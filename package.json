@@ -11,6 +11,10 @@
 		"prettier": "2.6.2"
 	},
 	"dependencies": {
-		"sass": "^1.51.0"
+		"@pinia/nuxt": "^0.1.9",
+		"mdi": "^2.2.43",
+		"pinia": "^2.0.14",
+		"sass": "^1.51.0",
+		"vuetify": "^3.0.0-beta.1"
 	}
 }

@@ -4,40 +4,34 @@ import { defineNuxtConfig } from "nuxt";
 export default defineNuxtConfig({
 	publicRuntimeConfig: {
 		appURL: process.env.APP_URL || "http://localhost:3000",
+		apiURL: process.env.API_URL || "http://localhost:3000",
 	},
+	ssr: false,
 
-	plugins: [
-		// { src: '~plugins/Api.js' },
+	css: [
+		"~/assets/scss/main.scss",
+		"vuetify/lib/styles/main.sass",
+		"mdi/css/materialdesignicons.min.css",
 	],
-
-	// css: ['~/assets/sass/main.sass'],
-	// vite: {
-	// 	css: {
-	// 		preprocessorOptions: {
-	// 			sass: {
-	// 				additionalData: '@import "~/assets/sass/variables.sass"'
-	// 			},
-	// 		},
-	// 	},
-	// },
-	components: {
-		dirs: ["~/components", "~/components/pages"],
+	build: {
+		transpile: ["vuetify"],
 	},
+	vite: {
+		css: {
+			preprocessorOptions: {
+				scss: {
+					additionalData: '@import "~/assets/scss/variables.scss";',
+				},
+			},
+		},
+		define: {
+			"process.env.DEBUG": false,
+		},
+	},
+	buildModules: ["@pinia/nuxt"],
+
 	srcDir: "src",
 	server: {
 		host: process.env.NUXT_HOST,
-	},
-	head: {
-		title: "Finmars",
-		htmlAttrs: {
-			lang: "en",
-		},
-		meta: [
-			{ charset: "utf-8" },
-			{ name: "viewport", content: "width=device-width, initial-scale=1" },
-			{ hid: "description", name: "description", content: "" },
-			{ name: "format-detection", content: "telephone=no" },
-		],
-		link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
 	},
 });

@@ -1,11 +1,33 @@
 <template>
-	<div class="test">
-		<TheSidebar></TheSidebar>
-		<NuxtPage />
-	</div>
+	<Head>
+		<Title>Finmars</Title>
+		<Meta name="description" :content="'Finmars'" />
+		<Link type="image/x-icon" rel="icon" href="/img/favicon/favicon.ico" />
+	</Head>
+
+	<v-app>
+		<!-- <TheSidebar /> -->
+
+		<v-main class="main">
+			<TheHeader />
+
+			<v-container class="pa-0" fluid>
+				<NuxtPage />
+			</v-container>
+		</v-main>
+	</v-app>
 </template>
 
+<script setup></script>
+
 <style lang="scss" scoped>
-.test {
+.wrap {
+	display: grid;
+	grid-template-columns: 160px 1fr;
+}
+.content {
+	padding: 20px;
+	height: calc(100vh - 50px);
+	overflow: auto;
 }
 </style>

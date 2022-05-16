@@ -1,0 +1,44 @@
+.dib,
+.inline-block {
+	display: inline-block;
+}
+.db,
+.block {
+	display: block;
+}
+.df,
+.flex {
+	display: flex;
+}
+.fww {
+	flex-wrap: wrap;
+}
+.fwnw {
+	flex-wrap: nowrap;
+}
+.jcc {
+	justify-content: center;
+}
+.center {
+	display: flex;
+	justify-content: center;
+}
+
+.sb,
+.space-between {
+	justify-content: space-between;
+}
+.vc,
+.aic {
+	align-items: center;
+}
+.aifs {
+	align-items: flex-start;
+}
+.aife,
+.aie {
+	align-items: flex-end;
+}
+.tac {
+	text-align: center;
+}

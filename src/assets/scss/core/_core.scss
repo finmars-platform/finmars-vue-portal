@@ -1,0 +1,10 @@
+@import "../variables";
+@import "mixins";
+@import "resets";
+@import "base";
+@import "helpers";
+
+@include font-face($font-family, "@/assets/fonts/Roboto/Roboto-Regular", 400);
+@include font-face($font-family, "@/assets/fonts/Roboto/Roboto-Bold", 700);
+@include font-face($font-family, "@/assets/fonts/Roboto/Roboto-Extrabld", 800);
+@include font-face($font-family, "@/assets/fonts/Roboto/Roboto-Black", 900);
