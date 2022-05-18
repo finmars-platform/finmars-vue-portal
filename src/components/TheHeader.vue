@@ -6,15 +6,16 @@
 
 		<v-btn class="text-lowercase">
 			<v-icon start size="24" icon="mdi-account-box"></v-icon>
-			{{ "a.priak" }}
+			{{ user.email }}
 		</v-btn>
 	</v-toolbar>
 </template>
 
 <script setup>
-import { useUserStore } from "~/stores/user";
+	import { useUserStore } from "~/stores/user";
 
-let user = useUserStore();
+	// let user = useUserStore();
+	let user = useState('user')
 </script>
 
 <style lang="scss" scoped>

@@ -37,21 +37,43 @@
 		<v-divider></v-divider>
 
 		<v-container fluid class="databases bg-grey-lighten-5">
+
+			<PagesProfileInviteItem
+				width="360"
+				v-for="invite in invites"
+				:invite="invite"
+				:key="invite.id"
+				@refresh="refresh(), refreshInvites()"
+			/>
 			<PagesProfileDatabasesItem
 				width="360"
 				v-for="db in data.results"
 				:db="db"
 				:key="db.id"
 				@refresh="refresh()"
+				@delete="deleteDB($event)"
 			/>
+
 		</v-container>
 	</div>
 </template>
 
 <script setup>
+
 	let { data, refresh } = await useAsyncData("masterUser", () =>
 		useApi("masterUser.get")
 	);
+	let { data: {value: {results: invites}}, refresh: refreshInvites } = await useAsyncData("invitesToDB", () =>
+		useApi('invitesToDB.get')
+	);
+
+	async function deleteDB(id) {
+		console.log('id:', id)
+		let res = await useApi('masterLeave.get', {params: {id}})
+
+		if ( res ) refresh()
+	}
+
 </script>
 
 <style lang="scss" scoped>
