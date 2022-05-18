@@ -16,6 +16,7 @@ export default defineNuxtConfig({
 	],
 	build: {
 		transpile: ["vuetify"],
+		publicPath: `${process.env.APP_URL}`
 	},
 	vite: {
 		css: {
