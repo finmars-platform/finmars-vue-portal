@@ -63,7 +63,7 @@
 		<v-card-text>Role: {{ db.isOwner ? "owner" : "admin" }}</v-card-text>
 
 		<v-card-actions class="justify-space-between d-flex">
-			<v-btn v-if="!isEdit" icon="mdi-lock" color="primary"></v-btn>
+			<v-btn v-if="!isEdit" icon="mdi-lock" color="primary" @click="emit('delete', db.id)"></v-btn>
 			<v-btn v-else color="primary" @click="cancelEdit()">cancel</v-btn>
 
 			<v-btn v-if="!isEdit" variant="contained" color="primary">open</v-btn>

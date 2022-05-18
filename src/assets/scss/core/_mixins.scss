@@ -4,7 +4,6 @@
 		font-weight: $weight;
 		font-style: $style;
 		font-display: swap;
-		src: url("#{$file-path}.eot") format("embedded-opentype"),
-			url("#{$file-path}.ttf") format("truetype");
+		src: url("#{$file-path}.ttf") format("truetype");
 	}
 }

@@ -18,7 +18,10 @@
 	</v-app>
 </template>
 
-<script setup></script>
+<script setup>
+	let res = await useApi('me.get')
+	let user = useState( 'user', () => res  )
+</script>
 
 <style lang="scss" scoped>
 .wrap {
