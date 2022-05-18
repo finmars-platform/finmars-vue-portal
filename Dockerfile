@@ -16,10 +16,10 @@ ENV OLD_APP_URL=${OLD_APP_URL}
 ARG APP_URL
 ENV APP_URL=${APP_URL}
 
-RUN npm run dev
+
 
 ENV NUXT_HOST=0.0.0.0
 
 EXPOSE 3000
 
-CMD [ "npm", "start" ]
+CMD [ "npm", "run" "dev" ]
