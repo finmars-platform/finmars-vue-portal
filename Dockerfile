@@ -7,6 +7,9 @@ COPY package*.json ./
 RUN npm i
 COPY . .
 
+ARG API_URL
+ENV API_URL=${API_URL}
+
 RUN npm run build
 
 ENV NUXT_HOST=0.0.0.0
