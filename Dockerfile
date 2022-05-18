@@ -16,7 +16,7 @@ ENV OLD_APP_URL=${OLD_APP_URL}
 ARG APP_URL
 ENV APP_URL=${APP_URL}
 
-RUN npm run build
+RUN npm run dev
 
 ENV NUXT_HOST=0.0.0.0
 
