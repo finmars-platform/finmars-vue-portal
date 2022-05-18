@@ -8,15 +8,16 @@ export default defineNuxtConfig({
 		oldAppURL: process.env.OLD_APP_URL || "http://localhost:3000",
 	},
 	ssr: false,
-
+	router: {
+    base: '/v/'
+  },
 	css: [
 		"~/assets/scss/main.scss",
 		"vuetify/lib/styles/main.sass",
 		"mdi/css/materialdesignicons.min.css",
 	],
 	build: {
-		transpile: ["vuetify"],
-		publicPath: `${process.env.APP_URL}`
+		transpile: ["vuetify"]
 	},
 	vite: {
 		css: {
