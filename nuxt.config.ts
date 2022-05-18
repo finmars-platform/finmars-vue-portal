@@ -8,9 +8,6 @@ export default defineNuxtConfig({
 		oldAppURL: process.env.OLD_APP_URL || "http://localhost:3000",
 	},
 	ssr: false,
-	router: {
-    base: '/nuxt-v/'
-  },
 	css: [
 		"~/assets/scss/main.scss",
 		"vuetify/lib/styles/main.sass",
