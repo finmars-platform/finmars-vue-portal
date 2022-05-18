@@ -1,6 +1,6 @@
 import routes from "./routes";
 
-export default function (route_opt, { params, body } = {}) {
+export default function (route_opt, { params, body, filters } = {}) {
 	const config = useRuntimeConfig();
 	const [route, method] = route_opt.split(".");
 	let url = routes[route][method];
