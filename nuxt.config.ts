@@ -9,7 +9,7 @@ export default defineNuxtConfig({
 	},
 	ssr: false,
 	router: {
-    base: '/v/'
+    base: '/nuxt-v/'
   },
 	css: [
 		"~/assets/scss/main.scss",
