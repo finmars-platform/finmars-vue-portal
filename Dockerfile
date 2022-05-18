@@ -14,6 +14,6 @@ RUN npm run build
 
 ENV NUXT_HOST=0.0.0.0
 
-EXPOSE 8080
+EXPOSE 3000
 
 CMD [ "npm", "start" ]
