@@ -6,8 +6,10 @@ export default {
 	},
 	masterBackups: {
 		get: '/authorizer/master-user-backups/',
-		'delete': '/authorizer/master-user-backups/{id}/'
+		'delete': '/authorizer/master-user-backups/{id}/',
+		put: '/authorizer/master-user-backups/{id}/restore-from-backup/'
 	},
+
 	masterExport: {
 		get: '/authorizer/master-user-export/{id}/'
 	},
@@ -23,7 +25,6 @@ export default {
 	masterCreateFrom: {
 		post: '/authorizer/master-user-create-from-backup/'
 	},
-
 	me: {
 		get: "/authorizer/user/0/",
 		put: "/authorizer/user/0/",
