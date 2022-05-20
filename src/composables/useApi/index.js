@@ -1,6 +1,6 @@
 import routes from "./routes";
 
-export default function (route_opt, { params, body, filters } = {}) {
+export default async function (route_opt, { params, body, filters, headers = {} } = {}) {
 	const config = useRuntimeConfig();
 	const [route, method] = route_opt.split(".");
 	let url = routes[route][method];
@@ -14,7 +14,8 @@ export default function (route_opt, { params, body, filters } = {}) {
 		baseURL: config.public.apiURL,
 		method: method.toLowerCase() || "GET",
 		headers: {
-			Authorization: "Token " + "b0077c3678b9021bcf28d4ef2b0e92ebfd8f1143",
+			Authorization: "Token " + useCookie('authtoken').value,
+			...headers
 		},
 	};
 
@@ -25,5 +26,12 @@ export default function (route_opt, { params, body, filters } = {}) {
 		}
 	}
 
-	return $fetch(url, opts);
+	try {
+		return await $fetch(url, opts);
+
+	} catch(e) {
+		console.log('e:', e)
+		return e
+	}
+
 }

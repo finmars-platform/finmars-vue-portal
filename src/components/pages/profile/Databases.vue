@@ -1,20 +1,25 @@
 <template>
 	<div>
 		<v-container class="justify-space-between d-flex py-3" fluid>
-			<v-btn id="menu-activator" color="primary" icon="mdi-plus" size="small" />
-
 			<v-menu
-				:value="true"
-				activator="#menu-activator"
-				open-on-click
 				anchor="bottom"
 			>
+				<template v-slot:activator="{ props }">
+					<v-btn color="primary" icon="mdi-plus" size="small" v-bind="props" />
+				</template>
+
 				<v-list>
 					<v-list-item :value="1" @click="$router.push('/profile/add-database')">
 						New
 					</v-list-item>
 					<v-list-item :value="2">
 						<v-list-item-title>From Backup</v-list-item-title>
+
+						<PagesProfileDatabaseFromBackup
+							@close="isShowNewBackup = false, refresh()"
+							v-model="isShowNewBackup"
+							activator="parent"
+						/>
 					</v-list-item>
 				</v-list>
 			</v-menu>
@@ -36,7 +41,7 @@
 
 		<v-divider></v-divider>
 
-		<v-container fluid class="databases bg-grey-lighten-5">
+		<v-container fluid class="databases bg-grey-lighten-5" v-if="invites.length || data.results.length">
 
 			<PagesProfileInviteItem
 				width="360"
@@ -55,6 +60,7 @@
 			/>
 
 		</v-container>
+		<v-container fluid class="text-h4" v-else>No databases found</v-container>
 	</div>
 </template>
 
@@ -67,8 +73,9 @@
 		useApi('invitesToDB.get')
 	);
 
+	let isShowNewBackup = ref(false)
+
 	async function deleteDB(id) {
-		console.log('id:', id)
 		let res = await useApi('masterLeave.get', {params: {id}})
 
 		if ( res ) refresh()

@@ -1,7 +1,7 @@
 <template>
 	<!-- <div class="sidebar">
 		<NuxtLink class="logo" to="/">
-			<img src="/img/logo.png" alt="" />
+			<img src="img/logo.png" alt="" />
 		</NuxtLink>
 
 		<ul>

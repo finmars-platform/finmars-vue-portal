@@ -38,22 +38,22 @@
 						<ul>
 							<li class="d-flex space-between align-center auth_app_item">
 								<div>
-									<img width="33" src="/img/g-auth-app.svg" alt="">
+									<img width="33" src="img/g-auth-app.svg" alt="">
 									Google authenticator
 								</div>
 								<div class="d-flex align-center">
-									<a href="https://apps.apple.com/us/app/google-authenticator/id388497605" target="_blank"><img width="112" src="/img/app-store.png" alt=""></a>
-									<a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank"><img width="112" src="/img/google-play.png" alt=""></a>
+									<a href="https://apps.apple.com/us/app/google-authenticator/id388497605" target="_blank"><img width="112" src="img/app-store.png" alt=""></a>
+									<a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank"><img width="112" src="img/google-play.png" alt=""></a>
 								</div>
 							</li>
 							<li class="d-flex space-between align-center auth_app_item">
 								<div>
-									<img width="33" src="/img/microsoft-authenticator.svg" alt="">
+									<img width="33" src="img/microsoft-authenticator.svg" alt="">
 									Microsoft authenticator
 								</div>
 								<div class="d-flex align-center">
-									<a href="https://apps.apple.com/us/app/microsoft-authenticator/id983156458" target="_blank"><img width="112" src="/img/app-store.png" alt=""></a>
-									<a href="https://play.google.com/store/apps/details?id=com.azure.authenticator" target="_blank"><img width="112" src="/img/google-play.png" alt=""></a>
+									<a href="https://apps.apple.com/us/app/microsoft-authenticator/id983156458" target="_blank"><img width="112" src="img/app-store.png" alt=""></a>
+									<a href="https://play.google.com/store/apps/details?id=com.azure.authenticator" target="_blank"><img width="112" src="img/google-play.png" alt=""></a>
 								</div>
 							</li>
 						</ul>
@@ -133,4 +133,5 @@
 .auth_app_item
 	padding: 19px 0
 	border-bottom: 1px solid #E0E0E0
+
 </style>

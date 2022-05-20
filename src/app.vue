@@ -2,7 +2,7 @@
 	<Head>
 		<Title>Finmars</Title>
 		<Meta name="description" :content="'Finmars'" />
-		<Link type="image/x-icon" rel="icon" href="/img/favicon/favicon.ico" />
+		<Link type="image/x-icon" rel="icon" href="img/favicon/favicon.ico" />
 	</Head>
 
 	<v-app>

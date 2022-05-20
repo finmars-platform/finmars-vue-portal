@@ -5,11 +5,25 @@ export default {
 		put: "/authorizer/master-user/{id}/",
 	},
 	masterBackups: {
-		get: '/authorizer/master-user-backups/'
+		get: '/authorizer/master-user-backups/',
+		'delete': '/authorizer/master-user-backups/{id}/'
+	},
+	masterExport: {
+		get: '/authorizer/master-user-export/{id}/'
 	},
 	masterLeave: {
 		get: '/authorizer/master-user-leave/{id}/'
 	},
+	masterSet: {
+		patch: '/authorizer/master-user/{id}/set-current/'
+	},
+	masterCreate: {
+		post: '/authorizer/master-user-create/'
+	},
+	masterCreateFrom: {
+		post: '/authorizer/master-user-create-from-backup/'
+	},
+
 	me: {
 		get: "/authorizer/user/0/",
 		put: "/authorizer/user/0/",
