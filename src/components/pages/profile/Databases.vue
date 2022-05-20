@@ -27,14 +27,14 @@
 			<v-spacer></v-spacer>
 
 			<v-btn
-				size="x-small"
+				size="small"
 				height="auto"
 				variant="text"
 				stacked
 				class="text-lowercase"
 				@click="refresh(), refreshInvites()"
 			>
-				<v-icon start size="16" icon="mdi-refresh"></v-icon>
+				<v-icon start size="24" icon="mdi-refresh"></v-icon>
 				refresh
 			</v-btn>
 		</v-container>

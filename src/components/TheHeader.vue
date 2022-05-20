@@ -4,18 +4,63 @@
 
 		<v-spacer></v-spacer>
 
-		<v-btn class="text-lowercase">
-			<v-icon start size="24" icon="mdi-account-box"></v-icon>
-			{{ user.email }}
+		<v-btn icon="mdi-home" to="/" />
+
+		<v-btn class="text-lowercase" id="menu-db">
+			{{ store.current.name }}
 		</v-btn>
+
+		<v-menu
+			activator="#menu-db"
+			anchor="bottom"
+		>
+			<v-list>
+				<v-list-item
+					v-for="(item, index) in store.databases"
+					:key="index"
+					@click="setCurrent( item.id )"
+				>
+					{{ item.name }}
+				</v-list-item>
+			</v-list>
+		</v-menu>
+
+		<v-btn class="text-lowercase" id="menu-btn">
+			<v-icon start size="24" icon="mdi-account-box"></v-icon>
+			{{ store.user.username }}
+		</v-btn>
+		<v-menu
+			activator="#menu-btn"
+			anchor="bottom"
+			:close-on-content-click="true"
+		>
+			<v-list>
+				<v-list-item
+					v-for="(item, index) in menu"
+					:key="index"
+					@click="item.cb()"
+				>
+					{{ item.name }}
+				</v-list-item>
+			</v-list>
+		</v-menu>
 	</v-toolbar>
 </template>
 
 <script setup>
-	import { useUserStore } from "~/stores/user";
 
-	// let user = useUserStore();
-	let user = useState('user')
+	const store = useStore()
+
+	let menu = ref([
+		{name: 'Profile', cb: () => {navigateTo('/profile')}},
+		{name: 'Logout', cb: () => {}},
+	])
+
+	async function setCurrent( id ) {
+		let res = await useApi('masterSet.patch', {params: {id}})
+
+		if ( res ) navigateTo('/')
+	}
 </script>
 
 <style lang="scss" scoped>
