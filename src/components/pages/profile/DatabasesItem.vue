@@ -125,12 +125,21 @@ function cancelEdit() {
 	isEditDesc.value = false;
 	isEdit.value = false;
 }
-async function open() {
-	let res = await useApi("masterSet.patch", {
+async function exportDb() {
+	let res = await useApi("masterExport.get", {
 		params: { id: props.db.id },
 	});
 	if ( res.success ) {
-		window.location.href = config.public.oldAppUrl
+
+	}
+}
+async function open() {
+	let res = await useApi("masterSet.patch", {
+		body: {},
+		params: { id: props.db.id },
+	});
+	if ( res.success ) {
+		window.location.href = config.public.oldAppURL
 	}
 }
 async function save() {
