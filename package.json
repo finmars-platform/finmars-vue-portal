@@ -1,8 +1,8 @@
 {
 	"private": true,
 	"scripts": {
-		"build": "nuxt build",
-		"dev": "nuxt dev",
+		"build": "nuxt build ",
+		"dev": "nuxt --rootDir=./v/ dev",
 		"start": "node .output/server/index.mjs",
 		"generate": "nuxt generate",
 		"preview": "nuxt preview"

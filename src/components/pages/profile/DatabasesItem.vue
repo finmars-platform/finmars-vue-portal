@@ -1,16 +1,19 @@
 <template>
 	<v-card width="360">
 		<v-card-title>
-			<template v-if="!isEditTitle">
-				{{ db.name }}
-				<v-btn
-					variant="plain"
-					icon="mdi-pencil"
-					color="primary"
-					size="small"
-					@click="editTitle(db.name)"
-				/>
-			</template>
+			<v-hover v-if="!isEditTitle" v-slot="{ isHovering, props }">
+				<div v-bind="props" >
+					{{ db.name }}
+					<v-btn
+						:class="{ 'hide': !isHovering }"
+						variant="plain"
+						icon="mdi-pencil"
+						color="primary"
+						size="small"
+						@click="editTitle(db.name)"
+					/>
+				</div>
+			</v-hover>
 
 			<v-text-field
 				class="py-0"
@@ -23,30 +26,34 @@
 			/>
 		</v-card-title>
 
-		<v-card-subtitle>Expired ({{ db.license_expiry_date }})</v-card-subtitle>
+		<v-card-subtitle v-if="db.is_initialized">Expired ({{ db.license_expiry_date }})</v-card-subtitle>
+		<v-card-subtitle v-else>Database is initializing</v-card-subtitle>
 
 		<v-card-text>
-			<template v-if="!isEditDesc">
-				{{ db.description }}
+			<v-hover v-if="!isEditDesc" v-slot="{ isHovering, props }">
+				<div v-bind="props" >
+					{{ db.description }}
 
-				<v-btn
-					v-if="db.description"
-					variant="plain"
-					icon="mdi-pencil"
-					color="primary"
-					size="small"
-					@click="editDesc()"
-				/>
-				<v-btn
-					class="text-capitalize px-0"
-					variant="plain"
-					density="compact"
-					color="primary"
-					@click="editDesc()"
-					v-else
-					>Add Description</v-btn
-				>
-			</template>
+					<v-btn
+						v-if="db.description"
+						:class="{ 'hide': !isHovering }"
+						variant="plain"
+						icon="mdi-pencil"
+						color="primary"
+						size="small"
+						@click="editDesc()"
+					/>
+					<v-btn
+						class="text-capitalize px-0"
+						variant="plain"
+						density="compact"
+						color="primary"
+						@click="editDesc()"
+						v-else
+						>Add Description</v-btn
+					>
+				</div>
+			</v-hover>
 
 			<v-textarea
 				v-if="isEditDesc"
@@ -62,19 +69,27 @@
 
 		<v-card-text>Role: {{ db.isOwner ? "owner" : "admin" }}</v-card-text>
 
-		<v-card-actions class="justify-space-between d-flex">
-			<v-btn v-if="!isEdit" icon="mdi-lock" color="primary" @click="emit('delete', db.id)"></v-btn>
-			<v-btn v-else color="primary" @click="cancelEdit()">cancel</v-btn>
+		<v-card-actions v-if="!isEdit && db.is_initialized" class="justify-space-between d-flex">
+			<v-btn v-if="!showActions" icon="mdi-lock" color="primary" @click="showActions = true"></v-btn>
 
-			<v-btn v-if="!isEdit" variant="contained" color="primary">open</v-btn>
-			<v-btn v-else variant="contained" color="primary" @click="save()"
-				>save</v-btn
-			>
+			<div v-if="showActions">
+				<v-btn icon="mdi-cloud-upload" color="primary" @click="exportDb()"></v-btn>
+				<v-btn icon="mdi-delete" color="primary" class="ml-0" @click="emit('delete', db.id)"></v-btn>
+			</div>
+
+			<v-btn v-if="!isEdit" variant="contained" color="primary" @click="open()">open</v-btn>
+		</v-card-actions>
+
+		<v-card-actions v-if="isEdit" class="justify-space-between d-flex">
+			<v-btn color="primary" @click="cancelEdit()">cancel</v-btn>
+
+			<v-btn variant="contained" color="primary" @click="save()">save</v-btn>
 		</v-card-actions>
 	</v-card>
 </template>
 
 <script setup>
+const config = useRuntimeConfig();
 const emit = defineEmits(["refresh"]);
 const props = defineProps({
 	db: Object,
@@ -85,6 +100,8 @@ let editingData = reactive({});
 let isEditDesc = ref(false);
 let isEditTitle = ref(false);
 let isEdit = ref(false);
+
+let showActions = ref(false)
 
 function setEditObject() {
 	editingData.description = props.db.description;
@@ -107,6 +124,14 @@ function cancelEdit() {
 	isEditTitle.value = false;
 	isEditDesc.value = false;
 	isEdit.value = false;
+}
+async function open() {
+	let res = await useApi("masterSet.patch", {
+		params: { id: props.db.id },
+	});
+	if ( res.success ) {
+		window.location.href = config.public.oldAppUrl
+	}
 }
 async function save() {
 	let res = await useApi("masterUser.put", {
