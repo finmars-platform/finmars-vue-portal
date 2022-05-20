@@ -4,7 +4,7 @@
 
 		<v-spacer></v-spacer>
 
-		<v-btn icon="mdi-home" to="/" />
+		<v-btn icon="mdi-home" :to="config.public.oldAppURL" />
 
 		<v-btn class="text-lowercase" id="menu-db">
 			{{ store.current.name }}
@@ -50,6 +50,7 @@
 <script setup>
 
 	const store = useStore()
+	const config = useRuntimeConfig()
 
 	let menu = ref([
 		{name: 'Profile', cb: () => {navigateTo('/profile')}},
@@ -59,7 +60,7 @@
 	async function setCurrent( id ) {
 		let res = await useApi('masterSet.patch', {params: {id}})
 
-		if ( res ) navigateTo('/')
+		if ( res ) navigateTo(config.public.oldAppURL)
 	}
 </script>
 
