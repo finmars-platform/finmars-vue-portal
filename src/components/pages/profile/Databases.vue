@@ -32,7 +32,7 @@
 				variant="text"
 				stacked
 				class="text-lowercase"
-				@click="refresh"
+				@click="refresh(), refreshInvites()"
 			>
 				<v-icon start size="16" icon="mdi-refresh"></v-icon>
 				refresh
@@ -45,7 +45,7 @@
 
 			<PagesProfileInviteItem
 				width="360"
-				v-for="invite in invites"
+				v-for="invite in invites.results"
 				:invite="invite"
 				:key="invite.id"
 				@refresh="refresh(), refreshInvites()"
@@ -69,7 +69,7 @@
 	let { data, refresh } = await useAsyncData("masterUser", () =>
 		useApi("masterUser.get")
 	);
-	let { data: {value: {results: invites}}, refresh: refreshInvites } = await useAsyncData("invitesToDB", () =>
+	let { data: invites, refresh: refreshInvites } = await useAsyncData("invitesToDB", () =>
 		useApi('invitesToDB.get')
 	);
 
