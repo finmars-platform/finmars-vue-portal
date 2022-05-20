@@ -26,7 +26,7 @@
 			/>
 		</v-card-title>
 
-		<v-card-subtitle v-if="db.is_initialized">Expired ({{ db.license_expiry_date }})</v-card-subtitle>
+		<v-card-subtitle v-if="db.is_initialized">Expire ({{ db.license_expiry_date }})</v-card-subtitle>
 		<v-card-subtitle v-else>Database is initializing</v-card-subtitle>
 
 		<v-card-text>
@@ -89,71 +89,74 @@
 </template>
 
 <script setup>
-const config = useRuntimeConfig();
-const emit = defineEmits(["refresh"]);
-const props = defineProps({
-	db: Object,
-});
-
-let editingData = reactive({});
-
-let isEditDesc = ref(false);
-let isEditTitle = ref(false);
-let isEdit = ref(false);
-
-let showActions = ref(false)
-
-function setEditObject() {
-	editingData.description = props.db.description;
-	editingData.name = props.db.name;
-	editingData.id = props.db.id;
-}
-function editDesc() {
-	isEditDesc.value = true;
-	isEdit.value = true;
-
-	setEditObject();
-}
-function editTitle() {
-	isEditTitle.value = true;
-	isEdit.value = true;
-
-	setEditObject();
-}
-function cancelEdit() {
-	isEditTitle.value = false;
-	isEditDesc.value = false;
-	isEdit.value = false;
-}
-async function exportDb() {
-	let res = await useApi("masterExport.get", {
-		params: { id: props.db.id },
-	});
-	if ( res.success ) {
-
-	}
-}
-async function open() {
-	let res = await useApi("masterSet.patch", {
-		body: {},
-		params: { id: props.db.id },
-	});
-	if ( res.success ) {
-		window.location.href = config.public.oldAppURL
-	}
-}
-async function save() {
-	let res = await useApi("masterUser.put", {
-		body: editingData,
-		params: { id: editingData.id },
+	const config = useRuntimeConfig();
+	const emit = defineEmits(["refresh"]);
+	const props = defineProps({
+		db: Object,
 	});
 
-	if (res.status) {
-		emit("refresh");
-	}
+	let editingData = reactive({});
 
-	cancelEdit();
-}
+	let isEditDesc = ref(false);
+	let isEditTitle = ref(false);
+	let isEdit = ref(false);
+
+	let showActions = ref(false)
+
+	function setEditObject() {
+		editingData.description = props.db.description;
+		editingData.name = props.db.name;
+		editingData.id = props.db.id;
+	}
+	function editDesc() {
+		isEditDesc.value = true;
+		isEdit.value = true;
+
+		setEditObject();
+	}
+	function editTitle() {
+		isEditTitle.value = true;
+		isEdit.value = true;
+
+		setEditObject();
+	}
+	function cancelEdit() {
+		isEditTitle.value = false;
+		isEditDesc.value = false;
+		isEdit.value = false;
+	}
+	async function exportDb() {
+		let res = await useApi("masterExport.get", {
+			params: { id: props.db.id },
+		});
+		if ( res ) {
+			useNotify({
+				type: 'success',
+				title: res.message,
+			})
+		}
+	}
+	async function open() {
+		let res = await useApi("masterSet.patch", {
+			body: {},
+			params: { id: props.db.id },
+		});
+		if ( res.success ) {
+			window.location.href = config.public.oldAppURL
+		}
+	}
+	async function save() {
+		let res = await useApi("masterUser.put", {
+			body: editingData,
+			params: { id: editingData.id },
+		});
+
+		if (res.status) {
+			emit("refresh");
+		}
+
+		cancelEdit();
+	}
 </script>
 
 <style lang="scss" scoped>

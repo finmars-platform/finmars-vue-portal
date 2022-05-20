@@ -7,7 +7,15 @@ export const useUserStore = defineStore({
 			user: { name: "Andrey" },
 		};
 	},
-	actions: {},
+	actions: {
+		async init() {
+			await this.getUser()
+		},
+		async getUser() {
+			let res = await useApi('me.get')
+			this.user = res
+		}
+	},
 	getters: {
 		filtersList: (state) => state.filtersList,
 	},

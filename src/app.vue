@@ -16,11 +16,14 @@
 			</v-container>
 		</v-main>
 	</v-app>
+
+	<notifications />
 </template>
 
 <script setup>
-	let res = await useApi('me.get')
-	let user = useState( 'user', () => res  )
+	let store = useStore()
+
+	store.init()
 </script>
 
 <style lang="scss" scoped>

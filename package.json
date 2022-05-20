@@ -13,6 +13,7 @@
 	},
 	"dependencies": {
 		"@chenfengyuan/vue-qrcode": "^2.0.0",
+		"@kyvg/vue3-notification": "^2.3.4",
 		"@pinia/nuxt": "^0.1.9",
 		"mdi": "^2.2.43",
 		"pinia": "^2.0.14",

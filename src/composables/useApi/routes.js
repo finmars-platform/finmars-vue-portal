@@ -4,6 +4,9 @@ export default {
 		get: "/authorizer/master-user/",
 		put: "/authorizer/master-user/{id}/",
 	},
+	ping: {
+		get: "/authorizer/ping/"
+	},
 	masterBackups: {
 		get: '/authorizer/master-user-backups/',
 		'delete': '/authorizer/master-user-backups/{id}/',
