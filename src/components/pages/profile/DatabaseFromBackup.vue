@@ -24,7 +24,9 @@
 					<v-file-input
 						label="File input"
 						variant="outlined"
-						density="compact"
+						density="comfortable"
+						prepend-icon
+						prepend-inner-icon="mdi-paperclip"
 						@change="addFile"
 					>
 						<template v-slot:selection="{ fileNames }">

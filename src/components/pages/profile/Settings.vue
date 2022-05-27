@@ -53,7 +53,7 @@
 						<v-text-field
 							autocomplete="current-password"
 							v-model="formPass.password"
-							:append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
+							:append-inner-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
 							:type="showPass ? 'text' : 'password'"
 							label="Old password"
 							placeholder="Old password"
@@ -63,7 +63,7 @@
 						/>
 						<v-text-field
 							v-model="formPass.new_password"
-							:append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
+							:append-inner-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
 							:type="showPass ? 'text' : 'password'"
 							label="New password"
 							hint="At least 8 characters"
@@ -75,7 +75,7 @@
 						/>
 						<v-text-field
 							v-model="formPass.new_password_check"
-							:append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
+							:append-inner-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
 							:type="showPass ? 'text' : 'password'"
 							label="New password (confirm)"
 							hint="At least 8 characters"

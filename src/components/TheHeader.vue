@@ -4,28 +4,30 @@
 
 		<v-spacer></v-spacer>
 
-		<v-btn icon="mdi-home" :to="config.public.oldAppURL" />
+		<v-btn v-if="store.current.name" color="#737373" icon="mdi-home" :href="config.public.oldAppURL" />
 
-		<v-btn class="text-lowercase" id="menu-db">
-			{{ store.current.name }}
-		</v-btn>
+		<template v-if="store.databases.length">
+			<v-btn color="#737373" class="text-lowercase" id="menu-db">
+				{{ store.current.name }}
+			</v-btn>
 
-		<v-menu
-			activator="#menu-db"
-			anchor="bottom"
-		>
-			<v-list>
-				<v-list-item
-					v-for="(item, index) in store.databases"
-					:key="index"
-					@click="setCurrent( item.id )"
-				>
-					{{ item.name }}
-				</v-list-item>
-			</v-list>
-		</v-menu>
+			<v-menu
+				activator="#menu-db"
+				anchor="bottom"
+			>
+				<v-list>
+					<v-list-item
+						v-for="(item, index) in store.databases"
+						:key="index"
+						@click="setCurrent( item.id )"
+					>
+						{{ item.name }}
+					</v-list-item>
+				</v-list>
+			</v-menu>
+		</template>
 
-		<v-btn class="text-lowercase" id="menu-btn">
+		<v-btn color="#737373" class="text-lowercase" id="menu-btn">
 			<v-icon start size="24" icon="mdi-account-box"></v-icon>
 			{{ store.user.username }}
 		</v-btn>
