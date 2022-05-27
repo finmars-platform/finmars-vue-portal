@@ -1,43 +1,65 @@
 <template>
-	<!-- <div class="sidebar">
+	<v-navigation-drawer
+		:rail="rail"
+		permanent
+		width="200"
+		rail-width="58"
+		theme="dark"
+	>
+		<!-- <div @click="rail = !rail">switch</div> -->
 		<NuxtLink class="logo" to="/">
-			<img src="img/logo.png" alt="" />
+			<img src="/v/img/logo.png" alt="" />
 		</NuxtLink>
 
-		<ul>
-			<li v-for="(item, index) in menuList" :key="index">
-				<NuxtLink class="menu_item" :to="item.to">{{ item.title }}</NuxtLink>
-			</li>
-		</ul>
-	</div> -->
-	<v-navigation-drawer permanent>
-		<v-list-item>
-			<v-list-item-content>
-				<v-list-item-title class="text-h6"> Application </v-list-item-title>
-				<v-list-item-subtitle> subtext </v-list-item-subtitle>
-			</v-list-item-content>
-		</v-list-item>
+		<v-list class="px-0" nav v-model:opened="open">
+			<template
+				v-for="(route, i) in menu"
+				:key="i"
+			>
+				<v-list-item
+					v-if="!route.pages"
+					:title="route.title"
+					:to="route.link"
+				>
+					<template #prepend>
+						<v-icon class="mr-3" :icon="route.icon" />
+					</template>
+				</v-list-item>
+				<v-list-group
+					v-else
+				>
+					<template v-slot:activator="{ props }">
+						<v-list-item
+							variant="contained"
+							v-bind="props"
+							:title="route.title"
+							value="userwe"
+						>
+							<template #prepend>
+								<v-icon class="mr-3" :icon="route.icon" />
+							</template>
+						</v-list-item>
+					</template>
 
-		<v-divider></v-divider>
-
-		<v-list dense nav>
-			<v-list-item v-for="item in items" :key="item.title" link>
-				<v-list-item-icon>
-					<v-icon>{{ item.icon }}</v-icon>
-				</v-list-item-icon>
-
-				<v-list-item-content>
-					<v-list-item-title>{{ item.title }}</v-list-item-title>
-				</v-list-item-content>
-			</v-list-item>
+					<v-list-item
+						v-for="({link, title}, i) in route.pages"
+						:key="i"
+						:title="title"
+						:to="link"
+					/>
+				</v-list-group>
+			</template>
 		</v-list>
 	</v-navigation-drawer>
 </template>
 
 <script setup>
-import menuList from "~/assets/data/menu.json";
+	import menu from "~/assets/data/menu.js";
 
-const menuItems = menuList;
+	let open = ref(['user'])
+	let rail = ref(false)
+
+
 </script>
 
 <style lang="scss" scoped>

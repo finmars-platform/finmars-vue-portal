@@ -6,9 +6,9 @@
 	</Head>
 
 	<v-app>
-		<!-- <TheSidebar /> -->
+		<!-- <TheSidebar v-if="isOpenSidbar" /> -->
 
-		<v-main class="main">
+		<v-main class="main bg-grey-lighten-5">
 			<TheHeader />
 
 			<v-container class="pa-0" fluid>
@@ -22,6 +22,7 @@
 
 <script setup>
 	let store = useStore()
+	let isOpenSidbar = useState('isOpenSidbar', () => true)
 
 	store.init()
 </script>

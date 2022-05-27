@@ -1,5 +1,4 @@
 export default {
-	// Auth service
 	masterUser: {
 		get: "/authorizer/master-user/",
 		put: "/authorizer/master-user/{id}/",

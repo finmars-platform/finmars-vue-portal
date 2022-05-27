@@ -9,5 +9,7 @@
 </template>
 
 <script setup>
-useState("title", () => "Homepage");
+	definePageMeta({
+		title: "Homepage",
+	});
 </script>

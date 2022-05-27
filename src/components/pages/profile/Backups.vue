@@ -13,12 +13,12 @@
 
 			<v-spacer></v-spacer>
 
-			<v-btn
+			<v-btn color="#737373"
 				size="small"
 				height="auto"
 				variant="text"
 				stacked
-				class="text-lowercase"
+				class="text-capitalize"
 				@click="refresh()"
 			>
 				<v-icon start size="24" icon="mdi-refresh"></v-icon>

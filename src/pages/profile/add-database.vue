@@ -21,6 +21,12 @@
 							variant="outlined"
 							density="comfortable"
 						/>
+						<v-select
+							:items="configs"
+							label="Init configuration"
+							variant="outlined"
+							density="comfortable"
+						/>
 						<v-text-field
 							v-model="form.description"
 							label="Description"
@@ -76,7 +82,15 @@
 
 				<v-card-actions class="justify-space-between d-flex">
 					<v-btn color="primary" @click="$router.push('/profile')">cancel</v-btn>
-					<v-btn variant="contained" color="primary" @click="createDb()">finish</v-btn>
+					<v-btn variant="contained" :disabled="processing" color="primary" @click="createDb()">
+						<v-progress-circular v-if="processing"
+							class="mr-2"
+							indeterminate
+							color="white"
+							size="24"
+						/>
+						finish
+					</v-btn>
 				</v-card-actions>
 			</v-card>
 		</v-window-item>
@@ -117,15 +131,25 @@
 	definePageMeta({
 		title: "Profile: Create New Database ",
 	});
+	useState('isOpenSidbar').value = false
+
+	let router = useRouter()
 
 	let step = ref('create')
 	let isShow = ref(false)
+	let processing = ref(false)
+
 	let form = reactive({})
+	let configs = ['Blank']
 
 	async function createDb() {
+		processing.value = true
+
 		let res = await useApi('masterCreate.post', { body: form })
 
-		if ( res ) $router.push('/profile')
+		if ( res.id ) router.push('/profile')
+
+		processing.value = false
 	}
 </script>
 
