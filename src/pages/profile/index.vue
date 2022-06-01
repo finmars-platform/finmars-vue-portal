@@ -1,9 +1,9 @@
 <template>
-	<Head>
-		<Title>Profile</Title>
-		<Link type="image/x-icon" rel="icon" href="/v/img/favicon/favicon.ico" />
-	</Head>
 	<div>
+		<Head>
+			<Title>Profile</Title>
+			<Link type="image/x-icon" rel="icon" href="/v/img/favicon/favicon.ico" />
+		</Head>
 		<v-tabs v-model="tab" color="primary" class="bg-grey-lighten-5">
 			<v-tab
 				class="px-7"

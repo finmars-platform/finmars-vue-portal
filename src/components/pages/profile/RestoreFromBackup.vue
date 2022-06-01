@@ -20,21 +20,6 @@
 						density="comfortable"
 						v-model="form.license_key"
 					/>
-
-					<v-file-input
-						label="File input"
-						variant="outlined"
-						density="comfortable"
-						prepend-icon
-						prepend-inner-icon="mdi-paperclip"
-						@change="addFile"
-					>
-						<template v-slot:selection="{ fileNames }">
-							<template v-for="fileName in fileNames" :key="fileName">
-								{{ fileName.length > 30 ? fileName.slice(0,30) + '...' : fileName }}
-							</template>
-						</template>
-					</v-file-input>
 				</v-card-content>
 				<v-card-actions class="space-between pa-4">
 					<v-btn color="primary" @click="close()">cancel</v-btn>
@@ -56,23 +41,15 @@
 	async function createDB() {
 		if ( processing.value ) return false
 
-		let FD  = new FormData();
-
-		for( let prop in form ) {
-			FD.append( prop, form[ prop ] );
-		}
-
 		processing.value = true
 
-		let res = await useApi('masterCreateFrom.post', {body: FD })
+		let res = await useApi('masterBackups.put', {body: form })
 
 		if ( res ) {
+			useNotify({type: 'success', title: 'Ecosystem is proccessing'})
 		}
 
 		close()
-	}
-	function addFile( event ) {
-		form.file = event.target.files[0]
 	}
 
 </script>

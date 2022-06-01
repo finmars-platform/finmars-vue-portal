@@ -38,8 +38,8 @@ export default defineNuxtPlugin((nuxtApp) => {
 			global: {
 				ripple: false,
 			},
-			VIcon: {
-				// color: '#737373'
+			VCardActions: {
+				class: 'pa-20'
 			},
 		},
 	});

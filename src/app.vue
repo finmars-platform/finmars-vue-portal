@@ -6,7 +6,7 @@
 	</Head>
 
 	<v-app>
-		<!-- <TheSidebar v-if="isOpenSidbar" /> -->
+		<TheSidebar v-if="isOpenSidbar" />
 
 		<v-main class="main bg-grey-lighten-5">
 			<TheHeader />

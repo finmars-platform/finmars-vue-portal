@@ -5,7 +5,7 @@ export default defineStore({
 	state: () => {
 		return {
 			user: {},
-			databases: {},
+			databases: [],
 			current: {}
 		};
 	},

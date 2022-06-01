@@ -6,7 +6,7 @@
 
 		<v-btn v-if="store.current.name" color="#737373" icon="mdi-home" :href="config.public.oldAppURL" />
 
-		<template v-if="store.databases.length">
+		<template v-if="store.current.name">
 			<v-btn color="#737373" class="text-lowercase" id="menu-db">
 				{{ store.current.name }}
 			</v-btn>

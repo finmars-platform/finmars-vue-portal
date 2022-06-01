@@ -12,7 +12,14 @@
 				<v-btn icon="mdi-delete" color="primary" class="ml-0" @click="deleteBackup()"></v-btn>
 			</div>
 
-			<v-btn color="primary">restore</v-btn>
+			<v-btn color="primary">
+				restore
+				<PagesProfileRestoreFromBackup
+					@close="isShowRestore = false, emit('refresh')"
+					v-model="isShowRestore"
+					activator="parent"
+				/>
+			</v-btn>
 		</v-card-actions>
 	</v-card>
 </template>
@@ -24,6 +31,7 @@
 	});
 
 	let showActions = ref(false)
+	let isShowRestore = ref(false)
 	let config = useRuntimeConfig()
 
 	// async function save() {
