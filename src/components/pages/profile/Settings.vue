@@ -11,21 +11,21 @@
 							placeholder="First name"
 							variant="outlined"
 							density="comfortable"
-							v-model="user.first_name"
+							v-model="formUser.first_name"
 						/>
 						<v-text-field
 							label="Last name"
 							placeholder="Last name"
 							variant="outlined"
 							density="comfortable"
-							v-model="user.last_name"
+							v-model="formUser.last_name"
 						/>
 						<v-text-field
 							label="E-mail"
 							placeholder="E-mail"
 							variant="outlined"
 							density="comfortable"
-							v-model="user.email"
+							v-model="formUser.email"
 						/>
 						<!-- <v-select
 							label="Language"
@@ -40,7 +40,7 @@
 					</v-form>
 				</v-card-text>
 
-				<v-card-actions class="justify-end d-flex">
+				<v-card-actions class="justify-end d-flex pa-4">
 					<v-btn variant="contained" color="primary" @click="saveUser()">save</v-btn>
 				</v-card-actions>
 			</v-card>
@@ -59,7 +59,7 @@
 							placeholder="Old password"
 							variant="outlined"
 							density="comfortable"
-							@click:append="showPass = !showPass"
+							@click:append-inner="showPass = !showPass"
 						/>
 						<v-text-field
 							v-model="formPass.new_password"
@@ -71,7 +71,7 @@
 							variant="outlined"
 							density="comfortable"
 							counter
-							@click:append="showPass = !showPass"
+							@click:append-inner="showPass = !showPass"
 						/>
 						<v-text-field
 							v-model="formPass.new_password_check"
@@ -83,12 +83,12 @@
 							variant="outlined"
 							density="comfortable"
 							counter
-							@click:append="showPass = !showPass"
+							@click:append-inner="showPass = !showPass"
 						/>
 					</v-form>
 				</v-card-text>
 
-				<v-card-actions class="justify-end d-flex">
+				<v-card-actions class="justify-end d-flex pa-4">
 					<v-btn variant="contained" color="primary" @click="savePass()">save</v-btn>
 				</v-card-actions>
 			</v-card>
@@ -96,22 +96,26 @@
 			<v-card width="360" class="d-flex flex-column">
 				<v-card-title>Two-factor authentication</v-card-title>
 
-				<v-card-subtitle>
-					<v-switch v-model="user.two_factor_verification" :label="`Enabled`" hide-details="auto" @change="saveUser()" />
-				</v-card-subtitle>
-
-				<v-card-text>
+				<v-card-text v-if="!formUser.two_factor_verification">
 					No connected devices
 				</v-card-text>
 
-				<v-card-actions class="justify-end d-flex">
-					<v-btn variant="contained" color="primary">
+				<v-card-text v-else>
+					Device connected
+				</v-card-text>
+
+				<v-card-actions class="justify-end d-flex pa-4">
+					<v-btn variant="contained" color="primary" v-if="!formUser.two_factor_verification">
 						Add device
 						<PagesProfileTwoFAModal
-							@close="dialog = false"
+							@close="enableTwoFA($event)"
 							v-model="dialog"
 							activator="parent"
 						/>
+					</v-btn>
+
+					<v-btn variant="contained" color="primary" v-else @click="dasableTwoFA()">
+						Remove device
 					</v-btn>
 				</v-card-actions>
 			</v-card>
@@ -125,9 +129,11 @@
 	let formPass = reactive({})
 	let dialog = ref(false)
 
-	let user = reactive({ ...useState('user').value })
+	const store = useStore()
 
-	let { results: twoFA } = await useApi('meTwoFactor.get')
+	let formUser = store.user
+
+	let { data, refresh: refresh2FA } = await useAsyncData( '2fa', () => useApi('meTwoFactor.get') )
 
 async function savePass() {
 		let res = await useApi('meSetPassword.put', {body: formPass})
@@ -137,7 +143,31 @@ async function savePass() {
 		formPass.new_password_check = ''
 	}
 	async function saveUser() {
-		let res = await useApi('me.put', { body: user })
+		let res = await useApi('me.put', { body: formUser })
+	}
+	async function enableTwoFA( success ) {
+		dialog.value = false
+		if ( !success ) return false
+
+		formUser.two_factor_verification = true
+
+		await saveUser()
+		await store.getUser()
+		formUser = store.user
+
+		refresh2FA()
+	}
+	async function dasableTwoFA() {
+		console.log('data:', data)
+		let res = await useApi('meTwoFactor.delete', { params: {id: data.value.results[0]?.id } })
+
+		formUser.two_factor_verification = false
+
+		await saveUser()
+		await store.getUser()
+		formUser = store.user
+
+		refresh2FA()
 	}
 </script>
 

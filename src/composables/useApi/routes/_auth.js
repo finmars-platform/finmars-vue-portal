@@ -37,6 +37,7 @@ export default {
 	meTwoFactor: {
 		get: '/authorizer/two-factor/',
 		patch: '/authorizer/two-factor/{id}/',
+		delete: '/authorizer/two-factor/{id}/',
 	},
 	generateQR: {
 		put: '/authorizer/two-factor/generate-code/'

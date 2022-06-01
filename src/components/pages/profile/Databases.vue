@@ -16,7 +16,7 @@
 						<v-list-item-title>From Backup</v-list-item-title>
 
 						<PagesProfileDatabaseFromBackup
-							@close="isShowNewBackup = false, refresh()"
+							@close="isShowNewBackup = false, store.getDatabases()"
 							v-model="isShowNewBackup"
 							activator="parent"
 						/>
@@ -32,7 +32,7 @@
 				variant="text"
 				stacked
 				class="text-capitalize"
-				@click="refresh(), refreshInvites()"
+				@click="store.getDatabases(), refreshInvites()"
 			>
 				<v-icon start size="24" icon="mdi-refresh"></v-icon>
 				Refresh
@@ -41,21 +41,21 @@
 
 		<v-divider></v-divider>
 
-		<v-container fluid class="databases bg-grey-lighten-5" v-if="invites.length || data.results.length">
+		<v-container fluid class="databases bg-grey-lighten-5" v-if="invites || store.databases.length">
 
 			<PagesProfileInviteItem
 				width="360"
 				v-for="invite in invites.results"
 				:invite="invite"
 				:key="invite.id"
-				@refresh="refresh(), refreshInvites()"
+				@refresh="store.getDatabases(), refreshInvites()"
 			/>
 			<PagesProfileDatabasesItem
 				width="360"
-				v-for="db in data.results"
+				v-for="db in store.databases"
 				:db="db"
 				:key="db.id"
-				@refresh="refresh()"
+				@refresh="store.getDatabases()"
 				@delete="deleteDB($event)"
 			/>
 
@@ -66,9 +66,8 @@
 
 <script setup>
 
-	let { data, refresh } = await useAsyncData("masterUser", () =>
-		useApi("masterUser.get")
-	);
+	let store = useStore()
+
 	let { data: invites, refresh: refreshInvites } = await useAsyncData("invitesToDB", () =>
 		useApi('invitesToDB.get')
 	);
@@ -78,7 +77,7 @@
 	async function deleteDB(id) {
 		let res = await useApi('masterLeave.get', {params: {id}})
 
-		if ( res ) refresh()
+		if ( res ) store.getDatabases()
 	}
 
 </script>

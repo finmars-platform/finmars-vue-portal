@@ -1,1 +1,6 @@
 @import "core/core";
+
+.v-navigation-drawer__content {
+	overflow-x: inherit !important;
+	overflow-y: inherit !important;
+}

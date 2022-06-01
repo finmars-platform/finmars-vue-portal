@@ -82,7 +82,7 @@
 
 					<v-card-actions class="space-between">
 						<v-btn color="primary" @click="step = 'scan'">back</v-btn>
-						<v-btn color="primary" variant="contained" @click="close(false)">finish</v-btn>
+						<v-btn color="primary" variant="contained" @click="close()">finish</v-btn>
 					</v-card-actions>
 				</template>
 
@@ -103,11 +103,10 @@
 		if ( !code.value || code.value.length < 6 ) return false
 
 		let res = await useApi('validateQR.put', {
-			body: {code: code.value, username: 'test'}
+			body: {code: code.value, username: useState('user').value.username}
 		})
 
 		if ( res.match ) {
-			console.log('res.match:', res.match)
 			addDevice( res.id )
 		}
 	}
@@ -121,11 +120,11 @@
 			close()
 		}
 	}
-	async function close( success = true  ) {
+	async function close() {
 		step.value = 'start'
 		isShowApps.value = false
 		code.value = ''
-		emit('close', success)
+		emit('close')
 	}
 
 </script>

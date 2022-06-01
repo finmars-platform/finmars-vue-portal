@@ -69,8 +69,8 @@
 
 		<v-card-text>Role: {{ db.isOwner ? "owner" : "admin" }}</v-card-text>
 
-		<v-card-actions v-if="!isEdit && db.is_initialized" class="justify-space-between d-flex">
-			<v-btn id="parent" icon="mdi-lock" color="primary" @click="showActions = true">
+		<v-card-actions v-if="!isEdit && db.is_initialized" class="justify-space-between d-flex pa-4">
+			<v-btn id="parent" icon="mdi-lock" color="primary" @click="showActions = true" v-show="!showActions">
 				<v-tooltip
 					activator="#parent"
 					anchor="start"
