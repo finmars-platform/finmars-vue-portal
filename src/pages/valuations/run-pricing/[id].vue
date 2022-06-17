@@ -40,24 +40,8 @@
 				<v-card>
 					<v-card-title>Prices</v-card-title>
 					<v-card-content>
-						<v-text-field
-							:label="`Date from${isDateFromExpr ? ' (Expression)' : ''}`"
-							:placeholder="`Date from${isDateFromExpr ? ' (Expression)' : ''}`"
-							variant="outlined"
-							density="comfortable"
-							:type="isDateFromExpr ? 'text' : 'date'"
-							:append-inner-icon="isDateFromExpr ? 'mdi-code-tags' : ''"
-							:prepend-inner-icon="'mdi-swap-vertical'"
-							@click:prepend-inner="isDateFromExpr = !isDateFromExpr"
-							:modelValue="isDateFromExpr ? procedure.price_date_from_expr : procedure.price_date_from"
-							@update:modelValue="procedure.price_date_from = $event"
-							@click="isDateFromExpr ? isOpenFromExpr = true : ''"
-						/>
-						<FmExpression
-							v-if="isOpenFromExpr"
-							v-model="isOpenFromExpr"
-							:expressions="procedure.price_date_from_expr"
-							@save="procedure.price_date_from_expr = $event"
+						<FnDateExpr
+							label="Date from"
 						/>
 
 						<v-text-field
