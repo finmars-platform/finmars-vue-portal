@@ -45,5 +45,8 @@ export default {
 	dataInstance: {
 		get: prefix + '/procedures/data-procedure-instance/'
 	},
+	importSchemeLight: {
+		get: prefix + '/import/complex-transaction-import-scheme-light/'
+	},
 
 }
