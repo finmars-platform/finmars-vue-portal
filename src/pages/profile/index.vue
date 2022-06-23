@@ -1,5 +1,9 @@
 <template>
 	<div>
+		<Head>
+			<Title>Profile</Title>
+			<Link type="image/x-icon" rel="icon" href="/v/img/favicon/favicon.ico" />
+		</Head>
 		<v-tabs v-model="tab" color="primary" class="bg-grey-lighten-5">
 			<v-tab
 				class="px-7"
@@ -31,29 +35,18 @@
 	</div>
 </template>
 
-<script>
-export default defineComponent({
-	async setup() {},
-	data() {
-		return {
-			tabs: ["Databases", "Backups", "Billing", "Settings"],
-			tab: null,
-			menus: [{ title: "test" }, { title: "test2" }],
-			error: null,
-		};
-	},
-	created() {
-		definePageMeta({
-			title: "Profile",
-		});
-	},
-	methods: {},
-	head() {
-		return {
-			title: "Profile",
-		};
-	},
-});
+<script setup>
+	definePageMeta({
+		title: "Profile",
+	});
+	useState('isOpenSidbar').value = false
+
+	let tabs = ref(["Databases", "Backups", "Billing", "Settings"])
+	let tab = ref(null)
+	let error = ref(null)
+
+
+
 </script>
 
 <style lang="scss" scoped>

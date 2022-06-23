@@ -8,8 +8,8 @@ export default defineNuxtConfig({
 		oldAppURL: process.env.OLD_APP_URL || "http://localhost:3000",
 	},
 	ssr: false,
-	router: {
-		base: '/v/'
+	app: {
+		baseURL: '/v/'
 	},
 	css: [
 		"~/assets/scss/main.scss",

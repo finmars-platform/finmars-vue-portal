@@ -15,7 +15,7 @@
 			<b>{{ invite.from_user_object.username }}</b>
 		</v-card-text>
 
-		<v-card-actions class="justify-space-between d-flex">
+		<v-card-actions class="justify-space-between d-flex pa-4">
 			<v-btn color="primary" @click="changeStatus(2)">decline</v-btn>
 
 			<v-btn variant="contained" color="primary" @click="changeStatus(1)">Accept</v-btn>

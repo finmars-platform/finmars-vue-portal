@@ -1,61 +1,94 @@
 <template>
-	<!-- <div class="sidebar">
+	<v-navigation-drawer
+		class="sidebar overflow-x-visible"
+		:rail="rail"
+		permanent
+		width="160"
+		rail-width="58"
+		color="#000"
+	>
+		<!-- <div @click="rail = !rail">switch</div> -->
 		<NuxtLink class="logo" to="/">
-			<img src="/img/logo.png" alt="" />
+			<img src="/v/img/logo.png" alt="" />
 		</NuxtLink>
 
-		<ul>
-			<li v-for="(item, index) in menuList" :key="index">
-				<NuxtLink class="menu_item" :to="item.to">{{ item.title }}</NuxtLink>
-			</li>
-		</ul>
-	</div> -->
-	<v-navigation-drawer permanent>
-		<v-list-item>
-			<v-list-item-content>
-				<v-list-item-title class="text-h6"> Application </v-list-item-title>
-				<v-list-item-subtitle> subtext </v-list-item-subtitle>
-			</v-list-item-content>
-		</v-list-item>
+		<v-list bg-color="#000" class="menu px-0" nav v-model:opened="open">
+			<v-list-item class="menu_item"
+				v-for="(route, i) in menu"
+				:key="i"
+				:title="route.title"
+				:to="!route.old ? route.link : ''"
+				:href="(route.old ? config.public.oldAppURL : '') + route.link"
+			>
+				<template #prepend>
+					<v-icon class="mr-3" :icon="route.icon" />
+				</template>
 
-		<v-divider></v-divider>
-
-		<v-list dense nav>
-			<v-list-item v-for="item in items" :key="item.title" link>
-				<v-list-item-icon>
-					<v-icon>{{ item.icon }}</v-icon>
-				</v-list-item-icon>
-
-				<v-list-item-content>
-					<v-list-item-title>{{ item.title }}</v-list-item-title>
-				</v-list-item-content>
+				<v-list nav class="drop_menu pa-0" v-if="route.pages">
+					<v-list-item class="menu_item"
+						v-for="({link, title, old}, i) in route.pages"
+						:key="i"
+						:title="title"
+						:to="!old ? link : ''"
+						:href="old ? config.public.oldAppURL + link : ''"
+						:disabled="!link"
+					/>
+				</v-list>
 			</v-list-item>
 		</v-list>
 	</v-navigation-drawer>
 </template>
 
 <script setup>
-import menuList from "~/assets/data/menu.json";
+	import menu from "~/assets/data/menu.js";
 
-const menuItems = menuList;
+	let open = ref(['user'])
+	let rail = ref(false)
+	let config = useRuntimeConfig()
+
+
 </script>
 
 <style lang="scss" scoped>
 .sidebar {
-	height: 100vh;
+	width: 160px;
 	background: #000;
+
 }
 .logo {
 	padding: 10px;
 }
 .menu_item {
-	padding: 10px;
 	color: #fff;
-	font-size: 11px;
-	text-transform: uppercase;
+	border-radius: 0;
+	cursor: pointer;
 
 	&.router-link-exact-active {
 		color: $c1;
 	}
+
+	&:hover {
+		background: #9e9e9e33;
+		.drop_menu {
+			opacity: 1;
+			visibility: visible;
+		}
+	}
+
+
+}
+.menu {
+	overflow: inherit;
+}
+.drop_menu {
+	position: absolute;
+	left: 160px;
+	top: 0;
+	background: #000;
+	width: 160px;
+	color: #fff;
+	opacity: 0;
+	visibility: hidden;
+	transition: 0.3s;
 }
 </style>
