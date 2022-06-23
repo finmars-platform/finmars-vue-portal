@@ -1,6 +1,15 @@
 import routes from "./routes";
 
-export default function (route_opt, { params, body, filters } = {}) {
+export default async function (
+		route_opt,
+		{
+			params,  // Router params
+			body,    // Body for POST PUT PATCH
+			filters, // Query string
+			headers = {}
+		} = {}
+	) {
+
 	const config = useRuntimeConfig();
 	const [route, method] = route_opt.split(".");
 	let url = routes[route][method];
@@ -10,11 +19,19 @@ export default function (route_opt, { params, body, filters } = {}) {
 		return false;
 	}
 
+	let baseApi = useStore().current.base_api_url
+	url = url.replace('{client}', baseApi);
+
+	let token = useCookie('authtoken').value
+
+	if ( !token ) window.location.href = `${config.public.apiURL}/login`
+
 	let opts = {
 		baseURL: config.public.apiURL,
-		method: method.toLowerCase() || "GET",
+		method: method.toUpperCase() || "GET",
 		headers: {
-			Authorization: "Token " + "b0077c3678b9021bcf28d4ef2b0e92ebfd8f1143",
+			Authorization: "Token " + token,
+			...headers
 		},
 	};
 
@@ -25,5 +42,12 @@ export default function (route_opt, { params, body, filters } = {}) {
 		}
 	}
 
-	return $fetch(url, opts);
+	try {
+		return await $fetch(url, opts);
+
+	} catch(e) {
+		console.log('e:', e)
+		return e
+	}
+
 }

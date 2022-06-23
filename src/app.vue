@@ -2,13 +2,13 @@
 	<Head>
 		<Title>Finmars</Title>
 		<Meta name="description" :content="'Finmars'" />
-		<Link type="image/x-icon" rel="icon" href="/img/favicon/favicon.ico" />
+		<Link type="image/x-icon" rel="icon" href="img/favicon/favicon.ico" />
 	</Head>
 
 	<v-app>
-		<!-- <TheSidebar /> -->
+		<TheSidebar v-if="isOpenSidbar" />
 
-		<v-main class="main">
+		<v-main class="main bg-grey-lighten-5">
 			<TheHeader />
 
 			<v-container class="pa-0" fluid>
@@ -16,11 +16,15 @@
 			</v-container>
 		</v-main>
 	</v-app>
+
+	<notifications />
 </template>
 
 <script setup>
-	let res = await useApi('me.get')
-	let user = useState( 'user', () => res  )
+	let store = useStore()
+	let isOpenSidbar = useState('isOpenSidbar', () => true)
+
+	store.init()
 </script>
 
 <style lang="scss" scoped>

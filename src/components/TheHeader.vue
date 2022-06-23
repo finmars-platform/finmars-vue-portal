@@ -4,18 +4,66 @@
 
 		<v-spacer></v-spacer>
 
-		<v-btn class="text-lowercase">
+		<v-btn v-if="store.current.name" color="#737373" icon="mdi-home" :href="config.public.oldAppURL" />
+
+		<template v-if="store.current.name">
+			<v-btn color="#737373" class="text-lowercase" id="menu-db">
+				{{ store.current.name }}
+			</v-btn>
+
+			<v-menu
+				activator="#menu-db"
+				anchor="bottom"
+			>
+				<v-list>
+					<v-list-item
+						v-for="(item, index) in store.databases"
+						:key="index"
+						@click="setCurrent( item.id )"
+					>
+						{{ item.name }}
+					</v-list-item>
+				</v-list>
+			</v-menu>
+		</template>
+
+		<v-btn color="#737373" class="text-lowercase" id="menu-btn">
 			<v-icon start size="24" icon="mdi-account-box"></v-icon>
-			{{ user.email }}
+			{{ store.user.username }}
 		</v-btn>
+		<v-menu
+			activator="#menu-btn"
+			anchor="bottom"
+			:close-on-content-click="true"
+		>
+			<v-list>
+				<v-list-item
+					v-for="(item, index) in menu"
+					:key="index"
+					@click="item.cb()"
+				>
+					{{ item.name }}
+				</v-list-item>
+			</v-list>
+		</v-menu>
 	</v-toolbar>
 </template>
 
 <script setup>
-	import { useUserStore } from "~/stores/user";
 
-	// let user = useUserStore();
-	let user = useState('user')
+	const store = useStore()
+	const config = useRuntimeConfig()
+
+	let menu = ref([
+		{name: 'Profile', cb: () => {navigateTo('/profile')}},
+		{name: 'Logout', cb: () => {}},
+	])
+
+	async function setCurrent( id ) {
+		let res = await useApi('masterSet.patch', {params: {id}})
+
+		if ( res ) navigateTo(config.public.oldAppURL)
+	}
 </script>
 
 <style lang="scss" scoped>
