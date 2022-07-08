@@ -194,7 +194,17 @@
 <script setup>
 
 	definePageMeta({
-		title: "Update Pricing Procedure ",
+		bread: [
+			{
+				text: 'Import: Import from bank ',
+				to: '/import/bank',
+				disabled: false
+			},
+			{
+				text: 'Update Data Procedure ',
+				disabled: true
+			},
+		],
 	});
 	const store = useStore()
 	let route = useRoute()

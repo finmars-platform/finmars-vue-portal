@@ -69,7 +69,7 @@
 
 		<v-card-text>Role: {{ db.isOwner ? "owner" : "admin" }}</v-card-text>
 
-		<v-card-actions v-if="!isEdit && db.is_initialized" class="justify-space-between d-flex pa-4">
+		<v-card-actions v-if="!isEdit && db.is_initialized" class="justify-space-between d-flex pa-4 py-2">
 			<v-btn id="parent" icon="mdi-lock" color="primary" @click="showActions = true" v-show="!showActions">
 				<v-tooltip
 					activator="#parent"
@@ -79,23 +79,23 @@
 
 			<div v-if="showActions">
 				<v-btn icon="mdi-cloud-upload" color="primary" @click="exportDb()"></v-btn>
-				<v-btn icon="mdi-delete" color="primary" class="ml-0" @click="emit('delete', db.id)"></v-btn>
+				<v-btn v-if="db.isOwner" icon="mdi-delete" color="primary" class="ml-0" @click="emit('delete', db.id)"></v-btn>
 			</div>
 
-			<v-btn v-if="!isEdit" variant="contained" color="primary" @click="open()">open</v-btn>
+			<v-btn v-if="!isEdit" variant="elevated" color="primary" @click="open()">open</v-btn>
 		</v-card-actions>
 
-		<v-card-actions v-if="isEdit" class="justify-space-between d-flex">
+		<v-card-actions v-if="isEdit" class="justify-space-between d-flex pa-4">
 			<v-btn color="primary" @click="cancelEdit()">cancel</v-btn>
 
-			<v-btn variant="contained" color="primary" @click="save()">save</v-btn>
+			<v-btn variant="elevated" color="primary" @click="save()">save</v-btn>
 		</v-card-actions>
 	</v-card>
 </template>
 
 <script setup>
 	const config = useRuntimeConfig();
-	const emit = defineEmits(["refresh"]);
+	const emit = defineEmits(["refresh", 'delete']);
 	const props = defineProps({
 		db: Object,
 	});

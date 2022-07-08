@@ -98,7 +98,13 @@
 	import moment from 'moment'
 
 	definePageMeta({
-		title: "Valuations: Run Pricing ",
+		bread: [
+			{
+				text: 'Valuations: Run Pricing',
+				to: '/valuations/run-pricing',
+				disabled: false
+			},
+		],
 	});
 	const store = useStore()
 	let procedures = ref(null)

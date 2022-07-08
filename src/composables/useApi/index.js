@@ -46,8 +46,7 @@ export default async function (
 		return await $fetch(url, opts);
 
 	} catch(e) {
-		console.log('e:', e)
-		return e
+		return {error: e}
 	}
 
 }

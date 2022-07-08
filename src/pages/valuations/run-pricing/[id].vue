@@ -211,7 +211,17 @@
 <script setup>
 
 	definePageMeta({
-		title: "Update Pricing Procedure ",
+		bread: [
+			{
+				text: 'Update Pricing Procedure',
+				to: '/valuations/run-pricing',
+				disabled: false
+			},
+			{
+				text: 'Update Pricing Procedure ',
+				disabled: true
+			},
+		],
 	});
 	const store = useStore()
 	let route = useRoute()

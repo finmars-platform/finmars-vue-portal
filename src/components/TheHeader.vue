@@ -1,6 +1,10 @@
 <template>
 	<v-toolbar class="px-7" prominent>
-		<v-toolbar-title>{{ $route.meta.title || "No title" }}</v-toolbar-title>
+		<v-breadcrumbs class="pa-0" :items="$route.meta.bread" active-color="#000">
+      <template v-slot:divider>
+        <v-icon size="20" color="#737373" icon="mdi-arrow-right"></v-icon>
+      </template>
+    </v-breadcrumbs>
 
 		<v-spacer></v-spacer>
 
@@ -54,9 +58,12 @@
 	const store = useStore()
 	const config = useRuntimeConfig()
 
-	let menu = ref([
+let menu = ref([
 		{name: 'Profile', cb: () => {navigateTo('/profile')}},
-		{name: 'Logout', cb: () => {}},
+		{name: 'Logout', cb: () => {
+			useCookie('authtoken').value = null
+			window.location.href = '/'
+		}},
 	])
 
 	async function setCurrent( id ) {

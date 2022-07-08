@@ -97,7 +97,7 @@
 
 <script setup>
 	let props = defineProps([
-		'items', 'modelValue', 'title'
+		'items', 'modelValue', 'title', 'item_title'
 	])
 	let emit = defineEmits(['update:modelValue'])
 
@@ -105,18 +105,25 @@
 	let availableSearch = ref('')
 	let selectedSearch = ref('')
 
-	let selectedFilter  = reactive( new Set( props.modelValue.split(',') ) )
+	let modelValueArray = props.modelValue
+
+	if ( typeof modelValueArray == 'string' ) modelValueArray = modelValueArray.split(',')
+
+	let selectedFilter = reactive( new Set( modelValueArray ) )
 
 	let selectedList  = computed(() => props.items
-		.filter( item => selectedFilter.has(item.user_code) &&
-		item.user_code.toLocaleLowerCase().includes(selectedSearch.value.toLocaleLowerCase()) ))
+		.filter( item => selectedFilter.has(item[props.item_title]) &&
+		item[props.item_title].toLocaleLowerCase().includes(selectedSearch.value.toLocaleLowerCase()) ))
 
 	let availableList = computed(() => props.items
-		.filter( item => !selectedFilter.has(item.user_code) &&
-		item.user_code.toLocaleLowerCase().includes(availableSearch.value.toLocaleLowerCase()) ))
+		.filter( item => !selectedFilter.has(item[props.item_title]) &&
+		item[props.item_title].toLocaleLowerCase().includes(availableSearch.value.toLocaleLowerCase()) ))
 
 	function save() {
-		emit('update:modelValue', [...selectedFilter].join(',') )
+		let result = [...selectedFilter]
+		if ( typeof props.modelValue == 'String' ) result = result.join(',')
+
+		emit('update:modelValue', result )
 
 		isOpen.value = false
 	}
@@ -125,7 +132,7 @@
 			.filter(item => item.selected || !!all)
 			.map( item => {
 				item.selected = false
-				return item.user_code
+				return item[props.item_title]
 			})
 		items.forEach( item => selectedFilter.add(item) )
 	}
@@ -134,7 +141,7 @@
 			.filter(item => item.selected || !!all)
 			.map( item => {
 				item.selected = false
-				return item.user_code
+				return item[props.item_title]
 			})
 
 		items.forEach( item => selectedFilter.delete(item) )

@@ -49,5 +49,9 @@ export default {
 		get: '/authorizer/invite-from-master-user/?status=0',
 		put: '/authorizer/invite-from-master-user/{id}/'
 	},
+	memberInvites: {
+		get: '/authorizer/invite-to-user/',
+		post: '/authorizer/create-invite-to-user/',
+	},
 
 };
