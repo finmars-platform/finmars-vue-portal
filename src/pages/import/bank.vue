@@ -76,8 +76,15 @@
 	import moment from 'moment'
 
 	definePageMeta({
-		title: "Valuations: Run Pricing ",
+		bread: [
+			{
+				text: 'Import: Import from bank ',
+				to: '/import/bank',
+				disabled: false
+			}
+		],
 	});
+
 	const store = useStore()
 
 	let procedures = ref(null)

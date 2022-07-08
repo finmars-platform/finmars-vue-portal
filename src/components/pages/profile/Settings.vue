@@ -40,7 +40,7 @@
 					</v-form>
 				</v-card-text>
 
-				<v-card-actions class="justify-end d-flex pa-4">
+				<v-card-actions class="justify-end d-flex px-4">
 					<v-btn variant="contained" color="primary" @click="saveUser()">save</v-btn>
 				</v-card-actions>
 			</v-card>

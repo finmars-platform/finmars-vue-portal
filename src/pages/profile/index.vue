@@ -18,7 +18,7 @@
 		<v-divider></v-divider>
 
 		<v-window v-model="tab">
-			<v-window-item value="Databases">
+			<v-window-item value="Workspaces">
 				<PagesProfileDatabases></PagesProfileDatabases>
 			</v-window-item>
 
@@ -37,11 +37,17 @@
 
 <script setup>
 	definePageMeta({
-		title: "Profile",
+		bread: [
+			{
+				text: 'Profile',
+				to: '/profile',
+				disabled: false
+			}
+		],
 	});
 	useState('isOpenSidbar').value = false
 
-	let tabs = ref(["Databases", "Backups", "Billing", "Settings"])
+	let tabs = ref(["Workspaces", "Backups", "Billing", "Settings"])
 	let tab = ref(null)
 	let error = ref(null)
 

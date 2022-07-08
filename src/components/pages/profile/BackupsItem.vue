@@ -4,7 +4,7 @@
 		<v-card-subtitle>File size: {{ backup.file_size }} MB</v-card-subtitle>
 
 		<v-spacer></v-spacer>
-		<v-card-actions class="justify-space-between d-flex">
+		<v-card-actions class="justify-space-between d-flex pa-4 py-2">
 			<v-btn v-if="!showActions" icon="mdi-lock" color="primary" @click="showActions = true"></v-btn>
 
 			<div v-if="showActions">

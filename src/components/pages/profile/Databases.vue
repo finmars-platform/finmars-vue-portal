@@ -43,13 +43,16 @@
 
 		<v-container fluid class="databases bg-grey-lighten-5" v-if="invites || store.databases.length">
 
-			<PagesProfileInviteItem
-				width="360"
-				v-for="invite in invites.results"
-				:invite="invite"
-				:key="invite.id"
-				@refresh="store.getDatabases(), refreshInvites()"
-			/>
+			<template v-if="invites">
+				<PagesProfileInviteItem
+					width="360"
+					v-for="invite in invites.results"
+					:invite="invite"
+					:key="invite.id"
+					@refresh="store.getDatabases(), refreshInvites()"
+				/>
+			</template>
+
 			<PagesProfileDatabasesItem
 				width="360"
 				v-for="db in store.databases"

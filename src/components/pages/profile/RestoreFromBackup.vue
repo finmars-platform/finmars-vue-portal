@@ -23,7 +23,7 @@
 				</v-card-content>
 				<v-card-actions class="space-between pa-4">
 					<v-btn color="primary" @click="close()">cancel</v-btn>
-					<v-btn color="primary" variant="contained" @click="createDB()">create</v-btn>
+					<v-btn :loading="processing" color="primary" variant="elevated" @click="createDB()">create</v-btn>
 				</v-card-actions>
 			</v-card>
 		</v-dialog>

@@ -128,8 +128,19 @@
 </template>
 
 <script setup>
+
 	definePageMeta({
-		title: "Profile: Create New Database ",
+		bread: [
+			{
+				text: 'Profile',
+				to: '/profile',
+				disabled: false
+			},
+			{
+				text: 'Create New Database',
+				disabled: true
+			},
+		],
 	});
 	useState('isOpenSidbar').value = false
 
@@ -139,7 +150,9 @@
 	let isShow = ref(false)
 	let processing = ref(false)
 
-	let form = reactive({})
+	let form = reactive({
+		description: ''
+	})
 	let configs = ['Blank']
 
 	async function createDb() {

@@ -48,5 +48,24 @@ export default {
 	importSchemeLight: {
 		get: prefix + '/import/complex-transaction-import-scheme-light/'
 	},
+	members: {
+		get: prefix + '/users/member/'
+	},
+	member: {
+		get: prefix + '/users/member/{id}/',
+		put: prefix + '/users/member/{id}/'
+	},
+
+	userGroups: {
+		get: prefix + '/users/group/',
+	},
+
+	portfolioRegister: {
+		post: prefix + '/portfolios/portfolio-register-ev/filtered/',
+	},
+	performanceReport: {
+		post: prefix + '/reports/performance-report/',
+	},
+
 
 }
