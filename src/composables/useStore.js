@@ -28,12 +28,6 @@ export default defineStore({
 		async ping() {
 			let res = await useApi("ping.get")
 
-			if ( !res.is_authenticated ) {
-				const config = useRuntimeConfig()
-
-				window.location.href = `${config.public.apiURL}/login`
-			}
-
 			this.current = res
 		}
 	},

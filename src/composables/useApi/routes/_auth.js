@@ -6,6 +6,9 @@ export default {
 	ping: {
 		get: "/authorizer/ping/"
 	},
+	tokenRefresh: {
+		post: 'authorizer/token-refresh/'
+	},
 	masterBackups: {
 		get: '/authorizer/master-user-backups/',
 		'delete': '/authorizer/master-user-backups/{id}/',
