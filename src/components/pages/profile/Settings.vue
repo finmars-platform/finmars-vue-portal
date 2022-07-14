@@ -37,6 +37,11 @@
 							variant="outlined"
 							density="comfortable"
 						/> -->
+						<v-checkbox
+							:label="'Autosave mode'"
+							v-model="formUser.data.layouts_autosave"
+							color="rgb(239,108,0)"
+						></v-checkbox>
 					</v-form>
 				</v-card-text>
 
@@ -135,16 +140,18 @@
 
 	let { data, refresh: refresh2FA } = await useAsyncData( '2fa', () => useApi('meTwoFactor.get') )
 
-async function savePass() {
+	async function savePass() {
 		let res = await useApi('meSetPassword.put', {body: formPass})
 
 		formPass.password = ''
 		formPass.new_password = ''
 		formPass.new_password_check = ''
 	}
+
 	async function saveUser() {
 		let res = await useApi('me.put', { body: formUser })
 	}
+
 	async function enableTwoFA( success ) {
 		dialog.value = false
 		if ( !success ) return false
@@ -169,6 +176,7 @@ async function savePass() {
 
 		refresh2FA()
 	}
+
 </script>
 
 <style lang="scss" scoped>

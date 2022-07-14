@@ -18,6 +18,9 @@ export default defineStore({
 		async getUser() {
 			let res = await useApi('me.get')
 			this.user = res
+
+			if (!this.user.data) this.user.data = {}
+
 		},
 		async getDatabases() {
 			let res = await useApi("masterUser.get")
