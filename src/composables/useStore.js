@@ -19,7 +19,11 @@ export default defineStore({
 			let res = await useApi('me.get')
 			this.user = res
 
-			if (!this.user.data) this.user.data = {}
+			if (!this.user.data) this.user.data = {};
+
+			if (typeof this.user.data.autosave_layouts !== 'boolean') {
+				this.user.data.autosave_layouts = true;
+			}
 
 		},
 		async getDatabases() {
