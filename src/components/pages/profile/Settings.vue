@@ -39,7 +39,7 @@
 						/> -->
 						<v-checkbox
 							:label="'Autosave mode'"
-							v-model="formUser.data.layouts_autosave"
+							v-model="formUser.data.autosave_layouts"
 							color="rgb(239,108,0)"
 						></v-checkbox>
 					</v-form>
