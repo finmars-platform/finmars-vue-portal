@@ -9,6 +9,9 @@ export default {
 	tokenRefresh: {
 		post: 'authorizer/token-refresh/'
 	},
+	tokenInfo: {
+		get: 'authorizer/auth-token-manager/'
+	},
 	masterBackups: {
 		get: '/authorizer/master-user-backups/',
 		'delete': '/authorizer/master-user-backups/{id}/',
