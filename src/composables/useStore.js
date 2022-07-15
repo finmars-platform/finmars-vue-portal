@@ -28,6 +28,25 @@ export default defineStore({
 		async ping() {
 			let res = await useApi("ping.get")
 
+			if ( res.error && res.code == '401' ) {
+				let token = await useApi('tokenRefresh.post', {body: {
+					refresh_token: useCookie('refresh_token').value }
+				})
+
+				if ( !token.error ) {
+					useCookie('access_token').value = token.access_token
+
+					await new Promise((res) => {
+						setTimeout(res, 300)
+					})
+					res = await useApi("ping.get")
+				} else {
+					const config = useRuntimeConfig()
+
+					// window.location.href = `${config.public.apiURL}/login`
+				}
+			}
+
 			this.current = res
 		}
 	},

@@ -14,6 +14,7 @@
 			:style="{gridTemplateColumns: colls}"
 			v-for="(row, index) in items"
 			:key="index"
+			@click="() => {if (cb) cb(index)}"
 		>
 			<div
 				class="table-cell"
@@ -23,6 +24,12 @@
 				{{ item }}
 			</div>
 		</div>
+	</div>
+	<div class="center py-8" v-if="!items.length">
+		 <v-progress-circular
+				indeterminate
+				color="primary"
+			></v-progress-circular>
 	</div>
 </template>
 
@@ -37,6 +44,9 @@
 		},
 		colls: {
 			type: String
+		},
+		cb: {
+			type: Function
 		}
 	})
 </script>

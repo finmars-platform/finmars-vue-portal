@@ -10,6 +10,7 @@
 						:headers="preriodHeaders"
 						:items="preriodItems"
 						colls="repeat(8, 1fr)"
+						:cb="choosePortfolio"
 					/>
         </v-expansion-panel-text>
       </v-expansion-panel>
@@ -18,7 +19,7 @@
 					{{ detailPortfolio }}
         </v-expansion-panel-title>
         <v-expansion-panel-text class="pa-0">
-          <div class="flex">
+          <div class="table_wrap flex">
 						<div class="coll_years">
 							<div class="coll_item t_header">Years</div>
 							<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">{{item}}</div>
@@ -32,10 +33,17 @@
 						</div>
 						<div class="coll_total">
 							<div class="coll_item t_header">TOTAL</div>
-							<div class="coll_item">2022</div>
-							<div class="coll_item">2021</div>
+							<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">0.1</div>
 						</div>
 					</div>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+			<v-expansion-panel value="diagram">
+        <v-expansion-panel-title>
+					{{ detailPortfolio }} - {{ detailYear }}
+        </v-expansion-panel-title>
+        <v-expansion-panel-text class="pa-0">
+          <canvas id="myChart" width="800" height="300"><p>Hello Fallback World</p></canvas>
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -44,6 +52,7 @@
 
 <script setup>
 	import moment from 'moment'
+	import Chart from 'chart.js/auto';
 
 	definePageMeta({
 		bread: [
@@ -56,7 +65,7 @@
 	});
 	const store = useStore()
 
-	let panels = ref(['period', 'detail'])
+	let panels = ref(['period', 'detail', 'diagram'])
 	let porfolios = []
 	let preriodHeaders = ref(
 		['', 'Daily', 'MTD', 'QTD', 'YTD', +moment().year() - 1, +moment().year() - 2, 'Incept']
@@ -67,10 +76,78 @@
 		['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 	)
 	let portfolioItems = reactive([])
+	let portfolioItemsCumm = reactive([])
 	let portfolioYears = reactive([])
 	let detailPortfolio = ref('')
+	let detailYear = ref('')
+	let chart = ref({})
+
+	async function choosePortfolio(id) {
+		detailPortfolio.value = porfolios[id].user_code
+
+		await getMonthDetails( id )
+	}
 
 	async function init() {
+		await fetchPortolios()
+
+		detailPortfolio.value = porfolios[0].user_code
+
+		await getMonthDetails()
+
+		detailYear.value = portfolioYears[0]
+
+		const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+		const data = {
+			labels: labels,
+			datasets: [
+				{
+					label: 'Monthly Returns',
+					data: portfolioItems[0],
+					backgroundColor: portfolioItems[0].map(item => item > 0 ? '#a5d9c9' : '#fac878'),
+					order: 1
+				},
+				{
+					label: 'Cummulative Return',
+					data: portfolioItemsCumm[0],
+					fill: false,
+					type: 'line',
+					borderColor: '#f05a23',
+					tension: 0.1,
+					order: 0
+				}
+
+			],
+
+		};
+		chart.value = new Chart('myChart', {
+			type: 'bar',
+			data: data,
+			options: {
+				responsive: true,
+				plugins: {
+					legend: {
+						position: 'top',
+						reverse: true
+					}
+				},
+				scales: {
+					y: {
+						position: 'left',
+						grace: '5%',
+						type: 'linear',
+					},
+					// myScale2: {
+					// 	position: 'right',
+					// 	type: 'linear',
+					// 	ticks: {}
+					// },
+				}
+			},
+		});
+	}
+
+	async function fetchPortolios() {
 		let res = await useApi('portfolioRegister.post', {
 			body: '{"groups_types":[],"page":1,"groups_values":[],"groups_order":"asc","page_size":60,"ev_options":{"entity_filters":["enabled","disabled","active","inactive"]},"filter_settings":[],"global_table_search":"","is_enabled":"any"}'
 		})
@@ -99,53 +176,64 @@
 			let beforeLast = await getYearBeforeLast( [portfolio.linked_instrument] )
 			row.beforeLast = Math.round(beforeLast * 100 * 100) / 100 + '%'
 
+			row.incept = 0.1
+
 			preriodItems.value.push(row)
 		})
+	}
 
-		detailPortfolio.value = porfolios[0].user_code
-
+	async function getMonthDetails( id_portfolio = 0 ) {
 		let allMonths = await useApi('performanceReport.post', {
 			body: {
-				 "save_report": false,
-				"begin_date": "2010-12-31",
+				"save_report": false,
+				"begin_date": "2019-12-31",
 				"end_date": null,
 				"calculation_type": "time_weighted",
 				"segmentation_type": 'months',
-				"registers": [porfolios[0].linked_instrument]
+				"registers": [ porfolios[ id_portfolio ].linked_instrument ]
 			}
 		})
 
 		let yearsBuffer = {}
+		let yearsBufferCumm = []
 
 		allMonths.items.forEach(item => {
 			let parseDate = item.date_to.split('-')
 			let defaultMonth = {
-				'01': 0 + '%',
-				'02': 0 + '%',
-				'03': 0 + '%',
-				'04': 0 + '%',
-				'05': 0 + '%',
-				'06': 0 + '%',
-				'07': 0 + '%',
-				'08': 0 + '%',
-				'09': 0 + '%',
-				'10': 0 + '%',
-				'11': 0 + '%',
-				'12': 0 + '%'
+				'01': [0, 0],
+				'02': [0, 0],
+				'03': [0, 0],
+				'04': [0, 0],
+				'05': [0, 0],
+				'06': [0, 0],
+				'07': [0, 0],
+				'08': [0, 0],
+				'09': [0, 0],
+				'10': [0, 0],
+				'11': [0, 0],
+				'12': [0, 0]
 			}
 
-			if ( !yearsBuffer[parseDate[0]] ) yearsBuffer[ parseDate[0] ] = defaultMonth
+			if ( !yearsBuffer[parseDate[0]] ) {
+				yearsBuffer[ parseDate[0] ] = defaultMonth
+			}
 
-			yearsBuffer[parseDate[0]][ parseDate[1] ] = Math.round(item.instrument_return * 100 * 100) / 100 + '%'
+			yearsBuffer[parseDate[0]][ parseDate[1] ] = [
+				Math.round(item.instrument_return * 10000) / 10000,
+				Math.round(item.cumulative_return * 10000) / 10000
+			]
 		})
 
 		for ( let prop in yearsBuffer ) {
 			portfolioYears.push( prop )
-			portfolioItems.push( Object.values(yearsBuffer[prop]) )
+
+			portfolioItems.push( Object.values(yearsBuffer[prop]).map(item => item[0]))
+			portfolioItemsCumm.push( Object.values(yearsBuffer[prop]).map(item => item[1]) )
 		}
 
 		portfolioYears.reverse()
 		portfolioItems.reverse()
+		portfolioItemsCumm.reverse()
 	}
 
 	async function getDay( ids ) {
@@ -240,5 +328,11 @@
 		line-height: 50px;
 		font-weight: 600;
 	}
+}
+.coll_months {
+	width: 100%;
+}
+.table_wrap {
+	width: 100%;
 }
 </style>
