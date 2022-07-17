@@ -24,7 +24,19 @@
 	let store = useStore()
 	let isOpenSidbar = useState('isOpenSidbar', () => true)
 
-	store.init()
+	await store.init()
+
+	if ( !store.current.base_api_url) {
+		onMounted(() => {
+			useNotify({
+				type: 'warn',
+				title: 'Notice',
+				text: 'Workspace is not selected'
+			})
+		})
+
+		useRouter().push('/profile')
+	}
 </script>
 
 <style lang="scss" scoped>

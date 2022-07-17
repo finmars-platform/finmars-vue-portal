@@ -29,6 +29,7 @@
 								:headers="portfolioHeaders"
 								:items="portfolioItems"
 								colls="repeat(12, 1fr)"
+								:cb="chooseMonth"
 							/>
 						</div>
 						<div class="coll_total">
@@ -75,54 +76,62 @@
 	let portfolioHeaders = ref(
 		['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 	)
-	let portfolioItems = reactive([])
-	let portfolioItemsCumm = reactive([])
-	let portfolioYears = reactive([])
+	let portfolioItems = ref([])
+	let portfolioItemsCumm = ref([])
+	let portfolioYears = ref([])
+
 	let detailPortfolio = ref('')
 	let detailYear = ref('')
-	let chart = ref({})
+	let chart
 
 	async function choosePortfolio(id) {
-		detailPortfolio.value = porfolios[id].user_code
+		detailPortfolio.value = preriodItems.value[id].name
 
-		await getMonthDetails( id )
+		await getMonthDetails( preriodItems.value[id].name )
+		detailYear.value = portfolioYears.value[0]
+
+		updateChart( portfolioItems.value[0], portfolioItemsCumm.value[0] )
+	}
+
+	async function chooseMonth(id) {
+		detailYear.value = portfolioYears.value[id]
+		updateChart( portfolioItems.value[id], portfolioItemsCumm.value[id] )
 	}
 
 	async function init() {
 		await fetchPortolios()
 
+		if ( !porfolios.length ) {
+			return false
+		}
 		detailPortfolio.value = porfolios[0].user_code
 
 		await getMonthDetails()
 
-		detailYear.value = portfolioYears[0]
+		detailYear.value = portfolioYears.value[0]
 
-		const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-		const data = {
-			labels: labels,
-			datasets: [
-				{
-					label: 'Monthly Returns',
-					data: portfolioItems[0],
-					backgroundColor: portfolioItems[0].map(item => item > 0 ? '#a5d9c9' : '#fac878'),
-					order: 1
-				},
-				{
-					label: 'Cummulative Return',
-					data: portfolioItemsCumm[0],
-					fill: false,
-					type: 'line',
-					borderColor: '#f05a23',
-					tension: 0.1,
-					order: 0
-				}
-
-			],
-
-		};
-		chart.value = new Chart('myChart', {
+		chart = new Chart('myChart', {
 			type: 'bar',
-			data: data,
+			data: {
+				labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+				datasets: [
+					{
+						label: 'Monthly Returns',
+						data: portfolioItems.value[0],
+						backgroundColor: portfolioItems.value[0].map(item => item > 0 ? '#a5d9c9' : '#fac878'),
+						order: 1
+					},
+					{
+						label: 'Cummulative Return',
+						data: portfolioItemsCumm.value[0],
+						fill: '#f05a23',
+						type: 'line',
+						borderColor: '#f05a23',
+						tension: 0.1,
+						order: 0
+					}
+				],
+			},
 			options: {
 				responsive: true,
 				plugins: {
@@ -133,15 +142,8 @@
 				},
 				scales: {
 					y: {
-						position: 'left',
-						grace: '5%',
-						type: 'linear',
-					},
-					// myScale2: {
-					// 	position: 'right',
-					// 	type: 'linear',
-					// 	ticks: {}
-					// },
+						grace: '5%'
+					}
 				}
 			},
 		});
@@ -153,36 +155,56 @@
 		})
 		porfolios = res.results
 
-		porfolios.forEach( async portfolio => {
-			let row = {
+		porfolios.forEach( portfolio => {
+			preriodItems.value.push({
 				name: portfolio.user_code,
-			}
+			})
 
-			let day = await getDay( [portfolio.linked_instrument] )
-			row.daily = Math.round(day * 100 * 100) / 100 + '%'
+			let row = preriodItems.value[ preriodItems.value.length - 1 ]
 
-			let month = await getMonth( [portfolio.linked_instrument] )
-			row.month = Math.round(month * 100 * 100) / 100 + '%'
+			row.daily = null
+			getDay( [portfolio.linked_instrument] ).then(day => {
+				row.daily = Math.round(day * 100 * 100) / 100 + '%'
+			})
 
-			let q = await getQ( [portfolio.linked_instrument] )
-			row.q = Math.round(q * 100 * 100) / 100 + '%'
+			row.month = null
+			getMonth( [portfolio.linked_instrument] ).then(month => {
+				row.month = Math.round(month * 100 * 100) / 100 + '%'
+			})
 
-			let year = await getYear( [portfolio.linked_instrument] )
-			row.year = Math.round(year * 100 * 100) / 100 + '%'
+			row.q = null
+			getQ( [portfolio.linked_instrument] ).then(q => {
+				row.q = Math.round(q * 100 * 100) / 100 + '%'
+			})
 
-			let last = await getLastYear( [portfolio.linked_instrument] )
-			row.last = Math.round(last * 100 * 100) / 100 + '%'
+			row.year = null
+			getYear( [portfolio.linked_instrument] ).then(year => {
+				row.year = Math.round(year * 100 * 100) / 100 + '%'
+			})
 
-			let beforeLast = await getYearBeforeLast( [portfolio.linked_instrument] )
-			row.beforeLast = Math.round(beforeLast * 100 * 100) / 100 + '%'
+			row.last = null
+			getLastYear( [portfolio.linked_instrument] ).then(last => {
+				row.last = Math.round(last * 100 * 100) / 100 + '%'
+			})
+
+			row.beforeLast = null
+			getYearBeforeLast( [portfolio.linked_instrument] ).then(beforeLast => {
+				row.beforeLast = Math.round(beforeLast * 100 * 100) / 100 + '%'
+			})
 
 			row.incept = 0.1
-
-			preriodItems.value.push(row)
 		})
 	}
 
-	async function getMonthDetails( id_portfolio = 0 ) {
+	async function getMonthDetails( name ) {
+		portfolioYears.value = []
+		portfolioItems.value = []
+		portfolioItemsCumm.value = []
+
+		let instr_id = name
+			? porfolios.find(item => item.name == name).linked_instrument
+			: porfolios[0].linked_instrument
+
 		let allMonths = await useApi('performanceReport.post', {
 			body: {
 				"save_report": false,
@@ -190,7 +212,7 @@
 				"end_date": null,
 				"calculation_type": "time_weighted",
 				"segmentation_type": 'months',
-				"registers": [ porfolios[ id_portfolio ].linked_instrument ]
+				"registers": [ instr_id ]
 			}
 		})
 
@@ -225,15 +247,25 @@
 		})
 
 		for ( let prop in yearsBuffer ) {
-			portfolioYears.push( prop )
+			portfolioYears.value.push( prop )
 
-			portfolioItems.push( Object.values(yearsBuffer[prop]).map(item => item[0]))
-			portfolioItemsCumm.push( Object.values(yearsBuffer[prop]).map(item => item[1]) )
+			portfolioItems.value.push( Object.values(yearsBuffer[prop]).map(item => item[0]))
+			portfolioItemsCumm.value.push( Object.values(yearsBuffer[prop]).map(item => item[1]) )
 		}
 
-		portfolioYears.reverse()
-		portfolioItems.reverse()
-		portfolioItemsCumm.reverse()
+		portfolioYears.value.reverse()
+		portfolioItems.value.reverse()
+		portfolioItemsCumm.value.reverse()
+	}
+
+	function updateChart( datasetMonth, datasetLine ) {
+		chart.data.datasets[0].data = datasetMonth
+		chart.data.datasets[0].backgroundColor =
+			datasetMonth.map(item => item > 0 ? '#a5d9c9' : '#fac878')
+
+		chart.data.datasets[1].data = datasetLine
+
+		chart.update()
 	}
 
 	async function getDay( ids ) {
@@ -300,13 +332,7 @@
 		return res.grand_return
 	}
 
-	if ( store.current.base_api_url ) {
-		init()
-	} else {
-		watch( () => store.current, async () => {
-			init()
-		})
-	}
+	init()
 </script>
 
 <style lang="scss" scoped>

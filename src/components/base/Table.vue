@@ -21,7 +21,13 @@
 				v-for="(item, index) in row"
 				:key="index"
 			>
-				{{ item }}
+				<v-progress-circular
+					v-if="item === null"
+					indeterminate
+					size="16"
+					color="primary"
+				/>
+				<template v-else>{{ item }}</template>
 			</div>
 		</div>
 	</div>
@@ -47,7 +53,10 @@
 		},
 		cb: {
 			type: Function
-		}
+		},
+		status: { // done, loading, fail
+			type: String
+		},
 	})
 </script>
 
