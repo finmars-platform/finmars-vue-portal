@@ -58,10 +58,11 @@
 	const store = useStore()
 	const config = useRuntimeConfig()
 
-let menu = ref([
+	let menu = ref([
 		{name: 'Profile', cb: () => {navigateTo('/profile')}},
 		{name: 'Logout', cb: () => {
-			useCookie('authtoken').value = null
+			useCookie('access_token').value = null
+			useCookie('refresh_token').value = null
 			window.location.href = '/'
 		}},
 	])
@@ -69,7 +70,7 @@ let menu = ref([
 	async function setCurrent( id ) {
 		let res = await useApi('masterSet.patch', {params: {id}})
 
-		if ( res ) navigateTo(config.public.oldAppURL)
+		if ( res ) window.location.href = config.public.oldAppURL
 	}
 </script>
 
