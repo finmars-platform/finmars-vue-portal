@@ -1,5 +1,5 @@
 <template>
-	<v-card width="360">
+	<v-card width="360" class="d-flex flex-column">
 		<v-card-title>
 			<v-hover v-if="!isEditTitle" v-slot="{ isHovering, props }">
 				<div v-bind="props" >
@@ -29,7 +29,7 @@
 		<v-card-subtitle v-if="db.is_initialized">Expire ({{ db.license_expiry_date }})</v-card-subtitle>
 		<v-card-subtitle v-else>Database is initializing</v-card-subtitle>
 
-		<v-card-text>
+		<v-card-text style="word-wrap: break-word;">
 			<v-hover v-if="!isEditDesc" v-slot="{ isHovering, props }">
 				<div v-bind="props" >
 					{{ db.description }}
@@ -55,16 +55,12 @@
 				</div>
 			</v-hover>
 
-			<v-textarea
+			<textarea style="width: 100%;padding-top: 10px;"
 				v-if="isEditDesc"
 				placeholder="Add description"
-				rows="4"
-				no-resize
-				autofocus
-				variant="plain"
+				:rows="editingData.description.split('\n').length"
 				v-model="editingData.description"
-				hide-details="auto"
-			></v-textarea>
+			></textarea>
 		</v-card-text>
 
 		<v-card-text>Role: {{ db.is_owner ? "owner" : "admin" }}</v-card-text>
