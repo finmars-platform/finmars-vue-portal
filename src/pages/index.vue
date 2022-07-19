@@ -7,6 +7,7 @@
 		dffs <br />
 
 		<span class="material-icons">dashboard</span>
+		<BaseIcon icon="dashboard" />
 		<span class="material-icons">home</span>
 		<span class="material-icons">assessment</span>
 		<span class="material-icons">view_compact</span>

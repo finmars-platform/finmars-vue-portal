@@ -67,7 +67,7 @@
 			></v-textarea>
 		</v-card-text>
 
-		<v-card-text>Role: {{ db.isOwner ? "owner" : "admin" }}</v-card-text>
+		<v-card-text>Role: {{ db.is_owner ? "owner" : "admin" }}</v-card-text>
 
 		<v-card-actions v-if="!isEdit && db.is_initialized" class="justify-space-between d-flex pa-4 py-2">
 			<v-btn id="parent" icon="mdi-lock" color="primary" @click="showActions = true" v-show="!showActions">
@@ -79,7 +79,7 @@
 
 			<div v-if="showActions">
 				<v-btn icon="mdi-cloud-upload" color="primary" @click="exportDb()"></v-btn>
-				<v-btn v-if="db.isOwner" icon="mdi-delete" color="primary" class="ml-0" @click="emit('delete', db.id)"></v-btn>
+				<v-btn v-if="db.is_owner" icon="mdi-delete" color="primary" class="ml-0" @click="emit('delete', db.id)"></v-btn>
 			</div>
 
 			<v-btn v-if="!isEdit" variant="elevated" color="primary" @click="open()">open</v-btn>

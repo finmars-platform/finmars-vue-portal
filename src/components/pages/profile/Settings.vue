@@ -6,25 +6,16 @@
 
 				<v-card-text>
 					<v-form ref="form">
-						<v-text-field
+						<BaseInput
 							label="First name"
-							placeholder="First name"
-							variant="outlined"
-							density="comfortable"
 							v-model="formUser.first_name"
 						/>
-						<v-text-field
+						<BaseInput
 							label="Last name"
-							placeholder="Last name"
-							variant="outlined"
-							density="comfortable"
 							v-model="formUser.last_name"
 						/>
-						<v-text-field
+						<BaseInput
 							label="E-mail"
-							placeholder="E-mail"
-							variant="outlined"
-							density="comfortable"
 							v-model="formUser.email"
 						/>
 						<!-- <v-select
@@ -41,12 +32,13 @@
 							:label="'Autosave mode'"
 							v-model="formUser.data.autosave_layouts"
 							color="rgb(239,108,0)"
+							hide-details="auto"
 						></v-checkbox>
 					</v-form>
 				</v-card-text>
 
 				<v-card-actions class="justify-end d-flex px-4">
-					<v-btn variant="contained" color="primary" @click="saveUser()">save</v-btn>
+					<v-btn variant="elevated" color="primary" @click="saveUser()">save</v-btn>
 				</v-card-actions>
 			</v-card>
 
@@ -55,46 +47,47 @@
 
 				<v-card-text>
 					<v-form>
-						<v-text-field
-							autocomplete="current-password"
-							v-model="formPass.password"
-							:append-inner-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
-							:type="showPass ? 'text' : 'password'"
+						<BaseInput
 							label="Old password"
-							placeholder="Old password"
-							variant="outlined"
-							density="comfortable"
-							@click:append-inner="showPass = !showPass"
-						/>
-						<v-text-field
-							v-model="formPass.new_password"
-							:append-inner-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
+							v-model="formUser.password"
 							:type="showPass ? 'text' : 'password'"
+						>
+							<template #button>
+								<BaseIcon
+									:icon="showPass ? 'visibility' : 'visibility_off'"
+									@click="showPass = !showPass"
+								/>
+							</template>
+						</BaseInput>
+						<BaseInput
 							label="New password"
-							hint="At least 8 characters"
-							placeholder="New password"
-							variant="outlined"
-							density="comfortable"
-							counter
-							@click:append-inner="showPass = !showPass"
-						/>
-						<v-text-field
-							v-model="formPass.new_password_check"
-							:append-inner-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
+							v-model="formUser.new_password"
 							:type="showPass ? 'text' : 'password'"
+						>
+							<template #button>
+								<BaseIcon
+									:icon="showPass ? 'visibility' : 'visibility_off'"
+									@click="showPass = !showPass"
+								/>
+							</template>
+						</BaseInput>
+						<BaseInput
 							label="New password (confirm)"
-							hint="At least 8 characters"
-							placeholder="New password (confirm)"
-							variant="outlined"
-							density="comfortable"
-							counter
-							@click:append-inner="showPass = !showPass"
-						/>
+							v-model="formUser.new_password_check"
+							:type="showPass ? 'text' : 'password'"
+						>
+							<template #button>
+								<BaseIcon
+									:icon="showPass ? 'visibility' : 'visibility_off'"
+									@click="showPass = !showPass"
+								/>
+							</template>
+						</BaseInput>
 					</v-form>
 				</v-card-text>
 
 				<v-card-actions class="justify-end d-flex pa-4">
-					<v-btn variant="contained" color="primary" @click="savePass()">save</v-btn>
+					<v-btn variant="elevated" color="primary" @click="savePass()">save</v-btn>
 				</v-card-actions>
 			</v-card>
 
@@ -110,7 +103,7 @@
 				</v-card-text>
 
 				<v-card-actions class="justify-end d-flex pa-4">
-					<v-btn variant="contained" color="primary" v-if="!formUser.two_factor_verification">
+					<v-btn variant="elevated" color="primary" v-if="!formUser.two_factor_verification">
 						Add device
 						<PagesProfileTwoFAModal
 							@close="enableTwoFA($event)"
@@ -119,7 +112,7 @@
 						/>
 					</v-btn>
 
-					<v-btn variant="contained" color="primary" v-else @click="dasableTwoFA()">
+					<v-btn variant="elevated" color="primary" v-else @click="dasableTwoFA()">
 						Remove device
 					</v-btn>
 				</v-card-actions>
@@ -146,10 +139,24 @@
 		formPass.password = ''
 		formPass.new_password = ''
 		formPass.new_password_check = ''
+
+		if ( !res.error) {
+			useNotify({
+				type: 'success',
+				title: 'Saved'
+			})
+		}
 	}
 
 	async function saveUser() {
 		let res = await useApi('me.put', { body: formUser })
+
+		if ( !res.error) {
+			useNotify({
+				type: 'success',
+				title: 'Saved'
+			})
+		}
 	}
 
 	async function enableTwoFA( success ) {
