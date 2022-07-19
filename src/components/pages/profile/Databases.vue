@@ -42,7 +42,6 @@
 		<v-divider></v-divider>
 
 		<v-container fluid class="databases bg-grey-lighten-5" v-if="invites || store.databases.length">
-
 			<template v-if="invites">
 				<PagesProfileInviteItem
 					width="360"

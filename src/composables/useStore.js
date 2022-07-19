@@ -50,7 +50,7 @@ export default defineStore({
 				} else {
 					const config = useRuntimeConfig()
 
-					window.location.href = `${config.public.apiURL}/login`
+					// window.location.href = `${config.public.apiURL}/login`
 				}
 			}
 
