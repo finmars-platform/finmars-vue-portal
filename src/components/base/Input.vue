@@ -3,9 +3,7 @@
 		<div class="bi_label" v-if="label">{{ label }}</div>
 
 		<div class="bi_wrap">
-			<div class="bi_button">
-				<slot name="button"></slot>
-			</div>
+			<div class="bi_button"><slot name="button"></slot></div>
 
 			<div class="bi_default">
 				<slot>
@@ -105,6 +103,10 @@
 	.bi_button {
 		margin-left: 13px;
 		color: #999999;
+
+		&:empty {
+			margin-left: 0;
+		}
 	}
 	.bi_side_item {
 		color: #999999;
