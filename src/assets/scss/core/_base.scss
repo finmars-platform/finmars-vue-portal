@@ -4,7 +4,9 @@ body {
 	color: #202020;
 }
 
-
+button {
+	white-space: nowrap;
+}
 
 ::-webkit-scrollbar-thumb {
 	background: $c1;
