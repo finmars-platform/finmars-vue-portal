@@ -31,6 +31,9 @@
 			<v-window-item value="Settings">
 				<PagesProfileSettings></PagesProfileSettings>
 			</v-window-item>
+			<v-window-item value="Api">
+				<PagesProfileApi></PagesProfileApi>
+			</v-window-item>
 		</v-window>
 	</div>
 </template>
@@ -47,7 +50,7 @@
 	});
 	useState('isOpenSidbar').value = false
 
-	let tabs = ref(["Workspaces", "Backups", "Billing", "Settings"])
+	let tabs = ref(["Workspaces", "Backups", "Billing", "Settings", "Api"])
 	let tab = ref(null)
 	let error = ref(null)
 
