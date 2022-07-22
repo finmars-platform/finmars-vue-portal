@@ -3,6 +3,7 @@
 	"scripts": {
 		"build": "nuxt build ",
 		"dev": "nuxt --rootDir=./v/ dev",
+		"local": "API_URL=https://dev.finmars.com APP_URL=http://localhost:3000/v OLD_APP_URL='https://dev.finmars.com/a/#!/' NUXT_HOST=0.0.0.0 nuxt --roDir=./v/ dev",
 		"start": "node .output/server/index.mjs",
 		"generate": "nuxt generate",
 		"preview": "nuxt preview"
