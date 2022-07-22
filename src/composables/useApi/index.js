@@ -12,17 +12,17 @@ export default async function (
 		} = {}
 	) {
 
-	if ( !expireTokens && route_opt != 'tokenInfo.get' ) {
-		let res = await useApi('tokenInfo.get')
+	// if ( !expireTokens && route_opt != 'tokenInfo.get' ) {
+	// 	let res = await useApi('tokenInfo.get')
 
-		if ( res.code != 401 ) {
-			expireTokens = {
-				expireAccess: res.results[0].access_token_expires_at,
-				expireToken: res.results[0].refresh_token_expires_at,
-			}
-			console.log('expireTokens:', expireTokens)
-		}
-	}
+	// 	if ( res.code != 401 ) {
+	// 		expireTokens = {
+	// 			expireAccess: res.results[0].access_token_expires_at,
+	// 			expireToken: res.results[0].refresh_token_expires_at,
+	// 		}
+	// 		console.log('expireTokens:', expireTokens)
+	// 	}
+	// }
 	const config = useRuntimeConfig();
 	const [route, method] = route_opt.split(".");
 	let url = routes[route][method];

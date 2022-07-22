@@ -28,12 +28,11 @@
 							variant="outlined"
 							density="comfortable"
 						/> -->
-						<v-checkbox
+
+						<BaseCheckbox
 							:label="'Autosave mode'"
 							v-model="formUser.data.autosave_layouts"
-							color="rgb(239,108,0)"
-							hide-details="auto"
-						></v-checkbox>
+						/>
 					</v-form>
 				</v-card-text>
 

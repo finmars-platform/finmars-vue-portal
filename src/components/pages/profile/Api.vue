@@ -47,7 +47,24 @@
 						}}
 					</NuxtLink>
 				</li>
+				<li class="token_item_line" v-show="tokenShows[index]">
+					<b class="token_item_title">Access Token: </b>
+					<div style="max-width: 600px;">{{ token.keycloak_access_token }}</div>
+
+				</li>
+				<li class="token_item_line" v-show="tokenShows[index]">
+					<b class="token_item_title">Refresh Token: </b>
+					<div style="max-width: 600px;">{{ token.keycloak_refresh_token }}</div>
+
+				</li>
 				<li class="token_item_line">
+					<v-btn
+						color="primary"
+						variant="text"
+						@click="tokenShows[index] = !tokenShows[index]"
+					>
+						{{ tokenShows[index] ? 'Hide' : 'Show'}} tokens
+					</v-btn>
 					<v-btn class="mr-4" color="primary"
 						v-if="
 							token.current_master_user_object &&
@@ -57,21 +74,10 @@
 					>
 						Refresh token
 					</v-btn>
-					<v-btn
-						color="primary"
-						variant="text"
-						@click="tokenShows[index] = !tokenShows[index]"
+					<v-btn class="mr-4" color="red"
 					>
-						Show tokens
+						Delete token
 					</v-btn>
-				</li>
-				<li class="token_item_line" v-show="tokenShows[index]">
-					<b class="token_item_title">Access Token: </b>
-					{{ token.keycloak_access_token }}
-				</li>
-				<li class="token_item_line" v-show="tokenShows[index]">
-					<b class="token_item_title">Refresh Token: </b>
-					{{ token.keycloak_refresh_token }}
 				</li>
 			</ul>
 		</v-container>
@@ -106,7 +112,7 @@ function fromatDate(date) {
 	width: 150px;
 }
 .current_token {
-	border: 1px solid $c1;
+	border: 1px solid $primary;
 	background: #fff;
 	border-radius: 4px;
 	padding: 2px 5px;

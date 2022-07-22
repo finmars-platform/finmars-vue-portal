@@ -16,6 +16,7 @@
 		"@kyvg/vue3-notification": "^2.3.4",
 		"@pinia/nuxt": "^0.1.9",
 		"chart.js": "^3.8.0",
+		"click-outside-vue3": "^4.0.1",
 		"mdi": "^2.2.43",
 		"moment": "^2.29.3",
 		"pinia": "^2.0.14",

@@ -107,7 +107,7 @@ export default {
 			}
 
 			&:hover path {
-				stroke: $c1 !important;
+				stroke: $primary !important;
 			}
 		}
 

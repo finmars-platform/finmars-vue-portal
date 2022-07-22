@@ -50,9 +50,9 @@
 		transition: border 0.3s;
 
 		&:focus-within {
-			border: 1px solid $border-active;
+			border: 1px solid #000;
 			.bi_label {
-				top: -11px;
+				top: -8px;
 				font-size: 12px;
 				visibility: visible;
 				opacity: 1;
@@ -81,15 +81,15 @@
 			content: '';
 			display: block;
 			position: absolute;
-			top: 10px;
+			top: 7px;
 			left: 0;
-			background: $separ;
+			background: #fff;
 			height: 1px;
 			width: 100%;
 			z-index: -1;
 		}
 		&.filling {
-			top: -11px;
+			top: -8px;
 			font-size: 12px;
 			visibility: visible;
 			opacity: 1;
@@ -117,15 +117,14 @@
 	}
 	.bi_button {
 		margin-left: 13px;
-		color: $text-lighten;
-		line-height: 0;
+		color: #999999;
 
 		&:empty {
 			margin-left: 0;
 		}
 	}
 	.bi_side_item {
-		color: $text-lighten;
+		color: #999999;
 
 		& + & {
 			margin-left: 1px;

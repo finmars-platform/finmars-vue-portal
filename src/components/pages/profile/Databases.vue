@@ -51,6 +51,9 @@
 					@refresh="store.getDatabases(), refreshInvites()"
 				/>
 			</template>
+			<FmCard>
+				<h3 class="card-title">Investor DEMO</h3>
+			</FmCard>
 
 			<PagesProfileDatabasesItem
 				width="360"
