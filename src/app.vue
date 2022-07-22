@@ -22,7 +22,8 @@
 
 <script setup>
 	let store = useStore()
-	let isOpenSidbar = useState('isOpenSidbar', () => true)
+	// let isOpenSidbar = useState('isOpenSidbar', () => true)
+	let isOpenSidbar = true;
 
 	await store.init()
 
