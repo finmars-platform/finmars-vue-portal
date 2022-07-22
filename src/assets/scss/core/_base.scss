@@ -1,13 +1,9 @@
 body {
-	background: #fff;
 	font: 400 16px/1.2 $font-family, sans-serif;
-	color: #202020;
+	color: $text;
 }
-
-
-
 ::-webkit-scrollbar-thumb {
-	background: $c1;
+	background: $primary;
 	border: 3px solid #fff;
 }
 ::-webkit-scrollbar-track {

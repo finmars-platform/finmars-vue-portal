@@ -6,32 +6,20 @@
 				<v-card class="mb-6">
 					<v-card-title>Global</v-card-title>
 					<v-card-content>
-						<v-text-field
+						<BaseInput
 							label="Name"
-							placeholder="Name"
-							variant="outlined"
-							density="comfortable"
 							v-model="procedure.name"
 						/>
-						<v-text-field
+						<BaseInput
 							label="User code"
-							placeholder="User code"
-							variant="outlined"
-							density="comfortable"
 							v-model="procedure.user_code"
 						/>
-						<v-text-field
+						<BaseInput
 							label="Notes"
-							placeholder="Notes"
-							variant="outlined"
-							density="comfortable"
 							v-model="procedure.notes"
 						/>
-						<v-text-field
+						<BaseInput
 							label="Notes for user"
-							placeholder="Notes for users"
-							variant="outlined"
-							density="comfortable"
 							v-model="procedure.notes_for_users"
 						/>
 					</v-card-content>
@@ -154,18 +142,12 @@
 						</template>
 
 						<template v-if="procedure.provider == 6">
-							<v-text-field
+							<BaseInput
 								label="Url"
-								placeholder="Url"
-								variant="outlined"
-								density="comfortable"
 								v-model="procedure.data.url"
 							/>
-							<v-text-field
+							<BaseInput
 								label="Security token"
-								placeholder="Security token"
-								variant="outlined"
-								density="comfortable"
 								v-model="procedure.data.security_token"
 							/>
 							<v-textarea
@@ -224,6 +206,8 @@
 	async function init() {
 		let res = await useApi('importBankProcId.get', {params: {id: route.params.id}})
 		procedure.value = res
+
+		if ( !procedure.value.data ) procedure.value.data = {}
 
 		simpleItems.value = (await useApi('importSchemeLight.get')).results
 		simpleItems.value.forEach(item => {

@@ -117,7 +117,7 @@
 	text-transform: uppercase;
 
 	&.router-link-exact-active {
-		color: $c1;
+		color: $primary;
 	}
 }
 .drop_menu_wrap:hover {

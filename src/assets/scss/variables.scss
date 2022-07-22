@@ -1,14 +1,27 @@
 $font-family: "Roboto";
 
-$text: #000;
+$orange: #f05a22;
+$red: #c9400e;
+$green: #13d330;
+$white: #fff;
+$black: #000;
+
+$primary: $orange;
+
+$border: #E0E0E0;
+$border-active: #333;
+$border-darken: #B3B3B3;
+
+$main: #f2f1f1;
+$main-darken: #f2f1f1;
+$separ: $white;
+
+$text: #333;
 $text-hover: #7e7e7e;
 
-$text-leght: #747474;
+$text-lighten: #747474;
 
-$c1: #f05a22;
-$c2: #eee;
-$c3: #c8efa0;
+// legacy
 
-$border: #B3B3B3;
-$bg: #f2f1f1;
-
+$borderPale: #e0e0e0;
+$btnHover: #fdece5;

@@ -2,7 +2,7 @@
 	<Head>
 		<Title>Finmars</Title>
 		<Meta name="description" :content="'Finmars'" />
-		<Link type="image/x-icon" rel="icon" href="img/favicon/favicon.ico" />
+		<Link type="image/x-icon" rel="icon" href="img/favicon.png" />
 	</Head>
 
 	<v-app>
@@ -26,16 +26,11 @@
 
 	await store.init()
 
-	if ( !store.current.base_api_url) {
-		onMounted(() => {
-			useNotify({
-				type: 'warn',
-				title: 'Notice',
-				text: 'Workspace is not selected'
-			})
-		})
-
-		useRouter().push('/profile')
+	if ( !store.current.base_api_url ) {
+		let router = useRouter()
+		if (  !router.currentRoute.value.path.includes('profile') ) {
+			router.push('/profile')
+		}
 	}
 </script>
 

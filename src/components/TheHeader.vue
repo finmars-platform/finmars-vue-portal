@@ -1,5 +1,5 @@
 <template>
-	<v-toolbar class="px-7" prominent>
+	<v-toolbar class="px-7" prominent style="overflow: visible;">
 		<v-breadcrumbs class="pa-0" :items="$route.meta.bread" active-color="#000">
       <template v-slot:divider>
         <v-icon size="20" color="#737373" icon="mdi-arrow-right"></v-icon>
@@ -14,6 +14,24 @@
 			<v-btn color="#737373" class="text-lowercase" id="menu-db">
 				{{ store.current.name }}
 			</v-btn>
+
+			<FmMenu>
+				<template #btn>
+					<v-btn color="#737373" class="text-lowercase" id="menu-db">
+						{{ store.current.name }}
+					</v-btn>
+				</template>
+
+				<v-list>
+					<v-list-item
+						v-for="(item, index) in store.databases"
+						:key="index"
+						@click="setCurrent( item.id )"
+					>
+						{{ item.name }}
+					</v-list-item>
+				</v-list>
+			</FmMenu>
 
 			<v-menu
 				activator="#menu-db"

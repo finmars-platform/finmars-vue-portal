@@ -43,8 +43,8 @@ export default defineStore({
 				if ( !token.error ) {
 					useCookie('access_token').value = token.access_token
 
-					await new Promise((res) => {
-						setTimeout(res, 300)
+					await new Promise((rej) => {
+						setTimeout(rej, 300)
 					})
 					res = await useApi("ping.get")
 				} else {
