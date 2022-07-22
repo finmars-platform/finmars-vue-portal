@@ -2,6 +2,11 @@ body {
 	font: 400 16px/1.2 $font-family, sans-serif;
 	color: $text;
 }
+
+button {
+	white-space: nowrap;
+}
+
 ::-webkit-scrollbar-thumb {
 	background: $primary;
 	border: 3px solid #fff;
