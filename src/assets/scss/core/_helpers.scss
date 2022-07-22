@@ -805,7 +805,7 @@ input.no-input-arrows[type="number"] {
 	border-radius: 2px;
 }
 
-.disabled-element {
+.disabled-element, .disabled-elem {
 	opacity: 0.5;
 	pointer-events: none;
 }
@@ -839,4 +839,8 @@ input.no-input-arrows[type="number"] {
 
 .z-index-56 {
 	z-index: 56;
+}
+
+.raised-btn {
+	box-shadow: 0 2px 5px 0 rgb(0 0 0 / 26%);
 }

@@ -7,17 +7,15 @@
 						<img src="/v/img/logo.png" class="sidenav-logo" alt=""/>
 					</NuxtLink>
 				</div>
-				<div class="side-nav-btn-resize-holder">
-					<button v-if="sidenavExpanded"
-									class="to-small-btn side-nav-btn fab "
+				<div class="panel-resizer-holder sidenav-resizer-holder">
+					<button class="to-small-btn sidenav-btn raised-btn"
 									@click="resizeSideNav(false)">
-						<ng-md-icon icon="chevron_left"></ng-md-icon>
+						<icon icon="chevron_left"></icon>
 					</button>
 
-					<button v-if="!sidenavExpanded"
-									class="expand-sidenav-btn side-nav-btn fab"
+					<button class="expand-sidenav-btn sidenav-btn raised-btn"
 									@click="resizeSideNav(true)">
-						<ng-md-icon icon="chevron_right"></ng-md-icon>
+						<icon icon="chevron_right"></icon>
 					</button>
 				</div>
 			</div>
@@ -29,86 +27,77 @@
 						<ul class="side-menu" v-if="readyStatus.access">
 
 							<li>
-								<button ui-sref-active="active"
+<!--								<button ui-sref-active="active"
 												class="sidemenu-btn"
 												ui-sref="app.portal.dashboard">
-                        <span class="side-nav-icon">
-                            <ng-md-icon icon="dashboard" size="24"></ng-md-icon>
-                        </span>
+												<icon icon="dashboard" class="side-nav-icon"></icon>
 									<span class="side-nav-title">Dashboard</span>
 
-								</button>
+								</button>-->
+								<a :href="`${config.public.apiURL}/a/#!/dashboard`"
+													class="sidemenu-btn">
+									<icon icon="dashboard" class="side-nav-icon"></icon>
+									<span class="side-nav-title">Dashboard</span>
+								</a>
 							</li>
 
 							<li>
-								<button ui-sref-active="active"
-												class="sidemenu-btn"
-												ui-sref="app.portal.home">
-                        <span class="side-nav-icon">
-                            <ng-md-icon icon="home" size="24"></ng-md-icon>
-                        </span>
+								<a :href="`${config.public.apiURL}/a/#!/`"
+									 class="sidemenu-btn">
+									<icon icon="home" class="side-nav-icon"></icon>
 									<span class="side-nav-title">Homepage</span>
-
-								</button>
+								</a>
 							</li>
 
 							<li>
-								<div class="sidenav-dropdown-menu-wrapper" sidenav-dropdown-menu menu-type="reports">
+								<div class="sidenav-dropdown-menu-wrapper"
+										 @mouseenter="showSubmenu($event)"
+										 @mouseleave="hideSubmenu($event)">
 
-									<button class="sidemenu-btn reports-sidenav-menu-btn">
-                            <span class="side-nav-icon">
-                                <ng-md-icon icon="assessment" size="24"></ng-md-icon>
-                            </span>
+									<button class="sidemenu-btn openSubmenuBtn">
+										<icon icon="assessment" class="side-nav-icon"></icon>
 										<span class="side-nav-title">Reports</span>
-
 									</button>
 
-									<ul class="sidenav-dropdown-menu reports-dropdown-menu-element ng-hide">
+									<ul class="sidenav-dropdown-menu display-none submenuElement">
 										<li v-if="accessTable.report_balance">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.reports.balance-report">
+											<a :href="`${config.public.apiURL}/a/#!/reports/balance`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Balance</span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.report_pl">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.reports.pl-report">
+											<a :href="`${config.public.apiURL}/a/#!/reports/profit-and-lost`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">P&L</span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.report_transaction">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.reports.transaction-report">
+											<a :href="`${config.public.apiURL}/a/#!/reports/transaction`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Transaction</span>
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.report_performance">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.reports.performance-report"
-															disabled>
+											<NuxtLink to="reports/performance"
+																class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Performance</span>
-											</button>
+											</NuxtLink>
 										</li>
 										<li v-if="accessTable.report_cash_flow">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.reports.cash-flow-projection-report"
-															disabled>
+<!--											<a :href="`${config.public.apiURL}/a/#!/reports/cash-flow-projection`"
+												 class="sidenav-dropdown-menu-btn">-->
+											<div class="sidenav-dropdown-menu-btn disabled-elem">
 												<span class="side-nav-title">Cash flow</span>
-											</button>
+											</div>
 										</li>
 										<li v-if="accessTable.report_event">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.reports.check-for-events">
+											<a :href="`${config.public.apiURL}/a/#!/reports/check-for-events`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Events</span>
-											</button>
+											</a>
 										</li>
 									</ul>
 
@@ -116,95 +105,85 @@
 							</li>
 
 							<li>
-								<div class="sidenav-dropdown-menu-wrapper" sidenav-dropdown-menu menu-type="data">
+								<div class="sidenav-dropdown-menu-wrapper"
+										 @mouseenter="showSubmenu($event)"
+										 @mouseleave="hideSubmenu($event)">
 
-									<button class="sidemenu-btn data-sidenav-menu-btn">
-                            <span class="side-nav-icon">
-                                <ng-md-icon icon="view_compact" size="24"></ng-md-icon>
-                            </span>
+									<button class="sidemenu-btn openSubmenuBtn">
+										<icon icon="view_compact" class="side-nav-icon"></icon>
 										<span class="side-nav-title">Data</span>
 
 									</button>
 
-									<ul class="sidenav-dropdown-menu data-dropdown-menu-element ng-hide">
+									<ul class="sidenav-dropdown-menu submenuElement display-none">
 										<li v-if="accessTable.data_portfolio">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.data.portfolio">
+											<a :href="`${config.public.apiURL}/a/#!/data/portfolios`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Portfolios</span>
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.data_portfolio">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.data.portfolio-register">
+											<a :href="`${config.public.apiURL}/a/#!/data/portfolio-registers`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Registers</span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.data_account">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.data.account">
+											<a :href="`${config.public.apiURL}/a/#!/data/accounts`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Accounts</span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.data_instrument">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.data.instrument">
+											<a :href="`${config.public.apiURL}/a/#!/data/instruments`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Instruments</span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.data_counterparty">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.data.counterparty">
+											<a :href="`${config.public.apiURL}/a/#!/data/counterparties`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Counterparties</span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.data_responsible">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.data.responsible">
+											<a :href="`${config.public.apiURL}/a/#!/data/responsibles`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Responsibles</span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.data_currency">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.data.currency">
+											<a :href="`${config.public.apiURL}/a/#!/data/currency`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Currencies</span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.data_strategies">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.data.strategy({strategyNumber: 1})">
+											<a :href="`${config.public.apiURL}/a/#!/data/strategy/1`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Strategies 1</span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.data_strategies">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.data.strategy({strategyNumber: 2})">
+											<a :href="`${config.public.apiURL}/a/#!/data/strategy/2`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Strategies 2</span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.data_strategies">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.data.strategy({strategyNumber: 3})">
+											<a :href="`${config.public.apiURL}/a/#!/data/strategy/3`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Strategies 3</span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.data_instrument">
 											<button ui-sref-active="active"
@@ -219,200 +198,187 @@
 							</li>
 
 							<li v-if="accessSectionTable.history">
-								<div class="sidenav-dropdown-menu-wrapper" sidenav-dropdown-menu menu-type="history">
-									<button class="sidemenu-btn history-sidenav-menu-btn">
-                            <span class="side-nav-icon">
-                                <ng-md-icon icon="history" size="24"></ng-md-icon>
-                            </span>
+								<div class="sidenav-dropdown-menu-wrapper"
+										 @mouseenter="showSubmenu($event)"
+										 @mouseleave="hideSubmenu($event)">
+
+									<button class="sidemenu-btn openSubmenuBtn">
+										<icon icon="history" class="side-nav-icon"></icon>
 										<span class="side-nav-title">Transactions</span>
 
 									</button>
 
-									<ul class="sidenav-dropdown-menu history-dropdown-menu-element ng-hide">
+									<ul class="sidenav-dropdown-menu submenuElement display-none">
 										<li v-if="accessTable.data_transaction">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.data.complex-transaction">
+											<a :href="`${config.public.apiURL}/a/#!/data/complex-transactions`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Transactions</span>
 
-											</button>
+											</a>
 										</li>
 										<li>
-											<button class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.data.transaction">
+											<a :href="`${config.public.apiURL}/a/#!/data/transactions`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Base Transactions</span>
 
-											</button>
+											</a>
 										</li>
 										<li>
-											<button class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.data.portfolio-register-record">
+											<a :href="`${config.public.apiURL}/a/#!/data/portfolio-register-records`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Register Records</span>
 
-											</button>
+											</a>
 										</li>
 									</ul>
 								</div>
 							</li>
 
 							<li v-if="accessSectionTable">
-								<div class="sidenav-dropdown-menu-wrapper" sidenav-dropdown-menu menu-type="history">
-									<button class="sidemenu-btn history-sidenav-menu-btn">
-                            <span class="side-nav-icon">
-                                <ng-md-icon icon="layers" size="24"></ng-md-icon>
-                            </span>
-										<span class="side-nav-title">Valuations</span>
+								<div class="sidenav-dropdown-menu-wrapper"
+										 @mouseenter="showSubmenu($event)"
+										 @mouseleave="hideSubmenu($event)">
 
+									<button class="sidemenu-btn openSubmenuBtn">
+										<icon icon="currency_exchange" class="side-nav-icon"></icon>
+										<span class="side-nav-title">Valuations</span>
 									</button>
 
-									<ul class="sidenav-dropdown-menu history-dropdown-menu-element ng-hide">
+									<ul class="sidenav-dropdown-menu submenuElement display-none">
 										<li v-if="accessTable.data_price_history">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.data.price-history">
+											<a :href="`${config.public.apiURL}/a/#!/data/pricing`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Prices</span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.data_price_history">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.data.price-history-error">
+											<a :href="`${config.public.apiURL}/a/#!/data/pricing-errors`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Prices Journal</span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.data_fx_history">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.data.currency-history">
+											<a :href="`${config.public.apiURL}/a/#!/data/currencies`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">FX Rates</span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.data_fx_history">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.data.currency-history-error">
+											<a :href="`${config.public.apiURL}/a/#!/data/currencies-errors`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">FX Rates Journal</span>
 
-											</button>
+											</a>
 										</li>
 										<li>
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.run-pricing-procedure">
+											<a :href="`${config.public.apiURL}/a/#!/run-pricing-procedures`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Run Pricing</span>
 
-											</button>
+											</a>
 										</li>
 										<li>
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.pricing-parent-procedure">
+											<a :href="`${config.public.apiURL}/a/#!/pricing-parent-procedures`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Procedures status</span>
 
-											</button>
+											</a>
 										</li>
 									</ul>
 								</div>
 							</li>
 
 							<li v-if="accessSectionTable.import">
-								<div class="sidenav-dropdown-menu-wrapper" sidenav-dropdown-menu menu-type="import">
-									<button class="sidemenu-btn import-sidenav-menu-btn">
-                                <span class="side-nav-icon">
-                                    <ng-md-icon icon="file_download" size="24"></ng-md-icon>
-                                </span>
+								<div class="sidenav-dropdown-menu-wrapper"
+										 @mouseenter="showSubmenu($event)"
+										 @mouseleave="hideSubmenu($event)">
+
+									<button class="sidemenu-btn openSubmenuBtn">
+										<icon icon="file_download" class="side-nav-icon"></icon>
 										<span class="side-nav-title">Import</span>
 
 									</button>
 
-									<ul class="sidenav-dropdown-menu import-dropdown-menu-element ng-hide">
+									<ul class="sidenav-dropdown-menu submenuElement display-none">
 										<li v-if="accessTable.data_simple_import">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn two-line-text"
-															ui-sref="app.portal.import.simple-entity">
-                                        <span class="side-nav-title">
-                                            Data<br>
-                                            (from file)
-                                        </span>
+											<a :href="`${config.public.apiURL}/a/#!/import/simple-entity-import`"
+												 class="sidenav-dropdown-menu-btn two-line-text">
+												<span class="side-nav-title">
+														Data<br>
+														(from file)
+												</span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.data_simple_import">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn two-line-text"
-															ui-sref="app.portal.import.unified-entity">
+											<a :href="`${config.public.apiURL}/a/#!/import/unified-entity-import`"
+												 class="sidenav-dropdown-menu-btn two-line-text">
                                         <span class="side-nav-title">
                                             Instrument<br>
                                             (from file)
                                         </span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.data_transaction_import">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn two-line-text"
-															ui-sref="app.portal.import.transaction">
+											<a :href="`${config.public.apiURL}/a/#!/import/transaction-import`"
+												 class="sidenav-dropdown-menu-btn two-line-text">
                                         <span class="side-nav-title">
                                             Transactions<br>
                                             (from file)
                                         </span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.data_complex_import">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn two-line-text"
-															ui-sref="app.portal.import.complex-import">
+											<a :href="`${config.public.apiURL}/a/#!/import/complex-import`"
+												 class="sidenav-dropdown-menu-btn two-line-text">
                                         <span class="side-nav-title">
                                             Data and Transactions<br>
                                             (from file)
                                         </span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.data_instrument_download">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn two-line-text"
-															ui-sref="app.portal.import.instrument">
+											<a :href="`${config.public.apiURL}/a/#!/import/instrument-import`"
+												 class="sidenav-dropdown-menu-btn two-line-text">
                                         <span class="side-nav-title">
                                             Instrument<br>
                                             (from provider)
                                         </span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.data_instrument_download">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn two-line-text"
-															ui-sref="app.portal.import.instrument-cbonds">
+											<a :href="`${config.public.apiURL}/a/#!/import/instrument-import-cbonds`"
+												 class="sidenav-dropdown-menu-btn two-line-text">
                                         <span class="side-nav-title">
                                             Instrument<br>
                                             (from Finmars Database)
                                         </span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.data_prices_download">
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn two-line-text"
-															ui-sref="app.portal.import.prices">
+											<a :href="`${config.public.apiURL}/a/#!/import/prices-import`"
+												 class="sidenav-dropdown-menu-btn two-line-text">
                                         <span class="side-nav-title">
                                             Prices/FX<br>
                                             (from provider)
                                         </span>
 
-											</button>
+											</a>
 										</li>
 										<li>
-											<button ui-sref-active="active"
-															class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.run-data-procedure">
+											<a :href="`${config.public.apiURL}/a/#!/run-data-procedures`"
+												 class="sidenav-dropdown-menu-btn two-line-text">
 												<span class="side-nav-title">Import From Bank</span>
 
-											</button>
+											</a>
 										</li>
 									</ul>
 								</div>
@@ -425,43 +391,42 @@
 						<ul class="side-menu" v-if="readyStatus.access">
 
 							<li v-if="accessSectionTable.journal">
-								<div class="sidenav-dropdown-menu-wrapper" sidenav-dropdown-menu menu-type="journal">
-									<button class="sidemenu-btn journal-sidenav-menu-btn">
-                                <span class="side-nav-icon">
-                                    <ng-md-icon icon="book" size="24"></ng-md-icon>
-                                </span>
+								<div class="sidenav-dropdown-menu-wrapper"
+										 @mouseenter="showSubmenu($event)"
+										 @mouseleave="hideSubmenu($event)">
+
+									<button class="sidemenu-btn journal-sidenav-menu-btn openSubmenuBtn">
+										<icon icon="book" class="side-nav-icon"></icon>
 										<span class="side-nav-title">Journal</span>
 
 									</button>
 
-									<ul class="sidenav-dropdown-menu open-upward journal-dropdown-menu-element ng-hide">
+									<ul class="sidenav-dropdown-menu open-upward journal-dropdown-menu-element display-none submenuElement">
 										<li v-if="accessTable.report_instrument_audit">
-											<button class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.data.instruments">
+											<a :href="`${config.public.apiURL}/a/#!/data/audit/instruments`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Instruments Audit</span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.report_transaction_audit">
-											<button class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.data.transactions">
+											<a :href="`${config.public.apiURL}/a/#!/data/audit/transactions`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">Transactions Audit</span>
 
-											</button>
+											</a>
 										</li>
 										<li v-if="accessTable.report_activity_log">
-											<button class="sidenav-dropdown-menu-btn"
-															ui-sref="#"
-															disabled>
+											<div class="sidenav-dropdown-menu-btn disabled-elem">
 												<span class="side-nav-title">Activity Log</span>
 
-											</button>
+											</div>
 										</li>
 										<li v-if="accessTable.report_activity_log">
-											<button class="sidenav-dropdown-menu-btn"
-															ui-sref="app.portal.system.file-reports">
+											<a :href="`${config.public.apiURL}/a/#!/system/file-reports`"
+												 class="sidenav-dropdown-menu-btn">
 												<span class="side-nav-title">System Files</span>
-											</button>
+											</a>
 										</li>
 									</ul>
 
@@ -469,11 +434,8 @@
 							</li>
 
 							<li>
-								<button class="sidemenu-btn sidenav-settings-toggle-btn" ref="toggleSettingsBtn">
-                <span class="side-nav-icon">
-										<ng-md-icon icon="settings" size="24"></ng-md-icon>
-								</span>
-
+								<button class="sidemenu-btn sidenav-settings-toggle-btn toggleSettingsBtn">
+									<icon icon="settings" class="side-nav-icon"></icon>
 									<span class="side-nav-title">Settings</span>
 								</button>
 							</li>
@@ -483,10 +445,9 @@
 
 					<div class="side-menu-settings-container side-menu-settings-menu" ref="settingsMenu">
 						<div class="side-menu-settings-wrapper">
-							<div class="settings-menu-collapse-button-holder">
-								<button class="to-small-btn side-nav-btn fab"
-												ref="toggleSettingsBtn">
-									<ng-md-icon icon="chevron_left"></ng-md-icon>
+							<div class="panel-resizer-holder settings-menu-collapse-btn-holder">
+								<button class="to-small-btn sidenav-btn raised-btn collapseSettingsMenu">
+									<icon icon="chevron_left"></icon>
 								</button>
 							</div>
 
@@ -495,49 +456,51 @@
 								<ul class="side-menu">
 									<li>
 
-										<div class="sidenav-dropdown-menu-wrapper" sidenav-dropdown-menu menu-type="dataTypes">
-											<button class="sidemenu-btn dataTypes-sidenav-menu-btn">
+										<div class="sidenav-dropdown-menu-wrapper"
+												 @mouseenter="showSubmenu($event)"
+												 @mouseleave="hideSubmenu($event)">
+											<button class="sidemenu-btn openSubmenuBtn">
 												<span class="side-nav-title">Layouts</span>
 
 											</button>
 
-											<ul class="sidenav-dropdown-menu dataTypes-dropdown-menu-element ng-hide">
+											<ul class="sidenav-dropdown-menu display-none submenuElement">
 
 												<li>
-													<button class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.settings.layouts">
+													<a :href="`${config.public.apiURL}/a/#!/import/layouts`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">Entity Viewer Layouts</span>
 
-													</button>
+													</a>
 												</li>
 												<li>
-													<button class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.dashboard-layout-manager">
+													<a :href="`${config.public.apiURL}/a/#!/dashboard-layouts`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">Dashboard Layouts</span>
 
-													</button>
+													</a>
 												</li>
 												<li>
-													<button class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.settings.input-form-layouts">
+													<a :href="`${config.public.apiURL}/a/#!/settings/input-form-layouts`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">Input Form Layouts</span>
 
-													</button>
+													</a>
 												</li>
 												<li>
-													<button class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.context-menu-layout-manager">
+													<a :href="`${config.public.apiURL}/a/#!/context-menu-layouts`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">Context Menu Layouts</span>
 
-													</button>
+													</a>
 												</li>
 
 												<li>
-													<button class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.manual-sorting-layout-manager">
+													<a :href="`${config.public.apiURL}/a/#!/manual-sorting-layouts`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">Manual Sorting</span>
 
-													</button>
+													</a>
 												</li>
 
 											</ul>
@@ -547,18 +510,18 @@
 									</li>
 
 									<li>
-										<button class="sidemenu-btn"
-														ui-sref="app.portal.settings.notifications">
+										<a :href="`${config.public.apiURL}/a/#!/settings/notifications`"
+											 class="sidemenu-btn">
 											<span class="side-nav-title">Notifications</span>
 
-										</button>
+										</a>
 									</li>
 									<li>
-										<button class="sidemenu-btn"
-														ui-sref="app.portal.settings.interface-access">
+										<a :href="`${config.public.apiURL}/a/#!/settings/interface`"
+											 class="sidemenu-btn">
 											<span class="side-nav-title">Interface Complexity</span>
 
-										</button>
+										</a>
 									</li>
 
 
@@ -569,34 +532,36 @@
 								<h3 class="sms-btn-group-header">Configuration</h3>
 								<ul class="side-menu">
 									<li v-if="accessSectionTable.settings_data">
-										<div class="sidenav-dropdown-menu-wrapper" sidenav-dropdown-menu menu-type="dataTypes">
-											<button class="sidemenu-btn dataTypes-sidenav-menu-btn">
+										<div class="sidenav-dropdown-menu-wrapper"
+												 @mouseenter="showSubmenu($event)"
+												 @mouseleave="hideSubmenu($event)">
+											<button class="sidemenu-btn openSubmenuBtn">
 												<span class="side-nav-title">Data Settings</span>
 
 											</button>
 
-											<ul class="sidenav-dropdown-menu dataTypes-dropdown-menu-element ng-hide">
+											<ul class="sidenav-dropdown-menu display-none submenuElement">
 
 												<li v-if="accessTable.configuration_account_type">
-													<button class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.data.account-type">
+													<a :href="`${config.public.apiURL}/a/#!/data/account-types`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">Account Types</span>
 
-													</button>
+													</a>
 												</li>
 												<li v-if="accessTable.configuration_instrument_type">
-													<button class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.data.instrument-type">
+													<a :href="`${config.public.apiURL}/a/#!/data/instrument-types`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">Instrument Types</span>
 
-													</button>
+													</a>
 												</li>
 												<li v-if="accessTable.configuration_transaction_type">
-													<button class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.data.transaction-type">
+													<a :href="`${config.public.apiURL}/a/#!/data/transaction-types`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">Transaction Types</span>
 
-													</button>
+													</a>
 												</li>
 												<!-- <li v-if="accessTable.configuration_pricing_policy">
 														<button class="sidenav-dropdown-menu-btn"
@@ -607,136 +572,37 @@
 														</button>
 												</li> -->
 												<li v-if="accessTable.configuration_user_attributes">
-													<button class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.settings.entities-custom-attributes">
+													<a :href="`${config.public.apiURL}/a/#!/settings/entities-custom-attributes`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">User Attributes</span>
 
-													</button>
+													</a>
 												</li>
 
 												<li v-if="accessTable.configuration_reference_table">
-													<button ui-sref-active="active"
-																	class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.import.reference-tables">
+													<a :href="`${config.public.apiURL}/a/#!/import/reference-tables`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">Reference Tables</span>
 
-													</button>
+													</a>
 												</li>
 
 												<li v-if="accessTable.configuration_mapping_tables">
-													<button ui-sref-active="active"
-																	class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.import.mapping-tables">
-                                                <span class="side-nav-title">
-                                                    Mapping Tables
-                                                </span>
+													<a :href="`${config.public.apiURL}/a/#!/import/mapping-tables-import`"
+														 class="sidenav-dropdown-menu-btn">
+														<span class="side-nav-title">
+																Mapping Tables
+														</span>
 
-													</button>
+													</a>
 												</li>
 
 												<li v-if="accessTable.configuration_template">
-													<button class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.template-layout-manager">
+													<a :href="`${config.public.apiURL}/a/#!/template-layouts`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">Templates</span>
 
-													</button>
-												</li>
-
-											</ul>
-
-										</div>
-									</li>
-
-									<li>
-										<div class="sidenav-dropdown-menu-wrapper" sidenav-dropdown-menu menu-type="dataTypes">
-											<button class="sidemenu-btn dataTypes-sidenav-menu-btn">
-												<span class="side-nav-title">Pricing</span>
-
-											</button>
-
-											<ul class="sidenav-dropdown-menu dataTypes-dropdown-menu-element ng-hide">
-
-												<li>
-													<button class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.pricing-schemes">
-														<span class="side-nav-title">Schemes</span>
-
-													</button>
-												</li>
-												<li>
-													<button class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.pricing-policy">
-														<span class="side-nav-title">Policies</span>
-
-													</button>
-												</li>
-
-											</ul>
-
-										</div>
-									</li>
-
-									<li v-if="accessSectionTable.settings_import_from_providers">
-										<div class="sidenav-dropdown-menu-wrapper" sidenav-dropdown-menu menu-type="dataTypes">
-											<button class="sidemenu-btn dataTypes-sidenav-menu-btn">
-												<span class="side-nav-title">Import from Providers</span>
-
-											</button>
-
-											<ul class="sidenav-dropdown-menu dataTypes-dropdown-menu-element ng-hide">
-
-												<li v-if="accessTable.configuration_price_download_scheme">
-													<button class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.settings.price-download-scheme">
-														<span class="side-nav-title">Price Schemes</span>
-
-													</button>
-												</li>
-												<li v-if="accessTable.configuration_instrument_download_scheme">
-													<button class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.settings.instrument-import">
-														<span class="side-nav-title">Instrument Schemes</span>
-
-													</button>
-												</li>
-
-											</ul>
-
-										</div>
-									</li>
-
-									<li v-if="accessSectionTable.settings_import_from_files">
-										<div class="sidenav-dropdown-menu-wrapper" sidenav-dropdown-menu menu-type="dataTypes">
-											<button class="sidemenu-btn dataTypes-sidenav-menu-btn">
-												<span class="side-nav-title">Import from Files</span>
-
-											</button>
-
-											<ul class="sidenav-dropdown-menu dataTypes-dropdown-menu-element ng-hide">
-
-												<li v-if="accessTable.configuration_simple_import_scheme">
-													<button ui-sref-active="active"
-																	class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.settings.simple-entity-import">
-														<span class="side-nav-title">Data Import</span>
-
-													</button>
-												</li>
-												<li v-if="accessTable.configuration_transaction_import_scheme">
-													<button ui-sref-active="active"
-																	class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.settings.transaction-import">
-														<span class="side-nav-title">Transactions Import</span>
-
-													</button>
-												</li>
-												<li v-if="accessTable.configuration_complex_import_scheme">
-													<button ui-sref-active="active"
-																	class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.settings.complex-import">
-														<span class="side-nav-title">Complex Import</span>
-
-													</button>
+													</a>
 												</li>
 
 											</ul>
@@ -746,42 +612,142 @@
 
 									<li>
 										<div class="sidenav-dropdown-menu-wrapper"
-												 sidenav-dropdown-menu
-												 menu-type="dataTypes">
+												 @mouseenter="showSubmenu($event)"
+												 @mouseleave="hideSubmenu($event)">
+											<button class="sidemenu-btn openSubmenuBtn">
+												<span class="side-nav-title">Pricing</span>
 
-											<button class="sidemenu-btn dataTypes-sidenav-menu-btn f-s-10">
+											</button>
+
+											<ul class="sidenav-dropdown-menu display-none submenuElement">
+
+												<li>
+													<a :href="`${config.public.apiURL}/a/#!/pricing-schemes`"
+														 class="sidenav-dropdown-menu-btn">
+														<span class="side-nav-title">Schemes</span>
+
+													</a>
+												</li>
+												<li>
+													<a :href="`${config.public.apiURL}/a/#!/pricing-policies`"
+														 class="sidenav-dropdown-menu-btn">
+														<span class="side-nav-title">Policies</span>
+
+													</a>
+												</li>
+
+											</ul>
+
+										</div>
+									</li>
+
+									<li v-if="accessSectionTable.settings_import_from_providers">
+										<div class="sidenav-dropdown-menu-wrapper"
+												 @mouseenter="showSubmenu($event)"
+												 @mouseleave="hideSubmenu($event)">
+											<button class="sidemenu-btn openSubmenuBtn">
+												<span class="side-nav-title">Import from Providers</span>
+
+											</button>
+
+											<ul class="sidenav-dropdown-menu display-none submenuElement">
+
+												<li v-if="accessTable.configuration_price_download_scheme">
+													<a :href="`${config.public.apiURL}/a/#!/settings/price-download-scheme`"
+														 class="sidenav-dropdown-menu-btn">
+														<span class="side-nav-title">Price Schemes</span>
+
+													</a>
+												</li>
+												<li v-if="accessTable.configuration_instrument_download_scheme">
+													<a :href="`${config.public.apiURL}/a/#!/settings/instrument-import`"
+														 class="sidenav-dropdown-menu-btn">
+														<span class="side-nav-title">Instrument Schemes</span>
+
+													</a>
+												</li>
+
+											</ul>
+
+										</div>
+									</li>
+
+									<li v-if="accessSectionTable.settings_import_from_files">
+										<div class="sidenav-dropdown-menu-wrapper"
+												 @mouseenter="showSubmenu($event)"
+												 @mouseleave="hideSubmenu($event)">
+											<button class="sidemenu-btn openSubmenuBtn">
+												<span class="side-nav-title">Import from Files</span>
+
+											</button>
+
+											<ul class="sidenav-dropdown-menu display-none submenuElement">
+
+												<li v-if="accessTable.configuration_simple_import_scheme">
+													<a :href="`${config.public.apiURL}/a/#!/settings/data-import`"
+														 class="sidenav-dropdown-menu-btn">
+														<span class="side-nav-title">Data Import</span>
+
+													</a>
+												</li>
+												<li v-if="accessTable.configuration_transaction_import_scheme">
+													<a :href="`${config.public.apiURL}/a/#!/settings/transaction-import`"
+														 class="sidenav-dropdown-menu-btn">
+														<span class="side-nav-title">Transactions Import</span>
+
+													</a>
+												</li>
+												<li v-if="accessTable.configuration_complex_import_scheme">
+													<a :href="`${config.public.apiURL}/a/#!/settings/complex-import`"
+														 class="sidenav-dropdown-menu-btn">
+														<span class="side-nav-title">Complex Import</span>
+
+													</a>
+												</li>
+
+											</ul>
+
+										</div>
+									</li>
+
+									<li>
+										<div class="sidenav-dropdown-menu-wrapper"
+												 @mouseenter="showSubmenu($event)"
+												 @mouseleave="hideSubmenu($event)">
+
+											<button class="sidemenu-btn f-s-10 openSubmenuBtn">
 												<span class="side-nav-title">Procedures and schedules</span>
 
 											</button>
 
-											<ul class="sidenav-dropdown-menu dataTypes-dropdown-menu-element ng-hide">
+											<ul class="sidenav-dropdown-menu display-none submenuElement">
 												<li>
-													<button class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.pricing-procedure">
+													<a :href="`${config.public.apiURL}/a/#!/pricing-procedures`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">Pricing Procedures</span>
 
-													</button>
+													</a>
 												</li>
 												<li>
-													<button class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.data-procedure">
+													<a :href="`${config.public.apiURL}/a/#!/data-procedures`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">Data Procedures</span>
 
-													</button>
+													</a>
 												</li>
 												<li>
-													<button class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.expression-procedure">
+													<a :href="`${config.public.apiURL}/a/#!/expression-procedures`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">Expression Procedures</span>
 
-													</button>
+													</a>
 												</li>
 												<li>
-													<button class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.schedules">
+													<a :href="`${config.public.apiURL}/a/#!/schedules`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">Schedules</span>
 
-													</button>
+													</a>
 												</li>
 											</ul>
 
@@ -793,49 +759,46 @@
 															 ui-sref="app.portal.settings.template-fields">
 												<span class="side-nav-title">Aliases</span>
 										</button>-->
-										<div class="sidenav-dropdown-menu-wrapper" sidenav-dropdown-menu menu-type="dataTypes">
-											<button class="sidemenu-btn dataTypes-sidenav-menu-btn">
+										<div class="sidenav-dropdown-menu-wrapper"
+												 @mouseenter="showSubmenu($event)"
+												 @mouseleave="hideSubmenu($event)">
+											<button class="sidemenu-btn openSubmenuBtn">
 												<span class="side-nav-title">Specifications</span>
 
 											</button>
 
-											<ul class="sidenav-dropdown-menu dataTypes-dropdown-menu-element ng-hide">
+											<ul class="sidenav-dropdown-menu display-none submenuElement">
 
 												<li v-if="accessTable.configuration_aliases">
-													<button ui-sref-active="active"
-																	class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.settings.template-fields">
+													<a :href="`${config.public.apiURL}/a/#!/settings/aliases`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">Aliases</span>
 
-													</button>
+													</a>
 												</li>
 
 												<li>
-													<button ui-sref-active="active"
-																	class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.settings.tooltips"
-													>
+													<a :href="`${config.public.apiURL}/a/#!/settings/tooltips`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">Tooltips</span>
 
-													</button>
+													</a>
 												</li>
 
 												<li>
-													<button ui-sref-active="active"
-																	class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.settings.color-palettes">
+													<a :href="`${config.public.apiURL}/a/#!/settings/palettes`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">Palettes</span>
 
-													</button>
+													</a>
 												</li>
 
 												<li>
-													<button ui-sref-active="active"
-																	class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.settings.cross-entity-attribute-extensions">
+													<a :href="`${config.public.apiURL}/a/#!/settings/cross-entity-attribute-extension`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">Reports</span>
 
-													</button>
+													</a>
 												</li>
 
 											</ul>
@@ -844,35 +807,36 @@
 									</li>
 
 									<li>
-										<div class="sidenav-dropdown-menu-wrapper" sidenav-dropdown-menu
-												 menu-type="configuration">
-											<button class="sidemenu-btn configuration-sidenav-menu-btn">
+										<div class="sidenav-dropdown-menu-wrapper"
+												 @mouseenter="showSubmenu($event)"
+												 @mouseleave="hideSubmenu($event)">
+											<button class="sidemenu-btn openSubmenuBtn">
 												<span class="side-nav-title">Configuration</span>
 
 											</button>
 
-											<ul class="sidenav-dropdown-menu configuration-dropdown-menu-element ng-hide">
+											<ul class="sidenav-dropdown-menu display-none submenuElement">
 
 												<li v-if="accessTable.settings_import_configuration">
-													<button class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.settings.import-configuration">
+													<a :href="`${config.public.apiURL}/a/#!/settings/import-configuration`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">Import</span>
 
-													</button>
+													</a>
 												</li>
 												<li v-if="accessTable.settings_export_configuration">
-													<button class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.settings.export-configuration">
+													<a :href="`${config.public.apiURL}/a/#!/settings/export-configuration`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">Export</span>
 
-													</button>
+													</a>
 												</li>
 												<li>
-													<button class="sidenav-dropdown-menu-btn"
-																	ui-sref="app.portal.update-configuration">
+													<a :href="`${config.public.apiURL}/a/#!/update-configuration`"
+														 class="sidenav-dropdown-menu-btn">
 														<span class="side-nav-title">Update</span>
 
-													</button>
+													</a>
 												</li>
 
 											</ul>
@@ -888,47 +852,45 @@
 								<h3 class="sms-btn-group-header">Administration</h3>
 								<ul class="side-menu">
 									<li v-if="accessTable.settings_provider">
-										<button class="sidemenu-btn"
-														ui-sref="app.portal.settings.data-providers">
+										<a :href="`${config.public.apiURL}/a/#!/settings/data-providers`"
+											 class="sidemenu-btn">
 											<span class="side-nav-title">Data providers</span>
 
-										</button>
+										</a>
 									</li>
 									<li v-if="accessTable.settings_init_configuration">
-										<button class="sidemenu-btn"
-														ui-sref="app.portal.settings.init-configuration">
+										<a :href="`${config.public.apiURL}/a/#!/settings/init-configuration`"
+											 class="sidemenu-btn">
 											<span class="side-nav-title">New User Setups</span>
 
-										</button>
+										</a>
 									</li>
 									<li v-if="accessTable.settings_users_groups_permission">
-										<button class="sidemenu-btn"
-														ui-sref="app.portal.settings.users-groups">
+										<a :href="`${config.public.apiURL}/a/#!/settings/users-and-groups`"
+											 class="sidemenu-btn">
 											<span class="side-nav-title">Permissions</span>
 
-										</button>
+										</a>
 									</li>
 									<li v-if="accessTable.settings_ecosystem_default">
-										<button class="sidemenu-btn"
-														ui-sref="app.portal.settings.ecosystem-default-settings">
+										<a :href="`${config.public.apiURL}/a/#!/settings/default-settings`"
+											 class="sidemenu-btn">
 											<span class="side-nav-title">Default Settings</span>
 
-										</button>
+										</a>
 									</li>
 									<li>
-										<button class="sidemenu-btn"
-														ui-sref="#"
-														disabled>
+										<div class="sidemenu-btn disabled-elem">
 											<span class="side-nav-title">Security</span>
 
-										</button>
+										</div>
 									</li>
 									<li>
-										<button class="sidemenu-btn"
-														ui-sref="app.portal.processes">
+										<a :href="`${config.public.apiURL}/a/#!/processes`"
+											 class="sidemenu-btn">
 											<span class="side-nav-title">Active Processes</span>
 
-										</button>
+										</a>
 									</li>
 
 
@@ -940,13 +902,41 @@
 
 				</div>
 			</div>
+
+		</div>
+
+		<div class="build-date">
+			Build date: {{buildDate}}
+
+
+			<!--				<span class="websocket-connection-status {{vm.getWsStatus()}}"
+										title="Websocket status: {{vm.getWsStatus()}}"></span>
+
+							<br/>
+							<div class="sidenav-error-subtitle" data-ng-click="vm.openSystemErrorLogDialog($event)">
+								<span class="{{vm.getErrorCount() ? 'text-warning-red' : ''}}">Errors: {{ vm.getErrorCount() }}</span>
+							</div>
+
+							<div classs="sidenav-api-subtitle">
+							<span><a class="sidenav-api-link" href="{{ vm.getCurrentApiUrl() }}" target="_blank">API</a>: <span
+								data-ng-click="vm.copyToBuffer(vm.getCurrentBaseApiUrl())" class="sidenav-tech-button">
+									{{ vm.getCurrentBaseApiUrl() }}
+
+									<md-tooltip class="tooltip_1" md-direction="top">Copy</md-tooltip>
+
+							</span></span>
+							</div>-->
+
 		</div>
 	</div>
+
 </template>
 
 <script setup>
 // import menu from "~/assets/data/menu.js";
-const readyStatus = {
+import Icon from "./base/Icon";
+
+const readyStatus = { // will be used by getInterfaceAccess()
 	access: true
 }
 
@@ -1029,12 +1019,8 @@ const accessTable = {
 
 };
 
-let open = ref(['user'])
-let rail = ref(false)
-let isOpenSubmenu = ref(false)
-let member = {}
-
-let config = useRuntimeConfig()
+let config = useRuntimeConfig();
+let buildDate = config.public.buildDATE;
 
 let sidenavExpanded = true;
 
@@ -1043,15 +1029,15 @@ function resizeSideNav(expand) {
 	// sideNavStatus = status;
 	sidenavExpanded = expand;
 
-	if (status === 'expand') {
+	if (sidenavExpanded) {
 
-		document.body.removeClass('sidenav-collapsed');
-		document.body.addClass('sidenav-expanded');
+		document.body.classList.remove('sidenav-collapsed');
+		document.body.classList.add('sidenav-expanded');
 
 	} else {
 
-		document.body.removeClass('sidenav-expanded');
-		document.body.addClass('sidenav-collapsed');
+		document.body.classList.remove('sidenav-expanded');
+		document.body.classList.add('sidenav-collapsed');
 
 	}
 
@@ -1065,10 +1051,11 @@ const vToggleSettingsMenuDirective = {
 	mounted: (el) => {
 
 		const settingsMenu = el.querySelector('.side-menu-settings-menu');
-		const settingsToggleBtn = el.querySelector('.sidenav-settings-toggle-btn');
+		const settingsToggleBtn = el.querySelector('.toggleSettingsBtn');
+		const settingsCollapseBtn = el.querySelector('.collapseSettingsMenu');
 
 		function settingsSideMenuOnClickOutside(event) {
-			console.log("testing1 settingsSideMenuOnClickOutside called");
+
 			let clickedOutside = true;
 			let elem = event.target;
 
@@ -1093,32 +1080,32 @@ const vToggleSettingsMenuDirective = {
 
 		function toggleSettingsSideMenu() {
 
-			if (!sideMenuSettingsMenuOpened) {
-
-				/* $('.side-menu-settings-menu').addClass('settings-menu-opened');
-					$('.sidenav-settings-toggle-btn').addClass('settings-menu-opened'); */
-
-				settingsMenu.addClass('settings-menu-opened');
-				settingsToggleBtn.addClass('settings-menu-opened');
-
-				setTimeout(function () {
-					// $('.side-menu-settings-menu').addClass('overflow-visible');
-					settingsMenu.addClass('overflow-visible');
-
-					window.addEventListener('click', settingsSideMenuOnClickOutside);
-					window.addEventListener('contextmenu', settingsSideMenuOnClickOutside);
-				}, 250);
-
-			} else {
+			if (sideMenuSettingsMenuOpened) {
 
 				/*$('.sidenav-settings-toggle-btn').removeClass('settings-menu-opened');
 				$('.side-menu-settings-menu').removeClass('overflow-visible');
 				$('.side-menu-settings-menu').removeClass('settings-menu-opened');*/
-				settingsToggleBtn.removeClass('settings-menu-opened');
-				settingsMenu.removeClass('overflow-visible', 'settings-menu-opened');
+				settingsToggleBtn.classList.remove('settings-menu-opened');
+				settingsMenu.classList.remove('overflow-visible', 'settings-menu-opened');
 
 				window.removeEventListener('click', settingsSideMenuOnClickOutside);
 				window.removeEventListener('contextmenu', settingsSideMenuOnClickOutside);
+
+			} else {
+
+				/* $('.side-menu-settings-menu').addClass('settings-menu-opened');
+					$('.sidenav-settings-toggle-btn').addClass('settings-menu-opened'); */
+
+				settingsMenu.classList.add('settings-menu-opened');
+				settingsToggleBtn.classList.add('settings-menu-opened');
+
+				setTimeout(function () {
+					// $('.side-menu-settings-menu').addClass('overflow-visible');
+					settingsMenu.classList.add('overflow-visible');
+
+					window.addEventListener('click', settingsSideMenuOnClickOutside);
+					window.addEventListener('contextmenu', settingsSideMenuOnClickOutside);
+				}, 250);
 
 			}
 
@@ -1126,8 +1113,52 @@ const vToggleSettingsMenuDirective = {
 
 		}
 
+		settingsToggleBtn.addEventListener('click', toggleSettingsSideMenu);
+		settingsCollapseBtn.addEventListener('click', toggleSettingsSideMenu);
+
 	}
 }
+
+/*const vExpandOnHoverDirective = {
+	mounted: (el) => {
+		var dropdownMenuClass = '.' + scope.menuType + '-dropdown-menu-element';
+		var menuBtnClass = '.' + scope.menuType + '-sidenav-menu-btn';
+		var dropdownMenu = el.find(dropdownMenuClass);
+		var menuBtn = el.find(menuBtnClass);
+
+		el.mouseenter(function () {
+			$(menuBtn).addClass('active-menu-btn');
+			$(dropdownMenu).removeClass('ng-hide');
+		});
+
+		el.mouseleave(function () {
+			$(menuBtn).removeClass('active-menu-btn');
+			$(dropdownMenu).addClass('ng-hide');
+		});
+	}
+}*/
+
+const showSubmenu = function ($event) {
+
+	const el = $event.target;
+	const dropdownMenu = el.querySelector('.submenuElement');
+	const menuBtn = el.querySelector('.openSubmenuBtn');
+
+	menuBtn.classList.add('active-menu-btn');
+	dropdownMenu.classList.remove('display-none');
+
+};
+
+const hideSubmenu = function ($event) {
+
+	const el = $event.target;
+	const dropdownMenu = el.querySelector('.submenuElement');
+	const menuBtn = el.querySelector('.openSubmenuBtn');
+
+	menuBtn.classList.remove('active-menu-btn');
+	dropdownMenu.classList.add('display-none');
+
+};
 
 // function toggleSettingsSideMenu() {
 //
@@ -1161,8 +1192,6 @@ const vToggleSettingsMenuDirective = {
 //
 // 	sideMenuSettingsMenuOpened = !sideMenuSettingsMenuOpened;
 // }
-
-
 </script>
 
 <style lang="scss" scoped>
@@ -1243,6 +1272,8 @@ const vToggleSettingsMenuDirective = {
 }
 
 .sidenav-left {
+	display: flex;
+	flex-direction: column;
 	width: 100%;
 	height: 100%;
 	// fill: #737373;
@@ -1266,37 +1297,61 @@ const vToggleSettingsMenuDirective = {
 		color: #fff;
 	}
 
-	// md-toolbar
-	.sidenav-logo-container {
-		min-height: 52px;
-		height: 52px;
-		background-color: #000;
-	}
-
-	/*.md-toolbar-tools {
-		//background-color: #3b283b;
-		min-height: 52px;
-		height: 52px;
-		background-color: #000;
-		padding: 0;
-	}*/
-
-	.sidenav-content {
-		position: relative;
-		height: 100%;
-		//background-color: #3b283b;
-		background-color: #000;
-		overflow: visible;
-	}
-
 	ng-md-icon {
 		position: relative;
 		top: 5px; // adjust for svg viewbox
 	}
 }
 
+// <md-toolbar> in angularjs interface
+.sidenav-logo-container {
+	display: flex;
+	flex-direction: row;
+	flex: 0 0 52px;
+	align-items: center;
+	min-height: 52px;
+	height: 52px;
+	background-color: #000;
+}
+
+/*.md-toolbar-tools {
+	//background-color: #3b283b;
+	min-height: 52px;
+	height: 52px;
+	background-color: #000;
+	padding: 0;
+}*/
+
+.sidenav-content {
+	flex: 0 1 100%;
+	position: relative;
+	// height: 100%;
+	//background-color: #3b283b;
+	background-color: #000;
+	overflow: visible;
+}
+
+.sidenav-logo-wrapper {
+	position: absolute;
+	left: 10px;
+	width: 140px;
+	height: 40px;
+	overflow: hidden;
+}
+
+.sidenav-logo {
+	max-width: 140px;
+	width: 140px;
+	height: 40px;
+	margin: 0 auto;
+}
+
 .sidenav-dropdown-menu-wrapper {
 	position: relative;
+}
+
+@mixin option-hover {
+		background-color: rgba(158,158,158,0.2);
 }
 
 .sidenav-dropdown-menu {
@@ -1317,23 +1372,29 @@ const vToggleSettingsMenuDirective = {
 		text-align: left;
 		padding-left: 1em;
 		margin-left: 0;
+		margin-bottom: 6px;
 		font-size: 11px;
 		line-height: 2;
 		padding-top: 12px;
 		padding-bottom: 10px;
+		text-transform: uppercase;
+
+		&:not([disabled]):hover {
+			@include option-hover;
+		}
 
 		&.active {
 			color: #F05A22;
 			fill: #F05A22;
 		}
 
-		&.active-menu-btn {
+		/*&.active-menu-btn {
 			//background-color: #5a3e5a;
 
 			&:hover {
 				//background-color: #5a3e5a;
 			}
-		}
+		}*/
 	}
 
 	&:not(.open-upward) li:first-child .sidenav-dropdown-menu-btn {
@@ -1373,9 +1434,11 @@ const vToggleSettingsMenuDirective = {
 		fill: #fff;
 		display: inline-block;
 		position: absolute;
-		left: 17px;
 		//left: 11px;
-		bottom: 3px;
+		left: 17px;
+		// bottom: 3px;
+		bottom: 6px;
+
 	}
 
 	transition: width ease 0.25s;
@@ -1384,32 +1447,52 @@ const vToggleSettingsMenuDirective = {
 .side-menu {
 	width: 100%;
 	padding-left: 0;
+	margin: 12px 0;
 }
 
 .sidemenu-btn {
+	position: relative;
 	width: 100%;
-	height: 35px;
+	height: 36px;
 	display: block;
+
 	text-align: left;
-	margin-left: 0;
-	font-size: 11px;
 	line-height: 2;
+	text-transform: uppercase;
+
 	padding-top: 11px;
 	padding-bottom: 2px;
 	padding-left: 55px;
+	margin-top: 6px;
+	margin-bottom: 6px;
+	margin-left: 0;
+
+	.side-nav-icon div.icon {
+		position: relative;
+		top: 0;
+		left: -6px;
+	}
+
+	&:not(.f-s-10) {
+		font-size: 11px;
+	}
+
+	&:not([disabled]):hover {
+		@include option-hover;
+	}
 
 	&.active {
 		color: #F05A22;
 		fill: #F05A22;
 	}
 
-	&.active-menu-btn {
+	/*&.active-menu-btn {
 		//background-color: #5a3e5a;
 
-		&:hover {
+		&:not([disabled]):hover {
 			//background-color: #5a3e5a;
 		}
-	}
+	}*/
 
 	.dropdown-icon {
 		float: right;
@@ -1457,10 +1540,10 @@ const vToggleSettingsMenuDirective = {
 		box-sizing: border-box;
 	}
 
-	.settings-menu-collapse-button-holder {
+	.settings-menu-collapse-btn-holder {
 		position: absolute;
 		right: 3px;
-		top: 3px;
+		top: 9px;
 	}
 
 	.side-menu-group-btn-container {
@@ -1470,6 +1553,8 @@ const vToggleSettingsMenuDirective = {
 		.sms-btn-group-header {
 			margin-left: 20px;
 			margin-top: 15px;
+			font-weight: 600;
+			line-height: normal;
 		}
 
 		.sidemenu-btn {
@@ -1482,24 +1567,36 @@ const vToggleSettingsMenuDirective = {
 	}
 }
 
-.side-nav-btn {
+.sidenav-btn {
+	position: relative;
+	display: block;
 	width: 24px;
 	height: 24px;
 	background: #fff;
 	border-radius: 50%;
-	fill: #747474;
-	left: 20px;
+	fill: $gray;
+	left: 12px;
 	min-height: 24px;
 	min-width: 24px;
 
-	ng-md-icon {
-		position: relative;
-		top: 0;
-		left: -6px;
-	}
-
 	&.expand-sidenav-btn ng-md-icon {
 		left: -5px;
+	}
+}
+
+.panel-resizer-holder {
+	position: absolute;
+
+	div.icon {
+		color: $gray;
+	}
+}
+
+.sidenav-resizer-holder {
+	right: 0;
+
+	.expand-sidenav-btn {
+		display: none;
 	}
 }
 
@@ -1521,9 +1618,16 @@ const vToggleSettingsMenuDirective = {
 		width: $collapsedLeftSidenavWidth;
 	}
 
-	.side-nav-btn-resize-holder {
-		position: absolute;
-		right: -12px;
+	.sidenav-resizer-holder {
+		// position: absolute;
+		// right: -12px;
+		.to-small-btn {
+			display: none;
+		}
+
+		.expand-sidenav-btn {
+			display: block;
+		}
 	}
 
 	.side-menu-settings-container {
@@ -1562,6 +1666,11 @@ const vToggleSettingsMenuDirective = {
 	.portal-header md-toolbar.header {
 		padding-left: $collapsedLeftSidenavWidth;
 	}
+
+	.build-date {
+		display: none;
+	}
+
 }
 
 .separate-side-menu {
@@ -1577,21 +1686,14 @@ const vToggleSettingsMenuDirective = {
 	width: 200px;
 }
 
-.side-nav-btn-resize-holder {
+.build-date {
 	position: absolute;
-	right: 0;
-}
-
-.sidenav-logo-wrapper {
-	position: absolute;
-	left: 10px;
-	width: 140px;
-	overflow: hidden;
-}
-
-.sidenav-logo {
-	width: 140px;
-	margin: 0 auto;
+	bottom: 0px;
+	color: $gray;
+	z-index: 100;
+	font-size: 9px;
+	text-align: left;
+	margin: 6px;
 }
 
 .sidenav-error-subtitle {
