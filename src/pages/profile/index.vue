@@ -4,42 +4,21 @@
 			<Title>Profile</Title>
 			<Link type="image/x-icon" rel="icon" href="/v/img/favicon/favicon.ico" />
 		</Head>
-		<v-tabs v-model="tab" color="primary" class="bg-grey-lighten-5">
-			<v-tab
-				class="px-7"
-				v-for="(item, index) in tabs"
-				:key="index"
-				:value="item"
-			>
-				{{ item }}
-			</v-tab>
-		</v-tabs>
 
-		<v-divider></v-divider>
+		<FmTabs v-model="tab" :tabs="tabs" />
 
-		<v-window v-model="tab">
-			<v-window-item value="Workspaces">
-				<PagesProfileDatabases></PagesProfileDatabases>
-			</v-window-item>
-
-			<v-window-item value="Backups">
-				<PagesProfileBackups></PagesProfileBackups>
-			</v-window-item>
-			<v-window-item value="Billing">
-				<PagesProfileBilling></PagesProfileBilling>
-			</v-window-item>
-			<v-window-item value="Settings">
-				<PagesProfileSettings></PagesProfileSettings>
-			</v-window-item>
-			<v-window-item value="Api">
-				<PagesProfileApi></PagesProfileApi>
-			</v-window-item>
-		</v-window>
+		<PagesProfileDatabases v-if="tab == 'Workspaces'" />
+		<PagesProfileBackups v-if="tab == 'Backups'" />
+		<PagesProfileBilling v-if="tab == 'Billing'" />
+		<PagesProfileSettings v-if="tab == 'Settings'" />
+		<PagesProfileApi v-if="tab == 'Api'" />
 	</div>
 </template>
 
 <script setup>
+
 	definePageMeta({
+		layout: 'profile',
 		bread: [
 			{
 				text: 'Profile',
@@ -48,21 +27,9 @@
 			}
 		],
 	});
-	useState('isOpenSidbar').value = false
 
-	let tabs = ref(["Workspaces", "Backups", "Billing", "Settings", "Api"])
-	let tab = ref(null)
+	const tabs = ["Workspaces", "Backups", "Billing", "Settings", "Api"]
+	let tab = ref("Workspaces")
 	let error = ref(null)
 
-
-
 </script>
-
-<style lang="scss" scoped>
-.databases {
-	display: grid;
-	grid-template-columns: repeat(3, auto);
-	grid-gap: 30px;
-	justify-content: flex-start;
-}
-</style>

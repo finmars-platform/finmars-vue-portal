@@ -1,10 +1,22 @@
 body {
 	font: 400 16px/1.2 $font-family, sans-serif;
 	color: $text;
+	overflow: initial;
 }
-
+html {
+	overflow: initial !important;
+}
 button {
 	white-space: nowrap;
+}
+p {
+	line-height: 1.35;
+}
+a {
+	color: $text;
+}
+input[type=file] {
+	display: none;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -19,6 +31,4 @@ button {
 	height: 8px;
 	width: 10px;
 }
-p {
-	line-height: 1.35;
-}
+

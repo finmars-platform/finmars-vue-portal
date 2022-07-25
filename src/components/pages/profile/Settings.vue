@@ -1,122 +1,93 @@
 <template>
-	<div>
-		<v-container fluid class="databases bg-grey-lighten-5 pa-7">
-			<v-card width="360" class="d-flex flex-column">
-				<v-card-title>Personal data</v-card-title>
+	<div class="fm_container databases">
+		<FmCard class="settings_block" title="Personal data">
+			<BaseInput
+				label="First name"
+				v-model="formUser.first_name"
+			/>
+			<BaseInput
+				label="Last name"
+				v-model="formUser.last_name"
+			/>
+			<BaseInput
+				label="E-mail"
+				v-model="formUser.email"
+			/>
+			<BaseCheckbox
+				:label="'Autosave mode'"
+				v-model="formUser.data.autosave_layouts"
+			/>
 
-				<v-card-text>
-					<v-form ref="form">
-						<BaseInput
-							label="First name"
-							v-model="formUser.first_name"
-						/>
-						<BaseInput
-							label="Last name"
-							v-model="formUser.last_name"
-						/>
-						<BaseInput
-							label="E-mail"
-							v-model="formUser.email"
-						/>
-						<!-- <v-select
-							label="Language"
-							variant="outlined"
-							density="comfortable"
-						/>
-						<v-select
-							label="Time zone"
-							variant="outlined"
-							density="comfortable"
-						/> -->
+			<v-card-actions class="justify-end d-flex px-4">
+				<FmBtn variant="elevated" @click="saveUser()">save</FmBtn>
+			</v-card-actions>
+		</FmCard>
 
-						<BaseCheckbox
-							:label="'Autosave mode'"
-							v-model="formUser.data.autosave_layouts"
-						/>
-					</v-form>
-				</v-card-text>
+		<FmCard class="settings_block" title="Password">
+			<BaseInput
+				label="Old password"
+				v-model="formUser.password"
+				:type="showPass ? 'text' : 'password'"
+			>
+				<template #button>
+					<FmIcon
+						:icon="showPass ? 'visibility' : 'visibility_off'"
+						@click="showPass = !showPass"
+					/>
+				</template>
+			</BaseInput>
+			<BaseInput
+				label="New password"
+				v-model="formUser.new_password"
+				:type="showPass ? 'text' : 'password'"
+			>
+				<template #button>
+					<FmIcon
+						:icon="showPass ? 'visibility' : 'visibility_off'"
+						@click="showPass = !showPass"
+					/>
+				</template>
+			</BaseInput>
+			<BaseInput
+				label="New password (confirm)"
+				v-model="formUser.new_password_check"
+				:type="showPass ? 'text' : 'password'"
+			>
+				<template #button>
+					<FmIcon
+						:icon="showPass ? 'visibility' : 'visibility_off'"
+						@click="showPass = !showPass"
+					/>
+				</template>
+			</BaseInput>
 
-				<v-card-actions class="justify-end d-flex px-4">
-					<v-btn variant="elevated" color="primary" @click="saveUser()">save</v-btn>
-				</v-card-actions>
-			</v-card>
+			<v-card-actions class="justify-end d-flex pa-4">
+				<v-btn variant="elevated" color="primary" @click="savePass()">save</v-btn>
+			</v-card-actions>
+		</FmCard>
 
-			<v-card width="360" class="d-flex flex-column">
-				<v-card-title>Password</v-card-title>
+		<FmCard class="settings_block" title="Two-factor authentication">
+			<div v-if="!formUser.two_factor_verification">
+				No connected devices
+			</div>
 
-				<v-card-text>
-					<v-form>
-						<BaseInput
-							label="Old password"
-							v-model="formUser.password"
-							:type="showPass ? 'text' : 'password'"
-						>
-							<template #button>
-								<BaseIcon
-									:icon="showPass ? 'visibility' : 'visibility_off'"
-									@click="showPass = !showPass"
-								/>
-							</template>
-						</BaseInput>
-						<BaseInput
-							label="New password"
-							v-model="formUser.new_password"
-							:type="showPass ? 'text' : 'password'"
-						>
-							<template #button>
-								<BaseIcon
-									:icon="showPass ? 'visibility' : 'visibility_off'"
-									@click="showPass = !showPass"
-								/>
-							</template>
-						</BaseInput>
-						<BaseInput
-							label="New password (confirm)"
-							v-model="formUser.new_password_check"
-							:type="showPass ? 'text' : 'password'"
-						>
-							<template #button>
-								<BaseIcon
-									:icon="showPass ? 'visibility' : 'visibility_off'"
-									@click="showPass = !showPass"
-								/>
-							</template>
-						</BaseInput>
-					</v-form>
-				</v-card-text>
+			<div v-else>
+				Device connected
+			</div>
 
-				<v-card-actions class="justify-end d-flex pa-4">
-					<v-btn variant="elevated" color="primary" @click="savePass()">save</v-btn>
-				</v-card-actions>
-			</v-card>
+			<v-btn variant="elevated" color="primary" v-if="!formUser.two_factor_verification">
+				Add device
+				<PagesProfileTwoFAModal
+					@close="enableTwoFA($event)"
+					v-model="dialog"
+					activator="parent"
+				/>
+			</v-btn>
 
-			<v-card width="360" class="d-flex flex-column">
-				<v-card-title>Two-factor authentication</v-card-title>
-
-				<v-card-text v-if="!formUser.two_factor_verification">
-					No connected devices
-				</v-card-text>
-
-				<v-card-text v-else>
-					Device connected
-				</v-card-text>
-
-				<v-card-actions class="justify-end d-flex pa-4">
-					<v-btn variant="elevated" color="primary" v-if="!formUser.two_factor_verification">
-						Add device
-						<PagesProfileTwoFAModal
-							@close="enableTwoFA($event)"
-							v-model="dialog"
-							activator="parent"
-						/>
-					</v-btn>
-
-					<v-btn variant="elevated" color="primary" v-else @click="dasableTwoFA()">
-						Remove device
-					</v-btn>
-				</v-card-actions>
-			</v-card>
-		</v-container>
+			<v-btn variant="elevated" color="primary" v-else @click="dasableTwoFA()">
+				Remove device
+			</v-btn>
+		</FmCard>
 	</div>
 </template>
 
@@ -191,5 +162,8 @@
 	grid-template-columns: repeat(3, auto);
 	grid-gap: 30px;
 	justify-content: flex-start;
+}
+.settings_block {
+	width: 360px;
 }
 </style>

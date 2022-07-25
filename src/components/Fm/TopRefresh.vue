@@ -1,39 +1,20 @@
 <template>
-	<div>
-		<v-container class="justify-space-between d-flex py-3" fluid>
-			<v-btn
-				class="add"
-				color="primary"
-				icon="mdi-plus"
-				size="small"
-				to="/settings/permissions/members/add"
-			/>
+	<div class="fm_container flex sb aic">
+		<slot name="action">
 
-			<v-text-field
-				class="py-0"
-				label="Search"
-				placeholder="Search"
-				variant="plain"
-				prepend-icon="mdi-magnify"
-				hide-details="auto"
-				density="compact"
-			/>
+		</slot>
 
-			<v-spacer></v-spacer>
-
-			<v-btn color="#737373"
-				size="small"
-				height="auto"
-				variant="text"
-				stacked
-				class="text-capitalize"
-				@click="refresh()"
-			>
-				<v-icon start size="24" icon="mdi-refresh"></v-icon>
-				refresh
-			</v-btn>
-		</v-container>
-		<v-divider></v-divider>
+		<v-btn color="#737373"
+			size="small"
+			height="auto"
+			variant="text"
+			stacked
+			class="text-capitalize"
+			@click="$emit('refresh')"
+		>
+			<v-icon start size="24" icon="mdi-refresh"></v-icon>
+			refresh
+		</v-btn>
 	</div>
 </template>
 
@@ -47,7 +28,12 @@
 	])
 </script>
 <style lang="scss" scoped>
-
+	.fm_container {
+		background: $separ;
+		padding-top: 0;
+		height: 60px;
+		border-bottom: 1px solid $border;
+	}
 	.add {
 		margin-right: 15px;
 	}

@@ -7,12 +7,15 @@ $white: #fff;
 $black: #000;
 
 $primary: $orange;
+$primary-darken: #e2521c;
+$primary-lighten: #f69470;
+$primary-lighten-2: #f9f4f1;
 
 $border: #E0E0E0;
 $border-active: #333;
 $border-darken: #B3B3B3;
 
-$main: #f2f1f1;
+$main: #fafafa;
 $main-darken: #f2f1f1;
 $separ: $white;
 
@@ -20,6 +23,8 @@ $text: #333;
 $text-hover: #7e7e7e;
 
 $text-lighten: #747474;
+
+$content-padding-x: 30px;
 
 // legacy
 

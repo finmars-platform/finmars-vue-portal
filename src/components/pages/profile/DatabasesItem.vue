@@ -1,71 +1,52 @@
 <template>
-	<v-card width="360" class="d-flex flex-column">
-		<v-card-title>
-			<v-hover v-if="!isEditTitle" v-slot="{ isHovering, props }">
-				<div v-bind="props" >
-					{{ db.name }}
-					<v-btn
-						:class="{ 'hide': !isHovering }"
-						variant="plain"
-						icon="mdi-pencil"
-						color="primary"
-						size="small"
-						@click="editTitle(db.name)"
-					/>
-				</div>
-			</v-hover>
-
-			<v-text-field
-				class="py-0"
-				v-if="isEditTitle"
-				autofocus
-				density="compact"
-				variant="plain"
-				v-model="editingData.name"
-				hide-details="auto"
+	<FmCard class="d-flex flex-column">
+		<div class="fm_card_title edit_hover">
+			<span
+				:contenteditable="isEditTitle"
+				@input="editingData.name = $event.target.innerText"
+				ref="title"
+			>
+				{{ isEditTitle ? editingData.name : db.name }}
+			</span>
+			<FmIcon
+				class="edit_icon"
+				icon="edit"
+				@click="edit('title')"
 			/>
-		</v-card-title>
+		</div>
 
-		<v-card-subtitle v-if="db.is_initialized">Expire ({{ db.license_expiry_date }})</v-card-subtitle>
-		<v-card-subtitle v-else>Database is initializing</v-card-subtitle>
+		<div class="fm_card_subtitle">
+			{{ db.is_initialized ? `Expire (${ db.license_expiry_date })` : 'Database is initializing'}}
+		</div>
 
-		<v-card-text style="word-wrap: break-word;">
-			<v-hover v-if="!isEditDesc" v-slot="{ isHovering, props }">
-				<div v-bind="props" >
-					{{ db.description }}
+		<div class="fm_card_content edit_hover">
+			<span
+				:contenteditable="isEditDesc"
+				@input="editingData.description = $event.target.innerText"
+				ref="description"
+			>
+				{{ isEditDesc ? editingData.description : db.description }}
+			</span>
 
-					<v-btn
-						v-if="db.description"
-						:class="{ 'hide': !isHovering }"
-						variant="plain"
-						icon="mdi-pencil"
-						color="primary"
-						size="small"
-						@click="editDesc()"
-					/>
-					<v-btn
-						class="text-capitalize px-0"
-						variant="plain"
-						density="compact"
-						color="primary"
-						@click="editDesc()"
-						v-else
-						>Add Description</v-btn
-					>
-				</div>
-			</v-hover>
+			<FmIcon
+				v-if="db.description"
+				class="edit_icon"
+				icon="edit"
+				@click="edit()"
+			/>
+			<FmBtn
+				v-else
+				class="text-capitalize"
+				type="text"
+				@click="edit()"
+			>
+				Add Description
+			</FmBtn>
+		</div>
 
-			<textarea style="width: 100%;padding-top: 10px;"
-				v-if="isEditDesc"
-				placeholder="Add description"
-				:rows="editingData.description.split('\n').length"
-				v-model="editingData.description"
-			></textarea>
-		</v-card-text>
+		<div>Role: {{ db.is_owner ? "owner" : "admin" }}</div>
 
-		<v-card-text>Role: {{ db.is_owner ? "owner" : "admin" }}</v-card-text>
-
-		<v-card-actions v-if="!isEdit && db.is_initialized" class="justify-space-between d-flex pa-4 py-2">
+		<div v-if="!isEdit && db.is_initialized" class="justify-space-between d-flex pa-4 py-2">
 			<v-btn id="parent" icon="mdi-lock" color="primary" @click="showActions = true" v-show="!showActions">
 				<v-tooltip
 					activator="#parent"
@@ -79,28 +60,37 @@
 			</div>
 
 			<v-btn v-if="!isEdit" variant="elevated" color="primary" @click="open()">open</v-btn>
-		</v-card-actions>
+		</div>
 
 		<v-card-actions v-if="isEdit" class="justify-space-between d-flex pa-4">
 			<v-btn color="primary" @click="cancelEdit()">cancel</v-btn>
 
 			<v-btn variant="elevated" color="primary" @click="save()">save</v-btn>
 		</v-card-actions>
-	</v-card>
+	</FmCard>
 </template>
 
 <script setup>
-	const config = useRuntimeConfig();
-	const emit = defineEmits(["refresh", 'delete']);
-	const props = defineProps({
-		db: Object,
-	});
 
-	let editingData = reactive({});
+	const props = defineProps({
+		db: Object
+	});
+	const emit = defineEmits(["refresh", 'delete']);
+	const config = useRuntimeConfig();
 
 	let isEditDesc = ref(false);
 	let isEditTitle = ref(false);
 	let isEdit = ref(false);
+
+	let title = ref(null);
+	let description = ref(null);
+
+	let editingData = reactive({
+		description: '',
+		name: '',
+		id: ''
+	});
+	setEditObject()
 
 	let showActions = ref(false)
 
@@ -109,22 +99,21 @@
 		editingData.name = props.db.name;
 		editingData.id = props.db.id;
 	}
-	function editDesc() {
-		isEditDesc.value = true;
+	function edit( prop ) {
+		if ( prop == 'title' ) isEditTitle.value = true;
+		else isEditDesc.value = true;
+
 		isEdit.value = true;
 
-		setEditObject();
-	}
-	function editTitle() {
-		isEditTitle.value = true;
-		isEdit.value = true;
-
-		setEditObject();
+		setTimeout(() => {
+			title.value.focus()
+		}, 0)
 	}
 	function cancelEdit() {
 		isEditTitle.value = false;
 		isEditDesc.value = false;
 		isEdit.value = false;
+		props.db.name = props.db.name
 	}
 	async function exportDb() {
 		let res = await useApi("masterExport.get", {
@@ -161,10 +150,18 @@
 </script>
 
 <style lang="scss" scoped>
-.databases {
-	display: grid;
-	grid-template-columns: repeat(3, auto);
-	grid-gap: 30px;
-	justify-content: flex-start;
+.edit_icon {
+	display: inline-block;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.3s;
+	padding: 5px;
+}
+.fm_card_content {
+	word-wrap: break-word;
+}
+.edit_hover:hover .edit_icon {
+	visibility: visible;
+	opacity: 1;
 }
 </style>
