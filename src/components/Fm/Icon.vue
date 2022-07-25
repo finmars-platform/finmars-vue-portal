@@ -31,6 +31,10 @@
 				visibility: visible;
 			}
 		}
+
+		&.gray-icon {
+			color: $grayIcon;
+		}
 	}
 	.material-icons {
 		font-size: inherit;
