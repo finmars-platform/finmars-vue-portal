@@ -1,6 +1,11 @@
 <template>
-	<div class="base-input" tab="-1">
-		<div class="bi_label" :class="{filling: modelValue}" v-if="label">{{ label }}</div>
+	<label class="base-input" tabindex="-1">
+		<div class="bi_label"
+			v-if="label"
+			:class="{filling: modelValue}"
+		>
+			{{ label }}
+		</div>
 
 		<div class="bi_wrap">
 			<div class="bi_button"><slot name="button"></slot></div>
@@ -18,21 +23,23 @@
 
 			<div class="bi_side_items flex">
 				<slot name="sedeItems">
-					<!-- <div class="bi_side_item">
-						<BaseIcon icon="edit" />
-					</div> -->
+
 				</slot>
 				<div class="bi_side_item" v-if="tooltip">
-					<BaseIcon icon="info" />
+					<FmIcon :tooltip="tooltip" icon="info" />
 				</div>
 			</div>
+
+			<div class="right_btn">
+				<slot name="rightBtn"></slot>
+			</div>
 		</div>
-	</div>
+	</label>
 </template>
 
 <script setup>
 	let props = defineProps({
-		modelValue: String,
+		modelValue: [String, Number],
 		type: String,
 		label: String,
 		tooltip: String,
@@ -43,16 +50,17 @@
 <style lang="scss" scoped>
 	.base-input {
 		position: relative;
+		display: block;
 		height: 42px;
-		border: 1px solid $border;
+		border: 1px solid $border-darken;
 		border-radius: 4px;
-		margin-bottom: 30px;
+		margin-bottom: 25px;
 		transition: border 0.3s;
 
-		&:focus-within {
+		&:focus-within, &:focus {
 			border: 1px solid $border-active;
 			.bi_label {
-				top: -11px;
+				top: -8px;
 				font-size: 12px;
 				visibility: visible;
 				opacity: 1;
@@ -81,7 +89,7 @@
 			content: '';
 			display: block;
 			position: absolute;
-			top: 10px;
+			top: 7px;
 			left: 0;
 			background: $separ;
 			height: 1px;
@@ -89,7 +97,7 @@
 			z-index: -1;
 		}
 		&.filling {
-			top: -11px;
+			top: -8px;
 			font-size: 12px;
 			visibility: visible;
 			opacity: 1;
@@ -123,6 +131,10 @@
 		&:empty {
 			margin-left: 0;
 		}
+	}
+	.right_btn {
+		margin-right: 10px;
+		color: $text-lighten;
 	}
 	.bi_side_item {
 		color: $text-lighten;

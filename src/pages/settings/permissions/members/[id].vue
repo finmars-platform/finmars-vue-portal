@@ -1,5 +1,5 @@
 <template>
-	<FmSettingsLayout
+	<CommonSettingsLayout
 		v-if="member.id"
 		title="Update member"
 		:saveFunc="save"
@@ -57,7 +57,7 @@
 				</v-card-content>
 			</v-card>
 		</template>
-	</FmSettingsLayout>
+	</CommonSettingsLayout>
 </template>
 
 <script setup>

@@ -121,7 +121,7 @@
 		<template #controls>
 			<v-card-actions class="actions justify-end">
 				<v-btn @click="close()">cancel</v-btn>
-				<v-btn variant="contained" color="primary" @click="save()">save</v-btn>
+				<v-btn variant="elevated" color="primary" @click="save()">save</v-btn>
 			</v-card-actions>
 		</template>
 	</BaseModal>

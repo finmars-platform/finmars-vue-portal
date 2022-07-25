@@ -3,7 +3,7 @@
 		:label="label"
 	>
 		<template #button>
-			<BaseIcon
+			<FmIcon
 				icon="edit"
 			/>
 		</template>

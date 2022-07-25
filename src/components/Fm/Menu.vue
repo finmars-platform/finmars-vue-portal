@@ -1,7 +1,7 @@
 <template>
 	<div class="fm_menu" v-click-outside="() => isOpen = false">
 		<div @click="toggle()" ref="activator">
-			<slot name="btn"></slot>
+			<slot name="btn" :isOpen="isOpen"></slot>
 		</div>
 
 		<div
@@ -9,7 +9,7 @@
 			:class="{active: isOpen}"
 			ref="popup"
 		>
-			<slot></slot>
+			<slot :close="() => isOpen = false"></slot>
 		</div>
 	</div>
 </template>
@@ -27,16 +27,29 @@
 	let popup = ref(null) // DOM element
 	let activator = ref(null) // DOM element
 
+	let clientWidth = window.innerWidth
+
 	onMounted(() => {
-		let activatorRect = activator.value.getBoundingClientRect()
-		let popupRect = popup.value.getBoundingClientRect()
+		setTimeout(() => {
+			let activatorRect = activator.value.getBoundingClientRect()
+			let popupRect = popup.value.getBoundingClientRect()
 
-		if ( props.anchor == 'bottom' ) {
+			// Hack чтобы посчитать реальную ширину
 			popup.value.style.position = 'absolute'
-			popup.value.style.top = `${activatorRect.height}px`
-			popup.value.style.width = `${popupRect.width}px`
-		}
+			popup.value.style.minWidth = `${popupRect.width}px`
+			popup.value.style.width = `100%`
 
+			// Y axios
+			if ( props.anchor == 'bottom' ) {
+				popup.value.style.top = `${activatorRect.height}px`
+			}
+
+			// X axios
+
+			if ( clientWidth - activatorRect.right <= popupRect.width ) {
+				popup.value.style.right = `0`
+			}
+		}, 20)
 	})
 	function toggle() {
 		isOpen.value = !isOpen.value
@@ -46,14 +59,14 @@
 <style lang="scss" scoped>
 	.fm_menu {
 		position: relative;
+		display: inline-block;
 	}
 	.fm_drop {
 		position: fixed;
 		display: inline-block;
-		min-width: 100px;
 		top: 33px;
 		z-index: 123;
-		box-shadow: 0px 3px 11px 3px #64646466;
+		box-shadow: 0 3px 11px 3px hsl(0deg 0% 60% / 40%);
 		visibility: hidden;
 		opacity: 0;
 

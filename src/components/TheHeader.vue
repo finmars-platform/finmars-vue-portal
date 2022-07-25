@@ -11,13 +11,9 @@
 		<v-btn v-if="store.current.name" color="#737373" icon="mdi-home" :href="config.public.oldAppURL" />
 
 		<template v-if="store.current.name">
-			<v-btn color="#737373" class="text-lowercase" id="menu-db">
-				{{ store.current.name }}
-			</v-btn>
-
 			<FmMenu>
-				<template #btn>
-					<v-btn color="#737373" class="text-lowercase" id="menu-db">
+				<template #btn="{ isOpen }">
+					<v-btn class="text-lowercase" :class="{active: isOpen}">
 						{{ store.current.name }}
 					</v-btn>
 				</template>
@@ -32,21 +28,6 @@
 					</v-list-item>
 				</v-list>
 			</FmMenu>
-
-			<v-menu
-				activator="#menu-db"
-				anchor="bottom"
-			>
-				<v-list>
-					<v-list-item
-						v-for="(item, index) in store.databases"
-						:key="index"
-						@click="setCurrent( item.id )"
-					>
-						{{ item.name }}
-					</v-list-item>
-				</v-list>
-			</v-menu>
 		</template>
 
 		<v-btn color="#737373" class="text-lowercase" id="menu-btn">

@@ -4,7 +4,7 @@
 			:checked="modelValue"
     	@change="emit('update:modelValue', !modelValue)"
 		/>
-		<span class="check"><BaseIcon class="mark" icon="check" /></span>
+		<span class="check"><FmIcon class="mark" icon="check" /></span>
 
 		<div v-if="label">{{ label }}</div>
 	</label>
