@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="fm_container">
 
 		<div class="flex aic">
 			<h3 class="text-h4">Active Tokens</h3>

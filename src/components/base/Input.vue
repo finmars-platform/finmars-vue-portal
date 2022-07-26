@@ -71,6 +71,9 @@
 				opacity: 1;
 			}
 		}
+		&.bi_no_borders {
+			margin-bottom: 0;
+		}
 
 		&:hover {
 			.bi_side_items {
