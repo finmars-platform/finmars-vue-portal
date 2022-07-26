@@ -30,9 +30,7 @@
 <style lang="scss" scoped>
 	.fm_container {
 		background: $separ;
-		// padding-top: 0;
-		padding: 16px;
-		// height: 60px;
+		padding-top: 0;
 		height: 65px;
 		border-bottom: 1px solid $border;
 		box-sizing: border-box;

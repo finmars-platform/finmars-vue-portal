@@ -33,7 +33,6 @@
 		>
 			<template v-if="invites">
 				<PagesProfileInviteItem
-					width="360"
 					v-for="invite in invites.results"
 					:invite="invite"
 					:key="invite.id"
@@ -42,7 +41,6 @@
 			</template>
 
 			<PagesProfileDatabasesItem
-				width="360"
 				v-for="db in store.databases"
 				:db="db"
 				:key="db.id"
@@ -75,8 +73,9 @@
 <style lang="scss" scoped>
 .databases {
 	display: grid;
-	grid-template-columns: repeat(3, auto);
+	grid-template-columns: repeat(3, 360px);
 	grid-gap: 30px;
 	justify-content: flex-start;
+	padding-bottom: $content-padding-x;
 }
 </style>
