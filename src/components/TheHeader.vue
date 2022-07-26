@@ -1,13 +1,14 @@
 <template>
 	<header>
-		<v-breadcrumbs class="pa-0" :items="$route.meta.bread" active-color="#000">
+		<!-- <v-breadcrumbs class="pa-0" :items="$route.meta.bread" active-color="#000">
       <template v-slot:divider>
         <v-icon size="20" color="#737373" icon="mdi-arrow-right"></v-icon>
       </template>
-    </v-breadcrumbs>
+    </v-breadcrumbs> -->
+		<div></div>
 
 		<div class="flex aic">
-			<FmIcon v-if="store.current.name" icon="home" :href="config.public.oldAppURL" />
+			<FmIcon btn v-if="store.current.name" icon="home" :href="config.public.oldAppURL" />
 
 			<template v-if="store.current.name">
 				<FmMenu>
@@ -18,33 +19,32 @@
 					</template>
 
 					<div class="fm_list">
-						<v-list-item class="fm_list_item"
+						<div class="fm_list_item"
 							v-for="(item, index) in store.databases"
 							:key="index"
 							@click="setCurrent( item.id )"
 						>
 							{{ item.name }}
-						</v-list-item>
+						</div>
 					</div>
 				</FmMenu>
 			</template>
 
 			<FmMenu>
 				<template #btn="{ isOpen }">
-					<FmBtn type="text" :class="['text-lowercase', {active: isOpen}]">
-						<FmIcon size="24" icon="account_box" />
+					<FmBtn type="text" :class="['text-lowercase', {active: isOpen}]" icon="account_box">
 						{{ store.user.username }}
 					</FmBtn>
 				</template>
 
 				<div class="fm_list">
-					<v-list-item class="fm_list_item"
+					<div class="fm_list_item"
 						v-for="(item, index) in menu"
 						:key="index"
 						@click="item.cb()"
 					>
 						{{ item.name }}
-					</v-list-item>
+					</div>
 				</div>
 			</FmMenu>
 		</div>

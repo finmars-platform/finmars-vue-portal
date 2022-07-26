@@ -1,6 +1,6 @@
 <template>
-	<div :class="['icon', {primary}] ">
-		<div :class="`material-icons`">{{ icon }}</div>
+	<div :class="['icon', {primary, btn, 'btn-primary': btnPrimary}] ">
+		<div class="material-icons">{{ icon }}</div>
 
 		<div class="tooltip" v-if="tooltip">{{ tooltip }}</div>
 	</div>
@@ -10,7 +10,9 @@
 	let props = defineProps({
 		icon: String,
 		tooltip: String,
-		primary: Boolean
+		primary: Boolean,
+		btn: Boolean,
+		btnPrimary: Boolean
 	})
 </script>
 
@@ -19,9 +21,10 @@
 		position: relative;
 		display: block;
 		cursor: pointer;
-		transition: color 0.3s;
+		transition: color, background  0.3s;
 		font-size: 24px;
 		line-height: 0;
+		color: $text-lighten;
 
 		&:hover {
 			color: $text-hover;
@@ -35,11 +38,36 @@
 		&.gray-icon {
 			color: $grayIcon;
 		}
+		&.btn-primary {
+			background: $primary;
+			color: $white;
+			padding: 7px;
+			border-radius: 50%;
+
+			&:hover {
+				background: $primary-lighten;
+			}
+		}
 		&.primary {
 			color: $primary;
 
 			&:hover {
 				color: $primary-lighten;
+			}
+		}
+		&.primary {
+			color: $primary;
+
+			&:hover {
+				color: $primary-lighten;
+			}
+		}
+		&.btn {
+			padding: 7px;
+			border-radius: 50%;
+
+			&:hover {
+				background: $main-darken-hover;
 			}
 		}
 	}

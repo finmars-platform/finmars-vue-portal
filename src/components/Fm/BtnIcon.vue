@@ -1,6 +1,6 @@
 <template>
 	<button
-		:class="['fm_btn', { icon }, type]"
+		:class="['fm_btn', {icon: icon}, type]"
 		:disabled="loading"
 	>
 		<div v-if="icon" :class="`icon material-icons`">{{ icon }}</div>
@@ -77,12 +77,16 @@
 		}
 	}
 	.fm_btn.icon {
+		$size: 40px;
+		width: $size;
+		min-width: $size;
+		border-radius: 50%;
+		height: $size;
+		line-height: $size;
+		padding: 0;
+		padding-left: 1px;
 		display: flex;
 		align-items: center;
-
-		.icon {
-			margin-right: 7px;
-			color: $text-lighten;
-		}
+		justify-content: center;
 	}
 </style>
