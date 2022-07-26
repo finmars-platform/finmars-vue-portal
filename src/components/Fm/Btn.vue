@@ -36,6 +36,9 @@
 		letter-spacing: 0.4px;
 		transition: background 0.3s;
 
+		&.basic {
+			color: $primary;
+		}
 		&.primary {
 			background: $primary;
 			color: $separ;

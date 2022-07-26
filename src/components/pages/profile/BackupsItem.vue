@@ -30,12 +30,17 @@
 					activator="parent"
 				/>
 			</v-btn>-->
-			<FmBtn color="primary-text">
+			<FmBtn type="basic" @click="isShowRestore = true">
 				RESTORE
-				<PagesProfileRestoreFromBackup
+<!--				<PagesProfileRestoreFromBackup
 					@close="isShowRestore = false, emit('refresh')"
 					v-model="isShowRestore"
 					activator="parent"
+				/>-->
+				<PagesProfileRestoreFromBackup
+					@close="isShowRestore = false"
+					@save="emit('refresh')"
+					v-model="isShowRestore"
 				/>
 			</FmBtn>
 		</v-card-actions>
