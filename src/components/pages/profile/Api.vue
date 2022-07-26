@@ -1,86 +1,81 @@
 <template>
 	<div>
-		<v-container class="" fluid>
-			<div class="flex aic">
-				<h3 class="text-h4">Active Tokens</h3>
 
-				<v-btn class="ml-6">Logout from all devices</v-btn>
-			</div>
+		<div class="flex aic">
+			<h3 class="text-h4">Active Tokens</h3>
 
-			<ul class="token_item" v-for="(token, index) in tokenInfo" :key="index">
-				<li class="token_item_line" v-if="token.current_master_user_object">
-					<b class="token_item_title">Workspace:</b>
-					{{ token.current_master_user_object.name }}
-					<div
-						class="current_token"
-						v-if="
-							token.current_master_user_object &&
-							store.current.base_api_url ==
-								token.current_master_user_object.base_api_url
-						"
-					>
-						Current
-					</div>
-				</li>
-				<li class="token_item_line">
-					<b class="token_item_title">Access Expire at:</b>
-					{{ fromatDate(token.access_token_expires_at) }}
-				</li>
-				<li class="token_item_line">
-					<b class="token_item_title">Refresh Expire at:</b>
-					{{ fromatDate(token.refresh_token_expires_at) }}
-				</li>
-				<li class="token_item_line">
-					<b class="token_item_title">Created:</b>
-					{{ fromatDate(token.created) }}
-				</li>
-				<li
-					class="flex token_item_line"
-					v-if="token.current_master_user_object"
+			<FmBtn type="text" class="m-l-8">Logout from all devices</FmBtn>
+		</div>
+
+		<ul class="token_item" v-for="(token, index) in tokenInfo" :key="index">
+			<li class="token_item_line" v-if="token.current_master_user_object">
+				<b class="token_item_title">Workspace:</b>
+				{{ token.current_master_user_object.name }}
+				<div
+					class="current_token"
+					v-if="
+						token.current_master_user_object &&
+						store.current.base_api_url ==
+							token.current_master_user_object.base_api_url
+					"
 				>
-					<b class="token_item_title">API URL: </b>
-					<NuxtLink
-						:to="`${config.public.apiURL}/${token.current_master_user_object.base_api_url}/api/v1`"
-					>
-						{{
-							`${config.public.apiURL}/${token.current_master_user_object.base_api_url}/api/v1`
-						}}
-					</NuxtLink>
-				</li>
-				<li class="token_item_line" v-show="tokenShows[index]">
-					<b class="token_item_title">Access Token: </b>
-					<div style="max-width: 600px;">{{ token.keycloak_access_token }}</div>
+					Current
+				</div>
+			</li>
+			<li class="token_item_line">
+				<b class="token_item_title">Access Expire at:</b>
+				{{ fromatDate(token.access_token_expires_at) }}
+			</li>
+			<li class="token_item_line">
+				<b class="token_item_title">Refresh Expire at:</b>
+				{{ fromatDate(token.refresh_token_expires_at) }}
+			</li>
+			<li class="token_item_line">
+				<b class="token_item_title">Created:</b>
+				{{ fromatDate(token.created) }}
+			</li>
+			<li
+				class="flex token_item_line"
+				v-if="token.current_master_user_object"
+			>
+				<b class="token_item_title">API URL: </b>
+				<NuxtLink
+					:to="`${config.public.apiURL}/${token.current_master_user_object.base_api_url}/api/v1`"
+				>
+					{{
+						`${config.public.apiURL}/${token.current_master_user_object.base_api_url}/api/v1`
+					}}
+				</NuxtLink>
+			</li>
+			<li class="token_item_line" v-show="tokenShows[index]">
+				<b class="token_item_title">Access Token: </b>
+				<div style="max-width: 600px;">{{ token.keycloak_access_token }}</div>
 
-				</li>
-				<li class="token_item_line" v-show="tokenShows[index]">
-					<b class="token_item_title">Refresh Token: </b>
-					<div style="max-width: 600px;">{{ token.keycloak_refresh_token }}</div>
+			</li>
+			<li class="token_item_line" v-show="tokenShows[index]">
+				<b class="token_item_title">Refresh Token: </b>
+				<div style="max-width: 600px;">{{ token.keycloak_refresh_token }}</div>
 
-				</li>
-				<li class="token_item_line">
-					<v-btn
-						color="primary"
-						variant="text"
-						@click="tokenShows[index] = !tokenShows[index]"
-					>
-						{{ tokenShows[index] ? 'Hide' : 'Show'}} tokens
-					</v-btn>
-					<v-btn class="mr-4" color="primary"
-						v-if="
-							token.current_master_user_object &&
-							store.current.base_api_url ==
-								token.current_master_user_object.base_api_url
-						"
-					>
-						Refresh token
-					</v-btn>
-					<v-btn class="mr-4" color="red"
-					>
-						Delete token
-					</v-btn>
-				</li>
-			</ul>
-		</v-container>
+			</li>
+			<li class="token_item_line">
+				<FmBtn @click="tokenShows[index] = !tokenShows[index]"
+							 class="m-r-4">
+					{{ tokenShows[index] ? 'Hide' : 'Show'}} tokens
+				</FmBtn>
+
+				<FmBtn v-if="
+						token.current_master_user_object &&
+						store.current.base_api_url ==
+							token.current_master_user_object.base_api_url
+					"
+					class="m-r-4">
+					Refresh token
+				</FmBtn>
+
+				<FmBtn type="basic" class="m-r-4">Delete token</FmBtn>
+			</li>
+		</ul>
+
 	</div>
 </template>
 
