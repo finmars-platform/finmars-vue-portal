@@ -6,7 +6,7 @@
 			<template #action>
 				<FmMenu>
 					<template #btn>
-						<FmBtn icon="add" />
+						<FmIcon btnPrimary icon="add" />
 					</template>
 
 					<div class="fm_list">

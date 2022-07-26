@@ -4,17 +4,13 @@
 
 		</slot>
 
-		<v-btn color="#737373"
-			size="small"
-			height="auto"
-			variant="text"
-			stacked
-			class="text-capitalize"
+		<FmBtn class="text-capitalize"
+			icon="refresh"
+			type="text"
 			@click="$emit('refresh')"
 		>
-			<v-icon start size="24" icon="mdi-refresh"></v-icon>
 			refresh
-		</v-btn>
+		</FmBtn>
 	</div>
 </template>
 
@@ -31,6 +27,7 @@
 	.fm_container {
 		background: $separ;
 		padding-top: 0;
+		padding-bottom: 0;
 		height: 65px;
 		border-bottom: 1px solid $border;
 		box-sizing: border-box;

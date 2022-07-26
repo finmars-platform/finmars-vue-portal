@@ -19,7 +19,9 @@
 			/>
 
 			<template #controls>
-				<FmBtn @click="saveUser()">save</FmBtn>
+				<div class="flex jcfe">
+					<FmBtn @click="saveUser()">save</FmBtn>
+				</div>
 			</template>
 		</FmCard>
 
@@ -62,7 +64,9 @@
 			</BaseInput>
 
 			<template #controls>
-				<FmBtn @click="savePass()">save</FmBtn>
+				<div class="flex jcfe">
+					<FmBtn @click="savePass()">save</FmBtn>
+				</div>
 			</template>
 		</FmCard>
 
@@ -72,9 +76,11 @@
 			</div>
 
 			<template #controls>
-				<FmBtn @click="formUser.two_factor_verification ? dasableTwoFA() : dialog = true">
-					{{ formUser.two_factor_verification ? 'Remove device' : 'Add device'}}
-				</FmBtn>
+				<div class="flex jcfe">
+					<FmBtn @click="formUser.two_factor_verification ? dasableTwoFA() : dialog = true">
+						{{ formUser.two_factor_verification ? 'Remove device' : 'Add device'}}
+					</FmBtn>
+				</div>
 
 				<PagesProfileTwoFAModal
 					v-model="dialog"

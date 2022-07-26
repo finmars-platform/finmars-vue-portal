@@ -14,8 +14,12 @@
 		<template #controls>
 			<div class="flex-row fc-space-between">
 				<FmBtn type="basic" @click="close()">cancel</FmBtn>
-				<FmBtn :loading="processing"
-							 @click="createMasterUser()">create</FmBtn>
+				<FmBtn
+					:loading="processing"
+					@click="createMasterUser()"
+				>
+					create
+				</FmBtn>
 			</div>
 		</template>
 

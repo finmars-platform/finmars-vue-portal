@@ -1,50 +1,33 @@
 <template>
-	<v-card width="360">
-		<v-card-title>{{ backup.name }}</v-card-title>
-		<v-card-subtitle>File size: {{ backup.file_size }} MB</v-card-subtitle>
+	<FmCard :title="backup.name" controls>
+		<div class="fm_card_subtitle">File size: {{ backup.file_size }} MB</div>
 
-		<v-spacer></v-spacer>
-		<v-card-actions class="justify-space-between d-flex pa-4 py-2">
+		<template #controls>
+			<div class="flex sb aic">
+				<FmIcon v-if="!showActions" icon="lock" primary @click="showActions = true"></FmIcon>
 
-<!--			<v-btn v-if="!showActions" icon="mdi-lock" color="primary" @click="showActions = true"></v-btn>-->
+				<div v-if="showActions" class="flex-row">
+					<a target="download" class="mr-10"
+						:href="`${config.public.apiURL}/authorizer/master-user-backups/${backup.id}/view/`"
+					>
+						<FmIcon icon="cloud_download" primary class="" />
+					</a>
 
-			<FmIcon v-if="!showActions" icon="lock" class="orange-text" @click="showActions = true"></FmIcon>
+					<FmIcon icon="delete" primary @click="deleteBackup()" />
+				</div>
 
-			<div v-if="showActions" class="flex-row">
-<!--				<v-btn target="download" :href="`${config.public.apiURL}/authorizer/master-user-backups/${backup.id}/view/`" icon="mdi-cloud-download" color="primary"></v-btn>
-				<v-btn icon="mdi-delete" color="primary" class="ml-0" @click="deleteBackup()"></v-btn>-->
-				<a :href="`${config.public.apiURL}/authorizer/master-user-backups/${backup.id}/view/`" target="download">
-					<FmIcon icon="cloud_download" class="orange-text p-8"></FmIcon>
-				</a>
-
-				<FmIcon icon="delete"
-								class="orange-text m-l-0 p-8"
-								@click="deleteBackup()"></FmIcon>
+				<FmBtn type="basic" @click="isShowRestore = true">
+					RESTORE
+				</FmBtn>
 			</div>
+		</template>
 
-<!--			<v-btn color="primary">
-				restore
-				<PagesProfileRestoreFromBackup
-					@close="isShowRestore = false, emit('refresh')"
-					v-model="isShowRestore"
-					activator="parent"
-				/>
-			</v-btn>-->
-			<FmBtn type="basic" @click="isShowRestore = true">
-				RESTORE
-<!--				<PagesProfileRestoreFromBackup
-					@close="isShowRestore = false, emit('refresh')"
-					v-model="isShowRestore"
-					activator="parent"
-				/>-->
-				<PagesProfileRestoreFromBackup
-					@close="isShowRestore = false"
-					@save="emit('refresh')"
-					v-model="isShowRestore"
-				/>
-			</FmBtn>
-		</v-card-actions>
-	</v-card>
+		<PagesProfileRestoreFromBackup
+			@close="isShowRestore = false"
+			@save="emit('refresh')"
+			v-model="isShowRestore"
+		/>
+	</FmCard>
 </template>
 
 <script setup>
