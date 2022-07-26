@@ -1,8 +1,9 @@
 <template>
 	<div class="fm_container flex sb aic">
-		<slot name="action">
-
-		</slot>
+		<div class="flex aic">
+			<slot name="action" />
+			<slot />
+		</div>
 
 		<FmBtn class="text-capitalize"
 			icon="refresh"

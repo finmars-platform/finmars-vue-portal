@@ -7,7 +7,7 @@ export default async function (
 		{
 			params,  // Router params
 			body,    // Body for POST PUT PATCH
-			filters, // Query string
+			filters, // Query object
 			headers = {}
 		} = {}
 	) {
@@ -47,6 +47,15 @@ export default async function (
 	};
 
 	if (body) opts.body = body;
+	if (filters) {
+		let searchPaarams = []
+
+		for ( let prop in filters ) {
+			searchPaarams.push(`${prop}=${filters[prop]}`)
+		}
+
+		url += '?' + searchPaarams.join('&')
+	}
 	if (params) {
 		for (let param in params) {
 			url = url.replace(`{${param}}`, params[param]);
@@ -58,6 +67,7 @@ export default async function (
 
 	} catch(e) {
 		let [code, url] = e.message.split('  ')
+		console.log('e.message:', e.message)
 
 		let errors = {
 			401: 'Not authorized'

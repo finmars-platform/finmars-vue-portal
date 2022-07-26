@@ -40,7 +40,7 @@
 			color: $primary;
 
 			&:hover {
-				color: $primary-lighten;
+				background: $primary-lighten-2;
 			}
 		}
 		&.primary {
