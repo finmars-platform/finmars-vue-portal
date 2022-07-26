@@ -1,6 +1,6 @@
 <template>
-	<div class="icon">
-		<div :class="`material-icons${type ? '-' + type : ''}`">{{ icon }}</div>
+	<div :class="['icon', {primary}] ">
+		<div :class="`material-icons`">{{ icon }}</div>
 
 		<div class="tooltip" v-if="tooltip">{{ tooltip }}</div>
 	</div>
@@ -9,8 +9,8 @@
 <script setup>
 	let props = defineProps({
 		icon: String,
-		type: String,
 		tooltip: String,
+		primary: Boolean
 	})
 </script>
 
@@ -34,6 +34,13 @@
 
 		&.gray-icon {
 			color: $grayIcon;
+		}
+		&.primary {
+			color: $primary;
+
+			&:hover {
+				color: $primary-lighten;
+			}
 		}
 	}
 	.material-icons {
