@@ -1,6 +1,6 @@
 <template>
 	<div class="fm_container databases">
-		<FmCard class="settings_block" title="Personal data">
+		<FmCard class="settings_block" title="Personal data" controls>
 			<BaseInput
 				label="First name"
 				v-model="formUser.first_name"
@@ -18,12 +18,12 @@
 				v-model="formUser.data.autosave_layouts"
 			/>
 
-			<v-card-actions class="justify-end d-flex px-4">
-				<FmBtn variant="elevated" @click="saveUser()">save</FmBtn>
-			</v-card-actions>
+			<template #controls>
+				<FmBtn @click="saveUser()">save</FmBtn>
+			</template>
 		</FmCard>
 
-		<FmCard class="settings_block" title="Password">
+		<FmCard class="settings_block" title="Password" controls>
 			<BaseInput
 				label="Old password"
 				v-model="formUser.password"
@@ -61,32 +61,26 @@
 				</template>
 			</BaseInput>
 
-			<v-card-actions class="justify-end d-flex pa-4">
-				<v-btn variant="elevated" color="primary" @click="savePass()">save</v-btn>
-			</v-card-actions>
+			<template #controls>
+				<FmBtn @click="savePass()">save</FmBtn>
+			</template>
 		</FmCard>
 
 		<FmCard class="settings_block" title="Two-factor authentication">
-			<div v-if="!formUser.two_factor_verification">
-				No connected devices
+			<div>
+				{{ formUser.two_factor_verification ? 'Device connected'	: 'No connected devices' }}
 			</div>
 
-			<div v-else>
-				Device connected
-			</div>
+			<template #controls>
+				<FmBtn @click="formUser.two_factor_verification ? dasableTwoFA() : dialog = true">
+					{{ formUser.two_factor_verification ? 'Remove device' : 'Add device'}}
+				</FmBtn>
 
-			<v-btn variant="elevated" color="primary" v-if="!formUser.two_factor_verification">
-				Add device
 				<PagesProfileTwoFAModal
-					@close="enableTwoFA($event)"
 					v-model="dialog"
-					activator="parent"
+					@close="enableTwoFA($event)"
 				/>
-			</v-btn>
-
-			<v-btn variant="elevated" color="primary" v-else @click="dasableTwoFA()">
-				Remove device
-			</v-btn>
+			</template>
 		</FmCard>
 	</div>
 </template>

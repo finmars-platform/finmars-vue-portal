@@ -51,7 +51,10 @@
 			color: $text;
 
 			&:hover {
-				background: $main-darken;
+				background: $main-darken-hover;
+			}
+			&.active {
+				background: $main-darken-hover;
 			}
 		}
 		&.action {
