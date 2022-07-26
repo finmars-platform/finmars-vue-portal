@@ -33,8 +33,24 @@
 	font-size: 24px;
 	margin-bottom: 25px;
 }
-
+.fm_card_subtitle {
+	color: $text-lighten;
+	margin-top: -20px;
+	padding-bottom: 24px;
+}
+.fm_card_text {
+	color: $text-lighten;
+}
 
 .pb-80 {
 	padding-bottom: 80px;
+}
+.mb-x {
+	margin-bottom: $content-padding-x;
+}
+.mr-10 {
+	margin-right: 10px !important;
+}
+.pb-x {
+	padding-bottom: $content-padding-x;
 }

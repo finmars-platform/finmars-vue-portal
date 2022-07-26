@@ -8,7 +8,7 @@
 			>
 				{{ isEditTitle ? editingData.name : db.name }}
 			</span>
-			<FmIcon
+			<FmIcon primary
 				class="edit_icon"
 				icon="edit"
 				@click="edit('title')"
@@ -19,56 +19,52 @@
 			{{ db.is_initialized ? `Expire (${ db.license_expiry_date })` : 'Database is initializing'}}
 		</div>
 
-		<div class="fm_card_content edit_hover">
-			<span
-				:contenteditable="isEditDesc"
-				@input="editingData.description = $event.target.innerText"
-				ref="description"
-			>
+		<div class="fm_card_content fm_card_text mb-x edit_hover">
+			<template v-if="!isEditDesc">
 				{{ isEditDesc ? editingData.description : db.description }}
-			</span>
-
-			<FmIcon
-				v-if="db.description"
-				class="edit_icon"
-				icon="edit"
-				@click="edit()"
-			/>
-			<FmBtn
-				v-else
-				class="text-capitalize"
-				type="text"
-				@click="edit()"
-			>
-				Add Description
-			</FmBtn>
+				<FmIcon primary
+					v-if="db.description"
+					class="edit_icon"
+					icon="edit"
+					@click="edit()"
+				/>
+				<FmBtn
+					v-else
+					class="text-capitalize"
+					type="action"
+					@click="edit()"
+				>
+					Add Description
+				</FmBtn>
+			</template>
+			<FmInputArea v-else v-model="editingData.description" ref="description" />
 		</div>
 
-		<div>Role: {{ db.is_owner ? "owner" : "admin" }}</div>
-
-
+		<div class="fm_card_text">Role: {{ db.is_owner ? "owner" : "admin" }}</div>
 
 		<template #controls>
-			<template v-if="!isEdit && db.is_initialized" class="justify-space-between d-flex pa-4 py-2">
-				<v-btn id="parent" icon="mdi-lock" color="primary" @click="showActions = true" v-show="!showActions">
-					<v-tooltip
-						activator="#parent"
-						anchor="start"
-					>Show more</v-tooltip>
-				</v-btn>
+			<div class="flex sb aic">
+				<template v-if="!isEdit && db.is_initialized">
+					<FmIcon primary
+						v-show="!showActions"
+						icon="lock"
+						@click="showActions = true"
+					/>
 
-				<div v-if="showActions">
-					<v-btn icon="mdi-cloud-upload" color="primary" @click="exportDb()"></v-btn>
-					<v-btn v-if="db.is_owner" icon="mdi-delete" color="primary" class="ml-0" @click="emit('delete', db.id)"></v-btn>
-				</div>
+					<div class="flex" v-if="showActions">
+						<FmIcon class="mr-10" icon="cloud_upload" primary @click="exportDb()" />
+						<FmIcon v-if="db.is_owner" icon="delete" primary @click="emit('delete', db.id)" />
+					</div>
 
-				<v-btn v-if="!isEdit" variant="elevated" color="primary" @click="open()">open</v-btn>
-			</template>
-			<template v-if="isEdit">
-				<v-btn color="primary" @click="cancelEdit()">cancel</v-btn>
+					<FmBtn v-if="!isEdit" @click="open()">open</FmBtn>
+				</template>
 
-				<v-btn variant="elevated" color="primary" @click="save()">save</v-btn>
-			</template>
+				<template v-if="isEdit">
+					<FmBtn type="text" @click="cancelEdit()">cancel</FmBtn>
+
+					<FmBtn @click="save()">save</FmBtn>
+				</template>
+			</div>
 		</template>
 	</FmCard>
 </template>
@@ -158,7 +154,14 @@
 	opacity: 0;
 	visibility: hidden;
 	transition: opacity 0.3s;
-	padding: 5px;
+	padding-left: 5px;
+	vertical-align: bottom;
+	font-size: 18px;
+}
+.fm_card_title {
+	.edit_icon {
+		font-size: 24px;
+	}
 }
 .fm_card_content {
 	word-wrap: break-word;
