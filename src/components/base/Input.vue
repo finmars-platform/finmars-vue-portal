@@ -14,7 +14,7 @@
 				<slot>
 					<input
 						:type="type"
-						:placeholder="label"
+						:placeholder="placeholder"
 						:value="modelValue"
     				@input="$emit('update:modelValue', $event.target.value)"
 					/>
@@ -42,6 +42,7 @@
 		modelValue: [String, Number],
 		type: String,
 		label: String,
+		placeholder: String,
 		tooltip: String,
 	})
 	defineEmits(['update:modelValue'])
@@ -52,12 +53,16 @@
 		position: relative;
 		display: block;
 		height: 42px;
-		border: 1px solid $border-darken;
+		// border: 1px solid $border-darken;
 		border-radius: 4px;
 		margin-bottom: 25px;
 		transition: border 0.3s;
 
-		&:focus-within, &:focus {
+		&:not(.bi_no_borders) {
+			border: 1px solid $border-darken;
+		}
+
+		&:not(.bi_no_borders):focus-within, &:focus {
 			border: 1px solid $border-active;
 			.bi_label {
 				top: -8px;

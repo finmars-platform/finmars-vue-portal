@@ -1,50 +1,55 @@
 <template>
 	<div>
-		<v-container class="justify-space-between d-flex py-3" fluid>
-			<v-text-field
-				class="py-0"
-				label="Search"
-				placeholder="Search"
-				variant="plain"
-				prepend-icon="mdi-magnify"
-				hide-details="auto"
-				density="compact"
-			/>
 
-			<v-spacer></v-spacer>
+		<FmTopRefresh @refresh="refresh()">
+			<template #action>
+				<div class="flex-row flex-i-center width-50">
+					<div class="flex-column flex-c-center">
+						<FmIcon icon="search" class="p-r-16 gray-icon"></FmIcon>
+					</div>
 
-			<v-btn color="#737373"
-				size="small"
-				height="auto"
-				variant="text"
-				stacked
-				class="text-capitalize"
-				@click="refresh()"
-			>
-				<v-icon start size="24" icon="mdi-refresh"></v-icon>
-				refresh
-			</v-btn>
-		</v-container>
+					<div class="flex-1-1-100">
+						<BaseInput type="text"
+											 v-model="muNameTerms"
+											 placeholder="Search"
+											 class="bi_no_borders"></BaseInput>
+					</div>
+				</div>
 
-		<v-divider></v-divider>
+			</template>
+		</FmTopRefresh>
 
-		<v-container fluid class="databases bg-grey-lighten-5" v-if="data.results.length">
+		<div v-if="data.results.length" class="p-16 databases bg-grey-lighten-5">
 			<PagesProfileBackupsItem max-width="360"
-				v-for="backup in data.results"
-				:backup="backup"
-				:key="backup.id"
-				@refresh="refresh()"
+															 v-for="backup in data.results"
+															 :backup="backup"
+															 :key="backup.id"
+															 @refresh="refresh()"
 			/>
-		</v-container>
-		<v-container fluid class="text-h4" v-else>No backups found</v-container>
+		</div>
+
+		<div v-else class="text-h4">No backups found</div>
+
 	</div>
 </template>
 
 <script setup>
 
-	let { data, refresh } = await useAsyncData("masterBackups", () =>
+	/* let { data, refresh } = await useAsyncData("masterBackups", () =>
 		useApi("masterBackups.get")
-	);
+	); */
+	let data = await useApi("masterBackups.get");
+	let muNameTerms = ref("");
+
+	async function refresh() {
+
+		const opts = {
+			filters: "?name=" + muNameTerms.value
+		}
+
+		data = await useApi("masterBackups.get", opts);
+	}
+
 </script>
 
 <style lang="scss" scoped>
