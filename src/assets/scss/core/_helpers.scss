@@ -19,6 +19,9 @@
 .jcc {
 	justify-content: center;
 }
+.jcfe {
+	justify-content: flex-end;
+}
 .center {
 	display: flex;
 	justify-content: center;
@@ -41,6 +44,12 @@
 }
 .tac {
 	text-align: center;
+}
+.text-capitalize {
+	text-transform: capitalize !important;
+}
+.text-lowercase {
+	text-transform: lowercase !important;
 }
 .hide {
 	opacity: 0;

@@ -14,7 +14,7 @@
 				<slot>
 					<input
 						:type="type"
-						:placeholder="placeholder"
+						:placeholder="placeholder || label"
 						:value="modelValue"
     				@input="$emit('update:modelValue', $event.target.value)"
 					/>
