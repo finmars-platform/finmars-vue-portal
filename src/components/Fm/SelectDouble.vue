@@ -11,9 +11,9 @@
 		<FmMenu class="select_btn">
 			<template #btn>
 				<div class="flex aic" style="height: 42px;">
-					<v-avatar color="#747474" class="" size="small" >
-						<span class="text-white">{{ selected }}</span>
-					</v-avatar>
+					<div class="fm_avatar">
+						{{ selected }}
+					</div>
 				</div>
 			</template>
 
@@ -26,9 +26,9 @@
 						@click="selectType(item), close()"
 					>
 						<div>{{ item.name }}</div>
-						<v-avatar color="#747474" class="ml-4" size="small">
-							<span class="text-white">{{ item.icon }}</span>
-						</v-avatar>
+						<div class="fm_avatar m-l-10">
+							{{ item.icon }}
+						</div>
 					</div>
 				</div>
 			</template>
@@ -79,7 +79,16 @@
 		}
 	}
 	.fm_list_item {
-		padding-right: 8px;
+		padding-right: 10px;
+	}
+	.fm_avatar {
+		border-radius: 50%;
+		width: 30px;
+		height: 30px;
+		line-height: 30px;
+		background: $text-lighten;
+		text-align: center;
+		color: $separ;
 	}
 
 </style>
