@@ -82,8 +82,8 @@
 		color: rgb(230, 230, 230);
 		background: rgb(26, 26, 26);
 		padding: 0 6px;
-		height: 12px;
-		line-height: 12px;
+		height: 15px;
+		line-height: 15px;
 		border-radius: 4px;
 		font-size: 10px;
 		opacity: 0;

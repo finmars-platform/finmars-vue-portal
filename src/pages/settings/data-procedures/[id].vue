@@ -6,7 +6,7 @@
 		@cancel="() => $router.push('/valuations/run-pricing')"
 	>
 		<template #left>
-			<FmCard title="Global">
+			<FmCard title="Global" class="mb-x">
 				<BaseInput
 					label="Name"
 					v-model="procedure.name"
@@ -25,7 +25,7 @@
 				/>
 			</FmCard>
 
-			<FmCard title="Period">
+			<FmCard title="Period" class="mb-x">
 				<FmInputDateExpr
 					label="Date from"
 					v-model:expr="procedure.date_from_expr"
@@ -39,7 +39,7 @@
 			</FmCard>
 		</template>
 		<template #right>
-			<FmCard title="Provider and schemes">
+			<FmCard title="Provider and schemes" class="mb-x">
 				<FmSelect
 					v-model="procedure.provider"
 					:items="dataProvider"
@@ -166,7 +166,6 @@
 		})
 
 		dataProvider.value = await useApi('dataProvider.get')
-		console.log('dataProvider.value:', dataProvider.value[0].id)
 	}
 
 	async function save() {

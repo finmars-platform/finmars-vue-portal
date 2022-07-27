@@ -55,6 +55,21 @@
 	opacity: 0;
 	visibility: hidden;
 }
+.pb-0 {
+	padding-bottom: 0 !important;
+}
+.pb-80 {
+	padding-bottom: 80px;
+}
+.mb-x {
+	margin-bottom: $content-padding-x;
+}
+.mr-10 {
+	margin-right: 10px !important;
+}
+.pb-x {
+	padding-bottom: $content-padding-x;
+}
 
 .p-0 {
 	padding: 0 !important;

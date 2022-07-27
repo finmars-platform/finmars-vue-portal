@@ -29,7 +29,6 @@
 
 	function calcRow() {
 		if ( !props.auto ) return 7;
-		console.log('props.modelValue:', props.modelValue.split("\r\n"))
 
 		return props.modelValue.split("\n").length
 	}

@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="fm_container pb-0">
 		<div class="fm_page_title">{{ title }}</div>
 		<div class="flex sb">
 			<div class="coll">

@@ -8,7 +8,7 @@
 		<div></div>
 
 		<div class="flex aic">
-			<FmIcon btn v-if="store.current.name" icon="home" :href="config.public.oldAppURL" />
+			<FmIcon btn v-if="store.current.name" tooltip="Homepage" icon="home" :href="config.public.oldAppURL" />
 
 			<template v-if="store.current.name">
 				<FmMenu>

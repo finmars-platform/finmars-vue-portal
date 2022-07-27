@@ -1,54 +1,39 @@
 <template>
-	<v-container fluid>
-		<v-expansion-panels v-model="panels" multiple>
-      <v-expansion-panel value="period">
-        <v-expansion-panel-title>
-					Period Returns
-        </v-expansion-panel-title>
-        <v-expansion-panel-text class="pa-0">
-          <BaseTable
-						:headers="preriodHeaders"
-						:items="preriodItems"
-						colls="repeat(8, 1fr)"
-						:cb="choosePortfolio"
+	<div class="fm_container">
+		<FmExpansionPanel title="Period Returns">
+			<BaseTable
+				:headers="preriodHeaders"
+				:items="preriodItems"
+				colls="repeat(8, 1fr)"
+				:cb="choosePortfolio"
+			/>
+		</FmExpansionPanel>
+
+		<FmExpansionPanel :title="detailPortfolio">
+			<div class="table_wrap flex">
+				<div class="coll_years">
+					<div class="coll_item t_header">Years</div>
+					<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">{{item}}</div>
+				</div>
+				<div class="coll_months">
+					<BaseTable
+						:headers="portfolioHeaders"
+						:items="portfolioItems"
+						colls="repeat(12, 1fr)"
+						:cb="chooseMonth"
 					/>
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-			<v-expansion-panel value="detail">
-        <v-expansion-panel-title>
-					{{ detailPortfolio }}
-        </v-expansion-panel-title>
-        <v-expansion-panel-text class="pa-0">
-          <div class="table_wrap flex">
-						<div class="coll_years">
-							<div class="coll_item t_header">Years</div>
-							<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">{{item}}</div>
-						</div>
-						<div class="coll_months">
-							<BaseTable
-								:headers="portfolioHeaders"
-								:items="portfolioItems"
-								colls="repeat(12, 1fr)"
-								:cb="chooseMonth"
-							/>
-						</div>
-						<div class="coll_total">
-							<div class="coll_item t_header">TOTAL</div>
-							<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">0.1</div>
-						</div>
-					</div>
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-			<v-expansion-panel value="diagram">
-        <v-expansion-panel-title>
-					{{ detailPortfolio }} - {{ detailYear }}
-        </v-expansion-panel-title>
-        <v-expansion-panel-text class="pa-0">
-          <canvas id="myChart" width="800" height="300"><p>Hello Fallback World</p></canvas>
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-    </v-expansion-panels>
-	</v-container>
+				</div>
+				<div class="coll_total">
+					<div class="coll_item t_header">TOTAL</div>
+					<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">0.1</div>
+				</div>
+			</div>
+		</FmExpansionPanel>
+
+		<FmExpansionPanel :title="detailPortfolio + '-' + detailYear">
+			<canvas id="myChart" width="800" height="300"><p>Chart</p></canvas>
+		</FmExpansionPanel>
+	</div>
 </template>
 
 <script setup>
