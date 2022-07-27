@@ -12,14 +12,14 @@
 						class="to-small-btn sidenav-btn raised-btn"
 						@click="resizeSideNav(false)"
 					>
-						<BaseIcon icon="chevron_left"></BaseIcon>
+						<FmIcon icon="chevron_left"></FmIcon>
 					</button>
 
 					<button
 						class="expand-sidenav-btn sidenav-btn raised-btn"
 						@click="resizeSideNav(true)"
 					>
-						<BaseIcon icon="chevron_right"></BaseIcon>
+						<FmIcon icon="chevron_right"></FmIcon>
 					</button>
 				</div>
 			</div>
@@ -35,7 +35,7 @@
 								<!--								<button ui-sref-active="active"
 												class="sidemenu-btn"
 												ui-sref="app.portal.dashboard">
-												<BaseIcon icon="dashboard" class="side-nav-icon"></BaseIcon>
+												<FmIcon icon="dashboard" class="side-nav-icon"></FmIcon>
 									<span class="side-nav-title">Dashboard</span>
 
 								</button>-->
@@ -43,14 +43,14 @@
 									:href="`${config.public.apiURL}/a/#!/dashboard`"
 									class="sidemenu-btn"
 								>
-									<BaseIcon icon="dashboard" class="side-nav-icon"></BaseIcon>
+									<FmIcon icon="dashboard" class="side-nav-icon"></FmIcon>
 									<span class="side-nav-title">Dashboard</span>
 								</a>
 							</li>
 
 							<li>
 								<a :href="`${config.public.apiURL}/a/#!/`" class="sidemenu-btn">
-									<BaseIcon icon="home" class="side-nav-icon"></BaseIcon>
+									<FmIcon icon="home" class="side-nav-icon"></FmIcon>
 									<span class="side-nav-title">Homepage</span>
 								</a>
 							</li>
@@ -62,7 +62,7 @@
 									@mouseleave="hideSubmenu($event)"
 								>
 									<button class="sidemenu-btn openSubmenuBtn">
-										<BaseIcon icon="assessment" class="side-nav-icon"></BaseIcon>
+										<FmIcon icon="assessment" class="side-nav-icon"></FmIcon>
 										<span class="side-nav-title">Reports</span>
 									</button>
 
@@ -93,7 +93,7 @@
 										</li>
 										<li v-if="accessTable.report_performance">
 											<NuxtLink
-												to="reports/performance"
+												to="/reports/performance"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Performance</span>
@@ -125,7 +125,7 @@
 									@mouseleave="hideSubmenu($event)"
 								>
 									<button class="sidemenu-btn openSubmenuBtn">
-										<BaseIcon icon="view_compact" class="side-nav-icon"></BaseIcon>
+										<FmIcon icon="view_compact" class="side-nav-icon"></FmIcon>
 										<span class="side-nav-title">Data</span>
 									</button>
 
@@ -230,7 +230,7 @@
 									@mouseleave="hideSubmenu($event)"
 								>
 									<button class="sidemenu-btn openSubmenuBtn">
-										<BaseIcon icon="history" class="side-nav-icon"></BaseIcon>
+										<FmIcon icon="history" class="side-nav-icon"></FmIcon>
 										<span class="side-nav-title">Transactions</span>
 									</button>
 
@@ -270,7 +270,7 @@
 									@mouseleave="hideSubmenu($event)"
 								>
 									<button class="sidemenu-btn openSubmenuBtn">
-										<BaseIcon icon="currency_exchange" class="side-nav-icon"></BaseIcon>
+										<FmIcon icon="currency_exchange" class="side-nav-icon"></FmIcon>
 										<span class="side-nav-title">Valuations</span>
 									</button>
 
@@ -334,7 +334,7 @@
 									@mouseleave="hideSubmenu($event)"
 								>
 									<button class="sidemenu-btn openSubmenuBtn">
-										<BaseIcon icon="file_download" class="side-nav-icon"></BaseIcon>
+										<FmIcon icon="file_download" class="side-nav-icon"></FmIcon>
 										<span class="side-nav-title">Import</span>
 									</button>
 
@@ -441,7 +441,7 @@
 									<button
 										class="sidemenu-btn journal-sidenav-menu-btn openSubmenuBtn"
 									>
-										<BaseIcon icon="book" class="side-nav-icon"></BaseIcon>
+										<FmIcon icon="book" class="side-nav-icon"></FmIcon>
 										<span class="side-nav-title">Journal</span>
 									</button>
 
@@ -485,7 +485,7 @@
 								<button
 									class="sidemenu-btn sidenav-settings-toggle-btn toggleSettingsBtn"
 								>
-									<BaseIcon icon="settings" class="side-nav-icon"></BaseIcon>
+									<FmIcon icon="settings" class="side-nav-icon"></FmIcon>
 									<span class="side-nav-title">Settings</span>
 								</button>
 							</li>
@@ -503,7 +503,7 @@
 								<button
 									class="to-small-btn sidenav-btn raised-btn collapseSettingsMenu"
 								>
-									<BaseIcon icon="chevron_left"></BaseIcon>
+									<FmIcon icon="chevron_left"></FmIcon>
 								</button>
 							</div>
 
@@ -1538,7 +1538,7 @@ const hideSubmenu = function ($event) {
 	}
 
 	.side-nav-icon {
-		fill: #fff;
+		color: $separ;
 		display: inline-block;
 		position: absolute;
 		//left: 11px;

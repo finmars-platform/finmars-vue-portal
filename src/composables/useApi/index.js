@@ -67,7 +67,6 @@ export default async function (
 
 	} catch(e) {
 		let [code, url] = e.message.split('  ')
-		console.log('e.message:', e.message)
 
 		let errors = {
 			401: 'Not authorized'
