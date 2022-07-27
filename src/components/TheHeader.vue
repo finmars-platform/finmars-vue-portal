@@ -1,17 +1,18 @@
 <template>
 	<header>
-		<!-- <v-breadcrumbs class="pa-0" :items="$route.meta.bread" active-color="#000">
-      <template v-slot:divider>
-        <v-icon size="20" color="#737373" icon="mdi-arrow-right"></v-icon>
-      </template>
-    </v-breadcrumbs> -->
-		<div></div>
+		<FmBreadcrumbs :items="$route.meta.bread" />
 
 		<div class="flex aic">
-			<FmIcon btn v-if="store.current.name" tooltip="Homepage" icon="home" :href="config.public.oldAppURL" />
+			<FmIcon class="header_item"
+				v-if="store.current.name"
+				btn
+				tooltip="Homepage"
+				icon="home"
+				:href="config.public.oldAppURL"
+			/>
 
 			<template v-if="store.current.name">
-				<FmMenu>
+				<FmMenu class="header_item">
 					<template #btn="{ isOpen }">
 						<FmBtn type="text" :class="['text-lowercase', {active: isOpen}]">
 							{{ store.current.name }}
@@ -30,7 +31,7 @@
 				</FmMenu>
 			</template>
 
-			<FmMenu>
+			<FmMenu class="header_item">
 				<template #btn="{ isOpen }">
 					<FmBtn type="text" :class="['text-lowercase', {active: isOpen}]" icon="account_box">
 						{{ store.user.username }}
@@ -73,12 +74,15 @@
 </script>
 
 <style lang="scss" scoped>
-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	height: 56px;
-	background: $main-darken;
-	padding: 0 $content-padding-x;
-}
+	header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		height: 56px;
+		background: $main-darken;
+		padding: 0 $content-padding-x;
+	}
+	.header_item + .header_item {
+		margin-left: 10px;
+	}
 </style>

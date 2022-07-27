@@ -21,21 +21,13 @@
 				v-for="(item, index) in row"
 				:key="index"
 			>
-				<v-progress-circular
-					v-if="item === null"
-					indeterminate
-					size="16"
-					color="primary"
-				/>
+				<FmLoader v-if="item === null" />
 				<template v-else>{{ item }}</template>
 			</div>
 		</div>
 	</div>
-	<div class="center py-8" v-if="!items.length">
-		 <v-progress-circular
-				indeterminate
-				color="primary"
-			></v-progress-circular>
+	<div class="center p-16" v-if="!items.length">
+		<FmLoader />
 	</div>
 </template>
 
