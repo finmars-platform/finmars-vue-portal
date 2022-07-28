@@ -4,14 +4,17 @@
 			<BaseInput
 				label="First name"
 				v-model="formUser.first_name"
+				:error="errors.first_name"
 			/>
 			<BaseInput
 				label="Last name"
 				v-model="formUser.last_name"
+				:error="errors.last_name"
 			/>
 			<BaseInput
 				label="E-mail"
 				v-model="formUser.email"
+				:error="errors.email"
 			/>
 			<BaseCheckbox
 				:label="'Autosave mode'"
@@ -30,6 +33,7 @@
 				label="Old password"
 				v-model="formUser.password"
 				:type="showPass ? 'text' : 'password'"
+				:error="errors.password"
 			>
 				<template #button>
 					<FmIcon
@@ -42,6 +46,7 @@
 				label="New password"
 				v-model="formUser.new_password"
 				:type="showPass ? 'text' : 'password'"
+				:error="errors.new_password"
 			>
 				<template #button>
 					<FmIcon
@@ -100,6 +105,7 @@
 	const store = useStore()
 
 	let formUser = store.user
+	let errors = ref({})
 
 	let { data, refresh: refresh2FA } = await useAsyncData( '2fa', () => useApi('meTwoFactor.get') )
 
@@ -115,17 +121,24 @@
 				type: 'success',
 				title: 'Saved'
 			})
+		} else {
+
+			errors.value = res.error
 		}
 	}
 
 	async function saveUser() {
 		let res = await useApi('me.put', { body: formUser })
 
-		if ( !res.error) {
+		if ( !res.error ) {
 			useNotify({
 				type: 'success',
 				title: 'Saved'
 			})
+
+		} else {
+
+			errors.value = res.error
 		}
 	}
 

@@ -1,17 +1,20 @@
 <template>
 	<FmCard class="" controls>
 		<div class="fm_card_title edit_hover">
-			<span
-				:contenteditable="isEditTitle"
-				@input="editingData.name = $event.target.innerText"
-				ref="title"
-			>
+			<span v-if="!isEditTitle">
 				{{ isEditTitle ? editingData.name : db.name }}
 			</span>
 			<FmIcon primary
+				v-if="!isEditTitle"
 				class="edit_icon"
 				icon="edit"
 				@click="edit('title')"
+			/>
+
+			<input class="fm_card_title m-b-0"
+				v-if="isEditTitle"
+				v-model="editingData.name"
+				ref="title"
 			/>
 		</div>
 
@@ -159,6 +162,7 @@
 	font-size: 18px;
 }
 .fm_card_title {
+	word-wrap: break-word;
 	.edit_icon {
 		font-size: 24px;
 	}

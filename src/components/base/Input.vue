@@ -1,5 +1,7 @@
 <template>
-	<label class="base-input" tabindex="-1">
+	<label class="base-input" tabindex="-1"
+		:class="{error}"
+	>
 		<div class="bi_label"
 			v-if="label"
 			:class="{filling: modelValue}"
@@ -22,9 +24,7 @@
 			</div>
 
 			<div class="bi_side_items flex">
-				<slot name="sedeItems">
-
-				</slot>
+				<slot name="sedeItems"></slot>
 				<div class="bi_side_item" v-if="tooltip">
 					<FmIcon :tooltip="tooltip" icon="info" />
 				</div>
@@ -34,6 +34,7 @@
 				<slot name="rightBtn"></slot>
 			</div>
 		</div>
+		<div class="bi_error" v-if="error">{{ error.join(', ') }}</div>
 	</label>
 </template>
 
@@ -44,6 +45,7 @@
 		label: String,
 		placeholder: String,
 		tooltip: String,
+		error: [String, Array]
 	})
 	defineEmits(['update:modelValue'])
 </script>
@@ -80,6 +82,23 @@
 				display: flex;
 			}
 		}
+		&.error {
+			border-color: $primary !important;
+			margin-bottom: 30px;
+
+			.icon {
+				color: $primary;
+			}
+
+			.bi_label {
+				color: $primary;
+			}
+		}
+	}
+	.bi_error {
+		color: $primary;
+		font-size: 12px;
+		padding: 5px 12px 10px;
 	}
 	.bi_label {
 		position: absolute;
