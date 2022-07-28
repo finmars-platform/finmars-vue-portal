@@ -11,6 +11,7 @@
 		</div>
 
 		<div class="table-row"
+			:class="{ active: active == index, choosible: active !== undefined }"
 			:style="{gridTemplateColumns: colls}"
 			v-for="(row, index) in items"
 			:key="index"
@@ -49,6 +50,9 @@
 		status: { // done, loading, fail
 			type: String
 		},
+		active: {
+			type: Number
+		}
 	})
 </script>
 
@@ -65,6 +69,18 @@
 	height: 36px;
 	border-bottom: 1px solid $border;
 	line-height: 36px;
+	transition: outline 0.1s;
+	outline: solid transparent;
+	&.choosible {
+		cursor: pointer;
+
+		&:not(.active):hover {
+			outline: solid  $primary-lighten;
+		}
+	}
+	&.active {
+		outline: solid $primary;
+	}
 	&.t_header {
 		background: #F2F2F2;
 		height: 50px;
