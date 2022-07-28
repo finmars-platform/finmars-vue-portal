@@ -4,6 +4,7 @@
 			<BaseTable
 				:headers="preriodHeaders"
 				:items="preriodItems"
+				:active="activePeriod"
 				colls="repeat(8, 1fr)"
 				:cb="choosePortfolio"
 			/>
@@ -21,6 +22,7 @@
 						:items="portfolioItems"
 						colls="repeat(12, 1fr)"
 						:cb="chooseMonth"
+						:active="activeYear"
 					/>
 				</div>
 				<div class="coll_total">
@@ -30,8 +32,8 @@
 			</div>
 		</FmExpansionPanel>
 
-		<FmExpansionPanel :title="detailPortfolio + '-' + detailYear">
-			<canvas id="myChart" width="800" height="300"><p>Chart</p></canvas>
+		<FmExpansionPanel :title="detailPortfolio + ' - ' + detailYear">
+			<canvas id="myChart"><p>Chart</p></canvas>
 		</FmExpansionPanel>
 	</div>
 </template>
@@ -45,7 +47,7 @@
 			{
 				text: 'Performance Report',
 				to: '/reports/performance',
-				disabled: false
+				disabled: true
 			}
 		],
 	});
@@ -69,7 +71,11 @@
 	let detailYear = ref('')
 	let chart
 
+	let activePeriod = ref(0)
+	let activeYear = ref(0)
+
 	async function choosePortfolio(id) {
+		activePeriod.value = id
 		detailPortfolio.value = preriodItems.value[id].name
 
 		await getMonthDetails( preriodItems.value[id].name )
@@ -79,6 +85,7 @@
 	}
 
 	async function chooseMonth(id) {
+		activeYear.value = id
 		detailYear.value = portfolioYears.value[id]
 		updateChart( portfolioItems.value[id], portfolioItemsCumm.value[id] )
 	}
@@ -206,35 +213,40 @@
 
 		allMonths.items.forEach(item => {
 			let parseDate = item.date_to.split('-')
+
+			// key_ fix order
 			let defaultMonth = {
-				'01': [0, 0],
-				'02': [0, 0],
-				'03': [0, 0],
-				'04': [0, 0],
-				'05': [0, 0],
-				'06': [0, 0],
-				'07': [0, 0],
-				'08': [0, 0],
-				'09': [0, 0],
-				'10': [0, 0],
-				'11': [0, 0],
-				'12': [0, 0]
+				'key_01': [0, 0],
+				'key_02': [0, 0],
+				'key_03': [0, 0],
+				'key_04': [0, 0],
+				'key_05': [0, 0],
+				'key_06': [0, 0],
+				'key_07': [0, 0],
+				'key_08': [0, 0],
+				'key_09': [0, 0],
+				'key_10': [0, 0],
+				'key_11': [0, 0],
+				'key_12': [0, 0]
 			}
 
 			if ( !yearsBuffer[parseDate[0]] ) {
 				yearsBuffer[ parseDate[0] ] = defaultMonth
 			}
 
-			yearsBuffer[parseDate[0]][ parseDate[1] ] = [
+			yearsBuffer[parseDate[0]][ 'key_' + parseDate[1] ] = [
 				Math.round(item.instrument_return * 10000) / 10000,
 				Math.round(item.cumulative_return * 10000) / 10000
 			]
 		})
 
 		for ( let prop in yearsBuffer ) {
+			console.log('prop:', prop)
 			portfolioYears.value.push( prop )
+			console.log('Object.values(yearsBuffer[prop]):', Object.values(yearsBuffer[prop]))
 
 			portfolioItems.value.push( Object.values(yearsBuffer[prop]).map(item => item[0]))
+
 			portfolioItemsCumm.value.push( Object.values(yearsBuffer[prop]).map(item => item[1]) )
 		}
 

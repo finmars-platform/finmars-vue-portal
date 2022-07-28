@@ -31,6 +31,7 @@
 		margin-bottom: 15px;
 		background: $separ;
 		border-radius: 4px;
+		max-width: 100%;
 	}
 	.fm_expansion_panel_content {
 		padding: 15px;

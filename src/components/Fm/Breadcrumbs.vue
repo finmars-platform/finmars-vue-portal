@@ -23,7 +23,9 @@
 		items: Array
 	})
 
-	let last = ref(props.items.length - 1)
+	let last
+
+	if ( props.items ) {last = ref(props.items.length - 1)}
 </script>
 
 <style lang="scss" scoped>
