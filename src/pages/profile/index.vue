@@ -23,7 +23,7 @@
 			{
 				text: 'Profile',
 				to: '/profile',
-				disabled: false
+				disabled: true
 			}
 		],
 	});

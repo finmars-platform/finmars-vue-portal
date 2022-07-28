@@ -69,7 +69,8 @@ export default async function (
 		let [code, url] = e.message.split('  ')
 
 		let errors = {
-			401: 'Not authorized'
+			400: 'Wrong data',
+			401: 'Not authorized',
 		}
 
 		useNotify({
@@ -78,7 +79,7 @@ export default async function (
 			text: errors[code] ? errors[code] : 'Unknown server error'
 		})
 
-		return {error: e.date || true, code }
+		return {error: e.data || true, code }
 	}
 
 }

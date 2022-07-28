@@ -19,13 +19,5 @@
 </script>
 
 <style lang="scss" scoped>
-.wrap {
-	display: grid;
-	grid-template-columns: 160px 1fr;
-}
-.content {
-	padding: 20px;
-	height: calc(100vh - 50px);
-	overflow: auto;
-}
+
 </style>
