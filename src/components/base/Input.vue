@@ -133,7 +133,8 @@
 	.bi_wrap {
 		display: flex;
 		align-items: center;
-		height: 40px;
+		// height: 40px;
+		height: 100%;
 		width: 100%;
 	}
 	.bi_default {
