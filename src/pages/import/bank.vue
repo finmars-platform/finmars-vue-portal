@@ -1,60 +1,46 @@
 <template>
 	<div>
-		<v-container class="justify-space-between d-flex py-3" fluid>
-			<v-text-field
-				class="py-0"
-				label="Search"
-				placeholder="Search"
-				variant="plain"
-				prepend-icon="mdi-magnify"
-				hide-details="auto"
-				density="compact"
-			/>
+		<FmTopRefresh @refresh="refresh()">
+			<template #action>
+				<BaseInput type="text"
+					v-model="searchParam"
+					placeholder="Search"
+					class="bi_no_borders"
+				>
+					<template #button>
+						<FmIcon icon="search" />
+					</template>
+				</BaseInput>
+			</template>
+		</FmTopRefresh>
 
-			<v-spacer></v-spacer>
-
-			<v-btn color="#737373"
-				size="small"
-				height="auto"
-				variant="text"
-				stacked
-				class="text-capitalize"
-				@click="refresh()"
-			>
-				<v-icon start size="24" icon="mdi-refresh"></v-icon>
-				refresh
-			</v-btn>
-		</v-container>
-		<v-divider></v-divider>
-		<div class="d-flex align-start">
-			<v-container fluid class="py-6 px-7 cards">
-				<v-card width="360"
+		<div class="flex align-start">
+			<div class="fm_container cards">
+				<FmCard
 					v-for="(item) in procedures"
 					:key="item.id"
+					:title="item.user_code"
+					controls
 				>
-					<v-card-title>
-						{{ item.user_code }}
-					</v-card-title>
-
-					<v-card-subtitle class="text-subtitle-2">
+					<div class="fm_card_subtitle">
 						Provider: <b>{{ item.provider_object.name }}</b>
-					</v-card-subtitle>
-
-					<v-card-subtitle class="text-subtitle-2">
+						<br>
 						Scheme: <b> {{ item.scheme_user_code }}</b>
-					</v-card-subtitle>
+					</div>
 
-					<v-card-text>
+					<div class="fm_card_content">
 						{{ item.notes }}
-					</v-card-text>
+					</div>
 
-					<v-card-actions class="justify-space-between d-flex">
-						<v-btn color="primary" :to="`/settings/data-procedures/${item.id}`">edit</v-btn>
+					<template #controls>
+						<div class="flex sb">
+							<FmBtn type="action" :to="`/settings/data-procedures/${item.id}`">edit</FmBtn>
 
-						<v-btn variant="contained" color="primary" :disabled="processing" @click="execute(item)">execute</v-btn>
-					</v-card-actions>
-				</v-card>
-			</v-container>
+							<FmBtn :disabled="processing" @click="execute(item)">execute</FmBtn>
+						</div>
+					</template>
+				</FmCard>
+			</div>
 			<div class="table">
 				<div class="table-row header">
 					<div class="table-cell">Procedure</div>
@@ -80,7 +66,7 @@
 			{
 				text: 'Import: Import from bank ',
 				to: '/import/bank',
-				disabled: false
+				disabled: true
 			}
 		],
 	});
@@ -90,6 +76,8 @@
 	let procedures = ref(null)
 	let statuses = ref(null)
 	let processing = ref(false)
+
+	let searchParam = ref('')
 
 	const mapSratuses = {
 		P: 'Processing',
@@ -132,7 +120,7 @@
 <style lang="scss" scoped>
 .cards {
 	display: grid;
-	grid-template-columns: repeat(2, auto);
+	grid-template-columns: repeat(2, 360px);
 	grid-gap: 30px;
 	justify-content: flex-start;
 }

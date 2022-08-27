@@ -45,7 +45,7 @@
 			type: String,
 			default: 'id',
 		},
-		prop_name: String,
+		prop_name: String
 	})
 	defineEmits(['update:modelValue'])
 

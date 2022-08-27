@@ -16,7 +16,7 @@
 				v-model="formUser.email"
 				:error="errors.email"
 			/>
-			<BaseCheckbox
+			<FmCheckbox
 				:label="'Autosave mode'"
 				v-model="formUser.data.autosave_layouts"
 			/>

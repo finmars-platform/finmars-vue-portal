@@ -4,7 +4,7 @@
 	>
 		<template #button>
 			<FmIcon
-				icon="edit"
+				icon="calendar_month"
 			/>
 		</template>
 		<template #sedeItems></template>

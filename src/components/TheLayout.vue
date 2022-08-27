@@ -19,6 +19,10 @@
 			default: true
 		}
 	})
+
+	let store = useStore()
+
+	await store.init()
 </script>
 
 <style lang="scss" scoped>

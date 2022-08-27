@@ -5,13 +5,18 @@
 </template>
 
 <script setup>
-	let store = useStore()
 
-	if ( !store.current.base_api_url ) {
-		useNotify({
-			title: 'Workspace is not selected',
-			type: 'warn'
-		})
-		useRouter().push('/profile')
-	}
+	onMounted(() => {
+		let store = useStore()
+
+		if ( !store.current.base_api_url ) {
+			useNotify({
+				title: 'Workspace is not selected',
+				type: 'warn'
+			})
+			console.log('store:', store.current.base_api_url)
+			useRouter().push('/profile')
+		}
+	})
+
 </script>

@@ -1,211 +1,123 @@
 <template>
-	<v-container fluid v-if="procedure.id" class="pb-16 mb-10">
-		<div class="text-h5 mb-3">Update Pricing Procedure</div>
-		<div class="d-flex space-between">
-			<div class="coll">
-				<v-card class="mb-6">
-					<v-card-title>Global</v-card-title>
-					<v-card-content>
-						<v-text-field
-							label="Name"
-							placeholder="Name"
-							variant="outlined"
-							density="comfortable"
-							v-model="procedure.name"
-						/>
-						<v-text-field
-							label="User code"
-							placeholder="User code"
-							variant="outlined"
-							density="comfortable"
-							v-model="procedure.user_code"
-						/>
-						<v-text-field
-							label="Notes"
-							placeholder="Notes"
-							variant="outlined"
-							density="comfortable"
-							v-model="procedure.notes"
-						/>
-						<v-text-field
-							label="Notes for user"
-							placeholder="Notes for users"
-							variant="outlined"
-							density="comfortable"
-							v-model="procedure.notes_for_users"
-						/>
-					</v-card-content>
-				</v-card>
+	<CommonSettingsLayout
+		v-if="procedure.id"
+		title="Update Pricing Procedure"
+		@save="save()"
+		@cancel="() => $router.push('/valuations/run-pricing')"
+	>
+		<template #left>
+			<FmCard title="Global" class="mb-x">
+				<BaseInput
+					label="Name"
+					v-model="procedure.name"
+				/>
+				<BaseInput
+					label="User code"
+					v-model="procedure.user_code"
+				/>
+				<BaseInput
+					label="Notes"
+					v-model="procedure.notes"
+				/>
+				<BaseInput
+					label="Notes for user"
+					v-model="procedure.notes_for_users"
+				/>
+			</FmCard>
 
-				<v-card>
-					<v-card-title>Prices</v-card-title>
-					<v-card-content>
-						<FnDateExpr
-							label="Date from"
-						/>
+			<FmCard title="Prices" class="mb-x">
+				<FmInputDateExpr
+					label="Date from"
+					v-model:expr="procedure.price_date_from_expr"
+					v-model:date="procedure.price_date_from"
+				/>
+				<FmInputDateExpr
+					label="Date to"
+					v-model:expr="procedure.price_date_to_expr"
+					v-model:date="procedure.price_date_to"
+				/>
+				<BaseInput
+					label="Roll prices for N days forward"
+					v-model="procedure.price_fill_days"
+				/>
 
-						<v-text-field
-							:label="`Date to${isDateToExpr ? ' (Expression)' : ''}`"
-							:placeholder="`Date to${isDateToExpr ? ' (Expression)' : ''}`"
-							variant="outlined"
-							density="comfortable"
-							:type="isDateToExpr ? 'text' : 'date'"
-							:append-inner-icon="isDateToExpr ? 'mdi-code-tags' : ''"
-							:prepend-inner-icon="'mdi-swap-vertical'"
-							@click:prepend-inner="isDateToExpr = !isDateToExpr"
-							:modelValue="isDateToExpr ? procedure.price_date_to_expr : procedure.price_date_to"
-							@click="isDateToExpr ? isOpenToExpr = true : ''"
-						/>
-						<FmExpression
-							v-if="isOpenToExpr"
-							v-model="isOpenToExpr"
-							:expressions="procedure.price_date_to_expr"
-							@save="procedure.price_date_to_expr = $event"
-						/>
+				<div class="checks">
+					<FmCheckbox
+						v-model="procedure.price_get_principal_prices"
+						label="Get Principal Prices"
+					/>
+					<FmCheckbox
+						v-model="procedure.price_get_accrued_prices"
+						label="Get Accruals"
+					/>
+					<FmCheckbox
+						v-model="procedure.price_get_fx_rates"
+						label="Get FX Rates"
+					/>
 
-						<v-text-field
-							label="Roll prices for N days forward"
-							placeholder="Roll prices for N days forward"
-							variant="outlined"
-							density="comfortable"
-							v-model="procedure.price_fill_days"
-							hide-details
-						/>
-						<v-row>
-							<v-col
-								cols="12"
-								sm="4"
-								md="4"
-							>
-								<v-checkbox
-									v-model="procedure.price_get_principal_prices"
-									label="Get Principal Prices"
-									color="primary"
-									hide-details
-								></v-checkbox>
-								<v-checkbox
-									v-model="procedure.price_overwrite_principal_prices"
-									label="Overwrite "
-									color="primary"
-									hide-details
-								></v-checkbox>
-							</v-col>
-							<v-col
-								cols="12"
-								sm="4"
-								md="4"
-							>
-								<v-checkbox
-									v-model="procedure.price_get_accrued_prices"
-									label="Get Accruals"
-									color="primary"
-									hide-details
-								></v-checkbox>
-								<v-checkbox
-									v-model="procedure.price_overwrite_accrued_prices"
-									label="Overwrite"
-									color="primary"
-									hide-details
-								></v-checkbox>
-							</v-col>
-							<v-col
-								cols="12"
-								sm="4"
-								md="4"
-							>
-								<v-checkbox
-									v-model="procedure.price_get_fx_rates"
-									label="Get FX Rates"
-									color="primary"
-									hide-details
-								></v-checkbox>
-								<v-checkbox
-									v-model="procedure.price_overwrite_fx_rates"
-									label="Overwrite"
-									color="primary"
-									hide-details
-								></v-checkbox>
-							</v-col>
-						</v-row>
-					</v-card-content>
-				</v-card>
-			</div>
-			<div class="coll">
-				<v-card class="mb-6">
-					<v-card-title>Filters</v-card-title>
-					<v-card-content>
-						<BaseMultiSelect
-							v-model="procedure.pricing_policy_filters"
-							title="Pricing policies"
-							:items="policyList"
-						/>
-						<BaseMultiSelect
-							v-model="procedure.portfolio_filters"
-							title="Portfolios"
-							:items="portfolioList"
-						/>
-					</v-card-content>
-				</v-card>
+					<FmCheckbox
+						v-model="procedure.price_overwrite_principal_prices"
+						label="Overwrite "
+					/>
+					<FmCheckbox
+						v-model="procedure.price_overwrite_accrued_prices"
+						label="Overwrite"
+					/>
+					<FmCheckbox
+						v-model="procedure.price_overwrite_fx_rates"
+						label="Overwrite"
+					/>
+				</div>
+			</FmCard>
+		</template>
+		<template #right>
+			<FmCard title="Filters" class="mb-x">
+				<BaseMultiSelect
+					v-model="procedure.pricing_policy_filters"
+					title="Pricing policies"
+					:items="policyList"
+				/>
+				<BaseMultiSelect
+					v-model="procedure.portfolio_filters"
+					title="Portfolios"
+					:items="portfolioList"
+				/>
+			</FmCard>
 
-				<v-card class="mb-6">
-					<v-card-title>Instruments</v-card-title>
-					<v-card-content>
-						<BaseMultiSelect
-							v-model="procedure.instrument_type_filters"
-							title="Instrument types"
-							:items="typeList"
-						/>
-						<BaseMultiSelect
-							v-model="procedure.instrument_pricing_scheme_filters"
-							title="Pricing schemes"
-							:items="instrumentList"
-						/>
-						<v-select
-							v-model="pricing_conditions"
-							@update:modelValue="procedure.instrument_pricing_condition_filters = $event.join(',')"
-							:items="conditions"
-							chips
-							closable-chips
-							label="Pricing Condition"
-							prepend-inner-icon="mdi-menu"
-							variant="outlined"
-							density="compact"
-							multiple
-						/>
-					</v-card-content>
-				</v-card>
+			<FmCard  title="Instruments" class="mb-x">
+				<BaseMultiSelect
+					v-model="procedure.instrument_type_filters"
+					title="Instrument types"
+					:items="typeList"
+				/>
+				<BaseMultiSelect
+					v-model="procedure.instrument_pricing_scheme_filters"
+					title="Pricing schemes"
+					:items="instrumentList"
+				/>
+				<FmSelect multiple
+					v-model="pricing_conditions"
+					@update:modelValue="procedure.instrument_pricing_condition_filters = $event.join(',')"
+					:items="conditions"
+					label="Pricing Condition"
+				/>
+			</FmCard>
 
-				<v-card>
-					<v-card-title>Currencies</v-card-title>
-					<v-card-content>
-						<BaseMultiSelect
-							v-model="procedure.currency_pricing_scheme_filters"
-							title="Pricing schemes"
-							:items="currencyList"
-						/>
-						<v-select
-							v-model="currency_condition"
-							@update:modelValue="procedure.currency_pricing_condition_filters = $event.join(',')"
-							:items="conditions"
-							chips
-							closable-chips
-							label="Pricing Condition"
-							prepend-inner-icon="mdi-menu"
-							variant="outlined"
-							density="compact"
-							multiple
-						/>
-					</v-card-content>
-				</v-card>
-			</div>
-		</div>
-
-		<v-sheet class="control_line pa-4 d-flex space-between">
-			<v-btn variant="text" @click="$router.push('/valuations/run-pricing')">cancel</v-btn>
-			<v-btn color="primary" @click="save()">save</v-btn>
-		</v-sheet>
-
-	</v-container>
+			<FmCard title="Currencies" class="mb-x">
+				<BaseMultiSelect
+					v-model="procedure.currency_pricing_scheme_filters"
+					title="Pricing schemes"
+					:items="currencyList"
+				/>
+				<FmSelect
+					label="Pricing Condition"
+					v-model="currency_condition"
+					@update:modelValue="procedure.currency_pricing_condition_filters = $event.join(',')"
+					:items="conditions"
+				/>
+			</FmCard>
+		</template>
+	</CommonSettingsLayout>
 </template>
 
 <script setup>
@@ -213,7 +125,7 @@
 	definePageMeta({
 		bread: [
 			{
-				text: 'Update Pricing Procedure',
+				text: 'Valuations: Run Pricing ',
 				to: '/valuations/run-pricing',
 				disabled: false
 			},
@@ -227,11 +139,11 @@
 	let route = useRoute()
 	let procedure = ref({})
 
-	let policyList = ref({})
-	let portfolioList = ref({})
-	let typeList = ref({})
-	let instrumentList = ref({})
-	let currencyList = ref({})
+	let policyList = ref([])
+	let portfolioList = ref([])
+	let typeList = ref([])
+	let instrumentList = ref([])
+	let currencyList = ref([])
 
 	let isDateFromExpr = ref(false)
 	let isDateToExpr = ref(false)
@@ -240,13 +152,19 @@
 	let isOpenToExpr = ref(false)
 
   let conditions = ref([
-		{title: 'Run valuation: Always', value: '2'},
-		{title: 'Run valuation: Open Position', value: '3'}
+		{name: 'Run valuation: Always', id: '2'},
+		{name: 'Run valuation: Open Position', id: '3'}
 	])
 	let pricing_conditions = ref()
 	let currency_condition = ref()
 
 	async function init() {
+		useApi('instrumentType.get').then( res => typeList.value = res.results )
+		useApi('instrumentScheme.get').then( res => instrumentList.value = res.results )
+		useApi('policyFilters.get').then( res => policyList.value = res.results )
+		useApi('portfolioFilters.get').then( res => portfolioList.value = res.results )
+		useApi('currencyScheme.get').then( res => currencyList.value = res.results )
+
 		let res = await useApi('pricingProcId.get', {params: {id: route.params.id}})
 		procedure.value = res
 		pricing_conditions.value = procedure.value.instrument_pricing_condition_filters.split(',')
@@ -254,12 +172,6 @@
 
 		isDateFromExpr.value = procedure.value.price_date_from_expr ? true : false
 		isDateToExpr.value = procedure.value.price_date_to_expr ? true : false
-
-		typeList.value = (await useApi('instrumentType.get')).results
-		instrumentList.value = (await useApi('instrumentScheme.get')).results
-		policyList.value = (await useApi('policyFilters.get')).results
-		portfolioList.value = (await useApi('portfolioFilters.get')).results
-		currencyList.value = (await useApi('currencyScheme.get')).results
 	}
 	function openExpr( expr ) {
 		dialog.value = true
@@ -287,14 +199,9 @@
 </script>
 
 <style lang="scss" scoped>
-.coll {
-	width: 48%;
-}
-.control_line {
-	width: calc(100% - 160px);
-	position: fixed;
-	left: 160px;
-	bottom: 0;
-	border-top: 1px solid $border;
+.checks {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 10px;
 }
 </style>

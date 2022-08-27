@@ -1,5 +1,5 @@
 <template>
-	<Teleport to="body">
+	<Teleport to="body" v-if="modelValue">
 		<transition name="fade">
 			<div class="modal_wrap flex aic jcc"
 				v-show="modelValue"

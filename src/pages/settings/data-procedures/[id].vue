@@ -1,9 +1,9 @@
 <template>
 	<CommonSettingsLayout
 		v-if="procedure.id"
-		title="Update Pricing Procedure"
+		title="Update Data Procedure"
 		@save="save()"
-		@cancel="() => $router.push('/valuations/run-pricing')"
+		@cancel="() => $router.push('/import/bank')"
 	>
 		<template #left>
 			<FmCard title="Global" class="mb-x">

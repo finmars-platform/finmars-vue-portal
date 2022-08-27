@@ -1,7 +1,7 @@
 <template>
-	<TheLayout :isShowSidebar="false">
+	<div>
 		<slot />
-	</TheLayout>
+	</div>
 </template>
 
 <script setup>

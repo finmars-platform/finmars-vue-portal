@@ -2,6 +2,7 @@
 	<button
 		:class="['fm_btn', { icon }, type]"
 		:disabled="loading"
+		@click="to ? $router.push(to) : ''"
 	>
 		<div v-if="icon" :class="`icon material-icons`">{{ icon }}</div>
 		<slot />
@@ -13,6 +14,7 @@
 	let props = defineProps({
 		label: String,
 		icon: String,
+		to: String,
 		loading: Boolean,
 		type: {
 			type: String,

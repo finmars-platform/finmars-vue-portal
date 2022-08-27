@@ -1,82 +1,58 @@
 <template>
 	<div>
-		<v-container class="justify-space-between d-flex py-3" fluid>
-			<v-text-field
-				class="py-0"
-				label="Search"
-				placeholder="Search"
-				variant="plain"
-				prepend-icon="mdi-magnify"
-				hide-details="auto"
-				density="compact"
-			/>
+		<FmTopRefresh @refresh="refresh()">
+			<template #action>
+				<BaseInput type="text"
+					placeholder="Search"
+					class="bi_no_borders"
+				>
+					<template #button>
+						<FmIcon icon="search" />
+					</template>
+				</BaseInput>
+			</template>
+		</FmTopRefresh>
 
-			<v-spacer></v-spacer>
-
-			<v-btn color="#737373"
-				size="small"
-				height="auto"
-				variant="text"
-				stacked
-				class="text-capitalize"
-				@click="refresh()"
-			>
-				<v-icon start size="24" icon="mdi-refresh"></v-icon>
-				refresh
-			</v-btn>
-		</v-container>
-		<v-divider></v-divider>
-		<div class="d-flex">
-			<v-container fluid class="py-6 px-7">
-				<v-card width="360"
+		<div class="flex aifs">
+			<div class="fm_container cards">
+				<FmCard
 					v-for="(item) in procedures"
 					:key="item.id"
+					:title="item.user_code"
+					controls
 				>
-					<v-card-title>
-						{{ item.user_code }}
-					</v-card-title>
-
-					<v-card-text>
+					<div class="fm_card_content">
 						{{ item.notes }}
-					</v-card-text>
+					</div>
 
-					<v-card-title class="text-subtitle-2">
+					<div>
 						Date range
-					</v-card-title>
+					</div>
 
-					<v-card-content class="d-flex space-between py-2">
+					<div class="flex sb p-t-16">
 						<div class="date_item">
-							<v-text-field
-								width="100"
-								type="date"
+							<FmInputDate class="m-b-0"
 								label="Date from"
-								placeholder="Date from"
-								variant="outlined"
-								density="comfortable"
 								v-model="item.price_date_from_calculated"
-								hide-details="auto"
 							/>
 						</div>
 						<div class="date_item">
-							<v-text-field
-								type="date"
+							<FmInputDate class="m-b-0"
 								label="Date to"
-								placeholder="Date to"
-								variant="outlined"
-								density="comfortable"
 								v-model="item.price_date_to_calculated"
-								hide-details="auto"
 							/>
 						</div>
-					</v-card-content>
+					</div>
 
-					<v-card-actions class="justify-space-between d-flex">
-						<v-btn color="primary" :to="`/valuations/run-pricing/${item.id}`">edit</v-btn>
+					<template #controls>
+						<div class="flex sb">
+							<FmBtn type="action" :to="`/valuations/run-pricing/${item.id}`">edit</FmBtn>
 
-						<v-btn variant="contained" color="primary" :disabled="processing" @click="execute(item)">execute</v-btn>
-					</v-card-actions>
-				</v-card>
-			</v-container>
+							<FmBtn :disabled="processing" @click="execute(item)">execute</FmBtn>
+						</div>
+					</template>
+				</FmCard>
+			</div>
 			<div class="table">
 				<div class="table-row header">
 					<div class="table-cell">Procedure</div>
@@ -102,7 +78,7 @@
 			{
 				text: 'Valuations: Run Pricing',
 				to: '/valuations/run-pricing',
-				disabled: false
+				disabled: true
 			},
 		],
 	});
@@ -152,6 +128,13 @@
 </script>
 
 <style lang="scss" scoped>
+
+.cards {
+	display: grid;
+	grid-template-columns: repeat(2, 360px);
+	grid-gap: 30px;
+	justify-content: flex-start;
+}
 .table {
 	border: 1px solid $border;
 	width: 100%;
