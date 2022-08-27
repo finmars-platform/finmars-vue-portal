@@ -3,8 +3,8 @@
 		<FmTopRefresh
 			:refresh="refresh"
 		/>
-		<div class="d-flex align-start">
-			<v-container fluid class="py-6 px-7">
+		<div class="flex aic">
+			<div class="py-6 px-7">
 				<div class="table">
 				<div class="table-row header">
 					<div class="table-cell">Name</div>
@@ -25,7 +25,7 @@
 					<div class="table-cell">{{ item.groups }}</div>
 				</div>
 				</div>
-			</v-container>
+			</div>
 
 			<div class="table">
 				<div class="table-row header">

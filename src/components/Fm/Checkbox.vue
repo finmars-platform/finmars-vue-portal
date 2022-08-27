@@ -32,7 +32,6 @@ input[type="radio"]:checked + .check > .mark,
 input[type="checkbox"]:checked + .check > .mark  {
 	opacity: 1;
 }
-
 input[type="checkbox"]:checked + .check {
 	background: $primary;
 	border: none;
@@ -45,9 +44,11 @@ input[type="checkbox"]:checked + .check {
 	height: 20px;
 	background: none;
 	border: 1px solid $border-darken;
-	border-radius: 50%;
 	margin-right: 10px;
 	cursor: pointer;
+	.circle {
+		border-radius: 50%;
+	}
 	.mark {
 		display: block;
 		position: absolute;

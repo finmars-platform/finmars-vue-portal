@@ -12,6 +12,9 @@ export default {
 	tokenInfo: {
 		get: 'authorizer/auth-token-manager/'
 	},
+	login: {
+		post: '/authorizer/token-auth/'
+	},
 	masterBackups: {
 		get: '/authorizer/master-user-backups/',
 		'delete': '/authorizer/master-user-backups/{id}/',

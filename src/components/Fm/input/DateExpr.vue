@@ -7,11 +7,10 @@
 		<template #button>
 			<FmIcon
 				v-if="isDateExpr"
-				type="outlined"
 				icon="code"
 				@click="isOpenDateExpr = true"
 			/>
-			<FmIcon v-else type="outlined" icon="calendar_month" />
+			<FmIcon v-else icon="calendar_month" />
 		</template>
 
 		<template #rightBtn>
@@ -34,7 +33,7 @@
 	const emit = defineEmits([
 		'update:date', 'update:expr'
 	])
-	let isDateExpr = ref(false)
+	let isDateExpr = ref(props.date ? false : true)
 	let isOpenDateExpr = ref(false)
 
 </script>

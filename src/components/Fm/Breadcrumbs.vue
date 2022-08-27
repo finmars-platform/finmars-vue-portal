@@ -23,9 +23,15 @@
 		items: Array
 	})
 
-	let last
+	let last = ref(0)
 
-	if ( props.items ) {last = ref(props.items.length - 1)}
+	if ( props.items ) setLast()
+
+	watch( () => props.items, () => setLast())
+
+	function setLast() {
+		last.value = props.items.length - 1
+	}
 </script>
 
 <style lang="scss" scoped>

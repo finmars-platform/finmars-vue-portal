@@ -68,4 +68,23 @@ export default {
 	},
 
 
+	systemMessagesStats: {
+		get: prefix + '/system-messages/message/stats/',
+	},
+	systemMessages: {
+		get: prefix + '/system-messages/message/',
+	},
+	systemMessages: {
+		get: prefix + '/system-messages/message/',
+	},
+	systemMessagesPin: {
+		post: prefix + '/system-messages/message/pin/',
+	},
+	systemMessagesUnpin: {
+		post: prefix + '/system-messages/message/unpin/',
+	},
+	systemMessagesSolved: {
+		post: prefix + '/system-messages/message/mark-as-solved/',
+	},
+
 }

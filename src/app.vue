@@ -13,9 +13,7 @@
 </template>
 
 <script setup>
-	let store = useStore()
 
-	await store.init()
 </script>
 
 <style lang="scss" scoped>
