@@ -2,11 +2,14 @@
 	<FmMenu class="fm_select">
 		<template #btn="{ isOpen }">
 			<BaseInput
-				class="input_btn"
-				:class="{active: isOpen}"
+				class="input_btn m-b-0"
+				:class="{active: isOpen, 'bi_no_borders': no_borders, small: size == 'small'}"
 				:label="label"
 				:modelValue="modelValue"
 			>
+				<template #button>
+					<slot name="left_icon"></slot>
+				</template>
 				<template #rightBtn>
 					<slot name="right_btn">
 						<FmIcon :icon="isOpen ? 'arrow_drop_up' : 'arrow_drop_down'" />
@@ -45,11 +48,15 @@
 			type: String,
 			default: 'id',
 		},
-		prop_name: String
+		prop_name: String,
+		size: String,
+		no_borders: Boolean,
 	})
 	defineEmits(['update:modelValue'])
 
 	let selected = ref(props.modelValue)
+
+	if ( props.items ) selected.value = props.items.find(item => item[props.prop_id] == props.modelValue).name
 
 	watch( () => props.items, () => {
 		let elem = props.items.find(item => item[props.prop_id] == props.modelValue)
@@ -60,6 +67,7 @@
 <style lang="scss" scoped>
 	.fm_select {
 		display: block;
+		margin-bottom: 25px;
 	}
 	.input_btn {
 		cursor: pointer;
