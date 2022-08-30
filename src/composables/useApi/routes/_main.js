@@ -87,4 +87,8 @@ export default {
 		post: prefix + '/system-messages/message/mark-as-solved/',
 	},
 
+	instrumentsEvent: {
+		get: prefix + '/instruments/generated-event/{id}/',
+	},
+
 }

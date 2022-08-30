@@ -3,23 +3,30 @@
 		<div class="hp_block">
 			<div class="hp_title">Notifications</div>
 			<div class="hp_toolbar flex sb aic">
-				<FmSelect v-model="action" :items="actionsItems" size="small" class="m-b-0" @update:modelValue="dateFilter()" />
-				<BaseInput type="text"
-					v-model="query"
-					placeholder="Search"
-					class="bi_no_borders"
-					@keyup.enter="search()"
-				>
-					<template #button>
-						<FmIcon icon="search" />
-					</template>
-				</BaseInput>
+				<div class="flex aic">
+					<FmSelect v-model="action" :items="actionsItems" size="small" class="m-b-0" @update:modelValue="dateFilter()" />
 
-				<FmSelect v-model="date" :items="dateItems" class="m-b-0" no_borders @update:modelValue="dateFilter()">
-					<template #left_icon>
-						<FmIcon icon="today" />
-					</template>
-				</FmSelect>
+					<BaseInput type="text"
+						v-model="query"
+						placeholder="Search"
+						class="bi_no_borders"
+						@keyup.enter="search()"
+					>
+						<template #button>
+							<FmIcon icon="search" />
+						</template>
+					</BaseInput>
+				</div>
+
+				<div class="flex aic">
+					<FmSelect v-model="date" :items="dateItems" class="m-b-0" no_borders @update:modelValue="dateFilter()">
+						<template #left_icon>
+							<FmIcon icon="today" />
+						</template>
+					</FmSelect>
+					<FmIcon :icon="only_new ? 'visibility' : 'visibility_off'"
+						:tooltip="(only_new ? 'Show' : 'Hide') + ' read messages'" @click="only_new = !only_new, dateFilter()" />
+				</div>
 			</div>
 
 			<div class="hp_content">
@@ -80,7 +87,10 @@
 				<template v-else>
 					<div class="hp_row flex sb aic">
 						<div class="flex aic">
-							<FmIcon icon="arrow_back" @click="backToStats()" />
+							<div class="hp_back">
+								<FmIcon icon="arrow_back" @click="backToStats()" />
+							</div>
+
 							<div class="hp_item no_hover">
 								<div>{{ openedStream.name }}</div>
 								<div class="hp_text_small">Total new: {{ openedStream.total }}</div>
@@ -113,11 +123,11 @@
 
 							<template #default="{close}">
 								<div class="fm_list">
-									<div class="fm_list_item" @click="">
-										<FmIcon class="m-r-10" icon="docs_add_on" /> Show all details
-									</div>
-									<div class="fm_list_item" @click="">
-										<FmIcon class="m-r-10" icon="docs_add_on" /> Hide all details
+									<!-- <div class="fm_list_item" @click="">
+										<FmIcon class="m-r-10" icon="playlist_add" /> Show all details
+									</div> -->
+									<div class="fm_list_item" @click="hideAllDetails(), close()">
+										<FmIcon class="m-r-10" icon="playlist_remove" /> Hide all details
 									</div>
 									<div class="fm_list_item" @click="markAsReadAll( openedStream.id ), close()">
 										<FmIcon class="m-r-10" icon="mark_email_read" /> Mark as read
@@ -139,7 +149,7 @@
 						}"
 					>
 						<div class="flex sb">
-							<div><b>{{ item.title ? item.title + ': ' : '' }}</b> {{ item.description }}</div>
+							<div class="hp_messages_text"><b>{{ item.title ? item.title + ': ' : '' }}</b> {{ item.description }}</div>
 							<div class="flex">
 								<div>
 									<div :class="['action_status', {primary: item.action_status == 2}]">{{ ACTION_STATUSES[item.action_status] }}</div>
@@ -160,16 +170,32 @@
 
 						<div class="hp_details" v-if="(item.linked_event || item.attachments.length) && openedDetalis.has(item.id)">
 							<div class="hp_actions" v-if="item.linked_event">
-								Instrument: US900123AW05 (UNITED STATES OF AMERICA 1.125% 2020-20.11.2027) <br>
-								Position: -150.00 <br>
-								Account: 106438730 <br>
-								Portfolio: Portfolio Test <br>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Instrument:</div>
+									<div class="hp_actions_item_t">
+										{{ detailsObjs[item.linked_event].instrument_object.name }}
+									</div>
+								</div>
 
-								Available actions <br>
+								<b>Available actions</b><br>
 
-								Action 1 description<br>
-								Action 2 super long description<br>
-								Ignore
+								<div class="hp_actions_item_btn"
+									v-for="(item, i) in detailsObjs[item.linked_event].event_schedule_object.actions"
+									:key="i"
+								>
+									{{ item.display_text }}
+								</div>
+							</div>
+							<div class="hp_attach" v-if="item.attachments.length">
+								<b>Attachments</b>
+								<div class="hp_attach_item flex aic"
+									v-for="(item, index) in item.attachments"
+									:key="index"
+								>
+									<div class="hp_attach_item_type">{{ item.file_report_object.content_type || 'JSON' }}</div>
+									<a class="hp_attach_item_name"
+									:href="`${useRuntimeConfig().public.apiURL}/${useStore().current.base_api_url}/api/v1/file-reports/file-report/${item.file_report_object.id}/view/`">{{ item.file_report_object.name }}</a>
+								</div>
 							</div>
 
 						</div>
@@ -266,6 +292,7 @@
 	let streams = ref([])
 	let openedStream = ref(null)
 	let messages = ref([])
+	let detailsObjs = ref({})
 
 	let dateItems = [
 		{id: moment().add(-1, 'd').format('YYYY-MM-DD'), name: 'Last day'},
@@ -283,6 +310,7 @@
 
 	let query = ref('')
 	let date = ref('')
+	let only_new = ref(true)
 	let action = ref('')
 	let types = ref(new Set())
 
@@ -291,7 +319,7 @@
 	async function loadStats() {
 		let filters = {
 			query: query.value,
-			only_new: true
+			only_new: only_new.value
 		}
 
 		if ( date.value ) filters.created_after = date.value
@@ -322,6 +350,11 @@
 		})
 
 		streams.value = res
+
+		if ( openedStream.value ) openedStream.value = res.find(item => item.id == openedStream.value.id)
+	}
+	function hideAllDetails() {
+		openedDetalis.value = new Set()
 	}
 	async function search() {
 		if ( openedStream.value ) loadStream( true )
@@ -329,7 +362,8 @@
 	}
 	async function dateFilter() {
 		if ( openedStream.value ) loadStream( true )
-		else loadStats()
+
+		loadStats()
 	}
 
 	async function markAsReadAll( id ) {
@@ -372,13 +406,19 @@
 
 		loadStream( true )
 	}
-	function openDetails( message ) {
+	async function openDetails( message ) {
 		if ( openedDetalis.value.has(message.id) ) {
 			openedDetalis.value.delete(message.id)
 		} else {
 			openedDetalis.value.add(message.id)
-			console.log('message:', message)
 
+			if ( message.linked_event ) {
+				let res = await useApi('instrumentsEvent.get', {
+					params: {id: message.linked_event}
+				})
+
+				detailsObjs.value[message.linked_event] = res
+			}
 		}
 	}
 
@@ -403,6 +443,7 @@
 		if ( types.value ) filters.type = [...types.value].join(',')
 		if ( date.value ) filters.created_after = date.value
 		if ( action.value ) filters.action_status = action.value
+		if ( only_new.value ) filters.only_new = only_new.value
 
 		if ( openedStream.value.id !== 0 ) filters.section = openedStream.value.id
 
@@ -534,6 +575,21 @@
 			}
 		}
 	}
+	.hp_back {
+		width: 25px;
+		height: 25px;
+		background: $text-lighten;
+		border-radius: 50%;
+		margin-right: 10px;
+		text-align: center;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		.icon {
+			color: $separ;
+			font-size: 20px;
+		}
+	}
 	.hp_messages {
 		position: relative;
 		margin: 15px 10px 0;
@@ -559,6 +615,9 @@
 			border-left-color: #E1FEF5;
 		}
 	}
+	.hp_messages_text {
+		padding-right: 10px;
+	}
 	.hp_details_btn {
 		color: $primary;
 		cursor: pointer;
@@ -567,6 +626,40 @@
 		&:hover {
 			color: $primary-lighten;
 		}
+	}
+	.hp_actions {
+		padding: 10px 0;
+	}
+	.hp_actions_item {
+		margin-bottom: 10px;
+	}
+	.hp_actions_item_h {
+		color: $text-lighten;
+		width: 100px;
+	}
+	.hp_actions_item_btn {
+		margin-top: 10px;
+		background: $main-darken;
+		width: 228px;
+		border-radius: 5px;
+		padding: 8px 10px;
+		cursor: pointer;
+	}
+	.hp_attach_item {
+		margin-top: 13px;
+	}
+	.hp_attach_item_type {
+		border: 1px solid $primary;
+		border-radius: 1px;
+		padding: 6px;
+		font-size: 14px;
+		text-transform: uppercase;
+		color: $primary;
+		margin-right: 11px;
+	}
+	.hp_attach_item_name {
+		text-decoration: underline;
+		cursor: pointer;
 	}
 	.more_menu {
 		position: absolute;
