@@ -89,6 +89,6 @@
 		opacity: 0;
 		visibility: hidden;
 		transition: 0.3s;
-
+		white-space: nowrap;
 	}
 </style>
