@@ -74,8 +74,8 @@ export default {
 	systemMessages: {
 		get: prefix + '/system-messages/message/',
 	},
-	systemMessages: {
-		get: prefix + '/system-messages/message/',
+	systemMessagesRead: {
+		post: prefix + '/system-messages/message/mark-as-read/',
 	},
 	systemMessagesPin: {
 		post: prefix + '/system-messages/message/pin/',

@@ -60,11 +60,16 @@
 		margin-bottom: 25px;
 		transition: border 0.3s;
 
+		&.small {
+			height: 24px;
+			font-size: 14px;
+		}
+
 		&:not(.bi_no_borders) {
 			border: 1px solid $border-darken;
 		}
 
-		&:not(.bi_no_borders):focus-within, &:focus {
+		&:not(.bi_no_borders):focus-within, &:not(.bi_no_borders):focus {
 			border: 1px solid $border-active;
 			.bi_label {
 				top: -8px;
@@ -150,6 +155,10 @@
 	.bi_side_items {
 		display: none;
 		padding: 0 8px;
+
+		&:empty {
+			padding: 0;
+		}
 	}
 	.bi_button {
 		margin-left: 13px;
@@ -163,6 +172,10 @@
 	.right_btn {
 		margin-right: 10px;
 		color: $text-lighten;
+
+		&:empty {
+			margin-right: 0;
+		}
 	}
 	.bi_side_item {
 		color: $text-lighten;
