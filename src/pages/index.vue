@@ -267,22 +267,22 @@
 	const store = useStore()
 
 
-	var timeout;
-$('.messages').scroll(function(){
-  var me = this;
-  if(timeout) clearTimeout(timeout);
-  timeout = setTimeout(function(){ //чтобы не искать одно и то же несколько раз
-    $(me).find('.unreadmessage').each(function(){
-      var scrollTop = $(me).scrollTop(), posTop = $(this).position().top, message = this;
-      setTimeout(function(){
-        if(posTop >= scrollTop && posTop <= scrollTop + $(me).height()){
-          $(message).removeClass('unreadmessage');
-        }
-      }, 1500);
-    });
-  }, 100);
+// 	var timeout;
+// $('.messages').scroll(function(){
+//   var me = this;
+//   if(timeout) clearTimeout(timeout);
+//   timeout = setTimeout(function(){ //чтобы не искать одно и то же несколько раз
+//     $(me).find('.unreadmessage').each(function(){
+//       var scrollTop = $(me).scrollTop(), posTop = $(this).position().top, message = this;
+//       setTimeout(function(){
+//         if(posTop >= scrollTop && posTop <= scrollTop + $(me).height()){
+//           $(message).removeClass('unreadmessage');
+//         }
+//       }, 1500);
+//     });
+//   }, 100);
 
-}).scrollTop(150);
+// }).scrollTop(150);
 
 
 	let nextPage = 1
