@@ -187,7 +187,7 @@
 								</div>
 							</div>
 							<div class="hp_attach" v-if="item.attachments.length">
-								<b>Attachments</b>
+								<b class="m-t-10 db">Attachments</b>
 								<div class="hp_attach_item flex aic"
 									v-for="(item, index) in item.attachments"
 									:key="index"
@@ -264,14 +264,39 @@
 		9: 'Schedules',
 		10: 'Other'
 	}
+	const store = useStore()
+
+
+	var timeout;
+$('.messages').scroll(function(){
+  var me = this;
+  if(timeout) clearTimeout(timeout);
+  timeout = setTimeout(function(){ //чтобы не искать одно и то же несколько раз
+    $(me).find('.unreadmessage').each(function(){
+      var scrollTop = $(me).scrollTop(), posTop = $(this).position().top, message = this;
+      setTimeout(function(){
+        if(posTop >= scrollTop && posTop <= scrollTop + $(me).height()){
+          $(message).removeClass('unreadmessage');
+        }
+      }, 1500);
+    });
+  }, 100);
+
+}).scrollTop(150);
+
 
 	let nextPage = 1
 	let openedDetalis = ref(new Set())
 
 	let ws = new WebSocket("wss://dev.finmars.com/ws/");
-	ws.onopen = function(){
+	ws.onopen = async function() {
 		console.log("Websocket. Initial Auth");
-		ws.send(JSON.stringify({action: "initial_auth"}));
+
+		let member = await useApi('member.get', {params: {id: 0}})
+		ws.send(JSON.stringify({action: "initial_auth", data: {access_token: useCookie('access_token').value}}));
+		ws.send( JSON.stringify( {action: "update_user_state", data: {member: member}} ) )
+		ws.send( JSON.stringify( {action: "update_user_state", data: {master_user: store.current}} ) )
+
 	};
 	ws.onMessage = (message) => {
 		try {
@@ -416,6 +441,14 @@
 				let res = await useApi('instrumentsEvent.get', {
 					params: {id: message.linked_event}
 				})
+
+				let res2 = await useApi('instrumentsEventBook.get', {
+					params: {id: message.linked_event},
+					filters: {action: 95}
+				})
+				console.log('res2:', res2)
+
+
 
 				detailsObjs.value[message.linked_event] = res
 			}
