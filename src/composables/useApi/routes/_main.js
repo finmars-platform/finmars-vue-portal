@@ -90,5 +90,9 @@ export default {
 	instrumentsEvent: {
 		get: prefix + '/instruments/generated-event/{id}/',
 	},
+	instrumentsEventBook: {
+		get: prefix + '/instruments/generated-event/{id}/book/',
+		put: prefix + '/instruments/generated-event/{id}/book/',
+	},
 
 }
