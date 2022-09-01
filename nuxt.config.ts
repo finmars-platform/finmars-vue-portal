@@ -8,6 +8,7 @@ export default defineNuxtConfig({
 	publicRuntimeConfig: {
 		appURL: process.env.APP_URL || "http://localhost:3000",
 		apiURL: process.env.API_URL || "http://localhost:3000",
+		wsURL: process.env.WS_URL || "http://localhost:3000",
 		oldAppURL: process.env.OLD_APP_URL || "http://localhost:3000",
 		buildDATE: dateString,
 	},

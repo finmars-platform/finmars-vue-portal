@@ -74,6 +74,9 @@ export default {
 	systemMessages: {
 		get: prefix + '/system-messages/message/',
 	},
+	systemMessagesOne: {
+		get: prefix + '/system-messages/message/{id}/',
+	},
 	systemMessagesRead: {
 		post: prefix + '/system-messages/message/mark-as-read/',
 	},

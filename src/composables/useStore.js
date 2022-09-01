@@ -5,6 +5,7 @@ export default defineStore({
 	state: () => {
 		return {
 			user: {},
+			ws: null,
 			databases: [],
 			current: {}
 		};
@@ -12,6 +13,7 @@ export default defineStore({
 	actions: {
 		async init() {
 			await this.ping()
+
 			this.getUser()
 			this.getDatabases()
 		},

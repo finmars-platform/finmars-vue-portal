@@ -1,6 +1,6 @@
 <template>
 	<div class="fm_container wrap">
-		<div class="hp_block">
+		<div class="hp_block notifications">
 			<div class="hp_title">Notifications</div>
 			<div class="hp_toolbar flex sb aic">
 				<div class="flex aic">
@@ -11,6 +11,7 @@
 						placeholder="Search"
 						class="bi_no_borders"
 						@keyup.enter="search()"
+						@change="search()"
 					>
 						<template #button>
 							<FmIcon icon="search" />
@@ -29,7 +30,59 @@
 				</div>
 			</div>
 
-			<div class="hp_content">
+			<div class="hp_row hp_messages_stats flex sb aic"  v-if="openedStream">
+				<div class="flex aic">
+					<div class="hp_back">
+						<FmIcon icon="arrow_back" @click="backToStats()" />
+					</div>
+
+					<div class="hp_item no_hover">
+						<div>{{ openedStream.name }}</div>
+						<div class="hp_text_small">Total new: {{ openedStream.total }}</div>
+					</div>
+				</div>
+
+				<div class="flex aic">
+					<div class="hp_item red" :class="{active: types.has(3)}" @click="choseType(3)">
+						<div class="hp_text_small">Errors</div>
+						<div><span class="circle red"></span>{{ openedStream.errors }}</div>
+					</div>
+					<div class="hp_item primary" :class="{active: types.has(2)}" @click="choseType(2)">
+						<div class="hp_text_small">Warning</div>
+						<div><span class="circle primary"></span>{{ openedStream.warning }}</div>
+					</div>
+					<div class="hp_item blue" :class="{active: types.has(1)}" @click="choseType(1)">
+						<div class="hp_text_small">Information</div>
+						<div><span class="circle blue"></span>{{ openedStream.information }}</div>
+					</div>
+					<div class="hp_item green" @click="choseType(4)" :class="{active: types.has(4)}">
+						<div class="hp_text_small">Success</div>
+						<div><span class="circle green"></span>{{ openedStream.success }}</div>
+					</div>
+				</div>
+
+				<FmMenu class="header_item" anchor="right">
+					<template #btn>
+						<FmIcon icon="more_vert" />
+					</template>
+
+					<template #default="{close}">
+						<div class="fm_list">
+							<!-- <div class="fm_list_item" @click="">
+								<FmIcon class="m-r-10" icon="playlist_add" /> Show all details
+							</div> -->
+							<div class="fm_list_item" @click="hideAllDetails(), close()">
+								<FmIcon class="m-r-10" icon="playlist_remove" /> Hide all details
+							</div>
+							<div class="fm_list_item" @click="markAsReadAll( openedStream.id ), close()">
+								<FmIcon class="m-r-10" icon="mark_email_read" /> Mark as read
+							</div>
+						</div>
+					</template>
+				</FmMenu>
+			</div>
+
+			<div class="hp_content" :class="{opened: openedStream}">
 				<template v-if="!openedStream">
 					<div class="hp_row flex sb aic"
 						v-for="(item, index) in streams"
@@ -49,23 +102,27 @@
 								@click="openedStream = item, choseType(3)"
 							>
 								<div class="hp_text_small">Errors</div>
-								<div><span class="circle red"></span>{{ item.errors }}</div>
+								<div v-if="item.errors"><span class="circle red"></span>{{ item.errors }}</div>
+								<div v-else>-</div>
 							</div>
 							<div class="hp_item primary" @click="openedStream = item, choseType(2)">
 								<div class="hp_text_small">Warning</div>
-								<div><span class="circle primary"></span>{{ item.warning }}</div>
+								<div v-if="item.warning"><span class="circle primary"></span>{{ item.warning }}</div>
+								<div v-else>-</div>
 							</div>
 							<div class="hp_item blue" @click="openedStream = item, choseType(1)">
 								<div class="hp_text_small">Information</div>
-								<div><span class="circle blue"></span>{{ item.information }}</div>
+								<div v-if="item.information"><span class="circle blue"></span>{{ item.information }}</div>
+								<div v-else>-</div>
 							</div>
 							<div class="hp_item green" @click="openedStream = item, choseType(4)">
 								<div class="hp_text_small">Success</div>
-								<div><span class="circle green"></span>{{ item.success }}</div>
+								<div v-if="item.success"><span class="circle green"></span>{{ item.success }}</div>
+								<div v-else>-</div>
 							</div>
 						</div>
 
-						<FmMenu class="header_item">
+						<FmMenu class="header_item" anchor="right">
 							<template #btn>
 								<FmIcon icon="more_vert" />
 							</template>
@@ -80,63 +137,10 @@
 									</div>
 								</div>
 							</template>
-
 						</FmMenu>
 					</div>
 				</template>
 				<template v-else>
-					<div class="hp_row flex sb aic">
-						<div class="flex aic">
-							<div class="hp_back">
-								<FmIcon icon="arrow_back" @click="backToStats()" />
-							</div>
-
-							<div class="hp_item no_hover">
-								<div>{{ openedStream.name }}</div>
-								<div class="hp_text_small">Total new: {{ openedStream.total }}</div>
-							</div>
-						</div>
-
-						<div class="flex aic">
-							<div class="hp_item red" :class="{active: types.has(3)}" @click="choseType(3)">
-								<div class="hp_text_small">Errors</div>
-								<div><span class="circle red"></span>{{ openedStream.errors }}</div>
-							</div>
-							<div class="hp_item primary" :class="{active: types.has(2)}" @click="choseType(2)">
-								<div class="hp_text_small">Warning</div>
-								<div><span class="circle primary"></span>{{ openedStream.warning }}</div>
-							</div>
-							<div class="hp_item blue" :class="{active: types.has(1)}" @click="choseType(1)">
-								<div class="hp_text_small">Information</div>
-								<div><span class="circle blue"></span>{{ openedStream.information }}</div>
-							</div>
-							<div class="hp_item green" @click="choseType(4)" :class="{active: types.has(4)}">
-								<div class="hp_text_small">Success</div>
-								<div><span class="circle green"></span>{{ openedStream.success }}</div>
-							</div>
-						</div>
-
-						<FmMenu class="header_item">
-							<template #btn>
-								<FmIcon icon="more_vert" />
-							</template>
-
-							<template #default="{close}">
-								<div class="fm_list">
-									<!-- <div class="fm_list_item" @click="">
-										<FmIcon class="m-r-10" icon="playlist_add" /> Show all details
-									</div> -->
-									<div class="fm_list_item" @click="hideAllDetails(), close()">
-										<FmIcon class="m-r-10" icon="playlist_remove" /> Hide all details
-									</div>
-									<div class="fm_list_item" @click="markAsReadAll( openedStream.id ), close()">
-										<FmIcon class="m-r-10" icon="mark_email_read" /> Mark as read
-									</div>
-								</div>
-							</template>
-						</FmMenu>
-					</div>
-
 					<div class="hp_messages"
 						v-for="(item, index) in messages"
 						:key="index"
@@ -201,7 +205,7 @@
 						</div>
 
 						<div class="more_menu">
-							<FmMenu class="header_item">
+							<FmMenu class="header_item" anchor="right">
 								<template #btn>
 									<FmIcon icon="more_vert" />
 								</template>
@@ -288,31 +292,19 @@
 	let nextPage = 1
 	let openedDetalis = ref(new Set())
 
-	let ws = new WebSocket("wss://dev.finmars.com/ws/");
-	ws.onopen = async function() {
-		console.log("Websocket. Initial Auth");
+	store.ws.on('new_system_message', async ( data ) => {
+		if (
+			openedStream.value &&
+			( data.section == openedStream.value.id || openedStream.value.id == 0 )
+		) {
+			let message = await useApi( 'systemMessagesOne.get', { params: {id: data.id} } )
 
-		let member = await useApi('member.get', {params: {id: 0}})
-		ws.send(JSON.stringify({action: "initial_auth", data: {access_token: useCookie('access_token').value}}));
-		ws.send( JSON.stringify( {action: "update_user_state", data: {member: member}} ) )
-		ws.send( JSON.stringify( {action: "update_user_state", data: {master_user: store.current}} ) )
+			let pinned = messages.value.filter(item => item.is_pinned)
+			let start = pinned ? pinned.length : 0
 
-	};
-	ws.onMessage = (message) => {
-		try {
-			let parsedMessage = JSON.parse(message.data)
-
-			if ( parsedMessage.type == 'new_system_message') {
-				if ( parsedMessage.payload.section == openedStream.section ) {
-					messages.unshift(parsedMessage.payload)
-				}
-			}
-
-		} catch (error) {
-				console.log("Websocket onmessage error. Error: ", error);
-				console.log("Websocket onmessage error. Message: ", message);
+			messages.value.splice( start, 0, message )
 		}
-	}
+	})
 
 	let streams = ref([])
 	let openedStream = ref(null)
@@ -320,17 +312,17 @@
 	let detailsObjs = ref({})
 
 	let dateItems = [
+		{id: '', name: 'All'},
 		{id: moment().add(-1, 'd').format('YYYY-MM-DD'), name: 'Last day'},
 		{id: moment().add(-7, 'd').format('YYYY-MM-DD'), name: 'Last 7 days'},
 		{id: moment().add(-30, 'd').format('YYYY-MM-DD'), name: 'Last month'},
-		{id: '', name: 'All'},
 	]
 
 	let actionsItems = [
+		{id: '', name: 'All actions'},
 		{id: 1, name: 'Action not required'},
 		{id: 2, name: 'Action required'},
 		{id: 3, name: 'Solved'},
-		{id: '', name: 'Actions'},
 	]
 
 	let query = ref('')
@@ -536,11 +528,16 @@
 	.hp_toolbar {
 		padding: 0 20px;
 		border-bottom: 1px solid $border;
-		margin-bottom: 15px;
 		height: 44px;
 	}
 	.hp_content {
-		padding-bottom: 10px;
+		padding: 10px 0;
+		overflow-y: auto;
+		height: calc(100% - 75px);
+
+		&.opened {
+			height: calc(100% - 144px);
+		}
 	}
 	.hp_row {
 		padding-left: 15px;
@@ -623,6 +620,15 @@
 			font-size: 20px;
 		}
 	}
+	.notifications {
+		height: calc(100vh - 87px);
+	}
+	.hp_messages_stats {
+		border-bottom: 1px solid $border;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		padding-left: 20px;
+	}
 	.hp_messages {
 		position: relative;
 		margin: 15px 10px 0;
@@ -631,6 +637,10 @@
 		border: 1px solid $border;
 		border-left: 10px solid $border;
 		border-radius: 5px;
+
+		&:first-child {
+			margin-top: 5px;
+		}
 
 		&.pinned {
 			background: #FEF9EF;

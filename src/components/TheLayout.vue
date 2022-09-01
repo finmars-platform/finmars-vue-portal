@@ -13,6 +13,9 @@
 </template>
 
 <script setup>
+
+	import Stream from '~/services/WebSocket.js'
+
 	defineProps({
 		isShowSidebar: {
 			type: Boolean,
@@ -23,6 +26,19 @@
 	let store = useStore()
 
 	await store.init()
+
+	let ws = new Stream({
+		url: 'wss://dev.finmars.com/ws/'
+	})
+
+	store.ws = ws
+
+	useApi('member.get', {params: {id: 0}}).then(res => {
+		ws.send({action: "initial_auth", data: {access_token: useCookie('access_token').value}})
+		ws.send( {action: "update_user_state", data: {member: res}} )
+		ws.send( {action: "update_user_state", data: {master_user: {id: store.current.current_master_user_id}}} )
+	})
+
 </script>
 
 <style lang="scss" scoped>
