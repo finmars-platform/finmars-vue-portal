@@ -233,6 +233,7 @@
 			<div class="hp_title">Bookmarks</div>
 
 			<div class="hp_content">
+				<div style="padding: 10px 20px;">Coming soon</div>
 			</div>
 		</div>
 	</div>
@@ -533,10 +534,10 @@
 	.hp_content {
 		padding: 10px 0;
 		overflow-y: auto;
-		height: calc(100% - 75px);
+		max-height: calc(100vh - 177px);
 
 		&.opened {
-			height: calc(100% - 144px);
+			max-height: calc(100vh - 237px);
 		}
 	}
 	.hp_row {
@@ -621,7 +622,6 @@
 		}
 	}
 	.notifications {
-		height: calc(100vh - 87px);
 	}
 	.hp_messages_stats {
 		border-bottom: 1px solid $border;

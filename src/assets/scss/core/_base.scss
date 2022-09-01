@@ -20,7 +20,7 @@ input[type=file] {
 }
 
 ::-webkit-scrollbar-thumb {
-	background: $primary;
+	background: $primary-lighten;
 	border: 3px solid #fff;
 }
 ::-webkit-scrollbar-track {
