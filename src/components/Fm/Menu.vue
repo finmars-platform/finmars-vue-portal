@@ -46,7 +46,7 @@
 
 			// X axios
 
-			if ( clientWidth - activatorRect.right <= popupRect.width ) {
+			if ( (clientWidth - activatorRect.right <= popupRect.width) || props.anchor.includes('right') ) {
 				popup.value.style.right = `0`
 			}
 		}, 20)
@@ -63,12 +63,13 @@
 	}
 	.fm_drop {
 		position: fixed;
-		display: inline-block;
 		top: 33px;
 		z-index: 123;
 		box-shadow: 0 3px 11px 3px hsl(0deg 0% 60% / 40%);
 		visibility: hidden;
 		opacity: 0;
+		display: inline-block;
+		border-radius: 5px;
 
 		&.active {
 			opacity: 1;

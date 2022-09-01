@@ -3,31 +3,35 @@
 		<FmBreadcrumbs :items="$route.meta.bread" />
 
 		<div class="flex aic">
-			<FmMenu class="header_item" v-if="noti.length">
+			<FmMenu class="header_item" v-if="noti">
 				<template #btn="{ isOpen }">
-					<FmIcon class="header_item"
+					<FmIcon class="noti_icon"
+						:class="{active: noti.length}"
 						btn
 						icon="notifications"
 					/>
 				</template>
 
 				<div class="fm_list">
-					<div class="fm_message_item"
-						v-for="(item, index) in noti"
-						:key="index"
-					>
-						<div class="flex sb">
-							<div class="fm_message_item_date">{{ fromatDate(item.created) }}</div>
-							<div class="fm_message_item_section">{{ SECTIONS[item.section] }}</div>
+					<template v-if="noti.length">
+						<div class="fm_message_item"
+							v-for="(item, index) in noti"
+							:key="index"
+						>
+							<div class="flex sb">
+								<div class="fm_message_item_date">{{ fromatDate(item.created) }}</div>
+								<div class="fm_message_item_section">{{ SECTIONS[item.section] }}</div>
+							</div>
+							<div class="fm_message_item_h">{{ item.title }}</div>
+							<div class="fm_message_item_t">
+								{{ item.description.length > 65 ? item.description.slice(0, 65) + '...' : item.description }}
+							</div>
 						</div>
-						<div class="fm_message_item_h">{{ item.title }}</div>
-						<div class="fm_message_item_t">
-							{{ item.description.length > 65 ? item.description.slice(0, 65) + '...' : item.description }}
+						<div class="tac p-8">
+							<FmBtn to="/" type="action">Show ALL</FmBtn>
 						</div>
-					</div>
-					<div class="tac p-8">
-						<FmBtn to="/" type="action">Show ALL</FmBtn>
-					</div>
+					</template>
+					<div class="p-16" v-else>No new messages</div>
 				</div>
 			</FmMenu>
 
@@ -106,14 +110,14 @@
 			window.location.href = '/'
 		}},
 	])
-	let noti = ref([])
+	let noti = ref(null)
 
 	loadNoti()
 
 	async function loadNoti( id ) {
-		let res = await useApi('systemMessages.get', {filters: {page_size: 3, only_new: true}})
+		let res = await useApi('systemMessages.get', {filters: {only_new: true}})
 
-		noti.value = res.results
+		noti.value = res.results.filter( item => !item.is_pinned ).slice(0, 3)
 	}
 
 	function fromatDate( date ) {
@@ -151,6 +155,9 @@
 		&_h, &_t {
 			margin-top: 11px;
 		}
+		&_h {
+			font-weight: 500;
+		}
 	}
 	.fm_message_item_date {
 		color: $text-lighten;
@@ -158,5 +165,20 @@
 	.fm_message_item_section {
 		color: $text-lighten;
 		font-weight: 500;
+	}
+	.noti_icon {
+		position: relative;
+		&.active:after {
+			content: '';
+			display: block;
+			position: absolute;
+			top: 9px;
+			right: 8px;
+			width: 7px;
+			height: 7px;
+			border-radius: 50%;
+			background: $primary;
+			border: 2px solid $main-darken;
+		}
 	}
 </style>
