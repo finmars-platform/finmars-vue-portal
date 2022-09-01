@@ -4,13 +4,15 @@
 			<slot name="btn" :isOpen="isOpen"></slot>
 		</div>
 
-		<div
-			class="fm_drop"
-			:class="{active: isOpen}"
-			ref="popup"
-		>
-			<slot :close="() => isOpen = false"></slot>
-		</div>
+		<transition>
+			<div
+				v-if="isOpen"
+				class="fm_drop"
+				ref="popup"
+			>
+				<slot :close="() => isOpen = false"></slot>
+			</div>
+		</transition>
 	</div>
 </template>
 
@@ -29,27 +31,28 @@
 
 	let clientWidth = window.innerWidth
 
-	onMounted(() => {
-		setTimeout(() => {
-			let activatorRect = activator.value.getBoundingClientRect()
-			let popupRect = popup.value.getBoundingClientRect()
+	watch(isOpen, async () => {
+		if ( !isOpen.value ) return false
+		await nextTick()
 
-			// Hack чтобы посчитать реальную ширину
-			popup.value.style.position = 'absolute'
-			popup.value.style.minWidth = `${popupRect.width}px`
-			popup.value.style.width = `100%`
+		let activatorRect = activator.value.getBoundingClientRect()
+		let popupRect = popup.value.getBoundingClientRect()
 
-			// Y axios
-			if ( props.anchor == 'bottom' ) {
-				popup.value.style.top = `${activatorRect.height}px`
-			}
+		// Hack чтобы посчитать реальную ширину
+		popup.value.style.position = 'absolute'
+		popup.value.style.minWidth = `${popupRect.width}px`
+		popup.value.style.width = `100%`
 
-			// X axios
+		// Y axios
+		if ( props.anchor == 'bottom' ) {
+			popup.value.style.top = `${activatorRect.height}px`
+		}
 
-			if ( (clientWidth - activatorRect.right <= popupRect.width) || props.anchor.includes('right') ) {
-				popup.value.style.right = `0`
-			}
-		}, 20)
+		// X axios
+
+		if ( (clientWidth - activatorRect.right <= popupRect.width) || props.anchor.includes('right') ) {
+			popup.value.style.right = `0`
+		}
 	})
 	function toggle() {
 		isOpen.value = !isOpen.value
@@ -66,14 +69,18 @@
 		top: 33px;
 		z-index: 123;
 		box-shadow: 0 3px 11px 3px hsl(0deg 0% 60% / 40%);
-		visibility: hidden;
-		opacity: 0;
 		display: inline-block;
 		border-radius: 5px;
+	}
 
-		&.active {
-			opacity: 1;
-			visibility: visible;
-		}
+
+	.v-enter-active,
+	.v-leave-active {
+		transition: opacity 0.3s ease;
+	}
+
+	.v-enter-from,
+	.v-leave-to {
+		opacity: 0;
 	}
 </style>
