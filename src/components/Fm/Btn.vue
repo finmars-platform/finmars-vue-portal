@@ -11,11 +11,15 @@
 
 <script setup>
 
-	let props = defineProps({
+let props = defineProps({
 		label: String,
 		icon: String,
 		to: String,
 		loading: Boolean,
+		/**
+		 * Type of button
+		 * @values primary, basic, text, action
+		 */
 		type: {
 			type: String,
 			default: 'primary'

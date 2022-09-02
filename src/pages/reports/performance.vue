@@ -1,4 +1,42 @@
 <template>
+	<div class="ev_top_panel">
+		<FmHorizontalPanel>
+			<template #leftActions>
+				<FmIcon icon="save" btn />
+			</template>
+
+			<template #rightActions>
+				<FmIcon icon="settings" btn />
+			</template>
+		</FmHorizontalPanel>
+	</div>
+
+	<div>
+		<FmHorizontalPanel class="ev_toolbar">
+			<template #leftActions>
+				<FmMenu>
+					<template #btn>
+						<FmIcon btnPrimary icon="add" />
+					</template>
+
+					<div class="fm_list">
+						<div class="fm_list_item">
+							<FmBtn type="text" disabled="true">Add Portfolio register</FmBtn>
+						</div>
+						<div class="fm_list_item">
+							<FmBtn type="text">Add bundle</FmBtn>
+						</div>
+					</div>
+				</FmMenu>
+
+			</template>
+
+			<template #rightActions>
+				<FmIcon icon="refresh" btn />
+			</template>
+		</FmHorizontalPanel>
+	</div>
+
 	<div class="fm_container">
 		<FmExpansionPanel title="Period Returns">
 			<BaseTable
@@ -52,6 +90,7 @@
 		],
 	});
 	const store = useStore()
+	const perfReportStore = usePerformanceReportStore();
 
 	let panels = ref(['period', 'detail', 'diagram'])
 	let porfolios = []
@@ -90,7 +129,25 @@
 		updateChart( portfolioItems.value[id], portfolioItemsCumm.value[id] )
 	}
 
+	async function fetchDefaultListLayout () {
+		const resData = await useApi('defaultListLayout.get', {params: {contentType: 'performance.report'}});
+
+		if (resData.error) {
+			throw new Error('Failed to fetch layout');
+
+		} else {
+
+			const defaultListLayout = resData.results.length ? resData.results[0] : null;
+			perfReportStore.setListLayout(defaultListLayout);
+
+		}
+
+	}
+
 	async function init() {
+
+		// await fetchDefaultListLayout()
+
 		await fetchPortolios()
 
 		if ( !porfolios.length ) {
