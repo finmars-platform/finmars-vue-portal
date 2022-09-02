@@ -19,6 +19,10 @@ input[type=file] {
 	display: none;
 }
 
+.ev_top_panel {
+	height: 50px;
+}
+
 ::-webkit-scrollbar-thumb {
 	background: $primary-lighten;
 	border: 3px solid #fff;

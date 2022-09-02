@@ -98,4 +98,7 @@ export default {
 		put: prefix + '/instruments/generated-event/{id}/book/',
 	},
 
+	defaultListLayout: {
+		get: prefix + '/ui/list-layout/?is_default=2&content_type={contentType}/',
+	}
 }
