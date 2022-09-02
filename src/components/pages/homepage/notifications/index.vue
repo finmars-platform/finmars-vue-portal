@@ -15,14 +15,19 @@
 					<template #button>
 						<FmIcon icon="search" />
 					</template>
+					<template #rightBtn>
+						<FmIcon size="16" icon="close" @click="query = '', search()" />
+					</template>
 				</BaseInput>
 			</div>
-
 			<div class="flex aic">
+				<FmIcon icon="today"
+					@click="order()"
+				/>
+				<FmIcon :icon="ordering == 'created' ? 'south' : 'north'" size="20"
+					@click="order()"
+				/>
 				<FmSelect v-model="date" :items="dateItems" class="m-b-0" no_borders @update:modelValue="dateFilter()">
-					<template #left_icon>
-						<FmIcon icon="today" />
-					</template>
 				</FmSelect>
 				<FmIcon :icon="only_new ? 'visibility' : 'visibility_off'"
 					:tooltip="(only_new ? 'Show' : 'Hide') + ' read messages'" @click="only_new = !only_new, dateFilter()" />
@@ -279,6 +284,7 @@
 
 	let query = ref('')
 	let date = ref('')
+	let ordering = ref('created')
 	let only_new = ref(true)
 	let action = ref('')
 	let types = ref(new Set())
@@ -363,6 +369,13 @@
 	let scrolledBox = ref(null)
 	let messagesLoader = ref(null)
 
+	function order() {
+		if ( openedStream.value ) {
+			ordering.value = ordering.value == 'created' ? '-created' : 'created'
+			loadStream( true )
+		}
+	}
+
 	async function loadStream( force ) {
 		if ( !messageObserver.value ) setMessageObserver()
 		if ( force ) {
@@ -374,7 +387,8 @@
 
 		let filters = {
 			query: query.value,
-			page: nextPage
+			page: nextPage,
+			ordering: ordering.value
 		}
 		if ( types.value ) filters.type = [...types.value].join(',')
 		if ( date.value ) filters.created_after = date.value
@@ -444,7 +458,7 @@
 							messages.value[index].is_read = true
 							let messType = openedStream.value[ TYPES[messages.value[index].type] ]
 
-							if ( messType > 0 ) messType -= 1
+							if ( messType > 0 ) openedStream.value[ TYPES[messages.value[index].type] ] -= 1
 							if ( openedStream.value.total > 0 ) openedStream.value.total -= 1
 						}
 					}, 200)
