@@ -415,6 +415,12 @@
 		loadingObserver = new IntersectionObserver(callback, options);
 		loadingObserver.observe(messagesLoader.value)
 	}
+	const TYPES = {
+		1: 'information',
+		2: 'warnings',
+		3: 'errors',
+		4: 'success',
+	}
 	function setMessageObserver() {
 		let options = {
 			root: scrolledBox.value,
@@ -430,11 +436,18 @@
 					observer.unobserve(entry.target)
 
 					let id = entry.target.dataset.id
-
 					buffer.push(id)
 
-					let index = messages.value.findIndex(item => item.id == id)
-					if ( index !== undefined ) messages.value[index].is_read = true
+					setTimeout(() => {
+						let index = messages.value.findIndex(item => item.id == id)
+						if ( index !== undefined ) {
+							messages.value[index].is_read = true
+							let messType = openedStream.value[ TYPES[messages.value[index].type] ]
+
+							if ( messType > 0 ) messType -= 1
+							if ( openedStream.value.total > 0 ) openedStream.value.total -= 1
+						}
+					}, 200)
 
 					if ( !timeout ) timeout = setTimeout(() => {
 							useApi( 'systemMessagesRead.post', { body: {ids: buffer} } )
@@ -543,6 +556,9 @@
 		types.value = new Set()
 		nextPage = 1
 		isMore.value = true
+
+		loadStats()
+		scrollTop()
 	}
 	function fromatDate( date ) {
 		return moment( date ).format('DD.MM.YYYY HH:mm')
