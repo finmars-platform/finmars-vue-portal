@@ -1,5 +1,5 @@
 <template>
-	<div :class="['icon', {primary, btn, 'btn-primary': btnPrimary}] ">
+	<div :class="['icon', {primary, btn, 'btn-primary': btnPrimary}]" :style="{fontSize: size + 'px'}">
 		<div class="material-icons">{{ icon }}</div>
 
 		<div class="tooltip" v-if="tooltip">{{ tooltip }}</div>
@@ -9,6 +9,7 @@
 <script setup>
 	let props = defineProps({
 		icon: String,
+		size: String,
 		tooltip: String,
 		primary: Boolean,
 		btn: Boolean,

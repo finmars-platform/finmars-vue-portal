@@ -15,14 +15,20 @@
 					<template #button>
 						<FmIcon icon="search" />
 					</template>
+					<template #rightBtn>
+						<FmIcon v-if="query" size="16" icon="close" @click="query = '', search()" />
+					</template>
 				</BaseInput>
 			</div>
-
 			<div class="flex aic">
+				<FmIcon icon="today" v-if="openedStream"
+					@click="order()"
+				/>
+				<FmIcon :icon="ordering == 'created' ? 'south' : 'north'" size="20"
+					@click="order()"
+					v-if="openedStream"
+				/>
 				<FmSelect v-model="date" :items="dateItems" class="m-b-0" no_borders @update:modelValue="dateFilter()">
-					<template #left_icon>
-						<FmIcon icon="today" />
-					</template>
 				</FmSelect>
 				<FmIcon :icon="only_new ? 'visibility' : 'visibility_off'"
 					:tooltip="(only_new ? 'Show' : 'Hide') + ' read messages'" @click="only_new = !only_new, dateFilter()" />
@@ -146,16 +152,20 @@
 
 				<div class="hp_messages"
 					v-for="(item, index) in messages"
-					:key="index"
+					:key="item.id"
 					:class="{
 						blue: item.type == 1,
 						primary: item.type == 2,
 						red: item.type == 3,
 						green: item.type == 4,
-						pinned: item.is_pinned,
-						no_read: !item.is_read,
+						pinned: item.is_pinned
 					}"
 					:data-id="item.id"
+					:ref="el => {
+						if ( el && !item.is_read) {
+							messageObserver.observe(el)
+						}
+					}"
 				>
 					<div class="flex sb">
 						<div class="hp_messages_text"><b>{{ item.title ? item.title + ': ' : '' }}</b> {{ item.description }}</div>
@@ -178,7 +188,7 @@
 					</div>
 
 					<div class="hp_details" v-if="(item.linked_event || item.attachments.length) && openedDetalis.has(item.id)">
-						<div class="hp_actions" v-if="item.linked_event">
+						<div class="hp_actions" v-if="detailsObjs[item.linked_event]">
 							<div class="hp_actions_item flex">
 								<div class="hp_actions_item_h">Instrument:</div>
 								<div class="hp_actions_item_t">
@@ -189,10 +199,11 @@
 							<b>Available actions</b><br>
 
 							<div class="hp_actions_item_btn"
-								v-for="(item, i) in detailsObjs[item.linked_event].event_schedule_object.actions"
+								v-for="(action, i) in detailsObjs[item.linked_event].event_schedule_object.actions"
 								:key="i"
+								@click="runAction(item.linked_event, action.id)"
 							>
-								{{ item.display_text }}
+								{{ action.display_text }}
 							</div>
 						</div>
 						<div class="hp_attach" v-if="item.attachments.length">
@@ -275,6 +286,7 @@
 
 	let query = ref('')
 	let date = ref('')
+	let ordering = ref('created')
 	let only_new = ref(true)
 	let action = ref('')
 	let types = ref(new Set())
@@ -354,22 +366,31 @@
 	let nextPage = 1
 	let isMore = ref(true)
 
-	let messageObserver
+	let messageObserver = ref(null)
 	let loadingObserver
 	let scrolledBox = ref(null)
 	let messagesLoader = ref(null)
 
+	function order() {
+		if ( openedStream.value ) {
+			ordering.value = ordering.value == 'created' ? '-created' : 'created'
+			loadStream( true )
+		}
+	}
+
 	async function loadStream( force ) {
-		if ( !messageObserver ) setMessageObserver()
+		if ( !messageObserver.value ) setMessageObserver()
 		if ( force ) {
 			nextPage = 1
 			isMore.value = true
 			scrolledBox.value.scrollTo({ top: 0, behavior: "smooth" })
+			if ( messageObserver.value ) messageObserver.value.disconnect()
 		}
 
 		let filters = {
 			query: query.value,
-			page: nextPage
+			page: nextPage,
+			ordering: ordering.value
 		}
 		if ( types.value ) filters.type = [...types.value].join(',')
 		if ( date.value ) filters.created_after = date.value
@@ -380,15 +401,6 @@
 
 		let res = await useApi('systemMessages.get', { filters })
 		messages.value = force ? res.results : messages.value.concat(res.results)
-
-		await nextTick()
-
-		let domMess = document.querySelectorAll('.hp_messages.no_read')
-		if ( domMess.length ) {
-			domMess.forEach(item => {
-        messageObserver.observe(item)
-      })
-		}
 
 		if (res.next) {
 			++nextPage
@@ -408,7 +420,6 @@
 		let callback = (entries, observer) => {
 			entries.forEach( entry => {
 				if ( entry.isIntersecting ) {
-					console.log('entry.isIntersecting:', entry.isIntersecting)
 					if ( !isMore.value ) {
 						return false
 					}
@@ -420,30 +431,49 @@
 		loadingObserver = new IntersectionObserver(callback, options);
 		loadingObserver.observe(messagesLoader.value)
 	}
+	const TYPES = {
+		1: 'information',
+		2: 'warnings',
+		3: 'errors',
+		4: 'success',
+	}
 	function setMessageObserver() {
 		let options = {
 			root: scrolledBox.value,
 			rootMargin: '0px',
 			threshold: 1.0
 		}
-		let callback = async (entries, observer) => {
-			entries.forEach(entry => {
-				if ( entry.isIntersecting ) {
-					let id = entry.target.dataset.id
-					console.log('id:', id)
+		let buffer = []
+		let timeout = null
 
+		let callback = async (entries, observer) => {
+			entries.forEach(async entry => {
+				if ( entry.isIntersecting ) {
+					observer.unobserve(entry.target)
+
+					let id = entry.target.dataset.id
+					buffer.push(id)
 
 					setTimeout(() => {
 						let index = messages.value.findIndex(item => item.id == id)
-						if ( index ) messages.value[index].is_read = true
+						if ( index !== undefined ) {
+							messages.value[index].is_read = true
+							let messType = openedStream.value[ TYPES[messages.value[index].type] ]
 
-					}, 300)
+							if ( messType > 0 ) openedStream.value[ TYPES[messages.value[index].type] ] -= 1
+							if ( openedStream.value.total > 0 ) openedStream.value.total -= 1
+						}
+					}, 200)
 
-					observer.unobserve(entry.target)
+					if ( !timeout ) timeout = setTimeout(() => {
+							useApi( 'systemMessagesRead.post', { body: {ids: buffer} } )
+							timeout = null
+							buffer = []
+						}, 2000)
 				}
 			})
 		};
-		messageObserver = new IntersectionObserver(callback, options);
+		messageObserver.value = new IntersectionObserver(callback, options);
 	}
 
 
@@ -456,8 +486,10 @@
 		) {
 			let message = await useApi( 'systemMessagesOne.get', { params: {id: data.id} } )
 
+			if ( message.error ) return false
+
 			let pinned = messages.value.filter(item => item.is_pinned)
-			let start = pinned ? pinned.length : 0
+			let start = pinned.length
 
 			messages.value.splice( start, 0, message )
 			newMessages.value += 1
@@ -470,12 +502,6 @@
 
 	let openedDetalis = ref(new Set())
 	let detailsObjs = ref({})
-
-
-
-
-
-
 
 
 
@@ -522,24 +548,39 @@
 					params: {id: message.linked_event}
 				})
 
-				let res2 = await useApi('instrumentsEventBook.get', {
-					params: {id: message.linked_event},
-					filters: {action: 95}
-				})
-				console.log('res2:', res2)
-
-
-
 				detailsObjs.value[message.linked_event] = res
 			}
 		}
 	}
+	async function runAction( eventId, actionId ) {
+		let action = await useApi('instrumentsEventBook.get', {
+			params: {id: eventId},
+			filters: {action: actionId}
+		})
+
+		let res = await useApi('instrumentsEventBook.put', {
+			params: {id: eventId},
+			filters: {action: actionId, event_status: 4},
+			body: action
+		})
+
+		console.log('res2:', res)
+	}
 	function backToStats() {
-		scrolledBox.value.removeEventListener('scroll', loadOnScroll)
+		if ( messageObserver.value ) messageObserver.value.disconnect()
+		if ( loadingObserver ) {
+			loadingObserver.disconnect()
+			loadingObserver = null
+		}
+
 		openedStream.value = null
 		messages.value = []
 		types.value = new Set()
 		nextPage = 1
+		isMore.value = true
+
+		loadStats()
+		scrollTop()
 	}
 	function fromatDate( date ) {
 		return moment( date ).format('DD.MM.YYYY HH:mm')
@@ -579,6 +620,7 @@
 		padding: 10px 0;
 		overflow-y: auto;
 		max-height: calc(100vh - 177px);
+		min-height: 230px;
 
 		&.opened {
 			max-height: calc(100vh - 237px);
