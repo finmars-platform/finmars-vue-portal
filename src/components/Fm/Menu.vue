@@ -1,19 +1,19 @@
 <template>
-	<div class="fm_menu" v-click-outside="() => isOpen = false">
-		<div @click="toggle()" ref="activator">
-			<slot name="btn" :isOpen="isOpen"></slot>
-		</div>
-
-		<transition>
-			<div
-				v-if="isOpen"
-				class="fm_drop"
-				ref="popup"
-			>
-				<slot :close="() => isOpen = false"></slot>
+		<div class="fm_menu" v-click-outside="() => isOpen = false">
+			<div @click="toggle()" ref="activator">
+				<slot name="btn" :isOpen="isOpen"></slot>
 			</div>
-		</transition>
-	</div>
+
+			<transition>
+				<div
+					v-if="isOpen"
+					class="fm_drop"
+					ref="popup"
+				>
+					<slot :close="() => isOpen = false"></slot>
+				</div>
+			</transition>
+		</div>
 </template>
 
 <script setup>
@@ -30,6 +30,7 @@
 	let activator = ref(null) // DOM element
 
 	let clientWidth = window.innerWidth
+	let clientHeight = window.innerHeight
 
 	watch(isOpen, async () => {
 		if ( !isOpen.value ) return false
@@ -46,6 +47,9 @@
 		// Y axios
 		if ( props.anchor == 'bottom' ) {
 			popup.value.style.top = `${activatorRect.height}px`
+		}
+		if ( clientHeight - activatorRect.bottom < popupRect.height ) {
+			popup.value.style.bottom = `${activatorRect.height}px`
 		}
 
 		// X axios
@@ -66,7 +70,6 @@
 	}
 	.fm_drop {
 		position: fixed;
-		top: 33px;
 		z-index: 123;
 		box-shadow: 0 3px 11px 3px hsl(0deg 0% 60% / 40%);
 		display: inline-block;

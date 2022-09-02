@@ -16,16 +16,17 @@
 						<FmIcon icon="search" />
 					</template>
 					<template #rightBtn>
-						<FmIcon size="16" icon="close" @click="query = '', search()" />
+						<FmIcon v-if="query" size="16" icon="close" @click="query = '', search()" />
 					</template>
 				</BaseInput>
 			</div>
 			<div class="flex aic">
-				<FmIcon icon="today"
+				<FmIcon icon="today" v-if="openedStream"
 					@click="order()"
 				/>
 				<FmIcon :icon="ordering == 'created' ? 'south' : 'north'" size="20"
 					@click="order()"
+					v-if="openedStream"
 				/>
 				<FmSelect v-model="date" :items="dateItems" class="m-b-0" no_borders @update:modelValue="dateFilter()">
 				</FmSelect>
@@ -187,7 +188,7 @@
 					</div>
 
 					<div class="hp_details" v-if="(item.linked_event || item.attachments.length) && openedDetalis.has(item.id)">
-						<div class="hp_actions" v-if="item.linked_event">
+						<div class="hp_actions" v-if="detailsObjs[item.linked_event]">
 							<div class="hp_actions_item flex">
 								<div class="hp_actions_item_h">Instrument:</div>
 								<div class="hp_actions_item_t">
@@ -198,10 +199,11 @@
 							<b>Available actions</b><br>
 
 							<div class="hp_actions_item_btn"
-								v-for="(item, i) in detailsObjs[item.linked_event].event_schedule_object.actions"
+								v-for="(action, i) in detailsObjs[item.linked_event].event_schedule_object.actions"
 								:key="i"
+								@click="runAction(item.linked_event, action.id)"
 							>
-								{{ item.display_text }}
+								{{ action.display_text }}
 							</div>
 						</div>
 						<div class="hp_attach" v-if="item.attachments.length">
@@ -546,17 +548,23 @@
 					params: {id: message.linked_event}
 				})
 
-				let res2 = await useApi('instrumentsEventBook.get', {
-					params: {id: message.linked_event},
-					filters: {action: 95}
-				})
-				console.log('res2:', res2)
-
-
-
 				detailsObjs.value[message.linked_event] = res
 			}
 		}
+	}
+	async function runAction( eventId, actionId ) {
+		let action = await useApi('instrumentsEventBook.get', {
+			params: {id: eventId},
+			filters: {action: actionId}
+		})
+
+		let res = await useApi('instrumentsEventBook.put', {
+			params: {id: eventId},
+			filters: {action: actionId, event_status: 4},
+			body: action
+		})
+
+		console.log('res2:', res)
 	}
 	function backToStats() {
 		if ( messageObserver.value ) messageObserver.value.disconnect()
@@ -612,6 +620,7 @@
 		padding: 10px 0;
 		overflow-y: auto;
 		max-height: calc(100vh - 177px);
+		min-height: 230px;
 
 		&.opened {
 			max-height: calc(100vh - 237px);
