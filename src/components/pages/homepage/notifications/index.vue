@@ -421,16 +421,26 @@
 			rootMargin: '0px',
 			threshold: 1.0
 		}
+		let buffer = []
+		let timeout = null
+
 		let callback = async (entries, observer) => {
 			entries.forEach(async entry => {
 				if ( entry.isIntersecting ) {
 					observer.unobserve(entry.target)
 
 					let id = entry.target.dataset.id
-					console.log('id:', id)
+
+					buffer.push(id)
 
 					let index = messages.value.findIndex(item => item.id == id)
 					if ( index !== undefined ) messages.value[index].is_read = true
+
+					if ( !timeout ) timeout = setTimeout(() => {
+							useApi( 'systemMessagesRead.post', { body: {ids: buffer} } )
+							timeout = null
+							buffer = []
+						}, 2000)
 				}
 			})
 		};
@@ -463,12 +473,6 @@
 
 	let openedDetalis = ref(new Set())
 	let detailsObjs = ref({})
-
-
-
-
-
-
 
 
 
@@ -529,6 +533,11 @@
 	}
 	function backToStats() {
 		if ( messageObserver.value ) messageObserver.value.disconnect()
+		if ( loadingObserver ) {
+			loadingObserver.disconnect()
+			loadingObserver = null
+		}
+
 		openedStream.value = null
 		messages.value = []
 		types.value = new Set()
