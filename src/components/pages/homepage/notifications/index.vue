@@ -146,16 +146,20 @@
 
 				<div class="hp_messages"
 					v-for="(item, index) in messages"
-					:key="index"
+					:key="item.id"
 					:class="{
 						blue: item.type == 1,
 						primary: item.type == 2,
 						red: item.type == 3,
 						green: item.type == 4,
-						pinned: item.is_pinned,
-						no_read: !item.is_read,
+						pinned: item.is_pinned
 					}"
 					:data-id="item.id"
+					:ref="el => {
+						if ( el && !item.is_read) {
+							messageObserver.observe(el)
+						}
+					}"
 				>
 					<div class="flex sb">
 						<div class="hp_messages_text"><b>{{ item.title ? item.title + ': ' : '' }}</b> {{ item.description }}</div>
@@ -354,13 +358,13 @@
 	let nextPage = 1
 	let isMore = ref(true)
 
-	let messageObserver
+	let messageObserver = ref(null)
 	let loadingObserver
 	let scrolledBox = ref(null)
 	let messagesLoader = ref(null)
 
 	async function loadStream( force ) {
-		if ( !messageObserver ) setMessageObserver()
+		if ( !messageObserver.value ) setMessageObserver()
 		if ( force ) {
 			nextPage = 1
 			isMore.value = true
@@ -381,15 +385,6 @@
 		let res = await useApi('systemMessages.get', { filters })
 		messages.value = force ? res.results : messages.value.concat(res.results)
 
-		await nextTick()
-
-		let domMess = document.querySelectorAll('.hp_messages.no_read')
-		if ( domMess.length ) {
-			domMess.forEach(item => {
-        messageObserver.observe(item)
-      })
-		}
-
 		if (res.next) {
 			++nextPage
 
@@ -408,7 +403,6 @@
 		let callback = (entries, observer) => {
 			entries.forEach( entry => {
 				if ( entry.isIntersecting ) {
-					console.log('entry.isIntersecting:', entry.isIntersecting)
 					if ( !isMore.value ) {
 						return false
 					}
@@ -427,23 +421,19 @@
 			threshold: 1.0
 		}
 		let callback = async (entries, observer) => {
-			entries.forEach(entry => {
+			entries.forEach(async entry => {
 				if ( entry.isIntersecting ) {
+					observer.unobserve(entry.target)
+
 					let id = entry.target.dataset.id
 					console.log('id:', id)
 
-
-					setTimeout(() => {
-						let index = messages.value.findIndex(item => item.id == id)
-						if ( index ) messages.value[index].is_read = true
-
-					}, 300)
-
-					observer.unobserve(entry.target)
+					let index = messages.value.findIndex(item => item.id == id)
+					if ( index !== undefined ) messages.value[index].is_read = true
 				}
 			})
 		};
-		messageObserver = new IntersectionObserver(callback, options);
+		messageObserver.value = new IntersectionObserver(callback, options);
 	}
 
 
@@ -456,8 +446,10 @@
 		) {
 			let message = await useApi( 'systemMessagesOne.get', { params: {id: data.id} } )
 
+			if ( message.error ) return false
+
 			let pinned = messages.value.filter(item => item.is_pinned)
-			let start = pinned ? pinned.length : 0
+			let start = pinned.length
 
 			messages.value.splice( start, 0, message )
 			newMessages.value += 1
