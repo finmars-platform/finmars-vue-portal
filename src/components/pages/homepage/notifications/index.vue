@@ -369,6 +369,7 @@
 			nextPage = 1
 			isMore.value = true
 			scrolledBox.value.scrollTo({ top: 0, behavior: "smooth" })
+			if ( messageObserver.value ) messageObserver.value.disconnect()
 		}
 
 		let filters = {
@@ -527,11 +528,12 @@
 		}
 	}
 	function backToStats() {
-		scrolledBox.value.removeEventListener('scroll', loadOnScroll)
+		if ( messageObserver.value ) messageObserver.value.disconnect()
 		openedStream.value = null
 		messages.value = []
 		types.value = new Set()
 		nextPage = 1
+		isMore.value = true
 	}
 	function fromatDate( date ) {
 		return moment( date ).format('DD.MM.YYYY HH:mm')
