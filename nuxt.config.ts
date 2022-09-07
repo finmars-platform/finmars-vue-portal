@@ -1,11 +1,16 @@
 import { defineNuxtConfig } from "nuxt";
 
+const curDate = new Date();
+const dateString = `${curDate.getHours()}:${curDate.getMinutes()}, ${curDate.getDate()}/${curDate.getMonth()}/${curDate.getFullYear()}`;
+
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
 	publicRuntimeConfig: {
-		appURL: process.env.APP_URL || "http://localhost:3000",
-		apiURL: process.env.API_URL || "http://localhost:3000",
-		oldAppURL: process.env.OLD_APP_URL || "http://localhost:3000",
+		appURL: process.env.APP_URL || "PROD_APP_URL",
+		apiURL: process.env.API_URL || "PROD_API_URL",
+		wsURL: process.env.WS_URL || "PROD_WS_URL",
+		oldAppURL: process.env.OLD_APP_URL || "PROD_OLD_APP_URL",
+		buildDATE: dateString,
 	},
 	ssr: false,
 	app: {
@@ -13,12 +18,8 @@ export default defineNuxtConfig({
 	},
 	css: [
 		"~/assets/scss/main.scss",
-		"vuetify/lib/styles/main.sass",
-		"mdi/css/materialdesignicons.min.css",
+		"~/assets/css/material-icons.css"
 	],
-	build: {
-		transpile: ["vuetify"]
-	},
 	vite: {
 		css: {
 			preprocessorOptions: {

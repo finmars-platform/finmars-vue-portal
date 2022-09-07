@@ -1,47 +1,25 @@
 <template>
-	 <v-dialog>
-			<v-card width="426">
-				<v-card-title>
-					Create Database
-				</v-card-title>
+	<BaseModal
+		title="Create Database"
+	>
+		<BaseInput
+			label="Name"
+			v-model="form.name"
+		/>
+		<BaseInput
+			label="License key"
+			v-model="form.license_key"
+		/>
 
-				<v-card-content>
-					<v-text-field
-						label="Name"
-						placeholder="Name"
-						variant="outlined"
-						density="comfortable"
-						v-model="form.name"
-					/>
-					<v-text-field
-						label="License key"
-						placeholder="License key"
-						variant="outlined"
-						density="comfortable"
-						v-model="form.license_key"
-					/>
+		<FmInputFile label="Select file" @change="addFile" />
 
-					<v-file-input
-						label="File input"
-						variant="outlined"
-						density="comfortable"
-						prepend-icon
-						prepend-inner-icon="mdi-paperclip"
-						@change="addFile"
-					>
-						<template v-slot:selection="{ fileNames }">
-							<template v-for="fileName in fileNames" :key="fileName">
-								{{ fileName.length > 30 ? fileName.slice(0,30) + '...' : fileName }}
-							</template>
-						</template>
-					</v-file-input>
-				</v-card-content>
-				<v-card-actions class="space-between pa-4">
-					<v-btn color="primary" @click="close()">cancel</v-btn>
-					<v-btn color="primary" variant="contained" @click="createDB()">create</v-btn>
-				</v-card-actions>
-			</v-card>
-		</v-dialog>
+		<template #controls>
+			<div class="flex sb">
+				<FmBtn type="text" @click="close()">cancel</FmBtn>
+				<FmBtn :loading="processing" @click="createDB()">create</FmBtn>
+			</div>
+		</template>
+	</BaseModal>
 </template>
 
 <script setup>
@@ -67,6 +45,7 @@
 		let res = await useApi('masterCreateFrom.post', {body: FD })
 
 		if ( res ) {
+			useNotify({type: 'success', title: 'Ecosystem is proccessing'})
 		}
 
 		close()

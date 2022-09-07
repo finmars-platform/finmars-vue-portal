@@ -3,6 +3,7 @@
 	"scripts": {
 		"build": "nuxt build ",
 		"dev": "nuxt --rootDir=./v/ dev",
+		"local": "API_URL=https://dev.finmars.com APP_URL=http://localhost:3000/v OLD_APP_URL='https://dev.finmars.com/a/#!/' NUXT_HOST=0.0.0.0 nuxt --roDir=./v/ dev",
 		"start": "node .output/server/index.mjs",
 		"generate": "nuxt generate",
 		"preview": "nuxt preview"
@@ -15,12 +16,12 @@
 		"@chenfengyuan/vue-qrcode": "^2.0.0",
 		"@kyvg/vue3-notification": "^2.3.4",
 		"@pinia/nuxt": "^0.1.9",
-		"mdi": "^2.2.43",
+		"chart.js": "^3.8.0",
+		"click-outside-vue3": "^4.0.1",
 		"moment": "^2.29.3",
 		"pinia": "^2.0.14",
 		"qrcode": "^1.5.0",
-		"sass": "^1.52.3",
-		"vue": "^3.2.37",
-		"vuetify": "^3.0.0-beta.3"
+		"sass": "^1.53.0",
+		"vue": "^3.2.37"
 	}
 }

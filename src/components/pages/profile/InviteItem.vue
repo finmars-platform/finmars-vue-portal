@@ -1,9 +1,9 @@
 <template>
-	<v-card width="360" class="d-flex flex-column" color="rgba(240, 90, 34, 0.1)">
-		<v-card-title>
-			{{ invite.to_master_user_object.name }}
-		</v-card-title>
-
+	<FmCard
+		class="d-flex flex-column"
+		color="rgba(240, 90, 34, 0.1)"
+		:title="invite.to_master_user_object.name"
+	>
 		<v-card-text v-if="invite.to_master_user_object.description">
 			{{ invite.to_master_user_object.description }}
 		</v-card-text>
@@ -15,12 +15,12 @@
 			<b>{{ invite.from_user_object.username }}</b>
 		</v-card-text>
 
-		<v-card-actions class="justify-space-between d-flex pa-4">
-			<v-btn color="primary" @click="changeStatus(2)">decline</v-btn>
+		<template #controls>
+			<FmBtn type="text" @click="changeStatus(2)">decline</FmBtn>
 
-			<v-btn variant="contained" color="primary" @click="changeStatus(1)">Accept</v-btn>
-		</v-card-actions>
-	</v-card>
+			<FmBtn @click="changeStatus(1)">Accept</FmBtn>
+		</template>
+	</FmCard>
 </template>
 
 <script setup>
