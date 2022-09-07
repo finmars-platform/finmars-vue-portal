@@ -1,125 +1,98 @@
 <template>
-	<div>
-		<v-container fluid class="databases bg-grey-lighten-5 pa-7">
-			<v-card width="360" class="d-flex flex-column">
-				<v-card-title>Personal data</v-card-title>
+	<div class="fm_container databases">
+		<FmCard class="settings_block" title="Personal data" controls>
+			<BaseInput
+				label="First name"
+				v-model="formUser.first_name"
+				:error="errors.first_name"
+			/>
+			<BaseInput
+				label="Last name"
+				v-model="formUser.last_name"
+				:error="errors.last_name"
+			/>
+			<BaseInput
+				label="E-mail"
+				v-model="formUser.email"
+				:error="errors.email"
+			/>
+			<FmCheckbox
+				:label="'Autosave mode'"
+				v-model="formUser.data.autosave_layouts"
+			/>
 
-				<v-card-text>
-					<v-form ref="form">
-						<v-text-field
-							label="First name"
-							placeholder="First name"
-							variant="outlined"
-							density="comfortable"
-							v-model="formUser.first_name"
-						/>
-						<v-text-field
-							label="Last name"
-							placeholder="Last name"
-							variant="outlined"
-							density="comfortable"
-							v-model="formUser.last_name"
-						/>
-						<v-text-field
-							label="E-mail"
-							placeholder="E-mail"
-							variant="outlined"
-							density="comfortable"
-							v-model="formUser.email"
-						/>
-						<!-- <v-select
-							label="Language"
-							variant="outlined"
-							density="comfortable"
-						/>
-						<v-select
-							label="Time zone"
-							variant="outlined"
-							density="comfortable"
-						/> -->
-					</v-form>
-				</v-card-text>
+			<template #controls>
+				<div class="flex jcfe">
+					<FmBtn @click="saveUser()">save</FmBtn>
+				</div>
+			</template>
+		</FmCard>
 
-				<v-card-actions class="justify-end d-flex pa-4">
-					<v-btn variant="contained" color="primary" @click="saveUser()">save</v-btn>
-				</v-card-actions>
-			</v-card>
+		<FmCard class="settings_block" title="Password" controls>
+			<BaseInput
+				label="Old password"
+				v-model="formUser.password"
+				:type="showPass ? 'text' : 'password'"
+				:error="errors.password"
+			>
+				<template #button>
+					<FmIcon
+						:icon="showPass ? 'visibility' : 'visibility_off'"
+						@click="showPass = !showPass"
+					/>
+				</template>
+			</BaseInput>
+			<BaseInput
+				label="New password"
+				v-model="formUser.new_password"
+				:type="showPass ? 'text' : 'password'"
+				:error="errors.new_password"
+			>
+				<template #button>
+					<FmIcon
+						:icon="showPass ? 'visibility' : 'visibility_off'"
+						@click="showPass = !showPass"
+					/>
+				</template>
+			</BaseInput>
+			<BaseInput
+				label="New password (confirm)"
+				v-model="formUser.new_password_check"
+				:type="showPass ? 'text' : 'password'"
+			>
+				<template #button>
+					<FmIcon
+						:icon="showPass ? 'visibility' : 'visibility_off'"
+						@click="showPass = !showPass"
+					/>
+				</template>
+			</BaseInput>
 
-			<v-card width="360" class="d-flex flex-column">
-				<v-card-title>Password</v-card-title>
+			<template #controls>
+				<div class="flex jcfe">
+					<FmBtn @click="savePass()">save</FmBtn>
+				</div>
+			</template>
+		</FmCard>
 
-				<v-card-text>
-					<v-form>
-						<v-text-field
-							autocomplete="current-password"
-							v-model="formPass.password"
-							:append-inner-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
-							:type="showPass ? 'text' : 'password'"
-							label="Old password"
-							placeholder="Old password"
-							variant="outlined"
-							density="comfortable"
-							@click:append-inner="showPass = !showPass"
-						/>
-						<v-text-field
-							v-model="formPass.new_password"
-							:append-inner-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
-							:type="showPass ? 'text' : 'password'"
-							label="New password"
-							hint="At least 8 characters"
-							placeholder="New password"
-							variant="outlined"
-							density="comfortable"
-							counter
-							@click:append-inner="showPass = !showPass"
-						/>
-						<v-text-field
-							v-model="formPass.new_password_check"
-							:append-inner-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
-							:type="showPass ? 'text' : 'password'"
-							label="New password (confirm)"
-							hint="At least 8 characters"
-							placeholder="New password (confirm)"
-							variant="outlined"
-							density="comfortable"
-							counter
-							@click:append-inner="showPass = !showPass"
-						/>
-					</v-form>
-				</v-card-text>
+		<FmCard class="settings_block" title="Two-factor authentication">
+			<div>
+				{{ formUser.two_factor_verification ? 'Device connected'	: 'No connected devices' }}
+			</div>
 
-				<v-card-actions class="justify-end d-flex pa-4">
-					<v-btn variant="contained" color="primary" @click="savePass()">save</v-btn>
-				</v-card-actions>
-			</v-card>
+			<template #controls>
+				<div class="flex jcfe">
+					<FmBtn @click="formUser.two_factor_verification ? dasableTwoFA() : dialog = true">
+						{{ formUser.two_factor_verification ? 'Remove device' : 'Add device'}}
+					</FmBtn>
+				</div>
 
-			<v-card width="360" class="d-flex flex-column">
-				<v-card-title>Two-factor authentication</v-card-title>
-
-				<v-card-text v-if="!formUser.two_factor_verification">
-					No connected devices
-				</v-card-text>
-
-				<v-card-text v-else>
-					Device connected
-				</v-card-text>
-
-				<v-card-actions class="justify-end d-flex pa-4">
-					<v-btn variant="contained" color="primary" v-if="!formUser.two_factor_verification">
-						Add device
-						<PagesProfileTwoFAModal
-							@close="enableTwoFA($event)"
-							v-model="dialog"
-							activator="parent"
-						/>
-					</v-btn>
-
-					<v-btn variant="contained" color="primary" v-else @click="dasableTwoFA()">
-						Remove device
-					</v-btn>
-				</v-card-actions>
-			</v-card>
-		</v-container>
+				<PagesProfileTwoFAModal
+					v-model="dialog"
+					@close="enableTwoFA($event)"
+				/>
+			</template>
+		</FmCard>
 	</div>
 </template>
 
@@ -132,19 +105,43 @@
 	const store = useStore()
 
 	let formUser = store.user
+	let errors = ref({})
 
 	let { data, refresh: refresh2FA } = await useAsyncData( '2fa', () => useApi('meTwoFactor.get') )
 
-async function savePass() {
+	async function savePass() {
 		let res = await useApi('meSetPassword.put', {body: formPass})
 
 		formPass.password = ''
 		formPass.new_password = ''
 		formPass.new_password_check = ''
+
+		if ( !res.error) {
+			useNotify({
+				type: 'success',
+				title: 'Saved'
+			})
+		} else {
+
+			errors.value = res.error
+		}
 	}
+
 	async function saveUser() {
 		let res = await useApi('me.put', { body: formUser })
+
+		if ( !res.error ) {
+			useNotify({
+				type: 'success',
+				title: 'Saved'
+			})
+
+		} else {
+
+			errors.value = res.error
+		}
 	}
+
 	async function enableTwoFA( success ) {
 		dialog.value = false
 		if ( !success ) return false
@@ -169,6 +166,7 @@ async function savePass() {
 
 		refresh2FA()
 	}
+
 </script>
 
 <style lang="scss" scoped>
@@ -177,5 +175,8 @@ async function savePass() {
 	grid-template-columns: repeat(3, auto);
 	grid-gap: 30px;
 	justify-content: flex-start;
+}
+.settings_block {
+	width: 360px;
 }
 </style>

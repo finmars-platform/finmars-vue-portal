@@ -9,7 +9,7 @@ export default [
 			{ title: 'Balance', link: 'reports/balance', old: true },
 			{ title: 'P&L', link: 'reports/profit-and-lost', old: true },
 			{ title: 'Transaction', link: 'reports/transaction', old: true },
-			{ title: 'Performance', link: 'reports/performance', old: true },
+			{ title: 'Performance', link: '/reports/performance' },
 			{ title: 'Cash flow', link: 'reports/cash-flow-projection', old: true },
 			{ title: 'Events', link: 'reports/check-for-events', old: true },
 		]
@@ -77,6 +77,60 @@ export default [
 			{ title: 'System files', link: 'system/file-reports', old: true},
 		]
 	},
-	{ title: 'Settings', link: '/user/test', icon: 'mdi-settings' }
+	{
+		title: 'Settings',
+		icon: 'mdi-settings',
+		submenu: [
+			{
+				title: 'Interface',
+				pages: [
+					{
+						title: 'Layouts',
+						link: 'data/audit/transactions',
+						old: true,
+						pages: [
+							{ title: 'Entity viewer layouts', link: 'settings/layouts', old: true},
+							{ title: 'Dashboard layouts', link: 'dashboard-layouts', old: true},
+							{ title: 'Input form layouts', link: 'settings/input-form-layouts', old: true},
+							{ title: 'Context menu layouts', link: 'context-menu-layouts', old: true},
+							{ title: 'Manual sorting', link: 'manual-sorting-layouts', old: true},
+
+						]
+					},
+					{ title: 'Notifications', link: 'settings/notifications', old: true},
+					{ title: 'Interface complexity', link: 'settings/interface', old: true},
+				]
+			},
+			{
+				title: 'Configuration',
+				pages: [
+					{
+						title: 'Data settings',
+						link: 'data/audit/transactions',
+						old: true,
+						pages: [
+							{ title: 'Account types', link: 'settings/account-types', old: true},
+							{ title: 'Instument types', link: 'settings/instument-types', old: true},
+							{ title: 'Transaction types', link: 'settings/transaction-types', old: true},
+							{ title: 'User attributes', link: 'settings/entites-custom-attributes', old: true},
+							{ title: 'Reference tables', link: 'import/reference-tables', old: true},
+							{ title: 'Mapping tables', link: 'import/mapping-tables-import', old: true},
+							{ title: 'Templates', link: 'template-layouts', old: true},
+
+						]
+					},
+					{
+						title: 'Data settings',
+						link: 'data/audit/transactions',
+						old: true,
+						pages: [
+							{ title: 'Account types', link: 'settings/account-types', old: true},
+							{ title: 'Instument types', link: 'settings/instument-types', old: true}
+						]
+					},
+				]
+			},
+		]
+	}
 
 ]

@@ -48,5 +48,54 @@ export default {
 	importSchemeLight: {
 		get: prefix + '/import/complex-transaction-import-scheme-light/'
 	},
+	members: {
+		get: prefix + '/users/member/'
+	},
+	member: {
+		get: prefix + '/users/member/{id}/',
+		put: prefix + '/users/member/{id}/'
+	},
+
+	userGroups: {
+		get: prefix + '/users/group/',
+	},
+
+	portfolioRegister: {
+		post: prefix + '/portfolios/portfolio-register-ev/filtered/',
+	},
+	performanceReport: {
+		post: prefix + '/reports/performance-report/',
+	},
+
+
+	systemMessagesStats: {
+		get: prefix + '/system-messages/message/stats/',
+	},
+	systemMessages: {
+		get: prefix + '/system-messages/message/',
+	},
+	systemMessagesOne: {
+		get: prefix + '/system-messages/message/{id}/',
+	},
+	systemMessagesRead: {
+		post: prefix + '/system-messages/message/mark-as-read/',
+	},
+	systemMessagesPin: {
+		post: prefix + '/system-messages/message/pin/',
+	},
+	systemMessagesUnpin: {
+		post: prefix + '/system-messages/message/unpin/',
+	},
+	systemMessagesSolved: {
+		post: prefix + '/system-messages/message/mark-as-solved/',
+	},
+
+	instrumentsEvent: {
+		get: prefix + '/instruments/generated-event/{id}/',
+	},
+	instrumentsEventBook: {
+		get: prefix + '/instruments/generated-event/{id}/book/',
+		put: prefix + '/instruments/generated-event/{id}/book/',
+	},
 
 }

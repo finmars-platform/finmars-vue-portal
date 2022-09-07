@@ -1,54 +1,47 @@
 <template>
 	<div>
-		<v-container class="justify-space-between d-flex py-3" fluid>
-			<v-text-field
-				class="py-0"
-				label="Search"
-				placeholder="Search"
-				variant="plain"
-				prepend-icon="mdi-magnify"
-				hide-details="auto"
-				density="compact"
-			/>
+		<FmTopRefresh @refresh="refresh()">
+			<template #action>
+				<BaseInput type="text"
+					v-model="muNameTerms"
+					placeholder="Search"
+					class="bi_no_borders"
+				>
+					<template #button>
+						<FmIcon icon="search" />
+					</template>
+				</BaseInput>
+			</template>
+		</FmTopRefresh>
 
-			<v-spacer></v-spacer>
-
-			<v-btn color="#737373"
-				size="small"
-				height="auto"
-				variant="text"
-				stacked
-				class="text-capitalize"
-				@click="refresh()"
-			>
-				<v-icon start size="24" icon="mdi-refresh"></v-icon>
-				refresh
-			</v-btn>
-		</v-container>
-
-		<v-divider></v-divider>
-
-		<v-container fluid class="databases bg-grey-lighten-5" v-if="data.results.length">
-			<PagesProfileBackupsItem max-width="360"
+		<div v-if="data && data.results.length" class="fm_container backups">
+			<PagesProfileBackupsItem
 				v-for="backup in data.results"
 				:backup="backup"
 				:key="backup.id"
 				@refresh="refresh()"
 			/>
-		</v-container>
-		<v-container fluid class="text-h4" v-else>No backups found</v-container>
+		</div>
+
+		<div v-else class="text-h4">No backups found</div>
+
 	</div>
 </template>
 
 <script setup>
 
+	let muNameTerms = ref("");
+
 	let { data, refresh } = await useAsyncData("masterBackups", () =>
-		useApi("masterBackups.get")
+		useApi("masterBackups.get", {
+			filters: { name: muNameTerms.value }
+		})
 	);
+
 </script>
 
 <style lang="scss" scoped>
-.databases {
+.backups {
 	display: grid;
 	grid-template-columns: repeat(3, auto);
 	grid-gap: 30px;

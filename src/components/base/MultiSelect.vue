@@ -1,122 +1,142 @@
 <template>
 	<div>
-		<v-text-field
+		<BaseInput class="ms_wrap"
 			:label="title"
-			:placeholder="title"
-			variant="outlined"
-			density="compact"
-			prepend-inner-icon="mdi-menu"
 			@click="isOpen = true"
 			modelValue=" "
 		>
-			<v-chip class="mb-1 mr-1"
-				v-for="(item, index) in selectedFilter"
-				:key="index"
-				density="comfortable"
-				@click="isOpen = true"
-			>
-				{{ item }}
-			</v-chip>
-		</v-text-field>
+			<template #button><FmIcon icon="menu" /></template>
 
-		<v-dialog v-model="isOpen">
-			<v-card>
-				<v-card-content class="d-flex space-between align-center">
-					<div class="available">
-						<div class="header">Available</div>
+			<div class="flex aic" style="height: inherit;">
+				<div class="fm_chip"
+					v-for="(item, index) in selectedFilter"
+					:key="index"
+				>
+					{{ item.length > 10 ? item.slice(0, 10) + '...' : item }}
+				</div>
+			</div>
+		</BaseInput>
 
-						<div class="block">
-							<div class="search">
-								<v-text-field class="rounded-0"
-									label="Search"
-									placeholder="Search"
-									variant="outlined"
-									density="compact"
-									prepend-inner-icon="mdi-magnify"
-									hide-details="auto"
-									v-model="availableSearch"
-								/>
-							</div>
-							<div class="list">
-								<div class="list_item"
-									v-for="item in availableList"
-									:key="item.name"
-									:class="{selected: item.selected}"
-									@click="item.selected = !item.selected"
-								>
-									{{ item.name }}
-								</div>
+		<BaseModal v-model="isOpen">
+			<div class="flex sp aic">
+				<div class="available">
+					<div class="header">Available</div>
+
+					<div class="block">
+						<div class="search">
+							<BaseInput class="m-b-0"
+								label="Search"
+								v-model="availableSearch"
+							/>
+						</div>
+						<div class="list">
+							<div class="list_item"
+								v-for="item in availableList"
+								:key="item.name"
+								:class="{selected: item.selected}"
+								@click="item.selected = !item.selected"
+							>
+								{{ item[item_title] }}
 							</div>
 						</div>
 					</div>
+				</div>
 
-					<div class="actions">
-						<v-btn class="d-block" color="#737373" variant="text" icon="mdi-chevron-right" density="comfortable" @click="addItem()" />
-						<v-btn class="d-block" color="#737373" variant="text" icon="mdi-chevron-double-right" density="comfortable" @click="addItem('all')" />
+				<div class="actions">
+					<FmIcon btn icon="chevron_right" @click="addItem()" />
+					<FmIcon btn icon="keyboard_double_arrow_right" @click="addItem('all')" />
 
-						<v-btn class="d-block" color="#737373" variant="text" icon="mdi-chevron-left" density="comfortable" @click="removeItem()" />
-						<v-btn class="d-block" color="#737373" variant="text" icon="mdi-chevron-double-left" density="comfortable" @click="removeItem('all')" />
-					</div>
+					<FmIcon btn icon="chevron_left" @click="removeItem()" />
+					<FmIcon btn icon="keyboard_double_arrow_left" @click="removeItem('all')" />
+				</div>
 
-					<div class="selected">
-						<div class="header">Selected</div>
+				<div class="selected">
+					<div class="header">Selected</div>
 
-						<div class="block">
-							<div class="search">
-								<v-text-field class="rounded-0"
-									label="Search"
-									placeholder="Search"
-									variant="outlined"
-									density="compact"
-									prepend-inner-icon="mdi-magnify"
-									hide-details="auto"
-									v-model="selectedSearch"
-								/>
-							</div>
-							<div class="list">
-								<div class="list_item"
-									v-for="item in selectedList"
-									:key="item.name"
-									:class="{selected: item.selected}"
-									@click="item.selected = !item.selected"
-								>
-									{{ item.name }}
-								</div>
+					<div class="block">
+						<div class="search">
+							<BaseInput class="m-b-0"
+								label="Search"
+								v-model="selectedSearch"
+							/>
+						</div>
+						<div class="list">
+							<div class="list_item"
+								v-for="item in selectedList"
+								:key="item.name"
+								:class="{selected: item.selected}"
+								@click="item.selected = !item.selected"
+							>
+								{{ item[item_title] }}
 							</div>
 						</div>
 					</div>
-				</v-card-content>
-				<v-card-actions class="space-between px-4">
-					<v-btn @click="isOpen = false">cancel</v-btn>
-					<v-btn color="primary" variant="contained" @click="save()">save</v-btn>
-				</v-card-actions>
-			</v-card>
-		</v-dialog>
+				</div>
+			</div>
+
+			<template #controls>
+				<div class="flex sb">
+					<FmBtn type="text" @click="isOpen = false">cancel</FmBtn>
+					<FmBtn @click="save()">save</FmBtn>
+				</div>
+			</template>
+		</BaseModal>
 	</div>
 </template>
 
 <script setup>
-	let props = defineProps([
-		'items', 'modelValue', 'title'
-	])
+	let props = defineProps({
+		items: Array,
+		modelValue: [String, Array],
+		title: String,
+		item_title: {
+			type: String,
+			default: 'user_code'
+		}
+	})
 	let emit = defineEmits(['update:modelValue'])
 
 	let isOpen = ref(false)
 	let availableSearch = ref('')
 	let selectedSearch = ref('')
 
-	let selectedFilter  = reactive( new Set( props.modelValue.split(',') ) )
+	let modelValueArray = props.modelValue
 
-	let selectedList  = computed(() => props.items
-		.filter( item => selectedFilter.has(item.user_code) &&
-		item.user_code.toLocaleLowerCase().includes(selectedSearch.value.toLocaleLowerCase()) ))
+	if ( typeof modelValueArray == 'string' ) modelValueArray = modelValueArray.split(',')
 
-	let availableList = computed(() => props.items
-		.filter( item => !selectedFilter.has(item.user_code) &&
-		item.user_code.toLocaleLowerCase().includes(availableSearch.value.toLocaleLowerCase()) ))
+	let selectedFilter = reactive( new Set( modelValueArray ) )
+
+	let selectedList  = computed(() => {
+		if ( !props.items.length ) return []
+
+		return props.items.filter(
+			item => {
+				let elem = item[props.item_title]
+
+				return selectedFilter.has(elem) &&
+					elem.toLocaleLowerCase().includes( selectedSearch.value.toLocaleLowerCase() )
+			}
+		)
+	})
+
+	let availableList = computed(() => {
+		if ( !props.items.length ) return []
+
+		return props.items.filter(
+			item => {
+				let elem = item[props.item_title]
+
+				return !selectedFilter.has(elem) &&
+					elem.toLocaleLowerCase().includes(availableSearch.value.toLocaleLowerCase())
+			}
+		)
+	})
 
 	function save() {
-		emit('update:modelValue', [...selectedFilter].join(',') )
+		let result = [...selectedFilter]
+		if ( typeof props.modelValue == 'String' ) result = result.join(',')
+
+		emit('update:modelValue', result )
 
 		isOpen.value = false
 	}
@@ -125,7 +145,7 @@
 			.filter(item => item.selected || !!all)
 			.map( item => {
 				item.selected = false
-				return item.user_code
+				return item[props.item_title]
 			})
 		items.forEach( item => selectedFilter.add(item) )
 	}
@@ -134,7 +154,7 @@
 			.filter(item => item.selected || !!all)
 			.map( item => {
 				item.selected = false
-				return item.user_code
+				return item[props.item_title]
 			})
 
 		items.forEach( item => selectedFilter.delete(item) )
@@ -142,7 +162,21 @@
 
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+	.ms_wrap {
+		cursor: pointer;
+	}
+	.fm_chip {
+		background: $main-darken-2;
+		padding: 3px 8px;
+		border-radius: 16px;
+		min-width: 30px;
+		text-align: center;
+
+		& + & {
+			margin-left: 5px;
+		}
+	}
 	.header {
 		font-size: 20px;
 		margin-bottom: 8px;
@@ -151,9 +185,9 @@
 		min-width: 400px;
 	}
 	.list {
-		border-bottom: 1px solid $border;
-		border-left: 1px solid $border;
-		border-right: 1px solid $border;
+		border-bottom: 1px solid $border-darken;
+		border-left: 1px solid $border-darken;
+		border-right: 1px solid $border-darken;
 		padding: 10px 0;
 		overflow: auto;
 		height: 270px;

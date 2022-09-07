@@ -1,0 +1,43 @@
+.fm_container {
+	padding: 15px $content-padding-x;
+}
+.fm_page_title {
+	font-size: 24px;
+	margin-bottom: 15px;
+}
+.fm_drop {
+	background: $separ;
+}
+.fm_list_item {
+	display: flex;
+	align-items: center;
+	height: 40px;
+	padding: 0 16px;
+	cursor: pointer;
+	transition: 0.3s;
+	white-space: nowrap;
+
+	&:hover {
+		background: $main;
+	}
+	&.active {
+		background: $main-darken;
+	}
+	& + & {
+		border-top: 1px solid $border;
+	}
+}
+
+// Card
+.fm_card_title {
+	font-size: 24px;
+	margin-bottom: 25px;
+}
+.fm_card_subtitle {
+	color: $text-lighten;
+	margin-top: -20px;
+	padding-bottom: 24px;
+}
+.fm_card_text {
+	color: $text-lighten;
+}

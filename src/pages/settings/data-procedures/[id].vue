@@ -1,200 +1,142 @@
 <template>
-	<v-container fluid v-if="procedure.id" class="pb-16 mb-10">
-		<div class="text-h5 mb-3">Update Pricing Procedure</div>
-		<div class="d-flex space-between">
-			<div class="coll">
-				<v-card class="mb-6">
-					<v-card-title>Global</v-card-title>
-					<v-card-content>
-						<v-text-field
-							label="Name"
-							placeholder="Name"
-							variant="outlined"
-							density="comfortable"
-							v-model="procedure.name"
-						/>
-						<v-text-field
-							label="User code"
-							placeholder="User code"
-							variant="outlined"
-							density="comfortable"
-							v-model="procedure.user_code"
-						/>
-						<v-text-field
-							label="Notes"
-							placeholder="Notes"
-							variant="outlined"
-							density="comfortable"
-							v-model="procedure.notes"
-						/>
-						<v-text-field
-							label="Notes for user"
-							placeholder="Notes for users"
-							variant="outlined"
-							density="comfortable"
-							v-model="procedure.notes_for_users"
-						/>
-					</v-card-content>
-				</v-card>
+	<CommonSettingsLayout
+		v-if="procedure.id"
+		title="Update Data Procedure"
+		@save="save()"
+		@cancel="() => $router.push('/import/bank')"
+	>
+		<template #left>
+			<FmCard title="Global" class="mb-x">
+				<BaseInput
+					label="Name"
+					v-model="procedure.name"
+				/>
+				<BaseInput
+					label="User code"
+					v-model="procedure.user_code"
+				/>
+				<BaseInput
+					label="Notes"
+					v-model="procedure.notes"
+				/>
+				<BaseInput
+					label="Notes for user"
+					v-model="procedure.notes_for_users"
+				/>
+			</FmCard>
 
-				<v-card>
-					<v-card-title>Period</v-card-title>
-					<v-card-content>
-						<FmDateExpr
-							label="Date from"
-							:expr="procedure.date_from_expr"
-							:date="procedure.date_from"
-							@save:date="procedure.date_from = $event"
-							@save:expr="procedure.date_from_expr = $event"
-						/>
-						<FmDateExpr
-							label="Date to"
-							:expr="procedure.date_to_expr"
-							:date="procedure.date_to"
-							@save:date="procedure.date_to = $event"
-							@save:expr="procedure.date_to_expr = $event"
-						/>
-					</v-card-content>
-				</v-card>
-			</div>
-			<div class="coll">
-				<v-card>
-					<v-card-title>Provider and schemes</v-card-title>
-					<v-card-content>
-						<v-select
-							v-model="procedure.provider"
-							:items="dataProvider"
-							label="Provider"
-							variant="outlined"
-							density="compact"
-						/>
+			<FmCard title="Period" class="mb-x">
+				<FmInputDateExpr
+					label="Date from"
+					v-model:expr="procedure.date_from_expr"
+					v-model:date="procedure.date_from"
+				/>
+				<FmInputDateExpr
+					label="Date to"
+					v-model:expr="procedure.date_to_expr"
+					v-model:date="procedure.date_to"
+				/>
+			</FmCard>
+		</template>
+		<template #right>
+			<FmCard title="Provider and schemes" class="mb-x">
+				<FmSelect
+					v-model="procedure.provider"
+					:items="dataProvider"
+					label="Provider"
+				/>
 
-						<FmMultiField
-							label="Scheme name"
-							v-model="procedure.scheme_user_code"
-							:type="procedure.scheme_type"
-							:items="types"
-							:simpleItems="simpleItems"
-							@selected:type="procedure.scheme_type = $event"
-						/>
+				<FmSelectDouble
+					label="Scheme name"
+					v-model="procedure.scheme_user_code"
+					v-model:type="procedure.scheme_type"
+					:items="types"
+					:simpleItems="simpleItems"
+					prop_id="user_code"
+				/>
 
-						<template v-if="procedure.provider == 1">
-							<v-text-field
-								label="Filename pattern"
-								placeholder="Filename pattern"
-								variant="outlined"
-								density="comfortable"
-								v-model="procedure.data.filenamemask"
-							/>
-						</template>
+				<template v-if="procedure.provider == 1">
+					<BaseInput
+						label="Filename pattern"
+						v-model="procedure.data.filenamemask"
+					/>
+				</template>
 
-						<template v-if="procedure.provider == 3">
-							<v-text-field
-								label="Archive password"
-								placeholder="Archive password"
-								variant="outlined"
-								density="comfortable"
-								v-model="procedure.data.archivepassword"
-							/>
-						</template>
+				<template v-if="procedure.provider == 3">
+					<BaseInput
+						label="Archive password"
+						v-model="procedure.data.archivepassword"
+					/>
+				</template>
 
-						<template v-if="procedure.provider == 4">
-							<v-text-field
-								label="Code"
-								placeholder="Code"
-								variant="outlined"
-								density="comfortable"
-								v-model="procedure.data.code"
-							/>
-							<v-text-field
-								label="Issuer"
-								placeholder="Issuer"
-								variant="outlined"
-								density="comfortable"
-								v-model="procedure.data.issuer"
-							/>
-							<v-text-field
-								label="Client id"
-								placeholder="Client id"
-								variant="outlined"
-								density="comfortable"
-								v-model="procedure.data.client_id"
-							/>
-							<v-text-field
-								label="jwt"
-								placeholder="jwt"
-								variant="outlined"
-								density="comfortable"
-								v-model="procedure.data.jwt"
-							/>
-						</template>
+				<template v-if="procedure.provider == 4">
+					<BaseInput
+						label="Code"
+						v-model="procedure.data.code"
+					/>
+					<BaseInput
+						label="Issuer"
+						v-model="procedure.data.issuer"
+					/>
+					<BaseInput
+						label="Client id"
+						v-model="procedure.data.client_id"
+					/>
+					<BaseInput
+						label="jwt"
+						v-model="procedure.data.jwt"
+					/>
+				</template>
 
-						<template v-if="procedure.provider == 5">
-							<v-text-field
-								label="Sender pattern"
-								placeholder="Sender pattern"
-								variant="outlined"
-								density="comfortable"
-								v-model="procedure.data.sender"
-							/>
-							<v-text-field
-								label="Subject pattern"
-								placeholder="Subject pattern"
-								variant="outlined"
-								density="comfortable"
-								v-model="procedure.data.subject"
-							/>
-							<v-text-field
-								label="Filename pattern"
-								placeholder="Filename pattern"
-								variant="outlined"
-								density="comfortable"
-								v-model="procedure.data.filename"
-							/>
-						</template>
+				<template v-if="procedure.provider == 5">
+					<BaseInput
+						label="Sender pattern"
+						v-model="procedure.data.sender"
+					/>
+					<BaseInput
+						label="Subject pattern"
+						v-model="procedure.data.subject"
+					/>
+					<BaseInput
+						label="Filename pattern"
+						v-model="procedure.data.filename"
+					/>
+				</template>
 
-						<template v-if="procedure.provider == 6">
-							<v-text-field
-								label="Url"
-								placeholder="Url"
-								variant="outlined"
-								density="comfortable"
-								v-model="procedure.data.url"
-							/>
-							<v-text-field
-								label="Security token"
-								placeholder="Security token"
-								variant="outlined"
-								density="comfortable"
-								v-model="procedure.data.security_token"
-							/>
-							<v-textarea
-								label="JSON"
-								variant="outlined"
-								density="comfortable"
-								:modelValue="JSON.stringify( procedure.data, null, 2)"
-								filled
-								rows="10"
-								@update:modelValue="procedure.data = JSON.parse($event)"
-							></v-textarea>
-						</template>
-					</v-card-content>
-				</v-card>
-			</div>
-		</div>
-
-		<v-sheet class="control_line pa-4 d-flex space-between">
-			<v-btn variant="text" @click="$router.push('/valuations/run-pricing')">cancel</v-btn>
-			<v-btn color="primary" @click="save()">save</v-btn>
-		</v-sheet>
-
-	</v-container>
+				<template v-if="procedure.provider == 6">
+					<BaseInput
+						label="Url"
+						v-model="procedure.data.url"
+					/>
+					<BaseInput
+						label="Security token"
+						v-model="procedure.data.security_token"
+					/>
+					<FmInputArea
+						label="JSON"
+						:modelValue="JSON.stringify( procedure.data, null, 2)"
+						@update:modelValue="procedure.data = JSON.parse($event)"
+					/>
+				</template>
+			</FmCard>
+		</template>
+	</CommonSettingsLayout>
 </template>
 
 <script setup>
 
 	definePageMeta({
-		title: "Update Pricing Procedure ",
+		bread: [
+			{
+				text: 'Import: Import from bank ',
+				to: '/import/bank',
+				disabled: false
+			},
+			{
+				text: 'Update Data Procedure ',
+				disabled: true
+			},
+		],
 	});
 	const store = useStore()
 	let route = useRoute()
@@ -215,6 +157,8 @@
 		let res = await useApi('importBankProcId.get', {params: {id: route.params.id}})
 		procedure.value = res
 
+		if ( !procedure.value.data ) procedure.value.data = {}
+
 		simpleItems.value = (await useApi('importSchemeLight.get')).results
 		simpleItems.value.forEach(item => {
 			item.title = item.name
@@ -222,10 +166,6 @@
 		})
 
 		dataProvider.value = await useApi('dataProvider.get')
-		dataProvider.value.forEach(item => {
-			item.title = item.name
-			item.value = item.id
-		})
 	}
 
 	async function save() {
@@ -247,14 +187,5 @@
 </script>
 
 <style lang="scss" scoped>
-.coll {
-	width: 48%;
-}
-.control_line {
-	width: calc(100% - 160px);
-	position: fixed;
-	left: 160px;
-	bottom: 0;
-	border-top: 1px solid $border;
-}
+
 </style>

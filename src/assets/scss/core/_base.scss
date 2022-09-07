@@ -1,13 +1,26 @@
 body {
-	background: #fff;
 	font: 400 16px/1.2 $font-family, sans-serif;
-	color: #202020;
+	color: $text;
+	overflow: initial;
+}
+html {
+	overflow: initial !important;
+}
+button {
+	white-space: nowrap;
+}
+p {
+	line-height: 1.35;
+}
+a {
+	color: $text;
+}
+input[type=file] {
+	display: none;
 }
 
-
-
 ::-webkit-scrollbar-thumb {
-	background: $c1;
+	background: $primary-lighten;
 	border: 3px solid #fff;
 }
 ::-webkit-scrollbar-track {
@@ -18,6 +31,4 @@ body {
 	height: 8px;
 	width: 10px;
 }
-p {
-	line-height: 1.35;
-}
+
