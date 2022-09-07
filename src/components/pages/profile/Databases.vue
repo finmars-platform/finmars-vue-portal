@@ -62,12 +62,6 @@
 
 	let isShowNewBackup = ref(false)
 
-	async function deleteDB(id) {
-		let res = await useApi('masterLeave.get', {params: {id}})
-
-		if ( res ) store.getDatabases()
-	}
-
 </script>
 
 <style lang="scss" scoped>
