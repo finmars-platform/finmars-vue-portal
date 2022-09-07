@@ -82,13 +82,11 @@
 
 	let props = defineProps({
 		'modelValue': Boolean,
-		'reportId': String,
+		'viewerData': Object,
 	});
-	let emit = defineEmits(['cancel', 'save', 'update:modelValue']);
+	let emit = defineEmits(['cancel', 'save']);
 
-	const perfStore = usePerformanceReportStore();
-	let perfData = perfStore.instances[props.reportId];
-
+	//<editor-fold desc="Variables">
 	let endDate = ref(null);
 
 	let currency = ref(null);
@@ -114,7 +112,6 @@
 	];
 
 	let segmentationType = ref('days');
-	if (perfData.reportOptions.segmentation_type) segmentationType.value = perfData.reportOptions.segmentation_type;
 
 	let segmentTypeOpts = [
 		{
@@ -150,6 +147,7 @@
 	let showGraphs = ref(true);
 
 	let readyStatus = ref(false);
+	//</editor-fold>
 
 	function fetchPpOpts () {
 
@@ -194,19 +192,16 @@
 	}
 
 	function cancel() {
-		if (perfData.reportOptions.calculation_type) calculationType.value = perfData.reportOptions.calculation_type;
-		if (perfData.reportOptions.segmentation_type) segmentationType.value = perfData.reportOptions.segmentation_type;
-
 		emit('cancel');
 	}
 
 	function save() {
 
-		perfData.reportOptions.end_date = endDate.value;
-		perfData.reportOptions.report_currency = currency.value;
-		perfData.reportOptions.pricing_policy = pricingPolicy.value;
-		perfData.reportOptions.calculation_type = calculationType.value;
-		perfData.reportOptions.segmentation_type = segmentationType.value;
+		props.viewerData.reportOptions.end_date = endDate.value;
+		props.viewerData.reportOptions.report_currency = currency.value;
+		props.viewerData.reportOptions.pricing_policy = pricingPolicy.value;
+		props.viewerData.reportOptions.calculation_type = calculationType.value;
+		props.viewerData.reportOptions.segmentation_type = segmentationType.value;
 
 		emit('save');
 
@@ -216,15 +211,11 @@
 
 		if (props.modelValue) {
 
-			if (perfData.reportOptions.end_date) endDate.value = perfData.reportOptions.end_date;
-
-			if (perfData.reportOptions.report_currency) currency.value = perfData.reportOptions.report_currency;
-
-			if (perfData.reportOptions.pricing_policy) pricingPolicy.value = perfData.reportOptions.pricing_policy;
-
-			if (perfData.reportOptions.calculation_type) calculationType.value = perfData.reportOptions.calculation_type;
-
-			if (perfData.reportOptions.segmentation_type) segmentationType.value = perfData.reportOptions.segmentation_type;
+			endDate.value = props.viewerData.reportOptions.end_date;
+			currency.value = props.viewerData.reportOptions.report_currency;
+			pricingPolicy.value = props.viewerData.reportOptions.pricing_policy;
+			calculationType.value = props.viewerData.reportOptions.calculation_type;
+			segmentationType.value = props.viewerData.reportOptions.segmentation_type;
 
 		}
 	})

@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<PagesReportsPerformanceDialogSettings v-model="showSettingsDialog"
-																					 :report-id="perfReportId"
+																					 :viewer-data="viewerData"
 																					 @save="showSettingsDialog = false;"
 																					 @cancel="showSettingsDialog = false;" />
 
@@ -86,9 +86,9 @@
 		],
 	});
 
-	const store = useStore()
-	const perfStore = usePerformanceReportStore();
-	const perfReportId = perfStore.initInstance();
+	const store = useStore();
+	const viewerData = usePerformanceViewerData();
+
 	let showSettingsDialog = ref(false);
 
 	// <editor-fold desc="Variables">
@@ -140,7 +140,7 @@
 		} else {
 
 			const defaultListLayout = resData.results.length ? resData.results[0] : null;
-			perfStore.setLayoutCurrentConfig(perfReportId, defaultListLayout);
+			viewerData.setLayoutCurrentConfig(defaultListLayout);
 
 		}
 
@@ -151,7 +151,7 @@
 	async function init() {
 
 		await fetchDefaultListLayout();
-		// await fetchDefaultListLayout()
+
 		await fetchPortolios()
 
 		if ( !porfolios.length ) {
