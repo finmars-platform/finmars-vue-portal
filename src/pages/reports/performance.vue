@@ -1,6 +1,6 @@
 <template>
-	<div class="ev_top_panel">
-		<FmHorizontalPanel>
+	<div>
+		<FmHorizontalPanel class="ev_top_panel">
 			<template #leftActions>
 				<FmIcon icon="save" btn />
 			</template>
@@ -9,10 +9,8 @@
 				<FmIcon icon="settings" btn />
 			</template>
 		</FmHorizontalPanel>
-	</div>
 
-	<div>
-		<FmHorizontalPanel class="ev_toolbar">
+		<FmHorizontalPanel height="50">
 			<template #leftActions>
 				<FmMenu>
 					<template #btn>
@@ -21,10 +19,10 @@
 
 					<div class="fm_list">
 						<div class="fm_list_item">
-							<FmBtn type="text" disabled="true">Add Portfolio register</FmBtn>
+							Add Portfolio register
 						</div>
 						<div class="fm_list_item">
-							<FmBtn type="text">Add bundle</FmBtn>
+							Add bundle
 						</div>
 					</div>
 				</FmMenu>
@@ -35,44 +33,44 @@
 				<FmIcon icon="refresh" btn />
 			</template>
 		</FmHorizontalPanel>
-	</div>
 
-	<div class="fm_container">
-		<FmExpansionPanel title="Period Returns">
-			<BaseTable
-				:headers="preriodHeaders"
-				:items="preriodItems"
-				:active="activePeriod"
-				colls="repeat(8, 1fr)"
-				:cb="choosePortfolio"
-			/>
-		</FmExpansionPanel>
+		<div class="fm_container">
+			<FmExpansionPanel title="Period Returns">
+				<BaseTable
+					:headers="preriodHeaders"
+					:items="preriodItems"
+					:active="activePeriod"
+					colls="repeat(8, 1fr)"
+					:cb="choosePortfolio"
+				/>
+			</FmExpansionPanel>
 
-		<FmExpansionPanel :title="detailPortfolio">
-			<div class="table_wrap flex">
-				<div class="coll_years">
-					<div class="coll_item t_header">Years</div>
-					<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">{{item}}</div>
+			<FmExpansionPanel :title="detailPortfolio">
+				<div class="table_wrap flex">
+					<div class="coll_years">
+						<div class="coll_item t_header">Years</div>
+						<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">{{item}}</div>
+					</div>
+					<div class="coll_months">
+						<BaseTable
+							:headers="portfolioHeaders"
+							:items="portfolioItems"
+							colls="repeat(12, 1fr)"
+							:cb="chooseMonth"
+							:active="activeYear"
+						/>
+					</div>
+					<div class="coll_total">
+						<div class="coll_item t_header">TOTAL</div>
+						<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">0.1</div>
+					</div>
 				</div>
-				<div class="coll_months">
-					<BaseTable
-						:headers="portfolioHeaders"
-						:items="portfolioItems"
-						colls="repeat(12, 1fr)"
-						:cb="chooseMonth"
-						:active="activeYear"
-					/>
-				</div>
-				<div class="coll_total">
-					<div class="coll_item t_header">TOTAL</div>
-					<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">0.1</div>
-				</div>
-			</div>
-		</FmExpansionPanel>
+			</FmExpansionPanel>
 
-		<FmExpansionPanel :title="detailPortfolio + ' - ' + detailYear">
-			<canvas id="myChart"><p>Chart</p></canvas>
-		</FmExpansionPanel>
+			<FmExpansionPanel :title="detailPortfolio + ' - ' + detailYear">
+				<canvas id="myChart"><p>Chart</p></canvas>
+			</FmExpansionPanel>
+		</div>
 	</div>
 </template>
 
