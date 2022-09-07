@@ -1,8 +1,6 @@
 <template>
-	<div>
-		<v-container class="justify-space-between d-flex py-3" fluid>
-			<h2 class="text-h4">Coming soon</h2>
-		</v-container>
+	<div class="fm_container">
+		<h2 class="text-h4">Coming soon</h2>
 	</div>
 </template>
 

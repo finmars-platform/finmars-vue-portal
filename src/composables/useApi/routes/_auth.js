@@ -6,6 +6,15 @@ export default {
 	ping: {
 		get: "/authorizer/ping/"
 	},
+	tokenRefresh: {
+		post: 'authorizer/token-refresh/'
+	},
+	tokenInfo: {
+		get: 'authorizer/auth-token-manager/'
+	},
+	login: {
+		post: '/authorizer/token-auth/'
+	},
 	masterBackups: {
 		get: '/authorizer/master-user-backups/',
 		'delete': '/authorizer/master-user-backups/{id}/',
@@ -48,6 +57,10 @@ export default {
 	invitesToDB: {
 		get: '/authorizer/invite-from-master-user/?status=0',
 		put: '/authorizer/invite-from-master-user/{id}/'
+	},
+	memberInvites: {
+		get: '/authorizer/invite-to-user/',
+		post: '/authorizer/create-invite-to-user/',
 	},
 
 };

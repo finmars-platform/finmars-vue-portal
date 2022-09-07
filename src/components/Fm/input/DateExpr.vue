@@ -1,22 +1,27 @@
 <template>
-	<v-text-field
+	<BaseInput
 		:label="`${label}${isDateExpr ? ' (Expression)' : ''}`"
-		:placeholder="`${label}${isDateExpr ? ' (Expression)' : ''}`"
-		variant="outlined"
-		density="comfortable"
-		:type="isDateExpr ? 'text' : 'date'"
-		:append-inner-icon="isDateExpr ? 'mdi-code-tags' : ''"
-		:prepend-inner-icon="'mdi-swap-vertical'"
-		@click:prepend-inner="isDateExpr = !isDateExpr"
 		:modelValue="isDateExpr ? expr : date"
-		@update:modelValue="emit('save:date', $event)"
-		@click="isDateExpr ? isOpenDateExpr = true : ''"
-	/>
+		@update:modelValue="emit(`update:${isDateExpr ? 'expr' :' date'}`, $event)"
+	>
+		<template #button>
+			<FmIcon
+				v-if="isDateExpr"
+				icon="code"
+				@click="isOpenDateExpr = true"
+			/>
+			<FmIcon v-else icon="calendar_month" />
+		</template>
+
+		<template #rightBtn>
+			<FmIcon icon="swap_vert" @click="$event.stopPropagation(), isDateExpr = !isDateExpr" />
+		</template>
+	</BaseInput>
 	<FmExpression
 		v-if="isOpenDateExpr"
 		v-model="isOpenDateExpr"
 		:expressions="expr"
-		@save="emit('save:expr', $event)"
+		@save="emit('update:expr', $event)"
 	/>
 </template>
 
@@ -26,9 +31,9 @@
 		'modelValue', 'label', 'date', 'expr'
 	])
 	const emit = defineEmits([
-		'save:date', 'save:expr'
+		'update:date', 'update:expr'
 	])
-	let isDateExpr = ref(false)
+	let isDateExpr = ref(props.date ? false : true)
 	let isOpenDateExpr = ref(false)
 
 </script>

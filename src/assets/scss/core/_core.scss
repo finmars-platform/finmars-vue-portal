@@ -3,5 +3,7 @@
 @import "resets";
 @import "base";
 @import "helpers";
+@import "fm";
 
 @include font-face($font-family, "@/assets/fonts/Roboto/Roboto-Regular", 400);
+@include font-face($font-family, "@/assets/fonts/Roboto/Roboto-Medium", 500);
