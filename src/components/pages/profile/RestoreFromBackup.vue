@@ -1,6 +1,7 @@
 <template>
 	<BaseModal
 		title="Create Database"
+		@cancel="cancel()"
 	>
 		<BaseInput
 			label="Name"
@@ -13,7 +14,7 @@
 
 		<template #controls>
 			<div class="flex-row fc-space-between">
-				<FmBtn type="basic" @click="close()">cancel</FmBtn>
+				<FmBtn type="basic" @click="cancel()">cancel</FmBtn>
 				<FmBtn
 					:loading="processing"
 					@click="createMasterUser()"
@@ -27,12 +28,12 @@
 </template>
 
 <script setup>
-	let emit = defineEmits(['close', 'save'])
+	let emit = defineEmits(['cancel', 'save'])
 	let form = reactive({})
 	let processing = ref(false)
 
-	async function close() {
-		emit('close')
+	async function cancel() {
+		emit('cancel')
 		processing.value = false
 	}
 	async function createMasterUser() {
@@ -47,7 +48,7 @@
 		}
 
 		emit('save')
-		close()
+		cancel()
 	}
 
 </script>

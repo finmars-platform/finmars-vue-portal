@@ -23,7 +23,7 @@
 		</template>
 
 		<PagesProfileRestoreFromBackup
-			@close="isShowRestore = false"
+			@cancel="isShowRestore = false"
 			@save="emit('refresh')"
 			v-model="isShowRestore"
 		/>

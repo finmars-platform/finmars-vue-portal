@@ -6,8 +6,8 @@ export default defineStore({
 		return {
 			user: {},
 			ws: null,
-			databases: [],
-			current: {}
+			masterUsers: [],
+			current: {},
 		};
 	},
 	actions: {
@@ -15,7 +15,7 @@ export default defineStore({
 			await this.ping()
 
 			this.getUser()
-			this.getDatabases()
+			this.getMasterUsers()
 		},
 		async getUser() {
 			let res = await useApi('me.get')
@@ -28,11 +28,11 @@ export default defineStore({
 			}
 
 		},
-		async getDatabases() {
+		async getMasterUsers() {
 			let res = await useApi("masterUser.get")
 
-			this.databases = res.results
-			this.current.name = this.databases.find(item => item.id == this.current.current_master_user_id )?.name
+			this.masterUsers = res.results
+			this.current.name = this.masterUsers.find(item => item.id == this.current.current_master_user_id )?.name
 		},
 		async ping() {
 			let res = await useApi("ping.get")
@@ -57,7 +57,7 @@ export default defineStore({
 			}
 
 			this.current = res
-		}
+		},
 	},
 	getters: {
 	},

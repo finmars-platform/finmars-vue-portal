@@ -1,6 +1,12 @@
 <template>
+
+	<PagesReportsPerformanceDialogSettings v-model="showSettingsDialog"
+																				 :report-id="perfReportId"
+																				 @save="showSettingsDialog = false;"
+																				 @cancel="showSettingsDialog = false;" />
+
 	<div class="ev_top_panel">
-		<FmHorizontalPanel>
+<!--		<FmHorizontalPanel>
 			<template #leftActions>
 				<FmIcon icon="save" btn />
 			</template>
@@ -8,7 +14,9 @@
 			<template #rightActions>
 				<FmIcon icon="settings" btn />
 			</template>
-		</FmHorizontalPanel>
+		</FmHorizontalPanel>-->
+
+		<EvBaseTopPanel @open-settings="showSettingsDialog = true;" />
 	</div>
 
 	<div>
@@ -89,10 +97,15 @@
 			}
 		],
 	});
-	const store = useStore()
-	const perfReportStore = usePerformanceReportStore();
 
-	let panels = ref(['period', 'detail', 'diagram'])
+	const store = useStore()
+	const perfStore = usePerformanceReportStore();
+	const perfReportId = perfStore.initInstance();
+	let showSettingsDialog = ref(false);
+
+	// <editor-fold desc="Variables">
+	// let panels = ref(['period', 'detail', 'diagram'])
+	let panels = perfStore.components(perfReportId)
 	let porfolios = []
 	let preriodHeaders = ref(
 		['', 'Daily', 'MTD', 'QTD', 'YTD', +moment().year() - 1, +moment().year() - 2, 'Incept']
@@ -112,6 +125,8 @@
 
 	let activePeriod = ref(0)
 	let activeYear = ref(0)
+
+	// </editor-fold>
 
 	async function choosePortfolio(id) {
 		activePeriod.value = id
@@ -133,21 +148,23 @@
 		const resData = await useApi('defaultListLayout.get', {params: {contentType: 'performance.report'}});
 
 		if (resData.error) {
-			throw new Error('Failed to fetch layout');
+			throw new Error('Failed to fetch default performance layout');
 
 		} else {
 
 			const defaultListLayout = resData.results.length ? resData.results[0] : null;
-			perfReportStore.setListLayout(defaultListLayout);
+			perfStore.setLayoutCurrentConfig(perfReportId, defaultListLayout);
 
 		}
 
 	}
 
+
+
 	async function init() {
 
+		await fetchDefaultListLayout();
 		// await fetchDefaultListLayout()
-
 		await fetchPortolios()
 
 		if ( !porfolios.length ) {
