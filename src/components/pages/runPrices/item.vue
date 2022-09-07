@@ -42,28 +42,26 @@
 				</div>
 
 				<div class="center">
-					<v-btn color="primary" variant="text">
+					<FmBtn type="action" @click="subprocedure.dialog = true">
 						Show request
-						<v-dialog activator="parent" v-model="subprocedure.dialog">
-							<v-card>
-								<v-card-title>
-									Procedure request
-								</v-card-title>
+					</FmBtn>
 
-								<v-card-text>
-									<pre>{{ JSON.stringify( subprocedure.request_data, null, 2 ) }}</pre>
-								</v-card-text>
-								<v-card-actions class="space-between">
-									<v-btn color="primary" @click="subprocedure.dialog = false">cancel</v-btn>
+					<BaseModal v-model="subprocedure.dialog"
+						title="Procedure request"
+					>
+						<pre>{{ JSON.stringify( subprocedure.request_data, null, 2 ) }}</pre>
 
-									<div>
-										<v-btn color="primary" variant="text" @click="copyText(JSON.stringify( subprocedure.request_data, null, 2 ))">copy</v-btn>
-										<v-btn color="primary" variant="contained" @click="subprocedure.dialog = false">ok</v-btn>
-									</div>
-								</v-card-actions>
-							</v-card>
-						</v-dialog>
-					</v-btn>
+						<template #controls>
+							<div class="flex sb">
+								<FmBtn type="action" @click="subprocedure.dialog = false">cancel</FmBtn>
+
+								<div>
+									<FmBtn class="m-r-4" type="text" @click="copyText(JSON.stringify( subprocedure.request_data, null, 2 ))">copy</FmBtn>
+									<FmBtn @click="subprocedure.dialog = false">ok</FmBtn>
+								</div>
+							</div>
+						</template>
+					</BaseModal>
 				</div>
 			</div>
 		</div>
@@ -78,9 +76,6 @@
 		'item'
 	])
 
-	definePageMeta({
-		title: "Valuations: Run Pricing ",
-	});
 	const store = useStore()
 	let procedures = ref(null)
 	let isOpen = ref(false)

@@ -7,23 +7,13 @@
 		<div class="wrap pb-14 pt-5">
 			<div class="">
 				<div class="editor_block mx-5">
-					<div class="editor_block_toolbar d-flex space-between align-center">
+					<div class="editor_block_toolbar flex sb aic">
 						<div class="editor_block_h">Expression</div>
 						<div>
-							<v-btn
-								class="pa-1 ml-1"
-								icon="mdi-code-tags-check"
-								size="20"
-								variant="text"
-							/>
-							<v-btn
-								class="pa-1 ml-1"
-								icon="mdi-undo-variant"
-								size="20"
-								variant="text"
-							/>
+							<!-- <FmIcon
+								icon="undo_variant"
+							/> -->
 						</div>
-
 					</div>
 					<code class="code_block">
 						<div class="snippets">
@@ -35,7 +25,7 @@
 								{{ item }}
 							</div>
 						</div>
-						<div class="line d-flex align-center">
+						<div class="line flex aic">
 							<div class="line_id" contenteditable="false">
 								<div class="">1</div>
 							</div>
@@ -92,10 +82,9 @@
 			</div>
 
 			<div class="right_side ">
-				<v-text-field
+				<BaseInput
 					label="Search"
 					placeholder="Search"
-					hide-details="auto"
 				/>
 				<v-list class="menu" v-model:opened="open">
 					<v-list-group
@@ -119,10 +108,10 @@
 		</div>
 
 		<template #controls>
-			<v-card-actions class="actions justify-end">
-				<v-btn @click="close()">cancel</v-btn>
-				<v-btn variant="contained" color="primary" @click="save()">save</v-btn>
-			</v-card-actions>
+			<div class="flex sb">
+				<FmBtn type="text" @click="close()">cancel</FmBtn>
+				<FmBtn @click="save()">save</FmBtn>
+			</div>
 		</template>
 	</BaseModal>
 </template>
@@ -226,9 +215,6 @@
 	}
 	.editor_block_h {
 
-	}
-	.actions {
-		width: 100%;
 	}
 	.right_side {
 		width: 260px;

@@ -1,36 +1,33 @@
 <template>
-	 <v-dialog>
-			<v-card width="426">
-				<v-card-title>
-					Create Database
-				</v-card-title>
+	<BaseModal
+		title="Create Database"
+	>
+		<BaseInput
+			label="Name"
+			v-model="form.name"
+		/>
+		<BaseInput
+			label="License key"
+			v-model="form.license_key"
+		/>
 
-				<v-card-content>
-					<v-text-field
-						label="Name"
-						placeholder="Name"
-						variant="outlined"
-						density="comfortable"
-						v-model="form.name"
-					/>
-					<v-text-field
-						label="License key"
-						placeholder="License key"
-						variant="outlined"
-						density="comfortable"
-						v-model="form.license_key"
-					/>
-				</v-card-content>
-				<v-card-actions class="space-between pa-4">
-					<v-btn color="primary" @click="close()">cancel</v-btn>
-					<v-btn color="primary" variant="contained" @click="createDB()">create</v-btn>
-				</v-card-actions>
-			</v-card>
-		</v-dialog>
+		<template #controls>
+			<div class="flex-row fc-space-between">
+				<FmBtn type="basic" @click="close()">cancel</FmBtn>
+				<FmBtn
+					:loading="processing"
+					@click="createMasterUser()"
+				>
+					create
+				</FmBtn>
+			</div>
+		</template>
+
+	</BaseModal>
 </template>
 
 <script setup>
-	let emit = defineEmits(['close'])
+	let emit = defineEmits(['close', 'save'])
 	let form = reactive({})
 	let processing = ref(false)
 
@@ -38,7 +35,7 @@
 		emit('close')
 		processing.value = false
 	}
-	async function createDB() {
+	async function createMasterUser() {
 		if ( processing.value ) return false
 
 		processing.value = true
@@ -49,6 +46,7 @@
 			useNotify({type: 'success', title: 'Ecosystem is proccessing'})
 		}
 
+		emit('save')
 		close()
 	}
 
