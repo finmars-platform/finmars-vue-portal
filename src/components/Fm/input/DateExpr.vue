@@ -21,7 +21,8 @@
 		v-if="isOpenDateExpr"
 		v-model="isOpenDateExpr"
 		:expressions="expr"
-		@save="emit('update:expr', $event)"
+		@cancel="isOpenDateExpr = false;"
+		@save="emit('update:expr', $event); isOpenDateExpr = false;"
 	/>
 </template>
 

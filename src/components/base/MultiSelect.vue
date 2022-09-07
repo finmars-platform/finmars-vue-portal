@@ -17,7 +17,8 @@
 			</div>
 		</BaseInput>
 
-		<BaseModal v-model="isOpen">
+		<BaseModal v-model="isOpen"
+							 @cancel="isOpen = false">
 			<div class="flex sp aic">
 				<div class="available">
 					<div class="header">Available</div>

@@ -23,15 +23,21 @@ export default {
 	policyFilters: {
 		get: prefix + '/instruments/pricing-policy/'
 	},
+	pricingPoliciesLight: {
+		get: prefix + '/instruments/pricing-policy-light/'
+	},
+	currenciesLight: {
+		get: prefix + '/currencies/currency-light/',
+	},
 	portfolioFilters: {
-		get: prefix + '/portfolios/portfolio/'
+		get: prefix + '/portfolios/portfolio/',
 	},
 	currencyScheme: {
-		get: prefix + '/pricing/currency-pricing-scheme/'
+		get: prefix + '/pricing/currency-pricing-scheme/',
 	},
 
 	importBankProc: {
-		get: prefix + '/procedures/request-data-procedure/'
+		get: prefix + '/procedures/request-data-procedure/',
 	},
 	importBankProcId: {
 		get: prefix + '/procedures/request-data-procedure/{id}/',
@@ -100,5 +106,9 @@ export default {
 
 	defaultListLayout: {
 		get: prefix + '/ui/list-layout/?is_default=2&content_type={contentType}/',
+	},
+
+	ecosystemDefaults: {
+		get: prefix + '/users/ecosystem-default/'
 	}
 }

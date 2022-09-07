@@ -27,3 +27,8 @@ export const recursiveDeepCopy = (o, saveFunctions) => {
 	}
 	return newO;
 };
+
+export const generateUniqueId = function (key) {
+	const currentDate = Date.now().toString();
+	return md5(currentDate, key);
+}

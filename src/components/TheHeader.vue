@@ -53,7 +53,7 @@
 
 					<div class="fm_list">
 						<div class="fm_list_item"
-							v-for="(item, index) in store.databases"
+							v-for="(item, index) in store.masterUsers"
 							:key="index"
 							@click="setCurrent( item.id )"
 						>
