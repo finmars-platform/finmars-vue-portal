@@ -18,7 +18,9 @@
 						:type="type"
 						:placeholder="placeholder || label"
 						:value="modelValue"
+						:readonly="readonly"
     				@input="$emit('update:modelValue', $event.target.value)"
+						class="bi_main_input"
 					/>
 				</slot>
 			</div>
@@ -44,6 +46,7 @@
 		type: String,
 		label: String,
 		placeholder: String,
+		readonly: Boolean,
 		tooltip: String,
 		error: [String, Array]
 	})
