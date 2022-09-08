@@ -434,7 +434,7 @@
 		return await getReports({start, end, ids})
 	}
 
-	async function getReports({start, end, id, type = 'months'}) {
+	async function getReports({start, end, ids, type = 'months'}) {
 		let res = await useApi('performanceReport.post', {
 			body: {
 				 "save_report": false,
@@ -442,7 +442,7 @@
 				"end_date": end,
 				"calculation_type": "time_weighted",
 				"segmentation_type": type,
-				"bundle": id
+				"bundle": ids
 			}
 		})
 
