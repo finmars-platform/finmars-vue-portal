@@ -11,7 +11,8 @@
 .fm_list_item {
 	display: flex;
 	align-items: center;
-	height: 40px;
+	// height: 40px;
+	height: 36px;
 	padding: 0 16px;
 	cursor: pointer;
 	transition: 0.3s;
@@ -23,9 +24,9 @@
 	&.active {
 		background: $main-darken;
 	}
-	& + & {
+	/*& + & {
 		border-top: 1px solid $border;
-	}
+	}*/
 }
 
 // Card
