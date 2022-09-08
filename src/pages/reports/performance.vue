@@ -1,40 +1,96 @@
 <template>
-	<div class="fm_container">
-		<FmExpansionPanel title="Period Returns">
-			<BaseTable
-				:headers="preriodHeaders"
-				:items="preriodItems"
-				:active="activePeriod"
-				colls="repeat(8, 1fr)"
-				:cb="choosePortfolio"
-			/>
-		</FmExpansionPanel>
+	<div>
+		<PagesReportsPerformanceDialogSettings
+			v-model:open-dialog="showSettingsDialog"
+			v-model:layout-ready-status="layoutSet"
+			:viewer-data="viewerData"
+			@save="showSettingsDialog = false;"
+			@cancel="showSettingsDialog = false;"
+		/>
 
-		<FmExpansionPanel :title="detailPortfolio">
-			<div class="table_wrap flex">
-				<div class="coll_years">
-					<div class="coll_item t_header">Years</div>
-					<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">{{item}}</div>
-				</div>
-				<div class="coll_months">
-					<BaseTable
-						:headers="portfolioHeaders"
-						:items="portfolioItems"
-						colls="repeat(12, 1fr)"
-						:cb="chooseMonth"
-						:active="activeYear"
+		<EvBaseTopPanel height="50" @open-settings="showSettingsDialog = true;" />
+
+		<FmHorizontalPanel height="50">
+			<template #leftActions>
+				<FmMenu>
+					<template #btn>
+						<FmIcon btnPrimary icon="add" />
+					</template>
+
+					<div class="fm_list">
+						<div class="fm_list_item">
+							Add Portfolio register
+						</div>
+						<div class="fm_list_item" @click="isOpenAddBundle = true">
+							Add bundle
+						</div>
+					</div>
+				</FmMenu>
+				<BaseModal
+					title="Add Bundle"
+					v-model="isOpenAddBundle"
+					@cancel="isOpenAddBundle = false">
+
+					<FmInputEntityNames
+						label="Bundle name"
+						v-model:name="newBundle.name"
+						v-model:short_name="newBundle.short_name"
+						v-model:user_code="newBundle.user_code"
+						v-model:public_name="newBundle.public_name"
 					/>
-				</div>
-				<div class="coll_total">
-					<div class="coll_item t_header">TOTAL</div>
-					<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">0.1</div>
-				</div>
-			</div>
-		</FmExpansionPanel>
 
-		<FmExpansionPanel :title="detailPortfolio + ' - ' + detailYear">
-			<canvas id="myChart"><p>Chart</p></canvas>
-		</FmExpansionPanel>
+					<FmSelectWindow class="p-b-16" v-model="newBundle.registers" :items="registersItems" />
+					<template #controls>
+						<div class="flex sb">
+							<FmBtn type="text" @click="isOpenAddBundle = false">cancel</FmBtn>
+							<FmBtn @click="createBundle(), isOpenAddBundle = false">create</FmBtn>
+						</div>
+					</template>
+				</BaseModal>
+			</template>
+
+			<template #rightActions>
+				<FmIcon icon="refresh" @click="init()" btn />
+			</template>
+		</FmHorizontalPanel>
+
+		<div class="fm_container">
+			<FmExpansionPanel title="Period Returns">
+				<BaseTable
+					:headers="preriodHeaders"
+					:items="preriodItems"
+					:active="activePeriod"
+					colls="repeat(8, 1fr)"
+					:cb="choosePortfolio"
+				/>
+			</FmExpansionPanel>
+
+			<FmExpansionPanel :title="detailPortfolio">
+				<div class="table_wrap flex">
+					<div class="coll_years">
+						<div class="coll_item t_header">Years</div>
+						<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">{{item}}</div>
+					</div>
+					<div class="coll_months">
+						<BaseTable
+							:headers="portfolioHeaders"
+							:items="portfolioItems"
+							colls="repeat(12, 1fr)"
+							:cb="chooseMonth"
+							:active="activeYear"
+						/>
+					</div>
+					<div class="coll_total">
+						<div class="coll_item t_header">TOTAL</div>
+						<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">0.1</div>
+					</div>
+				</div>
+			</FmExpansionPanel>
+
+			<FmExpansionPanel :title="detailPortfolio + ' - ' + detailYear">
+				<canvas id="myChart"><p>Chart</p></canvas>
+			</FmExpansionPanel>
+		</div>
 	</div>
 </template>
 
@@ -51,10 +107,49 @@
 			}
 		],
 	});
-	const store = useStore()
 
+	const store = useStore();
+	const viewerData = usePerformanceViewerData();
+
+	let showSettingsDialog = ref(false);
+
+	let isOpenAddBundle = ref(false)
+	let newBundle = ref({
+		registers: []
+	})
+	let registersItems = ref([])
+
+	useApi('portfolioRegister.post', {
+		body: '{"groups_types":[],"page":1,"groups_values":[],"groups_order":"asc","page_size":60,"ev_options":{"entity_filters":["enabled","disabled","active","inactive"]},"filter_settings":[],"global_table_search":"","is_enabled":"any"}'
+	}).then((res) => {
+		res.results.forEach((item) => {
+			registersItems.value.push({
+				user_code: item.user_code,
+				id: item.id,
+			})
+		})
+	})
+
+	async function createBundle() {
+		let res = await useApi('portfolioBundles.post', {body: newBundle.value})
+
+		if ( res ) {
+			newBundle.value = {
+				registers: []
+			}
+
+			init()
+
+			useNotify({
+				type: 'success',
+				title: 'Bundle created successfully'
+			})
+		}
+	}
+
+	// #region Main
 	let panels = ref(['period', 'detail', 'diagram'])
-	let porfolios = []
+	let bundles = []
 	let preriodHeaders = ref(
 		['', 'Daily', 'MTD', 'QTD', 'YTD', +moment().year() - 1, +moment().year() - 2, 'Incept']
 	)
@@ -74,6 +169,10 @@
 	let activePeriod = ref(0)
 	let activeYear = ref(0)
 
+	let layoutSet = ref(false);
+
+	/* #endregion */
+
 	async function choosePortfolio(id) {
 		activePeriod.value = id
 		detailPortfolio.value = preriodItems.value[id].name
@@ -90,13 +189,35 @@
 		updateChart( portfolioItems.value[id], portfolioItemsCumm.value[id] )
 	}
 
+	async function fetchDefaultListLayout () {
+		const resData = await useApi('defaultListLayout.get', {params: {contentType: 'performance.report'}});
+
+		if (resData.error) {
+			throw new Error('Failed to fetch default performance layout');
+
+		} else {
+
+			const defaultListLayout = resData.results.length ? resData.results[0] : null;
+			viewerData.setLayoutCurrentConfig(defaultListLayout).then(() => {
+				layoutSet.value = true;
+			});
+
+		}
+
+	}
+
+
+
 	async function init() {
+
+		await fetchDefaultListLayout();
+
 		await fetchPortolios()
 
-		if ( !porfolios.length ) {
+		if ( !bundles.length ) {
 			return false
 		}
-		detailPortfolio.value = porfolios[0].user_code
+		detailPortfolio.value = bundles[0].user_code
 
 		await getMonthDetails()
 
@@ -142,45 +263,44 @@
 	}
 
 	async function fetchPortolios() {
-		let res = await useApi('portfolioRegister.post', {
-			body: '{"groups_types":[],"page":1,"groups_values":[],"groups_order":"asc","page_size":60,"ev_options":{"entity_filters":["enabled","disabled","active","inactive"]},"filter_settings":[],"global_table_search":"","is_enabled":"any"}'
-		})
-		porfolios = res.results
+		let res = await useApi('portfolioBundles.get')
+		bundles = res.results
+		preriodItems.value = []
 
-		porfolios.forEach( portfolio => {
+		bundles.forEach( bundle => {
 			preriodItems.value.push({
-				name: portfolio.user_code,
+				name: bundle.user_code,
 			})
 
 			let row = preriodItems.value[ preriodItems.value.length - 1 ]
 
 			row.daily = null
-			getDay( [portfolio.linked_instrument] ).then(day => {
+			getDay( bundle.id ).then(day => {
 				row.daily = Math.round(day * 100 * 100) / 100 + '%'
 			})
 
 			row.month = null
-			getMonth( [portfolio.linked_instrument] ).then(month => {
+			getMonth( bundle.id ).then(month => {
 				row.month = Math.round(month * 100 * 100) / 100 + '%'
 			})
 
 			row.q = null
-			getQ( [portfolio.linked_instrument] ).then(q => {
+			getQ( bundle.id ).then(q => {
 				row.q = Math.round(q * 100 * 100) / 100 + '%'
 			})
 
 			row.year = null
-			getYear( [portfolio.linked_instrument] ).then(year => {
+			getYear( bundle.id ).then(year => {
 				row.year = Math.round(year * 100 * 100) / 100 + '%'
 			})
 
 			row.last = null
-			getLastYear( [portfolio.linked_instrument] ).then(last => {
+			getLastYear( bundle.id ).then(last => {
 				row.last = Math.round(last * 100 * 100) / 100 + '%'
 			})
 
 			row.beforeLast = null
-			getYearBeforeLast( [portfolio.linked_instrument] ).then(beforeLast => {
+			getYearBeforeLast( bundle.id ).then(beforeLast => {
 				row.beforeLast = Math.round(beforeLast * 100 * 100) / 100 + '%'
 			})
 
@@ -193,9 +313,9 @@
 		portfolioItems.value = []
 		portfolioItemsCumm.value = []
 
-		let instr_id = name
-			? porfolios.find(item => item.name == name).linked_instrument
-			: porfolios[0].linked_instrument
+		let bundleId = name
+			? bundles.find(item => item.name == name).id
+			: bundles[0].id
 
 		let allMonths = await useApi('performanceReport.post', {
 			body: {
@@ -204,7 +324,7 @@
 				"end_date": null,
 				"calculation_type": "time_weighted",
 				"segmentation_type": 'months',
-				"registers": [ instr_id ]
+				"bundle": bundleId
 			}
 		})
 
@@ -322,7 +442,7 @@
 				"end_date": end,
 				"calculation_type": "time_weighted",
 				"segmentation_type": type,
-				"registers": ids
+				"bundle": ids
 			}
 		})
 

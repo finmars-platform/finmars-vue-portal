@@ -27,6 +27,9 @@ export default {
 	masterLeave: {
 		get: '/authorizer/master-user-leave/{id}/'
 	},
+	masterDelete: {
+		delete: '/authorizer/master-user-delete/{id}/'
+	},
 	masterSet: {
 		patch: '/authorizer/master-user/{id}/set-current/'
 	},

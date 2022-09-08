@@ -1,7 +1,7 @@
 <template>
 	<BaseModal
 		:modelValue="modelValue"
-		@update:modelValue="$emit('update:modelValue')"
+		@cancel="cancel()"
 		title="Expression editor"
 	>
 		<div class="wrap pb-14 pt-5">
@@ -109,7 +109,7 @@
 
 		<template #controls>
 			<div class="flex sb">
-				<FmBtn type="text" @click="close()">cancel</FmBtn>
+				<FmBtn type="text" @click="cancel()">cancel</FmBtn>
 				<FmBtn @click="save()">save</FmBtn>
 			</div>
 		</template>
@@ -124,7 +124,7 @@
 		'modelValue', 'expressions'
 	])
 	const emit = defineEmits([
-		'update:modelValue', 'save'
+		'cancel', 'save'
 	])
 
 	let open = ref(['All'])
@@ -174,7 +174,6 @@
 	}
 	function save( ) {
 		emit('save', code_elem.value.innerText)
-		close()
 	}
 	function getCursorPosition(parent) {
 		let selection = document.getSelection()
@@ -199,8 +198,8 @@
 			}
 		}
 	}
-	function close(params) {
-		emit('update:modelValue')
+	function cancel(params) {
+		emit('cancel')
 	}
 </script>
 <style lang="scss" scoped>

@@ -1,28 +1,38 @@
 <template>
-		<div class="fm_menu" v-click-outside="() => isOpen = false">
-			<div @click="toggle()" ref="activator">
-				<slot name="btn" :isOpen="isOpen"></slot>
-			</div>
 
-			<transition>
-				<div
-					v-if="isOpen"
-					class="fm_drop"
-					ref="popup"
-				>
-					<slot :close="() => isOpen = false"></slot>
-				</div>
-			</transition>
+	<div class="fm_menu" v-click-outside="() => isOpen = false">
+		<div @click="toggle()" ref="activator">
+			<slot name="btn" :isOpen="isOpen"></slot>
 		</div>
+
+		<transition>
+			<div
+				v-if="isOpen"
+				class="fm_drop"
+				ref="popup"
+				:style="{'min-height': menuMinHeight}"
+			>
+				<slot :close="() => isOpen = false"></slot>
+			</div>
+		</transition>
+
+	</div>
+
 </template>
 
 <script setup>
 
 	let props = defineProps({
+		/** @values bottom, top, top-start */
 		anchor: {
 			type: String,
-			default: 'bottom', // bottom, top, top-start
-		}
+			default: 'bottom',
+		},
+		menuMinHeight: String,
+		offsetY: {
+			type: Number,
+			default: 0
+		},
 	})
 
 	let isOpen = ref(false)
@@ -46,11 +56,15 @@
 
 		// Y axios
 		if ( props.anchor == 'bottom' ) {
-			popup.value.style.top = `${activatorRect.height}px`
+			popup.value.style.top = `${activatorRect.height + props.offsetY}px`
 		}
-		if ( clientHeight - activatorRect.bottom < popupRect.height ) {
-			popup.value.style.bottom = `${activatorRect.height}px`
+		else if (props.anchor === 'top') {
+			popup.value.style.top = `${0 + props.offsetY}px`;
 		}
+		else if ( clientHeight - activatorRect.bottom < popupRect.height ) {
+			popup.value.style.bottom = `${activatorRect.height}px`;
+		}
+
 
 		// X axios
 

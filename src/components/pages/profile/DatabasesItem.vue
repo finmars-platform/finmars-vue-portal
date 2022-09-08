@@ -19,7 +19,7 @@
 		</div>
 
 		<div class="fm_card_subtitle">
-			{{ db.is_initialized ? `Expire (${ db.license_expiry_date })` : 'Database is initializing'}}
+			{{ db.is_initialized ? `Expire (${ db.license_expiry_date })` : 'Workspace is initializing'}}
 		</div>
 
 		<div class="fm_card_content fm_card_text mb-x edit_hover">
@@ -33,7 +33,7 @@
 				/>
 				<FmBtn
 					v-else
-					class="text-capitalize"
+					class="plain text-capitalize"
 					type="action"
 					@click="edit()"
 				>
@@ -51,12 +51,13 @@
 					<FmIcon primary
 						v-show="!showActions"
 						icon="lock"
+						tooltip="Show more"
 						@click="showActions = true"
 					/>
 
 					<div class="flex" v-if="showActions">
-						<FmIcon class="mr-10" icon="cloud_upload" primary @click="exportDb()" />
-						<FmIcon v-if="db.is_owner" icon="delete" primary @click="emit('delete', db.id)" />
+						<FmIcon class="mr-10" icon="cloud_upload" tooltip="Export backup" primary @click="exportDb()" />
+						<FmIcon v-if="db.is_owner" icon="delete" tooltip="Delete workspace" primary @click="deleteDB()" />
 					</div>
 
 					<FmBtn v-if="!isEdit" @click="open()">open</FmBtn>
@@ -79,6 +80,7 @@
 	});
 	const emit = defineEmits(["refresh", 'delete']);
 	const config = useRuntimeConfig();
+	let store = useStore()
 
 	let isEditDesc = ref(false);
 	let isEditTitle = ref(false);
@@ -128,13 +130,27 @@
 			})
 		}
 	}
+	async function deleteDB() {
+		let res = props.db.is_owner
+			? await useApi( 'masterDelete.delete', { params: {id: props.db.id} } )
+			: await useApi( 'masterLeave.get', { params: {id: props.db.id} } )
+
+		if ( res ) {
+			store.getDatabases()
+
+			useNotify({
+				type: 'success',
+				title: res.message,
+			})
+		}
+	}
 	async function open() {
 		let res = await useApi("masterSet.patch", {
 			body: {},
 			params: { id: props.db.id },
 		});
 		if ( res.success ) {
-			window.location.href = config.public.oldAppURL
+			navigateTo('/')
 		}
 	}
 	async function save() {

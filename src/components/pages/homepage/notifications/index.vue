@@ -302,6 +302,7 @@
 	}
 
 	// ==== Stats =====
+	//<editor-fold desc=Stats>
 
 	let streams = ref([])
 
@@ -357,6 +358,7 @@
 			})
 		}
 	}
+	//</editor-fold>
 
 	// === Messages =====
 

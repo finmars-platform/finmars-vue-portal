@@ -30,9 +30,9 @@
 					v-for="(item, index) in items"
 					:key="index"
 					:class="{active: item[props.prop_id] == modelValue}"
-					@click="$emit('update:modelValue', item[props.prop_id]), selected = item.name, close()"
+					@click="$emit('update:modelValue', item[props.prop_id]), selected = item[props.prop_name], close()"
 				>
-					<div>{{ item.name }}</div>
+					<div>{{ item[props.prop_name] }}</div>
 				</div>
 			</div>
 		</template>
@@ -48,7 +48,10 @@
 			type: String,
 			default: 'id',
 		},
-		prop_name: String,
+		prop_name: {
+			type: String,
+			default: 'name',
+		},
 		size: String,
 		no_borders: Boolean,
 	})
@@ -56,11 +59,16 @@
 
 	let selected = ref(props.modelValue)
 
-	if ( props.items ) selected.value = props.items.find(item => item[props.prop_id] == props.modelValue).name
+	if ( props.items ) {
+		const selItem = props.items.find(item => item[props.prop_id] == props.modelValue)
+		if (selItem) {
+			selected.value = selItem[props.prop_name]
+		}
+	}
 
 	watch( () => props.items, () => {
 		let elem = props.items.find(item => item[props.prop_id] == props.modelValue)
-		if ( elem ) selected.value = elem.name
+		if ( elem ) selected.value = elem[props.prop_name]
 	})
 </script>
 
