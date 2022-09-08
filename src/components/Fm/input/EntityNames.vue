@@ -1,67 +1,77 @@
 <template>
-	<FmMenu anchor="top" :offset-y="-17">
-		<template #btn>
-			<div class="base_input_holder">
-				<BaseInput :label="label"
-									 :modelValue="fullName"
-									 :readonly="true"
-									 type="text">
-					<template #button>
-						<FmIcon icon="new_label" />
-					</template>
-				</BaseInput>
-			</div>
+	<BaseInput
+		type="text"
+		:label="label"
+		:modelValue="name"
+		@update:modelValue="$emit('update:name', $event)"
+	>
+		<template #button>
+			<FmMenu>
+				<template #btn>
+					<FmIcon icon="new_label" />
+				</template>
+
+				<div class="e_names_popup">
+					<div>
+						<FmInputText
+							label="Full name"
+							:modelValue="name"
+							@update:modelValue="$emit('update:name', $event)"
+						/>
+					</div>
+					<div>
+						<FmInputText
+							label="Short name"
+							:modelValue="short_name"
+							@update:modelValue="$emit('update:short_name', $event)"
+						/>
+					</div>
+					<div>
+						<FmInputText
+							label="User code"
+							:modelValue="user_code"
+							@update:modelValue="$emit('update:user_code', $event)"
+						/>
+					</div>
+					<div>
+						<FmInputText
+							class="m-b-0"
+							label="Public name"
+							:modelValue="public_name"
+							@update:modelValue="$emit('update:public_name', $event)"
+						/>
+					</div>
+				</div>
+			</FmMenu>
 		</template>
-
-		<div class="e_names_popup">
-			<div>
-				<FmInputText label="Full name"
-										 :modelValue="fullName"
-										 @update:modelValue="emit('update:fullName')" />
-			</div>
-			<div>
-				<FmInputText label="Short name"
-										 v-model="shortName"
-										 @update:modelValue="emit('update:shortName')" />
-			</div>
-			<div>
-				<FmInputText label="User code"
-										 v-model="userCode"
-										 @update:modelValue="emit('update:userCode')" />
-			</div>
-			<div>
-				<FmInputText label="Public name"
-										 v-model="publicName"
-										 @update:modelValue="emit('update:publicName')" />
-			</div>
-		</div>
-	</FmMenu>
-
+	</BaseInput>
 </template>
 
 <script setup>
 
-let props = defineProps({
-	label: ref,
-	fullName: ref,
-	shortName: ref,
-	publicName: ref,
-	userCode: ref,
-})
+	let props = defineProps({
+		label: String,
+		name: String,
+		short_name: String,
+		user_code: String,
+		public_name: String,
+	});
 
-let emit = defineEmits(['update:fullName', 'update:shortName', 'update:publicName', 'update:userCode']);
-
+	let emit = defineEmits([
+		"update:name",
+		"update:short_name",
+		"update:user_code",
+		"update:public_name",
+	]);
 </script>
 
 <style lang="scss" scoped>
-
 .e_names_popup {
 	min-width: 340px;
 	padding: 24px 16px;
 }
 
 .base_input_holder {
-
 	:deep(.base-input) {
 		cursor: pointer;
 	}
@@ -70,5 +80,4 @@ let emit = defineEmits(['update:fullName', 'update:shortName', 'update:publicNam
 		cursor: pointer;
 	}
 }
-
 </style>
