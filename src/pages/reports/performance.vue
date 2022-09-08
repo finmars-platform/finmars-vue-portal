@@ -92,7 +92,7 @@
 
 	let showSettingsDialog = ref(false);
 
-	// <editor-fold desc="Variables">
+	//#region Variables
 	let panels = ref(['period', 'detail', 'diagram'])
 	let porfolios = []
 	let preriodHeaders = ref(
@@ -116,7 +116,7 @@
 
 	let layoutSet = ref(false);
 
-	// </editor-fold>
+	//#endregion
 
 	async function choosePortfolio(id) {
 		activePeriod.value = id

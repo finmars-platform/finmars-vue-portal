@@ -23,11 +23,16 @@
 <script setup>
 
 	let props = defineProps({
+		/** @values bottom, top, top-start */
 		anchor: {
 			type: String,
-			default: 'bottom', // bottom, top, top-start
+			default: 'bottom',
 		},
-		menuMinHeight: String
+		menuMinHeight: String,
+		offsetY: {
+			type: Number,
+			default: 0
+		},
 	})
 
 	let isOpen = ref(false)
@@ -51,11 +56,15 @@
 
 		// Y axios
 		if ( props.anchor == 'bottom' ) {
-			popup.value.style.top = `${activatorRect.height}px`
+			popup.value.style.top = `${activatorRect.height + props.offsetY}px`
+		}
+		else if (props.anchor === 'top') {
+			popup.value.style.top = `${0 + props.offsetY}px`;
 		}
 		else if ( clientHeight - activatorRect.bottom < popupRect.height ) {
 			popup.value.style.bottom = `${activatorRect.height}px`;
 		}
+
 
 		// X axios
 
