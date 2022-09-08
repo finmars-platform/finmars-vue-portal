@@ -26,15 +26,24 @@
 						</div>
 					</div>
 				</FmMenu>
-				<BaseModal v-model="isOpenAddBundle"
+				<BaseModal
+					title="Add Bundle"
+					v-model="isOpenAddBundle"
 					@cancel="isOpenAddBundle = false">
 
-					<BaseInput v-model="newBundle.name" />
-					<FmSelectWindow v-model="newBundle.registers" :items="registersItems"></FmSelectWindow>
+					<FmInputEntityNames
+						label="Bundle name"
+						v-model:name="newBundle.name"
+						v-model:short_name="newBundle.short_name"
+						v-model:user_code="newBundle.user_code"
+						v-model:public_name="newBundle.public_name"
+					/>
+
+					<FmSelectWindow class="p-b-16" v-model="newBundle.registers" :items="registersItems" />
 					<template #controls>
 						<div class="flex sb">
 							<FmBtn type="text" @click="isOpenAddBundle = false">cancel</FmBtn>
-							<FmBtn @click="createBundle()">create</FmBtn>
+							<FmBtn @click="createBundle(), isOpenAddBundle = false">create</FmBtn>
 						</div>
 					</template>
 				</BaseModal>
@@ -130,6 +139,11 @@
 			}
 
 			init()
+
+			useNotify({
+				type: 'success',
+				title: 'Bundle created successfully'
+			})
 		}
 	}
 

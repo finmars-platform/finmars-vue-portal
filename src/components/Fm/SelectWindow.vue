@@ -103,14 +103,6 @@
 		)
 	})
 
-	function save() {
-		let result = [...selectedFilter]
-		if ( typeof props.modelValue == 'String' ) result = result.join(',')
-
-		emit('update:modelValue', result )
-
-		isOpen.value = false
-	}
 	function addItem( all ) {
 		let items = availableList.value
 			.filter(item => item.selected || !!all)
@@ -119,6 +111,9 @@
 				return item[props.item_title]
 			})
 		items.forEach( item => selectedFilter.add(item) )
+		console.log('selectedFilter:', selectedList)
+
+		emit('update:modelValue', [...selectedList.value].map((item) => item.id ) )
 	}
 	function removeItem( all ) {
 		let items = selectedList.value
@@ -129,6 +124,7 @@
 			})
 
 		items.forEach( item => selectedFilter.delete(item) )
+		emit('update:modelValue', [...selectedList.value].map((item) => item.id ) )
 	}
 
 </script>
