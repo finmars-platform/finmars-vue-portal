@@ -49,13 +49,13 @@
 
 							</RvSettingsBlock>-->
 
-					<RvSettingsBlock title="Sections">
+<!--					<RvSettingsBlock title="Sections">
 						<FmCheckbox v-model="showPeriod" label="Period returns" class="m-b-20" />
 
-						<FmCheckbox v-model="showMonthly" label="Monthly returns" class="m-b-20"  />
+						<FmCheckbox v-model="showDetail" label="Monthly returns" class="m-b-20"  />
 
-						<FmCheckbox v-model="showGraphs" label="Graphs" class="m-b-20" />
-					</RvSettingsBlock>
+						<FmCheckbox v-model="showDiagram" label="Graphs" class="m-b-20" />
+					</RvSettingsBlock>-->
 
 				</div>
 
@@ -144,8 +144,8 @@
 	}]
 
 	let showPeriod = ref(true);
-	let showMonthly = ref(true);
-	let showGraphs = ref(true);
+	let showDetail = ref(true);
+	let showDiagram = ref(true);
 
 	let readyStatus = ref(false);
 	//</editor-fold>
@@ -208,17 +208,29 @@
 		props.viewerData.reportOptions.calculation_type = calculationType.value;
 		props.viewerData.reportOptions.segmentation_type = segmentationType.value;
 
+		/* props.viewerData.components.period = showPeriod.value;
+		props.viewerData.components.detail = showDetail.value;
+		props.viewerData.components.diagram = showDetail.value; */
+
 		emit('save');
 
 	}
 
 	watch( () => props.viewerData.reportOptions, () => {
+
 		endDate.value = props.viewerData.reportOptions.end_date;
 		currency.value = props.viewerData.reportOptions.report_currency;
 		pricingPolicy.value = props.viewerData.reportOptions.pricing_policy;
 		calculationType.value = props.viewerData.reportOptions.calculation_type;
 		segmentationType.value = props.viewerData.reportOptions.segmentation_type;
-	})
+
+	});
+
+	watch( () => props.viewerData.components, () => {
+		showPeriod.value = props.viewerData.components.period;
+		showDetail.value = props.viewerData.components.detail;
+		showDiagram.value = props.viewerData.components.diagram;
+	});
 
 	function init () {
 
