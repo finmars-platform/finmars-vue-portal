@@ -1,19 +1,23 @@
 <template>
-		<div class="fm_menu" v-click-outside="() => isOpen = false">
-			<div @click="toggle()" ref="activator">
-				<slot name="btn" :isOpen="isOpen"></slot>
-			</div>
 
-			<transition>
-				<div
-					v-if="isOpen"
-					class="fm_drop"
-					ref="popup"
-				>
-					<slot :close="() => isOpen = false"></slot>
-				</div>
-			</transition>
+	<div class="fm_menu" v-click-outside="() => isOpen = false">
+		<div @click="toggle()" ref="activator">
+			<slot name="btn" :isOpen="isOpen"></slot>
 		</div>
+
+		<transition>
+			<div
+				v-if="isOpen"
+				class="fm_drop"
+				ref="popup"
+				:style="{'min-height': menuMinHeight}"
+			>
+				<slot :close="() => isOpen = false"></slot>
+			</div>
+		</transition>
+
+	</div>
+
 </template>
 
 <script setup>
@@ -22,7 +26,8 @@
 		anchor: {
 			type: String,
 			default: 'bottom', // bottom, top, top-start
-		}
+		},
+		menuMinHeight: String
 	})
 
 	let isOpen = ref(false)
@@ -48,8 +53,8 @@
 		if ( props.anchor == 'bottom' ) {
 			popup.value.style.top = `${activatorRect.height}px`
 		}
-		if ( clientHeight - activatorRect.bottom < popupRect.height ) {
-			popup.value.style.bottom = `${activatorRect.height}px`
+		else if ( clientHeight - activatorRect.bottom < popupRect.height ) {
+			popup.value.style.bottom = `${activatorRect.height}px`;
 		}
 
 		// X axios
