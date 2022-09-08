@@ -1,11 +1,11 @@
 <template>
 	<BaseModal title="Settings"
 						 @cancel="cancel()"
-						 v-model="modelValue">
+						 v-model="openDialog">
 
 		<template #default>
 			<div class="rs_mc_wrap">
-				<div v-if="readyStatus">
+				<div v-if="getReadyStatus()">
 
 					<RvSettingsBlock title="General">
 
@@ -59,7 +59,7 @@
 
 				</div>
 
-				<div v-if="!readyStatus" class="flex-row fc-center">
+				<div v-if="!getReadyStatus()" class="flex-row fc-center">
 					<FmLoader />
 				</div>
 			</div>
@@ -81,7 +81,8 @@
 	// import {defineProps} from "vue";
 
 	let props = defineProps({
-		'modelValue': Boolean,
+		'openDialog': Boolean,
+		'layoutReadyStatus': Boolean,
 		'viewerData': Object,
 	});
 	let emit = defineEmits(['cancel', 'save']);
@@ -149,6 +150,10 @@
 	let readyStatus = ref(false);
 	//</editor-fold>
 
+	function getReadyStatus () {
+		return readyStatus.value && props.layoutReadyStatus;
+	}
+
 	function fetchPpOpts () {
 
 		return new Promise(async (resolve, reject) => {
@@ -207,17 +212,12 @@
 
 	}
 
-	watch( () => props.modelValue,  () => {
-
-		if (props.modelValue) {
-
-			endDate.value = props.viewerData.reportOptions.end_date;
-			currency.value = props.viewerData.reportOptions.report_currency;
-			pricingPolicy.value = props.viewerData.reportOptions.pricing_policy;
-			calculationType.value = props.viewerData.reportOptions.calculation_type;
-			segmentationType.value = props.viewerData.reportOptions.segmentation_type;
-
-		}
+	watch( () => props.viewerData.reportOptions, () => {
+		endDate.value = props.viewerData.reportOptions.end_date;
+		currency.value = props.viewerData.reportOptions.report_currency;
+		pricingPolicy.value = props.viewerData.reportOptions.pricing_policy;
+		calculationType.value = props.viewerData.reportOptions.calculation_type;
+		segmentationType.value = props.viewerData.reportOptions.segmentation_type;
 	})
 
 	function init () {
