@@ -47,6 +47,7 @@
 					</FmBtn>
 
 					<BaseModal v-model="subprocedure.dialog"
+										 @cancel="subprocedure.dialog = false"
 						title="Procedure request"
 					>
 						<pre>{{ JSON.stringify( subprocedure.request_data, null, 2 ) }}</pre>

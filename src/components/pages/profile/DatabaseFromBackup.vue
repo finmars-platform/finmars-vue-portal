@@ -1,6 +1,7 @@
 <template>
 	<BaseModal
 		title="Create Database"
+		@cancel="cancel()"
 	>
 		<BaseInput
 			label="Name"
@@ -15,7 +16,7 @@
 
 		<template #controls>
 			<div class="flex sb">
-				<FmBtn type="text" @click="close()">cancel</FmBtn>
+				<FmBtn type="text" @click="cancel()">cancel</FmBtn>
 				<FmBtn :loading="processing" @click="createDB()">create</FmBtn>
 			</div>
 		</template>
@@ -23,12 +24,12 @@
 </template>
 
 <script setup>
-	let emit = defineEmits(['close'])
+	let emit = defineEmits(['cancel'])
 	let form = reactive({})
 	let processing = ref(false)
 
-	async function close() {
-		emit('close')
+	function cancel() {
+		emit('cancel')
 		processing.value = false
 	}
 	async function createDB() {
@@ -48,7 +49,7 @@
 			useNotify({type: 'success', title: 'Ecosystem is proccessing'})
 		}
 
-		close()
+		cancel()
 	}
 	function addFile( event ) {
 		form.file = event.target.files[0]

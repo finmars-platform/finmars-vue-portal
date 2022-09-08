@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<FmTopRefresh
-			@refresh="store.getDatabases(), refreshInvites()"
+			@refresh="store.getMasterUsers(), refreshInvites()"
 		>
 			<template #action>
 				<FmMenu>
@@ -20,7 +20,7 @@
 
 							<PagesProfileDatabaseFromBackup
 								v-model="isShowNewBackup"
-								@close="isShowNewBackup = false, store.getDatabases()"
+								@cancel="isShowNewBackup = false, store.getMasterUsers()"
 							/>
 						</div>
 					</div>
@@ -29,22 +29,22 @@
 		</FmTopRefresh>
 
 		<div class="fm_container databases"
-			v-if="invites || store.databases.length"
+			v-if="invites || store.masterUsers.length"
 		>
 			<template v-if="invites">
 				<PagesProfileInviteItem
 					v-for="invite in invites.results"
 					:invite="invite"
 					:key="invite.id"
-					@refresh="store.getDatabases(), refreshInvites()"
+					@refresh="store.getMasterUsers(), refreshInvites()"
 				/>
 			</template>
 
 			<PagesProfileDatabasesItem
-				v-for="db in store.databases"
+				v-for="db in store.masterUsers"
 				:db="db"
 				:key="db.id"
-				@refresh="store.getDatabases()"
+				@refresh="store.getMasterUsers()"
 				@delete="deleteDB($event)"
 			/>
 		</div>
@@ -65,7 +65,7 @@
 	async function deleteDB(id) {
 		let res = await useApi('masterLeave.get', {params: {id}})
 
-		if ( res ) store.getDatabases()
+		if ( res ) store.getMasterUsers()
 	}
 
 </script>

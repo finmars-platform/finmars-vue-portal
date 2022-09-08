@@ -11,11 +11,15 @@
 
 <script setup>
 
-	let props = defineProps({
+let props = defineProps({
 		label: String,
 		icon: String,
 		to: String,
 		loading: Boolean,
+		/**
+		 * Type of button
+		 * @values primary, basic, text, action
+		 */
 		type: {
 			type: String,
 			default: 'primary'
@@ -36,7 +40,7 @@
 		font-weight: 500;
 		font-size: 14px;
 		letter-spacing: 0.4px;
-		transition: background 0.3s;
+		transition: background, color 0.3s;
 
 		&.basic {
 			color: $primary;
@@ -51,6 +55,15 @@
 
 			&:hover {
 				background: $primary-darken;
+			}
+		}
+		&.plain {
+			padding: 0;
+			background: transparent !important;
+			height: auto;
+			line-height: 1.5;
+			&:hover {
+				color: $text;
 			}
 		}
 		&.text {

@@ -94,7 +94,13 @@
 
 		let res = await useApi('masterCreate.post', { body: form })
 
-		if ( res.id ) router.push('/profile')
+		if ( res.id ) {
+			router.push('/profile')
+			useNotify({
+				type: 'success',
+				title: 'Workspace is initializing.'
+			})
+		}
 
 		processing.value = false
 	}
