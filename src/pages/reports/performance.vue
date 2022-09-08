@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<PagesReportsPerformanceDialogSettings v-model="showSettingsDialog"
+		<PagesReportsPerformanceDialogSettings v-model:open-dialog="showSettingsDialog"
+																					 v-model:layout-ready-status="layoutSet"
 																					 :viewer-data="viewerData"
 																					 @save="showSettingsDialog = false;"
 																					 @cancel="showSettingsDialog = false;" />
@@ -113,6 +114,8 @@
 	let activePeriod = ref(0)
 	let activeYear = ref(0)
 
+	let layoutSet = ref(false);
+
 	// </editor-fold>
 
 	async function choosePortfolio(id) {
@@ -140,7 +143,9 @@
 		} else {
 
 			const defaultListLayout = resData.results.length ? resData.results[0] : null;
-			viewerData.setLayoutCurrentConfig(defaultListLayout);
+			viewerData.setLayoutCurrentConfig(defaultListLayout).then(() => {
+				layoutSet.value = true;
+			});
 
 		}
 
