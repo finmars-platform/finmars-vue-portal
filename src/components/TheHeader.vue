@@ -40,7 +40,7 @@
 				btn
 				tooltip="Homepage"
 				icon="home"
-				:href="config.public.oldAppURL"
+				@click="$router.push('/')"
 			/>
 
 			<template v-if="store.current.name">
@@ -117,6 +117,7 @@
 	async function loadNoti( id ) {
 		let res = await useApi('systemMessages.get', {filters: {only_new: true}})
 
+		if ( res.error ) return false
 		noti.value = res.results.filter( item => !item.is_pinned ).slice(0, 3)
 	}
 

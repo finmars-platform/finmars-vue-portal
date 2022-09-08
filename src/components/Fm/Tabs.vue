@@ -32,7 +32,6 @@
 			line-height: inherit;
 			padding: 0 $content-padding-x;
 			text-transform: uppercase;
-			font-weight: 500;
 			font-size: 14px;
 			letter-spacing: 0.4px;
 			transition: background 0.3s;

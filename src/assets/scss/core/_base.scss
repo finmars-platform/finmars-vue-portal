@@ -18,6 +18,10 @@ a {
 input[type=file] {
 	display: none;
 }
+input, textarea {
+	font: 400 16px/1.2 $font-family, sans-serif;
+	color: $text;
+}
 
 .ev_top_panel {
 	height: 50px;
