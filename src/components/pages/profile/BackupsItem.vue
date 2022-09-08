@@ -4,16 +4,17 @@
 
 		<template #controls>
 			<div class="flex sb aic">
-				<FmIcon v-if="!showActions" icon="lock" primary @click="showActions = true"></FmIcon>
+
+				<FmIcon v-if="!showActions" icon="lock" tooltip="Show more" primary @click="showActions = true"></FmIcon>
 
 				<div v-if="showActions" class="flex-row">
 					<a target="download" class="mr-10"
 						:href="`${config.public.apiURL}/authorizer/master-user-backups/${backup.id}/view/`"
 					>
-						<FmIcon icon="cloud_download" primary class="" />
+						<FmIcon icon="cloud_download" tooltip="Export backup" primary class="" />
 					</a>
 
-					<FmIcon icon="delete" primary @click="deleteBackup()" />
+					<FmIcon icon="delete" primary tooltip="Delete backup" @click="deleteBackup()" />
 				</div>
 
 				<FmBtn type="basic" @click="isShowRestore = true">

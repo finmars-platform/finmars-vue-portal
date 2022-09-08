@@ -62,6 +62,7 @@
 		border-radius: 4px;
 		margin-bottom: 25px;
 		transition: border 0.3s;
+		background: $separ;
 
 		&.small {
 			height: 24px;
