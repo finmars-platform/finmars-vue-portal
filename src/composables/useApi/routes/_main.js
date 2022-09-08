@@ -103,12 +103,14 @@ export default {
 		get: prefix + '/instruments/generated-event/{id}/book/',
 		put: prefix + '/instruments/generated-event/{id}/book/',
 	},
-
 	defaultListLayout: {
 		get: prefix + '/ui/list-layout/?is_default=2&content_type={contentType}/',
 	},
-
 	ecosystemDefaults: {
 		get: prefix + '/users/ecosystem-default/'
+	},
+	portfolioBundles: {
+		get: prefix + '/portfolios/portfolio-bundle/',
+		post: prefix + '/portfolios/portfolio-bundle/',
 	}
 }
