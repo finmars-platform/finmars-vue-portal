@@ -1,4 +1,4 @@
-export const recursiveDeepCopy = (o, saveFunctions) => {
+export const useRecursiveDeepCopy = (o, saveFunctions) => {
 	let newO,i;
 
 	if (typeof o !== 'object') {
@@ -11,7 +11,7 @@ export const recursiveDeepCopy = (o, saveFunctions) => {
 	if ('[object Array]' === Object.prototype.toString.apply(o)) {
 		newO = [];
 		for (i = 0; i < o.length; i += 1) {
-			newO[i] = recursiveDeepCopy(o[i]);
+			newO[i] = useRecursiveDeepCopy(o[i]);
 		}
 		return newO;
 
@@ -22,13 +22,13 @@ export const recursiveDeepCopy = (o, saveFunctions) => {
 	newO = {};
 	for (i in o) {
 		if (o.hasOwnProperty(i)) {
-			newO[i] = recursiveDeepCopy(o[i]);
+			newO[i] = useRecursiveDeepCopy(o[i]);
 		}
 	}
 	return newO;
 };
 
-export const generateUniqueId = function (key) {
+export const useGenerateUniqueId = function (key) {
 	const currentDate = Date.now().toString();
-	return md5(currentDate, key);
+	return useMd5(currentDate, key);
 }
