@@ -81,16 +81,14 @@ export default defineStore({
 		},
 
 		async getMe() {
-
 			const res = await useApi('member.get', {params: {id: 0}});
 
 			if (res.error) {
-				throw res.error;
+				console.log('res.error:', res.error)
 
 			} else {
 				this.member = res;
 			}
-
 		},
 		async ping() {
 			let res = await useApi("ping.get")

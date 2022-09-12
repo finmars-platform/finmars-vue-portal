@@ -80,6 +80,7 @@
 	});
 	const emit = defineEmits(["refresh", 'delete']);
 	const config = useRuntimeConfig();
+
 	let store = useStore()
 
 	let isEditDesc = ref(false);
@@ -154,6 +155,7 @@
 			params: { id: props.db.id },
 		});
 		if ( res.success ) {
+			await store.ping()
 			navigateTo('/')
 		}
 	}

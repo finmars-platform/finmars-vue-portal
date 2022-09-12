@@ -73,11 +73,11 @@ export default async function (
 			401: 'Not authorized',
 		}
 
-		useNotify({
-			type: 'error',
-			title: 'Error',
-			text: errors[code] ? errors[code] : 'Unknown server error'
-		})
+		// useNotify({
+		// 	type: 'error',
+		// 	title: 'Error',
+		// 	text: errors[code] ? errors[code] : 'Unknown server error'
+		// })
 
 		return {error: e.data || true, code }
 	}
