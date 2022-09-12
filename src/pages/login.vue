@@ -2,7 +2,7 @@
 	<div class="wrap flex sb aic">
 		<div class="left">
 			<NuxtLink to="/">
-				<img width="200" src="/v/img/logo.png" class="sidenav-logo" alt="" />
+				<img width="200" src="/img/logo.png" class="sidenav-logo" alt="" />
 			</NuxtLink>
 
 			<h2>Welcome back</h2>
