@@ -14,8 +14,14 @@
 				title: 'Workspace is not selected',
 				type: 'warn'
 			})
-			console.log('store:', store.current.base_api_url)
+
 			useRouter().push('/profile')
+		} else {
+
+			store.getMe().then(res => {
+				store.ws.send( {action: "update_user_state", data: {member: store.member}} )
+				store.ws.send( {action: "update_user_state", data: {master_user: {id: store.current.current_master_user_id}}} )
+			})
 		}
 	})
 

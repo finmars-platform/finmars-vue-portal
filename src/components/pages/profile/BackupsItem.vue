@@ -1,6 +1,6 @@
 <template>
 	<FmCard :title="backup.name" controls>
-		<div class="fm_card_subtitle">File size: {{ backup.file_size }} MB</div>
+		<div class="fm_card_subtitle">File size: {{ Math.round(backup.file_size / 1024 * 100) / 100 }} MB</div>
 
 		<template #controls>
 			<div class="flex sb aic">
@@ -18,7 +18,7 @@
 				</div>
 
 				<FmBtn type="basic" @click="isShowReuseStore = true">
-					REuseStore
+					REStore
 				</FmBtn>
 			</div>
 		</template>

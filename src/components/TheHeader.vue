@@ -107,12 +107,15 @@
 		{name: 'Logout', cb: () => {
 			useCookie('access_token').value = null
 			useCookie('refresh_token').value = null
-			window.location.href = '/'
+			window.location.href = '/logout'
 		}},
 	])
 	let noti = ref(null)
 
-	loadNoti()
+	watch(
+		() => store.current,
+		() => loadNoti()
+	)
 
 	async function loadNoti( id ) {
 		let res = await useApi('systemMessages.get', {filters: {only_new: true}})
