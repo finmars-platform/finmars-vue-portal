@@ -28,22 +28,22 @@
 				<ul>
 					<li class="flex sb aic auth_app_item">
 						<div>
-							<img width="33" src="img/g-auth-app.svg" alt="">
+							<img width="33" src="/img/g-auth-app.svg" alt="">
 							Google authenticator
 						</div>
 						<div class="flex center">
-							<a href="https://apps.apple.com/us/app/google-authenticator/id388497605" target="_blank"><img width="112" src="img/app-store.png" alt=""></a>
-							<a href="https://play.google.com/useStore/apps/details?id=com.google.android.apps.authenticator2" target="_blank"><img width="112" src="img/google-play.png" alt=""></a>
+							<a href="https://apps.apple.com/us/app/google-authenticator/id388497605" target="_blank"><img width="112" src="/img/app-store.png" alt=""></a>
+							<a href="https://play.google.com/useStore/apps/details?id=com.google.android.apps.authenticator2" target="_blank"><img width="112" src="/img/google-play.png" alt=""></a>
 						</div>
 					</li>
 					<li class="flex sb aic auth_app_item">
 						<div>
-							<img width="33" src="img/microsoft-authenticator.svg" alt="">
+							<img width="33" src="/img/microsoft-authenticator.svg" alt="">
 							Microsoft authenticator
 						</div>
 						<div class="d-flex align-center">
-							<a href="https://apps.apple.com/us/app/microsoft-authenticator/id983156458" target="_blank"><img width="112" src="img/app-store.png" alt=""></a>
-							<a href="https://play.google.com/useStore/apps/details?id=com.azure.authenticator" target="_blank"><img width="112" src="img/google-play.png" alt=""></a>
+							<a href="https://apps.apple.com/us/app/microsoft-authenticator/id983156458" target="_blank"><img width="112" src="/img/app-store.png" alt=""></a>
+							<a href="https://play.google.com/useStore/apps/details?id=com.azure.authenticator" target="_blank"><img width="112" src="/img/google-play.png" alt=""></a>
 						</div>
 					</li>
 				</ul>
