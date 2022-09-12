@@ -1,4 +1,5 @@
 import moment from "moment/moment";
+import {useRecursiveDeepCopy} from "~/composables/useMeta";
 
 export default () => {
 
@@ -9,6 +10,10 @@ export default () => {
 			additions: {},
 			components: {},
 			exportOptions: {},
+			contentType: 'reports.performancereport',
+			entityType: 'reports-performance',
+			isReport: true,
+			newLayout: false,
 
 			/*setListLayout(listLayout) {
 				this.state.listLayout = listLayout;
@@ -30,12 +35,16 @@ export default () => {
 				this.state.exportOptions = options;
 			},*/
 
-			async setLayoutCurrentConfig(listLayout) {
+			async setLayoutCurrentConfiguration(listLayout) {
 
 				if (listLayout) {
-					listLayout = recursiveDeepCopy(listLayout);
+
+					this.newLayout = false;
+					listLayout = useRecursiveDeepCopy(listLayout);
 
 				} else {
+
+					this.newLayout = true;
 
 					let edRes = await useApi('ecosystemDefaults.get');
 
@@ -48,7 +57,7 @@ export default () => {
 						data: {
 							additions: {},
 							reportOptions: {
-								begin_date: '0001-01-01',
+								begin_date: null,
 								end_date: moment(new Date).format('YYYY-MM-DD'),
 								report_currency: ecosystemDefaults.currency || null,
 								calculation_type: "time_weighted",
@@ -82,6 +91,19 @@ export default () => {
 
 				return new Promise(resolve => resolve());
 
+			},
+
+			getLayoutCurrentConfiguration() {
+
+				let listLayout = useRecursiveDeepCopy(this.listLayout);
+
+				listLayout.data.components = {...{}, ...this.components};
+				listLayout.data.reportOptions = JSON.parse(JSON.stringify(this.reportOptions));
+
+				listLayout.data.additions = JSON.parse(JSON.stringify(this.additions));
+				listLayout.data.exportOptions = JSON.parse(JSON.stringify(this.exportOptions));
+
+				return listLayout;
 			},
 
 			/*get reportOptions() {

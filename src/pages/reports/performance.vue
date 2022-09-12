@@ -9,7 +9,11 @@
 			@cancel="showSettingsDialog = false"
 		/>
 
-		<EvBaseTopPanel height="50" @openSettings="showSettingsDialog = true">
+		<EvBaseTopPanel
+			height="50"
+			@saveListLayout="saveLayout()"
+			@openSettings="showSettingsDialog = true;"
+		>
 			<template #rightActions>
 				<FmSelect no_borders
 					class="m-b-0"
@@ -167,7 +171,7 @@
 		}
 	}
 
-	// #region Main
+	//#region Main
 	let panels = ref(['period', 'detail', 'diagram'])
 	let bundles = ref([])
 	let preriodHeaders = ref(
@@ -192,7 +196,30 @@
 
 	let layoutSet = ref(false);
 
-	/* #endregion */
+	/*#endregion */
+
+	async function saveLayout () {
+
+		if (viewerData.newLayout) {
+
+			const layoutToSave = viewerData.getLayoutCurrentConfiguration();
+			layoutToSave.name = "default";
+			layoutToSave.user_code = "default";
+			layoutToSave.is_default = true;
+
+			let res = await useApi('listLayout.post', {body: layoutToSave});
+
+			if (!res.error) {
+				viewerData.newLayout = false;
+				viewerData.listLayout = res;
+				useNotify({type: 'success', title: 'Success. Page was saved.'})
+			}
+
+		} else {
+			useSaveLayoutList(store, viewerData);
+		}
+
+	}
 
 	async function choosePortfolio(id) {
 		activePeriod.value = id
@@ -211,7 +238,8 @@
 	}
 
 	async function fetchDefaultListLayout () {
-		const resData = await useApi('defaultListLayout.get', {params: {contentType: 'performance.report'}});
+
+		const resData = await useApi('defaultListLayout.get', {params: {contentType: viewerData.contentType}});
 
 		if (resData.error) {
 			throw new Error('Failed to fetch default performance layout');
@@ -219,7 +247,7 @@
 		} else {
 
 			const defaultListLayout = resData.results.length ? resData.results[0] : null;
-			viewerData.setLayoutCurrentConfig(defaultListLayout).then(() => {
+			viewerData.setLayoutCurrentConfiguration(defaultListLayout).then(() => {
 				layoutSet.value = true;
 			});
 

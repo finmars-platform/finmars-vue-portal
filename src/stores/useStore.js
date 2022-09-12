@@ -7,6 +7,7 @@ export default defineStore({
 			user: {},
 			ws: null,
 			masterUsers: [],
+			member: {},
 			current: {},
 		};
 	},
@@ -34,6 +35,63 @@ export default defineStore({
 			this.masterUsers = res.results
 			this.current.name = this.masterUsers.find(item => item.id == this.current.current_master_user_id )?.name
 		},
+
+		setupMemberData (isReport, entityType) {
+
+			if (!this.member.data) this.member.data = {};
+			if (!this.member.data.group_tables) this.member.data.group_tables = {};
+
+			if (!this.member.data.group_tables.entity_viewer) {
+				this.member.data.group_tables.entity_viewer = {
+					entity_viewers_settings: {}
+				};
+			}
+
+			if (!this.member.data.group_tables.report_viewer) {
+				this.member.data.group_tables.report_viewer = {
+					entity_viewers_settings: {}
+				};
+			}
+
+			const viewerType = isReport ? 'report_viewer' : 'entity_viewer';
+			let entityTypesSettings = this.member.data.group_tables[viewerType].entity_viewers_settings;
+
+			if (!entityTypesSettings[entityType]) {
+
+				entityTypesSettings[entityType] = {
+					marked_rows: {},
+					row_type_filter: 'none'
+				};
+
+			}
+
+			return this.member;
+
+		},
+
+		setMemberEntityViewerSettings(settings, isReport, entityType) {
+
+			const viewerType = isReport ? 'report_viewer' : 'entity_viewer';
+			/* let member = setUpMemberData(this.member, viewerType, entityType);
+
+			member.data.group_tables[viewerType].entity_viewers_settings[entityType] = settings; */
+
+			this.member.data.group_tables[viewerType].entity_viewers_settings[entityType] = settings;
+
+		},
+
+		async getMe() {
+
+			const res = await useApi('member.get', {params: {id: 0}});
+
+			if (res.error) {
+				throw res.error;
+
+			} else {
+				this.member = res;
+			}
+
+		},
 		async ping() {
 			let res = await useApi("ping.get")
 
@@ -60,5 +118,15 @@ export default defineStore({
 		},
 	},
 	getters: {
+		memberEntityViewerSettings(state) {
+			return (isReport, entityType) => {
+
+				const viewerType = isReport ? 'report_viewer' : 'entity_viewer';
+				// let member = setUpMemberData(state.member, viewerType, entityType);
+
+				return state.member.data.group_tables[viewerType].entity_viewers_settings[entityType];
+
+			};
+		},
 	},
 });
