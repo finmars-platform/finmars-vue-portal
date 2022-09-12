@@ -30,7 +30,7 @@
 					v-for="(item, index) in items"
 					:key="index"
 					:class="{active: item[props.prop_id] == modelValue}"
-					@click="$emit('update:modelValue', item[props.prop_id]), selected = item[props.prop_name], close()"
+					@click="$emit('update:modelValue', item[props.prop_id]), close()"
 				>
 					<div>{{ item[props.prop_name] }}</div>
 				</div>
@@ -57,18 +57,15 @@
 	})
 	defineEmits(['update:modelValue'])
 
-	let selected = ref(props.modelValue)
-
-	if ( props.items ) {
-		const selItem = props.items.find(item => item[props.prop_id] == props.modelValue)
-		if (selItem) {
-			selected.value = selItem[props.prop_name]
+	let selected = computed(() => {
+		if ( props.items ) {
+			const selItem = props.items.find(item => item[props.prop_id] == props.modelValue)
+			if (selItem) {
+				return selItem[props.prop_name]
+			} else {
+				return 'select'
+			}
 		}
-	}
-
-	watch( () => props.items, () => {
-		let elem = props.items.find(item => item[props.prop_id] == props.modelValue)
-		if ( elem ) selected.value = elem[props.prop_name]
 	})
 </script>
 

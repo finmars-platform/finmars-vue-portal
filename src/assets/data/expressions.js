@@ -446,7 +446,7 @@ export default {
   "context_var": [
     {
       "name": "Strategy 1",
-      "description": "[strategy1] :: [Result: Strategy]<br/><br/>[Result: Strategy]:  Strategy - variable autofilled from the Context (see Context Variables / Context).  The variable stores the Strategy 1 of the selected Context.",
+      "description": "[strategy1] :: [Result: Strategy]<br/><br/>[Result: Strategy]:  Strategy - variable autofilled from the Context (see Context Variables / Context).  The variable useStores the Strategy 1 of the selected Context.",
       "func": "strategy1",
       "validation": {
         "func": "strategy1"
@@ -510,7 +510,7 @@ export default {
     },
     {
       "name": "Strategy 2",
-      "description": "[strategy2] :: [Result: Strategy]<br/><br/>[Result: Strategy]:  Strategy - variable autofilled from the Context (see Context Variables / Context).  The variable stores the Strategy 2 of the selected Context.",
+      "description": "[strategy2] :: [Result: Strategy]<br/><br/>[Result: Strategy]:  Strategy - variable autofilled from the Context (see Context Variables / Context).  The variable useStores the Strategy 2 of the selected Context.",
       "func": "strategy2",
       "validation": {
         "func": "strategy2"
@@ -518,7 +518,7 @@ export default {
     },
     {
       "name": "Strategy 3",
-      "description": "[strategy3] :: [Result: Strategy]<br/><br/>[Result: Strategy]:  Strategy - variable autofilled from the Context (see Context Variables / Context).  The variable stores the Strategy 3 of the selected Context.",
+      "description": "[strategy3] :: [Result: Strategy]<br/><br/>[Result: Strategy]:  Strategy - variable autofilled from the Context (see Context Variables / Context).  The variable useStores the Strategy 3 of the selected Context.",
       "func": "strategy3",
       "validation": {
         "func": "strategy3"
