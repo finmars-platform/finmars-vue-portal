@@ -4,11 +4,25 @@
 			v-model:open-dialog="showSettingsDialog"
 			v-model:layout-ready-status="layoutSet"
 			:viewer-data="viewerData"
-			@save="showSettingsDialog = false;"
-			@cancel="showSettingsDialog = false;"
+			:bundles="bundles"
+			@save="showSettingsDialog = false, [viewerData.reportOptions, viewerData.components] = $event"
+			@cancel="showSettingsDialog = false"
 		/>
 
-		<EvBaseTopPanel height="50" @open-settings="showSettingsDialog = true;" />
+		<EvBaseTopPanel
+			height="50"
+			@saveListLayout="saveLayout()"
+			@openSettings="showSettingsDialog = true;"
+		>
+			<template #rightActions>
+				<FmSelect no_borders
+					class="m-b-0"
+					v-model="viewerData.reportOptions.report_currency"
+					:items="currencyOpts"
+					prop_name="short_name"
+				/>
+			</template>
+		</EvBaseTopPanel>
 
 		<FmHorizontalPanel height="50">
 			<template #leftActions>
@@ -82,7 +96,7 @@
 					</div>
 					<div class="coll_total">
 						<div class="coll_item t_header">TOTAL</div>
-						<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">0.1</div>
+						<div class="coll_item" v-for="(item, i) in portfolioTotals" :key="i">{{ item }}%</div>
 					</div>
 				</div>
 			</FmExpansionPanel>
@@ -130,6 +144,16 @@
 		})
 	})
 
+	let currencyOpts = ref([])
+	fetchCurrenciesOpts()
+	async function fetchCurrenciesOpts() {
+		const ppData = await useApi("currenciesLight.get");
+
+		if (!ppData.error) {
+			currencyOpts.value = ppData.results;
+		}
+	}
+
 	async function createBundle() {
 		let res = await useApi('portfolioBundles.post', {body: newBundle.value})
 
@@ -147,9 +171,9 @@
 		}
 	}
 
-	// #region Main
+	//#region Main
 	let panels = ref(['period', 'detail', 'diagram'])
-	let bundles = []
+	let bundles = ref([])
 	let preriodHeaders = ref(
 		['', 'Daily', 'MTD', 'QTD', 'YTD', +moment().year() - 1, +moment().year() - 2, 'Incept']
 	)
@@ -161,6 +185,7 @@
 	let portfolioItems = ref([])
 	let portfolioItemsCumm = ref([])
 	let portfolioYears = ref([])
+	let portfolioTotals = ref([])
 
 	let detailPortfolio = ref('')
 	let detailYear = ref('')
@@ -171,7 +196,30 @@
 
 	let layoutSet = ref(false);
 
-	/* #endregion */
+	/*#endregion */
+
+	async function saveLayout () {
+
+		if (viewerData.newLayout) {
+
+			const layoutToSave = viewerData.getLayoutCurrentConfiguration();
+			layoutToSave.name = "default";
+			layoutToSave.user_code = "default";
+			layoutToSave.is_default = true;
+
+			let res = await useApi('listLayout.post', {body: layoutToSave});
+
+			if (!res.error) {
+				viewerData.newLayout = false;
+				viewerData.listLayout = res;
+				useNotify({type: 'success', title: 'Success. Page was saved.'})
+			}
+
+		} else {
+			useSaveLayoutList(store, viewerData);
+		}
+
+	}
 
 	async function choosePortfolio(id) {
 		activePeriod.value = id
@@ -190,7 +238,8 @@
 	}
 
 	async function fetchDefaultListLayout () {
-		const resData = await useApi('defaultListLayout.get', {params: {contentType: 'performance.report'}});
+
+		const resData = await useApi('defaultListLayout.get', {params: {contentType: viewerData.contentType}});
 
 		if (resData.error) {
 			throw new Error('Failed to fetch default performance layout');
@@ -198,7 +247,7 @@
 		} else {
 
 			const defaultListLayout = resData.results.length ? resData.results[0] : null;
-			viewerData.setLayoutCurrentConfig(defaultListLayout).then(() => {
+			viewerData.setLayoutCurrentConfiguration(defaultListLayout).then(() => {
 				layoutSet.value = true;
 			});
 
@@ -214,10 +263,10 @@
 
 		await fetchPortolios()
 
-		if ( !bundles.length ) {
+		if ( !bundles.value.length ) {
 			return false
 		}
-		detailPortfolio.value = bundles[0].user_code
+		detailPortfolio.value = bundles.value[0].user_code
 
 		await getMonthDetails()
 
@@ -264,10 +313,10 @@
 
 	async function fetchPortolios() {
 		let res = await useApi('portfolioBundles.get')
-		bundles = res.results
+		bundles.value = res.results
 		preriodItems.value = []
 
-		bundles.forEach( bundle => {
+		bundles.value.forEach( bundle => {
 			preriodItems.value.push({
 				name: bundle.user_code,
 			})
@@ -304,23 +353,27 @@
 				row.beforeLast = Math.round(beforeLast * 100 * 100) / 100 + '%'
 			})
 
-			row.incept = 0.1
+			row.incept = null
+			getIncept( bundle.id ).then(incept => {
+				row.incept = Math.round(incept * 100 * 100) / 100 + '%'
+			})
 		})
 	}
 
 	async function getMonthDetails( name ) {
 		portfolioYears.value = []
+		portfolioTotals.value = []
 		portfolioItems.value = []
 		portfolioItemsCumm.value = []
 
 		let bundleId = name
-			? bundles.find(item => item.name == name).id
-			: bundles[0].id
+			? bundles.value.find(item => item.name == name).id
+			: bundles.value[0].id
 
 		let allMonths = await useApi('performanceReport.post', {
 			body: {
 				"save_report": false,
-				"begin_date": "2019-12-31",
+				"begin_date": null,
 				"end_date": null,
 				"calculation_type": "time_weighted",
 				"segmentation_type": 'months',
@@ -355,22 +408,23 @@
 			}
 
 			yearsBuffer[parseDate[0]][ 'key_' + parseDate[1] ] = [
-				Math.round(item.instrument_return * 10000) / 10000,
-				Math.round(item.cumulative_return * 10000) / 10000
+				Math.round(item.instrument_return * 10000) / 100,
+				Math.round(item.cumulative_return * 10000) / 100
 			]
 		})
 
 		for ( let prop in yearsBuffer ) {
-			console.log('prop:', prop)
 			portfolioYears.value.push( prop )
-			console.log('Object.values(yearsBuffer[prop]):', Object.values(yearsBuffer[prop]))
-
 			portfolioItems.value.push( Object.values(yearsBuffer[prop]).map(item => item[0]))
+
+			let total = await getReports({start: `${prop - 1}-12-31`, end: `${prop}-12-31`, ids: bundleId})
+			portfolioTotals.value.push( total * 100 )
 
 			portfolioItemsCumm.value.push( Object.values(yearsBuffer[prop]).map(item => item[1]) )
 		}
 
 		portfolioYears.value.reverse()
+		portfolioTotals.value.reverse()
 		portfolioItems.value.reverse()
 		portfolioItemsCumm.value.reverse()
 	}
@@ -434,10 +488,17 @@
 		return await getReports({start, end, ids})
 	}
 
+	async function getIncept( ids ) {
+		let start = null
+		let end = moment().add(-1, 'd').format('YYYY-MM-DD')
+
+		return await getReports({start, end, ids})
+	}
+
 	async function getReports({start, end, ids, type = 'months'}) {
 		let res = await useApi('performanceReport.post', {
 			body: {
-				 "save_report": false,
+				"save_report": false,
 				"begin_date": start,
 				"end_date": end,
 				"calculation_type": "time_weighted",

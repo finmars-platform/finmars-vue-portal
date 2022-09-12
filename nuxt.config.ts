@@ -12,6 +12,19 @@ export default defineNuxtConfig({
 		oldAppURL: process.env.OLD_APP_URL || "PROD_OLD_APP_URL",
 		buildDATE: dateString,
 	},
+	modules: [
+    ['@pinia/nuxt'],
+  ],
+	components: {
+		dirs: ['~/components']
+	},
+	imports: {
+    dirs: [
+      'stores',
+      'composables',
+      'composables/*/index.{ts,js,mjs,mts}'
+    ]
+  },
 	ssr: false,
 	app: {
 		baseURL: '/v/'
@@ -32,7 +45,6 @@ export default defineNuxtConfig({
 			"process.env.DEBUG": false,
 		},
 	},
-	buildModules: ["@pinia/nuxt"],
 
 	srcDir: "src",
 	server: {

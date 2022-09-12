@@ -131,12 +131,16 @@
 		}
 	}
 	async function deleteDB() {
+		let isConfirm = await useConfirm({text: 'Are you sure?'})
+
+		if ( !isConfirm ) return false
+
 		let res = props.db.is_owner
 			? await useApi( 'masterDelete.delete', { params: {id: props.db.id} } )
 			: await useApi( 'masterLeave.get', { params: {id: props.db.id} } )
 
 		if ( res ) {
-			store.getDatabases()
+			store.getMasterUsers()
 
 			useNotify({
 				type: 'success',

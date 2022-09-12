@@ -1,6 +1,8 @@
 <template>
 	<BaseInput
 		:label="label"
+		:modelValue="modelValue"
+		@update:modelValue="$emit('update:modelValue', $event)"
 	>
 		<template #button>
 			<FmIcon
@@ -13,6 +15,7 @@
 
 <script setup>
 	let props = defineProps({
+		modelValue: String,
 		label: String
 	})
 </script>

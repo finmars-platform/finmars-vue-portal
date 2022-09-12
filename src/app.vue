@@ -10,6 +10,8 @@
   </NuxtLayout>
 
 	<notifications />
+
+	<FmConfirm />
 </template>
 
 <script setup>
