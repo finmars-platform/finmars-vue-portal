@@ -9,7 +9,7 @@
 
 			<div class="flex aic" style="height: inherit;">
 				<div class="fm_chip"
-					v-for="(item, index) in selectedFilter"
+					v-for="(item, index) in selectedFilterNames"
 					:key="index"
 				>
 					{{ item.length > 10 ? item.slice(0, 10) + '...' : item }}
@@ -17,7 +17,7 @@
 			</div>
 		</BaseInput>
 
-		<BaseModal v-model="isOpen"
+		<BaseModal :title="title" v-model="isOpen"
 							 @cancel="isOpen = false">
 			<div class="flex sp aic">
 				<div class="available">
@@ -93,6 +93,10 @@
 		item_title: {
 			type: String,
 			default: 'user_code'
+		},
+		item_id: {
+			type: String,
+			default: 'user_code'
 		}
 	})
 	let emit = defineEmits(['update:modelValue'])
@@ -105,17 +109,25 @@
 
 	if ( typeof modelValueArray == 'string' ) modelValueArray = modelValueArray.split(',')
 
-	let selectedFilter = reactive( new Set( modelValueArray ) )
+	let selectedFilter = reactive( new Set( modelValueArray || [] ) )
+
+	let selectedFilterNames  = computed(() => {
+		return [...selectedFilter].map(
+			id => {
+				return (props.items.find(item => item[props.item_id] == id))[props.item_title]
+			}
+		)
+	})
 
 	let selectedList  = computed(() => {
 		if ( !props.items.length ) return []
 
 		return props.items.filter(
 			item => {
-				let elem = item[props.item_title]
+				let elem = item[props.item_id]
 
 				return selectedFilter.has(elem) &&
-					elem.toLocaleLowerCase().includes( selectedSearch.value.toLocaleLowerCase() )
+					item[props.item_title].toLocaleLowerCase().includes( selectedSearch.value.toLocaleLowerCase() )
 			}
 		)
 	})
@@ -125,10 +137,10 @@
 
 		return props.items.filter(
 			item => {
-				let elem = item[props.item_title]
+				let elem = item[props.item_id]
 
 				return !selectedFilter.has(elem) &&
-					elem.toLocaleLowerCase().includes(availableSearch.value.toLocaleLowerCase())
+					item[props.item_title].toLocaleLowerCase().includes(availableSearch.value.toLocaleLowerCase())
 			}
 		)
 	})
@@ -146,7 +158,7 @@
 			.filter(item => item.selected || !!all)
 			.map( item => {
 				item.selected = false
-				return item[props.item_title]
+				return item[props.item_id]
 			})
 		items.forEach( item => selectedFilter.add(item) )
 	}
@@ -155,7 +167,7 @@
 			.filter(item => item.selected || !!all)
 			.map( item => {
 				item.selected = false
-				return item[props.item_title]
+				return item[props.item_id]
 			})
 
 		items.forEach( item => selectedFilter.delete(item) )

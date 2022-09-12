@@ -18,12 +18,11 @@
 
 <style lang="scss" scoped>
  .rs_block_h {
-	 font-size: 14px;
-	 margin: 20px 0;
-	 font-weight: 600;
+	font-size: 16px;
+	margin-bottom: 15px;
+	font-weight: 600;
  }
 
  .rs_block_content {
-	 padding-left: 20px;
  }
 </style>

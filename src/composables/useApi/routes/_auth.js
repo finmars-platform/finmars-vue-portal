@@ -18,7 +18,7 @@ export default {
 	masterBackups: {
 		get: '/authorizer/master-user-backups/',
 		'delete': '/authorizer/master-user-backups/{id}/',
-		put: '/authorizer/master-user-backups/{id}/restore-from-backup/'
+		put: '/authorizer/master-user-backups/{id}/reuseStore-from-backup/'
 	},
 
 	masterExport: {

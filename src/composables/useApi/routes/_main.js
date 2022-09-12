@@ -103,8 +103,12 @@ export default {
 		get: prefix + '/instruments/generated-event/{id}/book/',
 		put: prefix + '/instruments/generated-event/{id}/book/',
 	},
+	listLayout: {
+		put: prefix + '/ui/list-layout/{id}/',
+		post: prefix + '/ui/list-layout/'
+	},
 	defaultListLayout: {
-		get: prefix + '/ui/list-layout/?is_default=2&content_type={contentType}/',
+		get: prefix + '/ui/list-layout/?is_default=2&content_type={contentType}',
 	},
 	ecosystemDefaults: {
 		get: prefix + '/users/ecosystem-default/'

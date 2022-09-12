@@ -45,7 +45,6 @@
 				:db="db"
 				:key="db.id"
 				@refresh="store.getMasterUsers()"
-				@delete="deleteDB($event)"
 			/>
 		</div>
 		<div class="fm_content" v-else>No databases found</div>
@@ -61,12 +60,6 @@
 	);
 
 	let isShowNewBackup = ref(false)
-
-	async function deleteDB(id) {
-		let res = await useApi('masterLeave.get', {params: {id}})
-
-		if ( res ) store.getMasterUsers()
-	}
 
 </script>
 

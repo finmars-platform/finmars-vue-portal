@@ -1,6 +1,6 @@
 <template>
 	<div class="rs_row flex-row fc-space-between fi-center">
-		<div>{{ props.label }}</div>
+		<div class="rs_field_label">{{ props.label }}</div>
 
 		<div class="rs_field_holder">
 			<slot />
@@ -16,10 +16,12 @@
 
 <style lang="scss" scoped>
 	.rs_row {
-		padding-bottom: 8px;
-		// padding-left: 20px;
+		padding-bottom: 10px;
 	}
 
+	.rs_field_label {
+		width: 200px;
+	}
 	.rs_field_holder {
 		width: 280px;
 

@@ -9,19 +9,18 @@
 		"preview": "nuxt preview"
 	},
 	"devDependencies": {
-		"nuxt": "3.0.0-rc.4",
+		"nuxt": "3.0.0-rc.9",
 		"prettier": "2.6.2"
 	},
 	"dependencies": {
 		"@chenfengyuan/vue-qrcode": "^2.0.0",
-		"@kyvg/vue3-notification": "^2.3.4",
-		"@pinia/nuxt": "^0.1.9",
-		"chart.js": "^3.8.0",
+		"@kyvg/vue3-notification": "^2.4.1",
+		"@pinia/nuxt": "^0.4.2",
+		"chart.js": "^3.9.1",
 		"click-outside-vue3": "^4.0.1",
-		"moment": "^2.29.3",
-		"pinia": "^2.0.14",
-		"qrcode": "^1.5.0",
-		"sass": "^1.53.0",
-		"vue": "^3.2.37"
+		"moment": "^2.29.4",
+		"qrcode": "^1.5.1",
+		"sass": "^1.54.9",
+		"vue": "^3.2.39"
 	}
 }
