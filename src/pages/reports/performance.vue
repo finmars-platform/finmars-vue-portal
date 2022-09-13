@@ -261,6 +261,7 @@
 	async function init() {
 		await fetchDefaultListLayout();
 		await refresh()
+		console.log('refresh:')
 
 		chart = new Chart('myChart', {
 			type: 'bar',
@@ -398,12 +399,11 @@
 			}
 		})
 
-		let yearsBuffer = {}
+		let yearsBuffer = new Map()
 		let yearsBufferCumm = []
 
-		allMonths.items.forEach(item => {
+		allMonths.items.reverse().forEach(item => {
 			let parseDate = item.date_to.split('-')
-
 			// key_ fix order
 			let defaultMonth = {
 				'key_01': [0, 0],
@@ -420,30 +420,25 @@
 				'key_12': [0, 0]
 			}
 
-			if ( !yearsBuffer[parseDate[0]] ) {
-				yearsBuffer[ parseDate[0] ] = defaultMonth
+			if ( !yearsBuffer.has(parseDate[0]) ) {
+				yearsBuffer.set(parseDate[0], defaultMonth)
 			}
 
-			yearsBuffer[parseDate[0]][ 'key_' + parseDate[1] ] = [
+			yearsBuffer.get(parseDate[0])[ 'key_' + parseDate[1] ] = [
 				Math.round(item.instrument_return * 10000) / 100,
 				Math.round(item.cumulative_return * 10000) / 100
 			]
 		})
 
-		for ( let prop in yearsBuffer ) {
-			portfolioYears.value.push( prop )
-			portfolioItems.value.push( Object.values(yearsBuffer[prop]).map(item => item[0]))
+		for ( let [year, months] of yearsBuffer ) {
+			portfolioYears.value.push( year )
+			portfolioItems.value.push( Object.values(months).map(item => item[0]))
+			portfolioItemsCumm.value.push( Object.values(months).map(item => item[1]) )
 
-			let total = await getReports({start: `${prop - 1}-12-31`, end: `${prop}-12-31`, ids: bundleId})
+			let total = await getReports({start: `${year - 1}-12-31`, end: `${year}-12-31`, ids: bundleId})
 			portfolioTotals.value.push( total * 100 )
-
-			portfolioItemsCumm.value.push( Object.values(yearsBuffer[prop]).map(item => item[1]) )
 		}
 
-		portfolioYears.value.reverse()
-		portfolioTotals.value.reverse()
-		portfolioItems.value.reverse()
-		portfolioItemsCumm.value.reverse()
 	}
 
 	function updateChart( datasetMonth, datasetLine ) {
@@ -525,6 +520,7 @@
 				"end_date": end,
 				"calculation_type": "time_weighted",
 				"segmentation_type": type,
+				'report_currency': viewerData.reportOptions?.report_currency,
 				"bundle": ids
 			}
 		})
