@@ -1,24 +1,64 @@
 <template>
 	<FmCard class="" controls>
-		<div class="fm_card_title edit_hover">
-			<span v-if="!isEditTitle">
-				{{ isEditTitle ? editingData.name : db.name }}
-			</span>
-			<FmIcon primary
-				v-if="!isEditTitle"
-				class="edit_icon"
-				icon="edit"
-				@click="edit('title')"
-			/>
+		<div class="flex aic sb">
+			<div class="fm_card_title edit_hover m-b-0">
+				<span v-if="!isEditTitle">
+					{{ isEditTitle ? editingData.name : db.name }}
+				</span>
+				<FmIcon primary
+					v-if="!isEditTitle"
+					class="edit_icon"
+					icon="edit"
+					@click="edit('title')"
+				/>
 
-			<input class="fm_card_title m-b-0"
-				v-if="isEditTitle"
-				v-model="editingData.name"
-				ref="title"
-			/>
+				<input class="fm_card_title m-b-0"
+					v-if="isEditTitle"
+					v-model="editingData.name"
+					ref="title"
+				/>
+			</div>
+
+			<FmMenu anchor="right">
+				<template #btn>
+					<FmIcon icon="settings" />
+				</template>
+
+				<template #default="{close}">
+					<div class="fm_list">
+						<div class="fm_list_item" @click="redeploy(), close()">
+							<FmIcon class="mr-10" icon="restart_alt" /> Restart
+						</div>
+						<!-- <div class="fm_list_item" @click="exportDb(), close()">
+							<FmIcon class="mr-10" icon="stop_circle" /> Stop
+						</div> -->
+						<div class="fm_list_item" @click="rollback(), close()">
+							<FmIcon class="mr-10" icon="cloud_sync" /> Rollback
+						</div>
+						<div class="fm_list_item" @click="exportDb(), close()">
+							<FmIcon class="mr-10" icon="cloud_upload" /> Export backup
+						</div>
+						<div
+							v-if="db.is_owner"
+							class="fm_list_item"
+							@click="deleteDB(), close()"
+						>
+							<FmIcon class="mr-10" icon="delete" /> Delete
+						</div>
+						<div
+							v-else
+							class="fm_list_item"
+							@click="deleteDB(), close()"
+						>
+							<FmIcon class="mr-10" icon="exit_to_app" /> Exit
+						</div>
+					</div>
+				</template>
+			</FmMenu>
 		</div>
 
-		<div class="fm_card_subtitle">
+
+		<div class="fm_card_subtitle m-t-8">
 			{{ db.is_initialized ? `Expire (${ db.license_expiry_date })` : 'Workspace is initializing'}}
 		</div>
 
@@ -43,23 +83,12 @@
 			<FmInputArea v-else v-model="editingData.description" ref="description" />
 		</div>
 
-		<div class="fm_card_text">Role: {{ db.is_owner ? "owner" : "admin" }}</div>
 
 		<template #controls>
 			<div class="flex sb aic">
+				<div class="fm_card_text">Role: {{ db.is_owner ? "owner" : "admin" }}</div>
+
 				<template v-if="!isEdit && db.is_initialized">
-					<FmIcon primary
-						v-show="!showActions"
-						icon="lock"
-						tooltip="Show more"
-						@click="showActions = true"
-					/>
-
-					<div class="flex" v-if="showActions">
-						<FmIcon class="mr-10" icon="cloud_upload" tooltip="Export backup" primary @click="exportDb()" />
-						<FmIcon v-if="db.is_owner" icon="delete" tooltip="Delete workspace" primary @click="deleteDB()" />
-					</div>
-
 					<FmBtn v-if="!isEdit" @click="open()">open</FmBtn>
 				</template>
 
@@ -129,6 +158,28 @@
 				type: 'success',
 				title: res.message,
 			})
+		}
+	}
+	async function redeploy() {
+		let res = await useApi("masterRedeploy.get")
+		if ( res ) {
+			useNotify({
+				type: 'success',
+				title: 'Success',
+			})
+			emit("refresh");
+		}
+	}
+	async function rollback() {
+		let res = await useApi("masterRollback.put", {
+			params: { id: props.db.id },
+		})
+		if ( res ) {
+			useNotify({
+				type: 'success',
+				title: 'Success',
+			})
+			emit("refresh");
 		}
 	}
 	async function deleteDB() {
