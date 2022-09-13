@@ -18,9 +18,14 @@ export default {
 	masterBackups: {
 		get: '/authorizer/master-user-backups/',
 		'delete': '/authorizer/master-user-backups/{id}/',
-		put: '/authorizer/master-user-backups/{id}/reuseStore-from-backup/'
+		put: '/authorizer/master-user-backups/{id}/Restore-from-backup/'
 	},
-
+	masterRollback: {
+		put: '/master-user/{id}/rollback-from-backup/'
+	},
+	masterRedeploy: {
+		get: '/authorizer/master-user-redeploy/?base_api_url={client}'
+	},
 	masterExport: {
 		get: '/authorizer/master-user-export/{id}/'
 	},

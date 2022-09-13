@@ -112,6 +112,10 @@
 	])
 	let noti = ref(null)
 
+	if ( store.current.base_api_url ) {
+		loadNoti()
+	}
+
 	watch(
 		() => store.current,
 		() => loadNoti()
