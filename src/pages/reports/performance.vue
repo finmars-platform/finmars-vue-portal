@@ -5,7 +5,7 @@
 			v-model:layout-ready-status="layoutSet"
 			:viewer-data="viewerData"
 			:bundles="bundles"
-			@save="showSettingsDialog = false, [viewerData.reportOptions, viewerData.components] = $event"
+			@save="showSettingsDialog = false, [viewerData.reportOptions, viewerData.components] = $event, refresh()"
 			@cancel="showSettingsDialog = false"
 		/>
 
