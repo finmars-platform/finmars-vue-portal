@@ -17,16 +17,16 @@
 					<FmIcon icon="delete" primary tooltip="Delete backup" @click="deleteBackup()" />
 				</div>
 
-				<FmBtn type="basic" @click="isShowReuseStore = true">
+				<FmBtn type="basic" @click="isShowRestore = true">
 					REStore
 				</FmBtn>
 			</div>
 		</template>
 
-		<PagesProfileReuseStoreFromBackup
-			@cancel="isShowReuseStore = false"
+		<PagesProfileRestoreFromBackup
+			@cancel="isShowRestore = false"
 			@save="emit('refresh')"
-			v-model="isShowReuseStore"
+			v-model="isShowRestore"
 		/>
 	</FmCard>
 </template>
@@ -39,7 +39,7 @@
 	});
 
 	let showActions = ref(false)
-	let isShowReuseStore = ref(false)
+	let isShowRestore = ref(false)
 	let config = useRuntimeConfig()
 
 	// async function save() {

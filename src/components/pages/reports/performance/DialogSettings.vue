@@ -133,16 +133,20 @@
 
 	init();
 
-	let reportOptions = ref({})
+	let reportOptions = ref({...props.viewerData.reportOptions})
 	watch(
 		() => props.viewerData.reportOptions,
-		() => reportOptions.value = { ...props.viewerData.reportOptions }
+		() => {
+			reportOptions.value = { ...props.viewerData.reportOptions }
+		}
 	);
 
-	let components = ref({})
+	let components = ref({ ...props.viewerData.components })
 	watch(
 		() => props.viewerData.components,
-		() => components.value = { ...props.viewerData.components }
+		() => {
+			components.value = { ...props.viewerData.components }
+		}
 	);
 
 
