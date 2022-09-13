@@ -294,7 +294,13 @@
 				},
 				scales: {
 					y: {
-						grace: '5%'
+						grace: '5%',
+						ticks: {
+							// Include a dollar sign in the ticks
+							callback: function(value, index, ticks) {
+									return value + '%';
+							}
+						}
 					}
 				}
 			},

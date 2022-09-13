@@ -286,7 +286,7 @@
 
 	let query = ref('')
 	let date = ref('')
-	let ordering = ref('created')
+	let ordering = ref('-created')
 	let only_new = ref(true)
 	let action = ref('')
 	let types = ref(new Set())
