@@ -147,9 +147,10 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		height: 56px;
+		height: 52px;
 		background: $main-darken;
 		padding: 0 $content-padding-x;
+		border-bottom: 1px solid $border;
 	}
 	.header_item + .header_item {
 		margin-left: 10px;

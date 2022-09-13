@@ -49,10 +49,17 @@
 							</li>
 
 							<li>
-								<a :href="`${config.public.apiURL}/a/#!/`" class="sidemenu-btn">
+<!--								<a :href="`${config.public.apiURL}/a/#!/`" class="sidemenu-btn">
 									<FmIcon icon="home" class="side-nav-icon"></FmIcon>
 									<span class="side-nav-title">Homepage</span>
-								</a>
+								</a>-->
+								<NuxtLink
+									to="/"
+									class="sidemenu-btn"
+								>
+									<FmIcon icon="home" class="side-nav-icon"></FmIcon>
+									<span class="side-nav-title">Homepage</span>
+								</NuxtLink>
 							</li>
 
 							<li>
