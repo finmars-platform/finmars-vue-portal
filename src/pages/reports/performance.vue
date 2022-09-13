@@ -64,7 +64,7 @@
 			</template>
 
 			<template #rightActions>
-				<FmIcon icon="refresh" @click="init()" btn />
+				<FmIcon icon="refresh" @click="refresh()" btn />
 			</template>
 		</FmHorizontalPanel>
 
@@ -96,7 +96,9 @@
 					</div>
 					<div class="coll_total">
 						<div class="coll_item t_header">TOTAL</div>
-						<div class="coll_item" v-for="(item, i) in portfolioTotals" :key="i">{{ item }}%</div>
+						<div class="coll_item" v-for="(item, i) in portfolioTotals" :key="i">
+							{{ Math.round(item * 100) / 100 }}%
+						</div>
 					</div>
 				</div>
 			</FmExpansionPanel>
@@ -162,7 +164,7 @@
 				registers: []
 			}
 
-			init()
+			refresh()
 
 			useNotify({
 				type: 'success',
@@ -256,21 +258,9 @@
 	}
 
 
-
 	async function init() {
-
 		await fetchDefaultListLayout();
-
-		await fetchPortolios()
-
-		if ( !bundles.value.length ) {
-			return false
-		}
-		detailPortfolio.value = bundles.value[0].user_code
-
-		await getMonthDetails()
-
-		detailYear.value = portfolioYears.value[0]
+		await refresh()
 
 		chart = new Chart('myChart', {
 			type: 'bar',
@@ -309,6 +299,22 @@
 				}
 			},
 		});
+	}
+
+	async function refresh() {
+		await fetchPortolios()
+
+		if ( !bundles.value.length ) {
+			return false
+		}
+		detailPortfolio.value = bundles.value[0].user_code
+
+		await getMonthDetails()
+
+		detailYear.value = portfolioYears.value[0]
+
+		if ( chart )
+			updateChart( portfolioItems.value[0], portfolioItemsCumm.value[0] )
 	}
 
 	async function fetchPortolios() {
@@ -370,11 +376,16 @@
 			? bundles.value.find(item => item.name == name).id
 			: bundles.value[0].id
 
+		let res = await useApi('performanceFirstTransaction.get', {
+			params: { id: bundleId }
+		})
+		let end = moment(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
+
 		let allMonths = await useApi('performanceReport.post', {
 			body: {
 				"save_report": false,
-				"begin_date": null,
-				"end_date": null,
+				"begin_date": res.transaction_date,
+				"end_date": end,
 				"calculation_type": "time_weighted",
 				"segmentation_type": 'months',
 				"bundle": bundleId
@@ -440,13 +451,13 @@
 	}
 
 	async function getDay( ids ) {
-		let day = moment().add(-1, 'd').format('YYYY-MM-DD')
+		let day = moment(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
 
 		return await getReports({start: day, end: day, ids, type: 'days'})
 	}
 
 	async function getMonth( ids ) {
-		let end = moment().add(-1, 'd').format('YYYY-MM-DD')
+		let end = moment(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
 		let start = moment().set('date', 1).add(-1, 'd').format('YYYY-MM-DD')
 
 		return await getReports({start, end, ids})
@@ -458,7 +469,7 @@
 			.set('date', 1)
 			.add(-1, 'd')
 			.format('YYYY-MM-DD')
-		let end = moment().add(-1, 'd').format('YYYY-MM-DD')
+		let end = moment(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
 
 		return await getReports({start, end, ids})
 	}
@@ -469,28 +480,33 @@
 			.add(-1, 'd')
 			.format('YYYY-MM-DD')
 
-		let end = moment().add(-1, 'd').format('YYYY-MM-DD')
+		let end = moment(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
 
 		return await getReports({start, end, ids})
 	}
 
 	async function getLastYear( ids ) {
 		let start = `${moment().year() - 2}-12-31`
-		let end = `${moment().year() - 1}-12-30`
+		let end = `${moment(viewerData.reportOptions?.end_date).year() - 1}-12-30`
 
 		return await getReports({start, end, ids})
 	}
 
 	async function getYearBeforeLast( ids ) {
 		let start = `${moment().year() - 3}-12-31`
-		let end = `${moment().year() - 2}-12-30`
+		let end = `${moment(viewerData.reportOptions?.end_date).year() - 2}-12-30`
 
 		return await getReports({start, end, ids})
 	}
 
 	async function getIncept( ids ) {
-		let start = null
-		let end = moment().add(-1, 'd').format('YYYY-MM-DD')
+		let res = await useApi('performanceFirstTransaction.get', {
+			params: { id: ids }
+		})
+
+		let start = res.transaction_date
+
+		let end = moment(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
 
 		return await getReports({start, end, ids})
 	}

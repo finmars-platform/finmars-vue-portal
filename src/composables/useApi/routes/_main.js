@@ -116,5 +116,9 @@ export default {
 	portfolioBundles: {
 		get: prefix + '/portfolios/portfolio-bundle/',
 		post: prefix + '/portfolios/portfolio-bundle/',
-	}
+	},
+	performanceFirstTransaction: {
+		get: prefix + '/reports/performance-report/first-transaction-date/?bandle={id}'
+	},
+
 }
