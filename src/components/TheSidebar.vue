@@ -1036,8 +1036,16 @@
 		</div>
 
 		<div class="build-date">
-			Build date: {{ buildDate }}
+			<div>Build date: {{ buildDate }}</div>
+			<div>
+				<a :href="`${config.public.apiURL}/${store.current.base_api_url}/api/v1/`"
+					 class="display-inline white-text">API:</a>&nbsp;
 
+				<span title="Copy" class="cursor-pointer" @click="copyToBuffer(store.current.base_api_url)">{{store.current.base_api_url}}</span>&nbsp;
+
+				<a :href="`${config.public.apiURL}/a/#!/update-center`"
+					 class="display-inline white-text">{{store.masterUser.version}}</a>
+			</div>
 			<!--				<span class="websocket-connection-status {{vm.getWsStatus()}}"
 										title="Websocket status: {{vm.getWsStatus()}}"></span>
 
@@ -1061,6 +1069,10 @@
 
 <script setup>
 // import menu from "~/assets/data/menu.js";
+const store = useStore();
+const config = useRuntimeConfig();
+const buildDate = config.public.buildDATE;
+
 
 const readyStatus = {
 	// will be used by getInterfaceAccess()
@@ -1143,8 +1155,6 @@ const accessTable = {
 	account_ecosystem_management: true,
 };
 
-let config = useRuntimeConfig();
-let buildDate = config.public.buildDATE;
 
 let sidenavExpanded = true;
 
@@ -1271,6 +1281,22 @@ const hideSubmenu = function ($event) {
 
 	menuBtn.classList.remove("active-menu-btn");
 	dropdownMenu.classList.add("display-none");
+};
+
+const copyToBuffer = function (content) {
+	const listener = function (e) {
+
+		e.clipboardData.setData('text/plain', content);
+
+		e.preventDefault();
+
+	};
+
+	document.addEventListener('copy', listener, {once: true});
+
+	document.execCommand("copy");
+
+	useNotify({type: 'success', title: "Copied"})
 };
 
 // function toggleSettingsSideMenu() {
