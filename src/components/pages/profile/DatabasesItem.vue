@@ -34,7 +34,7 @@
 						<!-- <div class="fm_list_item" @click="exportDb(), close()">
 							<FmIcon class="mr-10" icon="stop_circle" /> Stop
 						</div> -->
-						<div class="fm_list_item" @click="rollback(), close()">
+						<div class="fm_list_item" @click="isOpenRollback = true, close()">
 							<FmIcon class="mr-10" icon="cloud_sync" /> Rollback
 						</div>
 						<div class="fm_list_item" @click="exportDb(), close()">
@@ -88,7 +88,12 @@
 
 		<template #controls>
 			<div class="flex sb aic">
-				<div class="fm_card_text">Role: {{ db.is_owner ? "owner" : "admin" }}</div>
+				<div>
+					<div class="fm_card_text">Role: {{ db.is_owner ? "owner" : "admin" }}</div>
+					<div class="clipboard flex aic" @click="copy()">
+						<div class="clipboard_text">{{ db.base_api_url}}</div>
+						<FmIcon class="m-l-4" icon="content_copy" size="16" /></div>
+				</div>
 
 				<template v-if="!isEdit && db.is_initialized">
 					<FmBtn v-if="!isEdit" @click="open()">open</FmBtn>
@@ -101,6 +106,8 @@
 				</template>
 			</div>
 		</template>
+
+		<LazyPagesProfileWorkspaceRollbackM :workspaceId="db.id" v-model="isOpenRollback" v-if="isOpenRollback" />
 	</FmCard>
 </template>
 
@@ -119,6 +126,8 @@
 	let isEditDesc = ref(false);
 	let isEditTitle = ref(false);
 	let isEdit = ref(false);
+
+	let isOpenRollback = ref(false);
 
 	let title = ref(null);
 	let description = ref(null);
@@ -148,6 +157,14 @@
 		editingData.name = props.db.name;
 		editingData.id = props.db.id;
 	}
+	async function copy() {
+		await navigator.clipboard.writeText(`${config.public.apiURL}/${props.db.base_api_url}/api/v1/`)
+
+		useNotify({
+			type: 'success',
+			title: 'Copied to clipboard',
+		})
+	}
 	function edit( prop ) {
 		if ( prop == 'title' ) isEditTitle.value = true;
 		else isEditDesc.value = true;
@@ -165,6 +182,9 @@
 		props.db.name = props.db.name
 	}
 	async function exportDb() {
+		let isConfirm = await useConfirm({text: 'Are you sure?'})
+		if ( !isConfirm ) return false
+
 		let res = await useApi("masterExport.get", {
 			params: { id: props.db.id },
 		});
@@ -176,6 +196,9 @@
 		}
 	}
 	async function redeploy() {
+		let isConfirm = await useConfirm({text: 'Are you sure?'})
+		if ( !isConfirm ) return false
+
 		let res = await useApi("masterRedeploy.get")
 		if ( res ) {
 			useNotify({
@@ -185,21 +208,9 @@
 			emit("refresh");
 		}
 	}
-	async function rollback() {
-		let res = await useApi("masterRollback.put", {
-			params: { id: props.db.id },
-		})
-		if ( res ) {
-			useNotify({
-				type: 'success',
-				title: 'Success',
-			})
-			emit("refresh");
-		}
-	}
+
 	async function deleteDB() {
 		let isConfirm = await useConfirm({text: 'Are you sure?'})
-
 		if ( !isConfirm ) return false
 
 		let res = props.db.is_owner
@@ -246,6 +257,17 @@
 	}
 	&.warn {
 		background: #FFE8CC;
+	}
+}
+.clipboard {
+	cursor: pointer;
+	color: $text-lighten;
+	transition: color 0.3s;
+	&_text {
+		text-decoration: underline;
+	}
+	&:hover {
+		color: $text;
 	}
 }
 .edit_icon {
