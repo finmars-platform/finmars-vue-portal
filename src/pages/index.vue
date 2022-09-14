@@ -28,15 +28,15 @@
 <style lang="scss" scoped>
 	.wrap {
 		display: grid;
-		grid-template-columns: 1fr 500px;
+		grid-template-columns: 730px 500px;
 		align-items: flex-start;
+		justify-content: flex-start;
 		gap: 20px
 	}
 	.hp_block {
 		border: 1px solid $border;
 		border-radius: 3px;
 		background: $separ;
-		max-width: 730px;
 	}
 	.hp_title {
 		background: $main-darken;
