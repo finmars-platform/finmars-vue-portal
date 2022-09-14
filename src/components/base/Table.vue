@@ -19,6 +19,7 @@
 		>
 			<div
 				class="table-cell"
+				:class="{disabled: item === ''}"
 				v-for="(item, index) in row"
 				:key="index"
 			>
@@ -75,11 +76,11 @@
 		cursor: pointer;
 
 		&:not(.active):hover {
-			outline: solid  $primary-lighten;
+			background: #fac87863;
 		}
 	}
 	&.active {
-		outline: solid $primary;
+		background: #fac87863;
 	}
 	&.t_header {
 		background: #F2F2F2;
@@ -96,6 +97,9 @@
 
 	& + & {
 		border-left: 1px solid $border;
+	}
+	&.disabled {
+		background: $main-darken-2;
 	}
 }
 </style>

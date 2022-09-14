@@ -104,7 +104,9 @@
 			</FmExpansionPanel>
 
 			<FmExpansionPanel :title="detailPortfolio + ' - ' + detailYear">
-				<canvas id="myChart"><p>Chart</p></canvas>
+				<div style="height: 350px;">
+					<canvas id="myChart"><p>Chart</p></canvas>
+				</div>
 			</FmExpansionPanel>
 		</div>
 	</div>
@@ -240,7 +242,6 @@
 	}
 
 	async function fetchDefaultListLayout () {
-
 		const resData = await useApi('defaultListLayout.get', {params: {contentType: viewerData.contentType}});
 
 		if (resData.error) {
@@ -252,16 +253,13 @@
 			viewerData.setLayoutCurrentConfiguration(defaultListLayout).then(() => {
 				layoutSet.value = true;
 			});
-
 		}
-
 	}
-
 
 	async function init() {
 		await fetchDefaultListLayout();
 		await refresh()
-		console.log('refresh:')
+
 
 		chart = new Chart('myChart', {
 			type: 'bar',
@@ -287,6 +285,7 @@
 			},
 			options: {
 				responsive: true,
+				maintainAspectRatio: false,
 				plugins: {
 					legend: {
 						position: 'top',
@@ -314,6 +313,9 @@
 		if ( !bundles.value.length ) {
 			return false
 		}
+		activePeriod.value = 0
+		activeYear.value = 0
+
 		detailPortfolio.value = bundles.value[0].user_code
 
 		await getMonthDetails()
@@ -395,6 +397,7 @@
 				"end_date": end,
 				"calculation_type": "time_weighted",
 				"segmentation_type": 'months',
+				'report_currency': viewerData.reportOptions?.report_currency,
 				"bundle": bundleId
 			}
 		})
@@ -404,6 +407,7 @@
 
 		allMonths.items.reverse().forEach(item => {
 			let parseDate = item.date_to.split('-')
+
 			// key_ fix order
 			let defaultMonth = {
 				'key_01': [0, 0],
@@ -430,10 +434,18 @@
 			]
 		})
 
+		let dateTo = moment(viewerData.reportOptions?.end_date)
+
 		for ( let [year, months] of yearsBuffer ) {
 			portfolioYears.value.push( year )
-			portfolioItems.value.push( Object.values(months).map(item => item[0]))
-			portfolioItemsCumm.value.push( Object.values(months).map(item => item[1]) )
+			portfolioItems.value.push( Object.values(months).map((item, i) => {
+				if ( year != dateTo.year() || i <= dateTo.month() ) return item[1]
+				else return ''
+			}))
+			portfolioItemsCumm.value.push( Object.values(months).map((item, i) => {
+				if ( year != dateTo.year() || i <= dateTo.month() )
+					return item[1]
+			}))
 
 			let total = await getReports({start: `${year - 1}-12-31`, end: `${year}-12-31`, ids: bundleId})
 			portfolioTotals.value.push( total * 100 )
