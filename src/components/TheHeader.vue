@@ -2,41 +2,61 @@
 	<header>
 		<FmBreadcrumbs :items="$route.meta.bread" />
 
-		<div class="flex aic">
-			<FmMenu class="header_item" v-if="noti">
-				<template #btn="{ isOpen }">
-					<FmIcon class="noti_icon"
-						:class="{active: noti.length}"
-						btn
-						icon="notifications"
-					/>
-				</template>
+		<div class="flex aic height-100">
 
-				<div class="fm_list">
-					<template v-if="noti.length">
-						<div class="fm_message_item"
-							v-for="(item, index) in noti"
-							:key="index"
-						>
-							<div class="flex sb">
-								<div class="fm_message_item_date">{{ fromatDate(item.created) }}</div>
-								<div class="fm_message_item_section">{{ SECTIONS[item.section] }}</div>
-							</div>
-							<div class="fm_message_item_h">{{ item.title }}</div>
-							<div class="fm_message_item_t">
-								{{ item.description.length > 65 ? item.description.slice(0, 65) + '...' : item.description }}
-							</div>
-						</div>
-						<div class="tac p-8">
-							<FmBtn to="/" type="action">Show ALL</FmBtn>
-						</div>
+			<div v-if="store.current.name && $router.currentRoute.value.name !== 'profile'"
+					 class="flex fi-center height-100">
+
+				<FmMenu class="header_item header_icon_btn" v-if="noti">
+					<template #btn="{ isOpen }">
+						<FmIcon class="noti_icon"
+										:class="{active: noti.length}"
+										btn
+										icon="notifications"
+						/>
 					</template>
-					<div class="p-16" v-else>No new messages</div>
-				</div>
-			</FmMenu>
 
-			<FmIcon class="header_item"
-				v-if="store.current.name"
+					<div class="fm_list">
+						<template v-if="noti.length">
+							<div class="fm_message_item"
+									 v-for="(item, index) in noti"
+									 :key="index"
+							>
+								<div class="flex sb">
+									<div class="fm_message_item_date">{{ fromatDate(item.created) }}</div>
+									<div class="fm_message_item_section">{{ SECTIONS[item.section] }}</div>
+								</div>
+								<div class="fm_message_item_h">{{ item.title }}</div>
+								<div class="fm_message_item_t">
+									{{ item.description.length > 65 ? item.description.slice(0, 65) + '...' : item.description }}
+								</div>
+							</div>
+							<div class="tac p-8">
+								<FmBtn to="/" type="action">Show ALL</FmBtn>
+							</div>
+						</template>
+						<div class="p-16" v-else>No new messages</div>
+					</div>
+				</FmMenu>
+
+				<a :href="`${config.public.apiURL}/a/#!/processes`">
+					<FmIcon icon="cloud_download"
+									btn
+									tooltip="Open Active Processes"
+									class="header_item header_icon_btn" />
+				</a>
+
+				<a :href="`${config.public.apiURL}/documentation`">
+					<FmIcon icon="help"
+									btn
+									tooltip="Open help menu"
+									class="header_item header_icon_btn" />
+				</a>
+
+			</div>
+
+			<FmIcon class="header_item header_icon_btn"
+				v-if="store.current.name && $router.currentRoute.value.name === 'profile'"
 				btn
 				tooltip="Homepage"
 				icon="home"
@@ -44,9 +64,11 @@
 			/>
 
 			<template v-if="store.current.name">
-				<FmMenu class="header_item">
+				<FmMenu class="header_item height-100">
 					<template #btn="{ isOpen }">
-						<FmBtn type="text" :class="['text-lowercase', {active: isOpen}]">
+						<FmBtn type="text"
+									 :class="['header_text', 'm-l-4', 'm-r-4', {active: isOpen}]"
+									 style="height: 100%;">
 							{{ store.current.name }}
 						</FmBtn>
 					</template>
@@ -63,9 +85,12 @@
 				</FmMenu>
 			</template>
 
-			<FmMenu class="header_item">
+			<FmMenu class="header_item height-100">
 				<template #btn="{ isOpen }">
-					<FmBtn type="text" :class="['text-lowercase', {active: isOpen}]" icon="account_box">
+					<FmBtn type="text"
+								 :class="['header_text', {active: isOpen}]"
+								 style="height: 100%;"
+								 icon="account_box">
 						{{ store.user.username }}
 					</FmBtn>
 				</template>
@@ -89,6 +114,7 @@
 
 	const store = useStore()
 	const config = useRuntimeConfig()
+
 	const SECTIONS = {
 		1: 'Events',
 		2: 'Transactions',
@@ -143,6 +169,11 @@
 </script>
 
 <style lang="scss" scoped>
+	@mixin header_txt {
+		font-weight: 500;
+		color: $text-lighten;
+		text-transform: initial;
+	}
 	header {
 		display: flex;
 		justify-content: space-between;
@@ -151,9 +182,17 @@
 		background: $main-darken;
 		padding: 0 $content-padding-x;
 		border-bottom: 1px solid $border;
+		@include header_txt;
 	}
-	.header_item + .header_item {
+	/*.header_item + .header_item {
 		margin-left: 10px;
+	}*/
+	:deep(.header_text), :deep(.fm_btn.text.header_text) {
+		@include header_txt;
+	}
+	.header_icon_btn {
+		margin-left: 5px;
+		margin-right: 5px;
 	}
 	.fm_message_item {
 		padding: 11px;
