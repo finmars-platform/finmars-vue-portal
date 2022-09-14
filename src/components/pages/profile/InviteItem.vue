@@ -1,7 +1,6 @@
 <template>
 	<FmCard
 		class="d-flex flex-column"
-		color="rgba(240, 90, 34, 0.1)"
 		:title="invite.to_master_user_object.name"
 	>
 		<v-card-text v-if="invite.to_master_user_object.description">

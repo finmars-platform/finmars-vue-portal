@@ -1,5 +1,7 @@
 <template>
-	<FmCard class="" controls>
+	<FmCard class="db" controls
+		:class="{red: diffDateKey <= 0, warn: diffDateKey > 0 && diffDateKey <= 30}"
+	>
 		<div class="flex aic sb">
 			<div class="fm_card_title edit_hover m-b-0">
 				<span v-if="!isEditTitle">
@@ -19,7 +21,7 @@
 				/>
 			</div>
 
-			<FmMenu anchor="right">
+			<FmMenu anchor="right" v-if="db.is_owner || db.is_admin">
 				<template #btn>
 					<FmIcon icon="settings" />
 				</template>
@@ -59,7 +61,7 @@
 
 
 		<div class="fm_card_subtitle m-t-8">
-			{{ db.is_initialized ? `Expire (${ db.license_expiry_date })` : 'Workspace is initializing'}}
+			{{ status }}
 		</div>
 
 		<div class="fm_card_content fm_card_text mb-x edit_hover">
@@ -104,6 +106,8 @@
 
 <script setup>
 
+	import moment from 'moment'
+
 	const props = defineProps({
 		db: Object
 	});
@@ -127,6 +131,17 @@
 	setEditObject()
 
 	let showActions = ref(false)
+
+	let dateKey = moment( props.db.license_expiry_date )
+	let diffDateKey = dateKey.diff(moment(), 'days')
+
+	let status = computed(() => {
+		if ( !props.db.is_initialized ) return 'Workspace is initializing'
+
+		if ( diffDateKey <= 0  ) return `Expired ${dateKey.format('DD.MM.YYYY')}`
+		else if ( diffDateKey <= 30  ) return `Expire ${dateKey.fromNow()}`
+		else return `Expire date: ${dateKey.format('DD.MM.YYYY')}`
+	})
 
 	function setEditObject() {
 		editingData.description = props.db.description;
@@ -225,6 +240,14 @@
 </script>
 
 <style lang="scss" scoped>
+.db {
+	&.red {
+		background: #FFCCCC;
+	}
+	&.warn {
+		background: #FFE8CC;
+	}
+}
 .edit_icon {
 	display: inline-block;
 	opacity: 0;
