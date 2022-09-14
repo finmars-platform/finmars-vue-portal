@@ -439,7 +439,7 @@
 		for ( let [year, months] of yearsBuffer ) {
 			portfolioYears.value.push( year )
 			portfolioItems.value.push( Object.values(months).map((item, i) => {
-				if ( year != dateTo.year() || i <= dateTo.month() ) return item[1]
+				if ( year != dateTo.year() || i <= dateTo.month() ) return item[0]
 				else return ''
 			}))
 			portfolioItemsCumm.value.push( Object.values(months).map((item, i) => {
