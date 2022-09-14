@@ -1,7 +1,7 @@
 <template>
 
 	<div class="fm_menu" v-click-outside="() => isOpen = false">
-		<div @click="toggle()" ref="activator">
+		<div @click="toggle()" ref="activator" class="height-100">
 			<slot name="btn" :isOpen="isOpen"></slot>
 		</div>
 
