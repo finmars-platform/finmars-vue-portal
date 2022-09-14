@@ -1,5 +1,5 @@
 <template>
-	<BaseModal title="Settings" @cancel="cancel()" v-model="openDialog">
+	<BaseModal title="Settings">
 		<div class="rs_mc_wrap" v-if="readyStatus">
 			<RvSettingsBlock title="General">
 				<RvSettingsRow label="Date to">

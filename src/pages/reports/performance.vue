@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<PagesReportsPerformanceDialogSettings
-			v-model:open-dialog="showSettingsDialog"
+			v-model="showSettingsDialog"
 			v-model:layout-ready-status="layoutSet"
 			:viewer-data="viewerData"
 			:bundles="bundles"

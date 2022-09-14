@@ -2,6 +2,7 @@
 	<Teleport to="body" v-if="modelValue">
 		<transition name="fade">
 			<div class="modal_wrap flex aic jcc"
+				:class="{no_padding: no_padding}"
 				v-show="modelValue"
 			>
 				<div class="modal">
@@ -35,10 +36,11 @@ export default {
 
   props: {
 		modelValue: Boolean,
-		title: String
+		title: String,
+		no_padding: Boolean
 	},
 	emits: [
-		'cancel',
+		'update:modelValue',
 	],
   data() {
     return {
@@ -56,7 +58,7 @@ export default {
 
   methods: {
     cancel() {
-      this.$emit('cancel')
+      this.$emit('update:modelValue', false)
     },
   }
 }
@@ -79,6 +81,11 @@ export default {
 			left: 0;
 			bottom: 0;
 			z-index: 1;
+		}
+		&.no_padding {
+			.modal_content {
+				padding: 0;
+			}
 		}
 	}
 	.modal_top {
