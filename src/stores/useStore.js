@@ -7,6 +7,7 @@ export default defineStore({
 			user: {},
 			ws: null,
 			masterUsers: [],
+			masterUser: {},
 			member: {},
 			current: {},
 		};
@@ -30,10 +31,20 @@ export default defineStore({
 
 		},
 		async getMasterUsers() {
-			let res = await useApi("masterUser.get")
+			let res = await useApi("masterUser.get");
 
-			this.masterUsers = res.results
-			this.current.name = this.masterUsers.find(item => item.id == this.current.current_master_user_id )?.name
+			if (res.error) return;
+
+			this.masterUsers = res.results;
+
+			const activeMasterUser = this.masterUsers.find(item => item.id === this.current.current_master_user_id );
+
+			if (activeMasterUser) {
+				this.masterUser = activeMasterUser;
+				this.current.name = activeMasterUser.name;
+			}
+
+			// this.current.name = this.masterUsers.find(item => item.id == this.current.current_master_user_id )?.name
 		},
 
 		setupMemberData (isReport, entityType) {
