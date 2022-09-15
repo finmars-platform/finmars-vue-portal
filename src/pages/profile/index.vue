@@ -16,20 +16,17 @@
 </template>
 
 <script setup>
-
 	definePageMeta({
-		layout: 'profile',
 		bread: [
 			{
-				text: 'Profile',
-				to: '/profile',
-				disabled: true
-			}
+				text: "Profile",
+				to: "/profile",
+				disabled: true,
+			},
 		],
-	});
+	})
 
 	const tabs = ["Workspaces", "Backups", "Billing", "Settings", "Api"]
 	let tab = ref("Workspaces")
 	let error = ref(null)
-
 </script>
