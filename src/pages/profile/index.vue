@@ -2,7 +2,7 @@
 	<div>
 		<Head>
 			<Title>Profile</Title>
-			<Link type="image/x-icon" rel="icon" href="/v/img/favicon/favicon.ico" />
+			<Link type="image/x-icon" rel="icon" href="/img/favicon/favicon.ico" />
 		</Head>
 
 		<FmTabs v-model="tab" :tabs="tabs" />
@@ -17,6 +17,7 @@
 
 <script setup>
 	definePageMeta({
+		isHideSidebar: true,
 		bread: [
 			{
 				text: "Profile",
