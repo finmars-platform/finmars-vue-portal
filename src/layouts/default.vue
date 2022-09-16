@@ -1,9 +1,8 @@
 <template>
 	<div
 		class="wrap"
-		:style="{ 'grid-template-columns': `${sidenav_width}px 1fr` }"
 	>
-		<TheSidebar v-if="isShowSidebar" />
+		<LazyTheSidebar v-if="!$route.meta.isHideSidebar" />
 
 		<div class="main">
 			<TheHeader />
@@ -18,15 +17,7 @@
 <script setup>
 	import Stream from "~/services/WebSocket.js"
 
-	defineProps({
-		isShowSidebar: {
-			type: Boolean,
-			default: true,
-		},
-	})
-
-	let store = useStore()
-	let sidenav_width = useState("sidenav_width")
+	const store = useStore()
 
 	await store.init()
 
@@ -43,8 +34,6 @@
 		console.log("e:", e)
 	}
 	onMounted(() => {
-		let store = useStore()
-
 		if (!store.current.base_api_url) {
 			useNotify({
 				title: "Workspace is not selected",
@@ -68,9 +57,11 @@
 </script>
 <style lang="scss" scoped>
 	.wrap {
-		display: grid;
+		display: flex;
 	}
 	.main {
+		flex-grow: 1;
+		width: calc(100vw - 160px);
 		background: $main;
 	}
 	.content {

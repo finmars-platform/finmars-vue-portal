@@ -3,11 +3,10 @@
 		<FmBreadcrumbs :items="$route.meta.bread" />
 
 		<div class="flex aic height-100">
-			<div
+			<template
 				v-if="
-					store.current.name && $router.currentRoute.value.name !== 'profile'
+					store.current.name && !$route.path.includes('/profile')
 				"
-				class="flex fi-center height-100"
 			>
 				<FmMenu class="header_item header_icon_btn" v-if="noti">
 					<template #btn="{ isOpen }">
@@ -68,12 +67,12 @@
 						class="header_item header_icon_btn"
 					/>
 				</a>
-			</div>
+			</template>
 
 			<FmIcon
 				class="header_item header_icon_btn"
 				v-if="
-					store.current.name && $router.currentRoute.value.name === 'profile'
+					store.current.name && $route.name === 'profile'
 				"
 				btn
 				tooltip="Homepage"
@@ -170,13 +169,12 @@
 	])
 	let noti = ref(null)
 
-	if (store.current.base_api_url) {
-		loadNoti()
-	}
-
-	watch(
-		() => store.current,
-		() => loadNoti()
+	watchEffect(
+		() => {
+			if (store.current.base_api_url) {
+				loadNoti()
+			}
+		}
 	)
 
 	async function loadNoti(id) {

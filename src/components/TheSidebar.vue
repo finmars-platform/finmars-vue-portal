@@ -1568,11 +1568,12 @@
 
 	.sidenav-wrapper {
 		position: relative;
-		width: $leftSidenavWidth;
+		min-width: $leftSidenavWidth;
 		height: 100vh;
 		top: 0;
 		left: 0;
 		z-index: 61;
+		transition: min-width ease 0.25s;
 
 		span.side-nav-title {
 			position: relative;
@@ -1588,8 +1589,6 @@
 			// bottom: 3px;
 			bottom: 6px;
 		}
-
-		transition: width ease 0.25s;
 	}
 
 	.side-menu {
@@ -1795,7 +1794,7 @@
 		}
 
 		.sidenav-wrapper {
-			width: $collapsedLeftSidenavWidth;
+			min-width: $collapsedLeftSidenavWidth;
 			z-index: 11000;
 		}
 
