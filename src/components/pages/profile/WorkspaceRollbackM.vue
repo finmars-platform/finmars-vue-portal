@@ -1,5 +1,5 @@
 <template>
-	<BaseModal no_padding title="Rollback Workspace from Backup">
+	<BaseModal no_padding title="Rollback Workspace from Backup" @update:model-value="cancel()">
 		<template v-if="!pending">
 			<div
 				class="backup"
@@ -26,7 +26,7 @@
 				label="Create backup before rollback"
 			/>
 			<div class="flex sb">
-				<FmBtn type="text" @click="$emit('update:modelValue', false)">cancel</FmBtn>
+				<FmBtn type="text" @click="cancel()">cancel</FmBtn>
 
 				<FmBtn :disabled="!body.master_user_backup_id" :processing="processing" @click="rollback()">start</FmBtn>
 			</div>
@@ -69,7 +69,10 @@
 			})
 		}
 
-		processing.value = false
+		cancel()
+	}
+
+	function cancel() {
 		emit('update:modelValue', false)
 	}
 	function fromatDate( date ) {

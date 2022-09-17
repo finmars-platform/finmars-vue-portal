@@ -26,7 +26,7 @@
 		/** @values bottom, top, top-start */
 		anchor: {
 			type: String,
-			default: 'bottom',
+			default: 'bottom left',
 		},
 		menuMinHeight: String,
 		offsetY: {
@@ -39,8 +39,10 @@
 	let popup = ref(null) // DOM element
 	let activator = ref(null) // DOM element
 
-	let clientWidth = window.innerWidth
-	let clientHeight = window.innerHeight
+	let isTop = props.anchor.includes('top')
+	let isBot = props.anchor.includes('bottom')
+	let isLeft = props.anchor.includes('left')
+	let isRight = props.anchor.includes('right')
 
 	watch(isOpen, async () => {
 		if ( !isOpen.value ) return false
@@ -49,27 +51,55 @@
 		let activatorRect = activator.value.getBoundingClientRect()
 		let popupRect = popup.value.getBoundingClientRect()
 
+		let parent = popup.value.closest('.scrollable')
+		let distanceToLeft, distanceToRight, distanceToTop, distanceToBottom
+
+		if ( parent ) {
+			let parentRect = parent.getBoundingClientRect()
+
+			distanceToLeft = parentRect.left - activatorRect.left
+			distanceToRight = parentRect.right - activatorRect.right
+			distanceToTop = activatorRect.top - parentRect.top
+			distanceToBottom = parentRect.bottom - activatorRect.bottom
+
+		} else {
+
+			distanceToLeft = window.innerWidth - activatorRect.left
+			distanceToRight = window.innerWidth - activatorRect.right
+			distanceToTop = activatorRect.top - window.innerHeight
+			distanceToBottom = window.innerHeight - activatorRect.bottom
+		}
+
 		// Hack чтобы посчитать реальную ширину
 		popup.value.style.position = 'absolute'
 		popup.value.style.minWidth = `${popupRect.width}px`
 		popup.value.style.width = `100%`
+		console.log('popupRect.height:', popupRect.height)
+		console.log('distanceToTop:', distanceToTop)
 
-		// Y axios
-		if ( props.anchor == 'bottom' ) {
-			popup.value.style.top = `${activatorRect.height + props.offsetY}px`
-		}
-		else if (props.anchor === 'top') {
-			popup.value.style.top = `${0 + props.offsetY}px`;
-		}
-		else if ( clientHeight - activatorRect.bottom < popupRect.height ) {
-			popup.value.style.bottom = `${activatorRect.height}px`;
-		}
 
+
+		// Y axios || if no anchor or anchor == bottom and top have distance
+		if (
+			( ((!isTop && !isBot) || isBot) && distanceToBottom >= popupRect.height )
+			|| distanceToTop <= popupRect.height
+		) {
+			popup.value.style.top    = `${activatorRect.height + props.offsetY}px`
+		} else {
+			popup.value.style.bottom = `${activatorRect.height + props.offsetY}px`;
+		}
 
 		// X axios
-
-		if ( (clientWidth - activatorRect.right <= popupRect.width) || props.anchor.includes('right') ) {
+		if ( (distanceToRight <= popupRect.width) || props.anchor.includes('right') ) {
 			popup.value.style.right = `0`
+		}
+		if (
+			( ((!isLeft && !isRight) || isRight) && distanceToRight >= popupRect.width )
+			|| distanceToLeft <= popupRect.width
+		) {
+			popup.value.style.right = `0`
+		} else {
+			popup.value.style.left = 0
 		}
 	})
 	function toggle() {
