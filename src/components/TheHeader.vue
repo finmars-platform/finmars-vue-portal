@@ -3,32 +3,43 @@
 		<FmBreadcrumbs :items="$route.meta.bread" />
 
 		<div class="flex aic height-100">
-
-			<div v-if="store.current.name && $router.currentRoute.value.name !== 'profile'"
-					 class="flex fi-center height-100">
-
+			<template
+				v-if="
+					store.current.name && !$route.path.includes('/profile')
+				"
+			>
 				<FmMenu class="header_item header_icon_btn" v-if="noti">
 					<template #btn="{ isOpen }">
-						<FmIcon class="noti_icon"
-										:class="{active: noti.length}"
-										btn
-										icon="notifications"
+						<FmIcon
+							class="noti_icon"
+							:class="{ active: noti.length }"
+							btn
+							icon="notifications"
 						/>
 					</template>
 
 					<div class="fm_list">
 						<template v-if="noti.length">
-							<div class="fm_message_item"
-									 v-for="(item, index) in noti"
-									 :key="index"
+							<div
+								class="fm_message_item"
+								v-for="(item, index) in noti"
+								:key="index"
 							>
 								<div class="flex sb">
-									<div class="fm_message_item_date">{{ fromatDate(item.created) }}</div>
-									<div class="fm_message_item_section">{{ SECTIONS[item.section] }}</div>
+									<div class="fm_message_item_date">
+										{{ fromatDate(item.created) }}
+									</div>
+									<div class="fm_message_item_section">
+										{{ SECTIONS[item.section] }}
+									</div>
 								</div>
 								<div class="fm_message_item_h">{{ item.title }}</div>
 								<div class="fm_message_item_t">
-									{{ item.description.length > 65 ? item.description.slice(0, 65) + '...' : item.description }}
+									{{
+										item.description.length > 65
+											? item.description.slice(0, 65) + "..."
+											: item.description
+									}}
 								</div>
 							</div>
 							<div class="tac p-8">
@@ -40,23 +51,29 @@
 				</FmMenu>
 
 				<a :href="`${config.public.apiURL}/a/#!/processes`">
-					<FmIcon icon="cloud_download"
-									btn
-									tooltip="Open Active Processes"
-									class="header_item header_icon_btn" />
+					<FmIcon
+						icon="cloud_download"
+						btn
+						tooltip="Open Active Processes"
+						class="header_item header_icon_btn"
+					/>
 				</a>
 
 				<a :href="`${config.public.apiURL}/documentation`">
-					<FmIcon icon="help"
-									btn
-									tooltip="Open help menu"
-									class="header_item header_icon_btn" />
+					<FmIcon
+						icon="help"
+						btn
+						tooltip="Open help menu"
+						class="header_item header_icon_btn"
+					/>
 				</a>
+			</template>
 
-			</div>
-
-			<FmIcon class="header_item header_icon_btn"
-				v-if="store.current.name && $router.currentRoute.value.name === 'profile'"
+			<FmIcon
+				class="header_item header_icon_btn"
+				v-if="
+					store.current.name && $route.name === 'profile'
+				"
 				btn
 				tooltip="Homepage"
 				icon="home"
@@ -74,10 +91,11 @@
 					</template>
 
 					<div class="fm_list">
-						<div class="fm_list_item"
+						<div
+							class="fm_list_item"
 							v-for="(item, index) in store.masterUsers"
 							:key="index"
-							@click="setCurrent( item.id )"
+							@click="setCurrent(item.id)"
 						>
 							{{ item.name }}
 						</div>
@@ -96,7 +114,8 @@
 				</template>
 
 				<div class="fm_list">
-					<div class="fm_list_item"
+					<div
+						class="fm_list_item"
 						v-for="(item, index) in menu"
 						:key="index"
 						@click="item.cb()"
@@ -110,61 +129,70 @@
 </template>
 
 <script setup>
-	import moment from 'moment'
+	import moment from "moment"
 
 	const store = useStore()
 	const config = useRuntimeConfig()
 
 	const SECTIONS = {
-		1: 'Events',
-		2: 'Transactions',
-		3: 'Instruments',
-		4: 'Data',
-		5: 'Prices',
-		6: 'Report',
-		7: 'Import',
-		8: 'Activity log',
-		9: 'Schedules',
-		10: 'Other'
+		1: "Events",
+		2: "Transactions",
+		3: "Instruments",
+		4: "Data",
+		5: "Prices",
+		6: "Report",
+		7: "Import",
+		8: "Activity log",
+		9: "Schedules",
+		10: "Other",
 	}
 
 	let menu = ref([
-		{name: 'Profile', cb: () => {navigateTo('/profile')}},
-		{name: 'Logout', cb: () => {
-			useCookie('access_token').value = null
-			useCookie('refresh_token').value = null
-			window.location.href = '/logout'
-		}},
+		{
+			name: "Profile",
+			cb: () => {
+				navigateTo("/profile")
+			},
+		},
+		{
+			name: "Logout",
+			cb: () => {
+				useCookie("access_token").value = null
+				useCookie("refresh_token").value = null
+				window.location.href = "/logout"
+			},
+		},
 	])
 	let noti = ref(null)
 
-	if ( store.current.base_api_url ) {
-		loadNoti()
-	}
-
-	watch(
-		() => store.current,
-		() => loadNoti()
+	watchEffect(
+		() => {
+			if (store.current.base_api_url) {
+				loadNoti()
+			}
+		}
 	)
 
-	async function loadNoti( id ) {
-		let res = await useApi('systemMessages.get', {filters: {only_new: true}})
+	async function loadNoti(id) {
+		let res = await useApi("systemMessages.get", {
+			filters: { only_new: true },
+		})
 
-		if ( res.error ) return false
-		noti.value = res.results.filter( item => !item.is_pinned ).slice(0, 3)
+		if (res.error) return false
+		noti.value = res.results.filter((item) => !item.is_pinned).slice(0, 3)
 	}
 
-	function fromatDate( date ) {
-		if ( moment().diff(moment(date), 'hours') > 12 )
-			return moment( date ).format('DD.MM.YYYY HH:mm')
+	function fromatDate(date) {
+		if (moment().diff(moment(date), "hours") > 12)
+			return moment(date).format("DD.MM.YYYY HH:mm")
 
-		return moment( date ).fromNow()
+		return moment(date).fromNow()
 	}
 
-	async function setCurrent( id ) {
-		let res = await useApi('masterSet.patch', {params: {id}})
+	async function setCurrent(id) {
+		let res = await useApi("masterSet.patch", { params: { id } })
 
-		if ( res ) window.location.href = config.public.oldAppURL
+		if (res) window.location.href = config.public.oldAppURL
 	}
 </script>
 
@@ -187,7 +215,8 @@
 	/*.header_item + .header_item {
 		margin-left: 10px;
 	}*/
-	:deep(.header_text_btn), :deep(.fm_btn.text.header_text_btn) {
+	:deep(.header_text_btn),
+	:deep(.fm_btn.text.header_text_btn) {
 		@include header_txt;
 		padding: 0 12px;
 	}
@@ -201,7 +230,8 @@
 		font-size: 14px;
 		width: 280px;
 
-		&_h, &_t {
+		&_h,
+		&_t {
 			margin-top: 11px;
 		}
 		&_h {
@@ -218,7 +248,7 @@
 	.noti_icon {
 		position: relative;
 		&.active:after {
-			content: '';
+			content: "";
 			display: block;
 			position: absolute;
 			top: 9px;

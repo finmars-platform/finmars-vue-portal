@@ -129,9 +129,8 @@ export default defineStore({
 					})
 					res = await useApi("ping.get")
 				} else {
-					const config = useRuntimeConfig()
 
-					useRouter().push('/login')
+					window.location.href = '/login'
 				}
 			}
 

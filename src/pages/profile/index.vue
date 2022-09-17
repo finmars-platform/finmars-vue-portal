@@ -2,7 +2,7 @@
 	<div>
 		<Head>
 			<Title>Profile</Title>
-			<Link type="image/x-icon" rel="icon" href="/v/img/favicon/favicon.ico" />
+			<Link type="image/x-icon" rel="icon" href="/img/favicon/favicon.ico" />
 		</Head>
 
 		<FmTabs v-model="tab" :tabs="tabs" />
@@ -16,20 +16,18 @@
 </template>
 
 <script setup>
-
 	definePageMeta({
-		layout: 'profile',
+		isHideSidebar: true,
 		bread: [
 			{
-				text: 'Profile',
-				to: '/profile',
-				disabled: true
-			}
+				text: "Profile",
+				to: "/profile",
+				disabled: true,
+			},
 		],
-	});
+	})
 
 	const tabs = ["Workspaces", "Backups", "Billing", "Settings", "Api"]
 	let tab = ref("Workspaces")
 	let error = ref(null)
-
 </script>
