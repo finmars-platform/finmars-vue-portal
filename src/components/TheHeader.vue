@@ -67,7 +67,7 @@
 				<FmMenu class="header_item height-100">
 					<template #btn="{ isOpen }">
 						<FmBtn type="text"
-									 :class="['header_text', 'm-l-4', 'm-r-4', {active: isOpen}]"
+									 :class="['header_text_btn', 'm-l-8', 'm-r-8', {active: isOpen}]"
 									 style="height: 100%;">
 							{{ store.current.name }}
 						</FmBtn>
@@ -88,7 +88,7 @@
 			<FmMenu class="header_item height-100">
 				<template #btn="{ isOpen }">
 					<FmBtn type="text"
-								 :class="['header_text', {active: isOpen}]"
+								 :class="['header_text_btn', {active: isOpen}]"
 								 style="height: 100%;"
 								 icon="account_box">
 						{{ store.user.username }}
@@ -187,12 +187,13 @@
 	/*.header_item + .header_item {
 		margin-left: 10px;
 	}*/
-	:deep(.header_text), :deep(.fm_btn.text.header_text) {
+	:deep(.header_text_btn), :deep(.fm_btn.text.header_text_btn) {
 		@include header_txt;
+		padding: 0 12px;
 	}
 	.header_icon_btn {
-		margin-left: 5px;
-		margin-right: 5px;
+		margin-left: 2px;
+		margin-right: 2px;
 	}
 	.fm_message_item {
 		padding: 11px;

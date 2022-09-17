@@ -10,14 +10,26 @@ export default defineStore({
 			masterUser: {},
 			member: {},
 			current: {},
+			systemErrors: [],
 		};
 	},
 	actions: {
+		registerSysError (error) {
+			this.systemErrors.push({
+				created: new Date().toISOString(),
+				location: window.location.href,
+				text: JSON.stringify(error)
+			})
+		},
 		async init() {
-			await this.ping()
 
-			this.getUser()
-			this.getMasterUsers()
+			await this.ping();
+
+			this.getUser();
+			this.getMasterUsers();
+
+			window.onerror = this.registerSysError;
+
 		},
 		async getUser() {
 			let res = await useApi('me.get')
