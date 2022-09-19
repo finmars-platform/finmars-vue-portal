@@ -22,11 +22,7 @@
 		url: "wss://dev.finmars.com/ws/",
 		onOpen() {
 			store.ws = ws
-		}
-	})
 
-	let effectStop = watchEffect( async () => {
-		if ( store.ws ) {
 			store.ws.send({
 				action: "initial_auth",
 				data: { access_token: useCookie("access_token").value },
@@ -39,14 +35,13 @@
 				action: "update_user_state",
 				data: { master_user: { id: store.current.id } },
 			})
-			effectStop()
 		}
 	})
 
-	let getMeEffectStop = watchEffect( async () => {
+	watchEffect( async ( onCleanup ) => {
 		if ( store.current.base_api_url ) {
-			await store.getMe()
-			getMeEffectStop()
+			onCleanup(() => {})
+			store.getMe()
 		}
 	})
 
