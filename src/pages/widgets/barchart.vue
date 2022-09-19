@@ -1,5 +1,5 @@
 <template>
-	<div style="height: 350px;">
+	<div style="height: 100vh;">
 		<canvas id="myChart"><p>Chart</p></canvas>
 	</div>
 </template>
@@ -8,17 +8,14 @@
 	import Chart from 'chart.js/auto';
 
 	definePageMeta({
-		layout: 'auth',
-		bread: [
-			{
-				text: 'Performance Report',
-				to: '/reports/performance',
-				disabled: true
-			}
-		],
+		layout: 'auth'
 	});
 
+	let wId = useRoute().query.wId
+
 	onMounted(() => {
+		initPostMessageBus()
+
 		let chart = new Chart('myChart', {
 			type: 'bar',
 			data: {
@@ -66,14 +63,36 @@
 					const points = chart.getElementsAtEventForMode(evt, 'nearest', { intersect: false, axis: 'x' }, true);
 
 					if (points.length) {
-						console.log('points:', points)
 						const firstPoint = points[0];
 						const label = chart.data.labels[firstPoint.index];
 						const value = chart.data.datasets[firstPoint.datasetIndex].data[firstPoint.index];
-						console.log('value:', value)
+
+						send({
+							action: 'clickOnChart',
+							data: label
+						})
 					}
         }
 			},
 		});
 	})
+
+	function initPostMessageBus() {
+		if ( window == top ) return false
+
+		send({
+			action: 'init'
+		})
+
+		window.addEventListener("message", (e) => {
+			console.log('Iframe event:', e.source)
+			e.source.postMessage("hi u", "*")
+		});
+	}
+	function send( data, source = window.parent ) {
+		let dataObj = Object.assign(data, {
+			wId,
+		})
+		source.postMessage( dataObj, "*" )
+	}
 </script>
