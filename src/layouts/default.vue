@@ -3,17 +3,16 @@
 		<LazyTheSidebar v-if="!$route.meta.isHideSidebar" />
 
 		<div class="main">
-			<TheHeader />
-
-			<div class="content">
+			<HeaderAndContent>
 				<slot />
-			</div>
+			</HeaderAndContent>
 		</div>
 	</div>
 </template>
 
 <script setup>
 	import Stream from "~/services/WebSocket.js"
+	import HeaderAndContent from "../components/HeaderAndContent";
 
 	const store = useStore()
 	await store.init()
@@ -54,9 +53,5 @@
 		flex-grow: 1;
 		width: calc(100vw - 160px);
 		background: $main;
-	}
-	.content {
-		height: calc(100vh - 56px);
-		overflow: auto;
 	}
 </style>

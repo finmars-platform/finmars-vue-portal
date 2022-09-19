@@ -1,4 +1,7 @@
 <template>
+	<ModalSystemErrorLog v-model="showErrorLog"
+											 @cancel="showErrorLog = false" />
+
 	<div class="sidenav-wrapper">
 		<div class="sidenav-left">
 			<div class="sidenav-logo-container">
@@ -1036,26 +1039,26 @@
 		</div>
 
 		<div class="build-date">
-			<div>Build date: {{ buildDate }}</div>
+			<div class="flex-row">
+				<div>Build date: {{ buildDate }}</div>
+
+				<div class="ws-status"
+						 :class="getWsStatus()"
+						 :title="`Websocket status: ${getWsStatus()}`"></div>
+			</div>
+
+			<div class="sidenav-error-subtitle" @click="showErrorLog = true">
+				<span :class="{'text-warning-red': store.systemErrors.length}">Errors: {{ store.systemErrors.length }}</span>
+			</div>
+
 			<div>
-				<a
-					:href="`${config.public.apiURL}/${store.current.base_api_url}/api/v1/`"
-					class="display-inline white-text"
-					>API:</a
-				>&nbsp;
+				<a :href="`${config.public.apiURL}/${store.current.base_api_url}/api/v1/`"
+					 class="display-inline highlight link">API:</a>&nbsp;
 
-				<span
-					title="Copy"
-					class="cursor-pointer"
-					@click="copyToBuffer(store.current.base_api_url)"
-					>{{ store.current.base_api_url }}</span
-				>&nbsp;
+				<span title="Copy" class="cursor-pointer link" @click="copyToBuffer(store.current.base_api_url)">{{store.current.base_api_url}}</span>&nbsp;
 
-				<a
-					:href="`${config.public.apiURL}/a/#!/update-center`"
-					class="display-inline white-text"
-					>{{ store.current.version }}</a
-				>
+				<a :href="`${config.public.apiURL}/a/#!/update-center`"
+					 class="display-inline highlight link">{{store.current.version}}</a>
 			</div>
 			<!--				<span class="websocket-connection-status {{vm.getWsStatus()}}"
 										title="Websocket status: {{vm.getWsStatus()}}"></span>
@@ -1089,10 +1092,12 @@
 		access: true,
 	}
 
-	const accessSectionTable = {
-		history: true,
-		journal: true,
-		import: true,
+let showErrorLog = ref(false);
+
+const accessSectionTable = {
+	history: true,
+	journal: true,
+	import: true,
 
 		settings_data: true,
 		settings_import_from_providers: true,
@@ -1294,9 +1299,20 @@
 		dropdownMenu.classList.add("display-none")
 	}
 
-	const copyToBuffer = function (content) {
-		const listener = function (e) {
-			e.clipboardData.setData("text/plain", content)
+const getWsStatus = function () {
+
+	if (store.ws && store.ws.readyState === WebSocket.OPEN) {
+		return 'open';
+	}
+
+	return 'closed';
+
+};
+
+const copyToBuffer = function (content) {
+	const listener = function (e) {
+
+		e.clipboardData.setData('text/plain', content);
 
 			e.preventDefault()
 		}
@@ -1653,11 +1669,38 @@
 		width: 100%;
 	}
 
-	@media screen and (max-height: 620px) {
-		.side-menu-bottom-menu {
-			position: relative;
-			bottom: initial;
+.build-date {
+	.highlight {
+		color: #fff;
+	}
+
+	.link:hover {
+		opacity: .7;
+	}
+
+	.ws-status {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		float: right;
+		margin-left: 3px;
+		margin-top: 2px;
+
+		&.open {
+			background: green;
 		}
+
+		&.closed {
+			background: red;
+		}
+	}
+}
+
+@media screen and (max-height: 620px) {
+	.side-menu-bottom-menu {
+		position: relative;
+		bottom: initial;
+	}
 
 		.build-date {
 			display: none;

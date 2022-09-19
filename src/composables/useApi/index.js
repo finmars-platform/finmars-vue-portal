@@ -2,7 +2,7 @@ import routes from "./routes";
 
 let expireTokens
 
-export default async function (
+export default async function useApi (
 		route_opt,
 		{
 			params,  // Router params
@@ -81,5 +81,51 @@ export default async function (
 
 		return {error: e.data || true, code }
 	}
+
+}
+
+export function useLoadAllPages (
+	route_opt,
+	{
+		params,  // Router params
+		body,    // Body for POST PUT PATCH
+		filters = {}, // Query object
+		headers = {},
+	} = {},
+	dataList = [],
+) {
+
+	if (!filters.hasOwnProperty('page')) filters.page = 1;
+
+	const options = {
+		params,
+		body,
+		filters,
+		headers
+	};
+
+	const loadPage = async () => {
+
+		try {
+
+			let res = await useApi(route_opt, options);
+
+			dataList = dataList.concat(res.results);
+
+			if (res.next) {
+				options.filters.page += 1; // number of page to request
+				return loadPage();
+
+			} else {
+				return dataList;
+			}
+
+		} catch (e) {
+			throw e;
+		}
+
+	};
+
+	return loadPage();
 
 }

@@ -10,9 +10,17 @@ export default defineStore({
 			masterUsers: [],
 			current: {},
 			member: {},
+			systemErrors: [],
 		};
 	},
 	actions: {
+		registerSysError (error) {
+			this.systemErrors.push({
+				created: new Date().toISOString(),
+				location: window.location.href,
+				text: JSON.stringify(error)
+			})
+		},
 		async init() {
 			this.getUser()
 			await this.getMasterUsers()
@@ -27,6 +35,9 @@ export default defineStore({
 			const activeMasterUser = this.masterUsers.find( item => item.is_current )
 
 			if ( activeMasterUser ) this.current = activeMasterUser
+
+			window.onerror = this.registerSysError;
+
 		},
 		async getUser() {
 			let res = await useApi('me.get')
