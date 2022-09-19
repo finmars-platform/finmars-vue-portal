@@ -4,20 +4,29 @@ export default defineStore({
 	id: "global",
 	state: () => {
 		return {
+			isAuth: false,
 			user: {},
 			ws: null,
 			masterUsers: [],
-			masterUser: {},
-			member: {},
 			current: {},
+			member: {},
 		};
 	},
 	actions: {
 		async init() {
-			await this.ping()
-
 			this.getUser()
-			this.getMasterUsers()
+			await this.getMasterUsers()
+		},
+		async getMasterUsers() {
+			let res = await useApi("masterUser.get");
+
+			if (res.error) return;
+
+			this.masterUsers = res.results;
+
+			const activeMasterUser = this.masterUsers.find( item => item.is_current )
+
+			if ( activeMasterUser ) this.current = activeMasterUser
 		},
 		async getUser() {
 			let res = await useApi('me.get')
@@ -30,21 +39,15 @@ export default defineStore({
 			}
 
 		},
-		async getMasterUsers() {
-			let res = await useApi("masterUser.get");
+		async getMe() {
+			const res = await useApi('member.get', {params: {id: 0}});
 
-			if (res.error) return;
+			if (res.error) {
+				console.log('res.error:', res.error)
 
-			this.masterUsers = res.results;
-
-			const activeMasterUser = this.masterUsers.find(item => item.id === this.current.current_master_user_id );
-
-			if (activeMasterUser) {
-				this.masterUser = activeMasterUser;
-				this.current.name = activeMasterUser.name;
+			} else {
+				this.member = res;
 			}
-
-			// this.current.name = this.masterUsers.find(item => item.id == this.current.current_master_user_id )?.name
 		},
 
 		setupMemberData (isReport, entityType) {
@@ -91,39 +94,7 @@ export default defineStore({
 
 		},
 
-		async getMe() {
-			const res = await useApi('member.get', {params: {id: 0}});
 
-			if (res.error) {
-				console.log('res.error:', res.error)
-
-			} else {
-				this.member = res;
-			}
-		},
-		async ping() {
-			let res = await useApi("ping.get")
-
-			if ( res.error && res.code == '401' ) {
-				let token = await useApi('tokenRefresh.post', {body: {
-					refresh_token: useCookie('refresh_token').value }
-				})
-
-				if ( !token.error ) {
-					useCookie('access_token').value = token.access_token
-
-					await new Promise((rej) => {
-						setTimeout(rej, 300)
-					})
-					res = await useApi("ping.get")
-				} else {
-
-					window.location.href = '/login'
-				}
-			}
-
-			this.current = res
-		},
 	},
 	getters: {
 		memberEntityViewerSettings(state) {
