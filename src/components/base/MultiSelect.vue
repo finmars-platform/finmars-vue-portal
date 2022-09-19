@@ -114,7 +114,15 @@
 	let selectedFilterNames  = computed(() => {
 		return [...selectedFilter].map(
 			id => {
-				return (props.items.find(item => item[props.item_id] == id))[props.item_title]
+
+				const selItem = props.items.find(item => item[props.item_id] === id);
+
+				if (selItem) {
+					return selItem[props.item_title];
+				}
+
+				return '';
+
 			}
 		)
 	})
