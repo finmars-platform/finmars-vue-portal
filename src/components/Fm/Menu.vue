@@ -90,9 +90,6 @@
 		}
 
 		// X axios
-		if ( (distanceToRight <= popupRect.width) || props.anchor.includes('right') ) {
-			popup.value.style.right = `0`
-		}
 		if (
 			( ((!isLeft && !isRight) || isRight) && distanceToRight >= popupRect.width )
 			|| distanceToLeft <= popupRect.width
