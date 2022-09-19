@@ -15,6 +15,7 @@
 <script setup>
 
 	definePageMeta({
+		middleware: 'auth',
 		bread: [
 			{
 				text: 'Home page: Investor',

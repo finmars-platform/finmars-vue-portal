@@ -30,6 +30,7 @@
 
 <script setup>
 	definePageMeta({
+		middleware: 'auth',
 		bread: [
 			{
 				text: "Profile",

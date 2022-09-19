@@ -248,7 +248,7 @@
 			params: { id: props.db.id },
 		});
 		if ( res.success ) {
-			await store.ping()
+			await store.getMasterUsers()
 			navigateTo('/')
 		}
 	}

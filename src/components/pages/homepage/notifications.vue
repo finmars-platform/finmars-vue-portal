@@ -481,20 +481,25 @@
 
 	let newMessages = ref(0)
 
-	store.ws.on('new_system_message', async ( data ) => {
-		if (
-			openedStream.value &&
-			( data.section == openedStream.value.id || openedStream.value.id == 0 )
-		) {
-			let message = await useApi( 'systemMessagesOne.get', { params: {id: data.id} } )
+	let effectStop = watchEffect( async () => {
+		if ( store.ws ) {
+			store.ws.on('new_system_message', async ( data ) => {
+				if (
+					openedStream.value &&
+					( data.section == openedStream.value.id || openedStream.value.id == 0 )
+				) {
+					let message = await useApi( 'systemMessagesOne.get', { params: {id: data.id} } )
 
-			if ( message.error ) return false
+					if ( message.error ) return false
 
-			let pinned = messages.value.filter(item => item.is_pinned)
-			let start = pinned.length
+					let pinned = messages.value.filter(item => item.is_pinned)
+					let start = pinned.length
 
-			messages.value.splice( start, 0, message )
-			newMessages.value += 1
+					messages.value.splice( start, 0, message )
+					newMessages.value += 1
+				}
+			})
+			effectStop()
 		}
 	})
 

@@ -1054,7 +1054,7 @@
 				<a
 					:href="`${config.public.apiURL}/a/#!/update-center`"
 					class="display-inline white-text"
-					>{{ store.masterUser.version }}</a
+					>{{ store.current.version }}</a
 				>
 			</div>
 			<!--				<span class="websocket-connection-status {{vm.getWsStatus()}}"

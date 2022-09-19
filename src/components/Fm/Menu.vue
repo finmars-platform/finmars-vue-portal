@@ -74,8 +74,6 @@
 		popup.value.style.position = 'absolute'
 		popup.value.style.minWidth = `${popupRect.width}px`
 		popup.value.style.width = `100%`
-		console.log('popupRect.height:', popupRect.height)
-		console.log('distanceToTop:', distanceToTop)
 
 
 

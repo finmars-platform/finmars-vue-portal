@@ -1,7 +1,5 @@
 <template>
-	<div
-		class="wrap"
-	>
+	<div class="wrap">
 		<LazyTheSidebar v-if="!$route.meta.isHideSidebar" />
 
 		<div class="main">
@@ -18,42 +16,40 @@
 	import Stream from "~/services/WebSocket.js"
 
 	const store = useStore()
-
 	await store.init()
 
-	store.ws = new Stream({
+	let ws = new Stream({
 		url: "wss://dev.finmars.com/ws/",
-	})
-
-	try {
-		store.ws.send({
-			action: "initial_auth",
-			data: { access_token: useCookie("access_token").value },
-		})
-	} catch (e) {
-		console.log("e:", e)
-	}
-	onMounted(() => {
-		if (!store.current.base_api_url) {
-			useNotify({
-				title: "Workspace is not selected",
-				type: "warn",
-			})
-
-			useRouter().push("/profile")
-		} else {
-			store.getMe().then((res) => {
-				store.ws.send({
-					action: "update_user_state",
-					data: { member: store.member },
-				})
-				store.ws.send({
-					action: "update_user_state",
-					data: { master_user: { id: store.current.current_master_user_id } },
-				})
-			})
+		onOpen() {
+			store.ws = ws
 		}
 	})
+
+	let effectStop = watchEffect( async () => {
+		if ( store.ws ) {
+			store.ws.send({
+				action: "initial_auth",
+				data: { access_token: useCookie("access_token").value },
+			})
+			store.ws.send({
+				action: "update_user_state",
+				data: { member: store.member },
+			})
+			store.ws.send({
+				action: "update_user_state",
+				data: { master_user: { id: store.current.id } },
+			})
+			effectStop()
+		}
+	})
+
+	let getMeEffectStop = watchEffect( async () => {
+		if ( store.current.base_api_url ) {
+			await store.getMe()
+			getMeEffectStop()
+		}
+	})
+
 </script>
 <style lang="scss" scoped>
 	.wrap {

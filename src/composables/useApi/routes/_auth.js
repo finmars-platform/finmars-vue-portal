@@ -21,7 +21,7 @@ export default {
 		put: '/authorizer/master-user-backups/{id}/Restore-from-backup/'
 	},
 	masterRollback: {
-		put: '/master-user/{id}/rollback-from-backup/'
+		put: '/authorizer/master-user/{id}/rollback-from-backup/'
 	},
 	masterRedeploy: {
 		get: '/authorizer/master-user-redeploy/?base_api_url={client}'
