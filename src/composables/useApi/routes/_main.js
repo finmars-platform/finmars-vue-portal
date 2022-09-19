@@ -20,7 +20,7 @@ export default {
 	instrumentScheme: {
 		get: prefix + '/pricing/instrument-pricing-scheme/'
 	},
-	policyFilters: {
+	pricingPolicy: {
 		get: prefix + '/instruments/pricing-policy/'
 	},
 	pricingPoliciesLight: {

@@ -1,6 +1,6 @@
 <template>
 	<BaseModal title="Settings">
-		<div class="rs_mc_wrap" v-if="readyStatus">
+		<div v-show="readyStatus" class="rs_mc_wrap">
 			<RvSettingsBlock title="General">
 				<RvSettingsRow label="Date to">
 					<FmInputDate v-model="reportOptions.end_date" />
@@ -58,7 +58,8 @@
 				<FmCheckbox v-model="components.diagram" label="Graphs" class="m-b-20" />
 			</RvSettingsBlock>
 		</div>
-		<div class="flex-row fc-center" v-else>
+
+		<div v-if="!readyStatus" class="flex-row fc-center">
 			<FmLoader />
 		</div>
 
@@ -66,7 +67,7 @@
 			<div class="flex-row fc-space-between">
 				<FmBtn type="basic" @click="cancel()">CANCEL</FmBtn>
 
-				<FmBtn @click="save()">SAVE</FmBtn>
+				<FmBtn v-model:loading="notReady" @click="save()">SAVE</FmBtn>
 			</div>
 		</template>
 	</BaseModal>
@@ -77,10 +78,16 @@
 	let props = defineProps({
 		openDialog: Boolean,
 		layoutReadyStatus: Boolean,
-		viewerData: Object,
 		bundles: Object,
 	});
 	let emit = defineEmits(["cancel", "save"]);
+
+	const viewerData = inject('viewerData');
+
+	const readyStatusData = reactive({
+		currency: false,
+		pricingPolicy: false,
+	});
 
 	let currencyOpts = ref([]);
 	let pricingPoliciesOpts = ref([]);
@@ -125,44 +132,62 @@
 		},
 	];
 
+	function getReadyStatus () {
+
+		let ready = props.layoutReadyStatus;
+
+		Object.keys(readyStatusData).forEach(status => {
+			ready = ready && readyStatusData[status];
+		})
+
+		return ready;
+
+	}
+
 	let readyStatus = computed(() => {
-		return (
-			currencyOpts.value && props.layoutReadyStatus && pricingPoliciesOpts.value
-		);
+		return getReadyStatus();
+	});
+
+	let notReady = computed(() => {
+		return !getReadyStatus();
 	});
 
 	init();
 
-	let reportOptions = ref({...props.viewerData.reportOptions})
+	let reportOptions = ref({...viewerData.reportOptions})
+
 	watch(
-		() => props.viewerData.reportOptions,
+		() => viewerData.reportOptions,
 		() => {
-			reportOptions.value = { ...props.viewerData.reportOptions }
+			reportOptions.value = { ...viewerData.reportOptions }
 		}
 	);
 
-	let components = ref({ ...props.viewerData.components })
+	let components = ref({ ...viewerData.components })
 	watch(
-		() => props.viewerData.components,
+		() => viewerData.components,
 		() => {
-			components.value = { ...props.viewerData.components }
+			components.value = { ...viewerData.components }
 		}
 	);
 
 
 	async function fetchPpOpts() {
-		const ppData = await useApi("pricingPoliciesLight.get");
+		const ppData = await useLoadAllPages("pricingPoliciesLight.get", {filters: {page: 1, page_size: 1000}});
 
 		if (!ppData.error) {
 			pricingPoliciesOpts.value = ppData.results;
+			readyStatusData.pricingPolicy = true;
 		}
 	}
 	async function fetchCurrenciesOpts() {
-		const ppData = await useApi("currenciesLight.get");
+		const ppData = await useLoadAllPages("currenciesLight.get", {filters: {page: 1, page_size: 1000}});
 
 		if (!ppData.error) {
 			currencyOpts.value = ppData.results;
+			readyStatusData.currency = true;
 		}
+
 	}
 
 	function cancel() {
