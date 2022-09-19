@@ -481,7 +481,7 @@
 
 	let newMessages = ref(0)
 
-	let effectStop = watchEffect( async () => {
+	watchEffect( async (effectStop) => {
 		if ( store.ws ) {
 			store.ws.on('new_system_message', async ( data ) => {
 				if (
@@ -499,7 +499,7 @@
 					newMessages.value += 1
 				}
 			})
-			effectStop()
+			effectStop(() => {})
 		}
 	})
 
