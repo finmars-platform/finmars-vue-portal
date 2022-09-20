@@ -1,5 +1,3 @@
-import { defineNuxtConfig } from "nuxt";
-
 const curDate = new Date();
 const dateString = `${curDate.getHours()}:${curDate.getMinutes()}, ${curDate.getDate()}/${curDate.getMonth()}/${curDate.getFullYear()}`;
 

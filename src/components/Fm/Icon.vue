@@ -1,6 +1,8 @@
 <template>
 	<div :class="['icon', {primary, btn, 'btn-primary': btnPrimary}]" :style="{fontSize: size + 'px'}">
-		<div class="material-icons">{{ icon }}</div>
+		<slot>
+			<div class="material-icons">{{ icon }}</div>
+		</slot>
 
 		<div class="tooltip" v-if="tooltip">{{ tooltip }}</div>
 	</div>

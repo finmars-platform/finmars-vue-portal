@@ -90,16 +90,18 @@
 						</FmBtn>
 					</template>
 
-					<div class="fm_list">
-						<div
-							class="fm_list_item"
-							v-for="(item, index) in store.masterUsers"
-							:key="index"
-							@click="setCurrent(item.id)"
-						>
-							{{ item.name }}
+					<template #default="{ close }">
+						<div class="fm_list">
+							<div
+								class="fm_list_item"
+								v-for="(item, index) in store.masterUsers"
+								:key="index"
+								@click="setCurrent(item.id), close()"
+							>
+								{{ item.name }}
+							</div>
 						</div>
-					</div>
+					</template>
 				</FmMenu>
 			</template>
 
@@ -112,17 +114,18 @@
 						{{ store.user.username }}
 					</FmBtn>
 				</template>
-
-				<div class="fm_list">
-					<div
-						class="fm_list_item"
-						v-for="(item, index) in menu"
-						:key="index"
-						@click="item.cb()"
-					>
-						{{ item.name }}
+				<template #default="{ close }">
+					<div class="fm_list">
+						<div
+							class="fm_list_item"
+							v-for="(item, index) in menu"
+							:key="index"
+							@click="item.cb(), close()"
+						>
+							{{ item.name }}
+						</div>
 					</div>
-				</div>
+				</template>
 			</FmMenu>
 		</div>
 	</header>
@@ -192,7 +195,7 @@
 	async function setCurrent(id) {
 		let res = await useApi("masterSet.patch", { params: { id } })
 
-		if (res) window.location.href = config.public.oldAppURL
+		if (res) window.location.href = '/'
 	}
 </script>
 

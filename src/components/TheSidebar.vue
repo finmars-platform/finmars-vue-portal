@@ -1058,7 +1058,7 @@
 				<span title="Copy" class="cursor-pointer link" @click="copyToBuffer(store.current.base_api_url)">{{store.current.base_api_url}}</span>&nbsp;
 
 				<a :href="`${config.public.apiURL}/a/#!/update-center`"
-					 class="display-inline highlight link">{{store.masterUser.version}}</a>
+					 class="display-inline highlight link">{{store.current.version}}</a>
 			</div>
 			<!--				<span class="websocket-connection-status {{vm.getWsStatus()}}"
 										title="Websocket status: {{vm.getWsStatus()}}"></span>
