@@ -145,11 +145,17 @@
 	}
 
 	let readyStatus = computed(() => {
-		return getReadyStatus();
+		let ready = props.layoutReadyStatus;
+
+		Object.keys(readyStatusData).forEach(status => {
+			ready = ready && readyStatusData[status];
+		})
+
+		return ready;
 	});
 
 	let notReady = computed(() => {
-		return !getReadyStatus();
+		return !readyStatus.value;
 	});
 
 	init();
@@ -176,15 +182,16 @@
 		const ppData = await useLoadAllPages("pricingPoliciesLight.get", {filters: {page: 1, page_size: 1000}});
 
 		if (!ppData.error) {
-			pricingPoliciesOpts.value = ppData.results;
+			pricingPoliciesOpts.value = ppData;
 			readyStatusData.pricingPolicy = true;
 		}
 	}
-	async function fetchCurrenciesOpts() {
-		const ppData = await useLoadAllPages("currenciesLight.get", {filters: {page: 1, page_size: 1000}});
 
-		if (!ppData.error) {
-			currencyOpts.value = ppData.results;
+	async function fetchCurrenciesOpts() {
+		const currencyData = await useLoadAllPages("currenciesLight.get", {filters: {page: 1, page_size: 1000}});
+
+		if (!currencyData.error) {
+			currencyOpts.value = currencyData;
 			readyStatusData.currency = true;
 		}
 

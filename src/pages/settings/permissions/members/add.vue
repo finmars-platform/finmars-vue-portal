@@ -33,7 +33,6 @@
 					<BaseMultiSelect
 						v-model="form.groups"
 						title="Groups"
-						item_title="name"
 						:items="groups"
 					/>
 

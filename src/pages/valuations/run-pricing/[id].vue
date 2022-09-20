@@ -75,11 +75,13 @@
 				<BaseMultiSelect
 					v-model="procedure.pricing_policy_filters"
 					title="Pricing policies"
+					item_title="user_code"
 					:items="policyList"
 				/>
 				<BaseMultiSelect
 					v-model="procedure.portfolio_filters"
 					title="Portfolios"
+					item_title="user_code"
 					:items="portfolioList"
 				/>
 			</FmCard>
@@ -88,11 +90,13 @@
 				<BaseMultiSelect
 					v-model="procedure.instrument_type_filters"
 					title="Instrument types"
+					item_title="user_code"
 					:items="typeList"
 				/>
 				<BaseMultiSelect
 					v-model="procedure.instrument_pricing_scheme_filters"
 					title="Pricing schemes"
+					item_title="user_code"
 					:items="instrumentList"
 				/>
 				<FmSelect multiple
@@ -107,6 +111,7 @@
 				<BaseMultiSelect
 					v-model="procedure.currency_pricing_scheme_filters"
 					title="Pricing schemes"
+					item_title="user_code"
 					:items="currencyList"
 				/>
 				<FmSelect
