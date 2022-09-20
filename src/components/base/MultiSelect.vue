@@ -9,10 +9,10 @@
 
 			<div class="flex aic" style="height: inherit;">
 				<div class="fm_chip"
-					v-for="(item, index) in selectedFilterNames"
-					:key="index"
+					v-for="item in selectedList"
+					:key="selectedList[item_id]"
 				>
-					{{ item.length > 10 ? item.slice(0, 10) + '...' : item }}
+					{{ item[item_title] }}
 				</div>
 			</div>
 		</BaseInput>
@@ -63,7 +63,7 @@
 						</div>
 						<div class="list">
 							<div class="list_item"
-								v-for="item in selectedList"
+								v-for="item in filteredSelList"
 								:key="item.name"
 								:class="{selected: item.selected}"
 								@click="item.selected = !item.selected"
@@ -87,12 +87,16 @@
 
 <script setup>
 	let props = defineProps({
-		items: Array,
+		items: {
+			type: Array,
+			default: []
+		},
+		/** Unique keys or objects of selected items as string separated by comma or inside an array  */
 		modelValue: [String, Array],
 		title: String,
 		item_title: {
 			type: String,
-			default: 'user_code'
+			default: 'name'
 		},
 		item_id: {
 			type: String,
@@ -104,8 +108,12 @@
 	let isOpen = ref(false)
 	let availableSearch = ref('')
 	let selectedSearch = ref('')
-
-	let modelValueArray = props.modelValue
+	/**
+	 * Set of unique ids of selected items
+	 * @type {Ref<Set>}
+	 * */
+	let selectedFilter;
+	/*let modelValueArray = props.modelValue
 
 	if ( typeof modelValueArray == 'string' ) modelValueArray = modelValueArray.split(',')
 
@@ -125,42 +133,73 @@
 
 			}
 		)
-	})
+	})*/
 
-	let selectedList  = computed(() => {
-		if ( !props.items.length ) return []
+	function getSelectedFilter () {
 
-		return props.items.filter(
-			item => {
-				let elem = item[props.item_id]
+		let modelValueArray = props.modelValue;
 
-				return selectedFilter.has(elem) &&
-					item[props.item_title].toLocaleLowerCase().includes( selectedSearch.value.toLocaleLowerCase() )
+		if ( typeof modelValueArray === 'string' ) { // if selected items in form of string, convert them into array
+			modelValueArray = modelValueArray.split(',');
+		}
+
+		if (Array.isArray(modelValueArray) && typeof modelValueArray[0] === 'object') {
+			modelValueArray = modelValueArray.map(selItem => selItem[props.item_id]);
+		}
+
+		return new Set( modelValueArray || [] );
+
+	}
+
+	selectedFilter = ref(getSelectedFilter());
+
+	let selectedList = computed(() => {
+
+		return [...selectedFilter.value].map(selId => {
+
+			let selItem = props.items.find(item => item[props.item_id] === selId);
+
+			if (!selItem) {
+
+				return {
+					[props.item_id]: selId,
+					[props.item_title]: 'Not found',
+					error_data: {
+						description: ''
+					}
+				}
+
 			}
-		)
-	})
+
+			return selItem;
+
+		})
+
+	});
+
+	let filteredSelList = computed(() => {
+		return selectedList.value.filter(selItem => {
+			return selItem[props.item_title].toLocaleLowerCase().includes( selectedSearch.value.toLocaleLowerCase() )
+		})
+	});
 
 	let availableList = computed(() => {
-		if ( !props.items.length ) return []
+		// if ( !props.items.length ) return []
 
-		return props.items.filter(
-			item => {
-				let elem = item[props.item_id]
+		 return props.items.filter(
+				item => {
 
-				return !selectedFilter.has(elem) &&
-					item[props.item_title].toLocaleLowerCase().includes(availableSearch.value.toLocaleLowerCase())
-			}
+					let itemId = item[props.item_id];
+
+					let itemPassesFilter = item[props.item_title].toLocaleLowerCase().includes(availableSearch.value.toLocaleLowerCase());
+
+					return !selectedFilter.value.has(itemId) && itemPassesFilter;
+
+				}
 		)
+
 	})
 
-	function save() {
-		let result = [...selectedFilter]
-		if ( typeof props.modelValue == 'String' ) result = result.join(',')
-
-		emit('update:modelValue', result )
-
-		isOpen.value = false
-	}
 	function addItem( all ) {
 		let items = availableList.value
 			.filter(item => item.selected || !!all)
@@ -168,7 +207,7 @@
 				item.selected = false
 				return item[props.item_id]
 			})
-		items.forEach( item => selectedFilter.add(item) )
+		items.forEach( item => selectedFilter.value.add(item) )
 	}
 	function removeItem( all ) {
 		let items = selectedList.value
@@ -178,8 +217,24 @@
 				return item[props.item_id]
 			})
 
-		items.forEach( item => selectedFilter.delete(item) )
+		items.forEach( item => selectedFilter.value.delete(item) )
 	}
+
+	function save() {
+		let result = [...selectedFilter.value]
+		if ( typeof props.modelValue == 'String' ) result = result.join(',')
+
+		emit('update:modelValue', result )
+
+		isOpen.value = false
+	}
+
+	watch(
+		() => props.modelValue,
+		() => {
+			selectedFilter.value = getSelectedFilter();
+		}
+	)
 
 </script>
 
