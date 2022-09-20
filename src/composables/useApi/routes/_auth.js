@@ -26,6 +26,12 @@ export default {
 	masterRedeploy: {
 		get: '/authorizer/master-user-redeploy/?base_api_url={client}'
 	},
+	masterStart: {
+		get: '/authorizer/master-user-start/?base_api_url={client}'
+	},
+	masterStop: {
+		get: '/authorizer/master-user-stop/?base_api_url={client}'
+	},
 	masterExport: {
 		get: '/authorizer/master-user-export/{id}/'
 	},

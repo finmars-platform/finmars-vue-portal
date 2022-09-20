@@ -75,7 +75,6 @@
 		popup.value.style.minWidth = `${popupRect.width}px`
 		popup.value.style.width = `100%`
 
-		console.log('авпав', distanceToTop <= popupRect.height)
 		// Y axios || if no anchor or anchor == bottom and top have distance
 		if (
 			(
