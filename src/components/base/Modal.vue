@@ -17,7 +17,7 @@
 						<FmIcon icon="close" @click="cancel()"/>
 					</div>
 
-					<div class="modal_content">
+					<div class="modal_content scrollable">
 						<slot />
 					</div>
 
