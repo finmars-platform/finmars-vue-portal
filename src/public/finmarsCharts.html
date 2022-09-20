@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+	<div id="parentWidgetId"></div>
+	blablalba
+	<div id="parentWidgetId2"></div>
+
+
+	<script type="module">
+		import FinmarsWidgets from 'http://localhost:3000/v/finmarsWidgets.js'
+
+		let FinmarsWidgets2 = new FinmarsWidgets({
+			// apiUrl: "https://finmars.com/blabla/",
+			// websocketUrl: "wss://finmars.com/",
+			widgets: [
+				{
+					name: "barchart",
+					container: "#parentWidgetId" // e.g. finmarsChart1
+				}
+			]
+		})
+	</script>
+</body>
+</html>

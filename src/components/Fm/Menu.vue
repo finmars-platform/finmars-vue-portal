@@ -74,8 +74,6 @@
 		popup.value.style.position = 'absolute'
 		popup.value.style.minWidth = `${popupRect.width}px`
 		popup.value.style.width = `100%`
-		console.log('popupRect.height:', popupRect.height)
-		console.log('distanceToTop:', distanceToTop)
 
 
 
@@ -90,9 +88,6 @@
 		}
 
 		// X axios
-		if ( (distanceToRight <= popupRect.width) || props.anchor.includes('right') ) {
-			popup.value.style.right = `0`
-		}
 		if (
 			( ((!isLeft && !isRight) || isRight) && distanceToRight >= popupRect.width )
 			|| distanceToLeft <= popupRect.width

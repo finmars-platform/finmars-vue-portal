@@ -91,6 +91,16 @@
 				<div>
 					<div class="fm_card_text">Role: {{ db.is_owner ? "owner" : "admin" }}</div>
 					<div class="clipboard flex aic" @click="copy()">
+
+						<FmIcon
+							:tooltip="STATUSES[db.status]"
+							class="db_status"
+							:class="{
+								green: db.status == 1,
+								yellow: db.status == 2,
+								red: db.status == 3,
+							}"
+						></FmIcon>
 						<div class="clipboard_text">{{ db.base_api_url}}</div>
 						<FmIcon class="m-l-4" icon="content_copy" size="16" /></div>
 				</div>
@@ -131,6 +141,12 @@
 
 	let title = ref(null);
 	let description = ref(null);
+
+	const STATUSES = {
+		1: 'Active',
+		2: 'Maintenance',
+		3: 'Offline',
+	}
 
 	let editingData = reactive({
 		description: '',
@@ -232,7 +248,7 @@
 			params: { id: props.db.id },
 		});
 		if ( res.success ) {
-			await store.ping()
+			await store.getMasterUsers()
 			navigateTo('/')
 		}
 	}
@@ -268,6 +284,22 @@
 	}
 	&:hover {
 		color: $text;
+	}
+}
+.db_status {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	margin-right: 7px;
+	margin-top: 1px;
+	&.green {
+		background: #02A471;
+	}
+	&.yellow {
+		background: #FFA462;
+	}
+	&.red {
+		background: #E15303;
 	}
 }
 .edit_icon {

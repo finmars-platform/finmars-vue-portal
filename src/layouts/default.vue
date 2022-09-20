@@ -1,7 +1,5 @@
 <template>
-	<div
-		class="wrap"
-	>
+	<div class="wrap">
 		<LazyTheSidebar v-if="!$route.meta.isHideSidebar" />
 
 		<div class="main">
@@ -17,42 +15,35 @@
 	import HeaderAndContent from "../components/HeaderAndContent";
 
 	const store = useStore()
-
 	await store.init()
 
-	store.ws = new Stream({
+	let ws = new Stream({
 		url: "wss://dev.finmars.com/ws/",
-	})
+		onOpen() {
+			store.ws = ws
 
-	try {
-		store.ws.send({
-			action: "initial_auth",
-			data: { access_token: useCookie("access_token").value },
-		})
-	} catch (e) {
-		console.log("e:", e)
-	}
-	onMounted(() => {
-		if (!store.current.base_api_url) {
-			useNotify({
-				title: "Workspace is not selected",
-				type: "warn",
+			store.ws.send({
+				action: "initial_auth",
+				data: { access_token: useCookie("access_token").value },
 			})
-
-			useRouter().push("/profile")
-		} else {
-			store.getMe().then((res) => {
-				store.ws.send({
-					action: "update_user_state",
-					data: { member: store.member },
-				})
-				store.ws.send({
-					action: "update_user_state",
-					data: { master_user: { id: store.current.current_master_user_id } },
-				})
+			store.ws.send({
+				action: "update_user_state",
+				data: { member: store.member },
+			})
+			store.ws.send({
+				action: "update_user_state",
+				data: { master_user: { id: store.current.id } },
 			})
 		}
 	})
+
+	watchEffect( async ( onCleanup ) => {
+		if ( store.current.base_api_url ) {
+			onCleanup(() => {})
+			store.getMe()
+		}
+	})
+
 </script>
 <style lang="scss" scoped>
 	.wrap {
