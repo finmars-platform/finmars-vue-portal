@@ -21,8 +21,7 @@
 	await store.init()
 
 	let ws = new Stream({
-		url: config.public.wsURL
-,
+		url: config.public.wsURL,
 		onOpen() {
 			store.ws = ws
 
