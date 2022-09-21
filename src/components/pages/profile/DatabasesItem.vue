@@ -31,9 +31,18 @@
 						<div class="fm_list_item" @click="redeploy(), close()">
 							<FmIcon class="mr-10" icon="restart_alt" /> Restart
 						</div>
-						<!-- <div class="fm_list_item" @click="exportDb(), close()">
+
+						<div class="fm_list_item" @click="stop(), close()"
+							v-if="db.status != 4"
+						>
 							<FmIcon class="mr-10" icon="stop_circle" /> Stop
-						</div> -->
+						</div>
+						<div class="fm_list_item" @click="start(), close()"
+							v-else
+						>
+							<FmIcon class="mr-10" icon="play_circle" /> Start
+						</div>
+
 						<div class="fm_list_item" @click="isOpenRollback = true, close()">
 							<FmIcon class="mr-10" icon="cloud_sync" /> Rollback
 						</div>
@@ -98,7 +107,7 @@
 							:class="{
 								green: db.status == 1,
 								yellow: db.status == 2,
-								red: db.status == 3,
+								red: db.status == 3 || db.status == 4,
 							}"
 						></FmIcon>
 						<div class="clipboard_text">{{ db.base_api_url}}</div>
@@ -146,6 +155,7 @@
 		1: 'Active',
 		2: 'Maintenance',
 		3: 'Offline',
+		4: 'Down/stopped'
 	}
 
 	let editingData = reactive({
@@ -224,7 +234,32 @@
 			emit("refresh");
 		}
 	}
+	async function stop() {
+		let isConfirm = await useConfirm({text: 'Are you sure?'})
+		if ( !isConfirm ) return false
 
+		let res = await useApi("masterStop.get")
+		if ( res ) {
+			useNotify({
+				type: 'success',
+				title: 'Success',
+			})
+			emit("refresh");
+		}
+	}
+	async function start() {
+		let isConfirm = await useConfirm({text: 'Are you sure?'})
+		if ( !isConfirm ) return false
+
+		let res = await useApi("masterStart.get")
+		if ( res ) {
+			useNotify({
+				type: 'success',
+				title: 'Success',
+			})
+			emit("refresh");
+		}
+	}
 	async function deleteDB() {
 		let isConfirm = await useConfirm({text: 'Are you sure?'})
 		if ( !isConfirm ) return false

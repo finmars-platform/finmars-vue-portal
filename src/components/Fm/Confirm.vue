@@ -1,5 +1,5 @@
 <template>
-	<BaseModal title="Confirm" @cancel="cancel()" v-model="settings.isOpen">
+	<BaseModal title="Confirm" v-model="settings.isOpen">
 		<div class="p-b-16">{{ settings.text }}</div>
 
 		<template #controls>

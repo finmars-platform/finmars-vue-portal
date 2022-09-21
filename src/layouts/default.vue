@@ -3,22 +3,25 @@
 		<LazyTheSidebar v-if="!$route.meta.isHideSidebar" />
 
 		<div class="main">
-			<HeaderAndContent>
+			<TheHeader />
+
+			<div class="content">
 				<slot />
-			</HeaderAndContent>
+			</div>
 		</div>
 	</div>
 </template>
 
 <script setup>
 	import Stream from "~/services/WebSocket.js"
-	import HeaderAndContent from "../components/HeaderAndContent";
 
 	const store = useStore()
+	const config = useRuntimeConfig()
+
 	await store.init()
 
 	let ws = new Stream({
-		url: "wss://dev.finmars.com/ws/",
+		url: config.public.wsURL,
 		onOpen() {
 			store.ws = ws
 
@@ -53,5 +56,9 @@
 		flex-grow: 1;
 		width: calc(100vw - 160px);
 		background: $main;
+	}
+	.content {
+		height: calc(100vh - 56px);
+		overflow: auto;
 	}
 </style>

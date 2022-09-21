@@ -121,4 +121,10 @@ export default {
 		get: prefix + '/reports/performance-report/first-transaction-date/?bandle={id}'
 	},
 
+
+	// Надо отделить
+
+	widgetsHistory: {
+		get: '/client0tsryctpc5/api/v1/widgets/history/nav/'
+	},
 }
