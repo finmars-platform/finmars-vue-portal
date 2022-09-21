@@ -33,7 +33,7 @@
 
 			<RvSettingsBlock title="Filters">
 				<RvSettingsRow label="Portfolios and Bundles">
-					<BaseMultiSelect
+					<BaseMultiSelectInput
 						v-model="reportOptions.bundles"
 						title="Portfolios and Bundles"
 						:items="bundles"

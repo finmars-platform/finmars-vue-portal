@@ -1,5 +1,5 @@
 <template>
-	<div :class="['icon', {primary, btn, 'btn-primary': btnPrimary}]" :style="{fontSize: size + 'px'}">
+	<div :class="['icon', {primary, error, btn, 'btn-primary': btnPrimary}]" :style="{fontSize: size + 'px'}">
 		<slot>
 			<div class="material-icons">{{ icon }}</div>
 		</slot>
@@ -14,6 +14,7 @@
 		size: String,
 		tooltip: String,
 		primary: Boolean,
+		error: Boolean,
 		btn: Boolean,
 		btnPrimary: Boolean
 	})
@@ -64,6 +65,9 @@
 			&:hover {
 				color: $primary-lighten;
 			}
+		}
+		&.error {
+			color: $error;
 		}
 		&.btn {
 			padding: 7px;
