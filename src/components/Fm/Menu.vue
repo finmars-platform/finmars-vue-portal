@@ -66,8 +66,8 @@
 
 			distanceToLeft = window.innerWidth - activatorRect.left
 			distanceToRight = window.innerWidth - activatorRect.right
-			distanceToTop = activatorRect.top - window.innerHeight
-			distanceToBottom = window.innerHeight - activatorRect.bottom
+			distanceToTop = Math.abs(activatorRect.top - window.innerHeight)
+			distanceToBottom = Math.abs(window.innerHeight - activatorRect.bottom)
 		}
 
 		// Hack чтобы посчитать реальную ширину
@@ -75,16 +75,19 @@
 		popup.value.style.minWidth = `${popupRect.width}px`
 		popup.value.style.width = `100%`
 
-
-
 		// Y axios || if no anchor or anchor == bottom and top have distance
 		if (
-			( ((!isTop && !isBot) || isBot) && distanceToBottom >= popupRect.height )
-			|| distanceToTop <= popupRect.height
+			(
+				( (!isTop && !isBot) || isBot )
+				&& ((distanceToBottom >= popupRect.height) || (distanceToBottom > distanceToTop))
+			)
+			|| ((distanceToTop <= popupRect.height) && (distanceToBottom > distanceToTop))
 		) {
 			popup.value.style.top    = `${activatorRect.height + props.offsetY}px`
+			popup.value.style.maxHeight = `${distanceToBottom - 20}px`
 		} else {
 			popup.value.style.bottom = `${activatorRect.height + props.offsetY}px`;
+			popup.value.style.maxHeight = `${distanceToTop - 20}px`
 		}
 
 		// X axios
@@ -113,8 +116,8 @@
 		box-shadow: 0 3px 11px 3px hsl(0deg 0% 60% / 40%);
 		display: inline-block;
 		border-radius: 5px;
+		overflow: auto;
 	}
-
 
 	.v-enter-active,
 	.v-leave-active {
