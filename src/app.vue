@@ -15,6 +15,7 @@
 </template>
 
 <script setup>
+	console.log('notifications:')
 
 </script>
 
