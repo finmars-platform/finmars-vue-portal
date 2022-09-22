@@ -7,7 +7,6 @@
 				<span v-if="!isEditTitle">
 					{{ isEditTitle ? editingData.name : db.name.length > 20 ? db.name.slice(0, 20) + '...' : db.name }}
 				</span>
-
 				<FmIcon primary
 					v-if="!isEditTitle"
 					class="edit_icon"
