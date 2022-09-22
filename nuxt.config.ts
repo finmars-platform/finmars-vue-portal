@@ -5,10 +5,10 @@ const dateString = `${curDate.getHours()}:${curDate.getMinutes()}, ${curDate.get
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
 	publicRuntimeConfig: {
-		appURL: process.env.APP_URL || "PROD_APP_URL",
-		apiURL: process.env.API_URL || "PROD_API_URL",
-		wsURL: process.env.WS_URL || "PROD_WS_URL",
-		oldAppURL: process.env.OLD_APP_URL || "PROD_OLD_APP_URL",
+		appURL: process.env.APP_URL || "==PROD_APP_URL==",
+		apiURL: process.env.API_URL || "==PROD_API_URL==",
+		wsURL: process.env.WS_URL || "==PROD_WS_URL==",
+		oldAppURL: process.env.OLD_APP_URL || "==PROD_OLD_APP_URL==",
 		buildDATE: dateString,
 	},
 	experimental: {
