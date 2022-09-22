@@ -33,27 +33,24 @@
   SubTitle
 } from 'chart.js';
 class Custom extends DoughnutController {
-    draw() {
-        // Call bubble controller method to draw all the points
-        super.draw(arguments);
 
-        // Now we can do some custom drawing for this dataset. Here we'll draw a red box around the first point in each dataset
-        const meta = this.getMeta();
-        const pt0 = meta.data[0];
+	update() {
+		super.update(arguments)
+		const meta = this.getMeta();
+		const max = Math.max(...meta._dataset.data)
 
-        const {x, y} = pt0.getProps(['x', 'y']);
-        const {radius} = pt0.options;
+		meta.data.forEach((item) => {
+			let value = item.$context.parsed
 
-        const ctx = this.chart.ctx;
-        ctx.save();
-        ctx.strokeStyle = 'red';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(x - radius, y - radius, 2 * radius, 2 * radius);
-        ctx.restore();
-    }
+			if ( value < max ) {
+				console.log('value:', value)
+
+			}
+		})
+  }
 };
 Custom.id = 'derivedBubble';
-Custom.defaults = BubbleController.defaults;
+Custom.defaults = DoughnutController.defaults;
 
 // Stores the controller so that the chart initialization routine can look it up
 	Chart.register(
@@ -97,7 +94,7 @@ Custom.defaults = BubbleController.defaults;
 		initPostMessageBus()
 
 		let myChart = new Chart('myChart', {
-			type: 'doughnut',
+			type: 'derivedBubble',
 			data: {
 				labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 				datasets: [
@@ -105,8 +102,7 @@ Custom.defaults = BubbleController.defaults;
 						label: 'Crypto',
 						data: [-11,2,3,5,3,2,4,5,3,6,12,3],
 						backgroundColor: ['rgba(87, 117, 144, 0.5)', 'rgba(250, 103, 105, 0.5)'],
-						hoverOffset: 4,
-						cutout: 50
+						hoverOffset: 4
 					},
 					// {
 					// 	label: 'Monthly mi',
@@ -118,16 +114,6 @@ Custom.defaults = BubbleController.defaults;
 					// }
 				],
 			},
-			plugins: [{
-				id: 'myEventCatcher',
-				beforeEvent(chart, args, pluginOptions) {
-					console.log('args:', args)
-					const event = args.event;
-					if (event.type === 'mouseout') {
-						// process the event
-					}
-				}
-			}],
 			options: {
 				responsive: true,
 				maintainAspectRatio: false,
@@ -159,9 +145,6 @@ Custom.defaults = BubbleController.defaults;
         }
 			},
 		});
-		let res = myChart.elements
-		console.log('myChart:', res)
-
 	})
 
 	function initPostMessageBus() {
