@@ -1,5 +1,6 @@
+import { defineNuxtConfig } from 'nuxt'
 const curDate = new Date();
-const dateString = `${curDate.getHours()}:${curDate.getMinutes()}, ${curDate.getDate()}/${curDate.getMonth()}/${curDate.getFullYear()}`;
+const dateString = `${curDate.getHours()}:${curDate.getMinutes()}, ${curDate.getDate()}/${curDate.getMonth() + 1}/${curDate.getFullYear()}`;
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
@@ -9,6 +10,9 @@ export default defineNuxtConfig({
 		wsURL: process.env.WS_URL || "PROD_WS_URL",
 		oldAppURL: process.env.OLD_APP_URL || "PROD_OLD_APP_URL",
 		buildDATE: dateString,
+	},
+	experimental: {
+		payloadExtraction: false
 	},
 	modules: [
     ['@pinia/nuxt'],
