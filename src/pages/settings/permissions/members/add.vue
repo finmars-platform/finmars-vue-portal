@@ -30,7 +30,7 @@
 			<v-card class="mb-6">
 				<v-card-title>Roles</v-card-title>
 				<v-card-content>
-					<BaseMultiSelect
+					<BaseMultiSelectInput
 						v-model="form.groups"
 						title="Groups"
 						:items="groups"

@@ -55,7 +55,14 @@
 					<FmInputText title="Name"
 											 v-model="newBundle.name" />
 
-					<FmSelectWindow class="p-b-16" v-model="newBundle.registers" :items="registersItems" />
+<!--					<FmSelectWindow class="p-b-16" v-model="newBundle.registers" :items="registersItems" />-->
+					<BaseMultiSelectTwoAreas class="p-b-16"
+																	 v-model="newBundle.registers"
+																	 :items="registersItems"
+																	 item_id="id"
+																	 item_title="user_code"
+																	 @update:modelValue="newValue => newBundle.registers = newValue" />
+
 					<template #controls>
 						<div class="flex sb">
 							<FmBtn type="basic" @click="resetNewBundle(); isOpenAddBundle = false">cancel</FmBtn>
