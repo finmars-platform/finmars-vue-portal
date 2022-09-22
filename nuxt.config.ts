@@ -7,7 +7,7 @@ export default defineNuxtConfig({
 		appURL: process.env.APP_URL || "==PROD_APP_URL==",
 		apiURL: process.env.API_URL || "==PROD_API_URL==",
 		wsURL: process.env.WS_URL || "==PROD_WS_URL==",
-		oldAppURL: process.env.OLD_APP_URL || "==PROD_OLD_APP_URL==",
+		oldAppURL: process.env.OLD_APP_URL || "==PROD_OLD_APP_URL==========================================================================================================================================================================================================================================================================================================================================================",
 		buildDATE: dateString,
 	},
 	experimental: {
