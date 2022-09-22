@@ -1,9 +1,10 @@
-FROM node:14.17.6
+FROM node:18.9
 
 RUN mkdir -p /var/www/finmars
 WORKDIR /var/www/finmars
 
 COPY package*.json ./
+RUN npx nuxi@latest cleanup
 RUN npm i
 COPY . .
 
