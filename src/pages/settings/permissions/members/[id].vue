@@ -40,7 +40,7 @@
 						v-model="member.username"
 						disabled
 					/>
-					<BaseMultiSelect
+					<BaseMultiSelectInput
 						:modelValue="selectedGroups.join(',')"
 						@update:modelValue="member.groups = findIds($event)"
 						title="Groups"
