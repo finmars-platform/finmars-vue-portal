@@ -24,13 +24,13 @@ export default {
 		put: '/authorizer/master-user/{id}/rollback-from-backup/'
 	},
 	masterRedeploy: {
-		get: '/authorizer/master-user-redeploy/?base_api_url={client}'
+		get: '/authorizer/master-user-redeploy/?base_api_url={baseApi}'
 	},
 	masterStart: {
-		get: '/authorizer/master-user-start/?base_api_url={client}'
+		get: '/authorizer/master-user-start/?base_api_url={baseApi}'
 	},
 	masterStop: {
-		get: '/authorizer/master-user-stop/?base_api_url={client}'
+		get: '/authorizer/master-user-stop/?base_api_url={baseApi}'
 	},
 	masterExport: {
 		get: '/authorizer/master-user-export/{id}/'

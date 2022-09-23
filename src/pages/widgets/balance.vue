@@ -133,7 +133,7 @@ class Custom extends DoughnutController {
     for (i = start; i < start + count; ++i) {
       const circumference = this._circumference(i, reset);
       const arc = arcs[i];
-			let newOuterRadius = 97.5 + arc.$context.parsed / 12 * 97.5
+			let newOuterRadius = innerRadius + arc.$context.parsed / 12 * innerRadius
       const properties = {
         x: centerX,
         y: centerY,
@@ -141,7 +141,7 @@ class Custom extends DoughnutController {
         endAngle: startAngle + circumference,
         circumference,
         outerRadius: newOuterRadius,
-        innerRadius: 97.5,
+        innerRadius,
       };
 			console.log('properties:', properties)
       if (includeOptions) {
@@ -198,7 +198,7 @@ Custom.defaults = DoughnutController.defaults;
 		initPostMessageBus()
 
 		let myChart = new Chart('myChart', {
-			type: 'derivedBubble',
+			type: 'doughnut',
 			data: {
 				labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov'],
 				datasets: [
@@ -208,14 +208,14 @@ Custom.defaults = DoughnutController.defaults;
 						backgroundColor: ['rgba(87, 117, 144, 0.5)', 'rgba(250, 103, 105, 0.5)'],
 						hoverOffset: 4
 					},
-					// {
-					// 	label: 'Monthly mi',
-					// 	data: [-9, -1],
-					// 	backgroundColor: 'rgba(250, 103, 105, 0.8)',
-					// 	// rotation: 10,
-					// 	// offset: 50,
-					// 	circumference: 180
-					// }
+					{
+						label: 'Monthly mi',
+						data: [-9, -1],
+						backgroundColor: 'rgba(250, 103, 105, 0.8)',
+						// rotation: 10,
+						// offset: 50,
+						circumference: 180
+					}
 				],
 			},
 			options: {
