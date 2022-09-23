@@ -1,3 +1,3 @@
 export default defineNuxtRouteMiddleware((to, from) => {
-  return navigateTo('/home', { redirectCode: 301 })
+  return window.location.href = '/home'
 })
