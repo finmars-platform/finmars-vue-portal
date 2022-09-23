@@ -5,7 +5,7 @@
 		<div class="flex aic sb">
 			<div class="fm_card_title edit_hover m-b-0">
 				<span v-if="!isEditTitle">
-					{{ isEditTitle ? editingData.name : db.name }}
+					{{ isEditTitle ? editingData.name : db.name.length > 20 ? db.name.slice(0, 20) + '...' : db.name }}
 				</span>
 				<FmIcon primary
 					v-if="!isEditTitle"
@@ -31,10 +31,19 @@
 						<div class="fm_list_item" @click="redeploy(), close()">
 							<FmIcon class="mr-10" icon="restart_alt" /> Restart
 						</div>
-						<!-- <div class="fm_list_item" @click="exportDb(), close()">
+
+						<div class="fm_list_item" @click="stop(), close()"
+							v-if="db.status != 4"
+						>
 							<FmIcon class="mr-10" icon="stop_circle" /> Stop
-						</div> -->
-						<div class="fm_list_item" @click="rollback(), close()">
+						</div>
+						<div class="fm_list_item" @click="start(), close()"
+							v-else
+						>
+							<FmIcon class="mr-10" icon="play_circle" /> Start
+						</div>
+
+						<div class="fm_list_item" @click="isOpenRollback = true, close()">
 							<FmIcon class="mr-10" icon="cloud_sync" /> Rollback
 						</div>
 						<div class="fm_list_item" @click="exportDb(), close()">
@@ -88,7 +97,22 @@
 
 		<template #controls>
 			<div class="flex sb aic">
-				<div class="fm_card_text">Role: {{ db.is_owner ? "owner" : "admin" }}</div>
+				<div>
+					<div class="fm_card_text">Role: {{ db.is_owner ? "owner" : "admin" }}</div>
+					<div class="clipboard flex aic" @click="copy()">
+
+						<FmIcon
+							:tooltip="STATUSES[db.status]"
+							class="db_status"
+							:class="{
+								green: db.status == 1,
+								yellow: db.status == 2,
+								red: db.status == 3 || db.status == 4,
+							}"
+						></FmIcon>
+						<div class="clipboard_text">{{ db.base_api_url}}</div>
+						<FmIcon class="m-l-4" icon="content_copy" size="16" /></div>
+				</div>
 
 				<template v-if="!isEdit && db.is_initialized">
 					<FmBtn v-if="!isEdit" @click="open()">open</FmBtn>
@@ -101,6 +125,8 @@
 				</template>
 			</div>
 		</template>
+
+		<LazyPagesProfileWorkspaceRollbackM :workspaceId="db.id" v-model="isOpenRollback" v-if="isOpenRollback" />
 	</FmCard>
 </template>
 
@@ -120,8 +146,17 @@
 	let isEditTitle = ref(false);
 	let isEdit = ref(false);
 
+	let isOpenRollback = ref(false);
+
 	let title = ref(null);
 	let description = ref(null);
+
+	const STATUSES = {
+		1: 'Active',
+		2: 'Maintenance',
+		3: 'Offline',
+		4: 'Down/stopped'
+	}
 
 	let editingData = reactive({
 		description: '',
@@ -148,6 +183,14 @@
 		editingData.name = props.db.name;
 		editingData.id = props.db.id;
 	}
+	async function copy() {
+		await navigator.clipboard.writeText(`${config.public.apiURL}/${props.db.base_api_url}/api/v1/`)
+
+		useNotify({
+			type: 'success',
+			title: 'Copied to clipboard',
+		})
+	}
 	function edit( prop ) {
 		if ( prop == 'title' ) isEditTitle.value = true;
 		else isEditDesc.value = true;
@@ -165,6 +208,9 @@
 		props.db.name = props.db.name
 	}
 	async function exportDb() {
+		let isConfirm = await useConfirm({text: 'Are you sure?'})
+		if ( !isConfirm ) return false
+
 		let res = await useApi("masterExport.get", {
 			params: { id: props.db.id },
 		});
@@ -176,6 +222,9 @@
 		}
 	}
 	async function redeploy() {
+		let isConfirm = await useConfirm({text: 'Are you sure?'})
+		if ( !isConfirm ) return false
+
 		let res = await useApi("masterRedeploy.get")
 		if ( res ) {
 			useNotify({
@@ -185,10 +234,24 @@
 			emit("refresh");
 		}
 	}
-	async function rollback() {
-		let res = await useApi("masterRollback.put", {
-			params: { id: props.db.id },
-		})
+	async function stop() {
+		let isConfirm = await useConfirm({text: 'Are you sure?'})
+		if ( !isConfirm ) return false
+
+		let res = await useApi("masterStop.get")
+		if ( res ) {
+			useNotify({
+				type: 'success',
+				title: 'Success',
+			})
+			emit("refresh");
+		}
+	}
+	async function start() {
+		let isConfirm = await useConfirm({text: 'Are you sure?'})
+		if ( !isConfirm ) return false
+
+		let res = await useApi("masterStart.get")
 		if ( res ) {
 			useNotify({
 				type: 'success',
@@ -199,7 +262,6 @@
 	}
 	async function deleteDB() {
 		let isConfirm = await useConfirm({text: 'Are you sure?'})
-
 		if ( !isConfirm ) return false
 
 		let res = props.db.is_owner
@@ -221,8 +283,8 @@
 			params: { id: props.db.id },
 		});
 		if ( res.success ) {
-			await store.ping()
-			navigateTo('/')
+			await store.getMasterUsers()
+			navigateTo('/home')
 		}
 	}
 	async function save() {
@@ -246,6 +308,33 @@
 	}
 	&.warn {
 		background: #FFE8CC;
+	}
+}
+.clipboard {
+	cursor: pointer;
+	color: $text-lighten;
+	transition: color 0.3s;
+	&_text {
+		text-decoration: underline;
+	}
+	&:hover {
+		color: $text;
+	}
+}
+.db_status {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	margin-right: 7px;
+	margin-top: 1px;
+	&.green {
+		background: #02A471;
+	}
+	&.yellow {
+		background: #FFA462;
+	}
+	&.red {
+		background: #E15303;
 	}
 }
 .edit_icon {

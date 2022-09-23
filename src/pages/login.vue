@@ -1,7 +1,7 @@
 <template>
 	<div class="wrap flex sb aic">
 		<div class="left">
-			<NuxtLink to="/">
+			<NuxtLink to="/home">
 				<img width="200" src="/img/logo.png" class="sidenav-logo" alt="" />
 			</NuxtLink>
 

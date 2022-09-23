@@ -31,28 +31,22 @@
 				</div>
 
 				<div class="center">
-					<v-btn color="primary" variant="text">
-						Show request
-						<v-dialog activator="parent" v-model="item.dialog">
-							<v-card>
-								<v-card-title>
-									Procedure request
-								</v-card-title>
+					<FmBtn type="action" @click="item.dialog = true">Show request</FmBtn>
 
-								<v-card-text>
-									<pre>{{ JSON.stringify( item.request_data, null, 2 ) }}</pre>
-								</v-card-text>
-								<v-card-actions class="space-between">
-									<v-btn color="primary" @click="item.dialog = false">cancel</v-btn>
+					<BaseModal v-if="item.dialog" title="Procedure request" v-model="item.dialog">
+						<pre>{{ JSON.stringify( item.request_data, null, 2 ) }}</pre>
 
-									<div>
-										<v-btn color="primary" variant="text" @click="copyText(JSON.stringify( item.request_data, null, 2 ))">copy</v-btn>
-										<v-btn color="primary" variant="contained" @click="item.dialog = false">ok</v-btn>
-									</div>
-								</v-card-actions>
-							</v-card>
-						</v-dialog>
-					</v-btn>
+						<template #controls>
+							<div class="flex sb">
+								<FmBtn type="action" @click="item.dialog = false">cancel</FmBtn>
+
+								<div>
+									<FmBtn type="action" @click="copyText(JSON.stringify( item.request_data, null, 2 ))">copy</FmBtn>
+									<FmBtn @click="item.dialog = false">ok</FmBtn>
+								</div>
+							</div>
+						</template>
+					</BaseModal>
 				</div>
 			</div>
 		</div>

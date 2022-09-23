@@ -2,8 +2,8 @@
 	<BaseInput
 		type="text"
 		:label="label"
-		:modelValue="name"
-		@update:modelValue="$emit('update:name', $event)"
+		:modelValue="baseInputVal"
+		@update:modelValue="setNames($event)"
 	>
 		<template #button>
 			<FmMenu>
@@ -41,6 +41,14 @@
 							@update:modelValue="$emit('update:public_name', $event)"
 						/>
 					</div>
+					<div v-if="!hideValueToShow">
+						<FmInputSelect
+							class="m-b-0"
+							label="Show by default"
+							:modelValue="valueToShow"
+							@update:modelValue="$emit('update:valueToShow', $event)"
+						/>
+					</div>
 				</div>
 			</FmMenu>
 		</template>
@@ -55,6 +63,12 @@
 		short_name: String,
 		user_code: String,
 		public_name: String,
+		valueToShow: {
+			type: String,
+			default: 'name',
+		},
+		hideValueToShow: Boolean,
+		namesEditing: Boolean,
 	});
 
 	let emit = defineEmits([
@@ -62,7 +76,20 @@
 		"update:short_name",
 		"update:user_code",
 		"update:public_name",
+		"update:valueToShow",
 	]);
+
+	let baseInputVal = ref('');
+
+	function setNames(value) {
+
+		emit("update:name", value);
+		emit("update:short_name", value);
+		emit("update:user_code", value);
+		emit("update:public_name", value);
+
+	}
+
 </script>
 
 <style lang="scss" scoped>

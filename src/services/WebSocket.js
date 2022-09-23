@@ -10,7 +10,7 @@ export default class Stream {
 		this._ws = new WebSocket( opts.url )
 
 		this._onMessage()
-		this._onOpen()
+		this._onOpen(opts.onOpen)
 		this._onClose()
 		this._onError()
 	}
@@ -48,9 +48,10 @@ export default class Stream {
 			})
 		}
 	}
-	_onOpen(e) {
+	_onOpen( callback ) {
 		this._ws.onopen = async (e) => {
 			console.log(`[WebSocket] Open`)
+			callback()
 		}
 		this._pingInterval = setInterval(item => {
 			this._ws.send('ping')

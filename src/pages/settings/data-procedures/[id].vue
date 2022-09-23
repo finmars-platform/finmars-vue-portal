@@ -1,6 +1,5 @@
 <template>
 	<CommonSettingsLayout
-		v-if="procedure.id"
 		title="Update Data Procedure"
 		@save="save()"
 		@cancel="() => $router.push('/import/bank')"
@@ -141,7 +140,6 @@
 	const store = useStore()
 	let route = useRoute()
 
-	let procedure = ref({})
 	let dataProvider = ref([])
 
 	let pricing_conditions = ref()
@@ -153,10 +151,11 @@
 		{id: 'transaction_import', name: 'Transaction Import', icon: 'TI'},
 	])
 
-	async function init() {
-		let res = await useApi('importBankProcId.get', {params: {id: route.params.id}})
-		procedure.value = res
+	let {data: procedure} = await useAsyncData('importBankProcId', () => {
+		return useApi('importBankProcId.get', {params: {id: route.params.id}})
+	})
 
+	async function init() {
 		if ( !procedure.value.data ) procedure.value.data = {}
 
 		simpleItems.value = (await useApi('importSchemeLight.get')).results

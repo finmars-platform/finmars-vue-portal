@@ -2,20 +2,22 @@
 	<Teleport to="body" v-if="modelValue">
 		<transition name="fade">
 			<div class="modal_wrap flex aic jcc"
+				:class="{no_padding: no_padding}"
 				v-show="modelValue"
 			>
 				<div class="modal">
 					<div class="modal_top flex aic sb">
 						<div class="modal_head" v-if="title">{{ title }}</div>
-						<svg class="close stroke" width="24" height="24" viewBox="0 0 24 24" fill="none"
+<!--						<svg class="close stroke" width="24" height="24" viewBox="0 0 24 24" fill="none"
 							xmlns="http://www.w3.org/2000/svg"
 							@click="cancel()">
 							<path d="M18 6L6 18" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 							<path d="M6 6L18 18" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-						</svg>
+						</svg>-->
+						<FmIcon icon="close" @click="cancel()"/>
 					</div>
 
-					<div class="modal_content">
+					<div class="modal_content scrollable">
 						<slot />
 					</div>
 
@@ -35,10 +37,11 @@ export default {
 
   props: {
 		modelValue: Boolean,
-		title: String
+		title: String,
+		no_padding: Boolean
 	},
 	emits: [
-		'cancel',
+		'update:modelValue',
 	],
   data() {
     return {
@@ -56,7 +59,7 @@ export default {
 
   methods: {
     cancel() {
-      this.$emit('cancel')
+      this.$emit('update:modelValue', false)
     },
   }
 }
@@ -79,6 +82,11 @@ export default {
 			left: 0;
 			bottom: 0;
 			z-index: 1;
+		}
+		&.no_padding {
+			.modal_content {
+				padding: 0;
+			}
 		}
 	}
 	.modal_top {

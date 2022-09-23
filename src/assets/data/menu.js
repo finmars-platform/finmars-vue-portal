@@ -1,7 +1,7 @@
 export default [
 
 	{ title: 'Dashboard', link: 'dashboard', icon: 'mdi-view-dashboard', old: true },
-	{ title: 'Homepage',  link: '/', icon: 'mdi-home' },
+	{ title: 'Homepage',  link: '/home', icon: 'mdi-home' },
 	{
 		title: 'Reports',
 		icon: 'mdi-chart-bar',

@@ -1,23 +1,26 @@
 <template>
 	<FmCard
+		controls
 		class="d-flex flex-column"
 		:title="invite.to_master_user_object.name"
 	>
-		<v-card-text v-if="invite.to_master_user_object.description">
+		<div class="fm_card_content" v-if="invite.to_master_user_object.description">
 			{{ invite.to_master_user_object.description }}
-		</v-card-text>
+		</div>
 
-		<v-card-text>
+		<div class="fm_card_content">
 			You have been invited to “
 			<b>{{ invite.to_master_user_object.name }}</b>
 			” database by
 			<b>{{ invite.from_user_object.username }}</b>
-		</v-card-text>
+		</div>
 
 		<template #controls>
-			<FmBtn type="text" @click="changeStatus(2)">decline</FmBtn>
+			<div class="flex sb">
+				<FmBtn type="text" @click="changeStatus(2)">decline</FmBtn>
 
-			<FmBtn @click="changeStatus(1)">Accept</FmBtn>
+				<FmBtn @click="changeStatus(1)">Accept</FmBtn>
+			</div>
 		</template>
 	</FmCard>
 </template>

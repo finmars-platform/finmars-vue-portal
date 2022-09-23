@@ -1,9 +1,12 @@
 <template>
+	<ModalSystemErrorLog v-model="showErrorLog"
+											 @cancel="showErrorLog = false" />
+
 	<div class="sidenav-wrapper">
 		<div class="sidenav-left">
 			<div class="sidenav-logo-container">
 				<div class="sidenav-logo-wrapper">
-					<NuxtLink to="/">
+					<NuxtLink to="/home">
 						<img src="/img/logo.png" class="sidenav-logo" alt="" />
 					</NuxtLink>
 				</div>
@@ -49,14 +52,11 @@
 							</li>
 
 							<li>
-<!--								<a :href="`${config.public.apiURL}/a/#!/`" class="sidemenu-btn">
+								<!--								<a :href="`${config.public.apiURL}/a/#!/`" class="sidemenu-btn">
 									<FmIcon icon="home" class="side-nav-icon"></FmIcon>
 									<span class="side-nav-title">Homepage</span>
 								</a>-->
-								<NuxtLink
-									to="/"
-									class="sidemenu-btn"
-								>
+								<NuxtLink to="/home" class="sidemenu-btn">
 									<FmIcon icon="home" class="side-nav-icon"></FmIcon>
 									<span class="side-nav-title">Homepage</span>
 								</NuxtLink>
@@ -277,7 +277,10 @@
 									@mouseleave="hideSubmenu($event)"
 								>
 									<button class="sidemenu-btn openSubmenuBtn">
-										<FmIcon icon="currency_exchange" class="side-nav-icon"></FmIcon>
+										<FmIcon
+											icon="currency_exchange"
+											class="side-nav-icon"
+										></FmIcon>
 										<span class="side-nav-title">Valuations</span>
 									</button>
 
@@ -1036,15 +1039,26 @@
 		</div>
 
 		<div class="build-date">
-			<div>Build date: {{ buildDate }}</div>
+			<div class="flex-row">
+				<div>Build date: {{ buildDate }}</div>
+
+				<div class="ws-status"
+						 :class="getWsStatus()"
+						 :title="`Websocket status: ${getWsStatus()}`"></div>
+			</div>
+
+			<div class="sidenav-error-subtitle" @click="showErrorLog = true">
+				<span :class="{'text-warning-red': store.systemErrors.length}">Errors: {{ store.systemErrors.length }}</span>
+			</div>
+
 			<div>
 				<a :href="`${config.public.apiURL}/${store.current.base_api_url}/api/v1/`"
-					 class="display-inline white-text">API:</a>&nbsp;
+					 class="display-inline highlight link">API:</a>&nbsp;
 
-				<span title="Copy" class="cursor-pointer" @click="copyToBuffer(store.current.base_api_url)">{{store.current.base_api_url}}</span>&nbsp;
+				<span title="Copy" class="cursor-pointer link" @click="copyToBuffer(store.current.base_api_url)">{{store.current.base_api_url}}</span>&nbsp;
 
 				<a :href="`${config.public.apiURL}/a/#!/update-center`"
-					 class="display-inline white-text">{{store.masterUser.version}}</a>
+					 class="display-inline highlight link">{{store.current.version}}</a>
 			</div>
 			<!--				<span class="websocket-connection-status {{vm.getWsStatus()}}"
 										title="Websocket status: {{vm.getWsStatus()}}"></span>
@@ -1068,185 +1082,187 @@
 </template>
 
 <script setup>
-// import menu from "~/assets/data/menu.js";
-const store = useStore();
-const config = useRuntimeConfig();
-const buildDate = config.public.buildDATE;
+	// import menu from "~/assets/data/menu.js";
+	const store = useStore()
+	const config = useRuntimeConfig()
+	const buildDate = config.public.buildDATE
 
+	const readyStatus = {
+		// will be used by getInterfaceAccess()
+		access: true,
+	}
 
-const readyStatus = {
-	// will be used by getInterfaceAccess()
-	access: true,
-};
+let showErrorLog = ref(false);
 
 const accessSectionTable = {
 	history: true,
 	journal: true,
 	import: true,
 
-	settings_data: true,
-	settings_import_from_providers: true,
-	settings_import_from_files: true,
+		settings_data: true,
+		settings_import_from_providers: true,
+		settings_import_from_files: true,
 
-	settings_administration: true,
-};
-
-const accessTable = {
-	data_portfolio: true,
-	data_account: true,
-	data_instrument: true,
-	data_responsible: true,
-	data_counterparty: true,
-	data_currency: true,
-	data_strategies: true,
-	data_transaction: true,
-	data_price_history: true,
-	data_fx_history: true,
-	data_simple_import: true,
-	data_transaction_import: true,
-	data_complex_import: true,
-	data_instrument_download: true,
-	data_prices_download: true,
-
-	report_balance: true,
-	report_pl: true,
-	report_transaction: true,
-	report_performance: true,
-	report_cash_flow: true,
-	report_dashboard: true,
-	report_event: true,
-	report_bookmark: true,
-	report_instrument_audit: true,
-	report_transaction_audit: true,
-	report_base_transaction: true,
-	report_activity_log: true,
-	report_forum: true,
-
-	configuration_account_type: true,
-	configuration_instrument_type: true,
-	configuration_transaction_type: true,
-	configuration_pricing_policy: true,
-	configuration_price_download_scheme: true,
-	configuration_instrument_download_scheme: true,
-	configuration_automated_price_downloads: true,
-	configuration_simple_import_scheme: true,
-	configuration_transaction_import_scheme: true,
-	configuration_complex_import_scheme: true,
-	configuration_mapping_tables: true,
-	configuration_user_attributes: true,
-	configuration_aliases: true,
-	configuration_template: true,
-	configuration_reference_table: true,
-
-	settings_notification: true,
-	settings_export_configuration: true,
-	settings_import_configuration: true,
-	settings_export_mapping: true,
-	settings_import_mapping: true,
-	settings_provider: true,
-	settings_init_configuration: true,
-	settings_users_groups_permission: true,
-	settings_new_objects_permission: true,
-	settings_timezone: true,
-	settings_ecosystem_default: true,
-
-	account_settings: true,
-	account_personal_data: true,
-	account_ecosystem_management: true,
-};
-
-
-let sidenavExpanded = true;
-
-let member = {};
-
-function resizeSideNav(expand) {
-	// sideNavStatus = status;
-	sidenavExpanded = expand;
-
-	if (sidenavExpanded) {
-		document.body.classList.remove("sidenav-collapsed");
-		document.body.classList.add("sidenav-expanded");
-	} else {
-		document.body.classList.remove("sidenav-expanded");
-		document.body.classList.add("sidenav-collapsed");
+		settings_administration: true,
 	}
 
-	window.dispatchEvent(new Event("resize"));
-}
+	const accessTable = {
+		data_portfolio: true,
+		data_account: true,
+		data_instrument: true,
+		data_responsible: true,
+		data_counterparty: true,
+		data_currency: true,
+		data_strategies: true,
+		data_transaction: true,
+		data_price_history: true,
+		data_fx_history: true,
+		data_simple_import: true,
+		data_transaction_import: true,
+		data_complex_import: true,
+		data_instrument_download: true,
+		data_prices_download: true,
 
-let sideMenuSettingsMenuOpened = false;
+		report_balance: true,
+		report_pl: true,
+		report_transaction: true,
+		report_performance: true,
+		report_cash_flow: true,
+		report_dashboard: true,
+		report_event: true,
+		report_bookmark: true,
+		report_instrument_audit: true,
+		report_transaction_audit: true,
+		report_base_transaction: true,
+		report_activity_log: true,
+		report_forum: true,
 
-const vToggleSettingsMenuDirective = {
-	mounted: (el) => {
-		const settingsMenu = el.querySelector(".side-menu-settings-menu");
-		const settingsToggleBtn = el.querySelector(".toggleSettingsBtn");
-		const settingsCollapseBtn = el.querySelector(".collapseSettingsMenu");
+		configuration_account_type: true,
+		configuration_instrument_type: true,
+		configuration_transaction_type: true,
+		configuration_pricing_policy: true,
+		configuration_price_download_scheme: true,
+		configuration_instrument_download_scheme: true,
+		configuration_automated_price_downloads: true,
+		configuration_simple_import_scheme: true,
+		configuration_transaction_import_scheme: true,
+		configuration_complex_import_scheme: true,
+		configuration_mapping_tables: true,
+		configuration_user_attributes: true,
+		configuration_aliases: true,
+		configuration_template: true,
+		configuration_reference_table: true,
 
-		function settingsSideMenuOnClickOutside(event) {
-			let clickedOutside = true;
-			let elem = event.target;
+		settings_notification: true,
+		settings_export_configuration: true,
+		settings_import_configuration: true,
+		settings_export_mapping: true,
+		settings_import_mapping: true,
+		settings_provider: true,
+		settings_init_configuration: true,
+		settings_users_groups_permission: true,
+		settings_new_objects_permission: true,
+		settings_timezone: true,
+		settings_ecosystem_default: true,
 
-			for (var i = 0; i < 15; i++) {
-				if (elem.classList.contains("side-menu-settings-menu")) {
-					clickedOutside = false;
-					break;
-				} else if (elem.tagName === "BODY") {
-					break;
-				} else {
-					elem = elem.parentNode;
+		account_settings: true,
+		account_personal_data: true,
+		account_ecosystem_management: true,
+	}
+
+	let sidenavExpanded = true
+
+	let member = {}
+	let sidenav_width = useState("sidenav_width", () => 160)
+	function resizeSideNav(expand) {
+		// sideNavStatus = status;
+		sidenavExpanded = expand
+
+		if (sidenavExpanded) {
+			document.body.classList.remove("sidenav-collapsed")
+			document.body.classList.add("sidenav-expanded")
+			sidenav_width.value = 160
+		} else {
+			document.body.classList.remove("sidenav-expanded")
+			document.body.classList.add("sidenav-collapsed")
+			sidenav_width.value = 65
+		}
+
+		window.dispatchEvent(new Event("resize"))
+	}
+
+	let sideMenuSettingsMenuOpened = false
+
+	const vToggleSettingsMenuDirective = {
+		mounted: (el) => {
+			const settingsMenu = el.querySelector(".side-menu-settings-menu")
+			const settingsToggleBtn = el.querySelector(".toggleSettingsBtn")
+			const settingsCollapseBtn = el.querySelector(".collapseSettingsMenu")
+
+			function settingsSideMenuOnClickOutside(event) {
+				let clickedOutside = true
+				let elem = event.target
+
+				for (var i = 0; i < 15; i++) {
+					if (elem.classList.contains("side-menu-settings-menu")) {
+						clickedOutside = false
+						break
+					} else if (elem.tagName === "BODY") {
+						break
+					} else {
+						elem = elem.parentNode
+					}
+				}
+
+				if (clickedOutside) {
+					toggleSettingsSideMenu()
 				}
 			}
 
-			if (clickedOutside) {
-				toggleSettingsSideMenu();
-			}
-		}
-
-		function toggleSettingsSideMenu() {
-			if (sideMenuSettingsMenuOpened) {
-				/*$('.sidenav-settings-toggle-btn').removeClass('settings-menu-opened');
+			function toggleSettingsSideMenu() {
+				if (sideMenuSettingsMenuOpened) {
+					/*$('.sidenav-settings-toggle-btn').removeClass('settings-menu-opened');
 				$('.side-menu-settings-menu').removeClass('overflow-visible');
 				$('.side-menu-settings-menu').removeClass('settings-menu-opened');*/
-				settingsToggleBtn.classList.remove("settings-menu-opened");
-				settingsMenu.classList.remove(
-					"overflow-visible",
-					"settings-menu-opened"
-				);
+					settingsToggleBtn.classList.remove("settings-menu-opened")
+					settingsMenu.classList.remove(
+						"overflow-visible",
+						"settings-menu-opened"
+					)
 
-				window.removeEventListener("click", settingsSideMenuOnClickOutside);
-				window.removeEventListener(
-					"contextmenu",
-					settingsSideMenuOnClickOutside
-				);
-			} else {
-				/* $('.side-menu-settings-menu').addClass('settings-menu-opened');
-					$('.sidenav-settings-toggle-btn').addClass('settings-menu-opened'); */
-
-				settingsMenu.classList.add("settings-menu-opened");
-				settingsToggleBtn.classList.add("settings-menu-opened");
-
-				setTimeout(function () {
-					// $('.side-menu-settings-menu').addClass('overflow-visible');
-					settingsMenu.classList.add("overflow-visible");
-
-					window.addEventListener("click", settingsSideMenuOnClickOutside);
-					window.addEventListener(
+					window.removeEventListener("click", settingsSideMenuOnClickOutside)
+					window.removeEventListener(
 						"contextmenu",
 						settingsSideMenuOnClickOutside
-					);
-				}, 250);
+					)
+				} else {
+					/* $('.side-menu-settings-menu').addClass('settings-menu-opened');
+					$('.sidenav-settings-toggle-btn').addClass('settings-menu-opened'); */
+
+					settingsMenu.classList.add("settings-menu-opened")
+					settingsToggleBtn.classList.add("settings-menu-opened")
+
+					setTimeout(function () {
+						// $('.side-menu-settings-menu').addClass('overflow-visible');
+						settingsMenu.classList.add("overflow-visible")
+
+						window.addEventListener("click", settingsSideMenuOnClickOutside)
+						window.addEventListener(
+							"contextmenu",
+							settingsSideMenuOnClickOutside
+						)
+					}, 250)
+				}
+
+				sideMenuSettingsMenuOpened = !sideMenuSettingsMenuOpened
 			}
 
-			sideMenuSettingsMenuOpened = !sideMenuSettingsMenuOpened;
-		}
+			settingsToggleBtn.addEventListener("click", toggleSettingsSideMenu)
+			settingsCollapseBtn.addEventListener("click", toggleSettingsSideMenu)
+		},
+	}
 
-		settingsToggleBtn.addEventListener("click", toggleSettingsSideMenu);
-		settingsCollapseBtn.addEventListener("click", toggleSettingsSideMenu);
-	},
-};
-
-/*const vExpandOnHoverDirective = {
+	/*const vExpandOnHoverDirective = {
 	mounted: (el) => {
 		var dropdownMenuClass = '.' + scope.menuType + '-dropdown-menu-element';
 		var menuBtnClass = '.' + scope.menuType + '-sidenav-menu-btn';
@@ -1265,22 +1281,32 @@ const vToggleSettingsMenuDirective = {
 	}
 }*/
 
-const showSubmenu = function ($event) {
-	const el = $event.target;
-	const dropdownMenu = el.querySelector(".submenuElement");
-	const menuBtn = el.querySelector(".openSubmenuBtn");
+	const showSubmenu = function ($event) {
+		const el = $event.target
+		const dropdownMenu = el.querySelector(".submenuElement")
+		const menuBtn = el.querySelector(".openSubmenuBtn")
 
-	menuBtn.classList.add("active-menu-btn");
-	dropdownMenu.classList.remove("display-none");
-};
+		menuBtn.classList.add("active-menu-btn")
+		dropdownMenu.classList.remove("display-none")
+	}
 
-const hideSubmenu = function ($event) {
-	const el = $event.target;
-	const dropdownMenu = el.querySelector(".submenuElement");
-	const menuBtn = el.querySelector(".openSubmenuBtn");
+	const hideSubmenu = function ($event) {
+		const el = $event.target
+		const dropdownMenu = el.querySelector(".submenuElement")
+		const menuBtn = el.querySelector(".openSubmenuBtn")
 
-	menuBtn.classList.remove("active-menu-btn");
-	dropdownMenu.classList.add("display-none");
+		menuBtn.classList.remove("active-menu-btn")
+		dropdownMenu.classList.add("display-none")
+	}
+
+const getWsStatus = function () {
+
+	if (store.ws && store.ws.readyState === WebSocket.OPEN) {
+		return 'open';
+	}
+
+	return 'closed';
+
 };
 
 const copyToBuffer = function (content) {
@@ -1288,53 +1314,52 @@ const copyToBuffer = function (content) {
 
 		e.clipboardData.setData('text/plain', content);
 
-		e.preventDefault();
+			e.preventDefault()
+		}
 
-	};
+		document.addEventListener("copy", listener, { once: true })
 
-	document.addEventListener('copy', listener, {once: true});
+		document.execCommand("copy")
 
-	document.execCommand("copy");
+		useNotify({ type: "success", title: "Copied" })
+	}
 
-	useNotify({type: 'success', title: "Copied"})
-};
-
-// function toggleSettingsSideMenu() {
-//
-// 	if (!sideMenuSettingsMenuOpened) {
-//
-// 		/* $('.side-menu-settings-menu').addClass('settings-menu-opened');
-// 		$('.sidenav-settings-toggle-btn').addClass('settings-menu-opened'); */
-// 		settingsMenu.addClass('settings-menu-opened');
-// 		settingsToggleBtn.addClass('settings-menu-opened');
-//
-// 		setTimeout(function () {
-// 			// $('.side-menu-settings-menu').addClass('overflow-visible');
-// 			settingsMenu.addClass('overflow-visible');
-//
-// 			window.addEventListener('click', settingsSideMenuOnClickOutside);
-// 			window.addEventListener('contextmenu', settingsSideMenuOnClickOutside);
-// 		}, 250);
-//
-// 	} else {
-//
-// 		/*$('.sidenav-settings-toggle-btn').removeClass('settings-menu-opened');
-// 		$('.side-menu-settings-menu').removeClass('overflow-visible');
-// 		$('.side-menu-settings-menu').removeClass('settings-menu-opened');*/
-// 		settingsToggleBtn.removeClass('settings-menu-opened');
-// 		settingsMenu.removeClass('overflow-visible', 'settings-menu-opened');
-//
-// 		window.removeEventListener('click', vm.settingsSideMenuOnClickOutside);
-// 		window.removeEventListener('contextmenu', vm.settingsSideMenuOnClickOutside);
-//
-// 	}
-//
-// 	sideMenuSettingsMenuOpened = !sideMenuSettingsMenuOpened;
-// }
+	// function toggleSettingsSideMenu() {
+	//
+	// 	if (!sideMenuSettingsMenuOpened) {
+	//
+	// 		/* $('.side-menu-settings-menu').addClass('settings-menu-opened');
+	// 		$('.sidenav-settings-toggle-btn').addClass('settings-menu-opened'); */
+	// 		settingsMenu.addClass('settings-menu-opened');
+	// 		settingsToggleBtn.addClass('settings-menu-opened');
+	//
+	// 		setTimeout(function () {
+	// 			// $('.side-menu-settings-menu').addClass('overflow-visible');
+	// 			settingsMenu.addClass('overflow-visible');
+	//
+	// 			window.addEventListener('click', settingsSideMenuOnClickOutside);
+	// 			window.addEventListener('contextmenu', settingsSideMenuOnClickOutside);
+	// 		}, 250);
+	//
+	// 	} else {
+	//
+	// 		/*$('.sidenav-settings-toggle-btn').removeClass('settings-menu-opened');
+	// 		$('.side-menu-settings-menu').removeClass('overflow-visible');
+	// 		$('.side-menu-settings-menu').removeClass('settings-menu-opened');*/
+	// 		settingsToggleBtn.removeClass('settings-menu-opened');
+	// 		settingsMenu.removeClass('overflow-visible', 'settings-menu-opened');
+	//
+	// 		window.removeEventListener('click', vm.settingsSideMenuOnClickOutside);
+	// 		window.removeEventListener('contextmenu', vm.settingsSideMenuOnClickOutside);
+	//
+	// 	}
+	//
+	// 	sideMenuSettingsMenuOpened = !sideMenuSettingsMenuOpened;
+	// }
 </script>
 
 <style lang="scss" scoped>
-/*.sidebar {
+	/*.sidebar {
 	width: 160px;
 	background: #000;
 
@@ -1397,64 +1422,64 @@ const copyToBuffer = function (content) {
 		visibility: visible;
 	}
 }*/
-.side-menu-container {
-	display: block;
-	position: absolute;
-	overflow: visible;
-	height: 100%;
-	width: 100%;
+	.side-menu-container {
+		display: block;
+		position: absolute;
+		overflow: visible;
+		height: 100%;
+		width: 100%;
 
-	button[disabled] {
+		button[disabled] {
+			color: #fff;
+			opacity: 0.5;
+		}
+	}
+
+	.sidenav-left {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		height: 100%;
+		// fill: #737373;
+		box-shadow: 0 1px 3px 0 rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%),
+			0 2px 1px -1px rgb(0 0 0 / 12%);
+		overflow: visible;
+
+		font-family: "Roboto-Regular", "Roboto", sans-serif;
+		font-weight: 400;
+		font-style: normal;
+		font-size: 12px;
+
+		z-index: 60;
+
+		a {
+			color: #fff;
+		}
+
 		color: #fff;
-		opacity: 0.5;
-	}
-}
 
-.sidenav-left {
-	display: flex;
-	flex-direction: column;
-	width: 100%;
-	height: 100%;
-	// fill: #737373;
-	box-shadow: 0 1px 3px 0 rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%),
-		0 2px 1px -1px rgb(0 0 0 / 12%);
-	overflow: visible;
+		button {
+			color: #fff;
+		}
 
-	font-family: "Roboto-Regular", "Roboto", sans-serif;
-	font-weight: 400;
-	font-style: normal;
-	font-size: 12px;
-
-	z-index: 60;
-
-	a {
-		color: #fff;
+		ng-md-icon {
+			position: relative;
+			top: 5px; // adjust for svg viewbox
+		}
 	}
 
-	color: #fff;
-
-	button {
-		color: #fff;
+	// <md-toolbar> in angularjs interface
+	.sidenav-logo-container {
+		display: flex;
+		flex-direction: row;
+		flex: 0 0 52px;
+		align-items: center;
+		min-height: 52px;
+		height: 52px;
+		background-color: #000;
 	}
 
-	ng-md-icon {
-		position: relative;
-		top: 5px; // adjust for svg viewbox
-	}
-}
-
-// <md-toolbar> in angularjs interface
-.sidenav-logo-container {
-	display: flex;
-	flex-direction: row;
-	flex: 0 0 52px;
-	align-items: center;
-	min-height: 52px;
-	height: 52px;
-	background-color: #000;
-}
-
-/*.md-toolbar-tools {
+	/*.md-toolbar-tools {
 	//background-color: #3b283b;
 	min-height: 52px;
 	height: 52px;
@@ -1462,62 +1487,158 @@ const copyToBuffer = function (content) {
 	padding: 0;
 }*/
 
-.sidenav-content {
-	flex: 0 1 100%;
-	position: relative;
-	// height: 100%;
-	//background-color: #3b283b;
-	background-color: #000;
-	overflow: visible;
-}
+	.sidenav-content {
+		flex: 0 1 100%;
+		position: relative;
+		// height: 100%;
+		//background-color: #3b283b;
+		background-color: #000;
+		overflow: visible;
+	}
 
-.sidenav-logo-wrapper {
-	position: absolute;
-	left: 10px;
-	width: 140px;
-	height: 40px;
-	overflow: hidden;
-}
+	.sidenav-logo-wrapper {
+		position: absolute;
+		left: 10px;
+		width: 140px;
+		height: 40px;
+		overflow: hidden;
+	}
 
-.sidenav-logo {
-	max-width: 140px;
-	width: 140px;
-	height: 40px;
-	margin: 0 auto;
-}
+	.sidenav-logo {
+		max-width: 140px;
+		width: 140px;
+		height: 40px;
+		margin: 0 auto;
+	}
 
-.sidenav-dropdown-menu-wrapper {
-	position: relative;
-}
+	.sidenav-dropdown-menu-wrapper {
+		position: relative;
+	}
 
-@mixin option-hover {
-	background-color: rgba(158, 158, 158, 0.2);
-}
+	@mixin option-hover {
+		background-color: rgba(158, 158, 158, 0.2);
+	}
 
-.sidenav-dropdown-menu {
-	width: 200px;
-	position: absolute;
-	//background-color: #5a3e5a;
-	background-color: #000;
-	top: 0;
-	right: -200px;
-	padding-left: 0;
-	z-index: 1;
+	.sidenav-dropdown-menu {
+		width: 200px;
+		position: absolute;
+		//background-color: #5a3e5a;
+		background-color: #000;
+		top: 0;
+		right: -200px;
+		padding-left: 0;
+		z-index: 1;
 
-	.sidenav-dropdown-menu-btn {
+		.sidenav-dropdown-menu-btn {
+			width: 100%;
+			height: 35px;
+			min-height: 30px;
+			display: block;
+			text-align: left;
+			padding-left: 1em;
+			margin-left: 0;
+			margin-bottom: 6px;
+			font-size: 11px;
+			line-height: 2;
+			padding-top: 12px;
+			padding-bottom: 10px;
+			text-transform: uppercase;
+
+			&:not([disabled]):hover {
+				@include option-hover;
+			}
+
+			&.active {
+				color: #f05a22;
+				fill: #f05a22;
+			}
+
+			/*&.active-menu-btn {
+			//background-color: #5a3e5a;
+
+			&:hover {
+				//background-color: #5a3e5a;
+			}
+		}*/
+		}
+
+		&:not(.open-upward) li:first-child .sidenav-dropdown-menu-btn {
+			margin-top: 0;
+		}
+
+		.sidenav-dropdown-menu-btn.two-line-text {
+			padding-top: 8px;
+			padding-bottom: 0;
+			line-height: 1.5;
+		}
+	}
+
+	.sidenav-dropdown-menu.open-upward {
+		top: initial;
+		bottom: 0;
+
+		li:last-child .sidenav-dropdown-menu-btn {
+			margin-bottom: 0;
+		}
+	}
+
+	.sidenav-wrapper {
+		position: relative;
+		min-width: $leftSidenavWidth;
+		height: 100vh;
+		top: 0;
+		left: 0;
+		z-index: 61;
+		transition: min-width ease 0.25s;
+
+		span.side-nav-title {
+			position: relative;
+			top: -4px;
+		}
+
+		.side-nav-icon {
+			color: $separ;
+			display: inline-block;
+			position: absolute;
+			//left: 11px;
+			left: 17px;
+			// bottom: 3px;
+			bottom: 6px;
+		}
+	}
+
+	.side-menu {
 		width: 100%;
-		height: 35px;
-		min-height: 30px;
+		padding-left: 0;
+		margin: 12px 0;
+	}
+
+	.sidemenu-btn {
+		position: relative;
+		width: 100%;
+		height: 36px;
 		display: block;
+
 		text-align: left;
-		padding-left: 1em;
-		margin-left: 0;
-		margin-bottom: 6px;
-		font-size: 11px;
 		line-height: 2;
-		padding-top: 12px;
-		padding-bottom: 10px;
 		text-transform: uppercase;
+
+		padding-top: 11px;
+		padding-bottom: 2px;
+		padding-left: 55px;
+		margin-top: 6px;
+		margin-bottom: 6px;
+		margin-left: 0;
+
+		.side-nav-icon div.icon {
+			position: relative;
+			top: 0;
+			left: -6px;
+		}
+
+		&:not(.f-s-10) {
+			font-size: 11px;
+		}
 
 		&:not([disabled]):hover {
 			@include option-hover;
@@ -1529,103 +1650,6 @@ const copyToBuffer = function (content) {
 		}
 
 		/*&.active-menu-btn {
-			//background-color: #5a3e5a;
-
-			&:hover {
-				//background-color: #5a3e5a;
-			}
-		}*/
-	}
-
-	&:not(.open-upward) li:first-child .sidenav-dropdown-menu-btn {
-		margin-top: 0;
-	}
-
-	.sidenav-dropdown-menu-btn.two-line-text {
-		padding-top: 8px;
-		padding-bottom: 0;
-		line-height: 1.5;
-	}
-}
-
-.sidenav-dropdown-menu.open-upward {
-	top: initial;
-	bottom: 0;
-
-	li:last-child .sidenav-dropdown-menu-btn {
-		margin-bottom: 0;
-	}
-}
-
-.sidenav-wrapper {
-	position: relative;
-	width: $leftSidenavWidth;
-	height: 100vh;
-	top: 0;
-	left: 0;
-	z-index: 61;
-
-	span.side-nav-title {
-		position: relative;
-		top: -4px;
-	}
-
-	.side-nav-icon {
-		color: $separ;
-		display: inline-block;
-		position: absolute;
-		//left: 11px;
-		left: 17px;
-		// bottom: 3px;
-		bottom: 6px;
-	}
-
-	transition: width ease 0.25s;
-}
-
-.side-menu {
-	width: 100%;
-	padding-left: 0;
-	margin: 12px 0;
-}
-
-.sidemenu-btn {
-	position: relative;
-	width: 100%;
-	height: 36px;
-	display: block;
-
-	text-align: left;
-	line-height: 2;
-	text-transform: uppercase;
-
-	padding-top: 11px;
-	padding-bottom: 2px;
-	padding-left: 55px;
-	margin-top: 6px;
-	margin-bottom: 6px;
-	margin-left: 0;
-
-	.side-nav-icon div.icon {
-		position: relative;
-		top: 0;
-		left: -6px;
-	}
-
-	&:not(.f-s-10) {
-		font-size: 11px;
-	}
-
-	&:not([disabled]):hover {
-		@include option-hover;
-	}
-
-	&.active {
-		color: #f05a22;
-		fill: #f05a22;
-	}
-
-	/*&.active-menu-btn {
 		//background-color: #5a3e5a;
 
 		&:not([disabled]):hover {
@@ -1633,16 +1657,43 @@ const copyToBuffer = function (content) {
 		}
 	}*/
 
-	.dropdown-icon {
-		float: right;
-		fill: #fff;
+		.dropdown-icon {
+			float: right;
+			fill: #fff;
+		}
 	}
-}
 
-.side-menu-bottom-menu {
-	position: absolute;
-	bottom: 40px;
-	width: 100%;
+	.side-menu-bottom-menu {
+		position: absolute;
+		bottom: 40px;
+		width: 100%;
+	}
+
+.build-date {
+	.highlight {
+		color: #fff;
+	}
+
+	.link:hover {
+		opacity: .7;
+	}
+
+	.ws-status {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		float: right;
+		margin-left: 3px;
+		margin-top: 2px;
+
+		&.open {
+			background: green;
+		}
+
+		&.closed {
+			background: red;
+		}
+	}
 }
 
 @media screen and (max-height: 620px) {
@@ -1651,210 +1702,210 @@ const copyToBuffer = function (content) {
 		bottom: initial;
 	}
 
-	.build-date {
-		display: none;
-	}
-}
-
-.side-menu-settings-container {
-	width: 0px;
-	height: 100%;
-	overflow: visible;
-	position: absolute;
-	top: 0;
-	left: $leftSidenavWidth;
-	z-index: 0;
-	//background-color: #3b283b;
-	background-color: #000;
-	color: #ffffff;
-	overflow: hidden;
-	transition: width ease 0.25s, left ease 0.25s;
-
-	.side-menu-settings-wrapper {
-		position: relative;
-		width: 200px;
-		height: 100%;
-		border-top: 2px solid #1f1f1f;
-		border-left: 2px solid #1f1f1f;
-		box-sizing: border-box;
-	}
-
-	.settings-menu-collapse-btn-holder {
-		position: absolute;
-		right: 3px;
-		top: 9px;
-	}
-
-	.side-menu-group-btn-container {
-		width: 100%;
-		box-sizing: border-box;
-
-		.sms-btn-group-header {
-			margin-left: 20px;
-			margin-top: 15px;
-			font-weight: 600;
-			line-height: normal;
-		}
-
-		.sidemenu-btn {
-			padding-left: 45px;
-		}
-	}
-
-	.side-menu-settings-border-top-1 {
-		border-top: 2px solid #1f1f1f;
-	}
-}
-
-.sidenav-btn {
-	position: relative;
-	display: block;
-	width: 24px;
-	height: 24px;
-	background: #fff;
-	border-radius: 50%;
-	fill: $gray;
-	left: 12px;
-	min-height: 24px;
-	min-width: 24px;
-
-	&.expand-sidenav-btn ng-md-icon {
-		left: -5px;
-	}
-}
-
-.panel-resizer-holder {
-	position: absolute;
-
-	div.icon {
-		color: $gray;
-	}
-}
-
-.sidenav-resizer-holder {
-	right: 0;
-
-	.expand-sidenav-btn {
-		display: none;
-	}
-}
-
-.sidenav-collapsed {
-	.space-for-sidenav {
-		padding-left: $collapsedLeftSidenavWidth;
-	}
-
-	.g-table-dial {
-		left: 80px;
-	}
-
-	.sidenav-logo-wrapper {
-		width: 40px;
-	}
-
-	.sidenav-wrapper {
-		width: $collapsedLeftSidenavWidth;
-	}
-
-	.sidenav-resizer-holder {
-		// position: absolute;
-		// right: -12px;
-		.to-small-btn {
+		.build-date {
 			display: none;
-		}
-
-		.expand-sidenav-btn {
-			display: block;
 		}
 	}
 
 	.side-menu-settings-container {
-		left: $collapsedLeftSidenavWidth;
-	}
+		width: 0px;
+		height: 100%;
+		overflow: visible;
+		position: absolute;
+		top: 0;
+		left: $leftSidenavWidth;
+		z-index: 0;
+		//background-color: #3b283b;
+		background-color: #000;
+		color: #ffffff;
+		overflow: hidden;
+		transition: width ease 0.25s, left ease 0.25s;
 
-	.md-button.md-raised.expand-sidenav-btn {
-		width: 25px;
-		min-height: 20px;
-		height: 25px;
-		margin: 0;
-		left: initial;
+		.side-menu-settings-wrapper {
+			position: relative;
+			width: 200px;
+			height: 100%;
+			border-top: 2px solid #1f1f1f;
+			border-left: 2px solid #1f1f1f;
+			box-sizing: border-box;
+		}
 
-		ng-md-icon {
-			top: initial;
-			right: 4px;
+		.settings-menu-collapse-btn-holder {
+			position: absolute;
+			right: 3px;
+			top: 9px;
+		}
+
+		.side-menu-group-btn-container {
+			width: 100%;
+			box-sizing: border-box;
+
+			.sms-btn-group-header {
+				margin-left: 20px;
+				margin-top: 15px;
+				font-weight: 600;
+				line-height: normal;
+			}
+
+			.sidemenu-btn {
+				padding-left: 45px;
+			}
+		}
+
+		.side-menu-settings-border-top-1 {
+			border-top: 2px solid #1f1f1f;
 		}
 	}
 
-	.sidenav-wrapper {
-		width: $collapsedLeftSidenavWidth;
-		z-index: 11000;
+	.sidenav-btn {
+		position: relative;
+		display: block;
+		width: 24px;
+		height: 24px;
+		background: #fff;
+		border-radius: 50%;
+		fill: $gray;
+		left: 12px;
+		min-height: 24px;
+		min-width: 24px;
+
+		&.expand-sidenav-btn ng-md-icon {
+			left: -5px;
+		}
 	}
 
-	.sidemenu-btn {
-		min-width: 50px;
+	.panel-resizer-holder {
+		position: absolute;
+
+		div.icon {
+			color: $gray;
+		}
 	}
 
-	.side-menu-main-buttons .sidemenu-btn .side-nav-title {
-		display: none;
+	.sidenav-resizer-holder {
+		right: 0;
+
+		.expand-sidenav-btn {
+			display: none;
+		}
 	}
 
-	.portal-header md-toolbar.header {
-		padding-left: $collapsedLeftSidenavWidth;
+	.sidenav-collapsed {
+		.space-for-sidenav {
+			padding-left: $collapsedLeftSidenavWidth;
+		}
+
+		.g-table-dial {
+			left: 80px;
+		}
+
+		.sidenav-logo-wrapper {
+			width: 40px;
+		}
+
+		.sidenav-wrapper {
+			width: $collapsedLeftSidenavWidth;
+		}
+
+		.sidenav-resizer-holder {
+			// position: absolute;
+			// right: -12px;
+			.to-small-btn {
+				display: none;
+			}
+
+			.expand-sidenav-btn {
+				display: block;
+			}
+		}
+
+		.side-menu-settings-container {
+			left: $collapsedLeftSidenavWidth;
+		}
+
+		.md-button.md-raised.expand-sidenav-btn {
+			width: 25px;
+			min-height: 20px;
+			height: 25px;
+			margin: 0;
+			left: initial;
+
+			ng-md-icon {
+				top: initial;
+				right: 4px;
+			}
+		}
+
+		.sidenav-wrapper {
+			min-width: $collapsedLeftSidenavWidth;
+			z-index: 11000;
+		}
+
+		.sidemenu-btn {
+			min-width: 50px;
+		}
+
+		.side-menu-main-buttons .sidemenu-btn .side-nav-title {
+			display: none;
+		}
+
+		.portal-header md-toolbar.header {
+			padding-left: $collapsedLeftSidenavWidth;
+		}
+
+		.build-date {
+			display: none;
+		}
+	}
+
+	.separate-side-menu {
+		margin-top: 20px;
+	}
+
+	.sidenav-settings-toggle-btn.settings-menu-opened,
+	.sidenav-settings-toggle-btn.settings-menu-opened.md-button:not([disabled]).md-focused {
+		background-color: #69476a;
+	}
+
+	.side-menu-settings-menu.settings-menu-opened {
+		width: 200px;
 	}
 
 	.build-date {
-		display: none;
+		position: absolute;
+		bottom: 0px;
+		color: $gray;
+		z-index: 100;
+		font-size: 9px;
+		text-align: left;
+		margin: 6px;
 	}
-}
 
-.separate-side-menu {
-	margin-top: 20px;
-}
+	.sidenav-error-subtitle {
+		margin-top: 4px;
+		margin-bottom: 4px;
 
-.sidenav-settings-toggle-btn.settings-menu-opened,
-.sidenav-settings-toggle-btn.settings-menu-opened.md-button:not([disabled]).md-focused {
-	background-color: #69476a;
-}
+		cursor: pointer;
 
-.side-menu-settings-menu.settings-menu-opened {
-	width: 200px;
-}
-
-.build-date {
-	position: absolute;
-	bottom: 0px;
-	color: $gray;
-	z-index: 100;
-	font-size: 9px;
-	text-align: left;
-	margin: 6px;
-}
-
-.sidenav-error-subtitle {
-	margin-top: 4px;
-	margin-bottom: 4px;
-
-	cursor: pointer;
-
-	&:hover {
-		opacity: 0.7;
+		&:hover {
+			opacity: 0.7;
+		}
 	}
-}
 
-.sidenav-tech-button {
-	cursor: pointer;
+	.sidenav-tech-button {
+		cursor: pointer;
 
-	&:hover {
-		opacity: 0.7;
+		&:hover {
+			opacity: 0.7;
+		}
 	}
-}
 
-.sidenav-api-link {
-	color: #fff;
-	text-decoration: none;
+	.sidenav-api-link {
+		color: #fff;
+		text-decoration: none;
 
-	&:hover {
-		opacity: 0.7;
+		&:hover {
+			opacity: 0.7;
+		}
 	}
-}
 </style>
