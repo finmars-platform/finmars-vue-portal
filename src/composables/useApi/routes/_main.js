@@ -20,7 +20,7 @@ export default {
 	instrumentScheme: {
 		get: prefix + '/pricing/instrument-pricing-scheme/'
 	},
-	policyFilters: {
+	pricingPolicy: {
 		get: prefix + '/instruments/pricing-policy/'
 	},
 	pricingPoliciesLight: {
@@ -121,4 +121,10 @@ export default {
 		get: prefix + '/reports/performance-report/first-transaction-date/?bandle={id}'
 	},
 
+
+	// Надо отделить
+
+	widgetsHistory: {
+		get: '/client0tsryctpc5/api/v1/widgets/history/nav/'
+	},
 }

@@ -28,18 +28,20 @@
 			</template>
 		</FmTopRefresh>
 
-		<div class="fm_container databases"
-			v-if="invites || store.masterUsers.length"
+		<div class="fm_container databases p-b-16"
+			v-if="invites && invites.results.length"
 		>
-			<template v-if="invites">
-				<PagesProfileInviteItem
-					v-for="invite in invites.results"
-					:invite="invite"
-					:key="invite.id"
-					@refresh="store.getMasterUsers(), refreshInvites()"
-				/>
-			</template>
+			<PagesProfileInviteItem
+				v-for="invite in invites.results"
+				:invite="invite"
+				:key="invite.id"
+				@refresh="store.getMasterUsers(), refreshInvites()"
+			/>
+		</div>
 
+		<div class="fm_container databases"
+			v-if="store.masterUsers.length"
+		>
 			<PagesProfileDatabasesItem
 				v-for="db in store.masterUsers"
 				:db="db"
@@ -47,7 +49,7 @@
 				@refresh="store.getMasterUsers()"
 			/>
 		</div>
-		<div class="fm_content" v-else>No databases found</div>
+		<div class="fm_container databases" v-else>No databases found</div>
 	</div>
 </template>
 
@@ -55,8 +57,10 @@
 
 	let store = useStore()
 
-	let { data: invites, refresh: refreshInvites } = await useAsyncData("invitesToDB", () =>
-		useApi('invitesToDB.get')
+	let { data: invites, refresh: refreshInvites } = await useAsyncData(
+		"invitesToDB",
+		() => useApi('invitesToDB.get'),
+		{lazy: true}
 	);
 
 	let isShowNewBackup = ref(false)

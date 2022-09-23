@@ -80,14 +80,14 @@
 							<FmIcon class="m-r-10" icon="playlist_remove" /> Hide all details
 						</div>
 						<div class="fm_list_item" @click="markAsReadAll( openedStream.id ), close()">
-							<FmIcon class="m-r-10" icon="mark_email_read" /> Mark as read
+							<FmIcon class="m-r-10" icon="mark_email_read" /> Mark all as read
 						</div>
 					</div>
 				</template>
 			</FmMenu>
 		</div>
 
-		<div class="hp_content" :class="{opened: openedStream}" ref="scrolledBox">
+		<div class="hp_content scrollable" :class="{opened: openedStream}" ref="scrolledBox">
 
 			<template v-if="!openedStream">
 				<div class="hp_row flex sb aic"
@@ -128,7 +128,7 @@
 						</div>
 					</div>
 
-					<FmMenu class="header_item" anchor="right">
+					<FmMenu class="header_item" anchor="bottom left">
 						<template #btn>
 							<FmIcon icon="more_vert" />
 						</template>
@@ -139,7 +139,7 @@
 									<FmIcon class="m-r-10" icon="smart_display" /> Watch stream
 								</div>
 								<div class="fm_list_item" @click="markAsReadAll( item.id ), close()">
-									<FmIcon class="m-r-10" icon="mark_email_read" /> Mark as read
+									<FmIcon class="m-r-10" icon="mark_email_read" /> Mark all as read
 								</div>
 							</div>
 						</template>
@@ -481,20 +481,25 @@
 
 	let newMessages = ref(0)
 
-	store.ws.on('new_system_message', async ( data ) => {
-		if (
-			openedStream.value &&
-			( data.section == openedStream.value.id || openedStream.value.id == 0 )
-		) {
-			let message = await useApi( 'systemMessagesOne.get', { params: {id: data.id} } )
+	watchEffect( async (effectStop) => {
+		if ( store.ws ) {
+			store.ws.on('new_system_message', async ( data ) => {
+				if (
+					openedStream.value &&
+					( data.section == openedStream.value.id || openedStream.value.id == 0 )
+				) {
+					let message = await useApi( 'systemMessagesOne.get', { params: {id: data.id} } )
 
-			if ( message.error ) return false
+					if ( message.error ) return false
 
-			let pinned = messages.value.filter(item => item.is_pinned)
-			let start = pinned.length
+					let pinned = messages.value.filter(item => item.is_pinned)
+					let start = pinned.length
 
-			messages.value.splice( start, 0, message )
-			newMessages.value += 1
+					messages.value.splice( start, 0, message )
+					newMessages.value += 1
+				}
+			})
+			effectStop(() => {})
 		}
 	})
 

@@ -9,13 +9,13 @@
 		"preview": "nuxt preview"
 	},
 	"devDependencies": {
-		"nuxt": "3.0.0-rc.9",
+		"nuxt": "^3.0.0-rc.11",
 		"prettier": "2.6.2"
 	},
 	"dependencies": {
 		"@chenfengyuan/vue-qrcode": "^2.0.0",
 		"@kyvg/vue3-notification": "^2.4.1",
-		"@pinia/nuxt": "^0.4.2",
+		"@pinia/nuxt": "0.1.9",
 		"chart.js": "^3.9.1",
 		"click-outside-vue3": "^4.0.1",
 		"moment": "^2.29.4",

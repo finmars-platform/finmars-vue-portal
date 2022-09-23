@@ -85,6 +85,7 @@ let props = defineProps({
 		}
 		&[disabled] {
 			background: $primary-lighten;
+			cursor: default;
 
 			&:hover {
 				background: $primary-lighten;
