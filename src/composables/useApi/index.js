@@ -1,7 +1,6 @@
 import routes from "./routes";
 
 let expireTokens
-
 export default async function useApi (
 		route_opt,
 		{
@@ -24,6 +23,7 @@ export default async function useApi (
 	// 	}
 	// }
 	const config = useRuntimeConfig();
+
 	const [route, method] = route_opt.split(".");
 	let url = routes[route][method];
 
