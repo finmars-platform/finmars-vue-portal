@@ -284,7 +284,7 @@
 		});
 		if ( res.success ) {
 			await store.getMasterUsers()
-			navigateTo('/')
+			navigateTo('/home')
 		}
 	}
 	async function save() {

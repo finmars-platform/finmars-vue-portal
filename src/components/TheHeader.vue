@@ -77,7 +77,7 @@
 				btn
 				tooltip="Homepage"
 				icon="home"
-				@click="$router.push('/')"
+				@click="$router.push('/home')"
 			/>
 
 			<template v-if="store.current.name">
@@ -195,7 +195,7 @@
 	async function setCurrent(id) {
 		let res = await useApi("masterSet.patch", { params: { id } })
 
-		if (res) window.location.href = '/'
+		if (res) window.location.href = '/home'
 	}
 </script>
 
