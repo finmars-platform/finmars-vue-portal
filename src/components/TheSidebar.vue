@@ -6,7 +6,7 @@
 		<div class="sidenav-left">
 			<div class="sidenav-logo-container">
 				<div class="sidenav-logo-wrapper">
-					<NuxtLink to="/">
+					<NuxtLink to="/home">
 						<img src="/img/logo.png" class="sidenav-logo" alt="" />
 					</NuxtLink>
 				</div>
@@ -56,7 +56,7 @@
 									<FmIcon icon="home" class="side-nav-icon"></FmIcon>
 									<span class="side-nav-title">Homepage</span>
 								</a>-->
-								<NuxtLink to="/" class="sidemenu-btn">
+								<NuxtLink to="/home" class="sidemenu-btn">
 									<FmIcon icon="home" class="side-nav-icon"></FmIcon>
 									<span class="side-nav-title">Homepage</span>
 								</NuxtLink>

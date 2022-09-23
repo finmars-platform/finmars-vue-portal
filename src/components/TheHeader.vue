@@ -43,7 +43,7 @@
 								</div>
 							</div>
 							<div class="tac p-8">
-								<FmBtn to="/" type="action">Show ALL</FmBtn>
+								<FmBtn to="/home" type="action">Show ALL</FmBtn>
 							</div>
 						</template>
 						<div class="p-16" v-else>No new messages</div>
