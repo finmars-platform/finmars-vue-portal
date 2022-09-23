@@ -195,7 +195,7 @@
 	async function setCurrent(id) {
 		let res = await useApi("masterSet.patch", { params: { id } })
 
-		if (res) window.location.href = '/home'
+		if (res) window.location.href = '/v/home'
 	}
 </script>
 
