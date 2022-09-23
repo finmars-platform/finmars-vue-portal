@@ -225,7 +225,9 @@
 		let isConfirm = await useConfirm({text: 'Are you sure?'})
 		if ( !isConfirm ) return false
 
-		let res = await useApi("masterRedeploy.get")
+		let res = await useApi("masterRedeploy.get", {
+			params: {baseApi: props.db.base_api_url}
+		})
 		if ( res ) {
 			useNotify({
 				type: 'success',
@@ -238,7 +240,9 @@
 		let isConfirm = await useConfirm({text: 'Are you sure?'})
 		if ( !isConfirm ) return false
 
-		let res = await useApi("masterStop.get")
+		let res = await useApi("masterStop.get", {
+			params: {baseApi: props.db.base_api_url}
+		})
 		if ( res ) {
 			useNotify({
 				type: 'success',
@@ -251,7 +255,9 @@
 		let isConfirm = await useConfirm({text: 'Are you sure?'})
 		if ( !isConfirm ) return false
 
-		let res = await useApi("masterStart.get")
+		let res = await useApi("masterStart.get", {
+			params: {baseApi: props.db.base_api_url}
+		})
 		if ( res ) {
 			useNotify({
 				type: 'success',
