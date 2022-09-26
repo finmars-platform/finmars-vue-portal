@@ -125,6 +125,9 @@ export default {
 	// Надо отделить
 
 	widgetsHistory: {
-		get: '/client0tsryctpc5/api/v1/widgets/history/nav/'
+		get: '/client0s6sf5crgw/api/v1/widgets/history/nav/?portfolio=2&date=2022-09-15'
+	},
+	widgetsStats: {
+		get: '/client0s6sf5crgw/api/v1/widgets/stats/?portfolio=2&date=2022-09-15'
 	},
 }
