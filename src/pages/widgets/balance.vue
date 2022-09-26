@@ -191,7 +191,8 @@ Custom.defaults = DoughnutController.defaults;
 
 	let wId = useRoute().query.wId
 
-	// let res = await useApi('widgetsHistory.get')
+	let res = await useApi('widgetsHistory.get')
+	console.log('res:', res)
 	let active = ref(null)
 
 	onMounted(() => {
@@ -224,7 +225,7 @@ Custom.defaults = DoughnutController.defaults;
 				plugins: {
 					legend: {
 						position: 'right',
-						align: 'start',
+						align: 'center',
 						labels: {
 							padding: 20,
 							color: '#404040',
