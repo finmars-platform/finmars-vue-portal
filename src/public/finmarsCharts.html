@@ -4,24 +4,75 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
+	<title>Widgets example</title>
+	<style>
+		* {
+			margin: 0;
+			border: none;
+			padding: 0;
+		}
+		body {
+			padding: 20px;
+		}
+		.flex {
+			display: flex;
+		}
+		.details {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 30px;
+			margin-top: 30px;
+		}
+		#balance_time {
+			margin-top: 30px;
+		}
+		@media only screen and (max-width: 767px) {
+			body {
+				padding: 20px 0;
+			}
+			#balance_nav {
+				padding: 0 20px;
+			}
+			#balance_pl {
+				margin-top: 30px;
+			}
+			.details {
+				display: block;
+			}
+		}
+	</style>
 </head>
 <body>
-	<div id="parentWidgetId"></div>
-	blablalba
-	<div id="parentWidgetId2"></div>
+	<div id="balance_nav"></div>
+	<div id="balance_time"></div>
 
+	<div class="flex details">
+		<div id="balance_datail"></div>
+		<div id="balance_pl"></div>
+	</div>
 
 	<script type="module">
-		import FinmarsWidgets from 'http://localhost:3000/v/finmarsWidgets.js'
+		import FinmarsWidgets from 'http://localhost:3000/finmarsWidgets.js'
 
 		let FinmarsWidgets2 = new FinmarsWidgets({
-			// apiUrl: "https://finmars.com/blabla/",
+			// apiUrl: "http://localhost:3000/v/",
 			// websocketUrl: "wss://finmars.com/",
 			widgets: [
 				{
 					name: "barchart",
-					container: "#parentWidgetId" // e.g. finmarsChart1
+					container: "#balance_time" // e.g. finmarsChart1
+				},
+				{
+					name: "balance",
+					container: "#balance_datail" // e.g. finmarsChart1
+				},
+				{
+					name: "pl",
+					container: "#balance_pl" // e.g. finmarsChart1
+				},
+				{
+					name: "nav",
+					container: "#balance_nav" // e.g. finmarsChart1
 				}
 			]
 		})

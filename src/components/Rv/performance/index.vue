@@ -484,7 +484,6 @@ async function getMonthDetails( name ) {
 
 	let dateTo = moment(viewerData.reportOptions?.end_date)
 	let dateFrom = moment(firstTransaction.transaction_date)
-	console.log('dateFrom:', dateFrom)
 
 	for ( let [year, months] of yearsBuffer ) {
 		portfolioYears.value.push( year )
