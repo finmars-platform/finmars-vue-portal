@@ -1,6 +1,6 @@
 export default class FinmarsWidgets {
 
-	widgetsUrl = 'http://localhost:3000/v/widgets/'
+	widgetsUrl = 'https://dev.finmars.com/v/widgets/'
 	_widgets = {}
 
 	constructor({
