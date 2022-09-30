@@ -29,7 +29,7 @@ export default {
 	currenciesLight: {
 		get: prefix + '/currencies/currency-light/',
 	},
-	portfolio: {
+	portfolios: {
 		get: prefix + '/portfolios/portfolio/',
 	},
 	currencyScheme: {
