@@ -261,7 +261,8 @@ async function choosePortfolio(id) {
 	activePeriod.value = id
 	detailPortfolio.value = preriodItems.value[id].name
 
-	await getMonthDetails( preriodItems.value[id].name )
+	let success = await getMonthDetails( preriodItems.value[id].name )
+	if  ( success === false ) return false
 	detailYear.value = portfolioYears.value[0]
 
 	updateChart( portfolioItems.value[0], portfolioItemsCumm.value[0] )
@@ -413,17 +414,22 @@ async function fetchPortolios() {
 	})
 }
 
+let detailsLoading = false
+
 async function getMonthDetails( name ) {
+	if ( detailsLoading ) return false
+
+	detailsLoading = true
 	portfolioYears.value = []
 	portfolioTotals.value = []
 	portfolioItems.value = []
 	portfolioItemsCumm.value = []
 
 	let bundleId = name
-		? bundles.value.find(item => item.name == name).id
+		? bundles.value.find(item => item.user_code == name).id
 		: bundles.value[0].id
 
-	let res = await useApi('performanceFirstTransaction.get', {
+	let firstTransaction = await useApi('performanceFirstTransaction.get', {
 		params: { id: bundleId }
 	})
 	let end = moment(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
@@ -431,7 +437,7 @@ async function getMonthDetails( name ) {
 	let allMonths = await useApi('performanceReport.post', {
 		body: {
 			"save_report": false,
-			"begin_date": res.transaction_date,
+			"begin_date": firstTransaction.transaction_date,
 			"end_date": end,
 			"calculation_type": "time_weighted",
 			"segmentation_type": 'months',
@@ -439,6 +445,10 @@ async function getMonthDetails( name ) {
 			"bundle": bundleId
 		}
 	})
+	if ( allMonths.error ) {
+		detailsLoading = false
+		return false
+	}
 
 	let yearsBuffer = new Map()
 	let yearsBufferCumm = []
@@ -473,22 +483,28 @@ async function getMonthDetails( name ) {
 	})
 
 	let dateTo = moment(viewerData.reportOptions?.end_date)
+	let dateFrom = moment(firstTransaction.transaction_date)
 
 	for ( let [year, months] of yearsBuffer ) {
 		portfolioYears.value.push( year )
 		portfolioItems.value.push( Object.values(months).map((item, i) => {
-			if ( year != dateTo.year() || i <= dateTo.month() ) return item[0]
+			if (
+				(year != dateTo.year() || i <= dateTo.month())
+				&&
+				(year != dateFrom.year() || i >= dateFrom.month() )
+			) return item[0]
 			else return ''
 		}))
 		portfolioItemsCumm.value.push( Object.values(months).map((item, i) => {
-			if ( year != dateTo.year() || i <= dateTo.month() )
-				return item[1]
+			if (
+				(year != dateTo.year() || i <= dateTo.month())
+			) return item[1]
 		}))
 
 		let total = await getReports({start: `${year - 1}-12-31`, end: `${year}-12-31`, ids: bundleId})
 		portfolioTotals.value.push( total * 100 )
 	}
-
+	detailsLoading = false
 }
 
 function updateChart( datasetMonth, datasetLine ) {
