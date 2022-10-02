@@ -166,8 +166,8 @@
 	async function init() {
 		useApi('instrumentType.get').then( res => typeList.value = res.results )
 		useApi('instrumentScheme.get').then( res => instrumentList.value = res.results )
-		useApi('policyFilters.get').then( res => policyList.value = res.results )
-		useApi('portfolioFilters.get').then( res => portfolioList.value = res.results )
+		useApi('pricingPolicy.get').then( res => policyList.value = res.results )
+		useApi('portfolios.get').then( res => portfolioList.value = res.results )
 		useApi('currencyScheme.get').then( res => currencyList.value = res.results )
 
 		let res = await useApi('pricingProcId.get', {params: {id: route.params.id}})

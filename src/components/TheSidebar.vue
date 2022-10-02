@@ -980,7 +980,7 @@
 							<div
 								class="side-menu-group-btn-container side-menu-settings-border-top-1"
 								v-if="
-									accessSectionTable.settings_administration && member.is_admin
+									accessSectionTable.settings_administration && store.member.is_admin
 								"
 							>
 								<h3 class="sms-btn-group-header">Administration</h3>
@@ -1087,26 +1087,28 @@
 	const config = useRuntimeConfig()
 	const buildDate = config.public.buildDATE
 
-	const readyStatus = {
+	let readyStatus = reactive({
 		// will be used by getInterfaceAccess()
 		access: true,
-	}
+	});
 
-let showErrorLog = ref(false);
+	let showErrorLog = ref(false);
 
-const accessSectionTable = {
-	history: true,
-	journal: true,
-	import: true,
+	let interfaceAccess = [];
 
-		settings_data: true,
-		settings_import_from_providers: true,
-		settings_import_from_files: true,
+	let accessSectionTable = reactive({
+			history: true,
+			journal: true,
+			import: true,
 
-		settings_administration: true,
-	}
+			settings_data: true,
+			settings_import_from_providers: true,
+			settings_import_from_files: true,
 
-	const accessTable = {
+			settings_administration: true,
+	});
+
+	let accessTable = reactive({
 		data_portfolio: true,
 		data_account: true,
 		data_instrument: true,
@@ -1168,11 +1170,10 @@ const accessSectionTable = {
 		account_settings: true,
 		account_personal_data: true,
 		account_ecosystem_management: true,
-	}
+	});
 
-	let sidenavExpanded = true
+	let sidenavExpanded = true;
 
-	let member = {}
 	let sidenav_width = useState("sidenav_width", () => 160)
 	function resizeSideNav(expand) {
 		// sideNavStatus = status;
@@ -1299,22 +1300,253 @@ const accessSectionTable = {
 		dropdownMenu.classList.add("display-none")
 	}
 
-const getWsStatus = function () {
+	//# region Permissions for access
+	const syncInterfaceAccess = function () {
 
-	if (store.ws && store.ws.readyState === WebSocket.OPEN) {
-		return 'open';
-	}
+		Object.keys(accessTable).forEach(function (key) {
 
-	return 'closed';
+			accessTable[key] = false;
 
-};
+		});
 
-const copyToBuffer = function (content) {
-	const listener = function (e) {
+		interfaceAccess.forEach(function (item) {
 
-		e.clipboardData.setData('text/plain', content);
+			if (item.value <= store.member.interface_level) {
+				accessTable[item.user_code] = true;
+			}
 
-			e.preventDefault()
+		});
+
+	};
+
+	const syncInterfaceSectionsAccess = function () {
+
+		accessSectionTable.history =
+			accessTable.data_transaction ||
+			accessTable.data_price_history ||
+			accessTable.data_fx_history;
+
+
+		accessSectionTable.journal =
+			accessTable.report_instrument_audit ||
+			accessTable.report_transaction_audit ||
+			accessTable.report_base_transaction;
+
+		accessSectionTable.import =
+			accessTable.data_simple_import ||
+			accessTable.data_transaction_import ||
+			accessTable.data_complex_import ||
+			accessTable.data_instrument_download ||
+			accessTable.data_prices_download ||
+			accessTable.configuration_mapping_tables;
+
+		accessSectionTable.settings_data =
+			accessTable.configuration_account_type ||
+			accessTable.configuration_instrument_type ||
+			accessTable.configuration_transaction_type ||
+			accessTable.configuration_pricing_policy ||
+			accessTable.configuration_user_attributes ||
+			accessTable.configuration_reference_table;
+
+		accessSectionTable.settings_import_from_providers =
+			accessTable.configuration_price_download_scheme ||
+			accessTable.configuration_instrument_download_scheme ||
+			accessTable.configuration_automated_price_downloads;
+
+		accessSectionTable.settings_import_from_files =
+			accessTable.configuration_simple_import_scheme ||
+			accessTable.configuration_transaction_import_scheme ||
+			accessTable.configuration_complex_import_scheme;
+
+
+		accessSectionTable.settings_administration =
+			accessTable.settings_provider ||
+			accessTable.settings_init_configuration ||
+			accessTable.settings_users_groups_permission ||
+			accessTable.settings_ecosystem_default;
+
+	};
+
+	const applyMemberInterfacePermissions = function () {
+
+		if (!store.member.is_admin && !store.member.is_owner) {
+
+			console.log("Applying Member Interface Permissions");
+
+			store.member.groups_object.forEach(function (group) {
+
+				console.log(' group.permission_table', group.permission_table);
+
+				if (group.permission_table) {
+
+					if (group.permission_table.function) {
+
+						group.permission_table.function.forEach(function (item) {
+
+							console.log('function item', item);
+
+							if (item.content_type === 'function.import_data') {
+
+								if (accessTable.data_simple_import) { // because possibly we dont have access to this menu via interface complexity level
+									accessTable.data_simple_import = item.data.creator_view
+								}
+							}
+
+							if (item.content_type === 'function.import_transactions') {
+								if (accessTable.data_transaction_import) {
+									accessTable.data_transaction_import = item.data.creator_view
+								}
+							}
+
+							if (item.content_type === 'function.import_complex') {
+								if (accessTable.data_complex_import) {
+									accessTable.data_complex_import = item.data.creator_view
+								}
+							}
+
+							if (item.content_type === 'function.provider_download_instrument') {
+								if (accessTable.data_instrument_download) {
+									accessTable.data_instrument_download = item.data.creator_view
+								}
+							}
+
+							if (item.content_type === 'function.provider_download_price') {
+								if (accessTable.data_prices_download) {
+									accessTable.data_prices_download = item.data.creator_view
+								}
+							}
+
+
+						})
+
+					}
+
+
+					if (group.permission_table.configuration) {
+
+						group.permission_table.configuration.forEach(function (item) {
+
+							if (item.content_type === 'obj_attrs.attributetype') {
+
+								if (accessTable.configuration_user_attributes) { // because possibly we dont have access to this menu via interface complexity level
+									accessTable.configuration_user_attributes = item.data.creator_view
+								}
+							}
+
+							if (item.content_type === 'reference_tables.referencetable') {
+
+								if (accessTable.configuration_reference_table) {
+									accessTable.configuration_reference_table = item.data.creator_view
+								}
+							}
+
+							if (item.content_type === 'ui.templatelayout') {
+
+								if (accessTable.configuration_template) {
+									accessTable.configuration_template = item.data.creator_view
+								}
+
+							}
+
+							if (item.content_type === 'integrations.mappingtable') {
+
+								if (accessTable.configuration_mapping_tables) {
+									accessTable.configuration_mapping_tables = item.data.creator_view
+								}
+							}
+
+							if (item.content_type === 'integrations.pricedownloadscheme') {
+
+								if (accessTable.configuration_price_download_scheme) {
+									accessTable.configuration_price_download_scheme = item.data.creator_view
+								}
+							}
+
+							if (item.content_type === 'integrations.instrumentdownloadscheme') {
+
+								if (accessTable.configuration_instrument_download_scheme) {
+									accessTable.configuration_instrument_download_scheme = item.data.creator_view
+								}
+							}
+
+							if (item.content_type === 'csv_import.csvimportscheme') {
+
+								if (accessTable.configuration_simple_import_scheme) {
+									accessTable.configuration_simple_import_scheme = item.data.creator_view
+								}
+							}
+
+							if (item.content_type === 'integrations.complextransactionimportscheme') {
+
+								if (accessTable.configuration_transaction_import_scheme) {
+									accessTable.configuration_transaction_import_scheme = item.data.creator_view
+								}
+							}
+
+							if (item.content_type === 'complex_import.compleximportscheme') {
+
+								if (accessTable.configuration_complex_import_scheme) {
+									accessTable.configuration_complex_import_scheme = item.data.creator_view
+								}
+							}
+
+							if (item.content_type === 'ui.userfield') {
+
+								if (accessTable.configuration_aliases) {
+									accessTable.configuration_aliases = item.data.creator_view
+								}
+							}
+
+
+						})
+
+					}
+
+				}
+
+			});
+
+		}
+
+	};
+
+	const getInterfaceAccess = function () {
+
+		// uiService.getPortalInterfaceAccess().then(function (data) {
+		useApi('interfaceAccess.get').then(function (data) {
+
+			// console.log('vm.getInterfaceAccess', data);
+			interfaceAccess = data;
+
+			syncInterfaceAccess();
+			applyMemberInterfacePermissions();
+			syncInterfaceSectionsAccess();
+
+			readyStatus.access = true;
+
+		})
+
+	};
+	//# endregion
+
+	const getWsStatus = function () {
+
+		if (store.ws && store.ws.readyState === WebSocket.OPEN) {
+			return 'open';
+		}
+
+		return 'closed';
+
+	};
+
+	const copyToBuffer = function (content) {
+
+		const listener = function (e) {
+
+			e.clipboardData.setData('text/plain', content);
+
+			e.preventDefault();
+
 		}
 
 		document.addEventListener("copy", listener, { once: true })
@@ -1356,6 +1588,11 @@ const copyToBuffer = function (content) {
 	//
 	// 	sideMenuSettingsMenuOpened = !sideMenuSettingsMenuOpened;
 	// }
+	const init = function () {
+		getInterfaceAccess();
+	};
+
+	init();
 </script>
 
 <style lang="scss" scoped>

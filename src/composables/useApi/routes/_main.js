@@ -29,7 +29,7 @@ export default {
 	currenciesLight: {
 		get: prefix + '/currencies/currency-light/',
 	},
-	portfolioFilters: {
+	portfolios: {
 		get: prefix + '/portfolios/portfolio/',
 	},
 	currencyScheme: {
@@ -120,11 +120,17 @@ export default {
 	performanceFirstTransaction: {
 		get: prefix + '/reports/performance-report/first-transaction-date/?bandle={id}'
 	},
+	interfaceAccess: {
+		get: prefix + '/ui/portal-interface-access/'
+	},
 
 
 	// Надо отделить
 
 	widgetsHistory: {
-		get: '/client0tsryctpc5/api/v1/widgets/history/nav/'
+		get: '/client0s6sf5crgw/api/v1/widgets/history/nav/?portfolio=2&date=2022-09-15'
+	},
+	widgetsStats: {
+		get: '/client0s6sf5crgw/api/v1/widgets/stats/?portfolio=2&date=2022-09-15'
 	},
 }

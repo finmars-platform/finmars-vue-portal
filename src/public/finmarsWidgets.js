@@ -1,26 +1,54 @@
 export default class FinmarsWidgets {
 
-	widgetsUrl = 'http://localhost:3000/v/widgets/'
+	widgetsUrl = 'https://dev.finmars.com/v/widgets/'
+	_widgets = {}
 
 	constructor({
 		widgets
 	}) {
 		this._initWidgets( widgets )
 
-		window.addEventListener("message", this._onMessage);
+		let inits = 0
+
+		window.addEventListener("message", (e) => {
+			if ( !e.data.action ) return false
+			if ( e.data.action == 'init' ) {
+				inits++
+
+				if ( inits == widgets.length ) {
+					for ( let prop in this._widgets ) {
+						this._widgets[prop].postMessage( {action: 'ready'}, "*" )
+					}
+				}
+			}
+
+			if ( "clickOnChart" == e.data.action ) {
+				this._widgets['balance'].postMessage(
+					{
+						action: 'clickOnChart',
+						data: e.data.data,
+					},
+					"*"
+				)
+			}
+		});
 	}
 
 	async _initWidgets( widgets ) {
 		if ( !widgets ) {
 			return false;
 		}
-
 		widgets.forEach((widget) => {
 			this._createWidget(widget)
 		})
 	}
 	async _createWidget( widget ) {
 		this._checkName( widget.name )
+		let heights = {
+			'balance': '340px',
+			'pl': '340px',
+			'nav': '100px',
+		}
 
 		let frame = document.createElement('iframe')
 		let widgetId = this._generateWidgetId( widget.name )
@@ -28,22 +56,20 @@ export default class FinmarsWidgets {
 		frame.src = this.widgetsUrl + widget.name + '?wId=' + widgetId
 		frame.name = widgetId
 		frame.width = '100%'
-		frame.height = '300px'
+		frame.height = heights[widget.name] || '400px'
 
 		let container = document.querySelector(widget.container)
 
 		if ( !container ) throw new Error(`Bad container "${widget.container}"`)
 
 		container.append(frame)
-	}
-	_onMessage( e ) {
-		if ( !e.data.action ) return false
 
-		console.log('data:', e.data)
+		frame.onload = () => {
+			this._widgets[widget.name] = frame.contentWindow
+		}
 	}
-
 	_checkName( name ) {
-		let names = ['barchart']
+		let names = ['barchart', 'balance', 'pl', 'nav']
 
 		if ( names.includes(name) ) return true
 		else throw new Error('Bad widget name')

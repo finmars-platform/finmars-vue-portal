@@ -99,8 +99,7 @@
 			<div class="flex sb aic">
 				<div>
 					<div class="fm_card_text">Role: {{ db.is_owner ? "owner" : "admin" }}</div>
-					<div class="clipboard flex aic" @click="copy()">
-
+					<div class="clipboard flex aic">
 						<FmIcon
 							:tooltip="STATUSES[db.status]"
 							class="db_status"
@@ -110,8 +109,11 @@
 								red: db.status == 3 || db.status == 4,
 							}"
 						></FmIcon>
-						<div class="clipboard_text">{{ db.base_api_url}}</div>
-						<FmIcon class="m-l-4" icon="content_copy" size="16" /></div>
+						<a target="_blank" :href="`${config.public.apiURL}/${db.base_api_url}/api/v1/`" class="clipboard_text">
+							{{ db.base_api_url}}
+						</a>
+						<!-- <FmIcon class="m-l-4" icon="content_copy" size="16" /> -->
+					</div>
 				</div>
 
 				<template v-if="!isEdit && db.is_initialized">
