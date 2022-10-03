@@ -5,9 +5,8 @@
 				v-for="(item, prop) in stats"
 				:key="prop"
 				:class="{active: item[0] == active}"
-				@click="active = item[0]"
 			>
-				<div class="card_name">{{ item[0] }}</div>
+				<div class="card_name">{{ STATS[item[0]] }}</div>
 				<div class="card_value">{{ Math.round(item[1]) }}</div>
 			</div>
 		</div>
@@ -26,6 +25,10 @@
 	let portfolioId = route.query.portfolioId
 	let client = route.query.workspace
 	let date_to = route.query.date_to
+
+	const STATS = {
+		"portfolio":2,"nav":7517531.61778312,"total":4302192.5800554305,"cumulative_return":-1.0,"annualized_return":-1.0,"portfolio_volatility":39.26645467629845,"annualized_portfolio_volatility":136.0229890648989,"sharpe_ratio":-0.007351698465638649,"max_annualized_drawdown":-379.97930904551254,"betta":0.0,"alpha":0.0,"correlation":0.0
+	}
 
 	let res = await useApi('widgetsStats.get', {
 		params: {
