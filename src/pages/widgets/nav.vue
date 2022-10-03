@@ -21,9 +21,17 @@
 		layout: 'auth'
 	});
 
-	let wId = useRoute().query.wId
+	let route = useRoute()
+	let wId = route.query.wId
+	let portfolioId = route.query.portfolioId
+	let client = route.query.workspace
+	let date_to = route.query.date_to
 
-	let res = await useApi('widgetsStats.get')
+	let res = await useApi('widgetsStats.get', {
+		params: {
+			client
+		}
+	})
 	delete res.date
 	delete res.portfolio
 	delete res.benchmark

@@ -2,6 +2,17 @@
 	<div class="wrap">
 		<div class="title">Balance (time) </div>
 
+		<div class="filters flex">
+			<div class="filter_item"
+				v-for="(item, i) in categories"
+				:key="i"
+				:class="{active: categoryName == item}"
+				@click="categoryName = item, updateData()"
+			>
+				{{ item }}
+			</div>
+		</div>
+
 		<div class="content">
 			<canvas id="myChart"><p>Chart</p></canvas>
 		</div>
@@ -70,52 +81,93 @@
 		layout: 'auth'
 	});
 
-	let wId = useRoute().query.wId
+	let route = useRoute()
+	let wId = route.query.wId
+	let portfolioId = route.query.portfolioId
+	let client = route.query.workspace
+	let date_to = route.query.date_to
 
-	let histroy = await useApi('widgetsHistory.get')
+	let refresh_token = useCookie('refresh_token')
+	refresh_token.value = route.query.token
+
+	let token_res = await useApi('tokenRefresh.post',
+		{body: { refresh_token: refresh_token.value }
+	})
+
+	if ( !token_res.error ) {
+		let access_token = useCookie('access_token')
+		access_token.value = token_res.access_token
+	} else {
+		throw new Error(token_res.error.detail)
+	}
+
+	let historyStats = await useApi('widgetsHistory.get', {
+		params: {
+			type: 'nav',
+			client,
+		},
+		filters: {
+			portfolio: portfolioId,
+			date_to,
+		}
+	})
 	let active = ref(null)
 	let last = ref({})
 
-	onMounted(() => {
-		initPostMessageBus()
+	let categoryName = ref('Asset Types')
+	let categories = reactive(new Set())
 
-		let data = {
-			labels: [],
-			datasets: [],
-		}
+	let data = {
+		labels: [],
+		datasets: [],
+	}
+	let myChart
+	const COLORS = [
+		'#577590CC',
+		'#43AA8BCC',
+		'#F9AB4B',
+		'#FA6769',
+		'#F9C74F',
+		'#979BFF',
+		'#D9ED92',
+		'#C8D7F9',
+		'#96B5B4',
+		'#AB7967',
+		'#577590CC',
+		'#43AA8BCC',
+		'#F9AB4B',
+		'#FA6769',
+		'#F9C74F',
+		'#979BFF',
+		'#D9ED92',
+		'#C8D7F9',
+		'#96B5B4',
+		'#AB7967',
+	]
 
-		const COLORS = [
-			'#577590CC',
-			'#43AA8BCC',
-			'#F9AB4B',
-			'#FA6769',
-			'#F9C74F',
-			'#979BFF',
-			'#D9ED92',
-			'#C8D7F9',
-			'#96B5B4',
-			'#AB7967',
-			'#577590CC',
-			'#43AA8BCC',
-			'#F9AB4B',
-			'#FA6769',
-			'#F9C74F',
-			'#979BFF',
-			'#D9ED92',
-			'#C8D7F9',
-			'#96B5B4',
-			'#AB7967',
-		]
+	function updateData() {
+		data.labels = []
+		data.datasets = []
 
-		let categoryName = 'Asset Types'
-		let categories = []
+		createData()
 
-		histroy.items.forEach((date) => {
+		send({
+			action: 'clickOnChart',
+			data: {...last.value},
+			date: historyStats.items[historyStats.items.length - 1],
+			category: categoryName.value
+		})
+		myChart.update()
+	}
+
+
+	function createData() {
+		historyStats.items.forEach((date) => {
 			data.labels.push(moment(date.date).format('MMM YY'))
 
 			date.categories.forEach((category) => {
-				categories.push( category.name )
-				if ( category.name != categoryName ) return false
+				categories.add( category.name )
+				if ( category.name != categoryName.value ) return false
 
 				category.items.forEach((instrument, key) => {
 					if ( !data.datasets[key] ) {
@@ -135,14 +187,21 @@
 			.filter((item) => item.total != 0)
 			.sort( (a, b) => b.total - a.total)
 
+		last.value = {}
 
 		data.datasets.forEach((item, key) => {
 			item.backgroundColor = COLORS[key]
 
 			last.value[item.label] = item.data[item.data.length - 1]
 		})
+	}
 
-		let myChart = new Chart('myChart', {
+	onMounted(() => {
+		initPostMessageBus()
+
+		createData()
+
+		myChart = new Chart('myChart', {
 			type: 'bar',
 			data: data,
 			plugins: [{
@@ -181,7 +240,7 @@
 						grace: '5%',
 						ticks: {
 							callback: function(value) {
-								var suffixes = ["", "k", "m", "b","t"];
+								var suffixes = ["", "K", "M", "B","T"];
 								var suffixNum = Math.floor((""+value).length/3);
 								var shortValue = parseFloat((suffixNum != 0 ? (value / Math.pow(1000,suffixNum)) : value).toPrecision(2));
 								if (shortValue % 1 != 0) {
@@ -217,8 +276,6 @@
 				},
 				onClick: (evt) => {
 					const points = myChart.getElementsAtEventForMode(evt, 'nearest', { intersect: false, axis: 'x' }, true);
-					console.log('evt:', evt)
-					console.log('points:', points)
 
 					if (points.length) {
 						let data = {}
@@ -231,7 +288,9 @@
 
 						send({
 							action: 'clickOnChart',
-							data
+							data,
+							date: historyStats.items[points[0].index],
+							category: categoryName.value
 						})
 					}
         }
@@ -250,7 +309,9 @@
 			if ( e.data.action == 'ready' ) {
 				e.source.postMessage({
 					action: 'clickOnChart',
-					data: {...last.value}
+					data: {...last.value},
+					date: historyStats.items[historyStats.items.length - 1],
+					category: categoryName.value
 				}, '*')
 			}
 		});
@@ -275,6 +336,29 @@
 		padding: 0 20px;
 	}
 	.content {
-		height: calc(100vh - 38px);
+		height: calc(100vh - 75px);
+	}
+	.filters {
+		margin-top: 12px;
+		margin-left: 12px;
+		overflow-x: auto;
+    overflow-y: hidden;
+	}
+	.filter_item {
+		height: 25px;
+		line-height: 25px;
+		padding: 0 15px;
+		background: $main-darken;
+		border-radius: 5px;
+		cursor: pointer;
+
+		&.active {
+			background: $primary;
+			color: $separ;
+		}
+
+		&+& {
+			margin-left: 20px;
+		}
 	}
 </style>
