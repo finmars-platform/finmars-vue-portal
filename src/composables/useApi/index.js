@@ -33,7 +33,8 @@ export default async function useApi (
 	}
 
 	let baseApi = useStore().current.base_api_url
-	url = url.replace('{client}', baseApi);
+	if ( baseApi )
+		url = url.replace('{client}', baseApi);
 
 	let token = useCookie('access_token').value
 
@@ -41,10 +42,12 @@ export default async function useApi (
 		baseURL: config.public.apiURL,
 		method: method.toUpperCase() || "GET",
 		headers: {
-			Authorization: "Token " + token,
 			...headers
 		}
 	};
+
+	if ( token )
+		opts.headers.Authorization = "Token " + token
 
 	if (body) opts.body = body;
 	if (filters) {
