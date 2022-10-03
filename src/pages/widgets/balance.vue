@@ -81,7 +81,11 @@
 		'#AB7967'
 	]
 
-	let wId = useRoute().query.wId
+	let route = useRoute()
+	let wId = route.query.wId
+	let portfolioId = route.query.portfolioId
+	let client = route.query.workspace
+	let date_to = route.query.date_to
 
 	let active = ref(null)
 	let myChart
@@ -98,7 +102,13 @@
 			}
 		],
 	})
+	function precisionTick(value) {
+		var suffixes = ["", "K", "M", "B","T"];
+		var suffixNum = Math.floor( ( "" + Math.round( Math.abs(value) )).length / 3 );
+		var shortValue = parseFloat((suffixNum != 0 ? (value / Math.pow(1000,suffixNum)) : value).toPrecision(2));
 
+		return shortValue+suffixes[suffixNum];
+	}
 	onMounted(() => {
 		initPostMessageBus()
 
@@ -114,10 +124,11 @@
 						position: 'right',
 						align: 'center',
 						labels: {
-							padding: 20,
+							padding: 0,
 							color: '#404040',
-							boxWidth: 26,
-							boxHeight: 26,
+							boxWidth: 30,
+							boxHeight: 30,
+							maxWidth: 300,
 							font: {
 								size: 16
 							},
@@ -127,12 +138,14 @@
 
 								labelsOriginal.forEach((item, i) => {
 									item.datasetIndex = 0
-									item.fillStyle = COLORS[i]
+									item.fillStyle = inheritColors[item.text]
 
 									if ( data.value.datasets[0].data.length <= i ) {
 										item.datasetIndex = 1
 										item.index = i - data.value.datasets[0].data.length
 									}
+									item.text += ' | ' +
+										precisionTick(data.value.datasets[item.datasetIndex].data[item.index])
 								})
 
 								return labelsOriginal
@@ -171,6 +184,8 @@
 		});
 	})
 
+	let inheritColors = {}
+
 	function initPostMessageBus() {
 		if ( window == top ) return false
 
@@ -180,30 +195,44 @@
 
 		window.addEventListener("message", (e) => {
 			if ( 'clickOnChart' == e.data.action ) {
+				let i = 0
+				for ( let prop in e.data.data ) {
+					inheritColors[prop] = COLORS[i]
+					i++
+				}
 				let rawData = Object
 					.entries(e.data.data)
 					.sort((a,b) => b[1] - a[1])
 
+				let plusColors = []
 				let plus = rawData
 					.filter(item => item[1] > 0)
-					.map(item => item[1])
+					.map(item => {
+						plusColors.push( inheritColors[item[0]] )
+						return item[1]
+					})
+
 				let totalPlus = plus.length ? plus.reduce((a,b)=> a + b) : 1
 
+				let minusColors = []
 				let minus = rawData
 					.filter(item => item[1] < 0)
-					.map(item => item[1])
+					.map(item => {
+						minusColors.push( inheritColors[item[0]] )
+						return item[1]
+					})
 				let totalMinus = Math.abs(minus.length ? minus.reduce((a,b) => a + b) : 1)
 
 				data.value.labels = rawData.map(item => item[0])
 				data.value.datasets = [
 					{
 						data: plus,
-						backgroundColor: COLORS,
+						backgroundColor: plusColors,
 						hoverOffset: 4
 					},
 					{
 						data: minus,
-						backgroundColor: COLORS.slice(plus.length),
+						backgroundColor: minusColors,
 						circumference: Math.floor(totalMinus / totalPlus * 360)
 					}
 				]
