@@ -52,11 +52,19 @@
 	</div>
 
 	<script type="module">
-		import FinmarsWidgets from 'https://dev.finmars.com/v/finmarsWidgets.js'
+		import FinmarsWidgets from 'http://localhost:3000/finmarsWidgets.js'
+		// import FinmarsWidgets from 'https://dev.finmars.com/v/finmarsWidgets.js'
 
 		let FinmarsWidgets2 = new FinmarsWidgets({
-			// apiUrl: "http://localhost:3000/v/",
-			// websocketUrl: "wss://finmars.com/",
+			apiUrl: "http://localhost:3000/v/",
+			apiToken: 'eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI2YzE1ZTYxOC1lMzliLTRkZjItYTQ0Ny1hYmYxNjEyOTNmNjcifQ', // refresh token
+			workspace: 'client436933fdg',
+			options: {
+				portfolioId: 2, // Readme
+				date_to: '2022-09-15', // Readme
+				date_from: undefined, // Readme
+				benchmark: undefined, // Readme
+			},
 			widgets: [
 				{
 					name: "barchart",
