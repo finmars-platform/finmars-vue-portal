@@ -29,7 +29,7 @@ export default {
 	currenciesLight: {
 		get: prefix + '/currencies/currency-light/',
 	},
-	portfolioFilters: {
+	portfolios: {
 		get: prefix + '/portfolios/portfolio/',
 	},
 	currencyScheme: {
@@ -119,6 +119,9 @@ export default {
 	},
 	performanceFirstTransaction: {
 		get: prefix + '/reports/performance-report/first-transaction-date/?bandle={id}'
+	},
+	interfaceAccess: {
+		get: prefix + '/ui/portal-interface-access/'
 	},
 
 
