@@ -34,6 +34,9 @@
 		filters: {
 			portfolio: portfolioId,
 			date: date_to,
+		},
+		headers: {
+			Authorization: 'Token' + route.query.token
 		}
 	})
 	delete res.date
