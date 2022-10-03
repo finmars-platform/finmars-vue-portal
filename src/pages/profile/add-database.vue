@@ -31,6 +31,7 @@
 <script setup>
 	definePageMeta({
 		middleware: 'auth',
+		isHideSidebar: true,
 		bread: [
 			{
 				text: "Profile",
