@@ -18,13 +18,14 @@
 						<div class="fm_list_item" @click="isShowNewBackup = true">
 							From Backup
 
-							<PagesProfileDatabaseFromBackup
-								v-model="isShowNewBackup"
-								@cancel="isShowNewBackup = false, store.getMasterUsers()"
-							/>
+
 						</div>
 					</div>
 				</FmMenu>
+				<PagesProfileDatabaseFromBackup
+								v-model="isShowNewBackup"
+								@cancel="isShowNewBackup = false, store.getMasterUsers()"
+							/>
 			</template>
 		</FmTopRefresh>
 

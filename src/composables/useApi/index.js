@@ -41,12 +41,10 @@ export default async function useApi (
 		baseURL: config.public.apiURL,
 		method: method.toUpperCase() || "GET",
 		headers: {
+			Authorization: "Token " + token,
 			...headers
 		}
 	};
-
-	if ( token )
-		opts.headers.Authorization = "Token " + token
 
 	if (body) opts.body = body;
 	if (filters) {
