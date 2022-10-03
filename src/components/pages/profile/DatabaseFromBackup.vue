@@ -1,7 +1,6 @@
 <template>
 	<BaseModal
 		title="Create Database"
-		@cancel="cancel()"
 	>
 		<BaseInput
 			label="Name"
