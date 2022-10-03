@@ -1,11 +1,23 @@
 export default class FinmarsWidgets {
 
-	widgetsUrl = 'https://dev.finmars.com/v/widgets/'
+	widgetsUrl = 'http://localhost:3000/v/widgets/'
 	_widgets = {}
+	apiToken = ''
+	_workspace = ''
+	_options = {}
 
 	constructor({
+		apiToken,
+		apiUrl,
+		workspace,
+		options,
 		widgets
 	}) {
+		this.apiToken = apiToken
+		this.widgetsUrl = apiUrl + 'widgets/'
+		this._workspace = workspace
+		this._options = options
+
 		this._initWidgets( widgets )
 
 		let inits = 0
@@ -24,10 +36,11 @@ export default class FinmarsWidgets {
 
 			if ( "clickOnChart" == e.data.action ) {
 				this._widgets['balance'].postMessage(
-					{
-						action: 'clickOnChart',
-						data: e.data.data,
-					},
+					e.data,
+					"*"
+				)
+				this._widgets['pl'].postMessage(
+					e.data,
 					"*"
 				)
 			}
@@ -53,7 +66,16 @@ export default class FinmarsWidgets {
 		let frame = document.createElement('iframe')
 		let widgetId = this._generateWidgetId( widget.name )
 
-		frame.src = this.widgetsUrl + widget.name + '?wId=' + widgetId
+		frame.src = this.widgetsUrl + widget.name +
+			'?wId=' + widgetId +
+			'&token=' + this.apiToken +
+			'&workspace=' + this._workspace
+
+		let opts = Object.entries(this._options)
+			.map(item => item.join('='))
+			.join('&')
+
+		frame.src += '&' + opts
 		frame.name = widgetId
 		frame.width = '100%'
 		frame.height = heights[widget.name] || '400px'

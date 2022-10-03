@@ -10,7 +10,6 @@ export default async function useApi (
 			headers = {}
 		} = {}
 	) {
-
 	// if ( !expireTokens && route_opt != 'tokenInfo.get' ) {
 	// 	let res = await useApi('tokenInfo.get')
 
@@ -33,7 +32,8 @@ export default async function useApi (
 	}
 
 	let baseApi = useStore().current.base_api_url
-	url = url.replace('{client}', baseApi);
+	if ( baseApi )
+		url = url.replace('{client}', baseApi);
 
 	let token = useCookie('access_token').value
 
