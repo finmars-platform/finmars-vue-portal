@@ -97,7 +97,7 @@
 			date_to,
 		},
 		headers: {
-			Authorization: 'Token' + route.query.token
+			Authorization: 'Token ' + route.query.token
 		}
 	})
 	let active = ref(null)

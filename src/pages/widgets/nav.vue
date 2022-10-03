@@ -36,7 +36,7 @@
 			date: date_to,
 		},
 		headers: {
-			Authorization: 'Token' + route.query.token
+			Authorization: 'Token ' + route.query.token
 		}
 	})
 	delete res.date
