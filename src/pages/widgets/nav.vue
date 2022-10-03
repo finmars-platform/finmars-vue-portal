@@ -30,6 +30,10 @@
 	let res = await useApi('widgetsStats.get', {
 		params: {
 			client
+		},
+		filters: {
+			portfolio: portfolioId,
+			date: date_to,
 		}
 	})
 	delete res.date

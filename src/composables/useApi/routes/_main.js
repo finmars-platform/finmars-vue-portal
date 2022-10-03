@@ -131,6 +131,6 @@ export default {
 		get: '/{client}/api/v1/widgets/history/{type}/'
 	},
 	widgetsStats: {
-		get: '/{client}/api/v1/widgets/stats/?portfolio=2&date=2022-09-15'
+		get: '/{client}/api/v1/widgets/stats/'
 	},
 }

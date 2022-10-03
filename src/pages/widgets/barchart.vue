@@ -87,19 +87,8 @@
 	let client = route.query.workspace
 	let date_to = route.query.date_to
 
-	let refresh_token = useCookie('refresh_token')
-	refresh_token.value = route.query.token
-
-	let token_res = await useApi('tokenRefresh.post',
-		{body: { refresh_token: refresh_token.value }
-	})
-
-	if ( !token_res.error ) {
-		let access_token = useCookie('access_token')
-		access_token.value = token_res.access_token
-	} else {
-		throw new Error(token_res.error.detail)
-	}
+	let access_token = useCookie('access_token')
+	access_token.value = access_token.value || route.query.token
 
 	let historyStats = await useApi('widgetsHistory.get', {
 		params: {
