@@ -87,9 +87,6 @@
 	let client = route.query.workspace
 	let date_to = route.query.date_to
 
-	let access_token = useCookie('access_token')
-	access_token.value = access_token.value || route.query.token
-
 	let historyStats = await useApi('widgetsHistory.get', {
 		params: {
 			type: 'nav',
@@ -98,6 +95,9 @@
 		filters: {
 			portfolio: portfolioId,
 			date_to,
+		},
+		headers: {
+			Authorization: route.query.token
 		}
 	})
 	let active = ref(null)
