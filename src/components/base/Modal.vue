@@ -14,7 +14,7 @@
 							<path d="M18 6L6 18" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 							<path d="M6 6L18 18" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 						</svg>-->
-						<FmIcon icon="close" @click="cancel()"/>
+						<FmIcon icon="close" @click="cancel"/>
 					</div>
 
 					<div class="modal_content scrollable">
@@ -25,7 +25,7 @@
 						<slot name="controls"></slot>
 					</div>
 				</div>
-				<div class="mask" @click="cancel()"></div>
+				<div class="mask" @click="cancel"></div>
 			</div>
 		</transition>
 	</Teleport>
@@ -72,7 +72,7 @@ export default {
 		top: 0;
 		right: 0;
 		bottom: 0;
-		z-index: 2000;
+		z-index: $backdrop-z-index;
 		background: rgba(0, 0, 0, 0.55);
 
 		.mask {

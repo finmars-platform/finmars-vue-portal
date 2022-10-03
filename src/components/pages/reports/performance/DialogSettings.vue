@@ -132,18 +132,6 @@
 		},
 	];
 
-	function getReadyStatus () {
-
-		let ready = props.layoutReadyStatus;
-
-		Object.keys(readyStatusData).forEach(status => {
-			ready = ready && readyStatusData[status];
-		})
-
-		return ready;
-
-	}
-
 	let readyStatus = computed(() => {
 		let ready = props.layoutReadyStatus;
 

@@ -8,6 +8,10 @@
 			@cancel="showSettingsDialog = false"
 		/>
 
+		<ModalPortfolioRegister v-model="addRegisterIsOpen"
+														@save="addRegisterIsOpen = false"
+														@cancel="addRegisterIsOpen = false"/>
+
 		<EvBaseTopPanel
 			height="50"
 			@saveListLayout="saveLayout()"
@@ -32,18 +36,20 @@
 					</template>
 
 					<div class="fm_list">
-						<!--						<div class="fm_list_item">
-													Add Portfolio register
-												</div>-->
+						<div class="fm_list_item"
+								 @click="addRegisterIsOpen = true">
+							Add Portfolio register
+						</div>
 						<div class="fm_list_item" @click="isOpenAddBundle = true">
 							Add bundle
 						</div>
 					</div>
 				</FmMenu>
+
 				<BaseModal
 					title="Add Bundle"
 					v-model="isOpenAddBundle"
-					@cancel="isOpenAddBundle = false">
+					@update:modelValue="isOpenAddBundle = false">
 
 					<!--					<FmInputEntityNames
 											label="Bundle name"
@@ -141,6 +147,8 @@ let newBundle = ref({
 	public_name: computed(() => newBundle.value.name),
 	registers: [],
 })
+
+let addRegisterIsOpen = ref(false);
 
 let registersItems = ref([])
 
