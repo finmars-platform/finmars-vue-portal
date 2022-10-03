@@ -10,7 +10,6 @@ export default async function useApi (
 			headers = {}
 		} = {}
 	) {
-
 	// if ( !expireTokens && route_opt != 'tokenInfo.get' ) {
 	// 	let res = await useApi('tokenInfo.get')
 
