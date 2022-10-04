@@ -36,10 +36,10 @@
 					</template>
 
 					<div class="fm_list">
-						<div class="fm_list_item"
+<!--						<div class="fm_list_item"
 								 @click="addRegisterIsOpen = true">
 							Add Portfolio register
-						</div>
+						</div>-->
 						<div class="fm_list_item" @click="isOpenAddBundle = true">
 							Add bundle
 						</div>

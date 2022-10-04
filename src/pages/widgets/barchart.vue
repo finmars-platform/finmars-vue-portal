@@ -143,7 +143,7 @@
 		send({
 			action: 'clickOnChart',
 			data: {...last.value},
-			date: historyStats.items[historyStats.items.length - 1],
+			date: historyStats.items[historyStats.items.length - 2],
 			category: categoryName.value
 		})
 		myChart.update()
@@ -181,7 +181,7 @@
 		data.datasets.forEach((item, key) => {
 			item.backgroundColor = COLORS[key]
 
-			last.value[item.label] = item.data[item.data.length - 1]
+			last.value[item.label] = item.data[item.data.length - 2]
 		})
 	}
 
@@ -299,7 +299,7 @@
 				e.source.postMessage({
 					action: 'clickOnChart',
 					data: {...last.value},
-					date: historyStats.items[historyStats.items.length - 1],
+					date: historyStats.items[historyStats.items.length - 2],
 					category: categoryName.value
 				}, '*')
 			}
@@ -325,7 +325,7 @@
 		padding: 0 20px;
 	}
 	.content {
-		height: calc(100vh - 75px);
+		height: calc(100vh - 100px);
 	}
 	.filters {
 		margin-top: 12px;
