@@ -325,7 +325,7 @@
 		padding: 0 20px;
 	}
 	.content {
-		height: calc(100vh - 75px);
+		height: calc(100vh - 100px);
 	}
 	.filters {
 		margin-top: 12px;
