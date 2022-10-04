@@ -148,7 +148,7 @@
 		padding: 0 20px;
 	}
 	.content {
-		height: calc(100vh - 38px);
+		min-height: calc(100vh - 38px);
 	}
 	.chart_row {
 		display: flex;
