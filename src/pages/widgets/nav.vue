@@ -7,7 +7,7 @@
 				:class="{active: item[0] == active}"
 			>
 				<div class="card_name">{{ STATS[item[0]] }}</div>
-				<div class="card_value">{{ Math.round(item[1]) }}</div>
+				<div class="card_value">{{ STATS_FORMAT[item[0]](item[1])  }}</div>
 			</div>
 		</div>
 	</div>
@@ -27,7 +27,41 @@
 	let date_to = route.query.date_to
 
 	const STATS = {
-		"portfolio":2,"nav":7517531.61778312,"total":4302192.5800554305,"cumulative_return":-1.0,"annualized_return":-1.0,"portfolio_volatility":39.26645467629845,"annualized_portfolio_volatility":136.0229890648989,"sharpe_ratio":-0.007351698465638649,"max_annualized_drawdown":-379.97930904551254,"betta":0.0,"alpha":0.0,"correlation":0.0
+		"nav": 'NAV',
+		"total": 'Total P&L',
+		"cumulative_return": 'Cumulative return',
+		"annualized_return": 'Annualized return',
+		"portfolio_volatility": 'Ann. Volatility',
+		"annualized_portfolio_volatility": 'Annualized portfolio volatility',
+		"sharpe_ratio": 'Sharpe ratio (rf=0%)',
+		"max_annualized_drawdown": 'Max annualized drawdown',
+		"betta": 'Beta',
+		"alpha": 'Alpha vs Index, ann.',
+		"correlation": 'Correlation (vs. Index)',
+	}
+
+	function formatCurency(val) {
+		return new Intl.NumberFormat('en-EN', {
+			style: 'currency',
+			currency: 'USD',
+		}).format(val)
+	}
+	function formatPercent(val) {
+		return Math.round(val * 100) + '%'
+	}
+
+	const STATS_FORMAT = {
+		"nav": formatCurency,
+		"total": formatCurency,
+		"cumulative_return": formatPercent,
+		"annualized_return": formatPercent,
+		"portfolio_volatility": formatPercent,
+		"annualized_portfolio_volatility": formatPercent,
+		"sharpe_ratio": (val) => Math.round(val * 100) / 100,
+		"max_annualized_drawdown": formatPercent,
+		"betta": (val) => Math.round(val * 100) / 100,
+		"alpha": formatPercent,
+		"correlation": (val) => Math.round(val * 100) / 100
 	}
 
 	let res = await useApi('widgetsStats.get', {
@@ -89,6 +123,7 @@
 		border: 1px solid $border;
 		border-left: 10px solid #DFEAFF;
 		min-width: 154px;
+		max-width: 190px;
 		height: 90px;
 		padding: 10px;
 		flex-shrink: 0;
@@ -104,8 +139,10 @@
 	}
 	.card_name {
 		margin-bottom: 10px;
-		text-transform: uppercase;
 		color: $text-lighten;
+	}
+	.card_value {
+		text-align: right;
 	}
 	@media only screen and (max-width: 767px) {
 		.card + .card {

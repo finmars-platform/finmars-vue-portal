@@ -119,6 +119,19 @@
 				cutout: '35%',
 				responsive: true,
 				maintainAspectRatio: false,
+				onResize(chart, size) {
+					let { position } = chart.options.plugins.legend
+
+					if ( size.width < 500 && position == 'right' ) {
+						chart.options.plugins.legend.position = 'bottom'
+						chart.options.plugins.legend.labels.padding = 10
+
+					} else if ( size.width > 500 && position == 'bottom') {
+
+						chart.options.plugins.legend.position = 'right'
+						chart.options.plugins.legend.labels.padding = 0
+					}
+				},
 				plugins: {
 					legend: {
 						position: 'right',
