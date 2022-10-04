@@ -75,11 +75,10 @@
 	let maxTickStock = ref(null)
 
 	function precisionTick(value) {
-		var suffixes = ["", "K", "M", "B","T"];
-		var suffixNum = Math.floor( ( "" + Math.round( Math.abs(value) )).length / 3 );
-		var shortValue = parseFloat((suffixNum != 0 ? (value / Math.pow(1000,suffixNum)) : value)?.toPrecision(2));
-
-		return shortValue+suffixes[suffixNum];
+		return new Intl.NumberFormat('en-US', {
+				notation: "compact",
+				maximumFractionDigits: 2
+			}).format(value);
 	}
 	onMounted(() => {
 		initPostMessageBus()
