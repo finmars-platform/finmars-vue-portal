@@ -80,7 +80,6 @@
 		height: 42px;
 		// border: 1px solid $border-darken;
 		border-radius: 4px;
-		margin-top: 6px;
 		margin-bottom: 25px;
 		transition: border 0.3s;
 		background: $separ;
@@ -91,6 +90,7 @@
 		}
 
 		&:not(.bi_no_borders) {
+			margin-top: 6px;
 			border: $input-border;
 			border-top-color: transparent;
 		}
@@ -110,8 +110,13 @@
 			}
 
 		}
+
 		&.bi_no_borders {
 			margin-bottom: 0;
+
+			.bi_top {
+				display: none;
+			}
 		}
 
 		&:hover {
