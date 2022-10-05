@@ -405,7 +405,21 @@
 		if ( openedStream.value.id !== 0 ) filters.section = openedStream.value.id
 
 		let res = await useApi('systemMessages.get', { filters })
-		messages.value = force ? res.results : messages.value.concat(res.results)
+
+		if ( !res.error ) {
+			messages.value = force ? res.results : messages.value.concat(res.results)
+
+		} else {
+
+			if ( res.code == 404 ) {
+				filters.page = 1
+
+				res = await useApi('systemMessages.get', { filters })
+				messages.value = res.results
+			}
+
+			return false
+		}
 
 		if (res.next) {
 			++nextPage
