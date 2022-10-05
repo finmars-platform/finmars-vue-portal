@@ -119,11 +119,12 @@
 		display: flex;
 	}
 	.card {
+		position: relative;
 		border-radius: 5px;
 		border: 1px solid $border;
 		border-left: 10px solid #DFEAFF;
 		min-width: 154px;
-		max-width: 190px;
+		max-width: 180px;
 		height: 90px;
 		padding: 10px;
 		flex-shrink: 0;
@@ -142,7 +143,11 @@
 		color: $text-lighten;
 	}
 	.card_value {
-		text-align: right;
+		text-align: center;
+		position: absolute;
+		bottom: 10px;
+		left: 0;
+		width: 100%;
 	}
 	@media only screen and (max-width: 767px) {
 		.card + .card {
