@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Widgets example</title>
+	<style>
+		* {
+			margin: 0;
+			border: none;
+			padding: 0;
+		}
+		body {
+			padding: 20px;
+		}
+		.flex {
+			display: flex;
+		}
+		.details {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 30px;
+			margin-top: 30px;
+		}
+		#balance_time {
+			margin-top: 30px;
+		}
+		@media only screen and (max-width: 767px) {
+			body {
+				padding: 20px 0;
+			}
+			#balance_nav {
+				padding: 0 20px;
+			}
+			#balance_pl {
+				margin-top: 30px;
+			}
+			#balance_pl iframe {
+			}
+			#balance_time iframe {
+				height: auto;
+				min-height: 450px;
+			}
+			#balance_datail iframe {
+				height: auto;
+				min-height: 400px;
+			}
+			.details {
+				display: block;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="flex">
+		<input id="token" type="text" placeholder="access token">
+		<button id="btn">создать</button>
+	</div>
+	<div id="balance_nav"></div>
+	<div id="balance_time"></div>
+
+	<div class="flex details">
+		<div id="balance_datail"></div>
+		<div id="balance_pl"></div>
+	</div>
+
+	<script type="module">
+		// import FinmarsWidgets from 'https://dev.finmars.com/v/finmarsWidgets.js'
+		import FinmarsWidgets from 'http://localhost:3000/finmarsWidgets.js'
+
+		let FinmarsWidgets2
+
+		document.getElementById('btn').onclick = create
+		console.log('document.ge:', document.getElementById('btn'))
+
+		function create() {
+			console.log('FinmarsWidgets2:', FinmarsWidgets2)
+			FinmarsWidgets2 = new FinmarsWidgets({
+				apiUrl: "https://dev.finmars.com/v/",
+				apiToken: document.getElementById('token').value, // access token
+				workspace: 'client0s6sf5crgw',
+				options: {
+					portfolioId: 2, // Readme
+					date_to: '2022-09-15', // Readme
+					date_from: undefined, // Readme
+					benchmark: undefined, // Readme
+				},
+				widgets: [
+					{
+						name: "barchart",
+						container: "#balance_time" // e.g. finmarsChart1
+					},
+					{
+						name: "balance",
+						container: "#balance_datail" // e.g. finmarsChart1
+					},
+					{
+						name: "pl",
+						container: "#balance_pl" // e.g. finmarsChart1
+					},
+					{
+						name: "nav",
+						container: "#balance_nav" // e.g. finmarsChart1
+					}
+				]
+			})
+		}
+
+	</script>
+</body>
+</html>
