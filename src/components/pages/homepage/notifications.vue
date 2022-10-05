@@ -76,6 +76,9 @@
 						<!-- <div class="fm_list_item" @click="">
 							<FmIcon class="m-r-10" icon="playlist_add" /> Show all details
 						</div> -->
+						<div class="fm_list_item" @click="showAllDetails(), close()">
+							<FmIcon class="m-r-10" icon="playlist_add" /> Show all details
+						</div>
 						<div class="fm_list_item" @click="hideAllDetails(), close()">
 							<FmIcon class="m-r-10" icon="playlist_remove" /> Hide all details
 						</div>
@@ -511,11 +514,15 @@
 	let detailsObjs = ref({})
 
 
-
-
-
 	function hideAllDetails() {
 		openedDetalis.value = new Set()
+	}
+	function showAllDetails() {
+		messages.value.forEach((item) => {
+			if ( item.linked_event || item.attachments.length ) {
+				openDetails( item )
+			}
+		})
 	}
 	async function pin( message ) {
 		let res = await useApi('systemMessagesPin.post', {
