@@ -1,6 +1,8 @@
 <template>
 	<div class="card_view">
-		<div class="card_wrap">
+		<div class="card_wrap"
+			@mousedown="dragStart"
+		>
 			<div class="card"
 				v-for="(item, prop) in stats"
 				:key="prop"
@@ -103,6 +105,28 @@
 		window.addEventListener("message", (e) => {
 		});
 	}
+
+
+	function dragStart(e) {
+		let elem = e.target.closest('.card_wrap')
+		let shiftX = e.clientX + elem.parentNode.scrollLeft
+
+		document.ondragstart = function() {
+			return false;
+		};
+
+		function onmousemove(e) {
+			elem.parentNode.scrollLeft = -(e.clientX - shiftX)
+		}
+
+		document.addEventListener('mousemove', onmousemove)
+
+		document.onmouseup = function() {
+			document.removeEventListener('mousemove', onmousemove);
+			elem.onmouseup = null;
+		};
+	}
+
 	function send( data, source = window.parent ) {
 		let dataObj = Object.assign(data, {
 			wId,
@@ -114,9 +138,12 @@
 <style lang="scss" scoped>
 	.card_view {
 		width: 100%;
+		overflow: auto;
 	}
 	.card_wrap {
 		display: flex;
+		cursor: grab;
+		user-select: none;
 	}
 	.card {
 		position: relative;
@@ -128,7 +155,6 @@
 		height: 90px;
 		padding: 10px;
 		flex-shrink: 0;
-		cursor: pointer;
 
 		&.active {
 			border-left-color: $primary;
