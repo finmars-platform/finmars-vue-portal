@@ -84,6 +84,7 @@ export default class FinmarsWidgets {
 
 		if ( !container ) throw new Error(`Bad container "${widget.container}"`)
 
+		container.innerHTML = ''
 		container.append(frame)
 
 		frame.onload = () => {
