@@ -8,7 +8,7 @@
 				:key="item.id"
 				@click="body.master_user_backup_id = item.id"
 			>
-				<div class="backup_title">{{ item.name }}</div>
+				<div class="backup_title">{{ item.name > 45 ? item.name.slice(0, 45) + '...' : item.name }}</div>
 				<div class="flex aic sb">
 					<div>{{ fromatDate(item.created_at) }}</div>
 					<div v-if="item.created_by">Performed by: <span class="backup_by">{{ item.created_by }}</span></div>
@@ -28,7 +28,7 @@
 			<div class="flex sb">
 				<FmBtn type="text" @click="cancel()">cancel</FmBtn>
 
-				<FmBtn :disabled="!body.master_user_backup_id" :processing="processing" @click="rollback()">start</FmBtn>
+				<FmBtn :disabled="!body.master_user_backup_id || processing" :processing="processing" @click="rollback()">start</FmBtn>
 			</div>
 		</template>
 	</BaseModal>
@@ -41,7 +41,11 @@
 	let props = defineProps({workspaceId: String})
 
 	let { data, refresh, pending } = useLazyAsyncData("masterBackups", () =>
-		useApi("masterBackups.get")
+		useApi("masterBackups.get", {
+			filters: {
+				master_user: props.workspaceId
+			}
+		})
 	)
 
 	let processing = ref(false)

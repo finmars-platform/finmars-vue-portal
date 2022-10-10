@@ -9,6 +9,8 @@ export default defineNuxtConfig({
 		authorizerURL: process.env.AUTHORIZER_URL || process.env.API_URL,
 		wsURL: process.env.WS_URL || "==PROD_WS_URL==",
 		oldAppURL: process.env.OLD_APP_URL || "==PROD_OLD_APP_URL==",
+		cloackPass: "==PROD_CLOACK_PASS==",
+		cloack2fa: "==PROD_CLOACK_2fa==",
 		buildDATE: dateString,
 	},
 	experimental: {

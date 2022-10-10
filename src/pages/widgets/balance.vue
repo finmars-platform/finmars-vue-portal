@@ -103,11 +103,10 @@
 		],
 	})
 	function precisionTick(value) {
-		var suffixes = ["", "K", "M", "B","T"];
-		var suffixNum = Math.floor( ( "" + Math.round( Math.abs(value) )).length / 3 );
-		var shortValue = parseFloat((suffixNum != 0 ? (value / Math.pow(1000,suffixNum)) : value).toPrecision(2));
-
-		return shortValue+suffixes[suffixNum];
+		return new Intl.NumberFormat('en-US', {
+			notation: "compact",
+			maximumFractionDigits: 2
+		}).format(value);
 	}
 	onMounted(() => {
 		initPostMessageBus()
@@ -119,6 +118,19 @@
 				cutout: '35%',
 				responsive: true,
 				maintainAspectRatio: false,
+				onResize(chart, size) {
+					let { position } = chart.options.plugins.legend
+
+					if ( size.width < 500 && position == 'right' ) {
+						chart.options.plugins.legend.position = 'bottom'
+						chart.options.plugins.legend.labels.padding = 10
+
+					} else if ( size.width > 500 && position == 'bottom') {
+
+						chart.options.plugins.legend.position = 'right'
+						chart.options.plugins.legend.labels.padding = 0
+					}
+				},
 				plugins: {
 					legend: {
 						position: 'right',

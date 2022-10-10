@@ -14,20 +14,23 @@
 			<div class="chart_row"
 				v-for="(item, i) in instruments"
 				:key="i"
+				:style="{background: inheritColors[item.name].slice(0, 7) + '0f'}"
+				:class="{minus: item.value < 0}"
 			>
 				<div class="chart_field">
-					<div class="center_line">
-						<div class="chart_bar"
-							:class="{minus: item.value < 0}"
-							:style="{
-								width: Math.abs(item.value / maxTickStock * 130) + 'px',
-								background: inheritColors[item.name]
-							}"
-						></div>
-					</div>
+					<div class="center_line"></div>
+					<div class="chart_bar"
+						:class="{minus: item.value < 0}"
+						:style="{
+							width: Math.abs(item.value / maxTickStock * 50) + '%',
+							background: inheritColors[item.name]
+						}"
+					></div>
 				</div>
-				<div class="chart_total">{{ precisionTick(item.value) }}</div>
-				<div class="chart_inst">{{ item.name }}</div>
+				<div class="chart_label flex">
+					<div class="chart_total">{{ precisionTick(item.value) }}</div>
+					<div class="chart_inst">{{ item.name }}</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -72,11 +75,10 @@
 	let maxTickStock = ref(null)
 
 	function precisionTick(value) {
-		var suffixes = ["", "K", "M", "B","T"];
-		var suffixNum = Math.floor( ( "" + Math.round( Math.abs(value) )).length / 3 );
-		var shortValue = parseFloat((suffixNum != 0 ? (value / Math.pow(1000,suffixNum)) : value)?.toPrecision(2));
-
-		return shortValue+suffixes[suffixNum];
+		return new Intl.NumberFormat('en-US', {
+				notation: "compact",
+				maximumFractionDigits: 2
+			}).format(value);
 	}
 	onMounted(() => {
 		initPostMessageBus()
@@ -145,7 +147,7 @@
 		padding: 0 20px;
 	}
 	.content {
-		height: calc(100vh - 38px);
+		min-height: calc(100vh - 38px);
 	}
 	.chart_row {
 		display: flex;
@@ -182,12 +184,15 @@
 		height: 100%;
 		border-radius: 0px 3px 3px 0px;
 		position: absolute;
-		left: 1px;
+		left: 50%;
+		margin-left: 1px;
+		margin-right: 0;
 
 		&.minus {
 			border-radius: 3px 0px 0px 3px;
 			left: auto;
-			right: 1px;
+			right: 50%;
+			margin-left: 0;
 		}
 	}
 	.chart_total {
@@ -219,5 +224,53 @@
 	}
 	.tick_min {
 		left: 0;
+	}
+	@media only screen and (min-width: 501px) {
+		.chart_row {
+			background: none !important;
+		}
+	}
+	@media only screen and (max-width: 500px) {
+		.chart_row.header {
+			.chart_total {
+				display: none;
+			}
+		}
+		.tick_max {
+			right: 0;
+		}
+		.chart_field {
+			width: 100%;
+		}
+		.chart_row:not(.header) {
+			flex-wrap: wrap;
+			justify-content: flex-end;
+			height: 60px;
+
+			&:not(.minus) {
+				.chart_total {
+					order: 1;
+					margin-left: 20px;
+				}
+			}
+
+			.chart_field {
+				height: 30px;
+				border-bottom: 1px solid $border;
+			}
+
+			&.minus {
+				justify-content: flex-start;
+			}
+		}
+
+		.chart_total {
+			margin-left: 0;
+			height: 30px;
+		}
+		.chart_inst {
+			height: 30px;
+			margin-left: 20px;
+		}
 	}
 </style>
