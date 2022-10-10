@@ -141,7 +141,7 @@ export default {
 		post: prefix + '/portfolios/portfolio-bundle/',
 	},
 	performanceFirstTransaction: {
-		get: prefix + '/reports/performance-report/first-transaction-date/?bandle={id}'
+		get: prefix + '/reports/performance-report/first-transaction-date/?bundle={id}'
 	},
 	interfaceAccess: {
 		get: prefix + '/ui/portal-interface-access/'

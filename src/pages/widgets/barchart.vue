@@ -143,7 +143,7 @@
 		send({
 			action: 'clickOnChart',
 			data: {...last.value},
-			date: historyStats.items[historyStats.items.length - 1],
+			date: historyStats.items[historyStats.items.length - 2],
 			category: categoryName.value
 		})
 		myChart.update()
@@ -181,7 +181,7 @@
 		data.datasets.forEach((item, key) => {
 			item.backgroundColor = COLORS[key]
 
-			last.value[item.label] = item.data[item.data.length - 1]
+			last.value[item.label] = item.data[item.data.length - 2]
 		})
 	}
 
@@ -229,13 +229,10 @@
 						grace: '5%',
 						ticks: {
 							callback: function(value) {
-								var suffixes = ["", "K", "M", "B","T"];
-								var suffixNum = Math.floor((""+value).length/3);
-								var shortValue = parseFloat((suffixNum != 0 ? (value / Math.pow(1000,suffixNum)) : value).toPrecision(2));
-								if (shortValue % 1 != 0) {
-										var shortNum = shortValue.toFixed(1);
-								}
-								return shortValue+suffixes[suffixNum];
+								return new Intl.NumberFormat('en-US', {
+										notation: "compact",
+										maximumFractionDigits: 2
+									}).format(value);
 							}
 						},
 						grid: {
@@ -299,7 +296,7 @@
 				e.source.postMessage({
 					action: 'clickOnChart',
 					data: {...last.value},
-					date: historyStats.items[historyStats.items.length - 1],
+					date: historyStats.items[historyStats.items.length - 2],
 					category: categoryName.value
 				}, '*')
 			}
@@ -325,7 +322,7 @@
 		padding: 0 20px;
 	}
 	.content {
-		height: calc(100vh - 75px);
+		height: calc(100vh - 100px);
 	}
 	.filters {
 		margin-top: 12px;

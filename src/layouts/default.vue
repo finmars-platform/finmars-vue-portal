@@ -43,7 +43,11 @@
 	watchEffect( async ( onCleanup ) => {
 		if ( store.current.base_api_url ) {
 			onCleanup(() => {})
-			store.getMe()
+			await store.getMe()
+			store.ws.send({
+				action: "update_user_state",
+				data: { member: store.member },
+			})
 		}
 	})
 
