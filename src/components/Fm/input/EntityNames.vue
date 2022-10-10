@@ -4,7 +4,7 @@
 						anchor="top left"
 						attach="body"
 						menuWidth="activator"
-						:openOnClick="false"
+						:openOn="false"
 
 						:offsetX="-13"
 						:offsetY="-24"
@@ -17,7 +17,7 @@
 				<BaseInput
 					type="text"
 					:label="label"
-					:modelValue="baseInputVal"
+					:modelValue="inputText"
 					@update:modelValue="setNames"
 				>
 					<template #button>
@@ -73,96 +73,96 @@
 
 <script setup>
 
-	let props = defineProps({
-		label: String,
-		name: String,
-		short_name: String,
-		user_code: String,
-		public_name: String,
-		valueToShow: {
-			type: String,
-			default: 'name',
-		},
-		hideValueToShow: Boolean,
-		/** Use when editing existent entity names **/
-		editing: Boolean,
-	});
+let props = defineProps({
+	label: String,
+	name: String,
+	short_name: String,
+	user_code: String,
+	public_name: String,
+	valueToShow: {
+		type: String,
+		default: 'name',
+	},
+	hideValueToShow: Boolean,
+	/** Use when editing existent entity names **/
+	editing: Boolean,
+});
 
-	let emit = defineEmits([
-		"update:name",
-		"update:short_name",
-		"update:user_code",
-		"update:public_name",
-		"update:valueToShow",
-	]);
+let emit = defineEmits([
+	"update:name",
+	"update:short_name",
+	"update:user_code",
+	"update:public_name",
+	"update:valueToShow",
+]);
 
-	let labelText = ref(props.valueToShow);
-	if (props.label) labelText.value = props.label;
+let labelText = ref(props.valueToShow);
+if (props.label) labelText.value = props.label;
 
-	let menuIsOpened = ref(false);
+let menuIsOpened = ref(false);
 
-	let baseInputVal = ref('');
+let inputText = ref('');
 
-	const valueToShowOptions = [
-		{
-			id: "name",
-			name: "name",
-		},
-		{
-			id: "short_name",
-			name: "Short Name",
-		}
-	];
+const valueToShowOptions = [
+	{
+		id: "name",
+		name: "name",
+	},
+	{
+		id: "short_name",
+		name: "Short Name",
+	}
+];
 
-	function onValueToShowChange(newValueToShow) {
+function onValueToShowChange(newValueToShow) {
 
-		baseInputVal.value = props[newValueToShow];
+	inputText.value = props[newValueToShow];
 
-		if (!props.label) {
-			const selOpt = valueToShowOptions.find(opt => opt.id === newValueToShow);
-			labelText.value = selOpt.name;
-		}
+	if (!props.label) {
+		const selOpt = valueToShowOptions.find(opt => opt.id === newValueToShow);
+		labelText.value = selOpt.name;
+	}
 
-		emit("update:valueToShow", newValueToShow);
+	emit("update:valueToShow", newValueToShow);
+
+}
+
+/**
+ * Update name based on new value of base input
+ *
+ * @param {String} propName - 'name', 'short_name', 'user_code', 'public_name'
+ * @param {String} newValue - value after changing base input
+ */
+function updateName(propName, newValue) {
+
+	// change field if it is empty or having the same value as baseInput
+	if (!props[propName] || props[propName] === inputText.value) {
+
+		emit("update:" + propName, newValue);
 
 	}
 
-	/**
-	 * Update name based on new value of base input
-	 *
-	 * @param {String} propName - 'name', 'short_name', 'user_code', 'public_name'
-	 * @param {String} newValue - value after changing base input
-	 */
-	function updateName(propName, newValue) {
+}
 
-		// change field if it is empty or having the same value as baseInput
-		if (!props[propName] || props[propName] === baseInputVal.value) {
+function setNames(newValue) {
 
-			emit("update:" + propName, newValue);
-
-		}
-
+	if (!props.label) {
+		const selOpt = valueToShowOptions.find(opt => opt.id === props.valueToShow);
+		labelText.value = selOpt.name;
 	}
 
-	function setNames(newValue) {
+	updateName('name', newValue);
+	updateName('short_name', newValue);
 
-		if (!props.label) {
-			const selOpt = valueToShowOptions.find(opt => opt.id === props.valueToShow);
-			labelText.value = selOpt.name;
-		}
-
-		updateName('name', newValue);
-		updateName('short_name', newValue);
-
-		if (!props.editing) {
-			updateName('user_code', newValue);
-		}
-
-		updateName('public_name', newValue);
-
-		baseInputVal.value = newValue;
-
+	if (!props.editing) {
+		updateName('user_code', newValue);
 	}
+
+	updateName('public_name', newValue);
+
+	inputText.value = newValue;
+
+}
 
 </script>
 

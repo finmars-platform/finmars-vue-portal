@@ -6,6 +6,7 @@ export default defineNuxtConfig({
 	publicRuntimeConfig: {
 		appURL: process.env.APP_URL || "==PROD_APP_URL==",
 		apiURL: process.env.API_URL || "==PROD_API_URL==",
+		authorizerURL: process.env.AUTHORIZER_URL || process.env.API_URL,
 		wsURL: process.env.WS_URL || "==PROD_WS_URL==",
 		oldAppURL: process.env.OLD_APP_URL || "==PROD_OLD_APP_URL==",
 		buildDATE: dateString,

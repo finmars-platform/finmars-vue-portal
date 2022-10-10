@@ -35,10 +35,12 @@ export default async function useApi (
 	if ( baseApi )
 		url = url.replace('{client}', baseApi);
 
+	let baseUrl = url.startsWith('/authorizer/') ? config.public.authorizerURL : config.public.apiURL;
+
 	let token = useCookie('access_token').value
 
 	let opts = {
-		baseURL: config.public.apiURL,
+		baseURL: baseUrl,
 		method: method.toUpperCase() || "GET",
 		headers: {
 			Authorization: "Token " + token,
