@@ -9,10 +9,10 @@ COPY . .
 
 RUN npm run build
 
-ENV NUXT_HOST=0.0.0.0
-
 EXPOSE 3000
 
 # CMD [ "npm", "start" ]
 RUN chmod +x /var/www/finmars/docker/substitute_environment_variables.sh
 ENTRYPOINT ["/var/www/finmars/docker/substitute_environment_variables.sh"]
+
+# RUN npm run test
