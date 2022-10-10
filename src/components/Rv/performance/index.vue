@@ -18,12 +18,18 @@
 			@openSettings="showSettingsDialog = true;"
 		>
 			<template #rightActions>
-				<FmSelect no_borders
-									class="m-b-0"
-									v-model="viewerData.reportOptions.report_currency"
-									:items="currencyOpts"
-									prop_name="short_name"
-				/>
+				<!--				<FmSelect no_borders
+													class="m-b-0"
+													v-model="viewerData.reportOptions.report_currency"
+													:items="currencyOpts"
+													prop_name="short_name"
+								/>-->
+				<div style="width: 175px;">
+					<FmUnifiedDataSelect noBorders
+															 v-model="viewerData.reportOptions.report_currency"
+															 :itemObject="viewerData.reportOptions.report_currency_object"
+															 content_type="currencies.currency" />
+				</div>
 			</template>
 		</EvBaseTopPanel>
 
@@ -35,15 +41,17 @@
 						<FmIcon class="add_ev_btn" btnPrimary icon="add" />
 					</template>
 
-					<div class="fm_list">
-<!--						<div class="fm_list_item"
-								 @click="addRegisterIsOpen = true">
-							Add Portfolio register
-						</div>-->
-						<div class="fm_list_item" @click="isOpenAddBundle = true">
-							Add bundle
+					<template #default="{ close }">
+						<div class="fm_list" @click="close()">
+							<div class="fm_list_item"
+									 @click="addRegisterIsOpen = true">
+								Add Portfolio register
+							</div>
+							<div class="fm_list_item" @click="isOpenAddBundle = true">
+								Add bundle
+							</div>
 						</div>
-					</div>
+					</template>
 				</FmMenu>
 
 				<BaseModal
@@ -61,7 +69,7 @@
 					<FmInputText title="Name"
 											 v-model="newBundle.name" />
 
-<!--					<FmSelectWindow class="p-b-16" v-model="newBundle.registers" :items="registersItems" />-->
+					<!--					<FmSelectWindow class="p-b-16" v-model="newBundle.registers" :items="registersItems" />-->
 					<BaseMultiSelectTwoAreas class="p-b-16"
 																	 v-model="newBundle.registers"
 																	 :items="registersItems"
@@ -152,7 +160,7 @@ let addRegisterIsOpen = ref(false);
 
 let registersItems = ref([])
 
-useApi('portfolioRegister.post', {
+useApi('portfolioRegisterEvFiltered.post', {
 	body: '{"groups_types":[],"page":1,"groups_values":[],"groups_order":"asc","page_size":60,"ev_options":{"entity_filters":["enabled","disabled","active","inactive"]},"filter_settings":[],"global_table_search":"","is_enabled":"any"}'
 }).then((res) => {
 	res.results.forEach((item) => {
@@ -166,7 +174,7 @@ useApi('portfolioRegister.post', {
 let currencyOpts = ref([])
 fetchCurrenciesOpts()
 async function fetchCurrenciesOpts() {
-	const ppData = await useApi("currenciesLight.get");
+	const ppData = await useApi('currencyLight.get');
 
 	if (!ppData.error) {
 		currencyOpts.value = ppData.results;

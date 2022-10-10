@@ -9,7 +9,7 @@
 
 				<div v-if="showActions" class="flex-row">
 					<a target="download" class="mr-10"
-						:href="`${config.public.apiURL}/authorizer/master-user-backups/${backup.id}/view/`"
+						:href="`${config.public.authorizerURL}/authorizer/master-user-backups/${backup.id}/view/`"
 					>
 						<FmIcon icon="cloud_download" tooltip="Export backup" primary class="" />
 					</a>

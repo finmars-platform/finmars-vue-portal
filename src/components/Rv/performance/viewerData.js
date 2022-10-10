@@ -49,6 +49,18 @@ export default () => {
 
 					const ecosystemDefaults = (edRes.error) ? {} : edRes.results[0];
 
+					let reportCurrencyObj = null;
+
+					if (ecosystemDefaults.currency_object) {
+						reportCurrencyObj = JSON.parse(JSON.stringify(ecosystemDefaults.currency_object));
+					}
+
+					let pricingPolicyObj = null;
+
+					if (ecosystemDefaults.pricing_policy_object) {
+						pricingPolicyObj = JSON.parse(JSON.stringify(ecosystemDefaults.pricing_policy_object));
+					}
+
 					listLayout = {
 						name: "",
 						user_code: "",
@@ -59,9 +71,11 @@ export default () => {
 								begin_date: null,
 								end_date: moment(new Date).format('YYYY-MM-DD'),
 								report_currency: ecosystemDefaults.currency || null,
+								report_currency_object: reportCurrencyObj,
 								calculation_type: "time_weighted",
 								segmentation_type: "months",
 								pricing_policy: ecosystemDefaults.pricing_policy || null,
+								pricing_policy_object: pricingPolicyObj,
 							},
 							components: {
 								period: true,

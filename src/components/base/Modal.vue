@@ -25,7 +25,7 @@
 						<slot name="controls"></slot>
 					</div>
 				</div>
-				<div class="mask" @click="cancel"></div>
+				<div class="mask" @[backdropClickable]="cancel"></div>
 			</div>
 		</transition>
 	</Teleport>
@@ -38,7 +38,11 @@ export default {
   props: {
 		modelValue: Boolean,
 		title: String,
-		no_padding: Boolean
+		no_padding: Boolean,
+		closeOnClickOutside: {
+			type: Boolean,
+			default: true
+		}
 	},
 	emits: [
 		'update:modelValue',
@@ -48,6 +52,11 @@ export default {
 
     }
   },
+	computed: {
+		backdropClickable() {
+			return this.closeOnClickOutside ? 'click' : false;
+		}
+	},
   async mounted() {
   },
 	watch: {

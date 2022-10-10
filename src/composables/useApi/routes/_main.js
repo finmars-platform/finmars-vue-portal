@@ -14,6 +14,10 @@ export default {
 		get: prefix + "/procedures/pricing-parent-procedure-instance/",
 	},
 
+	instruments: {
+		get: prefix + '/instruments/instrument/'
+	},
+
 	instrumentType: {
 		get: prefix + '/instruments/instrument-type/'
 	},
@@ -23,17 +27,29 @@ export default {
 	pricingPolicy: {
 		get: prefix + '/instruments/pricing-policy/'
 	},
-	pricingPoliciesLight: {
+	pricingPolicyLight: {
 		get: prefix + '/instruments/pricing-policy-light/'
 	},
-	currenciesLight: {
-		get: prefix + '/currencies/currency-light/',
+	currency: {
+		get: prefix + '/currencies/currency/',
 	},
-	portfolios: {
-		get: prefix + '/portfolios/portfolio/',
+	currencyLight: {
+		get: prefix + '/currencies/currency-light/',
 	},
 	currencyScheme: {
 		get: prefix + '/pricing/currency-pricing-scheme/',
+	},
+	importCurrencyCbonds: {
+		post: prefix + 'import/finmars-database/currency/'
+	},
+	currencyDatabaseSearch: {
+		get: prefix + '/api/currencies/currency-database-search/'
+	},
+	portfolio: {
+		get: prefix + '/portfolios/portfolio/',
+	},
+	counterparty: {
+		get: prefix + '/counterparties/counterparty/'
 	},
 
 	importBankProc: {
@@ -46,6 +62,10 @@ export default {
 
 	dataProvider: {
 		get: prefix + '/integrations/data-provider/'
+	},
+
+	importUnifiedData: {
+		post: prefix + 'import/unified-data-provider/'
 	},
 
 	dataInstance: {
@@ -67,6 +87,9 @@ export default {
 	},
 
 	portfolioRegister: {
+		post: prefix + '/portfolios/portfolio-register/',
+	},
+	portfolioRegisterEvFiltered: {
 		post: prefix + '/portfolios/portfolio-register-ev/filtered/',
 	},
 	performanceReport: {
@@ -123,7 +146,9 @@ export default {
 	interfaceAccess: {
 		get: prefix + '/ui/portal-interface-access/'
 	},
-
+	counterpartyUnifiedData: {
+		get: prefix + '/data/company/'
+	},
 
 	// Надо отделить
 

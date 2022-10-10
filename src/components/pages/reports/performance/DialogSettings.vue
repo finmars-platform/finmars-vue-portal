@@ -7,7 +7,10 @@
 				</RvSettingsRow>
 
 				<RvSettingsRow label="Reporting currency">
-					<FmSelect v-model="reportOptions.report_currency" :items="currencyOpts" />
+					<!--					<FmSelect v-model="reportOptions.report_currency" :items="currencyOpts" />-->
+					<FmUnifiedDataSelect v-model="reportOptions.report_currency"
+															 :itemObject="reportOptions.report_currency_object"
+															 content_type="currencies.currency" />
 				</RvSettingsRow>
 
 				<RvSettingsRow label="Pricing policy">
@@ -75,127 +78,128 @@
 
 <script setup>
 
-	let props = defineProps({
-		openDialog: Boolean,
-		layoutReadyStatus: Boolean,
-		bundles: Object,
-	});
-	let emit = defineEmits(["cancel", "save"]);
+let props = defineProps({
+	openDialog: Boolean,
+	layoutReadyStatus: Boolean,
+	bundles: Object,
+});
+let emit = defineEmits(["cancel", "save"]);
 
-	const viewerData = inject('viewerData');
+const viewerData = inject('viewerData');
 
-	const readyStatusData = reactive({
-		currency: false,
-		pricingPolicy: false,
-	});
+const readyStatusData = reactive({
+	currency: false,
+	pricingPolicy: false,
+});
 
-	let currencyOpts = ref([]);
-	let pricingPoliciesOpts = ref([]);
-	let calcTypeOpts = [
-		{
-			id: "time_weighted",
-			name: "Time-Weighted Return",
-		},
-		{
-			id: "money_weighted",
-			name: "Money Weighted Return",
-		},
-		/*{
-			id: "",
-			name: "P&L in Currency"
-		}*/
-	];
-	let segmentTypeOpts = [
-		{
-			id: "days",
-			name: "Day",
-		},
-		{
-			id: "months",
-			name: "Month",
-		},
-	];
-	let daysConventionOpts = [
-		/*{
-			id: "working_days",
-			name: "Working days"
-		},*/
-		{
-			id: "calendar_days",
-			name: "Working days",
-		},
-	];
-	let graphTypeOpts = [
-		{
-			id: "1",
-			name: "Cummulative return + Monthly",
-		},
-	];
+let currencyOpts = ref([]);
+let pricingPoliciesOpts = ref([]);
+let calcTypeOpts = [
+	{
+		id: "time_weighted",
+		name: "Time-Weighted Return",
+	},
+	{
+		id: "money_weighted",
+		name: "Money Weighted Return",
+	},
+	/*{
+		id: "",
+		name: "P&L in Currency"
+	}*/
+];
+let segmentTypeOpts = [
+	{
+		id: "days",
+		name: "Day",
+	},
+	{
+		id: "months",
+		name: "Month",
+	},
+];
+let daysConventionOpts = [
+	/*{
+		id: "working_days",
+		name: "Working days"
+	},*/
+	{
+		id: "calendar_days",
+		name: "Working days",
+	},
+];
+let graphTypeOpts = [
+	{
+		id: "1",
+		name: "Cummulative return + Monthly",
+	},
+];
 
-	let readyStatus = computed(() => {
-		let ready = props.layoutReadyStatus;
+let readyStatus = computed(() => {
+	let ready = props.layoutReadyStatus;
 
-		Object.keys(readyStatusData).forEach(status => {
-			ready = ready && readyStatusData[status];
-		})
+	Object.keys(readyStatusData).forEach(status => {
+		ready = ready && readyStatusData[status];
+	})
 
-		return ready;
-	});
+	return ready;
+});
 
-	let notReady = computed(() => {
-		return !readyStatus.value;
-	});
+let notReady = computed(() => {
+	return !readyStatus.value;
+});
 
-	init();
+init();
 
-	let reportOptions = ref({...viewerData.reportOptions})
+let reportOptions = ref({...viewerData.reportOptions})
 
-	watch(
-		() => viewerData.reportOptions,
-		() => {
-			reportOptions.value = { ...viewerData.reportOptions }
-		}
-	);
+watch(
+	() => viewerData.reportOptions,
+	() => {
+		reportOptions.value = { ...viewerData.reportOptions }
+		console.log("testing ");
+	}
+);
 
-	let components = ref({ ...viewerData.components })
-	watch(
-		() => viewerData.components,
-		() => {
-			components.value = { ...viewerData.components }
-		}
-	);
+let components = ref({ ...viewerData.components })
+watch(
+	() => viewerData.components,
+	() => {
+		components.value = { ...viewerData.components }
+	}
+);
 
 
-	async function fetchPpOpts() {
-		const ppData = await useLoadAllPages("pricingPoliciesLight.get", {filters: {page: 1, page_size: 1000}});
+async function fetchPpOpts() {
+	const ppData = await useLoadAllPages('pricingPolicyLight.get', {filters: {page: 1, page_size: 1000}});
 
-		if (!ppData.error) {
-			pricingPoliciesOpts.value = ppData;
-			readyStatusData.pricingPolicy = true;
-		}
+	if (!ppData.error) {
+		pricingPoliciesOpts.value = ppData;
+		readyStatusData.pricingPolicy = true;
+	}
+}
+
+async function fetchCurrenciesOpts() {
+	const currencyData = await useLoadAllPages("currencyLight.get", {filters: {page: 1, page_size: 1000}});
+
+	if (!currencyData.error) {
+		currencyOpts.value = currencyData;
+		readyStatusData.currency = true;
 	}
 
-	async function fetchCurrenciesOpts() {
-		const currencyData = await useLoadAllPages("currenciesLight.get", {filters: {page: 1, page_size: 1000}});
+}
 
-		if (!currencyData.error) {
-			currencyOpts.value = currencyData;
-			readyStatusData.currency = true;
-		}
+function cancel() {
+	emit("cancel");
+}
+function save() {
+	emit("save", [ reportOptions.value, components.value ]);
+}
 
-	}
-
-	function cancel() {
-		emit("cancel");
-	}
-	function save() {
-		emit("save", [ reportOptions.value, components.value ]);
-	}
-
-	function init() {
-		fetchPpOpts();
-		fetchCurrenciesOpts();
-	}
+function init() {
+	fetchPpOpts();
+	fetchCurrenciesOpts();
+}
 </script>
 
 <style lang="scss" scoped>

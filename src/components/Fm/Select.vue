@@ -5,7 +5,7 @@
 				class="input_btn m-b-0"
 				:class="{active: isOpen, 'bi_no_borders': no_borders, small: size == 'small'}"
 				:label="label"
-				:modelValue="modelValue"
+				v-model="moFilter"
 			>
 				<template #button>
 					<slot name="left_icon"></slot>
@@ -16,21 +16,24 @@
 					</slot>
 				</template>
 
-				<div class="selected_field">
-					<div class="selected_field_item">
-						{{ selected }}
+				<template v-if="!optionsFilter">
+					<div class="selected_field">
+						<div class="selected_field_item">
+							{{ selected }}
+						</div>
 					</div>
-				</div>
+				</template>
+
 			</BaseInput>
 		</template>
 
 		<template #default="{ close }">
 			<div class="fm_list">
 				<div class="fm_list_item"
-					v-for="(item, index) in items"
+					v-for="(item, index) in menuOptions"
 					:key="index"
 					:class="{active: item[props.prop_id] == modelValue}"
-					@click="$emit('update:modelValue', item[props.prop_id]), close()"
+					@click="selectOption(item), close()"
 				>
 					<div>{{ item[props.prop_name] }}</div>
 				</div>
@@ -54,8 +57,22 @@
 		},
 		size: String,
 		no_borders: Boolean,
+		optionsFilter: Boolean,
 	})
-	defineEmits(['update:modelValue'])
+
+	let emit = defineEmits(['update:modelValue'])
+
+	let moFilter = ref('');
+
+	let menuOptions = computed(() => {
+
+		if (moFilter.value) {
+			return props.items.filter.filter(item => item[props.prop_name] === moFilter.value);
+		}
+
+		return props.items;
+
+	});
 
 	let selected = computed(() => {
 		if ( props.items ) {
@@ -67,6 +84,12 @@
 			}
 		}
 	})
+
+	function selectOption(selItem) {
+		if (props.optionsFilter) moFilter.value = '';
+		emit('update:modelValue', selItem[props.prop_id]);
+	}
+
 </script>
 
 <style lang="scss" scoped>
