@@ -14,29 +14,32 @@ export default {
 		get: prefix + "/procedures/pricing-parent-procedure-instance/",
 	},
 
-	instruments: {
+	instrumentList: {
 		get: prefix + '/instruments/instrument/'
 	},
 
-	instrumentType: {
+	instrumentTypeList: {
 		get: prefix + '/instruments/instrument-type/'
 	},
-	instrumentScheme: {
+	instrumentTypeListLight: {
+		get: prefix + '/instruments/instrument-type/'
+	},
+	instrumentSchemeList: {
 		get: prefix + '/pricing/instrument-pricing-scheme/'
 	},
-	pricingPolicy: {
+	pricingPolicyList: {
 		get: prefix + '/instruments/pricing-policy/'
 	},
-	pricingPolicyLight: {
+	pricingPolicyListLight: {
 		get: prefix + '/instruments/pricing-policy-light/'
 	},
-	currency: {
+	currencyList: {
 		get: prefix + '/currencies/currency/',
 	},
-	currencyLight: {
+	currencyListLight: {
 		get: prefix + '/currencies/currency-light/',
 	},
-	currencyScheme: {
+	currencySchemeList: {
 		get: prefix + '/pricing/currency-pricing-scheme/',
 	},
 	importCurrencyCbonds: {
@@ -45,10 +48,10 @@ export default {
 	currencyDatabaseSearch: {
 		get: prefix + '/api/currencies/currency-database-search/'
 	},
-	portfolio: {
+	portfolioList: {
 		get: prefix + '/portfolios/portfolio/',
 	},
-	counterparty: {
+	counterpartyList: {
 		get: prefix + '/counterparties/counterparty/'
 	},
 
@@ -86,7 +89,8 @@ export default {
 		get: prefix + '/users/group/',
 	},
 
-	portfolioRegister: {
+	portfolioRegisterList: {
+		get: prefix + '/portfolios/portfolio-register/',
 		post: prefix + '/portfolios/portfolio-register/',
 	},
 	portfolioRegisterEvFiltered: {
@@ -146,7 +150,7 @@ export default {
 	interfaceAccess: {
 		get: prefix + '/ui/portal-interface-access/'
 	},
-	counterpartyUnifiedData: {
+	counterpartiesUnifiedData: {
 		get: prefix + '/data/company/'
 	},
 
