@@ -1,6 +1,9 @@
 <template>
 	<div class="wrap">
-		<div class="title">Balance (USD) </div>
+		<div class="title flex aic sb">
+			<div>Balance (USD)</div>
+			<div>{{ total }}</div>
+		</div>
 
 		<div class="content">
 			<canvas id="myChart"><p>Chart</p></canvas>
@@ -87,6 +90,7 @@
 	let client = route.query.workspace
 	let date_to = route.query.date_to
 
+	let total = ref('0 USD')
 	let active = ref(null)
 	let myChart
 	let data = ref({
@@ -234,7 +238,9 @@
 						return item[1]
 					})
 				let totalMinus = Math.abs(minus.length ? minus.reduce((a,b) => a + b) : 1)
-
+				total.value = new Intl.NumberFormat('en-US', {
+					maximumFractionDigits: 2
+				}).format(totalMinus + totalPlus) + ' USD';
 				data.value.labels = rawData.map(item => item[0])
 				data.value.datasets = [
 					{

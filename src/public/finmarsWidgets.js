@@ -4,18 +4,21 @@ export default class FinmarsWidgets {
 	_widgets = {}
 	apiToken = ''
 	_workspace = ''
+	_widget_scope = ''
 	_options = {}
 
 	constructor({
 		apiToken,
 		apiUrl,
 		workspace,
+		widget_scope,
 		options,
 		widgets
 	}) {
 		this.apiToken = apiToken
 		this.widgetsUrl = apiUrl + 'widgets/'
 		this._workspace = workspace
+		this._widget_scope = widget_scope
 		this._options = options
 
 		this._initWidgets( widgets )

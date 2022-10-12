@@ -3,7 +3,6 @@
 	"scripts": {
 		"build": "nuxt build ",
 		"dev": "nuxt --rootDir=./v/ dev",
-		"cypress": "cypress open --e2e --browser chrome",
 		"local": "API_URL=https://dev.finmars.com APP_URL=http://localhost:3000/v OLD_APP_URL='https://dev.finmars.com/a/#!/' WS_URL='wss://dev.finmars.com/ws/' NUXT_HOST=0.0.0.0 nuxt --roDir=./v/ dev",
 		"start": "node .output/server/index.mjs",
 		"generate": "nuxt generate",
@@ -11,7 +10,6 @@
 	},
 
 	"devDependencies": {
-		"cypress": "^10.9.0",
 		"eslint": "^8.24.0",
 		"eslint-plugin-vue": "^9.6.0",
 		"nuxt": "^3.0.0-rc.11",
