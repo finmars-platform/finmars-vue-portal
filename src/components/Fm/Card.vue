@@ -26,11 +26,15 @@
 		box-shadow: 0 1px 4px hsl(0deg 0% 40% / 25%);
 		border-radius: 4px;
 		padding: 20px;
+		word-wrap: break-word;
 
 		&.fm_card_text {
 			background: none;
 			box-shadow: none;
 		}
+	}
+	.fm_card_title {
+		word-wrap: break-word;
 	}
 	.fm_card_actions {
 		position: absolute;

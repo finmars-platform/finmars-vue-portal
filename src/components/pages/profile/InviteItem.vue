@@ -2,7 +2,11 @@
 	<FmCard
 		controls
 		class="d-flex flex-column"
-		:title="invite.to_master_user_object.name"
+		:title="
+			invite.to_master_user_object.name.length > 20
+			? invite.to_master_user_object.name.slice(0, 20) + '...'
+			: invite.to_master_user_object.name
+		"
 	>
 		<div class="fm_card_content" v-if="invite.to_master_user_object.description">
 			{{ invite.to_master_user_object.description }}
@@ -38,7 +42,13 @@ async function changeStatus( status) {
 	});
 
 	if (res.status) {
-		emit("refresh");
+		let res = await useApi("masterSet.patch", {
+			body: {},
+			params: { id: props.invite.to_master_user },
+		});
+		if ( res.success ) {
+			navigateTo('/profile/setup')
+		}
 	}
 }
 </script>
