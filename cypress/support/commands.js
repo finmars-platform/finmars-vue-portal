@@ -1,25 +1,44 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('getByData', (selector, ...args) => {
+  return cy.get(`[data-cy=${selector}]`, ...args)
+})
+
+// Login
+Cypress.Commands.add('setToken', (
+	username = 'dev_apriakhin',
+	password = '02nxmv8ow4lb0tfm'
+) => {
+	cy.session([username, password], () => {
+		cy.request({
+			method: 'POST',
+			url: "https://dev.finmars.com/authorizer/token-auth/",
+			headers: {
+				'Content-type': 'application/json'
+			},
+			body: {
+				username,
+				password,
+			}
+		}).then(({ body }) => {
+      cy.setCookie("access_token", body.access_token);
+			cy.setActiveMasterUser()
+		})
+	})
+})
+
+Cypress.Commands.add('setActiveMasterUser', (
+	master_user_uuid = 'a9957bed-580c-41be-b57b-956cd22884d0'
+) => {
+	cy.getCookie('access_token')
+		.should('exist')
+		.then((cookie) => {
+			cy.request({
+				method: 'PATCH',
+				url: "https://dev.finmars.com/authorizer/master-user/"+master_user_uuid+"/set-current/",
+				headers: {
+					'Authorization': 'Token ' + cookie.value,
+					'Content-type': 'application/json'
+				}
+			})
+		})
+})

@@ -4,6 +4,7 @@
 
 <script setup>
 	definePageMeta({
+		middleware: 'auth',
 		bread: [
 			{
 				text: 'Performance Report',
