@@ -41,7 +41,7 @@ export default {
 		no_padding: Boolean,
 		closeOnClickOutside: {
 			type: Boolean,
-			default: true
+			default: false
 		}
 	},
 	emits: [
@@ -107,7 +107,7 @@ export default {
 		overflow: auto;
 		max-height: calc(90vh - 110px);
 		padding: 15px 20px 0;
-		min-width: 360px;
+		min-width: 400px; // so that FmInputEntityNames could fit in
 	}
 	.modal_bottom {
 		// border-top: 1px solid $border;

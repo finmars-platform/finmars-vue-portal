@@ -174,7 +174,7 @@ useApi('portfolioRegisterEvFiltered.post', {
 let currencyOpts = ref([])
 fetchCurrenciesOpts()
 async function fetchCurrenciesOpts() {
-	const ppData = await useApi('currencyLight.get');
+	const ppData = await useApi('currencyListLight.get');
 
 	if (!ppData.error) {
 		currencyOpts.value = ppData.results;

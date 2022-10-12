@@ -1,4 +1,4 @@
-const contentTypeToApiMap = {
+const apiForContentTypes = {
 	'portfolios.portfolio': 'portfolio',
 	'portfolios.portfolioregister': 'portfolioRegister',
 	'portfolios.portfolioregisterrecord': '',
@@ -9,7 +9,7 @@ const contentTypeToApiMap = {
 	'counterparties.responsiblegroup': '',
 	'counterparties.counterpartygroup': '',
 	'currencies.currency': 'currency',
-	'instruments.instrument': 'instruments',
+	'instruments.instrument': 'instrument',
 	'instruments.instrumenttype': 'instrumentType',
 	'transactions.transactiontype': '',
 	'periodicity': '',
@@ -44,13 +44,18 @@ export default function (content_type, method, options) {
 
 	if (!options) options = {};
 
-	let entityApi = contentTypeToApiMap[content_type];
+	let entityApi = apiForContentTypes[content_type];
 
 	if (!entityApi) {
 		throw new Error("There is no api for such entity");
 	}
 
-	if (options.lightList) entityApi += 'Light';
+	if (options.list) {
+		entityApi += 'List';
+
+	} else if (options.listLight) {
+		entityApi += 'ListLight';
+	}
 
 	const routeOpt = entityApi + '.' + method;
 

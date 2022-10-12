@@ -11,46 +11,50 @@
 														v-model:short_name="portfolioRegister.short_name"
 														v-model:user_code="portfolioRegister.user_code"
 														v-model:public_name="portfolioRegister.public_name"
-														:editing="true"
 														hideValueToShow />
 			</div>
 
-			<div v-if="portfolioId" class="m-b-35">
-				<FmInputSelect label="Portfolio"
-											 v-model="portfolioRegister.portfolio"
-											 :menuOptions="portfoliosList" />
+			<div v-if="!portfolioId" class="m-b-35">
+				<FmSelect v-model="portfolioRegister.portfolio"
+									label="Portfolio"
+									:items="portfoliosList"
+									prop_name="short_name"
+									attach="body"
+									optionsFilter />
 			</div>
 
 			<div class="m-b-35">
-				<FmUnifiedDataSelect label="Valuation currency"
-														 v-model="portfolioRegister.valuation_currency"
+				<FmUnifiedDataSelect v-model="portfolioRegister.valuation_currency"
+														 label="Valuation currency"
 														 content_type="currencies.currency"
 														 notNull
 														 class="m-b-0" />
 			</div>
 
 			<div class="m-b-35">
-				<FmSelect label="Pricing Policy"
+				<FmSelect v-model="portfolioRegister.valuation_pricing_policy"
+									label="Pricing Policy"
 									:items="ppList"
 									prop_name="short_name"
-									optionsFilter
-									v-model="portfolioRegister.valuation_pricing_policy" />
+									optionsFilter />
 			</div>
 
 			<div class="m-b-35">
-				<FmInputEntityNames label="Relation name"
-														v-model:name="portfolioRegister.new_linked_instrument.name"
+				<FmInputEntityNames v-model:name="portfolioRegister.new_linked_instrument.name"
 														v-model:short_name="portfolioRegister.new_linked_instrument.short_name"
 														v-model:user_code="portfolioRegister.new_linked_instrument.user_code"
 														v-model:public_name="portfolioRegister.new_linked_instrument.public_name"
-														:editing="true"
+														label="Relation name"
 														hideValueToShow />
 			</div>
 
 			<div class="m-b-35">
-				<FmInputSelect label="Instrument type"
-											 :menuOptions="itypesList"
-											 v-model="portfolioRegister.new_linked_instrument.instrument_type" />
+				<FmSelect v-model="portfolioRegister.new_linked_instrument.instrument_type"
+									label="Instrument type"
+									:items="itypesList"
+									prop_name="short_name"
+									attach="body"
+									optionsFilter />
 			</div>
 
 		</div>
@@ -62,7 +66,7 @@
 		<template #controls>
 			<div class="flex-row fc-space-between">
 				<FmBtn type="basic" @click="cancel">CANCEL</FmBtn>
-				<FmBtn type="primary" @click="emit('save')">CREATE</FmBtn>
+				<FmBtn type="primary" @click="save">CREATE</FmBtn>
 			</div>
 		</template>
 	</BaseModal>
@@ -92,11 +96,12 @@
 
 		try {
 
-			const res = await useLoadAllPages(routeOption, {filters: {page: 1, page_size: 1000}});
+			/* const res = await useLoadAllPages(routeOption, {filters: {page: 1, page_size: 1000}});
 
 			matchingRef.value = res.map(iType => {
 				return {id: iType.id, name: iType.short_name};
-			});
+			}); */
+			matchingRef.value = await useLoadAllPages(routeOption, {filters: {page: 1, page_size: 1000}});
 
 		} catch (e) {
 			throw e;
@@ -108,7 +113,7 @@
 
 		try {
 
-			const res = await useLoadAllPages('instrumentType.get', {filters: {page: 1, page_size: 1000}});
+			const res = await useLoadAllPages('instrumentTypeList.get', {filters: {page: 1, page_size: 1000}});
 
 			itypesList.value = res.map(iType => {
 				return {id: iType.id, name: iType.short_name};
@@ -124,7 +129,7 @@
 
 		try {
 
-			const res = await useLoadAllPages('pricingPolicy.get', {filters: {page: 1, page_size: 1000}});
+			const res = await useLoadAllPages('pricingPolicyList.get', {filters: {page: 1, page_size: 1000}});
 
 			ppList.value = res.map(policy => {
 				return {id: policy.id, name: policy.short_name}
@@ -141,19 +146,24 @@
 	}
 
 	async function save() {
-		console.log("testing save portfolioRegister", portfolioRegister);
-		// useApi('portfolioRegister.post', {body: });
+		console.log("testing save portfolioRegister", JSON.parse(JSON.stringify(portfolioRegister.value)));
+
+		await useApi('portfolioRegisterList.post', {body: portfolioRegister.value});
+
+		portfolioRegister.value = {new_linked_instrument: {}};
 		emit('save');
 	}
 
 	async function init () {
 
 		const promises = [
-			fetchEntities('instrumentType.get', itypesList),
-			fetchEntities('pricingPolicy.get', ppList)
+			fetchEntities('instrumentTypeList.get', itypesList),
+			fetchEntities('pricingPolicyList.get', ppList)
 		];
 
-		if (props.portfolioId) promises.push(portfoliosList);
+		if (!props.portfolioId) {
+			promises.push(fetchEntities('portfolioList.get', portfoliosList));
+		}
 
 		await Promise.all(promises);
 
@@ -167,7 +177,7 @@
 
 <style lang="scss" scoped>
 	.aprm_content {
-		:deep(.base-input) {
+		:deep(.base-input), :deep(.fm_select) {
 			margin-bottom: 0;
 		}
 	}

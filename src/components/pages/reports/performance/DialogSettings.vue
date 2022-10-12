@@ -157,7 +157,6 @@ watch(
 	() => viewerData.reportOptions,
 	() => {
 		reportOptions.value = { ...viewerData.reportOptions }
-		console.log("testing ");
 	}
 );
 
@@ -171,7 +170,7 @@ watch(
 
 
 async function fetchPpOpts() {
-	const ppData = await useLoadAllPages('pricingPolicyLight.get', {filters: {page: 1, page_size: 1000}});
+	const ppData = await useLoadAllPages('pricingPolicyListLight.get', {filters: {page: 1, page_size: 1000}});
 
 	if (!ppData.error) {
 		pricingPoliciesOpts.value = ppData;
@@ -180,7 +179,7 @@ async function fetchPpOpts() {
 }
 
 async function fetchCurrenciesOpts() {
-	const currencyData = await useLoadAllPages("currencyLight.get", {filters: {page: 1, page_size: 1000}});
+	const currencyData = await useLoadAllPages('currencyListLight.get', {filters: {page: 1, page_size: 1000}});
 
 	if (!currencyData.error) {
 		currencyOpts.value = currencyData;

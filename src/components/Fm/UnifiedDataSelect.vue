@@ -536,7 +536,7 @@ async function findEntities() {
 		}
 	}
 
-	const res = await useApi('counterpartyUnifiedData.get', options);
+	const res = await useApi('counterpartiesUnifiedData.get', options);
 
 	if (res.error) {
 
@@ -552,7 +552,7 @@ async function findEntities() {
 async function findEntitiesByUserCode() {
 
 	const options = {
-		lightList: true,
+		listLight: true,
 		filters: {
 			pageSize: 500,
 			user_code: inputText.value || '',

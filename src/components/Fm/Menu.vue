@@ -1,6 +1,6 @@
 <template>
 
-	<div class="fm_menu" v-click-outside="cancel">
+	<div class="fm_menu" v-click-outside="closeOnCo">
 		<div ref="activator" class="height-100">
 			<slot name="btn" :isOpen="isOpen"></slot>
 		</div>
@@ -13,7 +13,7 @@
 					ref="popup"
 					:style="{'min-height': minHeight}"
 				>
-					<slot :close="() => isOpen = false"></slot>
+					<slot :close="toggle"></slot>
 				</div>
 			</transition>
 		</Teleport>
@@ -41,6 +41,7 @@ let props = defineProps({
 
 	minHeight: String,
 	menuWidth: [Number, String],
+	minWidth: [Number, String],
 
 	positionX: Number,
 	positionY: Number,
@@ -52,6 +53,7 @@ let props = defineProps({
 		type: Number,
 		default: 0
 	},
+	testProp: String
 })
 
 let emit = defineEmits(['cancel'])
@@ -76,10 +78,28 @@ watch(
 	}
 )
 
+async function openHandlerBegins() {
+
+	await nextTick()
+
+	if (props.minWidth || props.minWidth === 0) {
+
+		let minWidth = props.minWidth;
+
+		if ( isNaN(props.minWidth) ) {
+			minWidth = props.minWidth + 'px';
+		}
+
+		popup.value.style['min-width'] = minWidth;
+
+	}
+
+}
+
 let isOpenHandler = async () => {
 
 	if ( !isOpen.value ) return false
-	await nextTick()
+	await openHandlerBegins();
 
 	let activatorRect = activator.value.getBoundingClientRect()
 	let popupRect = popup.value.getBoundingClientRect()
@@ -140,7 +160,7 @@ if (props.attach && props.attach.toLowerCase() === 'body') {
 	isOpenHandler = async () => {
 
 		if ( !isOpen.value ) return false
-		await nextTick()
+		await openHandlerBegins();
 
 		popup.value.style.position = 'absolute';
 		popup.value.style['z-index'] = 2000; // should be same as $backdrop-z-index inside variables.scss
@@ -158,7 +178,7 @@ if (props.attach && props.attach.toLowerCase() === 'body') {
 		let popupHeight = popup.value.clientHeight;
 		let popupWidth = popup.value.clientWidth;
 
-		if (props.width === 'activator') {
+		if (props.menuWidth === 'activator') {
 
 			popupWidth = activatorRect.width;
 			popup.value.style.width = popupWidth + 'px';
@@ -221,13 +241,13 @@ if (props.attach && props.attach.toLowerCase() === 'body') {
 watch(isOpen, isOpenHandler)
 
 function toggle() {
-	isOpen.value = !isOpen.value
+	isOpen.value = !isOpen.value;
+	if (!isOpen.value) emit('cancel');
 }
 
-function cancel(event) {
-
-	// needed when fm_drop attached to another element
-	if (popup.value && popup.value.contains(event.target)) return;
+function closeOnCo(event) {
+	// needed when fm_drop attached to another element (e.g. body)
+	if ((popup.value && popup.value.contains(event.target)) || activator.value.contains(event.target)) return;
 
 	isOpen.value = false;
 	emit('cancel');

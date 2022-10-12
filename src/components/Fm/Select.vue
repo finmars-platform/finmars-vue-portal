@@ -1,15 +1,30 @@
 <template>
-	<FmMenu class="fm_select">
+	<FmMenu class="fm_select"
+					:opened="menuIsOpened"
+					:openOn="optionsFilter ? false : 'click'"
+					:menuWidth="attach === 'body' ? 'activator' : ''"
+					:attach="attach"
+					:testProp="label"
+
+					:offsetX="5"
+
+					@cancel="onMenuClose">
+
 		<template #btn="{ isOpen }">
 			<BaseInput
 				class="input_btn m-b-0"
 				:class="{active: isOpen, 'bi_no_borders': no_borders, small: size == 'small'}"
 				:label="label"
 				v-model="moFilter"
+
+				@click.stop="openMenu"
+
 			>
+
 				<template #button>
 					<slot name="left_icon"></slot>
 				</template>
+
 				<template #rightBtn>
 					<slot name="right_btn">
 						<FmIcon :icon="isOpen ? 'arrow_drop_up' : 'arrow_drop_down'" />
@@ -19,7 +34,7 @@
 				<template v-if="!optionsFilter">
 					<div class="selected_field">
 						<div class="selected_field_item">
-							{{ selected }}
+							{{ selectedName }}
 						</div>
 					</div>
 				</template>
@@ -32,10 +47,10 @@
 				<div class="fm_list_item"
 					v-for="(item, index) in menuOptions"
 					:key="index"
-					:class="{active: item[props.prop_id] == modelValue}"
-					@click="selectOption(item), close()"
+					:class="{active: item[prop_id] == modelValue}"
+					@click="selectOption(item)"
 				>
-					<div>{{ item[props.prop_name] }}</div>
+					<div>{{ item[prop_name] }}</div>
 				</div>
 			</div>
 		</template>
@@ -58,23 +73,29 @@
 		size: String,
 		no_borders: Boolean,
 		optionsFilter: Boolean,
+		attach: String,
 	})
-
+	console.log("testing " + props.label + " props.optionsFilter", props.optionsFilter);
+	console.log("testing " + props.label + " props.items", props.items);
 	let emit = defineEmits(['update:modelValue'])
 
 	let moFilter = ref('');
+	let menuIsOpened = ref(false);
 
 	let menuOptions = computed(() => {
-
+		console.log("testing " + props.label + " menuOptions moFilter", moFilter.value);
 		if (moFilter.value) {
-			return props.items.filter.filter(item => item[props.prop_name] === moFilter.value);
+			console.log("testing " + props.label + " menuOptions 1");
+			return props.items.filter(item => {
+				return item[props.prop_name] && item[props.prop_name].toLowerCase().includes(moFilter.value.toLowerCase());
+			});
 		}
-
+		console.log("testing " + props.label + " menuOptions 2");
 		return props.items;
 
 	});
 
-	let selected = computed(() => {
+	let selectedName = computed(() => {
 		if ( props.items ) {
 			const selItem = props.items.find(item => item[props.prop_id] == props.modelValue)
 			if (selItem) {
@@ -86,9 +107,43 @@
 	})
 
 	function selectOption(selItem) {
-		if (props.optionsFilter) moFilter.value = '';
+		// if (props.optionsFilter) moFilter.value = '';
+		menuIsOpened.value = false;
 		emit('update:modelValue', selItem[props.prop_id]);
 	}
+
+	//#region props.optionsFilter === true
+	function openMenu() {
+		moFilter.value = '';
+		menuIsOpened.value = true;
+		console.log("testing openMenu menuIsOpened", menuIsOpened.value);
+	}
+
+	function onMenuClose () {
+		if (props.modelValue) {
+			moFilter.value = selectedName.value;
+		}
+
+		menuIsOpened.value = false;
+	}
+
+	if (props.optionsFilter) {
+
+		if (props.modelValue) {
+			moFilter.value = selectedName.value;
+			console.log("testing " + props.label + " moFilter on init", moFilter.value, selectedName.value);
+		}
+
+		watch(
+			() => props.modelValue,
+			() => {
+				if (props.modelValue) moFilter.value = selectedName.value;
+			}
+		)
+
+	}
+
+	//#endregion
 
 </script>
 
@@ -99,6 +154,10 @@
 	}
 	.input_btn {
 		cursor: pointer;
+
+		:deep(.bi_main_input) {
+			cursor: pointer;
+		}
 	}
 	.selected_field {
 		height: 100%;

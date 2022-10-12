@@ -4,9 +4,10 @@
 						anchor="top left"
 						attach="body"
 						menuWidth="activator"
+						:minWidth="340"
 						:openOn="false"
 
-						:offsetX="-13"
+						:offsetX="5"
 						:offsetY="-24"
 
 						class="width-100"
