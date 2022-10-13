@@ -146,7 +146,6 @@
 	}
 
 	async function save() {
-		console.log("testing save portfolioRegister", JSON.parse(JSON.stringify(portfolioRegister.value)));
 
 		await useApi('portfolioRegisterList.post', {body: portfolioRegister.value});
 

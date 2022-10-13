@@ -18,12 +18,6 @@
 			@openSettings="showSettingsDialog = true;"
 		>
 			<template #rightActions>
-				<!--				<FmSelect no_borders
-													class="m-b-0"
-													v-model="viewerData.reportOptions.report_currency"
-													:items="currencyOpts"
-													prop_name="short_name"
-								/>-->
 				<div style="width: 175px;">
 					<FmUnifiedDataSelect noBorders
 															 v-model="viewerData.reportOptions.report_currency"
@@ -43,10 +37,10 @@
 
 					<template #default="{ close }">
 						<div class="fm_list" @click="close()">
-							<div class="fm_list_item"
+<!--							<div class="fm_list_item"
 									 @click="addRegisterIsOpen = true">
 								Add Portfolio register
-							</div>
+							</div>-->
 							<div class="fm_list_item" @click="isOpenAddBundle = true">
 								Add bundle
 							</div>
@@ -171,13 +165,23 @@ useApi('portfolioRegisterEvFiltered.post', {
 	})
 })
 
-let currencyOpts = ref([])
-fetchCurrenciesOpts()
-async function fetchCurrenciesOpts() {
-	const ppData = await useApi('currencyListLight.get');
+let currencyListLight = ref([]);
 
-	if (!ppData.error) {
-		currencyOpts.value = ppData.results;
+async function fetchCurrenciesLightList() {
+	const res = await useApi('currencyListLight.get');
+
+	if (!res.error) {
+		currencyListLight.value = res.results;
+	}
+}
+
+let pricingPolicyListLight = ref([]);
+
+async function fetchPricingPoliciesOpts() {
+	const res = await useApi('currencyListLight.get');
+
+	if (!res.error) {
+		pricingPolicyListLight.value = res.results;
 	}
 }
 
@@ -291,21 +295,41 @@ async function chooseMonth(id) {
 }
 
 async function fetchDefaultListLayout () {
+
 	const resData = await useApi('defaultListLayout.get', {params: {contentType: viewerData.contentType}});
 
 	if (resData.error) {
 		throw new Error('Failed to fetch default performance layout');
-
-	} else {
-
-		const defaultListLayout = resData.results.length ? resData.results[0] : null;
-		viewerData.setLayoutCurrentConfiguration(defaultListLayout).then(() => {
-			readyStatusData.layout = true;
-		});
 	}
+
+	const defaultListLayout = resData.results.length ? resData.results[0] : null;
+
+	if (defaultListLayout.data.reportOptions.pricing_policy) {
+
+		defaultListLayout.data.reportOptions.pricing_policy_object = pricingPolicyListLight.value.find(item => {
+			return item.id === defaultListLayout.data.reportOptions.pricing_policy;
+		});
+
+	}
+
+	if (defaultListLayout.data.reportOptions.report_currency) {
+
+		defaultListLayout.data.reportOptions.report_currency_object = currencyListLight.value.find(item => {
+			return item.id === defaultListLayout.data.reportOptions.report_currency;
+		});
+
+	}
+
+	viewerData.setLayoutCurrentConfiguration(defaultListLayout).then(() => {
+		readyStatusData.layout = true;
+	});
+
 }
 
 async function init() {
+
+	await Promise.all([fetchCurrenciesLightList(), fetchPricingPoliciesOpts()]);
+
 	await fetchDefaultListLayout();
 	await refresh()
 

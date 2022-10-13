@@ -117,10 +117,10 @@ let noItemsFound = computed(() => !localItems.value.length && !databaseItems.val
 		name: ''
 	}
 });*/
-let selItem = ref({name: ''});
+let selItem = ref(props.itemObject || {name: ''});
 
 let valueIsValid = ref(false);
-let inputText = ref('');
+let inputText = ref(selItem.value.name || '');
 
 function getHighlighted (value) {
 
@@ -455,11 +455,9 @@ async function loadItemsFromUnifiedDatabase(item) {
 	let res = await useApi('importUnifiedData.post', config);
 
 	if (res.errors.length) {
-
 		onLoadItemError(res.errors[0]);
 
 	} else if (res.error) {
-		console.log("testing loadItemsFromUnifiedDatabase ", res.error);
 		onLoadItemError(res.error.message);
 
 	}
@@ -511,7 +509,7 @@ async function findEntities() {
 		}
 
 		const res = await useApi('currencyDatabaseSearch.get', options);
-		console.log("testing findEntity res", res);
+
 		if (res.error) {
 
 			console.error("Unified Database error occurred", res.error);
@@ -627,7 +625,7 @@ async function getList() {
 function onFilterInputFocus() {
 
 	menuIsOpened.value = true;
-	console.log("testing onFilterInputFocus", menuIsOpened.value);
+
 	inputText.value = '';
 	getList();
 
