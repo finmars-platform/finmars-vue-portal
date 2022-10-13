@@ -64,36 +64,43 @@
 	<script type="module">
 		import FinmarsWidgets from 'http://localhost:3000/finmarsWidgets.js'
 
-		let FinmarsWidgets2 = new FinmarsWidgets({
+		let access_token =  'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJhMkduaFhLRWRIZHpwaExuQTljZWJKV0dXX25jZjB1a2luTHBiTmFLOUpjIn0.eyJleHAiOjE2NjU2NzU2ODcsImlhdCI6MTY2NTU4OTI4NywianRpIjoiN2I2MzI4YzktYzk4Ny00YTY4LWEyZDktZDAwZmJiZDdjYzg0IiwiaXNzIjoiaHR0cHM6Ly9hdXRoLmZpbm1hcnMuY29tL3JlYWxtcy9kZXYtZmlubWFycyIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiJjYzA2ZmY5Ny05YzgzLTQyNWEtOTYyNi0zN2M0NDI1YjYxNzUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJmaW5tYXJzLWF1dGhvcml6ZXIiLCJzZXNzaW9uX3N0YXRlIjoiY2ZmMGZiZDUtNzEyOC00ODBiLWFkOWYtMDBiM2JhZjJmNTI4IiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtZGV2LWZpbm1hcnMiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6ImNmZjBmYmQ1LTcxMjgtNDgwYi1hZDlmLTAwYjNiYWYyZjUyOCIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwicHJlZmVycmVkX3VzZXJuYW1lIjoiZGV2X2Fwcmlha2hpbiJ9.XMxbnzUiJuOxkU7e1ugVqyGKX3fxOwbFcTwz7Zm_XcYEUJRzUVeWzHuZKQPouaMqApZfJycFapqJhuaXiCg903BIChDhai4fE4xhjZyyzztZxbLpeHlXeyy0goOWiCjeeNuHuhwFUm0Jl5VAZGrsQRm3dvCDyPL8Sr61_RHN-JJVJVn0d9Zjx6h_HPYcQ9LoTGFKCpXLx8awe_-Iw1F5c4L7ZrS0EYAD-9-9LKoJcDhgAcGYcugqdDdNlPgWfF3EKRmyy93wr-qoX3_Y0OLQyFIzLqTYwCqz5aqE87wdbR1O3DgLFCxRy7MeVCtl8yQvhfS6IcOrfGKXEpB1_OyvMw'
+
+		window.FinmarsWidgetInstance = new FinmarsWidgets({
 			apiUrl: "http://localhost:3000/v/",
-			apiToken: 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJhMkduaFhLRWRIZHpwaExuQTljZWJKV0dXX25jZjB1a2luTHBiTmFLOUpjIn0.eyJleHAiOjE2NjU2NzU2ODcsImlhdCI6MTY2NTU4OTI4NywianRpIjoiN2I2MzI4YzktYzk4Ny00YTY4LWEyZDktZDAwZmJiZDdjYzg0IiwiaXNzIjoiaHR0cHM6Ly9hdXRoLmZpbm1hcnMuY29tL3JlYWxtcy9kZXYtZmlubWFycyIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiJjYzA2ZmY5Ny05YzgzLTQyNWEtOTYyNi0zN2M0NDI1YjYxNzUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJmaW5tYXJzLWF1dGhvcml6ZXIiLCJzZXNzaW9uX3N0YXRlIjoiY2ZmMGZiZDUtNzEyOC00ODBiLWFkOWYtMDBiM2JhZjJmNTI4IiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtZGV2LWZpbm1hcnMiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6ImNmZjBmYmQ1LTcxMjgtNDgwYi1hZDlmLTAwYjNiYWYyZjUyOCIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwicHJlZmVycmVkX3VzZXJuYW1lIjoiZGV2X2Fwcmlha2hpbiJ9.XMxbnzUiJuOxkU7e1ugVqyGKX3fxOwbFcTwz7Zm_XcYEUJRzUVeWzHuZKQPouaMqApZfJycFapqJhuaXiCg903BIChDhai4fE4xhjZyyzztZxbLpeHlXeyy0goOWiCjeeNuHuhwFUm0Jl5VAZGrsQRm3dvCDyPL8Sr61_RHN-JJVJVn0d9Zjx6h_HPYcQ9LoTGFKCpXLx8awe_-Iw1F5c4L7ZrS0EYAD-9-9LKoJcDhgAcGYcugqdDdNlPgWfF3EKRmyy93wr-qoX3_Y0OLQyFIzLqTYwCqz5aqE87wdbR1O3DgLFCxRy7MeVCtl8yQvhfS6IcOrfGKXEpB1_OyvMw', // access token
+			apiToken: access_token, // access token
 			workspace: 'client0s6sf5crgw',
 			widget_scope: 'set1',
-			options: {
-				portfolioId: 2, // Readme
-				date_to: '2022-09-15', // Readme
-				date_from: undefined, // Readme
-				benchmark: undefined, // Readme
-			},
-			widgets: [
-				{
-					name: "barchart",
-					container: "#balance_time" // e.g. finmarsChart1
-				},
-				{
-					name: "balance",
-					container: "#balance_datail" // e.g. finmarsChart1
-				},
-				{
-					name: "pl",
-					container: "#balance_pl" // e.g. finmarsChart1
-				},
-				{
-					name: "nav",
-					container: "#balance_nav" // e.g. finmarsChart1
-				}
-			]
 		})
+
+		window.FinmarsWidgetInstance.setOptions({
+			portfolioId: 2, // Readme
+			date_to: '2022-09-15', // Readme
+			date_from: undefined, // Readme
+			benchmark: undefined, // Readme
+		})
+
+		window.FinmarsWidgetInstance
+			.addWidget({
+				name: "barchart",
+				container: "#balance_time"
+			})
+
+		window.FinmarsWidgetInstance
+			.addWidget({
+				name: "nav",
+				container: "#balance_nav"
+			})
+		window.FinmarsWidgetInstance
+			.addWidget({
+				name: "balance",
+				container: "#balance_datail"
+			})
+		window.FinmarsWidgetInstance
+			.addWidget({
+				name: "pl",
+				container: "#balance_pl"
+			})
 	</script>
 </body>
 </html>
