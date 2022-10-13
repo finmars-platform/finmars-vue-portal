@@ -1,7 +1,9 @@
 <template>
 	<div class="wrap">
-		<div class="title">P&L (USD)</div>
-
+		<div class="title flex aic sb">
+			<div>P&L (USD)</div>
+			<div>{{ total }}</div>
+		</div>
 		<div class="content">
 			<div class="chart_row header">
 				<div class="chart_field">
@@ -70,7 +72,7 @@
 		'#AB7967',
 	]
 	let inheritColors = reactive({})
-
+	let total = ref('0 USD')
 	let instruments = ref(null)
 	let maxTickStock = ref(null)
 
@@ -111,6 +113,10 @@
 				})
 				let active = ref(null)
 				let currentDate = pl.items.find(item => item.date == e.data.date.date)
+				total.value = new Intl.NumberFormat('en-US', {
+					maximumFractionDigits: 2
+				}).format(currentDate.total) + ' USD';
+
 				let currentCategory = currentDate.categories.find(item => item.name == e.data.category)
 				let items = currentCategory.items
 					.filter((item) => item.value != 0)
