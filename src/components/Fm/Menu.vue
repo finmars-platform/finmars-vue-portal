@@ -53,7 +53,6 @@ let props = defineProps({
 		type: Number,
 		default: 0
 	},
-	testProp: String
 })
 
 let emit = defineEmits(['cancel'])

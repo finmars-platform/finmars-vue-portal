@@ -4,7 +4,6 @@
 					:openOn="optionsFilter ? false : 'click'"
 					:menuWidth="attach === 'body' ? 'activator' : ''"
 					:attach="attach"
-					:testProp="label"
 
 					:offsetX="5"
 
@@ -75,22 +74,20 @@
 		optionsFilter: Boolean,
 		attach: String,
 	})
-	console.log("testing " + props.label + " props.optionsFilter", props.optionsFilter);
-	console.log("testing " + props.label + " props.items", props.items);
+
 	let emit = defineEmits(['update:modelValue'])
 
 	let moFilter = ref('');
 	let menuIsOpened = ref(false);
 
 	let menuOptions = computed(() => {
-		console.log("testing " + props.label + " menuOptions moFilter", moFilter.value);
+
 		if (moFilter.value) {
-			console.log("testing " + props.label + " menuOptions 1");
 			return props.items.filter(item => {
 				return item[props.prop_name] && item[props.prop_name].toLowerCase().includes(moFilter.value.toLowerCase());
 			});
 		}
-		console.log("testing " + props.label + " menuOptions 2");
+
 		return props.items;
 
 	});
@@ -116,7 +113,6 @@
 	function openMenu() {
 		moFilter.value = '';
 		menuIsOpened.value = true;
-		console.log("testing openMenu menuIsOpened", menuIsOpened.value);
 	}
 
 	function onMenuClose () {
@@ -131,7 +127,6 @@
 
 		if (props.modelValue) {
 			moFilter.value = selectedName.value;
-			console.log("testing " + props.label + " moFilter on init", moFilter.value, selectedName.value);
 		}
 
 		watch(
