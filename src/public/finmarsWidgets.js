@@ -4,21 +4,19 @@ export default class FinmarsWidgets {
 	_widgets = {}
 	apiToken = ''
 	_workspace = ''
+	_widget_scope = 'base'
 	_options = {}
 
 	constructor({
 		apiToken,
 		apiUrl,
 		workspace,
-		options,
-		widgets
+		widget_scope
 	}) {
 		this.apiToken = apiToken
 		this.widgetsUrl = apiUrl + 'widgets/'
 		this._workspace = workspace
-		this._options = options
-
-		this._initWidgets( widgets )
+		this._widget_scope = widget_scope
 
 		let inits = 0
 
@@ -27,7 +25,7 @@ export default class FinmarsWidgets {
 			if ( e.data.action == 'init' ) {
 				inits++
 
-				if ( inits == widgets.length ) {
+				if ( inits == 4 ) {
 					for ( let prop in this._widgets ) {
 						this._widgets[prop].postMessage( {action: 'ready'}, "*" )
 					}
@@ -46,7 +44,21 @@ export default class FinmarsWidgets {
 			}
 		});
 	}
+	addWidget(widget) {
+		this._createWidget(widget)
+	}
+	setOptions(options) {
+		this._options = Object.assign(this._options, options)
+	}
+	setDate(  ) {
+		this._widgets['balance'].postMessage(
+			e.data,
+			"*"
+		)
+	}
+	setPortfolio(  ) {
 
+	}
 	async _initWidgets( widgets ) {
 		if ( !widgets ) {
 			return false;

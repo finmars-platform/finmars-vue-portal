@@ -232,7 +232,7 @@
 								return new Intl.NumberFormat('en-US', {
 										notation: "compact",
 										maximumFractionDigits: 2
-									}).format(value);
+									}).format(parseFloat(value));
 							}
 						},
 						grid: {
@@ -242,6 +242,23 @@
 					}
 				},
 				plugins: {
+					tooltip: {
+						callbacks: {
+							footer:  (tooltipItems) => {
+								let sum = 0;
+
+								tooltipItems.forEach(function(tooltipItem) {
+									myChart.data.datasets.forEach((item) => {
+										sum += item.data[tooltipItem.dataIndex]
+									})
+								});
+								return 'Total: ' + new Intl.NumberFormat('en-US', {
+										style: 'currency',
+										currency: 'USD',
+									}).format(parseFloat(sum));
+							}
+						}
+					},
 					legend: {
 						position: 'bottom',
 						align: 'start',

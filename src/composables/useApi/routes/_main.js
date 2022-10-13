@@ -150,6 +150,9 @@ export default {
 	interfaceAccess: {
 		get: prefix + '/ui/portal-interface-access/'
 	},
+	configurationList: {
+		get: prefix + '/ui/configuration/'
+	},
 	counterpartiesUnifiedData: {
 		get: prefix + '/data/company/'
 	},
