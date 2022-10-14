@@ -1,5 +1,5 @@
 <template>
-	<BaseModal :closeOnClickOutside="false"
+	<BaseModal :closingDisabled="creating"
 						 @update:modelValue="cancel">
 
 		<div v-if="readyStatus" class="flex-column fc-space-between aprm_content">
@@ -65,8 +65,16 @@
 
 		<template #controls>
 			<div class="flex-row fc-space-between">
-				<FmBtn type="basic" @click="cancel">CANCEL</FmBtn>
-				<FmBtn type="primary" @click="save">CREATE</FmBtn>
+				<FmBtn :disabled="creating"
+							 type="basic"
+							 @click="cancel">CANCEL</FmBtn>
+
+				<div>
+					<FmLoader v-if="creating" title="Creating new portfolio register" />
+					<FmBtn :disabled="creating"
+								 type="primary"
+								 @click="save">CREATE</FmBtn>
+				</div>
 			</div>
 		</template>
 	</BaseModal>
@@ -83,6 +91,7 @@
 	let emit = defineEmits(['cancel', 'save'])
 
 	let readyStatus = ref(false);
+	let creating = ref(false);
 
 	let portfolioRegister = ref({new_linked_instrument: {}});
 
@@ -141,16 +150,29 @@
 
 	};*/
 	function cancel() {
+
+		if (creating.value) return;
+
 		portfolioRegister.value = {new_linked_instrument: {}};
+		creating.value = false;
 		emit('cancel');
+
 	}
 
 	async function save() {
 
-		await useApi('portfolioRegisterList.post', {body: portfolioRegister.value});
+		creating.value = true;
 
-		portfolioRegister.value = {new_linked_instrument: {}};
-		emit('save');
+		const res = await useApi('portfolioRegisterList.post', {body: portfolioRegister.value});
+
+		creating.value = false;
+
+		if (!res.error) {
+			portfolioRegister.value = {new_linked_instrument: {}};
+
+			emit('save', res);
+		}
+
 	}
 
 	async function init () {

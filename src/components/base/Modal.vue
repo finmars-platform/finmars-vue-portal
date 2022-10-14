@@ -7,14 +7,15 @@
 			>
 				<div class="modal">
 					<div class="modal_top flex aic sb">
-						<div class="modal_head" v-if="title">{{ title }}</div>
+						<div class="modal_head">{{ title }}</div>
 <!--						<svg class="close stroke" width="24" height="24" viewBox="0 0 24 24" fill="none"
 							xmlns="http://www.w3.org/2000/svg"
 							@click="cancel()">
 							<path d="M18 6L6 18" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 							<path d="M6 6L18 18" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 						</svg>-->
-						<FmIcon icon="close" @click="cancel"/>
+<!--						<FmIcon :disabled="closingDisabled" icon="close" @click="cancel"/>-->
+						<FmBtn :disabled="closingDisabled" type="iconBtn" icon="close" @click="cancel" />
 					</div>
 
 					<div class="modal_content scrollable">
@@ -42,7 +43,8 @@ export default {
 		closeOnClickOutside: {
 			type: Boolean,
 			default: false
-		}
+		},
+		closingDisabled: Boolean
 	},
 	emits: [
 		'update:modelValue',
@@ -68,6 +70,7 @@ export default {
 
   methods: {
     cancel() {
+			if (this.closingDisabled) return;
       this.$emit('update:modelValue', false)
     },
   }
