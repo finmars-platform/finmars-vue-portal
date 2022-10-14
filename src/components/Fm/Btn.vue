@@ -18,7 +18,7 @@ let props = defineProps({
 		loading: Boolean,
 		/**
 		 * Type of button
-		 * @values primary, basic, text, action
+		 * @values primary, basic, text, action, iconBtn
 		 */
 		type: {
 			type: String,
@@ -83,12 +83,18 @@ let props = defineProps({
 				background: $primary-lighten-2;
 			}
 		}
+		&.iconBtn {
+			padding: 0;
+			min-width: 0;
+			height: auto;
+		}
 		&[disabled] {
-			background: $primary-lighten;
 			cursor: default;
+			opacity: .6;
 
-			&:hover {
+			&.primary {
 				background: $primary-lighten;
+				opacity: 1;
 			}
 		}
 	}
@@ -97,8 +103,11 @@ let props = defineProps({
 		align-items: center;
 
 		.icon {
-			margin-right: 7px;
 			color: $text-lighten;
+		}
+
+		&:not(.iconBtn) .icon {
+			margin-right: 7px;
 		}
 	}
 </style>

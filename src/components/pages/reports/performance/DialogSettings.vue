@@ -80,7 +80,7 @@
 
 let props = defineProps({
 	openDialog: Boolean,
-	layoutReadyStatus: Boolean,
+	externalReadyStatus: Boolean,
 	bundles: Object,
 });
 let emit = defineEmits(["cancel", "save"]);
@@ -136,7 +136,7 @@ let graphTypeOpts = [
 ];
 
 let readyStatus = computed(() => {
-	let ready = props.layoutReadyStatus;
+	let ready = props.externalReadyStatus;
 
 	Object.keys(readyStatusData).forEach(status => {
 		ready = ready && readyStatusData[status];

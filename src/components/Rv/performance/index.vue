@@ -2,14 +2,15 @@
 	<div>
 		<PagesReportsPerformanceDialogSettings
 			v-model="showSettingsDialog"
-			v-model:layoutReadyStatus="readyStatus"
+			v-model:externalReadyStatus="dsReadyStatus"
 			:bundles="bundles"
 			@save="showSettingsDialog = false, [viewerData.reportOptions, viewerData.components] = $event, refresh()"
 			@cancel="showSettingsDialog = false"
 		/>
 
-		<ModalPortfolioRegister v-model="addRegisterIsOpen"
-														@save="addRegisterIsOpen = false"
+		<ModalPortfolioRegister title="Add portfolio register"
+														v-model="addRegisterIsOpen"
+														@save="onPrtfRegisterCreate"
 														@cancel="addRegisterIsOpen = false"/>
 
 		<EvBaseTopPanel
@@ -37,12 +38,14 @@
 
 					<template #default="{ close }">
 						<div class="fm_list" @click="close()">
-<!--							<div class="fm_list_item"
+							<div class="fm_list_item"
 									 @click="addRegisterIsOpen = true">
 								Add Portfolio register
-							</div>-->
-							<div class="fm_list_item" @click="isOpenAddBundle = true">
-								Add bundle
+							</div>
+							<div class="fm_list_item">
+								<div v-if="readyStatusData.portfolioRegisters"
+										 @click="isOpenAddBundle = true">Add bundle</div>
+								<FmLoader v-if="!readyStatusData.portfolioRegisters" />
 							</div>
 						</div>
 					</template>
@@ -152,18 +155,41 @@ let newBundle = ref({
 
 let addRegisterIsOpen = ref(false);
 
-let registersItems = ref([])
+let registersItems = ref([]);
 
-useApi('portfolioRegisterEvFiltered.post', {
-	body: '{"groups_types":[],"page":1,"groups_values":[],"groups_order":"asc","page_size":60,"ev_options":{"entity_filters":["enabled","disabled","active","inactive"]},"filter_settings":[],"global_table_search":"","is_enabled":"any"}'
-}).then((res) => {
-	res.results.forEach((item) => {
-		registersItems.value.push({
-			user_code: item.user_code,
-			id: item.id,
-		})
+function addPrtfRegisterItem(newRegister) {
+	registersItems.value.push({
+		user_code: newRegister.user_code,
+		id: newRegister.id,
 	})
-})
+}
+
+async function fetchPrtfRegistersList() {
+
+	readyStatusData.portfolioRegisters = false;
+
+	const res = await useApi('portfolioRegisterEvFiltered.post', {
+		body: '{"groups_types":[],"page":1,"groups_values":[],"groups_order":"asc","page_size":60,"ev_options":{"entity_filters":["enabled","disabled","active","inactive"]},"filter_settings":[],"global_table_search":"","is_enabled":"any"}'
+	});
+
+	if (!res.error) {
+
+		res.results.forEach(addPrtfRegisterItem);
+
+		readyStatusData.portfolioRegisters = true;
+
+	}
+
+}
+
+function onPrtfRegisterCreate(newRegister) {
+
+	addPrtfRegisterItem(newRegister);
+	addRegisterIsOpen.value = false;
+
+	refresh();
+
+}
 
 let currencyListLight = ref([]);
 
@@ -238,6 +264,7 @@ let activeYear = ref(0)
 let readyStatusData = reactive({
 	layout: false,
 	bundles: false,
+	portfolioRegisters: false,
 });
 
 let readyStatus = computed(() => {
@@ -250,7 +277,9 @@ let readyStatus = computed(() => {
 
 	return ready;
 
-})
+});
+
+let dsReadyStatus = computed(() => readyStatusData.layout && readyStatusData.bundles);
 
 /*#endregion */
 
@@ -328,6 +357,7 @@ async function fetchDefaultListLayout () {
 
 async function init() {
 
+	fetchPrtfRegistersList();
 	await Promise.all([fetchCurrenciesLightList(), fetchPricingPoliciesOpts()]);
 
 	await fetchDefaultListLayout();
@@ -381,7 +411,7 @@ async function init() {
 }
 
 async function refresh() {
-	await fetchPortolios()
+	await fetchPortfolioBundles()
 
 	if ( !bundles.value.length ) {
 		return false
@@ -399,7 +429,7 @@ async function refresh() {
 		updateChart( portfolioItems.value[0], portfolioItemsCumm.value[0] )
 }
 
-async function fetchPortolios() {
+async function fetchPortfolioBundles() {
 
 	readyStatusData.bundles = false;
 
