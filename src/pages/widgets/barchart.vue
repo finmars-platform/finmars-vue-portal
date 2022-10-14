@@ -86,23 +86,28 @@
 	let portfolioId = route.query.portfolioId
 	let client = route.query.workspace
 	let date_to = route.query.date_to
+	let historyStats
 
-	let historyStats = await useApi('widgetsHistory.get', {
-		params: {
-			type: 'nav',
-			client,
-		},
-		filters: {
-			portfolio: portfolioId,
-			date_to,
-		},
-		headers: {
-			Authorization: 'Token ' + route.query.token
-		}
-	})
+	await getHistory()
+
+	async function getHistory() {
+		historyStats = await useApi('widgetsHistory.get', {
+			params: {
+				type: 'nav',
+				client,
+			},
+			filters: {
+				portfolio: portfolioId,
+				date_to,
+			},
+			headers: {
+				Authorization: 'Token ' + route.query.token
+			}
+		})
+	}
 	let active = ref(null)
-	let last = ref({})
-
+	let dataOfActive = ref({})
+	let activeIndex = ref(historyStats.items.length - 2)
 	let categoryName = ref('Asset Types')
 	let categories = reactive(new Set())
 
@@ -142,8 +147,8 @@
 
 		send({
 			action: 'clickOnChart',
-			data: {...last.value},
-			date: historyStats.items[historyStats.items.length - 2],
+			data: {...dataOfActive.value},
+			date: historyStats.items[activeIndex.value],
 			category: categoryName.value
 		})
 		myChart.update()
@@ -151,6 +156,7 @@
 
 
 	function createData() {
+
 		historyStats.items.forEach((date) => {
 			data.labels.push(moment(date.date).format('MMM YY'))
 
@@ -176,12 +182,12 @@
 			.filter((item) => item.total != 0)
 			.sort( (a, b) => b.total - a.total)
 
-		last.value = {}
+		dataOfActive.value = {}
 
 		data.datasets.forEach((item, key) => {
 			item.backgroundColor = COLORS[key]
 
-			last.value[item.label] = item.data[item.data.length - 2]
+			dataOfActive.value[item.label] = item.data[activeIndex.value]
 		})
 	}
 
@@ -232,7 +238,7 @@
 								return new Intl.NumberFormat('en-US', {
 										notation: "compact",
 										maximumFractionDigits: 2
-									}).format(value);
+									}).format(parseFloat(value));
 							}
 						},
 						grid: {
@@ -242,6 +248,23 @@
 					}
 				},
 				plugins: {
+					tooltip: {
+						callbacks: {
+							footer:  (tooltipItems) => {
+								let sum = 0;
+
+								tooltipItems.forEach(function(tooltipItem) {
+									myChart.data.datasets.forEach((item) => {
+										sum += item.data[tooltipItem.dataIndex]
+									})
+								});
+								return 'Total: ' + new Intl.NumberFormat('en-US', {
+										style: 'currency',
+										currency: 'USD',
+									}).format(parseFloat(sum));
+							}
+						}
+					},
 					legend: {
 						position: 'bottom',
 						align: 'start',
@@ -272,6 +295,7 @@
 						active.value = points[0]
 						myChart.update()
 
+						activeIndex.value = points[0].index
 						send({
 							action: 'clickOnChart',
 							data,
@@ -291,14 +315,22 @@
 			action: 'init'
 		})
 
-		window.addEventListener("message", (e) => {
+		window.addEventListener("message", async (e) => {
 			if ( e.data.action == 'ready' ) {
 				e.source.postMessage({
 					action: 'clickOnChart',
-					data: {...last.value},
-					date: historyStats.items[historyStats.items.length - 2],
+					data: {...dataOfActive.value},
+					date: historyStats.items[activeIndex.value],
 					category: categoryName.value
 				}, '*')
+			}
+			if ( e.data.action == 'updateOpts' ) {
+				portfolioId = e.data.data.portfolioId
+				date_to = e.data.data.date_to
+
+				await getHistory()
+
+				updateData()
 			}
 		});
 	}

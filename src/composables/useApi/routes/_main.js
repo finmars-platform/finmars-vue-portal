@@ -123,8 +123,9 @@ export default {
 	interfaceAccess: {
 		get: prefix + '/ui/portal-interface-access/'
 	},
-
-
+	configurationList: {
+		get: prefix + '/ui/configuration/'
+	},
 	// Надо отделить
 
 	widgetsHistory: {
