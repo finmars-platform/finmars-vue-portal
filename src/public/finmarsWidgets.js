@@ -18,29 +18,29 @@ export default class FinmarsWidgets {
 		this._workspace = workspace
 		this._widget_scope = widget_scope
 
-		let inits = 0
+		let clickEvent = null
 
 		window.addEventListener("message", (e) => {
 			if ( !e.data.action ) return false
 			if ( e.data.action == 'init' ) {
-				inits++
-
-				if ( inits == 4 ) {
+				if ( 'barchart' in this._widgets ) {
+					console.log('e.data:', e.data)
 					for ( let prop in this._widgets ) {
 						this._widgets[prop].postMessage( {action: 'ready'}, "*" )
+						if ( clickEvent ) {
+							this._widgets[prop].postMessage( clickEvent, "*" )
+						}
 					}
 				}
 			}
 
 			if ( "clickOnChart" == e.data.action ) {
-				this._widgets['balance'].postMessage(
-					e.data,
-					"*"
-				)
-				this._widgets['pl'].postMessage(
-					e.data,
-					"*"
-				)
+				clickEvent = e.data
+
+				for ( let prop in this._widgets ) {
+					if ( prop == 'barchart') continue
+					this._widgets[prop].postMessage( e.data, "*" )
+				}
 			}
 		});
 	}
@@ -49,15 +49,10 @@ export default class FinmarsWidgets {
 	}
 	setOptions(options) {
 		this._options = Object.assign(this._options, options)
-	}
-	setDate(  ) {
-		this._widgets['balance'].postMessage(
-			e.data,
-			"*"
-		)
-	}
-	setPortfolio(  ) {
 
+		for ( let prop in this._widgets ) {
+			this._widgets[prop].postMessage( {action: 'updateOpts', data: this._options}, "*" )
+		}
 	}
 	async _initWidgets( widgets ) {
 		if ( !widgets ) {

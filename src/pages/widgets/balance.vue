@@ -218,11 +218,12 @@
 				}
 				let rawData = Object
 					.entries(e.data.data)
+					.filter(item => item[1] != 0)
 					.sort((a,b) => b[1] - a[1])
 
 				let plusColors = []
 				let plus = rawData
-					.filter(item => item[1] > 0)
+					.filter(item => item[1] >= 0)
 					.map(item => {
 						plusColors.push( inheritColors[item[0]] )
 						return item[1]
