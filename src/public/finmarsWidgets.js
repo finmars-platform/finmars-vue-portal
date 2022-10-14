@@ -4,49 +4,56 @@ export default class FinmarsWidgets {
 	_widgets = {}
 	apiToken = ''
 	_workspace = ''
+	_widget_scope = 'base'
 	_options = {}
 
 	constructor({
 		apiToken,
 		apiUrl,
 		workspace,
-		options,
-		widgets
+		widget_scope
 	}) {
 		this.apiToken = apiToken
 		this.widgetsUrl = apiUrl + 'widgets/'
 		this._workspace = workspace
-		this._options = options
+		this._widget_scope = widget_scope
 
-		this._initWidgets( widgets )
-
-		let inits = 0
+		let clickEvent = null
 
 		window.addEventListener("message", (e) => {
 			if ( !e.data.action ) return false
 			if ( e.data.action == 'init' ) {
-				inits++
-
-				if ( inits == widgets.length ) {
+				if ( 'barchart' in this._widgets ) {
+					console.log('e.data:', e.data)
 					for ( let prop in this._widgets ) {
 						this._widgets[prop].postMessage( {action: 'ready'}, "*" )
+						if ( clickEvent ) {
+							this._widgets[prop].postMessage( clickEvent, "*" )
+						}
 					}
 				}
 			}
 
 			if ( "clickOnChart" == e.data.action ) {
-				this._widgets['balance'].postMessage(
-					e.data,
-					"*"
-				)
-				this._widgets['pl'].postMessage(
-					e.data,
-					"*"
-				)
+				clickEvent = e.data
+
+				for ( let prop in this._widgets ) {
+					if ( prop == 'barchart') continue
+					this._widgets[prop].postMessage( e.data, "*" )
+				}
 			}
 		});
 	}
+	addWidget(widget) {
+		this._createWidget(widget)
+	}
+	setOptions(options) {
+		this._options = Object.assign(this._options, options)
 
+		for ( let prop in this._widgets ) {
+			this._widgets[prop].postMessage( {action: 'updateOpts', data: this._options}, "*" )
+		}
+	}
 	async _initWidgets( widgets ) {
 		if ( !widgets ) {
 			return false;
