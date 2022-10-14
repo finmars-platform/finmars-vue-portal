@@ -51,7 +51,7 @@ export default class FinmarsWidgets {
 		this._options = Object.assign(this._options, options)
 
 		for ( let prop in this._widgets ) {
-			this._widgets[prop].postMessage( {action: 'updateOpts'}, "*" )
+			this._widgets[prop].postMessage( {action: 'updateOpts', data: this._options}, "*" )
 		}
 	}
 	async _initWidgets( widgets ) {
