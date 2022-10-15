@@ -12,8 +12,7 @@
 								 :class="{active: menuIsOpened, 'bi_no_borders': noBorders}"
 
 								 @update:modelValue="onFilterInputChange"
-								 @onFocus="onFilterInputFocus"
-								 @onBlur="onFilterInputBlur">
+								 @onFocus="onFilterInputFocus">
 
 				<template v-if="!noBorders && !noIndicatorButton" #button>
 					<FmIcon icon="menu" />
@@ -35,6 +34,7 @@
 				<div v-if="localItems.length">
 
 					<div v-for="option in localItems"
+							 :key="option.user_code"
 							 @click="selectLocalItem(option)"
 							 class="sel_option">
 
@@ -53,6 +53,7 @@
 				<div v-if="databaseItems.length">
 
 					<div v-for="option in databaseItems"
+							 :key="content_type === 'currencies.currency' ? option.code : option.user_code"
 							 @click="selectDatabaseItem(option)"
 							 class="sel_option">
 
@@ -654,12 +655,17 @@ function onFilterInputBlur() {
 		padding: 11px 16px 2px 16px;
 		box-sizing: border-box;
 		width: 100%;
+		border-bottom: $opts-borders;
+
+		&:first-child {
+			border-top: $opts-borders;
+		}
 
 		&:hover {
 			background: inherit;
 			background-color: rgba(0, 0, 0, 0.03);
-			border: none;
-			border-radius: 0px;
+			/*border: none;
+			border-radius: 0px;*/
 			-moz-box-shadow: none;
 			-webkit-box-shadow: none;
 			box-shadow: none;
