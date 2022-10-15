@@ -12,7 +12,8 @@
 								 :class="{active: menuIsOpened, 'bi_no_borders': noBorders}"
 
 								 @update:modelValue="onFilterInputChange"
-								 @onFocus="onFilterInputFocus">
+								 @onFocus="onFilterInputFocus"
+								 @onBlur="onFilterInputBlur">
 
 				<template v-if="!noBorders && !noIndicatorButton" #button>
 					<FmIcon icon="menu" />
