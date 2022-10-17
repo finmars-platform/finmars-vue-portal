@@ -24,9 +24,9 @@ white-space: nowrap;
 &.active {
 	background: $main-darken;
 }
-/*& + & {
+& + & {
 	border-top: 1px solid $border;
-}*/
+}
 }
 
 // Card
