@@ -92,7 +92,7 @@ export default {
 	.modal_top {
 		height: 50px;
 		padding: 0 20px;
-		// border-bottom: 1px solid $border;
+		border-bottom: 1px solid $border;
 	}
 	.modal_content {
 		overflow: auto;
@@ -101,7 +101,7 @@ export default {
 		min-width: 360px;
 	}
 	.modal_bottom {
-		// border-top: 1px solid $border;
+		border-top: 1px solid $border;
 		padding: 10px 20px;
 	}
 	.modal {
@@ -109,6 +109,7 @@ export default {
 		background: #fff;
 		min-width: 300px;
 		max-width: 90%;
+		border-radius: 4px;
 		z-index: 2;
 
 		.close {
