@@ -255,7 +255,8 @@
 
 								tooltipItems.forEach(function(tooltipItem) {
 									myChart.data.datasets.forEach((item) => {
-										sum += item.data[tooltipItem.dataIndex]
+										if ( item.data[tooltipItem.dataIndex] )
+											sum += item.data[tooltipItem.dataIndex]
 									})
 								});
 								return 'Total: ' + new Intl.NumberFormat('en-US', {

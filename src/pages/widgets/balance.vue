@@ -81,6 +81,26 @@
 		'#D9ED92',
 		'#C8D7F9',
 		'#96B5B4',
+		'#AB7967',
+		'#577590CC',
+		'#43AA8BCC',
+		'#F9AB4B',
+		'#FA6769',
+		'#F9C74F',
+		'#979BFF',
+		'#D9ED92',
+		'#C8D7F9',
+		'#96B5B4',
+		'#AB7967',
+		'#577590CC',
+		'#43AA8BCC',
+		'#F9AB4B',
+		'#FA6769',
+		'#F9C74F',
+		'#979BFF',
+		'#D9ED92',
+		'#C8D7F9',
+		'#96B5B4',
 		'#AB7967'
 	]
 
@@ -160,8 +180,12 @@
 										item.datasetIndex = 1
 										item.index = i - data.value.datasets[0].data.length
 									}
-									item.text += ' | ' +
-										precisionTick(data.value.datasets[item.datasetIndex].data[item.index])
+									let percent = Math.round(
+										data.value.datasets[item.datasetIndex].data[item.index]
+										/ parseFloat(total.value.replaceAll(',', ''))
+										* 10000
+									) / 100
+									item.text = percent + '% | ' + item.text
 								})
 
 								return labelsOriginal
