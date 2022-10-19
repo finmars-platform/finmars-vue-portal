@@ -24,7 +24,6 @@ export default class FinmarsWidgets {
 			if ( !e.data.action ) return false
 			if ( e.data.action == 'init' ) {
 				if ( 'barchart' in this._widgets ) {
-					console.log('e.data:', e.data)
 					for ( let prop in this._widgets ) {
 						this._widgets[prop].postMessage( {action: 'ready'}, "*" )
 						if ( clickEvent ) {
@@ -41,6 +40,9 @@ export default class FinmarsWidgets {
 					if ( prop == 'barchart') continue
 					this._widgets[prop].postMessage( e.data, "*" )
 				}
+			}
+			if ( "changeHistoryType" == e.data.action ) {
+				this._widgets['barchart']?.postMessage( e.data, "*" )
 			}
 		});
 	}
