@@ -1,17 +1,20 @@
 <template>
 	<div class="card_view">
 		<div class="card_wrap"
+			v-if="stats"
 			@mousedown="dragStart"
 		>
 			<div class="card"
 				v-for="(item, prop) in stats"
 				:key="prop"
 				:class="{active: item[0] == active}"
+				@click="item[0] == 'nav' || item[0] == 'total' ? setActive(item[0]) : false"
 			>
 				<div class="card_name">{{ STATS[item[0]] }}</div>
 				<div class="card_value">{{ STATS_FORMAT[item[0]](item[1])  }}</div>
 			</div>
 		</div>
+		<div v-else>No data</div>
 	</div>
 
 </template>
@@ -82,12 +85,25 @@
 	delete res.portfolio
 	delete res.benchmark
 
+	async function setActive( item ) {
+		active.value = item
+
+		send({
+			action: 'changeHistoryType',
+			type: item
+		})
+	}
+
 	let statsCurrent = ref(0)
 	let stats = computed(() => {
-		let arr = Object.entries(res)
+		if ( res && !res.error ) {
+			let arr = Object.entries(res)
+			return arr
 
-		return arr
+		} else return null
+
 	})
+	console.log('stats:', stats)
 
 	let active = ref('nav')
 
