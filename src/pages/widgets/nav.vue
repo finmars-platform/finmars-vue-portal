@@ -103,7 +103,6 @@
 		} else return null
 
 	})
-	console.log('stats:', stats)
 
 	let active = ref('nav')
 
