@@ -90,10 +90,10 @@
 
 	await getHistory()
 
-	async function getHistory() {
+	async function getHistory(type = 'nav') {
 		historyStats = await useApi('widgetsHistory.get', {
 			params: {
-				type: 'nav',
+				type,
 				client,
 			},
 			filters: {
@@ -330,6 +330,12 @@
 				date_to = e.data.data.date_to
 
 				await getHistory()
+
+				updateData()
+			}
+			if ( e.data.action == 'changeHistoryType' ) {
+				await getHistory(e.data.type)
+				console.log('e.data.type:', e.data.type)
 
 				updateData()
 			}
