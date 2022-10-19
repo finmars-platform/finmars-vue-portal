@@ -334,8 +334,11 @@
 				updateData()
 			}
 			if ( e.data.action == 'changeHistoryType' ) {
-				await getHistory(e.data.type)
-				console.log('e.data.type:', e.data.type)
+				let map = {
+					nav: 'nav',
+					total: 'pl'
+				}
+				await getHistory(map[e.data.type])
 
 				updateData()
 			}
