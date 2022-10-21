@@ -245,6 +245,7 @@ function toggle() {
 }
 
 function closeOnCo(event) {
+
 	// needed when fm_drop attached to another element (e.g. body)
 	if ((popup.value && popup.value.contains(event.target)) || activator.value.contains(event.target)) return;
 
