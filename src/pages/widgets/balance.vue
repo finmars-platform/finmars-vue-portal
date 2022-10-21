@@ -253,7 +253,7 @@
 						return item[1]
 					})
 
-				let totalPlus = plus.length ? plus.reduce((a,b)=> a + b) : 1
+				let totalPlus = plus.length ? plus.reduce((a,b)=> a + b) : 0
 
 				let minusColors = []
 				let minus = rawData
@@ -262,6 +262,7 @@
 						minusColors.push( inheritColors[item[0]] )
 						return item[1]
 					})
+
 				let totalMinus = Math.abs(minus.length ? minus.reduce((a,b) => a + b) : 1)
 				total.value = new Intl.NumberFormat('en-US', {
 					maximumFractionDigits: 2
@@ -276,7 +277,9 @@
 					{
 						data: minus,
 						backgroundColor: minusColors,
-						circumference: Math.floor(totalMinus / totalPlus * 360)
+						circumference: totalPlus == 0
+							? 360
+							: Math.floor(totalMinus / totalPlus * 360)
 					}
 				]
 
