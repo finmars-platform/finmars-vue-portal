@@ -29,6 +29,12 @@ white-space: nowrap;
 }
 }
 
+// custom inputs
+.bi_main_input { // needed because some inputs can insert theirs input into BaseInput's default slot
+	width: 100%;
+	height: inherit;
+}
+
 // Card
 .fm_card_title {
 	font-size: 24px;

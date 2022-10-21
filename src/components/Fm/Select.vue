@@ -11,11 +11,15 @@
 
 		<template #btn="{ isOpen }">
 			<BaseInput
+				:errorData="errorData"
+				:modelValue="modelValue"
 				class="input_btn m-b-0"
 				:class="{active: isOpen, 'bi_no_borders': no_borders, small: size == 'small'}"
 				:label="label"
-				v-model="moFilter"
+				:tooltip="tooltip"
+				:required="required"
 
+				@update:errorData="newVal => emit('update:errorData', newVal)"
 				@click.stop="openMenu"
 
 			>
@@ -23,6 +27,11 @@
 				<template #button>
 					<slot name="left_icon"></slot>
 				</template>
+
+				<input :placeholder="label"
+							 v-model="moFilter"
+							 type="text"
+							 class="bi_main_input" />
 
 				<template #rightBtn>
 					<slot name="right_btn">
@@ -61,6 +70,7 @@
 		modelValue: [String, Number],
 		items: Array,
 		label: String,
+		tooltip: String,
 		prop_id: {
 			type: String,
 			default: 'id',
@@ -72,10 +82,12 @@
 		size: String,
 		no_borders: Boolean,
 		optionsFilter: Boolean,
+		required: Boolean,
 		attach: String,
+		errorData: Object
 	})
 
-	let emit = defineEmits(['update:modelValue'])
+	let emit = defineEmits(['update:modelValue', 'update:errorData'])
 
 	let moFilter = ref('');
 	let menuIsOpened = ref(false);
@@ -106,6 +118,11 @@
 	function selectOption(selItem) {
 		// if (props.optionsFilter) moFilter.value = '';
 		menuIsOpened.value = false;
+
+		if (selItem[props.prop_id] === props.modelValue) {
+			return;
+		}
+
 		emit('update:modelValue', selItem[props.prop_id]);
 	}
 
