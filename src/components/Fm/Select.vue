@@ -24,18 +24,25 @@
 					<slot name="left_icon"></slot>
 				</template>
 
-				<template #rightBtn>
-					<slot name="right_btn">
-						<FmIcon :icon="isOpen ? 'arrow_drop_up' : 'arrow_drop_down'" />
-					</slot>
+				<template v-if="optionsFilter">
+					<input :placeholder="label"
+								 v-model="moFilter"
+								 type="text"
+								 class="bi_main_input" />
 				</template>
 
-				<template v-if="!optionsFilter">
+				<template v-else>
 					<div class="selected_field">
 						<div class="selected_field_item">
 							{{ selectedName }}
 						</div>
 					</div>
+				</template>
+
+				<template #rightBtn>
+					<slot name="right_btn">
+						<FmIcon :icon="isOpen ? 'arrow_drop_up' : 'arrow_drop_down'" />
+					</slot>
 				</template>
 
 			</BaseInput>
@@ -44,10 +51,10 @@
 		<template #default="{ close }">
 			<div class="fm_list">
 				<div class="fm_list_item"
-					v-for="(item, index) in menuOptions"
-					:key="index"
-					:class="{active: item[prop_id] == modelValue}"
-					@click="selectOption(item)"
+						 v-for="(item, index) in menuOptions"
+						 :key="index"
+						 :class="{active: item[prop_id] == modelValue}"
+						 @click="selectOption(item)"
 				>
 					<div>{{ item[prop_name] }}</div>
 				</div>
