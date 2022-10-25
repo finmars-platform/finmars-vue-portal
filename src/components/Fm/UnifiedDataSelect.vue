@@ -143,7 +143,7 @@ function closeMenu() {
 
 	menuIsOpened.value = false;
 
-	if (selItem.value.name) inputText.value = selItem.value.value;
+	if (selItem.value.name) inputText.value = selItem.value.name;
 
 }
 

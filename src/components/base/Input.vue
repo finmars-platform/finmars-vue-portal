@@ -1,6 +1,9 @@
 <template>
-	<label class="base-input" tabindex="-1"
-				 :class="{error}"
+	<div class="base-input"
+			 :class="{error}"
+			 tabindex="-1"
+
+			 @click="mainInput && mainInput.focus()"
 	>
 		<div class="bi_top">
 			<div class="top_left_border"></div>
@@ -21,6 +24,7 @@
 			<div class="bi_default">
 				<slot>
 					<input
+						ref="mainInput"
 						:type="type"
 						:placeholder="placeholder || label"
 						:value="modelValue"
@@ -47,7 +51,7 @@
 			</div>
 		</div>
 		<div class="bi_error" v-if="error">{{ error.join(', ') }}</div>
-	</label>
+	</div>
 </template>
 
 <script setup>
@@ -61,6 +65,8 @@ let props = defineProps({
 	error: [String, Array]
 })
 defineEmits(['update:modelValue', 'onBlur', 'onFocus'])
+
+let mainInput = ref(null);
 </script>
 
 <style lang="scss" scoped>
