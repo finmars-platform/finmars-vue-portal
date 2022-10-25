@@ -7,7 +7,7 @@
 
 					:offsetX="5"
 
-					@cancel="onMenuClose">
+					@cancel="closeMenu">
 
 		<template #btn="{ isOpen }">
 			<BaseInput
@@ -25,7 +25,8 @@
 				</template>
 
 				<template v-if="optionsFilter">
-					<input :placeholder="label"
+					<input ref="mainInput"
+								 :placeholder="label"
 								 v-model="moFilter"
 								 type="text"
 								 class="bi_main_input" />
@@ -41,7 +42,9 @@
 
 				<template #rightBtn>
 					<slot name="right_btn">
-						<FmIcon :icon="isOpen ? 'arrow_drop_up' : 'arrow_drop_down'" />
+						<FmBtn type="iconBtn"
+									 :icon="isOpen ? 'arrow_drop_up' : 'arrow_drop_down'"
+									 @click="mainInput && mainInput.focus()" />
 					</slot>
 				</template>
 
@@ -108,11 +111,13 @@
 				return 'select'
 			}
 		}
-	})
+	});
+
+	let mainInput = ref(null);
 
 	function selectOption(selItem) {
 		// if (props.optionsFilter) moFilter.value = '';
-		menuIsOpened.value = false;
+		closeMenu();
 		emit('update:modelValue', selItem[props.prop_id]);
 	}
 
@@ -122,7 +127,7 @@
 		menuIsOpened.value = true;
 	}
 
-	function onMenuClose () {
+	function closeMenu () {
 		if (props.modelValue) {
 			moFilter.value = selectedName.value;
 		}
