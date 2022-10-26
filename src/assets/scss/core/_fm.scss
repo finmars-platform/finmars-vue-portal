@@ -29,6 +29,14 @@ white-space: nowrap;
 }
 }
 
+// Custom inputs
+.bi_default {
+	.bi_main_input {
+		width: 100%;
+		height: inherit;
+	}
+}
+
 // Card
 .fm_card_title {
 	font-size: 24px;
