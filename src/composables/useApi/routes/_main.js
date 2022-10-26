@@ -78,7 +78,7 @@ export default {
 		get: prefix + '/import/complex-transaction-import-scheme-light/'
 	},
 	members: {
-		get: prefix + '/users/member/'
+		get: prefix + '/users/member/',
 	},
 	member: {
 		get: prefix + '/users/member/{id}/',
@@ -156,6 +156,9 @@ export default {
 	counterpartiesUnifiedData: {
 		get: prefix + '/data/company/'
 	},
+	configurationJson: {
+		post: prefix + '/import/configuration-json/'
+	},
 
 	// Надо отделить
 
@@ -164,5 +167,5 @@ export default {
 	},
 	widgetsStats: {
 		get: '/{client}/api/v1/widgets/stats/'
-	},
+	}
 }

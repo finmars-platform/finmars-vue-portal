@@ -1,0 +1,13 @@
+<template>
+	<iframe :src="frame" width="100%" frameborder="0"></iframe>
+</template>
+
+<script setup>
+	let frame = ref(window.location.href.replace('/v/', '/a/#!/'))
+</script>
+
+<style lang="scss" scoped>
+	iframe {
+		height: 100%;
+	}
+</style>
