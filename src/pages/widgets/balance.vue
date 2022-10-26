@@ -233,13 +233,37 @@
 			action: 'init'
 		})
 
-		window.addEventListener("message", (e) => {
+		window.addEventListener("message", async (e) => {
 			if ( 'clickOnChart' == e.data.action ) {
 				let i = 0
 				for ( let prop in e.data.data ) {
 					inheritColors[prop] = COLORS[i]
 					i++
 				}
+				// let pl = await useApi('widgetsHistory.get', {
+				// 	params: {type: 'nav', client},
+				// 	filters: {
+				// 		portfolio: portfolioId,
+				// 		date_from: e.data.date.date,
+				// 		date_to: e.data.date.date,
+				// 	},
+				// 	headers: {
+				// 		Authorization: 'Token ' + route.query.token
+				// 	}
+				// })
+
+				// let currentDate = pl.items.find(item => item.date == e.data.date.date)
+
+				// 	if ( !currentDate ) return false
+				// 	total.value = new Intl.NumberFormat('en-US', {
+				// 		maximumFractionDigits: 2
+				// 	}).format(currentDate.total) + ' USD';
+
+				// 	let currentCategory = currentDate.categories.find(item => item.name == e.data.category)
+				// 	if ( !currentCategory ) return false
+				// 	let items = currentCategory.items
+				// 		.filter((item) => item.value != 0)
+				// 		.sort( (a, b) => b.value - a.value)
 				let rawData = Object
 					.entries(e.data.data)
 					.filter(item => item[1] != 0)
