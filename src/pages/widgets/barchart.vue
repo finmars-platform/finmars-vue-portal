@@ -251,13 +251,13 @@
 					tooltip: {
 						callbacks: {
 							footer:  (tooltipItems) => {
-								let sum = 0;
-
+								let sum = 0
 								tooltipItems.forEach(function(tooltipItem) {
-									myChart.data.datasets.forEach((item) => {
-										if ( item.data[tooltipItem.dataIndex] )
-											sum += item.data[tooltipItem.dataIndex]
-									})
+									let rawDate = tooltipItem.label.split(' ')
+									let date = moment( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
+
+									let item = historyStats.items.find((item) => item.date.includes(date))
+									sum = item.nav
 								});
 								return 'Total: ' + new Intl.NumberFormat('en-US', {
 										style: 'currency',
