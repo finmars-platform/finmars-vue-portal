@@ -8,9 +8,8 @@
 				v-for="(item, prop) in stats"
 				:key="prop"
 				:class="{active: item[0] == active}"
+				@click="item[0] == 'nav' || item[0] == 'total' ? setActive(item[0]) : false"
 			>
-
-			<!-- @click="item[0] == 'nav' || item[0] == 'total' ? setActive(item[0]) : false" -->
 				<div class="card_name">{{ STATS[item[0]] }}</div>
 				<div class="card_value">{{ STATS_FORMAT[item[0]](item[1])  }}</div>
 			</div>
