@@ -159,6 +159,9 @@ export default {
 	configurationJson: {
 		post: prefix + '/import/configuration-json/'
 	},
+	configurationJsonStatus: {
+		get: prefix + '/active_processes/active_processes/{id}/'
+	},
 
 	// Надо отделить
 
