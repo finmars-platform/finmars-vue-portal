@@ -257,7 +257,7 @@
 									let date = moment( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
 
 									let item = historyStats.items.find((item) => item.date.includes(date))
-									sum = item.nav
+									sum = item.nav || item.total
 								});
 								return 'Total: ' + new Intl.NumberFormat('en-US', {
 										style: 'currency',
