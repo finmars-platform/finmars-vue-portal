@@ -1,5 +1,5 @@
 <template>
-	<div class="lds-ring">
+	<div class="lds-ring" :style="{'--loader-type': type, '--loader-size': size + 'px', '--loader-border': border + 'px'}">
 		<div></div>
 		<div></div>
 		<div></div>
@@ -10,9 +10,14 @@
 <script setup>
 
 	let props = defineProps({
-		label: String,
-		icon: String,
-		loading: Boolean,
+		size: {
+			type: String,
+			default: '25'
+		},
+		border: {
+			type: String,
+			default: '3'
+		},
 		type: {
 			type: String,
 			default: 'primary'
@@ -22,7 +27,8 @@
 </script>
 
 <style lang="scss" scoped>
-	$size: 25px;
+	$size: var(--loader-size);
+	$border: var(--loader-border);
 	.lds-ring {
 		display: inline-block;
 		position: relative;
@@ -34,9 +40,9 @@
 		box-sizing: border-box;
 		display: block;
 		position: absolute;
-		width: $size - 4;
-		height: $size - 4;
-		border: 3px solid $primary;
+		width: calc($size - 4px);
+		height: calc($size - 4px);
+		border: $border solid $primary;
 		border-radius: 50%;
 		animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
 		border-color: $primary transparent transparent transparent;

@@ -1,10 +1,9 @@
 <template>
 	<div class="setup_wrap">
-		<h1 class="tac">Welcome</h1>
-		<h2 class="tac">Setup your account </h2>
-		<h3 class="tac">Step {{ step }} / 2</h3>
-
 		<div class="step_1" v-if="step == 1">
+			<h1 class="tac">Welcome</h1>
+			<h2 class="tac">Setup your account </h2>
+			<h3 class="tac">Step 1 / 2</h3>
 			Please select your complexity level:
 			<FmSelect
 				v-model="store.member.interface_level"
@@ -18,6 +17,12 @@
 		</div>
 
 		<div class="step_2" v-if="step == 2">
+			<h1 class="tac">Welcome</h1>
+			<h2 class="tac">Setup your account </h2>
+			<h3 class="tac">Step 2 / 2</h3>
+
+			<div class="tac m-b-24">Please select init configuration you would like to use</div>
+
 			<div class="dib">
 				<div class="config_wrap flex sb fww">
 					<FmCard class="config_item"
@@ -40,10 +45,23 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="progress" v-if="step == 3">
+			<div class="flex aic posr">
+				<div>
+					<FmLoader size="53" border="1" />
+					<div class="progress_percent">{{ progress }}%</div>
+				</div>
+
+				<div class="progress_inst">Installing...</div>
+			</div>
+			<div class="progress_desc">{{ progress_item }}</div>
+		</div>
 	</div>
 </template>
 
 <script setup>
+
 	definePageMeta({
 		middleware: 'auth',
 		isHideSidebar: true,
@@ -54,7 +72,7 @@
 				disabled: false,
 			},
 			{
-				text: "Create New Database",
+				text: "Initial setup",
 				disabled: true,
 			},
 		],
@@ -74,8 +92,8 @@
 	let configs = ref(res.results)
 
 	let config = ref(null)
-	let counter = ref(null)
-	let activeItemTotal = ref(null)
+	let progress = ref(0)
+	let progress_item = ref('')
 
 	async function next() {
 		await useApi('member.put', {
@@ -92,34 +110,30 @@
 			mode: 'overwrite'
 		}
 
-		let importData = async () => {
-			let res = await useApi('configurationJson.post', {
-				body: importedData
+		step.value = 3
+
+		importedData = await useApi('configurationJson.post', {
+			body: importedData
+		})
+
+		let checkStatus = async () => {
+			let res = await useApi('configurationJsonStatus.get', {
+				params: {id: importedData.task_id}
 			})
 
-			importedData = res;
-			counter.value = res.processed_rows;
-			activeItemTotal.value = res.total_rows;
+			if (res.status === 'P') {
+				progress.value = res.progress_object?.percent || progress.value
+				progress_item.value = res.progress_object?.description
 
-			if (importedData.task_status === 'SUCCESS') {
-				return true
+				setTimeout(checkStatus, 1000)
 
-			} else {
+			} else if (res.status === 'D') {
 
-				await new Promise((resolve) => {
-					setTimeout(async () => {
-						await importData()
-						resolve()
-					}, 1000)
-				})
+				useRouter().push('/home')
 			}
 		}
 
-		await importData()
-
-		console.log(res)
-
-		// step.value = 3
+		checkStatus()
 	}
 </script>
 
@@ -143,7 +157,6 @@
 	.setup_wrap {
 
 		h1 {
-			margin-top: 20px;
 			font-size: 24px;
 			line-height: 28px;
 			text-align: center;
@@ -160,6 +173,7 @@
 			line-height: 19px;
 			letter-spacing: 0.4px;
 			margin-top: 17px;
+			margin-bottom: 30px;
 		}
 	}
 	.btns {
@@ -174,5 +188,32 @@
 		margin: 0 auto;
 		margin-top: 30px;
 		text-align: center;
+	}
+	.progress {
+		margin-top: 150px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+	.posr {
+		position: relative;
+	}
+	.progress_percent {
+		position: absolute;
+		left: 0;
+		top: 16px;
+		width: 50px;
+		font-size: 16px;
+		font-weight: 500;
+		text-align: center;
+	}
+	.progress_inst {
+		font-weight: 500;
+		font-size: 20px;
+		margin-left: 11px;
+	}
+	.progress_desc {
+		margin-top: 40px;
+		color: $text-lighten;
 	}
 </style>
