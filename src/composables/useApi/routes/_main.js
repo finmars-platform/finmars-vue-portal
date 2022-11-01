@@ -130,12 +130,22 @@ export default {
 		get: prefix + '/instruments/generated-event/{id}/book/',
 		put: prefix + '/instruments/generated-event/{id}/book/',
 	},
+	listLayoutList: {
+		get: prefix + '/ui/list-layout/',
+	},
+	listLayoutListLight: {
+		get: prefix + '/ui/list-layout-light/',
+	},
 	listLayout: {
+		get: prefix + '/ui/list-layout/{id}/',
 		put: prefix + '/ui/list-layout/{id}/',
-		post: prefix + '/ui/list-layout/'
+		post: prefix + '/ui/list-layout/',
+	},
+	listLayoutPing: {
+		get: prefix + '/ui/list-layout/{id}/ping',
 	},
 	defaultListLayout: {
-		get: prefix + '/ui/list-layout/?is_default=2&content_type={contentType}',
+		get: prefix + '/ui/list-layout/?is_default=2&content_type={content_type}',
 	},
 	ecosystemDefaults: {
 		get: prefix + '/users/ecosystem-default/'
@@ -155,6 +165,9 @@ export default {
 	},
 	counterpartiesUnifiedData: {
 		get: prefix + '/data/company/'
+	},
+	configSharingMyInvitesList: {
+		get: prefix + '/configuration-sharing/my-invites/',
 	},
 
 	// Надо отделить

@@ -1,69 +1,72 @@
 <template>
 	<BaseModal title="Settings">
-		<div v-show="readyStatus" class="rs_mc_wrap">
-			<RvSettingsBlock title="General">
-				<RvSettingsRow label="Date to">
-					<FmInputDate v-model="reportOptions.end_date" />
-				</RvSettingsRow>
 
-				<RvSettingsRow label="Reporting currency">
-					<!--					<FmSelect v-model="reportOptions.report_currency" :items="currencyOpts" />-->
-					<FmUnifiedDataSelect v-model="reportOptions.report_currency"
-															 :itemObject="reportOptions.report_currency_object"
-															 content_type="currencies.currency" />
-				</RvSettingsRow>
+		<div>
+			<div v-show="readyStatus" class="rs_mc_wrap">
+				<RvSettingsBlock title="General">
+					<RvSettingsRow label="Date to">
+						<FmInputDate v-model="reportOptions.end_date" />
+					</RvSettingsRow>
 
-				<RvSettingsRow label="Pricing policy">
-					<FmSelect v-model="reportOptions.pricing_policy" :items="pricingPoliciesOpts" />
-				</RvSettingsRow>
+					<RvSettingsRow label="Reporting currency">
+						<!--					<FmSelect v-model="reportOptions.report_currency" :items="currencyOpts" />-->
+						<FmUnifiedDataSelect v-model="reportOptions.report_currency"
+																 :itemObject="reportOptions.report_currency_object"
+																 content_type="currencies.currency" />
+					</RvSettingsRow>
 
-				<RvSettingsRow label="Return calculations">
-					<FmSelect v-model="reportOptions.calculation_type" :items="calcTypeOpts" />
-				</RvSettingsRow>
+					<RvSettingsRow label="Pricing policy">
+						<FmSelect v-model="reportOptions.pricing_policy" :items="pricingPoliciesOpts" />
+					</RvSettingsRow>
 
-				<RvSettingsRow label="Time grain">
-					<FmSelect v-model="reportOptions.segmentation_type" :items="segmentTypeOpts" />
-				</RvSettingsRow>
+					<RvSettingsRow label="Return calculations">
+						<FmSelect v-model="reportOptions.calculation_type" :items="calcTypeOpts" />
+					</RvSettingsRow>
 
-				<!-- <RvSettingsRow label="Days Convention">
-					<FmSelect v-model="daysConv" :items="daysConventionOpts" />
-				</RvSettingsRow>
+					<RvSettingsRow label="Time grain">
+						<FmSelect v-model="reportOptions.segmentation_type" :items="segmentTypeOpts" />
+					</RvSettingsRow>
 
-				<RvSettingsRow label="Graph type">
-					<FmSelect v-model="graphType" :items="graphTypeOpts" />
-				</RvSettingsRow> -->
-			</RvSettingsBlock>
+					<!-- <RvSettingsRow label="Days Convention">
+						<FmSelect v-model="daysConv" :items="daysConventionOpts" />
+					</RvSettingsRow>
 
-			<RvSettingsBlock title="Filters">
-				<RvSettingsRow label="Portfolios and Bundles">
-					<BaseMultiSelectInput
-						v-model="reportOptions.bundles"
-						title="Portfolios and Bundles"
-						:items="bundles"
-						item_id="id"
+					<RvSettingsRow label="Graph type">
+						<FmSelect v-model="graphType" :items="graphTypeOpts" />
+					</RvSettingsRow> -->
+				</RvSettingsBlock>
+
+				<RvSettingsBlock title="Filters">
+					<RvSettingsRow label="Portfolios and Bundles">
+						<BaseMultiSelectInput
+							v-model="reportOptions.bundles"
+							title="Portfolios and Bundles"
+							:items="bundles"
+							item_id="id"
+						/>
+					</RvSettingsRow>
+				</RvSettingsBlock>
+
+				<RvSettingsBlock title="Sections">
+					<FmCheckbox
+						class="m-b-20"
+						v-model="components.period"
+						label="Period returns"
 					/>
-				</RvSettingsRow>
-			</RvSettingsBlock>
 
-			<RvSettingsBlock title="Sections">
-				<FmCheckbox
-					class="m-b-20"
-					v-model="components.period"
-					label="Period returns"
-				/>
+					<FmCheckbox
+						class="m-b-20"
+						v-model="components.detail"
+						label="Monthly returns"
+					/>
 
-				<FmCheckbox
-					class="m-b-20"
-					v-model="components.detail"
-					label="Monthly returns"
-				/>
+					<FmCheckbox v-model="components.diagram" label="Graphs" class="m-b-20" />
+				</RvSettingsBlock>
+			</div>
 
-				<FmCheckbox v-model="components.diagram" label="Graphs" class="m-b-20" />
-			</RvSettingsBlock>
-		</div>
-
-		<div v-if="!readyStatus" class="flex-row fc-center">
-			<FmLoader />
+			<div v-if="!readyStatus" class="flex-row fc-center">
+				<FmLoader />
+			</div>
 		</div>
 
 		<template #controls>

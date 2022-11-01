@@ -15,12 +15,11 @@ const saveRowTypeFilters = function (store, viewerData, rowTypeFilters, isReport
 
 };
 
-export async function useSaveLayoutList (store, viewerData) {
+export async function useSaveEvRvLayout (store, viewerData) {
 
-	const entityType = viewerData.entityType;
 	const isReport = viewerData.isReport;
 
-	if (entityType !== 'reports-performance') {
+	if (viewerData.content_type !== 'reports.performancereport') {
 
 		const rowTypeFilters = viewerData.getRowTypeFilters();
 		if (rowTypeFilters) saveRowTypeFilters(store, viewerData, rowTypeFilters, isReport);
@@ -58,4 +57,35 @@ export async function useSaveLayoutList (store, viewerData) {
 
 }
 
+export async function useFetchEvRvLayoutByUserCode(layoutsStore, contentType, userCode) {
 
+	let layout;
+
+	if (userCode) {
+
+		const res = await layoutsStore.getLayoutByUserCode(contentType, userCode);
+
+		if (res.error) {
+			useNotify({type: 'warning', title: `Layout with user code "${userCode}" is not found. Switching back to Default Layout.`})
+		}
+		else {
+			layout = res;
+		}
+
+	}
+
+	if (!layout) {
+
+		const res = await layoutsStore.getDefaultLayout(contentType);
+
+		if (res.error) {
+			throw new Error('Failed to fetch default layout');
+		}
+
+		layout = res;
+
+	}
+
+	return layout;
+
+}

@@ -42,12 +42,16 @@
 
 	watchEffect( async ( onCleanup ) => {
 		if ( store.current.base_api_url ) {
+
 			onCleanup(() => {})
-			await store.getMe()
+
+			await Promise.all([store.getMe(), store.fetchEcosystemDefaults()]);
+
 			store.ws.send({
 				action: "update_user_state",
 				data: { member: store.member },
 			})
+
 		}
 	})
 

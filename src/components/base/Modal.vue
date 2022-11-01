@@ -23,7 +23,7 @@
 					</div>
 
 					<div class="modal_bottom">
-						<slot name="controls"></slot>
+						<slot name="controls" :cancel="cancel"></slot>
 					</div>
 				</div>
 				<div class="mask" @[backdropClickable]="cancel"></div>
