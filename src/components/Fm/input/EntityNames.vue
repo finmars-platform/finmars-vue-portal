@@ -25,7 +25,7 @@
 					@update:errorData="newVal => onErrorDataChange('baseInput', newVal)"
 				>
 					<template #button>
-						<FmIcon icon="new_label" @click="menuIsOpened = true" />
+						<FmIcon icon="new_label" @click.stop="menuIsOpened = true" />
 					</template>
 				</BaseInput>
 			</template>

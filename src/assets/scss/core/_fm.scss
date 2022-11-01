@@ -29,10 +29,12 @@ white-space: nowrap;
 }
 }
 
-// custom inputs
-.bi_main_input { // needed because some inputs can insert theirs input into BaseInput's default slot
-	width: 100%;
-	height: inherit;
+// Custom inputs
+.bi_default {
+	.bi_main_input {
+		width: 100%;
+		height: inherit;
+	}
 }
 
 // Card
