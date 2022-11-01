@@ -78,7 +78,7 @@ export default {
 		get: prefix + '/import/complex-transaction-import-scheme-light/'
 	},
 	members: {
-		get: prefix + '/users/member/'
+		get: prefix + '/users/member/',
 	},
 	member: {
 		get: prefix + '/users/member/{id}/',
@@ -169,6 +169,12 @@ export default {
 	configSharingMyInvitesList: {
 		get: prefix + '/configuration-sharing/my-invites/',
 	},
+	configurationJson: {
+		post: prefix + '/import/configuration-json/'
+	},
+	configurationJsonStatus: {
+		get: prefix + '/active_processes/active_processes/{id}/'
+	},
 
 	// Надо отделить
 
@@ -177,5 +183,5 @@ export default {
 	},
 	widgetsStats: {
 		get: '/{client}/api/v1/widgets/stats/'
-	},
+	}
 }

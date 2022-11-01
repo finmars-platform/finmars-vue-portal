@@ -1,6 +1,9 @@
 <template>
-	<label class="base-input" tabindex="-1"
-				 :class="{'error': errorData}"
+	<div class="base-input"
+			 :class="{'error': errorData}"
+			 tabindex="-1"
+
+			 @click="mainInput && mainInput.focus()"
 	>
 		<div class="bi_top">
 			<div class="top_left_border"></div>
@@ -21,6 +24,7 @@
 			<div class="bi_default">
 				<slot>
 					<input
+						ref="mainInput"
 						:type="type"
 						:placeholder="placeholder || label"
 						:value="modelValue"
@@ -54,7 +58,7 @@
 			</div>
 		</div>
 		<div class="bi_error" v-if="errorData">{{ errorData.message }}</div>
-	</label>
+	</div>
 </template>
 
 <script setup>
@@ -71,6 +75,8 @@ let props = defineProps({
 })
 
 let emit = defineEmits(['update:modelValue', 'update:errorData', 'onBlur', 'onFocus']);
+
+let mainInput = ref(null);
 
 watch(
 	() => props.modelValue,
