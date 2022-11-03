@@ -58,26 +58,40 @@ export default defineStore({
 	actions: {
 
 		async fetchAndCacheLayout(route_opt, options) {
-			console.log("testing fetchAndCacheLayout", route_opt, options);
+
 			const res = await useApi(route_opt, options);
-			console.log("testing fetchAndCacheLayout res", res);
+
 			if (res.error) {
 				return processError(res);
 			}
 
+			let layout = res;
+
 			const fetchingByUc = options.filters && options.filters.hasOwnProperty('user_code');
 			const fetchingDefault = options.filters && options.filters.is_default === 2;
-			console.log("testing fetchAndCacheLayout fetchingBy", fetchingByUc, fetchingDefault);
-			if (fetchingByUc && !res.results.length) {
 
-				const error = {error: 'No layouts were found when searching by user code: ' + options.filters.user_code};
-				console.error(error);
+			if (fetchingByUc || fetchingDefault) {
 
-				return error;
+				if (!res.results.length) {
+
+					const errorData = {
+						error: {
+							key: 'not_found',
+							message: 'No layouts were found when searching by user code: ' + options.filters.user_code,
+						},
+					};
+
+					if (fetchingDefault) errorData.message = "No default layout were found."
+
+					console.error(errorData.error);
+
+					return null;
+
+				}
+
+				layout = res.results[0];
 
 			}
-
-			const layout = (fetchingByUc || fetchingDefault) ? res.results[0] : res;
 
 			this.listLayoutsData[layout.id] = layout;
 

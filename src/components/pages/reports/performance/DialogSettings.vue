@@ -11,12 +11,14 @@
 					<RvSettingsRow label="Reporting currency">
 						<!--					<FmSelect v-model="reportOptions.report_currency" :items="currencyOpts" />-->
 						<FmUnifiedDataSelect v-model="reportOptions.report_currency"
-																 :itemObject="reportOptions.report_currency_object"
+																 v-model:itemObject="reportOptions.report_currency_object"
 																 content_type="currencies.currency" />
 					</RvSettingsRow>
 
 					<RvSettingsRow label="Pricing policy">
-						<FmSelect v-model="reportOptions.pricing_policy" :items="pricingPoliciesOpts" />
+						<FmSelect :modelValue="reportOptions.pricing_policy"
+											:items="pricingPoliciesOpts"
+											@update:modelValue="onPpChange" />
 					</RvSettingsRow>
 
 					<RvSettingsRow label="Return calculations">
@@ -152,15 +154,14 @@ let notReady = computed(() => {
 	return !readyStatus.value;
 });
 
-init();
-
 let reportOptions = ref({...viewerData.reportOptions})
 
 watch(
 	() => viewerData.reportOptions,
 	() => {
-		reportOptions.value = { ...viewerData.reportOptions }
-	}
+		reportOptions.value = JSON.parse(JSON.stringify(viewerData.reportOptions));
+	},
+	{deep: true}
 );
 
 let components = ref({ ...viewerData.components })
@@ -170,7 +171,6 @@ watch(
 		components.value = { ...viewerData.components }
 	}
 );
-
 
 async function fetchPpOpts() {
 	const ppData = await useLoadAllPages('pricingPolicyListLight.get', {filters: {page: 1, page_size: 1000}});
@@ -191,6 +191,15 @@ async function fetchCurrenciesOpts() {
 
 }
 
+function onPpChange(newVal) {
+
+	reportOptions.value.pricing_policy = newVal;
+	const ppObj = pricingPoliciesOpts.value.find(pPolicy => pPolicy.id === newVal);
+
+	reportOptions.value.pricing_policy_object = JSON.parse(JSON.stringify(ppObj));
+
+}
+
 function cancel() {
 	emit("cancel");
 }
@@ -202,6 +211,9 @@ function init() {
 	fetchPpOpts();
 	fetchCurrenciesOpts();
 }
+
+init();
+
 </script>
 
 <style lang="scss" scoped>

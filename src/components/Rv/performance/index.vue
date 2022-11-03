@@ -23,7 +23,7 @@
 				<div style="width: 175px;">
 					<FmUnifiedDataSelect noBorders
 															 v-model="viewerData.reportOptions.report_currency"
-															 :itemObject="viewerData.reportOptions.report_currency_object"
+															 v-model:itemObject="viewerData.reportOptions.report_currency_object"
 															 content_type="currencies.currency" />
 				</div>
 			</template>
@@ -137,12 +137,11 @@
 import moment from 'moment'
 import Chart from 'chart.js/auto';
 import getPerformanceViewerData from "./viewerData";
-import {useFetchEvRvLayoutByUserCode} from "../../../composables/useEvRvLayouts";
 
 const store = useStore();
 const layoutsStore = useLayoutsStore();
 const route = useRoute();
-console.log("testing route", route, route.params);
+
 const viewerData = getPerformanceViewerData();
 provide('viewerData', viewerData);
 
@@ -289,17 +288,25 @@ let dsReadyStatus = computed(() => readyStatusData.layout && readyStatusData.bun
 
 watch(
 	() => route.query.layout,
-	() => {
-		fetchListLayout();
+	async () => {
+		await fetchListLayout();
 		refresh();
 	}
 )
 
 watch(
-	() => layoutsStore.layoutToOpen,
-	() => {
-		fetchListLayout();
-		refresh();
+	() => viewerData.layoutToOpen,
+	async () => {
+
+		if (viewerData.layoutToOpen) {
+
+			await fetchListLayout();
+			viewerData.layoutToOpen = null;
+
+			refresh();
+
+		}
+
 	},
 )
 
@@ -368,22 +375,9 @@ async function fetchListLayout () {
 		});
 
 	}*/
-	let listLayout;
+	readyStatusData.layout = false;
 
-	let lUserCode;
-
-	if (route.params.layoutUserCode) {
-		lUserCode = route.params.layoutUserCode;
-
-	} else if (route.query.layout) {
-
-		lUserCode = route.query.layout;
-
-	}
-
-	const res = await useFetchEvRvLayoutByUserCode(layoutsStore, viewerData.content_type, lUserCode);
-
-	if (res.error) return;
+	const res = await useFetchEvRvLayout(layoutsStore, viewerData, route.query.layout);
 
 	viewerData.setLayoutCurrentConfiguration(res, store.ecosystemDefaults);
 	readyStatusData.layout = true;
