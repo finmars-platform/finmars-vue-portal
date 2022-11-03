@@ -51,6 +51,8 @@ export default () => {
 			components: {},
 			exportOptions: {},
 
+			layoutToOpen: null, // id of layout
+
 			content_type: 'reports.performancereport',
 			entityType: 'reports-performance', // TODO: remove and use only content_type
 
@@ -79,7 +81,7 @@ export default () => {
 			},*/
 
 			setLayoutCurrentConfiguration(listLayout, ecosystemDefaults) {
-				console.log("testing setLayoutCurrentConfiguration", listLayout, ecosystemDefaults);
+
 				if (listLayout) {
 
 					this.newLayout = false;
@@ -96,7 +98,7 @@ export default () => {
 					listLayout = getEmptyLayoutData(JSON.parse(JSON.stringify(ecosystemDefaults)));
 
 				}
-				console.log("testing setLayoutCurrentConfiguration listLayout", listLayout);
+
 				this.components = JSON.parse(JSON.stringify(listLayout.data.components));
 				this.reportOptions = JSON.parse(JSON.stringify(listLayout.data.reportOptions));
 
@@ -104,6 +106,7 @@ export default () => {
 				this.exportOptions = JSON.parse(JSON.stringify(listLayout.data.exportOptions));
 
 				this.listLayout = listLayout;
+
 				/*this.setComponents(JSON.parse(JSON.stringify(listLayout.data.components)));
 				this.setReportOptions(JSON.parse(JSON.stringify(listLayout.data.reportOptions)));
 				this.setAdditions(JSON.parse(JSON.stringify(listLayout.data.additions)));

@@ -38,7 +38,6 @@
 
 	function save() {
 		emit('save', {name: newName.value, user_code: newUserCode.value});
-		console.log("testing save used");
 	}
 
 	function cancelModal(cancelFn) {

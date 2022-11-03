@@ -140,6 +140,7 @@ export default {
 		get: prefix + '/ui/list-layout/{id}/',
 		put: prefix + '/ui/list-layout/{id}/',
 		post: prefix + '/ui/list-layout/',
+		delete: prefix + '/ui/list-layout/{id}/'
 	},
 	listLayoutPing: {
 		get: prefix + '/ui/list-layout/{id}/ping',

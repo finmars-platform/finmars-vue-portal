@@ -8,6 +8,7 @@
 											@createNewLayout="createNewLayout"
 											@save="saveLayout"
 											@saveAs="saveAs"
+											@setAsDefault="setAsDefault"
 											@rename="renameLayout"
 											@delete="deleteLayout" />
 
@@ -37,7 +38,7 @@
 	let invitesList = ref([]);
 
 	async function getLayouts (arg) {
-		console.log("testing getLayouts called", arg);
+
 		loadingLayoutsList.value = true;
 
 		const filters = {
@@ -66,6 +67,7 @@
 	function createNewLayout() {
 
 		viewerData.setLayoutCurrentConfiguration(null, store.ecosystemDefaults);
+		viewerData.listLayout.name = 'New layout';
 
 		refresh();
 
@@ -79,6 +81,53 @@
 		openSaveAsModal.value = true;
 	}
 
+	async function setAsDefault(layoutLight) {
+
+		let layout;
+
+		if (layoutLight) {
+
+			if (layoutLight.is_default) return;
+
+			layout = await layoutsStore.getLayoutByKey(layoutLight.id);
+
+		} else { // use active layout
+
+			if (viewerData.listLayout.is_default) return;
+
+			layout = viewerData.listLayout;
+
+		}
+
+		layout.is_default = true;
+
+		const res = await layoutsStore.updateLayout(layout.id, layout);
+
+		if (!res.error) {
+
+			let prevDefLayout = layoutsList.value.find(dLayout => dLayout.is_default);
+
+			if (prevDefLayout) {
+
+				prevDefLayout.is_default = false;
+
+				if (prevDefLayout.id === viewerData.listLayout.id) viewerData.listLayout.is_default = false;
+
+			}
+
+			let dLayout = layoutsList.value.find(dLayout => dLayout.id === res.id);
+			dLayout.is_default = true;
+
+			useNotify({
+				type: 'success',
+				title: 'Layout made default'
+			});
+
+		}
+
+
+	}
+
 	async function getInvites () {
 
 		const res = await useApi('configSharingMyInvitesList.get', {filters: {status: '0'}});
@@ -88,14 +137,14 @@
 	}
 
 	async function renameLayout(namesData) {
-		console.log("testing renameLayout called");
+
 		const layout = JSON.parse(JSON.stringify(viewerData.listLayout));
-		console.log("testing renameLayout layout", layout);
+
 		layout.name = namesData.name;
 		layout.user_code = namesData.user_code;
 
 		const res = await layoutsStore.updateLayout(layout.id, layout);
-		console.log("testing renameLayout res", res);
+
 		if (!res.error) {
 
 			viewerData.listLayout = res;
@@ -115,21 +164,27 @@
 
 		const res = await layoutsStore.deleteLayout(layoutId);
 
-		if (!res.error) return;
+		if (res.error) return;
 
-		if (layoutIsDefault && layoutsList.value.length > 1) { // If default layout was deleted and other layouts exist. Make another layout default.
+		/*if (layoutIsDefault && layoutsList.value.length > 1) { // If default layout was deleted and other layouts exist. Make another layout default.
 
-			let nextDefaultLayout = layoutsList.value[0];
+			let nextDefLayoutId = layoutsList.value[0].id;
 
 			if (nextDefaultLayout.id === layoutId) {
-				nextDefaultLayout = layoutsList.value[1];
+				nextDefLayoutId = layoutsList.value[1].id;
 			}
+
+			let nextDefaultLayout = await layoutsStore.getLayoutByKey(nextDefLayoutId);
 
 			nextDefaultLayout.is_default = true;
 
-			await layoutsStore.updateLayout(nextDefaultLayout.id, nextDefaultLayout);
+			layoutsStore.updateLayout(nextDefaultLayout.id, nextDefaultLayout).then(() => {
+				viewerData.layoutToOpen = 'default';
+			});
 
-		}
+		}*/
+
+		viewerData.layoutToOpen = 'default';
 
 		getLayouts();
 
@@ -144,23 +199,8 @@
 	}
 
 	async function init() {
-		/*const result = await getLayouts();
-		console.log("testing init result", result);
-		if (!result.error) layoutsList.value = result;
-		console.log("testing init layoutsList", layoutsList.value);*/
 		await getLayouts();
-		console.log("testing init layoutsList", layoutsList.value);
 	}
-	console.log("testing EvLayoutManager", viewerData.content_type);
-	/*watch(
-		() => viewerData.content_type,
-		() => {
-			console.log("testing viewerData.content_type watch", viewerData.content_type);
-			init();
-			// unwatchLayoutLoading();
-
-		}
-	)*/
 
 	init();
 

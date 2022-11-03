@@ -36,7 +36,7 @@
 							<span v-if="!layout.origin_for_global_layout && !layout.sourced_from_global_layout"
 										class="material-icons default_icons"
 										:class="{'default_layout': isLayoutDefault(layout)}"
-										@click.prevent.stop="emit('setAsDefault', JSON.parse(JSON.stringify(layout)))">home</span>
+										@click.prevent.stop="setAsDefault(layout)">home</span>
 
 							<span v-if="layout.origin_for_global_layout"
 										class="material-icons default_icons"
@@ -45,9 +45,6 @@
 										class="material-icons default_icons"
 										style="color: #747474;">update</span>
 
-<!--							<a :href="getLinkToLayout(layout.user_code)"
-								 @click.prevent="onLayoutLinkClick(layout, close)"
-								 class="a_item">{{ layout.name }}</a>-->
 							<NuxtLink :to="$router.resolve({name: $route.name, query: {layout: layout.user_code}})"
 												class="a_item"
 												>
@@ -56,15 +53,15 @@
 
 						</div>
 
-						<div v-if="autosaveLayout" class="menu_item">
-						<span class="material-icons default_icons"
-									:class="{'default_layout': isLayoutDefault(autosaveLayout)}"
-									@click="emit('setAsDefault', JSON.parse(JSON.stringify(autosaveLayout)))">home</span>
+<!--						<div v-if="autosaveLayout" class="menu_item">
+							<span class="material-icons default_icons"
+										:class="{'default_layout': isLayoutDefault(autosaveLayout)}"
+										@click="setAsDefault(autosaveLayout)">home</span>
 
-							<a href="{{getLinkToLayout(autosaveLayout.user_code)}}"
-								 @click.prevent="onLayoutLinkClick(autosaveLayout)"
-								 class="a_item text-bold">{{ autosaveLayout.name }}</a>
-						</div>
+								<a href="{{getLinkToLayout(autosaveLayout.user_code)}}"
+									 @click.prevent="onLayoutLinkClick(autosaveLayout)"
+									 class="a_item text-bold">{{ autosaveLayout.name }}</a>
+						</div>-->
 					</div>
 
 					<div v-if="loadingLayoutsList" class="flex-row fc-center">
@@ -140,12 +137,12 @@
 										<span class="material-icons">exit_to_app</span>
 										<span>Export</span>
 									</div>-->
-					<FmBtn type="text"
+<!--					<FmBtn type="text"
 								 class="menu_item"
 								 @click="emit('export'), close()">
 						<span class="material-icons">exit_to_app</span>
 						Export
-					</FmBtn>
+					</FmBtn>-->
 
 					<!--		TODO make package manager component
 					<div class="menu_item" package-manager-button data-ng-click="parentPopup.cancel()"
@@ -153,11 +150,17 @@
 								<span class="material-icons">system_update_alt</span>
 								<span>Select from list</span>
 							</div>-->
-					<FmBtn type="text"
+<!--					<FmBtn type="text"
 								 class="menu_item">
 						<span class="material-icons">system_update_alt</span>
 						Select from list
-					</FmBtn>
+					</FmBtn>-->
+
+<!--					<div class="menu_item"
+							 @click="emit('openInvites')" :class="{'disabled-btn': !invites.length}">
+						<span class="material-icons">email</span>
+						<span>Invites ({{invites.length}})</span>
+					</div>-->
 
 					<FmBtn type="text"
 								 class="menu_item"
@@ -167,20 +170,7 @@
 						Rename
 					</FmBtn>
 
-					<!--		<div class="menu_item"
-									 @click="emit('openInvites')" :class="{'disabled-btn': !invites.length}">
-								<span class="material-icons">email</span>
-								<span>Invites ({{invites.length}})</span>
-							</div>
-
-							<md-button class="menu_item"
-												 data-ng-click="renameLayout($event)"
-												 ng-disabled="isNewLayout || layout.id === autosaveLayout.id">
-								<span class="material-icons">create</span>
-								<span>Rename</span>
-							</md-button>
-
-							<div data-ng-if="layout.sourced_from_global_layout && !layout.origin_for_global_layout"
+					<!-- <div data-ng-if="layout.sourced_from_global_layout && !layout.origin_for_global_layout"
 									 class="menu_item"
 									 data-ng-click="pullUpdate($event)">
 								<span class="material-icons">share</span>
@@ -202,6 +192,13 @@
 								<span>Make default</span>
 
 							</md-button>-->
+					<FmBtn type="text"
+								 class="menu_item"
+								 :disabled="viewerData.newLayout || viewerData.listLayout.is_default"
+								 @click="emit('setAsDefault')">
+						<span class="material-icons">home</span>
+						Make default
+					</FmBtn>
 
 				</div>
 
@@ -228,7 +225,7 @@
 										 :user_code="viewerData.listLayout.user_code"
 										 v-model="renameModalIsOpened"
 
-										 @save="testingFn" />
+										 @save="newNamesData => emit('rename', newNamesData)" />
 
 	<ModalInfo title="Warning"
 						 description="Are you sure want to delete this layout??"
@@ -283,9 +280,12 @@
 		isLayoutDefault = layout => props.isLayoutDefault(layout);
 	}
 
-	function testingFn(newNamesData) {
-		console.log("testing testingFn called", newNamesData);
-		emit('rename', newNamesData);
+	function setAsDefault(layoutLight) {
+
+		if (!isLayoutDefault(layoutLight)) {
+			emit('setAsDefault', JSON.parse(JSON.stringify(layoutLight)));
+		}
+
 	}
 
 	function onLayoutLinkClick (layoutId, closeMenuFn) {
@@ -295,33 +295,23 @@
 		scope.dashboardDataService.setLayoutToOpen(layout);
 		scope.dashboardEventService.dispatchEvent(dashboardEvents.DASHBOARD_LAYOUT_CHANGE)*/
 		// TODO write function for vue
-		console.log("testing onLayoutLinkClick called", layoutId);
+
 		closeMenuFn();
-		layoutsStore.layoutToOpen = layoutId;
-
-	}
-
-	function getLinkToLayout (userCode) {
-
-		/*let link = router.resolve({name: 'reports-performance', query: {layout: userCode}});
-		console.log("testing getLinkToLayout link", link);
-		return link;*/
-		return '';
+		viewerData.layoutToOpen = layoutId;
 
 	}
 
 	function emitAndClose(event, argument) {
-		console.log("testing emitAndClose event", event);
+
 		if (argument !== undefined) {
 			emit(event, argument);
 
 		} else {
-			console.log("testing emitAndClose 2");
 			emit(event);
 		}
 
 		menuIsOpened.value = false;
-		console.log("testing emitAndClose 2");
+
 	}
 
 </script>

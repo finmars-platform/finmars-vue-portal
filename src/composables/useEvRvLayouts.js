@@ -44,7 +44,7 @@ export async function useSaveEvRvLayout (store, viewerData) {
 
 		const resData = await useApi('listLayout.put', {params: params, body: currentLayoutConfig});
 
-		if (!resData.errorData) {
+		if (!resData.error) {
 
 			viewerData.listLayout = resData;
 			// viewerData.setActiveLayoutConfiguration({layoutConfig: currentLayoutConfig}); // TODO: check layout for changes
@@ -57,35 +57,39 @@ export async function useSaveEvRvLayout (store, viewerData) {
 
 }
 
-export async function useFetchEvRvLayoutByUserCode(layoutsStore, contentType, userCode) {
+export async function useFetchEvRvLayout(layoutsStore, viewerData, queryUserCode) {
 
-	let layout;
+	let res;
 
-	if (userCode) {
+	if (viewerData.layoutToOpen !== 'default') {
 
-		const res = await layoutsStore.getLayoutByUserCode(contentType, userCode);
+		if (viewerData.layoutToOpen) {
+			res = await layoutsStore.getLayoutByKey(viewerData.layoutToOpen);
 
-		if (res.error) {
-			useNotify({type: 'warning', title: `Layout with user code "${userCode}" is not found. Switching back to Default Layout.`})
-		}
-		else {
-			layout = res;
+		} else if (queryUserCode) {
+			res = await layoutsStore.getLayoutByUserCode(viewerData.content_type, queryUserCode);
+
+			if (!res) {
+
+				useNotify({
+					type: 'warning',
+					title: `Layout with user code "${queryUserCode}" is not found. Switching back to Default Layout.`
+				})
+
+			}
+
 		}
 
 	}
 
-	if (!layout) {
-
-		const res = await layoutsStore.getDefaultLayout(contentType);
-
-		if (res.error) {
-			throw new Error('Failed to fetch default layout');
-		}
-
-		layout = res;
-
+	if (!res) {
+		res = await layoutsStore.getDefaultLayout(viewerData.content_type);
 	}
 
-	return layout;
+	if (res && res.error) {
+		throw new Error(res.error);
+	}
+
+	return res;
 
 }

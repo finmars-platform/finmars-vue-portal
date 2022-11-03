@@ -44,26 +44,14 @@
 
 	let overwriteData;
 
-	/*watch(
-		() => props.modelValue,
-		() => {
-
-			if (props.modelValue) {
-				newName.value = viewerData.listLayout.name;
-				newUserCode.value = viewerData.listLayout.user_code;
-			}
-			console.log("testing SaveLayoutAs watcher ", newName.value, newUserCode.value);
-		},
-		{deep: true}
-	)*/
 	function applyLayout(newLayout) {
 
 		viewerData.listLayout = newLayout;
 		// viewerData.setActiveLayoutConfiguration();
 		viewerData.newLayout = false;
-		console.log("testing applyLayout 1");
+
 		emit('layoutSaved', JSON.parse(JSON.stringify(newLayout)));
-		console.log("testing applyLayout end");
+
 	}
 
 	async function overwriteLayout() {
@@ -192,7 +180,7 @@
 		} else {
 			userCodesSet.value = new Set(props.occupiedUserCodes);
 		}
-		console.log("testing SaveLayoutAs userCodesSet", userCodesSet.value);
+
 	}
 
 	init();
