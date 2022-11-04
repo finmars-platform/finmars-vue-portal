@@ -1,6 +1,6 @@
 <template>
 	<div class="base-input"
-			 :class="{error}"
+			 :class="{'error': errorData}"
 			 tabindex="-1"
 
 			 @click="mainInput && mainInput.focus()"
@@ -40,17 +40,24 @@
 			</div>
 
 			<div class="bi_side_items flex">
-				<slot name="sedeItems"></slot>
+				<slot name="sideItems"></slot>
+
 				<div class="bi_side_item" v-if="tooltip">
-					<FmIcon :tooltip="tooltip" icon="info" />
+					<FmIcon :tooltip="tooltip" icon="info_outlined" />
 				</div>
+			</div>
+
+
+			<div v-if="errorData && errorData.longMessage"
+					 class="bi_side_item error_icon">
+				<FmIcon :tooltip="errorData.longMessage" icon="info" />
 			</div>
 
 			<div class="right_btn">
 				<slot name="rightBtn"></slot>
 			</div>
 		</div>
-		<div class="bi_error" v-if="error">{{ error.join(', ') }}</div>
+		<div class="bi_error" v-if="errorData">{{ errorData.message }}</div>
 	</div>
 </template>
 
@@ -61,18 +68,57 @@ let props = defineProps({
 	label: String,
 	placeholder: String,
 	readonly: Boolean,
+	required: Boolean,
 	tooltip: String,
-	error: [String, Array]
+	// error: [String, Array]
+	errorData: Object
 })
-defineEmits(['update:modelValue', 'onBlur', 'onFocus'])
+
+let emit = defineEmits(['update:modelValue', 'update:errorData', 'onBlur', 'onFocus']);
 
 let mainInput = ref(null);
+
+watch(
+	() => props.modelValue,
+	() => {
+		if (props.errorData && props.modelValue) emit('update:errorData', null);
+	}
+)
+
+if (props.required) {
+
+	watch(
+		() => props.errorData ? props.errorData.validate : false,
+		(newVal) => {
+
+			if (newVal) {
+
+				const error = props.modelValue ? null : {message: "Field should not be null"};
+				emit('update:errorData', error);
+
+			}
+		}
+	)
+
+}
+
+/*function onModelValueChange (newVal) {
+
+	if (props.errorData && props.errorData.code === 10 && newVal) {
+		emit('update:errorData', null);
+	}
+
+	emit('update:modelValue', newVal);
+
+}*/
+
 </script>
 
 <style lang="scss" scoped>
 
 $input-border: 1px solid $border-darken;
 $active-input-border: 1px solid $border-active;
+$side-items-padding: 0 8px;
 
 @mixin show_label {
 	top: -8px;
@@ -106,8 +152,10 @@ $active-input-border: 1px solid $border-active;
 	}
 
 	&:not(.bi_no_borders):focus-within, &:not(.bi_no_borders):focus {
-		border: $active-input-border;
-		border-top-color: transparent;
+		border-top-color: transparent !important;
+		border-right: $active-input-border;
+		border-bottom: $active-input-border;
+		border-left: $active-input-border;
 
 		.bi_top {
 			.top_left_border, .top_right_border {
@@ -130,27 +178,45 @@ $active-input-border: 1px solid $border-active;
 	}
 
 	&:hover {
-		.bi_side_items {
+		.bi_side_items:not(.empty) {
 			display: flex;
+			padding: $side-items-padding;
 		}
 	}
+
 	&.error {
-		border-color: $primary !important;
 		margin-bottom: 30px;
 
-		.icon {
-			color: $primary;
+		.error_icon {
+			color: $error;
 		}
 
-		.bi_label {
-			color: $primary;
+		.bi_top {
+
+			.bi_label {
+				color: $error;
+			}
+
+		}
+	}
+
+	&.error:not(.bi_no_borders) {
+		border-right-color: $error;
+		border-bottom-color: $error;
+		border-left-color: $error;
+
+		.bi_top {
+			.top_left_border, .top_right_border {
+				border-color: $error;
+			}
 		}
 	}
 }
 .bi_error {
 	color: $primary;
 	font-size: 12px;
-	padding: 5px 12px 10px;
+	// padding: 5px 12px 10px;
+	padding: 4px 12px 0;
 }
 
 .bi_top {
@@ -228,18 +294,10 @@ $active-input-border: 1px solid $border-active;
 	margin-left: 13px;
 	height: inherit;
 
-	input {
+	/*input {
 		width: 100%;
 		height: inherit;
-	}
-}
-.bi_side_items {
-	display: none;
-	padding: 0 8px;
-
-	&:empty {
-		padding: 0;
-	}
+	}*/
 }
 .bi_button {
 	margin-left: 13px;
@@ -248,6 +306,16 @@ $active-input-border: 1px solid $border-active;
 
 	&:empty {
 		margin-left: 0;
+	}
+}
+
+.bi_side_items {
+	display: none;
+	padding: $side-items-padding;
+
+	&:empty {
+		width: auto;
+		padding: 0;
 	}
 }
 .right_btn {
@@ -259,6 +327,7 @@ $active-input-border: 1px solid $border-active;
 	}
 }
 .bi_side_item {
+	width: 24px;
 	color: $text-lighten;
 
 	& + & {

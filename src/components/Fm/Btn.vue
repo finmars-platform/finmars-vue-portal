@@ -45,7 +45,7 @@ let props = defineProps({
 		&.basic {
 			color: $primary;
 
-			&:hover {
+			&:not([disabled]):hover {
 				background: $primary-lighten-2;
 			}
 		}
@@ -53,7 +53,7 @@ let props = defineProps({
 			background: $primary;
 			color: $separ;
 
-			&:hover {
+			&:not([disabled]):hover {
 				background: $primary-darken;
 			}
 		}
@@ -62,24 +62,24 @@ let props = defineProps({
 			background: transparent !important;
 			height: auto;
 			line-height: 1.5;
-			&:hover {
+			&:not([disabled]):hover {
 				color: $text;
 			}
 		}
 		&.text {
 			color: $text;
 
-			&:hover {
+			&:not([disabled]):hover {
 				background: $main-darken-hover;
 			}
-			&.active {
+			&:not([disabled]).active {
 				background: $main-darken-hover;
 			}
 		}
 		&.action {
 			color: $primary;
 
-			&:hover {
+			&:not([disabled]):hover {
 				background: $primary-lighten-2;
 			}
 		}

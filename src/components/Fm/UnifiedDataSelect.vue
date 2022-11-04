@@ -3,21 +3,30 @@
 	<FmMenu :opened="menuIsOpened"
 					:openOn="false"
 					attach="body"
-					class="width-100">
+					class="width-100"
+
+					@cancel="onMenuClose">
 
 		<template #btn>
-			<BaseInput :label="label"
-								 v-model="inputText"
-								 :error="error"
+			<BaseInput :modelValue="modelValue"
+								 :label="label"
+								 :tooltip="tooltip"
+								 :errorData="errorData"
 								 :class="{active: menuIsOpened, 'bi_no_borders': noBorders}"
+								 :required="required"
 
-								 @update:modelValue="onFilterInputChange"
-								 @onFocus="onFilterInputFocus"
-								 @onBlur="onFilterInputBlur">
+								 @update:errorData="newVal => emit('update:errorData', newVal)"
+								 @click.stop="openMenu">
 
 				<template v-if="!noBorders && !noIndicatorButton" #button>
 					<FmIcon icon="menu" />
 				</template>
+
+				<input :placeholder="label"
+							 :value="inputText"
+							 type="text"
+							 class="bi_main_input"
+							 @input="onFilterInputChange" />
 
 				<template #rightBtn>
 					<slot name="rightBtn" />
@@ -87,561 +96,571 @@
 </template>
 
 <script setup>
-let props = defineProps({
-	label: String,
-	modelValue: [String, Number],
-	selectedOptionsName: String,
-	/** Object with data of selected entity **/
-	itemObject: Object,
-	content_type: String,
-	noBorders: Boolean,
-	noIndicatorButton: Boolean,
-	notNull: Boolean,
-})
 
-let emit = defineEmits(['update:modelValue', 'update:itemObject'])
+	let props = defineProps({
+		label: String,
+		tooltip: String,
+		modelValue: [String, Number],
+		selectedOptionsName: String,
+		/** Object with data of selected entity **/
+		itemObject: Object,
+		content_type: String,
+		noBorders: Boolean,
+		noIndicatorButton: Boolean,
+		required: Boolean,
+		errorData: Object
+	})
 
-let disabled = ref(false);
-let processing = ref(false);
+	let emit = defineEmits(['update:modelValue', 'update:itemObject', 'update:errorData'])
 
-let error = ref('');
-let menuIsOpened = ref(false);
+	let disabled = ref(false);
+	let processing = ref(false);
 
-let localItemsTotal = ref(0);
-let databaseItemsTotal = ref(0);
-let databaseItems = ref([]);
-let localItems = ref([]);
-let noItemsFound = computed(() => !localItems.value.length && !databaseItems.value.length);
+	let menuIsOpened = ref(false);
 
-/*let selItem = reactive({
-	type: null,
-	data: {
-		name: ''
+	let localItemsTotal = ref(0);
+	let databaseItemsTotal = ref(0);
+	let databaseItems = ref([]);
+	let localItems = ref([]);
+	let noItemsFound = computed(() => !localItems.value.length && !databaseItems.value.length);
+
+	/*let selItem = reactive({
+		type: null,
+		data: {
+			name: ''
+		}
+	});*/
+	let selItem = ref(props.itemObject || {name: ''});
+
+	let valueIsValid = ref(false);
+	let inputText = ref(selItem.value.name || '');
+
+	watch(
+		() => props.itemObject,
+		() => {
+			selItem.value = props.itemObject || {name: ''};
+			inputText.value = selItem.value.name;
+		}
+	)
+
+	function getHighlighted (value) {
+
+		var inputTextPieces = inputText.value.split(' ')
+
+		var resultValue;
+
+		// Case-insensitive regular expression for highlighting multiple parts inside results
+		var reg = new RegExp("(?![^<]+>)(" + inputTextPieces.join("|") + ")", "ig");
+
+		resultValue = value.replace(reg, '<span class="highlight">$1</span>');
+
+		return resultValue
+
 	}
-});*/
-let selItem = ref(props.itemObject || {name: ''});
 
-let valueIsValid = ref(false);
-let inputText = ref(selItem.value.name || '');
+	function closeMenu() {
 
-function getHighlighted (value) {
-
-	var inputTextPieces = inputText.value.split(' ')
-
-	var resultValue;
-
-	// Case-insensitive regular expression for highlighting multiple parts inside results
-	var reg = new RegExp("(?![^<]+>)(" + inputTextPieces.join("|") + ")", "ig");
-
-	resultValue = value.replace(reg, '<span class="highlight">$1</span>');
-
-	return resultValue
-
-}
-
-function closeMenu() {
-
-	menuIsOpened.value = false;
+		menuIsOpened.value = false;
 
 	if (selItem.value.name) inputText.value = selItem.value.name;
 
-}
+	}
 
-function selectLocalItem(item) {
+	function selectItem(itemId, itemData) {
 
-	closeMenu();
+		if (props.modelValue === itemId) return; // when using inside selectDatabaseItem()
 
-	if (item.id === props.modelValue) return;
-
-	error.value = '';
-	selItem.value = item;
-
-	emit('update:modelValue', item.id);
-	emit('update:itemObject', item);
-
-	valueIsValid.value = true;
-	inputText.value = item.short_name;
-
-}
-
-const onLoadItemError = function (error) {
-
-	useNotify({
-		type: 'error',
-		title: 'Error',
-		text: error
-	});
-
-	emit('update:modelValue', null);
-
-	selItem.value = {name: ''};
-
-};
-
-async function loadItemsFromCbonds(item) {
-
-	const config = {
-		body: {
-			currency_code: item.code,
-			mode: 1
-		}
-	};
-
-	let res = await useApi('importCurrencyCbonds.post', config);
-
-	if (res.errors.length) {
-
-		onLoadItemError(res.errors[0]);
-
-	} else if (res.error) {
-
-		onLoadItemError(res.error.message);
-
-	} else {
-
-		emit('update:modelValue', res.result_id);
-		emit('update:itemObject', {id: res.result_id, name: item.name, user_code: item.code});
+		emit('update:modelValue', itemId);
+		emit('update:itemObject', JSON.parse(JSON.stringify(itemData)));
 
 		valueIsValid.value = true;
 
 	}
 
-	disabled.value = false;
-	processing.value = false;
+	function selectLocalItem(item) {
 
-}
+		closeMenu();
 
-const entitiesDataList = [
-	{
-		name: "Dashboard",
-		entity: 'dashboard',
-		key: "ui.dashboard"
-	},
-	{
-		name: "Account Type",
-		entity: 'account-type',
-		key: "accounts.accounttype"
-	},
-	{
-		name: "Account",
-		entity: 'account',
-		key: "accounts.account"
-	},
-	{
-		name: "Counterparty",
-		entity: 'counterparty',
-		key: "counterparties.counterparty"
-	},
-	{
-		name: "Responsible",
-		entity: 'responsible',
-		key: "counterparties.responsible"
-	},
-	{
-		name: "Currency",
-		entity: 'currency',
-		key: "currencies.currency"
-	},
-	{
-		name: "Currency history",
-		entity: 'currency-history',
-		key: "currencies.currencyhistory"
-	},
-	{
-		name: "Instrument",
-		entity: 'instrument',
-		key: "instruments.instrument"
-	},
-	{
-		name: "Generated Event",
-		entity: 'generated-event',
-		key: "instruments.generatedevent"
-	},
-	{
-		name: 'Pricing Policy',
-		entity: 'pricing-policy',
-		key: 'instruments.pricingpolicy'
-	},
-	{
-		name: 'Price History',
-		entity: 'price-history',
-		key: 'instruments.pricehistory'
-	},
-	{
-		name: "Portfolio",
-		entity: 'portfolio',
-		key: "portfolios.portfolio"
-	},
-	{
-		name: "Portfolio Register",
-		entity: 'portfolio-register',
-		key: "portfolios.portfolioregister"
-	},
-	{
-		name: "Portfolio Register Record",
-		entity: 'portfolio-register-record',
-		key: "portfolios.portfolioregisterrecord"
-	},
-	{
-		name: "Instrument Type",
-		entity: 'instrument-type',
-		key: "instruments.instrumenttype"
-	},
-	{
-		name: "Transaction",
-		entity: 'transaction',
-		key: "transactions.transaction"
-	},
-	{
-		name: "Transaction Type",
-		entity: 'transaction-type',
-		key: "transactions.transactiontype"
-	},
-	{
-		name: "Transaction Type Group",
-		entity: 'transaction-type-group',
-		key: "transactions.transactiontypegroup"
-	},
-	{
-		name: "Counterparty group",
-		entity: 'counterparty-group',
-		key: "counterparties.counterpartygroup"
-	},
-	{
-		name: "Responsible group",
-		entity: 'responsible-group',
-		key: "counterparties.responsiblegroup"
-	},
-	{
-		name: "Strategy 1",
-		entity: 'strategy-1',
-		key: "strategies.strategy1"
-	},
-	{
-		name: "Strategy 2",
-		entity: 'strategy-2',
-		key: "strategies.strategy2"
-	},
-	{
-		name: "Strategy 3",
-		entity: 'strategy-3',
-		key: "strategies.strategy3"
-	},
-	{
-		name: "Strategy 1 group",
-		entity: 'strategy-1-group',
-		key: "strategies.strategy1group"
-	},
-	{
-		name: "Strategy 2 group",
-		entity: 'strategy-2-group',
-		key: "strategies.strategy2group"
-	},
-	{
-		name: "Strategy 3 group",
-		entity: 'strategy-3-group',
-		key: "strategies.strategy3group"
-	},
-	{
-		name: "Strategy 1 subgroup",
-		entity: 'strategy-1-subgroup',
-		key: "strategies.strategy1subgroup"
-	},
-	{
-		name: "Strategy 2 subgroup",
-		entity: 'strategy-2-subgroup',
-		key: "strategies.strategy1subgroup"
-	},
-	{
-		name: "Strategy 3 subgroup",
-		entity: 'strategy-3-subgroup',
-		key: "strategies.strategy1subgroup"
-	},
-	{
-		name: "Balance report",
-		entity: 'balance-report',
-		key: "reports.balancereport"
-	},
-	{
-		name: "P&L report",
-		entity: 'pl-report',
-		key: "reports.plreport"
-	},
-	{
-		name: "Transaction report",
-		entity: 'transaction-report',
-		key: "reports.transactionreport"
-	},
-	{
-		name: "Cash flow projection report",
-		entity: 'cash-flow-projection-report',
-		key: "reports.cashflowreport"
-	},
-	{
-		name: "Performance report",
-		entity: 'performance-report',
-		key: "reports.performancereport"
-	},
-	{
-		name: "Transaction",
-		entity: 'complex-transaction',
-		key: "transactions.complextransaction"
-	},
-	{
-		name: "Balance Report Custom Field",
-		entity: 'balance-report-custom-field',
-		key: "reports.balancereportcustomfield"
-	},
-	{
-		name: "PL Report Custom Field",
-		entity: 'pl-report-custom-field',
-		key: "reports.plreportcustomfield"
-	},
-	{
-		name: "Transaction Report Custom Field",
-		entity: 'transaction-report-custom-field',
-		key: "reports.transactionreportcustomfield"
-	},
-	{
-		name: 'Price History Error',
-		entity: 'price-history-error',
-		key: 'pricing.pricehistoryerror'
-	},
-	{
-		name: "Currency History Error",
-		entity: 'currency-history-error',
-		key: "pricing.currencyhistoryerror"
-	},
-	{
-		name: 'Audit transaction',
-		entity: 'audit-transaction',
-		key: 'audit.objecthistory4entry'
-	},
+		if (item.id === props.modelValue) return;
 
-	{
-		name: 'Audit instrument',
-		entity: 'audit-instrument',
-		key: 'audit.objecthistory4entry'
+		selItem.value = item;
+
+		/*emit('update:modelValue', item.id);
+		emit('update:itemObject', item);
+
+		valueIsValid.value = true;*/
+		selectItem(item.id, item);
+
+		inputText.value = item.short_name;
+
 	}
-];
 
-watch(
-	() => props.itemObject,
-	() => {
-		selItem.value = props.itemObject || {name: ''};
-		inputText.value = selItem.value.name;
-	}
-)
+	const onLoadItemError = function (error) {
 
-function getEntityTypeByContentType() {
-	return entitiesDataList.find(data => data.key === props.content_type).entity;
-}
+		useNotify({
+			type: 'error',
+			title: 'Error',
+			text: error
+		});
 
-async function loadItemsFromUnifiedDatabase(item) {
+		emit('update:modelValue', null);
 
-	error.value = '';
+		selItem.value = {name: ''};
 
-	const config = {
-		body: {
-			id: item.id,
-			entity_type: getEntityTypeByContentType(),
-		}
 	};
 
-	selItem.value = item;
+	async function loadItemsFromCbonds(item) {
 
-	processing.value = true;
-	disabled.value = true;
+		const config = {
+			body: {
+				currency_code: item.code,
+				mode: 1
+			}
+		};
 
+		let res = await useApi('importCurrencyCbonds.post', config);
 
-	let res = await useApi('importUnifiedData.post', config);
+		if (res.errors.length) {
+			onLoadItemError(res.errors[0]);
 
-	if (res.errors.length) {
-		onLoadItemError(res.errors[0]);
+		} else if (res.error) {
+			onLoadItemError(res.error.message);
 
-	} else if (res.error) {
-		onLoadItemError(res.error.message);
+		} else {
 
-	}
-	else {
+			/*emit('update:modelValue', res.result_id);
+			emit('update:itemObject', {id: res.result_id, name: item.name, user_code: item.code});
 
-		emit('update:modelValue', res.id);
-		emit('update:itemObject', {id: res.id, name: item.name, user_code: item.user_code});
+			valueIsValid.value = true;*/
+			selectItem(res.result_id, {id: res.result_id, name: item.name, user_code: item.code});
 
-		valueIsValid.value = true;
+		}
 
-	}
-
-	disabled.value = false;
-	processing.value = false;
-
-}
-
-async function selectDatabaseItem(item) {
-
-	console.log('selectDatabaseItem.item', item);
-	menuIsOpened.value = false;
-
-	selItem.value = item;
-	inputText.value = item.name;
-
-	if (props.content_type === 'currencies.currency') {
-		loadItemsFromCbonds(item);
-
-	} else {
-
-		// Download here?
-		loadItemsFromUnifiedDatabase(item);
+		disabled.value = false;
+		processing.value = false;
 
 	}
 
-}
+	const entitiesDataList = [
+		{
+			name: "Dashboard",
+			entity: 'dashboard',
+			key: "ui.dashboard"
+		},
+		{
+			name: "Account Type",
+			entity: 'account-type',
+			key: "accounts.accounttype"
+		},
+		{
+			name: "Account",
+			entity: 'account',
+			key: "accounts.account"
+		},
+		{
+			name: "Counterparty",
+			entity: 'counterparty',
+			key: "counterparties.counterparty"
+		},
+		{
+			name: "Responsible",
+			entity: 'responsible',
+			key: "counterparties.responsible"
+		},
+		{
+			name: "Currency",
+			entity: 'currency',
+			key: "currencies.currency"
+		},
+		{
+			name: "Currency history",
+			entity: 'currency-history',
+			key: "currencies.currencyhistory"
+		},
+		{
+			name: "Instrument",
+			entity: 'instrument',
+			key: "instruments.instrument"
+		},
+		{
+			name: "Generated Event",
+			entity: 'generated-event',
+			key: "instruments.generatedevent"
+		},
+		{
+			name: 'Pricing Policy',
+			entity: 'pricing-policy',
+			key: 'instruments.pricingpolicy'
+		},
+		{
+			name: 'Price History',
+			entity: 'price-history',
+			key: 'instruments.pricehistory'
+		},
+		{
+			name: "Portfolio",
+			entity: 'portfolio',
+			key: "portfolios.portfolio"
+		},
+		{
+			name: "Portfolio Register",
+			entity: 'portfolio-register',
+			key: "portfolios.portfolioregister"
+		},
+		{
+			name: "Portfolio Register Record",
+			entity: 'portfolio-register-record',
+			key: "portfolios.portfolioregisterrecord"
+		},
+		{
+			name: "Instrument Type",
+			entity: 'instrument-type',
+			key: "instruments.instrumenttype"
+		},
+		{
+			name: "Transaction",
+			entity: 'transaction',
+			key: "transactions.transaction"
+		},
+		{
+			name: "Transaction Type",
+			entity: 'transaction-type',
+			key: "transactions.transactiontype"
+		},
+		{
+			name: "Transaction Type Group",
+			entity: 'transaction-type-group',
+			key: "transactions.transactiontypegroup"
+		},
+		{
+			name: "Counterparty group",
+			entity: 'counterparty-group',
+			key: "counterparties.counterpartygroup"
+		},
+		{
+			name: "Responsible group",
+			entity: 'responsible-group',
+			key: "counterparties.responsiblegroup"
+		},
+		{
+			name: "Strategy 1",
+			entity: 'strategy-1',
+			key: "strategies.strategy1"
+		},
+		{
+			name: "Strategy 2",
+			entity: 'strategy-2',
+			key: "strategies.strategy2"
+		},
+		{
+			name: "Strategy 3",
+			entity: 'strategy-3',
+			key: "strategies.strategy3"
+		},
+		{
+			name: "Strategy 1 group",
+			entity: 'strategy-1-group',
+			key: "strategies.strategy1group"
+		},
+		{
+			name: "Strategy 2 group",
+			entity: 'strategy-2-group',
+			key: "strategies.strategy2group"
+		},
+		{
+			name: "Strategy 3 group",
+			entity: 'strategy-3-group',
+			key: "strategies.strategy3group"
+		},
+		{
+			name: "Strategy 1 subgroup",
+			entity: 'strategy-1-subgroup',
+			key: "strategies.strategy1subgroup"
+		},
+		{
+			name: "Strategy 2 subgroup",
+			entity: 'strategy-2-subgroup',
+			key: "strategies.strategy1subgroup"
+		},
+		{
+			name: "Strategy 3 subgroup",
+			entity: 'strategy-3-subgroup',
+			key: "strategies.strategy1subgroup"
+		},
+		{
+			name: "Balance report",
+			entity: 'balance-report',
+			key: "reports.balancereport"
+		},
+		{
+			name: "P&L report",
+			entity: 'pl-report',
+			key: "reports.plreport"
+		},
+		{
+			name: "Transaction report",
+			entity: 'transaction-report',
+			key: "reports.transactionreport"
+		},
+		{
+			name: "Cash flow projection report",
+			entity: 'cash-flow-projection-report',
+			key: "reports.cashflowreport"
+		},
+		{
+			name: "Performance report",
+			entity: 'performance-report',
+			key: "reports.performancereport"
+		},
+		{
+			name: "Transaction",
+			entity: 'complex-transaction',
+			key: "transactions.complextransaction"
+		},
+		{
+			name: "Balance Report Custom Field",
+			entity: 'balance-report-custom-field',
+			key: "reports.balancereportcustomfield"
+		},
+		{
+			name: "PL Report Custom Field",
+			entity: 'pl-report-custom-field',
+			key: "reports.plreportcustomfield"
+		},
+		{
+			name: "Transaction Report Custom Field",
+			entity: 'transaction-report-custom-field',
+			key: "reports.transactionreportcustomfield"
+		},
+		{
+			name: 'Price History Error',
+			entity: 'price-history-error',
+			key: 'pricing.pricehistoryerror'
+		},
+		{
+			name: "Currency History Error",
+			entity: 'currency-history-error',
+			key: "pricing.currencyhistoryerror"
+		},
+		{
+			name: 'Audit transaction',
+			entity: 'audit-transaction',
+			key: 'audit.objecthistory4entry'
+		},
 
-async function findEntities() {
+		{
+			name: 'Audit instrument',
+			entity: 'audit-instrument',
+			key: 'audit.objecthistory4entry'
+		}
+	];
 
-	databaseItems.value = [];
+	function getEntityTypeByContentType() {
+		return entitiesDataList.find(data => data.key === props.content_type).entity;
+	}
 
-	if (props.content_type === 'currencies.currency') {
+	async function loadItemsFromUnifiedDatabase(item) {
+
+		const config = {
+			body: {
+				id: item.id,
+				entity_type: getEntityTypeByContentType(),
+			}
+		};
+
+		selItem.value = item;
+
+		processing.value = true;
+		disabled.value = true;
+
+
+		let res = await useApi('importUnifiedData.post', config);
+
+		if (res.errors.length) {
+			onLoadItemError(res.errors[0]);
+
+		} else if (res.error) {
+			onLoadItemError(res.error.message);
+
+		}
+		else {
+
+			/* emit('update:modelValue', res.id);
+			emit('update:itemObject', {id: res.id, name: item.name, user_code: item.user_code});
+
+			valueIsValid.value = true; */
+			selectItem(res.id, {id: res.id, name: item.name, user_code: item.user_code});
+
+		}
+
+		disabled.value = false;
+		processing.value = false;
+
+	}
+
+	async function selectDatabaseItem(item) {
+
+		console.log('selectDatabaseItem.item', item);
+		menuIsOpened.value = false;
+
+		selItem.value = item;
+		inputText.value = item.name;
+
+		if (props.content_type === 'currencies.currency') {
+			loadItemsFromCbonds(item);
+
+		} else {
+			// Download here?
+			loadItemsFromUnifiedDatabase(item);
+		}
+
+	}
+
+	async function findEntities() {
+
+		databaseItems.value = [];
+
+		if (props.content_type === 'currencies.currency') {
+
+			const options = {
+				filters: {
+					name: inputText.value || '',
+					page: 0,
+				}
+			}
+
+			const res = await useApi('currencyDatabaseSearch.get', options);
+
+			if (res.error) {
+
+				console.error("Unified Database error occurred", res.error);
+
+			} else {
+
+				databaseItemsTotal.value = res.resultCount;
+				// TODO make request for currencyDatabaseSearch.get return empty array instead of object
+				if (Array.isArray(res.foundItems)) {
+					databaseItems.value = res.foundItems;
+				}
+
+			}
+
+			return;
+
+		}
 
 		const options = {
 			filters: {
-				name: inputText.value || '',
-				page: 0,
+				query: inputText.value || '',
 			}
 		}
 
-		const res = await useApi('currencyDatabaseSearch.get', options);
+		const res = await useApi('counterpartiesUnifiedData.get', options);
 
 		if (res.error) {
 
 			console.error("Unified Database error occurred", res.error);
 
 		} else {
-
-			databaseItemsTotal.value = res.resultCount;
-			// TODO make request for currencyDatabaseSearch.get return empty array instead of object
-			if (Array.isArray(res.foundItems)) {
-				databaseItems.value = res.foundItems;
-			}
-
+			databaseItemsTotal.value = res.count;
+			databaseItems.value = res.results;
 		}
 
-		return;
-
 	}
 
-	const options = {
-		filters: {
-			query: inputText.value || '',
-		}
-	}
+	async function findEntitiesByUserCode() {
 
-	const res = await useApi('counterpartiesUnifiedData.get', options);
-
-	if (res.error) {
-
-		console.error("Unified Database error occurred", res.error);
-
-	} else {
-		databaseItemsTotal.value = res.count;
-		databaseItems.value = res.results;
-	}
-
-}
-
-async function findEntitiesByUserCode() {
-
-	const options = {
-		listLight: true,
-		filters: {
-			pageSize: 500,
-			user_code: inputText.value || '',
-		}
-	};
-
-	let res = await useResolveEntityApi(props.content_type, 'get', options);
-
-	if (!res.error) {
-		localItemsTotal.value = res.count;
-		localItems.value = res.results;
-	}
-
-}
-
-async function getList() {
-
-	processing.value = true;
-
-	var promises = [];
-
-	promises.push(findEntities());
-
-	/*promises.push(new Promise(function (resolve, reject) {
-
-
-		entityResolverService.getListLight(scope.entityType, {
-			pageSize: 500,
+		const options = {
+			listLight: true,
 			filters: {
-				user_code: scope.inputText
+				pageSize: 500,
+				user_code: inputText.value || '',
 			}
-		}).then(function (data) {
+		};
 
-			scope.localItemsTotal = data.count;
+		let res = await useResolveEntityApi(props.content_type, 'get', options);
 
-			scope.localItems = data.results;
+		if (!res.error) {
+			localItemsTotal.value = res.count;
+			localItems.value = res.results;
+		}
 
-			resolve()
+	}
 
+	async function getList() {
+
+		processing.value = true;
+
+		var promises = [];
+
+		promises.push(findEntities());
+
+		/*promises.push(new Promise(function (resolve, reject) {
+
+
+			entityResolverService.getListLight(scope.entityType, {
+				pageSize: 500,
+				filters: {
+					user_code: scope.inputText
+				}
+			}).then(function (data) {
+
+				scope.localItemsTotal = data.count;
+
+				scope.localItems = data.results;
+
+				resolve()
+
+
+			})
+
+		}))*/
+		promises.push(findEntitiesByUserCode())
+
+
+		await Promise.allSettled(promises);
+
+		databaseItems.value = databaseItems.value.filter(function (databaseItem) {
+
+			let userCodeProp = (props.content_type === 'currencies.currency') ? 'code' : 'user_code';
+
+			let exist = !!localItems.value.find(item => item.user_code === databaseItem[userCodeProp]);
+
+			return !exist;
 
 		})
 
-	}))*/
-	promises.push(findEntitiesByUserCode())
+		/*setTimeout(function () {
 
+			$('.unified-data-select-options-group-title').on('click', function () {
 
-	await Promise.allSettled(promises);
+				$(this).next()[0].scrollIntoView({block: 'start', behavior: 'smooth'});
+			});
 
-	databaseItems.value = databaseItems.value.filter(function (databaseItem) {
+		}, 100)*/
 
-		let userCodeProp = (props.content_type === 'currencies.currency') ? 'code' : 'user_code';
+		processing.value = false;
 
-		let exist = !!localItems.value.find(item => item.user_code === databaseItem[userCodeProp]);
+	}
 
-		return !exist;
+	function openMenu() {
 
-	})
+		menuIsOpened.value = true;
 
-	/*setTimeout(function () {
+		inputText.value = '';
+		getList();
 
-		$('.unified-data-select-options-group-title').on('click', function () {
+	}
 
-			$(this).next()[0].scrollIntoView({block: 'start', behavior: 'smooth'});
-		});
+	function onFilterInputChange($event) {
+		inputText.value = $event.target.value;
+		getList();
+	}
 
-	}, 100)*/
-
-	processing.value = false;
-
-}
-
-function onFilterInputFocus() {
-
-	menuIsOpened.value = true;
-
-	inputText.value = '';
-	getList();
-
-}
-
-function onFilterInputChange(newValue) {
-	inputText.value = newValue;
-	getList();
-}
-
-function onFilterInputBlur() {
-	inputText.value = selItem.value.name;
-	menuIsOpened.value = false;
-}
+	function onMenuClose() {
+		inputText.value = selItem.value.name;
+		menuIsOpened.value = false;
+	}
 
 </script>
 
