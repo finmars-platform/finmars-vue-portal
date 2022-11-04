@@ -6,37 +6,43 @@
 
 			<div class="m-b-35">
 				<!-- entity names for register here -->
-				<FmInputEntityNames label="Relation name"
-														v-model:name="portfolioRegister.name"
+				<FmInputEntityNames v-model:name="portfolioRegister.name"
 														v-model:short_name="portfolioRegister.short_name"
 														v-model:user_code="portfolioRegister.user_code"
 														v-model:public_name="portfolioRegister.public_name"
-														hideValueToShow />
+														v-model:errorData="errorsData.pRegisterNames"
+														label="Relation name" />
 			</div>
 
 			<div v-if="!portfolioId" class="m-b-35">
-				<FmSelect v-model="portfolioRegister.portfolio"
+				<FmSelect v-model:modelValue="portfolioRegister.portfolio"
+									v-model:errorData="errorsData.portfolio"
 									label="Portfolio"
 									:items="portfoliosList"
 									prop_name="short_name"
 									attach="body"
-									optionsFilter />
+									tooltip="Select portfolio"
+									optionsFilter
+									required />
 			</div>
 
 			<div class="m-b-35">
-				<FmUnifiedDataSelect v-model="portfolioRegister.valuation_currency"
+				<FmUnifiedDataSelect v-model:modelValue="portfolioRegister.valuation_currency"
+														 v-model:errorData="errorsData.vCurrency"
 														 label="Valuation currency"
 														 content_type="currencies.currency"
-														 notNull
+														 required
 														 class="m-b-0" />
 			</div>
 
 			<div class="m-b-35">
-				<FmSelect v-model="portfolioRegister.valuation_pricing_policy"
+				<FmSelect v-model:modelValue="portfolioRegister.valuation_pricing_policy"
+									v-model:errorData="errorsData.vPricingPolicy"
 									label="Pricing Policy"
 									:items="ppList"
 									prop_name="short_name"
-									optionsFilter />
+									optionsFilter
+									required />
 			</div>
 
 			<div class="m-b-35">
@@ -44,17 +50,19 @@
 														v-model:short_name="portfolioRegister.new_linked_instrument.short_name"
 														v-model:user_code="portfolioRegister.new_linked_instrument.user_code"
 														v-model:public_name="portfolioRegister.new_linked_instrument.public_name"
-														label="Relation name"
-														hideValueToShow />
+														v-model:errorData="errorsData.instrumentNames"
+														label="Relation name" />
 			</div>
 
 			<div class="m-b-35">
-				<FmSelect v-model="portfolioRegister.new_linked_instrument.instrument_type"
+				<FmSelect v-model:modelValue="portfolioRegister.new_linked_instrument.instrument_type"
+									v-model:errorData="errorsData.iType"
 									label="Instrument type"
 									:items="itypesList"
 									prop_name="short_name"
 									attach="body"
-									optionsFilter />
+									optionsFilter
+									required />
 			</div>
 
 		</div>
@@ -93,6 +101,15 @@
 	let readyStatus = ref(false);
 	let creating = ref(false);
 
+	let errorsData = reactive({
+		pRegisterNames: null,
+		portfolio: null,
+		vCurrency: null,
+		vPricingPolicy: null,
+		instrumentNames: null,
+		iType: null
+	});
+
 	let portfolioRegister = ref({new_linked_instrument: {}});
 
 	if (props.portfolioId) portfolioRegister.value.portfolio = props.portfolioId;
@@ -104,12 +121,6 @@
 	const fetchEntities = async function (routeOption, matchingRef) {
 
 		try {
-
-			/* const res = await useLoadAllPages(routeOption, {filters: {page: 1, page_size: 1000}});
-
-			matchingRef.value = res.map(iType => {
-				return {id: iType.id, name: iType.short_name};
-			}); */
 			matchingRef.value = await useLoadAllPages(routeOption, {filters: {page: 1, page_size: 1000}});
 
 		} catch (e) {
@@ -155,11 +166,33 @@
 
 		portfolioRegister.value = {new_linked_instrument: {}};
 		creating.value = false;
+
+		Object.keys(errorsData).forEach(prop => {
+			errorsData[prop] = null;
+		});
+
 		emit('cancel');
 
 	}
 
 	async function save() {
+
+		/*let formIsInvalid = !portfolioRegister.value.name &&
+			!portfolioRegister.value.portfolio &&
+			!portfolioRegister.value.valuation_currency &&
+			!portfolioRegister.value.valuation_pricing_policy &&
+			!portfolioRegister.value.new_linked_instrument.name &&
+			!portfolioRegister.value.new_linked_instrument.instrument_type;*/
+
+		Object.keys(errorsData).forEach(prop => {
+			errorsData[prop] = {validate: true};
+		})
+
+		const inputWithError = !Object.keys(errorsData).find(prop => errorsData[prop])
+
+		if (inputWithError) {
+			return;
+		}
 
 		creating.value = true;
 
@@ -169,6 +202,10 @@
 
 		if (!res.error) {
 			portfolioRegister.value = {new_linked_instrument: {}};
+
+			Object.keys(errorsData).forEach(prop => {
+				errorsData[prop] = null;
+			});
 
 			emit('save', res);
 		}

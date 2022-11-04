@@ -15,6 +15,7 @@
 
 		<EvBaseTopPanel
 			height="50"
+			:loadingLayout="!readyStatusData.layout"
 			@saveListLayout="saveLayout()"
 			@openSettings="showSettingsDialog = true;"
 		>
@@ -22,7 +23,7 @@
 				<div style="width: 175px;">
 					<FmUnifiedDataSelect noBorders
 															 v-model="viewerData.reportOptions.report_currency"
-															 :itemObject="viewerData.reportOptions.report_currency_object"
+															 v-model:itemObject="viewerData.reportOptions.report_currency_object"
 															 content_type="currencies.currency" />
 				</div>
 			</template>
@@ -138,6 +139,8 @@ import Chart from 'chart.js/auto';
 import getPerformanceViewerData from "./viewerData";
 
 const store = useStore();
+const layoutsStore = useLayoutsStore();
+const route = useRoute();
 
 const viewerData = getPerformanceViewerData();
 provide('viewerData', viewerData);
@@ -283,6 +286,30 @@ let dsReadyStatus = computed(() => readyStatusData.layout && readyStatusData.bun
 
 /*#endregion */
 
+watch(
+	() => route.query.layout,
+	async () => {
+		await fetchListLayout();
+		refresh();
+	}
+)
+
+watch(
+	() => viewerData.layoutToOpen,
+	async () => {
+
+		if (viewerData.layoutToOpen) {
+
+			await fetchListLayout();
+			viewerData.layoutToOpen = null;
+
+			refresh();
+
+		}
+
+	},
+)
+
 async function saveLayout () {
 
 	if (viewerData.newLayout) {
@@ -301,7 +328,7 @@ async function saveLayout () {
 		}
 
 	} else {
-		useSaveLayoutList(store, viewerData);
+		useSaveEvRvLayout(store, viewerData);
 	}
 
 }
@@ -323,15 +350,15 @@ async function chooseMonth(id) {
 	updateChart( portfolioItems.value[id], portfolioItemsCumm.value[id] )
 }
 
-async function fetchDefaultListLayout () {
+async function fetchListLayout () {
 
-	const resData = await useApi('defaultListLayout.get', {params: {contentType: viewerData.contentType}});
+	/*const resData = await useApi('defaultListLayout.get', {params: {contentType: viewerData.contentType}});
 
 	if (resData.error) {
 		throw new Error('Failed to fetch default performance layout');
 	}
 
-	const defaultListLayout = resData.results.length ? resData.results[0] : null;
+	const defaultListLayout = (resData.results.length) ? resData.results[0] : null;
 
 	if (defaultListLayout.data.reportOptions.pricing_policy) {
 
@@ -347,11 +374,13 @@ async function fetchDefaultListLayout () {
 			return item.id === defaultListLayout.data.reportOptions.report_currency;
 		});
 
-	}
+	}*/
+	readyStatusData.layout = false;
 
-	viewerData.setLayoutCurrentConfiguration(defaultListLayout).then(() => {
-		readyStatusData.layout = true;
-	});
+	const res = await useFetchEvRvLayout(layoutsStore, viewerData, route.query.layout);
+
+	viewerData.setLayoutCurrentConfiguration(res, store.ecosystemDefaults);
+	readyStatusData.layout = true;
 
 }
 
@@ -360,7 +389,7 @@ async function init() {
 	fetchPrtfRegistersList();
 	await Promise.all([fetchCurrenciesLightList(), fetchPricingPoliciesOpts()]);
 
-	await fetchDefaultListLayout();
+	await fetchListLayout();
 	await refresh()
 
 
@@ -428,6 +457,8 @@ async function refresh() {
 	if ( chart )
 		updateChart( portfolioItems.value[0], portfolioItemsCumm.value[0] )
 }
+
+provide('refreshReport', refresh);
 
 async function fetchPortfolioBundles() {
 
