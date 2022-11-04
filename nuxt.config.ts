@@ -19,9 +19,6 @@ export default defineNuxtConfig({
 	modules: [
     ['@pinia/nuxt'],
   ],
-	components: {
-		dirs: ['~/components']
-	},
 	imports: {
     dirs: [
       'stores',
