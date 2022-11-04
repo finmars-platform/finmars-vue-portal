@@ -34,6 +34,7 @@ const emit = defineEmits(["refresh"]);
 const props = defineProps({
 	invite: Object,
 });
+let store = useStore()
 
 async function changeStatus( status) {
 	let res = await useApi("invitesToDB.put", {
@@ -47,6 +48,7 @@ async function changeStatus( status) {
 			params: { id: props.invite.to_master_user },
 		});
 		if ( res.success ) {
+			await store.getMasterUsers()
 			navigateTo('/profile/setup')
 		}
 	}
