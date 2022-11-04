@@ -9,7 +9,6 @@
 		"generate": "nuxt generate",
 		"preview": "nuxt preview"
 	},
-
 	"devDependencies": {
 		"eslint": "^8.24.0",
 		"eslint-plugin-vue": "^9.6.0",
@@ -19,10 +18,11 @@
 	"dependencies": {
 		"@chenfengyuan/vue-qrcode": "^2.0.0",
 		"@kyvg/vue3-notification": "^2.4.1",
-		"@pinia/nuxt": "0.1.9",
+		"@pinia/nuxt": "0.4.3",
 		"chart.js": "^3.9.1",
 		"click-outside-vue3": "^4.0.1",
 		"moment": "^2.29.4",
+		"pinia": "^2.0.23",
 		"qrcode": "^1.5.1",
 		"sass": "^1.54.9",
 		"vue": "^3.2.39"
