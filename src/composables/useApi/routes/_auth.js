@@ -76,9 +76,5 @@ export default {
 		get: '/authorizer/invite-to-user/',
 		post: '/authorizer/create-invite-to-user/',
 	},
-	memberInvites: {
-		get: '/authorizer/invite-to-user/',
-		post: '/authorizer/create-invite-to-user/',
-	},
 
 };

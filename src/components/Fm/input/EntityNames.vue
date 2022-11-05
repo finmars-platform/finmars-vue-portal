@@ -85,7 +85,7 @@
 
 <script setup>
 
-import {fmDebounce} from "../../../composables/useUtils";
+import {useDebounce} from "../../../composables/useUtils";
 
 let props = defineProps({
 	label: String,
@@ -236,7 +236,7 @@ function baseInputChangeFn (newVal) {
  * Debounce prevents changing unintended names when deleting text inside base input
  * e.g. Deleting 'Bank AAA' would also delete 'Bank A' without debounce
  */
-const setNames = fmDebounce(baseInputChangeFn, 300);
+const setNames = useDebounce(baseInputChangeFn, 300);
 
 function onErrorDataChange(propName, newValue) {
 

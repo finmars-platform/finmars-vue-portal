@@ -10,10 +10,15 @@
 											@saveAs="saveAs"
 											@setAsDefault="setAsDefault"
 											@rename="renameLayout"
-											@delete="deleteLayout" />
+											@delete="deleteLayout"
+											@export="openLayoutExport" />
 
 	<EvModalSaveLayoutAs v-model="openSaveAsModal"
 											 @layoutSaved="getLayouts" />
+
+	<ModalExportListLayout :isReport="viewerData.isReport"
+												 :layout="layoutToExport"
+												 v-model="openExport" />
 </template>
 
 <script setup>
@@ -34,8 +39,8 @@
 	let layoutsList = ref([]);
 
 	let openSaveAsModal = ref(false);
-
-	let invitesList = ref([]);
+	let openExport = ref(false);
+	let layoutToExport = ref(null);
 
 	async function getLayouts (arg) {
 
@@ -128,12 +133,9 @@
 
 	}
 
-	async function getInvites () {
-
-		const res = await useApi('configSharingMyInvitesList.get', {filters: {status: '0'}});
-
-		invitesList.value = res.results;
-
+	function openLayoutExport() {
+		layoutToExport.value = viewerData.getLayoutCurrentConfiguration();
+		openExport.value = true;
 	}
 
 	async function renameLayout(namesData) {

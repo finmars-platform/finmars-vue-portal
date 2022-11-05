@@ -77,7 +77,7 @@ export default {
 	importSchemeLight: {
 		get: prefix + '/import/complex-transaction-import-scheme-light/'
 	},
-	members: {
+	memberList: {
 		get: prefix + '/users/member/',
 	},
 	member: {
@@ -166,6 +166,15 @@ export default {
 	},
 	counterpartiesUnifiedData: {
 		get: prefix + '/data/company/'
+	},
+
+	configSharingConfigFile: {
+		get: prefix + '/configuration-sharing/shared-configuration-file/{id}/',
+		put: prefix + '/configuration-sharing/shared-configuration-file/{id}/',
+		post: prefix + '/configuration-sharing/shared-configuration-file/',
+	},
+	configSharingInvite: {
+		post: prefix + '/configuration-sharing/invites/',
 	},
 	configSharingMyInvitesList: {
 		get: prefix + '/configuration-sharing/my-invites/',
