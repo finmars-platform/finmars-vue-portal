@@ -38,7 +38,7 @@
 
 				<template v-else>
 					<div class="selected_field">
-						<div class="selected_field_item">
+						<div class="selected_field_item" :class="{'nothing_selected': !selectedItem}">
 							{{ selectedName }}
 						</div>
 					</div>
@@ -109,15 +109,34 @@
 
 	});
 
+	let selectedItem = computed(() => {
+
+		if (props.items) return props.items.find(item => item[props.prop_id] === props.modelValue);
+
+		return null;
+
+	})
+
 	let selectedName = computed(() => {
-		if ( props.items ) {
+		/*if ( props.items ) {
 			const selItem = props.items.find(item => item[props.prop_id] == props.modelValue)
 			if (selItem) {
 				return selItem[props.prop_name]
+
 			} else {
-				return 'select'
+				return 'select';
 			}
+		}*/
+
+		if (selectedItem.value) {
+			return selectedItem.value[props.prop_name];
+
+		} else if (props.label) {
+			return props.label;
 		}
+
+		return 'Select option';
+
 	});
 
 	let mainInput = ref(null);
@@ -183,5 +202,9 @@
 		height: 100%;
 		display: flex;
 		align-items: center;
+
+		.selected_field_item.nothing_selected {
+			color: $text-pale;
+		}
 	}
 </style>
