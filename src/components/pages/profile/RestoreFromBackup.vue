@@ -45,7 +45,7 @@
 
 		let res = await useApi('masterBackups.put', {
 			body: form,
-			params: props.backupId
+			params: {id: props.backupId }
 		})
 
 		if ( res ) {
