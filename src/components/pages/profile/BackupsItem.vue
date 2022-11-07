@@ -27,6 +27,7 @@
 			@cancel="isShowRestore = false"
 			@save="emit('refresh')"
 			v-model="isShowRestore"
+			:backupId="backup.id"
 		/>
 	</FmCard>
 </template>
