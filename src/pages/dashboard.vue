@@ -26,6 +26,7 @@
 						'grid-column': 'span ' + item.colls,
 						'grid-row': 'span ' + item.rows,
 					}"
+					:data-name="item.name"
 				>
 					<component :is="item.name" style="height: 100%;" />
 
@@ -34,17 +35,46 @@
 				</div>
 			</div>
 
-			<FmBtn>Add components</FmBtn>
+			<FmBtn @click="isOpenAddComponents = true">Add components</FmBtn>
+
+			<BaseModal title="Choose component" v-model="isOpenAddComponents" no_padding>
+				<h3>System components</h3>
+				<div class="fm_list">
+					<div class="fm_list_item">Group component</div>
+				</div>
+				<h3>Common</h3>
+				<div class="fm_list">
+					<div class="fm_list_item">Nav(Stats)</div>
+					<div class="fm_list_item">Barchart(History)</div>
+					<div class="fm_list_item">Balance</div>
+					<div class="fm_list_item">P&L</div>
+				</div>
+
+				<template #controls>
+					<div class="flex sb">
+						<FmBtn type="text">Cancel</FmBtn>
+						<FmBtn>Done</FmBtn>
+					</div>
+				</template>
+			</BaseModal>
 		</div>
 	</div>
 </template>
 
 <script setup>
 
+	let componentsList = [
+		{id: 'nav', name: 'Nav(Stats)', min_colls: 12, min_rows: 1},
+		{id: 'nav', name: 'Barchart(History)', min_colls: 12, min_rows: 1},
+		{id: 'nav', name: 'Nav(Stats)', min_colls: 12, min_rows: 1},
+		{id: 'nav', name: 'Nav(Stats)', min_colls: 12, min_rows: 1},
+	]
+
 	let components = reactive([
 		{name: 'Nav', colls: 12, rows: 1},
 		{name: 'Balance', colls: 4, rows: 4},
 	])
+	let isOpenAddComponents = ref(false)
 	definePageMeta({
 		// middleware: 'auth',
 		bread: [
@@ -74,22 +104,27 @@
 		let elem = e.target.closest('.board_widget')
 		let grid = e.target.closest('.grid')
 		let rect = grid.getBoundingClientRect();
-		let halfColl = rect.width / 12 / 2
+		let halfColl = rect.width / 12
 		let shiftX = e.clientX
 
 		document.ondragstart = function() {
 			return false;
 		};
 
-		let startColls = components.find((item) => item.name == 'Balance').colls
+		let startColls = components.find((item) => item.name == elem.dataset.name).colls
 
 		function onmousemove(e) {
-			if ( e.clientX - shiftX > halfColl ) {
-				components.find((item) => item.name == 'Balance').colls =
-					startColls + Math.floor( (e.clientX - shiftX) / halfColl )
+			if ( Math.abs(e.clientX - shiftX) > halfColl ) {
+				let shift = Math.abs(e.clientX - shiftX)
+				if ( e.clientX - shiftX > 0) {
+					components.find((item) => item.name == elem.dataset.name).colls =
+						startColls + Math.floor( shift / halfColl )
+				} else {
 
-				console.log(startColls)
-				console.log(Math.floor( (e.clientX - shiftX) / halfColl ))
+					components.find((item) => item.name == elem.dataset.name).colls =
+						startColls - Math.floor( shift / halfColl )
+				}
+
 			}
 		}
 
