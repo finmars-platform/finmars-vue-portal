@@ -1,7 +1,9 @@
 <template>
 
 	<FmMenu attach="body"
-					:disabled="loadingLayout">
+					v-model:opened="menuIsOpened"
+					:disabled="loadingLayout"
+					testProp="layoutsManager">
 
 		<template #btn="{ isOpen }">
 			<FmBtn type="text"
@@ -78,7 +80,7 @@
 						<FmBtn type="text"
 									 class="menu_item"
 									 :disabled="viewerData.newLayout"
-									 @-click="emitAndClose('save')">
+									 @click="emit('save')">
 							<span class="material-icons">save</span>
 							Save
 						</FmBtn>
@@ -94,16 +96,14 @@
 							Save as
 						</FmBtn>
 
-						<!--					<div class="menu_item" @click="emit('openLayoutsList')">
-												<span class="material-icons" style="visibility: hidden;">open_in_new</span>
-												<span>Open</span>
-											</div>-->
-						<FmBtn type="text"
+<!--						Will be develop in context of FN-908
+
+<FmBtn type="text"
 									 class="menu_item"
 									 @click="emit('openLayoutsList'), close()">
 							<span class="material-icons"></span>
 							Open
-						</FmBtn>
+						</FmBtn>-->
 
 					</slot>
 				</div>
@@ -159,13 +159,15 @@
 						<span class="material-icons">email</span>
 						<span>Invites ({{invites.length}})</span>
 					</div>-->
-					<FmBtn type="text"
+<!--
+
+<FmBtn type="text"
 								 class="menu_item"
 								 :disabled="!invitesList.length"
 								 @click="invitesIsOpened = true, close()">
 						<span class="material-icons">email</span>
 						Invites ({{ invitesList.length }})
-					</FmBtn>
+					</FmBtn>-->
 
 					<FmBtn type="text"
 								 class="menu_item"
@@ -189,21 +191,26 @@
 							</div>
 
 							-->
-					<FmBtn v-if="availableForUpdating"
+
+<!--					Maybe will be used again
+
+<FmBtn v-if="availableForUpdating"
 								 type="text"
 								 class="menu_item"
 								 @click="">
 						<span class="material-icons">share</span>
 						Update
-					</FmBtn>
+					</FmBtn>-->
 
-					<FmBtn v-if="availableForSharing"
+<!--					Maybe will be used again
+
+<FmBtn v-if="availableForSharing"
 								 type="text"
 								 class="menu_item"
 								 @click="sharingIsOpened = true, close()">
 						<span class="material-icons">share</span>
 						Share
-					</FmBtn>
+					</FmBtn>-->
 
 					<FmBtn type="text"
 								 class="menu_item"
@@ -236,9 +243,10 @@
 	<ModalNameUserCode title="Rename layout"
 										 :name="viewerData.listLayout.name"
 										 :user_code="viewerData.listLayout.user_code"
+										 :occupiedUserCodes="occupiedUserCodes"
 										 v-model="renameIsOpened"
 
-										 @save="newNamesData => emit('rename', newNamesData)" />
+										 @save="renameLayout" />
 
 	<ModalInfo title="Warning"
 						 description="Are you sure want to delete this layout??"
@@ -247,7 +255,7 @@
 			<div class="flex-row fc-space-between">
 				<FmBtn type="basic" @click="cancel">CANCEL</FmBtn>
 
-				<FmBtn type="basic" @click="emit('delete'), cancel">OVERWRITE</FmBtn>
+				<FmBtn type="basic" @click="emit('delete'), cancel">OK</FmBtn>
 			</div>
 		</template>
 	</ModalInfo>
@@ -291,9 +299,12 @@
 
 	let menuIsOpened = ref(false);
 	let renameIsOpened = ref(false);
-	let invitesIsOpened = ref(false);
 	let showDeletionWarning = ref(false);
 	let sharingIsOpened = ref(false);
+
+	/* Maybe will be used again
+
+	let invitesIsOpened = ref(false);
 
 	let availableForUpdating = computed(() => viewerData.listLayout.sourced_from_global_layout && !viewerData.listLayout.origin_for_global_layout);
 	let availableForSharing = computed(() => {
@@ -302,6 +313,17 @@
 
 		return notAnAutosave &&
 			((!viewerData.listLayout.sourced_from_global_layout && !viewerData.listLayout.origin_for_global_layout) || (viewerData.listLayout.sourced_from_global_layout && viewerData.listLayout.origin_for_global_layout));
+
+	});
+	*/
+
+	let occupiedUserCodes = computed(() => {
+
+		return props.layouts.filter(lLayout => {
+
+			return lLayout.user_code !== viewerData.listLayout.user_code
+
+		}).map(lLayout => lLayout.user_code);
 
 	});
 
@@ -332,17 +354,9 @@
 
 	}
 
-	function emitAndClose(event, argument) {
-
-		if (argument !== undefined) {
-			emit(event, argument);
-
-		} else {
-			emit(event);
-		}
-
-		menuIsOpened.value = false;
-
+	function renameLayout(newNamesData) {
+		emit('rename', newNamesData);
+		renameIsOpened.value = false;
 	}
 
 	async function fetchInvites () {
