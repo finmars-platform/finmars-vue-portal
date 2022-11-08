@@ -66,8 +66,8 @@
 	let componentsList = [
 		{id: 'nav', name: 'Nav(Stats)', min_colls: 12, min_rows: 1},
 		{id: 'nav', name: 'Barchart(History)', min_colls: 12, min_rows: 1},
-		{id: 'nav', name: 'Nav(Stats)', min_colls: 12, min_rows: 1},
-		{id: 'nav', name: 'Nav(Stats)', min_colls: 12, min_rows: 1},
+		{id: 'balance', name: 'Balance', min_colls: 12, min_rows: 1},
+		{id: 'pl', name: 'P&L', min_colls: 12, min_rows: 1},
 	]
 
 	let components = reactive([
