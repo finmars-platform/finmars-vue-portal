@@ -7,7 +7,7 @@
 
 											@createNewLayout="createNewLayout"
 											@save="saveLayout"
-											@saveAs="saveAs"
+											@saveAs="openSaveAsModal = true"
 											@setAsDefault="setAsDefault"
 											@rename="renameLayout"
 											@delete="deleteLayout"
@@ -42,7 +42,7 @@
 	let openExport = ref(false);
 	let layoutToExport = ref(null);
 
-	async function getLayouts (arg) {
+	async function getLayouts () {
 
 		loadingLayoutsList.value = true;
 
@@ -67,6 +67,8 @@
 		layoutsList.value = res.results;
 		loadingLayoutsList.value = false;
 
+		// openSaveAsModal.value = false;
+
 	}
 
 	function createNewLayout() {
@@ -80,10 +82,6 @@
 
 	function saveLayout() {
 		useSaveEvRvLayout(store, viewerData);
-	}
-
-	function saveAs() {
-		openSaveAsModal.value = true;
 	}
 
 	async function setAsDefault(layoutLight) {
@@ -154,6 +152,8 @@
 			const renamedLayout = layoutsList.value.find(lLayout => lLayout.id === layout.id);
 			renamedLayout.name = namesData.name;
 			renamedLayout.user_code = namesData.user_code;
+
+			useNotify({type: 'success', title: 'Layout renamed'})
 
 		}
 
