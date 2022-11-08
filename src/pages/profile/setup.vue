@@ -11,7 +11,7 @@
 			/>
 
 			<div class="btns flex sb">
-				<FmBtn type="action">Cancel</FmBtn>
+				<FmBtn type="action" @click="navigateTo('/profile')">Cancel</FmBtn>
 				<FmBtn class="btn" @click="next()">Next</FmBtn>
 			</div>
 		</div>
