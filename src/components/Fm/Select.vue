@@ -7,15 +7,19 @@
 
 					:offsetX="5"
 
-					@cancel="onMenuClose">
+					@cancel="closeMenu">
 
 		<template #btn="{ isOpen }">
 			<BaseInput
+				:errorData="errorData"
+				:modelValue="modelValue"
 				class="input_btn m-b-0"
 				:class="{active: isOpen, 'bi_no_borders': no_borders, small: size == 'small'}"
 				:label="label"
-				v-model="moFilter"
+				:tooltip="tooltip"
+				:required="required"
 
+				@update:errorData="newVal => emit('update:errorData', newVal)"
 				@click.stop="openMenu"
 
 			>
@@ -24,18 +28,28 @@
 					<slot name="left_icon"></slot>
 				</template>
 
-				<template #rightBtn>
-					<slot name="right_btn">
-						<FmIcon :icon="isOpen ? 'arrow_drop_up' : 'arrow_drop_down'" />
-					</slot>
+				<template v-if="optionsFilter">
+					<input ref="mainInput"
+								 :placeholder="label"
+								 v-model="moFilter"
+								 type="text"
+								 class="bi_main_input" />
 				</template>
 
-				<template v-if="!optionsFilter">
+				<template v-else>
 					<div class="selected_field">
-						<div class="selected_field_item">
+						<div class="selected_field_item" :class="{'nothing_selected': !selectedItem}">
 							{{ selectedName }}
 						</div>
 					</div>
+				</template>
+
+				<template #rightBtn>
+					<slot name="right_btn">
+						<FmBtn type="iconBtn"
+									 :icon="isOpen ? 'arrow_drop_up' : 'arrow_drop_down'"
+									 @click="mainInput && mainInput.focus()" />
+					</slot>
 				</template>
 
 			</BaseInput>
@@ -44,10 +58,10 @@
 		<template #default="{ close }">
 			<div class="fm_list">
 				<div class="fm_list_item"
-					v-for="(item, index) in menuOptions"
-					:key="index"
-					:class="{active: item[prop_id] == modelValue}"
-					@click="selectOption(item)"
+						 v-for="(item, index) in menuOptions"
+						 :key="index"
+						 :class="{active: item[prop_id] == modelValue}"
+						 @click="selectOption(item)"
 				>
 					<div>{{ item[prop_name] }}</div>
 				</div>
@@ -61,6 +75,7 @@
 		modelValue: [String, Number],
 		items: Array,
 		label: String,
+		tooltip: String,
 		prop_id: {
 			type: String,
 			default: 'id',
@@ -72,10 +87,12 @@
 		size: String,
 		no_borders: Boolean,
 		optionsFilter: Boolean,
+		required: Boolean,
 		attach: String,
+		errorData: Object
 	})
 
-	let emit = defineEmits(['update:modelValue'])
+	let emit = defineEmits(['update:modelValue', 'update:errorData'])
 
 	let moFilter = ref('');
 	let menuIsOpened = ref(false);
@@ -92,21 +109,48 @@
 
 	});
 
+	let selectedItem = computed(() => {
+
+		if (props.items) return props.items.find(item => item[props.prop_id] === props.modelValue);
+
+		return null;
+
+	})
+
 	let selectedName = computed(() => {
-		if ( props.items ) {
+		/*if ( props.items ) {
 			const selItem = props.items.find(item => item[props.prop_id] == props.modelValue)
 			if (selItem) {
 				return selItem[props.prop_name]
+
 			} else {
-				return 'select'
+				return 'select';
 			}
+		}*/
+
+		if (selectedItem.value) {
+			return selectedItem.value[props.prop_name];
+
+		} else if (props.label) {
+			return props.label;
 		}
-	})
+
+		return 'Select option';
+
+	});
+
+	let mainInput = ref(null);
 
 	function selectOption(selItem) {
 		// if (props.optionsFilter) moFilter.value = '';
-		menuIsOpened.value = false;
+		closeMenu();
+
+		if (selItem[props.prop_id] === props.modelValue) {
+			return;
+		}
+
 		emit('update:modelValue', selItem[props.prop_id]);
+
 	}
 
 	//#region props.optionsFilter === true
@@ -115,7 +159,7 @@
 		menuIsOpened.value = true;
 	}
 
-	function onMenuClose () {
+	function closeMenu () {
 		if (props.modelValue) {
 			moFilter.value = selectedName.value;
 		}
@@ -158,5 +202,9 @@
 		height: 100%;
 		display: flex;
 		align-items: center;
+
+		.selected_field_item.nothing_selected {
+			color: $text-pale;
+		}
 	}
 </style>

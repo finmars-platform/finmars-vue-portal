@@ -233,41 +233,60 @@
 			action: 'init'
 		})
 
-		window.addEventListener("message", (e) => {
+		window.addEventListener("message", async (e) => {
 			if ( 'clickOnChart' == e.data.action ) {
 				let i = 0
 				for ( let prop in e.data.data ) {
 					inheritColors[prop] = COLORS[i]
 					i++
 				}
-				let rawData = Object
-					.entries(e.data.data)
-					.filter(item => item[1] != 0)
-					.sort((a,b) => b[1] - a[1])
+				let nav = await useApi('widgetsHistory.get', {
+					params: {type: 'nav', client},
+					filters: {
+						portfolio: portfolioId,
+						date_from: e.data.date.date,
+						date_to: e.data.date.date,
+					},
+					headers: {
+						Authorization: 'Token ' + route.query.token
+					}
+				})
+
+				let currentDate = nav.items.find(item => item.date == e.data.date.date)
+
+				if ( !currentDate ) return false
+
+				total.value = new Intl.NumberFormat('en-US', {
+					maximumFractionDigits: 2
+				}).format(currentDate.nav) + ' USD';
+
+				let currentCategory = currentDate.categories.find(item => item.name == e.data.category)
+				if ( !currentCategory ) return false
+				let items = currentCategory.items
+					.filter((item) => item.value != 0)
+					.sort( (a, b) => b.value - a.value)
 
 				let plusColors = []
-				let plus = rawData
-					.filter(item => item[1] >= 0)
+				let plus = items
+					.filter(item => item.value >= 0)
 					.map(item => {
-						plusColors.push( inheritColors[item[0]] )
-						return item[1]
+						plusColors.push( inheritColors[item.name] )
+						return item.value
 					})
 
 				let totalPlus = plus.length ? plus.reduce((a,b)=> a + b) : 0
 
 				let minusColors = []
-				let minus = rawData
-					.filter(item => item[1] < 0)
+				let minus = items
+					.filter(item => item.value < 0)
 					.map(item => {
-						minusColors.push( inheritColors[item[0]] )
-						return item[1]
+						minusColors.push( inheritColors[item.name] )
+						return item.value
 					})
 
 				let totalMinus = Math.abs(minus.length ? minus.reduce((a,b) => a + b) : 1)
-				total.value = new Intl.NumberFormat('en-US', {
-					maximumFractionDigits: 2
-				}).format(totalMinus + totalPlus) + ' USD';
-				data.value.labels = rawData.map(item => item[0])
+
+				data.value.labels = items.map(item => item.name)
 				data.value.datasets = [
 					{
 						data: plus,

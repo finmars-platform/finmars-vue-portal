@@ -36,7 +36,7 @@
 				v-for="invite in invites.results"
 				:invite="invite"
 				:key="invite.id"
-				@refresh="store.getMasterUsers(), refreshInvites()"
+				@refresh="refreshInvites()"
 			/>
 		</div>
 

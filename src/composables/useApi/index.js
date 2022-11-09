@@ -1,3 +1,4 @@
+import _auth from "./routes/_auth";
 import routes from "./routes";
 
 let expireTokens
@@ -35,7 +36,7 @@ export default async function useApi (
 	if ( baseApi )
 		url = url.replace('{client}', baseApi);
 
-	let baseUrl = url.startsWith('/authorizer/') ? config.public.authorizerURL : config.public.apiURL;
+	let baseUrl = _auth.hasOwnProperty(route) ? config.public.authorizerURL : config.public.apiURL;
 
 	let token = useCookie('access_token').value
 

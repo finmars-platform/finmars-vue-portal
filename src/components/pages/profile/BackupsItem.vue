@@ -1,6 +1,6 @@
 <template>
 	<FmCard :title="backup.name" controls>
-		<div class="fm_card_subtitle">File size: {{ Math.round(backup.file_size / 1024 * 100) / 100 }} MB</div>
+		<div class="fm_card_subtitle">File size: {{ Math.round(backup.file_size / 1024 / 1024 * 100) / 100 }} MB</div>
 
 		<template #controls>
 			<div class="flex sb aic">
@@ -9,7 +9,7 @@
 
 				<div v-if="showActions" class="flex-row">
 					<a target="download" class="mr-10"
-						:href="`${config.public.authorizerURL}/authorizer/master-user-backups/${backup.id}/view/`"
+						:href="`${config.public.authorizerURL}/master-user-backups/${backup.id}/view/`"
 					>
 						<FmIcon icon="cloud_download" tooltip="Export backup" primary class="" />
 					</a>
@@ -27,6 +27,7 @@
 			@cancel="isShowRestore = false"
 			@save="emit('refresh')"
 			v-model="isShowRestore"
+			:backupId="backup.id"
 		/>
 	</FmCard>
 </template>
