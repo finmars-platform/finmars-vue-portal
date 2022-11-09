@@ -21,14 +21,15 @@
 		<div class="fm_container">
 			<div class="drag_zone grid">
 				<div class="board_widget"
-					v-for="item in components"
+					v-for="(item, i) of components"
+					:key="i"
 					:style="{
 						'grid-column': 'span ' + item.colls,
 						'grid-row': 'span ' + item.rows,
 					}"
 					:data-name="item.name"
 				>
-					<component :is="item.name" style="height: 100%;" />
+					<component :is="'Widgets' + item.name" style="height: 100%;" />
 
 					<div class="settings_top" @mousedown="drag"></div>
 					<div class="rs_right" @mousedown="resize"></div>
@@ -44,16 +45,19 @@
 				</div>
 				<h3>Common</h3>
 				<div class="fm_list">
-					<div class="fm_list_item">Nav(Stats)</div>
-					<div class="fm_list_item">Barchart(History)</div>
-					<div class="fm_list_item">Balance</div>
-					<div class="fm_list_item">P&L</div>
+					<div class="fm_list_item"
+						v-for="item in componentsList"
+						:class="{active: activeComponent == item.id}"
+						@click="activeComponent = item.id"
+					>
+						{{ item.name }}
+					</div>
 				</div>
 
 				<template #controls>
 					<div class="flex sb">
 						<FmBtn type="text">Cancel</FmBtn>
-						<FmBtn>Done</FmBtn>
+						<FmBtn @click="addComponent()">Done</FmBtn>
 					</div>
 				</template>
 			</BaseModal>
@@ -64,17 +68,31 @@
 <script setup>
 
 	let componentsList = [
-		{id: 'nav', name: 'Nav(Stats)', min_colls: 12, min_rows: 1},
-		{id: 'nav', name: 'Barchart(History)', min_colls: 12, min_rows: 1},
-		{id: 'balance', name: 'Balance', min_colls: 12, min_rows: 1},
-		{id: 'pl', name: 'P&L', min_colls: 12, min_rows: 1},
+		{id: 'Nav', name: 'Nav(Stats)', min_colls: 12, min_rows: 1},
+		{id: 'Barchart', name: 'Barchart(History)', min_colls: 12, min_rows: 1},
+		{id: 'Balance', name: 'Balance', min_colls: 12, min_rows: 1},
+		{id: 'Pl', name: 'P&L', min_colls: 12, min_rows: 1},
 	]
+	let activeComponent = ref(null)
+
+	function addComponent() {
+		let component = componentsList.find((item) => item.id == activeComponent.value)
+
+		let new_component = {
+			name: component.id,
+			colls: component.min_colls,
+			rows: component.min_rows,
+		}
+
+		components.push(new_component)
+
+		isOpenAddComponents.value = false
+	}
 
 	let components = reactive([
-		{name: 'Nav', colls: 12, rows: 1},
-		{name: 'Balance', colls: 4, rows: 4},
 	])
 	let isOpenAddComponents = ref(false)
+
 	definePageMeta({
 		// middleware: 'auth',
 		bread: [
@@ -101,6 +119,7 @@
 	})
 
 	function resize(e) {
+		console.log('Resize start')
 		let elem = e.target.closest('.board_widget')
 		let grid = e.target.closest('.grid')
 		let rect = grid.getBoundingClientRect();
@@ -114,6 +133,7 @@
 		let startColls = components.find((item) => item.name == elem.dataset.name).colls
 
 		function onmousemove(e) {
+		console.log('Resize onmousemove')
 			if ( Math.abs(e.clientX - shiftX) > halfColl ) {
 				let shift = Math.abs(e.clientX - shiftX)
 				if ( e.clientX - shiftX > 0) {
@@ -186,7 +206,7 @@
 		display: grid;
 		gap: 20px;
 		grid-template-columns: repeat(12, 1fr);
-		grid-template-rows: repeat(12, 50px);
+		grid-template-rows: repeat(6, 50px);
 	}
 	.shadow_widget {
 		background: #000;

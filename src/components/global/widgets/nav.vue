@@ -16,20 +16,17 @@
 		</div>
 		<div v-else>No data</div>
 	</div>
-
 </template>
 
 <script setup>
 
-	definePageMeta({
-		layout: 'auth'
-	});
-
-	let route = useRoute()
-	let wId = route.query.wId
-	let portfolioId = route.query.portfolioId
-	let client = route.query.workspace
-	let date_to = route.query.date_to
+	let props = defineProps({
+		frameMod: Boolean,
+		client: String,
+		date: String,
+		portfolio: Number,
+		token: String,
+	})
 
 	const STATS = {
 		"nav": 'NAV',
@@ -69,18 +66,17 @@
 		"correlation": (val) => Math.round(val * 100) / 100
 	}
 
-	let res = await useApi('widgetsStats.get', {
-		params: {
-			client
-		},
+	let apiOpts = {
 		filters: {
-			portfolio: portfolioId,
-			date: date_to,
-		},
-		headers: {
-			Authorization: 'Token ' + route.query.token
+			portfolio: props.portfolio,
+			date: props.date,
 		}
-	})
+	}
+	if ( props.client ) apiOpts.params = { client }
+	if ( props.token ) apiOpts.headers = { Authorization: 'Token ' + props.token }
+
+	let res = await useApi('widgetsStats.get', apiOpts)
+
 	delete res.date
 	delete res.portfolio
 	delete res.benchmark
@@ -88,10 +84,10 @@
 	async function setActive( item ) {
 		active.value = item
 
-		send({
-			action: 'changeHistoryType',
-			type: item
-		})
+		// send({
+		// 	action: 'changeHistoryType',
+		// 	type: item
+		// })
 	}
 
 	let statsCurrent = ref(0)
@@ -105,22 +101,6 @@
 	})
 
 	let active = ref('nav')
-
-	onMounted(() => {
-		initPostMessageBus()
-	})
-
-	function initPostMessageBus() {
-		if ( window == top ) return false
-
-		send({
-			action: 'init'
-		})
-
-		window.addEventListener("message", (e) => {
-		});
-	}
-
 
 	function dragStart(e) {
 		let elem = e.target.closest('.card_wrap')
@@ -140,13 +120,6 @@
 			document.removeEventListener('mousemove', onmousemove);
 			elem.onmouseup = null;
 		};
-	}
-
-	function send( data, source = window.parent ) {
-		let dataObj = Object.assign(data, {
-			wId,
-		})
-		source.postMessage( dataObj, "*" )
 	}
 </script>
 
