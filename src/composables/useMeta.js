@@ -28,51 +28,13 @@ export const useRecursiveDeepCopy = (o, saveFunctions) => {
 	return newO;
 };
 
-export const useGenerateUniqueId = function (key) {
+export const useGenerateUniqueId = key => {
 	const currentDate = Date.now().toString();
 	return useMd5(currentDate, key);
 }
 
-/**
- *
- * @param {function} dataRequest - asynchronous method that returns array of items
- * @param {array} argumentsList - array of arguments for dataRequest method. Must contain argument with options {pageSize: 1000, page: 1}
- * @param {array} [dataList] - array where requested data will be placed
- * @returns {Promise<unknown>}
- */
-var loadDataFromAllPages = function (dataRequest, argumentsList, dataList) {
-
-	if (!Array.isArray(dataList)) dataList = [];
-
-	let optionsArg = argumentsList.find(arg => {
-		return typeof arg === 'object' && arg.hasOwnProperty('page');
-	});
-
-	if (!optionsArg) throw new Error('No options with page number were specified in argumentsList');
-
-	var loadAllPages = (resolve, reject) => {
-
-		dataRequest(...argumentsList).then(function (data) {
-
-			dataList = dataList.concat(data.results);
-
-			if (data.next) {
-
-				optionsArg.page = optionsArg.page + 1; // number of page to request
-				loadAllPages(resolve, reject);
-
-			} else {
-				resolve(dataList);
-			}
-
-		}).catch(error => reject(error));
-
-	};
-
-	return new Promise((resolve, reject) => {
-
-		loadAllPages(resolve, reject);
-
-	});
-
-};
+export const useLogResponseError = resposeData => {
+	console.error(resposeData.error);
+	useNotify({type: 'error', title: resposeData.error.error.message || resposeData.error.error.details});
+	return resposeData;
+}

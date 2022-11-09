@@ -15,12 +15,11 @@ const saveRowTypeFilters = function (store, viewerData, rowTypeFilters, isReport
 
 };
 
-export async function useSaveLayoutList (store, viewerData) {
+export async function useSaveEvRvLayout (store, viewerData) {
 
-	const entityType = viewerData.entityType;
 	const isReport = viewerData.isReport;
 
-	if (entityType !== 'reports-performance') {
+	if (viewerData.content_type !== 'reports.performancereport') {
 
 		const rowTypeFilters = viewerData.getRowTypeFilters();
 		if (rowTypeFilters) saveRowTypeFilters(store, viewerData, rowTypeFilters, isReport);
@@ -45,7 +44,7 @@ export async function useSaveLayoutList (store, viewerData) {
 
 		const resData = await useApi('listLayout.put', {params: params, body: currentLayoutConfig});
 
-		if (!resData.errorData) {
+		if (!resData.error) {
 
 			viewerData.listLayout = resData;
 			// viewerData.setActiveLayoutConfiguration({layoutConfig: currentLayoutConfig}); // TODO: check layout for changes
@@ -58,4 +57,39 @@ export async function useSaveLayoutList (store, viewerData) {
 
 }
 
+export async function useFetchEvRvLayout(layoutsStore, viewerData, queryUserCode) {
 
+	let res;
+
+	if (viewerData.layoutToOpen !== 'default') {
+
+		if (viewerData.layoutToOpen) {
+			res = await layoutsStore.getLayoutByKey(viewerData.layoutToOpen);
+
+		} else if (queryUserCode) {
+			res = await layoutsStore.getLayoutByUserCode(viewerData.content_type, queryUserCode);
+
+			if (!res) {
+
+				useNotify({
+					type: 'warning',
+					title: `Layout with user code "${queryUserCode}" is not found. Switching back to Default Layout.`
+				})
+
+			}
+
+		}
+
+	}
+
+	if (!res) {
+		res = await layoutsStore.getDefaultLayout(viewerData.content_type);
+	}
+
+	if (res && res.error) {
+		throw new Error(res.error);
+	}
+
+	return res;
+
+}

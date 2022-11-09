@@ -36,6 +36,11 @@ let props = defineProps({
 		type: [String, Boolean],
 		default: 'click',
 	},
+	disabled: Boolean,
+	closeOnClickOutside: {
+		type: Boolean,
+		default: true,
+	},
 
 	attach: String,
 
@@ -55,7 +60,7 @@ let props = defineProps({
 	},
 })
 
-let emit = defineEmits(['cancel'])
+let emit = defineEmits(['update:opened'])
 
 let isOpen = ref(false)
 let popup = ref(null) // DOM element
@@ -73,7 +78,7 @@ let isRight = props.anchor.includes('right')
 watch(
 	() => props.opened,
 	() => {
-		isOpen.value = props.opened;
+		if (!props.disabled) isOpen.value = props.opened;
 	}
 )
 
@@ -240,18 +245,26 @@ if (props.attach && props.attach.toLowerCase() === 'body') {
 watch(isOpen, isOpenHandler)
 
 function toggle() {
+
+	if (props.disabled) return;
+
 	isOpen.value = !isOpen.value;
-	if (!isOpen.value) emit('cancel');
-}
 
-function closeOnCo(event) {
-	// needed when fm_drop attached to another element (e.g. body)
-	if ((popup.value && popup.value.contains(event.target)) || activator.value.contains(event.target)) return;
-
-	isOpen.value = false;
-	emit('cancel');
+	emit('update:opened', isOpen.value);
 
 }
+
+let closeOnCo = {
+	handler: function (event) {
+		// needed when fm_drop attached to another element (e.g. body)
+		if ((popup.value && popup.value.contains(event.target)) || activator.value.contains(event.target)) return;
+
+		isOpen.value = false;
+		emit('update:opened', isOpen.value);
+
+	},
+	isActive: props.closeOnClickOutside
+};
 
 onMounted(() => {
 
