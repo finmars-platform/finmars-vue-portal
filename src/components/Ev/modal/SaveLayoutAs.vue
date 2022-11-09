@@ -90,12 +90,15 @@
 			body: newLayoutData
 		};
 
+		showWarning.value = false;
+		emit('update:modelValue', false);
+
 		const updateRes = await useApi('listLayout.put', ovOptions);
 
 		if (!updateRes.error) {
 
 			applyLayout(updateRes);
-			useNotify({type: 'success', title: updateRes.error.message});
+			useNotify({type: 'success', title: `Success. Layout ${overwriteData.name} overwritten.`});
 
 			showWarning.value = false;
 			emit('update:modelValue', false);
@@ -126,6 +129,8 @@
 		newLayout.is_default = viewerData.isRootEntityViewer; // default layout for split panel does not have is_default === true
 		if (newLayout.id) delete newLayout.id; // if layout based on another existing layout
 
+		emit('update:modelValue', false);
+
 		/*uiService.createListLayout(entityType, listLayout).then(function (data) {
 
 			applyLayout(isRootEntityViewer, evDataService, evEventService, data);
@@ -148,7 +153,6 @@
 
 			useNotify({type: 'success', title: `Layout ${newLayout.name} saved.`});
 			applyLayout(res);
-			emit('update:modelValue', false);
 
 		}
 

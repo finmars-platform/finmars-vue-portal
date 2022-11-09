@@ -7,13 +7,18 @@
 
 											@createNewLayout="createNewLayout"
 											@save="saveLayout"
-											@saveAs="saveAs"
+											@saveAs="openSaveAsModal = true"
 											@setAsDefault="setAsDefault"
 											@rename="renameLayout"
-											@delete="deleteLayout" />
+											@delete="deleteLayout"
+											@export="openLayoutExport" />
 
 	<EvModalSaveLayoutAs v-model="openSaveAsModal"
 											 @layoutSaved="getLayouts" />
+
+	<ModalExportListLayout :isReport="viewerData.isReport"
+												 :layout="layoutToExport"
+												 v-model="openExport" />
 </template>
 
 <script setup>
@@ -34,10 +39,10 @@
 	let layoutsList = ref([]);
 
 	let openSaveAsModal = ref(false);
+	let openExport = ref(false);
+	let layoutToExport = ref(null);
 
-	let invitesList = ref([]);
-
-	async function getLayouts (arg) {
+	async function getLayouts () {
 
 		loadingLayoutsList.value = true;
 
@@ -62,6 +67,8 @@
 		layoutsList.value = res.results;
 		loadingLayoutsList.value = false;
 
+		// openSaveAsModal.value = false;
+
 	}
 
 	function createNewLayout() {
@@ -75,10 +82,6 @@
 
 	function saveLayout() {
 		useSaveEvRvLayout(store, viewerData);
-	}
-
-	function saveAs() {
-		openSaveAsModal.value = true;
 	}
 
 	async function setAsDefault(layoutLight) {
@@ -128,12 +131,9 @@
 
 	}
 
-	async function getInvites () {
-
-		const res = await useApi('configSharingMyInvitesList.get', {filters: {status: '0'}});
-
-		invitesList.value = res.results;
-
+	function openLayoutExport() {
+		layoutToExport.value = viewerData.getLayoutCurrentConfiguration();
+		openExport.value = true;
 	}
 
 	async function renameLayout(namesData) {
@@ -152,6 +152,8 @@
 			const renamedLayout = layoutsList.value.find(lLayout => lLayout.id === layout.id);
 			renamedLayout.name = namesData.name;
 			renamedLayout.user_code = namesData.user_code;
+
+			useNotify({type: 'success', title: 'Layout renamed'})
 
 		}
 

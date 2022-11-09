@@ -1,84 +1,80 @@
 export default {
 	masterUser: {
-		get: "/authorizer/master-user/",
-		put: "/authorizer/master-user/{id}/",
+		get: "/master-user/",
+		put: "/master-user/{id}/",
 	},
 	ping: {
-		get: "/authorizer/ping/"
+		get: "/ping/"
 	},
 	tokenRefresh: {
-		post: 'authorizer/token-refresh/'
+		post: '/token-refresh/'
 	},
 	tokenInfo: {
-		get: 'authorizer/auth-token-manager/'
+		get: '/auth-token-manager/'
 	},
 	login: {
-		post: '/authorizer/token-auth/'
+		post: '/token-auth/'
 	},
 	masterBackups: {
-		get: '/authorizer/master-user-backups/',
-		'delete': '/authorizer/master-user-backups/{id}/',
-		put: '/authorizer/master-user-backups/{id}/restore-from-backup/'
+		get: '/master-user-backups/',
+		'delete': '/master-user-backups/{id}/',
+		put: '/master-user-backups/{id}/restore-from-backup/'
 	},
 	masterRollback: {
-		put: '/authorizer/master-user/{id}/rollback-from-backup/'
+		put: '/master-user/{id}/rollback-from-backup/'
 	},
 	masterRedeploy: {
-		get: '/authorizer/master-user-redeploy/?base_api_url={baseApi}'
+		get: '/master-user-redeploy/?base_api_url={baseApi}'
 	},
 	masterStart: {
-		get: '/authorizer/master-user-start/?base_api_url={baseApi}'
+		get: '/master-user-start/?base_api_url={baseApi}'
 	},
 	masterStop: {
-		get: '/authorizer/master-user-stop/?base_api_url={baseApi}'
+		get: '/master-user-stop/?base_api_url={baseApi}'
 	},
 	masterExport: {
-		get: '/authorizer/master-user-export/{id}/'
+		get: '/master-user-export/{id}/'
 	},
 	masterLeave: {
-		get: '/authorizer/master-user-leave/{id}/'
+		get: '/master-user-leave/{id}/'
 	},
 	masterDelete: {
-		delete: '/authorizer/master-user-delete/{id}/'
+		delete: '/master-user-delete/{id}/'
 	},
 	masterSet: {
-		patch: '/authorizer/master-user/{id}/set-current/'
+		patch: '/master-user/{id}/set-current/'
 	},
 	masterCreate: {
-		post: '/authorizer/master-user-create/'
+		post: '/master-user-create/'
 	},
 	masterCreateFrom: {
-		post: '/authorizer/master-user-create-from-backup/'
+		post: '/master-user-create-from-backup/'
 	},
 	me: {
-		get: "/authorizer/user/0/",
-		put: "/authorizer/user/0/",
+		get: "/user/0/",
+		put: "/user/0/",
 	},
 	meSetPassword: {
-		put: '/authorizer/user/0/set-password/'
+		put: '/user/0/set-password/'
 	},
 	meTwoFactor: {
-		get: '/authorizer/two-factor/',
-		patch: '/authorizer/two-factor/{id}/',
-		delete: '/authorizer/two-factor/{id}/',
+		get: '/two-factor/',
+		patch: '/two-factor/{id}/',
+		delete: '/two-factor/{id}/',
 	},
 	generateQR: {
-		put: '/authorizer/two-factor/generate-code/'
+		put: '/two-factor/generate-code/'
 	},
 	validateQR: {
-		put: '/authorizer/two-factor/validate-code/'
+		put: '/two-factor/validate-code/'
 	},
 	invitesToDB: {
-		get: '/authorizer/invite-from-master-user/?status=0',
-		put: '/authorizer/invite-from-master-user/{id}/'
+		get: '/invite-from-master-user/?status=0',
+		put: '/invite-from-master-user/{id}/'
 	},
 	memberInvites: {
-		get: '/authorizer/invite-to-user/',
-		post: '/authorizer/create-invite-to-user/',
-	},
-	memberInvites: {
-		get: '/authorizer/invite-to-user/',
-		post: '/authorizer/create-invite-to-user/',
+		get: '/invite-to-user/',
+		post: '/create-invite-to-user/',
 	},
 
 };

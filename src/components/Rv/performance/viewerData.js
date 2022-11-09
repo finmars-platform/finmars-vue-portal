@@ -59,6 +59,7 @@ export default () => {
 			isReport: true,
 			isRootEntityViewer: true,
 			newLayout: false,
+			viewerContext: 'entity_viewer',
 
 			/*setListLayout(listLayout) {
 				this.state.listLayout = listLayout;

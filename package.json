@@ -4,7 +4,7 @@
 		"build": "nuxt build ",
 		"dev": "nuxt --rootDir=./v/ dev",
 		"dev-proxy": "API_URL=https://dev.finmars.com APP_URL=http://localhost:3000/v OLD_APP_URL='https://dev.finmars.com/a/#!/' WS_URL='wss://dev.finmars.com/ws/' NUXT_HOST=0.0.0.0 nuxt --roDir=./v/ dev",
-		"dev-local": "API_URL=http://0.0.0.0:8000 AUTHORIZER_URL=http://0.0.0.0:8083 APP_URL=http://localhost:3000/v OLD_APP_URL='http://0.0.0.0:8080/#!/' WS_URL='ws://0.0.0.0:6969' NUXT_HOST=0.0.0.0 nuxt --roDir=./v/ dev",
+		"dev-local": "API_URL=http://0.0.0.0:8000 AUTHORIZER_URL=http://0.0.0.0:8083/authorizer APP_URL=http://localhost:3000/v OLD_APP_URL='http://0.0.0.0:8080/#!/' WS_URL='ws://0.0.0.0:6969' NUXT_HOST=0.0.0.0 nuxt --roDir=./v/ dev",
 		"start": "node .output/server/index.mjs",
 		"generate": "nuxt generate",
 		"preview": "nuxt preview"
