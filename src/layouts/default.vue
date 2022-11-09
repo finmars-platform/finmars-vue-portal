@@ -41,12 +41,14 @@
 	})
 
 	watchEffect( async ( onCleanup ) => {
+		console.log("testing46 watcher with getMe");
 		if ( store.current.base_api_url ) {
 
 			onCleanup(() => {})
 
 			await Promise.all([store.getMe(), store.fetchEcosystemDefaults()]);
-
+			console.log("testing46 watcher with getMe member", store.member);
+			if (store.member) console.log("testing46 watcher with getMe member immutable", JSON.parse(JSON.stringify(store.member)));
 			store.ws.send({
 				action: "update_user_state",
 				data: { member: store.member },
