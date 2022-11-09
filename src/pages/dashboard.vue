@@ -19,7 +19,31 @@
 		<FmTabs v-model="activeTab" :tabs="tabs" />
 
 		<div class="fm_container">
+			<div class="shadow_grid">
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+				</div>
 			<div class="drag_zone grid">
+
 				<div class="board_widget"
 					v-for="(item, i) of components"
 					:key="i"
@@ -207,6 +231,16 @@
 		gap: 20px;
 		grid-template-columns: repeat(12, 1fr);
 		grid-template-rows: repeat(6, 50px);
+	}
+	.shadow_grid {
+		display: grid;
+		gap: 20px;
+		grid-template-columns: repeat(12, 1fr);
+		grid-template-rows: repeat(6, 50px);
+
+		div {
+			border: 1px solid #000;
+		}
 	}
 	.shadow_widget {
 		background: #000;
