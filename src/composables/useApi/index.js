@@ -23,7 +23,7 @@ export default async function useApi (
 	// 	}
 	// }
 	const config = useRuntimeConfig();
-	console.log("testing runtime config", config.public.authorizerURL, config.public.apiURL);
+
 	const [route, method] = route_opt.split(".");
 	let url = routes[route][method];
 
