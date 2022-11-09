@@ -1,7 +1,9 @@
 <template>
 
 	<FmMenu attach="body"
-					:disabled="loadingLayout">
+					v-model:opened="menuIsOpened"
+					:disabled="loadingLayout"
+					testProp="layoutsManager">
 
 		<template #btn="{ isOpen }">
 			<FmBtn type="text"
@@ -53,15 +55,17 @@
 
 						</div>
 
-<!--						<div v-if="autosaveLayout" class="menu_item">
+						<div v-if="autosaveLayout" class="menu_item">
 							<span class="material-icons default_icons"
 										:class="{'default_layout': isLayoutDefault(autosaveLayout)}"
-										@click="setAsDefault(autosaveLayout)">home</span>
+										@click.prevent.stop="setAsDefault(autosaveLayout)">home</span>
 
-								<a href="{{getLinkToLayout(autosaveLayout.user_code)}}"
-									 @click.prevent="onLayoutLinkClick(autosaveLayout)"
-									 class="a_item text-bold">{{ autosaveLayout.name }}</a>
-						</div>-->
+							<NuxtLink :to="$router.resolve({name: $route.name, query: {layout: autosaveLayout.user_code}})"
+												class="a_item"
+							>
+								<div @click.prevent.stop="onLayoutLinkClick(autosaveLayout.id, close)">{{ autosaveLayout.name }}</div>
+							</NuxtLink>
+						</div>
 					</div>
 
 					<div v-if="loadingLayoutsList" class="flex-row fc-center">
@@ -76,7 +80,7 @@
 						<FmBtn type="text"
 									 class="menu_item"
 									 :disabled="viewerData.newLayout"
-									 @-click="emitAndClose('save')">
+									 @click="emit('save')">
 							<span class="material-icons">save</span>
 							Save
 						</FmBtn>
@@ -92,16 +96,14 @@
 							Save as
 						</FmBtn>
 
-						<!--					<div class="menu_item" @click="emit('openLayoutsList')">
-												<span class="material-icons" style="visibility: hidden;">open_in_new</span>
-												<span>Open</span>
-											</div>-->
-						<FmBtn type="text"
+<!--						Will be develop in context of FN-908
+
+<FmBtn type="text"
 									 class="menu_item"
 									 @click="emit('openLayoutsList'), close()">
 							<span class="material-icons"></span>
 							Open
-						</FmBtn>
+						</FmBtn>-->
 
 					</slot>
 				</div>
@@ -133,16 +135,12 @@
 
 				<div class="divider_bottom">
 
-					<!--				<div class="menu_item" @click="emit('export')">
-										<span class="material-icons">exit_to_app</span>
-										<span>Export</span>
-									</div>-->
-<!--					<FmBtn type="text"
+					<FmBtn type="text"
 								 class="menu_item"
 								 @click="emit('export'), close()">
 						<span class="material-icons">exit_to_app</span>
 						Export
-					</FmBtn>-->
+					</FmBtn>
 
 					<!--		TODO make package manager component
 					<div class="menu_item" package-manager-button data-ng-click="parentPopup.cancel()"
@@ -161,11 +159,20 @@
 						<span class="material-icons">email</span>
 						<span>Invites ({{invites.length}})</span>
 					</div>-->
+<!--
+
+<FmBtn type="text"
+								 class="menu_item"
+								 :disabled="!invitesList.length"
+								 @click="invitesIsOpened = true, close()">
+						<span class="material-icons">email</span>
+						Invites ({{ invitesList.length }})
+					</FmBtn>-->
 
 					<FmBtn type="text"
 								 class="menu_item"
 								 :disabled="viewerData.newLayout"
-								 @click="renameModalIsOpened = true, close()">
+								 @click="renameIsOpened = true, close()">
 						<span class="material-icons">create</span>
 						Rename
 					</FmBtn>
@@ -183,15 +190,28 @@
 								<span>Share</span>
 							</div>
 
-							<md-button class="menu_item"
-												 data-ng-class="{'default_layout': layout.is_default}"
-												 data-ng-click="setAsDefault(layout)"
-												 data-ng-disabled="layoutIsDefault(layout)">
+							-->
 
-								<span class="material-icons">home</span>
-								<span>Make default</span>
+<!--					Maybe will be used again
 
-							</md-button>-->
+<FmBtn v-if="availableForUpdating"
+								 type="text"
+								 class="menu_item"
+								 @click="">
+						<span class="material-icons">share</span>
+						Update
+					</FmBtn>-->
+
+<!--					Maybe will be used again
+
+<FmBtn v-if="availableForSharing"
+								 type="text"
+								 class="menu_item"
+								 @click="sharingIsOpened = true, close()">
+						<span class="material-icons">share</span>
+						Share
+					</FmBtn>-->
+
 					<FmBtn type="text"
 								 class="menu_item"
 								 :disabled="viewerData.newLayout || viewerData.listLayout.is_default"
@@ -223,9 +243,10 @@
 	<ModalNameUserCode title="Rename layout"
 										 :name="viewerData.listLayout.name"
 										 :user_code="viewerData.listLayout.user_code"
-										 v-model="renameModalIsOpened"
+										 :occupiedUserCodes="occupiedUserCodes"
+										 v-model="renameIsOpened"
 
-										 @save="newNamesData => emit('rename', newNamesData)" />
+										 @save="renameLayout" />
 
 	<ModalInfo title="Warning"
 						 description="Are you sure want to delete this layout??"
@@ -234,10 +255,14 @@
 			<div class="flex-row fc-space-between">
 				<FmBtn type="basic" @click="cancel">CANCEL</FmBtn>
 
-				<FmBtn type="basic" @click="emit('delete'), cancel">OVERWRITE</FmBtn>
+				<FmBtn type="basic" @click="emit('delete'), cancel">OK</FmBtn>
 			</div>
 		</template>
 	</ModalInfo>
+
+	<ModalLayoutShare :layout="viewerData.listLayout"
+										:layoutType="viewerData.isReport ? 'ui.reportlayout' : 'ui.listlayout'"
+										v-model="sharingIsOpened" />
 
 </template>
 
@@ -270,9 +295,37 @@
 		'delete',
 	]);
 
+	let invitesList = ref([]);
+
 	let menuIsOpened = ref(false);
-	let renameModalIsOpened = ref(false);
+	let renameIsOpened = ref(false);
 	let showDeletionWarning = ref(false);
+	let sharingIsOpened = ref(false);
+
+	/* Maybe will be used again
+
+	let invitesIsOpened = ref(false);
+
+	let availableForUpdating = computed(() => viewerData.listLayout.sourced_from_global_layout && !viewerData.listLayout.origin_for_global_layout);
+	let availableForSharing = computed(() => {
+
+		const notAnAutosave = !props.autosaveLayout || viewerData.listLayout.id !== props.autosaveLayout.id
+
+		return notAnAutosave &&
+			((!viewerData.listLayout.sourced_from_global_layout && !viewerData.listLayout.origin_for_global_layout) || (viewerData.listLayout.sourced_from_global_layout && viewerData.listLayout.origin_for_global_layout));
+
+	});
+	*/
+
+	let occupiedUserCodes = computed(() => {
+
+		return props.layouts.filter(lLayout => {
+
+			return lLayout.user_code !== viewerData.listLayout.user_code
+
+		}).map(lLayout => lLayout.user_code);
+
+	});
 
 	let isLayoutDefault = layout => layout.is_default;
 
@@ -301,18 +354,20 @@
 
 	}
 
-	function emitAndClose(event, argument) {
+	function renameLayout(newNamesData) {
+		emit('rename', newNamesData);
+		renameIsOpened.value = false;
+	}
 
-		if (argument !== undefined) {
-			emit(event, argument);
+	async function fetchInvites () {
 
-		} else {
-			emit(event);
-		}
+		const res = await useApi('configSharingMyInvitesList.get', {filters: {status: '0'}});
 
-		menuIsOpened.value = false;
+		if (!res.error) invitesList.value = res.results;
 
 	}
+
+	fetchInvites();
 
 </script>
 

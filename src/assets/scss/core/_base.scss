@@ -28,6 +28,10 @@ input, textarea {
 	height: 50px;
 }
 
+textarea {
+	border: 1px solid;
+}
+
 ::-webkit-scrollbar-thumb {
 	background: $primary-lighten;
 	border: 3px solid #fff;

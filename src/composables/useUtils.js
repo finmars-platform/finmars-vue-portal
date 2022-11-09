@@ -1,4 +1,4 @@
-export function fmDebounce(func, wait, immediate) {
+export function useDebounce(func, wait, immediate) {
 
 	var timeout;
 	return function () {

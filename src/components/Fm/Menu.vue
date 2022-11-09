@@ -60,7 +60,7 @@ let props = defineProps({
 	},
 })
 
-let emit = defineEmits(['cancel'])
+let emit = defineEmits(['update:opened'])
 
 let isOpen = ref(false)
 let popup = ref(null) // DOM element
@@ -245,9 +245,13 @@ if (props.attach && props.attach.toLowerCase() === 'body') {
 watch(isOpen, isOpenHandler)
 
 function toggle() {
+
 	if (props.disabled) return;
+
 	isOpen.value = !isOpen.value;
-	if (!isOpen.value) emit('cancel');
+
+	emit('update:opened', isOpen.value);
+
 }
 
 let closeOnCo = {
@@ -256,7 +260,7 @@ let closeOnCo = {
 		if ((popup.value && popup.value.contains(event.target)) || activator.value.contains(event.target)) return;
 
 		isOpen.value = false;
-		emit('cancel');
+		emit('update:opened', isOpen.value);
 
 	},
 	isActive: props.closeOnClickOutside
