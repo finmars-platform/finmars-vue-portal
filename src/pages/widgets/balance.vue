@@ -244,15 +244,15 @@
 					params: {type: 'nav', client},
 					filters: {
 						portfolio: portfolioId,
-						date_from: e.data.date.date,
-						date_to: e.data.date.date,
+						date_from: e.data.date?.date,
+						date_to: e.data.date?.date,
 					},
 					headers: {
 						Authorization: 'Token ' + route.query.token
 					}
 				})
 
-				let currentDate = nav.items.find(item => item.date == e.data.date.date)
+				let currentDate = nav.items.find(item => item.date == e.data.date?.date)
 
 				if ( !currentDate ) return false
 
