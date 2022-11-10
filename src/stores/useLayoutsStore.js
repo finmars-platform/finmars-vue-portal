@@ -50,9 +50,11 @@ export default defineStore({
 		return {
 			listLayoutsData: {},
 			defaultListLayoutsData: {}, // do not contain full layouts
+			listLayoutsLightData: {}, // used by LayoutsManager
 
 			layoutToOpen: null, // id of layout
 			dashboardLayouts: [],
+
 		};
 	},
 	actions: {
@@ -145,6 +147,7 @@ export default defineStore({
 			return this.fetchAndCacheLayout('listLayout.get', {params: {id: layoutData.id}});
 
 		},
+
 		async getLayoutByKey(id) {
 
 			let layout = this.listLayoutsData[id];
@@ -164,6 +167,7 @@ export default defineStore({
 			return this.fetchAndCacheLayout('listLayout.get', {params: {id: id}});
 
 		},
+
 		async getDefaultLayout(contentType) {
 
 			const defLayoutData = this.defaultListLayoutsData[contentType];
@@ -229,6 +233,27 @@ export default defineStore({
 
 		},
 
+		removeLayoutLight(layoutId) {
+
+			const contentTypesList = Object.keys(this.listLayoutsLightData);
+
+			while (contentTypesList.length) {
+
+				const ct = contentTypesList.pop();
+
+				const llIndex = this.listLayoutsLightData[ct].findIndex(lLayout => lLayout.id === layoutId);
+
+				if (llIndex > -1) {
+
+					this.listLayoutsLightData[ct].splice(llIndex, 1);
+					break;
+
+				}
+
+			}
+
+		},
+
 		async deleteLayout(layoutId) {
 
 			const res = useApi('listLayout.delete', {params: {id: layoutId}});
@@ -240,11 +265,34 @@ export default defineStore({
 
 				// TODO: delete layout from localStorage
 				delete this.listLayoutsData[layoutId];
+				this.removeLayoutLight(layoutId);
+
 				return res;
 
 			}
 
 		},
+
+		async getListLayoutsLight(contentType) {
+
+			const filters = {
+				pageSize: 1000,
+				content_type: contentType,
+			}
+
+			const res = await useApi('listLayoutListLight.get', {filters});
+
+			if (res.error) {
+				return processError(res);
+
+			} else {
+
+				this.listLayoutsLightData[contentType] = res.results;
+				return this.listLayoutsLightData[contentType];
+
+			}
+
+		}
 
 	},
 	getters: {},

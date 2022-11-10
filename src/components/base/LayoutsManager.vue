@@ -270,7 +270,6 @@
 
 	const router = useRouter();
 	const route = useRoute();
-	const layoutsStore = useLayoutsStore();
 
 	let props = defineProps({
 		layouts: Array,

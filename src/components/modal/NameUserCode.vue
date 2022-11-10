@@ -30,7 +30,10 @@
 		modelValue: Boolean,
 		name: String,
 		user_code: String,
-		occupiedUserCodes: Array,
+		occupiedUserCodes: {
+			type: Array,
+			default: [],
+		},
 	});
 
 	let emit = defineEmits(['save', 'update:modelValue']);
@@ -46,19 +49,22 @@
 
 	function onUserCodeChange(newVal) {
 
-		if (props.occupiedUserCodes && props.occupiedUserCodes.length) {
+		if (!newVal) {
 
-			if (!nucErrorData.value && props.occupiedUserCodes.includes(newVal)) {
-
-				nucErrorData.value = {
-					message: 'User code occupied enter another one.'
-				}
-
-			} else if (nucErrorData.value && !props.occupiedUserCodes.includes(newVal)) {
-
-				nucErrorData.value = null;
-
+			nucErrorData.value = {
+				message: 'User code should not be empty'
 			}
+
+		}
+		else if (!nucErrorData.value && props.occupiedUserCodes.includes(newVal)) {
+
+			nucErrorData.value = {
+				message: 'User code is occupied enter another one.'
+			}
+
+		} else if (nucErrorData.value && !props.occupiedUserCodes.includes(newVal)) {
+
+			nucErrorData.value = null;
 
 		}
 
@@ -67,7 +73,17 @@
 	}
 
 	function save() {
-		emit('save', {name: newName.value, user_code: newUserCode.value});
+
+		if (!newUserCode.value) {
+
+			nucErrorData.value = {
+				message: 'User code should not be empty'
+			}
+
+		} else {
+			emit('save', {name: newName.value, user_code: newUserCode.value});
+		}
+
 	}
 
 	function cancelModal(cancelFn) {
