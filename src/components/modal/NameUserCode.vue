@@ -1,6 +1,6 @@
 <template>
-	<BaseModal v-model="modelValue"
-						 @update:modelValue="emit('update:modelValue')">
+	<BaseModal :modelValue="modelValue"
+						 @update:modelValue="newVal => emit('update:modelValue', newVal)">
 
 		<div>
 			<FmInputText label="Name" v-model="newName" />
