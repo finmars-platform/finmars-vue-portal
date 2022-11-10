@@ -130,6 +130,9 @@
 				</div>
 			</FmExpansionPanel>
 		</div>
+
+		<EvModalSaveLayoutAs v-model="openSaveAsModal"
+												 @layoutSaved="layoutsStore.getListLayoutsLight(viewerData.content_type)" />
 	</div>
 </template>
 
@@ -145,6 +148,7 @@ const route = useRoute();
 const viewerData = getPerformanceViewerData();
 provide('viewerData', viewerData);
 
+let openSaveAsModal = ref(false);
 let showSettingsDialog = ref(false);
 
 let isOpenAddBundle = ref(false)
@@ -314,7 +318,7 @@ async function saveLayout () {
 
 	if (viewerData.newLayout) {
 
-		const layoutToSave = viewerData.getLayoutCurrentConfiguration();
+		/*const layoutToSave = viewerData.getLayoutCurrentConfiguration();
 		layoutToSave.name = "default";
 		layoutToSave.user_code = "default";
 		layoutToSave.is_default = true;
@@ -325,7 +329,9 @@ async function saveLayout () {
 			viewerData.newLayout = false;
 			viewerData.listLayout = res;
 			useNotify({type: 'success', title: 'Success. Page was saved.'})
-		}
+		}*/
+		openSaveAsModal.value = true;
+
 
 	} else {
 		useSaveEvRvLayout(store, viewerData);

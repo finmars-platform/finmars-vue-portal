@@ -1,6 +1,6 @@
 <template>
 
-	<FmMenu :opened="menuIsOpened"
+	<FmMenu v-model:opened="menuIsOpened"
 					:openOn="false"
 					attach="body"
 					class="width-100"
