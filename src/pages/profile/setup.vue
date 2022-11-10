@@ -28,11 +28,12 @@
 					<FmCard class="config_item"
 						v-for="item in configs"
 						:title="item.name"
+						:class="{active: config == item.data}"
 						@click="config = item.data"
 					>
 						<div class="fm_card_text">{{ item.description }}</div>
 
-						<div class="version flex sb">
+						<div class="version flex sb" v-if="item.data != 'blank'">
 							<div>Updated: {{item.data.head.date}}</div>
 							<div>Version: {{ item.data.head.version.split(' ')[0] }}</div>
 						</div>
@@ -89,6 +90,7 @@
 	]
 
 	let res = await useApi("configurationList.get")
+	res.results.unshift({name: 'Blank', description: 'Empty Ecosystem. Configure all forms, layouts and tables by myself', data: 'blank'})
 	let configs = ref(res.results)
 
 	let config = ref(null)
@@ -105,6 +107,11 @@
 	}
 
 	async function finish() {
+		if ( config.value == 'blank') {
+			navigateTo('/home')
+			return false
+		}
+
 		let importedData = {
 			data: config.value,
 			mode: 'overwrite'
@@ -139,12 +146,17 @@
 
 <style lang="scss" scoped>
 	.config_wrap {
-		display: inline-block;
 		text-align: left;
+		max-width: 750px;
 	}
 	.config_item {
 		height: 186px;
 		width: 360px;
+		margin-bottom: 30px;
+
+		&.active {
+			background: $primary-lighten-2;
+		}
 	}
 	.version {
 		position: absolute;
@@ -155,6 +167,7 @@
 		color: $text-lighten;
 	}
 	.setup_wrap {
+		padding-bottom: 30px;
 
 		h1 {
 			font-size: 24px;
@@ -177,7 +190,6 @@
 		}
 	}
 	.btns {
-		margin-top: 35px;
 	}
 	.step_1 {
 		width: 330px;
