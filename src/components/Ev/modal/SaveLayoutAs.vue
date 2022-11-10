@@ -1,7 +1,7 @@
 <template>
 	<ModalNameUserCode title="New layout"
 										 :name="viewerData.listLayout.name"
-										 v-model="modelValue"
+										 :modelValue="modelValue"
 
 										 @update:modelValue="newVal => emit('update:modelValue', newVal)"
 										 @save="saveLayout" />
