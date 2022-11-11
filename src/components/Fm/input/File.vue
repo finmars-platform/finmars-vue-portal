@@ -2,6 +2,7 @@
 	<BaseInput class="file_input"
 		:label="label"
 		modelValue=" "
+		@click="fileInput.click()"
 	>
 		<template #button>
 			<FmIcon
@@ -10,7 +11,7 @@
 			/>
 		</template>
 
-		<input type="file" @change="addFile">
+		<input ref="fileInput" type="file" @change="addFile">
 		<div class="selected">
 			{{ fileName }}
 		</div>
@@ -25,6 +26,8 @@
 	})
 
 	let fileName = ref('...')
+
+	let fileInput = ref(null);
 
 	function addFile( e ) {
 		let file = e.target.files[0]
