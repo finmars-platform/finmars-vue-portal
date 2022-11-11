@@ -1,5 +1,5 @@
 <template>
-	<div class="wrap">
+	<div v-if="notLoadingMember" class="wrap">
 		<LazyTheSidebar v-if="!$route.meta.isHideSidebar" />
 
 		<div class="main">
@@ -19,6 +19,8 @@
 	const config = useRuntimeConfig()
 
 	await store.init()
+
+	let notLoadingMember = ref(true);
 
 	let ws = new Stream({
 		url: config.public.wsURL,
@@ -46,9 +48,12 @@
 
 			onCleanup(() => {})
 
+			notLoadingMember.value = false;
+
 			await Promise.all([store.getMe(), store.fetchEcosystemDefaults()]);
-			console.log("testing46 watcher with getMe member", store.member);
-			if (store.member) console.log("testing46 watcher with getMe member immutable", JSON.parse(JSON.stringify(store.member)));
+
+			notLoadingMember.value = true;
+			console.log("testing46 watcher with getMe notLoadingMember", notLoadingMember.value);
 			store.ws.send({
 				action: "update_user_state",
 				data: { member: store.member },
