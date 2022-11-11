@@ -147,7 +147,7 @@
 <style lang="scss" scoped>
 	.config_wrap {
 		text-align: left;
-		max-width: 750px;
+		width: 750px;
 	}
 	.config_item {
 		height: 186px;
