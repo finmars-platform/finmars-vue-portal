@@ -50,7 +50,9 @@ async function changeStatus( status) {
 		if ( res.success ) {
 			await store.getMasterUsers()
 			emit('refresh')
-			navigateTo('/profile/setup')
+
+			if ( status != 2 )
+				navigateTo('/profile/setup')
 		}
 	}
 }
