@@ -1236,6 +1236,7 @@
 						"contextmenu",
 						settingsSideMenuOnClickOutside
 					)
+
 				} else {
 					/* $('.side-menu-settings-menu').addClass('settings-menu-opened');
 					$('.sidenav-settings-toggle-btn').addClass('settings-menu-opened'); */
@@ -1245,13 +1246,18 @@
 
 					setTimeout(function () {
 						// $('.side-menu-settings-menu').addClass('overflow-visible');
-						settingsMenu.classList.add("overflow-visible")
+						if (sideMenuSettingsMenuOpened) {
 
-						window.addEventListener("click", settingsSideMenuOnClickOutside)
-						window.addEventListener(
-							"contextmenu",
-							settingsSideMenuOnClickOutside
-						)
+							settingsMenu.classList.add("overflow-visible")
+
+							window.addEventListener("click", settingsSideMenuOnClickOutside)
+							window.addEventListener(
+								"contextmenu",
+								settingsSideMenuOnClickOutside
+							)
+
+						}
+
 					}, 250)
 				}
 
