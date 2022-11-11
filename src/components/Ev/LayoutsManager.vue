@@ -35,18 +35,28 @@
 
 	let loadingLayoutsList = ref(false);
 
-	let autosaveLayout = ref(null);
-	let layoutsList = ref([]);
+	// let autosaveLayout = ref(null);
+	// let layoutsList = ref([]);
 
 	let openSaveAsModal = ref(false);
 	let openExport = ref(false);
 	let layoutToExport = ref(null);
 
+	let lLayoutsLight = computed(() => layoutsStore.listLayoutsLightData[viewerData.content_type] || []);
+
+	let layoutsList = computed(() => {
+		return lLayoutsLight.value.filter(lLayout => !lLayout.is_systemic);
+	});
+
+	const alUserCode = getAutosaveLayoutUserCode(viewerData.content_type);
+
+	let autosaveLayout = computed(() => {
+		return lLayoutsLight.value.find(lLayout => lLayout.user_code === alUserCode)
+	});
+
 	async function getLayouts () {
 
-		loadingLayoutsList.value = true;
-
-		const filters = {
+		/*const filters = {
 			pageSize: 1000,
 			content_type: viewerData.content_type,
 		}
@@ -64,8 +74,9 @@
 			autosaveLayout.value = res.results.splice(autosaveLayoutIndex, 1)[0];
 		}
 
-		layoutsList.value = res.results;
-		loadingLayoutsList.value = false;
+		layoutsList.value = res.results; */
+		const res = await layoutsStore.getListLayoutsLight(viewerData.content_type);
+		if (res.error) loadingLayoutsList.value = true;
 
 		// openSaveAsModal.value = false;
 
@@ -108,7 +119,8 @@
 
 		if (!res.error) {
 
-			let prevDefLayout = layoutsList.value.find(dLayout => dLayout.is_default);
+			// let prevDefLayout = layoutsList.value.find(dLayout => dLayout.is_default);
+			let prevDefLayout = lLayoutsLight.value.find(dLayout => dLayout.is_default);
 
 			if (prevDefLayout) {
 
@@ -118,13 +130,16 @@
 
 			}
 
-			let dLayout = layoutsList.value.find(dLayout => dLayout.id === res.id);
+			let dLayout = lLayoutsLight.value.find(dLayout => dLayout.id === res.id);
 			dLayout.is_default = true;
+			dLayout.modified = res.modified;
 
 			useNotify({
 				type: 'success',
 				title: 'Layout made default'
 			});
+
+			// getLayouts();
 
 		}
 
@@ -161,7 +176,7 @@
 
 	async function deleteLayout() {
 
-		const layoutIsDefault = viewerData.listLayout.is_default;
+		// const layoutIsDefault = viewerData.listLayout.is_default;
 		const layoutId = viewerData.listLayout.id;
 
 		const res = await layoutsStore.deleteLayout(layoutId);
@@ -187,8 +202,7 @@
 		}*/
 
 		viewerData.layoutToOpen = 'default';
-
-		getLayouts();
+		// getLayouts();
 
 	}
 
@@ -201,7 +215,16 @@
 	}
 
 	async function init() {
-		await getLayouts();
+
+		loadingLayoutsList.value = true;
+
+		const res = layoutsStore.getListLayoutsLight(viewerData.content_type);
+
+		if (!res.error) {
+			loadingLayoutsList.value = false;
+		}
+
+		// await getLayouts();
 	}
 
 	init();

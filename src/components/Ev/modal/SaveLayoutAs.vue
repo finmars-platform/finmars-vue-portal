@@ -1,7 +1,7 @@
 <template>
 	<ModalNameUserCode title="New layout"
 										 :name="viewerData.listLayout.name"
-										 v-model="modelValue"
+										 :modelValue="modelValue"
 
 										 @update:modelValue="newVal => emit('update:modelValue', newVal)"
 										 @save="saveLayout" />
@@ -29,7 +29,7 @@
 
 	let props = defineProps({
 		modelValue: Boolean,
-		occupiedUserCodes: Array,
+		// occupiedUserCodes: Array,
 	});
 
 	let emit = defineEmits(['update:modelValue', 'layoutSaved']);
@@ -37,10 +37,14 @@
 	let showWarning = ref(false);
 
 	// let layoutData = ref({});
-	let newName = ref('');
-	let newUserCode = ref('');
+	/*let newName = ref('');
+	let newUserCode = ref('');*/
 
-	let userCodesSet = ref([]);
+	let userCodesSet = computed(() => {
+		return new Set(
+			layoutsStore.listLayoutsLightData[viewerData.content_type].map(lLayout => lLayout.user_code) || []
+		)
+	});
 
 	let overwriteData;
 
@@ -76,18 +80,18 @@
 			return;
 		}
 
-		const layoutToOverwriteId = res.id;
+		// const layoutToOverwriteId = res.id;
 
 		const newLayoutData = viewerData.getLayoutCurrentConfiguration();
 
-		newLayoutData.name = overwriteData.name;
-		newLayoutData.user_code = overwriteData.user_code;
+		res.data = newLayoutData.data;
+		res.name = newLayoutData.name;
 
 		const ovOptions = {
 			params: {
-				id: layoutToOverwriteId,
+				id: res.id,
 			},
-			body: newLayoutData
+			body: res
 		};
 
 		showWarning.value = false;
@@ -167,7 +171,7 @@
 			}
 		};
 
-		if (!props.occupiedUserCodes) {
+		/*if (!props.occupiedUserCodes) {
 
 			let res = await useApi('listLayoutListLight.get', options);
 
@@ -183,7 +187,7 @@
 
 		} else {
 			userCodesSet.value = new Set(props.occupiedUserCodes);
-		}
+		}*/
 
 	}
 
