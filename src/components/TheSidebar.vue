@@ -218,13 +218,36 @@
 											</a>
 										</li>
 										<li v-if="accessTable.data_instrument">
-											<button
-												ui-sref-active="active"
+											<a
+												:href="`${config.public.apiURL}/a/#!/data/generated-events`"
 												class="sidenav-dropdown-menu-btn"
-												ui-sref="app.portal.data.generated-event"
 											>
-												<span class="side-nav-title">Events</span>
-											</button>
+												<span class="side-nav-title">EVENTS</span>
+											</a>
+										</li>
+										<li>
+											<a
+												:href="`${config.public.apiURL}/a/#!/explorer`"
+												class="sidenav-dropdown-menu-btn"
+											>
+												<span class="side-nav-title">EXPLORER</span>
+											</a>
+										</li>
+										<li>
+											<a
+												:href="`${config.public.apiURL}/a/#!/data-stats`"
+												class="sidenav-dropdown-menu-btn"
+											>
+												<span class="side-nav-title">STATS</span>
+											</a>
+										</li>
+										<li>
+											<a
+												:href="`${config.public.apiURL}/a/#!/calendar`"
+												class="sidenav-dropdown-menu-btn"
+											>
+												<span class="side-nav-title">CALENDAR</span>
+											</a>
 										</li>
 									</ul>
 								</div>
