@@ -39,9 +39,6 @@
 </template>
 
 <script setup>
-	definePageMeta({
-		layout: 'auth'
-	});
 
 	let route = useRoute()
 	let wId = route.query.wId
@@ -163,7 +160,8 @@
 		padding: 0 20px;
 	}
 	.content {
-		min-height: calc(100vh - 38px);
+		// min-height: calc(100vh - 38px);
+		min-height: calc(100% - 36px);
 	}
 	.chart_row {
 		display: flex;

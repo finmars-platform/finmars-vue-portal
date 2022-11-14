@@ -12,33 +12,34 @@
 </template>
 
 <script setup>
+
 	import {
-  Chart,
-  ArcElement,
-  LineElement,
-  BarElement,
-  PointElement,
-  BarController,
-  BubbleController,
-  DoughnutController,
-  LineController,
-  PieController,
-  PolarAreaController,
-  RadarController,
-  ScatterController,
-  CategoryScale,
-  LinearScale,
-  LogarithmicScale,
-  RadialLinearScale,
-  TimeScale,
-  TimeSeriesScale,
-  Decimation,
-  Filler,
-  Legend,
-  Title,
-  Tooltip,
-  SubTitle
-} from 'chart.js';
+		Chart,
+		ArcElement,
+		LineElement,
+		BarElement,
+		PointElement,
+		BarController,
+		BubbleController,
+		DoughnutController,
+		LineController,
+		PieController,
+		PolarAreaController,
+		RadarController,
+		ScatterController,
+		CategoryScale,
+		LinearScale,
+		LogarithmicScale,
+		RadialLinearScale,
+		TimeScale,
+		TimeSeriesScale,
+		Decimation,
+		Filler,
+		Legend,
+		Title,
+		Tooltip,
+		SubTitle
+	} from 'chart.js';
 // Stores the controller so that the chart initialization routine can look it up
 	Chart.register(
 		ArcElement,
@@ -326,6 +327,6 @@
 		padding: 0 20px;
 	}
 	.content {
-		height: calc(100vh - 38px);
+		// height: calc(100vh - 38px);
 	}
 </style>

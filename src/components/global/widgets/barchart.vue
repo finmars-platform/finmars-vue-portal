@@ -14,55 +14,18 @@
 		</div>
 
 		<div class="content">
-			<canvas id="myChart"><p>Chart</p></canvas>
+			<canvas :id="wid"><p>Chart</p></canvas>
 		</div>
 	</div>
 </template>
 
 <script setup>
 
-	import moment from 'moment'
+	import dayjs from 'dayjs'
 	import {
-  Chart,
-  ArcElement,
-  LineElement,
-  BarElement,
-  PointElement,
-  BarController,
-  BubbleController,
-  DoughnutController,
-  LineController,
-  PieController,
-  PolarAreaController,
-  RadarController,
-  ScatterController,
-  CategoryScale,
-  LinearScale,
-  LogarithmicScale,
-  RadialLinearScale,
-  TimeScale,
-  TimeSeriesScale,
-  Decimation,
-  Filler,
-  Legend,
-  Title,
-  Tooltip,
-  SubTitle
-} from 'chart.js';
-
-	Chart.register(
-		ArcElement,
-		LineElement,
+		Chart,
 		BarElement,
-		PointElement,
 		BarController,
-		BubbleController,
-		DoughnutController,
-		LineController,
-		PieController,
-		PolarAreaController,
-		RadarController,
-		ScatterController,
 		CategoryScale,
 		LinearScale,
 		LogarithmicScale,
@@ -75,39 +38,32 @@
 		Title,
 		Tooltip,
 		SubTitle
-	);
+	} from 'chart.js';
 
-	definePageMeta({
-		layout: 'auth'
-	});
+	let props = defineProps({
+		portfolio: {
+			type: Number,
+			required: true
+		},
+		date_to: {
+			type: String,
+			required: true
+		},
+		type: {
+			type: String,
+			defoult: 'nav'
+		},
+		client: String,
+		token: String,
+		frameMod: Boolean,
+	})
 
-	let route = useRoute()
-	let wId = route.query.wId
-	let portfolioId = route.query.portfolioId
-	let client = route.query.workspace
-	let date_to = route.query.date_to
+	let wid = 'barchart'
 	let historyStats
 
-	await getHistory()
-
-	async function getHistory(type = 'nav') {
-		historyStats = await useApi('widgetsHistory.get', {
-			params: {
-				type,
-				client,
-			},
-			filters: {
-				portfolio: portfolioId,
-				date_to,
-			},
-			headers: {
-				Authorization: 'Token ' + route.query.token
-			}
-		})
-	}
 	let active = ref(null)
 	let dataOfActive = ref({})
-	let activeIndex = ref(historyStats.items.length - 2)
+	let activeIndex = ref(null)
 	let categoryName = ref('Asset Types')
 	let categories = reactive(new Set())
 
@@ -139,64 +95,29 @@
 		'#AB7967',
 	]
 
-	function updateData() {
-		data.labels = []
-		data.datasets = []
-
-		createData()
-
-		send({
-			action: 'clickOnChart',
-			data: {...dataOfActive.value},
-			date: historyStats.items[activeIndex.value],
-			category: categoryName.value
-		})
-		myChart.update()
-	}
-
-
-	function createData() {
-
-		historyStats.items.forEach((date) => {
-			data.labels.push(moment(date.date).format('MMM YY'))
-
-			date.categories.forEach((category) => {
-				categories.add( category.name )
-				if ( category.name != categoryName.value ) return false
-
-				category.items.forEach((instrument, key) => {
-					if ( !data.datasets[key] ) {
-						data.datasets[key] = {
-							data: [],
-							total: 0
-						}
-					}
-
-					data.datasets[key].label = instrument.name
-					data.datasets[key].data.push(instrument.value)
-					data.datasets[key].total += instrument.value
-				})
-			})
-		})
-		data.datasets = data.datasets
-			.filter((item) => item.total != 0)
-			.sort( (a, b) => b.total - a.total)
-
-		dataOfActive.value = {}
-
-		data.datasets.forEach((item, key) => {
-			item.backgroundColor = COLORS[key]
-
-			dataOfActive.value[item.label] = item.data[activeIndex.value]
-		})
-	}
+	await getHistory()
 
 	onMounted(() => {
-		initPostMessageBus()
+		if (!historyStats) return false
 
 		createData()
-
-		myChart = new Chart('myChart', {
+		Chart.register(
+			BarElement,
+			BarController,
+			CategoryScale,
+			LinearScale,
+			LogarithmicScale,
+			RadialLinearScale,
+			TimeScale,
+			TimeSeriesScale,
+			Decimation,
+			Filler,
+			Legend,
+			Title,
+			Tooltip,
+			SubTitle
+		);
+		myChart = new Chart(wid, {
 			type: 'bar',
 			data: data,
 			plugins: [{
@@ -254,7 +175,7 @@
 								let sum = 0
 								tooltipItems.forEach(function(tooltipItem) {
 									let rawDate = tooltipItem.label.split(' ')
-									let date = moment( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
+									let date = dayjs( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
 
 									let item = historyStats.items.find((item) => item.date.includes(date))
 									sum = item.nav || item.total
@@ -308,47 +229,69 @@
 			},
 		});
 	})
-
-	function initPostMessageBus() {
-		if ( window == top ) return false
-
-		send({
-			action: 'init'
-		})
-
-		window.addEventListener("message", async (e) => {
-			if ( e.data.action == 'ready' ) {
-				e.source.postMessage({
-					action: 'clickOnChart',
-					data: {...dataOfActive.value},
-					date: historyStats.items[activeIndex.value],
-					category: categoryName.value
-				}, '*')
+	async function getHistory(type = 'nav') {
+		let apiOpts = {
+			filters: {
+				portfolio: props.portfolio,
+				date_to: props.date_to
+			},
+			params: {
+				type
 			}
-			if ( e.data.action == 'updateOpts' ) {
-				portfolioId = e.data.data.portfolioId
-				date_to = e.data.data.date_to
+		}
+		if ( props.client ) apiOpts.params.client = client
+		if ( props.token ) apiOpts.headers = { Authorization: 'Token ' + props.token }
 
-				await getHistory()
+		let res = await useApi('widgetsHistory.get', apiOpts)
 
-				updateData()
-			}
-			if ( e.data.action == 'changeHistoryType' ) {
-				let map = {
-					nav: 'nav',
-					total: 'pl'
-				}
-				await getHistory(map[e.data.type])
-
-				updateData()
-			}
-		});
+		if ( !res.error ) {
+			historyStats = res
+			activeIndex.value = historyStats.items.length - 1
+		}
 	}
-	function send( data, source = window.parent ) {
-		let dataObj = Object.assign(data, {
-			wId,
+	function updateData() {
+		data.labels = []
+		data.datasets = []
+
+		createData()
+
+		// event
+		myChart.update()
+	}
+	function createData() {
+
+		historyStats.items.forEach((date) => {
+			data.labels.push(dayjs(date.date).format('MMM YY'))
+
+			date.categories.forEach((category) => {
+				categories.add( category.name )
+				if ( category.name != categoryName.value ) return false
+
+				category.items.forEach((instrument, key) => {
+					if ( !data.datasets[key] ) {
+						data.datasets[key] = {
+							data: [],
+							total: 0
+						}
+					}
+
+					data.datasets[key].label = instrument.name
+					data.datasets[key].data.push(instrument.value)
+					data.datasets[key].total += instrument.value
+				})
+			})
 		})
-		source.postMessage( dataObj, "*" )
+		data.datasets = data.datasets
+			.filter((item) => item.total != 0)
+			.sort( (a, b) => b.total - a.total)
+
+		dataOfActive.value = {}
+
+		data.datasets.forEach((item, key) => {
+			item.backgroundColor = COLORS[key]
+
+			dataOfActive.value[item.label] = item.data[activeIndex.value]
+		})
 	}
 </script>
 
@@ -364,7 +307,7 @@
 		padding: 0 20px;
 	}
 	.content {
-		height: calc(100vh - 100px);
+		height: calc(100% - 36px);
 	}
 	.filters {
 		margin-top: 12px;
