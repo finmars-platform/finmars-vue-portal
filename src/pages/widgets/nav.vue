@@ -117,7 +117,7 @@
 		})
 
 		window.addEventListener("message", async (e) => {
-			if ( 'clickOnChart' == e.data.action ) {
+			if ( 'updateOpts' == e.data.action ) {
 
 				let res = await useApi('widgetsStats.get', {
 					params: {
@@ -125,7 +125,7 @@
 					},
 					filters: {
 						portfolio: portfolioId,
-						date: e.data.date?.date,
+						date: e.data.data.date_to,
 					},
 					headers: {
 						Authorization: 'Token ' + route.query.token
