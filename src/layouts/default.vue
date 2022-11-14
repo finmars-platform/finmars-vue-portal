@@ -44,7 +44,7 @@
 		if ( store.current.base_api_url ) {
 			onCleanup(() => {})
 			await store.getMe()
-			store.ws.send({
+			store.ws?.send({
 				action: "update_user_state",
 				data: { member: store.member },
 			})

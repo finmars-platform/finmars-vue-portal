@@ -10,42 +10,25 @@
 			</template>
 		</FmHorizontalPanel>
 
-		<!-- <div class="fm_container grid"
-			:style="topAreaGrid">
-			<FmCard class="test_w_9" title="Scope 1 - Widget 9"></FmCard>
-			<FmCard class="test_w_10" title="Scope 1 - Widget 10"></FmCard>
-		</div> -->
+		<div class="drag_container grid">
+
+		</div>
 
 		<FmTabs v-model="activeTab" :tabs="tabs" />
 
-		<div class="fm_container">
-			<div class="shadow_grid">
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-				</div>
-			<div class="drag_zone grid">
+		<div class="drag_container">
+			<div class="shadow_grid"
+				v-if="isEdit"
+			>
+				<div class="shadow_grid_item"
+					v-for="(item, key) in mainShadowCells"
+					:key="key"
+				></div>
+			</div>
 
+			<div class="drag_zone grid">
 				<div class="board_widget"
-					v-for="(item, i) of components"
+					v-for="(item, i) of dashStore.components"
 					:key="i"
 					:style="{
 						'grid-column': 'span ' + item.colls,
@@ -53,10 +36,27 @@
 					}"
 					:data-name="item.name"
 				>
-					<component :is="'Widgets' + item.name" style="height: 100%;" />
+					<component
+						class="widget_wrap"
+						style="height: 100%;"
+						:is="'Widgets' + item.name"
+						v-bind="item.props"
+					/>
 
-					<div class="settings_top" @mousedown="drag"></div>
-					<div class="rs_right" @mousedown="resize"></div>
+					<div class="board_widget_controls"
+						v-if="isEdit"
+					>
+						<div class="bwc_top flex sb aic">
+							<FmIcon
+								icon="drag_indicator"
+								@mousedown="drag"
+							/>
+							<FmIcon icon="gear" />
+						</div>
+
+						<div class="bwc_right" @mousedown="resizeX"></div>
+						<div class="bwc_bottom" @mousedown="resizeY"></div>
+					</div>
 				</div>
 			</div>
 
@@ -91,10 +91,12 @@
 
 <script setup>
 
+	let dashStore = useStoreDashboard()
+
 	let componentsList = [
 		{id: 'Nav', name: 'Nav(Stats)', min_colls: 12, min_rows: 1},
-		{id: 'Barchart', name: 'Barchart(History)', min_colls: 12, min_rows: 1},
-		{id: 'Balance', name: 'Balance', min_colls: 12, min_rows: 1},
+		{id: 'Barchart', name: 'Barchart(History)', min_colls: 12, min_rows: 2},
+		{id: 'Balance', name: 'Balance', min_colls: 6, min_rows: 3},
 		{id: 'Pl', name: 'P&L', min_colls: 12, min_rows: 1},
 	]
 	let activeComponent = ref(null)
@@ -108,13 +110,11 @@
 			rows: component.min_rows,
 		}
 
-		components.push(new_component)
+		dashStore.components.push(new_component)
 
 		isOpenAddComponents.value = false
 	}
 
-	let components = reactive([
-	])
 	let isOpenAddComponents = ref(false)
 
 	definePageMeta({
@@ -129,20 +129,25 @@
 
 	let isEdit = ref(true)
 
-	let tabs = ['Test_1', 'Test_2']
+	let tabs = ['Test_1', 'Test_2', '+']
 	let activeTab = ref('Test_1')
 	let clickData = ref('no clicks')
 
-	let topAreaGrid = {
-		'grid-template-areas': `
-			"A A A A   B B B B   B B B B"
-		`,
-		'grid-template-rows': 'repeat(1, 100px)'
-	}
-	let mainAreaGrid = reactive({
+	let countRows = computed(() => {
+		let allColls = 0
+		let allRows = 0
+
+		dashStore.components.forEach((item) => {
+			allColls += item.colls
+			allRows += item.rows
+		})
+		return Math.ceil(allColls / 12) + allRows - dashStore.components.length
+	})
+	let mainShadowCells = computed(() => {
+		return new Array(countRows.value * 12)
 	})
 
-	function resize(e) {
+	function resizeX(e) {
 		console.log('Resize start')
 		let elem = e.target.closest('.board_widget')
 		let grid = e.target.closest('.grid')
@@ -154,18 +159,55 @@
 			return false;
 		};
 
-		let startColls = components.find((item) => item.name == elem.dataset.name).colls
+		let startColls = dashStore.components.find((item) => item.name == elem.dataset.name).colls
 
 		function onmousemove(e) {
 		console.log('Resize onmousemove')
 			if ( Math.abs(e.clientX - shiftX) > halfColl ) {
 				let shift = Math.abs(e.clientX - shiftX)
 				if ( e.clientX - shiftX > 0) {
-					components.find((item) => item.name == elem.dataset.name).colls =
+					dashStore.components.find((item) => item.name == elem.dataset.name).colls =
 						startColls + Math.floor( shift / halfColl )
 				} else {
 
-					components.find((item) => item.name == elem.dataset.name).colls =
+					dashStore.components.find((item) => item.name == elem.dataset.name).colls =
+						startColls - Math.floor( shift / halfColl )
+				}
+
+			}
+		}
+
+		document.addEventListener('mousemove', onmousemove)
+
+		document.onmouseup = function() {
+			document.removeEventListener('mousemove', onmousemove);
+			elem.onmouseup = null;
+		};
+	}
+	function resizeY(e) {
+		console.log('Resize y start')
+		let elem = e.target.closest('.board_widget')
+		let grid = e.target.closest('.grid')
+		let rect = grid.getBoundingClientRect();
+		let halfColl = 50
+		let shiftY = e.clientY
+
+		document.ondragstart = function() {
+			return false;
+		};
+
+		let startColls = dashStore.components.find((item) => item.name == elem.dataset.name).rows
+
+		function onmousemove(e) {
+		console.log('Resize onmousemove')
+			if ( Math.abs(e.clientY - shiftY) > halfColl ) {
+				let shift = Math.abs(e.clientY - shiftY)
+				if ( e.clientY - shiftY > 0) {
+					dashStore.components.find((item) => item.name == elem.dataset.name).rows =
+						startColls + Math.floor( shift / halfColl )
+				} else {
+
+					dashStore.components.find((item) => item.name == elem.dataset.name).rows =
 						startColls - Math.floor( shift / halfColl )
 				}
 
@@ -186,11 +228,14 @@
 		let div = document.createElement('div')
 		div.style.gridArea = elem.style.gridArea
 		div.style.background = '#e6e6e6'
+		elem.style.zIndex = '12'
+		div.style.opacity = '.5'
 		div.className = 'shadow_widget'
 
 		elem.after(div)
 
 		elem.style.position = 'fixed'
+		elem.style.zIndex = '9999'
 		elem.style.top = e.clientY + 'px'
 		elem.style.left = e.clientX + 'px'
 
@@ -216,7 +261,10 @@
 		document.addEventListener('mousemove', onmousemove)
 
 		document.onmouseup = function() {
-			elem.style.position = 'static'
+			elem.style.top = ''
+			elem.style.left = ''
+			elem.style.position = ''
+			elem.style.zIndex = ''
 
 			div.replaceWith(elem)
 			document.removeEventListener('mousemove', onmousemove);
@@ -226,36 +274,86 @@
 </script>
 
 <style lang="scss" scoped>
+	.drag_container {
+		position: relative;
+		margin: 20px 30px;
+	}
 	.grid {
 		display: grid;
 		gap: 20px;
 		grid-template-columns: repeat(12, 1fr);
-		grid-template-rows: repeat(6, 50px);
+		grid-auto-rows: 50px;
 	}
 	.shadow_grid {
+		position: absolute;
 		display: grid;
+		width: 100%;
 		gap: 20px;
 		grid-template-columns: repeat(12, 1fr);
 		grid-template-rows: repeat(6, 50px);
+		z-index: 0;
 
-		div {
-			border: 1px solid #000;
+		&_item {
+			border: 1px solid #ecded2;
+			background: $primary-lighten-2;
+			border-radius: 4px;
 		}
-	}
-	.shadow_widget {
-		background: #000;
 	}
 	.board_widget {
 		position: relative;
 		user-select: none;
+		background: $separ;
+
+		&:hover {
+			.bwc_top {
+				top: -20px;
+			}
+		}
 	}
-	.rs_right {
+	.widget_wrap {
+		position: relative;
+		z-index: 2;
+		overflow: auto;
+	}
+	.board_widget_controls {
 		position: absolute;
 		top: 0;
-		right: -10px;
-		width: 10px;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 1;
+	}
+	.bwc_right {
+		position: absolute;
+		top: 0;
+		right: -7px;
+		width: 7px;
 		height: 100%;
-		background: $primary;
+		background: rgb(255 182 122);
+		border-radius: 4px;
+		cursor: ew-resize;
+	}
+	.bwc_bottom {
+		position: absolute;
+		left: 0;
+		bottom: -7px;
+		height: 7px;
+		width: 100%;
+		background: rgb(255 182 122);
+		border-radius: 4px;
+		border: 1px solid $border;
+		cursor: n-resize;
+	}
+	.bwc_top {
+		position: absolute;
+		left: 0;
+		top: 0px;
+		height: 20px;
+		width: 100%;
+		background: #eee;
+		border-radius: 4px;
+		border: 1px solid $border;
+		transition: 0.3s;
 	}
 
 </style>

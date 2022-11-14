@@ -1,4 +1,4 @@
-import routes from "./routes";
+import routes from "../api/routes";
 
 let expireTokens
 export default async function useApi (
