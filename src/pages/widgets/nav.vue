@@ -85,6 +85,14 @@
 	delete res.portfolio
 	delete res.benchmark
 
+	let stats = ref(null)
+
+	if ( res && !res.error ) {
+		let arr = Object.entries(res)
+		stats.value = arr
+
+	}
+
 	async function setActive( item ) {
 		active.value = item
 
@@ -95,15 +103,6 @@
 	}
 
 	let statsCurrent = ref(0)
-	let stats = computed(() => {
-		if ( res && !res.error ) {
-			let arr = Object.entries(res)
-			return arr
-
-		} else return null
-
-	})
-
 	let active = ref('nav')
 
 	onMounted(() => {
@@ -117,7 +116,31 @@
 			action: 'init'
 		})
 
-		window.addEventListener("message", (e) => {
+		window.addEventListener("message", async (e) => {
+			if ( 'clickOnChart' == e.data.action ) {
+
+				let res = await useApi('widgetsStats.get', {
+					params: {
+						client
+					},
+					filters: {
+						portfolio: portfolioId,
+						date: e.data.date?.date,
+					},
+					headers: {
+						Authorization: 'Token ' + route.query.token
+					}
+				})
+				delete res.date
+				delete res.portfolio
+				delete res.benchmark
+
+				if ( res && !res.error ) {
+					let arr = Object.entries(res)
+					stats.value = arr
+
+				}
+			}
 		});
 	}
 
