@@ -2,28 +2,30 @@
 	<div>
 		<PagesReportsPerformanceDialogSettings
 			v-model="showSettingsDialog"
-			v-model:layoutReadyStatus="readyStatus"
+			v-model:externalReadyStatus="dsReadyStatus"
 			:bundles="bundles"
 			@save="showSettingsDialog = false, [viewerData.reportOptions, viewerData.components] = $event, refresh()"
 			@cancel="showSettingsDialog = false"
 		/>
 
-		<ModalPortfolioRegister v-model="addRegisterIsOpen"
-														@save="addRegisterIsOpen = false"
+		<ModalPortfolioRegister title="Add portfolio register"
+														v-model="addRegisterIsOpen"
+														@save="onPrtfRegisterCreate"
 														@cancel="addRegisterIsOpen = false"/>
 
 		<EvBaseTopPanel
 			height="50"
+			:loadingLayout="!readyStatusData.layout"
 			@saveListLayout="saveLayout()"
 			@openSettings="showSettingsDialog = true;"
 		>
 			<template #rightActions>
-				<FmSelect no_borders
-									class="m-b-0"
-									v-model="viewerData.reportOptions.report_currency"
-									:items="currencyOpts"
-									prop_name="short_name"
-				/>
+				<div style="width: 175px;">
+					<FmUnifiedDataSelect noBorders
+															 v-model="viewerData.reportOptions.report_currency"
+															 v-model:itemObject="viewerData.reportOptions.report_currency_object"
+															 content_type="currencies.currency" />
+				</div>
 			</template>
 		</EvBaseTopPanel>
 
@@ -35,15 +37,19 @@
 						<FmIcon class="add_ev_btn" btnPrimary icon="add" />
 					</template>
 
-					<div class="fm_list">
-<!--						<div class="fm_list_item"
-								 @click="addRegisterIsOpen = true">
-							Add Portfolio register
-						</div>-->
-						<div class="fm_list_item" @click="isOpenAddBundle = true">
-							Add bundle
+					<template #default="{ close }">
+						<div class="fm_list" @click="close()">
+							<div class="fm_list_item"
+									 @click="addRegisterIsOpen = true">
+								Add Portfolio register
+							</div>
+							<div class="fm_list_item">
+								<div v-if="readyStatusData.portfolioRegisters"
+										 @click="isOpenAddBundle = true">Add bundle</div>
+								<FmLoader v-if="!readyStatusData.portfolioRegisters" />
+							</div>
 						</div>
-					</div>
+					</template>
 				</FmMenu>
 
 				<BaseModal
@@ -61,7 +67,7 @@
 					<FmInputText title="Name"
 											 v-model="newBundle.name" />
 
-<!--					<FmSelectWindow class="p-b-16" v-model="newBundle.registers" :items="registersItems" />-->
+					<!--					<FmSelectWindow class="p-b-16" v-model="newBundle.registers" :items="registersItems" />-->
 					<BaseMultiSelectTwoAreas class="p-b-16"
 																	 v-model="newBundle.registers"
 																	 :items="registersItems"
@@ -124,6 +130,9 @@
 				</div>
 			</FmExpansionPanel>
 		</div>
+
+		<EvModalSaveLayoutAs v-model="openSaveAsModal"
+												 @layoutSaved="layoutsStore.getListLayoutsLight(viewerData.content_type)" />
 	</div>
 </template>
 
@@ -133,10 +142,13 @@ import Chart from 'chart.js/auto';
 import getPerformanceViewerData from "./viewerData";
 
 const store = useStore();
+const layoutsStore = useLayoutsStore();
+const route = useRoute();
 
 const viewerData = getPerformanceViewerData();
 provide('viewerData', viewerData);
 
+let openSaveAsModal = ref(false);
 let showSettingsDialog = ref(false);
 
 let isOpenAddBundle = ref(false)
@@ -150,26 +162,59 @@ let newBundle = ref({
 
 let addRegisterIsOpen = ref(false);
 
-let registersItems = ref([])
+let registersItems = ref([]);
 
-useApi('portfolioRegister.post', {
-	body: '{"groups_types":[],"page":1,"groups_values":[],"groups_order":"asc","page_size":60,"ev_options":{"entity_filters":["enabled","disabled","active","inactive"]},"filter_settings":[],"global_table_search":"","is_enabled":"any"}'
-}).then((res) => {
-	res.results.forEach((item) => {
-		registersItems.value.push({
-			user_code: item.user_code,
-			id: item.id,
-		})
+function addPrtfRegisterItem(newRegister) {
+	registersItems.value.push({
+		user_code: newRegister.user_code,
+		id: newRegister.id,
 	})
-})
+}
 
-let currencyOpts = ref([])
-fetchCurrenciesOpts()
-async function fetchCurrenciesOpts() {
-	const ppData = await useApi("currenciesLight.get");
+async function fetchPrtfRegistersList() {
 
-	if (!ppData.error) {
-		currencyOpts.value = ppData.results;
+	readyStatusData.portfolioRegisters = false;
+
+	const res = await useApi('portfolioRegisterEvFiltered.post', {
+		body: '{"groups_types":[],"page":1,"groups_values":[],"groups_order":"asc","page_size":60,"ev_options":{"entity_filters":["enabled","disabled","active","inactive"]},"filter_settings":[],"global_table_search":"","is_enabled":"any"}'
+	});
+
+	if (!res.error) {
+
+		res.results.forEach(addPrtfRegisterItem);
+
+		readyStatusData.portfolioRegisters = true;
+
+	}
+
+}
+
+function onPrtfRegisterCreate(newRegister) {
+
+	addPrtfRegisterItem(newRegister);
+	addRegisterIsOpen.value = false;
+
+	refresh();
+
+}
+
+let currencyListLight = ref([]);
+
+async function fetchCurrenciesLightList() {
+	const res = await useApi('currencyListLight.get');
+
+	if (!res.error) {
+		currencyListLight.value = res.results;
+	}
+}
+
+let pricingPolicyListLight = ref([]);
+
+async function fetchPricingPoliciesOpts() {
+	const res = await useApi('currencyListLight.get');
+
+	if (!res.error) {
+		pricingPolicyListLight.value = res.results;
 	}
 }
 
@@ -226,6 +271,7 @@ let activeYear = ref(0)
 let readyStatusData = reactive({
 	layout: false,
 	bundles: false,
+	portfolioRegisters: false,
 });
 
 let readyStatus = computed(() => {
@@ -238,15 +284,41 @@ let readyStatus = computed(() => {
 
 	return ready;
 
-})
+});
+
+let dsReadyStatus = computed(() => readyStatusData.layout && readyStatusData.bundles);
 
 /*#endregion */
+
+watch(
+	() => route.query.layout,
+	async () => {
+		await fetchListLayout();
+		refresh();
+	}
+)
+
+watch(
+	() => viewerData.layoutToOpen,
+	async () => {
+
+		if (viewerData.layoutToOpen) {
+
+			await fetchListLayout();
+			viewerData.layoutToOpen = null;
+
+			refresh();
+
+		}
+
+	},
+)
 
 async function saveLayout () {
 
 	if (viewerData.newLayout) {
 
-		const layoutToSave = viewerData.getLayoutCurrentConfiguration();
+		/*const layoutToSave = viewerData.getLayoutCurrentConfiguration();
 		layoutToSave.name = "default";
 		layoutToSave.user_code = "default";
 		layoutToSave.is_default = true;
@@ -257,10 +329,12 @@ async function saveLayout () {
 			viewerData.newLayout = false;
 			viewerData.listLayout = res;
 			useNotify({type: 'success', title: 'Success. Page was saved.'})
-		}
+		}*/
+		openSaveAsModal.value = true;
+
 
 	} else {
-		useSaveLayoutList(store, viewerData);
+		useSaveEvRvLayout(store, viewerData);
 	}
 
 }
@@ -282,23 +356,46 @@ async function chooseMonth(id) {
 	updateChart( portfolioItems.value[id], portfolioItemsCumm.value[id] )
 }
 
-async function fetchDefaultListLayout () {
-	const resData = await useApi('defaultListLayout.get', {params: {contentType: viewerData.contentType}});
+async function fetchListLayout () {
+
+	/*const resData = await useApi('defaultListLayout.get', {params: {contentType: viewerData.contentType}});
 
 	if (resData.error) {
 		throw new Error('Failed to fetch default performance layout');
-
-	} else {
-
-		const defaultListLayout = resData.results.length ? resData.results[0] : null;
-		viewerData.setLayoutCurrentConfiguration(defaultListLayout).then(() => {
-			readyStatusData.layout = true;
-		});
 	}
+
+	const defaultListLayout = (resData.results.length) ? resData.results[0] : null;
+
+	if (defaultListLayout.data.reportOptions.pricing_policy) {
+
+		defaultListLayout.data.reportOptions.pricing_policy_object = pricingPolicyListLight.value.find(item => {
+			return item.id === defaultListLayout.data.reportOptions.pricing_policy;
+		});
+
+	}
+
+	if (defaultListLayout.data.reportOptions.report_currency) {
+
+		defaultListLayout.data.reportOptions.report_currency_object = currencyListLight.value.find(item => {
+			return item.id === defaultListLayout.data.reportOptions.report_currency;
+		});
+
+	}*/
+	readyStatusData.layout = false;
+
+	const res = await useFetchEvRvLayout(layoutsStore, viewerData, route.query.layout);
+
+	viewerData.setLayoutCurrentConfiguration(res, store.ecosystemDefaults);
+	readyStatusData.layout = true;
+
 }
 
 async function init() {
-	await fetchDefaultListLayout();
+
+	fetchPrtfRegistersList();
+	await Promise.all([fetchCurrenciesLightList(), fetchPricingPoliciesOpts()]);
+
+	await fetchListLayout();
 	await refresh()
 
 
@@ -349,7 +446,7 @@ async function init() {
 }
 
 async function refresh() {
-	await fetchPortolios()
+	await fetchPortfolioBundles()
 
 	if ( !bundles.value.length ) {
 		return false
@@ -367,7 +464,9 @@ async function refresh() {
 		updateChart( portfolioItems.value[0], portfolioItemsCumm.value[0] )
 }
 
-async function fetchPortolios() {
+provide('refreshReport', refresh);
+
+async function fetchPortfolioBundles() {
 
 	readyStatusData.bundles = false;
 
@@ -437,17 +536,24 @@ async function getMonthDetails( name ) {
 		? bundles.value.find(item => item.user_code == name).id
 		: bundles.value[0].id
 
-	let firstTransaction = await useApi('performanceFirstTransaction.get', {
-		params: { id: bundleId }
-	})
+	let begin
+
+	if ( !viewerData.reportOptions?.begin_date ) {
+		let firstTransaction = await useApi('performanceFirstTransaction.get', {
+			params: { id: bundleId }
+		})
+		begin = firstTransaction.transaction_date
+	} else {
+		begin = moment(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
+	}
 	let end = moment(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
 
 	let allMonths = await useApi('performanceReport.post', {
 		body: {
 			"save_report": false,
-			"begin_date": firstTransaction.transaction_date,
+			"begin_date": begin,
 			"end_date": end,
-			"calculation_type": "time_weighted",
+			"calculation_type": viewerData.reportOptions?.calculation_type,
 			"segmentation_type": 'months',
 			'report_currency': viewerData.reportOptions?.report_currency,
 			"bundle": bundleId
@@ -592,7 +698,7 @@ async function getReports({start, end, ids, type = 'months'}) {
 			"save_report": false,
 			"begin_date": start,
 			"end_date": end,
-			"calculation_type": "time_weighted",
+			"calculation_type": viewerData.reportOptions?.calculation_type,
 			"segmentation_type": type,
 			'report_currency': viewerData.reportOptions?.report_currency,
 			"bundle": ids

@@ -7,14 +7,15 @@
 			>
 				<div class="modal">
 					<div class="modal_top flex aic sb">
-						<div class="modal_head" v-if="title">{{ title }}</div>
+						<div class="modal_head">{{ title }}</div>
 <!--						<svg class="close stroke" width="24" height="24" viewBox="0 0 24 24" fill="none"
 							xmlns="http://www.w3.org/2000/svg"
 							@click="cancel()">
 							<path d="M18 6L6 18" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 							<path d="M6 6L18 18" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 						</svg>-->
-						<FmIcon icon="close" @click="cancel"/>
+<!--						<FmIcon :disabled="closingDisabled" icon="close" @click="cancel"/>-->
+						<FmBtn :disabled="closingDisabled" type="iconBtn" icon="close" @click="cancel" />
 					</div>
 
 					<div class="modal_content scrollable">
@@ -22,10 +23,10 @@
 					</div>
 
 					<div class="modal_bottom">
-						<slot name="controls"></slot>
+						<slot name="controls" :cancel="cancel"></slot>
 					</div>
 				</div>
-				<div class="mask" @click="cancel"></div>
+				<div class="mask" @[backdropClickable]="cancel"></div>
 			</div>
 		</transition>
 	</Teleport>
@@ -38,7 +39,12 @@ export default {
   props: {
 		modelValue: Boolean,
 		title: String,
-		no_padding: Boolean
+		no_padding: Boolean,
+		closeOnClickOutside: {
+			type: Boolean,
+			default: false
+		},
+		closingDisabled: Boolean
 	},
 	emits: [
 		'update:modelValue',
@@ -48,6 +54,11 @@ export default {
 
     }
   },
+	computed: {
+		backdropClickable() {
+			return this.closeOnClickOutside ? 'click' : false;
+		}
+	},
   async mounted() {
   },
 	watch: {
@@ -59,6 +70,7 @@ export default {
 
   methods: {
     cancel() {
+			if (this.closingDisabled) return;
       this.$emit('update:modelValue', false)
     },
   }
@@ -98,7 +110,7 @@ export default {
 		overflow: auto;
 		max-height: calc(90vh - 110px);
 		padding: 15px 20px 0;
-		min-width: 360px;
+		min-width: 400px; // so that FmInputEntityNames could fit in
 	}
 	.modal_bottom {
 		border-top: 1px solid $border;

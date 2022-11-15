@@ -1,5 +1,5 @@
 <template>
-	<div class="wrap">
+	<div v-if="notLoadingMember" class="wrap">
 		<LazyTheSidebar v-if="!$route.meta.isHideSidebar" />
 
 		<div class="main">
@@ -19,6 +19,8 @@
 	const config = useRuntimeConfig()
 
 	await store.init()
+
+	let notLoadingMember = ref(true);
 
 	let ws = new Stream({
 		url: config.public.wsURL,
@@ -41,13 +43,22 @@
 	})
 
 	watchEffect( async ( onCleanup ) => {
+		console.log("testing46 watcher with getMe");
 		if ( store.current.base_api_url ) {
+
 			onCleanup(() => {})
-			await store.getMe()
+
+			notLoadingMember.value = false;
+
+			await Promise.all([store.getMe(), store.fetchEcosystemDefaults()]);
+
+			notLoadingMember.value = true;
+			console.log("testing46 watcher with getMe notLoadingMember", notLoadingMember.value);
 			store.ws.send({
 				action: "update_user_state",
 				data: { member: store.member },
 			})
+
 		}
 	})
 
@@ -62,7 +73,7 @@
 		background: $main;
 	}
 	.content {
-		height: calc(100vh - 56px);
+		height: calc(100vh - 52px);
 		overflow: auto;
 	}
 </style>
