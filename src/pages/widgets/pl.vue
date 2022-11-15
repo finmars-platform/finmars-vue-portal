@@ -16,7 +16,7 @@
 			<div class="chart_row"
 				v-for="(item, i) in instruments"
 				:key="i"
-				:style="{background: inheritColors[item.name].slice(0, 7) + '0f'}"
+				:style="{background: inheritColors[item.name]?.slice(0, 7) + '0f'}"
 				:class="{minus: item.value < 0}"
 			>
 				<div class="chart_field">
@@ -93,44 +93,54 @@
 		})
 
 		window.addEventListener("message", async (e) => {
-			if ( 'clickOnChart' == e.data.action ) {
-				let i = 0
-				for ( let prop in e.data.data ) {
-					inheritColors[prop] = COLORS[i]
-					i++
+			try {
+				if ( 'clickOnChart' == e.data.action ) {
+					let i = 0
+					for ( let prop in e.data.data ) {
+						inheritColors[prop] = COLORS[i]
+						i++
+					}
+
+					let pl = await useApi('widgetsHistory.get', {
+						params: {type: 'pl', client},
+						filters: {
+							portfolio: portfolioId,
+							date_from: e.data.date.date,
+							date_to: e.data.date.date,
+						},
+						headers: {
+							Authorization: 'Token ' + route.query.token
+						}
+					})
+					let active = ref(null)
+					let currentDate = pl.items.find(item => item.date == e.data.date.date)
+
+					if ( !currentDate ) return false
+					total.value = new Intl.NumberFormat('en-US', {
+						maximumFractionDigits: 2
+					}).format(currentDate.total) + ' USD';
+
+					let currentCategory = currentDate.categories.find(item => item.name == e.data.category)
+					if ( !currentCategory ) return false
+					let items = currentCategory.items
+						.filter((item) => item.value != 0)
+						.sort( (a, b) => b.value - a.value)
+
+					instruments.value = items
+
+					let arr = instruments.value.map(item => item.value)
+					let tickMax = Math.max(...arr)
+					let tickMin = Math.min(...arr)
+					let tickTo = Math.abs(tickMax) > Math.abs(tickMin) ? Math.abs(tickMax) : Math.abs(tickMin)
+					let countZerro = Math.floor(( ""+ Math.round(tickTo)).length / 3)
+					maxTickStock.value = Math.ceil(tickTo / Math.pow( 1000, countZerro )) * Math.pow( 1000, countZerro )
 				}
 
-				let pl = await useApi('widgetsHistory.get', {
-					params: {type: 'pl', client},
-					filters: {
-						portfolio: portfolioId,
-						date_from: e.data.date.date,
-						date_to: e.data.date.date,
-					},
-					headers: {
-						Authorization: 'Token ' + route.query.token
-					}
-				})
-				let active = ref(null)
-				let currentDate = pl.items.find(item => item.date == e.data.date.date)
-				total.value = new Intl.NumberFormat('en-US', {
-					maximumFractionDigits: 2
-				}).format(currentDate.total) + ' USD';
+			} catch(e) {
 
-				let currentCategory = currentDate.categories.find(item => item.name == e.data.category)
-				let items = currentCategory.items
-					.filter((item) => item.value != 0)
-					.sort( (a, b) => b.value - a.value)
-
-				instruments.value = items
-
-				let arr = instruments.value.map(item => item.value)
-				let tickMax = Math.max(...arr)
-				let tickMin = Math.min(...arr)
-				let tickTo = Math.abs(tickMax) > Math.abs(tickMin) ? Math.abs(tickMax) : Math.abs(tickMin)
-				let countZerro = Math.floor(( ""+ Math.round(tickTo)).length / 3)
-				maxTickStock.value = Math.ceil(tickTo / Math.pow( 1000, countZerro )) * Math.pow( 1000, countZerro )
+				console.log('e:', e)
 			}
+
 		});
 	}
 	function send( data, source = window.parent ) {

@@ -6,10 +6,13 @@ export default defineStore({
 		return {
 			isAuth: false,
 			user: {},
-			ws: null,
 			masterUsers: [],
 			current: {},
 			member: {},
+
+			ws: null,
+
+			ecosystemDefaults: {},
 			systemErrors: [],
 		};
 	},
@@ -61,6 +64,16 @@ export default defineStore({
 			}
 		},
 
+		async fetchEcosystemDefaults() {
+
+			const res = await useApi('ecosystemDefaults.get');
+
+			if (!res.error) {
+				this.ecosystemDefaults = res.results[0];
+			}
+
+		},
+
 		setupMemberData (isReport, entityType) {
 
 			if (!this.member.data) this.member.data = {};
@@ -104,7 +117,6 @@ export default defineStore({
 			this.member.data.group_tables[viewerType].entity_viewers_settings[entityType] = settings;
 
 		},
-
 
 	},
 	getters: {

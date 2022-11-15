@@ -14,26 +14,45 @@ export default {
 		get: prefix + "/procedures/pricing-parent-procedure-instance/",
 	},
 
-	instrumentType: {
+	instrumentList: {
+		get: prefix + '/instruments/instrument/'
+	},
+
+	instrumentTypeList: {
 		get: prefix + '/instruments/instrument-type/'
 	},
-	instrumentScheme: {
+	instrumentTypeListLight: {
+		get: prefix + '/instruments/instrument-type/'
+	},
+	instrumentSchemeList: {
 		get: prefix + '/pricing/instrument-pricing-scheme/'
 	},
-	pricingPolicy: {
+	pricingPolicyList: {
 		get: prefix + '/instruments/pricing-policy/'
 	},
-	pricingPoliciesLight: {
+	pricingPolicyListLight: {
 		get: prefix + '/instruments/pricing-policy-light/'
 	},
-	currenciesLight: {
+	currencyList: {
+		get: prefix + '/currencies/currency/',
+	},
+	currencyListLight: {
 		get: prefix + '/currencies/currency-light/',
 	},
-	portfolios: {
+	currencySchemeList: {
+		get: prefix + '/pricing/currency-pricing-scheme/',
+	},
+	importCurrencyCbonds: {
+		post: prefix + 'import/finmars-database/currency/'
+	},
+	currencyDatabaseSearch: {
+		get: prefix + '/api/currencies/currency-database-search/'
+	},
+	portfolioList: {
 		get: prefix + '/portfolios/portfolio/',
 	},
-	currencyScheme: {
-		get: prefix + '/pricing/currency-pricing-scheme/',
+	counterpartyList: {
+		get: prefix + '/counterparties/counterparty/'
 	},
 
 	importBankProc: {
@@ -48,14 +67,18 @@ export default {
 		get: prefix + '/integrations/data-provider/'
 	},
 
+	importUnifiedData: {
+		post: prefix + 'import/unified-data-provider/'
+	},
+
 	dataInstance: {
 		get: prefix + '/procedures/data-procedure-instance/'
 	},
 	importSchemeLight: {
 		get: prefix + '/import/complex-transaction-import-scheme-light/'
 	},
-	members: {
-		get: prefix + '/users/member/'
+	memberList: {
+		get: prefix + '/users/member/',
 	},
 	member: {
 		get: prefix + '/users/member/{id}/',
@@ -66,7 +89,11 @@ export default {
 		get: prefix + '/users/group/',
 	},
 
-	portfolioRegister: {
+	portfolioRegisterList: {
+		get: prefix + '/portfolios/portfolio-register/',
+		post: prefix + '/portfolios/portfolio-register/',
+	},
+	portfolioRegisterEvFiltered: {
 		post: prefix + '/portfolios/portfolio-register-ev/filtered/',
 	},
 	performanceReport: {
@@ -103,12 +130,23 @@ export default {
 		get: prefix + '/instruments/generated-event/{id}/book/',
 		put: prefix + '/instruments/generated-event/{id}/book/',
 	},
+	listLayoutList: {
+		get: prefix + '/ui/list-layout/',
+	},
+	listLayoutListLight: {
+		get: prefix + '/ui/list-layout-light/',
+	},
 	listLayout: {
+		get: prefix + '/ui/list-layout/{id}/',
 		put: prefix + '/ui/list-layout/{id}/',
-		post: prefix + '/ui/list-layout/'
+		post: prefix + '/ui/list-layout/',
+		delete: prefix + '/ui/list-layout/{id}/'
+	},
+	listLayoutPing: {
+		get: prefix + '/ui/list-layout/{id}/ping',
 	},
 	defaultListLayout: {
-		get: prefix + '/ui/list-layout/?is_default=2&content_type={contentType}',
+		get: prefix + '/ui/list-layout/?is_default=2&content_type={content_type}',
 	},
 	ecosystemDefaults: {
 		get: prefix + '/users/ecosystem-default/'
@@ -126,6 +164,28 @@ export default {
 	configurationList: {
 		get: prefix + '/ui/configuration/'
 	},
+	counterpartiesUnifiedData: {
+		get: prefix + '/data/company/'
+	},
+
+	configSharingConfigFile: {
+		get: prefix + '/configuration-sharing/shared-configuration-file/{id}/',
+		put: prefix + '/configuration-sharing/shared-configuration-file/{id}/',
+		post: prefix + '/configuration-sharing/shared-configuration-file/',
+	},
+	configSharingInvite: {
+		post: prefix + '/configuration-sharing/invites/',
+	},
+	configSharingMyInvitesList: {
+		get: prefix + '/configuration-sharing/my-invites/',
+	},
+	configurationJson: {
+		post: prefix + '/import/configuration-json/'
+	},
+	configurationJsonStatus: {
+		get: prefix + '/active_processes/active_processes/{id}/'
+	},
+
 	// Надо отделить
 
 	widgetsHistory: {
@@ -133,5 +193,5 @@ export default {
 	},
 	widgetsStats: {
 		get: '/{client}/api/v1/widgets/stats/'
-	},
+	}
 }

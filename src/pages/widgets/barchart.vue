@@ -90,10 +90,10 @@
 
 	await getHistory()
 
-	async function getHistory() {
+	async function getHistory(type = 'nav') {
 		historyStats = await useApi('widgetsHistory.get', {
 			params: {
-				type: 'nav',
+				type,
 				client,
 			},
 			filters: {
@@ -251,12 +251,13 @@
 					tooltip: {
 						callbacks: {
 							footer:  (tooltipItems) => {
-								let sum = 0;
-
+								let sum = 0
 								tooltipItems.forEach(function(tooltipItem) {
-									myChart.data.datasets.forEach((item) => {
-										sum += item.data[tooltipItem.dataIndex]
-									})
+									let rawDate = tooltipItem.label.split(' ')
+									let date = moment( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
+
+									let item = historyStats.items.find((item) => item.date.includes(date))
+									sum = item.nav || item.total
 								});
 								return 'Total: ' + new Intl.NumberFormat('en-US', {
 										style: 'currency',
@@ -329,6 +330,15 @@
 				date_to = e.data.data.date_to
 
 				await getHistory()
+
+				updateData()
+			}
+			if ( e.data.action == 'changeHistoryType' ) {
+				let map = {
+					nav: 'nav',
+					total: 'pl'
+				}
+				await getHistory(map[e.data.type])
 
 				updateData()
 			}

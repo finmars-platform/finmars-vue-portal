@@ -1,17 +1,20 @@
 <template>
 	<div class="card_view">
 		<div class="card_wrap"
+			v-if="stats"
 			@mousedown="dragStart"
 		>
 			<div class="card"
 				v-for="(item, prop) in stats"
 				:key="prop"
 				:class="{active: item[0] == active}"
+				@click="item[0] == 'nav' || item[0] == 'total' ? setActive(item[0]) : false"
 			>
 				<div class="card_name">{{ STATS[item[0]] }}</div>
 				<div class="card_value">{{ STATS_FORMAT[item[0]](item[1])  }}</div>
 			</div>
 		</div>
+		<div v-else>No data</div>
 	</div>
 
 </template>
@@ -82,13 +85,24 @@
 	delete res.portfolio
 	delete res.benchmark
 
-	let statsCurrent = ref(0)
-	let stats = computed(() => {
+	let stats = ref(null)
+
+	if ( res && !res.error ) {
 		let arr = Object.entries(res)
+		stats.value = arr
 
-		return arr
-	})
+	}
 
+	async function setActive( item ) {
+		active.value = item
+
+		send({
+			action: 'changeHistoryType',
+			type: item
+		})
+	}
+
+	let statsCurrent = ref(0)
 	let active = ref('nav')
 
 	onMounted(() => {
@@ -102,7 +116,31 @@
 			action: 'init'
 		})
 
-		window.addEventListener("message", (e) => {
+		window.addEventListener("message", async (e) => {
+			if ( 'updateOpts' == e.data.action ) {
+
+				let res = await useApi('widgetsStats.get', {
+					params: {
+						client
+					},
+					filters: {
+						portfolio: portfolioId,
+						date: e.data.data.date_to,
+					},
+					headers: {
+						Authorization: 'Token ' + route.query.token
+					}
+				})
+				delete res.date
+				delete res.portfolio
+				delete res.benchmark
+
+				if ( res && !res.error ) {
+					let arr = Object.entries(res)
+					stats.value = arr
+
+				}
+			}
 		});
 	}
 

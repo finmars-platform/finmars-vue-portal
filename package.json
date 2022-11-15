@@ -3,22 +3,28 @@
 	"scripts": {
 		"build": "nuxt build ",
 		"dev": "nuxt --rootDir=./v/ dev",
-		"local": "API_URL=https://dev.finmars.com APP_URL=http://localhost:3000/v OLD_APP_URL='https://dev.finmars.com/a/#!/' WS_URL='wss://dev.finmars.com/ws/' NUXT_HOST=0.0.0.0 nuxt --roDir=./v/ dev",
+		"dev-proxy": "API_URL=https://dev.finmars.com APP_URL=http://localhost:3000/v OLD_APP_URL='https://dev.finmars.com/a/#!/' WS_URL='wss://dev.finmars.com/ws/' NUXT_HOST=0.0.0.0 nuxt --roDir=./v/ dev",
+		"dev-local": "API_URL=http://0.0.0.0:8000 AUTHORIZER_URL=http://0.0.0.0:8083/authorizer APP_URL=http://localhost:3000/v OLD_APP_URL='http://0.0.0.0:8080/#!/' WS_URL='ws://0.0.0.0:6969' NUXT_HOST=0.0.0.0 nuxt --roDir=./v/ dev",
 		"start": "node .output/server/index.mjs",
 		"generate": "nuxt generate",
-		"preview": "nuxt preview"
+		"preview": "nuxt preview",
+		"test": "vitest",
+		"coverage": "vitest run --coverage"
 	},
-
 	"devDependencies": {
+		"@testing-library/jest-dom": "^5.16.5",
+		"@testing-library/vue": "^6.6.1",
 		"eslint": "^8.24.0",
 		"eslint-plugin-vue": "^9.6.0",
+		"jsdom": "^20.0.1",
 		"nuxt": "^3.0.0-rc.11",
-		"prettier": "2.6.2"
+		"prettier": "2.6.2",
+		"vitest": "^0.24.3"
 	},
 	"dependencies": {
 		"@chenfengyuan/vue-qrcode": "^2.0.0",
 		"@kyvg/vue3-notification": "^2.4.1",
-		"@pinia/nuxt": "0.1.9",
+		"@pinia/nuxt": "^0.4.3",
 		"chart.js": "^3.9.1",
 		"click-outside-vue3": "^4.0.1",
 		"moment": "^2.29.4",

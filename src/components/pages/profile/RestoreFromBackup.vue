@@ -28,7 +28,9 @@
 </template>
 
 <script setup>
+	let props = defineProps(['backupId'])
 	let emit = defineEmits(['cancel', 'save'])
+
 	let form = reactive({})
 	let processing = ref(false)
 
@@ -41,7 +43,10 @@
 
 		processing.value = true
 
-		let res = await useApi('masterBackups.put', {body: form })
+		let res = await useApi('masterBackups.put', {
+			body: form,
+			params: {id: props.backupId }
+		})
 
 		if ( res ) {
 			useNotify({type: 'success', title: 'Ecosystem is proccessing'})

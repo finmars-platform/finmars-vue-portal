@@ -1368,7 +1368,8 @@
 	};
 
 	const applyMemberInterfacePermissions = function () {
-
+		console.log("testing46.applyMemberInterfacePermissions store.member", store.member);
+		if (store.member) console.log("testing46.applyMemberInterfacePermissions store.member immutable", JSON.parse(JSON.stringify(store.member)));
 		if (!store.member.is_admin && !store.member.is_owner) {
 
 			console.log("Applying Member Interface Permissions");

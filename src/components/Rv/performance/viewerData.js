@@ -1,5 +1,46 @@
 import moment from "moment/moment";
 
+export function getEmptyLayoutData (ecosystemDefaults) {
+
+	let reportCurrencyObj = null;
+
+	if (ecosystemDefaults.currency_object) {
+		reportCurrencyObj = ecosystemDefaults.currency_object;
+	}
+
+	let pricingPolicyObj = null;
+
+	if (ecosystemDefaults.pricing_policy_object) {
+		pricingPolicyObj = ecosystemDefaults.pricing_policy_object;
+	}
+
+	return {
+		name: "",
+		user_code: "",
+		content_type: "reports.performancereport",
+		data: {
+			additions: {},
+			reportOptions: {
+				begin_date: null,
+				end_date: moment(new Date).format('YYYY-MM-DD'),
+				report_currency: ecosystemDefaults.currency || null,
+				report_currency_object: reportCurrencyObj,
+				calculation_type: "time_weighted",
+				segmentation_type: "months",
+				pricing_policy: ecosystemDefaults.pricing_policy || null,
+				pricing_policy_object: pricingPolicyObj,
+			},
+			components: {
+				period: true,
+				detail: true,
+				diagram: true,
+			},
+			exportOptions: {}
+		}
+	};
+
+}
+
 export default () => {
 
 	return reactive(
@@ -9,10 +50,16 @@ export default () => {
 			additions: {},
 			components: {},
 			exportOptions: {},
-			contentType: 'reports.performancereport',
-			entityType: 'reports-performance',
+
+			layoutToOpen: null, // id of layout
+
+			content_type: 'reports.performancereport',
+			entityType: 'reports-performance', // TODO: remove and use only content_type
+
 			isReport: true,
+			isRootEntityViewer: true,
 			newLayout: false,
+			viewerContext: 'entity_viewer',
 
 			/*setListLayout(listLayout) {
 				this.state.listLayout = listLayout;
@@ -34,7 +81,7 @@ export default () => {
 				this.state.exportOptions = options;
 			},*/
 
-			async setLayoutCurrentConfiguration(listLayout) {
+			setLayoutCurrentConfiguration(listLayout, ecosystemDefaults) {
 
 				if (listLayout) {
 
@@ -45,32 +92,11 @@ export default () => {
 
 					this.newLayout = true;
 
-					let edRes = await useApi('ecosystemDefaults.get');
+					/*let edRes = await useApi('ecosystemDefaults.get');
 
-					const ecosystemDefaults = (edRes.error) ? {} : edRes.results[0];
+					const ecosystemDefaults = (edRes.error) ? {} : edRes.results[0];*/
 
-					listLayout = {
-						name: "",
-						user_code: "",
-						content_type: "reports.performancereport",
-						data: {
-							additions: {},
-							reportOptions: {
-								begin_date: null,
-								end_date: moment(new Date).format('YYYY-MM-DD'),
-								report_currency: ecosystemDefaults.currency || null,
-								calculation_type: "time_weighted",
-								segmentation_type: "months",
-								pricing_policy: ecosystemDefaults.pricing_policy || null,
-							},
-							components: {
-								period: true,
-								detail: true,
-								diagram: true,
-							},
-							exportOptions: {}
-						}
-					};
+					listLayout = getEmptyLayoutData(JSON.parse(JSON.stringify(ecosystemDefaults)));
 
 				}
 
@@ -81,14 +107,13 @@ export default () => {
 				this.exportOptions = JSON.parse(JSON.stringify(listLayout.data.exportOptions));
 
 				this.listLayout = listLayout;
+
 				/*this.setComponents(JSON.parse(JSON.stringify(listLayout.data.components)));
 				this.setReportOptions(JSON.parse(JSON.stringify(listLayout.data.reportOptions)));
 				this.setAdditions(JSON.parse(JSON.stringify(listLayout.data.additions)));
 				this.setExportOptions(JSON.parse(JSON.stringify(listLayout.data.exportOptions)));
 
 				this.setListLayout(listLayout);*/
-
-				return new Promise(resolve => resolve());
 
 			},
 
