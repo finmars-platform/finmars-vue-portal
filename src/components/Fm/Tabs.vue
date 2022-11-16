@@ -19,7 +19,7 @@
 	defineEmits(['update:modelValue'])
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 	.fm_tabs {
 		display: flex;
 		background: $separ;
