@@ -537,9 +537,10 @@ async function getMonthDetails( name ) {
 		: bundles.value[0].id
 
 	let begin
+	let firstTransaction
 
 	if ( !viewerData.reportOptions?.begin_date ) {
-		let firstTransaction = await useApi('performanceFirstTransaction.get', {
+		firstTransaction = await useApi('performanceFirstTransaction.get', {
 			params: { id: bundleId }
 		})
 		begin = firstTransaction.transaction_date
