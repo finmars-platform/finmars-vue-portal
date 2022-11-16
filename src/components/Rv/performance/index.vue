@@ -407,7 +407,7 @@ async function init() {
 				{
 					label: 'Monthly Returns',
 					data: portfolioItems.value[0],
-					backgroundColor: portfolioItems.value[0].map(item => item > 0 ? '#a5d9c9' : '#fac878'),
+					backgroundColor: portfolioItems.value[0]?.map(item => item > 0 ? '#a5d9c9' : '#fac878'),
 					order: 1
 				},
 				{
@@ -538,7 +538,6 @@ async function getMonthDetails( name ) {
 
 	let begin
 	let firstTransaction
-
 	if ( !viewerData.reportOptions?.begin_date ) {
 		firstTransaction = await useApi('performanceFirstTransaction.get', {
 			params: { id: bundleId }
