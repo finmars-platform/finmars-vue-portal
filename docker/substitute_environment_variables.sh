@@ -8,6 +8,7 @@ echo PROD_WS_URL $PROD_WS_URL
 echo PROD_OLD_APP_URL $PROD_OLD_APP_URL
 echo PROD_CLOACK_PASS $PROD_CLOACK_PASS
 echo PROD_CLOACK_2fa $PROD_CLOACK_2fa
+echo PROD_APP_BASE_URL $PROD_APP_BASE_URL
 
 # Replace env vars in files served by server
 for file in $ROOT_DIR/.output/**/*.mjs* $ROOT_DIR/.output/server/chunks/nitro/node-server.mjs
