@@ -31,7 +31,7 @@ export default defineNuxtConfig({
   },
 	ssr: false,
 	app: {
-		baseURL: '/v/'
+		baseURL: process.env.APP_BASE_URL || "==PROD_APP_BASE_URL==",
 	},
 	css: [
 		"~/assets/scss/main.scss",
