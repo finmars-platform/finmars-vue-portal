@@ -1,6 +1,7 @@
 const curDate = new Date();
 const dateString = `${curDate.getHours()}:${curDate.getMinutes()}, ${curDate.getDate()}/${curDate.getMonth() + 1}/${curDate.getFullYear()}`;
 const apiURL = process.env.API_URL || "==PROD_API_URL==";
+const baseURL = (process.env.APP_BASE_URL || "==PROD_APP_BASE_URL==") + '/v/';
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
 	publicRuntimeConfig: {
@@ -31,7 +32,7 @@ export default defineNuxtConfig({
   },
 	ssr: false,
 	app: {
-		baseURL: process.env.APP_BASE_URL || "==PROD_APP_BASE_URL==",
+		baseURL: baseURL,
 	},
 	css: [
 		"~/assets/scss/main.scss",
