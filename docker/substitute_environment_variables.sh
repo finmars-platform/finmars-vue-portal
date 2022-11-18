@@ -18,6 +18,7 @@ do
   sed -i 's|==PROD_OLD_APP_URL==|'${PROD_OLD_APP_URL}'|g' $file
   sed -i 's|==PROD_CLOACK_PASS==|'${PROD_CLOACK_PASS}'|g' $file
   sed -i 's|==PROD_CLOACK_2fa==|'${PROD_CLOACK_2fa}'|g' $file
+  sed -i 's|==PROD_APP_BASE_URL==|'${PROD_APP_BASE_URL}'|g' $file
 done
 
 #grep -rnw '/var/www/finmars/' -e 'PROD_APP_URL'
