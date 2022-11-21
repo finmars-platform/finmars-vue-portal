@@ -1,7 +1,19 @@
 <template>
-	<BaseModal title="Edit widget" no_padding>
+	<BaseModal title="Edit widget">
 
+		<BaseInput v-model="editable.date" label="Date" />
 
+		<RvSettingsRow label="Portfolio id">
+			<BaseInput v-model="editable.portfolio" />
+		</RvSettingsRow>
+
+		<RvSettingsRow label="Scope">
+			<BaseInput v-model="editable.scope" />
+		</RvSettingsRow>
+
+		<RvSettingsRow label="Tab">
+			<BaseInput v-model="editable.tab" />
+		</RvSettingsRow>
 
 		<template #controls>
 			<div class="flex sb">
@@ -13,22 +25,17 @@
 </template>
 
 <script setup>
-	let dashStore = useStoreDashboard()
-	let activeComponent = ref(null)
 
-	function addComponent() {
-		let component = componentsList.find((item) => item.id == activeComponent.value)
-
-		let new_component = {
-			name: component.id,
-			colls: component.min_colls,
-			rows: component.min_rows,
+	let props = defineProps({
+		wid: {
+			type: String,
+			required: true
 		}
+	})
+	let dashStore = useStoreDashboard()
 
-		dashStore.widgets.push(new_component)
+	let editable = dashStore.widgets.find(item => item.id == props.wid) || {}
 
-		isOpenAddComponents.value = false
-	}
 </script>
 
 <style lang="scss" scoped>

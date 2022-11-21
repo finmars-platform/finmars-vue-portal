@@ -1,7 +1,7 @@
 <template>
 	<div class="card_view">
 		<div class="card_wrap"
-			v-if="stats"
+			v-if="status == 100"
 			@mousedown="dragStart"
 		>
 			<div class="card"
@@ -14,7 +14,14 @@
 				<div class="card_value">{{ STATS_FORMAT[item[0]](item[1])  }}</div>
 			</div>
 		</div>
-		<div v-else>No data</div>
+		<div class="content flex-column aic jcc" v-else>
+			<div class="flex aic">
+				<FmIcon v-if="status > 100" class="m-r-8" icon="report_problem" />
+				{{ STATUSES[status] }}
+			</div>
+
+			<FmLoaderData v-if="status < 100" />
+		</div>
 	</div>
 </template>
 
@@ -41,6 +48,11 @@
 		"alpha": 'Alpha vs Index, ann.',
 		"correlation": 'Correlation (vs. Index)',
 	}
+	const STATUSES = {
+		0: 'Loading data',
+		101: 'Data are not available',
+	}
+	let status = ref(0)
 
 	function formatCurency(val) {
 		return new Intl.NumberFormat('en-EN', {
@@ -76,6 +88,11 @@
 	if ( props.token ) apiOpts.headers = { Authorization: 'Token ' + props.token }
 
 	let res = await useApi('widgetsStats.get', apiOpts)
+
+	if ( res.error ) {
+		status.value = 101
+
+	}
 
 	delete res.date
 	delete res.portfolio
@@ -124,6 +141,9 @@
 </script>
 
 <style lang="scss" scoped>
+	.content {
+		height: 100%;
+	}
 	.card_view {
 		width: 100%;
 		overflow: auto;

@@ -3,15 +3,17 @@ const dateString = `${curDate.getHours()}:${curDate.getMinutes()}, ${curDate.get
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
-	publicRuntimeConfig: {
-		appURL: process.env.APP_URL || "==PROD_APP_URL==",
-		apiURL: process.env.API_URL || "==PROD_API_URL==",
-		authorizerURL: process.env.AUTHORIZER_URL || process.env.API_URL,
-		wsURL: process.env.WS_URL || "==PROD_WS_URL==",
-		oldAppURL: process.env.OLD_APP_URL || "==PROD_OLD_APP_URL==",
-		cloackPass: "==PROD_CLOACK_PASS==",
-		cloack2fa: "==PROD_CLOACK_2fa==",
-		buildDATE: dateString,
+	runtimeConfig: {
+		public: {
+			appURL: process.env.APP_URL || "==PROD_APP_URL==",
+			apiURL: process.env.API_URL || "==PROD_API_URL==",
+			authorizerURL: process.env.AUTHORIZER_URL || process.env.API_URL,
+			wsURL: process.env.WS_URL || "==PROD_WS_URL==",
+			oldAppURL: process.env.OLD_APP_URL || "==PROD_OLD_APP_URL==",
+			cloackPass: "==PROD_CLOACK_PASS==",
+			cloack2fa: "==PROD_CLOACK_2fa==",
+			buildDATE: dateString,
+		}
 	},
 	experimental: {
 		payloadExtraction: false
@@ -47,8 +49,5 @@ export default defineNuxtConfig({
 		},
 	},
 
-	srcDir: "src",
-	server: {
-		host: process.env.NUXT_HOST,
-	},
+	srcDir: "src"
 });
