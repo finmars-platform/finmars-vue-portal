@@ -292,7 +292,8 @@
 		});
 		if ( res.success ) {
 			await store.getMasterUsers()
-			navigateTo('/home')
+			//navigateTo('/home')
+			window.location.href = '/' + props.db.base_api_url + '/home'
 		}
 	}
 	async function save() {
