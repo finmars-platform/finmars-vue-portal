@@ -68,7 +68,7 @@
 		})
 	})
 
-	let isEdit = ref(true)
+	let isEdit = ref(false)
 
 	let tabs = reactive([
 		{id: 'porfolio_winner', name: 'Porfolio Winner'},

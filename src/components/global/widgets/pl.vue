@@ -4,7 +4,8 @@
 			<div>P&L (USD)</div>
 			<div>{{ total }}</div>
 		</div>
-		<div class="content">
+
+		<div v-if="status == 100" class="content">
 			<div class="chart_row header">
 				<div class="chart_field">
 					<div class="tick tick_min">-{{ precisionTick(maxTickStock) }}</div>
@@ -35,16 +36,47 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="content flex-column aic jcc" v-else>
+			<div class="flex aic">
+				<FmIcon v-if="status > 100" class="m-r-8" icon="report_problem" />
+				{{ STATUSES[status] }}
+			</div>
+
+			<FmLoaderData v-if="status < 100" />
+		</div>
 	</div>
 </template>
 
 <script setup>
 
-	let route = useRoute()
-	let wId = route.query.wId
-	let portfolioId = route.query.portfolioId
-	let client = route.query.workspace
-	let date_to = route.query.date_to
+	let props = defineProps({
+		wid: {
+			type: String,
+			required: true
+		},
+		portfolio: {
+			type: Number,
+			required: true
+		},
+		date_to: {
+			type: String,
+			required: true
+		},
+		type: {
+			type: String,
+			defoult: 'nav'
+		},
+		client: String,
+		token: String,
+		frameMod: Boolean,
+	})
+
+	const STATUSES = {
+		0: 'Waiting [barchart] data',
+		101: 'Data are not available',
+	}
+	let status = ref(0)
 
 	const COLORS = [
 		'#577590CC',
@@ -80,72 +112,7 @@
 			}).format(value);
 	}
 	onMounted(() => {
-		initPostMessageBus()
 	})
-	function initPostMessageBus() {
-		if ( window == top ) return false
-
-		send({
-			action: 'init'
-		})
-
-		window.addEventListener("message", async (e) => {
-			try {
-				if ( 'clickOnChart' == e.data.action ) {
-					let i = 0
-					for ( let prop in e.data.data ) {
-						inheritColors[prop] = COLORS[i]
-						i++
-					}
-
-					let pl = await useApi('widgetsHistory.get', {
-						params: {type: 'pl', client},
-						filters: {
-							portfolio: portfolioId,
-							date_from: e.data.date.date,
-							date_to: e.data.date.date,
-						},
-						headers: {
-							Authorization: 'Token ' + route.query.token
-						}
-					})
-					let active = ref(null)
-					let currentDate = pl.items.find(item => item.date == e.data.date.date)
-
-					if ( !currentDate ) return false
-					total.value = new Intl.NumberFormat('en-US', {
-						maximumFractionDigits: 2
-					}).format(currentDate.total) + ' USD';
-
-					let currentCategory = currentDate.categories.find(item => item.name == e.data.category)
-					if ( !currentCategory ) return false
-					let items = currentCategory.items
-						.filter((item) => item.value != 0)
-						.sort( (a, b) => b.value - a.value)
-
-					instruments.value = items
-
-					let arr = instruments.value.map(item => item.value)
-					let tickMax = Math.max(...arr)
-					let tickMin = Math.min(...arr)
-					let tickTo = Math.abs(tickMax) > Math.abs(tickMin) ? Math.abs(tickMax) : Math.abs(tickMin)
-					let countZerro = Math.floor(( ""+ Math.round(tickTo)).length / 3)
-					maxTickStock.value = Math.ceil(tickTo / Math.pow( 1000, countZerro )) * Math.pow( 1000, countZerro )
-				}
-
-			} catch(e) {
-
-				console.log('e:', e)
-			}
-
-		});
-	}
-	function send( data, source = window.parent ) {
-		let dataObj = Object.assign(data, {
-			wId,
-		})
-		source.postMessage( dataObj, "*" )
-	}
 </script>
 
 <style lang="scss" scoped>

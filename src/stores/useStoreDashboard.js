@@ -11,19 +11,60 @@ export default defineStore({
 				{id: 'Pl', name: 'P&L', min_colls: 12, min_rows: 1},
 			],
 			widgets: [
-				{name:"Nav","sdfd":"Nav(Stats)","colls":12,"rows":2,
-					scope: 'test', tab: null, minColls: 2, minRows: 2, props: {portfolio: 2, date: '2022-10-12'}
+				{
+					id:"test_Nav",
+					name:"Nav",
+					scope: 'test',
+					tab: null,
+					colls: 12,
+					rows:2,
+					minColls: 2,
+					minRows: 2,
 				},
-				{"name":"Barchart","dfg":"Balance","colls":12,"rows":4, scope: 'test', tab: 'i_lose', props: {portfolio: 2, date_to: '2022-10-12'}, minColls: 2, minRows: 2},
-				{"name":"Balance","df":"Balance","colls":6,"rows":3, scope: 'test', tab: 'i_lose', minColls: 2, minRows: 2},
-				{"name":"Pl","df":"P&L","colls":6,"rows":3, scope: 'test', tab: 'i_lose', minColls: 2, minRows: 2}
+				{
+					id:"test_Barchart",
+					name:"Barchart",
+					scope: 'test',
+					tab: 'i_lose',
+					colls: 12,
+					rows: 4,
+					minColls: 2,
+					minRows: 2,
+				},
+				{
+					id:"test_Balance",
+					name:"Balance",
+					scope: 'test',
+					tab: 'i_lose',
+					colls: 6,
+					rows: 4,
+					minColls: 2,
+					minRows: 2,
+				},
+				{
+					id:"test_Pl",
+					name:"Pl",
+					scope: 'test',
+					tab: 'i_lose',
+					colls: 6,
+					rows: 4,
+					minColls: 2,
+					minRows: 2,
+				}
 			],
-			scopeList: {
+			scopes: {
+				global: {
+					date: '2022-09-15',
+				},
 				test: {
 					portfolio: 2,
-					date: '2022-09-15'
+					date: '2022-09-15',
+					dataset: {
+
+					}
 				}
-			}
+			},
+
 		};
 	},
 	actions: {

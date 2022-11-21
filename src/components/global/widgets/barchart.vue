@@ -1,20 +1,34 @@
 <template>
-	<div class="wrap">
-		<div class="title">Balance (time) </div>
-
-		<div class="filters flex">
-			<div class="filter_item"
-				v-for="(item, i) in categories"
-				:key="i"
-				:class="{active: categoryName == item}"
-				@click="categoryName = item, updateData()"
-			>
-				{{ item }}
-			</div>
+	<div class="wrap" :class="{fullscreen: isFull}">
+		<div class="title flex aic sb">
+			<div>Balance (time)</div>
+			<FmIcon
+				:icon="isFull ? 'fullscreen_exit' : 'fullscreen'"
+				@click="isFull = !isFull"
+			/>
 		</div>
 
-		<div class="content">
+		<div class="content" v-if="status === 100">
+			<div class="filters flex">
+				<div class="filter_item"
+					v-for="(item, i) in categories"
+					:key="i"
+					:class="{active: categoryName == item}"
+					@click="categoryName = item, updateData()"
+				>
+					{{ item }}
+				</div>
+			</div>
 			<canvas :id="wid"><p>Chart</p></canvas>
+		</div>
+
+		<div class="content flex-column aic jcc" v-else>
+			<div class="flex aic">
+				<FmIcon v-if="status > 100" class="m-r-8" icon="report_problem" />
+				{{ STATUSES[status] }}
+			</div>
+
+			<FmLoaderData v-if="status < 100" />
 		</div>
 	</div>
 </template>
@@ -26,21 +40,24 @@
 		Chart,
 		BarElement,
 		BarController,
-		CategoryScale,
-		LinearScale,
-		LogarithmicScale,
-		RadialLinearScale,
-		TimeScale,
-		TimeSeriesScale,
-		Decimation,
 		Filler,
 		Legend,
-		Title,
 		Tooltip,
-		SubTitle
 	} from 'chart.js';
 
+	Chart.register(
+		BarElement,
+		BarController,
+		Filler,
+		Legend,
+		Tooltip,
+	);
+
 	let props = defineProps({
+		wid: {
+			type: String,
+			required: true
+		},
 		portfolio: {
 			type: Number,
 			required: true
@@ -57,11 +74,17 @@
 		token: String,
 		frameMod: Boolean,
 	})
+	// 0-99 101-200
+	const STATUSES = {
+		0: 'Loading data',
+		101: 'Data are not available',
+	}
+	let status = ref(0)
 
-	let wid = 'barchart'
 	let historyStats
 
 	let active = ref(null)
+	let isFull = ref(false)
 	let dataOfActive = ref({})
 	let activeIndex = ref(null)
 	let categoryName = ref('Asset Types')
@@ -71,7 +94,7 @@
 		labels: [],
 		datasets: [],
 	}
-	let myChart
+	let barchart
 	const COLORS = [
 		'#577590CC',
 		'#43AA8BCC',
@@ -95,29 +118,72 @@
 		'#AB7967',
 	]
 
-	await getHistory()
+	fetchHistory()
 
 	onMounted(() => {
-		if (!historyStats) return false
+		createChart()
+	})
+
+	async function fetchHistory(type = 'nav') {
+		let apiOpts = {
+			filters: {
+				portfolio: props.portfolio,
+				date_to: props.date_to
+			},
+			params: {
+				type
+			}
+		}
+		if ( props.client ) apiOpts.params.client = client
+		if ( props.token ) apiOpts.headers = { Authorization: 'Token ' + props.token }
+
+		let res = await useApi('widgetsHistory.get', apiOpts)
+
+		if ( res.error ) {
+			status.value = 101
+
+			return false
+		}
 
 		createData()
-		Chart.register(
-			BarElement,
-			BarController,
-			CategoryScale,
-			LinearScale,
-			LogarithmicScale,
-			RadialLinearScale,
-			TimeScale,
-			TimeSeriesScale,
-			Decimation,
-			Filler,
-			Legend,
-			Title,
-			Tooltip,
-			SubTitle
-		);
-		myChart = new Chart(wid, {
+	}
+	function createData() {
+		historyStats.items.forEach((date) => {
+			data.labels.push(dayjs(date.date).format('MMM YY'))
+
+			date.categories.forEach((category) => {
+				categories.add( category.name )
+				if ( category.name != categoryName.value ) return false
+
+				category.items.forEach((instrument, key) => {
+					if ( !data.datasets[key] ) {
+						data.datasets[key] = {
+							data: [],
+							total: 0
+						}
+					}
+
+					data.datasets[key].label = instrument.name
+					data.datasets[key].data.push(instrument.value)
+					data.datasets[key].total += instrument.value
+				})
+			})
+		})
+		data.datasets = data.datasets
+			.filter((item) => item.total != 0)
+			.sort( (a, b) => b.total - a.total)
+
+		dataOfActive.value = {}
+		activeIndex.value = historyStats.items.length - 1
+
+		data.datasets.forEach((item, key) => {
+			item.backgroundColor = COLORS[key]
+
+			dataOfActive.value[item.label] = item.data[activeIndex.value]
+		})
+	}
+	function createChart() {
+		barchart = new Chart(props.wid, {
 			type: 'bar',
 			data: data,
 			plugins: [{
@@ -206,16 +272,16 @@
 					axis: 'x'
 				},
 				onClick: (evt) => {
-					const points = myChart.getElementsAtEventForMode(evt, 'nearest', { intersect: false, axis: 'x' }, true);
+					const points = barchart.getElementsAtEventForMode(evt, 'nearest', { intersect: false, axis: 'x' }, true);
 
 					if (points.length) {
 						let data = {}
 
 						points.forEach((item, i) => {
-							data[myChart.data.datasets[item.datasetIndex].label] = myChart.data.datasets[item.datasetIndex].data[item.index]
+							data[barChart.data.datasets[item.datasetIndex].label] = barChart.data.datasets[item.datasetIndex].data[item.index]
 						})
 						active.value = points[0]
-						myChart.update()
+						barchart.update()
 
 						activeIndex.value = points[0].index
 						send({
@@ -228,26 +294,6 @@
         }
 			},
 		});
-	})
-	async function getHistory(type = 'nav') {
-		let apiOpts = {
-			filters: {
-				portfolio: props.portfolio,
-				date_to: props.date_to
-			},
-			params: {
-				type
-			}
-		}
-		if ( props.client ) apiOpts.params.client = client
-		if ( props.token ) apiOpts.headers = { Authorization: 'Token ' + props.token }
-
-		let res = await useApi('widgetsHistory.get', apiOpts)
-
-		if ( !res.error ) {
-			historyStats = res
-			activeIndex.value = historyStats.items.length - 1
-		}
 	}
 	function updateData() {
 		data.labels = []
@@ -256,42 +302,7 @@
 		createData()
 
 		// event
-		myChart.update()
-	}
-	function createData() {
-
-		historyStats.items.forEach((date) => {
-			data.labels.push(dayjs(date.date).format('MMM YY'))
-
-			date.categories.forEach((category) => {
-				categories.add( category.name )
-				if ( category.name != categoryName.value ) return false
-
-				category.items.forEach((instrument, key) => {
-					if ( !data.datasets[key] ) {
-						data.datasets[key] = {
-							data: [],
-							total: 0
-						}
-					}
-
-					data.datasets[key].label = instrument.name
-					data.datasets[key].data.push(instrument.value)
-					data.datasets[key].total += instrument.value
-				})
-			})
-		})
-		data.datasets = data.datasets
-			.filter((item) => item.total != 0)
-			.sort( (a, b) => b.total - a.total)
-
-		dataOfActive.value = {}
-
-		data.datasets.forEach((item, key) => {
-			item.backgroundColor = COLORS[key]
-
-			dataOfActive.value[item.label] = item.data[activeIndex.value]
-		})
+		barchart.update()
 	}
 </script>
 
@@ -299,6 +310,16 @@
 	.wrap {
 		border-radius: 5px;
 		border: 1px solid $border;
+
+		&.fullscreen {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			z-index: 1111;
+			background: #fff;
+		}
 	}
 	.title {
 		height: 36px;
@@ -332,4 +353,5 @@
 			margin-left: 20px;
 		}
 	}
+
 </style>

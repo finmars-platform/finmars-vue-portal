@@ -32,7 +32,6 @@
 								Settings
 							</div>
 							<div class="fm_list_item">
-								<FmIcon icon="delete" />
 								Remove
 							</div>
 						</div>
@@ -50,6 +49,7 @@
 		<PagesDashboardEditWidgetM
 			v-if="isEditWidget"
 			v-model="isEditWidget"
+			:wid="component.id"
 		/>
 	</div>
 </template>

@@ -5,8 +5,16 @@
 			<div>{{ total }}</div>
 		</div>
 
-		<div class="content">
+		<div v-if="status == 100" class="content">
 			<canvas id="myChart"><p>Chart</p></canvas>
+		</div>
+		<div class="content flex-column aic jcc" v-else>
+			<div class="flex aic">
+				<FmIcon v-if="status > 100" class="m-r-8" icon="report_problem" />
+				{{ STATUSES[status] }}
+			</div>
+
+			<FmLoaderData v-if="status < 100" />
 		</div>
 	</div>
 </template>
@@ -16,61 +24,46 @@
 	import {
 		Chart,
 		ArcElement,
-		LineElement,
-		BarElement,
-		PointElement,
-		BarController,
-		BubbleController,
 		DoughnutController,
-		LineController,
-		PieController,
-		PolarAreaController,
-		RadarController,
-		ScatterController,
-		CategoryScale,
-		LinearScale,
-		LogarithmicScale,
-		RadialLinearScale,
-		TimeScale,
-		TimeSeriesScale,
-		Decimation,
 		Filler,
 		Legend,
-		Title,
 		Tooltip,
-		SubTitle
 	} from 'chart.js';
-// Stores the controller so that the chart initialization routine can look it up
+
 	Chart.register(
 		ArcElement,
-		LineElement,
-		BarElement,
-		PointElement,
-		BarController,
-		BubbleController,
 		DoughnutController,
-		LineController,
-		PieController,
-		PolarAreaController,
-		RadarController,
-		ScatterController,
-		CategoryScale,
-		LinearScale,
-		LogarithmicScale,
-		RadialLinearScale,
-		TimeScale,
-		TimeSeriesScale,
-		Decimation,
 		Filler,
 		Legend,
-		Title,
 		Tooltip,
-		SubTitle
 	);
+	let props = defineProps({
+		wid: {
+			type: String,
+			required: true
+		},
+		portfolio: {
+			type: Number,
+			required: true
+		},
+		date_to: {
+			type: String,
+			required: true
+		},
+		type: {
+			type: String,
+			defoult: 'nav'
+		},
+		client: String,
+		token: String,
+		frameMod: Boolean,
+	})
 
-	definePageMeta({
-		layout: 'auth'
-	});
+	const STATUSES = {
+		0: 'Waiting [barchart] data',
+		101: 'Data are not available',
+	}
+	let status = ref(0)
 
 	const COLORS = [
 		'#577590CC',
@@ -105,12 +98,6 @@
 		'#AB7967'
 	]
 
-	let route = useRoute()
-	let wId = route.query.wId
-	let portfolioId = route.query.portfolioId
-	let client = route.query.workspace
-	let date_to = route.query.date_to
-
 	let total = ref('0 USD')
 	let active = ref(null)
 	let myChart
@@ -127,15 +114,8 @@
 			}
 		],
 	})
-	function precisionTick(value) {
-		return new Intl.NumberFormat('en-US', {
-			notation: "compact",
-			maximumFractionDigits: 2
-		}).format(value);
-	}
-	onMounted(() => {
-		initPostMessageBus()
 
+	onMounted(() => {
 		myChart = new Chart('myChart', {
 			type: 'doughnut',
 			data: data.value,
@@ -225,93 +205,11 @@
 		});
 	})
 
-	let inheritColors = {}
-
-	function initPostMessageBus() {
-		if ( window == top ) return false
-
-		send({
-			action: 'init'
-		})
-
-		window.addEventListener("message", async (e) => {
-			if ( 'clickOnChart' == e.data.action ) {
-				let i = 0
-				for ( let prop in e.data.data ) {
-					inheritColors[prop] = COLORS[i]
-					i++
-				}
-				let nav = await useApi('widgetsHistory.get', {
-					params: {type: 'nav', client},
-					filters: {
-						portfolio: portfolioId,
-						date_from: e.data.date.date,
-						date_to: e.data.date.date,
-					},
-					headers: {
-						Authorization: 'Token ' + route.query.token
-					}
-				})
-
-				let currentDate = nav.items.find(item => item.date == e.data.date.date)
-
-				if ( !currentDate ) return false
-
-				total.value = new Intl.NumberFormat('en-US', {
-					maximumFractionDigits: 2
-				}).format(currentDate.nav) + ' USD';
-
-				let currentCategory = currentDate.categories.find(item => item.name == e.data.category)
-				if ( !currentCategory ) return false
-				let items = currentCategory.items
-					.filter((item) => item.value != 0)
-					.sort( (a, b) => b.value - a.value)
-
-				let plusColors = []
-				let plus = items
-					.filter(item => item.value >= 0)
-					.map(item => {
-						plusColors.push( inheritColors[item.name] )
-						return item.value
-					})
-
-				let totalPlus = plus.length ? plus.reduce((a,b)=> a + b) : 0
-
-				let minusColors = []
-				let minus = items
-					.filter(item => item.value < 0)
-					.map(item => {
-						minusColors.push( inheritColors[item.name] )
-						return item.value
-					})
-
-				let totalMinus = Math.abs(minus.length ? minus.reduce((a,b) => a + b) : 1)
-
-				data.value.labels = items.map(item => item.name)
-				data.value.datasets = [
-					{
-						data: plus,
-						backgroundColor: plusColors,
-						hoverOffset: 4
-					},
-					{
-						data: minus,
-						backgroundColor: minusColors,
-						circumference: totalPlus == 0
-							? 360
-							: Math.floor(totalMinus / totalPlus * 360)
-					}
-				]
-
-				myChart.update()
-			}
-		});
-	}
-	function send( data, source = window.parent ) {
-		let dataObj = Object.assign(data, {
-			wId,
-		})
-		source.postMessage( dataObj, "*" )
+	function precisionTick(value) {
+		return new Intl.NumberFormat('en-US', {
+			notation: "compact",
+			maximumFractionDigits: 2
+		}).format(value);
 	}
 </script>
 
@@ -327,6 +225,6 @@
 		padding: 0 20px;
 	}
 	.content {
-		// height: calc(100vh - 38px);
+		height: calc(100% - 38px);
 	}
 </style>
