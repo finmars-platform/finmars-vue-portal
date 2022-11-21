@@ -43,7 +43,7 @@
 
 								</button>-->
 								<a
-									:href="`${config.public.apiURL}/a/#!/dashboard`"
+									:href="`${config.public.oldAppURL}dashboard`"
 									class="sidemenu-btn"
 								>
 									<FmIcon icon="dashboard" class="side-nav-icon"></FmIcon>
@@ -52,7 +52,7 @@
 							</li>
 
 							<li>
-								<!--								<a :href="`${config.public.apiURL}/a/#!/`" class="sidemenu-btn">
+								<!--								<a :href="`${config.public.oldAppURL}`" class="sidemenu-btn">
 									<FmIcon icon="home" class="side-nav-icon"></FmIcon>
 									<span class="side-nav-title">Homepage</span>
 								</a>-->
@@ -76,7 +76,7 @@
 									<ul class="sidenav-dropdown-menu display-none submenuElement">
 										<li v-if="accessTable.report_balance">
 											<a
-												:href="`${config.public.apiURL}/a/#!/reports/balance`"
+												:href="`${config.public.oldAppURL}reports/balance`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Balance</span>
@@ -84,7 +84,7 @@
 										</li>
 										<li v-if="accessTable.report_pl">
 											<a
-												:href="`${config.public.apiURL}/a/#!/reports/profit-and-lost`"
+												:href="`${config.public.oldAppURL}reports/profit-and-lost`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">P&L</span>
@@ -92,7 +92,7 @@
 										</li>
 										<li v-if="accessTable.report_transaction">
 											<a
-												:href="`${config.public.apiURL}/a/#!/reports/transaction`"
+												:href="`${config.public.oldAppURL}reports/transaction`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Transaction</span>
@@ -107,7 +107,7 @@
 											</NuxtLink>
 										</li>
 										<li v-if="accessTable.report_cash_flow">
-											<!--											<a :href="`${config.public.apiURL}/a/#!/reports/cash-flow-projection`"
+											<!--											<a :href="`${config.public.oldAppURL}reports/cash-flow-projection`"
 												 class="sidenav-dropdown-menu-btn">-->
 											<div class="sidenav-dropdown-menu-btn disabled-elem">
 												<span class="side-nav-title">Cash flow</span>
@@ -115,7 +115,7 @@
 										</li>
 										<li v-if="accessTable.report_event">
 											<a
-												:href="`${config.public.apiURL}/a/#!/reports/check-for-events`"
+												:href="`${config.public.oldAppURL}reports/check-for-events`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Events</span>
@@ -139,7 +139,7 @@
 									<ul class="sidenav-dropdown-menu submenuElement display-none">
 										<li v-if="accessTable.data_portfolio">
 											<a
-												:href="`${config.public.apiURL}/a/#!/data/portfolios`"
+												:href="`${config.public.oldAppURL}data/portfolios`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Portfolios</span>
@@ -147,7 +147,7 @@
 										</li>
 										<li v-if="accessTable.data_portfolio">
 											<a
-												:href="`${config.public.apiURL}/a/#!/data/portfolio-registers`"
+												:href="`${config.public.oldAppURL}data/portfolio-registers`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Registers</span>
@@ -155,7 +155,7 @@
 										</li>
 										<li v-if="accessTable.data_account">
 											<a
-												:href="`${config.public.apiURL}/a/#!/data/accounts`"
+												:href="`${config.public.oldAppURL}data/accounts`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Accounts</span>
@@ -163,7 +163,7 @@
 										</li>
 										<li v-if="accessTable.data_instrument">
 											<a
-												:href="`${config.public.apiURL}/a/#!/data/instruments`"
+												:href="`${config.public.oldAppURL}data/instruments`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Instruments</span>
@@ -171,7 +171,7 @@
 										</li>
 										<li v-if="accessTable.data_counterparty">
 											<a
-												:href="`${config.public.apiURL}/a/#!/data/counterparties`"
+												:href="`${config.public.oldAppURL}data/counterparties`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Counterparties</span>
@@ -179,7 +179,7 @@
 										</li>
 										<li v-if="accessTable.data_responsible">
 											<a
-												:href="`${config.public.apiURL}/a/#!/data/responsibles`"
+												:href="`${config.public.oldAppURL}data/responsibles`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Responsibles</span>
@@ -187,7 +187,7 @@
 										</li>
 										<li v-if="accessTable.data_currency">
 											<a
-												:href="`${config.public.apiURL}/a/#!/data/currency`"
+												:href="`${config.public.oldAppURL}data/currency`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Currencies</span>
@@ -195,7 +195,7 @@
 										</li>
 										<li v-if="accessTable.data_strategies">
 											<a
-												:href="`${config.public.apiURL}/a/#!/data/strategy/1`"
+												:href="`${config.public.oldAppURL}data/strategy/1`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Strategies 1</span>
@@ -203,7 +203,7 @@
 										</li>
 										<li v-if="accessTable.data_strategies">
 											<a
-												:href="`${config.public.apiURL}/a/#!/data/strategy/2`"
+												:href="`${config.public.oldAppURL}data/strategy/2`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Strategies 2</span>
@@ -211,7 +211,7 @@
 										</li>
 										<li v-if="accessTable.data_strategies">
 											<a
-												:href="`${config.public.apiURL}/a/#!/data/strategy/3`"
+												:href="`${config.public.oldAppURL}data/strategy/3`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Strategies 3</span>
@@ -219,7 +219,7 @@
 										</li>
 										<li v-if="accessTable.data_instrument">
 											<a
-												:href="`${config.public.apiURL}/a/#!/data/generated-events`"
+												:href="`${config.public.oldAppURL}data/generated-events`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">EVENTS</span>
@@ -227,7 +227,7 @@
 										</li>
 										<li>
 											<a
-												:href="`${config.public.apiURL}/a/#!/explorer`"
+												:href="`${config.public.oldAppURL}explorer`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">EXPLORER</span>
@@ -235,7 +235,7 @@
 										</li>
 										<li>
 											<a
-												:href="`${config.public.apiURL}/a/#!/data-stats`"
+												:href="`${config.public.oldAppURL}data-stats`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">STATS</span>
@@ -243,7 +243,7 @@
 										</li>
 										<li>
 											<a
-												:href="`${config.public.apiURL}/a/#!/calendar`"
+												:href="`${config.public.oldAppURL}calendar`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">CALENDAR</span>
@@ -267,7 +267,7 @@
 									<ul class="sidenav-dropdown-menu submenuElement display-none">
 										<li v-if="accessTable.data_transaction">
 											<a
-												:href="`${config.public.apiURL}/a/#!/data/complex-transactions`"
+												:href="`${config.public.oldAppURL}data/complex-transactions`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Transactions</span>
@@ -275,7 +275,7 @@
 										</li>
 										<li>
 											<a
-												:href="`${config.public.apiURL}/a/#!/data/transactions`"
+												:href="`${config.public.oldAppURL}data/transactions`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Base Transactions</span>
@@ -283,7 +283,7 @@
 										</li>
 										<li>
 											<a
-												:href="`${config.public.apiURL}/a/#!/data/portfolio-register-records`"
+												:href="`${config.public.oldAppURL}data/portfolio-register-records`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Register Records</span>
@@ -310,7 +310,7 @@
 									<ul class="sidenav-dropdown-menu submenuElement display-none">
 										<li v-if="accessTable.data_price_history">
 											<a
-												:href="`${config.public.apiURL}/a/#!/data/pricing`"
+												:href="`${config.public.oldAppURL}data/pricing`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Prices</span>
@@ -318,7 +318,7 @@
 										</li>
 										<li v-if="accessTable.data_price_history">
 											<a
-												:href="`${config.public.apiURL}/a/#!/data/pricing-errors`"
+												:href="`${config.public.oldAppURL}data/pricing-errors`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Prices Journal</span>
@@ -326,7 +326,7 @@
 										</li>
 										<li v-if="accessTable.data_fx_history">
 											<a
-												:href="`${config.public.apiURL}/a/#!/data/currencies`"
+												:href="`${config.public.oldAppURL}data/currencies`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">FX Rates</span>
@@ -334,7 +334,7 @@
 										</li>
 										<li v-if="accessTable.data_fx_history">
 											<a
-												:href="`${config.public.apiURL}/a/#!/data/currencies-errors`"
+												:href="`${config.public.oldAppURL}data/currencies-errors`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">FX Rates Journal</span>
@@ -342,7 +342,7 @@
 										</li>
 										<li>
 											<a
-												:href="`${config.public.apiURL}/a/#!/run-pricing-procedures`"
+												:href="`${config.public.oldAppURL}run-pricing-procedures`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Run Pricing</span>
@@ -350,7 +350,7 @@
 										</li>
 										<li>
 											<a
-												:href="`${config.public.apiURL}/a/#!/pricing-parent-procedures`"
+												:href="`${config.public.oldAppURL}pricing-parent-procedures`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Procedures status</span>
@@ -374,7 +374,7 @@
 									<ul class="sidenav-dropdown-menu submenuElement display-none">
 										<li v-if="accessTable.data_simple_import">
 											<a
-												:href="`${config.public.apiURL}/a/#!/import/simple-entity-import`"
+												:href="`${config.public.oldAppURL}import/simple-entity-import`"
 												class="sidenav-dropdown-menu-btn two-line-text"
 											>
 												<span class="side-nav-title">
@@ -385,7 +385,7 @@
 										</li>
 										<li v-if="accessTable.data_simple_import">
 											<a
-												:href="`${config.public.apiURL}/a/#!/import/unified-entity-import`"
+												:href="`${config.public.oldAppURL}import/unified-entity-import`"
 												class="sidenav-dropdown-menu-btn two-line-text"
 											>
 												<span class="side-nav-title">
@@ -396,7 +396,7 @@
 										</li>
 										<li v-if="accessTable.data_transaction_import">
 											<a
-												:href="`${config.public.apiURL}/a/#!/import/transaction-import`"
+												:href="`${config.public.oldAppURL}import/transaction-import`"
 												class="sidenav-dropdown-menu-btn two-line-text"
 											>
 												<span class="side-nav-title">
@@ -407,7 +407,7 @@
 										</li>
 										<li v-if="accessTable.data_complex_import">
 											<a
-												:href="`${config.public.apiURL}/a/#!/import/complex-import`"
+												:href="`${config.public.oldAppURL}import/complex-import`"
 												class="sidenav-dropdown-menu-btn two-line-text"
 											>
 												<span class="side-nav-title">
@@ -418,7 +418,7 @@
 										</li>
 										<li v-if="accessTable.data_instrument_download">
 											<a
-												:href="`${config.public.apiURL}/a/#!/import/instrument-import`"
+												:href="`${config.public.oldAppURL}import/instrument-import`"
 												class="sidenav-dropdown-menu-btn two-line-text"
 											>
 												<span class="side-nav-title">
@@ -429,7 +429,7 @@
 										</li>
 										<li v-if="accessTable.data_instrument_download">
 											<a
-												:href="`${config.public.apiURL}/a/#!/import/instrument-import-cbonds`"
+												:href="`${config.public.oldAppURL}import/instrument-import-cbonds`"
 												class="sidenav-dropdown-menu-btn two-line-text"
 											>
 												<span class="side-nav-title">
@@ -440,7 +440,7 @@
 										</li>
 										<li v-if="accessTable.data_prices_download">
 											<a
-												:href="`${config.public.apiURL}/a/#!/import/prices-import`"
+												:href="`${config.public.oldAppURL}import/prices-import`"
 												class="sidenav-dropdown-menu-btn two-line-text"
 											>
 												<span class="side-nav-title">
@@ -451,7 +451,7 @@
 										</li>
 										<li>
 											<a
-												:href="`${config.public.apiURL}/a/#!/run-data-procedures`"
+												:href="`${config.public.oldAppURL}run-data-procedures`"
 												class="sidenav-dropdown-menu-btn two-line-text"
 											>
 												<span class="side-nav-title">Import From Bank</span>
@@ -483,7 +483,7 @@
 									>
 										<li v-if="accessTable.report_instrument_audit">
 											<a
-												:href="`${config.public.apiURL}/a/#!/data/audit/instruments`"
+												:href="`${config.public.oldAppURL}data/audit/instruments`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Instruments Audit</span>
@@ -491,7 +491,7 @@
 										</li>
 										<li v-if="accessTable.report_transaction_audit">
 											<a
-												:href="`${config.public.apiURL}/a/#!/data/audit/transactions`"
+												:href="`${config.public.oldAppURL}data/audit/transactions`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Transactions Audit</span>
@@ -504,7 +504,7 @@
 										</li>
 										<li v-if="accessTable.report_activity_log">
 											<a
-												:href="`${config.public.apiURL}/a/#!/system/file-reports`"
+												:href="`${config.public.oldAppURL}system/file-reports`"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">System Files</span>
@@ -558,7 +558,7 @@
 											>
 												<li>
 													<a
-														:href="`${config.public.apiURL}/a/#!/import/layouts`"
+														:href="`${config.public.oldAppURL}import/layouts`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
@@ -568,7 +568,7 @@
 												</li>
 												<li>
 													<a
-														:href="`${config.public.apiURL}/a/#!/dashboard-layouts`"
+														:href="`${config.public.oldAppURL}dashboard-layouts`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
@@ -578,7 +578,7 @@
 												</li>
 												<li>
 													<a
-														:href="`${config.public.apiURL}/a/#!/settings/input-form-layouts`"
+														:href="`${config.public.oldAppURL}settings/input-form-layouts`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
@@ -588,7 +588,7 @@
 												</li>
 												<li>
 													<a
-														:href="`${config.public.apiURL}/a/#!/context-menu-layouts`"
+														:href="`${config.public.oldAppURL}context-menu-layouts`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
@@ -599,7 +599,7 @@
 
 												<li>
 													<a
-														:href="`${config.public.apiURL}/a/#!/manual-sorting-layouts`"
+														:href="`${config.public.oldAppURL}manual-sorting-layouts`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Manual Sorting</span>
@@ -611,7 +611,7 @@
 
 									<li>
 										<a
-											:href="`${config.public.apiURL}/a/#!/settings/notifications`"
+											:href="`${config.public.oldAppURL}settings/notifications`"
 											class="sidemenu-btn"
 										>
 											<span class="side-nav-title">Notifications</span>
@@ -619,7 +619,7 @@
 									</li>
 									<li>
 										<a
-											:href="`${config.public.apiURL}/a/#!/settings/interface`"
+											:href="`${config.public.oldAppURL}settings/interface`"
 											class="sidemenu-btn"
 										>
 											<span class="side-nav-title">Interface Complexity</span>
@@ -648,7 +648,7 @@
 											>
 												<li v-if="accessTable.configuration_account_type">
 													<a
-														:href="`${config.public.apiURL}/a/#!/data/account-types`"
+														:href="`${config.public.oldAppURL}data/account-types`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Account Types</span>
@@ -656,7 +656,7 @@
 												</li>
 												<li v-if="accessTable.configuration_instrument_type">
 													<a
-														:href="`${config.public.apiURL}/a/#!/data/instrument-types`"
+														:href="`${config.public.oldAppURL}data/instrument-types`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Instrument Types</span>
@@ -664,7 +664,7 @@
 												</li>
 												<li v-if="accessTable.configuration_transaction_type">
 													<a
-														:href="`${config.public.apiURL}/a/#!/data/transaction-types`"
+														:href="`${config.public.oldAppURL}data/transaction-types`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
@@ -682,7 +682,7 @@
 												</li> -->
 												<li v-if="accessTable.configuration_user_attributes">
 													<a
-														:href="`${config.public.apiURL}/a/#!/settings/entities-custom-attributes`"
+														:href="`${config.public.oldAppURL}settings/entities-custom-attributes`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">User Attributes</span>
@@ -691,7 +691,7 @@
 
 												<li v-if="accessTable.configuration_reference_table">
 													<a
-														:href="`${config.public.apiURL}/a/#!/import/reference-tables`"
+														:href="`${config.public.oldAppURL}import/reference-tables`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Reference Tables</span>
@@ -700,7 +700,7 @@
 
 												<li v-if="accessTable.configuration_mapping_tables">
 													<a
-														:href="`${config.public.apiURL}/a/#!/import/mapping-tables-import`"
+														:href="`${config.public.oldAppURL}import/mapping-tables-import`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"> Mapping Tables </span>
@@ -709,7 +709,7 @@
 
 												<li v-if="accessTable.configuration_template">
 													<a
-														:href="`${config.public.apiURL}/a/#!/template-layouts`"
+														:href="`${config.public.oldAppURL}template-layouts`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Templates</span>
@@ -734,7 +734,7 @@
 											>
 												<li>
 													<a
-														:href="`${config.public.apiURL}/a/#!/pricing-schemes`"
+														:href="`${config.public.oldAppURL}pricing-schemes`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Schemes</span>
@@ -742,7 +742,7 @@
 												</li>
 												<li>
 													<a
-														:href="`${config.public.apiURL}/a/#!/pricing-policies`"
+														:href="`${config.public.oldAppURL}pricing-policies`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Policies</span>
@@ -771,7 +771,7 @@
 													v-if="accessTable.configuration_price_download_scheme"
 												>
 													<a
-														:href="`${config.public.apiURL}/a/#!/settings/price-download-scheme`"
+														:href="`${config.public.oldAppURL}settings/price-download-scheme`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Price Schemes</span>
@@ -783,7 +783,7 @@
 													"
 												>
 													<a
-														:href="`${config.public.apiURL}/a/#!/settings/instrument-import`"
+														:href="`${config.public.oldAppURL}settings/instrument-import`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
@@ -812,7 +812,7 @@
 													v-if="accessTable.configuration_simple_import_scheme"
 												>
 													<a
-														:href="`${config.public.apiURL}/a/#!/settings/data-import`"
+														:href="`${config.public.oldAppURL}settings/data-import`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Data Import</span>
@@ -824,7 +824,7 @@
 													"
 												>
 													<a
-														:href="`${config.public.apiURL}/a/#!/settings/transaction-import`"
+														:href="`${config.public.oldAppURL}settings/transaction-import`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
@@ -836,7 +836,7 @@
 													v-if="accessTable.configuration_complex_import_scheme"
 												>
 													<a
-														:href="`${config.public.apiURL}/a/#!/settings/complex-import`"
+														:href="`${config.public.oldAppURL}settings/complex-import`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Complex Import</span>
@@ -863,7 +863,7 @@
 											>
 												<li>
 													<a
-														:href="`${config.public.apiURL}/a/#!/pricing-procedures`"
+														:href="`${config.public.oldAppURL}pricing-procedures`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
@@ -873,7 +873,7 @@
 												</li>
 												<li>
 													<a
-														:href="`${config.public.apiURL}/a/#!/data-procedures`"
+														:href="`${config.public.oldAppURL}data-procedures`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Data Procedures</span>
@@ -881,7 +881,7 @@
 												</li>
 												<li>
 													<a
-														:href="`${config.public.apiURL}/a/#!/expression-procedures`"
+														:href="`${config.public.oldAppURL}expression-procedures`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
@@ -891,7 +891,7 @@
 												</li>
 												<li>
 													<a
-														:href="`${config.public.apiURL}/a/#!/schedules`"
+														:href="`${config.public.oldAppURL}schedules`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Schedules</span>
@@ -920,7 +920,7 @@
 											>
 												<li v-if="accessTable.configuration_aliases">
 													<a
-														:href="`${config.public.apiURL}/a/#!/settings/aliases`"
+														:href="`${config.public.oldAppURL}settings/aliases`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Aliases</span>
@@ -929,7 +929,7 @@
 
 												<li>
 													<a
-														:href="`${config.public.apiURL}/a/#!/settings/tooltips`"
+														:href="`${config.public.oldAppURL}settings/tooltips`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Tooltips</span>
@@ -938,7 +938,7 @@
 
 												<li>
 													<a
-														:href="`${config.public.apiURL}/a/#!/settings/palettes`"
+														:href="`${config.public.oldAppURL}settings/palettes`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Palettes</span>
@@ -947,7 +947,7 @@
 
 												<li>
 													<a
-														:href="`${config.public.apiURL}/a/#!/settings/cross-entity-attribute-extension`"
+														:href="`${config.public.oldAppURL}settings/cross-entity-attribute-extension`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Reports</span>
@@ -972,7 +972,7 @@
 											>
 												<li v-if="accessTable.settings_import_configuration">
 													<a
-														:href="`${config.public.apiURL}/a/#!/settings/import-configuration`"
+														:href="`${config.public.oldAppURL}settings/import-configuration`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Import</span>
@@ -980,7 +980,7 @@
 												</li>
 												<li v-if="accessTable.settings_export_configuration">
 													<a
-														:href="`${config.public.apiURL}/a/#!/settings/export-configuration`"
+														:href="`${config.public.oldAppURL}settings/export-configuration`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Export</span>
@@ -988,7 +988,7 @@
 												</li>
 												<li>
 													<a
-														:href="`${config.public.apiURL}/a/#!/update-configuration`"
+														:href="`${config.public.oldAppURL}update-configuration`"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Update</span>
@@ -1010,7 +1010,7 @@
 								<ul class="side-menu">
 									<li v-if="accessTable.settings_provider">
 										<a
-											:href="`${config.public.apiURL}/a/#!/settings/data-providers`"
+											:href="`${config.public.oldAppURL}settings/data-providers`"
 											class="sidemenu-btn"
 										>
 											<span class="side-nav-title">Data providers</span>
@@ -1018,7 +1018,7 @@
 									</li>
 									<li v-if="accessTable.settings_init_configuration">
 										<a
-											:href="`${config.public.apiURL}/a/#!/settings/init-configuration`"
+											:href="`${config.public.oldAppURL}settings/init-configuration`"
 											class="sidemenu-btn"
 										>
 											<span class="side-nav-title">New User Setups</span>
@@ -1026,7 +1026,7 @@
 									</li>
 									<li v-if="accessTable.settings_users_groups_permission">
 										<a
-											:href="`${config.public.apiURL}/a/#!/settings/users-and-groups`"
+											:href="`${config.public.oldAppURL}settings/users-and-groups`"
 											class="sidemenu-btn"
 										>
 											<span class="side-nav-title">Permissions</span>
@@ -1034,7 +1034,7 @@
 									</li>
 									<li v-if="accessTable.settings_ecosystem_default">
 										<a
-											:href="`${config.public.apiURL}/a/#!/settings/default-settings`"
+											:href="`${config.public.oldAppURL}settings/default-settings`"
 											class="sidemenu-btn"
 										>
 											<span class="side-nav-title">Default Settings</span>
@@ -1047,7 +1047,7 @@
 									</li>
 									<li>
 										<a
-											:href="`${config.public.apiURL}/a/#!/processes`"
+											:href="`${config.public.oldAppURL}processes`"
 											class="sidemenu-btn"
 										>
 											<span class="side-nav-title">Active Processes</span>
@@ -1080,7 +1080,7 @@
 
 				<span title="Copy" class="cursor-pointer link" @click="copyToBuffer(store.current.base_api_url)">{{store.current.base_api_url}}</span>&nbsp;
 
-				<a :href="`${config.public.apiURL}/a/#!/update-center`"
+				<a :href="`${config.public.oldAppURL}update-center`"
 					 class="display-inline highlight link">{{store.current.version}}</a>
 			</div>
 			<!--				<span class="websocket-connection-status {{vm.getWsStatus()}}"
