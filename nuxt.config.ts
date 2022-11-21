@@ -1,18 +1,20 @@
 const curDate = new Date();
 const dateString = `${curDate.getHours()}:${curDate.getMinutes()}, ${curDate.getDate()}/${curDate.getMonth() + 1}/${curDate.getFullYear()}`;
 const apiURL = process.env.API_URL || "==PROD_API_URL==";
-const baseURL = (process.env.APP_BASE_URL || "==PROD_APP_BASE_URL==") + '/v/';
+const baseURL = process.env.APP_BASE_URL || "==PROD_APP_BASE_URL=="
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
-	publicRuntimeConfig: {
-		appURL: process.env.APP_URL || "==PROD_APP_URL==",
-		apiURL: apiURL,
-		authorizerURL: process.env.AUTHORIZER_URL || apiURL + "/authorizer",
-		wsURL: process.env.WS_URL || "==PROD_WS_URL==",
-		oldAppURL: process.env.OLD_APP_URL || "==PROD_OLD_APP_URL==",
-		cloackPass: "==PROD_CLOACK_PASS==",
-		cloack2fa: "==PROD_CLOACK_2fa==",
-		buildDATE: dateString,
+	runtimeConfig: {
+		public: {
+			appURL: process.env.APP_URL || "==PROD_APP_URL==",
+			apiURL: apiURL,
+			authorizerURL: process.env.AUTHORIZER_URL || apiURL + "/authorizer",
+			wsURL: process.env.WS_URL || "==PROD_WS_URL==",
+			oldAppURL: process.env.OLD_APP_URL || "==PROD_OLD_APP_URL==",
+			cloackPass: "==PROD_CLOACK_PASS==",
+			cloack2fa: "==PROD_CLOACK_2fa==",
+			buildDATE: dateString,
+		}
 	},
 	experimental: {
 		payloadExtraction: false
