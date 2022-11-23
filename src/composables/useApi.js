@@ -68,7 +68,7 @@ export default async function useApi (
 	try {
 		let response = await $fetch(url, opts)
 
-		return method == 'get' ? providers[route](response) : response
+		return method == 'get' && providers[route] ? providers[route](response) : response
 
 	} catch(e) {
 		let [code, url] = e.message.split('  ')

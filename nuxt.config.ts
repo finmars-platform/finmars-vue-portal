@@ -30,7 +30,8 @@ export default defineNuxtConfig({
   },
 	ssr: false,
 	app: {
-		baseURL: '/v/'
+		baseURL: '',
+		pageTransition: { name: 'page', mode: 'out-in' }
 	},
 	css: [
 		"~/assets/scss/main.scss",
