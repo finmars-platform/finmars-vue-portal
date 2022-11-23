@@ -1,6 +1,6 @@
 <template>
 	<BaseModal :title="title"
-						 v-model="opened"
+						 v-model="props.opened"
 						 @update:modelValue="cancel">
 
 		<div>

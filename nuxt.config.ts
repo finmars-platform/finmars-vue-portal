@@ -1,38 +1,38 @@
-const curDate = new Date();
-const dateString = `${curDate.getHours()}:${curDate.getMinutes()}, ${curDate.getDate()}/${curDate.getMonth() + 1}/${curDate.getFullYear()}`;
+import dayjs from 'dayjs'
 
-// https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
 	runtimeConfig: {
 		public: {
-			appURL: process.env.APP_URL || "==PROD_APP_URL==",
-			apiURL: process.env.API_URL || "==PROD_API_URL==",
-			authorizerURL: process.env.AUTHORIZER_URL || process.env.API_URL,
-			wsURL: process.env.WS_URL || "==PROD_WS_URL==",
-			oldAppURL: process.env.OLD_APP_URL || "==PROD_OLD_APP_URL==",
+			frontURL: process.env.FRONT_HOST || "==PROD_FRONT_HOST==",
+			apiURL: process.env.API_HOST || "==PROD_API_HOST==",
+			wsURL: (process.env.WS_HOST  || "==PROD_WS_HOST==") + '/ws',
+
+			oldAppURL: process.env.API_HOST + '/a/#!' || "==PROD_API_HOST==/a/#!",
+			authorizerURL: process.env.AUTH_HOST || process.env.API_HOST || "==PROD_API_HOST==",
+
 			cloackPass: "==PROD_CLOACK_PASS==",
 			cloack2fa: "==PROD_CLOACK_2fa==",
-			buildDATE: dateString,
+
+			buildDATE: dayjs().format('HH:mm DD/MM/YYYY')
 		}
 	},
-	experimental: {
-		payloadExtraction: false
+	alias: {
+		'img': `~/img`
+	},
+	ssr: false,
+	imports: {
+		dirs: [
+			'stores',
+			'composables',
+			'composables/*/index.{ts,js,mjs,mts}'
+		]
+	},
+	app: {
+		pageTransition: { name: 'page', mode: 'out-in' }
 	},
 	modules: [
     ['@pinia/nuxt'],
   ],
-	imports: {
-    dirs: [
-      'stores',
-      'composables',
-      'composables/*/index.{ts,js,mjs,mts}'
-    ]
-  },
-	ssr: false,
-	app: {
-		baseURL: '',
-		pageTransition: { name: 'page', mode: 'out-in' }
-	},
 	css: [
 		"~/assets/scss/main.scss",
 		"~/assets/css/material-icons.css"
@@ -49,6 +49,5 @@ export default defineNuxtConfig({
 			"process.env.DEBUG": false,
 		},
 	},
-
 	srcDir: "src"
 });

@@ -2,7 +2,7 @@
 	<Head>
 		<Title>Finmars</Title>
 		<Meta name="description" :content="'Finmars'" />
-		<Link type="image/x-icon" rel="icon" href="/v/img/favicon.png" />
+		<Link type="image/x-icon" rel="icon" href="~/img/favicon.png" />
 	</Head>
 
 	<NuxtLayout>
