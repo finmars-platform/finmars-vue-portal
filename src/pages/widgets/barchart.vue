@@ -107,7 +107,7 @@
 	}
 	let active = ref(null)
 	let dataOfActive = ref({})
-	let activeIndex = ref(historyStats.items.length - 2)
+	let activeIndex = ref(historyStats.items.length - 1)
 	let categoryName = ref('Asset Types')
 	let categories = reactive(new Set())
 
