@@ -155,6 +155,7 @@
 				if ( res && !res.error ) {
 					let arr = Object.entries(res)
 					stats.value = arr
+					status.value = 100
 
 				} else {
 					status.value = 101

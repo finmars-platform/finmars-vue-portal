@@ -186,6 +186,7 @@
 			category: categoryName.value
 		})
 		myChart.update()
+
 	}
 
 
@@ -223,6 +224,8 @@
 
 			dataOfActive.value[item.label] = item.data[activeIndex.value]
 		})
+
+		status.value = 100
 	}
 
 	onMounted(async () => {
