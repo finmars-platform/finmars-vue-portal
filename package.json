@@ -10,6 +10,7 @@
 		"preview": "nuxt preview"
 	},
 	"devDependencies": {
+		"@nuxt/image-edge": "^1.0.0-27809804.194d2d6",
 		"eslint": "^8.24.0",
 		"eslint-plugin-vue": "^9.6.0",
 		"nuxt": "^3.0.0",

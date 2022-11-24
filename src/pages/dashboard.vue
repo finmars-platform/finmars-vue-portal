@@ -32,7 +32,7 @@
 			</div>
 		</div>
 
-		<PagesDashboardGrid :isEdit="isEdit">
+		<PagesDashboardGrid :isEdit="isEdit" :tab="activeTab" >
 			<PagesDashboardWidgetWrap
 				v-for="(component, i) of mainComponents"
 				:key="i"

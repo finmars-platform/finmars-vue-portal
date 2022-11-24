@@ -16,9 +16,6 @@ export default defineNuxtConfig({
 			buildDATE: dayjs().format('HH:mm DD/MM/YYYY')
 		}
 	},
-	alias: {
-		'img': `~/img`
-	},
 	ssr: false,
 	imports: {
 		dirs: [
@@ -28,10 +25,17 @@ export default defineNuxtConfig({
 		]
 	},
 	app: {
+		head: {
+			title: 'Finmars',
+			viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
+			charset: 'utf-8',
+			link: [{ rel: 'icon', type: 'image/png', href: process.env.NUXT_APP_BASE_URL + 'img/favicon.png' }],
+		},
 		pageTransition: { name: 'page', mode: 'out-in' }
 	},
 	modules: [
     ['@pinia/nuxt'],
+		'@nuxt/image-edge'
   ],
 	css: [
 		"~/assets/scss/main.scss",
