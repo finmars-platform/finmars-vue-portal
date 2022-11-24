@@ -156,6 +156,8 @@
 					let arr = Object.entries(res)
 					stats.value = arr
 
+				} else {
+					status.value = 101
 				}
 			}
 		});
