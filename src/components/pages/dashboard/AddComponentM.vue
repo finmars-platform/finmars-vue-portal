@@ -10,14 +10,20 @@
 		<h3>System components</h3>
 
 		<div class="fm_list">
-			<div class="fm_list_item">Group component</div>
+			<div class="fm_list_item"
+				v-for="item in systems"
+				:class="{active: activeWidget == item.id}"
+				@click="activeWidget = item.id"
+			>
+				{{ item.name }}
+			</div>
 		</div>
 
-		<h3>Common</h3>
+		<h3>Base components</h3>
 
 		<div class="fm_list">
 			<div class="fm_list_item"
-				v-for="item in widgetList"
+				v-for="item in base"
 				:class="{active: activeWidget == item.id}"
 				@click="activeWidget = item.id"
 			>
@@ -35,7 +41,16 @@
 	})
 
 	let dashStore = useStoreDashboard()
+
 	let activeWidget = ref(null)
+
+	let systems = computed(() => {
+		return widgetList.filter((item) => item.group == 'system')
+	})
+
+	let bases = computed(() => {
+		return widgetList.filter((item) => item.group == 'base')
+	})
 
 	function addComponent() {
 		let widget = widgetList.find((item) => item.id == activeWidget.value)
