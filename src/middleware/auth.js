@@ -26,8 +26,8 @@ export default defineNuxtRouteMiddleware( async (to, from) => {
 			store.isAuth = true
 		}
 
-		if ( !ping.base_api_url && !useRoute().path.includes('/profile') ) {
-			return navigateTo('/profile')
-		}
+		//if ( !ping.base_api_url && !useRoute().path.includes('/profile') ) {
+		//	return navigateTo('/profile')
+		//}
 	}
 })
