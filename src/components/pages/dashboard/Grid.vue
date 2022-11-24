@@ -25,6 +25,7 @@
 		<PagesDashboardAddComponentM
 			v-if="isOpenAddComponents"
 			v-model="isOpenAddComponents"
+			:tab="tab"
 		/>
 	</div>
 </template>
@@ -34,7 +35,8 @@
 		isEdit: {
 			type: Boolean,
 			required: true
-		}
+		},
+		tab: String,
 	})
 
 	let isOpenAddComponents = ref(false)
