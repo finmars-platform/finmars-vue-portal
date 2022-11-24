@@ -135,6 +135,8 @@
 
 		window.addEventListener("message", async (e) => {
 			if ( 'updateOpts' == e.data.action ) {
+				portfolioId = e.data.data.portfolioId
+				date_to = e.data.data.date_to
 
 				let res = await useApi('widgetsStats.get', {
 					params: {
@@ -142,7 +144,7 @@
 					},
 					filters: {
 						portfolio: portfolioId,
-						date: e.data.data.date_to,
+						date: date_to,
 					},
 					headers: {
 						Authorization: 'Token ' + route.query.token

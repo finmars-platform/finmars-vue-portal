@@ -135,6 +135,8 @@
 
 		historyStats = res
 		activeIndex.value = historyStats.items?.length - 1
+
+		return true
 	}
 	let active = ref(null)
 	let dataOfActive = ref({})
