@@ -2,22 +2,20 @@
 	<div class="wrap">
 		<div class="title">Balance (time) </div>
 
-		<template v-show="status == 100">
-			<div class="filters flex">
-				<div class="filter_item"
-					v-for="(item, i) in categories"
-					:key="i"
-					:class="{active: categoryName == item}"
-					@click="categoryName = item, updateData()"
-				>
-					{{ item }}
-				</div>
+		<div class="filters flex" v-show="status == 100">
+			<div class="filter_item"
+				v-for="(item, i) in categories"
+				:key="i"
+				:class="{active: categoryName == item}"
+				@click="categoryName = item, updateData()"
+			>
+				{{ item }}
 			</div>
+		</div>
 
-			<div class="content">
-				<canvas id="myChart"><p>Chart</p></canvas>
-			</div>
-		</template>
+		<div class="content" v-show="status == 100">
+			<canvas id="myChart"><p>Chart</p></canvas>
+		</div>
 
 		<div class="content flex-column aic jcc" v-if="status > 100">
 			<div class="flex aic">
