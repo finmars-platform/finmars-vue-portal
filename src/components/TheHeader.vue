@@ -50,7 +50,7 @@
 					</div>
 				</FmMenu>
 
-				<a :href="`${config.public.apiURL}/a/#!/processes`">
+				<a :href="`${config.public.oldAppURL}processes`">
 					<FmIcon
 						icon="cloud_download"
 						btn
@@ -96,7 +96,7 @@
 								class="fm_list_item"
 								v-for="(item, index) in store.masterUsers"
 								:key="index"
-								@click="setCurrent(item.id), close()"
+								@click="setCurrent(item), close()"
 							>
 								{{ item.name }}
 							</div>
@@ -192,10 +192,10 @@
 		return moment(date).fromNow()
 	}
 
-	async function setCurrent(id) {
-		let res = await useApi("masterSet.patch", { params: { id } })
+	async function setCurrent(item) {
+		let res = await useApi("masterSet.patch", { params: { id: item.id } })
 
-		if (res) window.location.href = '/v/home'
+		if (res) window.location.href = '/' + item.base_api_url + '/v/home'
 	}
 </script>
 
