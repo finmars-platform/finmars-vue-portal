@@ -5,10 +5,10 @@
 			<div>{{ total }}</div>
 		</div>
 
-		<div class="content" v-if="status == 100">
+		<div class="content" v-show="status == 100">
 			<canvas id="myChart"><p>Chart</p></canvas>
 		</div>
-		<div class="content flex-column aic jcc" v-else>
+		<div class="content flex-column aic jcc" v-if="status > 100">
 			<div class="flex aic">
 				<FmIcon v-if="status > 100" class="m-r-8" icon="report_problem" />
 				{{ STATUSES[status] }}
@@ -346,6 +346,13 @@
 				}
 
 				myChart.update()
+			}
+			if ( 'updateOpts' == e.data.action ) {
+				portfolioId = e.data.data.portfolioId
+				date_to = e.data.data.date_to
+
+				status.value = 0
+
 			}
 		});
 	}
