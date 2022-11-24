@@ -168,6 +168,63 @@
 
 					status.value = 100
 				}
+				if ( 'updateOpts' == e.data.action ) {
+					portfolioId = e.data.data.portfolioId
+					date_to = e.data.data.date_to
+
+					for ( let prop in e.data.data ) {
+						inheritColors[prop] = COLORS[i]
+						i++
+					}
+
+					let pl = await useApi('widgetsHistory.get', {
+						params: {type: 'pl', client},
+						filters: {
+							portfolio: portfolioId,
+							date_from: date_to,
+							date_to: date_to,
+						},
+						headers: {
+							Authorization: 'Token ' + route.query.token
+						}
+					})
+
+					if ( pl.error ) {
+						status.value = 101
+
+						return false
+					}
+
+					if ( !pl.items || pl.items.length == 0  ) {
+						status.value = 102
+
+						return false
+					}
+					let active = ref(null)
+					let currentDate = pl.items.find(item => item.date == e.data.date.date)
+
+					if ( !currentDate ) return false
+					total.value = new Intl.NumberFormat('en-US', {
+						maximumFractionDigits: 2
+					}).format(currentDate.total) + ' USD';
+
+					let currentCategory = currentDate.categories.find(item => item.name == e.data.category)
+					if ( !currentCategory ) return false
+					let items = currentCategory.items
+						.filter((item) => item.value != 0)
+						.sort( (a, b) => b.value - a.value)
+
+					instruments.value = items
+
+					let arr = instruments.value.map(item => item.value)
+					let tickMax = Math.max(...arr)
+					let tickMin = Math.min(...arr)
+					let tickTo = Math.abs(tickMax) > Math.abs(tickMin) ? Math.abs(tickMax) : Math.abs(tickMin)
+					let countZerro = Math.floor(( ""+ Math.round(tickTo)).length / 3)
+					maxTickStock.value = Math.ceil(tickTo / Math.pow( 1000, countZerro )) * Math.pow( 1000, countZerro )
+
+					status.value = 100
+				}
 
 
 			} catch(e) {

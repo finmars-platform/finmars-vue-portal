@@ -2,7 +2,7 @@
 	<div class="wrap">
 		<div class="title">Balance (time) </div>
 
-		<template v-if="status == 100">
+		<template v-show="status == 100">
 			<div class="filters flex">
 				<div class="filter_item"
 					v-for="(item, i) in categories"
@@ -19,7 +19,7 @@
 			</div>
 		</template>
 
-		<div class="content flex-column aic jcc" v-else>
+		<div class="content flex-column aic jcc" v-if="status > 100">
 			<div class="flex aic">
 				<FmIcon v-if="status > 100" class="m-r-8" icon="report_problem" />
 				{{ STATUSES[status] }}
