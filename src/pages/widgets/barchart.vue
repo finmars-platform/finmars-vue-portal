@@ -224,8 +224,6 @@
 
 			dataOfActive.value[item.label] = item.data[activeIndex.value]
 		})
-
-		status.value = 100
 	}
 
 	onMounted(async () => {
@@ -368,8 +366,9 @@
 				portfolioId = e.data.data.portfolioId
 				date_to = e.data.data.date_to
 
-				await getHistory()
+				let success = await getHistory()
 
+				if ( success ) status.value = 100
 				updateData()
 			}
 			if ( e.data.action == 'changeHistoryType' ) {
@@ -377,7 +376,8 @@
 					nav: 'nav',
 					total: 'pl'
 				}
-				await getHistory(map[e.data.type])
+				let success = await getHistory(map[e.data.type])
+				if ( success ) status.value = 100
 
 				updateData()
 			}
