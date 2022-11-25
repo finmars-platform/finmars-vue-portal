@@ -26,6 +26,7 @@
 															 v-model:itemObject="viewerData.reportOptions.report_currency_object"
 															 content_type="currencies.currency" />
 				</div>
+
 			</template>
 		</EvBaseTopPanel>
 
