@@ -11,7 +11,7 @@
 														v-model:user_code="portfolioRegister.user_code"
 														v-model:public_name="portfolioRegister.public_name"
 														v-model:errorData="errorsData.pRegisterNames"
-														label="Relation name" />
+														label="Relation name (Portfolio Register)" />
 			</div>
 
 			<div v-if="!portfolioId" class="m-b-35">
@@ -51,7 +51,7 @@
 														v-model:user_code="portfolioRegister.new_linked_instrument.user_code"
 														v-model:public_name="portfolioRegister.new_linked_instrument.public_name"
 														v-model:errorData="errorsData.instrumentNames"
-														label="Relation name" />
+														label="Instrument name" />
 			</div>
 
 			<div class="m-b-35">
