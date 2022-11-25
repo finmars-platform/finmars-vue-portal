@@ -5,7 +5,7 @@
 			<div v-show="readyStatus" class="rs_mc_wrap">
 				<RvSettingsBlock title="General">
 					<RvSettingsRow label="Date to">
-						<FmInputDate v-model="reportOptions.end_date" />
+						<FmInputDate v-model="reportOptions.end_date" v-model:errorData="endDateErrorData" />
 					</RvSettingsRow>
 
 					<RvSettingsRow label="Reporting currency">
@@ -75,7 +75,7 @@
 			<div class="flex-row fc-space-between">
 				<FmBtn type="basic" @click="cancel()">CANCEL</FmBtn>
 
-				<FmBtn v-model:loading="notReady" @click="save()">SAVE</FmBtn>
+				<FmBtn v-model:loading="notReady" :disabled="endDateErrorData" @click="save()">SAVE</FmBtn>
 			</div>
 		</template>
 	</BaseModal>
@@ -96,6 +96,8 @@ const readyStatusData = reactive({
 	currency: false,
 	pricingPolicy: false,
 });
+
+let endDateErrorData = ref(null);
 
 let currencyOpts = ref([]);
 let pricingPoliciesOpts = ref([]);

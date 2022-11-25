@@ -81,7 +81,7 @@ let mainInput = ref(null);
 watch(
 	() => props.modelValue,
 	() => {
-		if (props.errorData && props.modelValue) emit('update:errorData', null);
+		if (props.errorData && props.errorData.code === 30 && props.modelValue) emit('update:errorData', null);
 	}
 )
 
@@ -119,6 +119,7 @@ if (props.required) {
 $input-border: 1px solid $border-darken;
 $active-input-border: 1px solid $border-active;
 $side-items-padding: 0 8px;
+$border-radius: 4px;
 
 @mixin show_label {
 	top: -8px;
@@ -133,9 +134,9 @@ $side-items-padding: 0 8px;
 .base-input {
 	position: relative;
 	display: block;
-	height: 42px;
+	// height: 42px;
 	// border: 1px solid $border-darken;
-	border-radius: 4px;
+	border-radius: $border-radius;
 	margin-bottom: 25px;
 	transition: border 0.3s;
 	background: $separ;
@@ -147,15 +148,16 @@ $side-items-padding: 0 8px;
 
 	&:not(.bi_no_borders) {
 		margin-top: 6px;
-		border: $input-border;
-		border-top-color: transparent;
+
+		.bi_wrap {
+			border: $input-border;
+			border-top-color: transparent;
+			border-radius: $border-radius;
+		}
+
 	}
 
 	&:not(.bi_no_borders):focus-within, &:not(.bi_no_borders):focus {
-		border-top-color: transparent !important;
-		border-right: $active-input-border;
-		border-bottom: $active-input-border;
-		border-left: $active-input-border;
 
 		.bi_top {
 			.top_left_border, .top_right_border {
@@ -165,6 +167,13 @@ $side-items-padding: 0 8px;
 			.bi_label {
 				@include show_label;
 			}
+		}
+
+		.bi_wrap {
+			border-top-color: transparent !important;
+			border-right: $active-input-border;
+			border-bottom: $active-input-border;
+			border-left: $active-input-border;
 		}
 
 	}
@@ -198,17 +207,28 @@ $side-items-padding: 0 8px;
 			}
 
 		}
+
+		.bi_button {
+			color: $error;
+
+			:deep(.fm_btn.icon .icon) {
+				color: $error;
+			}
+		}
 	}
 
 	&.error:not(.bi_no_borders) {
-		border-right-color: $error;
-		border-bottom-color: $error;
-		border-left-color: $error;
 
 		.bi_top {
 			.top_left_border, .top_right_border {
 				border-color: $error;
 			}
+		}
+
+		.bi_wrap {
+			border-right-color: $error;
+			border-bottom-color: $error;
+			border-left-color: $error;
 		}
 	}
 }
@@ -224,7 +244,8 @@ $side-items-padding: 0 8px;
 	display: flex;
 	flex-direction: row;
 	width: 100%;
-	top: -1px;
+	// top: -1px;
+	top: 1px;
 	left: 0;
 	z-index: 0;
 
@@ -286,6 +307,7 @@ $side-items-padding: 0 8px;
 	display: flex;
 	align-items: center;
 	// height: 40px;
+	min-height: 42px;
 	height: 100%;
 	width: 100%;
 }

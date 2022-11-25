@@ -35,7 +35,8 @@ export default defineNuxtConfig({
 	},
 	css: [
 		"~/assets/scss/main.scss",
-		"~/assets/css/material-icons.css"
+		"~/assets/css/material-icons.css",
+		"~/assets/scss/pickmeup.scss",
 	],
 	vite: {
 		css: {
