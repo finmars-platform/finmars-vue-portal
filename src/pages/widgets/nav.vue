@@ -1,7 +1,7 @@
 <template>
 	<div class="card_view">
 		<div class="card_wrap"
-			v-if="stats"
+			v-if="status == 100"
 			@mousedown="dragStart"
 		>
 			<div class="card"
@@ -14,7 +14,13 @@
 				<div class="card_value">{{ STATS_FORMAT[item[0]](item[1])  }}</div>
 			</div>
 		</div>
-		<div v-else>No data</div>
+		<div class="error_wrap flex-column aic jcc" v-else>
+			<div class="flex aic">
+				<FmIcon v-if="status > 100" class="m-r-8" icon="report_problem" />
+				{{ STATUSES[status] }}
+			</div>
+		</div>
+
 	</div>
 
 </template>
@@ -44,6 +50,12 @@
 		"alpha": 'Alpha vs Index, ann.',
 		"correlation": 'Correlation (vs. Index)',
 	}
+
+	const STATUSES = {
+		0: 'Loading data',
+		101: 'Data are not available',
+	}
+	let status = ref(0)
 
 	function formatCurency(val) {
 		return new Intl.NumberFormat('en-EN', {
@@ -81,6 +93,11 @@
 			Authorization: 'Token ' + route.query.token
 		}
 	})
+
+	if ( res.error ) {
+		status.value = 101
+	}
+
 	delete res.date
 	delete res.portfolio
 	delete res.benchmark
@@ -90,7 +107,7 @@
 	if ( res && !res.error ) {
 		let arr = Object.entries(res)
 		stats.value = arr
-
+		status.value = 100
 	}
 
 	async function setActive( item ) {
@@ -118,6 +135,8 @@
 
 		window.addEventListener("message", async (e) => {
 			if ( 'updateOpts' == e.data.action ) {
+				portfolioId = e.data.data.portfolioId
+				date_to = e.data.data.date_to
 
 				let res = await useApi('widgetsStats.get', {
 					params: {
@@ -125,7 +144,7 @@
 					},
 					filters: {
 						portfolio: portfolioId,
-						date: e.data.data.date_to,
+						date: date_to,
 					},
 					headers: {
 						Authorization: 'Token ' + route.query.token
@@ -138,7 +157,10 @@
 				if ( res && !res.error ) {
 					let arr = Object.entries(res)
 					stats.value = arr
+					status.value = 100
 
+				} else {
+					status.value = 101
 				}
 			}
 		});
@@ -212,6 +234,9 @@
 		bottom: 10px;
 		left: 0;
 		width: 100%;
+	}
+	.error_wrap {
+		height: 90px;
 	}
 	@media only screen and (max-width: 767px) {
 		.card + .card {

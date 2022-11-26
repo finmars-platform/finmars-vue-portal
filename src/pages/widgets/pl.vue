@@ -4,7 +4,7 @@
 			<div>P&L (USD)</div>
 			<div>{{ total }}</div>
 		</div>
-		<div class="content">
+		<div class="content" v-if="status == 100">
 			<div class="chart_row header">
 				<div class="chart_field">
 					<div class="tick tick_min">-{{ precisionTick(maxTickStock) }}</div>
@@ -35,6 +35,12 @@
 				</div>
 			</div>
 		</div>
+		<div class="content flex-column aic jcc" v-else>
+			<div class="flex aic">
+				<FmIcon v-if="status > 100" class="m-r-8" icon="report_problem" />
+				{{ STATUSES[status] }}
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -42,6 +48,15 @@
 	definePageMeta({
 		layout: 'auth'
 	});
+
+	const STATUSES = {
+		0: 'Waiting data',
+		101: 'Data are not available',
+		102: 'Data are missing',
+		103: 'Bad/incomplete input data',
+		104: 'Data display error',
+	}
+	let status = ref(0)
 
 	let route = useRoute()
 	let wId = route.query.wId
@@ -84,6 +99,10 @@
 	}
 	onMounted(() => {
 		initPostMessageBus()
+
+		setTimeout(() => {
+			if ( status.value == 0 ) status.value = 101
+		}, 1000 * 5)
 	})
 	function initPostMessageBus() {
 		if ( window == top ) return false
@@ -112,6 +131,18 @@
 							Authorization: 'Token ' + route.query.token
 						}
 					})
+
+					if ( pl.error ) {
+						status.value = 101
+
+						return false
+					}
+
+					if ( !pl.items || pl.items.length == 0  ) {
+						status.value = 102
+
+						return false
+					}
 					let active = ref(null)
 					let currentDate = pl.items.find(item => item.date == e.data.date.date)
 
@@ -134,11 +165,71 @@
 					let tickTo = Math.abs(tickMax) > Math.abs(tickMin) ? Math.abs(tickMax) : Math.abs(tickMin)
 					let countZerro = Math.floor(( ""+ Math.round(tickTo)).length / 3)
 					maxTickStock.value = Math.ceil(tickTo / Math.pow( 1000, countZerro )) * Math.pow( 1000, countZerro )
+
+					status.value = 100
 				}
+				if ( 'updateOpts' == e.data.action ) {
+					portfolioId = e.data.data.portfolioId
+					date_to = e.data.data.date_to
+
+					for ( let prop in e.data.data ) {
+						inheritColors[prop] = COLORS[i]
+						i++
+					}
+
+					let pl = await useApi('widgetsHistory.get', {
+						params: {type: 'pl', client},
+						filters: {
+							portfolio: portfolioId,
+							date_from: date_to,
+							date_to: date_to,
+						},
+						headers: {
+							Authorization: 'Token ' + route.query.token
+						}
+					})
+
+					if ( pl.error ) {
+						status.value = 101
+
+						return false
+					}
+
+					if ( !pl.items || pl.items.length == 0  ) {
+						status.value = 102
+
+						return false
+					}
+					let active = ref(null)
+					let currentDate = pl.items.find(item => item.date == e.data.date.date)
+
+					if ( !currentDate ) return false
+					total.value = new Intl.NumberFormat('en-US', {
+						maximumFractionDigits: 2
+					}).format(currentDate.total) + ' USD';
+
+					let currentCategory = currentDate.categories.find(item => item.name == e.data.category)
+					if ( !currentCategory ) return false
+					let items = currentCategory.items
+						.filter((item) => item.value != 0)
+						.sort( (a, b) => b.value - a.value)
+
+					instruments.value = items
+
+					let arr = instruments.value.map(item => item.value)
+					let tickMax = Math.max(...arr)
+					let tickMin = Math.min(...arr)
+					let tickTo = Math.abs(tickMax) > Math.abs(tickMin) ? Math.abs(tickMax) : Math.abs(tickMin)
+					let countZerro = Math.floor(( ""+ Math.round(tickTo)).length / 3)
+					maxTickStock.value = Math.ceil(tickTo / Math.pow( 1000, countZerro )) * Math.pow( 1000, countZerro )
+
+					status.value = 100
+				}
+
 
 			} catch(e) {
 
-				console.log('e:', e)
+				// status.value = 104
 			}
 
 		});

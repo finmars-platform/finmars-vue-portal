@@ -2,7 +2,7 @@
 	<div class="wrap">
 		<div class="title">Balance (time) </div>
 
-		<div class="filters flex">
+		<div class="filters flex" v-show="status == 100">
 			<div class="filter_item"
 				v-for="(item, i) in categories"
 				:key="i"
@@ -13,8 +13,15 @@
 			</div>
 		</div>
 
-		<div class="content">
+		<div class="content" v-show="status == 100">
 			<canvas id="myChart"><p>Chart</p></canvas>
+		</div>
+
+		<div class="content flex-column aic jcc" v-if="status > 100">
+			<div class="flex aic">
+				<FmIcon v-if="status > 100" class="m-r-8" icon="report_problem" />
+				{{ STATUSES[status] }}
+			</div>
 		</div>
 	</div>
 </template>
@@ -81,17 +88,24 @@
 		layout: 'auth'
 	});
 
+	const STATUSES = {
+		0: 'Loading data',
+		101: 'Data are not available',
+		102: 'Data are missing',
+		103: 'Bad/incomplete input data'
+	}
+	let status = ref(0)
+
 	let route = useRoute()
 	let wId = route.query.wId
 	let portfolioId = route.query.portfolioId
 	let client = route.query.workspace
 	let date_to = route.query.date_to
-	let historyStats
+	let historyStats = {}
 
-	await getHistory()
 
 	async function getHistory(type = 'nav') {
-		historyStats = await useApi('widgetsHistory.get', {
+		let res = await useApi('widgetsHistory.get', {
 			params: {
 				type,
 				client,
@@ -104,12 +118,32 @@
 				Authorization: 'Token ' + route.query.token
 			}
 		})
+
+		if ( res.error ) {
+			status.value = 101
+
+			return false
+		}
+
+		if ( !res.items || res.items.length == 0  ) {
+			status.value = 102
+
+			return false
+		}
+
+		historyStats = res
+		activeIndex.value = historyStats.items?.length - 1
+
+		return true
 	}
 	let active = ref(null)
 	let dataOfActive = ref({})
-	let activeIndex = ref(historyStats.items.length - 2)
+	let activeIndex = ref(null)
 	let categoryName = ref('Asset Types')
 	let categories = reactive(new Set())
+
+	await getHistory()
+
 
 	let data = {
 		labels: [],
@@ -152,6 +186,7 @@
 			category: categoryName.value
 		})
 		myChart.update()
+
 	}
 
 
@@ -191,10 +226,12 @@
 		})
 	}
 
-	onMounted(() => {
+	onMounted(async () => {
 		initPostMessageBus()
 
 		createData()
+		status.value = 100
+		await nextTick()
 
 		myChart = new Chart('myChart', {
 			type: 'bar',
@@ -329,8 +366,9 @@
 				portfolioId = e.data.data.portfolioId
 				date_to = e.data.data.date_to
 
-				await getHistory()
+				let success = await getHistory()
 
+				if ( success ) status.value = 100
 				updateData()
 			}
 			if ( e.data.action == 'changeHistoryType' ) {
@@ -338,7 +376,8 @@
 					nav: 'nav',
 					total: 'pl'
 				}
-				await getHistory(map[e.data.type])
+				let success = await getHistory(map[e.data.type])
+				if ( success ) status.value = 100
 
 				updateData()
 			}

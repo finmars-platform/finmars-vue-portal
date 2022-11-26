@@ -5,8 +5,14 @@
 			<div>{{ total }}</div>
 		</div>
 
-		<div class="content">
+		<div class="content" v-show="status == 100">
 			<canvas id="myChart"><p>Chart</p></canvas>
+		</div>
+		<div class="content flex-column aic jcc" v-if="status > 100">
+			<div class="flex aic">
+				<FmIcon v-if="status > 100" class="m-r-8" icon="report_problem" />
+				{{ STATUSES[status] }}
+			</div>
 		</div>
 	</div>
 </template>
@@ -104,6 +110,15 @@
 		'#AB7967'
 	]
 
+	const STATUSES = {
+		0: 'Waiting data',
+		101: 'Data are not available',
+		102: 'Data are missing',
+		103: 'Bad/incomplete input data',
+		104: 'Data display error',
+	}
+	let status = ref(0)
+
 	let route = useRoute()
 	let wId = route.query.wId
 	let portfolioId = route.query.portfolioId
@@ -135,6 +150,16 @@
 	onMounted(() => {
 		initPostMessageBus()
 
+		if ( status.value == 100 ) {
+			createChart()
+		}
+
+		setTimeout(() => {
+			if ( status.value == 0 ) status.value = 101
+		}, 1000 * 5)
+	})
+
+	function createChart() {
 		myChart = new Chart('myChart', {
 			type: 'doughnut',
 			data: data.value,
@@ -222,7 +247,7 @@
         }
 			},
 		});
-	})
+	}
 
 	let inheritColors = {}
 
@@ -251,6 +276,18 @@
 						Authorization: 'Token ' + route.query.token
 					}
 				})
+
+				if ( nav.error ) {
+					status.value = 101
+
+					return false
+				}
+
+				if ( !nav.items || nav.items.length == 0  ) {
+					status.value = 102
+
+					return false
+				}
 
 				let currentDate = nav.items.find(item => item.date == e.data.date?.date)
 
@@ -301,8 +338,21 @@
 							: Math.floor(totalMinus / totalPlus * 360)
 					}
 				]
+				status.value = 100
+				await nextTick()
+
+				if ( !myChart ) {
+					createChart()
+				}
 
 				myChart.update()
+			}
+			if ( 'updateOpts' == e.data.action ) {
+				portfolioId = e.data.data.portfolioId
+				date_to = e.data.data.date_to
+
+				status.value = 0
+
 			}
 		});
 	}
