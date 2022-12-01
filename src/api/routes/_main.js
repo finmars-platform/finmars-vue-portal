@@ -162,6 +162,13 @@ export default {
 	configurationJsonStatus: {
 		get: prefix + '/active_processes/active_processes/{id}/'
 	},
+	dashboardLayout: {
+		get: prefix + '/ui/dashboard-layout/{id}/',
+		put: prefix + '/ui/dashboard-layout/{id}/',
+		post: prefix + '/ui/dashboard-layout/',
+	},
+
+
 
 	// Надо отделить
 

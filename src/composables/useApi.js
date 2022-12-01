@@ -67,6 +67,7 @@ export default async function useApi (
 
 	try {
 		let response = await $fetch(url, opts)
+		console.log('route:', route)
 
 		return method == 'get' && providers[route] ? providers[route](response) : response
 

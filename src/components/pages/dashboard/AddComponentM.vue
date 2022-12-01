@@ -3,7 +3,7 @@
 		no_padding
 		title="Choose component"
 		:controls="{
-			cancel: {name: 'Cancel', cb() {}},
+			cancel: {name: 'Cancel'},
 			action: {name: 'Save', cb: addComponent},
 		}"
 	>
@@ -14,6 +14,7 @@
 				v-for="item in systems"
 				:class="{active: activeWidget == item.id}"
 				@click="activeWidget = item.id"
+				@dblclick="activeWidget = item.id, addComponent(), $emit('close')"
 			>
 				{{ item.name }}
 			</div>
@@ -23,9 +24,10 @@
 
 		<div class="fm_list">
 			<div class="fm_list_item"
-				v-for="item in base"
+				v-for="item in bases"
 				:class="{active: activeWidget == item.id}"
 				@click="activeWidget = item.id"
+				@dblclick="activeWidget = item.id, addComponent(), $emit('close')"
 			>
 				{{ item.name }}
 			</div>
@@ -56,21 +58,22 @@
 		let widget = widgetList.find((item) => item.id == activeWidget.value)
 
 		let new_widget = {
-			id: generateId(),
-			componentName: widget.componentName,
+			id: generateId(widget.id),
+			componentName: widget.id,
 			scope: null,
 			tab: props.tab ? props.tab : null,
 			colls: widget.minColls,
 			rows: widget.minRows,
 			minColls: widget.minColls,
 			minRows: widget.minRows,
-			settings: {}
+			settings: {},
+			isEdit: true
 		}
 
 		dashStore.widgets.push(new_widget)
 	}
-	function generateId() {
-
+	function generateId( id ) {
+		return id + Date.now()
 	}
 </script>
 
