@@ -1,11 +1,11 @@
 <template>
 	<BaseModal :title="title"
-						 v-model="opened"
+						 v-model="props.opened"
 						 @update:modelValue="cancel">
 
 		<div>
 			<BaseMultiSelectTwoAreas :items="items"
-															 v-model:modelValue="modelValue"
+															 v-model="props.modelValue"
 															 :item_title="item_title"
 															 :item_id="item_id"
 															 @update:modelValue="newValue => selValue = newValue" />

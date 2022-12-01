@@ -8,12 +8,6 @@
 				<div class="modal">
 					<div class="modal_top flex aic sb">
 						<div class="modal_head">{{ title }}</div>
-<!--						<svg class="close stroke" width="24" height="24" viewBox="0 0 24 24" fill="none"
-							xmlns="http://www.w3.org/2000/svg"
-							@click="cancel()">
-							<path d="M18 6L6 18" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-							<path d="M6 6L18 18" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-						</svg>-->
 <!--						<FmIcon :disabled="closingDisabled" icon="close" @click="cancel"/>-->
 						<FmBtn :disabled="closingDisabled" type="iconBtn" icon="close" @click="cancel" />
 					</div>
@@ -23,7 +17,13 @@
 					</div>
 
 					<div class="modal_bottom">
-						<slot name="controls" :cancel="cancel"></slot>
+						<slot name="controls">
+							<div class="flex sb" v-if="controls">
+								<FmBtn type="text"
+									@click="cancel(), controls.cancel.cb ? controls.cancel.cb() : ''">{{ controls.cancel.name }}</FmBtn>
+								<FmBtn @click="cancel(), controls.action.cb()">{{ controls.action.name }}</FmBtn>
+							</div>
+						</slot>
 					</div>
 				</div>
 				<div class="mask" @[backdropClickable]="cancel"></div>
@@ -39,6 +39,7 @@ export default {
   props: {
 		modelValue: Boolean,
 		title: String,
+		controls: Object,
 		no_padding: Boolean,
 		closeOnClickOutside: {
 			type: Boolean,
@@ -48,6 +49,7 @@ export default {
 	},
 	emits: [
 		'update:modelValue',
+		'close'
 	],
   data() {
     return {
@@ -72,6 +74,7 @@ export default {
     cancel() {
 			if (this.closingDisabled) return;
       this.$emit('update:modelValue', false)
+      this.$emit('close')
     },
   }
 }
