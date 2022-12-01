@@ -1,41 +1,42 @@
-const curDate = new Date();
-const dateString = `${curDate.getHours()}:${curDate.getMinutes()}, ${curDate.getDate()}/${curDate.getMonth() + 1}/${curDate.getFullYear()}`;
-const apiURL = process.env.API_URL || "==PROD_API_URL==";
-const baseURL = process.env.APP_BASE_URL || "==PROD_APP_BASE_URL=="
-// https://v3.nuxtjs.org/api/configuration/nuxt.config
+import dayjs from 'dayjs'
+
 export default defineNuxtConfig({
 	runtimeConfig: {
 		public: {
-			appURL: process.env.APP_URL || "==PROD_APP_URL==",
-			apiURL: apiURL,
-			authorizerURL: process.env.AUTHORIZER_URL || apiURL + "/authorizer",
-			wsURL: process.env.WS_URL || "==PROD_WS_URL==",
-			oldAppURL: process.env.OLD_APP_URL || "==PROD_OLD_APP_URL==",
+			frontURL: process.env.FRONT_HOST || "==PROD_FRONT_HOST==",
+			apiURL: process.env.API_HOST || "==PROD_API_HOST==",
+			wsURL: (process.env.WS_HOST  || "==PROD_WS_HOST==") + '/ws',
+
+			oldAppURL: process.env.API_HOST + '/a/#!' || "==PROD_API_HOST==/a/#!",
+			authorizerURL: process.env.AUTH_HOST || process.env.API_HOST || "==PROD_API_HOST==",
+
 			cloackPass: "==PROD_CLOACK_PASS==",
 			cloack2fa: "==PROD_CLOACK_2fa==",
-			buildDATE: dateString,
+
+			buildDATE: dayjs().format('HH:mm DD/MM/YYYY')
 		}
 	},
-	experimental: {
-		payloadExtraction: false
+	ssr: false,
+	imports: {
+		dirs: [
+			'stores',
+			'composables',
+			'composables/*/index.{ts,js,mjs,mts}'
+		]
+	},
+	app: {
+		head: {
+			title: 'Finmars',
+			viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
+			charset: 'utf-8',
+			link: [{ rel: 'icon', type: 'image/png', href: process.env.NUXT_APP_BASE_URL + 'img/favicon.png' }],
+		},
+		pageTransition: { name: 'page', mode: 'out-in' }
 	},
 	modules: [
     ['@pinia/nuxt'],
+		'@nuxt/image-edge'
   ],
-	components: {
-		dirs: ['~/components']
-	},
-	imports: {
-    dirs: [
-      'stores',
-      'composables',
-      'composables/*/index.{ts,js,mjs,mts}'
-    ]
-  },
-	ssr: false,
-	app: {
-		baseURL: baseURL,
-	},
 	css: [
 		"~/assets/scss/main.scss",
 		"~/assets/css/material-icons.css",
@@ -53,9 +54,5 @@ export default defineNuxtConfig({
 			"process.env.DEBUG": false,
 		},
 	},
-
-	srcDir: "src",
-	server: {
-		host: process.env.NUXT_HOST,
-	},
+	srcDir: "src"
 });

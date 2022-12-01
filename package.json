@@ -12,22 +12,21 @@
 		"coverage": "vitest run --coverage"
 	},
 	"devDependencies": {
-		"@testing-library/jest-dom": "^5.16.5",
-		"@testing-library/vue": "^6.6.1",
+		"@nuxt/image-edge": "^1.0.0-27809804.194d2d6",
 		"eslint": "^8.24.0",
 		"eslint-plugin-vue": "^9.6.0",
-		"jsdom": "^20.0.1",
-		"nuxt": "^3.0.0-rc.11",
-		"prettier": "2.6.2",
-		"vitest": "^0.24.3"
+		"nuxt": "^3.0.0",
+		"prettier": "2.6.2"
 	},
 	"dependencies": {
 		"@chenfengyuan/vue-qrcode": "^2.0.0",
 		"@kyvg/vue3-notification": "^2.4.1",
-		"@pinia/nuxt": "^0.4.3",
+		"@pinia/nuxt": "^0.4.4",
 		"chart.js": "^3.9.1",
 		"click-outside-vue3": "^4.0.1",
+		"dayjs": "^1.11.6",
 		"moment": "^2.29.4",
+		"pinia": "^2.0.24",
 		"qrcode": "^1.5.1",
 		"sass": "^1.54.9",
 		"vue": "^3.2.39"

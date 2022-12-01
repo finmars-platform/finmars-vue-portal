@@ -1,5 +1,6 @@
 import _auth from "./routes/_auth";
-import routes from "./routes";
+import routes from "../api/routes";
+import providers from "../api/providers/main.js";
 
 let expireTokens
 export default async function useApi (
@@ -66,7 +67,10 @@ export default async function useApi (
 	}
 
 	try {
-		return await $fetch(url, opts)
+		let response = await $fetch(url, opts)
+		console.log('route:', route)
+
+		return method == 'get' && providers[route] ? providers[route](response) : response
 
 	} catch(e) {
 		let [code, url] = e.message.split('  ')
@@ -75,12 +79,6 @@ export default async function useApi (
 			400: 'Wrong data',
 			401: 'Not authorized',
 		}
-
-		// useNotify({
-		// 	type: 'error',
-		// 	title: 'Error',
-		// 	text: errors[code] ? errors[code] : 'Unknown server error'
-		// })
 
 		return {error: e.data || true, code }
 	}
