@@ -91,7 +91,7 @@
 		<BaseMultiSelectModal :title="title"
 													:items="items"
 													v-model:opened="isOpen"
-													v-model:modelValue="modelValue"
+													v-model="props.modelValue"
 													:item_id="item_id"
 													:item_title="item_title"
 													@cancel="isOpen = false"
