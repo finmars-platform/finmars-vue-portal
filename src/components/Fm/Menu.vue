@@ -5,7 +5,7 @@
 			<slot name="btn" :isOpen="isOpen"></slot>
 		</div>
 
-		<Teleport :to="attach" :disabled="!!!attach">
+		<Teleport :to="attach" :disabled="!attach">
 			<transition>
 				<div
 					v-if="isOpen"

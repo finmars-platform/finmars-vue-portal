@@ -85,7 +85,7 @@ declare global {
   const useCssVars: typeof import('vue')['useCssVars']
   const useSlots: typeof import('vue')['useSlots']
   const useTransitionState: typeof import('vue')['useTransitionState']
-  const useApi: typeof import('../../src/composables/useApi/index')['default']
+  const useApi: typeof import('../../src/composables/useApi')['default']
   const definePageMeta: typeof import('../../node_modules/nuxt/dist/pages/runtime/composables')['definePageMeta']
 }
 export {}
