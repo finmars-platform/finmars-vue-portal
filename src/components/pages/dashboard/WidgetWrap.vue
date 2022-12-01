@@ -4,12 +4,12 @@
 			'grid-column': 'span ' + component.colls,
 			'grid-row': 'span ' + component.rows,
 		}"
-		:data-name="component.name"
+		:data-name="component.id"
 	>
 		<component
 			class="widget_wrap"
 			style="height: 100%;"
-			:is="'Widgets' + component.name"
+			:is="'Widgets' + component.componentName"
 			v-bind="component.props"
 		/>
 
@@ -19,7 +19,7 @@
 			<div class="bwc_top flex sb aic">
 				<div>{{ component.name }}</div>
 				<div class="flex aic">
-					<FmMenu>
+					<FmMenu anchor="bottom right">
 						<template #btn>
 							<FmIcon
 								size="24"
@@ -31,7 +31,7 @@
 							<div class="fm_list_item" @click="isEditWidget = true">
 								Settings
 							</div>
-							<div class="fm_list_item">
+							<div class="fm_list_item" @click="remove(component.id)">
 								Remove
 							</div>
 						</div>
@@ -67,7 +67,8 @@
 	})
 
 	let dashStore = useStoreDashboard()
-	let isEditWidget = ref(false)
+	let isEditWidget = ref(props.component.isEdit)
+	delete props.component.isEdit
 
 	function resizeX(e) {
 		let elem = e.target.closest('.board_widget')
@@ -80,7 +81,7 @@
 			return false;
 		};
 
-		let component = dashStore.widgets.find((item) => item.name == elem.dataset.name)
+		let component = dashStore.widgets.find((item) => item.id == elem.dataset.name)
 		let startColls = component.colls
 
 		function onmousemove(e) {
@@ -107,7 +108,7 @@
 			return false;
 		};
 
-		let component = dashStore.widgets.find((item) => item.name == elem.dataset.name)
+		let component = dashStore.widgets.find((item) => item.id == elem.dataset.name)
 		let startRows = component.rows
 
 		function onmousemove(e) {
@@ -189,6 +190,9 @@
 		elem.style.position = ''
 		elem.style.zIndex = ''
 		elem.style.opacity = ''
+	}
+	function remove( id ) {
+		dashStore.removeWidget( id )
 	}
 </script>
 

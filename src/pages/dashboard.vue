@@ -6,7 +6,12 @@
 			</template>
 
 			<template #rightActions>
-				<FmCheckbox v-model="isEdit" label="Edit mode" />
+				<FmBtn v-if="!isEdit" @click="edit()">Edit dashboard</FmBtn>
+
+				<template v-else>
+					<FmBtn type="text" @click="cancelEdit()">cancel</FmBtn>
+					<FmBtn @click="save()">save</FmBtn>
+				</template>
 			</template>
 		</FmHorizontalPanel>
 
@@ -57,6 +62,8 @@
 
 	let dashStore = useStoreDashboard()
 
+	dashStore.init()
+
 	let topComponents = computed(() => {
 		return dashStore.widgets.filter((item) => {
 			return item.tab == null
@@ -75,6 +82,20 @@
 		{id: 'i_lose', name: 'I wanna lose my money'}
 	])
 	let activeTab = ref('i_lose')
+
+	function edit() {
+		isEdit.value = true
+	}
+	function save() {
+		dashStore.saveLayout()
+
+		isEdit.value = false
+	}
+	function cancelEdit() {
+		dashStore.getLayout()
+
+		isEdit.value = false
+	}
 
 </script>
 

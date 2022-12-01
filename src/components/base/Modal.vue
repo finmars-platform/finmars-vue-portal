@@ -20,8 +20,8 @@
 						<slot name="controls">
 							<div class="flex sb" v-if="controls">
 								<FmBtn type="text"
-									@click="cancel(), controls.cancel.cb()">{{ controls.cancel.name }}</FmBtn>
-								<FmBtn @click="controls.action.cb()">{{ controls.action.name }}</FmBtn>
+									@click="cancel(), controls.cancel.cb ? controls.cancel.cb() : ''">{{ controls.cancel.name }}</FmBtn>
+								<FmBtn @click="cancel(), controls.action.cb()">{{ controls.action.name }}</FmBtn>
 							</div>
 						</slot>
 					</div>
@@ -49,6 +49,7 @@ export default {
 	},
 	emits: [
 		'update:modelValue',
+		'close'
 	],
   data() {
     return {
@@ -73,6 +74,7 @@ export default {
     cancel() {
 			if (this.closingDisabled) return;
       this.$emit('update:modelValue', false)
+      this.$emit('close')
     },
   }
 }

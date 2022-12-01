@@ -26,6 +26,7 @@
 			v-if="isOpenAddComponents"
 			v-model="isOpenAddComponents"
 			:tab="tab"
+			@close="isOpenAddComponents = false"
 		/>
 	</div>
 </template>

@@ -6,7 +6,7 @@
 		</div>
 
 		<div v-if="status == 100" class="content">
-			<canvas id="myChart"><p>Chart</p></canvas>
+			<canvas :id="wid"><p>Chart</p></canvas>
 		</div>
 		<div class="content flex-column aic jcc" v-else>
 			<div class="flex aic">
@@ -116,7 +116,7 @@
 	})
 
 	onMounted(() => {
-		myChart = new Chart('myChart', {
+		myChart = new Chart(props.wid, {
 			type: 'doughnut',
 			data: data.value,
 			options: {

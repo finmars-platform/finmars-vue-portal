@@ -32,7 +32,7 @@ export default defineStore({
 
 			this.masterUsers = res.results;
 
-			const activeMasterUser = this.masterUsers.find( item => item.is_current )
+			const activeMasterUser = this.masterUsers.find( item => location.href.includes(item.base_api_url) )
 
 			if ( activeMasterUser ) this.current = activeMasterUser
 

@@ -1,5 +1,6 @@
 export default {
-	widgetsHistory(data) {
+	widgetsStats(data) {
+		console.log('data:', data)
 		return data
 	}
 }
