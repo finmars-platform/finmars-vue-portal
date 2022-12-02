@@ -1,4 +1,4 @@
-import _auth from "./routes/_auth";
+import _auth from "../api/routes/_auth";
 import routes from "../api/routes";
 import providers from "../api/providers/main.js";
 
@@ -37,12 +37,9 @@ export default async function useApi (
 	if ( baseApi )
 		url = url.replace('{client}', baseApi);
 
-	let baseUrl = _auth.hasOwnProperty(route) ? config.public.authorizerURL : config.public.apiURL;
-
 	let token = useCookie('access_token').value
 
 	let opts = {
-		baseURL: baseUrl,
 		method: method.toUpperCase() || "GET",
 		headers: {
 			Authorization: "Token " + token,
@@ -68,7 +65,6 @@ export default async function useApi (
 
 	try {
 		let response = await $fetch(url, opts)
-		console.log('route:', route)
 
 		return method == 'get' && providers[route] ? providers[route](response) : response
 
