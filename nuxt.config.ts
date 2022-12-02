@@ -5,10 +5,10 @@ export default defineNuxtConfig({
 		public: {
 			frontURL: process.env.FRONT_HOST || "==PROD_FRONT_HOST==",
 			apiURL: process.env.API_HOST || "==PROD_API_HOST==",
+			authURL: process.env.AUTH_HOST || "==PROD_AUTH_HOST==",
 			wsURL: (process.env.WS_HOST  || "==PROD_WS_HOST==") + '/ws',
 
 			oldAppURL: process.env.API_HOST + '/a/#!' || "==PROD_API_HOST==/a/#!",
-			authorizerURL: process.env.AUTH_HOST || process.env.API_HOST || "==PROD_API_HOST==",
 
 			cloackPass: "==PROD_CLOACK_PASS==",
 			cloack2fa: "==PROD_CLOACK_2fa==",

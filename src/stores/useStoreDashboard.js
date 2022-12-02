@@ -27,6 +27,9 @@ export default defineStore({
 		async init() {
 			await this.getLayout()
 		},
+		getScope() {
+			return this.scopes.test
+		},
 		async getLayout() {
 			// localStorage.getItem('layout')
 			let res = await useApi('dashboardLayout.get', {params: {id: 17}});
