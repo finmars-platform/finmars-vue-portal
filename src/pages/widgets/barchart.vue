@@ -1,6 +1,6 @@
 <template>
 	<div class="wrap">
-		<div class="title">Balance (time) </div>
+		<div class="title">{{ widgetName }}</div>
 
 		<div class="filters flex" v-show="status == 100">
 			<div class="filter_item"
@@ -101,13 +101,15 @@
 	let portfolioId = route.query.portfolioId
 	let client = route.query.workspace
 	let date_to = route.query.date_to
+	let typeHistory = 'nav'
+	let widgetName = ref('Balance (Historical)')
 	let historyStats = {}
 
 
-	async function getHistory(type = 'nav') {
+	async function getHistory() {
 		let res = await useApi('widgetsHistory.get', {
 			params: {
-				type,
+				type: typeHistory,
 				client,
 			},
 			filters: {
@@ -376,8 +378,12 @@
 					nav: 'nav',
 					total: 'pl'
 				}
-				let success = await getHistory(map[e.data.type])
+				typeHistory = map[e.data.type]
+
+				let success = await getHistory()
 				if ( success ) status.value = 100
+
+				widgetName.value = e.data.type == 'total' ? 'P&L (Historical)' : 'Balance (Historical)'
 
 				updateData()
 			}
