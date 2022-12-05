@@ -54,25 +54,7 @@
 	);
 
 	let props = defineProps({
-		wid: {
-			type: String,
-			required: true
-		},
-		portfolio: {
-			type: Number,
-			required: true
-		},
-		date_to: {
-			type: String,
-			required: true
-		},
-		type: {
-			type: String,
-			defoult: 'nav'
-		},
-		client: String,
-		token: String,
-		frameMod: Boolean,
+		wid: String
 	})
 	// 0-99 101-200
 	const STATUSES = {
@@ -80,6 +62,11 @@
 		101: 'Data are not available',
 	}
 	let status = ref(0)
+
+
+	let dashStore = useStoreDashboard()
+	let res = await dashStore.getHistory(props.wid)
+	console.log('res:', res)
 
 	let historyStats
 
@@ -118,7 +105,6 @@
 		'#AB7967',
 	]
 
-	fetchHistory()
 
 	onMounted(() => {
 		createChart()

@@ -6,11 +6,11 @@
 		>
 			<div class="card"
 				v-for="(item) in stats"
-				:class="{active: item[0] == active}"
-				@click="item.id == 'nav' || item.id == 'total' ? setActive(item[0]) : false"
+				:class="{active: item.id == active}"
+				@click="setActive(item)"
 			>
 				<div class="card_name">{{ item.name }}</div>
-				<div class="card_value">{{ item.value }}</div>
+				<div class="card_value">{{ formatByType(item) }}</div>
 			</div>
 		</div>
 
@@ -32,7 +32,6 @@
 	})
 
 	let dashStore = useStoreDashboard()
-
 	let scope = dashStore.getScope(props.wid)
 
 	const STATUSES = {
@@ -40,6 +39,7 @@
 		101: 'Data are not available',
 	}
 	let status = ref(0)
+
 
 	let stats = ref(null)
 	let statsCurrent = ref(0)
@@ -69,12 +69,12 @@
 		status.value = 100
 	}
 	async function setActive( item ) {
-		active.value = item
-
-		// send({
-		// 	action: 'changeHistoryType',
-		// 	type: item
-		// })
+		if (item.id == 'nav' || item.id == 'total') active.value = item.id
+	}
+	function formatByType( item ) {
+		if ( item.type == 'currency' ) return formatCurency(item.value)
+		if ( item.type == 'percent' ) return formatPercent(item.value)
+		if ( item.type == 'ratio' ) return Math.round(item.value * 100) / 100
 	}
 	function formatCurency(val) {
 		return new Intl.NumberFormat('en-EN', {
