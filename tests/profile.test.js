@@ -1,8 +1,6 @@
-import {render, fireEvent} from '@testing-library/vue'
-import Component from '../src/pages/home.vue'
+import { describe, test } from 'vitest'
+import { setup, $fetch } from '@nuxt/test-utils-edge'
 
-test('properly handles v-model', async () => {
-  const {getByLabelText, getByText} = render(Component)
+const html = await $fetch('/')
 
-  getByText('Workspace')
-})
+

@@ -1,12 +1,11 @@
 let host = useRuntimeConfig().public.apiURL
 let prefix = host + '/{client}/api/v1'
-console.log('prefix:', prefix)
 
 export default {
 	pricingProc: {
 		get: prefix + "/procedures/pricing-procedure/",
 		post: prefix + "/procedures/pricing-procedure/{id}/run-procedure/",
-		put: '/procedures/pricing-procedure/{id}/'
+		put: prefix + '/procedures/pricing-procedure/{id}/'
 	},
 	pricingProcId: {
 		get: prefix + "/procedures/pricing-procedure/{id}/",

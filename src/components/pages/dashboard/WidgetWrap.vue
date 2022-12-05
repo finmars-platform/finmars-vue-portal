@@ -8,11 +8,9 @@
 	>
 		<component
 			class="widget_wrap"
-			style="height: 100%;"
 			:is="'Widgets' + component.componentName"
-			v-bind="component.props"
+			:wid="component.id"
 		/>
-
 		<div class="board_widget_controls"
 			v-if="isEdit"
 		>
@@ -210,6 +208,7 @@
 		position: relative;
 		z-index: 1;
 		overflow: auto;
+		height: 100%;
 	}
 	.board_widget_controls {
 		position: absolute;
