@@ -16,11 +16,15 @@ export default defineStore({
 				test: {
 					portfolio: 2,
 					date: '2022-09-15',
+					_type: 'nav',
 					dataset: {
 
 					}
 				}
-			}
+			},
+
+			//test
+			history: null
 		};
 	},
 	actions: {
@@ -31,8 +35,10 @@ export default defineStore({
 			return this.scopes.test
 		},
 		async getLayout() {
-			// localStorage.getItem('layout')
+			let dashboardLayout = localStorage.getItem('dashboardLayout')
 			let res = await useApi('dashboardLayout.get', {params: {id: 17}});
+
+			if ( res.error ) return false
 
 			this.widgets = res.data.widgets || []
 			this.tabs = res.data.tabs || []
@@ -41,6 +47,21 @@ export default defineStore({
 			delete res.data
 
 			this.layout = res
+		},
+		async getHistory() {
+			let apiOpts = {
+				filters: {
+					portfolio: this.scopes.test.portfolio,
+					date_to: this.scopes.test.date
+				},
+				params: {
+					type: this.scopes.test._type
+				}
+			}
+
+			let res = await useApi('widgetsHistory.get', apiOpts)
+
+			return res
 		},
 		async saveLayout() {
 			let res = await useApi('dashboardLayout.put', {
