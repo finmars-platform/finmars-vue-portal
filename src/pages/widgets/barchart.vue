@@ -193,13 +193,16 @@
 
 
 	function createData() {
+		let dataByName = {}
 
 		historyStats.items.forEach((date) => {
 			data.labels.push(moment(date.date).format('MMM YY'))
 
+
 			date.categories.forEach((category) => {
 				categories.add( category.name )
 				if ( category.name != categoryName.value ) return false
+
 
 				category.items.forEach((instrument, key) => {
 					if ( !data.datasets[key] ) {
@@ -209,12 +212,19 @@
 						}
 					}
 
+					if ( !dataByName[instrument.name] ) {
+						dataByName[instrument.name] = []
+					}
+					dataByName[instrument.name].push(instrument.value)
+
 					data.datasets[key].label = instrument.name
-					data.datasets[key].data.push(instrument.value)
+					data.datasets[key].data = dataByName[instrument.name]
 					data.datasets[key].total += instrument.value
 				})
 			})
 		})
+		console.log('data:', dataByName)
+
 		data.datasets = data.datasets
 			.filter((item) => item.total != 0)
 			.sort( (a, b) => b.total - a.total)
