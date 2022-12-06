@@ -28,7 +28,7 @@
 
 <script setup>
 
-	import moment from 'moment'
+	import dayjs from 'dayjs'
 	import {
   Chart,
   ArcElement,
@@ -197,7 +197,8 @@
 		let dataset = []
 
 		historyStats.items.forEach((date) => {
-			data.labels.push(moment(date.date).format('MMM YY'))
+			let formatedDate = dayjs(date.date).format('MMM YY')
+			data.labels.push(formatedDate)
 
 			if ( !date.categories.length ) {
 				for ( let prop in dataset ) {
@@ -212,13 +213,13 @@
 				category.items.forEach((instrument, key) => {
 					if ( !dataset[instrument.name] ) {
 						dataset[instrument.name] = {
-							data: [],
+							data: {},
 							total: 0
 						}
 					}
 
 					dataset[instrument.name].label = instrument.name
-					dataset[instrument.name].data.push(instrument.value)
+					dataset[instrument.name].data[formatedDate] = instrument.value
 					dataset[instrument.name].total += instrument.value
 				})
 			})
@@ -307,7 +308,7 @@
 								let sum = 0
 								tooltipItems.forEach(function(tooltipItem) {
 									let rawDate = tooltipItem.label.split(' ')
-									let date = moment( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
+									let date = dayjs( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
 
 									let item = historyStats.items.find((item) => item.date.includes(date))
 									sum = typeHistory == 'nav' ? item.nav : item.total
