@@ -25,15 +25,22 @@
 		</PagesDashboardGrid>
 
 		<div class="fm_tabs"
-			v-if="tabs.length > 1 || isEdit"
+			v-if="dashStore.tabs.length > 1 || isEdit"
 		>
-			<div class="fm_tabs_item"
-				v-for="(tab, index) in tabs"
+			<div class="fm_tabs_item center aic"
+				v-for="(tab, index) in dashStore.tabs"
 				:key="index"
 				:class="{active: tab.id == activeTab}"
 				@click="activeTab = tab.id"
 			>
 				{{ tab.name }}
+
+				<FmInput v-model="tab.name" />
+				<FmIcon class="m-l-10" icon="edit" />
+				<FmIcon class="m-l-4" icon="close" />
+			</div>
+			<div class="fm_tabs_item flex aic" v-if="isEdit" @click="addTab()">
+				<FmIcon primary icon="add" />
 			</div>
 		</div>
 
@@ -83,6 +90,18 @@
 	])
 	let activeTab = ref('i_lose')
 
+	function addTab() {
+		dashStore.tabs.push({
+			id: Date.now(),
+			name: 'New tab'
+		})
+	}
+	function delTab( id ) {
+		dashStore.tabs.push({
+			id: Date.now(),
+			name: 'New tab'
+		})
+	}
 	function edit() {
 		isEdit.value = true
 	}
