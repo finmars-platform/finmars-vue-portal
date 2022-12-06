@@ -201,7 +201,7 @@
 
 			if ( !date.categories.length ) {
 				for ( let prop in dataset ) {
-					dataset[prop].push(null)
+					dataset[prop].data.push(null)
 				}
 			}
 
