@@ -217,6 +217,7 @@
 							total: 0
 						}
 					}
+					// if ( instrument.name == 'Derivatives' && formatedDate == 'Jun 18') return false
 
 					dataset[instrument.name].label = instrument.name
 					dataset[instrument.name].data[formatedDate] = instrument.value
@@ -343,20 +344,30 @@
 
 					if (points.length) {
 						let data = {}
+						let currentLabel
+						try {
+							let currentLabel = Object.entries(myChart.data.datasets[0].data)[points[0].index][0]
 
-						points.forEach((item, i) => {
-							data[myChart.data.datasets[item.datasetIndex].label] = myChart.data.datasets[item.datasetIndex].data[item.index]
-						})
-						active.value = points[0]
-						myChart.update()
+							points.forEach((item, i) => {
+								data[myChart.data.datasets[item.datasetIndex].label] = myChart.data.datasets[item.datasetIndex].data[currentLabel]
+							})
+							active.value = points[0]
+							myChart.update()
 
-						activeIndex.value = points[0].index
-						send({
-							action: 'clickOnChart',
-							data,
-							date: historyStats.items[points[0].index],
-							category: categoryName.value
-						})
+							activeIndex.value = points[0].index
+
+							let rawDate = currentLabel.split(' ')
+							let date = dayjs( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
+
+							send({
+								action: 'clickOnChart',
+								data,
+								date: historyStats.items.find(item => item.date.includes(date)),
+								category: categoryName.value
+							})
+						} catch (e) {
+							console.log('Error in click:', e)
+						}
 					}
         }
 			},
