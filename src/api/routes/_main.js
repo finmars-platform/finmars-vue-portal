@@ -190,7 +190,9 @@ export default {
 		put: prefix + '/ui/dashboard-layout/{id}/',
 		post: prefix + '/ui/dashboard-layout/',
 	},
-
+	expression: {
+		post: prefix + '/utils/expression/',
+	},
 
 
 	// Надо отделить

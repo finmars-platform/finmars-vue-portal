@@ -5,7 +5,9 @@
 			<div v-show="readyStatus" class="rs_mc_wrap">
 				<RvSettingsBlock title="General">
 					<RvSettingsRow label="Date to">
-						<FmInputDate v-model="reportOptions.end_date" v-model:errorData="endDateErrorData" />
+<!--						<FmInputDate v-model="reportOptions.end_date" v-model:errorData="endDateErrorData" />-->
+						<FmInputDateComplex v-model:firstDate="reportOptions.end_date"
+																v-model:firstDatepickerOptions="reportLayoutOptions.datepickerOptions.reportLastDatepicker" />
 					</RvSettingsRow>
 
 					<RvSettingsRow label="Reporting currency">
@@ -166,6 +168,16 @@ watch(
 	{deep: true}
 );
 
+let reportLayoutOptions = ref({...viewerData.reportLayoutOptions});
+
+watch(
+	() => viewerData.reportLayoutOptions,
+	() => {
+		reportLayoutOptions.value = JSON.parse(JSON.stringify(viewerData.reportLayoutOptions));
+	},
+	{deep: true}
+)
+
 let components = ref({ ...viewerData.components })
 watch(
 	() => viewerData.components,
@@ -206,7 +218,7 @@ function cancel() {
 	emit("cancel");
 }
 function save() {
-	emit("save", [ reportOptions.value, components.value ]);
+	emit("save", [ reportOptions.value, reportLayoutOptions.value, components.value ]);
 }
 
 function init() {

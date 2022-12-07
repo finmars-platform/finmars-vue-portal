@@ -20,6 +20,9 @@ export function getEmptyLayoutData (ecosystemDefaults) {
 		content_type: "reports.performancereport",
 		data: {
 			additions: {},
+			reportLayoutOptions: {
+				datepickerOptions: {},
+			},
 			reportOptions: {
 				begin_date: null,
 				end_date: moment(new Date).format('YYYY-MM-DD'),
@@ -46,6 +49,7 @@ export default () => {
 	return reactive(
 		{
 			listLayout: {},
+			reportLayoutOptions: {},
 			reportOptions: {},
 			additions: {},
 			components: {},
@@ -100,7 +104,26 @@ export default () => {
 
 				}
 
+				//region Setup data for FmInputDateComplex
+				if (!listLayout.data.hasOwnProperty('reportLayoutOptions')) {
+					listLayout.data.reportLayoutOptions = {};
+				}
+
+				if (!listLayout.data.reportLayoutOptions.hasOwnProperty('datepickerOptions')) {
+					listLayout.data.reportLayoutOptions.datepickerOptions = {};
+				}
+
+				if (!listLayout.data.reportLayoutOptions.datepickerOptions.hasOwnProperty('reportFirstDatepicker')) {
+					listLayout.data.reportLayoutOptions.datepickerOptions.reportFirstDatepicker = {};
+				}
+
+				if (!listLayout.data.reportLayoutOptions.datepickerOptions.hasOwnProperty('reportLastDatepicker')) {
+					listLayout.data.reportLayoutOptions.datepickerOptions.reportLastDatepicker = {};
+				}
+				//endregion
+
 				this.components = JSON.parse(JSON.stringify(listLayout.data.components));
+				this.reportLayoutOptions = JSON.parse(JSON.stringify(listLayout.data.reportLayoutOptions));
 				this.reportOptions = JSON.parse(JSON.stringify(listLayout.data.reportOptions));
 
 				this.additions = JSON.parse(JSON.stringify(listLayout.data.additions));
@@ -122,6 +145,7 @@ export default () => {
 				let listLayout = useRecursiveDeepCopy(this.listLayout);
 
 				listLayout.data.components = {...{}, ...this.components};
+				listLayout.data.reportLayoutOptions = JSON.parse(JSON.stringify(this.reportLayoutOptions));
 				listLayout.data.reportOptions = JSON.parse(JSON.stringify(this.reportOptions));
 
 				listLayout.data.additions = JSON.parse(JSON.stringify(this.additions));

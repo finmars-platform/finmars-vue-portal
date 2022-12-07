@@ -3,16 +3,20 @@
 		:label="label"
 		:modelValue="modelValue"
 		:required="required"
+		:disabled="disabled"
 		:errorData="error"
 
 		@update:modelValue="$emit('update:modelValue', $event)"
 		@udpate:errorData="newVal => $emit('update:errorData', newVal)"
 	>
 		<template #button>
-			<FmBtn type="iconBtn"
-						 icon="calendar_month"
-						 @click="showDatepicker"
-			/>
+			<slot name="button">
+				<FmBtn type="iconBtn"
+							 icon="calendar_month"
+							 :disabled="disabled"
+							 @click="showDatepicker"
+				/>
+			</slot>
 		</template>
 
 		<input
@@ -27,7 +31,9 @@
 			class="bi_main_input"
 		/>
 
-		<template #sideItems></template>
+		<template v-if="$slots.sideItems" #sideItems>
+			<slot name="sideItems"></slot>
+		</template>
 	</BaseInput>
 </template>
 
@@ -47,11 +53,12 @@
 
 	let emit = defineEmits(['update:modelValue', 'update:errorData'])
 
-	let localErrorData = ref(null); // when props.errorData not used
 	let mainInput = ref(null);
 	// let mainInputValue = ref(props.modelValue);
 
 	let doNotShowDatepicker = true;
+
+	let localErrorData = ref(null); // when props.errorData not used
 
 	let error = computed({
 		set(newVal) {
@@ -207,5 +214,7 @@
 
 <style lang="scss" scoped>
 
-
+.bi_main_input[disabled] {
+	color: $text-lighten;
+}
 </style>
