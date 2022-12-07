@@ -33,11 +33,10 @@
 				:class="{active: tab.id == activeTab}"
 				@click="activeTab = tab.id"
 			>
-				{{ tab.name }}
+				<input v-if="isEdit" v-model="tab.name" />
+				<template v-else>{{ tab.name }}</template>
 
-				<FmInput v-model="tab.name" />
-				<FmIcon class="m-l-10" icon="edit" />
-				<FmIcon class="m-l-4" icon="close" />
+				<FmIcon v-if="isEdit" @click="delTab()" class="m-l-4" icon="delete" />
 			</div>
 			<div class="fm_tabs_item flex aic" v-if="isEdit" @click="addTab()">
 				<FmIcon primary icon="add" />
@@ -83,11 +82,6 @@
 	})
 
 	let isEdit = ref(false)
-
-	let tabs = reactive([
-		{id: 'porfolio_winner', name: 'Porfolio Winner'},
-		{id: 'i_lose', name: 'I wanna lose my money'}
-	])
 	let activeTab = ref('i_lose')
 
 	function addTab() {
