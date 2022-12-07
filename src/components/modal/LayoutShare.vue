@@ -1,6 +1,6 @@
 <template>
 	<BaseModal title="Share Layout"
-						 v-model="modelValue"
+						 :modelValue="modelValue"
 						 @update:modelValue="newVal => emit('update:modelValue', newVal)">
 
 		<div class="p-b-16">

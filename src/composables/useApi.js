@@ -1,4 +1,4 @@
-import _auth from "./routes/_auth";
+import _auth from "../api/routes/_auth";
 import routes from "../api/routes";
 import providers from "../api/providers/main.js";
 

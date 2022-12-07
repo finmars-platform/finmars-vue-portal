@@ -4,7 +4,7 @@
 			v-model="showSettingsDialog"
 			v-model:externalReadyStatus="dsReadyStatus"
 			:bundles="bundles"
-			@save="showSettingsDialog = false, [viewerData.reportOptions, viewerData.components] = $event, refresh()"
+			@save="showSettingsDialog = false, [viewerData.reportOptions, viewerData.reportLayoutOptions, viewerData.components] = $event"
 			@cancel="showSettingsDialog = false"
 		/>
 
@@ -141,6 +141,7 @@
 import moment from 'moment'
 import Chart from 'chart.js/auto';
 import getPerformanceViewerData from "./viewerData";
+import {useCalculateReportDatesExprs} from "../../../composables/useReportHelper";
 
 const store = useStore();
 const layoutsStore = useLayoutsStore();
@@ -384,9 +385,16 @@ async function fetchListLayout () {
 	}*/
 	readyStatusData.layout = false;
 
-	const res = await useFetchEvRvLayout(layoutsStore, viewerData, route.query.layout);
+	const layoutRes = await useFetchEvRvLayout(layoutsStore, viewerData, route.query.layout);
 
-	viewerData.setLayoutCurrentConfiguration(res, store.ecosystemDefaults);
+	viewerData.setLayoutCurrentConfiguration(layoutRes, store.ecosystemDefaults);
+
+	const reportOptionsRes = await useCalculateReportDatesExprs(viewerData.content_type, viewerData.reportOptions, viewerData.reportLayoutOptions);
+
+	if (reportOptionsRes.error) throw reportOptionsRes.error;
+
+	viewerData.reportOptions = reportOptionsRes;
+
 	readyStatusData.layout = true;
 
 }

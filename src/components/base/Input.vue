@@ -1,9 +1,9 @@
 <template>
 	<div class="base-input"
-			 :class="{'error': errorData}"
+			 :class="{'error': errorData, 'disabled': disabled}"
 			 tabindex="-1"
 
-			 @click="mainInput && mainInput.focus()"
+			 @click="onBiClick"
 	>
 		<div class="bi_top">
 			<div class="top_left_border"></div>
@@ -29,6 +29,7 @@
 						:placeholder="placeholder || label"
 						:value="modelValue"
 						:readonly="readonly"
+						:disabled="disabled"
 
 						@input="$emit('update:modelValue', $event.target.value)"
 						@focus="$emit('onFocus')"
@@ -39,7 +40,7 @@
 				</slot>
 			</div>
 
-			<div class="bi_side_items flex">
+			<div class="bi_side_items flex" :class="{'empty': !tooltip && !$slots.sideItems}">
 				<slot name="sideItems"></slot>
 
 				<div class="bi_side_item" v-if="tooltip">
@@ -68,15 +69,17 @@ let props = defineProps({
 	label: String,
 	placeholder: String,
 	readonly: Boolean,
+	disabled: Boolean,
 	required: Boolean,
 	tooltip: String,
 	// error: [String, Array]
-	errorData: Object
+	errorData: Object,
 })
 
 let emit = defineEmits(['update:modelValue', 'update:errorData', 'onBlur', 'onFocus']);
-
 let mainInput = ref(null);
+
+let slots = useSlots();
 
 watch(
 	() => props.modelValue,
@@ -100,6 +103,11 @@ if (props.required) {
 		}
 	)
 
+}
+
+function onBiClick() {
+	if (props.disabled) return;
+	if (mainInput.value) mainInput.value.focus();
 }
 
 /*function onModelValueChange (newVal) {
@@ -137,13 +145,16 @@ $border-radius: 4px;
 	// height: 42px;
 	// border: 1px solid $border-darken;
 	border-radius: $border-radius;
-	margin-bottom: 25px;
 	transition: border 0.3s;
 	background: $separ;
 
 	&.small {
 		height: 24px;
 		font-size: 14px;
+	}
+
+	&:not(.bi_no_margins) {
+		margin-bottom: 25px;
 	}
 
 	&:not(.bi_no_borders) {
@@ -193,7 +204,7 @@ $border-radius: 4px;
 		}
 	}
 
-	&.error {
+	&.error:not(.disabled) {
 		margin-bottom: 30px;
 
 		.error_icon {
@@ -217,7 +228,7 @@ $border-radius: 4px;
 		}
 	}
 
-	&.error:not(.bi_no_borders) {
+	&.error:not(.disabled):not(.bi_no_borders) {
 
 		.bi_top {
 			.top_left_border, .top_right_border {
@@ -232,11 +243,39 @@ $border-radius: 4px;
 		}
 	}
 }
+
 .bi_error {
 	color: $primary;
 	font-size: 12px;
 	// padding: 5px 12px 10px;
 	padding: 4px 12px 0;
+}
+
+.base-input.disabled {
+	color: $text-pale;
+
+	&:not(.bi_no_borders) {
+
+		.top_left_border, .top_right_border {
+			border-color: $borer-lighten;
+		}
+
+		.bi_wrap {
+			border-right-color: $borer-lighten;
+			border-bottom-color: $borer-lighten;
+			border-left-color: $borer-lighten;
+		}
+	}
+
+	.bi_main_input {
+		color: $text-lighten;
+	}
+}
+
+.base-input.cursor-pointer {
+	.bi_main_input {
+		cursor: pointer;
+	}
 }
 
 .bi_top {
@@ -254,7 +293,7 @@ $border-radius: 4px;
 		width: 10px;
 		height: 5px; // makes connection with .base-input borders smoother
 		border-top: $input-border;
-		border-top-left-radius: 2px;
+		border-top-left-radius: $border-radius;
 	}
 
 	.bi_label {
@@ -297,7 +336,7 @@ $border-radius: 4px;
 		flex: 0 3 100%;
 		height: 5px; // makes connection with .base-input borders smoother
 		border-top: $input-border;
-		border-top-right-radius: 2px;
+		border-top-right-radius: $border-radius;
 	}
 
 

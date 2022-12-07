@@ -15,6 +15,6 @@ export default function (target, options) {
 		pickmeupOpts = {...defaultOpts, ...options};
 
 	}
-	console.log("testing.usePickmeup options", target, pickmeupOpts);
+
 	return nuxtApp.$pickmeup(target, pickmeupOpts);
 }
