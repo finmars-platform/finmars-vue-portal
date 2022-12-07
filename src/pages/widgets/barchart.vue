@@ -218,8 +218,6 @@
 						}
 					}
 
-					if ( formatedDate == 'Jun 18' ) return false
-
 					dataset[instrument.name].label = instrument.name
 					dataset[instrument.name].data[formatedDate] = instrument.value
 					dataset[instrument.name].total += instrument.value
@@ -342,8 +340,6 @@
 				},
 				onClick: (evt) => {
 					let barElements = myChart.getSortedVisibleDatasetMetas()[0].data
-					console.log('myChart.getSortedVisibleDatasetMetas():', myChart.getSortedVisibleDatasetMetas())
-					console.log('barElements:', barElements)
 					let clickedElem = barElements.find( item => (item.x - (item.width * 1.25 / 2)) < evt.x && (item.x + (item.width * 1.25 / 2)) > evt.x )
 					let index = clickedElem.$context.parsed.x
 
