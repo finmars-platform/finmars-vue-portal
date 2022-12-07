@@ -217,7 +217,7 @@
 							total: 0
 						}
 					}
-					// if ( instrument.name == 'Derivatives' && formatedDate == 'Jun 18') return false
+					if ( formatedDate == 'Jun 18' && instrument.name != 'Crypto' ) return false
 
 					dataset[instrument.name].label = instrument.name
 					dataset[instrument.name].data[formatedDate] = instrument.value
@@ -340,13 +340,17 @@
 					axis: 'x'
 				},
 				onClick: (evt) => {
+					let barElements = myChart.getSortedVisibleDatasetMetas()[0].data
+					let index = barElements.findIndex(item => item.x > evt.x) + 1
+
 					const points = myChart.getElementsAtEventForMode(evt, 'nearest', { intersect: false, axis: 'x' }, true);
 
 					if (points.length) {
 						let data = {}
 						let currentLabel
+
 						try {
-							let currentLabel = Object.entries(myChart.data.datasets[0].data)[points[0].index][0]
+							let currentLabel = myChart.data.labels[index]
 
 							points.forEach((item, i) => {
 								data[myChart.data.datasets[item.datasetIndex].label] = myChart.data.datasets[item.datasetIndex].data[currentLabel]
@@ -354,15 +358,12 @@
 							active.value = points[0]
 							myChart.update()
 
-							activeIndex.value = points[0].index
-
-							let rawDate = currentLabel.split(' ')
-							let date = dayjs( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
+							activeIndex.value = index
 
 							send({
 								action: 'clickOnChart',
 								data,
-								date: historyStats.items.find(item => item.date.includes(date)),
+								date: historyStats.items[index],
 								category: categoryName.value
 							})
 						} catch (e) {
