@@ -217,7 +217,7 @@
 							total: 0
 						}
 					}
-					if ( formatedDate == 'Jun 18' && instrument.name != 'Crypto' ) return false
+					// if ( formatedDate == 'Jun 18' && instrument.name != 'Crypto' ) return false
 
 					dataset[instrument.name].label = instrument.name
 					dataset[instrument.name].data[formatedDate] = instrument.value
@@ -341,7 +341,7 @@
 				},
 				onClick: (evt) => {
 					let barElements = myChart.getSortedVisibleDatasetMetas()[0].data
-					let index = barElements.findIndex(item => item.x > evt.x) + 1
+					let index = barElements.findIndex(item => (item.x - (item.width * 1.25 / 2)) > evt.x) - 1
 
 					const points = myChart.getElementsAtEventForMode(evt, 'nearest', { intersect: false, axis: 'x' }, true);
 
@@ -359,6 +359,8 @@
 							myChart.update()
 
 							activeIndex.value = index
+							console.log('index:', index)
+								console.log('historyStats.items:', historyStats.items)
 
 							send({
 								action: 'clickOnChart',
