@@ -16,7 +16,7 @@
 			<div class="chart_row"
 				v-for="(item, i) in instruments"
 				:key="i"
-				:style="{background: (inheritColors[item.name] || Math.random(1, 20))?.slice(0, 7) + '0f'}"
+				:style="{background: (inheritColors[item.name] || COLORS[Math.random(1, 20)])?.slice(0, 7) + '0f'}"
 				:class="{minus: item.value < 0}"
 			>
 				<div class="chart_field">
@@ -25,7 +25,7 @@
 						:class="{minus: item.value < 0}"
 						:style="{
 							width: Math.abs(item.value / maxTickStock * 50) + '%',
-							background: (inheritColors[item.name] || Math.random(1, 20))
+							background: (inheritColors[item.name] || COLORS[Math.random(1, 20)])
 						}"
 					></div>
 				</div>
