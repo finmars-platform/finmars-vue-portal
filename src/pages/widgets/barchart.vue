@@ -339,9 +339,14 @@
 					axis: 'x'
 				},
 				onClick: (evt) => {
-					let barElements = myChart.getSortedVisibleDatasetMetas()[0].data
-					let clickedElem = barElements.find( item => (item.x - (item.width * 1.25 / 2)) < evt.x && (item.x + (item.width * 1.25 / 2)) > evt.x )
-					let index = clickedElem.$context.parsed.x
+					let metas = myChart.getSortedVisibleDatasetMetas()
+					let index
+
+					metas.forEach((dataset) => {
+						let clickedElem = dataset.data.find( item => (item.x - (item.width * 1.25 / 2)) < evt.x && (item.x + (item.width * 1.25 / 2)) > evt.x )
+
+						if ( clickedElem ) index = clickedElem.$context.parsed.x
+					})
 
 					const points = myChart.getElementsAtEventForMode(evt, 'nearest', { intersect: false, axis: 'x' }, true);
 
