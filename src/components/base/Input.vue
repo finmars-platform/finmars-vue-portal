@@ -1,9 +1,9 @@
 <template>
 	<div class="base-input"
-			 :class="{'error': errorData}"
+			 :class="{'error': errorData, 'disabled': disabled}"
 			 tabindex="-1"
 
-			 @click="mainInput && mainInput.focus()"
+			 @click="onBiClick"
 	>
 		<div class="bi_top">
 			<div class="top_left_border"></div>
@@ -29,6 +29,7 @@
 						:placeholder="placeholder || label"
 						:value="modelValue"
 						:readonly="readonly"
+						:disabled="disabled"
 
 						@input="$emit('update:modelValue', $event.target.value)"
 						@focus="$emit('onFocus')"
@@ -39,7 +40,7 @@
 				</slot>
 			</div>
 
-			<div class="bi_side_items flex">
+			<div class="bi_side_items flex" :class="{'empty': !tooltip && !$slots.sideItems}">
 				<slot name="sideItems"></slot>
 
 				<div class="bi_side_item" v-if="tooltip">
@@ -68,20 +69,22 @@ let props = defineProps({
 	label: String,
 	placeholder: String,
 	readonly: Boolean,
+	disabled: Boolean,
 	required: Boolean,
 	tooltip: String,
 	// error: [String, Array]
-	errorData: Object
+	errorData: Object,
 })
 
 let emit = defineEmits(['update:modelValue', 'update:errorData', 'onBlur', 'onFocus']);
-
 let mainInput = ref(null);
+
+let slots = useSlots();
 
 watch(
 	() => props.modelValue,
 	() => {
-		if (props.errorData && props.modelValue) emit('update:errorData', null);
+		if (props.errorData && props.errorData.code === 30 && props.modelValue) emit('update:errorData', null);
 	}
 )
 
@@ -102,6 +105,11 @@ if (props.required) {
 
 }
 
+function onBiClick() {
+	if (props.disabled) return;
+	if (mainInput.value) mainInput.value.focus();
+}
+
 /*function onModelValueChange (newVal) {
 
 	if (props.errorData && props.errorData.code === 10 && newVal) {
@@ -119,6 +127,7 @@ if (props.required) {
 $input-border: 1px solid $border-darken;
 $active-input-border: 1px solid $border-active;
 $side-items-padding: 0 8px;
+$border-radius: 4px;
 
 @mixin show_label {
 	top: -8px;
@@ -133,10 +142,9 @@ $side-items-padding: 0 8px;
 .base-input {
 	position: relative;
 	display: block;
-	height: 42px;
+	// height: 42px;
 	// border: 1px solid $border-darken;
-	border-radius: 4px;
-	margin-bottom: 25px;
+	border-radius: $border-radius;
 	transition: border 0.3s;
 	background: $separ;
 
@@ -145,17 +153,22 @@ $side-items-padding: 0 8px;
 		font-size: 14px;
 	}
 
+	&:not(.bi_no_margins) {
+		margin-bottom: 25px;
+	}
+
 	&:not(.bi_no_borders) {
 		margin-top: 6px;
-		border: $input-border;
-		border-top-color: transparent;
+
+		.bi_wrap {
+			border: $input-border;
+			border-top-color: transparent;
+			border-radius: $border-radius;
+		}
+
 	}
 
 	&:not(.bi_no_borders):focus-within, &:not(.bi_no_borders):focus {
-		border-top-color: transparent !important;
-		border-right: $active-input-border;
-		border-bottom: $active-input-border;
-		border-left: $active-input-border;
 
 		.bi_top {
 			.top_left_border, .top_right_border {
@@ -165,6 +178,13 @@ $side-items-padding: 0 8px;
 			.bi_label {
 				@include show_label;
 			}
+		}
+
+		.bi_wrap {
+			border-top-color: transparent !important;
+			border-right: $active-input-border;
+			border-bottom: $active-input-border;
+			border-left: $active-input-border;
 		}
 
 	}
@@ -184,7 +204,7 @@ $side-items-padding: 0 8px;
 		}
 	}
 
-	&.error {
+	&.error:not(.disabled) {
 		margin-bottom: 30px;
 
 		.error_icon {
@@ -198,20 +218,32 @@ $side-items-padding: 0 8px;
 			}
 
 		}
+
+		.bi_button {
+			color: $error;
+
+			:deep(.fm_btn.icon .icon) {
+				color: $error;
+			}
+		}
 	}
 
-	&.error:not(.bi_no_borders) {
-		border-right-color: $error;
-		border-bottom-color: $error;
-		border-left-color: $error;
+	&.error:not(.disabled):not(.bi_no_borders) {
 
 		.bi_top {
 			.top_left_border, .top_right_border {
 				border-color: $error;
 			}
 		}
+
+		.bi_wrap {
+			border-right-color: $error;
+			border-bottom-color: $error;
+			border-left-color: $error;
+		}
 	}
 }
+
 .bi_error {
 	color: $primary;
 	font-size: 12px;
@@ -219,12 +251,40 @@ $side-items-padding: 0 8px;
 	padding: 4px 12px 0;
 }
 
+.base-input.disabled {
+	color: $text-pale;
+
+	&:not(.bi_no_borders) {
+
+		.top_left_border, .top_right_border {
+			border-color: $borer-lighten;
+		}
+
+		.bi_wrap {
+			border-right-color: $borer-lighten;
+			border-bottom-color: $borer-lighten;
+			border-left-color: $borer-lighten;
+		}
+	}
+
+	.bi_main_input {
+		color: $text-lighten;
+	}
+}
+
+.base-input.cursor-pointer {
+	.bi_main_input {
+		cursor: pointer;
+	}
+}
+
 .bi_top {
 	position: absolute;
 	display: flex;
 	flex-direction: row;
 	width: 100%;
-	top: -1px;
+	// top: -1px;
+	top: 1px;
 	left: 0;
 	z-index: 0;
 
@@ -233,7 +293,7 @@ $side-items-padding: 0 8px;
 		width: 10px;
 		height: 5px; // makes connection with .base-input borders smoother
 		border-top: $input-border;
-		border-top-left-radius: 2px;
+		border-top-left-radius: $border-radius;
 	}
 
 	.bi_label {
@@ -276,7 +336,7 @@ $side-items-padding: 0 8px;
 		flex: 0 3 100%;
 		height: 5px; // makes connection with .base-input borders smoother
 		border-top: $input-border;
-		border-top-right-radius: 2px;
+		border-top-right-radius: $border-radius;
 	}
 
 
@@ -286,6 +346,7 @@ $side-items-padding: 0 8px;
 	display: flex;
 	align-items: center;
 	// height: 40px;
+	min-height: 42px;
 	height: 100%;
 	width: 100%;
 }
