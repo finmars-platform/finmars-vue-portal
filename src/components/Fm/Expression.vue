@@ -1,12 +1,12 @@
 <template>
 	<BaseModal
 		:modelValue="modelValue"
-		@cancel="cancel()"
+		@close="cancel()"
 		title="Expression editor"
 	>
 		<div class="wrap pb-14 pt-5">
-			<div class="">
-				<div class="editor_block mx-5">
+			<div>
+				<div class="editor_block mx-5 m-b-24">
 					<div class="editor_block_toolbar flex sb aic">
 						<div class="editor_block_h">Expression</div>
 						<div>
@@ -20,7 +20,7 @@
 							<div class="snippets_item"
 								v-for="(item, index) in snippets"
 								:key="index"
-								@click="paste( item )"
+								@mousedown="paste( item )"
 							>
 								{{ item }}
 							</div>
@@ -29,7 +29,12 @@
 							<div class="line_id" contenteditable="false">
 								<div class="">1</div>
 							</div>
-							<pre ref="code_elem" class="code" contenteditable="true" @input="change" v-html="code"></pre>
+							<pre ref="code_elem"
+									 class="code"
+									 contenteditable="true"
+									 @input="change"
+									 v-html="code"
+									 @blur="snippets = []"></pre>
 						</div>
 					</code>
 				</div>
@@ -86,7 +91,7 @@
 					label="Search"
 					placeholder="Search"
 				/>
-				<v-list class="menu" v-model:opened="open">
+<!--				<v-list class="menu" v-model:opened="open">
 					<v-list-group
 						v-for="(group, title) in functions"
 						:key="title"
@@ -103,7 +108,25 @@
 							@click="info = description"
 						></v-list-item>
 					</v-list-group>
-				</v-list>
+				</v-list>-->
+				<div class="expression_function_block">
+					<div v-for="(group, title) in functions"
+							 :key="title">
+
+						<div><h3 class="text-bold p-r-8 p-l-8">{{ title }}</h3></div>
+
+						<div class="fm_list">
+							<div class="fm_list_item px-2"
+									 v-for="({name, description}, i) in group"
+									 :key="i"
+									 @click="info = description"
+							>
+								<div>{{ name }}</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
 			</div>
 		</div>
 
@@ -133,7 +156,13 @@
 	let snippets = ref([])
 	let currentSnip = ''
 
-	let code = ref( props.expressions )
+	let code = ref( props.expressions || '' )
+
+	watch(
+		() => props.expressions,
+		() => { parse(props.expressions || '') }
+	)
+
 	parse(code.value)
 
 	function change( event ) {
@@ -141,7 +170,8 @@
 		let pos = getCursorPosition(elem)
 
 		if ( event.data ) {
-			let match = elem.innerText.slice(0, pos).match(new RegExp(`[a-z\_]+${event.data}$`))
+			let enteredChar = '\\' + event.data; // escaping entered character
+			let match = elem.innerText.slice(0, pos).match(new RegExp('[a-z\_]+' + enteredChar + '$'))
 
 			if ( match ) {
 				currentSnip = match
@@ -156,6 +186,7 @@
 		})
 	}
 	function paste( snippet ) {
+
 		let stock = code_elem.value.innerText.replace(currentSnip, snippet)
 		let pos = stock.indexOf( currentSnip )
 
@@ -220,6 +251,10 @@
 		height: inherit;
 		overflow: hidden;
 
+	}
+	.expression_function_block {
+		max-height: 450px;
+		overflow: auto;
 	}
 	.info {
 		flex: 1;
