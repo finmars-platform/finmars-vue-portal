@@ -1,6 +1,6 @@
 export default class FinmarsWidgets {
 
-	widgetsUrl = 'http://localhost:3000/v/widgets/'
+	widgetsUrl = 'http://localhost:3000/client0s6sf5crgw/v/widgets/'
 	_widgets = {}
 	apiToken = ''
 	_workspace = ''
