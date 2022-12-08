@@ -1,6 +1,6 @@
 <template>
 	<div class="wrap">
-		<div class="title">Balance (time) </div>
+		<div class="title">{{ widgetName }}</div>
 
 		<div class="filters flex" v-show="status == 100">
 			<div class="filter_item"
@@ -28,7 +28,7 @@
 
 <script setup>
 
-	import moment from 'moment'
+	import dayjs from 'dayjs'
 	import {
   Chart,
   ArcElement,
@@ -101,13 +101,15 @@
 	let portfolioId = route.query.portfolioId
 	let client = route.query.workspace
 	let date_to = route.query.date_to
+	let typeHistory = 'nav'
+	let widgetName = ref('Balance (Historical)')
 	let historyStats = {}
 
 
-	async function getHistory(type = 'nav') {
+	async function getHistory() {
 		let res = await useApi('widgetsHistory.get', {
 			params: {
-				type,
+				type: typeHistory,
 				client,
 			},
 			filters: {
@@ -191,30 +193,45 @@
 
 
 	function createData() {
+		let dataByName = {}
+		let dataset = []
 
 		historyStats.items.forEach((date) => {
-			data.labels.push(moment(date.date).format('MMM YY'))
+			let formatedDate = dayjs(date.date).format('MMM YY')
+			data.labels.push(formatedDate)
+
+			if ( !date.categories.length ) {
+				for ( let prop in dataset ) {
+					dataset[prop].data.push(null)
+				}
+			}
 
 			date.categories.forEach((category) => {
 				categories.add( category.name )
 				if ( category.name != categoryName.value ) return false
 
 				category.items.forEach((instrument, key) => {
-					if ( !data.datasets[key] ) {
-						data.datasets[key] = {
-							data: [],
+					if ( !dataset[instrument.name] ) {
+						dataset[instrument.name] = {
+							data: {},
 							total: 0
 						}
 					}
 
-					data.datasets[key].label = instrument.name
-					data.datasets[key].data.push(instrument.value)
-					data.datasets[key].total += instrument.value
+					dataset[instrument.name].label = instrument.name
+					dataset[instrument.name].data[formatedDate] = instrument.value
+					dataset[instrument.name].total += instrument.value
 				})
 			})
 		})
+		for ( let prop in dataset ) {
+			let elem = dataset[prop]
+
+			if ( elem.total == 0 ) continue
+
+			data.datasets.push( dataset[prop] )
+		}
 		data.datasets = data.datasets
-			.filter((item) => item.total != 0)
 			.sort( (a, b) => b.total - a.total)
 
 		dataOfActive.value = {}
@@ -291,10 +308,10 @@
 								let sum = 0
 								tooltipItems.forEach(function(tooltipItem) {
 									let rawDate = tooltipItem.label.split(' ')
-									let date = moment( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
+									let date = dayjs( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
 
 									let item = historyStats.items.find((item) => item.date.includes(date))
-									sum = item.nav || item.total
+									sum = typeHistory == 'nav' ? item.nav : item.total
 								});
 								return 'Total: ' + new Intl.NumberFormat('en-US', {
 										style: 'currency',
@@ -322,24 +339,44 @@
 					axis: 'x'
 				},
 				onClick: (evt) => {
+					let metas = myChart.getSortedVisibleDatasetMetas()
+					let index
+
+					metas.forEach((dataset) => {
+						let clickedElem = dataset.data.find( item => (item.x - (item.width * 1.25 / 2)) < evt.x && (item.x + (item.width * 1.25 / 2)) > evt.x )
+
+						if ( clickedElem ) index = clickedElem.$context.parsed.x
+					})
+
 					const points = myChart.getElementsAtEventForMode(evt, 'nearest', { intersect: false, axis: 'x' }, true);
 
 					if (points.length) {
 						let data = {}
+						let currentLabel
 
-						points.forEach((item, i) => {
-							data[myChart.data.datasets[item.datasetIndex].label] = myChart.data.datasets[item.datasetIndex].data[item.index]
-						})
-						active.value = points[0]
-						myChart.update()
+						try {
+							let currentLabel = myChart.data.labels[index]
 
-						activeIndex.value = points[0].index
-						send({
-							action: 'clickOnChart',
-							data,
-							date: historyStats.items[points[0].index],
-							category: categoryName.value
-						})
+							points.forEach((item, i) => {
+								data[myChart.data.datasets[item.datasetIndex].label] = myChart.data.datasets[item.datasetIndex].data[currentLabel]
+							})
+							active.value = points[0]
+							myChart.update()
+
+							activeIndex.value = index
+
+							let rawDate = currentLabel.split(' ')
+							let date = dayjs( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
+
+							send({
+								action: 'clickOnChart',
+								data,
+								date: historyStats.items.find((item) => item.date.includes(date)),
+								category: categoryName.value
+							})
+						} catch (e) {
+							console.log('Error in click:', e)
+						}
 					}
         }
 			},
@@ -376,8 +413,12 @@
 					nav: 'nav',
 					total: 'pl'
 				}
-				let success = await getHistory(map[e.data.type])
+				typeHistory = map[e.data.type]
+
+				let success = await getHistory()
 				if ( success ) status.value = 100
+
+				widgetName.value = e.data.type == 'total' ? 'P&L (Historical)' : 'Balance (Historical)'
 
 				updateData()
 			}
