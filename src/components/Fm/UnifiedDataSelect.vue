@@ -1,11 +1,11 @@
 <template>
 
-	<FmMenu v-model:opened="menuIsOpened"
+	<FmMenu :opened="menuIsOpened"
 					:openOn="false"
 					attach="body"
 					class="width-100"
 
-					@cancel="onMenuClose">
+					@update:opened="toggleMenu">
 
 		<template #btn>
 			<BaseInput :modelValue="modelValue"
@@ -657,9 +657,9 @@
 		getList();
 	}
 
-	function onMenuClose() {
-		inputText.value = selItem.value.name;
-		menuIsOpened.value = false;
+	function toggleMenu(opened) {
+		if (!opened) inputText.value = selItem.value.name;
+		menuIsOpened.value = opened;
 	}
 
 </script>

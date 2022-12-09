@@ -3,7 +3,10 @@
 		<div class="hp_title">Notifications</div>
 		<div class="hp_toolbar flex sb aic">
 			<div class="flex aic">
-				<FmSelect v-model="action" :items="actionsItems" size="small" class="m-b-0" @update:modelValue="dateFilter()" />
+				<div class="hp_actions_select">
+					<FmSelect v-model="action" :items="actionsItems" size="small" class="m-b-0" @update:modelValue="dateFilter()" />
+				</div>
+
 
 				<BaseInput type="text"
 					v-model="query"
@@ -642,6 +645,16 @@
 		padding: 0 20px;
 		border-bottom: 1px solid $border;
 		height: 44px;
+	}
+	.hp_actions_select {
+		:deep(.base-input) {
+			margin-top: 0;
+
+			.bi_wrap {
+				min-height: 0;
+			}
+
+		}
 	}
 	.hp_content {
 		position: relative;

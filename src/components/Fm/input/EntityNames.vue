@@ -10,9 +10,7 @@
 						:offsetX="5"
 						:offsetY="-24"
 
-						class="width-100"
-
-						@cancel="() => menuIsOpened = false">
+						class="width-100">
 
 			<template #btn>
 				<BaseInput
