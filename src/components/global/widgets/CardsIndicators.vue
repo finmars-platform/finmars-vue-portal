@@ -32,7 +32,8 @@
 	})
 
 	let dashStore = useStoreDashboard()
-	let scope = dashStore.getScope(props.wid)
+	let widget = dashStore.getWidget(props.wid)
+	let scope = dashStore.scopes[widget.scope]
 
 	const STATUSES = {
 		0: 'Loading data',
@@ -42,20 +43,21 @@
 
 
 	let stats = ref(null)
-	let statsCurrent = ref(0)
 	let active = ref('nav')
+	watch(
+		scope,
+		() => init()
+	)
 
 	init()
 
 	async function init() {
 		let apiOpts = {
 			filters: {
-				portfolio: scope.portfolio,
-				date: scope.date,
+				portfolio: scope.portfolio.value,
+				date: scope.date_to.value,
 			}
 		}
-		if ( props.client ) apiOpts.params = { client }
-		if ( props.token ) apiOpts.headers = { Authorization: 'Token ' + props.token }
 
 		let res = await useApi('widgetsStats.get', apiOpts)
 

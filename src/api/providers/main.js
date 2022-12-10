@@ -5,7 +5,7 @@ export default {
 			"total": 'Total P&L',
 			"cumulative_return": 'Cumulative return',
 			"annualized_return": 'Annualized return',
-			"portfolio_volatility": 'Ann. Volatility',
+			"portfolio_volatility": 'Portfolio Volatility',
 			"annualized_portfolio_volatility": 'Annualized portfolio volatility',
 			"sharpe_ratio": 'Sharpe ratio (rf=0%)',
 			"max_annualized_drawdown": 'Max annualized drawdown',

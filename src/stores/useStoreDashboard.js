@@ -4,25 +4,15 @@ export default defineStore({
 	id: "dashboard",
 	state: () => {
 		return {
-			layout: {},
-
 			// DATA
 			widgets: [],
 			tabs: [],
 			scopes: {
-				global: {
-					date: '2022-09-15',
-				},
-				test: {
-					portfolio: 2,
-					date: '2022-09-15',
-					_type: 'nav',
-					dataset: {
-
-					}
-				}
+				global: {}
 			},
-
+			// END DATA
+			layout: {},
+			activeTab: null,
 			//test
 			history: null
 		};
@@ -30,9 +20,10 @@ export default defineStore({
 	actions: {
 		async init() {
 			await this.getLayout()
+			this.activeTab = this.tabs[0]?.id
 		},
-		getScope() {
-			return this.scopes.test
+		getWidget(id) {
+			return this.widgets.find(item => item.id == id)
 		},
 		async getLayout() {
 			let dashboardLayout = localStorage.getItem('dashboardLayout')

@@ -150,7 +150,6 @@
 		}
 
 		emit('update:modelValue', selItem[props.prop_id]);
-
 	}
 
 	//#region props.optionsFilter === true

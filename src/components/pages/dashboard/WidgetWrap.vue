@@ -6,7 +6,7 @@
 		}"
 		:data-name="component.id"
 	>
-		<component
+		<component v-if="!component._isEdit"
 			class="widget_wrap"
 			:is="'Widgets' + component.componentName"
 			:wid="component.id"
@@ -65,8 +65,7 @@
 	})
 
 	let dashStore = useStoreDashboard()
-	let isEditWidget = ref(props.component.isEdit)
-	delete props.component.isEdit
+	let isEditWidget = ref(props.component._isEdit)
 
 	function resizeX(e) {
 		let elem = e.target.closest('.board_widget')
