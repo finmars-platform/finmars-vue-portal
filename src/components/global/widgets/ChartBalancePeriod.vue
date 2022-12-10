@@ -65,10 +65,14 @@
 
 
 	let dashStore = useStoreDashboard()
-	let res = await dashStore.getHistory(props.wid)
-	console.log('res:', res)
+	let historyStats = await dashStore.getHistory(props.wid)
+	if ( historyStats.error ) {
+		status.value = 101
 
-	let historyStats
+		return false
+	}
+
+	createData()
 
 	let active = ref(null)
 	let isFull = ref(false)
@@ -110,29 +114,6 @@
 		createChart()
 	})
 
-	async function fetchHistory(type = 'nav') {
-		let apiOpts = {
-			filters: {
-				portfolio: props.portfolio,
-				date_to: props.date_to
-			},
-			params: {
-				type
-			}
-		}
-		if ( props.client ) apiOpts.params.client = client
-		if ( props.token ) apiOpts.headers = { Authorization: 'Token ' + props.token }
-
-		let res = await useApi('widgetsHistory.get', apiOpts)
-
-		if ( res.error ) {
-			status.value = 101
-
-			return false
-		}
-
-		createData()
-	}
 	function createData() {
 		historyStats.items.forEach((date) => {
 			data.labels.push(dayjs(date.date).format('MMM YY'))
@@ -167,6 +148,15 @@
 
 			dataOfActive.value[item.label] = item.data[activeIndex.value]
 		})
+	}
+	function updateData() {
+		data.labels = []
+		data.datasets = []
+
+		createData()
+
+		// event
+		barchart.update()
 	}
 	function createChart() {
 		barchart = new Chart(props.wid, {
@@ -280,15 +270,6 @@
         }
 			},
 		});
-	}
-	function updateData() {
-		data.labels = []
-		data.datasets = []
-
-		createData()
-
-		// event
-		barchart.update()
 	}
 </script>
 

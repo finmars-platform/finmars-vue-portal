@@ -37,7 +37,7 @@
 			type: Boolean,
 			required: true
 		},
-		tab: String,
+		tab: String
 	})
 
 	let isOpenAddComponents = ref(false)
