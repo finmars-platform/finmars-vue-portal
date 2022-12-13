@@ -159,9 +159,8 @@
 	}
 
 	function toggleMenu (opened) {
-		console.log("testing toggleMenu", opened);
+
 		if (!opened) {
-			console.log("testing reset name", selectedName.value);
 			moFilter.value = selectedName.value;
 		}
 
