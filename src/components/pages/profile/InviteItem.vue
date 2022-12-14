@@ -51,8 +51,11 @@ async function changeStatus( status) {
 			await store.getMasterUsers()
 			emit('refresh')
 
-			if ( status != 2 )
-				navigateTo( '/' + store.current.base_api_url + '/v/profile/setup')
+			if ( status != 2 ) {
+				let mu = store.masterUsers.find(item => item.id == props.invite.to_master_user)
+
+				navigateTo( useRuntimeConfig().public.appURL + '/' + mu.base_api_url + '/v/profile/setup')
+			}
 		}
 	}
 }
