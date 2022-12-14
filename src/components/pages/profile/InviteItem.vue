@@ -54,7 +54,7 @@ async function changeStatus( status) {
 			if ( status != 2 ) {
 				let mu = store.masterUsers.find(item => item.id == props.invite.to_master_user)
 
-				navigateTo( useRuntimeConfig().public.appURL + '/' + mu.base_api_url + '/v/profile/setup', {external: true})
+				location.href = useRuntimeConfig().public.appURL + '/' + mu.base_api_url + '/v/profile/setup'
 			}
 		}
 	}
