@@ -52,7 +52,7 @@ async function changeStatus( status) {
 			emit('refresh')
 
 			if ( status != 2 )
-				navigateTo('/profile/setup')
+				navigateTo( '/' + store.current.base_api_url + '/v/profile/setup')
 		}
 	}
 }
