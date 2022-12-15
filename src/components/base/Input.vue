@@ -364,6 +364,7 @@ $border-radius: 4px;
 	margin-left: 13px;
 	color: $text-lighten;
 	line-height: 0;
+	z-index: 1; // keeps .bi_button atop of .bi_top
 
 	&:empty {
 		margin-left: 0;
@@ -373,6 +374,7 @@ $border-radius: 4px;
 .bi_side_items {
 	display: none;
 	padding: $side-items-padding;
+	z-index: 1; // keeps .bi_side_items atop of .bi_top
 
 	&:empty {
 		width: auto;

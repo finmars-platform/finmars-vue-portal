@@ -11,7 +11,6 @@
 					</RvSettingsRow>
 
 					<RvSettingsRow label="Reporting currency">
-						<!--					<FmSelect v-model="reportOptions.report_currency" :items="currencyOpts" />-->
 						<FmUnifiedDataSelect v-model="reportOptions.report_currency"
 																 v-model:itemObject="reportOptions.report_currency_object"
 																 content_type="currencies.currency" />
