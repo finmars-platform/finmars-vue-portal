@@ -164,8 +164,8 @@ export default {
 	configurationList: {
 		get: prefix + '/ui/configuration/'
 	},
-	counterpartiesUnifiedData: {
-		get: prefix + '/data/company/'
+	unifiedData: {
+		get: prefix + '/data/{type}/'
 	},
 
 	configSharingConfigFile: {
