@@ -68,8 +68,7 @@
 	let historyStats = await dashStore.getHistory(props.wid)
 	if ( historyStats.error ) {
 		status.value = 101
-
-		return false
+		// return false
 	}
 
 	createData()
