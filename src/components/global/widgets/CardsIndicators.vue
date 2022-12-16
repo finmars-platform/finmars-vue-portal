@@ -5,15 +5,15 @@
 			@mousedown="dragStart"
 		>
 			<div class="card"
-				v-for="(item, prop) in stats"
-				:key="prop"
-				:class="{active: item[0] == active}"
-				@click="item[0] == 'nav' || item[0] == 'total' ? setActive(item[0]) : false"
+				v-for="(item) in stats"
+				:class="{active: item.id == active}"
+				@click="setActive(item)"
 			>
-				<div class="card_name">{{ STATS[item[0]] }}</div>
-				<div class="card_value">{{ STATS_FORMAT[item[0]](item[1])  }}</div>
+				<div class="card_name">{{ item.name }}</div>
+				<div class="card_value">{{ formatByType(item) }}</div>
 			</div>
 		</div>
+
 		<div class="content flex-column aic jcc" v-else>
 			<div class="flex aic">
 				<FmIcon v-if="status > 100" class="m-r-8" icon="report_problem" />
@@ -28,32 +28,56 @@
 <script setup>
 
 	let props = defineProps({
-		frameMod: Boolean,
-		client: String,
-		date: String,
-		portfolio: Number,
-		token: String,
+		wid: String
 	})
 
-	const STATS = {
-		"nav": 'NAV',
-		"total": 'Total P&L',
-		"cumulative_return": 'Cumulative return',
-		"annualized_return": 'Annualized return',
-		"portfolio_volatility": 'Ann. Volatility',
-		"annualized_portfolio_volatility": 'Annualized portfolio volatility',
-		"sharpe_ratio": 'Sharpe ratio (rf=0%)',
-		"max_annualized_drawdown": 'Max annualized drawdown',
-		"betta": 'Beta',
-		"alpha": 'Alpha vs Index, ann.',
-		"correlation": 'Correlation (vs. Index)',
-	}
+	let dashStore = useStoreDashboard()
+	let widget = dashStore.getWidget(props.wid)
+	let scope = dashStore.scopes[widget.scope]
+
 	const STATUSES = {
 		0: 'Loading data',
 		101: 'Data are not available',
 	}
 	let status = ref(0)
 
+
+	let stats = ref(null)
+	let active = ref('nav')
+	watch(
+		scope,
+		() => init()
+	)
+
+	init()
+
+	async function init() {
+		let apiOpts = {
+			filters: {
+				portfolio: scope.portfolio.value,
+				date: scope.date_to.value,
+			}
+		}
+
+		let res = await useApi('widgetsStats.get', apiOpts)
+
+		if ( res.error ) {
+			status.value = 101
+
+			return false
+		}
+
+		stats.value = res
+		status.value = 100
+	}
+	async function setActive( item ) {
+		if (item.id == 'nav' || item.id == 'total') active.value = item.id
+	}
+	function formatByType( item ) {
+		if ( item.type == 'currency' ) return formatCurency(item.value)
+		if ( item.type == 'percent' ) return formatPercent(item.value)
+		if ( item.type == 'ratio' ) return Math.round(item.value * 100) / 100
+	}
 	function formatCurency(val) {
 		return new Intl.NumberFormat('en-EN', {
 			style: 'currency',
@@ -63,62 +87,6 @@
 	function formatPercent(val) {
 		return Math.round(val * 100) + '%'
 	}
-
-	const STATS_FORMAT = {
-		"nav": formatCurency,
-		"total": formatCurency,
-		"cumulative_return": formatPercent,
-		"annualized_return": formatPercent,
-		"portfolio_volatility": formatPercent,
-		"annualized_portfolio_volatility": formatPercent,
-		"sharpe_ratio": (val) => Math.round(val * 100) / 100,
-		"max_annualized_drawdown": formatPercent,
-		"betta": (val) => Math.round(val * 100) / 100,
-		"alpha": formatPercent,
-		"correlation": (val) => Math.round(val * 100) / 100
-	}
-
-	let apiOpts = {
-		filters: {
-			portfolio: props.portfolio,
-			date: props.date,
-		}
-	}
-	if ( props.client ) apiOpts.params = { client }
-	if ( props.token ) apiOpts.headers = { Authorization: 'Token ' + props.token }
-
-	let res = await useApi('widgetsStats.get', apiOpts)
-
-	if ( res.error ) {
-		status.value = 101
-
-	}
-
-	delete res.date
-	delete res.portfolio
-	delete res.benchmark
-
-	async function setActive( item ) {
-		active.value = item
-
-		// send({
-		// 	action: 'changeHistoryType',
-		// 	type: item
-		// })
-	}
-
-	let statsCurrent = ref(0)
-	let stats = computed(() => {
-		if ( res && !res.error ) {
-			let arr = Object.entries(res)
-			return arr
-
-		} else return null
-
-	})
-
-	let active = ref('nav')
-
 	function dragStart(e) {
 		let elem = e.target.closest('.card_wrap')
 		let shiftX = e.clientX + elem.parentNode.scrollLeft

@@ -7,7 +7,7 @@
 
 					:offsetX="5"
 
-					@cancel="closeMenu">
+					@update:opened="toggleMenu">
 
 		<template #btn="{ isOpen }">
 			<BaseInput
@@ -132,7 +132,7 @@
 			return selectedItem.value[props.prop_name];
 
 		} else if (props.label) {
-			return props.label;
+			return '';
 		}
 
 		return 'Select option';
@@ -143,14 +143,13 @@
 
 	function selectOption(selItem) {
 		// if (props.optionsFilter) moFilter.value = '';
-		closeMenu();
+		toggleMenu(false);
 
 		if (selItem[props.prop_id] === props.modelValue) {
 			return;
 		}
 
 		emit('update:modelValue', selItem[props.prop_id]);
-
 	}
 
 	//#region props.optionsFilter === true
@@ -159,12 +158,13 @@
 		menuIsOpened.value = true;
 	}
 
-	function closeMenu () {
-		if (props.modelValue) {
+	function toggleMenu (opened) {
+
+		if (!opened) {
 			moFilter.value = selectedName.value;
 		}
 
-		menuIsOpened.value = false;
+		menuIsOpened.value = opened;
 	}
 
 	if (props.optionsFilter) {

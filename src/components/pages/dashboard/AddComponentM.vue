@@ -60,14 +60,14 @@
 		let new_widget = {
 			id: generateId(widget.id),
 			componentName: widget.id,
-			scope: null,
+			scope: 'global',
 			tab: props.tab ? props.tab : null,
 			colls: widget.minColls,
 			rows: widget.minRows,
 			minColls: widget.minColls,
 			minRows: widget.minRows,
 			settings: {},
-			isEdit: true
+			_isEdit: true
 		}
 
 		dashStore.widgets.push(new_widget)

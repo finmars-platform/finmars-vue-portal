@@ -1,16 +1,10 @@
-/// <reference types="vitest" />
-
-// Configure Vitest (https://vitest.dev/config/)
-
-import { defineConfig } from 'vite'
-import Vue from '@vitejs/plugin-vue'
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-	plugins: [
-    Vue(),
-  ],
   test: {
-		globals: true,
-		environment: 'jsdom'
+    environment: "jsdom",
+    deps: {
+      inline: [/@nuxt\/test-utils-edge/],
+    },
   },
 })

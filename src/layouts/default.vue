@@ -43,7 +43,7 @@
 	})
 
 	watchEffect( async ( onCleanup ) => {
-		console.log("testing46 watcher with getMe");
+
 		if ( store.current.base_api_url ) {
 
 			onCleanup(() => {})
@@ -53,7 +53,7 @@
 			await Promise.all([store.getMe(), store.fetchEcosystemDefaults()]);
 
 			notLoadingMember.value = true;
-			console.log("testing46 watcher with getMe notLoadingMember", notLoadingMember.value);
+
 			store.ws.send({
 				action: "update_user_state",
 				data: { member: store.member },

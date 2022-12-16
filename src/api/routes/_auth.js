@@ -1,80 +1,82 @@
+let prefix = useRuntimeConfig().public.authURL
+
 export default {
 	masterUser: {
-		get: "/master-user/",
-		put: "/master-user/{id}/",
+		get: prefix + "/master-user/",
+		put: prefix + "/master-user/{id}/",
 	},
 	ping: {
-		get: "/ping/"
+		get: prefix + "/ping/"
 	},
 	tokenRefresh: {
-		post: '/token-refresh/'
+		post: prefix + '/token-refresh/'
 	},
 	tokenInfo: {
-		get: '/auth-token-manager/'
+		get: prefix + '/auth-token-manager/'
 	},
 	login: {
-		post: '/token-auth/'
+		post: prefix + '/token-auth/'
 	},
 	masterBackups: {
-		get: '/master-user-backups/',
-		'delete': '/master-user-backups/{id}/',
-		put: '/master-user-backups/{id}/restore-from-backup/'
+		get: prefix + '/master-user-backups/',
+		'delete': prefix + '/master-user-backups/{id}/',
+		put: prefix + '/master-user-backups/{id}/restore-from-backup/'
 	},
 	masterRollback: {
-		put: '/master-user/{id}/rollback-from-backup/'
+		put: prefix + '/master-user/{id}/rollback-from-backup/'
 	},
 	masterRedeploy: {
-		get: '/master-user-redeploy/?base_api_url={baseApi}'
+		get: prefix + '/master-user-redeploy/?base_api_url={baseApi}'
 	},
 	masterStart: {
-		get: '/master-user-start/?base_api_url={baseApi}'
+		get: prefix + '/master-user-start/?base_api_url={baseApi}'
 	},
 	masterStop: {
-		get: '/master-user-stop/?base_api_url={baseApi}'
+		get: prefix + '/master-user-stop/?base_api_url={baseApi}'
 	},
 	masterExport: {
-		get: '/master-user-export/{id}/'
+		get: prefix + '/master-user-export/{id}/'
 	},
 	masterLeave: {
-		get: '/master-user-leave/{id}/'
+		get:  prefix + '/master-user-leave/{id}/'
 	},
 	masterDelete: {
-		delete: '/master-user-delete/{id}/'
+		delete:  prefix + '/master-user-delete/{id}/'
 	},
 	masterSet: {
-		patch: '/master-user/{id}/set-current/'
+		patch:  prefix + '/master-user/{id}/set-current/'
 	},
 	masterCreate: {
-		post: '/master-user-create/'
+		post:  prefix + '/master-user-create/'
 	},
 	masterCreateFrom: {
-		post: '/master-user-create-from-backup/'
+		post:  prefix + '/master-user-create-from-backup/'
 	},
 	me: {
-		get: "/user/0/",
-		put: "/user/0/",
+		get: prefix + "/user/0/",
+		put: prefix + "/user/0/",
 	},
 	meSetPassword: {
-		put: '/user/0/set-password/'
+		put:  prefix + '/user/0/set-password/'
 	},
 	meTwoFactor: {
-		get: '/two-factor/',
-		patch: '/two-factor/{id}/',
-		delete: '/two-factor/{id}/',
+		get:  prefix + '/two-factor/',
+		patch:  prefix + '/two-factor/{id}/',
+		delete:  prefix + '/two-factor/{id}/',
 	},
 	generateQR: {
-		put: '/two-factor/generate-code/'
+		put:  prefix + '/two-factor/generate-code/'
 	},
 	validateQR: {
-		put: '/two-factor/validate-code/'
+		put:  prefix + '/two-factor/validate-code/'
 	},
 	invitesToDB: {
-		get: '/invite-from-master-user/?status=0',
-		put: '/invite-from-master-user/{id}/'
+		get:  prefix + '/invite-from-master-user/?status=0',
+		put:  prefix + '/invite-from-master-user/{id}/'
 	},
 	memberInvites: {
-		get: '/invite-to-user/',
-		post: '/create-invite-to-user/',
+		get:  prefix + '/invite-to-user/',
+		post:  prefix + '/create-invite-to-user/',
 	},
 
 };

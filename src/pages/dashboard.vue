@@ -25,19 +25,25 @@
 		</PagesDashboardGrid>
 
 		<div class="fm_tabs"
-			v-if="tabs.length > 1 || isEdit"
+			v-if="dashStore.tabs.length > 1 || isEdit"
 		>
-			<div class="fm_tabs_item"
-				v-for="(tab, index) in tabs"
+			<div class="fm_tabs_item center aic"
+				v-for="(tab, index) in dashStore.tabs"
 				:key="index"
-				:class="{active: tab.id == activeTab}"
-				@click="activeTab = tab.id"
+				:class="{active: tab.id == dashStore.activeTab}"
+				@click="dashStore.activeTab = tab.id"
 			>
-				{{ tab.name }}
+				<input v-if="isEdit" v-model="tab.name" />
+				<template v-else>{{ tab.name }}</template>
+
+				<FmIcon v-if="isEdit" @click="delTab(tab.id)" class="m-l-4" icon="delete" />
+			</div>
+			<div class="fm_tabs_item flex aic" v-if="isEdit" @click="addTab()">
+				<FmIcon primary icon="add" />
 			</div>
 		</div>
 
-		<PagesDashboardGrid :isEdit="isEdit" :tab="activeTab" >
+		<PagesDashboardGrid :isEdit="isEdit" :tab="dashStore.activeTab" >
 			<PagesDashboardWidgetWrap
 				v-for="(component, i) of mainComponents"
 				:key="i"
@@ -71,18 +77,26 @@
 	})
 	let mainComponents = computed(() => {
 		return dashStore.widgets.filter((item) => {
-			return item.tab == activeTab.value
+			return item.tab == dashStore.activeTab
 		})
 	})
 
 	let isEdit = ref(false)
+	let activeTab = ref(dashStore.tabs[0]?.id)
 
-	let tabs = reactive([
-		{id: 'porfolio_winner', name: 'Porfolio Winner'},
-		{id: 'i_lose', name: 'I wanna lose my money'}
-	])
-	let activeTab = ref('i_lose')
+	function addTab() {
+		dashStore.tabs.push({
+			id: '' + Date.now(),
+			name: 'New tab'
+		})
+	}
+	function delTab( id ) {
+		let tabIndex = dashStore.tabs.findIndex((item) => {
+			return item.id == id
+		})
 
+		dashStore.tabs.splice( tabIndex, 1 )
+	}
 	function edit() {
 		isEdit.value = true
 	}

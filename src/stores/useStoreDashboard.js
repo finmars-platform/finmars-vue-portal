@@ -4,32 +4,32 @@ export default defineStore({
 	id: "dashboard",
 	state: () => {
 		return {
-			layout: {},
-
 			// DATA
 			widgets: [],
 			tabs: [],
 			scopes: {
-				global: {
-					date: '2022-09-15',
-				},
-				test: {
-					portfolio: 2,
-					date: '2022-09-15',
-					dataset: {
-
-					}
-				}
-			}
+				global: {}
+			},
+			// END DATA
+			layout: {},
+			activeTab: null,
+			//test
+			history: null
 		};
 	},
 	actions: {
 		async init() {
 			await this.getLayout()
+			this.activeTab = this.tabs[0]?.id
+		},
+		getWidget(id) {
+			return this.widgets.find(item => item.id == id)
 		},
 		async getLayout() {
-			// localStorage.getItem('layout')
+			let dashboardLayout = localStorage.getItem('dashboardLayout')
 			let res = await useApi('dashboardLayout.get', {params: {id: 17}});
+
+			if ( res.error ) return false
 
 			this.widgets = res.data.widgets || []
 			this.tabs = res.data.tabs || []
@@ -38,6 +38,21 @@ export default defineStore({
 			delete res.data
 
 			this.layout = res
+		},
+		async getHistory() {
+			let apiOpts = {
+				filters: {
+					portfolio: this.scopes.test.portfolio,
+					date_to: this.scopes.test.date
+				},
+				params: {
+					type: this.scopes.test._type
+				}
+			}
+
+			let res = await useApi('widgetsHistory.get', apiOpts)
+
+			return res
 		},
 		async saveLayout() {
 			let res = await useApi('dashboardLayout.put', {
