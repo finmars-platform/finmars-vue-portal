@@ -1,4 +1,4 @@
-let prefix = useRuntimeConfig().public.authURL
+let prefix = useRuntimeConfig().public.authorizerURL
 
 export default {
 	masterUser: {
