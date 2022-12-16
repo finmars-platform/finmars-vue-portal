@@ -1,11 +1,11 @@
 <template>
 
-	<FmMenu v-model:opened="menuIsOpened"
+	<FmMenu :opened="menuIsOpened"
 					:openOn="false"
 					attach="body"
 					class="width-100"
 
-					@cancel="onMenuClose">
+					@update:opened="toggleMenu">
 
 		<template #btn>
 			<BaseInput :modelValue="modelValue"
@@ -649,28 +649,25 @@ async function getList() {
 
 }
 
-function openMenu() {
+    function openMenu() {
 
-	menuIsOpened.value = true;
+      menuIsOpened.value = true;
 
-	inputText.value = '';
-	getList();
+      inputText.value = '';
+      getList();
 
-}
+    }
 
-const onFilterInputChange = useDebounce(function ($event) {
-	inputText.value = $event.target.value;
-	getList();
-}, 500);
-/*function onFilterInputChange($event) {
-	inputText.value = $event.target.value;
-	getList();
-}*/
+    const onFilterInputChange = useDebounce(function ($event) {
+      inputText.value = $event.target.value;
+      getList();
+    }, 500);
 
-function onMenuClose() {
-	inputText.value = selItem.value.name;
-	menuIsOpened.value = false;
-}
+
+  function toggleMenu(opened) {
+		if (!opened) inputText.value = selItem.value.name;
+		menuIsOpened.value = opened;
+	}
 
 </script>
 

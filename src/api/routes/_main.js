@@ -1,10 +1,11 @@
-let prefix = '/{client}/api/v1'
+let host = useRuntimeConfig().public.apiURL
+let prefix = host + '/{client}/api/v1'
 
 export default {
 	pricingProc: {
 		get: prefix + "/procedures/pricing-procedure/",
 		post: prefix + "/procedures/pricing-procedure/{id}/run-procedure/",
-		put: '/procedures/pricing-procedure/{id}/'
+		put: prefix + '/procedures/pricing-procedure/{id}/'
 	},
 	pricingProcId: {
 		get: prefix + "/procedures/pricing-procedure/{id}/",
@@ -198,9 +199,9 @@ export default {
 	// Надо отделить
 
 	widgetsHistory: {
-		get: '/{client}/api/v1/widgets/history/{type}/'
+		get: prefix + '/widgets/history/{type}/'
 	},
 	widgetsStats: {
-		get: '/{client}/api/v1/widgets/stats/'
+		get: prefix + '/widgets/stats/'
 	}
 }
