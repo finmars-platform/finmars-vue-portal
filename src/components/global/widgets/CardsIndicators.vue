@@ -33,7 +33,10 @@
 
 	let dashStore = useStoreDashboard()
 	let widget = dashStore.getWidget(props.wid)
-	let scope = dashStore.scopes[widget.scope]
+
+	let scope = computed(() => {
+		return dashStore.scopes[widget.scope]
+	})
 
 	const STATUSES = {
 		0: 'Loading data',
@@ -54,8 +57,8 @@
 	async function init() {
 		let apiOpts = {
 			filters: {
-				portfolio: scope.portfolio.value,
-				date: scope.date_to.value,
+				portfolio: scope.value.portfolio.value,
+				date: scope.value.date_to.value,
 			}
 		}
 

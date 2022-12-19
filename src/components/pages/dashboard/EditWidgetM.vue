@@ -15,6 +15,7 @@
 					v-model="editable.scope"
 					:items="scopeList"
 					label="Scope"
+					@update:modelValue="prepareProps()"
 				/>
 				<FmSelect
 					v-model="editable.tab"
@@ -46,9 +47,9 @@
 	let tab = ref('widget')
 
 	let widget = dashStore.widgets.find(item => item.id == props.wid) || {}
-	let editable = reactive( widget )
+	let editable = reactive( JSON.parse(JSON.stringify(widget)) )
 
-	let scopeProps = {}
+	let scopeProps = ref({})
 	prepareProps()
 
 	function prepareProps() {
@@ -57,12 +58,17 @@
 		for ( let prop in currentWodget.props ) {
 			let obj = currentWodget.props[prop]
 
-			if (  !dashStore.scopes[editable.scope][prop] ) continue
+			if ( !dashStore.scopes[editable.scope] || !dashStore.scopes[editable.scope][prop] ) {
+				obj.value = ''
 
-			obj.value = dashStore.scopes[editable.scope][prop].value
+			} else {
+
+				obj.value = dashStore.scopes[editable.scope][prop].value
+			}
 		}
+		console.log('editable.scope:', editable.scope)
 
-		scopeProps = currentWodget.props
+		scopeProps.value = currentWodget.props
 	}
 
 	let tabList = computed(() => {
@@ -80,7 +86,7 @@
 		}
 
 		list.push({
-			id: '' + Date.now(),
+			id: 'New scope',
 			name: 'New scope'
 		})
 
@@ -88,14 +94,40 @@
 	})
 
 	function save() {
+		let newScope = editable.scope
+
 		dashStore.$patch((state) => {
-			for ( let prop in scopeProps ) {
-				state.scopes[editable.scope][prop].value = scopeProps[prop].value
+			let oldScope = widget.scope
+
+			for ( let prop in state.scopes[oldScope] ) {
+				let index = state.scopes[oldScope][prop]._used.findIndex(item => item == editable.id)
+
+				delete state.scopes[oldScope][prop]._used.splice(index, 1)
+			}
+
+			if ( !state.scopes[newScope] ) {
+				newScope = 'Scope №' + Math.round(Math.random(0, 1) * 1000)
+				state.scopes[newScope] = {}
+			}
+
+			for ( let prop in scopeProps.value ) {
+				if ( !state.scopes[newScope][prop] ) {
+					state.scopes[newScope][prop] = structuredClone( toRaw(scopeProps.value[prop]) )
+				}
+
+				state.scopes[newScope][prop].value = scopeProps.value[prop].value
+
+				if ( !state.scopes[newScope][prop]._used )
+					state.scopes[newScope][prop]._used = []
+
+				state.scopes[newScope][prop]._used.push(editable.id)
 			}
 		})
 
 		delete widget._isEdit
 
+		widget.scope = newScope
+		widget.tab = editable.tab
 	}
 </script>
 
