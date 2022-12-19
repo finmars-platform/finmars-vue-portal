@@ -233,6 +233,7 @@
 									let rawDate = tooltipItem.label.split(' ')
 									let date = dayjs( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
 
+									let newDate = Object.keys(historyStats[categoryName.value]).find(item => item.includes(date))
 									let item = historyStats.items.find((item) => item.date.includes(date))
 									sum = typeHistory == 'nav' ? item.nav : item.total
 								});
@@ -291,7 +292,7 @@
 							let rawDate = currentLabel.split(' ')
 							let date = dayjs( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
 
-							scope.value._detail_date = Object.keys(historyStats).find(item => item.includes(date))
+							scope.value._detail_date = Object.keys(historyStats[categoryName.value]).find(item => item.includes(date))
 							console.log('scope.value._detail_date:', scope.value._detail_date)
 						} catch (e) {
 							console.log('Error in click:', e)
