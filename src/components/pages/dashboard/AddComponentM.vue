@@ -59,6 +59,7 @@
 
 		let new_widget = {
 			id: generateId(widget.id),
+			name: widget.name,
 			componentName: widget.id,
 			scope: 'global',
 			tab: props.tab ? props.tab : null,

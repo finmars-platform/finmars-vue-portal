@@ -15,7 +15,7 @@
 			v-if="isEdit"
 		>
 			<div class="bwc_top flex sb aic">
-				<div>{{ component.name }}</div>
+				<div>{{ component.name }} <b>[{{ component.scope }}]</b></div>
 				<div class="flex aic">
 					<FmMenu anchor="bottom right">
 						<template #btn>

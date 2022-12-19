@@ -17,8 +17,8 @@
 
 		<PagesDashboardGrid :isEdit="isEdit">
 			<PagesDashboardWidgetWrap
-				v-for="(component, i) of topComponents"
-				:key="i"
+				v-for="component of topComponents"
+				:key="component.id"
 				:component="component"
 				:isEdit="isEdit"
 			/>
@@ -45,8 +45,8 @@
 
 		<PagesDashboardGrid :isEdit="isEdit" :tab="dashStore.activeTab" >
 			<PagesDashboardWidgetWrap
-				v-for="(component, i) of mainComponents"
-				:key="i"
+				v-for="component of mainComponents"
+				:key="component.id"
 				:component="component"
 				:isEdit="isEdit"
 			/>

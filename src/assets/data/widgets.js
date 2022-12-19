@@ -4,14 +4,18 @@ export default [
 		name: 'Group component',
 		group: 'system',
 		minColls: 4,
-		minRows: 4
+		minRows: 4,
+		props: {
+		}
 	},
 	{
 		id: 'controls',
 		name: 'Controls component',
 		group: 'system',
 		minColls: 4,
-		minRows: 4
+		minRows: 4,
+		props: {
+		}
 	},
 	{
 		id: 'CardsIndicators',
@@ -21,7 +25,7 @@ export default [
 		minRows: 2,
 		props: {
 			date_to:   {name: 'Date', type: 'string', value: ''},
-			portfolio: {name: 'Portfolio', type: 'string', value: ''}
+			portfolio: {name: 'Portfolio', type: 'string', value: ''},
 		}
 	},
 	{
@@ -42,13 +46,21 @@ export default [
 		name: 'Chart balance date',
 		group: 'base',
 		minColls: 4,
-		minRows: 4
+		minRows: 4,
+		props: {
+			date_to:   {name: 'Date', type: 'string', value: ''},
+			portfolio: {name: 'Portfolio', type: 'string', value: ''}
+		}
 	},
 	{
 		id: 'ChartPnlDate',
 		name: 'Chart P&L date',
 		group: 'base',
 		minColls: 4,
-		minRows: 4
+		minRows: 4,
+		props: {
+			date_to:   {name: 'Date', type: 'string', value: ''},
+			portfolio: {name: 'Portfolio', type: 'string', value: ''}
+		}
 	},
 ]

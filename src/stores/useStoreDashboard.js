@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import widgetList from '~/assets/data/widgets.js'
 
 export default defineStore({
 	id: "dashboard",
@@ -33,26 +34,32 @@ export default defineStore({
 
 			this.widgets = res.data.widgets || []
 			this.tabs = res.data.tabs || []
-			this.scopes = res.data.scopes || {}
+			this.scopes = res.data.scopes || {global: {}}
 
 			delete res.data
 
 			this.layout = res
 		},
-		async getHistory() {
+		async getHistory(wid) {
+			let widget = this.widgets.find(item => item.id == wid)
+
 			let apiOpts = {
 				filters: {
-					portfolio: this.scopes.test.portfolio,
-					date_to: this.scopes.test.date
+					portfolio: this.scopes[widget.scope].portfolio.value,
+					date_to: this.scopes[widget.scope].date_to.value
 				},
 				params: {
-					type: this.scopes.test._type
+					type: this.scopes[widget.scope]._type || 'nav'
 				}
 			}
 
 			let res = await useApi('widgetsHistory.get', apiOpts)
+			this.history = res
 
 			return res
+		},
+		async getHistoryNav(opts) {
+			return this.history[opts.category][opts.date]
 		},
 		async saveLayout() {
 			let res = await useApi('dashboardLayout.put', {
@@ -70,8 +77,24 @@ export default defineStore({
 		removeWidget( id ) {
 			let index = this.widgets.findIndex(item => item.id == id)
 
-			if ( ~index ) this.widgets.splice(index, 1)
-			else throw new Error('[Store:removeWidget] ID not find')
+			if ( index === -1 ) throw new Error('[Store:removeWidget] ID not find')
+
+			let widget = this.widgets[index]
+			let baseWidget = widgetList.find(item => item.id == widget.componentName)
+
+			for ( let prop in baseWidget.props ) {
+				let propObject = this.scopes[widget.scope][prop]
+
+				if ( !propObject ) throw new Error('[Store:removeWidget] Data incorrect')
+				propObject._usedCount -= 1
+
+				if ( propObject._usedCount == 0 || this.widgets.length == 1 ) {
+					delete this.scopes[widget.scope][prop]
+				}
+
+			}
+
+			this.widgets.splice(index, 1)
 		}
 	},
 	getters: {

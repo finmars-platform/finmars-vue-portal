@@ -40,6 +40,8 @@
 		Chart,
 		BarElement,
 		BarController,
+		CategoryScale,
+		LinearScale,
 		Filler,
 		Legend,
 		Tooltip,
@@ -48,6 +50,8 @@
 	Chart.register(
 		BarElement,
 		BarController,
+		CategoryScale,
+		LinearScale,
 		Filler,
 		Legend,
 		Tooltip,
@@ -63,29 +67,31 @@
 	}
 	let status = ref(0)
 
-
 	let dashStore = useStoreDashboard()
 	let historyStats = await dashStore.getHistory(props.wid)
+	let widget = dashStore.getWidget(props.wid)
+
+	let scope = computed(() => {
+		return dashStore.scopes[widget.scope]
+	})
+	scope.value._detail_date = '2022-09-09'
 	if ( historyStats.error ) {
 		status.value = 101
-
-		return false
 	}
-
-	createData()
 
 	let active = ref(null)
 	let isFull = ref(false)
+	let typeHistory = 'nav'
 	let dataOfActive = ref({})
 	let activeIndex = ref(null)
 	let categoryName = ref('Asset Types')
-	let categories = reactive(new Set())
+	let categories = ref({})
 
 	let data = {
 		labels: [],
 		datasets: [],
 	}
-	let barchart
+	let myChart
 	const COLORS = [
 		'#577590CC',
 		'#43AA8BCC',
@@ -109,39 +115,46 @@
 		'#AB7967',
 	]
 
-
+	createData()
+	status.value = 100
 	onMounted(() => {
 		createChart()
 	})
 
 	function createData() {
-		historyStats.items.forEach((date) => {
-			data.labels.push(dayjs(date.date).format('MMM YY'))
+		let dataset = []
+		categories.value = Object.keys(historyStats)
 
-			date.categories.forEach((category) => {
-				categories.add( category.name )
-				if ( category.name != categoryName.value ) return false
+		for ( let date in historyStats[categoryName.value] ) {
+			let formatedDate = dayjs(date).format('MMM YY')
+			data.labels.push( formatedDate )
 
-				category.items.forEach((instrument, key) => {
-					if ( !data.datasets[key] ) {
-						data.datasets[key] = {
-							data: [],
-							total: 0
-						}
+			for ( let instr in historyStats[categoryName.value][date].items ) {
+				if ( !dataset[instr] ) {
+					dataset[instr] = {
+						data: {},
+						total: 0
 					}
+				}
 
-					data.datasets[key].label = instrument.name
-					data.datasets[key].data.push(instrument.value)
-					data.datasets[key].total += instrument.value
-				})
-			})
-		})
+				dataset[instr].label = instr
+				dataset[instr].data[formatedDate] = historyStats[categoryName.value][date].items[instr]
+				dataset[instr].total += historyStats[categoryName.value][date].items[instr]
+			}
+		}
+
+		for ( let prop in dataset ) {
+			let elem = dataset[prop]
+
+			if ( elem.total == 0 ) continue
+
+			data.datasets.push( dataset[prop] )
+		}
+
 		data.datasets = data.datasets
-			.filter((item) => item.total != 0)
 			.sort( (a, b) => b.total - a.total)
 
 		dataOfActive.value = {}
-		activeIndex.value = historyStats.items.length - 1
 
 		data.datasets.forEach((item, key) => {
 			item.backgroundColor = COLORS[key]
@@ -149,6 +162,7 @@
 			dataOfActive.value[item.label] = item.data[activeIndex.value]
 		})
 	}
+
 	function updateData() {
 		data.labels = []
 		data.datasets = []
@@ -156,10 +170,10 @@
 		createData()
 
 		// event
-		barchart.update()
+		myChart.update()
 	}
 	function createChart() {
-		barchart = new Chart(props.wid, {
+		myChart = new Chart(props.wid, {
 			type: 'bar',
 			data: data,
 			plugins: [{
@@ -220,7 +234,7 @@
 									let date = dayjs( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
 
 									let item = historyStats.items.find((item) => item.date.includes(date))
-									sum = item.nav || item.total
+									sum = typeHistory == 'nav' ? item.nav : item.total
 								});
 								return 'Total: ' + new Intl.NumberFormat('en-US', {
 										style: 'currency',
@@ -248,24 +262,40 @@
 					axis: 'x'
 				},
 				onClick: (evt) => {
-					const points = barchart.getElementsAtEventForMode(evt, 'nearest', { intersect: false, axis: 'x' }, true);
+					let metas = myChart.getSortedVisibleDatasetMetas()
+					let index
+
+					metas.forEach((dataset) => {
+						let clickedElem = dataset.data.find( item => (item.x - (item.width * 1.25 / 2)) < evt.x && (item.x + (item.width * 1.25 / 2)) > evt.x )
+
+						if ( clickedElem ) index = clickedElem.$context.parsed.x
+					})
+
+					const points = myChart.getElementsAtEventForMode(evt, 'nearest', { intersect: false, axis: 'x' }, true);
 
 					if (points.length) {
 						let data = {}
+						let currentLabel
 
-						points.forEach((item, i) => {
-							data[barChart.data.datasets[item.datasetIndex].label] = barChart.data.datasets[item.datasetIndex].data[item.index]
-						})
-						active.value = points[0]
-						barchart.update()
+						try {
+							let currentLabel = myChart.data.labels[index]
 
-						activeIndex.value = points[0].index
-						send({
-							action: 'clickOnChart',
-							data,
-							date: historyStats.items[points[0].index],
-							category: categoryName.value
-						})
+							points.forEach((item, i) => {
+								data[myChart.data.datasets[item.datasetIndex].label] = myChart.data.datasets[item.datasetIndex].data[currentLabel]
+							})
+							active.value = points[0]
+							myChart.update()
+
+							activeIndex.value = index
+
+							let rawDate = currentLabel.split(' ')
+							let date = dayjs( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
+
+							scope.value._detail_date = Object.keys(historyStats).find(item => item.includes(date))
+							console.log('scope.value._detail_date:', scope.value._detail_date)
+						} catch (e) {
+							console.log('Error in click:', e)
+						}
 					}
         }
 			},
@@ -295,7 +325,7 @@
 		padding: 0 20px;
 	}
 	.content {
-		height: calc(100% - 36px);
+		height: calc(100% - 72px);
 	}
 	.filters {
 		margin-top: 12px;

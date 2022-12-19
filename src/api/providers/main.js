@@ -43,5 +43,52 @@ export default {
 		}
 
 		return collection
+	},
+	widgetsHistory(data) {
+		let dates = new Map()
+		let categories = new Set()
+		let instrumentsByCategory = {}
+		let values = {}
+
+		data.items.forEach(date => {
+			dates.set(date.date, date.nav)
+
+			date.categories.forEach(category => {
+				categories.add(category.name)
+
+				category.items.forEach(instrument => {
+					if ( !instrumentsByCategory[category.name] )
+						instrumentsByCategory[category.name] = new Set()
+
+					instrumentsByCategory[category.name].add(instrument.name)
+					values[category.name+date.date+instrument.name] = instrument.value
+				})
+			})
+		})
+
+		let newData = {}
+
+		for ( let category in instrumentsByCategory ) {
+			let instruments = instrumentsByCategory[category]
+
+			newData[category] = {}
+
+			dates.forEach((total, date) => {
+				newData[category][date] = {
+					items: {},
+					total: null
+				}
+
+				instruments.forEach(instr => {
+					newData[category][date].items[instr] = values[category+date+instr] !== undefined
+						? values[category+date+instr]
+						: null
+
+					newData[category][date].total = total
+				})
+			})
+		}
+
+		return newData
 	}
 }
