@@ -210,7 +210,7 @@
 	)
 	async function prepareData() {
 		let nav = await dashStore.getHistoryNav({
-			date: '2022-09-09',
+			date: scope.value._detail_date,
 			category: 'Asset Types'
 		})
 		console.log('nav:', nav)
