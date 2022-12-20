@@ -40,8 +40,8 @@
 										 @click="activateMode('today')">Today</div>
 
 								<div class="complex-datepicker-mode-container"
-										 :class="{'active': modeIsActive('yesterday')}"
-										 @click="activateMode('yesterday')">Yesterday</div>
+										 :class="{'active': modeIsActive('yesterday-business')}"
+										 @click="activateMode('yesterday-business')">Yesterday (Business)</div>
 
 								<!--<div class="complex-datepicker-mode-container"
 										 :class="{'active': modeIsActive('inception')}"
@@ -509,7 +509,7 @@
 
 					prevWeekLastDay = new Date(exprCalcRes.result);
 
-				} catch (error) {throw new Error(error);}
+				} catch (error) {throw error;}
 
 				applyDatesOnRangeModeSwitch(
 					prevWeekLastDay,
@@ -682,7 +682,7 @@
 
 	}
 
-	function activateMode (mode) {
+	async function activateMode (mode) {
 
 		switch (mode) {
 
@@ -699,14 +699,18 @@
 
 				break;
 
-			case 'yesterday':
+			case 'yesterday-business':
 
-				fdOptions.value.datepickerMode = 'yesterday';
-				fdOptions.value.expression = 'now()-days(1)';
+				try {
 
-				fDate.value = moment(new Date()).subtract(1, 'day').format('YYYY-MM-DD'); // yesterday's date
+					fDate.value = await calcExpression( 'last_business_day(now()-days(1))');
+					console.log("testing fDate.value ", fDate.value);
+					usePickmeup(firstCalendar.value).set_date(new Date(fDate.value));
 
-				usePickmeup(firstCalendar.value).set_date(new Date(fDate.value));
+				} catch (error) { throw error; }
+
+				fdOptions.value.datepickerMode = 'yesterday-business';
+				fdOptions.value.expression = 'last_business_day(now()-days(1))';
 
 				firstDateIsDisabled.value = true;
 
@@ -732,19 +736,27 @@
 	}
 
 	function onFirstPickmeupChange (event) {
+
+		document.activeElement.blur();
+
 		fDate.value = event.detail.formatted_date;
 		fdOptions.value.datepickerMode = 'datepicker';
 
 		// update highlighted dates inside another calendar
 		if (rangeOfDates.value) usePickmeup(secondCalendar.value).update();
+
 	}
 
 	function onSecondPickmeupChange (event) {
+
+		document.activeElement.blur();
+
 		sDate.value = event.detail.formatted_date;
 		sdOptions.value.datepickerMode = 'datepicker';
 
 		// update highlighted dates inside another calendar
 		if (rangeOfDates.value) usePickmeup(firstCalendar.value).update();
+
 	}
 
 	function initCalendar (calendarNumber) {
