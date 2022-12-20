@@ -74,7 +74,10 @@
 		status.value = 100
 	}
 	async function setActive( item ) {
-		if (item.id == 'nav' || item.id == 'total') active.value = item.id
+		if (item.id == 'nav' || item.id == 'total') {
+			active.value = item.id
+			scope.value._cbp_type = item.id == 'total' ? 'pl' : item.id
+		}
 	}
 	function formatByType( item ) {
 		if ( item.type == 'currency' ) return formatCurency(item.value)

@@ -49,7 +49,7 @@ export default defineStore({
 					date_to: this.scopes[widget.scope].date_to.value
 				},
 				params: {
-					type: this.scopes[widget.scope]._type || 'nav'
+					type: this.scopes[widget.scope]._cbp_type || 'nav'
 				}
 			}
 
