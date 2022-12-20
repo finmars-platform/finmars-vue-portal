@@ -26,7 +26,7 @@
 		"@pinia/nuxt": "^0.4.4",
 		"chart.js": "^3.9.1",
 		"click-outside-vue3": "^4.0.1",
-		"dayjs": "^1.11.6",
+		"dayjs": "^1.11.7",
 		"moment": "^2.29.4",
 		"pinia": "^2.0.24",
 		"qrcode": "^1.5.1",

@@ -704,7 +704,7 @@
 				try {
 
 					fDate.value = await calcExpression( 'last_business_day(now()-days(1))');
-					console.log("testing fDate.value ", fDate.value);
+
 					usePickmeup(firstCalendar.value).set_date(new Date(fDate.value));
 
 				} catch (error) { throw error; }
