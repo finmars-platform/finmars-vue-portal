@@ -509,7 +509,7 @@
 
 					prevWeekLastDay = new Date(exprCalcRes.result);
 
-				} catch (error) {throw new Error(error);}
+				} catch (error) {throw error;}
 
 				applyDatesOnRangeModeSwitch(
 					prevWeekLastDay,
@@ -703,12 +703,11 @@
 
 				try {
 
-					const exprCalcRes = await calcExpression('last_business_day(now()-days(1))');
+					fDate.value = await calcExpression( 'last_business_day(now()-days(1))');
 
-					fDate.value = exprCalcRes;
 					usePickmeup(firstCalendar.value).set_date(new Date(fDate.value));
 
-				} catch (error) { throw new Error(error); }
+				} catch (error) { throw error; }
 
 				fdOptions.value.datepickerMode = 'yesterday-business';
 				fdOptions.value.expression = 'last_business_day(now()-days(1))';
@@ -737,21 +736,27 @@
 	}
 
 	function onFirstPickmeupChange (event) {
+
 		document.activeElement.blur();
+
 		fDate.value = event.detail.formatted_date;
 		fdOptions.value.datepickerMode = 'datepicker';
 
 		// update highlighted dates inside another calendar
 		if (rangeOfDates.value) usePickmeup(secondCalendar.value).update();
+
 	}
 
 	function onSecondPickmeupChange (event) {
+
 		document.activeElement.blur();
+
 		sDate.value = event.detail.formatted_date;
 		sdOptions.value.datepickerMode = 'datepicker';
 
 		// update highlighted dates inside another calendar
 		if (rangeOfDates.value) usePickmeup(firstCalendar.value).update();
+
 	}
 
 	function initCalendar (calendarNumber) {
