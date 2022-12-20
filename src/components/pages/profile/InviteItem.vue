@@ -51,8 +51,11 @@ async function changeStatus( status) {
 			await store.getMasterUsers()
 			emit('refresh')
 
-			if ( status != 2 )
-				navigateTo('/profile/setup')
+			if ( status != 2 ) {
+				let mu = store.masterUsers.find(item => item.id == props.invite.to_master_user)
+
+				location.href = `https://${location.host}/${mu.base_api_url}/v/profile/setup`
+			}
 		}
 	}
 }
