@@ -39,7 +39,17 @@ export default [
 			date_to:   {name: 'Date to', type: 'string', value: ''},
 			date_from: {name: 'Date from', type: 'string', value: ''},
 			portfolio: {name: 'Portfolio', type: 'string', value: ''}
-		}
+		},
+		settings: [
+			{
+				name: 'Type',
+				propName: '_cbp_type',
+				opts: [
+					{id: 'nav', name: 'nav'},
+					{id: 'pl', name: 'pl'},
+				]
+			}
+		]
 	},
 	{
 		id: 'ChartBalanceDate',

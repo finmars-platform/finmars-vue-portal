@@ -74,7 +74,7 @@
 	let scope = computed(() => {
 		return dashStore.scopes[widget.scope]
 	})
-	scope.value._detail_date = '2022-09-09'
+
 	if ( historyStats.error ) {
 		status.value = 101
 	}
@@ -120,6 +120,13 @@
 	onMounted(() => {
 		createChart()
 	})
+	watch(
+		() => scope.value._cbp_type,
+		async () => {
+			historyStats = await dashStore.getHistory(props.wid)
+			updateData()
+		}
+	)
 
 	function createData() {
 		let dataset = []
@@ -161,6 +168,8 @@
 
 			dataOfActive.value[item.label] = item.data[activeIndex.value]
 		})
+
+		scope.value._detail_date = scope.value.date_to.value
 	}
 
 	function updateData() {
@@ -233,9 +242,9 @@
 									let rawDate = tooltipItem.label.split(' ')
 									let date = dayjs( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
 
-									let newDate = Object.keys(historyStats[categoryName.value]).find(item => item.includes(date))
-									let item = historyStats.items.find((item) => item.date.includes(date))
-									sum = typeHistory == 'nav' ? item.nav : item.total
+									// let newDate = Object.keys(historyStats[categoryName.value]).find(item => item.includes(date))
+									// let item = historyStats.items.find((item) => item.date.includes(date))
+									// sum = typeHistory == 'nav' ? item.nav : item.total
 								});
 								return 'Total: ' + new Intl.NumberFormat('en-US', {
 										style: 'currency',
@@ -293,7 +302,6 @@
 							let date = dayjs( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
 
 							scope.value._detail_date = Object.keys(historyStats[categoryName.value]).find(item => item.includes(date))
-							console.log('scope.value._detail_date:', scope.value._detail_date)
 						} catch (e) {
 							console.log('Error in click:', e)
 						}

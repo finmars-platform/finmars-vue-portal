@@ -22,6 +22,12 @@
 					:items="tabList"
 					label="Tab"
 				/>
+				<FmSelect v-if="currentWodget.settings && currentWodget.settings.length"
+					v-model="scopeProps._cbp_type"
+					:items="currentWodget.settings[0].opts"
+					:label="currentWodget.settings[0].name"
+				/>
+
 			</template>
 
 			<template v-if="tab == 'scope'">
@@ -50,23 +56,28 @@
 	let editable = reactive( JSON.parse(JSON.stringify(widget)) )
 
 	let scopeProps = ref({})
+	let currentWodget = widgetList.find(item => item.id == editable.componentName)
+
 	prepareProps()
 
 	function prepareProps() {
-		let currentWodget = widgetList.find(item => item.id == editable.componentName)
-
 		for ( let prop in currentWodget.props ) {
-			let obj = currentWodget.props[prop]
-
-			if ( !dashStore.scopes[editable.scope] || !dashStore.scopes[editable.scope][prop] ) {
-				obj.value = ''
+			if ( typeof currentWodget.props[prop] != 'object' ) {
+				currentWodget.props[prop] = dashStore.scopes[editable.scope][prop]
 
 			} else {
+				let obj = currentWodget.props[prop]
 
-				obj.value = dashStore.scopes[editable.scope][prop].value
+				if ( !dashStore.scopes[editable.scope] || !dashStore.scopes[editable.scope][prop] ) {
+					obj.value = ''
+
+				} else {
+
+					obj.value = dashStore.scopes[editable.scope][prop].value
+					obj._used = dashStore.scopes[editable.scope][prop]._used
+				}
 			}
 		}
-		console.log('editable.scope:', editable.scope)
 
 		scopeProps.value = currentWodget.props
 	}
@@ -100,6 +111,7 @@
 			let oldScope = widget.scope
 
 			for ( let prop in state.scopes[oldScope] ) {
+				if ( !state.scopes[oldScope][prop]._used ) continue
 				let index = state.scopes[oldScope][prop]._used.findIndex(item => item == editable.id)
 
 				delete state.scopes[oldScope][prop]._used.splice(index, 1)
@@ -112,15 +124,21 @@
 
 			for ( let prop in scopeProps.value ) {
 				if ( !state.scopes[newScope][prop] ) {
-					state.scopes[newScope][prop] = structuredClone( toRaw(scopeProps.value[prop]) )
+					state.scopes[newScope][prop] = JSON.parse( JSON.stringify(scopeProps.value[prop]) )
 				}
 
-				state.scopes[newScope][prop].value = scopeProps.value[prop].value
+				if ( typeof state.scopes[newScope][prop] != 'object' ) {
+					state.scopes[newScope][prop] = scopeProps.value[prop]
 
-				if ( !state.scopes[newScope][prop]._used )
-					state.scopes[newScope][prop]._used = []
+				} else {
 
-				state.scopes[newScope][prop]._used.push(editable.id)
+					state.scopes[newScope][prop].value = scopeProps.value[prop].value
+
+					if ( !state.scopes[newScope][prop]._used )
+						state.scopes[newScope][prop]._used = []
+
+					state.scopes[newScope][prop]._used.push(editable.id)
+				}
 			}
 		})
 

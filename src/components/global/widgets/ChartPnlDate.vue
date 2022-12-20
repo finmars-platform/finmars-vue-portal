@@ -17,22 +17,22 @@
 			<div class="chart_row"
 				v-for="(item, i) in instruments"
 				:key="i"
-				:style="{background: inheritColors[item.name]?.slice(0, 7) + '0f'}"
-				:class="{minus: item.value < 0}"
+				:style="{background: inheritColors[item[0]]?.slice(0, 7) + '0f'}"
+				:class="{minus: item[1] < 0}"
 			>
 				<div class="chart_field">
 					<div class="center_line"></div>
 					<div class="chart_bar"
-						:class="{minus: item.value < 0}"
+						:class="{minus: item[1] < 0}"
 						:style="{
-							width: Math.abs(item.value / maxTickStock * 50) + '%',
-							background: inheritColors[item.name]
+							width: Math.abs(item[1] / maxTickStock * 50) + '%',
+							background: inheritColors[item[0]]
 						}"
 					></div>
 				</div>
 				<div class="chart_label flex">
-					<div class="chart_total">{{ precisionTick(item.value) }}</div>
-					<div class="chart_inst">{{ item.name }}</div>
+					<div class="chart_total">{{ precisionTick(item[1]) }}</div>
+					<div class="chart_inst">{{ item[0] }}</div>
 				</div>
 			</div>
 		</div>
@@ -54,22 +54,7 @@
 		wid: {
 			type: String,
 			required: true
-		},
-		portfolio: {
-			type: Number,
-			required: true
-		},
-		date_to: {
-			type: String,
-			required: true
-		},
-		type: {
-			type: String,
-			defoult: 'nav'
-		},
-		client: String,
-		token: String,
-		frameMod: Boolean,
+		}
 	})
 
 	const STATUSES = {
@@ -100,10 +85,63 @@
 		'#96B5B4',
 		'#AB7967',
 	]
+
+	let dashStore = useStoreDashboard()
+	let widget = dashStore.getWidget(props.wid)
+
+	let scope = computed(() => {
+		return dashStore.scopes[widget.scope]
+	})
+
 	let inheritColors = reactive({})
 	let total = ref('0 USD')
 	let instruments = ref(null)
 	let maxTickStock = ref(null)
+
+	watch(
+		() => scope.value._detail_date,
+		() => prepareData()
+	)
+
+	async function prepareData() {
+		let pl = await dashStore.getHistoryNav({
+			date: scope.value._detail_date,
+			category: 'Asset Types',
+			type: scope.value._cbp_type
+		})
+
+		if ( pl.error ) {
+			status.value = 101
+
+			return false
+		}
+
+		if ( !pl.items ) {
+			status.value = 102
+
+			return false
+		}
+
+		total.value = new Intl.NumberFormat('en-US', {
+			maximumFractionDigits: 2
+		}).format(pl.total) + ' USD';
+
+		let items = Object.entries(pl.items)
+		items = items
+			.filter((item) => item[1] != 0)
+			.sort( (a, b) => b[1] - a[1])
+
+		instruments.value = items
+
+		let arr = instruments.value.map(item => item[1])
+		let tickMax = Math.max(...arr)
+		let tickMin = Math.min(...arr)
+		let tickTo = Math.abs(tickMax) > Math.abs(tickMin) ? Math.abs(tickMax) : Math.abs(tickMin)
+		let countZerro = Math.floor(( ""+ Math.round(tickTo)).length / 3)
+		maxTickStock.value = Math.ceil(tickTo / Math.pow( 1000, countZerro )) * Math.pow( 1000, countZerro )
+
+		status.value = 100
+	}
 
 	function precisionTick(value) {
 		return new Intl.NumberFormat('en-US', {

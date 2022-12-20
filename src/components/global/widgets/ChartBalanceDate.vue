@@ -113,7 +113,6 @@
 	onMounted(() => {
 
 	})
-	console.log('scope:', scope)
 
 	function createChart() {
 		myChart = new Chart(props.wid, {
@@ -204,16 +203,18 @@
 			},
 		});
 	}
+
 	watch(
 		() => scope.value._detail_date,
 		() => prepareData()
 	)
 	async function prepareData() {
+		if ( !scope.value._detail_date ) return false
+
 		let nav = await dashStore.getHistoryNav({
 			date: scope.value._detail_date,
 			category: 'Asset Types'
 		})
-		console.log('nav:', nav)
 
 		if ( nav.error ) {
 			status.value = 101
