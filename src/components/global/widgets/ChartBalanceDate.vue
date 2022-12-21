@@ -20,6 +20,7 @@
 </template>
 
 <script setup>
+	import dayjs from 'dayjs'
 
 	import {
 		Chart,
@@ -203,12 +204,19 @@
 			},
 		});
 	}
-
+	if ( dayjs(scope.value.date_to.value).diff(dayjs(), 'day') >= 0 ) {
+		status.value = 101
+	}
 	watch(
 		() => scope.value._detail_date,
 		() => prepareData()
 	)
 	async function prepareData() {
+		if ( dayjs(scope.value.date_to.value).diff(dayjs(), 'day') >= 0 ) {
+			status.value = 101
+			return false
+		}
+
 		if ( !scope.value._detail_date ) return false
 
 		let nav = await dashStore.getHistoryNav({

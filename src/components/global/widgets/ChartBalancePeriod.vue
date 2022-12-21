@@ -118,6 +118,10 @@
 	createData()
 	status.value = 100
 	onMounted(() => {
+		if ( dayjs(scope.value.date_to.value).diff(dayjs(), 'day') >= 0 ) {
+			status.value = 101
+			return false
+		}
 		createChart()
 	})
 	watch(
@@ -129,6 +133,10 @@
 	)
 
 	function createData() {
+		if ( dayjs(scope.value.date_to.value).diff(dayjs(), 'day') >= 0 ) {
+			status.value = 101
+			return false
+		}
 		let dataset = []
 		categories.value = Object.keys(historyStats)
 
