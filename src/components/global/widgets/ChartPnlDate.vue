@@ -49,6 +49,7 @@
 </template>
 
 <script setup>
+	import dayjs from 'dayjs'
 
 	let props = defineProps({
 		wid: {
@@ -98,12 +99,20 @@
 	let instruments = ref(null)
 	let maxTickStock = ref(null)
 
+	if ( dayjs(scope.value.date_to.value).diff(dayjs(), 'day') >= 0 ) {
+			status.value = 101
+		}
+
 	watch(
 		() => scope.value._detail_date,
 		() => prepareData()
 	)
 
 	async function prepareData() {
+		if ( dayjs(scope.value.date_to.value).diff(dayjs(), 'day') >= 0 ) {
+			status.value = 101
+			return false
+		}
 		let pl = await dashStore.getHistoryNav({
 			date: scope.value._detail_date,
 			category: 'Asset Types',

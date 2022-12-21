@@ -26,6 +26,8 @@
 </template>
 
 <script setup>
+import dayjs from 'dayjs';
+
 
 	let props = defineProps({
 		wid: String
@@ -55,6 +57,10 @@
 	init()
 
 	async function init() {
+		if ( dayjs(scope.value.date_to.value).diff(dayjs(), 'day') >= 0 ) {
+			status.value = 101
+			return false
+		}
 		let apiOpts = {
 			filters: {
 				portfolio: scope.value.portfolio.value,

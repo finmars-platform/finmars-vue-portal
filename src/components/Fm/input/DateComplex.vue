@@ -1,5 +1,4 @@
 <template>
-
 	<FmMenu attach="body"
 					:closeOnClickOutside="false"
 					class="width-100">
