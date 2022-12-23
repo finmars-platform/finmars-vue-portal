@@ -59,7 +59,7 @@
 	})
 
 	const STATUSES = {
-		0: 'Waiting [barchart] data',
+		0: 'Waiting data',
 		101: 'Data are not available',
 	}
 	let status = ref(0)
