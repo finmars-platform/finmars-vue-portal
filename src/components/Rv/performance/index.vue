@@ -658,11 +658,7 @@ async function getQ( ids ) {
 }
 
 async function getYear( ids ) {
-	let start = moment()
-		.set({date: 1, month: 1})
-		.add(-1, 'd')
-		.format('YYYY-MM-DD')
-
+	let start = `${moment().format('YYYY') - 1}-12-31`
 	let end = moment(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
 
 	return await getReports({start, end, ids})
