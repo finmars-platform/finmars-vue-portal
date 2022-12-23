@@ -615,7 +615,9 @@ async function getMonthDetails( name ) {
 			) return item[1]
 		}))
 
-		let total = await getReports({start: `${year - 1}-12-31`, end: `${year}-12-31`, ids: bundleId})
+		let end = year == moment().format('YYYY') ? dateTo.format('YYYY-MM-DD') : `${year}-12-31`
+
+		let total = await getReports({start: `${year - 1}-12-31`, end, ids: bundleId})
 		portfolioTotals.value.push( total * 100 )
 	}
 	detailsLoading = false
@@ -656,11 +658,7 @@ async function getQ( ids ) {
 }
 
 async function getYear( ids ) {
-	let start = moment()
-		.set({date: 1, month: 1})
-		.add(-1, 'd')
-		.format('YYYY-MM-DD')
-
+	let start = `${moment().format('YYYY') - 1}-12-31`
 	let end = moment(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
 
 	return await getReports({start, end, ids})
