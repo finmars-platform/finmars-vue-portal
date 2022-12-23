@@ -68,12 +68,20 @@ export default async function useApi (
 		return method == 'get' && providers[route] ? providers[route](response) : response
 
 	} catch(e) {
+		console.log('e:', e)
 		let [code, url] = e.message.split('  ')
 
 		let errors = {
 			400: 'Wrong data',
 			401: 'Not authorized',
 		}
+
+		let error_object = e.data.error
+
+		let text = error_object
+		let title = error_object.status_code == 500 ? 'Server Error' : 'Client Error'
+
+		useNotify({ group: 'server_error', title, text, duration: 100000 })
 
 		return {error: e.data || true, code }
 	}
