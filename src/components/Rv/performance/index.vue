@@ -615,7 +615,9 @@ async function getMonthDetails( name ) {
 			) return item[1]
 		}))
 
-		let total = await getReports({start: `${year - 1}-12-31`, end: `${year}-12-31`, ids: bundleId})
+		let end = year == moment().format('YYYY') ? dateTo.format('YYYY-MM-DD') : `${year}-12-31`
+
+		let total = await getReports({start: `${year - 1}-12-31`, end, ids: bundleId})
 		portfolioTotals.value.push( total * 100 )
 	}
 	detailsLoading = false
