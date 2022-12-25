@@ -104,7 +104,7 @@
     }
   }
 	.toast-pre {
-		overflow: auto;
+		white-space: pre-wrap;
 		margin: 0;
 		padding: 4px;
 		border: 1px solid #ddd;

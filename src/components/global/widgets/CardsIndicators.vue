@@ -49,22 +49,64 @@ import dayjs from 'dayjs';
 
 	let stats = ref(null)
 	let active = ref('nav')
-	watch(
-		scope,
-		() => init()
-	)
 
-	init()
+	let portfolio
+	let date
 
-	async function init() {
+	for ( let prop in scope.value ) {
+		if ( typeof scope.value[prop] != 'object' ) continue
+
+		let value = scope.value[prop].value
+
+		if ( prop == 'portfolio' ) portfolio = scope.value[prop].value
+		if ( prop == 'date_to' ) date = typeof scope.value[prop] == 'string'
+						? scope.value[prop]
+						: scope.value[prop].value
+
+		if ( value.includes('WATCH') ) {
+			let [scope, watchProp] = value.split(':')[1].split('.')
+
+			if ( prop == 'portfolio' ) portfolio = dashStore.scopes[scope][watchProp].value
+			if ( prop == 'date_to' ) date = typeof dashStore.scopes[scope][watchProp] == 'string'
+						? dashStore.scopes[scope][watchProp]
+						: dashStore.scopes[scope][watchProp].value
+
+			watch(
+				dashStore.scopes[scope][watchProp],
+				() => {
+					if ( prop == 'portfolio' ) portfolio = dashStore.scopes[scope][watchProp].value
+					if ( prop == 'date_to' ) date = typeof dashStore.scopes[scope][watchProp] == 'string'
+						? dashStore.scopes[scope][watchProp]
+						: dashStore.scopes[scope][watchProp].value
+					console.log('dsdddd', 'WATCH')
+					loadData()
+				}
+			)
+		} else {
+
+			watch(
+				scope.value[prop],
+				() => {
+					if ( prop == 'portfolio' ) portfolio = scope.value[prop].value
+					if ( prop == 'date_to' ) date = scope.value[prop].value
+
+					loadData()
+				}
+			)
+		}
+	}
+
+	loadData()
+
+	async function loadData() {
 		if ( dayjs(scope.value.date_to.value).diff(dayjs(), 'day') >= 0 ) {
 			status.value = 101
 			return false
 		}
 		let apiOpts = {
 			filters: {
-				portfolio: scope.value.portfolio.value,
-				date: scope.value.date_to.value,
+				portfolio: portfolio,
+				date: date,
 			}
 		}
 
