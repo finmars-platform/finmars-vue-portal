@@ -27,6 +27,8 @@
 
 <script setup>
 
+	import dayjs from 'dayjs'
+
 	definePageMeta({
 		layout: 'auth'
 	});
@@ -81,33 +83,44 @@
 		"correlation": (val) => Math.round(val * 100) / 100
 	}
 
-	let res = await useApi('widgetsStats.get', {
-		params: {
-			client
-		},
-		filters: {
-			portfolio: portfolioId,
-			date: date_to,
-		},
-		headers: {
-			Authorization: 'Token ' + route.query.token
-		}
-	})
-
-	if ( res.error ) {
-		status.value = 101
-	}
-
-	delete res.date
-	delete res.portfolio
-	delete res.benchmark
-
 	let stats = ref(null)
 
-	if ( res && !res.error ) {
-		let arr = Object.entries(res)
-		stats.value = arr
-		status.value = 100
+	loadData()
+
+	async function loadData() {
+		if ( dayjs(date_to).diff(dayjs(), 'day') >= 0 ) {
+			status.value = 101
+			return false
+		}
+
+		let res = await useApi('widgetsStats.get', {
+			params: {
+				client
+			},
+			filters: {
+				portfolio: portfolioId,
+				date: date_to,
+			},
+			headers: {
+				Authorization: 'Token ' + route.query.token
+			}
+		})
+
+		if ( res.error ) {
+			status.value = 101
+
+			return false
+		}
+
+		delete res.date
+		delete res.portfolio
+		delete res.benchmark
+
+		if ( res ) {
+			let arr = Object.entries(res)
+			stats.value = arr
+			status.value = 100
+		}
 	}
 
 	async function setActive( item ) {

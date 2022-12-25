@@ -107,6 +107,11 @@
 
 
 	async function getHistory() {
+		if ( dayjs(date_to).diff(dayjs(), 'day') >= 0 ) {
+			status.value = 101
+
+			return false
+		}
 		let res = await useApi('widgetsHistory.get', {
 			params: {
 				type: typeHistory,

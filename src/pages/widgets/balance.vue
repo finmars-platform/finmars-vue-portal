@@ -18,6 +18,9 @@
 </template>
 
 <script setup>
+
+	import dayjs from 'dayjs'
+
 	import {
   Chart,
   ArcElement,
@@ -260,6 +263,11 @@
 
 		window.addEventListener("message", async (e) => {
 			if ( 'clickOnChart' == e.data.action ) {
+				if ( dayjs(e.data.date?.date).diff(dayjs(), 'day') >= 0 ) {
+					status.value = 101
+
+					return false
+				}
 				let i = 0
 				for ( let prop in e.data.data ) {
 					inheritColors[prop] = COLORS[i]
@@ -352,7 +360,6 @@
 				date_to = e.data.data.date_to
 
 				status.value = 0
-
 			}
 		});
 	}

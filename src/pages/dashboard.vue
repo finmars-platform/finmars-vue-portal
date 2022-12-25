@@ -9,11 +9,25 @@
 				<FmBtn v-if="!isEdit" @click="edit()">Edit dashboard</FmBtn>
 
 				<template v-else>
+					<FmBtn type="text" @click="editJSON()">edit JSON</FmBtn>
 					<FmBtn type="text" @click="cancelEdit()">cancel</FmBtn>
 					<FmBtn @click="save()">save</FmBtn>
 				</template>
 			</template>
 		</FmHorizontalPanel>
+
+		<BaseModal v-model="isOpenJSON" no_padding title="Editor JSON"
+			:controls="{
+				cancel: {name: 'Cancel'},
+				action: {name: 'Save', cb: saveJSON},
+			}">
+			<v-ace-editor
+				v-model:value="content"
+				@init="editorInit"
+				lang="json"
+				theme="monokai"
+				style="height: 300px;width: 600px;" />
+		</BaseModal>
 
 		<PagesDashboardGrid :isEdit="isEdit">
 			<PagesDashboardWidgetWrap
@@ -56,6 +70,10 @@
 
 <script setup>
 
+	import { VAceEditor } from 'vue3-ace-editor';
+	import 'ace-builds/src-noconflict/mode-json';
+	import 'ace-builds/src-noconflict/theme-monokai';
+
 	definePageMeta({
 		// middleware: 'auth',
 		bread: [
@@ -70,6 +88,34 @@
 
 	dashStore.init()
 
+	let isOpenJSON = ref(false)
+	let content = ref('')
+
+	function editJSON() {
+		content.value = JSON.stringify({
+			widgets: dashStore.widgets,
+			tabs: dashStore.tabs,
+			scopes: dashStore.scopes,
+		}, null, 4)
+		isOpenJSON.value = true
+	}
+	function saveJSON() {
+		let newStore = JSON.parse(content.value)
+
+		dashStore.widgets = newStore.widgets
+		dashStore.tabs = newStore.tabs
+		dashStore.scopes = newStore.scopes
+	}
+
+	function editorInit(editor) {
+		editor.setHighlightActiveLine(false);
+		editor.setShowPrintMargin(false);
+		editor.setFontSize(14)
+		editor.setBehavioursEnabled(true);
+
+		editor.focus();
+		editor.navigateFileStart();
+	}
 	let topComponents = computed(() => {
 		return dashStore.widgets.filter((item) => {
 			return item.tab == null
@@ -110,7 +156,6 @@
 
 		isEdit.value = false
 	}
-
 </script>
 
 <style lang="scss" scoped>
