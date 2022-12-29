@@ -139,10 +139,12 @@
 
 <script setup>
 import moment from 'moment'
+import dayjs from 'dayjs'
+import quarterOfYear from 'dayjs/plugin/quarterOfYear'
 import Chart from 'chart.js/auto';
 import getPerformanceViewerData from "./viewerData";
 import {useCalculateReportDatesExprs} from "../../../composables/useReportHelper";
-
+dayjs.extend(quarterOfYear)
 const store = useStore();
 const layoutsStore = useLayoutsStore();
 const route = useRoute();
@@ -250,9 +252,10 @@ async function createBundle() {
 //#region Main
 let panels = ref(['period', 'detail', 'diagram'])
 let bundles = ref([])
-let preriodHeaders = ref(
-	['', 'Daily', 'MTD', 'QTD', 'YTD', +moment().year() - 1, +moment().year() - 2, 'Incept']
-)
+
+let preriodHeaders = computed(() => {
+	return ['', 'Daily', 'MTD', 'QTD', 'YTD', dayjs(viewerData.reportOptions?.end_date).year() - 1, dayjs(viewerData.reportOptions?.end_date).year() - 2, 'Incept']
+})
 let preriodItems = ref([])
 
 let portfolioHeaders = ref(
@@ -624,7 +627,7 @@ async function getMonthDetails( name ) {
 			) return item[1]
 		}))
 
-		let end = year == moment().format('YYYY') ? dateTo.format('YYYY-MM-DD') : `${year}-12-31`
+		let end = year == dayjs(dateTo).year() ? dateTo.add(-1, 'd').format('YYYY-MM-DD') : `${year}-12-30`
 
 		let total = await getReports({start: `${year - 1}-12-31`, end: end, ids: bundleId})
 		portfolioTotals.value.push( total * 100 )
@@ -649,44 +652,41 @@ async function getDay( ids ) {
 }
 
 async function getMonth( ids ) {
-	let end = moment(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
-	let start = moment().set('date', 1).add(-1, 'd').format('YYYY-MM-DD')
+	let start = dayjs(viewerData.reportOptions?.end_date).set('date', 1).add(-1, 'd').format('YYYY-MM-DD')
+	let end = dayjs(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
 
 	return await getReports({start, end, ids})
 }
 
 async function getQ( ids ) {
-	let start = moment()
-		.quarter(moment().quarter())
+	let start = dayjs(viewerData.reportOptions?.end_date)
+		.quarter(dayjs(viewerData.reportOptions?.end_date).quarter())
 		.set('date', 1)
 		.add(-1, 'd')
+		.add(-3, 'M')
 		.format('YYYY-MM-DD')
-	let end = moment(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
+	let end = dayjs(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
 
 	return await getReports({start, end, ids})
 }
 
 async function getYear( ids ) {
-	let start = moment()
-		.set({date: 1, month: 1})
-		.add(-1, 'd')
-		.format('YYYY-MM-DD')
-
-	let end = moment(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
+	let start = `${dayjs(viewerData.reportOptions?.end_date).year() - 1}-12-31`
+	let end = dayjs(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
 
 	return await getReports({start, end, ids})
 }
 
 async function getLastYear( ids ) {
-	let start = `${moment().year() - 2}-12-31`
-	let end = `${moment(viewerData.reportOptions?.end_date).year() - 1}-12-30`
+	let start = `${dayjs(viewerData.reportOptions?.end_date).year() - 2}-12-31`
+	let end = `${dayjs(viewerData.reportOptions?.end_date).year() - 1}-12-30`
 
 	return await getReports({start, end, ids})
 }
 
 async function getYearBeforeLast( ids ) {
-	let start = `${moment().year() - 3}-12-31`
-	let end = `${moment(viewerData.reportOptions?.end_date).year() - 2}-12-30`
+	let start = `${dayjs(viewerData.reportOptions?.end_date).year() - 3}-12-31`
+	let end = `${dayjs(viewerData.reportOptions?.end_date).year() - 2}-12-30`
 
 	return await getReports({start, end, ids})
 }
