@@ -659,11 +659,11 @@ async function getMonth( ids ) {
 }
 
 async function getQ( ids ) {
-	let start = dayjs(viewerData.reportOptions?.end_date)
-		.quarter(dayjs(viewerData.reportOptions?.end_date).quarter())
-		.set('date', 1)
+	let endDate = dayjs(viewerData.reportOptions?.end_date)
+	let start = dayjs('2022-01-01')
+		.year(endDate.year())
+		.quarter( endDate.quarter() )
 		.add(-1, 'd')
-		.add(-3, 'M')
 		.format('YYYY-MM-DD')
 	let end = dayjs(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
 
