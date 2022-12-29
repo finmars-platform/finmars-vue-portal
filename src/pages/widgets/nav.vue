@@ -103,7 +103,8 @@
 			},
 			headers: {
 				Authorization: 'Token ' + route.query.token
-			}
+			},
+			provider: null
 		})
 
 		if ( res.error ) {

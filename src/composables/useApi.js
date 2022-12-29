@@ -8,7 +8,8 @@ export default async function useApi (
 			params,  // Router params
 			body,    // Body for POST PUT PATCH
 			filters, // Query object
-			headers = {}
+			headers = {},
+			provider = true // Query object
 		} = {}
 	) {
 	// if ( !expireTokens && route_opt != 'tokenInfo.get' ) {
@@ -65,7 +66,7 @@ export default async function useApi (
 	try {
 		let response = await $fetch(url, opts)
 
-		return method == 'get' && providers[route] ? providers[route](response) : response
+		return method == 'get' && providers[route] && provider ? providers[route](response) : response
 
 	} catch(e) {
 		console.log('e:', e)

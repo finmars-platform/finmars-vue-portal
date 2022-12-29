@@ -45,6 +45,7 @@
 </template>
 
 <script setup>
+	import dayjs from 'dayjs'
 	definePageMeta({
 		layout: 'auth'
 	});
@@ -114,7 +115,7 @@
 		window.addEventListener("message", async (e) => {
 			try {
 				if ( 'clickOnChart' == e.data.action ) {
-					if ( dayjs(date_to).diff(dayjs(), 'day') >= 0 ) {
+					if ( dayjs(e.data.date.date).diff(dayjs(), 'day') >= 0 ) {
 						status.value = 101
 
 						return false
@@ -134,7 +135,8 @@
 						},
 						headers: {
 							Authorization: 'Token ' + route.query.token
-						}
+						},
+						provider: null
 					})
 
 					if ( pl.error ) {
@@ -174,6 +176,13 @@
 					status.value = 100
 				}
 				if ( 'updateOpts' == e.data.action ) {
+
+					if ( dayjs(e.data.date.date).diff(dayjs(), 'day') >= 0 ) {
+
+						status.value = 101
+
+						return false
+					}
 					portfolioId = e.data.data.portfolioId
 					date_to = e.data.data.date_to
 
@@ -191,7 +200,8 @@
 						},
 						headers: {
 							Authorization: 'Token ' + route.query.token
-						}
+						},
+						provider: null
 					})
 
 					if ( pl.error ) {
@@ -233,8 +243,9 @@
 
 
 			} catch(e) {
+			console.log('e:', e)
 
-				// status.value = 104
+				status.value = 104
 			}
 
 		});
