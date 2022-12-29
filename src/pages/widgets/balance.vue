@@ -282,7 +282,8 @@
 					},
 					headers: {
 						Authorization: 'Token ' + route.query.token
-					}
+					},
+					provider: null
 				})
 
 				if ( nav.error ) {
