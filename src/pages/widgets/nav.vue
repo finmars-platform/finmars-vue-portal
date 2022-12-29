@@ -162,7 +162,8 @@
 					},
 					headers: {
 						Authorization: 'Token ' + route.query.token
-					}
+					},
+					provider: null
 				})
 				delete res.date
 				delete res.portfolio
