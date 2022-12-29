@@ -11,7 +11,7 @@
 				@click="item[0] == 'nav' || item[0] == 'total' ? setActive(item[0]) : false"
 			>
 				<div class="card_name">{{ STATS[item[0]] }}</div>
-				<div class="card_value">{{ STATS_FORMAT[item[0]](item[1])  }}</div>
+				<div class="card_value">{{ STATS_FORMAT[item[0]] ? STATS_FORMAT[item[0]](item[1]) : '' }}</div>
 			</div>
 		</div>
 		<div class="error_wrap flex-column aic jcc" v-else>
