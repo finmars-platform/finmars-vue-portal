@@ -208,7 +208,7 @@
 
 			if ( !date.categories.length ) {
 				for ( let prop in dataset ) {
-					dataset[prop].data.push(null)
+					dataset[prop].data[formatedDate] = null
 				}
 			}
 
