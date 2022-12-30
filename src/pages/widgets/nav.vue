@@ -11,7 +11,7 @@
 				@click="item[0] == 'nav' || item[0] == 'total' ? setActive(item[0]) : false"
 			>
 				<div class="card_name">{{ STATS[item[0]] }}</div>
-				<div class="card_value">{{ STATS_FORMAT[item[0]](item[1])  }}</div>
+				<div class="card_value">{{ STATS_FORMAT[item[0]] ? STATS_FORMAT[item[0]](item[1]) : '' }}</div>
 			</div>
 		</div>
 		<div class="error_wrap flex-column aic jcc" v-else>
@@ -26,6 +26,8 @@
 </template>
 
 <script setup>
+
+	import dayjs from 'dayjs'
 
 	definePageMeta({
 		layout: 'auth'
@@ -81,33 +83,45 @@
 		"correlation": (val) => Math.round(val * 100) / 100
 	}
 
-	let res = await useApi('widgetsStats.get', {
-		params: {
-			client
-		},
-		filters: {
-			portfolio: portfolioId,
-			date: date_to,
-		},
-		headers: {
-			Authorization: 'Token ' + route.query.token
-		}
-	})
-
-	if ( res.error ) {
-		status.value = 101
-	}
-
-	delete res.date
-	delete res.portfolio
-	delete res.benchmark
-
 	let stats = ref(null)
 
-	if ( res && !res.error ) {
-		let arr = Object.entries(res)
-		stats.value = arr
-		status.value = 100
+	loadData()
+
+	async function loadData() {
+		if ( dayjs(date_to).diff(dayjs(), 'day') >= 0 ) {
+			status.value = 101
+			return false
+		}
+
+		let res = await useApi('widgetsStats.get', {
+			params: {
+				client
+			},
+			filters: {
+				portfolio: portfolioId,
+				date: date_to,
+			},
+			headers: {
+				Authorization: 'Token ' + route.query.token
+			},
+			provider: null
+		})
+
+		if ( res.error ) {
+			status.value = 101
+
+			return false
+		}
+
+		delete res.date
+		delete res.portfolio
+		delete res.benchmark
+
+		if ( res ) {
+			let arr = Object.entries(res)
+			stats.value = arr
+			status.value = 100
+		}
 	}
 
 	async function setActive( item ) {
@@ -148,7 +162,8 @@
 					},
 					headers: {
 						Authorization: 'Token ' + route.query.token
-					}
+					},
+					provider: null
 				})
 				delete res.date
 				delete res.portfolio

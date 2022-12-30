@@ -5,11 +5,13 @@
 			<div v-show="readyStatus" class="rs_mc_wrap">
 				<RvSettingsBlock title="General">
 					<RvSettingsRow label="Date to">
-						<FmInputDate v-model="reportOptions.end_date" />
+						<!--						<FmInputDate v-model="reportOptions.end_date" v-model:errorData="endDateErrorData" />-->
+						<FmInputDateComplex v-model:firstDate="reportOptions.end_date"
+																v-model:firstDatepickerOptions="reportLayoutOptions.datepickerOptions.reportLastDatepicker"
+																v-model:errorData="endDateErrorData" />
 					</RvSettingsRow>
 
 					<RvSettingsRow label="Reporting currency">
-						<!--					<FmSelect v-model="reportOptions.report_currency" :items="currencyOpts" />-->
 						<FmUnifiedDataSelect v-model="reportOptions.report_currency"
 																 v-model:itemObject="reportOptions.report_currency_object"
 																 content_type="currencies.currency" />
@@ -75,7 +77,7 @@
 			<div class="flex-row fc-space-between">
 				<FmBtn type="basic" @click="cancel()">CANCEL</FmBtn>
 
-				<FmBtn v-model:loading="notReady" @click="save()">SAVE</FmBtn>
+				<FmBtn v-model:loading="notReady" :disabled="endDateErrorData" @click="save()">SAVE</FmBtn>
 			</div>
 		</template>
 	</BaseModal>
@@ -83,136 +85,148 @@
 
 <script setup>
 
-let props = defineProps({
-	openDialog: Boolean,
-	externalReadyStatus: Boolean,
-	bundles: Object,
-});
-let emit = defineEmits(["cancel", "save"]);
+	let props = defineProps({
+		openDialog: Boolean,
+		externalReadyStatus: Boolean,
+		bundles: Object,
+	});
+	let emit = defineEmits(["cancel", "save"]);
 
-const viewerData = inject('viewerData');
+	const viewerData = inject('viewerData');
 
-const readyStatusData = reactive({
-	currency: false,
-	pricingPolicy: false,
-});
+	const readyStatusData = reactive({
+		currency: false,
+		pricingPolicy: false,
+	});
 
-let currencyOpts = ref([]);
-let pricingPoliciesOpts = ref([]);
-let calcTypeOpts = [
-	{
-		id: "time_weighted",
-		name: "Time-Weighted Return",
-	},
-	{
-		id: "money_weighted",
-		name: "Money Weighted Return",
-	},
-	/*{
-		id: "",
-		name: "P&L in Currency"
-	}*/
-];
-let segmentTypeOpts = [
-	{
-		id: "days",
-		name: "Day",
-	},
-	{
-		id: "months",
-		name: "Month",
-	},
-];
-let daysConventionOpts = [
-	/*{
-		id: "working_days",
-		name: "Working days"
-	},*/
-	{
-		id: "calendar_days",
-		name: "Working days",
-	},
-];
-let graphTypeOpts = [
-	{
-		id: "1",
-		name: "Cummulative return + Monthly",
-	},
-];
+	let endDateErrorData = ref(null);
 
-let readyStatus = computed(() => {
-	let ready = props.externalReadyStatus;
+	let currencyOpts = ref([]);
+	let pricingPoliciesOpts = ref([]);
+	let calcTypeOpts = [
+		{
+			id: "time_weighted",
+			name: "Time-Weighted Return",
+		},
+		{
+			id: "money_weighted",
+			name: "Money Weighted Return",
+		},
+		/*{
+			id: "",
+			name: "P&L in Currency"
+		}*/
+	];
+	let segmentTypeOpts = [
+		{
+			id: "days",
+			name: "Day",
+		},
+		{
+			id: "months",
+			name: "Month",
+		},
+	];
+	let daysConventionOpts = [
+		/*{
+			id: "working_days",
+			name: "Working days"
+		},*/
+		{
+			id: "calendar_days",
+			name: "Working days",
+		},
+	];
+	let graphTypeOpts = [
+		{
+			id: "1",
+			name: "Cummulative return + Monthly",
+		},
+	];
 
-	Object.keys(readyStatusData).forEach(status => {
-		ready = ready && readyStatusData[status];
-	})
+	let readyStatus = computed(() => {
+		let ready = props.externalReadyStatus;
 
-	return ready;
-});
+		Object.keys(readyStatusData).forEach(status => {
+			ready = ready && readyStatusData[status];
+		})
 
-let notReady = computed(() => {
-	return !readyStatus.value;
-});
+		return ready;
+	});
 
-let reportOptions = ref({...viewerData.reportOptions})
+	let notReady = computed(() => {
+		return !readyStatus.value;
+	});
 
-watch(
-	() => viewerData.reportOptions,
-	() => {
-		reportOptions.value = JSON.parse(JSON.stringify(viewerData.reportOptions));
-	},
-	{deep: true}
-);
+	let reportOptions = ref({...viewerData.reportOptions})
 
-let components = ref({ ...viewerData.components })
-watch(
-	() => viewerData.components,
-	() => {
-		components.value = { ...viewerData.components }
+	watch(
+		() => viewerData.reportOptions,
+		() => {
+			reportOptions.value = JSON.parse(JSON.stringify(viewerData.reportOptions));
+		},
+		{deep: true}
+	);
+
+	let reportLayoutOptions = ref({...viewerData.reportLayoutOptions});
+
+	watch(
+		() => viewerData.reportLayoutOptions,
+		() => {
+			reportLayoutOptions.value = JSON.parse(JSON.stringify(viewerData.reportLayoutOptions));
+		},
+		{deep: true}
+	)
+
+	let components = ref({ ...viewerData.components })
+	watch(
+		() => viewerData.components,
+		() => {
+			components.value = { ...viewerData.components }
+		}
+	);
+
+	async function fetchPpOpts() {
+		const ppData = await useLoadAllPages('pricingPolicyListLight.get', {filters: {page: 1, page_size: 1000}});
+
+		if (!ppData.error) {
+			pricingPoliciesOpts.value = ppData;
+			readyStatusData.pricingPolicy = true;
+		}
 	}
-);
 
-async function fetchPpOpts() {
-	const ppData = await useLoadAllPages('pricingPolicyListLight.get', {filters: {page: 1, page_size: 1000}});
+	async function fetchCurrenciesOpts() {
+		const currencyData = await useLoadAllPages('currencyListLight.get', {filters: {page: 1, page_size: 1000}});
 
-	if (!ppData.error) {
-		pricingPoliciesOpts.value = ppData;
-		readyStatusData.pricingPolicy = true;
-	}
-}
+		if (!currencyData.error) {
+			currencyOpts.value = currencyData;
+			readyStatusData.currency = true;
+		}
 
-async function fetchCurrenciesOpts() {
-	const currencyData = await useLoadAllPages('currencyListLight.get', {filters: {page: 1, page_size: 1000}});
-
-	if (!currencyData.error) {
-		currencyOpts.value = currencyData;
-		readyStatusData.currency = true;
 	}
 
-}
+	function onPpChange(newVal) {
 
-function onPpChange(newVal) {
+		reportOptions.value.pricing_policy = newVal;
+		const ppObj = pricingPoliciesOpts.value.find(pPolicy => pPolicy.id === newVal);
 
-	reportOptions.value.pricing_policy = newVal;
-	const ppObj = pricingPoliciesOpts.value.find(pPolicy => pPolicy.id === newVal);
+		reportOptions.value.pricing_policy_object = JSON.parse(JSON.stringify(ppObj));
 
-	reportOptions.value.pricing_policy_object = JSON.parse(JSON.stringify(ppObj));
+	}
 
-}
+	function cancel() {
+		emit("cancel");
+	}
+	function save() {
+		emit("save", [ reportOptions.value, reportLayoutOptions.value, components.value ]);
+	}
 
-function cancel() {
-	emit("cancel");
-}
-function save() {
-	emit("save", [ reportOptions.value, components.value ]);
-}
+	function init() {
+		fetchPpOpts();
+		fetchCurrenciesOpts();
+	}
 
-function init() {
-	fetchPpOpts();
-	fetchCurrenciesOpts();
-}
-
-init();
+	init();
 
 </script>
 

@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export function useDebounce(func, wait, immediate) {
 
 	var timeout;
@@ -47,4 +49,14 @@ export function fmThrottle(fn, wait, options) {
 			}, waitRemains);
 		}
 	};
+}
+
+/**
+ * Validates string with a date
+ *
+ * @param {String} date
+ * @returns {boolean}
+ */
+export function useDateStringIsValid (date) {
+	return moment(date, 'YYYY-MM-DD', true).isValid();
 }

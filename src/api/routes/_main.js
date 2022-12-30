@@ -1,10 +1,11 @@
-let prefix = '/{client}/api/v1'
+let host = useRuntimeConfig().public.apiURL
+let prefix = host + '/{client}/api/v1'
 
 export default {
 	pricingProc: {
 		get: prefix + "/procedures/pricing-procedure/",
 		post: prefix + "/procedures/pricing-procedure/{id}/run-procedure/",
-		put: '/procedures/pricing-procedure/{id}/'
+		put: prefix + '/procedures/pricing-procedure/{id}/'
 	},
 	pricingProcId: {
 		get: prefix + "/procedures/pricing-procedure/{id}/",
@@ -164,8 +165,8 @@ export default {
 	configurationList: {
 		get: prefix + '/ui/configuration/'
 	},
-	counterpartiesUnifiedData: {
-		get: prefix + '/data/company/'
+	unifiedData: {
+		get: prefix + '/data/{type}/'
 	},
 
 	configSharingConfigFile: {
@@ -185,13 +186,22 @@ export default {
 	configurationJsonStatus: {
 		get: prefix + '/active_processes/active_processes/{id}/'
 	},
+	dashboardLayout: {
+		get: prefix + '/ui/dashboard-layout/{id}/',
+		put: prefix + '/ui/dashboard-layout/{id}/',
+		post: prefix + '/ui/dashboard-layout/',
+	},
+	expression: {
+		post: prefix + '/utils/expression/',
+	},
+
 
 	// Надо отделить
 
 	widgetsHistory: {
-		get: '/{client}/api/v1/widgets/history/{type}/'
+		get: prefix + '/widgets/history/{type}/'
 	},
 	widgetsStats: {
-		get: '/{client}/api/v1/widgets/stats/'
+		get: prefix + '/widgets/stats/'
 	}
 }

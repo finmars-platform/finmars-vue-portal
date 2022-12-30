@@ -1,5 +1,7 @@
 @import "core/core";
 
+.vue-notification-wrapper {
+}
 .v-navigation-drawer__content {
 	overflow-x: inherit !important;
 	overflow-y: inherit !important;
@@ -18,4 +20,8 @@
 	.numbers {
 		color: purple;
 	}
+}
+
+.pickmeup {
+	z-index: $backdrop-z-index;
 }
