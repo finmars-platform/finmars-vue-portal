@@ -1,6 +1,7 @@
 <template>
 	<BaseInput
 		:label="label"
+		:placeholder="placeholder"
 		:tooltip="tooltip"
 		:errorData="errorData"
 		:modelValue="modelValue"
@@ -34,9 +35,11 @@
 </template>
 
 <script setup>
+
 	let props = defineProps({
 		modelValue: String,
 		label: String,
+		placeholder: String,
 		tooltip: String,
 		required: Boolean,
 		errorData: Object,

@@ -9,24 +9,24 @@
 	background: $separ;
 }
 .fm_list_item {
-display: flex;
-align-items: center;
-// height: 40px;
-height: 36px;
-padding: 0 16px;
-cursor: pointer;
-transition: 0.3s;
-white-space: nowrap;
+	display: flex;
+	align-items: center;
+	// height: 40px;
+	height: 36px;
+	padding: 0 16px;
+	cursor: pointer;
+	transition: 0.3s;
+	white-space: nowrap;
 
-&:hover {
-	background: $main;
-}
-&.active {
-	background: $main-darken;
-}
-& + & {
-	border-top: $opts-borders;
-}
+	&:hover {
+		background: $main;
+	}
+	&.active {
+		background: $main-darken;
+	}
+	& + & {
+		border-top: $opts-borders;
+	}
 }
 
 // Custom inputs
@@ -50,3 +50,210 @@ white-space: nowrap;
 .fm_card_text {
 	color: $text-lighten;
 }
+.fm_tabs {
+	display: flex;
+	background: $separ;
+	border-bottom: 1px solid $border;
+	height: 48px;
+	line-height: 48px;
+
+	&_item {
+		height: inherit;
+		line-height: inherit;
+		padding: 0 $content-padding-x;
+		text-transform: uppercase;
+		font-size: 14px;
+		letter-spacing: 0.4px;
+		transition: background 0.3s;
+		cursor: pointer;
+
+		&:hover {
+			background: $main-darken;
+		}
+		&.active {
+			color: $primary;
+			border-bottom: 2px solid $primary;
+
+			&:hover {
+				background: $primary-lighten-2;
+			}
+		}
+	}
+}
+
+//# region pickmeup inside FmInputDateComplex
+
+.pickmeup.fm_cd_pickmeup {
+	background: #fff;
+
+	.pmu-instance {
+		// width: 340px;
+		width: 334px;
+		height: 340px;
+		padding: 8px 0;
+
+		.pmu-today {
+			background-color: #fff;
+		}
+
+		.pmu-button {
+			color: $gray;
+		}
+
+		.pmu-months, .pmu-years {
+			.pmu-button {
+				width: 46px;
+				height: 47px;
+				margin: 5px;
+				line-height: 48px;
+				border-radius: 100%;
+				color: #000;
+
+				&.pmu-selected {
+					background-color: $orange;
+					color: #fff;
+
+					&:hover {
+						opacity: .5;
+					}
+				}
+
+				&:not(.pmu-selected):hover {
+					background-color: $paleOrange;
+				}
+			}
+		}
+
+		.pmu-day-of-week {
+			padding: 0 13px;
+			border-bottom: 2px solid $borderPale;
+
+			& > div {
+				color: $gray;
+				width: 44px;
+			}
+		}
+
+		.pmu-days {
+			padding: 0 13px;
+			width: 334px;
+
+			.pmu-button {
+				border-radius: 100%;
+				height: 36px;
+				width: 36px;
+				font-size: 12px;
+				padding: 10px 0;
+				font-size: 12px;
+				box-sizing: border-box;
+				margin: 4px;
+				color: #000;
+
+				&.pmu-not-in-month {
+					// visibility: hidden;
+					opacity: .4;
+				}
+
+				&.pmu-selected {
+					background: $orange;
+					color: #fff;
+				}
+
+				&:not(.pmu-selected):hover {
+					background-color: $paleOrange;
+				}
+			}
+
+		}
+
+		.ax_default {
+			color: #333333;
+		}
+
+	}
+
+	.pmu-instance:first-child, .pmu-instance:last-child {
+
+		.pmu-prev {
+			// order: 1;
+			width: 16px;
+			padding: 0 4px;
+			// margin-right: 8px;
+			margin-left: 18px;
+			box-sizing: content-box;
+
+			&:hover {
+				color: $orange;
+			}
+		}
+
+		.pmu-month {
+			width: 258px;
+			margin: 0 16px;
+
+			&:hover {
+				color: $orange;
+			}
+
+		}
+
+		.pmu-next {
+			// order: 2;
+			width: 16px;
+			padding: 0 4px;
+			// margin-left: 8px;
+			box-sizing: content-box;
+
+			&:hover {
+				color: $orange;
+			}
+		}
+
+	}
+
+}
+
+.dates_range {
+	.pickmeup.fm_cd_pickmeup {
+
+		.pmu-instance {
+
+			.pmu-days {
+
+				.pmu-button.pmu-selected:not(.custom-pmu-date-from-to) {
+
+					&.custom-pmu-date-from {
+						background-color: $orange;
+						border-top-right-radius: 0;
+						border-bottom-right-radius: 0;
+						margin-right: 0;
+					}
+
+					&.custom-pmu-date-to {
+						background-color: $orange;
+						border-top-left-radius: 0;
+						border-bottom-left-radius: 0;
+						margin-left: 0;
+					}
+
+				}
+
+				.pmu-button:not(.pmu-selected) {
+
+					&.custom-pmu-day-in-range {
+						width: 44px;
+						background-color: #fcd7ca;
+						border-radius: 0;
+						margin-right: 0;
+						margin-left: 0;
+					}
+
+				}
+
+			}
+
+		}
+
+	}
+}
+//# endregion pickmeup inside FmInputDateComplex

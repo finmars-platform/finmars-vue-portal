@@ -1,11 +1,11 @@
 <template>
 
-	<FmMenu v-model:opened="menuIsOpened"
+	<FmMenu :opened="menuIsOpened"
 					:openOn="false"
 					attach="body"
 					class="width-100"
 
-					@cancel="onMenuClose">
+					@update:opened="toggleMenu">
 
 		<template #btn>
 			<BaseInput :modelValue="modelValue"
@@ -19,7 +19,9 @@
 								 @click.stop="openMenu">
 
 				<template v-if="!noBorders && !noIndicatorButton" #button>
-					<FmIcon icon="menu" />
+					<FmBtn type="iconBtn"
+								 icon="menu"
+								 @click.stop="modalIsOpened = true" />
 				</template>
 
 				<input :placeholder="label"
@@ -93,9 +95,19 @@
 		</div>
 
 	</FmMenu>
+
+	<FmUnifiedDataSelectModal :content_type="content_type"
+														:modelValue="modelValue"
+														:itemObject="selItem"
+														v-model:opened="modalIsOpened"
+														@update:modelValue="newVal => emit('update:modelValue', newVal)"
+														@update:itemObject="onItemObjectChange" />
 </template>
 
 <script setup>
+
+	import * as commonHelper from "./helper";
+	import {useDebounce} from "../../../composables/useUtils";
 
 	let props = defineProps({
 		label: String,
@@ -116,6 +128,7 @@
 	let disabled = ref(false);
 	let processing = ref(false);
 
+	let modalIsOpened = ref(false);
 	let menuIsOpened = ref(false);
 
 	let localItemsTotal = ref(0);
@@ -143,26 +156,27 @@
 		}
 	)
 
+	function onItemObjectChange (newVal) {
+
+		if (props.itemObject === undefined) {
+			selItem.value = newVal;
+			inputText.value = selItem.value.name;
+
+		} else {
+			emit('update:itemObject', newVal)
+		}
+
+	}
+
 	function getHighlighted (value) {
-
-		var inputTextPieces = inputText.value.split(' ')
-
-		var resultValue;
-
-		// Case-insensitive regular expression for highlighting multiple parts inside results
-		var reg = new RegExp("(?![^<]+>)(" + inputTextPieces.join("|") + ")", "ig");
-
-		resultValue = value.replace(reg, '<span class="highlight">$1</span>');
-
-		return resultValue
-
+		return commonHelper.getHighlighted(inputText.value, value);
 	}
 
 	function closeMenu() {
 
 		menuIsOpened.value = false;
 
-	if (selItem.value.name) inputText.value = selItem.value.name;
+		if (selItem.value.name) inputText.value = selItem.value.name;
 
 	}
 
@@ -516,7 +530,7 @@
 
 	}
 
-	async function findEntities() {
+	/* async function findEntities() {
 
 		databaseItems.value = [];
 
@@ -555,7 +569,15 @@
 			}
 		}
 
-		const res = await useApi('counterpartiesUnifiedData.get', options);
+		if (content_type === 'counterparties.counterparty') {
+
+			options.params = {
+				type: 'company'
+			}
+
+		}
+
+		const res = await useApi('unifiedData.get', options);
 
 		if (res.error) {
 
@@ -594,27 +616,6 @@
 		var promises = [];
 
 		promises.push(findEntities());
-
-		/*promises.push(new Promise(function (resolve, reject) {
-
-
-			entityResolverService.getListLight(scope.entityType, {
-				pageSize: 500,
-				filters: {
-					user_code: scope.inputText
-				}
-			}).then(function (data) {
-
-				scope.localItemsTotal = data.count;
-
-				scope.localItems = data.results;
-
-				resolve()
-
-
-			})
-
-		}))*/
 		promises.push(findEntitiesByUserCode())
 
 
@@ -630,14 +631,19 @@
 
 		})
 
-		/*setTimeout(function () {
+		processing.value = false;
 
-			$('.unified-data-select-options-group-title').on('click', function () {
+	} */
+	async function getList() {
 
-				$(this).next()[0].scrollIntoView({block: 'start', behavior: 'smooth'});
-			});
+		processing.value = true;
 
-		}, 100)*/
+		const res = await commonHelper.getList(props.content_type, inputText.value);
+
+		databaseItems.value = res.databaseData.items;
+		databaseItemsTotal.value = res.databaseData.itemsTotal;
+		localItems.value = res.localData.items;
+		localItemsTotal.value = res.localData.itemsTotal;
 
 		processing.value = false;
 
@@ -652,63 +658,64 @@
 
 	}
 
-	function onFilterInputChange($event) {
+	const onFilterInputChange = useDebounce(function ($event) {
 		inputText.value = $event.target.value;
 		getList();
+	}, 500);
+
+
+	function toggleMenu(opened) {
+		if (!opened) inputText.value = selItem.value.name;
+		menuIsOpened.value = opened;
 	}
 
-	function onMenuClose() {
-		inputText.value = selItem.value.name;
-		menuIsOpened.value = false;
-	}
-
-</script>
+	</script>
 
 <style lang="scss" scoped>
-.sel_menu_block {
-	max-height: 380px;
-	min-width: 280px;
-	max-width: 280px;
-	width: 280px;
+	.sel_menu_block {
+		max-height: 380px;
+		min-width: 280px;
+		max-width: 280px;
+		width: 280px;
 
-	.sel_option {
-		padding: 11px 16px 2px 16px;
-		box-sizing: border-box;
-		width: 100%;
-		border-bottom: $opts-borders;
+		.sel_option {
+			padding: 11px 16px 2px 16px;
+			box-sizing: border-box;
+			width: 100%;
+			border-bottom: $opts-borders;
 
-		&:first-child {
-			border-top: $opts-borders;
+			&:first-child {
+				border-top: $opts-borders;
+			}
+
+			&:hover {
+				background: inherit;
+				background-color: rgba(0, 0, 0, 0.03);
+				/*border: none;
+				border-radius: 0px;*/
+				-moz-box-shadow: none;
+				-webkit-box-shadow: none;
+				box-shadow: none;
+			}
+
+			span.highlight {
+				color: #F05A22;
+				font-weight: bold;
+			}
+
 		}
-
-		&:hover {
-			background: inherit;
-			background-color: rgba(0, 0, 0, 0.03);
-			/*border: none;
-			border-radius: 0px;*/
-			-moz-box-shadow: none;
-			-webkit-box-shadow: none;
-			box-shadow: none;
-		}
-
-		span.highlight {
-			color: #F05A22;
-			font-weight: bold;
-		}
-
 	}
-}
 
-.opts_group_title {
-	font-size: 14px;
-	color: #333333;
-	margin: 8px;
-	padding-left: 10px;
-	position: sticky;
-	background: #fff;
-	cursor: pointer;
-	height: 30px;
-	padding-top: 9px;
-	box-sizing: border-box;
-}
+	.opts_group_title {
+		font-size: 14px;
+		color: #333333;
+		margin: 8px;
+		padding-left: 10px;
+		position: sticky;
+		background: #fff;
+		cursor: pointer;
+		height: 30px;
+		padding-top: 9px;
+		box-sizing: border-box;
+	}
 </style>

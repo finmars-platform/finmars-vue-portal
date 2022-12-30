@@ -50,7 +50,7 @@
 					</div>
 				</FmMenu>
 
-				<a :href="`${config.public.oldAppURL}processes`">
+				<a :href="`${config.public.apiURL}/${store.current.base_api_url}/a/#!/processes`">
 					<FmIcon
 						icon="cloud_download"
 						btn

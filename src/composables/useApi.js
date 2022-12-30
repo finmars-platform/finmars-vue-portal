@@ -1,5 +1,5 @@
-import _auth from "./routes/_auth";
-import routes from "./routes";
+import routes from "../api/routes";
+import providers from "../api/providers/main.js";
 
 let expireTokens
 export default async function useApi (
@@ -8,7 +8,8 @@ export default async function useApi (
 			params,  // Router params
 			body,    // Body for POST PUT PATCH
 			filters, // Query object
-			headers = {}
+			headers = {},
+			provider = true // Query object
 		} = {}
 	) {
 	// if ( !expireTokens && route_opt != 'tokenInfo.get' ) {
@@ -36,12 +37,9 @@ export default async function useApi (
 	if ( baseApi )
 		url = url.replace('{client}', baseApi);
 
-	let baseUrl = _auth.hasOwnProperty(route) ? config.public.authorizerURL : config.public.apiURL;
-
 	let token = useCookie('access_token').value
 
 	let opts = {
-		baseURL: baseUrl,
 		method: method.toUpperCase() || "GET",
 		headers: {
 			Authorization: "Token " + token,
@@ -66,9 +64,12 @@ export default async function useApi (
 	}
 
 	try {
-		return await $fetch(url, opts)
+		let response = await $fetch(url, opts)
+
+		return method == 'get' && providers[route] && provider ? providers[route](response) : response
 
 	} catch(e) {
+		console.log('e:', e)
 		let [code, url] = e.message.split('  ')
 
 		let errors = {
@@ -76,11 +77,12 @@ export default async function useApi (
 			401: 'Not authorized',
 		}
 
-		// useNotify({
-		// 	type: 'error',
-		// 	title: 'Error',
-		// 	text: errors[code] ? errors[code] : 'Unknown server error'
-		// })
+		let error_object = e.data.error
+
+		let text = error_object
+		let title = error_object.status_code == 500 ? 'Server Error' : 'Client Error'
+
+		useNotify({ group: 'server_error', title, text, duration: 100000 })
 
 		return {error: e.data || true, code }
 	}
