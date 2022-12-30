@@ -128,7 +128,7 @@
 				params: {id: importedData.task_id}
 			})
 
-			if (res.status === 'P') {
+			if (res.status === 'P' || res.status === 'I') {
 				progress.value = res.progress_object?.percent || progress.value
 				progress_item.value = res.progress_object?.description
 
