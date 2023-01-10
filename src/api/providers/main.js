@@ -48,10 +48,12 @@ export default {
 		let dates = new Map()
 		let categories = new Set()
 		let instrumentsByCategory = {}
+		let instruments = new Set()
 		let values = {}
+		let totals = {}
 
 		data.items.forEach(date => {
-			dates.set(date.date, date.nav)
+			dates.set(date.date, date.nav || date.total)
 
 			date.categories.forEach(category => {
 				categories.add(category.name)
@@ -61,7 +63,12 @@ export default {
 						instrumentsByCategory[category.name] = new Set()
 
 					instrumentsByCategory[category.name].add(instrument.name)
+
+					if ( !totals[category.name+instrument.name] )
+						totals[category.name+instrument.name] = 0
+
 					values[category.name+date.date+instrument.name] = instrument.value
+					totals[category.name+instrument.name] += instrument.value
 				})
 			})
 		})
@@ -80,6 +87,8 @@ export default {
 				}
 
 				instruments.forEach(instr => {
+					if ( !totals[category+instr] ) return false
+
 					newData[category][date].items[instr] = values[category+date+instr] !== undefined
 						? values[category+date+instr]
 						: null
