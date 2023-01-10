@@ -73,4 +73,33 @@ export default [
 			portfolio: {name: 'Portfolio', type: 'string', value: ''}
 		}
 	},
+	{
+		id: 'Matrix',
+		name: 'Matrix',
+		group: 'base',
+		minColls: 6,
+		minRows: 4,
+		props: {
+			date_to:   {name: 'Date', type: 'string', value: ''},
+			portfolio: {name: 'Portfolio', type: 'string', value: ''}
+		},
+		settings: [
+			{
+				name: 'Absciss',
+				propName: '',
+				opts: [
+					{id: 'nav', name: 'nav'},
+					{id: 'pl', name: 'pl'},
+				]
+			},
+			{
+				name: 'Ordinate',
+				propName: '',
+				opts: [
+					{id: 'nav', name: 'nav'},
+					{id: 'pl', name: 'pl'},
+				]
+			}
+		]
+	},
 ]

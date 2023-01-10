@@ -92,28 +92,6 @@
 		datasets: [],
 	}
 	let myChart
-	const COLORS = [
-		'#577590CC',
-		'#43AA8BCC',
-		'#F9AB4B',
-		'#FA6769',
-		'#F9C74F',
-		'#979BFF',
-		'#D9ED92',
-		'#C8D7F9',
-		'#96B5B4',
-		'#AB7967',
-		'#577590CC',
-		'#43AA8BCC',
-		'#F9AB4B',
-		'#FA6769',
-		'#F9C74F',
-		'#979BFF',
-		'#D9ED92',
-		'#C8D7F9',
-		'#96B5B4',
-		'#AB7967',
-	]
 
 	createData()
 	status.value = 100
@@ -159,10 +137,6 @@
 		}
 
 		for ( let prop in dataset ) {
-			let elem = dataset[prop]
-
-			if ( elem.total == 0 ) continue
-
 			data.datasets.push( dataset[prop] )
 		}
 
@@ -172,7 +146,7 @@
 		dataOfActive.value = {}
 
 		data.datasets.forEach((item, key) => {
-			item.backgroundColor = COLORS[key]
+			item.backgroundColor = dashStore.instrColors[categoryName.value + item.label]
 
 			dataOfActive.value[item.label] = item.data[activeIndex.value]
 		})
