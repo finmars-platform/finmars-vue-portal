@@ -1,7 +1,7 @@
 <template>
 	<div class="wrap" :class="{fullscreen: isFull}">
 		<div class="title flex aic sb">
-			<div>Balance (time)</div>
+			<div>{{ widgetName }}</div>
 			<FmIcon
 				:icon="isFull ? 'fullscreen_exit' : 'fullscreen'"
 				@click="isFull = !isFull"
@@ -13,8 +13,8 @@
 				<div class="filter_item"
 					v-for="(item, i) in categories"
 					:key="i"
-					:class="{active: categoryName == item}"
-					@click="categoryName = item, updateData()"
+					:class="{active: scope.__categoryType == item}"
+					@click="scope.__categoryType = item, updateData()"
 				>
 					{{ item }}
 				</div>
@@ -70,10 +70,8 @@
 	let dashStore = useStoreDashboard()
 	let historyStats = await dashStore.getHistory(props.wid)
 	let widget = dashStore.getWidget(props.wid)
-
-	let scope = computed(() => {
-		return dashStore.scopes[widget.scope]
-	})
+	let widgetName = ref('Balance (Historical)')
+	let scope = dashStore.scopes[widget.scope]
 
 	if ( historyStats.error ) {
 		status.value = 101
@@ -81,10 +79,10 @@
 
 	let active = ref(null)
 	let isFull = ref(false)
-	let typeHistory = 'nav'
 	let dataOfActive = ref({})
 	let activeIndex = ref(null)
-	let categoryName = ref('Asset Types')
+
+	scope.__categoryType = 'Asset Types'
 	let categories = ref({})
 
 	let data = {
@@ -96,33 +94,34 @@
 	createData()
 	status.value = 100
 	onMounted(() => {
-		if ( dayjs(scope.value.date_to.value).diff(dayjs(), 'day') >= 0 ) {
+		if ( dayjs(scope.date_to.value).diff(dayjs(), 'day') >= 0 ) {
 			status.value = 101
 			return false
 		}
 		createChart()
 	})
 	watch(
-		() => scope.value._cbp_type,
+		scope,
 		async () => {
+			widgetName.value = scope._cbp_type == 'pl' ? 'P&L (Historical)' : 'Balance (Historical)'
 			historyStats = await dashStore.getHistory(props.wid)
 			updateData()
 		}
 	)
 
 	function createData() {
-		if ( dayjs(scope.value.date_to.value).diff(dayjs(), 'day') >= 0 ) {
+		if ( dayjs(scope.date_to.value).diff(dayjs(), 'day') >= 0 ) {
 			status.value = 101
 			return false
 		}
 		let dataset = []
 		categories.value = Object.keys(historyStats)
 
-		for ( let date in historyStats[categoryName.value] ) {
+		for ( let date in historyStats[scope.__categoryType] ) {
 			let formatedDate = dayjs(date).format('MMM YY')
 			data.labels.push( formatedDate )
 
-			for ( let instr in historyStats[categoryName.value][date].items ) {
+			for ( let instr in historyStats[scope.__categoryType][date].items ) {
 				if ( !dataset[instr] ) {
 					dataset[instr] = {
 						data: {},
@@ -131,8 +130,8 @@
 				}
 
 				dataset[instr].label = instr
-				dataset[instr].data[formatedDate] = historyStats[categoryName.value][date].items[instr]
-				dataset[instr].total += historyStats[categoryName.value][date].items[instr]
+				dataset[instr].data[formatedDate] = historyStats[scope.__categoryType][date].items[instr]
+				dataset[instr].total += historyStats[scope.__categoryType][date].items[instr]
 			}
 		}
 
@@ -146,12 +145,14 @@
 		dataOfActive.value = {}
 
 		data.datasets.forEach((item, key) => {
-			item.backgroundColor = dashStore.instrColors[categoryName.value + item.label]
+			item.backgroundColor = dashStore.instrColors[scope.__categoryType + item.label]
 
 			dataOfActive.value[item.label] = item.data[activeIndex.value]
 		})
+		let notNull = Object.entries(historyStats[scope.__categoryType])
+			.filter(item => item[1].total)
 
-		scope.value._detail_date = scope.value.date_to.value
+		scope._detail_date = notNull[notNull.length - 1][0]
 	}
 
 	function updateData() {
@@ -170,21 +171,52 @@
 			plugins: [{
 				id: 'custom_canvas_background_color',
 				afterDraw: (chart, args, options) => {
-					if ( !active.value ) return;
+					let metas = myChart.getSortedVisibleDatasetMetas()
+					let allBarsByDay = []
+
+					metas.forEach((categoty) => {
+						categoty.data.forEach((date, key) => {
+							if ( !allBarsByDay[key] ) allBarsByDay[key] = 0
+							if (date.height) allBarsByDay[key] += date.height
+						})
+					})
+					let active = metas[0].data[allBarsByDay.filter(i => i).length - 1]
+
+					if ( !active ) return false
+
 					const {ctx} = chart;
 					ctx.save();
 					ctx.globalCompositeOperation = 'destination-over';
+
+					// Fill active
 					ctx.fillStyle = options.color;
 					ctx.fillRect(
-						active.value.element.x - active.value.element.width * 1.25 / 2,
+						active.x - active.width * 1.25 / 2,
 						chart.chartArea.top,
-						active.value.element.width * 1.25,
+						active.width * 1.25,
 						chart.chartArea.height
 					);
+
+					// Fill empty data
+					ctx.fillStyle = options.nonActiveColor;
+					allBarsByDay.forEach((item, key) => {
+						if ( item ) return false
+
+						let nullable = metas[0].data[key]
+
+						ctx.fillRect(
+							nullable.x - nullable.width * 1.25 / 2,
+							chart.chartArea.top,
+							nullable.width * 1.25,
+							chart.chartArea.height
+						);
+					})
+
 					ctx.restore();
 				},
 				defaults: {
-					color: 'rgba(243, 123, 78, 0.2)'
+					color: 'rgba(243, 123, 78, 0.2)',
+					nonActiveColor: 'rgb(203, 203, 203, 0.4)',
 				}
 			}],
 			options: {
@@ -283,7 +315,7 @@
 							let rawDate = currentLabel.split(' ')
 							let date = dayjs( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
 
-							scope.value._detail_date = Object.keys(historyStats[categoryName.value]).find(item => item.includes(date))
+							scope._detail_date = Object.keys(historyStats[scope.__categoryType]).find(item => item.includes(date))
 						} catch (e) {
 							console.log('Error in click:', e)
 						}

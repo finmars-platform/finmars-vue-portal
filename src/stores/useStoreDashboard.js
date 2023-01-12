@@ -48,7 +48,8 @@ export default defineStore({
 			let apiOpts = {
 				filters: {
 					portfolio: this.scopes[widget.scope].portfolio.value,
-					date_to: this.scopes[widget.scope].date_to.value
+					date_from: this.scopes[widget.scope].date_from.value,
+					date_to: this.scopes[widget.scope].date_to.value,
 				},
 				params: {
 					type: 'nav'
@@ -73,6 +74,7 @@ export default defineStore({
 			let apiOptsPl = {
 				filters: {
 					portfolio: this.scopes[widget.scope].portfolio.value,
+					date_from: this.scopes[widget.scope].date_from.value,
 					date_to: this.scopes[widget.scope].date_to.value
 				},
 				params: {

@@ -111,7 +111,7 @@
 	})
 
 	onMounted(() => {
-
+		prepareData()
 	})
 
 	function createChart() {
@@ -154,7 +154,7 @@
 
 								labelsOriginal.forEach((item, i) => {
 									item.datasetIndex = 0
-									item.fillStyle = dashStore.instrColors['Asset Types' + item.text]
+									item.fillStyle = dashStore.instrColors[scope.value.__categoryType + item.text]
 
 									if ( data.value.datasets[0].data.length <= i ) {
 										item.datasetIndex = 1
@@ -207,7 +207,7 @@
 		status.value = 101
 	}
 	watch(
-		() => scope.value._detail_date,
+		scope.value,
 		() => prepareData()
 	)
 	async function prepareData() {
@@ -220,7 +220,7 @@
 
 		let nav = await dashStore.getHistoryNav({
 			date: scope.value._detail_date,
-			category: 'Asset Types'
+			category: scope.value.__categoryType
 		})
 
 		if ( nav.error ) {
@@ -248,7 +248,7 @@
 		let plus = items
 			.filter(item => item[1] >= 0)
 			.map(item => {
-				plusColors.push( dashStore.instrColors['Asset Types' + item[0]] )
+				plusColors.push( dashStore.instrColors[scope.value.__categoryType + item[0]] )
 				return item[1]
 			})
 
@@ -258,7 +258,7 @@
 		let minus = items
 			.filter(item => item[1] < 0)
 			.map(item => {
-				minusColors.push( dashStore.instrColors['Asset Types' + item[0]] )
+				minusColors.push( dashStore.instrColors[scope.value.__categoryType + item[0]] )
 				return item[1]
 			})
 
