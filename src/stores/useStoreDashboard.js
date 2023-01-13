@@ -12,7 +12,8 @@ export default defineStore({
 				global: {}
 			},
 			// END DATA
-			layout: {},
+			layoutList: [],
+			activeLayoutId: null,
 			activeTab: null,
 			//test
 			history: null,
@@ -30,17 +31,19 @@ export default defineStore({
 		},
 		async getLayout() {
 			let dashboardLayout = localStorage.getItem('dashboardLayout')
-			let res = await useApi('dashboardLayout.get', {params: {id: 17}});
 
-			if ( res.error ) return false
+			let res = await useApi('dashboardLayoutList.get', {filters: {
+				name: 'dashboardV2@'
+			}});
 
-			this.widgets = res.data.widgets || []
-			this.tabs = res.data.tabs || []
-			this.scopes = res.data.scopes || {global: {}}
+			if ( res.error || !res.results.length ) return false
 
-			delete res.data
+			this.layoutList = res.results
+			this.activeLayoutId = res.results[0].id
 
-			this.layout = res
+			this.widgets = this.layout.data.widgets || []
+			this.tabs = this.layout.data.tabs || []
+			this.scopes = this.layout.data.scopes || {global: {}}
 		},
 		async getHistory(wid) {
 			let widget = this.widgets.find(item => item.id == wid)
@@ -137,15 +140,39 @@ export default defineStore({
 			return this.historyPnl[opts.category][opts.date]
 		},
 		async saveLayout() {
-			let res = await useApi('dashboardLayout.put', {
-				params: {id: 17},
-				body: {
-					user_code: this.layout.user_code,
-					data: {
-						widgets: this.widgets,
-						tabs: this.tabs,
-						scopes: this.scopes,
+			if ( !this.layout.id ) {
+				let res = await useApi('dashboardLayout.post', {
+					body: {
+						name: this.layout.name + ' dashboardV2@',
+						user_code: this.layout.user_code,
+						data: {
+							widgets: this.widgets,
+							tabs: this.tabs,
+							scopes: this.scopes,
+						}
 					}
+				})
+
+			} else {
+
+				let res = await useApi('dashboardLayout.put', {
+					params: {id: this.layout.id},
+					body: {
+						user_code: this.layout.user_code,
+						data: {
+							widgets: this.widgets,
+							tabs: this.tabs,
+							scopes: this.scopes,
+						}
+					}
+				})
+			}
+		},
+		async deleteLayout() {
+			let res = await useApi('dashboardLayout.delete', {
+				params: {id: this.layout.id},
+				body: {
+					user_code: this.layout.user_code
 				}
 			})
 		},
@@ -173,6 +200,8 @@ export default defineStore({
 		}
 	},
 	getters: {
-
+		layout(state) {
+			return state.layoutList.find(item => item.id == state.activeLayoutId) || {}
+		}
 	},
 });

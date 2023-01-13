@@ -2,13 +2,33 @@
 	<div>
 		<FmHorizontalPanel>
 			<template #leftActions>
-				Default layout
+				<template v-if="!isEdit">
+					<FmSelect
+						class="m-b-0 m-t-0"
+						v-model="dashStore.activeLayoutId"
+						:items="dashStore.layoutList"
+					/>
+				</template>
+
+				<div class="flex" v-else>
+					<BaseInput
+						class="bi_no_margins m-t-0 m-r-4"
+						v-model="dashStore.layout.name"
+						label="Name"
+					/>
+					<BaseInput
+						class="bi_no_margins m-t-0"
+						v-model="dashStore.layout.user_code"
+						label="User code"
+					/>
+				</div>
 			</template>
 
 			<template #rightActions>
 				<FmBtn v-if="!isEdit" @click="edit()">Edit dashboard</FmBtn>
 
 				<template v-else>
+					<FmBtn @click="deleteDashboard()">Delete dashboard</FmBtn>
 					<FmBtn type="text" @click="editJSON()">edit JSON</FmBtn>
 					<FmBtn type="text" @click="cancelEdit()">cancel</FmBtn>
 					<FmBtn @click="save()">save</FmBtn>
@@ -150,6 +170,10 @@
 		dashStore.saveLayout()
 
 		isEdit.value = false
+	}
+	function deleteDashboard() {
+		dashStore.deleteLayout()
+
 	}
 	function cancelEdit() {
 		dashStore.getLayout()
