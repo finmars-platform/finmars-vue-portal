@@ -14,29 +14,72 @@
 			</template>
 		</FmTopRefresh>
 
-		<div v-if="data && data.results.length" class="fm_container backups">
-			<PagesProfileBackupsItem
-				v-for="backup in data.results"
-				:backup="backup"
-				:key="backup.id"
-				@refresh="refresh()"
+		<div class="fm_container">
+			<BaseTable
+				v-if="!activeBackupId"
+				colls="repeat(4, 1fr)"
+				:items="backupsMetas"
+				:headers="['Workspace', 'Backups', 'Autobackup', 'Last backup']"
+				:cb="openMU"
+			/>
+			<BaseTable
+				v-else
+				colls="1fr 200px 100px 200px 100px 1fr"
+				:items="backupsByMU"
+				:headers="['Name', 'Date', 'Status', 'Performed by', 'Size', 'Notes']"
 			/>
 		</div>
 
-		<div v-else class="text-h4">No backups found</div>
+		<!-- <div v-else class="text-h4">No backups found</div> -->
 
 	</div>
 </template>
 
 <script setup>
 
-	let muNameTerms = ref("");
+	import dayjs from 'dayjs'
 
-	let { data, refresh } = await useAsyncData("masterBackups", () =>
-		useApi("masterBackups.get", {
-			filters: { name: muNameTerms.value }
-		})
-	);
+	let muNameTerms = ref("");
+	let processing = false
+
+	let backupsMetas = [
+		{name: 'New Marscap Production', count: 11, autobackup_status: 'Success', last_backup: '07 Apr 2022 19:23'},
+		{name: 'New Marscap 2', count: 2, autobackup_status: 'Failed', last_backup: '07 Apr 2022 19:23'},
+		{name: 'New Marscap Produc 3', count: 2, autobackup_status: 'Disabled', last_backup: '07 Apr 2022 19:23'},
+	]
+	let backupsByMU = ref([])
+	let activeBackupId = ref(null)
+
+	async function openMU(index) {
+		if ( processing ) return false
+
+		processing = true
+		activeBackupId.value = backupsMetas[index].id
+
+		if ( activeBackupId.value != backupsMetas[index].name ) {
+			activeBackupId.value = backupsMetas[index].name
+			let res = await useApi("masterBackups.get", {
+			});
+
+			backupsByMU.value = []
+			res.results.forEach((item) => {
+				backupsByMU.value.push({
+					name: item.name,
+					date: dayjs(item.created_at).format('DD MMM YYYY HH:mm'),
+					status: 'hz',
+					created_by: item.created_by,
+					file_size: Math.round(item.file_size / 1024) + ' KB',
+					notes: item.notes,
+				})
+
+			})
+
+		}
+
+		processing = false
+	}
+
+
 
 </script>
 
