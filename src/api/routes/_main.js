@@ -190,6 +190,10 @@ export default {
 		get: prefix + '/ui/dashboard-layout/{id}/',
 		put: prefix + '/ui/dashboard-layout/{id}/',
 		post: prefix + '/ui/dashboard-layout/',
+		delete: prefix + '/ui/dashboard-layout/{id}/',
+	},
+	dashboardLayoutList: {
+		get: prefix + '/ui/dashboard-layout/'
 	},
 	expression: {
 		post: prefix + '/utils/expression/',
