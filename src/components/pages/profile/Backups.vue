@@ -51,35 +51,8 @@
 	let activeBackupId = ref(null)
 
 	async function openMU(index) {
-		if ( processing ) return false
-
-		processing = true
-		activeBackupId.value = backupsMetas[index].id
-
-		if ( activeBackupId.value != backupsMetas[index].name ) {
-			activeBackupId.value = backupsMetas[index].name
-			let res = await useApi("masterBackups.get", {
-			});
-
-			backupsByMU.value = []
-			res.results.forEach((item) => {
-				backupsByMU.value.push({
-					name: item.name,
-					date: dayjs(item.created_at).format('DD MMM YYYY HH:mm'),
-					status: 'hz',
-					created_by: item.created_by,
-					file_size: Math.round(item.file_size / 1024) + ' KB',
-					notes: item.notes,
-				})
-
-			})
-
-		}
-
-		processing = false
+		useRouter().push('/profile/backups/' + (backupsMetas[index].id || 18))
 	}
-
-
 
 </script>
 
