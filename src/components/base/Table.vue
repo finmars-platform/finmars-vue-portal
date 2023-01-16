@@ -26,6 +26,7 @@
 				<FmLoader v-if="item === null" />
 				<template v-else>{{ item }}</template>
 			</div>
+			<slot name="actions" :index="index" />
 		</div>
 	</div>
 	<div class="center p-16" v-if="!items.length">
