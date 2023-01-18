@@ -39,6 +39,10 @@ export default {
   props: {
 		modelValue: Boolean,
 		title: String,
+		// {
+		//	cancel:
+		//  action
+		// }
 		controls: Object,
 		no_padding: Boolean,
 		closeOnClickOutside: {

@@ -22,11 +22,8 @@
 
 <script setup>
 
-	const props = defineProps([
-		'refresh'
-	])
 	const emit = defineEmits([
-		'selected:type', 'update:modelValue'
+		'selected:type', 'update:modelValue', 'refresh'
 	])
 </script>
 <style lang="scss" scoped>

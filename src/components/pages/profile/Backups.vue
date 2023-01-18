@@ -3,7 +3,8 @@
 		<FmTopRefresh @refresh="refresh()">
 			<template #action>
 				<BaseInput type="text"
-					v-model="muNameTerms"
+					v-model="searchParam"
+					@keyup.enter="refresh()"
 					placeholder="Search"
 					class="bi_no_borders"
 				>
@@ -16,22 +17,13 @@
 
 		<div class="fm_container">
 			<BaseTable
-				v-if="!activeBackupId"
 				colls="repeat(4, 1fr)"
-				:items="backupsMetas"
+				:items="backupsView"
 				:headers="['Workspace', 'Backups', 'Autobackup', 'Last backup']"
 				:cb="openMU"
 			/>
-			<BaseTable
-				v-else
-				colls="1fr 200px 100px 200px 100px 1fr"
-				:items="backupsByMU"
-				:headers="['Name', 'Date', 'Status', 'Performed by', 'Size', 'Notes']"
-			/>
 		</div>
-
 		<!-- <div v-else class="text-h4">No backups found</div> -->
-
 	</div>
 </template>
 
@@ -39,19 +31,42 @@
 
 	import dayjs from 'dayjs'
 
-	let muNameTerms = ref("");
-	let processing = false
+	let searchParam = ref("");
+	let process = false
+	let backups = ref(null)
 
-	let backupsMetas = [
-		{name: 'New Marscap Production', count: 11, autobackup_status: 'Success', last_backup: '07 Apr 2022 19:23'},
-		{name: 'New Marscap 2', count: 2, autobackup_status: 'Failed', last_backup: '07 Apr 2022 19:23'},
-		{name: 'New Marscap Produc 3', count: 2, autobackup_status: 'Disabled', last_backup: '07 Apr 2022 19:23'},
-	]
-	let backupsByMU = ref([])
-	let activeBackupId = ref(null)
+	refresh()
+
+	let backupsView = computed(() => {
+		if ( !backups.value ) return []
+		let items = []
+		backups.value.forEach((item) => {
+			items.push({
+				name: item.master_user.name,
+				count: item.count,
+				autobackup_status: 'Success',
+				last_backup: '07 Apr 2022 19:23'
+			})
+		})
+
+		return items
+	})
+
+	async function refresh() {
+		if ( process ) return false
+		process = true
+
+		let res = await useApi("masterBackupInfo.get", {
+			filters: {
+				name: searchParam.value
+			}
+		});
+		backups.value = res.results
+		process = false
+	}
 
 	async function openMU(index) {
-		useRouter().push('/profile/backups/' + (backupsMetas[index].id || 18))
+		useRouter().push('/profile/backups/' + (backups.value[index].master_user.id))
 	}
 
 </script>

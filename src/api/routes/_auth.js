@@ -20,8 +20,15 @@ export default {
 	masterBackups: {
 		get: prefix + '/master-user-backups/',
 		'delete': prefix + '/master-user-backups/{id}/',
-		put: prefix + '/master-user-backups/{id}/restore-from-backup/'
+		put: prefix + '/master-user-backups/{id}/restore-from-backup/' // Bad, need rework
 	},
+	masterBackupsSave: {
+		put: prefix + '/master-user-backups/{id}/'
+	},
+	masterBackupInfo: {
+		get: prefix + '/master-user/backups-info/'
+	},
+
 	masterRollback: {
 		put: prefix + '/master-user/{id}/rollback-from-backup/'
 	},
