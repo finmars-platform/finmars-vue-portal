@@ -3,9 +3,10 @@
 		<FmTopRefresh @refresh="refresh()">
 			<template #action>
 				<BaseInput type="text"
-					v-model="muNameTerms"
+					v-model="searchParam"
 					placeholder="Search"
 					class="bi_no_borders"
+					@keyup.enter="refresh()"
 				>
 					<template #button>
 						<FmIcon icon="search" />
@@ -38,13 +39,23 @@
 									class="fm_list_item mr-10"
 									:href="`${config.public.authorizerURL}/master-user-backups/${backups[index].id}/view/`"
 								>
-									<FmIcon icon="cloud_download" /> Download
+									<FmIcon class="m-r-4" icon="cloud_download" /> Download
 								</a>
 
-								<div class="fm_list_item"><FmIcon class="m-r-4" icon="undo" /> Restore</div>
-								<div class="fm_list_item"><FmIcon class="m-r-4" icon="add_circle" /> Create new workspace</div>
+								<div
+									v-if="backups[index].owner == store.member.id"
+									class="fm_list_item"
+									@click="restore(index)"
+								>
+									<FmIcon class="m-r-4" icon="settings_backup_restore" /> Restore
+								</div>
 								<div class="fm_list_item"
-									@click="deleteBackup()"
+									@click="isShowNewBackup = true, restoredID = backups[index].id"
+								>
+									<FmIcon class="m-r-4" icon="add_circle" /> Create new workspace
+								</div>
+								<div class="fm_list_item"
+									@click="deleteBackup(index)"
 								>
 									<FmIcon class="m-r-4" icon="delete" /> Delete
 								</div>
@@ -56,10 +67,33 @@
 		</div>
 		<!-- <div v-else class="text-h4">No backups found</div> -->
 
-		<BaseModal title="Editable" v-model="isOpenEdit">
+		<BaseModal title="Edit backup" v-model="isOpenEdit"
+			:controls="{
+				cancel: {
+					name: 'cancel',
+					cb: () => {}
+				},
+				action: {
+					name: 'Save',
+					cb: saveBackup
+				},
+			}"
+		>
+			{{ editable.master_user_base_api_url }}
 			<BaseInput label="Name" v-model="editable.name" />
-			<BaseInput label="Notice" v-model="editable.notice" />
+			<BaseInput label="Notes" v-model="editable.notes" />
 		</BaseModal>
+
+		<PagesProfileRestoreFromBackup
+			v-model="isShowRestore"
+			:backupId="restoredID"
+			@cancel="isShowRestore = false, restoredID = null"
+		/>
+		<PagesProfileDatabaseFromBackup
+			v-model="isShowNewBackup"
+			:backupId="restoredID"
+			@cancel="isShowNewBackup = false, restoredID = null"
+		/>
 	</div>
 </template>
 
@@ -80,47 +114,89 @@
 				to: "/profile",
 			},
 			{
-				text: "Backups",
-				to: "/profile",
-				disabled: true,
-			},
+				text: "Backup detail",
+				disabled: true
+			}
 		],
 	})
 	const config = useRuntimeConfig()
+	const store = useStore()
+	const route = useRoute()
 
-	let muNameTerms = ref("");
+	let searchParam = ref("")
 	let processing = false
 
 	let backupsByMU = ref([])
 	let editable = ref(null)
+	let restoredID = ref(null)
 	let isOpenEdit = ref(false)
+	let isShowRestore = ref(false)
+	let isShowNewBackup = ref(false)
+	let backups = null
 
-	let res = await useApi("masterBackups.get", {
-	});
-	let backups = res.results
+	refresh()
 
-	backups.forEach((item) => {
-		backupsByMU.value.push({
-			name: item.name,
-			date: dayjs(item.created_at).format('DD MMM YYYY HH:mm'),
-			status: 'hz',
-			created_by: item.created_by,
-			file_size: Math.round(item.file_size / 1024) + ' KB',
-			notes: item.notes,
+	async function refresh() {
+		let res = await useApi("masterBackups.get", {
+			filters: {
+				master_user: route.params.id,
+				name: searchParam.value
+			}
+		});
+		backups = res.results
+		backupsByMU.value = []
+
+		backups.forEach((item) => {
+			backupsByMU.value.push({
+				name: item.name,
+				date: dayjs(item.created_at).format('DD MMM YYYY HH:mm'),
+				status: 'hz',
+				created_by: item.created_by,
+				file_size: Math.round(item.file_size / 1024) + ' KB',
+				notes: item.notes,
+			})
 		})
-	})
-
+	}
 	function edit( index ) {
 		editable.value = backups[index]
 		isOpenEdit.value = true
 	}
-	function restore( index ) {
-		editable.value = backups[index]
+	async function saveBackup() {
+		let res = await useApi('masterBackupsSave.put', {
+			params: {id: editable.value.id },
+			body: editable.value
+		})
 	}
-	async function deleteBackup() {
-		let res = await useApi('masterBackups.delete', {params: {id: backupsByMU.value.id }})
-		console.log('res:', res)
-		emit('refresh')
+	async function restore(index) {
+		let isConfirm = await useConfirm({text: `Are you sure you want to restore ${backups[index].master_user_base_api_url} from
+			backup ${backups[index].name}? All data that was created after this backup will be deleted.`})
+		if ( !isConfirm ) return false
+
+		let res = await useApi("masterRollback.put", {
+			params: { id: backups[index].master_user },
+			body: {
+				master_user_backup_id: backups[index].id,
+				create_backup_before_rollback: true
+			}
+		})
+
+		if ( !res.error ) {
+			useNotify({
+				type: 'success',
+				title: 'Success',
+			})
+		} else {
+			useNotify({
+				type: 'error',
+				title: 'No success',
+			})
+		}
+	}
+	async function deleteBackup(index) {
+		let isConfirm = await useConfirm({text: `Are you sure you want to delete ${backups[index].name}?`})
+		if ( !isConfirm ) return false
+
+		let res = await useApi('masterBackups.delete', {params: {id: backups[index].id }})
 	}
 
 </script>
