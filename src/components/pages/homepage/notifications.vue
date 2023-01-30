@@ -238,18 +238,20 @@
 								<div class="hp_actions_item_btn"
 									v-for="(action, i) in detailsObjs[item.linked_event].event_schedule_object.actions"
 									:key="i"
-									@click="activeAction == action.id"
+									:class="{active: activeAction == action.id}"
+									@click="activeAction = action.id"
 								>
 									{{ action.display_text }}
 								</div>
 								<div class="hp_actions_item_btn"
 									:class="{active: activeAction == 'ignore'}"
-									@click="activeAction == 'ignore'"
+									@click="activeAction = 'ignore'"
 								>
 									Ignore
 								</div>
 								<div class="hp_actions_item_btn m-b-20"
-									@click="activeAction == 'default'"
+									:class="{active: activeAction == 'default'}"
+									@click="activeAction = 'default'"
 								>
 									Apply default
 								</div>
@@ -257,7 +259,7 @@
 								<template #controls>
 									<div class="flex aic sb">
 										<FmBtn type="text">calncel</FmBtn>
-										<FmBtn :disable="true">apply</FmBtn>
+										<FmBtn @click="activeAction ? applyAction(detailsObjs[item.linked_event]) : ''" :disabled="!activeAction">apply</FmBtn>
 									</div>
 								</template>
 							</BaseModal>
@@ -339,6 +341,8 @@
 		{id: 2, name: 'Action required'},
 		{id: 3, name: 'Solved'},
 	]
+
+	let activeAction = ref('')
 
 	let query = ref('')
 	let date = ref('')
@@ -437,6 +441,55 @@
 		}
 	}
 
+	async function applyAction( eventAction ) {
+		console.log('eventAction:', eventAction)
+		if ( activeAction.value == 'ignore' ) {
+			let res = await useApi('instrumentsEventInformed.put', {
+				params: {id: eventAction.id},
+				body: {}
+			})
+			isOpenAction.value = false
+
+			return false
+		}
+		if ( activeAction.value == 'default' ) {
+			let actions = eventAction.event_schedule_object.actions
+				.filter(action => action.is_book_automatic)
+				console.log('actions:', actions)
+
+			if ( actions.length ) {
+
+				for ( let i = 0; i < actions.length; i++ ) {
+
+					await runAction( eventAction.id, actions[i].id )
+				}
+
+			} else {
+				// vm.informed();
+			}
+
+			isOpenAction.value = false
+
+			return false
+		}
+
+		await runAction( eventAction.id, activeAction.value )
+		isOpenAction.value = false
+	}
+	async function runAction( eventId, actionId ) {
+		let action = await useApi('instrumentsEventBook.get', {
+			params: {id: eventId},
+			filters: {action: actionId}
+		})
+
+		let res = await useApi('instrumentsEventBook.put', {
+			params: {id: eventId},
+			filters: {action: actionId, event_status: 4},
+			body: action
+		})
+
+		console.log('res2:', res)
+	}
 	async function loadStream( force ) {
 		if ( !messageObserver.value ) setMessageObserver()
 		if ( force ) {
@@ -634,20 +687,7 @@
 			}
 		}
 	}
-	async function runAction( eventId, actionId ) {
-		let action = await useApi('instrumentsEventBook.get', {
-			params: {id: eventId},
-			filters: {action: actionId}
-		})
 
-		let res = await useApi('instrumentsEventBook.put', {
-			params: {id: eventId},
-			filters: {action: actionId, event_status: 4},
-			body: action
-		})
-
-		console.log('res2:', res)
-	}
 	function backToStats() {
 		if ( messageObserver.value ) messageObserver.value.disconnect()
 		if ( loadingObserver ) {
@@ -885,10 +925,13 @@
 	.hp_actions_item_btn {
 		margin-top: 10px;
 		background: $main-darken;
-		width: 228px;
 		border-radius: 5px;
 		padding: 8px 10px;
 		cursor: pointer;
+
+		&.active {
+			background: #F9EAE4;
+		}
 	}
 	.hp_attach_item {
 		margin-top: 13px;
