@@ -80,7 +80,7 @@ export default async function useApi (
 		let error_object = e.data.error
 
 		let text = error_object
-		let title = error_object.status_code == 500 ? 'Server Error' : 'Client Error'
+		let title = code == 500 ? 'Server Error' : 'Client Error'
 
 		useNotify({ group: 'server_error', title, text, duration: 100000 })
 

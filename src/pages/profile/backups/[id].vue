@@ -17,13 +17,13 @@
 
 		<div class="fm_container">
 			<BaseTable
-				colls="1fr 200px 100px 200px 100px 1fr 50px"
+				colls="50px 1fr 200px 100px 200px 100px 1fr"
 				:items="backupsByMU"
-				:headers="['Name', 'Date', 'Status', 'Performed by', 'Size', 'Notes']"
+				:headers="['', 'Name', 'Date', 'Status', 'Performed by', 'Size', 'Notes']"
 			>
 				<template #actions="{index}">
 					<div class="flex jcc">
-						<FmMenu anchor="bottom right">
+						<FmMenu anchor="bottom left">
 							<template #btn>
 								<FmIcon icon="more_vert" />
 							</template>
