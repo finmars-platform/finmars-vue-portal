@@ -202,15 +202,65 @@
 								</div>
 							</div>
 
-							<b>Available actions</b><br>
+							<div class="hp_details_btn" @click="isOpenAction = true">Select action</div>
+							<BaseModal title="Actions" v-if="isOpenAction" v-model="isOpenAction">
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Status:</div>
+									<div class="hp_actions_item_t">
+										{{ detailsObjs[item.linked_event].status }}
+									</div>
+								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Instrument:</div>
+									<div class="hp_actions_item_t">
+										{{ detailsObjs[item.linked_event].instrument_object?.name }}
+									</div>
+								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Position:</div>
+									<div class="hp_actions_item_t">
+										{{ detailsObjs[item.linked_event].position }}
+									</div>
+								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Account:</div>
+									<div class="hp_actions_item_t">
+										{{ detailsObjs[item.linked_event].account_object?.name }}
+									</div>
+								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Portfolio:</div>
+									<div class="hp_actions_item_t">
+										{{ detailsObjs[item.linked_event].portfolio_object?.name }}
+									</div>
+								</div>
+								<b>Please select an action</b>
+								<div class="hp_actions_item_btn"
+									v-for="(action, i) in detailsObjs[item.linked_event].event_schedule_object.actions"
+									:key="i"
+									@click="activeAction == action.id"
+								>
+									{{ action.display_text }}
+								</div>
+								<div class="hp_actions_item_btn"
+									:class="{active: activeAction == 'ignore'}"
+									@click="activeAction == 'ignore'"
+								>
+									Ignore
+								</div>
+								<div class="hp_actions_item_btn m-b-20"
+									@click="activeAction == 'default'"
+								>
+									Apply default
+								</div>
 
-							<div class="hp_actions_item_btn"
-								v-for="(action, i) in detailsObjs[item.linked_event].event_schedule_object.actions"
-								:key="i"
-								@click="runAction(item.linked_event, action.id)"
-							>
-								{{ action.display_text }}
-							</div>
+								<template #controls>
+									<div class="flex aic sb">
+										<FmBtn type="text">calncel</FmBtn>
+										<FmBtn :disable="true">apply</FmBtn>
+									</div>
+								</template>
+							</BaseModal>
 						</div>
 						<div class="hp_attach" v-if="item.attachments.length">
 							<b class="m-t-10 db">Attachments</b>
@@ -296,6 +346,7 @@
 	let only_new = ref(true)
 	let action = ref('')
 	let types = ref(new Set())
+	let isOpenAction = ref(false)
 
 	async function search() {
 		if ( openedStream.value ) loadStream( true )
