@@ -51,7 +51,7 @@
 
 			if (item.last_backup) {
 				result_item['autobackup_status'] = item.last_backup.status;
-				result_item['last_backup'] item.last_backup.created_at;
+				result_item['last_backup'] = item.last_backup.created_at;
 			}
 
 			items.push(result_item)
