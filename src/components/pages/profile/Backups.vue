@@ -58,7 +58,7 @@
 
 		let res = await useApi("masterBackupInfo.get", {
 			filters: {
-				name: searchParam.value
+				query: searchParam.value
 			}
 		});
 		backups.value = res.results
@@ -66,7 +66,7 @@
 	}
 
 	async function openMU(index) {
-		useRouter().push('/profile/backups/' + (backups.value[index].master_user.id))
+		useRouter().push('/profile/backups/' + (backups.value[index].master_user.base_api_url))
 	}
 
 </script>
