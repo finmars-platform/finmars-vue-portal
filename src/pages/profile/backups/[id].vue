@@ -17,13 +17,13 @@
 
 		<div class="fm_container">
 			<BaseTable
-				colls="1fr 200px 100px 200px 100px 1fr 50px"
+				colls="50px 1fr 200px 100px 200px 100px 1fr"
 				:items="backupsByMU"
-				:headers="['Name', 'Date', 'Status', 'Performed by', 'Size', 'Notes']"
+				:headers="['', 'Name', 'Date', 'Status', 'Performed by', 'Size', 'Notes']"
 			>
 				<template #actions="{index}">
 					<div class="flex jcc">
-						<FmMenu anchor="bottom right">
+						<FmMenu anchor="bottom left">
 							<template #btn>
 								<FmIcon icon="more_vert" />
 							</template>
@@ -139,8 +139,8 @@
 	async function refresh() {
 		let res = await useApi("masterBackups.get", {
 			filters: {
-				master_user: route.params.id,
-				name: searchParam.value
+				space_id: route.params.id,
+				query: searchParam.value
 			}
 		});
 		backups = res.results
@@ -150,8 +150,8 @@
 			backupsByMU.value.push({
 				name: item.name,
 				date: dayjs(item.created_at).format('DD MMM YYYY HH:mm'),
-				status: 'hz',
-				created_by: item.created_by,
+				status: item.status,
+				created_by: item.created_by_object.username,
 				file_size: Math.round(item.file_size / 1024) + ' KB',
 				notes: item.notes,
 			})
