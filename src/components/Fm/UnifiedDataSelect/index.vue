@@ -8,15 +8,17 @@
 					@update:opened="toggleMenu">
 
 		<template #btn>
-			<BaseInput :modelValue="modelValue"
-								 :label="label"
-								 :tooltip="tooltip"
-								 :errorData="errorData"
-								 :class="{active: menuIsOpened, 'bi_no_borders': noBorders}"
-								 :required="required"
+			<BaseInput
+				:modelValue="modelValue"
+				:label="label"
+				:tooltip="tooltip"
+				:errorData="errorData"
+				:class="{active: menuIsOpened, 'bi_no_borders': noBorders}"
+				:required="required"
 
-								 @update:errorData="newVal => emit('update:errorData', newVal)"
-								 @click.stop="openMenu">
+				@update:errorData="newVal => emit('update:errorData', newVal)"
+				@click.stop="openMenu"
+			>
 
 				<template v-if="!noBorders && !noIndicatorButton" #button>
 					<FmBtn type="iconBtn"
@@ -24,11 +26,13 @@
 								 @click.stop="modalIsOpened = true" />
 				</template>
 
-				<input :placeholder="label"
-							 :value="inputText"
-							 type="text"
-							 class="bi_main_input"
-							 @input="onFilterInputChange" />
+				<input
+					:placeholder="label"
+					:value="inputText"
+					type="text"
+					class="bi_main_input"
+					@input="onFilterInputChange"
+				/>
 
 				<template #rightBtn>
 					<slot name="rightBtn" />

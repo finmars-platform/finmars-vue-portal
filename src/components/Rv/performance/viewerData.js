@@ -118,7 +118,12 @@ export default () => {
 				}
 
 				if (!listLayout.data.reportLayoutOptions.datepickerOptions.hasOwnProperty('reportLastDatepicker')) {
-					listLayout.data.reportLayoutOptions.datepickerOptions.reportLastDatepicker = {};
+
+					listLayout.data.reportLayoutOptions.datepickerOptions.reportLastDatepicker = {
+						expression: 'last_business_date(now())',
+						datepickerMode: 'expression'
+					};
+
 				}
 				//endregion
 
