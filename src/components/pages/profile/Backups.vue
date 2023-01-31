@@ -44,8 +44,8 @@
 			items.push({
 				name: item.master_user.name,
 				count: item.count,
-				autobackup_status: 'Success',
-				last_backup: '07 Apr 2022 19:23'
+				autobackup_status: item.last_backup.status,
+				last_backup: item.last_backup.created_at
 			})
 		})
 
