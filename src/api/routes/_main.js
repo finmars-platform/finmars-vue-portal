@@ -131,6 +131,9 @@ export default {
 		get: prefix + '/instruments/generated-event/{id}/book/',
 		put: prefix + '/instruments/generated-event/{id}/book/',
 	},
+	instrumentsEventInformed: {
+		put: prefix + '/instruments/generated-event/{id}/informed/',
+	},
 	listLayoutList: {
 		get: prefix + '/ui/list-layout/',
 	},

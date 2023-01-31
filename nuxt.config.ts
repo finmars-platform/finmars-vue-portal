@@ -28,7 +28,7 @@ export default defineNuxtConfig({
 			title: 'Finmars',
 			viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
 			charset: 'utf-8',
-			link: [{ rel: 'icon', type: 'image/png', href: process.env.NUXT_APP_BASE_URL + 'img/favicon.png' }],
+			link: [{ rel: 'icon', type: 'image/png', href: process.env.NUXT_APP_BASE_URL + 'img/favicon.png' }]
 		},
 		pageTransition: { name: 'page', mode: 'out-in' }
 	},

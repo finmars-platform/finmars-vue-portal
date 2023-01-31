@@ -1,6 +1,8 @@
 <template>
 	<div class="table">
 		<div class="table-row t_header" :style="{gridTemplateColumns: colls}">
+			<div v-if="isActions"><FmCheckbox /></div>
+			<div v-if="isActions" class="table-cell"></div>
 			<div
 				class="table-cell font-weight-bold"
 				v-for="(header, index) in headers"
@@ -17,6 +19,8 @@
 			:key="index"
 			@click="() => {if (cb) cb(index)}"
 		>
+			<div class="center" v-if="isActions"><FmCheckbox /></div>
+			<slot class="table-cell" name="actions" :index="index" />
 			<div
 				class="table-cell"
 				:class="{disabled: item === ''}"
@@ -26,7 +30,6 @@
 				<FmLoader v-if="item === null" />
 				<template v-else>{{ item }}</template>
 			</div>
-			<slot name="actions" :index="index" />
 		</div>
 	</div>
 	<div class="center p-16" v-if="!items.length">
@@ -54,6 +57,9 @@
 		},
 		active: {
 			type: Number
+		},
+		isActions: {
+			type: Boolean
 		}
 	})
 </script>

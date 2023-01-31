@@ -202,15 +202,67 @@
 								</div>
 							</div>
 
-							<b>Available actions</b><br>
+							<div class="hp_details_btn" @click="isOpenAction = true">Select action</div>
+							<BaseModal title="Actions" v-if="isOpenAction" v-model="isOpenAction">
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Status:</div>
+									<div class="hp_actions_item_t">
+										{{ detailsObjs[item.linked_event].status }}
+									</div>
+								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Instrument:</div>
+									<div class="hp_actions_item_t">
+										{{ detailsObjs[item.linked_event].instrument_object?.name }}
+									</div>
+								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Position:</div>
+									<div class="hp_actions_item_t">
+										{{ detailsObjs[item.linked_event].position }}
+									</div>
+								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Account:</div>
+									<div class="hp_actions_item_t">
+										{{ detailsObjs[item.linked_event].account_object?.name }}
+									</div>
+								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Portfolio:</div>
+									<div class="hp_actions_item_t">
+										{{ detailsObjs[item.linked_event].portfolio_object?.name }}
+									</div>
+								</div>
+								<b>Please select an action</b>
+								<div class="hp_actions_item_btn"
+									v-for="(action, i) in detailsObjs[item.linked_event].event_schedule_object.actions"
+									:key="i"
+									:class="{active: activeAction == action.id}"
+									@click="activeAction = action.id"
+								>
+									{{ action.display_text }}
+								</div>
+								<div class="hp_actions_item_btn"
+									:class="{active: activeAction == 'ignore'}"
+									@click="activeAction = 'ignore'"
+								>
+									Ignore
+								</div>
+								<div class="hp_actions_item_btn m-b-20"
+									:class="{active: activeAction == 'default'}"
+									@click="activeAction = 'default'"
+								>
+									Apply default
+								</div>
 
-							<div class="hp_actions_item_btn"
-								v-for="(action, i) in detailsObjs[item.linked_event].event_schedule_object.actions"
-								:key="i"
-								@click="runAction(item.linked_event, action.id)"
-							>
-								{{ action.display_text }}
-							</div>
+								<template #controls>
+									<div class="flex aic sb">
+										<FmBtn type="text">calncel</FmBtn>
+										<FmBtn @click="activeAction ? applyAction(detailsObjs[item.linked_event]) : ''" :disabled="!activeAction">apply</FmBtn>
+									</div>
+								</template>
+							</BaseModal>
 						</div>
 						<div class="hp_attach" v-if="item.attachments.length">
 							<b class="m-t-10 db">Attachments</b>
@@ -290,12 +342,15 @@
 		{id: 3, name: 'Solved'},
 	]
 
+	let activeAction = ref('')
+
 	let query = ref('')
 	let date = ref('')
 	let ordering = ref('-created')
 	let only_new = ref(true)
 	let action = ref('')
 	let types = ref(new Set())
+	let isOpenAction = ref(false)
 
 	async function search() {
 		if ( openedStream.value ) loadStream( true )
@@ -386,6 +441,55 @@
 		}
 	}
 
+	async function applyAction( eventAction ) {
+		console.log('eventAction:', eventAction)
+		if ( activeAction.value == 'ignore' ) {
+			let res = await useApi('instrumentsEventInformed.put', {
+				params: {id: eventAction.id},
+				body: {}
+			})
+			isOpenAction.value = false
+
+			return false
+		}
+		if ( activeAction.value == 'default' ) {
+			let actions = eventAction.event_schedule_object.actions
+				.filter(action => action.is_book_automatic)
+				console.log('actions:', actions)
+
+			if ( actions.length ) {
+
+				for ( let i = 0; i < actions.length; i++ ) {
+
+					await runAction( eventAction.id, actions[i].id )
+				}
+
+			} else {
+				// vm.informed();
+			}
+
+			isOpenAction.value = false
+
+			return false
+		}
+
+		await runAction( eventAction.id, activeAction.value )
+		isOpenAction.value = false
+	}
+	async function runAction( eventId, actionId ) {
+		let action = await useApi('instrumentsEventBook.get', {
+			params: {id: eventId},
+			filters: {action: actionId}
+		})
+
+		let res = await useApi('instrumentsEventBook.put', {
+			params: {id: eventId},
+			filters: {action: actionId, event_status: 4},
+			body: action
+		})
+
+		console.log('res2:', res)
+	}
 	async function loadStream( force ) {
 		if ( !messageObserver.value ) setMessageObserver()
 		if ( force ) {
@@ -583,20 +687,7 @@
 			}
 		}
 	}
-	async function runAction( eventId, actionId ) {
-		let action = await useApi('instrumentsEventBook.get', {
-			params: {id: eventId},
-			filters: {action: actionId}
-		})
 
-		let res = await useApi('instrumentsEventBook.put', {
-			params: {id: eventId},
-			filters: {action: actionId, event_status: 4},
-			body: action
-		})
-
-		console.log('res2:', res)
-	}
 	function backToStats() {
 		if ( messageObserver.value ) messageObserver.value.disconnect()
 		if ( loadingObserver ) {
@@ -834,10 +925,13 @@
 	.hp_actions_item_btn {
 		margin-top: 10px;
 		background: $main-darken;
-		width: 228px;
 		border-radius: 5px;
 		padding: 8px 10px;
 		cursor: pointer;
+
+		&.active {
+			background: #F9EAE4;
+		}
 	}
 	.hp_attach_item {
 		margin-top: 13px;
