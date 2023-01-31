@@ -41,12 +41,20 @@
 		if ( !backups.value ) return []
 		let items = []
 		backups.value.forEach((item) => {
-			items.push({
+
+			let result_item = {
 				name: item.master_user.name,
 				count: item.count,
-				autobackup_status: item.last_backup.status,
-				last_backup: item.last_backup.created_at
-			})
+				autobackup_status: '',
+				last_backup: ''
+			}
+
+			if (item.last_backup) {
+				result_item['autobackup_status'] = item.last_backup.status,
+				result_item['last_backup'] item.last_backup.created_at
+			}
+
+			items.push(result_item)
 		})
 
 		return items
