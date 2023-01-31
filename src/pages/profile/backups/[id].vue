@@ -150,8 +150,8 @@
 			backupsByMU.value.push({
 				name: item.name,
 				date: dayjs(item.created_at).format('DD MMM YYYY HH:mm'),
-				status: 'hz',
-				created_by: item.created_by,
+				status: item.status,
+				created_by: item.created_by.username,
 				file_size: Math.round(item.file_size / 1024) + ' KB',
 				notes: item.notes,
 			})
