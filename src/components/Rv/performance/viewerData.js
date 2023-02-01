@@ -120,7 +120,7 @@ export default () => {
 				if (!listLayout.data.reportLayoutOptions.datepickerOptions.hasOwnProperty('reportLastDatepicker')) {
 
 					listLayout.data.reportLayoutOptions.datepickerOptions.reportLastDatepicker = {
-						expression: 'last_business_date(now())',
+						expression: 'last_business_day(now())',
 						datepickerMode: 'expression'
 					};
 
