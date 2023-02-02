@@ -6,9 +6,11 @@
 		>
 			<div>{{ title }}</div>
 
-			<slot name="rightPart"></slot>
+			<div class="flex-row">
+				<slot name="rightActions" />
 
-			<FmIcon :icon="!isOpen ? 'expand_more' : 'expand_less'" />
+				<FmIcon :icon="!isOpen ? 'expand_more' : 'expand_less'" class="m-l-10" />
+			</div>
 		</div>
 
 		<div class="fm_expansion_panel_content"
@@ -25,6 +27,7 @@
 	})
 
 	let isOpen = ref(true)
+
 </script>
 
 <style lang="scss" scoped>
