@@ -121,8 +121,33 @@
 
 		<div class="fm_container">
 			<FmExpansionPanel title="Period Returns">
-				<template #rightpart>
-					<FmBtn type="iconBtn" />
+				<template #rightActions>
+					<FmBtn
+						v-if="!showBundleActions"
+						class="primaryIcon"
+						type="iconBtn"
+						icon="lock"
+						@click.stop="showBundleActions = true"
+					/>
+
+					<div v-if="showBundleActions">
+
+						<FmBtn
+							:disabled="!activePeriod && activePeriod !== 0"
+							class="primaryIcon"
+							type="iconBtn"
+							icon="delete"
+							@click.stop="showBundleDeletionWarning = true"
+						/>
+
+<!--						<FmBtn
+							type="iconBtn"
+							icon="edit"
+							@click=""
+						/>-->
+
+					</div>
+
 				</template>
 
 				<BaseTable
@@ -169,6 +194,20 @@
 			v-model="openSaveAsModal"
 			@layoutSaved="layoutsStore.getListLayoutsLight(viewerData.content_type)"
 		/>
+
+		<ModalInfo title="Warning"
+							 :description="`Are you sure you want to delete period: ${activePeriodName}?`"
+							 v-model="showBundleDeletionWarning">
+
+			<template #controls="{ cancel }">
+				<div class="flex-row fc-space-between">
+					<FmBtn type="basic" @click="cancel">CANCEL</FmBtn>
+
+					<FmBtn type="basic" @click="deleteBundle(), cancel()">YES</FmBtn>
+				</div>
+			</template>
+
+		</ModalInfo>
 	</div>
 </template>
 
@@ -198,6 +237,9 @@ let newBundle = ref({
 	public_name: computed(() => newBundle.value.name),
 	registers: [],
 })
+
+let showBundleActions = ref(false);
+let showBundleDeletionWarning = ref(false);
 
 let addRegisterIsOpen = ref(false);
 
@@ -306,6 +348,18 @@ let detailYear = ref('')
 let chart
 
 let activePeriod = ref(0)
+let activePeriodName = computed(() => {
+
+	if (!activePeriod.value && activePeriod.value !== 0) {
+		return '';
+	}
+
+	const activePeriodData = bundles.value[activePeriod.value];
+
+	return activePeriodData ? activePeriodData.name : '';
+
+})
+
 let activeYear = ref(0)
 
 let readyStatusData = reactive({
@@ -380,6 +434,7 @@ async function saveLayout () {
 }
 
 async function choosePortfolio(id) {
+
 	activePeriod.value = id
 	detailPortfolio.value = preriodItems.value[id].name
 
@@ -388,6 +443,7 @@ async function choosePortfolio(id) {
 	detailYear.value = portfolioYears.value[0]
 
 	updateChart( portfolioItems.value[0], portfolioItemsCumm.value[0] )
+
 }
 
 async function chooseMonth(id) {
@@ -566,6 +622,22 @@ async function fetchPortfolioBundles() {
 			row.incept = Math.round(incept * 100 * 100) / 100 + '%'
 		})
 	})
+}
+
+async function deleteBundle() {
+
+	const bundleToDelete = bundles.value[activePeriod.value];
+
+	const res = await useApi( 'portfolioBundles.delete', {params: {id: bundleToDelete.id}} );
+
+	if (!res.error) {
+
+		useNotify({type: 'success', title: `Bundle ${bundleToDelete.name} was successfully deleted.`})
+
+		refresh()
+
+	}
+
 }
 
 let detailsLoading = false
