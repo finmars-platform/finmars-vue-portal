@@ -25,6 +25,7 @@
 			</template>
 
 			<template #rightActions>
+				<FmBtn v-if="!isEdit" type="basic" @click="create()">Create dashboard</FmBtn>
 				<FmBtn v-if="!isEdit" @click="edit()">Edit dashboard</FmBtn>
 
 				<template v-else>
@@ -163,6 +164,17 @@
 
 		dashStore.tabs.splice( tabIndex, 1 )
 	}
+	function create() {
+
+		dashStore.activeLayoutId = null;
+
+		dashStore.widgets = [];
+		dashStore.tabs = [];
+		dashStore.scopes = {global: {}};
+
+		isEdit.value = true;
+
+	}
 	function edit() {
 		isEdit.value = true
 	}
@@ -176,7 +188,7 @@
 
 	}
 	function cancelEdit() {
-		dashStore.getLayout()
+		dashStore.getLayouts()
 
 		isEdit.value = false
 	}

@@ -6,6 +6,8 @@
 		>
 			<div>{{ title }}</div>
 
+			<slot name="rightPart"></slot>
+
 			<FmIcon :icon="!isOpen ? 'expand_more' : 'expand_less'" />
 		</div>
 

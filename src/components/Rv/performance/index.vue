@@ -121,6 +121,10 @@
 
 		<div class="fm_container">
 			<FmExpansionPanel title="Period Returns">
+				<template #rightpart>
+					<FmBtn type="iconBtn" />
+				</template>
+
 				<BaseTable
 					:headers="preriodHeaders"
 					:items="preriodItems"
