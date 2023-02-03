@@ -28,7 +28,9 @@
 		],
 	})
 
+	let route = useRoute()
+
 	const tabs = ["Workspaces", "Backups", "Billing", "Settings", "Api"]
-	let tab = ref("Workspaces")
+	let tab = ref(route.query.tab || "Workspaces")
 	let error = ref(null)
 </script>
