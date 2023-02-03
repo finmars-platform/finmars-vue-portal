@@ -201,13 +201,22 @@
 									{{ detailsObjs[item.linked_event].instrument_object.name }}
 								</div>
 							</div>
+							<div class="hp_actions_item flex">
+								<div class="hp_actions_item_h">Status:</div>
+								<div class="hp_actions_item_t">
+									{{ EVENT_STATUSES[detailsObjs[item.linked_event].status] }}
+								</div>
+							</div>
 
-							<div class="hp_details_btn" @click="isOpenAction = true">Select action</div>
-							<BaseModal title="Actions" v-if="isOpenAction" v-model="isOpenAction">
+							<div class="hp_details_btn" @click="isOpenAction.add(item.linked_event)">Select action</div>
+							<BaseModal title="Actions"
+								v-if="isOpenAction.has(item.linked_event)"
+								v-model="isOpenActionTrue"
+							>
 								<div class="hp_actions_item flex">
 									<div class="hp_actions_item_h">Status:</div>
 									<div class="hp_actions_item_t">
-										{{ detailsObjs[item.linked_event].status }}
+										{{ EVENT_STATUSES[detailsObjs[item.linked_event].status] }}
 									</div>
 								</div>
 								<div class="hp_actions_item flex">
@@ -234,6 +243,12 @@
 										{{ detailsObjs[item.linked_event].portfolio_object?.name }}
 									</div>
 								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Date:</div>
+									<div class="hp_actions_item_t">
+										{{ dayjs(detailsObjs[item.linked_event].status_date) }}
+									</div>
+								</div>
 								<b>Please select an action</b>
 								<div class="hp_actions_item_btn"
 									v-for="(action, i) in detailsObjs[item.linked_event].event_schedule_object.actions"
@@ -256,9 +271,9 @@
 									Apply default
 								</div>
 
-								<template #controls>
+								<template #controls="{cancel}">
 									<div class="flex aic sb">
-										<FmBtn type="text">calncel</FmBtn>
+										<FmBtn type="text" @click="isOpenAction.delete(item.linked_event)">cancel</FmBtn>
 										<FmBtn @click="activeAction ? applyAction(detailsObjs[item.linked_event]) : ''" :disabled="!activeAction">apply</FmBtn>
 									</div>
 								</template>
@@ -308,12 +323,25 @@
 <script setup>
 
 	import moment from 'moment'
+	import dayjs from 'dayjs'
 
 	const ACTION_STATUSES = {
 		1: 'Action not required',
 		2: 'Action required',
 		3: 'Solved',
 	}
+	const EVENT_STATUSES = {
+		1: 'NEW',
+		2: 'INFORMED',
+		3: 'BOOKED_SYSTEM_DEFAULT',
+		4: 'BOOKED_USER_ACTIONS',
+		5: 'BOOKED_USER_DEFAULT',
+		6: 'BOOKED_PENDING_SYSTEM_DEFAULT',
+		7: 'BOOKED_PENDING_USER_ACTIONS',
+		8: 'BOOKED_PENDING_USER_DEFAULT',
+		9: 'ERROR',
+	}
+
 	const SECTIONS = {
 		1: 'Events',
 		2: 'Transactions',
@@ -350,7 +378,8 @@
 	let only_new = ref(true)
 	let action = ref('')
 	let types = ref(new Set())
-	let isOpenAction = ref(false)
+	let isOpenAction = reactive(new Set())
+	let isOpenActionTrue = ref(true)
 
 	async function search() {
 		if ( openedStream.value ) loadStream( true )
