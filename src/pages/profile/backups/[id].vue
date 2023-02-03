@@ -50,7 +50,7 @@
 									<FmIcon class="m-r-4" icon="settings_backup_restore" /> Restore
 								</div>
 								<div class="fm_list_item"
-									@click="isShowNewBackup = true, restoredID = backups[index].id"
+									@click="isShowRestore = true, restoredID = backups[index].id"
 								>
 									<FmIcon class="m-r-4" icon="add_circle" /> Create new workspace
 								</div>
@@ -89,11 +89,6 @@
 			:backupId="restoredID"
 			@cancel="isShowRestore = false, restoredID = null"
 		/>
-		<PagesProfileDatabaseFromBackup
-			v-model="isShowNewBackup"
-			:backupId="restoredID"
-			@cancel="isShowNewBackup = false, restoredID = null"
-		/>
 	</div>
 </template>
 
@@ -111,7 +106,7 @@
 			},
 			{
 				text: "Backups",
-				to: "/profile",
+				to: "/profile?tab=Backups",
 			},
 			{
 				text: "Backup detail",
@@ -166,6 +161,8 @@
 			params: {id: editable.value.id },
 			body: editable.value
 		})
+
+		refresh()
 	}
 	async function restore(index) {
 		let isConfirm = await useConfirm({text: `Are you sure you want to restore ${backups[index].master_user_base_api_url} from
@@ -197,6 +194,7 @@
 		if ( !isConfirm ) return false
 
 		let res = await useApi('masterBackups.delete', {params: {id: backups[index].id }})
+		refresh()
 	}
 
 </script>
