@@ -1,7 +1,11 @@
 <template>
-	<FmMenu attach="body"
-					:closeOnClickOutside="false"
-					class="width-100">
+
+	<FmMenu
+		v-model:opened="menuIsOpened"
+		attach="body"
+		:closeOnClickOutside="false"
+		class="width-100"
+	>
 
 		<template #btn>
 			<BaseInput
@@ -10,11 +14,17 @@
 				:readonly="true"
 				:errorData="error"
 				class="cursor-pointer"
+				:class="{'bi_no_borders': noBorders}"
 			>
-				<template #button>
-					<FmBtn type="iconBtn"
-								 icon="calendar_month"
+				<template v-if="!noBorders" #button>
+					<FmBtn
+						type="iconBtn"
+						icon="calendar_month"
 					/>
+				</template>
+
+				<template v-if="noBorders" #rightBtn>
+					<FmIcon :icon="menuIsOpened ? 'arrow_drop_up' : 'arrow_drop_down'" />
 				</template>
 
 			</BaseInput>
@@ -22,173 +32,176 @@
 
 		<template #default="{ close }">
 
-				<div>
+			<div>
 
-					<div class="c_datepicker" :class="{'dates_range': rangeOfDates}">
-						<div class="flex-row">
+				<div class="c_datepicker" :class="{'dates_range': rangeOfDates}">
+					<div class="flex-row">
 
-							<div v-if="!rangeOfDates"
-									 class="complex-datepicker-left">
+						<div v-if="!rangeOfDates" class="complex-datepicker-left">
 
-								<div class="complex-datepicker-mode-container"
-										 :class="{'active': modeIsActive(['datepicker', 'expression'])}"
-										 @click="activateCustomMode()">Custom</div>
+							<div class="complex-datepicker-mode-container"
+									 :class="{'active': modeIsActive(['datepicker', 'expression'])}"
+									 @click="activateCustomMode()">Custom</div>
 
-								<div class="complex-datepicker-mode-container"
-										 :class="{'active': modeIsActive('today')}"
-										 @click="activateMode('today')">Today</div>
+							<div class="complex-datepicker-mode-container"
+									 :class="{'active': modeIsActive('today')}"
+									 @click="activateMode('today')">Today</div>
 
-								<div class="complex-datepicker-mode-container"
-										 :class="{'active': modeIsActive('yesterday-business')}"
-										 @click="activateMode('yesterday-business')">Yesterday (Business)</div>
+							<div class="complex-datepicker-mode-container"
+									 :class="{'active': modeIsActive('yesterday-business')}"
+									 @click="activateMode('yesterday-business')">Yesterday (Business)</div>
 
-								<!--<div class="complex-datepicker-mode-container"
-										 :class="{'active': modeIsActive('inception')}"
-										 @click="activateMode('inception')">All time</div>-->
+							<!--<div class="complex-datepicker-mode-container"
+									 :class="{'active': modeIsActive('inception')}"
+									 @click="activateMode('inception')">All time</div>-->
 
-							</div>
+						</div>
 
-							<div v-if="rangeOfDates"
-									 class="complex-datepicker-left">
+						<div v-if="rangeOfDates"
+								 class="complex-datepicker-left">
 
-								<div class="complex-datepicker-mode-container"
-										 :class="{'active': modeIsActive(['datepicker', 'expression'])}"
-										 @click="activateCustomMode()">Custom</div>
+							<div class="complex-datepicker-mode-container"
+									 :class="{'active': modeIsActive(['datepicker', 'expression'])}"
+									 @click="activateCustomMode()">Custom</div>
 
-								<div class="complex-datepicker-mode-container"
-										 :class="{'active': modeIsActive('week-to-date')}"
-										 @click="activateRangeMode('week-to-date')">WTD</div>
+							<div class="complex-datepicker-mode-container"
+									 :class="{'active': modeIsActive('week-to-date')}"
+									 @click="activateRangeMode('week-to-date')">WTD</div>
 
-								<div class="complex-datepicker-mode-container"
-										 :class="{'active': modeIsActive('month-to-date')}"
-										 @click="activateRangeMode('month-to-date')">MTD</div>
+							<div class="complex-datepicker-mode-container"
+									 :class="{'active': modeIsActive('month-to-date')}"
+									 @click="activateRangeMode('month-to-date')">MTD</div>
 
-								<div class="complex-datepicker-mode-container"
-										 :class="{'active': modeIsActive('quarter-to-date')}"
-										 @click="activateRangeMode('quarter-to-date')">QTD</div>
+							<div class="complex-datepicker-mode-container"
+									 :class="{'active': modeIsActive('quarter-to-date')}"
+									 @click="activateRangeMode('quarter-to-date')">QTD</div>
 
-								<div class="complex-datepicker-mode-container"
-										 :class="{'active': modeIsActive('year-to-date')}"
-										 @click="activateRangeMode('year-to-date')">YTD</div>
+							<div class="complex-datepicker-mode-container"
+									 :class="{'active': modeIsActive('year-to-date')}"
+									 @click="activateRangeMode('year-to-date')">YTD</div>
 
-								<div class="complex-datepicker-mode-container"
-										 :class="{'active': modeIsActive('inception')}"
-										 @click="activateRangeMode('inception')">All time</div>
+							<div class="complex-datepicker-mode-container"
+									 :class="{'active': modeIsActive('inception')}"
+									 @click="activateRangeMode('inception')">All time</div>
 
-							</div>
+						</div>
 
-							<div class="flex-column">
+						<div class="flex-column">
 
-								<div class="flex-row m-b-10" style="margin-left: 18px;">
+							<div class="flex-row m-b-10" style="margin-left: 18px;">
+
+								<div class="date-input-holder"
+										 :class="{'expression-mode': fdOptions.datepickerMode === 'expression'}">
+
+									<div v-if="fdOptions.datepickerMode !== 'inception'">
+
+										<FmInputDate :modelValue="fDate"
+																 :disabled="firstDateIsDisabled"
+																 class="bi_no_margins"
+																 @update:modelValue="newVal => fDate = newVal">
+
+											<template #button>
+
+												<FmBtn type="iconBtn"
+															 class="expression-builder-btn"
+															 :disabled="firstDateIsDisabled"
+															 @click="openFirstEe = true">
+													<img v-show="modeIsActive(['datepicker', 'expression'])"
+															 class="btn-icon" src="~/assets/img/fx-icon.png" alt="function">
+												</FmBtn>
+
+											</template>
+
+										</FmInputDate>
+
+									</div>
+
+									<div v-if="fdOptions.datepickerMode === 'inception'">
+										<p class="complex-datepicker-text">Inception</p>
+									</div>
+
+								</div>
+
+								<div v-if="rangeOfDates" class="flex-row fi-center">
+
+									<div class="complex-datepicker-date-fields-divider">-</div>
 
 									<div class="date-input-holder"
-											 :class="{'expression-mode': fdOptions.datepickerMode === 'expression'}">
-
-										<div v-if="fdOptions.datepickerMode !== 'inception'">
-
-											<FmInputDate :modelValue="fDate"
-																	 :disabled="firstDateIsDisabled"
-																	 class="bi_no_margins"
-																	 @update:modelValue="newVal => fDate = newVal">
-
-												<template #button>
-
-													<FmBtn type="iconBtn"
-																 class="expression-builder-btn"
-																 :disabled="firstDateIsDisabled"
-																 @click="openFirstEe = true">
-														<img v-show="modeIsActive(['datepicker', 'expression'])"
-																 class="btn-icon" src="~/assets/img/fx-icon.png" alt="function">
-													</FmBtn>
-
-												</template>
-
-											</FmInputDate>
-
-										</div>
-
-										<div v-if="fdOptions.datepickerMode === 'inception'">
-											<p class="complex-datepicker-text">Inception</p>
-										</div>
-
-									</div>
-
-									<div v-if="rangeOfDates" class="flex-row fi-center">
-
-										<div class="complex-datepicker-date-fields-divider">-</div>
-
-										<div class="date-input-holder"
-												 :class="{'expression-mode': sdOptions.datepickerMode === 'expression'}">
+											 :class="{'expression-mode': sdOptions.datepickerMode === 'expression'}">
 
 <!--											<button v-show="modeIsActive(['datepicker', 'expression'])"
-															class="expression-builder-btn"
-															ng-click="openEditExpressionDialog($event, 2)">
-												<img class="btn-icon" src="shell/content/img/fx-icon.png" alt="function">
-											</button>-->
+														class="expression-builder-btn"
+														ng-click="openEditExpressionDialog($event, 2)">
+											<img class="btn-icon" src="shell/content/img/fx-icon.png" alt="function">
+										</button>-->
 
-											<FmInputDate :modelValue="sDate"
-																	 :disable="secondDateIsDisabled"
-																	 @update:modelValue="newVal => sDate = newVal">
+										<FmInputDate :modelValue="sDate"
+																 :disable="secondDateIsDisabled"
+																 @update:modelValue="newVal => sDate = newVal">
 
-												<template #button>
+											<template #button>
 
-													<FmBtn type="iconBtn"
-																 class="expression-builder-btn"
-																 :disabled="secondDateIsDisabled"
-																 @click="openSecondEe = true">
-														<img v-show="modeIsActive(['datepicker', 'expression'])"
-																 class="btn-icon" src="~/assets/img/fx-icon.png" alt="function">
-													</FmBtn>
+												<FmBtn type="iconBtn"
+															 class="expression-builder-btn"
+															 :disabled="secondDateIsDisabled"
+															 @click="openSecondEe = true">
+													<img v-show="modeIsActive(['datepicker', 'expression'])"
+															 class="btn-icon" src="~/assets/img/fx-icon.png" alt="function">
+												</FmBtn>
 
-												</template>
+											</template>
 
-											</FmInputDate>
-										</div>
-
+										</FmInputDate>
 									</div>
 
 								</div>
 
-								<div class="flex-row">
-									<div :ref="initFirstDatepicker"
-											 class="datepicker-container"
-											 :class="{'empty': fDate === null, 'disabled': firstDateIsDisabled}"></div>
+							</div>
 
-									<div v-if="rangeOfDates"
-											 :ref="initSecondDatepicker"
-											 class="datepicker-container"
-											 :class="{'empty': sDate === null, 'disabled': firstDateIsDisabled}"></div>
-								</div>
+							<div class="flex-row">
+								<div :ref="initFirstDatepicker"
+										 class="datepicker-container"
+										 :class="{'empty': fDate === null, 'disabled': firstDateIsDisabled}"></div>
 
+								<div v-if="rangeOfDates"
+										 :ref="initSecondDatepicker"
+										 class="datepicker-container"
+										 :class="{'empty': sDate === null, 'disabled': firstDateIsDisabled}"></div>
 							</div>
 
 						</div>
-					</div>
 
-					<div class="flex-row fc-end fi-center c_datepicker_footer">
-						<FmBtn type="basic"
-									 class="m-r-8 m-l-8"
-									 @click="cancel(close)">CANCEL</FmBtn>
-						<FmBtn type="basic"
-									 class="m-r-8 m-l-8"
-									 @click="save(close)">SAVE</FmBtn>
 					</div>
-
 				</div>
+
+				<div class="flex-row fc-end fi-center c_datepicker_footer">
+					<FmBtn type="basic"
+								 class="m-r-8 m-l-8"
+								 @click="cancel(close)">CANCEL</FmBtn>
+					<FmBtn type="basic"
+								 class="m-r-8 m-l-8"
+								 @click="save(close)">SAVE</FmBtn>
+				</div>
+
+			</div>
 
 		</template>
 	</FmMenu>
 
-	<FmExpression :expressions="fdOptions.expression"
-								v-model="openFirstEe"
-								@save="val => {applyExpression(1, val); openFirstEe = false;}"
-								@cancel="openFirstEe = false" />
+	<FmExpression
+		v-model="openFirstEe"
+		:expressions="fdOptions.expression"
+		@save="val => {applyExpression(1, val); openFirstEe = false;}"
+		@cancel="openFirstEe = false"
+	/>
 
-	<FmExpression v-if="rangeOfDates"
-								:expressions="sdOptions.expression"
-								v-model="openSecondEe"
-								@save="val => applyExpression(2, val)"
-								@cancel="openSecondEe = false" />
+	<FmExpression
+		v-if="rangeOfDates"
+		v-model="openSecondEe"
+		:expressions="sdOptions.expression"
+		@save="val => applyExpression(2, val)"
+		@cancel="openSecondEe = false"
+	/>
 
 </template>
 
@@ -213,6 +226,7 @@
 			}
 		},
 		label: String,
+		noBorders: Boolean,
 		errorData: Object,
 	})
 
@@ -225,6 +239,7 @@
 	]);
 
 	let rangeOfDates = ref(props.secondDate !== undefined);
+	let menuIsOpened = ref(false);
 
 	let firstDateIsDisabled = ref(false);
 	let secondDateIsDisabled = ref(false);
@@ -290,7 +305,7 @@
 		}
 	)
 
-	let fdOptions = ref(JSON.parse(JSON.stringify(props.firstDatepickerOptions)));
+	let fdOptions = ref( JSON.parse(JSON.stringify(props.firstDatepickerOptions)) );
 
 	if (!fdOptions.value.datepickerMode) fdOptions.value.datepickerMode = 'datepicker';
 
@@ -917,6 +932,10 @@
 </script>
 
 <style lang="scss" scoped>
+
+	:deep(.bi_main_input) {
+		font-size: 14px;
+	}
 
 	.c_datepicker_footer {
 		height: 60px;
