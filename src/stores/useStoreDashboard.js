@@ -23,13 +23,13 @@ export default defineStore({
 	},
 	actions: {
 		async init() {
-			await this.getLayout()
+			await this.getLayouts()
 			this.activeTab = this.tabs[0]?.id
 		},
 		getWidget(id) {
 			return this.widgets.find(item => item.id == id)
 		},
-		async getLayout() {
+		async getLayouts() {
 			let dashboardLayout = localStorage.getItem('dashboardLayout')
 
 			let res = await useApi('dashboardLayoutList.get', {filters: {
@@ -153,6 +153,10 @@ export default defineStore({
 					}
 				})
 
+				if (!res.error) {
+					this.layoutList.push(res);
+				}
+
 			} else {
 
 				let res = await useApi('dashboardLayout.put', {
@@ -166,7 +170,11 @@ export default defineStore({
 						}
 					}
 				})
+
 			}
+
+			if (!this.activeLayoutId) this.activeLayoutId = this.layoutList[0].id;
+
 		},
 		async deleteLayout() {
 			let res = await useApi('dashboardLayout.delete', {

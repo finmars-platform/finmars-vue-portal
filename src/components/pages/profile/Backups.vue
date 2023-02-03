@@ -41,12 +41,20 @@
 		if ( !backups.value ) return []
 		let items = []
 		backups.value.forEach((item) => {
-			items.push({
+
+			let result_item = {
 				name: item.master_user.name,
 				count: item.count,
-				autobackup_status: 'Success',
-				last_backup: '07 Apr 2022 19:23'
-			})
+				autobackup_status: '',
+				last_backup: ''
+			}
+
+			if (item.last_backup) {
+				result_item['autobackup_status'] = item.last_backup.status;
+				result_item['last_backup'] = item.last_backup.created_at;
+			}
+
+			items.push(result_item)
 		})
 
 		return items
@@ -58,7 +66,7 @@
 
 		let res = await useApi("masterBackupInfo.get", {
 			filters: {
-				name: searchParam.value
+				query: searchParam.value
 			}
 		});
 		backups.value = res.results
@@ -66,7 +74,7 @@
 	}
 
 	async function openMU(index) {
-		useRouter().push('/profile/backups/' + (backups.value[index].master_user.id))
+		useRouter().push('/profile/backups/' + (backups.value[index].master_user.base_api_url))
 	}
 
 </script>
