@@ -255,6 +255,26 @@
 										{{ dayjs(detailsObjs[item.linked_event].notification_date).format('DD.MM.YYYY') }}
 									</div>
 								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Strategy 1:</div>
+									<div class="hp_actions_item_t">
+										{{ detailsObjs[item.linked_event].strategy1_object?.name }}
+									</div>
+								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Strategy 2:</div>
+									<div class="hp_actions_item_t">
+										{{ detailsObjs[item.linked_event].strategy2_object?.name }}
+									</div>
+								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Strategy 3:</div>
+									<div class="hp_actions_item_t">
+										{{ detailsObjs[item.linked_event].strategy3_object?.name }}
+									</div>
+								</div>
+
+
 								<b>Please select an action</b>
 								<div class="hp_actions_item_btn"
 									v-for="(action, i) in detailsObjs[item.linked_event].event_schedule_object.actions"
@@ -477,7 +497,6 @@
 	}
 
 	async function applyAction( eventAction ) {
-		console.log('eventAction:', eventAction)
 		if ( activeAction.value == 'ignore' ) {
 			let res = await useApi('instrumentsEventInformed.put', {
 				params: {id: eventAction.id},
@@ -490,13 +509,12 @@
 		if ( activeAction.value == 'default' ) {
 			let actions = eventAction.event_schedule_object.actions
 				.filter(action => action.is_book_automatic)
-				console.log('actions:', actions)
 
 			if ( actions.length ) {
 
 				for ( let i = 0; i < actions.length; i++ ) {
 
-					await runAction( eventAction.id, actions[i].id )
+					await runAction( eventAction.id, actions[i].id, true )
 				}
 
 			} else {
@@ -511,15 +529,21 @@
 		await runAction( eventAction.id, activeAction.value )
 		isOpenAction.value = false
 	}
-	async function runAction( eventId, actionId ) {
+	async function runAction( eventId, actionId, isDefault = false ) {
 		let action = await useApi('instrumentsEventBook.get', {
 			params: {id: eventId},
 			filters: {action: actionId}
 		})
 
+		let status = isDefault ? 5 : 4
+
+		if (action.is_sent_to_pending) {
+				status = isDefault ? 8 : 7
+		}
+
 		let res = await useApi('instrumentsEventBook.put', {
 			params: {id: eventId},
-			filters: {action: actionId, event_status: 4},
+			filters: {action: actionId, event_status: status},
 			body: action
 		})
 
