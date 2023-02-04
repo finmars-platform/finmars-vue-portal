@@ -88,6 +88,14 @@ let props = defineProps({
 			padding: 0;
 			min-width: 0;
 			height: auto;
+
+			&.primaryIcon {
+				color: $primary;
+
+				.icon {
+					color: $primary;
+				}
+			}
 		}
 		&[disabled] {
 			cursor: default;

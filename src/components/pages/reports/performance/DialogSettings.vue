@@ -6,9 +6,11 @@
 				<RvSettingsBlock title="General">
 					<RvSettingsRow label="Date to">
 						<!--						<FmInputDate v-model="reportOptions.end_date" v-model:errorData="endDateErrorData" />-->
-						<FmInputDateComplex v-model:firstDate="reportOptions.end_date"
-																v-model:firstDatepickerOptions="reportLayoutOptions.datepickerOptions.reportLastDatepicker"
-																v-model:errorData="endDateErrorData" />
+						<FmInputDateComplex
+							v-model:firstDate="reportOptions.end_date"
+							v-model:firstDatepickerOptions="reportLayoutOptions.datepickerOptions.reportLastDatepicker"
+							v-model:errorData="endDateErrorData"
+						/>
 					</RvSettingsRow>
 
 					<RvSettingsRow label="Reporting currency">

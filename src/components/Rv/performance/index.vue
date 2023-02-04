@@ -8,10 +8,12 @@
 			@cancel="showSettingsDialog = false"
 		/>
 
-		<ModalPortfolioRegister title="Add portfolio register"
-														v-model="addRegisterIsOpen"
-														@save="onPrtfRegisterCreate"
-														@cancel="addRegisterIsOpen = false"/>
+		<ModalPortfolioRegister
+			title="Add portfolio register"
+			v-model="addRegisterIsOpen"
+			@save="onPrtfRegisterCreate"
+			@cancel="addRegisterIsOpen = false"
+		/>
 
 		<EvBaseTopPanel
 			height="50"
@@ -20,18 +22,37 @@
 			@openSettings="showSettingsDialog = true;"
 		>
 			<template #rightActions>
-				<div style="width: 175px;">
-					<FmUnifiedDataSelect noBorders
-															 v-model="viewerData.reportOptions.report_currency"
-															 v-model:itemObject="viewerData.reportOptions.report_currency_object"
-															 content_type="currencies.currency" />
+				<div class="flex-row fc-end">
+
+					<div style="flex-basis: 175px;">
+						<FmUnifiedDataSelect
+							v-model="viewerData.reportOptions.report_currency"
+							v-model:itemObject="viewerData.reportOptions.report_currency_object"
+							noBorders
+							content_type="currencies.currency"
+						/>
+					</div>
+
+					<div style="flex-basis: 120px;">
+
+						<FmInputDateComplex
+							v-if="readyStatusData.layout"
+							v-model:firstDate="viewerData.reportOptions.end_date"
+							v-model:firstDatepickerOptions="viewerData.reportLayoutOptions.datepickerOptions.reportLastDatepicker"
+							noBorders
+						/>
+
+						<FmLoader v-if="!readyStatusData.layout" />
+
+					</div>
+
 				</div>
 
 			</template>
 		</EvBaseTopPanel>
 
-		<FmHorizontalPanel height="initial"
-											 class="ev_toolbar">
+		<FmHorizontalPanel height="initial" class="ev_toolbar">
+
 			<template #leftActions>
 				<FmMenu>
 					<template #btn>
@@ -40,13 +61,16 @@
 
 					<template #default="{ close }">
 						<div class="fm_list" @click="close()">
-							<div class="fm_list_item"
-									 @click="addRegisterIsOpen = true">
+							<div class="fm_list_item" @click="addRegisterIsOpen = true">
 								Add Portfolio register
 							</div>
 							<div class="fm_list_item">
-								<div v-if="readyStatusData.portfolioRegisters"
-										 @click="isOpenAddBundle = true">Add bundle</div>
+								<div
+									v-if="readyStatusData.portfolioRegisters"
+									@click="isOpenAddBundle = true"
+								>
+									Add bundle
+								</div>
 								<FmLoader v-if="!readyStatusData.portfolioRegisters" />
 							</div>
 						</div>
@@ -54,9 +78,10 @@
 				</FmMenu>
 
 				<BaseModal
-					title="Add Bundle"
 					v-model="isOpenAddBundle"
-					@update:modelValue="isOpenAddBundle = false">
+					title="Add Bundle"
+					@update:modelValue="isOpenAddBundle = false"
+				>
 
 					<!--					<FmInputEntityNames
 											label="Bundle name"
@@ -65,16 +90,20 @@
 											v-model:user_code="newBundle.user_code"
 											v-model:public_name="newBundle.public_name"
 										/>-->
-					<FmInputText title="Name"
-											 v-model="newBundle.name" />
+					<FmInputText
+						title="Name"
+						v-model="newBundle.name"
+					/>
 
 					<!--					<FmSelectWindow class="p-b-16" v-model="newBundle.registers" :items="registersItems" />-->
-					<BaseMultiSelectTwoAreas class="p-b-16"
-																	 v-model="newBundle.registers"
-																	 :items="registersItems"
-																	 item_id="id"
-																	 item_title="user_code"
-																	 @update:modelValue="newValue => newBundle.registers = newValue" />
+					<BaseMultiSelectTwoAreas
+						class="p-b-16"
+						v-model="newBundle.registers"
+						:items="registersItems"
+						item_id="id"
+						item_title="user_code"
+						@update:modelValue="newValue => newBundle.registers = newValue"
+					/>
 
 					<template #controls>
 						<div class="flex sb">
@@ -92,6 +121,7 @@
 
 		<div class="fm_container">
 			<FmExpansionPanel title="Period Returns">
+
 				<BaseTable
 					:headers="preriodHeaders"
 					:items="preriodItems"
@@ -102,6 +132,36 @@
 			</FmExpansionPanel>
 
 			<FmExpansionPanel :title="detailPortfolio">
+
+				<template #rightActions>
+					<FmBtn
+						v-if="!showBundleActions"
+						class="primaryIcon"
+						type="iconBtn"
+						icon="lock"
+						@click.stop="showBundleActions = true"
+					/>
+
+					<div v-if="showBundleActions">
+
+						<FmBtn
+							:disabled="!activePeriod && activePeriod !== 0"
+							class="primaryIcon"
+							type="iconBtn"
+							icon="delete"
+							@click.stop="showBundleDeletionWarning = true"
+						/>
+
+						<!--						<FmBtn
+													type="iconBtn"
+													icon="edit"
+													@click=""
+												/>-->
+
+					</div>
+
+				</template>
+
 				<div class="table_wrap flex">
 					<div class="coll_years">
 						<div class="coll_item t_header">Years</div>
@@ -132,8 +192,24 @@
 			</FmExpansionPanel>
 		</div>
 
-		<EvModalSaveLayoutAs v-model="openSaveAsModal"
-												 @layoutSaved="layoutsStore.getListLayoutsLight(viewerData.content_type)" />
+		<EvModalSaveLayoutAs
+			v-model="openSaveAsModal"
+			@layoutSaved="layoutsStore.getListLayoutsLight(viewerData.content_type)"
+		/>
+
+		<ModalInfo title="Warning"
+							 :description="`Are you sure you want to delete period: ${activePeriodName}?`"
+							 v-model="showBundleDeletionWarning">
+
+			<template #controls="{ cancel }">
+				<div class="flex-row fc-space-between">
+					<FmBtn type="basic" @click="cancel">CANCEL</FmBtn>
+
+					<FmBtn type="basic" @click="deleteBundle(), cancel()">YES</FmBtn>
+				</div>
+			</template>
+
+		</ModalInfo>
 	</div>
 </template>
 
@@ -163,6 +239,9 @@ let newBundle = ref({
 	public_name: computed(() => newBundle.value.name),
 	registers: [],
 })
+
+let showBundleActions = ref(false);
+let showBundleDeletionWarning = ref(false);
 
 let addRegisterIsOpen = ref(false);
 
@@ -271,6 +350,18 @@ let detailYear = ref('')
 let chart
 
 let activePeriod = ref(0)
+let activePeriodName = computed(() => {
+
+	if (!activePeriod.value && activePeriod.value !== 0) {
+		return '';
+	}
+
+	const activePeriodData = bundles.value[activePeriod.value];
+
+	return activePeriodData ? activePeriodData.name : '';
+
+})
+
 let activeYear = ref(0)
 
 let readyStatusData = reactive({
@@ -345,6 +436,7 @@ async function saveLayout () {
 }
 
 async function choosePortfolio(id) {
+
 	activePeriod.value = id
 	detailPortfolio.value = preriodItems.value[id].name
 
@@ -353,6 +445,7 @@ async function choosePortfolio(id) {
 	detailYear.value = portfolioYears.value[0]
 
 	updateChart( portfolioItems.value[0], portfolioItemsCumm.value[0] )
+
 }
 
 async function chooseMonth(id) {
@@ -498,42 +591,111 @@ async function fetchPortfolioBundles() {
 
 		row.daily = null
 		getDay( bundle.id ).then(day => {
-			row.daily = Math.round(day * 100 * 100) / 100 + '%'
+			let value = Math.round(day * 100 * 100) / 100
+			row.daily = value ? `${value}%` : ''
 		})
 
 		row.month = null
 		getMonth( bundle.id ).then(month => {
-			row.month = Math.round(month * 100 * 100) / 100 + '%'
+			let value = Math.round(month * 100 * 100) / 100
+			row.month = value ? `${value}%` : ''
 		})
 
 		row.q = null
 		getQ( bundle.id ).then(q => {
-			row.q = Math.round(q * 100 * 100) / 100 + '%'
+			let value = Math.round(q * 100 * 100) / 100
+			row.q = value ? `${value}%` : ''
 		})
 
 		row.year = null
 		getYear( bundle.id ).then(year => {
-			row.year = Math.round(year * 100 * 100) / 100 + '%'
+			let value = Math.round(year * 100 * 100) / 100
+			row.year = value ? `${value}%` : ''
 		})
 
 		row.last = null
 		getLastYear( bundle.id ).then(last => {
-			row.last = Math.round(last * 100 * 100) / 100 + '%'
+			let value = Math.round(last * 100 * 100) / 100
+			row.last = value ? `${value}%` : ''
 		})
 
 		row.beforeLast = null
 		getYearBeforeLast( bundle.id ).then(beforeLast => {
-			row.beforeLast = Math.round(beforeLast * 100 * 100) / 100 + '%'
+			let value = Math.round(beforeLast * 100 * 100) / 100
+			row.beforeLast = value ? `${value}%` : ''
 		})
 
 		row.incept = null
 		getIncept( bundle.id ).then(incept => {
-			row.incept = Math.round(incept * 100 * 100) / 100 + '%'
+			let value = Math.round(incept * 100 * 100) / 100
+			row.incept = value ? `${value}%` : ''
 		})
 	})
 }
 
+async function deleteBundle() {
+
+	const bundleToDelete = bundles.value[activePeriod.value];
+
+	const res = await useApi( 'portfolioBundles.delete', {params: {id: bundleToDelete.id}} );
+
+	if (!res.error) {
+
+		useNotify({type: 'success', title: `Bundle ${bundleToDelete.name} was successfully deleted.`})
+
+		refresh()
+
+	}
+
+}
+
 let detailsLoading = false
+async function getEndDate() {
+
+	if (viewerData.reportOptions?.end_date) {
+		return viewerData.reportOptions?.end_date;
+	}
+
+	const roCopy = viewerData.reportOptions ? JSON.parse(JSON.stringify(viewerData.reportOptions)) : viewerData.reportOptions;
+	console.error("No end_date set for performance report ", roCopy);
+
+	// if there is expression for end_date, calculate it
+	if (
+		viewerData.reportLayoutOptions?.datepickerOptions?.reportLastDatepicker.datepickerMode !== 'datepicker' &&
+		viewerData.reportLayoutOptions.datepickerOptions.reportLastDatepicker.expression
+	) {
+
+		const opts = {
+			body: {
+				is_eval: true,
+				expression: viewerData.reportLayoutOptions.datepickerOptions.reportLastDatepicker.expression,
+			}
+		}
+
+		const res = await useApi('expression.post', opts);
+
+		viewerData.reportOptions.end_date = res.result;
+
+		return viewerData.reportOptions.end_date;
+
+	}
+
+	const opts = {
+		body: {
+			is_eval: true,
+			expression: 'last_business_day(now())',
+		}
+	}
+
+	const res = await useApi('expression.post', opts);
+
+	if (res.error) throw new Error(res.error);
+
+	viewerData.reportOptions.end_date = res.result;
+
+	return viewerData.reportOptions.end_date;
+
+}
 
 async function getMonthDetails( name ) {
 	if ( detailsLoading ) return false
@@ -558,7 +720,9 @@ async function getMonthDetails( name ) {
 	} else {
 		begin = moment(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
 	}
-	let end = moment(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
+	const endDate = await getEndDate();
+
+	let end = moment(endDate).add(-1, 'd').format('YYYY-MM-DD')
 
 	let allMonths = await useApi('performanceReport.post', {
 		body: {
@@ -646,47 +810,66 @@ function updateChart( datasetMonth, datasetLine ) {
 }
 
 async function getDay( ids ) {
-	let day = moment(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
+	const endDate = await getEndDate();
+
+	let day = moment(endDate).add(-1, 'd').format('YYYY-MM-DD')
 
 	return await getReports({start: day, end: day, ids, type: 'days'})
 }
 
 async function getMonth( ids ) {
-	let start = dayjs(viewerData.reportOptions?.end_date).set('date', 1).add(-1, 'd').format('YYYY-MM-DD')
-	let end = dayjs(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
+
+	const endDate = await getEndDate();
+
+	let start = dayjs(endDate).set('date', 1).add(-1, 'd').format('YYYY-MM-DD')
+	let end = dayjs(endDate).add(-1, 'd').format('YYYY-MM-DD')
 
 	return await getReports({start, end, ids})
+
 }
 
 async function getQ( ids ) {
-	let endDate = dayjs(viewerData.reportOptions?.end_date)
+	// let endDate = dayjs(viewerData.reportOptions?.end_date)
+	let endDate = await getEndDate();
+	endDate = dayjs(endDate);
+
 	let start = dayjs('2022-01-01')
 		.year(endDate.year())
 		.quarter( endDate.quarter() )
 		.add(-1, 'd')
 		.format('YYYY-MM-DD')
-	let end = dayjs(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
+
+	let end = dayjs(endDate).add(-1, 'd').format('YYYY-MM-DD')
 
 	return await getReports({start, end, ids})
 }
 
 async function getYear( ids ) {
-	let start = `${dayjs(viewerData.reportOptions?.end_date).year() - 1}-12-31`
-	let end = dayjs(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
+
+	const endDate = await getEndDate();
+
+	let start = `${dayjs(endDate).year() - 1}-12-31`
+	let end = dayjs(endDate).add(-1, 'd').format('YYYY-MM-DD')
 
 	return await getReports({start, end, ids})
 }
 
 async function getLastYear( ids ) {
-	let start = `${dayjs(viewerData.reportOptions?.end_date).year() - 2}-12-31`
-	let end = `${dayjs(viewerData.reportOptions?.end_date).year() - 1}-12-30`
+	const endDate = await getEndDate();
+
+	let start = `${dayjs(endDate).year() - 2}-12-31`
+	let end = `${dayjs(endDate).year() - 1}-12-30`
 
 	return await getReports({start, end, ids})
 }
 
 async function getYearBeforeLast( ids ) {
-	let start = `${dayjs(viewerData.reportOptions?.end_date).year() - 3}-12-31`
-	let end = `${dayjs(viewerData.reportOptions?.end_date).year() - 2}-12-30`
+
+	const endDate = await getEndDate();
+
+	let start = `${dayjs(endDate).year() - 3}-12-31`
+
+	let end = `${dayjs(endDate).year() - 2}-12-30`
 
 	return await getReports({start, end, ids})
 }
@@ -698,7 +881,9 @@ async function getIncept( ids ) {
 
 	let start = res.transaction_date
 
-	let end = moment(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
+	const endDate = await getEndDate();
+
+	let end = moment(endDate).add(-1, 'd').format('YYYY-MM-DD')
 
 	return await getReports({start, end, ids})
 }
