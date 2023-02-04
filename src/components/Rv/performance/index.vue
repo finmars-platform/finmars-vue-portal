@@ -121,6 +121,18 @@
 
 		<div class="fm_container">
 			<FmExpansionPanel title="Period Returns">
+
+				<BaseTable
+					:headers="preriodHeaders"
+					:items="preriodItems"
+					:active="activePeriod"
+					colls="repeat(8, 1fr)"
+					:cb="choosePortfolio"
+				/>
+			</FmExpansionPanel>
+
+			<FmExpansionPanel :title="detailPortfolio">
+
 				<template #rightActions>
 					<FmBtn
 						v-if="!showBundleActions"
@@ -140,26 +152,16 @@
 							@click.stop="showBundleDeletionWarning = true"
 						/>
 
-<!--						<FmBtn
-							type="iconBtn"
-							icon="edit"
-							@click=""
-						/>-->
+						<!--						<FmBtn
+													type="iconBtn"
+													icon="edit"
+													@click=""
+												/>-->
 
 					</div>
 
 				</template>
 
-				<BaseTable
-					:headers="preriodHeaders"
-					:items="preriodItems"
-					:active="activePeriod"
-					colls="repeat(8, 1fr)"
-					:cb="choosePortfolio"
-				/>
-			</FmExpansionPanel>
-
-			<FmExpansionPanel :title="detailPortfolio">
 				<div class="table_wrap flex">
 					<div class="coll_years">
 						<div class="coll_item t_header">Years</div>
