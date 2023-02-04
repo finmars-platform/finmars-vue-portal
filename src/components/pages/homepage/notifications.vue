@@ -244,9 +244,15 @@
 									</div>
 								</div>
 								<div class="hp_actions_item flex">
-									<div class="hp_actions_item_h">Date:</div>
+									<div class="hp_actions_item_h">Effective date:</div>
 									<div class="hp_actions_item_t">
-										{{ dayjs(detailsObjs[item.linked_event].status_date) }}
+										{{ dayjs(detailsObjs[item.linked_event].effective_date).format('DD.MM.YYYY') }}
+									</div>
+								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Notification date:</div>
+									<div class="hp_actions_item_t">
+										{{ dayjs(detailsObjs[item.linked_event].notification_date).format('DD.MM.YYYY') }}
 									</div>
 								</div>
 								<b>Please select an action</b>

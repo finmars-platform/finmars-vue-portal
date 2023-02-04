@@ -28,6 +28,10 @@
 				:key="index"
 			>
 				<FmLoader v-if="item === null" />
+				<template v-else-if="typeof item == 'object'">
+					<NuxtLink class="link" :to="item.link" v-if="item.link">{{ item.value }}</NuxtLink>
+					<template v-else>{{ item.value }}</template>
+				</template>
 				<template v-else>{{ item }}</template>
 			</div>
 		</div>
@@ -108,5 +112,8 @@
 	&.disabled {
 		background: $main-darken-2;
 	}
+}
+.link {
+	text-decoration: underline;
 }
 </style>
