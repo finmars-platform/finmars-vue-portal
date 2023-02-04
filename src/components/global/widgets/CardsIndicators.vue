@@ -72,7 +72,7 @@ import dayjs from 'dayjs';
 						: dashStore.scopes[scope][watchProp].value
 
 			watch(
-				dashStore.scopes[scope][watchProp],
+				() => dashStore.scopes[scope][watchProp],
 				() => {
 					if ( prop == 'portfolio' ) portfolio = dashStore.scopes[scope][watchProp].value
 					if ( prop == 'date_to' ) date = typeof dashStore.scopes[scope][watchProp] == 'string'
@@ -85,7 +85,7 @@ import dayjs from 'dayjs';
 		} else {
 
 			watch(
-				scope.value[prop],
+				() => scope.value[prop],
 				() => {
 					if ( prop == 'portfolio' ) portfolio = scope.value[prop].value
 					if ( prop == 'date_to' ) date = scope.value[prop].value

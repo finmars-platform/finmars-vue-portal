@@ -201,16 +201,109 @@
 									{{ detailsObjs[item.linked_event].instrument_object.name }}
 								</div>
 							</div>
-
-							<b>Available actions</b><br>
-
-							<div class="hp_actions_item_btn"
-								v-for="(action, i) in detailsObjs[item.linked_event].event_schedule_object.actions"
-								:key="i"
-								@click="runAction(item.linked_event, action.id)"
-							>
-								{{ action.display_text }}
+							<div class="hp_actions_item flex">
+								<div class="hp_actions_item_h">Status:</div>
+								<div class="hp_actions_item_t">
+									{{ EVENT_STATUSES[detailsObjs[item.linked_event].status] }}
+								</div>
 							</div>
+
+							<div class="hp_details_btn" @click="isOpenAction.add(item.linked_event)">Select action</div>
+							<BaseModal title="Actions"
+								v-if="isOpenAction.has(item.linked_event)"
+								v-model="isOpenActionTrue"
+							>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Status:</div>
+									<div class="hp_actions_item_t">
+										{{ EVENT_STATUSES[detailsObjs[item.linked_event].status] }}
+									</div>
+								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Instrument:</div>
+									<div class="hp_actions_item_t">
+										{{ detailsObjs[item.linked_event].instrument_object?.name }}
+									</div>
+								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Position:</div>
+									<div class="hp_actions_item_t">
+										{{ detailsObjs[item.linked_event].position }}
+									</div>
+								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Account:</div>
+									<div class="hp_actions_item_t">
+										{{ detailsObjs[item.linked_event].account_object?.name }}
+									</div>
+								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Portfolio:</div>
+									<div class="hp_actions_item_t">
+										{{ detailsObjs[item.linked_event].portfolio_object?.name }}
+									</div>
+								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Effective date:</div>
+									<div class="hp_actions_item_t">
+										{{ dayjs(detailsObjs[item.linked_event].effective_date).format('DD.MM.YYYY') }}
+									</div>
+								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Notification date:</div>
+									<div class="hp_actions_item_t">
+										{{ dayjs(detailsObjs[item.linked_event].notification_date).format('DD.MM.YYYY') }}
+									</div>
+								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Strategy 1:</div>
+									<div class="hp_actions_item_t">
+										{{ detailsObjs[item.linked_event].strategy1_object?.name }}
+									</div>
+								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Strategy 2:</div>
+									<div class="hp_actions_item_t">
+										{{ detailsObjs[item.linked_event].strategy2_object?.name }}
+									</div>
+								</div>
+								<div class="hp_actions_item flex">
+									<div class="hp_actions_item_h">Strategy 3:</div>
+									<div class="hp_actions_item_t">
+										{{ detailsObjs[item.linked_event].strategy3_object?.name }}
+									</div>
+								</div>
+
+
+								<b>Please select an action</b>
+								<div class="hp_actions_item_btn"
+									v-for="(action, i) in detailsObjs[item.linked_event].event_schedule_object.actions"
+									:key="i"
+									:class="{active: activeAction == action.id}"
+									@click="activeAction = action.id"
+								>
+									{{ action.display_text }}
+								</div>
+								<div class="hp_actions_item_btn"
+									:class="{active: activeAction == 'ignore'}"
+									@click="activeAction = 'ignore'"
+								>
+									Ignore
+								</div>
+								<div class="hp_actions_item_btn m-b-20"
+									:class="{active: activeAction == 'default'}"
+									@click="activeAction = 'default'"
+								>
+									Apply default
+								</div>
+
+								<template #controls="{cancel}">
+									<div class="flex aic sb">
+										<FmBtn type="text" @click="isOpenAction.delete(item.linked_event)">cancel</FmBtn>
+										<FmBtn @click="activeAction ? applyAction(detailsObjs[item.linked_event]) : ''" :disabled="!activeAction">apply</FmBtn>
+									</div>
+								</template>
+							</BaseModal>
 						</div>
 						<div class="hp_attach" v-if="item.attachments.length">
 							<b class="m-t-10 db">Attachments</b>
@@ -256,12 +349,25 @@
 <script setup>
 
 	import moment from 'moment'
+	import dayjs from 'dayjs'
 
 	const ACTION_STATUSES = {
 		1: 'Action not required',
 		2: 'Action required',
 		3: 'Solved',
 	}
+	const EVENT_STATUSES = {
+		1: 'NEW',
+		2: 'INFORMED',
+		3: 'BOOKED_SYSTEM_DEFAULT',
+		4: 'BOOKED_USER_ACTIONS',
+		5: 'BOOKED_USER_DEFAULT',
+		6: 'BOOKED_PENDING_SYSTEM_DEFAULT',
+		7: 'BOOKED_PENDING_USER_ACTIONS',
+		8: 'BOOKED_PENDING_USER_DEFAULT',
+		9: 'ERROR',
+	}
+
 	const SECTIONS = {
 		1: 'Events',
 		2: 'Transactions',
@@ -290,12 +396,16 @@
 		{id: 3, name: 'Solved'},
 	]
 
+	let activeAction = ref('')
+
 	let query = ref('')
 	let date = ref('')
 	let ordering = ref('-created')
 	let only_new = ref(true)
 	let action = ref('')
 	let types = ref(new Set())
+	let isOpenAction = reactive(new Set())
+	let isOpenActionTrue = ref(true)
 
 	async function search() {
 		if ( openedStream.value ) loadStream( true )
@@ -386,6 +496,59 @@
 		}
 	}
 
+	async function applyAction( eventAction ) {
+		if ( activeAction.value == 'ignore' ) {
+			let res = await useApi('instrumentsEventInformed.put', {
+				params: {id: eventAction.id},
+				body: {}
+			})
+			isOpenAction.value = false
+
+			return false
+		}
+		if ( activeAction.value == 'default' ) {
+			let actions = eventAction.event_schedule_object.actions
+				.filter(action => action.is_book_automatic)
+
+			if ( actions.length ) {
+
+				for ( let i = 0; i < actions.length; i++ ) {
+
+					await runAction( eventAction.id, actions[i].id, true )
+				}
+
+			} else {
+				// vm.informed();
+			}
+
+			isOpenAction.value = false
+
+			return false
+		}
+
+		await runAction( eventAction.id, activeAction.value )
+		isOpenAction.value = false
+	}
+	async function runAction( eventId, actionId, isDefault = false ) {
+		let action = await useApi('instrumentsEventBook.get', {
+			params: {id: eventId},
+			filters: {action: actionId}
+		})
+
+		let status = isDefault ? 5 : 4
+
+		if (action.is_sent_to_pending) {
+				status = isDefault ? 8 : 7
+		}
+
+		let res = await useApi('instrumentsEventBook.put', {
+			params: {id: eventId},
+			filters: {action: actionId, event_status: status},
+			body: action
+		})
+
+		console.log('res2:', res)
+	}
 	async function loadStream( force ) {
 		if ( !messageObserver.value ) setMessageObserver()
 		if ( force ) {
@@ -583,20 +746,7 @@
 			}
 		}
 	}
-	async function runAction( eventId, actionId ) {
-		let action = await useApi('instrumentsEventBook.get', {
-			params: {id: eventId},
-			filters: {action: actionId}
-		})
 
-		let res = await useApi('instrumentsEventBook.put', {
-			params: {id: eventId},
-			filters: {action: actionId, event_status: 4},
-			body: action
-		})
-
-		console.log('res2:', res)
-	}
 	function backToStats() {
 		if ( messageObserver.value ) messageObserver.value.disconnect()
 		if ( loadingObserver ) {
@@ -834,10 +984,13 @@
 	.hp_actions_item_btn {
 		margin-top: 10px;
 		background: $main-darken;
-		width: 228px;
 		border-radius: 5px;
 		padding: 8px 10px;
 		cursor: pointer;
+
+		&.active {
+			background: #F9EAE4;
+		}
 	}
 	.hp_attach_item {
 		margin-top: 13px;

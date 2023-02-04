@@ -131,6 +131,9 @@ export default {
 		get: prefix + '/instruments/generated-event/{id}/book/',
 		put: prefix + '/instruments/generated-event/{id}/book/',
 	},
+	instrumentsEventInformed: {
+		put: prefix + '/instruments/generated-event/{id}/informed/',
+	},
 	listLayoutList: {
 		get: prefix + '/ui/list-layout/',
 	},
@@ -155,6 +158,7 @@ export default {
 	portfolioBundles: {
 		get: prefix + '/portfolios/portfolio-bundle/',
 		post: prefix + '/portfolios/portfolio-bundle/',
+		delete: prefix + '/portfolios/portfolio-bundle/{id}/',
 	},
 	performanceFirstTransaction: {
 		get: prefix + '/reports/performance-report/first-transaction-date/?bundle={id}'
@@ -190,6 +194,10 @@ export default {
 		get: prefix + '/ui/dashboard-layout/{id}/',
 		put: prefix + '/ui/dashboard-layout/{id}/',
 		post: prefix + '/ui/dashboard-layout/',
+		delete: prefix + '/ui/dashboard-layout/{id}/',
+	},
+	dashboardLayoutList: {
+		get: prefix + '/ui/dashboard-layout/'
 	},
 	expression: {
 		post: prefix + '/utils/expression/',

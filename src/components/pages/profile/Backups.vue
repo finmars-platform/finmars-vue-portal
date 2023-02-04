@@ -3,7 +3,8 @@
 		<FmTopRefresh @refresh="refresh()">
 			<template #action>
 				<BaseInput type="text"
-					v-model="muNameTerms"
+					v-model="searchParam"
+					@keyup.enter="refresh()"
 					placeholder="Search"
 					class="bi_no_borders"
 				>
@@ -14,29 +15,62 @@
 			</template>
 		</FmTopRefresh>
 
-		<div v-if="data && data.results.length" class="fm_container backups">
-			<PagesProfileBackupsItem
-				v-for="backup in data.results"
-				:backup="backup"
-				:key="backup.id"
-				@refresh="refresh()"
+		<div class="fm_container">
+			<BaseTable
+				colls="repeat(4, 1fr)"
+				:items="backupsView"
+				:headers="['Workspace', 'Backups', 'Autobackup', 'Last backup']"
 			/>
 		</div>
-
-		<div v-else class="text-h4">No backups found</div>
-
+		<!-- <div v-else class="text-h4">No backups found</div> -->
 	</div>
 </template>
 
 <script setup>
 
-	let muNameTerms = ref("");
+	import dayjs from 'dayjs'
 
-	let { data, refresh } = await useAsyncData("masterBackups", () =>
-		useApi("masterBackups.get", {
-			filters: { name: muNameTerms.value }
+	let searchParam = ref("");
+	let process = false
+	let backups = ref(null)
+
+	refresh()
+
+	let backupsView = computed(() => {
+		if ( !backups.value ) return []
+		let items = []
+		backups.value.forEach((item) => {
+
+			let result_item = {
+				name: {value: item.master_user.name, link: `/profile/backups/${item.master_user.base_api_url}`},
+				count: item.count,
+				autobackup_status: undefined,
+				last_backup: undefined
+			}
+
+			if (item.last_backup) {
+				result_item['autobackup_status'] = item.last_backup.status;
+				result_item['last_backup'] = dayjs(item.last_backup.created_at)
+			}
+
+			items.push(result_item)
 		})
-	);
+
+		return items
+	})
+
+	async function refresh() {
+		if ( process ) return false
+		process = true
+
+		let res = await useApi("masterBackupInfo.get", {
+			filters: {
+				query: searchParam.value
+			}
+		});
+		backups.value = res.results
+		process = false
+	}
 
 </script>
 

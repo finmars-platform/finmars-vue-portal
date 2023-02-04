@@ -17,7 +17,7 @@
 			<div class="chart_row"
 				v-for="(item, i) in instruments"
 				:key="i"
-				:style="{background: inheritColors[item[0]]?.slice(0, 7) + '0f'}"
+				:style="{background: dashStore.instrColors['Asset Types' + item[0]]?.slice(0, 7) + '0f'}"
 				:class="{minus: item[1] < 0}"
 			>
 				<div class="chart_field">
@@ -26,7 +26,7 @@
 						:class="{minus: item[1] < 0}"
 						:style="{
 							width: Math.abs(item[1] / maxTickStock * 50) + '%',
-							background: inheritColors[item[0]]
+							background: dashStore.instrColors['Asset Types' + item[0]]
 						}"
 					></div>
 				</div>
@@ -64,29 +64,6 @@
 	}
 	let status = ref(0)
 
-	const COLORS = [
-		'#577590CC',
-		'#43AA8BCC',
-		'#F9AB4B',
-		'#FA6769',
-		'#F9C74F',
-		'#979BFF',
-		'#D9ED92',
-		'#C8D7F9',
-		'#96B5B4',
-		'#AB7967',
-		'#577590CC',
-		'#43AA8BCC',
-		'#F9AB4B',
-		'#FA6769',
-		'#F9C74F',
-		'#979BFF',
-		'#D9ED92',
-		'#C8D7F9',
-		'#96B5B4',
-		'#AB7967',
-	]
-
 	let dashStore = useStoreDashboard()
 	let widget = dashStore.getWidget(props.wid)
 
@@ -94,7 +71,6 @@
 		return dashStore.scopes[widget.scope]
 	})
 
-	let inheritColors = reactive({})
 	let total = ref('0 USD')
 	let instruments = ref(null)
 	let maxTickStock = ref(null)
@@ -113,10 +89,9 @@
 			status.value = 101
 			return false
 		}
-		let pl = await dashStore.getHistoryNav({
+		let pl = await dashStore.getHistoryPnl({
 			date: scope.value._detail_date,
-			category: 'Asset Types',
-			type: scope.value._cbp_type
+			category: 'Asset Types'
 		})
 
 		if ( pl.error ) {
@@ -137,7 +112,7 @@
 
 		let items = Object.entries(pl.items)
 		items = items
-			.filter((item) => item[1] != 0)
+			.filter((item) => item[1] != 0 && item[1] != null)
 			.sort( (a, b) => b[1] - a[1])
 
 		instruments.value = items

@@ -12,33 +12,38 @@ export default defineStore({
 				global: {}
 			},
 			// END DATA
-			layout: {},
+			layoutList: [],
+			activeLayoutId: null,
 			activeTab: null,
 			//test
-			history: null
+			history: null,
+			historyPnl: null,
+			instrColors: {}
 		};
 	},
 	actions: {
 		async init() {
-			await this.getLayout()
+			await this.getLayouts()
 			this.activeTab = this.tabs[0]?.id
 		},
 		getWidget(id) {
 			return this.widgets.find(item => item.id == id)
 		},
-		async getLayout() {
+		async getLayouts() {
 			let dashboardLayout = localStorage.getItem('dashboardLayout')
-			let res = await useApi('dashboardLayout.get', {params: {id: 17}});
 
-			if ( res.error ) return false
+			let res = await useApi('dashboardLayoutList.get', {filters: {
+				name: 'dashboardV2@'
+			}});
 
-			this.widgets = res.data.widgets || []
-			this.tabs = res.data.tabs || []
-			this.scopes = res.data.scopes || {global: {}}
+			if ( res.error || !res.results.length ) return false
 
-			delete res.data
+			this.layoutList = res.results
+			this.activeLayoutId = res.results[0].id
 
-			this.layout = res
+			this.widgets = this.layout.data.widgets || []
+			this.tabs = this.layout.data.tabs || []
+			this.scopes = this.layout.data.scopes || {global: {}}
 		},
 		async getHistory(wid) {
 			let widget = this.widgets.find(item => item.id == wid)
@@ -46,31 +51,136 @@ export default defineStore({
 			let apiOpts = {
 				filters: {
 					portfolio: this.scopes[widget.scope].portfolio.value,
-					date_to: this.scopes[widget.scope].date_to.value
+					date_from: this.scopes[widget.scope].date_from.value,
+					date_to: this.scopes[widget.scope].date_to.value,
 				},
 				params: {
-					type: this.scopes[widget.scope]._cbp_type || 'nav'
+					type: 'nav'
 				}
 			}
 
-			let res = await useApi('widgetsHistory.get', apiOpts)
-			this.history = res
+			this.history = await useApi('widgetsHistory.get', apiOpts)
 
-			return res
+			let colors = this.generateColors();
+
+			for ( let category in this.history ) {
+				for ( let firstDate in this.history[category] ) {
+					Object.entries(this.history[category][firstDate].items)
+						.forEach((item, key) => {
+							this.instrColors[category + item[0]] = colors[key]
+						})
+
+					break;
+				}
+			}
+
+			let apiOptsPl = {
+				filters: {
+					portfolio: this.scopes[widget.scope].portfolio.value,
+					date_from: this.scopes[widget.scope].date_from.value,
+					date_to: this.scopes[widget.scope].date_to.value
+				},
+				params: {
+					type: 'pl'
+				}
+			}
+
+			this.historyPnl = await useApi('widgetsHistory.get', apiOptsPl)
+
+			return this.scopes[widget.scope]._cbp_type == 'nav' ? this.history : this.historyPnl
+		},
+		generateColors() {
+			return [
+				'#577590CC',
+				'#43AA8BCC',
+				'#F9AB4B',
+				'#FA6769',
+				'#F9C74F',
+				'#979BFF',
+				'#D9ED92',
+				'#C8D7F9',
+				'#96B5B4',
+				'#AB7967',
+				'#577590CC',
+				'#43AA8BCC',
+				'#F9AB4B',
+				'#FA6769',
+				'#F9C74F',
+				'#979BFF',
+				'#D9ED92',
+				'#C8D7F9',
+				'#96B5B4',
+				'#AB7967',
+				'#577590CC',
+				'#43AA8BCC',
+				'#F9AB4B',
+				'#FA6769',
+				'#F9C74F',
+				'#979BFF',
+				'#D9ED92',
+				'#C8D7F9',
+				'#96B5B4',
+				'#AB7967',
+				'#577590CC',
+				'#43AA8BCC',
+				'#F9AB4B',
+				'#FA6769',
+				'#F9C74F',
+				'#979BFF',
+				'#D9ED92',
+				'#C8D7F9',
+				'#96B5B4',
+				'#AB7967',
+			]
 		},
 		async getHistoryNav(opts) {
 			return this.history[opts.category][opts.date]
 		},
+		async getHistoryPnl(opts) {
+			return this.historyPnl[opts.category][opts.date]
+		},
 		async saveLayout() {
-			let res = await useApi('dashboardLayout.put', {
-				params: {id: 17},
-				body: {
-					user_code: this.layout.user_code,
-					data: {
-						widgets: this.widgets,
-						tabs: this.tabs,
-						scopes: this.scopes,
+			if ( !this.layout.id ) {
+				let res = await useApi('dashboardLayout.post', {
+					body: {
+						name: this.layout.name + ' dashboardV2@',
+						user_code: this.layout.user_code,
+						data: {
+							widgets: this.widgets,
+							tabs: this.tabs,
+							scopes: this.scopes,
+						}
 					}
+				})
+
+				if (!res.error) {
+					this.layoutList.push(res);
+				}
+
+			} else {
+
+				let res = await useApi('dashboardLayout.put', {
+					params: {id: this.layout.id},
+					body: {
+						user_code: this.layout.user_code,
+						data: {
+							widgets: this.widgets,
+							tabs: this.tabs,
+							scopes: this.scopes,
+						}
+					}
+				})
+
+			}
+
+			if (!this.activeLayoutId) this.activeLayoutId = this.layoutList[0].id;
+
+		},
+		async deleteLayout() {
+			let res = await useApi('dashboardLayout.delete', {
+				params: {id: this.layout.id},
+				body: {
+					user_code: this.layout.user_code
 				}
 			})
 		},
@@ -98,6 +208,8 @@ export default defineStore({
 		}
 	},
 	getters: {
-
+		layout(state) {
+			return state.layoutList.find(item => item.id == state.activeLayoutId) || {}
+		}
 	},
 });

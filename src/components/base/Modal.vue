@@ -17,7 +17,7 @@
 					</div>
 
 					<div class="modal_bottom">
-						<slot name="controls">
+						<slot name="controls" :cancel="cancel">
 							<div class="flex sb" v-if="controls">
 								<FmBtn type="text"
 									@click="cancel(), controls.cancel.cb ? controls.cancel.cb() : ''">{{ controls.cancel.name }}</FmBtn>
@@ -39,6 +39,10 @@ export default {
   props: {
 		modelValue: Boolean,
 		title: String,
+		// {
+		//	cancel:
+		//  action
+		// }
 		controls: Object,
 		no_padding: Boolean,
 		closeOnClickOutside: {

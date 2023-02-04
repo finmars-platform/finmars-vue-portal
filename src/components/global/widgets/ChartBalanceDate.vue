@@ -46,7 +46,6 @@
 			required: true
 		}
 	})
-	let inheritColors = {}
 
 	const STATUSES = {
 		0: 'Waiting [barchart] data',
@@ -112,7 +111,7 @@
 	})
 
 	onMounted(() => {
-
+		prepareData()
 	})
 
 	function createChart() {
@@ -155,7 +154,7 @@
 
 								labelsOriginal.forEach((item, i) => {
 									item.datasetIndex = 0
-									item.fillStyle = inheritColors[item.text]
+									item.fillStyle = dashStore.instrColors[scope.value.__categoryType + item.text]
 
 									if ( data.value.datasets[0].data.length <= i ) {
 										item.datasetIndex = 1
@@ -208,7 +207,7 @@
 		status.value = 101
 	}
 	watch(
-		() => scope.value._detail_date,
+		scope.value,
 		() => prepareData()
 	)
 	async function prepareData() {
@@ -221,7 +220,7 @@
 
 		let nav = await dashStore.getHistoryNav({
 			date: scope.value._detail_date,
-			category: 'Asset Types'
+			category: scope.value.__categoryType
 		})
 
 		if ( nav.error ) {
@@ -241,14 +240,15 @@
 		}).format(nav.total) + ' USD';
 
 		let items = Object.entries(nav.items)
-		items = items.filter((item) => item[1] != 0)
+		items = items
+			.filter((item) => item[1] != 0 && item[1] != null)
 			.sort( (a, b) => b[1] - a[1])
 
 		let plusColors = []
 		let plus = items
 			.filter(item => item[1] >= 0)
 			.map(item => {
-				plusColors.push( inheritColors[item[0]] )
+				plusColors.push( dashStore.instrColors[scope.value.__categoryType + item[0]] )
 				return item[1]
 			})
 
@@ -258,7 +258,7 @@
 		let minus = items
 			.filter(item => item[1] < 0)
 			.map(item => {
-				minusColors.push( inheritColors[item[0]] )
+				minusColors.push( dashStore.instrColors[scope.value.__categoryType + item[0]] )
 				return item[1]
 			})
 
