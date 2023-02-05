@@ -77,25 +77,17 @@
 					</template>
 				</FmMenu>
 
-				<BaseModal
+<!--				<BaseModal
 					v-model="isOpenAddBundle"
 					title="Add Bundle"
 					@update:modelValue="isOpenAddBundle = false"
 				>
 
-					<!--					<FmInputEntityNames
-											label="Bundle name"
-											v-model:name="newBundle.name"
-											v-model:short_name="newBundle.short_name"
-											v-model:user_code="newBundle.user_code"
-											v-model:public_name="newBundle.public_name"
-										/>-->
 					<FmInputText
 						title="Name"
 						v-model="newBundle.name"
 					/>
 
-					<!--					<FmSelectWindow class="p-b-16" v-model="newBundle.registers" :items="registersItems" />-->
 					<BaseMultiSelectTwoAreas
 						class="p-b-16"
 						v-model="newBundle.registers"
@@ -111,7 +103,10 @@
 							<FmBtn @click="createBundle(), isOpenAddBundle = false">create</FmBtn>
 						</div>
 					</template>
-				</BaseModal>
+				</BaseModal> -->
+				<ModalPortfolioBundleAddEdit v-model="isOpenAddBundle"
+																		 :registers="registersItems"
+																		 @save="createBundle" />
 			</template>
 
 			<template #rightActions>
@@ -142,7 +137,15 @@
 						@click.stop="showBundleActions = true"
 					/>
 
-					<div v-if="showBundleActions">
+					<div v-if="showBundleActions" class="flex-row">
+
+						<FmBtn
+							:disabled="!activePeriod && activePeriod !== 0"
+							class="primaryIcon m-r-8"
+							type="iconBtn"
+							icon="edit"
+							@click.stop="editBundleIsOpened = true"
+						/>
 
 						<FmBtn
 							:disabled="!activePeriod && activePeriod !== 0"
@@ -152,13 +155,14 @@
 							@click.stop="showBundleDeletionWarning = true"
 						/>
 
-						<!--						<FmBtn
-													type="iconBtn"
-													icon="edit"
-													@click=""
-												/>-->
-
 					</div>
+
+					<ModalPortfolioBundleAddEdit v-model="editBundleIsOpened"
+																			 actionType="edit"
+																			 :name="activePeriodData.user_code"
+																			 :bundleRegisters="activePeriodData.registers"
+																			 :registers="registersItems"
+																			 @save="updateBundle" />
 
 				</template>
 
@@ -198,7 +202,7 @@
 		/>
 
 		<ModalInfo title="Warning"
-							 :description="`Are you sure you want to delete period: ${activePeriodName}?`"
+							 :description="`Are you sure you want to delete period: ${activePeriodData.user_code}?`"
 							 v-model="showBundleDeletionWarning">
 
 			<template #controls="{ cancel }">
@@ -240,6 +244,8 @@ let newBundle = ref({
 	registers: [],
 })
 
+let editBundleIsOpened = ref(false);
+
 let showBundleActions = ref(false);
 let showBundleDeletionWarning = ref(false);
 
@@ -253,6 +259,8 @@ function addPrtfRegisterItem(newRegister) {
 		id: newRegister.id,
 	})
 }
+
+
 
 async function fetchPrtfRegistersList() {
 
@@ -301,7 +309,7 @@ async function fetchPricingPoliciesOpts() {
 	}
 }
 
-function resetNewBundle () {
+/*function resetNewBundle () {
 
 	newBundle.value = {
 		name: '',
@@ -311,9 +319,9 @@ function resetNewBundle () {
 		registers: [],
 	};
 
-}
+}*/
 
-async function createBundle() {
+/* async function createBundle() {
 	let res = await useApi('portfolioBundles.post', {body: newBundle.value})
 
 	if ( res ) {
@@ -326,6 +334,59 @@ async function createBundle() {
 			title: 'Bundle created successfully'
 		})
 	}
+} */
+async function createBundle(bundleData) {
+
+	const newBundleData = {
+		name: bundleData.name,
+		short_name: bundleData.name,
+		user_code: bundleData.name,
+		public_name: bundleData.name,
+		registers: bundleData.registers,
+	};
+
+	let res = await useApi('portfolioBundles.post', {body: newBundleData})
+
+	if ( res ) {
+
+		refresh()
+
+		useNotify({
+			type: 'success',
+			title: 'Bundle created successfully'
+		})
+
+	}
+}
+
+async function updateBundle(bundleData) {
+
+	let updatedData = JSON.parse(JSON.stringify( activePeriodData.value ));
+	updatedData = {...updatedData, ...bundleData};
+	updatedData.short_name = bundleData.name;
+	updatedData.user_code = bundleData.name;
+	updatedData.public_name = bundleData.name;
+
+	const opts = {
+		params: {
+			id: updatedData.id,
+		},
+		body: updatedData,
+	};
+
+	let res = await useApi('portfolioBundles.put', opts);
+
+	if (!res.error) {
+
+		useNotify({
+			type: 'success',
+			title: 'Bundle updated successfully'
+		});
+
+		refresh();
+
+	}
+
 }
 
 //#region Main
@@ -348,9 +409,20 @@ let portfolioTotals = ref([])
 let detailPortfolio = ref('')
 let detailYear = ref('')
 let chart
-
+/** Index of selected bundle **/
 let activePeriod = ref(0)
-let activePeriodName = computed(() => {
+/** Object of selected bundle **/
+let activePeriodData = computed(() => {
+
+	if (!activePeriod.value && activePeriod.value !== 0) {
+		return null;
+	}
+
+	return bundles.value[activePeriod.value] || null;
+
+})
+
+/*let activePeriodName = computed(() => {
 
 	if (!activePeriod.value && activePeriod.value !== 0) {
 		return '';
@@ -360,7 +432,7 @@ let activePeriodName = computed(() => {
 
 	return activePeriodData ? activePeriodData.name : '';
 
-})
+})*/
 
 let activeYear = ref(0)
 
