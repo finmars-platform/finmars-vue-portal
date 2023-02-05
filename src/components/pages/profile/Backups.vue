@@ -20,7 +20,6 @@
 				colls="repeat(4, 1fr)"
 				:items="backupsView"
 				:headers="['Workspace', 'Backups', 'Autobackup', 'Last backup']"
-				:cb="openMU"
 			/>
 		</div>
 		<!-- <div v-else class="text-h4">No backups found</div> -->
@@ -43,15 +42,15 @@
 		backups.value.forEach((item) => {
 
 			let result_item = {
-				name: item.master_user.name,
+				name: {value: item.master_user.name, link: `/profile/backups/${item.master_user.base_api_url}`},
 				count: item.count,
-				autobackup_status: '',
-				last_backup: ''
+				autobackup_status: undefined,
+				last_backup: undefined
 			}
 
 			if (item.last_backup) {
 				result_item['autobackup_status'] = item.last_backup.status;
-				result_item['last_backup'] = item.last_backup.created_at;
+				result_item['last_backup'] = dayjs(item.last_backup.created_at)
 			}
 
 			items.push(result_item)
@@ -71,10 +70,6 @@
 		});
 		backups.value = res.results
 		process = false
-	}
-
-	async function openMU(index) {
-		useRouter().push('/profile/backups/' + (backups.value[index].master_user.base_api_url))
 	}
 
 </script>
