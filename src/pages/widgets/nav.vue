@@ -71,7 +71,7 @@
 		},
 		"annualized_return": {
 			h: 'Annualized Return (AR)',
-			t: `AR = (CR)(1/N), <br>
+			t: `AR = (CR)^(1/N), <br>
 				N - number of years since inception <br>
 				CR -cumulative return`
 		},

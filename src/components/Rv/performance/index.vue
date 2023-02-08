@@ -4,7 +4,7 @@
 			v-model="showSettingsDialog"
 			v-model:externalReadyStatus="dsReadyStatus"
 			:bundles="bundles"
-			@save="showSettingsDialog = false, [viewerData.reportOptions, viewerData.reportLayoutOptions, viewerData.components] = $event"
+			@save="showSettingsDialog = false, [viewerData.reportOptions, viewerData.reportLayoutOptions, viewerData.components] = $event, refresh()"
 			@cancel="showSettingsDialog = false"
 		/>
 
@@ -30,6 +30,7 @@
 							v-model:itemObject="viewerData.reportOptions.report_currency_object"
 							noBorders
 							content_type="currencies.currency"
+							@update:modelValue="refresh()"
 						/>
 					</div>
 
