@@ -77,7 +77,7 @@ export default async function useApi (
 			401: 'Not authorized',
 		}
 
-		let error_object = e.data.error
+		let error_object = e.data?.error
 
 		let text = error_object
 		let title = code == 500 ? 'Server Error' : 'Client Error'
