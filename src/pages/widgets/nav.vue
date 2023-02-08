@@ -20,7 +20,7 @@
 
 					<div class="card_tooltip">
 						<div class="card_tooltip_h">{{ STATS_INFO[item[0]].h }}</div>
-						<div class="card_tooltip_t">{{ STATS_INFO[item[0]].t }}</div>
+						<div class="card_tooltip_t" v-html="STATS_INFO[item[0]].t"></div>
 					</div>
 				</FmMenu>
 			</div>
@@ -71,7 +71,9 @@
 		},
 		"annualized_return": {
 			h: 'Annualized Return (AR)',
-			t: 'AR = (CR)^(1/N),   where N - number of years since inception'
+			t: `AR = (CR)(1/N), <br>
+				N - number of years since inception <br>
+				CR -cumulative return`
 		},
 		"portfolio_volatility": {
 			h: 'Portfolio Volatility (PV)',
@@ -79,11 +81,13 @@
 		},
 		"annualized_portfolio_volatility": {
 			h: 'Annualized Volatility (AV)',
-			t: 'AV = PV*(12)^(1/2)'
+			t: 'AV = PV * √(12)'
 		},
 		"sharpe_ratio": {
 			h: 'Sharpe Ratio (ShR)',
-			t: 'ShR = CR/AV'
+			t: `ShR = CR/AV <br>
+					CR - cumulative return <br>
+					AV - annualized volatility`
 		},
 		"max_annualized_drawdown": {
 			h: 'Max  DrawDown Annualized',
@@ -92,7 +96,15 @@
 		"correlation": {
 			h: 'Correlation vs. Index',
 			t: 'The correlation of performances between the portfolio and benchmark  index (S&P 500)'
-		}
+		},
+		"alpha": {
+			h: 'Alpha',
+			t: 'The alpha of a portfolio is the excess return it produces compared to a benchmark index (S&P 500)'
+		},
+		"betta": {
+			h: 'Beta',
+			t: 'Portfolio beta describes relative volatility of an individual securities portfolio, taken as a whole, as measured by the individual stock betas of the securities making it up. '
+		},
 	}
 
 	const STATUSES = {
