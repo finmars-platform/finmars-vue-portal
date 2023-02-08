@@ -202,7 +202,6 @@
 		}*/
 
 		viewerData.layoutToOpen = 'default';
-		// getLayouts();
 
 	}
 
