@@ -1,5 +1,5 @@
 <template>
-	<div class="card_view">
+	<div class="card_view scrollable">
 		<div class="card_wrap"
 			v-if="status == 100"
 			@mousedown="dragStart"
@@ -13,7 +13,7 @@
 				<div class="card_name">{{ STATS[item[0]] }}</div>
 				<div class="card_value">{{ STATS_FORMAT[item[0]] ? STATS_FORMAT[item[0]](item[1]) : '' }}</div>
 
-				<FmMenu class="card_info" anchor="bottom right" offsetY="0" attach="body" v-if="STATS_INFO[item[0]]">
+				<FmMenu class="card_info" open-on-hover v-if="STATS_INFO[item[0]]">
 					<template #btn>
 						<FmIcon icon="info_outlined" size="14" />
 					</template>
@@ -312,7 +312,7 @@
 		z-index: 100;
 		font-size: 12px;
 		padding: 5px 12px;
-		max-width: 200px;
+		max-width: 350px;
 
 		&_h {
 			font-weight: 500;
