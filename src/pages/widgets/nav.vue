@@ -13,9 +13,15 @@
 				<div class="card_name">{{ STATS[item[0]] }}</div>
 				<div class="card_value">{{ STATS_FORMAT[item[0]] ? STATS_FORMAT[item[0]](item[1]) : '' }}</div>
 
-				<FmMenu class="card_info" open-on-hover v-if="STATS_INFO[item[0]]">
+				<FmMenu
+					v-if="STATS_INFO[item[0]]"
+					class="card_info"
+					open-on-hover
+					:offsetX="24"
+					:offsetY="-24"
+				>
 					<template #btn>
-						<FmIcon icon="info_outlined" size="14" />
+						<FmIcon class="card_info_icon" icon="info_outlined" size="14" />
 					</template>
 
 					<div class="card_tooltip">
@@ -103,7 +109,7 @@
 		},
 		"betta": {
 			h: 'Beta',
-			t: 'Portfolio beta describes relative volatility of an individual securities portfolio, taken as a whole, as measured by the individual stock betas of the securities making it up. '
+			t: 'Portfolio beta measures its relative volatility, expressed as the weighted average of the betas of each individual security within it.'
 		},
 	}
 
@@ -325,9 +331,12 @@
 	}
 	.card_info {
 		position: absolute;
-		top: 5px;
-		right: 5px;
-		width: 14px;
+		top: 0;
+		right: 0;
+	}
+	.card_info_icon {
+		width: 24px;
+		padding: 5px;
 	}
 	.error_wrap {
 		height: 90px;

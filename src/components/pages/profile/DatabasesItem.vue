@@ -269,7 +269,10 @@
 		}
 	}
 	async function deleteDB() {
-		let isConfirm = await useConfirm({text: 'Are you sure?'})
+		let isConfirm = await useConfirm({
+			text: 'Are you sure?',
+			check: props.db.name,
+		})
 		if ( !isConfirm ) return false
 
 		let res = props.db.is_owner
