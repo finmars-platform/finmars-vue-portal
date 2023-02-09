@@ -120,7 +120,6 @@
 		await openHandlerBegins();
 
 		let activatorRect = activator.value.getBoundingClientRect()
-		console.log('activatorRect:', activatorRect)
 		let popupRect = popup.value.getBoundingClientRect()
 		let parent = popup.value.closest('.scrollable')
 		let distanceToLeft, distanceToRight, distanceToTop, distanceToBottom
