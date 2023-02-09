@@ -42,7 +42,7 @@
 		attach: String,
 
 		minHeight: String,
-		menuWidth: [Number, String],
+		menuWidth: [Number, String], // depricated
 		minWidth: [Number, String],
 
 		positionX: Number,
@@ -120,6 +120,7 @@
 		await openHandlerBegins();
 
 		let activatorRect = activator.value.getBoundingClientRect()
+		console.log('activatorRect:', activatorRect)
 		let popupRect = popup.value.getBoundingClientRect()
 		let parent = popup.value.closest('.scrollable')
 		let distanceToLeft, distanceToRight, distanceToTop, distanceToBottom
@@ -127,17 +128,17 @@
 		if ( parent ) {
 			let parentRect = parent.getBoundingClientRect()
 
-			distanceToLeft = Math.abs(parentRect.left - activatorRect.left)
-			distanceToRight = Math.abs(parentRect.right - activatorRect.right)
-			distanceToTop = Math.abs(activatorRect.top - parentRect.top)
-			distanceToBottom = Math.abs(parentRect.bottom - activatorRect.bottom)
+			distanceToLeft = Math.abs(parentRect.left - activatorRect.left - props.offsetX)
+			distanceToRight = Math.abs(parentRect.right - activatorRect.right - props.offsetX)
+			distanceToTop = Math.abs(activatorRect.top - parentRect.top - props.offsetY)
+			distanceToBottom = Math.abs(parentRect.bottom - activatorRect.bottom - props.offsetY)
 
 		} else {
 
-			distanceToLeft = Math.abs(window.innerWidth - activatorRect.left)
-			distanceToRight = Math.abs(window.innerWidth - activatorRect.right)
-			distanceToTop = Math.abs(activatorRect.top - window.innerHeight)
-			distanceToBottom = Math.abs(window.innerHeight - activatorRect.bottom)
+			distanceToLeft = Math.abs(window.innerWidth - activatorRect.left - props.offsetX)
+			distanceToRight = Math.abs(window.innerWidth - activatorRect.right - props.offsetX)
+			distanceToTop = Math.abs(activatorRect.top - window.innerHeight - props.offsetY)
+			distanceToBottom = Math.abs(window.innerHeight - activatorRect.bottom - props.offsetY)
 		}
 
 		// Hack чтобы посчитать реальную ширину
@@ -152,11 +153,12 @@
 			)
 			|| ((distanceToTop <= popupRect.height) && (distanceToBottom > distanceToTop))
 		) {
+			console.log('props.offsetY:', props.offsetY)
 			popup.value.style.top    = `${activatorRect.height + props.offsetY}px`
-			popup.value.style.maxHeight = `${distanceToBottom - 20}px`
+			popup.value.style.maxHeight = `${distanceToBottom}px`
 		} else {
 			popup.value.style.bottom = `${activatorRect.height + props.offsetY}px`;
-			popup.value.style.maxHeight = `${distanceToTop - 20}px`
+			popup.value.style.maxHeight = `${distanceToTop}px`
 		}
 		// X axios
 		if (
@@ -166,10 +168,10 @@
 			)
 			|| ((distanceToRight <= popupRect.width) && (distanceToLeft > distanceToRight))
 		) {
-			popup.value.style.right = 0
+			popup.value.style.right = 0 + props.offsetX + 'px'
 			popup.value.style.left = 'auto'
 		} else {
-			popup.value.style.left = 0
+			popup.value.style.left = 0 + props.offsetX + 'px'
 		}
 
 	};
