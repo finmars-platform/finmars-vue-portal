@@ -1,7 +1,7 @@
 <template>
 
 	<div class="panel_wrap">
-		<FmHorizontalPanel>
+		<FmHorizontalPanel height="65">
 			<template #leftActions>
 				<slot name="action" />
 			</template>

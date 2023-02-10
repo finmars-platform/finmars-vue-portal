@@ -1,56 +1,43 @@
 <template>
-	<FmSettingsLayout
+	<CommonSettingsLayout
 		title="Add member"
-		:saveFunc="save"
 		saveText="Send invite"
-		:cancelFunc="cancel"
+		@save="save"
+		@cancel="cancel"
 	>
 		<template #left>
-			<v-card class="mb-6">
-				<v-card-title class="text-h5">General</v-card-title>
-				<v-card-content>
-					<v-text-field
-						label="Name"
-						placeholder="Name"
-						variant="outlined"
-						density="comfortable"
-						v-model="form.username"
-					/>
-					<v-text-field
-						label="Email"
-						placeholder="Email"
-						variant="outlined"
-						density="comfortable"
-						v-model="form.email"
-					/>
-				</v-card-content>
-			</v-card>
+			<FmCard title="General" class="mb-6">
+				<BaseInput
+					label="Name"
+					v-model="form.username"
+				/>
+				<BaseInput
+					label="Email"
+					v-model="form.email"
+				/>
+			</FmCard>
 		</template>
 		<template #right>
-			<v-card class="mb-6">
-				<v-card-title>Roles</v-card-title>
-				<v-card-content>
-					<BaseMultiSelectInput
-						v-model="form.groups"
-						title="Groups"
-						:items="groups"
-					/>
+			<FmCard title="Roles" class="m-b-6">
+				<BaseMultiSelectInput
+					v-model="form.groups"
+					title="Groups"
+					:items="groups"
+					item_id="name"
+				/>
 
-					<v-checkbox
-						v-model="form.is_owner"
-						label="Owner"
-						color="primary"
-						hide-details
-					></v-checkbox>
-				</v-card-content>
-			</v-card>
+				<FmCheckbox
+					v-model="form.is_owner"
+					label="Owner"
+				/>
+			</FmCard>
 		</template>
-	</FmSettingsLayout>
+	</CommonSettingsLayout>
 </template>
 
 <script setup>
 
-	import moment from 'moment'
+	import dayjs from 'dayjs'
 
 	definePageMeta({
 		bread: [
@@ -73,13 +60,14 @@
 		groups: ['Guests'],
 		is_owner: false
 	})
-	let groups = ref({})
+	let groups = ref([])
 
 	async function init() {
 		let res = await useApi('userGroups.get')
 		groups.value = res.results
 	}
 	function findIds( val ) {
+		if ( typeof val == 'string' ) val = val.split(',')
 		let result = []
 		val.forEach( itemArr => {
 			let elem = groups.value.find(itemObj => itemObj.name == itemArr)
@@ -99,7 +87,7 @@
 		router.push('/settings/permissions')
 	}
 	function fromatDate( date ) {
-		return moment( date ).format('DD.MM.YYYY LT')
+		return dayjs( date ).format('DD.MM.YYYY LT')
 	}
 
 	if ( store.current.base_api_url ) {

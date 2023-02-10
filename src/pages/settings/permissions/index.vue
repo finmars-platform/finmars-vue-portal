@@ -1,11 +1,18 @@
 <template>
 	<div>
 		<FmTopRefresh
-			:refresh="refresh"
-		/>
-		<div class="flex aic">
-			<div class="py-6 px-7">
-				<div class="table">
+			@refresh="refresh()"
+		>
+			<template #action>
+				<FmIcon
+					btnPrimary
+					icon="add"
+					@click="$router.push(`/settings/permissions/members/add`)"
+				/>
+			</template>
+		</FmTopRefresh>
+		<div class="fm_container">
+			<div class="table">
 				<div class="table-row header">
 					<div class="table-cell">Name</div>
 					<div class="table-cell">Role</div>
@@ -24,10 +31,9 @@
 					<div class="table-cell">{{ item.status }}</div>
 					<div class="table-cell">{{ item.groups }}</div>
 				</div>
-				</div>
 			</div>
 
-			<div class="table">
+			<!-- <div class="table">
 				<div class="table-row header">
 					<div class="table-cell">Procedure</div>
 					<div class="table-cell">Date</div>
@@ -39,25 +45,24 @@
 					:key="item.id"
 					:item="item"
 				/>
-			</div>
+			</div> -->
 		</div>
 	</div>
 </template>
 
 <script setup>
-	import moment from 'moment'
+
+	import dayjs from 'dayjs'
 
 	definePageMeta({
 		bread: [
 			{
 				text: 'Permissions: Members',
-				to: '/settings/permissions',
-				disabled: false
+				disabled: true
 			}
 		],
 	});
 	const store = useStore()
-
 
 	let stockMembers = ref(null)
 	let stockInvites = ref(null)
@@ -90,13 +95,9 @@
 	let statuses = ref(null)
 	let processing = ref(false)
 
-	const mapSratuses = {
-		P: 'Processing',
-		D: 'Done',
-	}
 
 	async function init() {
-		let res = await useApi('members.get')
+		let res = await useApi('memberList.get')
 		stockMembers.value = res.results
 
 		res = await useApi('memberInvites.get')
@@ -106,10 +107,10 @@
 		statuses.value = resStatus.results
 	}
 	function refresh() {
-
+		init()
 	}
 	function fromatDate( date ) {
-		return moment( date ).format('DD.MM.YYYY LT')
+		return dayjs( date ).format('DD.MM.YYYY LT')
 	}
 	if ( store.current.base_api_url ) {
 		init()
@@ -142,7 +143,7 @@
 	// height: 26px;
 	&.header {
 		background: #F2F2F2;
-		height: 50px;
+		height: 35px;
 	}
 }
 .table-cell {
