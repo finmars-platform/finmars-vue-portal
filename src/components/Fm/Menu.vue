@@ -1,5 +1,4 @@
 <template>
-
 	<div class="fm_menu" v-click-outside="closeOnCo">
 		<div ref="activator" class="height-100">
 			<slot name="btn" :isOpen="isOpen"></slot>
@@ -17,262 +16,271 @@
 				</div>
 			</transition>
 		</Teleport>
-
 	</div>
-
 </template>
 
 <script setup>
 
-let props = defineProps({
-	opened: Boolean,
-	anchor: {
-		type: String,
-		default: 'bottom left',
-	},
-	relativeTo: [String, Node],
+	const props = defineProps({
+		opened: Boolean,
+		anchor: {
+			type: String,
+			default: 'bottom left',
+		},
+		relativeTo: [String, Node],
 
-	openOn: {
-		type: [String, Boolean],
-		default: 'click',
-	},
-	disabled: Boolean,
-	closeOnClickOutside: {
-		type: Boolean,
-		default: true,
-	},
+		openOnHover: {
+			type: Boolean,
+			default: false,
+		},
+		disabled: Boolean,
+		closeOnClickOutside: {
+			type: Boolean,
+			default: true,
+		},
 
-	attach: String,
+		attach: String,
 
-	minHeight: String,
-	menuWidth: [Number, String],
-	minWidth: [Number, String],
+		minHeight: String,
+		menuWidth: [Number, String], // depricated
+		minWidth: [Number, String],
 
-	positionX: Number,
-	positionY: Number,
-	offsetX: {
-		type: Number,
-		default: 0
-	},
-	offsetY: {
-		type: Number,
-		default: 0
-	},
-})
+		positionX: Number,
+		positionY: Number,
+		offsetX: {
+			type: Number,
+			default: 0
+		},
+		offsetY: {
+			type: Number,
+			default: 0
+		},
+	})
 
-let emit = defineEmits(['update:opened'])
+	const emit = defineEmits(['update:opened'])
 
-let isOpen = ref(false)
-let popup = ref(null) // DOM element
-let activator = ref(null) // DOM element
+	let isOpen = ref(false)
+	let popup = ref(null) // DOM element
+	let activator = ref(null) // DOM element
 
-let openEventsList = computed(() => {
-	return props.openOn ? props.openOn.split(' ') : [];
-});
+	let isTop = props.anchor.includes('top')
+	let isBot = props.anchor.includes('bottom')
+	let isLeft = props.anchor.includes('left')
+	let isRight = props.anchor.includes('right')
 
-let isTop = props.anchor.includes('top')
-let isBot = props.anchor.includes('bottom')
-let isLeft = props.anchor.includes('left')
-let isRight = props.anchor.includes('right')
+	let openEventsList = computed(() => {
+		return props.openOn ? props.openOn.split(' ') : [];
+	});
 
-watch(
-	() => props.opened,
-	() => {
-		if (!props.disabled) isOpen.value = props.opened;
-	}
-)
+	onMounted(() => {
 
-async function openHandlerBegins() {
+		if ( props.openOnHover ) {
+			activator.value.addEventListener('mouseover', () => {
+				isOpen.value = true
+			});
+			activator.value.addEventListener('mouseleave', () => {
+				isOpen.value = false
+			});
 
-	await nextTick()
+		} else {
 
-	if (props.minWidth || props.minWidth === 0) {
-
-		let minWidth = props.minWidth;
-
-		if ( isNaN(props.minWidth) ) {
-			minWidth = props.minWidth + 'px';
+			activator.value.addEventListener('click', toggle);
 		}
 
-		popup.value.style['min-width'] = minWidth;
+	});
+
+	watch(
+		() => props.opened,
+		() => {
+			if (!props.disabled) isOpen.value = props.opened;
+		}
+	)
+
+	async function openHandlerBegins() {
+
+		await nextTick()
+
+		if (props.minWidth || props.minWidth === 0) {
+
+			let minWidth = props.minWidth;
+
+			if ( isNaN(props.minWidth) ) {
+				minWidth = props.minWidth + 'px';
+			}
+
+			popup.value.style['min-width'] = minWidth;
+
+		}
 
 	}
 
-}
-
-let isOpenHandler = async () => {
-
-	if ( !isOpen.value ) return false
-	await openHandlerBegins();
-
-	let activatorRect = activator.value.getBoundingClientRect()
-	let popupRect = popup.value.getBoundingClientRect()
-
-	let parent = popup.value.closest('.scrollable')
-	let distanceToLeft, distanceToRight, distanceToTop, distanceToBottom
-
-	if ( parent ) {
-		let parentRect = parent.getBoundingClientRect()
-
-		distanceToLeft = parentRect.left - activatorRect.left
-		distanceToRight = parentRect.right - activatorRect.right
-		distanceToTop = activatorRect.top - parentRect.top
-		distanceToBottom = parentRect.bottom - activatorRect.bottom
-
-	} else {
-
-		distanceToLeft = window.innerWidth - activatorRect.left
-		distanceToRight = window.innerWidth - activatorRect.right
-		distanceToTop = Math.abs(activatorRect.top - window.innerHeight)
-		distanceToBottom = Math.abs(window.innerHeight - activatorRect.bottom)
-	}
-
-	// Hack чтобы посчитать реальную ширину
-	popup.value.style.position = 'absolute'
-	popup.value.style.minWidth = `${popupRect.width}px`
-	popup.value.style.width = `100%`
-
-	// Y axios || if no anchor or anchor == bottom and top have distance
-	if (
-		(
-			( (!isTop && !isBot) || isBot )
-			&& ((distanceToBottom >= popupRect.height) || (distanceToBottom > distanceToTop))
-		)
-		|| ((distanceToTop <= popupRect.height) && (distanceToBottom > distanceToTop))
-	) {
-		popup.value.style.top    = `${activatorRect.height + props.offsetY}px`
-		popup.value.style.maxHeight = `${distanceToBottom - 20}px`
-	} else {
-		popup.value.style.bottom = `${activatorRect.height + props.offsetY}px`;
-		popup.value.style.maxHeight = `${distanceToTop - 20}px`
-	}
-
-	// X axios
-	if (
-		( ((!isLeft && !isRight) || isRight) && distanceToRight >= popupRect.width )
-		|| distanceToLeft <= popupRect.width
-	) {
-		popup.value.style.right = `0`
-	} else {
-		popup.value.style.left = 0
-	}
-
-};
-
-if (props.attach && props.attach.toLowerCase() === 'body') {
-
-	isOpenHandler = async () => {
+	let isOpenHandler = async () => {
 
 		if ( !isOpen.value ) return false
 		await openHandlerBegins();
 
-		popup.value.style.position = 'absolute';
-		popup.value.style['z-index'] = 55; // should be same as $backdrop-z-index inside variables.scss
+		let activatorRect = activator.value.getBoundingClientRect()
+		let popupRect = popup.value.getBoundingClientRect()
+		let parent = popup.value.closest('.scrollable')
+		let distanceToLeft, distanceToRight, distanceToTop, distanceToBottom
 
-		// const coords = targetElement.getBoundingClientRect();
-		let positionX;
-		if (props.positionX) positionX = props.positionX;
+		if ( parent ) {
+			let parentRect = parent.getBoundingClientRect()
 
-		let positionY;
-		if (props.positionY) positionY = props.positionY;
-
-		let activatorRect = activator.value.getBoundingClientRect();
-		// let popupRect = popup.value.getBoundingClientRect()
-
-		let popupHeight = popup.value.clientHeight;
-		let popupWidth = popup.value.clientWidth;
-
-		if (props.menuWidth === 'activator') {
-
-			popupWidth = activatorRect.width;
-			popup.value.style.width = popupWidth + 'px';
-
-		}
-
-		if (!positionX) {
-
-			if (isLeft) {
-				positionX = activatorRect['left'];
-
-			} else {
-				positionX = activatorRect['right'];
-			}
-
-		}
-
-		if (!positionY) {
-			positionY = isTop ? activatorRect['top'] : activatorRect['bottom'];
-		}
-
-		if (props.offsetX) {
-			positionX = positionX + props.offsetX;
-		}
-
-		if (props.offsetY) {
-			positionY = positionY + props.offsetY;
-		}
-
-		//#region Prevents popup from creeping out of window
-		const windowHeight = document.body.clientHeight;
-		const windowWidth = document.body.clientWidth;
-
-		if (popupHeight > windowHeight) popupHeight = windowHeight;
-
-		if (positionX + popupWidth > windowWidth) {
-			popup.value.style.right = '0';
-			popup.value.style.left = "";
+			distanceToLeft = Math.abs(parentRect.left - activatorRect.left - props.offsetX)
+			distanceToRight = Math.abs(parentRect.right - activatorRect.right - props.offsetX)
+			distanceToTop = Math.abs(activatorRect.top - parentRect.top - props.offsetY)
+			distanceToBottom = Math.abs(parentRect.bottom - activatorRect.bottom - props.offsetY)
 
 		} else {
-			popup.value.style.left = positionX + 'px';
-			popup.value.style.right = "";
+
+			distanceToLeft = Math.abs(window.innerWidth - activatorRect.left - props.offsetX)
+			distanceToRight = Math.abs(window.innerWidth - activatorRect.right - props.offsetX)
+			distanceToTop = Math.abs(activatorRect.top - window.innerHeight - props.offsetY)
+			distanceToBottom = Math.abs(window.innerHeight - activatorRect.bottom - props.offsetY)
 		}
 
-		if (positionY + popupHeight > windowHeight) {
-			popup.value.style.bottom = '0';
-			popup.value.style.top = "";
-
+		// Hack чтобы посчитать реальную ширину
+		popup.value.style.position = 'absolute'
+		popup.value.style.minWidth = `${popupRect.width}px`
+		popup.value.style.width = `100%`
+		// Y axios || if no anchor or anchor == bottom and top have distance
+		if (
+			(
+				( (!isTop && !isBot) || isBot )
+				&& ((distanceToBottom >= popupRect.height) || (distanceToBottom > distanceToTop))
+			)
+			|| ((distanceToTop <= popupRect.height) && (distanceToBottom > distanceToTop))
+		) {
+			console.log('props.offsetY:', props.offsetY)
+			popup.value.style.top    = `${activatorRect.height + props.offsetY}px`
+			popup.value.style.maxHeight = `${distanceToBottom}px`
+		} else {
+			popup.value.style.bottom = `${activatorRect.height + props.offsetY}px`;
+			popup.value.style.maxHeight = `${distanceToTop}px`
 		}
-		else {
-			popup.value.style.top = positionY + 'px';
-			popup.value.style.bottom = "";
+		// X axios
+		if (
+			(
+				( (!isLeft && !isRight) || isRight)
+				&& ((distanceToLeft >= popupRect.width) || (distanceToLeft > distanceToRight))
+			)
+			|| ((distanceToRight <= popupRect.width) && (distanceToLeft > distanceToRight))
+		) {
+			popup.value.style.right = 0 + props.offsetX + 'px'
+			popup.value.style.left = 'auto'
+		} else {
+			popup.value.style.left = 0 + props.offsetX + 'px'
 		}
-		//#endregion Prevents popup from creeping out of window >
 
 	};
 
-}
+	if (props.attach && props.attach.toLowerCase() === 'body') {
 
-watch(isOpen, isOpenHandler)
+		isOpenHandler = async () => {
 
-function toggle() {
+			if ( !isOpen.value ) return false
+			await openHandlerBegins();
 
-	if (props.disabled) return;
+			popup.value.style.position = 'absolute';
+			popup.value.style['z-index'] = 55; // should be same as $backdrop-z-index inside variables.scss
 
-	isOpen.value = !isOpen.value;
+			// const coords = targetElement.getBoundingClientRect();
+			let positionX;
+			if (props.positionX) positionX = props.positionX;
 
-	emit('update:opened', isOpen.value);
+			let positionY;
+			if (props.positionY) positionY = props.positionY;
 
-}
+			let activatorRect = activator.value.getBoundingClientRect();
+			// let popupRect = popup.value.getBoundingClientRect()
 
-let closeOnCo = {
-	handler: function (event) {
-		// needed when fm_drop attached to another element (e.g. body)
-		if ((popup.value && popup.value.contains(event.target)) || activator.value.contains(event.target)) return;
+			let popupHeight = popup.value.clientHeight;
+			let popupWidth = popup.value.clientWidth;
 
-		isOpen.value = false;
-		emit('update:opened', isOpen.value);
+			if (props.menuWidth === 'activator') {
 
-	},
-	isActive: props.closeOnClickOutside
-};
+				popupWidth = activatorRect.width;
+				popup.value.style.width = popupWidth + 'px';
 
-onMounted(() => {
+			}
 
-	if (openEventsList.value.includes('click')) {
-		activator.value.addEventListener('click', toggle);
+			if (!positionX) {
+
+				if (isLeft) {
+					positionX = activatorRect['left'];
+
+				} else {
+					positionX = activatorRect['right'];
+				}
+
+			}
+
+			if (!positionY) {
+				positionY = isTop ? activatorRect['top'] : activatorRect['bottom'];
+			}
+
+			if (props.offsetX) {
+				positionX = positionX + props.offsetX;
+			}
+
+			if (props.offsetY) {
+				positionY = positionY + props.offsetY;
+			}
+
+			//#region Prevents popup from creeping out of window
+			const windowHeight = document.body.clientHeight;
+			const windowWidth = document.body.clientWidth;
+
+			if (popupHeight > windowHeight) popupHeight = windowHeight;
+
+			if (positionX + popupWidth > windowWidth) {
+				popup.value.style.right = '0';
+				popup.value.style.left = "";
+
+			} else {
+				popup.value.style.left = positionX + 'px';
+				popup.value.style.right = "";
+			}
+
+			if (positionY + popupHeight > windowHeight) {
+				popup.value.style.bottom = '0';
+				popup.value.style.top = "";
+
+			}
+			else {
+				popup.value.style.top = positionY + 'px';
+				popup.value.style.bottom = "";
+			}
+			//#endregion Prevents popup from creeping out of window >
+
+		};
+
 	}
 
-});
+	watch(isOpen, isOpenHandler)
+
+	function toggle() {
+
+		if (props.disabled) return;
+
+		isOpen.value = !isOpen.value;
+
+		emit('update:opened', isOpen.value);
+
+	}
+
+	let closeOnCo = {
+		handler: function (event) {
+			// needed when fm_drop attached to another element (e.g. body)
+			if ((popup.value && popup.value.contains(event.target)) || activator.value.contains(event.target)) return;
+
+			isOpen.value = false;
+			emit('update:opened', isOpen.value);
+
+		},
+		isActive: props.closeOnClickOutside
+	};
 
 </script>
 
@@ -289,6 +297,7 @@ onMounted(() => {
 	display: inline-block;
 	border-radius: 5px;
 	overflow: auto;
+	left: 0;
 }
 
 .v-enter-active,

@@ -29,6 +29,7 @@
 		font-size: 24px;
 		line-height: 0;
 		color: $text-lighten;
+		overflow: hidden;
 
 		&:hover {
 			color: $text-hover;

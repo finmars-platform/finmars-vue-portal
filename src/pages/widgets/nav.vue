@@ -1,5 +1,5 @@
 <template>
-	<div class="card_view">
+	<div class="card_view scrollable">
 		<div class="card_wrap"
 			v-if="status == 100"
 			@mousedown="dragStart"
@@ -12,6 +12,23 @@
 			>
 				<div class="card_name">{{ STATS[item[0]] }}</div>
 				<div class="card_value">{{ STATS_FORMAT[item[0]] ? STATS_FORMAT[item[0]](item[1]) : '' }}</div>
+
+				<FmMenu
+					v-if="STATS_INFO[item[0]]"
+					class="card_info"
+					open-on-hover
+					:offsetX="24"
+					:offsetY="-24"
+				>
+					<template #btn>
+						<FmIcon class="card_info_icon" icon="info_outlined" size="14" />
+					</template>
+
+					<div class="card_tooltip">
+						<div class="card_tooltip_h">{{ STATS_INFO[item[0]].h }}</div>
+						<div class="card_tooltip_t" v-html="STATS_INFO[item[0]].t"></div>
+					</div>
+				</FmMenu>
 			</div>
 		</div>
 		<div class="error_wrap flex-column aic jcc" v-else>
@@ -51,6 +68,49 @@
 		"betta": 'Beta',
 		"alpha": 'Alpha vs Index, ann.',
 		"correlation": 'Correlation (vs. Index)',
+	}
+
+	const STATS_INFO = {
+		"cumulative_return": {
+			h: 'Cumulative Return (CR)',
+			t: 'Time-weighted total portfolio performance since inception date'
+		},
+		"annualized_return": {
+			h: 'Annualized Return (AR)',
+			t: `AR = (CR)^(1/N), <br>
+				N - number of years since inception <br>
+				CR -cumulative return`
+		},
+		"portfolio_volatility": {
+			h: 'Portfolio Volatility (PV)',
+			t: 'the standard deviation of portfolio performance (taken monthly values of performance)'
+		},
+		"annualized_portfolio_volatility": {
+			h: 'Annualized Volatility (AV)',
+			t: 'AV = PV * √(12)'
+		},
+		"sharpe_ratio": {
+			h: 'Sharpe Ratio (ShR)',
+			t: `ShR = CR/AV <br>
+					CR - cumulative return <br>
+					AV - annualized volatility`
+		},
+		"max_annualized_drawdown": {
+			h: 'Max  DrawDown Annualized',
+			t: 'MAX by absolute value negative performance taken within any 12 consecutive months since inception.'
+		},
+		"correlation": {
+			h: 'Correlation vs. Index',
+			t: 'The correlation of performances between the portfolio and benchmark  index (S&P 500)'
+		},
+		"alpha": {
+			h: 'Alpha',
+			t: 'The alpha of a portfolio is the excess return it produces compared to a benchmark index (S&P 500)'
+		},
+		"betta": {
+			h: 'Beta',
+			t: 'Portfolio beta measures its relative volatility, expressed as the weighted average of the betas of each individual security within it.'
+		},
 	}
 
 	const STATUSES = {
@@ -228,7 +288,7 @@
 		min-width: 154px;
 		max-width: 180px;
 		height: 90px;
-		padding: 10px;
+		padding: 13px;
 		flex-shrink: 0;
 
 		&.active {
@@ -240,15 +300,43 @@
 		}
 	}
 	.card_name {
-		margin-bottom: 10px;
+		margin-bottom: 5px;
 		color: $text-lighten;
+		height: 30px;
+		font-size: 13px;
+		text-align: center;
+		vertical-align: middle;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 	.card_value {
 		text-align: center;
-		position: absolute;
-		bottom: 10px;
-		left: 0;
 		width: 100%;
+	}
+	.card_tooltip {
+		z-index: 100;
+		font-size: 12px;
+		padding: 5px 12px;
+		max-width: 350px;
+
+		&_h {
+			font-weight: 500;
+			color: $primary;
+			margin-bottom: 3px;
+		}
+		&_t {
+			color: $text-lighten;
+		}
+	}
+	.card_info {
+		position: absolute;
+		top: 0;
+		right: 0;
+	}
+	.card_info_icon {
+		width: 24px;
+		padding: 5px;
 	}
 	.error_wrap {
 		height: 90px;
@@ -256,6 +344,24 @@
 	@media only screen and (max-width: 767px) {
 		.card + .card {
 			margin-left: 15px;
+		}
+	}
+	@media only screen and (min-width: 1920px) {
+		.card {
+			padding-top: 20px;
+		}
+		.card_name {
+			font-size: 15px;
+		}
+		.card_info {
+			width: 16px;
+			top: 3px;
+			.icon {
+				font-size: 16px !important;
+			}
+		}
+		.card_tooltip {
+			font-size: 14px;
 		}
 	}
 </style>

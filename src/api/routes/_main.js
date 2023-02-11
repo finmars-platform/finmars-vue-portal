@@ -158,6 +158,7 @@ export default {
 	portfolioBundles: {
 		get: prefix + '/portfolios/portfolio-bundle/',
 		post: prefix + '/portfolios/portfolio-bundle/',
+		put: prefix + '/portfolios/portfolio-bundle/{id}/',
 		delete: prefix + '/portfolios/portfolio-bundle/{id}/',
 	},
 	performanceFirstTransaction: {

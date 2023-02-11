@@ -33,12 +33,14 @@
 	.control_line {
 		width: calc(100% + $content-padding-x * 2);
 		position: sticky;
-		bottom: 0;
+		top: calc(100vh - 109px);
 		margin-left: -$content-padding-x;
 		border-top: 1px solid $border;
 		padding: 10px $content-padding-x;
 		background: $separ;
 		z-index: 2;
 	}
-
+	.fm_container {
+		min-height: calc(100vh - 52px);
+	}
 </style>

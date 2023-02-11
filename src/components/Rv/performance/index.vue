@@ -4,7 +4,7 @@
 			v-model="showSettingsDialog"
 			v-model:externalReadyStatus="dsReadyStatus"
 			:bundles="bundles"
-			@save="showSettingsDialog = false, [viewerData.reportOptions, viewerData.reportLayoutOptions, viewerData.components] = $event"
+			@save="showSettingsDialog = false, [viewerData.reportOptions, viewerData.reportLayoutOptions, viewerData.components] = $event, refresh()"
 			@cancel="showSettingsDialog = false"
 		/>
 
@@ -30,6 +30,7 @@
 							v-model:itemObject="viewerData.reportOptions.report_currency_object"
 							noBorders
 							content_type="currencies.currency"
+							@update:modelValue="refresh()"
 						/>
 					</div>
 
@@ -77,25 +78,17 @@
 					</template>
 				</FmMenu>
 
-				<BaseModal
+<!--				<BaseModal
 					v-model="isOpenAddBundle"
 					title="Add Bundle"
 					@update:modelValue="isOpenAddBundle = false"
 				>
 
-					<!--					<FmInputEntityNames
-											label="Bundle name"
-											v-model:name="newBundle.name"
-											v-model:short_name="newBundle.short_name"
-											v-model:user_code="newBundle.user_code"
-											v-model:public_name="newBundle.public_name"
-										/>-->
 					<FmInputText
 						title="Name"
 						v-model="newBundle.name"
 					/>
 
-					<!--					<FmSelectWindow class="p-b-16" v-model="newBundle.registers" :items="registersItems" />-->
 					<BaseMultiSelectTwoAreas
 						class="p-b-16"
 						v-model="newBundle.registers"
@@ -111,96 +104,102 @@
 							<FmBtn @click="createBundle(), isOpenAddBundle = false">create</FmBtn>
 						</div>
 					</template>
-				</BaseModal>
+				</BaseModal> -->
+				<ModalPortfolioBundleAddEdit v-model="isOpenAddBundle"
+																		 :registers="registersItems"
+																		 @save="createBundle" />
 			</template>
 
 			<template #rightActions>
+				<FmIcon icon="splitscreen" @click="splitComponent = 'FmBtn'" btn />
 				<FmIcon icon="refresh" @click="refresh()" btn />
 			</template>
 		</FmHorizontalPanel>
 
+		<div class="split_panel_wrap"
+			:style="splitComponent ? {gridTemplateRows: `calc(100% - ${splitHeight}px) ${splitHeight}px`} : {}"
+		>
+			<div class="fm_container split_panel_main">
+				<RvPerformanceBundles
+					:end_date="viewerData.reportOptions?.end_date"
+				/>
 
-		<div class="fm_container">
-			<RvPerformanceBundles
-				:end_date="viewerData.reportOptions?.end_date"
-			/>
+				<FmExpansionPanel :title="detailPortfolio">
 
-			<FmExpansionPanel :title="detailPortfolio">
-
-				<template #rightActions>
-					<FmBtn
-						v-if="!showBundleActions"
-						class="primaryIcon"
-						type="iconBtn"
-						icon="lock"
-						@click.stop="showBundleActions = true"
-					/>
-
-					<div v-if="showBundleActions" class="flex-row">
-
+					<template #rightActions>
 						<FmBtn
-							:disabled="!activePeriod && activePeriod !== 0"
-							class="primaryIcon m-r-8"
-							type="iconBtn"
-							icon="edit"
-							@click.stop="editBundleIsOpened = true"
-						/>
-
-						<FmBtn
-							:disabled="!activePeriod && activePeriod !== 0"
+							v-if="!showBundleActions"
 							class="primaryIcon"
 							type="iconBtn"
-							icon="delete"
-							@click.stop="showBundleDeletionWarning = true"
+							icon="lock"
+							@click.stop="showBundleActions = true"
 						/>
 
-					</div>
+					<div v-if="showBundleActions">
 
-					<!-- <ModalPortfolioBundleAddEdit v-model="editBundleIsOpened"
-																			 actionType="edit"
-																			 :name="activePeriodData.user_code"
-																			 :bundleRegisters="activePeriodData.registers"
-																			 :registers="registersItems"
-																			 @save="updateBundle" /> -->
+							<FmBtn
+								:disabled="!activePeriod && activePeriod !== 0"
+								class="primaryIcon"
+								type="iconBtn"
+								icon="delete"
+								@click.stop="showBundleDeletionWarning = true"
+							/>
+
+						<!--						<FmBtn
+													type="iconBtn"
+													icon="edit"
+													@click=""
+												/>-->
+
+					</div>
 
 				</template>
 
-				<div class="table_wrap flex">
-					<div class="coll_years">
-						<div class="coll_item t_header">Years</div>
-						<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">{{item}}</div>
-					</div>
-					<div class="coll_months">
-						<BaseTable
-							:headers="portfolioHeaders"
-							:items="portfolioItems"
-							colls="repeat(12, 1fr)"
-							:cb="chooseMonth"
-							:active="activeYear"
-						/>
-					</div>
-					<div class="coll_total">
-						<div class="coll_item t_header">TOTAL</div>
-						<div class="coll_item" v-for="(item, i) in portfolioTotals" :key="i">
-							{{ Math.round(item * 100) / 100 }}%
+					<div class="table_wrap flex">
+						<div class="coll_years">
+							<div class="coll_item t_header">Years</div>
+							<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">{{item}}</div>
+						</div>
+						<div class="coll_months">
+							<BaseTable
+								:headers="portfolioHeaders"
+								:items="portfolioItems"
+								colls="repeat(12, 1fr)"
+								:cb="chooseMonth"
+								:active="activeYear"
+							/>
+						</div>
+						<div class="coll_total">
+							<div class="coll_item t_header">TOTAL</div>
+							<div class="coll_item" v-for="(item, i) in portfolioTotals" :key="i">
+								{{ Math.round(item * 100) / 100 }}%
+							</div>
 						</div>
 					</div>
-				</div>
-			</FmExpansionPanel>
+				</FmExpansionPanel>
 
-			<FmExpansionPanel :title="detailPortfolio + ' - ' + detailYear">
-				<div style="height: 350px;">
-					<canvas id="myChart"><p>Chart</p></canvas>
-				</div>
-			</FmExpansionPanel>
+				<FmExpansionPanel :title="detailPortfolio + ' - ' + detailYear">
+					<div style="height: 350px;">
+						<canvas id="myChart"><p>Chart</p></canvas>
+					</div>
+				</FmExpansionPanel>
+			</div>
+
+			<div class="split_panel" v-if="splitComponent">
+				<div class="split_panel_devider" @mousedown="resizeY"></div>
+				<component
+					:is="splitComponent"
+				>sdfgdf</component>
+			</div>
 		</div>
+
 		<EvModalSaveLayoutAs
 			v-model="openSaveAsModal"
 			@layoutSaved="layoutsStore.getListLayoutsLight(viewerData.content_type)"
 		/>
 
 		<ModalInfo title="Warning"
-							 :description="`Are you sure you want to delete period: ${activePeriodName}?`"
+							 :description="`Are you sure you want to delete period: ${activePeriodData.user_code}?`"
 							 v-model="showBundleDeletionWarning">
 
 			<template #controls="{ cancel }">
@@ -228,6 +227,8 @@ const store = useStore();
 const layoutsStore = useLayoutsStore();
 const route = useRoute();
 
+const fmbtn = resolveComponent('FmBtn')
+
 const viewerData = getPerformanceViewerData();
 provide('viewerData', viewerData);
 
@@ -243,12 +244,16 @@ let newBundle = ref({
 	registers: [],
 })
 
+let editBundleIsOpened = ref(false);
+
 let showBundleActions = ref(false);
 let showBundleDeletionWarning = ref(false);
 
 let addRegisterIsOpen = ref(false);
 
 let registersItems = ref([]);
+let splitHeight = ref(200)
+let splitComponent = ref(false)
 
 function addPrtfRegisterItem(newRegister) {
 	registersItems.value.push({
@@ -256,6 +261,37 @@ function addPrtfRegisterItem(newRegister) {
 		id: newRegister.id,
 	})
 }
+
+	function resizeY(e) {
+		let elem = e.target
+		let parentRect = elem.closest('.split_panel_wrap').getBoundingClientRect()
+		let startY = e.clientY
+		let oldValue = splitHeight.value
+
+		document.ondragstart = function() {
+			return false;
+		};
+
+		function onmousemove(e) {
+			let newVal = oldValue + (startY - e.clientY)
+
+			if ( newVal < 30 ) newVal = 30
+			if ( newVal > parentRect.height ) newVal = parentRect.height
+
+			splitHeight.value = newVal
+		}
+
+		document.addEventListener('mousemove', onmousemove)
+		document.onselectstart = function(e) {
+			e.preventDefault()
+			return false
+		};
+		document.onmouseup = function() {
+			document.removeEventListener('mousemove', onmousemove);
+			elem.onmouseup = null;
+			document.onselectstart = null
+		};
+	}
 
 async function fetchPrtfRegistersList() {
 
@@ -304,7 +340,7 @@ async function fetchPricingPoliciesOpts() {
 	}
 }
 
-function resetNewBundle () {
+/*function resetNewBundle () {
 
 	newBundle.value = {
 		name: '',
@@ -314,9 +350,9 @@ function resetNewBundle () {
 		registers: [],
 	};
 
-}
+}*/
 
-async function createBundle() {
+/* async function createBundle() {
 	let res = await useApi('portfolioBundles.post', {body: newBundle.value})
 
 	if ( res ) {
@@ -329,6 +365,59 @@ async function createBundle() {
 			title: 'Bundle created successfully'
 		})
 	}
+} */
+async function createBundle(bundleData) {
+
+	const newBundleData = {
+		name: bundleData.name,
+		short_name: bundleData.name,
+		user_code: bundleData.name,
+		public_name: bundleData.name,
+		registers: bundleData.registers,
+	};
+
+	let res = await useApi('portfolioBundles.post', {body: newBundleData})
+
+	if ( res ) {
+
+		refresh()
+
+		useNotify({
+			type: 'success',
+			title: 'Bundle created successfully'
+		})
+
+	}
+}
+
+async function updateBundle(bundleData) {
+
+	let updatedData = JSON.parse(JSON.stringify( activePeriodData.value ));
+	updatedData = {...updatedData, ...bundleData};
+	updatedData.short_name = bundleData.name;
+	updatedData.user_code = bundleData.name;
+	updatedData.public_name = bundleData.name;
+
+	const opts = {
+		params: {
+			id: updatedData.id,
+		},
+		body: updatedData,
+	};
+
+	let res = await useApi('portfolioBundles.put', opts);
+
+	if (!res.error) {
+
+		useNotify({
+			type: 'success',
+			title: 'Bundle updated successfully'
+		});
+
+		refresh();
+
+	}
+
 }
 
 //#region Main
@@ -346,9 +435,20 @@ let portfolioTotals = ref([])
 let detailPortfolio = ref('')
 let detailYear = ref('')
 let chart
-
+/** Index of selected bundle **/
 let activePeriod = ref(0)
-let activePeriodName = computed(() => {
+/** Object of selected bundle **/
+let activePeriodData = computed(() => {
+
+	if (!activePeriod.value && activePeriod.value !== 0) {
+		return null;
+	}
+
+	return bundles.value[activePeriod.value] || null;
+
+})
+
+/*let activePeriodName = computed(() => {
 
 	if (!activePeriod.value && activePeriod.value !== 0) {
 		return '';
@@ -358,7 +458,7 @@ let activePeriodName = computed(() => {
 
 	return activePeriodData ? activePeriodData.name : '';
 
-})
+})*/
 
 let activeYear = ref(0)
 
@@ -779,6 +879,23 @@ init()
 }
 .table_wrap {
 	width: 100%;
+}
+
+.split_panel_wrap {
+	display: grid;
+	height: calc(100vh - 161px);
+}
+.split_panel {
+	background: #fff;
+}
+.split_panel_main {
+	overflow: auto;
+}
+.split_panel_devider {
+	height: 5px;
+	border-top: 1px solid $border;
+	border-bottom: 1px solid $border;
+	cursor: row-resize;
 }
 
 </style>

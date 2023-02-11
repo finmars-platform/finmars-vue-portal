@@ -269,7 +269,11 @@
 		}
 	}
 	async function deleteDB() {
-		let isConfirm = await useConfirm({text: 'Are you sure?'})
+		let isConfirm = await useConfirm({
+			title: 'Delete workspace',
+			text: `Enter the full name of the workspace "${props.db.name}" to initiate its deletion.`,
+			check: props.db.name,
+		})
 		if ( !isConfirm ) return false
 
 		let res = props.db.is_owner
