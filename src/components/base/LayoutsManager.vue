@@ -230,7 +230,7 @@
 						</md-button>-->
 				<FmBtn type="text"
 							 class="menu_item"
-							 @click="emit('delete'), close()">
+							 @click="showDeletionWarning = true">
 					<span class="material-icons">delete</span>
 					Delete
 				</FmBtn>
@@ -249,13 +249,13 @@
 										 @save="renameLayout" />
 
 	<ModalInfo title="Warning"
-						 description="Are you sure want to delete this layout??"
+						 description="Are you sure want to delete this layout?"
 						 v-model="showDeletionWarning">
 		<template #controls="{ cancel }">
 			<div class="flex-row fc-space-between">
 				<FmBtn type="basic" @click="cancel">CANCEL</FmBtn>
 
-				<FmBtn type="basic" @click="emit('delete'), cancel">OK</FmBtn>
+				<FmBtn type="basic" @click="emit('delete'), cancel()">OK</FmBtn>
 			</div>
 		</template>
 	</ModalInfo>

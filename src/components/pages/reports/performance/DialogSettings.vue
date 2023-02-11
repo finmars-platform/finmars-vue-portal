@@ -49,6 +49,7 @@
 							title="Portfolios and Bundles"
 							:items="bundles"
 							item_id="id"
+							item_title="user_code"
 						/>
 					</RvSettingsRow>
 				</RvSettingsBlock>

@@ -1,69 +1,53 @@
 <template>
 	<CommonSettingsLayout
-		v-if="member.id"
 		title="Update member"
-		:saveFunc="save"
-		:cancelFunc="cancel"
+		@save="save"
+		@cancel="cancel"
 	>
 		<template #left>
-			<v-card class="mb-6">
-				<v-card-title class="text-h5">General</v-card-title>
-				<v-card-content>
-					<v-text-field
-						label="Name"
-						placeholder="Name"
-						variant="outlined"
-						density="comfortable"
-						v-model="member.username"
-						disabled
-					/>
-					<v-text-field
-						label="Date joined"
-						placeholder="Date joined"
-						variant="outlined"
-						density="comfortable"
-						:modelValue="fromatDate(member.join_date)"
-						disabled
-					/>
-				</v-card-content>
-			</v-card>
+			<FmCard title="General" v-if="member.id">
+				<BaseInput
+					label="Name"
+					v-model="member.username"
+					disabled
+				/>
+				<BaseInput
+					label="Date joined"
+					:modelValue="fromatDate(member.join_date)"
+					disabled
+				/>
+			</FmCard>
 		</template>
 		<template #right>
-			<v-card class="mb-6">
-				<v-card-title>Roles</v-card-title>
-				<v-card-content>
-					<v-text-field
-						label="User roles"
-						placeholder="User roles"
-						variant="outlined"
-						density="comfortable"
-						v-model="member.username"
-						disabled
-					/>
-					<BaseMultiSelectInput
-						:modelValue="selectedGroups.join(',')"
-						@update:modelValue="member.groups = findIds($event)"
-						title="Groups"
-						:items="groups"
-					/>
+			<FmCard title="Roles" class="m-b-24" v-if="member.id">
+				<BaseInput
+					label="User roles"
+					v-model="member.username"
+					disabled
+				/>
+				<BaseMultiSelectInput
+					:modelValue="selectedGroups"
+					@update:modelValue="findIds($event)"
+					title="Groups"
+					:items="groups"
+					item_id="name"
+				/>
 
-					<v-checkbox
-						v-model="member.is_owner"
-						label="Owner"
-						color="primary"
-						hide-details
-					></v-checkbox>
-				</v-card-content>
-			</v-card>
+				<FmCheckbox
+					v-model="member.is_owner"
+					label="Owner"
+				/>
+			</FmCard>
 		</template>
 	</CommonSettingsLayout>
 </template>
 
 <script setup>
 
-	import moment from 'moment'
+	import dayjs from 'dayjs'
 
 	definePageMeta({
+		middleware: 'auth',
 		bread: [
 			{
 				text: 'Permissions: Members',
@@ -81,12 +65,10 @@
 	let router = useRouter()
 
 	let member = ref({})
-	let groups = ref({})
+	let groups = ref([])
 	let selectedGroups = computed(() => {
-		if ( !member.value.groups_object ) return ''
-		return member.value.groups_object.map( item => {
-			return item.name
-		})
+		if ( !member.value.groups_object ) return []
+		return member.value.groups_object.map( item => item.name).join(',')
 	})
 
 	async function init() {
@@ -97,15 +79,16 @@
 		groups.value = res.results
 	}
 	function findIds( val ) {
-		console.log('val:', val)
+		if ( typeof val == 'string' ) val = val.split(',')
 		let result = []
 		 val.forEach( itemArr => {
 			let elem = groups.value.find(itemObj => itemObj.name == itemArr)
 			if ( elem ) result.push( elem.id )
 		})
-			console.log('result:', result)
 
-		return result
+		member.value.groups = result
+		member.value.groups_object = member.value.groups_object
+			.filter(item => member.value.groups.includes(item.id) )
 	}
 	async function save() {
 		let res = await useApi('member.put', {body: member.value, params: {id: route.params.id}})
@@ -116,7 +99,7 @@
 		router.push('/settings/permissions')
 	}
 	function fromatDate( date ) {
-		return moment( date ).format('DD.MM.YYYY LT')
+		return dayjs( date ).format('DD.MM.YYYY LT')
 	}
 
 	if ( store.current.base_api_url ) {
