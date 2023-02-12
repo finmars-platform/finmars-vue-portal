@@ -1,324 +1,60 @@
 <template>
-	<div>
-		<PagesReportsPerformanceDialogSettings
-			v-model="showSettingsDialog"
-			v-model:externalReadyStatus="dsReadyStatus"
-			:bundles="bundles"
-			@save="showSettingsDialog = false, [viewerData.reportOptions, viewerData.reportLayoutOptions, viewerData.components] = $event, refresh()"
-			@cancel="showSettingsDialog = false"
-		/>
+	<CommonEntityViewer>
+		<div class="fm_container">
+			<RvPerformanceBundles
+				:end_date="'2022-12-12'"
+			/>
 
-		<ModalPortfolioRegister
-			title="Add portfolio register"
-			v-model="addRegisterIsOpen"
-			@save="onPrtfRegisterCreate"
-			@cancel="addRegisterIsOpen = false"
-		/>
+			<RvPerformanceDetail
 
-		<EvBaseTopPanel
-			height="50"
-			:loadingLayout="!readyStatusData.layout"
-			@saveListLayout="saveLayout()"
-			@openSettings="showSettingsDialog = true;"
-		>
-			<template #rightActions>
-				<div class="flex-row fc-end">
+			/>
 
-					<div style="flex-basis: 175px;">
-						<FmUnifiedDataSelect
-							v-model="viewerData.reportOptions.report_currency"
-							v-model:itemObject="viewerData.reportOptions.report_currency_object"
-							noBorders
-							content_type="currencies.currency"
-							@update:modelValue="refresh()"
-						/>
-					</div>
+			<RvPerformanceChart
 
-					<div style="flex-basis: 120px;">
-
-						<FmInputDateComplex
-							v-if="readyStatusData.layout"
-							v-model:firstDate="viewerData.reportOptions.end_date"
-							v-model:firstDatepickerOptions="viewerData.reportLayoutOptions.datepickerOptions.reportLastDatepicker"
-							noBorders
-						/>
-
-						<FmLoader v-if="!readyStatusData.layout" />
-
-					</div>
-
-				</div>
-
-			</template>
-		</EvBaseTopPanel>
-
-		<FmHorizontalPanel height="initial" class="ev_toolbar">
-
-			<template #leftActions>
-				<FmMenu>
-					<template #btn>
-						<FmIcon class="add_ev_btn" btnPrimary icon="add" />
-					</template>
-
-					<template #default="{ close }">
-						<div class="fm_list" @click="close()">
-							<div class="fm_list_item" @click="addRegisterIsOpen = true">
-								Add Portfolio register
-							</div>
-							<div class="fm_list_item">
-								<div
-									v-if="readyStatusData.portfolioRegisters"
-									@click="isOpenAddBundle = true"
-								>
-									Add bundle
-								</div>
-								<FmLoader v-if="!readyStatusData.portfolioRegisters" />
-							</div>
-						</div>
-					</template>
-				</FmMenu>
-
-<!--				<BaseModal
-					v-model="isOpenAddBundle"
-					title="Add Bundle"
-					@update:modelValue="isOpenAddBundle = false"
-				>
-
-					<FmInputText
-						title="Name"
-						v-model="newBundle.name"
-					/>
-
-					<BaseMultiSelectTwoAreas
-						class="p-b-16"
-						v-model="newBundle.registers"
-						:items="registersItems"
-						item_id="id"
-						item_title="user_code"
-						@update:modelValue="newValue => newBundle.registers = newValue"
-					/>
-
-					<template #controls>
-						<div class="flex sb">
-							<FmBtn type="basic" @click="resetNewBundle(); isOpenAddBundle = false">cancel</FmBtn>
-							<FmBtn @click="createBundle(), isOpenAddBundle = false">create</FmBtn>
-						</div>
-					</template>
-				</BaseModal> -->
-				<ModalPortfolioBundleAddEdit v-model="isOpenAddBundle"
-																		 :registers="registersItems"
-																		 @save="createBundle" />
-			</template>
-
-			<template #rightActions>
-				<FmIcon icon="splitscreen" @click="splitComponent = 'FmBtn'" btn />
-				<FmIcon icon="refresh" @click="refresh()" btn />
-			</template>
-		</FmHorizontalPanel>
-
-		<div class="split_panel_wrap"
-			:style="splitComponent ? {gridTemplateRows: `calc(100% - ${splitHeight}px) ${splitHeight}px`} : {}"
-		>
-			<div class="fm_container split_panel_main">
-				<RvPerformanceBundles
-					:end_date="viewerData.reportOptions?.end_date"
-				/>
-
-				<FmExpansionPanel :title="detailPortfolio">
-
-					<template #rightActions>
-						<FmBtn
-							v-if="!showBundleActions"
-							class="primaryIcon"
-							type="iconBtn"
-							icon="lock"
-							@click.stop="showBundleActions = true"
-						/>
-
-					<div v-if="showBundleActions">
-
-							<FmBtn
-								:disabled="!activePeriod && activePeriod !== 0"
-								class="primaryIcon"
-								type="iconBtn"
-								icon="delete"
-								@click.stop="showBundleDeletionWarning = true"
-							/>
-
-						<!--						<FmBtn
-													type="iconBtn"
-													icon="edit"
-													@click=""
-												/>-->
-
-					</div>
-
-				</template>
-
-					<div class="table_wrap flex">
-						<div class="coll_years">
-							<div class="coll_item t_header">Years</div>
-							<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">{{item}}</div>
-						</div>
-						<div class="coll_months">
-							<BaseTable
-								:headers="portfolioHeaders"
-								:items="portfolioItems"
-								colls="repeat(12, 1fr)"
-								:cb="chooseMonth"
-								:active="activeYear"
-							/>
-						</div>
-						<div class="coll_total">
-							<div class="coll_item t_header">TOTAL</div>
-							<div class="coll_item" v-for="(item, i) in portfolioTotals" :key="i">
-								{{ Math.round(item * 100) / 100 }}%
-							</div>
-						</div>
-					</div>
-				</FmExpansionPanel>
-
-				<FmExpansionPanel :title="detailPortfolio + ' - ' + detailYear">
-					<div style="height: 350px;">
-						<canvas id="myChart"><p>Chart</p></canvas>
-					</div>
-				</FmExpansionPanel>
-			</div>
-
-			<div class="split_panel" v-if="splitComponent">
-				<div class="split_panel_devider" @mousedown="resizeY"></div>
-				<component
-					:is="splitComponent"
-				>sdfgdf</component>
-			</div>
+			/>
 		</div>
-
-		<EvModalSaveLayoutAs
-			v-model="openSaveAsModal"
-			@layoutSaved="layoutsStore.getListLayoutsLight(viewerData.content_type)"
-		/>
-
-		<ModalInfo title="Warning"
-							 :description="`Are you sure you want to delete period: ${activePeriodData.user_code}?`"
-							 v-model="showBundleDeletionWarning">
-
-			<template #controls="{ cancel }">
-				<div class="flex-row fc-space-between">
-					<FmBtn type="basic" @click="cancel">CANCEL</FmBtn>
-
-					<FmBtn type="basic" @click="deleteBundle(), cancel()">YES</FmBtn>
-				</div>
-			</template>
-
-		</ModalInfo>
-	</div>
+	</CommonEntityViewer>
 </template>
 
 <script setup>
 
-import moment from 'moment'
-import dayjs from 'dayjs'
-import quarterOfYear from 'dayjs/plugin/quarterOfYear'
-import Chart from 'chart.js/auto';
-import getPerformanceViewerData from "./viewerData";
-import {useCalculateReportDatesExprs} from "../../../composables/useReportHelper";
-dayjs.extend(quarterOfYear)
-const store = useStore();
-const layoutsStore = useLayoutsStore();
-const route = useRoute();
+	import dayjs from 'dayjs'
+	import quarterOfYear from 'dayjs/plugin/quarterOfYear'
 
-const fmbtn = resolveComponent('FmBtn')
+	import {useCalculateReportDatesExprs} from "../../../composables/useReportHelper";
 
-const viewerData = getPerformanceViewerData();
-provide('viewerData', viewerData);
+	dayjs.extend(quarterOfYear)
 
-let openSaveAsModal = ref(false);
-let showSettingsDialog = ref(false);
+	const store = useStore();
+	const layoutsStore = useLayoutsStore();
+	const route = useRoute();
 
-let isOpenAddBundle = ref(false)
-let newBundle = ref({
-	name: '',
-	short_name: computed(() => newBundle.value.name),
-	user_code: computed(() => newBundle.value.name),
-	public_name: computed(() => newBundle.value.name),
-	registers: [],
-})
-
-let editBundleIsOpened = ref(false);
-
-let showBundleActions = ref(false);
-let showBundleDeletionWarning = ref(false);
-
-let addRegisterIsOpen = ref(false);
-
-let registersItems = ref([]);
-let splitHeight = ref(200)
-let splitComponent = ref(false)
-
-function addPrtfRegisterItem(newRegister) {
-	registersItems.value.push({
-		user_code: newRegister.user_code,
-		id: newRegister.id,
+	let newBundle = ref({
+		name: '',
+		short_name: computed(() => newBundle.value.name),
+		user_code: computed(() => newBundle.value.name),
+		public_name: computed(() => newBundle.value.name),
+		registers: [],
 	})
-}
 
-	function resizeY(e) {
-		let elem = e.target
-		let parentRect = elem.closest('.split_panel_wrap').getBoundingClientRect()
-		let startY = e.clientY
-		let oldValue = splitHeight.value
+	async function fetchPrtfRegistersList() {
 
-		document.ondragstart = function() {
-			return false;
-		};
+		readyStatusData.portfolioRegisters = false;
 
-		function onmousemove(e) {
-			let newVal = oldValue + (startY - e.clientY)
+		const res = await useApi('portfolioRegisterEvFiltered.post', {
+			body: '{"groups_types":[],"page":1,"groups_values":[],"groups_order":"asc","page_size":60,"ev_options":{"entity_filters":["enabled","disabled","active","inactive"]},"filter_settings":[],"global_table_search":"","is_enabled":"any"}'
+		});
 
-			if ( newVal < 30 ) newVal = 30
-			if ( newVal > parentRect.height ) newVal = parentRect.height
+		if (!res.error) {
 
-			splitHeight.value = newVal
+			res.results.forEach(addPrtfRegisterItem);
+
+			readyStatusData.portfolioRegisters = true;
+
 		}
 
-		document.addEventListener('mousemove', onmousemove)
-		document.onselectstart = function(e) {
-			e.preventDefault()
-			return false
-		};
-		document.onmouseup = function() {
-			document.removeEventListener('mousemove', onmousemove);
-			elem.onmouseup = null;
-			document.onselectstart = null
-		};
 	}
 
-async function fetchPrtfRegistersList() {
-
-	readyStatusData.portfolioRegisters = false;
-
-	const res = await useApi('portfolioRegisterEvFiltered.post', {
-		body: '{"groups_types":[],"page":1,"groups_values":[],"groups_order":"asc","page_size":60,"ev_options":{"entity_filters":["enabled","disabled","active","inactive"]},"filter_settings":[],"global_table_search":"","is_enabled":"any"}'
-	});
-
-	if (!res.error) {
-
-		res.results.forEach(addPrtfRegisterItem);
-
-		readyStatusData.portfolioRegisters = true;
-
-	}
-
-}
-
-function onPrtfRegisterCreate(newRegister) {
-
-	addPrtfRegisterItem(newRegister);
-	addRegisterIsOpen.value = false;
-
-	refresh();
-
-}
 
 let currencyListLight = ref([]);
 
@@ -366,75 +102,12 @@ async function fetchPricingPoliciesOpts() {
 		})
 	}
 } */
-async function createBundle(bundleData) {
 
-	const newBundleData = {
-		name: bundleData.name,
-		short_name: bundleData.name,
-		user_code: bundleData.name,
-		public_name: bundleData.name,
-		registers: bundleData.registers,
-	};
-
-	let res = await useApi('portfolioBundles.post', {body: newBundleData})
-
-	if ( res ) {
-
-		refresh()
-
-		useNotify({
-			type: 'success',
-			title: 'Bundle created successfully'
-		})
-
-	}
-}
-
-async function updateBundle(bundleData) {
-
-	let updatedData = JSON.parse(JSON.stringify( activePeriodData.value ));
-	updatedData = {...updatedData, ...bundleData};
-	updatedData.short_name = bundleData.name;
-	updatedData.user_code = bundleData.name;
-	updatedData.public_name = bundleData.name;
-
-	const opts = {
-		params: {
-			id: updatedData.id,
-		},
-		body: updatedData,
-	};
-
-	let res = await useApi('portfolioBundles.put', opts);
-
-	if (!res.error) {
-
-		useNotify({
-			type: 'success',
-			title: 'Bundle updated successfully'
-		});
-
-		refresh();
-
-	}
-
-}
+init()
 
 //#region Main
 let panels = ref(['period', 'detail', 'diagram'])
-let bundles = ref([])
 
-let portfolioHeaders = ref(
-	['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-)
-let portfolioItems = ref([])
-let portfolioItemsCumm = ref([])
-let portfolioYears = ref([])
-let portfolioTotals = ref([])
-
-let detailPortfolio = ref('')
-let detailYear = ref('')
-let chart
 /** Index of selected bundle **/
 let activePeriod = ref(0)
 /** Object of selected bundle **/
@@ -459,29 +132,6 @@ let activePeriodData = computed(() => {
 	return activePeriodData ? activePeriodData.name : '';
 
 })*/
-
-let activeYear = ref(0)
-
-let readyStatusData = reactive({
-	layout: false,
-	bundles: false,
-	portfolioRegisters: false,
-});
-
-let readyStatus = computed(() => {
-
-	let ready = true;
-
-	Object.keys(readyStatusData).forEach(rStatus => {
-		ready = ready && readyStatusData[rStatus];
-	});
-
-	return ready;
-
-});
-
-let dsReadyStatus = computed(() => readyStatusData.layout && readyStatusData.bundles);
-
 /*#endregion */
 
 watch(
@@ -490,22 +140,6 @@ watch(
 		await fetchListLayout();
 		refresh();
 	}
-)
-
-watch(
-	() => viewerData.layoutToOpen,
-	async () => {
-
-		if (viewerData.layoutToOpen) {
-
-			await fetchListLayout();
-			viewerData.layoutToOpen = null;
-
-			refresh();
-
-		}
-
-	},
 )
 
 async function saveLayout () {
@@ -531,12 +165,6 @@ async function saveLayout () {
 		useSaveEvRvLayout(store, viewerData);
 	}
 
-}
-
-async function chooseMonth(id) {
-	activeYear.value = id
-	detailYear.value = portfolioYears.value[id]
-	updateChart( portfolioItems.value[id], portfolioItemsCumm.value[id] )
 }
 
 async function fetchListLayout () {
@@ -582,99 +210,35 @@ async function fetchListLayout () {
 
 async function init() {
 
-	fetchPrtfRegistersList();
-	await Promise.all([fetchCurrenciesLightList(), fetchPricingPoliciesOpts()]);
+	// fetchPrtfRegistersList();
+	// await Promise.all([fetchCurrenciesLightList(), fetchPricingPoliciesOpts()]);
 
-	await fetchListLayout();
-	await refresh()
-
-
-	chart = new Chart('myChart', {
-		type: 'bar',
-		data: {
-			labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-			datasets: [
-				{
-					label: 'Monthly Returns',
-					data: portfolioItems.value[0],
-					backgroundColor: portfolioItems.value[0]?.map(item => item > 0 ? '#a5d9c9' : '#fac878'),
-					order: 1
-				},
-				{
-					label: 'Cummulative Return',
-					data: portfolioItemsCumm.value[0],
-					fill: '#f05a23',
-					type: 'line',
-					borderColor: '#f05a23',
-					tension: 0.1,
-					order: 0
-				}
-			],
-		},
-		options: {
-			responsive: true,
-			maintainAspectRatio: false,
-			plugins: {
-				legend: {
-					position: 'top',
-					reverse: true
-				}
-			},
-			scales: {
-				y: {
-					grace: '5%',
-					ticks: {
-						// Include a dollar sign in the ticks
-						callback: function(value, index, ticks) {
-							return value + '%';
-						}
-					}
-				}
-			}
-		},
-	});
+	// await fetchListLayout();
+	// await refresh()
 }
 
 async function refresh() {
-	await fetchPortfolioBundles()
+	// await fetchPortfolioBundles()
 
-	if ( !bundles.value.length ) {
-		return false
-	}
-	activePeriod.value = 0
-	activeYear.value = 0
+	// if ( !bundles.value.length ) {
+	// 	return false
+	// }
+	// activePeriod.value = 0
+	// activeYear.value = 0
 
-	detailPortfolio.value = bundles.value[0].user_code
+	// detailPortfolio.value = bundles.value[0].user_code
 
-	await getMonthDetails()
+	// await getMonthDetails()
 
-	detailYear.value = portfolioYears.value[0]
+	// detailYear.value = portfolioYears.value[0]
 
-	if ( chart )
-		updateChart( portfolioItems.value[0], portfolioItemsCumm.value[0] )
+	// if ( chart )
+	// 	updateChart( portfolioItems.value[0], portfolioItemsCumm.value[0] )
 }
 
-provide('refreshReport', refresh);
+	provide('refreshReport', refresh);
 
-
-
-async function deleteBundle() {
-
-	const bundleToDelete = bundles.value[activePeriod.value];
-
-	const res = await useApi( 'portfolioBundles.delete', {params: {id: bundleToDelete.id}} );
-
-	if (!res.error) {
-
-		useNotify({type: 'success', title: `Bundle ${bundleToDelete.name} was successfully deleted.`})
-
-		refresh()
-
-	}
-
-}
-
-let detailsLoading = false
+	let detailsLoading = false
 	async function getEndDate() {
 
 		if (viewerData.reportOptions?.end_date) {
@@ -722,165 +286,25 @@ let detailsLoading = false
 
 	}
 
-async function getMonthDetails( name ) {
-	if ( detailsLoading ) return false
-
-	detailsLoading = true
-	portfolioYears.value = []
-	portfolioTotals.value = []
-	portfolioItems.value = []
-	portfolioItemsCumm.value = []
-
-	let bundleId = name
-		? bundles.value.find(item => item.user_code == name).id
-		: bundles.value[0].id
-
-	let begin
-	let firstTransaction
-	if ( !viewerData.reportOptions?.begin_date ) {
-		firstTransaction = await useApi('performanceFirstTransaction.get', {
-			params: { id: bundleId }
+	async function getReports({start, end, ids, type = 'months'}) {
+		let res = await useApi('performanceReport.post', {
+			body: {
+				"save_report": false,
+				"begin_date": start,
+				"end_date": end,
+				"calculation_type": viewerData.reportOptions?.calculation_type,
+				"segmentation_type": type,
+				'report_currency': viewerData.reportOptions?.report_currency,
+				"bundle": ids
+			}
 		})
-		begin = firstTransaction.transaction_date
-	} else {
-		begin = moment(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
-	}
-	const endDate = await getEndDate();
 
-	let end = moment(endDate).add(-1, 'd').format('YYYY-MM-DD')
-
-	let allMonths = await useApi('performanceReport.post', {
-		body: {
-			"save_report": false,
-			"begin_date": begin,
-			"end_date": end,
-			"calculation_type": viewerData.reportOptions?.calculation_type,
-			"segmentation_type": 'months',
-			'report_currency': viewerData.reportOptions?.report_currency,
-			"bundle": bundleId
-		}
-	})
-	if ( allMonths.error ) {
-		detailsLoading = false
-		return false
+		return res.grand_return
 	}
 
-	let yearsBuffer = new Map()
-	let yearsBufferCumm = []
-
-	allMonths.items.reverse().forEach(item => {
-		let parseDate = item.date_to.split('-')
-
-		// key_ fix order
-		let defaultMonth = {
-			'key_01': [0, 0],
-			'key_02': [0, 0],
-			'key_03': [0, 0],
-			'key_04': [0, 0],
-			'key_05': [0, 0],
-			'key_06': [0, 0],
-			'key_07': [0, 0],
-			'key_08': [0, 0],
-			'key_09': [0, 0],
-			'key_10': [0, 0],
-			'key_11': [0, 0],
-			'key_12': [0, 0]
-		}
-
-		if ( !yearsBuffer.has(parseDate[0]) ) {
-			yearsBuffer.set(parseDate[0], defaultMonth)
-		}
-
-		yearsBuffer.get(parseDate[0])[ 'key_' + parseDate[1] ] = [
-			Math.round(item.instrument_return * 10000) / 100,
-			Math.round(item.cumulative_return * 10000) / 100
-		]
-	})
-
-	let dateTo = moment(viewerData.reportOptions?.end_date)
-	let dateFrom = moment(firstTransaction.transaction_date)
-
-	for ( let [year, months] of yearsBuffer ) {
-		portfolioYears.value.push( year )
-		portfolioItems.value.push( Object.values(months).map((item, i) => {
-			if (
-				(year != dateTo.year() || i <= dateTo.month())
-				&&
-				(year != dateFrom.year() || i >= dateFrom.month() )
-			) return item[0]
-			else return ''
-		}))
-		portfolioItemsCumm.value.push( Object.values(months).map((item, i) => {
-			if (
-				(year != dateTo.year() || i <= dateTo.month())
-			) return item[1]
-		}))
-
-		let end = year == dayjs(dateTo).year() ? dateTo.add(-1, 'd').format('YYYY-MM-DD') : `${year}-12-30`
-
-		let total = await getReports({start: `${year - 1}-12-31`, end: end, ids: bundleId})
-		portfolioTotals.value.push( total * 100 )
-	}
-	detailsLoading = false
-}
-
-function updateChart( datasetMonth, datasetLine ) {
-	chart.data.datasets[0].data = datasetMonth
-	chart.data.datasets[0].backgroundColor =
-		datasetMonth.map(item => item > 0 ? '#a5d9c9' : '#fac878')
-
-	chart.data.datasets[1].data = datasetLine
-
-	chart.update()
-}
-
-async function getReports({start, end, ids, type = 'months'}) {
-	let res = await useApi('performanceReport.post', {
-		body: {
-			"save_report": false,
-			"begin_date": start,
-			"end_date": end,
-			"calculation_type": viewerData.reportOptions?.calculation_type,
-			"segmentation_type": type,
-			'report_currency': viewerData.reportOptions?.report_currency,
-			"bundle": ids
-		}
-	})
-
-	return res.grand_return
-}
-
-init()
 </script>
 
 <style lang="scss" scoped>
-
-.coll_years {
-	border-top: 1px solid $border;
-	border-left: 1px solid $border;
-}
-.coll_item {
-	height: 36px;
-	line-height: 36px;
-	padding: 0 14px;
-	white-space: nowrap;
-	background: #f2f2f2;
-	border-bottom: 1px solid $border;
-	font-size: 14px;
-
-	&.t_header {
-		height: 50px;
-		line-height: 50px;
-		font-weight: 600;
-	}
-}
-.coll_months {
-	width: 100%;
-}
-.table_wrap {
-	width: 100%;
-}
-
 .split_panel_wrap {
 	display: grid;
 	height: calc(100vh - 161px);
