@@ -1,18 +1,26 @@
 <template>
-	<CommonEntityViewer>
-		<div class="fm_container">
-			<RvPerformanceBundles
-				:end_date="'2022-12-12'"
-			/>
+	<CommonEntityViewer
+		@refresh="refresh()"
+	>
+		<template #default="{ reportOptions }">
+			<div class="fm_container">
+				<RvPerformanceBundles
+					:end_date="reportOptions.end_date"
+					:calculation_type="reportOptions.calculation_type"
+					:report_currency="reportOptions.report_currency"
+				/>
 
-			<RvPerformanceDetail
+				<RvPerformanceDetail
+					:end_date="reportOptions.end_date"
+					:calculation_type="reportOptions.calculation_type"
+					:report_currency="reportOptions.report_currency"
+				/>
 
-			/>
+				<RvPerformanceChart
 
-			<RvPerformanceChart
-
-			/>
-		</div>
+				/>
+			</div>
+		</template>
 	</CommonEntityViewer>
 </template>
 
@@ -21,12 +29,9 @@
 	import dayjs from 'dayjs'
 	import quarterOfYear from 'dayjs/plugin/quarterOfYear'
 
-	import {useCalculateReportDatesExprs} from "../../../composables/useReportHelper";
-
 	dayjs.extend(quarterOfYear)
 
 	const store = useStore();
-	const layoutsStore = useLayoutsStore();
 	const route = useRoute();
 
 	let newBundle = ref({
@@ -56,25 +61,25 @@
 	}
 
 
-let currencyListLight = ref([]);
+	let currencyListLight = ref([]);
 
-async function fetchCurrenciesLightList() {
-	const res = await useApi('currencyListLight.get');
+	async function fetchCurrenciesLightList() {
+		const res = await useApi('currencyListLight.get');
 
-	if (!res.error) {
-		currencyListLight.value = res.results;
+		if (!res.error) {
+			currencyListLight.value = res.results;
+		}
 	}
-}
 
-let pricingPolicyListLight = ref([]);
+	let pricingPolicyListLight = ref([]);
 
-async function fetchPricingPoliciesOpts() {
-	const res = await useApi('currencyListLight.get');
+	async function fetchPricingPoliciesOpts() {
+		const res = await useApi('currencyListLight.get');
 
-	if (!res.error) {
-		pricingPolicyListLight.value = res.results;
+		if (!res.error) {
+			pricingPolicyListLight.value = res.results;
+		}
 	}
-}
 
 /*function resetNewBundle () {
 
@@ -167,53 +172,13 @@ async function saveLayout () {
 
 }
 
-async function fetchListLayout () {
 
-	/*const resData = await useApi('defaultListLayout.get', {params: {contentType: viewerData.contentType}});
-
-	if (resData.error) {
-		throw new Error('Failed to fetch default performance layout');
-	}
-
-	const defaultListLayout = (resData.results.length) ? resData.results[0] : null;
-
-	if (defaultListLayout.data.reportOptions.pricing_policy) {
-
-		defaultListLayout.data.reportOptions.pricing_policy_object = pricingPolicyListLight.value.find(item => {
-			return item.id === defaultListLayout.data.reportOptions.pricing_policy;
-		});
-
-	}
-
-	if (defaultListLayout.data.reportOptions.report_currency) {
-
-		defaultListLayout.data.reportOptions.report_currency_object = currencyListLight.value.find(item => {
-			return item.id === defaultListLayout.data.reportOptions.report_currency;
-		});
-
-	}*/
-	readyStatusData.layout = false;
-
-	const layoutRes = await useFetchEvRvLayout(layoutsStore, viewerData, route.query.layout);
-
-	viewerData.setLayoutCurrentConfiguration(layoutRes, store.ecosystemDefaults);
-
-	const reportOptionsRes = await useCalculateReportDatesExprs(viewerData.content_type, viewerData.reportOptions, viewerData.reportLayoutOptions);
-
-	if (reportOptionsRes.error) throw reportOptionsRes.error;
-
-	viewerData.reportOptions = reportOptionsRes;
-
-	readyStatusData.layout = true;
-
-}
 
 async function init() {
 
 	// fetchPrtfRegistersList();
 	// await Promise.all([fetchCurrenciesLightList(), fetchPricingPoliciesOpts()]);
 
-	// await fetchListLayout();
 	// await refresh()
 }
 

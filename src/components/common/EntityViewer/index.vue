@@ -15,7 +15,7 @@
 							v-model:itemObject="viewerData.reportOptions.report_currency_object"
 							noBorders
 							content_type="currencies.currency"
-							@update:modelValue="refresh()"
+							@update:modelValue="emit('refresh')"
 						/>
 					</div>
 
@@ -34,6 +34,18 @@
 
 				</div>
 
+				<PagesReportsPerformanceDialogSettings
+					v-model="showSettingsDialog"
+					v-model:externalReadyStatus="dsReadyStatus"
+					:bundles="bundles"
+					@save="showSettingsDialog = false, [viewerData.reportOptions, viewerData.reportLayoutOptions, viewerData.components] = $event, emit('refresh')"
+					@cancel="showSettingsDialog = false"
+				/>
+
+				<EvModalSaveLayoutAs
+					v-model="openSaveAsModal"
+					@layoutSaved="layoutsStore.getListLayoutsLight(viewerData.content_type)"
+				/>
 			</template>
 		</EvBaseTopPanel>
 
@@ -93,52 +105,26 @@
 				<ModalPortfolioBundleAddEdit v-model="isOpenAddBundle"
 																		 :registers="registersItems"
 																		 @save="createBundle" />
+
+				<ModalPortfolioRegister
+					title="Add portfolio register"
+					v-model="addRegisterIsOpen"
+					@save="onPrtfRegisterCreate"
+					@cancel="addRegisterIsOpen = false"
+				/>
 			</template>
 
 			<template #rightActions>
 				<FmIcon icon="splitscreen" @click="splitComponent = 'FmBtn'" btn />
-				<FmIcon icon="refresh" @click="refresh()" btn />
+				<FmIcon icon="refresh" @click="emit('refresh')" btn />
 			</template>
 		</FmHorizontalPanel>
 
-		<PagesReportsPerformanceDialogSettings
-			v-model="showSettingsDialog"
-			v-model:externalReadyStatus="dsReadyStatus"
-			:bundles="bundles"
-			@save="showSettingsDialog = false, [viewerData.reportOptions, viewerData.reportLayoutOptions, viewerData.components] = $event, refresh()"
-			@cancel="showSettingsDialog = false"
-		/>
-
-		<ModalPortfolioRegister
-			title="Add portfolio register"
-			v-model="addRegisterIsOpen"
-			@save="onPrtfRegisterCreate"
-			@cancel="addRegisterIsOpen = false"
-		/>
-
-		<EvModalSaveLayoutAs
-			v-model="openSaveAsModal"
-			@layoutSaved="layoutsStore.getListLayoutsLight(viewerData.content_type)"
-		/>
-
-		<!-- <ModalInfo title="Warning"
-							 :description="`Are you sure you want to delete period: ${activePeriodData.user_code}?`"
-							 v-model="showBundleDeletionWarning">
-
-			<template #controls="{ cancel }">
-				<div class="flex-row fc-space-between">
-					<FmBtn type="basic" @click="cancel">CANCEL</FmBtn>
-
-					<FmBtn type="basic" @click="deleteBundle(), cancel()">YES</FmBtn>
-				</div>
-			</template>
-
-		</ModalInfo> -->
 		<div class="split_panel_wrap"
 			:style="splitComponent ? {gridTemplateRows: `calc(100% - ${splitHeight}px) ${splitHeight}px`} : {}"
 		>
 			<div class="split_panel_main">
-				<slot></slot>
+				<slot :reportOptions="viewerData.reportOptions"></slot>
 			</div>
 
 			<div class="split_panel" v-if="splitComponent">
@@ -147,14 +133,20 @@
 				<component :is="splitComponent" />
 			</div>
 		</div>
-
 	</div>
 </template>
 
 <script setup>
 
-	const viewerData = getPerformanceViewerData();
-	provide('viewerData', viewerData);
+	import dayjs from 'dayjs'
+
+	const emit = defineEmits(['refresh'])
+
+	const viewerData = getPerformanceViewerData()
+	const layoutsStore = useLayoutsStore();
+	const store = useStore();
+	const route = useRoute();
+	provide('viewerData', viewerData)
 
 	let bundles = ref([])
 	let registersItems = ref([]);
@@ -171,7 +163,6 @@
 	let openSaveAsModal = ref(false);
 	let isOpenAddBundle = ref(false)
 
-
 	let splitHeight = ref(200)
 	let splitComponent = ref(false)
 
@@ -187,6 +178,22 @@
 		return ready;
 
 	})
+
+	watch(
+		() => viewerData.layoutToOpen,
+		async () => {
+
+			if (viewerData.layoutToOpen) {
+
+				await fetchListLayout();
+				viewerData.layoutToOpen = null;
+
+				refresh();
+
+			}
+
+		},
+	)
 	function resizeY(e) {
 		let elem = e.target
 		let parentRect = elem.closest('.split_panel_wrap').getBoundingClientRect()
@@ -233,27 +240,27 @@
 	}
 	async function createBundle(bundleData) {
 
-const newBundleData = {
-	name: bundleData.name,
-	short_name: bundleData.name,
-	user_code: bundleData.name,
-	public_name: bundleData.name,
-	registers: bundleData.registers,
-};
+		const newBundleData = {
+			name: bundleData.name,
+			short_name: bundleData.name,
+			user_code: bundleData.name,
+			public_name: bundleData.name,
+			registers: bundleData.registers,
+		};
 
-let res = await useApi('portfolioBundles.post', {body: newBundleData})
+		let res = await useApi('portfolioBundles.post', {body: newBundleData})
 
-if ( res ) {
+		if ( res ) {
 
-	refresh()
+			refresh()
 
-	useNotify({
-		type: 'success',
-		title: 'Bundle created successfully'
-	})
+			useNotify({
+				type: 'success',
+				title: 'Bundle created successfully'
+			})
 
-}
-}
+		}
+	}
 
 	async function updateBundle(bundleData) {
 
@@ -299,135 +306,177 @@ if ( res ) {
 		}
 
 	}
+	await fetchListLayout();
+
+	async function fetchListLayout () {
+
+		/*const resData = await useApi('defaultListLayout.get', {params: {contentType: viewerData.contentType}});
+
+		if (resData.error) {
+			throw new Error('Failed to fetch default performance layout');
+		}
+
+		const defaultListLayout = (resData.results.length) ? resData.results[0] : null;
+
+		if (defaultListLayout.data.reportOptions.pricing_policy) {
+
+			defaultListLayout.data.reportOptions.pricing_policy_object = pricingPolicyListLight.value.find(item => {
+				return item.id === defaultListLayout.data.reportOptions.pricing_policy;
+			});
+
+		}
+
+		if (defaultListLayout.data.reportOptions.report_currency) {
+
+			defaultListLayout.data.reportOptions.report_currency_object = currencyListLight.value.find(item => {
+				return item.id === defaultListLayout.data.reportOptions.report_currency;
+			});
+
+		}*/
+		readyStatusData.layout = false;
+
+		const layoutRes = await useFetchEvRvLayout(layoutsStore, viewerData, route.query.layout);
+
+		viewerData.setLayoutCurrentConfiguration(layoutRes, store.ecosystemDefaults);
+
+		const reportOptionsRes = await useCalculateReportDatesExprs(viewerData.content_type, viewerData.reportOptions, viewerData.reportLayoutOptions);
+
+		if (reportOptionsRes.error) throw reportOptionsRes.error;
+
+		viewerData.reportOptions = reportOptionsRes;
+
+		readyStatusData.layout = true;
+
+	}
 
 	function getPerformanceViewerData() {
 
-return reactive(
-	{
-		listLayout: {},
-		reportLayoutOptions: {},
-		reportOptions: {},
-		additions: {},
-		components: {},
-		exportOptions: {},
+		return reactive(
+			{
+				listLayout: {},
+				reportLayoutOptions: {},
+				reportOptions: {},
+				additions: {},
+				components: {},
+				exportOptions: {},
 
-		layoutToOpen: null, // id of layout
+				layoutToOpen: null, // id of layout
 
-		content_type: 'reports.performancereport',
-		entityType: 'reports-performance', // TODO: remove and use only content_type
+				content_type: 'reports.performancereport',
+				entityType: 'reports-performance', // TODO: remove and use only content_type
 
-		isReport: true,
-		isRootEntityViewer: true,
-		newLayout: false,
-		viewerContext: 'entity_viewer',
+				isReport: true,
+				isRootEntityViewer: true,
+				newLayout: false,
+				viewerContext: 'entity_viewer',
 
-		/*setListLayout(listLayout) {
-			this.state.listLayout = listLayout;
-		},
+				/*setListLayout(listLayout) {
+					this.state.listLayout = listLayout;
+				},
 
-		setReportOptions(ro) {
-			this.state.reportOptions = ro;
-		},
+				setReportOptions(ro) {
+					this.state.reportOptions = ro;
+				},
 
-		setAdditions(additions) {
-			this.state.additions = additions;
-		},
+				setAdditions(additions) {
+					this.state.additions = additions;
+				},
 
-		setComponents(components) {
-			this.state.components = components;
-		},
+				setComponents(components) {
+					this.state.components = components;
+				},
 
-		setExportOptions(options) {
-			this.state.exportOptions = options;
-		},*/
+				setExportOptions(options) {
+					this.state.exportOptions = options;
+				},*/
 
-		setLayoutCurrentConfiguration(listLayout, ecosystemDefaults) {
+				setLayoutCurrentConfiguration(listLayout, ecosystemDefaults) {
 
-			if (listLayout) {
+					if (listLayout) {
 
-				this.newLayout = false;
-				listLayout = useRecursiveDeepCopy(listLayout);
+						this.newLayout = false;
+						listLayout = useRecursiveDeepCopy(listLayout);
 
-			} else {
+					} else {
 
-				this.newLayout = true;
+						this.newLayout = true;
 
-				/*let edRes = await useApi('ecosystemDefaults.get');
+						/*let edRes = await useApi('ecosystemDefaults.get');
 
-				const ecosystemDefaults = (edRes.error) ? {} : edRes.results[0];*/
+						const ecosystemDefaults = (edRes.error) ? {} : edRes.results[0];*/
 
-				listLayout = getEmptyLayoutData(JSON.parse(JSON.stringify(ecosystemDefaults)));
+						listLayout = getEmptyLayoutData(JSON.parse(JSON.stringify(ecosystemDefaults)));
 
+					}
+
+					//region Setup data for FmInputDateComplex
+					if (!listLayout.data.hasOwnProperty('reportLayoutOptions')) {
+						listLayout.data.reportLayoutOptions = {};
+					}
+
+					if (!listLayout.data.reportLayoutOptions.hasOwnProperty('datepickerOptions')) {
+						listLayout.data.reportLayoutOptions.datepickerOptions = {};
+					}
+
+					if (!listLayout.data.reportLayoutOptions.datepickerOptions.hasOwnProperty('reportFirstDatepicker')) {
+						listLayout.data.reportLayoutOptions.datepickerOptions.reportFirstDatepicker = {};
+					}
+
+					if (!listLayout.data.reportLayoutOptions.datepickerOptions.hasOwnProperty('reportLastDatepicker')) {
+
+						listLayout.data.reportLayoutOptions.datepickerOptions.reportLastDatepicker = {
+							expression: 'last_business_day(now())',
+							datepickerMode: 'expression'
+						};
+
+					}
+					//endregion
+
+					this.components = JSON.parse(JSON.stringify(listLayout.data.components));
+					this.reportLayoutOptions = JSON.parse(JSON.stringify(listLayout.data.reportLayoutOptions));
+					this.reportOptions = JSON.parse(JSON.stringify(listLayout.data.reportOptions));
+
+					this.additions = JSON.parse(JSON.stringify(listLayout.data.additions));
+					this.exportOptions = JSON.parse(JSON.stringify(listLayout.data.exportOptions));
+
+					this.listLayout = listLayout;
+
+					/*this.setComponents(JSON.parse(JSON.stringify(listLayout.data.components)));
+					this.setReportOptions(JSON.parse(JSON.stringify(listLayout.data.reportOptions)));
+					this.setAdditions(JSON.parse(JSON.stringify(listLayout.data.additions)));
+					this.setExportOptions(JSON.parse(JSON.stringify(listLayout.data.exportOptions)));
+
+					this.setListLayout(listLayout);*/
+
+				},
+
+				getLayoutCurrentConfiguration() {
+
+					let listLayout = useRecursiveDeepCopy(this.listLayout);
+
+					listLayout.data.components = {...{}, ...this.components};
+					listLayout.data.reportLayoutOptions = JSON.parse(JSON.stringify(this.reportLayoutOptions));
+					listLayout.data.reportOptions = JSON.parse(JSON.stringify(this.reportOptions));
+
+					listLayout.data.additions = JSON.parse(JSON.stringify(this.additions));
+					listLayout.data.exportOptions = JSON.parse(JSON.stringify(this.exportOptions));
+
+					return listLayout;
+				},
+
+				/*get reportOptions() {
+					return this.state.reportOptions;
+				},
+
+				get components() {
+					return this.state.components;
+				},
+
+				get exportOptions() {
+					return this.state.exportOptions;
+				},*/
 			}
-
-			//region Setup data for FmInputDateComplex
-			if (!listLayout.data.hasOwnProperty('reportLayoutOptions')) {
-				listLayout.data.reportLayoutOptions = {};
-			}
-
-			if (!listLayout.data.reportLayoutOptions.hasOwnProperty('datepickerOptions')) {
-				listLayout.data.reportLayoutOptions.datepickerOptions = {};
-			}
-
-			if (!listLayout.data.reportLayoutOptions.datepickerOptions.hasOwnProperty('reportFirstDatepicker')) {
-				listLayout.data.reportLayoutOptions.datepickerOptions.reportFirstDatepicker = {};
-			}
-
-			if (!listLayout.data.reportLayoutOptions.datepickerOptions.hasOwnProperty('reportLastDatepicker')) {
-
-				listLayout.data.reportLayoutOptions.datepickerOptions.reportLastDatepicker = {
-					expression: 'last_business_day(now())',
-					datepickerMode: 'expression'
-				};
-
-			}
-			//endregion
-
-			this.components = JSON.parse(JSON.stringify(listLayout.data.components));
-			this.reportLayoutOptions = JSON.parse(JSON.stringify(listLayout.data.reportLayoutOptions));
-			this.reportOptions = JSON.parse(JSON.stringify(listLayout.data.reportOptions));
-
-			this.additions = JSON.parse(JSON.stringify(listLayout.data.additions));
-			this.exportOptions = JSON.parse(JSON.stringify(listLayout.data.exportOptions));
-
-			this.listLayout = listLayout;
-
-			/*this.setComponents(JSON.parse(JSON.stringify(listLayout.data.components)));
-			this.setReportOptions(JSON.parse(JSON.stringify(listLayout.data.reportOptions)));
-			this.setAdditions(JSON.parse(JSON.stringify(listLayout.data.additions)));
-			this.setExportOptions(JSON.parse(JSON.stringify(listLayout.data.exportOptions)));
-
-			this.setListLayout(listLayout);*/
-
-		},
-
-		getLayoutCurrentConfiguration() {
-
-			let listLayout = useRecursiveDeepCopy(this.listLayout);
-
-			listLayout.data.components = {...{}, ...this.components};
-			listLayout.data.reportLayoutOptions = JSON.parse(JSON.stringify(this.reportLayoutOptions));
-			listLayout.data.reportOptions = JSON.parse(JSON.stringify(this.reportOptions));
-
-			listLayout.data.additions = JSON.parse(JSON.stringify(this.additions));
-			listLayout.data.exportOptions = JSON.parse(JSON.stringify(this.exportOptions));
-
-			return listLayout;
-		},
-
-		/*get reportOptions() {
-			return this.state.reportOptions;
-		},
-
-		get components() {
-			return this.state.components;
-		},
-
-		get exportOptions() {
-			return this.state.exportOptions;
-		},*/
-	}
-)
+		)
 
 	}
 
@@ -456,7 +505,7 @@ return reactive(
 				},
 				reportOptions: {
 					begin_date: null,
-					end_date: moment(new Date).format('YYYY-MM-DD'),
+					end_date: dayjs(new Date).format('YYYY-MM-DD'),
 					report_currency: ecosystemDefaults.currency || null,
 					report_currency_object: reportCurrencyObj,
 					calculation_type: "time_weighted",
@@ -473,22 +522,6 @@ return reactive(
 			}
 		};
 	}
-
-	watch(
-		() => viewerData.layoutToOpen,
-		async () => {
-
-			if (viewerData.layoutToOpen) {
-
-				await fetchListLayout();
-				viewerData.layoutToOpen = null;
-
-				refresh();
-
-			}
-
-		},
-	)
 
 </script>
 
