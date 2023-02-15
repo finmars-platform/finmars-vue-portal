@@ -29,7 +29,7 @@
 			>
 				<FmLoader v-if="item === null" />
 				<template v-else-if="typeof item == 'object'">
-					<NuxtLink class="link" :to="item.link" v-if="item.link">{{ item.value }}</NuxtLink>
+					<NuxtLink class="link dib" :to="item.link" v-if="item.link">{{ item.value }}</NuxtLink>
 					<template v-else>{{ item.value }}</template>
 				</template>
 				<template v-else>{{ item }}</template>
