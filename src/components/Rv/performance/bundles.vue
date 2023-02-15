@@ -17,7 +17,13 @@
 	let props = defineProps({
 		end_date: {
 			type: String
-		}
+		},
+		calculation_type: {
+			type: String
+		},
+		report_currency: {
+			type: Number
+		},
 	})
 
 	let preriodHeaders = computed(() => {
@@ -30,15 +36,18 @@
 	})
 	let preriodItems = ref([])
 	let activePeriod = ref(0)
+	let bundles = ref([])
+
+	fetchPortfolioBundles()
 
 	async function fetchPortfolioBundles() {
 
-		readyStatusData.bundles = false;
+		// readyStatusData.bundles = false;
 
 		let res = await useApi('portfolioBundles.get');
 
 		bundles.value = res.results;
-		readyStatusData.bundles = true;
+		// readyStatusData.bundles = true;
 
 		preriodItems.value = []
 
@@ -109,7 +118,7 @@
 	async function getDay( ids ) {
 		let endDate = dayjs(props.end_date)
 
-		let day = moment(endDate).add(-1, 'd').format('YYYY-MM-DD')
+		let day = dayjs(endDate).add(-1, 'd').format('YYYY-MM-DD')
 
 		return await getReports({start: day, end: day, ids, type: 'days'})
 	}
@@ -186,9 +195,9 @@
 				"save_report": false,
 				"begin_date": start,
 				"end_date": end,
-				"calculation_type": viewerData.reportOptions?.calculation_type,
+				"calculation_type": props.calculation_type,
 				"segmentation_type": type,
-				'report_currency': viewerData.reportOptions?.report_currency,
+				'report_currency': props.report_currency,
 				"bundle": ids
 			}
 		})
