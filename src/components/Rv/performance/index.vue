@@ -162,7 +162,8 @@
 
 						</div>
 
-						<ModalPortfolioBundleAddEdit v-model="editBundleIsOpened"
+						<ModalPortfolioBundleAddEdit v-if="editBundleIsOpened"
+																				v-model="editBundleIsOpened"
 																				actionType="edit"
 																				:name="activePeriodData.user_code"
 																				:bundleRegisters="activePeriodData.registers"
@@ -214,8 +215,8 @@
 			@layoutSaved="layoutsStore.getListLayoutsLight(viewerData.content_type)"
 		/>
 
-		<ModalInfo title="Warning"
-							 :description="`Are you sure you want to delete period: ${activePeriodData.user_code}?`"
+		<ModalInfo v-if="showBundleDeletionWarning" title="Warning"
+							 :description="`Do you want to delete the bundle “${activePeriodData.user_code}” permanently?`"
 							 v-model="showBundleDeletionWarning">
 
 			<template #controls="{ cancel }">
@@ -998,6 +999,8 @@ async function getIncept( ids ) {
 	})
 
 	let start = res.transaction_date
+
+	if ( !start ) return false
 
 	const endDate = await getEndDate();
 
