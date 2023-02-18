@@ -102,4 +102,25 @@ export default [
 			}
 		]
 	},
+	{
+		id: 'PerformanceBundles',
+		name: 'PerformanceBundles',
+		group: 'base',
+		minColls: 6,
+		minRows: 4,
+		props: {
+			inputs: [
+				{name: 'begin_date', type: 'string', value: '', id: 'PerformanceBundles', parents: []},
+				{name: 'end_date', type: 'string', value: '', id: 'PerformanceBundles', parents: []},
+				{name: 'calculation_type', type: 'string', value: '', id: 'PerformanceBundles', parents: []},
+				{name: 'report_currency', type: 'string', value: '', id: 'PerformanceBundles', parents: []},
+			],
+			outputs: [
+				{name: 'bundleId', type: 'number', value: '', id: 'PerformanceBundles', parents: []},
+			]
+		},
+		settings: [
+
+		]
+	},
 ]

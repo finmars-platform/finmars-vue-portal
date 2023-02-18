@@ -1,77 +1,157 @@
 <template>
 	<BaseModal
 		no_padding
-		title="Choose component"
-		:controls="{
-			cancel: {name: 'Cancel'},
-			action: {name: 'Save', cb: addComponent},
-		}"
+		title="Add component"
 	>
-		<h3>System components</h3>
+		<template v-if="step == 'component'">
+			<h3>System components</h3>
 
-		<div class="fm_list">
-			<div class="fm_list_item"
-				v-for="item in systems"
-				:class="{active: activeWidget == item.id}"
-				@click="activeWidget = item.id"
-				@dblclick="activeWidget = item.id, addComponent(), $emit('close')"
-			>
-				{{ item.name }}
+			<div class="fm_list">
+				<div class="fm_list_item"
+					v-for="item in systems"
+					:class="{active: activeWidget.id == item.id}"
+					@click="activeWidget = item"
+					@dblclick="activeWidget = item"
+				>
+					{{ item.name }}
+				</div>
+			</div>
+
+			<h3>Base components</h3>
+
+			<div class="fm_list">
+				<div class="fm_list_item"
+					v-for="item in bases"
+					:class="{active: activeWidget.id == item.id}"
+					@click="activeWidget = item"
+					@dblclick="activeWidget = item"
+				>
+					{{ item.name }}
+				</div>
+			</div>
+		</template>
+
+		<div class="settings flex" v-if="step == 'settings'">
+			<div class="settings_coll">
+				<h4>General</h4>
+
+				<BaseInput
+					v-model="activeWidget.user_code"
+					label="User code"
+					required
+				/>
+				<FmSelect
+					v-model="activeWidget.tab"
+					:items="tabList"
+					label="Tab"
+				/>
+			</div>
+
+			<div class="settings_coll">
+				<h4>Inputs</h4>
+
+				<div v-for="item in activeWidget.props.inputs">
+					<BaseInput
+						v-if="!propMode[item.name]"
+						v-model="item.value"
+						:label="item.name"
+					/>
+					<BaseMultiSelectInput
+						v-else
+						v-model="item.parents"
+						:title="item.name"
+						:items="JSON.parse(JSON.stringify(dashStore.scope))"
+						item_id="id"
+					/>
+
+					<FmCheckbox
+						class="inherit_checkbox"
+						v-model="propMode[item.name]"
+						:label="`Inherit value`"
+					/>
+				</div>
+
+			</div>
+
+			<div class="settings_coll">
+				<h4>Outputs</h4>
+
+				<div v-for="item in activeWidget.props.outputs">
+					<BaseMultiSelectInput
+						v-model="item.children"
+						:title="item.name"
+						:items="JSON.parse(JSON.stringify(dashStore.scope))"
+						item_id="id"
+					/>
+				</div>
 			</div>
 		</div>
 
-		<h3>Base components</h3>
-
-		<div class="fm_list">
-			<div class="fm_list_item"
-				v-for="item in bases"
-				:class="{active: activeWidget == item.id}"
-				@click="activeWidget = item.id"
-				@dblclick="activeWidget = item.id, addComponent(), $emit('close')"
-			>
-				{{ item.name }}
+		<template #controls="{cancel}">
+			<div class="flex sb">
+				<FmBtn type="text" @click="step = 'component'">cancel</FmBtn>
+				<FmBtn @click="step == 'settings' ? addComponent(cancel) : step = 'settings'">
+					{{ step == 'settings' ? 'finish' : 'next' }}
+				</FmBtn>
 			</div>
-		</div>
+		</template>
 	</BaseModal>
 </template>
 
 <script setup>
+
 	import widgetList from '~/assets/data/widgets.js'
 
-	let props = defineProps({
+	const props = defineProps({
 		tab: String,
 	})
 
-	let dashStore = useStoreDashboard()
+	const dashStore = useStoreDashboard()
 
-	let activeWidget = ref(null)
-
+	let step = ref('component')
+	let activeWidget = ref({})
+	let propMode = reactive({})
 	let systems = computed(() => {
 		return widgetList.filter((item) => item.group == 'system')
 	})
-
 	let bases = computed(() => {
 		return widgetList.filter((item) => item.group == 'base')
 	})
+	let tabList = computed(() => {
+		return [...dashStore.tabs, {id: null, name: 'Top place'}]
+	})
 
-	function addComponent() {
-		let widget = widgetList.find((item) => item.id == activeWidget.value)
-
+	function addComponent( cancelFunc ) {
 		let new_widget = {
-			id: generateId(widget.id),
-			name: widget.name,
-			componentName: widget.id,
-			scope: 'global',
-			tab: props.tab ? props.tab : null,
-			colls: widget.minColls,
-			rows: widget.minRows,
-			minColls: widget.minColls,
-			minRows: widget.minRows,
+			name: activeWidget.value.name,
+			componentName: activeWidget.value.id,
+			colls: activeWidget.value.minColls,
+			rows: activeWidget.value.minRows,
+			minColls: activeWidget.value.minColls,
+			minRows: activeWidget.value.minRows,
 			settings: {},
-			_isEdit: true
+			tab: props.tab ? props.tab : null,
+			id: generateId(activeWidget.value.id),
 		}
+		console.log('new_widget:', new_widget)
+		console.log('activeWidget.value:', activeWidget.value)
 
-		dashStore.widgets.push(new_widget)
+		dashStore.$patch((state) => {
+			dashStore.widgets.push(new_widget)
+
+			activeWidget.value.props.inputs.forEach((prop) => {
+				state.scope.push({
+					id: new_widget.id + Math.random(0, 1),
+					cid: new_widget.id,
+					name: prop.name,
+					type: prop.type,
+					__val: prop.value,
+					parents: prop.parents,
+					children: prop.children,
+				})
+			})
+		})
+		cancelFunc()
 	}
 	function generateId( id ) {
 		return id + Date.now()
@@ -83,7 +163,26 @@
 		padding: 10px 20px;
 		font-weight: 500;
 	}
+	h4 {
+		font-size: 16px;
+		font-weight: 500;
+		padding-bottom: 5px;
+	}
 	.fm_list_item {
 		padding: 0 20px;
+	}
+	.settings {
+		padding: 20px;
+	}
+	.settings_coll {
+		width: 300px;
+
+		& + & {
+			padding-left: 20px;
+		}
+	}
+	.inherit_checkbox {
+		margin-top: -18px;
+		margin-bottom: 25px;
 	}
 </style>

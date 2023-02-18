@@ -8,9 +8,7 @@ export default defineStore({
 			// DATA
 			widgets: [],
 			tabs: [],
-			scopes: {
-				global: {}
-			},
+			scope: [],
 			// END DATA
 			layoutList: [],
 			activeLayoutId: null,
@@ -43,7 +41,7 @@ export default defineStore({
 
 			this.widgets = this.layout.data.widgets || []
 			this.tabs = this.layout.data.tabs || []
-			this.scopes = this.layout.data.scopes || {global: {}}
+			this.scope = this.layout.data.scope || []
 		},
 		async getHistory(wid) {
 			let widget = this.widgets.find(item => item.id == wid)
@@ -148,7 +146,7 @@ export default defineStore({
 						data: {
 							widgets: this.widgets,
 							tabs: this.tabs,
-							scopes: this.scopes,
+							scope: this.scope,
 						}
 					}
 				})
@@ -166,7 +164,7 @@ export default defineStore({
 						data: {
 							widgets: this.widgets,
 							tabs: this.tabs,
-							scopes: this.scopes,
+							scope: this.scope,
 						}
 					}
 				})
@@ -189,20 +187,8 @@ export default defineStore({
 
 			if ( index === -1 ) throw new Error('[Store:removeWidget] ID not find')
 
-			let widget = this.widgets[index]
-			let baseWidget = widgetList.find(item => item.id == widget.componentName)
-
-			for ( let prop in baseWidget.props ) {
-				let propObject = this.scopes[widget.scope][prop]
-
-				if ( !propObject ) throw new Error('[Store:removeWidget] Data incorrect')
-				propObject._usedCount -= 1
-
-				if ( propObject._usedCount == 0 || this.widgets.length == 1 ) {
-					delete this.scopes[widget.scope][prop]
-				}
-
-			}
+			// let widget = this.widgets[index]
+			// let baseWidget = widgetList.find(item => item.id == widget.componentName)
 
 			this.widgets.splice(index, 1)
 		}

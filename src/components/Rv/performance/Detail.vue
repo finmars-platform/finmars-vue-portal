@@ -55,11 +55,40 @@
 
 <script setup>
 
+	import dayjs from 'dayjs'
+
+	const props = defineProps({
+		currentBundle: {
+			type: Object
+		},
+		begin_date: {
+			type: String
+		},
+		end_date: {
+			type: String
+		},
+		calculation_type: {
+			type: String
+		},
+		report_currency: {
+			type: Number
+		},
+	})
+	const emits = defineEmits(["setMonth"])
+
+	watch(
+		() => props.currentBundle,
+		() => {
+			getMonthDetails()
+		}
+	)
+
 	let portfolioItems = ref([])
 	let portfolioItemsCumm = ref([])
 	let portfolioYears = ref([])
 	let portfolioTotals = ref([])
 	let activeYear = ref(0)
+	let detailsLoading = false
 
 	let detailPortfolio = ref('')
 	let detailYear = ref('')
@@ -73,9 +102,13 @@
 	async function chooseMonth(id) {
 		activeYear.value = id
 		detailYear.value = portfolioYears.value[id]
-		updateChart( portfolioItems.value[id], portfolioItemsCumm.value[id] )
+
+		emits('setMonth', {
+			datasetMonth: portfolioItems.value[id],
+			datasetLine: portfolioItemsCumm.value[id]
+		})
 	}
-	async function getMonthDetails( name ) {
+	async function getMonthDetails() {
 		if ( detailsLoading ) return false
 
 		detailsLoading = true
@@ -84,35 +117,24 @@
 		portfolioItems.value = []
 		portfolioItemsCumm.value = []
 
-		let bundleId = name
-			? bundles.value.find(item => item.user_code == name).id
-			: bundles.value[0].id
+		let bundleId = props.currentBundle.id
 
 		let begin
 		let firstTransaction
-		if ( !viewerData.reportOptions?.begin_date ) {
+		if ( !props.begin_date ) {
 			firstTransaction = await useApi('performanceFirstTransaction.get', {
 				params: { id: bundleId }
 			})
 			begin = firstTransaction.transaction_date
 		} else {
-			begin = dayjs(viewerData.reportOptions?.end_date).add(-1, 'd').format('YYYY-MM-DD')
+			begin = dayjs(props.end_date).add(-1, 'd').format('YYYY-MM-DD')
 		}
-		const endDate = await getEndDate();
+		const endDate = props.end_date
 
 		let end = dayjs(endDate).add(-1, 'd').format('YYYY-MM-DD')
 
-		let allMonths = await useApi('performanceReport.post', {
-			body: {
-				"save_report": false,
-				"begin_date": begin,
-				"end_date": end,
-				"calculation_type": viewerData.reportOptions?.calculation_type,
-				"segmentation_type": 'months',
-				'report_currency': viewerData.reportOptions?.report_currency,
-				"bundle": bundleId
-			}
-		})
+		let allMonths = await getReports({start: begin, end: end, ids: bundleId})
+
 		if ( allMonths.error ) {
 			detailsLoading = false
 			return false
@@ -150,7 +172,7 @@
 			]
 		})
 
-		let dateTo = dayjs(viewerData.reportOptions?.end_date)
+		let dateTo = dayjs(props.end_date)
 		let dateFrom = dayjs(firstTransaction.transaction_date)
 
 		for ( let [year, months] of yearsBuffer ) {
@@ -172,9 +194,28 @@
 			let end = year == dayjs(dateTo).year() ? dateTo.add(-1, 'd').format('YYYY-MM-DD') : `${year}-12-30`
 
 			let total = await getReports({start: `${year - 1}-12-31`, end: end, ids: bundleId})
-			portfolioTotals.value.push( total * 100 )
+			portfolioTotals.value.push( total.grand_return * 100 )
 		}
 		detailsLoading = false
+
+		chooseMonth(0)
+	}
+
+	// double
+	async function getReports({start, end, ids, type = 'months'}) {
+		let res = await useApi('performanceReport.post', {
+			body: {
+				"save_report": false,
+				"begin_date": start,
+				"end_date": end,
+				"calculation_type": props.calculation_type,
+				"segmentation_type": type,
+				'report_currency': props.report_currency,
+				"bundle": ids
+			}
+		})
+
+		return res
 	}
 
 </script>

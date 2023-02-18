@@ -108,6 +108,15 @@
 	let dashStore = useStoreDashboard()
 
 	dashStore.init()
+	dashStore.$subscribe((mutation, state) => {
+		if ( mutation.events.key == '__val' ) {
+			let id = mutation.events.target.id
+			console.log('id:', id)
+
+			let props = state.scope.filter(item => item.parents.includes(id) )
+			props.forEach(prop => prop.__val = mutation.events.target.__val)
+		}
+	})
 
 	let isOpenJSON = ref(false)
 	let content = ref('')

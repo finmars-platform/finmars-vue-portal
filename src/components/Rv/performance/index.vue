@@ -1,23 +1,32 @@
 <template>
 	<CommonEntityViewer
+		type="report.performance"
 		@refresh="refresh()"
 	>
 		<template #default="{ reportOptions }">
 			<div class="fm_container">
 				<RvPerformanceBundles
+					:begin_date="reportOptions.begin_date"
 					:end_date="reportOptions.end_date"
 					:calculation_type="reportOptions.calculation_type"
 					:report_currency="reportOptions.report_currency"
+
+					@setBundle="currentBundle = $event"
 				/>
 
 				<RvPerformanceDetail
+					:currentBundle="currentBundle"
+
+					:begin_date="reportOptions.begin_date"
 					:end_date="reportOptions.end_date"
 					:calculation_type="reportOptions.calculation_type"
 					:report_currency="reportOptions.report_currency"
+
+					@setMonth="currentBundleYear = $event"
 				/>
 
 				<RvPerformanceChart
-
+					:yearData="currentBundleYear"
 				/>
 			</div>
 		</template>
@@ -26,13 +35,21 @@
 
 <script setup>
 
-	import dayjs from 'dayjs'
-	import quarterOfYear from 'dayjs/plugin/quarterOfYear'
-
-	dayjs.extend(quarterOfYear)
-
 	const store = useStore();
 	const route = useRoute();
+
+	let currentBundle = ref({})
+	let currentBundleYear = ref({})
+
+	function refresh(e) {
+		console.log('e:', e)
+	}
+
+	let panels = ref(['period', 'detail', 'diagram'])
+
+
+
+
 
 	let newBundle = ref({
 		name: '',
@@ -111,7 +128,6 @@
 init()
 
 //#region Main
-let panels = ref(['period', 'detail', 'diagram'])
 
 /** Index of selected bundle **/
 let activePeriod = ref(0)
@@ -139,71 +155,51 @@ let activePeriodData = computed(() => {
 })*/
 /*#endregion */
 
-watch(
-	() => route.query.layout,
-	async () => {
-		await fetchListLayout();
-		refresh();
+	watch(
+		() => route.query.layout,
+		async () => {
+			await fetchListLayout();
+			refresh();
+		}
+	)
+	async function saveLayout () {
+
+		if (viewerData.newLayout) {
+
+			/*const layoutToSave = viewerData.getLayoutCurrentConfiguration();
+			layoutToSave.name = "default";
+			layoutToSave.user_code = "default";
+			layoutToSave.is_default = true;
+
+			let res = await useApi('listLayout.post', {body: layoutToSave});
+
+			if (!res.error) {
+				viewerData.newLayout = false;
+				viewerData.listLayout = res;
+				useNotify({type: 'success', title: 'Success. Page was saved.'})
+			}*/
+			openSaveAsModal.value = true;
+
+
+		} else {
+			useSaveEvRvLayout(store, viewerData);
+		}
+
 	}
-)
-
-async function saveLayout () {
-
-	if (viewerData.newLayout) {
-
-		/*const layoutToSave = viewerData.getLayoutCurrentConfiguration();
-		layoutToSave.name = "default";
-		layoutToSave.user_code = "default";
-		layoutToSave.is_default = true;
-
-		let res = await useApi('listLayout.post', {body: layoutToSave});
-
-		if (!res.error) {
-			viewerData.newLayout = false;
-			viewerData.listLayout = res;
-			useNotify({type: 'success', title: 'Success. Page was saved.'})
-		}*/
-		openSaveAsModal.value = true;
-
-
-	} else {
-		useSaveEvRvLayout(store, viewerData);
-	}
-
-}
 
 
 
-async function init() {
+	async function init() {
 
 	// fetchPrtfRegistersList();
 	// await Promise.all([fetchCurrenciesLightList(), fetchPricingPoliciesOpts()]);
 
-	// await refresh()
-}
-
-async function refresh() {
-	// await fetchPortfolioBundles()
-
-	// if ( !bundles.value.length ) {
-	// 	return false
-	// }
-	// activePeriod.value = 0
-	// activeYear.value = 0
-
-	// detailPortfolio.value = bundles.value[0].user_code
-
-	// await getMonthDetails()
-
-	// detailYear.value = portfolioYears.value[0]
-
-	// if ( chart )
-	// 	updateChart( portfolioItems.value[0], portfolioItemsCumm.value[0] )
-}
+	}
 
 	provide('refreshReport', refresh);
 
 	let detailsLoading = false
+	// rework
 	async function getEndDate() {
 
 		if (viewerData.reportOptions?.end_date) {
@@ -249,22 +245,6 @@ async function refresh() {
 
 		return viewerData.reportOptions.end_date;
 
-	}
-
-	async function getReports({start, end, ids, type = 'months'}) {
-		let res = await useApi('performanceReport.post', {
-			body: {
-				"save_report": false,
-				"begin_date": start,
-				"end_date": end,
-				"calculation_type": viewerData.reportOptions?.calculation_type,
-				"segmentation_type": type,
-				'report_currency': viewerData.reportOptions?.report_currency,
-				"bundle": ids
-			}
-		})
-
-		return res.grand_return
 	}
 
 </script>

@@ -83,7 +83,6 @@
 
 	let availableSearch = ref('');
 	let selectedSearch = ref('');
-
 	/**
 	 * Set of unique ids of selected items
 	 * @type {Ref<Set>}
