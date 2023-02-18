@@ -81,7 +81,7 @@
 	function findIds( val ) {
 		if ( typeof val == 'string' ) val = val.split(',')
 		let result = []
-		 val.forEach( itemArr => {
+		val.forEach( itemArr => {
 			let elem = groups.value.find(itemObj => itemObj.name == itemArr)
 			if ( elem ) result.push( elem.id )
 		})

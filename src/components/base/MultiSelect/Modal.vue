@@ -5,7 +5,7 @@
 
 		<div>
 			<BaseMultiSelectTwoAreas :items="items"
-															 v-model="props.modelValue"
+															 :modelValue="modelValue"
 															 :item_title="item_title"
 															 :item_id="item_id"
 															 @update:modelValue="newValue => selValue = newValue" />

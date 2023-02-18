@@ -57,6 +57,9 @@ import dayjs from 'dayjs';
 		if ( typeof scope.value[prop] != 'object' ) continue
 
 		let value = scope.value[prop].value
+		console.log('prop:', prop)
+		console.log('scope.value[prop]:', scope.value[prop])
+		console.log('value:', value)
 
 		if ( prop == 'portfolio' ) portfolio = scope.value[prop].value
 		if ( prop == 'date_to' ) date = typeof scope.value[prop] == 'string'

@@ -13,8 +13,10 @@
 <script setup>
 
 	import dayjs from 'dayjs'
+	import quarterOfYear from 'dayjs/plugin/quarterOfYear'
+	dayjs.extend(quarterOfYear)
 
-	let props = defineProps({
+	const props = defineProps({
 		end_date: {
 			type: String
 		},
@@ -25,6 +27,7 @@
 			type: Number
 		},
 	})
+	const emits = defineEmits(["setBundle"]);
 
 	let preriodHeaders = computed(() => {
 		return [
@@ -100,19 +103,12 @@
 				row.incept = value ? `${value}%` : ''
 			})
 		})
+		choosePortfolio(0)
 	}
 
 	async function choosePortfolio(id) {
-
 		activePeriod.value = id
-		detailPortfolio.value = preriodItems.value[id].name
-
-		let success = await getMonthDetails( preriodItems.value[id].name )
-		if  ( success === false ) return false
-		detailYear.value = portfolioYears.value[0]
-
-		// updateChart( portfolioItems.value[0], portfolioItemsCumm.value[0] )
-
+		emits('setBundle', bundles.value[id])
 	}
 
 	async function getDay( ids ) {
@@ -181,6 +177,8 @@
 		})
 
 		let start = res.transaction_date
+		if ( !start ) return false
+
 
 		let endDate = dayjs(props.end_date)
 
@@ -205,6 +203,7 @@
 		return res.grand_return
 	}
 
+	// rework
 	async function getEndDate() {
 
 		if (viewerData.reportOptions?.end_date) {
