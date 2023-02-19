@@ -83,6 +83,7 @@ export default {
 	},
 	member: {
 		get: prefix + '/users/member/{id}/',
+		delete: prefix + '/users/member/{id}/',
 		put: prefix + '/users/member/{id}/'
 	},
 
