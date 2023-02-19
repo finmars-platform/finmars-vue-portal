@@ -17,22 +17,23 @@
 			:style="{gridTemplateColumns: colls}"
 			v-for="(row, index) in items"
 			:key="index"
-			@click="() => {if (cb) cb(index)}"
 		>
 			<div class="center" v-if="isActions"><FmCheckbox /></div>
-			<slot class="table-cell" name="actions" :index="index" />
+			<div class="table-cell" v-if="$slots.actions">
+				<slot name="actions" :index="index" />
+			</div>
 			<div
 				class="table-cell"
-				:class="{disabled: item === ''}"
-				v-for="(item, index) in row"
-				:key="index"
+				v-for="(item, indexRow) in row"
+				:key="indexRow"
+				@click="() => {if (cb) cb(index)}"
 			>
 				<FmLoader v-if="item === null" />
 				<template v-else-if="typeof item == 'object'">
-					<NuxtLink class="link" :to="item.link" v-if="item.link">{{ item.value }}</NuxtLink>
+					<NuxtLink class="link dib" :to="item.link" v-if="item.link">{{ item.value }}</NuxtLink>
 					<template v-else>{{ item.value }}</template>
 				</template>
-				<template v-else>{{ item }}</template>
+				<template v-else>{{ item === '' ? '-' : item }}</template>
 			</div>
 		</div>
 	</div>

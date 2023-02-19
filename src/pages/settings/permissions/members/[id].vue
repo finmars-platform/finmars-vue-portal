@@ -22,7 +22,7 @@
 			<FmCard title="Roles" class="m-b-24" v-if="member.id">
 				<BaseInput
 					label="User roles"
-					v-model="member.username"
+					v-model="role"
 					disabled
 				/>
 				<BaseMultiSelectInput
@@ -71,6 +71,16 @@
 		return member.value.groups_object.map( item => item.name).join(',')
 	})
 
+	let role = computed(() => {
+		let roles = []
+
+		if ( member.value.is_admin ) roles.push('Admin')
+		if ( member.value.is_owner ) roles.push('Owner')
+		if ( !member.value.is_owner && !member.value.is_admin ) roles.push('User')
+
+		return roles.join(', ')
+	})
+
 	async function init() {
 		let res = await useApi('member.get', {params: {id: route.params.id}})
 		member.value = res
@@ -80,15 +90,14 @@
 	}
 	function findIds( val ) {
 		if ( typeof val == 'string' ) val = val.split(',')
-		let result = []
+		member.value.groups_object = []
+
 		val.forEach( itemArr => {
 			let elem = groups.value.find(itemObj => itemObj.name == itemArr)
-			if ( elem ) result.push( elem.id )
+			if ( elem ) member.value.groups_object.push( elem )
 		})
 
-		member.value.groups = result
-		member.value.groups_object = member.value.groups_object
-			.filter(item => member.value.groups.includes(item.id) )
+		member.value.groups = member.value.groups_object.map(item => item.id)
 	}
 	async function save() {
 		let res = await useApi('member.put', {body: member.value, params: {id: route.params.id}})

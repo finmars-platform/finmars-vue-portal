@@ -1,5 +1,7 @@
 <template>
 	<div>
+		<FmTabs v-model="tab" :tabs="['Members', 'Groups']" />
+
 		<FmTopRefresh
 			@refresh="refresh()"
 		>
@@ -11,28 +13,31 @@
 				/>
 			</template>
 		</FmTopRefresh>
+
 		<div class="fm_container">
-			<div class="table">
-				<div class="table-row header">
-					<div class="table-cell">Name</div>
-					<div class="table-cell">Role</div>
-					<div class="table-cell">Status</div>
-					<div class="table-cell">Groups</div>
-				</div>
-
-				<div class="table-row"
-					v-for="(item) in members"
-					:key="item.id"
-					:item="item"
-					@click="$router.push(`/settings/permissions/members/${item.id}`)"
-				>
-					<div class="table-cell">{{ item.username }}</div>
-					<div class="table-cell">{{ item.role }}</div>
-					<div class="table-cell">{{ item.status }}</div>
-					<div class="table-cell">{{ item.groups }}</div>
-				</div>
-			</div>
-
+			<BaseTable
+				:headers="['', 'Name', 'Role', 'Status', 'Groups']"
+				:items="members"
+				colls="50px repeat(4, 1fr)"
+				:cb="(id) => $router.push(`/settings/permissions/members/${stockMembers[id].id}`)"
+			>
+			<template #actions="{index}">
+					<div class="flex jcc aic height-100">
+						<FmMenu anchor="bottom left">
+							<template #btn>
+								<FmIcon icon="more_vert" />
+							</template>
+							<div class="fm_list">
+								<div class="fm_list_item"
+									@click="deleteMember(index)"
+								>
+									<FmIcon class="m-r-4" icon="delete" /> Delete
+								</div>
+							</div>
+						</FmMenu>
+					</div>
+				</template>
+			</BaseTable>
 			<!-- <div class="table">
 				<div class="table-row header">
 					<div class="table-cell">Procedure</div>
@@ -64,11 +69,20 @@
 	});
 	const store = useStore()
 
+	let tab = ref('Members')
+	watch(
+		tab,
+		() => {
+			const config = useRuntimeConfig()
+			location.href = `${config.public.apiURL}/${store.current.base_api_url}/a/#!/settings/users-and-groups?tab=groups`
+		}
+	)
+
 	let stockMembers = ref(null)
 	let stockInvites = ref(null)
 
 	let members = computed(() => {
-		let data = {}
+		let data = []
 
 		if ( !stockMembers.value ) return []
 
@@ -79,16 +93,15 @@
 			if ( item.is_owner ) roles.push('Owner')
 			if ( !item.is_owner && !item.is_admin ) roles.push('User')
 
-			data[ item.username ] = {
-				id: item.id,
+			data.push({
+				// id: item.id,
 				username: item.username,
 				role: roles.join(', '),
 				status: item.is_owner ? 'Creator' : 'Accepted',
 				groups: item.groups_object.map(item => item.name).join(', ')
-			}
+			})
 		})
 
-		console.log('data:', data)
 		return data
 	})
 
@@ -106,18 +119,25 @@
 		let resStatus = await useApi('dataInstance.get')
 		statuses.value = resStatus.results
 	}
+	async function deleteMember( index ) {
+		let deletedMember = stockMembers.value[index]
+		let isConfirm = await useConfirm({
+			title: 'Delete member',
+			text: `Do you want to delete a member "${deletedMember.username}"?`,
+		})
+		if ( !isConfirm ) return false
+
+		let res = await useApi('member.delete', {
+			params: {id: deletedMember.id}
+		})
+		refresh()
+	}
+	init()
 	function refresh() {
 		init()
 	}
 	function fromatDate( date ) {
 		return dayjs( date ).format('DD.MM.YYYY LT')
-	}
-	if ( store.current.base_api_url ) {
-		init()
-	} else {
-		watch( () => store.current, async () => {
-			init()
-		})
 	}
 </script>
 
