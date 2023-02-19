@@ -17,9 +17,9 @@
 
 		<div class="fm_container">
 			<BaseTable
-				colls="repeat(4, 1fr)"
-				:items="backupsView"
 				:headers="['Workspace', 'Backups', 'Autobackup', 'Last backup']"
+				:items="backupsView"
+				colls="repeat(4, 1fr)"
 			/>
 		</div>
 		<!-- <div v-else class="text-h4">No backups found</div> -->
