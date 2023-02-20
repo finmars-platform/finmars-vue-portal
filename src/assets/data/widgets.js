@@ -1,32 +1,36 @@
 export default [
-	{
-		id: 'GroupComponent',
-		name: 'Group component',
-		group: 'system',
-		minColls: 4,
-		minRows: 4,
-		props: {
-		}
-	},
-	{
-		id: 'controls',
-		name: 'Controls component',
-		group: 'system',
-		minColls: 4,
-		minRows: 4,
-		props: {
-		}
-	},
+	// {
+	// 	id: 'GroupComponent',
+	// 	name: 'Group component',
+	// 	group: 'system',
+	// 	minColls: 4,
+	// 	minRows: 4,
+	// 	props: {
+	// 	}
+	// },
+	// {
+	// 	id: 'controls',
+	// 	name: 'Controls component',
+	// 	group: 'system',
+	// 	minColls: 4,
+	// 	minRows: 4,
+	// 	props: {
+	// 	}
+	// },
 	{
 		id: 'CardsIndicators',
 		name: 'Cards indicators',
 		group: 'base',
 		minColls: 6,
 		minRows: 2,
-		props: {
-			date_to:   {name: 'Date', type: 'string', value: ''},
-			portfolio: {name: 'Portfolio', type: 'string', value: ''},
-		}
+		inputs: [
+			{name: 'date', user_code: 'Date', type: 'date', value: '', direct: 'input', parents: []},
+			{name: 'portfolio', user_code: 'Portfolio', type: 'id', direct: 'input', value: '', parents: []},
+		],
+		outputs: [
+			{name: 'type', user_code: 'Period type', type: 'string', direct: 'output', children: [], value: ''},
+		],
+		settings: []
 	},
 	{
 		id: 'ChartBalancePeriod',
@@ -34,22 +38,18 @@ export default [
 		group: 'base',
 		minColls: 6,
 		minRows: 3,
-		props: {
-			benchmark: {name: 'Benchmark', type: 'string', value: ''},
-			date_to:   {name: 'Date to', type: 'string', value: ''},
-			date_from: {name: 'Date from', type: 'string', value: ''},
-			portfolio: {name: 'Portfolio', type: 'string', value: ''}
-		},
-		settings: [
-			{
-				name: 'Type',
-				propName: '_cbp_type',
-				opts: [
-					{id: 'nav', name: 'nav'},
-					{id: 'pl', name: 'pl'},
-				]
-			}
-		]
+		inputs: [
+			{name: 'type', user_code: 'Period type', type: 'string', direct: 'input', parents: []},
+			{name: 'benchmark', user_code: 'Benchmark', type: 'string', direct: 'input', parents: []},
+			{name: 'date_to', user_code: 'Date to', type: 'date', value: '', direct: 'input', parents: []},
+			{name: 'date_from', user_code: 'Date from', type: 'date', value: '', direct: 'input', parents: []},
+			{name: 'portfolio', user_code: 'Portfolio', type: 'id', value: '', direct: 'input', parents: []},
+		],
+		outputs: [
+			{name: 'category_type', user_code: 'Category type', direct: 'output', type: 'string', value: '', children: []},
+			{name: 'detail_date', user_code: 'detail_date', type: 'date', direct: 'output', value: '', children: []},
+		],
+		settings: []
 	},
 	{
 		id: 'ChartBalanceDate',
@@ -57,10 +57,12 @@ export default [
 		group: 'base',
 		minColls: 4,
 		minRows: 4,
-		props: {
-			date_to:   {name: 'Date', type: 'string', value: ''},
-			portfolio: {name: 'Portfolio', type: 'string', value: ''}
-		}
+		inputs: [
+			{name: 'date', user_code: 'Date', type: 'date', value: '', direct: 'input', parents: []},
+			{name: 'portfolio', user_code: 'Portfolio', type: 'id', value: '', direct: 'input', parents: []},
+			{name: 'category_type', user_code: 'Category type', direct: 'input', type: 'string', value: '', children: []},
+		],
+		outputs: []
 	},
 	{
 		id: 'ChartPnlDate',
@@ -68,10 +70,10 @@ export default [
 		group: 'base',
 		minColls: 4,
 		minRows: 4,
-		props: {
-			date_to:   {name: 'Date', type: 'string', value: ''},
-			portfolio: {name: 'Portfolio', type: 'string', value: ''}
-		}
+		inputs: [
+			{name: 'date', user_code: 'Date', type: 'date', value: '', direct: 'input', parents: []},
+			{name: 'portfolio', user_code: 'Portfolio', type: 'id', value: '', direct: 'input', parents: []},
+		],
 	},
 	{
 		id: 'Matrix',
@@ -80,8 +82,10 @@ export default [
 		minColls: 6,
 		minRows: 4,
 		props: {
-			date_to:   {name: 'Date', type: 'string', value: ''},
-			portfolio: {name: 'Portfolio', type: 'string', value: ''}
+			inputs: [
+				{name: 'Date', type: 'date', value: '', id: 'PerformanceBundles', parents: []},
+				{name: 'Portfolio', type: 'id', value: '', id: 'PerformanceBundles', parents: []},
+			],
 		},
 		settings: [
 			{
@@ -110,10 +114,10 @@ export default [
 		minRows: 4,
 		props: {
 			inputs: [
-				{name: 'begin_date', type: 'string', value: '', id: 'PerformanceBundles', parents: []},
-				{name: 'end_date', type: 'string', value: '', id: 'PerformanceBundles', parents: []},
+				{name: 'begin_date', type: 'date', value: '', id: 'PerformanceBundles', parents: []},
+				{name: 'end_date', type: 'date', value: '', id: 'PerformanceBundles', parents: []},
 				{name: 'calculation_type', type: 'string', value: '', id: 'PerformanceBundles', parents: []},
-				{name: 'report_currency', type: 'string', value: '', id: 'PerformanceBundles', parents: []},
+				{name: 'report_currency', type: 'number', value: '', id: 'PerformanceBundles', parents: []},
 			],
 			outputs: [
 				{name: 'bundleId', type: 'number', value: '', id: 'PerformanceBundles', parents: []},

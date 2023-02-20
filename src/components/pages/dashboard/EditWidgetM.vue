@@ -26,7 +26,7 @@
 			<div class="settings_coll">
 				<h4>Inputs</h4>
 
-				<div v-for="item in scopeProps">
+				<div v-for="item in scopeProps.filter(item => item.direct == 'input')">
 					<BaseInput
 						v-if="!propMode[item.name]"
 						v-model="item.__val"
@@ -36,7 +36,7 @@
 						v-else
 						v-model="item.parents"
 						:title="item.name"
-						:items="JSON.parse(JSON.stringify(dashStore.scope))"
+						:items="prepareItems(item)"
 						item_id="id"
 					/>
 
@@ -52,14 +52,14 @@
 			<div class="settings_coll">
 				<h4>Outputs</h4>
 
-				<!-- <div v-for="item in activeWidget.props.outputs">
+				<div v-for="item in scopeProps.filter(item => item.direct == 'output')">
 					<BaseMultiSelectInput
 						v-model="item.children"
 						:title="item.name"
-						:items="JSON.parse(JSON.stringify(dashStore.scope))"
+						:items="prepareItems(item)"
 						item_id="id"
 					/>
-				</div> -->
+				</div>
 			</div>
 		</div>
 	</BaseModal>
@@ -82,43 +82,58 @@
 
 	let scopeProps = ref({})
 	let currentWodget = widgetList.find(item => item.id == editable.componentName)
-	console.log('currentWodget:', currentWodget)
 
 	prepareProps()
 
 	function prepareProps() {
-		scopeProps.value = dashStore.scope.filter((prop) => prop.cid == widget.id)
+		scopeProps.value = JSON.parse(JSON.stringify( dashStore.scope.filter((prop) => prop.cid == widget.id) ))
+	}
+	function prepareItems(childProp) {
+		let newProps = dashStore.scope
+			.filter((prop) => {
+				let isType = prop.type == childProp.type
+				let isDirect = prop.direct != childProp.direct
+
+				return isType && isDirect && childProp.cid != prop.cid
+			})
+			.map((prop) => {
+				return {
+					id: prop.id,
+					name: `${dashStore.widgets.find(item => item.id == prop.cid).name} / ${prop.name}[${prop.__val}]`,
+				}
+			})
+
+		return JSON.parse(JSON.stringify(newProps))
 	}
 
 	let tabList = computed(() => {
 		return [...dashStore.tabs, {id: null, name: 'Top place'}]
 	})
 
-	let scopeList = computed(() => {
-		let list = []
-
-		for ( let prop in dashStore.scopes ) {
-			list.push({
-				id: prop,
-				name: prop
-			})
-		}
-
-		list.push({
-			id: 'New scope',
-			name: 'New scope'
-		})
-
-		return list
-	})
-
 	function save() {
 		dashStore.$patch((state) => {
-			// state.scope.push(...scopeProps.value)
+			widget.user_code = editable.user_code
+			widget.tab = editable.tab
+
+			scopeProps.value.forEach((prop) => {
+				let scopeProp = state.scope.find((item => item.id == prop.id))
+
+				scopeProp.__val = prop.__val
+
+				if ( prop.parents ) scopeProp.parents = prop.parents
+				if ( prop.children ) {
+					let children = state.scope.filter(item => item.parents && item.parents.includes(prop.id))
+
+					children.forEach((child) => {
+						if ( child.parents.includes(prop.id) ) {
+
+						}
+					})
+				}
+			})
 		})
 
-		// widget.scope = 'main'
-		// widget.tab = editable.tab
+
 	}
 </script>
 

@@ -13,8 +13,8 @@
 				<div class="filter_item"
 					v-for="(item, i) in categories"
 					:key="i"
-					:class="{active: scope.__categoryType == item}"
-					@click="scope.__categoryType = item, updateData()"
+					:class="{active: outputs.category_type.__val == item}"
+					@click="outputs.category_type.__val = item, updateData()"
 				>
 					{{ item }}
 				</div>
@@ -57,7 +57,7 @@
 		Tooltip,
 	);
 
-	let props = defineProps({
+	const props = defineProps({
 		wid: String
 	})
 	// 0-99 101-200
@@ -71,7 +71,23 @@
 	let historyStats = await dashStore.getHistory(props.wid)
 	let widget = dashStore.getWidget(props.wid)
 	let widgetName = ref('Balance (Historical)')
-	let scope = dashStore.scopes[widget.scope]
+
+	let componentProps = computed(() => {
+		let props = dashStore.scope.filter((prop) => prop.cid == widget.id && prop.direct == 'input')
+		let obj = {}
+
+		props.forEach((prop) => {
+			obj[prop.name] = prop.__val
+		})
+		return obj
+	})
+
+	let outputs = {}
+	let propsTest = dashStore.scope.filter((prop) => prop.cid == widget.id)
+	propsTest.forEach((prop) => {
+		outputs[prop.name] = prop
+	})
+
 
 	if ( historyStats.error ) {
 		status.value = 101
@@ -82,7 +98,7 @@
 	let dataOfActive = ref({})
 	let activeIndex = ref(null)
 
-	scope.__categoryType = 'Asset Types'
+	outputs.category_type.__val = 'Asset Types'
 	let categories = ref({})
 
 	let data = {
@@ -93,35 +109,36 @@
 
 	createData()
 	status.value = 100
-	onMounted(() => {
-		if ( dayjs(scope.date_to.value).diff(dayjs(), 'day') >= 0 ) {
+	onMounted(async () => {
+		if ( dayjs(componentProps.value.date_to).diff(dayjs(), 'day') >= 0 ) {
 			status.value = 101
 			return false
 		}
+		widgetName.value = 'pl' == 'pl' ? 'P&L (Historical)' : 'Balance (Historical)'
+		historyStats = await dashStore.getHistory(props.wid)
+	// 		updateData()
 		createChart()
 	})
-	watch(
-		scope,
-		async () => {
-			widgetName.value = scope._cbp_type == 'pl' ? 'P&L (Historical)' : 'Balance (Historical)'
-			historyStats = await dashStore.getHistory(props.wid)
-			updateData()
-		}
-	)
+
+	watch(componentProps, async () => {
+		historyStats = await dashStore.getHistory(props.wid)
+		updateData()
+	})
+
 
 	function createData() {
-		if ( dayjs(scope.date_to.value).diff(dayjs(), 'day') >= 0 ) {
+		if ( dayjs(componentProps.value.date_to).diff(dayjs(), 'day') >= 0 ) {
 			status.value = 101
 			return false
 		}
 		let dataset = []
 		categories.value = Object.keys(historyStats)
 
-		for ( let date in historyStats[scope.__categoryType] ) {
+		for ( let date in historyStats[outputs.category_type.__val] ) {
 			let formatedDate = dayjs(date).format('MMM YY')
 			data.labels.push( formatedDate )
 
-			for ( let instr in historyStats[scope.__categoryType][date].items ) {
+			for ( let instr in historyStats[outputs.category_type.__val][date].items ) {
 				if ( !dataset[instr] ) {
 					dataset[instr] = {
 						data: {},
@@ -130,8 +147,8 @@
 				}
 
 				dataset[instr].label = instr
-				dataset[instr].data[formatedDate] = historyStats[scope.__categoryType][date].items[instr]
-				dataset[instr].total += historyStats[scope.__categoryType][date].items[instr]
+				dataset[instr].data[formatedDate] = historyStats[outputs.category_type.__val][date].items[instr]
+				dataset[instr].total += historyStats[outputs.category_type.__val][date].items[instr]
 			}
 		}
 
@@ -145,14 +162,14 @@
 		dataOfActive.value = {}
 
 		data.datasets.forEach((item, key) => {
-			item.backgroundColor = dashStore.instrColors[scope.__categoryType + item.label]
+			item.backgroundColor = dashStore.instrColors[outputs.category_type.__val + item.label]
 
 			dataOfActive.value[item.label] = item.data[activeIndex.value]
 		})
-		let notNull = Object.entries(historyStats[scope.__categoryType])
+		let notNull = Object.entries(historyStats[outputs.category_type.__val])
 			.filter(item => item[1].total)
 
-		scope._detail_date = notNull[notNull.length - 1][0]
+			outputs.detail_date.__val = notNull[notNull.length - 1][0]
 	}
 
 	function updateData() {
@@ -171,7 +188,7 @@
 			plugins: [{
 				id: 'custom_canvas_background_color',
 				afterDraw: (chart, args, options) => {
-					let metas = myChart.getSortedVisibleDatasetMetas()
+					let metas = chart.getSortedVisibleDatasetMetas()
 					let allBarsByDay = []
 
 					metas.forEach((categoty) => {
@@ -180,7 +197,10 @@
 							if (date.height) allBarsByDay[key] += date.height
 						})
 					})
-					let active = metas[0].data[allBarsByDay.filter(i => i).length - 1]
+
+					if ( activeIndex.value == null ) activeIndex.value = allBarsByDay.length - 1
+
+					let active = metas[0].data[activeIndex.value]
 
 					if ( !active ) return false
 
@@ -252,14 +272,17 @@
 						callbacks: {
 							footer:  (tooltipItems) => {
 								let sum = 0
+
 								tooltipItems.forEach(function(tooltipItem) {
 									let rawDate = tooltipItem.label.split(' ')
 									let date = dayjs( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
 
-									// let newDate = Object.keys(historyStats[categoryName.value]).find(item => item.includes(date))
-									// let item = historyStats.items.find((item) => item.date.includes(date))
-									// sum = typeHistory == 'nav' ? item.nav : item.total
-								});
+									let newDate = Object.keys(historyStats[outputs.category_type.__val])
+										.find(item => item.includes(date))
+
+									sum = historyStats[outputs.category_type.__val][newDate].total
+								})
+
 								return 'Total: ' + new Intl.NumberFormat('en-US', {
 										style: 'currency',
 										currency: 'USD',
@@ -315,7 +338,9 @@
 							let rawDate = currentLabel.split(' ')
 							let date = dayjs( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
 
-							scope._detail_date = Object.keys(historyStats[scope.__categoryType]).find(item => item.includes(date))
+							outputs.detail_date.__val =
+								Object.keys(historyStats[outputs.category_type.__val])
+									.find(item => item.includes(date))
 						} catch (e) {
 							console.log('Error in click:', e)
 						}

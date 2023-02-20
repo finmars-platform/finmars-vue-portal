@@ -13,7 +13,6 @@
 	})
 	let dashStore = useStoreDashboard()
 	let widget = dashStore.getWidget(props.wid)
-	console.log('widget:', widget)
 
 	let componentProps = computed(() => {
 		let props = dashStore.scope.filter((prop) => prop.cid == widget.id)
