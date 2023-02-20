@@ -109,12 +109,19 @@
 
 	dashStore.init()
 	dashStore.$subscribe((mutation, state) => {
-		if ( mutation.events.key == '__val' ) {
+		if ( mutation.events.key == '__val' && mutation.events.target.direct == 'output' ) {
 			let id = mutation.events.target.id
-			console.log('id:', id)
+			let props = state.scope.filter(item => item.parents && item.parents.includes(id) )
 
-			let props = state.scope.filter(item => item.parents.includes(id) )
-			props.forEach(prop => prop.__val = mutation.events.target.__val)
+			console.group(
+				`${mutation.events.target.cid} / ${mutation.events.target.name} %c[${mutation.events.target.__val}]`,
+				'font-size: 16px;'
+			)
+			props.forEach(prop => {
+				prop.__val = mutation.events.target.__val
+				console.log(`=> ${prop.cid}[${prop.name}]`)
+			})
+			console.groupEnd()
 		}
 	})
 

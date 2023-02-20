@@ -50,7 +50,7 @@
 			<div class="settings_coll">
 				<h4>Inputs</h4>
 
-				<div v-for="item in activeWidget.props.inputs">
+				<div v-for="item in activeWidget.inputs">
 					<BaseInput
 						v-if="!propMode[item.name]"
 						v-model="item.value"
@@ -60,7 +60,7 @@
 						v-else
 						v-model="item.parents"
 						:title="item.name"
-						:items="JSON.parse(JSON.stringify(dashStore.scope))"
+						:items="prepareItems(item)"
 						item_id="id"
 					/>
 
@@ -76,11 +76,11 @@
 			<div class="settings_coll">
 				<h4>Outputs</h4>
 
-				<div v-for="item in activeWidget.props.outputs">
+				<div v-for="item in activeWidget.outputs">
 					<BaseMultiSelectInput
 						v-model="item.children"
 						:title="item.name"
-						:items="JSON.parse(JSON.stringify(dashStore.scope))"
+						:items="prepareItems(item)"
 						item_id="id"
 					/>
 				</div>
@@ -121,9 +121,25 @@
 		return [...dashStore.tabs, {id: null, name: 'Top place'}]
 	})
 
+	function prepareItems(childProp) {
+		let newProps = dashStore.scope
+			.filter((prop) => {
+				return prop.type == childProp.type && prop.direct != childProp.direct
+			})
+			.map((prop) => {
+				return {
+					id: prop.id,
+					name: `${dashStore.widgets.find(item => item.id == prop.cid).name}/${prop.name}[${prop.__val}]`,
+				}
+			})
+
+		return JSON.parse(JSON.stringify(newProps))
+	}
+
 	function addComponent( cancelFunc ) {
 		let new_widget = {
 			name: activeWidget.value.name,
+			user_code: activeWidget.value.user_code,
 			componentName: activeWidget.value.id,
 			colls: activeWidget.value.minColls,
 			rows: activeWidget.value.minRows,
@@ -133,21 +149,38 @@
 			tab: props.tab ? props.tab : null,
 			id: generateId(activeWidget.value.id),
 		}
-		console.log('new_widget:', new_widget)
-		console.log('activeWidget.value:', activeWidget.value)
 
 		dashStore.$patch((state) => {
 			dashStore.widgets.push(new_widget)
 
-			activeWidget.value.props.inputs.forEach((prop) => {
+			activeWidget.value.inputs.forEach((prop) => {
 				state.scope.push({
 					id: new_widget.id + Math.random(0, 1),
 					cid: new_widget.id,
 					name: prop.name,
 					type: prop.type,
+					direct: prop.direct,
 					__val: prop.value,
 					parents: prop.parents,
+				})
+			})
+			activeWidget.value.outputs.forEach((prop) => {
+				const propId = new_widget.id + Math.random(0, 1)
+
+				state.scope.push({
+					id: propId,
+					cid: new_widget.id,
+					name: prop.name,
+					direct: prop.direct,
+					type: prop.type,
+					__val: prop.value,
 					children: prop.children,
+				})
+
+				prop.children.forEach((id) => {
+					let inputProp = state.scope.find((item) => item.id == id)
+
+					inputProp.parents.push(propId)
 				})
 			})
 		})

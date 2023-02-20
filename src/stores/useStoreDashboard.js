@@ -42,15 +42,24 @@ export default defineStore({
 			this.widgets = this.layout.data.widgets || []
 			this.tabs = this.layout.data.tabs || []
 			this.scope = this.layout.data.scope || []
+			console.clear()
+			console.table(this.scope)
 		},
 		async getHistory(wid) {
 			let widget = this.widgets.find(item => item.id == wid)
 
+			let list = this.scope.filter((prop) => prop.cid == widget.id)
+			let props = {}
+
+			list.forEach((prop) => {
+				props[prop.name] = prop.__val
+			})
+
 			let apiOpts = {
 				filters: {
-					portfolio: this.scopes[widget.scope].portfolio.value,
-					date_from: this.scopes[widget.scope].date_from.value,
-					date_to: this.scopes[widget.scope].date_to.value,
+					portfolio: props.portfolio,
+					date_from: props.date_from,
+					date_to: props.date_to,
 				},
 				params: {
 					type: 'nav'
@@ -74,9 +83,9 @@ export default defineStore({
 
 			let apiOptsPl = {
 				filters: {
-					portfolio: this.scopes[widget.scope].portfolio.value,
-					date_from: this.scopes[widget.scope].date_from.value,
-					date_to: this.scopes[widget.scope].date_to.value
+					portfolio: props.portfolio,
+					date_from: props.date_from,
+					date_to: props.date_to,
 				},
 				params: {
 					type: 'pl'
@@ -84,8 +93,8 @@ export default defineStore({
 			}
 
 			this.historyPnl = await useApi('widgetsHistory.get', apiOptsPl)
-
-			return this.scopes[widget.scope]._cbp_type == 'nav' ? this.history : this.historyPnl
+			// this.scopes[widget.scope]._cbp_type
+			return props.type == 'nav' ? this.history : this.historyPnl
 		},
 		generateColors() {
 			return [
@@ -132,9 +141,11 @@ export default defineStore({
 			]
 		},
 		async getHistoryNav(opts) {
+			if ( !this.history ) return false
 			return this.history[opts.category][opts.date]
 		},
 		async getHistoryPnl(opts) {
+			if ( !this.history ) return false
 			return this.historyPnl[opts.category][opts.date]
 		},
 		async saveLayout() {
