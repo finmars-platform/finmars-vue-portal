@@ -11,11 +11,11 @@
 			<div class="settings_coll">
 				<h4>General</h4>
 
-				<!-- <BaseInput
-					v-model="activeWidget.user_code"
+				<BaseInput
+					v-model="editable.user_code"
 					label="User code"
 					required
-				/> -->
+				/>
 				<FmSelect
 					v-model="editable.tab"
 					:items="tabList"
@@ -81,12 +81,25 @@
 	let editable = reactive( JSON.parse(JSON.stringify(widget)) )
 
 	let scopeProps = ref({})
-	let currentWodget = widgetList.find(item => item.id == editable.componentName)
 
 	prepareProps()
 
 	function prepareProps() {
-		scopeProps.value = JSON.parse(JSON.stringify( dashStore.scope.filter((prop) => prop.cid == widget.id) ))
+		let unrefed = JSON.parse(
+			JSON.stringify(
+				dashStore.scope
+					.filter((prop) => prop.cid == widget.id)
+			)
+		)
+
+		unrefed.forEach((prop) => {
+			if ( prop.direct == 'input') return false
+
+			prop.children = dashStore.scope
+				.filter( (item) => item.direct == 'input' && item.parents.includes(prop.id) )
+				.map((item) => item.id)
+		})
+		scopeProps.value = unrefed
 	}
 	function prepareItems(childProp) {
 		let newProps = dashStore.scope
@@ -125,9 +138,16 @@
 					let children = state.scope.filter(item => item.parents && item.parents.includes(prop.id))
 
 					children.forEach((child) => {
-						if ( child.parents.includes(prop.id) ) {
+						let index = child.parents.findIndex((id) => id == prop.id)
 
+						if ( index !== -1 ) {
+							child.parents.splice(index, 1)
 						}
+					})
+
+					prop.children.forEach((id) => {
+						let children = state.scope.find(item => item.id == id)
+						children.parents.push(prop.id)
 					})
 				}
 			})

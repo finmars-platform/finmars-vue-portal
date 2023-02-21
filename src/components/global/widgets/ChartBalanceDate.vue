@@ -50,6 +50,8 @@
 	const STATUSES = {
 		0: 'Waiting [barchart] data',
 		101: 'Data are not available',
+		202: 'No [Date] property',
+		203: 'No [Category type] property',
 	}
 	let status = ref(0)
 
@@ -226,19 +228,26 @@
 		() => prepareData()
 	)
 	async function prepareData() {
+		if ( !inputs.value.date ) {
+			status.value = 202
+			return false
+		}
+		if ( !inputs.value.category_type ) {
+			status.value = 203
+			return false
+		}
+
 		if ( dayjs(inputs.value.date).diff(dayjs(), 'day') >= 0 ) {
 			status.value = 101
 			return false
 		}
-
-		if ( !inputs.value.date || !inputs.value.category_type ) return false
 
 		let nav = await dashStore.getHistoryNav({
 			date: inputs.value.date,
 			category: inputs.value.category_type
 		})
 
-		if ( nav.error ) {
+		if ( !nav || nav.error ) {
 			status.value = 101
 
 			return false

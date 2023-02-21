@@ -42,7 +42,7 @@ export default defineStore({
 			this.widgets = this.layout.data.widgets || []
 			this.tabs = this.layout.data.tabs || []
 			this.scope = this.layout.data.scope || []
-			console.clear()
+			// console.clear()
 			console.table(this.scope)
 		},
 		async getHistory(wid) {
@@ -198,8 +198,15 @@ export default defineStore({
 
 			if ( index === -1 ) throw new Error('[Store:removeWidget] ID not find')
 
-			// let widget = this.widgets[index]
-			// let baseWidget = widgetList.find(item => item.id == widget.componentName)
+			this.scope
+				.filter(item => item.cid == this.widgets[index].id)
+				.forEach((prop) => {
+					let index = this.scope.findIndex(item => item.id == prop.id)
+
+					if ( index === -1 ) return false
+
+					this.scope.splice(index, 1)
+				})
 
 			this.widgets.splice(index, 1)
 		}

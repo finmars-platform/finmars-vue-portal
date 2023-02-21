@@ -1,8 +1,6 @@
 <template>
-	<RvPerformanceBundles
+	<RvPerformanceChart
 		v-bind="inputs"
-
-		@setBundle="outputs.bundleId.__val = $event"
 	/>
 </template>
 
@@ -20,16 +18,6 @@
 
 		props.forEach((prop) => {
 			obj[prop.name] = prop.__val
-		})
-		return obj
-	})
-
-	let outputs = computed(() => {
-		let props = dashStore.scope.filter((prop) => prop.cid == widget.id && prop.direct == 'output')
-		let obj = {}
-
-		props.forEach((prop) => {
-			obj[prop.name] = prop
 		})
 		return obj
 	})
