@@ -17,7 +17,7 @@
 			<div class="chart_row"
 				v-for="(item, i) in instruments"
 				:key="i"
-				:style="{background: dashStore.instrColors['Asset Types' + item[0]]?.slice(0, 7) + '0f'}"
+				:style="{background: dashStore.instrColors[inputs.category_type + item[0]]?.slice(0, 7) + '0f'}"
 				:class="{minus: item[1] < 0}"
 			>
 				<div class="chart_field">
@@ -26,7 +26,7 @@
 						:class="{minus: item[1] < 0}"
 						:style="{
 							width: Math.abs(item[1] / maxTickStock * 50) + '%',
-							background: dashStore.instrColors['Asset Types' + item[0]]
+							background: dashStore.instrColors[inputs.category_type + item[0]]
 						}"
 					></div>
 				</div>

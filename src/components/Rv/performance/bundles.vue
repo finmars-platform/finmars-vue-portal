@@ -41,12 +41,16 @@
 	let activePeriod = ref(0)
 	let bundles = ref([])
 
-	watch(props, () => fetchPortfolioBundles())
+	watch(props, () => init())
 
 	init()
 
 	function init() {
 		// проверка на корректность всех свойств, если что выдать ошибку
+		if ( !props.end_date ) {
+			console.log('No end_date:', props.end_date)
+			return false
+		}
 		fetchPortfolioBundles()
 	}
 

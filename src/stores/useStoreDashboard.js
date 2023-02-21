@@ -23,6 +23,12 @@ export default defineStore({
 		async init() {
 			await this.getLayouts()
 			this.activeTab = this.tabs[0]?.id
+
+			watch(() => this.activeLayoutId, () => {
+				this.widgets = this.layout.data.widgets || []
+				this.tabs = this.layout.data.tabs || []
+				this.scope = this.layout.data.scope || []
+			})
 		},
 		getWidget(id) {
 			return this.widgets.find(item => item.id == id)
@@ -163,7 +169,8 @@ export default defineStore({
 				})
 
 				if (!res.error) {
-					this.layoutList.push(res);
+					this.layoutList.push(res)
+					this.activeLayoutId = res.id
 				}
 
 			} else {
@@ -183,7 +190,6 @@ export default defineStore({
 			}
 
 			if (!this.activeLayoutId) this.activeLayoutId = this.layoutList[0].id;
-
 		},
 		async deleteLayout() {
 			let res = await useApi('dashboardLayout.delete', {
@@ -192,6 +198,8 @@ export default defineStore({
 					user_code: this.layout.user_code
 				}
 			})
+
+			this.getLayouts()
 		},
 		removeWidget( id ) {
 			let index = this.widgets.findIndex(item => item.id == id)
