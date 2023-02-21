@@ -7,6 +7,7 @@
 						class="m-b-0 m-t-0"
 						v-model="dashStore.activeLayoutId"
 						:items="dashStore.layoutList"
+						label="Layout"
 					/>
 				</template>
 
@@ -191,7 +192,7 @@
 
 		dashStore.widgets = [];
 		dashStore.tabs = [];
-		dashStore.scopes = {global: {}};
+		dashStore.scope = []
 
 		isEdit.value = true;
 
