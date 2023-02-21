@@ -1,8 +1,8 @@
 <template>
-	<RvPerformanceBundles
+	<RvPerformanceDetail
 		v-bind="inputs"
 
-		@setBundle="outputs.bundleId.__val = $event"
+		@setMonth="outputs.currentBundleYear.__val = $event"
 	/>
 </template>
 

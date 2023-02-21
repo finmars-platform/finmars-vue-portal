@@ -118,6 +118,9 @@
 		historyStats = await dashStore.getHistory(props.wid)
 	// 		updateData()
 		createChart()
+
+		outputs.category_type.__val = ''
+		outputs.category_type.__val = 'Asset Types'
 	})
 
 	watch(componentProps, async () => {

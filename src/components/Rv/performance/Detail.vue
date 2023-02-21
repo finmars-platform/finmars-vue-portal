@@ -1,5 +1,5 @@
 <template>
-	<FmExpansionPanel :title="detailPortfolio">
+	<FmExpansionPanel :title="currentBundle ? currentBundle.name : 'No bundle'">
 
 		<template #rightActions>
 			<FmBtn
@@ -71,17 +71,12 @@
 			type: String
 		},
 		report_currency: {
-			type: Number
+			type: [Number, String]
 		},
 	})
 	const emits = defineEmits(["setMonth"])
 
-	watch(
-		() => props.currentBundle,
-		() => {
-			getMonthDetails()
-		}
-	)
+	watch(props, () => getMonthDetails())
 
 	let portfolioItems = ref([])
 	let portfolioItemsCumm = ref([])
@@ -120,14 +115,14 @@
 		let bundleId = props.currentBundle.id
 
 		let begin
-		let firstTransaction
+		let firstTransaction = {}
 		if ( !props.begin_date ) {
 			firstTransaction = await useApi('performanceFirstTransaction.get', {
 				params: { id: bundleId }
 			})
 			begin = firstTransaction.transaction_date
 		} else {
-			begin = dayjs(props.end_date).add(-1, 'd').format('YYYY-MM-DD')
+			begin = dayjs(props.begin_date).add(-1, 'd').format('YYYY-MM-DD')
 		}
 		const endDate = props.end_date
 
@@ -173,7 +168,7 @@
 		})
 
 		let dateTo = dayjs(props.end_date)
-		let dateFrom = dayjs(firstTransaction.transaction_date)
+		let dateFrom = dayjs(begin)
 
 		for ( let [year, months] of yearsBuffer ) {
 			portfolioYears.value.push( year )

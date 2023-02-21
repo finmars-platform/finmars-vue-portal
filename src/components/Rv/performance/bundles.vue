@@ -24,7 +24,7 @@
 			type: String
 		},
 		report_currency: {
-			type: Number
+			type: [Number, String]
 		},
 	})
 	const emits = defineEmits(["setBundle"]);
@@ -41,7 +41,7 @@
 	let activePeriod = ref(0)
 	let bundles = ref([])
 
-	fetchPortfolioBundles()
+	watch(props, () => fetchPortfolioBundles())
 
 	async function fetchPortfolioBundles() {
 

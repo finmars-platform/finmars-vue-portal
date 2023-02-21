@@ -41,7 +41,7 @@
 					required
 				/>
 				<FmSelect
-					v-model="activeWidget.tab"
+					v-model="props.tab"
 					:items="tabList"
 					label="Tab"
 				/>
@@ -129,7 +129,7 @@
 			.map((prop) => {
 				return {
 					id: prop.id,
-					name: `${dashStore.widgets.find(item => item.id == prop.cid).name}/${prop.name}[${prop.__val}]`,
+					name: `${dashStore.widgets.find(item => item.id == prop.cid).user_code}/${prop.name}[${prop.__val}]`,
 				}
 			})
 
@@ -174,8 +174,9 @@
 					direct: prop.direct,
 					type: prop.type,
 					__val: prop.value,
-					children: prop.children,
 				})
+
+				if ( !prop.children ) return false
 
 				prop.children.forEach((id) => {
 					let inputProp = state.scope.find((item) => item.id == id)

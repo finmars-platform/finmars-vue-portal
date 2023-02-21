@@ -61,37 +61,55 @@
 	const STATUSES = {
 		0: 'Waiting data',
 		101: 'Data are not available',
+		201: 'No [Category type] property',
 	}
 	let status = ref(0)
 
 	let dashStore = useStoreDashboard()
 	let widget = dashStore.getWidget(props.wid)
 
-	let scope = computed(() => {
-		return dashStore.scopes[widget.scope]
-	})
-
 	let total = ref('0 USD')
 	let instruments = ref(null)
 	let maxTickStock = ref(null)
 
-	if ( dayjs(scope.value.date_to.value).diff(dayjs(), 'day') >= 0 ) {
+	let inputs = computed(() => {
+		let props = dashStore.scope.filter((prop) => prop.cid == widget.id && prop.direct == 'input')
+		let obj = {}
+
+		props.forEach((prop) => {
+			obj[prop.name] = prop.__val
+		})
+		return obj
+	})
+
+	let outputs = {}
+	let propsTest = dashStore.scope.filter((prop) => prop.cid == widget.id && prop.direct == 'output')
+	propsTest.forEach((prop) => {
+		outputs[prop.name] = prop
+	})
+
+	if ( dayjs(inputs.value.date).diff(dayjs(), 'day') >= 0 ) {
 			status.value = 101
 		}
 
 	watch(
-		() => scope.value._detail_date,
+		inputs,
 		() => prepareData()
 	)
 
 	async function prepareData() {
-		if ( dayjs(scope.value.date_to.value).diff(dayjs(), 'day') >= 0 ) {
+		if ( dayjs(inputs.value.date).diff(dayjs(), 'day') >= 0 ) {
 			status.value = 101
 			return false
 		}
+
+		if ( !inputs.value.category_type ) {
+			status.value = 201
+			return false
+		}
 		let pl = await dashStore.getHistoryPnl({
-			date: scope.value._detail_date,
-			category: 'Asset Types'
+			date: inputs.value.date,
+			category: inputs.value.category_type
 		})
 
 		if ( pl.error ) {
