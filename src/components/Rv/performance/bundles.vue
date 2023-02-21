@@ -43,6 +43,13 @@
 
 	watch(props, () => fetchPortfolioBundles())
 
+	init()
+
+	function init() {
+		// проверка на корректность всех свойств, если что выдать ошибку
+		fetchPortfolioBundles()
+	}
+
 	async function fetchPortfolioBundles() {
 
 		// readyStatusData.bundles = false;
