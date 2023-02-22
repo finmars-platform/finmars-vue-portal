@@ -42,7 +42,7 @@ input[type="checkbox"]:checked + .check {
 	vertical-align: middle;
 	min-width: 20px;
 	height: 20px;
-	background: none;
+	background: #fff;
 	border: 1px solid $border-darken;
 	margin-right: 10px;
 	cursor: pointer;
