@@ -130,7 +130,7 @@ let props = defineProps({
 	$side-items-padding: 0 8px;
 	$border-radius: 4px;
 
-	@mixin show_label {
+	%show_label {
 		top: -8px;
 		width: auto;
 		flex-basis: auto;
@@ -177,7 +177,7 @@ let props = defineProps({
 				}
 
 				.bi_label {
-					@include show_label;
+					@extend %show_label;
 				}
 			}
 
@@ -189,9 +189,19 @@ let props = defineProps({
 			}
 
 		}
-
 		&.bi_no_borders {
 			margin-bottom: 0;
+
+			&.bi_border_bottom {
+
+				.bi_default {
+					border-bottom: 1px solid $border;
+					padding-left: 7px;
+					padding-bottom: 3px;
+					margin-left: 6px;
+					margin-bottom: -3px;
+				}
+			}
 
 			.bi_top {
 				display: none;
@@ -329,7 +339,7 @@ let props = defineProps({
 				z-index: -1;
 			}*/
 			&.filling {
-				@include show_label;
+				@extend %show_label;
 			}
 		}
 
