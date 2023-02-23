@@ -10,6 +10,10 @@
 					:modelValue="searchParam"
 					@update:modelValue="search"
 				>
+				<!--
+					v-model="searchParam"
+					:modelValue="searchParam"
+					@update:modelValue="search" -->
 					<template #button>
 						<FmIcon icon="search" />
 					</template>
@@ -25,15 +29,34 @@
 				v-if="isAdvanced"
 			>
 				<div class="flex">
-					<div class="fm_tabs_item active">Favorites</div>
-					<div class="fm_tabs_item">Advanced</div>
+					<div
+						class="fm_tabs_item"
+						:class="{active: tab == 'favorites'}"
+						@click="tab = 'favorites'"
+					>
+						Favorites
+					</div>
+
+					<div
+						class="fm_tabs_item"
+						:class="{active: tab == 'advanced'}"
+						@click="tab = 'advanced'"
+					>
+						Advanced
+					</div>
 				</div>
 
-				<div class="fm_tabs_item">Selected</div>
+				<div
+					class="fm_tabs_item"
+					:class="{active: tab == 'selected'}"
+					@click="tab = 'selected'"
+				>
+					Selected
+				</div>
 			</div>
 
-			<div :class="[isAdvanced ? 'advanced' : '', 'content_grid']">
-				<div class="content_grid_left" v-if="isAdvanced">
+			<div :class="[isAdvanced && tab == 'advanced' ? 'advanced' : '', 'content_grid']">
+				<div class="content_grid_left" v-if="isAdvanced && tab == 'advanced'">
 					<ul class="fm_list">
 						<li class="fm_list_item">Balance</li>
 						<li class="fm_list_item">Performance</li>
@@ -59,16 +82,16 @@
 								<div v-html="item.name"></div>
 							</div>
 
-							<FmIcon icon="search" />
+							<FmIcon v-if="tab == 'advanced'" class="favorites" size="20" primary icon="star_outlined" />
 						</div>
 					</div>
 
 				</div>
 
 				<div class="content_grid_right">
-					<div class="desc_title">test</div>
-					<div class="desc_subtitle">testus</div>
-					<div class="desc_about">sfdg fdsg fsd gfd</div>
+					<div class="desc_title">{{ favorites.name }}</div>
+					<div class="desc_subtitle">{{ favorites.path }}</div>
+					<div class="desc_about">{{ favorites.info }}</div>
 				</div>
 			</div>
 		</div>
@@ -83,6 +106,7 @@
 				</FmBtn>
 
 				<FmIcon
+					class="m-l-24"
 					primary
 					:icon="isAdvanced ? 'lock_open' : 'lock'"
 					@click="isAdvanced = !isAdvanced"
@@ -104,14 +128,14 @@
 
 	let searchParam = ref('')
 	let isAdvanced = ref(false)
-	let activeRow = ref('')
+	let tab = ref('favorites')
 
 	const formatedAttrs = attributes.map(item => {
 		item.name = item.name.replaceAll('. ', ' / ')
 
-
 		return item
 	})
+	let activeRow = ref(formatedAttrs[0].key)
 
 	const filteredColumns = computed(() => {
 		if ( !searchParam.value ) return formatedAttrs
@@ -121,8 +145,10 @@
 		let result = formatedAttrs
 
 		terms.forEach((term, i) => {
+			term = term.toLowerCase()
+
 			result = result
-				.filter((item) => item.key.includes(term))
+				.filter( (item) => item.name.toLowerCase().includes(term) )
 		})
 
 		result = result.map(item => {
@@ -138,7 +164,16 @@
 
 		return result
 	})
-	console.log('filteredColumns:', filteredColumns)
+	const favorites = computed(() => {
+		let attr = formatedAttrs.find(item => item.key == activeRow.value)
+		if ( !attr ) return {}
+
+		return {
+			name: activeRow.value,
+			path: attr.name,
+			info: 'No info',
+		}
+	})
 
 	let searchTimer;
 
@@ -215,6 +250,7 @@
 		&_main {
 			height: 100%;
 			overflow: auto;
+			padding: 10px 0;
 		}
 		&_right {
 			border-left: 1px solid $border;
@@ -227,8 +263,36 @@
 		padding: 0 20px;
 		height: 26px;
 		user-select: none;
+		border: none;
 		&.active {
 			background: $primary-lighten-2;
+			.favorites {
+				opacity: 1;
+			}
 		}
+		&:hover .favorites {
+			opacity: 1;
+		}
+	}
+
+	.desc_title {
+		padding: 10px 13px;
+		border-bottom: 1px solid $border;
+		word-wrap: break-word;
+	}
+	.desc_subtitle {
+		padding: 10px 13px;
+		background: $main;
+		border-bottom: 1px solid $border;
+		color: $text-lighten;
+		word-wrap: break-word;
+	}
+	.desc_about {
+		padding: 10px 13px;
+		color: $text-lighten;
+	}
+	.favorites {
+		opacity: 0;
+		transition: 0.3s;
 	}
 </style>
