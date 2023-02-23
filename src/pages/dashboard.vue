@@ -110,7 +110,7 @@
 
 	dashStore.init()
 	dashStore.$subscribe((mutation, state) => {
-		if ( mutation.events.key == '__val' && mutation.events.target.direct == 'output' ) {
+		if ( mutation.events && mutation.events.key == '__val' && mutation.events.target.direct == 'output' ) {
 			let id = mutation.events.target.id
 			let props = state.scope.filter(item => item.parents && item.parents.includes(id) )
 
