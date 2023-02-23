@@ -1,5 +1,8 @@
 <template>
-	<div :class="['icon', {primary, error, btn, 'btn-primary': btnPrimary}]" :style="{fontSize: size + 'px'}">
+	<div
+		:class="['icon', {primary, error, btn, 'btn-primary': btnPrimary}]"
+		:style="{width: size + 'px', fontSize: size + 'px'}"
+	>
 		<slot>
 			<div class="material-icons">{{ icon }}</div>
 		</slot>
