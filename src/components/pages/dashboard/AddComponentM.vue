@@ -167,7 +167,7 @@
 			activeWidget.value.outputs.forEach((prop) => {
 				const propId = new_widget.id + Math.random(0, 1)
 
-				state.scope.push({
+				let newProp = reactive({
 					id: propId,
 					cid: new_widget.id,
 					name: prop.name,
@@ -175,6 +175,33 @@
 					type: prop.type,
 					__val: prop.value,
 				})
+
+				state.scope.push(newProp)
+
+				newProp.__unwatch = watch(
+					() => newProp.__val,
+					() => {
+						let id = newProp.id
+						let props = dashStore.scope.filter(item => item.parents && item.parents.includes(id) )
+
+						console.group(
+							`%s / ${newProp.name} %c[${newProp.__val}]`,
+							`${dashStore.widgets.find(item => item.id == newProp.cid).user_code}`,
+							'font-size: 16px;'
+						)
+
+						props.forEach(childProp => {
+							childProp.__val = prop.__val
+
+							console.log(
+								`=> ${dashStore.widgets.find(item => item.id == childProp.cid).user_code} / %c${childProp.name}`,
+								'font-size: 14px;'
+							)
+						})
+
+						console.groupEnd()
+					}
+				)
 
 				if ( !prop.children ) return false
 

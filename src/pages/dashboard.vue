@@ -109,28 +109,6 @@
 	let dashStore = useStoreDashboard()
 
 	dashStore.init()
-	dashStore.$subscribe((mutation, state) => {
-		console.log('mutation:', mutation)
-		if ( mutation.events && mutation.events.key == '__val' && mutation.events.target.direct == 'output' ) {
-			let id = mutation.events.target.id
-			let props = state.scope.filter(item => item.parents && item.parents.includes(id) )
-
-			console.group(
-				`%s / ${mutation.events.target.name} %c[${mutation.events.target.__val}]`,
-				`${state.widgets.find(item => item.id == mutation.events.target.cid).user_code}`,
-				'font-size: 16px;'
-			)
-			props.forEach(prop => {
-				prop.__val = mutation.events.target.__val
-
-				console.log(
-					`=> ${state.widgets.find(item => item.id == prop.cid).user_code} / %c${prop.name}`,
-					'font-size: 14px;'
-				)
-			})
-			console.groupEnd()
-		}
-	})
 
 	let isOpenJSON = ref(false)
 	let content = ref('')
