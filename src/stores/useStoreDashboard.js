@@ -48,6 +48,35 @@ export default defineStore({
 			this.widgets = this.layout.data.widgets || []
 			this.tabs = this.layout.data.tabs || []
 			this.scope = this.layout.data.scope || []
+
+			this.scope.forEach((prop) => {
+				if ( prop.direct != 'output' && !prop.__unwatch ) return false
+
+				prop.__unwatch = watch(
+					() => prop.__val,
+					() => {
+						let id = prop.id
+						let props = this.scope.filter(item => item.parents && item.parents.includes(id) )
+
+						console.group(
+							`%s / ${prop.name} %c[${prop.__val}]`,
+							`${this.widgets.find(item => item.id == prop.cid).user_code}`,
+							'font-size: 16px;'
+						)
+
+						props.forEach(childProp => {
+							childProp.__val = prop.__val
+
+							console.log(
+								`=> ${this.widgets.find(item => item.id == childProp.cid).user_code} / %c${childProp.name}`,
+								'font-size: 14px;'
+							)
+						})
+
+						console.groupEnd()
+					}
+				)
+			})
 			// console.clear()
 			console.table(this.scope)
 		},
