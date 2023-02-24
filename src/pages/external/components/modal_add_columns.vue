@@ -58,14 +58,12 @@
 			<div :class="[isAdvanced && tab == 'advanced' ? 'advanced' : '', 'content_grid']">
 				<div class="content_grid_left" v-if="isAdvanced && tab == 'advanced'">
 					<ul class="fm_list">
-						<li class="fm_list_item">Balance</li>
-						<li class="fm_list_item">Performance</li>
-						<li class="fm_list_item">Allocation</li>
+						<li class="fm_list_item attr_item" :class="{active: activeTree == prop}" v-for="(val, prop) in advancedColumns" @click="activeTree = prop">{{ prop }}</li>
 					</ul>
 				</div>
 
 				<div class="content_grid_main">
-					<div class="fm_list">
+					<div class="fm_list" v-if="!isAdvanced || tab == 'favorites'">
 						<div
 							class="fm_list_item attr_item flex aic sb"
 							:class="{active: activeRow == item.key}"
@@ -85,7 +83,62 @@
 							<FmIcon v-if="tab == 'advanced'" class="favorites" size="20" primary icon="star_outlined" />
 						</div>
 					</div>
+					<template v-else>
+						<ul class="fm_list">
+							<template
+								v-for="(obj, prop) in advancedColumns[activeTree]"
+							>
+								<div
+									v-if="obj.key"
+									class="fm_list_item attr_item flex aic sb"
+									:class="{active: activeRow == obj.key}"
+									@click="activeRow = obj.key"
+									@dblclick="obj.checked = !obj.checked"
+								>
+									<div class="flex aic">
+										<FmCheckbox
+											v-model="obj.checked"
+											@click.stop="() => {}"
+										/>
 
+										<div v-html="prop"></div>
+									</div>
+
+									<FmIcon v-if="tab == 'advanced'" class="favorites" size="20" primary icon="star_outlined" />
+								</div>
+
+								<div v-else>
+									<li class="fm_list_item attr_item" @click="obj.isOpen = !obj.isOpen">
+										<FmIcon size="24" icon="expand_more" />
+										<div v-html="prop"></div>
+									</li>
+
+									<template v-if="obj.isOpen">
+										<div
+											v-for="(val, prop) in obj"
+											class="fm_list_item attr_item flex aic sb"
+											:class="{active: activeRow == val.key}"
+											@click="activeRow = val.key"
+											@dblclick="val.checked = !val.checked"
+											v-if="prop != 'isOpen'"
+										>
+											<div class="flex aic p-l-24">
+												<FmCheckbox
+													v-model="val.checked"
+													@click.stop="() => {}"
+												/>
+
+												<div v-html="prop"></div>
+											</div>
+
+											<FmIcon v-if="tab == 'advanced'" class="favorites" size="20" primary icon="star_outlined" />
+										</div>
+									</template>
+
+								</div>
+							</template>
+						</ul>
+					</template>
 				</div>
 
 				<div class="content_grid_right">
@@ -129,13 +182,22 @@
 	let searchParam = ref('')
 	let isAdvanced = ref(false)
 	let tab = ref('favorites')
+	let activeRow = ref('')
+	let activeTree = ref('')
 
 	const formatedAttrs = attributes.map(item => {
 		item.name = item.name.replaceAll('. ', ' / ')
 
 		return item
+	}).sort((a, b) => {
+		let compareFolder = b.name.match(/\//g).length - a.name.match(/\//g).length
+
+		if ( compareFolder != 0 ) return compareFolder
+
+		return a.name.localeCompare(b.name)
 	})
-	let activeRow = ref(formatedAttrs[0].key)
+
+	activeRow.value = formatedAttrs[0].key
 
 	const filteredColumns = computed(() => {
 		if ( !searchParam.value ) return formatedAttrs
@@ -159,10 +221,40 @@
 				(match) => `<span class="c_primary">${match}</span>`
 			)
 
-			return { name, key: item.key }
+			return { name, key: item.key, checked: ref(false) }
 		})
 
 		return result
+	})
+	const advancedColumns = computed(() => {
+		let tree = {};
+
+		for (let attr of filteredColumns.value) {
+			const parts = attr.name.split(" / ")
+			parts[0] = parts[0].replace(/( |<([^>]+)>)/ig, "")
+
+			let node = tree;
+
+			for  (let i = 0; i < parts.length; i++ ) {
+				let part = parts[i]
+
+				if (!node[part]) {
+					if ( parts.length - 1 == i ) {
+						node[part] = attr
+
+					} else {
+
+						node[part] = reactive({})
+
+						if ( i > 0 ) node[part].isOpen = false
+					}
+				}
+				node = node[part]
+			}
+		}
+		console.log('tree:', tree)
+
+		return tree
 	})
 	const favorites = computed(() => {
 		let attr = formatedAttrs.find(item => item.key == activeRow.value)
@@ -246,6 +338,7 @@
 			border-right: 1px solid $border;
 			height: 100%;
 			overflow: auto;
+			padding: 9px 0;
 		}
 		&_main {
 			height: 100%;
