@@ -1,10 +1,10 @@
 <template>
 	<label class="flex aic">
 		<input type="checkbox"
-			:checked="modelValue"
+			:checked="modelValue || disabled"
     	@change="emit('update:modelValue', !modelValue)"
 		/>
-		<span class="check"><FmIcon class="mark" icon="check" /></span>
+		<span class="check" :class="{disabled: disabled}"><FmIcon class="mark" icon="check" /></span>
 
 		<div v-if="label">{{ label }}</div>
 	</label>
@@ -13,6 +13,7 @@
 <script setup>
 	let props = defineProps({
 		modelValue: Boolean,
+		disabled: Boolean,
 		type: String,
 		label: String,
 		tooltip: String,
@@ -35,6 +36,11 @@ input[type="checkbox"]:checked + .check > .mark  {
 input[type="checkbox"]:checked + .check {
 	background: $primary;
 	border: none;
+
+	&.disabled {
+		background: #747474;
+		color: #fff;
+	}
 }
 .check {
 	display: inline-block;
