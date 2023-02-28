@@ -83,6 +83,7 @@ export default {
 	},
 	member: {
 		get: prefix + '/users/member/{id}/',
+		delete: prefix + '/users/member/{id}/',
 		put: prefix + '/users/member/{id}/'
 	},
 
@@ -158,6 +159,7 @@ export default {
 	portfolioBundles: {
 		get: prefix + '/portfolios/portfolio-bundle/',
 		post: prefix + '/portfolios/portfolio-bundle/',
+		put: prefix + '/portfolios/portfolio-bundle/{id}/',
 		delete: prefix + '/portfolios/portfolio-bundle/{id}/',
 	},
 	performanceFirstTransaction: {

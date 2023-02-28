@@ -23,9 +23,9 @@
 					</div>
 				</FmMenu>
 				<PagesProfileDatabaseFromBackup
-								v-model="isShowNewBackup"
-								@cancel="isShowNewBackup = false, store.getMasterUsers()"
-							/>
+					v-model="isShowNewBackup"
+					@cancel="isShowNewBackup = false, store.getMasterUsers()"
+				/>
 			</template>
 		</FmTopRefresh>
 

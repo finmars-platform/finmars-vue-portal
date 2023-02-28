@@ -1,33 +1,44 @@
 <template>
 	<div>
+		<FmTabs v-model="tab" :tabs="['Members', 'Groups']" />
+
 		<FmTopRefresh
-			:refresh="refresh"
-		/>
-		<div class="flex aic">
-			<div class="py-6 px-7">
-				<div class="table">
-				<div class="table-row header">
-					<div class="table-cell">Name</div>
-					<div class="table-cell">Role</div>
-					<div class="table-cell">Status</div>
-					<div class="table-cell">Groups</div>
-				</div>
+			@refresh="refresh()"
+		>
+			<template #action>
+				<FmIcon
+					btnPrimary
+					icon="add"
+					@click="$router.push(`/settings/permissions/members/add`)"
+				/>
+			</template>
+		</FmTopRefresh>
 
-				<div class="table-row"
-					v-for="(item) in members"
-					:key="item.id"
-					:item="item"
-					@click="$router.push(`/settings/permissions/members/${item.id}`)"
-				>
-					<div class="table-cell">{{ item.username }}</div>
-					<div class="table-cell">{{ item.role }}</div>
-					<div class="table-cell">{{ item.status }}</div>
-					<div class="table-cell">{{ item.groups }}</div>
-				</div>
-				</div>
-			</div>
-
-			<div class="table">
+		<div class="fm_container">
+			<BaseTable
+				:headers="['', 'Name', 'Role', 'Status', 'Groups']"
+				:items="members"
+				colls="50px repeat(4, 1fr)"
+				:cb="(id) => $router.push(`/settings/permissions/members/${stockMembers[id].id}`)"
+			>
+			<template #actions="{index}">
+					<div class="flex jcc aic height-100">
+						<FmMenu anchor="bottom left">
+							<template #btn>
+								<FmIcon icon="more_vert" />
+							</template>
+							<div class="fm_list">
+								<div class="fm_list_item"
+									@click="deleteMember(index)"
+								>
+									<FmIcon class="m-r-4" icon="delete" /> Delete
+								</div>
+							</div>
+						</FmMenu>
+					</div>
+				</template>
+			</BaseTable>
+			<!-- <div class="table">
 				<div class="table-row header">
 					<div class="table-cell">Procedure</div>
 					<div class="table-cell">Date</div>
@@ -39,33 +50,41 @@
 					:key="item.id"
 					:item="item"
 				/>
-			</div>
+			</div> -->
 		</div>
 	</div>
 </template>
 
 <script setup>
-	import moment from 'moment'
+
+	import dayjs from 'dayjs'
 
 	definePageMeta({
 		bread: [
 			{
 				text: 'Permissions: Members',
-				to: '/settings/permissions',
-				disabled: false
+				disabled: true
 			}
 		],
 	});
 	const store = useStore()
 
+	let tab = ref('Members')
+	watch(
+		tab,
+		() => {
+			const config = useRuntimeConfig()
+			location.href = `${config.public.apiURL}/${store.current.base_api_url}/a/#!/settings/users-and-groups?tab=groups`
+		}
+	)
 
 	let stockMembers = ref(null)
 	let stockInvites = ref(null)
 
 	let members = computed(() => {
-		let data = {}
+		let data = []
 
-		if ( !stockMembers.value ) return []
+		if ( !stockMembers.value || !stockInvites.value ) return []
 
 		stockMembers.value.forEach(item => {
 			let roles = []
@@ -74,29 +93,42 @@
 			if ( item.is_owner ) roles.push('Owner')
 			if ( !item.is_owner && !item.is_admin ) roles.push('User')
 
-			data[ item.username ] = {
-				id: item.id,
+			data.push({
+				// id: item.id,
 				username: item.username,
 				role: roles.join(', '),
 				status: item.is_owner ? 'Creator' : 'Accepted',
 				groups: item.groups_object.map(item => item.name).join(', ')
-			}
+			})
 		})
 
-		console.log('data:', data)
+		stockInvites.value.forEach(item => {
+			if ( data.find(row => row.username == item.user_object.username) ) return false
+
+			let roles = []
+
+			if ( item.is_admin ) roles.push('Admin')
+			if ( item.is_owner ) roles.push('Owner')
+			if ( !item.is_owner && !item.is_admin ) roles.push('User')
+
+			data.push({
+				// id: item.id,
+				username: item.user_object.username,
+				role: 'Admin',
+				status: 'Pending',
+				groups: item.groups
+			})
+		})
+
 		return data
 	})
 
 	let statuses = ref(null)
 	let processing = ref(false)
 
-	const mapSratuses = {
-		P: 'Processing',
-		D: 'Done',
-	}
 
 	async function init() {
-		let res = await useApi('members.get')
+		let res = await useApi('memberList.get')
 		stockMembers.value = res.results
 
 		res = await useApi('memberInvites.get')
@@ -105,18 +137,32 @@
 		let resStatus = await useApi('dataInstance.get')
 		statuses.value = resStatus.results
 	}
-	function refresh() {
+	async function deleteMember( index ) {
+		let usernameDel = members.value[index].username
 
+		let isConfirm = await useConfirm({
+			title: 'Delete member',
+			text: `Do you want to delete a member "${usernameDel}"?`,
+		})
+		if ( !isConfirm ) return false
+
+		let res = await useApi('memberKick.post', {
+			body: {
+				username: usernameDel,
+				base_api_url: store.current.base_api_url
+			}
+		})
+
+		useNotify({type: 'success', title: `Member "${usernameDel}" was deleted.`})
+
+		refresh()
+	}
+	init()
+	function refresh() {
+		init()
 	}
 	function fromatDate( date ) {
-		return moment( date ).format('DD.MM.YYYY LT')
-	}
-	if ( store.current.base_api_url ) {
-		init()
-	} else {
-		watch( () => store.current, async () => {
-			init()
-		})
+		return dayjs( date ).format('DD.MM.YYYY LT')
 	}
 </script>
 
@@ -142,7 +188,7 @@
 	// height: 26px;
 	&.header {
 		background: #F2F2F2;
-		height: 50px;
+		height: 35px;
 	}
 }
 .table-cell {
