@@ -82,7 +82,7 @@ export default {
 		put:  prefix + '/invite-from-master-user/{id}/'
 	},
 	memberInvites: {
-		get:  prefix + '/invite-to-user/',
+		get:  prefix + '/invite-to-user/?base_api_url={client}',
 		post:  prefix + '/create-invite-to-user/',
 	},
 

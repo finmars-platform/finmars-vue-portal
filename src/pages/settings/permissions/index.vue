@@ -84,7 +84,7 @@
 	let members = computed(() => {
 		let data = []
 
-		if ( !stockMembers.value ) return []
+		if ( !stockMembers.value || !stockInvites.value ) return []
 
 		stockMembers.value.forEach(item => {
 			let roles = []
@@ -99,6 +99,24 @@
 				role: roles.join(', '),
 				status: item.is_owner ? 'Creator' : 'Accepted',
 				groups: item.groups_object.map(item => item.name).join(', ')
+			})
+		})
+
+		stockInvites.value.forEach(item => {
+			if ( data.find(row => row.username == item.user_object.username) ) return false
+
+			let roles = []
+
+			if ( item.is_admin ) roles.push('Admin')
+			if ( item.is_owner ) roles.push('Owner')
+			if ( !item.is_owner && !item.is_admin ) roles.push('User')
+
+			data.push({
+				// id: item.id,
+				username: item.user_object.username,
+				role: 'Admin',
+				status: 'Pending',
+				groups: item.groups
 			})
 		})
 
