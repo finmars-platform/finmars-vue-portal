@@ -12,6 +12,17 @@
 					disabled
 				/>
 				<BaseInput
+					label="E-mail"
+					v-model="member.email"
+					disabled
+				/>
+				<BaseInput
+					v-if="invite"
+					label="Invited by"
+					:modelValue="invite.from_user_object.username"
+					disabled
+				/>
+				<BaseInput
 					label="Date joined"
 					:modelValue="fromatDate(member.join_date)"
 					disabled
@@ -65,10 +76,12 @@
 	let router = useRouter()
 
 	let member = ref({})
+	let invite = ref({})
 	let groups = ref([])
 	let selectedGroups = computed(() => {
-		if ( !member.value.groups_object ) return []
+		if ( !member.value.groups_object.length ) return []
 		return member.value.groups_object.map( item => item.name).join(',')
+
 	})
 
 	let role = computed(() => {
@@ -87,6 +100,9 @@
 
 		res = await useApi('userGroups.get')
 		groups.value = res.results
+
+		res = await useApi('memberInvites.get')
+		invite.value = res.results.find(item => item.id == route.params.id)
 	}
 	function findIds( val ) {
 		if ( typeof val == 'string' ) val = val.split(',')
