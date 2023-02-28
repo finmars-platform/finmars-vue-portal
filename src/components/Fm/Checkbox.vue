@@ -2,7 +2,8 @@
 	<label class="flex aic">
 		<input type="checkbox"
 			:checked="modelValue || disabled"
-    	@change="emit('update:modelValue', !modelValue)"
+			:disabled="disabled"
+    	@change="disabled || emit('update:modelValue', !modelValue)"
 		/>
 		<span class="check" :class="{disabled: disabled}"><FmIcon class="mark" icon="check" /></span>
 
