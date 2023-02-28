@@ -5,13 +5,16 @@
 				<div class="modal_head">Add column</div>
 
 				<BaseInput type="text"
-					class="bi_no_borders bi_border_bottom m-l-20"
+					class="small bi_no_borders bi_border_bottom m-l-20"
 					placeholder="Search"
 					:modelValue="searchParam"
 					@update:modelValue="search"
 				>
 					<template #button>
 						<FmIcon icon="search" />
+					</template>
+					<template #rightBtn>
+						<FmIcon size="16" icon="close" @click="searchParam = ''" />
 					</template>
 				</BaseInput>
 			</div>
@@ -54,7 +57,7 @@
 				</div>
 			</div>
 
-			<div :class="[isAdvanced && tab == 'advanced' ? 'advanced' : '', 'content_grid']">
+			<div :class="[isAdvanced && tab == 'advanced' ? 'advanced' : '', 'content_grid',{collapsed: isCollapsedInfo}]">
 				<div class="content_grid_left" v-show="isAdvanced && tab == 'advanced'">
 					<ul class="fm_list">
 						<li
@@ -75,11 +78,12 @@
 							:class="{active: activeRow == item.key}"
 							v-for="(item, i) in favoritesTab"
 							@click="activeRow = item.key"
-							@dblclick="selected[item.key] = !selected[item.key]"
+							@dblclick="item.disabled || (selected[item.key] = !selected[item.key])"
 						>
 							<div class="flex aic">
 								<FmCheckbox
 									v-model="selected[item.key]"
+									:disabled="item.disabled"
 									@click.stop=""
 								/>
 
@@ -154,6 +158,7 @@
 								<div class="flex aic">
 									<FmCheckbox
 										v-model="selected[obj.key]"
+										:disabled="obj.disabled"
 										@click.stop=""
 									/>
 
@@ -186,6 +191,7 @@
 										<div class="flex aic expand_wrap">
 											<FmCheckbox
 												v-model="selected[val.key]"
+												:disabled="val.disabled"
 												@click.stop=""
 											/>
 
@@ -207,16 +213,32 @@
 					</ul>
 				</div>
 
-				<div class="content_grid_right">
-					<div class="flex aic" v-if="tab != 'advanced'">
-						<div class="desc_title" v-if="!isEdit">{{ attrInfo.name }}</div>
-						<BaseInput v-else v-model="favList[attrInfo.key]" />
+				<div class="content_grid_right" :class="{collapsed: isCollapsedInfo}">
+					<div class="flex aic sb" v-if="tab != 'advanced'">
+						<div class="desc_title flex aic">
+							<span v-if="!isEdit">{{ attrInfo.name }}</span>
+							<BaseInput
+								class="small bi_no_margins m-t-0"
+								v-model="favList[attrInfo.key]"
+								v-else
+							/>
+						</div>
 
-						<FmIcon v-if="!isEdit" size="20" primary icon="edit" @click="isEdit = true" />
-						<FmIcon v-else primary icon="save" @click="isEdit = false" />
+						<div class="desc_icons" v-if="tab == 'favorites'">
+							<FmIcon v-if="!isEdit" size="20" primary icon="edit" @click="isEdit = true" />
+
+							<div class="flex" v-else>
+								<FmIcon primary size="20" icon="save" @click="isEdit = false" />
+								<FmIcon primary size="20" icon="close" @click="isEdit = false" />
+							</div>
+						</div>
 					</div>
 					<div class="desc_subtitle" v-if="tab != 'advanced'">[{{ attrInfo.path }}]</div>
 					<div class="desc_about">{{ attrInfo.info }}</div>
+
+					<div class="collapse" :class="{active: isCollapsedInfo}" @click="isCollapsedInfo = !isCollapsedInfo">
+						<FmIcon size="20" :icon="isCollapsedInfo ? 'chevron_left' : 'chevron_right'" @click="isEdit = false" />
+					</div>
 				</div>
 			</div>
 		</div>
@@ -251,17 +273,21 @@
 		layout: 'auth'
 	});
 
-	let searchParam = ref('')
-	let isAdvanced = ref(false)
 	let tab = ref('favorites')
+	let searchParam = ref('')
+
 	let activeRow = ref('')
 	let activeTree = ref(0)
+
+	let isAdvanced = ref(false)
 	let isEdit = ref(false)
+	let isCollapsedInfo = ref(false)
 	let isOpenSelect = reactive({
 		current: true,
 		new: true
 	})
 
+	// Prop attrs
 	const formatedAttrs = attributes.map(item => {
 		item.name = item.name.replaceAll('. ', ' / ')
 
@@ -273,8 +299,25 @@
 
 		return a.name.localeCompare(b.name)
 	})
-
-	const selectedOldProp = ['account.attributes.asset_type', 'account.attributes.account_type', 'account.attributes.asset_class']
+	// Prop Selected
+	const selectedOldProp = [
+		'account.attributes.asset_type',
+		'account.attributes.account_type',
+		'account.attributes.asset_class'
+	]
+	// Prop Favorites
+	let favList = reactive({
+		'pricing_currency.reference_for_pricing': 'test',
+		'account.attributes.asset_type': 'account asset_type',
+	})
+	// Prop Layout custom
+	let layoutMetas = reactive([
+		{
+			key: 'pricing_currency.reference_for_pricing',
+			name: 'test layout',
+			description: 'Info'
+		}
+	])
 
 	let selectedOld = formatedAttrs.filter(item => selectedOldProp.includes(item.key))
 
@@ -286,9 +329,6 @@
 		console.log('selected:', selected)
 		return filteredColumns.value.filter((item) => selected[item.key])
 	})
-	function filterSelected() {
-		selectedColumns.value = filteredColumns.value.filter((item) => selected.value[item.key])
-	}
 
 	const filteredColumns = computed(() => {
 		if ( !searchParam.value ) return formatedAttrs
@@ -312,7 +352,11 @@
 				(match) => `<span class="c_primary">${match}</span>`
 			)
 
-			return reactive({ name, key: item.key, checked: false })
+			let disabled = false
+			if ( selectedOldProp.includes(item.key) )
+				disabled = true
+
+			return reactive({ name, key: item.key, checked: false, disabled })
 		})
 
 		return result
@@ -381,29 +425,35 @@
 
 		return list
 	}
-	let favList = reactive({
-		'pricing_currency.reference_for_pricing': 'test'
-	})
-	let attrMetas = reactive({
-		key: 'pricing_currency.reference_for_pricing',
-		name: 'test',
-		description: 'Info'
-	})
+
 	const favoritesTab = computed(() => {
-		let attrs = formatedAttrs.filter(item => favList[item.key] != undefined )
+		let attrs = formatedAttrs.filter(item => favList[item.key] !== undefined )
 		if ( !attrs ) return {}
 
+		attrs.forEach((item => {
+			if ( selectedOldProp.includes(item.key) )
+				item.disabled = true
+		}))
 		return attrs
 	})
+
 	const attrInfo = computed(() => {
 		let attr = formatedAttrs.find(item => item.key == activeRow.value)
 		if ( !attr ) return {}
 
+		let layoutMeta = layoutMetas.find(item => item.key == attr.key)
+		let name = 'No name'
+
+		if ( tab.value == 'favorites' ) name = favList[attr.key] || attr.name
+		if ( tab.value == 'selected' ) {
+			name = layoutMeta?.name || attr.name
+		}
+
 		return {
-			name: favList[attr.key] || attr.name,
+			name,
 			path: attr.name,
 			key: attr.key,
-			info: 'No info',
+			info: layoutMeta?.description || 'No info',
 		}
 	})
 
@@ -464,6 +514,7 @@
 			font-size: 20px;
 		}
 	}
+
 	.select_count {
 		background: $primary;
 		width: 18px;
@@ -480,6 +531,10 @@
 		display: grid;
 		grid-template-columns: 1fr 200px;
 		height: 100%;
+
+		&.collapsed {
+			grid-template-columns: 1fr 32px;
+		}
 
 		&.advanced {
 			grid-template-columns: 160px 1fr 200px;
@@ -498,9 +553,21 @@
 			padding: 10px 0;
 		}
 		&_right {
+			position: relative;
 			border-left: 1px solid $border;
 			height: 100%;
-			overflow: auto;
+			// overflow: auto;
+
+			&.collapsed {
+				.desc_title, .desc_subtitle, .desc_about, .desc_icons {
+					display: none;
+				}
+			}
+
+			&:hover .collapse {
+				opacity: 1;
+				visibility: visible;
+			}
 		}
 	}
 
@@ -521,13 +588,14 @@
 	}
 
 	.desc_title {
-		padding: 10px 13px;
-		border-bottom: 1px solid $border;
+		padding: 0 13px;
+		height: 40px;
 		word-wrap: break-word;
 	}
 	.desc_subtitle {
 		padding: 10px 13px;
 		background: $main;
+		border-top: 1px solid $border;
 		border-bottom: 1px solid $border;
 		color: $text-lighten;
 		word-wrap: break-word;
@@ -535,6 +603,22 @@
 	.desc_about {
 		padding: 10px 13px;
 		color: $text-lighten;
+	}
+	.collapse {
+		position: absolute;
+		top: 10px;
+		left: -12px;
+		border: 1px solid $border;
+		background: #fff;
+		border-radius: 50%;
+		opacity: 0;
+		visibility: hidden;
+		transition: 0.3s;
+
+		&.active {
+			visibility: visible;
+			opacity: 1;
+		}
 	}
 	.favorites {
 		opacity: 0;
