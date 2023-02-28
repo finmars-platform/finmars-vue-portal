@@ -147,7 +147,7 @@
 		if ( !isConfirm ) return false
 
 		let res = await useApi('memberKick.post', {
-				params: {username: usernameDel, base_api_url: store.current.base_api_url}
+				body: {username: usernameDel, base_api_url: store.current.base_api_url}
 			})
 
 		// if ( stockMembers.value.find(item => item.username == usernameDel ) ) {
