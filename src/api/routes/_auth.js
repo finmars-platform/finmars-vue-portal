@@ -81,9 +81,11 @@ export default {
 		get:  prefix + '/invite-from-master-user/?status=0',
 		put:  prefix + '/invite-from-master-user/{id}/'
 	},
+	memberKick: {
+		post:  prefix + '/master-user-kick-member/',
+	},
 	memberInvites: {
 		get:  prefix + '/invite-to-user/?base_api_url={client}',
-		delete:  prefix + '/invite-to-user/{id}/?base_api_url={client}',
 		post:  prefix + '/create-invite-to-user/',
 	},
 
