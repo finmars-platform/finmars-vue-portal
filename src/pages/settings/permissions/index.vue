@@ -158,7 +158,7 @@
 			let deletedInvite = stockInvites.value.find(item => item.user_object.username == usernameDel )
 
 			let res = await useApi('memberInvites.delete', {
-				params: {username: item.user_object.username, base_api_url: store.current.base_api_url}
+				params: {username: deletedInvite.user_object.username, base_api_url: store.current.base_api_url}
 			})
 		}
 
