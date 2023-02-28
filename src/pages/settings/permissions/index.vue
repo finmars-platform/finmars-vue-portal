@@ -138,16 +138,32 @@
 		statuses.value = resStatus.results
 	}
 	async function deleteMember( index ) {
-		let deletedMember = stockMembers.value[index]
+		let usernameDel = members.value[index].username
+
 		let isConfirm = await useConfirm({
 			title: 'Delete member',
-			text: `Do you want to delete a member "${deletedMember.username}"?`,
+			text: `Do you want to delete a member "${usernameDel}"?`,
 		})
 		if ( !isConfirm ) return false
 
-		let res = await useApi('member.delete', {
-			params: {id: deletedMember.id}
-		})
+		if ( stockMembers.value.find(item => item.username == usernameDel ) ) {
+			let deletedMember = stockMembers.value.find(item => item.username == usernameDel )
+
+			let res = await useApi('member.delete', {
+				params: {id: deletedMember.id}
+			})
+
+		} else {
+
+			let deletedInvite = stockInvites.value.find(item => item.user_object.username == usernameDel )
+
+			let res = await useApi('memberInvites.delete', {
+				params: {id: deletedInvite.id}
+			})
+		}
+
+		useNotify({type: 'success', title: `Member "${usernameDel}" was deleted.`})
+
 		refresh()
 	}
 	init()

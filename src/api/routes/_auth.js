@@ -83,6 +83,7 @@ export default {
 	},
 	memberInvites: {
 		get:  prefix + '/invite-to-user/?base_api_url={client}',
+		delete:  prefix + '/invite-to-user/{id}/?base_api_url={client}',
 		post:  prefix + '/create-invite-to-user/',
 	},
 
