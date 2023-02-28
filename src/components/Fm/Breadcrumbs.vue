@@ -43,10 +43,12 @@
 		border-bottom: 1px solid $text;
 		padding-bottom: 1px;
 		transition: 0.3s;
+		color: $text-lighten;
+		border-color: $text-lighten;
 
 		&:hover {
-			color: $text-lighten;
-			border-color: $text-lighten;
+			color: $text;
+			border-color: $text;
 		}
 	}
 	.fm_breadcrumbs_devider {

@@ -175,7 +175,6 @@ selectedFilter = ref(getSelectedFilter(props.modelValue, props.item_id));
 let selectedList = computed(() => {
 
 	return [...selectedFilter.value].map(selId => {
-
 		let selItem = props.items.find(item => item[props.item_id] === selId);
 
 		if (!selItem) {
