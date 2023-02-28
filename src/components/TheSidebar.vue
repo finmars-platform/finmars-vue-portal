@@ -1021,12 +1021,12 @@
 										</a>
 									</li>
 									<li v-if="accessTable.settings_users_groups_permission">
-										<a
-											:href="getUrlToOldApp('/settings/users-and-groups')"
+										<NuxtLink
+											to="/settings/permissions"
 											class="sidemenu-btn"
 										>
 											<span class="side-nav-title">Permissions</span>
-										</a>
+										</NuxtLink>
 									</li>
 									<li v-if="accessTable.settings_ecosystem_default">
 										<a
