@@ -146,21 +146,25 @@
 		})
 		if ( !isConfirm ) return false
 
-		if ( stockMembers.value.find(item => item.username == usernameDel ) ) {
-			let deletedMember = stockMembers.value.find(item => item.username == usernameDel )
-
-			let res = await useApi('member.delete', {
-				params: {id: deletedMember.id}
-			})
-
-		} else {
-
-			let deletedInvite = stockInvites.value.find(item => item.user_object.username == usernameDel )
-
-			let res = await useApi('memberInvites.delete', {
+		let res = await useApi('memberKick.post', {
 				params: {username: deletedInvite.user_object.username, base_api_url: store.current.base_api_url}
 			})
-		}
+
+		// if ( stockMembers.value.find(item => item.username == usernameDel ) ) {
+		// 	let deletedMember = stockMembers.value.find(item => item.username == usernameDel )
+
+		// 	let res = await useApi('member.delete', {
+		// 		params: {id: deletedMember.id}
+		// 	})
+
+		// } else {
+
+		// 	let deletedInvite = stockInvites.value.find(item => item.user_object.username == usernameDel )
+
+		// 	let res = await useApi('memberInvites.delete', {
+		// 		params: {username: deletedInvite.user_object.username, base_api_url: store.current.base_api_url}
+		// 	})
+		// }
 
 		useNotify({type: 'success', title: `Member "${usernameDel}" was deleted.`})
 
