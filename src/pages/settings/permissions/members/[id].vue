@@ -17,7 +17,7 @@
 					disabled
 				/>
 				<BaseInput
-					v-if="invite"
+					v-if="invite.id"
 					label="Invited by"
 					:modelValue="invite.from_user_object.username"
 					disabled
@@ -102,7 +102,7 @@
 		groups.value = res.results
 
 		res = await useApi('memberInvites.get')
-		invite.value = res.results.find(item => item.id == route.params.id)
+		invite.value = res.results.find(item => item.id == route.params.id) || {}
 	}
 	function findIds( val ) {
 		if ( typeof val == 'string' ) val = val.split(',')
