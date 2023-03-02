@@ -72,74 +72,24 @@
 				</div>
 
 				<div class="content_grid_main">
+
 					<div class="fm_list" v-show="!isAdvanced || tab == 'favorites'">
 						<div
 							class="fm_list_item attr_item flex aic sb"
 							:class="{active: activeRow == item.key}"
-							v-for="(item, i) in favoritesTab"
+							v-for="(item, i) in favoritesAttrs"
 							@click="activeRow = item.key"
 							@dblclick="item.disabled || (selected[item.key] = !selected[item.key])"
 						>
 							<div class="flex aic">
-								<FmCheckbox
-									v-model="selected[item.key]"
-									:disabled="item.disabled"
-									@click.stop=""
-								/>
-
-								<div v-html="favList[item.key]"></div>
-							</div>
-						</div>
-					</div>
-
-					<div class="fm_list" v-show="tab == 'selected'">
-						<li class="fm_list_item attr_item"
-							@click="isOpenSelect.current = !isOpenSelect.current"
-						>
-							<FmIcon class="expand" :icon="isOpenSelect.current ? 'expand_less' : 'expand_more'" />
-							<div>Current</div>
-						</li>
-						<div v-show="isOpenSelect.current">
-							<div
-								class="fm_list_item attr_item flex aic sb "
-								:class="{active: activeRow == item.key}"
-								v-for="(item, i) in selectedOld"
-								:key="item.key"
-								@click="activeRow = item.key"
-							>
-								<div class="flex aic expand_wrap">
-									<FmCheckbox
-										disabled
-									/>
-
-									<div class="select_old" v-html="`[${item.name}]`"></div>
-								</div>
-							</div>
-						</div>
-
-						<li class="fm_list_item attr_item"
-							@click="isOpenSelect.new = !isOpenSelect.new"
-						>
-							<FmIcon class="expand" :icon="isOpenSelect.new ? 'expand_less' : 'expand_more'" />
-							<div>New</div>
-						</li>
-						<div v-show="isOpenSelect.new">
-							<div
-								class="fm_list_item attr_item flex aic sb"
-								:class="{active: activeRow == item.key}"
-								v-for="(item, i) in selectedColumns"
-								:key="item.key"
-								@click="activeRow = item.key"
-								@dblclick="selected[item.key] = !selected[item.key]"
-							>
-								<div class="flex aic expand_wrap">
 									<FmCheckbox
 										v-model="selected[item.key]"
-										@click.stop="() => {}"
+										:disabled="item.disabled"
+										@click.stop=""
 									/>
 
-									<div v-html="item.name"></div>
-								</div>
+
+								<div v-html="item.name"></div>
 							</div>
 						</div>
 					</div>
@@ -211,6 +161,57 @@
 							</div>
 						</template>
 					</ul>
+					<div class="fm_list" v-show="tab == 'selected'">
+						<li class="fm_list_item attr_item"
+							@click="isOpenSelect.current = !isOpenSelect.current"
+						>
+							<FmIcon class="expand" :icon="isOpenSelect.current ? 'expand_less' : 'expand_more'" />
+							<div>Current</div>
+						</li>
+						<div v-show="isOpenSelect.current">
+							<div
+								class="fm_list_item attr_item flex aic sb "
+								:class="{active: activeRow == item.key}"
+								v-for="(item, i) in selectedOld"
+								:key="item.key"
+								@click="activeRow = item.key"
+							>
+								<div class="flex aic expand_wrap">
+									<FmCheckbox
+										disabled
+									/>
+
+									<div class="select_old" v-html="`[${item.name}]`"></div>
+								</div>
+							</div>
+						</div>
+
+						<li class="fm_list_item attr_item"
+							@click="isOpenSelect.new = !isOpenSelect.new"
+						>
+							<FmIcon class="expand" :icon="isOpenSelect.new ? 'expand_less' : 'expand_more'" />
+							<div>New</div>
+						</li>
+						<div v-show="isOpenSelect.new">
+							<div
+								class="fm_list_item attr_item flex aic sb"
+								:class="{active: activeRow == item.key}"
+								v-for="(item, i) in selectedColumns"
+								:key="item.key"
+								@click="activeRow = item.key"
+								@dblclick="selected[item.key] = !selected[item.key]"
+							>
+								<div class="flex aic expand_wrap">
+									<FmCheckbox
+										v-model="selected[item.key]"
+										@click.stop="() => {}"
+									/>
+
+									<div v-html="item.name"></div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 
 				<div class="content_grid_right" :class="{collapsed: isCollapsedInfo}">
@@ -320,59 +321,35 @@
 	])
 
 	let selectedOld = formatedAttrs.filter(item => selectedOldProp.includes(item.key))
-
 	activeRow.value = formatedAttrs[0].key
 
-	// let selectedColumns = ref([])
 	let selected = reactive({})
-	const selectedColumns = computed(() => {
-		console.log('selected:', selected)
-		return filteredColumns.value.filter((item) => selected[item.key])
-	})
 
-	const filteredColumns = computed(() => {
-		if ( !searchParam.value ) return formatedAttrs
-			.map((item) => ({ name: item.name, key: item.key }) )
+	const favoritesAttrs = computed(() => {
+		let attrs = formatedAttrs
+			.filter(item => favList[item.key] !== undefined )
+			.map(item => ({...item, name: favList[item.key]}) )
 
-		let terms = searchParam.value.split(/\s*(?:\s|\/)\s*/)
-		let result = formatedAttrs
+		// if ( !attrs ) return []
 
-		terms.forEach((term, i) => {
-			term = term.toLowerCase()
-
-			result = result
-				.filter( (item) => item.name.toLowerCase().includes(term) )
-		})
-
-		result = result.map(item => {
-			let name = item.name
-
-			name = name.replace(
-				new RegExp(`(${terms.join('|')})`, 'gi'),
-				(match) => `<span class="c_primary">${match}</span>`
-			)
-
-			let disabled = false
+		attrs.forEach((item => {
 			if ( selectedOldProp.includes(item.key) )
-				disabled = true
+				item.disabled = true
+		}))
 
-			return reactive({ name, key: item.key, checked: false, disabled })
-		})
+		if ( searchParam.value ) attrs = searchAndReplace( attrs )
 
-		return result
+		return attrs
 	})
-	const advancedColumnActive = computed(() => {
-		let result = []
 
-		if ( advancedColumns.value[activeTree.value] )
-			result = advancedColumns.value[activeTree.value].children
 
-		return result
-	})
 	const advancedColumns = computed(() => {
 		let tree = {}
+		let attrs = formatedAttrs
 
-		for (let attr of filteredColumns.value) {
+		if ( searchParam.value ) attrs = searchAndReplace( attrs )
+
+		for ( let attr of attrs ) {
 			const parts = attr.name.split(" / ")
 			parts[0] = parts[0].replace(/( |<([^>]+)>)/ig, "")
 
@@ -397,11 +374,16 @@
 			}
 		}
 
-		tree = iterateNestedObject(tree)
+		attrs = toAttrsTree(tree)
 
-		return tree
+		attrs.forEach((item => {
+			if ( selectedOldProp.includes(item.key) )
+				item.disabled = true
+		}))
+
+		return attrs
 	})
-	function iterateNestedObject( obj ) {
+	function toAttrsTree( obj ) {
 		let list = []
 
 		for (let key in obj) {
@@ -412,7 +394,7 @@
 
 			if ( obj[key].isOpen === false) {
 				newObj.isOpen = ref(false)
-				newObj.children = iterateNestedObject(obj[key])
+				newObj.children = toAttrsTree(obj[key])
 
 			} else {
 
@@ -425,17 +407,30 @@
 
 		return list
 	}
+	const advancedColumnActive = computed(() => {
+		let result = []
 
-	const favoritesTab = computed(() => {
-		let attrs = formatedAttrs.filter(item => favList[item.key] !== undefined )
-		if ( !attrs ) return {}
+		if ( advancedColumns.value[activeTree.value] )
+			result = advancedColumns.value[activeTree.value].children
 
-		attrs.forEach((item => {
-			if ( selectedOldProp.includes(item.key) )
-				item.disabled = true
-		}))
-		return attrs
+		return result
 	})
+
+
+	const selectedColumns = computed(() => {
+		let props = []
+
+		for ( let prop in selected) {
+			if ( !selected[prop] ) continue
+
+			props.push(formatedAttrs.find((item) => item.key == prop ))
+		}
+
+		if ( searchParam.value ) props = searchAndReplace( props )
+
+		return props
+	})
+
 
 	const attrInfo = computed(() => {
 		let attr = formatedAttrs.find(item => item.key == activeRow.value)
@@ -457,8 +452,32 @@
 		}
 	})
 
-	let searchTimer;
+	function searchAndReplace( attrs ) {
+		let terms = searchParam.value.split(/\s*(?:\s|\/)\s*/)
+		let result = attrs
 
+		terms.forEach((term, i) => {
+			term = term.toLowerCase()
+
+			result = result
+				.filter( (item) => item.name.toLowerCase().includes(term) )
+		})
+
+		result = result.map(item => {
+			let name = item.name
+
+			name = name.replace(
+				new RegExp(`(${terms.join('|')})`, 'gi'),
+				(match) => `<span class="c_primary">${match}</span>`
+			)
+
+			return { ...item, name }
+		})
+
+		return result
+	}
+
+	let searchTimer;
 	function search( value ) {
 		clearTimeout(searchTimer)
 
