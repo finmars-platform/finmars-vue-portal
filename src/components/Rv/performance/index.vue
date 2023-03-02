@@ -124,9 +124,10 @@
 
 					<BaseTable
 						:headers="preriodHeaders"
-						:items="preriodItems"
+						:items="periodItems"
 						:active="activePeriod"
 						colls="repeat(8, 1fr)"
+						:status="periodItemsStatus"
 						:cb="choosePortfolio"
 					/>
 				</FmExpansionPanel>
@@ -182,6 +183,7 @@
 								:headers="portfolioHeaders"
 								:items="portfolioItems"
 								colls="repeat(12, 1fr)"
+								:status="detailsLoadingStatus"
 								:cb="chooseMonth"
 								:active="activeYear"
 							/>
@@ -440,10 +442,13 @@ async function updateBundle(bundleData) {
 let panels = ref(['period', 'detail', 'diagram'])
 let bundles = ref([])
 
+let periodItemsStatus = computed( () => readyStatusData.bundles ? 'done' : 'loading' );
+
 let preriodHeaders = computed(() => {
 	return ['', 'Daily', 'MTD', 'QTD', 'YTD', dayjs(viewerData.reportOptions?.end_date).year() - 1, dayjs(viewerData.reportOptions?.end_date).year() - 2, 'Incept']
 })
-let preriodItems = ref([])
+/** Contains array of bundles **/
+let periodItems = ref([])
 
 let portfolioHeaders = ref(
 	['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -468,18 +473,6 @@ let activePeriodData = computed(() => {
 	return bundles.value[activePeriod.value] || null;
 
 })
-
-/*let activePeriodName = computed(() => {
-
-	if (!activePeriod.value && activePeriod.value !== 0) {
-		return '';
-	}
-
-	const activePeriodData = bundles.value[activePeriod.value];
-
-	return activePeriodData ? activePeriodData.name : '';
-
-})*/
 
 let activeYear = ref(0)
 
@@ -554,12 +547,12 @@ async function saveLayout () {
 
 }
 
-async function choosePortfolio(id) {
+async function choosePortfolio(periodIndex) {
 
-	activePeriod.value = id
-	detailPortfolio.value = preriodItems.value[id].name
+	activePeriod.value = periodIndex
+	detailPortfolio.value = periodItems.value[periodIndex].name
 
-	let success = await getMonthDetails( preriodItems.value[id].name )
+	let success = await getMonthDetails( periodItems.value[periodIndex].name )
 	if  ( success === false ) return false
 	detailYear.value = portfolioYears.value[0]
 
@@ -675,7 +668,8 @@ async function refresh() {
 	if ( !bundles.value.length ) {
 		return false
 	}
-	activePeriod.value = 0
+
+	activePeriod.value = 0;
 	activeYear.value = 0
 
 	detailPortfolio.value = bundles.value[0].user_code
@@ -699,14 +693,20 @@ async function fetchPortfolioBundles() {
 	bundles.value = res.results;
 	readyStatusData.bundles = true;
 
-	preriodItems.value = []
+	periodItems.value = []
 
 	bundles.value.forEach( bundle => {
-		preriodItems.value.push({
+
+		if ( viewerData.reportOptions.bundles && viewerData.reportOptions.bundles.length && !viewerData.reportOptions.bundles.includes( bundle.id ) ) {
+			// if bundle does not pass filters
+			return;
+		}
+
+		periodItems.value.push({
 			name: bundle.user_code,
 		})
 
-		let row = preriodItems.value[ preriodItems.value.length - 1 ]
+		let row = periodItems.value[ periodItems.value.length - 1 ]
 
 		row.daily = null
 		getDay( bundle.id ).then(day => {
@@ -768,7 +768,11 @@ async function deleteBundle() {
 
 }
 
-let detailsLoading = false
+let detailsLoading = ref(false);
+let detailsLoadingStatus = computed( () => {
+	return ( detailsLoading.value || !portfolioItems.value.length ) ? 'loading' : 'done'
+});
+
 async function getEndDate() {
 
 	if (viewerData.reportOptions?.end_date) {
@@ -817,9 +821,9 @@ async function getEndDate() {
 }
 
 async function getMonthDetails( name ) {
-	if ( detailsLoading ) return false
+	if ( detailsLoading.value ) return false
 
-	detailsLoading = true
+	detailsLoading.value = true
 	portfolioYears.value = []
 	portfolioTotals.value = []
 	portfolioItems.value = []
@@ -855,7 +859,7 @@ async function getMonthDetails( name ) {
 		}
 	})
 	if ( allMonths.error ) {
-		detailsLoading = false
+		detailsLoading.value = false
 		return false
 	}
 
@@ -915,7 +919,7 @@ async function getMonthDetails( name ) {
 		let total = await getReports({start: `${year - 1}-12-31`, end: end, ids: bundleId})
 		portfolioTotals.value.push( total * 100 )
 	}
-	detailsLoading = false
+	detailsLoading.value = false
 }
 
 function updateChart( datasetMonth, datasetLine ) {
