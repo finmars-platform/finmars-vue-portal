@@ -59,7 +59,7 @@ export default defineStore({
 						let props = this.scope.filter(item => item.parents && item.parents.includes(id) )
 
 						console.group(
-							`%s / ${prop.name} %c[${prop.__val}]`,
+							`%s / ${prop.name} %c[${typeof prop.__val == 'object' ? JSON.stringify(prop.__val) : prop.__val}]`,
 							`${this.widgets.find(item => item.id == prop.cid).user_code}`,
 							'font-size: 16px;'
 						)
