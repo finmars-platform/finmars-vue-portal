@@ -51,7 +51,7 @@
 				style="height: 300px;width: 600px;" />
 		</BaseModal>
 
-		<PagesDashboardGrid :isEdit="isEdit">
+		<PagesDashboardGrid tab="1" :isEdit="isEdit">
 			<PagesDashboardWidgetWrap
 				v-for="component of topComponents"
 				:key="component.id"
@@ -75,7 +75,7 @@
 				<FmIcon v-if="isEdit" @click="delTab(tab.id)" class="m-l-4" icon="delete" />
 			</div>
 			<div class="fm_tabs_item flex aic" v-if="isEdit" @click="addTab()">
-				<FmIcon primary icon="add" />
+				<FmIcon primary icon="add" /> <div class="tab_add_text">Add tab</div>
 			</div>
 		</div>
 
@@ -117,7 +117,7 @@
 		content.value = JSON.stringify({
 			widgets: dashStore.widgets,
 			tabs: dashStore.tabs,
-			scopes: dashStore.scopes,
+			scope: dashStore.scope,
 		}, null, 4)
 		isOpenJSON.value = true
 	}
@@ -126,7 +126,7 @@
 
 		dashStore.widgets = newStore.widgets
 		dashStore.tabs = newStore.tabs
-		dashStore.scopes = newStore.scopes
+		dashStore.scope = newStore.scope
 	}
 
 	function editorInit(editor) {
@@ -140,7 +140,7 @@
 	}
 	let topComponents = computed(() => {
 		return dashStore.widgets.filter((item) => {
-			return item.tab == null
+			return item.tab == '1'
 		})
 	})
 	let mainComponents = computed(() => {
@@ -197,5 +197,8 @@
 
 <style lang="scss" scoped>
 
+	.tab_add_text {
+		color: $primary;
+	}
 
 </style>

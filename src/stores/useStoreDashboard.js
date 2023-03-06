@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import widgetList from '~/assets/data/widgets.js'
+import dayjs from 'dayjs'
 
 export default defineStore({
 	id: "dashboard",
@@ -13,6 +14,7 @@ export default defineStore({
 			layoutList: [],
 			activeLayoutId: null,
 			activeTab: null,
+			__log: [],
 			//test
 			history: null,
 			historyPnl: null,
@@ -49,22 +51,43 @@ export default defineStore({
 			this.tabs = this.layout.data.tabs || []
 			this.scope = this.layout.data.scope || []
 
+			this.setPropsWatchers()
+			// console.clear()
+			console.table(this.scope)
+		},
+		setPropsWatchers() {
 			this.scope.forEach((prop) => {
-				if ( prop.direct != 'output' && !prop.__unwatch ) return false
+				if ( prop.direct != 'output' || prop.__unwatch ) return false
 
 				prop.__unwatch = watch(
 					() => prop.__val,
-					() => {
+					(newVal, oldVal) => {
 						let id = prop.id
 						let props = this.scope.filter(item => item.parents && item.parents.includes(id) )
 
+						let log = {
+							name: prop.name,
+							componentName: this.widgets.find(item => item.id == prop.cid).user_code,
+							newVal: newVal,
+							oldVal: oldVal,
+							time: dayjs().format('HH:mm:ss'),
+							children: []
+						}
+
 						console.group(
-							`%s / ${prop.name} %c[${typeof prop.__val == 'object' ? JSON.stringify(prop.__val) : prop.__val}]`,
+							`%s / ${prop.name} %c[${prop.__val}]`,
 							`${this.widgets.find(item => item.id == prop.cid).user_code}`,
 							'font-size: 16px;'
 						)
 
 						props.forEach(childProp => {
+							log.children.push({
+								name: childProp.name,
+								componentName: this.widgets.find(item => item.id == childProp.cid).user_code,
+								newVal: prop.__val,
+								oldVal: childProp.__val,
+							})
+
 							childProp.__val = prop.__val
 
 							console.log(
@@ -74,11 +97,11 @@ export default defineStore({
 						})
 
 						console.groupEnd()
+
+						this.__log.push(log)
 					}
 				)
 			})
-			// console.clear()
-			console.table(this.scope)
 		},
 		async getHistory(wid) {
 			let widget = this.widgets.find(item => item.id == wid)
@@ -241,6 +264,16 @@ export default defineStore({
 					let index = this.scope.findIndex(item => item.id == prop.id)
 
 					if ( index === -1 ) return false
+
+					if ( this.scope[index].direct == 'output' ) {
+						this.scope
+							.filter(item => item.parents && item.parents.includes(this.scope[index].id) )
+							.forEach((item) => {
+								let indexParent = item.parents.findIndex(id => id == this.scope[index].id)
+
+								item.parents.splice(indexParent, 1)
+							})
+					}
 
 					this.scope.splice(index, 1)
 				})

@@ -41,7 +41,7 @@
 					required
 				/>
 				<FmSelect
-					v-model="props.tab"
+					v-model="activeTab"
 					:items="tabList"
 					label="Tab"
 				/>
@@ -108,6 +108,7 @@
 
 	const dashStore = useStoreDashboard()
 
+	let activeTab = ref(props.tab)
 	let step = ref('component')
 	let activeWidget = ref({})
 	let propMode = reactive({})
@@ -118,7 +119,7 @@
 		return widgetList.filter((item) => item.group == 'base')
 	})
 	let tabList = computed(() => {
-		return [...dashStore.tabs, {id: null, name: 'Top place'}]
+		return [...dashStore.tabs, {id: 1, name: 'Top place'}]
 	})
 
 	function prepareItems(childProp) {
@@ -146,7 +147,7 @@
 			minColls: activeWidget.value.minColls,
 			minRows: activeWidget.value.minRows,
 			settings: {},
-			tab: props.tab ? props.tab : null,
+			tab: activeTab.value,
 			id: generateId(activeWidget.value.id),
 		}
 
@@ -178,31 +179,6 @@
 
 				state.scope.push(newProp)
 
-				newProp.__unwatch = watch(
-					() => newProp.__val,
-					() => {
-						let id = newProp.id
-						let props = dashStore.scope.filter(item => item.parents && item.parents.includes(id) )
-
-						console.group(
-							`%s / ${newProp.name} %c[${newProp.__val}]`,
-							`${dashStore.widgets.find(item => item.id == newProp.cid).user_code}`,
-							'font-size: 16px;'
-						)
-
-						props.forEach(childProp => {
-							childProp.__val = prop.__val
-
-							console.log(
-								`=> ${dashStore.widgets.find(item => item.id == childProp.cid).user_code} / %c${childProp.name}`,
-								'font-size: 14px;'
-							)
-						})
-
-						console.groupEnd()
-					}
-				)
-
 				if ( !prop.children ) return false
 
 				prop.children.forEach((id) => {
@@ -211,6 +187,7 @@
 					inputProp.parents.push(propId)
 				})
 			})
+			dashStore.setPropsWatchers()
 		})
 		cancelFunc()
 	}
