@@ -8,15 +8,31 @@ export default [
 	// 	props: {
 	// 	}
 	// },
-	// {
-	// 	id: 'controls',
-	// 	name: 'Controls component',
-	// 	group: 'system',
-	// 	minColls: 4,
-	// 	minRows: 4,
-	// 	props: {
-	// 	}
-	// },
+	{
+		id: 'DateControl',
+		name: 'Date control',
+		group: 'system',
+		minColls: 2,
+		minRows: 1,
+		inputs: [
+		],
+		outputs: [
+			{name: 'date', user_code: 'Date', type: 'date', direct: 'output', value: ''},
+		],
+		settings: []
+	},
+	{
+		id: 'DebugComponent',
+		name: 'Debug Component',
+		group: 'system',
+		minColls: 6,
+		minRows: 4,
+		inputs: [
+		],
+		outputs: [
+		],
+		settings: []
+	},
 	{
 		id: 'CardsIndicators',
 		name: 'Cards indicators',
@@ -41,6 +57,7 @@ export default [
 		inputs: [
 			{name: 'type', user_code: 'Period type', type: 'string', direct: 'input', parents: []},
 			{name: 'benchmark', user_code: 'Benchmark', type: 'string', direct: 'input', parents: []},
+			{name: 'data_source', user_code: 'Data Source URL', type: 'string', direct: 'input', parents: []},
 			{name: 'date_to', user_code: 'Date to', type: 'date', value: '', direct: 'input', parents: []},
 			{name: 'date_from', user_code: 'Date from', type: 'date', value: '', direct: 'input', parents: []},
 			{name: 'portfolio', user_code: 'Portfolio', type: 'id', value: '', direct: 'input', parents: []},
