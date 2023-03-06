@@ -9,7 +9,7 @@
 
 		<textarea
 			class="bi_area"
-			:rows="calcRow()"
+			:rows="calcRow"
 			:value="modelValue"
     	@input="$emit('update:modelValue', $event.target.value)"
 		></textarea>
@@ -27,11 +27,11 @@
 	})
 	defineEmits(['update:modelValue'])
 
-	function calcRow() {
+	const calcRow = computed(() => {
 		if ( !props.auto ) return 7;
 
 		return props.modelValue.split("\n").length
-	}
+	})
 </script>
 
 <style lang="scss" scoped>

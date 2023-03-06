@@ -217,25 +217,43 @@
 				<div class="content_grid_right" :class="{collapsed: isCollapsedInfo}">
 					<div class="flex aic sb" v-if="tab != 'advanced'">
 						<div class="desc_title flex aic">
-							<span v-if="!isEdit">{{ attrInfo.name }}</span>
+							<span v-if="!isEdit">
+								{{ attrInfo.name.length > 17 ? attrInfo.name.slice(0, 17) + '...' : attrInfo.name }}
+							</span>
 							<BaseInput
 								class="small bi_no_margins m-t-0"
-								v-model="favList[attrInfo.key]"
+								v-model="infoEditable.name"
 								v-else
 							/>
 						</div>
 
 						<div class="desc_icons" v-if="tab == 'favorites'">
-							<FmIcon v-if="!isEdit" size="20" primary icon="edit" @click="isEdit = true" />
+							<FmIcon
+								v-if="!isEdit"
+								size="20"
+								primary
+								icon="edit"
+								@click="infoEditable.name = attrInfo.name, isEdit = true"
+							/>
 
 							<div class="flex" v-else>
-								<FmIcon primary size="20" icon="save" @click="isEdit = false" />
+								<FmIcon
+									primary
+									size="20"
+									icon="save"
+									@click="favList[attrInfo.key] = infoEditable.name, isEdit = false"
+								/>
 								<FmIcon primary size="20" icon="close" @click="isEdit = false" />
 							</div>
 						</div>
 					</div>
 					<div class="desc_subtitle" v-if="tab != 'advanced'">[{{ attrInfo.path }}]</div>
-					<div class="desc_about">{{ attrInfo.info }}</div>
+					<div class="desc_about">
+						<span v-if="!isEdit">
+							{{ attrInfo.info }}
+						</span>
+						<FmInputArea v-else v-model="infoEditable.description" />
+					</div>
 
 					<div class="collapse" :class="{active: isCollapsedInfo}" @click="isCollapsedInfo = !isCollapsedInfo">
 						<FmIcon size="20" :icon="isCollapsedInfo ? 'chevron_left' : 'chevron_right'" @click="isEdit = false" />
@@ -432,6 +450,10 @@
 	})
 
 
+	let infoEditable = reactive({
+		name: '',
+		description: ''
+	})
 	const attrInfo = computed(() => {
 		let attr = formatedAttrs.find(item => item.key == activeRow.value)
 		if ( !attr ) return {}
