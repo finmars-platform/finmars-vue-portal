@@ -158,6 +158,12 @@
 			},
 		},
 		{
+			name: "Account Security",
+			cb: () => {
+				window.location.href = config.public.keycloakAccountPage
+			},
+		},
+		{
 			name: "Logout",
 			cb: () => {
 				useCookie("access_token").value = null

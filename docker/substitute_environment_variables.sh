@@ -10,6 +10,8 @@ echo PROD_WS_HOST $PROD_WS_HOST
 echo PROD_CLOACK_PASS $PROD_CLOACK_PASS
 echo PROD_CLOACK_2fa $PROD_CLOACK_2fa
 
+echo KEYCLOAK_ACCOUNT_PAGE $KEYCLOAK_ACCOUNT_PAGE
+
 # Replace env vars in files served by server
 for file in $ROOT_DIR/.output/**/*.mjs* $ROOT_DIR/.output/server/chunks/nitro/node-server.mjs
 do
@@ -19,6 +21,8 @@ do
   sed -i 's|==PROD_WS_HOST==|'${PROD_WS_HOST}'|g' $file
   sed -i 's|==PROD_CLOACK_PASS==|'${PROD_CLOACK_PASS}'|g' $file
   sed -i 's|==PROD_CLOACK_2fa==|'${PROD_CLOACK_2fa}'|g' $file
+	sed -i 's|==KEYCLOAK_ACCOUNT_PAGE==|'${KEYCLOAK_ACCOUNT_PAGE}'|g' $file
+
 done
 
 #grep -rnw '/var/www/finmars/' -e 'PROD_APP_URL'
