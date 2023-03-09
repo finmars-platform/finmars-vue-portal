@@ -57,7 +57,14 @@
 				</div>
 			</div>
 
-			<div :class="[isAdvanced && tab == 'advanced' ? 'advanced' : '', 'content_grid',{collapsed: isCollapsedInfo}]">
+			<div
+				:class="[
+					isAdvanced ? 'advanced_mod' : '',
+					isAdvanced && tab == 'advanced' ? 'advanced' : '',
+					'content_grid',
+					{collapsed: isCollapsedInfo}
+				]"
+			>
 				<div class="content_grid_left" v-show="isAdvanced && tab == 'advanced'">
 					<ul class="fm_list">
 						<li
@@ -337,7 +344,7 @@
 			description: 'Info'
 		}
 	])
-
+		// key name value_type layout_name
 	let selectedOld = formatedAttrs.filter(item => selectedOldProp.includes(item.key))
 	activeRow.value = formatedAttrs[0].key
 
@@ -576,10 +583,12 @@
 		&.collapsed {
 			grid-template-columns: 1fr 32px;
 		}
+		&.advanced_mod {
+			height: calc(100% - 48px);
+		}
 
 		&.advanced {
 			grid-template-columns: 160px 1fr 200px;
-			height: calc(100% - 48px);
 		}
 
 		&_left {
