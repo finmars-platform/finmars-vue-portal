@@ -119,7 +119,7 @@
 										@click.stop=""
 									/>
 
-									<div v-html="obj.short_name"></div>
+									<div v-html="advancedColumns[activeTree].name == 'All sections' ? obj.name : obj.short_name"></div>
 								</div>
 
 								<FmIcon
@@ -127,7 +127,7 @@
 									primary
 									:class="['favorites', {active: !!favList[obj.key]}]"
 									:icon="favList[obj.key] ? 'star' : 'star_outlined'"
-									@click="favList[obj.key] = obj.name"
+									@click="favList[obj.key] ? delete favList[obj.key] : favList[obj.key] = obj.name.replace(/(<([^>]+)>)/ig, '')"
 								/>
 							</div>
 
@@ -160,7 +160,7 @@
 											primary
 											:class="['favorites', {active: !!favList[val.key]}]"
 											:icon="favList[val.key] ? 'star' : 'star_outlined'"
-											@click="favList[val.key] = val.name"
+											@click="favList[val.key] ? delete favList[val.key] : favList[val.key] = val.name.replace(/( |<([^>]+)>)/ig, '')"
 										/>
 									</div>
 								</template>
@@ -313,6 +313,43 @@
 		new: true
 	})
 
+	const onMessageType = 'modal'
+	const onMessageStack = {
+		'init': init
+	}
+
+	onMounted(() => {
+		window.addEventListener("message", onMessage)
+
+		send({
+			action: 'ready'
+		})
+	})
+
+
+	function init( data ) {
+
+	}
+
+	function onMessage(e) {
+		// {
+		// 	action: 'name',
+		// 	type: 'modal',
+		// 	payload: {}
+		// }
+		if ( !e.data.action || !e.data.type ) return false
+
+		if ( onMessageStack[e.data.action] ) onMessageStack[e.data.action](e.data.payload)
+		else console.log('e.data.action:', e.data)
+	}
+	function send( data, source = window.parent ) {
+		let dataObj = Object.assign(data, {
+			type: onMessageType,
+		})
+		source.postMessage( dataObj, "*" )
+	}
+
+
 	// Prop attrs
 	const formatedAttrs = attributes.map(item => {
 		item.name = item.name.replaceAll('. ', ' / ')
@@ -371,8 +408,18 @@
 	const advancedColumns = computed(() => {
 		let tree = {}
 		let attrs = formatedAttrs
+		let searchedAttrs
 
-		if ( searchParam.value ) attrs = searchAndReplace( attrs )
+		// Search
+		if ( searchParam.value ) {
+			searchedAttrs = searchAndReplace( attrs )
+			attrs = searchedAttrs
+		}
+
+		attrs.forEach((item => {
+			if ( selectedOldProp.includes(item.key) )
+				item.disabled = true
+		}))
 
 		for ( let attr of attrs ) {
 			const parts = attr.name.split(" / ")
@@ -401,10 +448,13 @@
 
 		attrs = toAttrsTree(tree)
 
-		attrs.forEach((item => {
-			if ( selectedOldProp.includes(item.key) )
-				item.disabled = true
-		}))
+		// Search
+		if ( searchParam.value ) {
+			attrs.unshift({
+				name: 'All sections',
+				children: searchedAttrs
+			})
+		}
 
 		return attrs
 	})
