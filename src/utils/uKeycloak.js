@@ -20,18 +20,26 @@ const keycloak = new Keycloak({
 	realm: 'finmars',
 	clientId: 'finmars'
 })
+let isInit = false
 
 keycloak.onAuthSuccess = setTokens
 keycloak.onAuthRefreshSuccess = setTokens
 keycloak.onTokenExpired = refreshTokens
 
-await keycloak.init({
-	onLoad: 'login-required',
-	token: useCookie('access_token').value,
-	refreshToken: useCookie('refresh_token').value,
-	idToken: useCookie('id_token').value
-})
+keycloak.onReady = () => {
+	isInit = true
+	if ( keycloak.isTokenExpired() ) refreshTokens()
+}
 
-if ( keycloak.isTokenExpired() ) refreshTokens()
+export default async () => {
+	if ( !isInit ) {
+		await keycloak.init({
+			onLoad: 'login-required',
+			token: useCookie('access_token').value,
+			refreshToken: useCookie('refresh_token').value,
+			idToken: useCookie('id_token').value
+		})
+	}
 
-export default keycloak
+	return keycloak
+}
