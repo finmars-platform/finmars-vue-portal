@@ -1,13 +1,11 @@
 import KeycloakJs from 'keycloak-js'
 
 const setTokens = () => {
-	console.log('onAuthSuccess:')
 	useCookie('access_token').value = keycloak.token
 	useCookie('refresh_token').value = keycloak.refreshToken
 	useCookie('id_token').value = keycloak.idToken
 }
 const refreshTokens = async () => {
-	console.log('onTokenExpired:')
 	const isRefreshed = await keycloak.updateToken()
 
 	if ( !isRefreshed ) {
@@ -16,9 +14,9 @@ const refreshTokens = async () => {
 }
 
 const keycloak = new KeycloakJs({
-	url: 'https://dev-auth.finmars.com',
-	realm: 'finmars',
-	clientId: 'finmars'
+	url: useRuntimeConfig().public.KEYCLOAK_URL,
+	realm: useRuntimeConfig().public.KEYCLOAK_REALM,
+	clientId: useRuntimeConfig().public.KEYCLOAK_CLIENT_ID
 })
 let isInit = false
 
