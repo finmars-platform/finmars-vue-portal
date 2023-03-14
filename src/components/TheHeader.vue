@@ -159,8 +159,9 @@
 		},
 		{
 			name: "Account Security",
-			cb: () => {
-				window.location.href = config.public.keycloakAccountPage
+			cb: async () => {
+				let kc = await uKeycloak()
+				kc.accountManagement()
 			},
 		},
 		{
