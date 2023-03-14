@@ -1,4 +1,4 @@
-import Keycloak from 'Keycloak-js'
+import KeycloakJs from 'keycloak-js'
 
 const setTokens = () => {
 	console.log('onAuthSuccess:')
@@ -15,7 +15,7 @@ const refreshTokens = async () => {
 	}
 }
 
-const keycloak = new Keycloak({
+const keycloak = new KeycloakJs({
 	url: 'https://dev-auth.finmars.com',
 	realm: 'finmars',
 	clientId: 'finmars'
