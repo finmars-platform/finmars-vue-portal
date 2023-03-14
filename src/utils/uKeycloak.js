@@ -1,4 +1,4 @@
-import Keycloak from 'Keycloak-js'
+import KeycloakJs from 'keycloak-js'
 
 const setTokens = () => {
 	console.log('onAuthSuccess:')
@@ -7,6 +7,7 @@ const setTokens = () => {
 	useCookie('id_token').value = keycloak.idToken
 }
 const refreshTokens = async () => {
+	if ( !isInit ) return false
 	console.log('onTokenExpired:')
 	const isRefreshed = await keycloak.updateToken()
 
@@ -15,7 +16,7 @@ const refreshTokens = async () => {
 	}
 }
 
-const keycloak = new Keycloak({
+const keycloak = new KeycloakJs({
 	url: 'https://dev-auth.finmars.com',
 	realm: 'finmars',
 	clientId: 'finmars'
@@ -29,8 +30,9 @@ keycloak.onTokenExpired = refreshTokens
 keycloak.onReady = () => {
 	isInit = true
 	if ( keycloak.isTokenExpired() ) refreshTokens()
-}
 
+}
+setTimeout(() => {console.log('keycloak.isTokenExpired():', keycloak.isTokenExpired())}, 10000)
 export default async () => {
 	if ( !isInit ) {
 		await keycloak.init({
