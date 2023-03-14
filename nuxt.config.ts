@@ -11,6 +11,7 @@ export default defineNuxtConfig({
 
 			cloackPass: "==PROD_CLOACK_PASS==",
 			cloack2fa: "==PROD_CLOACK_2fa==",
+			keycloakAccountPage: "==KEYCLOAK_ACCOUNT_PAGE==",
 
 			buildDATE: dayjs().format('HH:mm DD/MM/YYYY')
 		}
