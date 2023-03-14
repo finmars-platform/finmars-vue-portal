@@ -4,7 +4,6 @@ export default defineStore({
 	id: "global",
 	state: () => {
 		return {
-			isAuth: false,
 			user: {},
 			masterUsers: [],
 			current: {},
