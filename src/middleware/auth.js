@@ -1,3 +1,5 @@
 export default defineNuxtRouteMiddleware( async (to, from) => {
-	if ( !uKeycloak.authenticated ) uKeycloak.login()
+	let keycloak = await uKeycloak()
+
+	if ( !keycloak.authenticated ) keycloak.login()
 })
