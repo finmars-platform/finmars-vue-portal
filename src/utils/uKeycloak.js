@@ -1,14 +1,11 @@
 import KeycloakJs from 'keycloak-js'
 
 const setTokens = () => {
-	console.log('onAuthSuccess:')
 	useCookie('access_token').value = keycloak.token
 	useCookie('refresh_token').value = keycloak.refreshToken
 	useCookie('id_token').value = keycloak.idToken
 }
 const refreshTokens = async () => {
-	if ( !isInit ) return false
-	console.log('onTokenExpired:')
 	const isRefreshed = await keycloak.updateToken()
 
 	if ( !isRefreshed ) {
@@ -30,9 +27,8 @@ keycloak.onTokenExpired = refreshTokens
 keycloak.onReady = () => {
 	isInit = true
 	if ( keycloak.isTokenExpired() ) refreshTokens()
-
 }
-setTimeout(() => {console.log('keycloak.isTokenExpired():', keycloak.isTokenExpired())}, 10000)
+
 export default async () => {
 	if ( !isInit ) {
 		await keycloak.init({
