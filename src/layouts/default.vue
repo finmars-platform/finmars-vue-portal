@@ -22,25 +22,25 @@
 
 	let notLoadingMember = ref(true);
 
-	let ws = new Stream({
-		url: config.public.wsURL,
-		onOpen() {
-			store.ws = ws
+	// let ws = new Stream({
+	// 	url: config.public.wsURL,
+	// 	onOpen() {
+	// 		store.ws = ws
 
-			store.ws.send({
-				action: "initial_auth",
-				data: { access_token: useCookie("access_token").value },
-			})
-			store.ws.send({
-				action: "update_user_state",
-				data: { member: store.member },
-			})
-			store.ws.send({
-				action: "update_user_state",
-				data: { master_user: { id: store.current.id } },
-			})
-		}
-	})
+	// 		store.ws.send({
+	// 			action: "initial_auth",
+	// 			data: { access_token: useCookie("access_token").value },
+	// 		})
+	// 		store.ws.send({
+	// 			action: "update_user_state",
+	// 			data: { member: store.member },
+	// 		})
+	// 		store.ws.send({
+	// 			action: "update_user_state",
+	// 			data: { master_user: { id: store.current.id } },
+	// 		})
+	// 	}
+	// })
 
 	watchEffect( async ( onCleanup ) => {
 
@@ -54,10 +54,10 @@
 
 			notLoadingMember.value = true;
 
-			store.ws.send({
-				action: "update_user_state",
-				data: { member: store.member },
-			})
+			// store.ws.send({
+			// 	action: "update_user_state",
+			// 	data: { member: store.member },
+			// })
 
 		}
 	})
