@@ -58,6 +58,7 @@
 
 	let form = reactive({
 		groups: ['Guests'],
+		base_api_url: store.current.base_api_url,
 		is_owner: false
 	})
 	let groups = ref([])
@@ -80,7 +81,16 @@
 		form.groups = form.groups.join(',')
 		let res = await useApi('memberInvites.post', {body: form, params: {id: route.params.id}})
 
-		if ( !res.error ) useNotify({type: 'success', title: 'Invite sent!'})
+		if ( !res.error ) {
+			useNotify({type: 'success', title: 'Invite sent!'})
+
+			Object.assign(form, {
+				groups: ['Guests'],
+				is_owner: false,
+				email: '',
+				username: '',
+			})
+		}
 		else useNotify({type: 'error', title: 'User exists'})
 	}
 	async function cancel() {

@@ -84,7 +84,7 @@
 	let members = computed(() => {
 		let data = []
 
-		if ( !stockMembers.value ) return []
+		if ( !stockMembers.value || !stockInvites.value ) return []
 
 		stockMembers.value.forEach(item => {
 			let roles = []
@@ -95,10 +95,28 @@
 
 			data.push({
 				// id: item.id,
-				username: item.username,
+				username: {value: item.username, link: '/settings/permissions/members/' + item.id},
 				role: roles.join(', '),
 				status: item.is_owner ? 'Creator' : 'Accepted',
 				groups: item.groups_object.map(item => item.name).join(', ')
+			})
+		})
+
+		stockInvites.value.forEach(item => {
+			if ( data.find(row => row.username.value == item.user_object.username) ) return false
+
+			let roles = []
+
+			if ( item.is_admin ) roles.push('Admin')
+			if ( item.is_owner ) roles.push('Owner')
+			if ( !item.is_owner && !item.is_admin ) roles.push('User')
+
+			data.push({
+				// id: item.id,
+				username: {value: item.user_object.username, link: '/settings/permissions/members/' + item.user},
+				role: 'Admin',
+				status: 'Pending',
+				groups: item.groups.replace(',', ', ')
 			})
 		})
 
@@ -120,16 +138,23 @@
 		statuses.value = resStatus.results
 	}
 	async function deleteMember( index ) {
-		let deletedMember = stockMembers.value[index]
+		let usernameDel = members.value[index].username
+
 		let isConfirm = await useConfirm({
 			title: 'Delete member',
-			text: `Do you want to delete a member "${deletedMember.username}"?`,
+			text: `Do you want to delete a member "${usernameDel}"?`,
 		})
 		if ( !isConfirm ) return false
 
-		let res = await useApi('member.delete', {
-			params: {id: deletedMember.id}
+		let res = await useApi('memberKick.post', {
+			body: {
+				username: usernameDel,
+				base_api_url: store.current.base_api_url
+			}
 		})
+
+		useNotify({type: 'success', title: `Member "${usernameDel}" was deleted.`})
+
 		refresh()
 	}
 	init()
