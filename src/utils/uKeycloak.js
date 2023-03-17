@@ -14,9 +14,9 @@ const refreshTokens = async () => {
 }
 
 const keycloak = new KeycloakJs({
-	url: 'https://dev-auth.finmars.com',
-	realm: 'finmars',
-	clientId: 'finmars'
+	url: useRuntimeConfig().public.KEYCLOAK_URL,
+	realm: useRuntimeConfig().public.KEYCLOAK_REALM,
+	clientId: useRuntimeConfig().public.KEYCLOAK_CLIENT_ID
 })
 let isInit = false
 
