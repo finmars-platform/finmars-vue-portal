@@ -158,6 +158,13 @@
 			},
 		},
 		{
+			name: "Account Security",
+			cb: async () => {
+				let kc = await uKeycloak()
+				kc.accountManagement()
+			},
+		},
+		{
 			name: "Logout",
 			cb: () => {
 				useCookie("access_token").value = null

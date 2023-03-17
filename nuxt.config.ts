@@ -5,12 +5,13 @@ export default defineNuxtConfig({
 		public: {
 			frontURL: process.env.FRONT_HOST || "==PROD_FRONT_HOST==",
 			apiURL: process.env.API_HOST || "==PROD_API_HOST==",
-			wsURL: (process.env.WS_HOST  || "==PROD_WS_HOST==") + '/ws',
+			// wsURL: (process.env.WS_HOST  || "==PROD_WS_HOST==") + '/ws',
 
 			authorizerURL: process.env.AUTH_HOST || "==PROD_API_HOST==" + "/authorizer",
 
-			cloackPass: "==PROD_CLOACK_PASS==",
-			cloack2fa: "==PROD_CLOACK_2fa==",
+			KEYCLOAK_URL: process.env.KEYCLOAK_URL || "==PROD_KEYCLOAK_URL==",
+			KEYCLOAK_REALM: process.env.KEYCLOAK_REALM || "==PROD_KEYCLOAK_REALM==",
+			KEYCLOAK_CLIENT_ID: process.env.KEYCLOAK_CLIENT_ID || "==PROD_KEYCLOAK_CLIENT_ID==",
 
 			buildDATE: dayjs().format('HH:mm DD/MM/YYYY')
 		}

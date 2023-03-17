@@ -37,7 +37,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="center p-16" v-if="!items.length">
+	<div class="center p-16" v-if="status === 'loading'">
 		<FmLoader />
 	</div>
 </template>
@@ -58,7 +58,8 @@
 			type: Function
 		},
 		status: { // done, loading, fail
-			type: String
+			type: String,
+			default: 'done',
 		},
 		active: {
 			type: Number
