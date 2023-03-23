@@ -286,7 +286,7 @@
 				/>
 			</div>
 
-			<FmBtn @click="cancel()">OK</FmBtn>
+			<FmBtn @click="save()">OK</FmBtn>
 		</div>
 	</div>
 </template>
@@ -298,6 +298,8 @@
 	definePageMeta({
 		layout: 'auth'
 	});
+	let route = useRoute()
+	const iframeId = route.query.iframeId;
 
 	let tab = ref('favorites')
 	let searchParam = ref('')
@@ -315,14 +317,16 @@
 
 	const onMessageType = 'modal'
 	const onMessageStack = {
-		'init': init
+		'init': init,
+		'INITIALIZATION_SETTINGS_TRANSMISSION': function (payload) {},
 	}
 
 	onMounted(() => {
 		window.addEventListener("message", onMessage)
 
 		send({
-			action: 'ready'
+			action: 'IFRAME_READY',
+			iframeId: iframeId,
 		})
 	})
 
@@ -337,16 +341,20 @@
 		// 	type: 'modal',
 		// 	payload: {}
 		// }
-		if ( !e.data.action || !e.data.type ) return false
-
+		if ( !e.data.action ) return false
 		if ( onMessageStack[e.data.action] ) onMessageStack[e.data.action](e.data.payload)
 		else console.log('e.data.action:', e.data)
 	}
 	function send( data, source = window.parent ) {
+
+		data.iframeId = iframeId;
+
 		let dataObj = Object.assign(data, {
 			type: onMessageType,
 		})
+
 		source.postMessage( dataObj, "*" )
+
 	}
 
 
@@ -565,7 +573,22 @@
 		}, 300)
 	}
 
-	function cancel() {}
+	function cancel() {
+		send({ action: 'CANCEL_DIALOG' } );
+	}
+
+	function save() {
+
+		send({
+			action: 'SAVE_DIALOG',
+			payload: {
+				// selectedAttributes: [],
+				// favoriteAttributes: {},
+			}
+		});
+
+	}
+
 </script>
 
 <style lang="scss" scoped>
