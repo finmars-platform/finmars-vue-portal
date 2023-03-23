@@ -1036,17 +1036,28 @@
 											<span class="side-nav-title">Default Settings</span>
 										</a>
 									</li>
-									<li>
-										<div class="sidemenu-btn disabled-elem">
-											<span class="side-nav-title">Security</span>
-										</div>
-									</li>
-									<li>
+<!--									<li>
 										<a
 											:href="getUrlToOldApp('/processes')"
 											class="sidemenu-btn"
 										>
 											<span class="side-nav-title">Active Processes</span>
+										</a>
+									</li>-->
+									<li>
+										<a
+											:href="getUrlToOldApp('/recycle-bin')"
+											class="sidemenu-btn"
+										>
+											<span class="side-nav-title">Recycle Bin</span>
+										</a>
+									</li>
+									<li>
+										<a
+											:href="getUrlToOldApp('/system-dashboard')"
+											class="sidemenu-btn"
+										>
+											<span class="side-nav-title">System</span>
 										</a>
 									</li>
 								</ul>
