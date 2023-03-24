@@ -362,16 +362,20 @@
 		// 	iframeId: 'modal',
 		// 	payload: {}
 		// }
-		if ( !e.data.action || !e.data.type ) return false
-
+		if ( !e.data.action ) return false
 		if ( onMessageStack[e.data.action] ) onMessageStack[e.data.action](e.data.payload)
 		else console.log('e.data.action:', e.data)
 	}
 	function send( data, source = window.parent ) {
+
+		data.iframeId = iframeId;
+
 		let dataObj = Object.assign(data, {
 			iframeId: iframeId,
 		})
+
 		source.postMessage( dataObj, "*" )
+
 	}
 
 
