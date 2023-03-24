@@ -125,9 +125,9 @@
 								<FmIcon
 									size="20"
 									primary
-									:class="['favorites', {active: !!favList[obj.key]}]"
-									:icon="favList[obj.key] ? 'star' : 'star_outlined'"
-									@click="favList[obj.key] ? delete favList[obj.key] : favList[obj.key] = obj.name.replace(/(<([^>]+)>)/ig, '')"
+									:class="['favorites', {active: !!favList.find(o => o.key == obj.key)}]"
+									:icon="favList.find(o => o.key == obj.key) ? 'star' : 'star_outlined'"
+									@click="toggleFav(obj)"
 								/>
 							</div>
 
@@ -158,9 +158,9 @@
 										<FmIcon
 											size="20"
 											primary
-											:class="['favorites', {active: !!favList[val.key]}]"
-											:icon="favList[val.key] ? 'star' : 'star_outlined'"
-											@click="favList[val.key] ? delete favList[val.key] : favList[val.key] = val.name.replace(/( |<([^>]+)>)/ig, '')"
+											:class="['favorites', {active: !!favList.find(o => o.key == val.key)}]"
+											:icon="favList.find(o => o.key == val.key) ? 'star' : 'star_outlined'"
+											@click="toggleFav(val)"
 										/>
 									</div>
 								</template>
@@ -248,7 +248,7 @@
 									primary
 									size="20"
 									icon="save"
-									@click="favList[attrInfo.key] = infoEditable.name, isEdit = false"
+									@click="saveAttrInfo()"
 								/>
 								<FmIcon primary size="20" icon="close" @click="isEdit = false" />
 							</div>
@@ -286,18 +286,18 @@
 				/>
 			</div>
 
-			<FmBtn @click="cancel()">OK</FmBtn>
+			<FmBtn @click="save()">OK</FmBtn>
 		</div>
 	</div>
 </template>
 
 <script setup>
 
-	import attributes from '~/assets/data/attributes.js'
-
 	definePageMeta({
 		layout: 'auth'
 	});
+
+	const iframeId = useRoute().query.iframeId
 
 	let tab = ref('favorites')
 	let searchParam = ref('')
@@ -313,28 +313,53 @@
 		new: true
 	})
 
-	const onMessageType = 'modal'
 	const onMessageStack = {
-		'init': init
+		'INITIALIZATION_SETTINGS_TRANSMISSION': init
 	}
 
 	onMounted(() => {
 		window.addEventListener("message", onMessage)
 
 		send({
-			action: 'ready'
+			action: 'IFRAME_READY'
 		})
 	})
 
+	let formatedAttrs = []
+	let selectedOld = []
+	let favList = ref([{
+		key: 'pricing_currency.reference_for_pricing',
+		name: 'test',
+		customName: 'test',
+		customDescription: 'test',
+	}])
 
 	function init( data ) {
+		formatedAttrs = data.attributes
+			.map(item => {
+				item.name = item.name.replaceAll('. ', ' / ')
 
+				return item
+			})
+			.sort((a, b) => {
+				let compareFolder = b.name.match(/\//g).length - a.name.match(/\//g).length
+
+				if ( compareFolder != 0 ) return compareFolder
+
+				return a.name.localeCompare(b.name)
+			})
+
+		activeRow.value = formatedAttrs[0].key
+
+
+		selectedOld = formatedAttrs.filter(item => data.selectedAttributes.includes(item.key))
+		favList.value = data.favoriteAttributes
 	}
 
 	function onMessage(e) {
 		// {
 		// 	action: 'name',
-		// 	type: 'modal',
+		// 	iframeId: 'modal',
 		// 	payload: {}
 		// }
 		if ( !e.data.action || !e.data.type ) return false
@@ -344,58 +369,21 @@
 	}
 	function send( data, source = window.parent ) {
 		let dataObj = Object.assign(data, {
-			type: onMessageType,
+			iframeId: iframeId,
 		})
 		source.postMessage( dataObj, "*" )
 	}
 
 
-	// Prop attrs
-	const formatedAttrs = attributes.map(item => {
-		item.name = item.name.replaceAll('. ', ' / ')
-
-		return item
-	}).sort((a, b) => {
-		let compareFolder = b.name.match(/\//g).length - a.name.match(/\//g).length
-
-		if ( compareFolder != 0 ) return compareFolder
-
-		return a.name.localeCompare(b.name)
-	})
-	// Prop Selected
-	const selectedOldProp = [
-		'account.attributes.asset_type',
-		'account.attributes.account_type',
-		'account.attributes.asset_class'
-	]
-	// Prop Favorites
-	let favList = reactive({
-		'pricing_currency.reference_for_pricing': 'test',
-		'account.attributes.asset_type': 'account asset_type',
-	})
-	// Prop Layout custom
-	let layoutMetas = reactive([
-		{
-			key: 'pricing_currency.reference_for_pricing',
-			name: 'test layout',
-			description: 'Info'
-		}
-	])
-		// key name value_type layout_name
-	let selectedOld = formatedAttrs.filter(item => selectedOldProp.includes(item.key))
-	activeRow.value = formatedAttrs[0].key
-
 	let selected = reactive({})
 
 	const favoritesAttrs = computed(() => {
-		let attrs = formatedAttrs
-			.filter(item => favList[item.key] !== undefined )
-			.map(item => ({...item, name: favList[item.key]}) )
+		let attrs = favList.value
 
 		// if ( !attrs ) return []
 
 		attrs.forEach((item => {
-			if ( selectedOldProp.includes(item.key) )
+			if ( selectedOld.includes(item.key) )
 				item.disabled = true
 		}))
 
@@ -417,7 +405,7 @@
 		}
 
 		attrs.forEach((item => {
-			if ( selectedOldProp.includes(item.key) )
+			if ( selectedOld.includes(item.key) )
 				item.disabled = true
 		}))
 
@@ -509,27 +497,66 @@
 
 	let infoEditable = reactive({
 		name: '',
+		key: '',
 		description: ''
 	})
 	const attrInfo = computed(() => {
 		let attr = formatedAttrs.find(item => item.key == activeRow.value)
-		if ( !attr ) return {}
+		if ( !attr ) return {name: ''}
 
-		let layoutMeta = layoutMetas.find(item => item.key == attr.key)
 		let name = 'No name'
 
-		if ( tab.value == 'favorites' ) name = favList[attr.key] || attr.name
+		if ( tab.value == 'favorites' ) {
+			let fav = favList.value.find(o => o.key == attr.key)
+			name =  fav.customName || attr.name
+		}
 		if ( tab.value == 'selected' ) {
-			name = layoutMeta?.name || attr.name
+			name = attr.customName || attr.name
 		}
 
 		return {
 			name,
 			path: attr.name,
 			key: attr.key,
-			info: layoutMeta?.description || 'No info',
+			info: attr.description || 'No info',
 		}
 	})
+	function saveAttrInfo() {
+		let fav = favList.value.find(o => o.key == infoEditable.key)
+
+		fav.customName = infoEditable.name
+		fav.customDescription = infoEditable.description
+
+		isEdit.value = false
+
+		send({
+			action: 'SAVE_FAVORITE_ATTRIBUTES',
+			payload: favList.value
+		})
+	}
+	function toggleFav( attr ) {
+		let fav = favList.value.find(o => o.key == attr.key)
+
+		if ( fav ) {
+			let index = favList.value.findIndex(o => o.key == attr.key)
+
+			favList.value.slice(index, 1)
+
+		} else {
+
+			favList.value.push({
+				key: attr.key,
+				name: formatedAttrs.find(o => o.key == attr.key).name,
+				customName: '',
+				customDescription: '',
+			})
+		}
+
+		send({
+			action: 'SAVE_FAVORITE_ATTRIBUTES',
+			payload: favList.value
+		})
+	}
 
 	function searchAndReplace( attrs ) {
 		let terms = searchParam.value.split(/\s*(?:\s|\/)\s*/)
@@ -565,7 +592,19 @@
 		}, 300)
 	}
 
-	function cancel() {}
+	function cancel() {
+		send({
+			action: 'CANCEL_DIALOG'
+		})
+	}
+	function save() {
+		send({
+			action: 'SAVE_DIALOG',
+			payload: {
+				selectedAttributes: Object.keys(selected)
+			}
+		})
+	}
 </script>
 
 <style lang="scss" scoped>
