@@ -292,7 +292,7 @@
 </template>
 
 <script setup>
-
+import attributes from '~/assets/data/attributes.js'
 	definePageMeta({
 		layout: 'auth'
 	});
@@ -325,7 +325,7 @@
 		})
 	})
 
-	let formatedAttrs = []
+	let formatedAttrs = ref([])
 	let selectedOld = []
 	let favList = ref([{
 		key: 'pricing_currency.reference_for_pricing',
@@ -335,7 +335,7 @@
 	}])
 
 	function init( data ) {
-		formatedAttrs = data.attributes
+		let attributes = data.attributes
 			.map(item => {
 				item.name = item.name.replaceAll('. ', ' / ')
 
@@ -349,11 +349,11 @@
 				return a.name.localeCompare(b.name)
 			})
 
-		activeRow.value = formatedAttrs[0].key
-
-
-		selectedOld = formatedAttrs.filter(item => data.selectedAttributes.includes(item.key))
 		favList.value = data.favoriteAttributes
+		selectedOld = attributes.filter(item => data.selectedAttributes.includes(item.key))
+
+		formatedAttrs.value = attributes
+		activeRow.value = formatedAttrs.value[0].key
 	}
 
 	function onMessage(e) {
@@ -399,7 +399,7 @@
 
 	const advancedColumns = computed(() => {
 		let tree = {}
-		let attrs = formatedAttrs
+		let attrs = formatedAttrs.value
 		let searchedAttrs
 
 		// Search
@@ -490,7 +490,7 @@
 		for ( let prop in selected) {
 			if ( !selected[prop] ) continue
 
-			props.push(formatedAttrs.find((item) => item.key == prop ))
+			props.push(formatedAttrs.value.find((item) => item.key == prop ))
 		}
 
 		if ( searchParam.value ) props = searchAndReplace( props )
@@ -505,7 +505,7 @@
 		description: ''
 	})
 	const attrInfo = computed(() => {
-		let attr = formatedAttrs.find(item => item.key == activeRow.value)
+		let attr = formatedAttrs.value.find(item => item.key == activeRow.value)
 		if ( !attr ) return {name: ''}
 
 		let name = 'No name'
@@ -550,7 +550,7 @@
 
 			favList.value.push({
 				key: attr.key,
-				name: formatedAttrs.find(o => o.key == attr.key).name,
+				name: formatedAttrs.value.find(o => o.key == attr.key).name,
 				customName: '',
 				customDescription: '',
 			})
