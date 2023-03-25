@@ -159,6 +159,7 @@
 		border-right: 1px solid $border-darken;
 		padding: 10px 0;
 		overflow: auto;
+		margin-top: -3px;
 		height: 270px;
 	}
 
