@@ -95,7 +95,7 @@
 
 			data.push({
 				// id: item.id,
-				username: item.username,
+				username: {value: item.username, link: '/settings/permissions/members/' + item.id},
 				role: roles.join(', '),
 				status: item.is_owner ? 'Creator' : 'Accepted',
 				groups: item.groups_object.map(item => item.name).join(', ')
@@ -103,7 +103,7 @@
 		})
 
 		stockInvites.value.forEach(item => {
-			if ( data.find(row => row.username == item.user_object.username) ) return false
+			if ( data.find(row => row.username.value == item.user_object.username) ) return false
 
 			let roles = []
 
@@ -113,10 +113,10 @@
 
 			data.push({
 				// id: item.id,
-				username: item.user_object.username,
+				username: {value: item.user_object.username, link: '/settings/permissions/members/' + item.user},
 				role: 'Admin',
 				status: 'Pending',
-				groups: item.groups
+				groups: item.groups.replace(',', ', ')
 			})
 		})
 

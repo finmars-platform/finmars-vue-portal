@@ -158,6 +158,7 @@
 		padding: 10px 0;
 		overflow: auto;
 		height: 270px;
+		margin-top: -3px;
 	}
 	.list_item {
 		padding: 7px 14px;
