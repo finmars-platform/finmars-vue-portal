@@ -131,6 +131,7 @@
 								/>
 							</div>
 
+							<!-- Folder -->
 							<div v-else>
 								<li class="fm_list_item attr_item" @click="obj.isOpen = !obj.isOpen">
 									<FmIcon class="expand" icon="expand_more" />
@@ -166,6 +167,7 @@
 								</template>
 
 							</div>
+							<!-- endregion Folder -->
 						</template>
 					</ul>
 					<div class="fm_list" v-show="tab == 'selected'">
@@ -254,7 +256,11 @@
 							</div>
 						</div>
 					</div>
-					<div class="desc_subtitle" v-if="tab != 'advanced'">[{{ attrInfo.path }}]</div>
+
+					<div class="desc_subtitle" v-if="tab != 'advanced'">
+						<span v-if="attrInfo.path">[{{ attrInfo.path }}]</span>
+					</div>
+
 					<div class="desc_about">
 						<span v-if="!isEdit">
 							{{ attrInfo.info }}
@@ -313,6 +319,8 @@ import attributes from '~/assets/data/attributes.js'
 		new: true
 	})
 
+	let attrsList = [];
+
 	const onMessageStack = {
 		'INITIALIZATION_SETTINGS_TRANSMISSION': init
 	}
@@ -327,15 +335,18 @@ import attributes from '~/assets/data/attributes.js'
 
 	let formatedAttrs = ref([])
 	let selectedOld = []
-	let favList = ref([{
+	let favList = ref([/*{
 		key: 'pricing_currency.reference_for_pricing',
 		name: 'test',
 		customName: 'test',
 		customDescription: 'test',
-	}])
+	}*/])
 
 	function init( data ) {
-		let attributes = data.attributes
+
+		attrsList = data.attributes;
+
+		let attributes = attrsList
 			.map(item => {
 				item.name = item.name.replaceAll('. ', ' / ')
 
@@ -353,7 +364,11 @@ import attributes from '~/assets/data/attributes.js'
 		selectedOld = attributes.filter(item => data.selectedAttributes.includes(item.key))
 
 		formatedAttrs.value = attributes
-		activeRow.value = formatedAttrs.value[0].key
+
+		if ( formatedAttrs.value.length ) {
+			activeRow.value = formatedAttrs.value[0].key;
+		}
+
 	}
 
 	function onMessage(e) {
@@ -378,6 +393,10 @@ import attributes from '~/assets/data/attributes.js'
 
 	}
 
+	/** Disable attributes from property 'selectedAttributes' **/
+	function markDisabledAttrs(attrData) {
+		attrData.disabled = !!selectedOld.find(selAttr => selAttr.key === attrData.key);
+	}
 
 	let selected = reactive({})
 
@@ -386,10 +405,7 @@ import attributes from '~/assets/data/attributes.js'
 
 		// if ( !attrs ) return []
 
-		attrs.forEach((item => {
-			if ( selectedOld.includes(item.key) )
-				item.disabled = true
-		}))
+		attrs.forEach(markDisabledAttrs);
 
 		if ( searchParam.value ) attrs = searchAndReplace( attrs )
 
@@ -408,10 +424,7 @@ import attributes from '~/assets/data/attributes.js'
 			attrs = searchedAttrs
 		}
 
-		attrs.forEach((item => {
-			if ( selectedOld.includes(item.key) )
-				item.disabled = true
-		}))
+		attrs.forEach(markDisabledAttrs);
 
 		for ( let attr of attrs ) {
 			const parts = attr.name.split(" / ")
@@ -511,9 +524,12 @@ import attributes from '~/assets/data/attributes.js'
 		let name = 'No name'
 
 		if ( tab.value == 'favorites' ) {
+
 			let fav = favList.value.find(o => o.key == attr.key)
-			name =  fav.customName || attr.name
+			if (fav) name =  fav.customName || attr.name;
+
 		}
+
 		if ( tab.value == 'selected' ) {
 			name = attr.customName || attr.name
 		}
@@ -558,7 +574,7 @@ import attributes from '~/assets/data/attributes.js'
 
 		send({
 			action: 'SAVE_FAVORITE_ATTRIBUTES',
-			payload: favList.value
+			payload: JSON.parse(JSON.stringify( favList.value )), // JSON.parse prevents error when postMessage tries to copy an array
 		})
 	}
 
