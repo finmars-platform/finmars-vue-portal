@@ -57,7 +57,14 @@
 				</div>
 			</div>
 
-			<div :class="[isAdvanced && tab == 'advanced' ? 'advanced' : '', 'content_grid',{collapsed: isCollapsedInfo}]">
+			<div
+				:class="[
+					isAdvanced ? 'advanced_mod' : '',
+					isAdvanced && tab == 'advanced' ? 'advanced' : '',
+					'content_grid',
+					{collapsed: isCollapsedInfo}
+				]"
+			>
 				<div class="content_grid_left" v-show="isAdvanced && tab == 'advanced'">
 					<ul class="fm_list">
 						<li
@@ -112,15 +119,15 @@
 										@click.stop=""
 									/>
 
-									<div v-html="obj.short_name"></div>
+									<div v-html="advancedColumns[activeTree].name == 'All sections' ? obj.name : obj.short_name"></div>
 								</div>
 
 								<FmIcon
 									size="20"
 									primary
-									:class="['favorites', {active: !!favList[obj.key]}]"
-									:icon="favList[obj.key] ? 'star' : 'star_outlined'"
-									@click="favList[obj.key] = obj.name"
+									:class="['favorites', {active: !!favList.find(o => o.key == obj.key)}]"
+									:icon="favList.find(o => o.key == obj.key) ? 'star' : 'star_outlined'"
+									@click="toggleFav(obj)"
 								/>
 							</div>
 
@@ -151,9 +158,9 @@
 										<FmIcon
 											size="20"
 											primary
-											:class="['favorites', {active: !!favList[val.key]}]"
-											:icon="favList[val.key] ? 'star' : 'star_outlined'"
-											@click="favList[val.key] = val.name"
+											:class="['favorites', {active: !!favList.find(o => o.key == val.key)}]"
+											:icon="favList.find(o => o.key == val.key) ? 'star' : 'star_outlined'"
+											@click="toggleFav(val)"
 										/>
 									</div>
 								</template>
@@ -217,25 +224,43 @@
 				<div class="content_grid_right" :class="{collapsed: isCollapsedInfo}">
 					<div class="flex aic sb" v-if="tab != 'advanced'">
 						<div class="desc_title flex aic">
-							<span v-if="!isEdit">{{ attrInfo.name }}</span>
+							<span v-if="!isEdit">
+								{{ attrInfo.name.length > 17 ? attrInfo.name.slice(0, 17) + '...' : attrInfo.name }}
+							</span>
 							<BaseInput
 								class="small bi_no_margins m-t-0"
-								v-model="favList[attrInfo.key]"
+								v-model="infoEditable.name"
 								v-else
 							/>
 						</div>
 
 						<div class="desc_icons" v-if="tab == 'favorites'">
-							<FmIcon v-if="!isEdit" size="20" primary icon="edit" @click="isEdit = true" />
+							<FmIcon
+								v-if="!isEdit"
+								size="20"
+								primary
+								icon="edit"
+								@click="infoEditable.name = attrInfo.name, isEdit = true"
+							/>
 
 							<div class="flex" v-else>
-								<FmIcon primary size="20" icon="save" @click="isEdit = false" />
+								<FmIcon
+									primary
+									size="20"
+									icon="save"
+									@click="saveAttrInfo()"
+								/>
 								<FmIcon primary size="20" icon="close" @click="isEdit = false" />
 							</div>
 						</div>
 					</div>
 					<div class="desc_subtitle" v-if="tab != 'advanced'">[{{ attrInfo.path }}]</div>
-					<div class="desc_about">{{ attrInfo.info }}</div>
+					<div class="desc_about">
+						<span v-if="!isEdit">
+							{{ attrInfo.info }}
+						</span>
+						<FmInputArea v-else v-model="infoEditable.description" />
+					</div>
 
 					<div class="collapse" :class="{active: isCollapsedInfo}" @click="isCollapsedInfo = !isCollapsedInfo">
 						<FmIcon size="20" :icon="isCollapsedInfo ? 'chevron_left' : 'chevron_right'" @click="isEdit = false" />
@@ -261,18 +286,18 @@
 				/>
 			</div>
 
-			<FmBtn @click="cancel()">OK</FmBtn>
+			<FmBtn @click="save()">OK</FmBtn>
 		</div>
 	</div>
 </template>
 
 <script setup>
-
-	import attributes from '~/assets/data/attributes.js'
-
+import attributes from '~/assets/data/attributes.js'
 	definePageMeta({
 		layout: 'auth'
 	});
+
+	const iframeId = useRoute().query.iframeId
 
 	let tab = ref('favorites')
 	let searchParam = ref('')
@@ -288,52 +313,81 @@
 		new: true
 	})
 
-	// Prop attrs
-	const formatedAttrs = attributes.map(item => {
-		item.name = item.name.replaceAll('. ', ' / ')
+	const onMessageStack = {
+		'INITIALIZATION_SETTINGS_TRANSMISSION': init
+	}
 
-		return item
-	}).sort((a, b) => {
-		let compareFolder = b.name.match(/\//g).length - a.name.match(/\//g).length
+	onMounted(() => {
+		window.addEventListener("message", onMessage)
 
-		if ( compareFolder != 0 ) return compareFolder
-
-		return a.name.localeCompare(b.name)
+		send({
+			action: 'IFRAME_READY'
+		})
 	})
-	// Prop Selected
-	const selectedOldProp = [
-		'account.attributes.asset_type',
-		'account.attributes.account_type',
-		'account.attributes.asset_class'
-	]
-	// Prop Favorites
-	let favList = reactive({
-		'pricing_currency.reference_for_pricing': 'test',
-		'account.attributes.asset_type': 'account asset_type',
-	})
-	// Prop Layout custom
-	let layoutMetas = reactive([
-		{
-			key: 'pricing_currency.reference_for_pricing',
-			name: 'test layout',
-			description: 'Info'
-		}
-	])
 
-	let selectedOld = formatedAttrs.filter(item => selectedOldProp.includes(item.key))
-	activeRow.value = formatedAttrs[0].key
+	let formatedAttrs = ref([])
+	let selectedOld = []
+	let favList = ref([{
+		key: 'pricing_currency.reference_for_pricing',
+		name: 'test',
+		customName: 'test',
+		customDescription: 'test',
+	}])
+
+	function init( data ) {
+		let attributes = data.attributes
+			.map(item => {
+				item.name = item.name.replaceAll('. ', ' / ')
+
+				return item
+			})
+			.sort((a, b) => {
+				let compareFolder = b.name.match(/\//g).length - a.name.match(/\//g).length
+
+				if ( compareFolder != 0 ) return compareFolder
+
+				return a.name.localeCompare(b.name)
+			})
+
+		favList.value = data.favoriteAttributes
+		selectedOld = attributes.filter(item => data.selectedAttributes.includes(item.key))
+
+		formatedAttrs.value = attributes
+		activeRow.value = formatedAttrs.value[0].key
+	}
+
+	function onMessage(e) {
+		// {
+		// 	action: 'name',
+		// 	iframeId: 'modal',
+		// 	payload: {}
+		// }
+		if ( !e.data.action ) return false
+		if ( onMessageStack[e.data.action] ) onMessageStack[e.data.action](e.data.payload)
+		else console.log('e.data.action:', e.data)
+	}
+	function send( data, source = window.parent ) {
+
+		data.iframeId = iframeId;
+
+		let dataObj = Object.assign(data, {
+			iframeId: iframeId,
+		})
+
+		source.postMessage( dataObj, "*" )
+
+	}
+
 
 	let selected = reactive({})
 
 	const favoritesAttrs = computed(() => {
-		let attrs = formatedAttrs
-			.filter(item => favList[item.key] !== undefined )
-			.map(item => ({...item, name: favList[item.key]}) )
+		let attrs = favList.value
 
 		// if ( !attrs ) return []
 
 		attrs.forEach((item => {
-			if ( selectedOldProp.includes(item.key) )
+			if ( selectedOld.includes(item.key) )
 				item.disabled = true
 		}))
 
@@ -345,9 +399,19 @@
 
 	const advancedColumns = computed(() => {
 		let tree = {}
-		let attrs = formatedAttrs
+		let attrs = formatedAttrs.value
+		let searchedAttrs
 
-		if ( searchParam.value ) attrs = searchAndReplace( attrs )
+		// Search
+		if ( searchParam.value ) {
+			searchedAttrs = searchAndReplace( attrs )
+			attrs = searchedAttrs
+		}
+
+		attrs.forEach((item => {
+			if ( selectedOld.includes(item.key) )
+				item.disabled = true
+		}))
 
 		for ( let attr of attrs ) {
 			const parts = attr.name.split(" / ")
@@ -376,10 +440,13 @@
 
 		attrs = toAttrsTree(tree)
 
-		attrs.forEach((item => {
-			if ( selectedOldProp.includes(item.key) )
-				item.disabled = true
-		}))
+		// Search
+		if ( searchParam.value ) {
+			attrs.unshift({
+				name: 'All sections',
+				children: searchedAttrs
+			})
+		}
 
 		return attrs
 	})
@@ -423,7 +490,7 @@
 		for ( let prop in selected) {
 			if ( !selected[prop] ) continue
 
-			props.push(formatedAttrs.find((item) => item.key == prop ))
+			props.push(formatedAttrs.value.find((item) => item.key == prop ))
 		}
 
 		if ( searchParam.value ) props = searchAndReplace( props )
@@ -432,25 +499,68 @@
 	})
 
 
+	let infoEditable = reactive({
+		name: '',
+		key: '',
+		description: ''
+	})
 	const attrInfo = computed(() => {
-		let attr = formatedAttrs.find(item => item.key == activeRow.value)
-		if ( !attr ) return {}
+		let attr = formatedAttrs.value.find(item => item.key == activeRow.value)
+		if ( !attr ) return {name: ''}
 
-		let layoutMeta = layoutMetas.find(item => item.key == attr.key)
 		let name = 'No name'
 
-		if ( tab.value == 'favorites' ) name = favList[attr.key] || attr.name
+		if ( tab.value == 'favorites' ) {
+			let fav = favList.value.find(o => o.key == attr.key)
+			name =  fav.customName || attr.name
+		}
 		if ( tab.value == 'selected' ) {
-			name = layoutMeta?.name || attr.name
+			name = attr.customName || attr.name
 		}
 
 		return {
 			name,
 			path: attr.name,
 			key: attr.key,
-			info: layoutMeta?.description || 'No info',
+			info: attr.description || 'No info',
 		}
 	})
+	function saveAttrInfo() {
+		let fav = favList.value.find(o => o.key == infoEditable.key)
+
+		fav.customName = infoEditable.name
+		fav.customDescription = infoEditable.description
+
+		isEdit.value = false
+
+		send({
+			action: 'SAVE_FAVORITE_ATTRIBUTES',
+			payload: favList.value
+		})
+	}
+	function toggleFav( attr ) {
+		let fav = favList.value.find(o => o.key == attr.key)
+
+		if ( fav ) {
+			let index = favList.value.findIndex(o => o.key == attr.key)
+
+			favList.value.slice(index, 1)
+
+		} else {
+
+			favList.value.push({
+				key: attr.key,
+				name: formatedAttrs.value.find(o => o.key == attr.key).name,
+				customName: '',
+				customDescription: '',
+			})
+		}
+
+		send({
+			action: 'SAVE_FAVORITE_ATTRIBUTES',
+			payload: favList.value
+		})
+	}
 
 	function searchAndReplace( attrs ) {
 		let terms = searchParam.value.split(/\s*(?:\s|\/)\s*/)
@@ -486,7 +596,19 @@
 		}, 300)
 	}
 
-	function cancel() {}
+	function cancel() {
+		send({
+			action: 'CANCEL_DIALOG'
+		})
+	}
+	function save() {
+		send({
+			action: 'SAVE_DIALOG',
+			payload: {
+				selectedAttributes: Object.keys(selected)
+			}
+		})
+	}
 </script>
 
 <style lang="scss" scoped>
@@ -554,10 +676,12 @@
 		&.collapsed {
 			grid-template-columns: 1fr 32px;
 		}
+		&.advanced_mod {
+			height: calc(100% - 48px);
+		}
 
 		&.advanced {
 			grid-template-columns: 160px 1fr 200px;
-			height: calc(100% - 48px);
 		}
 
 		&_left {
