@@ -2,7 +2,7 @@
 	<BaseModal title="Settings">
 
 		<div>
-			<div v-show="readyStatus" class="rs_mc_wrap">
+			<div class="rs_mc_wrap">
 				<RvSettingsBlock title="General">
 					<RvSettingsRow label="Date to">
 						<!--						<FmInputDate v-model="reportOptions.end_date" v-model:errorData="endDateErrorData" />-->
@@ -71,16 +71,16 @@
 				</RvSettingsBlock>
 			</div>
 
-			<div v-if="!readyStatus" class="flex-row fc-center">
+			<!-- <div v-if="!readyStatus" class="flex-row fc-center">
 				<FmLoader />
-			</div>
+			</div> -->
 		</div>
 
 		<template #controls>
 			<div class="flex-row fc-space-between">
 				<FmBtn type="basic" @click="cancel()">CANCEL</FmBtn>
 
-				<FmBtn v-model:loading="notReady" :disabled="endDateErrorData" @click="save()">SAVE</FmBtn>
+				<FmBtn :disabled="endDateErrorData" @click="save()">SAVE</FmBtn>
 			</div>
 		</template>
 	</BaseModal>
@@ -88,19 +88,13 @@
 
 <script setup>
 
-	let props = defineProps({
+	const props = defineProps({
 		openDialog: Boolean,
-		externalReadyStatus: Boolean,
 		bundles: Object,
 	});
-	let emit = defineEmits(["cancel", "save"]);
+	const emit = defineEmits(["cancel", "save"]);
 
 	const viewerData = inject('viewerData');
-
-	const readyStatusData = reactive({
-		currency: false,
-		pricingPolicy: false,
-	});
 
 	let endDateErrorData = ref(null);
 
@@ -147,20 +141,6 @@
 		},
 	];
 
-	let readyStatus = computed(() => {
-		let ready = props.externalReadyStatus;
-
-		Object.keys(readyStatusData).forEach(status => {
-			ready = ready && readyStatusData[status];
-		})
-
-		return ready;
-	});
-
-	let notReady = computed(() => {
-		return !readyStatus.value;
-	});
-
 	let reportOptions = ref({...viewerData.reportOptions})
 
 	watch(
@@ -194,7 +174,6 @@
 
 		if (!ppData.error) {
 			pricingPoliciesOpts.value = ppData;
-			readyStatusData.pricingPolicy = true;
 		}
 	}
 
@@ -203,7 +182,6 @@
 
 		if (!currencyData.error) {
 			currencyOpts.value = currencyData;
-			readyStatusData.currency = true;
 		}
 
 	}

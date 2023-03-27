@@ -36,7 +36,6 @@
 
 				<PagesReportsPerformanceDialogSettings
 					v-model="showSettingsDialog"
-					v-model:externalReadyStatus="dsReadyStatus"
 					:bundles="bundles"
 					@save="showSettingsDialog = false, [viewerData.reportOptions, viewerData.reportLayoutOptions, viewerData.components] = $event, emit('refresh')"
 					@cancel="showSettingsDialog = false"
@@ -62,49 +61,16 @@
 							<div class="fm_list_item" @click="addRegisterIsOpen = true">
 								Add Portfolio register
 							</div>
-							<div class="fm_list_item">
-								<div
-									v-if="readyStatusData.portfolioRegisters"
-									@click="isOpenAddBundle = true"
-								>
-									Add bundle
-								</div>
-								<FmLoader v-if="!readyStatusData.portfolioRegisters" />
+							<div class="fm_list_item" @click="isOpenAddBundle = true">
+								Add bundle
 							</div>
 						</div>
 					</template>
 				</FmMenu>
 
-<!--				<BaseModal
+				<ModalPortfolioBundleAddEdit
 					v-model="isOpenAddBundle"
-					title="Add Bundle"
-					@update:modelValue="isOpenAddBundle = false"
-				>
-
-					<FmInputText
-						title="Name"
-						v-model="newBundle.name"
-					/>
-
-					<BaseMultiSelectTwoAreas
-						class="p-b-16"
-						v-model="newBundle.registers"
-						:items="registersItems"
-						item_id="id"
-						item_title="user_code"
-						@update:modelValue="newValue => newBundle.registers = newValue"
-					/>
-
-					<template #controls>
-						<div class="flex sb">
-							<FmBtn type="basic" @click="resetNewBundle(); isOpenAddBundle = false">cancel</FmBtn>
-							<FmBtn @click="createBundle(), isOpenAddBundle = false">create</FmBtn>
-						</div>
-					</template>
-				</BaseModal> -->
-				<ModalPortfolioBundleAddEdit v-model="isOpenAddBundle"
-																		 :registers="registersItems"
-																		 @save="createBundle" />
+					@save="createBundle" />
 
 				<ModalPortfolioRegister
 					title="Add portfolio register"
@@ -149,7 +115,7 @@
 	provide('viewerData', viewerData)
 
 	let bundles = ref([])
-	let registersItems = ref([]);
+
 
 	let readyStatusData = reactive({
 		layout: false,
@@ -157,7 +123,6 @@
 		portfolioRegisters: false,
 	})
 
-	let editBundleIsOpened = ref(false);
 	let showSettingsDialog = ref(false)
 	let addRegisterIsOpen = ref(false);
 	let openSaveAsModal = ref(false);
@@ -166,19 +131,30 @@
 	let splitHeight = ref(200)
 	let splitComponent = ref(false)
 
-	let dsReadyStatus = computed(() => readyStatusData.layout && readyStatusData.bundles)
-	let readyStatus = computed(() => {
+	async function saveLayout () {
 
-		let ready = true;
+		if (viewerData.newLayout) {
 
-		Object.keys(readyStatusData).forEach(rStatus => {
-			ready = ready && readyStatusData[rStatus];
-		});
+			/*const layoutToSave = viewerData.getLayoutCurrentConfiguration();
+			layoutToSave.name = "default";
+			layoutToSave.user_code = "default";
+			layoutToSave.is_default = true;
 
-		return ready;
+			let res = await useApi('listLayout.post', {body: layoutToSave});
 
-	})
+			if (!res.error) {
+				viewerData.newLayout = false;
+				viewerData.listLayout = res;
+				useNotify({type: 'success', title: 'Success. Page was saved.'})
+			}*/
+			openSaveAsModal.value = true;
 
+
+		} else {
+			useSaveEvRvLayout(store, viewerData);
+		}
+
+	}
 	watch(
 		() => viewerData.layoutToOpen,
 		async () => {
@@ -232,11 +208,13 @@
 		refresh();
 
 	}
-	function addPrtfRegisterItem(newRegister) {
-		registersItems.value.push({
-			user_code: newRegister.user_code,
-			id: newRegister.id,
-		})
+	fetchPortfolioBundles()
+
+	async function fetchPortfolioBundles() {
+
+		let res = await useApi('portfolioBundles.get');
+
+		bundles.value = res.results
 	}
 	async function createBundle(bundleData) {
 
@@ -262,48 +240,51 @@
 		}
 	}
 
-	async function updateBundle(bundleData) {
+	// rework
+	async function getEndDate() {
 
-		let updatedData = JSON.parse(JSON.stringify( activePeriodData.value ));
-		updatedData = {...updatedData, ...bundleData};
-		updatedData.short_name = bundleData.name;
-		updatedData.user_code = bundleData.name;
-		updatedData.public_name = bundleData.name;
+	if (viewerData.reportOptions?.end_date) {
+		return viewerData.reportOptions?.end_date;
+	}
+
+	const roCopy = viewerData.reportOptions ? JSON.parse(JSON.stringify(viewerData.reportOptions)) : viewerData.reportOptions;
+	console.error("No end_date set for performance report ", roCopy);
+
+	// if there is expression for end_date, calculate it
+	if (
+		viewerData.reportLayoutOptions?.datepickerOptions?.reportLastDatepicker.datepickerMode !== 'datepicker' &&
+		viewerData.reportLayoutOptions.datepickerOptions.reportLastDatepicker.expression
+	) {
 
 		const opts = {
-			params: {
-				id: updatedData.id,
-			},
-			body: updatedData,
-		};
-
-		let res = await useApi('portfolioBundles.put', opts);
-
-		if (!res.error) {
-
-			useNotify({
-				type: 'success',
-				title: 'Bundle updated successfully'
-			});
-
-			refresh();
-
+			body: {
+				is_eval: true,
+				expression: viewerData.reportLayoutOptions.datepickerOptions.reportLastDatepicker.expression,
+			}
 		}
+
+		const res = await useApi('expression.post', opts);
+
+		viewerData.reportOptions.end_date = res.result;
+
+		return viewerData.reportOptions.end_date;
 
 	}
-	async function deleteBundle() {
 
-		const bundleToDelete = bundles.value[activePeriod.value];
-
-		const res = await useApi( 'portfolioBundles.delete', {params: {id: bundleToDelete.id}} );
-
-		if (!res.error) {
-
-			useNotify({type: 'success', title: `Bundle ${bundleToDelete.name} was successfully deleted.`})
-
-			refresh()
-
+	const opts = {
+		body: {
+			is_eval: true,
+			expression: 'last_business_day(now())',
 		}
+	}
+
+	const res = await useApi('expression.post', opts);
+
+	if (res.error) throw new Error(res.error);
+
+	viewerData.reportOptions.end_date = res.result;
+
+	return viewerData.reportOptions.end_date;
 
 	}
 	await fetchListLayout();
@@ -505,7 +486,7 @@
 				},
 				reportOptions: {
 					begin_date: null,
-					end_date: dayjs(new Date).format('YYYY-MM-DD'),
+					end_date: dayjs().format('YYYY-MM-DD'),
 					report_currency: ecosystemDefaults.currency || null,
 					report_currency_object: reportCurrencyObj,
 					calculation_type: "time_weighted",
