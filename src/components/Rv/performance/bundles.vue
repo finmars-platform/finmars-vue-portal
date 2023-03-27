@@ -17,6 +17,9 @@
 	dayjs.extend(quarterOfYear)
 
 	const props = defineProps({
+		reportOptions: {
+			type: Object
+		},
 		end_date: {
 			type: String
 		},
@@ -27,7 +30,7 @@
 			type: [Number, String]
 		},
 	})
-	const emits = defineEmits(["setBundle"]);
+	const emits = defineEmits(["setBundle", 'refreshFunc']);
 
 	let preriodHeaders = computed(() => {
 		return [
@@ -43,6 +46,7 @@
 
 	watch(props, () => init())
 
+	emits('refreshFunc', init)
 	init()
 
 	function init() {
@@ -59,8 +63,8 @@
 		// readyStatusData.bundles = false;
 
 		let res = await useApi('portfolioBundles.get');
-
-		bundles.value = res.results;
+		bundles.value = res.results
+			.filter(o => !props.reportOptions.bundles || props.reportOptions.bundles.includes(o.id) );
 		// readyStatusData.bundles = true;
 
 		preriodItems.value = []

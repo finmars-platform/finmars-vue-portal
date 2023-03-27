@@ -1,5 +1,5 @@
 <template>
-	<FmExpansionPanel :title="currentBundle ? currentBundle.name : 'No bundle'">
+	<FmExpansionPanel :title="currentBundle ? currentBundle.user_code : 'No bundle'">
 
 		<template #rightActions>
 			<FmBtn
@@ -10,24 +10,34 @@
 				@click.stop="showBundleActions = true"
 			/>
 
-			<div v-if="showBundleActions">
+			<div v-if="showBundleActions" class="flex-row">
+				<FmBtn
+					:disabled="!portfolioItems.length"
+					class="primaryIcon m-r-8"
+					type="iconBtn"
+					icon="edit"
+					@click.stop="editBundleIsOpened = true"
+				/>
 
-					<FmBtn
-						:disabled="!activePeriod && activePeriod !== 0"
-						class="primaryIcon"
-						type="iconBtn"
-						icon="delete"
-						@click.stop="showBundleDeletionWarning = true"
-					/>
-
-				<!--						<FmBtn
-											type="iconBtn"
-											icon="edit"
-											@click=""
-										/>-->
-
+				<FmBtn
+					:disabled="!portfolioItems.length"
+					class="primaryIcon"
+					type="iconBtn"
+					icon="delete"
+					@click.stop="deleteBundle()"
+				/>
 			</div>
 		</template>
+
+		<ModalPortfolioBundleAddEdit
+			v-if="editBundleIsOpened"
+			v-model="editBundleIsOpened"
+			actionType="edit"
+			:name="currentBundle.user_code"
+			:bundleRegisters="currentBundle.registers"
+			@save="updateBundle"
+		/>
+
 
 		<div class="table_wrap flex">
 			<div class="coll_years">
@@ -74,7 +84,7 @@
 			type: [Number, String]
 		},
 	})
-	const emits = defineEmits(["setMonth"])
+	const emits = defineEmits(["setMonth", 'refresh'])
 
 	watch(props, () => getMonthDetails())
 
@@ -89,7 +99,7 @@
 	let detailYear = ref('')
 
 	let showBundleActions = ref(false);
-		let showBundleDeletionWarning = ref(false);
+	let editBundleIsOpened = ref(false);
 
 	let portfolioHeaders = ref(
 		['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -196,6 +206,50 @@
 		chooseMonth(0)
 	}
 
+	async function updateBundle(bundleData) {
+		let updatedData = JSON.parse(JSON.stringify( props.currentBundle ));
+
+		updatedData = {...updatedData, ...bundleData};
+		updatedData.short_name = bundleData.name;
+		updatedData.user_code = bundleData.name;
+		updatedData.public_name = bundleData.name;
+
+		const opts = {
+			params: {
+				id: updatedData.id,
+			},
+			body: updatedData,
+		};
+
+		let res = await useApi('portfolioBundles.put', opts);
+
+		if (!res.error) {
+
+			useNotify({
+				type: 'success',
+				title: 'Bundle updated successfully'
+			});
+
+			emits('refresh')
+		}
+	}
+
+	async function deleteBundle() {
+
+		let isConfirm = await useConfirm({
+			title: 'Delete bundle',
+			text: `Do you want to delete the bundle “${props.currentBundle.user_code}” permanently?`
+		})
+
+		if ( !isConfirm ) return false
+
+		const res = await useApi( 'portfolioBundles.delete', {params: {id: props.currentBundle.id}} );
+
+		if (!res.error) {
+			useNotify({type: 'success', title: `Bundle ${props.currentBundle.user_code} was successfully deleted.`})
+			refresh()
+		}
+	}
 	// double
 	async function getReports({start, end, ids, type = 'months'}) {
 		let res = await useApi('performanceReport.post', {

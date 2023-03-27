@@ -215,7 +215,7 @@
 		firstDatepickerOptions: {
 			type: Object,
 			default: {
-				datepickerMode: 'datepicker'
+				datepickerMode: 'yesterday-business'
 			}
 		},
 		secondDate: String,
@@ -307,13 +307,13 @@
 
 	let fdOptions = ref( JSON.parse(JSON.stringify(props.firstDatepickerOptions)) );
 
-	if (!fdOptions.value.datepickerMode) fdOptions.value.datepickerMode = 'datepicker';
+	if (!fdOptions.value.datepickerMode) fdOptions.value.datepickerMode = 'yesterday-business'
 
 	watch(
 		() => props.firstDatepickerOptions,
 		() => {
 			fdOptions.value = JSON.parse(JSON.stringify(props.firstDatepickerOptions));
-			if (!fdOptions.value.datepickerMode) fdOptions.value.datepickerMode = 'datepicker';
+			if (!fdOptions.value.datepickerMode) fdOptions.value.datepickerMode = 'yesterday-business'
 		}
 	)
 
