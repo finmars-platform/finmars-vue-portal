@@ -245,6 +245,22 @@
 												<span class="side-nav-title">CALENDAR</span>
 											</a>
 										</li>
+										<li>
+											<a
+												:href="getUrlToOldApp('/tasks')"
+												class="sidenav-dropdown-menu-btn"
+											>
+												<span class="side-nav-title">Tasks</span>
+											</a>
+										</li>
+										<li>
+											<a
+												:href="getUrlToOldApp('/workflows')"
+												class="sidenav-dropdown-menu-btn"
+											>
+												<span class="side-nav-title">Workflows</span>
+											</a>
+										</li>
 									</ul>
 								</div>
 							</li>
@@ -462,52 +478,13 @@
 					<div class="side-menu-bottom-menu side-menu-main-buttons">
 						<ul class="side-menu" v-if="readyStatus.access">
 							<li v-if="accessSectionTable.journal">
-								<div
-									class="sidenav-dropdown-menu-wrapper"
-									@mouseenter="showSubmenu($event)"
-									@mouseleave="hideSubmenu($event)"
+								<a
+									:href="getUrlToOldApp('/journal')"
+									class="sidemenu-btn"
 								>
-									<button
-										class="sidemenu-btn journal-sidenav-menu-btn openSubmenuBtn"
-									>
-										<FmIcon icon="book" class="side-nav-icon"></FmIcon>
-										<span class="side-nav-title">Journal</span>
-									</button>
-
-									<ul
-										class="sidenav-dropdown-menu open-upward journal-dropdown-menu-element display-none submenuElement"
-									>
-										<li v-if="accessTable.report_instrument_audit">
-											<a
-												:href="getUrlToOldApp('/data/audit/instruments')"
-												class="sidenav-dropdown-menu-btn"
-											>
-												<span class="side-nav-title">Instruments Audit</span>
-											</a>
-										</li>
-										<li v-if="accessTable.report_transaction_audit">
-											<a
-												:href="getUrlToOldApp('/data/audit/transactions')"
-												class="sidenav-dropdown-menu-btn"
-											>
-												<span class="side-nav-title">Transactions Audit</span>
-											</a>
-										</li>
-										<li v-if="accessTable.report_activity_log">
-											<div class="sidenav-dropdown-menu-btn disabled-elem">
-												<span class="side-nav-title">Activity Log</span>
-											</div>
-										</li>
-										<li v-if="accessTable.report_activity_log">
-											<a
-												:href="getUrlToOldApp('/system/file-reports')"
-												class="sidenav-dropdown-menu-btn"
-											>
-												<span class="side-nav-title">System Files</span>
-											</a>
-										</li>
-									</ul>
-								</div>
+									<FmIcon icon="book" class="side-nav-icon"></FmIcon>
+									<span class="side-nav-title">Journal</span>
+								</a>
 							</li>
 
 							<li>
@@ -763,16 +740,6 @@
 											<ul
 												class="sidenav-dropdown-menu display-none submenuElement"
 											>
-												<li
-													v-if="accessTable.configuration_price_download_scheme"
-												>
-													<a
-														:href="getUrlToOldApp('/settings/price-download-scheme')"
-														class="sidenav-dropdown-menu-btn"
-													>
-														<span class="side-nav-title">Price Schemes</span>
-													</a>
-												</li>
 												<li
 													v-if="
 														accessTable.configuration_instrument_download_scheme
