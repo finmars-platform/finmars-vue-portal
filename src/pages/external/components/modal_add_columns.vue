@@ -320,6 +320,7 @@ import attributes from '~/assets/data/attributes.js'
 	})
 
 	let attrsList = [];
+	const windowOrigin = window.origin;
 
 	const onMessageStack = {
 		'INITIALIZATION_SETTINGS_TRANSMISSION': init
@@ -377,7 +378,16 @@ import attributes from '~/assets/data/attributes.js'
 		// 	iframeId: 'modal',
 		// 	payload: {}
 		// }
-		if ( !e.data.action ) return false
+		if ( !e.data.action ) {
+			console.warn('Message without action sent');
+			return false;
+		}
+
+		if ( e.origin !== windowOrigin) {
+			console.error('Received message from a different origin', e.origin);
+			return false;
+		}
+
 		if ( onMessageStack[e.data.action] ) onMessageStack[e.data.action](e.data.payload)
 		else console.log('e.data.action:', e.data)
 	}
@@ -389,7 +399,7 @@ import attributes from '~/assets/data/attributes.js'
 			iframeId: iframeId,
 		})
 
-		source.postMessage( dataObj, "*" )
+		source.postMessage( dataObj, windowOrigin )
 
 	}
 
