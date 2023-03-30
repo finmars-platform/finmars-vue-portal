@@ -57,9 +57,9 @@
 	async function updateUniversalInput(){
 
      if (universalInput) {
-       window.localStorage.setItem("true")
+       window.localStorage.setItem("universalInputEnabled", "true")
 		 } else {
-			 window.localStorage.setItem("false")
+			 window.localStorage.setItem("universalInputEnabled", "false")
 		 }
 
 	}
