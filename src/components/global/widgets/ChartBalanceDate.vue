@@ -55,38 +55,6 @@
 	}
 	let status = ref(0)
 
-	const COLORS = [
-		'#577590CC',
-		'#43AA8BCC',
-		'#F9AB4B',
-		'#FA6769',
-		'#F9C74F',
-		'#979BFF',
-		'#D9ED92',
-		'#C8D7F9',
-		'#96B5B4',
-		'#AB7967',
-		'#577590CC',
-		'#43AA8BCC',
-		'#F9AB4B',
-		'#FA6769',
-		'#F9C74F',
-		'#979BFF',
-		'#D9ED92',
-		'#C8D7F9',
-		'#96B5B4',
-		'#AB7967',
-		'#577590CC',
-		'#43AA8BCC',
-		'#F9AB4B',
-		'#FA6769',
-		'#F9C74F',
-		'#979BFF',
-		'#D9ED92',
-		'#C8D7F9',
-		'#96B5B4',
-		'#AB7967'
-	]
 	let dashStore = useStoreDashboard()
 	let widget = dashStore.getWidget(props.wid)
 
@@ -197,8 +165,9 @@
 						callbacks: {
 							label: function(context) {
 								let labelIndex = context.dataIndex
+
 								if ( context.datasetIndex === 1 ) {
-									labelIndex = context.chart.data.datasets[0].data.length
+									labelIndex = context.chart.data.datasets[0].data.length + labelIndex
 								}
 
 								return context.chart.data.labels[labelIndex] + ': ' + context.formattedValue;

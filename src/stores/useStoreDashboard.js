@@ -6,10 +6,15 @@ export default defineStore({
 	id: "dashboard",
 	state: () => {
 		return {
-			// DATA
-			widgets: [],
+			// DATA FROM LAYOUT
 			tabs: [],
-			scope: [],
+			scopes: [],
+			components: [],
+			props: {
+				inputs: [],
+				outputs: [],
+				proxies: []
+			},
 			// END DATA
 			layoutList: [],
 			activeLayoutId: null,
@@ -27,6 +32,8 @@ export default defineStore({
 			this.activeTab = this.tabs[0]?.id
 
 			watch(() => this.activeLayoutId, () => {
+				if ( !this.layout.data ) return false
+
 				this.widgets = this.layout.data.widgets || []
 				this.tabs = this.layout.data.tabs || []
 				this.scope = this.layout.data.scope || []

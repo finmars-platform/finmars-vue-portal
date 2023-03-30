@@ -176,7 +176,7 @@
 		let notNull = Object.entries(historyStats[outputs.value.category_type.__val])
 			.filter(item => item[1].total)
 
-			outputs.value.detail_date.__val = notNull[notNull.length - 1][0]
+		outputs.value.detail_date.__val = notNull[notNull.length - 1][0]
 	}
 
 	function updateData() {
@@ -207,6 +207,7 @@
 
 					if ( activeIndex.value == null ) activeIndex.value = allBarsByDay.length - 1
 
+					if ( !metas.length ) return false
 					let active = metas[0].data[activeIndex.value]
 
 					if ( !active ) return false
