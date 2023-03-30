@@ -60,6 +60,7 @@
 	import dayjs from 'dayjs'
 
 	definePageMeta({
+		middleware: 'auth',
 		bread: [
 			{
 				text: 'Permissions: Members',

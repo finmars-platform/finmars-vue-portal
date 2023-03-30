@@ -290,15 +290,7 @@
 		}
 	}
 	async function open() {
-		let res = await useApi("masterSet.patch", {
-			body: {},
-			params: { id: props.db.id },
-		});
-		if ( res.success ) {
-			await store.getMasterUsers()
-			//navigateTo('/home')
-			window.location.href = '/' + props.db.base_api_url + '/v/home'
-		}
+		window.location.href = '/' + props.db.base_api_url + '/v/home'
 	}
 	async function save() {
 		let res = await useApi("masterUser.put", {
