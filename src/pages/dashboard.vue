@@ -97,7 +97,7 @@
 	import 'ace-builds/src-noconflict/theme-monokai';
 
 	definePageMeta({
-		// middleware: 'auth',
+		middleware: 'auth',
 		bread: [
 			{
 				text: 'Dashboard',

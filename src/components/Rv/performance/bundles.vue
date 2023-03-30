@@ -64,7 +64,7 @@
 
 		let res = await useApi('portfolioBundles.get');
 		bundles.value = res.results
-			.filter(o => !props.reportOptions.bundles || props.reportOptions.bundles.includes(o.id) );
+			.filter(o => !props.reportOptions?.bundles || props.reportOptions.bundles.includes(o.id) );
 		// readyStatusData.bundles = true;
 
 		preriodItems.value = []

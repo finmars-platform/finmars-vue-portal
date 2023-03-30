@@ -78,20 +78,23 @@
 		return result
 	}
 	async function save() {
-		form.groups = form.groups.join(',')
-		let res = await useApi('memberInvites.post', {body: form, params: {id: route.params.id}})
+		let sendedForm = {
+			...form,
+			groups: form.groups.join(',')
+		}
+
+		let res = await useApi('memberInvites.post', {body: sendedForm, params: {id: route.params.id}})
 
 		if ( !res.error ) {
 			useNotify({type: 'success', title: 'Invite sent!'})
 
 			Object.assign(form, {
-				groups: ['Guests'],
+				groups: [],
 				is_owner: false,
 				email: '',
 				username: '',
 			})
 		}
-		else useNotify({type: 'error', title: 'User exists'})
 	}
 	async function cancel() {
 		router.push('/settings/permissions')

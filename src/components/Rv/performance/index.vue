@@ -61,21 +61,5 @@
 </script>
 
 <style lang="scss" scoped>
-.split_panel_wrap {
-	display: grid;
-	height: calc(100vh - 161px);
-}
-.split_panel {
-	background: #fff;
-}
-.split_panel_main {
-	overflow: auto;
-}
-.split_panel_devider {
-	height: 5px;
-	border-top: 1px solid $border;
-	border-bottom: 1px solid $border;
-	cursor: row-resize;
-}
 
 </style>

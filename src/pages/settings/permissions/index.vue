@@ -138,7 +138,7 @@
 		statuses.value = resStatus.results
 	}
 	async function deleteMember( index ) {
-		let usernameDel = members.value[index].username
+		let usernameDel = members.value[index].username?.value
 
 		let isConfirm = await useConfirm({
 			title: 'Delete member',

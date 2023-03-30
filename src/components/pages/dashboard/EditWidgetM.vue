@@ -120,7 +120,7 @@
 	}
 
 	let tabList = computed(() => {
-		return [...dashStore.tabs, {id: null, name: 'Top place'}]
+		return [...dashStore.tabs, {id: 1, name: 'Top place'}]
 	})
 
 	function save() {
