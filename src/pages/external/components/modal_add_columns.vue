@@ -73,7 +73,7 @@
 							v-for="(item, i) in advancedColumns"
 							@click="activeTree = i"
 						>
-							{{ item.name }}
+							<div v-html="item.name"></div>
 						</li>
 					</ul>
 				</div>
@@ -98,6 +98,15 @@
 
 								<div v-html="item.name"></div>
 							</div>
+
+							<FmIcon
+								v-if="isAdvanced"
+								size="20"
+								primary
+								:class="['favorites']"
+								:icon="favList.find(o => o.key == item.key) ? 'star' : 'star_outlined'"
+								@click="toggleFav(item)"
+							/>
 						</div>
 					</div>
 
@@ -299,11 +308,13 @@
 
 <script setup>
 import attributes from '~/assets/data/attributes.js'
+import {useRegExpEscape} from "~/composables/useUtils";
 	definePageMeta({
 		layout: 'auth'
 	});
 
 	const iframeId = useRoute().query.iframeId
+	const foldersSeparatorRE = /\.\s(?=\S)/g; // equals to ". " which have symbol after it
 
 	let tab = ref('favorites')
 	let searchParam = ref('')
@@ -321,6 +332,7 @@ import attributes from '~/assets/data/attributes.js'
 
 	let attrsList = [];
 	const windowOrigin = window.origin;
+	// const windowOrigin = 'http://0.0.0.0:8080'; // for development
 
 	const onMessageStack = {
 		'INITIALIZATION_SETTINGS_TRANSMISSION': init
@@ -343,23 +355,55 @@ import attributes from '~/assets/data/attributes.js'
 		customDescription: 'test',
 	}*/])
 
+	const getAttrPriority = attr => {
+
+		let priority = 3;
+
+		if ( attr.key.includes('attributes.') ) {
+			priority = 1;
+
+			if ( attr.key.includes('pricing_policy_') ) {
+				priority = 2;
+			}
+
+		}
+
+		return priority;
+
+	}
+
+	function compareAttrFolders(a, b) {
+		let priority = b.name.match(foldersSeparatorRE).length - a.name.match(foldersSeparatorRE).length;
+
+		if (priority === 0) { // attributes have the same folders quantity
+			// place "User Attributes", "Pricing" after other folders
+			priority = getAttrPriority(b) - getAttrPriority(a);
+		}
+
+		return priority;
+	}
+
+	function sortAttrs(a, b) {
+
+		const priority = compareAttrFolders(a, b);
+
+		if ( priority !== 0 ) return priority;
+
+		return a.name.localeCompare(b.name);
+
+	}
+
 	function init( data ) {
 
 		attrsList = data.attributes;
 
 		let attributes = attrsList
-			.map(item => {
+			/*.map(item => {
 				item.name = item.name.replaceAll('. ', ' / ')
 
 				return item
-			})
-			.sort((a, b) => {
-				let compareFolder = b.name.match(/\//g).length - a.name.match(/\//g).length
-
-				if ( compareFolder != 0 ) return compareFolder
-
-				return a.name.localeCompare(b.name)
-			})
+			})*/
+			.sort(sortAttrs)
 
 		favList.value = data.favoriteAttributes
 		selectedOld = attributes.filter(item => data.selectedAttributes.includes(item.key))
@@ -378,6 +422,7 @@ import attributes from '~/assets/data/attributes.js'
 		// 	iframeId: 'modal',
 		// 	payload: {}
 		// }
+
 		if ( !e.data.action ) {
 			console.warn('Message without action sent');
 			return false;
@@ -406,18 +451,22 @@ import attributes from '~/assets/data/attributes.js'
 	/** Disable attributes from property 'selectedAttributes' **/
 	function markDisabledAttrs(attrData) {
 		attrData.disabled = !!selectedOld.find(selAttr => selAttr.key === attrData.key);
+		return attrData;
 	}
 
 	let selected = reactive({})
 
 	const favoritesAttrs = computed(() => {
-		let attrs = favList.value
+		let attrs = JSON.parse(JSON.stringify( favList.value ));
 
+		attrs = attrs.map(markDisabledAttrs);
 		// if ( !attrs ) return []
+		if ( searchParam.value ) {
+			attrs = searchAndReplace( attrs )
 
-		attrs.forEach(markDisabledAttrs);
-
-		if ( searchParam.value ) attrs = searchAndReplace( attrs )
+		} else {
+			attrs = formatNames(attrs);
+		}
 
 		return attrs
 	})
@@ -425,7 +474,7 @@ import attributes from '~/assets/data/attributes.js'
 
 	const advancedColumns = computed(() => {
 		let tree = {}
-		let attrs = formatedAttrs.value
+		let attrs = JSON.parse(JSON.stringify( formatedAttrs.value ));
 		let searchedAttrs
 
 		// Search
@@ -434,11 +483,12 @@ import attributes from '~/assets/data/attributes.js'
 			attrs = searchedAttrs
 		}
 
-		attrs.forEach(markDisabledAttrs);
+		attrs = attrs.map(markDisabledAttrs);
 
 		for ( let attr of attrs ) {
-			const parts = attr.name.split(" / ")
-			parts[0] = parts[0].replace(/( |<([^>]+)>)/ig, "")
+			// const parts = attr.name.split(" / ")
+			const parts = attr.name.split(". ")
+			parts[0] = parts[0].trim()
 
 			let node = tree;
 
@@ -497,6 +547,7 @@ import attributes from '~/assets/data/attributes.js'
 
 		return list
 	}
+
 	const advancedColumnActive = computed(() => {
 		let result = []
 
@@ -513,10 +564,19 @@ import attributes from '~/assets/data/attributes.js'
 		for ( let prop in selected) {
 			if ( !selected[prop] ) continue
 
-			props.push(formatedAttrs.value.find((item) => item.key == prop ))
+			let selAttr = formatedAttrs.value.find((item) => item.key == prop );
+			selAttr = JSON.parse(JSON.stringify( selAttr ));
+
+			props.push(selAttr)
+
 		}
 
-		if ( searchParam.value ) props = searchAndReplace( props )
+		if ( searchParam.value ) {
+			props = searchAndReplace( props )
+
+		} else {
+			props = formatNames( props )
+		}
 
 		return props
 	})
@@ -527,6 +587,7 @@ import attributes from '~/assets/data/attributes.js'
 		key: '',
 		description: ''
 	})
+
 	const attrInfo = computed(() => {
 		let attr = formatedAttrs.value.find(item => item.key == activeRow.value)
 		if ( !attr ) return {name: ''}
@@ -536,17 +597,17 @@ import attributes from '~/assets/data/attributes.js'
 		if ( tab.value == 'favorites' ) {
 
 			let fav = favList.value.find(o => o.key == attr.key)
-			if (fav) name =  fav.customName || attr.name;
+			if (fav) name =  fav.customName || formatName(attr.name);
 
 		}
 
 		if ( tab.value == 'selected' ) {
-			name = attr.customName || attr.name
+			name = attr.customName || formatName(attr.name);
 		}
 
 		return {
 			name,
-			path: attr.name,
+			path: formatName(attr.name),
 			key: attr.key,
 			info: attr.description || 'No info',
 		}
@@ -570,12 +631,13 @@ import attributes from '~/assets/data/attributes.js'
 		if ( fav ) {
 			let index = favList.value.findIndex(o => o.key == attr.key)
 
-			favList.value.slice(index, 1)
+			favList.value.splice(index, 1)
 
 		} else {
 
 			favList.value.push({
 				key: attr.key,
+				// TODO use attributes's original name
 				name: formatedAttrs.value.find(o => o.key == attr.key).name,
 				customName: '',
 				customDescription: '',
@@ -588,8 +650,25 @@ import attributes from '~/assets/data/attributes.js'
 		})
 	}
 
+	// '. ' are not replaced inside attributes themselves because ' / ' can be used inside names of dynamic attributes
+	/**
+	 * @param {string} name
+	 * @returns {string} - name after replacing '. ' with ' / '
+	 */
+	const formatName = name => name.replaceAll(foldersSeparatorRE, ' / ');
+	function formatNames (attrs) {
+
+		return attrs.map(attr => {
+
+			attr.name = formatName(attr.name);
+			return attr;
+
+		});
+
+	}
+
 	function searchAndReplace( attrs ) {
-		let terms = searchParam.value.split(/\s*(?:\s|\/)\s*/)
+		let terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*/) // characters between spaces or '/'
 		let result = attrs
 
 		terms.forEach((term, i) => {
@@ -600,14 +679,20 @@ import attributes from '~/assets/data/attributes.js'
 		})
 
 		result = result.map(item => {
-			let name = item.name
 
-			name = name.replace(
-				new RegExp(`(${terms.join('|')})`, 'gi'),
+			let name = formatName( item.name );
+
+			terms = terms.map( term => useRegExpEscape(term) );
+			const searchTerm = terms.join('|');
+
+			name = name.replaceAll(
+				new RegExp(`(${searchTerm})`, 'gi'),
+				// new RegExp(pattern, 'gi'),
 				(match) => `<span class="c_primary">${match}</span>`
 			)
 
 			return { ...item, name }
+
 		})
 
 		return result
@@ -618,8 +703,8 @@ import attributes from '~/assets/data/attributes.js'
 		clearTimeout(searchTimer)
 
 		searchTimer = setTimeout(() => {
-			searchParam.value = value.trim()
-		}, 300)
+			searchParam.value = value
+		}, 1000)
 	}
 
 	function cancel() {
@@ -628,10 +713,13 @@ import attributes from '~/assets/data/attributes.js'
 		})
 	}
 	function save() {
+
+		const selKeys = Object.keys(selected).filter( key => selected[key] );
+
 		send({
 			action: 'SAVE_DIALOG',
 			payload: {
-				selectedAttributes: Object.keys(selected)
+				selectedAttributes: selKeys
 			}
 		})
 	}
