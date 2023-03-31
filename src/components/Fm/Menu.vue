@@ -1,5 +1,5 @@
 <template>
-	<div class="fm_menu" v-click-outside="closeOnCo">
+	<div class="fm_menu">
 		<div ref="activator" class="height-100">
 			<slot name="btn" :isOpen="isOpen"></slot>
 		</div>
@@ -11,6 +11,7 @@
 					class="fm_drop"
 					ref="popup"
 					:style="{'min-height': minHeight}"
+					v-click-outside="closeOnCo"
 				>
 					<slot :close="toggle"></slot>
 				</div>
@@ -152,7 +153,6 @@
 			)
 			|| ((distanceToTop <= popupRect.height) && (distanceToBottom > distanceToTop))
 		) {
-			console.log('props.offsetY:', props.offsetY)
 			popup.value.style.top    = `${activatorRect.height + props.offsetY}px`
 			popup.value.style.maxHeight = `${distanceToBottom}px`
 		} else {

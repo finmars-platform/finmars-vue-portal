@@ -151,6 +151,7 @@
 	])
 
 	let open = ref(['All'])
+	console.log('open:', open)
 	let code_elem = ref()
 	let info = ref('')
 	let snippets = ref([])

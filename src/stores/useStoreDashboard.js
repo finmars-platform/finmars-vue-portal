@@ -1,20 +1,25 @@
 import { defineStore } from "pinia";
 import widgetList from '~/assets/data/widgets.js'
+import dayjs from 'dayjs'
 
 export default defineStore({
 	id: "dashboard",
 	state: () => {
 		return {
-			// DATA
-			widgets: [],
+			// DATA FROM LAYOUT
 			tabs: [],
-			scopes: {
-				global: {}
+			scopes: [],
+			components: [],
+			props: {
+				inputs: [],
+				outputs: [],
+				proxies: []
 			},
 			// END DATA
 			layoutList: [],
 			activeLayoutId: null,
 			activeTab: null,
+			__log: [],
 			//test
 			history: null,
 			historyPnl: null,
@@ -25,6 +30,14 @@ export default defineStore({
 		async init() {
 			await this.getLayouts()
 			this.activeTab = this.tabs[0]?.id
+
+			watch(() => this.activeLayoutId, () => {
+				if ( !this.layout.data ) return false
+
+				this.widgets = this.layout.data.widgets || []
+				this.tabs = this.layout.data.tabs || []
+				this.scope = this.layout.data.scope || []
+			})
 		},
 		getWidget(id) {
 			return this.widgets.find(item => item.id == id)
@@ -43,16 +56,75 @@ export default defineStore({
 
 			this.widgets = this.layout.data.widgets || []
 			this.tabs = this.layout.data.tabs || []
-			this.scopes = this.layout.data.scopes || {global: {}}
+			this.scope = this.layout.data.scope || []
+
+			this.setPropsWatchers()
+			// console.clear()
+			console.table(this.scope)
+		},
+		setPropsWatchers() {
+			this.scope.forEach((prop) => {
+				if ( prop.direct != 'output' || prop.__unwatch ) return false
+
+				prop.__unwatch = watch(
+					() => prop.__val,
+					(newVal, oldVal) => {
+						let id = prop.id
+						let props = this.scope.filter(item => item.parents && item.parents.includes(id) )
+
+						let log = {
+							name: prop.name,
+							componentName: this.widgets.find(item => item.id == prop.cid).user_code,
+							newVal: newVal,
+							oldVal: oldVal,
+							time: dayjs().format('HH:mm:ss'),
+							children: []
+						}
+
+						console.group(
+							`%s / ${prop.name} %c[${prop.__val}]`,
+							`${this.widgets.find(item => item.id == prop.cid).user_code}`,
+							'font-size: 16px;'
+						)
+
+						props.forEach(childProp => {
+							log.children.push({
+								name: childProp.name,
+								componentName: this.widgets.find(item => item.id == childProp.cid).user_code,
+								newVal: prop.__val,
+								oldVal: childProp.__val,
+							})
+
+							childProp.__val = prop.__val
+
+							console.log(
+								`=> ${this.widgets.find(item => item.id == childProp.cid).user_code} / %c${childProp.name}`,
+								'font-size: 14px;'
+							)
+						})
+
+						console.groupEnd()
+
+						this.__log.push(log)
+					}
+				)
+			})
 		},
 		async getHistory(wid) {
 			let widget = this.widgets.find(item => item.id == wid)
 
+			let list = this.scope.filter((prop) => prop.cid == widget.id)
+			let props = {}
+
+			list.forEach((prop) => {
+				props[prop.name] = prop.__val
+			})
+
 			let apiOpts = {
 				filters: {
-					portfolio: this.scopes[widget.scope].portfolio.value,
-					date_from: this.scopes[widget.scope].date_from.value,
-					date_to: this.scopes[widget.scope].date_to.value,
+					portfolio: props.portfolio,
+					date_from: props.date_from,
+					date_to: props.date_to,
 				},
 				params: {
 					type: 'nav'
@@ -76,9 +148,9 @@ export default defineStore({
 
 			let apiOptsPl = {
 				filters: {
-					portfolio: this.scopes[widget.scope].portfolio.value,
-					date_from: this.scopes[widget.scope].date_from.value,
-					date_to: this.scopes[widget.scope].date_to.value
+					portfolio: props.portfolio,
+					date_from: props.date_from,
+					date_to: props.date_to,
 				},
 				params: {
 					type: 'pl'
@@ -86,8 +158,8 @@ export default defineStore({
 			}
 
 			this.historyPnl = await useApi('widgetsHistory.get', apiOptsPl)
-
-			return this.scopes[widget.scope]._cbp_type == 'nav' ? this.history : this.historyPnl
+			// this.scopes[widget.scope]._cbp_type
+			return props.type == 'nav' ? this.history : this.historyPnl
 		},
 		generateColors() {
 			return [
@@ -134,9 +206,11 @@ export default defineStore({
 			]
 		},
 		async getHistoryNav(opts) {
+			if ( !this.history ) return false
 			return this.history[opts.category][opts.date]
 		},
 		async getHistoryPnl(opts) {
+			if ( !this.history ) return false
 			return this.historyPnl[opts.category][opts.date]
 		},
 		async saveLayout() {
@@ -148,13 +222,14 @@ export default defineStore({
 						data: {
 							widgets: this.widgets,
 							tabs: this.tabs,
-							scopes: this.scopes,
+							scope: this.scope,
 						}
 					}
 				})
 
 				if (!res.error) {
-					this.layoutList.push(res);
+					this.layoutList.push(res)
+					this.activeLayoutId = res.id
 				}
 
 			} else {
@@ -166,7 +241,7 @@ export default defineStore({
 						data: {
 							widgets: this.widgets,
 							tabs: this.tabs,
-							scopes: this.scopes,
+							scope: this.scope,
 						}
 					}
 				})
@@ -174,7 +249,6 @@ export default defineStore({
 			}
 
 			if (!this.activeLayoutId) this.activeLayoutId = this.layoutList[0].id;
-
 		},
 		async deleteLayout() {
 			let res = await useApi('dashboardLayout.delete', {
@@ -183,26 +257,33 @@ export default defineStore({
 					user_code: this.layout.user_code
 				}
 			})
+
+			this.getLayouts()
 		},
 		removeWidget( id ) {
 			let index = this.widgets.findIndex(item => item.id == id)
 
 			if ( index === -1 ) throw new Error('[Store:removeWidget] ID not find')
 
-			let widget = this.widgets[index]
-			let baseWidget = widgetList.find(item => item.id == widget.componentName)
+			this.scope
+				.filter(item => item.cid == this.widgets[index].id)
+				.forEach((prop) => {
+					let index = this.scope.findIndex(item => item.id == prop.id)
 
-			for ( let prop in baseWidget.props ) {
-				let propObject = this.scopes[widget.scope][prop]
+					if ( index === -1 ) return false
 
-				if ( !propObject ) throw new Error('[Store:removeWidget] Data incorrect')
-				propObject._usedCount -= 1
+					if ( this.scope[index].direct == 'output' ) {
+						this.scope
+							.filter(item => item.parents && item.parents.includes(this.scope[index].id) )
+							.forEach((item) => {
+								let indexParent = item.parents.findIndex(id => id == this.scope[index].id)
 
-				if ( propObject._usedCount == 0 || this.widgets.length == 1 ) {
-					delete this.scopes[widget.scope][prop]
-				}
+								item.parents.splice(indexParent, 1)
+							})
+					}
 
-			}
+					this.scope.splice(index, 1)
+				})
 
 			this.widgets.splice(index, 1)
 		}
