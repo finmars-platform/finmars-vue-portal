@@ -14,12 +14,12 @@
 		</div>
 
 		<FmBtn
-			v-if="isEdit"
+			v-if="isEdit && tab"
 			class="add_component flex aic jcc"
 			@click="isOpenAddComponents = true"
 			icon="add"
 		>
-			Add components
+			Add component
 		</FmBtn>
 
 		<PagesDashboardAddComponentM

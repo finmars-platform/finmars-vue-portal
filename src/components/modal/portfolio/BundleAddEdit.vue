@@ -46,10 +46,6 @@
 		bundleRegisters: {
 			type: Array,
 			default: [],
-		},
-		registers: {
-			type: Array,
-			default: [],
 		}
 	});
 
@@ -57,6 +53,7 @@
 
 	let bundleName = ref(props.name);
 	let bundleRegistersList = ref(props.bundleRegisters);
+	let registers = ref([])
 
 	watch(
 		() => props.name,
@@ -67,7 +64,24 @@
 		() => props.bundleRegisters,
 		() => bundleRegistersList.value = props.bundleRegisters
 	)
+	fetchPrtfRegistersList()
+	async function fetchPrtfRegistersList() {
 
+		const res = await useApi('portfolioRegisterEvFiltered.post', {
+			body: '{"groups_types":[],"page":1,"groups_values":[],"groups_order":"asc","page_size":60,"ev_options":{"entity_filters":["enabled","disabled","active","inactive"]},"filter_settings":[],"global_table_search":"","is_enabled":"any"}'
+		});
+
+		if (!res.error) {
+
+			registers.value = res.results.map((o) => ({
+					user_code: o.user_code,
+					id: o.id,
+				})
+			);
+
+		}
+
+	}
 	function resetBundleData () {
 		bundleName.value = props.name;
 		bundleRegistersList.value = props.bundleRegisters;

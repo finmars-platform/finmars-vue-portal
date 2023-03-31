@@ -5,8 +5,6 @@
 					:menuWidth="attach === 'body' ? 'activator' : ''"
 					:attach="attach"
 
-					:offsetX="5"
-
 					@update:opened="toggleMenu">
 
 		<template #btn="{ isOpen }">

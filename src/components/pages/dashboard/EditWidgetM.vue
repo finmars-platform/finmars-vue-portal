@@ -7,32 +7,60 @@
 			action: {name: 'Save', cb: save},
 		}"
 	>
-		<FmTabs :tabs="tabs" v-model="tab" />
+	<div class="settings flex">
+			<div class="settings_coll">
+				<h4>General</h4>
 
-		<div class="p-16">
-			<template v-if="tab == 'widget'">
-				<FmSelect
-					v-model="editable.scope"
-					:items="scopeList"
-					label="Scope"
-					@update:modelValue="prepareProps()"
+				<BaseInput
+					v-model="editable.user_code"
+					label="User code"
+					required
 				/>
 				<FmSelect
 					v-model="editable.tab"
 					:items="tabList"
 					label="Tab"
 				/>
-				<FmSelect v-if="currentWodget.settings && currentWodget.settings.length"
-					v-model="scopeProps._cbp_type"
-					:items="currentWodget.settings[0].opts"
-					:label="currentWodget.settings[0].name"
-				/>
+			</div>
 
-			</template>
+			<div class="settings_coll">
+				<h4>Inputs</h4>
 
-			<template v-if="tab == 'scope'">
-				<BaseInput v-for="item in scopeProps" v-model="item.value" :label="item.name" />
-			</template>
+				<div v-for="item in scopeProps.filter(item => item.direct == 'input')">
+					<BaseInput
+						v-if="!propMode[item.name]"
+						v-model="item.__val"
+						:label="item.name"
+					/>
+					<BaseMultiSelectInput
+						v-else
+						v-model="item.parents"
+						:title="item.name"
+						:items="prepareItems(item)"
+						item_id="id"
+					/>
+
+					<FmCheckbox
+						class="inherit_checkbox"
+						v-model="propMode[item.name]"
+						:label="`Inherit value`"
+					/>
+				</div>
+
+			</div>
+
+			<div class="settings_coll">
+				<h4>Outputs</h4>
+
+				<div v-for="item in scopeProps.filter(item => item.direct == 'output')">
+					<BaseMultiSelectInput
+						v-model="item.children"
+						:title="item.name"
+						:items="prepareItems(item)"
+						item_id="id"
+					/>
+				</div>
+			</div>
 		</div>
 	</BaseModal>
 </template>
@@ -48,107 +76,100 @@
 		}
 	})
 	let dashStore = useStoreDashboard()
-
-	let tabs = ref(['widget', 'scope'])
-	let tab = ref('widget')
-
+	let propMode = reactive({})
 	let widget = dashStore.widgets.find(item => item.id == props.wid) || {}
 	let editable = reactive( JSON.parse(JSON.stringify(widget)) )
 
 	let scopeProps = ref({})
-	let currentWodget = widgetList.find(item => item.id == editable.componentName)
 
 	prepareProps()
 
 	function prepareProps() {
-		for ( let prop in currentWodget.props ) {
-			if ( typeof currentWodget.props[prop] != 'object' ) {
-				currentWodget.props[prop] = dashStore.scopes[editable.scope][prop]
+		let unrefed = JSON.parse(
+			JSON.stringify(
+				dashStore.scope
+					.filter((prop) => prop.cid == widget.id)
+			)
+		)
 
-			} else {
-				let obj = currentWodget.props[prop]
+		unrefed.forEach((prop) => {
+			if ( prop.direct == 'input') return false
 
-				if ( !dashStore.scopes[editable.scope] || !dashStore.scopes[editable.scope][prop] ) {
-					obj.value = ''
+			prop.children = dashStore.scope
+				.filter( (item) => item.direct == 'input' && item.parents.includes(prop.id) )
+				.map((item) => item.id)
+		})
+		scopeProps.value = unrefed
+	}
+	function prepareItems(childProp) {
+		let newProps = dashStore.scope
+			.filter((prop) => {
+				let isType = prop.type == childProp.type
+				let isDirect = prop.direct != childProp.direct
 
-				} else {
-
-					obj.value = dashStore.scopes[editable.scope][prop].value
-					obj._used = dashStore.scopes[editable.scope][prop]._used
+				return isType && isDirect && childProp.cid != prop.cid
+			})
+			.map((prop) => {
+				return {
+					id: prop.id,
+					name: `${dashStore.widgets.find(item => item.id == prop.cid).name} / ${prop.name}[${prop.__val}]`,
 				}
-			}
-		}
+			})
 
-		scopeProps.value = currentWodget.props
+		return JSON.parse(JSON.stringify(newProps))
 	}
 
 	let tabList = computed(() => {
-		return [...dashStore.tabs, {id: null, name: 'Top place'}]
-	})
-
-	let scopeList = computed(() => {
-		let list = []
-
-		for ( let prop in dashStore.scopes ) {
-			list.push({
-				id: prop,
-				name: prop
-			})
-		}
-
-		list.push({
-			id: 'New scope',
-			name: 'New scope'
-		})
-
-		return list
+		return [...dashStore.tabs, {id: 1, name: 'Top place'}]
 	})
 
 	function save() {
-		let newScope = editable.scope
-
 		dashStore.$patch((state) => {
-			let oldScope = widget.scope
+			widget.user_code = editable.user_code
+			widget.tab = editable.tab
 
-			for ( let prop in state.scopes[oldScope] ) {
-				if ( !state.scopes[oldScope][prop]._used ) continue
-				let index = state.scopes[oldScope][prop]._used.findIndex(item => item == editable.id)
+			scopeProps.value.forEach((prop) => {
+				let scopeProp = state.scope.find((item => item.id == prop.id))
 
-				delete state.scopes[oldScope][prop]._used.splice(index, 1)
-			}
+				scopeProp.__val = prop.__val
 
-			if ( !state.scopes[newScope] ) {
-				newScope = 'Scope №' + Math.round(Math.random(0, 1) * 1000)
-				state.scopes[newScope] = {}
-			}
+				if ( prop.parents ) scopeProp.parents = prop.parents
+				if ( prop.children ) {
+					let children = state.scope.filter(item => item.parents && item.parents.includes(prop.id))
 
-			for ( let prop in scopeProps.value ) {
-				if ( !state.scopes[newScope][prop] ) {
-					state.scopes[newScope][prop] = JSON.parse( JSON.stringify(scopeProps.value[prop]) )
+					children.forEach((child) => {
+						let index = child.parents.findIndex((id) => id == prop.id)
+
+						if ( index !== -1 ) {
+							child.parents.splice(index, 1)
+						}
+					})
+
+					prop.children.forEach((id) => {
+						let children = state.scope.find(item => item.id == id)
+						children.parents.push(prop.id)
+					})
 				}
-
-				if ( typeof state.scopes[newScope][prop] != 'object' ) {
-					state.scopes[newScope][prop] = scopeProps.value[prop]
-
-				} else {
-
-					state.scopes[newScope][prop].value = scopeProps.value[prop].value
-
-					if ( !state.scopes[newScope][prop]._used )
-						state.scopes[newScope][prop]._used = []
-
-					state.scopes[newScope][prop]._used.push(editable.id)
-				}
-			}
+			})
 		})
 
-		delete widget._isEdit
 
-		widget.scope = newScope
-		widget.tab = editable.tab
 	}
 </script>
 
 <style lang="scss" scoped>
+.settings {
+		padding: 20px;
+	}
+	.settings_coll {
+		width: 300px;
 
+		& + & {
+			padding-left: 20px;
+		}
+	}
+	.inherit_checkbox {
+		margin-top: -18px;
+		margin-bottom: 25px;
+	}
 </style>
