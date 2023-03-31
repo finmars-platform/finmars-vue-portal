@@ -60,3 +60,40 @@ export function fmThrottle(fn, wait, options) {
 export function useDateStringIsValid (date) {
 	return moment(date, 'YYYY-MM-DD', true).isValid();
 }
+
+const regExpSpecials = [
+	// order matters for these
+	"-", "[", "]",
+	// order doesn't matter for any of these
+	"/", "{", "}", "(", ")", "*", "+", "?", ".", "\\", "^", "$", "|"
+];
+
+/**
+ * Escape RexExp special symbols
+ *
+ * @param {string} string
+ * @return {string} - string with all RexExp special symbols escaped
+ *
+ * */
+export function useRegExpEscape (string) {
+
+	/*
+	Referring to the table here:
+	https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/regexp
+	these characters should be escaped
+	\ ^ $ * + ? . ( ) | { } [ ]
+	These characters only have special meaning inside of brackets
+	they do not need to be escaped, but they MAY be escaped
+	without any adverse effects (to the best of my knowledge and casual testing)
+	: ! , =
+	my test "~!@#$%^&*(){}[]`/=?+\|-_;:'\",<.>".match(/[\#]/g)
+	*/
+
+
+	// I choose to escape every character with '\'
+	// even though only some strictly require it when inside []
+	const regex = RegExp('[' + regExpSpecials.join('\\') + ']', 'g')
+
+	return string.replace(regex, "\\$&");
+
+}
