@@ -346,7 +346,7 @@ onMounted(() => {
 	})
 })
 
-let formatedAttrs = ref([])
+let formattedAttrs = ref([])
 let selectedOld = []
 let favList = ref([/*{
 		key: 'pricing_currency.reference_for_pricing',
@@ -408,10 +408,10 @@ function init( data ) {
 	favList.value = data.favoriteAttributes
 	selectedOld = attributes.filter(item => data.selectedAttributes.includes(item.key))
 
-	formatedAttrs.value = attributes
+	formattedAttrs.value = attributes
 
-	if ( formatedAttrs.value.length ) {
-		activeRow.value = formatedAttrs.value[0].key;
+	if ( formattedAttrs.value.length ) {
+		activeRow.value = formattedAttrs.value[0].key;
 	}
 
 }
@@ -474,7 +474,7 @@ const favoritesAttrs = computed(() => {
 
 const advancedColumns = computed(() => {
 	let tree = {}
-	let attrs = JSON.parse(JSON.stringify( formatedAttrs.value ));
+	let attrs = JSON.parse(JSON.stringify( formattedAttrs.value ));
 	let searchedAttrs
 
 	// Search
@@ -564,7 +564,7 @@ const selectedColumns = computed(() => {
 	for ( let prop in selected) {
 		if ( !selected[prop] ) continue
 
-		let selAttr = formatedAttrs.value.find((item) => item.key == prop );
+		let selAttr = formattedAttrs.value.find((item) => item.key == prop );
 		selAttr = JSON.parse(JSON.stringify( selAttr ));
 
 		props.push(selAttr)
@@ -589,7 +589,7 @@ let infoEditable = reactive({
 })
 
 const attrInfo = computed(() => {
-	let attr = formatedAttrs.value.find(item => item.key == activeRow.value)
+	let attr = formattedAttrs.value.find(item => item.key == activeRow.value)
 	if ( !attr ) return {name: ''}
 
 	let name = 'No name'
@@ -637,10 +637,12 @@ function editAttrInfo() {
 }
 
 function saveAttrInfo() {
-	let fav = favList.value.find(o => o.key == infoEditable.key)
+	let fav = favList.value.find(o => o.key == infoEditable.key);
 
 	fav.customName = infoEditable.name
 	fav.customDescription = infoEditable.description
+
+	// TODO: after modal_add_columns starts to return array of objects, change 'layout_name' inside formattedAttrs and / or attrsList
 
 	isEdit.value = false
 
@@ -662,7 +664,7 @@ function toggleFav( attr ) {
 		favList.value.push({
 			key: attr.key,
 			// TODO use attributes's original name
-			name: formatedAttrs.value.find(o => o.key == attr.key).name,
+			name: formattedAttrs.value.find(o => o.key == attr.key).name,
 			customName: '',
 			customDescription: '',
 		})
@@ -743,6 +745,7 @@ function save() {
 	send({
 		action: 'SAVE_DIALOG',
 		payload: {
+			// TODO: send array of attributes' objects
 			selectedAttributes: selKeys
 		}
 	})
