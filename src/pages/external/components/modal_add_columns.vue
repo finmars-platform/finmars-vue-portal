@@ -5,10 +5,10 @@
 				<div class="modal_head">Add column</div>
 
 				<BaseInput type="text"
-					class="small bi_no_borders bi_border_bottom m-l-20"
-					placeholder="Search"
-					:modelValue="searchParam"
-					@update:modelValue="search"
+									 class="small bi_no_borders bi_border_bottom m-l-20"
+									 placeholder="Search"
+									 :modelValue="searchParam"
+									 @update:modelValue="search"
 				>
 					<template #button>
 						<FmIcon icon="search" />
@@ -89,11 +89,11 @@
 							@dblclick="item.disabled || (selected[item.key] = !selected[item.key])"
 						>
 							<div class="flex aic">
-									<FmCheckbox
-										v-model="selected[item.key]"
-										:disabled="item.disabled"
-										@click.stop=""
-									/>
+								<FmCheckbox
+									v-model="selected[item.key]"
+									:disabled="item.disabled"
+									@click.stop=""
+								/>
 
 
 								<div v-html="item.name"></div>
@@ -181,7 +181,7 @@
 					</ul>
 					<div class="fm_list" v-show="tab == 'selected'">
 						<li class="fm_list_item attr_item"
-							@click="isOpenSelect.current = !isOpenSelect.current"
+								@click="isOpenSelect.current = !isOpenSelect.current"
 						>
 							<FmIcon class="expand" :icon="isOpenSelect.current ? 'expand_less' : 'expand_more'" />
 							<div>Current</div>
@@ -205,7 +205,7 @@
 						</div>
 
 						<li class="fm_list_item attr_item"
-							@click="isOpenSelect.new = !isOpenSelect.new"
+								@click="isOpenSelect.new = !isOpenSelect.new"
 						>
 							<FmIcon class="expand" :icon="isOpenSelect.new ? 'expand_less' : 'expand_more'" />
 							<div>New</div>
@@ -251,7 +251,7 @@
 								size="20"
 								primary
 								icon="edit"
-								@click="infoEditable.name = attrInfo.name, isEdit = true"
+								@click="editAttrInfo()"
 							/>
 
 							<div class="flex" v-else>
@@ -309,590 +309,614 @@
 <script setup>
 import attributes from '~/assets/data/attributes.js'
 import {useRegExpEscape} from "~/composables/useUtils";
-	definePageMeta({
-		layout: 'auth'
-	});
+definePageMeta({
+	layout: 'auth'
+});
 
-	const iframeId = useRoute().query.iframeId
-	const foldersSeparatorRE = /\.\s(?=\S)/g; // equals to ". " which have symbol after it
+const iframeId = useRoute().query.iframeId
+const foldersSeparatorRE = /\.\s(?=\S)/g; // equals to ". " which have symbol after it
 
-	let tab = ref('favorites')
-	let searchParam = ref('')
+let tab = ref('favorites')
+let searchParam = ref('')
 
-	let activeRow = ref('')
-	let activeTree = ref(0)
+let activeRow = ref('')
+let activeTree = ref(0)
 
-	let isAdvanced = ref(false)
-	let isEdit = ref(false)
-	let isCollapsedInfo = ref(false)
-	let isOpenSelect = reactive({
-		current: true,
-		new: true
+let isAdvanced = ref(false)
+let isEdit = ref(false)
+let isCollapsedInfo = ref(false)
+let isOpenSelect = reactive({
+	current: true,
+	new: true
+})
+
+let attrsList = [];
+const windowOrigin = window.origin;
+// const windowOrigin = 'http://0.0.0.0:8080'; // for development
+
+const onMessageStack = {
+	'INITIALIZATION_SETTINGS_TRANSMISSION': init
+}
+
+onMounted(() => {
+	window.addEventListener("message", onMessage)
+
+	send({
+		action: 'IFRAME_READY'
 	})
+})
 
-	let attrsList = [];
-	const windowOrigin = window.origin;
-	// const windowOrigin = 'http://0.0.0.0:8080'; // for development
-
-	const onMessageStack = {
-		'INITIALIZATION_SETTINGS_TRANSMISSION': init
-	}
-
-	onMounted(() => {
-		window.addEventListener("message", onMessage)
-
-		send({
-			action: 'IFRAME_READY'
-		})
-	})
-
-	let formatedAttrs = ref([])
-	let selectedOld = []
-	let favList = ref([/*{
+let formatedAttrs = ref([])
+let selectedOld = []
+let favList = ref([/*{
 		key: 'pricing_currency.reference_for_pricing',
 		name: 'test',
 		customName: 'test',
 		customDescription: 'test',
 	}*/])
 
-	const getAttrPriority = attr => {
+const getAttrPriority = attr => {
 
-		let priority = 3;
+	let priority = 3;
 
-		if ( attr.key.includes('attributes.') ) {
-			priority = 1;
+	if ( attr.key.includes('attributes.') ) {
+		priority = 1;
 
-			if ( attr.key.includes('pricing_policy_') ) {
-				priority = 2;
-			}
-
-		}
-
-		return priority;
-
-	}
-
-	function compareAttrFolders(a, b) {
-		let priority = b.name.match(foldersSeparatorRE).length - a.name.match(foldersSeparatorRE).length;
-
-		if (priority === 0) { // attributes have the same folders quantity
-			// place "User Attributes", "Pricing" after other folders
-			priority = getAttrPriority(b) - getAttrPriority(a);
-		}
-
-		return priority;
-	}
-
-	function sortAttrs(a, b) {
-
-		const priority = compareAttrFolders(a, b);
-
-		if ( priority !== 0 ) return priority;
-
-		return a.name.localeCompare(b.name);
-
-	}
-
-	function init( data ) {
-
-		attrsList = data.attributes;
-
-		let attributes = attrsList
-			/*.map(item => {
-				item.name = item.name.replaceAll('. ', ' / ')
-
-				return item
-			})*/
-			.sort(sortAttrs)
-
-		favList.value = data.favoriteAttributes
-		selectedOld = attributes.filter(item => data.selectedAttributes.includes(item.key))
-
-		formatedAttrs.value = attributes
-
-		if ( formatedAttrs.value.length ) {
-			activeRow.value = formatedAttrs.value[0].key;
+		if ( attr.key.includes('pricing_policy_') ) {
+			priority = 2;
 		}
 
 	}
 
-	function onMessage(e) {
-		// {
-		// 	action: 'name',
-		// 	iframeId: 'modal',
-		// 	payload: {}
-		// }
+	return priority;
 
-		if ( !e.data.action ) {
-			console.warn('Message without action sent');
-			return false;
-		}
+}
 
-		if ( e.origin !== windowOrigin) {
-			console.error('Received message from a different origin', e.origin);
-			return false;
-		}
+function compareAttrFolders(a, b) {
+	let priority = b.name.match(foldersSeparatorRE).length - a.name.match(foldersSeparatorRE).length;
 
-		if ( onMessageStack[e.data.action] ) onMessageStack[e.data.action](e.data.payload)
-		else console.log('e.data.action:', e.data)
-	}
-	function send( data, source = window.parent ) {
-
-		data.iframeId = iframeId;
-
-		let dataObj = Object.assign(data, {
-			iframeId: iframeId,
-		})
-
-		source.postMessage( dataObj, windowOrigin )
-
+	if (priority === 0) { // attributes have the same folders quantity
+		// place "User Attributes", "Pricing" after other folders
+		priority = getAttrPriority(b) - getAttrPriority(a);
 	}
 
-	/** Disable attributes from property 'selectedAttributes' **/
-	function markDisabledAttrs(attrData) {
-		attrData.disabled = !!selectedOld.find(selAttr => selAttr.key === attrData.key);
-		return attrData;
+	return priority;
+}
+
+function sortAttrs(a, b) {
+
+	const priority = compareAttrFolders(a, b);
+
+	if ( priority !== 0 ) return priority;
+
+	return a.name.localeCompare(b.name);
+
+}
+
+function init( data ) {
+
+	attrsList = data.attributes;
+
+	let attributes = attrsList
+		/*.map(item => {
+			item.name = item.name.replaceAll('. ', ' / ')
+
+			return item
+		})*/
+		.sort(sortAttrs)
+
+	favList.value = data.favoriteAttributes
+	selectedOld = attributes.filter(item => data.selectedAttributes.includes(item.key))
+
+	formatedAttrs.value = attributes
+
+	if ( formatedAttrs.value.length ) {
+		activeRow.value = formatedAttrs.value[0].key;
 	}
 
-	let selected = reactive({})
+}
 
-	const favoritesAttrs = computed(() => {
-		let attrs = JSON.parse(JSON.stringify( favList.value ));
+function onMessage(e) {
+	// {
+	// 	action: 'name',
+	// 	iframeId: 'modal',
+	// 	payload: {}
+	// }
 
-		attrs = attrs.map(markDisabledAttrs);
-		// if ( !attrs ) return []
-		if ( searchParam.value ) {
-			attrs = searchAndReplace( attrs )
+	if ( !e.data.action ) {
+		console.warn('Message without action sent');
+		return false;
+	}
 
-		} else {
-			attrs = formatNames(attrs);
-		}
+	if ( e.origin !== windowOrigin) {
+		console.error('Received message from a different origin', e.origin);
+		return false;
+	}
 
-		return attrs
+	if ( onMessageStack[e.data.action] ) onMessageStack[e.data.action](e.data.payload)
+	else console.log('e.data.action:', e.data)
+}
+function send( data, source = window.parent ) {
+
+	data.iframeId = iframeId;
+
+	let dataObj = Object.assign(data, {
+		iframeId: iframeId,
 	})
 
+	source.postMessage( dataObj, windowOrigin )
 
-	const advancedColumns = computed(() => {
-		let tree = {}
-		let attrs = JSON.parse(JSON.stringify( formatedAttrs.value ));
-		let searchedAttrs
+}
 
-		// Search
-		if ( searchParam.value ) {
-			searchedAttrs = searchAndReplace( attrs )
-			attrs = searchedAttrs
-		}
+/** Disable attributes from property 'selectedAttributes' **/
+function markDisabledAttrs(attrData) {
+	attrData.disabled = !!selectedOld.find(selAttr => selAttr.key === attrData.key);
+	return attrData;
+}
 
-		attrs = attrs.map(markDisabledAttrs);
+let selected = reactive({})
 
-		for ( let attr of attrs ) {
-			// const parts = attr.name.split(" / ")
-			const parts = attr.name.split(". ")
-			parts[0] = parts[0].trim()
+const favoritesAttrs = computed(() => {
+	let attrs = JSON.parse(JSON.stringify( favList.value ));
 
-			let node = tree;
+	attrs = attrs.map(markDisabledAttrs);
+	// if ( !attrs ) return []
+	if ( searchParam.value ) {
+		attrs = searchAndReplace( attrs )
 
-			for  (let i = 0; i < parts.length; i++ ) {
-				let part = parts[i]
+	} else {
+		attrs = formatNames(attrs);
+	}
 
-				if (!node[part]) {
-					if ( parts.length - 1 == i ) {
-						attr.short_name = part
-						node[part] = attr
+	return attrs
+})
 
-					} else {
 
-						node[part] = {}
+const advancedColumns = computed(() => {
+	let tree = {}
+	let attrs = JSON.parse(JSON.stringify( formatedAttrs.value ));
+	let searchedAttrs
 
-						node[part].isOpen = false
-					}
+	// Search
+	if ( searchParam.value ) {
+		searchedAttrs = searchAndReplace( attrs )
+		attrs = searchedAttrs
+	}
+
+	attrs = attrs.map(markDisabledAttrs);
+
+	for ( let attr of attrs ) {
+		// const parts = attr.name.split(" / ")
+		const parts = attr.name.split(". ")
+		parts[0] = parts[0].trim()
+
+		let node = tree;
+
+		for  (let i = 0; i < parts.length; i++ ) {
+			let part = parts[i]
+
+			if (!node[part]) {
+				if ( parts.length - 1 == i ) {
+					attr.short_name = part
+					node[part] = attr
+
+				} else {
+
+					node[part] = {}
+
+					node[part].isOpen = false
 				}
-				node = node[part]
 			}
+			node = node[part]
 		}
-
-		attrs = toAttrsTree(tree)
-
-		// Search
-		if ( searchParam.value ) {
-			attrs.unshift({
-				name: 'All sections',
-				children: searchedAttrs
-			})
-		}
-
-		return attrs
-	})
-	function toAttrsTree( obj ) {
-		let list = []
-
-		for (let key in obj) {
-			let newObj = reactive({
-				name: key,
-				children: []
-			})
-
-			if ( obj[key].isOpen === false) {
-				newObj.isOpen = ref(false)
-				newObj.children = toAttrsTree(obj[key])
-
-			} else {
-
-				newObj = obj[key]
-			}
-
-			if ( key != 'isOpen')
-				list.push(newObj)
-		}
-
-		return list
 	}
 
-	const advancedColumnActive = computed(() => {
-		let result = []
+	attrs = toAttrsTree(tree)
 
-		if ( advancedColumns.value[activeTree.value] )
-			result = advancedColumns.value[activeTree.value].children
-
-		return result
-	})
-
-
-	const selectedColumns = computed(() => {
-		let props = []
-
-		for ( let prop in selected) {
-			if ( !selected[prop] ) continue
-
-			let selAttr = formatedAttrs.value.find((item) => item.key == prop );
-			selAttr = JSON.parse(JSON.stringify( selAttr ));
-
-			props.push(selAttr)
-
-		}
-
-		if ( searchParam.value ) {
-			props = searchAndReplace( props )
-
-		} else {
-			props = formatNames( props )
-		}
-
-		return props
-	})
-
-
-	let infoEditable = reactive({
-		name: '',
-		key: '',
-		description: ''
-	})
-
-	const attrInfo = computed(() => {
-		let attr = formatedAttrs.value.find(item => item.key == activeRow.value)
-		if ( !attr ) return {name: ''}
-
-		let name = 'No name'
-
-		if ( tab.value == 'favorites' ) {
-
-			let fav = favList.value.find(o => o.key == attr.key)
-			if (fav) name =  fav.customName || formatName(attr.name);
-
-		}
-
-		if ( tab.value == 'selected' ) {
-			name = attr.customName || formatName(attr.name);
-		}
-
-		return {
-			name,
-			path: formatName(attr.name),
-			key: attr.key,
-			info: attr.description || 'No info',
-		}
-	})
-	function saveAttrInfo() {
-		let fav = favList.value.find(o => o.key == infoEditable.key)
-
-		fav.customName = infoEditable.name
-		fav.customDescription = infoEditable.description
-
-		isEdit.value = false
-
-		send({
-			action: 'SAVE_FAVORITE_ATTRIBUTES',
-			payload: favList.value
+	// Search
+	if ( searchParam.value ) {
+		attrs.unshift({
+			name: 'All sections',
+			children: searchedAttrs
 		})
 	}
-	function toggleFav( attr ) {
+
+	return attrs
+})
+function toAttrsTree( obj ) {
+	let list = []
+
+	for (let key in obj) {
+		let newObj = reactive({
+			name: key,
+			children: []
+		})
+
+		if ( obj[key].isOpen === false) {
+			newObj.isOpen = ref(false)
+			newObj.children = toAttrsTree(obj[key])
+
+		} else {
+
+			newObj = obj[key]
+		}
+
+		if ( key != 'isOpen')
+			list.push(newObj)
+	}
+
+	return list
+}
+
+const advancedColumnActive = computed(() => {
+	let result = []
+
+	if ( advancedColumns.value[activeTree.value] )
+		result = advancedColumns.value[activeTree.value].children
+
+	return result
+})
+
+
+const selectedColumns = computed(() => {
+	let props = []
+
+	for ( let prop in selected) {
+		if ( !selected[prop] ) continue
+
+		let selAttr = formatedAttrs.value.find((item) => item.key == prop );
+		selAttr = JSON.parse(JSON.stringify( selAttr ));
+
+		props.push(selAttr)
+
+	}
+
+	if ( searchParam.value ) {
+		props = searchAndReplace( props )
+
+	} else {
+		props = formatNames( props )
+	}
+
+	return props
+})
+
+
+let infoEditable = reactive({
+	name: '',
+	key: '',
+	description: ''
+})
+
+const attrInfo = computed(() => {
+	let attr = formatedAttrs.value.find(item => item.key == activeRow.value)
+	if ( !attr ) return {name: ''}
+
+	let name = 'No name'
+	let description = attr.description || 'No info';
+
+	if ( tab.value == 'favorites' ) {
+
 		let fav = favList.value.find(o => o.key == attr.key)
 
-		if ( fav ) {
-			let index = favList.value.findIndex(o => o.key == attr.key)
+		if (fav) {
 
-			favList.value.splice(index, 1)
+			name =  fav.customName || formatName(attr.name);
+			description = fav.customDescription || description;
 
-		} else {
-
-			favList.value.push({
-				key: attr.key,
-				// TODO use attributes's original name
-				name: formatedAttrs.value.find(o => o.key == attr.key).name,
-				customName: '',
-				customDescription: '',
-			})
 		}
 
-		send({
-			action: 'SAVE_FAVORITE_ATTRIBUTES',
-			payload: JSON.parse(JSON.stringify( favList.value )), // JSON.parse prevents error when postMessage tries to copy an array
+	}
+
+	if ( tab.value == 'selected' ) {
+		name = attr.customName || formatName(attr.name);
+	}
+
+	return {
+		name,
+		path: formatName(attr.name),
+		key: attr.key,
+		info: description,
+	}
+})
+
+function editAttrInfo() {
+
+	const selFavAttr = favList.value.find(fAttr => fAttr.key === attrInfo.value.key);
+
+	if ( !attrInfo.value.key || !selFavAttr ) {
+		return;
+	}
+
+	infoEditable.key = selFavAttr.key;
+	infoEditable.name = selFavAttr.customName;
+	infoEditable.description = selFavAttr.customDescription;
+
+	isEdit.value = true;
+
+}
+
+function saveAttrInfo() {
+	let fav = favList.value.find(o => o.key == infoEditable.key)
+
+	fav.customName = infoEditable.name
+	fav.customDescription = infoEditable.description
+
+	isEdit.value = false
+
+	send({
+		action: 'SAVE_FAVORITE_ATTRIBUTES',
+		payload: JSON.parse(JSON.stringify( favList.value )), // JSON.parse prevents error when postMessage tries to copy an array
+	})
+}
+function toggleFav( attr ) {
+	let fav = favList.value.find(o => o.key == attr.key)
+
+	if ( fav ) {
+		let index = favList.value.findIndex(o => o.key == attr.key)
+
+		favList.value.splice(index, 1)
+
+	} else {
+
+		favList.value.push({
+			key: attr.key,
+			// TODO use attributes's original name
+			name: formatedAttrs.value.find(o => o.key == attr.key).name,
+			customName: '',
+			customDescription: '',
 		})
 	}
 
-	// '. ' are not replaced inside attributes themselves because ' / ' can be used inside names of dynamic attributes
-	/**
-	 * @param {string} name
-	 * @returns {string} - name after replacing '. ' with ' / '
-	 */
-	const formatName = name => name.replaceAll(foldersSeparatorRE, ' / ');
-	function formatNames (attrs) {
+	send({
+		action: 'SAVE_FAVORITE_ATTRIBUTES',
+		payload: JSON.parse(JSON.stringify( favList.value )), // JSON.parse prevents error when postMessage tries to copy an array
+	})
+}
 
-		return attrs.map(attr => {
+// '. ' are not replaced inside attributes themselves because ' / ' can be used inside names of dynamic attributes
+/**
+ * @param {string} name
+ * @returns {string} - name after replacing '. ' with ' / '
+ */
+const formatName = name => name.replaceAll(foldersSeparatorRE, ' / ');
+function formatNames (attrs) {
 
-			attr.name = formatName(attr.name);
-			return attr;
+	return attrs.map(attr => {
 
-		});
+		attr.name = formatName(attr.name);
+		return attr;
 
-	}
+	});
 
-	function searchAndReplace( attrs ) {
-		let terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*/) // characters between spaces or '/'
-		let result = attrs
+}
 
-		terms.forEach((term, i) => {
-			term = term.toLowerCase()
+function searchAndReplace( attrs ) {
+	let terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*/) // characters between spaces or '/'
+	let result = attrs
 
-			result = result
-				.filter( (item) => item.name.toLowerCase().includes(term) )
-		})
+	terms.forEach((term, i) => {
+		term = term.toLowerCase()
 
-		result = result.map(item => {
+		result = result
+			.filter( (item) => item.name.toLowerCase().includes(term) )
+	})
 
-			let name = formatName( item.name );
+	result = result.map(item => {
 
-			terms = terms.map( term => useRegExpEscape(term) );
-			const searchTerm = terms.join('|');
+		let name = formatName( item.name );
 
-			name = name.replaceAll(
-				new RegExp(`(${searchTerm})`, 'gi'),
-				// new RegExp(pattern, 'gi'),
-				(match) => `<span class="c_primary">${match}</span>`
-			)
+		terms = terms.map( term => useRegExpEscape(term) );
+		const searchTerm = terms.join('|');
 
-			return { ...item, name }
+		name = name.replaceAll(
+			new RegExp(`(${searchTerm})`, 'gi'),
+			// new RegExp(pattern, 'gi'),
+			(match) => `<span class="c_primary">${match}</span>`
+		)
 
-		})
+		return { ...item, name }
 
-		return result
-	}
+	})
 
-	let searchTimer;
-	function search( value ) {
-		clearTimeout(searchTimer)
+	return result
+}
 
-		searchTimer = setTimeout(() => {
-			searchParam.value = value
-		}, 1000)
-	}
+let searchTimer;
+function search( value ) {
+	clearTimeout(searchTimer)
 
-	function cancel() {
-		send({
-			action: 'CANCEL_DIALOG'
-		})
-	}
-	function save() {
+	searchTimer = setTimeout(() => {
+		searchParam.value = value
+	}, 1000)
+}
 
-		const selKeys = Object.keys(selected).filter( key => selected[key] );
+function cancel() {
+	send({
+		action: 'CANCEL_DIALOG'
+	})
+}
+function save() {
 
-		send({
-			action: 'SAVE_DIALOG',
-			payload: {
-				selectedAttributes: selKeys
-			}
-		})
-	}
+	const selKeys = Object.keys(selected).filter( key => selected[key] );
+
+	send({
+		action: 'SAVE_DIALOG',
+		payload: {
+			selectedAttributes: selKeys
+		}
+	})
+}
 </script>
 
 <style lang="scss" scoped>
-	.modal_top {
-		height: 50px;
-		padding: 0 20px;
-		border-bottom: 1px solid $border;
-	}
-	.modal_content {
-		overflow: auto;
-		height: calc(100vh - 106px);
-		min-width: 400px; // so that FmInputEntityNames could fit in
-	}
-	.modal_bottom {
-		position: absolute;
-		bottom: 0;
-		width: 100%;
-		border-top: 1px solid $border;
-		padding: 10px 20px;
-	}
-	.modal {
-		position: relative;
-		background: #fff;
-		width: 100%;
-		height: 100vh;
-		max-height: 100%;
-		border-radius: 4px;
-		z-index: 2;
+.modal_top {
+	height: 50px;
+	padding: 0 20px;
+	border-bottom: 1px solid $border;
+}
+.modal_content {
+	overflow: auto;
+	height: calc(100vh - 106px);
+	min-width: 400px; // so that FmInputEntityNames could fit in
+}
+.modal_bottom {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	border-top: 1px solid $border;
+	padding: 10px 20px;
+}
+.modal {
+	position: relative;
+	background: #fff;
+	width: 100%;
+	height: 100vh;
+	max-height: 100%;
+	border-radius: 4px;
+	z-index: 2;
 
-		.close {
-			cursor: pointer;
+	.close {
+		cursor: pointer;
 
-			path {
-				transition: 0.3s;
-			}
-
-			&:hover path {
-				stroke: $primary !important;
-			}
+		path {
+			transition: 0.3s;
 		}
 
-		&_head {
-			font-weight: 500;
-			font-size: 20px;
+		&:hover path {
+			stroke: $primary !important;
 		}
 	}
 
-	.select_count {
-		background: $primary;
-		width: 18px;
-		height: 18px;
-		line-height: 18px;
-		text-align: center;
-		color: #fff;
-		margin-left: 11px;
-		font-size: 12px;
-		font-weight: 400;
-		border-radius: 2px;
+	&_head {
+		font-weight: 500;
+		font-size: 20px;
 	}
-	.content_grid {
-		display: grid;
-		grid-template-columns: 1fr 200px;
+}
+
+.select_count {
+	background: $primary;
+	width: 18px;
+	height: 18px;
+	line-height: 18px;
+	text-align: center;
+	color: #fff;
+	margin-left: 11px;
+	font-size: 12px;
+	font-weight: 400;
+	border-radius: 2px;
+}
+.content_grid {
+	display: grid;
+	grid-template-columns: 1fr 200px;
+	height: 100%;
+
+	&.collapsed {
+		grid-template-columns: 1fr 32px;
+	}
+	&.advanced_mod {
+		height: calc(100% - 48px);
+	}
+
+	&.advanced {
+		grid-template-columns: 160px 1fr 200px;
+	}
+
+	&_left {
+		border-right: 1px solid $border;
 		height: 100%;
+		overflow: auto;
+		padding: 9px 0;
+	}
+	&_main {
+		height: 100%;
+		overflow: auto;
+		padding: 10px 0;
+	}
+	&_right {
+		position: relative;
+		border-left: 1px solid $border;
+		height: 100%;
+		// overflow: auto;
 
 		&.collapsed {
-			grid-template-columns: 1fr 32px;
-		}
-		&.advanced_mod {
-			height: calc(100% - 48px);
-		}
-
-		&.advanced {
-			grid-template-columns: 160px 1fr 200px;
-		}
-
-		&_left {
-			border-right: 1px solid $border;
-			height: 100%;
-			overflow: auto;
-			padding: 9px 0;
-		}
-		&_main {
-			height: 100%;
-			overflow: auto;
-			padding: 10px 0;
-		}
-		&_right {
-			position: relative;
-			border-left: 1px solid $border;
-			height: 100%;
-			// overflow: auto;
-
-			&.collapsed {
-				.desc_title, .desc_subtitle, .desc_about, .desc_icons {
-					display: none;
-				}
-			}
-
-			&:hover .collapse {
-				opacity: 1;
-				visibility: visible;
+			.desc_title, .desc_subtitle, .desc_about, .desc_icons {
+				display: none;
 			}
 		}
-	}
 
-	.attr_item {
-		padding: 0 20px;
-		height: 26px;
-		user-select: none;
-		border: none;
-		&.active {
-			background: $primary-lighten-2;
-			.favorites {
-				opacity: 1;
-			}
-		}
-		&:hover .favorites {
+		&:hover .collapse {
 			opacity: 1;
-		}
-	}
-
-	.desc_title {
-		padding: 0 13px;
-		height: 40px;
-		word-wrap: break-word;
-	}
-	.desc_subtitle {
-		padding: 10px 13px;
-		background: $main;
-		border-top: 1px solid $border;
-		border-bottom: 1px solid $border;
-		color: $text-lighten;
-		word-wrap: break-word;
-	}
-	.desc_about {
-		padding: 10px 13px;
-		color: $text-lighten;
-	}
-	.collapse {
-		position: absolute;
-		top: 10px;
-		left: -12px;
-		border: 1px solid $border;
-		background: #fff;
-		border-radius: 50%;
-		opacity: 0;
-		visibility: hidden;
-		transition: 0.3s;
-
-		&.active {
 			visibility: visible;
-			opacity: 1;
 		}
 	}
-	.favorites {
-		opacity: 0;
-		transition: 0.3s;
+}
 
-		&.active {
+.attr_item {
+	padding: 0 20px;
+	height: 26px;
+	user-select: none;
+	border: none;
+	&.active {
+		background: $primary-lighten-2;
+		.favorites {
 			opacity: 1;
 		}
 	}
-	.expand_wrap {
-		padding-left: 31px;
+	&:hover .favorites {
+		opacity: 1;
 	}
-	.expand {
-		margin-left: -2px;
-		margin-right: 9px;
+}
+
+.desc_title {
+	padding: 0 13px;
+	height: 40px;
+	word-wrap: break-word;
+}
+.desc_subtitle {
+	padding: 10px 13px;
+	background: $main;
+	border-top: 1px solid $border;
+	border-bottom: 1px solid $border;
+	color: $text-lighten;
+	word-wrap: break-word;
+}
+.desc_about {
+	padding: 10px 13px;
+	color: $text-lighten;
+}
+.collapse {
+	position: absolute;
+	top: 10px;
+	left: -12px;
+	border: 1px solid $border;
+	background: #fff;
+	border-radius: 50%;
+	opacity: 0;
+	visibility: hidden;
+	transition: 0.3s;
+
+	&.active {
+		visibility: visible;
+		opacity: 1;
 	}
-	.select_old {
-		color: $text-lighten;
+}
+.favorites {
+	opacity: 0;
+	transition: 0.3s;
+
+	&.active {
+		opacity: 1;
 	}
+}
+.expand_wrap {
+	padding-left: 31px;
+}
+.expand {
+	margin-left: -2px;
+	margin-right: 9px;
+}
+.select_old {
+	color: $text-lighten;
+}
 </style>
