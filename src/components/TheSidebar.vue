@@ -1785,8 +1785,9 @@
 
 		.sidenav-dropdown-menu-btn {
 			width: 100%;
-			height: 35px;
-			min-height: 30px;
+			/*height: 35px;
+			min-height: 30px;*/
+			min-height: 24px;
 			display: block;
 			text-align: left;
 			padding-left: 1em;
@@ -1794,8 +1795,10 @@
 			margin-bottom: 6px;
 			font-size: 11px;
 			line-height: 2;
-			padding-top: 12px;
-			padding-bottom: 10px;
+			/*padding-top: 12px;
+			padding-bottom: 10px;*/
+			padding-top: 3px;
+			padding-bottom: 3px;
 			text-transform: uppercase;
 
 			&:not([disabled]):hover {
@@ -1847,17 +1850,17 @@
 
 		span.side-nav-title {
 			position: relative;
-			top: -4px;
+			// top: -4px;
 		}
 
 		.side-nav-icon {
 			color: $separ;
 			display: inline-block;
 			position: absolute;
-			//left: 11px;
+			// left: 11px;
 			left: 17px;
 			// bottom: 3px;
-			bottom: 6px;
+			bottom: 0;
 		}
 	}
 
@@ -1870,15 +1873,17 @@
 	.sidemenu-btn {
 		position: relative;
 		width: 100%;
-		height: 36px;
+		// height: 36px;
 		display: block;
 
 		text-align: left;
 		line-height: 2;
 		text-transform: uppercase;
 
-		padding-top: 11px;
-		padding-bottom: 2px;
+		/*padding-top: 11px;
+		padding-bottom: 2px;*/
+		padding-top: 0;
+		padding-bottom: 0;
 		padding-left: 55px;
 		margin-top: 6px;
 		margin-bottom: 6px;
