@@ -95,18 +95,27 @@
 									@click.stop=""
 								/>
 
-
 								<div v-html="item.name"></div>
 							</div>
 
-							<FmIcon
-								v-if="isAdvanced"
-								size="20"
-								primary
-								:class="['favorites']"
-								:icon="favList.find(o => o.key == item.key) ? 'star' : 'star_outlined'"
-								@click="toggleFav(item)"
-							/>
+							<div class="flex aic">
+								<FmIcon
+									v-if="isAdvanced"
+									size="20"
+									primary
+									:class="['favorites']"
+									:icon="favList.find(o => o.key == item.key) ? 'star' : 'star_outlined'"
+									@click="toggleFav(item)"
+								/>
+
+								<FmIcon
+									v-if="item.error"
+									size="20"
+									primary
+									icon="info"
+									v-fm-tooltip.error="item.error"
+								/>
+							</div>
 						</div>
 					</div>
 
@@ -196,6 +205,7 @@
 							>
 								<div class="flex aic expand_wrap">
 									<FmCheckbox
+										:modelValue="true"
 										disabled
 									/>
 
@@ -355,6 +365,35 @@ let favList = ref([/*{
 		customDescription: 'test',
 	}*/])
 
+const favoritesAttrs = computed(() => {
+	let attrs = JSON.parse(JSON.stringify( favList.value ));
+
+	attrs = attrs.map(markDisabledAttrs);
+
+	// mark favorites that refers to nonexistent attributes
+	attrs = attrs.map(fAttr => {
+
+		const index = attrsList.findIndex(attr => attr.key === fAttr.key);
+
+		if (index < 0) {
+			fAttr.error = "Attribute does not exist in the Configuration";
+			fAttr.disabled = true;
+		}
+
+		return fAttr;
+
+	});
+	// if ( !attrs ) return []
+	if ( searchParam.value ) {
+		attrs = searchAndReplace( attrs )
+
+	} else {
+		attrs = formatNames(attrs);
+	}
+
+	return attrs
+})
+
 const getAttrPriority = attr => {
 
 	let priority = 3;
@@ -406,7 +445,12 @@ function init( data ) {
 		.sort(sortAttrs)
 
 	favList.value = data.favoriteAttributes
-	selectedOld = attributes.filter(item => data.selectedAttributes.includes(item.key))
+
+	selectedOld = attributes.filter(item => data.selectedAttributes.includes(item.key));
+
+	selectedOld.forEach(sAttr => {
+		selected[sAttr.key] = true;
+	})
 
 	formattedAttrs.value = attributes
 
@@ -455,21 +499,6 @@ function markDisabledAttrs(attrData) {
 }
 
 let selected = reactive({})
-
-const favoritesAttrs = computed(() => {
-	let attrs = JSON.parse(JSON.stringify( favList.value ));
-
-	attrs = attrs.map(markDisabledAttrs);
-	// if ( !attrs ) return []
-	if ( searchParam.value ) {
-		attrs = searchAndReplace( attrs )
-
-	} else {
-		attrs = formatNames(attrs);
-	}
-
-	return attrs
-})
 
 
 const advancedColumns = computed(() => {
@@ -562,7 +591,10 @@ const selectedColumns = computed(() => {
 	let props = []
 
 	for ( let prop in selected) {
-		if ( !selected[prop] ) continue
+
+		const oldSel = selectedOld.find( attr => attr.key === prop );
+
+		if ( !selected[prop] || oldSel ) continue
 
 		let selAttr = formattedAttrs.value.find((item) => item.key == prop );
 		selAttr = JSON.parse(JSON.stringify( selAttr ));
@@ -740,7 +772,9 @@ function cancel() {
 }
 function save() {
 
-	const selKeys = Object.keys(selected).filter( key => selected[key] );
+	const selKeys = Object.keys(selected).filter( key => {
+		return !selectedOld.find(attr => attr.key === key);
+	});
 
 	send({
 		action: 'SAVE_DIALOG',

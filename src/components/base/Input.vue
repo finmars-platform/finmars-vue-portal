@@ -44,14 +44,14 @@
 				<slot name="sideItems"></slot>
 
 				<div class="bi_side_item" v-if="tooltip">
-					<FmIcon :tooltip="tooltip" icon="info_outlined" />
+					<FmIcon v-fm-tooltip.error="tooltip" icon="info_outlined" />
 				</div>
 			</div>
 
 
 			<div v-if="errorData && errorData.longMessage"
 					 class="bi_side_item error_icon">
-				<FmIcon :tooltip="errorData.longMessage" icon="info" />
+				<FmIcon v-fm-tooltip="errorData.longMessage" icon="info" />
 			</div>
 
 			<div class="right_btn">
