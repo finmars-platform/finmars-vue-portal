@@ -257,3 +257,19 @@
 	}
 }
 //# endregion pickmeup inside FmInputDateComplex
+
+// vFmTooltip directive
+.fm_tooltip {
+	padding: 3px 6px;
+	border-radius: 4px;
+	color: #fff;
+	background-color: #1a1a1aff;
+	opacity: .8;
+	font-size: 14px;
+	z-index: 60;
+
+	&.error {
+		background-color: $error;
+		font-size: 15px;
+	}
+}

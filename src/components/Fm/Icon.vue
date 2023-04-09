@@ -1,14 +1,14 @@
 <template>
-	<div
-		:class="['icon', {primary, error, btn, 'btn-primary': btnPrimary}]"
-		:style="{width: size + 'px', fontSize: size + 'px'}"
-	>
-		<slot>
-			<div class="material-icons">{{ icon }}</div>
-		</slot>
+		<div
+			:class="['icon', {primary, error, btn, disabled, 'btn-primary': btnPrimary}]"
+			:style="{width: size + 'px', fontSize: size + 'px'}"
+		>
+			<slot>
+				<div class="material-icons">{{ icon }}</div>
+			</slot>
 
-		<div class="tooltip" v-if="tooltip">{{ tooltip }}</div>
-	</div>
+	<!--		<div class="tooltip" v-if="tooltip">{{ tooltip }}</div>-->
+		</div>
 </template>
 
 <script setup>
@@ -19,8 +19,10 @@
 		primary: Boolean,
 		error: Boolean,
 		btn: Boolean,
-		btnPrimary: Boolean
+		btnPrimary: Boolean,
+		disabled: Boolean,
 	})
+
 </script>
 
 <style lang="scss" scoped>
@@ -34,15 +36,18 @@
 		color: $text-lighten;
 		overflow: hidden;
 
-		&:hover {
+		&:not(.disabled):hover {
 			color: $text-hover;
 
-			.tooltip {
+			/*.tooltip {
 				opacity: 0.8;
 				visibility: visible;
-			}
+			}*/
 		}
 
+		&.disabled {
+			cursor: default;
+		}
 		&.gray-icon {
 			color: $grayIcon;
 		}
@@ -85,21 +90,22 @@
 	.material-icons {
 		font-size: inherit;
 	}
-	.tooltip {
+	/*.tooltip {
 		position: absolute;
 		bottom: -18px;
 		left: 50%;
 		transform: translateX(-50%);
 		color: rgb(230, 230, 230);
 		background: rgb(26, 26, 26);
-		padding: 0 6px;
-		height: 15px;
+		padding: 3px 6px;
+		// height: 15px;
+		height: 20px;
 		line-height: 15px;
 		border-radius: 4px;
-		font-size: 10px;
+		font-size: 14px;
 		opacity: 0;
 		visibility: hidden;
 		transition: 0.3s;
 		white-space: nowrap;
-	}
+	}*/
 </style>

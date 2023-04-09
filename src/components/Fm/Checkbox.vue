@@ -1,11 +1,12 @@
 <template>
 	<label class="flex aic">
-		<input type="checkbox"
-			:checked="modelValue || disabled"
+		<input
+			type="checkbox"
+			:checked="modelValue"
 			:disabled="disabled"
     	@change="disabled || emit('update:modelValue', !modelValue)"
 		/>
-		<span class="check" :class="{disabled: disabled}"><FmIcon class="mark" icon="check" /></span>
+		<span class="check" :class="{disabled: disabled}"><FmIcon class="mark" icon="check" :disabled="disabled" /></span>
 
 		<div v-if="label">{{ label }}</div>
 	</label>
@@ -65,6 +66,9 @@ input[type="checkbox"]:checked + .check {
 		transition: .3s;
 		font-size: 16px;
 		color: $separ;
+	}
+	.disabled {
+		cursor: default;
 	}
 }
 </style>
