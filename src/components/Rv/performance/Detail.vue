@@ -86,7 +86,13 @@
 	})
 	const emits = defineEmits(["setMonth", 'refresh'])
 
-	watch(props, () => getMonthDetails())
+	watch(props, () => {
+
+		if (!props.currentBundle) return;
+
+		getMonthDetails();
+
+	})
 
 	let portfolioItems = ref([])
 	let portfolioItemsCumm = ref([])
@@ -114,6 +120,7 @@
 		})
 	}
 	async function getMonthDetails() {
+
 		if ( detailsLoading ) return false
 
 		detailsLoading = true
