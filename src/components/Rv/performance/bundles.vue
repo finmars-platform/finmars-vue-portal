@@ -55,16 +55,21 @@
 			console.log('No end_date:', props.end_date)
 			return false
 		}
+
 		fetchPortfolioBundles()
 	}
 
 	async function fetchPortfolioBundles() {
-
 		// readyStatusData.bundles = false;
 
 		let res = await useApi('portfolioBundles.get');
-		bundles.value = res.results
-			.filter(o => !props.reportOptions?.bundles || props.reportOptions.bundles.includes(o.id) );
+
+		bundles.value = res.results;
+
+		if ( props.reportOptions?.bundles?.length ) {
+			bundles.value = bundles.value
+				.filter(o => !props.reportOptions?.bundles || props.reportOptions.bundles.includes(o.id) );
+		}
 		// readyStatusData.bundles = true;
 
 		preriodItems.value = []

@@ -21,17 +21,19 @@
 
 	watch(
 		() => props.yearData,
-		() => {
-			updateChart( props.yearData.datasetMonth, props.yearData.datasetLine )
-		}
+		() => updateChart( props.yearData.datasetMonth, props.yearData.datasetLine )
 	)
 
 	function updateChart( datasetMonth, datasetLine ) {
 		if ( !chart ) createChart()
 
 		chart.data.datasets[0].data = datasetMonth
-		chart.data.datasets[0].backgroundColor =
-			datasetMonth.map(item => item > 0 ? '#a5d9c9' : '#fac878')
+		chart.data.datasets[0].backgroundColor = [];
+
+		if (datasetMonth) {
+			chart.data.datasets[0].backgroundColor =
+				datasetMonth.map(item => item > 0 ? '#a5d9c9' : '#fac878')
+		}
 
 		chart.data.datasets[1].data = datasetLine
 
