@@ -32,7 +32,7 @@
 
 		<template #default="{ close }">
 
-			<div>
+			<div style="width:562px;">
 
 				<div class="c_datepicker" :class="{'dates_range': rangeOfDates}">
 					<div class="flex-row">

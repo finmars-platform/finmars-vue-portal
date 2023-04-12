@@ -236,7 +236,7 @@
 
 			if (positionX + popupWidth > windowWidth) {
 				popup.value.style.right = '0';
-				popup.value.style.left = "";
+				popup.value.style.left = "auto";
 
 			} else {
 				popup.value.style.left = positionX + 'px';
@@ -245,7 +245,7 @@
 
 			if (positionY + popupHeight > windowHeight) {
 				popup.value.style.bottom = '0';
-				popup.value.style.top = "";
+				popup.value.style.top = "auto";
 
 			}
 			else {
