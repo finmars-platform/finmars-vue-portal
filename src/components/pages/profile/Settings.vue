@@ -34,6 +34,13 @@
 				v-model="formUser.data.codeEditor"
 				@update:modelValue="saveUser()"
 			/>
+
+			<FmCheckbox
+				:label="'Universal Input'"
+				v-model="universalInput"
+				@update:modelValue="updateUniversalInput()"
+			/>
+
 		</FmCard>
 	</div>
 </template>
@@ -45,6 +52,17 @@
 
 	let formUser = store.user
 	let errors = ref({})
+	let universalInput = ref()
+
+	async function updateUniversalInput(){
+
+     if (universalInput) {
+       window.localStorage.setItem("universalInputEnabled", "true")
+		 } else {
+			 window.localStorage.setItem("universalInputEnabled", "false")
+		 }
+
+	}
 
 	async function saveUser() {
 		let res = await useApi('me.put', { body: formUser })
