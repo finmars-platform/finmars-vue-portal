@@ -409,7 +409,7 @@ return reactive(
 				},
 				reportOptions: {
 					begin_date: null,
-					end_date: moment(new Date).format('YYYY-MM-DD'),
+					end_date: dayjs(new Date).format('YYYY-MM-DD'),
 					report_currency: ecosystemDefaults.currency || null,
 					report_currency_object: reportCurrencyObj,
 					calculation_type: "time_weighted",

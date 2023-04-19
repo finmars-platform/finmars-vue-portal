@@ -1,11 +1,10 @@
 <template>
 	<BaseLayoutsManager
 		:layouts="dashStore.layoutList"
-		:isLayoutDefault="isLayoutDefault"
 
-
+		@createNewLayout="create"
 	/>
-	<!-- @createNewLayout="createNewLayout"
+	<!--
 		@save="saveLayout"
 		@saveAs="openSaveAsModal = true"
 		@setAsDefault="setAsDefault"
@@ -16,32 +15,24 @@
 
 <script setup>
 
-	const router = useRouter();
-	const route = useRoute();
-	const dashStore = useStoreDashboard();
-
-	let props = defineProps({
+	const props = defineProps({
 		layouts: Array,
 		autosaveLayout: Object,
 		loadingLayout: Boolean,
 		loadingLayoutsList: Boolean,
 
 		isLayoutDefault: Function
-	});
+	})
 
+	const dashStore = useStoreDashboard();
 
-	let emit = defineEmits([
-		'createNewLayout',
-		'setAsDefault',
-		'save',
-		'saveAs',
-		'export',
-		'openLayoutsList',
-		'openInvites',
-		'rename',
-		'delete',
-	]);
+	function create() {
+		dashStore.activeLayoutId = null;
 
+		dashStore.components = []
+		dashStore.tabs = []
+		dashStore.props = []
+	}
 
 
 </script>

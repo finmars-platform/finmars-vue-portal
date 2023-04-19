@@ -134,7 +134,7 @@
 
 <script setup>
 
-	import moment from 'moment'
+	import dayjs from 'dayjs'
 
 	const props = defineProps({
 		db: Object
@@ -169,8 +169,8 @@
 
 	let showActions = ref(false)
 
-	let dateKey = moment( props.db.license_expiry_date )
-	let diffDateKey = dateKey.diff(moment(), 'days')
+	let dateKey = dayjs( props.db.license_expiry_date )
+	let diffDateKey = dateKey.diff(dayjs(), 'days')
 
 	let status = computed(() => {
 		if ( !props.db.is_initialized ) return 'Workspace is initializing'

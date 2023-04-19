@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-	import moment from "moment";
+	import dayjs from "dayjs";
 
 	const layoutsStore = useLayoutsStore();
 

@@ -55,7 +55,7 @@
 </template>
 
 <script setup>
-	import moment from 'moment'
+	import dayjs from 'dayjs'
 
 	defineProps([
 		'item'
@@ -81,7 +81,7 @@
 		useNotify({type: 'success', title: 'Copied successfully'})
 	}
 	function fromatDate( date ) {
-		return moment( date ).format('DD.MM.YYYY LT')
+		return dayjs( date ).format('DD.MM.YYYY LT')
 	}
 </script>
 

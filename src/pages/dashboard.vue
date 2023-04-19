@@ -4,27 +4,6 @@
 			<template #leftActions>
 				<PagesDashboardLayoutManager
 				/>
-				<template v-if="!isEdit">
-					<FmSelect
-						class="m-b-0 m-t-0"
-						v-model="dashStore.activeLayoutId"
-						:items="dashStore.layoutList"
-						label="Layout"
-					/>
-				</template>
-
-				<div class="flex" v-else>
-					<BaseInput
-						class="bi_no_margins m-t-0 m-r-4"
-						v-model="dashStore.layout.name"
-						label="Name"
-					/>
-					<BaseInput
-						class="bi_no_margins m-t-0"
-						v-model="dashStore.layout.user_code"
-						label="User code"
-					/>
-				</div>
 			</template>
 
 			<template #rightActions>
@@ -37,6 +16,7 @@
 					<FmBtn type="text" @click="cancelEdit()">cancel</FmBtn>
 					<FmBtn @click="save()">save</FmBtn>
 				</template>
+				<FmIcon btn icon="settings" />
 			</template>
 		</FmHorizontalPanel>
 
@@ -141,12 +121,12 @@
 		editor.navigateFileStart();
 	}
 	let topComponents = computed(() => {
-		return dashStore.widgets.filter((item) => {
+		return dashStore.components.filter((item) => {
 			return item.tab == '1'
 		})
 	})
 	let mainComponents = computed(() => {
-		return dashStore.widgets.filter((item) => {
+		return dashStore.components.filter((item) => {
 			return item.tab == dashStore.activeTab
 		})
 	})

@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-	import moment from 'moment'
+	import dayjs from 'dayjs'
 
 	let emit = defineEmits(['update:modelValue'])
 	let props = defineProps({workspaceId: String})
@@ -80,7 +80,7 @@
 		emit('update:modelValue', false)
 	}
 	function fromatDate( date ) {
-		return moment( date ).format('DD.MM.YYYY HH:mm')
+		return dayjs( date ).format('DD.MM.YYYY HH:mm')
 	}
 </script>
 
