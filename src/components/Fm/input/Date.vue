@@ -39,7 +39,7 @@
 
 <script setup>
 
-	import moment from "moment";
+	import dayjs from "dayjs";
 
 	let props = defineProps({
 		modelValue: String,
@@ -78,7 +78,7 @@
 
 			if (
 				error.value && error.value.code === 40 &&
-				props.modelValue && moment(props.modelValue, "YYYY-MM-DD", true).isValid()
+				props.modelValue && dayjs(props.modelValue, "YYYY-MM-DD", true).isValid()
 			) {
 
 				error.value = null;
@@ -150,7 +150,7 @@
 
 	const validateValue = useDebounce(function (newValue) {
 
-		const notValid = !moment(newValue, "YYYY-MM-DD", true).isValid()
+		const notValid = !dayjs(newValue, "YYYY-MM-DD", true).isValid()
 
 		if (notValid) {
 			error.value = {code: 40, message: "Date has wrong format. Use this format instead: YYYY-MM-DD."}

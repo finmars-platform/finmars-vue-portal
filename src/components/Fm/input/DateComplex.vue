@@ -207,7 +207,7 @@
 
 <script setup>
 
-	import moment from 'moment';
+	import dayjs from 'dayjs';
 	import {useDateStringIsValid} from "../../../composables/useUtils";
 
 	let props = defineProps({
@@ -297,7 +297,7 @@
 
 			if (firstCalendar.value) {
 
-				const datepickerVal = moment(props.firstDate, 'YYYY-MM-DD', true).isValid() ? props.firstDate : undefined;
+				const datepickerVal = dayjs(props.firstDate, 'YYYY-MM-DD', true).isValid() ? props.firstDate : undefined;
 				usePickmeup(firstCalendar.value).set_date(datepickerVal);
 
 			}
@@ -464,12 +464,12 @@
 	}
 
 	function applyFirstDate (date) {
-		fDate.value = moment(date).format('YYYY-MM-DD');
+		fDate.value = dayjs(date).format('YYYY-MM-DD');
 		usePickmeup(firstCalendar.value).set_date(date);
 	}
 
 	const applySecondDate = function (date) {
-		sDate.value = moment(date).format('YYYY-MM-DD');
+		sDate.value = dayjs(date).format('YYYY-MM-DD');
 		usePickmeup(secondCalendar.value).set_date(date);
 	};
 
@@ -705,7 +705,7 @@
 				fdOptions.value.datepickerMode = 'today';
 				fdOptions.value.expression = 'now()';
 
-				fDate.value = moment(new Date()).format('YYYY-MM-DD'); // today's date
+				fDate.value = dayjs(new Date()).format('YYYY-MM-DD'); // today's date
 
 				usePickmeup(firstCalendar.value).set_date(new Date(fDate.value));
 
@@ -802,19 +802,19 @@
 			const dateFrom = firstDateConv.value > secondDateConv.value ? secondDateConv.value : firstDateConv.value;
 			const dateTo = firstDateConv.value > secondDateConv.value ? firstDateConv.value : secondDateConv.value;
 
-			const ymdDate = moment(date).format('YYYY-MM-DD');
+			const ymdDate = dayjs(date).format('YYYY-MM-DD');
 
 
-			if (ymdDate === moment(dateFrom).format('YYYY-MM-DD') &&
-				ymdDate === moment(dateTo).format('YYYY-MM-DD')) {
+			if (ymdDate === dayjs(dateFrom).format('YYYY-MM-DD') &&
+				ymdDate === dayjs(dateTo).format('YYYY-MM-DD')) {
 
 				return {class_name: "custom-pmu-day-in-range"}
 
 			}
-			else if (ymdDate === moment(dateFrom).format('YYYY-MM-DD')) {
+			else if (ymdDate === dayjs(dateFrom).format('YYYY-MM-DD')) {
 				return {class_name: "custom-pmu-date-from custom-pmu-day-in-range"};
 
-			} else if (ymdDate === moment(dateTo).format('YYYY-MM-DD')) {
+			} else if (ymdDate === dayjs(dateTo).format('YYYY-MM-DD')) {
 				return {class_name: "custom-pmu-date-to custom-pmu-day-in-range"};
 			}
 

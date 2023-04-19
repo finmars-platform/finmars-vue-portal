@@ -76,7 +76,7 @@
 </template>
 
 <script setup>
-	import moment from 'moment'
+	import dayjs from 'dayjs'
 
 	let emit = defineEmits(['cancel'])
 	const store = useStore();
@@ -105,7 +105,7 @@
 	});*/
 
 	function formatDate(date) {
-		return moment(date).format('dd/MM/yyyy HH:mm');
+		return dayjs(date).format('dd/MM/yyyy HH:mm');
 	}
 
 	function getDownloadLink() {

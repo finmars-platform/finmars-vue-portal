@@ -1,9 +1,8 @@
 <template>
 
-	<FmMenu attach="body"
+	<FmMenu
 					v-model:opened="menuIsOpened"
-					:disabled="loadingLayout"
-					testProp="layoutsManager">
+					:disabled="loadingLayout">
 
 		<template #btn="{ isOpen }">
 			<FmBtn type="text"
@@ -325,13 +324,6 @@
 		}).map(lLayout => lLayout.user_code);
 
 	});
-
-	let endpoints = {
-		'transaction-type': 'transaction-type.get',
-		'account-type': 'account-type.get',
-	}
-
-	useApi( endpoints[entity] )
 
 	let isLayoutDefault = layout => layout.is_default;
 

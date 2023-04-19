@@ -1,4 +1,4 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 export function useDebounce(func, wait, immediate) {
 
@@ -58,7 +58,7 @@ export function fmThrottle(fn, wait, options) {
  * @returns {boolean}
  */
 export function useDateStringIsValid (date) {
-	return moment(date, 'YYYY-MM-DD', true).isValid();
+	return dayjs(date, 'YYYY-MM-DD', true).isValid();
 }
 
 const regExpSpecials = [
