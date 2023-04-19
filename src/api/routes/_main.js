@@ -204,6 +204,9 @@ export default {
 	expression: {
 		post: prefix + '/utils/expression/',
 	},
+	transactionComplexFiltered: {
+		post: prefix + '/transactions/complex-transaction-ev/filtered/',
+	},
 
 
 	// Надо отделить

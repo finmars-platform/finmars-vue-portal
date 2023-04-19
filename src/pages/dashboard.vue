@@ -2,6 +2,8 @@
 	<div>
 		<FmHorizontalPanel>
 			<template #leftActions>
+				<PagesDashboardLayoutManager
+				/>
 				<template v-if="!isEdit">
 					<FmSelect
 						class="m-b-0 m-t-0"
