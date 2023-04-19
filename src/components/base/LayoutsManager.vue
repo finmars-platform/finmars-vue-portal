@@ -11,7 +11,7 @@
 						 class="lm_open_btn"
 						 :disabled="loadingLayout"
 
-			>{{ viewerData.listLayout.name }} <FmIcon :icon="isOpen ? 'arrow_drop_up' : 'arrow_drop_down'" style="cursor: inherit;" /></FmBtn>
+			>{{ 'viewerData.listLayout.name' }} <FmIcon :icon="isOpen ? 'arrow_drop_up' : 'arrow_drop_down'" style="cursor: inherit;" /></FmBtn>
 		</template>
 
 		<template #default="{ close }">
@@ -79,7 +79,7 @@
 
 						<FmBtn type="text"
 									 class="menu_item"
-									 :disabled="viewerData.newLayout"
+									 :disabled="!'viewerData.newLayout'"
 									 @click="emit('save')">
 							<span class="material-icons">save</span>
 							Save
@@ -171,7 +171,7 @@
 
 					<FmBtn type="text"
 								 class="menu_item"
-								 :disabled="viewerData.newLayout"
+								 :disabled="'viewerData.newLayout'"
 								 @click="renameIsOpened = true, close()">
 						<span class="material-icons">create</span>
 						Rename
@@ -214,7 +214,7 @@
 
 					<FmBtn type="text"
 								 class="menu_item"
-								 :disabled="viewerData.newLayout || viewerData.listLayout.is_default"
+								 :disabled="'viewerData.newLayout || viewerData.listLayout.is_default'"
 								 @click="emit('setAsDefault')">
 						<span class="material-icons">home</span>
 						Make default
@@ -241,8 +241,8 @@
 	</FmMenu>
 
 	<ModalNameUserCode title="Rename layout"
-										 :name="viewerData.listLayout.name"
-										 :user_code="viewerData.listLayout.user_code"
+										 :name="'viewerData.listLayout.name'"
+										 :user_code="'viewerData.listLayout.user_code'"
 										 :occupiedUserCodes="occupiedUserCodes"
 										 v-model="renameIsOpened"
 
@@ -260,9 +260,9 @@
 		</template>
 	</ModalInfo>
 
-	<ModalLayoutShare :layout="viewerData.listLayout"
+	<!-- <ModalLayoutShare :layout="viewerData.listLayout"
 										:layoutType="viewerData.isReport ? 'ui.reportlayout' : 'ui.listlayout'"
-										v-model="sharingIsOpened" />
+										v-model="sharingIsOpened" /> -->
 
 </template>
 
@@ -280,7 +280,7 @@
 		isLayoutDefault: Function
 	});
 
-	const viewerData = inject('viewerData');
+	// const viewerData = inject('viewerData');
 
 	let emit = defineEmits([
 		'createNewLayout',
@@ -320,11 +320,18 @@
 
 		return props.layouts.filter(lLayout => {
 
-			return lLayout.user_code !== viewerData.listLayout.user_code
+			return lLayout.user_code !== 'viewerData.listLayout.user_code'
 
 		}).map(lLayout => lLayout.user_code);
 
 	});
+
+	let endpoints = {
+		'transaction-type': 'transaction-type.get',
+		'account-type': 'account-type.get',
+	}
+
+	useApi( endpoints[entity] )
 
 	let isLayoutDefault = layout => layout.is_default;
 
