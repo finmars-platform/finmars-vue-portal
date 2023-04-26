@@ -16,6 +16,7 @@ export default defineStore({
 				proxies: []
 			},
 			// END DATA
+			isEdit: true,
 			layoutList: [],
 			activeLayoutId: null,
 			activeTab: null,
@@ -29,18 +30,22 @@ export default defineStore({
 	actions: {
 		async init() {
 			await this.getLayouts()
-			this.activeTab = this.tabs[0]?.id
 
 			watch(() => this.activeLayoutId, () => {
 				if ( !this.layout.data ) return false
+				console.log('this.layout.data:', this.layout.data)
 
-				this.widgets = this.layout.data.widgets || []
+				this.components = this.layout.data.components || []
 				this.tabs = this.layout.data.tabs || []
-				this.scope = this.layout.data.scope || []
+				this.activeTab = this.tabs[0]?.id
+
+				if ( this.layout.data.props ) this.props = this.layout.data.props
+
+				this.setPropsWatchers()
 			})
 		},
 		getWidget(id) {
-			return this.widgets.find(item => item.id == id)
+			return this.components.find(item => item.uid == id)
 		},
 		async getLayouts() {
 			let dashboardLayout = localStorage.getItem('dashboardLayout')
@@ -52,58 +57,62 @@ export default defineStore({
 			if ( res.error || !res.results.length ) return false
 
 			this.layoutList = res.results
-			this.activeLayoutId = res.results[0].id
+			this.activeLayoutId = this.activeLayoutId || res.results[0].id
 
-			this.widgets = this.layout.data.widgets || []
+			this.components = this.layout.data.components || []
 			this.tabs = this.layout.data.tabs || []
-			this.scope = this.layout.data.scope || []
+			if ( this.layout.data.props ) {
+				this.layout.data.props.inputs.forEach(prop => prop.__val = prop.default_value)
+				this.props = this.layout.data.props
+			}
 
 			this.setPropsWatchers()
 			// console.clear()
-			console.table(this.scope)
+			// console.table(this.props)
 		},
 		setPropsWatchers() {
-			this.scope.forEach((prop) => {
-				if ( prop.direct != 'output' || prop.__unwatch ) return false
+			this.props.outputs.forEach((prop) => {
+				if ( prop.__unwatch ) return false
 
 				prop.__unwatch = watch(
 					() => prop.__val,
 					(newVal, oldVal) => {
-						let id = prop.id
-						let props = this.scope.filter(item => item.parents && item.parents.includes(id) )
+						let uid = prop.uid
+						let props = this.props.inputs.filter(item => item.subscribedTo.includes(uid) )
+						console.log('props:', props)
 
 						let log = {
 							name: prop.name,
-							componentName: this.widgets.find(item => item.id == prop.cid).user_code,
+							componentName: this.components.find(item => item.uid == prop.component_id).user_code,
 							newVal: newVal,
 							oldVal: oldVal,
 							time: dayjs().format('HH:mm:ss'),
 							children: []
 						}
 
-						console.group(
-							`%s / ${prop.name} %c[${prop.__val}]`,
-							`${this.widgets.find(item => item.id == prop.cid).user_code}`,
-							'font-size: 16px;'
-						)
+						// console.group(
+						// 	`%s / ${prop.name} %c[${prop.__val}]`,
+						// 	`${this.widgets.find(item => item.id == prop.cid).user_code}`,
+						// 	'font-size: 16px;'
+						// )
 
 						props.forEach(childProp => {
 							log.children.push({
 								name: childProp.name,
-								componentName: this.widgets.find(item => item.id == childProp.cid).user_code,
+								componentName: this.components.find(item => item.uid == childProp.component_id).user_code,
 								newVal: prop.__val,
 								oldVal: childProp.__val,
 							})
 
 							childProp.__val = prop.__val
 
-							console.log(
-								`=> ${this.widgets.find(item => item.id == childProp.cid).user_code} / %c${childProp.name}`,
-								'font-size: 14px;'
-							)
+							// console.log(
+							// 	`=> ${this.components.find(item => item.id == childProp.cid).user_code} / %c${childProp.name}`,
+							// 	'font-size: 14px;'
+							// )
 						})
 
-						console.groupEnd()
+						// console.groupEnd()
 
 						this.__log.push(log)
 					}
@@ -111,13 +120,13 @@ export default defineStore({
 			})
 		},
 		async getHistory(wid) {
-			let widget = this.widgets.find(item => item.id == wid)
+			let widget = this.components.find(item => item.uid == wid)
 
-			let list = this.scope.filter((prop) => prop.cid == widget.id)
+			let list = this.props.inputs.filter((prop) => prop.component_id == widget.uid)
 			let props = {}
 
 			list.forEach((prop) => {
-				props[prop.name] = prop.__val
+				props[prop.key] = prop.__val
 			})
 
 			let apiOpts = {
@@ -132,6 +141,7 @@ export default defineStore({
 			}
 
 			this.history = await useApi('widgetsHistory.get', apiOpts)
+			if ( this.history.error ) return false
 
 			let colors = this.generateColors();
 
@@ -220,9 +230,9 @@ export default defineStore({
 						name: this.layout.name + ' dashboardV2@',
 						user_code: this.layout.user_code,
 						data: {
-							widgets: this.widgets,
+							components: this.components,
 							tabs: this.tabs,
-							scope: this.scope,
+							props: this.props,
 						}
 					}
 				})
@@ -239,12 +249,14 @@ export default defineStore({
 					body: {
 						user_code: this.layout.user_code,
 						data: {
-							widgets: this.widgets,
+							components: this.components,
 							tabs: this.tabs,
-							scope: this.scope,
+							props: this.props,
 						}
 					}
 				})
+
+				this.isEdit = false
 
 			}
 
@@ -260,32 +272,40 @@ export default defineStore({
 
 			this.getLayouts()
 		},
-		removeWidget( id ) {
-			let index = this.widgets.findIndex(item => item.id == id)
+		removeWidget( uid ) {
+			let index = this.components.findIndex(item => item.uid == uid)
 
 			if ( index === -1 ) throw new Error('[Store:removeWidget] ID not find')
 
-			this.scope
-				.filter(item => item.cid == this.widgets[index].id)
+			this.props.inputs
+				.filter(item => item.component_id == this.components[index].uid)
 				.forEach((prop) => {
-					let index = this.scope.findIndex(item => item.id == prop.id)
+					let index = this.props.inputs.findIndex(item => item.uid == prop.uid)
 
 					if ( index === -1 ) return false
 
-					if ( this.scope[index].direct == 'output' ) {
-						this.scope
-							.filter(item => item.parents && item.parents.includes(this.scope[index].id) )
-							.forEach((item) => {
-								let indexParent = item.parents.findIndex(id => id == this.scope[index].id)
-
-								item.parents.splice(indexParent, 1)
-							})
-					}
-
-					this.scope.splice(index, 1)
+					this.props.inputs.splice(index, 1)
 				})
 
-			this.widgets.splice(index, 1)
+			this.props.outputs
+				.filter(item => item.component_id == this.components[index].uid)
+				.forEach((prop) => {
+					let index = this.props.outputs.findIndex(item => item.uid == prop.uid)
+
+					if ( index === -1 ) return false
+
+					this.props.inputs
+						.filter(item => item.subscribedTo.includes(this.props.outputs[index].uid) )
+						.forEach((item) => {
+							let indexParent = item.subscribedTo.findIndex(id => id == this.props.outputs[index].uid)
+
+							item.subscribedTo.splice(indexParent, 1)
+						})
+
+					this.props.outputs.splice(index, 1)
+				})
+
+			this.components.splice(index, 1)
 		}
 	},
 	getters: {

@@ -1,15 +1,18 @@
 <template>
 	<BaseLayoutsManager
 		:layouts="dashStore.layoutList"
+		:activeLayout="dashStore.layout"
 
 		@createNewLayout="create"
+		@changeLayout="dashStore.activeLayoutId = $event"
+		@save="saveLayout"
+		@delete="deleteLayout"
 	/>
 	<!--
-		@save="saveLayout"
-		@saveAs="openSaveAsModal = true"
+
 		@setAsDefault="setAsDefault"
 		@rename="renameLayout"
-		@delete="deleteLayout"
+
 		@export="openLayoutExport" -->
 </template>
 
@@ -28,10 +31,21 @@
 
 	function create() {
 		dashStore.activeLayoutId = null;
+		dashStore.isEdit = true;
 
 		dashStore.components = []
 		dashStore.tabs = []
-		dashStore.props = []
+		dashStore.props = {
+			inputs: [],
+			outputs: [],
+			proxies: []
+		}
+	}
+	function saveLayout() {
+		dashStore.saveLayout()
+	}
+	function deleteLayout() {
+		dashStore.deleteLayout()
 	}
 
 

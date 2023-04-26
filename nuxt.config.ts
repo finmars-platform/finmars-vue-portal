@@ -18,11 +18,7 @@ export default defineNuxtConfig({
 	},
 	ssr: false,
 	imports: {
-		dirs: [
-			'stores',
-			'composables',
-			'composables/*/index.{ts,js,mjs,mts}'
-		]
+		dirs: ['stores']
 	},
 	app: {
 		head: {
@@ -34,8 +30,7 @@ export default defineNuxtConfig({
 		pageTransition: { name: 'page', mode: 'out-in' }
 	},
 	modules: [
-    ['@pinia/nuxt'],
-		'@nuxt/image-edge'
+    ['@pinia/nuxt']
   ],
 	css: [
 		"~/assets/scss/main.scss",
