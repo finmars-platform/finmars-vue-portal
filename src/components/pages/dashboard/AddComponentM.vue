@@ -9,9 +9,9 @@
 			<div class="fm_list">
 				<div class="fm_list_item"
 					v-for="item in systems"
-					:class="{active: activeWidget.id == item.id}"
-					@click="activeWidget = item"
-					@dblclick="activeWidget = item"
+					:class="{active: activeComp.id == item.id}"
+					@click="activeComp = item"
+					@dblclick="activeComp = item"
 				>
 					{{ item.name }}
 				</div>
@@ -22,9 +22,9 @@
 			<div class="fm_list">
 				<div class="fm_list_item"
 					v-for="item in bases"
-					:class="{active: activeWidget.id == item.id}"
-					@click="activeWidget = item"
-					@dblclick="activeWidget = item"
+					:class="{active: activeComp.id == item.id}"
+					@click="activeComp = item"
+					@dblclick="activeComp = item"
 				>
 					{{ item.name }}
 				</div>
@@ -36,7 +36,7 @@
 				<h4>General</h4>
 
 				<BaseInput
-					v-model="activeWidget.user_code"
+					v-model="activeComp.user_code"
 					label="User code"
 					required
 				/>
@@ -50,7 +50,7 @@
 			<div class="settings_coll">
 				<h4>Inputs</h4>
 
-				<div v-for="item in activeWidget.inputs">
+				<div v-for="item in activeComp.inputs">
 					<BaseInput
 						v-if="!propMode[item.name]"
 						v-model="item.value"
@@ -76,7 +76,7 @@
 			<div class="settings_coll">
 				<h4>Outputs</h4>
 
-				<div v-for="item in activeWidget.outputs">
+				<div v-for="item in activeComp.outputs">
 					<BaseMultiSelectInput
 						v-model="item.children"
 						:title="item.name"
@@ -90,7 +90,7 @@
 		<template #controls="{cancel}">
 			<div class="flex sb">
 				<FmBtn type="text" @click="step = 'component'">cancel</FmBtn>
-				<FmBtn @click="step == 'settings' ? addComponent(cancel) : step = 'settings'">
+				<FmBtn @click="continueAddition(cancel)">
 					{{ step == 'settings' ? 'finish' : 'next' }}
 				</FmBtn>
 			</div>
@@ -106,11 +106,13 @@
 		tab: String,
 	})
 
+	const emit = defineEmits(['addMatrix'])
+
 	const dashStore = useStoreDashboard()
 
 	let activeTab = ref(props.tab)
 	let step = ref('component')
-	let activeWidget = ref({})
+	let activeComp = ref({})
 	let propMode = reactive({})
 	let systems = computed(() => {
 		return widgetList.filter((item) => item.group == 'system')
@@ -130,31 +132,46 @@
 			.map((prop) => {
 				return {
 					id: prop.id,
-					name: `${dashStore.widgets.find(item => item.id == prop.cid).user_code}/${prop.name}[${prop.__val}]`,
+					name: `${dashStore.components.find(item => item.id == prop.cid).user_code}/${prop.name}[${prop.__val}]`,
 				}
 			})
 
 		return JSON.parse(JSON.stringify(newProps))
 	}
 
+	function continueAddition(cancel) {
+		console.log("testing1090 continueAddition", activeComp, activeComp.value.id);
+		if (activeComp.value.id === 'matrix') {
+
+			emit('addMatrix');
+			cancel();
+
+		}
+
+		if (step.value === 'settings') addComponent(cancel);
+
+		step.value = 'settings';
+
+	}
+
 	function addComponent( cancelFunc ) {
 		let new_widget = {
-			name: activeWidget.value.name,
-			user_code: activeWidget.value.user_code,
-			componentName: activeWidget.value.id,
-			colls: activeWidget.value.minColls,
-			rows: activeWidget.value.minRows,
-			minColls: activeWidget.value.minColls,
-			minRows: activeWidget.value.minRows,
+			name: activeComp.value.name,
+			user_code: activeComp.value.user_code,
+			componentName: activeComp.value.id,
+			colls: activeComp.value.minColls,
+			rows: activeComp.value.minRows,
+			minColls: activeComp.value.minColls,
+			minRows: activeComp.value.minRows,
 			settings: {},
 			tab: activeTab.value,
-			id: generateId(activeWidget.value.id),
+			id: generateId(activeComp.value.id),
 		}
 
 		dashStore.$patch((state) => {
-			dashStore.widgets.push(new_widget)
+			dashStore.components.push(new_widget)
 
-			activeWidget.value.inputs.forEach((prop) => {
+			activeComp.value.inputs.forEach((prop) => {
 				state.scope.push({
 					id: new_widget.id + Math.random(0, 1),
 					cid: new_widget.id,
@@ -165,7 +182,7 @@
 					parents: prop.parents,
 				})
 			})
-			activeWidget.value.outputs.forEach((prop) => {
+			activeComp.value.outputs.forEach((prop) => {
 				const propId = new_widget.id + Math.random(0, 1)
 
 				let newProp = reactive({

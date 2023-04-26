@@ -124,6 +124,24 @@ export default [
 	// 	]
 	// },
 	{
+		id: 'matrix',
+		name: 'Matrix',
+		group: 'base',
+		minColls: 6,
+		minRows: 4,
+		inputs: [],
+		settings: [
+			{
+				name: 'Absciss',
+				propName: '',
+			},
+			{
+				name: 'Ordinate',
+				propName: '',
+			}
+		]
+	},
+	{
 		id: 'PerformanceBundles',
 		name: 'PerformanceBundles',
 		group: 'base',

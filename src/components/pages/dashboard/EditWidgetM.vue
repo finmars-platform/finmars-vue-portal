@@ -77,7 +77,7 @@
 	})
 	let dashStore = useStoreDashboard()
 	let propMode = reactive({})
-	let widget = dashStore.widgets.find(item => item.id == props.wid) || {}
+	let widget = dashStore.components.find(item => item.id == props.wid) || {}
 	let editable = reactive( JSON.parse(JSON.stringify(widget)) )
 
 	let scopeProps = ref({})
@@ -112,7 +112,7 @@
 			.map((prop) => {
 				return {
 					id: prop.id,
-					name: `${dashStore.widgets.find(item => item.id == prop.cid).name} / ${prop.name}[${prop.__val}]`,
+					name: `${dashStore.components.find(item => item.id == prop.cid).name} / ${prop.name}[${prop.__val}]`,
 				}
 			})
 

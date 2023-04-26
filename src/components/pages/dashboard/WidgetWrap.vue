@@ -78,7 +78,7 @@
 			return false;
 		};
 
-		let component = dashStore.widgets.find((item) => item.id == elem.dataset.name)
+		let component = dashStore.components.find((item) => item.id == elem.dataset.name)
 		let startColls = component.colls
 
 		function onmousemove(e) {
@@ -105,7 +105,7 @@
 			return false;
 		};
 
-		let component = dashStore.widgets.find((item) => item.id == elem.dataset.name)
+		let component = dashStore.components.find((item) => item.id == elem.dataset.name)
 		let startRows = component.rows
 
 		function onmousemove(e) {

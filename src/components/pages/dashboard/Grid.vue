@@ -27,7 +27,16 @@
 			v-model="isOpenAddComponents"
 			:tab="tab"
 			@close="isOpenAddComponents = false"
+			@addMatrix="addMatrixIsOpen = true"
 		/>
+
+		<PagesDashboardAddMatrixModal
+			v-if="addMatrixIsOpen"
+			v-model="addMatrixIsOpen"
+			:tab="tab"
+			@close="addMatrixIsOpen = false"
+		/>
+
 	</div>
 </template>
 
@@ -41,6 +50,7 @@
 	})
 
 	let isOpenAddComponents = ref(false)
+	let addMatrixIsOpen = ref(false);
 
 	let gridElement = ref(null)
 	let shadowCells = ref([])
