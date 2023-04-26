@@ -4,15 +4,15 @@
 			'grid-column': 'span ' + component.colls,
 			'grid-row': 'span ' + component.rows,
 		}"
-		:data-name="component.id"
+		:data-name="component.uid"
 	>
-		<component v-if="!component._isEdit"
+		<component
 			class="widget_wrap"
 			:is="'Widgets' + component.componentName"
-			:wid="component.id"
+			:wid="component.uid"
 		/>
 		<div class="board_widget_controls"
-			v-if="isEdit"
+			v-if="dashStore.isEdit"
 		>
 			<div class="bwc_top flex sb aic">
 				<div>{{ component.name }} <b>[{{ component.scope }}]</b></div>
@@ -29,7 +29,7 @@
 							<div class="fm_list_item" @click="isEditWidget = true">
 								Settings
 							</div>
-							<div class="fm_list_item" @click="remove(component.id)">
+							<div class="fm_list_item" @click="remove(component.uid)">
 								Remove
 							</div>
 						</div>
@@ -47,7 +47,7 @@
 		<PagesDashboardEditWidgetM
 			v-if="isEditWidget"
 			v-model="isEditWidget"
-			:wid="component.id"
+			:wid="component.uid"
 		/>
 	</div>
 </template>
@@ -57,15 +57,11 @@
 		component: {
 			type: Object,
 			required: true
-		},
-		isEdit: {
-			type: Boolean,
-			required: true
 		}
 	})
 
-	let dashStore = useStoreDashboard()
-	let isEditWidget = ref(props.component._isEdit)
+	const dashStore = useStoreDashboard()
+	let isEditWidget = ref(false)
 
 	function resizeX(e) {
 		let elem = e.target.closest('.board_widget')
@@ -78,7 +74,7 @@
 			return false;
 		};
 
-		let component = dashStore.widgets.find((item) => item.id == elem.dataset.name)
+		let component = dashStore.components.find((item) => item.uid == elem.dataset.name)
 		let startColls = component.colls
 
 		function onmousemove(e) {
@@ -105,7 +101,7 @@
 			return false;
 		};
 
-		let component = dashStore.widgets.find((item) => item.id == elem.dataset.name)
+		let component = dashStore.components.find((item) => item.uid == elem.dataset.name)
 		let startRows = component.rows
 
 		function onmousemove(e) {

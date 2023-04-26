@@ -4,7 +4,7 @@
 			<slot name="btn" :isOpen="isOpen"></slot>
 		</div>
 
-		<!-- <Teleport :to="attach" :disabled="!attach"> -->
+		<Teleport :to="attach" :disabled="!attach">
 			<transition>
 				<div
 					v-if="isOpen"
@@ -16,7 +16,7 @@
 					<slot :close="toggle"></slot>
 				</div>
 			</transition>
-		<!-- </Teleport> -->
+		</Teleport>
 	</div>
 </template>
 
@@ -144,7 +144,7 @@
 		// Hack чтобы посчитать реальную ширину
 		popup.value.style.position = 'absolute'
 		popup.value.style.minWidth = `${popupRect.width}px`
-		popup.value.style.width = `auto`
+		popup.value.style.width = `100%`
 		// Y axios || if no anchor or anchor == bottom and top have distance
 		if (
 			(
