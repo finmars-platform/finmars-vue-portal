@@ -139,11 +139,11 @@
 			})
 			begin = firstTransaction.transaction_date
 		} else {
-			begin = dayjs(props.begin_date).add(-1, 'd').format('YYYY-MM-DD')
+			begin = dayjs(props.begin_date).format('YYYY-MM-DD')
 		}
 		const endDate = props.end_date
 
-		let end = dayjs(endDate).add(-1, 'd').format('YYYY-MM-DD')
+		let end = dayjs(endDate).format('YYYY-MM-DD')
 
 		let allMonths = await getReports({start: begin, end: end, ids: bundleId})
 
@@ -203,9 +203,9 @@
 				) return item[1]
 			}))
 
-			let end = year == dayjs(dateTo).year() ? dateTo.add(-1, 'd').format('YYYY-MM-DD') : `${year}-12-30`
+			let end = year == dayjs(dateTo).year() ? dateTo.format('YYYY-MM-DD') : `${year}-12-31`
 
-			let total = await getReports({start: `${year - 1}-12-31`, end: end, ids: bundleId})
+			let total = await getReports({start: `${year}-01-01`, end: end, ids: bundleId})
 			portfolioTotals.value.push( total.grand_return * 100 )
 		}
 		detailsLoading = false
