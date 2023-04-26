@@ -321,11 +321,9 @@
 	}
 
 	function setAsDefault(layoutLight) {
-
 		if (!isLayoutDefault(layoutLight)) {
 			emit('setAsDefault', JSON.parse(JSON.stringify(layoutLight)));
 		}
-
 	}
 
 	function onLayoutLinkClick (layoutId, closeMenuFn) {
@@ -337,7 +335,6 @@
 		// TODO write function for vue
 
 		closeMenuFn();
-		// viewerData.layoutToOpen = layoutId;
 		emit('changeLayout', layoutId)
 	}
 

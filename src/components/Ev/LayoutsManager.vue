@@ -1,5 +1,8 @@
 <template>
-	<BaseLayoutsManager :layouts="layoutsList"
+	<BaseLayoutsManager
+		v-bind="$attrs"
+		:activeLayout="viewerData.listLayout"
+		:layouts="layoutsList"
 											:autosaveLayout="autosaveLayout"
 											:loadingLayout="loadingLayout"
 											:loadingLayoutsList="loadingLayoutsList"
@@ -11,7 +14,9 @@
 											@setAsDefault="setAsDefault"
 											@rename="renameLayout"
 											@delete="deleteLayout"
-											@export="openLayoutExport" />
+											@export="openLayoutExport"
+		@changeLayout="viewerData.layoutToOpen = $event"
+	/>
 
 	<EvModalSaveLayoutAs v-model="openSaveAsModal"
 											 @layoutSaved="getLayouts" />
