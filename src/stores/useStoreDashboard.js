@@ -31,7 +31,6 @@ export default defineStore({
 
 			watch(() => this.activeLayoutId, () => {
 				if ( !this.layout.data ) return false
-				console.log('this.layout.data:', this.layout.data)
 
 				this.components = this.layout.data.components || []
 				this.tabs = this.layout.data.tabs || []
@@ -79,7 +78,6 @@ export default defineStore({
 					(newVal, oldVal) => {
 						let uid = prop.uid
 						let props = this.props.inputs.filter(item => item.subscribedTo.includes(uid) )
-						console.log('props:', props)
 
 						let log = {
 							name: prop.name,
@@ -128,7 +126,6 @@ export default defineStore({
 			list.forEach((prop) => {
 				props[prop.key] = prop.__val
 			})
-			console.log('props:', props)
 
 			let apiOpts = {
 				filters: {
@@ -218,10 +215,10 @@ export default defineStore({
 		},
 		async getHistoryNav(opts) {
  			if ( !this.history ) return false
-			console.log('this.history[opts.category][opts.date]:', this.history[opts.category][opts.date])
 			return this.history[opts.category][opts.date]
 		},
 		async getHistoryPnl(opts) {
+			console.log('opts:', opts)
 			if ( !this.history ) return false
 			return this.historyPnl[opts.category][opts.date]
 		},

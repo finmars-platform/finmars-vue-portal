@@ -120,10 +120,8 @@
 			status.value = 101
 			return false
 		}
-		// historyStats = await dashStore.getHistory(props.wid)
-	// 		updateData()
-
 		createChart()
+
 	})
 
 	watch(inputs, async () => {
@@ -177,7 +175,8 @@
 		let notNull = Object.entries(historyStats[outputs.value.choosed_category.__val])
 			.filter(item => item[1].total)
 
-		outputs.value.choosed_date.__val = notNull[notNull.length - 1][0]
+		if ( !outputs.value.choosed_date.__val )
+			outputs.value.choosed_date.__val = notNull[notNull.length - 1][0]
 	}
 
 	function updateData() {
@@ -290,6 +289,7 @@
 										.find(item => item.includes(date))
 
 									sum = historyStats[outputs.value.choosed_category.__val][newDate].total
+
 								})
 
 								return 'Total: ' + new Intl.NumberFormat('en-US', {
