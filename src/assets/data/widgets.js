@@ -364,17 +364,62 @@ export default [
 		_group: 'base',
 	},
 	{
-		id: 'ChartPnlDate',
+		uid: null,
+		user_code: null,
 		name: 'Chart P&L date',
-		group: 'base',
+		componentName: 'ChartPnlDate',
+
+		inputs: [
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'date',
+				name: 'Date',
+				type: 'date',
+				view: {
+					type: 'date'
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			},
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'portfolio',
+				name: 'Portfolio',
+				type: 'portfolio',
+				view: {
+					type: 'portfolio'
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			},
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'category_type',
+				name: 'Category type',
+				type: 'period_category',
+				view: {
+					type: 'input'
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			}
+		],
+		outputs: [],
+		settings: [],
+		scopes: [],
+
 		minColls: 4,
 		minRows: 4,
-		inputs: [
-			{name: 'date', user_code: 'Date', type: 'date', value: '', direct: 'input', subscribedTo: []},
-			{name: 'portfolio', user_code: 'Portfolio', type: 'id', value: '', direct: 'input', subscribedTo: []},
-			{name: 'category_type', user_code: 'Category type', direct: 'input', type: 'string', value: '', subscribedTo: []},
-		],
-		outputs: []
+		_group: 'base',
 	},
 	// {
 	// 	id: 'Matrix',
