@@ -6,6 +6,18 @@
 			v-model="prop.default_value"
 			:label="prop.name"
 		/>
+		<LazySelectorsCurrency
+			v-if="prop.view && prop.view.type == 'currency'"
+			class="prop_row"
+			v-model="prop.default_value"
+			:label="prop.name"
+		/>
+		<LazySelectorsBundle
+			v-if="prop.view && prop.view.type == 'bundle'"
+			class="prop_row"
+			v-model="prop.default_value"
+			:label="prop.name"
+		/>
 		<FmInputDate
 			class="bi_no_margins prop_row"
 			v-if="prop.view && prop.view.type == 'date'"

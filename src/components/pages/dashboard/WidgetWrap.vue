@@ -15,7 +15,7 @@
 			v-if="dashStore.isEdit"
 		>
 			<div class="bwc_top flex sb aic">
-				<div>{{ component.name }} <b>[{{ component.scope }}]</b></div>
+				<div>{{ component.name }}</div>
 				<div class="flex aic">
 					<FmMenu anchor="bottom right">
 						<template #btn>

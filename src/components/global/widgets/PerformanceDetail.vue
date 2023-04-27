@@ -1,7 +1,7 @@
 <template>
 	<RvPerformanceDetail
 		v-bind="inputs"
-
+		:calculation_type="widget.settings[0].calculation_type"
 
 		@setMonth="outputs.currentBundleYear.__val = $event"
 	/>
@@ -9,57 +9,30 @@
 
 <script setup>
 
-	let props = defineProps({
+	const props = defineProps({
 		wid: String
 	})
 	let dashStore = useStoreDashboard()
 	let widget = dashStore.getWidget(props.wid)
 
-	let inputs = computed(() => {
-		let props = dashStore.scope
-			.filter((prop) => prop.cid == widget.id && prop.direct == 'input')
+	const inputs = computed(() => {
+		let props = dashStore.props.inputs
+			.filter((prop) => prop.component_id == widget.uid)
 		let obj = {}
 
 		props.forEach((prop) => {
-			obj[prop.name] = prop.__val
+			obj[prop.key] = prop.__val
 		})
+
 		return obj
 	})
 
-	let test = {
-		pl_report: {
-			outputs: {
-				date_to: {},
-				date_from: {},
-			}
-		},
-		chart: {
-			inputs: {
-				date: {
-
-				},
-			}
-		},
-	}
-
-	// =========== Max's' way
-	// let inputs2 = computed(() => {
-	// 	let obj = {}
-
-	// 	for ( let prop in dashStore.scope['comp_1'].inputs ) {
-	// 		let propObj = dashStore.scope['comp_1'].inputs[prop]
-	// 		obj[propObj.name] = propObj.__val
-	// 	}
-
-	// 	return obj
-	// })
-
-	let outputs = computed(() => {
-		let props = dashStore.scope.filter((prop) => prop.cid == widget.id && prop.direct == 'output')
+	const outputs = computed(() => {
+		let props = dashStore.props.outputs.filter((prop) => prop.component_id == widget.uid)
 		let obj = {}
 
 		props.forEach((prop) => {
-			obj[prop.name] = prop
+			obj[prop.key] = prop
 		})
 		return obj
 	})

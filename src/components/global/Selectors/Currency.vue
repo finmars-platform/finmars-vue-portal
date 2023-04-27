@@ -1,7 +1,6 @@
 <template>
 	<FmSelect
-		:items="portfolios"
-		prop_name="user_code"
+		:items="currencies"
 		@update:modelValue="emits('selected', $event)"
 	/>
 </template>
@@ -10,13 +9,13 @@
 
 	const emits = defineEmits(['selected'])
 
-	let portfolios = ref([])
+	let currencies = ref([])
 
 	init()
 	async function init() {
-		let res = await useApi('portfolioLight.get')
+		let res = await useApi('currencyListLight.get')
 
-		portfolios.value = res.results
+		currencies.value = res.results
 	}
 </script>
 

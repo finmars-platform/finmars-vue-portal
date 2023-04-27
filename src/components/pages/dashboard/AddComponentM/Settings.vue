@@ -13,6 +13,15 @@
 				:items="tabList"
 				label="Tab"
 			/>
+			<h4>Settings</h4>
+
+			<FmSelect
+				v-for="stg in component.settings"
+				class="prop_row"
+				v-model="stg.default_value"
+				:label="stg.name"
+				:items="stg.view.items"
+			/>
 		</div>
 
 		<div class="settings_coll">

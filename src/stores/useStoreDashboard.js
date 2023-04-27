@@ -1,5 +1,3 @@
-import { defineStore } from "pinia";
-import widgetList from '~/assets/data/widgets.js'
 import dayjs from 'dayjs'
 
 export default defineStore({
@@ -16,7 +14,7 @@ export default defineStore({
 				proxies: []
 			},
 			// END DATA
-			isEdit: true,
+			isEdit: false,
 			layoutList: [],
 			activeLayoutId: null,
 			activeTab: null,
@@ -61,8 +59,10 @@ export default defineStore({
 
 			this.components = this.layout.data.components || []
 			this.tabs = this.layout.data.tabs || []
+			this.activeTab = this.tabs[0]?.id
 			if ( this.layout.data.props ) {
 				this.layout.data.props.inputs.forEach(prop => prop.__val = prop.default_value)
+				this.layout.data.props.outputs.forEach(prop => prop.__val = prop.default_value)
 				this.props = this.layout.data.props
 			}
 
@@ -128,6 +128,7 @@ export default defineStore({
 			list.forEach((prop) => {
 				props[prop.key] = prop.__val
 			})
+			console.log('props:', props)
 
 			let apiOpts = {
 				filters: {
@@ -216,7 +217,8 @@ export default defineStore({
 			]
 		},
 		async getHistoryNav(opts) {
-			if ( !this.history ) return false
+ 			if ( !this.history ) return false
+			console.log('this.history[opts.category][opts.date]:', this.history[opts.category][opts.date])
 			return this.history[opts.category][opts.date]
 		},
 		async getHistoryPnl(opts) {

@@ -1,26 +1,26 @@
 <template>
 	<FmInputDate
-		v-model="value"
-		@change="outputs.date.__val = value"
+		:modelValue="outputs.date.__val"
+		@update:modelValue="outputs.date.__val = $event"
 	/>
 </template>
 
 <script setup>
 
-	let props = defineProps({
+	const props = defineProps({
 		wid: String
 	})
 
+	const dashStore = useStoreDashboard()
+	let component = dashStore.getWidget(props.wid)
 	let value = ref('2022-09-09')
-	let dashStore = useStoreDashboard()
-	let widget = dashStore.getWidget(props.wid)
 
-	let outputs = computed(() => {
-		let props = dashStore.scope.filter((prop) => prop.cid == widget.id && prop.direct == 'output')
+	const outputs = computed(() => {
+		let props = dashStore.props.outputs.filter((prop) => prop.component_id == component.uid)
 		let obj = {}
 
 		props.forEach((prop) => {
-			obj[prop.name] = prop
+			obj[prop.key] = prop
 		})
 		return obj
 	})
