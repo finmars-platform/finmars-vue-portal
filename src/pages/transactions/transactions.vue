@@ -4,7 +4,7 @@
 		@refresh="refresh()"
 		v-slot="{ reportOptions }"
 	>
-		<ag-grid-vue
+		<!-- <ag-grid-vue
 			style="height: 100%;"
 			class="ag-theme-material"
 			:columnDefs="columnDefs"
@@ -15,15 +15,15 @@
 			:aggFuncs="aggFuncs"
 			:pagination="true"
 			:getContextMenuItems="getContextMenuItems"
-		/>
+		/> -->
 	</CommonEntityViewer>
 </template>
 
 <script setup>
 
-	import "ag-grid-community/styles/ag-grid.css";
-	import "ag-grid-community/styles/ag-theme-material.css";
-	import { AgGridVue } from "ag-grid-vue3";
+	// import "ag-grid-community/styles/ag-grid.css";
+	// import "ag-grid-community/styles/ag-theme-material.css";
+	// import { AgGridVue } from "ag-grid-vue3";
 
 	definePageMeta({
 		middleware: 'auth',
