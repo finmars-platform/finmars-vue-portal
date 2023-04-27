@@ -1,6 +1,8 @@
 <template>
 
-	<FmMenu :opened="menuIsOpened"
+	<FmMenu
+		v-bind="$attrs"
+		:opened="menuIsOpened"
 					:openOn="false"
 					attach="body"
 					class="width-100"

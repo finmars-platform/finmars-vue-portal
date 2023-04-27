@@ -134,7 +134,7 @@
 	async function getDay( ids ) {
 		let endDate = dayjs(props.end_date)
 
-		let day = dayjs(endDate).add(-1, 'd').format('YYYY-MM-DD')
+		let day = dayjs(endDate).format('YYYY-MM-DD')
 
 		return await getReports({start: day, end: day, ids, type: 'days'})
 	}
@@ -142,8 +142,8 @@
 	async function getMonth( ids ) {
 		let endDate = dayjs(props.end_date)
 
-		let start = dayjs(endDate).set('date', 1).add(-1, 'd').format('YYYY-MM-DD')
-		let end = dayjs(endDate).add(-1, 'd').format('YYYY-MM-DD')
+		let start = dayjs(endDate).set('date', 1).format('YYYY-MM-DD')
+		let end = dayjs(endDate).format('YYYY-MM-DD')
 
 		return await getReports({start, end, ids})
 
@@ -155,10 +155,9 @@
 		let start = dayjs('2022-01-01')
 			.year(endDate.year())
 			.quarter( endDate.quarter() )
-			.add(-1, 'd')
 			.format('YYYY-MM-DD')
 
-		let end = dayjs(endDate).add(-1, 'd').format('YYYY-MM-DD')
+		let end = dayjs(endDate).format('YYYY-MM-DD')
 
 		return await getReports({start, end, ids})
 	}
@@ -166,8 +165,8 @@
 	async function getYear( ids ) {
 		let endDate = dayjs(props.end_date)
 
-		let start = `${dayjs(endDate).year() - 1}-12-31`
-		let end = dayjs(endDate).add(-1, 'd').format('YYYY-MM-DD')
+		let start = `${dayjs(endDate).year()}-01-01`
+		let end = dayjs(endDate).format('YYYY-MM-DD')
 
 		return await getReports({start, end, ids})
 	}
@@ -175,8 +174,8 @@
 	async function getLastYear( ids ) {
 		let endDate = dayjs(props.end_date)
 
-		let start = `${dayjs(endDate).year() - 2}-12-31`
-		let end = `${dayjs(endDate).year() - 1}-12-30`
+		let start = `${dayjs(endDate).year() - 1}-01-01`
+		let end = `${dayjs(endDate).year() - 1}-12-31`
 
 		return await getReports({start, end, ids})
 	}
@@ -184,9 +183,9 @@
 	async function getYearBeforeLast( ids ) {
 		let endDate = dayjs(props.end_date)
 
-		let start = `${dayjs(endDate).year() - 3}-12-31`
+		let start = `${dayjs(endDate).year() - 2}-01-01`
 
-		let end = `${dayjs(endDate).year() - 2}-12-30`
+		let end = `${dayjs(endDate).year() - 2}-12-31`
 
 		return await getReports({start, end, ids})
 	}
@@ -202,7 +201,7 @@
 
 		let endDate = dayjs(props.end_date)
 
-		let end = dayjs(endDate).add(-1, 'd').format('YYYY-MM-DD')
+		let end = dayjs(endDate).format('YYYY-MM-DD')
 
 		return await getReports({start, end, ids})
 	}

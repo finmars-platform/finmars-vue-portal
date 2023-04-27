@@ -1,0 +1,125 @@
+<template>
+	<BaseModal
+		no_padding
+		title="Add component"
+	>
+		<PagesDashboardAddComponentMChooseComponent
+			v-if="step == 'component'"
+		/>
+
+		<PagesDashboardAddComponentMSettings
+			v-if="step == 'settings'"
+			:tab="tab"
+		/>
+
+		<template #controls="{cancel}">
+			<div class="flex sb">
+				<FmBtn type="text" @click="step = 'component'">cancel</FmBtn>
+				<FmBtn
+					@click="step == 'settings' ? addComponent(cancel) : step = 'settings'"
+				>
+					{{ step == 'settings' ? 'finish' : 'next' }}
+				</FmBtn>
+			</div>
+		</template>
+	</BaseModal>
+</template>
+
+<script setup>
+
+	const props = defineProps({
+		tab: Number,
+	})
+
+	const dashStore = useStoreDashboard()
+
+	let step = ref('component')
+	let component = ref({})
+
+	provide('component', component)
+
+	function addComponent( cancelFunc ) {
+		let new_widget = {
+			uid: generateId(component.value.componentName),
+			user_code: component.value.user_code,
+			name: component.value.name,
+			componentName: component.value.componentName,
+			tab: component.value.tab,
+			scopes: component.value.scopes,
+
+			colls: component.value.minColls,
+			rows: component.value.minRows,
+			minColls: component.value.minColls,
+			minRows: component.value.minRows,
+
+			settings: component.value.settings,
+		}
+
+		dashStore.$patch((state) => {
+			dashStore.components.push(new_widget)
+
+			component.value.inputs.forEach((prop) => {
+				state.props.inputs.push({
+					uid: new_widget.uid + ' ' + prop.name,
+					component_id: new_widget.uid,
+					user_code: prop.user_code,
+					name: prop.name,
+					type: prop.type,
+					key: prop.key,
+
+					view: prop.view,
+					subscribedTo: prop.subscribedTo,
+
+					default_value: prop.default_value,
+					__val: prop.default_value
+				})
+			})
+
+			component.value.outputs.forEach((prop) => {
+				let newProp = reactive({
+					uid: new_widget.uid + '_' + prop.name,
+					component_id: new_widget.uid,
+					user_code: prop.user_code,
+					name: prop.name,
+					type: prop.type,
+					key: prop.key,
+
+					view: prop.view,
+
+					default_value: prop.default_value,
+					__val: prop.default_value
+				})
+
+				state.props.outputs.push(newProp)
+
+				prop._children.forEach((uid) => {
+					let inputProp = state.props.inputs.find((item) => item.uid == uid)
+
+					inputProp.subscribedTo.push(newProp.uid)
+				})
+			})
+			dashStore.setPropsWatchers()
+		})
+		cancelFunc()
+	}
+	function generateId( id ) {
+		return id + Date.now()
+	}
+</script>
+
+<style lang="scss" scoped>
+	.settings {
+		padding: 20px;
+	}
+	.settings_coll {
+		width: 300px;
+
+		& + & {
+			padding-left: 20px;
+		}
+	}
+	.inherit_checkbox {
+		margin-top: -18px;
+		margin-bottom: 25px;
+	}
+</style>

@@ -1,7 +1,14 @@
 <template>
-	<FmInputDate
-		:modelValue="outputs.date.__val"
-		@update:modelValue="outputs.date.__val = $event"
+	<!-- <FmSelect
+		class="m-b-0"
+		attach="body"
+		v-model="outputs.currency.__val"
+		:items="currencies"
+	/> -->
+	<FmUnifiedDataSelect
+		v-model="outputs.currency.__val"
+		noBorders
+		content_type="currencies.currency"
 	/>
 </template>
 
@@ -10,10 +17,9 @@
 	const props = defineProps({
 		wid: String
 	})
-
 	const dashStore = useStoreDashboard()
+
 	let component = dashStore.getWidget(props.wid)
-	let value = ref('2022-09-09')
 
 	const outputs = computed(() => {
 		let props = dashStore.props.outputs.filter((prop) => prop.component_id == component.uid)
@@ -25,6 +31,12 @@
 		return obj
 	})
 
+	let currencies = ref([])
+
+	init()
+	async function init() {
+
+	}
 </script>
 
 <style lang="scss" scoped>
