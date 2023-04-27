@@ -6,18 +6,18 @@
 
 <script setup>
 
-	let props = defineProps({
+	const props = defineProps({
 		wid: String
 	})
-	let dashStore = useStoreDashboard()
+	const dashStore = useStoreDashboard()
 	let widget = dashStore.getWidget(props.wid)
 
-	let inputs = computed(() => {
-		let props = dashStore.scope.filter((prop) => prop.cid == widget.id && prop.direct == 'input')
+	const inputs = computed(() => {
+		let props = dashStore.props.inputs.filter((prop) => prop.component_id == widget.uid )
 		let obj = {}
 
 		props.forEach((prop) => {
-			obj[prop.name] = prop.__val
+			obj[prop.key] = prop.__val
 		})
 		return obj
 	})

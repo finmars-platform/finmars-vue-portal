@@ -104,7 +104,6 @@
 	let dataOfActive = ref({})
 	let activeIndex = ref(null)
 
-	// outputs.value.choosed_category.__val = 'Asset Types'
 	let categories = ref({})
 
 	let data = {

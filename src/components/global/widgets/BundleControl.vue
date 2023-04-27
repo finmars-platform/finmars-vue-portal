@@ -2,8 +2,9 @@
 	<FmSelect
 		class="m-b-0"
 		attach="body"
-		v-model="outputs.portfolio.__val"
-		:items="portfolios"
+		v-model="outputs.bundleId.__val"
+		:items="bundles"
+		prop_name="user_code"
 	/>
 </template>
 
@@ -26,14 +27,13 @@
 		return obj
 	})
 
-	let current = ref(0)
-	let portfolios = ref([])
+	let bundles = ref([])
 
 	init()
 	async function init() {
-		let res = await useApi('portfolioLight.get')
+		let res = await useApi('portfolioBundles.get')
 
-		portfolios.value = res.results
+		bundles.value = res.results
 	}
 </script>
 

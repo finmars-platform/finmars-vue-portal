@@ -32,6 +32,12 @@ export default defineNuxtConfig({
 	modules: [
     ['@pinia/nuxt']
   ],
+	pinia: {
+    autoImports: [
+      'defineStore', // import { defineStore } from 'pinia'
+      ['defineStore', 'definePiniaStore'], // import { defineStore as definePiniaStore } from 'pinia'
+    ],
+  },
 	css: [
 		"~/assets/scss/main.scss",
 		"~/assets/css/material-icons.css",
