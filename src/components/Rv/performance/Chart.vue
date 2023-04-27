@@ -19,8 +19,9 @@
 
 	let chart
 
+	// updateChart( props.yearData.datasetMonth, props.yearData.datasetLine )
 	watch(
-		() => props.yearData,
+		props,
 		() => updateChart( props.yearData.datasetMonth, props.yearData.datasetLine )
 	)
 

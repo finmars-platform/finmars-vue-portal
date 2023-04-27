@@ -68,8 +68,8 @@
 	import dayjs from 'dayjs'
 
 	const props = defineProps({
-		currentBundle: {
-			type: Object
+		bundleId: {
+			type: Number
 		},
 		begin_date: {
 			type: String
@@ -88,10 +88,15 @@
 
 	watch(props, () => {
 
-		if (!props.currentBundle) return;
+		console.log('props.bundleId:', props.bundleId)
+		if (!props.bundleId) return;
 
 		getMonthDetails();
 
+	})
+
+	let currentBundle = computed(() => {
+		return {id: props.bundleId, user_code: 'Need name id: ' + props.bundleId}
 	})
 
 	let portfolioItems = ref([])
@@ -110,6 +115,9 @@
 	let portfolioHeaders = ref(
 		['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 	)
+
+	getMonthDetails()
+
 	async function chooseMonth(id) {
 		activeYear.value = id
 		detailYear.value = portfolioYears.value[id]
@@ -120,7 +128,6 @@
 		})
 	}
 	async function getMonthDetails() {
-
 		if ( detailsLoading ) return false
 
 		detailsLoading = true
@@ -129,7 +136,7 @@
 		portfolioItems.value = []
 		portfolioItemsCumm.value = []
 
-		let bundleId = props.currentBundle.id
+		let bundleId = props.bundleId
 
 		let begin
 		let firstTransaction = {}
@@ -139,11 +146,11 @@
 			})
 			begin = firstTransaction.transaction_date
 		} else {
-			begin = dayjs(props.begin_date).add(-1, 'd').format('YYYY-MM-DD')
+			begin = dayjs(props.begin_date).format('YYYY-MM-DD')
 		}
 		const endDate = props.end_date
 
-		let end = dayjs(endDate).add(-1, 'd').format('YYYY-MM-DD')
+		let end = dayjs(endDate).format('YYYY-MM-DD')
 
 		let allMonths = await getReports({start: begin, end: end, ids: bundleId})
 
@@ -203,9 +210,9 @@
 				) return item[1]
 			}))
 
-			let end = year == dayjs(dateTo).year() ? dateTo.add(-1, 'd').format('YYYY-MM-DD') : `${year}-12-30`
+			let end = year == dayjs(dateTo).year() ? dateTo.format('YYYY-MM-DD') : `${year}-12-31`
 
-			let total = await getReports({start: `${year - 1}-12-31`, end: end, ids: bundleId})
+			let total = await getReports({start: `${year}-01-01`, end: end, ids: bundleId})
 			portfolioTotals.value.push( total.grand_return * 100 )
 		}
 		detailsLoading = false
@@ -250,7 +257,7 @@
 
 		if ( !isConfirm ) return false
 
-		const res = await useApi( 'portfolioBundles.delete', {params: {id: props.currentBundle.id}} );
+		const res = await useApi( 'portfolioBundles.delete', {params: {id: props.bundleId}} );
 
 		if (!res.error) {
 			useNotify({type: 'success', title: `Bundle ${props.currentBundle.user_code} was successfully deleted.`})

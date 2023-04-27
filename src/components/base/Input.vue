@@ -80,6 +80,10 @@ let props = defineProps({
 	let emit = defineEmits(['update:modelValue', 'update:errorData', 'onBlur', 'onFocus']);
 	let mainInput = ref(null);
 
+	defineExpose({
+		mainInput
+	})
+
 	let slots = useSlots();
 
 	watch(

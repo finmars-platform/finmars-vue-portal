@@ -207,6 +207,9 @@ export default {
 	transactionComplexFiltered: {
 		post: prefix + '/transactions/complex-transaction-ev/filtered/',
 	},
+	portfolioLight: {
+		get: prefix + '/portfolios/portfolio-light/',
+	},
 
 
 	// Надо отделить
