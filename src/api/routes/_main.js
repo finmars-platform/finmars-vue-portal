@@ -96,7 +96,7 @@ export default {
 		post: prefix + '/portfolios/portfolio-register/',
 	},
 	portfolioRegisterEvFiltered: {
-		post: prefix + '/portfolios/portfolio-register-ev/filtered/',
+		post: prefix + '/portfolios/portfolio-register/ev-item/',
 	},
 	performanceReport: {
 		post: prefix + '/reports/performance-report/',
@@ -205,7 +205,7 @@ export default {
 		post: prefix + '/utils/expression/',
 	},
 	transactionComplexFiltered: {
-		post: prefix + '/transactions/complex-transaction-ev/filtered/',
+		post: prefix + '/transactions/complex-transaction/ev-item/',
 	},
 	portfolioLight: {
 		get: prefix + '/portfolios/portfolio/light/',
