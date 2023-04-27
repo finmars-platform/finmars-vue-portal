@@ -32,13 +32,13 @@ export default {
 		get: prefix + '/instruments/pricing-policy/'
 	},
 	pricingPolicyListLight: {
-		get: prefix + '/instruments/pricing-policy-light/'
+		get: prefix + '/instruments/pricing-policy//'
 	},
 	currencyList: {
 		get: prefix + '/currencies/currency/',
 	},
 	currencyListLight: {
-		get: prefix + '/currencies/currency-light/',
+		get: prefix + '/currencies/currency/light/',
 	},
 	currencySchemeList: {
 		get: prefix + '/pricing/currency-pricing-scheme/',
@@ -76,7 +76,7 @@ export default {
 		get: prefix + '/procedures/data-procedure-instance/'
 	},
 	importSchemeLight: {
-		get: prefix + '/import/complex-transaction-import-scheme-light/'
+		get: prefix + '/import/complex-transaction-import-scheme/light/'
 	},
 	memberList: {
 		get: prefix + '/users/member/',
@@ -139,7 +139,7 @@ export default {
 		get: prefix + '/ui/list-layout/',
 	},
 	listLayoutListLight: {
-		get: prefix + '/ui/list-layout-light/',
+		get: prefix + '/ui/list-layout/light/',
 	},
 	listLayout: {
 		get: prefix + '/ui/list-layout/{id}/',
@@ -208,7 +208,7 @@ export default {
 		post: prefix + '/transactions/complex-transaction-ev/filtered/',
 	},
 	portfolioLight: {
-		get: prefix + '/portfolios/portfolio-light/',
+		get: prefix + '/portfolios/portfolio/light/',
 	},
 
 
