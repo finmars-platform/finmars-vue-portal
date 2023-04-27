@@ -7,7 +7,6 @@
 			<div class="sidenav-logo-container">
 				<div class="sidenav-logo-wrapper">
 					<NuxtLink to="/home">
-						<!-- <img src="/img/logo.png" class="sidenav-logo" alt="" /> -->
 					</NuxtLink>
 				</div>
 				<div class="panel-resizer-holder sidenav-resizer-holder">
