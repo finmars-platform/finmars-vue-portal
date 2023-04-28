@@ -1,6 +1,5 @@
 <template>
 	<BaseModal title="Settings">
-
 		<div>
 			<div class="rs_mc_wrap">
 				<RvSettingsBlock title="General">
@@ -8,29 +7,41 @@
 						<!--						<FmInputDate v-model="reportOptions.end_date" v-model:errorData="endDateErrorData" />-->
 						<FmInputDateComplex
 							v-model:firstDate="reportOptions.end_date"
-							v-model:firstDatepickerOptions="reportLayoutOptions.datepickerOptions.reportLastDatepicker"
+							v-model:firstDatepickerOptions="
+								reportLayoutOptions.datepickerOptions.reportLastDatepicker
+							"
 							v-model:errorData="endDateErrorData"
 						/>
 					</RvSettingsRow>
 
 					<RvSettingsRow label="Reporting currency">
-						<FmUnifiedDataSelect v-model="reportOptions.report_currency"
-																 v-model:itemObject="reportOptions.report_currency_object"
-																 content_type="currencies.currency" />
+						<FmUnifiedDataSelect
+							v-model="reportOptions.report_currency"
+							v-model:itemObject="reportOptions.report_currency_object"
+							content_type="currencies.currency"
+						/>
 					</RvSettingsRow>
 
 					<RvSettingsRow label="Pricing policy">
-						<FmSelect :modelValue="reportOptions.pricing_policy"
-											:items="pricingPoliciesOpts"
-											@update:modelValue="onPpChange" />
+						<FmSelect
+							:modelValue="reportOptions.pricing_policy"
+							:items="pricingPoliciesOpts"
+							@update:modelValue="onPpChange"
+						/>
 					</RvSettingsRow>
 
 					<RvSettingsRow label="Return calculations">
-						<FmSelect v-model="reportOptions.calculation_type" :items="calcTypeOpts" />
+						<FmSelect
+							v-model="reportOptions.calculation_type"
+							:items="calcTypeOpts"
+						/>
 					</RvSettingsRow>
 
 					<RvSettingsRow label="Time grain">
-						<FmSelect v-model="reportOptions.segmentation_type" :items="segmentTypeOpts" />
+						<FmSelect
+							v-model="reportOptions.segmentation_type"
+							:items="segmentTypeOpts"
+						/>
 					</RvSettingsRow>
 
 					<!-- <RvSettingsRow label="Days Convention">
@@ -67,7 +78,11 @@
 						label="Monthly returns"
 					/>
 
-					<FmCheckbox v-model="components.diagram" label="Graphs" class="m-b-20" />
+					<FmCheckbox
+						v-model="components.diagram"
+						label="Graphs"
+						class="m-b-20"
+					/>
 				</RvSettingsBlock>
 			</div>
 
@@ -87,78 +102,79 @@
 </template>
 
 <script setup>
-
 	const props = defineProps({
 		openDialog: Boolean,
 		bundles: Object,
-	});
-	const emit = defineEmits(["cancel", "save"]);
+	})
+	const emit = defineEmits(['cancel', 'save'])
 
-	const viewerData = inject('viewerData');
+	const viewerData = inject('viewerData')
 
-	let endDateErrorData = ref(null);
+	let endDateErrorData = ref(null)
 
-	let currencyOpts = ref([]);
-	let pricingPoliciesOpts = ref([]);
+	let currencyOpts = ref([])
+	let pricingPoliciesOpts = ref([])
 	let calcTypeOpts = [
 		{
-			id: "time_weighted",
-			name: "Time-Weighted Return",
+			id: 'time_weighted',
+			name: 'Time-Weighted Return',
 		},
 		{
-			id: "money_weighted",
-			name: "Money Weighted Return",
+			id: 'money_weighted',
+			name: 'Money Weighted Return',
 		},
 		/*{
 			id: "",
 			name: "P&L in Currency"
 		}*/
-	];
+	]
 	let segmentTypeOpts = [
 		{
-			id: "days",
-			name: "Day",
+			id: 'days',
+			name: 'Day',
 		},
 		{
-			id: "months",
-			name: "Month",
+			id: 'months',
+			name: 'Month',
 		},
-	];
+	]
 	let daysConventionOpts = [
 		/*{
 			id: "working_days",
 			name: "Working days"
 		},*/
 		{
-			id: "calendar_days",
-			name: "Working days",
+			id: 'calendar_days',
+			name: 'Working days',
 		},
-	];
+	]
 	let graphTypeOpts = [
 		{
-			id: "1",
-			name: "Cummulative return + Monthly",
+			id: '1',
+			name: 'Cummulative return + Monthly',
 		},
-	];
+	]
 
-	let reportOptions = ref({...viewerData.reportOptions})
+	let reportOptions = ref({ ...viewerData.reportOptions })
 
 	watch(
 		() => viewerData.reportOptions,
 		() => {
-			reportOptions.value = JSON.parse(JSON.stringify(viewerData.reportOptions));
+			reportOptions.value = JSON.parse(JSON.stringify(viewerData.reportOptions))
 		},
-		{deep: true}
-	);
+		{ deep: true }
+	)
 
-	let reportLayoutOptions = ref({...viewerData.reportLayoutOptions});
+	let reportLayoutOptions = ref({ ...viewerData.reportLayoutOptions })
 
 	watch(
 		() => viewerData.reportLayoutOptions,
 		() => {
-			reportLayoutOptions.value = JSON.parse(JSON.stringify(viewerData.reportLayoutOptions));
+			reportLayoutOptions.value = JSON.parse(
+				JSON.stringify(viewerData.reportLayoutOptions)
+			)
 		},
-		{deep: true}
+		{ deep: true }
 	)
 
 	let components = ref({ ...viewerData.components })
@@ -167,50 +183,56 @@
 		() => {
 			components.value = { ...viewerData.components }
 		}
-	);
+	)
 
 	async function fetchPpOpts() {
-		const ppData = await useLoadAllPages('pricingPolicyListLight.get', {filters: {page: 1, page_size: 1000}});
+		const ppData = await useLoadAllPages('pricingPolicyListLight.get', {
+			filters: { page: 1, page_size: 1000 },
+		})
 
 		if (!ppData.error) {
-			pricingPoliciesOpts.value = ppData;
+			pricingPoliciesOpts.value = ppData
 		}
 	}
 
 	async function fetchCurrenciesOpts() {
-		const currencyData = await useLoadAllPages('currencyListLight.get', {filters: {page: 1, page_size: 1000}});
+		const currencyData = await useLoadAllPages('currencyListLight.get', {
+			filters: { page: 1, page_size: 1000 },
+		})
 
 		if (!currencyData.error) {
-			currencyOpts.value = currencyData;
+			currencyOpts.value = currencyData
 		}
-
 	}
 
 	function onPpChange(newVal) {
+		reportOptions.value.pricing_policy = newVal
+		const ppObj = pricingPoliciesOpts.value.find(
+			(pPolicy) => pPolicy.id === newVal
+		)
 
-		reportOptions.value.pricing_policy = newVal;
-		const ppObj = pricingPoliciesOpts.value.find(pPolicy => pPolicy.id === newVal);
-
-		reportOptions.value.pricing_policy_object = JSON.parse(JSON.stringify(ppObj));
-
+		reportOptions.value.pricing_policy_object = JSON.parse(
+			JSON.stringify(ppObj)
+		)
 	}
 
 	function cancel() {
-		emit("cancel");
+		emit('cancel')
 	}
 	function save() {
-		emit("save", [ reportOptions.value, reportLayoutOptions.value, components.value ]);
+		emit('save', [
+			reportOptions.value,
+			reportLayoutOptions.value,
+			components.value,
+		])
 	}
 
 	function init() {
-		fetchPpOpts();
-		fetchCurrenciesOpts();
+		fetchPpOpts()
+		fetchCurrenciesOpts()
 	}
 
-	init();
-
+	init()
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>
