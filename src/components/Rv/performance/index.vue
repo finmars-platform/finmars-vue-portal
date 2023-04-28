@@ -1,34 +1,31 @@
 <template>
-	<CommonEntityViewer
-		type="report.performance"
-		@refresh="refresh()"
-	>
-		<template #default="{ reportOptions }">
+	<CommonEntityViewer type="report.performance" @refresh="refresh()">
+		<template #default="{ reportOptions, components }">
 			<div class="fm_container">
 				<RvPerformanceBundles
+					v-model:open="components.period"
 					:begin_date="reportOptions.begin_date"
 					:end_date="reportOptions.end_date"
 					:calculation_type="reportOptions.calculation_type"
 					:report_currency="reportOptions.report_currency"
 					:reportOptions="reportOptions"
-
 					@setBundle="currentBundle = $event"
 					@refreshFunc="bundlesRefreshFunc = $event"
 				/>
 
 				<RvPerformanceDetail
-					:currentBundle="currentBundle"
-
+					v-model:open="components.detail"
+					:bundleId="currentBundle"
 					:begin_date="reportOptions.begin_date"
 					:end_date="reportOptions.end_date"
 					:calculation_type="reportOptions.calculation_type"
 					:report_currency="reportOptions.report_currency"
-
 					@setMonth="currentBundleYear = $event"
 					@refresh="refresh()"
 				/>
 
 				<RvPerformanceChart
+					v-model:open="components.diagram"
 					:yearData="currentBundleYear"
 				/>
 			</div>
@@ -37,10 +34,9 @@
 </template>
 
 <script setup>
+	provide('refreshReport', refresh)
 
-	provide('refreshReport', refresh);
-
-	const route = useRoute();
+	const route = useRoute()
 
 	let currentBundle = ref({})
 	let currentBundleYear = ref({})
@@ -53,13 +49,10 @@
 	watch(
 		() => route.query.layout,
 		async () => {
-			await fetchListLayout();
-			refresh();
+			await fetchListLayout()
+			refresh()
 		}
 	)
-
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>
