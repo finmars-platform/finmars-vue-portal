@@ -76,7 +76,7 @@ export default {
 		get: prefix + '/procedures/data-procedure-instance/',
 	},
 	importSchemeLight: {
-		get: prefix + '/import/complex-transaction-import-scheme-light/',
+		get: prefix + '/import/complex-transaction-import-scheme/light/',
 	},
 	memberList: {
 		get: prefix + '/users/member/',
@@ -96,7 +96,7 @@ export default {
 		post: prefix + '/portfolios/portfolio-register/',
 	},
 	portfolioRegisterEvFiltered: {
-		post: prefix + '/portfolios/portfolio-register-ev/filtered/',
+		post: prefix + '/portfolios/portfolio-register/ev-item/',
 	},
 	performanceReport: {
 		post: prefix + '/reports/performance-report/',
@@ -138,7 +138,7 @@ export default {
 		get: prefix + '/ui/list-layout/',
 	},
 	listLayoutListLight: {
-		get: prefix + '/ui/list-layout-light/',
+		get: prefix + '/ui/list-layout/light/',
 	},
 	listLayout: {
 		get: prefix + '/ui/list-layout/{id}/',
@@ -206,10 +206,10 @@ export default {
 		post: prefix + '/utils/expression/',
 	},
 	transactionComplexFiltered: {
-		post: prefix + '/transactions/complex-transaction-ev/filtered/',
+		post: prefix + '/transactions/complex-transaction/ev-item/',
 	},
 	portfolioLight: {
-		get: prefix + '/portfolios/portfolio-light/',
+		get: prefix + '/portfolios/portfolio/light/',
 	},
 
 	// Надо отделить
