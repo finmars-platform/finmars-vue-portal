@@ -1,6 +1,7 @@
 <template>
-	<FmExpansionPanel :title="currentBundle ? currentBundle.user_code : 'No bundle'">
-
+	<FmExpansionPanel
+		:title="currentBundle ? currentBundle.user_code : 'No bundle'"
+	>
 		<template #rightActions>
 			<FmBtn
 				v-if="!showBundleActions"
@@ -38,11 +39,12 @@
 			@save="updateBundle"
 		/>
 
-
 		<div class="table_wrap flex">
 			<div class="coll_years">
 				<div class="coll_item t_header">Years</div>
-				<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">{{item}}</div>
+				<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">
+					{{ item }}
+				</div>
 			</div>
 			<div class="coll_months">
 				<BaseTable
@@ -64,34 +66,46 @@
 </template>
 
 <script setup>
-
 	import dayjs from 'dayjs'
 
 	const props = defineProps({
-		currentBundle: {
-			type: Object
+		bundleId: {
+			type: [Number, Object],
 		},
 		begin_date: {
-			type: String
+			type: String,
 		},
 		end_date: {
-			type: String
+			type: String,
 		},
 		calculation_type: {
-			type: String
+			type: String,
 		},
 		report_currency: {
-			type: [Number, String]
+			type: [Number, String],
 		},
 	})
-	const emits = defineEmits(["setMonth", 'refresh'])
+	const emits = defineEmits(['setMonth', 'refresh'])
+
+	let currentBundle = computed(() => {
+		if (typeof props.bundleId == 'object') return props.bundleId
+
+		return { id: props.bundleId, user_code: 'Need name id: ' + props.bundleId }
+	})
+
+	let bundleId = computed(() => {
+		if (typeof props.bundleId == 'object' && props.bundleId.id)
+			return props.bundleId.id
+
+		if (typeof props.bundleId == 'number') return props.bundleId
+
+		return false
+	})
 
 	watch(props, () => {
+		if (!bundleId.value) return false
 
-		if (!props.currentBundle) return;
-
-		getMonthDetails();
-
+		getMonthDetails()
 	})
 
 	let portfolioItems = ref([])
@@ -104,24 +118,37 @@
 	let detailPortfolio = ref('')
 	let detailYear = ref('')
 
-	let showBundleActions = ref(false);
-	let editBundleIsOpened = ref(false);
+	let showBundleActions = ref(false)
+	let editBundleIsOpened = ref(false)
 
-	let portfolioHeaders = ref(
-		['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-	)
+	let portfolioHeaders = ref([
+		'Jan',
+		'Feb',
+		'Mar',
+		'Apr',
+		'May',
+		'Jun',
+		'Jul',
+		'Aug',
+		'Sep',
+		'Oct',
+		'Nov',
+		'Dec',
+	])
+
+	if (bundleId.value) getMonthDetails()
+
 	async function chooseMonth(id) {
 		activeYear.value = id
 		detailYear.value = portfolioYears.value[id]
 
 		emits('setMonth', {
 			datasetMonth: portfolioItems.value[id],
-			datasetLine: portfolioItemsCumm.value[id]
+			datasetLine: portfolioItemsCumm.value[id],
 		})
 	}
 	async function getMonthDetails() {
-
-		if ( detailsLoading ) return false
+		if (detailsLoading) return false
 
 		detailsLoading = true
 		portfolioYears.value = []
@@ -129,25 +156,25 @@
 		portfolioItems.value = []
 		portfolioItemsCumm.value = []
 
-		let bundleId = props.currentBundle.id
+		let bundle = bundleId.value
 
 		let begin
 		let firstTransaction = {}
-		if ( !props.begin_date ) {
+		if (!props.begin_date) {
 			firstTransaction = await useApi('performanceFirstTransaction.get', {
-				params: { id: bundleId }
+				params: { id: bundle },
 			})
 			begin = firstTransaction.transaction_date
 		} else {
-			begin = dayjs(props.begin_date).add(-1, 'd').format('YYYY-MM-DD')
+			begin = dayjs(props.begin_date).format('YYYY-MM-DD')
 		}
 		const endDate = props.end_date
 
-		let end = dayjs(endDate).add(-1, 'd').format('YYYY-MM-DD')
+		let end = dayjs(endDate).format('YYYY-MM-DD')
 
-		let allMonths = await getReports({start: begin, end: end, ids: bundleId})
+		let allMonths = await getReports({ start: begin, end: end, ids: bundle })
 
-		if ( allMonths.error ) {
+		if (allMonths.error) {
 			detailsLoading = false
 			return false
 		}
@@ -155,58 +182,67 @@
 		let yearsBuffer = new Map()
 		let yearsBufferCumm = []
 
-		allMonths.items.reverse().forEach(item => {
+		allMonths.items.reverse().forEach((item) => {
 			let parseDate = item.date_to.split('-')
 
 			// key_ fix order
 			let defaultMonth = {
-				'key_01': [0, 0],
-				'key_02': [0, 0],
-				'key_03': [0, 0],
-				'key_04': [0, 0],
-				'key_05': [0, 0],
-				'key_06': [0, 0],
-				'key_07': [0, 0],
-				'key_08': [0, 0],
-				'key_09': [0, 0],
-				'key_10': [0, 0],
-				'key_11': [0, 0],
-				'key_12': [0, 0]
+				key_01: [0, 0],
+				key_02: [0, 0],
+				key_03: [0, 0],
+				key_04: [0, 0],
+				key_05: [0, 0],
+				key_06: [0, 0],
+				key_07: [0, 0],
+				key_08: [0, 0],
+				key_09: [0, 0],
+				key_10: [0, 0],
+				key_11: [0, 0],
+				key_12: [0, 0],
 			}
 
-			if ( !yearsBuffer.has(parseDate[0]) ) {
+			if (!yearsBuffer.has(parseDate[0])) {
 				yearsBuffer.set(parseDate[0], defaultMonth)
 			}
 
-			yearsBuffer.get(parseDate[0])[ 'key_' + parseDate[1] ] = [
+			yearsBuffer.get(parseDate[0])['key_' + parseDate[1]] = [
 				Math.round(item.instrument_return * 10000) / 100,
-				Math.round(item.cumulative_return * 10000) / 100
+				Math.round(item.cumulative_return * 10000) / 100,
 			]
 		})
 
 		let dateTo = dayjs(props.end_date)
 		let dateFrom = dayjs(begin)
 
-		for ( let [year, months] of yearsBuffer ) {
-			portfolioYears.value.push( year )
-			portfolioItems.value.push( Object.values(months).map((item, i) => {
-				if (
-					(year != dateTo.year() || i <= dateTo.month())
-					&&
-					(year != dateFrom.year() || i >= dateFrom.month() )
-				) return item[0]
-				else return ''
-			}))
-			portfolioItemsCumm.value.push( Object.values(months).map((item, i) => {
-				if (
-					(year != dateTo.year() || i <= dateTo.month())
-				) return item[1]
-			}))
+		for (let [year, months] of yearsBuffer) {
+			portfolioYears.value.push(year)
+			portfolioItems.value.push(
+				Object.values(months).map((item, i) => {
+					if (
+						(year != dateTo.year() || i <= dateTo.month()) &&
+						(year != dateFrom.year() || i >= dateFrom.month())
+					)
+						return item[0]
+					else return ''
+				})
+			)
+			portfolioItemsCumm.value.push(
+				Object.values(months).map((item, i) => {
+					if (year != dateTo.year() || i <= dateTo.month()) return item[1]
+				})
+			)
 
-			let end = year == dayjs(dateTo).year() ? dateTo.add(-1, 'd').format('YYYY-MM-DD') : `${year}-12-30`
+			let end =
+				year == dayjs(dateTo).year()
+					? dateTo.format('YYYY-MM-DD')
+					: `${year}-12-31`
 
-			let total = await getReports({start: `${year - 1}-12-31`, end: end, ids: bundleId})
-			portfolioTotals.value.push( total.grand_return * 100 )
+			let total = await getReports({
+				start: `${year}-01-01`,
+				end: end,
+				ids: bundle,
+			})
+			portfolioTotals.value.push(total.grand_return * 100)
 		}
 		detailsLoading = false
 
@@ -214,92 +250,94 @@
 	}
 
 	async function updateBundle(bundleData) {
-		let updatedData = JSON.parse(JSON.stringify( props.currentBundle ));
+		let updatedData = JSON.parse(JSON.stringify(props.currentBundle))
 
-		updatedData = {...updatedData, ...bundleData};
-		updatedData.short_name = bundleData.name;
-		updatedData.user_code = bundleData.name;
-		updatedData.public_name = bundleData.name;
+		updatedData = { ...updatedData, ...bundleData }
+		updatedData.short_name = bundleData.name
+		updatedData.user_code = bundleData.name
+		updatedData.public_name = bundleData.name
 
 		const opts = {
 			params: {
 				id: updatedData.id,
 			},
 			body: updatedData,
-		};
+		}
 
-		let res = await useApi('portfolioBundles.put', opts);
+		let res = await useApi('portfolioBundles.put', opts)
 
 		if (!res.error) {
-
 			useNotify({
 				type: 'success',
-				title: 'Bundle updated successfully'
-			});
+				title: 'Bundle updated successfully',
+			})
 
 			emits('refresh')
 		}
 	}
 
 	async function deleteBundle() {
-
 		let isConfirm = await useConfirm({
 			title: 'Delete bundle',
-			text: `Do you want to delete the bundle “${props.currentBundle.user_code}” permanently?`
+			text: `Do you want to delete the bundle “${props.currentBundle.user_code}” permanently?`,
 		})
 
-		if ( !isConfirm ) return false
+		if (!isConfirm) return false
 
-		const res = await useApi( 'portfolioBundles.delete', {params: {id: props.currentBundle.id}} );
+		const res = await useApi('portfolioBundles.delete', {
+			params: { id: bundleId.value },
+		})
 
 		if (!res.error) {
-			useNotify({type: 'success', title: `Bundle ${props.currentBundle.user_code} was successfully deleted.`})
+			useNotify({
+				type: 'success',
+				title: `Bundle ${props.currentBundle.user_code} was successfully deleted.`,
+			})
 			refresh()
 		}
 	}
 	// double
-	async function getReports({start, end, ids, type = 'months'}) {
+	async function getReports({ start, end, ids, type = 'months' }) {
 		let res = await useApi('performanceReport.post', {
 			body: {
-				"save_report": false,
-				"begin_date": start,
-				"end_date": end,
-				"calculation_type": props.calculation_type,
-				"segmentation_type": type,
-				'report_currency': props.report_currency,
-				"bundle": ids
-			}
+				save_report: false,
+				begin_date: start,
+				end_date: end,
+				calculation_type: props.calculation_type,
+				segmentation_type: type,
+				report_currency: props.report_currency,
+				bundle: ids,
+			},
 		})
 
 		return res
 	}
-
 </script>
 
 <style lang="scss" scoped>
-.coll_years {
-	border-top: 1px solid $border;
-	border-left: 1px solid $border;
-}
-.coll_item {
-	height: 36px;
-	line-height: 36px;
-	padding: 0 14px;
-	white-space: nowrap;
-	background: #f2f2f2;
-	border-bottom: 1px solid $border;
-	font-size: 14px;
-
-	&.t_header {
-		height: 50px;
-		line-height: 50px;
-		font-weight: 600;
+	.coll_years {
+		border-top: 1px solid $border;
+		border-left: 1px solid $border;
 	}
-}
-.coll_months {
-	width: 100%;
-}
-.table_wrap {
-	width: 100%;
-}
+	.coll_item {
+		height: 36px;
+		line-height: 36px;
+		padding: 0 14px;
+		white-space: nowrap;
+		background: #f2f2f2;
+		border-bottom: 1px solid $border;
+		font-size: 14px;
+
+		&.t_header {
+			height: 50px;
+			line-height: 50px;
+			font-weight: 600;
+		}
+	}
+	.coll_months {
+		width: 100%;
+	}
+	.table_wrap {
+		width: 100%;
+	}
 </style>

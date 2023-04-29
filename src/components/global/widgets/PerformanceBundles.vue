@@ -2,7 +2,7 @@
 	<RvPerformanceBundles
 		v-bind="inputs"
 
-		@setBundle="outputs.bundleId.__val = $event"
+		@setBundle="outputs.bundleId.__val = $event.id"
 	/>
 </template>
 
@@ -15,21 +15,21 @@
 	let widget = dashStore.getWidget(props.wid)
 
 	let inputs = computed(() => {
-		let props = dashStore.scope.filter((prop) => prop.cid == widget.id && prop.direct == 'input')
+		let props = dashStore.props.inputs.filter((prop) => prop.component_id == widget.uid )
 		let obj = {}
 
 		props.forEach((prop) => {
-			obj[prop.name] = prop.__val
+			obj[prop.key] = prop.__val
 		})
 		return obj
 	})
 
 	let outputs = computed(() => {
-		let props = dashStore.scope.filter((prop) => prop.cid == widget.id && prop.direct == 'output')
+		let props = dashStore.props.outputs.filter((prop) => prop.component_id == widget.uid )
 		let obj = {}
 
 		props.forEach((prop) => {
-			obj[prop.name] = prop
+			obj[prop.key] = prop
 		})
 		return obj
 	})

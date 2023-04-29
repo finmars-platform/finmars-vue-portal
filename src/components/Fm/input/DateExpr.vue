@@ -1,5 +1,6 @@
 <template>
 	<BaseInput
+		v-bind="$attrs"
 		:label="`${label}${isDateExpr ? ' (Expression)' : ''}`"
 		:modelValue="isDateExpr ? expr : date"
 		@update:modelValue="emit(`update:${isDateExpr ? 'expr' :' date'}`, $event)"
@@ -17,6 +18,7 @@
 			<FmIcon icon="swap_vert" @click="$event.stopPropagation(), isDateExpr = !isDateExpr" />
 		</template>
 	</BaseInput>
+
 	<FmExpression
 		v-if="isOpenDateExpr"
 		v-model="isOpenDateExpr"

@@ -26,40 +26,21 @@
 			<div class="settings_coll">
 				<h4>Inputs</h4>
 
-				<div v-for="item in scopeProps.filter(item => item.direct == 'input')">
-					<BaseInput
-						v-if="!propMode[item.name]"
-						v-model="item.__val"
-						:label="item.name"
-					/>
-					<BaseMultiSelectInput
-						v-else
-						v-model="item.parents"
-						:title="item.name"
-						:items="prepareItems(item)"
-						item_id="id"
-					/>
-
-					<FmCheckbox
-						class="inherit_checkbox"
-						v-model="propMode[item.name]"
-						:label="`Inherit value`"
-					/>
-				</div>
-
+				<PagesDashboardAddComponentMPropEditor
+					v-for="prop in inputs"
+					:prop="prop"
+					type="inputs"
+				/>
 			</div>
 
 			<div class="settings_coll">
 				<h4>Outputs</h4>
 
-				<div v-for="item in scopeProps.filter(item => item.direct == 'output')">
-					<BaseMultiSelectInput
-						v-model="item.children"
-						:title="item.name"
-						:items="prepareItems(item)"
-						item_id="id"
-					/>
-				</div>
+				<PagesDashboardAddComponentMPropEditor
+					v-for="prop in outputs"
+					:prop="prop"
+					type="outputs"
+				/>
 			</div>
 		</div>
 	</BaseModal>
@@ -67,89 +48,77 @@
 
 <script setup>
 
-	import widgetList from '~/assets/data/widgets.js'
-
-	let props = defineProps({
+	const props = defineProps({
 		wid: {
 			type: String,
 			required: true
 		}
 	})
-	let dashStore = useStoreDashboard()
-	let propMode = reactive({})
-	let widget = dashStore.components.find(item => item.id == props.wid) || {}
-	let editable = reactive( JSON.parse(JSON.stringify(widget)) )
+	const dashStore = useStoreDashboard()
+	const tabList = [...dashStore.tabs, {id: 1, name: 'Top place'}]
 
-	let scopeProps = ref({})
+	let component = dashStore.components.find(item => item.uid == props.wid) || {}
+	let editable = reactive( JSON.parse(JSON.stringify(component)) )
+
+	let inputs = ref([])
+	let outputs = ref([])
 
 	prepareProps()
 
 	function prepareProps() {
-		let unrefed = JSON.parse(
+		inputs.value = JSON.parse(
 			JSON.stringify(
-				dashStore.scope
-					.filter((prop) => prop.cid == widget.id)
+				dashStore.props.inputs
+					.filter((prop) => prop.component_id == component.uid)
 			)
 		)
 
-		unrefed.forEach((prop) => {
-			if ( prop.direct == 'input') return false
+		dashStore.props.outputs.forEach((prop) => {
+			if ( prop.component_id != component.uid ) return false
 
-			prop.children = dashStore.scope
-				.filter( (item) => item.direct == 'input' && item.parents.includes(prop.id) )
-				.map((item) => item.id)
+			let clonedProp = JSON.parse(
+				JSON.stringify(prop)
+			)
+
+			clonedProp._children = dashStore.props.inputs
+				.filter( (item) => item.subscribedTo.includes(clonedProp.uid) )
+				.map((item) => item.uid)
+
+			outputs.value.push(clonedProp)
 		})
-		scopeProps.value = unrefed
 	}
-	function prepareItems(childProp) {
-		let newProps = dashStore.scope
-			.filter((prop) => {
-				let isType = prop.type == childProp.type
-				let isDirect = prop.direct != childProp.direct
-
-				return isType && isDirect && childProp.cid != prop.cid
-			})
-			.map((prop) => {
-				return {
-					id: prop.id,
-					name: `${dashStore.components.find(item => item.id == prop.cid).name} / ${prop.name}[${prop.__val}]`,
-				}
-			})
-
-		return JSON.parse(JSON.stringify(newProps))
-	}
-
-	let tabList = computed(() => {
-		return [...dashStore.tabs, {id: 1, name: 'Top place'}]
-	})
-
 	function save() {
 		dashStore.$patch((state) => {
-			widget.user_code = editable.user_code
-			widget.tab = editable.tab
+			component.user_code = editable.user_code
+			component.tab = editable.tab
 
-			scopeProps.value.forEach((prop) => {
-				let scopeProp = state.scope.find((item => item.id == prop.id))
+			inputs.value.forEach((prop) => {
+				let input = state.props.inputs.find((item => item.uid == prop.uid))
 
-				scopeProp.__val = prop.__val
+				input.default_value = prop.default_value
+				input.subscribedTo = prop.subscribedTo
+			})
 
-				if ( prop.parents ) scopeProp.parents = prop.parents
-				if ( prop.children ) {
-					let children = state.scope.filter(item => item.parents && item.parents.includes(prop.id))
+			outputs.value.forEach((prop) => {
+				let output = state.props.outputs.find((item => item.uid == prop.uid))
 
-					children.forEach((child) => {
-						let index = child.parents.findIndex((id) => id == prop.id)
+				output.default_value = prop.default_value
 
-						if ( index !== -1 ) {
-							child.parents.splice(index, 1)
-						}
-					})
+				let children = state.props.inputs
+					.filter(item => item.subscribedTo.includes(prop.uid))
 
-					prop.children.forEach((id) => {
-						let children = state.scope.find(item => item.id == id)
-						children.parents.push(prop.id)
-					})
-				}
+				children.forEach((child) => {
+					let index = child.subscribedTo.findIndex((uid) => uid == prop.uid)
+
+					if ( index !== -1 ) {
+						child.subscribedTo.splice(index, 1)
+					}
+				})
+
+				prop._children.forEach((uid) => {
+					let children = state.props.inputs.find(item => item.uid == uid)
+					children.subscribedTo.push(prop.uid)
+				})
 			})
 		})
 
