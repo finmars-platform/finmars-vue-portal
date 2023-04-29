@@ -1,7 +1,7 @@
 <template>
 	<div class="drag_container">
 		<div class="shadow_grid"
-			v-if="isEdit"
+			v-if="dashStore.isEdit"
 		>
 			<div class="shadow_grid_item"
 				v-for="(item, key) in shadowCells"
@@ -14,7 +14,7 @@
 		</div>
 
 		<FmBtn
-			v-if="isEdit && tab"
+			v-if="dashStore.isEdit && tab"
 			class="add_component flex aic jcc"
 			@click="isOpenAddComponents = true"
 			icon="add"
@@ -27,30 +27,19 @@
 			v-model="isOpenAddComponents"
 			:tab="tab"
 			@close="isOpenAddComponents = false"
-			@addMatrix="addMatrixIsOpen = true"
-		/>
-
-		<PagesDashboardAddMatrixModal
-			v-if="addMatrixIsOpen"
-			v-model="addMatrixIsOpen"
-			:tab="tab"
-			@close="addMatrixIsOpen = false"
 		/>
 
 	</div>
 </template>
 
 <script setup>
-	let props = defineProps({
-		isEdit: {
-			type: Boolean,
-			required: true
-		},
-		tab: String
+
+	const props = defineProps({
+		tab: Number
 	})
+	const dashStore = useStoreDashboard()
 
 	let isOpenAddComponents = ref(false)
-	let addMatrixIsOpen = ref(false);
 
 	let gridElement = ref(null)
 	let shadowCells = ref([])

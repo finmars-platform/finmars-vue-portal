@@ -9,90 +9,417 @@ export default [
 	// 	}
 	// },
 	{
-		id: 'DateControl',
+		uid: null,
+		user_code: null,
 		name: 'Date control',
-		group: 'system',
+		componentName: 'DateControl',
+		tab: null,
+		scopes: [],
+
+		inputs: [],
+		outputs: [
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'date',
+				name: 'Date',
+				type: 'date',
+				view: {
+					type: 'date',
+				},
+				default_value: 'null',
+				__val: null,
+				_children: [],
+			},
+		],
+		settings: [],
+		_group: 'system',
 		minColls: 2,
 		minRows: 1,
-		inputs: [
-		],
-		outputs: [
-			{name: 'date', user_code: 'Date', type: 'date', direct: 'output', value: ''},
-		],
-		settings: []
 	},
 	{
-		id: 'DebugComponent',
+		uid: null,
+		user_code: null,
+		name: 'Portfolio control',
+		componentName: 'PortfolioControl',
+		tab: null,
+		scopes: [],
+
+		inputs: [],
+		outputs: [
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'portfolio',
+				name: 'Portfolio',
+				type: 'portfolio',
+				view: {
+					type: 'portfolio',
+				},
+				default_value: null,
+				__val: null,
+				_children: [],
+			},
+		],
+		settings: [],
+		_group: 'system',
+		minColls: 2,
+		minRows: 1,
+	},
+	{
+		uid: null,
+		user_code: null,
+		name: 'Bundle control',
+		componentName: 'BundleControl',
+		tab: null,
+		scopes: [],
+
+		inputs: [],
+		outputs: [
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'bundleId',
+				name: 'Bundle',
+				type: 'bundle',
+				view: {
+					type: 'bundle',
+				},
+				default_value: null,
+				__val: null,
+				_children: [],
+			},
+		],
+		settings: [],
+		_group: 'system',
+		minColls: 2,
+		minRows: 1,
+	},
+	{
+		uid: null,
+		user_code: null,
+		name: 'Currency control',
+		componentName: 'CurrencyControl',
+		tab: null,
+		scopes: [],
+
+		inputs: [],
+		outputs: [
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'currency',
+				name: 'Currency',
+				type: 'currency',
+				view: {
+					type: 'currency',
+				},
+				default_value: null,
+				__val: null,
+				_children: [],
+			},
+		],
+		settings: [],
+		_group: 'system',
+		minColls: 2,
+		minRows: 1,
+	},
+	{
+		uid: null,
+		user_code: null,
 		name: 'Debug Component',
-		group: 'system',
-		minColls: 6,
+		componentName: 'DebugComponent',
+		tab: null,
+		_group: 'system',
+		minColls: 12,
 		minRows: 4,
-		inputs: [
-		],
-		outputs: [
-		],
+		inputs: [],
+		outputs: [],
 		settings: []
 	},
 	{
-		id: 'CardsIndicators',
+		uid: null,
+		user_code: null,
 		name: 'Cards indicators',
-		group: 'base',
+		componentName: 'CardsIndicators',
+		tab: null,
+		scopes: [],
+
+		inputs: [
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'date',
+				name: 'Date',
+				type: 'date',
+				view: {
+					type: 'date'
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			},
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'portfolio',
+				name: 'Portfolio',
+				type: 'portfolio',
+				view: {
+					type: 'portfolio'
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			}
+		],
+		outputs: [
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'type',
+				name: 'Period type',
+				type: 'type_nav_or_pnl',
+				default_value: 'nav',
+				__val: null,
+				_children: [],
+			},
+		],
+		settings: [],
+
 		minColls: 6,
 		minRows: 2,
-		inputs: [
-			{name: 'date', user_code: 'Date', type: 'date', value: '', direct: 'input', parents: []},
-			{name: 'portfolio', user_code: 'Portfolio', type: 'id', direct: 'input', value: '', parents: []},
-		],
-		outputs: [
-			{name: 'type', user_code: 'Period type', type: 'string', direct: 'output', value: ''},
-		],
-		settings: []
+		_group: 'base',
 	},
 	{
-		id: 'ChartBalancePeriod',
+		uid: null,
+		user_code: null,
 		name: 'Chart balance period',
-		group: 'base',
+		componentName: 'ChartBalancePeriod',
+		tab: null,
+		scopes: [], // Array UID
+		settings: [
+			{
+				name: 'Benchmark',
+				view: 'input',
+			},
+			{
+				name: 'Data Source URL',
+				view: 'input',
+			},
+		],
+		inputs: [
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'type',
+				name: 'NAV or PNL',
+				type: 'type_nav_or_pnl',
+				view: {
+					type: 'select',
+					items: [
+						{id: 'nav', name: 'NAV'},
+						{id: 'pl', name: 'P&L'},
+					]
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			},
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'date_from',
+				name: 'Date from',
+				type: 'date',
+				view: {
+					type: 'date'
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			},
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'date_to',
+				name: 'Date to',
+				type: 'date',
+				view: {
+					type: 'date'
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			},
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'portfolio',
+				name: 'Portfolio',
+				type: 'portfolio',
+				view: {
+					type: 'portfolio'
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			}
+		],
+		outputs: [
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'choosed_category',
+				name: 'Choosed category',
+				type: 'period_category',
+				default_value: null,
+				__val: null,
+				_children: [],
+			},
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'choosed_date',
+				name: 'Choosed date',
+				type: 'date',
+				default_value: null,
+				__val: null,
+				_children: [],
+			}
+		],
 		minColls: 6,
 		minRows: 3,
-		inputs: [
-			{name: 'type', user_code: 'Period type', type: 'string', direct: 'input', parents: []},
-			{name: 'benchmark', user_code: 'Benchmark', type: 'string', direct: 'input', parents: []},
-			{name: 'data_source', user_code: 'Data Source URL', type: 'string', direct: 'input', parents: []},
-			{name: 'date_to', user_code: 'Date to', type: 'date', value: '', direct: 'input', parents: []},
-			{name: 'date_from', user_code: 'Date from', type: 'date', value: '', direct: 'input', parents: []},
-			{name: 'portfolio', user_code: 'Portfolio', type: 'id', value: '', direct: 'input', parents: []},
-		],
-		outputs: [
-			{name: 'category_type', user_code: 'Category type', direct: 'output', type: 'string', value: ''},
-			{name: 'detail_date', user_code: 'detail_date', type: 'date', direct: 'output', value: ''},
-		],
-		settings: []
+		_group: 'base'
 	},
 	{
-		id: 'ChartBalanceDate',
+		uid: null,
+		user_code: null,
 		name: 'Chart balance date',
-		group: 'base',
+		componentName: 'ChartBalanceDate',
+		tab: null,
+		inputs: [
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'portfolio',
+				name: 'Portfolio',
+				type: 'portfolio',
+				view: {
+					type: 'portfolio'
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			},
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'date',
+				name: 'Date',
+				type: 'date',
+				view: {
+					type: 'date'
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			},
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'category_type',
+				name: 'Category type',
+				type: 'period_category',
+				view: {
+					type: 'input'
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			},
+		],
+		outputs: [],
+		scopes: [],
+		settings: [],
+
 		minColls: 4,
 		minRows: 4,
-		inputs: [
-			{name: 'date', user_code: 'Date', type: 'date', value: '', direct: 'input', parents: []},
-			{name: 'portfolio', user_code: 'Portfolio', type: 'id', value: '', direct: 'input', parents: []},
-			{name: 'category_type', user_code: 'Category type', direct: 'input', type: 'string', value: '', parents: []},
-		],
-		outputs: []
+		_group: 'base',
 	},
 	{
-		id: 'ChartPnlDate',
+		uid: null,
+		user_code: null,
 		name: 'Chart P&L date',
-		group: 'base',
+		componentName: 'ChartPnlDate',
+
+		inputs: [
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'date',
+				name: 'Date',
+				type: 'date',
+				view: {
+					type: 'date'
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			},
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'portfolio',
+				name: 'Portfolio',
+				type: 'portfolio',
+				view: {
+					type: 'portfolio'
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			},
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'category_type',
+				name: 'Category type',
+				type: 'period_category',
+				view: {
+					type: 'input'
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			}
+		],
+		outputs: [],
+		settings: [],
+		scopes: [],
+
 		minColls: 4,
 		minRows: 4,
-		inputs: [
-			{name: 'date', user_code: 'Date', type: 'date', value: '', direct: 'input', parents: []},
-			{name: 'portfolio', user_code: 'Portfolio', type: 'id', value: '', direct: 'input', parents: []},
-			{name: 'category_type', user_code: 'Category type', direct: 'input', type: 'string', value: '', parents: []},
-		],
-		outputs: []
+		_group: 'base',
 	},
 	// {
 	// 	id: 'Matrix',
@@ -101,8 +428,8 @@ export default [
 	// 	minColls: 6,
 	// 	minRows: 4,
 	// 	inputs: [
-	// 		{name: 'date', user_code: 'Date', type: 'date', value: '', direct: 'input', parents: []},
-	// 		{name: 'portfolio', user_code: 'Portfolio', type: 'id', value: '', direct: 'input', parents: []},
+	// 		{name: 'date', user_code: 'Date', type: 'date', value: '', direct: 'input', subscribedTo: []},
+	// 		{name: 'portfolio', user_code: 'Portfolio', type: 'id', value: '', direct: 'input', subscribedTo: []},
 	// 	],
 	// 	settings: [
 	// 		{
@@ -124,12 +451,13 @@ export default [
 	// 	]
 	// },
 	{
-		id: 'matrix',
+		uid: null,
+		user_code: null,
 		name: 'Matrix',
-		group: 'base',
-		minColls: 6,
-		minRows: 4,
+		componentName: 'Matrix',
+
 		inputs: [],
+		outputs: [],
 		settings: [
 			{
 				name: 'Absciss',
@@ -139,53 +467,221 @@ export default [
 				name: 'Ordinate',
 				propName: '',
 			}
-		]
-	},
-	{
-		id: 'PerformanceBundles',
-		name: 'PerformanceBundles',
-		group: 'base',
+		],
+
+		_group: 'base',
 		minColls: 6,
 		minRows: 4,
-		inputs: [
-			{name: 'begin_date', user_code: 'Date', type: 'date', value: '', direct: 'input', parents: []},
-			{name: 'end_date', user_code: 'Date', type: 'date', value: '', direct: 'input', parents: []},
-			{name: 'calculation_type', user_code: 'Date', type: 'calculation_type', value: '', direct: 'input', parents: []},
-			{name: 'report_currency', user_code: 'Date', type: 'currency_id', value: '', direct: 'input', parents: []},
-		],
-		outputs: [
-			{name: 'bundleId', user_code: 'Bundle id', type: 'bundle_id', direct: 'output', value: ''},
-		],
-		settings: []
 	},
 	{
-		id: 'PerformanceDetail',
-		name: 'PerformanceDetail',
-		group: 'base',
+		uid: null,
+		user_code: null,
+		name: 'Performance Bundles',
+		componentName: 'PerformanceBundles',
+		tab: null,
+
+		inputs: [
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'begin_date',
+				name: 'Date from',
+				type: 'date',
+				view: {
+					type: 'date'
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			},
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'end_date',
+				name: 'Date to',
+				type: 'date',
+				view: {
+					type: 'date'
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			},
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'report_currency',
+				name: 'Currency',
+				type: 'currency',
+				view: {
+					type: 'currency'
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			}
+		],
+		outputs: [
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'bundleId',
+				name: 'Bundle',
+				type: 'bundle',
+				view: {
+					type: 'bundle'
+				},
+				default_value: null,
+				__val: null,
+				_children: [],
+			}
+		],
+		settings: [
+			{
+				key: 'calculation_type',
+				name: 'Calculation type',
+				view: {
+					type: 'select',
+					items: [
+						{id: 'time_weighted', name: 'Time-weighted return'},
+						{id: 'money_weighted', name: 'Money weighted return'},
+					]
+				},
+				default_value: null
+			},
+		],
+
+		_group: 'base',
 		minColls: 6,
 		minRows: 4,
-		inputs: [
-			{name: 'currentBundle', user_code: 'currentBundle', type: 'bundle_id', value: '', direct: 'input', parents: []},
-			{name: 'begin_date', user_code: 'begin_date', type: 'date', value: '', direct: 'input', parents: []},
-			{name: 'end_date', user_code: 'end_date', type: 'date', value: '', direct: 'input', parents: []},
-			{name: 'calculation_type', user_code: 'calculation_type', type: 'calculation_type', value: '', direct: 'input', parents: []},
-			{name: 'report_currency', user_code: 'report_currency', type: 'currency_id', value: '', direct: 'input', parents: []},
-		],
-		outputs: [
-			{name: 'currentBundleYear', user_code: 'currentBundleYear', type: 'bundle_year', direct: 'output', value: ''},
-		],
-		settings: []
 	},
 	{
-		id: 'PerformanceChart',
+		uid: null,
+		user_code: null,
+		name: 'Performance Detail',
+		componentName: 'PerformanceDetail',
+		tab: null,
+
+		inputs: [
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'bundleId',
+				name: 'Bundle',
+				type: 'bundle',
+				view: {
+					type: 'bundle'
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			},
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'begin_date',
+				name: 'Date from',
+				type: 'date',
+				view: {
+					type: 'date'
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			},
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'end_date',
+				name: 'Date to',
+				type: 'date',
+				view: {
+					type: 'date'
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			},
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'report_currency',
+				name: 'Currency',
+				type: 'currency',
+				view: {
+					type: 'currency'
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			}
+		],
+		outputs: [
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'currentBundleYear',
+				name: 'Сurrent Bundle Year',
+				type: 'bundle_year',
+				default_value: null,
+				__val: null,
+				_children: [],
+			}
+		],
+		settings: [
+			{
+				key: 'calculation_type',
+				name: 'Calculation type',
+				view: {
+					type: 'select',
+					items: [
+						{id: 'time_weighted', name: 'Time-weighted return'},
+						{id: 'money_weighted', name: 'Money weighted return'},
+					]
+				},
+				default_value: null
+			},
+		],
+		scopes: [],
+
+		minColls: 6,
+		minRows: 4,
+		_group: 'base',
+	},
+	{
+		uid: null,
+		user_code: null,
 		name: 'Performance Chart',
-		group: 'base',
-		minColls: 6,
-		minRows: 4,
+		componentName: 'PerformanceChart',
+		tab: null,
+
 		inputs: [
-			{name: 'yearData', user_code: 'Year Data', type: 'bundle_year', direct: 'input', value: {}},
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'yearData',
+				name: 'Year Data',
+				type: 'bundle_year',
+				subscribedTo: [],
+				default_value: null,
+				__val: null
+			}
 		],
 		outputs: [],
-		settings: []
+		settings: [],
+
+		_group: 'base',
+		minColls: 6,
+		minRows: 4,
 	},
 ]

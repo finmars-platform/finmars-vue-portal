@@ -3,57 +3,60 @@ let prefix = host + '/{client}/api/v1'
 
 export default {
 	pricingProc: {
-		get: prefix + "/procedures/pricing-procedure/",
-		post: prefix + "/procedures/pricing-procedure/{id}/run-procedure/",
-		put: prefix + '/procedures/pricing-procedure/{id}/'
+		get: prefix + '/procedures/pricing-procedure/',
+		post: prefix + '/procedures/pricing-procedure/{id}/run-procedure/',
+		put: prefix + '/procedures/pricing-procedure/{id}/',
 	},
 	pricingProcId: {
-		get: prefix + "/procedures/pricing-procedure/{id}/",
-		put: prefix + "/procedures/pricing-procedure/{id}/",
+		get: prefix + '/procedures/pricing-procedure/{id}/',
+		put: prefix + '/procedures/pricing-procedure/{id}/',
 	},
 	pricingProcInstance: {
-		get: prefix + "/procedures/pricing-parent-procedure-instance/",
+		get: prefix + '/procedures/pricing-parent-procedure-instance/',
 	},
 
 	instrumentList: {
-		get: prefix + '/instruments/instrument/'
+		get: prefix + '/instruments/instrument/',
 	},
 
 	instrumentTypeList: {
-		get: prefix + '/instruments/instrument-type/'
+		get: prefix + '/instruments/instrument-type/',
 	},
 	instrumentTypeListLight: {
-		get: prefix + '/instruments/instrument-type/'
+		get: prefix + '/instruments/instrument-type/',
 	},
 	instrumentSchemeList: {
-		get: prefix + '/pricing/instrument-pricing-scheme/'
+		get: prefix + '/pricing/instrument-pricing-scheme/',
 	},
 	pricingPolicyList: {
-		get: prefix + '/instruments/pricing-policy/'
+		get: prefix + '/instruments/pricing-policy/',
 	},
 	pricingPolicyListLight: {
-		get: prefix + '/instruments/pricing-policy-light/'
+		get: prefix + '/instruments/pricing-policy/light/',
 	},
 	currencyList: {
 		get: prefix + '/currencies/currency/',
 	},
 	currencyListLight: {
-		get: prefix + '/currencies/currency-light/',
+		get: prefix + '/currencies/currency/light/',
 	},
 	currencySchemeList: {
 		get: prefix + '/pricing/currency-pricing-scheme/',
 	},
 	importCurrencyCbonds: {
-		post: prefix + 'import/finmars-database/currency/'
+		post: prefix + 'import/finmars-database/currency/',
 	},
 	currencyDatabaseSearch: {
-		get: prefix + '/api/currencies/currency-database-search/'
+		get: prefix + '/api/currencies/currency-database-search/',
 	},
 	portfolioList: {
 		get: prefix + '/portfolios/portfolio/',
 	},
+	portfolioListLight: {
+		get: prefix + '/portfolios/portfolio/light/',
+	},
 	counterpartyList: {
-		get: prefix + '/counterparties/counterparty/'
+		get: prefix + '/counterparties/counterparty/',
 	},
 
 	importBankProc: {
@@ -65,18 +68,18 @@ export default {
 	},
 
 	dataProvider: {
-		get: prefix + '/integrations/data-provider/'
+		get: prefix + '/integrations/data-provider/',
 	},
 
 	importUnifiedData: {
-		post: prefix + 'import/unified-data-provider/'
+		post: prefix + 'import/unified-data-provider/',
 	},
 
 	dataInstance: {
-		get: prefix + '/procedures/data-procedure-instance/'
+		get: prefix + '/procedures/data-procedure-instance/',
 	},
 	importSchemeLight: {
-		get: prefix + '/import/complex-transaction-import-scheme-light/'
+		get: prefix + '/import/complex-transaction-import-scheme/light/',
 	},
 	memberList: {
 		get: prefix + '/users/member/',
@@ -84,7 +87,7 @@ export default {
 	member: {
 		get: prefix + '/users/member/{id}/',
 		delete: prefix + '/users/member/{id}/',
-		put: prefix + '/users/member/{id}/'
+		put: prefix + '/users/member/{id}/',
 	},
 
 	userGroups: {
@@ -96,12 +99,11 @@ export default {
 		post: prefix + '/portfolios/portfolio-register/',
 	},
 	portfolioRegisterEvFiltered: {
-		post: prefix + '/portfolios/portfolio-register-ev/filtered/',
+		post: prefix + '/portfolios/portfolio-register/ev-item/',
 	},
 	performanceReport: {
 		post: prefix + '/reports/performance-report/',
 	},
-
 
 	systemMessagesStats: {
 		get: prefix + '/system-messages/message/stats/',
@@ -139,13 +141,13 @@ export default {
 		get: prefix + '/ui/list-layout/',
 	},
 	listLayoutListLight: {
-		get: prefix + '/ui/list-layout-light/',
+		get: prefix + '/ui/list-layout/light/',
 	},
 	listLayout: {
 		get: prefix + '/ui/list-layout/{id}/',
 		put: prefix + '/ui/list-layout/{id}/',
 		post: prefix + '/ui/list-layout/',
-		delete: prefix + '/ui/list-layout/{id}/'
+		delete: prefix + '/ui/list-layout/{id}/',
 	},
 	listLayoutPing: {
 		get: prefix + '/ui/list-layout/{id}/ping',
@@ -154,7 +156,7 @@ export default {
 		get: prefix + '/ui/list-layout/?is_default=2&content_type={content_type}',
 	},
 	ecosystemDefaults: {
-		get: prefix + '/users/ecosystem-default/'
+		get: prefix + '/users/ecosystem-default/',
 	},
 	balanceReport: {
 		get: prefix + 'reports/balance-report/',
@@ -169,16 +171,18 @@ export default {
 		delete: prefix + '/portfolios/portfolio-bundle/{id}/',
 	},
 	performanceFirstTransaction: {
-		get: prefix + '/reports/performance-report/first-transaction-date/?bundle={id}'
+		get:
+			prefix +
+			'/reports/performance-report/first-transaction-date/?bundle={id}',
 	},
 	interfaceAccess: {
-		get: prefix + '/ui/portal-interface-access/'
+		get: prefix + '/ui/portal-interface-access/',
 	},
 	configurationList: {
-		get: prefix + '/ui/configuration/'
+		get: prefix + '/ui/configuration/',
 	},
 	unifiedData: {
-		get: prefix + '/data/{type}/'
+		get: prefix + '/data/{type}/',
 	},
 
 	configSharingConfigFile: {
@@ -193,10 +197,10 @@ export default {
 		get: prefix + '/configuration-sharing/my-invites/',
 	},
 	configurationJson: {
-		post: prefix + '/import/configuration-json/'
+		post: prefix + '/import/configuration-json/',
 	},
 	configurationJsonStatus: {
-		get: prefix + '/active_processes/active_processes/{id}/'
+		get: prefix + '/active_processes/active_processes/{id}/',
 	},
 	dashboardLayout: {
 		get: prefix + '/ui/dashboard-layout/{id}/',
@@ -205,13 +209,13 @@ export default {
 		delete: prefix + '/ui/dashboard-layout/{id}/',
 	},
 	dashboardLayoutList: {
-		get: prefix + '/ui/dashboard-layout/'
+		get: prefix + '/ui/dashboard-layout/',
 	},
 	expression: {
 		post: prefix + '/utils/expression/',
 	},
 	transactionComplexFiltered: {
-		post: prefix + '/transactions/complex-transaction-ev/filtered/',
+		post: prefix + '/transactions/complex-transaction/ev-item/',
 	},
 	systemAttributes: {
 		get: prefix + '/ui/system-attributes/',
@@ -252,9 +256,9 @@ export default {
 	// Надо отделить
 
 	widgetsHistory: {
-		get: prefix + '/widgets/history/{type}/'
+		get: prefix + '/widgets/history/{type}/',
 	},
 	widgetsStats: {
-		get: prefix + '/widgets/stats/'
-	}
+		get: prefix + '/widgets/stats/',
+	},
 }

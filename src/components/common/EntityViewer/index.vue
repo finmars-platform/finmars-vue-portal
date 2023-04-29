@@ -4,52 +4,62 @@
 			height="50"
 			:loadingLayout="!readyStatusData.layout"
 			@saveListLayout="saveLayout()"
-			@openSettings="showSettingsDialog = true;"
+			@openSettings="showSettingsDialog = true"
 		>
 			<template #rightActions>
 				<div class="flex-row fc-end">
-
-					<div style="flex-basis: 175px;">
+					<div style="flex-basis: 175px">
 						<FmUnifiedDataSelect
 							v-model="viewerData.reportOptions.report_currency"
-							v-model:itemObject="viewerData.reportOptions.report_currency_object"
+							v-model:itemObject="
+								viewerData.reportOptions.report_currency_object
+							"
 							noBorders
 							content_type="currencies.currency"
 							@update:modelValue="emit('refresh')"
 						/>
 					</div>
 
-					<div style="flex-basis: 120px;">
-
+					<div style="flex-basis: 120px">
 						<FmInputDateComplex
 							v-if="readyStatusData.layout"
 							v-model:firstDate="viewerData.reportOptions.end_date"
-							v-model:firstDatepickerOptions="viewerData.reportLayoutOptions.datepickerOptions.reportLastDatepicker"
+							v-model:firstDatepickerOptions="
+								viewerData.reportLayoutOptions.datepickerOptions
+									.reportLastDatepicker
+							"
 							noBorders
 						/>
 
 						<FmLoader v-if="!readyStatusData.layout" />
-
 					</div>
-
 				</div>
 
 				<PagesReportsPerformanceDialogSettings
 					v-model="showSettingsDialog"
 					:bundles="bundles"
-					@save="showSettingsDialog = false, [viewerData.reportOptions, viewerData.reportLayoutOptions, viewerData.components] = $event, emit('refresh')"
+					@save="
+						;(showSettingsDialog = false),
+							([
+								viewerData.reportOptions,
+								viewerData.reportLayoutOptions,
+								viewerData.components,
+							] = $event),
+							emit('refresh')
+					"
 					@cancel="showSettingsDialog = false"
 				/>
 
 				<EvModalSaveLayoutAs
 					v-model="openSaveAsModal"
-					@layoutSaved="layoutsStore.getListLayoutsLight(viewerData.content_type)"
+					@layoutSaved="
+						layoutsStore.getListLayoutsLight(viewerData.content_type)
+					"
 				/>
 			</template>
 		</EvBaseTopPanel>
 
 		<FmHorizontalPanel height="initial" class="ev_toolbar">
-
 			<template #leftActions>
 				<FmMenu>
 					<template #btn>
@@ -70,7 +80,8 @@
 
 				<ModalPortfolioBundleAddEdit
 					v-model="isOpenAddBundle"
-					@save="createBundle" />
+					@save="createBundle"
+				/>
 
 				<ModalPortfolioRegister
 					title="Add portfolio register"
@@ -81,16 +92,30 @@
 			</template>
 
 			<template #rightActions>
-				<FmIcon icon="splitscreen" @click="splitComponent = splitComponent ? null : 'FmBtn'" btn />
+				<FmIcon
+					icon="splitscreen"
+					@click="splitComponent = splitComponent ? null : 'FmBtn'"
+					btn
+				/>
 				<FmIcon icon="refresh" @click="emit('refresh')" btn />
 			</template>
 		</FmHorizontalPanel>
 
-		<div class="split_panel_wrap"
-			:style="splitComponent ? {gridTemplateRows: `calc(100% - ${splitHeight}px) ${splitHeight}px`} : {}"
+		<div
+			class="split_panel_wrap"
+			:style="
+				splitComponent
+					? {
+							gridTemplateRows: `calc(100% - ${splitHeight}px) ${splitHeight}px`,
+					  }
+					: {}
+			"
 		>
 			<div class="split_panel_main">
-				<slot :reportOptions="viewerData.reportOptions"></slot>
+				<slot
+					:reportOptions="viewerData.reportOptions"
+					:components="viewerData.components"
+				></slot>
 			</div>
 
 			<div class="split_panel" v-if="splitComponent">
@@ -103,19 +128,17 @@
 </template>
 
 <script setup>
-
 	import dayjs from 'dayjs'
 
 	const emit = defineEmits(['refresh'])
 
 	const viewerData = getPerformanceViewerData()
-	const layoutsStore = useLayoutsStore();
-	const store = useStore();
-	const route = useRoute();
+	const layoutsStore = useLayoutsStore()
+	const store = useStore()
+	const route = useRoute()
 	provide('viewerData', viewerData)
 
 	let bundles = ref([])
-
 
 	let readyStatusData = reactive({
 		layout: false,
@@ -124,17 +147,15 @@
 	})
 
 	let showSettingsDialog = ref(false)
-	let addRegisterIsOpen = ref(false);
-	let openSaveAsModal = ref(false);
+	let addRegisterIsOpen = ref(false)
+	let openSaveAsModal = ref(false)
 	let isOpenAddBundle = ref(false)
 
 	let splitHeight = ref(200)
 	let splitComponent = ref(false)
 
-	async function saveLayout () {
-
+	async function saveLayout() {
 		if (viewerData.newLayout) {
-
 			/*const layoutToSave = viewerData.getLayoutCurrentConfiguration();
 			layoutToSave.name = "default";
 			layoutToSave.user_code = "default";
@@ -147,28 +168,21 @@
 				viewerData.listLayout = res;
 				useNotify({type: 'success', title: 'Success. Page was saved.'})
 			}*/
-			openSaveAsModal.value = true;
-
-
+			openSaveAsModal.value = true
 		} else {
-			useSaveEvRvLayout(store, viewerData);
+			useSaveEvRvLayout(store, viewerData)
 		}
-
 	}
 	watch(
 		() => viewerData.layoutToOpen,
 		async () => {
-
 			if (viewerData.layoutToOpen) {
+				await fetchListLayout()
+				viewerData.layoutToOpen = null
 
-				await fetchListLayout();
-				viewerData.layoutToOpen = null;
-
-				refresh();
-
+				refresh()
 			}
-
-		},
+		}
 	)
 	function resizeY(e) {
 		let elem = e.target
@@ -176,121 +190,116 @@
 		let startY = e.clientY
 		let oldValue = splitHeight.value
 
-		document.ondragstart = function() {
-			return false;
-		};
+		document.ondragstart = function () {
+			return false
+		}
 
 		function onmousemove(e) {
 			let newVal = oldValue + (startY - e.clientY)
 
-			if ( newVal < 30 ) newVal = 30
-			if ( newVal > parentRect.height ) newVal = parentRect.height
+			if (newVal < 30) newVal = 30
+			if (newVal > parentRect.height) newVal = parentRect.height
 
 			splitHeight.value = newVal
 		}
 
 		document.addEventListener('mousemove', onmousemove)
-		document.onselectstart = function(e) {
+		document.onselectstart = function (e) {
 			e.preventDefault()
 			return false
-		};
-		document.onmouseup = function() {
-			document.removeEventListener('mousemove', onmousemove);
-			elem.onmouseup = null;
+		}
+		document.onmouseup = function () {
+			document.removeEventListener('mousemove', onmousemove)
+			elem.onmouseup = null
 			document.onselectstart = null
-		};
+		}
 	}
 	function onPrtfRegisterCreate(newRegister) {
+		addPrtfRegisterItem(newRegister)
+		addRegisterIsOpen.value = false
 
-		addPrtfRegisterItem(newRegister);
-		addRegisterIsOpen.value = false;
-
-		refresh();
-
+		refresh()
 	}
 	fetchPortfolioBundles()
 
 	async function fetchPortfolioBundles() {
-
-		let res = await useApi('portfolioBundles.get');
+		let res = await useApi('portfolioBundles.get')
 
 		bundles.value = res.results
 	}
 	async function createBundle(bundleData) {
-
 		const newBundleData = {
 			name: bundleData.name,
 			short_name: bundleData.name,
 			user_code: bundleData.name,
 			public_name: bundleData.name,
 			registers: bundleData.registers,
-		};
+		}
 
-		let res = await useApi('portfolioBundles.post', {body: newBundleData})
+		let res = await useApi('portfolioBundles.post', { body: newBundleData })
 
-		if ( res ) {
-
+		if (res) {
 			refresh()
 
 			useNotify({
 				type: 'success',
-				title: 'Bundle created successfully'
+				title: 'Bundle created successfully',
 			})
-
 		}
 	}
 
 	// rework
 	async function getEndDate() {
+		if (viewerData.reportOptions?.end_date) {
+			return viewerData.reportOptions?.end_date
+		}
 
-	if (viewerData.reportOptions?.end_date) {
-		return viewerData.reportOptions?.end_date;
-	}
+		const roCopy = viewerData.reportOptions
+			? JSON.parse(JSON.stringify(viewerData.reportOptions))
+			: viewerData.reportOptions
+		console.error('No end_date set for performance report ', roCopy)
 
-	const roCopy = viewerData.reportOptions ? JSON.parse(JSON.stringify(viewerData.reportOptions)) : viewerData.reportOptions;
-	console.error("No end_date set for performance report ", roCopy);
+		// if there is expression for end_date, calculate it
+		if (
+			viewerData.reportLayoutOptions?.datepickerOptions?.reportLastDatepicker
+				.datepickerMode !== 'datepicker' &&
+			viewerData.reportLayoutOptions.datepickerOptions.reportLastDatepicker
+				.expression
+		) {
+			const opts = {
+				body: {
+					is_eval: true,
+					expression:
+						viewerData.reportLayoutOptions.datepickerOptions
+							.reportLastDatepicker.expression,
+				},
+			}
 
-	// if there is expression for end_date, calculate it
-	if (
-		viewerData.reportLayoutOptions?.datepickerOptions?.reportLastDatepicker.datepickerMode !== 'datepicker' &&
-		viewerData.reportLayoutOptions.datepickerOptions.reportLastDatepicker.expression
-	) {
+			const res = await useApi('expression.post', opts)
+
+			viewerData.reportOptions.end_date = res.result
+
+			return viewerData.reportOptions.end_date
+		}
 
 		const opts = {
 			body: {
 				is_eval: true,
-				expression: viewerData.reportLayoutOptions.datepickerOptions.reportLastDatepicker.expression,
-			}
+				expression: 'last_business_day(now())',
+			},
 		}
 
-		const res = await useApi('expression.post', opts);
+		const res = await useApi('expression.post', opts)
 
-		viewerData.reportOptions.end_date = res.result;
+		if (res.error) throw new Error(res.error)
 
-		return viewerData.reportOptions.end_date;
+		viewerData.reportOptions.end_date = res.result
 
+		return viewerData.reportOptions.end_date
 	}
+	await fetchListLayout()
 
-	const opts = {
-		body: {
-			is_eval: true,
-			expression: 'last_business_day(now())',
-		}
-	}
-
-	const res = await useApi('expression.post', opts);
-
-	if (res.error) throw new Error(res.error);
-
-	viewerData.reportOptions.end_date = res.result;
-
-	return viewerData.reportOptions.end_date;
-
-	}
-	await fetchListLayout();
-
-	async function fetchListLayout () {
-
+	async function fetchListLayout() {
 		/*const resData = await useApi('defaultListLayout.get', {params: {contentType: viewerData.contentType}});
 
 		if (resData.error) {
@@ -314,44 +323,49 @@
 			});
 
 		}*/
-		readyStatusData.layout = false;
+		readyStatusData.layout = false
 
-		const layoutRes = await useFetchEvRvLayout(layoutsStore, viewerData, route.query.layout);
+		const layoutRes = await useFetchEvRvLayout(
+			layoutsStore,
+			viewerData,
+			route.query.layout
+		)
 
-		viewerData.setLayoutCurrentConfiguration(layoutRes, store.ecosystemDefaults);
+		viewerData.setLayoutCurrentConfiguration(layoutRes, store.ecosystemDefaults)
 
-		const reportOptionsRes = await useCalculateReportDatesExprs(viewerData.content_type, viewerData.reportOptions, viewerData.reportLayoutOptions);
+		const reportOptionsRes = await useCalculateReportDatesExprs(
+			viewerData.content_type,
+			viewerData.reportOptions,
+			viewerData.reportLayoutOptions
+		)
 
-		if (reportOptionsRes.error) throw reportOptionsRes.error;
+		if (reportOptionsRes.error) throw reportOptionsRes.error
 
-		viewerData.reportOptions = reportOptionsRes;
+		viewerData.reportOptions = reportOptionsRes
 
-		readyStatusData.layout = true;
-
+		readyStatusData.layout = true
 	}
 
 	function getPerformanceViewerData() {
+		return reactive({
+			listLayout: {},
+			reportLayoutOptions: {},
+			reportOptions: {},
+			additions: {},
+			components: {},
+			exportOptions: {},
 
-		return reactive(
-			{
-				listLayout: {},
-				reportLayoutOptions: {},
-				reportOptions: {},
-				additions: {},
-				components: {},
-				exportOptions: {},
+			layoutToOpen: null, // id of layout
 
-				layoutToOpen: null, // id of layout
+			content_type: 'reports.performancereport',
+			entityType: 'reports-performance', // TODO: remove and use only content_type
 
-				content_type: 'reports.performancereport',
-				entityType: 'reports-performance', // TODO: remove and use only content_type
+			isReport: true,
+			isRootEntityViewer: true,
+			newLayout: false,
+			viewerContext: 'entity_viewer',
 
-				isReport: true,
-				isRootEntityViewer: true,
-				newLayout: false,
-				viewerContext: 'entity_viewer',
-
-				/*setListLayout(listLayout) {
+			/*setListLayout(listLayout) {
 					this.state.listLayout = listLayout;
 				},
 
@@ -371,81 +385,100 @@
 					this.state.exportOptions = options;
 				},*/
 
-				setLayoutCurrentConfiguration(listLayout, ecosystemDefaults) {
+			setLayoutCurrentConfiguration(listLayout, ecosystemDefaults) {
+				if (listLayout) {
+					this.newLayout = false
+					listLayout = useRecursiveDeepCopy(listLayout)
+				} else {
+					this.newLayout = true
 
-					if (listLayout) {
-
-						this.newLayout = false;
-						listLayout = useRecursiveDeepCopy(listLayout);
-
-					} else {
-
-						this.newLayout = true;
-
-						/*let edRes = await useApi('ecosystemDefaults.get');
+					/*let edRes = await useApi('ecosystemDefaults.get');
 
 						const ecosystemDefaults = (edRes.error) ? {} : edRes.results[0];*/
 
-						listLayout = getEmptyLayoutData(JSON.parse(JSON.stringify(ecosystemDefaults)));
+					listLayout = getEmptyLayoutData(
+						JSON.parse(JSON.stringify(ecosystemDefaults))
+					)
+				}
 
-					}
+				//region Setup data for FmInputDateComplex
+				if (!listLayout.data.hasOwnProperty('reportLayoutOptions')) {
+					listLayout.data.reportLayoutOptions = {}
+				}
 
-					//region Setup data for FmInputDateComplex
-					if (!listLayout.data.hasOwnProperty('reportLayoutOptions')) {
-						listLayout.data.reportLayoutOptions = {};
-					}
+				if (
+					!listLayout.data.reportLayoutOptions.hasOwnProperty(
+						'datepickerOptions'
+					)
+				) {
+					listLayout.data.reportLayoutOptions.datepickerOptions = {}
+				}
 
-					if (!listLayout.data.reportLayoutOptions.hasOwnProperty('datepickerOptions')) {
-						listLayout.data.reportLayoutOptions.datepickerOptions = {};
-					}
+				if (
+					!listLayout.data.reportLayoutOptions.datepickerOptions.hasOwnProperty(
+						'reportFirstDatepicker'
+					)
+				) {
+					listLayout.data.reportLayoutOptions.datepickerOptions.reportFirstDatepicker =
+						{}
+				}
 
-					if (!listLayout.data.reportLayoutOptions.datepickerOptions.hasOwnProperty('reportFirstDatepicker')) {
-						listLayout.data.reportLayoutOptions.datepickerOptions.reportFirstDatepicker = {};
-					}
-
-					if (!listLayout.data.reportLayoutOptions.datepickerOptions.hasOwnProperty('reportLastDatepicker')) {
-
-						listLayout.data.reportLayoutOptions.datepickerOptions.reportLastDatepicker = {
+				if (
+					!listLayout.data.reportLayoutOptions.datepickerOptions.hasOwnProperty(
+						'reportLastDatepicker'
+					)
+				) {
+					listLayout.data.reportLayoutOptions.datepickerOptions.reportLastDatepicker =
+						{
 							expression: 'last_business_day(now())',
-							datepickerMode: 'expression'
-						};
+							datepickerMode: 'expression',
+						}
+				}
+				//endregion
 
-					}
-					//endregion
+				this.components = JSON.parse(JSON.stringify(listLayout.data.components))
+				this.reportLayoutOptions = JSON.parse(
+					JSON.stringify(listLayout.data.reportLayoutOptions)
+				)
+				this.reportOptions = JSON.parse(
+					JSON.stringify(listLayout.data.reportOptions)
+				)
 
-					this.components = JSON.parse(JSON.stringify(listLayout.data.components));
-					this.reportLayoutOptions = JSON.parse(JSON.stringify(listLayout.data.reportLayoutOptions));
-					this.reportOptions = JSON.parse(JSON.stringify(listLayout.data.reportOptions));
+				this.additions = JSON.parse(JSON.stringify(listLayout.data.additions))
+				this.exportOptions = JSON.parse(
+					JSON.stringify(listLayout.data.exportOptions)
+				)
 
-					this.additions = JSON.parse(JSON.stringify(listLayout.data.additions));
-					this.exportOptions = JSON.parse(JSON.stringify(listLayout.data.exportOptions));
+				this.listLayout = listLayout
 
-					this.listLayout = listLayout;
-
-					/*this.setComponents(JSON.parse(JSON.stringify(listLayout.data.components)));
+				/*this.setComponents(JSON.parse(JSON.stringify(listLayout.data.components)));
 					this.setReportOptions(JSON.parse(JSON.stringify(listLayout.data.reportOptions)));
 					this.setAdditions(JSON.parse(JSON.stringify(listLayout.data.additions)));
 					this.setExportOptions(JSON.parse(JSON.stringify(listLayout.data.exportOptions)));
 
 					this.setListLayout(listLayout);*/
+			},
 
-				},
+			getLayoutCurrentConfiguration() {
+				let listLayout = useRecursiveDeepCopy(this.listLayout)
 
-				getLayoutCurrentConfiguration() {
+				listLayout.data.components = { ...{}, ...this.components }
+				listLayout.data.reportLayoutOptions = JSON.parse(
+					JSON.stringify(this.reportLayoutOptions)
+				)
+				listLayout.data.reportOptions = JSON.parse(
+					JSON.stringify(this.reportOptions)
+				)
 
-					let listLayout = useRecursiveDeepCopy(this.listLayout);
+				listLayout.data.additions = JSON.parse(JSON.stringify(this.additions))
+				listLayout.data.exportOptions = JSON.parse(
+					JSON.stringify(this.exportOptions)
+				)
 
-					listLayout.data.components = {...{}, ...this.components};
-					listLayout.data.reportLayoutOptions = JSON.parse(JSON.stringify(this.reportLayoutOptions));
-					listLayout.data.reportOptions = JSON.parse(JSON.stringify(this.reportOptions));
+				return listLayout
+			},
 
-					listLayout.data.additions = JSON.parse(JSON.stringify(this.additions));
-					listLayout.data.exportOptions = JSON.parse(JSON.stringify(this.exportOptions));
-
-					return listLayout;
-				},
-
-				/*get reportOptions() {
+			/*get reportOptions() {
 					return this.state.reportOptions;
 				},
 
@@ -456,29 +489,26 @@
 				get exportOptions() {
 					return this.state.exportOptions;
 				},*/
-			}
-		)
-
+		})
 	}
 
-	function getEmptyLayoutData (ecosystemDefaults) {
-
-		let reportCurrencyObj = null;
+	function getEmptyLayoutData(ecosystemDefaults) {
+		let reportCurrencyObj = null
 
 		if (ecosystemDefaults.currency_object) {
-			reportCurrencyObj = ecosystemDefaults.currency_object;
+			reportCurrencyObj = ecosystemDefaults.currency_object
 		}
 
-		let pricingPolicyObj = null;
+		let pricingPolicyObj = null
 
 		if (ecosystemDefaults.pricing_policy_object) {
-			pricingPolicyObj = ecosystemDefaults.pricing_policy_object;
+			pricingPolicyObj = ecosystemDefaults.pricing_policy_object
 		}
 
 		return {
-			name: "",
-			user_code: "",
-			content_type: "reports.performancereport",
+			name: '',
+			user_code: '',
+			content_type: 'reports.performancereport',
 			data: {
 				additions: {},
 				reportLayoutOptions: {
@@ -489,8 +519,8 @@
 					end_date: dayjs().format('YYYY-MM-DD'), // Nees lastBussiness day
 					report_currency: ecosystemDefaults.currency || null,
 					report_currency_object: reportCurrencyObj,
-					calculation_type: "time_weighted",
-					segmentation_type: "months",
+					calculation_type: 'time_weighted',
+					segmentation_type: 'months',
 					pricing_policy: ecosystemDefaults.pricing_policy || null,
 					pricing_policy_object: pricingPolicyObj,
 				},
@@ -499,28 +529,27 @@
 					detail: true,
 					diagram: true,
 				},
-				exportOptions: {}
-			}
-		};
+				exportOptions: {},
+			},
+		}
 	}
-
 </script>
 
 <style lang="scss" scoped>
-.split_panel_wrap {
-	display: grid;
-	height: calc(100vh - 161px);
-}
-.split_panel {
-	background: #fff;
-}
-.split_panel_main {
-	overflow: auto;
-}
-.split_panel_devider {
-	height: 5px;
-	border-top: 1px solid $border;
-	border-bottom: 1px solid $border;
-	cursor: row-resize;
-}
+	.split_panel_wrap {
+		display: grid;
+		height: calc(100vh - 161px);
+	}
+	.split_panel {
+		background: #fff;
+	}
+	.split_panel_main {
+		overflow: auto;
+	}
+	.split_panel_devider {
+		height: 5px;
+		border-top: 1px solid $border;
+		border-bottom: 1px solid $border;
+		cursor: row-resize;
+	}
 </style>

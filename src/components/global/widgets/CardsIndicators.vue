@@ -29,33 +29,34 @@
 
 	import dayjs from 'dayjs';
 
-	let props = defineProps({
+	const props = defineProps({
 		wid: String
 	})
 
-	let dashStore = useStoreDashboard()
-	let widget = dashStore.getWidget(props.wid)
+	const dashStore = useStoreDashboard()
+	let component = dashStore.getWidget(props.wid)
 
-	let componentProps = computed(() => {
-		let props = dashStore.scope.filter((prop) => prop.cid == widget.id)
+	const inputs = computed(() => {
+		let props = dashStore.props.inputs.filter((prop) => prop.component_id == component.uid)
 		let obj = {}
 
 		props.forEach((prop) => {
-			obj[prop.name] = prop.__val
+			obj[prop.key] = prop.__val
 		})
 		return obj
 	})
-	let outputs = computed(() => {
-		let props = dashStore.scope.filter((prop) => prop.cid == widget.id && prop.direct == 'output')
+	const outputs = computed(() => {
+		let props = dashStore.props.outputs.filter((prop) => prop.component_id == component.uid)
 		let obj = {}
 
 		props.forEach((prop) => {
-			obj[prop.name] = prop
+			obj[prop.key] = prop
 		})
 		return obj
 	})
-	outputs.value.type.__val = outputs.value.type.__val || 'nav'
-	watch(componentProps, () => loadData())
+
+	watch(inputs, () => loadData())
+
 	const stats_map = {
 		'nav': 'nav',
 		'total': 'pl'
@@ -70,14 +71,14 @@
 	loadData()
 
 	async function loadData() {
-		if ( dayjs(componentProps.value.date).diff(dayjs(), 'day') >= 0 ) {
+		if ( dayjs(inputs.value.date).diff(dayjs(), 'day') >= 0 ) {
 			status.value = 101
 			return false
 		}
 		let apiOpts = {
 			filters: {
-				portfolio: componentProps.value.portfolio,
-				date: componentProps.value.date,
+				portfolio: inputs.value.portfolio,
+				date: inputs.value.date,
 			}
 		}
 

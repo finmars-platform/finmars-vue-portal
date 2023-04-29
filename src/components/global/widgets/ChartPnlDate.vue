@@ -73,25 +73,19 @@
 	let maxTickStock = ref(null)
 
 	let inputs = computed(() => {
-		let props = dashStore.scope.filter((prop) => prop.cid == widget.id && prop.direct == 'input')
+		let props = dashStore.props.inputs.filter((prop) => prop.component_id == widget.uid)
 		let obj = {}
 
 		props.forEach((prop) => {
-			obj[prop.name] = prop.__val
+			obj[prop.key] = prop.__val
 		})
 		return obj
-	})
-
-	let outputs = {}
-	let propsTest = dashStore.scope.filter((prop) => prop.cid == widget.id && prop.direct == 'output')
-	propsTest.forEach((prop) => {
-		outputs[prop.name] = prop
 	})
 
 	if ( dayjs(inputs.value.date).diff(dayjs(), 'day') >= 0 ) {
 			status.value = 101
 		}
-
+		prepareData()
 	watch(
 		inputs,
 		() => prepareData()
@@ -107,12 +101,13 @@
 			status.value = 201
 			return false
 		}
+
 		let pl = await dashStore.getHistoryPnl({
 			date: inputs.value.date,
 			category: inputs.value.category_type
 		})
 
-		if ( pl.error ) {
+		if ( !pl || pl.error ) {
 			status.value = 101
 
 			return false

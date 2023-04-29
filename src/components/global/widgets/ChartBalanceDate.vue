@@ -59,21 +59,11 @@
 	let widget = dashStore.getWidget(props.wid)
 
 	let inputs = computed(() => {
-		let props = dashStore.scope.filter((prop) => prop.cid == widget.id && prop.direct == 'input')
+		let props = dashStore.props.inputs.filter((prop) => prop.component_id == widget.uid)
 		let obj = {}
 
 		props.forEach((prop) => {
-			obj[prop.name] = prop.__val
-		})
-		return obj
-	})
-
-	let outputs = computed(() => {
-		let props = dashStore.scope.filter((prop) => prop.cid == widget.id && prop.direct == 'output')
-		let obj = {}
-
-		props.forEach((prop) => {
-			obj[prop.name] = prop.__val
+			obj[prop.key] = prop.__val
 		})
 		return obj
 	})
@@ -189,7 +179,7 @@
 			},
 		});
 	}
-	if ( dayjs(inputs.value.date_to).diff(dayjs(), 'day') >= 0 ) {
+	if ( dayjs(inputs.value.date).diff(dayjs(), 'day') >= 0 ) {
 		status.value = 101
 	}
 	watch(

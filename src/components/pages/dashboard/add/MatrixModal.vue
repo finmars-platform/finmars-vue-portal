@@ -1,6 +1,6 @@
 <template>
 
-	<BaseModal title="New Report Viewer Matrix Component">
+<!--	<BaseModal title="New Report Viewer Matrix Component">
 
 		<div>
 			<FmTabs v-model="activeTab" :tabs="tabsList" />
@@ -74,7 +74,72 @@
 				<FmBtn @click="addComponent(cancel)">add</FmBtn>
 			</div>
 		</template>
-	</BaseModal>
+	</BaseModal>-->
+	<div>
+		<FmTabs v-model="activeTab" :tabs="tabsList" />
+
+		<div v-if="activeTab === 'main'">
+			<BaseInput
+				v-model="userCode"
+				label="User code"
+				required
+			/>
+
+			<FmSelect
+				v-model="selDashTab"
+				:items="dashTabsList"
+				label="Tab"
+			/>
+
+			<div class="flex-row">
+				<div class="flex-0-1-100">
+					<FmSelect
+						title="Layout"
+						v-model="settings.layout"
+						:items="layoutsList"
+						prop_id="user_code"
+					/>
+				</div>
+
+				<div style="flex: 0 0 180px;">
+					<FmSelect
+						title="Report type"
+						v-model="settings.content_type"
+						:items="contentTypeOpts"
+					/>
+				</div>
+
+			</div>
+
+			<FmAttributesSelect
+				v-model="settings.axisX"
+				title="Axis X Columns"
+				:contentType="settings.content_type"
+				:disabled="!!settings.layout"
+			/>
+
+			<FmAttributesSelect
+				v-model="settings.axisY"
+				title="Axis Y Columns"
+				:contentType="settings.content_type"
+				:disabled="!!settings.layout"
+			/>
+
+			<FmAttributesSelect
+				v-model="settings.valueKey"
+				title="Value"
+				:contentType="settings.content_type"
+				:disabled="!!settings.layout"
+			/>
+
+		</div>
+
+		<div v-else-if="activeTab === 'advance settings'"></div>
+
+		<div v-else-if="activeTab === 'menu settings'"></div>
+
+		<div v-else-if="activeTab === 'linking'"></div>
+	</div>
 </template>
 
 <script setup>
@@ -82,7 +147,7 @@
 	import useEvAttributesStore from "~/stores/useEvAttributesStore";
 
 	const props = defineProps({
-		tab: String,
+		tab: Number,
 	});
 
 	const dashStore = useStoreDashboard();

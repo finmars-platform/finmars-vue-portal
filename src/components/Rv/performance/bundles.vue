@@ -11,33 +11,36 @@
 </template>
 
 <script setup>
-
 	import dayjs from 'dayjs'
 	import quarterOfYear from 'dayjs/plugin/quarterOfYear'
 	dayjs.extend(quarterOfYear)
 
 	const props = defineProps({
 		reportOptions: {
-			type: Object
+			type: Object,
 		},
 		end_date: {
-			type: String
+			type: String,
 		},
 		calculation_type: {
-			type: String
+			type: String,
 		},
 		report_currency: {
-			type: [Number, String]
+			type: [Number, String],
 		},
 	})
-	const emits = defineEmits(["setBundle", 'refreshFunc']);
+	const emits = defineEmits(['setBundle', 'refreshFunc'])
 
 	let preriodHeaders = computed(() => {
 		return [
-			'', 'Daily', 'MTD', 'QTD', 'YTD',
+			'',
+			'Daily',
+			'MTD',
+			'QTD',
+			'YTD',
 			dayjs(props.end_date).year() - 1,
 			dayjs(props.end_date).year() - 2,
-			'Incept'
+			'Incept',
 		]
 	})
 	let preriodItems = ref([])
@@ -51,7 +54,7 @@
 
 	function init() {
 		// проверка на корректность всех свойств, если что выдать ошибку
-		if ( !props.end_date ) {
+		if (!props.end_date) {
 			console.log('No end_date:', props.end_date)
 			return false
 		}
@@ -62,63 +65,66 @@
 	async function fetchPortfolioBundles() {
 		// readyStatusData.bundles = false;
 
-		let res = await useApi('portfolioBundles.get');
+		let res = await useApi('portfolioBundles.get')
 
-		bundles.value = res.results;
+		bundles.value = res.results
 
-		if ( props.reportOptions?.bundles?.length ) {
-			bundles.value = bundles.value
-				.filter(o => !props.reportOptions?.bundles || props.reportOptions.bundles.includes(o.id) );
+		if (props.reportOptions?.bundles?.length) {
+			bundles.value = bundles.value.filter(
+				(o) =>
+					!props.reportOptions?.bundles ||
+					props.reportOptions.bundles.includes(o.id)
+			)
 		}
 		// readyStatusData.bundles = true;
 
 		preriodItems.value = []
 
-		bundles.value.forEach( bundle => {
+		bundles.value.forEach((bundle) => {
 			preriodItems.value.push({
 				name: bundle.user_code,
 			})
 
-			let row = preriodItems.value[ preriodItems.value.length - 1 ]
+			let row = preriodItems.value[preriodItems.value.length - 1]
 
 			row.daily = null
-			getDay( bundle.id ).then(day => {
+			getDay(bundle.id).then((day) => {
 				let value = Math.round(day * 100 * 100) / 100
 				row.daily = value ? `${value}%` : ''
 			})
 
 			row.month = null
-			getMonth( bundle.id ).then(month => {
+			getMonth(bundle.id).then((month) => {
 				let value = Math.round(month * 100 * 100) / 100
 				row.month = value ? `${value}%` : ''
 			})
 
 			row.q = null
-			getQ( bundle.id ).then(q => {
+			getQ(bundle.id).then((q) => {
 				let value = Math.round(q * 100 * 100) / 100
 				row.q = value ? `${value}%` : ''
 			})
 
 			row.year = null
-			getYear( bundle.id ).then(year => {
+			getYear(bundle.id).then((year) => {
 				let value = Math.round(year * 100 * 100) / 100
 				row.year = value ? `${value}%` : ''
 			})
 
 			row.last = null
-			getLastYear( bundle.id ).then(last => {
+			getLastYear(bundle.id).then((last) => {
 				let value = Math.round(last * 100 * 100) / 100
 				row.last = value ? `${value}%` : ''
 			})
 
 			row.beforeLast = null
-			getYearBeforeLast( bundle.id ).then(beforeLast => {
+			getYearBeforeLast(bundle.id).then((beforeLast) => {
 				let value = Math.round(beforeLast * 100 * 100) / 100
 				row.beforeLast = value ? `${value}%` : ''
 			})
 
 			row.incept = null
-			getIncept( bundle.id ).then(incept => {
+			getIncept(bundle.id).then((incept) => {
 				let value = Math.round(incept * 100 * 100) / 100
 				row.incept = value ? `${value}%` : ''
 			})
@@ -131,93 +137,90 @@
 		emits('setBundle', bundles.value[id])
 	}
 
-	async function getDay( ids ) {
+	async function getDay(ids) {
 		let endDate = dayjs(props.end_date)
 
-		let day = dayjs(endDate).add(-1, 'd').format('YYYY-MM-DD')
+		let day = dayjs(endDate).format('YYYY-MM-DD')
 
-		return await getReports({start: day, end: day, ids, type: 'days'})
+		return await getReports({ start: day, end: day, ids, type: 'days' })
 	}
 
-	async function getMonth( ids ) {
+	async function getMonth(ids) {
 		let endDate = dayjs(props.end_date)
 
-		let start = dayjs(endDate).set('date', 1).add(-1, 'd').format('YYYY-MM-DD')
-		let end = dayjs(endDate).add(-1, 'd').format('YYYY-MM-DD')
+		let start = dayjs(endDate).set('date', 1).format('YYYY-MM-DD')
+		let end = dayjs(endDate).format('YYYY-MM-DD')
 
-		return await getReports({start, end, ids})
-
+		return await getReports({ start, end, ids })
 	}
 
-	async function getQ( ids ) {
+	async function getQ(ids) {
 		let endDate = dayjs(props.end_date)
 
 		let start = dayjs('2022-01-01')
 			.year(endDate.year())
-			.quarter( endDate.quarter() )
-			.add(-1, 'd')
+			.quarter(endDate.quarter())
 			.format('YYYY-MM-DD')
 
-		let end = dayjs(endDate).add(-1, 'd').format('YYYY-MM-DD')
+		let end = dayjs(endDate).format('YYYY-MM-DD')
 
-		return await getReports({start, end, ids})
+		return await getReports({ start, end, ids })
 	}
 
-	async function getYear( ids ) {
+	async function getYear(ids) {
 		let endDate = dayjs(props.end_date)
 
-		let start = `${dayjs(endDate).year() - 1}-12-31`
-		let end = dayjs(endDate).add(-1, 'd').format('YYYY-MM-DD')
+		let start = `${dayjs(endDate).year()}-01-01`
+		let end = dayjs(endDate).format('YYYY-MM-DD')
 
-		return await getReports({start, end, ids})
+		return await getReports({ start, end, ids })
 	}
 
-	async function getLastYear( ids ) {
+	async function getLastYear(ids) {
 		let endDate = dayjs(props.end_date)
 
-		let start = `${dayjs(endDate).year() - 2}-12-31`
-		let end = `${dayjs(endDate).year() - 1}-12-30`
+		let start = `${dayjs(endDate).year() - 1}-01-01`
+		let end = `${dayjs(endDate).year() - 1}-12-31`
 
-		return await getReports({start, end, ids})
+		return await getReports({ start, end, ids })
 	}
 
-	async function getYearBeforeLast( ids ) {
+	async function getYearBeforeLast(ids) {
 		let endDate = dayjs(props.end_date)
 
-		let start = `${dayjs(endDate).year() - 3}-12-31`
+		let start = `${dayjs(endDate).year() - 2}-01-01`
 
-		let end = `${dayjs(endDate).year() - 2}-12-30`
+		let end = `${dayjs(endDate).year() - 2}-12-31`
 
-		return await getReports({start, end, ids})
+		return await getReports({ start, end, ids })
 	}
 
-	async function getIncept( ids ) {
+	async function getIncept(ids) {
 		let res = await useApi('performanceFirstTransaction.get', {
-			params: { id: ids }
+			params: { id: ids },
 		})
 
 		let start = res.transaction_date
-		if ( !start ) return false
-
+		if (!start) return false
 
 		let endDate = dayjs(props.end_date)
 
-		let end = dayjs(endDate).add(-1, 'd').format('YYYY-MM-DD')
+		let end = dayjs(endDate).format('YYYY-MM-DD')
 
-		return await getReports({start, end, ids})
+		return await getReports({ start, end, ids })
 	}
 
-	async function getReports({start, end, ids, type = 'months'}) {
+	async function getReports({ start, end, ids, type = 'months' }) {
 		let res = await useApi('performanceReport.post', {
 			body: {
-				"save_report": false,
-				"begin_date": start,
-				"end_date": end,
-				"calculation_type": props.calculation_type,
-				"segmentation_type": type,
-				'report_currency': props.report_currency,
-				"bundle": ids
-			}
+				save_report: false,
+				begin_date: start,
+				end_date: end,
+				calculation_type: props.calculation_type,
+				segmentation_type: type,
+				report_currency: props.report_currency,
+				bundle: ids,
+			},
 		})
 
 		return res.grand_return
@@ -225,54 +228,53 @@
 
 	// rework
 	async function getEndDate() {
-
 		if (viewerData.reportOptions?.end_date) {
-			return viewerData.reportOptions?.end_date;
+			return viewerData.reportOptions?.end_date
 		}
 
-		const roCopy = viewerData.reportOptions ? JSON.parse(JSON.stringify(viewerData.reportOptions)) : viewerData.reportOptions;
-		console.error("No end_date set for performance report ", roCopy);
+		const roCopy = viewerData.reportOptions
+			? JSON.parse(JSON.stringify(viewerData.reportOptions))
+			: viewerData.reportOptions
+		console.error('No end_date set for performance report ', roCopy)
 
 		// if there is expression for end_date, calculate it
 		if (
-			viewerData.reportLayoutOptions?.datepickerOptions?.reportLastDatepicker.datepickerMode !== 'datepicker' &&
-			viewerData.reportLayoutOptions.datepickerOptions.reportLastDatepicker.expression
+			viewerData.reportLayoutOptions?.datepickerOptions?.reportLastDatepicker
+				.datepickerMode !== 'datepicker' &&
+			viewerData.reportLayoutOptions.datepickerOptions.reportLastDatepicker
+				.expression
 		) {
-
 			const opts = {
 				body: {
 					is_eval: true,
-					expression: viewerData.reportLayoutOptions.datepickerOptions.reportLastDatepicker.expression,
-				}
+					expression:
+						viewerData.reportLayoutOptions.datepickerOptions
+							.reportLastDatepicker.expression,
+				},
 			}
 
-			const res = await useApi('expression.post', opts);
+			const res = await useApi('expression.post', opts)
 
-			viewerData.reportOptions.end_date = res.result;
+			viewerData.reportOptions.end_date = res.result
 
-			return viewerData.reportOptions.end_date;
-
+			return viewerData.reportOptions.end_date
 		}
 
 		const opts = {
 			body: {
 				is_eval: true,
 				expression: 'last_business_day(now())',
-			}
+			},
 		}
 
-		const res = await useApi('expression.post', opts);
+		const res = await useApi('expression.post', opts)
 
-		if (res.error) throw new Error(res.error);
+		if (res.error) throw new Error(res.error)
 
-		viewerData.reportOptions.end_date = res.result;
+		viewerData.reportOptions.end_date = res.result
 
-		return viewerData.reportOptions.end_date;
-
+		return viewerData.reportOptions.end_date
 	}
-
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>
