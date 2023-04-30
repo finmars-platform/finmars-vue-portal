@@ -1,7 +1,9 @@
 <template>
 	<BaseModal no_padding title="Workspace Provising Log" @update:model-value="cancel()">
 		<div class="provision-log">
-				<div> {{ logText }}</div>
+				<li v-for="(line, index) in lines" :key="index">
+        	{{ line }}
+      	</li>
 		</div>
 		<template #controls>
 			<div class="flex sb">
@@ -17,13 +19,14 @@
 	let emit = defineEmits(['update:modelValue'])
 	let props = defineProps({baseApiUrl: String})
 
-	const logText = ref('')
+	const lines = ref('')
 
 	async function getData() {
 
-		logText.value = await useApi("masterLog.get", {
+		let logText = await useApi("masterLog.get", {
 			params: {baseApi: props.baseApiUrl}
 		})
+		lines.value = logText.split(/\r?\n/);
 
 	}
 
