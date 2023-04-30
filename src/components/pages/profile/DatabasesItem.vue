@@ -46,6 +46,9 @@
 						<div class="fm_list_item" @click="isOpenRollback = true, close()">
 							<FmIcon class="mr-10" icon="cloud_sync" /> Rollback
 						</div>
+						<div class="fm_list_item" @click="isProvisionLogDialog = true, close()">
+							<FmIcon class="mr-10" icon="cloud_sync" /> Show Provising Log
+						</div>
 						<div class="fm_list_item" @click="exportDb(), close()">
 							<FmIcon class="mr-10" icon="cloud_upload" /> Export backup
 						</div>
@@ -129,6 +132,7 @@
 		</template>
 
 		<LazyPagesProfileWorkspaceRollbackM :workspaceId="db.id" v-model="isOpenRollback" v-if="isOpenRollback" />
+		<LazyPagesProfileWorkspaceProvisionLogM :workspaceId="db.id" v-model="isProvisionLogDialog" v-if="isProvisionLogDialog" />
 	</FmCard>
 </template>
 
@@ -149,6 +153,7 @@
 	let isEdit = ref(false);
 
 	let isOpenRollback = ref(false);
+	let isProvisionLogDialog = ref(false);
 
 	let title = ref(null);
 	let description = ref(null);
