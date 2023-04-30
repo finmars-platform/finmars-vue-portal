@@ -20,7 +20,9 @@
 <script setup>
 
 	let emit = defineEmits(['update:modelValue'])
-	let props = defineProps({workspaceId: String})
+	const props = defineProps({
+		db: Object
+	});
 
 	let data = ''
 
