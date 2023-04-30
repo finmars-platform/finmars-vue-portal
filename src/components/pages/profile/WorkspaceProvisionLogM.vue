@@ -24,7 +24,7 @@
 
 	let data = ''
 
-	function getData() {
+	async function getData() {
 
 		data = await useApi("masterLog.get", {
 			params: {baseApi: props.db.base_api_url}
