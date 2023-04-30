@@ -19,7 +19,7 @@
 	let emit = defineEmits(['update:modelValue'])
 	let props = defineProps({baseApiUrl: String})
 
-	const lines = ref('Waiting to server response...')
+	const lines = ref(['Waiting to server response...'])
 
 	async function getData() {
 
@@ -49,6 +49,7 @@
 		width: 1024px;
 		font-family: monospace;
 		white-space: pre;
+		overflow: auto;
 	}
 
 </style>
