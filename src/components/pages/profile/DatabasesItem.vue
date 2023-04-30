@@ -132,7 +132,7 @@
 		</template>
 
 		<LazyPagesProfileWorkspaceRollbackM :workspaceId="db.id" v-model="isOpenRollback" v-if="isOpenRollback" />
-		<LazyPagesProfileWorkspaceProvisionLogM :workspaceId="db.id" v-model="isProvisionLogDialog" v-if="isProvisionLogDialog" />
+		<LazyPagesProfileWorkspaceProvisionLogM :baseApiUrl="db.base_api_url" v-model="isProvisionLogDialog" v-if="isProvisionLogDialog" />
 	</FmCard>
 </template>
 

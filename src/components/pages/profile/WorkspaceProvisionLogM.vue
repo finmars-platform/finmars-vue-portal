@@ -20,16 +20,14 @@
 <script setup>
 
 	let emit = defineEmits(['update:modelValue'])
-	const props = defineProps({
-		db: Object
-	});
+	let props = defineProps({baseApiUrl: String})
 
 	let data = ''
 
 	async function getData() {
 
 		data = await useApi("masterLog.get", {
-			params: {baseApi: props.db.base_api_url}
+			params: {baseApi: props.baseApiUrl}
 		})
 
 	}
