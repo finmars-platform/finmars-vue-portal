@@ -1,13 +1,8 @@
 <template>
 	<BaseModal no_padding title="Workspace Provising Log" @update:model-value="cancel()">
-		<template>
-
-			<div
-				class="provision-log">
-			<div>{{data}}</div>
-			</div>
-
-		</template>
+		<div class="provision-log">
+				<div> {{ logText }}</div>
+		</div>
 		<template #controls>
 			<div class="flex sb">
 				<FmBtn type="text" @click="cancel()">close</FmBtn>
@@ -22,11 +17,11 @@
 	let emit = defineEmits(['update:modelValue'])
 	let props = defineProps({baseApiUrl: String})
 
-	let data = ref('')
+	const logText = ref('')
 
 	async function getData() {
 
-		data.value = await useApi("masterLog.get", {
+		logText.value = await useApi("masterLog.get", {
 			params: {baseApi: props.baseApiUrl}
 		})
 
