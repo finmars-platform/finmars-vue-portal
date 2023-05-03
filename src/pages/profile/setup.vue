@@ -117,18 +117,13 @@
 			return false
 		}
 
-		let importedData = {
-			data: config.value,
-			mode: 'overwrite',
-		}
-
 		step.value = 3
 
-		importedData = await useApi('configurationJson.put', {
+		let importedData = await useApi('configurationJson.put', {
 			params: {
-				id: config.value.id,
+				id: config.value,
 			},
-			body: importedData,
+			body: configs.value.find((o) => o.id == config.value),
 		})
 
 		let checkStatus = async () => {
@@ -146,7 +141,10 @@
 			}
 		}
 
-		checkStatus()
+		if (importedData.task_id) checkStatus()
+		else {
+			step.value = 2
+		}
 	}
 </script>
 
