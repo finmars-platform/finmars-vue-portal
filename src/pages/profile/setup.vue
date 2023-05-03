@@ -31,11 +31,11 @@
 						:class="{ active: config == item.data }"
 						@click="config = item.data"
 					>
-						<div class="fm_card_text">{{ item.description.slice(0, 100) }}</div>
+						<div class="fm_card_text">{{ item.notes.slice(0, 100) }}</div>
 
 						<div class="version flex sb" v-if="item.data != 'blank'">
-							<div>Updated: {{ item.data.head.date }}</div>
-							<div>Version: {{ item.data.head.version.split(' ')[0] }}</div>
+							<!-- <div>Updated: {{ item.data.head.date }}</div> -->
+							<div>Version: {{ item.configuration_code }}</div>
 						</div>
 					</FmCard>
 				</div>
@@ -93,8 +93,7 @@
 	let res = await useApi('configurationList.get')
 	res.results.unshift({
 		name: 'Blank',
-		description:
-			'Empty Ecosystem. Configure all forms, layouts and tables by myselfEmpty Ecosystem. Configure all forms, layouts and tables by myselfEmpty Ecosystem. Configure all forms, layouts and tables by myselfEmpty Ecosystem. Configure all forms, layouts and tables by myselfEmpty Ecosystem. Configure all forms, layouts and tables by myselfEmpty Ecosystem. Configure all forms, layouts and tables by myselfEmpty Ecosystem. Configure all forms, layouts and tables by myselfEmpty Ecosystem. Configure all forms, layouts and tables by myselfEmpty Ecosystem. Configure all forms, layouts and tables by myself',
+		notes: 'Empty Ecosystem. Configure all forms, layouts and tables by myself',
 		data: 'blank',
 	})
 	let configs = ref(res.results)
