@@ -35,6 +35,9 @@ export default {
 	masterRedeploy: {
 		get: prefix + '/master-user-redeploy/?base_api_url={baseApi}'
 	},
+	masterLog: {
+		get: prefix + '/master-user-log/?base_api_url={baseApi}'
+	},
 	masterStart: {
 		get: prefix + '/master-user-start/?base_api_url={baseApi}'
 	},
