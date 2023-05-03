@@ -28,8 +28,8 @@
 						class="config_item"
 						v-for="item in configs"
 						:title="item.name"
-						:class="{ active: config == item.data }"
-						@click="config = item.data"
+						:class="{ active: config == item.id }"
+						@click="config = item.id"
 					>
 						<div class="fm_card_text">{{ item.notes.slice(0, 100) }}</div>
 
