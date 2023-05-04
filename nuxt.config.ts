@@ -1,5 +1,7 @@
 import dayjs from 'dayjs'
 
+// console.log('process.env ', process.env);
+
 export default defineNuxtConfig({
 	runtimeConfig: {
 		public: {
