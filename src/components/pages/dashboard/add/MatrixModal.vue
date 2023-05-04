@@ -94,7 +94,7 @@
 			<div class="flex-row">
 				<div class="flex-0-1-100">
 					<FmSelect
-						title="Layout"
+						label="Layout"
 						v-model="settings.layout"
 						:items="layoutsList"
 						prop_id="user_code"
@@ -114,22 +114,28 @@
 			<FmAttributesSelect
 				v-model="settings.axisX"
 				title="Axis X Columns"
+				:attributes="stringAttrsOpts"
 				:contentType="settings.content_type"
-				:disabled="!!settings.layout"
+				:disabled="!settings.layout"
+				class="m-b-24"
 			/>
 
 			<FmAttributesSelect
 				v-model="settings.axisY"
 				title="Axis Y Columns"
+				:attributes="stringAttrsOpts"
 				:contentType="settings.content_type"
-				:disabled="!!settings.layout"
+				:disabled="!settings.layout"
+				class="m-b-24"
 			/>
 
 			<FmAttributesSelect
 				v-model="settings.valueKey"
 				title="Value"
+				:attributes="numAttrsOpts"
 				:contentType="settings.content_type"
-				:disabled="!!settings.layout"
+				:disabled="!settings.layout"
+				class="m-b-24"
 			/>
 
 		</div>
@@ -144,14 +150,13 @@
 
 <script setup>
 
-	import useEvAttributesStore from "~/stores/useEvAttributesStore";
-
 	const props = defineProps({
 		tab: Number,
 	});
 
 	const dashStore = useStoreDashboard();
 	const layoutsStore = useLayoutsStore();
+	const evAttrsStore = useEvAttributesStore();
 
 	let userCode = ref();
 	let selDashTab = ref(props.tab);
@@ -162,7 +167,7 @@
 	const tabsList = ['main', 'advance settings', 'menu settings', 'linking', /* CALCULATION, */];
 	let activeTab = ref('main');
 
-	let settings = ref({
+	let settings = reactive({
 		layout: null,
 		content_type: "reports.balancereport",
 		axisY: null,
@@ -177,10 +182,15 @@
 	];
 
 	let layoutsList = ref(null);
+	let attrs = ref([]);
+
+	let stringAttrsOpts = computed( () => attrs.value.filter(attr => attr.value_type === 10) );
+
+	let numAttrsOpts = computed( () => attrs.value.filter(attr => attr.value_type === 20) );
 
 	watchEffect(async () => {
 
-		const res = await layoutsStore.getListLayoutsLight(settings.value.content_type);
+		const res = await layoutsStore.getListLayoutsLight(settings.content_type);
 
 		if ( !res.error ) {
 			layoutsList.value = res.filter(layout => !layout.user_code.startsWith('system_autosave_') );
@@ -204,12 +214,7 @@
 		cancel()
 	}
 
-	function init() {
-
-
-	}
-
-	init();
+	attrs.value = evAttrsStore.getDataForAttributesSelector(settings.content_type);
 
 </script>
 

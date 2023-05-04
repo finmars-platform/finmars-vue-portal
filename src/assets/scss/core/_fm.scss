@@ -258,6 +258,16 @@
 }
 //# endregion pickmeup inside FmInputDateComplex
 
+.fm_select_main_input {
+	height: 100%;
+	display: flex;
+	align-items: center;
+
+	.selected_text.nothing_selected {
+		color: $text-pale;
+	}
+}
+
 // vFmTooltip directive
 .fm_tooltip {
 	padding: 3px 6px;

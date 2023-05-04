@@ -9,7 +9,12 @@
 					<div class="modal_top flex aic sb">
 						<div class="modal_head">{{ title }}</div>
 <!--						<FmIcon :disabled="closingDisabled" icon="close" @click="cancel"/>-->
-						<FmBtn :disabled="closingDisabled" type="iconBtn" icon="close" @click="cancel" />
+
+						<slot name="modalTop" />
+
+						<div>
+							<FmBtn :disabled="closingDisabled" type="iconBtn" icon="close" @click="cancel" />
+						</div>
 					</div>
 
 					<div class="modal_content scrollable">
@@ -109,17 +114,18 @@ export default {
 		}
 	}
 	.modal_top {
-		height: 50px;
+		height: $modal-header-height;
 		padding: 0 20px;
 		border-bottom: 1px solid $border;
 	}
 	.modal_content {
 		overflow: auto;
-		max-height: calc(90vh - 110px);
+		max-height: calc(90vh - $modal-header-height - $modal-footer-height);
 		padding: 15px 20px 0;
 		min-width: 400px; // so that FmInputEntityNames could fit in
 	}
 	.modal_bottom {
+		height: $modal-footer-height;
 		border-top: 1px solid $border;
 		padding: 10px 20px;
 	}

@@ -10,7 +10,7 @@
 		<template #btn="{ isOpen }">
 			<BaseInput
 				:errorData="errorData"
-				:modelValue="selectedName"
+				:modelValue="modelValue"
 				class="input_btn m-b-0"
 				:class="{active: isOpen, 'bi_no_borders': no_borders, small: size == 'small'}"
 				:label="label"
@@ -35,9 +35,9 @@
 				</template>
 
 				<template v-else>
-					<div class="selected_field">
+					<div class="fm_select_main_input">
 						<div
-							class="selected_field_item"
+							class="selected_text"
 							:class="{'nothing_selected': !selectedItem}"
 						>
 							{{ selectedName }}
@@ -189,7 +189,7 @@
 			cursor: pointer;
 		}
 	}
-	.selected_field {
+	/*.selected_field {
 		height: 100%;
 		display: flex;
 		align-items: center;
@@ -197,5 +197,5 @@
 		.selected_field_item.nothing_selected {
 			color: $text-pale;
 		}
-	}
+	}*/
 </style>

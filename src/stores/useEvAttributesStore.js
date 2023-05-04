@@ -51,9 +51,22 @@ const customFieldsRouteOpts = {
 	'reports.transactionreport': 'transactionReportCustomFieldList',
 }
 
-const userFieldsRouteOpts = {
+const ttypeUserFields  = [
+	'complex_transaction.transaction_type.user_text_1', 'complex_transaction.transaction_type.user_text_2', 'complex_transaction.transaction_type.user_text_3', 'complex_transaction.transaction_type.user_text_4', 'complex_transaction.transaction_type.user_text_5',
+	'complex_transaction.transaction_type.user_text_6', 'complex_transaction.transaction_type.user_text_7', 'complex_transaction.transaction_type.user_text_8', 'complex_transaction.transaction_type.user_text_9', 'complex_transaction.transaction_type.user_text_10',
+	'complex_transaction.transaction_type.user_text_11', 'complex_transaction.transaction_type.user_text_12', 'complex_transaction.transaction_type.user_text_13', 'complex_transaction.transaction_type.user_text_14', 'complex_transaction.transaction_type.user_text_15',
+	'complex_transaction.transaction_type.user_text_16', 'complex_transaction.transaction_type.user_text_17', 'complex_transaction.transaction_type.user_text_18', 'complex_transaction.transaction_type.user_text_19', 'complex_transaction.transaction_type.user_text_20',
+	'complex_transaction.transaction_type.user_text_21', 'complex_transaction.transaction_type.user_text_22', 'complex_transaction.transaction_type.user_text_23', 'complex_transaction.transaction_type.user_text_24', 'complex_transaction.transaction_type.user_text_25',
+	'complex_transaction.transaction_type.user_text_26', 'complex_transaction.transaction_type.user_text_27', 'complex_transaction.transaction_type.user_text_28', 'complex_transaction.transaction_type.user_text_29', 'complex_transaction.transaction_type.user_text_30',
 
-}
+	'complex_transaction.transaction_type.user_number_1', 'complex_transaction.transaction_type.user_number_2', 'complex_transaction.transaction_type.user_number_3', 'complex_transaction.transaction_type.user_number_4',
+	'complex_transaction.transaction_type.user_number_5', 'complex_transaction.transaction_type.user_number_6', 'complex_transaction.transaction_type.user_number_7', 'complex_transaction.transaction_type.user_number_8',
+	'complex_transaction.transaction_type.user_number_9', 'complex_transaction.transaction_type.user_number_10', 'complex_transaction.transaction_type.user_number_11', 'complex_transaction.transaction_type.user_number_12',
+	'complex_transaction.transaction_type.user_number_13', 'complex_transaction.transaction_type.user_number_14', 'complex_transaction.transaction_type.user_number_15', 'complex_transaction.transaction_type.user_number_16',
+	'complex_transaction.transaction_type.user_number_17', 'complex_transaction.transaction_type.user_number_18', 'complex_transaction.transaction_type.user_number_19', 'complex_transaction.transaction_type.user_number_20',
+
+	'complex_transaction.transaction_type.user_date_1', 'complex_transaction.transaction_type.user_date_2', 'complex_transaction.transaction_type.user_date_3', 'complex_transaction.transaction_type.user_date_4', 'complex_transaction.transaction_type.user_date_5'
+];
 
 /**
  *
@@ -109,11 +122,11 @@ function formatCustomFields(customFields) {
 
 // Used by state._getCommonDynamicAttrs() in calling state.getDynamicAttrs()
 const reportCommonDynamicAttrs = {
-	'portfolioDAttr': ['portfolios.portfolio', 'portfolio', 'Portfolio'],
-	'accountDAttr': ['accounts.account', 'account', 'Account'],
-	'instrumentDAttr': ['instruments.instrument', 'instrument', 'Instrument'],
-	'allocationInstrumentDAttr': ['instruments.instrument', 'allocation', 'Allocation'],
-	'linkedInstrumentDAttr': ['instruments.instrument', 'linked_instrument', 'Linked Instrument'],
+	'portfolioDAttrs': ['portfolios.portfolio', 'portfolio', 'Portfolio'],
+	'accountDAttrs': ['accounts.account', 'account', 'Account'],
+	'instrumentDAttrs': ['instruments.instrument', 'instrument', 'Instrument'],
+	'linkedInstrumentDAttrs': ['instruments.instrument', 'linked_instrument', 'Linked Instrument'],
+	/*'allocationInstrumentDAttrs': ['instruments.instrument', 'allocation', 'Allocation'],*/
 }
 
 export default defineStore({
@@ -136,7 +149,7 @@ export default defineStore({
 
 			// console.log('contentType', contentType);
 
-			let attributes = getAttrsCopy(this.systemAttrs[contentType]);
+			let attributes = getAttrsCopy( this.systemAttrs[contentType] );
 
 			const getAttributesRecursive = this._getAttributesRecursive;
 
@@ -253,7 +266,8 @@ export default defineStore({
 
 		},
 
-		// Generate dynamic attributes common between reports
+		/** Get dynamic attributes common between reports
+		 * @return {Object} - data with applied dynamic attributes for portfolio, account, instrument, linked_instrument */
 		_getCommonDynamicAttrs(attrsData) {
 			Object.keys(reportCommonDynamicAttrs).forEach(key => {
 				attrsData[key] = this.getDynamicAttrs( ...reportCommonDynamicAttrs[key] )
@@ -262,296 +276,24 @@ export default defineStore({
 			return attrsData;
 		},
 
-		_getBalanceReportAttributes() {
-
-			let result = {};
-
-			//# region System attributes
-			result.balanceAttrs = this.getAllAttributesAsFlatList('reports.balancereport', '', 'Balance', {maxDepth: 1});
-
-			result.balanceMismatchAttrs = this.getAllAttributesAsFlatList('reports.balancereportmismatch', '', 'Mismatch', {maxDepth: 1});
-
-			result.balancePerformanceAttrs = this.getAllAttributesAsFlatList('reports.balancereportperformance', '', 'Performance', {maxDepth: 1});
-
-			result.allocationAttrs = this.getAllAttributesAsFlatList('instruments.instrument', 'allocation', 'Allocation', {maxDepth: 1});
-
-			result.instrumentAttrs = this.getAllAttributesAsFlatList('instruments.instrument', 'instrument', 'Instrument', {maxDepth: 1});
-
-			result.linkedInstrumentAttrs = this.getAllAttributesAsFlatList('instruments.instrument', 'linked_instrument', 'Linked Instrument', {maxDepth: 1});
-
-			result.currencyAttrs = this.getAllAttributesAsFlatList('currencies.currency', 'currency', 'Currency', {maxDepth: 1});
-
-			result.accountAttrs = this.getAllAttributesAsFlatList('accounts.account', 'account', 'Account', {maxDepth: 1});
-
-			result.portfolioAttrs = this.getAllAttributesAsFlatList('portfolios.portfolio', 'portfolio', 'Portfolio', {maxDepth: 1});
-
-			result.strategy1attrs = this.getAllAttributesAsFlatList('strategies.strategy1', 'strategy1', 'Strategy 1', {maxDepth: 1});
-
-			result.strategy2attrs = this.getAllAttributesAsFlatList('strategies.strategy2', 'strategy2', 'Strategy 2', {maxDepth: 1});
-
-			result.strategy3attrs = this.getAllAttributesAsFlatList('strategies.strategy3', 'strategy3', 'Strategy 3', {maxDepth: 1});
-			//# endregion
-
-			result.custom = formatCustomFields( this.customFields['reports.balancereport'] );
-
-			//# regions Dynamic attributes
-			result = this._getCommonDynamicAttrs(result);
-			//# endregion
-
-			// remove attributes that area already inside currency from balance
-			result.balanceAttrs = result.balanceAttrs.filter(bAttr => {
-				return !result.currencyAttrs.find(cAttr => cAttr.key === bAttr.key);
-			});
-
-			/*result = result.concat(balanceAttrs);
-			result = result.concat(balanceMismatchAttrs);
-			result = result.concat(balancePerformanceAttrs);
-			result = result.concat(allocationAttrs);
-			result = result.concat(instrumentAttrs);
-			result = result.concat(linkedInstrumentAttrs);
-			result = result.concat(currencyAttrs);
-			result = result.concat(accountAttrs);
-			result = result.concat(portfolioAttrs);
-			result = result.concat(strategy1attrs);
-			result = result.concat(strategy2attrs);
-			result = result.concat(strategy3attrs);
-
-			result = result.concat(custom);
-
-			result = result.concat(portfolioDynamicAttrs);
-			result = result.concat(accountDynamicAttrs);
-			result = result.concat(currencyDynamicAttrs);
-			result = result.concat(instrumentDynamicAttrs);
-			result = result.concat(allocationDynamicAttrs);
-			result = result.concat(linkedInstrumentDynamicAttrs);
-
-			return result*/
-
-			// assemble attributes into array
-			return Object.keys(result).reduce(
-				(accumulator, resultKey) => accumulator.concat( result[resultKey] ),
-				[]
-			)
-
-		},
-
-		_getPlReportAttributes() {
-
-			let result = {};
-
-			//# regions System attributes
-			result.balanceAttrs = this.getAllAttributesAsFlatList('reports.plreport', '', 'Balance', {maxDepth: 1});
-
-			result.balanceMismatchAttrs = this.getAllAttributesAsFlatList('reports.plreportmismatch', '', 'Mismatch', {maxDepth: 1});
-
-			result.balancePerformanceAttrs = this.getAllAttributesAsFlatList('reports.plreportperformance', '', 'Performance', {maxDepth: 1});
-
-			result.instrumentAttrs = this.getAllAttributesAsFlatList('instruments.instrument', 'instrument', 'Instrument', {maxDepth: 1});
-			result.instrumentAttrs = this.applyAliasesToAttrs(result.instrumentAttrs, 'instruments.instrument', 'instrument.', 'Instrument. ');
-
-			result.linkedInstrumentAttrs = this.getAllAttributesAsFlatList('instruments.instrument', 'linked_instrument', 'Linked Instrument', {maxDepth: 1});
-			result.linkedInstrumentAttrs = this.applyAliasesToAttrs(result.linkedInstrumentAttrs, 'instruments.instrument', 'linked_instrument.', 'Linked Instrument. ');
-
-			result.allocationAttrs = this.getAllAttributesAsFlatList('instruments.instrument', 'allocation', 'Allocation', {maxDepth: 1});
-			result.allocationAttrs = this.applyAliasesToAttrs(result.allocationAttrs, 'instruments.instrument', 'allocation.', 'Allocation. ');
-
-			result.accountAttrs = this.getAllAttributesAsFlatList('accounts.account', 'account', 'Account', {maxDepth: 1});
-
-			result.portfolioAttrs = this.getAllAttributesAsFlatList('portfolios.portfolio', 'portfolio', 'Portfolio', {maxDepth: 1});
-
-			result.strategy1attrs = this.getAllAttributesAsFlatList('strategies.strategy1', 'strategy1', 'Strategy 1', {maxDepth: 1});
-
-			result.strategy2attrs = this.getAllAttributesAsFlatList('strategies.strategy2', 'strategy2', 'Strategy 2', {maxDepth: 1});
-
-			result.strategy3attrs = this.getAllAttributesAsFlatList('strategies.strategy3', 'strategy3', 'Strategy 3', {maxDepth: 1});
-			//# endregion
-
-			result.custom = formatCustomFields( this.customFields['reports.plreportmismatch'] );
-
-			//# region Dynamic attributes
-			result = this._getCommonDynamicAttrs(result);
-			//# endregion
-
-			/*result = result.concat(balanceAttrs);
-			result = result.concat(balanceMismatchAttrs);
-			result = result.concat(balancePerformanceAttrs);
-			result = result.concat(allocationAttrs);
-			result = result.concat(instrumentAttrs);
-			result = result.concat(linkedInstrumentAttrs);
-			result = result.concat(accountAttrs);
-			result = result.concat(portfolioAttrs);
-			result = result.concat(strategy1attrs);
-			result = result.concat(strategy2attrs);
-			result = result.concat(strategy3attrs);
-
-			result = result.concat(custom);
-
-			result = result.concat(portfolioDynamicAttrs);
-			result = result.concat(accountDynamicAttrs);
-			result = result.concat(instrumentDynamicAttrs);
-			result = result.concat(allocationDynamicAttrs);
-			result = result.concat(linkedInstrumentDynamicAttrs);
-
-			return result*/
-			// assemble attributes into array
-			return Object.keys(result).reduce(
-				(accumulator, resultKey) => accumulator.concat( result[resultKey] ),
-				[]
-			);
-
-		},
-
-		_getTransactionReportAttributes() {
-
-			let result = {};
-
-			//# region System attributes
-			var transactionAttrs = getAllAttributesAsFlatList('reports.transactionreport', '', 'Transaction', {maxDepth: 1});
-			transactionAttrs = applyAliasesToAttrs(transactionAttrs, 'transactions.transaction', '', 'Transaction. ');
-
-			var complexTransactionAttrs = getAllAttributesAsFlatList('transactions.complextransaction', 'complex_transaction', 'Complex Transaction', {maxDepth: 1});
-
-			complexTransactionAttrs = complexTransactionAttrs.filter(function (attr) {
-				return ttypeUserFields.indexOf(attr.key) < 0;
-			});
-
-			complexTransactionAttrs = applyAliasesToAttrs(complexTransactionAttrs, 'transactions.complextransaction', 'complex_transaction.', 'Complex Transaction. ');
-
-			var portfolioAttrs = getAllAttributesAsFlatList('portfolios.portfolio', 'portfolio', 'Portfolio', {maxDepth: 1});
-
-			var instrumentAttrs = getAllAttributesAsFlatList('instruments.instrument', 'instrument', 'Instrument', {maxDepth: 1});
-			instrumentAttrs = applyAliasesToAttrs(instrumentAttrs, 'instruments.instrument', 'instrument.', 'Instrument. ');
-
-			var responsibleAttrs = getAllAttributesAsFlatList('counterparties.responsible', 'responsible', 'Responsible', {maxDepth: 1});
-
-			var counterpartyAttrs = getAllAttributesAsFlatList('counterparties.counterparty', 'counterparty', 'Counterparty', {maxDepth: 1});
-
-			// instruments
-
-			var linkedInstrumentAttrs = getAllAttributesAsFlatList('instruments.instrument', 'linked_instrument', 'Linked Instrument', {maxDepth: 1});
-			linkedInstrumentAttrs = applyAliasesToAttrs(linkedInstrumentAttrs, 'instruments.instrument', 'linked_instrument.', 'Linked Instrument. ');
-
-			var allocationBalanceAttrs = getAllAttributesAsFlatList('instruments.instrument', 'allocation_balance', 'Allocation Balance', {maxDepth: 1});
-			allocationBalanceAttrs = applyAliasesToAttrs(allocationBalanceAttrs, 'instruments.instrument', 'allocation_balance.', 'Allocation Balance. ');
-
-			var allocationPlAttrs = getAllAttributesAsFlatList('instruments.instrument', 'allocation_pl', 'Allocation P&L', {maxDepth: 1});
-			allocationPlAttrs = applyAliasesToAttrs(allocationPlAttrs, 'instruments.instrument', 'allocation_pl.', 'Allocation P&L. ');
-
-			// currencies
-
-			var transactionCurrencyAttrs = getAllAttributesAsFlatList('currencies.currency', 'transaction_currency', 'Transaction currency', {maxDepth: 1});
-
-			var settlementCurrencyAttrs = getAllAttributesAsFlatList('currencies.currency', 'settlement_currency', 'Settlement currency', {maxDepth: 1});
-
-			// accounts
-
-			var accountPositionAttrs = getAllAttributesAsFlatList('accounts.account', 'account_position', 'Account Position', {maxDepth: 1});
-
-			var accountCashAttrs = getAllAttributesAsFlatList('accounts.account', 'account_cash', 'Account Cash', {maxDepth: 1});
-
-			var accountInterimAttrs = getAllAttributesAsFlatList('accounts.account', 'account_interim', 'Account Interim', {maxDepth: 1});
-
-			// strategies
-
-			var strategy1cashAttrs = getAllAttributesAsFlatList('strategies.strategy1', 'strategy1_cash', 'Strategy 1 Cash', {maxDepth: 1});
-
-			var strategy1positionAttrs = getAllAttributesAsFlatList('strategies.strategy1', 'strategy1_position', 'Strategy 1 Position', {maxDepth: 1});
-
-			var strategy2cashAttrs = getAllAttributesAsFlatList('strategies.strategy2', 'strategy2_cash', 'Strategy 2 Cash', {maxDepth: 1});
-
-			var strategy2positionAttrs = getAllAttributesAsFlatList('strategies.strategy2', 'strategy2_position', 'Strategy 2 Position', {maxDepth: 1});
-
-			var strategy3cashAttrs = getAllAttributesAsFlatList('strategies.strategy3', 'strategy3_cash', 'Strategy 3 Cash', {maxDepth: 1});
-
-			var strategy3positionAttrs = getAllAttributesAsFlatList('strategies.strategy3', 'strategy3_position', 'Strategy 3 Position', {maxDepth: 1});
-			//# endregion
-
-
-			var custom = getCustomFieldsByEntityType('transaction-report').map(function (customItem) {
-
-				customItem.custom_field = Object.assign({}, customItem);
-
-				customItem.key = 'custom_fields.' + customItem.user_code;
-				customItem.name = 'Custom Field. ' + customItem.name;
-
-				return customItem
-
-			});
-
-
-			var portfolioDynamicAttrs = getDynamicAttributesByEntityType('portfolio');
-			var complexTransactionDynamicAttrs = getDynamicAttributesByEntityType('complex-transaction');
-			var transactionTypeDynamicAttrs = getDynamicAttributesByEntityType('transaction-type');
-			var responsibleDynamicAttrs = getDynamicAttributesByEntityType('responsible');
-			var counterpartyDynamicAttrs = getDynamicAttributesByEntityType('counterparty');
-
-			var instrumentDynamicAttrs = getDynamicAttributesByEntityType('instrument');
-			var linkedInstrumentDynamicAttrs = getDynamicAttributesByEntityType('instrument');
-			var allocationBalanceDynamicAttrs = getDynamicAttributesByEntityType('instrument');
-			var allocationPlDnymaicAttrs = getDynamicAttributesByEntityType('instrument');
-
-			var accountPositionDynamicAttrs = getDynamicAttributesByEntityType('account');
-			var accountCashDynamicAttrs = getDynamicAttributesByEntityType('account');
-			var accountInterimDynamicAttrs = getDynamicAttributesByEntityType('account');
-
-			var portfolioDynamicAttrsFormatted = formatAttributeTypes(portfolioDynamicAttrs, 'portfolios.portfolio', 'portfolio', 'Portfolio');
-			var complexTransactionDynamicAttrsFormatted = formatAttributeTypes(complexTransactionDynamicAttrs, 'transactions.complextransaction', 'complex_transaction', 'Complex Transaction');
-			var transactionTypeDynamicAttrsFormatted = formatAttributeTypes(transactionTypeDynamicAttrs, 'transactions.transactiontype', 'transaction_type', 'Transaction Type');
-			var responsibleDynamicAttrsFormatted = formatAttributeTypes(responsibleDynamicAttrs, 'counterparties.responsible', 'responsible', 'Responsible');
-			var counterpartyDynmicAttrsFormatted = formatAttributeTypes(counterpartyDynamicAttrs, 'counterparties.counterparty', 'counterparty', 'Counterparty');
-
-			var instrumentDynamicAttrsFormatted = formatAttributeTypes(instrumentDynamicAttrs, 'instruments.instrument', 'instrument', 'Instrument');
-			var linkedInstrumentDynamicAttrsFormatted = formatAttributeTypes(linkedInstrumentDynamicAttrs, 'instruments.instrument', 'linked_instrument', 'Linked Instrument');
-			var allocationBalanceDynamicAttrsFormatted = formatAttributeTypes(allocationBalanceDynamicAttrs, 'instruments.instrument', 'allocation_balance', 'Allocation Balance');
-			var allocationPlDnymaicAttrsFormatted = formatAttributeTypes(allocationPlDnymaicAttrs, 'instruments.instrument', 'allocation_pl', 'Allocation P&L');
-
-			var accountPositionDynamicAttrsFormatted = formatAttributeTypes(accountPositionDynamicAttrs, 'accounts.account', 'account_position', 'Account Position');
-			var accountCashDynamicAttrsFormatted = formatAttributeTypes(accountCashDynamicAttrs, 'accounts.account', 'account_cash', 'Account Cash');
-			var accountInterimDynamicAttrsFormatted = formatAttributeTypes(accountInterimDynamicAttrs, 'accounts.account', 'account_interim', 'Account Interim');
-
-			result = result.concat(transactionAttrs);
-			result = result.concat(complexTransactionAttrs);
-			result = result.concat(portfolioAttrs);
-			result = result.concat(instrumentAttrs);
-			result = result.concat(responsibleAttrs);
-			result = result.concat(counterpartyAttrs);
-
-			result = result.concat(linkedInstrumentAttrs);
-			result = result.concat(allocationBalanceAttrs);
-			result = result.concat(allocationPlAttrs);
-
-			result = result.concat(transactionCurrencyAttrs);
-			result = result.concat(settlementCurrencyAttrs);
-
-			result = result.concat(accountPositionAttrs);
-			result = result.concat(accountCashAttrs);
-			result = result.concat(accountInterimAttrs);
-
-			result = result.concat(strategy1cashAttrs);
-			result = result.concat(strategy1positionAttrs);
-			result = result.concat(strategy2cashAttrs);
-			result = result.concat(strategy2positionAttrs);
-			result = result.concat(strategy3cashAttrs);
-			result = result.concat(strategy3positionAttrs);
-
-			result = result.concat(custom);
-
-			result = result.concat(portfolioDynamicAttrsFormatted);
-			result = result.concat(complexTransactionDynamicAttrsFormatted);
-			result = result.concat(transactionTypeDynamicAttrsFormatted);
-			result = result.concat(responsibleDynamicAttrsFormatted);
-			result = result.concat(counterpartyDynmicAttrsFormatted);
-
-			result = result.concat(instrumentDynamicAttrsFormatted);
-			result = result.concat(linkedInstrumentDynamicAttrsFormatted);
-			result = result.concat(allocationBalanceDynamicAttrsFormatted);
-			result = result.concat(allocationPlDnymaicAttrsFormatted);
-
-			result = result.concat(accountPositionDynamicAttrsFormatted);
-			result = result.concat(accountCashDynamicAttrsFormatted);
-			result = result.concat(accountInterimDynamicAttrsFormatted);
-
-			return result
+		_appendIdAttr(attrs, contentType) {
+
+			const idAttribute = {
+				"key": "id",
+				"name": "Id",
+				"value_type": 20
+			};
+
+
+
+			vm.attributeDataService.appendEntityAttribute('portfolio', Object.assign({}, idAttribute));
+			vm.attributeDataService.appendEntityAttribute('account', Object.assign({}, idAttribute));
+			vm.attributeDataService.appendEntityAttribute('currency', Object.assign({}, idAttribute));
+			vm.attributeDataService.appendEntityAttribute('instrument', Object.assign({}, idAttribute));
+			vm.attributeDataService.appendEntityAttribute('responsible', Object.assign({}, idAttribute));
+			vm.attributeDataService.appendEntityAttribute('counterparty', Object.assign({}, idAttribute));
+			vm.attributeDataService.appendEntityAttribute('transaction-type', Object.assign({}, idAttribute));
+			vm.attributeDataService.appendEntityAttribute('complex-transaction', Object.assign({}, idAttribute));
 
 		},
 		//# endregion Functions - helpers
@@ -588,7 +330,7 @@ export default defineStore({
 			});
 
 			this.systemAttrs = res;
-			console.log("testing1090 systemAttrs", this.systemAttrs);
+
 		},
 		/*getAttributeTypes(contentType) {
 			if ( !this.attrTypes[contentType] ) {
@@ -652,6 +394,312 @@ export default defineStore({
 		},
 		//# endregion Loading attributes
 
+		getBalanceReportAttributes() {
+
+			let result = {};
+
+			//# region System attributes
+			result.balanceAttrs = this.getAllAttributesAsFlatList('reports.balancereport', '', 'Balance', {maxDepth: 1});
+
+			result.balanceMismatchAttrs = this.getAllAttributesAsFlatList('reports.balancereportmismatch', '', 'Mismatch', {maxDepth: 1});
+
+			result.balancePerformanceAttrs = this.getAllAttributesAsFlatList('reports.balancereportperformance', '', 'Performance', {maxDepth: 1});
+
+			result.allocationAttrs = this.getAllAttributesAsFlatList('instruments.instrument', 'allocation', 'Allocation', {maxDepth: 1});
+
+			result.instrumentAttrs = this.getAllAttributesAsFlatList('instruments.instrument', 'instrument', 'Instrument', {maxDepth: 1});
+
+			result.linkedInstrumentAttrs = this.getAllAttributesAsFlatList('instruments.instrument', 'linked_instrument', 'Linked Instrument', {maxDepth: 1});
+
+			result.currencyAttrs = this.getAllAttributesAsFlatList('currencies.currency', 'currency', 'Currency', {maxDepth: 1});
+
+			result.accountAttrs = this.getAllAttributesAsFlatList('accounts.account', 'account', 'Account', {maxDepth: 1});
+
+			result.portfolioAttrs = this.getAllAttributesAsFlatList('portfolios.portfolio', 'portfolio', 'Portfolio', {maxDepth: 1});
+
+			result.strategy1attrs = this.getAllAttributesAsFlatList('strategies.strategy1', 'strategy1', 'Strategy 1', {maxDepth: 1});
+
+			result.strategy2attrs = this.getAllAttributesAsFlatList('strategies.strategy2', 'strategy2', 'Strategy 2', {maxDepth: 1});
+
+			result.strategy3attrs = this.getAllAttributesAsFlatList('strategies.strategy3', 'strategy3', 'Strategy 3', {maxDepth: 1});
+			//# endregion
+
+			result.custom = formatCustomFields( this.customFields['reports.balancereport'] );
+
+			//# regions Dynamic attributes
+			result = this._getCommonDynamicAttrs(result);
+			result.allocationInstrumentDAttrs = this.getDynamicAttrs('instruments.instrument', 'allocation', 'Allocation');
+			//# endregion
+
+			// remove attributes that area already inside currency from balance
+			result.balanceAttrs = result.balanceAttrs.filter(bAttr => {
+				return !result.currencyAttrs.find(cAttr => cAttr.key === bAttr.key);
+			});
+
+			/*result = result.concat(balanceAttrs);
+			result = result.concat(balanceMismatchAttrs);
+			result = result.concat(balancePerformanceAttrs);
+			result = result.concat(allocationAttrs);
+			result = result.concat(instrumentAttrs);
+			result = result.concat(linkedInstrumentAttrs);
+			result = result.concat(currencyAttrs);
+			result = result.concat(accountAttrs);
+			result = result.concat(portfolioAttrs);
+			result = result.concat(strategy1attrs);
+			result = result.concat(strategy2attrs);
+			result = result.concat(strategy3attrs);
+
+			result = result.concat(custom);
+
+			result = result.concat(portfolioDynamicAttrs);
+			result = result.concat(accountDynamicAttrs);
+			result = result.concat(currencyDynamicAttrs);
+			result = result.concat(instrumentDynamicAttrs);
+			result = result.concat(allocationDynamicAttrs);
+			result = result.concat(linkedInstrumentDynamicAttrs);
+
+			return result*/
+			// console.log("testing1090.getBalanceReportAttributes result", JSON.parse(JSON.stringify(result)) );
+			// assemble attributes into array
+			return Object.keys(result).reduce(
+				(accumulator, resultKey) => accumulator.concat( result[resultKey] ),
+				[]
+			)
+			/*console.log("testing1090.getBalanceReportAttributes test", JSON.parse(JSON.stringify(test)) );
+			return test;*/
+
+		},
+
+		getPlReportAttributes() {
+
+			let result = {};
+
+			//# regions System attributes
+			result.balanceAttrs = this.getAllAttributesAsFlatList('reports.plreport', '', 'Balance', {maxDepth: 1});
+
+			result.balanceMismatchAttrs = this.getAllAttributesAsFlatList('reports.plreportmismatch', '', 'Mismatch', {maxDepth: 1});
+
+			result.balancePerformanceAttrs = this.getAllAttributesAsFlatList('reports.plreportperformance', '', 'Performance', {maxDepth: 1});
+
+			result.instrumentAttrs = this.getAllAttributesAsFlatList('instruments.instrument', 'instrument', 'Instrument', {maxDepth: 1});
+			result.instrumentAttrs = this.applyAliasesToAttrs(result.instrumentAttrs, 'instruments.instrument', 'instrument.', 'Instrument. ');
+
+			result.linkedInstrumentAttrs = this.getAllAttributesAsFlatList('instruments.instrument', 'linked_instrument', 'Linked Instrument', {maxDepth: 1});
+			result.linkedInstrumentAttrs = this.applyAliasesToAttrs(result.linkedInstrumentAttrs, 'instruments.instrument', 'linked_instrument.', 'Linked Instrument. ');
+
+			result.allocationAttrs = this.getAllAttributesAsFlatList('instruments.instrument', 'allocation', 'Allocation', {maxDepth: 1});
+			result.allocationAttrs = this.applyAliasesToAttrs(result.allocationAttrs, 'instruments.instrument', 'allocation.', 'Allocation. ');
+
+			result.accountAttrs = this.getAllAttributesAsFlatList('accounts.account', 'account', 'Account', {maxDepth: 1});
+
+			result.portfolioAttrs = this.getAllAttributesAsFlatList('portfolios.portfolio', 'portfolio', 'Portfolio', {maxDepth: 1});
+
+			result.strategy1attrs = this.getAllAttributesAsFlatList('strategies.strategy1', 'strategy1', 'Strategy 1', {maxDepth: 1});
+
+			result.strategy2attrs = this.getAllAttributesAsFlatList('strategies.strategy2', 'strategy2', 'Strategy 2', {maxDepth: 1});
+
+			result.strategy3attrs = this.getAllAttributesAsFlatList('strategies.strategy3', 'strategy3', 'Strategy 3', {maxDepth: 1});
+			//# endregion
+
+			result.custom = formatCustomFields( this.customFields['reports.plreportmismatch'] );
+
+			//# region Dynamic attributes
+			result = this._getCommonDynamicAttrs(result);
+			result.allocationInstrumentDAttrs = this.getDynamicAttrs('instruments.instrument', 'allocation', 'Allocation');
+			//# endregion
+
+			/*result = result.concat(balanceAttrs);
+			result = result.concat(balanceMismatchAttrs);
+			result = result.concat(balancePerformanceAttrs);
+			result = result.concat(allocationAttrs);
+			result = result.concat(instrumentAttrs);
+			result = result.concat(linkedInstrumentAttrs);
+			result = result.concat(accountAttrs);
+			result = result.concat(portfolioAttrs);
+			result = result.concat(strategy1attrs);
+			result = result.concat(strategy2attrs);
+			result = result.concat(strategy3attrs);
+
+			result = result.concat(custom);
+
+			result = result.concat(portfolioDynamicAttrs);
+			result = result.concat(accountDynamicAttrs);
+			result = result.concat(instrumentDynamicAttrs);
+			result = result.concat(allocationDynamicAttrs);
+			result = result.concat(linkedInstrumentDynamicAttrs);
+
+			return result*/
+			// assemble attributes into array
+			return Object.keys(result).reduce(
+				(accumulator, resultKey) => accumulator.concat( result[resultKey] ),
+				[]
+			);
+
+		},
+
+		getTransactionReportAttributes() {
+
+			let result = {};
+
+			//# region System attributes
+			result.transactionAttrs = this.getAllAttributesAsFlatList('reports.transactionreport', '', 'Transaction', {maxDepth: 1});
+			result.transactionAttrs = this.applyAliasesToAttrs(result.transactionAttrs, 'transactions.transaction', '', 'Transaction. ');
+
+			result.complexTransactionAttrs = this.getAllAttributesAsFlatList('transactions.complextransaction', 'complex_transaction', 'Complex Transaction', {maxDepth: 1});
+
+			result.complexTransactionAttrs = result.complexTransactionAttrs.filter(function (attr) {
+				return ttypeUserFields.indexOf(attr.key) < 0;
+			});
+
+			result.complexTransactionAttrs = this.applyAliasesToAttrs(result.complexTransactionAttrs, 'transactions.complextransaction', 'complex_transaction.', 'Complex Transaction. ');
+
+			result.portfolioAttrs = this.getAllAttributesAsFlatList('portfolios.portfolio', 'portfolio', 'Portfolio', {maxDepth: 1});
+
+			result.instrumentAttrs = this.getAllAttributesAsFlatList('instruments.instrument', 'instrument', 'Instrument', {maxDepth: 1});
+			result.instrumentAttrs = this.applyAliasesToAttrs(result.instrumentAttrs, 'instruments.instrument', 'instrument.', 'Instrument. ');
+
+			result.responsibleAttrs = this.getAllAttributesAsFlatList('counterparties.responsible', 'responsible', 'Responsible', {maxDepth: 1});
+
+			result.counterpartyAttrs = this.getAllAttributesAsFlatList('counterparties.counterparty', 'counterparty', 'Counterparty', {maxDepth: 1});
+
+			// instruments
+
+			result.linkedInstrumentAttrs = this.getAllAttributesAsFlatList('instruments.instrument', 'linked_instrument', 'Linked Instrument', {maxDepth: 1});
+			result.linkedInstrumentAttrs = this.applyAliasesToAttrs(result.linkedInstrumentAttrs, 'instruments.instrument', 'linked_instrument.', 'Linked Instrument. ');
+
+			result.allocationBalanceAttrs = this.getAllAttributesAsFlatList('instruments.instrument', 'allocation_balance', 'Allocation Balance', {maxDepth: 1});
+			result.allocationBalanceAttrs = this.applyAliasesToAttrs(result.allocationBalanceAttrs, 'instruments.instrument', 'allocation_balance.', 'Allocation Balance. ');
+
+			result.allocationPlAttrs = this.getAllAttributesAsFlatList('instruments.instrument', 'allocation_pl', 'Allocation P&L', {maxDepth: 1});
+			result.allocationPlAttrs = this.applyAliasesToAttrs(result.allocationPlAttrs, 'instruments.instrument', 'allocation_pl.', 'Allocation P&L. ');
+
+			// currencies
+
+			result.transactionCurrencyAttrs = this.getAllAttributesAsFlatList('currencies.currency', 'transaction_currency', 'Transaction currency', {maxDepth: 1});
+
+			result.settlementCurrencyAttrs = this.getAllAttributesAsFlatList('currencies.currency', 'settlement_currency', 'Settlement currency', {maxDepth: 1});
+
+			// accounts
+
+			result.accountPositionAttrs = this.getAllAttributesAsFlatList('accounts.account', 'account_position', 'Account Position', {maxDepth: 1});
+
+			result.accountCashAttrs = this.getAllAttributesAsFlatList('accounts.account', 'account_cash', 'Account Cash', {maxDepth: 1});
+
+			result.accountInterimAttrs = this.getAllAttributesAsFlatList('accounts.account', 'account_interim', 'Account Interim', {maxDepth: 1});
+
+			// strategies
+
+			result.strategy1cashAttrs = this.getAllAttributesAsFlatList('strategies.strategy1', 'strategy1_cash', 'Strategy 1 Cash', {maxDepth: 1});
+
+			result.strategy1positionAttrs = this.getAllAttributesAsFlatList('strategies.strategy1', 'strategy1_position', 'Strategy 1 Position', {maxDepth: 1});
+
+			result.strategy2cashAttrs = this.getAllAttributesAsFlatList('strategies.strategy2', 'strategy2_cash', 'Strategy 2 Cash', {maxDepth: 1});
+
+			result.strategy2positionAttrs = this.getAllAttributesAsFlatList('strategies.strategy2', 'strategy2_position', 'Strategy 2 Position', {maxDepth: 1});
+
+			result.strategy3cashAttrs = this.getAllAttributesAsFlatList('strategies.strategy3', 'strategy3_cash', 'Strategy 3 Cash', {maxDepth: 1});
+
+			result.strategy3positionAttrs = this.getAllAttributesAsFlatList('strategies.strategy3', 'strategy3_position', 'Strategy 3 Position', {maxDepth: 1});
+			//# endregion
+
+			result.custom = formatCustomFields( this.customFields['reports.transactionreport'] );
+
+			//# region Dynamic attributes
+			/*var portfolioDynamicAttrs = getDynamicAttributesByEntityType('portfolio');
+			var complexTransactionDynamicAttrs = getDynamicAttributesByEntityType('complex-transaction');
+			var transactionTypeDynamicAttrs = getDynamicAttributesByEntityType('transaction-type');
+			var responsibleDynamicAttrs = getDynamicAttributesByEntityType('responsible');
+			var counterpartyDynamicAttrs = getDynamicAttributesByEntityType('counterparty');
+
+			var instrumentDynamicAttrs = getDynamicAttributesByEntityType('instrument');
+			var linkedInstrumentDynamicAttrs = getDynamicAttributesByEntityType('instrument');
+			var allocationBalanceDynamicAttrs = getDynamicAttributesByEntityType('instrument');
+			var allocationPlDnymaicAttrs = getDynamicAttributesByEntityType('instrument');
+
+			var accountPositionDynamicAttrs = getDynamicAttributesByEntityType('account');
+			var accountCashDynamicAttrs = getDynamicAttributesByEntityType('account');
+			var accountInterimDynamicAttrs = getDynamicAttributesByEntityType('account');
+
+			var portfolioDynamicAttrsFormatted = formatAttributeTypes(portfolioDynamicAttrs, 'portfolios.portfolio', 'portfolio', 'Portfolio');
+			var complexTransactionDynamicAttrsFormatted = formatAttributeTypes(complexTransactionDynamicAttrs, 'transactions.complextransaction', 'complex_transaction', 'Complex Transaction');
+			var transactionTypeDynamicAttrsFormatted = formatAttributeTypes(transactionTypeDynamicAttrs, 'transactions.transactiontype', 'transaction_type', 'Transaction Type');
+			var responsibleDynamicAttrsFormatted = formatAttributeTypes(responsibleDynamicAttrs, 'counterparties.responsible', 'responsible', 'Responsible');
+			var counterpartyDynmicAttrsFormatted = formatAttributeTypes(counterpartyDynamicAttrs, 'counterparties.counterparty', 'counterparty', 'Counterparty');
+
+			var instrumentDynamicAttrsFormatted = formatAttributeTypes(instrumentDynamicAttrs, 'instruments.instrument', 'instrument', 'Instrument');
+			var linkedInstrumentDynamicAttrsFormatted = formatAttributeTypes(linkedInstrumentDynamicAttrs, 'instruments.instrument', 'linked_instrument', 'Linked Instrument');
+			var allocationBalanceDynamicAttrsFormatted = formatAttributeTypes(allocationBalanceDynamicAttrs, 'instruments.instrument', 'allocation_balance', 'Allocation Balance');
+			var allocationPlDnymaicAttrsFormatted = formatAttributeTypes(allocationPlDnymaicAttrs, 'instruments.instrument', 'allocation_pl', 'Allocation P&L');
+
+			var accountPositionDynamicAttrsFormatted = formatAttributeTypes(accountPositionDynamicAttrs, 'accounts.account', 'account_position', 'Account Position');
+			var accountCashDynamicAttrsFormatted = formatAttributeTypes(accountCashDynamicAttrs, 'accounts.account', 'account_cash', 'Account Cash');
+			var accountInterimDynamicAttrsFormatted = formatAttributeTypes(accountInterimDynamicAttrs, 'accounts.account', 'account_interim', 'Account Interim');*/
+			result = this._getCommonDynamicAttrs(result);
+
+			result.complexTransactionDAttrs = this.getDynamicAttrs('transactions.complextransaction', 'complex_transaction', 'Complex Transaction');
+			result.transactionTypeDAttrs = this.getDynamicAttrs('transactions.transactiontype', 'transaction_type', 'Transaction Type');
+			result.responsibleDAttrs = this.getDynamicAttrs('counterparties.responsible', 'responsible', 'Responsible');
+			result.counterpartyDAttrs = this.getDynamicAttrs('counterparties.counterparty', 'counterparty', 'Counterparty');
+
+			result.allocationBalanceDAttrs = this.getDynamicAttrs('instruments.instrument', 'allocation_balance', 'Allocation Balance');
+			result.allocationPlDAttrs = this.getDynamicAttrs('instruments.instrument', 'allocation_pl', 'Allocation P&L');
+
+			result.accountPositionDAttrs = this.getDynamicAttrs('accounts.account', 'account_position', 'Account Position');
+			result.accountCashDAttrs = this.getDynamicAttrs('accounts.account', 'account_cash', 'Account Cash');
+			result.accountInterimDAttrs = this.getDynamicAttrs('accounts.account', 'account_interim', 'Account Interim');
+
+			//# endregion
+
+			/*result = result.concat(transactionAttrs);
+			result = result.concat(complexTransactionAttrs);
+			result = result.concat(portfolioAttrs);
+			result = result.concat(instrumentAttrs);
+			result = result.concat(responsibleAttrs);
+			result = result.concat(counterpartyAttrs);
+
+			result = result.concat(linkedInstrumentAttrs);
+			result = result.concat(allocationBalanceAttrs);
+			result = result.concat(allocationPlAttrs);
+
+			result = result.concat(transactionCurrencyAttrs);
+			result = result.concat(settlementCurrencyAttrs);
+
+			result = result.concat(accountPositionAttrs);
+			result = result.concat(accountCashAttrs);
+			result = result.concat(accountInterimAttrs);
+
+			result = result.concat(strategy1cashAttrs);
+			result = result.concat(strategy1positionAttrs);
+			result = result.concat(strategy2cashAttrs);
+			result = result.concat(strategy2positionAttrs);
+			result = result.concat(strategy3cashAttrs);
+			result = result.concat(strategy3positionAttrs);
+
+			result = result.concat(custom);
+
+			result = result.concat(portfolioDynamicAttrsFormatted);
+			result = result.concat(complexTransactionDynamicAttrsFormatted);
+			result = result.concat(transactionTypeDynamicAttrsFormatted);
+			result = result.concat(responsibleDynamicAttrsFormatted);
+			result = result.concat(counterpartyDynmicAttrsFormatted);
+
+			result = result.concat(instrumentDynamicAttrsFormatted);
+			result = result.concat(linkedInstrumentDynamicAttrsFormatted);
+			result = result.concat(allocationBalanceDynamicAttrsFormatted);
+			result = result.concat(allocationPlDnymaicAttrsFormatted);
+
+			result = result.concat(accountPositionDynamicAttrsFormatted);
+			result = result.concat(accountCashDynamicAttrsFormatted);
+			result = result.concat(accountInterimDynamicAttrsFormatted);
+
+			return result*/
+			return Object.keys(result).reduce(
+				(accumulator, resultKey) => accumulator.concat( result[resultKey] ),
+				[]
+			);
+
+		},
+
 		applyAliasesToAttrs(attributes, contentType, keyPrefix='', namePrefix='') {
 
 			const customFieldsObj = {
@@ -686,7 +734,7 @@ export default defineStore({
 		},
 
 		getAllAttributesByContentType(contentType, viewContext) {
-
+			// console.log("testing1090.getAllAttributesByContentType contentType", contentType);
 			let result;
 
 			/*if (viewContext === 'reconciliation_viewer') {
@@ -696,16 +744,17 @@ export default defineStore({
 			else {*/
 
 			switch (contentType) {
-					case 'balance-report':
-						result = this._getBalanceReportAttributes();
+					case 'reports.balancereport':
+						result = this.getBalanceReportAttributes();
+						// console.log("testing1090.getAllAttributesByContentType reports.balancereport", result);
 						break;
 
-					case 'pl-report':
-						result = this._getPlReportAttributes();
+					case 'reports.plreport':
+						result = this.getPlReportAttributes();
 						break;
 
-					case 'transaction-report':
-						result = this._getTransactionReportAttributes();
+					case 'reports.transactionreport':
+						result = this.getTransactionReportAttributes();
 						break;
 
 					default: // get attributes for entity viewer
@@ -746,11 +795,14 @@ export default defineStore({
 
 			return result;
 		},
-
+		/**
+		 * @param {String} contentType
+		 * @param {String} [viewContext]
+		 */
 		getDataForAttributesSelector(contentType, viewContext) {
 			const attrs = this.getAllAttributesByContentType(contentType, viewContext);
-
-			return attrs.filter(function (attr) {
+			// console.log("testing1090.getDataForAttributesSelector attrs", attrs);
+			return attrs.filter(attr => {
 				return attr.value_type !== 'mc_field';
 			})
 		},

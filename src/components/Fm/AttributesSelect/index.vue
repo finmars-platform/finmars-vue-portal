@@ -1,14 +1,15 @@
 <template>
-	<div>
 		<BaseInput
-			class="ms_wrap"
+			class="ms_wrap input_btn cursor-pointer"
 			:label="title"
-			@click="modalIsOpen = true"
-			modelValue=" "
+			v-bind="$attrs"
+			:disabled="disabled"
+			@click.stop="openDialog"
+			:modelValue="modelValue"
 		>
 			<template #button><FmIcon icon="menu" /></template>
 
-			<div class="flex aic" style="height: inherit;">
+			<div v-if="multiselect" class="flex aic" style="height: inherit;">
 
 				<div
 					class="flex-row fi-center"
@@ -27,15 +28,27 @@
 				</div>
 
 			</div>
+			<div v-else class="fm_select_main_input">
+
+				<div
+					class="selected_text"
+					:class="{'nothing_selected': !modelValue || (Array.isArray(modelValue) && !modelValue.length) }"
+				>
+					{{ selectedName }}
+				</div>
+
+			</div>
 		</BaseInput>
 
 		<FmAttributesSelectModal
 			v-model="modalIsOpen"
 			:title="title"
 			:contentType="contentType"
-			:attributes="attributes"
+			:attributes="attributesList"
+			:selected="modelValue"
+			:multiselect="multiselect"
+			@save="selected => emit('update:modelValue', selected)"
 		/>
-	</div>
 </template>
 
 <script setup>
@@ -43,41 +56,73 @@
 	import useEvAttributesStore from "~/stores/useEvAttributesStore";
 
 	let props = defineProps({
-		modelValue: {
-			type: Array,
-			default: [],
-		},
+		modelValue: [Array, String], // Array for multiselect, String for select
 		title: String,
 		contentType: String,
-		valueType: Number,
-		/*attributes: {
+		attributes: {
 			type: Array,
-			default: [],
-		},*/
+			default: []
+		},
+		multiselect: Boolean,
+		disabled: Boolean,
 	});
 
 	let emit = defineEmits(['update:modelValue']);
 
-	let attributes = ref([]);
+	// let evAttrsStore = useEvAttributesStore();
 
-	let evAttrsStore = useEvAttributesStore();
+	let attributesList = ref(null);
+	let selAttrsKeysList = ref([]);
+	let modalIsOpen = ref(false);
+
+	attributesList.value = JSON.parse(JSON.stringify( props.attributes ));
+
+	watch(() => props.attributes, () => {
+		attributesList.value = JSON.parse(JSON.stringify( props.attributes ));
+	})
 
 	watch(
-		() => evAttrsStore.$state,
+		() => props.modelValue,
 		() => {
 
-		},
-		{deep: true}
+			if ( Array.isArray(props.modelValue) ) selAttrsKeysList.value = props.modelValue;
+
+			if (typeof props.modelValue === 'string') {
+				selAttrsKeysList.value = props.modelValue ? [props.modelValue] : []
+
+			} else {
+				throw new Error("Wrong format of modelValue: " + typeof props.modelValue)
+			}
+
+		}
 	)
 
-	if ( props.valueType && ![10, 20, 30, 40].includes(props.valueType) ) {
-		throw new Error("Not valid value_type was provided: " + props.value_type )
+	function openDialog() {
+		if (!props.disabled) modalIsOpen.value = true;
 	}
 
-	let modalIsOpen = ref(false);
+	let selectedAttrs = computed(() => {
+		return attributesList.value.filter( attr => selAttrsKeysList.value.includes(attr.key) )
+	});
+
+	let selectedName = computed( () => {
+
+		if ( selectedAttrs.value[0] ) {
+
+			return selectedAttrs.value[0].layout_name || selectedAttrs.value[0].name;
+
+		}
+
+		return props.title || '';
+
+	});
+
+	// watch(() => props.modelValue, modelValueWatchHandler)
 
 </script>
 
 <style lang="scss" scoped>
-
+	:deep(.base-input) {
+		margin-bottom: 0;
+	}
 </style>

@@ -1,6 +1,6 @@
 <template>
-	<div class="modal">
-		<div class="modal_top flex aic sb">
+	<div class="attrs_sel_container">
+<!--		<div class="modal_top flex aic sb">
 			<div class="flex aic">
 				<div class="modal_head">{{ title }}</div>
 
@@ -19,10 +19,10 @@
 				</BaseInput>
 			</div>
 
-			<FmBtn type="iconBtn" icon="close" @click="emit('cance')" />
-		</div>
+			<FmBtn type="iconBtn" icon="close" @click="emit('cancel')" />
+		</div>-->
 
-		<div class="modal_content scrollable">
+		<div class="attrs_sel_content scrollable">
 			<div
 				class="fm_tabs sb"
 				v-if="isAdvanced"
@@ -90,8 +90,9 @@
 						>
 							<div class="flex aic">
 								<FmCheckbox
-									v-model="selected[item.key]"
+									:modelValue="selected[item.key]"
 									:disabled="item.disabled"
+									@update:modelValue="newVal => toggleAttr(item.key, newVal)"
 									@click.stop=""
 								/>
 
@@ -128,12 +129,13 @@
 								class="fm_list_item attr_item flex aic sb"
 								:class="{active: activeRow == obj.key}"
 								@click="activeRow = obj.key"
-								@dblclick="selected[obj.key] = !selected[obj.key]"
+								@dblclick="toggleAttr(obj.key, !selected[obj.key])"
 							>
 								<div class="flex aic">
 									<FmCheckbox
-										v-model="selected[obj.key]"
+										:modelValue="selected[obj.key]"
 										:disabled="obj.disabled"
+										@update:modelValue="newVal => toggleAttr(obj.key, newVal)"
 										@click.stop=""
 									/>
 
@@ -162,12 +164,13 @@
 										class="fm_list_item attr_item flex aic sb"
 										:class="{active: activeRow == val.key}"
 										@click="activeRow = val.key"
-										@dblclick="selected[val.key] = !selected[val.key]"
+										@dblclick="toggleAttr( val.key, !selected[val.key] )"
 									>
 										<div class="flex aic expand_wrap">
 											<FmCheckbox
-												v-model="selected[val.key]"
+												:modelValue="selected[val.key]"
 												:disabled="val.disabled"
+												@update:modelValue="newVal => toggleAttr( val.key, newVal )"
 												@click.stop=""
 											/>
 
@@ -199,7 +202,7 @@
 							<div
 								class="fm_list_item attr_item flex aic sb "
 								:class="{active: activeRow == item.key}"
-								v-for="(item, i) in selectedOld"
+								v-for="(item, i) in disabledAttrs"
 								:key="item.key"
 								@click="activeRow = item.key"
 							>
@@ -294,7 +297,7 @@
 			</div>
 		</div>
 
-		<div class="modal_bottom flex sb">
+<!--		<div class="modal_bottom flex sb">
 			<div class="flex aic">
 				<FmBtn
 					type="text"
@@ -312,13 +315,17 @@
 			</div>
 
 			<FmBtn @click="save()">OK</FmBtn>
-		</div>
+		</div>-->
 	</div>
 </template>
 
 <script setup>
 
 	let props = defineProps({
+		modelValue: {
+			type: Array,
+			default: [],
+		}, // selected attributes
 		title: {
 			type: String,
 			default: "Select attribute,"
@@ -328,13 +335,16 @@
 			default: [],
 		},
 		favoriteAttributes: Array,
-		selectedAttributes: {
+		disabledAttributes: { // e.g. attributes that are already used when adding new columns
 			type: Array,
 			default: [],
 		},
+		multiselect: Boolean,
+		searchParameters: String,
+		isAdvanced: Boolean, // if false, only tab "favorites" available
 	});
 
-	let emit = defineEmits(['save', 'cancel', 'favoritesChanged']);
+	let emit = defineEmits(['update:modelValue', 'save', 'cancel', 'favoritesChanged']);
 
 	const foldersSeparatorRE = /\.\s(?=\S)/g; // equals to ". " which have symbol after it
 
@@ -344,7 +354,7 @@
 	let activeRow = ref('')
 	let activeTree = ref(0)
 
-	let isAdvanced = ref(false)
+	// let isAdvanced = ref(false)
 	let isEdit = ref(false)
 	let isCollapsedInfo = ref(false)
 	let isOpenSelect = reactive({
@@ -357,7 +367,8 @@
 	// const windowOrigin = 'http://0.0.0.0:8080'; // for development
 
 	let formattedAttrs = ref([])
-	let selectedOld = []
+	// let selectedOld = []
+	let disabledAttrs = [];
 	let favList = ref([/*{
 			key: 'pricing_currency.reference_for_pricing',
 			name: 'test',
@@ -432,42 +443,46 @@
 
 	}
 
-	function init() {
-
-		attrsList = JSON.parse(JSON.stringify( props.attributes ));
-
-		let attributes = attrsList
-			/*.map(item => {
-				item.name = item.name.replaceAll('. ', ' / ')
-
-				return item
-			})*/
-			.sort(sortAttrs)
-
-		favList.value = JSON.parse(JSON.stringify( props.favoriteAttributes ));
-
-		selectedOld = attributes.filter(item => props.selectedAttributes.includes(item.key));
-
-		selectedOld.forEach(sAttr => {
-			selected[sAttr.key] = true;
-		})
-
-		formattedAttrs.value = attributes
-
-		if ( formattedAttrs.value.length ) {
-			activeRow.value = formattedAttrs.value[0].key;
-		}
-
-	}
-
-	/** Disable attributes from property 'selectedAttributes' **/
+	/** Disable attributes from property 'disabledAttributes' **/
 	function markDisabledAttrs(attrData) {
-		attrData.disabled = !!selectedOld.find(selAttr => selAttr.key === attrData.key);
+		attrData.disabled = !!disabledAttrs.find(selAttr => selAttr.key === attrData.key);
 		return attrData;
 	}
 
-	let selected = reactive({})
+	let selected = reactive({});
 
+	let toggleAttr = function (attrKey, status) {
+		console.log("testing1090 toggleAttr1", attrKey, status);
+		selected[attrKey] = status; // in case attribute was not selected before
+
+		if ( selected[attrKey] ) {
+
+			Object.keys(selected).forEach(key => { // deselect other attributes except disabled
+				selected[key] = !disabledAttrs.includes(key) && key === attrKey;
+			})
+
+		}
+
+		emit( 'update:modelValue', selected[attrKey] ? attrKey : null ); // 'null' if attribute was deselected
+
+	}
+
+	if (props.multiselect) {
+
+		toggleAttr = function (attrKey, status) {
+			console.log("testing1090 toggleAttr2", attrKey, status);
+			selected[attrKey] = status;
+
+			const selKeys = Object.keys(selected).filter( key => {
+				return selected[key] && !disabledAttrs.find(attr => attr.key === key);
+			});
+			console.log("testing1090 toggleAttr2 selKeys", selKeys);
+			// const selAttrs = props.attributes.filter( attr => selKeys.includes(attr.key) );
+
+			emit('update:modelValue', selKeys);
+		}
+
+	}
 
 	const advancedColumns = computed(() => {
 		let tree = {}
@@ -560,7 +575,7 @@
 
 		for ( let prop in selected) {
 
-			const oldSel = selectedOld.find( attr => attr.key === prop );
+			const oldSel = disabledAttrs.find( attr => attr.key === prop );
 
 			if ( !selected[prop] || oldSel ) continue
 
@@ -580,6 +595,7 @@
 
 		return props
 	})
+
 
 
 	let infoEditable = reactive({
@@ -722,6 +738,7 @@
 
 	let searchTimer;
 	function search( value ) {
+		console.log("testing1090 searchParameters changed search", value);
 		clearTimeout(searchTimer)
 
 		searchTimer = setTimeout(() => {
@@ -729,7 +746,9 @@
 		}, 1000)
 	}
 
-	function save() {
+	watch(() => props.searchParameters, search)
+
+	/* function save() {
 
 		const selKeys = Object.keys(selected).filter( key => {
 			return !selectedOld.find(attr => attr.key === key);
@@ -739,7 +758,51 @@
 		console.log("testing1090 save selAttrs", selAttrs);
 		emit('save', selAttrs);
 
+	} */
+	watch(
+		() => props.modelValue,
+		() => {
+
+			props.modelValue.forEach(attrKey => {
+				selected[attrKey] = true;
+			})
+
+		}
+	)
+
+	function init() {
+
+		attrsList = JSON.parse(JSON.stringify( props.attributes ));
+		console.log("testing1090.attrsList ", attrsList);
+		let attributes = attrsList
+			/*.map(item => {
+				item.name = item.name.replaceAll('. ', ' / ')
+
+				return item
+			})*/
+			.sort(sortAttrs)
+
+		props.modelValue.forEach(attrKey => {
+			selected[attrKey] = true;
+		})
+
+		favList.value = JSON.parse(JSON.stringify( props.favoriteAttributes || [] ));
+		console.log("testing1090.attributesSelectMain favList", favList.value);
+		disabledAttrs = attributes.filter( item => props.disabledAttributes.includes(item.key) );
+
+		disabledAttrs.forEach(sAttr => {
+			selected[sAttr.key] = true;
+		})
+
+		formattedAttrs.value = attributes
+
+		if ( formattedAttrs.value.length ) {
+			activeRow.value = formattedAttrs.value[0].key;
+		}
+
 	}
+
+	init();
 
 </script>
 
@@ -749,9 +812,10 @@
 		padding: 0 20px;
 		border-bottom: 1px solid $border;
 	}
-	.modal_content {
-		overflow: auto;
-		height: calc(100vh - 106px);
+	.attrs_sel_content {
+		height: 100%;
+		// overflow: auto;
+		// height: calc(100vh - 106px);
 		min-width: 400px; // so that FmInputEntityNames could fit in
 	}
 	.modal_bottom {
@@ -761,7 +825,7 @@
 		border-top: 1px solid $border;
 		padding: 10px 20px;
 	}
-	.modal {
+	.attrs_sel_container {
 		position: relative;
 		background: #fff;
 		width: 100%;
