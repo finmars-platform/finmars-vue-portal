@@ -179,7 +179,7 @@ export default {
 		get: prefix + '/ui/portal-interface-access/',
 	},
 	configurationList: {
-		get: prefix + '/ui/configuration/',
+		get: prefix + '/configuration/new-member-setup-configuration/',
 	},
 	unifiedData: {
 		get: prefix + '/data/{type}/',
@@ -197,10 +197,10 @@ export default {
 		get: prefix + '/configuration-sharing/my-invites/',
 	},
 	configurationJson: {
-		post: prefix + '/import/configuration-json/',
+		put: prefix + '/configuration/new-member-setup-configuration/{id}/install/',
 	},
-	configurationJsonStatus: {
-		get: prefix + '/active_processes/active_processes/{id}/',
+	getTask: {
+		get: prefix + '/tasks/task/{id}/',
 	},
 	dashboardLayout: {
 		get: prefix + '/ui/dashboard-layout/{id}/',
