@@ -14,7 +14,7 @@
 
 		<template #controls="{cancel}">
 			<div class="flex sb">
-				<FmBtn type="text" @click="step = 'component'">cancel</FmBtn>
+				<FmBtn type="text" @click="(step === 'component') ? cancel() : step = 'component'">cancel</FmBtn>
 				<FmBtn
 					@click="step == 'settings' ? addComponent(cancel) : step = 'settings'"
 				>
