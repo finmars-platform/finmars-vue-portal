@@ -1,58 +1,131 @@
 <template>
 	<div>
-		<FmTabs v-model="tab" :tabs="['Members', 'Groups']" />
+		<FmTabs v-model="activeTab" :tabs="['Members', 'Groups', 'Roles']" />
 
-		<FmTopRefresh
-			@refresh="refresh()"
-		>
-			<template #action>
-				<FmIcon
-					btnPrimary
-					icon="add"
-					@click="$router.push(`/settings/permissions/members/add`)"
-				/>
-			</template>
-		</FmTopRefresh>
+		<div v-if="activeTab == 'Members'">
 
-		<div class="fm_container">
-			<BaseTable
-				:headers="['', 'Name', 'Role', 'Status', 'Groups']"
-				:items="members"
-				colls="50px repeat(4, 1fr)"
-				:cb="(id) => $router.push(`/settings/permissions/members/${stockMembers[id].id}`)"
+			<FmTopRefresh
+				@refresh="refresh()"
 			>
-			<template #actions="{index}">
-					<div class="flex jcc aic height-100">
-						<FmMenu anchor="bottom left">
-							<template #btn>
-								<FmIcon icon="more_vert" />
-							</template>
-							<div class="fm_list">
-								<div class="fm_list_item"
-									@click="deleteMember(index)"
-								>
-									<FmIcon class="m-r-4" icon="delete" /> Delete
-								</div>
-							</div>
-						</FmMenu>
-					</div>
+				<template #action>
+					<FmIcon
+						btnPrimary
+						icon="add"
+						@click="$router.push(`/settings/permissions/members/add`)"
+					/>
 				</template>
-			</BaseTable>
-			<!-- <div class="table">
-				<div class="table-row header">
-					<div class="table-cell">Procedure</div>
-					<div class="table-cell">Date</div>
-					<div class="table-cell">Status</div>
-				</div>
+			</FmTopRefresh>
 
-				<PagesPermissionsItemEvent
-					v-for="(item) in statuses"
-					:key="item.id"
-					:item="item"
-				/>
-			</div> -->
+			<div class="fm_container">
+				<BaseTable
+					:headers="['', 'Name', 'Is Admin', 'Is Owner', 'Status', 'Groups', 'Roles']"
+					:items="members"
+					colls="50px repeat(7, 1fr)"
+					:cb="(id) => $router.push(`/settings/permissions/members/${stockMembers[id].id}`)"
+				>
+				<template #actions="{index}">
+						<div class="flex jcc aic height-100">
+							<FmMenu anchor="bottom left">
+								<template #btn>
+									<FmIcon icon="more_vert" />
+								</template>
+								<div class="fm_list">
+									<div class="fm_list_item"
+										@click="deleteMember(index)"
+									>
+										<FmIcon class="m-r-4" icon="delete" /> Delete
+									</div>
+								</div>
+							</FmMenu>
+						</div>
+					</template>
+				</BaseTable>
+
+			</div>
+
 		</div>
-	</div>
+		<div v-if="activeTab == 'Groups'">
+			<FmTopRefresh
+				@refresh="refresh()"
+			>
+				<template #action>
+					<FmIcon
+						btnPrimary
+						icon="add"
+						@click="$router.push(`/settings/permissions/groups/add`)"
+					/>
+				</template>
+			</FmTopRefresh>
+
+			<div class="fm_container">
+				<BaseTable
+					:headers="['', 'Name']"
+					:items="groups"
+					colls="50px repeat(7, 1fr)"
+					:cb="(id) => $router.push(`/settings/permissions/groups/${groups[id].id}`)"
+				>
+					<template #actions="{index}">
+						<div class="flex jcc aic height-100">
+							<FmMenu anchor="bottom left">
+								<template #btn>
+									<FmIcon icon="more_vert" />
+								</template>
+								<div class="fm_list">
+									<div class="fm_list_item"
+											 @click="deleteGroup(index)"
+									>
+										<FmIcon class="m-r-4" icon="delete" /> Delete
+									</div>
+								</div>
+							</FmMenu>
+						</div>
+					</template>
+				</BaseTable>
+
+			</div>
+		</div>
+		<div v-if="activeTab == 'Roles'">
+			<FmTopRefresh
+				@refresh="refresh()"
+			>
+				<template #action>
+					<FmIcon
+						btnPrimary
+						icon="add"
+						@click="$router.push(`/settings/permissions/roles/add`)"
+					/>
+				</template>
+			</FmTopRefresh>
+
+			<div class="fm_container">
+				<BaseTable
+					:headers="['', 'Name']"
+					:items="roles"
+					colls="50px repeat(7, 1fr)"
+					:cb="(id) => $router.push(`/settings/permissions/roles/${roles[id].id}`)"
+				>
+					<template #actions="{index}">
+						<div class="flex jcc aic height-100">
+							<FmMenu anchor="bottom left">
+								<template #btn>
+									<FmIcon icon="more_vert" />
+								</template>
+								<div class="fm_list">
+									<div class="fm_list_item"
+											 @click="deleteRole(index)"
+									>
+										<FmIcon class="m-r-4" icon="delete" /> Delete
+									</div>
+								</div>
+							</FmMenu>
+						</div>
+					</template>
+				</BaseTable>
+
+			</div>
+
+		</div>
+		</div>
 </template>
 
 <script setup>
@@ -70,14 +143,8 @@
 	});
 	const store = useStore()
 
-	let tab = ref('Members')
-	watch(
-		tab,
-		() => {
-			const config = useRuntimeConfig()
-			location.href = `${config.public.apiURL}/${store.current.base_api_url}/a/#!/settings/users-and-groups?tab=groups`
-		}
-	)
+	let activeTab = ref('Members')
+
 
 	let stockMembers = ref(null)
 	let stockInvites = ref(null)
@@ -97,7 +164,9 @@
 			data.push({
 				// id: item.id,
 				username: {value: item.username, link: '/settings/permissions/members/' + item.id},
-				role: roles.join(', '),
+				is_admin: item.is_admin ? 'Admin'  : 'No',
+				is_owner: item.is_owner ? 'Owner'  : 'No',
+				roles: item.roles_object.map(item => item.name).join(', '),
 				status: item.is_owner ? 'Creator' : 'Accepted',
 				groups: item.groups_object.map(item => item.name).join(', ')
 			})
@@ -127,10 +196,20 @@
 	let statuses = ref(null)
 	let processing = ref(false)
 
+	let groups = ref([])
+	let roles = ref([])
+
 
 	async function init() {
 		let res = await useApi('memberList.get')
 		stockMembers.value = res.results
+
+		let groupsRes = await useApi('group.list')
+		groups.value = groupsRes.results
+
+		let rolesRes = await useApi('role.list')
+		roles.value = rolesRes.results
+
 
 		res = await useApi('memberInvites.get')
 		stockInvites.value = res.results
@@ -155,6 +234,36 @@
 		})
 
 		useNotify({type: 'success', title: `Member "${usernameDel}" was deleted.`})
+
+		refresh()
+	}
+	async function deleteGroup( index ) {
+		let group = groups.value[index]
+
+		let isConfirm = await useConfirm({
+			title: 'Delete group',
+			text: `Do you want to delete a group "${group.name}"?`,
+		})
+		if ( !isConfirm ) return false
+
+		let res = await useApi('group.delete', group.id)
+
+		useNotify({type: 'success', title: `Group "${group.name}" was deleted.`})
+
+		refresh()
+	}
+	async function deleteRole( index ) {
+		let role = roles.value[index]
+
+		let isConfirm = await useConfirm({
+			title: 'Delete role',
+			text: `Do you want to delete a role "${role.name}"?`,
+		})
+		if ( !isConfirm ) return false
+
+		let res = await useApi('role.delete', role.id)
+
+		useNotify({type: 'success', title: `Role "${role.name}" was deleted.`})
 
 		refresh()
 	}

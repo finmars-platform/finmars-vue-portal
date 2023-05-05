@@ -1,7 +1,7 @@
 <template>
 	<CommonSettingsLayout
-		title="Add member"
-		saveText="Send invite"
+		title="Add Group"
+		saveText="Create Group"
 		@save="save"
 		@cancel="cancel"
 	>
@@ -9,52 +9,45 @@
 			<FmCard title="General" class="mb-6">
 				<BaseInput
 					label="Name"
-					v-model="form.username"
+					v-model="form.name"
 				/>
-
-				<FmCheckbox
-					v-model="form.is_owner"
-					label="Owner"
-					class="m-b-8"
-				/>
-
-				<FmCheckbox
-					v-model="form.is_admin"
-					label="Admin"
+				<BaseInput
+					label="User Code"
+					v-model="user_code"
 				/>
 
 			</FmCard>
 		</template>
 		<template #right>
-			<FmCard title="Groups" class="m-b-6">
+			<FmCard title="Access Policies" class="m-b-24">
 				<BaseMultiSelectInput
-					v-model="form.groups"
-					title="Groups"
-					:items="groups"
+					v-model="form.access_policies"
+					title="Access Policies"
+					:items="access_policies_templates"
 					item_id="name"
 				/>
 
 
 			</FmCard>
 
-			<FmCard title="Groups" class="m-b-6">
+			<FmCard title="Roles" class="m-b-24">
 				<BaseMultiSelectInput
 					v-model="form.roles"
 					title="Roles"
 					:items="roles"
 					item_id="name"
 				/>
-
 			</FmCard>
-			<FmCard title="Personal Access Policies" class="m-b-6">
+
+			<FmCard title="Users" class="m-b-24">
 				<BaseMultiSelectInput
-					v-model="form.access_policies"
-					title="Personal Access Policies"
-					:items="access_policies"
+					v-model="form.users"
+					title="Users"
+					:items="Users"
 					item_id="name"
 				/>
-
 			</FmCard>
+
 		</template>
 	</CommonSettingsLayout>
 </template>
@@ -102,16 +95,13 @@
 		return result
 	}
 	async function save() {
-		let sendedForm = {
-			...form,
-			groups: form.groups.join(',')
-		}
 
-		let res = await useApi('memberInvites.post', {body: sendedForm, params: {id: route.params.id}})
+
+		let res = await useApi('group.post', {body: form})
 
 		if ( !res.error ) {
-			useNotify({type: 'success', title: 'Invite sent!'})
-
+			useNotify({type: 'success', title: 'Group created!'})
+			// TODO move to active tab Groups
 			router.push('/settings/permissions')
 		}
 	}
