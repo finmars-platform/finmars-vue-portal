@@ -11,7 +11,11 @@
 					v-model="member.username"
 					disabled
 				/>
-
+				<BaseInput
+					label="E-mail"
+					v-model="member.email"
+					disabled
+				/>
 				<BaseInput
 					v-if="invite.id"
 					label="Invited by"
@@ -101,15 +105,21 @@ let router = useRouter()
 let member = ref({})
 let invite = ref({})
 let groups = ref([])
-let roles = ref([])
-
 let selectedGroups = computed(() => {
 	if (!member.value.groups_object.length) return []
 	return member.value.groups_object.map(item => item.name).join(',')
 
 })
 
+let role = computed(() => {
+	let roles = []
 
+	if (member.value.is_admin) roles.push('Admin')
+	if (member.value.is_owner) roles.push('Owner')
+	if (!member.value.is_owner && !member.value.is_admin) roles.push('User')
+
+	return roles.join(', ')
+})
 
 async function init() {
 	let res = await useApi('member.get', {params: {id: route.params.id}})
@@ -137,10 +147,7 @@ function findIds(val) {
 async function save() {
 	let res = await useApi('member.put', {body: member.value, params: {id: route.params.id}})
 
-	if (res) {
-		useNotify({type: 'success', title: 'Saved!'})
-		router.push('/settings/permissions')
-	}
+	if (res) useNotify({type: 'success', title: 'Saved!'})
 }
 
 async function cancel() {

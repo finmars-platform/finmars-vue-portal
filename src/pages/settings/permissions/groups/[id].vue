@@ -1,56 +1,36 @@
 <template>
 	<CommonSettingsLayout
-		title="Update member"
+		title="Update Group"
 		@save="save"
 		@cancel="cancel"
 	>
 		<template #left>
-			<FmCard title="General" v-if="member.id">
+			<FmCard title="General" v-if="group.id">
 				<BaseInput
 					label="Name"
-					v-model="member.username"
+					v-model="group.name"
 					disabled
 				/>
-
-				<BaseInput
-					v-if="invite.id"
-					label="Invited by"
-					:modelValue="invite.from_user_object.username"
-					disabled
-				/>
-				<BaseInput
-					label="Date joined"
-					:modelValue="fromatDate(member.join_date)"
-					disabled
-				/>
-
-				<FmCheckbox
-					v-model="member.is_owner"
-					label="Owner"
-					class="m-b-8"
-				/>
-
-				<FmCheckbox
-					v-model="member.is_admin"
-					label="Admin"
-				/>
+				<div>
+					<div>User Code</div>
+					{{group.user_code}}
+				</div>
 
 			</FmCard>
 		</template>
 		<template #right>
-			<FmCard title="Groups" class="m-b-24" v-if="member.id">
+			<FmCard title="Access Policies" class="m-b-24" v-if="group.id">
 
 				<BaseMultiSelectInput
-					:modelValue="selectedGroups"
-					@update:modelValue="findIds($event)"
-					title="Groups"
-					:items="groups"
+					v-model="selectedAccessPolicies"
+					title="Access Policies"
+					:items="access_policies_templates"
 					item_id="name"
 				/>
 
 
 			</FmCard>
-			<FmCard title="Roles" class="m-b-24" v-if="member.id">
+			<FmCard title="Roles" class="m-b-24" v-if="group.id">
 
 				<BaseMultiSelectInput
 					:modelValue="selectedRoles"
@@ -62,14 +42,14 @@
 
 
 			</FmCard>
-			<FmCard title="Personal Access Policies" class="m-b-24">
+			<FmCard title="Users" class="m-b-24">
 				<BaseMultiSelectInput
-					v-model="selectedAccessPolicies"
-					title="Personal Access Policies"
-					:items="access_policies"
+					v-model="selectedUsers"
+					@update:modelValue="findIds($event)"
+					title="Users"
+					:items="Users"
 					item_id="name"
 				/>
-
 			</FmCard>
 
 		</template>
@@ -101,15 +81,21 @@ let router = useRouter()
 let member = ref({})
 let invite = ref({})
 let groups = ref([])
-let roles = ref([])
-
 let selectedGroups = computed(() => {
 	if (!member.value.groups_object.length) return []
 	return member.value.groups_object.map(item => item.name).join(',')
 
 })
 
+let role = computed(() => {
+	let roles = []
 
+	if (member.value.is_admin) roles.push('Admin')
+	if (member.value.is_owner) roles.push('Owner')
+	if (!member.value.is_owner && !member.value.is_admin) roles.push('User')
+
+	return roles.join(', ')
+})
 
 async function init() {
 	let res = await useApi('member.get', {params: {id: route.params.id}})
@@ -137,10 +123,7 @@ function findIds(val) {
 async function save() {
 	let res = await useApi('member.put', {body: member.value, params: {id: route.params.id}})
 
-	if (res) {
-		useNotify({type: 'success', title: 'Saved!'})
-		router.push('/settings/permissions')
-	}
+	if (res) useNotify({type: 'success', title: 'Saved!'})
 }
 
 async function cancel() {

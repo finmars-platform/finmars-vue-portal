@@ -1,7 +1,7 @@
 <template>
 	<CommonSettingsLayout
-		title="Add member"
-		saveText="Send invite"
+		title="Add Role"
+		saveText="Create Role"
 		@save="save"
 		@cancel="cancel"
 	>
@@ -9,7 +9,10 @@
 			<FmCard title="General" class="mb-6">
 				<BaseInput
 					label="Name"
-					v-model="form.username"
+					v-model="form.name"
+				/>
+				<BaseInput
+					v-model="form.user_code"
 				/>
 
 				<FmCheckbox
@@ -112,7 +115,12 @@
 		if ( !res.error ) {
 			useNotify({type: 'success', title: 'Invite sent!'})
 
-			router.push('/settings/permissions')
+			Object.assign(form, {
+				groups: [],
+				is_owner: false,
+				email: '',
+				username: '',
+			})
 		}
 	}
 	async function cancel() {
