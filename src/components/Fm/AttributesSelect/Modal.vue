@@ -121,6 +121,13 @@
 		cancelCallback();
 	}
 
+	if ( !store.favorites.attributes[props.contentType] ||
+		   !store.favorites.attributes[props.contentType].length ) {
+
+		isAdvanced.value = true;
+
+	}
+
 </script>
 
 <style lang="scss" scoped>
