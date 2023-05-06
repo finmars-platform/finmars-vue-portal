@@ -124,8 +124,9 @@
 						<template
 							v-for="obj in advancedColumnActive"
 						>
+							<!-- Leaf -->
 							<div
-								v-if="obj.key"
+								v-if="!obj.hasOwnProperty('isOpen')"
 								class="fm_list_item attr_item flex aic sb"
 								:class="{active: activeRow == obj.key}"
 								@click="activeRow = obj.key"
@@ -151,10 +152,10 @@
 								/>
 							</div>
 
-							<!-- Folder -->
+							<!-- Branch -->
 							<div v-else>
 								<li class="fm_list_item attr_item" @click="obj.isOpen = !obj.isOpen">
-									<FmIcon class="expand" icon="expand_more" />
+									<FmIcon class="expand" :icon="obj.isOpen  ? 'expand_more' : 'chevron_right'" />
 									<div v-html="obj.name"></div>
 								</li>
 
@@ -258,16 +259,16 @@
 							/>
 						</div>
 
-						<div class="desc_icons" v-if="tab == 'favorites'">
+						<div class="desc_icons m-r-16" v-if="tab == 'favorites' && isAdvanced">
 							<FmIcon
-								v-if="!isEdit"
+								v-if="!isEdit && activeRow"
 								size="20"
 								primary
 								icon="edit"
 								@click="editAttrInfo()"
 							/>
 
-							<div class="flex" v-else>
+							<div class="flex" v-if="isEdit">
 								<FmIcon
 									primary
 									size="20"
@@ -287,7 +288,12 @@
 						<span v-if="!isEdit">
 							{{ attrInfo.info }}
 						</span>
-						<FmInputArea v-else v-model="infoEditable.description" />
+
+						<FmInputArea
+							v-else
+							v-model="infoEditable.description"
+							class="height-100 m-b-0"
+						/>
 					</div>
 
 					<div class="collapse" :class="{active: isCollapsedInfo}" @click="isCollapsedInfo = !isCollapsedInfo">
@@ -349,6 +355,11 @@
 	const foldersSeparatorRE = /\.\s(?=\S)/g; // equals to ". " which have symbol after it
 
 	let tab = ref('favorites')
+
+	if ( !props.favoriteAttributes || !props.favoriteAttributes.length ) {
+		tab.value = 'advanced';
+	}
+
 	let searchParam = ref('')
 
 	let activeRow = ref('')
@@ -405,6 +416,7 @@
 		return attrs
 	})
 
+
 	const getAttrPriority = attr => {
 
 		let priority = 3;
@@ -452,7 +464,7 @@
 	let selected = reactive({});
 
 	let toggleAttr = function (attrKey, status) {
-		console.log("testing1090 toggleAttr1", attrKey, status);
+
 		selected[attrKey] = status; // in case attribute was not selected before
 
 		if ( selected[attrKey] ) {
@@ -470,13 +482,13 @@
 	if (props.multiselect) {
 
 		toggleAttr = function (attrKey, status) {
-			console.log("testing1090 toggleAttr2", attrKey, status);
+
 			selected[attrKey] = status;
 
 			const selKeys = Object.keys(selected).filter( key => {
 				return selected[key] && !disabledAttrs.find(attr => attr.key === key);
 			});
-			console.log("testing1090 toggleAttr2 selKeys", selKeys);
+
 			// const selAttrs = props.attributes.filter( attr => selKeys.includes(attr.key) );
 
 			emit('update:modelValue', selKeys);
@@ -485,17 +497,20 @@
 	}
 
 	const advancedColumns = computed(() => {
+
 		let tree = {}
 		let attrs = JSON.parse(JSON.stringify( formattedAttrs.value ));
 		let searchedAttrs
 
 		// Search
 		if ( searchParam.value ) {
-			searchedAttrs = searchAndReplace( attrs )
+			// searchedAttrs = searchAndReplace( attrs )
+			searchedAttrs = filterAttrs(attrs);
 			attrs = searchedAttrs
 		}
 
 		attrs = attrs.map(markDisabledAttrs);
+
 
 		for ( let attr of attrs ) {
 			// const parts = attr.name.split(" / ")
@@ -508,11 +523,11 @@
 				let part = parts[i]
 
 				if (!node[part]) {
-					if ( parts.length - 1 == i ) {
+					if ( parts.length - 1 == i ) { // leaf
 						attr.short_name = part
 						node[part] = attr
 
-					} else {
+					} else { // branch
 
 						node[part] = {}
 
@@ -523,15 +538,49 @@
 			}
 		}
 
-		attrs = toAttrsTree(tree)
+		attrs = toAttrsTree(tree);
 
 		// Search
 		if ( searchParam.value ) {
+
+			attrs = highlightFound(attrs);
+
 			attrs.unshift({
 				name: 'All sections',
-				children: searchedAttrs
+				children: highlightFound(searchedAttrs),
 			})
+
 		}
+		/*else {
+
+			// Create tree for toAttrsTree()
+			for ( let attr of attrs ) {
+				// const parts = attr.name.split(" / ")
+				const parts = attr.name.split(". ")
+				parts[0] = parts[0].trim()
+
+				let node = tree;
+
+				for  (let i = 0; i < parts.length; i++ ) {
+					let part = parts[i]
+
+					if (!node[part]) {
+						if ( parts.length - 1 == i ) { // leaf
+							attr.display_name = part
+							node[part] = attr
+
+						} else { // branch
+
+							node[part] = {}
+
+							node[part].isOpen = false
+						}
+					}
+					node = node[part]
+				}
+			}
+
+		}*/
 
 		return attrs
 	})
@@ -539,36 +588,53 @@
 		let list = []
 
 		for (let key in obj) {
-			let newObj = reactive({
+			/*let newObj = reactive({
 				name: key,
 				children: []
-			})
-
-			if ( obj[key].isOpen === false) {
-				newObj.isOpen = ref(false)
-				newObj.children = toAttrsTree(obj[key])
-
-			} else {
-
-				newObj = obj[key]
+			})*/
+			let newObj = {
+				name: key,
+				children: []
 			}
 
-			if ( key != 'isOpen')
+			if ( obj[key].isOpen === false ) { // obj[key] is a branch
+				newObj.isOpen = false;
+				newObj.children = toAttrsTree( obj[key] );
+
+			} else { // obj[key] is a leaf
+				newObj = obj[key];
+			}
+
+			if (key != 'isOpen')
 				list.push(newObj)
+
 		}
 
-		return list
+		return list;
 	}
 
-	const advancedColumnActive = computed(() => {
+	/*const advancedColumnActive = computed(() => {
 		let result = []
 
 		if ( advancedColumns.value[activeTree.value] )
 			result = advancedColumns.value[activeTree.value].children
 
 		return result
-	})
+	})*/
+	let advancedColumnActive = ref([]);
 
+	watch(
+		[advancedColumns, activeTree],
+		() => {
+
+			advancedColumnActive.value = [];
+
+			if ( advancedColumns.value[activeTree.value] ) {
+				advancedColumnActive.value = JSON.parse(JSON.stringify( advancedColumns.value[activeTree.value].children ));
+			}
+
+		}
+	)
 
 	const selectedColumns = computed(() => {
 		let props = []
@@ -705,8 +771,49 @@
 
 	}
 
-	function searchAndReplace( attrs ) {
-		let terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*/) // characters between spaces or '/'
+	function filterAttrs( attrs ) {
+		const terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*/); // characters between spaces or '/'
+
+		let result = attrs;
+
+		terms.forEach((term, i) => {
+			term = term.toLowerCase();
+
+			result = result
+				.filter( (item) => item.name.toLowerCase().includes(term) );
+		})
+
+		return result;
+	}
+
+	/** Highlights part of names of attributes that pass filter */
+	function highlightFound(attrs) {
+
+		let terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*/); // characters between spaces or '/'
+
+		attrs = attrs.map(item => {
+
+			let name = formatName( item.name );
+
+			terms = terms.map( term => useRegExpEscape(term) );
+			const searchTerm = terms.join('|');
+
+			name = name.replaceAll(
+				new RegExp(`(${searchTerm})`, 'gi'),
+				// new RegExp(pattern, 'gi'),
+				(match) => `<span class="c_primary">${match}</span>`
+			)
+
+			return { ...item, name }
+
+		});
+
+		return attrs;
+
+	}
+
+	/*function searchAndReplace( attrs ) {
+		let terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*!/) // characters between spaces or '/'
 		let result = attrs
 
 		terms.forEach((term, i) => {
@@ -734,11 +841,19 @@
 		})
 
 		return result
+	}*/
+	function searchAndReplace( attrs ) {
+
+		let result = filterAttrs(attrs);
+
+		result = highlightFound(result);
+
+		return result
 	}
 
 	let searchTimer;
 	function search( value ) {
-		console.log("testing1090 searchParameters changed search", value);
+
 		clearTimeout(searchTimer)
 
 		searchTimer = setTimeout(() => {
@@ -755,7 +870,7 @@
 		});
 
 		const selAttrs = props.attributes.filter( attr => selKeys.includes(attr.key) );
-		console.log("testing1090 save selAttrs", selAttrs);
+
 		emit('save', selAttrs);
 
 	} */
@@ -773,7 +888,7 @@
 	function init() {
 
 		attrsList = JSON.parse(JSON.stringify( props.attributes ));
-		console.log("testing1090.attrsList ", attrsList);
+
 		let attributes = attrsList
 			/*.map(item => {
 				item.name = item.name.replaceAll('. ', ' / ')
@@ -787,7 +902,7 @@
 		})
 
 		favList.value = JSON.parse(JSON.stringify( props.favoriteAttributes || [] ));
-		console.log("testing1090.attributesSelectMain favList", favList.value);
+
 		disabledAttrs = attributes.filter( item => props.disabledAttributes.includes(item.key) );
 
 		disabledAttrs.forEach(sAttr => {
@@ -796,9 +911,9 @@
 
 		formattedAttrs.value = attributes
 
-		if ( formattedAttrs.value.length ) {
+		/* if ( formattedAttrs.value.length ) {
 			activeRow.value = formattedAttrs.value[0].key;
-		}
+		} */
 
 	}
 
@@ -926,6 +1041,11 @@
 		}
 	}
 
+	.content_grid_right {
+		display: flex;
+		flex-direction: column;
+	}
+
 	.desc_title {
 		padding: 0 13px;
 		height: 40px;
@@ -940,6 +1060,7 @@
 		word-wrap: break-word;
 	}
 	.desc_about {
+		flex-grow: 1;
 		padding: 10px 13px;
 		color: $text-lighten;
 	}

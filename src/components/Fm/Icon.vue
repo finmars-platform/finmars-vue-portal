@@ -35,6 +35,7 @@
 		line-height: 0;
 		color: $text-lighten;
 		overflow: hidden;
+		user-select: none;
 
 		&:not(.disabled):hover {
 			color: $text-hover;

@@ -459,14 +459,12 @@ export default defineStore({
 			result = result.concat(linkedInstrumentDynamicAttrs);
 
 			return result*/
-			// console.log("testing1090.getBalanceReportAttributes result", JSON.parse(JSON.stringify(result)) );
+
 			// assemble attributes into array
 			return Object.keys(result).reduce(
 				(accumulator, resultKey) => accumulator.concat( result[resultKey] ),
 				[]
 			)
-			/*console.log("testing1090.getBalanceReportAttributes test", JSON.parse(JSON.stringify(test)) );
-			return test;*/
 
 		},
 
@@ -734,7 +732,7 @@ export default defineStore({
 		},
 
 		getAllAttributesByContentType(contentType, viewContext) {
-			// console.log("testing1090.getAllAttributesByContentType contentType", contentType);
+
 			let result;
 
 			/*if (viewContext === 'reconciliation_viewer') {
@@ -746,7 +744,6 @@ export default defineStore({
 			switch (contentType) {
 					case 'reports.balancereport':
 						result = this.getBalanceReportAttributes();
-						// console.log("testing1090.getAllAttributesByContentType reports.balancereport", result);
 						break;
 
 					case 'reports.plreport':
@@ -801,7 +798,7 @@ export default defineStore({
 		 */
 		getDataForAttributesSelector(contentType, viewContext) {
 			const attrs = this.getAllAttributesByContentType(contentType, viewContext);
-			// console.log("testing1090.getDataForAttributesSelector attrs", attrs);
+
 			return attrs.filter(attr => {
 				return attr.value_type !== 'mc_field';
 			})
