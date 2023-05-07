@@ -83,7 +83,7 @@
 
 				<ul>
 					<li><b>Effect</b>: The effect of the statement, either "Allow" or "Deny".</li>
-					<li><b>Action</b>: A single action or an array of actions that the statement applies to.</li>
+					<li><b>Action</b>: A single action or an array of actions that the statement applies to. <b>Action String is case insensitive. Policy Engine forces it to lowercase when permission evaluated</b></li>
 					<li><b>Resource</b>: The resource or resources to which the statement applies. The value can be a specific
 						resource
 						identifier or a wildcard * to represent all resources.
