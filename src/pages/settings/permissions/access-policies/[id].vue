@@ -58,14 +58,14 @@
     {
       "Effect": "Allow",
       "Action": [
-        "resource:create",
-        "resource:edit"
+        "service:resource:create",
+        "service:resource:edit"
       ],
       "Resource": "*"
     },
     {
       "Effect": "Deny",
-      "Action": "resource:delete",
+      "Action": "service:resource:delete",
       "Resource": "*"
     }
   ]
@@ -93,7 +93,7 @@
 				<h4>Action</h4>
 
 				<p>An action represents a specific operation that can be performed on a resource. Actions are represented as
-					strings in the format "resource:operation", such as "accounts:create" or "accounts:edit".</p>
+					strings in the format "service:resource:operation", such as "finmars:accounts:create" or "finmars:accounts:edit".</p>
 
 				<h4>Example</h4>
 
@@ -107,14 +107,14 @@
     {
       "Effect": "Allow",
       "Action": [
-        "portfolio:create",
-        "portfolio:edit"
+        "finmars:portfolio:create",
+        "finmars:portfolio:edit"
       ],
       "Resource": "*"
     },
     {
       "Effect": "Deny",
-      "Action": "portfolio:delete",
+      "Action": "finmars:portfolio:delete",
       "Resource": "*"
     }
   ]
@@ -136,7 +136,7 @@
     {
       "Effect": "Allow",
       "Action": [
-        "portfolio:*"
+        "finmars:portfolio:*"
       ],
       "Resource": ["frn:finmars:portfolios.portfolio:portfolio_1"]
     },
