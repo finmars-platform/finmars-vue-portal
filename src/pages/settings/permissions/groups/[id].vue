@@ -9,47 +9,60 @@
 				<BaseInput
 					label="Name"
 					v-model="group.name"
+				/>
+				<BaseInput
+					label="User Code"
+					v-model="group.user_code"
 					disabled
 				/>
-				<div>
-					<div>User Code</div>
-					{{group.user_code}}
-				</div>
+
+				<BaseInput
+					label="Configuration Code"
+					v-model="group.configuration_code"
+					disabled
+				/>
+
 
 			</FmCard>
 		</template>
 		<template #right>
-			<FmCard title="Access Policies" class="m-b-24" v-if="group.id">
 
-				<BaseMultiSelectInput
-					v-model="selectedAccessPolicies"
-					title="Access Policies"
-					:items="access_policies_templates"
-					item_id="name"
-				/>
-
-
-			</FmCard>
 			<FmCard title="Roles" class="m-b-24" v-if="group.id">
 
 				<BaseMultiSelectInput
 					:modelValue="selectedRoles"
-					@update:modelValue="findIds($event)"
+					@update:modelValue="findRoleUserCodes($event)"
 					title="Roles"
 					:items="roles"
-					item_id="name"
+					item_id="user_code"
+					item_title="name"
 				/>
 
 
 			</FmCard>
-			<FmCard title="Users" class="m-b-24">
+			<FmCard title="Members" class="m-b-24" v-if="group.id">
 				<BaseMultiSelectInput
-					v-model="selectedUsers"
-					@update:modelValue="findIds($event)"
-					title="Users"
-					:items="Users"
-					item_id="name"
+					v-model="selectedMembers"
+					@update:modelValue="findMemberIds($event)"
+					title="Members"
+					:items="members"
+					item_id="username"
+					item_title="username"
 				/>
+			</FmCard>
+
+			<FmCard title="Access Policies" class="m-b-24" v-if="group.id">
+
+				<BaseMultiSelectInput
+					v-model="selectedAccessPolicies"
+					@update:modelValue="findAccessPolicyUserCodes($event)"
+					title="Access Policies"
+					:items="accessPolicies"
+					item_id="user_code"
+					item_title="name"
+				/>
+
+
 			</FmCard>
 
 		</template>
@@ -64,12 +77,12 @@ definePageMeta({
 	middleware: 'auth',
 	bread: [
 		{
-			text: 'Permissions: Members',
+			text: 'Permissions: Groups',
 			to: '/settings/permissions',
 			disabled: false
 		},
 		{
-			text: 'Update member',
+			text: 'Update Group',
 			disabled: true
 		},
 	],
@@ -78,50 +91,88 @@ const store = useStore()
 let route = useRoute()
 let router = useRouter()
 
-let member = ref({})
-let invite = ref({})
-let groups = ref([])
-let selectedGroups = computed(() => {
-	if (!member.value.groups_object.length) return []
-	return member.value.groups_object.map(item => item.name).join(',')
+let group = ref({})
+let roles = ref([])
+let members = ref([])
+let accessPolicies = ref([])
 
+let selectedRoles = computed(() => {
+	if (!group.value.roles_object.length) return []
+	return group.value.roles_object.map(item => item.user_code).join(',')
 })
 
-let role = computed(() => {
-	let roles = []
-
-	if (member.value.is_admin) roles.push('Admin')
-	if (member.value.is_owner) roles.push('Owner')
-	if (!member.value.is_owner && !member.value.is_admin) roles.push('User')
-
-	return roles.join(', ')
+let selectedMembers = computed(() => {
+	if (!group.value.members_object.length) return []
+	return group.value.members_object.map(item => item.username).join(',')
 })
+
+let selectedAccessPolicies = computed(() => {
+	if (!group.value.access_policies_object.length) return []
+	return group.value.access_policies_object.map(item => item.user_code).join(',')
+})
+
+
 
 async function init() {
-	let res = await useApi('member.get', {params: {id: route.params.id}})
-	member.value = res
+	let res = await useApi('group.get', {params: {id: route.params.id}})
+	group.value = res
 
-	res = await useApi('userGroups.get')
-	groups.value = res.results
+	res = await useApi('roleList.get')
+	roles.value = res.results
 
-	res = await useApi('memberInvites.get')
-	invite.value = res.results.find(item => item.id == route.params.id) || {}
+	res = await useApi('memberList.get')
+	members.value = res.results
+
+	// res = await useApi('accessPolicyList.get', {params: {page_size: '10000'}})
+	res = await useLoadAllPages('accessPolicyList.get', {
+		filters: { page: 1, page_size: 10000 },
+	})
+	accessPolicies.value = res
+
 }
 
-function findIds(val) {
+function findRoleUserCodes(val) {
 	if (typeof val == 'string') val = val.split(',')
-	member.value.groups_object = []
+	group.value.roles_object = []
 
 	val.forEach(itemArr => {
-		let elem = groups.value.find(itemObj => itemObj.name == itemArr)
-		if (elem) member.value.groups_object.push(elem)
+		let elem = roles.value.find(itemObj => itemObj.user_code == itemArr)
+		if (elem) group.value.roles_object.push(elem)
 	})
 
-	member.value.groups = member.value.groups_object.map(item => item.id)
+	group.value.roles = group.value.roles_object.map(item => item.user_code)
+}
+
+function findAccessPolicyUserCodes(val) {
+	if (typeof val == 'string') val = val.split(',')
+	group.value.access_policies_object = []
+
+	val.forEach(itemArr => {
+		let elem = accessPolicies.value.find(itemObj => itemObj.user_code == itemArr)
+		if (elem) group.value.access_policies_object.push(elem)
+	})
+
+	group.value.access_policies = group.value.access_policies_object.map(item => item.user_code)
+}
+
+
+function findMemberIds(val) {
+
+	if (typeof val == 'string') val = val.split(',')
+	group.value.members_object = []
+
+	console.log('findMemberIds.val', val)
+
+	val.forEach(itemArr => {
+		let elem = members.value.find(itemObj => itemObj.username == itemArr)
+		if (elem) group.value.members_object.push(elem)
+	})
+
+	group.value.members = group.value.members_object.map(item => item.id)
 }
 
 async function save() {
-	let res = await useApi('member.put', {body: member.value, params: {id: route.params.id}})
+	let res = await useApi('group.put', {body: group.value, params: {id: route.params.id}})
 
 	if (res) useNotify({type: 'success', title: 'Saved!'})
 }

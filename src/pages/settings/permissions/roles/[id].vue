@@ -1,78 +1,66 @@
 <template>
 	<CommonSettingsLayout
-		title="Update member"
+		title="Update Role"
 		@save="save"
 		@cancel="cancel"
 	>
 		<template #left>
-			<FmCard title="General" v-if="member.id">
+			<FmCard title="General" v-if="role.id">
 				<BaseInput
 					label="Name"
-					v-model="member.username"
-					disabled
+					v-model="role.name"
 				/>
 				<BaseInput
-					label="E-mail"
-					v-model="member.email"
-					disabled
-				/>
-				<BaseInput
-					v-if="invite.id"
-					label="Invited by"
-					:modelValue="invite.from_user_object.username"
-					disabled
-				/>
-				<BaseInput
-					label="Date joined"
-					:modelValue="fromatDate(member.join_date)"
+					label="User Code"
+					v-model="role.user_code"
 					disabled
 				/>
 
-				<FmCheckbox
-					v-model="member.is_owner"
-					label="Owner"
-					class="m-b-8"
-				/>
-
-				<FmCheckbox
-					v-model="member.is_admin"
-					label="Admin"
+				<BaseInput
+					label="Configuration Code"
+					v-model="role.configuration_code"
+					disabled
 				/>
 
 			</FmCard>
 		</template>
 		<template #right>
-			<FmCard title="Groups" class="m-b-24" v-if="member.id">
+			<FmCard title="Groups" class="m-b-24" v-if="role.id">
 
 				<BaseMultiSelectInput
 					:modelValue="selectedGroups"
-					@update:modelValue="findIds($event)"
+					@update:modelValue="findGroupUserCodes($event)"
 					title="Groups"
 					:items="groups"
-					item_id="name"
+					item_id="user_code"
 				/>
 
 
 			</FmCard>
-			<FmCard title="Roles" class="m-b-24" v-if="member.id">
 
+			<FmCard title="Members" class="m-b-24" v-if="role.id">
 				<BaseMultiSelectInput
-					:modelValue="selectedRoles"
-					@update:modelValue="findIds($event)"
-					title="Roles"
-					:items="roles"
-					item_id="name"
+					v-model="selectedMembers"
+					@update:modelValue="findMemberIds($event)"
+					title="Members"
+					:items="members"
+					item_id="username"
+					item_title="username"
 				/>
-
-
 			</FmCard>
-			<FmCard title="Personal Access Policies" class="m-b-24">
+
+
+			<FmCard title="Access Policies" class="m-b-24" v-if="role.id">
+
 				<BaseMultiSelectInput
 					v-model="selectedAccessPolicies"
-					title="Personal Access Policies"
-					:items="access_policies"
-					item_id="name"
+					@update:modelValue="findAccessPolicyUserCodes($event)"
+					title="Access Policies"
+					:items="accessPolicies"
+					item_id="user_code"
+					item_title="name"
 				/>
+
 
 			</FmCard>
 
@@ -88,12 +76,12 @@ definePageMeta({
 	middleware: 'auth',
 	bread: [
 		{
-			text: 'Permissions: Members',
+			text: 'Permissions: Roles',
 			to: '/settings/permissions',
 			disabled: false
 		},
 		{
-			text: 'Update member',
+			text: 'Update Role',
 			disabled: true
 		},
 	],
@@ -102,50 +90,88 @@ const store = useStore()
 let route = useRoute()
 let router = useRouter()
 
-let member = ref({})
-let invite = ref({})
+let role = ref({})
 let groups = ref([])
+let members = ref([])
+let accessPolicies = ref([])
+
 let selectedGroups = computed(() => {
-	if (!member.value.groups_object.length) return []
-	return member.value.groups_object.map(item => item.name).join(',')
+	if (!role.value.groups_object.length) return []
+	return role.value.groups_object.map(item => item.user_code).join(',')
 
 })
 
-let role = computed(() => {
-	let roles = []
-
-	if (member.value.is_admin) roles.push('Admin')
-	if (member.value.is_owner) roles.push('Owner')
-	if (!member.value.is_owner && !member.value.is_admin) roles.push('User')
-
-	return roles.join(', ')
+let selectedMembers = computed(() => {
+	if (!role.value.members_object.length) return []
+	return role.value.members_object.map(item => item.username).join(',')
 })
+
+let selectedAccessPolicies = computed(() => {
+	if (!role.value.access_policies_object.length) return []
+	return role.value.access_policies_object.map(item => item.user_code).join(',')
+})
+
 
 async function init() {
-	let res = await useApi('member.get', {params: {id: route.params.id}})
-	member.value = res
+	let res = await useApi('role.get', {params: {id: route.params.id}})
+	role.value = res
 
-	res = await useApi('userGroups.get')
+	res = await useApi('groupList.get')
 	groups.value = res.results
 
-	res = await useApi('memberInvites.get')
-	invite.value = res.results.find(item => item.id == route.params.id) || {}
+	res = await useApi('memberList.get')
+	members.value = res.results
+
+	// res = await useApi('accessPolicyList.get', {params: {page_size: '10000'}})
+	res = await useLoadAllPages('accessPolicyList.get', {
+		filters: { page: 1, page_size: 10000 },
+	})
+	accessPolicies.value = res
+
 }
 
-function findIds(val) {
+function findGroupUserCodes(val) {
 	if (typeof val == 'string') val = val.split(',')
-	member.value.groups_object = []
+	role.value.groups_object = []
 
 	val.forEach(itemArr => {
-		let elem = groups.value.find(itemObj => itemObj.name == itemArr)
-		if (elem) member.value.groups_object.push(elem)
+		let elem = role.value.find(itemObj => itemObj.user_code == itemArr)
+		if (elem) role.value.groups_object.push(elem)
 	})
 
-	member.value.groups = member.value.groups_object.map(item => item.id)
+	role.value.groups = role.value.groups_object.map(item => item.user_code)
 }
 
+function findMemberIds(val) {
+
+	if (typeof val == 'string') val = val.split(',')
+	group.value.members_object = []
+
+	console.log('findMemberIds.val', val)
+
+	val.forEach(itemArr => {
+		let elem = members.value.find(itemObj => itemObj.username == itemArr)
+		if (elem) group.value.members_object.push(elem)
+	})
+
+	group.value.members = group.value.members_object.map(item => item.id)
+}
+
+function findAccessPolicyUserCodes(val) {
+	if (typeof val == 'string') val = val.split(',')
+	role.value.access_policies_object = []
+
+	val.forEach(itemArr => {
+		let elem = accessPolicies.value.find(itemObj => itemObj.user_code == itemArr)
+		if (elem) role.value.access_policies_object.push(elem)
+	})
+
+	role.value.access_policies = role.value.access_policies_object.map(item => item.user_code)
+}
+
+
 async function save() {
-	let res = await useApi('member.put', {body: member.value, params: {id: route.params.id}})
+	let res = await useApi('role.put', {body: role.value, params: {id: route.params.id}})
 
 	if (res) useNotify({type: 'success', title: 'Saved!'})
 }
