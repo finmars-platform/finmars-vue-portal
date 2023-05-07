@@ -13,22 +13,18 @@
 				/>
 				<BaseInput
 					label="User Code"
-					v-model="user_code"
+					v-model="form.user_code"
+				/>
+
+				<BaseInput
+					label="Configuration Code"
+					v-model="form.configuration_code"
 				/>
 
 			</FmCard>
 		</template>
 		<template #right>
-			<FmCard title="Access Policies" class="m-b-24">
-				<BaseMultiSelectInput
-					v-model="form.access_policies"
-					title="Access Policies"
-					:items="access_policies_templates"
-					item_id="name"
-				/>
 
-
-			</FmCard>
 
 			<FmCard title="Roles" class="m-b-24">
 				<BaseMultiSelectInput
@@ -39,13 +35,24 @@
 				/>
 			</FmCard>
 
-			<FmCard title="Users" class="m-b-24">
+			<FmCard title="Members" class="m-b-24">
 				<BaseMultiSelectInput
-					v-model="form.users"
-					title="Users"
-					:items="Users"
+					v-model="form.members"
+					title="Members"
+					:items="members"
 					item_id="name"
 				/>
+			</FmCard>
+
+			<FmCard title="Access Policies" class="m-b-24">
+				<BaseMultiSelectInput
+					v-model="form.access_policies"
+					title="Access Policies"
+					:items="access_policies_templates"
+					item_id="name"
+				/>
+
+
 			</FmCard>
 
 		</template>
@@ -59,12 +66,12 @@
 	definePageMeta({
 		bread: [
 			{
-				text: 'Permissions: Members',
+				text: 'Permissions: Groups',
 				to: '/settings/permissions',
 				disabled: false
 			},
 			{
-				text: 'Add member',
+				text: 'Add Group',
 				disabled: true
 			},
 		],
@@ -74,9 +81,12 @@
 	let router = useRouter()
 
 	let form = reactive({
-		groups: ['Guests'],
-		base_api_url: store.current.base_api_url,
-		is_owner: false
+		name: '',
+		user_code: '',
+		configuration_code: 'com.finmars.local',
+		roles: [],
+		users: [],
+		access_policies: [],
 	})
 	let groups = ref([])
 
@@ -97,7 +107,7 @@
 	async function save() {
 
 
-		let res = await useApi('group.post', {body: form})
+		let res = await useApi('groupList.post', {body: form})
 
 		if ( !res.error ) {
 			useNotify({type: 'success', title: 'Group created!'})

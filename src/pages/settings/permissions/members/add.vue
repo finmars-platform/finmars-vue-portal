@@ -102,9 +102,11 @@
 		return result
 	}
 	async function save() {
+		// TODO Refactor
 		let sendedForm = {
 			...form,
-			groups: form.groups.join(',')
+			groups: form.groups.join(','),
+			roles: form.groups.join(',')
 		}
 
 		let res = await useApi('memberInvites.post', {body: sendedForm, params: {id: route.params.id}})
