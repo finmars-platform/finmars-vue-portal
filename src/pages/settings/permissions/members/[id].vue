@@ -70,7 +70,8 @@
 					@update:modelValue="findAccessPolicyIds($event)"
 					title="Access Policies"
 					:items="accessPolicies"
-					item_id="name"
+					item_id="user_code"
+					item_title="name"
 				/>
 
 			</FmCard>
@@ -119,7 +120,7 @@ let selectedRoles = computed(() => {
 
 let selectedAccessPolicies = computed(() => {
 	if (!member.value.access_policies_object.length) return []
-	return member.value.access_policies_object.map(item => item.name).join(',')
+	return member.value.access_policies_object.map(item => item.user_code).join(',')
 })
 
 
@@ -174,7 +175,7 @@ function findAccessPolicyIds(val) {
 	member.value.access_policies_object = []
 
 	val.forEach(itemArr => {
-		let elem = selectedAccessPolicies.value.find(itemObj => itemObj.name == itemArr)
+		let elem = accessPolicies.value.find(itemObj => itemObj.user_code == itemArr)
 		if (elem) member.value.access_policies_object.push(elem)
 	})
 
