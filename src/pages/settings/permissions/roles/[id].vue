@@ -150,16 +150,16 @@ function findGroupUserCodes(val) {
 function findMemberIds(val) {
 
 	if (typeof val == 'string') val = val.split(',')
-	group.value.members_object = []
+	role.value.members_object = []
 
 	console.log('findMemberIds.val', val)
 
 	val.forEach(itemArr => {
 		let elem = members.value.find(itemObj => itemObj.username == itemArr)
-		if (elem) group.value.members_object.push(elem)
+		if (elem) role.value.members_object.push(elem)
 	})
 
-	group.value.members = group.value.members_object.map(item => item.id)
+	role.value.members = role.value.members_object.map(item => item.id)
 }
 
 function findAccessPolicyUserCodes(val) {
