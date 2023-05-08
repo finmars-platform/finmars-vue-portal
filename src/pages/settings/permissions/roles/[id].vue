@@ -22,6 +22,11 @@
 					disabled
 				/>
 
+				<BaseInput
+					label="Description"
+					v-model="role.description"
+				/>
+
 			</FmCard>
 		</template>
 		<template #right>

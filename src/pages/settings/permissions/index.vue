@@ -298,7 +298,7 @@ async function deleteGroup(index) {
 	})
 	if (!isConfirm) return false
 
-	let res = await useApi('group.delete', group.id)
+	let res = await useApi('group.delete', {params: {id: group.id}})
 
 	useNotify({type: 'success', title: `Group "${group.name}" was deleted.`})
 
@@ -314,7 +314,7 @@ async function deleteRole(index) {
 	})
 	if (!isConfirm) return false
 
-	let res = await useApi('role.delete', role.id)
+	let res = await useApi('role.delete', {params: {id: role.id}})
 
 	useNotify({type: 'success', title: `Role "${role.name}" was deleted.`})
 
