@@ -22,6 +22,11 @@
 					disabled
 				/>
 
+				<BaseInput
+					label="Description"
+					v-model="group.description"
+				/>
+
 
 			</FmCard>
 		</template>

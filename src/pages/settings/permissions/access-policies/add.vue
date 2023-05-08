@@ -168,7 +168,8 @@ let policyJson = ref(JSON.stringify({
 				{
 					"Effect": "Allow",
 					"Action": [],
-					"Resource": "*"
+					"Resource": "*",
+					"Principal": "*"
 				}
 			]
 		}
