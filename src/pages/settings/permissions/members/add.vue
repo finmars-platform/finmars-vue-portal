@@ -81,7 +81,7 @@
 	let router = useRouter()
 
 	let form = reactive({
-		groups: ['Guests'],
+		groups: [],
 		base_api_url: store.current.base_api_url,
 		is_owner: false
 	})
