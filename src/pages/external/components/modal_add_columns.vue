@@ -2,7 +2,7 @@
 	<div class="modal">
 		<div class="modal_top flex aic sb">
 			<div class="flex aic">
-				<div class="modal_head">Add column</div>
+				<div class="modal_head">{{title}}</div>
 
 				<BaseInput type="text"
 									 class="small bi_no_borders bi_border_bottom m-l-20"
@@ -340,6 +340,8 @@ let isOpenSelect = reactive({
 	new: true
 })
 
+let title = ref('Select attributes');
+
 let attrsList = [];
 // const windowOrigin = window.origin;
 const windowOrigin = 'http://0.0.0.0:8080'; // for development
@@ -462,6 +464,8 @@ function init( data ) {
 	if ( formattedAttrs.value.length ) {
 		activeRow.value = formattedAttrs.value[0].key;
 	}
+
+	if (data.title) title.value = data.title;
 
 }
 
