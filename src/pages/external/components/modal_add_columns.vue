@@ -95,7 +95,7 @@
 									@click.stop=""
 								/>
 
-								<div v-html="item.name"></div>
+								<div v-html="item.customName || item.name"></div>
 							</div>
 
 							<div class="flex aic">
@@ -341,8 +341,8 @@ let isOpenSelect = reactive({
 })
 
 let attrsList = [];
-const windowOrigin = window.origin;
-// const windowOrigin = 'http://0.0.0.0:8080'; // for development
+// const windowOrigin = window.origin;
+const windowOrigin = 'http://0.0.0.0:8080'; // for development
 
 const onMessageStack = {
 	'INITIALIZATION_SETTINGS_TRANSMISSION': init
@@ -446,6 +446,11 @@ function init( data ) {
 
 	favList.value = data.favoriteAttributes
 
+	if ( !favList.value || !favList.value.length ) {
+		isAdvanced.value = true;
+		tab.value = 'advanced';
+	}
+
 	selectedOld = attributes.filter(item => data.selectedAttributes.includes(item.key));
 
 	selectedOld.forEach(sAttr => {
@@ -521,7 +526,7 @@ const advancedColumns = computed(() => {
 
 		let node = tree;
 
-		for  (let i = 0; i < parts.length; i++ ) {
+		for (let i = 0; i < parts.length; i++ ) {
 			let part = parts[i]
 
 			if (!node[part]) {
@@ -544,10 +549,14 @@ const advancedColumns = computed(() => {
 
 	// Search
 	if ( searchParam.value ) {
-		attrs.unshift({
+		/*attrs.unshift({
 			name: 'All sections',
 			children: searchedAttrs
-		})
+		})*/
+		attrs = [{
+			name: 'All sections',
+			children: searchedAttrs
+		}]
 	}
 
 	return attrs
