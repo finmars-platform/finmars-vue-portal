@@ -2,7 +2,7 @@
 	<div class="modal">
 		<div class="modal_top flex aic sb">
 			<div class="flex aic">
-				<div class="modal_head">Add column</div>
+				<div class="modal_head">{{title}}</div>
 
 				<BaseInput type="text"
 									 class="small bi_no_borders bi_border_bottom m-l-20"
@@ -95,7 +95,7 @@
 									@click.stop=""
 								/>
 
-								<div v-html="item.name"></div>
+								<div v-html="item.customName || item.name"></div>
 							</div>
 
 							<div class="flex aic">
@@ -346,6 +346,8 @@ let isOpenSelect = reactive({
 	new: true
 })
 
+let title = ref('Select attributes');
+
 let attrsList = [];
 const windowOrigin = window.origin;
 // const windowOrigin = 'http://0.0.0.0:8080'; // for development
@@ -453,7 +455,7 @@ function init( data ) {
 	favList.value = data.favoriteAttributes
 
 	if ( !favList.value || !favList.value.length ) {
-		isAdvance.value = true;
+		isAdvanced.value = true;
 		tab.value = 'advanced';
 	}
 
@@ -468,6 +470,8 @@ function init( data ) {
 	/*if ( formattedAttrs.value.length ) {
 		activeRow.value = formattedAttrs.value[0].key;
 	}*/
+
+	if (data.title) title.value = data.title;
 
 }
 
@@ -534,7 +538,7 @@ const advancedColumns = computed(() => {
 
 		let node = tree;
 
-		for  (let i = 0; i < parts.length; i++ ) {
+		for (let i = 0; i < parts.length; i++ ) {
 			let part = parts[i]
 
 				if (!node[part]) {
@@ -557,6 +561,10 @@ const advancedColumns = computed(() => {
 
 	// Search
 	if ( searchParam.value ) {
+		/*attrs.unshift({
+			name: 'All sections',
+			children: searchedAttrs
+		})*/
 
 		attrs = highlightFound(attrs);
 
