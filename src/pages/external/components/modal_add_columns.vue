@@ -343,8 +343,8 @@ let isOpenSelect = reactive({
 let title = ref('Select attributes');
 
 let attrsList = [];
-// const windowOrigin = window.origin;
-const windowOrigin = 'http://0.0.0.0:8080'; // for development
+const windowOrigin = window.origin;
+// const windowOrigin = 'http://0.0.0.0:8080'; // for development
 
 const onMessageStack = {
 	'INITIALIZATION_SETTINGS_TRANSMISSION': init
