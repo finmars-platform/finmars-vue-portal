@@ -231,7 +231,8 @@ let members = computed(() => {
 			username: {value: item.user_object.username, link: '/settings/permissions/members/' + item.user},
 			role: 'Admin',
 			status: 'Pending',
-			groups: item.groups.replace(',', ', ')
+			groups: ''
+			// groups: item.groups.replace(',', ', ')
 		})
 	})
 
