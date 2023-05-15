@@ -566,12 +566,12 @@ const advancedColumns = computed(() => {
 			children: searchedAttrs
 		})*/
 
-		attrs = highlightFound(attrs);
+		// attrs = highlightFound(attrs);
 
-		attrs.unshift({
+		attrs = [{
 			name: 'All sections',
 			children: highlightFound(searchedAttrs),
-		})
+		}]
 
 	}
 

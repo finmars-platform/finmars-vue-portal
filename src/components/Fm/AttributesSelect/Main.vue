@@ -70,7 +70,7 @@
 						<li
 							class="fm_list_item attr_item"
 							:class="{active: activeTree == i}"
-							v-for="(item, i) in advancedColumns"
+							v-for="(item, i) in viewTree"
 							@click="activeTree = i"
 						>
 							<div v-html="item.name"></div>
@@ -121,12 +121,12 @@
 					</div>
 
 					<ul class="fm_list" v-show="tab == 'advanced'">
-						<template
-							v-for="obj in advancedColumnActive"
+						<template v-if="viewTree[activeTree]"
+							v-for="obj in viewTree[activeTree].children"
 						>
 							<!-- Leaf -->
 							<div
-								v-if="!obj.hasOwnProperty('isOpen')"
+								v-if="!obj.hasOwnProperty('opened')"
 								class="fm_list_item attr_item flex aic sb"
 								:class="{active: activeRow == obj.key}"
 								@click="activeRow = obj.key"
@@ -140,7 +140,8 @@
 										@click.stop=""
 									/>
 
-									<div v-html="advancedColumns[activeTree].name == 'All sections' ? obj.name : obj.short_name"></div>
+<!--									<div v-html="advancedColumns[activeTree].name == 'All sections' ? obj.name : obj.short_name"></div>-->
+									<div v-html="obj.name"></div>
 								</div>
 
 								<FmIcon
@@ -154,36 +155,43 @@
 
 							<!-- Branch -->
 							<div v-else>
-								<li class="fm_list_item attr_item" @click="obj.isOpen = !obj.isOpen">
-									<FmIcon class="expand" :icon="obj.isOpen  ? 'expand_more' : 'chevron_right'" />
+								<li class="fm_list_item attr_item" @click="obj.opened = !obj.opened">
+									<FmIcon class="expand" :icon="obj.opened  ? 'expand_more' : 'chevron_right'" />
 									<div v-html="obj.name"></div>
 								</li>
 
-								<template v-if="obj.isOpen">
-									<div
-										v-for="(val, prop) in obj.children"
+								<template v-if="obj.opened">
+<!--									<div
+										v-for="(val, prop) in obj"
 										class="fm_list_item attr_item flex aic sb"
 										:class="{active: activeRow == val.key}"
 										@click="activeRow = val.key"
 										@dblclick="toggleAttr( val.key, !selected[val.key] )"
+									>-->
+									<div
+										v-for="child in obj.children"
+										class="fm_list_item attr_item flex aic sb"
+										:class="{active: activeRow == child.key}"
+										@click="activeRow = child.key"
+										@dblclick="toggleAttr( child.key, !selected[child.key] )"
 									>
 										<div class="flex aic expand_wrap">
 											<FmCheckbox
-												:modelValue="selected[val.key]"
-												:disabled="val.disabled"
-												@update:modelValue="newVal => toggleAttr( val.key, newVal )"
+												:modelValue="selected[child.key]"
+												:disabled="child.disabled"
+												@update:modelValue="newVal => toggleAttr( child.key, newVal )"
 												@click.stop=""
 											/>
 
-											<div v-html="val.short_name"></div>
+											<div v-html="child.name"></div>
 										</div>
 
 										<FmIcon
 											size="20"
 											primary
-											:class="['favorites', {active: !!favList.find(o => o.key == val.key)}]"
-											:icon="favList.find(o => o.key == val.key) ? 'star' : 'star_outlined'"
-											@click="toggleFav(val)"
+											:class="['favorites', {active: !!favList.find(o => o.key == child.key)}]"
+											:icon="favList.find(o => o.key == child.key) ? 'star' : 'star_outlined'"
+											@click="toggleFav(child)"
 										/>
 									</div>
 								</template>
@@ -377,7 +385,9 @@
 	const windowOrigin = window.origin;
 	// const windowOrigin = 'http://0.0.0.0:8080'; // for development
 
-	let formattedAttrs = ref([])
+	let formattedAttrs = ref([]);
+	let attrsTree;
+	let viewTree = ref([]);
 	// let selectedOld = []
 	let disabledAttrs = [];
 	let favList = ref([/*{
@@ -496,7 +506,7 @@
 
 	}
 
-	const advancedColumns = computed(() => {
+	const advancedColumnsOld = computed(() => {
 
 		let tree = {}
 		let attrs = JSON.parse(JSON.stringify( formattedAttrs.value ));
@@ -531,7 +541,7 @@
 
 						node[part] = {}
 
-						node[part].isOpen = false
+						node[part].opened = false
 					}
 				}
 				node = node[part]
@@ -573,7 +583,7 @@
 
 							node[part] = {}
 
-							node[part].isOpen = false
+							node[part].opened = false
 						}
 					}
 					node = node[part]
@@ -584,6 +594,7 @@
 
 		return attrs
 	})
+
 	function toAttrsTree( obj ) {
 		let list = []
 
@@ -623,7 +634,7 @@
 	})*/
 	let advancedColumnActive = ref([]);
 
-	watch(
+	/*watch(
 		[advancedColumns, activeTree],
 		() => {
 
@@ -633,6 +644,176 @@
 				advancedColumnActive.value = JSON.parse(JSON.stringify( advancedColumns.value[activeTree.value].children ));
 			}
 
+		}
+	)*/
+
+	let advancedColumns = ref([]);
+
+	const testing1619ToDelete = function () {
+
+		/*for ( let attr of attrs ) {
+				// const parts = attr.name.split(" / ")
+				const parts = attr.name.split(". ")
+				parts[0] = parts[0].trim()
+
+				let node = tree;
+				let parentNode = null;
+
+				for  (let i = 0; i < parts.length; i++ ) {
+					let part = parts[i]
+
+					if ( !node[part] ) { // node does not exist
+
+						if ( parts.length - 1 === i ) { // leaf
+
+							// let pathToNode = [attr.key];
+							//
+							// if ( parentNode ) {
+							// 	pathToNode = parentNode.pathToNode.concat(pathToNode);
+							// }
+
+							node[part] = {
+								originalName: attr.name,
+								id: attr.key,
+								name: part,
+								// pathToNode: pathToNode
+							}
+
+						} else { // branch
+
+							// let pathToNode = [ part ];
+							//
+							// if ( parentNode ) {
+							// 	pathToNode = parentNode.pathToNode.concat(pathToNode);
+							// }
+
+							node[part] = {
+								// id: pathToNode.join('. '),
+								name: part,
+								children: {},
+							};
+
+							parentNode = node;
+
+							node = node[part].children;
+
+						}
+
+					} else {
+						node = node[part].children;
+					}
+
+
+				}
+			}*/
+
+	}
+
+	function buildTreeTemplate(attrs) {
+
+		let tree = {};
+
+		for ( let attr of attrs ) {
+			// const parts = attr.name.split(" / ")
+			const parts = attr.name.split(". ")
+			parts[0] = parts[0].trim()
+
+			let node = tree;
+
+			for  (let i = 0; i < parts.length; i++ ) {
+				let part = parts[i]
+
+				if (!node[part]) {
+					if ( parts.length - 1 == i ) { // leaf
+						// attr.short_name = part
+						node[part] = attr
+
+					} else { // branch
+
+						node[part] = {}
+
+						node[part]._branch = true;
+					}
+				}
+				node = node[part]
+			}
+		}
+
+		return tree;
+
+	}
+
+	function assembleTree( treeTemplate, parent ) {
+
+		let list = [];
+
+		for (let key in treeTemplate) {
+
+			let pathToNode = [key];
+			// let level = 0;
+
+			if ( parent ) {
+
+				pathToNode = parent.pathToNode.concat(pathToNode);
+				// level = parent.level + 1;
+
+			}
+
+			let nodeData = {
+				name: key,
+				pathToNode: pathToNode,
+				// level: level,
+			}
+
+			if ( treeTemplate[key]._branch ) {
+				nodeData.opened = false;
+				nodeData.children = assembleTree( treeTemplate[key] );
+
+			} else { // leaf
+				// newObj = treeTemplate[key];
+				nodeData.key = treeTemplate[key].key;
+				nodeData.originalName = treeTemplate[key].name;
+			}
+
+			if (key !== '_branch')
+				list.push(nodeData)
+
+		}
+
+		return list;
+
+	}
+
+	function buildViewTree() {
+
+		if (searchParam.value) {
+			return filterTree(attrsTree);
+
+		} else {
+			viewTree.value = attrsTree
+		}
+
+	}
+
+	watch(
+		formattedAttrs,
+		() => {
+
+			let attrs = JSON.parse(JSON.stringify( formattedAttrs.value ));
+			let tree = buildTreeTemplate(attrs);
+
+			console.log("testing1619 treeTemplate", JSON.parse(JSON.stringify(tree)) );
+			attrsTree = assembleTree(tree);
+			viewTree.value = searchParam.value ? filterTree(attrsTree) : attrsTree;
+			console.log("testing1619 tree", JSON.parse(JSON.stringify(attrsTree)) );
+
+		}
+	)
+
+	watch(
+		searchParam,
+		() => {
+			viewTree.value = searchParam.value ? filterTree(attrsTree) : attrsTree;
 		}
 	)
 
@@ -771,8 +952,20 @@
 
 	}
 
-	function filterAttrs( attrs ) {
+	const searchTermsList = computed(() => {
+
+		if ( !searchParam.value ) {
+			return [];
+		}
+
 		const terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*/); // characters between spaces or '/'
+
+		return terms.map( term => term.toLowerCase() );
+
+	});
+
+	function filterAttrs( attrs ) {
+		/*const terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*!/); // characters between spaces or '/'
 
 		let result = attrs;
 
@@ -781,19 +974,43 @@
 
 			result = result
 				.filter( (item) => item.name.toLowerCase().includes(term) );
+		})*/
+
+		let result = attrs;
+
+		searchTermsList.value.forEach(term => {
+
+			result = result
+				.filter( (item) => item.name.toLowerCase().includes(term) );
+
 		})
 
 		return result;
 	}
 
-	/** Highlights part of names of attributes that pass filter */
+	function highlightName(name) {
+
+		name = formatName(name);
+
+		const terms = searchTermsList.value.map( term => useRegExpEscape(term) );
+		const searchTerm = terms.join('|');
+
+		return name.replaceAll(
+			new RegExp(`(${searchTerm})`, 'gi'),
+			// new RegExp(pattern, 'gi'),
+			(match) => `<span class="c_primary">${match}</span>`
+		)
+
+	}
+
+	/** Format names of attributes that pass filter and highlight its parts  */
 	function highlightFound(attrs) {
 
-		let terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*/); // characters between spaces or '/'
+		// let terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*/); // characters between spaces or '/'
 
 		attrs = attrs.map(item => {
 
-			let name = formatName( item.name );
+			/*let name = formatName( item.name );
 
 			terms = terms.map( term => useRegExpEscape(term) );
 			const searchTerm = terms.join('|');
@@ -802,7 +1019,8 @@
 				new RegExp(`(${searchTerm})`, 'gi'),
 				// new RegExp(pattern, 'gi'),
 				(match) => `<span class="c_primary">${match}</span>`
-			)
+			)*/
+			const name = highlightName(item.name);
 
 			return { ...item, name }
 
@@ -851,6 +1069,90 @@
 		return result
 	}
 
+	/*function filterNode(node) {
+
+		let name;
+
+		if (node.originalName) {
+			name =
+		}
+		let passed = searchTermsList.value.find(term => node.name.includes(term) );
+
+		if (passed) {
+
+		}
+		const formattedName = highlightName( node.name );
+
+	}*/
+
+	function filterNodesR( tree, filteredTree = [] ) {
+
+		tree.forEach(node => {
+			console.log("testing1619.swelter node", node);
+			let name = node.originalName ? formatName(node.originalName) : node.name;
+			name = name.toLowerCase();
+			console.log("testing1619.swelter node name", name);
+			// all terms should be found inside name
+			let pass = !searchTermsList.value.find(term => !name.includes(term) );
+			console.log("testing1619.swelter node: " + name + " pass", pass);
+			if (pass) {
+
+				let filteredNode;
+
+				if (node.children) {
+
+					filteredNode = {...node};
+					filteredNode.name = highlightName(filteredNode.name);
+					console.log("testing1619.swelter node: " + name + " 1 ", filteredNode);
+				} else {
+
+					filteredNode = node;
+					filteredNode.name = highlightName(filteredNode.originalName);
+					console.log("testing1619.swelter node: " + name + " 2 ", filteredNode);
+				}
+
+				filteredTree.push(filteredNode);
+				console.log("testing1619.swelter node: " + name + " filteredTree ", JSON.parse(JSON.stringify(filteredTree)) );
+			}
+
+			// should be called after filteredTree.push(filteredNode) to place nodes after their parents
+			if (node.children) {
+				filteredTree = filterNodesR(node.children, filteredTree);
+			}
+
+		})
+		console.log("testing1619.swelter filteredTree", JSON.parse(JSON.stringify(filteredTree)) );
+		return filteredTree;
+
+	}
+
+	function filterTree(tree) {
+
+		const testingME = tree
+			.map(node => {
+
+				const filteredChildren = filterNodesR(node.children);
+				console.log("testing1619.swelter filterTree node: " + node.name + " filteredChildren", JSON.parse(JSON.stringify(filteredChildren)) );
+				if (filteredChildren.length) {
+
+					return {
+						...node,
+						...{children: filteredChildren}
+					};
+
+				}
+
+				return null;
+
+			})
+			.filter(node => node);
+
+		console.log("testing1619.swelter filterTree ", JSON.parse(JSON.stringify(testingME)) );
+
+		return testingME;
+
+	}
+
 	let searchTimer;
 	function search( value ) {
 
@@ -858,6 +1160,15 @@
 
 		searchTimer = setTimeout(() => {
 			searchParam.value = value
+
+			if ( searchParam.value ) {
+
+				viewTree.value = filterTree(attrsTree);
+				console.log("testing1619 viewTree", JSON.parse(JSON.stringify(viewTree.value)) );
+			} else {
+				viewTree.value = attrsTree
+			}
+
 		}, 1000)
 	}
 
