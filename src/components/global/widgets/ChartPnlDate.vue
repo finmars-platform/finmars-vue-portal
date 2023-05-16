@@ -17,7 +17,7 @@
 			<div class="chart_row"
 				v-for="(item, i) in instruments"
 				:key="i"
-				:style="{background: dashStore.instrColors['Asset Types' + item[0]]?.slice(0, 7) + '0f'}"
+				:style="{background: dashStore.instrColors[inputs.category_type + item[0]]?.slice(0, 7) + '0f'}"
 				:class="{minus: item[1] < 0}"
 			>
 				<div class="chart_field">
@@ -26,7 +26,7 @@
 						:class="{minus: item[1] < 0}"
 						:style="{
 							width: Math.abs(item[1] / maxTickStock * 50) + '%',
-							background: dashStore.instrColors['Asset Types' + item[0]]
+							background: dashStore.instrColors[inputs.category_type + item[0]]
 						}"
 					></div>
 				</div>
@@ -61,40 +61,53 @@
 	const STATUSES = {
 		0: 'Waiting data',
 		101: 'Data are not available',
+		201: 'No [Category type] property',
 	}
 	let status = ref(0)
 
 	let dashStore = useStoreDashboard()
 	let widget = dashStore.getWidget(props.wid)
 
-	let scope = computed(() => {
-		return dashStore.scopes[widget.scope]
-	})
-
 	let total = ref('0 USD')
 	let instruments = ref(null)
 	let maxTickStock = ref(null)
 
-	if ( dayjs(scope.value.date_to.value).diff(dayjs(), 'day') >= 0 ) {
+	let inputs = computed(() => {
+		let props = dashStore.props.inputs.filter((prop) => prop.component_id == widget.uid)
+		let obj = {}
+
+		props.forEach((prop) => {
+			obj[prop.key] = prop.__val
+		})
+		return obj
+	})
+
+	if ( dayjs(inputs.value.date).diff(dayjs(), 'day') >= 0 ) {
 			status.value = 101
 		}
-
+		prepareData()
 	watch(
-		() => scope.value._detail_date,
+		inputs,
 		() => prepareData()
 	)
 
 	async function prepareData() {
-		if ( dayjs(scope.value.date_to.value).diff(dayjs(), 'day') >= 0 ) {
+		if ( dayjs(inputs.value.date).diff(dayjs(), 'day') >= 0 ) {
 			status.value = 101
 			return false
 		}
+
+		if ( !inputs.value.category_type ) {
+			status.value = 201
+			return false
+		}
+
 		let pl = await dashStore.getHistoryPnl({
-			date: scope.value._detail_date,
-			category: 'Asset Types'
+			date: inputs.value.date,
+			category: inputs.value.category_type
 		})
 
-		if ( pl.error ) {
+		if ( !pl || pl.error ) {
 			status.value = 101
 
 			return false

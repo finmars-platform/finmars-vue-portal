@@ -11,14 +11,22 @@
 					label="Name"
 					v-model="form.username"
 				/>
-				<BaseInput
-					label="Email"
-					v-model="form.email"
+
+				<FmCheckbox
+					v-model="form.is_owner"
+					label="Owner"
+					class="m-b-8"
 				/>
+
+				<FmCheckbox
+					v-model="form.is_admin"
+					label="Admin"
+				/>
+
 			</FmCard>
 		</template>
 		<template #right>
-			<FmCard title="Roles" class="m-b-6">
+			<FmCard title="Groups" class="m-b-6">
 				<BaseMultiSelectInput
 					v-model="form.groups"
 					title="Groups"
@@ -26,10 +34,26 @@
 					item_id="name"
 				/>
 
-				<FmCheckbox
-					v-model="form.is_owner"
-					label="Owner"
+
+			</FmCard>
+
+			<FmCard title="Groups" class="m-b-6">
+				<BaseMultiSelectInput
+					v-model="form.roles"
+					title="Roles"
+					:items="roles"
+					item_id="name"
 				/>
+
+			</FmCard>
+			<FmCard title="Personal Access Policies" class="m-b-6">
+				<BaseMultiSelectInput
+					v-model="form.access_policies"
+					title="Personal Access Policies"
+					:items="access_policies"
+					item_id="name"
+				/>
+
 			</FmCard>
 		</template>
 	</CommonSettingsLayout>
@@ -57,7 +81,7 @@
 	let router = useRouter()
 
 	let form = reactive({
-		groups: ['Guests'],
+		groups: [],
 		base_api_url: store.current.base_api_url,
 		is_owner: false
 	})
@@ -78,20 +102,20 @@
 		return result
 	}
 	async function save() {
-		form.groups = form.groups.join(',')
-		let res = await useApi('memberInvites.post', {body: form, params: {id: route.params.id}})
+		// TODO Refactor
+		let sendedForm = {
+			...form,
+			groups: form.groups.join(','),
+			roles: form.groups.join(',')
+		}
+
+		let res = await useApi('memberInvites.post', {body: sendedForm, params: {id: route.params.id}})
 
 		if ( !res.error ) {
 			useNotify({type: 'success', title: 'Invite sent!'})
 
-			Object.assign(form, {
-				groups: ['Guests'],
-				is_owner: false,
-				email: '',
-				username: '',
-			})
+			router.push('/settings/permissions')
 		}
-		else useNotify({type: 'error', title: 'User exists'})
 	}
 	async function cancel() {
 		router.push('/settings/permissions')

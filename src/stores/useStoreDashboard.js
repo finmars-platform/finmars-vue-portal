@@ -1,20 +1,24 @@
-import { defineStore } from "pinia";
-import widgetList from '~/assets/data/widgets.js'
+import dayjs from 'dayjs'
 
 export default defineStore({
 	id: "dashboard",
 	state: () => {
 		return {
-			// DATA
-			widgets: [],
+			// DATA FROM LAYOUT
 			tabs: [],
-			scopes: {
-				global: {}
+			scopes: [],
+			components: [],
+			props: {
+				inputs: [],
+				outputs: [],
+				proxies: []
 			},
 			// END DATA
+			isEdit: false,
 			layoutList: [],
 			activeLayoutId: null,
 			activeTab: null,
+			__log: [],
 			//test
 			history: null,
 			historyPnl: null,
@@ -24,10 +28,21 @@ export default defineStore({
 	actions: {
 		async init() {
 			await this.getLayouts()
-			this.activeTab = this.tabs[0]?.id
+
+			watch(() => this.activeLayoutId, () => {
+				if ( !this.layout.data ) return false
+
+				this.components = this.layout.data.components || []
+				this.tabs = this.layout.data.tabs || []
+				this.activeTab = this.tabs[0]?.id
+
+				if ( this.layout.data.props ) this.props = this.layout.data.props
+
+				this.setPropsWatchers()
+			})
 		},
 		getWidget(id) {
-			return this.widgets.find(item => item.id == id)
+			return this.components.find(item => item.uid == id)
 		},
 		async getLayouts() {
 			let dashboardLayout = localStorage.getItem('dashboardLayout')
@@ -39,20 +54,84 @@ export default defineStore({
 			if ( res.error || !res.results.length ) return false
 
 			this.layoutList = res.results
-			this.activeLayoutId = res.results[0].id
+			this.activeLayoutId = this.activeLayoutId || res.results[0].id
 
-			this.widgets = this.layout.data.widgets || []
+			this.components = this.layout.data.components || []
 			this.tabs = this.layout.data.tabs || []
-			this.scopes = this.layout.data.scopes || {global: {}}
+			this.activeTab = this.tabs[0]?.id
+			if ( this.layout.data.props ) {
+				this.layout.data.props.inputs.forEach(prop => prop.__val = prop.default_value)
+				this.layout.data.props.outputs.forEach(prop => prop.__val = prop.default_value)
+				this.props = this.layout.data.props
+			}
+
+			this.setPropsWatchers()
+			// console.clear()
+			// console.table(this.props)
+		},
+		setPropsWatchers() {
+			this.props.outputs.forEach((prop) => {
+				if ( prop.__unwatch ) return false
+
+				prop.__unwatch = watch(
+					() => prop.__val,
+					(newVal, oldVal) => {
+						let uid = prop.uid
+						let props = this.props.inputs.filter(item => item.subscribedTo.includes(uid) )
+
+						let log = {
+							name: prop.name,
+							componentName: this.components.find(item => item.uid == prop.component_id).user_code,
+							newVal: newVal,
+							oldVal: oldVal,
+							time: dayjs().format('HH:mm:ss'),
+							children: []
+						}
+
+						// console.group(
+						// 	`%s / ${prop.name} %c[${prop.__val}]`,
+						// 	`${this.widgets.find(item => item.id == prop.cid).user_code}`,
+						// 	'font-size: 16px;'
+						// )
+
+						props.forEach(childProp => {
+							log.children.push({
+								name: childProp.name,
+								componentName: this.components.find(item => item.uid == childProp.component_id).user_code,
+								newVal: prop.__val,
+								oldVal: childProp.__val,
+							})
+
+							childProp.__val = prop.__val
+
+							// console.log(
+							// 	`=> ${this.components.find(item => item.id == childProp.cid).user_code} / %c${childProp.name}`,
+							// 	'font-size: 14px;'
+							// )
+						})
+
+						// console.groupEnd()
+
+						this.__log.push(log)
+					}
+				)
+			})
 		},
 		async getHistory(wid) {
-			let widget = this.widgets.find(item => item.id == wid)
+			let widget = this.components.find(item => item.uid == wid)
+
+			let list = this.props.inputs.filter((prop) => prop.component_id == widget.uid)
+			let props = {}
+
+			list.forEach((prop) => {
+				props[prop.key] = prop.__val
+			})
 
 			let apiOpts = {
 				filters: {
-					portfolio: this.scopes[widget.scope].portfolio.value,
-					date_from: this.scopes[widget.scope].date_from.value,
-					date_to: this.scopes[widget.scope].date_to.value,
+					portfolio: props.portfolio,
+					date_from: props.date_from,
+					date_to: props.date_to,
 				},
 				params: {
 					type: 'nav'
@@ -60,6 +139,7 @@ export default defineStore({
 			}
 
 			this.history = await useApi('widgetsHistory.get', apiOpts)
+			if ( this.history.error ) return false
 
 			let colors = this.generateColors();
 
@@ -76,9 +156,9 @@ export default defineStore({
 
 			let apiOptsPl = {
 				filters: {
-					portfolio: this.scopes[widget.scope].portfolio.value,
-					date_from: this.scopes[widget.scope].date_from.value,
-					date_to: this.scopes[widget.scope].date_to.value
+					portfolio: props.portfolio,
+					date_from: props.date_from,
+					date_to: props.date_to,
 				},
 				params: {
 					type: 'pl'
@@ -86,8 +166,8 @@ export default defineStore({
 			}
 
 			this.historyPnl = await useApi('widgetsHistory.get', apiOptsPl)
-
-			return this.scopes[widget.scope]._cbp_type == 'nav' ? this.history : this.historyPnl
+			// this.scopes[widget.scope]._cbp_type
+			return props.type == 'nav' ? this.history : this.historyPnl
 		},
 		generateColors() {
 			return [
@@ -134,9 +214,12 @@ export default defineStore({
 			]
 		},
 		async getHistoryNav(opts) {
+ 			if ( !this.history ) return false
 			return this.history[opts.category][opts.date]
 		},
 		async getHistoryPnl(opts) {
+			console.log('opts:', opts)
+			if ( !this.history ) return false
 			return this.historyPnl[opts.category][opts.date]
 		},
 		async saveLayout() {
@@ -146,15 +229,16 @@ export default defineStore({
 						name: this.layout.name + ' dashboardV2@',
 						user_code: this.layout.user_code,
 						data: {
-							widgets: this.widgets,
+							components: this.components,
 							tabs: this.tabs,
-							scopes: this.scopes,
+							props: this.props,
 						}
 					}
 				})
 
 				if (!res.error) {
-					this.layoutList.push(res);
+					this.layoutList.push(res)
+					this.activeLayoutId = res.id
 				}
 
 			} else {
@@ -164,17 +248,18 @@ export default defineStore({
 					body: {
 						user_code: this.layout.user_code,
 						data: {
-							widgets: this.widgets,
+							components: this.components,
 							tabs: this.tabs,
-							scopes: this.scopes,
+							props: this.props,
 						}
 					}
 				})
 
+				this.isEdit = false
+
 			}
 
 			if (!this.activeLayoutId) this.activeLayoutId = this.layoutList[0].id;
-
 		},
 		async deleteLayout() {
 			let res = await useApi('dashboardLayout.delete', {
@@ -183,28 +268,43 @@ export default defineStore({
 					user_code: this.layout.user_code
 				}
 			})
+
+			this.getLayouts()
 		},
-		removeWidget( id ) {
-			let index = this.widgets.findIndex(item => item.id == id)
+		removeWidget( uid ) {
+			let index = this.components.findIndex(item => item.uid == uid)
 
 			if ( index === -1 ) throw new Error('[Store:removeWidget] ID not find')
 
-			let widget = this.widgets[index]
-			let baseWidget = widgetList.find(item => item.id == widget.componentName)
+			this.props.inputs
+				.filter(item => item.component_id == this.components[index].uid)
+				.forEach((prop) => {
+					let index = this.props.inputs.findIndex(item => item.uid == prop.uid)
 
-			for ( let prop in baseWidget.props ) {
-				let propObject = this.scopes[widget.scope][prop]
+					if ( index === -1 ) return false
 
-				if ( !propObject ) throw new Error('[Store:removeWidget] Data incorrect')
-				propObject._usedCount -= 1
+					this.props.inputs.splice(index, 1)
+				})
 
-				if ( propObject._usedCount == 0 || this.widgets.length == 1 ) {
-					delete this.scopes[widget.scope][prop]
-				}
+			this.props.outputs
+				.filter(item => item.component_id == this.components[index].uid)
+				.forEach((prop) => {
+					let index = this.props.outputs.findIndex(item => item.uid == prop.uid)
 
-			}
+					if ( index === -1 ) return false
 
-			this.widgets.splice(index, 1)
+					this.props.inputs
+						.filter(item => item.subscribedTo.includes(this.props.outputs[index].uid) )
+						.forEach((item) => {
+							let indexParent = item.subscribedTo.findIndex(id => id == this.props.outputs[index].uid)
+
+							item.subscribedTo.splice(indexParent, 1)
+						})
+
+					this.props.outputs.splice(index, 1)
+				})
+
+			this.components.splice(index, 1)
 		}
 	},
 	getters: {

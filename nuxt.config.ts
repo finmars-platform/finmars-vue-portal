@@ -1,5 +1,7 @@
 import dayjs from 'dayjs'
 
+// console.log('process.env ', process.env);
+
 export default defineNuxtConfig({
 	runtimeConfig: {
 		public: {
@@ -18,11 +20,7 @@ export default defineNuxtConfig({
 	},
 	ssr: false,
 	imports: {
-		dirs: [
-			'stores',
-			'composables',
-			'composables/*/index.{ts,js,mjs,mts}'
-		]
+		dirs: ['stores']
 	},
 	app: {
 		head: {
@@ -34,9 +32,14 @@ export default defineNuxtConfig({
 		pageTransition: { name: 'page', mode: 'out-in' }
 	},
 	modules: [
-    ['@pinia/nuxt'],
-		'@nuxt/image-edge'
+    ['@pinia/nuxt']
   ],
+	pinia: {
+    autoImports: [
+      'defineStore', // import { defineStore } from 'pinia'
+      ['defineStore', 'definePiniaStore'], // import { defineStore as definePiniaStore } from 'pinia'
+    ],
+  },
 	css: [
 		"~/assets/scss/main.scss",
 		"~/assets/css/material-icons.css",

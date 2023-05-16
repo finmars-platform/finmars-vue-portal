@@ -1,29 +1,29 @@
 <template>
-
-	<FmMenu :opened="menuIsOpened"
-					:openOn="false"
-					attach="body"
-					class="width-100"
-
-					@update:opened="toggleMenu">
-
+	<FmMenu
+		v-bind="$attrs"
+		:opened="menuIsOpened"
+		:openOn="false"
+		attach="body"
+		class="width-100"
+		@update:opened="toggleMenu"
+	>
 		<template #btn>
 			<BaseInput
 				:modelValue="modelValue"
 				:label="label"
 				:tooltip="tooltip"
 				:errorData="errorData"
-				:class="{active: menuIsOpened, 'bi_no_borders': noBorders}"
+				:class="{ active: menuIsOpened, bi_no_borders: noBorders }"
 				:required="required"
-
-				@update:errorData="newVal => emit('update:errorData', newVal)"
+				@update:errorData="(newVal) => emit('update:errorData', newVal)"
 				@click.stop="openMenu"
 			>
-
 				<template v-if="!noBorders && !noIndicatorButton" #button>
-					<FmBtn type="iconBtn"
-								 icon="menu"
-								 @click.stop="modalIsOpened = true" />
+					<FmBtn
+						type="iconBtn"
+						icon="menu"
+						@click.stop="modalIsOpened = true"
+					/>
 				</template>
 
 				<input
@@ -42,76 +42,81 @@
 		</template>
 
 		<div class="sel_menu_block">
-
 			<div v-if="!processing" style="height: 369px; overflow-y: auto">
-
-				<div v-if="localItems.length" class="text-bold opts_group_title">Local Records ({{localItemsTotal}})</div>
+				<div v-if="localItems.length" class="text-bold opts_group_title">
+					Local Records ({{ localItemsTotal }})
+				</div>
 
 				<div v-if="localItems.length">
-
-					<div v-for="option in localItems"
-							 :key="option.user_code"
-							 @click="selectLocalItem(option)"
-							 class="sel_option">
-
+					<div
+						v-for="option in localItems"
+						:key="option.user_code"
+						@click="selectLocalItem(option)"
+						class="sel_option"
+					>
 						<div v-html="getHighlighted(option.name)"></div>
 
 						<div v-html="getHighlighted(option.user_code)"></div>
-
 					</div>
-
 				</div>
 
-				<div v-if="databaseItems.length"
-						 class="text-bold opts_group_title"
-						 style="bottom: 0;" >Global Records ({{databaseItemsTotal}})</div>
+				<div
+					v-if="databaseItems.length"
+					class="text-bold opts_group_title"
+					style="bottom: 0"
+				>
+					Global Records ({{ databaseItemsTotal }})
+				</div>
 
 				<div v-if="databaseItems.length">
-
-					<div v-for="option in databaseItems"
-							 :key="content_type === 'currencies.currency' ? option.code : option.user_code"
-							 @click="selectDatabaseItem(option)"
-							 class="sel_option">
-
+					<div
+						v-for="option in databaseItems"
+						:key="
+							content_type === 'currencies.currency'
+								? option.code
+								: option.user_code
+						"
+						@click="selectDatabaseItem(option)"
+						class="sel_option"
+					>
 						<div v-html="getHighlighted(option.name)"></div>
 
-						<div v-if="content_type !== 'currencies.currency'"
-								 v-html="getHighlighted(option.user_code)"></div>
+						<div
+							v-if="content_type !== 'currencies.currency'"
+							v-html="getHighlighted(option.user_code)"
+						></div>
 
-						<div v-if="content_type === 'currencies.currency'"
-								 v-html="getHighlighted(option.code)"></div>
-
-
+						<div
+							v-if="content_type === 'currencies.currency'"
+							v-html="getHighlighted(option.code)"
+						></div>
 					</div>
-
 				</div>
 
 				<div v-if="noItemsFound">
 					<span class="text-bold opts_group_title">Not records found</span>
 				</div>
-
 			</div>
 
 			<div v-if="processing" class="flex-row fc-center">
 				<FmLoader />
 			</div>
-
 		</div>
-
 	</FmMenu>
 
-	<FmUnifiedDataSelectModal :content_type="content_type"
-														:modelValue="modelValue"
-														:itemObject="selItem"
-														v-model:opened="modalIsOpened"
-														@update:modelValue="newVal => emit('update:modelValue', newVal)"
-														@update:itemObject="onItemObjectChange" />
+	<FmUnifiedDataSelectModal
+		:content_type="content_type"
+		:modelValue="modelValue"
+		:itemObject="selItem"
+		v-model:opened="modalIsOpened"
+		@update:modelValue="(newVal) => emit('update:modelValue', newVal)"
+		@update:itemObject="onItemObjectChange"
+	/>
 </template>
 
 <script setup>
-
-	import * as commonHelper from "./helper";
-	import {useDebounce} from "../../../composables/useUtils";
+	import * as commonHelper from "./helper"
+	import { useDebounce } from "../../../composables/useUtils"
 
 	let props = defineProps({
 		label: String,
@@ -124,22 +129,28 @@
 		noBorders: Boolean,
 		noIndicatorButton: Boolean,
 		required: Boolean,
-		errorData: Object
+		errorData: Object,
 	})
 
-	let emit = defineEmits(['update:modelValue', 'update:itemObject', 'update:errorData'])
+	let emit = defineEmits([
+		"update:modelValue",
+		"update:itemObject",
+		"update:errorData",
+	])
 
-	let disabled = ref(false);
-	let processing = ref(false);
+	let disabled = ref(false)
+	let processing = ref(false)
 
-	let modalIsOpened = ref(false);
-	let menuIsOpened = ref(false);
+	let modalIsOpened = ref(false)
+	let menuIsOpened = ref(false)
 
-	let localItemsTotal = ref(0);
-	let databaseItemsTotal = ref(0);
-	let databaseItems = ref([]);
-	let localItems = ref([]);
-	let noItemsFound = computed(() => !localItems.value.length && !databaseItems.value.length);
+	let localItemsTotal = ref(0)
+	let databaseItemsTotal = ref(0)
+	let databaseItems = ref([])
+	let localItems = ref([])
+	let noItemsFound = computed(
+		() => !localItems.value.length && !databaseItems.value.length
+	)
 
 	/*let selItem = reactive({
 		type: null,
@@ -147,391 +158,372 @@
 			name: ''
 		}
 	});*/
-	let selItem = ref(props.itemObject || {name: ''});
+	let selItem = ref(props.itemObject || { name: "" })
 
-	let valueIsValid = ref(false);
-	let inputText = ref(selItem.value.name || '');
+	let valueIsValid = ref(false)
+	let inputText = ref(selItem.value.name || "")
 
 	watch(
 		() => props.itemObject,
 		() => {
-			selItem.value = props.itemObject || {name: ''};
-			inputText.value = selItem.value.name;
+			selItem.value = props.itemObject || { name: "" }
+			inputText.value = selItem.value.name
 		}
 	)
 
-	function onItemObjectChange (newVal) {
-
+	function onItemObjectChange(newVal) {
 		if (props.itemObject === undefined) {
-			selItem.value = newVal;
-			inputText.value = selItem.value.name;
-
+			selItem.value = newVal
+			inputText.value = selItem.value.name
 		} else {
-			emit('update:itemObject', newVal)
+			emit("update:itemObject", newVal)
 		}
-
 	}
 
-	function getHighlighted (value) {
-		return commonHelper.getHighlighted(inputText.value, value);
+	function getHighlighted(value) {
+		return commonHelper.getHighlighted(inputText.value, value)
 	}
 
 	function closeMenu() {
+		menuIsOpened.value = false
 
-		menuIsOpened.value = false;
-
-		if (selItem.value.name) inputText.value = selItem.value.name;
-
+		if (selItem.value.name) inputText.value = selItem.value.name
 	}
 
 	function selectItem(itemId, itemData) {
+		if (props.modelValue === itemId) return // when using inside selectDatabaseItem()
 
-		if (props.modelValue === itemId) return; // when using inside selectDatabaseItem()
+		emit("update:modelValue", itemId)
+		emit("update:itemObject", JSON.parse(JSON.stringify(itemData)))
 
-		emit('update:modelValue', itemId);
-		emit('update:itemObject', JSON.parse(JSON.stringify(itemData)));
-
-		valueIsValid.value = true;
-
+		valueIsValid.value = true
 	}
 
 	function selectLocalItem(item) {
+		closeMenu()
 
-		closeMenu();
+		if (item.id === props.modelValue) return
 
-		if (item.id === props.modelValue) return;
-
-		selItem.value = item;
+		selItem.value = item
 
 		/*emit('update:modelValue', item.id);
 		emit('update:itemObject', item);
 
 		valueIsValid.value = true;*/
-		selectItem(item.id, item);
+		selectItem(item.id, item)
 
-		inputText.value = item.short_name;
-
+		inputText.value = item.short_name
 	}
 
 	const onLoadItemError = function (error) {
-
 		useNotify({
-			type: 'error',
-			title: 'Error',
-			text: error
-		});
+			type: "error",
+			title: "Error",
+			text: error,
+		})
 
-		emit('update:modelValue', null);
+		emit("update:modelValue", null)
 
-		selItem.value = {name: ''};
-
-	};
+		selItem.value = { name: "" }
+	}
 
 	async function loadItemsFromCbonds(item) {
-
 		const config = {
 			body: {
 				currency_code: item.code,
-				mode: 1
-			}
-		};
+				mode: 1,
+			},
+		}
 
-		let res = await useApi('importCurrencyCbonds.post', config);
+		let res = await useApi("importCurrencyCbonds.post", config)
 
 		if (res.errors.length) {
-			onLoadItemError(res.errors[0]);
-
+			onLoadItemError(res.errors[0])
 		} else if (res.error) {
-			onLoadItemError(res.error.message);
-
+			onLoadItemError(res.error.message)
 		} else {
-
 			/*emit('update:modelValue', res.result_id);
 			emit('update:itemObject', {id: res.result_id, name: item.name, user_code: item.code});
 
 			valueIsValid.value = true;*/
-			selectItem(res.result_id, {id: res.result_id, name: item.name, user_code: item.code});
-
+			selectItem(res.result_id, {
+				id: res.result_id,
+				name: item.name,
+				user_code: item.code,
+			})
 		}
 
-		disabled.value = false;
-		processing.value = false;
-
+		disabled.value = false
+		processing.value = false
 	}
 
 	const entitiesDataList = [
 		{
 			name: "Dashboard",
-			entity: 'dashboard',
-			key: "ui.dashboard"
+			entity: "dashboard",
+			key: "ui.dashboard",
 		},
 		{
 			name: "Account Type",
-			entity: 'account-type',
-			key: "accounts.accounttype"
+			entity: "account-type",
+			key: "accounts.accounttype",
 		},
 		{
 			name: "Account",
-			entity: 'account',
-			key: "accounts.account"
+			entity: "account",
+			key: "accounts.account",
 		},
 		{
 			name: "Counterparty",
-			entity: 'counterparty',
-			key: "counterparties.counterparty"
+			entity: "counterparty",
+			key: "counterparties.counterparty",
 		},
 		{
 			name: "Responsible",
-			entity: 'responsible',
-			key: "counterparties.responsible"
+			entity: "responsible",
+			key: "counterparties.responsible",
 		},
 		{
 			name: "Currency",
-			entity: 'currency',
-			key: "currencies.currency"
+			entity: "currency",
+			key: "currencies.currency",
 		},
 		{
 			name: "Currency history",
-			entity: 'currency-history',
-			key: "currencies.currencyhistory"
+			entity: "currency-history",
+			key: "currencies.currencyhistory",
 		},
 		{
 			name: "Instrument",
-			entity: 'instrument',
-			key: "instruments.instrument"
+			entity: "instrument",
+			key: "instruments.instrument",
 		},
 		{
 			name: "Generated Event",
-			entity: 'generated-event',
-			key: "instruments.generatedevent"
+			entity: "generated-event",
+			key: "instruments.generatedevent",
 		},
 		{
-			name: 'Pricing Policy',
-			entity: 'pricing-policy',
-			key: 'instruments.pricingpolicy'
+			name: "Pricing Policy",
+			entity: "pricing-policy",
+			key: "instruments.pricingpolicy",
 		},
 		{
-			name: 'Price History',
-			entity: 'price-history',
-			key: 'instruments.pricehistory'
+			name: "Price History",
+			entity: "price-history",
+			key: "instruments.pricehistory",
 		},
 		{
 			name: "Portfolio",
-			entity: 'portfolio',
-			key: "portfolios.portfolio"
+			entity: "portfolio",
+			key: "portfolios.portfolio",
 		},
 		{
 			name: "Portfolio Register",
-			entity: 'portfolio-register',
-			key: "portfolios.portfolioregister"
+			entity: "portfolio-register",
+			key: "portfolios.portfolioregister",
 		},
 		{
 			name: "Portfolio Register Record",
-			entity: 'portfolio-register-record',
-			key: "portfolios.portfolioregisterrecord"
+			entity: "portfolio-register-record",
+			key: "portfolios.portfolioregisterrecord",
 		},
 		{
 			name: "Instrument Type",
-			entity: 'instrument-type',
-			key: "instruments.instrumenttype"
+			entity: "instrument-type",
+			key: "instruments.instrumenttype",
 		},
 		{
 			name: "Transaction",
-			entity: 'transaction',
-			key: "transactions.transaction"
+			entity: "transaction",
+			key: "transactions.transaction",
 		},
 		{
 			name: "Transaction Type",
-			entity: 'transaction-type',
-			key: "transactions.transactiontype"
+			entity: "transaction-type",
+			key: "transactions.transactiontype",
 		},
 		{
 			name: "Transaction Type Group",
-			entity: 'transaction-type-group',
-			key: "transactions.transactiontypegroup"
+			entity: "transaction-type-group",
+			key: "transactions.transactiontypegroup",
 		},
 		{
 			name: "Counterparty group",
-			entity: 'counterparty-group',
-			key: "counterparties.counterpartygroup"
+			entity: "counterparty-group",
+			key: "counterparties.counterpartygroup",
 		},
 		{
 			name: "Responsible group",
-			entity: 'responsible-group',
-			key: "counterparties.responsiblegroup"
+			entity: "responsible-group",
+			key: "counterparties.responsiblegroup",
 		},
 		{
 			name: "Strategy 1",
-			entity: 'strategy-1',
-			key: "strategies.strategy1"
+			entity: "strategy-1",
+			key: "strategies.strategy1",
 		},
 		{
 			name: "Strategy 2",
-			entity: 'strategy-2',
-			key: "strategies.strategy2"
+			entity: "strategy-2",
+			key: "strategies.strategy2",
 		},
 		{
 			name: "Strategy 3",
-			entity: 'strategy-3',
-			key: "strategies.strategy3"
+			entity: "strategy-3",
+			key: "strategies.strategy3",
 		},
 		{
 			name: "Strategy 1 group",
-			entity: 'strategy-1-group',
-			key: "strategies.strategy1group"
+			entity: "strategy-1-group",
+			key: "strategies.strategy1group",
 		},
 		{
 			name: "Strategy 2 group",
-			entity: 'strategy-2-group',
-			key: "strategies.strategy2group"
+			entity: "strategy-2-group",
+			key: "strategies.strategy2group",
 		},
 		{
 			name: "Strategy 3 group",
-			entity: 'strategy-3-group',
-			key: "strategies.strategy3group"
+			entity: "strategy-3-group",
+			key: "strategies.strategy3group",
 		},
 		{
 			name: "Strategy 1 subgroup",
-			entity: 'strategy-1-subgroup',
-			key: "strategies.strategy1subgroup"
+			entity: "strategy-1-subgroup",
+			key: "strategies.strategy1subgroup",
 		},
 		{
 			name: "Strategy 2 subgroup",
-			entity: 'strategy-2-subgroup',
-			key: "strategies.strategy1subgroup"
+			entity: "strategy-2-subgroup",
+			key: "strategies.strategy1subgroup",
 		},
 		{
 			name: "Strategy 3 subgroup",
-			entity: 'strategy-3-subgroup',
-			key: "strategies.strategy1subgroup"
+			entity: "strategy-3-subgroup",
+			key: "strategies.strategy1subgroup",
 		},
 		{
 			name: "Balance report",
-			entity: 'balance-report',
-			key: "reports.balancereport"
+			entity: "balance-report",
+			key: "reports.balancereport",
 		},
 		{
 			name: "P&L report",
-			entity: 'pl-report',
-			key: "reports.plreport"
+			entity: "pl-report",
+			key: "reports.plreport",
 		},
 		{
 			name: "Transaction report",
-			entity: 'transaction-report',
-			key: "reports.transactionreport"
+			entity: "transaction-report",
+			key: "reports.transactionreport",
 		},
 		{
 			name: "Cash flow projection report",
-			entity: 'cash-flow-projection-report',
-			key: "reports.cashflowreport"
+			entity: "cash-flow-projection-report",
+			key: "reports.cashflowreport",
 		},
 		{
 			name: "Performance report",
-			entity: 'performance-report',
-			key: "reports.performancereport"
+			entity: "performance-report",
+			key: "reports.performancereport",
 		},
 		{
 			name: "Transaction",
-			entity: 'complex-transaction',
-			key: "transactions.complextransaction"
+			entity: "complex-transaction",
+			key: "transactions.complextransaction",
 		},
 		{
 			name: "Balance Report Custom Field",
-			entity: 'balance-report-custom-field',
-			key: "reports.balancereportcustomfield"
+			entity: "balance-report-custom-field",
+			key: "reports.balancereportcustomfield",
 		},
 		{
 			name: "PL Report Custom Field",
-			entity: 'pl-report-custom-field',
-			key: "reports.plreportcustomfield"
+			entity: "pl-report-custom-field",
+			key: "reports.plreportcustomfield",
 		},
 		{
 			name: "Transaction Report Custom Field",
-			entity: 'transaction-report-custom-field',
-			key: "reports.transactionreportcustomfield"
+			entity: "transaction-report-custom-field",
+			key: "reports.transactionreportcustomfield",
 		},
 		{
-			name: 'Price History Error',
-			entity: 'price-history-error',
-			key: 'pricing.pricehistoryerror'
+			name: "Price History Error",
+			entity: "price-history-error",
+			key: "pricing.pricehistoryerror",
 		},
 		{
 			name: "Currency History Error",
-			entity: 'currency-history-error',
-			key: "pricing.currencyhistoryerror"
+			entity: "currency-history-error",
+			key: "pricing.currencyhistoryerror",
 		},
 		{
-			name: 'Audit transaction',
-			entity: 'audit-transaction',
-			key: 'audit.objecthistory4entry'
+			name: "Audit transaction",
+			entity: "audit-transaction",
+			key: "audit.objecthistory4entry",
 		},
 
 		{
-			name: 'Audit instrument',
-			entity: 'audit-instrument',
-			key: 'audit.objecthistory4entry'
-		}
-	];
+			name: "Audit instrument",
+			entity: "audit-instrument",
+			key: "audit.objecthistory4entry",
+		},
+	]
 
 	function getEntityTypeByContentType() {
-		return entitiesDataList.find(data => data.key === props.content_type).entity;
+		return entitiesDataList.find((data) => data.key === props.content_type)
+			.entity
 	}
 
 	async function loadItemsFromUnifiedDatabase(item) {
-
 		const config = {
 			body: {
 				id: item.id,
 				entity_type: getEntityTypeByContentType(),
-			}
-		};
+			},
+		}
 
-		selItem.value = item;
+		selItem.value = item
 
-		processing.value = true;
-		disabled.value = true;
+		processing.value = true
+		disabled.value = true
 
-
-		let res = await useApi('importUnifiedData.post', config);
+		let res = await useApi("importUnifiedData.post", config)
 
 		if (res.errors.length) {
-			onLoadItemError(res.errors[0]);
-
+			onLoadItemError(res.errors[0])
 		} else if (res.error) {
-			onLoadItemError(res.error.message);
-
-		}
-		else {
-
+			onLoadItemError(res.error.message)
+		} else {
 			/* emit('update:modelValue', res.id);
 			emit('update:itemObject', {id: res.id, name: item.name, user_code: item.user_code});
 
 			valueIsValid.value = true; */
-			selectItem(res.id, {id: res.id, name: item.name, user_code: item.user_code});
-
+			selectItem(res.id, {
+				id: res.id,
+				name: item.name,
+				user_code: item.user_code,
+			})
 		}
 
-		disabled.value = false;
-		processing.value = false;
-
+		disabled.value = false
+		processing.value = false
 	}
 
 	async function selectDatabaseItem(item) {
+		console.log("selectDatabaseItem.item", item)
+		menuIsOpened.value = false
 
-		console.log('selectDatabaseItem.item', item);
-		menuIsOpened.value = false;
+		selItem.value = item
+		inputText.value = item.name
 
-		selItem.value = item;
-		inputText.value = item.name;
-
-		if (props.content_type === 'currencies.currency') {
-			loadItemsFromCbonds(item);
-
+		if (props.content_type === "currencies.currency") {
+			loadItemsFromCbonds(item)
 		} else {
 			// Download here?
-			loadItemsFromUnifiedDatabase(item);
+			loadItemsFromUnifiedDatabase(item)
 		}
-
 	}
 
 	/* async function findEntities() {
@@ -639,41 +631,35 @@
 
 	} */
 	async function getList() {
+		processing.value = true
 
-		processing.value = true;
+		const res = await commonHelper.getList(props.content_type, inputText.value)
 
-		const res = await commonHelper.getList(props.content_type, inputText.value);
+		databaseItems.value = res.databaseData.items
+		databaseItemsTotal.value = res.databaseData.itemsTotal
+		localItems.value = res.localData.items
+		localItemsTotal.value = res.localData.itemsTotal
 
-		databaseItems.value = res.databaseData.items;
-		databaseItemsTotal.value = res.databaseData.itemsTotal;
-		localItems.value = res.localData.items;
-		localItemsTotal.value = res.localData.itemsTotal;
-
-		processing.value = false;
-
+		processing.value = false
 	}
 
 	function openMenu() {
+		menuIsOpened.value = true
 
-		menuIsOpened.value = true;
-
-		inputText.value = '';
-		getList();
-
+		inputText.value = ""
+		getList()
 	}
 
 	const onFilterInputChange = useDebounce(function ($event) {
-		inputText.value = $event.target.value;
-		getList();
-	}, 500);
-
+		inputText.value = $event.target.value
+		getList()
+	}, 500)
 
 	function toggleMenu(opened) {
-		if (!opened) inputText.value = selItem.value.name;
-		menuIsOpened.value = opened;
+		if (!opened) inputText.value = selItem.value.name
+		menuIsOpened.value = opened
 	}
-
-	</script>
+</script>
 
 <style lang="scss" scoped>
 	.sel_menu_block {
@@ -703,10 +689,9 @@
 			}
 
 			span.highlight {
-				color: #F05A22;
+				color: #f05a22;
 				font-weight: bold;
 			}
-
 		}
 	}
 

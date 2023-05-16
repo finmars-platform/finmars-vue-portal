@@ -1,40 +1,40 @@
 <template>
-
-	<FmMenu attach="body"
-					v-model:opened="menuIsOpened"
-					:disabled="loadingLayout"
-					testProp="layoutsManager">
-
+	<FmMenu
+		v-model:opened="menuIsOpened"
+		:disabled="loadingLayout"
+	>
 		<template #btn="{ isOpen }">
-			<FmBtn type="text"
-						 icon="view_quilt"
-						 class="lm_open_btn"
-						 :disabled="loadingLayout"
+			<FmBtn
+				type="text"
+				icon="view_quilt"
+				class="lm_open_btn"
+				:disabled="loadingLayout"
+			>
+				{{ activeLayout.name }}
 
-			>{{ viewerData.listLayout.name }} <FmIcon :icon="isOpen ? 'arrow_drop_up' : 'arrow_drop_down'" style="cursor: inherit;" /></FmBtn>
+				<FmIcon
+					:icon="isOpen ? 'arrow_drop_up' : 'arrow_drop_down'"
+					style="cursor: inherit;"
+				/>
+			</FmBtn>
 		</template>
 
 		<template #default="{ close }">
 			<div class="layouts_manager_menu">
-
 				<div class="divider_bottom">
-
 					<FmBtn type="text"
 								 class="menu_item"
 								 @click="emit('createNewLayout'), close()">
 						<span class="material-icons">add_circle</span>
 						New layout
 					</FmBtn>
-
 				</div>
 
 				<div class="layouts_container divider_bottom">
-
 					<div v-if="!loadingLayoutsList">
 						<div v-for="layout in layouts"
 								 :key="layout.id"
 								 class="menu_item">
-
 							<span v-if="!layout.origin_for_global_layout && !layout.sourced_from_global_layout"
 										class="material-icons default_icons"
 										:class="{'default_layout': isLayoutDefault(layout)}"
@@ -43,6 +43,7 @@
 							<span v-if="layout.origin_for_global_layout"
 										class="material-icons default_icons"
 										style="color: #747474;">share</span>
+
 							<span v-if="!layout.origin_for_global_layout && layout.sourced_from_global_layout"
 										class="material-icons default_icons"
 										style="color: #747474;">update</span>
@@ -52,7 +53,6 @@
 												>
 								<div @click.prevent.stop="onLayoutLinkClick(layout.id, close)">{{ layout.name }}</div>
 							</NuxtLink>
-
 						</div>
 
 						<div v-if="autosaveLayout" class="menu_item">
@@ -79,7 +79,7 @@
 
 						<FmBtn type="text"
 									 class="menu_item"
-									 :disabled="viewerData.newLayout"
+									 :disabled="!'viewerData.newLayout'"
 									 @click="emit('save')">
 							<span class="material-icons">save</span>
 							Save
@@ -171,7 +171,7 @@
 
 					<FmBtn type="text"
 								 class="menu_item"
-								 :disabled="viewerData.newLayout"
+								 :disabled="'viewerData.newLayout'"
 								 @click="renameIsOpened = true, close()">
 						<span class="material-icons">create</span>
 						Rename
@@ -214,7 +214,7 @@
 
 					<FmBtn type="text"
 								 class="menu_item"
-								 :disabled="viewerData.newLayout || viewerData.listLayout.is_default"
+								 :disabled="'viewerData.newLayout || viewerData.listLayout.is_default'"
 								 @click="emit('setAsDefault')">
 						<span class="material-icons">home</span>
 						Make default
@@ -230,48 +230,35 @@
 						</md-button>-->
 				<FmBtn type="text"
 							 class="menu_item"
-							 @click="showDeletionWarning = true">
+							 @click="deleteLayout">
 					<span class="material-icons">delete</span>
 					Delete
 				</FmBtn>
 			</div>
 		</template>
-
-
 	</FmMenu>
 
-	<ModalNameUserCode title="Rename layout"
-										 :name="viewerData.listLayout.name"
-										 :user_code="viewerData.listLayout.user_code"
+	<ModalNameUserCode
+		title="Rename layout"
+										 :name="'viewerData.listLayout.name'"
+										 :user_code="'viewerData.listLayout.user_code'"
 										 :occupiedUserCodes="occupiedUserCodes"
 										 v-model="renameIsOpened"
 
-										 @save="renameLayout" />
+		@save="renameLayout"
+	/>
 
-	<ModalInfo title="Warning"
-						 description="Are you sure want to delete this layout?"
-						 v-model="showDeletionWarning">
-		<template #controls="{ cancel }">
-			<div class="flex-row fc-space-between">
-				<FmBtn type="basic" @click="cancel">CANCEL</FmBtn>
 
-				<FmBtn type="basic" @click="emit('delete'), cancel()">OK</FmBtn>
-			</div>
-		</template>
-	</ModalInfo>
-
-	<ModalLayoutShare :layout="viewerData.listLayout"
+	<!-- <ModalLayoutShare :layout="viewerData.listLayout"
 										:layoutType="viewerData.isReport ? 'ui.reportlayout' : 'ui.listlayout'"
-										v-model="sharingIsOpened" />
+										v-model="sharingIsOpened" /> -->
 
 </template>
 
 <script setup>
 
-	const router = useRouter();
-	const route = useRoute();
-
 	let props = defineProps({
+		activeLayout: Object,
 		layouts: Array,
 		autosaveLayout: Object,
 		loadingLayout: Boolean,
@@ -280,10 +267,11 @@
 		isLayoutDefault: Function
 	});
 
-	const viewerData = inject('viewerData');
+	// const viewerData = inject('viewerData');
 
 	let emit = defineEmits([
 		'createNewLayout',
+		'changeLayout',
 		'setAsDefault',
 		'save',
 		'saveAs',
@@ -320,7 +308,7 @@
 
 		return props.layouts.filter(lLayout => {
 
-			return lLayout.user_code !== viewerData.listLayout.user_code
+			return lLayout.user_code !== 'viewerData.listLayout.user_code'
 
 		}).map(lLayout => lLayout.user_code);
 
@@ -333,11 +321,9 @@
 	}
 
 	function setAsDefault(layoutLight) {
-
 		if (!isLayoutDefault(layoutLight)) {
 			emit('setAsDefault', JSON.parse(JSON.stringify(layoutLight)));
 		}
-
 	}
 
 	function onLayoutLinkClick (layoutId, closeMenuFn) {
@@ -349,13 +335,23 @@
 		// TODO write function for vue
 
 		closeMenuFn();
-		viewerData.layoutToOpen = layoutId;
-
+		emit('changeLayout', layoutId)
 	}
 
 	function renameLayout(newNamesData) {
 		emit('rename', newNamesData);
 		renameIsOpened.value = false;
+	}
+
+	async function deleteLayout() {
+		let confirm = await useConfirm({
+			title: 'Confirm action',
+			text: `Do you want to delete "this.layout" layout?`
+		})
+
+		if ( confirm ) {
+			emit('delete')
+		}
 	}
 
 	async function fetchInvites () {

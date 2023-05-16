@@ -132,7 +132,7 @@
 </template>
 
 <script setup>
-	import moment from "moment"
+	import dayjs from "dayjs"
 
 	const store = useStore()
 	const config = useRuntimeConfig()
@@ -193,10 +193,10 @@
 	}
 
 	function fromatDate(date) {
-		if (moment().diff(moment(date), "hours") > 12)
-			return moment(date).format("DD.MM.YYYY HH:mm")
+		if (dayjs().diff(dayjs(date), "hours") > 12)
+			return dayjs(date).format("DD.MM.YYYY HH:mm")
 
-		return moment(date).fromNow()
+		return dayjs(date).fromNow()
 	}
 
 	async function setCurrent(item) {

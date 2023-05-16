@@ -2,15 +2,11 @@
 	<div>
 		<FmHorizontalPanel>
 			<template #leftActions>
-				<template v-if="!isEdit">
-					<FmSelect
-						class="m-b-0 m-t-0"
-						v-model="dashStore.activeLayoutId"
-						:items="dashStore.layoutList"
-					/>
-				</template>
+				<PagesDashboardLayoutManager
+					v-if="!dashStore.isEdit"
+				/>
 
-				<div class="flex" v-else>
+				<template v-else>
 					<BaseInput
 						class="bi_no_margins m-t-0 m-r-4"
 						v-model="dashStore.layout.name"
@@ -21,19 +17,27 @@
 						v-model="dashStore.layout.user_code"
 						label="User code"
 					/>
-				</div>
+				</template>
 			</template>
 
 			<template #rightActions>
-				<FmBtn v-if="!isEdit" type="basic" @click="create()">Create dashboard</FmBtn>
-				<FmBtn v-if="!isEdit" @click="edit()">Edit dashboard</FmBtn>
-
-				<template v-else>
-					<FmBtn @click="deleteDashboard()">Delete dashboard</FmBtn>
-					<FmBtn type="text" @click="editJSON()">edit JSON</FmBtn>
+				<template v-if="dashStore.isEdit">
 					<FmBtn type="text" @click="cancelEdit()">cancel</FmBtn>
-					<FmBtn @click="save()">save</FmBtn>
+					<FmBtn @click="dashStore.saveLayout()">save</FmBtn>
 				</template>
+
+				<FmMenu class="m-l-10">
+					<template #btn>
+						<FmIcon btn icon="settings" />
+					</template>
+
+					<template #default="{ close }">
+						<div class="fm_list">
+							<div class="fm_list_item" @click="edit(), close()">Edit dashboard</div>
+							<div class="fm_list_item" @click="editJSON(), close()">Edit JSON</div>
+						</div>
+					</template>
+				</FmMenu>
 			</template>
 		</FmHorizontalPanel>
 
@@ -50,17 +54,17 @@
 				style="height: 300px;width: 600px;" />
 		</BaseModal>
 
-		<PagesDashboardGrid :isEdit="isEdit">
+		<PagesDashboardGrid :tab="1">
 			<PagesDashboardWidgetWrap
 				v-for="component of topComponents"
-				:key="component.id"
+				:key="component.uid"
 				:component="component"
-				:isEdit="isEdit"
+				:isEdit="dashStore.isEdit"
 			/>
 		</PagesDashboardGrid>
 
 		<div class="fm_tabs"
-			v-if="dashStore.tabs.length > 1 || isEdit"
+			v-if="dashStore.tabs.length > 1 || dashStore.isEdit"
 		>
 			<div class="fm_tabs_item center aic"
 				v-for="(tab, index) in dashStore.tabs"
@@ -68,20 +72,20 @@
 				:class="{active: tab.id == dashStore.activeTab}"
 				@click="dashStore.activeTab = tab.id"
 			>
-				<input v-if="isEdit" v-model="tab.name" />
+				<input v-if="dashStore.isEdit" v-model="tab.name" />
 				<template v-else>{{ tab.name }}</template>
 
-				<FmIcon v-if="isEdit" @click="delTab(tab.id)" class="m-l-4" icon="delete" />
+				<FmIcon v-if="dashStore.isEdit" @click="delTab(tab.id)" class="m-l-4" icon="delete" />
 			</div>
-			<div class="fm_tabs_item flex aic" v-if="isEdit" @click="addTab()">
-				<FmIcon primary icon="add" />
+			<div class="fm_tabs_item flex aic" v-if="dashStore.isEdit" @click="addTab()">
+				<FmIcon primary icon="add" /> <div class="tab_add_text">Add tab</div>
 			</div>
 		</div>
 
-		<PagesDashboardGrid :isEdit="isEdit" :tab="dashStore.activeTab" >
+		<PagesDashboardGrid :tab="dashStore.activeTab">
 			<PagesDashboardWidgetWrap
 				v-for="component of mainComponents"
-				:key="component.id"
+				:key="component.uid"
 				:component="component"
 				:isEdit="isEdit"
 			/>
@@ -96,7 +100,7 @@
 	import 'ace-builds/src-noconflict/theme-monokai';
 
 	definePageMeta({
-		// middleware: 'auth',
+		middleware: 'auth',
 		bread: [
 			{
 				text: 'Dashboard',
@@ -105,7 +109,7 @@
 		],
 	});
 
-	let dashStore = useStoreDashboard()
+	const dashStore = useStoreDashboard()
 
 	dashStore.init()
 
@@ -116,7 +120,7 @@
 		content.value = JSON.stringify({
 			widgets: dashStore.widgets,
 			tabs: dashStore.tabs,
-			scopes: dashStore.scopes,
+			scope: dashStore.scope,
 		}, null, 4)
 		isOpenJSON.value = true
 	}
@@ -125,7 +129,7 @@
 
 		dashStore.widgets = newStore.widgets
 		dashStore.tabs = newStore.tabs
-		dashStore.scopes = newStore.scopes
+		dashStore.scope = newStore.scope
 	}
 
 	function editorInit(editor) {
@@ -138,22 +142,21 @@
 		editor.navigateFileStart();
 	}
 	let topComponents = computed(() => {
-		return dashStore.widgets.filter((item) => {
-			return item.tab == null
+		return dashStore.components.filter((item) => {
+			return item.tab == '1'
 		})
 	})
 	let mainComponents = computed(() => {
-		return dashStore.widgets.filter((item) => {
+		return dashStore.components.filter((item) => {
 			return item.tab == dashStore.activeTab
 		})
 	})
 
 	let isEdit = ref(false)
-	let activeTab = ref(dashStore.tabs[0]?.id)
 
 	function addTab() {
 		dashStore.tabs.push({
-			id: '' + Date.now(),
+			id: Date.now(),
 			name: 'New tab'
 		})
 	}
@@ -164,37 +167,20 @@
 
 		dashStore.tabs.splice( tabIndex, 1 )
 	}
-	function create() {
-
-		dashStore.activeLayoutId = null;
-
-		dashStore.widgets = [];
-		dashStore.tabs = [];
-		dashStore.scopes = {global: {}};
-
-		isEdit.value = true;
-
-	}
 	function edit() {
-		isEdit.value = true
-	}
-	function save() {
-		dashStore.saveLayout()
-
-		isEdit.value = false
-	}
-	function deleteDashboard() {
-		dashStore.deleteLayout()
-
+		dashStore.isEdit = true
 	}
 	function cancelEdit() {
 		dashStore.getLayouts()
 
-		isEdit.value = false
+		dashStore.isEdit = false
 	}
 </script>
 
 <style lang="scss" scoped>
 
+	.tab_add_text {
+		color: $primary;
+	}
 
 </style>

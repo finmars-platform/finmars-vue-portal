@@ -13,6 +13,7 @@ const refreshTokens = async () => {
 	}
 }
 
+
 const keycloak = new KeycloakJs({
 	url: useRuntimeConfig().public.KEYCLOAK_URL,
 	realm: useRuntimeConfig().public.KEYCLOAK_REALM,
@@ -24,9 +25,11 @@ keycloak.onAuthSuccess = setTokens
 keycloak.onAuthRefreshSuccess = setTokens
 keycloak.onTokenExpired = refreshTokens
 
-keycloak.onReady = () => {
+keycloak.onReady = async () => {
 	isInit = true
-	if ( keycloak.isTokenExpired() ) refreshTokens()
+	if ( keycloak.isTokenExpired() ) await refreshTokens()
+
+	if ( useRoute().hash.includes('#state=') ) useRouter().push({hash: ''})
 }
 
 export default async () => {

@@ -44,14 +44,14 @@
 				<slot name="sideItems"></slot>
 
 				<div class="bi_side_item" v-if="tooltip">
-					<FmIcon :tooltip="tooltip" icon="info_outlined" />
+					<FmIcon v-fm-tooltip.error="tooltip" icon="info_outlined" />
 				</div>
 			</div>
 
 
 			<div v-if="errorData && errorData.longMessage"
 					 class="bi_side_item error_icon">
-				<FmIcon :tooltip="errorData.longMessage" icon="info" />
+				<FmIcon v-fm-tooltip="errorData.longMessage" icon="info" />
 			</div>
 
 			<div class="right_btn">
@@ -79,6 +79,10 @@ let props = defineProps({
 
 	let emit = defineEmits(['update:modelValue', 'update:errorData', 'onBlur', 'onFocus']);
 	let mainInput = ref(null);
+
+	defineExpose({
+		mainInput
+	})
 
 	let slots = useSlots();
 
@@ -130,7 +134,7 @@ let props = defineProps({
 	$side-items-padding: 0 8px;
 	$border-radius: 4px;
 
-	@mixin show_label {
+	%show_label {
 		top: -8px;
 		width: auto;
 		flex-basis: auto;
@@ -143,7 +147,7 @@ let props = defineProps({
 	.base-input {
 		position: relative;
 		display: block;
-		// height: 42px;
+		height: 42px;
 		// border: 1px solid $border-darken;
 		border-radius: $border-radius;
 		transition: border 0.3s;
@@ -177,7 +181,7 @@ let props = defineProps({
 				}
 
 				.bi_label {
-					@include show_label;
+					@extend %show_label;
 				}
 			}
 
@@ -189,9 +193,19 @@ let props = defineProps({
 			}
 
 		}
-
 		&.bi_no_borders {
 			margin-bottom: 0;
+
+			&.bi_border_bottom {
+
+				.bi_default {
+					border-bottom: 1px solid $border;
+					padding-left: 7px;
+					padding-bottom: 3px;
+					margin-left: 6px;
+					margin-bottom: -3px;
+				}
+			}
 
 			.bi_top {
 				display: none;
@@ -329,7 +343,7 @@ let props = defineProps({
 				z-index: -1;
 			}*/
 			&.filling {
-				@include show_label;
+				@extend %show_label;
 			}
 		}
 
@@ -347,7 +361,7 @@ let props = defineProps({
 		display: flex;
 		align-items: center;
 		// height: 40px;
-		min-height: 42px;
+		// min-height: 42px;
 		height: 100%;
 		width: 100%;
 	}

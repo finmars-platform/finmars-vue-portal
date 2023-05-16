@@ -348,7 +348,6 @@
 
 <script setup>
 
-	import moment from 'moment'
 	import dayjs from 'dayjs'
 
 	const ACTION_STATUSES = {
@@ -384,9 +383,9 @@
 
 	let dateItems = [
 		{id: '', name: 'All'},
-		{id: moment().add(-1, 'd').format('YYYY-MM-DD'), name: 'Last day'},
-		{id: moment().add(-7, 'd').format('YYYY-MM-DD'), name: 'Last 7 days'},
-		{id: moment().add(-30, 'd').format('YYYY-MM-DD'), name: 'Last month'},
+		{id: dayjs().add(-1, 'd').format('YYYY-MM-DD'), name: 'Last day'},
+		{id: dayjs().add(-7, 'd').format('YYYY-MM-DD'), name: 'Last 7 days'},
+		{id: dayjs().add(-30, 'd').format('YYYY-MM-DD'), name: 'Last month'},
 	]
 
 	let actionsItems = [
@@ -764,7 +763,7 @@
 		scrollTop()
 	}
 	function fromatDate( date ) {
-		return moment( date ).format('DD.MM.YYYY HH:mm')
+		return dayjs( date ).format('DD.MM.YYYY HH:mm')
 	}
 </script>
 
