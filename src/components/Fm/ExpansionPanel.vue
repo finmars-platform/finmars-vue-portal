@@ -1,33 +1,39 @@
 <template>
 	<div class="fm_expansion_panel">
-		<div class="fm_expansion_panel_title"
-			:class="{active: isOpen}"
-			@click="isOpen = !isOpen"
+		<div
+			class="fm_expansion_panel_title"
+			:class="{ active: isOpen }"
+			@click=";(isOpen = !isOpen), $emit('update:open', !isOpen)"
 		>
 			<div>{{ title }}</div>
 
 			<div class="flex-row">
 				<slot name="rightActions" />
 
-				<FmIcon :icon="!isOpen ? 'expand_more' : 'expand_less'" class="m-l-10" />
+				<FmIcon
+					:icon="!isOpen ? 'expand_more' : 'expand_less'"
+					class="m-l-10"
+				/>
 			</div>
 		</div>
 
-		<div class="fm_expansion_panel_content"
-			v-show="isOpen"
-		>
+		<div class="fm_expansion_panel_content" v-show="isOpen">
 			<slot />
 		</div>
 	</div>
 </template>
 
 <script setup>
-	defineProps({
-		title: String
+	const props = defineProps({
+		title: String,
+		open: {
+			type: Boolean,
+			default: true,
+		},
 	})
+	defineEmits(['update:open'])
 
-	let isOpen = ref(true)
-
+	let isOpen = ref(props.open)
 </script>
 
 <style lang="scss" scoped>

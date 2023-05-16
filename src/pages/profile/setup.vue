@@ -2,13 +2,10 @@
 	<div class="setup_wrap">
 		<div class="step_1" v-if="step == 1">
 			<h1 class="tac">Welcome</h1>
-			<h2 class="tac">Setup your account </h2>
+			<h2 class="tac">Setup your account</h2>
 			<h3 class="tac">Step 1 / 2</h3>
 			Please select your complexity level:
-			<FmSelect
-				v-model="store.member.interface_level"
-				:items="levels"
-			/>
+			<FmSelect v-model="store.member.interface_level" :items="levels" />
 
 			<div class="btns flex sb">
 				<FmBtn type="action" @click="navigateTo('/profile')">Cancel</FmBtn>
@@ -18,31 +15,36 @@
 
 		<div class="step_2" v-if="step == 2">
 			<h1 class="tac">Welcome</h1>
-			<h2 class="tac">Setup your account </h2>
+			<h2 class="tac">Setup your account</h2>
 			<h3 class="tac">Step 2 / 2</h3>
 
-			<div class="tac m-b-24">Please select init configuration you would like to use</div>
+			<div class="tac m-b-24">
+				Please select init configuration you would like to use
+			</div>
 
 			<div class="dib">
 				<div class="config_wrap flex sb fww">
-					<FmCard class="config_item"
+					<FmCard
+						class="config_item"
 						v-for="item in configs"
 						:title="item.name"
-						:class="{active: config == item.data}"
-						@click="config = item.data"
+						:class="{ active: config == item.id }"
+						@click="config = item.id"
 					>
-						<div class="fm_card_text">{{ item.description }}</div>
+						<div class="fm_card_text">{{ item.notes.slice(0, 100) }}</div>
 
 						<div class="version flex sb" v-if="item.data != 'blank'">
-							<div>Updated: {{item.data.head.date}}</div>
-							<div>Version: {{ item.data.head.version.split(' ')[0] }}</div>
+							<!-- <div>Updated: {{ item.data.head.date }}</div> -->
+							<div>Version: {{ item.configuration_code }}</div>
 						</div>
 					</FmCard>
 				</div>
 
 				<div class="btns flex sb">
 					<FmBtn type="action" @click="step = 1">Back</FmBtn>
-					<FmBtn class="btn" :disabled="!config" @click="finish()">Finish</FmBtn>
+					<FmBtn class="btn" :disabled="!config" @click="finish()"
+						>Finish</FmBtn
+					>
 				</div>
 			</div>
 		</div>
@@ -62,18 +64,17 @@
 </template>
 
 <script setup>
-
 	definePageMeta({
 		middleware: 'auth',
 		isHideSidebar: true,
 		bread: [
 			{
-				text: "Profile",
-				to: "/profile",
+				text: 'Profile',
+				to: '/profile',
 				disabled: false,
 			},
 			{
-				text: "Initial setup",
+				text: 'Initial setup',
 				disabled: true,
 			},
 		],
@@ -83,14 +84,18 @@
 
 	let step = ref(1)
 	let levels = [
-		{id: 5, name: 'Front Office'},
-		{id: 10, name: 'Middle Office'},
-		{id: 15, name: 'Sophisticated User'},
-		{id: 20, name: 'Advanced Sophisticated User'},
+		{ id: 5, name: 'Front Office' },
+		{ id: 10, name: 'Middle Office' },
+		{ id: 15, name: 'Sophisticated User' },
+		{ id: 20, name: 'Advanced Sophisticated User' },
 	]
 
-	let res = await useApi("configurationList.get")
-	res.results.unshift({name: 'Blank', description: 'Empty Ecosystem. Configure all forms, layouts and tables by myself', data: 'blank'})
+	let res = await useApi('configurationList.get')
+	res.results.unshift({
+		name: 'Blank',
+		notes: 'Empty Ecosystem. Configure all forms, layouts and tables by myself',
+		data: 'blank',
+	})
 	let configs = ref(res.results)
 
 	let config = ref(null)
@@ -100,32 +105,30 @@
 	async function next() {
 		await useApi('member.put', {
 			body: store.member,
-			params: {id: 0}
+			params: { id: 0 },
 		})
 
 		step.value = 2
 	}
 
 	async function finish() {
-		if ( config.value == 'blank') {
+		if (config.value == 'blank') {
 			navigateTo('/home')
 			return false
 		}
 
-		let importedData = {
-			data: config.value,
-			mode: 'overwrite'
-		}
-
 		step.value = 3
 
-		importedData = await useApi('configurationJson.post', {
-			body: importedData
+		let importedData = await useApi('configurationJson.put', {
+			params: {
+				id: config.value,
+			},
+			body: configs.value.find((o) => o.id == config.value),
 		})
 
 		let checkStatus = async () => {
-			let res = await useApi('configurationJsonStatus.get', {
-				params: {id: importedData.task_id}
+			let res = await useApi('getTask.get', {
+				params: { id: importedData.task_id },
 			})
 
 			if (res.status === 'P' || res.status === 'I') {
@@ -133,14 +136,15 @@
 				progress_item.value = res.progress_object?.description
 
 				setTimeout(checkStatus, 1000)
-
 			} else if (res.status === 'D') {
-
 				useRouter().push('/home')
 			}
 		}
 
-		checkStatus()
+		if (importedData.task_id) checkStatus()
+		else {
+			step.value = 2
+		}
 	}
 </script>
 

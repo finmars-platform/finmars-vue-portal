@@ -7,148 +7,138 @@
 			action: {name: 'Save', cb: save},
 		}"
 	>
-		<FmTabs :tabs="tabs" v-model="tab" />
+	<div class="settings flex">
+			<div class="settings_coll">
+				<h4>General</h4>
 
-		<div class="p-16">
-			<template v-if="tab == 'widget'">
-				<FmSelect
-					v-model="editable.scope"
-					:items="scopeList"
-					label="Scope"
-					@update:modelValue="prepareProps()"
+				<BaseInput
+					v-model="editable.user_code"
+					label="User code"
+					required
 				/>
 				<FmSelect
 					v-model="editable.tab"
 					:items="tabList"
 					label="Tab"
 				/>
-				<FmSelect v-if="currentWodget.settings && currentWodget.settings.length"
-					v-model="scopeProps._cbp_type"
-					:items="currentWodget.settings[0].opts"
-					:label="currentWodget.settings[0].name"
+			</div>
+
+			<div class="settings_coll">
+				<h4>Inputs</h4>
+
+				<PagesDashboardAddComponentMPropEditor
+					v-for="prop in inputs"
+					:prop="prop"
+					type="inputs"
 				/>
+			</div>
 
-			</template>
+			<div class="settings_coll">
+				<h4>Outputs</h4>
 
-			<template v-if="tab == 'scope'">
-				<BaseInput v-for="item in scopeProps" v-model="item.value" :label="item.name" />
-			</template>
+				<PagesDashboardAddComponentMPropEditor
+					v-for="prop in outputs"
+					:prop="prop"
+					type="outputs"
+				/>
+			</div>
 		</div>
 	</BaseModal>
 </template>
 
 <script setup>
 
-	import widgetList from '~/assets/data/widgets.js'
-
-	let props = defineProps({
+	const props = defineProps({
 		wid: {
 			type: String,
 			required: true
 		}
 	})
-	let dashStore = useStoreDashboard()
+	const dashStore = useStoreDashboard()
+	const tabList = [...dashStore.tabs, {id: 1, name: 'Top place'}]
 
-	let tabs = ref(['widget', 'scope'])
-	let tab = ref('widget')
+	let component = dashStore.components.find(item => item.uid == props.wid) || {}
+	let editable = reactive( JSON.parse(JSON.stringify(component)) )
 
-	let widget = dashStore.widgets.find(item => item.id == props.wid) || {}
-	let editable = reactive( JSON.parse(JSON.stringify(widget)) )
-
-	let scopeProps = ref({})
-	let currentWodget = widgetList.find(item => item.id == editable.componentName)
+	let inputs = ref([])
+	let outputs = ref([])
 
 	prepareProps()
 
 	function prepareProps() {
-		for ( let prop in currentWodget.props ) {
-			if ( typeof currentWodget.props[prop] != 'object' ) {
-				currentWodget.props[prop] = dashStore.scopes[editable.scope][prop]
+		inputs.value = JSON.parse(
+			JSON.stringify(
+				dashStore.props.inputs
+					.filter((prop) => prop.component_id == component.uid)
+			)
+		)
 
-			} else {
-				let obj = currentWodget.props[prop]
+		dashStore.props.outputs.forEach((prop) => {
+			if ( prop.component_id != component.uid ) return false
 
-				if ( !dashStore.scopes[editable.scope] || !dashStore.scopes[editable.scope][prop] ) {
-					obj.value = ''
+			let clonedProp = JSON.parse(
+				JSON.stringify(prop)
+			)
 
-				} else {
+			clonedProp._children = dashStore.props.inputs
+				.filter( (item) => item.subscribedTo.includes(clonedProp.uid) )
+				.map((item) => item.uid)
 
-					obj.value = dashStore.scopes[editable.scope][prop].value
-					obj._used = dashStore.scopes[editable.scope][prop]._used
-				}
-			}
-		}
-
-		scopeProps.value = currentWodget.props
+			outputs.value.push(clonedProp)
+		})
 	}
-
-	let tabList = computed(() => {
-		return [...dashStore.tabs, {id: null, name: 'Top place'}]
-	})
-
-	let scopeList = computed(() => {
-		let list = []
-
-		for ( let prop in dashStore.scopes ) {
-			list.push({
-				id: prop,
-				name: prop
-			})
-		}
-
-		list.push({
-			id: 'New scope',
-			name: 'New scope'
-		})
-
-		return list
-	})
-
 	function save() {
-		let newScope = editable.scope
-
 		dashStore.$patch((state) => {
-			let oldScope = widget.scope
+			component.user_code = editable.user_code
+			component.tab = editable.tab
 
-			for ( let prop in state.scopes[oldScope] ) {
-				if ( !state.scopes[oldScope][prop]._used ) continue
-				let index = state.scopes[oldScope][prop]._used.findIndex(item => item == editable.id)
+			inputs.value.forEach((prop) => {
+				let input = state.props.inputs.find((item => item.uid == prop.uid))
 
-				delete state.scopes[oldScope][prop]._used.splice(index, 1)
-			}
+				input.default_value = prop.default_value
+				input.subscribedTo = prop.subscribedTo
+			})
 
-			if ( !state.scopes[newScope] ) {
-				newScope = 'Scope №' + Math.round(Math.random(0, 1) * 1000)
-				state.scopes[newScope] = {}
-			}
+			outputs.value.forEach((prop) => {
+				let output = state.props.outputs.find((item => item.uid == prop.uid))
 
-			for ( let prop in scopeProps.value ) {
-				if ( !state.scopes[newScope][prop] ) {
-					state.scopes[newScope][prop] = JSON.parse( JSON.stringify(scopeProps.value[prop]) )
-				}
+				output.default_value = prop.default_value
 
-				if ( typeof state.scopes[newScope][prop] != 'object' ) {
-					state.scopes[newScope][prop] = scopeProps.value[prop]
+				let children = state.props.inputs
+					.filter(item => item.subscribedTo.includes(prop.uid))
 
-				} else {
+				children.forEach((child) => {
+					let index = child.subscribedTo.findIndex((uid) => uid == prop.uid)
 
-					state.scopes[newScope][prop].value = scopeProps.value[prop].value
+					if ( index !== -1 ) {
+						child.subscribedTo.splice(index, 1)
+					}
+				})
 
-					if ( !state.scopes[newScope][prop]._used )
-						state.scopes[newScope][prop]._used = []
-
-					state.scopes[newScope][prop]._used.push(editable.id)
-				}
-			}
+				prop._children.forEach((uid) => {
+					let children = state.props.inputs.find(item => item.uid == uid)
+					children.subscribedTo.push(prop.uid)
+				})
+			})
 		})
 
-		delete widget._isEdit
 
-		widget.scope = newScope
-		widget.tab = editable.tab
 	}
 </script>
 
 <style lang="scss" scoped>
+.settings {
+		padding: 20px;
+	}
+	.settings_coll {
+		width: 300px;
 
+		& + & {
+			padding-left: 20px;
+		}
+	}
+	.inherit_checkbox {
+		margin-top: -18px;
+		margin-bottom: 25px;
+	}
 </style>

@@ -5,6 +5,7 @@
 		"dev": "nuxt --rootDir=./v/ dev -p=8080",
 		"dev-proxy": "API_HOST=https://dev.finmars.com AUTH_HOST=https://dev.finmars.com/authorizer APP_HOST=http://localhost:3000/v WS_HOST='wss://dev.finmars.com/ws/' NUXT_HOST=0.0.0.0 nuxt --rootDir=./v/ dev",
 		"dev-local": "API_HOST=http://0.0.0.0:8000 AUTH_HOST=http://0.0.0.0:8083/authorizer APP_HOST=http://localhost:3000/v OLD_APP_URL='http://0.0.0.0:8080/#!/' WS_HOST='ws://0.0.0.0:6969/' NUXT_HOST=0.0.0.0 nuxt --rootDir=./v/ dev",
+		"dev-local-sz": "nuxt --rootDir=./v/ dev -p=3000",
 		"start": "PORT=8080 node .output/server/index.mjs",
 		"generate": "nuxt generate",
 		"preview": "nuxt preview",
@@ -18,7 +19,8 @@
 		"eslint-plugin-vue": "^9.6.0",
 		"jsdom": "^20.0.3",
 		"nuxt": "^3.0.0",
-		"prettier": "2.6.2"
+		"prettier": "2.6.2",
+		"sass": "^1.54.9"
 	},
 	"dependencies": {
 		"@chenfengyuan/vue-qrcode": "^2.0.0",
@@ -28,10 +30,8 @@
 		"click-outside-vue3": "^4.0.1",
 		"dayjs": "^1.11.7",
 		"keycloak-js": "^21.0.1",
-		"moment": "^2.29.4",
 		"pinia": "^2.0.24",
 		"qrcode": "^1.5.1",
-		"sass": "^1.54.9",
 		"vue": "^3.2.39",
 		"vue3-ace-editor": "^2.2.2"
 	}

@@ -1,12 +1,13 @@
 <template>
 	<BaseInput
+		ref="baseInput"
 		:label="label"
 		:modelValue="modelValue"
 		:required="required"
 		:disabled="disabled"
 		:errorData="error"
 
-		@update:modelValue="$emit('update:modelValue', $event)"
+		@update:modelValue="onMainInputChange"
 		@udpate:errorData="newVal => $emit('update:errorData', newVal)"
 	>
 		<template #button>
@@ -19,18 +20,6 @@
 			</slot>
 		</template>
 
-		<input
-			ref="mainInput"
-			type="text"
-			:placeholder="label"
-			:value="modelValue"
-			:disabled="disabled"
-
-			@input="onMainInputChange"
-
-			class="bi_main_input"
-		/>
-
 		<template v-if="$slots.sideItems" #sideItems>
 			<slot name="sideItems"></slot>
 		</template>
@@ -39,9 +28,11 @@
 
 <script setup>
 
-	import moment from "moment";
+	import dayjs from "dayjs";
+	import customParseFormat from "dayjs/plugin/customParseFormat";
+	dayjs.extend(customParseFormat);
 
-	let props = defineProps({
+	const props = defineProps({
 		modelValue: String,
 		label: String,
 		disabled: Boolean,
@@ -50,14 +41,11 @@
 
 		defaultDate: Boolean,
 	})
+	const emit = defineEmits(['update:modelValue', 'update:errorData'])
 
-	let emit = defineEmits(['update:modelValue', 'update:errorData'])
-
-	let mainInput = ref(null);
+	let baseInput = ref(null);
 	// let mainInputValue = ref(props.modelValue);
-
 	let doNotShowDatepicker = true;
-
 	let localErrorData = ref(null); // when props.errorData not used
 
 	let error = computed({
@@ -71,26 +59,46 @@
 			return props.errorData ? props.errorData : localErrorData.value;
 		}
 	});
+	onMounted(() => {
+		let pickmeupOpts = {
+			default_date: props.defaultDate,
+		};
 
+		if (props.modelValue) {
+			pickmeupOpts.date = new Date(props.modelValue);
+			pickmeupOpts.current = new Date(props.modelValue);
+		}
+		usePickmeup(baseInput.value.mainInput, pickmeupOpts)
+
+		//#region Prevents showing datepicker on mainInput click
+		baseInput.value.mainInput.addEventListener("pickmeup-show", function (event) {
+			if (doNotShowDatepicker) event.preventDefault();
+		});
+
+		baseInput.value.mainInput.addEventListener("pickmeup-hide", function () {
+			doNotShowDatepicker = true;
+		});
+		//#endregion
+
+		baseInput.value.mainInput.addEventListener("pickmeup-change", function (event) {
+			emit('update:modelValue', event.detail.formatted_date);
+		});
+	})
 	watch(
 		() => props.modelValue,
 		() => {
-
 			if (
 				error.value && error.value.code === 40 &&
-				props.modelValue && moment(props.modelValue, "YYYY-MM-DD", true).isValid()
+				props.modelValue && dayjs(props.modelValue, "YYYY-MM-DD", true).isValid()
 			) {
-
 				error.value = null;
-
 			}
-
 		}
 	)
 
 	function showDatepicker() {
 		doNotShowDatepicker = false;
-		usePickmeup(mainInput.value).show();
+		usePickmeup(baseInput.value.mainInput).show();
 	}
 
 	/**
@@ -150,7 +158,7 @@
 
 	const validateValue = useDebounce(function (newValue) {
 
-		const notValid = !moment(newValue, "YYYY-MM-DD", true).isValid()
+		const notValid = !dayjs(newValue, "YYYY-MM-DD", true).isValid()
 
 		if (notValid) {
 			error.value = {code: 40, message: "Date has wrong format. Use this format instead: YYYY-MM-DD."}
@@ -161,17 +169,12 @@
 
 	}, 800);
 
-	function onMainInputChange (event) {
-
-		let value = event.target.value;
-
+	function onMainInputChange( value ) {
 		if (!value) {
-
 			if (error.value && error.value.code === 40) error.value = null;
 			emit('update:modelValue', null);
 
 			return;
-
 		}
 
 		value = formatDateValue(value);
@@ -179,37 +182,9 @@
 		validateValue(value);
 
 		emit('update:modelValue', value);
-
 	}
 
-	onMounted(() => {
 
-		let pickmeupOpts = {
-			default_date: props.defaultDate,
-		};
-
-		if (props.modelValue) {
-			pickmeupOpts.date = new Date(props.modelValue);
-			pickmeupOpts.current = new Date(props.modelValue);
-		}
-
-		usePickmeup(mainInput.value, pickmeupOpts)
-
-		//#region Prevents showing datepicker on mainInput click
-		mainInput.value.addEventListener("pickmeup-show", function (event) {
-			if (doNotShowDatepicker) event.preventDefault();
-		});
-
-		mainInput.value.addEventListener("pickmeup-hide", function () {
-			doNotShowDatepicker = true;
-		});
-		//#endregion
-
-		mainInput.value.addEventListener("pickmeup-change", function (event) {
-			emit('update:modelValue', event.detail.formatted_date);
-		});
-
-	})
 </script>
 
 <style lang="scss" scoped>

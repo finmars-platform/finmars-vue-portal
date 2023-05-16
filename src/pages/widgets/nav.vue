@@ -1,17 +1,19 @@
 <template>
 	<div class="card_view scrollable">
-		<div class="card_wrap"
-			v-if="status == 100"
-			@mousedown="dragStart"
-		>
-			<div class="card"
+		<div class="card_wrap" v-if="status == 100" @mousedown="dragStart">
+			<div
+				class="card"
 				v-for="(item, prop) in stats"
 				:key="prop"
-				:class="{active: item[0] == active}"
-				@click="item[0] == 'nav' || item[0] == 'total' ? setActive(item[0]) : false"
+				:class="{ active: item[0] == active }"
+				@click="
+					item[0] == 'nav' || item[0] == 'total' ? setActive(item[0]) : false
+				"
 			>
 				<div class="card_name">{{ STATS[item[0]] }}</div>
-				<div class="card_value">{{ STATS_FORMAT[item[0]] ? STATS_FORMAT[item[0]](item[1]) : '' }}</div>
+				<div class="card_value">
+					{{ STATS_FORMAT[item[0]] ? STATS_FORMAT[item[0]](item[1]) : '' }}
+				</div>
 
 				<FmMenu
 					v-if="STATS_INFO[item[0]]"
@@ -37,18 +39,15 @@
 				{{ STATUSES[status] }}
 			</div>
 		</div>
-
 	</div>
-
 </template>
 
 <script setup>
-
 	import dayjs from 'dayjs'
 
 	definePageMeta({
-		layout: 'auth'
-	});
+		layout: 'auth',
+	})
 
 	let route = useRoute()
 	let wId = route.query.wId
@@ -57,59 +56,59 @@
 	let date_to = route.query.date_to
 
 	const STATS = {
-		"nav": 'NAV',
-		"total": 'Total P&L',
-		"cumulative_return": 'Cumulative return',
-		"annualized_return": 'Annualized return',
-		"portfolio_volatility": 'Portfolio Volatility',
-		"annualized_portfolio_volatility": 'Annualized portfolio volatility',
-		"sharpe_ratio": 'Sharpe ratio (rf=0%)',
-		"max_annualized_drawdown": 'Max annualized drawdown',
-		"betta": 'Beta',
-		"alpha": 'Alpha vs Index, ann.',
-		"correlation": 'Correlation (vs. Index)',
+		nav: 'NAV',
+		total: 'Total P&L',
+		cumulative_return: 'Cumulative return',
+		annualized_return: 'Annualized return',
+		portfolio_volatility: 'Portfolio Volatility',
+		annualized_portfolio_volatility: 'Annualized portfolio volatility',
+		sharpe_ratio: 'Sharpe ratio (rf=0%)',
+		max_annualized_drawdown: 'Max annualized drawdown',
+		betta: 'Beta',
+		alpha: 'Alpha vs Index, ann.',
+		correlation: 'Correlation (vs. Index)',
 	}
 
 	const STATS_INFO = {
-		"cumulative_return": {
+		cumulative_return: {
 			h: 'Cumulative Return (CR)',
-			t: 'Time-weighted total portfolio performance since inception date'
+			t: 'Time-weighted total portfolio performance since inception date',
 		},
-		"annualized_return": {
+		annualized_return: {
 			h: 'Annualized Return (AR)',
 			t: `AR = (CR)^(1/N), <br>
 				N - number of years since inception <br>
-				CR -cumulative return`
+				CR -cumulative return`,
 		},
-		"portfolio_volatility": {
+		portfolio_volatility: {
 			h: 'Portfolio Volatility (PV)',
-			t: 'the standard deviation of portfolio performance (taken monthly values of performance)'
+			t: 'the standard deviation of portfolio performance (taken monthly values of performance)',
 		},
-		"annualized_portfolio_volatility": {
+		annualized_portfolio_volatility: {
 			h: 'Annualized Volatility (AV)',
-			t: 'AV = PV * √(12)'
+			t: 'AV = PV * √(12)',
 		},
-		"sharpe_ratio": {
+		sharpe_ratio: {
 			h: 'Sharpe Ratio (ShR)',
 			t: `ShR = CR/AV <br>
 					CR - cumulative return <br>
-					AV - annualized volatility`
+					AV - annualized volatility`,
 		},
-		"max_annualized_drawdown": {
+		max_annualized_drawdown: {
 			h: 'Max  DrawDown Annualized',
-			t: 'MAX by absolute value negative performance taken within any 12 consecutive months since inception.'
+			t: 'MAX by absolute value negative performance taken within any 12 consecutive months since inception.',
 		},
-		"correlation": {
+		correlation: {
 			h: 'Correlation vs. Index',
-			t: 'The correlation of performances between the portfolio and benchmark  index (S&P 500)'
+			t: 'The correlation of performances between the portfolio and benchmark  index (S&P 500)',
 		},
-		"alpha": {
+		alpha: {
 			h: 'Alpha',
-			t: 'The alpha of a portfolio is the excess return it produces compared to a benchmark index (S&P 500)'
+			t: 'The alpha of a portfolio is the excess return it produces compared to a benchmark index (S&P 500)',
 		},
-		"betta": {
+		betta: {
 			h: 'Beta',
-			t: 'Portfolio beta measures its relative volatility, expressed as the weighted average of the betas of each individual security within it.'
+			t: 'Portfolio beta measures its relative volatility, expressed as the weighted average of the betas of each individual security within it.',
 		},
 	}
 
@@ -130,17 +129,17 @@
 	}
 
 	const STATS_FORMAT = {
-		"nav": formatCurency,
-		"total": formatCurency,
-		"cumulative_return": formatPercent,
-		"annualized_return": formatPercent,
-		"portfolio_volatility": formatPercent,
-		"annualized_portfolio_volatility": formatPercent,
-		"sharpe_ratio": (val) => Math.round(val * 100) / 100,
-		"max_annualized_drawdown": formatPercent,
-		"betta": (val) => Math.round(val * 100) / 100,
-		"alpha": formatPercent,
-		"correlation": (val) => Math.round(val * 100) / 100
+		nav: formatCurency,
+		total: formatCurency,
+		cumulative_return: formatPercent,
+		annualized_return: formatPercent,
+		portfolio_volatility: formatPercent,
+		annualized_portfolio_volatility: formatPercent,
+		sharpe_ratio: (val) => Math.round(val * 100) / 100,
+		max_annualized_drawdown: formatPercent,
+		betta: (val) => Math.round(val * 100) / 100,
+		alpha: formatPercent,
+		correlation: (val) => Math.round(val * 100) / 100,
 	}
 
 	let stats = ref(null)
@@ -148,26 +147,26 @@
 	loadData()
 
 	async function loadData() {
-		if ( dayjs(date_to).diff(dayjs(), 'day') >= 0 ) {
+		if (dayjs(date_to).diff(dayjs(), 'day') >= 0) {
 			status.value = 101
 			return false
 		}
 
 		let res = await useApi('widgetsStats.get', {
 			params: {
-				client
+				client,
 			},
 			filters: {
 				portfolio: portfolioId,
 				date: date_to,
 			},
 			headers: {
-				Authorization: 'Token ' + route.query.token
+				Authorization: 'Token ' + route.query.token,
 			},
-			provider: null
+			provider: null,
 		})
 
-		if ( res.error ) {
+		if (res.error) {
 			status.value = 101
 
 			return false
@@ -177,19 +176,19 @@
 		delete res.portfolio
 		delete res.benchmark
 
-		if ( res ) {
+		if (res) {
 			let arr = Object.entries(res)
 			stats.value = arr
 			status.value = 100
 		}
 	}
 
-	async function setActive( item ) {
+	async function setActive(item) {
 		active.value = item
 
 		send({
 			action: 'changeHistoryType',
-			type: item
+			type: item,
 		})
 	}
 
@@ -201,54 +200,52 @@
 	})
 
 	function initPostMessageBus() {
-		if ( window == top ) return false
+		if (window == top) return false
 
 		send({
-			action: 'init'
+			action: 'init',
 		})
 
-		window.addEventListener("message", async (e) => {
-			if ( 'updateOpts' == e.data.action ) {
+		window.addEventListener('message', async (e) => {
+			if ('updateOpts' == e.data.action) {
 				portfolioId = e.data.data.portfolioId
 				date_to = e.data.data.date_to
 
 				let res = await useApi('widgetsStats.get', {
 					params: {
-						client
+						client,
 					},
 					filters: {
 						portfolio: portfolioId,
 						date: date_to,
 					},
 					headers: {
-						Authorization: 'Token ' + route.query.token
+						Authorization: 'Token ' + route.query.token,
 					},
-					provider: null
+					provider: null,
 				})
 				delete res.date
 				delete res.portfolio
 				delete res.benchmark
 
-				if ( res && !res.error ) {
+				if (res && !res.error) {
 					let arr = Object.entries(res)
 					stats.value = arr
 					status.value = 100
-
 				} else {
 					status.value = 101
 				}
 			}
-		});
+		})
 	}
-
 
 	function dragStart(e) {
 		let elem = e.target.closest('.card_wrap')
 		let shiftX = e.clientX + elem.parentNode.scrollLeft
 
-		document.ondragstart = function() {
-			return false;
-		};
+		document.ondragstart = function () {
+			return false
+		}
 
 		function onmousemove(e) {
 			elem.parentNode.scrollLeft = -(e.clientX - shiftX)
@@ -256,17 +253,17 @@
 
 		document.addEventListener('mousemove', onmousemove)
 
-		document.onmouseup = function() {
-			document.removeEventListener('mousemove', onmousemove);
-			elem.onmouseup = null;
-		};
+		document.onmouseup = function () {
+			document.removeEventListener('mousemove', onmousemove)
+			elem.onmouseup = null
+		}
 	}
 
-	function send( data, source = window.parent ) {
+	function send(data, source = window.parent) {
 		let dataObj = Object.assign(data, {
 			wId,
 		})
-		source.postMessage( dataObj, "*" )
+		source.postMessage(dataObj, '*')
 	}
 </script>
 
@@ -284,7 +281,7 @@
 		position: relative;
 		border-radius: 5px;
 		border: 1px solid $border;
-		border-left: 10px solid #DFEAFF;
+		border-left: 10px solid #dfeaff;
 		min-width: 154px;
 		max-width: 180px;
 		height: 90px;
@@ -331,12 +328,10 @@
 	}
 	.card_info {
 		position: absolute;
-		top: 0;
-		right: 0;
+		top: 5px;
+		right: 5px;
 	}
 	.card_info_icon {
-		width: 24px;
-		padding: 5px;
 	}
 	.error_wrap {
 		height: 90px;

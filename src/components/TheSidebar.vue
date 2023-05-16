@@ -535,7 +535,7 @@
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
-															>Entity Viewer Layouts</span
+														>Entity Viewer Layouts</span
 														>
 													</a>
 												</li>
@@ -545,7 +545,7 @@
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
-															>Dashboard Layouts</span
+														>Dashboard Layouts</span
 														>
 													</a>
 												</li>
@@ -555,7 +555,7 @@
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
-															>Input Form Layouts</span
+														>Input Form Layouts</span
 														>
 													</a>
 												</li>
@@ -565,7 +565,7 @@
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
-															>Context Menu Layouts</span
+														>Context Menu Layouts</span
 														>
 													</a>
 												</li>
@@ -641,7 +641,7 @@
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
-															>Transaction Types</span
+														>Transaction Types</span
 														>
 													</a>
 												</li>
@@ -733,7 +733,7 @@
 										>
 											<button class="sidemenu-btn openSubmenuBtn">
 												<span class="side-nav-title"
-													>Import from Providers</span
+												>Import from Providers</span
 												>
 											</button>
 
@@ -750,7 +750,7 @@
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
-															>Instrument Schemes</span
+														>Instrument Schemes</span
 														>
 													</a>
 												</li>
@@ -791,7 +791,7 @@
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
-															>Transactions Import</span
+														>Transactions Import</span
 														>
 													</a>
 												</li>
@@ -817,7 +817,7 @@
 										>
 											<button class="sidemenu-btn f-s-10 openSubmenuBtn">
 												<span class="side-nav-title"
-													>Procedures and schedules</span
+												>Procedures and schedules</span
 												>
 											</button>
 
@@ -830,7 +830,7 @@
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
-															>Pricing Procedures</span
+														>Pricing Procedures</span
 														>
 													</a>
 												</li>
@@ -848,7 +848,7 @@
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
-															>Expression Procedures</span
+														>Expression Procedures</span
 														>
 													</a>
 												</li>
@@ -1003,14 +1003,14 @@
 											<span class="side-nav-title">Default Settings</span>
 										</a>
 									</li>
-<!--									<li>
-										<a
-											:href="getUrlToOldApp('/processes')"
-											class="sidemenu-btn"
-										>
-											<span class="side-nav-title">Active Processes</span>
-										</a>
-									</li>-->
+									<!--									<li>
+																			<a
+																				:href="getUrlToOldApp('/processes')"
+																				class="sidemenu-btn"
+																			>
+																				<span class="side-nav-title">Active Processes</span>
+																			</a>
+																		</li>-->
 									<li>
 										<a
 											:href="getUrlToOldApp('/recycle-bin')"
@@ -1079,820 +1079,728 @@
 </template>
 
 <script setup>
-	// import menu from "~/assets/data/menu.js";
-	const store = useStore()
-	const config = useRuntimeConfig()
-	const buildDate = config.public.buildDATE
-	const apiUrl = config.public.apiURL;
+// import menu from "~/assets/data/menu.js";
+const store = useStore()
+const config = useRuntimeConfig()
+const buildDate = config.public.buildDATE
+const apiUrl = config.public.apiURL;
 
-	let readyStatus = reactive({
-		// will be used by getInterfaceAccess()
-		access: true,
-	});
+let readyStatus = reactive({
+	// will be used by getInterfaceAccess()
+	access: true,
+});
 
-	let showErrorLog = ref(false);
+let showErrorLog = ref(false);
 
-	let interfaceAccess = [];
+let interfaceAccess = [];
 
-	let accessSectionTable = reactive({
-			history: true,
-			journal: true,
-			import: true,
+let accessSectionTable = reactive({
+	history: true,
+	journal: true,
+	import: true,
 
-			settings_data: true,
-			settings_import_from_providers: true,
-			settings_import_from_files: true,
+	settings_data: true,
+	settings_import_from_providers: true,
+	settings_import_from_files: true,
 
-			settings_administration: true,
-	});
+	settings_administration: true,
+});
 
-	let accessTable = reactive({
-		data_portfolio: true,
-		data_account: true,
-		data_instrument: true,
-		data_responsible: true,
-		data_counterparty: true,
-		data_currency: true,
-		data_strategies: true,
-		data_transaction: true,
-		data_price_history: true,
-		data_fx_history: true,
-		data_simple_import: true,
-		data_transaction_import: true,
-		data_complex_import: true,
-		data_instrument_download: true,
-		data_prices_download: true,
+let accessTable = reactive({
+	data_portfolio: true,
+	data_account: true,
+	data_instrument: true,
+	data_responsible: true,
+	data_counterparty: true,
+	data_currency: true,
+	data_strategies: true,
+	data_transaction: true,
+	data_price_history: true,
+	data_fx_history: true,
+	data_simple_import: true,
+	data_transaction_import: true,
+	data_complex_import: true,
+	data_instrument_download: true,
+	data_prices_download: true,
 
-		report_balance: true,
-		report_pl: true,
-		report_transaction: true,
-		report_performance: true,
-		report_cash_flow: true,
-		report_dashboard: true,
-		report_event: true,
-		report_bookmark: true,
-		report_instrument_audit: true,
-		report_transaction_audit: true,
-		report_base_transaction: true,
-		report_activity_log: true,
-		report_forum: true,
+	report_balance: true,
+	report_pl: true,
+	report_transaction: true,
+	report_performance: true,
+	report_cash_flow: true,
+	report_dashboard: true,
+	report_event: true,
+	report_bookmark: true,
+	report_instrument_audit: true,
+	report_transaction_audit: true,
+	report_base_transaction: true,
+	report_activity_log: true,
+	report_forum: true,
 
-		configuration_account_type: true,
-		configuration_instrument_type: true,
-		configuration_transaction_type: true,
-		configuration_pricing_policy: true,
-		configuration_price_download_scheme: true,
-		configuration_instrument_download_scheme: true,
-		configuration_automated_price_downloads: true,
-		configuration_simple_import_scheme: true,
-		configuration_transaction_import_scheme: true,
-		configuration_complex_import_scheme: true,
-		configuration_mapping_tables: true,
-		configuration_user_attributes: true,
-		configuration_aliases: true,
-		configuration_template: true,
-		configuration_reference_table: true,
+	configuration_account_type: true,
+	configuration_instrument_type: true,
+	configuration_transaction_type: true,
+	configuration_pricing_policy: true,
+	configuration_price_download_scheme: true,
+	configuration_instrument_download_scheme: true,
+	configuration_automated_price_downloads: true,
+	configuration_simple_import_scheme: true,
+	configuration_transaction_import_scheme: true,
+	configuration_complex_import_scheme: true,
+	configuration_mapping_tables: true,
+	configuration_user_attributes: true,
+	configuration_aliases: true,
+	configuration_template: true,
+	configuration_reference_table: true,
 
-		settings_notification: true,
-		settings_export_configuration: true,
-		settings_import_configuration: true,
-		settings_export_mapping: true,
-		settings_import_mapping: true,
-		settings_provider: true,
-		settings_init_configuration: true,
-		settings_users_groups_permission: true,
-		settings_new_objects_permission: true,
-		settings_timezone: true,
-		settings_ecosystem_default: true,
+	settings_notification: true,
+	settings_export_configuration: true,
+	settings_import_configuration: true,
+	settings_export_mapping: true,
+	settings_import_mapping: true,
+	settings_provider: true,
+	settings_init_configuration: true,
+	settings_users_groups_permission: true,
+	settings_new_objects_permission: true,
+	settings_timezone: true,
+	settings_ecosystem_default: true,
 
-		account_settings: true,
-		account_personal_data: true,
-		account_ecosystem_management: true,
-	});
+	account_settings: true,
+	account_personal_data: true,
+	account_ecosystem_management: true,
+});
 
-	let sidenavExpanded = true;
+let sidenavExpanded = true;
 
-	let sidenav_width = useState("sidenav_width", () => 160)
+let sidenav_width = useState("sidenav_width", () => 160)
 
-	function getUrlToOldApp (suffix) {
+function getUrlToOldApp (suffix) {
 
-		let baseApiUrl = '';
+	let baseApiUrl = '';
 
-		if ( Object.keys(store.current).length ) {
-			baseApiUrl = '/' + store.current.base_api_url;
-		}
-
-		return `${apiUrl}${baseApiUrl}/a/#!${suffix}`;
-
+	if ( Object.keys(store.current).length ) {
+		baseApiUrl = '/' + store.current.base_api_url;
 	}
 
-	function resizeSideNav(expand) {
-		// sideNavStatus = status;
-		sidenavExpanded = expand
+	return `${apiUrl}${baseApiUrl}/a/#!${suffix}`;
 
-		if (sidenavExpanded) {
-			document.body.classList.remove("sidenav-collapsed")
-			document.body.classList.add("sidenav-expanded")
-			sidenav_width.value = 160
-		} else {
-			document.body.classList.remove("sidenav-expanded")
-			document.body.classList.add("sidenav-collapsed")
-			sidenav_width.value = 65
-		}
+}
 
-		window.dispatchEvent(new Event("resize"))
+function resizeSideNav(expand) {
+	// sideNavStatus = status;
+	sidenavExpanded = expand
+
+	if (sidenavExpanded) {
+		document.body.classList.remove("sidenav-collapsed")
+		document.body.classList.add("sidenav-expanded")
+		sidenav_width.value = 160
+	} else {
+		document.body.classList.remove("sidenav-expanded")
+		document.body.classList.add("sidenav-collapsed")
+		sidenav_width.value = 65
 	}
 
-	let sideMenuSettingsMenuOpened = false
+	window.dispatchEvent(new Event("resize"))
+}
 
-	const vToggleSettingsMenuDirective = {
-		mounted: (el) => {
-			const settingsMenu = el.querySelector(".side-menu-settings-menu")
-			const settingsToggleBtn = el.querySelector(".toggleSettingsBtn")
-			const settingsCollapseBtn = el.querySelector(".collapseSettingsMenu")
+let sideMenuSettingsMenuOpened = false
 
-			function settingsSideMenuOnClickOutside(event) {
-				let clickedOutside = true
-				let elem = event.target
+const vToggleSettingsMenuDirective = {
+	mounted: (el) => {
+		const settingsMenu = el.querySelector(".side-menu-settings-menu")
+		const settingsToggleBtn = el.querySelector(".toggleSettingsBtn")
+		const settingsCollapseBtn = el.querySelector(".collapseSettingsMenu")
 
-				for (var i = 0; i < 15; i++) {
-					if (elem.classList.contains("side-menu-settings-menu")) {
-						clickedOutside = false
-						break
-					} else if (elem.tagName === "BODY") {
-						break
-					} else {
-						elem = elem.parentNode
-					}
-				}
+		function settingsSideMenuOnClickOutside(event) {
+			let clickedOutside = true
+			let elem = event.target
 
-				if (clickedOutside) {
-					toggleSettingsSideMenu()
+			for (var i = 0; i < 15; i++) {
+				if (elem.classList.contains("side-menu-settings-menu")) {
+					clickedOutside = false
+					break
+				} else if (elem.tagName === "BODY") {
+					break
+				} else {
+					elem = elem.parentNode
 				}
 			}
 
-			function toggleSettingsSideMenu() {
-				if (sideMenuSettingsMenuOpened) {
-					/*$('.sidenav-settings-toggle-btn').removeClass('settings-menu-opened');
-				$('.side-menu-settings-menu').removeClass('overflow-visible');
-				$('.side-menu-settings-menu').removeClass('settings-menu-opened');*/
-					settingsToggleBtn.classList.remove("settings-menu-opened")
-					settingsMenu.classList.remove(
-						"overflow-visible",
-						"settings-menu-opened"
-					)
+			if (clickedOutside) {
+				toggleSettingsSideMenu()
+			}
+		}
 
-					window.removeEventListener("click", settingsSideMenuOnClickOutside)
-					window.removeEventListener(
-						"contextmenu",
-						settingsSideMenuOnClickOutside
-					)
+		function toggleSettingsSideMenu() {
+			if (sideMenuSettingsMenuOpened) {
+				/*$('.sidenav-settings-toggle-btn').removeClass('settings-menu-opened');
+			$('.side-menu-settings-menu').removeClass('overflow-visible');
+			$('.side-menu-settings-menu').removeClass('settings-menu-opened');*/
+				settingsToggleBtn.classList.remove("settings-menu-opened")
+				settingsMenu.classList.remove(
+					"overflow-visible",
+					"settings-menu-opened"
+				)
 
-				} else {
-					/* $('.side-menu-settings-menu').addClass('settings-menu-opened');
-					$('.sidenav-settings-toggle-btn').addClass('settings-menu-opened'); */
+				window.removeEventListener("click", settingsSideMenuOnClickOutside)
+				window.removeEventListener(
+					"contextmenu",
+					settingsSideMenuOnClickOutside
+				)
 
-					settingsMenu.classList.add("settings-menu-opened")
-					settingsToggleBtn.classList.add("settings-menu-opened")
+			} else {
+				/* $('.side-menu-settings-menu').addClass('settings-menu-opened');
+				$('.sidenav-settings-toggle-btn').addClass('settings-menu-opened'); */
 
-					setTimeout(function () {
-						// $('.side-menu-settings-menu').addClass('overflow-visible');
-						if (sideMenuSettingsMenuOpened) {
+				settingsMenu.classList.add("settings-menu-opened")
+				settingsToggleBtn.classList.add("settings-menu-opened")
 
-							settingsMenu.classList.add("overflow-visible")
+				setTimeout(function () {
+					// $('.side-menu-settings-menu').addClass('overflow-visible');
+					if (sideMenuSettingsMenuOpened) {
 
-							window.addEventListener("click", settingsSideMenuOnClickOutside)
-							window.addEventListener(
-								"contextmenu",
-								settingsSideMenuOnClickOutside
-							)
+						settingsMenu.classList.add("overflow-visible")
+
+						window.addEventListener("click", settingsSideMenuOnClickOutside)
+						window.addEventListener(
+							"contextmenu",
+							settingsSideMenuOnClickOutside
+						)
+
+					}
+
+				}, 250)
+			}
+
+			sideMenuSettingsMenuOpened = !sideMenuSettingsMenuOpened
+		}
+
+		settingsToggleBtn.addEventListener("click", toggleSettingsSideMenu)
+		settingsCollapseBtn.addEventListener("click", toggleSettingsSideMenu)
+	},
+}
+
+/*const vExpandOnHoverDirective = {
+mounted: (el) => {
+	var dropdownMenuClass = '.' + scope.menuType + '-dropdown-menu-element';
+	var menuBtnClass = '.' + scope.menuType + '-sidenav-menu-btn';
+	var dropdownMenu = el.find(dropdownMenuClass);
+	var menuBtn = el.find(menuBtnClass);
+
+	el.mouseenter(function () {
+		$(menuBtn).addClass('active-menu-btn');
+		$(dropdownMenu).removeClass('ng-hide');
+	});
+
+	el.mouseleave(function () {
+		$(menuBtn).removeClass('active-menu-btn');
+		$(dropdownMenu).addClass('ng-hide');
+	});
+}
+}*/
+
+const showSubmenu = function ($event) {
+	const el = $event.target
+	const dropdownMenu = el.querySelector(".submenuElement")
+	const menuBtn = el.querySelector(".openSubmenuBtn")
+
+	menuBtn.classList.add("active-menu-btn")
+	dropdownMenu.classList.remove("display-none")
+}
+
+const hideSubmenu = function ($event) {
+	const el = $event.target
+	const dropdownMenu = el.querySelector(".submenuElement")
+	const menuBtn = el.querySelector(".openSubmenuBtn")
+
+	menuBtn.classList.remove("active-menu-btn")
+	dropdownMenu.classList.add("display-none")
+}
+
+//# region Permissions for access
+const syncInterfaceAccess = function () {
+
+	Object.keys(accessTable).forEach(function (key) {
+
+		accessTable[key] = false;
+
+	});
+
+	interfaceAccess.forEach(function (item) {
+
+		if (item.value <= store.member.interface_level) {
+			accessTable[item.user_code] = true;
+		}
+
+	});
+
+};
+
+const syncInterfaceSectionsAccess = function () {
+
+	accessSectionTable.history =
+		accessTable.data_transaction ||
+		accessTable.data_price_history ||
+		accessTable.data_fx_history;
+
+
+	accessSectionTable.journal =
+		accessTable.report_instrument_audit ||
+		accessTable.report_transaction_audit ||
+		accessTable.report_base_transaction;
+
+	accessSectionTable.import =
+		accessTable.data_simple_import ||
+		accessTable.data_transaction_import ||
+		accessTable.data_complex_import ||
+		accessTable.data_instrument_download ||
+		accessTable.data_prices_download ||
+		accessTable.configuration_mapping_tables;
+
+	accessSectionTable.settings_data =
+		accessTable.configuration_account_type ||
+		accessTable.configuration_instrument_type ||
+		accessTable.configuration_transaction_type ||
+		accessTable.configuration_pricing_policy ||
+		accessTable.configuration_user_attributes ||
+		accessTable.configuration_reference_table;
+
+	accessSectionTable.settings_import_from_providers =
+		accessTable.configuration_price_download_scheme ||
+		accessTable.configuration_instrument_download_scheme ||
+		accessTable.configuration_automated_price_downloads;
+
+	accessSectionTable.settings_import_from_files =
+		accessTable.configuration_simple_import_scheme ||
+		accessTable.configuration_transaction_import_scheme ||
+		accessTable.configuration_complex_import_scheme;
+
+
+	accessSectionTable.settings_administration =
+		accessTable.settings_provider ||
+		accessTable.settings_init_configuration ||
+		accessTable.settings_users_groups_permission ||
+		accessTable.settings_ecosystem_default;
+
+};
+
+const applyMemberInterfacePermissions = function () {
+
+	if (!store.member.is_admin && !store.member.is_owner) {
+
+		console.log("Applying Member Interface Permissions");
+
+		store.member.groups_object.forEach(function (group) {
+
+			console.log(' group.permission_table', group.permission_table);
+
+			if (group.permission_table) {
+
+				if (group.permission_table.function) {
+
+					group.permission_table.function.forEach(function (item) {
+
+						console.log('function item', item);
+
+						if (item.content_type === 'function.import_data') {
+
+							if (accessTable.data_simple_import) { // because possibly we dont have access to this menu via interface complexity level
+								accessTable.data_simple_import = item.data.creator_view
+							}
+						}
+
+						if (item.content_type === 'function.import_transactions') {
+							if (accessTable.data_transaction_import) {
+								accessTable.data_transaction_import = item.data.creator_view
+							}
+						}
+
+						if (item.content_type === 'function.import_complex') {
+							if (accessTable.data_complex_import) {
+								accessTable.data_complex_import = item.data.creator_view
+							}
+						}
+
+						if (item.content_type === 'function.provider_download_instrument') {
+							if (accessTable.data_instrument_download) {
+								accessTable.data_instrument_download = item.data.creator_view
+							}
+						}
+
+						if (item.content_type === 'function.provider_download_price') {
+							if (accessTable.data_prices_download) {
+								accessTable.data_prices_download = item.data.creator_view
+							}
+						}
+
+
+					})
+
+				}
+
+
+				if (group.permission_table.configuration) {
+
+					group.permission_table.configuration.forEach(function (item) {
+
+						if (item.content_type === 'obj_attrs.attributetype') {
+
+							if (accessTable.configuration_user_attributes) { // because possibly we dont have access to this menu via interface complexity level
+								accessTable.configuration_user_attributes = item.data.creator_view
+							}
+						}
+
+						if (item.content_type === 'reference_tables.referencetable') {
+
+							if (accessTable.configuration_reference_table) {
+								accessTable.configuration_reference_table = item.data.creator_view
+							}
+						}
+
+						if (item.content_type === 'ui.templatelayout') {
+
+							if (accessTable.configuration_template) {
+								accessTable.configuration_template = item.data.creator_view
+							}
 
 						}
 
-					}, 250)
+						if (item.content_type === 'integrations.mappingtable') {
+
+							if (accessTable.configuration_mapping_tables) {
+								accessTable.configuration_mapping_tables = item.data.creator_view
+							}
+						}
+
+						if (item.content_type === 'integrations.pricedownloadscheme') {
+
+							if (accessTable.configuration_price_download_scheme) {
+								accessTable.configuration_price_download_scheme = item.data.creator_view
+							}
+						}
+
+						if (item.content_type === 'integrations.instrumentdownloadscheme') {
+
+							if (accessTable.configuration_instrument_download_scheme) {
+								accessTable.configuration_instrument_download_scheme = item.data.creator_view
+							}
+						}
+
+						if (item.content_type === 'csv_import.csvimportscheme') {
+
+							if (accessTable.configuration_simple_import_scheme) {
+								accessTable.configuration_simple_import_scheme = item.data.creator_view
+							}
+						}
+
+						if (item.content_type === 'integrations.complextransactionimportscheme') {
+
+							if (accessTable.configuration_transaction_import_scheme) {
+								accessTable.configuration_transaction_import_scheme = item.data.creator_view
+							}
+						}
+
+						if (item.content_type === 'complex_import.compleximportscheme') {
+
+							if (accessTable.configuration_complex_import_scheme) {
+								accessTable.configuration_complex_import_scheme = item.data.creator_view
+							}
+						}
+
+						if (item.content_type === 'ui.userfield') {
+
+							if (accessTable.configuration_aliases) {
+								accessTable.configuration_aliases = item.data.creator_view
+							}
+						}
+
+
+					})
+
 				}
 
-				sideMenuSettingsMenuOpened = !sideMenuSettingsMenuOpened
-			}
-
-			settingsToggleBtn.addEventListener("click", toggleSettingsSideMenu)
-			settingsCollapseBtn.addEventListener("click", toggleSettingsSideMenu)
-		},
-	}
-
-	/*const vExpandOnHoverDirective = {
-	mounted: (el) => {
-		var dropdownMenuClass = '.' + scope.menuType + '-dropdown-menu-element';
-		var menuBtnClass = '.' + scope.menuType + '-sidenav-menu-btn';
-		var dropdownMenu = el.find(dropdownMenuClass);
-		var menuBtn = el.find(menuBtnClass);
-
-		el.mouseenter(function () {
-			$(menuBtn).addClass('active-menu-btn');
-			$(dropdownMenu).removeClass('ng-hide');
-		});
-
-		el.mouseleave(function () {
-			$(menuBtn).removeClass('active-menu-btn');
-			$(dropdownMenu).addClass('ng-hide');
-		});
-	}
-}*/
-
-	const showSubmenu = function ($event) {
-		const el = $event.target
-		const dropdownMenu = el.querySelector(".submenuElement")
-		const menuBtn = el.querySelector(".openSubmenuBtn")
-
-		menuBtn.classList.add("active-menu-btn")
-		dropdownMenu.classList.remove("display-none")
-	}
-
-	const hideSubmenu = function ($event) {
-		const el = $event.target
-		const dropdownMenu = el.querySelector(".submenuElement")
-		const menuBtn = el.querySelector(".openSubmenuBtn")
-
-		menuBtn.classList.remove("active-menu-btn")
-		dropdownMenu.classList.add("display-none")
-	}
-
-	//# region Permissions for access
-	const syncInterfaceAccess = function () {
-
-		Object.keys(accessTable).forEach(function (key) {
-
-			accessTable[key] = false;
-
-		});
-
-		interfaceAccess.forEach(function (item) {
-
-			if (item.value <= store.member.interface_level) {
-				accessTable[item.user_code] = true;
 			}
 
 		});
 
-	};
-
-	const syncInterfaceSectionsAccess = function () {
-
-		accessSectionTable.history =
-			accessTable.data_transaction ||
-			accessTable.data_price_history ||
-			accessTable.data_fx_history;
-
-
-		accessSectionTable.journal =
-			accessTable.report_instrument_audit ||
-			accessTable.report_transaction_audit ||
-			accessTable.report_base_transaction;
-
-		accessSectionTable.import =
-			accessTable.data_simple_import ||
-			accessTable.data_transaction_import ||
-			accessTable.data_complex_import ||
-			accessTable.data_instrument_download ||
-			accessTable.data_prices_download ||
-			accessTable.configuration_mapping_tables;
-
-		accessSectionTable.settings_data =
-			accessTable.configuration_account_type ||
-			accessTable.configuration_instrument_type ||
-			accessTable.configuration_transaction_type ||
-			accessTable.configuration_pricing_policy ||
-			accessTable.configuration_user_attributes ||
-			accessTable.configuration_reference_table;
-
-		accessSectionTable.settings_import_from_providers =
-			accessTable.configuration_price_download_scheme ||
-			accessTable.configuration_instrument_download_scheme ||
-			accessTable.configuration_automated_price_downloads;
-
-		accessSectionTable.settings_import_from_files =
-			accessTable.configuration_simple_import_scheme ||
-			accessTable.configuration_transaction_import_scheme ||
-			accessTable.configuration_complex_import_scheme;
-
-
-		accessSectionTable.settings_administration =
-			accessTable.settings_provider ||
-			accessTable.settings_init_configuration ||
-			accessTable.settings_users_groups_permission ||
-			accessTable.settings_ecosystem_default;
-
-	};
-
-	const applyMemberInterfacePermissions = function () {
-
-		if (!store.member.is_admin && !store.member.is_owner) {
-
-			console.log("Applying Member Interface Permissions");
-
-			store.member.groups_object.forEach(function (group) {
-
-				console.log(' group.permission_table', group.permission_table);
-
-				if (group.permission_table) {
-
-					if (group.permission_table.function) {
-
-						group.permission_table.function.forEach(function (item) {
-
-							console.log('function item', item);
-
-							if (item.content_type === 'function.import_data') {
-
-								if (accessTable.data_simple_import) { // because possibly we dont have access to this menu via interface complexity level
-									accessTable.data_simple_import = item.data.creator_view
-								}
-							}
-
-							if (item.content_type === 'function.import_transactions') {
-								if (accessTable.data_transaction_import) {
-									accessTable.data_transaction_import = item.data.creator_view
-								}
-							}
-
-							if (item.content_type === 'function.import_complex') {
-								if (accessTable.data_complex_import) {
-									accessTable.data_complex_import = item.data.creator_view
-								}
-							}
-
-							if (item.content_type === 'function.provider_download_instrument') {
-								if (accessTable.data_instrument_download) {
-									accessTable.data_instrument_download = item.data.creator_view
-								}
-							}
-
-							if (item.content_type === 'function.provider_download_price') {
-								if (accessTable.data_prices_download) {
-									accessTable.data_prices_download = item.data.creator_view
-								}
-							}
-
-
-						})
-
-					}
-
-
-					if (group.permission_table.configuration) {
-
-						group.permission_table.configuration.forEach(function (item) {
-
-							if (item.content_type === 'obj_attrs.attributetype') {
-
-								if (accessTable.configuration_user_attributes) { // because possibly we dont have access to this menu via interface complexity level
-									accessTable.configuration_user_attributes = item.data.creator_view
-								}
-							}
-
-							if (item.content_type === 'reference_tables.referencetable') {
-
-								if (accessTable.configuration_reference_table) {
-									accessTable.configuration_reference_table = item.data.creator_view
-								}
-							}
-
-							if (item.content_type === 'ui.templatelayout') {
-
-								if (accessTable.configuration_template) {
-									accessTable.configuration_template = item.data.creator_view
-								}
-
-							}
-
-							if (item.content_type === 'integrations.mappingtable') {
-
-								if (accessTable.configuration_mapping_tables) {
-									accessTable.configuration_mapping_tables = item.data.creator_view
-								}
-							}
-
-							if (item.content_type === 'integrations.pricedownloadscheme') {
-
-								if (accessTable.configuration_price_download_scheme) {
-									accessTable.configuration_price_download_scheme = item.data.creator_view
-								}
-							}
-
-							if (item.content_type === 'integrations.instrumentdownloadscheme') {
-
-								if (accessTable.configuration_instrument_download_scheme) {
-									accessTable.configuration_instrument_download_scheme = item.data.creator_view
-								}
-							}
-
-							if (item.content_type === 'csv_import.csvimportscheme') {
-
-								if (accessTable.configuration_simple_import_scheme) {
-									accessTable.configuration_simple_import_scheme = item.data.creator_view
-								}
-							}
-
-							if (item.content_type === 'integrations.complextransactionimportscheme') {
-
-								if (accessTable.configuration_transaction_import_scheme) {
-									accessTable.configuration_transaction_import_scheme = item.data.creator_view
-								}
-							}
-
-							if (item.content_type === 'complex_import.compleximportscheme') {
-
-								if (accessTable.configuration_complex_import_scheme) {
-									accessTable.configuration_complex_import_scheme = item.data.creator_view
-								}
-							}
-
-							if (item.content_type === 'ui.userfield') {
-
-								if (accessTable.configuration_aliases) {
-									accessTable.configuration_aliases = item.data.creator_view
-								}
-							}
-
-
-						})
-
-					}
-
-				}
-
-			});
-
-		}
-
-	};
-
-	const getInterfaceAccess = function () {
-
-		// uiService.getPortalInterfaceAccess().then(function (data) {
-		useApi('interfaceAccess.get').then(function (data) {
-
-			// console.log('vm.getInterfaceAccess', data);
-			interfaceAccess = data;
-
-			syncInterfaceAccess();
-			applyMemberInterfacePermissions();
-			syncInterfaceSectionsAccess();
-
-			readyStatus.access = true;
-
-		})
-
-	};
-	//# endregion
-
-	const getWsStatus = function () {
-
-		if (store.ws && store.ws.readyState === WebSocket.OPEN) {
-			return 'open';
-		}
-
-		return 'closed';
-
-	};
-
-	const copyToBuffer = function (content) {
-
-		const listener = function (e) {
-
-			e.clipboardData.setData('text/plain', content);
-
-			e.preventDefault();
-
-		}
-
-		document.addEventListener("copy", listener, { once: true })
-
-		document.execCommand("copy")
-
-		useNotify({ type: "success", title: "Copied" })
 	}
 
-	// function toggleSettingsSideMenu() {
-	//
-	// 	if (!sideMenuSettingsMenuOpened) {
-	//
-	// 		/* $('.side-menu-settings-menu').addClass('settings-menu-opened');
-	// 		$('.sidenav-settings-toggle-btn').addClass('settings-menu-opened'); */
-	// 		settingsMenu.addClass('settings-menu-opened');
-	// 		settingsToggleBtn.addClass('settings-menu-opened');
-	//
-	// 		setTimeout(function () {
-	// 			// $('.side-menu-settings-menu').addClass('overflow-visible');
-	// 			settingsMenu.addClass('overflow-visible');
-	//
-	// 			window.addEventListener('click', settingsSideMenuOnClickOutside);
-	// 			window.addEventListener('contextmenu', settingsSideMenuOnClickOutside);
-	// 		}, 250);
-	//
-	// 	} else {
-	//
-	// 		/*$('.sidenav-settings-toggle-btn').removeClass('settings-menu-opened');
-	// 		$('.side-menu-settings-menu').removeClass('overflow-visible');
-	// 		$('.side-menu-settings-menu').removeClass('settings-menu-opened');*/
-	// 		settingsToggleBtn.removeClass('settings-menu-opened');
-	// 		settingsMenu.removeClass('overflow-visible', 'settings-menu-opened');
-	//
-	// 		window.removeEventListener('click', vm.settingsSideMenuOnClickOutside);
-	// 		window.removeEventListener('contextmenu', vm.settingsSideMenuOnClickOutside);
-	//
-	// 	}
-	//
-	// 	sideMenuSettingsMenuOpened = !sideMenuSettingsMenuOpened;
-	// }
-	const init = function () {
-		getInterfaceAccess();
-	};
+};
 
-	init();
+const getInterfaceAccess = function () {
+
+	// uiService.getPortalInterfaceAccess().then(function (data) {
+	useApi('interfaceAccess.get').then(function (data) {
+
+		// console.log('vm.getInterfaceAccess', data);
+		interfaceAccess = data;
+
+		syncInterfaceAccess();
+		applyMemberInterfacePermissions();
+		syncInterfaceSectionsAccess();
+
+		readyStatus.access = true;
+
+	})
+
+};
+//# endregion
+
+const getWsStatus = function () {
+
+	if (store.ws && store.ws.readyState === WebSocket.OPEN) {
+		return 'open';
+	}
+
+	return 'closed';
+
+};
+
+const copyToBuffer = function (content) {
+
+	const listener = function (e) {
+
+		e.clipboardData.setData('text/plain', content);
+
+		e.preventDefault();
+
+	}
+
+	document.addEventListener("copy", listener, { once: true })
+
+	document.execCommand("copy")
+
+	useNotify({ type: "success", title: "Copied" })
+}
+
+// function toggleSettingsSideMenu() {
+//
+// 	if (!sideMenuSettingsMenuOpened) {
+//
+// 		/* $('.side-menu-settings-menu').addClass('settings-menu-opened');
+// 		$('.sidenav-settings-toggle-btn').addClass('settings-menu-opened'); */
+// 		settingsMenu.addClass('settings-menu-opened');
+// 		settingsToggleBtn.addClass('settings-menu-opened');
+//
+// 		setTimeout(function () {
+// 			// $('.side-menu-settings-menu').addClass('overflow-visible');
+// 			settingsMenu.addClass('overflow-visible');
+//
+// 			window.addEventListener('click', settingsSideMenuOnClickOutside);
+// 			window.addEventListener('contextmenu', settingsSideMenuOnClickOutside);
+// 		}, 250);
+//
+// 	} else {
+//
+// 		/*$('.sidenav-settings-toggle-btn').removeClass('settings-menu-opened');
+// 		$('.side-menu-settings-menu').removeClass('overflow-visible');
+// 		$('.side-menu-settings-menu').removeClass('settings-menu-opened');*/
+// 		settingsToggleBtn.removeClass('settings-menu-opened');
+// 		settingsMenu.removeClass('overflow-visible', 'settings-menu-opened');
+//
+// 		window.removeEventListener('click', vm.settingsSideMenuOnClickOutside);
+// 		window.removeEventListener('contextmenu', vm.settingsSideMenuOnClickOutside);
+//
+// 	}
+//
+// 	sideMenuSettingsMenuOpened = !sideMenuSettingsMenuOpened;
+// }
+const init = function () {
+	getInterfaceAccess();
+};
+
+init();
 </script>
 
 <style lang="scss" scoped>
-	/*.sidebar {
-	width: 160px;
-	background: #000;
+/*.sidebar {
+width: 160px;
+background: #000;
 
 }
 .logo {
-	padding: 10px;
+padding: 10px;
 }
 .menu_item {
-	color: #fff;
-	border-radius: 0;
-	text-transform: uppercase;
+color: #fff;
+border-radius: 0;
+text-transform: uppercase;
 
-	&.router-link-exact-active {
-		color: $primary;
-	}
+&.router-link-exact-active {
+	color: $primary;
+}
 }
 .drop_menu_wrap:hover {
-	background: #9e9e9e33;
-	cursor: pointer;
-	.drop_menu {
-		opacity: 1;
-		visibility: visible;
-	}
+background: #9e9e9e33;
+cursor: pointer;
+.drop_menu {
+	opacity: 1;
+	visibility: visible;
+}
 }
 .v-list-item-title {
-	text-transform: uppercase;
+text-transform: uppercase;
 }
 .menu {
-	overflow: inherit;
-	text-transform: uppercase;
+overflow: inherit;
+text-transform: uppercase;
 }
 .submenu {
-	position: fixed;
-	top: 55px;
-	left: 160px;
-	width: 160px;
-	height: calc(100vh - 55px);
-	background: #000;
-	border-left: 1px solid $border;
+position: fixed;
+top: 55px;
+left: 160px;
+width: 160px;
+height: calc(100vh - 55px);
+background: #000;
+border-left: 1px solid $border;
 
-	&_list {
-		background: #000;
-		color: #fff;
-		overflow: inherit;
-	}
+&_list {
+	background: #000;
+	color: #fff;
+	overflow: inherit;
+}
 }
 .drop_menu {
-	position: absolute;
-	left: 160px;
-	top: 0;
-	background: #000;
-	width: 160px;
-	color: #fff;
-	opacity: 0;
-	visibility: hidden;
-	transition: 0.3s;
+position: absolute;
+left: 160px;
+top: 0;
+background: #000;
+width: 160px;
+color: #fff;
+opacity: 0;
+visibility: hidden;
+transition: 0.3s;
 
-	&.active {
-		opacity: 1;
-		visibility: visible;
-	}
+&.active {
+	opacity: 1;
+	visibility: visible;
+}
 }*/
-	.side-menu-container {
-		display: block;
-		position: absolute;
-		overflow: visible;
-		height: 100%;
-		width: 100%;
+.side-menu-container {
+	display: block;
+	position: absolute;
+	overflow: visible;
+	height: 100%;
+	width: 100%;
 
-		button[disabled] {
-			color: #fff;
-			opacity: 0.5;
-		}
-	}
-
-	.sidenav-left {
-		display: flex;
-		flex-direction: column;
-		width: 100%;
-		height: 100%;
-		// fill: #737373;
-		box-shadow: 0 1px 3px 0 rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%),
-			0 2px 1px -1px rgb(0 0 0 / 12%);
-		overflow: visible;
-
-		font-family: "Roboto-Regular", "Roboto", sans-serif;
-		font-weight: 400;
-		font-style: normal;
-		font-size: 12px;
-
-		z-index: 60;
-
-		a {
-			color: #fff;
-		}
-
+	button[disabled] {
 		color: #fff;
+		opacity: 0.5;
+	}
+}
 
-		button {
-			color: #fff;
-		}
+.sidenav-left {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+	// fill: #737373;
+	box-shadow: 0 1px 3px 0 rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%),
+	0 2px 1px -1px rgb(0 0 0 / 12%);
+	overflow: visible;
 
-		ng-md-icon {
-			position: relative;
-			top: 5px; // adjust for svg viewbox
-		}
+	font-family: "Roboto-Regular", "Roboto", sans-serif;
+	font-weight: 400;
+	font-style: normal;
+	font-size: 12px;
+
+	z-index: 60;
+
+	a {
+		color: #fff;
 	}
 
-	// <md-toolbar> in angularjs interface
-	.sidenav-logo-container {
-		display: flex;
-		flex-direction: row;
-		flex: 0 0 52px;
-		align-items: center;
-		min-height: 52px;
-		height: 52px;
-		background-color: #000;
+	color: #fff;
+
+	button {
+		color: #fff;
 	}
 
-	/*.md-toolbar-tools {
-	//background-color: #3b283b;
+	ng-md-icon {
+		position: relative;
+		top: 5px; // adjust for svg viewbox
+	}
+}
+
+// <md-toolbar> in angularjs interface
+.sidenav-logo-container {
+	display: flex;
+	flex-direction: row;
+	flex: 0 0 52px;
+	align-items: center;
 	min-height: 52px;
 	height: 52px;
 	background-color: #000;
-	padding: 0;
+}
+
+/*.md-toolbar-tools {
+//background-color: #3b283b;
+min-height: 52px;
+height: 52px;
+background-color: #000;
+padding: 0;
 }*/
 
-	.sidenav-content {
-		flex: 0 1 100%;
-		position: relative;
-		// height: 100%;
-		//background-color: #3b283b;
-		background-color: #000;
-		overflow: visible;
-	}
+.sidenav-content {
+	flex: 0 1 100%;
+	position: relative;
+	// height: 100%;
+	//background-color: #3b283b;
+	background-color: #000;
+	overflow: visible;
+}
 
-	.sidenav-logo-wrapper {
-		position: absolute;
-		left: 10px;
-		width: 140px;
-		height: 40px;
-		overflow: hidden;
-	}
+.sidenav-logo-wrapper {
+	position: absolute;
+	left: 10px;
+	width: 140px;
+	height: 40px;
+	overflow: hidden;
+}
 
-	.sidenav-logo {
-		max-width: 140px;
-		width: 140px;
-		height: 40px;
-		margin: 0 auto;
-	}
+.sidenav-logo {
+	max-width: 140px;
+	width: 140px;
+	height: 40px;
+	margin: 0 auto;
+}
 
-	.sidenav-dropdown-menu-wrapper {
-		position: relative;
-	}
+.sidenav-dropdown-menu-wrapper {
+	position: relative;
+}
 
-	@mixin option-hover {
-		background-color: rgba(158, 158, 158, 0.2);
-	}
+@mixin option-hover {
+	background-color: rgba(158, 158, 158, 0.2);
+}
 
-	.sidenav-dropdown-menu {
-		width: 200px;
-		position: absolute;
-		//background-color: #5a3e5a;
-		background-color: #000;
-		top: 0;
-		right: -200px;
-		padding-left: 0;
-		z-index: 1;
+.sidenav-dropdown-menu {
+	width: 200px;
+	position: absolute;
+	//background-color: #5a3e5a;
+	background-color: #000;
+	top: 0;
+	right: -200px;
+	padding-left: 0;
+	border-top: 5px solid transparent;
+	z-index: 1;
 
-		.sidenav-dropdown-menu-btn {
-			width: 100%;
-			height: 35px;
-			min-height: 30px;
-			display: block;
-			text-align: left;
-			padding-left: 1em;
-			margin-left: 0;
-			margin-bottom: 6px;
-			font-size: 11px;
-			line-height: 2;
-			padding-top: 12px;
-			padding-bottom: 10px;
-			text-transform: uppercase;
-
-			&:not([disabled]):hover {
-				@include option-hover;
-			}
-
-			&.active {
-				color: #f05a22;
-				fill: #f05a22;
-			}
-
-			/*&.active-menu-btn {
-			//background-color: #5a3e5a;
-
-			&:hover {
-				//background-color: #5a3e5a;
-			}
-		}*/
-		}
-
-		&:not(.open-upward) li:first-child .sidenav-dropdown-menu-btn {
-			margin-top: 0;
-		}
-
-		.sidenav-dropdown-menu-btn.two-line-text {
-			padding-top: 8px;
-			padding-bottom: 0;
-			line-height: 1.5;
-		}
-	}
-
-	.sidenav-dropdown-menu.open-upward {
-		top: initial;
-		bottom: 0;
-
-		li:last-child .sidenav-dropdown-menu-btn {
-			margin-bottom: 0;
-		}
-	}
-
-	.sidenav-wrapper {
-		position: relative;
-		min-width: $leftSidenavWidth;
-		height: 100vh;
-		top: 0;
-		left: 0;
-		z-index: 61;
-		transition: min-width ease 0.25s;
-
-		span.side-nav-title {
-			position: relative;
-			top: -4px;
-		}
-
-		.side-nav-icon {
-			color: $separ;
-			display: inline-block;
-			position: absolute;
-			//left: 11px;
-			left: 17px;
-			// bottom: 3px;
-			bottom: 6px;
-		}
-	}
-
-	.side-menu {
+	.sidenav-dropdown-menu-btn {
 		width: 100%;
-		padding-left: 0;
-		margin: 12px 0;
-	}
-
-	.sidemenu-btn {
-		position: relative;
-		width: 100%;
-		height: 36px;
+		/*height: 35px;
+		min-height: 30px;*/
+		min-height: 24px;
 		display: block;
-
 		text-align: left;
-		line-height: 2;
-		text-transform: uppercase;
-
-		padding-top: 11px;
-		padding-bottom: 2px;
-		padding-left: 55px;
-		margin-top: 6px;
-		margin-bottom: 6px;
+		padding-left: 1em;
 		margin-left: 0;
-
-		.side-nav-icon div.icon {
-			position: relative;
-			top: 0;
-			left: -6px;
-		}
-
-		&:not(.f-s-10) {
-			font-size: 11px;
-		}
+		margin-bottom: 6px;
+		font-size: 11px;
+		line-height: 2;
+		/*padding-top: 12px;
+		padding-bottom: 10px;*/
+		padding-top: 3px;
+		padding-bottom: 3px;
+		text-transform: uppercase;
 
 		&:not([disabled]):hover {
 			@include option-hover;
@@ -1906,22 +1814,120 @@
 		/*&.active-menu-btn {
 		//background-color: #5a3e5a;
 
-		&:not([disabled]):hover {
+		&:hover {
 			//background-color: #5a3e5a;
 		}
 	}*/
-
-		.dropdown-icon {
-			float: right;
-			fill: #fff;
-		}
 	}
 
-	.side-menu-bottom-menu {
+	&:not(.open-upward) li:first-child .sidenav-dropdown-menu-btn {
+		margin-top: 0;
+	}
+
+	.sidenav-dropdown-menu-btn.two-line-text {
+		padding-top: 8px;
+		padding-bottom: 0;
+		line-height: 1.5;
+	}
+}
+
+.sidenav-dropdown-menu.open-upward {
+	top: initial;
+	bottom: 0;
+
+	li:last-child .sidenav-dropdown-menu-btn {
+		margin-bottom: 0;
+	}
+}
+
+.sidenav-wrapper {
+	position: relative;
+	min-width: $leftSidenavWidth;
+	height: 100vh;
+	top: 0;
+	left: 0;
+	z-index: 61;
+	transition: min-width ease 0.25s;
+
+	span.side-nav-title {
+		position: relative;
+		// top: -4px;
+	}
+
+	.side-nav-icon {
+		color: $separ;
+		display: inline-block;
 		position: absolute;
-		bottom: 40px;
-		width: 100%;
+		left: 11px;
+		// left: 17px;
+		bottom: 3px;
+		// bottom: 0;
 	}
+}
+
+.side-menu {
+	width: 100%;
+	padding-left: 0;
+	margin: 12px 0;
+}
+
+.sidemenu-btn {
+	position: relative;
+	width: 100%;
+	height: 36px;
+	display: block;
+
+	text-align: left;
+	line-height: 2;
+	text-transform: uppercase;
+
+	padding-top: 11px;
+	padding-bottom: 2px;
+	/*padding-top: 0;
+	padding-bottom: 0;*/
+	padding-left: 55px;
+	margin-top: 6px;
+	margin-bottom: 6px;
+	margin-left: 0;
+
+	.side-nav-icon div.icon {
+		position: relative;
+		top: 0;
+		left: -6px;
+	}
+
+	&:not(.f-s-10) {
+		font-size: 11px;
+	}
+
+	&:not([disabled]):hover {
+		@include option-hover;
+	}
+
+	&.active {
+		color: #f05a22;
+		fill: #f05a22;
+	}
+
+	/*&.active-menu-btn {
+	//background-color: #5a3e5a;
+
+	&:not([disabled]):hover {
+		//background-color: #5a3e5a;
+	}
+}*/
+
+	.dropdown-icon {
+		float: right;
+		fill: #fff;
+	}
+}
+
+.side-menu-bottom-menu {
+	position: absolute;
+	bottom: 40px;
+	width: 100%;
+}
 
 .build-date {
 	.highlight {
@@ -1956,210 +1962,211 @@
 		bottom: initial;
 	}
 
-		.build-date {
+	.build-date {
+		display: none;
+	}
+}
+
+.sidenav-btn {
+	position: relative;
+	display: block;
+	width: 24px;
+	height: 24px;
+	background: #fff;
+	border-radius: 50%;
+	fill: $gray;
+	left: 12px;
+	min-height: 24px;
+	min-width: 24px;
+
+	&.expand-sidenav-btn ng-md-icon {
+		left: -5px;
+	}
+}
+
+.side-menu-settings-container {
+	width: 0px;
+	height: 100%;
+	overflow: visible;
+	position: absolute;
+	top: 0;
+	left: $leftSidenavWidth;
+	z-index: 0;
+	//background-color: #3b283b;
+	background-color: #000;
+	color: #ffffff;
+	overflow: hidden;
+	transition: width ease 0.25s, left ease 0.25s;
+
+	.side-menu-settings-wrapper {
+		position: relative;
+		width: 200px;
+		height: 100%;
+		border-top: 2px solid #1f1f1f;
+		border-left: 2px solid #1f1f1f;
+		box-sizing: border-box;
+	}
+
+	.settings-menu-collapse-btn-holder {
+		position: absolute;
+		right: 3px;
+		top: 9px;
+	}
+
+	.side-menu-group-btn-container {
+		width: 100%;
+		box-sizing: border-box;
+
+		.sms-btn-group-header {
+			margin-left: 20px;
+			margin-top: 15px;
+			font-weight: 600;
+			line-height: normal;
+		}
+
+		.sidemenu-btn {
+			height: 36px;
+			padding-left: 45px;
+		}
+	}
+
+	.side-menu-settings-border-top-1 {
+		border-top: 2px solid #1f1f1f;
+	}
+}
+
+.panel-resizer-holder {
+	position: absolute;
+
+	div.icon {
+		color: $gray;
+	}
+}
+
+.sidenav-resizer-holder {
+	right: 0;
+
+	.expand-sidenav-btn {
+		display: none;
+	}
+}
+
+.sidenav-collapsed {
+	.space-for-sidenav {
+		padding-left: $collapsedLeftSidenavWidth;
+	}
+
+	.g-table-dial {
+		left: 80px;
+	}
+
+	.sidenav-logo-wrapper {
+		width: 40px;
+	}
+
+	.sidenav-wrapper {
+		width: $collapsedLeftSidenavWidth;
+	}
+
+	.sidenav-resizer-holder {
+		// position: absolute;
+		// right: -12px;
+		.to-small-btn {
 			display: none;
+		}
+
+		.expand-sidenav-btn {
+			display: block;
 		}
 	}
 
 	.side-menu-settings-container {
-		width: 0px;
-		height: 100%;
-		overflow: visible;
-		position: absolute;
-		top: 0;
-		left: $leftSidenavWidth;
-		z-index: 0;
-		//background-color: #3b283b;
-		background-color: #000;
-		color: #ffffff;
-		overflow: hidden;
-		transition: width ease 0.25s, left ease 0.25s;
+		left: $collapsedLeftSidenavWidth;
+	}
 
-		.side-menu-settings-wrapper {
-			position: relative;
-			width: 200px;
-			height: 100%;
-			border-top: 2px solid #1f1f1f;
-			border-left: 2px solid #1f1f1f;
-			box-sizing: border-box;
-		}
+	.md-button.md-raised.expand-sidenav-btn {
+		width: 25px;
+		min-height: 20px;
+		height: 25px;
+		margin: 0;
+		left: initial;
 
-		.settings-menu-collapse-btn-holder {
-			position: absolute;
-			right: 3px;
-			top: 9px;
-		}
-
-		.side-menu-group-btn-container {
-			width: 100%;
-			box-sizing: border-box;
-
-			.sms-btn-group-header {
-				margin-left: 20px;
-				margin-top: 15px;
-				font-weight: 600;
-				line-height: normal;
-			}
-
-			.sidemenu-btn {
-				padding-left: 45px;
-			}
-		}
-
-		.side-menu-settings-border-top-1 {
-			border-top: 2px solid #1f1f1f;
+		ng-md-icon {
+			top: initial;
+			right: 4px;
 		}
 	}
 
-	.sidenav-btn {
-		position: relative;
-		display: block;
-		width: 24px;
-		height: 24px;
-		background: #fff;
-		border-radius: 50%;
-		fill: $gray;
-		left: 12px;
-		min-height: 24px;
-		min-width: 24px;
-
-		&.expand-sidenav-btn ng-md-icon {
-			left: -5px;
-		}
+	.sidenav-wrapper {
+		min-width: $collapsedLeftSidenavWidth;
+		z-index: 11000;
 	}
 
-	.panel-resizer-holder {
-		position: absolute;
-
-		div.icon {
-			color: $gray;
-		}
+	.sidemenu-btn {
+		min-width: 50px;
 	}
 
-	.sidenav-resizer-holder {
-		right: 0;
-
-		.expand-sidenav-btn {
-			display: none;
-		}
+	.side-menu-main-buttons .sidemenu-btn .side-nav-title {
+		display: none;
 	}
 
-	.sidenav-collapsed {
-		.space-for-sidenav {
-			padding-left: $collapsedLeftSidenavWidth;
-		}
-
-		.g-table-dial {
-			left: 80px;
-		}
-
-		.sidenav-logo-wrapper {
-			width: 40px;
-		}
-
-		.sidenav-wrapper {
-			width: $collapsedLeftSidenavWidth;
-		}
-
-		.sidenav-resizer-holder {
-			// position: absolute;
-			// right: -12px;
-			.to-small-btn {
-				display: none;
-			}
-
-			.expand-sidenav-btn {
-				display: block;
-			}
-		}
-
-		.side-menu-settings-container {
-			left: $collapsedLeftSidenavWidth;
-		}
-
-		.md-button.md-raised.expand-sidenav-btn {
-			width: 25px;
-			min-height: 20px;
-			height: 25px;
-			margin: 0;
-			left: initial;
-
-			ng-md-icon {
-				top: initial;
-				right: 4px;
-			}
-		}
-
-		.sidenav-wrapper {
-			min-width: $collapsedLeftSidenavWidth;
-			z-index: 11000;
-		}
-
-		.sidemenu-btn {
-			min-width: 50px;
-		}
-
-		.side-menu-main-buttons .sidemenu-btn .side-nav-title {
-			display: none;
-		}
-
-		.portal-header md-toolbar.header {
-			padding-left: $collapsedLeftSidenavWidth;
-		}
-
-		.build-date {
-			display: none;
-		}
-	}
-
-	.separate-side-menu {
-		margin-top: 20px;
-	}
-
-	.sidenav-settings-toggle-btn.settings-menu-opened,
-	.sidenav-settings-toggle-btn.settings-menu-opened.md-button:not([disabled]).md-focused {
-		background-color: #69476a;
-	}
-
-	.side-menu-settings-menu.settings-menu-opened {
-		width: 200px;
+	.portal-header md-toolbar.header {
+		padding-left: $collapsedLeftSidenavWidth;
 	}
 
 	.build-date {
-		position: absolute;
-		bottom: 0px;
-		color: $gray;
-		z-index: 100;
-		font-size: 9px;
-		text-align: left;
-		margin: 6px;
+		display: none;
 	}
+}
 
-	.sidenav-error-subtitle {
-		margin-top: 4px;
-		margin-bottom: 4px;
+.separate-side-menu {
+	margin-top: 20px;
+}
 
-		cursor: pointer;
+.sidenav-settings-toggle-btn.settings-menu-opened,
+.sidenav-settings-toggle-btn.settings-menu-opened.md-button:not([disabled]).md-focused {
+	background-color: #69476a;
+}
 
-		&:hover {
-			opacity: 0.7;
-		}
+.side-menu-settings-menu.settings-menu-opened {
+	width: 200px;
+}
+
+.build-date {
+	position: absolute;
+	bottom: 0px;
+	color: $gray;
+	z-index: 100;
+	font-size: 9px;
+	text-align: left;
+	margin: 6px;
+}
+
+.sidenav-error-subtitle {
+	margin-top: 4px;
+	margin-bottom: 4px;
+
+	cursor: pointer;
+
+	&:hover {
+		opacity: 0.7;
 	}
+}
 
-	.sidenav-tech-button {
-		cursor: pointer;
+.sidenav-tech-button {
+	cursor: pointer;
 
-		&:hover {
-			opacity: 0.7;
-		}
+	&:hover {
+		opacity: 0.7;
 	}
+}
 
-	.sidenav-api-link {
-		color: #fff;
-		text-decoration: none;
+.sidenav-api-link {
+	color: #fff;
+	text-decoration: none;
 
-		&:hover {
-			opacity: 0.7;
-		}
+	&:hover {
+		opacity: 0.7;
 	}
+}
 </style>

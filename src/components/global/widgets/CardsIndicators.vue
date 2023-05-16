@@ -6,7 +6,7 @@
 		>
 			<div class="card"
 				v-for="(item) in stats"
-				:class="{active: item.id == active}"
+				:class="{active: stats_map[item.id] == outputs.type.__val}"
 				@click="setActive(item)"
 			>
 				<div class="card_name">{{ item.name }}</div>
@@ -26,87 +26,59 @@
 </template>
 
 <script setup>
-import dayjs from 'dayjs';
 
+	import dayjs from 'dayjs';
 
-	let props = defineProps({
+	const props = defineProps({
 		wid: String
 	})
 
-	let dashStore = useStoreDashboard()
-	let widget = dashStore.getWidget(props.wid)
+	const dashStore = useStoreDashboard()
+	let component = dashStore.getWidget(props.wid)
 
-	let scope = computed(() => {
-		return dashStore.scopes[widget.scope]
+	const inputs = computed(() => {
+		let props = dashStore.props.inputs.filter((prop) => prop.component_id == component.uid)
+		let obj = {}
+
+		props.forEach((prop) => {
+			obj[prop.key] = prop.__val
+		})
+		return obj
+	})
+	const outputs = computed(() => {
+		let props = dashStore.props.outputs.filter((prop) => prop.component_id == component.uid)
+		let obj = {}
+
+		props.forEach((prop) => {
+			obj[prop.key] = prop
+		})
+		return obj
 	})
 
+	watch(inputs, () => loadData())
+
+	const stats_map = {
+		'nav': 'nav',
+		'total': 'pl'
+	}
 	const STATUSES = {
 		0: 'Loading data',
 		101: 'Data are not available',
 	}
 	let status = ref(0)
-
-
 	let stats = ref(null)
-	let active = ref('nav')
-
-	let portfolio
-	let date
-
-	for ( let prop in scope.value ) {
-		if ( typeof scope.value[prop] != 'object' ) continue
-
-		let value = scope.value[prop].value
-
-		if ( prop == 'portfolio' ) portfolio = scope.value[prop].value
-		if ( prop == 'date_to' ) date = typeof scope.value[prop] == 'string'
-						? scope.value[prop]
-						: scope.value[prop].value
-
-		if ( value.includes('WATCH') ) {
-			let [scope, watchProp] = value.split(':')[1].split('.')
-
-			if ( prop == 'portfolio' ) portfolio = dashStore.scopes[scope][watchProp].value
-			if ( prop == 'date_to' ) date = typeof dashStore.scopes[scope][watchProp] == 'string'
-						? dashStore.scopes[scope][watchProp]
-						: dashStore.scopes[scope][watchProp].value
-
-			watch(
-				() => dashStore.scopes[scope][watchProp],
-				() => {
-					if ( prop == 'portfolio' ) portfolio = dashStore.scopes[scope][watchProp].value
-					if ( prop == 'date_to' ) date = typeof dashStore.scopes[scope][watchProp] == 'string'
-						? dashStore.scopes[scope][watchProp]
-						: dashStore.scopes[scope][watchProp].value
-					console.log('dsdddd', 'WATCH')
-					loadData()
-				}
-			)
-		} else {
-
-			watch(
-				() => scope.value[prop],
-				() => {
-					if ( prop == 'portfolio' ) portfolio = scope.value[prop].value
-					if ( prop == 'date_to' ) date = scope.value[prop].value
-
-					loadData()
-				}
-			)
-		}
-	}
 
 	loadData()
 
 	async function loadData() {
-		if ( dayjs(scope.value.date_to.value).diff(dayjs(), 'day') >= 0 ) {
+		if ( dayjs(inputs.value.date).diff(dayjs(), 'day') >= 0 ) {
 			status.value = 101
 			return false
 		}
 		let apiOpts = {
 			filters: {
-				portfolio: portfolio,
-				date: date,
+				portfolio: inputs.value.portfolio,
+				date: inputs.value.date,
 			}
 		}
 
@@ -122,9 +94,8 @@ import dayjs from 'dayjs';
 		status.value = 100
 	}
 	async function setActive( item ) {
-		if (item.id == 'nav' || item.id == 'total') {
-			active.value = item.id
-			scope.value._cbp_type = item.id == 'total' ? 'pl' : item.id
+		if (stats_map[item.id] == 'nav' || stats_map[item.id] == 'pl') {
+			outputs.value.type.__val = stats_map[item.id]
 		}
 	}
 	function formatByType( item ) {

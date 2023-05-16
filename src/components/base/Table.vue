@@ -107,6 +107,8 @@
 	padding: 0 14px;
 	height: inherit;
 	line-height: inherit;
+	overflow: hidden;
+	text-overflow: ellipsis;
 
 	& + & {
 		border-left: 1px solid $border;

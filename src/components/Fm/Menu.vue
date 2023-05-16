@@ -1,5 +1,5 @@
 <template>
-	<div class="fm_menu" v-click-outside="closeOnCo">
+	<div class="fm_menu">
 		<div ref="activator" class="height-100">
 			<slot name="btn" :isOpen="isOpen"></slot>
 		</div>
@@ -11,6 +11,7 @@
 					class="fm_drop"
 					ref="popup"
 					:style="{'min-height': minHeight}"
+					v-click-outside="closeOnCo"
 				>
 					<slot :close="toggle"></slot>
 				</div>
@@ -136,7 +137,7 @@
 
 			distanceToLeft = Math.abs(window.innerWidth - activatorRect.left - props.offsetX)
 			distanceToRight = Math.abs(window.innerWidth - activatorRect.right - props.offsetX)
-			distanceToTop = Math.abs(activatorRect.top - window.innerHeight - props.offsetY)
+			distanceToTop = Math.abs(activatorRect.top - props.offsetY)
 			distanceToBottom = Math.abs(window.innerHeight - activatorRect.bottom - props.offsetY)
 		}
 
@@ -148,16 +149,15 @@
 		if (
 			(
 				( (!isTop && !isBot) || isBot )
-				&& ((distanceToBottom >= popupRect.height) || (distanceToBottom > distanceToTop))
+				&& ( (distanceToBottom >= popupRect.height) || (distanceToBottom > distanceToTop) )
 			)
 			|| ((distanceToTop <= popupRect.height) && (distanceToBottom > distanceToTop))
 		) {
-			console.log('props.offsetY:', props.offsetY)
 			popup.value.style.top    = `${activatorRect.height + props.offsetY}px`
-			popup.value.style.maxHeight = `${distanceToBottom}px`
+			popup.value.style.maxHeight = `${distanceToBottom - 15}px`
 		} else {
 			popup.value.style.bottom = `${activatorRect.height + props.offsetY}px`;
-			popup.value.style.maxHeight = `${distanceToTop}px`
+			popup.value.style.maxHeight = `${distanceToTop - 15}px`
 		}
 		// X axios
 		if (
@@ -236,7 +236,7 @@
 
 			if (positionX + popupWidth > windowWidth) {
 				popup.value.style.right = '0';
-				popup.value.style.left = "";
+				popup.value.style.left = "auto";
 
 			} else {
 				popup.value.style.left = positionX + 'px';
@@ -245,7 +245,7 @@
 
 			if (positionY + popupHeight > windowHeight) {
 				popup.value.style.bottom = '0';
-				popup.value.style.top = "";
+				popup.value.style.top = "auto";
 
 			}
 			else {

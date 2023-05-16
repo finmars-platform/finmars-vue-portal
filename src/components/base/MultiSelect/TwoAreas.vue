@@ -83,7 +83,6 @@
 
 	let availableSearch = ref('');
 	let selectedSearch = ref('');
-
 	/**
 	 * Set of unique ids of selected items
 	 * @type {Ref<Set>}
@@ -160,6 +159,7 @@
 		border-right: 1px solid $border-darken;
 		padding: 10px 0;
 		overflow: auto;
+		margin-top: -3px;
 		height: 270px;
 	}
 

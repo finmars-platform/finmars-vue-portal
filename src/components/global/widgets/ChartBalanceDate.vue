@@ -50,48 +50,23 @@
 	const STATUSES = {
 		0: 'Waiting [barchart] data',
 		101: 'Data are not available',
+		202: 'No [Date] property',
+		203: 'No [Category type] property',
 	}
 	let status = ref(0)
 
-	const COLORS = [
-		'#577590CC',
-		'#43AA8BCC',
-		'#F9AB4B',
-		'#FA6769',
-		'#F9C74F',
-		'#979BFF',
-		'#D9ED92',
-		'#C8D7F9',
-		'#96B5B4',
-		'#AB7967',
-		'#577590CC',
-		'#43AA8BCC',
-		'#F9AB4B',
-		'#FA6769',
-		'#F9C74F',
-		'#979BFF',
-		'#D9ED92',
-		'#C8D7F9',
-		'#96B5B4',
-		'#AB7967',
-		'#577590CC',
-		'#43AA8BCC',
-		'#F9AB4B',
-		'#FA6769',
-		'#F9C74F',
-		'#979BFF',
-		'#D9ED92',
-		'#C8D7F9',
-		'#96B5B4',
-		'#AB7967'
-	]
 	let dashStore = useStoreDashboard()
 	let widget = dashStore.getWidget(props.wid)
 
-	let scope = computed(() => {
-		return dashStore.scopes[widget.scope]
-	})
+	let inputs = computed(() => {
+		let props = dashStore.props.inputs.filter((prop) => prop.component_id == widget.uid)
+		let obj = {}
 
+		props.forEach((prop) => {
+			obj[prop.key] = prop.__val
+		})
+		return obj
+	})
 
 	let total = ref('0 USD')
 	let active = ref(null)
@@ -154,7 +129,7 @@
 
 								labelsOriginal.forEach((item, i) => {
 									item.datasetIndex = 0
-									item.fillStyle = dashStore.instrColors[scope.value.__categoryType + item.text]
+									item.fillStyle = dashStore.instrColors[inputs.value.category_type + item.text]
 
 									if ( data.value.datasets[0].data.length <= i ) {
 										item.datasetIndex = 1
@@ -180,8 +155,9 @@
 						callbacks: {
 							label: function(context) {
 								let labelIndex = context.dataIndex
+
 								if ( context.datasetIndex === 1 ) {
-									labelIndex = context.chart.data.datasets[0].data.length
+									labelIndex = context.chart.data.datasets[0].data.length + labelIndex
 								}
 
 								return context.chart.data.labels[labelIndex] + ': ' + context.formattedValue;
@@ -203,27 +179,34 @@
 			},
 		});
 	}
-	if ( dayjs(scope.value.date_to.value).diff(dayjs(), 'day') >= 0 ) {
+	if ( dayjs(inputs.value.date).diff(dayjs(), 'day') >= 0 ) {
 		status.value = 101
 	}
 	watch(
-		scope.value,
+		inputs,
 		() => prepareData()
 	)
 	async function prepareData() {
-		if ( dayjs(scope.value.date_to.value).diff(dayjs(), 'day') >= 0 ) {
+		if ( !inputs.value.date ) {
+			status.value = 202
+			return false
+		}
+		if ( !inputs.value.category_type ) {
+			status.value = 203
+			return false
+		}
+
+		if ( dayjs(inputs.value.date).diff(dayjs(), 'day') >= 0 ) {
 			status.value = 101
 			return false
 		}
 
-		if ( !scope.value._detail_date ) return false
-
 		let nav = await dashStore.getHistoryNav({
-			date: scope.value._detail_date,
-			category: scope.value.__categoryType
+			date: inputs.value.date,
+			category: inputs.value.category_type
 		})
 
-		if ( nav.error ) {
+		if ( !nav || nav.error ) {
 			status.value = 101
 
 			return false
@@ -248,7 +231,7 @@
 		let plus = items
 			.filter(item => item[1] >= 0)
 			.map(item => {
-				plusColors.push( dashStore.instrColors[scope.value.__categoryType + item[0]] )
+				plusColors.push( dashStore.instrColors[inputs.value.category_type + item[0]] )
 				return item[1]
 			})
 
@@ -258,7 +241,7 @@
 		let minus = items
 			.filter(item => item[1] < 0)
 			.map(item => {
-				minusColors.push( dashStore.instrColors[scope.value.__categoryType + item[0]] )
+				minusColors.push( dashStore.instrColors[inputs.value.category_type + item[0]] )
 				return item[1]
 			})
 

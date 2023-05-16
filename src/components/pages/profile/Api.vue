@@ -80,7 +80,7 @@
 </template>
 
 <script setup>
-import moment from "moment";
+import dayjs from "dayjs";
 
 let tokenInfo = (await useApi("tokenInfo.get")).results;
 let tokenShows = ref([])
@@ -89,7 +89,7 @@ let store = useStore();
 const config = useRuntimeConfig();
 
 function fromatDate(date) {
-	return moment(date).format("DD.MM.YYYY LT");
+	return dayjs(date).format("DD.MM.YYYY LT");
 }
 </script>
 

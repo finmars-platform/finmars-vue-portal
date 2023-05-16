@@ -46,6 +46,9 @@
 						<div class="fm_list_item" @click="isOpenRollback = true, close()">
 							<FmIcon class="mr-10" icon="cloud_sync" /> Rollback
 						</div>
+						<div class="fm_list_item" @click="isProvisionLogDialog = true, close()">
+							<FmIcon class="mr-10" icon="cloud_sync" /> Show Provising Log
+						</div>
 						<div class="fm_list_item" @click="exportDb(), close()">
 							<FmIcon class="mr-10" icon="cloud_upload" /> Export backup
 						</div>
@@ -129,12 +132,13 @@
 		</template>
 
 		<LazyPagesProfileWorkspaceRollbackM :workspaceId="db.id" v-model="isOpenRollback" v-if="isOpenRollback" />
+		<LazyPagesProfileWorkspaceProvisionLogM :baseApiUrl="db.base_api_url" v-model="isProvisionLogDialog" v-if="isProvisionLogDialog" />
 	</FmCard>
 </template>
 
 <script setup>
 
-	import moment from 'moment'
+	import dayjs from 'dayjs'
 
 	const props = defineProps({
 		db: Object
@@ -149,6 +153,7 @@
 	let isEdit = ref(false);
 
 	let isOpenRollback = ref(false);
+	let isProvisionLogDialog = ref(false);
 
 	let title = ref(null);
 	let description = ref(null);
@@ -169,8 +174,8 @@
 
 	let showActions = ref(false)
 
-	let dateKey = moment( props.db.license_expiry_date )
-	let diffDateKey = dateKey.diff(moment(), 'days')
+	let dateKey = dayjs( props.db.license_expiry_date )
+	let diffDateKey = dateKey.diff(dayjs(), 'days')
 
 	let status = computed(() => {
 		if ( !props.db.is_initialized ) return 'Workspace is initializing'
@@ -290,15 +295,7 @@
 		}
 	}
 	async function open() {
-		let res = await useApi("masterSet.patch", {
-			body: {},
-			params: { id: props.db.id },
-		});
-		if ( res.success ) {
-			await store.getMasterUsers()
-			//navigateTo('/home')
-			window.location.href = '/' + props.db.base_api_url + '/v/home'
-		}
+		window.location.href = '/' + props.db.base_api_url + '/v/home'
 	}
 	async function save() {
 		let res = await useApi("masterUser.put", {
