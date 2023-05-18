@@ -1,0 +1,95 @@
+<div class="popup-menu">
+    <div class="layout-menu-item" data-ng-click="createLayout($event)">
+        <span class="material-icons">add_circle</span>
+        <span>New layout</span>
+    </div>
+
+    <md-menu-divider></md-menu-divider>
+
+    <div class="layouts-container" style="min-height: 100px;">
+
+        <div data-ng-if="!processing">
+            <div data-ng-repeat="layout in layouts" class="layout-menu-item">
+
+                <span class="material-icons default-icons" data-ng-class="{'default-layout': layout.is_default}"
+                      data-ng-click="setAsDefault(layout)">home</span>
+                <div class="layout-menu-text" data-ng-click="openLayout(layout)">{{layout.name}}</div>
+            </div>
+        </div>
+
+        <div data-ng-if="processing" class="p-t-16" layout="row" layout-sm="column" layout-align="space-around">
+            <progress-circular diameter="50"></progress-circular>
+        </div>
+
+    </div>
+
+    <md-menu-divider></md-menu-divider>
+
+    <div class="layout-menu-item" data-ng-click="saveLayoutList()">
+        <span class="material-icons">save</span>
+        <span>Save</span>
+    </div>
+
+    <div class="layout-menu-item" data-ng-click="openLayoutList($event)">
+        <span class="material-icons" style="visibility: hidden;">open_in_new</span>
+        <span>Open</span>
+    </div>
+
+    <div class="layout-menu-item" data-ng-click="makeCopy($event)">
+        <span class="material-icons">duplicate</span>
+        <span>Make copy</span>
+    </div>
+
+    <div class="layout-menu-item" data-ng-click="editDashboardLayout()">
+        <span class="material-icons" style="visibility: hidden">edit</span>
+        <span>Edit Dashboard Layout</span>
+    </div>
+
+    <md-menu-divider></md-menu-divider>
+
+    <div class="layout-menu-item" data-ng-click="exportLayout($event)">
+        <span class="material-icons">exit_to_app</span>
+        <span>Export</span>
+    </div>
+
+    <div class="layout-menu-item" data-ng-click="openInvites($event)" data-ng-class="{'disabled-btn': !invites.length}">
+        <span class="material-icons">email</span>
+        <span>Invites ({{invites.length}})</span>
+    </div>
+
+
+    <div class="layout-menu-item" data-ng-click="renameLayout($event)">
+        <span class="material-icons">create</span>
+        <span>Rename</span>
+    </div>
+
+    <div class="layout-menu-item" data-ng-click="pullUpdate($event)"
+         data-ng-if="layout.sourced_from_global_layout && !layout.origin_for_global_layout">
+        <span class="material-icons">share</span>
+        <span>Update</span>
+    </div>
+
+    <div class="layout-menu-item" data-ng-click="shareLayout($event)"
+         data-ng-if="(!layout.sourced_from_global_layout && !layout.origin_for_global_layout) || (layout.sourced_from_global_layout && layout.origin_for_global_layout)">
+        <span class="material-icons">share</span>
+        <span>Share</span>
+    </div>
+
+    <div class="layout-menu-item"
+         data-ng-class="{'default-layout': layout.is_default}"
+         data-ng-click="setAsDefault(layout)"
+         data-ng-disabled="layout.is_default">
+
+        <span class="material-icons">home</span>
+        <span>Make default</span>
+
+    </div>
+
+    <md-menu-divider></md-menu-divider>
+
+    <div class="layout-menu-item" data-ng-click="deleteLayout($event)">
+        <span class="material-icons">delete</span>
+        <span>Delete</span>
+    </div>
+
+</div>

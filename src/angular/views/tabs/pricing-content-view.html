@@ -1,0 +1,85 @@
+<div layout="row">
+
+    <div layotu="column">
+
+        <div layout="row" class="m-b-13">
+
+            <dropdown-select class="p-r-8" label="Pricing Currency"
+                             model="vm.entity.pricing_currency"
+                             placeholder-text="Pricing Currency"
+                             menu-options="vm.currencies"
+                             small-options="{tooltipText: 'Pricing Currency'}"
+                             on-change-callback="vm.entityChange()"
+                             style="width: 306px">
+            </dropdown-select>
+<!--                on-change-callback="vm.entityChange()"-->
+<!--                <dropdown-select class="p-r-8" label="Co-directional exposure currency"
+                             model="vm.entity.co_directional_exposure_currency"
+                             placeholder-text="Co-directional exposure currency"
+                             menu-options="vm.currencies"
+                             small-options="{tooltipText: 'Co-directional exposure currency'}"
+                             style="width: 200px;">
+            </dropdown-select>
+
+            <dropdown-select class="p-r-8" label="Counter-directional exposure currency"
+                             model="vm.entity.counter_directional_exposure_currency"
+                             placeholder-text="Counter-directional exposure currency"
+                             menu-options="vm.currencies"
+                             small-options="{tooltipText: 'Counter-directional exposure currency'}"
+                             style="width: 200px;">
+            </dropdown-select>-->
+
+            <number-input class="p-r-8"
+                          label="Pricing Multiplier"
+                          model="vm.entity.price_multiplier"
+                          small-options="{tooltipText: 'Pricing Multiplier'}"
+                          style="width: 148px;">
+            </number-input>
+
+            <number-input class="p-r-8"
+                          label="Default Price"
+                          model="vm.entity.default_price"
+                          small-options="{tooltipText: 'Default Price'}"
+                          style="width: 148px;">
+            </number-input>
+
+            <dropdown-select class="p-r-8" label="Pricing Condition"
+                             model="vm.entity.pricing_condition"
+                             placeholder-text="Pricing Condition"
+                             menu-options="vm.pricingConditions"
+                             small-options="{tooltipText: 'Pricing Condition'}"
+                             style="width: 306px;">
+            </dropdown-select>
+
+        </div>
+
+        <div layout="row" class="m-b-13">
+
+            <text-input class="p-r-8"
+                        model="vm.entity.reference_for_pricing"
+                        label="ID for Price Downloading"
+                        placeholder-text="ID for Price Downloading"
+                        style="width: 306px;">
+            </text-input>
+
+            <md-button data-ng-if="vm.entityType === 'instrument' && vm.entity.id"
+                       class="md-raised primary-button m-t-0 m-b-0"
+                       data-ng-click="vm.runPricingInstrument($event)">Run Pricing
+            </md-button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div ng-if="vm.readyStatus">
+    <grid-table class="instrument-pricing-policies-table"
+                data-gt-data-service="vm.pricingPoliciesGridTableDataService"
+                data-gt-event-service="vm.pricingPoliciesGridTableEventService">
+    </grid-table>
+</div>
+
+<div ng-if="!vm.readyStatus" class="flex-row flex-c-center width-100" style="height: 100px;">
+    <progress-circular diameter="100"></progress-circular>
+</div>

@@ -1,0 +1,120 @@
+<md-dialog aria-label="" ng-cloak class="draggable-dialog width-70 edit-expression-procedure" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Create Expression Procedure</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+
+        <div layout="column" data-ng-if="vm.readyStatus.procedure">
+
+            <div class="p-16">
+
+                <div>
+                    <div class="width-100">
+                        <md-input-container>
+                            <label>Name</label>
+                            <input type="text" data-ng-model="vm.item.name">
+                        </md-input-container>
+                    </div>
+
+                    <div class="width-100">
+
+                        <md-input-container>
+                            <label>User Code</label>
+                            <input type="text" data-ng-model="vm.item.user_code">
+                        </md-input-container>
+
+                    </div>
+
+                    <div class="width-100">
+                        <md-input-container>
+                            <label>Notes</label>
+                            <input type="text" data-ng-model="vm.item.notes">
+                        </md-input-container>
+                    </div>
+
+                    <div class="edit-expression-procedure-context-variables">
+
+                        <h3>Context Variables</h3>
+
+                        <div data-ng-repeat="item in vm.item.context_variables track by $index"
+                             class="edit-expression-procedure-context-variable" layout="column">
+
+                            <div style="padding-left: 12px; margin-bottom: 8px;">
+                                Index: {{item.order}}
+                            </div>
+
+                            <div>
+
+                                <md-input-container>
+                                    <label for="">Name (must start with <b>context_</b>)</label>
+                                    <input type="text" data-ng-model="item.name">
+                                </md-input-container>
+
+                            </div>
+
+                            <div>
+
+                                <md-input-container>
+                                    <label for="">Expression</label>
+                                    <input type="text" data-ng-model="item.expression">
+                                </md-input-container>
+
+                                <expression-editor-button data-item="item.expression">
+                                </expression-editor-button>
+
+                            </div>
+
+                            <div>
+
+                                <md-input-container>
+                                    <label for="">Notes</label>
+                                    <input type="text" data-ng-model="item.notes">
+                                </md-input-container>
+
+                            </div>
+
+                            <div>
+                                <md-button class="md-warn" data-ng-click="vm.deleteContextVariable($event, $index)">
+                                    Delete
+                                </md-button>
+                            </div>
+
+                        </div>
+
+                        <md-button data-ng-click="vm.addContextVariable($event)">Add Context Variable</md-button>
+
+                    </div>
+
+                </div>
+
+                <div class="ace-editor" id="aceEditor" style="height: 80vh;">
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div data-ng-if="!vm.readyStatus.procedure">
+
+            <div class="m-16" layout="row" layout-sm="column" layout-align="space-around">
+                <progress-circular diameter="100"></progress-circular>
+            </div>
+
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()">
+            Close
+        </md-button>
+        <md-button class="md-primary" ng-click="vm.agree()" style="margin-right:20px;">
+            Create
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

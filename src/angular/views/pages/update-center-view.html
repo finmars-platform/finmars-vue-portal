@@ -1,0 +1,48 @@
+<div class="update-center-page p-24">
+
+    <div layout="column">
+        <h1>Finmars Update Center</h1>
+
+        <div data-ng-if="vm.readyStatus.data">
+
+
+            <div data-ng-if="vm.currentMasterUser.version == vm.latestVersion.name">
+                Your ecosystem is up to date
+            </div>
+
+            <div data-ng-if="vm.currentMasterUser.version != vm.latestVersion.name">
+
+                <h1>Latest Version: <b>{{vm.latestVersion.name}}</b></h1>
+
+                <h2>Current Version: <b>{{vm.currentMasterUser.version}}</b></h2>
+
+                <md-button class="md-raised primary-button" data-ng-click="vm.updateFinmars()">Update Finmars</md-button>
+
+            </div>
+
+
+            <div>
+
+                <md-input-container class="md-block" flex-gt-sm style="margin-top: 10px">
+                    <md-checkbox data-ng-checked="vm.currentMasterUser.auto_update"
+                                 data-ng-click="vm.toggleAutoUpdate()"
+                                 aria-label="checkbox">
+                        <label style="width: 100%; position: relative">Autoupdate Finmars</label>
+                    </md-checkbox>
+                </md-input-container>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.data" style="width: 100%">
+        <div layout="row" layout-sm="column" layout-align="space-around">
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+    </div>
+
+</div>

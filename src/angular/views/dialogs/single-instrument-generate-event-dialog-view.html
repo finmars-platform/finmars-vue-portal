@@ -1,0 +1,41 @@
+<md-dialog aria-label="" ng-cloak class="draggable-dialog width-50" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Generate Events Settings</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="p-24">
+
+        <h3 class="m-0 m-b-16 text-center">Settings</h3>
+
+        <div>
+
+            <div layout="row">
+
+                <md-input-container>
+                    <label for="">Date from</label>
+                    <zh-date-picker data-date-value="vm.options.effective_date_0"></zh-date-picker>
+                </md-input-container>
+
+                <md-input-container>
+                    <label for="">Date to</label>
+                    <zh-date-picker data-date-value="vm.options.effective_date_1"></zh-date-picker>
+                </md-input-container>
+
+            </div>
+
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.agree()" style="margin-right:20px;">
+            Generate Events
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

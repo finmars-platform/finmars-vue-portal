@@ -1,0 +1,282 @@
+<!-- .g-content-wrap -->
+<!-- .g-workarea-wrap -->
+<!-- .g-root-wrapper -->
+
+<div class="g-wrapper position-relative"
+     data-ng-class="getWrapperClasses()">
+
+    <div class="g-recon verticalSplitPanelWrapper"
+         data-ng-if="isRootEntityViewer && verticalAdditions.isOpen && domElemsAreReady">
+
+        <div group-width-aligner
+             root-wrap-elem="rootWrapElem"
+             content-wrap-elem="contentWrapElem"
+             ev-data-service="evDataService"
+             ev-event-service="evEventService"></div>
+
+        <div class="g-width-slider"></div>
+
+        <div class="g-additions-workarea" data-ng-if="verticalAdditions.type === 'reconciliation'">
+            <g-vertical-split-panel-report-binder ev-data-service="evDataService"
+                                                  ev-event-service="evEventService"
+                                                  sp-exchange-service="spExchangeService"
+                                                  root-wrap-elem="rootWrapElem"
+                                                  class="display-block height-100">
+            </g-vertical-split-panel-report-binder>
+        </div>
+
+    </div>
+
+    <div class="g-content-wrap"
+         data-ng-class="{'g-content-wrap-right': verticalAdditions.isOpen, 'g-root-content-wrap': isRootEntityViewer}">
+
+<!--        <div ng-if="isReport">
+            <g-top-part ev-data-service="evDataService"
+                        ev-event-service="evEventService"
+            ></g-top-part>
+        </div>-->
+
+        <div class="g-workarea-wrap">
+            <div class="g-workarea main-area"
+                 data-ng-if="domElemsAreReady"
+                 ev-data-service="evDataService"
+                 ev-event-service="evEventService">
+
+                <div ng-if="components.topPart">
+                    <g-top-part ev-data-service="evDataService"
+                                ev-event-service="evEventService"
+                                attribute-data-service="attributeDataService"
+                                sp-exchange-service="spExchangeService">
+                    </g-top-part>
+                </div>
+
+                <div ng-if="components.filterArea" class="position-relative">
+                    <g-filters ev-data-service="evDataService"
+                               ev-event-service="evEventService"
+                               attribute-data-service="attributeDataService"
+                               content-wrap-element="contentWrapElem"
+                               hide-filters-block="hideFiltersBlock"
+                               hide-use-from-above-filters="hideUseFromAboveFilters">
+                    </g-filters>
+                </div>
+
+                <!--<div ng-if="!isReport" class="g-ev-left-panel-holder">
+                    <g-ev-left-panel
+                                class="height-100 display-block"
+                                ev-data-service="evDataService"
+                                ev-event-service="evEventService"
+                                attribute-data-service="attributeDataService"
+                                sp-exchange-service="spExchangeService">
+                    </g-ev-left-panel>
+                </div>-->
+
+<!--                <div class="g-grouping-section"
+                     data-ng-if="components.groupingArea && viewType !== 'matrix'">
+                    <group-grouping ev-data-service="evDataService"
+                                    ev-event-service="evEventService"
+                                    attribute-data-service="attributeDataService"
+                                    content-wrap-element="contentWrapElem"></group-grouping>
+                </div>-->
+
+                <div ng-if="readyToRenderTable" class="g-table-section">
+
+                    <div class="flex-row">
+
+                        <div ng-if="!isReport" class="g-ev-left-panel-holder gEvLeftPanelHolder">
+                            <g-ev-left-panel class="height-100 display-block"
+                                             ev-data-service="evDataService"
+                                             ev-event-service="evEventService"
+                                             attribute-data-service="attributeDataService"
+                                             sp-exchange-service="spExchangeService"
+                                             content-wrap-element="contentWrapElem"></g-ev-left-panel>
+
+                            <div class="drop-area-wrap left-side-groups-drop-area display-none gLeftSideGroupsHolder">
+                                <div class="g-drop-area gDropArea"></div>
+
+                                <div class="drop-area-content">
+                                    <span>Drop here to add grouping</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="g-table-container">
+
+                            <div class="g-table-wrap">
+
+                                <div class="g-column-area-wrap">
+                                    <div data-ng-if="components.columnArea && viewType !== 'matrix'">
+                                        <group-columns ev-data-service="evDataService"
+                                                       ev-event-service="evEventService"
+                                                       attribute-data-service="attributeDataService"
+                                                       content-wrap-element="contentWrapElem"
+                                        ></group-columns>
+                                    </div>
+
+                                    <!--                                <md-button data-ng-if="!isReport && !isInsideDashboard && viewType !== 'matrix'"
+                                                                           class="toggle-group-column-area-btn"
+                                                                           ng-click="toggleGroupAndColumnArea()">
+                                                                    <ng-md-icon ng-hide="groupingAndColumnAreaCollapsed"
+                                                                                icon="keyboard_arrow_up"></ng-md-icon>
+                                                                    <ng-md-icon ng-hide="!groupingAndColumnAreaCollapsed"
+                                                                                icon="keyboard_arrow_down"></ng-md-icon>
+                                                                </md-button>-->
+                                </div>
+
+                                <group-table-body data-ng-if="viewType == 'report_viewer'"
+                                                  class="group-table-body"
+                                                  data-ng-class="{
+                                                'g-font-size-small': reportOptions.table_font_size === 'small',
+                                                'g-font-size-medium': reportOptions.table_font_size === 'medium',
+                                                'g-font-size-large': reportOptions.table_font_size === 'large'
+                                              }"
+                                                  ev-data-service="evDataService"
+                                                  ev-event-service="evEventService"
+                                                  workarea-wrap-element="workareaWrapElem"
+                                                  content-wrap-element="contentWrapElem"
+                                                  root-wrap-element="rootWrapElem"
+                                ></group-table-body>
+
+                                <report-viewer-matrix data-ng-if="viewType == 'matrix'"
+                                                      class="height-100 display-block matrix-inside-report-builder"
+                                                      style="height: 600px;"
+                                                      matrix-settings="viewSettings"
+                                                      ev-data-service="evDataService"
+                                                      ev-event-service="evEventService"></report-viewer-matrix>
+
+                                <!--<div g-c-areas-drag-and-drop
+                                     ev-data-service="evDataService"
+                                     ev-event-service="evEventService"
+                                     content-wrap-element="contentWrapElem"
+                                     root-wrap-element="rootWrapElem"></div>-->
+                                <div ng-if="isReport"
+                                     rv-gcf-areas-dnd
+                                     ev-data-service="evDataService"
+                                     ev-event-service="evEventService"
+                                     content-wrap-element="contentWrapElem"></div>
+
+                                <div ng-if="!isReport"
+                                     ev-gcf-areas-dnd
+                                     ev-data-service="evDataService"
+                                     ev-event-service="evEventService"
+                                     content-wrap-element="contentWrapElem"></div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+         <!-- <div data-ng-if="isInsideDashboard && !components.filterArea" class="g-dashboard-filter-holder">
+
+            <md-button class="toggle-dashboard-filter-btn"
+                       ng-click="toggleDashboardFilter()">
+                <ng-md-icon ng-hide="dashboardFilterCollapsed"
+                            icon="keyboard_arrow_left"></ng-md-icon>
+                <ng-md-icon ng-hide="!dashboardFilterCollapsed"
+                            icon="keyboard_arrow_right"></ng-md-icon>
+            </md-button>
+
+            <div class="g-dashboard-filter">
+                <group-dashboard-filter data-ng-show="!dashboardFilterCollapsed"
+                                        ev-data-service="evDataService"
+                                        ev-event-service="evEventService"
+                                        attribute-data-service="attributeDataService"></group-dashboard-filter>
+            </div>
+
+        </div> -->
+
+<!--        <div class="g-filter-sidebar main-sidebar" ng-if="components.sidebar && domElemsAreReady">
+            <div>
+                <div class="g-filter" id="filtersbag">
+                    <g-sidebar-filter ev-data-service="evDataService"
+                                      ev-event-service="evEventService"
+                                      attribute-data-service="attributeDataService"
+                                      sp-exchange-service="spExchangeService"
+                                      content-wrap-element="contentWrapElem"></g-sidebar-filter>
+                </div>
+            </div>
+        </div>-->
+
+    </div>
+
+    <div class="g-additions" data-ng-if="isRootEntityViewer && additions.isOpen">
+
+            <div data-ng-if="domElemsAreReady">
+                <div data-g-height-aligner
+                     data-ev-data-service="evDataService"
+                     data-ev-event-service="evEventService"
+                     data-root-wrap-elem="rootWrapElem"
+                     data-content-wrap-elem="contentWrapElem"></div>
+            </div>
+
+            <div class="g-height-slider"></div>
+
+            <div class="g-additions-workarea" data-ng-if="additions.type === 'editor'">
+
+                <div class="height-100">
+                    <group-editor-binder ev-data-service="evDataService"
+                                         ev-event-service="evEventService"></group-editor-binder>
+                </div>
+
+            </div>
+
+            <div class="g-additions-workarea" data-ng-if="additions.type === 'permission-editor'">
+
+                <group-permission-editor-binder class="display-block height-100"
+                                                ev-data-service="evDataService"
+                                                ev-event-service="evEventService"
+                                                sp-exchange-service="spExchangeService"></group-permission-editor-binder>
+
+            </div>
+
+            <!--<div class="g-additions-workarea"
+                 data-ng-if="additions.type === 'balance-report'">
+                <group-split-panel-report-binder ev-data-service="evDataService"
+                                                 ev-event-service="evEventService"
+                                                 sp-exchange-service="spExchangeService"></group-split-panel-report-binder>
+            </div>
+
+            <div class="g-additions-workarea"
+                 data-ng-if="additions.type === 'pl-report'">
+                <group-split-panel-report-binder ev-data-service="evDataService"
+                                                 ev-event-service="evEventService"
+                                                 sp-exchange-service="spExchangeService"></group-split-panel-report-binder>
+            </div>-->
+
+            <div class="g-additions-workarea"
+                 data-ng-if="
+                    additions.type === 'balance-report' ||
+                    additions.type === 'pl-report' ||
+                    additions.type === 'transaction-report'"
+            >
+                <group-split-panel-report-binder ev-data-service="evDataService"
+                                                 ev-event-service="evEventService"
+                                                 sp-exchange-service="spExchangeService"></group-split-panel-report-binder>
+            </div>
+
+            <div class="g-additions-workarea" data-ng-if="additions.type === 'reconciliation_match_editor'">
+
+                <group-reconciliation-match-editor-binder class="display-block height-100" ev-data-service="evDataService"
+                                                          ev-event-service="evEventService"
+                                                          sp-exchange-service="spExchangeService"></group-reconciliation-match-editor-binder>
+
+            </div>
+
+        </div>
+
+    <!--<div ng-if="domElemsAreReady">
+
+        <div group-layout-resizer
+             ev-data-service="evDataService"
+             ev-event-service="evEventService"
+             content-wrap-element="contentWrapElem"
+             workarea-wrap-element="workareaWrapElem"></div>
+
+    </div>-->
+
+</div>

@@ -1,0 +1,43 @@
+<md-dialog class="rename-color-dialog draggable-dialog dialog-actions-bottom colorRenameDialogElemToResize"
+           aria-label="two inputs dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2 data-ng-bind-html="vm.dialogTitle"></h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="p-16 height-100">
+        <div class="flex-column height-100">
+            <div class="m-b-16 rename-color-textinput-holder">
+                <text-input model="vm.colorName"
+                            label="Name"
+                            placeholder-text="Color name"
+                            small-options="{noIndicatorBtn: true}"></text-input>
+            </div>
+
+            <textarea ng-model="vm.tooltipText"
+                      placeholder="Color tooltip"
+                      class="rename-color-textarea"></textarea>
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions>
+        <div layout="row" layout-align="space-between center">
+            <md-button ng-click="vm.cancel()">
+                Cancel
+            </md-button>
+
+            <md-button ng-click="vm.agree()" style="margin-right:20px;">
+                OK
+            </md-button>
+        </div>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+    </md-dialog-actions>
+</md-dialog>

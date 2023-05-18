@@ -1,0 +1,59 @@
+<div class="grid-table-top-panel">
+    <div data-ng-show="!mode" class="flex-row fc-space-between fi-center width-100">
+        <div class="flex-row fi-center">
+            <md-button ng-if="topPanelComponents.addButton !== false"
+                       data-ng-click="addRow($event)"
+                       class="grid-table-add-row-btn">
+                <span class="material-icons">add</span>
+            </md-button>
+
+            <md-button data-ng-if="topPanelComponents.addFilter"
+                       class="grid-table-top-row-btns">ADD FILTER</md-button>
+        </div>
+
+        <h4 ng-if="gridTableData.name"
+            ng-bind="gridTableData.name"
+            class="grid-table-name"></h4>
+
+        <div>
+            <md-button data-ng-if="topPanelComponents.search">SEARCH</md-button>
+            <md-button data-ng-if="topPanelComponents.columns">COLUMNS</md-button>
+        </div>
+    </div>
+
+    <!-- <div data-ng-if="mode === 'row_addition'" class="grid-table-row">
+
+        <div>
+            <md-button data-ng-click="">ADD</md-button>
+        </div>
+
+        <div data-ng-repeat="cell in newRow.columns track by cell.key"
+             class="grid-table-cell">
+
+            <grid-table-cell data-row="newRow"
+                             data-column="cell"
+                             data-gt-data-service="gtDataService"
+                             data-gt-event-service="gtEventService"></grid-table-cell>
+        </div>
+
+    </div> -->
+
+    <div data-ng-show="mode === 'rows_deletion'"
+         class="grid-table-deletion-row">
+
+        <div class="flex-row fi-center grid-table-deletion-left" style="height: 40px;">
+            <div class="grid-table-deletion-number">{{ activeRows.length }} selected</div>
+            <md-button data-ng-click="deleteRows()" class="grid-table-delete-rows-btn">
+                <span class="material-icons">delete</span> Delete
+            </md-button>
+        </div>
+
+        <div>
+            <md-button data-ng-click="mode = false"
+                       class="grid-table-cancel-deletion-btn">
+                <span class="material-icons">close</span>
+            </md-button>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,82 @@
+<div class="context-menu-constructor">
+
+    <div data-ng-if="vm.readyStatus.data && vm.readyStatus.transactionTypes && vm.readyStatus.layouts">
+
+        <div class="p-24">
+
+            <div layout="row">
+
+                <md-input-container style="width: 200px;">
+                    <label for="">Context Menu Layout Name</label>
+                    <input type="text" data-ng-model="vm.layout.name">
+                </md-input-container>
+
+                <usercode-input data-item="vm.layout" data-ng-if="!vm.layout.id"></usercode-input>
+
+                <md-input-container style="width: 200px;" data-ng-if="vm.layout.id">
+                    <label for="">User Code</label>
+                    <input type="text" data-ng-model="vm.layout.user_code">
+                </md-input-container>
+
+                <md-select data-ng-model="vm.layout.type">
+                    <md-option value="report_context_menu">Report Right Click</md-option>
+                    <md-option value="report_menu_add_entities">Report Menu Add Entities</md-option>
+                </md-select>
+
+            </div>
+
+
+
+
+            <div class="context-menu-holder">
+
+                <div class="context-menu-root-title">Root</div>
+
+                <div class="context-menu-block">
+
+                    <div data-ng-repeat="item in vm.layout.data.menu.root.items | orderBy: 'order' track by $index"
+
+                         layout="row">
+
+                        <context-menu-constructor-option item="item"
+                                                         index="$index"
+                                                         parent="vm.layout.data.menu.root"
+                                                         add-callback="vm.addOption(event, item)"
+                                                         edit-callback="vm.editOption(event, item)"
+                                                         delete-callback="vm.deleteOption(event, item, index)"
+                                                         move-up-callback="vm.moveUp(itemIndex)"
+                                                         move-down-callback="vm.moveDown(itemIndex)"
+                        ></context-menu-constructor-option>
+
+                    </div>
+
+
+                </div>
+                <div>
+                    <md-button class="md-raised" data-ng-click="vm.addOption($event, vm.layout.data.menu.root)">
+                        Add Option
+                    </md-button>
+                </div>
+
+            </div>
+
+            <div>
+
+                <md-button ng-click="vm.saveLayout($event)" ng-class="{'disabled-btn': !vm.layout.name}"
+                           class="md-raised">
+                    Save
+                </md-button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.data || !vm.readyStatus.transactionTypes || !vm.readyStatus.layouts">
+        <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+    </div>
+
+</div>

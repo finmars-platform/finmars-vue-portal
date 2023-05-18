@@ -1,0 +1,23 @@
+<md-dialog aria-label="ace dialog"
+           class="ace-editor-dialog draggable-dialog dialog-actions-bottom"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2 >Code Editor</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="ace-editor" id="aceEditor">
+
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row" layout-align="space-between">
+        <md-button ng-click="vm.cancel()" style="margin-right:20px;">
+            Close
+        </md-button>
+        <md-button ng-click="vm.agree()">
+            OK
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,78 @@
+<md-dialog class="g-entity-viewer-settings-dialog-view draggable-dialog"
+           drag-dialog
+           aria-label="entity viewer settings dialog">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Entity viewer settings</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="p-24">
+
+        <div layout="column">
+            <p style="margin: 0 10px 10px;">Table items to load on "Load more" button press</p>
+            <md-input-container style="min-width: 340px">
+                <label></label>
+                <input type="number"
+                       ng-model="vm.itemsToLoad"
+                       class="no-input-arrows">
+            </md-input-container>
+        </div>
+
+        <!--<div layout="row" >
+            <md-input-container flex="100">
+                <label>Filter items by statuses</label>
+                <md-select data-ng-model="vm.entityFilters" multiple>
+                    <md-option value="disabled">Show Disabled</md-option>
+                    <md-option value="deleted">Show Deleted</md-option>
+                    <md-option value="inactive" data-ng-if="vm.entityType === 'instrument'">Show Inactive</md-option>
+                </md-select>
+            </md-input-container>
+        </div>
+
+        <div layout="row" data-ng-if="vm.entityType === 'complex-transaction'">
+            <md-input-container flex="100">
+                <label>Filter transactions by statuses</label>
+                <md-select data-ng-model="vm.complexTransactionFilters" multiple>
+                    <md-option value="ignored">Ignored</md-option>
+                    <md-option value="locked">Locked</md-option>
+                    <md-option value="partially_visible">Partially Visible</md-option>
+                </md-select>
+            </md-input-container>
+        </div>-->
+
+        <div layout="row" >
+            <md-input-container flex="100">
+                <label>Filter items by statuses</label>
+                <md-select data-ng-model="vm.entityFilters" multiple>
+                    <md-option data-ng-repeat="option in vm.multiselectorOptions"
+                               ng-value="option.value"
+                               data-ng-bind="option.name"></md-option>
+                </md-select>
+            </md-input-container>
+        </div>
+
+        <div layout="row" data-ng-if="vm.entityType === 'complex-transaction'" class="m-t-16">
+            <md-input-container flex="100">
+                <label>Filter transactions by statuses</label>
+                <md-select data-ng-model="vm.complexTransactionFilters" multiple>
+                    <md-option value="booked">Booked</md-option>
+                    <md-option value="ignored">Ignored</md-option>
+                </md-select>
+            </md-input-container>
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="space-between center">
+        <md-button class="md-raised" ng-click="vm.cancel()">
+            Close
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.saveSettings()">
+            Save
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,157 @@
+<md-dialog aria-label="dashboard constructor button set dialog" class="draggable-dialog width-80" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Button Set Component</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="p-24">
+
+            <md-input-container style="width: 200px;">
+                <label for="">Name</label>
+                <input type="text" data-ng-model="vm.item.name">
+            </md-input-container>
+
+            <div>
+                <md-input-container class="dashboard-constructor-field1">
+                    <label for="">Label</label>
+                    <input type="text" data-ng-model="vm.item.custom_component_name">
+                </md-input-container>
+            </div>
+
+
+            <div>
+
+                <md-input-container style="width: 200px;">
+
+                    <md-checkbox data-ng-model="vm.item.settings.showAsDropdown"
+                                 ng-change=""
+                                 style="margin-left: 10px;">Show as dropdown</md-checkbox>
+
+                </md-input-container>
+
+            </div>
+
+            <div>
+
+                <h5>Buttons Grid Projection Size</h5>
+
+                <md-input-container style="width: 200px;">
+                    <label for="">Rows</label>
+                    <input type="text" data-ng-model="vm.item.settings.rows">
+                </md-input-container>
+
+                <span class="display-inline-block position-relative" style="top: -4px">x</span>
+
+                <md-input-container style="width: 200px;">
+                    <label for="">Columns</label>
+                    <input type="text" data-ng-model="vm.item.settings.columns">
+                </md-input-container>
+
+
+            </div>
+
+            <div data-ng-show="vm.checkReadyStatus()" class="constructor-button-set-grid">
+
+                <div style="min-width: 1700px; min-height: 200px;" data-ng-repeat="row in vm.item.settings.grid.rows" class="overflow-hidden" data-ng-show="row.index < vm.item.settings.rows">
+
+                    <div data-ng-repeat="item in row.items track by $index" data-ng-show="$index < vm.item.settings.columns" class="constructor-button-set-grid-elem">
+
+                        <div>
+
+                            <md-input-container style="width: 200px;">
+                                <label for="">Name</label>
+                                <input type="text" data-ng-model="item.name">
+                            </md-input-container>
+
+                        </div>
+
+                        <div class="m-t-16">
+                            <md-input-container style="width: 200px;">
+                                <label for="">Action</label>
+                                <md-select data-ng-model="item.action" data-ng-change="item.target = null">
+                                    <md-option
+                                            data-ng-repeat="action in vm.actions | orderBy:'-name' track by $index "
+                                            ng-value="action.value">{{action.name}}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+
+                        </div>
+
+                        <div class="m-t-16">
+
+                            <md-input-container style="width: 200px;">
+                                <label for="">Target</label>
+                                <md-select data-ng-model="item.target" data-ng-class="{'disabled-btn': !item.action}">
+                                    <md-option
+                                            data-ng-repeat="target in vm.targets[item.action] | orderBy:'-name' track by $index "
+                                            ng-value="target.value">{{target.name}}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+
+                        </div>
+
+                        <div class="m-t-16" data-ng-if="item.action === 'open_data_viewer' || item.action === 'open_report'">
+
+                            <md-input-container style="width: 200px;">
+                                <label for="">Target Specific</label>
+                                <md-select
+                                        md-on-open="vm.getTargetSpecifics($event, item)"
+                                        data-ng-model="item.target_specific"
+                                           data-ng-class="{'disabled-btn': !item.target}">
+                                    <md-option
+                                            data-ng-repeat="target in vm.targetSpecifics[item.action][item.target] | orderBy:'-name' track by $index "
+                                            ng-value="target.value">{{target.name}}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+
+                        </div>
+
+                        <div data-ng-if="item.action === 'book_transaction'"
+                             class="m-t-16">
+                            <md-checkbox ng-model="item.options.get_context"
+                                         style="width: 200px; margin: 0 10px;">Get context</md-checkbox>
+                            <md-tooltip md-direction="top" class="tooltip_1">Take last selected position inside another report based component as context.</md-tooltip>
+                        </div>
+
+                        <div class="m-t-16">
+
+                            <md-button class="md-raised md-primary" data-ng-click="item = {options: {}}">Clear</md-button>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div data-ng-show="!vm.checkReadyStatus()">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                    <progress-circular diameter="100"></progress-circular>
+                </div>
+            </div>
+
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+
+        <md-button ng-click="vm.exportToDashboards()" style="margin-right:20px;">
+            Export to dashboards
+        </md-button>
+
+        <md-button ng-click="vm.cancel()" style="margin-right:20px;">
+            Cancel
+        </md-button>
+
+        <md-button ng-click="vm.agree()" style="margin-right:20px;">
+            OK
+        </md-button>
+
+    </md-dialog-actions>
+</md-dialog>

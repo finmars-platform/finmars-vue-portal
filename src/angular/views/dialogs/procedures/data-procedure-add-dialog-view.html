@@ -1,0 +1,312 @@
+<md-dialog aria-label="" ng-cloak class="draggable-dialog width-50" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Create Data Procedure</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="p-24">
+
+        <div layout="column">
+
+            <div>
+
+                <h3>General</h3>
+
+                <md-input-container>
+                    <label>Name</label>
+                    <input type="text" data-ng-model="vm.item.name">
+                </md-input-container>
+
+                <!--                <md-input-container>-->
+                <!--                    <label>User Code</label>-->
+                <!--                    <input type="text" data-ng-model="vm.item.user_code">-->
+                <!--                </md-input-container>-->
+
+                <usercode-input data-item="vm.item"></usercode-input>
+
+                <div class="m-t-16">
+
+                    <div><label for="">Notes</label></div>
+                    <textarea name="" data-ng-model="vm.item.notes" cols="60" rows="5"></textarea>
+
+                </div>
+
+                <div class="m-t-16">
+
+                    <div><label for="">Notes for Users</label></div>
+                    <textarea name="" data-ng-model="vm.item.notes_for_users" cols="60" rows="5"></textarea>
+
+                </div>
+
+                <div class="m-t-16" layout="row">
+
+                    <div layout="row">
+
+                        <md-button class="md-icon-button md-raised md-primary"
+                                   data-ng-click="vm.toggle('date_from')">
+
+                            T
+                            <md-tooltip class="tooltip_1" md-direction="bottom">Toggle</md-tooltip>
+
+                        </md-button>
+
+                        <div data-ng-if="vm.toggleStatus.date_from == 'datepicker'">
+
+                            <md-input-container>
+                                <label for="">Date from</label>
+                                <zh-date-picker data-date-value="vm.item.date_from"></zh-date-picker>
+                            </md-input-container>
+
+                        </div>
+
+                        <div data-ng-if="vm.toggleStatus.date_from == 'expr'">
+
+                            <md-input-container style="width: 60%">
+                                <label for="">Date from (Expression)</label>
+                                <input type="text" data-ng-model="vm.item.date_from_expr">
+                            </md-input-container>
+
+                            <expression-editor-button data-item="vm.item.date_from_expr">
+                            </expression-editor-button>
+
+                        </div>
+
+                    </div>
+
+                    <div layout="row">
+
+                        <md-button class="md-icon-button md-raised md-primary"
+                                   data-ng-click="vm.toggle('date_to')">
+
+                            T
+                            <md-tooltip class="tooltip_1" md-direction="bottom">Toggle</md-tooltip>
+
+                        </md-button>
+
+
+                        <div data-ng-if="vm.toggleStatus.date_to == 'datepicker'">
+
+                            <md-input-container>
+                                <label for="">Date to</label>
+                                <zh-date-picker data-date-value="vm.item.date_to"></zh-date-picker>
+                            </md-input-container>
+
+                        </div>
+
+                        <div data-ng-if="vm.toggleStatus.date_to == 'expr'">
+
+                            <md-input-container style="width: 60%">
+                                <label for="">Date to (Expression)</label>
+                                <input type="text" data-ng-model="vm.item.date_to_expr">
+                            </md-input-container>
+
+                            <expression-editor-button data-item="vm.item.date_to_expr">
+                            </expression-editor-button>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="m-t-16">
+
+                    <div><label for="">Provider</label></div>
+                    <md-select data-ng-model="vm.item.provider">
+                        <md-option data-ng-repeat="provider in vm.providers" ng-value="provider.id">
+                            {{provider.name}}
+                        </md-option>
+                    </md-select>
+
+                </div>
+
+                <div class="m-t-16">
+
+                    <div><label for="">Scheme type</label></div>
+                    <md-select data-ng-model="vm.item.scheme_type" data-ng-change="vm.item.user_code = ''">
+                        <md-option value="transaction_import">
+                            Transaction Import
+                        </md-option>
+                        <md-option value="simple_import">
+                            Simple Import
+                        </md-option>
+                    </md-select>
+
+                </div>
+
+                <div class="m-t-16" data-ng-if="vm.item.scheme_type == 'transaction_import'">
+
+                    <div><label for="">Scheme name</label></div>
+                    <md-select data-ng-model="vm.item.scheme_user_code">
+                        <md-option data-ng-repeat="scheme in vm.transactionImportSchemes" ng-value="scheme.user_code">
+                            {{scheme.user_code}}
+                        </md-option>
+                    </md-select>
+
+                </div>
+
+                <div class="m-t-16" data-ng-if="vm.item.scheme_type == 'simple_import'">
+
+                    <div><label for="">Scheme name</label></div>
+                    <md-select data-ng-model="vm.item.scheme_user_code">
+                        <md-option data-ng-repeat="scheme in vm.simpleImportSchemes" ng-value="scheme.user_code">
+                            {{scheme.user_code}}
+                        </md-option>
+                    </md-select>
+
+                </div>
+
+
+                <!--cim-->
+                <div data-ng-if="vm.item.provider == 1">
+
+                    <md-input-container>
+                        <label>Filename pattern</label>
+                        <input type="text" data-ng-model="vm.item.data.filenamemask">
+                    </md-input-container>
+
+                </div>
+
+
+                <!--lombard-->
+                <div data-ng-if="vm.item.provider == 3">
+
+                    <md-input-container>
+                        <label>Archive password</label>
+                        <input type="password" data-ng-model="vm.item.data.archivepassword">
+                    </md-input-container>
+
+                </div>
+
+                <!--revolut-->
+                <div data-ng-if="vm.item.provider == 4">
+
+                    <div>
+
+                        <md-input-container>
+                            <label>Code</label>
+                            <input type="text" data-ng-model="vm.item.data.code">
+                        </md-input-container>
+
+                    </div>
+
+                    <div>
+
+                        <md-input-container>
+                            <label>Issuer</label>
+                            <input type="text" data-ng-model="vm.item.data.issuer">
+                        </md-input-container>
+
+                    </div>
+
+                    <div>
+
+                        <md-input-container>
+                            <label>Client ID</label>
+                            <input type="text" data-ng-model="vm.item.data.client_id">
+                        </md-input-container>
+
+                    </div>
+
+                    <div>
+
+                        <md-input-container class="md-block">
+                            <label>JWT</label>
+
+                            <br/>
+                            <textarea name="" id="" cols="30" rows="10"
+                                      data-ng-model="vm.item.data.jwt"></textarea>
+
+                        </md-input-container>
+
+                    </div>
+
+
+                </div>
+
+                <!--email provider-->
+                <div data-ng-if="vm.item.provider == 5">
+
+                    <md-input-container>
+                        <label>Sender pattern</label>
+                        <input type="text" data-ng-model="vm.item.data.sender">
+                    </md-input-container>
+
+                    <md-input-container>
+                        <label>Subject pattern</label>
+                        <input type="text" data-ng-model="vm.item.data.subject">
+                    </md-input-container>
+
+                    <md-input-container>
+                        <label>Filename pattern</label>
+                        <input type="text" data-ng-model="vm.item.data.filename">
+                    </md-input-container>
+
+                    <div class="m-t-8">
+                        <md-checkbox ng-model="vm.item.data.hasNoDelete">
+                            No delete
+                        </md-checkbox>
+                    </div>
+
+
+                </div>
+
+                <!--exante provider-->
+                <div data-ng-if="vm.item.provider == 6">
+
+                    <md-input-container>
+                        <label>URL</label>
+                        <input type="text" data-ng-model="vm.item.data.url" data-ng-change="vm.universalFieldChange()">
+                    </md-input-container>
+
+                    <md-input-container>
+                        <label>Security token</label>
+                        <input type="text" data-ng-model="vm.item.data.security_token"
+                               data-ng-change="vm.universalFieldChange()">
+                    </md-input-container>
+
+                    <!--                    <div><label for="">Currency</label></div>-->
+                    <!--                    <md-select data-ng-model="vm.item.data.currencies">-->
+                    <!--                        <md-option data-ng-repeat="item in vm.currencyCodes" ng-value="item.id">-->
+                    <!--                            {{item.name}}-->
+                    <!--                        </md-option>-->
+                    <!--                    </md-select>-->
+
+
+                    <div>
+                        <label>Options (JSON)</label>
+                        <div layout="row">
+                            <textarea name="" data-ng-model="vm.item.data_string" cols="60" rows="5"
+                                      data-ng-change="vm.universalOptionsChange()"></textarea>
+                            <json-editor-button data-item="vm.item.data_string"
+                                                data-on-change-callback="vm.universalOptionsChange()">
+                            </json-editor-button>
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()">
+            Close
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.agree()" style="margin-right:20px;">
+            Create
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

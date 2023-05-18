@@ -1,0 +1,53 @@
+<div>
+
+    <h1 class="p-24">Manual Sorting Layouts</h1>
+
+    <div data-ng-if="vm.readyStatus.data" class="p-24">
+
+        <div data-ng-if="vm.items.length">
+
+            <div data-ng-repeat="item in vm.items track by item.id">
+
+                {{item.name}}
+
+                <md-button class="md-raised" data-ng-click="vm.editItem($event, item)">Edit</md-button>
+                <md-button class="md-raised md-warn" data-ng-click="vm.deleteItem($event, item)">Delete</md-button>
+
+            </div>
+
+        </div>
+
+        <div data-ng-if="vm.commonItems.length">
+
+            <h4>Common Sorts</h4>
+
+            <div>
+
+                <div data-ng-repeat="item in vm.commonItems track by item.id">
+
+                    {{item.name}}
+
+                    <md-button class="md-raised" data-ng-click="vm.editItem($event, item)">Edit</md-button>
+                    <md-button class="md-raised md-warn" data-ng-click="vm.deleteItem($event, item)">Delete</md-button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div data-ng-if="!vm.items.length">
+
+            <h4>No Layouts Exists</h4>
+
+        </div>
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.data">
+        <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+    </div>
+
+</div>

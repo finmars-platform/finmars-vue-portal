@@ -1,0 +1,14 @@
+<div class="gt-multiselector-cell" ng-class="{'gt-cell-disabled': column.settings.isDisabled}">
+
+    <div class="flex-0-1-100">
+        <chips-list ng-show="chipsList.length"
+                    chips-list="chipsList"
+                    event-service="chipsListEventService"
+                    order-chips="{{chipsOrderSettings}}"></chips-list>
+    </div>
+
+    <div class="gt-cell-edit-btn">
+        <span class="material-icons">edit</span>
+    </div>
+
+</div>

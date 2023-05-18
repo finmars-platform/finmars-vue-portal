@@ -1,0 +1,271 @@
+<md-dialog aria-label="transaction type add dialog"
+           class="entity-editor-dialog draggable-dialog dialog-actions-bottom ttypeCreationElemToDrag"
+           drag-dialog
+           style="height: 100%">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Add Transaction Type</h2>
+
+            <div data-ng-if="vm.processing" layout="row" class="m-l-16">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="m-r-8">
+                    <progress-circular diameter="20"></progress-circular>
+                </div>
+                — Processing
+            </div>
+
+        </div>
+    </md-toolbar>
+    <md-dialog-content style="height: 100%">
+
+        <div style="min-width: 1450px">
+
+            <div data-ng-if="vm.checkReadyStatus()">
+
+                <div data-ng-if="!vm.entity.type" style="padding-top: 64px">
+
+                    <h3 class="text-center">Please Select Type</h3>
+
+                    <md-input-container class="md-block" style="height: 64px; width: 400px; margin: 24px auto;">
+                        <label>Type</label>
+                        <md-select data-ng-model="vm.entity.type">
+                            <md-option ng-value="1">Transaction</md-option>
+                            <md-option ng-value="2">Procedure</md-option>
+                        </md-select>
+                    </md-input-container>
+
+                </div>
+
+                <div data-ng-if="vm.entity.type">
+
+                    <md-tabs md-dynamic-height md-border-bottom class="tabs-colored">
+
+                        <md-tab>
+                            <md-tab-lable>
+                                <span class="grey-tab">General</span>
+                            </md-tab-lable>
+                            <md-tab-body>
+                                <md-content class="md-padding p-t-26">
+                                    <div data-ng-include="'views/tabs/transaction-type/transaction-type-general-tab-view.html'"></div>
+                                </md-content>
+                            </md-tab-body>
+                        </md-tab>
+
+                        <md-tab>
+                            <md-tab-lable>
+                                <span class="grey-tab">User Attributes</span>
+                            </md-tab-lable>
+                            <md-tab-body>
+                                <md-content class="md-padding p-t-26">
+                                    <div data-ng-include="'views/tabs/transaction-type/transaction-type-attributes-tab-view.html'"></div>
+                                </md-content>
+                            </md-tab-body>
+                        </md-tab>
+
+                        <md-tab>
+                            <md-tab-lable>
+                                <span class="grey-tab">Inputs</span>
+                            </md-tab-lable>
+                            <md-tab-body>
+                                <md-content class="md-padding p-t-26">
+                                    <div data-ng-include="'views/tabs/transaction-type/transaction-type-inputs-tab-view.html'"></div>
+                                </md-content>
+                            </md-tab-body>
+                        </md-tab>
+
+                        <md-tab>
+                            <md-tab-lable>
+                                <span class="grey-tab">Actions</span>
+                            </md-tab-lable>
+                            <md-tab-body>
+                                <md-content class="md-padding p-t-26">
+                                    <div data-ng-include="'views/tabs/transaction-type/transaction-type-actions-tab-view.html'"></div>
+                                </md-content>
+                            </md-tab-body>
+                        </md-tab>
+
+                        <md-tab>
+                            <md-tab-lable>
+                                <span class="grey-tab">Fields</span>
+                            </md-tab-lable>
+                            <md-tab-body>
+                                <md-content class="md-padding p-t-26">
+                                    <div data-ng-include="'views/tabs/transaction-type/transaction-type-fields-tab-view.html'"></div>
+                                </md-content>
+                            </md-tab-body>
+                        </md-tab>
+
+                        <md-tab>
+                            <md-tab-lable>
+                                <span class="grey-tab">Context Parameters</span>
+                            </md-tab-lable>
+                            <md-tab-body>
+                                <md-content class="md-padding p-t-26">
+                                    <div data-ng-include="'views/tabs/transaction-type/transaction-type-context-parameters-tab-view.html'"></div>
+                                </md-content>
+                            </md-tab-body>
+                        </md-tab>
+
+                        <md-tab data-ng-if="vm.canManagePermissions">
+                            <md-tab-label>
+                                <span class="colored-tab">Permissions</span>
+                            </md-tab-label>
+                            <md-tab-body>
+                                <md-content class="md-padding p-t-26">
+                                    <md-content class="md-padding">
+                                        <div data-ng-if="vm.readyStatus.permissions">
+
+                                            <h3>Group permissions</h3>
+
+                                            <div>
+                                                <div layout="column">
+                                                    <div layout="row" layout-align="space-between center"
+                                                         class="permissions-table-header">
+                                                        <div>
+                                                            <div class="permissions-columns">Group name
+                                                            </div>
+                                                        </div>
+                                                        <div layout="row"
+                                                             class="permissions-checkbox-holder"
+                                                             flex="30"
+                                                             layout-align="space-between center">
+                                                            <div class="permissions-columns" flex="33">
+                                                                Delegate
+                                                                <ng-md-icon class="tooltip-inline-block"
+                                                                            icon="info"
+                                                                            size="20"
+                                                                            style="fill: #777777">
+                                                                    <md-tooltip class="tooltip_2"
+                                                                                md-direction="top">
+                                                                        tooltip
+                                                                        text
+                                                                    </md-tooltip>
+                                                                </ng-md-icon>
+                                                            </div>
+                                                            <div class="permissions-columns" flex="33">
+                                                                Write
+                                                                <ng-md-icon class="tooltip-inline-block"
+                                                                            icon="info"
+                                                                            size="20"
+                                                                            style="fill: #777777">
+                                                                    <md-tooltip class="tooltip_2"
+                                                                                md-direction="top">
+                                                                        tooltip
+                                                                        text
+                                                                    </md-tooltip>
+                                                                </ng-md-icon>
+                                                            </div>
+                                                            <div class="permissions-columns" flex="33">
+                                                                Read
+                                                                <ng-md-icon class="tooltip-inline-block"
+                                                                            icon="info"
+                                                                            size="20"
+                                                                            style="fill: #777777">
+                                                                    <md-tooltip class="tooltip_2"
+                                                                                md-direction="top">
+                                                                        tooltip
+                                                                        text
+                                                                    </md-tooltip>
+                                                                </ng-md-icon>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <md-divider></md-divider>
+                                                </div>
+                                                <div data-ng-repeat="group in vm.groups" layout="column">
+                                                    <div layout="row" layout-align="space-between center"
+                                                         class="permissions-table-row">
+                                                        <div>
+                                                            <p> {{ group.name }} </p>
+                                                        </div>
+                                                        <div layout="row"
+                                                             class="permissions-checkbox-holder"
+                                                             flex="30"
+                                                             layout-align="space-between center">
+                                                            <div flex="33" layout="center center">
+                                                                <md-checkbox class="md-secondary"
+                                                                             data-ng-class="{'disabled-btn': !group.objectPermissions.manage  && !vm.currentMember.is_admin && !vm.currentMember.is_owner}"
+                                                                             ng-model="group.objectPermissions.manage"></md-checkbox>
+                                                            </div>
+                                                            <div flex="33" layout="center center">
+                                                                <md-checkbox class="md-secondary"
+                                                                             data-ng-class="{'disabled-btn': !group.objectPermissions.manage  && !vm.currentMember.is_admin && !vm.currentMember.is_owner}"
+                                                                             ng-model="group.objectPermissions.change"></md-checkbox>
+                                                            </div>
+                                                            <div flex="33" layout="center center">
+                                                                <md-checkbox class="md-secondary"
+                                                                             data-ng-class="{'disabled-btn': !group.objectPermissions.manage  && !vm.currentMember.is_admin && !vm.currentMember.is_owner}"
+                                                                             ng-model="group.objectPermissions.view"></md-checkbox>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <md-divider></md-divider>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div data-ng-if="!vm.readyStatus.permissions">
+                                            <div layout="row" layout-sm="column" layout-align="space-around"
+                                                 class="m-large">
+                                                <!--<md-progress-circular md-mode="indeterminate"-->
+                                                <!--md-diameter="96"></md-progress-circular>-->
+                                                <progress-circular diameter="100"></progress-circular>
+                                            </div>
+                                        </div>
+                                    </md-content>
+                                </md-content>
+                            </md-tab-body>
+                        </md-tab>
+
+
+                        <md-tab>
+                            <md-tab-lable>
+                                <span class="grey-tab">Reconciliation</span>
+                            </md-tab-lable>
+                            <md-tab-body>
+                                <md-content class="md-padding p-t-26">
+                                    <div data-ng-include="'views/tabs/transaction-type/transaction-type-recon-tab-view.html'"></div>
+                                </md-content>
+                            </md-tab-body>
+                        </md-tab>
+
+                    </md-tabs>
+
+                </div>
+
+            </div>
+            <div data-ng-if="!vm.checkReadyStatus()">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                    <!--<md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>-->
+                    <progress-circular diameter="100"></progress-circular>
+                </div>
+            </div>
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="space-between center">
+        <div>
+            <md-button ng-click="vm.manageAttrs($event)" class="md-raised md-primary" ng-disabled="!vm.checkReadyStatus()">
+                Manage attributes
+            </md-button>
+        </div>
+        <div>
+            <md-button class="md-raised" ng-click="vm.cancel()">
+                Cancel
+            </md-button>
+            <md-button class="md-raised" ng-click="vm.save()" style="margin-left:20px;"
+                       ng-class="{'disabled-btn': vm.processing || !vm.entity.type}">
+                Add
+            </md-button>
+            <md-button class="md-raised" ng-click="vm.saveAndExit()" ng-class="{'disabled-btn': vm.processing || !vm.entity.type}">
+                Add and Exit
+            </md-button>
+        </div>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               data-on-resize-callback="vm.rearrangeMdDialogActions()"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+    </md-dialog-actions>
+</md-dialog>

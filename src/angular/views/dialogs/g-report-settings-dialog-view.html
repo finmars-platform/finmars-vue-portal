@@ -1,0 +1,1118 @@
+<md-dialog class="g-report-settings-dialog-view draggable-dialog"
+           drag-dialog
+           aria-label="g report settings dialog">
+    <md-toolbar>
+        <!--<div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Report settings</h2>
+        </div>-->
+        <dialog-header title="Report settings"
+                       cancel-dialog="vm.cancel()"></dialog-header>
+    </md-toolbar>
+
+    <md-dialog-content class="p-t-10">
+
+        <div data-ng-if="vm.checkReadyStatus()" class="p-8">
+
+            <div data-ng-if="vm.entityType == 'balance-report' || vm.entityType == 'pl-report' || vm.entityType == 'performance-report'">
+
+                <h5 class="default-f-s">General Settings</h5>
+
+                <div class="flex-column">
+
+                    <!--<div class="g-report-settings-row p-b-8" data-ng-if="vm.entityType == 'pl-report'">
+                        <div class="default-f-s">First Date</div>
+                        <date-input model="vm.reportOptions.pl_first_date" class="g-report-settings-field"></date-input>
+                    </div>
+
+
+                    <div class="g-report-settings-row p-b-8">
+                        <div class="default-f-s">Date</div>
+                        <date-input model="vm.reportOptions.report_date" class="g-report-settings-field"></date-input>
+                    </div>-->
+
+                    <div ng-if="vm.entityType === 'balance-report'"
+                         class="g-report-settings-row p-b-8">
+                        <div class="default-f-s">Report date</div>
+
+                        <div class="g-report-settings-field">
+                            <complex-zh-datepicker date="vm.reportOptions.report_date"
+                                                   datepicker-options="vm.reportLayoutOptions.datepickerOptions.reportLastDatepicker"
+                                                   ev-data-service="vm.evDataService"
+                                                   ev-event-service="vm.evEventService"
+                                                   attribute-data-service="vm.attributeDataService"
+                                                   is-disabled="vm.disableDatepicker"
+                                                   selector-look="input"></complex-zh-datepicker>
+                        </div>
+                    </div>
+
+                    <div ng-if="vm.entityType === 'pl-report'"
+                         class="g-report-settings-row p-b-8">
+                        <div class="default-f-s">Report date</div>
+
+                        <div class="g-report-settings-field">
+                            <complex-zh-datepicker date="vm.reportOptions.pl_first_date"
+                                                   datepicker-options="vm.reportLayoutOptions.datepickerOptions.reportFirstDatepicker"
+                                                   second-date="vm.reportOptions.report_date"
+                                                   second-datepicker-options="vm.reportLayoutOptions.datepickerOptions.reportLastDatepicker"
+                                                   ev-data-service="vm.evDataService"
+                                                   ev-event-service="vm.evEventService"
+                                                   attribute-data-service="vm.attributeDataService"
+                                                   is-disabled="vm.disableDatepicker"
+                                                   selector-look="input"></complex-zh-datepicker>
+                        </div>
+                    </div>
+
+                    <div class="g-report-settings-row p-b-8">
+                        <div class="default-f-s">Currency</div>
+                        <dropdown-select model="vm.reportOptions.report_currency"
+                                         menu-options="vm.currencies"
+                                         small-options="{tooltipText: 'Currency'}"
+                                         class="g-report-settings-field">
+                        </dropdown-select>
+                    </div>
+
+                    <div class="g-report-settings-row p-b-8">
+                        <div class="default-f-s">Cost method</div>
+
+                        <dropdown-select model="vm.reportOptions.cost_method"
+                                         menu-options="vm.costMethod"
+                                         class="g-report-settings-field">
+                        </dropdown-select>
+                    </div>
+
+                    <div class="g-report-settings-row p-b-8">
+                        <div class="default-f-s">Pricing Policy</div>
+
+                        <dropdown-select model="vm.reportOptions.pricing_policy"
+                                         menu-options="vm.pricingPolicies"
+                                         class="g-report-settings-field">
+                        </dropdown-select>
+                    </div>
+
+                    <div class="g-report-settings-row p-b-8">
+                        <div class="default-f-s">Table font size</div>
+
+                        <dropdown-select model="vm.tableFontSize"
+                                         menu-options="vm.tableFontSizeOptions"
+                                         small-options="{tooltipText: 'Table font size'}"
+                                         class="g-report-settings-field">
+                        </dropdown-select>
+                    </div>
+
+                </div>
+
+                <h5 class="default-f-s">Consolidation</h5>
+
+                <div class="flex-column">
+
+                    <div class="g-report-settings-row p-b-8">
+                        <div class="default-f-s">Portfolio mode</div>
+
+                        <dropdown-select model="vm.reportOptions.portfolio_mode"
+                                         menu-options="vm.selectOptions"
+                                         class="g-report-settings-field">
+                        </dropdown-select>
+                    </div>
+
+                    <div class="g-report-settings-row p-b-8">
+                        <div class="default-f-s">Account mode</div>
+
+                        <dropdown-select model="vm.reportOptions.account_mode"
+                                         menu-options="vm.selectOptions"
+                                         class="g-report-settings-field">
+                        </dropdown-select>
+                    </div>
+
+                    <div class="g-report-settings-row p-b-8">
+                        <div class="default-f-s">Strategy 1 Mode</div>
+
+                        <dropdown-select model="vm.reportOptions.strategy1_mode"
+                                         menu-options="vm.strategiesSelectOptions"
+                                         small-options="{tooltipText: 'Strategy 1 Mode'}"
+                                         class="g-report-settings-field">
+                        </dropdown-select>
+                    </div>
+
+                    <div class="g-report-settings-row p-b-8">
+                        <div class="default-f-s">Strategy 2 Mode</div>
+
+                        <dropdown-select model="vm.reportOptions.strategy2_mode"
+                                         menu-options="vm.strategiesSelectOptions"
+                                         small-options="{tooltipText: 'Strategy 2 Mode'}"
+                                         class="g-report-settings-field">
+                        </dropdown-select>
+                    </div>
+
+                    <div class="g-report-settings-row p-b-8">
+                        <div class="default-f-s">Strategy 3 Mode</div>
+
+                        <dropdown-select model="vm.reportOptions.strategy3_mode"
+                                         menu-options="vm.strategiesSelectOptions"
+                                         small-options="{tooltipText: 'Strategy 3 Mode'}"
+                                         class="g-report-settings-field">
+                        </dropdown-select>
+                    </div>
+
+                    <div class="g-report-settings-row p-b-8" ng-if="vm.entityType === 'pl-report'">
+                        <div class="default-f-s">Allocation mode</div>
+
+                        <dropdown-select model="vm.reportOptions.allocation_mode"
+                                         menu-options="vm.selectOptions"
+                                         class="g-report-settings-field">
+                        </dropdown-select>
+                    </div>
+
+                    <div class="g-report-settings-row p-b-8">
+                        <div class="default-f-s">Offsetting Size</div>
+
+                        <dropdown-select model="vm.reportOptions.approach_multiplier"
+                                         menu-options="vm.approachMultiplierOptions"
+                                         class="g-report-settings-field">
+                        </dropdown-select>
+                    </div>
+
+                </div>
+
+                <h5 class="default-f-s">Filters</h5>
+
+                <div class="flex-column">
+
+                    <div class="g-report-settings-row p-b-16">
+                        <div class="default-f-s">Portfolios multiselector</div>
+
+                        <two-fields-multiselect get-data-method="vm.getPortfolios(vm.optionsForMultiselect)"
+                                                model="vm.reportOptions.portfolios"
+                                                selected-items="vm.reportOptions.portfolios"
+                                                nothing-selected-text="Off"
+                                                selected-items-indication="chips"
+                                                name-property="short_name"
+                                                small-options="{tooltipText: 'Portfolios multiselector'}"
+                                                class="g-report-settings-field"></two-fields-multiselect>
+                    </div>
+
+                    <div class="g-report-settings-row p-b-16">
+                        <div class="default-f-s">Accounts multiselector</div>
+
+                        <two-fields-multiselect get-data-method="vm.getAccounts(vm.optionsForMultiselect)"
+                                                model="vm.reportOptions.accounts"
+                                                selected-items="vm.reportOptions.accounts"
+                                                nothing-selected-text="Off"
+                                                selected-items-indication="chips"
+                                                name-property="short_name"
+                                                small-options="{tooltipText: 'Accounts multiselector'}"
+                                                class="g-report-settings-field"></two-fields-multiselect>
+                    </div>
+
+                    <div class="g-report-settings-row p-b-16">
+                        <div class="default-f-s">Strategies 1 multiselector</div>
+
+                        <two-fields-multiselect get-data-method="vm.getStrategies1(vm.optionsForMultiselect)"
+                                                model="vm.reportOptions.strategies1"
+                                                data-selected-items="vm.reportOptions.strategies1"
+                                                nothing-selected-text="Off"
+                                                selected-items-indication="chips"
+                                                data-name-property="short_name"
+                                                small-options="{tooltipText: 'Strategies 1 multiselector'}"
+                                                class="g-report-settings-field"></two-fields-multiselect>
+                    </div>
+
+                    <div class="g-report-settings-row p-b-16">
+                        <div class="default-f-s">Strategies 2 multiselector</div>
+
+                        <two-fields-multiselect get-data-method="vm.getStrategies2(vm.optionsForMultiselect)"
+                                                model="vm.reportOptions.strategies2"
+                                                data-selected-items="vm.reportOptions.strategies2"
+                                                nothing-selected-text="Off"
+                                                selected-items-indication="chips"
+                                                data-name-property="short_name"
+                                                small-options="{tooltipText: 'Strategies 2 multiselector'}"
+                                                class="g-report-settings-field"></two-fields-multiselect>
+                    </div>
+
+                    <div class="g-report-settings-row p-b-16">
+                        <div class="default-f-s">Strategies 3 multiselector</div>
+
+                        <two-fields-multiselect get-data-method="vm.getStrategies3(vm.optionsForMultiselect)"
+                                                model="vm.reportOptions.strategies3"
+                                                data-selected-items="vm.reportOptions.strategies3"
+                                                nothing-selected-text="Off"
+                                                selected-items-indication="chips"
+                                                data-name-property="short_name"
+                                                small-options="{tooltipText: 'Strategies 3 multiselector'}"
+                                                class="g-report-settings-field"></two-fields-multiselect>
+                    </div>
+
+                </div>
+
+                <h4 class="default-f-s">Market Value/Exposure %</h4>
+
+                <div class="flex-column">
+
+                    <div class="g-report-settings-row p-b-8">
+                        <div class="default-f-s">Calculation Grouping</div>
+
+                        <dropdown-select model="vm.reportOptions.calculationGroup"
+                                         menu-options="vm.calculationGroupOptions"
+                                         small-options="{tooltipText: 'Calculation Grouping'}"
+                                         class="g-report-settings-field">
+                        </dropdown-select>
+                    </div>
+
+                    <div class="g-report-settings-row p-b-16">
+                        <div class="default-f-s">Custom Fields</div>
+
+                        <two-fields-multiselect items="vm.customFieldsNames"
+                                                model="vm.selectedCustomFields"
+                                                selected-items="vm.selectedCustomFields"
+                                                nothing-selected-text="Off"
+                                                selected-items-indication="chips"
+                                                on-change-callback="vm.selectedCustomFieldsChanged()"
+                                                name-property="name"
+                                                class="g-report-settings-field"></two-fields-multiselect>
+                    </div>
+
+                    <div class="flex-row-reverse">
+                        <div class="g-report-settings-field">
+                            <md-input-container class="m-0">
+                                <md-checkbox data-ng-model="vm.reportOptions.show_balance_exposure_details" class="m-b-20">
+                                    Show exposure details
+                                </md-checkbox>
+                            </md-input-container>
+
+                            <md-input-container class="m-0">
+                                <md-checkbox data-ng-model="vm.reportOptions.show_transaction_details">
+                                    Show transaction details
+                                </md-checkbox>
+                            </md-input-container>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- <div layout="row">
+
+                    <div layout="column" class="m-r-16">
+
+                        <md-input-container style="margin-bottom: 20px;">
+                            <label for="">Account mode</label>
+                            <md-select data-ng-model="vm.reportOptions.account_mode">
+                                <md-option ng-value="opt.value" ng-repeat="opt in vm.selectOptions">
+                                    {{opt.caption}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+
+                    </div>
+
+                    <div layout="column">
+
+                        <md-input-container style="margin-bottom: 20px;">
+                            <label for="">Strategy 1 mode</label>
+                            <md-select data-ng-model="vm.reportOptions.strategy1_mode">
+                                <md-option ng-value="opt.value" ng-repeat="opt in vm.strategiesSelectOptions">
+                                    {{opt.caption}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+
+                        <md-input-container style="margin-bottom: 20px;">
+                            <label for="">Strategy 2 mode</label>
+                            <md-select data-ng-model="vm.reportOptions.strategy2_mode">
+                                <md-option ng-value="opt.value" ng-repeat="opt in vm.strategiesSelectOptions">
+                                    {{opt.caption}}
+                                </md-option>
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+
+                        <md-input-container style="margin-bottom: 20px;">
+                            <label for="">Strategy 3 mode</label>
+                            <md-select data-ng-model="vm.reportOptions.strategy3_mode">
+                                <md-option ng-value="opt.value" ng-repeat="opt in vm.strategiesSelectOptions">
+                                    {{opt.caption}}
+                                </md-option>
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+
+                    </div>
+
+                    <div layout="row">
+
+                        <md-input-container>
+                            <label for="">Offsetting size</label>
+                            <md-select data-ng-model="vm.reportOptions.approach_multiplier">
+                                <md-option ng-value="0">0/100</md-option>
+                                <md-option ng-value="0.5">50/50</md-option>
+                                <md-option ng-value="1">100/0</md-option>
+                            </md-select>
+                        </md-input-container>
+
+                    </div>
+
+                </div> -->
+
+            </div>
+
+            <div data-ng-if="vm.entityType == 'transaction-report'">
+
+                <h5 class="default-f-s">General Settings</h5>
+
+                <div class="flex-column">
+
+                    <!--<div class="g-report-settings-row p-b-8" >
+                        <div class="default-f-s">Date from</div>
+                        <date-input model="vm.reportOptions.begin_date" class="g-report-settings-field"></date-input>
+                    </div>
+
+
+                    <div class="g-report-settings-row p-b-8">
+                        <div class="default-f-s">Date to</div>
+                        <date-input model="vm.reportOptions.end_date" class="g-report-settings-field"></date-input>
+                    </div>-->
+                    <div class="g-report-settings-row p-b-8">
+                        <div class="default-f-s">Report date</div>
+
+                        <div class="g-report-settings-field">
+                            <complex-zh-datepicker date="vm.reportOptions.begin_date"
+                                                   datepicker-options="vm.reportLayoutOptions.datepickerOptions.reportFirstDatepicker"
+                                                   second-date="vm.reportOptions.end_date"
+                                                   second-datepicker-options="vm.reportLayoutOptions.datepickerOptions.reportLastDatepicker"
+                                                   ev-data-service="vm.evDataService"
+                                                   ev-event-service="vm.evEventService"
+                                                   attribute-data-service="vm.attributeDataService"
+                                                   is-disabled="vm.disableDatepicker"
+                                                   selector-look="input"></complex-zh-datepicker>
+                        </div>
+                    </div>
+
+
+                    <div class="g-report-settings-row p-b-8">
+                        <div class="default-f-s">Table font size</div>
+
+                        <dropdown-select model="vm.tableFontSize"
+                                         menu-options="vm.tableFontSizeOptions"
+                                         small-options="{tooltipText: 'Table font size'}"
+                                         class="g-report-settings-field">
+                        </dropdown-select>
+                    </div>
+
+                    <div class="g-report-settings-row p-b-8" data-ng-if="vm.fieldsReady">
+                        <div class="default-f-s">Date Field</div>
+
+                        <dropdown-select model="vm.reportOptions.date_field"
+                                         menu-options="vm.dateFieldOptions"
+                                         small-options="{tooltipText: 'Date field'}"
+                                         class="g-report-settings-field">
+                        </dropdown-select>
+                    </div>
+
+                    <div class="g-report-settings-row p-b-16">
+                        <div class="default-f-s">Custom Fields</div>
+
+                        <two-fields-multiselect items="vm.customFieldsNames"
+                                                model="vm.selectedCustomFields"
+                                                selected-items="vm.selectedCustomFields"
+                                                nothing-selected-text="Off"
+                                                selected-items-indication="chips"
+                                                on-change-callback="vm.selectedCustomFieldsChanged()"
+                                                name-property="name"
+                                                class="g-report-settings-field"></two-fields-multiselect>
+                    </div>
+
+                    <hr>
+
+                    <div class="g-report-settings-row p-b-8">
+                        <div class="default-f-s">Depth Level</div>
+
+                        <dropdown-select model="vm.reportOptions.depth_level"
+                                         menu-options="vm.depthLevelOptions"
+                                         small-options="{tooltipText: 'Depth Level'}"
+                                         class="g-report-settings-field">
+                        </dropdown-select>
+                    </div>
+
+
+                </div>
+
+                <!-- <div layout="row">
+
+                    <div layout="column" class="m-r-16">
+
+                        <md-input-container style="margin-bottom: 20px;">
+                            <label for="">Account mode</label>
+                            <md-select data-ng-model="vm.reportOptions.account_mode">
+                                <md-option ng-value="opt.value" ng-repeat="opt in vm.selectOptions">
+                                    {{opt.caption}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+
+                    </div>
+
+                    <div layout="column">
+
+                        <md-input-container style="margin-bottom: 20px;">
+                            <label for="">Strategy 1 mode</label>
+                            <md-select data-ng-model="vm.reportOptions.strategy1_mode">
+                                <md-option ng-value="opt.value" ng-repeat="opt in vm.strategiesSelectOptions">
+                                    {{opt.caption}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+
+                        <md-input-container style="margin-bottom: 20px;">
+                            <label for="">Strategy 2 mode</label>
+                            <md-select data-ng-model="vm.reportOptions.strategy2_mode">
+                                <md-option ng-value="opt.value" ng-repeat="opt in vm.strategiesSelectOptions">
+                                    {{opt.caption}}
+                                </md-option>
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+
+                        <md-input-container style="margin-bottom: 20px;">
+                            <label for="">Strategy 3 mode</label>
+                            <md-select data-ng-model="vm.reportOptions.strategy3_mode">
+                                <md-option ng-value="opt.value" ng-repeat="opt in vm.strategiesSelectOptions">
+                                    {{opt.caption}}
+                                </md-option>
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+
+                    </div>
+
+                    <div layout="row">
+
+                        <md-input-container>
+                            <label for="">Offsetting size</label>
+                            <md-select data-ng-model="vm.reportOptions.approach_multiplier">
+                                <md-option ng-value="0">0/100</md-option>
+                                <md-option ng-value="0.5">50/50</md-option>
+                                <md-option ng-value="1">100/0</md-option>
+                            </md-select>
+                        </md-input-container>
+
+                    </div>
+
+                </div> -->
+
+            </div>
+
+            <!--<div data-ng-if="vm.entityType == 'balance-report' || vm.entityType == 'pl-report' || vm.entityType == 'performance-report'">
+
+                <h2>General Settings</h2>
+
+                <div>
+                    <md-input-container data-ng-if="vm.entityType == 'pl-report'">
+
+                        <label for="">First Date</label>
+
+                        <zh-date-picker data-date-value="vm.reportOptions.pl_first_date"
+                                        data-position="left"></zh-date-picker>
+
+                    </md-input-container>
+
+                    <md-input-container>
+
+                        <label for="">Date</label>
+
+                        <zh-date-picker data-date-value="vm.reportOptions.report_date"
+                                        data-position="left"></zh-date-picker>
+
+                    </md-input-container>
+                </div>
+
+                <div layout="row" style="margin-bottom: 20px">
+
+                    <md-input-container data-ng-if="vm.entityType == 'pl-report'">
+
+                        <label for="">First Date</label>
+
+                        <zh-date-picker data-date-value="vm.reportOptions.pl_first_date"
+                                        data-position="left"></zh-date-picker>
+
+                    </md-input-container>
+
+                    <md-input-container>
+
+                        <label for="">Date</label>
+
+                        <zh-date-picker data-date-value="vm.reportOptions.report_date"
+                                        data-position="left"></zh-date-picker>
+
+                    </md-input-container>
+
+                    &lt;!&ndash;<md-input-container>
+
+                        <label for="">Pricing Policy</label>
+
+                        <md-select data-ng-model="vm.reportOptions.pricing_policy">
+                            <md-option data-ng-repeat="item in vm.pricingPolicies" ng-value="item.id">
+                                {{item.name}}
+                            </md-option>
+                        </md-select>
+
+                    </md-input-container>&ndash;&gt;
+
+                    <md-input-container>
+                        <label>Pricing Policy</label>
+                        <div>
+                            <md-select ng-model="vm.reportOptions.pricing_policy"
+                                       md-container-class="common-select-container"
+                                       md-on-close="searchTerm = ''">
+                                <md-select-header>
+                                    <input data-ng-model="searchTerm"
+                                           type="search"
+                                           placeholder="Search for a ..."
+                                           class="md-text md-select-search-pattern select-input-filter"
+                                           ng-keydown="$event.stopPropagation()">
+                                </md-select-header>
+
+                                <div class="select-options-holder">
+
+                                    <md-option data-ng-repeat="item in vm.pricingPolicies | filter:{name: searchTerm}"
+                                            ng-value="item.id">
+                                        {{item.name}}
+                                    </md-option>
+
+                                </div>
+
+                            </md-select>
+                        </div>
+                    </md-input-container>
+
+                    <dropdown-select label="Table font size"
+                                     model="vm.tableFontSize"
+                                     placeholder-text="Table font size"
+                                     menu-options="vm.tableFontSizeOptions"
+                                     small-options="{tooltipText: 'Table font size'}"
+                                     style="width: 200px;">
+                    </dropdown-select>
+
+                </div>
+
+                <div layout="row">
+
+                    &lt;!&ndash;<md-input-container>
+
+                        <label for="">Currency</label>
+
+                        <md-select data-ng-model="vm.reportOptions.report_currency">
+                            <md-option data-ng-repeat="item in vm.currencies" ng-value="item.id">{{item.name}}
+                            </md-option>
+                        </md-select>
+
+                    </md-input-container>&ndash;&gt;
+
+                    <md-input-container>
+                        <label>Currency</label>
+                        <div>
+                            <md-select ng-model="vm.reportOptions.report_currency"
+                                       md-container-class="common-select-container"
+                                       md-on-close="searchTerm = ''">
+                                <md-select-header>
+                                    <input data-ng-model="searchTerm"
+                                           type="search"
+                                           placeholder="Search for a ..."
+                                           class="md-text md-select-search-pattern select-input-filter"
+                                           ng-keydown="$event.stopPropagation()">
+                                </md-select-header>
+
+                                <div class="select-options-holder">
+
+                                    <md-option data-ng-repeat="item in vm.currencies | filter:{name: searchTerm}"
+                                               ng-value="item.id">
+                                        {{item.name}}
+                                    </md-option>
+
+                                </div>
+
+                            </md-select>
+                        </div>
+                    </md-input-container>
+
+                    <md-input-container>
+
+                        <label for="">Cost method</label>
+
+                        <md-select data-ng-model="vm.reportOptions.cost_method">
+                            <md-option ng-value="1">AVCO
+                            </md-option>
+                            <md-option ng-value="2">FIFO
+                            </md-option>
+                            &lt;!&ndash;<md-option ng-value="3">LIFO&ndash;&gt;
+                            &lt;!&ndash;</md-option>&ndash;&gt;
+                        </md-select>
+
+                    </md-input-container>
+
+                </div>
+
+                <h2>Consolidation</h2>
+
+                <div layout="row">
+
+                    <div layout="column" class="m-r-16">
+
+                        <md-input-container style="margin-bottom: 20px;">
+                            <label for="">Portfolio mode</label>
+                            <md-select data-ng-model="vm.reportOptions.portfolio_mode">
+                                <md-option ng-value="opt.value" ng-repeat="opt in vm.selectOptions">
+                                    {{opt.caption}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+
+                        <md-input-container style="margin-bottom: 20px;">
+                            <label for="">Account mode</label>
+                            <md-select data-ng-model="vm.reportOptions.account_mode">
+                                <md-option ng-value="opt.value" ng-repeat="opt in vm.selectOptions">
+                                {{opt.caption}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+
+
+                        &lt;!&ndash;<md-input-container style="margin-bottom: 20px;">&ndash;&gt;
+                            &lt;!&ndash;<label for="">Account position</label>&ndash;&gt;
+                            &lt;!&ndash;<md-select data-ng-model="vm.accountsPosition">&ndash;&gt;
+                                &lt;!&ndash;<md-option ng-value="opt.value" ng-repeat="opt in vm.selectOptions">&ndash;&gt;
+                                    &lt;!&ndash;{{opt.caption}}&ndash;&gt;
+                                &lt;!&ndash;</md-option>&ndash;&gt;
+                            &lt;!&ndash;</md-select>&ndash;&gt;
+                        &lt;!&ndash;</md-input-container>&ndash;&gt;
+
+                        &lt;!&ndash;<md-input-container style="margin-bottom: 20px;">&ndash;&gt;
+                            &lt;!&ndash;<label for="">Account cash</label>&ndash;&gt;
+                            &lt;!&ndash;<md-select data-ng-model="vm.accountsCash">&ndash;&gt;
+                                &lt;!&ndash;<md-option ng-value="opt.value" ng-repeat="opt in vm.selectOptions">&ndash;&gt;
+                                    &lt;!&ndash;{{opt.caption}}&ndash;&gt;
+                                &lt;!&ndash;</md-option>&ndash;&gt;
+                            &lt;!&ndash;</md-select>&ndash;&gt;
+                        &lt;!&ndash;</md-input-container>&ndash;&gt;
+
+                    </div>
+
+                    <div layout="column">
+
+                        <md-input-container style="margin-bottom: 20px;">
+                            <label for="">Strategy 1 mode</label>
+                            <md-select data-ng-model="vm.reportOptions.strategy1_mode">
+                                <md-option ng-value="opt.value" ng-repeat="opt in vm.strategiesSelectOptions">
+                                    {{opt.caption}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+
+                        <md-input-container style="margin-bottom: 20px;">
+                            <label for="">Strategy 2 mode</label>
+                            <md-select data-ng-model="vm.reportOptions.strategy2_mode">
+                                <md-option ng-value="opt.value" ng-repeat="opt in vm.strategiesSelectOptions">
+                                    {{opt.caption}}
+                                </md-option>
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+
+                        <md-input-container style="margin-bottom: 20px;">
+                            <label for="">Strategy 3 mode</label>
+                            <md-select data-ng-model="vm.reportOptions.strategy3_mode">
+                                <md-option ng-value="opt.value" ng-repeat="opt in vm.strategiesSelectOptions">
+                                    {{opt.caption}}
+                                </md-option>
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+
+                    </div>
+
+                    <div layout="row">
+
+                        <md-input-container>
+                            <label for="">Offsetting size</label>
+                            <md-select data-ng-model="vm.reportOptions.approach_multiplier">
+                                <md-option ng-value="0">0/100</md-option>
+                                <md-option ng-value="0.5">50/50</md-option>
+                                <md-option ng-value="1">100/0</md-option>
+                            </md-select>
+                        </md-input-container>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div data-ng-if="vm.entityType == 'transaction-report'">
+
+                <h2>General Settings</h2>
+
+                <div layout="row" style="margin-bottom: 20px">
+
+                    <md-input-container>
+
+                        <label for="">Begin date</label>
+
+                        <zh-date-picker data-date-value="vm.reportOptions.begin_date"
+                                        data-position="left"
+                        ></zh-date-picker>
+
+                    </md-input-container>
+
+                    <md-input-container>
+
+                        <label for="">End date</label>
+
+                        <zh-date-picker data-date-value="vm.reportOptions.end_date"
+                                        position="left"
+                        ></zh-date-picker>
+
+                    </md-input-container>
+
+                    &lt;!&ndash; <md-input-container style="margin-bottom: 24px;">
+                        <label class="uncut-text-on-focus-label" for="transaction-report-date-type">Filter by</label>
+                        <md-select ng-model="reportOptions.date_field"
+                                   md-container-class="common-select-container"
+                                   md-on-close="searchTerm = ''"
+                                   ng-change="updateReportOptions()" id="transaction-report-date-type">
+                            <md-select-header>
+                                <input data-ng-model="searchTerm"
+                                       type="search"
+                                       placeholder="Search for a ..."
+                                       class="md-text md-select-search-pattern select-input-filter"
+                                       data-ng-keydown="$event.stopPropagation()">
+                            </md-select-header>
+
+                            <div class="select-options-holder">
+                                <md-option ng-hide="filterItemsOutsideNgrepeat('Report date', searchTerm)" ng-value="null">Transaction date</md-option>
+                                <md-option ng-repeat="userDate in transactionsUserDates | orderBy: userDate.name | filter:{name: searchTerm}"
+                                           ng-value="userDate.key">
+                                    {{userDate.name}}
+                                </md-option>
+                            </div>
+
+                        </md-select>
+                    </md-input-container> &ndash;&gt;
+                    <dropdown-select label="Filter by"
+                                     model="vm.reportOptions.date_field"
+                                     placeholder-text="Filter by"
+                                     menu-options="vm.transactionsUserDates"
+                                     small-options="{tooltipText: 'Date to filter by'}"
+                                     style="width: 200px; margin: 0 10px;">
+                    </dropdown-select>
+
+                    <dropdown-select label="Table font size"
+                                     model="vm.tableFontSize"
+                                     placeholder-text="Table font size"
+                                     menu-options="vm.tableFontSizeOptions"
+                                     small-options="{tooltipText: 'Table font size'}"
+                                     style="width: 200px; margin: 0 10px;">
+                    </dropdown-select>
+
+                </div>
+
+            </div>
+
+            <div data-ng-if="vm.entityType == 'cash-flow-projection-report'">
+
+                <h2>General Settings</h2>
+
+                <div layout="row" style="margin-bottom: 20px">
+
+                    <md-input-container>
+
+                        <label for="">Begin date</label>
+
+                        <zh-date-picker data-date-value="vm.reportOptions.begin_date"
+                                        position="left"></zh-date-picker>
+
+                    </md-input-container>
+
+                    <md-input-container>
+
+                        <label for="">End date</label>
+
+                        <zh-date-picker data-date-value="vm.reportOptions.end_date"
+                                        data-position="left"></zh-date-picker>
+
+                    </md-input-container>
+
+                    <md-input-container>
+
+                        <label for="">Balance date</label>
+
+                        <zh-date-picker data-date-value="vm.reportOptions.balance_date"
+                                        data-position="left"></zh-date-picker>
+
+                    </md-input-container>
+
+                    <md-input-container>
+
+                        <label for="">Report date</label>
+
+                        <zh-date-picker data-date-value=".reportOptions.report_date"
+                                        data-position="left"></zh-date-picker>
+
+                    </md-input-container>
+
+                </div>
+
+            </div>
+
+            <h2>Filters</h2>
+
+            <div layout="row" style="margin-bottom:20px">
+
+                <two-fields-multiselect get-data-method="vm.getPortfolios(vm.optionsForMultiselect)"
+                                        model="vm.reportOptions.portfolios"
+                                        title="Portfolios multiselector"
+                                        selected-items="vm.reportOptions.portfolios"
+                                        nothing-selected-text="Off"
+                                        selected-items-indication="chips"
+                                        name-property="short_name"
+                                        small-options="{tooltipText: 'Portfolios multiselector'}"></two-fields-multiselect>
+
+                &lt;!&ndash;<md-input-container>
+
+                    <label for="">Accounts</label>
+
+                    <md-select multiple data-ng-model="vm.reportOptions.accounts"
+                               md-on-close="searchTerm = ''">
+                        <md-select-header>
+                            <input data-ng-model="searchTerm"
+                                   type="search"
+                                   placeholder="Search for a ..."
+                                   ng-keydown="vm.onSearchChange($event)"
+                                   class="md-text md-select-search-pattern">
+                        </md-select-header>
+                        <md-option
+                                data-ng-repeat="item in vm.accounts | orderBy:'-'+item.name | filter:{name: searchTerm}"
+                                ng-value="item.id">{{item.name}}
+                        </md-option>
+                    </md-select>
+
+                </md-input-container>&ndash;&gt;
+
+                <two-fields-multiselect get-data-method="vm.getAccounts(vm.optionsForMultiselect)"
+                                        model="vm.reportOptions.accounts"
+                                        title="Accounts multiselector"
+                                        selected-items="vm.reportOptions.accounts"
+                                        nothing-selected-text="Off"
+                                        selected-items-indication="chips"
+                                        name-property="short_name"
+                                        small-options="{tooltipText: 'Accounts multiselector'}"></two-fields-multiselect>
+
+            </div>
+
+            <div layout="row" style="margin-bottom:20px">
+
+                &lt;!&ndash;<md-input-container>
+
+                    <label for="">Strategies 1</label>
+
+                    <md-select multiple data-ng-model="vm.reportOptions.strategies1"
+                               md-on-close="searchTerm = ''">
+                        <md-select-header>
+                            <input data-ng-model="searchTerm"
+                                   type="search"
+                                   placeholder="Search for a ..."
+                                   ng-keydown="vm.onSearchChange($event)"
+                                   class="md-text md-select-search-pattern">
+                        </md-select-header>
+                        <md-option
+                                data-ng-repeat="item in vm.strategies1 | orderBy:'-'+item.name | filter:{name: searchTerm}"
+                                ng-value="item.id">{{item.name}}
+                        </md-option>
+                    </md-select>
+
+                </md-input-container>&ndash;&gt;
+
+                <two-fields-multiselect get-data-method="vm.getStrategies1(vm.optionsForMultiselect)"
+                                        model="vm.reportOptions.strategies1"
+                                        data-title="Strategies 1 multiselector"
+                                        data-selected-items="vm.reportOptions.strategies1"
+                                        nothing-selected-text="Off"
+                                        selected-items-indication="chips"
+                                        data-name-property="short_name"
+                                        small-options="{tooltipText: 'Strategies 1 multiselector'}"></two-fields-multiselect>
+
+                &lt;!&ndash;<md-input-container>
+
+                    <label for="">Strategies 2</label>
+
+                    <md-select multiple data-ng-model="vm.reportOptions.strategies2"
+                               md-on-close="searchTerm = ''">
+                        <md-select-header>
+                            <input data-ng-model="searchTerm"
+                                   type="search"
+                                   placeholder="Search for a ..."
+                                   ng-keydown="vm.onSearchChange($event)"
+                                   class="md-text md-select-search-pattern">
+                        </md-select-header>
+                        <md-option
+                                data-ng-repeat="item in vm.strategies2 | orderBy:'-'+item.name | filter:{name: searchTerm}"
+                                ng-value="item.id">{{item.name}}
+                        </md-option>
+                    </md-select>
+
+                </md-input-container>&ndash;&gt;
+
+                <two-fields-multiselect get-data-method="vm.getStrategies2(vm.optionsForMultiselect)"
+                                        model="vm.reportOptions.strategies2"
+                                        data-title="Strategies 2 multiselector"
+                                        data-selected-items="vm.reportOptions.strategies2"
+                                        nothing-selected-text="Off"
+                                        selected-items-indication="chips"
+                                        data-name-property="short_name"
+                                        small-options="{tooltipText: 'Strategies 2 multiselector'}"></two-fields-multiselect>
+
+                &lt;!&ndash;<md-input-container>
+
+                    <label for="">Strategies 3</label>
+
+                    <md-select multiple data-ng-model="vm.reportOptions.strategies3"
+                               md-on-close="searchTerm = ''">
+                        <md-select-header>
+                            <input data-ng-model="searchTerm"
+                                   type="search"
+                                   placeholder="Search for a ..."
+                                   ng-keydown="vm.onSearchChange($event)"
+                                   class="md-text md-select-search-pattern">
+                        </md-select-header>
+                        <md-option
+                                data-ng-repeat="item in vm.strategies3 | orderBy:'-'+item.name | filter:{name: searchTerm}"
+                                ng-value="item.id">{{item.name}}
+                        </md-option>
+                    </md-select>
+
+                </md-input-container>&ndash;&gt;
+
+                <two-fields-multiselect get-data-method="vm.getStrategies3(vm.optionsForMultiselect)"
+                                        model="vm.reportOptions.strategies3"
+                                        data-title="Strategies 3 multiselector"
+                                        data-selected-items="vm.reportOptions.strategies3"
+                                        nothing-selected-text="Off"
+                                        selected-items-indication="chips"
+                                        name-property="short_name"
+                                        small-options="{tooltipText: 'Accounts multiselector'}"></two-fields-multiselect>
+
+            </div>
+
+            <div data-ng-if="vm.entityType == 'balance-report'">
+
+                <h2>Exposure details</h2>
+
+                <div layout="row">
+
+                    <md-input-container>
+                        <md-checkbox data-ng-model="vm.reportOptions.show_balance_exposure_details">
+                            Show exposure details
+                        </md-checkbox>
+                    </md-input-container>
+
+                </div>
+
+                <h2>Market Value/Exposure %</h2>
+
+                <div layout="row">
+                    <md-radio-group ng-model="vm.reportOptions.calculationGroup" layout="row">
+
+                        <md-radio-button value="portfolio" class="md-primary">Portfolio</md-radio-button>
+                        <md-radio-button value="account" class="md-primary">Account</md-radio-button>
+                        <md-radio-button value="strategy1" class="md-primary">Strategy 1</md-radio-button>
+                        <md-radio-button value="strategy2" class="md-primary">Strategy 2</md-radio-button>
+                        <md-radio-button value="strategy3" class="md-primary">Strategy 3</md-radio-button>
+
+                    </md-radio-group>
+
+                </div>
+
+            </div>
+
+            <div data-ng-if="vm.entityType == 'balance-report' || vm.entityType == 'pl-report'">
+
+                <h2>Transaction details</h2>
+
+                <div layout="row">
+
+                    <md-input-container>
+                        <md-checkbox data-ng-model="vm.reportOptions.show_transaction_details">
+                            Show transaction details
+                        </md-checkbox>
+                    </md-input-container>
+
+
+                    <md-input-container data-ng-if="vm.entityType == 'pl-report'">
+                        <md-checkbox data-ng-model="vm.reportOptions.allocation_detailing">
+                            Show allocation details
+                        </md-checkbox>
+                    </md-input-container>
+
+                </div>
+
+                <h2>Market Value/Exposure %</h2>
+
+                <div layout="row">
+                    <md-radio-group ng-model="vm.reportOptions.calculationGroup" layout="row">
+
+                        <md-radio-button value="portfolio" class="md-primary">Portfolio</md-radio-button>
+                        <md-radio-button value="account" class="md-primary">Account</md-radio-button>
+                        <md-radio-button value="strategy1" class="md-primary">Strategy 1</md-radio-button>
+                        <md-radio-button value="strategy2" class="md-primary">Strategy 2</md-radio-button>
+                        <md-radio-button value="strategy3" class="md-primary">Strategy 3</md-radio-button>
+
+                    </md-radio-group>
+
+                </div>
+
+            </div>
+
+            <div class="m-t-16">
+                <two-fields-multiselect items="vm.customFieldsNames"
+                                        model="vm.selectedCustomFields"
+                                        title="Custom Fields multiselector"
+                                        selected-items="vm.selectedCustomFields"
+                                        nothing-selected-text="Nothing Selected"
+                                        on-change-callback="vm.selectedCustomFieldsChanged()"
+                                        name-property="name"></two-fields-multiselect>
+            </div>
+
+
+            <div class="m-t-16" data-ng-if="vm.entityType == 'transaction-report'">
+
+                <div layout="row"  class="m-t-16">
+                    <md-input-container flex="100">
+                        <label>Filter transactions by statuses</label>
+                        <md-select data-ng-model="vm.complex_transaction_statuses_filter" multiple>
+                            <md-option value="booked">Booked</md-option>
+                            <md-option value="ignored">Ignored</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+
+            </div>-->
+
+        </div>
+
+        <div data-ng-if="!vm.checkReadyStatus()" class="p-t-24 p-b-24">
+            <div layout="row" layout-sm="column" layout-align="space-around">
+                <progress-circular diameter="100"></progress-circular>
+            </div>
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions class="flex_cb">
+        <md-button class="link-button" ng-click="vm.cancel()">
+            CLOSE
+        </md-button>
+        <md-button data-ng-if="!vm.disableChangesSaving" class="link-button" ng-click="vm.saveSettings()">
+            OK
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

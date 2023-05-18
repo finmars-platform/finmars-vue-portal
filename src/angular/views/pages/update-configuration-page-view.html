@@ -1,0 +1,65 @@
+<div>
+
+
+    <div data-ng-if="vm.processing" style="margin-bottom: 100px; margin-top: 50px" class="text-center">
+        <div layout="row" layout-sm="column" layout-align="space-around">
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+
+        <p class="overlay-text"><b>Applying Configuration</b></p>
+
+    </div>
+
+    <p class="text-center">Configurations</p>
+
+
+    <div class="margin-auto setup-wrapper">
+
+        <div data-ng-repeat="item in vm.items" class="setup-item"
+        >
+
+            <div>
+
+                <div class="setup-name p-t-8 m-b-8">{{item.name}}</div>
+
+                <div data-ng-if="item.description" class="setup-description">
+                    {{item.description}}
+                </div>
+
+                <div class="setup-item-footer">
+
+                    <md-button class="md-raised m-0 float-right {{vm.processing ? 'disabled-btn' : ''}}"
+                               data-ng-click="vm.setActiveConfig($event, item.id)">
+                        Apply
+                    </md-button>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <p class="text-center">Zero Configuration</p>
+
+    <div class="margin-auto setup-wrapper">
+        <div  class="setup-item">
+
+            <div class="setup-name p-t-8 m-b-8">Finmars Initial Configuration</div>
+
+            <div class="setup-item-footer">
+
+                <md-button class="md-raised m-0 float-right {{vm.processing ? 'disabled-btn' : ''}}"
+                           data-ng-click="vm.applyInitialConfiguration($event)">
+                    Apply
+                </md-button>
+
+            </div>
+
+
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,55 @@
+<div class="p-24">
+
+
+    <div data-ng-if="vm.readyStatus.content">
+
+        <h4>System Files</h4>
+
+        <div>
+
+            <table class="file-reports-table">
+
+                <thead>
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Notes
+                    </th>
+                    <th>
+                        Link
+                    </th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                <tr data-ng-repeat="item in vm.items">
+
+                    <td data-ng-bind="item.name"></td>
+                    <td data-ng-bind="item.notes"></td>
+                    <td><a href="{{vm.getFileUrl(item)}}" download>Download</a></td>
+
+                </tr>
+
+
+                </tbody>
+
+            </table>
+
+
+        </div>
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.content">
+
+        <div class="overlay-loader" layout="row" layout-sm="column" layout-align="space-around">
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+
+    </div>
+
+
+</div>

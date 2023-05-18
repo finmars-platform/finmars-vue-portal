@@ -1,0 +1,111 @@
+<md-dialog class="color-picker-dialog draggable-dialog dialog-actions-bottom colorPickerDialogElemToResize"
+           aria-label="color picker dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Pick color</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="p-16 height-100">
+
+        <div class="flex-row">
+            <div class="color-picker-presets-container">
+                <div class="color-picker-preset-elem"
+                     data-ng-click="vm.chooseColor('#ff8080')"
+                     style="background-color: #ff8080"></div>
+                <div class="color-picker-preset-elem"
+                     data-ng-click="vm.chooseColor('#ffff80')"
+                     style="background-color: #ffff80"></div>
+                <div class="color-picker-preset-elem"
+                     data-ng-click="vm.chooseColor('#80ff80')"
+                     style="background-color: #80ff80"></div>
+                <div class="color-picker-preset-elem"
+                     data-ng-click="vm.chooseColor('#80ffff')"
+                     style="background-color: #80ffff"></div>
+
+                <div class="color-picker-preset-elem"
+                     data-ng-click="vm.chooseColor('#0080ff')"
+                     style="background-color: #0080ff"></div>
+                <div class="color-picker-preset-elem"
+                     data-ng-click="vm.chooseColor('#ff80c0')"
+                     style="background-color: #ff80c0"></div>
+                <div class="color-picker-preset-elem"
+                     data-ng-click="vm.chooseColor('#ff80ff')"
+                     style="background-color: #ff80ff"></div>
+                <div class="color-picker-preset-elem"
+                     data-ng-click="vm.chooseColor('#ff0000')"
+                     style="background-color: #ff0000"></div>
+
+                <div class="color-picker-preset-elem"
+                     data-ng-click="vm.chooseColor('#0080c0')"
+                     style="background-color: #0080c0"></div>
+                <div class="color-picker-preset-elem"
+                     data-ng-click="vm.chooseColor('#8080c0')"
+                     style="background-color: #8080c0"></div>
+                <div class="color-picker-preset-elem"
+                     data-ng-click="vm.chooseColor('#ff00ff')"
+                     style="background-color: #ff00ff"></div>
+                <div class="color-picker-preset-elem"
+                     data-ng-click="vm.chooseColor('#804040')"
+                     style="background-color: #804040"></div>
+
+                <div class="color-picker-preset-elem"
+                     data-ng-click="vm.chooseColor('#ff8040')"
+                     style="background-color: #ff8040"></div>
+                <div class="color-picker-preset-elem"
+                     data-ng-click="vm.chooseColor('#8080ff')"
+                     style="background-color: #8080ff"></div>
+                <div class="color-picker-preset-elem"
+                     data-ng-click="vm.chooseColor('#0f87ff')"
+                     style="background-color: #0f87ff"></div>
+                <div class="color-picker-preset-elem"
+                     data-ng-click="vm.chooseColor('#8000ff')"
+                     style="background-color: #8000ff"></div>
+
+                <div class="color-picker-preset-elem"
+                     data-ng-click="vm.chooseColor('#808040')"
+                     style="background-color: #808040"></div>
+                <div class="color-picker-preset-elem"
+                     data-ng-click="vm.chooseColor('#c0c0c0')"
+                     style="background-color: #c0c0c0"></div>
+                <div class="color-picker-preset-elem"
+                     data-ng-click="vm.chooseColor('#00e2ea')"
+                     style="background-color: #00e2ea"></div>
+                <div class="color-picker-preset-elem"
+                     data-ng-click="vm.chooseColor('#000000')"
+                     style="background-color: #000000"></div>
+
+                <!--<div data-ng-click="vm.chooseColor('#000000')"></div>
+                <div data-ng-click="vm.chooseColor('#000000')"></div>
+                <div data-ng-click="vm.chooseColor('#000000')"></div>
+                <div data-ng-click="vm.chooseColor('#000000')"></div>
+                <div data-ng-click="vm.chooseColor('#000000')"></div>-->
+            </div>
+
+            <div class="color-picker-holder">
+                <div class="replaceWithColorPicker"></div>
+            </div>
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions>
+        <div class="width-100" layout="row" layout-align="space-between center">
+            <md-button ng-click="vm.cancel()">
+                Reset
+            </md-button>
+
+            <md-button ng-click="vm.agree()" style="margin-right:20px;">
+                Assign
+            </md-button>
+        </div>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+    </md-dialog-actions>
+</md-dialog>

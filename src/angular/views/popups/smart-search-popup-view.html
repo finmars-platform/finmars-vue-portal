@@ -1,0 +1,31 @@
+<div class="custom-input-sel-menu-container m-t-8">
+    <div class="custom-input-sel-menu-block">
+        <div ng-if="!popupData.loadingOptions">
+            <div data-ng-repeat="option in popupData.selectorOptions track by $index"
+                 data-ng-mousedown="popupData.selectOption(option, _$popup)" tabindex="0"
+                 data-ng-bind="option.short_name" class="custom-input-sel-option"></div>
+        </div>
+
+        <div ng-if="popupData.loadingOptions"
+             layout="row" layout-sm="column" layout-align="space-around">
+            <progress-circular diameter="10"></progress-circular>
+        </div>
+
+
+        <div class="custom-input-sel-menu-block-btns-pan flex_c">
+            <button class="md-raised md-primary md-button md-ink-ripple m-b-8"
+                    data-ng-click="popupData.createEntity(_$popup, $event)">
+                Create
+            </button>
+            <button data-ng-if="popupData.entityType === 'instrument'"
+                    class="md-raised md-primary md-button md-ink-ripple m-b-8"
+                    data-ng-click="popupData.downloadEntity(_$popup, $event)">
+                Download
+            </button>
+            <button data-ng-if="popupData.entityType === 'instrument'"
+                    class="md-raised md-primary md-button md-ink-ripple">
+                Generate
+            </button>
+        </div>
+    </div>
+</div>

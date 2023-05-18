@@ -1,0 +1,444 @@
+<div data-ng-controller="AccrualCalculationSchedulesController as vm">
+    <div class="" data-ng-if="vm.checkReadyStatus()">
+
+        <div layout="row">
+
+<!--            <md-input-container class="md-block" style="width: 200px;">
+                <label>Accrual Currency</label>
+                <md-select md-on-close="vm.searchTermCurrecy = ''"
+                           data-ng-model="vm.entity.accrued_currency"
+                           md-on-open="vm.getCurrencyFields()"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermCurrecy"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.currencyFields | orderBy:'-'+field.name | filter:{name: vm.searchTermCurrecy} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>-->
+
+            <div class="p-r-8" style="width: 200px;">
+                <bind-field-control entity-type="vm.entityType"
+                                    entity="vm.entity"
+                                    entity-change="vm.onEntityChange(fieldKey, fieldType)"
+                                    ev-editor-data-service="vm.evEditorDataService"
+                                    ev-editor-event-service="vm.evEditorEventService"
+                                    item="vm.accruedCurrencyAttr"
+                                    class="cic-no-padding"></bind-field-control>
+            </div>
+
+<!--            <md-input-container class="md-block" style="width: 230px;">
+                <label>Accrual Size Clarification</label>
+                <md-select md-on-close="vm.searchTermPaymentSizeDetail = ''"
+                           data-ng-model="vm.entity.payment_size_detail"
+                           md-on-open="vm.getPaymentSizeDetailFields()"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermPaymentSizeDetail"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.dailyPricingModelFields | orderBy:'-'+field.name | filter:{name: vm.searchTermPaymentSizeDetail} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>-->
+
+            <div class="p-r-8" style="width: 200px;">
+                <bind-field-control entity-type="vm.entityType"
+                                    entity="vm.entity"
+                                    entity-change="vm.onEntityChange(fieldKey, fieldType)"
+                                    ev-editor-data-service="vm.evEditorDataService"
+                                    ev-editor-event-service="vm.evEditorEventService"
+                                    item="vm.paymentSizeDetailAttr"
+                                    class="cic-no-padding"></bind-field-control>
+            </div>
+
+<!--            <md-input-container style="width: 200px;">
+                <label for="">Accrual Multiplier</label>
+                <input type="text" data-ng-model="vm.entity.accrued_multiplier">
+            </md-input-container>-->
+
+            <number-input class="p-r-8"
+                          label="Accrual Multiplier"
+                          model="vm.entity.accrued_multiplier"
+                          small-options="{tooltipText: 'Accrual Multiplier'}"
+                          style="width: 200px;">
+            </number-input>
+
+<!--            <md-input-container style="width: 200px;">
+                <label for="">Default Accrued</label>
+                <input type="text" data-ng-model="vm.entity.default_accrued">
+            </md-input-container>-->
+
+            <number-input label="Default Accrued"
+                          model="vm.entity.default_accrued"
+                          small-options="{tooltipText: 'Default Accrued'}"
+                          style="width: 200px;">
+            </number-input>
+
+            <md-button data-ng-click="vm.generateEventsSchedule($event)" data-ng-if="vm.entity.id"
+                       class="md-raised md-primary">Build Events
+            </md-button>
+
+        </div>
+
+        <div style="font-size: 18px; padding-left: 6px; margin-bottom: 24px;
+                        font-weight: bold; border-top: 1px solid #ddd; padding-top: 16px;
+                        margin-top: 8px;">
+            Accrued Interest Calculation Schedules
+        </div>
+
+        <!--<table class="bordered">
+            <thead>
+            <tr>
+                <th data-ng-click="vm.setSort('accrual_start_date')">Accrual start date<span class="sortorder"
+                                                                                             data-ng-show="vm.sort === 'accrual_start_date'"
+                                                                                             data-ng-class="{reverse: vm.direction}"></span>
+                </th>
+                <th data-ng-click="vm.setSort('first_payment_date')">First payment date<span class="sortorder"
+                                                                                             data-ng-show="vm.sort === 'first_payment_date'"
+                                                                                             data-ng-class="{reverse: vm.direction}"></span>
+                </th>
+                <th data-ng-click="vm.setSort('accrual_size')">Accrual size<span class="sortorder"
+                                                                                 data-ng-show="vm.sort === 'accrual_size'"
+                                                                                 data-ng-class="{reverse: vm.direction}"></span>
+                </th>
+                <th data-ng-click="vm.setSort('accrual_calculation_model')">Accrual calculation model<span
+                        class="sortorder"
+                        data-ng-show="vm.sort === 'accrual_calculation_model'"
+                        data-ng-class="{reverse: vm.direction}"></span>
+                </th>
+                <th data-ng-click="vm.setSort('periodicity')">Periodicity<span class="sortorder"
+                                                                               data-ng-show="vm.sort === 'periodicity'"
+                                                                               data-ng-class="{reverse: vm.direction}"></span>
+                </th>
+                <th data-ng-click="vm.setSort('periodicity_n')">Periodicity N<span class="sortorder"
+                                                                                   data-ng-show="vm.sort === 'periodicity_n'"
+                                                                                   data-ng-class="{reverse: vm.direction}"></span>
+                </th>
+                <th data-ng-click="vm.setSort('notes')">Notes<span class="sortorder"
+                                                                   data-ng-show="vm.sort === 'notes'"
+                                                                   data-ng-class="{reverse: vm.direction}"></span></th>
+                <th>
+                    <md-button class="md-icon-button">
+                        <ng-md-icon data-ng-click="vm.toggleQuery()" icon="search"></ng-md-icon>
+                    </md-button>
+                </th>
+            </tr>
+            <tr data-ng-if="vm.queryStatus" class="filter-row-holder">
+                <th>
+                    <md-input-container>
+                        <ng-md-icon icon="search"></ng-md-icon>
+                        <input type="text" data-ng-model="vm.query.accrual_start_date">
+                    </md-input-container>
+                </th>
+                <th>
+                    <md-input-container>
+                        <ng-md-icon icon="search"></ng-md-icon>
+                        <input type="text" data-ng-model="vm.query.first_payment_date">
+                    </md-input-container>
+                </th>
+                <th>
+                    <md-input-container>
+                        <ng-md-icon icon="search"></ng-md-icon>
+                        <input type="text" data-ng-model="vm.query.accrual_size">
+                    </md-input-container>
+                </th>
+                <th>
+                    <md-input-container>
+                        <ng-md-icon icon="search"></ng-md-icon>
+                        <input type="text" data-ng-model="vm.query.calculation_model_name">
+                    </md-input-container>
+                </th>
+                <th>
+                    <md-input-container>
+                        <ng-md-icon icon="search"></ng-md-icon>
+                        <input type="text" data-ng-model="vm.query.periodicity">
+                    </md-input-container>
+                </th>
+                <th>
+                    <md-input-container>
+                        <ng-md-icon icon="search"></ng-md-icon>
+                        <input type="text" data-ng-model="vm.query.periodicity_n">
+                    </md-input-container>
+                </th>
+                <th>
+                    <md-input-container>
+                        <ng-md-icon icon="search"></ng-md-icon>
+                        <input type="text" data-ng-model="vm.query.notes">
+                    </md-input-container>
+                </th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr data-ng-repeat="item in vm.entity.accrual_calculation_schedules | filter:vm.query | orderBy:vm.sort:vm.direction">
+                <td data-ng-if="!item.editStatus" data-ng-bind="item.accrual_start_date"></td>
+                <td data-ng-if="!item.editStatus" data-ng-bind="item.first_payment_date"></td>
+                <td data-ng-if="!item.editStatus" data-ng-bind="item.accrual_size"></td>
+                <td data-ng-if="!item.editStatus" data-ng-bind="vm.bindCalculationModel(item)"></td>
+                <td data-ng-if="!item.editStatus" data-ng-bind="vm.bindPeriodicity(item)"></td>
+                <td data-ng-if="!item.editStatus" data-ng-bind="item.periodicity_n"></td>
+                <td data-ng-if="!item.editStatus" data-ng-bind="item.notes"></td>
+                <td data-ng-if="!item.editStatus" class="table-misc-cell">
+                    <md-menu>
+                        &lt;!&ndash; Trigger element is a md-button with an icon &ndash;&gt;
+                        <md-button ng-click="$mdOpenMenu($event)" class="md-icon-button" aria-label="Open sample menu">
+                            <ng-md-icon icon="settings"></ng-md-icon>
+                        </md-button>
+                        <md-menu-content>
+                            <md-menu-item>
+                                <md-button ng-click="vm.editItem(item)">
+                                    <ng-md-icon icon="mode_edit" style="top: 6px;
+    position: relative;
+    margin-right: 10px;"></ng-md-icon>
+                                    Edit
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="vm.deleteItem(item, $index)">
+                                    <ng-md-icon icon="delete" style="top: 6px;
+    position: relative;
+    margin-right: 10px;"></ng-md-icon>
+                                    Delete
+                                </md-button>
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
+                </td>
+                <td data-ng-if="item.editStatus" class="edit-state-td">
+                    <md-input-container>
+                        <label for="">Accrual start date</label>
+                        <zh-date-picker data-date-value="item.accrual_start_date"></zh-date-picker>
+                    </md-input-container>
+                </td>
+                <td data-ng-if="item.editStatus" class="edit-state-td">
+                    <md-input-container>
+                        <label for="">First payment date</label>
+                        <zh-date-picker data-date-value="item.first_payment_date"></zh-date-picker>
+                    </md-input-container>
+                </td>
+                <td data-ng-if="item.editStatus" class="edit-state-td">
+                    <md-input-container>
+                        <label for="">Accrual size</label>
+                        <input type="text" data-ng-model="item.accrual_size">
+                    </md-input-container>
+                </td>
+                <td data-ng-if="item.editStatus" class="edit-state-td">
+                    <md-input-container style="margin-bottom: 23px" aria-label="select with filter">
+                        &lt;!&ndash;<label for="">Accrual calculation model</label>&ndash;&gt;
+                        &lt;!&ndash;<md-select data-ng-model="item.accrual_calculation_model">
+                            <md-option data-ng-repeat="model in vm.accrualModels" ng-value="model.id">{{model.name}}
+                            </md-option>
+                        </md-select>&ndash;&gt;
+                        <label></label>
+                        <md-select ng-model="item.accrual_calculation_model"
+                                   md-container-class="common-select-container"
+                                   md-on-close="searchTerm = ''">
+
+                            <md-select-header>
+                                <input data-ng-model="searchTerm"
+                                       type="search"
+                                       placeholder="Search for a ..."
+                                       class="md-text md-select-search-pattern select-input-filter"
+                                       ng-keydown="$event.stopPropagation()">
+                            </md-select-header>
+
+                            <div class="select-options-holder">
+
+                                <md-option
+                                        data-ng-repeat="model in vm.accrualModels | filter: {name: searchTerm}"
+                                        ng-value="model.id"
+                                        ng-bind="model.name">
+                                </md-option>
+
+                            </div>
+
+                        </md-select>
+                    </md-input-container>
+                </td>
+                <td data-ng-if="item.editStatus" class="edit-state-td">
+                    <md-input-container aria-label="select with filter">
+                        &lt;!&ndash;<label for="">Periodicity</label>
+                        <md-select data-ng-model="item.periodicity">
+                            <md-option data-ng-repeat="model in vm.periodicityItems" ng-value="model.id">{{model.name}}
+                            </md-option>
+                        </md-select>&ndash;&gt;
+
+                        <label>Periodicity</label>
+                        <md-select ng-model="item.periodicity"
+                                   md-container-class="common-select-container"
+                                   md-on-close="searchTerm = ''">
+
+                            <md-select-header>
+                                <input data-ng-model="searchTerm"
+                                       type="search"
+                                       placeholder="Search for a ..."
+                                       class="md-text md-select-search-pattern select-input-filter"
+                                       ng-keydown="$event.stopPropagation()">
+                            </md-select-header>
+
+                            <div class="select-options-holder">
+
+                                <md-option
+                                        data-ng-repeat="model in vm.periodicityItems | filter: {name: searchTerm}"
+                                        ng-value="model.id"
+                                        ng-bind="model.name">
+                                </md-option>
+
+                            </div>
+
+                        </md-select>
+                    </md-input-container>
+                </td>
+                <td data-ng-if="item.editStatus" class="edit-state-td">
+                    <md-input-container>
+                        <label for="">Periodicity N</label>
+                        <input type="text" data-ng-model="item.periodicity_n">
+                    </md-input-container>
+                </td>
+                <td data-ng-if="item.editStatus" class="edit-state-td">
+                    <md-input-container>
+                        <label for="">Notes</label>
+                        <input type="text" data-ng-model="item.notes">
+                    </md-input-container>
+                </td>
+                <td data-ng-if="item.editStatus" class="edit-state-td">
+                    <md-button data-ng-click="vm.saveItem(item)">
+                        Ok
+                    </md-button>
+                </td>
+            </tr>
+            <tr class="tab-input-row">
+                <td>
+                    <md-input-container>
+                        &lt;!&ndash;<label for="">Accrual start date</label>&ndash;&gt;
+                        <zh-date-picker data-date-value="vm.newItem.accrual_start_date"></zh-date-picker>
+                    </md-input-container>
+                </td>
+                <td>
+                    <md-input-container>
+                        &lt;!&ndash;<label for="">First payment date</label>&ndash;&gt;
+                        <zh-date-picker data-date-value="vm.newItem.first_payment_date"></zh-date-picker>
+                    </md-input-container>
+                </td>
+                <td>
+                    <md-input-container>
+                        &lt;!&ndash;<label for="">Accrual size</label>&ndash;&gt;
+                        <input type="text" data-ng-model="vm.newItem.accrual_size">
+                    </md-input-container>
+                </td>
+                <td>
+                    <md-input-container stiyle="margin-bottom: 24px;" aria-label="select with filter">
+                        &lt;!&ndash;<md-select data-ng-model="vm.newItem.accrual_calculation_model">
+                            <md-option data-ng-repeat="model in vm.accrualModels" ng-value="model.id">{{model.name}}
+                            </md-option>
+                        </md-select>&ndash;&gt;
+
+                        <label></label>
+                        <md-select ng-model="vm.newItem.accrual_calculation_model"
+                                   md-container-class="common-select-container"
+                                   md-on-close="searchTerm = ''">
+
+                            <md-select-header>
+                                <input data-ng-model="searchTerm"
+                                       type="search"
+                                       placeholder="Search for a ..."
+                                       class="md-text md-select-search-pattern select-input-filter"
+                                       ng-keydown="$event.stopPropagation()">
+                            </md-select-header>
+
+                            <div class="select-options-holder">
+
+                                <md-option
+                                        data-ng-repeat="model in vm.accrualModels | filter: {name: searchTerm}"
+                                        ng-value="model.id"
+                                        ng-bind="model.name">
+                                </md-option>
+
+                            </div>
+
+                        </md-select>
+                    </md-input-container>
+                </td>
+                <td>
+                    <md-input-container style="margin-bottom: 21px;" aria-label="select with filter">
+                        &lt;!&ndash;<label for="">Periodicity</label>&ndash;&gt;
+                        &lt;!&ndash;<md-select data-ng-model="vm.newItem.periodicity">
+                            <md-option data-ng-repeat="model in vm.periodicityItems" ng-value="model.id">{{model.name}}
+                            </md-option>
+                        </md-select>&ndash;&gt;
+
+                        <label></label>
+                        <md-select ng-model="vm.newItem.periodicity"
+                                   md-container-class="common-select-container"
+                                   md-on-close="searchTerm = ''">
+
+                            <md-select-header>
+                                <input data-ng-model="searchTerm"
+                                       type="search"
+                                       placeholder="Search for a ..."
+                                       class="md-text md-select-search-pattern select-input-filter"
+                                       ng-keydown="$event.stopPropagation()">
+                            </md-select-header>
+
+                            <div class="select-options-holder">
+
+                                <md-option
+                                        data-ng-repeat="model in vm.periodicityItems | filter: {name: searchTerm}"
+                                        ng-value="model.id"
+                                        ng-bind="model.name">
+                                </md-option>
+
+                            </div>
+
+                        </md-select>
+                    </md-input-container>
+                </td>
+                <td>
+                    <md-input-container>
+                        &lt;!&ndash;<label for="">Periodicity N</label>&ndash;&gt;
+                        <input type="text" data-ng-model="vm.newItem.periodicity_n">
+                    </md-input-container>
+                </td>
+                <td>
+                    <md-input-container>
+                        &lt;!&ndash;<label for="">Notes</label>&ndash;&gt;
+                        <input type="text" data-ng-model="vm.newItem.notes">
+                    </md-input-container>
+                </td>
+                <td>
+                    <md-button data-ng-click="vm.addRow()">
+                        Add
+                    </md-button>
+                </td>
+            </tr>
+
+            </tbody>
+        </table>-->
+        <grid-table data-gt-data-service="vm.schedulesGridTableDataService"
+                    data-gt-event-service="vm.schedulesGridTableEventService"></grid-table>
+
+    </div>
+    <div data-ng-if="!vm.checkReadyStatus()">
+        <div layout="row" layout-sm="column" layout-align="space-around">
+            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,87 @@
+<md-dialog class="reference-table draggable-dialog" aria-label="reference table edit dialog" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Reference Table: {{vm.referenceTable.name}}</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="custom-scrollbar p-24 dndScrollableElem">
+
+        <div layout="row" class="reference-table-columns-filters-container">
+            <md-input-container class="reference-table-keys-filter" md-no-float="">
+                <input data-ng-model="vm.filterTerms.key"
+                       placeholder="Search for keys">
+            </md-input-container>
+
+            <md-input-container class="reference-table-value-filter" md-no-float="">
+                <input data-ng-model="vm.filterTerms.value"
+                       placeholder="Search for values">
+            </md-input-container>
+        </div>
+
+        <div layout="row" class="reference-table-columns-names-container">
+            <div style="width: 350px;">Key</div>
+            <div>Value</div>
+        </div>
+
+        <div class="referenceTableRowsHolder">
+
+            <div data-ng-repeat="item in vm.referenceTable.rows | orderBy: 'order' | filter:vm.filterTerms as results track by item.order"
+                 data-ng-init="$last && !vm.dragAndDropInited && vm.dragAndDrop.init()"
+                 data-row-order="{{item.order}}">
+
+                <!--<div layout="row">
+
+                </div>-->
+                <md-card class="position-relative e-reference-table-row-card">
+                    <div layout="row">
+
+                        <md-input-container class="no-error-spacer reference-table-key-input-container" style="width: 300px;">
+                            <input type="text"
+                                   data-ng-class="{'key-duplicate': item.is_duplicate && vm.validationEnabled}"
+                                   data-ng-model="item.key"
+                                   data-ng-keyup="vm.checkForDuplicates()">
+                        </md-input-container>
+
+                        <md-input-container class="no-error-spacer reference-table-value-input-container">
+                            <input type="text" data-ng-model="item.value">
+                        </md-input-container>
+
+                        <md-button class="md-button md-warn"
+                                   ng-click="vm.deleteRow($event, item.order)">
+                            Delete
+                        </md-button>
+
+                    </div>
+
+                    <!--<div class="e-reference-table-drag-icon-holder ert-grab-place"
+                         data-ng-mousedown="vm.turnOnDragging()">
+                        <ng-md-icon icon="dialpad" size="20" class="draggable-dialog-sign"></ng-md-icon>
+                    </div>-->
+                    <div class="e-reference-table-drag-icon-holder"
+                         data-ng-mousedown="vm.turnOnDragging()">
+                        <is-draggable-sign></is-draggable-sign>
+                    </div>
+                </md-card>
+
+            </div>
+
+        </div>
+
+        <div>
+            <md-button class="md-raised md-primary" ng-click="vm.createRow($event)">
+                Add New Row
+            </md-button>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row" layout-align="space-between center">
+        <md-button ng-click="vm.cancel()">
+            Close
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.agree($event)" style="margin-right:20px;">
+            Update
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

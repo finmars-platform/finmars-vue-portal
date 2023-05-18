@@ -1,0 +1,44 @@
+<div ng-if="readyStatus.content">
+
+    <!--<md-input-container class="md-block no-error-spacer">
+        <label data-ng-bind="getName()"></label>
+        <md-select md-on-close="searchTerm = ''"
+                   data-ng-model="entity[item.name]"
+                   data-ng-change="changeHandler()"
+                   md-selected-text="entity[item.name]"
+                   md-on-open="getData()"
+                   md-container-class="common-select-container">
+            <md-select-header>
+                <input data-ng-model="searchTerm"
+                       type="search"
+                       placeholder="Search for a ..."
+                       class="md-text md-select-search-pattern select-input-filter"
+                       ng-keydown="$event.stopPropagation()">
+            </md-select-header>
+            <div class="select-options-holder">
+                <md-option
+                        data-ng-repeat="field in fields | orderBy: resolveSort(field) | filter:{key: searchTerm} as results track by field.id "
+                        ng-value="field.value">
+                   {{field.key}}
+                </md-option>
+            </div>
+        </md-select>
+    </md-input-container>-->
+    <dropdown-select label="{{getName()}}"
+                     model="modelObj.model"
+                     placeholder-text="{{getName()}}"
+                     event-signal="ciEventObj.event"
+                     item-name="inputTextObj.value"
+                     menu-options="fields"
+                     small-options="{
+                        notNull: options.notNull,
+                        tooltipText: '{{getName()}}',
+                        dialogParent: '.dialog-containers-wrap'
+                     }"
+                     custom-buttons="item.buttons"
+                     custom-styles="customStyles"
+                     sorted="sorted"
+                     on-change-callback="changeHandler()">
+    </dropdown-select>
+
+</div>

@@ -1,0 +1,44 @@
+<div>
+
+    <div data-ng-repeat="item in vm.reconFields" class="input-form-complex-transaction-recon-field">
+
+        <div class="input-form-complex-transaction-recon-field-reference-name">
+            <b>{{item.reference_name}}</b>
+        </div>
+
+        <div style="padding-left: 20px;">
+            <div data-ng-if="item.value_string" class="m-8">
+                <span class="input-form-complex-transaction-recon-field-property-name">Text:</span> {{item.value_string}}
+            </div>
+            <div data-ng-if="item.value_float" class="m-8">
+                <span class="input-form-complex-transaction-recon-field-property-name">Number: </span>{{item.value_float}}
+            </div>
+            <div data-ng-if="item.value_date" class="m-8">
+                <span class="input-form-complex-transaction-recon-field-property-name">Date:</span> {{item.value_date}}
+            </div>
+        </div>
+
+        <div class="input-form-complex-transaction-recon-field-status">
+
+            <div data-ng-if="item.status == 1" class="recon-card-matched">
+                Matched
+            </div>
+
+            <div data-ng-if="item.status == 2" class="recon-card-unmatched">
+                Unmatched
+            </div>
+
+            <div data-ng-if="item.status == 3" class="recon-card-auto-matched">
+                Auto Matched
+            </div>
+
+            <div data-ng-if="item.status == 4" class="recon-card-ignore">
+                Ignore
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>

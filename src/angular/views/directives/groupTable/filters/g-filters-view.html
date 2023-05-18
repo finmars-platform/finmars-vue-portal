@@ -1,0 +1,42 @@
+<div class="g-filters width-100 gFilters"
+     data-ng-class="{'open-filters': isFiltersOpened}">
+    <!-- IMPORTANT: for .gFiltersWrap padding should be set by styles, so that scripts can access it -->
+    <div class="gFiltersWrap" style="padding: 10px;">
+
+        <div ng-if="isReport">
+            <g-rv-filters ev-data-service="evDataService"
+                          ev-event-service="evEventService"
+                          attribute-data-service="attributeDataService"></g-rv-filters>
+        </div>
+
+        <div ng-if="!isReport">
+            <g-ev-filters ev-data-service="evDataService"
+                          ev-event-service="evEventService"
+                          attribute-data-service="attributeDataService"></g-ev-filters>
+        </div>
+
+        <div data-ng-if="viewContext !== 'dashboard'"
+             class="drop-area-wrap column-to-filters-drop-area display-none gFiltersDropArea">
+            <div class="g-drop-area gDropArea"></div>
+
+            <div class="drop-area-content">
+                <span>Drop here to add filters</span>
+            </div>
+        </div>
+
+        <div data-ng-if="viewContext !== 'dashboard'"
+             class="drop-area-wrap remove-column-drop-area display-none gDeletionDropArea">
+            <div class="g-drop-area gDropArea"></div>
+
+            <div class="drop-area-content">
+                <span class="material-icons">delete</span>
+            </div>
+        </div>
+
+    </div>
+
+    <g-rows-bulk-actions ng-if="isRootEntityViewer && viewContext !== 'dashboard'"
+                         ev-data-service="evDataService"
+                         ev-event-service="evEventService"
+                         content-wrap-element="contentWrapElement"></g-rows-bulk-actions>
+</div>

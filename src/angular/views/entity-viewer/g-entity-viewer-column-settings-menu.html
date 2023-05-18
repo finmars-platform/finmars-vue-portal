@@ -1,0 +1,129 @@
+<md-menu>
+
+    <md-button aria-label="entity viewer column settings"
+               class="md-icon-button column-btns column-settings-menu"
+               ng-click="$mdOpenMenu($event)">
+        <ng-md-icon icon="settings"></ng-md-icon>
+    </md-button>
+
+    <md-menu-content width="4">
+        <md-menu-item>
+            <md-button ng-click="renameColumn(column.key, $mdMenu, $event)"
+                       class="g-settings-option-btn">
+                <ng-md-icon icon="visibility_off"
+                            style="visibility: hidden;"></ng-md-icon>
+                <span>Rename</span>
+            </md-button>
+            <md-menu-content style="display: none"></md-menu-content>
+        </md-menu-item>
+
+        <md-menu-item data-ng-if="!columnHasCorrespondingGroup(column.key)">
+            <md-button data-ng-click="addColumnEntityToGrouping(column)"
+                       class="g-settings-option-btn">
+                <ng-md-icon icon="visibility_off"
+                            style="visibility: hidden;"></ng-md-icon>
+                <span>Add to grouping</span>
+            </md-button>
+            <md-menu-content style="display: none"></md-menu-content>
+        </md-menu-item>
+
+        <md-menu-item data-ng-if="checkForFilteringBySameAttr(column.key)">
+            <md-button data-ng-click="addFiltersWithColAttr(column)"
+                       class="g-settings-option-btn">
+                <ng-md-icon icon="visibility_off"
+                            style="visibility: hidden;"></ng-md-icon>
+                <span>Add to Filters</span>
+            </md-button>
+            <md-menu-content style="display: none"></md-menu-content>
+        </md-menu-item>
+
+        <md-menu-item>
+            <md-button ng-click="resizeColumn(column, $mdMenu, $event)"
+                       class="g-settings-option-btn">
+                <ng-md-icon icon="visibility_off"
+                            style="visibility: hidden;"></ng-md-icon>
+                <span>Resize</span>
+            </md-button>
+        </md-menu-item>
+
+        <md-menu-item data-ng-if="!isReport || !columnHasCorrespondingGroup(column.key);">
+            <md-menu>
+                <md-button aria-label="Open phone interactions menu"
+                           ng-click="$mdOpenMenu($event)">
+                    <ng-md-icon icon="done"
+                                class="z-menu-icon"
+                                style="visibility: hidden;"></ng-md-icon>
+                    <span>Text aligning</span>
+                    <ng-md-icon icon="arrow_drop_up"
+                                class="z-dropdown-icon"></ng-md-icon>
+                </md-button>
+
+                <md-menu-content width="3">
+                    <md-menu-item>
+                        <md-button ng-click="changeColumnTextAlign(column, 'left')"
+                                   class="g-settings-option-btn">
+                            <ng-md-icon icon="done"
+                                        data-ng-show="!checkColTextAlign(column, 'left')"
+                                        class="z-menu-icon"
+                                        style="visibility: hidden;"></ng-md-icon>
+                            <ng-md-icon icon="done"
+                                        data-ng-show="checkColTextAlign(column, 'left')"
+                                        class="z-menu-icon"></ng-md-icon>
+                            <span>Left</span>
+                        </md-button>
+                    </md-menu-item>
+
+                    <md-menu-item>
+                        <md-button ng-click="changeColumnTextAlign(column, 'center')"
+                                   class="g-settings-option-btn">
+                            <ng-md-icon icon="done"
+                                        data-ng-show="!checkColTextAlign(column, 'center')"
+                                        class="z-menu-icon"
+                                        style="visibility: hidden;"></ng-md-icon>
+                            <ng-md-icon icon="done"
+                                        data-ng-show="checkColTextAlign(column, 'center')"
+                                        class="z-menu-icon"></ng-md-icon>
+                            <span>Center</span>
+                        </md-button>
+                    </md-menu-item>
+
+                    <md-menu-item>
+                        <md-button ng-click="changeColumnTextAlign(column, 'right')"
+                                   class="g-settings-option-btn">
+                            <ng-md-icon icon="done"
+                                        data-ng-show="!checkColTextAlign(column, 'right')"
+                                        class="z-menu-icon"
+                                        style="visibility: hidden;"></ng-md-icon>
+                            <ng-md-icon icon="done"
+                                        data-ng-show="checkColTextAlign(column, 'right')"
+                                        class="z-menu-icon"></ng-md-icon>
+                            <span>Right</span>
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+        </md-menu-item>
+
+        <md-menu-item data-ng-if="isReport && columnHasCorrespondingGroup(column.key)">
+            <md-menu>
+                <md-button data-ng-click="removeGroup(column.___column_id)"
+                           class="g-settings-option-btn">
+                    <ng-md-icon icon="visibility_off"></ng-md-icon>
+                    <span>Remove</span>
+                </md-button>
+                <md-menu-content style="display: none"></md-menu-content>
+            </md-menu>
+        </md-menu-item>
+
+        <md-menu-item data-ng-if="!isReport || !columnHasCorrespondingGroup(column.key)">
+            <md-menu>
+                <md-button ng-click="removeColumn(column)"
+                           class="g-settings-option-btn">
+                    <ng-md-icon icon="visibility_off"></ng-md-icon>
+                    <span>Remove</span>
+                </md-button>
+                <md-menu-content style="display: none"></md-menu-content>
+            </md-menu>
+        </md-menu-item>
+    </md-menu-content>
+</md-menu>

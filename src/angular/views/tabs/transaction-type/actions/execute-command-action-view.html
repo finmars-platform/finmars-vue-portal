@@ -1,0 +1,19 @@
+<div layout="row">
+    <div flex="50">
+
+        <div flex="50" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap p-l-0">
+            <!--<md-input-container class="expression-input-container">
+                <label for="" class="uncut-text-on-focus-label" content-title>Expression</label>
+                <input type="text" value-title
+                       data-ng-model="item.execute_command.expr">
+            </md-input-container>
+            <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                      data-item="item.execute_command.expr"></expression-editor-button>-->
+            <expression-input label="Expression"
+                              model="item.execute_command.expr"
+                              data-data="vm.expressionData"
+                              class="width-100"></expression-input>
+        </div>
+
+    </div>
+</div>

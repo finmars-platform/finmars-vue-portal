@@ -1,0 +1,38 @@
+<md-dialog aria-label="" ng-cloak class="success-dialog draggable-dialog" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Export Reference Table</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="p-24">
+
+            <div data-ng-if="vm.readyStatus.content" layout="row">
+
+                <div class="width-50">
+                    <md-input-container class="width-80">
+                        <label>File Name</label>
+                        <input type="text" data-ng-model="vm.filename">
+                    </md-input-container>
+                </div>
+
+            </div>
+
+            <div data-ng-if="!vm.readyStatus.content">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                    <md-progress-circular md-mode="indeterminate" md-diameter="48"></md-progress-circular>
+                </div>
+            </div>
+
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()">
+            Close
+        </md-button>
+        <a style="margin-right:20px;" class="md-button md-raised md-primary export-reference-table-link">
+            Export
+        </a>
+    </md-dialog-actions>
+</md-dialog>

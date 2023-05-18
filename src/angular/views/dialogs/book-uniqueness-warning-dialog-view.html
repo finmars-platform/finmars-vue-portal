@@ -1,0 +1,34 @@
+<md-dialog class="warning-dialog draggable-dialog dialog-actions-bottom"
+           aria-label="warning dialog"
+           drag-dialog style="width: 600px;">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Warning</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="warning-text">
+            Transaction Uniqueness Error. Please choose one of the following options.
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+        <div>
+            <md-button ng-click="vm.skip()">
+                Skip
+            </md-button>
+            <md-button ng-click="vm.overwrite()" style="margin-right:20px;">
+                Overwrite
+            </md-button>
+            <md-button ng-click="vm.cancel()">
+                Cancel
+            </md-button>
+            <md-button ng-click="vm.bookWithoutUniqueCode()">
+                Book without Unique Code
+            </md-button>
+        </div>
+    </md-dialog-actions>
+</md-dialog>

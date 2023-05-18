@@ -1,0 +1,756 @@
+<div style="padding: 0 20px">
+
+    <div ng-if="vm.readyStatus">
+        <h2 class="m-b-35">Layouts</h2>
+
+        <md-button class="md-raised md-primary m-b-24" ui-sref="app.portal.dashboard-layout-manager">Dashboard Layout Manager
+        </md-button>
+
+        <md-button class="md-raised md-primary m-b-24" ui-sref="app.portal.context-menu-layout-manager">Context Menu Layout Manager
+        </md-button>
+
+        <div class="forms-data-constructor-block"
+             layout="column">
+
+            <input type="text"
+                   aria-label="entities filter"
+                   ng-model="entitiesSearchTerms"
+                   data-ng-model-options="{debounce: 1000}"
+                   ng-change="vm.setAMCHeightOnFilterChange()"
+                   placeholder="(o) Search by name"
+                   class="forms-data-constructor-filter-input">
+
+            <!--<div layout="column"
+                 class="collapsing-row-t1-container"
+                 ng-class="{'cr-row-collapsed': vm.portfolioLayoutsCollapsed}">
+                <div layout="row">
+                    <h3>Portfolio</h3>
+                    <md-button class="md-raised"
+                               ng-click="vm.portfolioLayoutsCollapsed = !vm.portfolioLayoutsCollapsed">
+                        <span ng-show="!vm.portfolioLayoutsCollapsed">hide layouts</span>
+                        <span ng-show="vm.portfolioLayoutsCollapsed">show layouts</span>
+                    </md-button>
+                </div>
+
+                <div data-ng-repeat="layout in vm.portfolioLayouts | filter: {name: entitiesSearchTerms}"
+                     class="ll-layout-item {{layout.is_default ? 'active' : ''}}"
+                     style="padding: 10px" layout="row" layout-align="space-between center">
+                    &lt;!&ndash;                <div layout="row" class="ll-name" data-ng-click="vm.selectLayout(item)">&ndash;&gt;
+                    <div layout="row" class="ll-name">
+                        {{layout.name}}
+                    </div>
+                    <div>
+                        <md-button class="md-button ll-delete-btn" ng-click="vm.renameLayout(layout, $event)">
+                            <md-tooltip md-direction="top">Rename</md-tooltip>
+                            <ng-md-icon icon="mode_edit" size="24"></ng-md-icon>
+                        </md-button>
+                        <md-button class="md-button ll-delete-btn" ng-click="vm.setAsDefault(layout)">
+                            <md-tooltip md-direction="top">Set as default</md-tooltip>
+                            <ng-md-icon ng-hide="layout.is_default" icon="star_border" size="24"></ng-md-icon>
+                            <ng-md-icon ng-hide="!layout.is_default" icon="star" size="24"></ng-md-icon>
+                        </md-button>
+                        <md-button class="md-button ll-delete-btn" ng-click="vm.deleteLayout($event, layout)">
+                            <md-tooltip md-direction="top">Delete</md-tooltip>
+                            <ng-md-icon icon="delete" size="24"></ng-md-icon>
+                        </md-button>
+                    </div>
+                </div>
+
+            </div>-->
+
+            <div layout="column"
+                 class="cb1-main-container"
+                 ng-class="{'cb1-block-collapsed': vm.portfolioLayoutsCollapsed}">
+                <div class="ALS-group-toggle"
+                     layout="row"
+                     ng-click="vm.portfolioLayoutsCollapsed = !vm.portfolioLayoutsCollapsed">
+                    <h4 class="ALS-group-title">Portfolio</h4>
+                </div>
+
+                <div class="cb1-resizing-wrap">
+                    <div layout="row"
+                         layout-wrap
+                         class="ALS-layout-group-container">
+
+                        <div data-ng-if="vm.portfolioLayouts.length"
+                             flex="100">
+                            <md-card data-ng-repeat="layout in vm.portfolioLayouts | filter: {name: entitiesSearchTerms} as result track by layout.id"
+                                     class="ALS-card"
+                                     layout="row"
+                                     layout-align="space-between center">
+                                <div class="ALS-card-left">
+                                    <b ng-bind="layout.name"></b>
+                                </div>
+
+                                <div class="ALS-card-right">
+                                    <md-button class="md-button" ng-click="vm.renameLayout(layout, $event)">
+                                        <md-tooltip md-direction="top">Rename</md-tooltip>
+                                        <ng-md-icon icon="mode_edit" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button" ng-click="vm.setAsDefault(layout)">
+                                        <md-tooltip md-direction="top">Set as default</md-tooltip>
+                                        <ng-md-icon ng-hide="layout.is_default" icon="star_border" size="24"></ng-md-icon>
+                                        <ng-md-icon ng-hide="!layout.is_default" icon="star" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button" ng-click="vm.deleteLayout($event, layout)">
+                                        <md-tooltip md-direction="top">Delete</md-tooltip>
+                                        <ng-md-icon icon="delete" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button" ng-click="vm.openLayout(layout)">
+                                        Open Layout
+                                    </md-button>
+                                </div>
+
+                            </md-card>
+                        </div>
+
+                        <div data-ng-if="!vm.portfolioLayouts.length" flex="100">
+                            <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                            </div> -->
+                            <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                                <h1>This entity has no layouts.</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div layout="column"
+                 class="cb1-main-container"
+                 ng-class="{'cb1-block-collapsed': vm.accountLayoutsCollapsed}">
+                <div class="ALS-group-toggle"
+                     layout="row"
+                     ng-click="vm.accountLayoutsCollapsed = !vm.accountLayoutsCollapsed">
+                    <h4 class="ALS-group-title">Account</h4>
+                </div>
+
+                <div class="cb1-resizing-wrap">
+                    <div layout="row"
+                         layout-wrap
+                         class="ALS-layout-group-container">
+
+                        <div data-ng-if="vm.accountLayouts.length"
+                             flex="100">
+                            <md-card data-ng-repeat="layout in vm.accountLayouts | filter: {name: entitiesSearchTerms} as result track by layout.id"
+                                     class="ALS-card"
+                                     layout="row"
+                                     layout-align="space-between center">
+                                <div class="ALS-card-left">
+                                    <b ng-bind="layout.name"></b>
+                                </div>
+
+                                <div class="ALS-card-right">
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.renameLayout(layout, $event)">
+                                        <md-tooltip md-direction="top">Rename</md-tooltip>
+                                        <ng-md-icon icon="mode_edit" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.setAsDefault(layout)">
+                                        <md-tooltip md-direction="top">Set as default</md-tooltip>
+                                        <ng-md-icon ng-hide="layout.is_default" icon="star_border" size="24"></ng-md-icon>
+                                        <ng-md-icon ng-hide="!layout.is_default" icon="star" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.deleteLayout($event, layout)">
+                                        <md-tooltip md-direction="top">Delete</md-tooltip>
+                                        <ng-md-icon icon="delete" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button" ng-click="vm.openLayout(layout)">
+                                        Open Layout
+                                    </md-button>
+                                </div>
+
+                            </md-card>
+                        </div>
+
+                        <div data-ng-if="!vm.accountLayouts.length" flex="100">
+                            <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                            </div> -->
+                            <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                                <h1>This entity has no layouts.</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div layout="column"
+                 class="cb1-main-container"
+                 ng-class="{'cb1-block-collapsed': vm.instrumentLayoutsCollapsed}">
+                <div class="ALS-group-toggle"
+                     layout="row"
+                     ng-click="vm.instrumentLayoutsCollapsed = !vm.instrumentLayoutsCollapsed">
+                    <h4 class="ALS-group-title">Instrument</h4>
+                </div>
+
+                <div class="cb1-resizing-wrap">
+                    <div layout="row"
+                         layout-wrap
+                         class="ALS-layout-group-container">
+
+                        <div data-ng-if="vm.instrumentLayouts.length" flex="100">
+                            <md-card data-ng-repeat="layout in vm.instrumentLayouts | filter: {name: entitiesSearchTerms} as result track by layout.id"
+                                     class="ALS-card"
+                                     layout="row"
+                                     layout-align="space-between center">
+                                <div class="ALS-card-left">
+                                    <b ng-bind="layout.name"></b>
+                                </div>
+
+                                <div class="ALS-card-right">
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.renameLayout(layout, $event)">
+                                        <md-tooltip md-direction="top">Rename</md-tooltip>
+                                        <ng-md-icon icon="mode_edit" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.setAsDefault(layout)">
+                                        <md-tooltip md-direction="top">Set as default</md-tooltip>
+                                        <ng-md-icon ng-hide="layout.is_default" icon="star_border" size="24"></ng-md-icon>
+                                        <ng-md-icon ng-hide="!layout.is_default" icon="star" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.deleteLayout($event, layout)">
+                                        <md-tooltip md-direction="top">Delete</md-tooltip>
+                                        <ng-md-icon icon="delete" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button" ng-click="vm.openLayout(layout)">
+                                        Open Layout
+                                    </md-button>
+                                </div>
+
+                            </md-card>
+                        </div>
+
+                        <div data-ng-if="!vm.instrumentLayouts.length" flex="100">
+                            <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                            </div> -->
+                            <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                                <h1>This entity has no layouts.</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div layout="column"
+                 class="cb1-main-container"
+                 ng-class="{'cb1-block-collapsed': vm.responsibleLayoutsCollapsed}">
+                <div class="ALS-group-toggle"
+                     layout="row"
+                     ng-click="vm.responsibleLayoutsCollapsed = !vm.responsibleLayoutsCollapsed">
+                    <h4 class="ALS-group-title">Responsible</h4>
+                </div>
+
+                <div class="cb1-resizing-wrap">
+                    <div layout="row"
+                         layout-wrap
+                         class="ALS-layout-group-container">
+
+                        <div data-ng-if="vm.responsibleLayouts.length" flex="100">
+                            <md-card data-ng-repeat="layout in vm.responsibleLayouts | filter: {name: entitiesSearchTerms} as result track by layout.id"
+                                     class="ALS-card"
+                                     layout="row"
+                                     layout-align="space-between center">
+                                <div class="ALS-card-left">
+                                    <b ng-bind="layout.name"></b>
+                                </div>
+
+                                <div class="ALS-card-right">
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.renameLayout(layout, $event)">
+                                        <md-tooltip md-direction="top">Rename</md-tooltip>
+                                        <ng-md-icon icon="mode_edit" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.setAsDefault(layout)">
+                                        <md-tooltip md-direction="top">Set as default</md-tooltip>
+                                        <ng-md-icon ng-hide="layout.is_default" icon="star_border" size="24"></ng-md-icon>
+                                        <ng-md-icon ng-hide="!layout.is_default" icon="star" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.deleteLayout($event, layout)">
+                                        <md-tooltip md-direction="top">Delete</md-tooltip>
+                                        <ng-md-icon icon="delete" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button" ng-click="vm.openLayout(layout)">
+                                        Open Layout
+                                    </md-button>
+                                </div>
+
+                            </md-card>
+                        </div>
+
+                        <div data-ng-if="!vm.responsibleLayouts.length" flex="100">
+                            <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                            </div> -->
+                            <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                                <h1>This entity has no layouts.</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div layout="column"
+                 class="cb1-main-container"
+                 ng-class="{'cb1-block-collapsed': vm.counterpartyLayoutsCollapsed}">
+                <div class="ALS-group-toggle"
+                     layout="row"
+                     ng-click="vm.counterpartyLayoutsCollapsed = !vm.counterpartyLayoutsCollapsed">
+                    <h4 class="ALS-group-title">Counterparty</h4>
+                </div>
+
+                <div class="cb1-resizing-wrap">
+                    <div layout="row"
+                         layout-wrap
+                         class="ALS-layout-group-container">
+
+                        <div data-ng-if="vm.counterpartyLayouts.length" flex="100">
+                            <md-card data-ng-repeat="layout in vm.counterpartyLayouts | filter: {name: entitiesSearchTerms} as result track by layout.id"
+                                     class="ALS-card"
+                                     layout="row"
+                                     layout-align="space-between center">
+                                <div class="ALS-card-left">
+                                    <b ng-bind="layout.name"></b>
+                                </div>
+
+                                <div class="ALS-card-right">
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.renameLayout(layout, $event)">
+                                        <md-tooltip md-direction="top">Rename</md-tooltip>
+                                        <ng-md-icon icon="mode_edit" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.setAsDefault(layout)">
+                                        <md-tooltip md-direction="top">Set as default</md-tooltip>
+                                        <ng-md-icon ng-hide="layout.is_default" icon="star_border" size="24"></ng-md-icon>
+                                        <ng-md-icon ng-hide="!layout.is_default" icon="star" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.deleteLayout($event, layout)">
+                                        <md-tooltip md-direction="top">Delete</md-tooltip>
+                                        <ng-md-icon icon="delete" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button" ng-click="vm.openLayout(layout)">
+                                        Open Layout
+                                    </md-button>
+                                </div>
+
+                            </md-card>
+                        </div>
+
+                        <div data-ng-if="!vm.counterpartyLayouts.length" flex="100">
+                            <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                            </div> -->
+                            <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                                <h1>This entity has no layouts.</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div layout="column"
+                 class="cb1-main-container"
+                 ng-class="{'cb1-block-collapsed': vm.currencyLayoutsCollapsed}">
+                <div class="ALS-group-toggle"
+                     layout="row"
+                     ng-click="vm.currencyLayoutsCollapsed = !vm.currencyLayoutsCollapsed">
+                    <h4 class="ALS-group-title">Currency</h4>
+                </div>
+
+                <div class="cb1-resizing-wrap">
+                    <div layout="row"
+                         layout-wrap
+                         class="ALS-layout-group-container">
+
+                        <div data-ng-if="vm.currencyLayouts.length" flex="100">
+                            <md-card data-ng-repeat="layout in vm.currencyLayouts | filter: {name: entitiesSearchTerms} as result track by layout.id"
+                                     class="ALS-card"
+                                     layout="row"
+                                     layout-align="space-between center">
+                                <div class="ALS-card-left">
+                                    <b ng-bind="layout.name"></b>
+                                </div>
+
+                                <div class="ALS-card-right">
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.renameLayout(layout, $event)">
+                                        <md-tooltip md-direction="top">Rename</md-tooltip>
+                                        <ng-md-icon icon="mode_edit" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.setAsDefault(layout)">
+                                        <md-tooltip md-direction="top">Set as default</md-tooltip>
+                                        <ng-md-icon ng-hide="layout.is_default" icon="star_border" size="24"></ng-md-icon>
+                                        <ng-md-icon ng-hide="!layout.is_default" icon="star" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.deleteLayout($event, layout)">
+                                        <md-tooltip md-direction="top">Delete</md-tooltip>
+                                        <ng-md-icon icon="delete" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button" ng-click="vm.openLayout(layout)">
+                                        Open Layout
+                                    </md-button>
+                                </div>
+
+                            </md-card>
+                        </div>
+
+                        <div data-ng-if="!vm.currencyLayouts.length" flex="100">
+                            <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                            </div> -->
+                            <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                                <h1>This entity has no layouts.</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div layout="column"
+                 class="cb1-main-container"
+                 ng-class="{'cb1-block-collapsed': vm.strategy1LayoutsCollapsed}">
+                <div class="ALS-group-toggle"
+                     layout="row"
+                     ng-click="vm.strategy1LayoutsCollapsed = !vm.strategy1LayoutsCollapsed">
+                    <h4 class="ALS-group-title">Strategy 1</h4>
+                </div>
+
+                <div class="cb1-resizing-wrap">
+                    <div layout="row"
+                         layout-wrap
+                         class="ALS-layout-group-container">
+
+                        <div data-ng-if="vm.strategy1Layouts.length" flex="100">
+                            <md-card data-ng-repeat="layout in vm.strategy1Layouts | filter: {name: entitiesSearchTerms} as result track by layout.id"
+                                     class="ALS-card"
+                                     layout="row"
+                                     layout-align="space-between center">
+                                <div class="ALS-card-left">
+                                    <b ng-bind="layout.name"></b>
+                                </div>
+
+                                <div class="ALS-card-right">
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.renameLayout(layout, $event)">
+                                        <md-tooltip md-direction="top">Rename</md-tooltip>
+                                        <ng-md-icon icon="mode_edit" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.setAsDefault(layout)">
+                                        <md-tooltip md-direction="top">Set as default</md-tooltip>
+                                        <ng-md-icon ng-hide="layout.is_default" icon="star_border" size="24"></ng-md-icon>
+                                        <ng-md-icon ng-hide="!layout.is_default" icon="star" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.deleteLayout($event, layout)">
+                                        <md-tooltip md-direction="top">Delete</md-tooltip>
+                                        <ng-md-icon icon="delete" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button" ng-click="vm.openLayout(layout)">
+                                        Open Layout
+                                    </md-button>
+                                </div>
+
+                            </md-card>
+                        </div>
+
+                        <div data-ng-if="!vm.strategy1Layouts.length" flex="100">
+                            <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                            </div> -->
+                            <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                                <h1>This entity has no layouts.</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div layout="column"
+                 class="cb1-main-container"
+                 ng-class="{'cb1-block-collapsed': vm.strategy2LayoutsCollapsed}">
+                <div class="ALS-group-toggle"
+                     layout="row"
+                     ng-click="vm.strategy2LayoutsCollapsed = !vm.strategy2LayoutsCollapsed">
+                    <h4 class="ALS-group-title">Strategy 2</h4>
+                </div>
+
+                <div class="cb1-resizing-wrap">
+                    <div layout="row"
+                         layout-wrap
+                         class="ALS-layout-group-container">
+
+                        <div data-ng-if="vm.strategy2Layouts.length" flex="100">
+                            <md-card data-ng-repeat="layout in vm.strategy2Layouts | filter: {name: entitiesSearchTerms} as result track by layout.id"
+                                     class="ALS-card"
+                                     layout="row"
+                                     layout-align="space-between center">
+                                <div class="ALS-card-left">
+                                    <b ng-bind="layout.name"></b>
+                                </div>
+
+                                <div class="ALS-card-right">
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.renameLayout(layout, $event)">
+                                        <md-tooltip md-direction="top">Rename</md-tooltip>
+                                        <ng-md-icon icon="mode_edit" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.setAsDefault(layout)">
+                                        <md-tooltip md-direction="top">Set as default</md-tooltip>
+                                        <ng-md-icon ng-hide="layout.is_default" icon="star_border" size="24"></ng-md-icon>
+                                        <ng-md-icon ng-hide="!layout.is_default" icon="star" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.deleteLayout($event, layout)">
+                                        <md-tooltip md-direction="top">Delete</md-tooltip>
+                                        <ng-md-icon icon="delete" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button" ng-click="vm.openLayout(layout)">
+                                        Open Layout
+                                    </md-button>
+                                </div>
+
+                            </md-card>
+                        </div>
+
+                        <div data-ng-if="!vm.strategy2Layouts.length" flex="100">
+                            <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                            </div> -->
+                            <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                                <h1>This entity has no layouts.</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div layout="column"
+                 class="cb1-main-container"
+                 ng-class="{'cb1-block-collapsed': vm.strategy3LayoutsCollapsed}">
+                <div class="ALS-group-toggle"
+                     layout="row"
+                     ng-click="vm.strategy3LayoutsCollapsed = !vm.strategy3LayoutsCollapsed">
+                    <h4 class="ALS-group-title">Strategy 3</h4>
+                </div>
+
+                <div class="cb1-resizing-wrap">
+                    <div layout="row"
+                         layout-wrap
+                         class="ALS-layout-group-container">
+
+                        <div data-ng-if="vm.strategy3Layouts.length" flex="100">
+                            <md-card data-ng-repeat="layout in vm.strategy3Layouts | filter: {name: entitiesSearchTerms} as result track by layout.id"
+                                     class="ALS-card"
+                                     layout="row"
+                                     layout-align="space-between center">
+                                <div class="ALS-card-left">
+                                    <b ng-bind="layout.name"></b>
+                                </div>
+
+                                <div class="ALS-card-right">
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.renameLayout(layout, $event)">
+                                        <md-tooltip md-direction="top">Rename</md-tooltip>
+                                        <ng-md-icon icon="mode_edit" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.setAsDefault(layout)">
+                                        <md-tooltip md-direction="top">Set as default</md-tooltip>
+                                        <ng-md-icon ng-hide="layout.is_default" icon="star_border" size="24"></ng-md-icon>
+                                        <ng-md-icon ng-hide="!layout.is_default" icon="star" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.deleteLayout($event, layout)">
+                                        <md-tooltip md-direction="top">Delete</md-tooltip>
+                                        <ng-md-icon icon="delete" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button" ng-click="vm.openLayout(layout)">
+                                        Open Layout
+                                    </md-button>
+                                </div>
+
+                            </md-card>
+                        </div>
+
+                        <div data-ng-if="!vm.strategy3Layouts.length" flex="100">
+                            <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                            </div> -->
+                            <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                                <h1>This entity has no layouts.</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div layout="column"
+                 class="cb1-main-container"
+                 ng-class="{'cb1-block-collapsed': vm.accountTypeLayoutsCollapsed}">
+                <div class="ALS-group-toggle"
+                     layout="row"
+                     ng-click="vm.accountTypeLayoutsCollapsed = !vm.accountTypeLayoutsCollapsed">
+                    <h4 class="ALS-group-title">Account Type</h4>
+                </div>
+
+                <div class="cb1-resizing-wrap">
+                    <div layout="row"
+                         layout-wrap
+                         class="ALS-layout-group-container">
+
+                        <div data-ng-if="vm.accountTypeLayouts.length" flex="100">
+                            <md-card data-ng-repeat="layout in vm.accountTypeLayouts | filter: {name: entitiesSearchTerms} as result track by layout.id"
+                                     class="ALS-card"
+                                     layout="row"
+                                     layout-align="space-between center">
+                                <div class="ALS-card-left">
+                                    <b ng-bind="layout.name"></b>
+                                </div>
+
+                                <div class="ALS-card-right">
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.renameLayout(layout, $event)">
+                                        <md-tooltip md-direction="top">Rename</md-tooltip>
+                                        <ng-md-icon icon="mode_edit" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.setAsDefault(layout)">
+                                        <md-tooltip md-direction="top">Set as default</md-tooltip>
+                                        <ng-md-icon ng-hide="layout.is_default" icon="star_border" size="24"></ng-md-icon>
+                                        <ng-md-icon ng-hide="!layout.is_default" icon="star" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.deleteLayout($event, layout)">
+                                        <md-tooltip md-direction="top">Delete</md-tooltip>
+                                        <ng-md-icon icon="delete" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button" ng-click="vm.openLayout(layout)">
+                                        Open Layout
+                                    </md-button>
+                                </div>
+
+                            </md-card>
+                        </div>
+
+                        <div data-ng-if="!vm.accountTypeLayouts.length" flex="100">
+                            <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                            </div> -->
+                            <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                                <h1>This entity has no layouts.</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div layout="column"
+                 class="cb1-main-container"
+                 ng-class="{'cb1-block-collapsed': vm.instrumentTypeLayoutsCollapsed}">
+                <div class="ALS-group-toggle"
+                     layout="row"
+                     ng-click="vm.instrumentTypeLayoutsCollapsed = !vm.instrumentTypeLayoutsCollapsed">
+                    <h4 class="ALS-group-title">Instrument Type</h4>
+                </div>
+
+                <div class="cb1-resizing-wrap">
+                    <div layout="row"
+                         layout-wrap
+                         class="ALS-layout-group-container">
+
+                        <div data-ng-if="vm.instrumentTypeLayouts.length" flex="100">
+                            <md-card data-ng-repeat="layout in vm.instrumentTypeLayouts | filter: {name: entitiesSearchTerms} as result track by layout.id"
+                                     class="ALS-card"
+                                     layout="row"
+                                     layout-align="space-between center">
+                                <div class="ALS-card-left">
+                                    <b ng-bind="layout.name"></b>
+                                </div>
+
+                                <div class="ALS-card-right">
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.renameLayout(layout, $event)">
+                                        <md-tooltip md-direction="top">Rename</md-tooltip>
+                                        <ng-md-icon icon="mode_edit" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.setAsDefault(layout)">
+                                        <md-tooltip md-direction="top">Set as default</md-tooltip>
+                                        <ng-md-icon ng-hide="layout.is_default" icon="star_border" size="24"></ng-md-icon>
+                                        <ng-md-icon ng-hide="!layout.is_default" icon="star" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.deleteLayout($event, layout)">
+                                        <md-tooltip md-direction="top">Delete</md-tooltip>
+                                        <ng-md-icon icon="delete" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button" ng-click="vm.openLayout(layout)">
+                                        Open Layout
+                                    </md-button>
+                                </div>
+
+                            </md-card>
+                        </div>
+
+                        <div data-ng-if="!vm.instrumentTypeLayouts.length" flex="100">
+                            <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                            </div> -->
+                            <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                                <h1>This entity has no layouts.</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div layout="column"
+                 class="cb1-main-container"
+                 ng-class="{'cb1-block-collapsed': vm.transactionTypeLayoutsCollapsed}">
+                <div class="ALS-group-toggle"
+                     layout="row"
+                     ng-click="vm.transactionTypeLayoutsCollapsed = !vm.transactionTypeLayoutsCollapsed">
+                    <h4 class="ALS-group-title">Transaction Type</h4>
+                </div>
+
+                <div class="cb1-resizing-wrap">
+                    <div layout="row"
+                         layout-wrap
+                         class="ALS-layout-group-container">
+
+                        <div data-ng-if="vm.transactionTypeLayouts.length"
+                             flex="100">
+                            <md-card data-ng-repeat="layout in vm.transactionTypeLayouts | filter: {name: entitiesSearchTerms} as result track by layout.id"
+                                     class="ALS-card"
+                                     layout="row"
+                                     layout-align="space-between center">
+                                <div class="ALS-card-left">
+                                    <b ng-bind="layout.name"></b>
+                                </div>
+
+                                <div class="ALS-card-right">
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.renameLayout(layout, $event)">
+                                        <md-tooltip md-direction="top">Rename</md-tooltip>
+                                        <ng-md-icon icon="mode_edit" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.setAsDefault(layout)">
+                                        <md-tooltip md-direction="top">Set as default</md-tooltip>
+                                        <ng-md-icon ng-hide="layout.is_default" icon="star_border" size="24"></ng-md-icon>
+                                        <ng-md-icon ng-hide="!layout.is_default" icon="star" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button ll-delete-btn" ng-click="vm.deleteLayout($event, layout)">
+                                        <md-tooltip md-direction="top">Delete</md-tooltip>
+                                        <ng-md-icon icon="delete" size="24"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="md-button" ng-click="vm.openLayout(layout)">
+                                        Open Layout
+                                    </md-button>
+                                </div>
+
+                            </md-card>
+                        </div>
+
+                        <div data-ng-if="!vm.transactionTypeLayouts.length" flex="100">
+                            <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                            </div> -->
+                            <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                                <h1>This entity has no layouts.</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div data-ng-if="!vm.readyStatus">
+        <div class="e-data-loader" layout="row" layout-sm="column" layout-align="space-around">
+            <progress-circular data-diameter="100" ></progress-circular>
+        </div>
+    </div>
+</div>

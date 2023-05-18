@@ -1,0 +1,72 @@
+<md-dialog class="create-member-group-dialog draggable-dialog width-50" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Add new group</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="create-member-dialog-content p-16 position-relative">
+
+        <div layout="column" data-ng-if="vm.readyStatus.content">
+
+            <md-input-container>
+                <label>Group name</label>
+                <textarea data-ng-model="vm.group.name"></textarea>
+            </md-input-container>
+
+            <md-input-container style="height: 56px;">
+                <label>Preset</label>
+                <md-select data-ng-model="vm.activePresetId" data-ng-change="vm.presetChange($event)">
+                    <md-option data-ng-repeat="item in vm.presets"
+                               ng-value="item.id">
+                        {{item.name}}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+
+            <!--<div layout="column">-->
+                <!--<two-fields-options all-options="vm.membersList"-->
+                                    <!--selected-options="vm.assignedMembersList"-->
+                                    <!--name-property="username"-->
+                <!--&gt;</two-fields-options>-->
+            <!--</div>-->
+
+            <md-input-container style="height: 58px">
+
+                <md-checkbox data-ng-model="vm.group.is_public" aria-label="member permission">Public Group
+
+                    <md-tooltip class="tooltip_2"
+                                md-direction="bottom">
+                        Will have access to all Ecosystem data
+                    </md-tooltip>
+
+                </md-checkbox>
+
+            </md-input-container>
+
+        </div>
+
+        <div data-ng-if="vm.processing" class="processing-overlay">
+            <div layout="row" layout-sm="column" layout-align="space-around" class="dashboard-loader m-t-24">
+                <progress-circular diameter="50"></progress-circular>
+            </div>
+        </div>
+
+        <div data-ng-if="!vm.readyStatus.content">
+
+            <div layout="row" layout-sm="column" layout-align="space-around" class="dashboard-loader">
+                <progress-circular diameter="50"></progress-circular>
+            </div>
+
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row" layout-align="space-between center">
+
+        <md-button class="md-raised" data-ng-click="vm.cancel()">Cancel</md-button>
+
+        <md-button class="md-raised" data-ng-click="vm.agree()" data-ng-class="{'disabled-btn': vm.processing}" >Create</md-button>
+
+    </md-dialog-actions>
+</md-dialog>

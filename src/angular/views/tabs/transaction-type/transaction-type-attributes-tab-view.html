@@ -1,0 +1,24 @@
+<div>
+    <div data-ng-if="vm.checkReadyStatus()">
+
+        <div style="max-width: 300px">
+
+            <div data-ng-repeat="item in vm.attrs">
+
+                <bind-field-control entity-type="vm.entityType"
+                                    entity="vm.entity"
+                                    item="item"
+                                    class="m-16"></bind-field-control>
+
+            </div>
+
+
+        </div>
+
+    </div>
+    <div data-ng-if="!vm.checkReadyStatus()">
+        <div layout="row" layout-sm="column" layout-align="space-around">
+            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+        </div>
+    </div>
+</div>
