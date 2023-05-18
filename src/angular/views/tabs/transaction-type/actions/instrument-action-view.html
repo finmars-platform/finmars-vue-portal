@@ -1,0 +1,513 @@
+<div layout="row" class="ttype-action-inputs-container">
+    <!--<md-input-container class="orange-actions-selector">
+        <label for="" content-title>Action Specific</label>
+        <md-select data-ng-model="item.rebook_reaction">
+            <md-option data-ng-repeat="item in vm.rebookInstrumentReactions"
+                       ng-value="item.id">
+                {{item.name}}
+            </md-option>
+        </md-select>
+    </md-input-container>-->
+    <dropdown-select label="Action Specific"
+                     model="item.rebook_reaction"
+                     menu-options="vm.rebookInstrumentReactions"
+                     class="width-100"></dropdown-select>
+</div>
+
+<div layout="row">
+
+    <div flex="50">
+
+        <div layout="row" class="ttype-action-inputs-container">
+
+            <div flex="66" layout="row">
+                <!-- <div flex>
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.instrument.instrument_type_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'instrument', 'instrument_type')">
+                        <span data-ng-if="!!item.instrument.instrument_type_toggle">R</span>
+                        <span data-ng-if="!!!item.instrument.instrument_type_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="90">
+                    <div>
+                        <div data-ng-if="item.instrument.instrument_type_toggle">
+
+                            <ttype-actions-relations-select label-title="Instrument type"
+                                                            model="item.instrument.instrument_type"
+                                                            load-relation="vm.loadRelation('instrument_type')"
+                                                            relation-items="vm.relationItems['instrument_type']"
+                                                            selected-value="item.instrument.instrument_type_object.user_code"
+                                                            selected-name="item.instrument.instrument_type_object.name"
+                                                            is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-relations-select>
+                        </div>
+
+                        <div data-ng-if="!item.instrument.instrument_type_toggle">
+
+                            <ttype-actions-input-select label-title="Instrument type"
+                                                        model="item.instrument.instrument_type_input"
+                                                        find-inputs="vm.findInputs('instrument-type')"
+                                                        is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                        </div>
+                    </div>
+                </div> -->
+                <multitype-field label="Instrument type"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].instrument_type"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('instrument_type', item, $index, 'instrument')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('instrument_type', item, $index, 'instrument')"
+
+                                 class="ttype-action-input p-l-0"></multitype-field>
+            </div>
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>User code: Text</label>
+                    <input type="text" value-title data-ng-model="item.instrument.user_code">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument.user_code"></expression-editor-button>-->
+                <expression-input label="User code: Text"
+                                  model="item.instrument.user_code"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+        </div>
+
+        <div layout="row" class="ttype-action-inputs-container">
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap p-l-0">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Name: Text</label>
+                    <input type="text" value-title data-ng-model="item.instrument.name">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument.name"></expression-editor-button>-->
+                <expression-input label="Name: Text"
+                                  model="item.instrument.name"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Short name: Text</label>
+                    <input type="text" value-title data-ng-model="item.instrument.short_name">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument.short_name"></expression-editor-button>-->
+                <expression-input label="Short name: Text"
+                                  model="item.instrument.short_name"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Public name: Text</label>
+                    <input type="text" value-title data-ng-model="item.instrument.public_name">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument.public_name"></expression-editor-button>-->
+                <expression-input label="Public name: Text"
+                                  model="item.instrument.public_name"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+        </div>
+
+        <div layout="row" class="ttype-action-inputs-container">
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap p-l-0">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>User text1: Text</label>
+                    <input type="text" value-title data-ng-model="item.instrument.user_text_1">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument.user_text_1"></expression-editor-button>-->
+                <expression-input label="User text1: Text"
+                                  model="item.instrument.user_text_1"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>User text2: Text</label>
+                    <input type="text" value-title data-ng-model="item.instrument.user_text_2">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument.user_text_2"></expression-editor-button>-->
+                <expression-input label="User text2: Text"
+                                  model="item.instrument.user_text_2"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>User text3: Text</label>
+                    <input type="text" value-title data-ng-model="item.instrument.user_text_3">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument.user_text_3"></expression-editor-button>-->
+                <expression-input label="User text3: Text"
+                                  model="item.instrument.user_text_3"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+        </div>
+
+        <div layout="row" class="ttype-action-inputs-container">
+
+            <div flex="100" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap p-l-0">
+                <!--<md-input-container flex="grow">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Notes</label>
+                    <input type="text" value-title data-ng-model="item.instrument.notes">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument.notes"></expression-editor-button>-->
+                <expression-input label="Notes"
+                                  model="item.instrument.notes"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+        </div>
+
+    </div>
+
+    <div flex="50">
+
+        <div layout="row" class="ttype-action-inputs-container">
+
+            <div flex="33" layout="row">
+                <!-- <div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.instrument.pricing_currency_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'instrument', 'pricing_currency')">
+                        <span data-ng-if="!!item.instrument.pricing_currency_toggle">R</span>
+                        <span data-ng-if="!!!item.instrument.pricing_currency_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.instrument.pricing_currency_toggle">
+
+                        <ttype-actions-relations-select label-title="Pricing currency"
+                                                        model="item.instrument.pricing_currency"
+                                                        load-relation="vm.loadRelation('pricing_currency')"
+                                                        relation-items="vm.relationItems['pricing_currency']"
+                                                        selected-value="item.instrument.pricing_currency_object.user_code"
+                                                        selected-name="item.instrument.pricing_currency_object.name"
+                                                        is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-relations-select>
+                    </div>
+
+                    <div data-ng-if="!item.instrument.pricing_currency_toggle">
+
+                        <ttype-actions-input-select label-title="Pricing currency"
+                                                    model="item.instrument.pricing_currency_input"
+                                                    find-inputs="vm.findInputs('currency')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+                </div> -->
+                <multitype-field label="Pricing currency"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].pricing_currency"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('pricing_currency', item, $index, 'instrument')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('pricing_currency', item, $index, 'instrument')"
+
+                                 class="ttype-action-input"></multitype-field>
+            </div>
+
+            <div flex="33" layout="row">
+                <!-- <div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.instrument.accrued_currency_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'instrument', 'accrued_currency')">
+                        <span data-ng-if="!!item.instrument.accrued_currency_toggle">R</span>
+                        <span data-ng-if="!!!item.instrument.accrued_currency_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.instrument.accrued_currency_toggle">
+
+                        <ttype-actions-relations-select label-title="Accrued currency"
+                                                        model="item.instrument.accrued_currency"
+                                                        load-relation="vm.loadRelation('accrued_currency')"
+                                                        relation-items="vm.relationItems['accrued_currency']"
+                                                        selected-value="item.instrument.accrued_currency_object.user_code"
+                                                        selected-name="item.instrument.accrued_currency_object.name"
+                                                        is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-relations-select>
+                    </div>
+                    <div data-ng-if="!item.instrument.accrued_currency_toggle">
+
+                        <ttype-actions-input-select label-title="Accrued currency"
+                                                    model="item.instrument.accrued_currency_input"
+                                                    find-inputs="vm.findInputs('currency')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+                </div> -->
+                <multitype-field label="Accrued currency"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].accrued_currency"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('accrued_currency', item, $index, 'instrument')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('accrued_currency', item, $index, 'instrument')"
+
+                                 class="ttype-action-input"></multitype-field>
+            </div>
+
+            <div flex="33" layout="row">
+                <!--<div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.instrument.pricing_condition_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'instrument', 'pricing_condition')">
+                        <span data-ng-if="!!item.instrument.pricing_condition_toggle">R</span>
+                        <span data-ng-if="!!!item.instrument.pricing_condition_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.instrument.pricing_condition_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'instrument', 'pricing_condition')">
+                        <span data-ng-if="!!item.instrument.pricing_condition_toggle">R</span>
+                        <span data-ng-if="!!!item.instrument.pricing_condition_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.instrument.pricing_condition_toggle">
+
+                        <ttype-actions-relations-select label-title="Pricing condition"
+                                                        model="item.instrument.pricing_condition"
+                                                        load-relation="vm.loadRelation('pricing_condition')"
+                                                        relation-items="vm.relationItems['pricing_condition']"
+                                                        selected-value="item.instrument.pricing_condition_object.user_code"
+                                                        selected-name="item.instrument.pricing_condition_object.name"
+                                                        is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-relations-select>
+                    </div>
+                    <div data-ng-if="!item.instrument.pricing_condition_toggle">
+
+                        <ttype-actions-input-select label-title="Pricing condition"
+                                                    model="item.instrument.pricing_condition_input"
+                                                    find-inputs="vm.findInputs('daily-pricing-model')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+                </div>-->
+                <multitype-field label="Pricing condition"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].pricing_condition"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('pricing_condition', item, $index, 'instrument')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('pricing_condition', item, $index, 'instrument')"
+
+                                 class="ttype-action-input p-r-0"></multitype-field>
+            </div>
+
+        </div>
+
+        <div layout="row" class="ttype-action-inputs-container">
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Price multiplier: Number</label>
+                    <input type="text" value-title data-ng-model="item.instrument.price_multiplier">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument.price_multiplier"></expression-editor-button>-->
+
+                <expression-input label="Price multiplier: Number"
+                                  model="item.instrument.price_multiplier"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Accrued multiplier: Number</label>
+                    <input type="text" value-title data-ng-model="item.instrument.accrued_multiplier">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument.accrued_multiplier"></expression-editor-button>-->
+                <expression-input label="Accrued multiplier: Number"
+                                  model="item.instrument.accrued_multiplier"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+            <div flex="33" layout="row">
+                <!-- <div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.instrument.price_download_scheme_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'instrument', 'price_download_scheme')">
+                        <span data-ng-if="!!item.instrument.price_download_scheme_toggle">R</span>
+                        <span data-ng-if="!!!item.instrument.price_download_scheme_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.instrument.price_download_scheme_toggle">
+
+                        <ttype-actions-relations-select label-title="Price download scheme"
+                                                        model="item.instrument.price_download_scheme"
+                                                        relation-items="vm.relationItems['price_download_scheme']"
+                                                        load-relation="vm.loadRelation('price_download_scheme')"
+                                                        selected-value="item.instrument.price_download_scheme_object.user_code"
+                                                        selected-name="item.instrument.price_download_scheme_object.user_code"
+                                                        is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-relations-select>
+                    </div>
+                    <div data-ng-if="!item.instrument.price_download_scheme_toggle">
+
+                        <ttype-actions-input-select label-title="Price download scheme"
+                                                    model="item.instrument.price_download_scheme_input"
+                                                    find-inputs="vm.findInputs('price-download-scheme')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+                </div> -->
+
+                <!-- <multitype-field label="Price download scheme"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].price_download_scheme"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 on-value-change="vm.onMultitypeFieldValChange('price_download_scheme', item, $index, 'instrument')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('price_download_scheme', item, $index, 'instrument')"
+                                 class="ttype-action-input p-r-0"></multitype-field> -->
+            </div>
+
+        </div>
+
+        <div layout="row" class="ttype-action-inputs-container">
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Default price: Number</label>
+                    <input type="text" value-title data-ng-model="item.instrument.default_price">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument.default_price"></expression-editor-button>-->
+                <expression-input label="Default price: Number"
+                                  model="item.instrument.default_price"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Default accrued: Number</label>
+                    <input type="text" value-title data-ng-model="item.instrument.default_accrued">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument.default_accrued"></expression-editor-button>-->
+                <expression-input label="Default accrued: Number"
+                                  model="item.instrument.default_accrued"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap p-r-0">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Reference for pricing: Text</label>
+                    <input type="text" value-title
+                           data-ng-model="item.instrument.reference_for_pricing">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument.reference_for_pricing"></expression-editor-button>-->
+                <expression-input label="Reference for pricing: Text"
+                                  model="item.instrument.reference_for_pricing"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+        </div>
+
+        <div layout="row" layout-align="center center" class="ttype-action-inputs-container">
+
+            <div flex="33" layout="row">
+                <!-- <div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.instrument.payment_size_detail_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'instrument', 'payment_size_detail')">
+                        <span data-ng-if="!!item.instrument.payment_size_detail_toggle">R</span>
+                        <span data-ng-if="!!!item.instrument.payment_size_detail_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.instrument.payment_size_detail_toggle">
+
+                        <ttype-actions-relations-select label-title="Payment size details"
+                                                        model="item.instrument.payment_size_detail"
+                                                        load-relation="vm.loadRelation('payment_size_detail')"
+                                                        relation-items="vm.relationItems['payment_size_detail']"
+                                                        selected-value="item.instrument.payment_size_detail_object.user_code"
+                                                        selected-name="item.instrument.payment_size_detail_object.name"
+                                                        is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-relations-select>
+                    </div>
+                    <div data-ng-if="!item.instrument.payment_size_detail_toggle">
+
+                        <ttype-actions-input-select label-title="Payment size details"
+                                                    model="item.instrument.payment_size_detail_input"
+                                                    find-inputs="vm.findInputs('payment-size-detail')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+                </div> -->
+                <multitype-field label="Payment size details"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].payment_size_detail"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('payment_size_detail', item, $index, 'instrument')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('payment_size_detail', item, $index, 'instrument')"
+
+                                 class="ttype-action-input"></multitype-field>
+            </div>
+
+            <!--<div flex="33">
+                <md-input-container>
+                    <label for="" class="uncut-text-on-focus-label" content-title>&nbsp;</label>
+                </md-input-container>
+            </div>-->
+
+        </div>
+
+        <div layout="row" class="ttype-action-inputs-container">
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Maturity price: Number</label>
+                    <input type="text" value-title style="color: grey"
+                           data-ng-model="item.instrument.maturity_price">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument.maturity_price"></expression-editor-button>-->
+                <expression-input label="Maturity price: Number"
+                                  model="item.instrument.maturity_price"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Maturity date: Date</label>
+                    <input type="text" value-title style="color: grey"
+                           data-ng-model="item.instrument.maturity_date">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument.maturity_date"></expression-editor-button>-->
+                <expression-input label="Maturity date: Date"
+                                  model="item.instrument.maturity_date"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+        </div>
+
+    </div>
+</div>

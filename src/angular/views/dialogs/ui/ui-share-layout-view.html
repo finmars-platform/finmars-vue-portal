@@ -1,0 +1,107 @@
+<md-dialog aria-label="" ng-cloak class="list-layouts-dialog draggable-dialog" style="width: 50%" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <ng-md-icon icon="dialpad" size="20" class="draggable-dialog-sign"></ng-md-icon>
+            <h2>Share Layout</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="p-24">
+
+        <div data-ng-if="vm.readyStatus.members">
+
+            <div layout="column">
+                <h4>Share Layout</h4>
+
+                <div style="height: 58px">
+
+                    <md-input-container style="width: 100%">
+                        <label for="">Name</label>
+                        <input type="text" data-ng-model="vm.globalConfigurationFile.name">
+                    </md-input-container>
+                </div>
+
+                <div style="height: 58px">
+                    <md-input-container>
+                        <label for="">Publicity Type</label>
+                        <md-select data-ng-model="vm.globalConfigurationFile.publicity_type">
+                            <md-option ng-value="1" disabled class="disabled-btn">Public</md-option>
+                            <md-option ng-value="2">Ecosystem Only</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+
+                <div class="m-t-16">
+
+                    <div>
+                        <label for="">Notes</label>
+                    </div>
+                    <div>
+                    <textarea name=""
+                              data-ng-model="vm.globalConfigurationFile.notes"
+                              id=""
+                              cols="60"
+                              rows="5"></textarea>
+                    </div>
+
+                </div>
+
+                <div data-ng-if="vm.globalConfigurationFile.publicity_type == 2" class="m-t-16">
+
+                    <h4>Share Invites to Members</h4>
+
+                    <two-fields-options all-options="vm.members"
+                                        selected-options="vm.assignedMembersList"
+                                        name-property="username"></two-fields-options>
+
+                </div>
+
+                <div class="m-t-16">
+
+                    <div>
+                        <label for="">Message to members</label>
+                    </div>
+                    <div>
+                    <textarea name=""
+                              data-ng-model="vm.inviteNotes"
+                              id=""
+                              cols="60"
+                              rows="5"></textarea>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+        <div data-ng-if="!vm.readyStatus.members" class="dialog-loader">
+            <div layout="row" layout-sm="column" layout-align="space-around">
+                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            </div>
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row" layout-align="end center">
+        <md-button ng-click="vm.cancel()">
+            Close
+        </md-button>
+
+        <div>
+
+            <md-button ng-click="vm.agree()" style="margin-right:20px;" data-ng-if="!vm.globalConfigurationFile.id">
+                Share
+            </md-button>
+
+            <md-button ng-click="vm.agree()" style="margin-right:20px;" data-ng-if="vm.globalConfigurationFile.id">
+                Publish Update
+            </md-button>
+
+            <md-button ng-click="vm.agreeForce()" style="margin-right:20px;" data-ng-if="vm.globalConfigurationFile.id">
+                Force Publish Update
+            </md-button>
+
+        </div>
+    </md-dialog-actions>
+</md-dialog>

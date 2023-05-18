@@ -1,0 +1,44 @@
+<div style="padding: 20px 20px 0">
+
+    <h2 class="m-b-35">Instrument Import</h2>
+
+    <div data-ng-if="vm.readyStatus.instrumentSchemes">
+        <div layout="row" layout-align="end center">
+            <md-button class="md-raised md-primary" data-ng-click="vm.addScheme($event)">
+                Create scheme
+            </md-button>
+        </div>
+        <div layout="column" data-ng-if="vm.instrumentSchemes.length">
+            <div layout="row">
+                <h4 style="padding-left: 20px">Scheme name</h4>
+            </div>
+            <div layout="column">
+                <md-card data-ng-repeat="item in vm.instrumentSchemes" flex="100">
+                    <md-card-content>
+                        <div layout="row" layout-align="space-between center">
+                            <div>
+                                <span data-ng-bind="item['user_code']"></span>
+                            </div>
+                            <div>
+                                <md-button style="min-width: 42px" data-ng-click="vm.editScheme($event, item)">
+                                    <ng-md-icon icon="edit"></ng-md-icon>
+                                </md-button>
+                                <md-button style="min-width: 42px" data-ng-click="vm.deleteScheme($event, item)">
+                                    <ng-md-icon icon="delete"></ng-md-icon>
+                                </md-button>
+                            </div>
+                        </div>
+                    </md-card-content>
+                </md-card>
+            </div>
+        </div>
+        <div layout="row" data-ng-if="!vm.instrumentSchemes.length" layout-align="center center">
+            <h3>Import schemes do not exist</h3>
+        </div>
+    </div>
+    <div data-ng-if="!vm.readyStatus.instrumentSchemes">
+        <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+            <md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>
+        </div>
+    </div>
+</div>

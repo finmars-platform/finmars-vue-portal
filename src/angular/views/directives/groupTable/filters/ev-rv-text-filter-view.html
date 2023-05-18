@@ -1,0 +1,86 @@
+<div ng-if="readyStatus"
+     class="g-filter-type-n-value flex-row fc-space-between">
+
+    <!--<md-input-container class="g-filter-types-select">
+        <md-select ng-model="activeFilter.type"
+                   ng-change="changeFilterType(activeFilter.type)"
+                   class="g-filter-tnv-back">
+            <div class="select-options-holder">
+
+                <md-option ng-repeat="type in filterTypes"
+                           ng-value="type.value"
+                           ng-bind="type.name"></md-option>
+
+                <md-option ng-if="isReport" value="use_from_above" ng-click="openUseFromAboveSettings()">Linked</md-option>
+
+            </div>
+        </md-select>
+    </md-input-container>-->
+    <dropdown-select2 model="activeFilter.type"
+                      menu-options="filterTypes"
+                      small-options="{popupWidth: 'content'}"
+                      on-change-callback="changeFilterType(activeFilter.type)"
+                      class="g-filter-types-select"></dropdown-select2>
+
+    <div class="g-filter-value-wrap">
+        <div ng-if="filter.options.filter_type !== 'multiselector' && filter.options.filter_type !== 'selector'"
+             class="height-100">
+
+            <!--<input type="text"
+                   ng-model="filter.options.filter_values[0]"
+                   placeholder="Value"
+                   class="g-filter-tnv-back g-filter-input" />-->
+            <text-input model="filter.options.filter_values[0]"
+                        placeholder-text="Value"
+                        small-options="{noIndicatorBtn: true}"
+                        class="ci-placeholder2"></text-input>
+
+        </div>
+
+        <div ng-if="filter.options.filter_type === 'selector'" class="height-100">
+
+            <!-- <md-input-container class="g-filter-value-container no-error-spacer">
+                <md-select ng-model="filter.options.filter_values[0]"
+                           class="height-100 g-filter-tnv-back">
+
+                    <md-select-header>
+                        <md-input-container class="md-block no-error-spacer">
+                            <input data-ng-model="searchTerm"
+                                   type="search"
+                                   placeholder="Search for a ..."
+                                   class="md-text md-select-search-pattern select-input-filter"
+                                   ng-keydown="$event.stopPropagation()">
+                        </md-input-container>
+                    </md-select-header>
+
+                    <div class="g-filter-select-options-holder">
+
+                        <md-option ng-repeat="rowContent in columnRowsContent | orderBy: 'value' | filter: searchTerm as results track by rowContent.value"
+                                   ng-value="rowContent.value"
+                                   ng-bind="rowContent.value"></md-option>
+
+                    </div>
+                </md-select>
+            </md-input-container> -->
+            <dropdown-select2 model="filter.options.filter_values[0]"
+                              menu-options="columnRowsContent"
+                              small-options="{popupWidth: 'content'}"></dropdown-select2>
+
+        </div>
+
+        <div ng-if="filter.options.filter_type === 'multiselector'"
+             class="height-100 g-filter-multiselector">
+            <two-fields-multiselect dialog-title="{{getMultiselectorName()}}"
+                                    items="columnRowsContent"
+                                    model="filter.options.filter_values"
+                                    selected-items-indication="chips"
+                                    nothing-selected-text="Off"
+                                    small-options="{'dialogParent': '.dialog-containers-wrap'}"></two-fields-multiselect>
+        </div>
+    </div>
+
+</div>
+
+<div ng-if="!readyStatus" class="g-filter-type-loader flex-row fc-space-around fi-center">
+    <progress-circular diameter="30"></progress-circular>
+</div>

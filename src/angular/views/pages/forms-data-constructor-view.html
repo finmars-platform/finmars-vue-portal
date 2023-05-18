@@ -1,0 +1,67 @@
+<div style="padding: 0 20px;">
+
+    <h2 class="m-b-35">Configured Input Forms</h2>
+    <div layout="row" class="m-b-24">
+        <md-button class="md-raised forms-data-constructor-folding-btn"
+                   ng-click="vm.entitiesFolded = !vm.entitiesFolded"
+                   aria-label="entities forms folding button">
+            <span ng-hide="!vm.entitiesFolded">+</span>
+            <span ng-hide="vm.entitiesFolded">-</span>
+        </md-button>
+        <h2>Entities</h2>
+    </div>
+    <div ng-hide="vm.entitiesFolded"
+         class="forms-data-constructor-block"
+         layout="column">
+
+        <input type="text"
+               aria-label="entities filter"
+               ng-model="entitiesSearchTerms"
+               placeholder="(o) Search by name"
+               class="forms-data-constructor-filter-input">
+        <div ng-repeat="entity in vm.entities | filter: {name: entitiesSearchTerms}">
+            <md-button ng-bind="entity.name"
+                       ng-click="vm.openFormEditor($event, entity.entityType)"
+                       class="md-raised common-buttons-in-column"
+                       aria-label="edit entity input form"></md-button>
+        </div>
+    </div>
+
+    <div>
+        <div layout="row" class="m-b-24">
+            <md-button class="md-raised forms-data-constructor-folding-btn"
+                       ng-click="vm.transactionTypesFolded = !vm.transactionTypesFolded"
+                       aria-label="entities forms folding button">
+                <span ng-hide="!vm.transactionTypesFolded">+</span>
+                <span ng-hide="vm.transactionTypesFolded">-</span>
+            </md-button>
+            <h2>Transaction Types</h2>
+        </div>
+        <div ng-if="vm.readyStatus.transactionType"
+             ng-hide="vm.transactionTypesFolded"
+             class="forms-data-constructor-block"
+             layout="column">
+
+            <input type="text"
+                   aria-label="transaction type filter"
+                   ng-model="entityTypesSearchTerms"
+                   placeholder="(o) Search by name"
+                   class="forms-data-constructor-filter-input">
+
+            <div ng-repeat="type in vm.transactionTypes | filter: {name: entityTypesSearchTerms}">
+                <md-button ng-click="vm.openFormEditor($event, 'complex-transaction', type.id)"
+                           class="md-raised forms-data-constructor-column-button"
+                           aria-label="edit transaction type input form"
+                           style="min-width: 400px;">
+                    <span ng-bind="type.name"></span> <span ng-if="type.notes">({{type.notes}})</span>
+                </md-button>
+            </div>
+
+        </div>
+    </div>
+    <div data-ng-if="!vm.readyStatus.transactionType">
+        <div class="e-data-loader" layout="row" layout-sm="column" layout-align="space-around">
+            <md-progress-circular md-diameter="100" md-mode="indeterminate"></md-progress-circular>
+        </div>
+    </div>
+</div>

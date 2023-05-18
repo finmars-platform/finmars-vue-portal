@@ -1,0 +1,57 @@
+<md-dialog aria-label="ace dialog"
+           class="ace-editor-dialog entity-as-json-editor-dialog draggable-dialog dialog-actions-bottom entityAsJsonEditorDialogElemToResize"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>JSON Editor - {{vm.entityTypeSlug()}}</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="ace-editor" id="aceEditor">
+
+        </div>
+
+        <a ng-click="vm.copyContent()" class="copy-text-button">
+            <ng-md-icon icon="content_copy" size="16">
+                <md-tooltip class="tooltip_2" md-direction="top">Copy to clipboard</md-tooltip>
+            </ng-md-icon>
+        </a>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row" layout-align="space-between">
+        <div layout="row">
+            <md-button ng-click="vm.cancel()" style="margin-right:20px;">
+                Close
+            </md-button>
+
+        </div>
+        <div layout="row">
+
+            <md-button ng-click="vm.export()" style="margin-right:20px;">
+                Export
+            </md-button>
+
+            <md-button ng-click="vm.agree()" class="{{vm.processing ? 'disabled-btn' : ''}}">
+                Save
+            </md-button>
+
+            <div style="padding-top: 12px; width: 30px" data-ng-if="!vm.processing">
+                &nbsp;
+            </div>
+
+            <div layout="row" layout-sm="column" layout-align="space-around" class="m-r-8" data-ng-if="vm.processing"
+                 style="padding-top: 12px; width: 30px">
+                <!--<md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>-->
+                <progress-circular diameter="20"></progress-circular>
+            </div>
+
+        </div>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               data-on-resize-end-callback="vm.resizeDialogCallback()"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,60 @@
+<div class="accordion-header-content flex-row fc-space-between fi-center"
+     ng-click="vm.toggleItem($pane, item, $index, $event)">
+
+    <div class="flex-row fi-center p-l-24">
+        <div class="ttype-actions-toggle-icon">
+            <span ng-show="!item.isPaneExpanded" class="material-icons">expand_more</span>
+            <span ng-show="item.isPaneExpanded" class="material-icons">expand_less</span>
+        </div>
+
+        <div ng-click="$event.stopPropagation()">
+            <expression-editor-button data-ng-class="{'expression-entered': item.condition_expr}"
+                                      data-data="vm.expressionData"
+                                      data-item="item.condition_expr" data-button-text="IF ()"></expression-editor-button>
+            <md-tooltip class="tooltip_2"
+                        md-direction="bottom">Condition to execute the Action</md-tooltip>
+        </div>
+
+        <div class="text-bold m-r-4"># {{$index + 1}}</div> <div class="text-bold" ng-bind="vm.getActionTypeName(item) + ':'" style="width: 300px"></div>
+
+        <div>
+
+            <text-input ng-if="item.isPaneExpanded"
+                        model="item.action_notes"
+                        small-options="{noIndicatorBtn: true}"
+                        ng-click="$event.stopPropagation()"></text-input>
+
+            <span ng-if="!item.isPaneExpanded"
+                  ng-bind="item.action_notes"
+                  class="ttype-action-name p-l-10"></span>
+
+        </div>
+    </div>
+
+    <div class="flex-row ttype-action-btns">
+
+        <button ng-click="vm.moveUp(item, $index, $event)"
+                ng-disabled="$index == 0">
+            <span class="material-icons">arrow_upward</span>
+        </button>
+
+        <button ng-click="vm.moveDown(item, $index, $event)"
+                ng-disabled="$index == vm.entity.actions.length - 1">
+            <span class="material-icons">arrow_downward</span>
+        </button>
+
+        <button class="accordion-header-icon-btn icon-btn-basics"
+
+                custom-popup
+                popup-template-url="views/popups/selector-popup-view.html"
+                popup-data="vm.paneActionsMenuPopups[$index]"
+                position-relative-to="element"
+                relative-position-x="left"
+                relative-position-y="top"
+                open-on="click"
+                close-on-click-outside="true"
+                ng-click="$event.stopPropagation()">
+            <span class="material-icons">more_vert</span>
+        </button>
+    </div>
+</div>

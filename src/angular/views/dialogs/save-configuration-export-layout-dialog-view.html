@@ -1,0 +1,41 @@
+<md-dialog aria-label="" ng-cloak class="warning-dialog draggable-dialog" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Save configuration layout</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="p-24">
+        <div>
+            <md-input-container class="width-80">
+                <label>Name</label>
+                <input type="text" data-ng-model="vm.layout.name">
+            </md-input-container>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button class="md-warn"
+                   data-ng-if="vm.layout.id"
+                   ng-click="vm.delete()"
+                   style="margin-right:20px;">
+            Delete
+        </md-button>
+        <md-button ng-click="vm.cancel()">
+            Close
+        </md-button>
+        <md-button class="md-raised"
+                   ng-click="vm.save()"
+                   style="margin-right:20px;">
+            <span ng-if="vm.layout.id">Rename And Save</span>
+            <span ng-if="!vm.layout.id">Save</span>
+        </md-button>
+        <md-button ng-if="vm.layout.id"
+                   class="md-raised"
+                   ng-click="vm.saveAs()"
+                   style="margin-right:20px;">
+            Save as new
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

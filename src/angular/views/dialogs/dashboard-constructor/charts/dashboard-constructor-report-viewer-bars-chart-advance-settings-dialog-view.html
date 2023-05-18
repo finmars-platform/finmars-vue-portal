@@ -1,0 +1,129 @@
+<div layout="row" class="m-t-16 m-b-24">
+    <md-input-container class="dashboard-constructor-field1">
+        <label for="">Bars Direction</label>
+        <md-select data-ng-model="vm.item.settings.bars_direction" ng-change="vm.chartBarsDirectionChanged()">
+            <md-option value="bottom-top">Vertical</md-option>
+            <md-option value="left-right">Horizontal</md-option>
+        </md-select>
+    </md-input-container>
+</div>
+
+<div layout="row" class="m-t-16 m-b-24">
+    <md-input-container data-ng-if="vm.item.settings.bars_direction === 'left-right'"
+                        class="dashboard-constructor-field1">
+        <label for="">Abscissa Position</label>
+        <md-select data-ng-model="vm.item.settings.abscissa_position">
+            <md-option value="top">Top</md-option>
+            <md-option value="bottom">Bottom</md-option>
+        </md-select>
+    </md-input-container>
+
+    <md-input-container data-ng-if="vm.item.settings.bars_direction === 'bottom-top'"
+                        class="dashboard-constructor-field1">
+        <label for="">Ordinate Position</label>
+        <md-select data-ng-model="vm.item.settings.ordinate_position">
+            <md-option value="left">Left</md-option>
+            <md-option value="right">Right</md-option>
+        </md-select>
+    </md-input-container>
+</div>
+
+<div layout="row" class="m-t-16 m-b-35">
+    <md-input-container class="dashboard-constructor-field1">
+        <label for="">Calculation Of Number For Bar</label>
+        <md-select data-ng-model="vm.item.settings.group_number_calc_formula">
+            <md-option value="1">Sum</md-option>
+            <md-option value="2">Weighted Market Value</md-option>
+            <md-option value="3">Weighted Market Value Percent</md-option>
+            <md-option value="4">Weighted Exposure</md-option>
+            <md-option value="5">Weighted Exposure Percent</md-option>
+            <md-option value="6">Weighted Average Market Value</md-option>
+            <md-option value="7">Weighted Average Market Value Percent</md-option>
+            <md-option value="8">Weighted Average Exposure</md-option>
+            <md-option value="9">Weighted Average Exposure Percent</md-option>
+        </md-select>
+    </md-input-container>
+</div>
+
+<h5 style="margin-left: 10px">Bar Sorting Settings</h5>
+<md-checkbox data-ng-model="vm.item.settings.bars_sorting"
+             style="margin-left: 10px; margin-bottom: 5px;">Sort bars</md-checkbox>
+<div layout="row" class="m-t-16 m-b-35">
+
+    <md-input-container class="dashboard-constructor-field1">
+        <label for="">Sort By</label>
+        <md-select data-ng-model="vm.item.settings.sorting_value_type"
+                   ng-disabled="!vm.item.settings.bars_sorting">
+            <md-option value="string">Abscissa</md-option>
+            <md-option value="number">Ordinate</md-option>
+        </md-select>
+    </md-input-container>
+
+    <md-input-container class="dashboard-constructor-field1">
+        <label for="">Sort Type</label>
+        <md-select data-ng-model="vm.item.settings.sorting_type"
+                   ng-disabled="!vm.item.settings.bars_sorting">
+            <md-option value="ascending">Ascending</md-option>
+            <md-option value="descending">Descending</md-option>
+        </md-select>
+    </md-input-container>
+</div>
+
+<div class="m-b-35" layout="row">
+
+    <number-format-menu data-format-settings="vm.item.settings.number_format"
+                        data-button-content="Tooltips Number Format"
+                        data-button-classes="md-raised"></number-format-menu>
+
+</div>
+
+<h5 style="margin-left: 10px">Bar Width Settings</h5>
+<div layout="row" class="m-t-16 m-b-24">
+
+    <md-input-container class="no-error-spacer" style="width: 200px;">
+        <label for="">Chart bar minimal width (in pixels)</label>
+        <input class="no-input-arrows"
+               type="number"
+               data-ng-model="vm.item.settings.min_bar_width">
+    </md-input-container>
+
+    <md-input-container class="no-error-spacer" style="width: 200px;">
+        <label for="">Chart bar maximal width (in pixels)</label>
+        <input class="no-input-arrows"
+               type="number"
+               data-ng-model="vm.item.settings.max_bar_width">
+    </md-input-container>
+</div>
+
+<div layout="row">
+    <md-input-container style="width: 200px;">
+        <label for="">Crop Tick Text After</label>
+        <input type="number"
+               data-ng-model="vm.item.settings.crop_tick_text"
+               class="no-input-arrows">
+    </md-input-container>
+</div>
+
+<md-checkbox data-ng-model="vm.item.settings.autocalc_ticks_number"
+             style="margin-left: 10px;">Calculate number of ticks automatically</md-checkbox>
+<div layout="row">
+    <md-input-container class="no-input-arrows" style="width: 200px;">
+        <label for="">Approximate Number of Ticks</label>
+        <input ng-model="vm.item.settings.ticks_number"
+               type="number"
+               data-ng-disabled="vm.item.settings.autocalc_ticks_number">
+    </md-input-container>
+</div>
+
+<md-checkbox data-ng-model="vm.item.settings.auto_refresh"
+             class="m-b-35"
+             style="margin-left: 10px;">Trigger Refresh on Value Change</md-checkbox>
+
+<div>
+    <md-input-container class="dashboard-constructor-field1">
+        <label for="">Tooltip Font Size</label>
+        <input data-ng-model="vm.item.settings.tooltip_font_size"
+               type="number"
+               class="no-input-arrows">
+    </md-input-container>
+</div>

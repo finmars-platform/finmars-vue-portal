@@ -1,0 +1,21 @@
+<div class="big-drawer-content universal-editor">
+    <div class="big-drawer-header">
+
+        <h2 class="big-drawer-header-h">Add {{vm.entityTypeSlug()}}</h2>
+
+        <div data-ng-if="vm.processing" layout="row" class="m-l-16 big-drawer-header-processing">
+            <div layout="row" layout-sm="column" layout-align="space-around" class="m-r-8">
+                <progress-circular diameter="20"></progress-circular>
+            </div>
+            — Processing
+        </div>
+
+    </div>
+
+    <div class="big-drawer-main"
+         data-ng-include="'views/entity-viewer/entity-viewer-add-content-view.html'"></div>
+
+    <div class="big-drawer-footer big-drawer-actions flex-row fc-space-between"
+         data-ng-include="'views/entity-viewer/entity-viewer-universal-add-footer-view.html'"></div>
+
+</div>

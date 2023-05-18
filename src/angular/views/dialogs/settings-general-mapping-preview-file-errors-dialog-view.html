@@ -1,0 +1,36 @@
+<md-dialog aria-label="" ng-cloak class="import-entity-errors-dialog-view draggable-dialog"
+           style="width: 75%;" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Mapping import errors</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content style="background: #E5E5E5;">
+        <md-content>
+            <md-card>
+                <md-card-content>
+                    <h3>Please see below the list of records we failed to import</h3>
+
+                    <div data-ng-repeat="errorItem in vm.data.errors">
+
+                        {{vm.getName(errorItem.item)}} : {{errorItem.error}}
+
+                    </div>
+
+
+                </md-card-content>
+            </md-card>
+
+        </md-content>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+
+        <md-button class="md-raised" ng-click="vm.cancel()">
+            Ok
+        </md-button>
+
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,53 @@
+<md-dialog class="width-50  draggable-dialog  log-dialog logDialog"
+           aria-label="warning dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>log</h2>
+            <span flex></span>
+
+
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="warning-text p-16">
+
+            <input type="text" class="log-dialog-search" data-ng-model="vm.search" placeholder="Search"
+                   data-ng-keyup="vm.render()">
+
+            <div class="log-content">
+
+            </div>
+
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="space-between center">
+
+        <div layout="row">
+            <md-button ng-click="vm.cancel()">
+                Close
+            </md-button>
+
+            <md-button ng-click="vm.autoScroll = !vm.autoScroll">
+                <span data-ng-if="vm.autoScroll">Disable Autoscroll</span>
+                <span data-ng-if="!vm.autoScroll">Enable Autoscroll</span>
+            </md-button>
+
+
+            <md-button ng-click="vm.toggleWork()">
+                <span data-ng-if="vm.interval">Stop</span>
+                <span data-ng-if="!vm.interval">Start</span>
+            </md-button>
+
+        </div>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               data-on-resize-end-callback="vm.resizeDialogCallback()"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+
+    </md-dialog-actions>
+</md-dialog>

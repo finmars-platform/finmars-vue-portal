@@ -1,0 +1,71 @@
+<div>
+
+    <div class="m-t-16">
+
+        <div><label for="">Notes</label></div>
+        <textarea name="" data-ng-model="vm.entity.context_parameters_notes" cols="60" rows="5"></textarea>
+
+    </div>
+
+    <div class="m-t-16">
+
+        <table class="bordered">
+            <thead>
+            <tr>
+                <!--<th style="width: 50px;">#</th>-->
+                <th>User Code</th>
+                <th>Name</th>
+                <th>Value Type</th>
+                <th style="text-align: center">
+                    &nbsp;
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr data-ng-repeat="item in vm.entity.context_parameters track by $index">
+
+                <!--<td class="edit-state-td" style="width: 50px;">
+                    <md-input-container class="no-error-spacer">
+                        <input type="text" ng-model="item.order" disabled>
+                    </md-input-container>
+                </td>-->
+                <td class="edit-state-td">
+                    <text-input model="item.user_code"
+                                event-signal="item.frontOptions.nameInputEvent"
+                                small-options="{noIndicatorBtn: true, readonly: true}"></text-input>
+                </td>
+
+                <td class="edit-state-td">
+                    <text-input model="item.name"
+                                event-signal="item.frontOptions.nameInputEvent"
+                                small-options="{noIndicatorBtn: true}"
+                                on-blur-callback="vm.updateContextParameters()"></text-input>
+                </td>
+
+                <td class="edit-state-td">
+                    <md-input-container class="m-t-16">
+                        <md-select data-ng-model="item.value_type">
+                            <md-option value="10">Text</md-option>
+                            <md-option value="20">Number</md-option>
+                            <md-option value="40">Date</md-option>
+                        </md-select>
+                    </md-input-container>
+                </td>
+
+                <td class="edit-state-td">
+                    <md-button data-ng-click="vm.deleteContextParameter($event, $index)">
+                        Delete
+                    </md-button>
+                </td>
+
+            </tr>
+
+            </tbody>
+        </table>
+
+        <md-button class="link-button" data-ng-click="vm.addContextParameter($event)">Add</md-button>
+
+    </div>
+
+
+</div>

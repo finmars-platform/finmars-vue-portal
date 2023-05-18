@@ -1,0 +1,140 @@
+<div class="p-24">
+
+    <div data-ng-if="vm.readyStatus.procedures">
+
+        <div>
+
+            <h2>Expression Procedures</h2>
+
+            <div>
+
+                <div>
+
+                    <div>
+                        <div data-ng-repeat="item in vm.procedures" class="procedure-card">
+
+                            <div >
+                                <div class="procedure-card-field">
+                                    Name: <b>{{item.name}}</b>
+                                </div>
+                                <div data-ng-if="item.notes" class="procedure-card-field">
+                                    {{item.notes}}
+                                </div>
+
+                                <div style="min-width: 350px">
+                                    <md-button class="md-icon-button md-primary"
+                                               style="fill: deepskyblue"
+                                               data-ng-click="vm.executeProcedure($event, item)">
+                                        <ng-md-icon icon="play_arrow"></ng-md-icon>
+                                        <md-tooltip md-direction="bottom">Execute</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button" data-ng-click="vm.editProcedure($event, item)">
+                                        <ng-md-icon icon="mode_edit"></ng-md-icon>
+                                        <md-tooltip md-direction="bottom">Edit</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-warn"
+                                               style="fill: red"
+                                               data-ng-click="vm.deleteProcedure($event, item)">
+                                        <ng-md-icon icon="delete_forever"></ng-md-icon>
+                                        <md-tooltip md-direction="bottom">Delete</md-tooltip>
+                                    </md-button>
+                                </div>
+
+                                <div data-ng-if="item.executed">
+
+                                    <div class="m-16" layout="row" layout-sm="column" layout-align="space-around" data-ng-if="item.processing">
+                                        <progress-circular diameter="50"></progress-circular>
+                                    </div>
+
+                                    <div data-ng-if="!item.processing" style="padding-top: 8px; padding-left: 8px;">
+
+                                        <div class="procedure-card-result-field-holder">
+                                            <span class="procedure-card-result-field">Status:</span>
+                                            <div class="procedure-card-result-value">
+                                                {{item.result.status}}
+                                            </div>
+                                        </div>
+
+                                        <div class="procedure-card-result-field-holder">
+                                            <span class="procedure-card-result-field">Log</span>:
+                                            <div class="procedure-card-result-value">
+                                                <pre>{{item.result.log}}</pre>
+                                            </div>
+                                        </div>
+                                        <div class="procedure-card-result-field-holder">
+                                            <span class="procedure-card-result-field">Error Message</span>:
+                                            <div class="procedure-card-result-value">
+                                                <pre>{{item.result.error_message}}</pre>
+                                            </div>
+                                        </div>
+
+                                        <div class="procedure-card-result-field-holder">
+                                            <span class="procedure-card-result-field">Notes:</span>
+                                            <div class="procedure-card-result-value">
+                                                <pre>{{item.result.notes}}</pre>
+                                            </div>
+                                        </div>
+
+                                        <div class="procedure-card-result-field-holder">
+                                            <span class="procedure-card-result-field">Result:</span>
+                                            <div class="procedure-card-result-value">
+                                                <pre>{{item.result.result}}</pre>
+                                            </div>
+                                        </div>
+
+
+
+                                    </div>
+
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div layout="row">
+                <md-button ui-sref="app.portal.expression-procedure-instance" class="md-raised">Check Procedure Status
+                </md-button>
+                <md-button ui-sref="app.portal.ace-editor" class="md-raised md-primary">Open Code Editor</md-button>
+
+                <md-menu>
+                    <md-button class="md-raised" data-ng-click="$mdOpenMenu($event)">
+                        Add New
+                    </md-button>
+
+                    <md-menu-content>
+                        <md-menu-item>
+                            <md-button class="md-raised"
+                                       data-ng-click="vm.addProcedure($event)">Add Blank
+                            </md-button>
+                        </md-menu-item>
+
+                        <md-menu-item>
+                            <md-button class="md-raised"
+                                       package-manager-button
+                                       content-type="'procedures.requestdatafileprocedure'">
+                                Select from List
+                            </md-button>
+                        </md-menu-item>
+
+                    </md-menu-content>
+                </md-menu>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.procedures">
+        <div class="m-16" layout="row" layout-sm="column" layout-align="space-around">
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+    </div>
+
+</div>

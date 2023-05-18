@@ -1,0 +1,301 @@
+<div class="big-drawer-content universal-editor">
+    <div class="big-drawer-header">
+        <div>
+
+            <h2 class="big-drawer-header-h">Add Instrument type</h2>
+            <div data-ng-if="vm.processing" layout="row" class="m-l-16 big-drawer-header-processing">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="m-r-8">
+                    <progress-circular diameter="20"></progress-circular>
+                </div>
+                — Processing
+            </div>
+
+        </div>
+    </div>
+
+    <div class="big-drawer-main">
+
+        <div data-ng-if="vm.checkReadyStatus()">
+
+            <md-tabs md-dynamic-height md-border-bottom class="tabs-colored">
+
+                <md-tab>
+                    <md-tab-lable>
+                        <div class="tab-name-elem evFormSystemTabName" data-tab-name="general">
+                            <span class="grey-tab">General</span>
+                        </div>
+                    </md-tab-lable>
+                    <md-tab-body>
+                        <md-content class="md-padding p-t-26">
+                            <div data-ng-include="'views/tabs/instrument-type/instrument-type-general-tab-view.html'"></div>
+                        </md-content>
+                    </md-tab-body>
+                </md-tab>
+
+                <md-tab>
+                    <md-tab-lable>
+                        <div class="tab-name-elem evFormSystemTabName" data-tab-name="pricing">
+                            <span class="grey-tab">Pricing</span>
+                        </div>
+                    </md-tab-lable>
+                    <md-tab-body>
+                        <md-content class="md-padding p-t-26">
+                            <div data-ng-include="'views/tabs/instrument-type/pricing-view.html'"></div>
+                        </md-content>
+                    </md-tab-body>
+                </md-tab>
+
+                <md-tab>
+                    <md-tab-lable>
+                        <div class="tab-name-elem evFormSystemTabName" data-tab-name="accruals">
+                            <span class="grey-tab">Accruals</span>
+                        </div>
+                    </md-tab-lable>
+                    <md-tab-body>
+                        <md-content class="md-padding p-t-26">
+                            <div data-ng-include="'views/tabs/instrument-type/accruals-view.html'"></div>
+                        </md-content>
+                    </md-tab-body>
+                </md-tab>
+
+                <md-tab>
+                    <md-tab-lable>
+                        <div class="tab-name-elem evFormSystemTabName" data-tab-name="events">
+                            <span class="grey-tab">Events</span>
+                        </div>
+                    </md-tab-lable>
+                    <md-tab-body>
+                        <md-content class="md-padding p-t-26">
+                            <div data-ng-include="'views/tabs/instrument-type/events-view.html'"></div>
+                        </md-content>
+                    </md-tab-body>
+                </md-tab>
+
+                <md-tab>
+                    <md-tab-lable>
+                        <div class="tab-name-elem evFormSystemTabName" data-tab-name="user attributes">
+                            <span class="grey-tab">User Attributes</span>
+                        </div>
+                    </md-tab-lable>
+                    <md-tab-body>
+                        <md-content class="md-padding p-t-26">
+                            <div data-ng-include="'views/tabs/instrument-type/user-attributes-view.html'"></div>
+                        </md-content>
+                    </md-tab-body>
+                </md-tab>
+
+                <md-tab>
+                    <md-tab-lable>
+                        <div class="tab-name-elem evFormSystemTabName" data-tab-name="Exposure">
+                            <span class="grey-tab">Exposure</span>
+                        </div>
+                    </md-tab-lable>
+                    <md-tab-body>
+                        <md-content class="md-padding p-t-26">
+                            <div data-ng-include="'views/tabs/instrument-type/exposure-view.html'"></div>
+                        </md-content>
+                    </md-tab-body>
+                </md-tab>
+
+                <md-tab>
+                    <md-tab-lable>
+                        <div class="tab-name-elem evFormSystemTabName" data-tab-name="Factors">
+                            <span class="grey-tab">Factors</span>
+                        </div>
+                    </md-tab-lable>
+                    <md-tab-body>
+                        <md-content class="md-padding p-t-26">
+                            <div data-ng-include="'views/tabs/instrument-type/factors-view.html'"></div>
+                        </md-content>
+                    </md-tab-body>
+                </md-tab>
+
+                <md-tab>
+                    <md-tab-lable>
+                        <div class="tab-name-elem evFormSystemTabName" data-tab-name="layout settings">
+                            <span class="grey-tab">Layout Settings</span>
+                        </div>
+                    </md-tab-lable>
+                    <md-tab-body>
+                        <md-content class="md-padding p-t-26">
+                            <div data-ng-include="'views/tabs/instrument-type/layout-settings-view.html'"></div>
+                        </md-content>
+                    </md-tab-body>
+                </md-tab>
+
+                <md-tab data-ng-if="vm.canManagePermissions">
+                    <md-tab-label>
+                        <span class="colored-tab">Permissions</span>
+                    </md-tab-label>
+                    <md-tab-body>
+                        <md-content class="md-padding p-t-26">
+                            <md-content class="md-padding">
+                                <div data-ng-if="vm.readyStatus.permissions">
+
+                                    <h3>Group permissions</h3>
+
+                                    <div>
+                                        <div layout="column">
+                                            <div layout="row" layout-align="space-between center"
+                                                 class="permissions-table-header">
+                                                <div>
+                                                    <div class="permissions-columns">Group name
+                                                    </div>
+                                                </div>
+                                                <div layout="row"
+                                                     class="permissions-checkbox-holder"
+                                                     flex="30"
+                                                     layout-align="space-between center">
+                                                    <div class="permissions-columns" flex="33">
+                                                        Delegate
+                                                        <ng-md-icon class="tooltip-inline-block"
+                                                                    icon="info"
+                                                                    size="20"
+                                                                    style="fill: #777777">
+                                                            <md-tooltip class="tooltip_2"
+                                                                        md-direction="top">
+                                                                tooltip
+                                                                text
+                                                            </md-tooltip>
+                                                        </ng-md-icon>
+                                                    </div>
+                                                    <div class="permissions-columns" flex="33">
+                                                        Write
+                                                        <ng-md-icon class="tooltip-inline-block"
+                                                                    icon="info"
+                                                                    size="20"
+                                                                    style="fill: #777777">
+                                                            <md-tooltip class="tooltip_2"
+                                                                        md-direction="top">
+                                                                tooltip
+                                                                text
+                                                            </md-tooltip>
+                                                        </ng-md-icon>
+                                                    </div>
+                                                    <div class="permissions-columns" flex="33">
+                                                        Read
+                                                        <ng-md-icon class="tooltip-inline-block"
+                                                                    icon="info"
+                                                                    size="20"
+                                                                    style="fill: #777777">
+                                                            <md-tooltip class="tooltip_2"
+                                                                        md-direction="top">
+                                                                tooltip
+                                                                text
+                                                            </md-tooltip>
+                                                        </ng-md-icon>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <md-divider></md-divider>
+                                        </div>
+                                        <div data-ng-repeat="group in vm.groups" layout="column">
+                                            <div layout="row" layout-align="space-between center"
+                                                 class="permissions-table-row">
+                                                <div>
+                                                    <p> {{ group.name }} </p>
+                                                </div>
+                                                <div layout="row"
+                                                     class="permissions-checkbox-holder"
+                                                     flex="30"
+                                                     layout-align="space-between center">
+                                                    <div flex="33" layout="center center">
+                                                        <md-checkbox class="md-secondary"
+                                                                     data-ng-class="{'disabled-btn': !group.objectPermissions.manage  && !vm.currentMember.is_admin && !vm.currentMember.is_owner}"
+                                                                     ng-model="group.objectPermissions.manage"></md-checkbox>
+                                                    </div>
+                                                    <div flex="33" layout="center center">
+                                                        <md-checkbox class="md-secondary"
+                                                                     data-ng-class="{'disabled-btn': !group.objectPermissions.manage  && !vm.currentMember.is_admin && !vm.currentMember.is_owner}"
+                                                                     ng-model="group.objectPermissions.change"></md-checkbox>
+                                                    </div>
+                                                    <div flex="33" layout="center center">
+                                                        <md-checkbox class="md-secondary"
+                                                                     data-ng-class="{'disabled-btn': !group.objectPermissions.manage  && !vm.currentMember.is_admin && !vm.currentMember.is_owner}"
+                                                                     ng-model="group.objectPermissions.view"></md-checkbox>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <md-divider></md-divider>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div data-ng-if="!vm.readyStatus.permissions">
+                                    <div layout="row" layout-sm="column" layout-align="space-around"
+                                         class="m-large">
+                                        <!--<md-progress-circular md-mode="indeterminate"-->
+                                        <!--md-diameter="96"></md-progress-circular>-->
+                                        <progress-circular diameter="100"></progress-circular>
+                                    </div>
+                                </div>
+                            </md-content>
+                        </md-content>
+                    </md-tab-body>
+                </md-tab>
+
+
+            </md-tabs>
+
+        </div>
+        <div data-ng-if="!vm.checkReadyStatus()">
+            <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                <!--<md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>-->
+                <progress-circular diameter="100"></progress-circular>
+            </div>
+        </div>
+
+    </div>
+
+    <!--<div class="big-drawer-footer big-drawer-actions flex-row fc-space-between">
+
+        <div layout="row">
+            <md-button class="link-button" ng-click="vm.cancel()">
+                <span>Cancel</span>
+            </md-button>
+        </div>
+
+        <div style="margin-right: 10px;">
+            <md-menu md-position-mode="target-right target">
+
+                <md-button class="outline-button" ng-click="$mdOpenMenu($event)">
+                    <div class="flex-row flex-c-center">
+                        <ng-md-icon icon="more_vert" class="flex-row"></ng-md-icon>
+                    </div>
+                </md-button>
+
+                <md-menu-content class="universal-editor-menu-content optional-entity-menu" width="3">
+
+                    <md-menu-item>
+                        <md-button ng-click="vm.manageAttrs($event)">
+                            <div class="flex-row flex-i-center">
+                                <ng-md-icon icon="list" class="flex-row"></ng-md-icon>
+                                <span class="m-l-16">Manage Attributes</span>
+                            </div>
+
+                        </md-button>
+                    </md-menu-item>
+
+                </md-menu-content>
+            </md-menu>
+
+            <md-button class="outline-button"
+                       ng-disabled="vm.processing"
+                       ng-click="vm.save()">
+                Create
+            </md-button>
+
+            <md-button ng-disabled="vm.processing"
+                       ng-click="vm.saveAndExit()"
+                       class="m-r-24 primary-button">
+                Create and Exit
+            </md-button>
+
+        </div>
+
+    </div>-->
+    <div class="big-drawer-footer big-drawer-actions flex-row fc-space-between"
+         data-ng-include="'views/entity-viewer/entity-viewer-universal-add-footer-view.html'"></div>
+
+</div>

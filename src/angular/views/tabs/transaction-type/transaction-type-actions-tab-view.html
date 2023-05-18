@@ -1,0 +1,273 @@
+<div>
+    <div class="transaction-type-actions-tab-view transaction-type-actions-wrapper ">
+        <v-accordion multiple control="vm.accordion" oncollapse="vm.onActionAccordionCollapse(index, id)"
+                     class="vAccordion-type1">
+
+            <v-pane data-ng-repeat="item in vm.entity.actions track by $index" id="{{vm.getActionPaneId(item)}}" expanded="item.isPaneExpanded">
+                <v-pane-header ng-class="{'m-b-0': !$pane.isExpanded()}" inactive class="transaction-type-action-pane">
+                    <!-- <div layout="row"
+                         layout-align="space-between center"
+                         ng-click="vm.toggleItem($pane, item, $event)">
+                        <div layout="row"
+                             class="ttype-action-info-container"
+                             layout-align="start center">
+                            <span ng-click="$event.stopPropagation()">
+                                <expression-editor-button data-ng-class="{'grey-expression-btn': !item.condition_expr}"
+                                        data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                        data-item="item.condition_expr" data-button-text="If(...)"></expression-editor-button>
+                                <md-tooltip class="tooltip_2"
+                                            md-direction="bottom">Condition to execute the Action</md-tooltip>
+                            </span>
+
+                            <span class="text-bold"># {{$index + 1}}</span>
+
+                            <span class="text-bold"
+                                  ng-bind="vm.getActionTypeName(item) + ':'"
+                                  style="width: 270px"></span>
+
+                            <span ng-if="item.isPaneExpanded">
+                                <md-input-container class="no-error-spacer" style="min-height: 35px">
+                                    <label></label>
+                                    <input ng-keydown="vm.preventSpace($event)"
+                                           type="text"
+                                           ng-model="item.action_notes"
+                                           class="ttype-action-notes-input"
+                                           placeholder="Action notes">
+                                </md-input-container>
+                            </span>
+                            <span ng-if="!item.isPaneExpanded"
+                                  ng-bind="item.action_notes"></span>
+                        </div>
+                        <div layout="row">
+                            <md-button class="md-raised"
+                                       style="background: #ffeee8;"
+                                       data-ng-click="vm.deletePane(item, $index, $event)">Delete
+                            </md-button>
+                            <md-button class="md-raised"
+                                       data-ng-click="vm.makeCopyOfAction(item, $index, $event)">Make copy
+                            </md-button>
+                            <md-button class="md-raised" ng-disabled="$index == 0"
+                                       data-ng-click="vm.moveUp(item, $index, $event)">Move up
+                            </md-button>
+                            <md-button class="md-raised" ng-disabled="$index == vm.entity.actions.length - 1"
+                                       data-ng-click="vm.moveDown(item, $index, $event)">Move Down
+                            </md-button>
+                            <md-button class="md-raised" data-ng-click="vm.toggleItem($pane, item, $event)">
+                                <span data-ng-if="item.isPaneExpanded">Collapse</span>
+                                <span data-ng-if="!item.isPaneExpanded">Expand</span>
+                            </md-button>
+                        </div>
+                    </div> -->
+
+                    <div ng-include="'views/tabs/transaction-type/transaction-type-action-accordion-header-view.html'"></div>
+                    <!-- <div class="accordion-header-content flex-row fc-space-between fi-center"
+                         ng-click="vm.toggleItem($pane, item, $event)">
+
+                        <div class="flex-row fi-center p-l-24">
+                            <div class="ttype-actions-toggle-icon">
+                                <span ng-show="!item.isPaneExpanded" class="material-icons">expand_more</span>
+                                <span ng-show="item.isPaneExpanded" class="material-icons">expand_less</span>
+                            </div>
+
+                            <div ng-click="$event.stopPropagation()">
+                                <expression-editor-button data-ng-class="{'expression-entered': item.condition_expr}"
+                                                          data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                          data-item="item.condition_expr" data-button-text="IF ()"></expression-editor-button>
+                                <md-tooltip class="tooltip_2"
+                                            md-direction="bottom">Condition to execute the Action</md-tooltip>
+                            </div>
+
+                            <div class="text-bold"># {{$index + 1}}</div> <div class="text-bold" ng-bind="vm.getActionTypeName(item) + ':'" style="width: 300px"></div>
+
+                            <div>
+
+                                <text-input ng-if="item.isPaneExpanded"
+                                            model="item.action_notes"
+                                            small-options="{noIndicatorBtn: true}"
+                                            ng-click="$event.stopPropagation()"></text-input>
+
+                                <span ng-if="!item.isPaneExpanded"
+                                      ng-bind="item.action_notes"
+                                      class="ttype-action-name p-l-10"></span>
+
+                            </div>
+                        </div>
+
+                        <div class="flex-row ttype-action-btns">
+
+                            <button ng-click="vm.moveUp(item, $index, $event)"
+                                    ng-disabled="$index == 0">
+                                <span class="material-icons">arrow_upward</span>
+                            </button>
+
+                            <button ng-click="vm.moveDown(item, $index, $event)"
+                                    ng-disabled="$index == vm.entity.actions.length - 1">
+                                <span class="material-icons">arrow_downward</span>
+                            </button>
+
+                            <button class="accordion-header-icon-btn icon-btn-basics"
+
+                                    custom-popup
+                                    popup-template-url="views/popups/selector-popup-view.html"
+                                    popup-data="vm.paneActionsMenuPopups[$index]"
+                                    position-relative-to="element"
+                                    relative-position-x="left"
+                                    relative-position-y="top"
+                                    open-on="click"
+                                    close-on-click-outside="true"
+                                    ng-click="$event.stopPropagation()">
+                                <span class="material-icons">more_vert</span>
+                            </button>
+                        </div>
+                    </div> -->
+                </v-pane-header>
+
+                <v-pane-content class="transaction-type-actions-fields" ng-class="{'p-t-10': $pane.isExpanded()}">
+
+                    <div data-ng-if="item.transaction != null"
+                         data-ng-include="'views/tabs/transaction-type/actions/transaction-action-view.html'"></div>
+
+                    <div data-ng-if="item.instrument != null"
+                         data-ng-include="'views/tabs/transaction-type/actions/instrument-action-view.html'"></div>
+
+                    <div data-ng-if="item.instrument_factor_schedule != null"
+                         data-ng-include="'views/tabs/transaction-type/actions/instrument-factor-schedule-action-view.html'"></div>
+
+                    <!--<div data-ng-if="item.instrument_manual_pricing_formula != null"
+                         data-ng-include="'views/tabs/transaction-type/actions/instrument-manual-pricing-formula-action-view.html'">
+
+                    </div>-->
+                    <div data-ng-if="item.instrument_manual_pricing_formula != null">This action obsolete. Please delete it.</div>
+
+                    <div data-ng-if="item.instrument_accrual_calculation_schedules != null"
+                         data-ng-include="'views/tabs/transaction-type/actions/instrument-accrual-calculation-schedules-action-view.html'"></div>
+
+                    <div data-ng-if="item.instrument_event_schedule != null"
+                         data-ng-include="'views/tabs/transaction-type/actions/instrument-event-schedule-action-view.html'"></div>
+
+                    <div data-ng-if="item.instrument_event_schedule_action != null"
+                         data-ng-include="'views/tabs/transaction-type/actions/instrument-event-schedule-action-action-view.html'"></div>
+
+                    <div data-ng-if="item.execute_command != null"
+                         data-ng-include="'views/tabs/transaction-type/actions/execute-command-action-view.html'"></div>
+
+                </v-pane-content>
+            </v-pane>
+
+        </v-accordion>
+
+        <!-- <div class="transaction-type-operations-block">
+
+            <p class="text-right text-bold m-b-16">General operations:</p>
+
+            <div layout="row" layout-align="end center">
+                <md-button class="md-raised" data-ng-class="{'disabled-btn': vm.entity.type == 2}" data-ng-click="vm.addAction('transaction')">
+                    Create base transaction
+                </md-button>
+                <md-button class="md-raised" data-ng-click="vm.addAction('instrument')">
+                    Create instrument
+                </md-button>
+
+                <md-button class="md-raised" data-ng-click="vm.addAction('execute_command')">
+                    Execute Command
+                </md-button>
+            </div>
+
+        </div>
+
+        <div class="transaction-type-operations-block m-t-24">
+
+            <p class="text-right text-bold m-b-16">Instrument operations:</p>
+
+            <div layout="row" layout-align="end center">
+                <md-button class="md-raised" data-ng-click="vm.addAction('instrument_factor_schedule')">
+                    Create factor
+                </md-button>
+
+                <md-button class="md-raised" data-ng-click="vm.addAction('instrument_manual_pricing_formula')">
+                    Create pricing
+                </md-button>
+
+                <md-button class="md-raised" data-ng-click="vm.addAction('instrument_accrual_calculation_schedules')">
+                    Create accrual
+                </md-button>
+                <md-button class="md-raised" data-ng-click="vm.addAction('instrument_event_schedule')">
+                    Create event
+                </md-button>
+
+            </div>
+
+            <div layout="row" layout-align="end center">
+                <md-button class="md-raised" data-ng-click="vm.addAction('instrument_event_schedule_action')">
+                    Create Event Action
+                </md-button>
+            </div>
+
+        </div> -->
+        <div class="flex-row m-t-16">
+            <md-button custom-popup
+                       popup-template-url="views/popups/selector-popup-view.html"
+                       popup-data="vm.generateOperationPopupData"
+                       position-relative-to="element"
+                       relative-popup-x="left"
+                       relative-popup-y="top"
+                       open-on="click"
+                       close-on-click-outside="true"
+                       class="primary-button">+ GENERAL OPERATION</md-button>
+
+            <md-button custom-popup
+                       popup-template-url="views/popups/selector-popup-view.html"
+                       popup-data="vm.generateInstrumentOperationPopupData"
+                       position-relative-to="element"
+                       relative-popup-x="left"
+                       relative-popup-y="top"
+                       open-on="click"
+                       close-on-click-outside="true"
+                       class="primary-button"
+                       style="padding: 0 15px;">+ INSTRUMENT OPERATION</md-button>
+
+            <md-button custom-popup
+                       popup-template-url="views/popups/selector-popup-view.html"
+                       popup-data="vm.actionTemplatesPopupData"
+                       position-relative-to="element"
+                       relative-popup-x="left"
+                       relative-popup-y="top"
+                       open-on="click"
+                       close-on-click-outside="true"
+                       popup-width="element"
+                       class="outline-button"
+                       style="padding: 0 15px;">APPEND FROM TEMPLATE</md-button>
+
+            <md-button data-ng-click="vm.saveAsTemplate($event, 'action_template')"
+                       class="outline-button"
+                       style="padding: 0 15px;">SAVE AS TEMPLATE</md-button>
+        </div>
+
+    </div>
+
+
+    <!-- <div layout="row" class="transaction-type-template-controls">
+
+        <md-menu>
+            <md-button  class="md-raised"
+                        data-ng-class="{'disabled-btn': !vm.readyStatus.action_templates}"
+                        ng-click="$mdMenu.open($event)">
+                Append From Template
+            </md-button>
+
+            <md-menu-content width="3">
+                <md-menu-item data-ng-repeat="template in vm.actionTemplates">
+                    <md-button
+                            data-ng-click="vm.appendFromTemplate($event, template)">
+                        {{template.name}}
+                    </md-button>
+                </md-menu-item>
+            </md-menu-content>
+        </md-menu>
+
+        <md-button class="md-raised"
+                   data-ng-click="vm.saveAsTemplate($event, 'action_template')">Save as a Template</md-button>
+
+    </div> -->
+
+</div>

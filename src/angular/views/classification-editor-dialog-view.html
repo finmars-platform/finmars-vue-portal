@@ -1,0 +1,36 @@
+<md-dialog aria-label="classifier dialog"
+           class="classifier-editor-dialog-view draggable-dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Classifier editor</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content  >
+        <div layout="row">
+            <md-button data-ng-click="vm.createNode()">
+                Insert item
+            </md-button>
+            <md-button data-ng-click="vm.renameNode()">
+                Rename item
+            </md-button>
+            <md-button data-ng-click="vm.deleteNode()">
+                Delete item
+            </md-button>
+        </div>
+        <div layout="row">
+            <div id="jstree_demo" style="width: 100%; overflow: hidden"></div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+        <md-button class="md-raised md-primary" ng-click="vm.agree()" style="margin-right:20px;">
+            Save
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

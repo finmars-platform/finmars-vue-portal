@@ -1,0 +1,243 @@
+<div data-ng-controller="InstrumentTypePricingTabController as vm">
+
+    <div class="flex-column">
+
+        <div class="flex-row m-b-13">
+
+            <div class="p-r-8" style="width: 306px">
+                <dropdown-select label="Pricing Currency"
+                                 model="vm.entity.pricing_currency"
+                                 placeholder-text="Pricing Currency"
+                                 menu-options="vm.currencies"
+                                 small-options="{tooltipText: 'Pricing Currency'}"
+                                 on-change-callback="vm.onEntityChange()">
+                </dropdown-select>
+            </div>
+
+            <!--                on-change-callback="vm.entityChange()"-->
+            <!--                <dropdown-select class="p-r-8" label="Co-directional exposure currency"
+                                             model="vm.entity.co_directional_exposure_currency"
+                                             placeholder-text="Co-directional exposure currency"
+                                             menu-options="vm.currencies"
+                                             small-options="{tooltipText: 'Co-directional exposure currency'}"
+                                             style="width: 200px;">
+                            </dropdown-select>
+
+                            <dropdown-select class="p-r-8" label="Counter-directional exposure currency"
+                                             model="vm.entity.counter_directional_exposure_currency"
+                                             placeholder-text="Counter-directional exposure currency"
+                                             menu-options="vm.currencies"
+                                             small-options="{tooltipText: 'Counter-directional exposure currency'}"
+                                             style="width: 200px;">
+                            </dropdown-select>-->
+
+            <div class="p-r-8" style="width: 148px;">
+                <number-input label="Pricing Multiplier"
+                              model="vm.entity.price_multiplier"
+                              small-options="{tooltipText: 'Pricing Multiplier'}">
+                </number-input>
+            </div>
+
+            <div class="p-r-8" style="width: 148px;">
+                <number-input label="Default Price"
+                              model="vm.entity.default_price"
+                              small-options="{tooltipText: 'Default Price'}">
+                </number-input>
+            </div>
+
+            <div class="p-r-8" style="width: 306px;">
+                <dropdown-select label="Pricing Condition"
+                                 model="vm.entity.pricing_condition"
+                                 placeholder-text="Pricing Condition"
+                                 menu-options="vm.pricingConditions"
+                                 small-options="{tooltipText: 'Pricing Condition'}">
+                </dropdown-select>
+            </div>
+
+        </div>
+
+        <div class="flex-row m-b-13">
+
+            <div class="p-r-8" style="width: 306px;">
+                <text-input model="vm.entity.reference_for_pricing"
+                            label="ID for Price Downloading"
+                            placeholder-text="ID for Price Downloading">
+                </text-input>
+            </div>
+
+        </div>
+
+    </div>
+
+    <table>
+
+        <thead>
+
+        <tr>
+
+            <th>
+                Pricing Policy
+            </th>
+
+            <th>
+                Pricing Scheme
+            </th>
+
+            <th>
+                Pricing Scheme Clarification
+            </th>
+
+            <th>
+                Parameter Clarification
+            </th>
+
+            <th>
+                Override Pricing Scheme Default Parameters
+            </th>
+
+            <th>
+                Edit Default Parameters
+            </th>
+
+            <th>
+                Multiple Parameters
+            </th>
+
+            <th>
+                Edit Scheme
+            </th>
+
+            <th>
+                Notes
+            </th>
+
+            <th>
+                Apply for All Instruments of This Type
+            </th>
+
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        <tr data-ng-repeat="item in vm.entity.pricing_policies">
+
+            <td>
+                {{item.pricing_policy_object.name}}
+            </td>
+
+            <td>
+                <md-input-container class="m-t-16">
+                    <md-select data-ng-model="item.pricing_scheme"
+                               data-ng-change="vm.pricingSchemeChange(item)">
+                        <md-option ng-value="scheme.id" data-ng-repeat="scheme in vm.instrumentPricingSchemes">
+                            {{scheme.name}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+            </td>
+
+            <td>
+                {{item.pricing_scheme_object.notes_for_users}}
+            </td>
+
+            <td>
+                {{item.pricing_scheme_object.notes_for_parameter}}
+            </td>
+
+            <td>
+                <md-checkbox data-ng-model="item.overwrite_default_parameters">
+                </md-checkbox>
+            </td>
+
+            <td>
+
+                <div data-ng-if="item.pricing_scheme_object.type_object.input_type == 1">
+                    -
+                </div>
+
+                <div data-ng-if="item.pricing_scheme_object.type_object.input_type != 1" class="m-t-16"
+                     data-ng-init="item.default_value ? item.switchState = 'default_value' : item.switchState = 'attribute_key'">
+
+                    <div layout="row" data-ng-if="item.switchState == 'default_value'">
+
+                        <md-input-container>
+                            <label>Default Value</label>
+                            <input type="text" data-ng-model="item.default_value">
+                        </md-input-container>
+
+                        <md-button class="md-raised md-primary"
+                                   data-ng-click="vm.switchPricingPolicyParameter($event, item)">Switch
+                        </md-button>
+
+                    </div>
+
+                    <div layout="row" data-ng-if="item.switchState == 'attribute_key'">
+
+                        <md-input-container class="m-t-16">
+                            <label>Options</label>
+                            <md-select data-ng-model="item.attribute_key">
+                                <md-option data-ng-repeat="attribute in vm.attributeTypesByValueTypes[item.pricing_scheme_object.type_settings.value_type]"
+                                           ng-value="attribute.id">
+                                    {{attribute.name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+
+                        <md-button class="md-raised md-primary"
+                                   data-ng-click="vm.switchPricingPolicyParameter($event, item)">Switch
+                        </md-button>
+
+                    </div>
+
+                </div>
+
+            </td>
+
+            <td>
+
+                <div data-ng-if="item.pricing_scheme_object.type_object.input_type != 3">
+                    -
+                </div>
+
+                <div class="m-t-16" data-ng-if="item.pricing_scheme_object.type_object.input_type == 3">
+
+                    <md-button class="md-raised" data-ng-click="vm.openPricingMultipleParametersDialog(item)">
+                        ...
+                    </md-button>
+
+                </div>
+
+            </td>
+
+            <td>
+                <md-button class="md-raised" data-ng-click="vm.editPricingScheme($event, item.pricing_scheme_object)"
+                           ng-disabled="!item.pricing_scheme && item.pricing_scheme !== 0">
+                    Edit
+                </md-button>
+            </td>
+
+            <td>
+                <md-input-container>
+                    <label>Notes</label>
+                    <input type="text" data-ng-model="item.notes">
+                </md-input-container>
+            </td>
+
+            <td>
+                <md-button ng-if="vm.entity.id || vm.entity.id === 0" class="md-raised md-primary" data-ng-click="vm.applyPricingToAllInstruments($event, item)">
+                    Apply
+                </md-button>
+            </td>
+
+        </tr>
+
+        </tbody>
+
+
+    </table>
+
+
+</div>

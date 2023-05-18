@@ -1,0 +1,66 @@
+<div class="notifications-view">
+    <div data-ng-if="vm.notifications.length && vm.notificationsReady">
+        <md-card class="nf-head-card">
+            <div layout="row">
+                <div flex="15">
+                    Date
+                </div>
+                <div flex="10">
+                    Entity
+                </div>
+                <div flex="10">
+                    Action
+                </div>
+                <div flex="65">
+                    Notification
+                </div>
+            </div>
+        </md-card>
+        <md-card data-ng-repeat="item in vm.notifications">
+            <div layout="row" class="notification-row {{!item.read_date ? 'unread' : ''}}">
+                <div flex="15">
+                    {{item['create_date'] | date:'dd/MM/yyyy HH:mm'}}
+                </div>
+                <div flex="10">
+                    {{ vm.getEntity(item) }}
+                </div>
+                <div flex="10">
+                    {{ item.verb }}
+                </div>
+                <div flex="65" layout="row" layout-align="space-between center">
+                    <div>
+                        {{item.message}}
+                    </div>
+                    <div>
+                        <ng-md-icon style="cursor: pointer" class="am-attr-card__status" data-ng-if="!item.read_date"
+                                    data-ng-click="vm.markAsRead(item)"
+                                    icon="visibility"></ng-md-icon>
+                    </div>
+                </div>
+            </div>
+        </md-card>
+        <div layout="row">
+            <div paging
+                 page="vm.notificationsCurrent"
+                 page-size="vm.itemPerPage"
+                 total="vm.notificationsTotal"
+                 paging-action="vm.changePage(page)"
+                 class="global-pagination-div">
+            </div>
+        </div>
+    </div>
+    <div layout="row">
+        <md-button class="md-raised" data-ng-click="vm.markAllNotificationsAsReaded()">Mark all as readed</md-button>
+        <md-button data-ng-if="vm.notificationsListType == 'all'" class="md-raised"
+                   data-ng-click="vm.hideShowReadedNotifications('unreaded')">Hide readed
+        </md-button>
+        <md-button data-ng-if="vm.notificationsListType == 'unreaded'" class="md-raised"
+                   data-ng-click="vm.hideShowReadedNotifications('all')">Show readed
+        </md-button>
+    </div>
+    <div data-ng-if="!vm.notifications.length && !vm.notificationsReady">
+        <div layout="row" layout-sm="column" layout-align="space-around">
+            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+        </div>
+    </div>
+</div>

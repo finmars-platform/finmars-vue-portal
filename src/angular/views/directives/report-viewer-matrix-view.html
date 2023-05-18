@@ -1,0 +1,330 @@
+<div class="report-viewer-matrix rvMatrix" data-ng-class="{'matrix-with-fixed-totals': matrixView === 'fixed-totals'}">
+    <div data-ng-if="!processing"
+         class="height-100 rvMatrixWrap">
+
+        <div class="report-viewer-matrix-holder rvMatrixHolder"
+             layout="column">
+
+            <div ng-if="viewContext === 'dashboard'"
+                 class="axis-attr-selector-btns-holder axisAttrSelectorBtnsHolder">
+                <button ng-if="canChangeAbscissaAttr"
+                        custom-popup
+                        popup-template-url="'views/popups/selector-popup-view.html'"
+                        popup-data="abscissaSelectorData"
+                        position-relative-to="element"
+                        relative-popup-x="left"
+                        relative-popup-y="top"
+                        open-on="click"
+                        close-on-click-outside="true"
+                        class="flex-row flex-center axis-attr-selector-btn abscissa"><span class="material-icons">chevron_right</span></button>
+
+                <button ng-if="canChangeOrdinateAttr"
+                        custom-popup
+                        popup-template-url="'views/popups/selector-popup-view.html'"
+                        popup-data="ordinateSelectorData"
+                        position-relative-to="element"
+                        relative-popup-y="top"
+                        open-on="click"
+                        close-on-click-outside="true"
+                        class="flex-row flex-center axis-attr-selector-btn ordinate"><span class="material-icons">expand_more</span></button>
+            </div>
+
+            <div class="report-viewer-matrix-row rv-matrix-header" flex="noshrink">
+
+                <!--<div class="report-viewer-matrix-column-header-cell report-viewer-empty-header-cell text-{{styles.cell.text_align}} rvMatrixCell"
+                     title="{{getTopLeftTitle()}}">-->
+                <div class="report-viewer-matrix-column-header-cell report-viewer-empty-header-cell text-{{styles.cell.text_align}} firstColumnCell rvMatrixCell">
+
+                    <div ng-if="canChangeValueAttr"
+                         class="selector-button-popup">
+
+                        <button custom-popup
+                                popup-template-url="'views/popups/selector-popup-view.html'"
+                                popup-data="valueSelectorData"
+                                position-relative-to="element"
+                                open-on="click"
+                                close-on-click-outside="true"
+                                class="selector-button-popup-btn"
+                                title="{{matrixValueAttrName}}">
+                            <!-- If .selected-option-name is not a block, text-overflow: ellipsis; clips text when it actually fits -->
+                            <div class="selected-option-name" ng-bind="matrixValueAttrName"></div>
+                            <span class="arrow_downward-icon material-icons">arrow_drop_down</span>
+
+                        </button>
+                    </div>
+
+                    <div ng-if="!canChangeValueAttr"
+                         ng-bind="matrixValueAttrName"
+                         class="report-viewer-matrix-value-name"
+                         title="{{matrixValueAttrName}}"></div>
+                    <!-- <span data-ng-bind="getTopLeftTitle()">-</span>
+
+                    <md-menu>
+                        <md-button class="matrix-settings-button"
+                                   ng-click="$mdOpenMenu($event)">
+                            <ng-md-icon icon="settings"></ng-md-icon>
+                        </md-button>
+
+                        <md-menu-content width="3">
+
+                            <md-menu-item>
+                                <md-menu>
+
+                                    <md-button aria-label="show number formatting menu"
+                                               ng-click="$mdOpenMenu($event)">
+                                        <span>Number Format</span>
+                                    </md-button>
+
+                                    <md-menu-content width="4">
+
+                                        <md-menu-item>
+                                            <md-button ng-click="setNumberFormatPreset('price')"
+                                                       class="g-settings-option-btn">
+                                                <span>Price (0)</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item>
+                                            <md-button ng-click="setNumberFormatPreset('market_value')"
+                                                       class="g-settings-option-btn">
+                                                <span>Market Value (000'000)</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item>
+                                            <md-button class="g-settings-option-btn"
+                                                       ng-click="setNumberFormatPreset('amount')">
+                                                <span>Amount (000'000.00)</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item>
+                                            <md-button class="g-settings-option-btn"
+                                                       ng-click="setNumberFormatPreset('exposure')">
+                                                <span>Exposure (0.0%)</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item>
+                                            <md-button class="g-settings-option-btn"
+                                                       ng-click="setNumberFormatPreset('return')">
+                                                <span>Return (0.00%)</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item>
+                                            <md-button class="g-settings-option-btn"
+                                                       ng-click="openNumberFormatSettings($event)">
+                                                <span>Custom</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                    </md-menu-content>
+                                </md-menu>
+                            </md-menu-item>
+
+                            <md-menu-item>
+                                <md-button ng-click="setSubtotalType(1)"
+                                           class="g-settings-option-btn">
+                                    <span>Subtotal SUM</span>
+                                </md-button>
+                            </md-menu-item>
+
+                            <md-menu-item>
+                                <md-menu md-offset="18px 0">
+                                    <md-button aria-label="Open phone interactions menu"
+                                               class=""
+                                               ng-click="$mdOpenMenu($event)">
+                                        <span>Subtotal Weighted</span>
+                                        <ng-md-icon icon="arrow_drop_up"
+                                                    class="z-dropdown-icon"></ng-md-icon>
+                                    </md-button>
+                                    <md-menu-content width="3">
+                                        <md-menu-item>
+                                            <md-button ng-click="setSubtotalType(2)"
+                                                       class="g-settings-option-btn">
+                                                <span>Market Value</span>
+                                            </md-button>
+                                        </md-menu-item>
+                                        <md-menu-item>
+                                            <md-button ng-click="setSubtotalType(3)"
+                                                       class="g-settings-option-btn">
+                                                <span>Market Value %</span>
+                                            </md-button>
+                                        </md-menu-item>
+                                        <md-menu-item>
+                                            <md-button ng-click="setSubtotalType(4)"
+                                                       class="g-settings-option-btn">
+                                                <span>Exposure</span>
+                                            </md-button>
+                                        </md-menu-item>
+                                        <md-menu-item>
+                                            <md-button ng-click="setSubtotalType(5)"
+                                                       class="g-settings-option-btn">
+                                                <span>Exposure %</span>
+                                            </md-button>
+                                        </md-menu-item>
+                                    </md-menu-content>
+                                </md-menu>
+                            </md-menu-item>
+
+                            <md-menu-item>
+                                <md-menu>
+                                    <md-button aria-label="Open phone interactions menu"
+                                               class=""
+                                               ng-click="$mdOpenMenu($event)">
+                                        <span>Subtotal Avg. Weighted</span>
+                                        <ng-md-icon icon="arrow_drop_up"
+                                                    class="z-dropdown-icon"></ng-md-icon>
+                                    </md-button>
+                                    <md-menu-content width="3">
+                                        <md-menu-item>
+                                            <md-button ng-click="setSubtotalType(6)"
+                                                       class="g-settings-option-btn">
+                                                <span>Market Value</span>
+                                            </md-button>
+                                        </md-menu-item>
+                                        <md-menu-item>
+                                            <md-button ng-click="setSubtotalType(7)"
+                                                       class="g-settings-option-btn">
+                                                <span>Market Value %</span>
+                                            </md-button>
+                                        </md-menu-item>
+                                        <md-menu-item>
+                                            <md-button ng-click="setSubtotalType(8)"
+                                                       class="g-settings-option-btn">
+                                                <span>Exposure</span>
+                                            </md-button>
+                                        </md-menu-item>
+                                        <md-menu-item>
+                                            <md-button ng-click="setSubtotalType(9)"
+                                                       class="g-settings-option-btn">
+                                                <span>Exposure %</span>
+                                            </md-button>
+                                        </md-menu-item>
+                                    </md-menu-content>
+                                </md-menu>
+                            </md-menu-item>
+
+                            <md-menu-item>
+                                <md-menu>
+                                    <md-button aria-label="Open phone interactions menu"
+                                               class=""
+                                               ng-click="$mdOpenMenu($event)">
+                                        <span>Hide empty columns or / and rows</span>
+                                        <ng-md-icon icon="arrow_drop_up"
+                                                    class="z-dropdown-icon"></ng-md-icon>
+                                    </md-button>
+
+                                    <md-menu-content width="3">
+                                        <md-menu-item>
+                                            <md-button ng-click="hideEmptyLines('columns')"
+                                                       class="g-settings-option-btn">
+                                                <ng-md-icon icon="done"
+                                                            data-ng-show="emptyLinesHidingType === 'columns'"></ng-md-icon>
+                                                <ng-md-icon icon="done"
+                                                            style="visibility:hidden;"
+                                                            data-ng-show="emptyLinesHidingType !== 'columns'"></ng-md-icon>
+                                                <span>Hide columns</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item>
+                                            <md-button ng-click="hideEmptyLines('rows')"
+                                                       class="g-settings-option-btn">
+                                                <ng-md-icon icon="done"
+                                                            data-ng-show="emptyLinesHidingType === 'rows'"></ng-md-icon>
+                                                <ng-md-icon icon="done"
+                                                            style="visibility:hidden;"
+                                                            data-ng-show="emptyLinesHidingType !== 'rows'"></ng-md-icon>
+                                                <span>Hide rows</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item>
+                                            <md-button ng-click="hideEmptyLines('columns_rows')"
+                                                       class="g-settings-option-btn">
+                                                <ng-md-icon icon="done"
+                                                            data-ng-show="emptyLinesHidingType === 'columns_rows'"></ng-md-icon>
+                                                <ng-md-icon icon="done"
+                                                            style="visibility:hidden;"
+                                                            data-ng-show="emptyLinesHidingType !== 'columns_rows'"></ng-md-icon>
+                                                <span>Hide columns and rows</span>
+                                            </md-button>
+                                        </md-menu-item>
+                                    </md-menu-content>
+                                </md-menu>
+                            </md-menu-item>
+
+                        </md-menu-content>
+                    </md-menu>-->
+                </div>
+
+                <div class="rvm-header-row-holder">
+                    <div class="rv-matrix-part-to-scroll rvmHeaderScrollableRow">
+                        <div data-ng-repeat="column in columns track by $index"
+                             class="report-viewer-matrix-column-header-cell rvMatrixCell"
+                             data-ng-class="{'active': activeItem == 'column_total:' + $index}"
+                             title="{{column.key}}"
+                             data-ng-click="singleColumnTotalClick($event, $index)">
+                            {{column.key}}
+                        </div>
+
+                        <div data-ng-if="matrixView !== 'fixed-totals'"
+                             class="report-viewer-matrix-column-header-cell report-viewer-cell-border-left text-{{styles.cell.text_align}} rvMatrixCell"
+                             title="TOTAL"
+                             data-ng-class="{'active': activeItem == 'columns_total'}"
+                             data-ng-click="columnsTotalClick($event)">
+                            TOTAL
+                        </div>
+
+                        <!-- Blank cell that serves as placeholder for position absolute column with totals -->
+                        <!--                <div class="report-viewer-matrix-cell rvMatrixCell"></div>-->
+                    </div>
+                </div>
+
+                <div data-ng-if="matrixView === 'fixed-totals'"
+                     class="rv-matrix-header-total-cell text-{{styles.cell.text_align}} rvMatrixCell"
+                     title="TOTAL"
+                     data-ng-class="{'active': activeItem == 'columns_total'}"
+                     data-ng-click="columnsTotalClick($event)">
+                    TOTAL
+                </div>
+
+            </div>
+
+            <div data-ng-if="matrixView !== 'fixed-totals'"
+                 class="rv-matrix-body"
+                 layout="row"
+                 flex="grow"
+                 data-ng-include="'views/directives/reportViewer/matrix/rv-matrix-body-template.html'"></div>
+
+            <div data-ng-if="matrixView === 'fixed-totals'"
+                 class="rv-matrix-body"
+                 layout="row"
+                 flex="grow"
+                 data-ng-include="'views/directives/reportViewer/matrix/rv-matrix-fixed-totals-body-template.html'"></div>
+        </div>
+
+    </div>
+
+<!--    <div data-ng-if="viewContext === 'dashboard' && !processing" class="g-dashboard-filter-holder">
+
+        <md-button class="toggle-dashboard-filter-btn"
+                   ng-click="dashboardFilterCollapsed = !dashboardFilterCollapsed">
+            <ng-md-icon ng-hide="dashboardFilterCollapsed"
+                        icon="keyboard_arrow_left"></ng-md-icon>
+            <ng-md-icon ng-hide="!dashboardFilterCollapsed"
+                        icon="keyboard_arrow_right"></ng-md-icon>
+        </md-button>
+
+        <div class="g-dashboard-filter">
+
+            <group-dashboard-filter data-ng-show="!dashboardFilterCollapsed"
+                                    ev-data-service="evDataService"
+                                    ev-event-service="evEventService"></group-dashboard-filter>
+        </div>
+
+    </div>-->
+
+</div>

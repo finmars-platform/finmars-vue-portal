@@ -1,0 +1,68 @@
+<div class="custom-input-container number-input-container numberInputContainer"
+     data-ng-class="getInputContainerClasses()">
+
+    <div ng-if="label || label === ''"
+         class="custom-input-top-row">
+        <span class="custom-input-textarea-span-pan">{{label}}</span>
+    </div>
+
+    <div class="custom-input-main-container customInputBackgroundColor">
+        <div class="custom-input-borders">
+            <div class="custom-input-content">
+
+            <div class="flex-row">
+              <button data-ng-if="!noIndicatorBtn"
+                      class="custom-input-indicator-btn position-relative"
+                      data-ng-click="openCalculatorDialog($event)"
+                      ng-disabled="isDisabled">
+                <span class="material-icons">apps</span>
+              </button>
+
+              <input type="text"
+                     ng-model="numberToShow"
+                     ng-change="onValueChange()"
+                     placeholder="{{placeholder}}"
+                     ng-disabled="isDisabled"
+                     class="custom-input number-input numberInputElem" />
+            </div>
+
+            <div class="custom-input-side-items flex-row customInputBackgroundColor">
+              <div class="custom-input-custom-btns-holder">
+                <div data-ng-if="customButtons && customButtons.length" class="height-100 flex-row">
+                  <button data-ng-repeat="button in customButtons" class="{{button.classes}} custom-input-custom-btn"
+                          data-ng-click="callFnForCustomBtn(button.action)">
+                    {{button.caption}}
+                    <ng-md-icon data-ng-if="button.iconObj.type === 'angularjs-material'"
+                                size="24"
+                                icon="{{button.iconObj.icon}}"
+                                class="ci-icon-color"></ng-md-icon>
+                    <span data-ng-if="button.iconObj.type === 'angular-material'"
+                          class="material-icons ci-icon-color">{{button.iconObj.icon}}</span>
+
+                    <md-tooltip data-ng-if="button.tooltip"
+                                class="tooltip_1"
+                                md-direction="top">{{button.tooltip}}
+                    </md-tooltip>
+                  </button>
+                </div>
+              </div>
+
+              <div data-ng-if="error" class="custom-input-tooltip">
+                <span class="material-icons">info</span>
+                <md-tooltip class="error-tooltip" md-direction="top">{{error}}</md-tooltip>
+              </div>
+
+              <div data-ng-if="tooltipText" data-ng-show="!error" class="custom-input-tooltip">
+                <span class="material-icons ci-icon-color">info_outline</span>
+                <md-tooltip class="tooltip_2" md-direction="top" data-ng-bind="tooltipText"></md-tooltip>
+              </div>
+            </div>
+
+            </div>
+        </div>
+    </div>
+
+  <div ng-if="error"
+       ng-bind="error"
+       class="custom-input-bottom-error-text"></div>
+</div>

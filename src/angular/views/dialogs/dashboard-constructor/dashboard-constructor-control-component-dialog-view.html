@@ -1,0 +1,233 @@
+<md-dialog aria-label="dashboard constructor control component"
+           class="draggable-dialog width-50"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>New Control Component</h2>
+            <span flex></span>
+
+            <div data-ng-if="vm.processing" class="dialog-toolbar-loader">
+                <progress-circular diameter="20"></progress-circular>
+            </div>
+
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <md-tabs md-border-bottom md-dynamic-height>
+
+            <md-tab>
+                <md-tab-label>Main</md-tab-label>
+
+                <md-tab-body>
+                    <md-content>
+                        <div class="p-24">
+
+                            <md-input-container style="width: 200px;">
+                                <label for="">Name</label>
+                                <input type="text" data-ng-model="vm.item.name">
+                            </md-input-container>
+
+                            <div>
+                                <md-input-container class="dashboard-constructor-field1">
+                                    <label for="">Label</label>
+                                    <input type="text" data-ng-model="vm.item.custom_component_name">
+                                </md-input-container>
+                            </div>
+
+
+                            <md-input-container class="md-block" style="height: 58px">
+                                <label>Value Type</label>
+                                <md-select data-ng-model="vm.item.settings.value_type" ng-change="vm.valueTypeChanged()">
+                                    <md-option ng-repeat="valueType in vm.valueTypes" ng-value="valueType.code">{{valueType.name}}</md-option>
+                                </md-select>
+                            </md-input-container>
+
+                            <div data-ng-if="vm.item.settings.value_type == 100" layout="row">
+
+                                <md-input-container class="md-block no-error-spacer"
+                                                    aria-label="select with filter"
+                                                    style="height: 58px">
+                                    <label>Content Type</label>
+                                    <md-select ng-model="vm.currentContentType"
+                                               md-container-class="common-select-container"
+                                               md-on-close="searchTerm = ''"
+                                               ng-change="vm.contentTypeChanged()"
+                                               style="margin-bottom: 10px">
+
+                                        <md-select-header>
+                                            <input data-ng-model="searchTerm"
+                                                   type="search"
+                                                   placeholder="Search for a ..."
+                                                   class="md-text md-select-search-pattern select-input-filter"
+                                                   ng-keydown="$event.stopPropagation()">
+                                        </md-select-header>
+
+                                        <div class="select-options-holder">
+
+                                            <md-option
+                                                    data-ng-repeat="contentType in vm.contentTypes | filter: {name: searchTerm}"
+                                                    ng-value="contentType"
+                                                    ng-bind="contentType.name">
+                                            </md-option>
+
+                                        </div>
+
+                                    </md-select>
+                                </md-input-container>
+
+                                <div>
+
+                                    <md-input-container style="height: 58px">
+
+                                        <md-checkbox data-ng-model="vm.item.settings.multiple" data-ng-change="vm.onMultipleChange()">Multiple Select</md-checkbox>
+
+                                    </md-input-container>
+
+                                </div>
+
+                            </div>
+
+
+                            <md-input-container style="height: 58px">
+
+                                <md-checkbox data-ng-model="vm.item.settings.auto_refresh">Trigger Refresh on Value Change</md-checkbox>
+
+                            </md-input-container>
+
+                        </div>
+                    </md-content>
+                </md-tab-body>
+            </md-tab>
+
+            <md-tab data-ng-disabled="!vm.isRequiredDefaultValue()">
+                <md-tab-label>Default value</md-tab-label>
+
+                <md-tab-body>
+                    <md-content>
+                        <div class="p-24">
+                            <md-radio-group ng-model="vm.defaultValue.mode"
+                                            ng-change="vm.onGetDefaultValueFromLayoutMode()">
+
+                                <md-radio-button ng-value="0">Get value</md-radio-button>
+                                <md-radio-button ng-value="1">Set default value</md-radio-button>
+                                <md-radio-button ng-value="2">No default value</md-radio-button>
+
+                            </md-radio-group>
+
+                            <div class="p-t-24" data-ng-if="vm.defaultValue.mode === 0">
+
+                                <div class="p-b-24">Value type: {{vm.getCurrentValueTypeName()}}</div>
+
+                                <!-- <md-input-container class="dashboard-constructor-field1" style="height: 58px">
+                                    <label for="">Report Type</label>
+                                    <md-select data-ng-model="vm.defaultValue.entity_type"
+                                               data-ng-change="vm.onReportTypeChange()">
+                                        <md-option value="balance-report">Balance Report</md-option>
+                                        <md-option value="pl-report">P&L Report</md-option>
+                                        <md-option value="transaction-report" data-ng-disabled="vm.isTransactionReportDisabled()">Transaction Report</md-option>
+                                    </md-select>
+                                </md-input-container>
+
+                                <expandable-items-selector model="vm.defaultValue.layout"
+                                                           title="Layout"
+                                                           dialog-title="Choose layout"
+                                                           items="vm.layoutsWithLinkToFilters"
+                                                           is-disabled="!vm.defaultValue.entity_type"
+                                                           on-change-callback="vm.onLayoutChange()"
+                                                           class="dashboard-constructor-selector-directive"></expandable-items-selector> -->
+                                <div class="flex-row">
+
+                                    <div style="width: 400px;">
+                                        <div ng-if="vm.readyStatus.layouts">
+                                            <multitype-field label="Select layout"
+                                                             field-types-data="vm.layoutsSelectorsList"
+                                                             type-switch="selector"
+                                                             on-value-change="vm.onLayoutChange()"
+                                                             on-type-change="vm.onLayoutEntityTypeChange(activeType)"></multitype-field>
+                                        </div>
+
+                                        <div ng-if="!vm.readyStatus.layouts" class="flex-row fc-space-around" style="height: 40px;">
+                                            <progress-circular diameter="30"></progress-circular>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <md-input-container ng-if="vm.item.settings.value_type == 40 && vm.defaultValue.entity_type !== 'balance-report'"
+                                                            class="dashboard-constructor-field1" style="height: 58px">
+
+                                            <label for="">Report Field</label>
+                                            <md-select data-ng-model="vm.defaultValue.report_field"
+                                                       data-ng-disabled="!vm.defaultValue.layout">
+
+                                                <md-option data-ng-repeat="reportField in vm.reportFields"
+                                                           ng-value="reportField"
+                                                           ng-bind="reportField.name">
+                                                </md-option>
+
+                                            </md-select>
+                                        </md-input-container>
+                                    </div>
+
+                                    <div data-ng-if="vm.item.settings.value_type === 40 && vm.defaultValue.report_field.value"
+                                         class="p-t-10" ng-class="{'m-l-8': vm.defaultValue.entity_type === 'balance-report'}">
+                                        Current default value: {{vm.defaultValue.report_field.value}}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="p-t-24" data-ng-if="vm.defaultValue.mode === 1">
+
+                                <div class="p-b-24">Value type: {{vm.getCurrentValueTypeName()}}</div>
+
+                                <md-input-container data-ng-if="vm.item.settings.value_type === 40" class="field-date-pick-holder no-error-spacer">
+                                    <label data-ng-bind="vm.item.custom_component_name || vm.item.name"></label>
+                                    <zh-date-picker data-date-value="vm.defaultValue.setValue"></zh-date-picker>
+                                </md-input-container>
+
+                                <div data-ng-if="vm.item.settings.value_type === 100 && vm.currentContentType">
+
+                                    <entity-search-select data-ng-if="!vm.item.settings.multiple"
+                                                          data-item="vm.defaultValue.setValue"
+                                                          data-label="vm.currentContentType.name"
+                                                          data-item-name="vm.defaultValue.setValueName"
+                                                          data-item-object="vm.defaultValue.setValueObject"
+                                                          data-entity-type="vm.currentContentType.entityType"></entity-search-select>
+
+                                    <two-fields-multiselect data-ng-if="vm.item.settings.multiple"
+                                                            title="{{vm.currentContentType.name}}"
+                                                            items="vm.multiselectItems"
+                                                            model="vm.defaultValue.setValue"
+                                                            get-data-method="vm.getDataForMultiselect()"
+                                                            class="two-fields-multiselect no-error-spacer dashboard-control-multiselect"></two-fields-multiselect>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </md-content>
+                </md-tab-body>
+            </md-tab>
+
+        </md-tabs>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+
+        <md-button ng-click="vm.exportToDashboards()" style="margin-right:20px;">
+            Export to dashboards
+        </md-button>
+
+        <md-button ng-click="vm.cancel()" style="margin-right:20px;">
+            Cancel
+        </md-button>
+
+        <md-button ng-click="vm.agree()" data-ng-disabled="!vm.isValidDefaultValue()" style="margin-right:20px;">
+            OK
+        </md-button>
+
+    </md-dialog-actions>
+</md-dialog>

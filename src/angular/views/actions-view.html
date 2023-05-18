@@ -1,0 +1,360 @@
+<div class="actions-view">
+
+    <div layout="row" layout-align="space-between">
+
+        <fieldset layout="column" class="">
+            <legend>Import from file</legend>
+
+            <div layout="row">
+
+                <div>
+                    <md-button data-ng-click="vm.complexImport($event)" class="md-primary md-raised">
+                        Complex Import
+                    </md-button>
+                </div>
+
+                <div>
+                    <md-button data-ng-click="vm.importEntity($event)" class="md-primary md-raised">
+                        Simple Entity Import
+                    </md-button>
+                </div>
+
+                <div>
+                    <md-button data-ng-click="vm.importTransaction($event)" class="md-primary md-raised">
+                        Import transaction
+                    </md-button>
+                </div>
+            </div>
+
+        </fieldset>
+
+        <fieldset class="">
+            <legend>Import schemes</legend>
+
+            <div layout="row">
+                <div>
+                    <md-button class="md-raised md-primary" data-ng-click="vm.addScheme($event)">
+                        Create download instruments scheme
+                    </md-button>
+                </div>
+
+                <div>
+                    <md-button data-ng-click="vm.instrumentDownload($event)" class="md-primary md-raised">
+                        Download instrument
+                    </md-button>
+                </div>
+
+            </div>
+
+
+        </fieldset>
+
+    </div>
+
+    <div layout="row" layout-align="space-between">
+
+        <fieldset class="fieldset-data-mapping">
+            <legend>Data mappings</legend>
+
+            <div layout="row" layout-align="space-between">
+
+                <div>
+                    <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'currency'})"
+                               class="md-primary md-raised">
+                        Currency mapping
+                    </md-button>
+                </div>
+
+                <div>
+                    <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'instrument-type'})"
+                               class="md-primary md-raised">
+                        Instrument type mapping
+                    </md-button>
+                </div>
+
+                <div>
+                    <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'account'})"
+                               class="md-primary md-raised">
+                        Account mapping
+                    </md-button>
+                </div>
+
+            </div>
+
+            <div layout="row" layout-align="space-between">
+
+                <div>
+                    <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'counterparty'})"
+                               class="md-primary md-raised">
+                        Counterparty mapping
+                    </md-button>
+                </div>
+
+                <div>
+                    <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'responsible'})"
+                               class="md-primary md-raised">
+                        Responsible mapping
+                    </md-button>
+                </div>
+
+                <div>
+                    <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'portfolio'})"
+                               class="md-primary md-raised">
+                        Portfolio mapping
+                    </md-button>
+                </div>
+
+            </div>
+
+            <div layout="row" layout-align="space-between" style="margin-left: 4px">
+
+                <div>
+
+                    <md-button
+                            data-ng-click="vm.openMapping($event, {complexExpressionEntity: 'price-download-scheme'})"
+                            class="md-primary md-raised">
+                        Price download scheme mapping
+                    </md-button>
+
+                </div>
+
+                <div>
+                    &nbsp;
+                </div>
+
+                <div>
+                    <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity: 'pricing-policy'})"
+                               class="md-primary md-raised">
+                        Pricing policy mapping
+                    </md-button>
+                </div>
+
+                <div>
+                    <div>
+                        <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'account-type'})"
+                                   class="md-primary md-raised">
+                            Account Type mapping
+                        </md-button>
+                    </div>
+                    <div>
+                        &nbsp;
+                    </div>
+
+                    <div>
+                        &nbsp;
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div layout="row" layout-align="space-between" style="margin-left: 4px">
+
+                <div>
+                    <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'strategy-1'})"
+                               class="md-primary md-raised">
+                        Strategy 1 mapping
+                    </md-button>
+                </div>
+
+                <div>
+                    <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'strategy-2'})"
+                               class="md-primary md-raised">
+                        Strategy 2 mapping
+                    </md-button>
+                </div>
+
+                <div>
+                    <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'strategy-3'})"
+                               class="md-primary md-raised">
+                        Strategy 3 mapping
+                    </md-button>
+                </div>
+
+                <div>
+                    &nbsp;
+                </div>
+
+            </div>
+
+        </fieldset>
+
+        <fieldset class="fieldset-data-mapping">
+            <legend>Instrument parameters mappings</legend>
+
+            <div layout="row" layout-align="space-between">
+
+                <div>
+                    <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'periodicity'})"
+                               class="md-primary md-raised">
+                        Periodicity mapping
+                    </md-button>
+                </div>
+
+                <div>
+                    <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'instrument'})"
+                               class="md-primary md-raised">
+                        Instrument mapping
+                    </md-button>
+                </div>
+
+                <div>
+                    <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity: 'daily-pricing-model'})"
+                               class="md-primary md-raised">
+                        Daily pricing model mapping
+                    </md-button>
+                </div>
+            </div>
+
+            <div layout="row" layout-align="space-between" style="margin-left: 4px">
+
+                <div>
+                    <md-button
+                            data-ng-click="vm.openMapping($event, {complexExpressionEntity: 'accrual-calculation-model'})"
+                            class="md-primary md-raised">
+                        Accrual calculation model mapping
+                    </md-button>
+                </div>
+
+                <div>
+                    <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity: 'payment-size-detail'})"
+                               class="md-primary md-raised">
+                        Payment size detail mapping
+                    </md-button>
+                </div>
+
+            </div>
+
+            <div layout="row" layout-align="space-between">
+
+                <div>
+                    &nbsp;
+                </div>
+
+
+                <div>
+                    &nbsp;
+                </div>
+
+                <div>
+                    &nbsp;
+                </div>
+
+            </div>
+
+
+        </fieldset>
+
+    </div>
+
+    <!--<div layout="row" layout-align="space-between">-->
+
+    <!--<fieldset class="fieldset-data-mapping">-->
+    <!--<legend>Classifier mappings</legend>-->
+
+    <!--<div layout="row" layout-align="space-between">-->
+
+    <!--<div>-->
+    <!--<md-button data-ng-click="vm.openClassifierMapping($event, {complexExpressionEntity:'periodicity'})"-->
+    <!--class="md-primary md-raised">-->
+    <!--Portfolio Classifier mapping-->
+    <!--</md-button>-->
+    <!--</div>-->
+
+    <!--<div>-->
+    <!--<md-button data-ng-click="vm.openClassifierMapping($event, {complexExpressionEntity:'currency'})"-->
+    <!--class="md-primary md-raised">-->
+    <!--Account Classifier mapping-->
+    <!--</md-button>-->
+    <!--</div>-->
+
+    <!--<div>-->
+    <!--<md-button data-ng-click="vm.openClassifierMapping($event, {complexExpressionEntity:'instrument_type'})"-->
+    <!--class="md-primary md-raised">-->
+    <!--Responsible Classifier mapping-->
+    <!--</md-button>-->
+    <!--</div>-->
+
+    <!--<div>-->
+    <!--<md-button data-ng-click="vm.openClassifierMapping($event, {complexExpressionEntity:'instrument'})"-->
+    <!--class="md-primary md-raised">-->
+    <!--Counterparty Classifier mapping-->
+    <!--</md-button>-->
+    <!--</div>-->
+
+    <!--</div>-->
+
+    <!--</fieldset>-->
+    <!--</div>-->
+
+    <div layout="row" layout-align="space-between">
+
+        <fieldset class="fieldset-event-settings">
+            <legend>Price upload</legend>
+
+            <div layout="row">
+
+                <md-button class="md-raised md-primary" data-ng-click="vm.addPriceDownloadScheme($event)">
+                    Create price download scheme
+                </md-button>
+
+                <div>
+                    <md-button data-ng-click="vm.fillPriceHistory($event)" class="md-primary md-raised">
+                        Fill price history
+                    </md-button>
+                </div>
+
+
+            </div>
+
+        </fieldset>
+
+    </div>
+
+    <div layout="row" layout-align="space-between">
+
+        <fieldset class="fieldset-event-settings">
+            <legend>Event settings</legend>
+
+            <div layout="row">
+
+                <md-button class="md-raised md-primary" data-ng-click="vm.checkForEvents($event)">
+                    Check for events
+                </md-button>
+
+                <md-button class="md-raised" data-ng-click="vm.eventsAsSystem($event)">
+                    Generate and process Events (As system once per day)
+                </md-button>
+
+            </div>
+
+        </fieldset>
+
+    </div>
+
+    <div layout="row" layout-align="space-between">
+
+        <fieldset class="fieldset-event-settings">
+            <legend>Default settings</legend>
+
+            <div layout="row">
+
+                <md-button class="md-raised md-primary" data-ng-click="vm.eventScheduleConfig()">
+                    Configure event schedule
+                </md-button>
+
+                <md-button class="md-raised md-primary" data-ng-click="vm.defaultPricingConfig($event)">
+                    Default pricing config
+                </md-button>
+
+                <md-button class="md-raised md-primary" data-ng-click="vm.notificationsSettings($event)">
+                    Notifications settings
+                </md-button>
+
+            </div>
+
+        </fieldset>
+
+    </div>
+
+</div>

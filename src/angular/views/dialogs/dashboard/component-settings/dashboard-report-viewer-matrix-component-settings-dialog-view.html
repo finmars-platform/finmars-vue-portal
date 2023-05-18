@@ -1,0 +1,257 @@
+<md-dialog aria-label="dashboard matrix component settings dialog"
+           class="draggable-dialog width-50"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Matrix Component Editor</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+
+        <md-tabs md-dynamic-height>
+
+            <md-tab label="MAIN">
+                <md-content class="p-16">
+
+                    <div class="dashboard-constructor-field2" style="margin: 0 10px;">
+                        <md-input-container class="m-0 width-100">
+                            <label>Chart Label</label>
+                            <input type="text" data-ng-model="vm.item.custom_component_name">
+                        </md-input-container>
+                    </div>
+
+                    <div class="dashboard-constructor-field1"
+                         style="margin: 0 10px 24px;">
+
+                        <md-input-container data-ng-if="vm.availableAbscissaAttrs && vm.availableAbscissaAttrs.length > 0"
+                                            class="m-0 width-100"
+                                            aria-label="select with filter">
+                            <label>Column (Axis X)</label>
+                            <md-select ng-model="vm.item.settings.abscissa"
+                                       md-container-class="common-select-container"
+                                       md-on-close="vm.abscissaSearchTerm = ''">
+
+                                <md-select-header>
+                                    <input data-ng-model="vm.abscissaSearchTerm"
+                                           type="search"
+                                           placeholder="Search for a ..."
+                                           class="md-text md-select-search-pattern select-input-filter"
+                                           ng-keydown="$event.stopPropagation()">
+                                </md-select-header>
+
+                                <div class="select-options-holder">
+
+                                    <md-option
+                                            data-ng-repeat="attr in vm.availableAbscissaAttrs | orderBy: 'order' | filter:vm.abscissaFilterExpr"
+                                            ng-value="attr.attribute_data.key"
+                                            ng-bind="vm.getSelectName(attr)">
+                                    </md-option>
+
+                                </div>
+
+                            </md-select>
+                        </md-input-container>
+
+                    </div>
+
+                    <div class="dashboard-constructor-field1"
+                         style="margin: 0 10px 24px;">
+
+                        <md-input-container data-ng-if="vm.availableOrdinateAttrs && vm.availableOrdinateAttrs.length > 0"
+                                            class="m-0 width-100"
+                                            aria-label="select with filter">
+                            <label>Category (Axis Y)</label>
+                            <md-select ng-model="vm.item.settings.ordinate"
+                                       md-container-class="common-select-container"
+                                       md-on-close="vm.ordinateSearchTerm = ''">
+
+                                <md-select-header>
+                                    <input data-ng-model="vm.ordinateSearchTerm"
+                                           type="search"
+                                           placeholder="Search for a ..."
+                                           class="md-text md-select-search-pattern select-input-filter"
+                                           ng-keydown="$event.stopPropagation()">
+                                </md-select-header>
+
+                                <div class="select-options-holder">
+
+                                    <md-option
+                                            data-ng-repeat="attr in vm.availableOrdinateAttrs | orderBy: 'order' | filter:vm.ordinateFilterExpr"
+                                            ng-value="attr.attribute_data.key"
+                                            ng-bind="vm.getSelectName(attr)">
+                                    </md-option>
+
+                                </div>
+
+                            </md-select>
+                        </md-input-container>
+
+                    </div>
+
+
+                    <div class="m-b-24" layout="row">
+
+                        <div data-ng-if="vm.availableValueAttrs && vm.availableValueAttrs.length > 0"
+                             class="dashboard-constructor-field1"
+                             style="margin: 0 10px;">
+
+                            <md-input-container class="m-0 width-100"
+                                                aria-label="select with filter">
+                                <label>Values</label>
+                                <md-select ng-model="vm.item.settings.value_key"
+                                           md-container-class="common-select-container"
+                                           md-on-close="vm.valuesSearchTerm = ''">
+
+                                    <md-select-header>
+                                        <input data-ng-model="vm.valuesSearchTerm"
+                                               type="search"
+                                               placeholder="Search for a ..."
+                                               class="md-text md-select-search-pattern select-input-filter"
+                                               ng-keydown="$event.stopPropagation()">
+                                    </md-select-header>
+
+                                    <div class="select-options-holder">
+
+                                        <md-option
+                                                data-ng-repeat="attr in vm.availableValueAttrs | orderBy: 'order' | filter:vm.valuesFilterExpr"
+                                                ng-value="attr.attribute_data.key"
+                                                ng-bind="vm.getSelectName(attr)">
+                                        </md-option>
+
+                                    </div>
+
+                                </md-select>
+                            </md-input-container>
+
+                        </div>
+
+<!--                        <div>
+                            <number-format-menu data-format-settings="vm.item.settings.number_format"
+                                                data-button-content="<span>Number Format</span>"
+                                                data-button-classes="md-raised md-primary"
+                                                class="dashboard-constructor-btn-among-fields"></number-format-menu>
+                        </div>-->
+
+                        <md-input-container class="dashboard-constructor-field1"
+                                            style="margin: 0 10px;">
+                            <label for="">Calculation</label>
+                            <md-select data-ng-model="vm.item.settings.subtotal_formula_id">
+                                <md-option value="1">Sum</md-option>
+                                <md-option value="2">Weighted Market Value</md-option>
+                                <md-option value="3">Weighted Market Value Percent</md-option>
+                                <md-option value="4">Weighted Exposure</md-option>
+                                <md-option value="5">Weighted Exposure Percent</md-option>
+                                <md-option value="6">Weighted Average Market Value</md-option>
+                                <md-option value="7">Weighted Average Market Value Percent</md-option>
+                                <md-option value="8">Weighted Average Exposure</md-option>
+                                <md-option value="9">Weighted Average Exposure Percent</md-option>
+                            </md-select>
+                        </md-input-container>
+
+                        <md-button class="md-raised md-primary" ng-click="vm.openNumberFormatSettings($event)" style="margin-right:20px;">
+                            Format Settings
+                        </md-button>
+
+                    </div>
+
+                </md-content>
+            </md-tab>
+
+            <md-tab label="ADVANCE SETTINGS">
+                <md-content class="p-16">
+
+                    <div class="m-b-24">
+                        <md-input-container class="dashboard-constructor-field1" style="margin: 0 10px;">
+                            <label for="">Hide empty columns or / and rows</label>
+                            <md-select data-ng-model="vm.item.settings.hide_empty_lines">
+                                <md-option value="columns">Hide columns</md-option>
+                                <md-option value="rows">Hide rows</md-option>
+                                <md-option value="columns_rows">Hide columns and rows</md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+
+                    <div class="m-b-24" layout="row">
+
+                        <md-input-container class="dashboard-constructor-field1" style="margin: 0 10px;">
+                            <label for="">Cell Text Align</label>
+                            <md-select data-ng-model="vm.item.settings.styles.cell.text_align">
+                                <md-option value="left">Left</md-option>
+                                <md-option value="center">Center</md-option>
+                                <md-option value="right">Right</md-option>
+                            </md-select>
+                        </md-input-container>
+
+                    </div>
+
+                    <div>
+                        <md-input-container style="height: 58px">
+                            <md-checkbox data-ng-model="vm.item.settings.auto_scaling"
+                                         aria-label="matrix autoscaling">
+                                Scale matrix
+                            </md-checkbox>
+                        </md-input-container>
+                    </div>
+
+                    <div>
+                        <md-input-container style="height: 58px">
+                            <md-checkbox data-ng-model="vm.item.settings.calculate_name_column_width"
+                                         aria-label="matrix autoscaling">
+                                Calculate width for column with names
+                            </md-checkbox>
+                        </md-input-container>
+                    </div>
+
+                </md-content>
+            </md-tab>
+            <!-- COMMITTED: 07.07.2020 -->
+            <!--<md-tab label="LINKING">
+                <md-content class="p-16">
+
+                    <h4>Linked to</h4>
+
+                    <div class="dashboard-linked-filters-container">
+                        <ui>
+                            <li data-ng-repeat="compName in vm.linkedToComps">
+                                <span data-ng-bind="compName"></span>
+                            </li>
+                        </ui>
+                    </div>
+
+                    <h4>Linked by</h4>
+
+                    <div class="dashboard-linked-filters-container">
+                        <ui>
+                            <li data-ng-repeat="compName in vm.linkedByComps">
+                                <span data-ng-bind="compName"></span>
+                            </li>
+                        </ui>
+                    </div>
+
+                </md-content>
+            </md-tab>-->
+            <!-- < COMMITTED: 07.07.2020 > -->
+
+        </md-tabs>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="space-between center">
+        <div>
+            <md-button ng-click="vm.cancel()" style="margin-right:20px;">
+                Cancel
+            </md-button>
+            <md-button ng-click="vm.agree('apply')" style="margin-right:20px;">
+                Apply
+            </md-button>
+        </div>
+
+        <div>
+            <md-button ng-click="vm.agree('save')" style="margin-right:20px;">
+                Save and Apply
+            </md-button>
+        </div>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,161 @@
+<div style="padding: 20px 20px 0">
+    <md-tabs md-border-bottom md-dynamic-height>
+
+        <md-tab>
+            <md-tab-label>
+                <span>Main</span>
+            </md-tab-label>
+
+            <md-tab-body>
+
+                <div data-ng-if="vm.readyStatus.dataProviders && vm.readyStatus.configs">
+                    <h2 class="m-b-35">Data Providers (Old)</h2>
+                    <md-card data-ng-repeat="dataProvider in vm.dataProviders">
+                        <md-card-content>
+                            <div layout="row" layout-align="space-between">
+                                <div layout="row" layout-align="begin center">
+
+                                    <div class="float-left m-r-8" style="width: 48px" layout="row">
+                                        <ng-md-icon icon="check_circle" class="color-success" data-ng-if="dataProvider.has_p12cert">
+                                            <md-tooltip md-direction="top">Certificate is imported</md-tooltip>
+                                        </ng-md-icon>
+                                        <ng-md-icon icon="radio_button_unchecked" class="color-grey"
+                                                    data-ng-if="!dataProvider.has_p12cert">
+                                            <md-tooltip md-direction="top">Certificate is not imported</md-tooltip>
+                                        </ng-md-icon>
+
+                                        <ng-md-icon icon="swap_vertial_circle" class="color-success" data-ng-if="dataProvider.is_valid">
+                                            <md-tooltip md-direction="top">Certificate is verified</md-tooltip>
+                                        </ng-md-icon>
+                                        <ng-md-icon icon="swap_vertial_circle" class="color-grey"
+                                                    data-ng-if="!dataProvider.is_valid">
+                                            <md-tooltip md-direction="top">Certificate is not verified</md-tooltip>
+                                        </ng-md-icon>
+                                    </div>
+
+                                    {{dataProvider.name}}
+                                </div>
+                                <div layout="row" layout-align="end center">
+                                    <div layout="row" layout-sm="column" layout-align="space-around" data-ng-if="vm.testCertificateProcessing">
+                                        <progress-circular diameter="30"></progress-circular>
+                                    </div>
+                                    <md-button
+                                            class="md-raised md-primary" ng-class="{'disabled-btn': !dataProvider.has_p12cert || vm.testCertificateProcessing}"
+                                            data-ng-click="vm.testBloombergCall($event)">
+                                        Make a Test Request
+                                    </md-button>
+                                    <md-button
+                                            class="md-raised data-provider-btn-sref"
+                                            data-ui-sref="app.portal.settings.data-providers-config({dataProviderId: dataProvider.id})">
+                                        Edit
+                                    </md-button>
+                                </div>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+                </div>
+                <div data-ng-if="!vm.readyStatus.dataProviders && !vm.readyStatus.configs">
+                    <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                        <progress-circular diameter="100"></progress-circular>
+                    </div>
+                </div>
+
+                <div data-ng-if="vm.readyStatus.bloombergCredentials">
+                    <h2 class="m-b-35">Bloomberg</h2>
+                    <md-card data-ng-repeat="item in vm.bloombergCredentials">
+                        <md-card-content>
+                            <div layout="row" layout-align="space-between">
+                                <div layout="row" layout-align="begin center">
+
+                                    <div class="float-left m-r-8" style="width: 48px" layout="row">
+                                        <ng-md-icon icon="check_circle" class="color-success" data-ng-if="item.has_p12cert">
+                                            <md-tooltip md-direction="top">Certificate is imported</md-tooltip>
+                                        </ng-md-icon>
+                                        <ng-md-icon icon="radio_button_unchecked" class="color-grey"
+                                                    data-ng-if="!item.has_p12cert">
+                                            <md-tooltip md-direction="top">Certificate is not imported</md-tooltip>
+                                        </ng-md-icon>
+
+                                        <ng-md-icon icon="swap_vertial_circle" class="color-success" data-ng-if="item.is_valid">
+                                            <md-tooltip md-direction="top">Certificate is verified</md-tooltip>
+                                        </ng-md-icon>
+                                        <ng-md-icon icon="swap_vertial_circle" class="color-grey"
+                                                    data-ng-if="!item.is_valid">
+                                            <md-tooltip md-direction="top">Certificate is not verified</md-tooltip>
+                                        </ng-md-icon>
+                                    </div>
+
+                                    <span data-ng-if="item.id == 'new'">Certificate is not configured</span>
+                                    <span data-ng-if="item.id != 'new'">Certificate is configured</span>
+
+                                </div>
+                                <div layout="row" layout-align="end center">
+                                    <div layout="row" layout-sm="column" layout-align="space-around" data-ng-if="vm.testCertificateProcessing">
+                                        <progress-circular diameter="30"></progress-circular>
+                                    </div>
+                                    <md-button
+                                            class="md-raised md-primary" ng-class="{'disabled-btn': !item.has_p12cert || vm.testCertificateProcessing}"
+                                            data-ng-click="vm.testBloombergCall($event)">
+                                        Make a Test Request
+                                    </md-button>
+                                    <md-button
+                                            class="md-raised data-provider-btn-sref"
+                                            data-ui-sref="app.portal.settings.data-providers-bloomberg({id: item.id})">
+                                        Edit
+                                    </md-button>
+                                </div>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+                </div>
+                <div data-ng-if="!vm.readyStatus.bloombergCredentials">
+                    <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                        <progress-circular diameter="100"></progress-circular>
+                    </div>
+                </div>
+
+            </md-tab-body>
+        </md-tab>
+
+        <md-tab>
+            <md-tab-label>
+                <span>Data Providers</span>
+            </md-tab-label>
+
+            <md-tab-body>
+
+                <div data-ng-if="vm.readyStatus.personalDataProviders && vm.readyStatus.credentials">
+                    <h2 class="m-b-35">Personal Data Providers</h2>
+                    <md-card data-ng-repeat="dataProvider in vm.personalDataProviders">
+                        <md-card-content>
+                            <div layout="row" layout-align="space-between">
+                                <div layout="row" layout-align="begin center">
+                                    {{dataProvider.name}}
+                                </div>
+                                <div layout="row" layout-align="end center">
+                                    <md-button
+                                            class="md-raised data-provider-btn-sref"
+                                            data-ng-click="vm.editPersonalProvider($event, dataProvider)">
+                                        Edit
+                                    </md-button>
+                                </div>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+                </div>
+                <div data-ng-if="!vm.readyStatus.dataProviders && !vm.readyStatus.configs">
+                    <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                        <progress-circular diameter="100"></progress-circular>
+                    </div>
+                </div>
+
+            </md-tab-body>
+
+        </md-tab>
+
+
+    </md-tabs>
+
+
+
+</div>

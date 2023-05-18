@@ -1,0 +1,354 @@
+<div class="tasks-page height-100">
+
+    <div layout="row">
+        <h1 style="margin-top: 5px; font-family: 'Roboto Light'; font-size: 20px; padding-left: 8px">Tasks</h1>
+
+        <md-button data-ng-class="{'disabled-btn': !vm.readyStatus.data}"
+                   data-ng-click="vm.getData()" class="md-raised md-icon-button md-primary tasks-refresh-button"><span
+                class="material-icons">refresh</span>
+            <md-tooltip md-direction="top">Refresh</md-tooltip>
+        </md-button>
+
+
+    </div>
+
+    <div layout="column">
+
+        <div>
+            <md-input-container class="tasks-page-filters-date-from">
+                <label for="">Date From</label>
+                <zh-date-picker data-date-value="vm.filters.date_from"
+                                data-callback-method="vm.updateFilters()"></zh-date-picker>
+            </md-input-container>
+
+            <md-input-container class="tasks-page-filters-date-to">
+                <label for="">Date To</label>
+                <zh-date-picker data-date-value="vm.filters.date_to"
+                                data-callback-method="vm.updateFilters()"></zh-date-picker>
+            </md-input-container>
+
+            <md-input-container class="tasks-page-filters-search">
+                <label for="">Search</label>
+                <input aria-label="search" type="text" data-ng-model="vm.filters.query" data-ng-change="vm.updateFilters()">
+            </md-input-container>
+
+        </div>
+
+        <div data-ng-if="vm.readyStatus.data" layout="row">
+
+            <div class="tasks-table-holder">
+
+                <div class="tasks-table-holder-inner">
+                    <div style="padding: 8px;">
+
+                        <table class="tasks-table">
+                            <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Task</th>
+                                <th>User</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr data-ng-repeat="item in vm.items" class="{{item.active ? 'active' : ''}}">
+                                <td>
+
+                                    <div data-ng-click="vm.selectActiveTask($event, item)">
+                                        <div class="task-status-badge status-init"
+                                             data-ng-if="item.status == 'I' || item.status == 'init'">
+                                            <div layout="row">
+                                                <ng-md-icon size="14" icon="check_circle"></ng-md-icon>
+                                                <div class="task-status-text">Init</div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="task-status-badge status-progress"
+                                             data-ng-if="item.status == 'P' || item.status == 'progress'">
+                                            <div layout="row">
+                                                <ng-md-icon size="14" icon="hourglass_full"></ng-md-icon>
+                                                <div class="task-status-text">Running</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="task-status-badge status-success"
+                                             data-ng-if="item.status == 'D' || item.status == 'success'">
+                                            <div layout="row">
+                                                <ng-md-icon size="14" icon="check_circle"></ng-md-icon>
+                                                <div class="task-status-text">Success</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="task-status-badge status-error"
+                                             data-ng-if="item.status == 'E' || item.status == 'error'">
+                                            <div layout="row">
+                                                <ng-md-icon size="14" icon="error"></ng-md-icon>
+                                                <div class="task-status-text">Error</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="task-status-badge status-canceled"
+                                             data-ng-if="item.status == 'C' || item.status == 'canceled'">
+                                            <div layout="row">
+                                                <ng-md-icon size="14" icon="do_not_disturb"></ng-md-icon>
+                                                <div class="task-status-text">Canceled</div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="task-status-execution-time" data-ng-if="item.execution_time_pretty">
+                                            <ng-md-icon size="12" icon="access_time"></ng-md-icon>
+                                            {{item.execution_time_pretty}}
+                                            <md-tooltip md-direction="bottom">Execution Time</md-tooltip>
+                                        </div>
+                                        <div class="task-status-finished-at" data-ng-if="item.finished_at_pretty">
+                                            <ng-md-icon size="12" icon="today"></ng-md-icon>
+                                            {{item.finished_at_pretty}}
+                                            <md-tooltip md-direction="bottom">Finished at
+                                            </md-tooltip>
+                                        </div>
+                                    </div>
+
+                                </td>
+                                <td>
+
+                                    <div data-ng-click="vm.selectActiveTask($event, item)" class="task-name">
+                                        <span data-ng-if="item.verbose_name">{{item.verbose_name}} [{{item.id}}]</span>
+                                        <span data-ng-if="!item.verbose_name">{{item.type}} [{{item.id}}]</span>
+
+                                    </div>
+                                </td>
+                                <td>
+
+                                    <div class="task-username-td-wrap">
+
+                                        <div class="user-avatar-simple"
+                                             ng-style="{'backgroundColor': vm.getAvatar(item.member_object.username[0])}">
+
+                                            {{item.member_object.username[0]}}
+
+                                        </div>
+
+                                        {{item.member_object.username}}
+                                    </div>
+
+                                </td>
+                            </tr>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                </div>
+
+                <div layout="row" class="m-t-16 pagination-bar">
+                    <md-button
+                            class="md-raised pagination-bar-button pagination-bar-previous-button {{vm.currentPage == 1 ? 'disabled-btn' : ''}}"
+                            data-ng-click="vm.openPreviousPage()">
+                        Previous
+                    </md-button>
+
+                    <div layout="row">
+
+                        <div data-ng-repeat="page in vm.pages">
+
+                            <md-button data-ng-click="vm.openPage(page)" data-ng-if="page.number"
+                                       class="md-raised pagination-bar-button {{vm.currentPage == page.number ? 'md-primary' : ''}}">
+                                {{page.caption}}
+                            </md-button>
+
+                            <div data-ng-if="!page.number" style="margin: 10px;">
+                                {{page.caption}}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <md-button class="md-raised pagination-bar-button pagination-bar-previous-button"
+                               data-ng-show="vm.currentPage < vm.totalPages"
+                               data-ng-click="vm.openNextPage()">Next
+                    </md-button>
+                    <span style="padding-top: 6px;font-size: 14px; margin-left: 8px">Records: <b>{{vm.count}}</b></span>
+                </div>
+
+            </div>
+
+            <div class="task-detail">
+
+                <div data-ng-if="vm.activeTask" class="position-relative task-detail-content">
+
+                    <div data-ng-if="!vm.activeTaskProcessing">
+
+                        <a data-ng-click="vm.refreshTask($event)"
+                           class="refresh-task-button">Refresh</a>
+
+                        <h1 style="word-break: break-word; font-size: 24px;">{{vm.activeTask.verbose_name}}</h1>
+                        <div class="task-detail-field">
+                            <span class="task-detail-field-definition">Start Date</span>:
+                            {{vm.activeTask.created | date:'yyyy-MM-dd' : 'UTC'}}
+                        </div>
+                        <div class="task-detail-field">
+                            <span class="task-detail-field-definition">Start Time</span>:
+                            {{vm.activeTask.created | date:'HH:mm:ss' : 'UTC'}}
+                            <md-tooltip md-direction="bottom">{{vm.activeTask.created}}</md-tooltip>
+                        </div>
+
+                        <div class="task-detail-field"
+                             data-ng-if="vm.activeTask.finished_at">
+                            <span class="task-detail-field-definition">Finished Time</span>:
+                            {{vm.activeTask.finished_at | date:'HH:mm:ss' : 'UTC'}}
+                            <md-tooltip md-direction="bottom">{{vm.activeTask.finished_at}}</md-tooltip>
+                        </div>
+
+                        <div class="task-detail-field">
+                            <span class="task-detail-field-definition">Id</span>:
+                            {{vm.activeTask.id}}
+                        </div>
+                        <div class="task-detail-field">
+                            <span class="task-detail-field-definition">Type</span>:
+                            {{vm.activeTask.type}}
+                        </div>
+
+
+                        <div class="task-detail-field">
+                            <span class="task-detail-field-definition">Status</span>:
+                            <span data-ng-if="vm.activeTask.status == 'D'"
+                                  class="{{vm.activeTask.status == 'D' ? 'calendar-detail-status-green' : '' }}">
+                                Success
+                            </span>
+                            <span data-ng-if="vm.activeTask.status == 'E'"
+                                  class="{{vm.activeTask.status == 'E' ? 'calendar-detail-status-red' : '' }}">
+                                Error
+                            </span>
+                            <span data-ng-if="vm.activeTask.status != 'D' && vm.activeTask.status != 'D'">
+                            {{vm.activeTask.status}}
+                            </span>
+                        </div>
+                        <div class="task-detail-field"><span
+                                class="task-detail-field-definition">Type</span>:
+                            {{vm.activeTask.type}}
+                        </div>
+
+                        <div data-ng-if="vm.activeTask.member_object">
+                            Member: {{vm.activeTask.member_object.username}}
+                        </div>
+
+                        <hr>
+
+                        <div class="task-detail-field"
+                             data-ng-if="vm.activeTask.verbose_result">
+                            <span class="task-detail-field-definition">Verbose result</span>:
+
+                            <div>
+                                {{vm.activeTask.verbose_result}}
+                            </div>
+
+                            <hr>
+                        </div>
+
+
+                        <div class="task-detail-field" data-ng-if="vm.activeTaskPayload.notes">
+                            <span class="task-detail-field-definition">Notes</span>:
+                            <div>
+                                {{vm.activeTask.notes}}
+                            </div>
+
+
+                        </div>
+
+                        <div class="task-detail-field"
+                             data-ng-if="vm.activeTask.error_message">
+                            <span class="task-detail-field-definition">Error Message</span>:
+                            <div class="task-detail-error-message">
+                                {{vm.activeTask.error_message}}
+                            </div>
+
+                            <hr>
+                        </div>
+
+                        <div class="task-detail-field">
+
+                            <span class="task-detail-field-definition">Options</span>
+
+                            <div style="max-height: 300px; overflow: auto">
+
+                                <pre>{{vm.activeTask.options_object}}
+                                </pre>
+
+                            </div>
+                            <hr>
+
+                        </div>
+
+                        <div class="task-detail-field">
+
+                            <span class="task-detail-field-definition">Progress</span>
+
+                            <div style="max-height: 300px; overflow: auto">
+
+                                <pre>{{vm.activeTask.progress_object}}
+                                </pre>
+
+                            </div>
+
+                            <hr>
+
+                        </div>
+
+                        <div class="task-detail-field">
+
+                            <span class="task-detail-field-definition">Results</span>
+
+                            <div style="max-height: 300px; overflow: auto">
+
+                                <pre>{{vm.activeTask.result_object}}
+                                </pre>
+
+                            </div>
+
+                            <hr>
+
+                        </div>
+
+                        <div class="task-detail-field"
+                             data-ng-if="vm.activeTask.attachments.length">
+
+                            <span class="task-detail-field-definition">Attachments</span>
+
+                            <div data-ng-repeat="item in vm.activeTask.attachments">
+                                <span class="download-file-button"
+                                      data-ng-click="vm.downloadFile($event, item)">{{item.file_report_object.name}}</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div data-ng-if="vm.activeTaskProcessing">
+                        <div layout="row" layout-sm="column" layout-align="space-around">
+                            <progress-circular diameter="50"></progress-circular>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div data-ng-if="!vm.activeTask">
+                    <h1>Click on event to see details</h1>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.data">
+        <div class="overlay-loader" layout="row" layout-sm="column" layout-align="space-around">
+            <progress-circular diameter="50"></progress-circular>
+        </div>
+    </div>
+
+</div>

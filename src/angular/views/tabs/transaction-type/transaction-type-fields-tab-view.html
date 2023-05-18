@@ -1,0 +1,181 @@
+<div>
+
+
+    <div class="ttype-fields-list-container"
+         data-ng-if="vm.checkReadyStatus()"
+         layout="column">
+
+        <div>
+            <md-button class="md-raised md-primary" style="margin-top: 2px;"  data-ng-click="vm.recalculateUserFields($event, null)">Recalculate</md-button>
+
+        </div>
+
+        <div layout="row">
+
+            <div class="ttype-fields-group-container"
+                 layout="column"
+                 flex="33">
+
+                <h4 class="ttype-fields-group-header">Text fields</h4>
+
+                <div layout="column">
+
+                    <div class="ttype-fields-field-wrap" layout="row" data-ng-repeat="item in vm.userTextFields" data-ng-if="vm.transactionUserFieldsState[item.key]">
+                        <!--<md-input-container>
+                            <label for="" data-ng-bind="vm.transactionUserFields['user_text_1']"></label>
+                            <input type="text" data-ng-model="vm.entity.user_text_1">
+                        </md-input-container>
+
+                        <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                  data-item="vm.entity.user_text_1"></expression-editor-button>-->
+                        <expression-input label="{{vm.transactionUserFields[item.key]}}"
+                                          model="vm.entity[item.key]"
+                                          data-data="vm.expressionData"
+                                          class="custom-input-bottom-space"></expression-input>
+
+                        <ng-md-icon class="tooltip-inline-block"
+                                    icon="info"
+                                    size="20"
+                                    style="fill: #777777">
+                            <md-tooltip class="tooltip_2"
+                                        md-direction="top">
+                                {{item.key}}
+                            </md-tooltip>
+                        </ng-md-icon>
+
+                        <div data-ng-if="vm.entity.id">
+
+                            <md-button class="md-raised md-primary" style="margin-top: 2px;"  data-ng-click="vm.recalculateUserFields($event, item.key)">Recalculate</md-button>
+
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+
+            </div>
+
+            <div class="ttype-fields-group-container"
+                 layout="column"
+                 flex="33">
+
+                <h4 class="ttype-fields-group-header">Number fields</h4>
+
+                <div layout="column">
+
+                    <div class="ttype-fields-field-wrap" layout="row" data-ng-repeat="item in vm.userNumberFields" data-ng-if="vm.transactionUserFieldsState[item.key]">
+                        <!--<md-input-container>
+                            <label for="" data-ng-bind="vm.transactionUserFields['user_number_1']"></label>
+                            <input type="text" data-ng-model="vm.entity.user_number_1">
+                        </md-input-container>
+
+                        <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                  data-item="vm.entity.user_number_1"></expression-editor-button>-->
+
+                        <expression-input label="{{vm.transactionUserFields[item.key]}}"
+                                          model="vm.entity[item.key]"
+                                          data-data="vm.expressionData"
+                                          class="custom-input-bottom-space"></expression-input>
+
+                        <ng-md-icon class="tooltip-inline-block"
+                                    icon="info"
+                                    size="20"
+                                    style="fill: #777777">
+                            <md-tooltip class="tooltip_2"
+                                        md-direction="top">
+                                {{item.key}}
+                            </md-tooltip>
+                        </ng-md-icon>
+
+                        <div data-ng-if="vm.entity.id">
+
+                            <md-button class="md-raised md-primary" style="margin-top: 2px;"  data-ng-click="vm.recalculateUserFields($event, item.key)">Recalculate</md-button>
+
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+            </div>
+
+            <div class="ttype-fields-group-container"
+                 layout="column"
+                 flex="33">
+
+                <h4 class="ttype-fields-group-header">Date fields</h4>
+
+                <div layout="column">
+
+                    <div class="ttype-fields-field-wrap" layout="row" data-ng-repeat="item in vm.userDateFields" data-ng-if="vm.transactionUserFieldsState[item.key]">
+                        <!--<md-input-container>
+                            <label for="" data-ng-bind="vm.transactionUserFields['user_date_1']"></label>
+                            <input type="text" data-ng-model="vm.entity.user_date_1">
+                        </md-input-container>
+
+                        <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                  data-item="vm.entity.user_date_1"></expression-editor-button>-->
+
+                        <expression-input label="{{vm.transactionUserFields[item.key]}}"
+                                          model="vm.entity[item.key]"
+                                          data-data="vm.expressionData"
+                                          class="custom-input-bottom-space"></expression-input>
+
+                        <ng-md-icon class="tooltip-inline-block"
+                                    icon="info"
+                                    size="20"
+                                    style="fill: #777777">
+                            <md-tooltip class="tooltip_2"
+                                        md-direction="top">
+                                {{item.key}}
+                            </md-tooltip>
+                        </ng-md-icon>
+
+                        <div data-ng-if="vm.entity.id">
+
+                            <md-button class="md-raised md-primary" style="margin-top: 2px;"  data-ng-click="vm.recalculateUserFields($event, item.key)">Recalculate</md-button>
+
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    <div data-ng-if="!vm.checkReadyStatus()">
+        <div layout="row" layout-sm="column" layout-align="space-around">
+            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+        </div>
+    </div>
+
+    <div layout="row">
+
+        <md-menu>
+            <md-button  class="md-raised"
+                        data-ng-class="{'disabled-btn': !vm.readyStatus.field_templates}"
+                        ng-click="$mdMenu.open($event)">
+                Use From Template
+            </md-button>
+
+            <md-menu-content width="3">
+                <md-menu-item data-ng-repeat="template in vm.fieldTemplates">
+                    <md-button
+                            data-ng-click="vm.appendFromTemplate($event, template)">
+                        {{template.name}}
+                    </md-button>
+                </md-menu-item>
+            </md-menu-content>
+        </md-menu>
+
+        <md-button class="md-raised" data-ng-click="vm.saveAsTemplate($event, 'field_template')">Save as a Template</md-button>
+
+    </div>
+
+</div>

@@ -1,0 +1,124 @@
+<md-dialog class="instrument-editor-drawer entity-editor-dialog draggable-dialog dialog-actions-bottom evEditorDialogElemToResize"
+           drag-dialog
+           aria-label="entity viewer edit dialog"
+           style="height: 100%">
+    <md-toolbar>
+        <div data-ng-if="vm.checkReadyStatus()"
+             class="md-toolbar-tools"
+             data-ng-class="{'disabled-input-form': !vm.hasEditPermission}">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2 data-ng-if="vm.hasEditPermission">Edit {{vm.entityTypeSlug()}}: {{vm.getEntityPropertyByDefault()}}</h2>
+            <h2 data-ng-if="!vm.hasEditPermission">View {{vm.entityTypeSlug()}}: {{vm.getEntityPropertyByDefault()}}</h2>
+            <span data-ng-if="!vm.hasEditPermission" style="margin-left: 12px;">
+                <ng-md-icon icon="lock" size="24">
+                        <md-tooltip md-direction="bottom">You don't have permission to edit this form</md-tooltip>
+                </ng-md-icon>
+            </span>
+            <div data-ng-if="vm.processing" layout="row" class="m-l-16">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="m-r-8">
+                    <progress-circular diameter="20"></progress-circular>
+                </div>
+                — Processing
+            </div>
+
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content style="height: 100%">
+
+        <div data-ng-include="'views/entity-viewer/entity-viewer-edit-content-view.html'"
+             style="min-width: 1450px"></div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="space-between center">
+<!--        Victor 2021.02.11 make one footer for modal window and Big Drawer-->
+<!--        <div layout="row">
+            <md-button ng-click="vm.editLayout($event)" class="md-raised md-primary">
+                Edit Form
+            </md-button>
+            <md-button ng-click="vm.manageAttrs($event)" class="md-raised md-primary" data-ng-if="vm.entityType != 'transaction'">
+                Manage attributes
+            </md-button>
+
+            <md-button
+                    data-ng-if="vm.hasEnabledStatus && vm.entityType != 'transaction'"
+                    ng-click="vm.toggleEnableStatus()"
+                    data-ng-class="{'disabled-btn': !vm.hasEditPermission || vm.processing}"
+                    class="md-raised">
+                <span data-ng-show="vm.entity.is_enabled">Disable</span>
+                <span data-ng-show="!vm.entity.is_enabled">Enable</span>
+            </md-button>
+
+            &lt;!&ndash;<md-button
+                    data-ng-if="!vm.entity.is_enabled && vm.hasEnabledStatus && vm.entityType != 'transaction'"
+                    ng-click="vm.toggleEnableStatus()"
+                    data-ng-class="{'disabled-btn': !vm.hasEditPermission}"
+                    class="md-raised">
+
+            </md-button>&ndash;&gt;
+
+            <md-button
+                    data-ng-if="vm.entityType != 'transaction'"
+                    ng-click="vm.delete($event)"
+                    data-ng-class="{'disabled-btn': !vm.hasEditPermission || vm.processing}"
+                    class="md-raised md-warn">
+                Delete
+            </md-button>
+        </div>
+
+        <div style="margin-right: 10px;">
+            <md-button class="md-raised m-r-24" ng-click="vm.copy()" data-ng-if="vm.entityType != 'price-history' && vm.entityType != 'currency-history' && vm.entityType != 'transaction'"
+                       ng-disabled="!vm.checkReadyStatus() || !vm.entity.is_enabled || !vm.hasEditPermission || vm.processing">
+                Make a copy
+            </md-button>
+
+            <md-button class="md-raised m-r-24" ng-click="vm.copy()" data-ng-if="vm.entityType == 'price-history' || vm.entityType == 'currency-history' && vm.entityType != 'transaction'"
+                       ng-disabled="!vm.checkReadyStatus() || !vm.hasEditPermission || vm.processing">
+                Make a copy
+            </md-button>
+            <md-button class="md-raised" ng-click="vm.cancel()">
+                <span data-ng-if="vm.entityType !== 'transaction'">Cancel</span>
+                <span data-ng-if="vm.entityType === 'transaction'">Close</span>
+            </md-button>
+
+            <md-button class="link-button" data-ng-if="vm.entity.is_deleted" ng-click="vm.restoreDeleted()">
+                <span>Restore</span>
+            </md-button>
+
+            &lt;!&ndash; <md-button data-ng-if="vm.entityType != 'price-history' && vm.entityType != 'currency-history' && vm.entityType !== 'transaction'"
+                       data-ng-class="{'disabled-btn': !vm.formIsValid || !vm.entity.is_enabled || !vm.hasEditPermission || vm.processing}"
+                       ng-click="vm.save($event, true)"
+                       class="md-raised m-r-24">
+                Save and Exit
+            </md-button>
+            <md-button class="md-raised m-r-24" data-ng-if="vm.entityType == 'price-history' || vm.entityType == 'currency-history'"
+                       data-ng-class="{'disabled-btn': !vm.formIsValid || !vm.hasEditPermission || vm.processing}"
+                       ng-click="vm.save($event, true)">
+                Save and Exit
+            </md-button> &ndash;&gt;
+            <md-button class="outline-button" data-ng-if="vm.entityType !== 'transaction'"
+                       ng-disabled="vm.saveBtnDisabled()"
+                       ng-click="vm.save($event, false)">
+                Save
+            </md-button>
+
+            <md-button data-ng-if="vm.entityType !== 'transaction'"
+                       ng-disabled="vm.saveBtnDisabled()"
+                       ng-click="vm.save($event, true)"
+                       class="m-r-24 primary-button">
+                Save and Exit
+            </md-button>
+
+        </div>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               data-on-resize-callback="vm.rearrangeMdDialogActions()"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>-->
+
+        <div class="dialog-footer flex-row fc-space-between"
+             data-ng-include="'views/entity-viewer/entity-viewer-edit-footer-view.html'"></div>
+    </md-dialog-actions>
+</md-dialog>

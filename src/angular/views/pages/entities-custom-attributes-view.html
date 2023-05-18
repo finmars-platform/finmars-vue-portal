@@ -1,0 +1,1519 @@
+<div style="padding: 20px 20px 0" class="all-custom-attributes-manager">
+    <div ng-if="vm.readyStatus">
+        <h2 class="m-b-35">User Attributes</h2>
+
+        <div layout="column"
+             class="cb1-main-container"
+             ng-class="{'cb1-block-collapsed': vm.portfolioAttrsCollapsed}">
+            <div class="all-am-attributes-group-toggle"
+                 layout="row"
+                 ng-click="vm.portfolioAttrsCollapsed = !vm.portfolioAttrsCollapsed">
+                <h4 class="all-am-attributes-group-title">Portfolio Attributes</h4>
+            </div>
+
+            <div class="cb1-resizing-wrap">
+                <div layout="row"
+                     layout-wrap
+                     class="all-am-manager-container">
+                    <div layout="row" flex="50" layout-align="start center">
+                        <md-menu>
+                            <md-button class="md-raised" data-ng-click="$mdOpenMenu($event)">
+                                Add New
+                            </md-button>
+
+                            <md-menu-content>
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               data-ng-click="vm.addAttribute('portfolio', $event)">Add Blank
+                                    </md-button>
+                                </md-menu-item>
+
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               package-manager-button
+                                               content-type="'obj_attrs.genericattributetype'"
+                                               target-content-type="'portfolios.portfolio'">
+                                        Select from List
+                                    </md-button>
+                                </md-menu-item>
+
+                            </md-menu-content>
+                        </md-menu>
+
+
+                    </div>
+                    <div layout="row" flex="50" layout-align="end center">
+                        <md-button class="md-raised"
+                                   data-ng-click="vm.toggleHidden('showHiddenPortfolioAttrs')">
+                        <span data-ng-show="!vm.showHiddenPortfolioAttrs">
+                            SHOW HIDDEN ATTRIBUTES
+                        </span>
+                            <span data-ng-show="vm.showHiddenPortfolioAttrs">
+                                HIDE ATTRIBUTES
+                            </span>
+                        </md-button>
+                        <!--<md-button class="md-raised md-primary" data-ui-sref="app.portal.data.portfolio">
+                            RETURN TO VIEW
+                        </md-button>
+                        <md-button class="md-raised md-primary"
+                                   data-ng-click="vm.editLayout()">
+                            RETURN TO FORM EDITOR
+                        </md-button>-->
+                    </div>
+
+                    <div data-ng-if="vm.portfolioAttrs.length" flex="100">
+                        <md-card data-ng-repeat="attr in vm.portfolioAttrs"
+                                 class="am-attr-card"
+                                 data-ng-if="vm.checkIsHidden(attr, 'showHiddenPortfolioAttrs')">
+                            <div class="am-attr-card__wrapper">
+                                <div class="am-attr-card__left-side">
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="!attr.is_hidden"
+                                                icon="visibility"></ng-md-icon>
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="attr.is_hidden"
+                                                icon="visibility_off"></ng-md-icon>
+
+                                    <b data-ng-bind="attr.name"></b> (<span data-ng-bind="vm.bindType(attr)"></span>)
+                                </div>
+                                <div class="am-attr-misc">
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.exportClassifiers(attr, 'portfolio', $event)">
+                                        <ng-md-icon icon="file_upload">
+                                            <md-tooltip md-direction="top">Export Classifier</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.importClassifiers(attr, 'portfolio', $event)">
+                                        <ng-md-icon icon="file_download">
+                                            <md-tooltip md-direction="top">Import Classifiers from .csv file
+                                            </md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.openClassifierMapping(attr, 'portfolio', $event)">
+                                        <ng-md-icon icon="map">
+                                            <md-tooltip md-direction="top">Open Classifier Mappings</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.editTreeAttr(attr, 'portfolio', $event)">
+                                        <ng-md-icon icon="format_align_right">
+                                            <md-tooltip md-direction="top">Edit Classifier tre</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.editAttr(attr, 'portfolio', $event)">
+                                        <ng-md-icon icon="edit">
+                                            <md-tooltip md-direction="top">Edit Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.deleteAttr(attr, 'portfolio', $event)">
+                                        <ng-md-icon icon="delete">
+                                            <md-tooltip md-direction="top">Delete Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                </div>
+                            </div>
+                        </md-card>
+                    </div>
+                    <div data-ng-if="!vm.portfolioAttrs.length" flex="100">
+                        <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                        </div> -->
+                        <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                            <h1>You could add new user attributes here</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div layout="column"
+             class="cb1-main-container"
+             ng-class="{'cb1-block-collapsed': vm.accountAttrsCollapsed}">
+            <div class="all-am-attributes-group-toggle"
+                 layout="row"
+                 ng-click="vm.accountAttrsCollapsed = !vm.accountAttrsCollapsed">
+                <h4 class="all-am-attributes-group-title">Account Attributes</h4>
+            </div>
+
+            <div class="cb1-resizing-wrap">
+                <div layout="row"
+                     layout-wrap
+                     class="all-am-manager-container">
+                    <div layout="row" flex="50" layout-align="start center">
+
+                        <md-menu>
+                            <md-button class="md-raised" data-ng-click="$mdOpenMenu($event)">
+                                Add New
+                            </md-button>
+
+                            <md-menu-content>
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               data-ng-click="vm.addAttribute('account', $event)">Add Blank
+                                    </md-button>
+                                </md-menu-item>
+
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               package-manager-button
+                                               content-type="'obj_attrs.genericattributetype'"
+                                               target-content-type="'portfolios.portfolio'">
+                                        Select from List
+                                    </md-button>
+                                </md-menu-item>
+
+                            </md-menu-content>
+                        </md-menu>
+
+
+                    </div>
+                    <div layout="row" flex="50" layout-align="end center">
+                        <md-button class="md-raised"
+                                   data-ng-click="vm.toggleHidden('showHiddenAccountAttrs')">
+                        <span data-ng-show="!vm.showHiddenAccountAttrs">
+                            SHOW HIDDEN ATTRIBUTES
+                        </span>
+                            <span data-ng-show="vm.showHiddenAccountAttrs">
+                            HIDE ATTRIBUTES
+                        </span>
+                        </md-button>
+                        <!--<md-button class="md-raised md-primary" data-ui-sref="app.portal.data.{{vm.entityType}}">
+                            RETURN TO VIEW
+                        </md-button>
+                        <md-button class="md-raised md-primary"
+                                   data-ng-click="vm.editLayout()">
+                            RETURN TO FORM EDITOR
+                        </md-button>-->
+                    </div>
+
+                    <div data-ng-if="vm.accountAttrs.length" flex="100">
+                        <md-card data-ng-repeat="attr in vm.accountAttrs"
+                                 class="am-attr-card"
+                                 data-ng-if="vm.checkIsHidden(attr, 'showHiddenAccountAttrs')">
+                            <div class="am-attr-card__wrapper">
+                                <div class="am-attr-card__left-side">
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="!attr.is_hidden"
+                                                icon="visibility"></ng-md-icon>
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="attr.is_hidden"
+                                                icon="visibility_off"></ng-md-icon>
+
+                                    <b data-ng-bind="attr.name"></b> (<span data-ng-bind="vm.bindType(attr)"></span>)
+                                </div>
+                                <div class="am-attr-misc">
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.exportClassifiers(attr, 'account', $event)">
+                                        <ng-md-icon icon="file_download">
+                                            <md-tooltip md-direction="top">Export Classifier</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.importClassifiers(attr, 'account', $event)">
+                                        <ng-md-icon icon="file_upload">
+                                            <md-tooltip md-direction="top">Import Classifiers from .csv file
+                                            </md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.openClassifierMapping(attr, 'account', $event)">
+                                        <ng-md-icon icon="map">
+                                            <md-tooltip md-direction="top">Open Classifier Mappings</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.editTreeAttr(attr, 'account', $event)">
+                                        <ng-md-icon icon="format_align_right">
+                                            <md-tooltip md-direction="top">Edit Classifier tre</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.editAttr(attr, 'account', $event)">
+                                        <ng-md-icon icon="edit">
+                                            <md-tooltip md-direction="top">Edit Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.deleteAttr(attr, 'account', $event)">
+                                        <ng-md-icon icon="delete">
+                                            <md-tooltip md-direction="top">Delete Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                </div>
+                            </div>
+                        </md-card>
+                    </div>
+                    <div data-ng-if="!vm.accountAttrs.length" flex="100">
+                        <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                        </div> -->
+                        <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                            <h1>You could add new user attributes here</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div layout="column" 
+             class="cb1-main-container"
+             ng-class="{'cb1-block-collapsed': vm.instrumentAttrsCollapsed}">
+            <div class="all-am-attributes-group-toggle"
+                 layout="row"
+                 ng-click="vm.instrumentAttrsCollapsed = !vm.instrumentAttrsCollapsed">
+                <h4 class="all-am-attributes-group-title">Instruments Attributes</h4>
+            </div>
+
+            <div class="cb1-resizing-wrap">
+                <div layout="row"
+                     layout-wrap
+                     class="all-am-manager-container">
+                    <div layout="row" flex="50" layout-align="start center">
+
+                        <md-menu>
+                            <md-button class="md-raised" data-ng-click="$mdOpenMenu($event)">
+                                Add New
+                            </md-button>
+
+                            <md-menu-content>
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               data-ng-click="vm.addAttribute('instrument', $event)">Add Blank
+                                    </md-button>
+                                </md-menu-item>
+
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               package-manager-button
+                                               content-type="'obj_attrs.genericattributetype'"
+                                               target-content-type="'instruments.instrument'">
+                                        Select from List
+                                    </md-button>
+                                </md-menu-item>
+
+                            </md-menu-content>
+                        </md-menu>
+
+                    </div>
+                    <div layout="row" flex="50" layout-align="end center">
+                        <md-button class="md-raised"
+                                   data-ng-click="vm.toggleHidden('showHiddenInstrumentAttrs')">
+                        <span data-ng-show="!vm.showHiddenInstrumentAttrs">
+                            SHOW HIDDEN ATTRIBUTES
+                        </span>
+                            <span data-ng-show="vm.showHiddenInstrumentAttrs">
+                            HIDE ATTRIBUTES
+                        </span>
+                        </md-button>
+                        <!--<md-button class="md-raised md-primary" data-ui-sref="app.portal.data.{{vm.entityType}}">
+                            RETURN TO VIEW
+                        </md-button>
+                        <md-button class="md-raised md-primary"
+                                   data-ng-click="vm.editLayout()">
+                            RETURN TO FORM EDITOR
+                        </md-button>-->
+                    </div>
+
+                    <div data-ng-if="vm.instrumentAttrs.length" flex="100">
+                        <md-card data-ng-repeat="attr in vm.instrumentAttrs"
+                                 class="am-attr-card"
+                                 data-ng-if="vm.checkIsHidden(attr, 'showHiddenInstrumentAttrs')">
+                            <div class="am-attr-card__wrapper">
+                                <div class="am-attr-card__left-side">
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="!attr.is_hidden"
+                                                icon="visibility"></ng-md-icon>
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="attr.is_hidden"
+                                                icon="visibility_off"></ng-md-icon>
+
+                                    <b data-ng-bind="attr.name"></b> (<span data-ng-bind="vm.bindType(attr)"></span>)
+                                </div>
+                                <div class="am-attr-misc">
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.exportClassifiers(attr, 'instrument', $event)">
+                                        <ng-md-icon icon="file_download">
+                                            <md-tooltip md-direction="top">Export Classifier</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.importClassifiers(attr, 'instrument', $event)">
+                                        <ng-md-icon icon="file_upload">
+                                            <md-tooltip md-direction="top">Import Classifiers from .csv file
+                                            </md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.openClassifierMapping(attr, 'instrument', $event)">
+                                        <ng-md-icon icon="map">
+                                            <md-tooltip md-direction="top">Open Classifier Mappings</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.editTreeAttr(attr, 'instrument', $event)">
+                                        <ng-md-icon icon="format_align_right">
+                                            <md-tooltip md-direction="top">Edit Classifier tre</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.editAttr(attr, 'instrument', $event)">
+                                        <ng-md-icon icon="edit">
+                                            <md-tooltip md-direction="top">Edit Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.deleteAttr(attr, 'instrument', $event)">
+                                        <ng-md-icon icon="delete">
+                                            <md-tooltip md-direction="top">Delete Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                </div>
+                            </div>
+                        </md-card>
+                    </div>
+                    <div data-ng-if="!vm.instrumentAttrs.length" flex="100">
+                        <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                        </div> -->
+                        <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                            <h1>You could add new user attributes here</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div layout="column"
+             class="cb1-main-container"
+             ng-class="{'cb1-block-collapsed': vm.responsibleAttrsCollapsed}">
+            <div class="all-am-attributes-group-toggle"
+                 layout="row"
+                 ng-click="vm.responsibleAttrsCollapsed = !vm.responsibleAttrsCollapsed">
+                <h4 class="all-am-attributes-group-title">Responsible Attributes</h4>
+            </div>
+
+            <div class="cb1-resizing-wrap">
+                <div layout="row"
+                     layout-wrap
+                     class="all-am-manager-container">
+                    <div layout="row" flex="50" layout-align="start center">
+
+                        <md-menu>
+                            <md-button class="md-raised" data-ng-click="$mdOpenMenu($event)">
+                                Add New
+                            </md-button>
+
+                            <md-menu-content>
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               data-ng-click="vm.addAttribute('responsible', $event)">Add Blank
+                                    </md-button>
+                                </md-menu-item>
+
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               package-manager-button
+                                               content-type="'obj_attrs.genericattributetype'"
+                                               target-content-type="'counterparties.responsible'">
+                                        Select from List
+                                    </md-button>
+                                </md-menu-item>
+
+                            </md-menu-content>
+                        </md-menu>
+
+                    </div>
+                    <div layout="row" flex="50" layout-align="end center">
+                        <md-button class="md-raised"
+                                   data-ng-click="vm.toggleHidden('showHiddenResponsibleAttrs')">
+                        <span data-ng-show="!vm.showHiddenResponsibleAttrs">
+                            SHOW HIDDEN ATTRIBUTES
+                        </span>
+                            <span data-ng-show="vm.showHiddenResponsibleAttrs">
+                            HIDE ATTRIBUTES
+                        </span>
+                        </md-button>
+                        <!--<md-button class="md-raised md-primary" data-ui-sref="app.portal.data.{{vm.entityType}}">
+                            RETURN TO VIEW
+                        </md-button>
+                        <md-button class="md-raised md-primary"
+                                   data-ng-click="vm.editLayout()">
+                            RETURN TO FORM EDITOR
+                        </md-button>-->
+                    </div>
+
+                    <div data-ng-if="vm.responsibleAttrs.length" flex="100">
+                        <md-card data-ng-repeat="attr in vm.responsibleAttrs"
+                                 class="am-attr-card"
+                                 data-ng-if="vm.checkIsHidden(attr, 'showHiddenResponsibleAttrs')">
+                            <div class="am-attr-card__wrapper">
+                                <div class="am-attr-card__left-side">
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="!attr.is_hidden"
+                                                icon="visibility"></ng-md-icon>
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="attr.is_hidden"
+                                                icon="visibility_off"></ng-md-icon>
+
+                                    <b data-ng-bind="attr.name"></b> (<span data-ng-bind="vm.bindType(attr)"></span>)
+                                </div>
+                                <div class="am-attr-misc">
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.exportClassifiers(attr, 'responsible', $event)">
+                                        <ng-md-icon icon="file_download">
+                                            <md-tooltip md-direction="top">Export Classifier</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.importClassifiers(attr, 'responsible', $event)">
+                                        <ng-md-icon icon="file_upload">
+                                            <md-tooltip md-direction="top">Import Classifiers from .csv file
+                                            </md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.openClassifierMapping(attr, 'responsible', $event)">
+                                        <ng-md-icon icon="map">
+                                            <md-tooltip md-direction="top">Open Classifier Mappings</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.editTreeAttr(attr, 'responsible', $event)">
+                                        <ng-md-icon icon="format_align_right">
+                                            <md-tooltip md-direction="top">Edit Classifier tre</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.editAttr(attr, 'responsible', $event)">
+                                        <ng-md-icon icon="edit">
+                                            <md-tooltip md-direction="top">Edit Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.deleteAttr(attr, 'responsible', $event)">
+                                        <ng-md-icon icon="delete">
+                                            <md-tooltip md-direction="top">Delete Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                </div>
+                            </div>
+                        </md-card>
+                    </div>
+                    <div data-ng-if="!vm.responsibleAttrs.length" flex="100">
+                        <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                        </div> -->
+                        <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                            <h1>You could add new user attributes here</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div layout="column"
+             class="cb1-main-container"
+             ng-class="{'cb1-block-collapsed': vm.counterpartyAttrsCollapsed}">
+            <div class="all-am-attributes-group-toggle"
+                 layout="row"
+                 ng-click="vm.counterpartyAttrsCollapsed = !vm.counterpartyAttrsCollapsed">
+                <h4 class="all-am-attributes-group-title">Counterparty Attributes</h4>
+            </div>
+
+            <div class="cb1-resizing-wrap">
+                <div layout="row"
+                     layout-wrap
+                     class="all-am-manager-container">
+                    <div layout="row" flex="50" layout-align="start center">
+
+                        <md-menu>
+                            <md-button class="md-raised" data-ng-click="$mdOpenMenu($event)">
+                                Add New
+                            </md-button>
+
+                            <md-menu-content>
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               data-ng-click="vm.addAttribute('counterparty', $event)">Add Blank
+                                    </md-button>
+                                </md-menu-item>
+
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               package-manager-button
+                                               content-type="'obj_attrs.genericattributetype'"
+                                               target-content-type="'counterparties.counterparty'">
+                                        Select from List
+                                    </md-button>
+                                </md-menu-item>
+
+                            </md-menu-content>
+                        </md-menu>
+
+                    </div>
+                    <div layout="row" flex="50" layout-align="end center">
+                        <md-button class="md-raised"
+                                   data-ng-click="vm.toggleHidden('showHiddenCounterpartyAttrs')">
+                        <span data-ng-show="!vm.showHiddenCounterpartyAttrs">
+                            SHOW HIDDEN ATTRIBUTES
+                        </span>
+                            <span data-ng-show="vm.showHiddenCounterpartyAttrs">
+                            HIDE ATTRIBUTES
+                        </span>
+                        </md-button>
+                        <!--<md-button class="md-raised md-primary" data-ui-sref="app.portal.data.{{vm.entityType}}">
+                            RETURN TO VIEW
+                        </md-button>
+                        <md-button class="md-raised md-primary"
+                                   data-ng-click="vm.editLayout()">
+                            RETURN TO FORM EDITOR
+                        </md-button>-->
+                    </div>
+
+                    <div data-ng-if="vm.counterpartyAttrs.length" flex="100">
+                        <md-card data-ng-repeat="attr in vm.counterpartyAttrs"
+                                 class="am-attr-card"
+                                 data-ng-if="vm.checkIsHidden(attr, 'showHiddenCounterpartyAttrs')">
+                            <div class="am-attr-card__wrapper">
+                                <div class="am-attr-card__left-side">
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="!attr.is_hidden"
+                                                icon="visibility"></ng-md-icon>
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="attr.is_hidden"
+                                                icon="visibility_off"></ng-md-icon>
+
+                                    <b data-ng-bind="attr.name"></b> (<span data-ng-bind="vm.bindType(attr)"></span>)
+                                </div>
+                                <div class="am-attr-misc">
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.exportClassifiers(attr, 'counterparty', $event)">
+                                        <ng-md-icon icon="file_download">
+                                            <md-tooltip md-direction="top">Export Classifier</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.importClassifiers(attr, 'counterparty', $event)">
+                                        <ng-md-icon icon="file_upload">
+                                            <md-tooltip md-direction="top">Import Classifiers from .csv file
+                                            </md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.openClassifierMapping(attr, 'counterparty', $event)">
+                                        <ng-md-icon icon="map">
+                                            <md-tooltip md-direction="top">Open Classifier Mappings</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.editTreeAttr(attr, 'counterparty', $event)">
+                                        <ng-md-icon icon="format_align_right">
+                                            <md-tooltip md-direction="top">Edit Classifier tre</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.editAttr(attr, 'counterparty', $event)">
+                                        <ng-md-icon icon="edit">
+                                            <md-tooltip md-direction="top">Edit Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.deleteAttr(attr, 'counterparty', $event)">
+                                        <ng-md-icon icon="delete">
+                                            <md-tooltip md-direction="top">Delete Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                </div>
+                            </div>
+                        </md-card>
+                    </div>
+                    <div data-ng-if="!vm.counterpartyAttrs.length" flex="100">
+                        <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                        </div> -->
+                        <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                            <h1>You could add new user attributes here</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div layout="column"
+             class="cb1-main-container"
+             ng-class="{'cb1-block-collapsed': vm.currencyAttrsCollapsed}">
+            <div class="all-am-attributes-group-toggle"
+                 layout="row"
+                 ng-click="vm.currencyAttrsCollapsed = !vm.currencyAttrsCollapsed">
+                <h4 class="all-am-attributes-group-title">Currency Attributes</h4>
+            </div>
+
+            <div class="cb1-resizing-wrap">
+                <div layout="row"
+                     layout-wrap
+                     class="all-am-manager-container">
+                    <div layout="row" flex="50" layout-align="start center">
+
+                        <md-menu>
+                            <md-button class="md-raised" data-ng-click="$mdOpenMenu($event)">
+                                Add New
+                            </md-button>
+
+                            <md-menu-content>
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               data-ng-click="vm.addAttribute('currency', $event)">Add Blank
+                                    </md-button>
+                                </md-menu-item>
+
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               package-manager-button
+                                               content-type="'obj_attrs.genericattributetype'"
+                                               target-content-type="'currencies.currency'">
+                                        Select from List
+                                    </md-button>
+                                </md-menu-item>
+
+                            </md-menu-content>
+                        </md-menu>
+
+
+                    </div>
+                    <div layout="row" flex="50" layout-align="end center">
+                        <md-button class="md-raised"
+                                   data-ng-click="vm.toggleHidden('showHiddenCurrencyAttrs')">
+                        <span data-ng-show="!vm.showHiddenCurrencyAttrs">
+                            SHOW HIDDEN ATTRIBUTES
+                        </span>
+                            <span data-ng-show="vm.showHiddenCurrencyAttrs">
+                            HIDE ATTRIBUTES
+                        </span>
+                        </md-button>
+                        <!--<md-button class="md-raised md-primary" data-ui-sref="app.portal.data.{{vm.entityType}}">
+                            RETURN TO VIEW
+                        </md-button>
+                        <md-button class="md-raised md-primary"
+                                   data-ng-click="vm.editLayout()">
+                            RETURN TO FORM EDITOR
+                        </md-button>-->
+                    </div>
+
+                    <div data-ng-if="vm.currencyAttrs.length" flex="100">
+                        <md-card data-ng-repeat="attr in vm.currencyAttrs"
+                                 class="am-attr-card"
+                                 data-ng-if="vm.checkIsHidden(attr, 'showHiddenCurrencyAttrs')">
+                            <div class="am-attr-card__wrapper">
+                                <div class="am-attr-card__left-side">
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="!attr.is_hidden"
+                                                icon="visibility"></ng-md-icon>
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="attr.is_hidden"
+                                                icon="visibility_off"></ng-md-icon>
+
+                                    <b data-ng-bind="attr.name"></b> (<span data-ng-bind="vm.bindType(attr)"></span>)
+                                </div>
+                                <div class="am-attr-misc">
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.exportClassifiers(attr, 'currency', $event)">
+                                        <ng-md-icon icon="file_download">
+                                            <md-tooltip md-direction="top">Export Classifier</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.importClassifiers(attr, 'currency', $event)">
+                                        <ng-md-icon icon="file_upload">
+                                            <md-tooltip md-direction="top">Import Classifiers from .csv file
+                                            </md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.openClassifierMapping(attr, 'currency', $event)">
+                                        <ng-md-icon icon="map">
+                                            <md-tooltip md-direction="top">Open Classifier Mappings</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.editTreeAttr(attr, 'currency', $event)">
+                                        <ng-md-icon icon="format_align_right">
+                                            <md-tooltip md-direction="top">Edit Classifier tre</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.editAttr(attr, 'currency', $event)">
+                                        <ng-md-icon icon="edit">
+                                            <md-tooltip md-direction="top">Edit Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.deleteAttr(attr, 'currency', $event)">
+                                        <ng-md-icon icon="delete">
+                                            <md-tooltip md-direction="top">Delete Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                </div>
+                            </div>
+                        </md-card>
+                    </div>
+                    <div data-ng-if="!vm.currencyAttrs.length" flex="100">
+                        <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                        </div> -->
+                        <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                            <h1>You could add new user attributes here</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div layout="column"
+             class="cb1-main-container"
+             ng-class="{'cb1-block-collapsed': vm.strategy1AttrsCollapsed}">
+            <div class="all-am-attributes-group-toggle"
+                 layout="row"
+                 ng-click="vm.strategy1AttrsCollapsed = !vm.strategy1AttrsCollapsed">
+                <h4 class="all-am-attributes-group-title">Strategy 1 Attributes</h4>
+            </div>
+
+            <div class="cb1-resizing-wrap">
+                <div layout="row"
+                     layout-wrap
+                     class="all-am-manager-container">
+                    <div layout="row" flex="50" layout-align="start center">
+                        <md-menu>
+                            <md-button class="md-raised" data-ng-click="$mdOpenMenu($event)">
+                                Add New
+                            </md-button>
+
+                            <md-menu-content>
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               data-ng-click="vm.addAttribute('strategy-1', $event)">Add Blank
+                                    </md-button>
+                                </md-menu-item>
+
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               package-manager-button
+                                               content-type="'obj_attrs.genericattributetype'"
+                                               target-content-type="'strategies.strategy1'">
+                                        Select from List
+                                    </md-button>
+                                </md-menu-item>
+
+                            </md-menu-content>
+                        </md-menu>
+
+                    </div>
+                    <div layout="row" flex="50" layout-align="end center">
+                        <md-button class="md-raised"
+                                   data-ng-click="vm.toggleHidden('showHiddenStrategy1Attrs')">
+                        <span data-ng-show="!vm.showHiddenStrategy1Attrs">
+                            SHOW HIDDEN ATTRIBUTES
+                        </span>
+                            <span data-ng-show="vm.showHiddenStrategy1Attrs">
+                            HIDE ATTRIBUTES
+                        </span>
+                        </md-button>
+                        <!--<md-button class="md-raised md-primary" data-ui-sref="app.portal.data.{{vm.entityType}}">
+                            RETURN TO VIEW
+                        </md-button>
+                        <md-button class="md-raised md-primary"
+                                   data-ng-click="vm.editLayout()">
+                            RETURN TO FORM EDITOR
+                        </md-button>-->
+                    </div>
+
+                    <div data-ng-if="vm.strategy1Attrs.length" flex="100">
+                        <md-card data-ng-repeat="attr in vm.strategy1Attrs"
+                                 class="am-attr-card"
+                                 data-ng-if="vm.checkIsHidden(attr, 'showHiddenStrategy1Attrs')">
+                            <div class="am-attr-card__wrapper">
+                                <div class="am-attr-card__left-side">
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="!attr.is_hidden"
+                                                icon="visibility"></ng-md-icon>
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="attr.is_hidden"
+                                                icon="visibility_off"></ng-md-icon>
+
+                                    <b data-ng-bind="attr.name"></b> (<span data-ng-bind="vm.bindType(attr)"></span>)
+                                </div>
+                                <div class="am-attr-misc">
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.exportClassifiers(attr, 'strategy-1', $event)">
+                                        <ng-md-icon icon="file_download">
+                                            <md-tooltip md-direction="top">Export Classifier</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.importClassifiers(attr, 'strategy-1', $event)">
+                                        <ng-md-icon icon="file_upload">
+                                            <md-tooltip md-direction="top">Import Classifiers from .csv file
+                                            </md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.openClassifierMapping(attr, 'strategy-1', $event)">
+                                        <ng-md-icon icon="map">
+                                            <md-tooltip md-direction="top">Open Classifier Mappings</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.editTreeAttr(attr, 'strategy-1', $event)">
+                                        <ng-md-icon icon="format_align_right">
+                                            <md-tooltip md-direction="top">Edit Classifier tre</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.editAttr(attr, 'strategy-1', $event)">
+                                        <ng-md-icon icon="edit">
+                                            <md-tooltip md-direction="top">Edit Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.deleteAttr(attr, 'strategy-1', $event)">
+                                        <ng-md-icon icon="delete">
+                                            <md-tooltip md-direction="top">Delete Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                </div>
+                            </div>
+                        </md-card>
+                    </div>
+                    <div data-ng-if="!vm.strategy1Attrs.length" flex="100">
+                        <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                        </div> -->
+                        <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                            <h1>You could add new user attributes here</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div layout="column"
+             class="cb1-main-container"
+             ng-class="{'cb1-block-collapsed': vm.strategy2AttrsCollapsed}">
+            <div class="all-am-attributes-group-toggle"
+                 layout="row"
+                 ng-click="vm.strategy2AttrsCollapsed = !vm.strategy2AttrsCollapsed">
+                <h4 class="all-am-attributes-group-title">Strategy 2 Attributes</h4>
+            </div>
+
+            <div class="cb1-resizing-wrap">
+                <div layout="row"
+                     layout-wrap
+                     class="all-am-manager-container">
+                    <div layout="row" flex="50" layout-align="start center">
+
+                        <md-menu>
+                            <md-button class="md-raised" data-ng-click="$mdOpenMenu($event)">
+                                Add New
+                            </md-button>
+
+                            <md-menu-content>
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               data-ng-click="vm.addAttribute('strategy-2', $event)">Add Blank
+                                    </md-button>
+                                </md-menu-item>
+
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               package-manager-button
+                                               content-type="'obj_attrs.genericattributetype'"
+                                               target-content-type="'strategies.strategy2'">
+                                        Select from List
+                                    </md-button>
+                                </md-menu-item>
+
+                            </md-menu-content>
+                        </md-menu>
+
+                    </div>
+                    <div layout="row" flex="50" layout-align="end center">
+                        <md-button class="md-raised"
+                                   data-ng-click="vm.toggleHidden('showHiddenStrategy2Attrs')">
+                        <span data-ng-show="!vm.showHiddenStrategy2Attrs">
+                            SHOW HIDDEN ATTRIBUTES
+                        </span>
+                            <span data-ng-show="vm.showHiddenStrategy2Attrs">
+                            HIDE ATTRIBUTES
+                        </span>
+                        </md-button>
+                        <!--<md-button class="md-raised md-primary" data-ui-sref="app.portal.data.{{vm.entityType}}">
+                            RETURN TO VIEW
+                        </md-button>
+                        <md-button class="md-raised md-primary"
+                                   data-ng-click="vm.editLayout()">
+                            RETURN TO FORM EDITOR
+                        </md-button>-->
+                    </div>
+
+                    <div data-ng-if="vm.strategy2Attrs.length" flex="100">
+                        <md-card data-ng-repeat="attr in vm.strategy2Attrs"
+                                 class="am-attr-card"
+                                 data-ng-if="vm.checkIsHidden(attr, 'showHiddenStrategy2Attrs')">
+                            <div class="am-attr-card__wrapper">
+                                <div class="am-attr-card__left-side">
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="!attr.is_hidden"
+                                                icon="visibility"></ng-md-icon>
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="attr.is_hidden"
+                                                icon="visibility_off"></ng-md-icon>
+
+                                    <b data-ng-bind="attr.name"></b> (<span data-ng-bind="vm.bindType(attr)"></span>)
+                                </div>
+                                <div class="am-attr-misc">
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.exportClassifiers(attr, 'strategy-2', $event)">
+                                        <ng-md-icon icon="file_download">
+                                            <md-tooltip md-direction="top">Export Classifier</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.importClassifiers(attr, 'strategy-2', $event)">
+                                        <ng-md-icon icon="file_upload">
+                                            <md-tooltip md-direction="top">Import Classifiers from .csv file
+                                            </md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.openClassifierMapping(attr, 'strategy-2', $event)">
+                                        <ng-md-icon icon="map">
+                                            <md-tooltip md-direction="top">Open Classifier Mappings</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.editTreeAttr(attr, 'strategy-2', $event)">
+                                        <ng-md-icon icon="format_align_right">
+                                            <md-tooltip md-direction="top">Edit Classifier tre</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.editAttr(attr, 'strategy-2', $event)">
+                                        <ng-md-icon icon="edit">
+                                            <md-tooltip md-direction="top">Edit Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.deleteAttr(attr, 'strategy-2', $event)">
+                                        <ng-md-icon icon="delete">
+                                            <md-tooltip md-direction="top">Delete Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                </div>
+                            </div>
+                        </md-card>
+                    </div>
+                    <div data-ng-if="!vm.strategy2Attrs.length" flex="100">
+                        <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                        </div> -->
+                        <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                            <h1>You could add new user attributes here</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div layout="column" 
+             class="cb1-main-container"
+             ng-class="{'cb1-block-collapsed': vm.strategy3AttrsCollapsed}">
+            <div class="all-am-attributes-group-toggle"
+                 layout="row"
+                 ng-click="vm.strategy3AttrsCollapsed = !vm.strategy3AttrsCollapsed">
+                <h4 class="all-am-attributes-group-title">Strategy 3 Attributes</h4>
+            </div>
+
+            <div class="cb1-resizing-wrap">
+                <div layout="row"
+                     layout-wrap
+                     class="all-am-manager-container">
+                    <div layout="row" flex="50" layout-align="start center">
+                        <md-menu>
+                            <md-button class="md-raised" data-ng-click="$mdOpenMenu($event)">
+                                Add New
+                            </md-button>
+
+                            <md-menu-content>
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               data-ng-click="vm.addAttribute('strategy-3', $event)">Add Blank
+                                    </md-button>
+                                </md-menu-item>
+
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               package-manager-button
+                                               content-type="'obj_attrs.genericattributetype'"
+                                               target-content-type="'strategies.strategy3'">
+                                        Select from List
+                                    </md-button>
+                                </md-menu-item>
+
+                            </md-menu-content>
+                        </md-menu>
+                    </div>
+                    <div layout="row" flex="50" layout-align="end center">
+                        <md-button class="md-raised"
+                                   data-ng-click="vm.toggleHidden('showHiddenStrategy3Attrs')">
+                        <span data-ng-show="!vm.showHiddenStrategy3Attrs">
+                            SHOW HIDDEN ATTRIBUTES
+                        </span>
+                            <span data-ng-show="vm.showHiddenStrategy3Attrs">
+                            HIDE ATTRIBUTES
+                        </span>
+                        </md-button>
+                        <!--<md-button class="md-raised md-primary" data-ui-sref="app.portal.data.{{vm.entityType}}">
+                            RETURN TO VIEW
+                        </md-button>
+                        <md-button class="md-raised md-primary"
+                                   data-ng-click="vm.editLayout()">
+                            RETURN TO FORM EDITOR
+                        </md-button>-->
+                    </div>
+
+                    <div data-ng-if="vm.strategy3Attrs.length" flex="100">
+                        <md-card data-ng-repeat="attr in vm.strategy3Attrs"
+                                 class="am-attr-card"
+                                 data-ng-if="vm.checkIsHidden(attr, 'showHiddenStrategy3Attrs')">
+                            <div class="am-attr-card__wrapper">
+                                <div class="am-attr-card__left-side">
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="!attr.is_hidden"
+                                                icon="visibility"></ng-md-icon>
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="attr.is_hidden"
+                                                icon="visibility_off"></ng-md-icon>
+
+                                    <b data-ng-bind="attr.name"></b> (<span data-ng-bind="vm.bindType(attr)"></span>)
+                                </div>
+                                <div class="am-attr-misc">
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.exportClassifiers(attr, 'strategy-3', $event)">
+                                        <ng-md-icon icon="file_download">
+                                            <md-tooltip md-direction="top">Export Classifier</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.importClassifiers(attr, 'strategy-3', $event)">
+                                        <ng-md-icon icon="file_upload">
+                                            <md-tooltip md-direction="top">Import Classifiers from .csv file
+                                            </md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.openClassifierMapping(attr, 'strategy-3', $event)">
+                                        <ng-md-icon icon="map">
+                                            <md-tooltip md-direction="top">Open Classifier Mappings</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.editTreeAttr(attr, 'strategy-3', $event)">
+                                        <ng-md-icon icon="format_align_right">
+                                            <md-tooltip md-direction="top">Edit Classifier tre</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.editAttr(attr, 'strategy-3', $event)">
+                                        <ng-md-icon icon="edit">
+                                            <md-tooltip md-direction="top">Edit Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.deleteAttr(attr, 'strategy-3', $event)">
+                                        <ng-md-icon icon="delete">
+                                            <md-tooltip md-direction="top">Delete Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                </div>
+                            </div>
+                        </md-card>
+                    </div>
+                    <div data-ng-if="!vm.strategy3Attrs.length" flex="100">
+                        <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                        </div> -->
+                        <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                            <h1>You could add new user attributes here</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div layout="column"
+             class="cb1-main-container"
+             ng-class="{'cb1-block-collapsed': vm.accountTypeAttrsCollapsed}">
+            <div class="all-am-attributes-group-toggle"
+                 layout="row"
+                 ng-click="vm.accountTypeAttrsCollapsed = !vm.accountTypeAttrsCollapsed">
+                <h4 class="all-am-attributes-group-title">Account Type Attributes</h4>
+            </div>
+
+            <div class="cb1-resizing-wrap">
+                <div layout="row"
+                     layout-wrap
+                     class="all-am-manager-container">
+                    <div layout="row" flex="50" layout-align="start center">
+
+                        <md-menu>
+                            <md-button class="md-raised" data-ng-click="$mdOpenMenu($event)">
+                                Add New
+                            </md-button>
+
+                            <md-menu-content>
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               data-ng-click="vm.addAttribute('account-type', $event)">Add Blank
+                                    </md-button>
+                                </md-menu-item>
+
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               package-manager-button
+                                               content-type="'obj_attrs.genericattributetype'"
+                                               target-content-type="'accounts.accounttype'">
+                                        Select from List
+                                    </md-button>
+                                </md-menu-item>
+
+                            </md-menu-content>
+                        </md-menu>
+
+                    </div>
+                    <div layout="row" flex="50" layout-align="end center">
+                        <md-button class="md-raised"
+                                   data-ng-click="vm.toggleHidden('showHiddenAccountTypeAttrs')">
+                        <span data-ng-show="!vm.showHiddenAccountTypeAttrs">
+                            SHOW HIDDEN ATTRIBUTES
+                        </span>
+                            <span data-ng-show="vm.showHiddenAccountTypeAttrs">
+                            HIDE ATTRIBUTES
+                        </span>
+                        </md-button>
+                        <!--<md-button class="md-raised md-primary" data-ui-sref="app.portal.data.{{vm.entityType}}">
+                            RETURN TO VIEW
+                        </md-button>
+                        <md-button class="md-raised md-primary"
+                                   data-ng-click="vm.editLayout()">
+                            RETURN TO FORM EDITOR
+                        </md-button>-->
+                    </div>
+
+                    <div data-ng-if="vm.accountTypeAttrs.length" flex="100">
+                        <md-card data-ng-repeat="attr in vm.accountTypeAttrs"
+                                 class="am-attr-card"
+                                 data-ng-if="vm.checkIsHidden(attr, 'showHiddenAccountTypeAttrs')">
+                            <div class="am-attr-card__wrapper">
+                                <div class="am-attr-card__left-side">
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="!attr.is_hidden"
+                                                icon="visibility"></ng-md-icon>
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="attr.is_hidden"
+                                                icon="visibility_off"></ng-md-icon>
+
+                                    <b data-ng-bind="attr.name"></b> (<span data-ng-bind="vm.bindType(attr)"></span>)
+                                </div>
+                                <div class="am-attr-misc">
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.exportClassifiers(attr, 'account-type', $event)">
+                                        <ng-md-icon icon="file_download">
+                                            <md-tooltip md-direction="top">Export Classifier</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.importClassifiers(attr, 'account-type', $event)">
+                                        <ng-md-icon icon="file_upload">
+                                            <md-tooltip md-direction="top">Import Classifiers from .csv file
+                                            </md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.openClassifierMapping(attr, 'account-type', $event)">
+                                        <ng-md-icon icon="map">
+                                            <md-tooltip md-direction="top">Open Classifier Mappings</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.editTreeAttr(attr, 'account-type', $event)">
+                                        <ng-md-icon icon="format_align_right">
+                                            <md-tooltip md-direction="top">Edit Classifier tre</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.editAttr(attr, 'account-type', $event)">
+                                        <ng-md-icon icon="edit">
+                                            <md-tooltip md-direction="top">Edit Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.deleteAttr(attr, 'account-type', $event)">
+                                        <ng-md-icon icon="delete">
+                                            <md-tooltip md-direction="top">Delete Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                </div>
+                            </div>
+                        </md-card>
+                    </div>
+                    <div data-ng-if="!vm.accountTypeAttrs.length" flex="100">
+                        <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                        </div> -->
+                        <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                            <h1>You could add new user attributes here</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div layout="column"
+             class="cb1-main-container"
+             ng-class="{'cb1-block-collapsed': vm.instrumentTypeAttrsCollapsed}">
+            <div class="all-am-attributes-group-toggle"
+                 layout="row"
+                 ng-click="vm.instrumentTypeAttrsCollapsed = !vm.instrumentTypeAttrsCollapsed">
+                <h4 class="all-am-attributes-group-title">Instrument Type Attributes</h4>
+            </div>
+
+            <div class="cb1-resizing-wrap">
+                <div layout="row"
+                     layout-wrap
+                     class="all-am-manager-container">
+                    <div layout="row" flex="50" layout-align="start center">
+                        <md-menu>
+                            <md-button class="md-raised" data-ng-click="$mdOpenMenu($event)">
+                                Add New
+                            </md-button>
+
+                            <md-menu-content>
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               data-ng-click="vm.addAttribute('instrument-type', $event)">Add Blank
+                                    </md-button>
+                                </md-menu-item>
+
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               package-manager-button
+                                               content-type="'obj_attrs.genericattributetype'"
+                                               target-content-type="'instruments.instrumenttype'">
+                                        Select from List
+                                    </md-button>
+                                </md-menu-item>
+
+                            </md-menu-content>
+                        </md-menu>
+                    </div>
+                    <div layout="row" flex="50" layout-align="end center">
+                        <md-button class="md-raised"
+                                   data-ng-click="vm.toggleHidden('showHiddenInstrumentTypeAttrs')">
+                        <span data-ng-show="!vm.showHiddenInstrumentTypeAttrs">
+                            SHOW HIDDEN ATTRIBUTES
+                        </span>
+                            <span data-ng-show="vm.showHiddenInstrumentTypeAttrs">
+                            HIDE ATTRIBUTES
+                        </span>
+                        </md-button>
+                        <!--<md-button class="md-raised md-primary" data-ui-sref="app.portal.data.{{vm.entityType}}">
+                            RETURN TO VIEW
+                        </md-button>
+                        <md-button class="md-raised md-primary"
+                                   data-ng-click="vm.editLayout()">
+                            RETURN TO FORM EDITOR
+                        </md-button>-->
+                    </div>
+
+                    <div data-ng-if="vm.instrumentTypeAttrs.length" flex="100">
+                        <md-card data-ng-repeat="attr in vm.instrumentTypeAttrs"
+                                 class="am-attr-card"
+                                 data-ng-if="vm.checkIsHidden(attr, 'showHiddenInstrumentTypeAttrs')">
+                            <div class="am-attr-card__wrapper">
+                                <div class="am-attr-card__left-side">
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="!attr.is_hidden"
+                                                icon="visibility"></ng-md-icon>
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="attr.is_hidden"
+                                                icon="visibility_off"></ng-md-icon>
+
+                                    <b data-ng-bind="attr.name"></b> (<span data-ng-bind="vm.bindType(attr)"></span>)
+                                </div>
+                                <div class="am-attr-misc">
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.exportClassifiers(attr, 'instrument-type', $event)">
+                                        <ng-md-icon icon="file_download">
+                                            <md-tooltip md-direction="top">Export Classifier</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.importClassifiers(attr, 'instrument-type', $event)">
+                                        <ng-md-icon icon="file_upload">
+                                            <md-tooltip md-direction="top">Import Classifiers from .csv file
+                                            </md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.openClassifierMapping(attr, 'instrument-type', $event)">
+                                        <ng-md-icon icon="map">
+                                            <md-tooltip md-direction="top">Open Classifier Mappings</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.editTreeAttr(attr, 'instrument-type', $event)">
+                                        <ng-md-icon icon="format_align_right">
+                                            <md-tooltip md-direction="top">Edit Classifier tre</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.editAttr(attr, 'instrument-type', $event)">
+                                        <ng-md-icon icon="edit">
+                                            <md-tooltip md-direction="top">Edit Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.deleteAttr(attr, 'instrument-type', $event)">
+                                        <ng-md-icon icon="delete">
+                                            <md-tooltip md-direction="top">Delete Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                </div>
+                            </div>
+                        </md-card>
+                    </div>
+                    <div data-ng-if="!vm.instrumentTypeAttrs.length" flex="100">
+                        <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                        </div> -->
+                        <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                            <h1>You could add new user attributes here</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div layout="column"
+             class="cb1-main-container"
+             ng-class="{'cb1-block-collapsed': vm.transactionTypeAttrsCollapsed}">
+            <div class="all-am-attributes-group-toggle"
+                 layout="row"
+                 ng-click="vm.transactionTypeAttrsCollapsed = !vm.transactionTypeAttrsCollapsed">
+                <h4 class="all-am-attributes-group-title">Transaction Type Attributes</h4>
+            </div>
+
+            <div class="cb1-resizing-wrap">
+                <div layout="row"
+                     layout-wrap
+                     class="all-am-manager-container">
+                    <div layout="row" flex="50" layout-align="start center">
+                        <md-menu>
+                            <md-button class="md-raised" data-ng-click="$mdOpenMenu($event)">
+                                Add New
+                            </md-button>
+
+                            <md-menu-content>
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               data-ng-click="vm.addAttribute('transaction-type', $event)">Add Blank
+                                    </md-button>
+                                </md-menu-item>
+
+                                <md-menu-item>
+                                    <md-button class="md-raised"
+                                               package-manager-button
+                                               content-type="'obj_attrs.genericattributetype'"
+                                               target-content-type="'transactions.transactiontype'">
+                                        Select from List
+                                    </md-button>
+                                </md-menu-item>
+
+                            </md-menu-content>
+                        </md-menu>
+                    </div>
+                    <div layout="row" flex="50" layout-align="end center">
+                        <md-button class="md-raised"
+                                   data-ng-click="vm.toggleHidden('showHiddenTransactionTypeAttrs')">
+                        <span data-ng-show="!vm.showHiddenTransactionTypeAttrs">
+                            SHOW HIDDEN ATTRIBUTES
+                        </span>
+                            <span data-ng-show="vm.showHiddenTransactionTypeAttrs">
+                            HIDE ATTRIBUTES
+                        </span>
+                        </md-button>
+                        <!--<md-button class="md-raised md-primary" data-ui-sref="app.portal.data.{{vm.entityType}}">
+                            RETURN TO VIEW
+                        </md-button>
+                        <md-button class="md-raised md-primary"
+                                   data-ng-click="vm.editLayout()">
+                            RETURN TO FORM EDITOR
+                        </md-button>-->
+                    </div>
+
+                    <div data-ng-if="vm.transactionTypeAttrs.length" flex="100">
+                        <md-card data-ng-repeat="attr in vm.transactionTypeAttrs"
+                                 class="am-attr-card"
+                                 data-ng-if="vm.checkIsHidden(attr, 'showHiddenTransactionTypeAttrs')">
+                            <div class="am-attr-card__wrapper">
+                                <div class="am-attr-card__left-side">
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="!attr.is_hidden"
+                                                icon="visibility"></ng-md-icon>
+                                    <ng-md-icon class="am-attr-card__status" data-ng-if="attr.is_hidden"
+                                                icon="visibility_off"></ng-md-icon>
+
+                                    <b data-ng-bind="attr.name"></b> (<span data-ng-bind="vm.bindType(attr)"></span>)
+                                </div>
+                                <div class="am-attr-misc">
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.exportClassifiers(attr, 'transaction-type', $event)">
+                                        <ng-md-icon icon="file_download">
+                                            <md-tooltip md-direction="top">Export Classifier</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.importClassifiers(attr, 'transaction-type', $event)">
+                                        <ng-md-icon icon="file_upload">
+                                            <md-tooltip md-direction="top">Import Classifiers from .csv file
+                                            </md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.openClassifierMapping(attr, 'transaction-type', $event)">
+                                        <ng-md-icon icon="map">
+                                            <md-tooltip md-direction="top">Open Classifier Mappings</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button data-ng-if="attr['value_type'] === 30" class="am-attr-btn"
+                                               data-ng-click="vm.editTreeAttr(attr, 'transaction-type', $event)">
+                                        <ng-md-icon icon="format_align_right">
+                                            <md-tooltip md-direction="top">Edit Classifier tre</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.editAttr(attr, 'transaction-type', $event)">
+                                        <ng-md-icon icon="edit">
+                                            <md-tooltip md-direction="top">Edit Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.deleteAttr(attr, 'transaction-type', $event)">
+                                        <ng-md-icon icon="delete">
+                                            <md-tooltip md-direction="top">Delete Attribute</md-tooltip>
+                                        </ng-md-icon>
+                                    </md-button>
+                                </div>
+                            </div>
+                        </md-card>
+                    </div>
+                    <div data-ng-if="!vm.transactionTypeAttrs.length" flex="100">
+                        <!-- <div layout="row" layout-sm="column" layout-align="space-around">
+                            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                        </div> -->
+                        <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                            <h1>You could add new user attributes here</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus">
+        <div class="e-data-loader" layout="row" layout-sm="column" layout-align="space-around">
+            <md-progress-circular md-diameter="100" md-mode="indeterminate"></md-progress-circular>
+        </div>
+    </div>
+</div>

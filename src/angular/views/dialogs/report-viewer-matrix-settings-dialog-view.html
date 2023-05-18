@@ -1,0 +1,62 @@
+<md-dialog class="draggable-dialog width-50" drag-dialog >
+
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Matrix Settings</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="p-16">
+
+       <div>
+
+           <div layout="row">
+
+               <div style="margin: 10px 16px;">
+
+                   <table-attribute-selector title="Abscissa"
+                                             dialog-title="Abscissa"
+                                             available-attrs="vm.attributes"
+                                             item="vm.settings.abscissa"></table-attribute-selector>
+
+               </div>
+
+               <div style="margin: 10px 16px;">
+
+                   <table-attribute-selector title="Ordinate"
+                                             dialog-title="Ordinate"
+                                             available-attrs="vm.attributes"
+                                             item="vm.settings.ordinate"></table-attribute-selector>
+
+               </div>
+
+               <div style="margin: 10px 16px;">
+
+                   <table-attribute-selector title="Value"
+                                             dialog-title="Value"
+                                             available-attrs="vm.numericAttributes"
+                                             item="vm.settings.value_key"></table-attribute-selector>
+
+               </div>
+
+               <md-button class="md-raised md-primary"
+                          data-ng-click="vm.openNumberFormatSettings($event)"
+                          style="height: 36px">
+                   Format Settings
+               </md-button>
+
+           </div>
+
+
+       </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="space-between center">
+        <md-button class="md-raised" ng-click="vm.cancel()">CANCEL</md-button>
+        <md-button class="md-raised" ng-click="vm.save()">OK</md-button>
+    </md-dialog-actions>
+</md-dialog>

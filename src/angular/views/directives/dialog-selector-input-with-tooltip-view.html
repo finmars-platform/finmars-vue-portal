@@ -1,0 +1,11 @@
+<md-input-container class="dialog-selector cursor-pointer">
+    <label data-ng-bind="title" class="cursor-pointer"></label>
+    <input type="text"
+           class="cursor-pointer text-overflow-ellipsis"
+           data-ng-model="inputText"
+           readonly>
+</md-input-container>
+<md-tooltip data-ng-if="model && model.length > 0 && tooltipText"
+            class="tooltip_1 f-s-15"
+            md-direction="top"
+            data-ng-bind="tooltipText"></md-tooltip>

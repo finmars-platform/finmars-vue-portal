@@ -1,0 +1,17 @@
+<md-button class="md-button-toggle sidemenu-btn" ng-click="toggle($event)"
+           aria-controls="side-menu-{{section.title}}"  aria-expanded="{{isOpen()}}">
+    <span data-ng-if="section.icon" class="side-nav-icon">
+        <ng-md-icon icon="{{section.icon}}" size="24"></ng-md-icon>
+    </span>
+    <span class="side-nav-title">{{section.title}}</span>
+
+    <ng-md-icon icon="expand_more" class="dropdown-icon" data-ng-if="!isOpen()"></ng-md-icon>
+    <ng-md-icon icon="expand_less" class="dropdown-icon" data-ng-if="isOpen()"></ng-md-icon>
+    <!--<span aria-hidden="true" class="pull-right fa fa-chevron-down md-toggle-icon" data-ng-class="{'toggled' : isOpen()}"></span>-->
+</md-button>
+<ul data-ng-show="isOpen()" id="side-menu-{{section.title}}" class="menu-toggle-list">
+    <li data-ng-repeat="section in section.pages">
+        <menu-link section="section" ng-if="section.type === 'link'"></menu-link>
+        <menu-toggle section="section" ng-if="section.type === 'toggle'"></menu-toggle>
+    </li>
+</ul>

@@ -1,0 +1,618 @@
+<md-dialog aria-label="" ng-cloak class="draggable-dialog width-50" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Edit Currency Pricing Scheme</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="p-24">
+
+        <div data-ng-if="vm.readyStatus.types && vm.readyStatus.item">
+
+            <md-input-container>
+                <label>Name</label>
+                <input type="text" data-ng-model="vm.item.name">
+            </md-input-container>
+
+            <md-input-container>
+                <label>User Code</label>
+                <input type="text" data-ng-model="vm.item.user_code">
+            </md-input-container>
+
+            <md-input-container>
+                <label>Short Name</label>
+                <input type="text" data-ng-model="vm.item.short_name">
+            </md-input-container>
+
+            <md-input-container>
+                <label>Type</label>
+                <md-select data-ng-model="vm.item.type" class="disabled-btn">
+                    <md-option ng-value="item.id" data-ng-repeat="item in vm.types">{{item.name}}</md-option>
+                </md-select>
+            </md-input-container>
+
+            <div class="m-t-16">
+
+                <div><label for="">Notes</label></div>
+                <textarea name="" data-ng-model="vm.item.notes" cols="60" rows="5"></textarea>
+
+            </div>
+
+            <div class="m-t-16">
+
+                <div><label for="">Clarification for Users</label></div>
+                <textarea name="" data-ng-model="vm.item.notes_for_users" cols="60" rows="5"></textarea>
+
+            </div>
+
+            <div class="m-t-16">
+
+                <div><label for="">Clarification for Parameter</label></div>
+                <textarea name="" data-ng-model="vm.item.notes_for_parameter" cols="60" rows="5"></textarea>
+
+            </div>
+
+            <md-input-container class="m-t-16">
+                <label>Error handling</label>
+                <md-select data-ng-model="vm.item.error_handler">
+                    <md-option value="1">Add to Error Table and notify in the End</md-option>
+                    <md-option value="2">Add to Error Table, no notification</md-option>
+                    <md-option value="3">Add to Error Table, notify directly</md-option>
+                    <md-option value="4">Notify Directly and request Prices</md-option>
+                </md-select>
+            </md-input-container>
+
+            <div data-ng-if="vm.item.type == 3">
+
+                <h4>Single Parameter Formula</h4>
+
+
+                <div layout="row" data-ng-if="vm.switchState == 'default_value'">
+
+                    <md-input-container>
+                        <label>Default Value</label>
+                        <input type="text" data-ng-model="vm.item.type_settings.default_value">
+                    </md-input-container>
+
+                    <md-button class="md-raised md-primary" data-ng-click="vm.switch($event)">Switch</md-button>
+
+                </div>
+
+                <div layout="row" data-ng-if="vm.switchState == 'attribute_key'">
+
+                    <md-input-container class="m-t-16">
+                        <label>Options</label>
+                        <md-select data-ng-model="vm.item.type_settings.attribute_key">
+                            <md-option ng-value="item.user_code" data-ng-repeat="item in vm.optionsForPrimaryParameter">
+                                {{item.name}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-button class="md-raised md-primary" data-ng-click="vm.switch($event)">Switch</md-button>
+
+                </div>
+
+                <md-input-container class="m-t-16">
+                    <label>Value Type</label>
+                    <md-select data-ng-model="vm.item.type_settings.value_type" data-ng-change="vm.primaryParameterValueTypeUpdate()">
+                        <md-option value="10">Text</md-option>
+                        <md-option value="20">Number</md-option>
+                        <md-option value="40">Date</md-option>
+                    </md-select>
+                </md-input-container>
+
+                <div class="pricing-scheme-help-box">
+
+                    <h4>Available variables:</h4>
+
+                    <div>
+                        <b>context_date</b>
+                    </div>
+
+                    <div>
+                        <b>context_currency</b>
+                    </div>
+
+                    <div>
+                        <b>context_pricing_policy</b>
+                    </div>
+
+                    <div>
+                        <b>parameter</b>
+                    </div>
+
+                </div>
+
+                <div>
+
+                    <md-input-container>
+                        <label>Pricing Formula</label>
+                        <input type="text" data-ng-model="vm.item.type_settings.expr">
+                    </md-input-container>
+
+                    <expression-editor-button data-item="vm.item.type_settings.expr"
+                                              data-data="{functions: vm.expressionBuilderFunctions}"
+                                              style="float: right"></expression-editor-button>
+
+                </div>
+
+                <div>
+
+                    <md-input-container>
+                        <label>If Error. Error Text</label>
+                        <input type="text" data-ng-model="vm.item.type_settings.error_text_expr">
+                    </md-input-container>
+
+                </div>
+
+
+
+            </div>
+
+            <div data-ng-if="vm.item.type == 4">
+
+                <h4>Multiple Parameter Formula</h4>
+
+                <h5>Pricing Parameters</h5>
+
+                <div layout="row" data-ng-if="vm.switchState == 'default_value'">
+
+                    <md-input-container>
+                        <label>Default Value</label>
+                        <input type="text" data-ng-model="vm.item.type_settings.default_value">
+                    </md-input-container>
+
+                    <md-button class="md-raised md-primary" data-ng-click="vm.switch($event)">Switch</md-button>
+
+                </div>
+
+                <div layout="row" data-ng-if="vm.switchState == 'attribute_key'">
+
+                    <md-input-container class="m-t-16">
+                        <label>Options</label>
+                        <md-select data-ng-model="vm.item.type_settings.attribute_key">
+                            <md-option ng-value="item.user_code" data-ng-repeat="item in vm.optionsForPrimaryParameter">
+                                {{item.name}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-button class="md-raised md-primary" data-ng-click="vm.switch($event)">Switch</md-button>
+
+                </div>
+
+                <md-input-container class="m-t-16">
+                    <label>Value Type</label>
+                    <md-select data-ng-model="vm.item.type_settings.value_type" data-ng-change="vm.primaryParameterValueTypeUpdate()">
+                        <md-option value="10">Text</md-option>
+                        <md-option value="20">Number</md-option>
+                        <md-option value="40">Date</md-option>
+                    </md-select>
+                </md-input-container>
+
+                <div>
+
+                    <div data-ng-repeat="item in vm.item.type_settings.data.parameters" layout="row" data-ng-if="item.index != 0">
+
+                        <md-input-container>
+                            <label>Index</label>
+                            <input type="text" data-ng-model="item.index" class="disabled-btn">
+                        </md-input-container>
+
+                        <md-input-container>
+                            <label>Name</label>
+                            <input type="text" data-ng-model="item.name">
+                        </md-input-container>
+
+                        <md-input-container class="m-t-16">
+                            <label>Value Type</label>
+                            <md-select data-ng-model="item.value_type" data-ng-change="vm.multipleParameterValueTypeUpdate(item.index)">
+                                <md-option value="10">Text</md-option>
+                                <md-option value="20">Number</md-option>
+                                <md-option value="40">Date</md-option>
+                            </md-select>
+                        </md-input-container>
+
+                        <div>
+
+                            <div layout="row" data-ng-if="item.___switch_state == 'default_value'">
+
+                                <md-input-container>
+                                    <label>Default Value</label>
+                                    <input type="text" data-ng-model="item.default_value">
+                                </md-input-container>
+
+                                <md-button class="md-raised md-primary"
+                                           data-ng-click="vm.switchParameter($event, item)">Switch
+                                </md-button>
+
+                            </div>
+
+                            <div layout="row" data-ng-if="item.___switch_state == 'attribute_key'">
+
+                                <md-input-container class="m-t-16">
+                                    <label>Options</label>
+                                    <md-select data-ng-model="item.attribute_key">
+                                        <md-option ng-value="item.user_code" data-ng-repeat="item in vm.optionsForMultipleParameters[item.index]">
+                                            {{item.name}} ({{item.user_code}})
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+
+                                <md-button class="md-raised md-primary"
+                                           data-ng-click="vm.switchParameter($event, item)">Switch
+                                </md-button>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+                <div>
+                    <md-button class="md-raised" data-ng-click="vm.addParameter($event)">Add Parameter</md-button>
+                </div>
+
+                <div class="pricing-scheme-help-box">
+
+                    <h4>Available variables:</h4>
+
+                    <div>
+                        <b>context_date</b>
+                    </div>
+
+                    <div>
+                        <b>context_currency</b>
+                    </div>
+
+                    <div>
+                        <b>context_pricing_policy</b>
+                    </div>
+
+                    <div>
+                        <b>parameter</b>
+                    </div>
+
+                    <div data-ng-repeat="item in vm.item.type_settings.data.parameters" data-ng-if="item.index != 0">
+                        <b>parameter{{item.index}}</b>
+                    </div>
+
+                </div>
+
+                <div>
+
+                    <md-input-container>
+                        <label>Pricing Formula</label>
+                        <input type="text" data-ng-model="vm.item.type_settings.expr">
+                    </md-input-container>
+
+                    <expression-editor-button data-item="vm.item.type_settings.expr"
+                                              data-data="{functions: vm.expressionBuilderFunctions}"
+                                              style="float: right"></expression-editor-button>
+
+                </div>
+
+                <div>
+
+                    <md-input-container>
+                        <label>If Error. Error Text</label>
+                        <input type="text" data-ng-model="vm.item.type_settings.error_text_expr">
+                    </md-input-container>
+
+                </div>
+
+
+            </div>
+
+            <div data-ng-if="vm.item.type == 5">
+
+                <h4>Bloomberg</h4>
+
+                <div layout="row" data-ng-if="vm.switchState == 'default_value'">
+
+                    <md-input-container>
+                        <label>Default Value</label>
+                        <input type="text" data-ng-model="vm.item.type_settings.default_value">
+                    </md-input-container>
+
+                    <md-button class="md-raised md-primary" data-ng-click="vm.switch($event)">Switch</md-button>
+
+                </div>
+
+                <div layout="row" data-ng-if="vm.switchState == 'attribute_key'">
+
+                    <md-input-container class="m-t-16">
+                        <label>Options</label>
+                        <md-select data-ng-model="vm.item.type_settings.attribute_key">
+                            <md-option ng-value="attribute.user_code" data-ng-repeat="attribute in vm.optionsForPrimaryParameter">
+                                {{attribute.name}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-button class="md-raised md-primary" data-ng-click="vm.switch($event)">Switch</md-button>
+
+                </div>
+
+                <md-input-container class="m-t-16">
+                    <label>Value Type</label>
+                    <md-select data-ng-model="vm.item.type_settings.value_type">
+                        <md-option value="10">Text</md-option>
+                        <md-option value="20">Number</md-option>
+                        <md-option value="40">Date</md-option>
+                    </md-select>
+                </md-input-container>
+
+                <div layout="row" class="m-t-16">
+
+                    <md-input-container>
+                        <label>FX Rate (Requested Field ID)</label>
+                        <input type="text" data-ng-model="vm.item.type_settings.fx_rate">
+                    </md-input-container>
+
+                </div>
+
+                <div class="pricing-scheme-help-box">
+
+                    <h4>Available variables:</h4>
+
+                    <div>
+                        <b>context_date</b>
+                    </div>
+
+                    <div>
+                        <b>context_currency</b>
+                    </div>
+
+                    <div>
+                        <b>context_pricing_policy</b>
+                    </div>
+
+                    <div>
+                        <b>fx_rate</b>
+                    </div>
+
+                    <div>
+                        <b>fx_rate_error</b>
+                    </div>
+
+
+
+                </div>
+
+                <div>
+
+                    <md-input-container>
+                        <label>Pricing Formula</label>
+                        <input type="text" data-ng-model="vm.item.type_settings.expr">
+                    </md-input-container>
+
+                    <expression-editor-button data-item="vm.item.type_settings.expr"
+                                              data-data="{functions: vm.expressionBuilderFunctions}"
+                                              style="float: right"></expression-editor-button>
+
+                </div>
+
+                <div>
+
+                    <md-input-container>
+                        <label>If Error. Error Text</label>
+                        <input type="text" data-ng-model="vm.item.type_settings.error_text_expr">
+                    </md-input-container>
+
+                </div>
+
+            </div>
+
+            <div data-ng-if="vm.item.type == 7">
+
+                <h4>Fixer</h4>
+
+                <div layout="row" data-ng-if="vm.switchState == 'default_value'">
+
+                    <md-input-container>
+                        <label>Default Value</label>
+                        <input type="text" data-ng-model="vm.item.type_settings.default_value">
+                    </md-input-container>
+
+                    <md-button class="md-raised md-primary" data-ng-click="vm.switch($event)">Switch</md-button>
+
+                </div>
+
+                <div layout="row" data-ng-if="vm.switchState == 'attribute_key'">
+
+                    <md-input-container class="m-t-16">
+                        <label>Options</label>
+                        <md-select data-ng-model="vm.item.type_settings.attribute_key">
+                            <md-option ng-value="item.user_code" data-ng-repeat="item in vm.optionsForPrimaryParameter">
+                                {{item.name}} ({{item.user_code}})
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-button class="md-raised md-primary" data-ng-click="vm.switch($event)">Switch</md-button>
+
+                </div>
+
+                <md-input-container class="m-t-16">
+                    <label>Value Type</label>
+                    <md-select data-ng-model="vm.item.type_settings.value_type"
+                               data-ng-change="vm.primaryParameterValueTypeUpdate()">
+                        <md-option value="10">Text</md-option>
+                        <md-option value="20">Number</md-option>
+                        <md-option value="40">Date</md-option>
+                    </md-select>
+                </md-input-container>
+
+                <div class="pricing-scheme-help-box">
+
+                    <h4>Available variables:</h4>
+
+                    <div>
+                        <b>context_date</b>
+                    </div>
+
+                    <div>
+                        <b>context_currency</b>
+                    </div>
+
+                    <div>
+                        <b>context_pricing_policy</b>
+                    </div>
+
+                    <div>
+                        <b>close</b>
+                    </div>
+
+                    <div>
+                        <b>close_error</b>
+                    </div>
+
+
+                </div>
+
+                <div>
+
+                    <md-input-container>
+                        <label>Pricing Formula</label>
+                        <input type="text" data-ng-model="vm.item.type_settings.expr">
+                    </md-input-container>
+
+                    <expression-editor-button data-item="vm.item.type_settings.expr"
+                                              data-data="{functions: vm.expressionBuilderFunctions}"
+                                              style="float: right"></expression-editor-button>
+
+                </div>
+
+                <div>
+
+                    <md-input-container>
+                        <label>If Error. Error Text</label>
+                        <input type="text" data-ng-model="vm.item.type_settings.error_text_expr">
+                    </md-input-container>
+
+                </div>
+
+
+
+            </div>
+
+            <div data-ng-if="vm.item.type == 9">
+
+                <h4>Finmars Database</h4>
+
+                <div layout="row" data-ng-if="vm.switchState == 'default_value'">
+
+                    <md-input-container>
+                        <label>Default Value</label>
+                        <input type="text" data-ng-model="vm.item.type_settings.default_value">
+                    </md-input-container>
+
+                    <md-button class="md-raised md-primary" data-ng-click="vm.switch($event)">Switch</md-button>
+
+                </div>
+
+                <div layout="row" data-ng-if="vm.switchState == 'attribute_key'">
+
+                    <md-input-container class="m-t-16">
+                        <label>Options</label>
+                        <md-select data-ng-model="vm.item.type_settings.attribute_key">
+                            <md-option ng-value="item.user_code" data-ng-repeat="item in vm.optionsForPrimaryParameter">
+                                {{item.name}} ({{item.user_code}})
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-button class="md-raised md-primary" data-ng-click="vm.switch($event)">Switch</md-button>
+
+                </div>
+
+                <md-input-container class="m-t-16">
+                    <label>Value Type</label>
+                    <md-select data-ng-model="vm.item.type_settings.value_type"
+                               data-ng-change="vm.primaryParameterValueTypeUpdate()">
+                        <md-option value="10">Text</md-option>
+                        <md-option value="20">Number</md-option>
+                        <md-option value="40">Date</md-option>
+                    </md-select>
+                </md-input-container>
+
+                <div class="pricing-scheme-help-box">
+
+                    <h4>Available variables:</h4>
+
+                    <div>
+                        <b>context_date</b>
+                    </div>
+
+                    <div>
+                        <b>context_currency</b>
+                    </div>
+
+                    <div>
+                        <b>context_pricing_policy</b>
+                    </div>
+
+                    <div>
+                        <b>close</b>
+                    </div>
+
+                    <div>
+                        <b>close_error</b>
+                    </div>
+
+
+                </div>
+
+                <div>
+
+                    <md-input-container>
+                        <label>Pricing Formula</label>
+                        <input type="text" data-ng-model="vm.item.type_settings.expr">
+                    </md-input-container>
+
+                    <expression-editor-button data-item="vm.item.type_settings.expr"
+                                              data-data="{functions: vm.expressionBuilderFunctions}"
+                                              style="float: right"></expression-editor-button>
+
+                </div>
+
+                <div>
+
+                    <md-input-container>
+                        <label>If Error. Error Text</label>
+                        <input type="text" data-ng-model="vm.item.type_settings.error_text_expr">
+                    </md-input-container>
+
+                </div>
+
+
+
+            </div>
+
+        </div>
+
+        <div data-ng-if="!vm.readyStatus.types || !vm.readyStatus.item">
+
+            <div class="m-16" layout="row" layout-sm="column" layout-align="space-around">
+                <progress-circular diameter="100"></progress-circular>
+            </div>
+
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()">
+            Close
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.agree()" style="margin-right:20px;">
+            Save
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

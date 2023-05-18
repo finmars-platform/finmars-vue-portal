@@ -1,0 +1,56 @@
+<div>
+    Edit default parameters popup
+</div>
+
+<div>
+    {{column.settings.popupSettings.data}}
+</div>
+
+
+
+
+
+<td>
+
+    <div data-ng-if="item.pricing_scheme_object.type_object.input_type == 1">
+        -
+    </div>
+
+    <div data-ng-if="item.pricing_scheme_object.type_object.input_type != 1" class="m-t-16"
+         data-ng-init="item.default_value ? item.switchState = 'default_value' : item.switchState = 'attribute_key'">
+
+        <div layout="row" data-ng-if="item.switchState == 'default_value'">
+
+            <md-input-container>
+                <label>Default Value</label>
+                <input type="text" data-ng-model="item.default_value">
+            </md-input-container>
+
+            <md-button class="md-raised md-primary"
+                       data-ng-click="vm.switchPricingPolicyParameter($event, item)">Switch
+            </md-button>
+
+        </div>
+
+        <div layout="row" data-ng-if="item.switchState == 'attribute_key'">
+
+            <md-input-container class="m-t-16">
+                <label>Options</label>
+                <md-select data-ng-model="item.attribute_key">
+                    <md-option ng-value="attribute.user_code"
+                               data-ng-repeat="attribute in vm.attributeTypesByValueTypes[item.pricing_scheme_object.type_settings.value_type]">
+                        {{attribute.name}}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-button class="md-raised md-primary"
+                       data-ng-click="vm.switchPricingPolicyParameter($event, item)">Switch
+            </md-button>
+
+        </div>
+
+    </div>
+
+
+</td>

@@ -1,0 +1,65 @@
+<div layout="row">
+    <md-button class="link-button" ng-click="vm.cancel()">
+        <span >Cancel</span>
+    </md-button>
+
+</div>
+
+<div style="margin-right: 10px;">
+    <!--            <md-button ng-click="" class="md-raised">-->
+    <!--                <div class="flex-row flex-c-center">-->
+    <!--                    <ng-md-icon icon="more_vert" class="flex-row"></ng-md-icon>-->
+    <!--                </div>-->
+    <!--                -->
+    <!--                -->
+    <!--                -->
+    <!--            </md-button>-->
+
+    <md-menu md-position-mode="target-right target">
+
+        <md-button class="outline-button" ng-click="$mdOpenMenu($event)">
+            <div class="flex-row flex-c-center">
+                <ng-md-icon icon="more_vert" class="flex-row"></ng-md-icon>
+            </div>
+        </md-button>
+
+        <md-menu-content class="universal-editor-menu-content optional-entity-menu" width="3">
+
+            <md-menu-item >
+                <md-button ng-click="vm.editLayout($event)" ng-disabled="!vm.checkReadyStatus() || !vm.entity.transaction_type">
+                    <div class="flex-row flex-i-center">
+                        <ng-md-icon icon="edit" class="flex-row"></ng-md-icon>
+                        <span class="m-l-16">Edit Form</span>
+                    </div>
+
+                </md-button>
+            </md-menu-item>
+
+            <md-menu-item>
+
+                <md-button ng-click="vm.editAsJson($event)">
+                    <div class="flex-row flex-i-center">
+                        <ng-md-icon icon="edit" class="flex-row"></ng-md-icon>
+                        <span class="m-l-16">Edit as JSON</span>
+                    </div>
+
+                </md-button>
+
+            </md-menu-item>
+
+        </md-menu-content>
+    </md-menu>
+
+    <md-button data-ng-class="{'disabled-btn': !vm.formIsValid || vm.processing}"
+               class="outline-button"
+               ng-click="vm.bookAsPending()">
+        Book as pending
+    </md-button>
+
+    <md-button data-ng-class="{'disabled-btn': !vm.formIsValid || vm.processing}"
+               ng-click="vm.book()"
+               class="m-r-24 primary-button">
+        Book
+    </md-button>
+
+</div>

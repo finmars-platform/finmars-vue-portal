@@ -1,0 +1,95 @@
+<md-dialog aria-label="custom field manager" class="width-70 draggable-dialog" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools" style="height: 64px;">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Custom Field Manager</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="attributes-manager-view" style="height: 100%;">
+            <md-content style="height: 100%;">
+
+                <div data-ng-if="vm.readyStatus.customFields && vm.readyStatus.attributes">
+
+                    <div>
+                        <h2 class="am-header"><span data-ng-bind="vm.entityType"></span>
+                            CUSTOM COLUMNS
+                        </h2>
+                    </div>
+                    <div layout="row">
+                        <div layout="row" flex="50" layout-align="start center">
+
+                            <md-menu>
+                                <md-button class="md-raised" data-ng-click="$mdOpenMenu($event)">
+                                    Add New
+                                </md-button>
+
+                                <md-menu-content>
+                                    <md-menu-item>
+                                        <md-button class="md-raised"
+                                                   data-ng-click="vm.addCustomField($event)">Add Blank
+                                        </md-button>
+                                    </md-menu-item>
+
+                                    <md-menu-item>
+                                        <md-button class="md-raised"
+                                                   package-manager-button
+                                                   content-type="vm.customFieldContentType">
+                                            Select from List
+                                        </md-button>
+                                    </md-menu-item>
+
+                                </md-menu-content>
+                            </md-menu>
+
+                        </div>
+                        <div layout="row" flex="50" layout-align="end center">
+                            <md-button class="md-raised md-primary" data-ui-sref="app.portal.reports.balance-report">
+                                RETURN TO VIEW
+                            </md-button>
+
+                        </div>
+                    </div>
+                    <div data-ng-if="vm.customFields.length">
+                        <md-card data-ng-repeat="item in vm.customFields" class="am-attr-card">
+                            <div>
+                                <b data-ng-bind="item.name"></b>
+                                <div class="am-attr-misc">
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.editCustomField(item, $event)">
+                                        <ng-md-icon icon="edit"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class="am-attr-btn"
+                                               data-ng-click="vm.deleteCustomField(item, $event)">
+                                        <ng-md-icon icon="delete"></ng-md-icon>
+                                    </md-button>
+                                </div>
+                            </div>
+                        </md-card>
+                    </div>
+                    <div data-ng-if="!vm.customFields.length">
+                        <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                            <h1>You could add new Custom Column here</h1>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div data-ng-if="!vm.readyStatus.customFields || !vm.readyStatus.attributes">
+                    <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                        <progress-circular diameter="100"></progress-circular>
+                    </div>
+                </div>
+
+            </md-content>
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" ng-click="vm.cancel()">
+            Close
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

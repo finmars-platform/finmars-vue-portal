@@ -1,0 +1,131 @@
+<div data-ng-if="vm.readyStatus.schemes"
+     style="padding: 0 20px" class="import-page simple-import-page">
+
+    <div class="import-section" layout="column" style="margin-bottom: 20px; width: 300px;">
+
+        <dropdown-select model="vm.activeContentType"
+                         placeholder-text="Entity"
+                         menu-options="vm.contentTypes"
+                         on-change-callback="vm.getSchemeList()"
+                         small-options="{noIndicatorBtn: true, dialogParent: '.dialog-containers-wrap'}"
+                         class=" m-t-16"></dropdown-select>
+
+
+        <div class="position-relative" layout="row">
+            <dropdown-select
+                    model="vm.config.scheme"
+                    placeholder-text="Import scheme"
+                    menu-options="vm.entitySchemes"
+                    small-options="{noIndicatorBtn: true, dialogParent: '.dialog-containers-wrap'}"
+                    class=" m-t-8 width-100"></dropdown-select>
+            <md-button
+                    class="scheme-edit-button md-fab"
+                    data-ng-click="vm.editScheme($event)"
+                    ng-disabled="!vm.config.scheme || !vm.hasSchemeEditPermission" style="top: 3px;">
+                <ng-md-icon icon="edit" size="24"></ng-md-icon>
+                <md-tooltip class="tooltip_1" md-direction="top">Edit Scheme</md-tooltip>
+            </md-button>
+            <md-button
+                    style="right: -120px; top: 3px;"
+                    class="scheme-edit-button md-fab"
+                    ng-disabled="!vm.config.scheme || !vm.hasSchemeEditPermission"
+                    data-ng-click="vm.editSchemeV2($event)">
+                <ng-md-icon icon="developer_dashboard" size="24"></ng-md-icon>
+                <md-tooltip class="tooltip_1" md-direction="top">Edit Scheme (v2)</md-tooltip>
+            </md-button>
+        </div>
+
+
+        <md-input-container flex="40" style="margin-bottom: 0" class="ng-hide">
+            <input type="file" id="importDataUploadInput" input-file-directive
+                   read-file="vm.config.file"
+                   read-file-change="vm.checkExtension(vm.config.file, 'csv', $event)">
+        </md-input-container>
+        <div class="input-upload-file-container">
+            <p class="importDataUploadInput">Entity</p>
+            <label for="importDataUploadInput" class="md-button md-raised md-primary IFUlabel">
+                <span>BROWSE...</span></label>
+        </div>
+
+        <div layout="row" layout-align="end center" class="m-t-8">
+
+            <div data-ng-if="vm.readyStatus.processing" class="m-l-16 m-t-8" style="position: relative; top: -4px;">
+                <progress-circular diameter="20"></progress-circular>
+            </div>
+            <md-button
+                    class="link-button"
+                    data-ng-disabled="!vm.loadIsAvailable()"
+                    data-ng-click="vm.validateImport($event)">
+                VALIDATE
+            </md-button>
+            <md-button
+                    class="md-raised import-button"
+                    data-ng-disabled="!vm.loadIsAvailable()"
+                    data-ng-click="vm.startImportWithValidation($event)">
+                IMPORT
+            </md-button>
+
+            <md-button
+                    style="font-size: 8px;"
+                    class="md-raised import-button"
+                    ng-disabled="!vm.loadIsAvailable()"
+                    data-ng-click="vm.startImport($event)">
+                IMPORT (NO VALIDATE)
+            </md-button>
+
+        </div>
+    </div>
+
+    <div class="progress-section" data-ng-if="vm.readyStatus.processing">
+
+        <div data-ng-if="!vm.task.progress_object">
+            <h2 class="text-center">Import is going to start</h2>
+        </div>
+
+        <div data-ng-if="vm.task.progress_object">
+
+            <div class="m-t-8" layout="row" layout-align="space-between">
+                <span>Progress:</span> <span>{{vm.task.progress_object.current}} / {{vm.task.progress_object.total}}</span>
+            </div>
+
+            <div layout="row" layout-sm="column" layout-align="space-around" class="loader-spinner">
+                <md-progress-linear md-mode="determinate"
+                                    value="{{vm.task.progress_object.percent}}"></md-progress-linear>
+            </div>
+
+            <div class="m-t-8">
+                Status:
+                <div>
+                    {{vm.task.progress_object.description}}
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="result-section" data-ng-if="vm.importIsFinished">
+
+        <div class="text-center width-100">
+            <span class="material-icons import-configuration-page-complete-icon" style="font-size: 80px; margin: 0;">check_circle</span>
+        </div>
+        <h2 class="text-center">Success</h2>
+
+        <div data-ng-if="vm.task.attachments.length">
+
+            <div data-ng-repeat="item in vm.task.attachments">
+                                <span class="download-file-button"
+                                      data-ng-click="vm.downloadFile($event, item)">{{item.file_report_object.name}}</span>
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+<div data-ng-if="!vm.readyStatus.schemes">
+    <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+        <progress-circular diameter="100"></progress-circular>
+    </div>
+</div>

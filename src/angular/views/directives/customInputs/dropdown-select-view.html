@@ -1,0 +1,125 @@
+<div class="custom-input-container dropdown-input-container dropdownSelectInputContainer"
+         data-ng-class="getInputContainerClasses()">
+
+    <div ng-if="label" class="custom-input-top-row">
+        <span class="custom-input-textarea-span-pan">{{label}}</span>
+    </div>
+
+    <div custom-popup
+         popup-template-url="{{popupTemplate}}"
+         popup-data="menuOptionsPopupData"
+         popup-event-service="popupEventService"
+         position-relative-to="element"
+         relative-popup-x="left"
+         relative-popup-y="bottom"
+         offset-y="2"
+         open-on="click"
+         close-on-click-outside="true"
+         popup-width="{{popupWidth}}"
+         popup-classes="custom-select-popup-container mh-100vh-popup"
+         on-cancel="onMenuClose()"
+
+         class="custom-input-main-container customInputPopup customInputBackgroundColor">
+
+        <div class="custom-input-borders">
+            <div class="custom-input-content">
+
+                <div class="flex-row">
+
+                    <button data-ng-if="!noIndicatorBtn"
+                                    class="custom-input-indicator-btn position-relative"
+                                    data-ng-click="openSelectorDialog($event)"
+                                    ng-disabled="isDisabled">
+                        <span class="material-icons">menu</span>
+                    </button>
+
+                    <!-- <input
+                        type="text"
+                        placeholder="{{placeholderText}}"
+                        ng-model="inputText"
+                        ng-model-options="{debounce: 1000}"
+                        ng-change="onInputTextChange()"
+                        ng-disabled="isDisabled"
+                        class="custom-input dropdown-select-input dropdownSelectInputElem"
+                    /> -->
+                    <input type="text"
+                           placeholder="{{placeholderText}}"
+                           ng-model="menuOptionsPopupData.filterTerm"
+                           ng-disabled="isDisabled"
+                           class="custom-input dropdown-select-input dropdownSelectInputElem" />
+
+                </div>
+
+                <div class="custom-input-side-items flex-row customInputBackgroundColor">
+
+                    <div class="custom-input-custom-btns-holder">
+                        <div data-ng-if="customButtons && customButtons.length" class="height-100 flex-row">
+                            <button data-ng-repeat="button in customButtons"
+                                    class="{{button.classes}} custom-input-custom-btn"
+                                    data-ng-click="callFnForCustomBtn(button.action)">
+                                {{button.caption}}
+                                <ng-md-icon data-ng-if="button.iconObj.type === 'angularjs-material'"
+                                                        size="24"
+                                                        icon="{{button.iconObj.icon}}"
+                                                        class="ci-custom-btn-icon"></ng-md-icon>
+
+                                <span data-ng-if="button.iconObj.type === 'angular-material'"
+                                      class="material-icons ci-icon-color">{{button.iconObj.icon}}</span>
+
+                                <md-tooltip data-ng-if="button.tooltip"
+                                                        class="tooltip_1"
+                                                        md-direction="top">{{button.tooltip}}
+                                </md-tooltip>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div data-ng-if="error" class="custom-input-tooltip">
+                        <span class="material-icons">info</span>
+                        <md-tooltip class="error-tooltip" md-direction="top">{{error}}</md-tooltip>
+                    </div>
+
+                    <div data-ng-if="tooltipText" data-ng-show="!error" class="custom-input-tooltip">
+                        <span class="material-icons ci-icon-color">info_outline</span>
+                        <md-tooltip class="tooltip_2" md-direction="top" data-ng-bind="tooltipText"></md-tooltip>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!--<div ng-if="dropdownMenuShown"
+         class="custom-input-sel-menu-container custom-input-dropdown-div selectMenuContainer">
+
+        <div ng-if="!groupOptions"
+             class="custom-input-sel-menu-block">
+            <div ng-repeat="option in menuOptions | orderBy:'name':false:optionsComparator | filter: inputText"
+                 ng-click="selectOption(option)"
+                 ng-bind="option.name"
+                 class="custom-input-sel-option"></div>
+        </div>
+
+        <div ng-if="groupOptions"
+             class="custom-input-sel-menu-block">
+            <div data-ng-repeat="group in menuOptions | orderBy:'name':false:optionsComparator | filter: inputText"
+                 class="custom-input-sel-group">
+
+                <div ng-if="group.content.length">
+                    <div class="group-name" ng-bind="group.name"></div>
+                    <div ng-repeat="option in group.content | orderBy:'name':false:optionsComparator| filter: inputText"
+                         ng-click="selectOption(option)"
+                         ng-bind="option.name"
+                         class="custom-input-sel-option"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>-->
+
+    <div ng-if="error"
+         ng-bind="error"
+         class="custom-input-bottom-error-text"></div>
+
+</div>
