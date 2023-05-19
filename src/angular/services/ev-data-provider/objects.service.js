@@ -10,8 +10,6 @@ import xhrService from '@/angular/core/services/xhrService'
 var baseUrl = baseUrlService.resolve()
 
 var getFilteredList = function (entityType, options) {
-	console.log('getFilteredList.options', options)
-
 	// options.filter_settings = filter_settings;
 
 	var entityUrl = entityUrlService.resolve(entityType)

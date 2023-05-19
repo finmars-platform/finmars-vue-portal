@@ -1,9 +1,31 @@
 <template>
-	<AngularFmGridTable
-		v-if="controller"
-		:evDataService="controller.entityViewerDataService"
-		:evEventService="controller.entityViewerEventService"
-	/>
+	<div class="entity-viewer-holder">
+		<div class="height-100">
+			<div
+				v-if="vm.readyStatus.attributes && vm.readyStatus.layout"
+				class="g-group-table-holder"
+			>
+				<AngularFmGridTable
+					:attributeDataService="vm.attributeDataService"
+					:evDataService="vm.entityViewerDataService"
+					:evEventService="vm.entityViewerEventService"
+					:spExchangeService="vm.splitPanelExchangeService"
+					:vm="vm"
+				/>
+			</div>
+			<div v-else>
+				<div
+					class="e-data-loader"
+					layout="row"
+					layout-sm="column"
+					layout-align="space-around"
+				>
+					<!-- <progress-circular diameter="100"></progress-circular> -->
+					loader
+				</div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script setup>
@@ -26,7 +48,7 @@
 		params: useRoute().query,
 	}
 
-	let controller = new entityViewerController(route)
+	let vm = new entityViewerController(route)
 
 	// fetchTrans()
 	async function fetchTrans() {

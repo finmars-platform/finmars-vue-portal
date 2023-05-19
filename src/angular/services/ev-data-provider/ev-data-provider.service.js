@@ -160,8 +160,6 @@ var deserializeObjects = function (
 	} else {
 		var groupData = entityViewerDataService.getData(event.___id)
 
-		console.log('groupData', groupData)
-
 		if (groupData) {
 			obj = Object.assign({}, groupData)
 
@@ -249,20 +247,14 @@ var deserializeObjects = function (
 
         obj.results.push(controlObj);*/
 
-	console.log('attributeDataService', attributeDataService)
-
 	var attribute_type_map = {}
 	var entityType = entityViewerDataService.getEntityType()
-
-	console.log('entityType', entityType)
 
 	var attrs = attributeDataService.getDynamicAttributesByEntityType(entityType)
 
 	attrs.forEach(function (item) {
 		attribute_type_map[item.id] = item
 	})
-
-	console.log('attribute_type_map', attribute_type_map)
 
 	obj.results.forEach(function (item) {
 		if (item.attributes) {
@@ -271,8 +263,6 @@ var deserializeObjects = function (
 			})
 		}
 	})
-
-	console.log('obj', obj)
 
 	entityViewerDataService.setData(obj)
 }
@@ -307,8 +297,6 @@ var deserializeGroups = function (
 				obj.results[pageAsIndex * step + i] = data.results[i]
 			}
 		}
-
-		console.log('obj', obj)
 	} else {
 		var groupData = entityViewerDataService.getData(event.___id)
 
@@ -427,8 +415,6 @@ var deserializeGroups = function (
 
         obj.results.push(controlObj); */
 
-	console.log('DESERIALIZE GROUPS', obj.results)
-
 	entityViewerDataService.setData(obj)
 }
 
@@ -506,8 +492,6 @@ var getObjects = function (
 					objectsService
 						.getFilteredList(entityType, options)
 						.then(function (data) {
-							console.log('requestParameters', requestParameters)
-
 							requestParameters.pagination.count = data.count
 							requestParameters.processedPages.push(pageToRequest)
 
@@ -567,8 +551,6 @@ var getObjects = function (
 							}
 						})
 						.catch(function (data) {
-							console.log('data', data)
-
 							console.log(
 								'error getFilteredList request requestParameters',
 								requestParameters
@@ -626,8 +608,6 @@ var getGroups = function (
 			return requestParameters.processedPages.indexOf(page) === -1
 		})
 
-		console.log('pagesToRequest', pagesToRequest)
-
 		var pagination = entityViewerDataService.getPagination()
 		var itemsPerPage = pagination.page_size
 
@@ -666,8 +646,6 @@ var getGroups = function (
 					groupsService
 						.getFilteredList(entityType, options)
 						.then(function (data) {
-							console.log('get groups', data)
-
 							requestParameters.pagination.count = data.count
 							requestParameters.processedPages.push(pageToRequest)
 
