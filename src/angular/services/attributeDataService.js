@@ -50,6 +50,12 @@ import portfolioPropsModel from '../models/portfolioPropsModel'
 import countryPropsModel from '../models/countryPropsModel'
 import transactionClassPropsModel from '../models/transactionClassPropsModel'
 
+import currencyHistoryErrorPropsModel from '../models/currencyHistoryErrorPropsModel'
+import priceHistoryErrorPropsModel from '../models/priceHistoryErrorPropsModel'
+import complextransactionStatusPropsModel from '../models/complextransactionStatusPropsModel'
+import portfolioRegisterRecordPropsModel from '../models/portfolioRegisterRecordPropsModel'
+import portfolioRegisterPropsModel from '../models/portfolioRegisterPropsModel'
+
 export default function (
 	metaContentTypesService,
 	customFieldService,
@@ -59,41 +65,29 @@ export default function (
 	var reportsEntityTypes = ['balance-report', 'pl-report', 'transaction-report']
 
 	var entityAttributesData = {
-		portfolio: require('../models/portfolioPropsModel').getAttributes(),
-		'portfolio-register':
-			require('../models/portfolioRegisterPropsModel').getAttributes(),
+		portfolio: portfolioPropsModel.getAttributes(),
+		'portfolio-register': portfolioRegisterPropsModel.getAttributes(),
 		'portfolio-register-record':
-			require('../models/portfolioRegisterRecordPropsModel').getAttributes(),
-		'audit-transaction':
-			require('../models/auditTransactionPropsModel').getAttributes(),
-		'audit-instrument':
-			require('../models/auditInstrumentPropsModel').getAttributes(),
-		account: require('../models/accountPropsModel').getAttributes(),
-		tag: require('../models/tagPropsModel').getAttributes(),
-		'account-type': require('../models/accountTypePropsModel').getAttributes(),
-		counterparty: require('../models/counterpartyPropsModel').getAttributes(),
-		'counterparty-group':
-			require('../models/counterpartyGroupPropsModel').getAttributes(),
-		responsible: require('../models/responsiblePropsModel').getAttributes(),
-		'responsible-group':
-			require('../models/responsibleGroupPropsModel').getAttributes(),
-		'pricing-policy':
-			require('../models/pricingPolicyPropsModel').getAttributes(),
-		'instrument-type':
-			require('../models/instrumentTypePropsModel').getAttributes(),
-		instrument: require('../models/instrumentPropsModel').getAttributes(),
-		'generated-event':
-			require('../models/generatedEventPropsModel').getAttributes(),
-		transaction: require('../models/transactionPropsModel').getAttributes(),
-		'transaction-type-group':
-			require('../models/transactionTypeGroupPropsModel').getAttributes(),
-		'transaction-type':
-			require('../models/transactionTypePropsModel').getAttributes(),
-		currency: require('../models/currencyPropsModel').getAttributes(),
-		'currency-history':
-			require('../models/currencyHistoryPropsModel').getAttributes(),
-		'price-history':
-			require('../models/priceHistoryPropsModel').getAttributes(),
+			portfolioRegisterRecordPropsModel.getAttributes(),
+		'audit-transaction': auditTransactionPropsModel.getAttributes(),
+		'audit-instrument': auditInstrumentPropsModel.getAttributes(),
+		account: accountPropsModel.getAttributes(),
+		tag: tagPropsModel.getAttributes(),
+		'account-type': accountTypePropsModel.getAttributes(),
+		counterparty: counterpartyPropsModel.getAttributes(),
+		'counterparty-group': counterpartyGroupPropsModel.getAttributes(),
+		responsible: responsiblePropsModel.getAttributes(),
+		'responsible-group': responsibleGroupPropsModel.getAttributes(),
+		'pricing-policy': pricingPolicyPropsModel.getAttributes(),
+		'instrument-type': instrumentTypePropsModel.getAttributes(),
+		instrument: instrumentPropsModel.getAttributes(),
+		'generated-event': generatedEventPropsModel.getAttributes(),
+		transaction: transactionPropsModel.getAttributes(),
+		'transaction-type-group': transactionTypeGroupPropsModel.getAttributes(),
+		'transaction-type': transactionTypePropsModel.getAttributes(),
+		currency: currencyPropsModel.getAttributes(),
+		'currency-history': currencyHistoryPropsModel.getAttributes(),
+		'price-history': priceHistoryPropsModel.getAttributes(),
 		'strategy-1': strategy1PropsModel.getAttributes(),
 		'strategy-2': strategy2PropsModel.getAttributes(),
 		'strategy-3': strategy3PropsModel.getAttributes(),
@@ -117,17 +111,13 @@ export default function (
 		'cash-flow-projection-report':
 			cashFlowProjectionReportPropsModel.getAttributes(),
 		'performance-report': performanceReportPropsModel.getAttributes(),
+		'currency-history-error': currencyHistoryErrorPropsModel.getAttributes(),
+		'price-history-error': priceHistoryErrorPropsModel.getAttributes(),
 
-		'currency-history-error':
-			require('../models/currencyHistoryErrorPropsModel').getAttributes(),
-		'price-history-error':
-			require('../models/priceHistoryErrorPropsModel').getAttributes(),
-
-		'transaction-class':
-			require('../models/transactionClassPropsModel').getAttributes(),
+		'transaction-class': transactionClassPropsModel.getAttributes(),
 		'complex-transaction-status':
-			require('../models/complextransactionStatusPropsModel').getAttributes(),
-		country: require('../models/countryPropsModel').getAttributes(),
+			complextransactionStatusPropsModel.getAttributes(),
+		country: countryPropsModel.getAttributes(),
 	}
 
 	var customFieldsData = {}

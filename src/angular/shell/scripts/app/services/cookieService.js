@@ -1,7 +1,6 @@
-'use strict';
+import jQuery from 'jquery'
 
 export default function () {
-
 	/* //# region IMPORTANT: Only for development purpose. E.g. development of components inside iframe locally.
 
 	let cookieStorage = {};
@@ -30,73 +29,72 @@ export default function () {
 	//# endregion IMPORTANT: Only for development purpose. E.g. development of components inside iframe locally. */
 
 	const getStoredCookie = function () {
-		return document.cookie;
+		return document.cookie
 	}
 
 	const storeCookie = function (value) {
-		document.cookie = value;
+		document.cookie = value
 	}
 
 	const getCookie = function (name) {
-		let cookieValue = null;
-		let cookie = getStoredCookie();
+		let cookieValue = null
+		let cookie = getStoredCookie()
 		if (cookie && cookie != '') {
-			const cookies = cookie.split(';');
+			const cookies = cookie.split(';')
 			for (let i = 0; i < cookies.length; i++) {
-				const cookie = jQuery.trim(cookies[i]);
+				const cookie = jQuery.trim(cookies[i])
 				// Does this cookie string begin with the name we want?
-				if (cookie.substring(0, name.length + 1) === (name + '=')) {
-					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-					break;
+				if (cookie.substring(0, name.length + 1) === name + '=') {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+					break
 				}
 			}
 		}
-		return cookieValue;
-	};
+		return cookieValue
+	}
 
 	const setCookie = function (name, value, options) {
-		options = options || {};
+		options = options || {}
 
 		if (!options.path) {
 			options.path = '/'
 		}
 
-		let expires = options.expires;
+		let expires = options.expires
 
-		if (typeof expires == "number" && expires) {
-			let d = new Date();
-			d.setTime(d.getTime() + expires * 1000);
-			expires = options.expires = d;
+		if (typeof expires == 'number' && expires) {
+			let d = new Date()
+			d.setTime(d.getTime() + expires * 1000)
+			expires = options.expires = d
 		}
 
 		if (expires && expires.toUTCString) {
-			options.expires = expires.toUTCString();
+			options.expires = expires.toUTCString()
 		}
 
-		value = encodeURIComponent(value);
+		value = encodeURIComponent(value)
 
-		let updatedCookie = name + "=" + value;
+		let updatedCookie = name + '=' + value
 
 		for (const propName in options) {
-			updatedCookie += "; " + propName;
-			const propValue = options[propName];
+			updatedCookie += '; ' + propName
+			const propValue = options[propName]
 			if (propValue !== true) {
-				updatedCookie += "=" + propValue;
+				updatedCookie += '=' + propValue
 			}
 		}
 
 		// document.cookie = updatedCookie;
-		storeCookie(updatedCookie);
-	};
+		storeCookie(updatedCookie)
+	}
 
 	const deleteCookie = function (name) {
-		setCookie(name, "", {expires: -1})
-	};
+		setCookie(name, '', { expires: -1 })
+	}
 
 	return {
 		getCookie: getCookie,
 		setCookie: setCookie,
-		deleteCookie: deleteCookie
+		deleteCookie: deleteCookie,
 	}
-
-};
+}

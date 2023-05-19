@@ -1,21 +1,18 @@
-'use strict';
+'use strict'
 
-window.base_api_url = '';
+window.base_api_url = ''
 
 const resolve = () => {
-
 	if ('__PROJECT_ENV__') {
-
 		// const host = '__API_HOST__';
-		const host = window.API_HOST;
+		// IMPORTANT
+		const host = 'https://dev.finmars.com'
 
-		return host;
-
+		return host
 	}
 
 	return ''
-
-};
+}
 
 const getAuthorizerUrl = () => {
 	// return '__AUTHORIZER_URL__'
@@ -23,11 +20,11 @@ const getAuthorizerUrl = () => {
 }
 
 const setMasterUserPrefix = function (_prefix) {
-	window.base_api_url = _prefix;
+	window.base_api_url = _prefix
 }
 
 const getMasterUserPrefix = () => {
-	return window.base_api_url
+	return window.base_api_url || 'space0crgw'
 }
 
 const getApiVersion = () => {
@@ -40,5 +37,5 @@ export default {
 	setMasterUserPrefix: setMasterUserPrefix,
 	getMasterUserPrefix: getMasterUserPrefix,
 
-	getApiVersion: getApiVersion
+	getApiVersion: getApiVersion,
 }
