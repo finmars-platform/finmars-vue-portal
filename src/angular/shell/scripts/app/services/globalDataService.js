@@ -44,8 +44,6 @@ export default function () {
 	}
 
 	const setMember = function (member) {
-		console.trace('autosave77 setMember')
-		console.log('autosave77 setMember', member)
 		data.member = member
 	}
 
@@ -119,7 +117,6 @@ export default function () {
 			user.data.autosave_layouts && member.data.autosave_layouts
 
 		if (!autosave77) {
-			console.log('autosave77 isAutosaveLayoutOn user, member', user, member)
 		}
 
 		return autosave77

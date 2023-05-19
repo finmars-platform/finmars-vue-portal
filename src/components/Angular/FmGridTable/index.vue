@@ -71,168 +71,13 @@
 					ev-event-service="evEventService"
 				>
 					<div v-if="components.topPart">
-						<!-- <g-top-part MIEN
-								ev-data-service="evDataService"
-								ev-event-service="evEventService"
-								attribute-data-service="attributeDataService"
-								sp-exchange-service="spExchangeService"
-							>
-							</g-top-part> -->
-						<div
-							class="g-top-part width-100 flex-row fc-space-between flex-i-center"
-						>
-							<div class="g-top-part-left p-l-24 flex-50 flex-row">
-								<md-button
-									class="g-top-button flex-row"
-									custom-popup
-									popup-template-url="'views/popups/entity-viewer/g-layouts-manager-popup-view.html'"
-									popup-data="popupData"
-									position-relative-to="element"
-									open-on="click"
-									offset-x="-30"
-									popup-classes="rounded-border"
-									close-on-click-outside="true"
-								>
-									<span class="material-icons">view_quilt</span>
-									<span class="m-l-8">{{ layoutData?.name }}</span>
-									<span class="material-icons">arrow_drop_down</span>
-								</md-button>
-
-								<md-button
-									class="g-top-button small-button-icon p-r-8 p-l-8"
-									ng-click="saveLayoutList($event)"
-								>
-									<span class="material-icons">save</span>
-								</md-button>
-
-								<md-button
-									v-if="!isRootEntityViewer"
-									class="g-filter-area-toggle active margin-0"
-									data-ng-click="toggleFilterBlock($event)"
-								>
-									<div class="flex-column flex-i-center">
-										<span class="material-icons">filter_list</span>
-									</div>
-								</md-button>
-
-								<div class="global-table-filter-container">
-									<input
-										type="text"
-										ng-model="globalTableSearch"
-										ng-change="onGlobalTableSearchChange()"
-										placeholder="Search for a ..."
-										class="global-table-filter-search"
-										aria-invalid="false"
-										data-ng-model-options="{debounce: 500}"
-									/>
-								</div>
-							</div>
-
-							<div class="p-r-24 flex-row flex-i-center">
-								<div v-if="isReport" class="flex-row flex-i-center">
-									<md-button
-										v-if="missingPricesData.items.length"
-										class="missing-prices-warning-button"
-										data-ng-click="openMissingPricesDialog($event)"
-										><span class="material-icons">warning</span> Missing Data
-										({{ missingPricesData?.items?.length }})
-									</md-button>
-
-									<md-select
-										v-if="entityType != 'transaction-report'"
-										data-ng-model="reportOptions.cost_method"
-										ng-change="updateReportOptions()"
-									>
-										<md-option ng-value="1">AVCO</md-option>
-										<md-option ng-value="2">FIFO</md-option>
-										<!--<md-option ng-value="3">LIFO-->
-										<!--</md-option>-->
-									</md-select>
-
-									<md-input-container v-if="entityType != 'transaction-report'">
-										<label></label>
-										<md-select
-											ng-model="reportOptions.report_currency"
-											md-container-class="common-select-container"
-											md-on-close="searchTerm = ''"
-											ng-change="updateReportOptions()"
-											data-ng-disabled="viewContext === 'dashboard'"
-										>
-											<md-select-header>
-												<input
-													data-ng-model="searchTerm"
-													type="search"
-													placeholder="Search for a ..."
-													class="md-text md-select-search-pattern select-input-filter"
-													ng-keydown="$event.stopPropagation()"
-												/>
-											</md-select-header>
-
-											<div class="select-options-holder">
-												<md-option
-													ng-repeat="item in currencies | filter:{name: searchTerm}"
-													ng-value="item.id"
-												>
-													{{ item?.name }}
-												</md-option>
-											</div>
-										</md-select>
-									</md-input-container>
-
-									<md-checkbox
-										ng-model="reportLayoutOptions.useDateFromAbove"
-										ng-change="toggleUseDateFromAbove()"
-										class="g-top-link-date-checkbox m-r-8 m-l-16"
-										>{{ useDateFromAboveName }}</md-checkbox
-									>
-
-									<div v-if="entityType === 'balance-report'" class="flex-row">
-										<div>
-											<complex-zh-datepicker
-												date="datesData.to"
-												datepicker-options="reportLayoutOptions.datepickerOptions.reportLastDatepicker"
-												callback-method="onReportDateChange()"
-												ev-data-service="evDataService"
-												ev-event-service="evEventService"
-												attribute-data-service="attributeDataService"
-												is-disabled="viewContext === 'split_panel' && reportLayoutOptions.useDateFromAbove"
-											></complex-zh-datepicker>
-										</div>
-									</div>
-
-									<div
-										v-if="
-											entityType === 'pl-report' ||
-											entityType === 'transaction-report'
-										"
-										class="flex-row"
-									>
-										<div>
-											<!-- <complex-zh-datepicker MAIN NEED RELOC
-													date="datesData.from"
-													datepicker-options="reportLayoutOptions.datepickerOptions.reportFirstDatepicker"
-													second-date="datesData.to"
-													second-datepicker-options="reportLayoutOptions.datepickerOptions.reportLastDatepicker"
-													callback-method="onReportDateChange()"
-													ev-data-service="evDataService"
-													ev-event-service="evEventService"
-													attribute-data-service="attributeDataService"
-													is-disabled="viewContext === 'split_panel' && reportLayoutOptions.useDateFromAbove"
-												>
-												</complex-zh-datepicker> -->
-										</div>
-									</div>
-								</div>
-
-								<md-button class="md-icon-button" ng-click="onSettingsClick()">
-									<div class="flex-row flex-c-center flex-i-center">
-										<ng-md-icon icon="settings" size="20">
-											<md-tooltip md-direction="top">Settings</md-tooltip>
-										</ng-md-icon>
-									</div>
-								</md-button>
-							</div>
-						</div>
+						<AngularFmGridTableTopPart
+							:attributeDataService="attributeDataService"
+							:evDataService="evDataService"
+							:evEventService="evEventService"
+							:spExchangeService="spExchangeService"
+							:vm="vm"
+						/>
 					</div>
 
 					<div v-if="components.filterArea" class="position-relative">
@@ -853,7 +698,7 @@
 	import localStorageService from '@/angular/shell/scripts/app/services/localStorageService'
 	import jquery from 'jquery'
 
-	const props = defineProps(['evEventService', 'evDataService'])
+	const props = defineProps(['evEventService', 'evDataService', 'vm'])
 
 	let scope = {
 		attributeDataService: '=',

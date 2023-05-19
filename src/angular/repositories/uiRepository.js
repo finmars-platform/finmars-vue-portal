@@ -212,7 +212,6 @@ return xhrService.fetch(baseUrl   +  '/' + prefix + '/' + apiVersion + '/' + 'ui
 			entityType,
 			'ui'
 		)
-		console.log('baseUrl:', baseUrl)
 
 		var prefix = baseUrlService.getMasterUserPrefix()
 		var apiVersion = baseUrlService.getApiVersion()

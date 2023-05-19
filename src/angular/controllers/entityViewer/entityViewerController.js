@@ -67,10 +67,10 @@ export default function (
 
 	var checkLayoutChanges = true
 
-	vm.readyStatus = {
+	vm.readyStatus = reactive({
 		attributes: false,
 		layout: false,
-	}
+	})
 
 	var onLogoutIndex, onUserChangeIndex
 
@@ -243,8 +243,6 @@ export default function (
 					if (res.status === 'agree') {
 						var objects = vm.entityViewerDataService.getObjects()
 
-						console.log('objects', objects)
-
 						objects.forEach(function (obj) {
 							if (res.data.ids.indexOf(obj.id) !== -1) {
 								var parent = vm.entityViewerDataService.getData(obj.___parentId)
@@ -252,8 +250,6 @@ export default function (
 								parent.results = parent.results.filter(function (resultItem) {
 									return res.data.ids.indexOf(resultItem.id) === -1
 								})
-
-								console.log('parent', parent)
 
 								vm.entityViewerDataService.setData(parent)
 							}
@@ -568,8 +564,6 @@ export default function (
 					})
 				}
 
-				console.log('actionData', actionData)
-
 				if ((actionData.object && actionData.object.id) || activeRowExist) {
 					switch (actionData.actionKey) {
 						case 'delete':
@@ -765,6 +759,7 @@ export default function (
 	 * @param layoutData
 	 */
 	vm.setLayout = function (layoutData) {
+		console.log('layoutData:', layoutData)
 		vm.layoutId = layoutData.id
 
 		layoutData.data.filters = separateEvFilters(layoutData.data.filters)
@@ -820,8 +815,6 @@ export default function (
 
 	vm.setFiltersValuesFromQueryParameters = function () {
 		var activeObject = vm.getActiveObjectFromQueryParameters()
-
-		console.log('vm.getView activeObject', activeObject)
 
 		if (activeObject) {
 			var filters = vm.entityViewerDataService.getFilters()
@@ -934,7 +927,6 @@ export default function (
 			middlewareService.onAutosaveLayoutToggle(function () {
 				// vm.currentMember = globalDataService.getMember();
 				autosaveLayoutOn = globalDataService.isAutosaveLayoutOn()
-				console.log('autosave77 ev isAutosaveLayoutOn', autosaveLayoutOn)
 				if (autosaveLayoutOn) {
 					autosaveLayoutService.initListenersForAutosaveLayout(
 						vm.entityViewerDataService,
@@ -1058,7 +1050,6 @@ export default function (
 
 	var checkLayoutsForChanges = function (transition) {
 		// called on attempt to change page
-		console.log('autosave77 ev checkLayoutsForChanges ', autosaveLayoutOn)
 		/* return new Promise(function (resolve, reject) {
 
                     if (!doNotCheckLayoutChanges) {
@@ -1219,7 +1210,6 @@ export default function (
 		)
 
 		if (layoutHasChanges || spChangedLayout) {
-			console.log('autosave77 ev warnAboutLayoutChangesLoss ', autosaveLayoutOn)
 			event.preventDefault()
 			;(event || window.event).returnValue =
 				'All unsaved changes of layout will be lost.'
@@ -1272,10 +1262,6 @@ export default function (
 			})
 
 			if (!autosaveLayoutOn) {
-				console.log(
-					'autosave77 ev init initTransitionListeners',
-					autosaveLayoutOn
-				)
 				initTransitionListeners()
 			}
 		}
