@@ -20,14 +20,7 @@ var getFilteredList = function (entityType, options) {
 	var apiVersion = baseUrlService.getApiVersion()
 
 	return xhrService.fetch(
-		baseUrl +
-			'/' +
-			prefix +
-			'/' +
-			apiVersion +
-			'/' +
-			entityUrl +
-			'-ev/filtered/',
+		baseUrl + '/' + prefix + '/' + apiVersion + '/' + entityUrl + '/ev-item/',
 		{
 			method: 'POST',
 			credentials: 'include',

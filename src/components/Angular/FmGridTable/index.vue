@@ -70,7 +70,7 @@
 					ev-data-service="evDataService"
 					ev-event-service="evEventService"
 				>
-					<div ng-if="components.topPart">
+					<div v-if="components.topPart">
 						<!-- <g-top-part MIEN
 								ev-data-service="evDataService"
 								ev-event-service="evEventService"
@@ -106,7 +106,7 @@
 								</md-button>
 
 								<md-button
-									ng-if="!isRootEntityViewer"
+									v-if="!isRootEntityViewer"
 									class="g-filter-area-toggle active margin-0"
 									data-ng-click="toggleFilterBlock($event)"
 								>
@@ -139,7 +139,7 @@
 									</md-button>
 
 									<md-select
-										ng-if="entityType != 'transaction-report'"
+										v-if="entityType != 'transaction-report'"
 										data-ng-model="reportOptions.cost_method"
 										ng-change="updateReportOptions()"
 									>
@@ -149,9 +149,7 @@
 										<!--</md-option>-->
 									</md-select>
 
-									<md-input-container
-										ng-if="entityType != 'transaction-report'"
-									>
+									<md-input-container v-if="entityType != 'transaction-report'">
 										<label></label>
 										<md-select
 											ng-model="reportOptions.report_currency"
@@ -188,7 +186,7 @@
 										>{{ useDateFromAboveName }}</md-checkbox
 									>
 
-									<div ng-if="entityType === 'balance-report'" class="flex-row">
+									<div v-if="entityType === 'balance-report'" class="flex-row">
 										<div>
 											<complex-zh-datepicker
 												date="datesData.to"
@@ -203,7 +201,10 @@
 									</div>
 
 									<div
-										ng-if="entityType === 'pl-report' || entityType === 'transaction-report'"
+										v-if="
+											entityType === 'pl-report' ||
+											entityType === 'transaction-report'
+										"
 										class="flex-row"
 									>
 										<div>
@@ -234,7 +235,7 @@
 						</div>
 					</div>
 
-					<div ng-if="components.filterArea" class="position-relative">
+					<div v-if="components.filterArea" class="position-relative">
 						<!-- <g-filters MAIN NEED RELOC
 								ev-data-service="evDataService"
 								ev-event-service="evEventService"
@@ -246,10 +247,10 @@
 							</g-filters> -->
 					</div>
 
-					<div ng-if="readyToRenderTable" class="g-table-section">
+					<div v-if="readyToRenderTable" class="g-table-section">
 						<div class="flex-row">
 							<div
-								ng-if="!isReport"
+								v-if="!isReport"
 								class="g-ev-left-panel-holder gEvLeftPanelHolder"
 							>
 								<!-- <g-ev-left-panel MIEN
@@ -298,7 +299,7 @@
 															<div class="context-menu-btn-wrapper"></div>
 
 															<button
-																ng-if="!isReport"
+																v-if="!isReport"
 																class="g-row-settings-btn visibility-hidden"
 																data-click-action-type="open_row_status_picker"
 															>
@@ -409,7 +410,7 @@
 													</div>
 
 													<div
-														ng-if="isReport"
+														v-if="isReport"
 														class="flex-row g-groups-holder gGroupsHolder gcAreaDnD"
 													>
 														<div
@@ -468,7 +469,7 @@
 																></div>
 
 																<div
-																	ng-if="column.report_settings.is_level_folded"
+																	v-if="column.report_settings.is_level_folded"
 																	class="g-cell-button"
 																	ng-click="unfoldLevel(column, $index)"
 																>
@@ -476,7 +477,7 @@
 																</div>
 
 																<div
-																	ng-if="!column.report_settings.is_level_folded"
+																	v-if="!column.report_settings.is_level_folded"
 																	class="g-cell-button"
 																	ng-click="foldLevel(column, $index)"
 																>
@@ -494,14 +495,14 @@
 																		<div
 																			class="flex-row flex-i-center name-block"
 																		>
-																			<div ng-if="!column.layout_name">
+																			<div v-if="!column.layout_name">
 																				<span ng-bind="column.name"></span>
 																				<span v-if="column.status == 'missing'"
 																					>(Deleted)</span
 																				>
 																			</div>
 
-																			<div ng-if="column.layout_name">
+																			<div v-if="column.layout_name">
 																				<span
 																					ng-bind="column.layout_name"
 																				></span>
@@ -602,7 +603,7 @@
 																class="g-cell g-table-header-cell position-relative"
 															>
 																<div
-																	ng-if="!isReport"
+																	v-if="!isReport"
 																	data-ng-click="sortHandler(column, column?.options.sort === 'DESC' ? 'ASC' : 'DESC')"
 																	class="g-column-sort-settings-opener"
 																></div>
@@ -620,11 +621,11 @@
 																		>
 																			<div>
 																				<span
-																					ng-if="!column.layout_name"
+																					v-if="!column.layout_name"
 																					ng-bind="column.name"
 																				></span>
 																				<span
-																					ng-if="column.layout_name"
+																					v-if="column.layout_name"
 																					ng-bind="column.layout_name"
 																				></span>
 																				<span v-if="column?.status == 'missing'"
@@ -715,7 +716,7 @@
 												class="ev-content"
 												data-ng-show="dataLoadStatus"
 											></div>
-											<div ng-if="!dataLoadStatus" class="ev-content-loader">
+											<div v-if="!dataLoadStatus" class="ev-content-loader">
 												<div
 													class="e-data-loader"
 													layout="row"
@@ -728,7 +729,7 @@
 										</div>
 
 										<div
-											ng-if="isReport"
+											v-if="isReport"
 											class="drop-area-wrap left-side-groups-drop-area display-none gLeftSideGroupsHolder"
 										>
 											<div class="g-drop-area gDropArea"></div>
@@ -759,7 +760,7 @@
 										></report-viewer-matrix> -->
 
 									<div
-										ng-if="isReport"
+										v-if="isReport"
 										rv-gcf-areas-dnd
 										ev-data-service="evDataService"
 										ev-event-service="evEventService"
@@ -767,7 +768,7 @@
 									></div>
 
 									<div
-										ng-if="!isReport"
+										v-if="!isReport"
 										ev-gcf-areas-dnd
 										ev-data-service="evDataService"
 										ev-event-service="evEventService"
@@ -851,7 +852,6 @@
 	import rvDataHelper from '@/angular/helpers/rv-data.helper'
 	import localStorageService from '@/angular/shell/scripts/app/services/localStorageService'
 	import jquery from 'jquery'
-	console.log('jquery:', jquery)
 
 	const props = defineProps(['evEventService', 'evDataService'])
 
@@ -881,8 +881,9 @@
 	var activeLayoutConfigIsSet = false
 
 	let isInsideDashboard = false
+	let domElemsAreReady = ref(true)
 
-	onMounted(() => {
+	onMounted(async () => {
 		let attrs = null
 
 		// var iframeMode = globalDataService.insideIframe()
@@ -913,6 +914,8 @@
 		if (viewContext === 'reconciliation_viewer') {
 			let isRecon = true
 		}
+		domElemsAreReady.value = true
+		await nextTick()
 
 		let contentWrapElem = elem.value[0].querySelector('.g-content-wrap')
 		let workareaWrapElem = elem.value[0].querySelector('.g-workarea-wrap')
@@ -941,7 +944,6 @@
 		// Here how it looks like in 2 steps:
 		// 1) template create .g-wrapper, .g-content-wrap, .g-workarea-wrap' and we query them here
 		// 2) then we set domElemsAreReady to true, and child components start rendering and we pass queried elements to them
-		let domElemsAreReady = true
 
 		// The point of this complexity is to remove extra
 		// setTimeout(function() {... $apply()}, 0)
@@ -956,7 +958,7 @@
 			//let groupingAndColumnAreaCollapsed = groupingAndColumnAreaCollapsed;
 
 			props.evDataService.setInterfaceLayout(interfaceLayout)
-			evEventService.dispatchEvent(evEvents.UPDATE_TABLE_VIEWPORT)
+			props.evEventService.dispatchEvent(evEvents.UPDATE_TABLE_VIEWPORT)
 		}
 
 		let toggleDashboardFilter = function () {
@@ -1011,15 +1013,18 @@
 		}
 
 		var initEventListeners = function () {
-			evEventService.addEventListener(evEvents.ADDITIONS_CHANGE, function () {
-				let additions = props.evDataService.getAdditions()
+			props.evEventService.addEventListener(
+				evEvents.ADDITIONS_CHANGE,
+				function () {
+					let additions = props.evDataService.getAdditions()
 
-				console.log('additions', additions)
+					console.log('additions', additions)
 
-				let activeObject = props.evDataService.getActiveObject()
-			})
+					let activeObject = props.evDataService.getActiveObject()
+				}
+			)
 
-			evEventService.addEventListener(
+			props.evEventService.addEventListener(
 				evEvents.VERTICAL_ADDITIONS_CHANGE,
 				function () {
 					let verticalAdditions = props.evDataService.getVerticalAdditions()
@@ -1028,8 +1033,8 @@
 						setTimeout(function () {
 							// wait for angular to remove vertical split panel
 
-							// delete evEventService.dispatchEvent(evEvents.UPDATE_ENTITY_VIEWER_CONTENT_WRAP_SIZE);
-							evEventService.dispatchEvent(evEvents.UPDATE_TABLE_VIEWPORT)
+							// delete props.evEventService.dispatchEvent(evEvents.UPDATE_ENTITY_VIEWER_CONTENT_WRAP_SIZE);
+							props.evEventService.dispatchEvent(evEvents.UPDATE_TABLE_VIEWPORT)
 						}, 200)
 					}
 
@@ -1037,44 +1042,53 @@
 				}
 			)
 
-			evEventService.addEventListener(
+			props.evEventService.addEventListener(
 				evEvents.ACTIVE_OBJECT_CHANGE,
 				function () {
 					let activeObject = props.evDataService.getActiveObject()
 				}
 			)
 
-			evEventService.addEventListener(evEvents.FILTERS_RENDERED, function () {
-				let readyToRenderTable = true
+			props.evEventService.addEventListener(
+				evEvents.FILTERS_RENDERED,
+				function () {
+					let readyToRenderTable = true
 
-				setTimeout(() => {
-					$apply()
-				}, 0)
-			})
-
-			evEventService.addEventListener(evEvents.DATA_LOAD_END, function () {
-				let additions = props.evDataService.getAdditions()
-				let activeObject = props.evDataService.getActiveObject()
-
-				if (viewType === 'matrix' && !activeLayoutConfigIsSet) {
-					activeLayoutConfigIsSet = true
-
-					props.evDataService.setActiveLayoutConfiguration({ isReport: true }) // saving layout for checking for changes
-					evEventService.dispatchEvent(
-						evEvents.ACTIVE_LAYOUT_CONFIGURATION_CHANGED
-					)
+					setTimeout(() => {
+						$apply()
+					}, 0)
 				}
-			})
+			)
 
-			evEventService.addEventListener(evEvents.VIEW_TYPE_CHANGED, function () {
-				let viewType = props.evDataService.getViewType()
-				let viewSettings = props.evDataService.getViewSettings(viewType)
+			props.evEventService.addEventListener(
+				evEvents.DATA_LOAD_END,
+				function () {
+					let additions = props.evDataService.getAdditions()
+					let activeObject = props.evDataService.getActiveObject()
 
-				console.log('viewType ', viewType)
-				console.log('viewSettings', viewSettings)
-			})
+					if (viewType === 'matrix' && !activeLayoutConfigIsSet) {
+						activeLayoutConfigIsSet = true
 
-			evEventService.addEventListener(
+						props.evDataService.setActiveLayoutConfiguration({ isReport: true }) // saving layout for checking for changes
+						props.evEventService.dispatchEvent(
+							evEvents.ACTIVE_LAYOUT_CONFIGURATION_CHANGED
+						)
+					}
+				}
+			)
+
+			props.evEventService.addEventListener(
+				evEvents.VIEW_TYPE_CHANGED,
+				function () {
+					let viewType = props.evDataService.getViewType()
+					let viewSettings = props.evDataService.getViewSettings(viewType)
+
+					console.log('viewType ', viewType)
+					console.log('viewSettings', viewSettings)
+				}
+			)
+
+			props.evEventService.addEventListener(
 				evEvents.REPORT_OPTIONS_CHANGE,
 				function () {
 					let reportOptions = props.evDataService.getReportOptions()

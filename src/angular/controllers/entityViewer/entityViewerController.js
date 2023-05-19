@@ -24,6 +24,9 @@ import evDataProviderService from '@/angular/services/ev-data-provider/ev-data-p
 import evRvLayoutsHelperInst from '../../helpers/evRvLayoutsHelper'
 import globalDataServiceInst from '../../shell/scripts/app/services/globalDataService'
 import middlewareServiceInst from '../../shell/scripts/app/services/middlewareService'
+import metaContentTypesService from '../../services/metaContentTypesService'
+import customFieldService from '../../services/reports/customFieldService'
+import attributeTypeService from '../../services/attributeTypeService'
 
 // portal.controller('EntityViewerController', [
 // 	'$scope',
@@ -53,12 +56,8 @@ export default function (
 	$customDialog,
 	$bigDrawer,
 	toastNotificationService,
-	metaContentTypesService,
 	instrumentService,
-	customFieldService,
-	attributeTypeService,
-	entityResolverService,
-	uiService
+	entityResolverService
 ) {
 	var vm = this
 
@@ -323,121 +322,6 @@ export default function (
 					entityType,
 					actionData.object.id
 				)
-
-				/* var editLayout;
-
-						if (entityType === 'instrument') {
-							editLayout = await instrumentService.getEditLayoutBasedOnUserCodes(activeObject.instrument_type_object.instrument_form_layouts);
-
-						} else {
-							editLayout = await uiService.getDefaultEditLayout(entityType);
-						}
-
-						// editLayout = await uiService.getDefaultEditLayout(entityType);
-
-						var bigDrawerWidthPercent;
-						var fixedAreaColumns = 6;
-
-						if (editLayout.results.length) {
-
-							var tabs = Array.isArray(editLayout.results[0].data) ? editLayout.results[0].data : editLayout.results[0].data.tabs;
-
-                            if (entityType !== 'instrument-type') {
-                                fixedAreaColumns = evHelperService.getEditLayoutMaxColumns(entityType, tabs);
-                            }
-
-							bigDrawerWidthPercent = evHelperService.getBigDrawerWidthPercent(fixedAreaColumns);
-
-							$bigDrawer.show({
-								controller: 'EntityViewerEditDialogController as vm',
-								templateUrl: 'views/entity-viewer/entity-viewer-edit-drawer-view.html',
-								addResizeButton: true,
-								drawerWidth: bigDrawerWidthPercent,
-								locals: {
-									entityType: entityType,
-									entityId: activeObject.id,
-									data: {
-										openedIn: 'big-drawer',
-										editLayout: editLayout
-									}
-								}
-
-							}).then((res) => {
-
-								postEditionActions(res, activeObject);
-
-							});
-
-						} else {
-							console.error("edit layout for edit entity viewer was not found");
-						} */
-
-				/* $mdDialog.show({
-							controller: 'EntityViewerEditDialogController as vm',
-							templateUrl: 'views/entity-viewer/entity-viewer-edit-dialog-view.html',
-							parent: angular.element(document.body),
-							targetEvent: activeObject.event,
-							//clickOutsideToClose: false,
-							locals: {
-								entityType: entityType,
-								entityId: activeObject.id,
-								data: {}
-							}
-						}).then(function (res) {
-
-							vm.entityViewerDataService.setActiveObjectAction(null);
-							vm.entityViewerDataService.setActiveObjectActionData(null);
-
-							if (res && res.res === 'agree') {
-
-								if (res.data.action === 'delete') {
-
-									var objects = vm.entityViewerDataService.getObjects();
-
-									objects.forEach(function (obj) {
-
-										if (activeObject.id === obj.id) {
-
-											var parent = vm.entityViewerDataService.getData(obj.___parentId);
-
-											parent.results = parent.results.filter(function (resultItem) {
-												return resultItem.id !== activeObject.id
-											});
-
-											vm.entityViewerDataService.setData(parent)
-
-										}
-
-									});
-
-									vm.entityViewerEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-
-								} else {
-
-									var objects = vm.entityViewerDataService.getObjects();
-
-									objects.forEach(function (obj) {
-
-										if (res.data.id === obj.id) {
-
-											Object.keys(res.data).forEach(function (key) {
-
-												obj[key] = res.data[key]
-
-											});
-
-											vm.entityViewerDataService.setObject(obj);
-
-										}
-
-									});
-
-									vm.entityViewerEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-								}
-
-							}
-
-						}); */
 
 				break
 		}
@@ -908,8 +792,8 @@ export default function (
 		) {
 			vm.entityViewerDataService.setSplitPanelStatus(true)
 		}
-
-		$scope.$apply()
+		// IMPORTANT
+		// $scope.$apply()
 	}
 
 	vm.getActiveObjectFromQueryParameters = function () {
@@ -1015,11 +899,12 @@ export default function (
 			uiService
 		)
 
-		vm.entityType = $scope.$parent.vm.entityType
+		let entityType = 'transaction'
+		vm.entityType = entityType
+		vm.contentType = entityType
 
-		vm.contentType = $scope.$parent.vm.contentType
-		vm.entityViewerDataService.setEntityType($scope.$parent.vm.entityType)
-		vm.entityViewerDataService.setContentType($scope.$parent.vm.contentType)
+		vm.entityViewerDataService.setEntityType(entityType)
+		vm.entityViewerDataService.setContentType(entityType)
 		vm.entityViewerDataService.setIsReport(false)
 		vm.entityViewerDataService.setViewContext('entity_viewer')
 		vm.entityViewerDataService.setCurrentMember(vm.currentMember)
@@ -1155,7 +1040,8 @@ export default function (
 
 		Promise.all(promises).then(function (data) {
 			vm.readyStatus.attributes = true
-			$scope.$apply()
+			// IMPORTANT UPDATE
+			// $scope.$apply()
 		})
 	}
 
@@ -1372,6 +1258,7 @@ export default function (
 
                 }*/
 		vm.currentMember = globalDataService.getMember()
+		localStorageService.setGlobalDataService(globalDataService)
 
 		if (vm.stateWithLayout) {
 			onUserChangeIndex = middlewareService.onMasterUserChanged(function () {

@@ -4,6 +4,7 @@
  * Deprecated. Use shell/scripts/app/services/cookieService instead.
  *
  */
+import jQuery from 'jquery'
 
 var getCookie = function (name) {
 	var cookieValue = null

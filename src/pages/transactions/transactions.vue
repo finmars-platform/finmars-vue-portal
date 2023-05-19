@@ -1,5 +1,9 @@
 <template>
-	<AngularFmGridTable v-if="controller" :evEventService="{}" />
+	<AngularFmGridTable
+		v-if="controller"
+		:evDataService="controller.entityViewerDataService"
+		:evEventService="controller.entityViewerEventService"
+	/>
 </template>
 
 <script setup>
@@ -19,10 +23,10 @@
 		current: {
 			name: 'app.portal.data.transaction',
 		},
+		params: useRoute().query,
 	}
 
 	let controller = new entityViewerController(route)
-	console.log('controller:', controller)
 
 	// fetchTrans()
 	async function fetchTrans() {

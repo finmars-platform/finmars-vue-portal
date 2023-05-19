@@ -759,6 +759,7 @@ let getDefaultLayout = function (viewModel, viewContext) {
 		uiService
 			.getDefaultListLayout(viewModel.entityType)
 			.then(async function (defaultLayoutData) {
+				console.log('defaultLayoutData:', defaultLayoutData)
 				let defaultLayout = null
 				if (defaultLayoutData.results && defaultLayoutData.results.length > 0) {
 					defaultLayout = defaultLayoutData.results[0]

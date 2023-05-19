@@ -6,7 +6,7 @@ export default function () {
 	let userHaveCurrentMasterUser = false
 
 	let data = {
-		masterUser: null,
+		masterUser: store.current,
 		member: store.member,
 		user: store.user,
 	}
