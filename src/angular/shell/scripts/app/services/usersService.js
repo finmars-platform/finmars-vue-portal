@@ -3,8 +3,6 @@
  */
 // (function () {
 
-'use strict'
-
 import UsersRepository from '../repositories/usersRepository.js'
 // import authorizerRepository from "../repositories/authorizerRepository";
 /** @module usersService */

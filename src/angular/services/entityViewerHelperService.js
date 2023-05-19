@@ -2023,6 +2023,15 @@ var onPricingSchemeChangeInsidePricingPolicy = function (
 		return policy
 	})
 }
+const getAttributesLayoutNames = function (columns) {
+	const result = {}
+
+	columns.forEach((col) => {
+		if (col.layout_name) result[col.key] = col.layout_name
+	})
+
+	return result
+}
 
 export default {
 	transformItem: transformItem,
@@ -2031,6 +2040,7 @@ export default {
 	checkSplitPanelForChanges: checkSplitPanelForChanges,
 	warnAboutChangesToLoose: warnAboutChangesToLoose,
 	getTableAttrInFormOf: getTableAttrInFormOf,
+	getAttributesLayoutNames: getAttributesLayoutNames,
 
 	getDynamicAttrValue: getDynamicAttrValue,
 	setDynamicAttrValue: setDynamicAttrValue,

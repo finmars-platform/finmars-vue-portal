@@ -1,0 +1,133 @@
+.attributes-manager-dialog {
+  height: 90%;
+  max-height: 90%;
+  width: 90%;
+  max-width: 90%;
+}
+
+.attributes-manager-view {
+  .attribute-with-recalculation {
+    background-color: #ffde89;
+  }
+}
+
+.attribute-manager-mixin() {
+  .am-attr-card {
+    padding: 14px;
+
+    .am-attr-card__wrapper {
+      display: flex;
+      justify-content: space-between;
+    }
+    .am-attr-card__status {
+      margin-right: 12px;
+    }
+    .am-attr-card__left-side {
+      display: flex;
+      align-content: center;
+      line-height: 1.5;
+    }
+  }
+
+  .am-header {
+    font-weight: 600;
+    padding-left: 8px;
+    text-transform: uppercase;
+    position: relative;
+    ng-md-icon {
+      position: relative;
+      top: 4px;
+    }
+    span {
+      color: #989898;
+    }
+  }
+  .md-button {
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+  }
+  .am-attr-misc {
+    float: right;
+    width: 260px;
+    text-align: right;
+  }
+  .am-attr-btn {
+    min-width: 0;
+    min-height: 0;
+    height: 24px;
+    margin: 0 2px;
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.attributes-manager-view {
+  padding-left: 10px;
+  .attribute-manager-mixin();
+}
+
+.all-am-container {
+  margin-bottom: 50px;
+  transition: margin-bottom ease-out 0.35s;
+}
+
+.all-custom-attributes-manager {
+  .attribute-manager-mixin();
+}
+
+.all-am-attributes-group-toggle {
+  height: 50px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #AAA;
+  cursor: pointer;
+  transition: color ease 0.25s, border-color ease 0.25s;
+
+  &:hover {
+    color: #2196F3;
+    border-color: #2196F3;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.all-am-attributes-group-title {
+  margin-top: 15px;
+}
+
+/*.all-am-manager-wrap {
+  overflow: hidden;
+  opacity: 1;
+  transition: height ease-out 0.35s, opacity ease-out 0.35s;
+}
+
+.all-am-attributes-group-collapse {
+  margin-bottom: 0;
+  .all-am-manager-wrap {
+    height: 0 !important;
+    opacity: 0;
+  }
+}*/
+
+.attribute-manager-dialog-view {
+  width: 60%;
+
+  md-dialog-content {
+    //padding: 20px;
+    .a-m-tab-content {
+      padding: 20px;
+    }
+  }
+
+  md-input-container {
+    margin-right: 60px;
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}

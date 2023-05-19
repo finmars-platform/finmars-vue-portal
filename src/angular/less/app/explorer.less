@@ -1,0 +1,153 @@
+.explorer-page {
+
+  min-height: 100%;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  overflow-y: hidden;
+
+  padding: 0;
+
+  &.show-explorer-workflow {
+
+    width: 150vw;
+
+    .explorer-explorer-section {
+      width: 50vw;
+    }
+
+  }
+
+  &.show-explorer-editor {
+
+    width: 100vw;
+
+    .explorer-explorer-section {
+      width: 50vw;
+    }
+
+  }
+
+  &.show-explorer-editor-workflow {
+
+    width: 200vw;
+
+    .explorer-explorer-section {
+      width: 50vw;
+    }
+
+  }
+
+  .explorer-explorer-section {
+    width: 100vw;
+    height: 100%;
+    padding: 0 16px;
+    overflow: hidden;
+  }
+
+  .explorer-file-edit-section {
+    width: 50vw;
+    height: 100%;
+    position: relative;
+  }
+
+  .explorer-workflow-section {
+    width: 100vw;
+    height: 100%;
+
+  }
+
+  
+  .explorer-breadcrumbs {
+    overflow: hidden;
+  }
+
+  .explorer-breadcrumbs-item {
+    float: left;
+    margin: 8px;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px;
+    &:hover {
+      background: #ddd;
+      opacity: 7;
+    }
+
+  }
+
+  .explorer-item {
+    float: left;
+    width: 64px;
+    height: 64px;
+    margin: 16px;
+    box-sizing: border-box;
+    text-align: center;
+
+    word-break: break-word;
+
+
+
+    .explorer-item-name {
+
+      display: inline-block;
+      font-size: 12px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    &.selected {
+      background: #ddd;
+
+      .explorer-item-name {
+        background: dodgerblue;
+        color: #fff;
+      }
+    }
+
+    .material-icons {
+      font-size: 48px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+  }
+
+  span.explorer-breadcrumbs-item-divider {
+    float: left;
+    font-weight: bold;
+    margin-top: 18px;
+  }
+
+  .explorer-toolbar {
+    padding-top: 8px;
+
+    button.md-raised.md-button {
+      font-size: 11px;
+      height: 30px;
+    }
+  }
+
+  .file-preview-content-wrap {
+    width: 100%;
+    height: 100%;
+    padding-top: 50px;
+    box-sizing: border-box;
+  }
+
+  .ace-editor {
+    width: 100%;
+    height: 100%;
+  }
+
+  .explorer-file-edit-section-toolbar {
+    position: absolute;
+    top: 0;
+    z-index: 2;
+    height: 50px;
+    width: 100%;
+    background: #000;
+  }
+
+
+}

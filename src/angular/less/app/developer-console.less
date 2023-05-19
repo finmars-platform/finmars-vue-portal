@@ -1,0 +1,89 @@
+.developer-console {
+
+  position: fixed;
+  top: 40px;
+  left: 40px;
+  width: 700px;
+  height: 300px;
+  background: rgba(0,0,0,.8);
+  padding: 16px;
+  color: #fff;
+  z-index: 52;
+}
+
+.developer-console-requests-container-scrollable {
+  overflow-y: auto;
+  height: 200px;
+}
+
+
+.developer-console-requests-container-scrollable::-webkit-scrollbar {
+  width: 5px;
+}
+
+.developer-console-requests-container-scrollable::-webkit-scrollbar-track {
+  background: #ddd;
+}
+
+.developer-console-requests-container-scrollable::-webkit-scrollbar-thumb {
+  background: #666;
+}
+
+.developer-console-requests-row-header {
+  overflow: hidden;
+}
+
+.developer-console-requests-row {
+  overflow: hidden;
+}
+
+.developer-console-requests-row-url {
+  float: left;
+  width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 20px;
+  white-space: pre;
+}
+
+.developer-console-requests-row-content-length {
+  float: left;
+  width: 200px;
+}
+
+.developer-console-requests-row-processing-time {
+  float: left;
+  width: 150px;
+}
+
+.developer-console-requests-row.row-status-done {
+  opacity: .4;
+}
+
+.developer-console-requests-row.row-status-error {
+  color: red;
+}
+
+.developer-console-head-content {
+  margin-bottom: 16px;
+}
+
+.developer-console-column-holder {
+  overflow: hidden;
+}
+.developer-console-head-column {
+  float: left;
+  width: 170px;
+  margin-right: 30px;
+}
+
+.developer-console-head-column-value {
+  float: right;
+}
+.developer-console-color-red {
+  color: red;
+}
+
+.developer-console-head-row {
+  margin-bottom: 4px;
+}
