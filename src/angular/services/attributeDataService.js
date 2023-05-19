@@ -1101,6 +1101,13 @@ export default function (
 	function getAttributesAvailableForColumns() {
 		return attributesAvailableForColumns
 	}
+	function getForAttributesSelector(entityType, viewContext) {
+		var attrs = getAllAttributesByEntityType(entityType, viewContext)
+
+		return attrs.filter(function (attr) {
+			return attr.value_type !== 'mc_field'
+		})
+	}
 
 	return {
 		// Remember! Download Custom Fields and Dynamic Attributes and User Fields before .get() them
@@ -1117,6 +1124,7 @@ export default function (
 		// Get method belows
 
 		getAllAttributesByEntityType: getAllAttributesByEntityType,
+		getForAttributesSelector: getForAttributesSelector,
 
 		getInstrumentUserFields: getInstrumentUserFields,
 		getTransactionUserFields: getTransactionUserFields,

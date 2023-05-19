@@ -1,0 +1,185 @@
+.configuration-import-export-mixin() {
+  .cie-first-level-group-h1 {
+    margin: 30px 0 40px;
+  }
+
+  .cie-entities-group-h2 {
+    margin-left: 20px;
+  }
+
+  .cie-entity-holder {
+    position: relative;
+    margin-bottom: 6px;
+    margin-top: 6px;
+    margin-left: 20px;
+  }
+
+  .cie-dependency {
+    position: absolute;
+    color: red;
+    font-size: 11px;
+    z-index: 1;
+    bottom: 2px;
+    left: 4px;
+  }
+
+  .cie-entity-items-holder {
+    margin-left: 40px;
+  }
+}
+
+.configuration-import-dialog-view {
+  width: 70%;
+  .configuration-import-export-mixin();
+}
+
+.configuration-export-page {
+  .configuration-import-export-mixin();
+}
+
+.toolbar-progression-indication {
+  position: relative;
+  width: 330px;
+  text-align: end;
+
+  span:first-child {
+    position: absolute;
+    left: 0;
+  }
+}
+
+.child-with-icon {
+  position: relative;
+  padding-left: 25px;
+
+  ng-md-icon {
+    height: 19px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+  }
+}
+
+.used-dynamic-attrs {
+  font-weight: bold;
+}
+
+.configuration-import-loader {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  opacity: .6;
+
+  md-progress-circular {
+    margin: 256px auto;
+  }
+}
+
+.import-configuration-page-drop-box {
+  width: 689px;
+  height: 284px;
+  border: 6px dashed #ddd;
+  margin: 24px;
+  padding-top: 70px;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+.import-configuration-page {
+  div.input-upload-file-container {
+    border-radius: 5px;
+    padding: 0;
+    text-align: left;
+    width: 120px;
+    min-width: 120px;
+    margin: 16px auto 0;
+    box-shadow: none;
+
+    label.IFUlabel.md-button.md-primary.md-raised {
+      padding: 0;
+      width: 120px;
+      background: rgba(240, 90, 34, 1);
+
+      &:hover {
+        background: rgba(240, 90, 34, 1);
+        opacity: .7;
+      }
+    }
+  }
+
+}
+
+.import-configuration-page-mode-settings {
+  font-size: 14px;
+  margin-right: 40px;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  padding: 20px 0;
+  width: 600px;
+  margin-top: 16px;
+}
+
+.start-import-button.md-button.md-primary.md-raised {
+  background: rgba(240, 90, 34, 1);
+
+  &:hover {
+    background: rgba(240, 90, 34, 1);
+    opacity: .7;
+  }
+}
+
+.cie-first-level-group-h1 {
+  font-size: 14px;
+  color: #333333;
+}
+
+.cie-entities-group-h2 {
+  font-size: 14px;
+  color: #333333;
+}
+
+.import-configuration-page-toggle-fold-control {
+  display: inline-block;
+  margin-right: 16px;
+  box-sizing: border-box;
+  cursor: pointer;
+  position: relative;
+  top: 6px;
+
+  &:hover {
+    opacity: .7;
+  }
+}
+
+.import-configuration-page-progress-container {
+  background: #fff;
+  border: 1px solid #ddd;
+  margin: 24px;
+  width: 680px;
+  height: 187px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.import-configuration-page-progress-bar-container {
+  width: 270px;
+}
+
+.import-configuration-page-complete-container, .import-configuration-page-error-container {
+  background: #fff;
+  border: 1px solid #ddd;
+  margin: 24px;
+  width: 680px;
+  height: 140px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.import-configuration-page-complete-icon, .import-configuration-page-error-icon {
+  color: #f05a22;
+  font-size: 45px;
+  margin-right: 16px;
+}

@@ -1,0 +1,86 @@
+@import "fonts/roboto";
+@import 'app/variables';
+
+@import 'app/main';
+@import 'app/data-constructor';
+@import 'app/group-table'; // should be imported before entity-viewer.less and report-viewer.less
+@import 'app/group-table-filters';
+@import 'app/notifications';
+@import 'app/attributes-manager.less';
+@import 'app/forum.less';
+@import 'app/special-rules.less';
+@import 'app/settings.less';
+@import 'app/bookmarks.less';
+@import 'app/custom-field-config-dialog.less';
+@import 'app/dashboard.less';
+@import "app/entity-viewer.less"; // should be imported after group-table.less
+@import "app/report-viewer.less"; // should be imported after group-table.less
+@import "app/two-fields-multiselector";
+@import "app/actions-block.less";
+@import "app/configuration-import-export";
+@import "app/expression-editor";
+@import "app/transaction-type";
+@import "app/entity-editor-dialog";
+@import "app/profile";
+@import "app/settings-configurations";
+@import "app/setup";
+@import "app/event-schedule";
+@import "app/entity-search";
+@import "app/md-select";
+@import "app/crud-select";
+@import "app/warning-dialog";
+@import "app/transaction-import";
+@import "app/view-constructor";
+@import "app/reconciliation";
+@import "app/calculator";
+@import "app/custom-inputs";
+@import "app/color-palettes-settings";
+@import "app/grid-table";
+@import "app/popup";
+@import "app/ui-elements";
+@import "app/tabs";
+
+@import "app/setup-page";
+@import "app/reference-table";
+@import "app/pricing-schedules";
+@import 'app/small-dialogs.less';
+@import 'app/classifier.less';
+
+@import "app/configuration-export-page";
+@import "app/loader-dialog";
+
+@import "app/colors";
+
+@import "app/dashboard-constructor";
+@import "app/report-viewer-matrix";
+@import "app/report-viewer-table-chart";
+@import "app/context-menu-constructor";
+@import "app/pricing";
+@import "app/developer-console";
+
+
+@import "app/loaders";
+@import "app/complex-transaction-dialog";
+@import "app/two-factor-login-dialog";
+
+@import "libs/pickmeup/pickmeup";
+@import "app/print";
+
+@import "app/instrument-select";
+@import "app/unified-data-select";
+@import "app/explorer";
+@import "app/data-stats";
+@import "app/calendar";
+@import "app/iframe";
+@import "app/procedures";
+
+@import "app/alert-side-nav";
+@import "app/system-page";
+@import "app/history-dialog";
+@import "app/simple-import";
+@import "app/journal-page";
+@import "app/recycle-bin";
+@import "app/tasks-page";
+
+// сommon styles should always be at the end to overwrite other styles
+@import "app/common";

@@ -1,0 +1,288 @@
+.alert-sidenav-wrapper {
+
+  position: absolute;
+  right: -360px;
+  top: 0;
+  width: 360px;
+  height: 100%;
+  background: white;
+  z-index: 51;
+  transition: right .3s linear;
+  box-shadow: none;
+
+  &.alert-sidenav-visible {
+    right: 0;
+    box-shadow: 0 8px 17px rgba(0, 0, 0, 0.2);
+  }
+
+  .alert-sidenav-wrapper-inner {
+    padding: 8px;
+    padding-top: 16px;
+    overflow-y: auto;
+    height: 100%;
+    box-sizing: border-box;
+  }
+
+  .alert-sidenav-wrapper-inner-alerts {
+    width: 100%;
+  }
+
+}
+
+.alerts-button-icon {
+  color: rgb(235, 0, 20);
+  padding-top: 5px;
+  animation: pulse 2s infinite;
+
+  &.healthy {
+    color: #3fb950 !important;
+
+    .alerts-button-icon-tag {
+      background: #3fb950 !important;
+    }
+  }
+
+  &.warn {
+    color: orange !important;
+
+    .alerts-button-icon-tag {
+      background: orange !important;
+    }
+  }
+
+  .alerts-button-icon-tag {
+    position: absolute;
+    background: #eb0014;
+    color: #fff;
+    padding: 2px 4px;
+    font-size: 8px;
+    border-radius: 6px;
+    top: 16px;
+    right: -8px;
+    border: 1px solid;
+    min-width: 24px;
+  }
+}
+
+
+.alert-card-level-3 {
+  background: #eb0014;
+}
+
+.alert-card-icon-3 {
+  color: #eb0014;
+}
+
+.alert-card-label-3 {
+  background: #eb0014;
+}
+
+.alert-card-level-2 {
+  background: orange;
+}
+
+.alert-card-icon-2 {
+  color: orange;
+}
+
+.alert-card-label-2 {
+  background: orange;
+}
+
+
+.alert-card-level {
+  position: absolute;
+  width: 4px;
+  height: 36px;
+  left: 8px;
+  top: 16px;
+}
+
+.alert-card-icon {
+  position: absolute;
+  left: 18px;
+  top: 20px;
+}
+
+.alert-card-label {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  border-radius: 8px;
+  padding: 4px 6px;
+  font-size: 11px;
+  color: #fff;
+}
+
+.alert-card {
+  box-shadow: 0 8px 17px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  box-sizing: border-box;
+  display: block;
+  margin: 16px 0;
+  min-height: 64px;
+  padding: 16px 0 2px;
+  position: relative;
+
+  &.alert-solved {
+
+    .alert-card-label {
+      background: #3fb950 !important;
+    }
+
+    .alert-card-icon {
+      color: #3fb950 !important;
+    }
+
+    .alert-card-level {
+      background: #3fb950 !important;
+    }
+
+  }
+}
+
+.alert-card-content {
+  padding-left: 48px;
+  min-height: 48px;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.alert-card-description {
+  margin-top: 2px;
+}
+
+.alert-card-title {
+  font-size: 14px;
+  margin-bottom: 2px;
+  padding-right: 80px;
+}
+
+.alert-card-created {
+  font-size: 11px;
+  color: grey;
+}
+
+.alert-today-title {
+  font-size: 16px;
+  color: grey;
+  padding-left: 4px;
+}
+
+.alert-card-footer {
+  border-top: 1px solid #ddd;
+  padding: 6px;
+  overflow: hidden;
+}
+
+.alert-card-footer-comment {
+  float: left;
+  width: 270px;
+  overflow: hidden;
+
+  input {
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, .2);
+    height: 24px;
+    width: 100%;
+    font-size: 14px;
+  }
+}
+
+.alert-card-footer-send-holder {
+  float: left;
+}
+
+button.md-raised.alert-card-footer-send.md-button {
+  width: 40px;
+  min-width: 40px;
+  min-height: 24px;
+  height: 24px;
+  margin: 0;
+  margin-left: 16px;
+
+  .material-icons {
+    font-size: 14px;
+    vertical-align: top;
+    padding-top: 6px;
+  }
+
+  &:hover {
+    opacity: .6;
+  }
+}
+
+.alert-sidenav-close {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  cursor: pointer;
+
+  opacity: .2;
+
+  &:hover {
+    opacity: .5;
+  }
+}
+
+.alert-card-comments {
+  padding-left: 24px;
+}
+
+.alert-card-comment-user {
+  width: 32px;
+  height: 32px;
+  background: grey;
+  text-align: center;
+  border-radius: 50%;
+  vertical-align: top;
+  padding-top: 6px;
+  box-sizing: border-box;
+  color: #fff;
+  margin-top: 4px;
+  position: absolute;
+  left: 0;
+  text-transform: uppercase;
+}
+
+.alert-card-comment-wrap {
+  float: left;
+  margin-left: 8px;
+}
+
+.alert-card-comment {
+  overflow: hidden;
+  margin: 8px 0;
+  position: relative;
+  padding-left: 34px;
+  padding-right: 10px;
+
+}
+
+.alert-card-comment-comment {
+  background: #f2f2f2;
+  min-width: 100px;
+  margin: 0;
+  padding: 8px;
+  box-sizing: border-box;
+  font-size: 14px;
+  border-radius: 6px;
+  position: relative;
+  padding-right: 38px;
+  //min-height: 36px;
+}
+
+.alert-card-comment-username {
+  font-size: 11px;
+  color: grey;
+}
+
+.alert-card-comment-comment-time {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  font-size: 9px;
+  background: #d6d0d0;
+  padding: 2px 4px;
+  border-radius: 4px;
+}

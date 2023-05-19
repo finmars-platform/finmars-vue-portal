@@ -160,6 +160,12 @@
 
 	import currencyService from '@/angular/services/currencyService'
 
+	const props = defineProps([
+		'vm',
+		'evEventService',
+		'evDataService',
+		'spExchangeService',
+	])
 	// export default function (
 	// 	$mdDialog,
 	// 	$state,
@@ -175,11 +181,13 @@
 	// 	attributeDataService: '=',
 	// 	spExchangeService: '=',
 	// },
-	let entityType = scope.evDataService.getEntityType()
-	let isReport = metaService.isReport(scope.entityType) || false
-	let reportOptions = scope.evDataService.getReportOptions()
-	let isRootEntityViewer = scope.evDataService.isRootEntityViewer()
-	let viewContext = scope.evDataService.getViewContext()
+	let { evDataService, evEventService, spExchangeService } = props
+
+	let entityType = evDataService.getEntityType()
+	let isReport = metaService.isReport(entityType) || false
+	let reportOptions = evDataService.getReportOptions()
+	let isRootEntityViewer = evDataService.isRootEntityViewer()
+	let viewContext = evDataService.getViewContext()
 
 	let globalTableSearch = ''
 
@@ -187,13 +195,13 @@
 		name: '',
 	}
 
-	let listLayout = scope.evDataService.getListLayout()
+	let listLayout = evDataService.getListLayout()
 
 	let dateFromKey
 	let dateToKey
 
 	if (listLayout && listLayout.name) {
-		scope.layoutData.name = listLayout.name
+		layoutData.name = listLayout.name
 	}
 
 	let popupData = {
@@ -210,25 +218,25 @@
 			evDataService.resetTableContent(false)
 		}
 
-		scope.evEventService.dispatchEvent(evEvents.UPDATE_TABLE)
+		evEventService.dispatchEvent(evEvents.UPDATE_TABLE)
 	}
 
 	let saveLayoutList = function ($event) {
-		var isNewLayout = scope.evDataService.isLayoutNew()
+		var isNewLayout = evDataService.isLayoutNew()
 
 		if (isNewLayout) {
 			evRvLayoutsHelper.saveAsLayoutList(
-				scope.evDataService,
-				scope.evEventService,
-				scope.isReport,
+				evDataService,
+				evEventService,
+				isReport,
 				$mdDialog,
-				scope.entityType,
+				entityType,
 				$event
 			)
 		} else {
 			evRvLayoutsHelper.saveLayoutList(
-				scope.evDataService,
-				scope.isReport,
+				evDataService,
+				isReport,
 				usersService,
 				globalDataService
 			)
@@ -244,8 +252,8 @@
 			targetEvent: $event,
 			locals: {
 				data: {
-					missingPricesData: scope.missingPricesData,
-					evDataService: scope.evDataService,
+					missingPricesData: missingPricesData,
+					evDataService: evDataService,
 				},
 			},
 		})
@@ -257,11 +265,11 @@
 			? elem.classList.remove('active')
 			: elem.classList.add('active')
 
-		scope.evEventService.dispatchEvent(evEvents.TOGGLE_FILTER_BLOCK)
+		evEventService.dispatchEvent(evEvents.TOGGLE_FILTER_BLOCK)
 	}
 
 	var openReportSettings = function ($event) {
-		// var reportOptions = scope.evDataService.getReportOptions();
+		// var reportOptions = evDataService.getReportOptions();
 
 		$mdDialog
 			.show({
@@ -273,23 +281,21 @@
 				locals: {
 					/*reportOptions: reportOptions,
                             options: {
-                                entityType: scope.entityType
+                                entityType: entityType
                             }*/
 					data: {
-						evDataService: scope.evDataService,
-						evEventService: scope.evEventService,
-						attributeDataService: scope.attributeDataService,
+						evDataService: evDataService,
+						evEventService: evEventService,
+						attributeDataService: attributeDataService,
 					},
 				},
 			})
 			.then(function (res) {
 				if (res.status === 'agree') {
-					scope.evDataService.setReportLayoutOptions(
-						res.data.reportLayoutOptions
-					)
-					scope.evDataService.setReportOptions(res.data.reportOptions)
+					evDataService.setReportLayoutOptions(res.data.reportLayoutOptions)
+					evDataService.setReportOptions(res.data.reportOptions)
 
-					scope.evEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE)
+					evEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE)
 				}
 			})
 	}
@@ -302,22 +308,18 @@
 				parent: angular.element(document.body),
 				targetEvent: $event,
 				locals: {
-					entityViewerDataService: scope.evDataService,
-					entityViewerEventService: scope.evEventService,
+					entityViewerDataService: evDataService,
+					entityViewerEventService: evEventService,
 				},
 			})
 			.then(function (res) {
 				if (res.status === 'agree') {
-					scope.evEventService.dispatchEvent(
-						evEvents.ENTITY_VIEWER_SETTINGS_CHANGED
-					)
+					evEventService.dispatchEvent(evEvents.ENTITY_VIEWER_SETTINGS_CHANGED)
 				}
 			})
 	}
 
-	let onSettingsClick = scope.isReport
-		? openReportSettings
-		: openEntityViewerSettings
+	let onSettingsClick = isReport ? openReportSettings : openEntityViewerSettings
 
 	var datesKeysData = [
 		{
@@ -332,31 +334,31 @@
 	]
 	let reportLayoutOptions
 	var prepareReportLayoutOptions = function () {
-		reportLayoutOptions = scope.evDataService.getReportLayoutOptions()
+		reportLayoutOptions = evDataService.getReportLayoutOptions()
 
 		// preparing data for complexZhDatePickerDirective
-		if (!scope.reportLayoutOptions.hasOwnProperty('datepickerOptions')) {
+		if (!reportLayoutOptions.hasOwnProperty('datepickerOptions')) {
 			reportLayoutOptions.datepickerOptions = {}
 		}
 
 		if (
-			!scope.reportLayoutOptions.datepickerOptions.hasOwnProperty(
+			!reportLayoutOptions.datepickerOptions.hasOwnProperty(
 				'reportFirstDatepicker'
 			)
 		) {
-			scope.reportLayoutOptions.datepickerOptions.reportFirstDatepicker = {}
+			reportLayoutOptions.datepickerOptions.reportFirstDatepicker = {}
 		}
 
 		if (
-			!scope.reportLayoutOptions.datepickerOptions.hasOwnProperty(
+			!reportLayoutOptions.datepickerOptions.hasOwnProperty(
 				'reportLastDatepicker'
 			)
 		) {
-			scope.reportLayoutOptions.datepickerOptions.reportLastDatepicker = {}
+			reportLayoutOptions.datepickerOptions.reportLastDatepicker = {}
 		}
 
-		if (typeof scope.reportLayoutOptions.useDateFromAbove !== 'boolean') {
-			scope.reportLayoutOptions.useDateFromAbove = true
+		if (typeof reportLayoutOptions.useDateFromAbove !== 'boolean') {
+			reportLayoutOptions.useDateFromAbove = true
 		}
 	}
 	let currencies
@@ -370,14 +372,14 @@
 			currencyService
 				.getListLight(currencyOptions)
 				.then(async function (data) {
-					currencies = scope.currencies.concat(data.results)
+					currencies = currencies.concat(data.results)
 
-					if (!scope.currencies.length) {
+					if (!currencies.length) {
 						const ecosystemDefaultData = await ecosystemDefaultService
 							.getList()
 							.then((res) => res.results[0])
-						scope.currencies.push(ecosystemDefaultData.currency_object)
-						scope.reportOptions.report_currency =
+						currencies.push(ecosystemDefaultData.currency_object)
+						reportOptions.report_currency =
 							ecosystemDefaultData.currency_object.id
 					}
 
@@ -386,7 +388,7 @@
 						// Victor 2020.12.03 may be not need
 						//getPricingPolicies(resolve, reject);
 					} else {
-						scope.$apply()
+						$apply()
 						resolve(true)
 					}
 				})
@@ -397,121 +399,113 @@
 	}
 
 	const updateReportLayoutOptions = function () {
-		const reportLayoutOptions = scope.evDataService.getReportLayoutOptions()
+		const reportLayoutOptions = evDataService.getReportLayoutOptions()
 		const newReportLayoutOptions = {
 			...reportLayoutOptions,
-			...scope.reportLayoutOptions,
+			...reportLayoutOptions,
 		}
 
-		scope.evDataService.setReportLayoutOptions(newReportLayoutOptions)
+		evDataService.setReportLayoutOptions(newReportLayoutOptions)
 	}
 
-	if (scope.isReport) {
+	if (isReport) {
 		currencies = []
-		/*scope.dateFrom = scope.reportOptions[dateFromKey];
-                    scope.dateTo = scope.reportOptions[dateToKey];*/
+		/*dateFrom = reportOptions[dateFromKey];
+                    dateTo = reportOptions[dateToKey];*/
 		let onReportDateChange = function () {
 			if (
-				scope.viewContext !== 'split_panel' ||
-				!scope.reportLayoutOptions.useDateFromAbove
+				viewContext !== 'split_panel' ||
+				!reportLayoutOptions.useDateFromAbove
 			) {
 				if (dateFromKey) {
-					scope.reportOptions[dateFromKey] = scope.datesData.from
+					reportOptions[dateFromKey] = datesData.from
 				}
 
-				scope.reportOptions[dateToKey] = scope.datesData.to
+				reportOptions[dateToKey] = datesData.to
 			}
 
-			scope.updateReportOptions()
+			updateReportOptions()
 		}
 
 		let toggleUseDateFromAbove = function () {
 			// reportLayoutOptions.useDateFromAbove updated inside entityViewerDataService by mutation
 			updateReportLayoutOptions()
 
-			scope.evEventService.dispatchEvent(
-				evEvents.TOGGLE_USE_REPORT_DATE_FROM_ABOVE
-			)
+			evEventService.dispatchEvent(evEvents.TOGGLE_USE_REPORT_DATE_FROM_ABOVE)
 
 			// event REPORT_OPTIONS_CHANGE dispatched from splitPanelReportViewerController as reaction to TOGGLE_USE_REPORT_DATE_FROM_ABOVE
-			if (scope.viewContext !== 'split_panel') {
-				scope.evEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE)
+			if (viewContext !== 'split_panel') {
+				evEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE)
 			}
 		}
 
-		scope.useDateFromAboveName =
-			scope.entityType === 'balance-report' ? 'Link date' : 'Link date'
+		useDateFromAboveName =
+			entityType === 'balance-report' ? 'Link date' : 'Link date'
 	}
 
 	let updateReportOptions = function () {
-		var reportOptions = scope.evDataService.getReportOptions()
+		var reportOptions = evDataService.getReportOptions()
 		// delete reportLayoutOptions.datepickerOptions.reportFirstDatepicker.secondDate;
-		var newReportOptions = Object.assign({}, reportOptions, scope.reportOptions)
+		var newReportOptions = Object.assign({}, reportOptions, reportOptions)
 
-		scope.evDataService.setReportOptions(newReportOptions)
+		evDataService.setReportOptions(newReportOptions)
 
 		updateReportLayoutOptions()
 
-		scope.evEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE)
+		evEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE)
 
 		setTimeout(function () {
-			scope.$apply()
+			$apply()
 		}, 200)
 	}
 	let missingPricesData
 	var initEventListeners = function () {
-		scope.evEventService.addEventListener(
-			evEvents.LAYOUT_NAME_CHANGE,
-			function () {
-				listLayout = scope.evDataService.getListLayout()
+		evEventService.addEventListener(evEvents.LAYOUT_NAME_CHANGE, function () {
+			listLayout = evDataService.getListLayout()
 
-				if (listLayout && listLayout.name) {
-					scope.layoutData.name = listLayout.name
-				}
+			if (listLayout && listLayout.name) {
+				layoutData.name = listLayout.name
 			}
-		)
+		})
 
-		scope.evEventService.addEventListener(
+		evEventService.addEventListener(
 			evEvents.MISSING_PRICES_LOAD_END,
 			function () {
-				missingPricesData = scope.evDataService.getMissingPrices()
+				missingPricesData = evDataService.getMissingPrices()
 			}
 		)
 
-		if (scope.isReport) {
-			scope.evEventService.addEventListener(
+		if (isReport) {
+			evEventService.addEventListener(
 				evEvents.REPORT_OPTIONS_CHANGE,
 				function () {
-					scope.reportOptions = scope.evDataService.getReportOptions()
-					scope.reportLayoutOptions =
-						scope.evDataService.getReportLayoutOptions()
+					reportOptions = evDataService.getReportOptions()
+					reportLayoutOptions = evDataService.getReportLayoutOptions()
 
 					if (dateFromKey) {
-						scope.datesData.from = scope.reportOptions[dateFromKey]
+						datesData.from = reportOptions[dateFromKey]
 					}
 
-					scope.datesData.to = scope.reportOptions[dateToKey]
+					datesData.to = reportOptions[dateToKey]
 				}
 			)
 		}
 	}
 	let datesData
 	const init = async function () {
-		missingPricesData = scope.evDataService.getMissingPrices()
+		missingPricesData = evDataService.getMissingPrices()
 
-		if (scope.isReport) {
+		if (isReport) {
 			getCurrencies()
 
 			prepareReportLayoutOptions()
-			;[dateFromKey, dateToKey] = reportHelper.getDateProperties(
-				scope.entityType
-			)
+			;[dateFromKey, dateToKey] = reportHelper.getDateProperties(entityType)
 
 			datesData = {
-				to: scope.reportOptions[dateToKey],
+				to: reportOptions[dateToKey],
 			}
 
-			if (dateFromKey) scope.datesData.from = scope.reportOptions[dateFromKey]
+			if (dateFromKey) datesData.from = reportOptions[dateFromKey]
 		}
 
 		initEventListeners()

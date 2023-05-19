@@ -24,10 +24,11 @@ import evDataProviderService from '@/angular/services/ev-data-provider/ev-data-p
 import evRvLayoutsHelperInst from '../../helpers/evRvLayoutsHelper'
 import globalDataServiceInst from '../../shell/scripts/app/services/globalDataService'
 import middlewareServiceInst from '../../shell/scripts/app/services/middlewareService'
-import metaContentTypesService from '../../services/metaContentTypesService'
+import metaContentTypesServiceInst from '../../services/metaContentTypesService'
 import customFieldService from '../../services/reports/customFieldService'
 import attributeTypeService from '../../services/attributeTypeService'
 
+window.metaContentTypesService = new metaContentTypesServiceInst()
 // portal.controller('EntityViewerController', [
 // 	'$scope',
 // 	'$mdDialog',
@@ -62,7 +63,7 @@ export default function (
 	var vm = this
 
 	let evRvLayoutsHelper = new evRvLayoutsHelperInst()
-	let globalDataService = new globalDataServiceInst()
+	window.globalDataService = new globalDataServiceInst()
 	let middlewareService = new middlewareServiceInst()
 
 	var checkLayoutChanges = true
@@ -883,7 +884,11 @@ export default function (
 		vm.readyStatus.layout = false
 
 		vm.entityViewerDataService = new EntityViewerDataService()
+		window.evDataService = vm.entityViewerDataService
+
 		vm.entityViewerEventService = new EntityViewerEventService()
+		window.evEventService = vm.entityViewerEventService
+
 		vm.splitPanelExchangeService = new SplitPanelExchangeService()
 		vm.attributeDataService = new AttributeDataService(
 			metaContentTypesService,
