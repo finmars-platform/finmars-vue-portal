@@ -373,8 +373,9 @@
 		</div>
 
 		<ModalAttributesSelector
-			v-if="isOpenAttrsSelector"
-			v-mode="isOpenAttrsSelector"
+			v-if="$mdDialog.modals['AttributesSelectorDialogController']"
+			:payload="$mdDialog.modals['AttributesSelectorDialogController']"
+			:modelValue="true"
 		></ModalAttributesSelector>
 	</div>
 </template>
@@ -397,6 +398,7 @@
 		'attributeDataService',
 		'contentWrapElement',
 	])
+	const $mdDialog = inject('$mdDialog')
 	/**
 	 * Created by szhitenev on 05.05.2016.
 	 */
@@ -633,56 +635,7 @@
 	let onSubtotalTypeSelectCancel = function () {
 		makePopupDataForColumns(columns)
 	}
-
-	function getPopupData(item, $index, isAGroup) {
-		let data = {
-			$index: $index,
-			isAGroup: isAGroup,
-			item: item, // can be column or group
-			viewContext: viewContext,
-			renameColumn: renameColumn,
-			isReport: isReport,
-			columnHasCorrespondingGroup: columnHasCorrespondingGroup,
-			addColumnEntityToGrouping: addColumnEntityToGrouping,
-			checkForFilteringBySameAttr: checkForFilteringBySameAttr,
-			addFiltersWithColAttr: addFiltersWithColAttr,
-			editManualSorting: editManualSorting,
-			activateColumnNumberRenderingPreset: activateColumnNumberRenderingPreset,
-			openColumnNumbersRenderingSettings: openColumnNumbersRenderingSettings,
-			selectSubtotalType: selectSubtotalType,
-			checkSubtotalFormula: checkSubtotalFormula,
-			// isSubtotalFormulaSelected: isSubtotalFormulaSelected,
-			getSubtotalFormula: getSubtotalFormula,
-			resizeColumn: resizeColumn,
-			removeColumn: removeColumn,
-			unGroup: unGroup,
-
-			changeColumnTextAlign: changeColumnTextAlign,
-			checkColTextAlign: checkColTextAlign,
-			removeGroup: removeGroup,
-			// reportHideSubtotal: reportHideSubtotal,
-			reportHideGrandTotal: reportHideGrandTotal,
-			isSubtotalWeightedShouldBeExcluded: isSubtotalWeightedShouldBeExcluded,
-
-			isSubtotalSum: isSubtotalSum(item),
-			isSubtotalWeighted: isSubtotalWeighted(item),
-			isSubtotalAvgWeighted: isSubtotalAvgWeighted(item),
-			subtotalFormula: getSubtotalFormula(item),
-			isTemporaryWeighted: false,
-
-			onSubtotalSumClick: onSubtotalSumClick,
-			onSubtotalWeightedClick: onSubtotalWeightedClick,
-			onSubtotalAvgWeightedClick: onSubtotalAvgWeightedClick,
-
-			openNumberFormatDialog: openNumberFormatDialog,
-		}
-
-		if (isAGroup) {
-			data.reportSetSubtotalType = reportSetSubtotalType
-		}
-
-		return data
-	}
+	let checkForFilteringBySameAttr
 
 	let getPopupMenuTemplate = function (column) {
 		if (isReport && column.value_type == 20) {
@@ -2079,39 +2032,41 @@
 		})
 	}
 
-	let $mdDialog = {
-		async show(opts) {
-			isOpenAttrsSelector.value = true
-		},
-	}
 	async function addColumn($event) {
 		const allAttrs = attributeDataService.getForAttributesSelector(entityType)
 		const selectedAttrs = columns.map((col) => col.key)
-		console.log('evHelperService:', evHelperService)
 
 		let res = await $mdDialog.show({
-			data: {
-				attributes: allAttrs,
-				layoutNames: evHelperService.getAttributesLayoutNames(columns),
-				selectedAttributes: selectedAttrs,
-				contentType: contentType,
+			controller: 'AttributesSelectorDialogController as vm',
+			templateUrl: 'views/dialogs/attributes-selector-dialog-view.html',
+			targetEvent: $event,
+			multiple: true,
+			locals: {
+				data: {
+					title: 'Add columns',
+					attributes: allAttrs,
+					layoutNames: evHelperService.getAttributesLayoutNames(columns),
+					selectedAttributes: selectedAttrs,
+					contentType: contentType,
+				},
 			},
 		})
 
-		// if (res && res.status === 'agree') {
-		// 	for (var i = 0; i < res.data.items.length; i = i + 1) {
-		// 		var colData = evHelperService.getTableAttrInFormOf(
-		// 			'column',
-		// 			res.data.items[i]
-		// 		)
-		// 		columns.push(colData)
-		// 	}
+		if (res && res.status == 'agree') {
+			console.log('res:', res)
+			for (var i = 0; i < res.data.items.length; i = i + 1) {
+				var colData = evHelperService.getTableAttrInFormOf(
+					'column',
+					res.data.items[i]
+				)
+				columns.push(colData)
+			}
 
-		// 	evDataService.setColumns(columns)
+			evDataService.setColumns(columns)
 
-		// 	evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
-		// 	evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
-		// }
+			evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
+			evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+		}
 	}
 
 	let addColumnToDashboardReport = function (attribute) {
@@ -2157,7 +2112,7 @@
 	let onGroupsChange
 
 	if (isReport) {
-		let checkForFilteringBySameAttr = function (columnKey) {
+		checkForFilteringBySameAttr = function (columnKey) {
 			var filters = evDataService.getFilters()
 
 			for (var i = 0; i < filters.length; i++) {
@@ -2211,7 +2166,7 @@
 			evEventService.dispatchEvent(evEvents.UPDATE_TABLE)
 		}
 
-		let checkForFilteringBySameAttr = function (columnKey) {
+		checkForFilteringBySameAttr = function (columnKey) {
 			var filters = evDataService.getFilters()
 			var filtersList = showFrontEvFilters ? filters.frontend : filters.backend
 
@@ -2320,6 +2275,56 @@
 	}
 
 	init()
+
+	function getPopupData(item, $index, isAGroup) {
+		let data = {
+			$index: $index,
+			isAGroup: isAGroup,
+			item: item, // can be column or group
+			viewContext: viewContext,
+			renameColumn: renameColumn,
+			isReport: isReport,
+			columnHasCorrespondingGroup: columnHasCorrespondingGroup,
+			addColumnEntityToGrouping: addColumnEntityToGrouping,
+			checkForFilteringBySameAttr: checkForFilteringBySameAttr,
+			addFiltersWithColAttr: addFiltersWithColAttr,
+			editManualSorting: editManualSorting,
+			activateColumnNumberRenderingPreset: activateColumnNumberRenderingPreset,
+			// openColumnNumbersRenderingSettings: openColumnNumbersRenderingSettings,
+			selectSubtotalType: selectSubtotalType,
+			checkSubtotalFormula: checkSubtotalFormula,
+			// isSubtotalFormulaSelected: isSubtotalFormulaSelected,
+			getSubtotalFormula: getSubtotalFormula,
+			resizeColumn: resizeColumn,
+			removeColumn: removeColumn,
+			unGroup: unGroup,
+
+			changeColumnTextAlign: changeColumnTextAlign,
+			checkColTextAlign: checkColTextAlign,
+			removeGroup: removeGroup,
+			// reportHideSubtotal: reportHideSubtotal,
+			reportHideGrandTotal: reportHideGrandTotal,
+			isSubtotalWeightedShouldBeExcluded: isSubtotalWeightedShouldBeExcluded,
+
+			isSubtotalSum: isSubtotalSum(item),
+			isSubtotalWeighted: isSubtotalWeighted(item),
+			isSubtotalAvgWeighted: isSubtotalAvgWeighted(item),
+			subtotalFormula: getSubtotalFormula(item),
+			isTemporaryWeighted: false,
+
+			onSubtotalSumClick: onSubtotalSumClick,
+			onSubtotalWeightedClick: onSubtotalWeightedClick,
+			onSubtotalAvgWeightedClick: onSubtotalAvgWeightedClick,
+
+			openNumberFormatDialog: openNumberFormatDialog,
+		}
+
+		if (isAGroup) {
+			data.reportSetSubtotalType = reportSetSubtotalType
+		}
+
+		return data
+	}
 </script>
 
 <style lang="scss" scoped>

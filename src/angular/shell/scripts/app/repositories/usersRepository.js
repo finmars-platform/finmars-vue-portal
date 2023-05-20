@@ -4,8 +4,6 @@
 
 // (function () {
 
-'use strict'
-
 /*import ToastNotificationService from "../services/toastNotificationService";
 const toastNotificationService = new ToastNotificationService();
 
@@ -67,7 +65,7 @@ var logout = function () {
 	})
 }; */
 
-export default function (cookieService, xhrService) {
+export default function () {
 	const ping = function () {
 		const prefix = baseUrlService.getMasterUserPrefix()
 		const apiVersion = baseUrlService.getApiVersion()

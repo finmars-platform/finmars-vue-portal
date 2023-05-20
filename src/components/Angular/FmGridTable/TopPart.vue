@@ -171,8 +171,7 @@
 	// 	$state,
 	// 	usersService,
 	// 	ecosystemDefaultService,
-	// 	globalDataService,
-	// 	evRvLayoutsHelper,
+	// 	,
 	// 	reportHelper
 	// ) {
 	// scope: {
@@ -222,6 +221,7 @@
 	}
 
 	let saveLayoutList = function ($event) {
+		console.log('$event:', $event)
 		var isNewLayout = evDataService.isLayoutNew()
 
 		if (isNewLayout) {
