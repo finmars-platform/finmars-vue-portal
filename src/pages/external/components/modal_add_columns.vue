@@ -828,7 +828,7 @@ function cancel() {
 function save() {
 
 	const selKeys = Object.keys(selected).filter( key => {
-		return !selectedOld.find(attr => attr.key === key);
+		return selected[key] && !selectedOld.find(attr => attr.key === key);
 	});
 
 	send({
