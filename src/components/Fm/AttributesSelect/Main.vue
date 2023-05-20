@@ -498,7 +498,6 @@
 			const selKeys = Object.keys(selected).filter( key => {
 				return selected[key] && !disabledAttrs.find(attr => attr.key === key);
 			});
-
 			// const selAttrs = props.attributes.filter( attr => selKeys.includes(attr.key) );
 
 			emit('update:modelValue', selKeys);
@@ -647,67 +646,7 @@
 		}
 	)*/
 
-	let advancedColumns = ref([]);
-
-	const testing1619ToDelete = function () {
-
-		/*for ( let attr of attrs ) {
-				// const parts = attr.name.split(" / ")
-				const parts = attr.name.split(". ")
-				parts[0] = parts[0].trim()
-
-				let node = tree;
-				let parentNode = null;
-
-				for  (let i = 0; i < parts.length; i++ ) {
-					let part = parts[i]
-
-					if ( !node[part] ) { // node does not exist
-
-						if ( parts.length - 1 === i ) { // leaf
-
-							// let pathToNode = [attr.key];
-							//
-							// if ( parentNode ) {
-							// 	pathToNode = parentNode.pathToNode.concat(pathToNode);
-							// }
-
-							node[part] = {
-								originalName: attr.name,
-								id: attr.key,
-								name: part,
-								// pathToNode: pathToNode
-							}
-
-						} else { // branch
-
-							// let pathToNode = [ part ];
-							//
-							// if ( parentNode ) {
-							// 	pathToNode = parentNode.pathToNode.concat(pathToNode);
-							// }
-
-							node[part] = {
-								// id: pathToNode.join('. '),
-								name: part,
-								children: {},
-							};
-
-							parentNode = node;
-
-							node = node[part].children;
-
-						}
-
-					} else {
-						node = node[part].children;
-					}
-
-
-				}
-			}*/
-
-	}
+	// let advancedColumns = ref([]);
 
 	function buildTreeTemplate(attrs) {
 
@@ -767,7 +706,7 @@
 
 			if ( treeTemplate[key]._branch ) {
 				nodeData.opened = false;
-				nodeData.children = assembleTree( treeTemplate[key] );
+				nodeData.children = assembleTree( treeTemplate[key], nodeData );
 
 			} else { // leaf
 				// newObj = treeTemplate[key];
@@ -802,10 +741,8 @@
 			let attrs = JSON.parse(JSON.stringify( formattedAttrs.value ));
 			let tree = buildTreeTemplate(attrs);
 
-			console.log("testing1619 treeTemplate", JSON.parse(JSON.stringify(tree)) );
 			attrsTree = assembleTree(tree);
 			viewTree.value = searchParam.value ? filterTree(attrsTree) : attrsTree;
-			console.log("testing1619 tree", JSON.parse(JSON.stringify(attrsTree)) );
 
 		}
 	)
@@ -1069,50 +1006,65 @@
 		return result
 	}
 
-	/*function filterNode(node) {
+	function nodePassesFilter(node) {
+		const name = node.name.toLowerCase();
+		// all terms should be found inside name or originalName
 
-		let name;
+		if (node.originalName) { // leaf
 
-		if (node.originalName) {
-			name =
+			const originalName = formatName(node.originalName).toLowerCase();
+			// all terms should be found inside originalName and at least one term inside name
+			return !searchTermsList.value.find(term => !originalName.includes(term) ) &&
+				!!searchTermsList.value.find(term => name.includes(term) );
+
 		}
-		let passed = searchTermsList.value.find(term => node.name.includes(term) );
+		// all terms should be found inside name
+		return !searchTermsList.value.find(term => !name.includes(term) );
 
-		if (passed) {
-
-		}
-		const formattedName = highlightName( node.name );
-
-	}*/
+	}
 
 	function filterNodesR( tree, filteredTree = [] ) {
 
 		tree.forEach(node => {
-			console.log("testing1619.swelter node", node);
-			let name = node.originalName ? formatName(node.originalName) : node.name;
-			name = name.toLowerCase();
-			console.log("testing1619.swelter node name", name);
-			// all terms should be found inside name
-			let pass = !searchTermsList.value.find(term => !name.includes(term) );
-			console.log("testing1619.swelter node: " + name + " pass", pass);
-			if (pass) {
+			/*let name = node.originalName ? formatName(node.originalName) : node.name;
+			name = name.toLowerCase();*/
+			if ( nodePassesFilter(node) ) {
 
 				let filteredNode;
 
-				if (node.children) {
+				/*
+				* Spreading object literals used below
+				* so that highlightName() will not change properties 'name'
+				* inside the object attrsTree
+				* */
+				/*if (node.children) {
 
-					filteredNode = {...node};
-					filteredNode.name = highlightName(filteredNode.name);
-					console.log("testing1619.swelter node: " + name + " 1 ", filteredNode);
+					filteredNode = {
+						...node,
+						name: highlightName(node.name)
+					};
+
 				} else {
 
-					filteredNode = node;
-					filteredNode.name = highlightName(filteredNode.originalName);
-					console.log("testing1619.swelter node: " + name + " 2 ", filteredNode);
-				}
+					filteredNode = {
+						...node,
+						name: highlightName(node.originalName),
+					};
+
+				}*/
+
+				/*
+				* Spreading object literals used below
+				* so that highlightName() will not change properties 'name'
+				* inside the object attrsTree
+				* */
+				filteredNode = {
+					...node,
+					name: highlightName(node.originalName || node.name),
+				};
 
 				filteredTree.push(filteredNode);
-				console.log("testing1619.swelter node: " + name + " filteredTree ", JSON.parse(JSON.stringify(filteredTree)) );
+
 			}
 
 			// should be called after filteredTree.push(filteredNode) to place nodes after their parents
@@ -1121,18 +1073,50 @@
 			}
 
 		})
-		console.log("testing1619.swelter filteredTree", JSON.parse(JSON.stringify(filteredTree)) );
+
 		return filteredTree;
+
+	}
+
+	/** Format names of branches for section - All sections */
+	function formatSecsBrsNames(tree) {
+
+		return tree.map(node => {
+
+			if (node.originalName) {
+				return node
+			}
+
+			return {
+				...node,
+				name: highlightName( node.pathToNode.join(' / ') ),
+				children: formatSecsBrsNames(node.children),
+			};
+
+		});
+
+	}
+
+	function getAllSectionsChildren(tree) {
+
+		let result = tree.reduce(
+			(accumulator, currentSection) => accumulator.concat(currentSection.children),
+			[],
+		);
+
+		result = formatSecsBrsNames(result);
+
+		return result;
 
 	}
 
 	function filterTree(tree) {
 
-		const testingME = tree
+		const filteredTree = tree
 			.map(node => {
 
 				const filteredChildren = filterNodesR(node.children);
-				console.log("testing1619.swelter filterTree node: " + node.name + " filteredChildren", JSON.parse(JSON.stringify(filteredChildren)) );
+
 				if (filteredChildren.length) {
 
 					return {
@@ -1147,9 +1131,14 @@
 			})
 			.filter(node => node);
 
-		console.log("testing1619.swelter filterTree ", JSON.parse(JSON.stringify(testingME)) );
+		const allSections = {
+			name: 'All sections',
+			children: getAllSectionsChildren(filteredTree),
+		}
 
-		return testingME;
+		filteredTree.unshift(allSections);
+
+		return filteredTree;
 
 	}
 
@@ -1164,7 +1153,7 @@
 			if ( searchParam.value ) {
 
 				viewTree.value = filterTree(attrsTree);
-				console.log("testing1619 viewTree", JSON.parse(JSON.stringify(viewTree.value)) );
+
 			} else {
 				viewTree.value = attrsTree
 			}

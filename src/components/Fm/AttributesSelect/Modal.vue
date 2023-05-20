@@ -3,7 +3,7 @@
 						 :title="title"
 						 no_padding
 						 @update:modelValue="newVal => emit('update:modelValue', newVal)"
-						 @close="isAdvanced = false">
+						 @close="onClose">
 
 		<template #modalTop>
 			<div style="flex-grow: 1;">
@@ -83,7 +83,7 @@
 			type: Array,
 			default: [],
 		},
-		selected: [Array, String],
+		selected: [Array, String, null], // Array for multiselect, String and null for select
 		multiselect: Boolean,
 	});
 
@@ -93,7 +93,7 @@
 	let isAdvanced = ref(false);
 
 	let searchParams = ref('');
-	let newSelAttrs = ref([]);
+	let newSelAttrs = ref( props.multiselect ? [] : '' );
 
 	watch(
 		() => props.selected,
@@ -116,8 +116,35 @@
 		store.updateMember();
 	}
 
+	function onClose() {
+		isAdvanced.value = false;
+		searchParams.value = '';
+	}
+
 	function save(cancelCallback) {
-		emit('save', newSelAttrs.value);
+
+		let val = newSelAttrs.value || null;
+
+		if (val !== null && typeof val !== 'string') {
+			console.error("Component FmAttributesSelectModal return value with wrong format. Expected string or null got " + typeof val);
+		}
+
+		if (!val) { // forbid selection of emptiness for selector of single attribute
+			cancelCallback();
+			return;
+		}
+
+		if ( props.multiselect ) {
+
+			val = newSelAttrs.value || [];
+
+			if ( !Array.isArray(val) ) {
+				console.error("Component FmAttributesSelectModal return value with wrong format. Expected array got " + typeof val);
+			}
+
+		}
+
+		emit('save', val);
 		cancelCallback();
 	}
 

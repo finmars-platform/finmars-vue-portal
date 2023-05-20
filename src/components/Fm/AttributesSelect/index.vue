@@ -56,7 +56,7 @@
 	import useEvAttributesStore from "~/stores/useEvAttributesStore";
 
 	let props = defineProps({
-		modelValue: [Array, String], // Array for multiselect, String for select
+		modelValue: [Array, String, null], // Array for multiselect, String and null for select
 		title: String,
 		contentType: String,
 		attributes: {

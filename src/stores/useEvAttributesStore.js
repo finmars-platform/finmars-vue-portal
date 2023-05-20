@@ -278,7 +278,7 @@ export default defineStore({
 
 		_appendIdAttr(attrs, contentType) {
 
-			const idAttribute = {
+			/* const idAttribute = {
 				"key": "id",
 				"name": "Id",
 				"value_type": 20
@@ -293,7 +293,7 @@ export default defineStore({
 			vm.attributeDataService.appendEntityAttribute('responsible', Object.assign({}, idAttribute));
 			vm.attributeDataService.appendEntityAttribute('counterparty', Object.assign({}, idAttribute));
 			vm.attributeDataService.appendEntityAttribute('transaction-type', Object.assign({}, idAttribute));
-			vm.attributeDataService.appendEntityAttribute('complex-transaction', Object.assign({}, idAttribute));
+			vm.attributeDataService.appendEntityAttribute('complex-transaction', Object.assign({}, idAttribute));*/
 
 		},
 		//# endregion Functions - helpers
