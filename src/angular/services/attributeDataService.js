@@ -792,7 +792,7 @@ export default function (
 	function getAllAttributesByEntityType(entityType) {
 		var result = []
 
-		if (reportsEntityTypes.indexOf(entityType) === -1) {
+		if (!reportsEntityTypes.includes(entityType)) {
 			var entityAttributes = getEntityAttributesByEntityType(entityType)
 			var dynamicAttributes = getDynamicAttributesByEntityType(entityType)
 			var contentType =
@@ -810,8 +810,7 @@ export default function (
 				return result
 			})
 
-			result.concat(entityAttributes)
-			result.concat(dynamicAttributes)
+			result = dynamicAttributes.concat(entityAttributes)
 		} else {
 			if (entityType === 'balance-report') {
 				result = _getBalanceReportAttributes()

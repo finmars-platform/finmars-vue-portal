@@ -8,7 +8,6 @@ import evHelperService from '@/angular/services/entityViewerHelperService'
 import entityResolverService from '@/angular/services/entityResolverService'
 import uiService from '@/angular/services/uiService'
 import instrumentService from '@/angular/services/instrumentService'
-
 import localStorageService from '@/angular/shell/scripts/app/services/localStorageService'
 import evEvents from '@/angular/services/entityViewerEvents'
 
@@ -27,8 +26,9 @@ import middlewareServiceInst from '../../shell/scripts/app/services/middlewareSe
 import metaContentTypesServiceInst from '../../services/metaContentTypesService'
 import customFieldService from '../../services/reports/customFieldService'
 import attributeTypeService from '../../services/attributeTypeService'
+import xhrService from '../../shell/scripts/app/services/xhrService'
+import cookieService from '../../shell/scripts/app/services/cookieService'
 
-window.metaContentTypesService = new metaContentTypesServiceInst()
 // portal.controller('EntityViewerController', [
 // 	'$scope',
 // 	'$mdDialog',
@@ -62,9 +62,14 @@ export default function (
 ) {
 	var vm = this
 
-	let evRvLayoutsHelper = new evRvLayoutsHelperInst()
-	window.globalDataService = new globalDataServiceInst()
+	window.evRvLayoutsHelper = new evRvLayoutsHelperInst()
 	let middlewareService = new middlewareServiceInst()
+
+	// Globals HACK
+	window.metaContentTypesService = new metaContentTypesServiceInst()
+	window.globalDataService = new globalDataServiceInst()
+	window.xhrService = new xhrService()
+	window.cookieService = new cookieService()
 
 	var checkLayoutChanges = true
 

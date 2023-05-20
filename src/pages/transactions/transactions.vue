@@ -48,6 +48,21 @@
 		params: useRoute().query,
 	}
 
+	// Modal hack
+	window.$mdDialog = {
+		modals: reactive({}),
+		show(opts) {
+			return new Promise((resolve, reject) => {
+				window.$mdDialog.modals[opts.controller.replace(' as vm', '')] = {
+					resolve,
+					reject,
+					...opts.locals,
+				}
+			})
+		},
+	}
+	provide('$mdDialog', window.$mdDialog)
+
 	let vm = new entityViewerController(route)
 
 	// fetchTrans()
