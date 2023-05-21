@@ -2,7 +2,7 @@
 	<div class="entity-viewer-holder">
 		<div class="height-100">
 			<div
-				v-if="vm.readyStatus.attributes && vm.readyStatus.layout"
+				v-if="vm && vm.readyStatus.attributes && vm.readyStatus.layout"
 				class="g-group-table-holder"
 			>
 				<AngularFmGridTable
@@ -20,8 +20,7 @@
 					layout-sm="column"
 					layout-align="space-around"
 				>
-					<!-- <progress-circular diameter="100"></progress-circular> -->
-					loader
+					<FmLoader></FmLoader>
 				</div>
 			</div>
 		</div>
@@ -48,6 +47,8 @@
 		params: useRoute().query,
 	}
 
+	window.$state = route
+
 	// Modal hack
 	window.$mdDialog = {
 		modals: reactive({}),
@@ -63,7 +64,11 @@
 	}
 	provide('$mdDialog', window.$mdDialog)
 
-	let vm = new entityViewerController(route)
+	let vm = ref(null)
+
+	onMounted(() => {
+		vm.value = new entityViewerController(route)
+	})
 
 	// fetchTrans()
 	async function fetchTrans() {

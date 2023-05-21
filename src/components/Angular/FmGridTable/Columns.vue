@@ -247,9 +247,15 @@
 				<AngularFmGridTableColumnCell
 					v-for="(column, index) in columnsToShow"
 					:column="column"
-					:style="{ ...column.style }"
+					:style="column.style"
 					:key="index + '_' + column.___column_id"
 					:isReport="isReport"
+					@sort="
+						changeSortDirection(
+							column,
+							column?.options.sort == 'DESC' ? 'ASC' : 'DESC'
+						)
+					"
 					:popup-template-url="getPopupMenuTemplate(column)"
 					:popup-data="columnsPopupsData[column.key]"
 					popup-classes="{{getPopupMenuClasses(column)}}"
@@ -664,15 +670,6 @@
 	let changeSortDirection = function (columnOrGroup, direction) {
 		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
 
-		/*if (columnHasCorrespondingGroup(column.key)) {
-
-	                       clearAllSortOptions(groups);
-
-	                   } else {
-
-	                       clearAllSortOptions(columns);
-
-	                   }*/
 		if (!columnOrGroup.options) columnOrGroup.options = {}
 
 		columnOrGroup.options.sort = direction
@@ -687,7 +684,7 @@
 			placeholder1.options.sort = columnOrGroup.options.sort
 			placeholder1.options.sort_settings = columnOrGroup.options.sort_settings
 
-			evDataService.setGroups(groups)
+			evDataService.setGroups(groups.value)
 
 			evDataService.setActiveGroupTypeSort(columnOrGroup)
 			evEventService.dispatchEvent(evEvents.GROUP_TYPE_SORT_CHANGE)
@@ -1043,7 +1040,7 @@
 		console.log('groups sorting group', group)
 		group.options.sort = sort
 
-		var groups = evDataService.getGroups()
+		groups.value = evDataService.getGroups()
 
 		groups.value.forEach(function (item) {
 			if (group.key === item.key || group.id === item.id) {
@@ -1051,7 +1048,7 @@
 			}
 		})
 
-		evDataService.setGroups(groups)
+		evDataService.setGroups(groups.value)
 		evDataService.setActiveGroupTypeSort(group)
 
 		evEventService.dispatchEvent(evEvents.GROUP_TYPE_SORT_CHANGE)
@@ -1147,7 +1144,7 @@
 						var group = groups.value.find((group) => group.key === itemKey)
 						group.layout_name = res.data.layout_name
 
-						evDataService.setGroups(groups)
+						evDataService.setGroups(groups.value)
 					}
 
 					const filters = evDataService.getFilters()
@@ -1435,7 +1432,7 @@
 		var groupToAdd = evHelperService.getTableAttrInFormOf('group', column)
 
 		groups.value.push(groupToAdd)
-		evDataService.setGroups(groups)
+		evDataService.setGroups(groups.value)
 
 		evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
 		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
@@ -1694,31 +1691,11 @@
 			item.___group_type_id = evDataHelper.getGroupTypeId(item)
 		})
 
-		evDataService.setGroups(groups)
+		evDataService.setGroups(groups.value)
 	}
 
 	const setDefaultGroupType = function () {
 		groups.value = evDataService.getGroups()
-
-		/* TO DELETE: date 2021-01-24
-	                   if (isReport) {
-
-	                       let reportOptions = evDataService.getReportOptions();
-
-	                       if (!reportOptions.subtotals_options) {
-	                           reportOptions.subtotals_options = {}
-	                       }
-
-	                       if (!reportOptions.subtotals_options.type) {
-
-	                           reportOptions.subtotals_options.type = 'line'
-
-	                           evDataService.setReportOptions(reportOptions);
-	                           evEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE);
-
-	                       }
-
-	                   } */
 
 		groups.value.forEach(function (group) {
 			if (!group.hasOwnProperty('report_settings')) {
@@ -1734,7 +1711,7 @@
 			}
 		})
 
-		evDataService.setGroups(groups)
+		evDataService.setGroups(groups.value)
 	}
 
 	const updateGroupFoldingState = function () {
@@ -1750,7 +1727,7 @@
 			}
 		})
 
-		evDataService.setGroups(groups)
+		evDataService.setGroups(groups.value)
 	}
 
 	const syncColumnsWithGroups = function () {
@@ -1798,20 +1775,20 @@
 	}
 
 	let foldLevel = function (key, $index) {
-		groups = evDataService.getGroups()
+		groups.value = evDataService.getGroups()
 
-		var item = groups[$index]
+		var item = groups.value[$index]
 		item.report_settings.is_level_folded = true
 		var i
 		//<editor-fold desc="Set folded groups before calling rvDataHelper.setGroupSettings()">
-		for (i = $index; i < groups.length; i++) {
-			groups[i].report_settings.is_level_folded = true
+		for (i = $index; i < groups.value.length; i++) {
+			groups.value[i].report_settings.is_level_folded = true
 		}
 
-		evDataService.setGroups(groups)
+		evDataService.setGroups(groups.value)
 		//</editor-fold">
 
-		for (i = $index; i < groups.length; i++) {
+		for (i = $index; i < groups.value.length; i++) {
 			var groupsContent = evDataHelper.getGroupsByLevel(i + 1, evDataService)
 
 			groupsContent.forEach(function (groupItem) {
@@ -1863,20 +1840,20 @@
 	}
 
 	let unfoldLevel = function (key, $index) {
-		groups = evDataService.getGroups()
+		groups.value = evDataService.getGroups()
 
-		var item = groups[$index]
+		var item = groups.value[$index]
 
 		item.report_settings.is_level_folded = false
 
-		groups = evDataService.getGroups()
+		groups.value = evDataService.getGroups()
 		var i
 		//<editor-fold desc="Set folded groups before calling rvDataHelper.setGroupSettings()">
 		for (i = $index; i >= 0; i--) {
 			groups[i].report_settings.is_level_folded = false
 		}
 
-		evDataService.setGroups(groups)
+		evDataService.setGroups(groups.value)
 		//</editor-fold>
 
 		for (i = $index; i >= 0; i--) {
@@ -2089,11 +2066,10 @@
 			evDataHelper.setColumnsDefaultWidth(evDataService)
 
 			let columns = evDataService.getColumns()
-			console.log('columns:', columns)
 			if (columns)
 				console.log(
-					'testing98.COLUMNS_CHANGE columns',
-					JSON.parse(JSON.stringify(columns))
+					'testing98.COLUMNS_CHANGE columns'
+					// JSON.parse(JSON.stringify(columns))
 				)
 			getColsAvailableForAdditions() // when inside dashboard
 			// flagMissingColumns();

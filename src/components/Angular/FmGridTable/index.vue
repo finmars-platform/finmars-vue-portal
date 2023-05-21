@@ -80,65 +80,58 @@
 						/>
 					</div>
 
-					<div v-if="components.filterArea" class="position-relative">
-						<!-- <g-filters MAIN NEED RELOC
-								ev-data-service="evDataService"
-								ev-event-service="evEventService"
-								attribute-data-service="attributeDataService"
-								content-wrap-element="contentWrapElem"
-								hide-filters-block="hideFiltersBlock"
-								hide-use-from-above-filters="hideUseFromAboveFilters"
-							>
-							</g-filters> -->
+					<div
+						v-if="components.filterArea && contentWrapElem"
+						class="position-relative"
+					>
+						<AngularFmGridTableFilters
+							:attributeDataService="attributeDataService"
+							:contentWrapElement="contentWrapElem"
+							:hideFiltersBlock="hideFiltersBlock"
+							:hideUseFromAboveFilters="hideUseFromAboveFilters"
+							:vm="vm"
+						/>
 					</div>
 
-					<div v-if="domElemsAreReady" class="g-table-section">
-						<div class="flex-row">
+					<div v-if="domElemsAreReady" class="g-table-section flex-row">
+						<div
+							v-if="!isReport && contentWrapElem"
+							class="g-ev-left-panel-holder gEvLeftPanelHolder"
+						>
+							<AngularFmGridTableLeftPanel
+								:attributeDataService="attributeDataService"
+								:evDataService="evDataService"
+								:evEventService="evEventService"
+								:spExchangeService="spExchangeService"
+								:contentWrapElement="contentWrapElem"
+							/>
+
 							<div
-								v-if="!isReport"
-								class="g-ev-left-panel-holder gEvLeftPanelHolder"
+								class="drop-area-wrap left-side-groups-drop-area display-none gLeftSideGroupsHolder"
 							>
-								<!-- <g-ev-left-panel MIEN
-										class="height-100 display-block"
-										ev-data-service="evDataService"
-										ev-event-service="evEventService"
-										attribute-data-service="attributeDataService"
-										sp-exchange-service="spExchangeService"
-										content-wrap-element="contentWrapElem"
-									></g-ev-left-panel> -->
+								<div class="g-drop-area gDropArea"></div>
 
-								<div
-									class="drop-area-wrap left-side-groups-drop-area display-none gLeftSideGroupsHolder"
-								>
-									<div class="g-drop-area gDropArea"></div>
-
-									<div class="drop-area-content">
-										<span>Drop here to add grouping</span>
-									</div>
+								<div class="drop-area-content">
+									<span>Drop here to add grouping</span>
 								</div>
 							</div>
+						</div>
 
-							<div class="g-table-container">
-								<div class="g-table-wrap">
-									<div class="g-column-area-wrap">
-										<div v-if="components.columnArea && viewType != 'matrix'">
-											<!-- <group-columns MAIN
-													ev-data-service="evDataService"
-													ev-event-service="evEventService"
-													attribute-data-service="attributeDataService"
-													content-wrap-element="contentWrapElem"
-												></group-columns> -->
-											<AngularFmGridTableColumns
-												v-if="contentWrapElem"
-												:evDataService="evDataService"
-												:evEventService="evEventService"
-												:attributeDataService="attributeDataService"
-												:contentWrapElement="contentWrapElem"
-												:vm="vm"
-											/>
-										</div>
+						<div class="g-table-container">
+							<div class="g-table-wrap">
+								<div class="g-column-area-wrap">
+									<div v-if="components.columnArea && viewType != 'matrix'">
+										<AngularFmGridTableColumns
+											v-if="contentWrapElem"
+											:evDataService="evDataService"
+											:evEventService="evEventService"
+											:attributeDataService="attributeDataService"
+											:contentWrapElement="contentWrapElem"
+											:vm="vm"
+										/>
 									</div>
-									<!-- :class="{
+								</div>
+								<!-- :class="{
 											'g-font-size-small':
 												reportOptions.table_font_size === 'small',
 											'g-font-size-medium':
@@ -146,14 +139,14 @@
 											'g-font-size-large':
 												reportOptions.table_font_size === 'large',
 										}" -->
-									<AngularFmGridTableBody
-										v-if="viewType == 'report_viewer' && workareaWrapElem"
-										:workareaWrapElement="workareaWrapElem"
-										:contentWrapElement="contentWrapElem"
-										:rootWrapElement="rootWrapElem"
-									/>
+								<AngularFmGridTableBody
+									v-if="viewType == 'report_viewer' && workareaWrapElem"
+									:workareaWrapElement="workareaWrapElem"
+									:contentWrapElement="contentWrapElem"
+									:rootWrapElement="rootWrapElem"
+								/>
 
-									<!-- <report-viewer-matrix NEED RELOC
+								<!-- <report-viewer-matrix NEED RELOC
 											v-if="viewType == 'matrix'"
 											class="height-100 display-block matrix-inside-report-builder"
 											style="height: 600px"
@@ -162,19 +155,18 @@
 											ev-event-service="evEventService"
 										></report-viewer-matrix> -->
 
-									<div
-										v-if="isReport"
-										rv-gcf-areas-dnd
-										ev-data-service="evDataService"
-										ev-event-service="evEventService"
-										content-wrap-element="contentWrapElem"
-									></div>
+								<div
+									v-if="isReport"
+									rv-gcf-areas-dnd
+									ev-data-service="evDataService"
+									ev-event-service="evEventService"
+									content-wrap-element="contentWrapElem"
+								></div>
 
-									<AngularFmGridTableAreasDnd
-										v-if="!isReport && contentWrapElem"
-										:contentWrapElement="contentWrapElem"
-									/>
-								</div>
+								<AngularFmGridTableAreasDnd
+									v-if="!isReport && contentWrapElem"
+									:contentWrapElement="contentWrapElem"
+								/>
 							</div>
 						</div>
 					</div>

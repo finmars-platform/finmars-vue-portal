@@ -48,12 +48,7 @@
 
 					<div
 						:class="['sort', column?.options.sort ? 'has-sort' : '']"
-						@click="
-							changeSortDirection(
-								column,
-								column?.options.sort == 'DESC' ? 'ASC' : 'DESC'
-							)
-						"
+						@click="$emit('sort')"
 					>
 						<span
 							v-show="column?.options.sort == 'DESC' || !column?.options.sort"
@@ -81,6 +76,7 @@
 
 <script setup>
 	const props = defineProps(['column', 'isReport'])
+	const emits = defineEmits(['sort'])
 </script>
 
 <style lang="scss" scoped></style>

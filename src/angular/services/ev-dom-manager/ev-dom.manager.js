@@ -1496,7 +1496,7 @@ var calculateScroll = function (elements, evDataService, evScrollManager) {
         } */
 
 	viewportHeight = Math.floor(contentWrapElemHeight - viewportTop)
-
+	viewportHeight = window.innerHeight - viewportTop
 	/* if (!isRootEntityViewer) {
 
             if (components.groupingArea) {

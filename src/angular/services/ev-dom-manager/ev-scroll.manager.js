@@ -81,7 +81,7 @@ export default function () {
 
 	function setContentWrapElemHeight(height) {
 		contentWrapElemHeight = height
-		contentWrapElem.style.height = height + 'px'
+		contentWrapElem.style.height = `calc(100vh - ${height})`
 	}
 
 	function getContentWrapElemHeight() {
