@@ -38,8 +38,6 @@ var getNextPage = function (options, event, entityViewerDataService) {
 		}
 	}
 
-	console.log('getNextPage._options.page', _options.page)
-
 	return _options.page
 }
 
@@ -296,10 +294,6 @@ var getFlatStructure = function (evDataService, globalDataService) {
 
 	var tree = utilsHelper.convertToTree(data, rootGroup)
 
-	console.log('getFlatStructure.data', data)
-	console.log('getFlatStructure.rootGroup', rootGroup)
-	console.log('getFlatStructure.tree', tree)
-
 	var list = utilsHelper.convertTreeToList(tree)
 
 	// console.log('getFlatStructure.list', list);
@@ -320,12 +314,12 @@ var calculateProjection = function (flatList, evDataService) {
 	var offsetPx = evDataService.getVirtualScrollOffsetPx()
 	var from = Math.ceil(offsetPx / rowHeight)
 	var step = evDataService.getVirtualScrollStep()
-	console.log(
-		'dubugging.rowsToShow calculateProjection data',
-		rowHeight,
-		offsetPx,
-		step
-	)
+	// console.log(
+	// 	'dubugging.rowsToShow calculateProjection data',
+	// 	rowHeight,
+	// 	offsetPx,
+	// 	step
+	// )
 	evDataService.setProjectionLastFrom(from)
 
 	var to = from + step / 2
@@ -577,8 +571,6 @@ var setDefaultGroups = function (
 		}
 	}
 
-	console.log('setDefaultGroups obj.count', obj.count)
-
 	for (i = 0; i < step; i = i + 1) {
 		if (pageAsIndex * step + i < obj.count) {
 			if (!obj.results[pageAsIndex * step + i]) {
@@ -670,8 +662,6 @@ var calculatePageFromOffset = function (requestParameters, evDataService) {
 		resultPage = 1
 		return resultPage
 	}
-
-	console.log('group', group)
 
 	var rowHeight = evDataService.getRowHeight()
 
@@ -813,8 +803,6 @@ var getObjectsFromSelectedGroups = function (evDataService, globalDataService) {
 	var selectedGroups = evDataService.getSelectedGroups()
 	var multiselectState = evDataService.getSelectedGroupsMultiselectState()
 
-	console.log('getObjectsFromSelectedGroups.selectedGroups', selectedGroups)
-
 	var controlObj = null
 
 	if (selectedGroups.length) {
@@ -823,8 +811,6 @@ var getObjectsFromSelectedGroups = function (evDataService, globalDataService) {
 
 			if (rawData) {
 				var data = JSON.parse(JSON.stringify(rawData))
-
-				console.log('getObjectsFromSelectedGroups.data', data)
 
 				data.results.forEach(function (item) {
 					if (item.___type === 'object') {
@@ -844,8 +830,6 @@ var getObjectsFromSelectedGroups = function (evDataService, globalDataService) {
 
 		if (rawData) {
 			var data = JSON.parse(JSON.stringify(rawData))
-
-			console.log('getObjectsFromSelectedGroups.data', data)
 
 			data.results.forEach(function (item) {
 				if (item.___type === 'object') {
@@ -869,8 +853,6 @@ var getObjectsFromSelectedGroups = function (evDataService, globalDataService) {
 
 	result = filterByRowColor(result, evDataService, globalDataService)
 
-	console.log('getObjectsFromSelectedGroups.result', result)
-
 	return result
 }
 
@@ -879,10 +861,6 @@ var getGroupsAsTree = function (evDataService) {
 	var rootGroup = JSON.parse(JSON.stringify(evDataService.getRootGroupData()))
 
 	var tree = utilsHelper.convertToTree(data, rootGroup)
-
-	console.log('getFlatStructure.data', data)
-	console.log('getFlatStructure.rootGroup', rootGroup)
-	console.log('getFlatStructure.tree', tree)
 
 	return tree
 }

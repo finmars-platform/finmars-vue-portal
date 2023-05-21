@@ -53,6 +53,7 @@ export default function (scope, $mdDialog, isReport) {
 			scope.dndAreas.deletionAreaHolder.classList.remove('display-none')
 		} else {
 			scope.hiddenDnDAreas.forEach((areaProp) => {
+				if (!scope.dndAreas[areaProp]) return false
 				scope.dndAreas[areaProp].classList.remove('display-none')
 			})
 		}
@@ -86,6 +87,7 @@ export default function (scope, $mdDialog, isReport) {
 
 	const onColumnDragstart = function (ev) {
 		onDragstart(ev, 'columns')
+
 		initListenersOnColumnDragStart()
 	}
 
@@ -136,21 +138,21 @@ export default function (scope, $mdDialog, isReport) {
 
 			switch (orderOf) {
 				case 'groups':
-					GCitems = scope.evDataService.getGroups()
+					GCitems = evDataService.getGroups()
 
 					updateGCFMethod = function () {
-						scope.evDataService.setGroups(GCitems)
-						scope.evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
+						evDataService.setGroups(GCitems)
+						evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
 					}
 
 					break
 
 				case 'columns':
-					GCitems = scope.evDataService.getColumns()
+					GCitems = evDataService.getColumns()
 
 					updateGCFMethod = function () {
-						scope.evDataService.setColumns(GCitems)
-						scope.evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
+						evDataService.setColumns(GCitems)
+						evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
 					}
 
 					break
@@ -177,8 +179,7 @@ export default function (scope, $mdDialog, isReport) {
 
 			updateGCFMethod()
 
-			scope.evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
-			scope.$apply()
+			evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 		}
 	}
 
@@ -219,6 +220,7 @@ export default function (scope, $mdDialog, isReport) {
 		scope.draggableItem = null
 
 		scope.hiddenDnDAreas.forEach((areaProp) => {
+			if (!scope.dndAreas[areaProp]) return false
 			scope.dndAreas[areaProp].classList.add('display-none')
 		})
 
@@ -241,6 +243,7 @@ export default function (scope, $mdDialog, isReport) {
 	/** When changing order of groups or columns */
 	const onSameHolderDragenter = function (ev) {
 		ev.stopPropagation()
+		ev.preventDefault()
 
 		const holderClass = ev.dataTransfer.types.includes('columns')
 			? 'gColumnsHolder'
@@ -252,6 +255,7 @@ export default function (scope, $mdDialog, isReport) {
 			draggedOverElem.classList.add('drop-right', 'draggedOver')
 			ev.dataTransfer.dropEffect = 'move'
 		} else {
+			// Drag on item
 			const types = ev.dataTransfer.types
 			const nextSiblingKey = draggedOverElem.dataset.attrKey
 
@@ -295,9 +299,9 @@ export default function (scope, $mdDialog, isReport) {
 		let filtersData // only for entity viewer
 
 		if (isReport) {
-			filters = scope.evDataService.getFilters()
+			filters = evDataService.getFilters()
 		} else {
-			filtersData = scope.evDataService.getFilters()
+			filtersData = evDataService.getFilters()
 			filters = filtersData[scope.shownFiltersType] // scope.shownFiltersType assigned inside evGcfAreasDragAndDrop
 		}
 
@@ -338,12 +342,12 @@ export default function (scope, $mdDialog, isReport) {
 			filters.push(filterToAdd)
 
 			if (isReport) {
-				scope.evDataService.setFilters(filters)
+				evDataService.setFilters(filters)
 			} else {
-				scope.evDataService.setFilters(filtersData)
+				evDataService.setFilters(filtersData)
 			}
 
-			scope.evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
+			evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
 		}
 	}
 
@@ -356,21 +360,22 @@ export default function (scope, $mdDialog, isReport) {
 
 		switch (droppedItemData.itemOrigin) {
 			case 'groups':
-				GCitems = scope.evDataService.getGroups()
+				GCitems = evDataService.getGroups()
 
 				updateGCFMethod = function () {
-					scope.evDataService.setGroups(GCitems)
-					scope.evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
+					evDataService.setGroups(GCitems)
+					evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
 				}
 
 				break
 
 			case 'columns':
-				GCitems = scope.evDataService.getColumns()
+				GCitems = evDataService.getColumns()
+				console.log('GCitems:', GCitems)
 
 				updateGCFMethod = function () {
-					scope.evDataService.setColumns(GCitems)
-					scope.evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
+					evDataService.setColumns(GCitems)
+					evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
 				}
 				break
 		}
@@ -381,7 +386,7 @@ export default function (scope, $mdDialog, isReport) {
 		GCitems.splice(deletedItemIndex, 1)
 
 		updateGCFMethod()
-		scope.evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 	}
 
 	/** @module gcfAreasDndSharedLogicHelper **/

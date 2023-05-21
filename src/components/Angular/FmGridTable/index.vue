@@ -92,7 +92,7 @@
 							</g-filters> -->
 					</div>
 
-					<div v-if="readyToRenderTable" class="g-table-section">
+					<div v-if="domElemsAreReady" class="g-table-section">
 						<div class="flex-row">
 							<div
 								v-if="!isReport"
@@ -170,13 +170,10 @@
 										content-wrap-element="contentWrapElem"
 									></div>
 
-									<div
-										v-if="!isReport"
-										ev-gcf-areas-dnd
-										ev-data-service="evDataService"
-										ev-event-service="evEventService"
-										content-wrap-element="contentWrapElem"
-									></div>
+									<AngularFmGridTableAreasDnd
+										v-if="!isReport && contentWrapElem"
+										:contentWrapElement="contentWrapElem"
+									/>
 								</div>
 							</div>
 						</div>
@@ -281,7 +278,7 @@
 
 	let viewType = props.evDataService.getViewType()
 	let viewSettings = props.evDataService.getViewSettings(viewType)
-	let readyToRenderTable = true
+	let readyToRenderTable = ref(false)
 
 	let reportOptions = props.evDataService.getReportOptions()
 	var interfaceLayout = props.evDataService.getInterfaceLayout()
@@ -458,8 +455,7 @@
 			props.evEventService.addEventListener(
 				evEvents.FILTERS_RENDERED,
 				function () {
-					readyToRenderTable = true
-					console.log('readyToRenderTable:', readyToRenderTable)
+					readyToRenderTable.value = true
 
 					setTimeout(() => {
 						$apply()
@@ -472,6 +468,7 @@
 				function () {
 					let additions = props.evDataService.getAdditions()
 					let activeObject = props.evDataService.getActiveObject()
+					readyToRenderTable.value = true
 
 					if (viewType === 'matrix' && !activeLayoutConfigIsSet) {
 						activeLayoutConfigIsSet = true

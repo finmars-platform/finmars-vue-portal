@@ -1,5 +1,10 @@
 <template>
-	<BaseModal title="Add columns" no_padding @close="cancel()">
+	<BaseModal
+		title="Add columns"
+		no_padding
+		@close="cancel()"
+		style="height: 70vh; width: 90%; width: 800px"
+	>
 		<template #top_place>
 			<BaseInput
 				type="text"
