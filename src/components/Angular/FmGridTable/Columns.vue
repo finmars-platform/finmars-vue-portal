@@ -88,10 +88,10 @@
 
 				<md-button class="g-row-settings-toggle" @click="rowFiltersToggle()">
 					<div class="center aic height-100">
-						<span v-show="hideRowSettings" class="material-icons f-s-16"
+						<span v-show="!hideRowSettings" class="material-icons f-s-16"
 							>keyboard_arrow_left</span
 						>
-						<span v-show="!hideRowSettings" class="material-icons f-s-16"
+						<span v-show="hideRowSettings" class="material-icons f-s-16"
 							>keyboard_arrow_right</span
 						>
 					</div>
@@ -110,10 +110,11 @@
 							column.frontOptions && column.frontOptions.lastDragged,
 						error: column.error_data,
 					}"
-					ng-style="column.style"
-					data-column-id="{{column.___group_type_id}}"
-					data-attr-key="{{column.key}}"
-					draggable="{{groupsAreaDraggable}}"
+					:key="column.key"
+					:style="column.style"
+					:data-column-id="column.___group_type_id"
+					:data-attr-key="column.key"
+					:draggable="groupsAreaDraggable"
 					custom-popup
 					popup-id="{{column.key}}"
 					popup-template-url="{{getPopupMenuTemplate(column)}}"
@@ -122,7 +123,7 @@
 					close-on-click-outside="true"
 					prevent-default="'true'"
 					on-save-callback=""
-					popup-data="columnsPopupsData[column.key]"
+					:popup-data="columnsPopupsData[column.key]"
 					offset-x="-10"
 					offset-y="-10"
 					popup-classes="{{getPopupMenuClasses(column)}}"
@@ -134,7 +135,7 @@
 						md-direction="top"
 						data-ng-class="{'custom-field-error': column.error_data}"
 					>
-						<span ng-bind="column.name"></span>
+						<span>{{ column.name }}</span>
 						<span v-if="column.status == 'missing'">(Deleted)</span>
 						<span v-if="column?.error_data">{{
 							column?.error_data.description
@@ -182,12 +183,12 @@
 							<div class="column-name-wrapper">
 								<div class="flex-row flex-i-center name-block">
 									<div v-if="!column.layout_name">
-										<span ng-bind="column.name"></span>
+										<span>{{ column.name }}</span>
 										<span v-if="column.status == 'missing'">(Deleted)</span>
 									</div>
 
 									<div v-if="column.layout_name">
-										<span ng-bind="column.layout_name"></span>
+										<span>{{ column.layout_name }}</span>
 										<span v-if="column.status == 'missing'">(Deleted)</span>
 									</div>
 
@@ -195,7 +196,7 @@
 
 									<span
 										v-if="
-											column?.options.sort_settings &&
+											column?.options?.sort_settings &&
 											column?.options.sort_settings.mode === 'manual'
 										"
 										class="column-manual-sort-icon"
@@ -217,12 +218,14 @@
 									"
 								>
 									<span
-										data-ng-show="column?.options.sort === 'DESC' || !column?.options.sort"
+										v-show="
+											column?.options.sort === 'DESC' || !column?.options.sort
+										"
 										class="material-icons gt-sorting-icon"
 										>arrow_upward</span
 									>
 									<span
-										data-ng-show="column?.options.sort === 'ASC'"
+										v-show="column?.options.sort === 'ASC'"
 										class="material-icons gt-sorting-icon"
 										>arrow_downward</span
 									>
@@ -231,143 +234,31 @@
 						</div>
 					</div>
 
-					<div
-						class="resize-slider"
-						data-group-column-resizer
-						ev-data-service="evDataService"
-						ev-event-service="evEventService"
-					></div>
+					<AngularFmGridTableColumnResizer />
 					<!-- gDraggableHeadArea used to prevent call of event "dragleave" by children of gcAreaDnD -->
 					<div
 						class="g-table-header-drop gDraggableHeadArea"
-						data-attr-key="{{column.key}}"
+						:data-attr-key="column.key"
 					></div>
 				</div>
 			</div>
 
 			<div class="flex-row width-100 g-cols-holder gColumnsHolder gcAreaDnD">
-				<div
-					class="g-table-header-cell-wrapper gColumnElem gDraggableHead gcAreaDnD"
-					v-for="column in columnsToShow"
-					:class="{
-						'last-dragged':
-							column.frontOptions && column.frontOptions.lastDragged,
-						error: column.error_data,
-					}"
-					:style="column.style"
-					:data-column-id="column.___column_id"
-					:data-attr-key="column.key"
-					draggable="true"
-					custom-popup
-					:popup-id="column.key"
-					popup-template-url="{{getPopupMenuTemplate(column)}}"
-					position-relative-to="mouse"
-					open-on="right_click"
-					close-on-click-outside="true"
-					prevent-default="'true'"
-					popup-data="columnsPopupsData[column.key]"
-					offset-x="-10"
-					offset-y="-10"
+				<AngularFmGridTableColumnCell
+					v-for="(column, index) in columnsToShow"
+					:column="column"
+					:style="{ ...column.style }"
+					:key="index + '_' + column.___column_id"
+					:isReport="isReport"
+					:popup-template-url="getPopupMenuTemplate(column)"
+					:popup-data="columnsPopupsData[column.key]"
 					popup-classes="{{getPopupMenuClasses(column)}}"
-					backdrop-classes="low-z-index-backdrop"
 					on-cancel="onSubtotalTypeSelectCancel()"
 					popup-event-service="evEventService"
-				>
-					<md-tooltip
-						md-direction="top"
-						data-ng-class="{'custom-field-error': column.error_data}"
-					>
-						<span ng-bind="column.name"></span>
-						<!--                    <span v-if="column.status == 'missing'">(Deleted)</span>-->
-						<span v-if="column?.error_data">{{
-							column?.error_data.description
-						}}</span>
-					</md-tooltip>
-
-					<div class="g-cell g-table-header-cell position-relative">
-						<div
-							v-if="!isReport"
-							@click="
-								sortHandler(
-									column,
-									column?.options.sort === 'DESC' ? 'ASC' : 'DESC'
-								)
-							"
-							class="g-column-sort-settings-opener"
-						></div>
-
-						<span v-if="column?.error_data" class="material-icons error"
-							>error</span
-						>
-
-						<div class="g-table-header-button">
-							<div class="column-name-wrapper">
-								<div class="flex-row flex-i-center name-block">
-									<div>
-										<span
-											v-if="!column.layout_name"
-											ng-bind="column.name"
-										></span>
-										<span
-											v-if="column.layout_name"
-											ng-bind="column.layout_name"
-										></span>
-										<span v-if="column?.status == 'missing'">(Deleted)</span>
-									</div>
-
-									<span
-										v-if="
-											column?.options.sort_settings &&
-											column?.options.sort_settings.mode === 'manual'
-										"
-										class="column-manual-sort-icon"
-									>
-										m
-										<md-tooltip md-direction="top">
-											Manual Sorting Activated
-										</md-tooltip>
-									</span>
-								</div>
-
-								<div
-									class="sort {{column?.options.sort ? 'has-sort' : ''}}"
-									@click="
-										changeSortDirection(
-											column,
-											column?.options.sort === 'DESC' ? 'ASC' : 'DESC'
-										)
-									"
-								>
-									<span
-										data-ng-show="column?.options.sort === 'DESC' || !column?.options.sort"
-										class="material-icons gt-sorting-icon"
-										>arrow_upward</span
-									>
-									<span
-										data-ng-show="column?.options.sort === 'ASC'"
-										class="material-icons gt-sorting-icon"
-										>arrow_downward</span
-									>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div
-						class="resize-slider"
-						data-group-column-resizer
-						ev-data-service="evDataService"
-						ev-event-service="evEventService"
-					></div>
-
-					<div
-						class="g-table-header-drop gDraggableHeadArea"
-						data-attr-key="{{column.key}}"
-					></div>
-				</div>
+				/>
 
 				<button class="g-cell g-add-column-button" @click="addColumn($event)">
-					<FmIcon primary tooltip="Add new column" icon="add_circle" />
+					<FmIcon v-fm-tooltip="'Add new column'" icon="add_circle" />
 				</button>
 			</div>
 		</div>
@@ -422,7 +313,10 @@
 
 	let columns = evDataService.getColumns()
 
-	let groups = evDataService.getGroups()
+	let groups = ref(null)
+	groups.value = evDataService.getGroups()
+	console.log('groups.value:', groups.value)
+	let columnsToShow = ref([])
 
 	let viewContext = evDataService.getViewContext()
 	// let isReport = metaService.isReport(entityType);
@@ -446,15 +340,12 @@
 			'exposure_percent',
 		].some((excludedKey) => column.key === excludedKey)
 	}
-	let columnsToShow
 	const getColumnsToShow = function () {
 		if (isReport) {
-			columnsToShow = evDataHelper.separateNotGroupingColumns(columns, groups)
+			return evDataHelper.separateNotGroupingColumns(columns, groups)
 		} else {
-			columnsToShow = columns
+			return columns
 		}
-
-		return columnsToShow
 	}
 
 	// Victor 2021.03.29 #88 fix bug with deleted custom fields
@@ -499,9 +390,9 @@
 		}
 
 		if (isReport) {
-			groups = evDataService.getGroups()
+			groups.value = evDataService.getGroups()
 
-			groups.forEach((group) => {
+			groups.value.forEach((group) => {
 				markItemUsingMissingCustomField(group, 'group', groupsErrorsList)
 			})
 		}
@@ -532,9 +423,9 @@
 	let dynamicAttrs = []
 
 	// var keysOfColsToHide = [];
-
+	let popupData
 	function onSubtotalSumClick(column) {
-		const popupData = columnsPopupsData[column.key].data
+		popupData = columnsPopupsData[column.key].data
 
 		if (popupData) {
 			popupData.isSubtotalAvgWeighted = false
@@ -547,7 +438,7 @@
 	}
 
 	function onSubtotalWeightedClick(column) {
-		const popupData = columnsPopupsData[column.key].data
+		popupData = columnsPopupsData[column.key].data
 
 		if (popupData) {
 			popupData.isSubtotalSum = false
@@ -558,7 +449,7 @@
 	}
 
 	function onSubtotalAvgWeightedClick(column) {
-		const popupData = columnsPopupsData[column.key].data
+		popupData = columnsPopupsData[column.key].data
 
 		if (popupData) {
 			popupData.isSubtotalSum = false
@@ -620,10 +511,10 @@
 	let columnsPopupsData = null
 
 	function makePopupDataForColumns(columns) {
-		let columnsPopupsData = {}
+		columnsPopupsData = {}
 
 		columns.forEach((column, index) => {
-			var matchingGroup = groups.find((group) => group.key === column.key)
+			var matchingGroup = groups.value.find((group) => group.key === column.key)
 			var item = matchingGroup || column
 
 			columnsPopupsData[column.key] = {
@@ -790,7 +681,7 @@
 
 	const signalSortChange = function (columnOrGroup) {
 		if (columnHasCorrespondingGroup(columnOrGroup.key)) {
-			const placeholder1 = groups.find(
+			const placeholder1 = groups.value.find(
 				(group) => group.key === columnOrGroup.key
 			)
 			placeholder1.options.sort = columnOrGroup.options.sort
@@ -934,13 +825,13 @@
 	}
 
 	let columnHasCorrespondingGroup = function (columnKey) {
-		var groupIndex = groups.findIndex((group) => group.key === columnKey)
+		var groupIndex = groups.value.findIndex((group) => group.key === columnKey)
 
 		return groupIndex > -1
 	}
 
 	let checkReportSortButton = function (column, index) {
-		if (isReport && index < groups.length) {
+		if (isReport && index < groups.value.length) {
 			if (column.key === groups[index].key) {
 				return false
 			}
@@ -1092,7 +983,7 @@
 						evDataService.setActiveColumnSort(column)
 
 						if (isReport) {
-							columnsToShow = getColumnsToShow()
+							columnsToShow.value = getColumnsToShow()
 						}
 
 						collectMissingCustomFieldsErrors()
@@ -1131,7 +1022,7 @@
 
 			evDataService.setColumns(columns)
 
-			columnsToShow = getColumnsToShow()
+			columnsToShow.value = getColumnsToShow()
 
 			collectMissingCustomFieldsErrors()
 
@@ -1142,7 +1033,7 @@
 	let groupsSortHandler = function (groupIndex, sort) {
 		// reset sorting for other groups
 		var i
-		for (i = 0; i < groups.length; i = i + 1) {
+		for (i = 0; i < groups.value.length; i = i + 1) {
 			if (!groups[i].options) {
 				groups[i].options = {}
 			}
@@ -1154,7 +1045,7 @@
 
 		var groups = evDataService.getGroups()
 
-		groups.forEach(function (item) {
+		groups.value.forEach(function (item) {
 			if (group.key === item.key || group.id === item.id) {
 				item = group
 			}
@@ -1253,7 +1144,7 @@
 					evDataService.setColumns(columns)
 
 					if (columnHasCorrespondingGroup(column.key)) {
-						var group = groups.find((group) => group.key === itemKey)
+						var group = groups.value.find((group) => group.key === itemKey)
 						group.layout_name = res.data.layout_name
 
 						evDataService.setGroups(groups)
@@ -1543,7 +1434,7 @@
 		var groups = evDataService.getGroups()
 		var groupToAdd = evHelperService.getTableAttrInFormOf('group', column)
 
-		groups.push(groupToAdd)
+		groups.value.push(groupToAdd)
 		evDataService.setGroups(groups)
 
 		evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
@@ -1620,9 +1511,9 @@
 
 		/** remove group */
 		/* var i;
-	                   for (i = 0; i < groups.length; i++) {
+	                   for (i = 0; i < groups .value.length; i++) {
 	                       if (groups[i].___group_type_id === columnTableId) {
-	                           groups.splice(i, 1);
+	                           groups .value.splice(i, 1);
 	                           break;
 	                       }
 	                   } */
@@ -1658,7 +1549,7 @@
 
 		evDataService.setColumns(columns)
 
-		columnsToShow = getColumnsToShow()
+		columnsToShow.value = getColumnsToShow()
 
 		collectMissingCustomFieldsErrors()
 
@@ -1797,9 +1688,9 @@
 	}
 
 	const updateGroupTypeIds = function () {
-		groups = evDataService.getGroups()
+		groups.value = evDataService.getGroups()
 
-		groups.forEach((item) => {
+		groups.value.forEach((item) => {
 			item.___group_type_id = evDataHelper.getGroupTypeId(item)
 		})
 
@@ -1807,7 +1698,7 @@
 	}
 
 	const setDefaultGroupType = function () {
-		groups = evDataService.getGroups()
+		groups.value = evDataService.getGroups()
 
 		/* TO DELETE: date 2021-01-24
 	                   if (isReport) {
@@ -1829,7 +1720,7 @@
 
 	                   } */
 
-		groups.forEach(function (group) {
+		groups.value.forEach(function (group) {
 			if (!group.hasOwnProperty('report_settings')) {
 				group.report_settings = {}
 			}
@@ -1847,10 +1738,10 @@
 	}
 
 	const updateGroupFoldingState = function () {
-		groups = evDataService.getGroups()
+		groups.value = evDataService.getGroups()
 		let parentGroupFullyFolded = false
 
-		groups.forEach((group) => {
+		groups.value.forEach((group) => {
 			if (parentGroupFullyFolded) {
 				group.report_settings.is_level_folded = true
 			} else if (group.report_settings.is_level_folded) {
@@ -1864,11 +1755,11 @@
 
 	const syncColumnsWithGroups = function () {
 		let columns = evDataService.getColumns()
-		groups = evDataService.getGroups()
+		groups.value = evDataService.getGroups()
 
 		let columnsHaveBeenSynced = false
 
-		groups.forEach((group, groupIndex) => {
+		groups.value.forEach((group, groupIndex) => {
 			if (group.key !== columns[groupIndex].key) {
 				let columnToAdd
 				let groupColumnIndex = columns.findIndex(
@@ -1899,7 +1790,7 @@
 	let hasFoldingBtn = function ($index) {
 		var groups = evDataService.getGroups()
 
-		if (isReport && $index < groups.length) {
+		if (isReport && $index < groups.value.length) {
 			return true
 		}
 
@@ -2136,7 +2027,7 @@
 
 			evDataHelper.importGroupsStylesFromColumns(groups, columns)
 
-			columnsToShow = getColumnsToShow()
+			columnsToShow.value = getColumnsToShow()
 
 			collectMissingCustomFieldsErrors()
 			// setFiltersLayoutNames();
@@ -2198,6 +2089,7 @@
 			evDataHelper.setColumnsDefaultWidth(evDataService)
 
 			let columns = evDataService.getColumns()
+			console.log('columns:', columns)
 			if (columns)
 				console.log(
 					'testing98.COLUMNS_CHANGE columns',
@@ -2207,7 +2099,8 @@
 			// flagMissingColumns();
 			makePopupDataForColumns(columns)
 
-			columnsToShow = getColumnsToShow()
+			let newColumns = getColumnsToShow()
+			columnsToShow.value = JSON.parse(JSON.stringify(newColumns))
 
 			collectMissingCustomFieldsErrors()
 		})
@@ -2236,7 +2129,7 @@
 	}
 
 	const init = function () {
-		evDataHelper.importGroupsStylesFromColumns(groups, columns)
+		evDataHelper.importGroupsStylesFromColumns(groups.value, columns)
 
 		if (hideRowSettings.value) {
 			contentWrapElement.classList.add('g-row-settings-collapsed')
@@ -2253,7 +2146,7 @@
 		// flagMissingColumns();
 		makePopupDataForColumns(columns)
 
-		let columnsToShow = getColumnsToShow()
+		columnsToShow.value = getColumnsToShow()
 
 		collectMissingCustomFieldsErrors()
 

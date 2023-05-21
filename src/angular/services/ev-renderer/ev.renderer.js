@@ -14,9 +14,6 @@ var render = function (
 	evDataService,
 	evEventService
 ) {
-	// console.log('render.projection.length', projection.length);
-	console.log('render.projection', projection)
-
 	console.time('Rendering projection')
 
 	var columns = evDataService.getColumns()

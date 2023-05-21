@@ -6,7 +6,7 @@
 				:class="{ no_padding: no_padding }"
 				v-show="modelValue"
 			>
-				<div class="modal">
+				<div class="modal" v-bind="$attrs">
 					<div class="modal_top flex aic sb" v-if="!empty_hack">
 						<div class="flex aic">
 							<div class="modal_head">{{ title }}</div>
@@ -128,7 +128,7 @@
 	}
 	.modal_content {
 		overflow: auto;
-		max-height: calc(90vh - 110px);
+		height: calc(100% - 110px);
 		padding: 15px 20px 0;
 		min-width: 400px; // so that FmInputEntityNames could fit in
 	}

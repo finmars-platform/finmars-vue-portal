@@ -303,8 +303,6 @@
 
 			projection = evDataHelper.calculateProjection(flatList, evDataService)
 
-			console.log('renderEntityViewer.projection', projection)
-
 			evDataService.setProjection(projection)
 
 			evDomManager.calculateScroll(elements, evDataService, scope.scrollManager)
@@ -539,8 +537,6 @@
 		})
 
 		evEventService.addEventListener(evEvents.REDRAW_TABLE, function () {
-			console.log('evEventService:', evEventService.getListeners())
-
 			calculateElemsWrapsSizes()
 
 			updateTableContent()
