@@ -168,7 +168,7 @@
 		evDataService.setGroups(groups)
 
 		evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+		// evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 	}
 
 	const onDropToColumns = function (ev) {

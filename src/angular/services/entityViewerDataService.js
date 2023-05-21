@@ -333,6 +333,7 @@ export default function (reportHelper) {
 	}
 
 	function setGroups(groups) {
+		// debugger
 		if (groups) {
 			data.groups = groups
 		} else {

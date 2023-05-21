@@ -86,6 +86,7 @@
 		})
 
 		evDataService.setColumns(columns)
+		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
 	}
 
 	function updateCellsWidth(column, index) {
