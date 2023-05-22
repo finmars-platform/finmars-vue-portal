@@ -583,100 +583,100 @@
 
 			// window.addEventListener('resize', onWindowResize)
 
-			// if (!scope.isReport) {
-			// 	scope.scrollManager = new EvScrollManager()
-			// }
+			if (!scope.isReport) {
+				scope.scrollManager = new EvScrollManager()
+			}
 
-			// setTimeout(function () {
-			// 	// prevents scroll from interfering with sizes of table parts calculation
+			setTimeout(function () {
+				// prevents scroll from interfering with sizes of table parts calculation
 
-			// 	calculateElemsWrapsSizes()
+				calculateElemsWrapsSizes()
 
-			// 	if (scope.isReport) {
-			// 		rvDomManager.calculateScroll(elements, evDataService)
+				if (scope.isReport) {
+					rvDomManager.calculateScroll(elements, evDataService)
 
-			// 		rvDomManager.initEventDelegation(
-			// 			contentElem,
-			// 			evDataService,
-			// 			evEventService,
-			// 			usersService,
-			// 			globalDataService
-			// 		)
-			// 		// rvDomManager.initContextMenuEventDelegation(contentElem, evDataService, evEventService);
+					rvDomManager.initEventDelegation(
+						contentElem,
+						evDataService,
+						evEventService,
+						usersService,
+						globalDataService
+					)
+					// rvDomManager.initContextMenuEventDelegation(contentElem, evDataService, evEventService);
 
-			// 		rvDomManager.addScrollListener(
-			// 			elements,
-			// 			evDataService,
-			// 			evEventService
-			// 		)
+					rvDomManager.addScrollListener(
+						elements,
+						evDataService,
+						evEventService
+					)
 
-			// 		evEventService.addEventListener(
-			// 			evEvents.RESIZE_COLUMNS_START,
-			// 			function () {
-			// 				clearOverflowingCells()
-			// 			}
-			// 		)
+					evEventService.addEventListener(
+						evEvents.RESIZE_COLUMNS_START,
+						function () {
+							clearOverflowingCells()
+						}
+					)
 
-			// 		evEventService.addEventListener(
-			// 			evEvents.RESIZE_COLUMNS_END,
-			// 			function () {
-			// 				cellContentOverflow()
-			// 			}
-			// 		)
+					evEventService.addEventListener(
+						evEvents.RESIZE_COLUMNS_END,
+						function () {
+							cellContentOverflow()
+						}
+					)
 
-			// 		// If we already have data (e.g. viewType changed)
-			// 		var flatList = rvDataHelper.getFlatStructure(
-			// 			evDataService,
-			// 			globalDataService
-			// 		)
+					// If we already have data (e.g. viewType changed)
+					var flatList = rvDataHelper.getFlatStructure(
+						evDataService,
+						globalDataService
+					)
 
-			// 		if (flatList.length > 1) {
-			// 			// progressBar.style.display = 'none';
+					if (flatList.length > 1) {
+						// progressBar.style.display = 'none';
 
-			// 			if (scope.isReport) {
-			// 				contentElem.style.opacity = '1'
-			// 			}
+						if (scope.isReport) {
+							contentElem.style.opacity = '1'
+						}
 
-			// 			if (evDataService.didDataLoadEnd()) {
-			// 				updateTableContent()
-			// 			}
-			// 		}
+						if (evDataService.didDataLoadEnd()) {
+							updateTableContent()
+						}
+					}
 
-			// 		//  If we already have data (e.g. viewType changed) end
+					//  If we already have data (e.g. viewType changed) end
 
-			// 		/*evEventService.addEventListener(evEvents.START_CELLS_OVERFLOW, function () {
-			//                            cellContentOverflow();
-			//                        });*/
-			// 	} else {
-			// 		evDomManager.calculateScroll(
-			// 			elements,
-			// 			evDataService,
-			// 			scope.scrollManager
-			// 		)
+					/*evEventService.addEventListener(evEvents.START_CELLS_OVERFLOW, function () {
+			                           cellContentOverflow();
+			                       });*/
+				} else {
+					evDomManager.calculateScroll(
+						elements,
+						evDataService,
+						scope.scrollManager
+					)
 
-			// 		evDomManager.initEventDelegation(
-			// 			contentElem,
-			// 			evDataService,
-			// 			evEventService,
-			// 			usersService,
-			// 			globalDataService
-			// 		)
-			// 		evDomManager.initContextMenuEventDelegation(
-			// 			contentElem,
-			// 			evDataService,
-			// 			evEventService
-			// 		)
+					evDomManager.initEventDelegation(
+						contentElem,
+						evDataService,
+						evEventService,
+						usersService,
+						globalDataService
+					)
+					evDomManager.initContextMenuEventDelegation(
+						contentElem,
+						evDataService,
+						evEventService
+					)
 
-			// 		evDomManager.addScrollListener(
-			// 			elements,
-			// 			evDataService,
-			// 			evEventService,
-			// 			scope.scrollManager
-			// 		)
-			// 	}
+					evDomManager.addScrollListener(
+						elements,
+						evDataService,
+						evEventService,
+						scope.scrollManager
+					)
+				}
 
-			// 	evEventService.dispatchEvent(evEvents.TABLE_SIZES_CALCULATED)
-			// }, 500)
+				evEventService.dispatchEvent(evEvents.TABLE_SIZES_CALCULATED)
+			}, 500)
 
 			if (!activeLayoutConfigIsSet && viewContext !== 'reconciliation_viewer') {
 				activeLayoutConfigIsSet = true

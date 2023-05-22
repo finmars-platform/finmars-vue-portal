@@ -1,6 +1,6 @@
 <template>
 	<BaseModal
-		title="Add columns"
+		:title="data.title"
 		no_padding
 		@close="cancel()"
 		style="height: 70vh; width: 90%; width: 800px"

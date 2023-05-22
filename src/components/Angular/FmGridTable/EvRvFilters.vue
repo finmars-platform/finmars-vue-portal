@@ -1,73 +1,70 @@
 <template>
-	<div
-		class="g-filters-holder width-100 flex-row fc-space-between flex-i-start"
+	<FmHorizontalPanel
+		class="ev_toolbar g-filters-holder"
 		:class="{
 			'hide-ev-front-filters':
 				!scope.isReport &&
 				scope.thereAreFrontendFilters &&
 				scope.shownFiltersType === 'frontend',
 		}"
-		:ref="(el) => (elem = jquery(el))"
+		height="initial"
 	>
-		<div class="flex-row flex-i-start">
+		<template #leftActions>
 			<div
 				class="g-filter-left-part gFiltersLeftPart"
 				:class="{ 'no-ev-g-filter-switch': !scope.thereAreFrontendFilters }"
 			>
-				<div v-if="scope.isReport" layout="row">
-					<!--<md-button class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
-                           @click="calculateReport()">
-                    <span class="material-icons">refresh</span>
-                    <md-tooltip md-direction="top">Calculate</md-tooltip>
-                </md-button>-->
-					<md-menu>
-						<md-button
-							class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
-							@click="$mdOpenMenu($event)"
-						>
-							<span class="material-icons">add</span>
-							<md-tooltip md-direction="top">Add</md-tooltip>
-						</md-button>
+				<template v-if="scope.isReport">
+					<FmMenu>
+						<template #btn>
+							<FmIcon
+								class="add_ev_btn"
+								btnPrimary
+								icon="add"
+								v-fm-tooltip="'Add'"
+							/>
+						</template>
 
-						<md-menu-content width="4">
-							<md-menu-item v-for="item in addMenu.data.menu.root.items">
-								<md-button
+						<template #default="{ close }">
+							<div class="fm_list" @click="close()">
+								<div
+									class="fm_list_item"
 									@click="dispatchAddMenuAction($event, item)"
-									class="g-settings-option-btn"
 								>
-									<span>{{ item.name }}</span>
-								</md-button>
-							</md-menu-item>
-						</md-menu-content>
-					</md-menu>
+									{{ item.name }}
+								</div>
+							</div>
+						</template>
+					</FmMenu>
 
-					<md-button
+					<FmIcon
+						btnPrimary
+						icon="link"
 						class="g-toggle-filters-btn md-icon-button chain-button"
 						:class="{
 							'g-use-from-above-filters-hidden': !scope.showUseFromAboveFilters,
 						}"
 						@click="toggleUseFromAboveFilters()"
-					>
-						<span class="material-icons">link</span>
-					</md-button>
-				</div>
+					/>
+				</template>
 
-				<div v-if="!isReport" layout="row">
-					<md-button
-						class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
-						@click="evAddEntity($event)"
+				<template v-if="!scope.isReport">
+					<FmIcon
 						v-if="
-							entityType != 'instrument' &&
-							entityType != 'instrument-type' &&
-							entityType != 'account-type' &&
-							entityType != 'transaction-type'
+							scope.entityType != 'instrument' &&
+							scope.entityType != 'instrument-type' &&
+							scope.entityType != 'account-type' &&
+							scope.entityType != 'transaction-type'
 						"
-					>
-						<span class="material-icons">add</span>
-						<md-tooltip md-direction="top"
-							>ADD {{ evGetEntityNameByState() }}</md-tooltip
-						>
-					</md-button>
+						btnPrimary
+						icon="add"
+						class="g-filter-settings-big-left-btn"
+						:class="{
+							'g-use-from-above-filters-hidden': !scope.showUseFromAboveFilters,
+						}"
+						v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
+						@click="evAddEntity"
+					/>
 
 					<md-menu v-if="scope.entityType == 'instrument'">
 						<md-button
@@ -116,7 +113,7 @@
 						</md-menu-content>
 					</md-menu>
 
-					<md-menu v-if="entityType == 'instrument-type'">
+					<md-menu v-if="scope.entityType == 'instrument-type'">
 						<md-button
 							class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
 							@click="$mdOpenMenu($event)"
@@ -148,7 +145,7 @@
 						</md-menu-content>
 					</md-menu>
 
-					<md-menu v-if="entityType == 'account-type'">
+					<md-menu v-if="scope.entityType == 'account-type'">
 						<md-button
 							class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
 							@click="$mdOpenMenu($event)"
@@ -180,7 +177,7 @@
 						</md-menu-content>
 					</md-menu>
 
-					<md-menu v-if="entityType == 'transaction-type'">
+					<md-menu v-if="scope.entityType == 'transaction-type'">
 						<md-button
 							class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
 							@click="$mdOpenMenu($event)"
@@ -213,57 +210,167 @@
 					</md-menu>
 
 					<md-button
-						v-if="thereAreFrontendFilters"
+						v-if="scope.thereAreFrontendFilters"
 						class="g-toggle-filters-btn md-icon-button"
 						@click="toggleFiltersToShow()"
 					>
 						<span
-							v-show="shownFiltersType === 'frontend'"
+							v-show="scope.shownFiltersType === 'frontend'"
 							class="material-icons"
 							>laptop_mac</span
 						>
-						<span v-show="shownFiltersType === 'backend'" class="material-icons"
+						<span
+							v-show="scope.shownFiltersType === 'backend'"
+							class="material-icons"
 							>dns</span
 						>
 					</md-button>
-				</div>
+				</template>
 			</div>
 
-			<div class="gFiltersContainer">
-				<div v-if="scope.readyStatus.filters">
-					<div
-						custom-popup
-						popup-template-url="{{filterPopupTemplate}}"
-						popup-data="popupData"
-						popup-event-service="popupEventService"
-						popup-x="popupPosX"
-						popup-y="popupPosY"
-						on-save="filterSettingsChange()"
-						class="g-filter-chips-wrap"
-					></div>
-					<chips-list
-						chips-list="filtersChips"
-						chips-deletion="true"
-						chips-addition="ADD FILTER"
-						on-chip-click="onFilterChipClick(chipsData, event)"
-						hide-overflowing-chips="false"
-						on-chips-deletion="removeFilter(chipsData)"
-						on-add-chip-click="addFilter(event)"
-						on-first-render-ending="onChipsFirstRender()"
-						class="g-filter-chips"
-					></chips-list>
-				</div>
-			</div>
-		</div>
+			<div class="gFiltersContainer flex aic fww">
+				<div
+					v-if="scope.readyStatus.filters"
+					custom-popup
+					popup-template-url="{{filterPopupTemplate}}"
+					popup-data="popupData"
+					popup-event-service="popupEventService"
+					popup-x="popupPosX"
+					popup-y="popupPosY"
+					on-save="filterSettingsChange()"
+					class="g-filter-chips-wrap"
+				></div>
 
-		<div class="icon-buttons gFiltersRightPart">
-			<md-button @click="refreshTable()" class="signed-button">
-				<div class="flex-column flex-i-center">
-					<span class="material-icons">refresh</span>
-					<span>Refresh</span>
-					<md-tooltip md-direction="bottom">
-						<div v-if="isReport">
-							<div v-if="reportOptions.auth_time">
+				<FmChips
+					v-if="scope.readyStatus.filters"
+					class="g-filter-chips"
+					:items="filtersChips"
+					canDelete
+					on-chip-click="onFilterChipClick(chipsData, event)"
+					hide-overflowing-chips="false"
+					on-chips-deletion="removeFilter(chipsData)"
+					on-add-chip-click="addFilter(event)"
+					on-first-render-ending="onChipsFirstRender()"
+				/>
+
+				<FmBtn type="action" @click="addFilter">ADD FILTER</FmBtn>
+			</div>
+		</template>
+		<template #rightActions>
+			<FmIcon
+				icon="refresh"
+				@click="refreshTable()"
+				v-fm-tooltip="'Refresh Database Filters'"
+				btn
+			/>
+
+			<FmMenu v-if="scope.isRootEntityViewer">
+				<template #btn>
+					<FmIcon btn icon="view_stream" v-fm-tooltip="'Split'" />
+				</template>
+
+				<template #default="{ close }">
+					<div class="fm_list" @click="close()">
+						<div
+							v-if="
+								!scope.isReport && scope.entityType !== 'complex-transaction'
+							"
+							class="fm_list_item g-settings-option-btn"
+							@click="toggleSplitPanel($event, 'permission-editor')"
+						>
+							<FmIcon
+								:style="{
+									opacity:
+										scope.currentAdditions?.type == 'permission-editor' ? 1 : 0,
+								}"
+								icon="done"
+							/>
+							<span>Open permission editor</span>
+						</div>
+
+						<div
+							v-if="!scope.isReport"
+							class="fm_list_item g-settings-option-btn"
+							@click="toggleSplitPanel($event, 'editor')"
+						>
+							<FmIcon
+								:style="{
+									opacity: scope.currentAdditions?.type == 'editor' ? 1 : 0,
+								}"
+								icon="done"
+							/>
+
+							<span>Open editor split panel</span>
+						</div>
+
+						<md-menu-item v-if="scope.isReport">
+							<md-button
+								@click="toggleSplitPanel($event, 'balance-report')"
+								class="g-settings-option-btn"
+							>
+								<span
+									class="material-icons"
+									v-show="scope.currentAdditions?.type === 'balance-report'"
+									>done</span
+								>
+								<span
+									class="material-icons"
+									v-show="scope.currentAdditions?.type !== 'balance-report'"
+									style="visibility: hidden"
+									>done</span
+								>
+
+								<span>Open Balance Report view panel</span>
+							</md-button>
+						</md-menu-item>
+
+						<md-menu-item v-if="scope.isReport">
+							<md-button
+								@click="toggleSplitPanel($event, 'pl-report')"
+								class="g-settings-option-btn"
+							>
+								<span
+									class="material-icons"
+									v-show="scope.currentAdditions?.type === 'pl-report'"
+									>done</span
+								>
+								<span
+									class="material-icons"
+									v-show="scope.currentAdditions?.type !== 'pl-report'"
+									style="visibility: hidden"
+									>done</span
+								>
+
+								<span>Open P&L Report view panel</span>
+							</md-button>
+						</md-menu-item>
+
+						<md-menu-item v-if="scope.isReport">
+							<md-button
+								@click="toggleSplitPanel($event, 'transaction-report')"
+								class="g-settings-option-btn"
+							>
+								<span
+									class="material-icons"
+									v-show="scope.currentAdditions?.type === 'transaction-report'"
+									>done</span
+								>
+								<span
+									class="material-icons"
+									v-show="scope.currentAdditions?.type !== 'transaction-report'"
+									style="visibility: hidden"
+									>done</span
+								>
+
+								<span>Open Transaction Report view panel</span>
+							</md-button>
+						</md-menu-item>
+					</div>
+				</template>
+			</FmMenu>
+
+			<!-- <div v-if="scope.isReport">
+							<div v-if="scope.reportOptions.auth_time">
 								Auth Time: {{ reportOptions.auth_time }}s<br />
 								Execution Time: {{ reportOptions.execution_time }}s<br />
 								Relation Prefetch Time:
@@ -273,256 +380,98 @@
 								Render Time: {{ renderTime }}s <br />
 								Rows downloaded: {{ reportOptions.items.length }} <br />
 							</div>
+						</div> -->
 
-							<div>Refresh Database Filters</div>
+			<FmMenu v-if="scope.isRootEntityViewer && scope.isReport">
+				<template #btn>
+					<FmIcon btn icon="view_module" v-fm-tooltip="'Matrix'" />
+				</template>
 
-							<div v-if="!isReport">Refresh Database Filters</div>
-						</div>
-					</md-tooltip>
-				</div>
-			</md-button>
-			<md-menu v-if="isRootEntityViewer" class="full-width">
-				<md-button class="signed-button" @click="$mdOpenMenu($event)">
-					<div class="flex-column flex-i-center">
-						<span class="material-icons">view_stream</span>
-						<span>Split</span>
-					</div>
-				</md-button>
-
-				<md-menu-content width="4">
-					<md-menu-item
-						v-if="!isReport && entityType !== 'complex-transaction'"
-					>
-						<md-button
-							@click="toggleSplitPanel($event, 'permission-editor')"
-							class="g-settings-option-btn"
-						>
-							<span
-								class="material-icons"
-								v-show="currentAdditions.type === 'permission-editor'"
-								>done</span
-							>
-							<span
-								class="material-icons"
-								v-show="currentAdditions.type !== 'permission-editor'"
-								style="visibility: hidden"
-								>done</span
-							>
-
-							<span>Open permission editor</span>
-						</md-button>
-					</md-menu-item>
-
-					<md-menu-item v-if="!isReport">
-						<md-button
-							@click="toggleSplitPanel($event, 'editor')"
-							class="g-settings-option-btn"
-						>
-							<span
-								class="material-icons"
-								v-show="currentAdditions.type === 'editor'"
-								>done</span
-							>
-							<span
-								class="material-icons"
-								v-show="currentAdditions.type !== 'editor'"
-								style="visibility: hidden"
-								>done</span
-							>
-
-							<span>Open editor split panel</span>
-						</md-button>
-					</md-menu-item>
-
-					<md-menu-item v-if="isReport">
-						<md-button
-							@click="toggleSplitPanel($event, 'balance-report')"
-							class="g-settings-option-btn"
-						>
-							<span
-								class="material-icons"
-								v-show="currentAdditions.type === 'balance-report'"
-								>done</span
-							>
-							<span
-								class="material-icons"
-								v-show="currentAdditions.type !== 'balance-report'"
-								style="visibility: hidden"
-								>done</span
-							>
-
-							<span>Open Balance Report view panel</span>
-						</md-button>
-					</md-menu-item>
-
-					<md-menu-item v-if="isReport">
-						<md-button
-							@click="toggleSplitPanel($event, 'pl-report')"
-							class="g-settings-option-btn"
-						>
-							<span
-								class="material-icons"
-								v-show="currentAdditions.type === 'pl-report'"
-								>done</span
-							>
-							<span
-								class="material-icons"
-								v-show="currentAdditions.type !== 'pl-report'"
-								style="visibility: hidden"
-								>done</span
-							>
-
-							<span>Open P&L Report view panel</span>
-						</md-button>
-					</md-menu-item>
-
-					<md-menu-item v-if="isReport">
-						<md-button
-							@click="toggleSplitPanel($event, 'transaction-report')"
-							class="g-settings-option-btn"
-						>
-							<span
-								class="material-icons"
-								v-show="currentAdditions.type === 'transaction-report'"
-								>done</span
-							>
-							<span
-								class="material-icons"
-								v-show="currentAdditions.type !== 'transaction-report'"
-								style="visibility: hidden"
-								>done</span
-							>
-
-							<span>Open Transaction Report view panel</span>
-						</md-button>
-					</md-menu-item>
-				</md-menu-content>
-			</md-menu>
-
-			<md-menu class="full-width" v-if="isRootEntityViewer && isReport">
-				<md-button class="signed-button" @click="$mdOpenMenu($event)">
-					<div class="flex-column flex-i-center">
-						<span class="material-icons">view_module</span>
-						<span>Matrix</span>
-					</div>
-				</md-button>
-
-				<md-menu-content width="4">
-					<md-menu-item>
-						<md-button
-							@click="toggleMatrix($event)"
-							class="g-settings-option-btn"
-						>
-							<span class="material-icons" v-show="viewContext === 'matrix'"
-								>done</span
-							>
-							<span
-								class="material-icons"
-								v-show="viewContext !== 'matrix'"
-								style="visibility: hidden"
-								>done</span
-							>
-
+				<template #default="{ close }">
+					<div class="fm_list" @click="close()">
+						<div class="fm_list_item" @click="toggleMatrix">
+							<FmIcon
+								v-show="scope.currentAdditions?.type === 'permission-editor'"
+								icon="matrix"
+							/>
 							<span>Open Matrix</span>
-						</md-button>
-					</md-menu-item>
-				</md-menu-content>
-			</md-menu>
-			<md-menu>
-				<md-button class="signed-button" @click="$mdOpenMenu($event)">
-					<div class="flex-column flex-i-center">
-						<span class="material-icons">upgrade</span>
-						<span>Export</span>
+						</div>
 					</div>
-				</md-button>
+				</template>
+			</FmMenu>
 
-				<md-menu-content width="4">
-					<md-menu-item v-if="isReport">
-						<md-button
-							@click="exportAsPdf($event)"
-							class="g-settings-option-btn"
+			<FmMenu>
+				<template #btn>
+					<FmIcon btn icon="upgrade" v-fm-tooltip="'Export'" />
+				</template>
+
+				<template #default="{ close }">
+					<div class="fm_list" @click="close()">
+						<div
+							class="fm_list_item"
+							v-if="scope.isReport"
+							@click="exportAsPdf"
 						>
-							<span>Export to PDF</span>
-						</md-button>
-					</md-menu-item>
+							Export to PDF
+						</div>
 
-					<md-menu-item>
-						<md-button @click="exportAsCSV()" class="g-settings-option-btn">
-							<span>Export to CSV</span>
-						</md-button>
-					</md-menu-item>
+						<div class="fm_list_item" @click="exportAsCSV">Export to CSV</div>
 
-					<md-menu-item>
-						<md-button @click="exportAsExcel()" class="g-settings-option-btn">
-							<span>Export to Excel</span>
-						</md-button>
-					</md-menu-item>
+						<div class="fm_list_item" @click="exportAsExcel">
+							Export to Excel
+						</div>
 
-					<md-menu-item>
-						<md-button @click="copyReport()" class="g-settings-option-btn">
-							<span>Copy all to buffer</span>
-						</md-button>
-					</md-menu-item>
-					<md-menu-item>
-						<md-button
-							@click="copySelectedToBuffer()"
-							class="g-settings-option-btn"
-						>
-							<span>Copy selected to buffer</span>
-						</md-button>
-					</md-menu-item>
-				</md-menu-content>
-			</md-menu>
+						<div class="fm_list_item" @click="copyReport">
+							Copy all to buffer
+						</div>
 
-			<md-menu>
-				<md-button class="signed-button" @click="$mdOpenMenu($event)">
-					<div class="flex-column flex-i-center">
-						<span class="material-icons">more_vert</span>
-						<span>More</span>
+						<div class="fm_list_item" @click="copySelectedToBuffer">
+							copySelectedToBuffer
+						</div>
 					</div>
-				</md-button>
+				</template>
+			</FmMenu>
 
-				<md-menu-content width="4">
-					<md-menu-item>
-						<md-button
-							@click="openViewConstructor($event)"
-							class="g-settings-option-btn"
-						>
-							<span>View Constructor</span>
-						</md-button>
-					</md-menu-item>
+			<FmMenu>
+				<template #btn>
+					<FmIcon btn icon="more_vert" v-fm-tooltip="'More'" />
+				</template>
 
-					<md-menu-item v-if="entityType !== 'complex-transaction'">
-						<md-button
-							@click="openCustomFieldsManager($event)"
-							class="g-settings-option-btn"
-						>
-							<span>Custom Columns</span>
-						</md-button>
-					</md-menu-item>
+				<template #default="{ close }">
+					<div class="fm_list" @click="close()">
+						<div class="fm_list_item" @click="openViewConstructor">
+							View Constructor
+						</div>
 
-					<md-menu-item v-if="isReport">
-						<md-button
-							@click="toggleAutoRefresh()"
-							class="g-settings-option-btn"
+						<div
+							class="fm_list_item"
+							v-if="scope.entityType !== 'complex-transaction'"
+							@click="openCustomFieldsManager"
 						>
-							<span v-if="rvAutoRefresh">Disable Auto Refresh</span>
-							<span v-if="!rvAutoRefresh">Enable Auto Refresh</span>
-						</md-button>
-					</md-menu-item>
+							Custom Columns
+						</div>
 
-					<md-menu-item v-if="!isReport">
-						<md-button
-							@click="openInputFormEditor($event)"
-							class="g-settings-option-btn"
+						<div
+							class="fm_list_item"
+							v-if="scope.isReport"
+							@click="toggleAutoRefresh"
 						>
-							<span>Edit form</span>
-						</md-button>
-					</md-menu-item>
-				</md-menu-content>
-			</md-menu>
-		</div>
-	</div>
+							<span v-if="scope.rvAutoRefresh">Disable Auto Refresh</span>
+							<span v-if="!scope.rvAutoRefresh">Enable Auto Refresh</span>
+						</div>
+
+						<div
+							class="fm_list_item"
+							v-if="!scope.isReport"
+							@click="openInputFormEditor"
+						>
+							Edit form
+						</div>
+					</div>
+				</template>
+			</FmMenu>
+		</template>
+	</FmHorizontalPanel>
 </template>
 
 <script setup>
@@ -531,32 +480,30 @@
 
 	import evHelperService from '@/angular/services/entityViewerHelperService'
 	// import EventService from '@/angular/services/eventService';
-	import jquery from 'jquery'
 
 	const props = defineProps(['attributeDataService', 'vm'])
 	const gFiltersVm = props.vm
 
 	let scope = reactive({
 		...props,
+		viewContext: evDataService.getViewContext(),
 	})
 
 	const elem = ref(null)
 
 	let filters = ref(evDataService.getFilters())
-	let viewContext = evDataService.getViewContext()
+	let filtersChips = ref([])
+
+	let filtersChipsContainer
+	let customFields
 
 	onMounted(() => {
-		const gFiltersLeftPartWidth =
-			elem.value[0].querySelector('.gFiltersLeftPart').clientWidth
+		elem.value = document.querySelector('.ev_toolbar.g-filters-holder')
 
-		const gFiltersRightPartWidth =
-			elem.value[0].querySelector('.gFiltersRightPart').clientWidth
+		filtersChipsContainer = elem.value.querySelector('.gFiltersContainer')
 
-		let filtersChipsContainer =
-			elem.value[0].querySelector('.gFiltersContainer')
 		let addFilterElem
-
-		let customFields = scope.attributeDataService.getCustomFieldsByEntityType(
+		customFields = scope.attributeDataService.getCustomFieldsByEntityType(
 			scope.entityType
 		)
 
@@ -566,7 +513,7 @@
 	scope.entityType = gFiltersVm.entityType
 	scope.isReport = false
 	scope.isRootEntityViewer = evDataService.isRootEntityViewer()
-	scope.shownFiltersType = 'backend'
+	scope.shownFiltersType = 'frontend' // hack
 
 	scope.thereAreFrontendFilters = false // needed for existing layouts with frontend filters
 
@@ -767,17 +714,19 @@
 
 	//region Chips
 	const formatFiltersForChips = function () {
-		scope.filtersChips = []
+		filtersChips.value = []
 
 		const errors = []
 		// const shownFilters = scope.showFrontFilters ? filters.valuefrontend : filters.valuebackend;
 		filters.value[scope.shownFiltersType].forEach((filter) => {
 			const filterOpts = filter.options || {}
+			console.log('filterOpts:', filterOpts)
 
 			let filterData = {
 				id: filter.key,
 				isActive: filterOpts.enabled,
 			}
+			console.log('filterData:', filterData)
 
 			const filterName = filter.layout_name ? filter.layout_name : filter.name
 
@@ -807,8 +756,9 @@
 				}
 			}
 
-			scope.filtersChips.push(filterData)
+			filtersChips.value.push(filterData)
 		})
+		console.log('filtersChips.value:', filtersChips.value)
 
 		if (errors.length) gFiltersVm.updateMissingCustomFieldsList(errors)
 
@@ -826,25 +776,20 @@
 
 	scope.onChipsFirstRender = gFiltersVm.onChipsFirstRender
 
-	function addFilter($event) {
-		// const shownFilters = scope.showFrontFilters ? filters.valuefrontend : filters.valuebackend;
+	async function addFilter($event) {
+		let res = await gFiltersVm.openAddFilterDialog(
+			$event,
+			filters.value[scope.shownFiltersType]
+		)
 
-		gFiltersVm
-			.openAddFilterDialog($event, filters[scope.shownFiltersType])
-			.then((res) => {
-				if (res.status === 'agree') {
-					for (var i = 0; i < res.data.items.length; i = i + 1) {
-						filters[scope.shownFiltersType].push(res.data.items[i])
-					}
+		if (res.status === 'agree') {
+			for (var i = 0; i < res.data.items.length; i = i + 1) {
+				filters.value[scope.shownFiltersType].push(res.data.items[i])
+			}
 
-					console.log('filters addFilter', filters)
-
-					evDataService.setFilters(filters)
-					evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
-
-					scope.$apply()
-				}
-			})
+			evDataService.setFilters(filters.value)
+			evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
+		}
 	}
 
 	function removeFilter(filtersToRemove) {
@@ -854,7 +799,7 @@
 			}
 		)
 
-		evDataService.setFilters(filters)
+		evDataService.setFilters(filters.value)
 
 		evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
 		evEventService.dispatchEvent(evEvents.UPDATE_TABLE)
@@ -882,14 +827,14 @@
 		evEventService.dispatchEvent(evEvents.FILTERS_TO_SHOW_CHANGE)
 	}
 
-	scope.toggleSplitPanel = gFiltersVm.toggleSplitPanel
+	const toggleSplitPanel = gFiltersVm.toggleSplitPanel
 
-	scope.exportAsCSV = gFiltersVm.exportAsCSV
-	scope.exportAsExcel = gFiltersVm.exportAsExcel
-	scope.copyReport = gFiltersVm.copyReport
-	scope.copySelectedToBuffer = gFiltersVm.copySelectedToBuffer
+	const exportAsCSV = gFiltersVm.exportAsCSV
+	const exportAsExcel = gFiltersVm.exportAsExcel
+	const copyReport = gFiltersVm.copyReport
+	const copySelectedToBuffer = gFiltersVm.copySelectedToBuffer
 
-	scope.openViewConstructor = gFiltersVm.openViewConstructor
+	const openViewConstructor = gFiltersVm.openViewConstructor
 
 	function openCustomFieldsManager($event) {
 		$mdDialog.show({
@@ -933,17 +878,11 @@
 
 		evEventService.addEventListener(
 			evEvents.TABLE_SIZES_CALCULATED,
-			function () {
-				gFiltersVm.calculateFilterChipsContainerWidth(
-					gFiltersLeftPartWidth,
-					gFiltersRightPartWidth,
-					filtersChipsContainer
-				)
-			}
+			function () {}
 		)
 
 		evEventService.addEventListener(evEvents.FILTERS_CHANGE, function () {
-			filters = evDataService.getFilters()
+			filters.value = evDataService.getFilters()
 
 			formatFiltersForChips()
 
@@ -965,10 +904,12 @@
 
 	function init() {
 		if (
-			viewContext !== 'reconciliation_viewer' &&
+			scope.viewContext !== 'reconciliation_viewer' &&
 			filters.value.frontend.length
 		)
 			scope.thereAreFrontendFilters = true
+
+		console.log('scope.thereAreFrontendFilters:', scope.thereAreFrontendFilters)
 
 		scope.currentAdditions = evDataService.getAdditions()
 
@@ -983,7 +924,6 @@
 		formatFiltersForChips()
 
 		scope.readyStatus.filters = true
-
 		gFiltersVm.updateFilterAreaHeightOnInit()
 
 		initEventListeners()

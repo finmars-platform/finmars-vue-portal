@@ -1,60 +1,67 @@
-<div class="chips-list-container overflow-hidden chipsListContainer"
-     ng-class="getChipsListClasses()">
+<div
+	class="chips-list-container overflow-hidden chipsListContainer"
+	ng-class="getChipsListClasses()"
+>
+	<div
+		ng-repeat="chip in chipsList | orderBy: orderOptions track by chip.id"
+		class="chip-wrap chipWrapElem"
+		ng-class="getChipClasses(chip)"
+		ng-init="$last && onLastChipInit()"
+	>
+		<div
+			class="chip-div chipDivElem"
+			data-ng-class="{active: chip.isActive}"
+			ng-click="onChipClickMethod(chip, $event)"
+		>
+			<span data-ng-if="chip.error_data" class="material-icons error"
+				>error</span
+			>
 
-    <div ng-repeat="chip in chipsList | orderBy: orderOptions track by chip.id"
-         class="chip-wrap chipWrapElem"
-         ng-class="getChipClasses(chip)"
-         ng-init="$last && onLastChipInit()">
+			<div
+				ng-bind-html="chip.text"
+				data-ng-class="{'custom-field-error': !!chip.error_data}"
+				class="chip-list-content"
+			></div>
 
-        <div class="chip-div chipDivElem"
-             data-ng-class="{active: chip.isActive}"
-             ng-click="onChipClickMethod(chip, $event)">
+			<md-button
+				ng-if="chipsDeletion"
+				ng-click="deleteChips(chip, $event)"
+				class="chip-deletion-btn"
+			>
+				<span class="material-icons">cancel</span>
+			</md-button>
 
-            <span data-ng-if="chip.error_data" class="material-icons error">error</span>
+			<md-tooltip
+				ng-if="getTooltipContent(chip)"
+				md-direction="top"
+				class="tooltip_1"
+				data-ng-class="{'custom-field-error': !!chip.error_data}"
+				ng-bind-html="getTooltipContent(chip)"
+			></md-tooltip>
+		</div>
+	</div>
 
-            <div ng-bind-html="chip.text"
-                 data-ng-class="{'custom-field-error': !!chip.error_data}"
-                 class="chip-list-content"></div>
+	<div class="chip-wrap" ng-if="hiddenChips.length">
+		<div
+			class="chip-div expand-chip"
+			ng-click="onChipClickMethod(hiddenChips, $event)"
+		>
+			<div class="chip-list-content">+{{hiddenChips.length}}</div>
 
-            <md-button ng-if="chipsDeletion"
-                       ng-click="deleteChips(chip, $event)"
-                       class="chip-deletion-btn">
-                <span class="material-icons">cancel</span>
-            </md-button>
+			<md-button
+				ng-if="chipsDeletion"
+				ng-click="deleteChips(hiddenChips, $event)"
+				class="chip-deletion-btn"
+			>
+				<span class="material-icons">cancel</span>
+			</md-button>
 
-            <md-tooltip ng-if="getTooltipContent(chip)"
-                        md-direction="top"
-                        class="tooltip_1"
-                        data-ng-class="{'custom-field-error': !!chip.error_data}"
-                        ng-bind-html="getTooltipContent(chip)"></md-tooltip>
-
-        </div>
-
-    </div>
-
-    <div class="chip-wrap" ng-if="hiddenChips.length">
-        <div class="chip-div expand-chip" ng-click="onChipClickMethod(hiddenChips, $event)">
-
-            <div class="chip-list-content">+{{hiddenChips.length}}</div>
-
-            <md-button ng-if="chipsDeletion"
-                       ng-click="deleteChips(hiddenChips, $event)"
-                       class="chip-deletion-btn">
-                <span class="material-icons">cancel</span>
-            </md-button>
-
-            <md-tooltip ng-if="hiddenChipsTexts"
-                        md-direction="top"
-                        class="tooltip_1"
-                        ng-bind="hiddenChipsTexts"></md-tooltip>
-
-        </div>
-    </div>
-
-    <div class="add-chip-wrap chipWrapElem" ng-if="chipsAddition">
-        <div class="chip-div" ng-click="onAddChipClick({event: $event})" ng-init="onAddChipInit()">
-            <div class="chip-list-content" ng-bind="chipsAddition"></div>
-        </div>
-    </div>
-
+			<md-tooltip
+				ng-if="hiddenChipsTexts"
+				md-direction="top"
+				class="tooltip_1"
+				ng-bind="hiddenChipsTexts"
+			></md-tooltip>
+		</div>
+	</div>
 </div>
