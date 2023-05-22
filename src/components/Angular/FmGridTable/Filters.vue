@@ -1,11 +1,11 @@
 <template>
 	<div
 		class="g-filters width-100 gFilters"
-		:class="{ 'open-filters': isFiltersOpened }"
+		:class="{ 'open-filters': $scope.isFiltersOpened }"
 	>
 		<!-- IMPORTANT: for .gFiltersWrap padding should be set by styles, so that scripts can access it -->
-		<div class="gFiltersWrap" style="padding: 10px">
-			<div v-if="$scope.isReport">
+		<div class="gFiltersWrap" style="padding: 0px">
+			<div v-if="$scope.isReport && ready">
 				<g-rv-filters
 					ev-data-service="evDataService"
 					ev-event-service="evEventService"
@@ -13,15 +13,14 @@
 				></g-rv-filters>
 			</div>
 
-			<div v-if="!$scope.isReport">
-				<AngularFmGridTableEvRvFilters
-					:vm="vm"
-					:attributeDataService="attributeDataService"
-				/>
-			</div>
+			<AngularFmGridTableEvRvFilters
+				v-if="!$scope.isReport && ready"
+				:vm="vm"
+				:attributeDataService="attributeDataService"
+			/>
 
 			<div
-				data-v-if="viewContext !== 'dashboard'"
+				v-if="viewContext !== 'dashboard' && ready"
 				class="drop-area-wrap column-to-filters-drop-area display-none gFiltersDropArea"
 			>
 				<div class="g-drop-area gDropArea"></div>
@@ -32,7 +31,7 @@
 			</div>
 
 			<div
-				data-v-if="viewContext !== 'dashboard'"
+				v-if="$scope.viewContext !== 'dashboard' && ready"
 				class="drop-area-wrap remove-column-drop-area display-none gDeletionDropArea"
 			>
 				<div class="g-drop-area gDropArea"></div>
@@ -58,6 +57,7 @@
 	import metaService from '@/angular/services/metaService'
 
 	import metaHelper from '@/angular/helpers/meta.helper'
+	import evHelperService from '@/angular/services/entityViewerHelperService'
 
 	import downloadFileHelper from '@/angular/helpers/downloadFileHelper'
 
@@ -67,12 +67,13 @@
 	import exportExcelService from '@/angular/services/exportExcelService'
 
 	import EventService from '@/angular/services/eventService'
+	import gFiltersHelperInst from '~~/src/angular/helpers/gFiltersHelper'
+
+	const gFiltersHelper = new gFiltersHelperInst()
 
 	// export default function (
-	// 	$mdDialog,
 	// 	uiService,
 	// 	evRvLayoutsHelper,
-	// 	gFiltersHelper
 	// ) {
 	// scope: {
 	// 		evDataService: '=',
@@ -90,10 +91,13 @@
 
 	let filters = []
 	// let useFromAboveFilters = [];
-
+	let attrsWithoutFilters = ['notes']
 	let entityAttrs = []
 	let dynamicAttrs = []
 	let gFiltersElem = null
+	let ready = ref(false)
+
+	let gFiltersElemPadding
 
 	onMounted(() => {
 		const filtersContainerElem = $scope.contentWrapElement
@@ -107,13 +111,16 @@
 		const gFiltersElemWidth = gFiltersElem.clientWidth
 
 		const gFiltersWrapElem = gFiltersElem.querySelector('.gFiltersWrap')
-		const gFiltersElemPadding = parseInt(gFiltersWrapElem.style.padding, 10)
+		gFiltersElemPadding = parseInt(gFiltersWrapElem.style.padding, 10)
 
 		init()
+
+		ready.value = true
 	})
 
-	vm.entityType = evDataService.getEntityType()
+	vm.entityType = evDataService.getContentType()
 	$scope.isReport = metaService.isReport(vm.entityType)
+	$scope.contentType = evDataService.getContentType()
 	// $scope.currentAdditions = evDataService.getAdditions();
 	$scope.isRootEntityViewer = evDataService.isRootEntityViewer()
 	$scope.viewContext = evDataService.getViewContext()
@@ -163,6 +170,7 @@
 						$scope.attributeDataService.getEntityAttributesByEntityType(
 							vm.entityType
 						)
+					console.log('vm.entityType:', vm.entityType)
 
 					entityAttrs.forEach(function (item) {
 						if (
@@ -213,8 +221,7 @@
 						return result
 					})
 
-					allAttrsList = allAttrsList.concat(entityAttrs)
-					allAttrsList = allAttrsList.concat(dynamicAttrs)
+					allAttrsList = allAttrsList.concat(entityAttrs, dynamicAttrs)
 
 					break
 			}
@@ -540,65 +547,44 @@
 		return availableAttrs
 	}
 
-	vm.openAddFilterDialog = function (event, filters) {
-		// const availableAttrs = getAttrsForFilterAddition();
-		return new Promise((resolve, reject) => {
-			try {
-				let availableAttrs = getAttrsForFilterAddition(filters)
+	vm.openAddFilterDialog = async (event, filters) => {
+		try {
+			let availableAttrs = getAttrsForFilterAddition(filters)
+			const columns = evDataService.getColumns()
+			const selectedAttrs = filters.map((col) => col.key)
 
-				$mdDialog
-					.show({
-						controller: 'TableAttributeSelectorDialogController as vm',
-						templateUrl:
-							'views/dialogs/table-attribute-selector-dialog-view.html',
-						targetEvent: event,
-						multiple: true,
-						locals: {
-							data: {
-								availableAttrs: availableAttrs,
-								title: 'Choose filter to add',
-								isReport: $scope.isReport,
-								multiselector: true,
-							},
-						},
-					})
-					.then(function (res) {
-						if (res && res.status === 'agree') {
-							// res.data.groups = true;
-							/* if (!res.data.options) {
-											res.data.options = {};
-										}
+			let res = await $mdDialog.show({
+				controller: 'AttributesSelectorDialogController as vm',
+				multiple: true,
+				locals: {
+					data: {
+						title: 'Add filters',
+						attributes: availableAttrs,
+						layoutNames: evHelperService.getAttributesLayoutNames(columns),
+						selectedAttributes: selectedAttrs,
+						contentType: $scope.contentType,
+						multiselector: true,
+					},
+				},
+			})
 
-										if (!res.data.options.filter_type) {
-											res.data.options.filter_type = metaHelper.getDefaultFilterType(res.data.value_type);
-										}
+			if (res && res.status === 'agree') {
+				for (var i = 0; i < res.data.items.length; i = i + 1) {
+					res.data.items[i] = gFiltersHelper.setFilterDefaultOptions(
+						res.data.items[i]
+					)
+				}
 
-										if (!res.data.options.filter_values) {
-											res.data.options.filter_values = [];
-										}
+				console.log('openAddFilterDialog res.data.items', res.data.items)
 
-										if (!res.data.options.hasOwnProperty('exclude_empty_cells')) {
-											res.data.options.exclude_empty_cells = false;
-										} */
-
-							for (var i = 0; i < res.data.items.length; i = i + 1) {
-								res.data.items[i] = gFiltersHelper.setFilterDefaultOptions(
-									res.data.items[i]
-								)
-							}
-
-							console.log('openAddFilterDialog res.data.items', res.data.items)
-
-							resolve({ status: res.status, data: res.data })
-						}
-
-						resolve({ status: res.status })
-					})
-					.catch((error) => reject(error))
-			} catch (error) {
-				reject(error)
+				return { status: res.status, data: res.data }
 			}
-		})
+
+			return { status: res.status }
+		} catch (error) {
+			console.log('error:', error)
+			return false
+		}
 	}
 
 	/**

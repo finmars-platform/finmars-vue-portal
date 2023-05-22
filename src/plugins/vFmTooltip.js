@@ -60,7 +60,7 @@ export default defineNuxtPlugin(nuxtApp => {
 
 			tooltipElem.classList.add('fm_tooltip');
 			tooltipElem.style.position = 'absolute';
-			tooltipElem.innerText = binding.value;
+			tooltipElem.innerHTML = binding.value;
 
 			if (errorMode) tooltipElem.classList.add('error');
 

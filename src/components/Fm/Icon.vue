@@ -61,6 +61,7 @@
 
 			&:hover {
 				background: $primary-lighten;
+				color: $white;
 			}
 		}
 		&.primary {
