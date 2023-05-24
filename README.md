@@ -46,3 +46,20 @@ npm run preview
 ```
 
 Checkout the [deployment documentation](https://v3.nuxtjs.org/docs/deployment) for more information.
+
+
+## Local Development with local backend & authorizer
+
+Create .env
+
+.env example
+
+```
+KEYCLOAK_URL=https://dev-auth.finmars.com
+KEYCLOAK_REALM=finmars
+KEYCLOAK_CLIENT_ID=finmars
+NUXT_APP_BASE_URL=/space00000/v/
+APP_HOST=http://0.0.0.0:3000/space00000/v/
+AUTH_HOST=http://0.0.0.0:8083/authorizer
+API_HOST=http://0.0.0.0:8000
+```

@@ -2,7 +2,7 @@
 	<div class="modal">
 		<div class="modal_top flex aic sb">
 			<div class="flex aic">
-				<div class="modal_head">Add column</div>
+				<div class="modal_head">{{ title }}</div>
 
 				<BaseInput
 					type="text"
@@ -94,7 +94,7 @@
 									@click.stop=""
 								/>
 
-								<div v-html="item.name"></div>
+								<div v-html="item.customName || item.name"></div>
 							</div>
 
 							<div class="flex aic">
