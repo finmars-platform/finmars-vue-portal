@@ -219,7 +219,7 @@ $evGRowSettingsWidth: 124px;
 		}
 		//endregion Left panel with grouping area
 
-		.g-content-wrap {
+		.g-workarea-wrap {
 			.g-row-settings {
 				width: $evGRowSettingsWidth;
 			}
@@ -1079,7 +1079,8 @@ $evGRowSettingsWidth: 124px;
 		color: #a5d9c9;
 	}
 }
-.g-content-wrap {
+// g-content-wrap
+.g-workarea-wrap {
 	position: relative;
 
 	.g-table-header-drop {
@@ -1101,11 +1102,11 @@ $evGRowSettingsWidth: 124px;
 	}
 
 	&.g-row-settings-collapsed {
-		div.g-row-settings {
+		.g-row-settings {
 			width: 0 !important;
 			padding: 0;
 			overflow: hidden;
-			border: none;
+			border: none !important;
 		}
 	}
 }
@@ -1713,13 +1714,6 @@ $gTableBackgroundColor: #fafafa;
 	}
 
 	.g-workarea {
-		width: 100%;
-		//width: calc(100% - border-right);
-		//border-right: 6px solid #4C334D;
-		background: #4c334d;
-		overflow: auto;
-		position: relative;
-
 		.ev-content {
 			background-color: $gTableBackgroundColor;
 		}

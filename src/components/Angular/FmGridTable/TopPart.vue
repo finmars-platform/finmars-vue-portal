@@ -1,6 +1,6 @@
 <template>
 	<div class="g-top-part width-100 flex-row fc-space-between flex-i-center">
-		<div class="g-top-part-left p-l-24 flex-50 flex-row">
+		<div class="g-top-part-left flex-50 flex-row" style="padding-left: 30px">
 			<md-button
 				class="g-top-button flex-row"
 				custom-popup
@@ -47,7 +47,7 @@
 			</div>
 		</div>
 
-		<div class="p-r-24 flex-row flex-i-center">
+		<div class="flex-row flex-i-center" style="padding-right: 30px">
 			<div v-if="isReport" class="flex-row flex-i-center">
 				<md-button
 					v-if="missingPricesData.items.length"
@@ -142,15 +142,19 @@
 					</div>
 				</div>
 			</div>
-
-			<md-button class="md-icon-button" @click="onSettingsClick()">
-				<div class="flex-row flex-c-center flex-i-center">
-					<ng-md-icon icon="settings" size="20">
-						<md-tooltip md-direction="top">Settings</md-tooltip>
-					</ng-md-icon>
-				</div>
-			</md-button>
+			<FmIcon
+				btn
+				icon="settings"
+				v-fm-tooltip="'Settings'"
+				@click="onSettingsClick()"
+			/>
 		</div>
+
+		<AngularFmGridTableEvSettingsM
+			v-if="$mdDialog.modals['GEntityViewerSettingsDialogController']"
+			:payload="$mdDialog.modals['GEntityViewerSettingsDialogController']"
+			:modelValue="true"
+		/>
 	</div>
 </template>
 
@@ -166,8 +170,8 @@
 		'evDataService',
 		'spExchangeService',
 	])
+	const $mdDialog = inject('$mdDialog')
 	// export default function (
-	// 	$mdDialog,
 	// 	$state,
 	// 	usersService,
 	// 	ecosystemDefaultService,
@@ -300,23 +304,14 @@
 			})
 	}
 
-	var openEntityViewerSettings = function ($event) {
-		$mdDialog
-			.show({
-				controller: 'GEntityViewerSettingsDialogController as vm',
-				templateUrl: 'views/dialogs/g-entity-viewer-settings-dialog-view.html',
-				parent: angular.element(document.body),
-				targetEvent: $event,
-				locals: {
-					entityViewerDataService: evDataService,
-					entityViewerEventService: evEventService,
-				},
-			})
-			.then(function (res) {
-				if (res.status === 'agree') {
-					evEventService.dispatchEvent(evEvents.ENTITY_VIEWER_SETTINGS_CHANGED)
-				}
-			})
+	var openEntityViewerSettings = async function ($event) {
+		let res = await $mdDialog.show({
+			controller: 'GEntityViewerSettingsDialogController as vm',
+			templateUrl: 'views/dialogs/g-entity-viewer-settings-dialog-view.html',
+		})
+		if (res.status === 'agree') {
+			evEventService.dispatchEvent(evEvents.ENTITY_VIEWER_SETTINGS_CHANGED)
+		}
 	}
 
 	let onSettingsClick = isReport ? openReportSettings : openEntityViewerSettings

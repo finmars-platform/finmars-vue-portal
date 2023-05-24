@@ -352,6 +352,9 @@
 	// VUE
 	import attributes from '~/assets/data/attributes.js'
 	import { useRegExpEscape } from '~/composables/useUtils'
+	import usersServiceInst from '~~/src/angular/shell/scripts/app/services/usersService'
+
+	const usersService = new usersServiceInst()
 	// export default function (
 	// 	$scope,
 	// 	$mdDialog,

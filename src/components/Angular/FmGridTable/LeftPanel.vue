@@ -110,6 +110,15 @@
 				>chevron_right</span
 			>
 		</div>
+		<div
+			class="drop-area-wrap left-side-groups-drop-area display-none gLeftSideGroupsHolder"
+		>
+			<div class="g-drop-area gDropArea"></div>
+
+			<div class="drop-area-content">
+				<span>Drop here to add grouping</span>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -539,8 +548,7 @@
 		finishRenderIndex = evEventService.addEventListener(
 			evEvents.FINISH_RENDER,
 			function () {
-				evContentElement.value =
-					scope.contentWrapElement.querySelector('.ev-viewport')
+				evContentElement.value = document.querySelector('.ev-viewport')
 				evEventService.removeEventListener(
 					evEvents.FINISH_RENDER,
 					finishRenderIndex
