@@ -1,28 +1,22 @@
 <template>
 	<div class="entity-viewer-holder">
-		<div class="height-100">
-			<div
-				v-if="vm && vm.readyStatus.attributes && vm.readyStatus.layout"
-				class="g-group-table-holder"
-			>
-				<AngularFmGridTable
-					:attributeDataService="vm.attributeDataService"
-					:evDataService="vm.entityViewerDataService"
-					:evEventService="vm.entityViewerEventService"
-					:spExchangeService="vm.splitPanelExchangeService"
-					:vm="vm"
-				/>
-			</div>
-			<div v-else>
-				<div
-					class="e-data-loader"
-					layout="row"
-					layout-sm="column"
-					layout-align="space-around"
-				>
-					<FmLoader></FmLoader>
-				</div>
-			</div>
+		<AngularFmGridTable
+			v-if="vm && vm.readyStatus.attributes && vm.readyStatus.layout"
+			class="g-group-table-holder"
+			:attributeDataService="vm.attributeDataService"
+			:evDataService="vm.entityViewerDataService"
+			:evEventService="vm.entityViewerEventService"
+			:spExchangeService="vm.splitPanelExchangeService"
+			:vm="vm"
+		/>
+		<div
+			v-else
+			class="e-data-loader"
+			layout="row"
+			layout-sm="column"
+			layout-align="space-around"
+		>
+			<FmLoader></FmLoader>
 		</div>
 	</div>
 </template>

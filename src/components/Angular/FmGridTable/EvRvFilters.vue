@@ -1,262 +1,258 @@
 <template>
-	<FmHorizontalPanel
-		class="ev_toolbar g-filters-holder"
+	<div
+		class="fm_container ev_toolbar g-filters-holder"
+		:style="{ height: '50px' }"
 		:class="{
 			'hide-ev-front-filters':
 				!scope.isReport &&
 				scope.thereAreFrontendFilters &&
 				scope.shownFiltersType === 'frontend',
 		}"
-		height="initial"
 	>
-		<template #leftActions>
-			<div
-				class="g-filter-left-part gFiltersLeftPart"
-				:class="{ 'no-ev-g-filter-switch': !scope.thereAreFrontendFilters }"
-			>
-				<template v-if="scope.isReport">
-					<FmMenu>
-						<template #btn>
-							<FmIcon
-								class="add_ev_btn"
-								btnPrimary
-								icon="add"
-								v-fm-tooltip="'Add'"
-							/>
-						</template>
+		<div
+			class="g-filter-left-part gFiltersLeftPart"
+			:class="{ 'no-ev-g-filter-switch': !scope.thereAreFrontendFilters }"
+		>
+			<template v-if="scope.isReport">
+				<FmMenu>
+					<template #btn>
+						<FmIcon
+							class="add_ev_btn"
+							btnPrimary
+							icon="add"
+							v-fm-tooltip="'Add'"
+						/>
+					</template>
 
-						<template #default="{ close }">
-							<div class="fm_list" @click="close()">
-								<div
-									class="fm_list_item"
-									@click="dispatchAddMenuAction($event, item)"
-								>
-									{{ item.name }}
-								</div>
+					<template #default="{ close }">
+						<div class="fm_list" @click="close()">
+							<div
+								class="fm_list_item"
+								@click="dispatchAddMenuAction($event, item)"
+							>
+								{{ item.name }}
 							</div>
-						</template>
-					</FmMenu>
+						</div>
+					</template>
+				</FmMenu>
 
-					<FmIcon
-						btnPrimary
-						icon="link"
-						class="g-toggle-filters-btn md-icon-button chain-button"
-						:class="{
-							'g-use-from-above-filters-hidden': !scope.showUseFromAboveFilters,
-						}"
-						@click="toggleUseFromAboveFilters()"
-					/>
-				</template>
+				<FmIcon
+					btnPrimary
+					icon="link"
+					class="g-toggle-filters-btn md-icon-button chain-button"
+					:class="{
+						'g-use-from-above-filters-hidden': !scope.showUseFromAboveFilters,
+					}"
+					@click="toggleUseFromAboveFilters()"
+				/>
+			</template>
 
-				<template v-if="!scope.isReport">
-					<FmIcon
-						v-if="
-							scope.entityType != 'instrument' &&
-							scope.entityType != 'instrument-type' &&
-							scope.entityType != 'account-type' &&
-							scope.entityType != 'transaction-type'
-						"
-						btnPrimary
-						icon="add"
-						class="g-filter-settings-big-left-btn"
-						:class="{
-							'g-use-from-above-filters-hidden': !scope.showUseFromAboveFilters,
-						}"
-						v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
-						@click="evAddEntity"
-					/>
-
-					<md-menu v-if="scope.entityType == 'instrument'">
-						<md-button
-							class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
-							@click="$mdOpenMenu($event)"
-						>
-							<span class="material-icons">add</span>
-							<md-tooltip md-direction="top"
-								>ADD {{ evGetEntityNameByState() }}</md-tooltip
-							>
-						</md-button>
-
-						<md-menu-content width="4">
-							<md-menu-item>
-								<md-button
-									@click="evAddEntity($event)"
-									class="g-settings-option-btn"
-								>
-									<span>Add Blank</span>
-								</md-button>
-							</md-menu-item>
-							<md-menu-item>
-								<md-button
-									@click="openTransactionTypeDialog($event)"
-									class="g-settings-option-btn"
-								>
-									<span>Add Typical</span>
-								</md-button>
-							</md-menu-item>
-							<md-menu-item>
-								<md-button
-									@click="openSimpleImportDialog($event)"
-									class="g-settings-option-btn"
-								>
-									<span>Import from File</span>
-								</md-button>
-							</md-menu-item>
-							<md-menu-item>
-								<md-button
-									@click="addFromProvider($event)"
-									class="g-settings-option-btn"
-								>
-									<span>Get From Provider</span>
-								</md-button>
-							</md-menu-item>
-						</md-menu-content>
-					</md-menu>
-
-					<md-menu v-if="scope.entityType == 'instrument-type'">
-						<md-button
-							class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
-							@click="$mdOpenMenu($event)"
-						>
-							<span class="material-icons">add</span>
-							<md-tooltip md-direction="top"
-								>ADD {{ evGetEntityNameByState() }}</md-tooltip
-							>
-						</md-button>
-
-						<md-menu-content width="4">
-							<md-menu-item>
-								<md-button
-									@click="evAddEntity($event)"
-									class="g-settings-option-btn"
-								>
-									<span>Add Blank</span>
-								</md-button>
-							</md-menu-item>
-							<md-menu-item>
-								<md-button
-									class="md-raised"
-									package-manager-button
-									content-type="'instruments.instrumenttype'"
-								>
-									Select from List
-								</md-button>
-							</md-menu-item>
-						</md-menu-content>
-					</md-menu>
-
-					<md-menu v-if="scope.entityType == 'account-type'">
-						<md-button
-							class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
-							@click="$mdOpenMenu($event)"
-						>
-							<span class="material-icons">add</span>
-							<md-tooltip md-direction="top"
-								>ADD {{ evGetEntityNameByState() }}</md-tooltip
-							>
-						</md-button>
-
-						<md-menu-content width="4">
-							<md-menu-item>
-								<md-button
-									@click="evAddEntity($event)"
-									class="g-settings-option-btn"
-								>
-									<span>Add Blank</span>
-								</md-button>
-							</md-menu-item>
-							<md-menu-item>
-								<md-button
-									class="md-raised"
-									package-manager-button
-									content-type="'accounts.accounttype'"
-								>
-									Select from List
-								</md-button>
-							</md-menu-item>
-						</md-menu-content>
-					</md-menu>
-
-					<md-menu v-if="scope.entityType == 'transaction-type'">
-						<md-button
-							class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
-							@click="$mdOpenMenu($event)"
-						>
-							<span class="material-icons">add</span>
-							<md-tooltip md-direction="top"
-								>ADD {{ evGetEntityNameByState() }}</md-tooltip
-							>
-						</md-button>
-
-						<md-menu-content width="4">
-							<md-menu-item>
-								<md-button
-									@click="evAddEntity($event)"
-									class="g-settings-option-btn"
-								>
-									<span>Add Blank</span>
-								</md-button>
-							</md-menu-item>
-							<md-menu-item>
-								<md-button
-									class="md-raised"
-									package-manager-button
-									content-type="'transactions.transactiontype'"
-								>
-									Select from List
-								</md-button>
-							</md-menu-item>
-						</md-menu-content>
-					</md-menu>
-
-					<md-button
-						v-if="scope.thereAreFrontendFilters"
-						class="g-toggle-filters-btn md-icon-button"
-						@click="toggleFiltersToShow()"
-					>
-						<span
-							v-show="scope.shownFiltersType === 'frontend'"
-							class="material-icons"
-							>laptop_mac</span
-						>
-						<span
-							v-show="scope.shownFiltersType === 'backend'"
-							class="material-icons"
-							>dns</span
-						>
-					</md-button>
-				</template>
-			</div>
-
-			<div class="gFiltersContainer flex aic fww">
-				<div
-					v-if="scope.readyStatus.filters"
-					custom-popup
-					popup-template-url="{{filterPopupTemplate}}"
-					popup-data="popupData"
-					popup-event-service="popupEventService"
-					popup-x="popupPosX"
-					popup-y="popupPosY"
-					on-save="filterSettingsChange()"
-					class="g-filter-chips-wrap"
-				></div>
-
-				<FmChips
-					v-if="scope.readyStatus.filters"
-					class="g-filter-chips"
-					:items="filtersChips"
-					canDelete
-					on-chip-click="onFilterChipClick(chipsData, event)"
-					hide-overflowing-chips="false"
-					on-chips-deletion="removeFilter(chipsData)"
-					on-add-chip-click="addFilter(event)"
-					on-first-render-ending="onChipsFirstRender()"
+			<template v-if="!scope.isReport">
+				<FmIcon
+					v-if="
+						scope.entityType != 'instrument' &&
+						scope.entityType != 'instrument-type' &&
+						scope.entityType != 'account-type' &&
+						scope.entityType != 'transaction-type'
+					"
+					btnPrimary
+					icon="add"
+					class="g-filter-settings-big-left-btn"
+					:class="{
+						'g-use-from-above-filters-hidden': !scope.showUseFromAboveFilters,
+					}"
+					v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
+					@click="evAddEntity"
 				/>
 
-				<FmBtn type="action" @click="addFilter">ADD FILTER</FmBtn>
-			</div>
-		</template>
-		<template #rightActions>
+				<md-menu v-if="scope.entityType == 'instrument'">
+					<md-button
+						class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
+						@click="$mdOpenMenu($event)"
+					>
+						<span class="material-icons">add</span>
+						<md-tooltip md-direction="top"
+							>ADD {{ evGetEntityNameByState() }}</md-tooltip
+						>
+					</md-button>
+
+					<md-menu-content width="4">
+						<md-menu-item>
+							<md-button
+								@click="evAddEntity($event)"
+								class="g-settings-option-btn"
+							>
+								<span>Add Blank</span>
+							</md-button>
+						</md-menu-item>
+						<md-menu-item>
+							<md-button
+								@click="openTransactionTypeDialog($event)"
+								class="g-settings-option-btn"
+							>
+								<span>Add Typical</span>
+							</md-button>
+						</md-menu-item>
+						<md-menu-item>
+							<md-button
+								@click="openSimpleImportDialog($event)"
+								class="g-settings-option-btn"
+							>
+								<span>Import from File</span>
+							</md-button>
+						</md-menu-item>
+						<md-menu-item>
+							<md-button
+								@click="addFromProvider($event)"
+								class="g-settings-option-btn"
+							>
+								<span>Get From Provider</span>
+							</md-button>
+						</md-menu-item>
+					</md-menu-content>
+				</md-menu>
+
+				<md-menu v-if="scope.entityType == 'instrument-type'">
+					<md-button
+						class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
+						@click="$mdOpenMenu($event)"
+					>
+						<span class="material-icons">add</span>
+						<md-tooltip md-direction="top"
+							>ADD {{ evGetEntityNameByState() }}</md-tooltip
+						>
+					</md-button>
+
+					<md-menu-content width="4">
+						<md-menu-item>
+							<md-button
+								@click="evAddEntity($event)"
+								class="g-settings-option-btn"
+							>
+								<span>Add Blank</span>
+							</md-button>
+						</md-menu-item>
+						<md-menu-item>
+							<md-button
+								class="md-raised"
+								package-manager-button
+								content-type="'instruments.instrumenttype'"
+							>
+								Select from List
+							</md-button>
+						</md-menu-item>
+					</md-menu-content>
+				</md-menu>
+
+				<md-menu v-if="scope.entityType == 'account-type'">
+					<md-button
+						class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
+						@click="$mdOpenMenu($event)"
+					>
+						<span class="material-icons">add</span>
+						<md-tooltip md-direction="top"
+							>ADD {{ evGetEntityNameByState() }}</md-tooltip
+						>
+					</md-button>
+
+					<md-menu-content width="4">
+						<md-menu-item>
+							<md-button
+								@click="evAddEntity($event)"
+								class="g-settings-option-btn"
+							>
+								<span>Add Blank</span>
+							</md-button>
+						</md-menu-item>
+						<md-menu-item>
+							<md-button
+								class="md-raised"
+								package-manager-button
+								content-type="'accounts.accounttype'"
+							>
+								Select from List
+							</md-button>
+						</md-menu-item>
+					</md-menu-content>
+				</md-menu>
+
+				<md-menu v-if="scope.entityType == 'transaction-type'">
+					<md-button
+						class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
+						@click="$mdOpenMenu($event)"
+					>
+						<span class="material-icons">add</span>
+						<md-tooltip md-direction="top"
+							>ADD {{ evGetEntityNameByState() }}</md-tooltip
+						>
+					</md-button>
+
+					<md-menu-content width="4">
+						<md-menu-item>
+							<md-button
+								@click="evAddEntity($event)"
+								class="g-settings-option-btn"
+							>
+								<span>Add Blank</span>
+							</md-button>
+						</md-menu-item>
+						<md-menu-item>
+							<md-button
+								class="md-raised"
+								package-manager-button
+								content-type="'transactions.transactiontype'"
+							>
+								Select from List
+							</md-button>
+						</md-menu-item>
+					</md-menu-content>
+				</md-menu>
+
+				<md-button
+					v-if="scope.thereAreFrontendFilters"
+					class="g-toggle-filters-btn md-icon-button"
+					@click="toggleFiltersToShow()"
+				>
+					<span
+						v-show="scope.shownFiltersType === 'frontend'"
+						class="material-icons"
+						>laptop_mac</span
+					>
+					<span
+						v-show="scope.shownFiltersType === 'backend'"
+						class="material-icons"
+						>dns</span
+					>
+				</md-button>
+			</template>
+		</div>
+
+		<div class="gFiltersContainer flex aic fww">
+			<div
+				v-if="scope.readyStatus.filters"
+				custom-popup
+				popup-template-url="{{filterPopupTemplate}}"
+				popup-data="popupData"
+				popup-event-service="popupEventService"
+				popup-x="popupPosX"
+				popup-y="popupPosY"
+				on-save="filterSettingsChange()"
+				class="g-filter-chips-wrap"
+			></div>
+
+			<FmChips
+				v-if="scope.readyStatus.filters"
+				class="g-filter-chips"
+				:items="filtersChips"
+				canDelete
+				@chipClick="scope.onFilterChipClick($event)"
+				@delete="removeFilter($event)"
+			/>
+
+			<FmBtn type="action" @click="addFilter">ADD FILTER</FmBtn>
+		</div>
+
+		<div class="flex aic">
 			<FmIcon
 				icon="refresh"
 				@click="refreshTable()"
@@ -426,7 +422,7 @@
 						</div>
 
 						<div class="fm_list_item" @click="copySelectedToBuffer">
-							copySelectedToBuffer
+							Copy selected to buffer
 						</div>
 					</div>
 				</template>
@@ -470,8 +466,8 @@
 					</div>
 				</template>
 			</FmMenu>
-		</template>
-	</FmHorizontalPanel>
+		</div>
+	</div>
 </template>
 
 <script setup>
@@ -793,11 +789,11 @@
 	}
 
 	function removeFilter(filtersToRemove) {
-		filters[scope.shownFiltersType] = filters[scope.shownFiltersType].filter(
-			(filter) => {
-				return filtersToRemove.find((item) => item.id !== filter.key)
-			}
-		)
+		filters.value[scope.shownFiltersType] = filters.value[
+			scope.shownFiltersType
+		].filter((filter) => {
+			return filtersToRemove.find((item) => item.id !== filter.key)
+		})
 
 		evDataService.setFilters(filters.value)
 
@@ -930,4 +926,16 @@
 	}
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+	.ev_toolbar {
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		gap: 20px;
+		align-items: center;
+		justify-content: space-between;
+		background: $separ;
+		padding-top: 0;
+		padding-bottom: 0;
+		border-bottom: 1px solid $border;
+	}
+</style>

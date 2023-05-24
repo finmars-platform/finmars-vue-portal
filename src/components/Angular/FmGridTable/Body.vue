@@ -424,11 +424,11 @@
 		}
 
 		var calculateElemsWrapsSizes = function () {
-			evRvDomManagerService.calculateContentWrapHeight(
-				elements.rootWrapElem,
-				elements.contentWrapElem,
-				evDataService
-			)
+			// evRvDomManagerService.calculateContentWrapHeight(
+			// 	elements.rootWrapElem,
+			// 	elements.contentWrapElem,
+			// 	evDataService
+			// )
 			// for vertical split panel contentWrapElem width calculated by gWidthAlignerComponent.js
 			// horizontal split panel contentWrapElem take all available width
 			if (isRootEntityViewer) {

@@ -100,11 +100,8 @@
 	let gFiltersElemPadding
 
 	onMounted(() => {
-		const filtersContainerElem = $scope.contentWrapElement
-			? $scope.contentWrapElement
-			: $scope.dashboardComponentElement
-
-		gFiltersElem = filtersContainerElem.querySelector('.gFilters')
+		// Use ref
+		gFiltersElem = document.querySelector('.gFilters')
 
 		/** Used when inside dashboard, and does not change with window resize. Can be less than actual width, when used outside dashboard. */
 
@@ -616,11 +613,8 @@
 		filtersChipsContainer.style.width = availableSpace + 'px'
 	}
 
-	vm.onFilterChipClick = function (chipsData, event) {
+	vm.onFilterChipClick = function (chipsData) {
 		vm.popupData.filterKey = chipsData.data.id
-
-		vm.popupPosX.value = event.clientX
-		vm.popupPosY.value = event.clientY
 
 		vm.popupEventService.dispatchEvent(popupEvents.OPEN_POPUP, {
 			doNotUpdateScope: true,

@@ -14,7 +14,7 @@
 				class="chip flex aic"
 				:class="{ active: chip.isActive }"
 				v-fm-tooltip="scope.getTooltipContent(chip)"
-				@click="onChipClickMethod(chip, $event)"
+				@click="$emit('chipClick', { data: chip })"
 			>
 				<span v-if="chip.error_data" class="material-icons error">error</span>
 
@@ -30,7 +30,7 @@
 					icon="cancel"
 					size="16"
 					:class="{ 'custom-field-error': !!chip.error_data }"
-					@click="deleteChips(chip, $event)"
+					@click.stop="$emit('delete', [chip])"
 				/>
 			</div>
 		</div>
@@ -64,18 +64,16 @@
 <script setup>
 	import directivesEvents from '@/angular/services/events/directivesEvents'
 
+	const emits = defineEmits(['chipClick', 'delete'])
 	const props = defineProps({
 		items: Array,
 		canDelete: { type: Boolean, default: false },
+		overflowing: Boolean,
 	})
-	console.log('props:', props)
 
 	let scope = {}
 	const elem = ref(null)
 	// $filter
-	// chipsList: '=',
-
-	// eventService: '=',
 
 	// chipsDeletion: '@', // whether allow chips deletion
 	// chipsAddition: '@',
@@ -83,8 +81,6 @@
 	// isDisabled: '=',
 	// // dropdownMenuOptions: "=",
 	// chipsContainerWidth: '=', // in pixels
-
-	// hideOverflowingChips: '@', // [ 'false' ] - will prevent chips concealment. [ 'true' ] - by default
 
 	// onChipsDeletion: '&?', // pass function with argument that is array of deleted inputs
 	// onChipClick: '&?', // [ function({}) ]
@@ -157,8 +153,6 @@
 	}
 
 	scope.onChipClickMethod = function (chipData, $event) {
-		$event.stopPropagation()
-
 		let chipsData = {
 			hiddenChips: Array.isArray(chipData),
 			data: chipData,
@@ -256,47 +250,32 @@
 		}
 	}
 
-	scope.deleteChips = function (chipsData, $event) {
-		$event.stopPropagation()
+	// scope.deleteChips = function (chipsData, $event) {
+	// 	$event.stopPropagation()
 
-		let chipsForDeletion = JSON.parse(JSON.stringify(chipsData))
+	// 	let chipsForDeletion = JSON.parse(JSON.stringify(chipsData))
 
-		if (!Array.isArray(chipsForDeletion)) {
-			// one chip deletion
+	// 	if (!Array.isArray(chipsForDeletion)) {
+	// 		// one chip deletion
 
-			chipsForDeletion = [chipsForDeletion]
-		} else {
-			// hidden chips deletion
-			scope.hiddenChips = []
-		}
+	// 		chipsForDeletion = [chipsForDeletion]
+	// 	} else {
+	// 		// hidden chips deletion
+	// 		scope.hiddenChips = []
+	// 	}
 
-		chipsForDeletion.forEach(function (chipData) {
-			for (let i = 0; i < scope.chipsList.length; i++) {
-				if (scope.chipsList[i].id === chipData.id) {
-					scope.chipsList.splice(i, 1)
-					break
-				}
-			}
-		})
+	// 	chipsForDeletion.forEach(function (chipData) {
+	// 		for (let i = 0; i < scope.chipsList.length; i++) {
+	// 			if (scope.chipsList[i].id === chipData.id) {
+	// 				scope.chipsList.splice(i, 1)
+	// 				break
+	// 			}
+	// 		}
+	// 	})
 
-		scope.concealOverflowingChips()
+	// 	scope.concealOverflowingChips()
 
-		if (scope.onChipsDeletion) {
-			scope.onChipsDeletion({ chipsData: chipsForDeletion })
-		}
-	}
-
-	/* scope.selectOption = function (option) {
-
-                    let newChip = {
-                        id: option.id,
-                        text: option.name
-                    };
-
-                    scope.chipsList.push(newChip);
-                    scope.concealOverflowingChips();
-
-                }; */
+	// }
 
 	let onFirstRenderEnding = function () {
 		if (scope.onFirstRenderEnding) {
@@ -351,7 +330,6 @@
 		padding: 6px 12px;
 		margin: 0 4px;
 		font-size: 14px;
-		box-sizing: border-box;
 
 		&:hover {
 			background-color: rgba(216, 216, 216, 1);
@@ -408,7 +386,6 @@
 		height: 33px;
 		padding-top: 9px;
 		padding-bottom: 9px;
-		margin-bottom: 9px;
 		cursor: pointer;
 
 		// Victor 2021.03.26 #85 only active filters must be orange

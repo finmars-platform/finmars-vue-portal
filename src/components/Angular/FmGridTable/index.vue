@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="g-wrapper position-relative"
-		data-ng-class="getWrapperClasses()"
+		:class="getWrapperClasses()"
 		:ref="(el) => (elem = jquery(el))"
 	>
 		<div
@@ -60,78 +60,58 @@
 		</div>
 
 		<div
-			class="g-content-wrap"
-			data-ng-class="{'g-content-wrap-right': verticalAdditions.isOpen, 'g-root-content-wrap': isRootEntityViewer}"
+			class="g-workarea-wrap g-workarea main-area"
+			:class="{
+				'g-content-wrap-right': verticalAdditions.isOpen,
+				'g-root-content-wrap': isRootEntityViewer,
+			}"
+			v-if="domElemsAreReady"
+			ev-data-service="evDataService"
+			ev-event-service="evEventService"
 		>
-			<div class="g-workarea-wrap">
-				<div
-					class="g-workarea main-area"
-					v-if="domElemsAreReady"
-					ev-data-service="evDataService"
-					ev-event-service="evEventService"
-				>
-					<div v-if="components.topPart">
-						<AngularFmGridTableTopPart
-							:attributeDataService="attributeDataService"
-							:evDataService="evDataService"
-							:evEventService="evEventService"
-							:spExchangeService="spExchangeService"
-							:vm="vm"
-						/>
-					</div>
+			<AngularFmGridTableTopPart
+				v-if="components.topPart"
+				:attributeDataService="attributeDataService"
+				:evDataService="evDataService"
+				:evEventService="evEventService"
+				:spExchangeService="spExchangeService"
+				:vm="vm"
+			/>
 
-					<div
-						v-if="components.filterArea && contentWrapElem"
-						class="position-relative"
-					>
-						<AngularFmGridTableFilters
-							:attributeDataService="attributeDataService"
-							:contentWrapElement="contentWrapElem"
-							:hideFiltersBlock="hideFiltersBlock"
-							:hideUseFromAboveFilters="hideUseFromAboveFilters"
-							:vm="vm"
-						/>
-					</div>
+			<AngularFmGridTableFilters
+				v-if="components.filterArea"
+				:attributeDataService="attributeDataService"
+				:hideFiltersBlock="hideFiltersBlock"
+				:hideUseFromAboveFilters="hideUseFromAboveFilters"
+				:vm="vm"
+			/>
 
-					<div v-if="domElemsAreReady" class="g-table-section flex-row">
-						<div
-							v-if="!isReport && contentWrapElem"
-							class="g-ev-left-panel-holder gEvLeftPanelHolder"
-						>
-							<AngularFmGridTableLeftPanel
-								:attributeDataService="attributeDataService"
-								:evDataService="evDataService"
-								:evEventService="evEventService"
-								:spExchangeService="spExchangeService"
-								:contentWrapElement="contentWrapElem"
-							/>
+			<div v-if="domElemsAreReady" class="g-table-section flex-row">
+				<div v-if="!isReport" class="g-ev-left-panel-holder gEvLeftPanelHolder">
+					<AngularFmGridTableLeftPanel
+						:attributeDataService="attributeDataService"
+						:evDataService="evDataService"
+						:evEventService="evEventService"
+						:spExchangeService="spExchangeService"
+						:contentWrapElement="contentWrapElem"
+					/>
+				</div>
 
-							<div
-								class="drop-area-wrap left-side-groups-drop-area display-none gLeftSideGroupsHolder"
-							>
-								<div class="g-drop-area gDropArea"></div>
-
-								<div class="drop-area-content">
-									<span>Drop here to add grouping</span>
-								</div>
+				<div class="g-table-container">
+					<div class="g-table-wrap">
+						<div class="g-column-area-wrap">
+							<div v-if="components.columnArea && viewType != 'matrix'">
+								<AngularFmGridTableColumns
+									v-if="contentWrapElem"
+									:evDataService="evDataService"
+									:evEventService="evEventService"
+									:attributeDataService="attributeDataService"
+									:contentWrapElement="contentWrapElem"
+									:vm="vm"
+								/>
 							</div>
 						</div>
-
-						<div class="g-table-container">
-							<div class="g-table-wrap">
-								<div class="g-column-area-wrap">
-									<div v-if="components.columnArea && viewType != 'matrix'">
-										<AngularFmGridTableColumns
-											v-if="contentWrapElem"
-											:evDataService="evDataService"
-											:evEventService="evEventService"
-											:attributeDataService="attributeDataService"
-											:contentWrapElement="contentWrapElem"
-											:vm="vm"
-										/>
-									</div>
-								</div>
-								<!-- :class="{
+						<!-- :class="{
 											'g-font-size-small':
 												reportOptions.table_font_size === 'small',
 											'g-font-size-medium':
@@ -139,14 +119,14 @@
 											'g-font-size-large':
 												reportOptions.table_font_size === 'large',
 										}" -->
-								<AngularFmGridTableBody
-									v-if="viewType == 'report_viewer' && workareaWrapElem"
-									:workareaWrapElement="workareaWrapElem"
-									:contentWrapElement="contentWrapElem"
-									:rootWrapElement="rootWrapElem"
-								/>
+						<AngularFmGridTableBody
+							v-if="viewType == 'report_viewer' && workareaWrapElem"
+							:workareaWrapElement="workareaWrapElem"
+							:contentWrapElement="contentWrapElem"
+							:rootWrapElement="rootWrapElem"
+						/>
 
-								<!-- <report-viewer-matrix NEED RELOC
+						<!-- <report-viewer-matrix NEED RELOC
 											v-if="viewType == 'matrix'"
 											class="height-100 display-block matrix-inside-report-builder"
 											style="height: 600px"
@@ -155,20 +135,18 @@
 											ev-event-service="evEventService"
 										></report-viewer-matrix> -->
 
-								<div
-									v-if="isReport"
-									rv-gcf-areas-dnd
-									ev-data-service="evDataService"
-									ev-event-service="evEventService"
-									content-wrap-element="contentWrapElem"
-								></div>
+						<div
+							v-if="isReport"
+							rv-gcf-areas-dnd
+							ev-data-service="evDataService"
+							ev-event-service="evEventService"
+							content-wrap-element="contentWrapElem"
+						></div>
 
-								<AngularFmGridTableAreasDnd
-									v-if="!isReport && contentWrapElem"
-									:contentWrapElement="contentWrapElem"
-								/>
-							</div>
-						</div>
+						<AngularFmGridTableAreasDnd
+							v-if="!isReport && contentWrapElem"
+							:contentWrapElement="contentWrapElem"
+						/>
 					</div>
 				</div>
 			</div>
@@ -318,7 +296,7 @@
 		domElemsAreReady.value = true
 		await nextTick()
 
-		contentWrapElem.value = elem.value[0].querySelector('.g-content-wrap')
+		contentWrapElem.value = elem.value[0].querySelector('.g-workarea-wrap')
 		workareaWrapElem.value = elem.value[0].querySelector('.g-workarea-wrap')
 		rootWrapElem.value = document.querySelector('.g-wrapper.g-root-wrapper') // we are looking for parent
 
@@ -358,26 +336,6 @@
 
 		let toggleDashboardFilter = function () {
 			let dashboardFilterCollapsed = !dashboardFilterCollapsed
-		}
-
-		let getWrapperClasses = function () {
-			var classes = ''
-
-			if (isRootEntityViewer) {
-				classes = 'g-root-wrapper'
-			} else if (isRecon) {
-				classes = 'g-reconciliation-wrapper'
-			}
-
-			if (props.evDataService.isVerticalSplitPanelActive()) {
-				classes += ' g-v-split-panel-active'
-			}
-
-			if (isReport) {
-				classes += ' g-is-report'
-			}
-
-			return classes
 		}
 
 		var applyGroupsFoldingFromLocalStorage = function () {
@@ -508,10 +466,25 @@
 
 		init()
 	})
+	function getWrapperClasses() {
+		var classes = ''
+		return classes
+		if (isRootEntityViewer) {
+			classes = 'g-root-wrapper'
+		} else if (isRecon) {
+			classes = 'g-reconciliation-wrapper'
+		}
 
-	// scope.$on('$destroy', function () {
-	// 	console.log('==== Table is destroyed ==== ')
-	// })
+		if (props.evDataService.isVerticalSplitPanelActive()) {
+			classes += ' g-v-split-panel-active'
+		}
+
+		if (isReport) {
+			classes += ' g-is-report'
+		}
+
+		return classes
+	}
 </script>
 
 <style lang="scss" scoped></style>
