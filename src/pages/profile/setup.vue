@@ -92,6 +92,7 @@
 
 	let res = await useApi('configurationList.get')
 	res.results.unshift({
+		id: 'blank',
 		name: 'Blank',
 		notes: 'Empty Ecosystem. Configure all forms, layouts and tables by myself',
 		data: 'blank',
