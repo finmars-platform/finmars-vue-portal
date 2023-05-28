@@ -1,32 +1,33 @@
 <template>
-	<div class="table">
+	<div class="table"
+			 v-bind="$attrs">
 		<div class="table-row t_header" :style="{gridTemplateColumns: colls}">
 			<div v-if="isActions"><FmCheckbox /></div>
-			<div v-if="isActions" class="table-cell"></div>
+			<div v-if="isActions" class="table-cell" data-test1="1"></div>
 			<div
 				class="table-cell font-weight-bold"
 				v-for="(header, index) in headers"
-				:key="index"
+				:key="index" data-test2="2"
 			>
 				{{ header }}
 			</div>
 		</div>
 
 		<div class="table-row"
-			:class="{ active: active == index, choosible: active !== undefined }"
+			:class="{ active: active == index, selectable: active !== undefined }"
 			:style="{gridTemplateColumns: colls}"
 			v-for="(row, index) in items"
-			:key="index"
+			:key="getRowKey(row, index)"
 		>
 			<div class="center" v-if="isActions"><FmCheckbox /></div>
-			<div class="table-cell" v-if="$slots.actions">
+			<div class="table-cell" data-test3="3" v-if="$slots.actions">
 				<slot name="actions" :index="index" />
 			</div>
 			<div
 				class="table-cell"
 				v-for="(item, indexRow) in row"
 				:key="indexRow"
-				@click="() => {if (cb) cb(index)}"
+				@click="onRowClick(row, index)" data-test4="4"
 			>
 				<FmLoader v-if="item === null" />
 				<template v-else-if="typeof item == 'object'">
@@ -54,6 +55,7 @@
 		colls: {
 			type: String
 		},
+		rowKeyProp: String,
 		cb: {
 			type: Function
 		},
@@ -68,56 +70,75 @@
 			type: Boolean
 		}
 	})
+
+	let getRowKey = (row, index) => props.rowKeyProp ? row[props.rowKeyProp] : index;
+
+	let onRowClick = function (row, index) {
+		if (props.cb) {
+			props.cb( getRowKey(row, index) );
+		}
+	}
+
 </script>
 
 <style lang="scss" scoped>
-.table {
-	border: 1px solid $border;
-	width: 100%;
-	font-size: 14px;
-}
-.table-row {
-	display: grid;
-	align-items: center;
-	background: #Fff;
-	height: 36px;
-	border-bottom: 1px solid $border;
-	line-height: 36px;
-	transition: outline 0.1s;
-	outline: solid transparent;
-	&.choosible {
-		cursor: pointer;
+	.table {
+		border: 1px solid $border;
+		width: 100%;
+		font-size: 14px;
+	}
+	.table-row {
+		display: grid;
+		align-items: center;
+		background: #Fff;
+		height: 36px;
+		border-bottom: 1px solid $border;
+		line-height: 36px;
+		transition: outline 0.1s;
+		outline: solid transparent;
+		&.selectable {
+			cursor: pointer;
 
-		&:not(.active):hover {
+			&:not(.active):hover {
+				background: #fac87863;
+			}
+		}
+		&.active {
 			background: #fac87863;
 		}
+		&.t_header {
+			background: #F2F2F2;
+			height: 50px;
+			line-height: 50px;
+			font-weight: 500;
+		}
 	}
-	&.active {
-		background: #fac87863;
-	}
-	&.t_header {
-		background: #F2F2F2;
-		height: 50px;
-		line-height: 50px;
-		font-weight: 500;
-	}
-}
-.table-cell {
-	white-space: nowrap;
-	padding: 0 14px;
-	height: inherit;
-	line-height: inherit;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	.table-cell {
+		white-space: nowrap;
+		padding: 0 14px;
+		height: inherit;
+		line-height: inherit;
+		overflow: hidden;
+		text-overflow: ellipsis;
 
-	& + & {
-		border-left: 1px solid $border;
+		& + & {
+			border-left: 1px solid $border;
+		}
+		&.disabled {
+			background: $main-darken-2;
+		}
 	}
-	&.disabled {
-		background: $main-darken-2;
+	.link {
+		text-decoration: underline;
 	}
-}
-.link {
-	text-decoration: underline;
-}
+
+	.table.clickable_rows {
+		.table-row:not(.t_header) {
+			cursor: pointer;
+
+			&:hover {
+				background-color: $hover-background;
+			}
+		}
+	}
 </style>
