@@ -361,20 +361,10 @@ export default function (
 
 	const getDefaultListLayout = function (entityType) {
 		return new Promise(function (resolve, reject) {
-			const contentType = metaContentTypesService.findContentTypeByEntity(
-				entityType,
-				'ui'
-			)
+			const contentType = entityType
 			const cachedLayout = localStorageService.getDefaultLayout(contentType)
 			const cachedLayoutRes = { results: [cachedLayout] }
 
-			/*uiRepository.pingListLayoutByKey(cachedLayout.id).then(function (pingData) {
-
-                if (isCachedLayoutActual(cachedLayout, pingData) && pingData.isDefault) {
-
-                }
-
-            });*/
 			const fetchDefaultListLayout = function () {
 				uiRepository
 					.getDefaultListLayout(entityType)

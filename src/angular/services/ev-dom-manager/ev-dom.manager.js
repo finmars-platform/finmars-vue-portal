@@ -1451,8 +1451,8 @@ var calculateScroll = function (elements, evDataService, evScrollManager) {
 	var interfaceLayout = evDataService.getInterfaceLayout()
 	var components = evDataService.getComponents()
 
-	var contentWrapElemHeight = evScrollManager.getContentWrapElemHeight()
-	var contentWrapElemWidth = evScrollManager.getContentWrapElemWidth()
+	// var contentWrapElemHeight = evScrollManager.getContentWrapElemHeight()
+	// var contentWrapElemWidth = evScrollManager.getContentWrapElemWidth()
 
 	//var viewportTop = interfaceLayout.headerToolbar.height + interfaceLayout.groupingArea.height + interfaceLayout.columnArea.height + interfaceLayout.progressBar.height;
 	//var viewportWidth = document.body.clientWidth - interfaceLayout.sidebar.width - interfaceLayout.filterArea.width;
@@ -1485,7 +1485,7 @@ var calculateScroll = function (elements, evDataService, evScrollManager) {
 	}
 
 	var leftPanelHeight = Math.floor(contentWrapElemHeight - viewportTop) // should be calculated before adding column area height to viewportTop
-	evScrollManager.setLeftPanelElemHeight(leftPanelHeight)
+	// evScrollManager.setLeftPanelElemHeight(leftPanelHeight)
 
 	if (components.columnArea) {
 		viewportTop = viewportTop + interfaceLayout.columnArea.height
@@ -1495,8 +1495,8 @@ var calculateScroll = function (elements, evDataService, evScrollManager) {
             viewportTop = viewportTop + interfaceLayout.groupingArea.height;
         } */
 
-	viewportHeight = Math.floor(contentWrapElemHeight - viewportTop)
-	viewportHeight = window.innerHeight - viewportTop
+	// viewportHeight = Math.floor(contentWrapElemHeight - viewportTop)
+	// viewportHeight = window.innerHeight - viewportTop
 	/* if (!isRootEntityViewer) {
 
             if (components.groupingArea) {
@@ -1516,16 +1516,16 @@ var calculateScroll = function (elements, evDataService, evScrollManager) {
 
         } */
 
-	evScrollManager.setViewportHeight(viewportHeight)
+	// evScrollManager.setViewportHeight(viewportHeight)
 
 	if (viewportWidth) {
-		evScrollManager.setViewportWidth(viewportWidth)
+		// evScrollManager.setViewportWidth(viewportWidth)
 	}
 
-	var paddingTop = calculatePaddingTop(evDataService)
-	var totalHeight = calculateTotalHeight(evDataService)
+	// var paddingTop = calculatePaddingTop(evDataService)
+	// var totalHeight = calculateTotalHeight(evDataService)
 
-	evScrollManager.setContentElemHeight(totalHeight)
+	// evScrollManager.setContentElemHeight(totalHeight)
 	// evScrollManager.setContentElemPaddingTop(paddingTop);
 }
 

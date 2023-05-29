@@ -130,18 +130,14 @@
 					backdrop-classes="'low-z-index-backdrop'"
 					on-cancel="onSubtotalTypeSelectCancel()"
 					popup-event-service="evEventService"
+					v-fm-tooltip="
+						column.name + column.status == 'missing'
+							? '(Deleted)'
+							: '' + column?.error_data
+							? column?.error_data?.description
+							: ''
+					"
 				>
-					<md-tooltip
-						md-direction="top"
-						data-ng-class="{'custom-field-error': column.error_data}"
-					>
-						<span>{{ column.name }}</span>
-						<span v-if="column.status == 'missing'">(Deleted)</span>
-						<span v-if="column?.error_data">{{
-							column?.error_data.description
-						}}</span>
-					</md-tooltip>
-
 					<div
 						class="g-cell g-table-header-cell g-table-header-group-cell position-relative"
 					>
@@ -348,7 +344,7 @@
 	}
 	const getColumnsToShow = function () {
 		if (isReport) {
-			return evDataHelper.separateNotGroupingColumns(columns, groups)
+			return evDataHelper.separateNotGroupingColumns(columns, groups.value)
 		} else {
 			return columns
 		}
@@ -1954,10 +1950,10 @@
 	const onGroupLevelFoldingSwitch = function (argumentsObj) {
 		rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService)
 
-		groups = evDataService.getGroups()
-		evDataHelper.importGroupsStylesFromColumns(groups, columns)
+		groups.value = evDataService.getGroups()
+		evDataHelper.importGroupsStylesFromColumns(groups.value, columns)
 
-		if (argumentsObj && argumentsObj.updateScope) $apply()
+		// if (argumentsObj && argumentsObj.updateScope) $apply()
 	}
 
 	const syncGroupLayoutNamesWithColumns = function () {

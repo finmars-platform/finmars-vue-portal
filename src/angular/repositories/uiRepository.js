@@ -208,10 +208,7 @@ return xhrService.fetch(baseUrl   +  '/' + prefix + '/' + apiVersion + '/' + 'ui
     }; */
 
 	var getDefaultListLayout = function (entityType) {
-		var contentType = metaContentTypesService.findContentTypeByEntity(
-			entityType,
-			'ui'
-		)
+		var contentType = entityType
 
 		var prefix = baseUrlService.getMasterUserPrefix()
 		var apiVersion = baseUrlService.getApiVersion()

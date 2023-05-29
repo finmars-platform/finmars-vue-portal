@@ -14,11 +14,8 @@
 		}
 
 	}; */
-let globalDataService
 
-const setGlobalDataService = function (globalDataServiceReference) {
-	globalDataService = globalDataServiceReference
-}
+const setGlobalDataService = function (globalDataServiceReference) {}
 
 const getPropertyForStoring = function () {
 	let errorsList = []

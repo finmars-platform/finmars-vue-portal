@@ -422,26 +422,26 @@ export default function (
 			}
 
 			var calculateElemsWrapsSizes = function () {
-				evRvDomManagerService.calculateContentWrapHeight(
-					elements.rootWrapElem,
-					elements.contentWrapElem,
-					scope.evDataService
-				)
+				// evRvDomManagerService.calculateContentWrapHeight(
+				// 	elements.rootWrapElem,
+				// 	elements.contentWrapElem,
+				// 	scope.evDataService
+				// )
 				// for vertical split panel contentWrapElem width calculated by gWidthAlignerComponent.js
 				// horizontal split panel contentWrapElem take all available width
 				if (isRootEntityViewer) {
-					evRvDomManagerService.calculateContentWrapWidth(
-						elements.rootWrapElem,
-						elements.contentWrapElem,
-						scope.evDataService
-					)
+					// evRvDomManagerService.calculateContentWrapWidth(
+					// 	elements.rootWrapElem,
+					// 	elements.contentWrapElem,
+					// 	scope.evDataService
+					// )
 				}
 
-				evRvDomManagerService.calculateWorkareaWrapWidth(
-					elements.contentWrapElem,
-					elements.workareaWrapElem,
-					scope.evDataService
-				)
+				// evRvDomManagerService.calculateWorkareaWrapWidth(
+				// 	elements.contentWrapElem,
+				// 	elements.workareaWrapElem,
+				// 	scope.evDataService
+				// )
 			}
 
 			scope.evEventService.addEventListener(
@@ -472,11 +472,11 @@ export default function (
 							scope.evDataService
 						)
 
-						evDomManager.calculateScroll(
-							elements,
-							scope.evDataService,
-							scope.scrollManager
-						)
+						// evDomManager.calculateScroll(
+						// 	elements,
+						// 	scope.evDataService,
+						// 	scope.scrollManager
+						// )
 						evRenderer.render(
 							contentElem,
 							projection,
@@ -566,11 +566,11 @@ export default function (
 					if (scope.isReport) {
 						rvDomManager.calculateScroll(elements, scope.evDataService)
 					} else {
-						evDomManager.calculateScroll(
-							elements,
-							scope.evDataService,
-							scope.scrollManager
-						)
+						// evDomManager.calculateScroll(
+						// 	elements,
+						// 	scope.evDataService,
+						// 	scope.scrollManager
+						// )
 					}
 
 					scope.evEventService.dispatchEvent(evEvents.TABLE_SIZES_CALCULATED)
@@ -715,11 +715,11 @@ export default function (
                                 cellContentOverflow();
                             });*/
 					} else {
-						evDomManager.calculateScroll(
-							elements,
-							scope.evDataService,
-							scope.scrollManager
-						)
+						// evDomManager.calculateScroll(
+						// 	elements,
+						// 	scope.evDataService,
+						// 	scope.scrollManager
+						// )
 
 						evDomManager.initEventDelegation(
 							contentElem,

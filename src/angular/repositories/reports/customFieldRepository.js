@@ -4,7 +4,7 @@
 import baseUrlService from '@/angular/shell/scripts/app/services/baseUrlService'
 import configureRepositoryUrlService from '@/angular/shell/scripts/app/services/configureRepositoryUrlService'
 
-export default function (cookieService, xhrService) {
+export default function () {
 	'use strict'
 
 	var baseUrl = baseUrlService.resolve()

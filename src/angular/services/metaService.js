@@ -166,16 +166,8 @@ var getFieldsWithTagGrouping = function () {
 	return metaRepository.getFieldsWithTagGrouping()
 }
 
-var isReport = function (entityType) {
-	return (
-		[
-			'balance-report',
-			'cash-flow-projection-report',
-			'performance-report',
-			'pl-report',
-			'transaction-report',
-		].indexOf(entityType) !== -1
-	)
+var isReport = function (contentType) {
+	return contentType.startsWith('reports.')
 }
 
 var getCurrentLocation = function ($state) {

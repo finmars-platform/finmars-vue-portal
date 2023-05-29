@@ -38,7 +38,7 @@ return xhrService.fetch(configureRepositoryUrlService.configureUrl(baseUrl   +  
 					'/' +
 					apiVersion +
 					'/' +
-					'transactions/transaction-type-light/',
+					'transactions/transaction-type/light/',
 				options
 			),
 			{
