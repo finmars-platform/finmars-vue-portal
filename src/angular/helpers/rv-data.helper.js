@@ -17,13 +17,11 @@ var calculateItemSubtotal = function (item, evDataService) {
 	var groups = evDataService.getGroups()
 	var level = groups.length
 
-	// console.log('calculateItemSubtotal.item', item)
+	//
 
 	// Reset subtotals if previously calculated
 
 	item.subtotal = {}
-
-	console.log('calculateItemSubtotal.item', item)
 
 	if (item.___level === level) {
 		item.subtotal = rvSubtotalHelper.calculate(item.results, columns)
@@ -50,10 +48,10 @@ var calculateSubtotals = function (evDataService) {
 	var groups = evDataService.getGroups()
 	var level = groups.length
 
-	// console.log('calculateSubtotals.level', level);
+	// ;
 
 	for (var i = level; i >= 0; i = i - 1) {
-		// console.log('calculateSubtotals.current_level', i);
+		// ;
 
 		dataList.forEach(function (item) {
 			if (item.___level === i) {
@@ -491,8 +489,6 @@ var removeItemsFromFoldedGroups = function (list, evDataService) {
 
 	var groupsIdsToFold = getGroupsIdsToFold(list, evDataService)
 
-	console.log('groupsIdsToFold', groupsIdsToFold)
-
 	result = result.filter(function (item) {
 		if (isItemInGroupsToFold(groupsIdsToFold, item)) {
 			if (item.___type === 'subtotal') {
@@ -563,8 +559,8 @@ var getNewDataInstance = function (evDataService) {
 	var sourceData = evDataService.getData()
 	var result = {}
 
-	// console.log('sourceData', evDataService.getData());
-	// console.log('getNewDataInstance Object.keys(sourceData)', Object.keys(sourceData));
+	// ;
+	// ;
 
 	Object.keys(sourceData).forEach(function (key) {
 		result[key] = simpleObjectCopy(sourceData[key]) // performance issue
@@ -656,9 +652,6 @@ var getFlatStructureOld = function (evDataService, globalDataService) {
 
 	var groups = evDataService.getGroups()
 
-	console.log('getFlatStructure.rootGroupOptions', rootGroupOptions)
-	console.log('getFlatStructure.groups', groups)
-
 	var data
 
 	if (groups.length || rootGroupOptions.subtotal_type) {
@@ -671,8 +664,6 @@ var getFlatStructureOld = function (evDataService, globalDataService) {
 		console.time('Copying data')
 
 		data = getNewDataInstance(evDataService)
-
-		console.log('data', data)
 
 		console.timeEnd('Copying data')
 
@@ -690,7 +681,7 @@ var getFlatStructureOld = function (evDataService, globalDataService) {
 
 		console.timeEnd('Calculating blankline')
 
-		// console.log('data', data);
+		// ;
 	} else {
 		data = getNewDataInstance(evDataService)
 	}
@@ -699,24 +690,20 @@ var getFlatStructureOld = function (evDataService, globalDataService) {
 	var rootGroup = Object.assign({}, evDataService.getRootGroupData())
 
 	console.time('Converting to tree')
-	console.log('Converting to tree data', data)
 
 	var tree = utilsHelper.convertToTree(data, rootGroup)
 
-	console.log('getFlatStructure.tree', tree)
-
 	console.timeEnd('Converting to tree')
 
-	// console.log('getFlatStructure.tree', tree);
+	// ;
 
 	console.time('Converting tree to list')
 
 	var list = utilsHelper.convertTreeToList(tree)
 
 	console.timeEnd('Converting tree to list')
-	console.log('Converted list length', list.length)
 
-	// console.log('getFlatStructure.list', list);
+	// ;
 
 	list = removeItemsFromFoldedGroups(list, evDataService)
 
@@ -730,9 +717,6 @@ var getFlatStructure = function (evDataService, globalDataService) {
 
 	var groups = evDataService.getGroups()
 
-	console.log('getFlatStructure.rootGroupOptions', rootGroupOptions)
-	console.log('getFlatStructure.groups', groups)
-
 	var data
 
 	if (groups.length || rootGroupOptions.subtotal_type) {
@@ -745,9 +729,6 @@ var getFlatStructure = function (evDataService, globalDataService) {
 		console.time('Copying data')
 
 		data = getNewDataInstance(evDataService)
-
-		console.log('getFlatStructure.data', data)
-		console.log('getFlatStructure.data length', Object.keys(data).length)
 
 		console.timeEnd('Copying data')
 
@@ -764,7 +745,7 @@ var getFlatStructure = function (evDataService, globalDataService) {
 
 		console.timeEnd('Calculating blankline')
 
-		// console.log('data', data);
+		// ;
 	} else {
 		data = getNewDataInstance(evDataService)
 	}
@@ -773,7 +754,6 @@ var getFlatStructure = function (evDataService, globalDataService) {
 	var rootGroup = Object.assign({}, evDataService.getRootGroupData())
 
 	console.time('Converting to tree')
-	console.log('Converting to tree data', data)
 
 	var optimize = false
 
@@ -782,11 +762,10 @@ var getFlatStructure = function (evDataService, globalDataService) {
 	}
 
 	var tree = utilsHelper.convertToTree(data, rootGroup, optimize)
-	console.log('getFlatStructure.tree', tree)
 
 	console.timeEnd('Converting to tree')
 
-	// console.log('getFlatStructure.tree', tree);
+	// ;
 
 	console.time('Converting tree to list')
 
@@ -798,9 +777,7 @@ var getFlatStructure = function (evDataService, globalDataService) {
 	var filledList = utilsHelper.fillListWithData(list, data)
 	console.timeEnd('Filling list with data')
 
-	console.log('Converted list length', filledList.length)
-
-	// console.log('getFlatStructure.list', list);
+	// ;
 
 	filledList = removeItemsFromFoldedGroups(filledList, evDataService)
 
@@ -815,9 +792,6 @@ var getPureFlatStructure = function (evDataService, globalDataService) {
 
 	var groups = evDataService.getGroups()
 
-	console.log('getFlatStructure.rootGroupOptions', rootGroupOptions)
-	console.log('getFlatStructure.groups', groups)
-
 	var data
 
 	if (groups.length || rootGroupOptions.subtotal_type) {
@@ -830,8 +804,6 @@ var getPureFlatStructure = function (evDataService, globalDataService) {
 		console.time('Copying data')
 
 		data = getNewDataInstance(evDataService)
-
-		console.log('data', data)
 
 		console.timeEnd('Copying data')
 
@@ -849,7 +821,7 @@ var getPureFlatStructure = function (evDataService, globalDataService) {
 
 		console.timeEnd('Calculating blankline')
 
-		// console.log('data', data);
+		// ;
 	} else {
 		data = getNewDataInstance(evDataService)
 	}
@@ -858,15 +830,12 @@ var getPureFlatStructure = function (evDataService, globalDataService) {
 	var rootGroup = Object.assign({}, evDataService.getRootGroupData())
 
 	console.time('Converting to tree')
-	console.log('Converting to tree data', data)
 
 	var tree = utilsHelper.convertToTree(data, rootGroup)
 
-	console.log('getFlatStructure.tree', tree)
-
 	console.timeEnd('Converting to tree')
 
-	// console.log('getFlatStructure.tree', tree);
+	// ;
 
 	console.time('Converting tree to list')
 
@@ -878,9 +847,7 @@ var getPureFlatStructure = function (evDataService, globalDataService) {
 	var filledList = utilsHelper.fillListWithData(list, data)
 	console.timeEnd('Filling list with data')
 
-	console.log('Converted list length', filledList.length)
-
-	// console.log('getFlatStructure.list', list);
+	// ;
 
 	filledList = filterByRowColor(filledList, evDataService, globalDataService)
 
@@ -892,7 +859,7 @@ var syncLevelFold = function (evDataService) {
 
 	var groups = evDataService.getGroups()
 
-	// console.log('syncLevelFold.groups', groups);
+	// ;
 
 	if (groups.length) {
 		for (var i = 0; i < groups.length; i = i + 1) {
@@ -903,7 +870,7 @@ var syncLevelFold = function (evDataService) {
 						evDataService
 					)
 
-					// console.log('syncLevelFold.groupsContent', groupsContent);
+					// ;
 
 					groupsContent.forEach(function (groupItem) {
 						groupItem.___is_open = false
@@ -913,7 +880,7 @@ var syncLevelFold = function (evDataService) {
 							evDataService
 						)
 
-						// console.log('childrens', childrens);
+						// ;
 
 						childrens.forEach(function (children) {
 							if (children.___type === 'group') {
@@ -1002,9 +969,6 @@ var getOrCreateGroupSettings = function (evDataService, group) {
 	full_path.push(group.___group_name)
 
 	var full_path_prop = full_path.join('___') // TODO check if safe enough
-
-	console.log('full_path', full_path)
-	console.log('full_path_prop', full_path_prop)
 
 	var groupSettings
 

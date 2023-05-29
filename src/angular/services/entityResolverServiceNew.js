@@ -52,13 +52,13 @@ import pricingProcedureService from './procedures/pricingProcedureService'
 import scheduleService from './scheduleService'
 import auditService from './auditService'
 
-export default function (
+export default function ({
 	instrumentService,
 	transactionTypeService,
 	priceHistoryService,
 	currencyHistoryService,
-	reportService
-) {
+	reportService,
+}) {
 	var getList = function (entityType, options) {
 		switch (entityType) {
 			case 'portfolio':
@@ -197,7 +197,7 @@ export default function (
 			case 'balance-report':
 				return reportService.getBalanceReport(options)
 				break
-			case 'pl-report':
+			case 'reports.plreport': // CONTENT TYPE
 				return reportService.getPnlReport(options)
 				break
 			case 'transaction-report':

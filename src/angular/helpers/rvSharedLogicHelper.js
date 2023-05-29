@@ -96,9 +96,14 @@ export default function (
 			Promise.all(promises)
 				.then(function (data) {
 					viewModel.readyStatus.attributes = true
+					console.log(
+						'viewModel.readyStatus.attributes:',
+						viewModel.readyStatus.attributes
+					)
 					resolve(data)
 				})
 				.catch(function (error) {
+					console.log('error:', error)
 					resolve({ errorObj: error, errorCause: 'dynamicAttributes' })
 				})
 		})
@@ -133,12 +138,8 @@ export default function (
 	}
 
 	const setLayoutDataForView = function () {
-		viewModel.entityViewerDataService.setEntityType(
-			$scope.$parent.vm.entityType
-		)
-		viewModel.entityViewerDataService.setContentType(
-			$scope.$parent.vm.contentType
-		)
+		viewModel.entityViewerDataService.setEntityType($scope.contentType)
+		viewModel.entityViewerDataService.setContentType($scope.contentType)
 		viewModel.entityViewerDataService.setIsReport(true)
 		viewModel.entityViewerDataService.setCurrentMember(viewModel.currentMember)
 		viewModel.entityViewerDataService.setVirtualScrollStep(500)
@@ -216,7 +217,7 @@ export default function (
 			)
 		}
 
-		$scope.$apply()
+		// $scope.$apply()
 
 		return viewModel.readyStatus.layout
 	}

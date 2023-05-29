@@ -1,161 +1,125 @@
 <template>
-	<div class="g-top-part width-100 flex-row fc-space-between flex-i-center">
-		<div class="g-top-part-left flex-50 flex-row" style="padding-left: 30px">
-			<md-button
-				class="g-top-button flex-row"
-				custom-popup
-				popup-template-url="'views/popups/entity-viewer/g-layouts-manager-popup-view.html'"
-				popup-data="popupData"
-				position-relative-to="element"
-				open-on="click"
-				offset-x="-30"
-				popup-classes="rounded-border"
-				close-on-click-outside="true"
-			>
-				<span class="material-icons">view_quilt</span>
-				<span class="m-l-8">{{ layoutData?.name }}</span>
-				<span class="material-icons">arrow_drop_down</span>
-			</md-button>
-
-			<md-button
-				class="g-top-button small-button-icon p-r-8 p-l-8"
-				@click="saveLayoutList($event)"
-			>
-				<span class="material-icons">save</span>
-			</md-button>
-
-			<md-button
-				v-if="!isRootEntityViewer"
-				class="g-filter-area-toggle active margin-0"
-				@click="toggleFilterBlock($event)"
-			>
-				<div class="flex-column flex-i-center">
-					<span class="material-icons">filter_list</span>
-				</div>
-			</md-button>
-
-			<div class="global-table-filter-container">
-				<input
-					type="text"
-					ng-model="globalTableSearch"
-					ng-change="onGlobalTableSearchChange()"
-					placeholder="Search for a ..."
-					class="global-table-filter-search"
-					aria-invalid="false"
-					data-ng-model-options="{debounce: 500}"
-				/>
-			</div>
-		</div>
-
-		<div class="flex-row flex-i-center" style="padding-right: 30px">
-			<div v-if="isReport" class="flex-row flex-i-center">
-				<md-button
-					v-if="missingPricesData.items.length"
-					class="missing-prices-warning-button"
-					@click="openMissingPricesDialog($event)"
-					><span class="material-icons">warning</span> Missing Data ({{
-						missingPricesData?.items?.length
-					}})
-				</md-button>
-
-				<md-select
-					v-if="entityType != 'transaction-report'"
-					data-ng-model="reportOptions.cost_method"
-					ng-change="updateReportOptions()"
-				>
-					<md-option ng-value="1">AVCO</md-option>
-					<md-option ng-value="2">FIFO</md-option>
-					<!--<md-option ng-value="3">LIFO-->
-					<!--</md-option>-->
-				</md-select>
-
-				<md-input-container v-if="entityType != 'transaction-report'">
-					<label></label>
-					<md-select
-						ng-model="reportOptions.report_currency"
-						md-container-class="common-select-container"
-						md-on-close="searchTerm = ''"
-						ng-change="updateReportOptions()"
-						data-ng-disabled="viewContext === 'dashboard'"
-					>
-						<md-select-header>
-							<input
-								data-ng-model="searchTerm"
-								type="search"
-								placeholder="Search for a ..."
-								class="md-text md-select-search-pattern select-input-filter"
-								ng-keydown="$event.stopPropagation()"
-							/>
-						</md-select-header>
-
-						<div class="select-options-holder">
-							<md-option
-								ng-repeat="item in currencies | filter:{name: searchTerm}"
-								ng-value="item.id"
-							>
-								{{ item?.name }}
-							</md-option>
-						</div>
-					</md-select>
-				</md-input-container>
-
-				<md-checkbox
-					ng-model="reportLayoutOptions.useDateFromAbove"
-					ng-change="toggleUseDateFromAbove()"
-					class="g-top-link-date-checkbox m-r-8 m-l-16"
-					>{{ useDateFromAboveName }}</md-checkbox
-				>
-
-				<div v-if="entityType === 'balance-report'" class="flex-row">
-					<div>
-						<complex-zh-datepicker
-							date="datesData.to"
-							datepicker-options="reportLayoutOptions.datepickerOptions.reportLastDatepicker"
-							callback-method="onReportDateChange()"
-							ev-data-service="evDataService"
-							ev-event-service="evEventService"
-							attribute-data-service="attributeDataService"
-							is-disabled="viewContext === 'split_panel' && reportLayoutOptions.useDateFromAbove"
-						></complex-zh-datepicker>
-					</div>
-				</div>
-
-				<div
-					v-if="
-						entityType === 'pl-report' || entityType === 'transaction-report'
-					"
-					class="flex-row"
-				>
-					<div>
-						<!-- <complex-zh-datepicker MAIN NEED RELOC
-													date="datesData.from"
-													datepicker-options="reportLayoutOptions.datepickerOptions.reportFirstDatepicker"
-													second-date="datesData.to"
-													second-datepicker-options="reportLayoutOptions.datepickerOptions.reportLastDatepicker"
-													callback-method="onReportDateChange()"
-													ev-data-service="evDataService"
-													ev-event-service="evEventService"
-													attribute-data-service="attributeDataService"
-													is-disabled="viewContext === 'split_panel' && reportLayoutOptions.useDateFromAbove"
-												>
-												</complex-zh-datepicker> -->
-					</div>
-				</div>
-			</div>
-			<FmIcon
-				btn
-				icon="settings"
-				v-fm-tooltip="'Settings'"
-				@click="onSettingsClick()"
+	<FmHorizontalPanel height="50">
+		<template #leftActions>
+			<BaseLayoutsManager
+				:activeLayout="layoutData"
+				:layouts="[layoutData]"
+				:autosaveLayout="autosaveLayout"
+				:loadingLayoutsList="loadingLayoutsList"
+				:isLayoutDefault="isLayoutDefault"
+				@createNewLayout="createNewLayout"
+				@save="saveLayoutList"
+				@saveAs="openSaveAsModal = true"
+				@setAsDefault="setAsDefault"
+				@rename="renameLayout"
+				@delete="deleteLayout"
+				@export="openLayoutExport"
+				@changeLayout="viewerData.layoutToOpen = $event"
 			/>
-		</div>
 
-		<AngularFmGridTableEvSettingsM
-			v-if="$mdDialog.modals['GEntityViewerSettingsDialogController']"
-			:payload="$mdDialog.modals['GEntityViewerSettingsDialogController']"
-			:modelValue="true"
-		/>
-	</div>
+			<FmIcon icon="save" btn @click="saveLayoutList" />
+
+			<BaseInput
+				class="bi_no_borders"
+				v-model="globalTableSearch"
+				@keyup.enter="onGlobalTableSearchChange()"
+				placeholder="Search for a ..."
+			/>
+		</template>
+
+		<template #rightActions>
+			<div class="flex-row flex-i-center" style="padding-right: 30px">
+				<div v-if="isReport" class="flex-row flex-i-center">
+					<md-button
+						v-if="missingPricesData?.items?.length"
+						class="missing-prices-warning-button"
+						@click="openMissingPricesDialog($event)"
+						><span class="material-icons">warning</span> Missing Data ({{
+							missingPricesData?.items?.length
+						}})
+					</md-button>
+
+					<md-select
+						v-if="entityType != 'transaction-report'"
+						data-ng-model="reportOptions.cost_method"
+						ng-change="updateReportOptions()"
+					>
+						<md-option ng-value="1">AVCO</md-option>
+						<md-option ng-value="2">FIFO</md-option>
+						<!--<md-option ng-value="3">LIFO-->
+						<!--</md-option>-->
+					</md-select>
+
+					<md-input-container v-if="entityType != 'transaction-report'">
+						<label></label>
+						<md-select
+							ng-model="reportOptions.report_currency"
+							md-container-class="common-select-container"
+							md-on-close="searchTerm = ''"
+							ng-change="updateReportOptions()"
+							data-ng-disabled="viewContext === 'dashboard'"
+						>
+							<md-select-header>
+								<input
+									data-ng-model="searchTerm"
+									type="search"
+									placeholder="Search for a ..."
+									class="md-text md-select-search-pattern select-input-filter"
+									ng-keydown="$event.stopPropagation()"
+								/>
+							</md-select-header>
+
+							<div class="select-options-holder">
+								<md-option
+									ng-repeat="item in currencies | filter:{name: searchTerm}"
+									ng-value="item.id"
+								>
+									{{ item?.name }}
+								</md-option>
+							</div>
+						</md-select>
+					</md-input-container>
+
+					<md-checkbox
+						ng-model="reportLayoutOptions.useDateFromAbove"
+						ng-change="toggleUseDateFromAbove()"
+						class="g-top-link-date-checkbox m-r-8 m-l-16"
+						>{{ useDateFromAboveName }}</md-checkbox
+					>
+
+					<div v-if="entityType === 'balance-report'" class="flex-row">
+						<div>
+							<complex-zh-datepicker
+								date="datesData.to"
+								datepicker-options="reportLayoutOptions.datepickerOptions.reportLastDatepicker"
+								callback-method="onReportDateChange()"
+								ev-data-service="evDataService"
+								ev-event-service="evEventService"
+								attribute-data-service="attributeDataService"
+								is-disabled="viewContext === 'split_panel' && reportLayoutOptions.useDateFromAbove"
+							></complex-zh-datepicker>
+						</div>
+					</div>
+
+					<div
+						v-if="
+							entityType === 'pl-report' || entityType === 'transaction-report'
+						"
+						class="flex-row"
+					>
+						<div></div>
+					</div>
+				</div>
+			</div>
+
+			<FmIcon icon="settings" btn @click="onSettingsClick" />
+			<AngularFmGridTableEvSettingsM
+				v-if="$mdDialog.modals['GEntityViewerSettingsDialogController']"
+				:payload="$mdDialog.modals['GEntityViewerSettingsDialogController']"
+				:modelValue="true"
+			/>
+		</template>
+	</FmHorizontalPanel>
 </template>
 
 <script setup>
@@ -163,6 +127,13 @@
 	import evEvents from '@/angular/services/entityViewerEvents'
 
 	import currencyService from '@/angular/services/currencyService'
+	import usersServiceInst from '~~/src/angular/shell/scripts/app/services/usersService'
+	import evRvLayoutsHelperInst from '@/angular/helpers/evRvLayoutsHelper'
+	import uiService from '~~/src/angular/services/uiService'
+
+	let usersService = new usersServiceInst()
+	let evRvLayoutsHelper = new evRvLayoutsHelperInst()
+	window.uiService = uiService
 
 	const props = defineProps([
 		'vm',
@@ -192,7 +163,9 @@
 	let isRootEntityViewer = evDataService.isRootEntityViewer()
 	let viewContext = evDataService.getViewContext()
 
-	let globalTableSearch = ''
+	let globalTableSearch = ref('')
+
+	let useDateFromAboveName = ref('')
 
 	let layoutData = {
 		name: '',
@@ -215,7 +188,7 @@
 	}
 
 	let onGlobalTableSearchChange = function () {
-		evDataService.setGlobalTableSearch(globalTableSearch)
+		evDataService.setGlobalTableSearch(globalTableSearch.value)
 
 		if (!isReport) {
 			evDataService.resetTableContent(false)
@@ -256,7 +229,7 @@
 			targetEvent: $event,
 			locals: {
 				data: {
-					missingPricesData: missingPricesData,
+					missingPricesData: missingPricesData.value,
 					evDataService: evDataService,
 				},
 			},
@@ -434,7 +407,7 @@
 			}
 		}
 
-		useDateFromAboveName =
+		useDateFromAboveName.value =
 			entityType === 'balance-report' ? 'Link date' : 'Link date'
 	}
 
@@ -453,7 +426,7 @@
 			$apply()
 		}, 200)
 	}
-	let missingPricesData
+	let missingPricesData = ref(null)
 	var initEventListeners = function () {
 		evEventService.addEventListener(evEvents.LAYOUT_NAME_CHANGE, function () {
 			listLayout = evDataService.getListLayout()
@@ -466,7 +439,7 @@
 		evEventService.addEventListener(
 			evEvents.MISSING_PRICES_LOAD_END,
 			function () {
-				missingPricesData = evDataService.getMissingPrices()
+				missingPricesData.value = evDataService.getMissingPrices()
 			}
 		)
 
@@ -488,7 +461,7 @@
 	}
 	let datesData
 	const init = async function () {
-		missingPricesData = evDataService.getMissingPrices()
+		missingPricesData.value = evDataService.getMissingPrices()
 
 		if (isReport) {
 			getCurrencies()

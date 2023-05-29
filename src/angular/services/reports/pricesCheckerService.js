@@ -3,7 +3,7 @@
  */
 import baseUrlService from '@/angular/shell/scripts/app/services/baseUrlService'
 
-export default function (cookieService, xhrService) {
+export default function () {
 	const baseUrl = baseUrlService.resolve()
 
 	const check = function (data) {

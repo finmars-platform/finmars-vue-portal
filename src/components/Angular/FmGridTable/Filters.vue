@@ -13,8 +13,14 @@
 				></g-rv-filters>
 			</div>
 
-			<AngularFmGridTableEvRvFilters
+			<!-- <AngularFmGridTableEvRvFilters
 				v-if="!$scope.isReport && ready"
+				:vm="vm"
+				:attributeDataService="attributeDataService"
+			/> -->
+
+			<AngularFmGridTableEvRvFilters
+				v-if="ready"
 				:vm="vm"
 				:attributeDataService="attributeDataService"
 			/>

@@ -1,5 +1,5 @@
 <template>
-	<div class="height-100 position-relative display-block">
+	<div class="g-ev-left-panel-holder gEvLeftPanelHolder">
 		<div
 			class="ev-left-panel-inner-container"
 			:class="`state-${sliderButtonState}`"
@@ -12,28 +12,24 @@
 			</div>
 
 			<div class="flex-column height-100">
-				<div class="flex-1-1-auto overflow-auto">
-					<AngularFmGridTableTreeElem
-						v-if="groupTypes.length"
-						:item="tree"
-						:evContentElement="evContentElement"
-					/>
+				<AngularFmGridTableTreeElem
+					v-if="groupTypes.length"
+					:item="tree"
+					:evContentElement="evContentElement"
+				/>
 
-					<div v-if="!groupTypes.length" class="ev-left-panel-drag-msg">
-						<span class="material-icons">file_download</span>
-						<span class="text">Drag a column here to group by</span>
-					</div>
+				<div v-else class="ev-left-panel-drag-msg">
+					<span class="material-icons">file_download</span>
+					<span class="text">Drag a column here to group by</span>
 				</div>
 
-				<div class="ev-left-panel-footer-section">
-					<div class="footer-content">
-						<FmCheckbox
-							v-model="multiselectIsActive"
-							tabindex="0"
-							label="Multiselect"
-							@update:model-value="toggleMultiselect(multiselectIsActive)"
-						/>
-					</div>
+				<div class="footer-content">
+					<FmCheckbox
+						v-model="multiselectIsActive"
+						tabindex="0"
+						label="Multiselect"
+						@update:model-value="toggleMultiselect(multiselectIsActive)"
+					/>
 				</div>
 			</div>
 
@@ -110,6 +106,7 @@
 				>chevron_right</span
 			>
 		</div>
+
 		<div
 			class="drop-area-wrap left-side-groups-drop-area display-none gLeftSideGroupsHolder"
 		>

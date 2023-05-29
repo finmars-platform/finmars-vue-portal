@@ -5,10 +5,11 @@
 		</RvSettingsRow>
 
 		<RvSettingsRow label="Filter items by statuses">
-			<FmSelect
+			<BaseMultiSelectInput
 				v-model="vm.entityFilters"
+				title="Filter items by statuses"
+				item_id="value"
 				:items="vm.multiselectorOptions"
-				prop_id="value"
 			/>
 		</RvSettingsRow>
 
@@ -27,7 +28,7 @@
 			<div class="flex aic sb">
 				<FmBtn type="text" @click="vm.cancel()"> Cancel </FmBtn>
 
-				<FmBtn @click="saveSettings()">Save</FmBtn>
+				<FmBtn @click="vm.saveSettings()">Save</FmBtn>
 			</div>
 		</template>
 	</BaseModal>
@@ -40,9 +41,10 @@
 	const { resolve, reject } = props.payload
 
 	// $scope
-	var vm = {}
+	var vm = reactive({})
 
-	vm.entityType = evDataService.getEntityType()
+	vm.entityType = evDataService.getContentType()
+
 	vm.multiselectorOptions = []
 
 	var pagePagination = evDataService.getPagination()
@@ -115,7 +117,6 @@
 			entityViewerOptions.complex_transaction_filters =
 				vm.complexTransactionFilters
 		}
-		console.log('ev settings entityViewerOptions', entityViewerOptions)
 		evDataService.setEntityViewerOptions(entityViewerOptions)
 
 		resolve({
@@ -127,13 +128,11 @@
 	var init = function () {
 		var entityViewerOptions = evDataService.getEntityViewerOptions()
 
-		console.log('entityViewerOptions', entityViewerOptions)
-
 		var multselData = getMultiselectorData()
 		vm.multiselectorOptions = multselData.optionsList
 		//vm.complexTransactionFilters = entityViewerOptions.complex_transaction_filters;
 		vm.entityFilters = entityViewerOptions.entity_filters
-		console.log('vm.entityFilters:', vm.entityFilters)
+
 		if (vm.entityType === 'complex-transaction') {
 			vm.complexTransactionFilters =
 				entityViewerOptions.complex_transaction_filters
@@ -141,18 +140,10 @@
 			vm.complexTransactionFilters = ['booked']
 		}
 
-		console.log('complexTransactionFilters', vm.complexTransactionFilters)
-
-		// DEPRECATED
-		// if (vm.entityType === "complex-transaction" && entityViewerOptions.complex_transaction_filters) {
-		// 	vm.entityFilters = entityViewerOptions.complex_transaction_filters;
-		// }
-
 		if (!vm.entityFilters) {
 			vm.entityFilters = multselData.selectedByDefault
 		}
 
-		console.log('ev settings entityFilters ', vm.entityFilters)
 		vm.itemsToLoad = pagePagination.page_size
 	}
 

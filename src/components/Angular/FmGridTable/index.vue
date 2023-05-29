@@ -87,16 +87,14 @@
 			/>
 
 			<div v-if="domElemsAreReady" class="g-table-section flex-row">
-				<div v-if="!isReport" class="g-ev-left-panel-holder gEvLeftPanelHolder">
-					<AngularFmGridTableLeftPanel
-						:attributeDataService="attributeDataService"
-						:evDataService="evDataService"
-						:evEventService="evEventService"
-						:spExchangeService="spExchangeService"
-						:contentWrapElement="contentWrapElem"
-					/>
-				</div>
-
+				<AngularFmGridTableLeftPanel
+					v-if="!isReport"
+					:attributeDataService="attributeDataService"
+					:evDataService="evDataService"
+					:evEventService="evEventService"
+					:spExchangeService="spExchangeService"
+					:contentWrapElement="contentWrapElem"
+				/>
 				<div class="g-table-container">
 					<div class="g-table-wrap">
 						<div class="g-column-area-wrap">
@@ -135,13 +133,10 @@
 											ev-event-service="evEventService"
 										></report-viewer-matrix> -->
 
-						<div
-							v-if="isReport"
-							rv-gcf-areas-dnd
-							ev-data-service="evDataService"
-							ev-event-service="evEventService"
-							content-wrap-element="contentWrapElem"
-						></div>
+						<AngularFmGridTableRvAreasDnd
+							v-if="isReport && contentWrapElem"
+							:contentWrapElement="contentWrapElem"
+						/>
 
 						<AngularFmGridTableAreasDnd
 							v-if="!isReport && contentWrapElem"

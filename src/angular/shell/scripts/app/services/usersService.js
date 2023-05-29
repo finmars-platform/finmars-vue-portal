@@ -6,7 +6,7 @@
 import UsersRepository from '../repositories/usersRepository.js'
 // import authorizerRepository from "../repositories/authorizerRepository";
 /** @module usersService */
-export default function (cookieService, globalDataService, xhrService) {
+export default function () {
 	const usersRepository = new UsersRepository(cookieService, xhrService)
 	// import usersRepository from '../repositories/usersRepository';
 
