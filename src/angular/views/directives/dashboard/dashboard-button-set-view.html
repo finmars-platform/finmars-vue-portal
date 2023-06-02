@@ -1,0 +1,41 @@
+<div class="dashboard-button-set-component">
+
+    <div data-ng-if="showAsDropdown">
+
+        <md-select ng-model="lastSelectedOption" class="dashboard-buttonset-dropdown" md-selected-text="getSelectedText()">
+            <md-option data-ng-repeat="item in itemsList" ng-click="handleAction($event, item)">
+                {{item.name}}
+            </md-option>
+        </md-select>
+
+    </div>
+
+    <div data-ng-if="!showAsDropdown">
+
+        <div data-ng-repeat="row in grid.rows" data-ng-show="row.index < rows">
+
+            <div layout="row">
+
+                <div data-ng-repeat="item in row.items track by $index" data-ng-show="$index < columns">
+
+                    <div data-ng-if="item.action">
+
+                        <md-button data-ng-click="handleAction($event, item)" class="dashboard-button-set-button">
+                            {{item.name}}
+                        </md-button>
+
+                    </div>
+
+                    <div data-ng-if="!item.action">
+                        &nbsp;
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

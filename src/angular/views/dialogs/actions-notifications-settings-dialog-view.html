@@ -1,0 +1,39 @@
+<md-dialog aria-label="" ng-cloak class="draggable-dialog" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Notifications settings</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="p-24">
+        <div layout="row" data-ng-if="vm.readyStatus.member">
+
+            <md-input-container class="md-block" style="height: 64px; min-width: 300px">
+                <label>Notification</label>
+                <md-select data-ng-model="vm.member.notification_level">
+                    <md-option value="4">Portal popups only notifications</md-option>
+                    <md-option value="3">Email only notifications</md-option>
+                    <md-option value="2">Portal popups & Email notifications</md-option>
+                    <md-option value="1">Do not notify</md-option>
+                </md-select>
+            </md-input-container>
+
+        </div>
+        <div data-ng-if="!vm.readyStatus.member">
+            <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                <md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+
+        <md-button data-ng-class="{'disabled-btn': !vm.readyStatus.member}" class="md-raised" ng-click="vm.save()">
+            Save
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

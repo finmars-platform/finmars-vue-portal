@@ -1,0 +1,35 @@
+<div class="custom-input-container complex-dropdown-select-container">
+
+    <div ng-if="label" class="custom-input-top-row">
+        <span class="custom-input-textarea-span-pan">{{label}}</span>
+    </div>
+
+    <div custom-popup
+         popup-data="popupData"
+         popup-template-url="'views/popups/complex-dropdown-select-menu-popup-view.html'"
+         open-on="click"
+         position-relative-to="element"
+         relative-popup-y="top"
+         close-on-click-outside="true"
+         popup-width="element"
+         offset-y="-10"
+         on-cancel="onPopupClose()"
+
+         class="custom-input-main-container cursor-pointer">
+
+        <div class="custom-input-borders">
+            <div class="custom-input-content">
+
+                <div class="cds-content-row">
+
+                    <div ng-bind="selectedOption.name" style="padding-left: 10px;"></div>
+
+                    <span class="cds-selector-icon material-icons">arrow_drop_down</span>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>

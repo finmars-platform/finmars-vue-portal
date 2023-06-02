@@ -20,7 +20,8 @@
 		"jsdom": "^20.0.3",
 		"nuxt": "^3.0.0",
 		"prettier": "2.6.2",
-		"sass": "^1.54.9"
+		"sass": "^1.54.9",
+		"vite-plugin-commonjs": "^0.7.1"
 	},
 	"dependencies": {
 		"@chenfengyuan/vue-qrcode": "^2.0.0",
@@ -29,6 +30,7 @@
 		"chart.js": "^3.9.1",
 		"click-outside-vue3": "^4.0.1",
 		"dayjs": "^1.11.7",
+		"jquery": "^3.3.1",
 		"keycloak-js": "^21.0.1",
 		"pinia": "^2.0.24",
 		"qrcode": "^1.5.1",

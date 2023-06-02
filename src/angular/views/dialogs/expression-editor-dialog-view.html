@@ -1,0 +1,165 @@
+<md-dialog aria-label="expression builder dialog"
+           class="expression-editor-dialog draggable-dialog"
+           drag-dialog style="width: 75%">
+    <md-toolbar>
+        <div class="md-toolbar-tools" style="height: 64px;">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Expression editor</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+
+        <div data-ng-if="vm.codeEditorInExpressionBuilder">
+
+            <div class="ace-editor" id="aceEditor">
+
+            </div>
+
+        </div>
+
+        <div data-ng-if="!vm.codeEditorInExpressionBuilder">
+
+            <div>
+                <md-input-container class="md-block m-t-16 none-max-height">
+                    <label>Expression</label>
+                    <textarea id="editorExpressionInput" cols="30" rows="4"
+                              data-ng-model="vm.item.expression"
+                              data-ng-change="vm.error = false; vm.success = false; vm.showValidation = false;"></textarea>
+                </md-input-container>
+            </div>
+
+            <div data-ng-if="vm.showValidation" class="p-16">
+
+                <div data-ng-bind-html="vm.htmlExpression">
+
+                </div>
+
+                <div class="m-t-16 overflow-hidden">
+
+                    <div class="validation-status float-left m-r-16">
+
+                        <div class="" data-ng-if="vm.status == 'error'">Status: <b class="color-danger">Invalid
+                            expression</b></div>
+                        <div class="" data-ng-if="vm.status == 'inputs-error'">Status: <b class="color-warning">Not all
+                            variables are identified
+                            expression</b></div>
+                        <div class="" data-ng-if="vm.status == 'bracket-error'">Status: <b class="color-danger">Mismatch
+                            in
+                            the
+                            opening and closing braces</b></div>
+                        <div class="" data-ng-if="vm.status == 'success'">Status: <b class="color-success">Expression is
+                            valid</b></div>
+                    </div>
+
+                    <div class="overflow-hidden float-left">
+
+                        <div class="float-left m-r-8">
+                            <div class="eb-circle eb-circle-func m-r-4"></div>
+                            - functions
+                        </div>
+
+                        <div class="float-left m-r-8">
+                            <div class="eb-circle eb-circle-property m-r-4"></div>
+                            - properties
+                        </div>
+
+                        <div class="float-left m-r-8">
+                            <div class="eb-circle eb-circle-input m-r-4"></div>
+                            - inputs
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div layout="row">
+            <div flex="100" class="position-relative">
+                <h2 class="text-center">Available functions</h2>
+
+                <md-button data-ng-if="vm.insideReport"
+                           class="md-raised md-raised eb-insert-col-btn"
+                           data-ng-click="vm.insertAttrKey($event)">Column Selector
+                </md-button>
+            </div>
+        </div>
+
+        <div class="expression-functions-block" layout="row">
+
+            <div class="expression-editor-column expression-editor-groups-col" layout="column">
+
+                <div class="{{item.isSelected ? 'selected' : ''}} help-item-menu-item"
+                     data-ng-repeat="item in vm.groups"
+                     data-ng-click="vm.selectHelpGroup(item)" data-ng-bind-html="item.name">
+                </div>
+            </div>
+
+            <div class="expression-editor-column expression-editor-exprs-col exprEditorExprsCol p-t-8" layout="column">
+
+                <md-input-container class="help-search-control">
+                    <input type="text" data-ng-model="vm.searchExpr" placeholder="Search">
+                </md-input-container>
+
+                <div class="help-functions-holder">
+                    <div>
+                        <div class="{{item.isSelected ? 'selected' : ''}} help-item-menu-item"
+                             data-ng-repeat="item in vm.expressions | filter: vm.getFilters()"
+                             data-ng-click="vm.selectHelpItem(item)" ng-dblclick="vm.appendFunction(item)">
+                            {{item.name}}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="expression-editor-cols-resizer exprEditorColsResizer"></div>
+
+            <div class="expression-editor-column description-column exprEditorDescriptionCol" layout="column">
+
+                <div class="description-column-header" data-ng-bind-html="vm.selectedHelpItem.func"></div>
+
+                <div class="description-column-body"
+                     data-ng-bind-html="vm.selectedHelpItem.description | trustAsHtml">
+                </div>
+
+                <div class="description-column-footer">
+                    <md-button class="md-raised" data-ng-click="vm.appendFunction(vm.selectedHelpItem)">Add
+                    </md-button>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row" layout-align="space-between">
+        <div>
+            &nbsp;
+            <!--<md-button ng-click="vm.openHelp($event)" class="md-raised md-primary">-->
+            <!--Help-->
+            <!--</md-button>-->
+
+            <md-button ng-click="vm.validate($event)"
+                       data-ng-if="!vm.codeEditorInExpressionBuilder"
+                       class="md-raised">
+                Validate
+            </md-button>
+
+            <md-button ng-click="vm.undo($event)"
+                       data-ng-if="!vm.codeEditorInExpressionBuilder"
+                       class="md-raised {{vm.expressionsHistory.length ? '' : 'disabled-btn'}}">
+                Undo
+            </md-button>
+
+        </div>
+        <div>
+            <md-button ng-click="vm.cancel()">
+                Cancel
+            </md-button>
+            <md-button ng-click="vm.agree()" class="md-raised md-primary m-r-24">
+                OK
+            </md-button>
+        </div>
+    </md-dialog-actions>
+</md-dialog>

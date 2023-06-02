@@ -1,0 +1,208 @@
+<div data-ng-controller="InstrumentTypeEventSchedulesTabController as vm">
+
+    <div class="instrument-type-events-tab-view"
+         data-ng-if="vm.readyStatus.gridTable">
+
+        <div layout="row" class="m-b-16">
+            <div class="ev-data-field">
+                <bind-field-control entity-type="vm.entityType"
+                                    entity="vm.entity"
+                                    entity-change="vm.onEntityChange(fieldKey)"
+                                    small-options="{notNull: true}"
+                                    ev-editor-data-service="vm.evEditorDataService"
+                                    ev-editor-event-service="vm.evEditorEventService"
+                                    item="vm.maturityDateAttr"></bind-field-control>
+            </div>
+
+            <div class="ev-data-field">
+                <bind-field-control entity-type="vm.entityType"
+                                    entity="vm.entity"
+                                    entity-change="vm.onEntityChange(fieldKey)"
+                                    ev-editor-data-service="vm.evEditorDataService"
+                                    ev-editor-event-service="vm.evEditorEventService"
+                                    item="vm.maturityPriceAttr"></bind-field-control>
+            </div>
+        </div>
+
+        <div>
+            <v-accordion class="instrument-type-accordion vAccordion-type1 m-b-8" control="vm.eventsAccordion">
+
+                <v-pane ng-repeat="item in vm.entity.events | orderBy: 'order'"
+                        expanded="item.isPaneExpanded">
+
+                    <div ng-hide="!item.isPaneExpanded" class="accordion-name-input">
+                        <text-input model="item.name"
+                                    event-signal="vm.evEditorFieldEvent"
+                                    on-change-callback="vm.onRequiredFieldChange('events')"
+                                    small-options="{notNull: true}"></text-input>
+                    </div>
+
+                    <v-pane-header ng-class="{'m-b-0': !$pane.isExpanded()}">
+                        <div class="accordion-header-content flex-row fc-space-between fi-center"
+                             data-ng-click="vm.toggleItem($pane, item, $event)">
+
+                            <div class="accordion-header-left">
+
+                            <span ng-hide="!$pane.isExpanded()"
+                                  class="material-icons accordion-expansion-icon">expand_less</span>
+                                <span ng-hide="$pane.isExpanded()"
+                                      class="material-icons accordion-expansion-icon">expand_more</span>
+
+                                <span class="text-weight-bold m-r-8"># {{$index + 1}}</span>
+
+                                <div ng-hide="!item.isPaneExpanded" class="accordion-name-input">
+
+                                    <!--<text-input model="item.name"
+                                                event-signal="vm.evEditorFieldEvent"
+                                                on-change-callback="vm.onRequiredFieldChange('events')"
+                                                small-options="{notNull: true}"
+                                                ng-click="$event.stopPropagation();"></text-input>-->
+                                    <!--<md-input-container class="no-error-spacer" style="min-height: 35px">
+                                        <label></label>
+                                        <input type="text"
+                                               ng-model="item.name"
+                                               class="ttype-action-notes-input text-weight-bold"
+                                               placeholder="name">
+                                    </md-input-container>-->
+                                </div>
+
+                                <span ng-hide="item.isPaneExpanded"
+                                      class="text-weight-bold accordion-name-text"
+                                      ng-bind="item.name"></span>
+                            </div>
+
+                            <div class="accordion-header-right">
+                                <md-checkbox ng-model="item.autogenerate"
+                                             id="{{'event_autogenerate_' + $index}}"
+                                             aria-lable="instrument type events autogenerate"
+                                             ng-change="vm.onAutogenerateToggle($event, item)"
+                                             ng-click="$event.stopPropagation();">Auto-generate</md-checkbox>
+
+                                <div class="accordion-actions m-l-35">
+
+                                    <button class="accordion-header-icon-btn icon-btn-basics"
+                                            ng-click="vm.moveUp(item, $event)"
+                                            ng-disabled="item.order === 0">
+                                        <span class="material-icons">arrow_upward</span>
+                                    </button>
+
+                                    <button class="accordion-header-icon-btn icon-btn-basics"
+                                            ng-click="vm.moveDown(item, $event)"
+                                            ng-disabled="item.order + 1 === vm.entity.events.length">
+                                        <span class="material-icons">arrow_downward</span>
+                                    </button>
+
+                                    <button class="accordion-header-icon-btn icon-btn-basics"
+
+                                            custom-popup
+                                            popup-template="{{vm.accordionActionsMenu}}"
+                                            popup-data="{
+                                            deletePane: vm.deletePane,
+                                            makeCopy: vm.makeCopy,
+                                            item: item
+                                        }"
+                                            popup-event-service="vm.popupEventService"
+                                            position-relative-to="element"
+                                            relative-position-x="left"
+                                            relative-position-y="top"
+                                            open-on="click"
+                                            close-on-click-outside="true"
+                                            ng-click="$event.stopPropagation();">
+                                        <span class="material-icons">more_vert</span>
+                                    </button>
+                                </div>
+                                <!-- <md-button class="md-raised"
+                                           style="background: #ffeee8;"
+                                           data-ng-click="vm.deletePane(item, $index, $event)">Delete
+                                </md-button>
+                                <md-button class="md-raised"
+                                           data-ng-click="vm.makeCopyOfAction(item, $index, $event)">Make copy
+                                </md-button>
+                                <md-button class="md-raised" ng-disabled="$index == 0"
+                                           data-ng-click="vm.moveUp(item, $index, $event)">Move up
+                                </md-button>
+                                <md-button class="md-raised" ng-disabled="$index == vm.entity.accruals.length - 1"
+                                           data-ng-click="vm.moveDown(item, $index, $event)">Move Down
+                                </md-button>
+                                <md-button class="md-raised" data-ng-click="vm.toggleItem($pane, item, $event)">
+                                    <span data-ng-if="item.isPaneExpanded">Collapse</span>
+                                    <span data-ng-if="!item.isPaneExpanded">Expand</span>
+                                </md-button> -->
+                            </div>
+
+                        </div>
+                    </v-pane-header>
+
+                    <v-pane-content>
+
+                        <div class="flex-row p-t-10 m-b-10 instrument-type-accordion-top-fields">
+                            <text-input label="Message on the form"
+                                        placeholder-text="Message on the form"
+                                        model="item.data.form_message"
+                                        event-signal="vm.evEditorFieldEvent"
+                                        small-options="{tooltipText: 'Message on the form', notNull: true}"
+                                        on-change-callback="vm.onRequiredFieldChange('events')"
+                                        class="p-r-10"
+                                        style="flex-basis: 33%;"></text-input>
+
+                            <dropdown-select class="p-r-8"
+                                             label="Event class"
+                                             model="item.data.event_class"
+                                             placeholder-text="Event class"
+                                             menu-options="vm.eventClasses"
+                                             event-signal="vm.evEditorFieldEvent"
+                                             small-options="{tooltipText: 'Event class', notNull: true}"
+                                             on-change-callback="vm.onRequiredFieldChange('events')"
+                                             style="flex-basis: 33%;"></dropdown-select>
+                        </div>
+
+                        <div class="instrument-type-accordion-grid-table instrument-type-event-grid-tables">
+
+                            <grid-table gt-data-service="item.eventItemsGridTableDataService"
+                                        gt-event-service="item.eventItemsGridTableEventService"></grid-table>
+
+                            <div class="instrument-type-event-block-items-container">
+
+                                <div class="instrument-type-event-params-btn-holder">
+                                    <md-button class="link-button"
+                                               data-ng-click="vm.openEventParametersManager($event, item)">Open Parameters Manager</md-button>
+                                </div>
+
+                                <!--<md-checkbox ng-model="item.data.items_blocked"
+                                             ng-change="vm.toggleEventBlockableItems(item)">Receive the below data from Accruals Schedule</md-checkbox>-->
+                                <md-checkbox ng-model="item.data.get_items2_from_accruals" ng-disabled="!item.autogenerate">Receive the below data from Accruals Schedule (in case of autogenerate, for each accrual entry)</md-checkbox>
+                            </div>
+
+                            <!--<grid-table gt-data-service="item.eventBlockableItemsGridTableDataService"
+                                        gt-event-service="item.eventBlockableItemsGridTableEventService"
+                                        ng-class="{'disabled-grid-table': item.data.items_blocked}"></grid-table>-->
+                            <grid-table gt-data-service="item.eventItems2GridTableDataService"
+                                        gt-event-service="item.eventItems2GridTableEventService"></grid-table>
+                        </div>
+
+                        <div class="instrument-type-accordion-grid-table grid-table-bordered-rows m-b-16">
+                            <grid-table gt-data-service="item.eventActionsGridTableDataService"
+                                        gt-event-service="item.eventActionsGridTableEventService"></grid-table>
+                        </div>
+
+
+
+                    </v-pane-content>
+
+                </v-pane>
+
+            </v-accordion>
+
+            <div class="flex-row">
+                <md-button class="m-l-0 primary-button m-t-0"
+                           ng-click="vm.createInstrumentTypeEvent()">+ ADD</md-button>
+
+                <!-- <md-button class="outline-button m-t-0">APPEND FROM TEMPLATE</md-button>
+
+                <md-button class="outline-button m-t-0">SAVE AS TEMPLATE</md-button> -->
+            </div>
+        </div>
+
+    </div>
+
+</div>

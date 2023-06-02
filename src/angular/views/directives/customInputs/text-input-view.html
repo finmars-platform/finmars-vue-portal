@@ -1,0 +1,151 @@
+<div class="custom-input-container text-input-container textInputContainer"
+     data-ng-class="getInputContainerClasses()">
+  <div ng-if="label"
+       class="custom-input-top-row">
+    <span class="custom-input-textarea-span-pan">{{label}}</span>
+  </div>
+  <!-- <div class="custom-input-top-row">
+    <div data-ng-bind="label" class="custom-input-label"></div>
+
+
+   
+  </div> -->
+
+  <!-- <div data-ng-bind="label" class="custom-input-label"></div> -->
+  <!-- 
+  <div data-ng-if="tooltipText" class="custom-input-tooltip">
+
+    <ng-md-icon
+      icon="info_outline"
+      size="18"
+      class="tooltip-sign"
+      style="fill: #777777;"
+    ></ng-md-icon>
+    <md-tooltip
+      class="tooltip_2"
+      md-direction="top"
+      data-ng-bind="tooltipText"
+    ></md-tooltip>
+  </div> -->
+
+    <div class="custom-input-main-container customInputBackgroundColor">
+        <div class="custom-input-borders">
+            <div class="custom-input-content">
+
+                <div class="flex-row">
+
+                    <button data-ng-if="locked"
+                            ng-click="unlockInput()"
+                            class="custom-input-indicator-btn">
+                        <span class="material-icons">lock</span>
+                    </button>
+
+                    <button data-ng-if="!noIndicatorBtn && !locked"
+                            class="custom-input-indicator-btn"
+                            data-ng-click="openTextInDialog($event)"
+                            ng-disabled="disabled() || isReadonly">
+                        <span class="material-icons">edit</span>
+                    </button>
+
+                    <!-- TEXTAREA CODE
+
+                    <input ng-if="!renderHyperlinks"
+                           ng-model="model"
+                           ng-readonly="isReadonly"
+                           ng-disabled="isDisabled"
+                           ng-init="elemInited()"
+                           type="text"
+                           placeholder="{{placeholderText}}"
+                           class="custom-input text-input textInputElem" />
+
+                    <div ng-if="renderHyperlinks"
+                         ng-readonly="isReadonly"
+                         ng-disabled="isDisabled"
+                         ng-init="elemInited()"
+                         class="custom-input text-input textInputElem">
+                        <span ng-bind-html="getHyperlinks()"></span>
+                    </div>
+
+                           -->
+                    <input ng-if="!renderHyperlinks"
+                           ng-model="model"
+                           ng-readonly="isReadonly"
+                           ng-disabled="disabled()"
+                           ng-init="init()"
+                           ng-blur="onInputBlur()"
+                           ng-change="onInputChange(model)"
+                           type="text"
+                           placeholder="{{placeholderText}}"
+                           class="custom-input text-input textInputElem" />
+
+                    <div ng-if="renderHyperlinks"
+                         ng-readonly="isReadonly"
+                         ng-disabled="disabled()"
+                         ng-init="init()"
+                         class="custom-input text-input textInputElem">
+                        <span ng-bind-html="getHyperlinks()"></span>
+                    </div>
+                </div>
+
+                <div class="custom-input-side-items flex-row customInputBackgroundColor">
+
+                  <div class="custom-input-custom-btns-holder">
+                    <div data-ng-if="customButtons && customButtons.length" class="height-100 flex-row">
+                      <button ng-repeat="button in customButtons"
+                              ng-disabled="disabled()"
+                              ng-click="callFnForCustomBtn(button.action)"
+                              class="{{button.classes}} custom-input-custom-btn">
+                        {{button.caption}}
+                        <ng-md-icon data-ng-if="button.iconObj.type === 'angularjs-material'"
+                                    size="24"
+                                    icon="{{button.iconObj.icon}}"
+                                    class="ci-icon-color"></ng-md-icon>
+                        <span data-ng-if="button.iconObj.type === 'angular-material'"
+                              class="material-icons ci-icon-color">{{button.iconObj.icon}}</span>
+
+                        <md-tooltip data-ng-if="button.tooltip"
+                                    class="tooltip_1"
+                                    md-direction="top">{{button.tooltip}}
+                        </md-tooltip>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div data-ng-if="error" class="custom-input-tooltip">
+                    <span class="material-icons">info</span>
+                    <md-tooltip class="error-tooltip" md-direction="top">{{error}}</md-tooltip>
+                  </div>
+
+                  <div data-ng-if="tooltipText" data-ng-show="!error" class="custom-input-tooltip">
+                    <span class="material-icons ci-icon-color">info_outline</span>
+                    <md-tooltip class="tooltip_2" md-direction="top" data-ng-bind="tooltipText"></md-tooltip>
+                  </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- <div class="custom-input-full-text-container customInputFullTextWrapper">
+
+            <div ng-if="!renderHyperlinks">
+                <textarea ng-model="model"
+                          ng-change="onInputChange(model)"
+                          class="custom-input-full-text customInputBackgroundColor customInputFullText"
+                          ng-readonly="isReadonly"
+                          ng-disabled="disabled()"
+                          ng-init="elemInited()"></textarea>
+            </div>
+
+            <div ng-if="renderHyperlinks"
+                 class="custom-input-full-text customInputBackgroundColor customInputFullText"
+                 ng-bind-html="getHyperlinks()"
+                 ng-init="elemInited()"></div>
+        </div> -->
+
+    </div>
+
+  <div ng-if="error"
+       ng-bind="error"
+       class="custom-input-bottom-error-text"></div>
+</div>

@@ -1,0 +1,55 @@
+<md-dialog aria-label="" ng-cloak class="draggable-dialog width-50" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Create Pricing Policy</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="p-24">
+        <div layout="column">
+
+            <md-input-container>
+                <label>Name</label>
+                <input type="text" data-ng-model="vm.item.name">
+            </md-input-container>
+
+<!--            <md-input-container>-->
+<!--                <label>Unique Code</label>-->
+<!--                <input type="text" data-ng-model="vm.item.user_code">-->
+<!--            </md-input-container>-->
+
+            <usercode-input data-item="vm.item"></usercode-input>
+
+            <div class="m-t-16">
+
+                <div><label for="">Notes</label></div>
+                <textarea name="" data-ng-model="vm.item.notes" cols="60" rows="5"></textarea>
+
+            </div>
+
+            <md-input-container class="m-t-16">
+                <label>Default Instrument Pricing Scheme</label>
+                <md-select data-ng-model="vm.item.default_instrument_pricing_scheme">
+                    <md-option ng-value="item.id" data-ng-repeat="item in vm.instrumentPricingSchemes">{{item.name}}</md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="m-t-16">
+                <label>Default Currency Pricing Scheme</label>
+                <md-select data-ng-model="vm.item.default_currency_pricing_scheme">
+                    <md-option ng-value="item.id" data-ng-repeat="item in vm.currencyPricingSchemes">{{item.name}}</md-option>
+                </md-select>
+            </md-input-container>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()">
+            Close
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.agree()" style="margin-right:20px;">
+            Create
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

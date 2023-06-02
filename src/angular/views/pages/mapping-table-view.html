@@ -1,0 +1,131 @@
+<div style="padding: 0 20px;" class="mapping-tables-import-export">
+    <h2 class="m-b-35">Export / Import Mapping Table</h2>
+
+    <div layout="row" style="margin-bottom: 55px;">
+        <!--<div style="width: 300px; margin-right: 24px";>-->
+
+            <!--<md-input-container flex="40" style="margin-bottom: 0" class="ng-hide">-->
+                <!--<input type="file"-->
+                       <!--accept=".fmpg"-->
+                       <!--id="mappingFileImport"-->
+                       <!--input-file-directive-->
+                       <!--read-file="vm.mappingFile"-->
+                       <!--read-file-change="vm.checkExtension(vm.mappingFile, $event)">-->
+            <!--</md-input-container>-->
+            <!--<div class="input-upload-file-container">-->
+                <!--<p class="mappingFileImport">Select file</p>-->
+                <!--<label for="mappingFileImport" class="md-button md-raised md-primary IFUlabel">-->
+                    <!--<ng-md-icon icon="file_upload"></ng-md-icon>-->
+                    <!--<span>BROWSE</span></label>-->
+            <!--</div>-->
+
+        <!--</div>-->
+        <!--<button style="margin-right: 50px"-->
+                <!--class="md-raised m-t-0 m-l-0 md-button md-ink-ripple {{vm.mappingFileIsAvailable() ? '' : 'disabled-btn' }}"-->
+                <!--type="button"-->
+                <!--data-ng-click="vm.openImportMappingManager($event)">Import-->
+        <!--</button>-->
+        <a class="md-button md-raised md-ink-ripple m-0"
+           type="button"
+           data-ng-click="vm.openExportMappingManager($event)"
+           style="height: 36px;">
+            Export
+        </a>
+    </div>
+
+    <h2 class="m-b-35">Mapping Tables</h2>
+
+    <div layout="row" class="mapping-tables-columns-container">
+        <div flex="33" layout="column" layout-align="start start" class="mapping-tables-column">
+            <fieldset layout="column" class="mapping-tables-column-fieldset">
+                <legend>Data</legend>
+                <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'portfolio'})"
+                           class="md-raised">
+                    Portfolio
+                </md-button>
+                <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'account'})"
+                           class="md-raised">
+                    Account
+                </md-button>
+                <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'instrument'})"
+                           class="md-raised">
+                    Instruments
+                </md-button>
+                <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'responsible'})"
+                           class="md-raised">
+                    Responsible
+                </md-button>
+                <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'counterparty'})"
+                           class="md-raised">
+                    Counterparties
+                </md-button>
+                <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'currency'})"
+                           class="md-raised">
+                    Currencies
+                </md-button>
+                <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'currency'})"
+                           class="md-raised">
+                    Currencies
+                </md-button>
+                <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'strategy-1'})"
+                           class="md-raised">
+                    Strategy 1
+                </md-button>
+                <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'strategy-2'})"
+                           class="md-raised">
+                    Strategy 2
+                </md-button>
+                <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'strategy-3'})"
+                           class="md-raised">
+                    Strategy 3
+                </md-button>
+            </fieldset>
+        </div>
+
+        <div flex="33" layout="column" layout-align="start center" class="mapping-tables-column margin-auto">
+            <fieldset layout="column" class="mapping-tables-column-fieldset">
+                <legend>Configuration Elements</legend>
+                <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'account-type'})"
+                           class="md-raised">
+                    Account Types
+                </md-button>
+                <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'instrument-type'})"
+                           class="md-raised">
+                    Instrument Types
+                </md-button>
+                <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity: 'pricing-policy'})"
+                           class="md-raised">
+                    Pricing Policy
+                </md-button>
+                <md-button
+                        data-ng-click="vm.openMapping($event, {complexExpressionEntity: 'price-download-scheme'})"
+                        class="md-raised">
+                    Price Download Scheme
+                </md-button>
+            </fieldset>
+        </div>
+
+        <div flex="33" layout="column" layout-align="start end" class="mapping-tables-column">
+            <fieldset layout="column" class="mapping-tables-column-fieldset">
+                <legend>System Elements</legend>
+                <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity: 'daily-pricing-model'})"
+                           class="md-raised">
+                    Pricing Model
+                </md-button>
+                <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity: 'payment-size-detail'})"
+                           class="md-raised">
+                    Payment Size Details
+                </md-button>
+                <md-button
+                        data-ng-click="vm.openMapping($event, {complexExpressionEntity: 'accrual-calculation-model'})"
+                        class="md-raised">
+                    Accrual Calculation
+                </md-button>
+                <md-button data-ng-click="vm.openMapping($event, {complexExpressionEntity:'periodicity'})"
+                           class="md-raised">
+                    Periodicity
+                </md-button>
+            </fieldset>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,17 @@
+<md-dialog aria-label="" ng-cloak class="help-dialog">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Help</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content  >
+        <iframe ng-src="{{vm.helpPage | trustAsUrl}}" frameborder="0"
+                style="width: 100%; height: 100%"></iframe>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

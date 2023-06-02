@@ -1,0 +1,319 @@
+<md-dialog class="draggable-dialog manage-member-group width-70 dialog-actions-bottom permissionsGroupManagerDialogETD"
+           aria-label="manage permission group dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2 layout="row">Edit group&nbsp;<b data-ng-bind="::vm.group.name"></b>
+
+                <div style="margin-left: 10px" layout="row" layout-sm="column" data-ng-if="vm.processing"
+                     layout-align="space-around" class="dashboard-loader">
+                    <progress-circular diameter="20"></progress-circular>
+                </div>
+
+            </h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="manage-member-dialog-content p-16">
+
+        <div data-ng-if="vm.readyStatus.content">
+
+            <div>
+                <md-input-container>
+                    <label>Group name</label>
+                    <textarea data-ng-model="vm.group.name"></textarea>
+                </md-input-container>
+            </div>
+
+            <div layout="column">
+
+                <two-fields-options all-options="vm.members"
+                                    selected-options="vm.assignedMembersList"
+                                    name-property="username"></two-fields-options>
+
+            </div>
+
+            <div layout="column" data-ng-if="vm.group.role != 1">
+
+                <div layout="row" style="margin-bottom: 5px;">
+
+                    <div style="width: 150px">
+                        &nbsp;
+                    </div>
+
+                    <div style="width: 340px; text-align: center; margin-right: 20px;">
+                        Object
+                    </div>
+                    <div style="width: 140px; text-align: center; margin-right: 25px;">
+                        Object Creator
+                    </div>
+                    <div style="width: 140px; text-align: center; margin-right: 25px;">
+                        Other Members
+                    </div>
+                </div>
+
+                <div layout="row" style="margin-bottom: 10px">
+
+                    <div layout="row">
+
+                        <div style="width: 150px">
+                            <h3 class="m-0"><b>Object</b></h3>
+                        </div>
+
+                        <div style="width: 110px; margin-right: 10px;">
+                            Create Objects
+                        </div>
+                        <div style="width: 135px; margin-right: 10px;">
+                            Manage Attributes
+                        </div>
+                        <div style="width: 95px; margin-right: 25px;">
+                            Inherit Rights
+                        </div>
+
+                    </div>
+
+                    <div layout="row">
+                        <div style="width: 60px">
+                            Manage
+                        </div>
+                        <div style="width: 40px; text-align: center">
+                            Edit
+                        </div>
+                        <div style="width: 40px; text-align: center; margin-right: 25px;">
+                            View
+                        </div>
+                    </div>
+
+                    <div layout="row">
+                        <div style="width: 60px">
+                            Manage
+                        </div>
+                        <div style="width: 40px; text-align: center">
+                            Edit
+                        </div>
+                        <div style="width: 40px; text-align: center; margin-right: 25px;">
+                            View
+                        </div>
+                    </div>
+
+                    <div layout="row">
+                        <div>
+                            Overwrite for Existing Objects
+                        </div>
+                    </div>
+
+                </div>
+
+                <div layout="column">
+
+                    <div data-ng-repeat="item in vm.permissionTable.data" layout="row" style="margin-bottom: 10px">
+
+                        <div style="width: 150px">
+                            {{item.name}}
+                        </div>
+
+                        <div style="width: 110px; margin-right: 10px;">
+                            <md-checkbox class="checkbox-center" data-ng-checked="item.data.create_objects"
+                                         data-ng-click="vm.updateCheckbox(item, 'create_objects')">
+                            </md-checkbox>
+                        </div>
+
+                        <div style="width: 95px; margin-right: 50px;">
+                            <md-checkbox class="checkbox-center"
+                                         data-ng-checked="item.data.manage_attributes"
+                                         data-ng-click="vm.updateCheckbox(item, 'manage_attributes')">
+                            </md-checkbox>
+                        </div>
+
+                        <div style="width: 95px; margin-right: 25px;">
+                            <md-checkbox class="checkbox-center"
+                                         ng-class="{'disabled-btn': !vm.canInheritRight(item.content_type)}"
+                                         data-ng-checked="item.data.inherit_rights"
+                                         data-ng-click="vm.updateCheckbox(item, 'inherit_rights')">
+                            </md-checkbox>
+                        </div>
+
+                        <div style="width: 60px">
+                            <md-checkbox class="checkbox-center"
+                                         ng-class="{'disabled-btn': item.data.inherit_rights || !item.data.create_objects}"
+                                         data-ng-checked="item.data.creator_manage"
+                                         data-ng-click="vm.updateCheckbox(item, 'creator_manage')">
+                            </md-checkbox>
+                        </div>
+
+                        <div style="width: 40px">
+                            <md-checkbox class="checkbox-center"
+                                         ng-class="{'disabled-btn': item.data.inherit_rights || !item.data.create_objects}"
+                                         data-ng-checked="item.data.creator_change"
+                                         data-ng-click="vm.updateCheckbox(item, 'creator_change')">
+                            </md-checkbox>
+                        </div>
+
+                        <div style="width: 40px; margin-right: 25px;">
+                            <md-checkbox class="checkbox-center"
+                                         data-ng-if="item.content_type != 'currencies.currency'"
+                                         ng-class="{'disabled-btn': item.data.inherit_rights || !item.data.create_objects}"
+                                         data-ng-checked="item.data.creator_view"
+                                         data-ng-click="vm.updateCheckbox(item, 'creator_view')">
+                            </md-checkbox>
+                        </div>
+
+                        <div style="width: 60px">
+                            <md-checkbox class="checkbox-center"
+                                         data-ng-checked="item.data.other_manage"
+                                         data-ng-click="vm.updateCheckbox(item, 'other_manage')">
+                            </md-checkbox>
+                        </div>
+
+                        <div style="width: 40px">
+                            <md-checkbox class="checkbox-center"
+                                         data-ng-checked="item.data.other_change"
+                                         data-ng-click="vm.updateCheckbox(item, 'other_change')">
+                            </md-checkbox>
+                        </div>
+
+                        <div style="width: 40px; margin-right: 80px;">
+                            <md-checkbox class="checkbox-center"
+                                         data-ng-if="item.content_type != 'currencies.currency'"
+                                         data-ng-checked="item.data.other_view"
+                                         data-ng-click="vm.updateCheckbox(item, 'other_view')">
+                            </md-checkbox>
+                        </div>
+
+                        <div>
+                            <md-button class="md-raised md-primary manage-group-overwrite-button"
+                                       data-ng-click="vm.overwritePermissions($event, item)"
+                                       data-ng-class="{'disabled-btn': !vm.isSaved}">Overwrite
+                                <md-tooltip md-direction="bottom">Rewrite permissions for all objects as Other member
+                                </md-tooltip>
+                            </md-button>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div>
+                    <md-button class="md-raised md-primary" data-ng-class="{'disabled-btn': !vm.isSaved}"
+                               data-ng-click="vm.overwritePermissionAll($event)">Overwrite Apply For All
+                    </md-button>
+                </div>
+
+                <div layout="row" style="margin-bottom: 10px; margin-top: 40px;">
+
+                    <div layout="row">
+
+                        <div style="width: 150px">
+                            <h3 class="m-0"><b>Configuration</b></h3>
+                        </div>
+
+                        <div style="width: 110px; margin-right: 10px; text-align: center">
+                            View
+                        </div>
+                        <div style="width: 95px; margin-right: 25px; text-align: center">
+                            Edit & Create
+                        </div>
+                    </div>
+
+                </div>
+
+                <div data-ng-repeat="item in vm.permissionTable.configuration" layout="row" style="margin-bottom: 10px">
+
+                    <div style="width: 150px">
+                        {{item.name}}
+                    </div>
+
+                    <div style="width: 110px; margin-right: 10px;">
+                        <md-checkbox class="checkbox-center" data-ng-checked="item.data.creator_view"
+                                     data-ng-click="vm.updateCheckbox(item, 'creator_view')">
+                        </md-checkbox>
+                    </div>
+
+                    <div style="width: 95px; margin-right: 25px;">
+                        <md-checkbox class="checkbox-center"
+                                     data-ng-checked="item.data.creator_change"
+                                     data-ng-disabled="(item.content_type == 'obj_attrs.attributetype' || item.content_type == 'ui.userfield') && item.data.creator_view"
+                                     data-ng-click="vm.updateCheckbox(item, 'creator_change')">
+                        </md-checkbox>
+                    </div>
+                </div>
+
+                <div style="margin-top: 16px;">
+
+                    <md-checkbox data-ng-checked="vm.checkConfigurationSection()"
+                                 data-ng-click="vm.toggleConfigurationSection()">
+                        Allow Import Configuration Section
+                    </md-checkbox>
+                </div>
+
+                <div layout="row" style="margin-bottom: 10px; margin-top: 40px;">
+
+                    <div layout="row">
+
+                        <div style="width: 150px">
+                            <h3 class="m-0"><b>Function</b></h3>
+                        </div>
+
+                        <div style="width: 110px; margin-right: 10px; text-align: center">
+                            View
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div data-ng-repeat="item in vm.permissionTable.function" layout="row" style="margin-bottom: 10px">
+
+                    <div style="width: 150px">
+                        {{item.name}}
+                    </div>
+
+                    <div style="width: 110px; margin-right: 10px;">
+                        <md-checkbox class="checkbox-center" data-ng-checked="item.data.creator_view"
+                                     data-ng-click="vm.updateCheckbox(item, 'creator_view')">
+                        </md-checkbox>
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+        <div data-ng-if="!vm.readyStatus.content">
+
+            <div layout="row" layout-sm="column" layout-align="space-around" class="dashboard-loader">
+                <progress-circular diameter="50"></progress-circular>
+            </div>
+
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="space-between center">
+
+        <md-button class="md-raised" ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+
+        <div layout="row">
+
+            <md-button class="md-raised" ng-click="vm.save($event)">
+                Save
+            </md-button>
+
+            <md-button class="md-raised" ng-click="vm.agree()">
+                Save and Exit
+            </md-button>
+
+        </div>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               data-on-resize-callback="vm.rearrangeMdDialogActions()"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,32 @@
+<md-dialog aria-label="" ng-cloak class="success-dialog width-40">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Export Layout</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="p-24">
+
+            <div layout="row">
+
+                <div class="width-90">
+                    <md-input-container class="width-80">
+                        <label>File Name</label>
+                        <input type="text" data-ng-model="vm.filename">
+                    </md-input-container>
+                </div>
+
+            </div>
+
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()">
+            Close
+        </md-button>
+        <a style="margin-right:20px;" class="md-button md-raised md-primary export-classifier-link">
+            Export
+        </a>
+    </md-dialog-actions>
+</md-dialog>

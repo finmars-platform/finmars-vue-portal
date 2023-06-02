@@ -1,0 +1,17 @@
+<div class="entity-viewer-holder">
+        <!--<div data-ng-if="vm.readyStatus.attributes" class="g-group-table-holder">-->
+        <div class="g-group-table-holder height-100">
+            <group-table
+                    attribute-data-service="vm.attributeDataService"
+                    ev-data-service="vm.entityViewerDataService"
+                    ev-event-service="vm.entityViewerEventService"
+            ></group-table>
+        </div>
+
+        <!--<div data-ng-if="!vm.readyStatus.attributes">-->
+            <!--<div class="e-data-loader" layout="row" layout-sm="column" layout-align="space-around">-->
+                <!--&lt;!&ndash;<md-progress-circular md-diameter="100" md-mode="indeterminate"></md-progress-circular>&ndash;&gt;-->
+                <!--<progress-circular diameter="100"></progress-circular>-->
+            <!--</div>-->
+        <!--</div>-->
+</div>

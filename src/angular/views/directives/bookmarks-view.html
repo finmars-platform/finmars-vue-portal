@@ -1,0 +1,36 @@
+<div data-ng-controller="BookmarksController as vm">
+    <md-button class="md-button header-cloud-layout-btn" data-ng-click="toggleBookmarkPanel()">
+        <ng-md-icon icon="bookmark" size="24">
+            <md-tooltip class="tooltip_1" md-direction="bottom">Open bookmark panel</md-tooltip>
+        </ng-md-icon>
+    </md-button>
+    <div class="bookmarks-list" layout="row" layout-align="space-between center" data-ng-if="showBookmarks">
+        <div layout="row">
+            <div data-ng-repeat="item in vm.items track by item.id">
+                <div data-ng-if="item.children.length" layout="row" layout-align="start start">
+                    <md-menu>
+                        <!-- Trigger element is a md-button with an icon -->
+                        <md-button ng-click="$mdMenu.open($event)" aria-label="Open sample menu">
+                            {{item.name}}
+                        </md-button>
+                        <md-menu-content>
+                            <md-menu-item data-ng-repeat="subItem in item.children">
+                                <!--<md-button data-ui-sref="{{vm.getState(subItem)}}" data-ng-click="vm.setLayout(subItem)">{{subItem.name}}</md-button>-->
+                                <md-button data-ng-click="vm.setLayout(subItem)">{{subItem.name}}</md-button>
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
+                </div>
+                <div data-ng-if="!item.children.length">
+                    <!--<md-button data-ui-sref="{{vm.getState(item)}}" class="bookmark-a-btn" data-ng-click="vm.setLayout(item)">{{item.name}}</md-button>-->
+                    <md-button class="bookmark-a-btn" data-ng-click="vm.setLayout(item)">{{item.name}}</md-button>
+                </div>
+            </div>
+        </div>
+        <div layout="row">
+            <md-button class="md-button header-cloud-layout-btn" data-ng-click="vm.openSettings($event)">
+                <ng-md-icon icon="settings" size="36"></ng-md-icon>
+            </md-button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,60 @@
+<md-dialog aria-label="event" class="draggable-dialog" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Event: {{vm.event.event_schedule_object.name}} (Apply default)</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content   class="custom-scrollbar md-padding">
+
+        <p>
+            {{vm.event.event_schedule_object.display_description}}
+        </p>
+
+        <div data-ng-if="vm.automatic_actions.length">
+
+            <p>
+                <b>The following transactions will be booked:</b>
+            </p>
+
+            <div layout="row" data-ng-repeat="item in vm.automatic_actions">
+                {{item.display_text}}
+            </div>
+
+        </div>
+
+
+        <div data-ng-if="vm.automaitc_actions_as_pending.length">
+
+            <p>
+                <b>The following transactions will be booked as pending:</b>
+            </p>
+
+            <div layout="row" data-ng-repeat="item in vm.automaitc_actions_as_pending">
+                {{item.display_text}}
+            </div>
+
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="column">
+        <div layout="row" layout-align="space-between center" class="width-100">
+            <md-button aria-label="cancel" class="md-raised md-warn" data-ng-click="vm.skip()">
+                Skip
+            </md-button>
+            <md-button aria-label="cancel" class="md-raised" data-ng-click="vm.informed()">
+                OK, do nothing
+            </md-button>
+            <md-button aria-label="process" class="md-raised md-primary" data-ng-click="vm.applyDefault()">
+                Apply Default
+            </md-button>
+        </div>
+        <div class="width-100">
+            <md-button aria-label="cancel" class=" md-warn skip-all-button"
+                       data-ng-click="vm.skipAll()">
+                Skip All
+            </md-button>
+        </div>
+    </md-dialog-actions>
+</md-dialog>

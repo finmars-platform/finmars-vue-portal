@@ -1,0 +1,56 @@
+<div class="flex-row instrument-options-selector">
+
+    <table>
+        <thead>
+            <tr class="options-row">
+                <td class="options-parameters">Parameter</td>
+                <td class="options-show">Show</td>
+                <td class="options-override-name">Override Name</td>
+            </tr>
+        </thead>
+
+        <tbody>
+            <!--remember override_name if user cancel without saving-->
+            <tr ng-repeat="option in popupModel.value" class="options-row" ng-init="oldValue = option.override_name">
+
+                <td class="options-parameters">{{option.name}}</td>
+                <td class="options-show"><md-checkbox ng-model="option.to_show" class="m-b-0"></md-checkbox></td>
+                <td class="options-override-name">
+
+                    <div class="grid-table-cell"
+                         custom-popup
+                         popup-template-url="'views/popups/option-editor-popup-view.html'"
+                         popup-data="{
+                            option: option,
+                            oldValue: oldValue,
+                            cancel: popupData.cancel,
+                            save: popupData.save
+                        }"
+                         position-relative-to="element"
+                         relative-popup-x="left"
+                         relative-popup-y="top"
+                         offset-y="-24"
+                         open-on="click"
+                         close-on-click-outside="true"
+                         popup-classes="p-16 popup-z-index"
+                         backdrop-classes="back-drop-z-index">
+                        <div class="gt-cell-content">
+
+                            <div class="gt-cell-text-container">
+                                <div class="gt-cell-text">
+                                    <span data-ng-bind="option.override_name"></span>
+                                </div>
+                                <div class="gt-cell-edit-btn ng-scope">
+                                    <span class="material-icons">edit</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>

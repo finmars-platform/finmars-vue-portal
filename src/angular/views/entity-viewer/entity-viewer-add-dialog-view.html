@@ -1,0 +1,55 @@
+<md-dialog aria-label="entity viewer add dialog"
+    class="entity-editor-dialog draggable-dialog dialog-actions-bottom evEditorDialogElemToResize" drag-dialog
+    style="height: 100%">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Add {{vm.entityTypeSlug()}}</h2>
+            <div data-ng-if="vm.processing" layout="row" class="m-l-16">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="m-r-8">
+                    <progress-circular diameter="20"></progress-circular>
+                </div>
+                — Processing
+            </div>
+
+        </div>
+    </md-toolbar>
+    <md-dialog-content style="height: 100%">
+
+        <div style="min-width: 1450px"
+             data-ng-include="'views/entity-viewer/entity-viewer-add-content-view.html'"></div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="space-between center">
+<!--        Victor 2021.02.11 make one footer for modal window and Big Drawer-->
+<!--
+        <div>
+            <md-button ng-click="vm.editLayout()" class="md-raised md-primary" ng-disabled="!vm.checkReadyStatus()">
+                Edit Form
+            </md-button>
+            <md-button ng-click="vm.manageAttrs($event)" class="md-raised md-primary"
+                ng-disabled="!vm.checkReadyStatus()">
+                Manage attributes
+            </md-button>
+        </div>
+
+        <div>
+            <md-button class="md-raised" ng-click="vm.cancel()">
+                Cancel
+            </md-button>
+            <md-button class="md-raised" data-ng-class="{'disabled-btn': !vm.formIsValid || vm.processing}"
+                ng-click="vm.save($event, true)" style="margin-right:20px;">
+                Add and Exit!
+            </md-button>
+        </div>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize" data-elem-to-resize="vm.dialogElemToResize"
+            class="dialog-window-resizer_type1"></dialog-window-resizer>-->
+
+        <div class="dialog-footer flex-row fc-space-between"
+             data-ng-include="'views/entity-viewer/entity-viewer-universal-add-footer-view.html'"></div>
+
+    </md-dialog-actions>
+</md-dialog>

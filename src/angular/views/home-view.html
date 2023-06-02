@@ -1,0 +1,117 @@
+<div class="p-16">
+
+<!--    <h1 class="m-0">Homepage</h1>-->
+
+    <md-button data-ng-click="vm.reactToEvents($event)" class="md-raised md-primary">React to events</md-button>
+
+    <div layout="row" class="m-b-35">
+
+
+
+        <fieldset class="homepage-dashboards-fieldset" flex="50" style="margin-right: 15px">
+            <legend>Dashboard</legend>
+
+            <div data-ng-if="vm.dashboardsList.length > 0" layout="column">
+
+                <div data-ng-repeat="dashboard in vm.dashboardsList">
+                    <md-button class="md-raised md-button"
+                               ui-sref="app.portal.dashboard({layoutUserCode: dashboard.user_code})"
+                               ng-bind="dashboard.name"></md-button>
+                </div>
+
+            </div>
+        </fieldset>
+
+        <fieldset flex="50" style="margin-left: 15px">
+            <legend>Messages</legend>
+
+            <div class="homepage-messages-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <td style="width: 140px;">
+                                Date
+                            </td>
+                            <td>
+                                Type
+                            </td>
+                            <td>
+                                Section
+                            </td>
+                            <td>
+                                Title
+                            </td>
+                            <td>
+                                Description
+                            </td>
+                            <td>
+                                Attachments
+                            </td>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr data-ng-repeat="item in vm.systemMessages">
+
+                            <td> {{item.verbose_created}}</td>
+                            <td> {{item.verbose_type}}</td>
+                            <td> {{item.verbose_section}}</td>
+                            <td> {{item.title}}</td>
+                            <td> {{item.description}}</td>
+                            <td>
+
+                                <div data-ng-repeat="item in item.attachments">
+                                    <span class="download-file-button" data-ng-click="vm.downloadFile($event, item)">{{item.file_report_object.name}}</span>
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+
+            </div>
+        </fieldset>
+    </div>
+
+    <div layout="row">
+        <fieldset flex="100">
+            <legend>Events</legend>
+
+            <div class="m-t-12 overflow-scroll-x width-100 p-b-24 p-t-24 margin-bottom-20">
+                <div>
+                    <div data-ng-include="'views/check-events-view.html'"></div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <!--<div class="m-t-12 overflow-scroll-x width-100 p-b-24 p-t-24 margin-bottom-20">
+        <div>
+            <div data-ng-include="'views/check-events-schedules-tab-view.html'"></div>
+        </div>
+    </div>
+
+    <div layout="row">
+        <a data-ui-sref="app.portal.dashboard" class="md-button md-raised md-primary">Dashboard</a>
+    </div>-->
+
+</div>
+
+
+<div class="overlay" data-ng-if="vm.eventsProcessing">
+    <!--<div class="overlay">-->
+
+    <div class="overlay-loader" layout="row" layout-sm="column" layout-align="space-around">
+        <progress-circular diameter="100"></progress-circular>
+    </div>
+
+    <p class="overlay-text">Checking for Events</p>
+
+</div>

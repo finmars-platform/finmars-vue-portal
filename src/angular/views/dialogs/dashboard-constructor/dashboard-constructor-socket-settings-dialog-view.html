@@ -1,0 +1,69 @@
+<md-dialog aria-label="dashboard constructor socket settings dialog"
+           class="dashboard-constructor-socket-settings-dialog draggable-dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Dashboard Component Manager</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="p-16">
+        <md-button class="md-raised edit-component-type-button m-b-24"
+                   data-ng-click="vm.editComponentType($event)">
+            b><span data-ng-bind="vm.component.name"></span></b> (<span
+                data-ng-bind="vm.getVerboseType()"></span>)
+        </md-button>
+
+        <md-input-container
+                class="md-block no-error-spacer m-b-16"
+                flex-gt-sm
+                aria-label="select with filter"
+                style="width: 150px;">
+            <label>Element width</label>
+            <md-select ng-model="vm.colspan"
+                       md-container-class="common-select-container"
+                       md-on-close="searchTerm = ''"
+                       ng-change="vm.onSpanChange()">
+                <div class="select-options-holder">
+                    <md-option
+                            data-ng-repeat="colspan in vm.colspanList"
+                            ng-value="colspan">
+                        {{colspan}} column(s)
+                    </md-option>
+                </div>
+            </md-select>
+        </md-input-container>
+
+        <md-input-container
+                class="md-block no-error-spacer m-b-16"
+                flex-gt-sm
+                aria-label="select with filter"
+                style="width: 150px;">
+            <label>Element height</label>
+            <md-select ng-model="vm.rowspan"
+                       md-container-class="common-select-container"
+                       md-on-close="searchTerm = ''"
+                       ng-change="vm.onSpanChange()">
+                <div class="select-options-holder">
+                    <md-option
+                            data-ng-repeat="rowspan in vm.rowspanList"
+                            ng-value="rowspan">
+                        {{rowspan}} row(s)
+                    </md-option>
+                </div>
+            </md-select>
+        </md-input-container>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+        <!--<md-button class="md-raised" ng-click="vm.cancel()">
+            Cancel
+        </md-button>-->
+        <md-button class="md-raised" ng-click="vm.agree()" style="margin-right:20px;">
+            <span>Ok</span>
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

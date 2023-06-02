@@ -1,0 +1,385 @@
+<md-dialog aria-label="dashboard constructor report viewer dialog"
+           class="draggable-dialog width-50 dialog-actions-bottom dcReportViewerElemToDrag"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>New Report Viewer Component</h2>
+            <span flex></span>
+
+            <div data-ng-if="vm.processing" class="dialog-toolbar-loader">
+                <progress-circular diameter="20"></progress-circular>
+            </div>
+
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+
+        <md-tabs md-dynamic-height>
+            <md-tab label="MAIN">
+                <md-content class="p-16">
+
+                    <div>
+
+                        <div>
+                            <md-input-container class="dashboard-constructor-field1">
+                                <label for="">Name</label>
+                                <input type="text" data-ng-model="vm.item.name">
+                            </md-input-container>
+                        </div>
+
+                        <div>
+                            <md-input-container class="dashboard-constructor-field1">
+                                <label for="">Report label</label>
+                                <input type="text" data-ng-model="vm.item.custom_component_name">
+                            </md-input-container>
+                        </div>
+
+                        <!-- <md-input-container class="dashboard-constructor-field1" style="height: 58px">
+                            <label for="">Report Type</label>
+                            <md-select data-ng-model="vm.item.settings.entity_type"
+                                       data-ng-change="vm.reportTypeChange()">
+                                <md-option value="balance-report">Balance Report</md-option>
+                                <md-option value="pl-report">P&L Report</md-option>
+                                <md-option value="transaction-report">Transaction Report</md-option>
+                            </md-select>
+                        </md-input-container>
+
+                        <expandable-items-selector data-model="vm.item.settings.layout"
+                                                   data-title="Layout"
+                                                   data-dialog-title="Choose layout"
+                                                   data-items="vm.layoutsWithLinkToFilters"
+                                                   data-is-disabled="!vm.item.settings.entity_type"
+                                                   data-on-change-callback="vm.onRvLayoutChange()"
+                                                   class="dashboard-constructor-selector-directive"></expandable-items-selector> -->
+
+                        <div style="width: 400px;" class="m-l-10">
+                            <div ng-if="vm.readyStatus.layouts">
+                                <multitype-field label="Select layout"
+                                                 field-types-data="vm.layoutsSelectorsList"
+                                                 type-switch="selector"
+                                                 on-value-change="vm.onLayoutChange()"
+                                                 on-type-change="vm.onLayoutEntityTypeChange(activeType)"></multitype-field>
+                            </div>
+
+                            <div ng-if="!vm.readyStatus.layouts" class="flex-row fc-space-around" style="height: 40px;">
+                                <progress-circular diameter="30"></progress-circular>
+                            </div>
+                        </div>
+
+                        <h4>Linked Filters (As when row is selected)</h4>
+
+                        <div>
+
+                            <div data-ng-repeat="filterLink in vm.item.settings.linked_components.filter_links track by $index"
+                                 layout="row">
+
+                                <div layout="row">
+
+                                    <!-- <md-input-container style="width: 200px;">
+                                    <label for="">Reference Name</label>
+                                    <input type="text" data-ng-model="filterLink.key">
+                                    </md-input-container> -->
+
+                                    <div class="m-t-16 m-b-16">
+
+                                        <md-input-container class="dashboard-constructor-field1">
+
+                                            <label for="">Attribute</label>
+
+                                            <md-select data-ng-model="filterLink.key"
+                                                       md-on-close="filterLinkSearchTerm = ''"
+                                                       ng-class="{'disabled-btn': !vm.item.settings.entity_type}">
+                                                <md-select-header>
+                                                    <input data-ng-model="filterLinkSearchTerm"
+                                                           type="search"
+                                                           placeholder="Search for a ..."
+                                                           class="md-text md-select-search-pattern select-input-filter"
+                                                           ng-keydown="$event.stopPropagation()">
+                                                </md-select-header>
+                                                <md-option
+                                                        data-ng-repeat="attribute in vm.attributes | orderBy:'-name' | filter:{name: filterLinkSearchTerm} track by attribute.key "
+                                                        ng-value="attribute.key">
+                                                    {{attribute.name}}
+                                                </md-option>
+                                            </md-select>
+
+                                        </md-input-container>
+
+                                    </div>
+
+                                    <div class="m-t-16 m-b-16">
+
+                                        <md-input-container class="md-block">
+                                            <label>Value Type</label>
+                                            <md-select data-ng-model="filterLink.value_type"
+                                                       data-ng-change="filterLink.componentId = null">
+                                                <md-option ng-value="10">Text</md-option>
+                                                <md-option ng-value="20">Number</md-option>
+                                                <md-option ng-value="40">Date</md-option>
+                                                <md-option ng-value="100">Relation</md-option>
+                                            </md-select>
+                                        </md-input-container>
+
+                                    </div>
+
+                                    <div class="m-t-16 m-b-16">
+
+                                        <md-input-container class="dashboard-constructor-field1">
+                                            <label for="">Control Component</label>
+                                            <md-select data-ng-model="filterLink.component_id"
+                                                       ng-class="{'disabled-btn': !filterLink.value_type}">
+                                                <md-option
+                                                        data-ng-repeat="componentType in vm.getComponentTypesByValueType(filterLink.value_type) | orderBy:'-name' track by componentType.id "
+                                                        ng-value="componentType.id">{{componentType.name}}
+                                                </md-option>
+                                            </md-select>
+                                        </md-input-container>
+
+                                    </div>
+
+
+                                </div>
+
+                                <div layout="row">
+
+                                    <!--<md-button class="md-raised"-->
+                                    <!--ng-class="{'disabled-btn': !filterLink.componentId || !filterLink.key}"-->
+                                    <!--ng-click="vm.updateFilterLink(filterLink)"-->
+                                    <!--style="margin-right:20px;">-->
+                                    <!--Update-->
+                                    <!--</md-button>-->
+
+                                    <md-button class="md-raised md-warn m-t-0" ng-click="vm.deleteFilterLink(filterLink, $index)">
+                                        Delete
+                                    </md-button>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                        <div class="m-t-16">
+
+                            <div layout="row">
+
+                                <!--<md-input-container style="width: 200px;">-->
+                                <!--<label for="">Reference Name</label>-->
+                                <!--<input type="text" data-ng-model="vm.newFilter.key">-->
+                                <!--</md-input-container>-->
+
+                                <div class="m-t-16 m-b-16">
+
+                                    <md-input-container class="dashboard-constructor-field1">
+                                        <label for="">Attribute</label>
+                                        <md-select data-ng-model="vm.newFilter.key"
+                                                   md-on-close="newFiltersearchTerm = ''"
+                                                   ng-class="{'disabled-btn': !vm.item.settings.entity_type}">
+                                            <md-select-header>
+                                                <input data-ng-model="newFiltersearchTerm"
+                                                       type="search"
+                                                       placeholder="Search for a ..."
+                                                       class="md-text md-select-search-pattern select-input-filter"
+                                                       ng-keydown="$event.stopPropagation()">
+                                            </md-select-header>
+                                            <md-option
+                                                    data-ng-repeat="attribute in vm.attributes | orderBy:'-name' | filter:{name: newFiltersearchTerm} track by attribute.key "
+                                                    ng-value="attribute.key">
+                                                {{attribute.name}}
+                                            </md-option>
+                                        </md-select>
+                                    </md-input-container>
+
+                                </div>
+
+
+                                <div class="m-t-16 m-b-16">
+
+                                    <md-input-container class="md-block">
+                                        <label>Value Type</label>
+                                        <md-select data-ng-model="vm.newFilter.value_type"
+                                                   data-ng-change="vm.newFilter.componentId = null">
+                                            <md-option ng-value="10">Text</md-option>
+                                            <md-option ng-value="20">Number</md-option>
+                                            <md-option ng-value="40">Date</md-option>
+                                            <md-option ng-value="100">Relation</md-option>
+                                        </md-select>
+                                    </md-input-container>
+
+                                </div>
+
+                                <div class="m-t-16 m-b-16">
+
+                                    <md-input-container class="dashboard-constructor-field1">
+                                        <label for="">Control Component</label>
+                                        <md-select data-ng-model="vm.newFilter.component_id"
+                                                   ng-class="{'disabled-btn': !vm.newFilter.value_type}">
+                                            <md-option
+                                                    data-ng-repeat="componentType in vm.getComponentTypesByValueType(vm.newFilter.value_type) | orderBy:'-name' track by componentType.id "
+                                                    ng-value="componentType.id">{{componentType.name}}
+                                            </md-option>
+                                        </md-select>
+                                    </md-input-container>
+
+                                </div>
+
+                                <md-button class="md-raised md-primary"
+                                           ng-class="{'disabled-btn': !vm.newFilter.component_id || !vm.newFilter.key}"
+                                           ng-click="vm.addFilterLink()" style="margin-right:20px;">
+                                    Add Filter Link
+                                </md-button>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </md-content>
+            </md-tab>
+
+            <md-tab label="ADVANCE SETTINGS">
+                <md-content class="p-16">
+
+                    <h4 class="m-t-0">Styles</h4>
+
+                    <div>
+
+                        <md-input-container class="dashboard-constructor-field1" style="height: 68px">
+                            <label for="">Cell Text Align</label>
+                            <md-select data-ng-model="vm.item.settings.styles.cell.text_align">
+                                <md-option value="left">Left</md-option>
+                                <md-option value="center">Center</md-option>
+                                <md-option value="right">Right</md-option>
+                            </md-select>
+                        </md-input-container>
+
+                    </div>
+
+                    <div>
+                        <h4>Small report columns</h4>
+
+                        <two-fields-multiselect ng-model="vm.smallRvSelectedCols"
+                                                title="Columns to show in small report"
+                                                items="vm.tableColumnsForMultiselector"
+                                                model="vm.smallRvSelectedCols"
+                                                name-property="name"
+                                                data-selected-items-indication="array"
+                                                data-on-change-callback="vm.smallRvColumnsChanged()"
+                                                class="dashboard-constructor-selector-directive"></two-fields-multiselect>
+                    </div>
+
+                </md-content>
+            </md-tab>
+
+            <md-tab label="MENU SETTINGS">
+                <md-content class="p-16">
+                    <table-attributes-menu-constructor title="Available Columns"
+                                                       dialog-title="Available for addition columns"
+                                                       model="vm.item.user_settings.manage_columns"
+                                                       is-report="'true'"
+                                                       available-attrs="vm.attributes"></table-attributes-menu-constructor>
+
+                </md-content>
+
+                <!--<md-content class="p-16">
+                    <two-fields-multiselect ng-model="vm.item.user_settings.hidden_columns"
+                                            title="Columns to Hide"
+                                            items="vm.tableColumnsForMultiselector"
+                                            model="vm.item.user_settings.hidden_columns"
+                                            name-property="name"
+                                            data-selected-items-indication="array"></two-fields-multiselect>
+
+                </md-content>-->
+            </md-tab>
+
+            <md-tab label="LINKING">
+                <md-content class="p-16">
+                    <div data-ng-if="vm.linkingToFilters && vm.linkingToFilters.length">
+
+                        <h4 class="m-t-0 m-b-16">Link to Selection filters of layout</h4>
+
+                        <div class="dashboard-constructor-linked-filters-container">
+                            <ui>
+                                <li data-ng-repeat="lFilter in vm.linkingToFilters">
+                                    <span data-ng-bind="lFilter.name"></span>
+                                </li>
+                            </ui>
+                        </div>
+
+                        <!--<div class="dashboard-constructor-linked-filters-ui">
+                            <div data-ng-repeat="lFilter in vm.linkingToFilters"
+                                data-ng-bind="lFilter.name"
+                                class="m-b-8 test-class"></div>
+                        </div>-->
+                    </div>
+
+                    <div layout="row">
+                        <div flex="50">
+                            <two-fields-multiselect ng-model="vm.item.settings.linked_components.active_object"
+                                                    title="Select Link to Component"
+                                                    items="vm.componentsForMultiselector"
+                                                    model="vm.item.settings.linked_components.active_object"
+                                                    name-property="name"
+                                                    data-selected-items-indication="array"
+                                                    class="dashboard-constructor-selector-directive"></two-fields-multiselect>
+                        </div>
+                    </div>
+
+                </md-content>
+            </md-tab>
+
+            <md-tab label="CALCULATION">
+                <md-content class="p-16"
+                            data-ng-include="'views/dialogs/dashboard-constructor/dashboard-component-settings-calculation-tab-view.html'">
+                </md-content>
+            </md-tab>
+
+        </md-tabs>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+        <div data-ng-if="!vm.launchedFromDashboard"
+             layout="row"
+             layout-align="space-between center">
+
+            <md-button ng-click="vm.exportToDashboards()" style="margin-right:20px;">
+                Export to dashboards
+            </md-button>
+
+            <md-button data-ng-click="vm.cancel()" style="margin-right:20px;">
+                Cancel
+            </md-button>
+
+            <md-button data-ng-click="vm.agree()" style="margin-right:20px;">
+                OK
+            </md-button>
+
+        </div>
+
+        <div data-ng-if="vm.launchedFromDashboard"
+             layout="row"
+             layout-align="space-between center"
+             class="width-100">
+            <div>
+                <md-button data-ng-click="vm.cancel()" style="margin-right:20px;">
+                    Cancel
+                </md-button>
+
+                <md-button data-ng-click="vm.customAgree('apply')" style="margin-right:20px;">
+                    Apply
+                </md-button>
+            </div>
+
+            <md-button data-ng-click="vm.customAgree('save')">Save</md-button>
+        </div>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               data-on-resize-callback="vm.rearrangeMdDialogActions()"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+    </md-dialog-actions>
+</md-dialog>

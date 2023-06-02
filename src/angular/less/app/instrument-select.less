@@ -1,0 +1,311 @@
+.instrument-select-database-dialog-view {
+
+  md-dialog-content {
+    padding: 21px 20px 15px;
+  }
+
+  .control-button {
+    color: #f05a22;
+    margin: 2px;
+    height: 29px;
+    border: 0;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 13px;
+    font-weight: 700;
+
+    &:hover {
+      opacity: .7;
+    }
+  }
+
+  span.highlight {
+    color: #F05A22;
+    font-weight: bold;
+  }
+
+}
+
+.instrument-select-input-sel-option {
+  padding: 11px 16px 2px 16px;
+  box-sizing: border-box;
+  width: 100%;
+
+  span.highlight {
+    color: #F05A22;
+    font-weight: bold;
+  }
+
+  &:hover {
+    background: inherit;
+    background-color: rgba(0, 0, 0, 0.027450980392156862);
+    border: none;
+    border-radius: 0px;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+}
+
+.instrument-select-instrument-name {
+  font-family: 'Roboto-Regular', 'Roboto', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
+  letter-spacing: normal;
+  color: #333333;
+}
+
+.instrument-select-instrument-isin {
+  color: rgb(161, 161, 161);
+  font-size: 12px;
+}
+
+.instrument-select-instrument-ticker {
+  color: rgb(161, 161, 161);
+  font-size: 12px;
+}
+
+instrument-select {
+  .custom-input-sel-menu-block {
+    max-height: 380px;
+    min-width: 280px;
+    max-width: 280px;
+    width: 280px;
+  }
+}
+
+.instrument-select-option-detail-box {
+  width: 220px;
+  left: 280px;
+  top: 0;
+  position: absolute;
+  height: 380px;
+  background: #F6F6F6;
+  z-index: 52;
+  box-shadow: 0 0 2px #000;
+  padding: 11px 16px 2px 16px;
+  box-sizing: border-box;
+}
+
+.instrument-select-options-group-title {
+  font-size: 14px;
+  letter-spacing: normal;
+  color: #333333;
+  display: block;
+  margin: 8px;
+  padding-left: 10px;
+  position: sticky;
+  background: #fff;
+  cursor: pointer;
+  height: 30px;
+  padding-top: 9px;
+  box-sizing: border-box;
+}
+
+.instrument-select-option-detail-label {
+  font-size: 12px;
+  color: #747474;
+}
+
+.instrument-select-option-detail-value {
+  font-family: 'Roboto-Regular', 'Roboto', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
+  letter-spacing: normal;
+  color: #333333;
+}
+
+.instrument-select-option-detail-field {
+  margin-bottom: 8px;
+}
+
+
+.instrument-select-database-dialog-view {
+  width: 936px;
+  height: 614px;
+}
+
+.instrument-select-database-dialog-table-body {
+  width: 713px;
+  height: 359px;
+  overflow-y: auto;
+
+
+}
+
+.instrument-select-database-dialog-instrument-row {
+  display: flex;
+  height: 47px;
+  box-sizing: border-box;
+  padding: 0 10px;
+  border-top: 1px solid #ddd;
+
+  &.active {
+    color: #F05A22;
+
+    .instrument-select-instrument-name {
+      color: #F05A22;
+    }
+
+    .instrument-select-instrument-isin {
+      color: #F05A22;
+    }
+
+    .instrument-select-instrument-type {
+      color: #F05A22;
+    }
+
+  }
+
+  &:hover {
+    background: inherit;
+    background-color: rgba(0, 0, 0, 0.027450980392156862);
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+
+  .instrument-select-instrument-name {
+    width: 50%;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 14px;
+    letter-spacing: normal;
+    color: #333333;
+    padding: 5px;
+  }
+
+  .instrument-select-instrument-isin {
+    width: 30%;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 14px;
+    letter-spacing: normal;
+    color: #333333;
+    padding: 5px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .instrument-select-instrument-type {
+    width: 20%;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 14px;
+    letter-spacing: normal;
+    color: #333333;
+    padding: 5px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    text-transform: capitalize;
+  }
+
+
+}
+
+
+.instrument-select-database-dialog-view .instrument-select-option-detail-box {
+  width: 224px;
+  right: 0;
+  left: inherit;
+  top: 123px;
+  position: absolute;
+  height: 417px;
+  background: #F6F6F6;
+  z-index: 52;
+  box-shadow: none;
+  border: 1px solid #ddd;
+  padding: 11px 16px 2px;
+  box-sizing: border-box;
+}
+
+.instrument-select-database-dialog-table-head {
+  display: flex;
+  width: 713px;
+  padding: 0 10px;
+  font-size: 13px;
+  color: #666;
+  box-sizing: border-box;
+  height: 56px;
+  padding-top: 13px;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+
+.instrument-select-database-dialog-view {
+
+  md-toolbar-tools {
+    h2 {
+      color: #000;
+      font-family: 'Roboto-Medium', 'Roboto Medium', 'Roboto', sans-serif;
+      font-weight: 500;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 28px;
+    }
+  }
+
+  md-dialog-content {
+    display: block;
+    height: 500px;
+  }
+
+  md-dialog-actions {
+    display: block;
+    text-align: right;
+    height: 53px;
+  }
+
+  .instrument-select-options-group-title {
+    font-size: 14px;
+    letter-spacing: normal;
+    color: #333;
+    display: block;
+    /* margin: 8px; */
+    padding-left: 10px;
+    height: 46px;
+    box-sizing: border-box;
+    padding-top: 15px;
+    position: sticky;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .instrument-select-database-dialog-view-close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+  }
+
+}
+
+.instrument-select-update-instrument-button {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  cursor: pointer;
+  &:hover {
+    opacity: .7;
+  }
+}
+
+.instrument-select-database-footer {
+  float: left;
+  width: 200px;
+  text-align: left;
+  padding-top: 12px;
+  color: #f05a22;
+
+  span {
+    cursor: pointer;
+
+    &:hover {
+      opacity: .7;
+    }
+  }
+}

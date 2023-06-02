@@ -1,0 +1,137 @@
+<div data-ng-if="vm.checkReadyStatus()">
+
+    <div class="entity-editor-fixed-area">
+
+        <div class="flex-row fi-center">
+
+            <!--<div style="flex: 0 1 50%">
+                Transaction Type:  {{vm.transactionType.name}} ({{vm.transactionType.user_code}})
+            </div>-->
+            <div style="flex: 0 1 50%">
+                <base-input data-label="Transaction Type"
+                            data-indicator-button-icon="menu"
+                            data-model="vm.transactionType.name"></base-input>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!--<div data-ng-if="vm.fixedArea.isActive"
+         class="entity-editor-fixed-area-container"
+         ng-class="{'opacity-05': vm.entity.is_locked, 'no-pointer-events': vm.entity.is_locked}">
+        <div layout="row"
+             ng-repeat="row in vm.range(vm.fixedArea.layout.rows)"
+             class="entity-editor-row">
+            <div data-ng-repeat="field in vm.fixedArea.layout.fields | orderBy: 'column' track by $index"
+                 data-ng-if="vm.checkFieldRender(vm.fixedArea, row, field)"
+                 class="ev-data-field"
+                 data-ng-class="{'decoration-label-line': field.attribute['value_type'] === 'decoration'}"
+                 flex="{{vm.bindFlex(vm.fixedArea, field)}}">
+                <bind-field-control
+                        entity-type="vm.entityType"
+                        entity="vm.entity"
+                        ev-editor-event-service="vm.evEditorEventService"
+                        ev-editor-data-service="vm.evEditorDataService"
+                        item="vm.fixedAreaAttributesLayout[$index]"
+                        fields-data-store="vm.fieldsDataStore"
+                        entity-change="vm.onEntityChange(fieldKey)"></bind-field-control>
+            </div>
+        </div>
+    </div>-->
+
+    <div class="position-relative">
+
+        <md-tabs md-dynamic-height md-border-bottom class="tabs-colored">
+
+            <md-tab data-ng-repeat="tab in vm.tabs track by tab.name" md-on-select="vm.activeTab = tab">
+                <md-tab-label>
+                    <div class="tab-name-elem evFormUserTabName" data-tab-name="{{tab.name | lowercase}}">
+                        <span>{{tab.name}}</span>
+                    </div>
+                </md-tab-label>
+
+                <md-tab-body>
+                    <md-content class="md-padding p-t-26"
+                                ng-class="{'locked-tab-overlay': vm.entity.is_locked, 'canceled-tab-overlay': vm.entity.is_canceled}" style="min-height: 50vh">
+                        <div ng-repeat="row in vm.range(tab.layout.rows)"
+                             layout="row"
+                             class="entity-editor-row">
+                            <div data-ng-repeat="field in tab.layout.fields | orderBy: 'column' track by $index"
+                                 class="ev-data-field {{field.attribute['value_type'] === 'decoration' ? 'decoration-label-line' : ''}}"
+                                 flex="{{vm.bindFlex(tab, field)}}"
+                                 data-ng-if="vm.checkFieldRender(tab, row, field)">
+                                <bind-field-control
+                                        entity-type="vm.entityType"
+                                        entity="vm.entity"
+                                        ev-editor-event-service="vm.evEditorEventService"
+                                        ev-editor-data-service="vm.evEditorDataService"
+                                        item="vm.attributesLayout[tab.tabOrder][field.row][field.column]"
+                                        fields-data-store="vm.fieldsDataStore"
+                                        entity-change="vm.onEntityChange(fieldKey)"></bind-field-control>
+                            </div>
+                        </div>
+                    </md-content>
+                </md-tab-body>
+            </md-tab>
+
+            <md-tab data-ng-repeat="tab in vm.entityTabs" data-ng-if="vm.checkViewState(tab)" md-active="vm.activeTab === tab">
+                <!-- Victor 2020.10.28 EntityTabs labels move to md-menu-->
+                <!--                         <md-tab-label>
+                                            <div class="tab-name-elem" data-tab-name="{{tab.label | lowercase}}">
+                                                <span class="grey-tab">{{tab.label}}</span>
+                                            </div>
+                                        </md-tab-label>-->
+
+                <md-tab-body>
+                    <md-content class="md-padding p-t-26"
+                                ng-class="{'locked-tab-overlay': !vm.entity.is_enabled && vm.hasEnabledStatus}">
+                        <div data-ng-include="tab.templateUrl"></div>
+                    </md-content>
+                </md-tab-body>
+            </md-tab>
+
+        </md-tabs>
+
+        <div class="entity-tabs-menu entityTabsMenu complex-transaction-entity-tabs-menu"
+             data-ng-class="{'active': vm.isEntityTabActive()}"
+
+             custom-popup
+             popup-template="{{vm.entityTabsMenuTplt}}"
+             popup-data="vm.entityTabsMenuPopupData"
+             position-relative-to="element"
+             relative-popup-x="left"
+             open-on="click"
+             close-on-click-outside="true"
+             popup-classes="{{vm.entityTablePopupClasses}}">
+
+            <md-button
+                    aria-label="open entity tabs"
+                    class="md-icon-button entity-tabs-menu-btn">
+                <ng-md-icon icon="arrow_drop_down"></ng-md-icon>
+            </md-button>
+
+            <div class="tabs-menu-error-icon">
+                <span class="material-icons">info</span>
+                <md-tooltip class="error-tooltip" md-direction="top">Tabs with error</md-tooltip>
+            </div>
+
+        </div>
+
+        <div class="transaction-recalculating-overlay" data-ng-show="vm.processing">
+            <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                <!--<md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>-->
+                <progress-circular diameter="100"></progress-circular>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div data-ng-if="!vm.checkReadyStatus()">
+    <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+        <!--<md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>-->
+        <progress-circular diameter="100"></progress-circular>
+    </div>
+</div>

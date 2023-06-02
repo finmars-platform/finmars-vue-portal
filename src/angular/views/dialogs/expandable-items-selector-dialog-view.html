@@ -1,0 +1,112 @@
+<md-dialog class="expandable-items-selector-dialog draggable-dialog dialog-actions-bottom eItemsSelectorElemToResize"
+           aria-label="expandable items selector dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2 ng-bind="vm.dialogTitle"></h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="m-t-16 p-16" style="min-width: 350px">
+
+        <div ng-class="{'bookmarks-layout-without-fold': vm.noFolding}">
+
+            <div class="select-layout-filter-container">
+                <input type="text"
+                       ng-model="searchTerm"
+                       data-ng-model-options="{debounce: 500}"
+                       data-ng-change="vm.setCCHeight()"
+                       placeholder="Search for ..."
+                       aria-label="select layout filter input">
+            </div>
+
+            <div layout="row">
+                <div layout="row" class="select-layout-toggle-btn-container m-r-16">
+                    <md-button class="md-raised small-folding-btn1"
+                               ng-click="vm.expandAll()">+</md-button>
+                    <span class="m-t-8">Expand all</span>
+                </div>
+
+                <div layout="row" class="select-layout-toggle-btn-container m-r-16">
+                    <md-button class="md-raised small-folding-btn1"
+                               ng-click="vm.collapseAll()">-</md-button>
+                    <span class="m-t-8">Collapse all</span>
+                </div>
+            </div>
+
+            <md-card data-ng-repeat="item in vm.items | filter: {name: searchTerm} as results track by item.id"
+                     class="select-layout-item-card expandable-item"
+                     ng-class="{'selected': item.isSelected}"
+                     data-ng-click="vm.selectItem(item)"
+                     data-ng-dblclick="vm.selectItemAndSave(item)">
+
+                <div class="cb1-main-container"
+                     ng-class="{'cb1-block-collapsed': vm.collapsingItems[item.id]}">
+
+                    <div class="position-relative">
+
+                        <md-checkbox data-ng-if="vm.isMultiselector"
+                                     data-ng-checked="item.isSelected"
+                                     class="select-layout-multiselector-checkbox m-b-0"
+                                     aria-label="selected item checkbox"></md-checkbox>
+
+                        <div layout="row" class="expandable-items-item-row"
+                             data-ng-class="{'empty-space-for-button': !item.content.length}" >
+
+                            <md-button data-ng-if="item.content.length"
+                                       class="md-button small-folding-btn1 expandable-items-subitems-toggle"
+                                       ng-click="vm.toggleSubitemsCollapse(item.id, $event)"
+                                       aria-label="folding subitems button">
+                                <span ng-if="vm.collapsingItems[item.id]">+</span>
+                                <span ng-if="!vm.collapsingItems[item.id]">-</span>
+                            </md-button>
+
+                            <span data-ng-bind="item.name"></span>
+
+                        </div>
+
+                        <div data-ng-if="item.content.length" class="cb1-resizing-wrap">
+
+                            <div class="expandable-items-subitems-wrap subitemsHeightWrap">
+                                <div data-ng-repeat="subitem in item.content"
+                                     class="expandable-items-subitem">
+
+                                    <div>
+                                        <span data-ng-bind="subitem.name"></span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </md-card>
+
+        </div>
+
+        <!--<div data-ng-if="!vm.readyStatus.content" class="dialog-loader overflow-hidden">
+            <div layout="row" layout-sm="column" layout-align="space-around">
+                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            </div>
+        </div>-->
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="space-between center">
+        <md-button ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+        <md-button ng-click="vm.agree()" style="margin-right:20px;">
+            OK
+        </md-button>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+    </md-dialog-actions>
+</md-dialog>

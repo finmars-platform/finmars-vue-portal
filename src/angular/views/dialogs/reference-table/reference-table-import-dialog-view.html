@@ -1,0 +1,60 @@
+<md-dialog aria-label="" ng-cloak class="success-dialog draggable-dialog" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Import Reference Table</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="p-24">
+
+            <div data-ng-if="vm.readyStatus.content" layout="row">
+
+                <div>
+
+                    <md-input-container flex="40" style="margin-bottom: 0" class="ng-hide">
+                        <input type="file" id="importDataUploadInput" input-file-directive
+                               read-file="vm.file"
+                               read-file-change="vm.checkExtension(vm.file, 'csv', $event)">
+                    </md-input-container>
+                    <div class="input-upload-file-container">
+                        <p class="importDataUploadInput">Select file</p>
+                        <label for="importDataUploadInput" class="md-button md-raised md-primary IFUlabel">
+                            <ng-md-icon icon="file_upload"></ng-md-icon>
+                            <span>BROWSE</span></label>
+                    </div>
+
+                </div>
+
+                <md-input-container aria-label="select with filter">
+
+                    <md-input-container>
+                        <label>Mode</label>
+                        <md-select data-ng-model="vm.mode">
+                            <md-option value="skip">Skip if exists</md-option>
+                            <md-option value="overwrite">Clear All and Overwrite</md-option>
+                        </md-select>
+                    </md-input-container>
+
+                </md-input-container>
+
+
+            </div>
+
+            <div data-ng-if="!vm.readyStatus.content">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                    <md-progress-circular md-mode="indeterminate" md-diameter="48"></md-progress-circular>
+                </div>
+            </div>
+
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()">
+            Close
+        </md-button>
+        <md-button ng-click="vm.agree()" style="margin-right:20px;" class="md-raised md-primary">
+            Import
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

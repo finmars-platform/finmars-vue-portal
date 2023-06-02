@@ -1,0 +1,22 @@
+<div class="active-rows-actions display-none activeRowsActions">
+
+    <div class="active-row-actions-wrapper">
+        <div class="selected-rows-count">
+            <span>{{selectedRowsCount}}</span>
+            <span>selected</span>
+        </div>
+
+        <div class="active-row-actions-container">
+            <div ng-if="!isReport">
+                <g-ev-rows-bulk-actions ev-data-service="evDataService"
+                                        ev-event-service="evEventService"></g-ev-rows-bulk-actions>
+            </div>
+        </div>
+
+    </div>
+
+    <button class="close-button" data-ng-click="closeSelectedRowsActions()">
+        <span class="material-icons">close</span>
+    </button>
+
+</div>

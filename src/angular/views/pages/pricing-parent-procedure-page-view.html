@@ -1,0 +1,133 @@
+<div class="p-24 pricing-parent-procedure-page">
+
+    <div data-ng-if="vm.readyStatus.procedures">
+
+        <div>
+
+            <h4>Pricing Procedures</h4>
+
+            <div layout="row">
+                <div class="p-8 width-20">
+                    <b>Name</b>
+                </div>
+
+                <div class="p-8 width-40">
+                    <b>Notes</b>
+                </div>
+
+                <div class="p-8 width-20">
+                    <b>Started</b>
+                </div>
+
+                <div class="p-8 width-20">
+                    <b>Status</b>
+                </div>
+
+            </div>
+            <div layout="column">
+                <div data-ng-repeat="item in vm.procedures track by $index" layout="column">
+                    <div layout="row">
+                        <div class="p-8 width-20">
+                            {{item.procedure_object.name}}
+                        </div>
+                        <div class="p-8 width-40">
+                            {{item.procedure_object.notes_for_users}}
+                        </div>
+                        <div class="p-8 width-20" data-ng-bind="item.created | date: 'yyyy/MM/dd HH:mm:ss'"></div>
+                        <div class="p-8 width-20">
+                            {{item.progress_percent}}%
+
+                            <md-button data-ng-if="item.procedures.length"
+                                       class="md-raised pricing-procedure-show-more-btn"
+                                       data-ng-click="item.opened = !item.opened">
+
+                                <span data-ng-if="!item.opened">Show More</span>
+                                <span data-ng-if="item.opened">Show Less</span>
+
+                            </md-button>
+
+                            <md-button data-ng-if="item.procedures.length"
+                                       class="md-raised pricing-procedure-show-more-btn"
+                                       data-ng-click="vm.refreshItem($index, item)">
+
+                                Refresh
+
+                            </md-button>
+                        </div>
+                    </div>
+                    <div data-ng-if="item.opened" class="pricing-procedure-more-info-box">
+
+                        <div layout="column">
+
+                            <div layout="row">
+                                <div class="p-8 width-20"><b>Provider</b></div>
+                                <div class="p-8 width-40"><b>Action</b></div>
+                                <div class="p-8 width-20"><b>Info</b></div>
+                                <div class="p-8 width-20"><b>Status</b></div>
+                            </div>
+
+                            <div data-ng-repeat="procedure in item.procedures" layout="row">
+
+                                <div class="p-8 width-20">
+                                    <span data-ng-if="procedure.provider_verbose">{{procedure.provider_verbose}}</span>
+                                    <span data-ng-if="!procedure.provider_verbose">-</span>
+                                </div>
+                                <div class="p-8 width-40">
+                                    <span data-ng-if="procedure.action_verbose">{{procedure.action_verbose}}</span>
+                                    <span data-ng-if="!procedure.action_verbose">-</span>
+                                </div>
+
+                                <div class="p-8 width-20">
+
+                                    <div data-ng-if="procedure.status == 'D'">
+                                        {{procedure.successful_prices_count}} successful,
+                                        {{procedure.error_prices_count}} errors
+                                    </div>
+
+                                    <div data-ng-if="procedure.status != 'D'">
+                                        &nbsp;
+                                    </div>
+
+                                    <div data-ng-if="procedure.error_message" style="color: red">
+                                        Error: {{procedure.error_message}}
+                                    </div>
+
+                                </div>
+
+                                <div class="p-8 width-20">
+
+                                    <span data-ng-if="procedure.status == 'I'">Init</span>
+                                    <span data-ng-if="procedure.status == 'D'">Done</span>
+                                    <span data-ng-if="procedure.status == 'P'">Processing</span>
+                                    <span data-ng-if="procedure.status == 'E'" class="color-danger">Error</span>
+
+                                    <md-button style="width: 100px;" class="md-raised pricing-procedure-show-more-btn"
+                                               data-ng-if="procedure.status == 'E'"
+                                               data-ng-click="vm.showErrorDetails($event, procedure)">Show details
+                                    </md-button>
+
+                                    <md-button style="width: 100px;" class="md-raised pricing-procedure-show-more-btn"
+                                               data-ng-click="vm.showRequestDetails($event, procedure)">Show Request
+                                    </md-button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.procedures">
+        <div class="m-16" layout="row" layout-sm="column" layout-align="space-around">
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+    </div>
+
+</div>

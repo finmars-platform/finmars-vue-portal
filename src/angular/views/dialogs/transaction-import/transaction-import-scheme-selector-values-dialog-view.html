@@ -1,0 +1,83 @@
+<md-dialog class="transaction-import-scheme-selector-values-dialog draggable-dialog"
+           aria-label="transaction import scheme selector values dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Selector values</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+
+        <div class="p-24">
+
+            <div layout="row" class="selector-values-columns-filters-container">
+                <md-input-container class="selector-values-value-filter" md-no-float="">
+                    <input data-ng-model="vm.filterTerms.value"
+                           placeholder="Search for keys">
+                </md-input-container>
+
+                <md-input-container class="selector-values-notes-filter" md-no-float="">
+                    <input data-ng-model="vm.filterTerms.notes"
+                           placeholder="Search for values">
+                </md-input-container>
+            </div>
+
+            <div layout="row" class="selector-values-columns-names-container">
+                <div style="width: 353px;">Value</div>
+                <div>Notes</div>
+            </div>
+
+            <div class="transactionImportSchemeSelectorValues">
+<!--        <div data-ng-repeat="selector in vm.selectorValues track by $index" layout="row">-->
+                <div data-ng-repeat="selector in vm.selectorValues.value | orderBy: 'order' | filter: vm.filterTerms as results track by $index"
+                     data-ng-init="$last && !vm.dragAndDropInited && vm.dragAndDrop.init()"
+                     data-row-order="{{selector.order}}">
+
+                    <md-card class="p-l-16 position-relative">
+                    <div layout="row">
+                        <md-input-container class="md-block no-error-spacer" style="width: 300px">
+                            <input type="text"
+                                   data-ng-model="selector.value">
+                        </md-input-container>
+
+                        <md-input-container class="md-block no-error-spacer" style="width: 300px">
+                            <input type="text" data-ng-model="selector.notes">
+                        </md-input-container>
+
+                        <md-button class="md-warn"
+                                   data-ng-click="vm.deleteSelector($event, selector.order)"
+                                   style="min-width: 42px">
+                            Delete
+                        </md-button>
+                    </div>
+
+                    <div class="e-reference-table-drag-icon-holder"
+                         data-ng-mousedown="vm.turnOnDragging()">
+                        <is-draggable-sign></is-draggable-sign>
+                    </div>
+                </md-card>
+
+                </div>
+            </div>
+
+            <div style="margin-top: 10px;">
+                <md-button class="md-raised"
+                           data-ng-click="vm.addSelector()">Add Selector</md-button>
+            </div>
+
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.agree()" style="margin-right:20px;">
+            Ok
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

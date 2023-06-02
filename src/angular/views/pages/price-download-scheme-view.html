@@ -1,0 +1,816 @@
+<div style="padding: 20px 20px 0">
+
+    <h2 class="m-b-35">Price Download Scheme Manager</h2>
+    <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab label="Yesterday Price">
+            <table class="bordered">
+                <thead>
+                <tr>
+                    <th data-ng-click="vm.setSort('user_code')">Pricing Model<span class="sortorder"
+                                                                                     data-ng-show="vm.sort === 'user_code'"
+                                                                                     data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th data-ng-click="vm.setSort('provider_name')">Provider<span class="sortorder"
+                                                                                  data-ng-show="vm.sort === 'provider_name'"
+                                                                                  data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th data-ng-click="vm.setSort('bid0')">Bid<span class="sortorder"
+                                                                    data-ng-show="vm.sort === 'bid0'"
+                                                                    data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <!--<th data-ng-click="vm.setSort('bid1')">Bid 2<span class="sortorder"
+                                                                      data-ng-show="vm.sort === 'bid1'"
+                                                                      data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th data-ng-click="vm.setSort('bid2')">Bid 3<span class="sortorder"
+                                                                      data-ng-show="vm.sort === 'bid2'"
+                                                                      data-ng-class="{reverse: vm.direction}"></span>
+                    </th>-->
+                    <th data-ng-click="vm.setSort('bid_multiplier')">Bid mul tiplier<span class="sortorder"
+                                                                                          data-ng-show="vm.sort === 'bid_multiplier'"
+                                                                                          data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th data-ng-click="vm.setSort('ask0')">Ask<span class="sortorder"
+                                                                    data-ng-show="vm.sort === 'ask0'"
+                                                                    data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <!--<th data-ng-click="vm.setSort('ask1')">Ask 2<span class="sortorder"
+                                                                      data-ng-show="vm.sort === 'ask1'"
+                                                                      data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th data-ng-click="vm.setSort('ask2')">Ask 3<span class="sortorder"
+                                                                      data-ng-show="vm.sort === 'ask2'"
+                                                                      data-ng-class="{reverse: vm.direction}"></span>
+                    </th>-->
+                    <th data-ng-click="vm.setSort('ask_multiplier')">Ask multiplier<span class="sortorder"
+                                                                                         data-ng-show="vm.sort === 'ask_multiplier'"
+                                                                                         data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th data-ng-click="vm.setSort('last')">Last<span class="sortorder"
+                                                                     data-ng-show="vm.sort === 'last'"
+                                                                     data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th data-ng-click="vm.setSort('last_multiplier')">Last multiplier<span class="sortorder"
+                                                                                           data-ng-show="vm.sort === 'last_multiplier'"
+                                                                                           data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th data-ng-click="vm.setSort('mid')">Mid<span class="sortorder"
+                                                                   data-ng-show="vm.sort === 'columns'"
+                                                                   data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th data-ng-click="vm.setSort('mid_multiplier')">Mid multiplier<span class="sortorder"
+                                                                                         data-ng-show="vm.sort === 'mid_multiplier'"
+                                                                                         data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th>
+                        <md-button class="md-icon-button">
+                            <ng-md-icon data-ng-click="vm.toggleQuery()" icon="search"></ng-md-icon>
+                        </md-button>
+                    </th>
+                </tr>
+                <tr style="border: 0" data-ng-if="vm.queryStatus" class="filter-row-holder">
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.user_code">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.provider_name">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.bid0">
+                        </md-input-container>
+                    </th>
+                    <!--<th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.bid1">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.bid2">
+                        </md-input-container>
+                    </th>-->
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.bid_multiplier">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.ask0">
+                        </md-input-container>
+                    </th>
+                    <!--<th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.ask1">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.ask2">
+                        </md-input-container>
+                    </th>-->
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.ask_multiplier">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.last">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.last_multiplier">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.mid">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.mid_multiplier">
+                        </md-input-container>
+                    </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr data-ng-repeat="item in vm.items | filter:vm.query | orderBy:vm.sort:vm.direction">
+                    <td data-ng-bind="item.user_code" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-bind="item.provider_name" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-bind="item.bid0" data-ng-if="!item.editStatus"></td>
+                    <!--<td data-ng-bind="item.bid1" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-bind="item.bid2" data-ng-if="!item.editStatus"></td>-->
+                    <td data-ng-bind="item.bid_multiplier" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-bind="item.ask0" data-ng-if="!item.editStatus"></td>
+                    <!--<td data-ng-bind="item.ask1" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-bind="item.ask2" data-ng-if="!item.editStatus"></td>-->
+                    <td data-ng-bind="item.ask_multiplier" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-bind="item.last" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-bind="item.last_multiplier" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-bind="item.mid" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-bind="item.mid_multiplier" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-if="!item.editStatus" class="table-misc-cell">
+                        <md-menu>
+                            <!-- Trigger element is a md-button with an icon -->
+                            <md-button ng-click="$mdOpenMenu($event)" class="md-icon-button"
+                                       aria-label="Open sample menu">
+                                <ng-md-icon icon="settings"></ng-md-icon>
+                            </md-button>
+                            <md-menu-content>
+                                <md-menu-item>
+                                    <md-button ng-click="vm.editItem(item)">
+                                        <ng-md-icon icon="mode_edit" style="top: 6px;
+    position: relative;
+    margin-right: 10px;"></ng-md-icon>
+                                        Edit
+                                    </md-button>
+                                </md-menu-item>
+                                <md-menu-item>
+                                    <md-button ng-click="vm.deleteItem(item, $index)">
+                                        <ng-md-icon icon="delete" style="top: 6px;
+    position: relative;
+    margin-right: 10px;"></ng-md-icon>
+                                        Delete
+                                    </md-button>
+                                </md-menu-item>
+                            </md-menu-content>
+                        </md-menu>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.user_code">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td" style="padding-top: 12px">
+                        <md-input-container class="md-block" flex-gt-sm>
+                            <md-select data-ng-model="item.provider">
+                                <md-option data-ng-repeat="item in vm.dataProviders"
+                                           data-ng-value="item.id">
+                                    {{item.name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.bid0">
+                        </md-input-container>
+                    </td>
+                    <!--<td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.bid1">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.bid2">
+                        </md-input-container>
+                    </td>-->
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.bid_multiplier">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.ask0">
+                        </md-input-container>
+                    </td>
+                    <!--<td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.ask1">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.ask2">
+                        </md-input-container>
+                    </td>-->
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.ask_multiplier">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.last">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.last_multiplier">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.mid">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.mid_multiplier">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-button data-ng-click="vm.saveItem(item)">
+                            Ok
+                        </md-button>
+                    </td>
+                </tr>
+                <tr class="tab-input-row">
+                    <td>
+                        <md-input-container>
+                            <!--<label for="">Value</label>-->
+                            <input type="text" data-ng-model="vm.newItem.user_code">
+                        </md-input-container>
+                    </td>
+                    <td style="padding-top: 0">
+                        <md-input-container class="md-block" flex-gt-sm>
+                            <md-select data-ng-model="vm.newItem.provider">
+                                <md-option data-ng-repeat="item in vm.dataProviders"
+                                           data-ng-value="item.id">
+                                    {{item.name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.newItem.bid0">
+                        </md-input-container>
+                    </td>
+                    <!--<td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.newItem.bid1">
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.newItem.bid2">
+                        </md-input-container>
+                    </td>-->
+                    <td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.newItem.bid_multiplier">
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.newItem.ask0">
+                        </md-input-container>
+                    </td>
+                    <!--<td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.newItem.ask1">
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.newItem.ask2">
+                        </md-input-container>
+                    </td>-->
+                    <td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.newItem.ask_multiplier">
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.newItem.last">
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.newItem.last_multiplier">
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.newItem.mid">
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.newItem.mid_multiplier">
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-button data-ng-click="vm.addRow()">
+                            Add
+                        </md-button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </md-tab>
+        <md-tab label="Historical Price">
+            <table class="bordered">
+                <thead>
+                <tr>
+                    <th data-ng-click="vm.setSort('user_code')">Pricing Model<span class="sortorder"
+                                                                                     data-ng-show="vm.sort === 'user_code'"
+                                                                                     data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th data-ng-click="vm.setSort('provider_name')">Provider<span class="sortorder"
+                                                                                  data-ng-show="vm.sort === 'provider_name'"
+                                                                                  data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th data-ng-click="vm.setSort('bid_history')">Bid History<span class="sortorder"
+                                                                                   data-ng-show="vm.sort === 'bid_history'"
+                                                                                   data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+
+                    <th data-ng-click="vm.setSort('ask_history')">Ask History<span class="sortorder"
+                                                                                   data-ng-show="vm.sort === 'ask_history'"
+                                                                                   data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+
+                    <th data-ng-click="vm.setSort('last_history')">Last History<span class="sortorder"
+                                                                                     data-ng-show="vm.sort === 'last_history'"
+                                                                                     data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+
+                    <th data-ng-click="vm.setSort('mid_history')">Mid history<span class="sortorder"
+                                                                                   data-ng-show="vm.sort === 'mid_history'"
+                                                                                   data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+
+                    <th data-ng-click="vm.setSort('bid_history_multiplier')">Bid History multiplier<span
+                            class="sortorder"
+                            data-ng-show="vm.sort === 'bid_history_multiplier'"
+                            data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+
+                    <th data-ng-click="vm.setSort('ask_history_multiplier')">Ask History multiplier<span
+                            class="sortorder"
+                            data-ng-show="vm.sort === 'ask_history_multiplier'"
+                            data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+
+                    <th data-ng-click="vm.setSort('last_history_multiplier')">Last History multiplier<span
+                            class="sortorder"
+                            data-ng-show="vm.sort === 'last_history_multiplier'"
+                            data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+
+                    <th data-ng-click="vm.setSort('mid_history_multiplier')">Mid history multiplier<span
+                            class="sortorder"
+                            data-ng-show="vm.sort === 'mid_history_multiplier'"
+                            data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+
+                    <th>
+                        <md-button class="md-icon-button">
+                            <ng-md-icon data-ng-click="vm.toggleQuery()" icon="search"></ng-md-icon>
+                        </md-button>
+                    </th>
+                </tr>
+                <tr style="border: 0" data-ng-if="vm.queryStatus" class="filter-row-holder">
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.user_code">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.provider_name">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.bid_history">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.ask_history">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.last_history">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.mid_history">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.bid_history_multiplier">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.ask_history_multiplier">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.last_history_multiplier">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.mid_history_multiplier">
+                        </md-input-container>
+                    </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr data-ng-repeat="item in vm.items | filter:vm.query | orderBy:vm.sort:vm.direction">
+                    <td data-ng-bind="item.user_code" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-bind="item.provider_name" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-bind="item.bid_history" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-bind="item.ask_history" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-bind="item.last_history" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-bind="item.mid_history" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-bind="item.bid_history_multiplier" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-bind="item.ask_history_multiplier" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-bind="item.last_history_multiplier" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-bind="item.mid_history_multiplier" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-if="!item.editStatus" class="table-misc-cell">
+                        <md-menu>
+                            <!-- Trigger element is a md-button with an icon -->
+                            <md-button ng-click="$mdOpenMenu($event)" class="md-icon-button"
+                                       aria-label="Open sample menu">
+                                <ng-md-icon icon="settings"></ng-md-icon>
+                            </md-button>
+                            <md-menu-content>
+                                <md-menu-item>
+                                    <md-button ng-click="vm.editItem(item)">
+                                        <ng-md-icon icon="mode_edit" style="top: 6px;
+    position: relative;
+    margin-right: 10px;"></ng-md-icon>
+                                        Edit
+                                    </md-button>
+                                </md-menu-item>
+                                <md-menu-item>
+                                    <md-button ng-click="vm.deleteItem(item, $index)">
+                                        <ng-md-icon icon="delete" style="top: 6px;
+    position: relative;
+    margin-right: 10px;"></ng-md-icon>
+                                        Delete
+                                    </md-button>
+                                </md-menu-item>
+                            </md-menu-content>
+                        </md-menu>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.user_code">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td" style="padding-top: 12px">
+                        <md-input-container class="md-block" flex-gt-sm>
+                            <md-select data-ng-model="vm.newItem.provider">
+                                <md-option data-ng-repeat="item in vm.dataProviders"
+                                           data-ng-value="item.id">
+                                    {{item.name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.bid_history">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.ask_history">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.last_history">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.mid_history">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.bid_history_multiplier">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.ask_history_multiplier">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.last_history_multiplier">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.mid_history_multiplier">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-button data-ng-click="vm.saveItem(item)">
+                            Ok
+                        </md-button>
+                    </td>
+                </tr>
+                <tr class="tab-input-row">
+                    <td>
+                        <md-input-container>
+                            <!--<label for="">Value</label>-->
+                            <input type="text" data-ng-model="vm.newItem.user_code">
+                        </md-input-container>
+                    </td>
+                    <td style="padding-top: 0">
+                        <md-input-container>
+                            <md-select data-ng-model="vm.newItem.provider">
+                                <md-option data-ng-repeat="item in vm.dataProviders"
+                                           data-ng-value="item.id">
+                                    {{item.name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.newItem.bid_history">
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.newItem.ask_history">
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.newItem.last_history">
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.newItem.mid_history">
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.newItem.bid_history_multiplier">
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.newItem.ask_history_multiplier">
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.newItem.last_history_multiplier">
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.newItem.mid_history_multiplier">
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-button data-ng-click="vm.addRow()">
+                            Add
+                        </md-button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </md-tab>
+        <md-tab label="Currency">
+            <table class="bordered">
+                <thead>
+                <tr>
+                    <th data-ng-click="vm.setSort('user_code')">Pricing Model<span class="sortorder"
+                                                                                     data-ng-show="vm.sort === 'user_code'"
+                                                                                     data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th data-ng-click="vm.setSort('provider_name')">Provider<span class="sortorder"
+                                                                                  data-ng-show="vm.sort === 'provider_name'"
+                                                                                  data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th data-ng-click="vm.setSort('currency_fxrate')">Currency FX Rate<span class="sortorder"
+                                                                                            data-ng-show="vm.sort === 'currency_fxrate'"
+                                                                                            data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+
+                    <th data-ng-click="vm.setSort('currency_fxrate_multiplier')">FX Rate Multiplier<span class="sortorder"
+                                                                                                         data-ng-show="vm.sort === 'currency_fxrate_multiplier'"
+                                                                                                         data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+
+                    <th>
+                        <md-button class="md-icon-button">
+                            <ng-md-icon data-ng-click="vm.toggleQuery()" icon="search"></ng-md-icon>
+                        </md-button>
+                    </th>
+                </tr>
+                <tr style="border: 0" data-ng-if="vm.queryStatus" class="filter-row-holder">
+                    <th>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.query.user_code">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.query.provider_name">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.query.currency_fxrate">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.query.currency_fxrate_multiplier">
+                        </md-input-container>
+                    </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr data-ng-repeat="item in vm.items | filter:vm.query | orderBy:vm.sort:vm.direction">
+                    <td data-ng-bind="item.user_code" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-bind="item.provider_name" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-bind="item.currency_fxrate" data-ng-if="!item.editStatus"></td>
+                    <td data-ng-bind="item.currency_fxrate_multiplier"
+                        data-ng-if="!item.editStatus"></td>
+                    <td data-ng-if="!item.editStatus" class="table-misc-cell">
+                        <md-menu>
+                            <!-- Trigger element is a md-button with an icon -->
+                            <md-button ng-click="$mdOpenMenu($event)" class="md-icon-button"
+                                       aria-label="Open sample menu">
+                                <ng-md-icon icon="settings"></ng-md-icon>
+                            </md-button>
+                            <md-menu-content>
+                                <md-menu-item>
+                                    <md-button ng-click="vm.editItem(item)">
+                                        <ng-md-icon icon="mode_edit" style="top: 6px;
+    position: relative;
+    margin-right: 10px;"></ng-md-icon>
+                                        Edit
+                                    </md-button>
+                                </md-menu-item>
+                                <md-menu-item>
+                                    <md-button ng-click="vm.deleteItem(item, $index)">
+                                        <ng-md-icon icon="delete" style="top: 6px;
+    position: relative;
+    margin-right: 10px;"></ng-md-icon>
+                                        Delete
+                                    </md-button>
+                                </md-menu-item>
+                            </md-menu-content>
+                        </md-menu>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.user_code">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td" style="padding-top: 12px">
+                        <md-input-container>
+                            <md-select data-ng-model="vm.newItem.provider">
+                                <md-option data-ng-repeat="item in vm.dataProviders"
+                                           data-ng-value="item.id">
+                                    {{item.name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.currency_fxrate">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.currency_fxrate_multiplier">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-button data-ng-click="vm.saveItem(item)">
+                            Ok
+                        </md-button>
+                    </td>
+                </tr>
+                <tr class="tab-input-row">
+                    <td>
+                        <md-input-container>
+                            <!--<label for="">Value</label>-->
+                            <input type="text" data-ng-model="vm.newItem.user_code">
+                        </md-input-container>
+                    </td>
+                    <td style="padding-top: 0">
+                        <md-input-container>
+                            <md-select data-ng-model="vm.newItem.provider">
+                                <md-option data-ng-repeat="item in vm.dataProviders"
+                                           data-ng-value="item.id">
+                                    {{item.name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.query.currency_fxrate">
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-input-container>
+                            <input type="text" data-ng-model="vm.query.currency_fxrate_multiplier">
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-button data-ng-click="vm.addRow()">
+                            Add
+                        </md-button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </md-tab>
+    </md-tabs>
+
+</div>

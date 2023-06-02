@@ -1,0 +1,34 @@
+<md-dialog aria-label="rename field dialog" class="warning-dialog draggable-dialog" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Rename</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content  class="p-24">
+        <div>
+
+            <p>Column Id: {{vm.data.key}}</p>
+            <p>
+                <span data-ng-if="!vm.data.layout_name">Current</span>
+                <span data-ng-if="vm.data.layout_name">Original</span>
+                name: {{vm.data.name}}
+            </p>
+
+            <md-input-container>
+                <label>Name</label>
+                <input type="text" data-ng-model="vm.layout_name">
+            </md-input-container>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()">
+            Close
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.agree()" style="margin-right:20px;">
+            Ok
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

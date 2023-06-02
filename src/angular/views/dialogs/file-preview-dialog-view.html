@@ -1,0 +1,45 @@
+<md-dialog aria-label="info dialog"
+           class="file-preview-dialog draggable-dialog dialog-actions-bottom"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>File Preview</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="file-preview-content">
+
+            <a ng-click="vm.copyContent(vm.data.content_formatted)" class="copy-text-button" data-ng-if="vm.contentType != 'image'">
+                <ng-md-icon icon="content_copy" size="16">
+                    <md-tooltip class="tooltip_2" md-direction="top">Copy to clipboard</md-tooltip>
+                </ng-md-icon>
+            </a>
+
+            <div data-ng-if="vm.contentType == 'text'" class="file-preview-content-wrap">
+                <div data-ng-bind-html="vm.data.content_formatted"></div>
+            </div>
+
+            <div data-ng-if="vm.contentType == 'csv'" class="file-preview-content-wrap">
+                <div data-ng-bind-html="vm.data.content_formatted"></div>
+            </div>
+
+            <div data-ng-show="vm.contentType == 'json' || vm.contentType == 'yaml' || vm.contentType == 'python'" class="file-preview-content-wrap">
+                <div class="ace-editor" id="filePreviewAceEditor"></div>
+            </div>
+
+            <div data-ng-show="vm.contentType == 'image'" class="text-center">
+                <img id="preview-image">
+            </div>
+
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row" layout-align="space-between">
+        <md-button ng-click="vm.download()" style="margin: 0" data-ng-if="vm.contentType != 'image'">
+            Download
+        </md-button>
+        <md-button ng-click="vm.agree()" style="margin: 0">
+            OK
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

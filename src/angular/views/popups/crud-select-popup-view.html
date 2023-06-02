@@ -1,0 +1,68 @@
+<div class="popup-crud-select">
+
+    <div layout="row" class="crud-header">
+        <div layout="row">
+            <input data-ng-model="popupData.searchTerm"
+                   type="search"
+                   placeholder="Search for a ..."
+                   class="md-text md-select-search-pattern crud-search"
+                   ng-keydown="$event.stopPropagation()">
+        </div>
+        <md-button
+                   data-ng-click="popupData.addItem()"
+                   class="addition-button">
+            <span class="material-icons">add</span>
+        </md-button>
+    </div>
+
+    <md-divider></md-divider>
+
+    <div layout="column" class="options-holder">
+
+        <div data-ng-repeat="item in popupData.options | filter:{name: popupData.searchTerm} as results track by item.id " class="crud-option">
+
+            <div data-ng-if="!item.___edit" class="flex-row">
+                <div class="option-name-container" data-ng-click="popupData.selectItem(item, _$popup)">
+                    <span class="material-icons" data-ng-if="item.id === popupData.selectedItem.item.id">done</span>
+                    <span class="material-icons" data-ng-if="item.id !== popupData.selectedItem.item.id" style="visibility: hidden">done</span>
+                    <span class="option-name">{{item.name}}</span>
+                </div>
+
+                <md-button class="option-button" data-ng-click="popupData.editItem(item)">
+                    <span class="material-icons">edit</span>
+                </md-button>
+
+                <md-button class="option-button" data-ng-click="popupData.deleteItem(item, $index, $event)">
+                    <span class="material-icons">delete</span>
+                </md-button>
+            </div>
+
+            <div data-ng-if="item.___edit" class="width-100">
+                <div class="edit-container">
+                    <span class="material-icons" data-ng-if="item.id === popupData.selectedItem.item.id">done</span>
+                    <span class="material-icons" data-ng-if="item.id !== popupData.selectedItem.item.id" style="visibility: hidden">done</span>
+                    <div class="edit-name">
+                        <input data-ng-model="popupData.currentEditName"
+                               class="crud-name-input"
+                               type="search"
+                               placeholder="Name"
+
+                               ng-keydown="$event.stopPropagation()">
+
+                        <md-button class="edit-option-button" data-ng-click="popupData.cancelEditItem(item)">
+                            <span class="material-icons">cancel</span>
+                        </md-button>
+                        <md-button class="edit-option-button" data-ng-click="popupData.saveItem(item, $index, $event)">
+                            <span class="material-icons">save</span>
+                        </md-button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

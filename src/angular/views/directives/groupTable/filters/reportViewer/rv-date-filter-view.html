@@ -1,0 +1,69 @@
+<div class="g-filter-type-n-value flex-row fc-space-between">
+    <md-input-container class="g-filter-types-select">
+        <md-select ng-model="activeFilterType"
+                   ng-change="changeFilterType()"
+                   class="g-filter-tnv-back">
+            <div class="select-options-holder">
+
+                <md-option ng-repeat="type in filterTypes"
+                           ng-value="type.value"
+                           ng-bind="type.name"></md-option>
+
+                <md-option value="use_from_above" ng-click="openUseFromAboveSettings()">Linked</md-option>
+
+            </div>
+        </md-select>
+    </md-input-container>
+
+    <div class="g-filter-value-wrap">
+        <div ng-if="filter.options.filter_type !== 'from_to' && filter.options.filter_type !== 'out_of_range' && filter.options.filter_type !== 'date_tree'"
+             class="height-100">
+
+            <md-input-container class="md-block">
+                <label>
+                    <span ng-bind="getFilterRegime()"></span>
+                </label>
+
+                <zh-date-picker data-date-value="filter.options.filter_values[0]"
+                                data-position="left"></zh-date-picker>
+            </md-input-container>
+
+        </div>
+
+        <div ng-if="filter.options.filter_type === 'from_to' || filter.options.filter_type === 'out_of_range'"
+             class="height-100">
+
+            <md-input-container class="md-block">
+                <label>
+                    <span>From (incl)</span>
+                </label>
+
+                <zh-date-picker data-date-value="filter.options.filter_values.min_value"
+                                data-position="left"></zh-date-picker>
+            </md-input-container>
+
+            <md-input-container class="md-block">
+                <label>
+                    <span>To (incl)</span>
+                </label>
+
+                <zh-date-picker data-date-value="filter.options.filter_values.max_value"
+                                data-position="left"></zh-date-picker>
+            </md-input-container>
+
+        </div>
+
+        <div class="date-tree" ng-if="filter.options.filter_type === 'date_tree'"
+             class="height-100">
+
+            <date-tree-input title=""
+                             dates-list="columnRowsContent"
+                             dates-tree="filter.options.dates_tree"
+                             nothing-selected-text="Off"
+                             callback-method="dateTreeChanged(filter.options.dates_tree)"></date-tree-input>
+
+        </div>
+
+    </div>
+
+</div>

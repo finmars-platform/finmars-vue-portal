@@ -1,0 +1,119 @@
+<md-dialog aria-label="" ng-cloak class="draggable-dialog" style="width: 500px;" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Complex Transaction Field</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+
+        <div class="p-24">
+
+            <div class="m-b-16">
+                <b>{{vm.item.code}} : {{vm.item.text}}</b>
+            </div>
+
+            <div class="m-t-16">
+
+                <b>{{vm.field.reference_name}} <span data-ng-if="vm.item.description">({{vm.field.description}})</span></b>
+
+                <div class="m-b-16 p-l-16 p-t-8">
+
+                    <div>
+                        <b>Value Text</b>: {{vm.field.value_string}}
+                    </div>
+
+                    <div>
+                        <b>Value Float</b>: {{vm.field.value_float}}
+                    </div>
+
+                    <div>
+                        <b>Value Date</b>: {{vm.field.value_date}}
+                    </div>
+                </div>
+
+                <div>
+
+                    <md-input-container style="margin: 0">
+
+                        <label for="">Notes</label>
+                        <input type="text" data-ng-model="vm.field.notes">
+
+                    </md-input-container>
+
+                </div>
+
+
+                <div data-ng-if="vm.linkedBankFields.length">
+
+                    <div data-ng-repeat="item in vm.linkedBankFields track by $index">
+
+                        <div layout="row">
+
+
+                            <div class="detail-recon-dialog-card-holder">
+
+                                <div class="detail-recon-dialog-card recon-card-matched p-10" style="font-size: 13px;">
+
+                                    <div>
+                                        {{item.reference_name}}
+                                    </div>
+
+                                    <div>
+                                        <div title="{{'Value Text: ' + item.value_string}}"><b>Value
+                                            Text</b>: {{item.value_string}}
+                                        </div>
+                                        <div title="{{'Value Float ' + item.value_float}}"><b>Value
+                                            Float</b>: {{item.value_float}}
+                                        </div>
+                                        <div title="{{'Value Date ' + item.value_date}}"><b>Value
+                                            Date</b>: {{item.value_date}}
+                                        </div>
+                                    </div>
+
+                                    <div class="text-right">
+                                        <md-button class="md-icon-button match-recon-card-details-button">
+                                            <ng-md-icon data-ng-click="vm.showDetailsLinkedField($event, item)" icon="list"></ng-md-icon>
+                                        </md-button>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <md-button class="md-raised" data-ng-click="vm.clearLinkedField($event, item, $index)"
+                                       style="height: 40px">
+                                Clear
+                            </md-button>
+
+                            <md-button class="md-raised" data-ng-click="vm.conflictLinkedField($event, item, $index)"
+                                       style="height: 40px">
+                                Conflict
+                            </md-button>
+
+                            <md-button class="md-raised" data-ng-click="vm.ignoreLinkedField($event, item, $index)"
+                                       style="height: 40px">
+                                Ignore
+                            </md-button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <div>
+            <md-button ng-click="vm.agree()">
+                Close
+            </md-button>
+        </div>
+    </md-dialog-actions>
+</md-dialog>

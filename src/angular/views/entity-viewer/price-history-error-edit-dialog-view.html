@@ -1,0 +1,85 @@
+<md-dialog class="entity-editor-dialog draggable-dialog dialog-actions-bottom evEditorDialogElemToResize"
+           drag-dialog
+           aria-label="entity viewer edit dialog"
+           style="height: 100%">
+
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Price history Error</h2>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content style="height: 100%">
+
+        <div style="min-width: 1450px">
+
+            <div data-ng-if="vm.checkReadyStatus()">
+
+                <div class="p-24">
+
+                    <div>
+                        <b>Date</b>: {{vm.entity.date}}
+                    </div>
+
+                    <div data-ng-if="vm.entity.price_error_text" class="m-t-16">
+                        <div>
+                            <b>Price Error Text:</b>
+                        </div>
+                        <div>{{vm.entity.price_error_text}}</div>
+                    </div>
+
+                    <div class="m-t-16">
+                        <md-input-container class="md-block">
+                            <label>Price</label>
+                            <input aria-label="scheme name" type="text" data-ng-model="vm.entity.principal_price">
+                        </md-input-container>
+
+                    </div>
+
+                    <div data-ng-if="vm.entity.accrual_error_text" class="m-t-16">
+                        <div><b>Accrual Error Text:</b></div>
+                        <div>
+                            {{vm.entity.accrual_error_text}}
+                        </div>
+                    </div>
+
+                    <div class="m-t-16">
+                        <md-input-container class="md-block">
+                            <label>Accrued Price</label>
+                            <input aria-label="scheme name" type="text" data-ng-model="vm.entity.accrued_price">
+                        </md-input-container>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div data-ng-if="!vm.checkReadyStatus()">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                    <progress-circular diameter="100"></progress-circular>
+                </div>
+            </div>
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="space-between center">
+
+        <div style="margin-right: 10px;">
+
+            <md-button class="md-raised" ng-click="vm.cancel()">
+                <span>Cancel</span>
+            </md-button>
+
+            <md-button class="md-raised m-r-24"
+                       ng-click="vm.save()">
+                Save
+            </md-button>
+        </div>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               data-on-resize-callback="vm.rearrangeMdDialogActions()"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+    </md-dialog-actions>
+</md-dialog>

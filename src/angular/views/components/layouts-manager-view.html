@@ -1,0 +1,188 @@
+<div class="popup-menu">
+	<div class="layout-menu-item" data-ng-click="createNewLayout($event)">
+		<span class="material-icons">add_circle</span>
+		<span>New layout</span>
+	</div>
+
+	<md-menu-divider></md-menu-divider>
+
+	<div class="layouts-container">
+		<div ng-if="!processing">
+			<div data-ng-repeat="layout in layouts" class="layout-menu-item">
+				<span
+					class="material-icons default-icons"
+					data-ng-if="!layout.origin_for_global_layout && !layout.sourced_from_global_layout"
+					ng-class="{'default-layout': layoutIsDefault(layout)}"
+					ng-click="setAsDefault(layout)"
+					>home</span
+				>
+
+				<span
+					class="material-icons default-icons"
+					data-ng-if="layout.origin_for_global_layout"
+					style="color: #747474"
+					>share</span
+				>
+				<span
+					class="material-icons default-icons"
+					data-ng-if="!layout.origin_for_global_layout && layout.sourced_from_global_layout"
+					style="color: #747474"
+					>update</span
+				>
+
+				<a
+					href="{{getLinkToLayout(layout.user_code)}}"
+					ng-click="onLayoutLinkClick($event, layout)"
+					class="layout-menu-a"
+					>{{layout.name}}</a
+				>
+			</div>
+
+			<div ng-if="autosaveLayout.id" class="layout-menu-item">
+				<span
+					class="material-icons default-icons"
+					ng-class="{'default-layout': layoutIsDefault(autosaveLayout)}"
+					ng-click="setAsDefault(autosaveLayout)"
+					>home</span
+				>
+
+				<a
+					href="{{getLinkToLayout(autosaveLayout.user_code)}}"
+					ng-click="onLayoutLinkClick($event, autosaveLayout)"
+					class="layout-menu-a text-bold"
+					>{{autosaveLayout.name}}</a
+				>
+			</div>
+		</div>
+
+		<div
+			data-ng-if="processing"
+			class="p-t-16"
+			layout="row"
+			layout-sm="column"
+			layout-align="space-around"
+		>
+			<progress-circular diameter="50"></progress-circular>
+		</div>
+	</div>
+
+	<md-menu-divider></md-menu-divider>
+
+	<div ng-if="viewContext !== 'dashboard'">
+		<md-button
+			class="layout-menu-item"
+			data-ng-click="saveLayoutList()"
+			ng-disabled="isNewLayout"
+		>
+			<span class="material-icons">save</span>
+			<span>Save</span>
+		</md-button>
+
+		<div class="layout-menu-item" data-ng-click="saveAsLayoutList()">
+			<span class="material-icons" style="visibility: hidden">save</span>
+			<span>Save as</span>
+		</div>
+
+		<div class="layout-menu-item" data-ng-click="openLayoutList($event)">
+			<span class="material-icons" style="visibility: hidden">open_in_new</span>
+			<span>Open</span>
+		</div>
+	</div>
+
+	<div ng-if="viewContext === 'dashboard'">
+		<div class="layout-menu-item" data-ng-click="saveLayoutList()">
+			<span class="material-icons">save</span>
+			<span>Save</span>
+		</div>
+
+		<div class="layout-menu-item" data-ng-click="openLayoutList($event)">
+			<span class="material-icons" style="visibility: hidden">open_in_new</span>
+			<span>Open</span>
+		</div>
+
+		<div class="layout-menu-item" data-ng-click="makeCopy($event)">
+			<span class="material-icons">duplicate</span>
+			<span>Make copy</span>
+		</div>
+
+		<div class="layout-menu-item" data-ng-click="editDashboardLayout()">
+			<span class="material-icons" style="visibility: hidden">edit</span>
+			<span>Edit Dashboard Layout</span>
+		</div>
+	</div>
+
+	<md-menu-divider></md-menu-divider>
+
+	<div class="layout-menu-item" data-ng-click="exportLayout($event)">
+		<span class="material-icons">exit_to_app</span>
+		<span>Export</span>
+	</div>
+
+	<div
+		class="layout-menu-item"
+		package-manager-button
+		data-ng-click="parentPopup.cancel()"
+		content-type="'ui.listlayout'"
+		target-content-type="targetContentType"
+	>
+		<span class="material-icons">system_update_alt</span>
+		<span>Select from list</span>
+	</div>
+
+	<div
+		class="layout-menu-item"
+		data-ng-click="openInvites($event)"
+		data-ng-class="{'disabled-btn': !invites.length}"
+	>
+		<span class="material-icons">email</span>
+		<span>Invites ({{invites.length}})</span>
+	</div>
+
+	<md-button
+		class="layout-menu-item"
+		data-ng-click="renameLayout($event)"
+		ng-disabled="isNewLayout || layout.id === autosaveLayout.id"
+	>
+		<span class="material-icons">create</span>
+		<span>Rename</span>
+	</md-button>
+
+	<div
+		data-ng-if="layout.sourced_from_global_layout && !layout.origin_for_global_layout"
+		class="layout-menu-item"
+		data-ng-click="pullUpdate($event)"
+	>
+		<span class="material-icons">share</span>
+		<span>Update</span>
+	</div>
+
+	<div
+		class="layout-menu-item"
+		data-ng-click="shareLayout($event)"
+		data-ng-if="layout.id !== autosaveLayout.id && ((!layout.sourced_from_global_layout && !layout.origin_for_global_layout) || (layout.sourced_from_global_layout && layout.origin_for_global_layout))"
+	>
+		<span class="material-icons">share</span>
+		<span>Share</span>
+	</div>
+
+	<md-button
+		class="layout-menu-item"
+		data-ng-class="{'default-layout': layout.is_default}"
+		data-ng-click="setAsDefault(layout)"
+		data-ng-disabled="layoutIsDefault(layout)"
+	>
+		<span class="material-icons">home</span>
+		<span>Make default</span>
+	</md-button>
+
+	<md-menu-divider></md-menu-divider>
+
+	<md-button
+		class="layout-menu-item"
+		data-ng-click="deleteLayout($event)"
+		data-ng-disabled="isNewLayout || layout.id === autosaveLayout.id"
+	>
+		<span class="material-icons">delete</span>
+		<span>Delete</span>
+	</md-button>
+</div>

@@ -1,0 +1,76 @@
+<md-dialog aria-label="" ng-cloak class="configuration-import-dialog-view draggable-dialog" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Mapping export manager</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content style="background: #fff; padding: 16px">
+
+        <div data-ng-if="vm.readyStatus.content">
+
+            <div>
+
+                <md-checkbox data-ng-checked="vm.selectAllState"
+                             data-ng-click="vm.toggleSelectAll()"
+                             aria-label="checkbox">
+                </md-checkbox>
+
+                <b>Select all</b>
+
+            </div>
+
+            <div data-ng-repeat="item in vm.items">
+
+                <div class="cie-entity-holder">
+                    <md-checkbox data-ng-checked="item.active"
+                                 data-ng-click="vm.toggleActiveForChilds(item)"
+                                 data-ng-class="item.someChildsActive"
+                                 aria-label="checkbox">
+                    </md-checkbox>
+                    <span data-ng-bind="vm.getEntityName(item)"></span> <span class="cie-dependency"
+                                                                              data-ng-bind="vm.getEntityDependenciesCaptions(item)"></span>
+                    ({{item.count}})
+                    <md-button class="md-raised" ng-click="item.displayItems = !item.displayItems"><span
+                            data-ng-if="!item.displayItems">Show</span><span data-ng-if="item.displayItems">Hide</span>
+                    </md-button>
+                </div>
+
+
+                <div data-ng-show="item.displayItems" style="padding-left: 20px">
+
+                    <div data-ng-repeat="child in item.content">
+                        <md-checkbox data-ng-checked="child.active"
+                                     data-ng-click="vm.updateActiveForParent(child, item)"
+                                     aria-label="checkbox">
+                        </md-checkbox>
+                        {{child.value}} - {{vm.getItemName(child)}}
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+        <div data-ng-if="!vm.readyStatus.content">
+            <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                <md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>
+            </div>
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+
+        <a class="md-raised md-button" id="exportButton" data-ng-click="vm.agree($event)">
+            Export
+        </a>
+    </md-dialog-actions>
+</md-dialog>

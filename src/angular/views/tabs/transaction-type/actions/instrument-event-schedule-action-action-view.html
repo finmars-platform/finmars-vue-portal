@@ -1,0 +1,122 @@
+<div layout="row" class="ttype-action-inputs-container">
+    <!--<md-input-container class="orange-actions-selector">
+        <label for="" content-title>Instruction if Transaction is Rebooked</label>
+        <md-select data-ng-model="item.rebook_reaction">
+            <md-option data-ng-repeat="item in vm.rebookOtherReactions"
+                       ng-value="item.id">
+                {{item.name}}
+            </md-option>
+        </md-select>
+    </md-input-container>-->
+    <dropdown-select label="Instruction if Transaction is Rebooked"
+                     model="item.rebook_reaction"
+                     menu-options="vm.rebookOtherReactions"
+                     class="width-100"></dropdown-select>
+</div>
+
+<div layout="row" class="ttype-action-inputs-container">
+
+    <div flex="33">
+
+        <div layout="row" class="p-r-8">
+
+            <dropdown-select data-label="Event (Phantom)"
+                             data-model="item.instrument_event_schedule_action.event_schedule_phantom"
+                             data-menu-options="vm.eventPhantomsOpts"
+                             data-is-disabled="vm.instrEventScheduleActions && vm.instrEventScheduleActions.eventSchedulePhantomDisabled"
+                             class="width-100"></dropdown-select>
+        </div>
+
+    </div>
+
+    <div flex="33">
+
+        <div layout="row" class="p-l-8 p-r-8">
+            <!--<md-input-container class="md-block">
+                    <label for="" content-title>Transaction Type</label>
+                    <md-select
+                            data-ng-model="item.instrument_event_schedule_action.transaction_type_from_instrument_type">
+                        <md-option data-ng-repeat="item in vm.instrumentTypeTransactionTypes"
+                                   ng-value="item.value">
+                            {{item.name}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>-->
+            <dropdown-select data-label="Transaction Type"
+                             data-model="item.instrument_event_schedule_action.transaction_type_from_instrument_type"
+                             data-menu-options="vm.instrumentTypeTransactionTypes"
+                             data-is-disabled="vm.instrEventScheduleActions && vm.instrEventScheduleActions.ttypeFromItypeDisabled"
+                             class="width-100"></dropdown-select>
+        </div>
+
+    </div>
+
+    <div flex="33">
+
+        <div layout="row">
+
+            <div flex="50" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Action is sent to pending: Boolean</label>
+                    <input type="text" value-title data-ng-model="item.instrument_event_schedule_action.is_sent_to_pending">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument_event_schedule_action.is_sent_to_pending"></expression-editor-button>-->
+                <expression-input label="Action is sent to pending: Boolean"
+                                  model="item.instrument_event_schedule_action.is_sent_to_pending"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+            <div flex="50" layout-align="start top" class="ttype-action-expr-input-wrap p-r-0">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Action is book automatic: Boolean</label>
+                    <input type="text" value-title data-ng-model="item.instrument_event_schedule_action.is_book_automatic">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument_event_schedule_action.is_book_automatic"></expression-editor-button>-->
+                <expression-input label="Action is book automatic: Boolean"
+                                  model="item.instrument_event_schedule_action.is_book_automatic"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div layout="row" class="ttype-action-inputs-container">
+
+    <div flex="50">
+
+        <div layout="row">
+            <div flex="33" layout-align="start top" class="ttype-action-expr-input-wrap p-l-0">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Button position: Number</label>
+                    <input type="text" value-title data-ng-model="item.instrument_event_schedule_action.button_position">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument_event_schedule_action.button_position"></expression-editor-button>-->
+                <expression-input label="Button position: Number"
+                                  model="item.instrument_event_schedule_action.button_position"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+            <div flex="33" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Text: Text</label>
+                    <input type="text" value-title data-ng-model="item.instrument_event_schedule_action.text">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument_event_schedule_action.text"></expression-editor-button>-->
+                <expression-input label="Text: Text"
+                                  model="item.instrument_event_schedule_action.text"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,101 @@
+<!-- <div class="crud-select">
+
+    <md-input-container class="md-block">
+        <div class="crud-input"
+             custom-popup
+             popup-template-url="'views/popups/crud-select-popup-view.html'"
+             popup-data="popupData"
+             open-on="click"
+             close-on-click-outside="true"
+             position-relative-to="element"
+             relative-popup-x="left"
+             popup-classes="rounded-border"
+             on-cancel="onPopupClose()">
+
+            <span class="crud-input-name" data-ng-if="selectedItem.item">{{selectedItem.item.name}}</span>
+            <span class="crud-input-name" data-ng-if="!selectedItem.item">{{label}}</span>
+
+            <span class="material-icons">arrow_drop_down</span>
+
+        </div>
+    </md-input-container>
+
+</div> -->
+<div class="custom-input-container crud-select-container crudSelectContainer customInputBackgroundColor"
+     data-ng-class="getInputContainerClasses()">
+
+    <div ng-if="label" class="custom-input-top-row">
+        <span class="custom-input-textarea-span-pan">{{label}}</span>
+    </div>
+
+    <div class="custom-input-main-container">
+        <div class="custom-input-borders">
+            <div class="custom-input-content"
+
+                 custom-popup
+                 popup-template-url="'views/popups/crud-select-popup-view.html'"
+                 popup-data="popupData"
+                 open-on="click"
+                 close-on-click-outside="true"
+                 position-relative-to="element"
+                 relative-popup-x="left"
+                 popup-classes="'rounded-border'"
+                 on-cancel="onPopupCancel()">
+
+                <div class="flex-row">
+
+                    <button data-ng-if="!noIndicatorBtn"
+                            class="custom-input-indicator-btn position-relative"
+                            data-ng-click="openSelectorDialog($event)"
+                            ng-disabled="isDisabled">
+                        <span class="material-icons">menu</span>
+                    </button>
+
+                    <div class="crud-input-name-holder">
+                        <span ng-hide="!selectedItem.item" class="crud-input-name" ng-bind="selectedItem.item.name"></span>
+                        <span ng-hide="selectedItem.item || !label" class="crud-input-name" ng-bind="label"></span>
+                    </div>
+
+                </div>
+
+                <div class="custom-input-side-items flex-row customInputBackgroundColor">
+
+                    <!-- <div class="custom-input-custom-btns-holder">
+                        <div data-ng-if="customButtons && customButtons.length" class="height-100 flex-row">
+                            <button data-ng-repeat="button in customButtons" class="{{button.classes}} custom-input-custom-btn"
+                                    data-ng-click="callFnForCustomBtn(button.action)">
+                                {{button.caption}}
+                                <ng-md-icon data-ng-if="button.iconObj.type === 'angularjs-material'"
+                                            size="24"
+                                            icon="{{button.iconObj.icon}}"
+                                            class="ci-custom-btn-icon"></ng-md-icon>
+
+                                <md-tooltip data-ng-if="button.tooltip"
+                                            class="tooltip_1"
+                                            md-direction="top">{{button.tooltip}}
+                                </md-tooltip>
+                            </button>
+                        </div>
+                    </div> -->
+
+                    <div data-ng-if="error" class="custom-input-tooltip">
+                        <span class="material-icons">info</span>
+                        <md-tooltip class="error-tooltip" md-direction="top">{{error}}</md-tooltip>
+                    </div>
+
+                    <div data-ng-if="tooltipText" data-ng-show="!error" class="custom-input-tooltip">
+                        <span class="material-icons ci-icon-color">info_outline</span>
+                        <md-tooltip class="tooltip_2" md-direction="top" data-ng-bind="tooltipText"></md-tooltip>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div ng-if="error"
+         ng-bind="error"
+         class="custom-input-bottom-error-text"></div>
+
+</div>

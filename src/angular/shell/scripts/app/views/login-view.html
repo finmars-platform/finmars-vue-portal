@@ -1,0 +1,46 @@
+<div class="auth-page height-100 flex-column flex-center">
+    <div ng-if="!vm.processing" class="auth-form">
+
+        <div class="auth-form-header">
+            <h3 class="p-r-16 p-l-16">Developer Authentication</h3>
+        </div>
+
+        <div class="auth-form-content">
+
+            <div>
+
+                <md-input-container class="width-100 margin-0">
+                    <label for="">Username</label>
+                    <input type="text" class="auth-username" data-ng-model="vm.username" data-ng-change="vm.error = false">
+                </md-input-container>
+
+            </div>
+
+            <div>
+                <md-input-container class="width-100 margin-0">
+                    <label for="">Password</label>
+                    <input type="password" class="auth-password" data-ng-model="vm.password" data-ng-change="vm.error = false">
+                </md-input-container>
+            </div>
+
+            <div data-ng-if="vm.error" class="m-t-8 m-b-16">
+                <div class="color-danger" title="{{vm.errorMessage}}">The username or password that you have entered is incorrect.</div>
+            </div>
+
+        </div>
+
+        <div class="auth-form-footer flex-row flex-c-center">
+            <md-button class="md-raised md-primary" data-ng-class="{'disabled-btn': !vm.username || !vm.password}" ng-click="vm.logIn($event)">SIGN IN</md-button>
+        </div>
+
+    </div>
+
+    <div data-ng-if="vm.processing">
+
+        <div class="overlay-loader" layout="row" layout-sm="column" layout-align="space-around">
+            <progress-circular diameter="50"></progress-circular>
+        </div>
+
+    </div>
+
+</div>
