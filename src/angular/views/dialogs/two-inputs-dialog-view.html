@@ -1,0 +1,45 @@
+<md-dialog class="text-editor-dialog draggable-dialog dialog-actions-bottom twoInputsDialogElemToResize"
+           aria-label="two inputs dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2 ng-bind="vm.title"></h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="p-16 height-100">
+        <div class="flex-row fc-space-between">
+            <div>
+                <text-input model="vm.firstInputData.value"
+                            label="{{vm.firstInputData.label}}"
+                            placeholder-text="Text"
+                            small-options="vm.firstInputData.smallOptions"></text-input>
+            </div>
+
+            <text-input model="vm.secondInputData.value"
+                        label="{{vm.secondInputData.label}}"
+                        placeholder-text="Text"
+                        small-options="vm.secondInputData.smallOptions"
+                        event-signal="vm.eventObj"></text-input>
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions>
+        <div layout="row" layout-align="space-between center">
+            <md-button ng-click="vm.cancel()">
+                Cancel
+            </md-button>
+
+            <md-button ng-click="vm.agree()" style="margin-right:20px;">
+                OK
+            </md-button>
+        </div>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,64 @@
+<md-dialog aria-label="" ng-cloak class="import-entity-errors-dialog-view draggable-dialog"
+           style="width: 40%;" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Complex import validation errors</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content style="background: #E5E5E5;">
+        <md-content>
+            <md-card>
+                <md-card-content>
+                    <h3>Please see below the list of import steps statuses</h3>
+
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Step</th>
+                            <th>Action Name</th>
+                            <th>Status</th>
+                            <th>Output</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr data-ng-repeat="action in vm.complexImportScheme.actions track by $index">
+                            <td>{{ $index + 1 }}</td>
+
+                            <td>{{action.action_notes}}</td>
+
+                            <td>
+                                <div data-ng-if="vm.validationResults.errors[$index].length">Error</div>
+                                <div data-ng-if="!vm.validationResults.errors[$index].length">Ok</div>
+                            </td>
+
+                            <td>
+                                <div data-ng-if="vm.validationResults.errors[$index].length">
+
+
+                                    <a href="javascript:void(0)" class="download-error-link link-{{$index}}">Download
+                                        error
+                                        file</a>
+                                </div>
+                            </td>
+
+                        </tr>
+                        </tbody>
+
+                    </table>
+
+                </md-card-content>
+            </md-card>
+
+        </md-content>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+
+        <md-button class="md-raised" ng-click="vm.agree()">
+            Ok
+        </md-button>
+
+    </md-dialog-actions>
+</md-dialog>

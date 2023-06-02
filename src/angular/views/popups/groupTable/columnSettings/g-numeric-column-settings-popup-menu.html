@@ -1,0 +1,208 @@
+<div class="popup-menu">
+
+    <div ng-if="popupData.data.isAGroup"
+         ng-include="'views/popups/entity-viewer/g-rv-group-settings-menu-options.html'"></div>
+
+    <div>
+        <md-button ng-click="popupData.data.renameColumn(popupData.data.item.key, null, $event, _$popup)"
+                   class="popup-menu-item">
+<!--            <ng-md-icon icon="visibility_off"
+                        style="visibility: hidden;"></ng-md-icon>-->
+            <span class="material-icons" style="visibility: hidden;">done</span>
+            <span>Rename</span>
+        </md-button>
+    </div>
+
+    <div data-ng-if="!popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)">
+        <md-button data-ng-click="popupData.data.addColumnEntityToGrouping(popupData.data.item)"
+                   class="popup-menu-item">
+<!--            <ng-md-icon icon="visibility_off"
+                        style="visibility: hidden;"></ng-md-icon>-->
+            <span class="material-icons" style="visibility: hidden;">done</span>
+            <span>Add to grouping</span>
+        </md-button>
+    </div>
+
+    <div ng-if="!popupData.data.isReport || popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)">
+        <md-button data-ng-click="popupData.data.unGroup(popupData.data.item.key, _$popup)"
+                   class="popup-menu-item">
+            <!--            <ng-md-icon icon="visibility_off"
+                                    style="visibility: hidden;"></ng-md-icon>-->
+            <span class="material-icons" style="visibility: hidden;">done</span>
+            <span>Ungroup</span>
+        </md-button>
+    </div>
+
+    <div>
+        <md-button data-ng-disabled="!popupData.data.checkForFilteringBySameAttr(popupData.data.item.key) || popupData.data.viewContext === 'dashboard'"
+                   data-ng-click="popupData.data.addFiltersWithColAttr(popupData.data.item)"
+                   class="popup-menu-item">
+<!--            <ng-md-icon icon="visibility_off"
+                        style="visibility: hidden;"></ng-md-icon>-->
+            <span class="material-icons" style="visibility: hidden;">done</span>
+            <span>Add to Filters</span>
+        </md-button>
+    </div>
+
+    <md-menu-divider></md-menu-divider>
+
+    <div>
+
+        <md-button ng-click="popupData.data.openNumberFormatDialog(popupData.data.item)"
+                   class="popup-menu-item">
+
+            <span class="material-icons" style="visibility: hidden;">done</span>
+            <span>Number Format</span>
+
+        </md-button>
+
+    </div>
+
+    <md-menu-divider></md-menu-divider>
+
+    <div data-ng-if="popupData.data.$index !== 0">
+        <md-button ng-click="popupData.data.onSubtotalSumClick(popupData.data.item, 1)"
+                   class="popup-menu-item">
+
+            <span class="material-icons" data-ng-show="popupData.data.isSubtotalSum">done</span>
+            <span class="material-icons" data-ng-show="!popupData.data.isSubtotalSum" style="visibility: hidden;">done</span>
+            <span>Subtotal SUM</span>
+
+        </md-button>
+    </div>
+
+    <div data-ng-if="popupData.data.$index !== 0 && !popupData.data.isSubtotalWeightedShouldBeExcluded(popupData.data.item)">
+
+        <md-button ng-click="popupData.data.onSubtotalWeightedClick(popupData.data.item)"
+                   class="popup-menu-item">
+
+            <span class="material-icons" data-ng-show="popupData.data.isSubtotalWeighted">done</span>
+            <span class="material-icons" style="visibility: hidden;" data-ng-show="!popupData.data.isSubtotalWeighted">done</span>
+            <span>Subtotal Weighted</span>
+
+        </md-button>
+
+    </div>
+
+    <div data-ng-if="popupData.data.$index !== 0 && !popupData.data.isSubtotalWeightedShouldBeExcluded(popupData.data.item)">
+
+        <md-button ng-click="popupData.data.onSubtotalAvgWeightedClick(popupData.data.item)"
+                   class="popup-menu-item">
+
+            <span class="material-icons" data-ng-show="popupData.data.isSubtotalAvgWeighted">done</span>
+            <span class="material-icons" style="visibility: hidden;" data-ng-show="!popupData.data.isSubtotalAvgWeighted">done</span>
+            <span>Subtotal Avg. Weighted</span>
+
+        </md-button>
+
+
+    </div>
+
+    <div>
+        <md-button ng-click="popupData.data.reportHideGrandTotal(popupData.data.item)"
+                   class="popup-menu-item">
+            <ng-md-icon icon="done" style="visibility: hidden;"></ng-md-icon>
+            <span data-ng-show="!popupData.data.item.report_settings.hide_grandtotal">Hide Grand Total</span>
+            <span data-ng-show="popupData.data.item.report_settings.hide_grandtotal">Show Grand Total</span>
+        </md-button>
+    </div>
+
+     <!--<div>
+        <md-button ng-click="popupData.data.reportHideSubtotal(popupData.data.item)"
+                   class="popup-menu-item">
+
+            <span class="material-icons" style="visibility: hidden;">done</span>
+            <span data-ng-show="!popupData.data.item.report_settings.hide_subtotal">Hide subtotal</span>
+            <span data-ng-show="popupData.data.item.report_settings.hide_subtotal">Show subtotal</span>
+
+        </md-button>
+    </div>-->
+
+    <md-menu-divider data-ng-if="popupData.data.$index !== 0 && !popupData.data.isSubtotalWeightedShouldBeExcluded(popupData.data.item)"></md-menu-divider>
+
+    <div data-ng-if="popupData.data.$index !== 0 && !popupData.data.isSubtotalWeightedShouldBeExcluded(popupData.data.item)"
+         data-ng-init="subtotalFormula = popupData.data.getSubtotalFormula(popupData.data.item)">
+
+        <md-button ng-click="popupData.data.selectSubtotalType(popupData.data.item, 2 + 4 * popupData.data.isSubtotalAvgWeighted)"
+                   class="popup-menu-item" data-ng-disabled="!popupData.data.isSubtotalWeighted && !popupData.data.isSubtotalAvgWeighted">
+
+            <span class="material-icons" data-ng-show="!popupData.data.isTemporaryWeighted && (subtotalFormula === 2 || subtotalFormula === 6)">done</span>
+            <span class="material-icons" style="visibility: hidden;" data-ng-show="popupData.data.isTemporaryWeighted || subtotalFormula !== 2 && subtotalFormula !== 6">done</span>
+            <span>Market Value</span>
+
+        </md-button>
+
+    </div>
+
+    <div data-ng-if="popupData.data.$index !== 0 && !popupData.data.isSubtotalWeightedShouldBeExcluded(popupData.data.item)"
+         data-ng-init="subtotalFormula = popupData.data.getSubtotalFormula(popupData.data.item)">
+
+        <md-button ng-click="popupData.data.selectSubtotalType(popupData.data.item, 3 + 4 * popupData.data.isSubtotalAvgWeighted)"
+                   class="popup-menu-item" data-ng-disabled="!popupData.data.isSubtotalWeighted && !popupData.data.isSubtotalAvgWeighted">
+
+            <span class="material-icons" data-ng-show="!popupData.data.isTemporaryWeighted && (subtotalFormula === 3 || subtotalFormula === 7)">done</span>
+            <span class="material-icons" style="visibility: hidden;" data-ng-show="popupData.data.isTemporaryWeighted || subtotalFormula !== 3 && subtotalFormula !== 7">done</span>
+            <span>Market Value %</span>
+
+        </md-button>
+
+    </div>
+
+    <div data-ng-if="popupData.data.$index !== 0 && !popupData.data.isSubtotalWeightedShouldBeExcluded(popupData.data.item)"
+         data-ng-init="subtotalFormula = popupData.data.getSubtotalFormula(popupData.data.item)">
+
+        <md-button ng-click="popupData.data.selectSubtotalType(popupData.data.item, 4 + 4 * popupData.data.isSubtotalAvgWeighted)"
+                   class="popup-menu-item" data-ng-disabled="!popupData.data.isSubtotalWeighted && !popupData.data.isSubtotalAvgWeighted">
+
+            <span class="material-icons" data-ng-show="!popupData.data.isTemporaryWeighted && (subtotalFormula === 4 || subtotalFormula === 8)">done</span>
+            <span class="material-icons" style="visibility: hidden;" data-ng-show="popupData.data.isTemporaryWeighted || subtotalFormula !== 4 && subtotalFormula !== 8">done</span>
+            <span>Exposure</span>
+
+        </md-button>
+
+    </div>
+
+    <div data-ng-if="popupData.data.$index !== 0 && !popupData.data.isSubtotalWeightedShouldBeExcluded(popupData.data.item)"
+         data-ng-init="subtotalFormula = popupData.data.getSubtotalFormula(popupData.data.item)">
+
+        <md-button ng-click="popupData.data.selectSubtotalType(popupData.data.item, 5 + 4 * popupData.data.isSubtotalAvgWeighted)"
+        class="popup-menu-item" data-ng-disabled="!popupData.data.isSubtotalWeighted && !popupData.data.isSubtotalAvgWeighted">
+
+            <span class="material-icons" data-ng-show="!popupData.data.isTemporaryWeighted && (subtotalFormula === 5 || subtotalFormula === 9)">done</span>
+            <span class="material-icons" style="visibility: hidden;" data-ng-show="popupData.data.isTemporaryWeighted || subtotalFormula !== 5 && subtotalFormula !== 9">done</span>
+            <span>Exposure %</span>
+
+        </md-button>
+
+    </div>
+
+
+<!--    <div>
+        <md-button ng-click="popupData.data.resizeColumn(popupData.data.item, $mdMenu, $event)"
+                   class="popup-menu-item">
+            <ng-md-icon icon="visibility_off"
+                        style="visibility: hidden;"></ng-md-icon>
+            <span>Resize</span>
+        </md-button>
+    </div>-->
+    <div data-ng-if="!popupData.data.isReport || !popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)"
+         ng-include="'views/popups/groupTable/columnSettings/g-column-alignment-menu-options.html'"
+         class="flex-column"></div>
+
+    <div data-ng-if="!popupData.data.isReport || popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)">
+        <md-button ng-click="popupData.data.removeGroup(popupData.data.item.___column_id || popupData.data.item.___group_type_id)"
+                   class="popup-menu-item">
+            <span class="material-icons" style="visibility: hidden;">done</span>
+            <span>Remove</span>
+        </md-button>
+    </div>
+
+    <div data-ng-if="!popupData.data.isReport || !popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)">
+        <md-button ng-click="popupData.data.removeColumn(popupData.data.item)"
+                   class="popup-menu-item">
+            <span class="material-icons" style="visibility: hidden;">done</span>
+            <span>Remove</span>
+        </md-button>
+    </div>
+
+</div>

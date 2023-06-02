@@ -1,0 +1,137 @@
+<md-dialog class="unified-data-select-database-dialog-view"
+           aria-label="unified data select dialog">
+    <md-toolbar>
+        <dialog-header title="{{vm.title}}" cancel-dialog="vm.cancel()"></dialog-header>
+    </md-toolbar>
+    <md-dialog-content>
+
+        <div>
+
+            <div layout="row">
+
+                <div style="width: 383px;">
+                    <text-input
+                            on-change-callback="vm.onInputTextChange()"
+                            placeholder-text="Search"
+                            model="vm.inputText"
+                            small-options="{dialogParent: '.dialog-containers-wrap'}"
+                            class="m-r-8"></text-input>
+                </div>
+
+            </div>
+
+            <div class="unified-data-select-database-dialog-table-head">
+
+                <div style="width: 50%; padding: 5px;">
+                    Name
+                </div>
+
+                <div style="width: 30%; padding: 5px;">
+                     Code
+                </div>
+
+
+            </div>
+
+            <div class="unified-data-select-database-dialog-table-body">
+
+                <div data-ng-if="!vm.processing" style="height: 359px; overflow-y: auto">
+
+                    <b data-ng-if="vm.localItems.length" class="unified-data-select-options-group-title">Local Records
+                        ({{vm.localItemsTotal}})</b>
+
+                    <div data-ng-if="vm.localItems.length">
+
+                        <div
+                                data-ng-repeat="option in vm.localItems"
+                                data-ng-click="vm.selectLocalItem(option)"
+                                class="database-option-row {{option.selected ? 'active' : ''}}"
+
+                        >
+
+                            <div class="unified-data-select-instrument-name" title="{{option.name}}" ng-bind-html="vm.getHighlighted(option.name)">
+
+                            </div>
+                            <div class="unified-data-select-instrument-isin" title="{{option.user_code}}" ng-bind-html="vm.getHighlighted(option.user_code)">
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                    <b data-ng-if="vm.databaseItems.length" style=" bottom: 0px;"  class="unified-data-select-options-group-title">Global Records
+                        ({{vm.databaseItemsTotal}})</b>
+
+                    <div data-ng-if="vm.databaseItems.length">
+
+                        <div
+                                data-ng-repeat="option in vm.databaseItems"
+                                data-ng-click="vm.selectDatabaseItem(option)"
+                                class="database-option-row {{option.selected ? 'active' : ''}}"
+
+                        >
+
+
+                            <div class="unified-data-select-instrument-name" title="{{option.name}}" ng-bind-html="vm.getHighlighted(option.name)">
+
+                            </div>
+
+                            <div data-ng-if="vm.entityType != 'currency'" class="unified-data-select-instrument-isin" title="{{option.user_code}}" ng-bind-html="vm.getHighlighted(option.user_code)">
+
+                            </div>
+
+                            <div data-ng-if="vm.entityType == 'currency'" class="unified-data-select-instrument-isin" title="{{option.code}}" ng-bind-html="vm.getHighlighted(option.code)">
+
+                            </div>
+
+
+                        </div>
+
+                        <button class="control-button load-more {{vm.globalProcessing ? 'disabled-btn' : ''}}" data-ng-if="vm.globalPage < vm.totalPages" data-ng-click="vm.loadMoreGlobalItems($event)">Load more</button>
+
+                    </div>
+
+                    <div data-ng-if="!vm.localItems.length && !vm.databaseItems.length">
+                        <b class="unified-data-select-options-group-title">Not records found</b>
+                    </div>
+
+                </div>
+
+
+                <div data-ng-if="vm.processing" layout="row" layout-sm="column" layout-align="space-around" class="p-8">
+                    <progress-circular diameter="50"></progress-circular>
+                </div>
+
+            </div>
+
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions>
+
+        <div class="flex-row fc-space-between flex-i-center">
+            <div class="unified-data-select-database-footer">
+
+                <span class="material-icons" data-ng-click="vm.unlock = true" data-ng-if="!vm.unlock">lock</span>
+
+                <span class="material-icons" data-ng-if="vm.unlock" data-ng-click="vm.addEntity($event)">add</span>
+
+            </div>
+
+            <div>
+                <md-button class="link-button m-0" ng-click="vm.cancel()">
+                    Cancel
+                </md-button>
+
+                <md-button class="link-button m-t-0 m-b-0 {{vm.isDisabled ? 'disabled-btn' : ''}}"
+                           ng-click="vm.agree()" style="margin-right:20px;">
+                    <span data-ng-if="vm.actionType == 'default'">Select</span>
+                </md-button>
+            </div>
+
+        </div>
+
+    </md-dialog-actions>
+</md-dialog>

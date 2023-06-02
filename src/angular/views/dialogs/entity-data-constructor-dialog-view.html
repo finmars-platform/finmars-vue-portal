@@ -1,0 +1,282 @@
+<md-dialog aria-label="data constructor"
+           class="entity-data-constructor-dialog dialog-actions-bottom draggable-dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h1 class="entity-data-constructor-title">
+                <span class="ec-entity-type">
+                    {{vm.entityType}}
+                    <ng-md-icon icon="chevron_right"
+                                size="24"
+                                style="fill:#8B8B8B;"></ng-md-icon>
+                </span>
+                INPUT FORM EDITOR
+            </h1>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="mdDialogContent height-100">
+        <div class="entity-constructor">
+
+            <div data-ng-if="vm.readyStatus.constructor"
+                 data-add-tab-ec data-tabs="vm.tabs">
+                <!--<h1 class="ec-breadcrumbs">
+                    <span class="ec-entity-type">{{vm.entityType}} <ng-md-icon icon="chevron_right" size="24"
+                                                                               style="fill:#8B8B8B;"></ng-md-icon></span> INPUT
+                    FORM EDITOR
+                </h1>-->
+
+                <div class="form-constructor-main">
+
+                    <div class="form-constructor-workarea scrollElemOnDrag tabsHolderElem">
+                        <div data-ng-init="vm.setTabsHolderHeight()"></div>
+
+                        <!-- CODE FOR FIXED AREA INSIDE INPUT FORM EDITOR -->
+                        <!--<div class="form-constructor-fixed-area">
+                            <div>
+                                <md-button class="md-raised m-b-16"
+                                           data-ng-click="vm.toggleFixedArea()">TOGGLE TOP PANEL</md-button>
+                            </div>
+
+                            <div data-ng-if="vm.fixedArea.isActive"
+                                 class="ec-md-content">
+
+                                <div class="ec-layout-box">
+                                    <md-button data-ng-repeat="item in vm.boxColumns"
+                                               data-ng-click="vm.setLayoutColumns(vm.fixedArea, item, $event)"
+                                               class="ec-layout-btn"
+                                               data-ng-class="{'active': vm.fixedArea.layout.columns === item}"
+                                               aria-label="input form editor columns quantity">
+                                        <ng-md-icon icon="stop" data-ng-repeat="icon in vm.range(item)"></ng-md-icon>
+                                    </md-button>
+                                </div>
+
+                                <div class="ec-layout">
+                                    <div layout="row"
+                                         data-ng-repeat="row in vm.fixedAreaFieldsTree"
+                                         class="ec-layout-row">
+                                        <div data-ng-repeat="field in row"
+                                             class="form-constructor-field-wrap"
+                                             flex="{{vm.bindFlex('fixedArea', field.row, field.column)}}"
+                                             ng-if="vm.checkColspan('fixedArea', field.row, field.column)">
+                                            <new-layout-constructor-field data-fixed-area="vm.fixedArea"
+                                                                          data-fields-tree="vm.fixedAreaFieldsTree"
+                                                                          data-tabs="vm.tabs"
+                                                                          data-tab-order="fixedArea"
+                                                                          data-field="field"></new-layout-constructor-field>
+                                        </div>
+
+                                        <md-button class="md-button ec-manage-row-btn"
+                                                   ng-click="vm.insertRow(vm.fixedArea, $index + 1)" style="right: 55px">
+                                            +
+                                            <md-tooltip class="tooltip_1" md-direction="top">Insert row below</md-tooltip>
+                                        </md-button>
+
+                                        <md-button data-ng-if="vm.fixedArea.layout.rows > $index + 1"
+                                                   class="md-button ec-manage-row-btn"
+                                                   ng-click="vm.deleteRow(vm.fixedArea, $index + 1)"
+                                                   style="right: 10px;"
+                                                   data-ng-disabled="!vm.isRowEmpty('fixedArea', $index + 1, vm.fixedArea.layout.columns)">
+                                            -
+                                            <md-tooltip class="tooltip_1"
+                                                        md-direction="top"
+                                                        data-ng-hide="!vm.isFARowEmtpty($index + 1)">Remove row</md-tooltip>
+                                            <md-tooltip class="tooltip_1"
+                                                        md-direction="top"
+                                                        data-ng-hide="vm.isFARowEmtpty($index + 1)">Empty row before removing it</md-tooltip>
+                                        </md-button>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>-->
+                        <!-- < CODE FOR FIXED AREA INSIDE INPUT FORM EDITOR > -->
+
+                        <div class="flex-row fc-start fi-center p-t-16 p-l-8 m-b-8">
+                            <!-- <md-input-container class="md-block">
+                                <label>User Code</label>
+                                <input aria-label="scheme user code" type="text" data-ng-model="vm.ui.user_code">
+                            </md-input-container> -->
+                            <text-input label="User Code"
+                                        model="vm.ui.user_code"
+                                        class="m-r-8"></text-input>
+                            <!-- <md-input-container class="md-block">
+                                <label>Name</label>
+                                <input aria-label="scheme name" type="text" data-ng-model="vm.ui.name">
+                            </md-input-container> -->
+                            <text-input label="Name"
+                                        model="vm.ui.name"
+                                        class="m-r-8"></text-input>
+
+                            <div>
+                                <md-checkbox data-ng-model="vm.ui.is_default"
+                                             class="m-b-0"
+                                             aria-label="checkbox">
+                                    Is default
+                                </md-checkbox>
+                            </div>
+
+                        </div>
+
+                        <div>
+                            <md-button class="md-raised"
+                                       data-ng-click="vm.openTabsEditor($event)"
+                                       data-ng-disabled="!vm.tabs || vm.tabs.length < 2">Change order of tabs</md-button>
+                        </div>
+
+                        <md-tabs md-border-bottom md-dynamic-height>
+                            <md-tab data-ng-repeat="tab in vm.tabs track by tab.name">
+                                <md-tab-label>
+                                    <div data-ng-if="!tab.editState" data-ng-click="">
+                                        <span class="ec-tab-item-name">{{tab.name}}</span>
+                                        <md-button class="ec-tab-btn"
+                                                   data-ng-click="vm.toggleEditTab(tab)"
+                                                   aria-label="input form editor tab edition toggle">
+                                            <ng-md-icon icon="edit"></ng-md-icon>
+                                        </md-button>
+                                        <md-button class="ec-tab-btn"
+                                                   data-ng-click="vm.deleteTab(tab)"
+                                                   aria-label="input form editor tab deletion">
+                                            <ng-md-icon icon="delete"></ng-md-icon>
+                                        </md-button>
+                                    </div>
+
+                                    <div data-ng-if="tab.editState">
+                                        <md-input-container class="ec-tab-item-edit">
+                                            <label>Tab name</label>
+                                            <input ng-model="tab.captionName" class="tabNameInput" data-tab-id="{{tab.id}}">
+                                        </md-input-container>
+                                        <md-button class="ec-tab-btn"
+                                                   data-ng-click="vm.saveEditedTab(tab)">
+                                            <ng-md-icon icon="save"></ng-md-icon>
+                                        </md-button>
+                                        <md-button class="ec-tab-btn"
+                                                   data-ng-click="vm.toggleEditTab(tab, 'back', $index)"
+                                                   aria-label="input form editor tab edition toggle">
+                                            <ng-md-icon icon="cancel"></ng-md-icon>
+                                        </md-button>
+                                    </div>
+                                </md-tab-label>
+
+                                <md-tab-body>
+                                    <div class="ec-md-content ec-layout-tab">
+                                        <div class="ec-layout-box">
+                                            <md-button class="{{tab.layout.columns === item ? 'active' : '' }} ec-layout-btn"
+                                                       data-ng-click="vm.setLayoutColumns(tab, item, $event)"
+                                                       data-ng-repeat="item in vm.boxColumns"
+                                                       aria-label="input form editor columns quantity">
+                                                <ng-md-icon icon="stop" data-ng-repeat="icon in vm.range(item)"></ng-md-icon>
+                                            </md-button>
+                                        </div>
+
+                                        <div class="ec-layout">
+                                            <div layout="row"
+                                                 data-ng-repeat="row in vm.range(tab.layout.rows)"
+                                                 class="ec-layout-row">
+                                                <div data-ng-repeat="column in vm.range(tab.layout.columns)"
+                                                     class="form-constructor-field-wrap"
+                                                     flex="{{vm.bindFlex(tab, row, column)}}"
+                                                     ng-if="vm.checkColspan(tab, row, column)">
+                                                    <layout-constructor-field tab="tab"
+                                                                              row="row"
+                                                                              column="column"
+                                                                              tab-fields-tree="vm.fieldsTree[tab.tabOrder]"
+                                                                              palettes-list="vm.palettesList"></layout-constructor-field>
+                                                </div>
+
+                                                <md-button class="md-button ec-manage-row-btn"
+                                                           ng-click="vm.insertRow(tab, row)" style="right: 55px">
+                                                    +
+                                                    <md-tooltip class="tooltip_1" md-direction="top">Insert row below</md-tooltip>
+                                                </md-button>
+                                                <md-button data-ng-if="tab.layout.rows > row"
+                                                           class="md-button ec-manage-row-btn"
+                                                           ng-click="vm.deleteRow(tab, row)"
+                                                           style="right: 10px;"
+                                                           data-ng-disabled="!vm.isRowEmpty(tab.tabOrder, row, tab.layout.columns)">
+                                                    -
+                                                    <md-tooltip class="tooltip_1"
+                                                                md-direction="top"
+                                                                data-ng-hide="!vm.isRowEmpty(tab.tabOrder, row, tab.layout.columns)">Remove row</md-tooltip>
+                                                    <md-tooltip class="tooltip_1"
+                                                                md-direction="top"
+                                                                data-ng-hide="vm.isRowEmpty(tab.tabOrder, row, tab.layout.columns)">Empty row before removing it</md-tooltip>
+                                                </md-button>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </md-tab-body>
+                            </md-tab>
+                        </md-tabs>
+
+                    </div>
+
+                    <div class="form-constructor-sidebar p-8">
+
+                        <p>
+                            <b>Drag fields from here</b>
+                        </p>
+
+                        <div data-ng-repeat="item in vm.items track by $index" class="form-constructor-draggable-card" >
+                            <md-card class="p-l-16"
+                                     data-index="{{$index}}"
+                                     data-occupies-whole-row="{{vm.doesAttrOccupiesWholeRow(item)}}">
+                                <p><b data-ng-bind="vm.getFieldName(item)"></b> (<span data-ng-bind="vm.getFieldType(item.value_type)"></span>)</p>
+                            </md-card>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div ng-if="!vm.readyStatus.constructor">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                    <progress-circular diameter="100"></progress-circular>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="space-between center">
+
+        <div>
+            <md-button data-ng-if="vm.attributesAvailable(vm.entityType)"
+                       class="md-raised md-primary manage-attrs-btn"
+                       data-ng-click="vm.manageAttrs($event)">
+                Manage attributes
+            </md-button>
+            <md-button class="md-raised manage-attrs-btn"
+                       data-ng-click="vm.openFormPreview($event)"
+                       ng-disabled="!vm.readyStatus.constructor">
+                Preview Form
+            </md-button>
+
+            <md-button class="md-raised"
+                       package-manager-button
+                       content-type="'ui.editlayout'"
+                       target-content-type="vm.targetContentType">
+                Select from List
+            </md-button>
+        </div>
+
+        <div style="padding-right: 10px">
+
+            <md-button ng-click="vm.cancel()" class="md-raised">
+                Cancel
+            </md-button>
+            <md-button ng-click="vm.saveLayout()" class="md-raised {{vm.processing ? 'disabled-btn' : ''}}" >
+                <span>Save & Return</span>
+                <span></span>
+            </md-button>
+        </div>
+
+    </md-dialog-actions>
+</md-dialog>

@@ -1,14 +1,17 @@
 <template>
-		<div
-			:class="['icon', {primary, error, btn, disabled, 'btn-primary': btnPrimary}]"
-			:style="{width: size + 'px', fontSize: size + 'px'}"
-		>
-			<slot>
-				<div class="material-icons">{{ icon }}</div>
-			</slot>
+	<div
+		:class="[
+			'icon',
+			{ primary, error, btn, disabled, 'btn-primary': btnPrimary },
+		]"
+		:style="{ width: size + 'px', fontSize: size + 'px' }"
+	>
+		<slot>
+			<div class="material-icons">{{ icon }}</div>
+		</slot>
 
-	<!--		<div class="tooltip" v-if="tooltip">{{ tooltip }}</div>-->
-		</div>
+		<!--		<div class="tooltip" v-if="tooltip">{{ tooltip }}</div>-->
+	</div>
 </template>
 
 <script setup>
@@ -22,7 +25,6 @@
 		btnPrimary: Boolean,
 		disabled: Boolean,
 	})
-
 </script>
 
 <style lang="scss" scoped>
@@ -30,7 +32,7 @@
 		position: relative;
 		display: block;
 		cursor: pointer;
-		transition: color, background  0.3s;
+		transition: color, background 0.3s;
 		font-size: 24px;
 		line-height: 0;
 		color: $text-lighten;
@@ -59,6 +61,7 @@
 
 			&:hover {
 				background: $primary-lighten;
+				color: $white;
 			}
 		}
 		&.primary {

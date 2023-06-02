@@ -1,0 +1,51 @@
+<md-dialog aria-label="" ng-cloak class="bookmarks-wizard-view draggable-dialog" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Bookmark editor</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+
+        <div layout="column" data-ng-if="vm.readyStatus" class="bookmarks-editor-content-wrapper">
+            <div layout="row">
+                <md-input-container flex="100">
+                    <label for="edit-bookmark-name">Bookmark Name</label>
+                    <input data-ng-model="vm.bookmarkName"
+                           type="text"
+                           id="edit-bookmark-name">
+                </md-input-container>
+            </div>
+
+            <div data-ng-if="!vm.itemIsFolder" layout="row">
+                <md-input-container flex="100" class="bookmarks-editor-layouts-input-container">
+                    <label for="edit-bookmark-entity-layout">Bookmark layout</label>
+                    <input data-ng-model="vm.bookmarkLayoutName"
+                           type="text"
+                           id="edit-bookmark-entity-layout"
+                           no-trim="true"
+                           readonly
+                           data-ng-click="vm.editBookmarkLayout($event)">
+                </md-input-container>
+            </div>
+        </div>
+        <div data-ng-if="!vm.readyStatus">
+            <div class="overflow-hidden" layout="row" layout-sm="column" layout-align="space-around">
+                <md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>
+            </div>
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+        <md-button ng-click="vm.agree()" style="margin-right:20px;">
+            OK
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

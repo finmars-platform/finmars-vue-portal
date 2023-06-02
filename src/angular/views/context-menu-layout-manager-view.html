@@ -1,0 +1,45 @@
+<div>
+
+    <h1 class="p-24">Context Menu Layouts</h1>
+
+    <md-button class="md-raised"
+               package-manager-button
+               content-type="'ui.contextmenulayout'">
+        Select from List
+    </md-button>
+
+    <div data-ng-if="vm.readyStatus.data" class="p-24">
+
+        <div>
+            <md-button class="md-raised md-primary" data-ng-disabled="vm.items.length > 2" data-ui-sref="app.portal.context-menu-constructor({id: 'new'})">Add New Layout
+            </md-button>
+        </div>
+
+        <div data-ng-if="vm.items.length">
+
+            <div data-ng-repeat="item in vm.items track by item.id">
+
+                {{item.name}} ({{item.type}})
+
+                <md-button class="md-raised" data-ui-sref="app.portal.context-menu-constructor({id: item.id})">Edit</md-button>
+                <md-button class="md-raised md-warn" data-ng-click="vm.deleteItem($event, item)">Delete</md-button>
+
+            </div>
+
+        </div>
+
+        <div data-ng-if="!vm.items.length">
+
+            <h4>No Layouts Exists</h4>
+
+        </div>
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.data">
+        <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+    </div>
+
+</div>

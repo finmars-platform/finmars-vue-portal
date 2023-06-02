@@ -1,0 +1,791 @@
+<md-dialog aria-label="import transaction scheme manager dialog"
+           class="transaction-scheme-manager-dialog-view transaction-scheme-manager-dialog-view-v2 dialog-actions-bottom"
+>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Transaction scheme manager (v2)</h2>
+            <div data-ng-if="vm.processing" layout="row" class="m-l-16">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="m-r-8">
+                    <progress-circular diameter="10"></progress-circular>
+                </div>
+                — Processing
+            </div>
+        </div>
+    </md-toolbar>
+    <md-dialog-content style="background: #E5E5E5;">
+        <md-content class="height-100">
+            <div data-ng-if="vm.checkReadyStatus()" class="height-100">
+
+                <md-tabs class="height-100">
+                    <md-tab>
+                        <md-tab-label>General</md-tab-label>
+
+                        <md-tab-body>
+
+                            <div layout="row" layout-align="center center">
+                                <md-card flex="100" class="inm-card-special">
+                                    <md-card-content layout="column">
+
+                                        <usercode-input data-item="vm.scheme"
+                                                        data-ng-if="!vm.scheme.id"></usercode-input>
+
+                                        <md-input-container class="md-block" data-ng-if="vm.scheme.id">
+                                            <label for="">User code</label>
+                                            <input type="text" data-ng-model="vm.scheme.user_code">
+                                        </md-input-container>
+
+                                        <md-input-container class="md-block">
+                                            <label for="">Name</label>
+                                            <input type="text" data-ng-model="vm.scheme.name">
+                                        </md-input-container>
+                                        <md-input-container class="md-block">
+                                            <label for="">Short name</label>
+                                            <input type="text" data-ng-model="vm.scheme.short_name">
+                                        </md-input-container>
+                                        <div layout="row">
+                                            <md-input-container flex style="margin-bottom: 0">
+                                                <label for="">Expression for Transaction Type Selector</label>
+                                                <input type="text" data-ng-model="vm.scheme.rule_expr">
+                                            </md-input-container>
+                                            <expression-editor-button data-item="vm.scheme.rule_expr"
+                                                                      data-data="vm.exprEditorBtnData"></expression-editor-button>
+
+                                            <md-button class="md-raised md-primary"
+                                                       data-ng-click="vm.openSelectorManager($event)"
+                                                       style="min-height: 30px; height: 30px; line-height: 1;">
+                                                Selector Values
+                                            </md-button>
+                                        </div>
+
+                                        <div layout="row">
+                                            <md-input-container flex style="margin-bottom: 0">
+                                                <label for="">Expression for File Preprocessing</label>
+                                                <input type="text" data-ng-model="vm.scheme.data_preprocess_expression">
+                                            </md-input-container>
+                                            <expression-editor-button data-item="vm.scheme.data_preprocess_expression"
+                                                                      data-data="vm.exprEditorBtnData"></expression-editor-button>
+                                        </div>
+
+                                        <div layout="row">
+                                            <md-input-container>
+                                                <label for="">Error handling</label>
+                                                <md-select data-ng-model="vm.scheme.error_handler">
+                                                    <md-option value="continue">Continue</md-option>
+                                                    <md-option value="break">Break on first error</md-option>
+                                                </md-select>
+                                            </md-input-container>
+
+                                            <md-input-container>
+                                                <label>Separator</label>
+                                                <md-select data-ng-model="vm.scheme.delimiter">
+                                                    <md-option value=",">Comma (,)</md-option>
+                                                    <md-option value=";">Semicolon (;)</md-option>
+                                                    <md-option value="\t">Tab</md-option>
+                                                </md-select>
+                                            </md-input-container>
+
+                                            <md-input-container style="width: 245px;">
+                                                <label>Import Rules - if object is not found</label>
+                                                <md-select
+                                                        data-ng-model="vm.scheme.missing_data_handler">
+                                                    <md-option value="throw_error">Treat as Error</md-option>
+                                                    <md-option value="set_defaults">Replace with Default Value
+                                                    </md-option>
+                                                </md-select>
+                                            </md-input-container>
+
+                                            <md-input-container class="md-block">
+                                                <label for="">Spreadsheet start cell</label>
+                                                <input type="text" data-ng-model="vm.scheme.spreadsheet_start_cell">
+                                            </md-input-container>
+
+                                            <md-input-container class="md-block">
+                                                <label for="">Spreadsheet active tab</label>
+                                                <input type="text"
+                                                       data-ng-model="vm.scheme.spreadsheet_active_tab_name">
+                                            </md-input-container>
+
+
+                                        </div>
+
+                                        <div layout="row">
+                                            <md-input-container style="width: 245px;">
+                                                <label>Column Matcher</label>
+                                                <md-select
+                                                        data-ng-model="vm.scheme.column_matcher">
+                                                    <md-option value="index">Index</md-option>
+                                                    <md-option value="name">Name</md-option>
+                                                </md-select>
+                                            </md-input-container>
+
+                                            <md-input-container class="md-block">
+                                                <md-checkbox ng-model="vm.scheme.has_header_row"
+                                                             aria-label="">
+                                                    Has header row
+                                                </md-checkbox>
+                                            </md-input-container>
+                                        </div>
+                                        <div>
+                                            <md-input-container class="md-block">
+                                                <label for="">Filter Expression</label>
+                                                <input type="text" data-ng-model="vm.scheme.filter_expression">
+                                            </md-input-container>
+                                        </div>
+
+                                        <div class="m-b-16">
+
+                                            <md-input-container style="width: 260px;">
+                                                <label>Transaction Unique Code Settings</label>
+                                                <md-select
+                                                        data-ng-model="vm.scheme.book_uniqueness_settings">
+                                                    <md-option ng-value="1">Skip</md-option>
+                                                    <md-option ng-value="2">Book without Unique Code
+                                                    </md-option>
+                                                    <md-option ng-value="3">Overwrite</md-option>
+                                                    <md-option ng-value="4">Treat as error</md-option>
+                                                </md-select>
+                                            </md-input-container>
+
+                                        </div>
+
+                                    </md-card-content>
+                                </md-card>
+                            </div>
+
+                        </md-tab-body>
+
+                    </md-tab>
+
+                    <md-tab>
+                        <md-tab-label>Scheme</md-tab-label>
+
+                        <md-tab-body>
+
+                            <div>
+                                <md-button class="md-raised dry-run-button"
+                                           data-ng-click="vm.showDryRun = !vm.showDryRun">
+                                    <span data-ng-show="vm.showDryRun">Hide Dry Run</span>
+                                    <span data-ng-show="!vm.showDryRun">Show Dry Run</span>
+                                </md-button>
+                                <div data-ng-if="vm.showDryRun">
+                                    <div>
+
+                                        <div layout="row">
+                                            <textarea name="" id="" class="dry-run-data-textarea"
+                                                      data-ng-model="vm.dryRunData"></textarea>
+                                            <div layout="row">
+                                                <md-button class="md-raised dry-run-execute"
+                                                           data-ng-click="vm.executeDryRun($event)">Execute
+                                                </md-button>
+                                                <div data-ng-if="vm.processing" style="padding-top: 12px">
+
+                                                    <div layout="row" layout-sm="column" layout-align="space-around">
+                                                        <progress-circular diameter="20"></progress-circular>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                    <div>
+
+                                        <div data-ng-if="vm.dryRunResult.result" class="dry-run-result">
+
+                                            <div>
+                                                Results:
+                                            </div>
+
+                                            <div data-ng-if="vm.dryRunResult.result.error_message">
+                                                <div style="color:red;">{{vm.dryRunResult.result.error_message}}</div>
+                                            </div>
+
+                                            <md-card data-ng-repeat="item in vm.dryRunResult.result.items"
+                                                     data-ng-click="vm.activateResultItem($event, item)"
+                                                     class="dry-run-result-item {{item.active ? 'active' : ''}}">
+
+                                                <div
+                                                        class="dry-run-result-item-body ">
+                                                    <div>Line: {{item.row_number}}. Status: {{item.status}}</div>
+                                                    <div class="dry-run-result-item-message">
+                                                        {{item.message}}
+                                                        <div style="color:red;">{{item.error_message}}</div>
+                                                    </div>
+
+                                                </div>
+
+                                            </md-card>
+
+
+                                        </div>
+                                        <div data-ng-if="!vm.dryRunResult.result">
+
+                                            <div style="color:red;">{{vm.dryRunResult.error_message}}</div>
+
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div layout="row" class="height-100 transaction-import-scheme-v2-cards-holder">
+
+                                <!-- Imported Columns-->
+                                <md-card class="transaction-import-scheme-v2-file-inputs-holder">
+                                    <md-card-content>
+
+                                        <div class="transaction-import-scheme-v2-card-header">
+                                            Imported Columns
+                                            <input type="text" data-ng-model="vm.providerFieldsQuery"
+                                                   placeholder="search..."
+                                                   class="transaction-import-scheme-v2-card-header-search">
+                                        </div>
+
+                                        <div data-ng-repeat="item in vm.providerFields | filter: {$: vm.providerFieldsQuery} track by $index"
+                                             class="transaction-import-scheme-v2-file-input"
+                                             >
+
+                                            <md-input-container style="position: relative; width: 50px">
+
+                                                <input class="no-input-arrows"
+                                                       type="number"
+                                                       ng-model="item.column"
+                                                       aria-label="provider field column number">
+                                            </md-input-container>
+                                            <md-input-container class="transaction-import-scheme-input-container">
+
+                                                <input type="text"
+                                                       placeholder="column name"
+                                                       data-ng-model="item.column_name"
+                                                       aria-label="provider field name">
+                                            </md-input-container>
+                                            <md-input-container class="transaction-import-scheme-input-container">
+                                                <input type="text"
+                                                       data-ng-model="item.name"
+                                                       placeholder="name"
+                                                       ng-blur="vm.setProviderFieldExpression(item)"
+                                                       aria-label="provider field name">
+                                            </md-input-container>
+
+                                            <div
+                                                    ng-click="vm.openProviderFieldExpressionBuilder(item, $event)"
+                                                    name=""
+                                                    class="transaction-import-scheme-v2-calculated-input-expression">
+                                                {{item.name_expr}}
+                                            </div>
+
+                                            <md-button
+                                                    ng-click="vm.removeProviderField(item, $index)"
+                                                    class="custom-small-icon-btn md-raised"
+                                                    style="line-height: 1">
+                                                <ng-md-icon icon="close"
+                                                            size="14"></ng-md-icon>
+                                            </md-button>
+
+                                            <div data-ng-if="item.dryRunResult">
+
+                                                <span class="dry-run-result-value">{{item.dryRunResult}}</span>
+
+                                            </div>
+
+                                        </div>
+
+                                        <div layout="row">
+                                            <md-button class="md-raised" ng-click="vm.addProviderField()">
+                                                Add field
+                                            </md-button>
+                                        </div>
+                                    </md-card-content>
+                                </md-card>
+
+                                <!-- Calculated Variables-->
+                                <md-card class="transaction-import-scheme-v2-calculated-inputs-holder">
+                                    <md-card-content>
+
+                                        <div class="transaction-import-scheme-v2-card-header">
+                                            Calculated Variables
+                                            <input type="text" data-ng-model="vm.calculatedFieldsQuery"
+                                                   placeholder="search..."
+                                                   class="transaction-import-scheme-v2-card-header-search">
+                                        </div>
+
+                                        <div data-ng-repeat="item in vm.calculatedFields | filter: {$: vm.calculatedFieldsQuery} track by $index"
+                                             class="transaction-import-scheme-v2-calculated-input"
+                                             >
+                                            <div class="fields-holder" layout="row">
+                                                <div class="iscm-item" layout="row">
+
+                                                    <md-input-container
+                                                            class="transaction-import-scheme-input-container">
+                                                        <input type="text"
+                                                               data-ng-model="item.name"
+                                                               placeholder="name"
+                                                               ng-blur="vm.onCalculatedFieldNameBlur(item)"
+                                                               aria-label="provider field name">
+                                                    </md-input-container>
+
+                                                </div>
+
+                                                <div flex style="margin-right: 2px;">
+
+                                                    <div
+                                                        ng-click="vm.openCalcFieldFxBtnExprBuilder(item, $event)"
+                                                        name=""
+                                                        class="transaction-import-scheme-v2-calculated-input-expression"
+                                                    >
+                                                        {{item.name_expr}}
+                                                    </div>
+
+                                                    <md-tooltip
+                                                            data-ng-show="item.frontOptions && item.frontOptions.noNameExpr"
+                                                            md-direction="top"
+                                                            class="error-tooltip">No expression defined for the
+                                                        calculated variable.
+                                                    </md-tooltip>
+                                                </div>
+
+                                                <div>
+                                                    <md-button ng-click="vm.removeCalculatedField(item, $index)"
+                                                               class="custom-small-icon-btn md-raised"
+                                                    >
+                                                        <ng-md-icon icon="close"
+                                                                    size="14"></ng-md-icon>
+                                                    </md-button>
+                                                </div>
+
+                                                <div data-ng-if="item.dryRunResult">
+
+                                                    <span class="dry-run-result-value">{{item.dryRunResult}}</span>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div layout="row">
+                                            <md-button class="md-raised" ng-click="vm.addCalculatedField()">
+                                                Add field
+                                            </md-button>
+                                        </div>
+
+                                    </md-card-content>
+
+                                </md-card>
+
+                                <!-- Scenarios-->
+                                <md-card class="transaction-import-scheme-v2-scenarios-holder">
+                                    <md-card-content class="instrument-scheme-fields-holder p-0">
+
+                                        <div class="transaction-import-scheme-v2-card-header">
+                                            Transaction Type Matching Scenarios
+                                            <input type="text" data-ng-model="vm.scenariosQuery"
+                                                   placeholder="search..."
+                                                   class="transaction-import-scheme-v2-card-header-search">
+                                        </div>
+
+                                        <div layout="column">
+                                            <div data-ng-repeat="item in vm.scenarios | filter: {$: vm.scenariosQuery}"
+                                                 layout="row"
+                                                 class="transaction-import-scheme-v2-scenario {{item.showInputs ? 'active' : ''}}">
+                                                <div layout="column">
+
+                                                    <div layout="row">
+                                                        <div style="width: 160px">
+                                                            <md-input-container>
+                                                                <label for="">Scenario Name</label>
+                                                                <input type="text"
+                                                                       data-ng-model="item.name">
+                                                            </md-input-container>
+                                                        </div>
+                                                        <div>
+                                                            <md-input-container>
+                                                                <label for="">Status</label>
+                                                                <md-select data-ng-model="item.status">
+                                                                    <md-option value="active">Active</md-option>
+                                                                    <md-option value="skip">Skip</md-option>
+                                                                </md-select>
+                                                            </md-input-container>
+                                                        </div>
+                                                        <div>
+                                                            <two-fields-multiselect
+                                                                    ng-model="item.selector_values"
+                                                                    data-title="Selector values"
+                                                                    data-items="vm.selector_values_projection"
+                                                                    data-model="item.selector_values"
+                                                                    data-nothing-selected-text="[ ]"
+                                                                    data-selected-items-indication="chips"
+                                                                    data-name-property="value"
+                                                                    class="table-filter-input-container">
+                                                            </two-fields-multiselect>
+                                                        </div>
+                                                        <div style="width: 200px;">
+                                                            <md-input-container
+                                                                    aria-label="select with filter">
+
+                                                                <label for="">Transaction type</label>
+                                                                <md-select ng-model="item.transaction_type"
+                                                                           md-container-class="common-select-container"
+                                                                           md-on-close="searchTerm = ''"
+                                                                           style="margin: 0;">
+
+                                                                    <md-select-header>
+                                                                        <input data-ng-model="searchTerm"
+                                                                               type="search"
+                                                                               placeholder="Search for a ..."
+                                                                               class="md-text md-select-search-pattern select-input-filter"
+                                                                               ng-keydown="$event.stopPropagation()">
+                                                                    </md-select-header>
+
+                                                                    <div class="select-options-holder">
+
+                                                                        <md-option
+                                                                                data-ng-repeat="transactionType in vm.transactionTypes | filter: {name: searchTerm}"
+                                                                                ng-value="transactionType.id"
+                                                                                ng-bind="transactionType.name">
+                                                                        </md-option>
+
+                                                                    </div>
+
+                                                                </md-select>
+                                                            </md-input-container>
+                                                        </div>
+                                                        <div style="width: 100px;">
+                                                            <md-button class="custom-small-icon-btn md-raised"
+                                                                       data-ng-click="item.showInputs = !item.showInputs">
+                                                                <ng-md-icon icon="view_list"
+                                                                            size="14"></ng-md-icon>
+                                                                <md-tooltip class="tooltip_1"
+                                                                            md-direction="top">
+                                                                    <span data-ng-if="!item.showInputs">Show Inputs</span>
+                                                                    <span data-ng-if="item.showInputs">Hide Inputs</span>
+                                                                </md-tooltip>
+                                                            </md-button>
+                                                            <md-button
+                                                                    class="custom-small-icon-btn md-raised"
+                                                                    ng-class="{'disabled-btn': !item.transaction_type}"
+                                                                    ng-click="vm.editTransactionType(item.transaction_type, $event)">
+                                                                <ng-md-icon icon="mode_edit"
+                                                                            size="14"></ng-md-icon>
+                                                                <md-tooltip class="tooltip_1"
+                                                                            md-direction="top">Edit
+                                                                    transaction type
+                                                                </md-tooltip>
+                                                            </md-button>
+
+                                                            <md-button
+                                                                    class="custom-small-icon-btn md-raised"
+                                                                    ng-click="vm.removeScenario(item, $index)"
+                                                                    data-ng-if="!item.required"
+                                                                    class="md-raised"
+                                                                    style="line-height: 1">
+                                                                <ng-md-icon icon="close"
+                                                                            size="14"></ng-md-icon>
+                                                                <md-tooltip class="tooltip_1"
+                                                                            md-direction="top">Delete Scenario
+                                                                </md-tooltip>
+                                                            </md-button>
+                                                        </div>
+                                                    </div>
+                                                    <div data-ng-if="item.showInputs"
+                                                         class="transaction-import-scheme-v2-scenario-inputs-holder">
+
+<!--                                                        <div data-ng-repeat="input_item in item.transaction_type_object.inputs"
+                                                             class="transaction-import-scheme-v2-scenario-inputs">
+
+                                                            <div class="transaction-import-scheme-v2-scenario-inputs-input-name">
+                                                                <span data-ng-bind="input_item.verbose_name"></span>
+                                                                <div style="white-space: nowrap;">Input: <b><span
+                                                                        data-ng-bind="input_item.name"></span></b>
+                                                                </div>
+                                                            </div>
+
+                                                            <div layout="row"
+                                                                 class="transaction-import-scheme-v2-scenario-inputs-input-expressio">
+                                                                <div >
+                                                                    <md-input-container>
+                                                                        <label for=""
+                                                                               data-ng-bind="vm.bindType(input_item)"></label>
+                                                                        <input type="text"
+                                                                               data-ng-model="input_item.expression">
+                                                                    </md-input-container>
+                                                                </div>
+                                                                <div >
+                                                                    <expression-editor-button
+                                                                            data-item="input_item.expression"
+                                                                            data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"></expression-editor-button>
+                                                                </div>
+
+                                                                <div data-ng-if="input_item.dryRunResult">
+
+                                                                    <span class="dry-run-result-value">{{input_item.dryRunResult}}</span>
+
+                                                                </div>
+                                                            </div>
+
+                                                        </div>-->
+
+
+                                                        <table class="transaction-import-scheme-v2-scenario-inputs-table">
+                                                            <tr data-ng-repeat="input_item in item.transaction_type_object.inputs" class="transaction-import-scheme-v2-scenario-inputs">
+                                                                <td>
+                                                                    <div class="transaction-import-scheme-v2-scenario-inputs-input-name">
+                                                                        <span data-ng-bind="input_item.verbose_name"></span>
+                                                                        <div style="white-space: nowrap;">Input: <b><span
+                                                                                data-ng-bind="input_item.name"></span></b>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div layout="row"
+                                                                         class="transaction-import-scheme-v2-scenario-inputs-input-expressio">
+                                                                        <div >
+                                                                            <md-input-container>
+                                                                                <label for=""
+                                                                                       data-ng-bind="vm.bindType(input_item)"></label>
+                                                                                <input type="text"
+                                                                                       data-ng-model="input_item.expression">
+                                                                            </md-input-container>
+                                                                        </div>
+                                                                        <div >
+                                                                            <expression-editor-button
+                                                                                    data-item="input_item.expression"
+                                                                                    data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"></expression-editor-button>
+                                                                        </div>
+
+
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div data-ng-if="input_item.dryRunResult">
+
+                                                                        <span class="dry-run-result-value">{{input_item.dryRunResult}}</span>
+
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div layout="row">
+                                            <md-button class="md-raised" ng-click="vm.addScenario()">Add
+                                                scenario
+                                            </md-button>
+                                        </div>
+
+                                        <h4>Default Rule Scenario</h4>
+
+                                        <div layout="column">
+                                            <div layout="row">
+                                                <div layout="row" style="width: 100%;" >
+                                                    <div style="width: 100px" >
+                                                        -
+                                                    </div>
+                                                    <div style="width: 100px">
+                                                        -
+                                                    </div>
+                                                    <div style="width: 200px">
+                                                        <md-input-container style="width: 80%"
+                                                                            aria-label="select with filter">
+
+                                                            <label for="">Transaction type</label>
+                                                            <md-select
+                                                                    ng-model="vm.defaultRuleScenario.transaction_type"
+                                                                    md-container-class="common-select-container"
+                                                                    md-on-close="searchTerm = ''"
+                                                                    style="margin: 0;">
+
+                                                                <md-select-header>
+                                                                    <input data-ng-model="searchTerm"
+                                                                           type="search"
+                                                                           placeholder="Search for a ..."
+                                                                           class="md-text md-select-search-pattern select-input-filter"
+                                                                           ng-keydown="$event.stopPropagation()">
+                                                                </md-select-header>
+
+                                                                <div class="select-options-holder">
+
+                                                                    <md-option
+                                                                            data-ng-repeat="transactionType in vm.transactionTypes | filter: {name: searchTerm}"
+                                                                            ng-value="transactionType.id"
+                                                                            ng-bind="transactionType.name">
+                                                                    </md-option>
+
+                                                                </div>
+
+                                                            </md-select>
+                                                        </md-input-container>
+                                                    </div>
+                                                    <!--<div flex="20">
+                                                        <md-button
+                                                                class="md-raised md-primary {{item.transaction_type ? '' : 'disabled-btn'}}"
+                                                                ng-click="vm.openInputs(item, $event)">
+                                                            Inputs
+                                                        </md-button>
+                                                    </div>
+                                                    <div flex="10">
+                                                        <md-button
+                                                                class="custom-small-icon-btn md-raised"
+                                                                ng-click="vm.removeMappingField(item, $index)"
+                                                                data-ng-if="!item.required"
+                                                                class="md-raised"
+                                                                style="line-height: 1">x
+                                                        </md-button>
+                                                    </div>-->
+                                                    <div>
+
+                                                        <md-button
+                                                                class="md-raised md-primary {{vm.defaultRuleScenario.transaction_type ? '' : 'disabled-btn'}}"
+                                                                ng-click="vm.openInputs(vm.defaultRuleScenario, $event)">
+                                                            Inputs
+                                                        </md-button>
+
+                                                        <md-button
+                                                                class="md-raised md-primary import-mapping-small-btn"
+                                                                ng-class="{'disabled-btn': !vm.defaultRuleScenario.transaction_type}"
+                                                                ng-click="vm.editTransactionType(vm.defaultRuleScenario.transaction_type, $event)">
+                                                            <ng-md-icon icon="mode_edit"
+                                                                        size="20"></ng-md-icon>
+                                                            <md-tooltip class="tooltip_1"
+                                                                        md-direction="top">Edit
+                                                                transaction type
+                                                            </md-tooltip>
+                                                        </md-button>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <h4>Error Rule Scenario</h4>
+
+                                        <div layout="column">
+                                            <div layout="row">
+                                                <div layout="row" style="width: 100%">
+                                                    <div style="width: 100px">
+                                                        -
+                                                    </div>
+                                                    <div style="width: 100px">
+                                                        -
+                                                    </div>
+                                                    <div  style="width: 200px" >
+                                                        <md-input-container style="width: 80%"
+                                                                            aria-label="select with filter">
+
+                                                            <label for="">Transaction type</label>
+                                                            <md-select
+                                                                    ng-model="vm.errorRuleScenario.transaction_type"
+                                                                    md-container-class="common-select-container"
+                                                                    md-on-close="searchTerm = ''"
+                                                                    style="margin: 0;">
+
+                                                                <md-select-header>
+                                                                    <input data-ng-model="searchTerm"
+                                                                           type="search"
+                                                                           placeholder="Search for a ..."
+                                                                           class="md-text md-select-search-pattern select-input-filter"
+                                                                           ng-keydown="$event.stopPropagation()">
+                                                                </md-select-header>
+
+                                                                <div class="select-options-holder">
+
+                                                                    <md-option
+                                                                            data-ng-repeat="transactionType in vm.transactionTypes | filter: {name: searchTerm}"
+                                                                            ng-value="transactionType.id"
+                                                                            ng-bind="transactionType.name">
+                                                                    </md-option>
+
+                                                                </div>
+
+                                                            </md-select>
+                                                        </md-input-container>
+                                                    </div>
+                                                    <!--<div flex="20">
+                                                        <md-button
+                                                                class="md-raised md-primary {{item.transaction_type ? '' : 'disabled-btn'}}"
+                                                                ng-click="vm.openInputs(item, $event)">
+                                                            Inputs
+                                                        </md-button>
+                                                    </div>
+                                                    <div flex="10">
+                                                        <md-button
+                                                                class="custom-small-icon-btn md-raised"
+                                                                ng-click="vm.removeMappingField(item, $index)"
+                                                                data-ng-if="!item.required"
+                                                                class="md-raised"
+                                                                style="line-height: 1">x
+                                                        </md-button>
+                                                    </div>-->
+                                                    <div >
+
+                                                        <md-button
+                                                                class="md-raised md-primary {{vm.errorRuleScenario.transaction_type ? '' : 'disabled-btn'}}"
+                                                                ng-click="vm.openInputs(vm.errorRuleScenario, $event)">
+                                                            Inputs
+                                                        </md-button>
+
+                                                        <md-button
+                                                                class="md-raised md-primary import-mapping-small-btn"
+                                                                ng-class="{'disabled-btn': !vm.errorRuleScenario.transaction_type}"
+                                                                ng-click="vm.editTransactionType(vm.errorRuleScenario.transaction_type, $event)">
+                                                            <ng-md-icon icon="mode_edit"
+                                                                        size="20"></ng-md-icon>
+                                                            <md-tooltip class="tooltip_1"
+                                                                        md-direction="top">Edit
+                                                                transaction type
+                                                            </md-tooltip>
+                                                        </md-button>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </md-card-content>
+                                </md-card>
+                            </div>
+
+
+                        </md-tab-body>
+
+                    </md-tab>
+
+
+                </md-tabs>
+
+
+            </div>
+            <div data-ng-if="!vm.checkReadyStatus()">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                    <progress-circular diameter="100"></progress-circular>
+                </div>
+            </div>
+        </md-content>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" class="position-relative">
+        <md-button class="md-raised" ng-click="vm.editAsJson($event)">
+            Edit as JSON
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.makeCopy($event)" data-ng-if="vm.scheme.id"
+                   data-ng-class="{'disabled-btn': vm.processing}">
+            Make Copy
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.agree()" style="margin-right:20px;"
+                   data-ng-class="{'disabled-btn': vm.processing}">
+            <span data-ng-if="vm.scheme.id">Save</span>
+            <span data-ng-if="!vm.scheme.id">Create</span>
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

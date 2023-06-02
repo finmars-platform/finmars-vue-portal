@@ -1,0 +1,440 @@
+@classifierTreePadding: 0 20px;
+@classifierNodeRowHeight: 26px;
+
+.classifier-select-dialog-view {
+  max-height: 90%;
+  overflow: hidden;
+
+  .md-toolbar-tools {
+    height: 87px;
+    max-height: 87px;
+    padding: 0 24px;
+    color: #333333;
+    font-size: 20px;
+  }
+
+  md-dialog-content {
+    height: 410px;
+    max-height: 410px;
+    min-height: 410px;
+    overflow: hidden;
+  }
+
+  md-dialog-actions.classifier-footer {
+    height: 62px;
+    display: flex;
+    justify-content: space-between;
+    background-color: #FFFFFF;
+    opacity: 1;
+    z-index: 1; // allow user to press cancel while loader is on
+
+    &.edit {
+      opacity: 0.5;
+    }
+
+    button {
+
+      &:disabled {
+        opacity: 0.5;
+      }
+
+      span {
+        color: @orange;
+      }
+    }
+  }
+}
+
+.classifier-sel-content {
+  position: relative;
+  height: 395px;
+}
+
+.classifier-sel-tree-wrapper {
+  position: relative;
+  height: inherit;
+}
+
+.classifier-tree-loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: white;
+  opacity: 0.5;
+}
+
+.classifier-sel-favorites-container {
+  display: flex;
+  flex-direction: column;
+
+  .classifier-sel-favorites-holder {
+    margin-top: 10px;
+    padding: @classifierTreePadding;
+  }
+
+  .fav-node-row {
+    position: relative;
+    height: @classifierNodeRowHeight;
+    padding-left: 24px;
+    margin: 5px 0 10px 0;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    .fav-node-btns-holder {
+      display: none;
+      height: inherit;
+      position: absolute;
+      top: 0;
+      right: 0;
+
+      .fav-node-btn {
+        span.material-icons {
+          color: @orange;
+        }
+
+        &:hover {
+          opacity: .5;
+        }
+      }
+    }
+
+    &.active,
+    &.edit {
+      background-color: @orange;
+
+      span {
+        color: #fff;
+      }
+
+      span.material-icons {
+        &[disabled] {
+          opacity: .5;
+        }
+      }
+
+      .fav-node-btns-holder .fav-node-btn span.material-icons {
+        color: #fff;
+      }
+
+    }
+
+    &:hover {
+      .fav-node-btns-holder {
+        display: block;
+      }
+    }
+
+  }
+
+}
+
+// region Classifier tree directive
+.classifier-tree-container {
+  /* height: 410px;
+  max-height: 410px;
+  min-height: 410px; */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 150px;
+}
+
+.classifier-tree-filter-container {
+  // height: 48px;
+  flex: 0 0 48px;
+
+  padding: 0 15px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+
+  border-top: 1px solid rgba(224, 224, 224, 1);
+  border-bottom: 1px solid rgba(224, 224, 224, 1);
+
+  &.disabled {
+    opacity: .5;
+    cursor: default;
+  }
+
+  .material-icons {
+    margin-right: 30px;
+    color: #747474;
+  }
+
+  input {
+    width: 100%;
+    border: none;
+    outline: none;
+
+    &[disabled] {
+      background-color: transparent;
+    }
+  }
+}
+
+.classifier-tree {
+  width: 100%;
+  /*max-height: 348px;
+  min-height: 348px;*/
+  flex: 0 1 100%;
+  padding: @classifierTreePadding;
+  box-sizing: border-box;
+  overflow: auto;
+
+  &.shadow {
+    box-shadow: inset 0 -8px 12px -8px rgba(0, 0, 0, 0.25),
+                inset 0 8px 12px -8px rgba(0, 0, 0, 0.25);
+  }
+
+  &.top-shadow {
+    box-shadow: inset 0 8px 12px -8px rgba(0, 0, 0, 0.25);
+  }
+
+  &.bottom-shadow {
+    box-shadow: inset 0 -8px 12px -8px rgba(0, 0, 0, 0.25);
+  }
+
+
+  .classifier-node-holder {
+    flex-basis: 100%;
+  }
+
+  .classifier-node-children {
+    padding-left: 20px;
+  }
+
+  .classifier-node {
+    position: relative;
+    cursor: pointer;
+
+    .classifier-node-btn {
+      width: 36px;
+      height: 24px;
+      padding-top: 0;
+      padding-bottom: 0;
+      overflow: hidden;
+
+      span.material-icons {
+        width: 24px;
+        height: inherit;
+
+        &[disabled] {
+          opacity: .5;
+        }
+      }
+
+      &:hover {
+        opacity: .5;
+      }
+    }
+
+    .classifier-node-custom-buttons-holder {
+      display: none;
+      height: inherit;
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    .classifier-node-row {
+
+      .row-content {
+        // height: 36px;
+        height: @classifierNodeRowHeight;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .pointer {
+        color: #747474;
+      }
+
+      /* .drop-inside-node-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 65%;
+      } */
+
+      &.opened {
+        .pointer {
+          transform: rotate(90deg);
+        }
+      }
+
+      &.has-active-child {
+        color: @orange;
+
+        .pointer {
+          color: @orange;
+        }
+      }
+
+      &:hover {
+        .classifier-node-custom-buttons-holder {
+          display: block;
+        }
+      }
+    }
+
+    /* .node-drop-container-1 {
+      position: absolute;
+      display: none;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    } */
+
+  }
+
+  .classifier-node {
+
+    &.dnd-mouse-hover-child:not(.active) {
+
+      > .classifier-node-row .row-content {
+        color: @orange;
+
+        .pointer {
+          color: @orange;
+        }
+      }
+
+    }
+
+    &.active,
+    &.edit {
+
+      > .classifier-node-row {
+        background-color: @orange;
+        color: #fff;
+
+        .pointer {
+          color: #fff;
+        }
+
+        .classifier-node-btn {
+          span, span.material-icons {
+            color: #FFFFFF;
+          }
+        }
+      }
+
+    }
+
+    /*&.edit {
+      .classifier-name {
+        width: 80%;
+        margin-right: 20px;
+        outline: none;
+        border: none;
+      }
+    }*/
+
+  }
+
+  .node-drop-container-2 {
+    position: relative;
+    height: 10px;
+    z-index: 2;
+
+    &.dnd-mouse-hover {
+      // height: 36px;
+      height: 30px;
+      background-color: #f2f2f2;
+    }
+  }
+
+}
+
+.classifier-tree.dnd-in-progress {
+
+  .classifier-node.dnd-mouse-hover {
+
+    > .classifier-node-row {
+      background-color: @paleOrange;
+    }
+
+  }
+
+  /* .classifier-node {
+    .node-drop-container-1 {
+      display: block;
+      z-index: 1;
+    }
+  } */
+
+
+}
+// endregion
+
+.classifier-tree .classifier-node,
+.classifier-sel-favorites-holder .fav-node-row {
+
+  &.edit {
+    .classifier-name {
+      width: 80%;
+      height: 22px;
+      margin-right: 20px;
+      outline: none;
+      border: none;
+    }
+  }
+
+}
+
+.classifier-select-dialog-view {
+  .classifier-tree-filter-container {
+    margin-bottom: 48px;
+  }
+
+  .classifier-tree-container .classifier-node .classifier-node-btn .material-icons {
+    color: @gray;
+
+    &.orange {
+      color: @orange;
+    }
+  }
+}
+
+.classifier-sel-tabs-holder {
+  position: absolute;
+  top: 50px;
+  font-size: 14px;
+
+  .classifier-sel-tab {
+    height: 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 16px;
+    color: @gray;
+    font-weight: 500;
+    box-sizing: border-box;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+
+    &.active {
+      color: @orange;
+      border-bottom-color: @orange;
+    }
+
+    &:not([disabled]):hover {
+      background-color: @btnHover;
+    }
+  }
+
+}

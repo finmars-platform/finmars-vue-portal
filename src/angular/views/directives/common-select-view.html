@@ -1,0 +1,29 @@
+<md-input-container class="md-block">
+    <label data-ng-bind="'{{labelTitle}}'"></label>
+        <!--<md-select md-on-close="searchTerm = ''"
+                   data-ng-model="entity[getModelKey()]" md-on-open="getData()"
+                   md-selected-text="bindFormFields()">-->
+    <md-select ng-model="model"
+               md-container-class="common-select-container"
+               md-on-close="searchTerm = ''">
+
+            <md-select-header>
+                <input data-ng-model="searchTerm"
+                       type="search"
+                       placeholder="Search for a ..."
+                       class="md-text md-select-search-pattern select-input-filter"
+                       ng-keydown="$event.stopPropagation()">
+            </md-select-header>
+
+            <div class="select-options-holder">
+
+                <md-option
+                        data-ng-repeat="option in options | filter:filterPredicateFunction(optionsFilterBy, searchTerm)"
+                        ng-value="option[optionsValue]"
+                        ng-bind="option[optionsName]">
+                </md-option>
+
+            </div>
+
+    </md-select>
+</md-input-container>

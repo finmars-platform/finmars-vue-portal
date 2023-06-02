@@ -1,0 +1,42 @@
+<div class="match-recon-card {{resolveStatus()}}" >
+
+    <div class="match-recon-card-name text-bold" title="{{field.description}}">
+        {{field.description}}
+    </div>
+
+    <div class="match-recon-card-values" >
+
+        <div data-ng-if="field.value_string">
+            T: <span class="match-recon-value-holder" title="{{field.value_string}}">{{field.value_string}}</span>
+        </div>
+
+        <div data-ng-if="field.value_float">
+            N: <span class="match-recon-value-holder" title="{{field.value_float}}">{{field.value_float}}</span>
+        </div>
+
+        <div data-ng-if="field.value_date">
+            D: <span class="match-recon-value-holder" title="{{field.value_date}}">{{field.value_date}}</span>
+        </div>
+
+    </div>
+
+    <div class="match-recon-card-info-tooltip-holder">
+        <!--<md-button class="md-icon-button match-recon-card-details-button">
+            <ng-md-icon data-ng-click="showDetails($event)" icon="more_vert"></ng-md-icon>
+        </md-button>-->
+        <ng-md-icon data-ng-click="showDetails($event)" icon="more_vert">
+            <md-tooltip class="tooltip_1 height-auto f-s-15" md-direction="top" >
+                <div>
+                    <div>{{field.description}}</div>
+
+                    <div data-ng-if="field.value_string">Text: {{field.value_string}}</div>
+                    <div data-ng-if="field.value_float">Number: {{field.value_float}}</div>
+                    <div data-ng-if="field.value_date">Date: {{field.value_date}}</div>
+
+                    <div>Reference: {{field.reference_name}}</div>
+                </div>
+            </md-tooltip>
+        </ng-md-icon>
+    </div>
+
+</div>

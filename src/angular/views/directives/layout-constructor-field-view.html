@@ -1,0 +1,217 @@
+<div>
+    <div data-ng-show="!item.editMode">
+        <div data-ng-if="item.attribute" class="form-constructor-draggable-card">
+            <md-card class="ec-attr-card ec-attr-occupied"
+                     data-col="{{column}}"
+                     data-row="{{row}}"
+                     data-tab-order="{{tab.tabOrder}}">
+                <div layout="row">
+                    <div ng-if="item.type !== 'table'"
+                         class="ec-extend-btns-holder flex-row">
+                        <button class="md-button md-raised" ng-click="decreaseColspan(item)">
+                            <ng-md-icon icon="chevron_left" size="16"></ng-md-icon>
+                        </button>
+
+                        <button class="md-button md-raised" ng-click="increaseColspan(item)">
+                            <ng-md-icon icon="chevron_right" size="16"></ng-md-icon>
+                        </button>
+                    </div>
+
+                    <p class="name-holder" flex="60">
+                        <b><span data-ng-bind="bindAttrName(item)"></span></b> (<span data-ng-bind="bindTypeByValueType(item.attribute['value_type'])"></span>)
+                    </p>
+
+                    <div class="options-holder" flex="40">
+                        <md-button aria-label="delete attribute" data-ng-click="deleteField()">
+                            <ng-md-icon icon="delete"></ng-md-icon>
+                        </md-button>
+                        <md-button aria-label="edit attribute" ng-click="toggleEditMode($event)">
+                            <ng-md-icon icon="mode_edit"></ng-md-icon>
+                        </md-button>
+                    </div>
+                </div>
+            </md-card>
+        </div>
+
+        <div data-ng-if="!item.attribute">
+            <div class="ec-attr-card ec-attr-empty"
+                 data-col="{{column}}"
+                 data-row="{{row}}"
+                 data-tab-order="{{tab.tabOrder}}"
+                 data-colspan="{{item.colspan}}">
+                <md-button aria-label="add field" ng-click="toggleEditMode($event)" class="width-100 ec-attr-empty-btn">
+                    <ng-md-icon icon="add_circle"></ng-md-icon>
+                </md-button>
+            </div>
+        </div>
+    </div>
+
+    <div ng-if="item.editMode">
+        <md-card class="ec-attr-card" ng-class="{'active': item.editMode}">
+
+            <md-input-container class="md-block ec-attr-row" flex-gt-sm>
+                <label>Please select Element</label>
+                <!--{{item.attribute}}-->
+                <md-select data-ng-model="item.attribute"
+                           data-md-container-class="common-select-container"
+                           data-md-on-close="searchTerm = ''"
+                           data-ng-focus="findAttrsLeft()"
+                           data-ng-change="onAttributeSelect()">
+                    <md-select-header>
+                        <input data-ng-model="searchTerm"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+
+                    <div class="select-options-holder">
+
+                        <md-optgroup label="System" class="bold-field-select">
+                            <md-option ng-repeat="entityAttr in entityAttrs | filter: {name: searchTerm}"
+                                       ng-value="entityAttr"
+                                       ng-disabled="entityAttr.disabled">
+                                <!--{{attr}}-->
+                                {{renameStrategySubgroup(entityAttr)}} ({{bindTypeByValueType(entityAttr['value_type'])}})
+                            </md-option>
+                        </md-optgroup>
+
+                        <md-optgroup label="User attributes" class="bold-field-select" data-ng-if="attrs.length">
+                            <md-option ng-repeat="attr in attrs | filter: {name: searchTerm}"
+                                       ng-value="attr"
+                                       ng-disabled="attr.disabled">
+                                <!--{{attr}}-->
+                                {{attr.name}} ({{bindTypeByValueType(attr['value_type'])}})
+                            </md-option>
+                        </md-optgroup>
+
+                        <md-optgroup label="Inputs" class="bold-field-select" data-ng-if="userInputs.length">
+                            <md-option ng-repeat="userInput in userInputs | filter: {name: searchTerm}"
+                                       ng-value="userInput"
+                                       ng-disabled="userInput.disabled">
+                                <!--{{attr}}-->
+                                {{userInput.name}} ({{bindTypeByValueType(userInput['value_type'])}})
+                            </md-option>
+                        </md-optgroup>
+
+                        <md-optgroup label="Layout" class="bold-field-select">
+                            <md-option ng-repeat="layoutAttr in layoutAttrs | filter: {name: searchTerm}"
+                                       ng-value="layoutAttr"
+                                       ng-disabled="layoutAttr.disabled">
+                                {{layoutAttr.name}} ({{bindTypeByValueType(layoutAttr['value_type'])}})
+                            </md-option>
+                        </md-optgroup>
+
+                    </div>
+
+                </md-select>
+            </md-input-container>
+
+                <div ng-if="item.type !== 'table'">
+
+                    <md-input-container class="md-block no-error-spacer ec-attr-row"
+                                        flex-gt-sm
+                                        aria-label="select with filter">
+                        <label>Element width</label>
+                        <md-select ng-model="item.colspan"
+                                   md-container-class="common-select-container"
+                                   md-on-close="searchTerm = ''"
+                                   ng-change="changeFieldColspan(item.colspan)">
+                            <div class="select-options-holder">
+                                <md-option
+                                        data-ng-repeat="colspan in getCols()"
+                                        value="{{colspan}}">
+                                    {{colspan}} column(s)
+                                </md-option>
+                            </div>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-input-container class="md-block no-error-spacer ec-attr-row"
+                                        data-ng-if="item.attribute && item.attribute.value_type !== 'decoration'">
+                        <label>Custom label</label>
+                        <input data-ng-model="item.options.fieldName">
+                    </md-input-container>
+
+                    <md-input-container class="md-block no-error-spacer ec-attr-row"
+                                        data-ng-if="item.attribute && item.attribute.value_type !== 'decoration'">
+                        <label>Tooltip text</label>
+                        <input data-ng-model="item.options.tooltipValue">
+                    </md-input-container>
+
+                    <div data-ng-if="checkForSpecialOptions()">
+                        <div data-ng-include="specialOptionTemplate"></div>
+                    </div>
+
+                    <div ng-if="item.attribute_class === 'userInput'">
+                        <md-input-container class="ec-input-color-checkbox-container">
+                            <md-checkbox ng-model="item.options.notNull"
+                                         aria-label="input not null">
+                                Not null
+                            </md-checkbox>
+                        </md-input-container>
+                    </div>
+
+                    <div data-ng-if="hasEditablesToggle()">
+
+                        <md-input-container class="ec-input-color-checkbox-container">
+                            <md-checkbox ng-model="item.editable" aria-label="text input is editable">
+                                Editable
+                            </md-checkbox>
+                        </md-input-container>
+
+                    </div>
+
+                    <!--<div >
+
+                        <md-input-container class="ec-input-color-checkbox-container">
+                            <md-checkbox ng-model="item.required" aria-label="input is required">
+                                Required
+                            </md-checkbox>
+                        </md-input-container>
+
+                    </div>-->
+
+                    <div data-ng-if="hasBackgroundColorInput()" class="ec-input-color-container">
+                        <div layout="row" layout-align="start center" class="m-b-8">
+
+                            <md-input-container class="ec-input-color-checkbox-container">
+                                <md-checkbox ng-checked="fieldUsesBackgroundColor"
+                                             ng-click="toggleBackgroundColor()">
+                                    Use colored background
+                                </md-checkbox>
+                            </md-input-container>
+
+                            <color-picker palettes-list="palettesObj.palettesList"
+                                          model="backgroundColor.color"
+                                          on-palettes-change-callback="onPalettesChange()"></color-picker>
+                            <!--<input type="color"
+                                   ng-model="fieldBackgroundColor"
+                                   class="ec-color-input"
+                                   ng-change="setFieldBackgroundColor(fieldBackgroundColor)"
+                                   ng-disabled="!fieldUsesBackgroundColor">-->
+                        </div>
+                    </div>
+
+                </div>
+
+                <md-divider></md-divider>
+
+                <div layout="row" layout-align="space-between center" class="constructor-card-actions">
+                    <md-button aria-label="cancel"
+                               data-ng-click="cancel()"
+                               data-ng-class="{'CCA-small-btn': colsInTotal > 5}">
+                        Cancel
+                    </md-button>
+                    <md-button class="ec-field-btn"
+                               aria-label="save layout"
+                               data-ng-click="saveField()"
+                               data-ng-class="{'disabled': !item.attribute, 'CCA-small-btn': colsInTotal > 5}">
+                        <span>Ok</span>
+                    </md-button>
+                </div>
+
+        </md-card>
+    </div>
+
+</div>

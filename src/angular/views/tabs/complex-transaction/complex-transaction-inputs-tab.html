@@ -1,0 +1,40 @@
+<div>
+
+    <table style="width: 80%; margin: 0 auto;">
+
+        <thead>
+
+            <tr>
+                <th style="padding: 4px">
+                    Name
+                </th>
+                <th style="padding: 4px">
+                    Verbose Name
+                </th>
+                <th style="padding: 4px">
+                    Type
+                </th>
+                <th style="padding: 4px">
+                    Value
+                </th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            <tr data-ng-repeat="item in vm.transactionInputs">
+
+                <td style="padding: 4px" data-ng-bind="item.name"></td>
+                <td style="padding: 4px" data-ng-bind="item.verbose_name"></td>
+                <td style="padding: 4px" data-ng-bind="item.verbose_value_type"></td>
+                <td style="padding: 4px" data-ng-bind="item.value"></td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+
+</div>

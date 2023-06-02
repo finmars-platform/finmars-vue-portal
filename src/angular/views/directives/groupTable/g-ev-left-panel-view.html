@@ -1,0 +1,108 @@
+<div class="height-100 position-relative">
+
+    <div class="ev-left-panel-inner-container state-{{sliderButtonState}}">
+
+        <div class="ev-left-panel-grouping-menu-button" data-ng-click="groupSectionState = !groupSectionState">
+            <span class="material-icons">menu</span>
+        </div>
+
+        <div class="flex-column height-100">
+
+            <div class="flex-1-1-auto overflow-auto">
+
+                <g-ev-left-panel-tree-elem ng-if="groupTypes.length"
+                                           item="tree"
+                                           ev-data-service="evDataService"
+                                           ev-event-service="evEventService"
+                                           ev-content-element="evContentElement"></g-ev-left-panel-tree-elem>
+
+                <div ng-if="!groupTypes.length" class="ev-left-panel-drag-msg">
+                    <span class="material-icons">file_download</span>
+                    <span class="text">Drag a column here to group by</span>
+                </div>
+
+            </div>
+
+
+            <div class="ev-left-panel-footer-section">
+
+                <div class="footer-content">
+                    <md-checkbox data-ng-click="toggleMultiselect($event)"
+                                 data-ng-checked="multiselectIsActive"
+                                 tabindex="0"
+                                 type="checkbox"
+                                 role="checkbox" aria-checked="false" class="m-b-0">
+                        Multiselect
+                    </md-checkbox>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="ev-left-panel-slider evLeftPanelSlider"></div>
+
+    </div>
+
+    <div class="ev-left-panel-grouping-section evLeftPanelGroupingSection"
+         data-ng-class="{'active': groupSectionState}">
+
+        <div data-ng-repeat="item in groupTypes track by $index"
+             class="ev-left-panel-grouping-section-item {{'p-l-' + $index * 2}}"
+             data-key="{{item.key}}">
+
+            <span class="material-icons">drag_indicator</span> <span
+                class="ev-left-panel-grouping-section-item-name">{{item.name}}
+
+         <md-tooltip md-direction="top">{{item.name}}</md-tooltip></span>
+
+            <md-menu class="float-right" style="    margin-right: 4px;
+    margin-top: -2px;">
+                <md-button class="signed-button" data-ng-click="$mdOpenMenu($event)">
+                    <div class="flex-column flex-i-center" style="margin-top: -11px;">
+                        <span class="material-icons">more_vert</span>
+                    </div>
+                </md-button>
+
+                <md-menu-content width="4">
+
+                    <md-menu-item>
+                        <md-button data-ng-click="sortGroupType($event, item, $index, 'DESC')"
+                                   class="g-settings-option-btn">
+                            <span>Sort Descending</span>
+                        </md-button>
+                    </md-menu-item>
+
+                    <md-menu-item>
+                        <md-button data-ng-click="sortGroupType($event, item, $index, 'ASC')"
+                                   class="g-settings-option-btn">
+                            <span>Sort Ascending</span>
+                        </md-button>
+                    </md-menu-item>
+
+                    <md-menu-item>
+                        <md-button data-ng-click="deleteGroupType($event, item, $index)" class="g-settings-option-btn">
+                            <span>Delete</span>
+                        </md-button>
+                    </md-menu-item>
+
+                </md-menu-content>
+            </md-menu>
+
+
+        </div>
+
+
+        <div class="add-group-type-button" ng-click="addGroupType($event)">
+            <div>  <span class="material-icons">add_circle</span>  Add Grouping</div>
+        </div>
+
+
+    </div>
+
+    <div class="ev-left-panel-slider-button evLeftPanelSliderButton">
+        <span class="material-icons" data-ng-if="sliderButtonState == 'unfolded'">chevron_left</span>
+        <span class="material-icons" data-ng-if="sliderButtonState == 'folded'">chevron_right</span>
+    </div>
+
+</div>

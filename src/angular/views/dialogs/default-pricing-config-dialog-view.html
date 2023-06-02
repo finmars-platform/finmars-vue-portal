@@ -1,0 +1,37 @@
+<md-dialog aria-label="" ng-cloak class="draggable-dialog" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Default pricing config</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="p-24">
+        <div layout="row">
+            <h3 style="color:#ff0000">Not yet implemented</h3>
+        </div>
+        <div layout="row">
+            <md-input-container>
+                <label for="daily-pric-models-select">Pricing model</label>
+                <md-select data-ng-model="vm.daily_pricing_model" id="daily-pric-models-select">
+                    <md-select-header>
+                        <input data-ng-model="searchTerm"
+                               placeholder="Search for a ..."
+                               type="text"
+                               class="md-text md-select-search-pattern">
+                    </md-select-header>
+                    <md-option data-ng-repeat="item in vm.dailyPricingModels | filter: {name: searchTerm}"
+                                data-ng-bind="item.name"
+                                data-ng-value="item.id">
+                    </md-option>
+                </md-select>
+            </md-input-container>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,258 @@
+<md-dialog aria-label="" ng-cloak class="draggable-dialog width-50 pricing-schedules" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Create Schedule</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="p-24 pricingSchedulesScrollElemOnDrag">
+
+        <div layout="column" data-ng-if="vm.readyStatus.pricingProcedures">
+
+            <md-input-container>
+                <label>Name</label>
+                <input type="text" data-ng-model="vm.schedule.name">
+            </md-input-container>
+
+<!--            <md-input-container>-->
+<!--                <label>User Code</label>-->
+<!--                <input type="text" data-ng-model="vm.schedule.user_code">-->
+<!--            </md-input-container>-->
+
+            <usercode-input data-item="vm.schedule"></usercode-input>
+
+            <div class="m-t-16">
+
+                <div><label for="">Notes</label></div>
+                <textarea name="" data-ng-model="vm.schedule.notes" cols="60" rows="5"></textarea>
+
+            </div>
+
+            <div class="m-t-16">
+                <md-input-container>
+                    <label for="">Upload periodicity</label>
+                    <md-select data-ng-model="vm.cron.periodicity" data-ng-change="vm.resetCronExpr()">
+                        <md-option value="1">Daily</md-option>
+                        <md-option value="2">Weekly</md-option>
+                        <md-option value="3">Monthly</md-option>
+                    </md-select>
+                </md-input-container>
+                <ng-md-icon class="tooltip-inline-block" icon="info" size="20" style="fill: #777777">
+                    <md-tooltip class="tooltip_1" md-direction="top">tooltip text</md-tooltip>
+                </ng-md-icon>
+            </div>
+            <div data-ng-show="vm.cron.periodicity == 2">
+                <div style="padding-left: 14px">
+                    <p><b>Weekly</b></p>
+                    <div>
+                        <md-checkbox ng-model="vm.days[0].status" data-ng-click="vm.setDay(1)"
+                                     aria-label="monday">
+                            Monday
+                        </md-checkbox>
+                        <md-checkbox ng-model="vm.days[1].status" data-ng-click="vm.setDay(2)"
+                                     aria-label="tuesday">
+                            Tuesday
+                        </md-checkbox>
+                        <md-checkbox ng-model="vm.days[2].status" data-ng-click="vm.setDay(3)"
+                                     aria-label="wednesday">
+                            Wednesday
+                        </md-checkbox>
+                        <md-checkbox ng-model="vm.days[3].status" data-ng-click="vm.setDay(4)"
+                                     aria-label="thursday">
+                            Thursday
+                        </md-checkbox>
+                        <md-checkbox ng-model="vm.days[4].status" data-ng-click="vm.setDay(5)"
+                                     aria-label="friday">
+                            Friday
+                        </md-checkbox>
+                        <md-checkbox ng-model="vm.days[5].status" data-ng-click="vm.setDay(6)"
+                                     aria-label="sat">
+                            Sat
+                        </md-checkbox>
+                        <md-checkbox ng-model="vm.days[6].status" data-ng-click="vm.setDay(7)"
+                                     aria-label="sun">
+                            Sun
+                        </md-checkbox>
+                    </div>
+                </div>
+            </div>
+            <div data-ng-show="vm.cron.periodicity == 3">
+                <div layout="row" style="padding-top: 14px">
+                    <md-input-container>
+                        <label for="">Month</label>
+                        <md-select data-ng-model="vm.cron.month" multiple>
+                            <md-option value="1">January</md-option>
+                            <md-option value="2">February</md-option>
+                            <md-option value="3">March</md-option>
+                            <md-option value="4">April</md-option>
+                            <md-option value="5">May</md-option>
+                            <md-option value="6">June</md-option>
+                            <md-option value="7">Jule</md-option>
+                            <md-option value="8">August</md-option>
+                            <md-option value="9">September</md-option>
+                            <md-option value="10">November</md-option>
+                            <md-option value="11">October</md-option>
+                            <md-option value="12">December</md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-input-container>
+                        <label for="">Day</label>
+
+                        <md-select data-ng-model="vm.cron.day" multiple>
+                            <md-option value="{{item + 1}}" data-ng-repeat="item in vm.getRange(31)">{{item + 1}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+            </div>
+            <div>
+
+                <div>
+
+                    <p>Server time: {{vm.getServerTime()}}</p>
+
+                </div>
+
+                <md-input-container style="padding-left: 0; padding-top: 16px">
+                    <label for="">Time</label>
+                    <mdp-time-picker class="custom-time-picker" data-ng-model="vm.cron.time"></mdp-time-picker>
+                </md-input-container>
+                <ng-md-icon class="tooltip-inline-block" icon="info" size="20" style="fill: #777777; margin-left: 8px;">
+                    <md-tooltip class="tooltip_1" md-direction="top">tooltip text</md-tooltip>
+                </ng-md-icon>
+            </div>
+
+            <div>
+
+                <md-input-container>
+                    <label>Error handling</label>
+                    <md-select data-ng-model="vm.schedule.error_handler">
+                        <md-option value="continue">Continue</md-option>
+                        <md-option value="break">Break on first error</md-option>
+                    </md-select>
+                </md-input-container>
+
+            </div>
+
+            <h4>Procedures</h4>
+
+            <div>
+
+                <div layout="row" class="e-pricing-schedules-table-header">
+                    <div  style="min-width: 50px">
+                        Order
+                    </div>
+                    <div  style="min-width: 200px">
+                        Type
+                    </div>
+                    <div  style="min-width: 200px">
+                        Code
+                    </div>
+                </div>
+
+                <div class="flex-row e-pricing-schedules-table-body">
+
+                    <div class="e-pricing-schedules-order-column">
+                        <div class="e-pricing-schedules-order-cell" data-ng-repeat="item in vm.schedule.procedures track by $index">
+                            <div>{{item.order +1 }}</div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="pricingSchedulesTableRowsHolder">
+
+
+                        <div data-ng-repeat="item in vm.schedule.procedures track by $index" layout="row"
+                             data-ng-init="$last && !vm.dragAndDropInited && vm.dragAndDrop.init()"
+                             data-row-order="{{item.order}}">
+
+                            <md-card class="position-relative e-pricing-schedules-table-row-card">
+
+                                <div layout="row">
+
+                                    <!--<div  style="min-width: 50px; padding-left: 10px; padding-top: 25px;">{{item.order}}</div>-->
+                                    <div  style="min-width: 200px">
+                                        <md-select data-ng-model="item.type">
+                                            <md-option value="pricing_procedure">Pricing Procedure</md-option>
+                                            <md-option value="data_procedure">Data Procedure</md-option>
+                                            <md-option value="expression_procedure">Expression Procedure</md-option>
+                                        </md-select>
+                                    </div>
+                                    <div style="min-width: 200px">
+
+                                        <div data-ng-if="item.type == 'pricing_procedure'">
+
+                                            <md-select data-ng-model="item.user_code">
+                                                <md-option ng-value="procedure.user_code" data-ng-repeat="procedure in vm.pricingProcedures">{{procedure.name}} ({{procedure.user_code}})</md-option>
+                                            </md-select>
+
+                                        </div>
+
+                                        <div data-ng-if="item.type == 'data_procedure'">
+
+                                            <md-select data-ng-model="item.user_code">
+                                                <md-option ng-value="procedure.user_code" data-ng-repeat="procedure in vm.dataProcedures">{{procedure.name}} ({{procedure.user_code}})</md-option>
+                                            </md-select>
+
+                                        </div>
+
+                                        <div data-ng-if="item.type == 'expression_procedure'">
+
+                                            <md-select data-ng-model="item.user_code">
+                                                <md-option ng-value="procedure.user_code" data-ng-repeat="procedure in vm.expressionProcedures">{{procedure.name}} ({{procedure.user_code}})</md-option>
+                                            </md-select>
+
+                                        </div>
+
+
+                                    </div>
+                                    <div  style="min-width: 200px; padding-top: 10px;">
+                                        <md-button data-ng-click="vm.deleteProcedure($event, item, $index)">Delete</md-button>
+                                    </div>
+                                </div>
+
+                                <div class="e-create-schedule-drag-icon-holder"
+                                     data-ng-mousedown="vm.turnOnDragging()">
+                                    <is-draggable-sign></is-draggable-sign>
+                                </div>
+
+                            </md-card>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <div>
+
+                    <md-button class="md-raised" data-ng-click="vm.addProcedure($event)">Add</md-button>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+        <div data-ng-if="!vm.readyStatus.pricingProcedures">
+
+            <div class="m-16" layout="row" layout-sm="column" layout-align="space-around">
+                <progress-circular diameter="100"></progress-circular>
+            </div>
+
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()">
+            Close
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.agree()" style="margin-right:20px;">
+            Create
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

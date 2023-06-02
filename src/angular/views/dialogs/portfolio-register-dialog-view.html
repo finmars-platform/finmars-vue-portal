@@ -1,0 +1,89 @@
+<md-dialog class="portfolio-register-dialog draggable-dialog dialog-actions-bottom twoInputsDialogElemToResize"
+           aria-label="two inputs dialog"
+           style="width: 373px; min-height: 488px;"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2 ng-bind="vm.title"></h2>
+
+            <close-dialog-button on-click="vm.cancel()"></close-dialog-button>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="p-16 height-100">
+        <div ng-if="vm.readyStatus" class="flex-column fc-space-between">
+            <div class="m-b-35">
+                <entity-names-field label="Relation name (Portfolio Register)"
+                                    entity-type="portfolio-register"
+                                    entity="vm.portfolioRegister"
+                                    value-to-show="vm.valueToShow"></entity-names-field>
+            </div>
+
+            <div ng-if="vm.portfolioId !== undefined" class="m-b-35">
+                <unified-data-select label="Portfolio"
+                                     model="vm.portfolioId"
+                                     item-object="vm.selPortfolioData"
+                                     item-name="vm.selPrtfName"
+                                     small-options="{notNull: true, dialogParent: '.dialog-containers-wrap'}"
+                                     entity-type="vm.etPortfolio"></unified-data-select>
+            </div>
+
+            <div class="m-b-35">
+                <unified-data-select label="Valuation currency"
+                                     model="vm.currencyId"
+                                     item-object="vm.selCurrencyData"
+                                     item-name="vm.selCurrencyName"
+                                     small-options="{notNull: true, dialogParent: '.dialog-containers-wrap'}"
+                                     entity-type="vm.etCurrency"></unified-data-select>
+            </div>
+
+            <div class="m-b-35">
+                <dropdown-select label="Pricing policy"
+                                 model="vm.pricingPolicyId"
+                                 menu-options="vm.pricingPoliciesOpts"
+                                 small-options="{dialogParent: '.dialog-containers-wrap'}"></dropdown-select>
+            </div>
+
+            <div class="m-b-35">
+                <entity-names-field label="Instrument name"
+                                    entity-type="instrument"
+                                    entity="vm.instrument"
+                                    value-to-show="vm.valueToShow"></entity-names-field>
+            </div>
+
+            <div>
+                <dropdown-select label="Instrument type"
+                                 model="vm.instrTypeId"
+                                 menu-options="vm.instrTypeOpts"
+                                 small-options="{dialogParent: '.dialog-containers-wrap'}"></dropdown-select>
+            </div>
+        </div>
+
+        <div ng-if="!vm.readyStatus" class="flex-row fc-center fi-center" style="height: 350px;">
+            <div class="flex-row fc-space-around">
+                <progress-circular diameter="80"></progress-circular>
+            </div>
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions>
+        <div class="width-100 flex-row fc-space-between fi-center">
+            <md-button class="link-button" ng-click="vm.cancel()">
+                CANCEL
+            </md-button>
+
+            <md-button class="primary-button"
+                       ng-click="vm.agree()"
+                       ng-disabled="!vm.readyStatus"
+                       style="margin-right:20px;">
+                CREATE
+            </md-button>
+        </div>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+    </md-dialog-actions>
+</md-dialog>

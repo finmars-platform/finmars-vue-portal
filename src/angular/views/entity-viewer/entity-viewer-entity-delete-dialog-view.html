@@ -1,0 +1,22 @@
+<md-dialog aria-label="" ng-cloak class="delete-portfolio-dialog">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Delete {{vm.displayCaption()}}</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content  >
+        <div class="warning-text">
+            <p>Are you sure to delete this  <b>{{vm.displayCaption()}}?</b></p>
+            <!--<p>Are you sure you want to permanently delete the chosen objects?</p>-->
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+        <md-button ng-click="vm.delete()" style="margin-right:20px;">
+            Delete
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

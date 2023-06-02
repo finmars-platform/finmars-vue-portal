@@ -1,0 +1,26 @@
+<!--<md-menu>
+    <md-button class="md-raised expr-btn flex-center"
+               ng-click="$mdOpenMenu($event)" data-ng-bind="buttonText">
+    </md-button>
+
+    <md-menu-content width="4">
+        <md-menu-item>
+            <md-button ng-click="openExpressionDialog()" class="g-settings-option-btn">
+                <span>Expression Builder</span>
+            </md-button>
+        </md-menu-item>
+        <md-menu-item>
+            <md-button ng-click="openCodeEditorDialog($event)" class="g-settings-option-btn">
+                <span>Code Editor</span>
+            </md-button>
+        </md-menu-item>
+    </md-menu-content>
+</md-menu>-->
+<md-button custom-popup
+           popup-template-url="views/popups/selector-popup-view.html"
+           popup-data="exprEditorSelData"
+           open-on="click"
+
+           class="md-raised expr-btn flex-center"
+           data-ng-bind="buttonText">
+</md-button>

@@ -1,0 +1,282 @@
+.g-recon {
+  //width: 50%;
+  height: 100%;
+  background: #ddd;
+  position: relative;
+  padding-right: 6px;
+  box-sizing: border-box;
+  /*position: absolute;
+  left: 0;
+  top: 0;*/
+
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 10;
+    background: #4C334D;
+    width: 6px;
+    height: 100%;
+  }
+}
+
+.g-width-slider {
+  position: absolute;
+  height: 100%;
+  top: 0;
+  right: 2px;
+  width: 3px;
+  cursor: col-resize;
+  z-index: 1000;
+}
+
+.g-reconciliation-wrapper {
+  height: 100%;
+}
+
+.g-row.row-recon-matched {
+  background: #8fbc8f;
+}
+
+.g-row.row-recon-auto-matched {
+  background: #add8e6;
+}
+
+.g-row.row-recon-new {
+  background: #f0e68c;
+}
+
+.g-row.row-recon-unmatched {
+  background: #f08080;
+}
+
+.g-row.row-recon-conflict {
+  background: #f08080;
+}
+
+.g-row.row-recon-canceled {
+  background: #a9a9a9;
+}
+
+.recon-match-holder {
+
+  .recon-match-content-holder {
+    background: #ddd;
+    min-height: 100%;
+  }
+
+  .recon-match-dialog-field-title {
+    margin-left: 10px;
+    margin-top: 10px;
+    margin-bottom: 8px;
+  }
+
+  .recon-match-dialog-bank-line {
+    border: 1px solid #9f9f9f;
+    padding-bottom: 10px;
+    padding-right: 15px;
+    margin-bottom: 20px;
+  }
+
+  .recon-match-dialog-transaction-line {
+    border: 1px solid #9f9f9f;
+    padding-bottom: 10px;
+    padding-right: 15px;
+    margin-bottom: 20px;
+
+  }
+
+  md-card.recon-match-field {
+    margin-bottom: 15px;
+  }
+
+  .recon-match-dialog-line-title {
+    margin-left: 10px;
+    margin-bottom: 8px;
+    margin-top: 10px;
+  }
+
+  .recon-match-fields-container {
+    position: relative;
+    margin: 10px 0;
+    padding: 5px;
+    border: 1px solid #9f9f9f;
+  }
+
+  .draggable-dialog-sign {
+    /*top: 5px;
+    left: 10px;*/
+    top: 1px;
+    left: 0;
+  }
+
+}
+
+.recon-match-dialog-content {
+  overflow: auto;
+}
+
+.recon-header-box {
+  width: 130px;
+  height: 60px;
+  border-right: 1px solid #9f9f9f;
+  margin: 1px;
+  font-size: 14px;
+  text-align: center;
+  padding-top: 20px;
+  box-sizing: border-box;
+}
+
+.recon-body-box {
+  width: 130px;
+  min-height: 100px;
+  border: 1px dotted #000;
+  margin: 1px;
+  text-align: center;
+  box-sizing: border-box;
+  padding-bottom: 56px;
+
+  &.recon-cards-container-dragged-over {
+    padding-bottom: 0;
+  }
+}
+
+.recon-cards-container-dragged-over {
+  box-shadow: 0 0 8px #363636 inset;
+  background: rgba(174, 174, 174, 0.3);
+}
+
+.recon-dragged-over-card {
+  .match-recon-card {
+    box-shadow: 0 0 8px #363636 inset;
+  }
+}
+
+.match-recon-card {
+  background: #fff;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.match-recon-card-name {
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  margin-bottom: 5px;
+  font-size: 13px;
+}
+
+.match-recon-card-values {
+  font-size: 12px;
+  text-align: left;
+}
+
+.match-recon-card-info-tooltip-holder {
+  overflow: hidden;
+  ng-md-icon {
+    float: right;
+  }
+}
+
+
+.recon-card-matched {
+  background: #8fbc8f;
+}
+
+.recon-card-ignore {
+  background: #a9a9a9;
+}
+
+.recon-card-auto-matched {
+  background: #add8e6;
+}
+
+.recon-card-resolved {
+  background: #8fbc8f;
+}
+
+.recon-card-new {
+  background: #f0e68c;
+}
+
+.recon-card-unmatched {
+  background: #f0e68c;
+}
+
+.recon-card-conflict {
+  background: #f08080;
+}
+
+
+
+.recon-match-line-title {
+
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  //width: 100%;
+  width: 465px;
+  white-space: pre;
+  height: 20px;
+  margin: 5px;
+
+}
+
+.recon-match-body-complex-transactions {
+  padding: 10px;
+}
+
+.recon-match-body-file-transactions {
+  padding: 10px;
+}
+
+.match-recon-card-details-button {
+  &:hover {
+    opacity: .5;
+  }
+}
+
+md-menu.match-recon-body-line-settings-button.md-menu {
+  position: absolute;
+  top: -3px;
+  right: 0;
+}
+
+.no-recon-fields-row {
+
+  background-size: auto auto;
+  background-color: rgba(255, 255, 255, 1);
+  background-image: repeating-linear-gradient(135deg, transparent, transparent 10px, rgba(143, 188, 143, .4) 10px, rgba(143, 188, 143, .4) 17px );
+
+}
+
+.detail-recon-dialog-card {
+  font-size: 13px;
+  padding: 10px;
+  max-height: 110px;
+  max-width: 150px;
+  box-sizing: border-box;
+}
+
+match-recon-card {
+  display: block;
+  border: 1px solid transparent;
+  margin: 5px;
+
+  &.active {
+    border: 1px solid #000;
+    box-shadow: 1px 1px 8px rgba(0,0,0,0.9);
+  }
+}
+
+.recon-processing-overlay .overlay-loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(0,0,0,.1);
+  padding-top: 200px;
+}

@@ -1,0 +1,90 @@
+<md-dialog aria-label="" ng-cloak class="draggable-dialog width-50" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Multiple Parameters</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="p-24">
+
+        <div layout="column">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th class="width-20">Name</th>
+                        <th class="width-20">Type</th>
+                        <th>Value</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr data-ng-repeat="item in vm.items">
+
+                        <th>
+                            {{item.name}}
+                        </th>
+
+                        <th>
+                            {{vm.getVerboseValueType(item.value_type)}}
+                        </th>
+
+                        <th class="flex-row flex-i-center fc-space-between">
+
+<!--                            <div layout="row" data-ng-if="item.___switch_state == 'default_value'">
+
+                                <md-input-container>
+                                    <label>Default Value</label>
+                                    <input type="text" data-ng-model="item.default_value">
+                                </md-input-container>
+
+                                <md-button class="md-raised md-primary" data-ng-click="vm.switch($event, item)">Switch</md-button>
+
+                            </div>
+
+                            <div layout="row" data-ng-if="item.___switch_state == 'attribute_key'">
+
+                                <md-input-container class="m-t-16">
+                                    <label>Options</label>
+                                    <md-select data-ng-model="item.attribute_key">
+                                        <md-option ng-value="attribute.user_code" data-ng-repeat="attribute in vm.optionsForMultipleParameters[item.index]">
+                                            {{attribute.name}}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+
+                                <md-button class="md-raised md-primary" data-ng-click="vm.switch($event, item)">Switch</md-button>
+
+                            </div>-->
+
+                            <multitype-field class="width-50 custom-input-bottom-space" field-types-data="item.___fieldTypesData" on-value-change="vm.onValueChange(item)"></multitype-field>
+
+                        </th>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()">
+            Close
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.agree()" style="margin-right:20px;">
+            Save
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

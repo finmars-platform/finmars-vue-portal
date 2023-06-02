@@ -1,0 +1,194 @@
+<md-dialog aria-label="" ng-cloak class="warning-dialog" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Missed price history</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div>
+            <md-tabs md-dynamic-height md-border-bottom>
+                <md-tab label="Instruments" data-ng-if="vm.instruments.length">
+                    <div data-ng-if="vm.checkReadyStatus()" style="padding: 20px">
+                        <table class="bordered">
+                            <thead>
+
+                            <tr>
+                                <th data-ng-click="vm.setSort('policy_name')">Pricing policy<span class="sortorder"
+                                                                                                  data-ng-show="vm.sort === 'policy_name'"
+                                                                                                  data-ng-class="{reverse: vm.direction}"></span>
+                                </th>
+                                <th data-ng-click="vm.setSort('instrument_name')">Instrument<span class="sortorder"
+                                                                                                  data-ng-show="vm.sort === 'instrument_name'"
+                                                                                                  data-ng-class="{reverse: vm.direction}"></span>
+                                </th>
+                                <th data-ng-click="vm.setSort('date')">Date<span class="sortorder"
+                                                                                 data-ng-show="vm.sort === 'date'"
+                                                                                 data-ng-class="{reverse: vm.direction}"></span>
+                                </th>
+                                <!--<th data-ng-click="vm.setSort('accrued_price')">Accrued price<span class="sortorder"
+                                                                                                   data-ng-show="vm.sort === 'accrued_price'"
+                                                                                                   data-ng-class="{reverse: vm.direction}"></span>
+                                </th>-->
+                                <th data-ng-click="vm.setSort('principal_price')">Principal price<span class="sortorder"
+                                                                                                       data-ng-show="vm.sort === 'principal_price'"
+                                                                                                       data-ng-class="{reverse: vm.direction}"></span>
+                                </th>
+                                <th>
+                                    <md-button class="md-icon-button">
+                                        <ng-md-icon data-ng-click="vm.toggleQuery()" icon="search"></ng-md-icon>
+                                    </md-button>
+                                </th>
+                            </tr>
+                            <tr style="border: 0" data-ng-if="vm.queryStatus" class="filter-row-holder">
+                                <th>
+                                    <md-input-container>
+                                        <ng-md-icon icon="search"></ng-md-icon>
+                                        <input type="text" data-ng-model="vm.query.policy_name">
+                                    </md-input-container>
+                                </th>
+                                <th>
+                                    <md-input-container>
+                                        <ng-md-icon icon="search"></ng-md-icon>
+                                        <input type="text" data-ng-model="vm.query.instrument_name">
+                                    </md-input-container>
+                                </th>
+                                <th>
+                                    <md-input-container>
+                                        <ng-md-icon icon="search"></ng-md-icon>
+                                        <input type="text" data-ng-model="vm.query.date">
+                                    </md-input-container>
+                                </th>
+                                <!--<th>
+                                    <md-input-container>
+                                        <ng-md-icon icon="search"></ng-md-icon>
+                                        <input type="text" data-ng-model="vm.query.accrued_price">
+                                    </md-input-container>
+                                </th>-->
+                                <th>
+                                    <md-input-container>
+                                        <ng-md-icon icon="search"></ng-md-icon>
+                                        <input type="text" data-ng-model="vm.query.principal_price">
+                                    </md-input-container>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr data-ng-repeat="item in vm.instrumentsPrices | filter:vm.query">
+                                <td data-ng-bind="item.instrument_object.user_code"></td>
+                                <td data-ng-bind="item.pricing_policy_object.user_code"></td>
+                                <td data-ng-bind="item.date"></td>
+                                <!--<td>
+                                    <md-input-container>
+                                        <input type="text" data-ng-model="item.accrued_price">
+                                    </md-input-container>
+                                </td>-->
+                                <td>
+                                    <md-input-container>
+                                        <input type="text" data-ng-model="item.principal_price">
+                                    </md-input-container>
+                                </td>
+                                <td></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div data-ng-if="!vm.checkReadyStatus()">
+                        <div layout="row" layout-sm="column" layout-align="space-around">
+                            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                    </div>
+                </md-tab>
+                <md-tab label="Currencies" data-ng-if="vm.currencies.length">
+                    <div data-ng-if="vm.checkReadyStatus()" style="padding: 20px">
+                        <table class="bordered">
+                            <thead>
+
+                            <tr>
+                                <th data-ng-click="vm.setSort('policy_name')">Pricing policy<span class="sortorder"
+                                                                                                  data-ng-show="vm.sort === 'policy_name'"
+                                                                                                  data-ng-class="{reverse: vm.direction}"></span>
+                                </th>
+                                <th data-ng-click="vm.setSort('currency_name')">Currency<span class="sortorder"
+                                                                                                  data-ng-show="vm.sort === 'currency_name'"
+                                                                                                  data-ng-class="{reverse: vm.direction}"></span>
+                                </th>
+                                <th data-ng-click="vm.setSort('date')">Date<span class="sortorder"
+                                                                                 data-ng-show="vm.sort === 'date'"
+                                                                                 data-ng-class="{reverse: vm.direction}"></span>
+                                </th>
+                                <th data-ng-click="vm.setSort('fx_rate')">FX rate<span class="sortorder"
+                                                                                                   data-ng-show="vm.sort === 'fx_rate'"
+                                                                                                   data-ng-class="{reverse: vm.direction}"></span>
+                                </th>
+                                <th>
+                                    <md-button class="md-icon-button">
+                                        <ng-md-icon data-ng-click="vm.toggleQuery()" icon="search"></ng-md-icon>
+                                    </md-button>
+                                </th>
+                            </tr>
+                            <tr style="border: 0" data-ng-if="vm.queryStatus" class="filter-row-holder">
+                                <th>
+                                    <md-input-container>
+                                        <ng-md-icon icon="search"></ng-md-icon>
+                                        <input type="text" data-ng-model="vm.query.policy_name">
+                                    </md-input-container>
+                                </th>
+                                <th>
+                                    <md-input-container>
+                                        <ng-md-icon icon="search"></ng-md-icon>
+                                        <input type="text" data-ng-model="vm.query.instrument_name">
+                                    </md-input-container>
+                                </th>
+                                <th>
+                                    <md-input-container>
+                                        <ng-md-icon icon="search"></ng-md-icon>
+                                        <input type="text" data-ng-model="vm.query.date">
+                                    </md-input-container>
+                                </th>
+                                <!--<th>
+                                    <md-input-container>
+                                        <ng-md-icon icon="search"></ng-md-icon>
+                                        <input type="text" data-ng-model="vm.query.accrued_price">
+                                    </md-input-container>
+                                </th>-->
+                                <th>
+                                    <md-input-container>
+                                        <ng-md-icon icon="search"></ng-md-icon>
+                                        <input type="text" data-ng-model="vm.query.principal_price">
+                                    </md-input-container>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr data-ng-repeat="item in vm.currenciesPrices | filter:vm.query">
+                                <td data-ng-bind="vm.bindPricingPolicy(item)"></td>
+                                <td data-ng-bind="vm.bindCurrency(item)"></td>
+                                <td data-ng-bind="item.date"></td>
+                                <td>
+                                    <md-input-container>
+                                        <input type="text" data-ng-model="item.fx_rate">
+                                    </md-input-container>
+                                </td>
+                                <td></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div data-ng-if="!vm.checkReadyStatus()">
+                        <div layout="row" layout-sm="column" layout-align="space-around">
+                            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                    </div>
+                </md-tab>
+            </md-tabs>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.agree()" class="md-raised" style="margin-right:20px;">
+            Save
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

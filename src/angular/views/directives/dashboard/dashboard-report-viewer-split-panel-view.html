@@ -1,0 +1,50 @@
+<!--DEPRECATED-->
+<div class="height-100" data-ng-if="readyStatus.data" layout="column">
+
+    <div class="dashboard-component-header" flex="noshrink">
+        <div class="dashboard-component-name">
+            <span class data-ng-if="customName" title="{{customName}}" data-ng-bind="customName"></span>
+            <span data-ng-if="!customName && item" title="{{item.data.name}}" data-ng-bind="item.data.name"></span>
+        </div>
+
+        <div class="dashboard-component-header-right">
+
+
+            <md-button data-ng-if="fillInModeData"
+                       data-ng-click="disableFillInMode()">
+                <ng-md-icon size="24" icon="close"></ng-md-icon>
+                <md-tooltip data-md-direction="top">Close Filled in Component</md-tooltip>
+            </md-button>
+
+            <md-menu data-ng-if="!fillInModeData" class="dashboard-component-settings-menu">
+                <md-button class="md-button dashboard-component-settings-btn"
+                           aria-label="dashboard component settings btn"
+                           data-ng-click="$mdOpenMenu($event)">
+                    <ng-md-icon size="24" icon="settings"></ng-md-icon>
+                    <md-tooltip md-direction="top">Component settings</md-tooltip>
+                </md-button>
+
+                <md-menu-content>
+                    <md-menu-item>
+                        <md-button data-ng-click="enableFillInMode()">Fill in dashboard space</md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+        </div>
+    </div>
+
+    <div class="dashboard-component-body" flex="grow">
+        <div data-ng-include="'views/entity-viewer/dashboard-report-viewer.html'"
+             class="height-100 report-data-layer-wrapper"></div>
+    </div>
+
+</div>
+
+<div data-ng-if="!readyStatus.data" class="dashboard-component-loader-holder">
+
+    <div layout="row" layout-sm="column" layout-align="space-around" class="dashboard-component-loader">
+        <!--<md-progress-circular md-mode="indeterminate" md-diameter="48"></md-progress-circular>-->
+        <progress-circular diameter="50"></progress-circular>
+    </div>
+
+</div>

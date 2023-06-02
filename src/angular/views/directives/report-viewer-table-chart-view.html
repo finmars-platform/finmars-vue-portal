@@ -1,0 +1,210 @@
+<div class="report-viewer-table-chart height-100">
+    <div data-ng-if="!processing"
+         class="report-viewer-table-chart-holder rvTableChartHolder height-100"
+    >
+
+        <div class="rv-table-chart-row rv-table-chart-row-header">
+
+            <div class="rv-table-chart-table-cell rv-table-chart-table-cell-column-title rv-table-chart-border-right" data-index="1" style="width: {{column_1_width}}px">
+
+                <span data-ng-click="toggleSort('title_column')" ng-class="{'text-bold': sortKey == 'title_column'}">
+
+                     <ng-md-icon class="table-chart-sort-icon" data-ng-if="sortDirection == 'ASC' && sortKey == 'title_column'" icon="arrow_upwards" size="14"></ng-md-icon>
+                     <ng-md-icon class="table-chart-sort-icon" data-ng-if="sortDirection == 'DESC' && sortKey == 'title_column'" icon="arrow_downward" size="14"></ng-md-icon>
+
+                    {{tableChartSettings.title_column_name}}
+                </span>
+
+                <div class="attr-selector-btns-holder axisAttrSelectorBtnsHolder">
+
+                    <button custom-popup
+                            popup-template-url="'views/popups/selector-popup-view.html'"
+                            popup-data="titleColumnSelectorData"
+                            position-relative-to="element"
+                            relative-popup-y="top"
+                            open-on="click"
+                            close-on-click-outside="true"
+                            ng-disabled="!canChangeTitleColumnAttr"
+                            class="flex-row flex-center attr-selector-btn ordinate"><span class="material-icons">expand_more</span></button>
+                </div>
+
+                <div class="rv-table-chart-table-cell-resize-slider" ></div>
+
+            </div>
+
+            <div class="rv-table-chart-table-cell rv-table-chart-table-cell-column-value rv-table-chart-border-right" data-index="2" style="width: {{column_2_width}}px">
+
+                <span data-ng-click="toggleSort('value_column')" ng-class="{'text-bold': sortKey == 'value_column'}">
+
+                    <ng-md-icon class="table-chart-sort-icon" data-ng-if="sortDirection == 'ASC' && sortKey == 'value_column'" icon="arrow_upwards" size="14"></ng-md-icon>
+                    <ng-md-icon class="table-chart-sort-icon" data-ng-if="sortDirection == 'DESC' && sortKey == 'value_column'" icon="arrow_downward" size="14"></ng-md-icon>
+
+                    {{tableChartSettings.value_column_name}}
+                </span>
+
+                <div class="attr-selector-btns-holder axisAttrSelectorBtnsHolder">
+
+                    <button custom-popup
+                            popup-template-url="'views/popups/selector-popup-view.html'"
+                            popup-data="valueColumnSelectorData"
+                            position-relative-to="element"
+                            relative-popup-y="top"
+                            open-on="click"
+                            close-on-click-outside="true"
+                            ng-disabled="!canChangeValueColumnAttr"
+                            class="flex-row flex-center attr-selector-btn ordinate"><span class="material-icons">expand_more</span></button>
+                </div>
+
+                <div class="rv-table-chart-table-cell-resize-slider" ></div>
+
+            </div>
+
+            <div class="rv-table-chart-table-cell rv-table-chart-table-cell-column-percent" data-index="3" style="width: {{column_3_width}}px">
+
+                <span data-ng-click="toggleSort('percent_column')" ng-class="{'text-bold': sortKey == 'percent_column'}">
+
+                    <ng-md-icon class="table-chart-sort-icon" data-ng-if="sortDirection == 'ASC' && sortKey == 'percent_column'" icon="arrow_upwards" size="14"></ng-md-icon>
+                    <ng-md-icon class="table-chart-sort-icon" data-ng-if="sortDirection == 'DESC' && sortKey == 'percent_column'" icon="arrow_downward" size="14"></ng-md-icon>
+
+                    % {{tableChartSettings.value_column_name}}
+
+                </span>
+
+                <div class="rv-table-chart-table-cell-resize-slider" ></div>
+
+            </div>
+
+        </div>
+
+        <div class="rv-table-chart-row-holder">
+            <div data-ng-repeat="item in items" class="rv-table-chart-row" data-ng-click="rowClick($event, item)">
+
+                <div class="rv-table-chart-table-cell rv-table-chart-table-cell-column-title rv-table-chart-border-right rv-table-chart-table-cell-1" style="width: {{column_1_width}}px">
+
+                    {{item.key}}
+
+                </div>
+
+                <div class="rv-table-chart-table-cell rv-table-chart-table-cell-column-value text-align-right rv-table-chart-table-cell-2" style="width: {{column_2_width}}px" ng-class="{'red-text': tableChartSettings.number_format.negative_color_format_id === 1}">
+
+                    {{item.total_formated}}
+
+                </div>
+
+                <div class="rv-table-chart-table-cell rv-table-chart-table-cell-column-percent rv-table-chart-table-cell-3" style="width: {{column_3_width}}px">
+
+                    <div data-ng-if="!hasNegativeValues">
+
+                        <div class="rv-table-chart-table-line-bar-dual-holder">
+
+                            <div layout="row">
+
+                                <div class="rv-table-chart-table-line-bar-holder">
+                                    <div class="rv-table-chart-table-line-bar rv-table-chart-table-line-bar-visible"
+                                         style="width: {{item.graph_percent + '%'}}">
+                                    </div>
+
+<!--                                    <span data-ng-if="item.graph_percent < 80"-->
+<!--                                          class="rv-table-chart-table-line-bar-title">{{item.graph_value}} %</span>-->
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+<!--                        <span data-ng-if="item.graph_percent >= 80"-->
+<!--                              class="rv-table-chart-table-line-bar-title">{{item.graph_value}} %</span>-->
+
+                    </div>
+
+                    <div data-ng-if="hasNegativeValues">
+
+                        <div data-ng-if="item.is_negative">
+
+                            <div class="rv-table-chart-table-line-bar-dual-holder">
+
+                                <div layout="row">
+
+                                    <div class="rv-table-chart-table-line-bar-holder" style="width: 50%">
+
+                                        <div class="rv-table-chart-table-line-bar rv-table-chart-table-line-bar-negative rv-table-chart-table-line-bar-visible"
+                                             style="width: {{item.graph_percent + '%'}}">
+                                        </div>
+
+                                    </div>
+
+<!--                                    <span class="rv-table-chart-table-line-bar-title"-->
+<!--                                          style="top: 4px;">{{item.graph_value}} %</span>-->
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div data-ng-if="!item.is_negative">
+
+                            <div class="rv-table-chart-table-line-bar-dual-holder">
+
+                                <div layout="row">
+
+                                    <div class="rv-table-chart-table-line-bar-holder">
+
+                                        <div class="rv-table-chart-table-line-bar rv-table-chart-table-line-bar-negative "
+                                             style="width: {{item.graph_percent + '%'}}">
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="rv-table-chart-table-line-bar-holder">
+                                        <div class="rv-table-chart-table-line-bar rv-table-chart-table-line-bar-visible"
+                                             style="width: {{item.graph_percent + '%'}}">
+
+                                        </div>
+
+<!--                                        <span data-ng-if="item.graph_percent < 80 && !item.is_negative"-->
+<!--                                              class="rv-table-chart-table-line-bar-title">{{item.graph_value}} %</span>-->
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+<!--                            <span data-ng-if="item.graph_percent >= 80" style="top: -12px;"-->
+<!--                                  class="rv-table-chart-table-line-bar-title">{{item.graph_value}} %</span>-->
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+<!--    <div data-ng-if="viewContext === 'dashboard' && !processing" class="g-dashboard-filter-holder">-->
+
+<!--        <md-button class="toggle-dashboard-filter-btn"-->
+<!--                   ng-click="dashboardFilterCollapsed = !dashboardFilterCollapsed">-->
+<!--            <ng-md-icon ng-hide="dashboardFilterCollapsed"-->
+<!--                        icon="keyboard_arrow_left"></ng-md-icon>-->
+<!--            <ng-md-icon ng-hide="!dashboardFilterCollapsed"-->
+<!--                        icon="keyboard_arrow_right"></ng-md-icon>-->
+<!--        </md-button>-->
+
+<!--        <div class="g-dashboard-filter">-->
+
+<!--            <group-dashboard-filter data-ng-show="!dashboardFilterCollapsed"-->
+<!--                                    ev-data-service="evDataService"-->
+<!--                                    ev-event-service="evEventService"></group-dashboard-filter>-->
+<!--        </div>-->
+
+<!--    </div>-->
+
+</div>

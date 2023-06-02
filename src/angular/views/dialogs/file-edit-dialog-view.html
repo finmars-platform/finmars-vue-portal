@@ -1,0 +1,39 @@
+<md-dialog aria-label="info dialog"
+           class="file-preview-dialog draggable-dialog dialog-actions-bottom"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>File Edit</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="file-preview-content">
+
+            <div
+                    class="file-preview-content-wrap">
+                <div class="ace-editor" id="filePreviewAceEditor"></div>
+            </div>
+
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row" layout-align="space-between">
+        <div layout="row">
+            <md-button ng-click="vm.close()" style="margin: 0; margin-right: 16px">
+                Close
+            </md-button>
+            <md-button ng-click="vm.download()" style="margin: 0" data-ng-if="vm.contentType != 'image'">
+                Download
+            </md-button>
+        </div>
+
+        <div layout="row">
+            <div data-ng-if="vm.processing" style="padding-top: 4px">
+                <progress-circular diameter="20"></progress-circular>
+            </div>
+            <md-button ng-click="vm.agree()" class="{{vm.processing ? 'disabled-btn' : ''}}" style="margin: 0">
+                Save
+            </md-button>
+        </div>
+    </md-dialog-actions>
+</md-dialog>

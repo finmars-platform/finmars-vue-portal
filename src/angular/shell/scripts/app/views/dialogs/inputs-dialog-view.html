@@ -1,0 +1,40 @@
+<md-dialog class="inputs-dialog draggable-dialog dialog-actions-bottom"
+           aria-label="inputs dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2 ng-bind="vm.title"></h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="p-16 height-100">
+
+        <div class="inputs-dialog-inputs-container">
+
+            <div ng-repeat="input in vm.inputsList">
+                <text-input model="input.model"
+                            label="{{input.label}}"
+                            small-options="input.smallOptions"></text-input>
+            </div>
+
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions>
+        <div layout="row" layout-align="space-between center">
+            <md-button ng-click="vm.cancel()">
+                Cancel
+            </md-button>
+
+            <md-button ng-click="vm.agree()" style="margin-right:20px;">
+                OK
+            </md-button>
+        </div>
+
+    </md-dialog-actions>
+
+</md-dialog>

@@ -1,0 +1,34 @@
+<div style="padding: 0 20px;" class="mapping-tables-import-export">
+    <h2 class="m-b-35">Reference Tables</h2>
+
+    <div data-ng-if="vm.readyStatus.referenceTables">
+
+        <div data-ng-repeat="item in vm.referenceTables">
+
+            <div layout="row">
+                <button class="md-button md-primary" style="min-width: 350px; text-align: left; text-transform: initial;" data-ng-click="vm.openReferenceTable($event, item)">
+                    {{item.name}}
+                </button>
+                <button class="md-button md-raised" data-ng-click="vm.renameReferenceTable($event, item)">Rename
+                </button>
+                <button class="md-button md-raised warn" data-ng-click="vm.deleteReferenceTable($event, item)">Delete
+                </button>
+                <md-button class="md-button md-raised"
+                           data-ng-click="vm.exportReferenceTable($event, item)">
+                    Export
+                </md-button>
+                <md-button class="md-button md-raised"
+                           data-ng-click="vm.importReferenceTable($event, item)">
+                    Import from .csv file
+                </md-button>
+            </div>
+
+        </div>
+
+        <div>
+            <button class="md-button md-raised md-primary" data-ng-click="vm.createReferenceTable($event)">Add New Reference Table</button>
+        </div>
+
+    </div>
+
+</div>

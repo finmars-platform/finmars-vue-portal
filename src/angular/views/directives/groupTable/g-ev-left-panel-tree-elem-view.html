@@ -1,0 +1,54 @@
+<div data-ng-if="item.___type === 'group'"
+     class="ev-left-panel-tree-elem"
+     ng-class="{'last-level-group': isLastLevel}">
+
+    <div data-ng-if="item.___parentId"
+         class="ev-left-panel-tree-elem-line flex-row fi-center"
+         data-ng-class="{'selected-group': item.___is_selected, 'has-selected-child-group': item.___has_selected_child}">
+
+        <div data-ng-show="!item.___is_open"
+             class="ev-left-panel-folding-btn"
+             data-ng-click="unfoldGroup($event)">
+            <span class="material-icons">chevron_right</span>
+        </div>
+
+        <div data-ng-show="item.___is_open"
+             class="ev-left-panel-folding-btn"
+             data-ng-click="foldGroup($event)">
+            <span class="material-icons">expand_more</span>
+        </div>
+
+        <div data-ng-click="toggleGroupSelection($event)" class="ev-left-panel-tree-elem-name"> {{getPrettyName()}}
+            ({{item.___items_count}})
+        </div>
+        <!--        <div data-ng-click="toggleGroupSelection($event)"  class="ev-left-panel-tree-elem-name"> {{item.___group_name}}</div>-->
+    </div>
+
+    <div data-ng-if="item.___is_open">
+        <div data-ng-repeat="child in item.results track by $index" class="ev-left-panel-children-holder">
+
+            <g-ev-left-panel-tree-elem item="child"
+                                       ev-data-service="evDataService"
+                                       ev-event-service="evEventService"
+                                       ev-content-element="evContentElement"></g-ev-left-panel-tree-elem>
+
+
+        </div>
+
+        <div data-ng-if="currentPage < total_pages">
+            <button class="control-button load-more" data-ng-if="!isLastLevel" data-ng-click="loadMore($event)">Load
+                more
+            </button>
+            <button class="control-button load-all" data-ng-if="!isLastLevel" data-ng-click="loadAll($event)"> Load
+                all
+            </button>
+        </div>
+    </div>
+
+    <div ng-if="loading">
+        <div class="loader-spinner flex-row fc-space-around">
+            <progress-circular diameter="20"></progress-circular>
+        </div>
+    </div>
+
+</div>

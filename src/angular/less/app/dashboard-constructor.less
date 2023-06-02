@@ -1,0 +1,450 @@
+.dashboard-constructor {
+  //overflow: hidden;
+
+  .dashboard-constructor-main {
+    padding: 8px;
+    box-sizing: border-box;
+    height: 100%;
+  }
+
+  .dashboard-constructor-working-area {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .dashboard-constructor-top-row {
+      display: flex;
+      flex-direction: row;
+      flex: 0 0 auto;
+    }
+
+    .layout-areas-and-components-row {
+      display: flex;
+      flex-direction: row;
+      flex: 0 1 100%;
+    }
+  }
+
+  .dashboard-layout {
+    width: 100%;
+    height: 100%;
+    //overflow: auto;
+
+    //padding-right: 100px;
+  }
+
+  .dashboard-constructor-layout-areas-container {
+    flex: 1 1 100%;
+  }
+
+  .fixed-area-holder {
+    height: 200px;
+    overflow: auto;
+    //margin-right: 320px;
+
+    .dashboard-layout {
+      height: auto;
+
+    }
+
+    .dashboard-layout-holder {
+      height: 200px;
+    }
+
+  }
+
+  .dashboard-constructor-tabs-holder {
+    height: 100%;
+    overflow: auto;
+    //margin-right: 320px;
+  }
+
+  .dashboard-constructor-sidebar {
+    flex: 0 0 320px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .dashboard-constructor-comp-cards-top-text {
+    margin-bottom: 4px;
+    margin-top: 12px;
+    padding-left: 4px;
+    font-weight: bold;
+  }
+
+  .dashboard-constructor-comp-cards-container {
+    height: 480px;
+    overflow: auto;
+  }
+
+  .dashboard-constructor-draggable-card {
+    cursor: pointer;
+    position: relative;
+  }
+
+  .dashboard-constructor-cell {
+    //display: block;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: 10px;
+
+    .dashboard-constructor-cell-container {
+      width: 100%;
+      flex: 1 0 100%;
+    }
+
+  }
+
+  button.dashboard-manage-row-btn {
+    position: absolute;
+    min-width: 0;
+    width: 40px;
+    min-height: 0;
+    height: 40px;
+    top: 50%;
+    //right: 10px;
+    transform: translateY(-50%);
+    margin: 0;
+    font-size: 24px;
+    border-radius: 24px;
+    color: #f4af8b;
+    //background-color: #f4af8b;
+    background-color: transparent;
+    border: 2px solid #F4AF8B;
+    transition: all 0.2s linear;
+
+    /*&:hover {
+      //opacity: 0.5;
+      background-color: #f4af8b;
+      color: #fff;
+    }*/
+
+    &:not([disabled]):hover {
+      background-color: #f4af8b;
+      color: #fff;
+    }
+
+    &:not([disabled]):focus {
+      background-color: transparent;
+    }
+
+    &[disabled]:focus {
+      background-color: transparent;
+    }
+
+    &[disabled] {
+      color: #f4af8b;
+      opacity: 0.5;
+    }
+  }
+
+  .dashboard-constructor-row {
+    position: relative;
+    padding-right: 95px;
+
+    &:after {
+      content: '';
+      display: block;
+      clear: both;
+    }
+  }
+
+  .dashboard-constructor-empty-cell {
+    border: 1px dotted #000;
+    padding: 6px 8px;
+    text-align: center;
+    fill: #898989;
+
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+
+    position: relative;
+
+    ng-md-icon {
+      top: 50%;
+      position: absolute;
+      margin-top: -12px;
+      left: 50%;
+      margin-left: -12px;
+    }
+  }
+
+  .row-controls-holder {
+
+    width: 100px;
+    height: 100%;
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+
+  }
+
+  .dashboard-constructor-row-controls {
+    display: block;
+    position: absolute;
+    //right: -100px;
+    top: 0;
+
+    height: 50px;
+    width: 100px;
+
+    background: #ddd;
+
+  }
+
+  .dashboard-layout-holder {
+    max-height: 480px;
+    height: 480px;
+    overflow: auto;
+  }
+
+  .dashboard-constructor-sidebar {
+
+  }
+
+  .dashboard-constructor-field-holder {
+
+    .edit-component-type-button {
+      margin-bottom: 24px;
+      min-width: 50px;
+    }
+
+    md-input-container {
+      height: 58px;
+      display: block;
+      flex: none;
+    }
+
+  }
+
+  .dashboard-constructor-layout-type {
+    h4 {
+      margin: 0 auto;
+      font-size: 24px;
+      text-align: center;
+      padding-top: 60px;
+      margin-bottom: 20px;
+    }
+
+    .dashboard-constructor-layout-type-buttons-holder {
+      text-align: center;
+    }
+
+    button.layout-type-button.md-button.md-ink-ripple {
+      margin: 24px;
+      width: 160px;
+      height: 160px;
+    }
+  }
+
+}
+
+// FIELD CARD START
+
+.dashboard-field-card {
+  margin: 0;
+  padding: 8px;
+  fill: #898989;
+
+  .dc-extend-btns-holder {
+    margin-right: 14px;
+
+    button {
+      min-height: 16px;
+      height: 16px;
+      min-width: 20px;
+      width: 20px;
+      line-height: 1;
+      padding: 0;
+      margin: 0;
+    }
+  }
+
+  .dashboard-field-card-options {
+
+    min-width: 48px;
+    height: 10px;
+
+    float: left;
+
+    position: relative;
+    top: -6px;
+
+    button {
+      float: right;
+      line-height: 1;
+      padding: 0;
+      margin: 2px;
+      margin-right: 0;
+      margin-left: 0;
+      min-width: 24px;
+      min-height: 24px;
+
+    }
+  }
+
+  .name-holder {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+    white-space: pre;
+    float: left;
+    display: inline-block;
+    margin: 0;
+  }
+
+  &.active {
+    background: #f3d074;
+    box-shadow: 0 0 30px rgba(255, 187, 0, .5);
+    //padding-top: 2em;
+    z-index: 100;
+    position: relative;
+
+    min-height: 100%;
+    min-width: 100%;
+  }
+
+  button.ec-field-btn.md-button.md-ink-ripple {
+    min-width: 40px;
+    width: 100%;
+  }
+
+  md-select-value {
+    min-width: 40px;
+  }
+
+}
+
+// FIELD CARD END
+
+.dashboard-constructor-field1 {
+  width: 200px;
+}
+
+.dashboard-constructor-field2 {
+  width: 343px;
+  margin: 0 10px;
+}
+
+.dashboard-constructor-btn-among-fields {
+  position: relative;
+  bottom: 9px;
+
+  .number-format-menu-button {
+    margin-right: 0;
+  }
+}
+
+.dashboard-constructor-selector-directive {
+  .expandable-item-selector-input {
+    width: 200px;
+    margin: 0 10px;
+  }
+}
+
+.dashboard-constructor-linked-filters-container {
+  display: flex;
+  max-height: 130px;
+  margin-bottom: 36px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  overflow: auto;
+
+  ui {
+    padding-left: 0;
+    margin: 0;
+    columns: 3;
+    -webkit-columns: 3;
+    -moz-columns: 3;
+    column-gap: 20px;
+
+    li {
+      list-style-type: none;
+      margin-bottom: 8px;
+    }
+  }
+}
+
+.constructor-button-set-grid-elem {
+  float: left;
+  border: 1px solid #ddd;
+  margin: 8px;
+  padding: 16px;
+}
+
+.accordion-constructor-row-accordion {
+
+  // TODO refactor class names
+  .ec-tab-btn {
+    opacity: 1;
+    &:hover {
+      opacity: .6;
+    }
+  }
+
+}
+.accordion-constructor-row {
+
+  height: 50px;
+
+  // TODO refactor class names
+  .ec-tab-btn {
+    opacity: 1;
+    &:hover {
+      opacity: .6;
+    }
+  }
+
+  .dashboard-constructor-empty-cell {
+    border: 1px dotted #000;
+    padding: 6px 8px;
+    text-align: center;
+    fill: #898989;
+
+    height: 30px;
+    width: 100px;
+    box-sizing: border-box;
+
+    position: relative;
+
+    ng-md-icon {
+      top: 50%;
+      position: absolute;
+      margin-top: -12px;
+      left: 50%;
+      margin-left: -12px;
+    }
+  }
+
+}
+
+.accordion-constructor-row-proxy {
+  height: 50px;
+}
+
+.dashboard-constructor-accordion-guide {
+  width: 110px;
+  float: left;
+}
+
+.dashboard-constructor .dashboard-layout {
+  background: transparent;
+  float: left;
+}
+
+.accordion-constructor-row-accordion-guide-card {
+  margin: 0;
+}
+
+.accordion-constructor-row md-input-container {
+  position: relative;
+  top: -12px;
+}
+
+.accordion-constructor-row .ec-tab-btn {
+  position: relative;
+  top: -7px;
+}

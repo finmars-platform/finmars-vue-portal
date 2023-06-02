@@ -1,0 +1,217 @@
+/* Calculator styles */
+
+/* Gradient text only on Webkit */
+/*.warning {
+  background: -webkit-linear-gradient(45deg,  #c97874 10%, #463042 90%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #8c5059;
+  font-weight: 400;
+  margin: 0 auto 6em;
+  max-width: 9em;
+}*/
+
+/*.calculator-block {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: #4C334D;
+  width: 250px;
+  height: 350px
+}*/
+
+.calculator-dialog {
+
+  md-toolbar {
+    min-height: 40px;
+    height: auto;
+    background-color: #4C334D;
+    padding-bottom: 5px;
+
+    .md-toolbar-tools {
+      max-width: 240px;
+      min-height: 40px;
+      height: auto;
+    }
+
+  }
+
+  md-dialog-actions {
+    padding: 0 8px;
+    background-color: #4C334D;
+    border-top: 1px solid rgba(255,255,255,.87);
+
+    button.md-button {
+      min-width: 0;
+      color: rgba(255,255,255,.87);
+      padding: 0 8px;
+      margin: 8px;
+    }
+
+  }
+
+  md-dialog-actions {
+    button.md-button[disabled] {
+      opacity: 0.5;
+    }
+  }
+
+}
+
+.calculator-dialog-content {
+  background-color: #4C334D;
+  width: 240px;
+  height: 350px
+}
+
+.calculator-interface {
+  font-size: 28px;
+  margin: 0 auto;
+  text-align: right;
+  padding: 0 8px;
+  color: rgba(255, 255, 255, 0.87);
+
+  .calculator-output-area {
+    height: 70px;
+    border: 1px solid #fff;
+    margin: 0 8px;
+    padding: 0 8px;
+    box-sizing: border-box;
+
+    & > div {
+      padding: 2px 0;
+      width: 100%;
+      height: 50%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      box-sizing: border-box;
+      white-space: nowrap;
+    }
+
+    .calculator-calc-history {
+      font-size: 18px;
+    }
+  }
+
+  .calculator-current-number {
+    text-align: right;
+    &.calculator-cn-sm-font {
+      font-size: 21px;
+    }
+  }
+
+  &::before,
+  &::after {
+    content: " ";
+    display: table;
+  }
+  &::after {
+    clear: both;
+  }
+
+  button {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    margin: 8px;
+    width: 40px;
+    height: 40px;
+    transition: all 0.5s;
+    border: 1px solid rgba(255, 255, 255, 0.87);
+
+    &:hover {
+      background-color: #664366;
+    }
+
+    &:focus {
+      outline: 0; // Better check accessibility
+
+      /* The value fade-ins that appear */
+      &::after {
+        animation: value-fade-out 1s;
+        animation-iteration-count: 1;
+        animation-fill-mode: both; // Fix Firefox from firing animations only once
+        content: attr(data-num);
+        cursor: default;
+        font-size: 100px;
+        position: absolute;
+        top: 1.5em;
+        left: 50%;
+        text-align: center;
+        margin-left: -24px;
+        opacity: 0;
+        width: 48px;
+      }
+    }
+
+    &[disabled] {
+      opacity: 0.5;
+    }
+  }
+
+  .pos-neg-toggle-btn {
+    position: relative;
+
+    span {
+      position: absolute;
+      top: 0;
+      height: 22px;
+      line-height: 1;
+      font-size: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    span:first-child {
+      top: 4px;
+      font-size: 23px;
+    }
+
+    span:last-child {
+      top: 9px;
+      font-size: 28px;
+    }
+  }
+}
+
+/* Same as above, modified for operators */
+.ops:focus::after {
+  content: attr(data-ops);
+  margin-left: -210px;
+  width: 420px;
+}
+
+/* Same as above, modified for result */
+.equals:focus::after {
+  content: attr(data-result);
+  margin-left: -300px;
+  width: 600px;
+}
+
+/* Reset button */
+
+.calculator-reset-button {
+  background: rgba(201,120,116,.28);
+  color:#c97874;
+  font-weight: 400;
+  margin-left: -77px;
+  padding: 0.5em 1em;
+  position: absolute;
+  top: -20em;
+  left: 50%;
+  width: auto;
+  height: auto;
+
+  &:hover {
+    background: #c97874;
+    color: #100a1c;
+  }
+
+  /* When button is revealed */
+  &.show {
+    top: 20em;
+    animation: reset-fade-in-animation 4s;
+  }
+}

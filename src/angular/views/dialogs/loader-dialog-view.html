@@ -1,0 +1,20 @@
+<md-dialog aria-label="" ng-cloak class="loader-dialog draggable-dialog" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <md-button data-ng-click="vm.cancel()">
+                <ng-md-icon icon="close" style="fill:#000000;" size="20"></ng-md-icon>
+            </md-button>
+
+            <p>{{text}}</p>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="p-24">
+
+        <div>
+            <div class="e-data-loader" layout="row" layout-sm="column" layout-align="space-around">
+                <progress-circular diameter="40"></progress-circular>
+            </div>
+
+        </div>
+    </md-dialog-content>
+</md-dialog>

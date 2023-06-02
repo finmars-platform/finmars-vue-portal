@@ -1,0 +1,359 @@
+<md-dialog class="number-format-dialog"
+           aria-label="column numbers rendering settings dialog">
+
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+
+            <h2>Complex Transaction Code: Number Format</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <div class="number-format-preset-container">
+        <div class="preset-selector"
+             custom-popup
+             popup-template-url="'views/popups/selector-popup-view.html'"
+             popup-data="vm.presetSelectorData"
+             position-relative-to="element"
+             relative-popup-x="left"
+             relative-popup-y="top"
+             open-on="click"
+             popup-classes="preset-options"
+             close-on-click-outside="true">
+
+            <span>{{vm.currentPresetName}}</span>
+            <span class="material-icons">arrow_drop_down</span>
+
+        </div>
+
+        <div class="examples">
+            <div class="examples-caption">Examples:</div>
+            <div class="examples-items"
+                 data-ng-class="{
+                    'low-font-size': vm.settings.percentage_format_id >= 3 && vm.settings.percentage_format_id < 5,
+                    'small-font-size': vm.settings.percentage_format_id === 5
+                    }">
+                <div>{{vm.positiveNumberExample}}</div>
+                <div>{{vm.zeroExample}}</div>
+                <div data-ng-class="{red: vm.negativeFormat % 2 === 1}">{{vm.negativeNumberExample}}</div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="number-format-accordion">
+
+<!--        Zero-->
+        <div layout="column"
+             data-ng-init="zeroCollapsed = true"
+             class="cb1-main-container"
+             ng-class="{'cb1-block-collapsed': zeroCollapsed}">
+            <div class="NF-group-toggle"
+                 layout="row"
+                 ng-click="zeroCollapsed = !zeroCollapsed">
+                <div class="parameter">Zero</div>
+                <div class="example" data-ng-if="zeroCollapsed" ng-bind="vm.getZeroName()"></div>
+                <div class="example" data-ng-if="!zeroCollapsed">Select zero number format</div>
+                <div class="collapse-icon">
+                    <span class="material-icons">expand_more</span>
+                </div>
+            </div>
+
+            <div class="cb1-resizing-wrap">
+                <div layout="row"
+                     layout-wrap
+                     class="numberFormatAccordionHeight">
+                    <div class="settings">
+                        <div layout="column">
+                            <md-radio-group ng-model="vm.settings.zero_format_id" ng-change="vm.onNumberFormatChange()">
+
+                                <md-radio-button data-ng-repeat="option in vm.zeroFormats" ng-value="option.id">{{option.name}}</md-radio-button>
+
+                            </md-radio-group>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!--        Negative-->
+        <div layout="column"
+             data-ng-init="negativeCollapsed = true"
+             class="cb1-main-container"
+             ng-class="{'cb1-block-collapsed': negativeCollapsed}">
+            <div class="NF-group-toggle"
+                 layout="row"
+                 ng-click="negativeCollapsed = !negativeCollapsed">
+                <div class="parameter">Negative</div>
+                <div class="example"
+                     data-ng-if="negativeCollapsed"
+                     ng-bind="vm.getNegativeName()"
+                     data-ng-class="{red: vm.negativeFormat % 2 === 1}"></div>
+                <div class="example" data-ng-if="!negativeCollapsed">Select negative number format</div>
+                <div class="collapse-icon">
+                    <span class="material-icons">expand_more</span>
+                </div>
+            </div>
+
+            <div class="cb1-resizing-wrap">
+                <div layout="row"
+                     layout-wrap
+                     class="numberFormatAccordionHeight">
+
+                    <div class="settings">
+
+                        <div layout="row">
+
+                            <md-radio-group ng-model="vm.negativeFormat" data-ng-change="vm.onNegativeFormatChange()">
+                                <md-radio-button data-ng-repeat="option in vm.negativeFormats"
+                                                 ng-value="option.id"
+                                                 data-ng-class="{red: option.id % 2 === 1}">{{option.name}}
+                                </md-radio-button>
+                            </md-radio-group>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+<!--        Rounding-->
+        <div layout="column"
+             data-ng-init="roundingCollapsed = true"
+             class="cb1-main-container"
+             ng-class="{'cb1-block-collapsed': roundingCollapsed}">
+            <div class="NF-group-toggle"
+                 layout="row"
+                 ng-click="roundingCollapsed = !roundingCollapsed">
+                <div class="parameter">Rounding</div>
+                <div class="example"
+                     data-ng-if="roundingCollapsed"
+                     ng-bind="vm.settings.round_format_id === 0 ? 'No rounding' : vm.formatRounding(0)"></div>
+                <div class="example" data-ng-if="!roundingCollapsed">Select rounding format</div>
+                <div class="collapse-icon">
+                    <span class="material-icons">expand_more</span>
+                </div>
+            </div>
+
+            <div class="cb1-resizing-wrap">
+                <div layout="row"
+                     layout-wrap
+                     class="numberFormatAccordionHeight">
+
+                    <div class="settings">
+                        <div layout="column">
+                            <md-radio-group ng-model="vm.settings.round_format_id" ng-change="vm.onRoundingChange()">
+
+                                <md-radio-button ng-value="0">no rounding</md-radio-button>
+
+                                <md-radio-button ng-value="1">0</md-radio-button>
+                                <md-radio-button ng-value="2">0.0</md-radio-button>
+                                <md-radio-button ng-value="3">0.00</md-radio-button>
+                                <md-radio-button ng-value="4">0.0000</md-radio-button>
+
+                            </md-radio-group>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+<!--        Separation-->
+        <div layout="column"
+             data-ng-init="separationCollapsed = true"
+             class="cb1-main-container"
+             ng-class="{'cb1-block-collapsed': separationCollapsed}">
+            <div class="NF-group-toggle"
+                 layout="row"
+                 ng-click="separationCollapsed = !separationCollapsed">
+                <div class="parameter">Thousands separation</div>
+                <div class="example" data-ng-if="separationCollapsed" ng-bind="vm.getSeparationName()"></div>
+                <div class="example" data-ng-if="!separationCollapsed">Select separation format</div>
+                <div class="collapse-icon">
+                    <span class="material-icons">expand_more</span>
+                </div>
+            </div>
+
+            <div class="cb1-resizing-wrap">
+                <div layout="row"
+                     layout-wrap
+                     class="numberFormatAccordionHeight">
+
+                    <div class="settings">
+                        <div layout="column">
+
+                            <md-radio-group ng-model="vm.settings.thousands_separator_format_id" ng-change="vm.onNumberFormatChange()">
+                                <md-radio-button data-ng-repeat="option in vm.separationFormats" ng-value="option.id">{{option.name}}</md-radio-button>
+                            </md-radio-group>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+<!--        Percentage-->
+        <div layout="column"
+             data-ng-init="percentageCollapsed = true"
+             class="cb1-main-container"
+             ng-class="{'cb1-block-collapsed': percentageCollapsed}">
+            <div class="NF-group-toggle"
+                 layout="row"
+                 ng-click="percentageCollapsed = !percentageCollapsed">
+                <div class="parameter">Percentage</div>
+                <div class="example" data-ng-if="percentageCollapsed" ng-bind="vm.getPercentageName()"></div>
+                <div class="example" data-ng-if="!percentageCollapsed">Select percentage format</div>
+                <div class="collapse-icon">
+                    <span class="material-icons">expand_more</span>
+                </div>
+            </div>
+
+            <div class="cb1-resizing-wrap">
+                <div layout="row"
+                     layout-wrap
+                     class="numberFormatAccordionHeight">
+
+                    <div class="settings">
+                        <div layout="column">
+
+                            <md-radio-group ng-model="vm.settings.percentage_format_id" ng-change="vm.onPercentageChange()">
+                                <md-radio-button data-ng-repeat="option in vm.percentageFormats" ng-value="option.id">{{option.name}}</md-radio-button>
+                            </md-radio-group>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+<!--        Suffix-->
+        <div layout="column"
+             data-ng-init="suffixCollapsed = true"
+             class="cb1-main-container"
+             ng-class="{'cb1-block-collapsed': suffixCollapsed}">
+            <div class="NF-group-toggle"
+                 layout="row"
+                 ng-click="suffixCollapsed = !suffixCollapsed">
+                <div class="parameter">Suffix</div>
+                <div class="example" data-ng-if="suffixCollapsed"></div>
+                <div class="example" data-ng-if="!suffixCollapsed">Enter suffix (after number)</div>
+                <div class="collapse-icon">
+                    <span class="material-icons">expand_more</span>
+                </div>
+            </div>
+
+            <div class="cb1-resizing-wrap">
+                <div layout="row"
+                     layout-wrap
+                     class="numberFormatAccordionHeight">
+
+                    <div class="settings">
+                        <div layout="column">
+                            <text-input model="vm.settings.number_suffix"
+                                        placeholder-text="Suffix"
+                                        on-change-callback="vm.onNumberFormatChange()"
+                                        small-options="{noIndicatorBtn: true}"></text-input>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+<!--        Prefix-->
+        <div layout="column"
+             data-ng-init="prefixCollapsed = true"
+             class="cb1-main-container"
+             ng-class="{'cb1-block-collapsed': prefixCollapsed}">
+            <div class="NF-group-toggle"
+                 layout="row"
+                 ng-click="prefixCollapsed = !prefixCollapsed">
+                <div class="parameter">Prefix</div>
+                <div class="example" data-ng-if="prefixCollapsed"></div>
+                <div class="example" data-ng-if="!prefixCollapsed">Enter prefix (before number)</div>
+                <div class="collapse-icon">
+                    <span class="material-icons">expand_more</span>
+                </div>
+            </div>
+
+            <div class="cb1-resizing-wrap">
+                <div layout="row"
+                     layout-wrap
+                     class="numberFormatAccordionHeight">
+
+                    <div class="settings">
+                        <div layout="column">
+                            <text-input model="vm.settings.number_prefix"
+                                        placeholder-text="Prefix"
+                                        on-change-callback="vm.onNumberFormatChange()"
+                                        small-options="{noIndicatorBtn: true}"></text-input>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+<!--        Multiplier-->
+        <div layout="column"
+             data-ng-init="multiplierCollapsed = true"
+             class="cb1-main-container"
+             ng-class="{'cb1-block-collapsed': multiplierCollapsed}">
+            <div class="NF-group-toggle"
+                 layout="row"
+                 ng-click="multiplierCollapsed = !multiplierCollapsed">
+                <div class="parameter">Multiplier</div>
+                <div class="example" data-ng-if="multiplierCollapsed"></div>
+                <div class="example" data-ng-if="!multiplierCollapsed">Enter multiplier</div>
+                <div class="collapse-icon">
+                    <span class="material-icons">expand_more</span>
+                </div>
+            </div>
+
+            <div class="cb1-resizing-wrap">
+                <div layout="row"
+                     layout-wrap
+                     class="numberFormatAccordionHeight">
+
+                    <div class="settings">
+                        <div layout="column">
+                            <number-input model="vm.settings.number_multiplier"
+                                          placeholder-text="Multiplier"
+                                          small-options="{noIndicatorBtn: true}"
+                                          on-change-callback="vm.onNumberFormatChange()"></number-input>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="flex-row fc-flex-end fi-center number-format-footer">
+        <div>
+            <md-button ng-click="vm.cancel()" class="link-button">
+                <span>CANCEL</span>
+            </md-button>
+        </div>
+
+        <div>
+            <md-button ng-click="vm.agree()" class="link-button">
+                <span>SAVE</span>
+            </md-button>
+        </div>
+    </div>
+</md-dialog>

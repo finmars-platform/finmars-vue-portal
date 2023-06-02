@@ -1,15 +1,24 @@
 <template>
 	<Teleport to="body" v-if="modelValue">
 		<transition name="fade">
-			<div class="modal_wrap flex aic jcc"
-				:class="{no_padding: no_padding}"
+			<div
+				class="modal_wrap flex aic jcc"
+				:class="{ no_padding: no_padding }"
 				v-show="modelValue"
 			>
-				<div class="modal">
-					<div class="modal_top flex aic sb">
-						<div class="modal_head">{{ title }}</div>
-<!--						<FmIcon :disabled="closingDisabled" icon="close" @click="cancel"/>-->
-						<FmBtn :disabled="closingDisabled" type="iconBtn" icon="close" @click="cancel" />
+				<div class="modal" v-bind="$attrs">
+					<div class="modal_top flex aic sb" v-if="!empty_hack">
+						<div class="flex aic">
+							<div class="modal_head">{{ title }}</div>
+							<slot name="top_place" />
+						</div>
+						<!--						<FmIcon :disabled="closingDisabled" icon="close" @click="cancel"/>-->
+						<FmBtn
+							:disabled="closingDisabled"
+							type="iconBtn"
+							icon="close"
+							@click="cancel"
+						/>
 					</div>
 
 					<div class="modal_content scrollable">
@@ -19,69 +28,73 @@
 					<div class="modal_bottom">
 						<slot name="controls" :cancel="cancel">
 							<div class="flex sb" v-if="controls">
-								<FmBtn type="text"
-									@click="cancel(), controls.cancel.cb ? controls.cancel.cb() : ''">{{ controls.cancel.name }}</FmBtn>
-								<FmBtn @click="cancel(), controls.action.cb()">{{ controls.action.name }}</FmBtn>
+								<FmBtn
+									type="text"
+									@click="
+										cancel(), controls.cancel.cb ? controls.cancel.cb() : ''
+									"
+									>{{ controls.cancel.name }}</FmBtn
+								>
+								<FmBtn @click="cancel(), controls.action.cb()">{{
+									controls.action.name
+								}}</FmBtn>
 							</div>
 						</slot>
 					</div>
 				</div>
-				<div class="mask" @[backdropClickable]="cancel"></div>
+				<div
+					v-if="!empty_hack"
+					class="mask"
+					@[backdropClickable]="cancel"
+				></div>
 			</div>
 		</transition>
 	</Teleport>
 </template>
 
 <script>
-
-export default {
-
-  props: {
-		modelValue: Boolean,
-		title: String,
-		// {
-		//	cancel:
-		//  action
-		// }
-		controls: Object,
-		no_padding: Boolean,
-		closeOnClickOutside: {
-			type: Boolean,
-			default: false
+	export default {
+		props: {
+			modelValue: Boolean,
+			title: String,
+			// {
+			//	cancel:
+			//  action
+			// }
+			controls: Object,
+			no_padding: Boolean,
+			closeOnClickOutside: {
+				type: Boolean,
+				default: false,
+			},
+			closingDisabled: Boolean,
+			empty_hack: Boolean,
 		},
-		closingDisabled: Boolean
-	},
-	emits: [
-		'update:modelValue',
-		'close'
-	],
-  data() {
-    return {
+		emits: ['update:modelValue', 'close'],
+		data() {
+			return {}
+		},
+		computed: {
+			backdropClickable() {
+				return this.closeOnClickOutside ? 'click' : false
+			},
+		},
+		async mounted() {},
+		watch: {
+			modelValue(val) {
+				if (val) document.querySelector('html').style.overflow = 'hidden'
+				else document.querySelector('html').style.overflow = 'initial'
+			},
+		},
 
-    }
-  },
-	computed: {
-		backdropClickable() {
-			return this.closeOnClickOutside ? 'click' : false;
-		}
-	},
-  async mounted() {
-  },
-	watch: {
-		modelValue(val) {
-			if ( val ) document.querySelector('html').style.overflow = 'hidden'
-			else document.querySelector('html').style.overflow = 'initial'
-		}
-	},
-
-  methods: {
-    cancel() {
-			if (this.closingDisabled) return;
-      this.$emit('update:modelValue', false)
-      this.$emit('close')
-    },
-  }
-}
+		methods: {
+			cancel() {
+				if (this.closingDisabled) return
+				this.$emit('update:modelValue', false)
+				this.$emit('close')
+			},
+		},
+	}
 </script>
 
 <style lang="scss" scoped>
@@ -115,7 +128,7 @@ export default {
 	}
 	.modal_content {
 		overflow: auto;
-		max-height: calc(90vh - 110px);
+		height: calc(100% - 110px);
 		padding: 15px 20px 0;
 		min-width: 400px; // so that FmInputEntityNames could fit in
 	}
@@ -161,8 +174,9 @@ export default {
 		padding-left: 0;
 		padding-right: 0;
 	}
-	.fade-enter-active, .fade-leave-active {
-		transition: opacity .3s;
+	.fade-enter-active,
+	.fade-leave-active {
+		transition: opacity 0.3s;
 	}
 	.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
 		opacity: 0;

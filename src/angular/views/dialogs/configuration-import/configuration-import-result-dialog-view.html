@@ -1,0 +1,55 @@
+<md-dialog aria-label="" ng-cloak class="import-entity-errors-dialog-view draggable-dialog"
+           style="width: 75%;" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Configuration import errors</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content style="background: #E5E5E5;">
+        <md-content>
+            <md-card>
+                <md-card-content>
+                    <h3>Please see below the list of records</h3>
+
+                    <div class="m-t-8">
+                        <a href="javascript:void(0)" class="download-error-link">Download error file</a>
+                    </div>
+
+
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Object</th>
+                            <th>Text</th>
+                            <th>Reaction</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr data-ng-repeat="item in vm.records">
+                            <td>{{ vm.getName(item) }}</td>
+                            <td>
+                                <div data-ng-if="item.error && item.error.message">{{item.error.message}}</div>
+                                <div data-ng-if="!item.error.message">Success</div>
+                            </td>
+                            <td>{{item.mode}}</td>
+                        </tr>
+                        </tbody>
+
+                    </table>
+
+                </md-card-content>
+            </md-card>
+
+        </md-content>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+
+        <md-button class="md-raised" ng-click="vm.cancel()">
+            Ok
+        </md-button>
+
+    </md-dialog-actions>
+</md-dialog>

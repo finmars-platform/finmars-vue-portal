@@ -1,0 +1,45 @@
+<div class="attributes-manager-view" style="height: 100%;">
+    <md-content style="height: 100%;">
+        <div>
+            <h2 class="am-header"><span data-ng-bind="vm.entityType"></span>
+                CUSTOM COLUMNS
+            </h2>
+        </div>
+        <div layout="row">
+            <div layout="row" flex="50" layout-align="start center">
+                <md-button class="md-raised" data-ng-click="vm.addCustomField($event)">
+                    ADD NEW
+                </md-button>
+            </div>
+            <div layout="row" flex="50" layout-align="end center">
+                <md-button class="md-raised md-primary" data-ui-sref="app.portal.reports.balance-report">
+                    RETURN TO VIEW
+                </md-button>
+
+            </div>
+        </div>
+        <div data-ng-if="vm.customFields.length">
+            <md-card data-ng-repeat="item in vm.customFields" class="am-attr-card">
+                <div>
+                    <b data-ng-bind="item.name"></b>
+                    <div class="am-attr-misc">
+                        <md-button class="am-attr-btn"
+                                   data-ng-click="vm.editCustomField(item, $event)">
+                            <ng-md-icon icon="edit"></ng-md-icon>
+                        </md-button>
+                        <md-button class="am-attr-btn"
+                                   data-ng-click="vm.deleteCustomField(item, $event)">
+                            <ng-md-icon icon="delete"></ng-md-icon>
+                        </md-button>
+                    </div>
+                </div>
+            </md-card>
+        </div>
+        <div data-ng-if="!vm.customFields.length">
+            <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                <h1>You could add new Custom Column here</h1>
+            </div>
+        </div>
+    </md-content>
+</div>
+

@@ -1,0 +1,16 @@
+<div class="bind-field-table-content overflow-auto">
+    <div ng-if="readyStatus" class="width-100">
+
+        <div data-ng-if="entityType === 'instrument'"
+             custom-popup
+             popup-template="{{addBtnPopupTemplate}}"
+             popup-data="popupData"
+             close-on-click-outside="true"
+             popup-x="popupX"
+             popup-y="popupY"
+             popup-event-service="gridTableEventService"></div>
+
+        <grid-table gt-data-service="gridTableDataService"
+                    gt-event-service="gridTableEventService"></grid-table>
+    </div>
+</div>

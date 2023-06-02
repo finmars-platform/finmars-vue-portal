@@ -1,0 +1,98 @@
+<md-dialog aria-label="" ng-cloak class="success-dialog">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Option Settings</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="p-24">
+
+            <div>
+
+                <md-input-container style="width: 200px;">
+                    <label for="">Name</label>
+                    <input type="text" data-ng-model="vm.item.name">
+                </md-input-container>
+
+                <md-input-container style="height: 54px; width: 200px; margin-right: 30px;">
+
+                    <label for="">Action</label>
+
+                    <md-select data-ng-model="vm.item.action">
+                        <md-option ng-value="item.action" data-ng-repeat="item in vm.actions track by $index">
+                            {{item.name}}
+                        </md-option>
+                    </md-select>
+
+                </md-input-container>
+
+            </div>
+
+            <div data-ng-if="vm.item.action == 'book_transaction_specific' && vm.transactionTypes.length">
+
+                <md-input-container style="height: 54px; width: 200px; margin-right: 30px;">
+
+                    <label for="">Transaction Types</label>
+
+                    <md-select data-ng-model="vm.item.action_data">
+                        <md-option ng-value="item.user_code"
+                                   data-ng-repeat="item in vm.transactionTypes track by $index">
+                            {{item.name}}
+                        </md-option>
+                    </md-select>
+
+                </md-input-container>
+
+            </div>
+
+            <div data-ng-if="vm.item.action == 'open_layout' && vm.layoutsGrouped.length">
+
+                <md-input-container style="height: 54px; width: 250px; margin-right: 30px;">
+
+                    <label for="">Layouts</label>
+
+                    <md-select data-ng-model="vm.item.action_data.name">
+
+                        <md-optgroup label="{{group.name}}"
+                                     data-ng-repeat="group in vm.layoutsGrouped">
+
+                            <md-option ng-value="item.name" data-ng-click="vm.updateLayout(item)"
+                                       data-ng-repeat="item in group.items track by $index">
+                                {{item.name}}
+                            </md-option>
+
+                        </md-optgroup>
+                    </md-select>
+
+                </md-input-container>
+
+            </div>
+
+            <div data-ng-if="vm.item.action === 'mark_row'">
+
+                <md-input-container style="height: 54px; width: 200px; margin-right: 30px;">
+                    <label>Mark row Type</label>
+                    <md-select data-ng-model="vm.item.action_data">
+                        <md-option ng-value="item.action_data"
+                                   ng-repeat="item in vm.markRowTypes track by $index">
+                            {{item.name}}
+                        </md-option>
+
+                    </md-select>
+
+                </md-input-container>
+
+            </div>
+
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()" style="margin-right:20px;">
+            Close
+        </md-button>
+        <md-button ng-click="vm.agree()" style="margin-right:20px;">
+            Save
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

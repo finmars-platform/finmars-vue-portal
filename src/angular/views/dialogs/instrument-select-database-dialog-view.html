@@ -1,0 +1,289 @@
+<md-dialog class="instrument-select-database-dialog-view" aria-label="instrument select database dialog">
+    <md-toolbar>
+        <dialog-header title="{{vm.title}}" cancel-dialog="vm.cancel()"></dialog-header>
+    </md-toolbar>
+    <md-dialog-content>
+
+        <div>
+
+            <div layout="row">
+
+                <div style="width: 383px;">
+                    <text-input
+                            on-change-callback="vm.onInputTextChange()"
+                            placeholder-text="Search"
+                            model="vm.inputText"
+                            small-options="{dialogParent: '.dialog-containers-wrap'}"
+                            class="m-r-8"></text-input>
+                </div>
+
+                <div class="m-l-8">
+
+                    <dropdown-select class="p-r-8"
+                                     model="vm.instrument_type"
+                                     placeholder-text="Instrument Type"
+                                     menu-options="vm.instrumentTypeOptions"
+                                     small-options="{tooltipText: 'Instrument Type'}"
+                                     class="custom-input-bottom-space"
+                                     on-change-callback="vm.onInputTextChange()"
+                                     small-options="{dialogParent: '.dialog-containers-wrap'}"
+                                     style="width: 50%">
+                    </dropdown-select>
+
+                </div>
+
+            </div>
+
+            <div class="instrument-select-database-dialog-table-head">
+
+                <div style="width: 50%; padding: 5px;">
+                    Instrument
+                </div>
+
+                <div style="width: 30%; padding: 5px;">
+                    ISIN / Code
+                </div>
+
+                <div style="width: 20%; padding: 5px;">
+                    Instrument Type
+                </div>
+
+            </div>
+
+            <div class="instrument-select-database-dialog-table-body">
+
+                <div data-ng-if="!vm.processing" style="height: 359px; overflow-y: auto">
+
+                    <b data-ng-if="vm.localInstruments.length" class="instrument-select-options-group-title">Local Instruments
+                        ({{vm.localInstrumentsTotal}})</b>
+
+                    <div data-ng-if="vm.localInstruments.length">
+
+                        <div
+                                data-ng-repeat="option in vm.localInstruments"
+                                data-ng-click="vm.selectLocalInstrument(option)"
+                                class="instrument-select-database-dialog-instrument-row {{option.selected ? 'active' : ''}}"
+                                ng-mouseover="vm.setHoverInstrument($event, option)"
+
+                        >
+
+                            <div class="instrument-select-instrument-name" title="{{option.name}}" ng-bind-html="vm.getHighlighted(option.name)">
+
+                            </div>
+                            <div class="instrument-select-instrument-isin" title="{{option.user_code}}" ng-bind-html="vm.getHighlighted(option.user_code)">
+
+                            </div>
+
+                            <div class="instrument-select-instrument-type"
+                                 title="{{option.instrument_type_object.name}}">
+                                {{option.instrument_type_object.name}}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <b data-ng-if="vm.databaseInstruments.length" style=" bottom: 0px;"  class="instrument-select-options-group-title">Global Instruments
+                        ({{vm.databaseInstrumentsTotal}})</b>
+
+                    <div data-ng-if="vm.databaseInstruments.length">
+
+                        <div
+                                data-ng-repeat="option in vm.databaseInstruments"
+                                data-ng-click="vm.selectDatabaseInstrument(option)"
+                                class="instrument-select-database-dialog-instrument-row {{option.selected ? 'active' : ''}}"
+                                ng-mouseover="vm.setHoverInstrument($event, option)"
+                        >
+
+
+                            <div class="instrument-select-instrument-name" title="{{option.issueName}}" ng-bind-html="vm.getHighlighted(option.issueName)">
+
+                            </div>
+
+                            <div class="instrument-select-instrument-isin" title="{{option.referenceId}}" ng-bind-html="vm.getHighlighted(option.referenceId)">
+
+                            </div>
+
+                            <div class="instrument-select-instrument-type" title="{{option.instrumentType}}">
+                                {{option.instrumentType}}
+                            </div>
+
+                        </div>
+
+                        <button class="control-button load-more {{vm.globalProcessing ? 'disabled-btn' : ''}}" data-ng-if="vm.globalPage < vm.totalPages" data-ng-click="vm.loadMoreGlobalInstruments($event)">Load more</button>
+
+                    </div>
+
+                    <div data-ng-if="!vm.localInstruments.length && !vm.databaseInstruments.length">
+                        <b class="instrument-select-options-group-title">Not instruments found</b>
+                    </div>
+
+                </div>
+
+
+                <div data-ng-if="vm.processing" layout="row" layout-sm="column" layout-align="space-around" class="p-8">
+                    <progress-circular diameter="50"></progress-circular>
+                </div>
+
+            </div>
+
+            <div class="instrument-select-database-dialog-instrument-detail">
+
+                <div class="instrument-select-option-detail-box" data-ng-if="vm.inputText.length > 2">
+
+                    <div data-ng-if="vm.hoverInstrument">
+
+                        <div data-ng-if="vm.hoverInstrument.id" class="instrument-select-update-instrument-button">
+                            <span class="material-icons  {{vm.isUpdatingInstrument ? 'disabled-btn' : ''}}" ng-click="vm.updateLocalInstrument(vm.hoverInstrument)">autorenew</span>
+                        </div>
+
+                        <div class="instrument-select-option-detail-field">
+
+                            <div class="instrument-select-option-detail-label">
+                                Instrument
+                            </div>
+                            <div class="instrument-select-option-detail-value" style="width: 140px">
+
+                                <span data-ng-if="vm.hoverInstrument.id">{{vm.hoverInstrument.name}}</span>
+                                <span data-ng-if="!vm.hoverInstrument.id">{{vm.hoverInstrument.issueName}}</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="instrument-select-option-detail-field">
+
+                            <div class="instrument-select-option-detail-label">
+                                ISIN
+                            </div>
+                            <div class="instrument-select-option-detail-value">
+
+                                <span data-ng-if="vm.hoverInstrument.id">{{vm.hoverInstrument.user_code}}</span>
+                                <span data-ng-if="!vm.hoverInstrument.id">{{vm.hoverInstrument.referenceId}}</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="instrument-select-option-detail-field">
+
+                            <div class="instrument-select-option-detail-label">
+                                Ticker
+                            </div>
+                            <div class="instrument-select-option-detail-value">
+
+                                <span data-ng-if="vm.hoverInstrument.id">{{vm.hoverInstrument.reference_for_pricing}}</span>
+                                <span data-ng-if="!vm.hoverInstrument.id">{{vm.hoverInstrument.bloombergTicker}}</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="instrument-select-option-detail-field">
+
+                            <div class="instrument-select-option-detail-label">
+                                Type
+                            </div>
+                            <div class="instrument-select-option-detail-value">
+
+                                <span data-ng-if="vm.hoverInstrument.id">{{vm.hoverInstrument.instrument_type_object.name}}</span>
+                                <span data-ng-if="!vm.hoverInstrument.id">{{vm.hoverInstrument.instrumentType}}</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="instrument-select-option-detail-field">
+
+                            <div class="instrument-select-option-detail-label">
+                                FIGI / FIGI RegS
+                            </div>
+                            <div class="instrument-select-option-detail-value">
+
+                                <span data-ng-if="vm.hoverInstrument.id">-</span>
+                                <span data-ng-if="!vm.hoverInstrument.id">{{vm.hoverInstrument.figi}}</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="instrument-select-option-detail-field">
+
+                            <div class="instrument-select-option-detail-label">
+                                Common Code
+                            </div>
+                            <div class="instrument-select-option-detail-value">
+
+                                <span data-ng-if="vm.hoverInstrument.id">-</span>
+                                <span data-ng-if="!vm.hoverInstrument.id">{{vm.hoverInstrument.commonCode}}</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="instrument-select-option-detail-field">
+
+                            <div class="instrument-select-option-detail-label">
+                                Updating Date
+                            </div>
+                            <div class="instrument-select-option-detail-value">
+
+                                <span data-ng-if="vm.hoverInstrument.id">{{vm.hoverInstrument.pretty_date}}</span>
+                                <span data-ng-if="!vm.hoverInstrument.id">{{vm.hoverInstrument.pretty_date}}</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="instrument-select-option-detail-field">
+
+                            <div class="instrument-select-option-detail-label">
+                                WKN Code
+                            </div>
+                            <div class="instrument-select-option-detail-value">
+
+                                <span data-ng-if="vm.hoverInstrument.id">-</span>
+                                <span data-ng-if="!vm.hoverInstrument.id">{{vm.hoverInstrument.wkn}}</span>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions>
+
+        <div class="flex-row fc-space-between flex-i-center">
+            <div class="unified-data-select-database-footer">
+
+                <span class="material-icons" data-ng-click="vm.unlock = true" data-ng-if="!vm.unlock">lock</span>
+
+                <span class="material-icons" data-ng-if="vm.unlock" data-ng-click="vm.addInstrument($event)">add</span>
+                <span class="material-icons" data-ng-if="vm.unlock" data-ng-click="vm.importBloomberg($event)">upgrade</span>
+
+            </div>
+
+            <div>
+                <md-button class="link-button m-0" ng-click="vm.cancel()">
+                    Cancel
+                </md-button>
+
+                <md-button class="link-button m-t-0 m-b-0 {{vm.isDisabled ? 'disabled-btn' : ''}}"
+                           ng-click="vm.agree()" style="margin-right:20px;">
+                    <span data-ng-if="vm.actionType == 'add_instrument_dialog'">Add</span>
+                    <span data-ng-if="vm.actionType == 'default'">Select</span>
+                </md-button>
+            </div>
+
+        </div>
+    </md-dialog-actions>
+</md-dialog>

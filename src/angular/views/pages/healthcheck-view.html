@@ -1,0 +1,85 @@
+<div class="healthcheck-page p-24">
+
+    <div data-ng-if="!vm.noInfo">
+
+        <div layout="row">
+            <h1>Healthcheck</h1>
+        </div>
+
+        <div data-ng-if="vm.readyStatus.data">
+
+            <div>
+
+                <md-card class="p-8 float-left" style="width: 260px;" data-ng-repeat="service in vm.healthcheckData">
+
+                    <h4>{{service.name}}</h4>
+
+
+                    <div data-ng-if="service.status == 200">
+
+                        <div><b>Status</b>: Online</div>
+
+                        <div data-ng-if="service.dataBaseConnectionInfo">
+
+                            <h3>Database Connection</h3>
+
+                            <div>
+                                Connection time: {{service.dataBaseConnectionInfo.observedValue}}
+                                {{service.dataBaseConnectionInfo.observedUnit}}
+                            </div>
+
+                        </div>
+
+                        <div data-ng-if="service.uptimeInfo">
+
+                            <h3>Uptime</h3>
+
+                            <div>
+                                Hours: {{service.uptimeInfo.hours}}
+                            </div>
+
+                        </div>
+
+                        <div data-ng-if="service.memoryInfo">
+
+                            <h3>Memory</h3>
+
+                            <div>
+                                Used: {{service.memoryInfo.observedValue}} {{service.memoryInfo.observedUnit}}
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                    <div data-ng-if="service.status == 503">
+
+                        <div><b>Status</b>: Service unavailable</div>
+
+                    </div>
+
+
+                </md-card>
+
+            </div>
+
+        </div>
+
+        <div data-ng-if="!vm.readyStatus.data" style="width: 100%">
+            <div layout="row" layout-sm="column" layout-align="space-around">
+                <progress-circular diameter="100"></progress-circular>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div data-ng-if="vm.noInfo">
+
+        <h3 class="text-center">Healthcheck is not available</h3>
+
+    </div>
+
+
+</div>

@@ -1,0 +1,990 @@
+<div layout="row">
+    <div flex="50">
+        <div layout="row" class="ttype-action-inputs-container">
+
+            <div class="flex-basis-66 p-r-8">
+
+                <!-- <ttype-actions-relations-select label-title="Transaction class"
+                                                model="item.transaction.transaction_class"
+                                                load-relation="vm.loadRelation('transaction_class')"
+                                                relation-items="vm.relationItems['transaction_class']"
+                                                selected-value="item.transaction.transaction_class_object.id"
+                                                selected-name="item.transaction.transaction_class_object.name"
+                                                is-disabled="vm.isRelationInputFieldDisabled()"
+                                                class="p-l-0"></ttype-actions-relations-select> -->
+                <dropdown-select label="Transaction class"
+                                 model="item.transaction.transaction_class"
+                                 load-menu-options="vm.loadRelation('transaction_class')"
+                                 item-name="item.transaction.transaction_class_object.name"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"></dropdown-select>
+
+            </div>
+
+            <div flex="33" layout="row">
+
+                 <!-- <div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.transaction.portfolio_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'transaction', 'portfolio')">
+                        <span data-ng-if="!!item.transaction.portfolio_toggle">R</span>
+                        <span data-ng-if="!!!item.transaction.portfolio_toggle">I</span>
+                    </md-button>
+                </div>
+
+                <div flex="80">
+
+                    <div data-ng-if="item.transaction.portfolio_toggle">
+                        <entity-search-select data-item="item.transaction.portfolio"
+                                              data-user-code-for-item="true"
+                                              data-label="'Portfolio'"
+                                              data-item-name="item.transaction.portfolio_object.name"
+                                              data-entity-type="'portfolio'"
+                                              is-disabled="vm.isRelationInputFieldDisabled()"></entity-search-select>
+                    </div>
+
+                    <div data-ng-if="!item.transaction.portfolio_toggle">
+
+                        <ttype-actions-input-select label-title="Portfolio"
+                                                    model="item.transaction.portfolio_input"
+                                                    find-inputs="vm.findInputs('portfolio')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+
+                </div> -->
+                <multitype-field label="Portfolio"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].portfolio"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('portfolio', item, $index, 'transaction')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('portfolio', item, $index, 'transaction')"
+
+                                 class="ttype-action-input"></multitype-field>
+
+            </div>
+
+        </div>
+
+        <div layout="row" class="ttype-action-inputs-container">
+
+            <div flex="33" layout="row">
+                <!-- <div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.transaction.settlement_currency_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'transaction', 'settlement_currency')">
+                        <span data-ng-if="!!item.transaction.settlement_currency_toggle">R</span>
+                        <span data-ng-if="!!!item.transaction.settlement_currency_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.transaction.settlement_currency_toggle">
+
+                        <ttype-actions-relations-select label-title="Settlement currency"
+                                                        model="item.transaction.settlement_currency"
+                                                        load-relation="vm.loadRelation('settlement_currency')"
+                                                        relation-items="vm.relationItems['settlement_currency']"
+                                                        selected-value="item.transaction.settlement_currency_object.user_code"
+                                                        selected-name="item.transaction.settlement_currency_object.name"
+                                                        is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-relations-select>
+                    </div>
+                    <div data-ng-if="!item.transaction.settlement_currency_toggle">
+
+                        <ttype-actions-input-select label-title="Settlement currency"
+                                                    model="item.transaction.settlement_currency_input"
+                                                    find-inputs="vm.findInputs('currency')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+                </div> -->
+                <multitype-field label="Settlement currency"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].settlement_currency"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('settlement_currency', item, $index, 'transaction')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('settlement_currency', item, $index, 'transaction')"
+
+                                 class="ttype-action-input p-l-0"></multitype-field>
+
+            </div>
+
+            <div flex="33" layout="row">
+                <!-- <div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.transaction.transaction_currency_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'transaction', 'transaction_currency')">
+                        <span data-ng-if="!!item.transaction.transaction_currency_toggle">R</span>
+                        <span data-ng-if="!!!item.transaction.transaction_currency_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.transaction.transaction_currency_toggle">
+                        <ttype-actions-relations-select label-title="Transaction currency"
+                                                        model="item.transaction.transaction_currency"
+                                                        load-relation="vm.loadRelation('transaction_currency')"
+                                                        relation-items="vm.relationItems['transaction_currency']"
+                                                        selected-value="item.transaction.transaction_currency_object.user_code"
+                                                        selected-name="item.transaction.transaction_currency_object.name"
+                                                        is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-relations-select>
+                    </div>
+
+                    <div data-ng-if="!item.transaction.transaction_currency_toggle">
+                        <ttype-actions-input-select label-title="Transaction currency"
+                                                    model="item.transaction.transaction_currency_input"
+                                                    find-inputs="vm.findInputs('currency')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+                </div> -->
+                <multitype-field label="Transaction currency"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].transaction_currency"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('transaction_currency', item, $index, 'transaction')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('transaction_currency', item, $index, 'transaction')"
+
+                                 class="ttype-action-input"></multitype-field>
+            </div>
+
+            <div flex="33">
+                <div layout="row">
+                    <!-- <div flex="20">
+                        <md-button
+                                class="ttype-action-field-toggle md-icon-button md-raised {{!!item.transaction.instrument_toggle ? 'ref' : ''}}"
+                                style="transform: scale(0.7,0.7)"
+                                data-ng-click="vm.resetPropertyBtn(item, 'transaction', 'instrument')">
+                            <span data-ng-if="!!item.transaction.instrument_toggle">R</span>
+                            <span data-ng-if="!!!item.transaction.instrument_toggle">I</span>
+                        </md-button>
+                    </div>
+                    <div flex="80">
+
+                        <div data-ng-if="item.transaction.instrument_toggle">
+                            <entity-search-select data-item="item.transaction.instrument"
+                                                  data-user-code-for-item="true"
+                                                  data-label="'Instrument'"
+                                                  data-item-name="item.transaction.instrument_object.name"
+                                                  data-entity-type="'instrument'" is-disabled="vm.isRelationInputFieldDisabled()"></entity-search-select>
+                        </div>
+
+                        <div data-ng-if="!item.transaction.instrument_toggle">
+                            <md-input-container class="ttype-actions-selector-with-phantoms">
+                                <label for="" content-title>Instrument</label>
+                                <md-select
+                                        data-ng-model="item.transaction[vm.resolveInstrumentProp(item, 'transaction', 'instrument')]"
+                                        data-ng-disabled="vm.isRelationInputFieldDisabled">
+                                    <md-optgroup label="Inputs">
+                                        <md-option
+                                                data-ng-click="vm.setTransactionInstrumentInput(item, inputItem.name, 'instrument')"
+                                                data-ng-repeat="inputItem in vm.findInputs('instrument')"
+                                                ng-value="inputItem.name">
+                                            {{inputItem.name}}
+                                        </md-option>
+                                    </md-optgroup>
+                                    <md-optgroup label="Phantoms">
+                                        <md-option
+                                                data-ng-click="vm.setTransactionInstrumentPhantom(item, phantomItem.positionOrder, 'instrument')"
+                                                data-ng-repeat="phantomItem in vm.findPhantoms()"
+                                                ng-value="phantomItem.positionOrder">
+                                            {{phantomItem.action_notes}}
+                                        </md-option>
+                                    </md-optgroup>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+
+                    </div> -->
+                    <multitype-field label="Instrument"
+                                     field-types-data="vm.actionsMultitypeFieldsList[$index].instrument"
+                                     is-disabled="vm.isRelationInputFieldDisabled()"
+                                     event-service="vm.actionsMFEventService"
+                                     on-value-change="vm.onMultitypeFieldValChange('instrument', item, $index, 'transaction')"
+                                     on-type-change="vm.onActionMultitypeFieldToggle('instrument', item, $index, 'transaction')"
+
+                                     class="ttype-action-input"></multitype-field>
+                </div>
+            </div>
+
+        </div>
+
+        <div layout="row" class="ttype-action-inputs-container">
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap p-l-0">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Principal with sign: Number</label>
+                    <input type="text" value-title data-ng-model="item.transaction.principal_with_sign">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.transaction.principal_with_sign" ></expression-editor-button>-->
+                <expression-input label="Principal with sign: Number"
+                                  model="item.transaction.principal_with_sign"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Reference fx-rate: Number</label>
+                    <input type="text" value-title data-ng-model="item.transaction.reference_fx_rate">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.transaction.reference_fx_rate"></expression-editor-button>-->
+                <expression-input label="Reference fx-rate: Number"
+                                  model="item.transaction.reference_fx_rate"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Position size with sign: Number</label>
+                    <input type="text" value-title data-ng-model="item.transaction.position_size_with_sign">
+                </md-input-container>
+
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.transaction.position_size_with_sign"></expression-editor-button>-->
+                <expression-input label="Position size with sign: Number"
+                                  model="item.transaction.position_size_with_sign"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+        </div>
+
+        <div layout="row" layout-align="space-between" class="ttype-action-inputs-container">
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap p-l-0">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Carry with sign: Number</label>
+                    <input type="text" value-title data-ng-model="item.transaction.carry_with_sign">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.transaction.carry_with_sign"></expression-editor-button>-->
+                <expression-input label="Carry with sign: Number"
+                                  model="item.transaction.carry_with_sign"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Trade price: Number</label>
+                    <input type="text" value-title data-ng-model="item.transaction.trade_price">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.transaction.trade_price"></expression-editor-button>-->
+                <expression-input label="Trade price: Number"
+                                  model="item.transaction.trade_price"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+            <!--<div flex="33">
+                <md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Position amount: Number</label>
+                    <input type="text" value-title data-ng-model="item.transaction.position_amount">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.transaction.position_amount"></expression-editor-button>
+            </div>
+
+            <div flex="33">
+                <md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Position amount: Number</label>
+                    <input type="text" value-title data-ng-model="item.transaction.position_amount">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.transaction.position_amount"></expression-editor-button>
+            </div>-->
+        </div>
+
+        <div layout="row" layout-align="space-between" class="ttype-action-inputs-container">
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap p-l-0">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Overheads with sign: Number</label>
+                    <input type="text" value-title data-ng-model="item.transaction.overheads_with_sign">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.transaction.overheads_with_sign"></expression-editor-button>-->
+                <expression-input label="Overheads with sign: Number"
+                                  model="item.transaction.overheads_with_sign"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Factor: Number</label>
+                    <input type="text" value-title data-ng-model="item.transaction.factor">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.transaction.factor"></expression-editor-button>-->
+                <expression-input label="Factor: Number"
+                                  model="item.transaction.factor"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+            <!--<div flex="33">
+                <md-input-container>
+                    <label for="" class="uncut-text-on-focus-label" content-title>&nbsp;</label>
+                </md-input-container>
+            </div>-->
+        </div>
+
+        <div layout="row" layout-align="space-between" class="ttype-action-inputs-container">
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap p-l-0">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Cash consideration: Number</label>
+                    <input type="text" value-title data-ng-model="item.transaction.cash_consideration">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.transaction.cash_consideration"></expression-editor-button>-->
+                <expression-input label="Cash consideration: Number"
+                                  model="item.transaction.cash_consideration"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+        </div>
+
+        <div layout="row" class="ttype-action-inputs-container">
+            <div flex="100" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap p-l-0">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Notes: Text</label>
+                    <input type="text" value-title data-ng-model="item.transaction.notes">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.transaction.notes"></expression-editor-button>-->
+                <expression-input label="Notes: Text"
+                                  model="item.transaction.notes"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+        </div>
+
+    </div>
+    <div flex="50">
+
+        <div layout="row" class="ttype-action-inputs-container">
+
+            <div flex="33" layout="row">
+                <!--<div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.transaction.account_position_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'transaction', 'account_position')">
+                        <span data-ng-if="!!item.transaction.account_position_toggle">R</span>
+                        <span data-ng-if="!!!item.transaction.account_position_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.transaction.account_position_toggle">
+                        <entity-search-select data-item="item.transaction.account_position"
+                                              data-user-code-for-item="true"
+                                              data-label="'Account position'"
+                                              data-item-name="item.transaction.account_position_object.name"
+                                              data-entity-type="'account'" is-disabled="vm.isRelationInputFieldDisabled()"></entity-search-select>
+                    </div>
+                    <div data-ng-if="!item.transaction.account_position_toggle">
+
+                        <ttype-actions-input-select label-title="Account position"
+                                                    model="item.transaction.account_position_input"
+                                                    find-inputs="vm.findInputs('account')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+                </div>-->
+                <multitype-field label="Account position"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].account_position"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('account_position', item, $index, 'transaction')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('account_position', item, $index, 'transaction')"
+                                 class="ttype-action-input"></multitype-field>
+            </div>
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Accounting date: Date</label>
+                    <input type="text" value-title style="color: grey"
+                           data-ng-model="item.transaction.accounting_date">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.transaction.accounting_date"></expression-editor-button>-->
+                <expression-input label="Accounting date: Date"
+                                  model="item.transaction.accounting_date"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+        </div>
+
+        <div layout="row" class="ttype-action-inputs-container">
+
+            <div flex="33" layout="row">
+                <!-- <div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.transaction.account_cash_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'transaction', 'account_cash')">
+                        <span data-ng-if="!!item.transaction.account_cash_toggle">R</span>
+                        <span data-ng-if="!!!item.transaction.account_cash_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.transaction.account_cash_toggle">
+                        <entity-search-select data-item="item.transaction.account_cash"
+                                              data-user-code-for-item="true"
+                                              data-label="'Account cash'"
+                                              data-item-name="item.transaction.account_cash_object.name"
+                                              data-entity-type="'account'" is-disabled="vm.isRelationInputFieldDisabled()"></entity-search-select>
+                    </div>
+                    <div data-ng-if="!item.transaction.account_cash_toggle">
+                        &lt;!&ndash;<md-input-container>
+                            <label for="" class="uncut-text-on-focus-label" content-title>Account cash</label>
+                            <md-select
+                                    data-ng-model="item.transaction.account_cash_input">
+                                <md-option
+                                        data-ng-repeat="inputItem in vm.findInputs('account')"
+                                        ng-value="inputItem.name">
+                                    {{inputItem.name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>&ndash;&gt;
+
+                        <ttype-actions-input-select label-title="Account cash"
+                                                    model="item.transaction.account_cash_input"
+                                                    find-inputs="vm.findInputs('account')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+                </div> -->
+                <multitype-field label="Account cash"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].account_cash"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('account_cash', item, $index, 'transaction')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('account_cash', item, $index, 'transaction')"
+                                 class="ttype-action-input"></multitype-field>
+            </div>
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Cash date: Date</label>
+                    <input type="text" value-title style="color: grey;"
+                           data-ng-model="item.transaction.cash_date">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.transaction.cash_date"></expression-editor-button>-->
+                <expression-input label="Cash date: Date"
+                                  model="item.transaction.cash_date"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+            <div flex="33" layout="row">
+                <!-- <div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.transaction.account_interim_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'transaction', 'account_interim')">
+                        <span data-ng-if="!!item.transaction.account_interim_toggle">R</span>
+                        <span data-ng-if="!!!item.transaction.account_interim_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.transaction.account_interim_toggle">
+                        <entity-search-select data-item="item.transaction.account_interim"
+                                              data-user-code-for-item="true"
+                                              data-label="'Account interim'"
+                                              data-item-name="item.transaction.account_interim_object.name"
+                                              data-entity-type="'account'" is-disabled="vm.isRelationInputFieldDisabled()"></entity-search-select>
+                    </div>
+                    <div data-ng-if="!item.transaction.account_interim_toggle">
+                        <ttype-actions-input-select label-title="Account interim"
+                                                    model="item.transaction.account_interim_input"
+                                                    find-inputs="vm.findInputs('account')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+                </div> -->
+                <multitype-field label="Account interim"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].account_interim"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('account_interim', item, $index, 'transaction')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('account_interim', item, $index, 'transaction')"
+                                 class="ttype-action-input p-r-0"></multitype-field>
+            </div>
+
+        </div>
+
+        <div layout="row" class="ttype-action-inputs-container">
+
+            <div flex="33">
+                <div layout="row">
+                    <!-- <div flex="20">
+                        <md-button
+                                class="ttype-action-field-toggle md-icon-button md-raised {{!!item.transaction.linked_instrument_toggle ? 'ref' : ''}}"
+                                style="transform: scale(0.7,0.7)"
+                                data-ng-click="vm.resetPropertyBtn(item, 'transaction', 'linked_instrument')">
+                            <span data-ng-if="!!item.transaction.linked_instrument_toggle">R</span>
+                            <span data-ng-if="!!!item.transaction.linked_instrument_toggle">I</span>
+                        </md-button>
+                    </div>
+                    <div flex="80">
+                        <div data-ng-if="item.transaction.linked_instrument_toggle">
+                            <entity-search-select data-item="item.transaction.linked_instrument"
+                                                  data-user-code-for-item="true"
+                                                  data-label="'Linked instrument'"
+                                                  data-item-name="item.transaction.linked_instrument_object.name"
+                                                  data-entity-type="'instrument'" is-disabled="vm.isRelationInputFieldDisabled()"></entity-search-select>
+                        </div>
+
+                        <div data-ng-if="!item.transaction.linked_instrument_toggle">
+                            <md-input-container class="ttype-actions-selector-with-phantoms">
+                                <label for="" content-title>Linked instrument</label>
+                                <md-select
+                                        data-ng-model="item.transaction[vm.resolveInstrumentProp(item, 'transaction', 'linked_instrument')]"
+                                        data-ng-disabled="vm.isRelationInputFieldDisabled">
+                                    <md-optgroup label="Inputs">
+                                        <md-option
+                                                data-ng-click="vm.setTransactionInstrumentInput(item, inputItem.name, 'linked_instrument')"
+                                                data-ng-repeat="inputItem in vm.findInputs('instrument')"
+                                                ng-value="inputItem.name">
+                                            {{inputItem.name}}
+                                        </md-option>
+                                    </md-optgroup>
+                                    <md-optgroup label="Phantoms">
+                                        <md-option
+                                                data-ng-click="vm.setTransactionInstrumentPhantom(item, phantomItem.positionOrder, 'linked_instrument')"
+                                                data-ng-repeat="phantomItem in vm.findPhantoms()"
+                                                ng-value="phantomItem.positionOrder">
+                                            {{phantomItem.action_notes}}
+                                        </md-option>
+                                    </md-optgroup>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+                    </div> -->
+                    <multitype-field label="Linked instrument"
+                                     field-types-data="vm.actionsMultitypeFieldsList[$index].linked_instrument"
+                                     is-disabled="vm.isRelationInputFieldDisabled()"
+                                     event-service="vm.actionsMFEventService"
+                                     on-value-change="vm.onMultitypeFieldValChange('linked_instrument', item, $index, 'transaction')"
+                                     on-type-change="vm.onActionMultitypeFieldToggle('linked_instrument', item, $index, 'transaction')"
+                                     class="ttype-action-input"></multitype-field>
+                </div>
+            </div>
+
+            <div flex="33">
+                <div layout="row">
+                    <!-- <div flex="20">
+                        <md-button
+                                class="ttype-action-field-toggle md-icon-button md-raised {{!!item.transaction.allocation_pl_toggle ? 'ref' : ''}}"
+                                style="transform: scale(0.7,0.7)"
+                                data-ng-click="vm.resetPropertyBtn(item, 'transaction', 'allocation_pl')">
+                            <span data-ng-if="!!item.transaction.allocation_pl_toggle">R</span>
+                            <span data-ng-if="!!!item.transaction.allocation_pl_toggle">I</span>
+                        </md-button>
+                    </div>
+                    <div flex="80">
+                        <div data-ng-if="item.transaction.allocation_pl_toggle">
+                            <entity-search-select data-item="item.transaction.allocation_pl"
+                                                  data-user-code-for-item="true"
+                                                  data-label="'Allocation-P&L'"
+                                                  data-item-name="item.transaction.allocation_pl_object.name"
+                                                  data-entity-type="'instrument'" is-disabled="vm.isRelationInputFieldDisabled()"></entity-search-select>
+                        </div>
+
+                        <div data-ng-if="!item.transaction.allocation_pl_toggle">
+                            <md-input-container class="ttype-actions-selector-with-phantoms">
+                                <label for="" content-title>Allocation-P&L</label>
+                                <md-select
+                                        data-ng-model="item.transaction[vm.resolveInstrumentProp(item, 'transaction', 'allocation_pl')]"
+                                        data-ng-disabled="vm.isRelationInputFieldDisabled">
+                                    <md-optgroup label="Inputs">
+                                        <md-option
+                                                data-ng-click="vm.setTransactionInstrumentInput(item, inputItem.name, 'allocation_pl')"
+                                                data-ng-repeat="inputItem in vm.findInputs('instrument')"
+                                                ng-value="inputItem.name">
+                                            {{inputItem.name}}
+                                        </md-option>
+                                    </md-optgroup>
+                                    <md-optgroup label="Phantoms">
+                                        <md-option
+                                                data-ng-click="vm.setTransactionInstrumentPhantom(item, phantomItem.positionOrder, 'allocation_pl')"
+                                                data-ng-repeat="phantomItem in vm.findPhantoms()"
+                                                ng-value="phantomItem.positionOrder">
+                                            {{phantomItem.action_notes}}
+                                        </md-option>
+                                    </md-optgroup>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+                    </div> -->
+                    <multitype-field label="Allocation-P&L"
+                                     field-types-data="vm.actionsMultitypeFieldsList[$index].allocation_pl"
+                                     is-disabled="vm.isRelationInputFieldDisabled()"
+                                     event-service="vm.actionsMFEventService"
+                                     on-value-change="vm.onMultitypeFieldValChange('allocation_pl', item, $index, 'transaction')"
+                                     on-type-change="vm.onActionMultitypeFieldToggle('allocation_pl', item, $index, 'transaction')"
+                                     class="ttype-action-input"></multitype-field>
+                </div>
+            </div>
+
+            <div flex="33">
+                <div layout="row">
+                    <!-- <div flex="20">
+                        <md-button
+                                class="ttype-action-field-toggle md-icon-button md-raised {{!!item.transaction.allocation_balance_toggle ? 'ref' : ''}}"
+                                style="transform: scale(0.7,0.7)"
+                                data-ng-click="vm.resetPropertyBtn(item, 'transaction', 'allocation_balance')">
+                            <span data-ng-if="!!item.transaction.allocation_balance_toggle">R</span>
+                            <span data-ng-if="!!!item.transaction.allocation_balance_toggle">I</span>
+                        </md-button>
+                    </div>
+                    <div flex="80">
+                        <div data-ng-if="item.transaction.allocation_balance_toggle">
+                            <entity-search-select data-item="item.transaction.allocation_balance"
+                                                  data-user-code-for-item="true"
+                                                  data-label="'Allocation-Balance'"
+                                                  data-item-name="item.transaction.allocation_balance_object.name"
+                                                  data-entity-type="'instrument'" is-disabled="vm.isRelationInputFieldDisabled()"></entity-search-select>
+                        </div>
+
+                        <div data-ng-if="!item.transaction.allocation_balance_toggle">
+                            <md-input-container class="ttype-actions-selector-with-phantoms">
+                                <label for="" content-title>Allocation-Balance</label>
+                                <md-select
+                                        data-ng-model="item.transaction[vm.resolveInstrumentProp(item, 'transaction', 'allocation_balance')]"
+                                        data-ng-disabled="vm.isRelationInputFieldDisabled">
+                                    <md-optgroup label="Inputs">
+                                        <md-option
+                                                data-ng-click="vm.setTransactionInstrumentInput(item, inputItem.name, 'allocation_balance')"
+                                                data-ng-repeat="inputItem in vm.findInputs('instrument')"
+                                                ng-value="inputItem.name">
+                                            {{inputItem.name}}
+                                        </md-option>
+                                    </md-optgroup>
+                                    <md-optgroup label="Phantoms">
+                                        <md-option
+                                                data-ng-click="vm.setTransactionInstrumentPhantom(item, phantomItem.positionOrder, 'allocation_balance')"
+                                                data-ng-repeat="phantomItem in vm.findPhantoms()"
+                                                ng-value="phantomItem.positionOrder">
+                                            {{phantomItem.action_notes}}
+                                        </md-option>
+                                    </md-optgroup>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+                    </div> -->
+                    <multitype-field label="Allocation-Balance"
+                                     field-types-data="vm.actionsMultitypeFieldsList[$index].allocation_balance"
+                                     is-disabled="vm.isRelationInputFieldDisabled()"
+                                     event-service="vm.actionsMFEventService"
+                                     on-value-change="vm.onMultitypeFieldValChange('allocation_balance', item, $index, 'transaction')"
+                                     on-type-change="vm.onActionMultitypeFieldToggle('allocation_balance', item, $index, 'transaction')"
+                                     class="ttype-action-input p-r-0"></multitype-field>
+                </div>
+            </div>
+
+        </div>
+
+        <div layout="row" class="ttype-action-inputs-container">
+            <div class="ttype-actions-empty-row"></div>
+        </div>
+
+        <div layout="row" class="ttype-action-inputs-container">
+
+            <div flex="33" layout="row">
+                <!-- <div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.transaction.strategy1_position_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'transaction', 'strategy1_position')">
+                        <span data-ng-if="!!item.transaction.strategy1_position_toggle">R</span>
+                        <span data-ng-if="!!!item.transaction.strategy1_position_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.transaction.strategy1_position_toggle">
+                        <entity-search-select data-item="item.transaction.strategy1_position"
+                                              data-user-code-for-item="true"
+                                              data-label="'Strategy1 position'"
+                                              data-item-name="item.transaction.strategy1_position_object.name"
+                                              data-entity-type="'strategy-1'" is-disabled="vm.isRelationInputFieldDisabled()"></entity-search-select>
+                    </div>
+                    <div data-ng-if="!item.transaction.strategy1_position_toggle">
+
+                        <ttype-actions-input-select label-title="Strategy1 position"
+                                                    model="item.transaction.strategy1_position_input"
+                                                    find-inputs="vm.findInputs('strategy-1')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+                </div> -->
+                <multitype-field label="Strategy1 position"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].strategy1_position"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('strategy1_position', item, $index, 'transaction')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('strategy1_position', item, $index, 'transaction')"
+                                 class="ttype-action-input"></multitype-field>
+            </div>
+
+            <div flex="33" layout="row">
+                <!-- <div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.transaction.strategy2_position_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'transaction', 'strategy2_position')">
+                        <span data-ng-if="!!item.transaction.strategy2_position_toggle">R</span>
+                        <span data-ng-if="!!!item.transaction.strategy2_position_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.transaction.strategy2_position_toggle">
+                        <entity-search-select data-item="item.transaction.strategy2_position"
+                                              data-user-code-for-item="true"
+                                              data-label="'Strategy2 position'"
+                                              data-item-name="item.transaction.strategy2_position_object.name"
+                                              data-entity-type="'strategy-2'" is-disabled="vm.isRelationInputFieldDisabled()"></entity-search-select>
+                    </div>
+                    <div data-ng-if="!item.transaction.strategy2_position_toggle">
+
+                        <ttype-actions-input-select label-title="Strategy2 position"
+                                                    model="item.transaction.strategy2_position_input"
+                                                    find-inputs="vm.findInputs('strategy-2')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+                </div> -->
+                <multitype-field label="Strategy2 position"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].strategy2_position"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('strategy2_position', item, $index, 'transaction')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('strategy2_position', item, $index, 'transaction')"
+                                 class="ttype-action-input"></multitype-field>
+            </div>
+
+            <div flex="33" layout="row">
+                <!-- <div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.transaction.strategy3_position_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'transaction', 'strategy3_position')">
+                        <span data-ng-if="!!item.transaction.strategy3_position_toggle">R</span>
+                        <span data-ng-if="!!!item.transaction.strategy3_position_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.transaction.strategy3_position_toggle">
+                        <entity-search-select data-item="item.transaction.strategy3_position"
+                                              data-user-code-for-item="true"
+                                              data-label="'Strategy3 position'"
+                                              data-item-name="item.transaction.strategy3_position_object.name"
+                                              data-entity-type="'strategy-3'" is-disabled="vm.isRelationInputFieldDisabled()"></entity-search-select>
+                    </div>
+                    <div data-ng-if="!item.transaction.strategy3_position_toggle">
+                        <ttype-actions-input-select label-title="Strategy3 position"
+                                                    model="item.transaction.strategy3_position_input"
+                                                    find-inputs="vm.findInputs('strategy-3')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+                </div> -->
+                <multitype-field label="Strategy3 position"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].strategy3_position"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('strategy3_position', item, $index, 'transaction')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('strategy3_position', item, $index, 'transaction')"
+                                 class="ttype-action-input p-r-0"></multitype-field>
+            </div>
+
+        </div>
+
+        <div layout="row" class="ttype-action-inputs-container">
+
+            <div flex="33" layout="row">
+                <!-- <div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.transaction.strategy1_cash_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'transaction', 'strategy1_cash')">
+                        <span data-ng-if="!!item.transaction.strategy1_cash_toggle">R</span>
+                        <span data-ng-if="!!!item.transaction.strategy1_cash_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.transaction.strategy1_cash_toggle">
+                        <entity-search-select data-item="item.transaction.strategy1_cash"
+                                              data-user-code-for-item="true"
+                                              data-label="'Strategy1 cash'"
+                                              data-item-name="item.transaction.strategy1_cash_object.name"
+                                              data-entity-type="'strategy-1'" is-disabled="vm.isRelationInputFieldDisabled()"></entity-search-select>
+                    </div>
+                    <div data-ng-if="!item.transaction.strategy1_cash_toggle">
+                        <ttype-actions-input-select label-title="Strategy1 cash"
+                                                    model="item.transaction.strategy1_cash_input"
+                                                    find-inputs="vm.findInputs('strategy-1')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+                </div> -->
+                <multitype-field label="Strategy1 cash"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].strategy1_cash"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('strategy1_cash', item, $index, 'transaction')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('strategy1_cash', item, $index, 'transaction')"
+                                 class="ttype-action-input"></multitype-field>
+            </div>
+
+            <div flex="33" layout="row">
+                <!-- <div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.transaction.strategy2_cash_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'transaction', 'strategy2_cash')">
+                        <span data-ng-if="!!item.transaction.strategy2_cash_toggle">R</span>
+                        <span data-ng-if="!!!item.transaction.strategy2_cash_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.transaction.strategy2_cash_toggle">
+                        <entity-search-select data-item="item.transaction.strategy2_cash"
+                                              data-user-code-for-item="true"
+                                              data-label="'Strategy2 cash'"
+                                              data-item-name="item.transaction.strategy2_cash_object.name"
+                                              data-entity-type="'strategy-2'" is-disabled="vm.isRelationInputFieldDisabled()"></entity-search-select>
+                    </div>
+                    <div data-ng-if="!item.transaction.strategy2_cash_toggle">
+
+                        <ttype-actions-input-select label-title="Strategy2 cash"
+                                                    model="item.transaction.strategy2_cash_input"
+                                                    find-inputs="vm.findInputs('strategy-2')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+                </div> -->
+                <multitype-field label="Strategy2 cash"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].strategy2_cash"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('strategy2_cash', item, $index, 'transaction')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('strategy2_cash', item, $index, 'transaction')"
+                                 class="ttype-action-input"></multitype-field>
+            </div>
+
+            <div flex="33" layout="row">
+                <!-- <div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.transaction.strategy3_cash_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'transaction', 'strategy3_cash')">
+                        <span data-ng-if="!!item.transaction.strategy3_cash_toggle">R</span>
+                        <span data-ng-if="!!!item.transaction.strategy3_cash_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.transaction.strategy3_cash_toggle">
+                        <entity-search-select data-item="item.transaction.strategy3_cash"
+                                              data-user-code-for-item="true"
+                                              data-label="'Strategy3 cash'"
+                                              data-item-name="item.transaction.strategy3_cash_object.name"
+                                              data-entity-type="'strategy-3'" is-disabled="vm.isRelationInputFieldDisabled()"></entity-search-select>
+                    </div>
+                    <div data-ng-if="!item.transaction.strategy3_cash_toggle">
+
+                        <ttype-actions-input-select label-title="Strategy3 cash"
+                                                    model="item.transaction.strategy3_cash_input"
+                                                    find-inputs="vm.findInputs('strategy-3')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+                </div> -->
+                <multitype-field label="Strategy3 cash"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].strategy3_cash"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('strategy3_cash', item, $index, 'transaction')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('strategy3_cash', item, $index, 'transaction')"
+                                 class="ttype-action-input p-r-0"></multitype-field>
+            </div>
+
+        </div>
+
+        <div layout="row" class="ttype-action-inputs-container">
+
+            <div flex="33" layout="row">
+                <!-- <div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.transaction.counterparty_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'transaction', 'counterparty')">
+                        <span data-ng-if="!!item.transaction.counterparty_toggle">R</span>
+                        <span data-ng-if="!!!item.transaction.counterparty_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.transaction.counterparty_toggle">
+                        <entity-search-select data-item="item.transaction.counterparty"
+                                              data-user-code-for-item="true"
+                                              data-label="'Counterparty'"
+                                              data-item-name="item.transaction.counterparty_object.name"
+                                              data-entity-type="'counterparty'" is-disabled="vm.isRelationInputFieldDisabled()"></entity-search-select>
+                    </div>
+                    <div data-ng-if="!item.transaction.counterparty_toggle">
+
+                        <ttype-actions-input-select label-title="Counterparty"
+                                                    model="item.transaction.counterparty_input"
+                                                    find-inputs="vm.findInputs('counterparty')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+                </div> -->
+                <multitype-field label="Counterparty"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].counterparty"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('counterparty', item, $index, 'transaction')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('counterparty', item, $index, 'transaction')"
+                                 class="ttype-action-input"></multitype-field>
+            </div>
+
+            <div flex="33" layout="row">
+                <!-- <div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.transaction.responsible_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'transaction', 'responsible')">
+                        <span data-ng-if="!!item.transaction.responsible_toggle">R</span>
+                        <span data-ng-if="!!!item.transaction.responsible_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.transaction.responsible_toggle">
+                        <entity-search-select data-item="item.transaction.responsible"
+                                              data-user-code-for-item="true"
+                                              data-label="'Responsible'"
+                                              data-item-name="item.transaction.responsible_object.name"
+                                              data-entity-type="'responsible'"
+                                              is-disabled="vm.isRelationInputFieldDisabled()"></entity-search-select>
+                    </div>
+
+                    <div data-ng-if="!item.transaction.responsible_toggle">
+
+                        <ttype-actions-input-select label-title="Responsible"
+                                                    model="item.transaction.responsible_input"
+                                                    find-inputs="vm.findInputs('responsible')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+                </div> -->
+                <multitype-field label="Responsible"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].responsible"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('responsible', item, $index, 'transaction')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('responsible', item, $index, 'transaction')"
+                                 class="ttype-action-input"></multitype-field>
+            </div>
+
+        </div>
+
+    </div>
+</div>

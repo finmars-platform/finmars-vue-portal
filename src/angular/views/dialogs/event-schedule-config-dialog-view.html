@@ -1,0 +1,68 @@
+<md-dialog aria-label="" ng-cloak class="event-schedule-dialog-view draggable-dialog" drag-dialog style="width: 50%">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Event schedule config</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content   style="background: #E5E5E5;">
+        <div data-ng-if="vm.checkReadyStatus()" layout="column">
+            <md-card>
+                <md-card-content>
+                    <md-input-container class="md-block">
+                        <label for="">Name</label>
+                        <input type="text" data-ng-model="vm.config.name">
+                    </md-input-container>
+                    <md-input-container class="md-block">
+                        <label for="">Description</label>
+                        <input type="text" data-ng-model="vm.config.description">
+                    </md-input-container>
+                    <md-input-container class="md-block" style="margin-bottom: 20px">
+                        <label for="">Notification class</label>
+                        <md-select
+                                   data-ng-model="vm.config.notification_class">
+                            <md-option data-ng-repeat="item in vm.notificationClasses" ng-value="item.id">
+                                {{item.name}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container class="md-block">
+                        <label for="">Notify in N days</label>
+                        <input type="text" data-ng-model="vm.config.notify_in_n_days">
+                    </md-input-container>
+                    <md-input-container class="md-block">
+                        <label for="">Action text</label>
+                        <input type="text" data-ng-model="vm.config.action_text">
+                    </md-input-container>
+                    <md-input-container class="md-block">
+                        <md-checkbox ng-model="vm.config.action_is_sent_to_pending"
+                                     aria-label="">
+                            Action is sent to pending
+                        </md-checkbox>
+                    </md-input-container>
+                    <md-input-container class="md-block">
+                        <md-checkbox ng-model="vm.config.action_is_book_automatic"
+                                     aria-label="">
+                            Action is book automatic
+                        </md-checkbox>
+                    </md-input-container>
+                </md-card-content>
+            </md-card>
+        </div>
+        <div data-ng-if="!vm.checkReadyStatus()">
+            <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                <md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" data-ng-click="vm.cancel()">
+            Close
+        </md-button>
+        <md-button class="md-raised" data-ng-click="vm.agree()">
+            Save
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

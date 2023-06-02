@@ -1,0 +1,163 @@
+<div layout="column" data-ng-controller="CheckEventsController as vm">
+
+    <div>
+
+        <div layout="row" class="m-b-24">
+            <md-input-container data-ng-class="{'disabled-btn': vm.loading}" class="m-r-16">
+                <label for="">Effective date from</label>
+                <zh-date-picker data-date-value="vm.effective_date_from"
+                                data-callback-method="vm.effective_date_to = vm.effective_date_from; vm.events = []"
+                ></zh-date-picker>
+            </md-input-container>
+
+            <md-input-container data-ng-class="{'disabled-btn': vm.loading}">
+                <label for="">Effective date to</label>
+                <zh-date-picker date-data-value="vm.effective_date_to"
+                                data-callback-method="vm.events = []"
+                ></zh-date-picker>
+            </md-input-container>
+
+            <md-button class="md-raised md-primary m-t-0" data-ng-class="{'disabled-btn': vm.loading}"
+                       data-ng-click="vm.generateEvents($event)" style="height: 24px">Generate Events
+            </md-button>
+
+            <md-button class="md-raised md-primary m-t-0" data-ng-class="{'disabled-btn': vm.loading}"
+                       data-ng-click="vm.requestEvents($event)" style="height: 24px">Show Events
+            </md-button>
+
+            <div class="m-l-16" layout="row" layout-sm="column" layout-align="space-around"
+                 data-ng-if="vm.loading">
+                <!--<md-progress-circular md-diameter="30" md-mode="indeterminate"></md-progress-circular>-->
+                <progress-circular diameter="30"></progress-circular>
+            </div>
+
+        </div>
+
+        <table class="bordered homepage-events-table">
+            <thead>
+
+            <tr>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    <md-input-container>
+                        <label for="">Status filter</label>
+                        <input aria-label="status" type="text" data-ng-model="vm.filters.status" data-ng-change="vm.updateFilters()">
+                    </md-input-container>
+                </td>
+                <td>
+                    <md-input-container>
+                        <label for="">Description filter</label>
+                        <input aria-label="status" type="text" data-ng-model="vm.filters.description" data-ng-change="vm.updateFilters()">
+                    </md-input-container>
+                </td>
+                <td>
+                    <md-input-container>
+                        <label for="">Instrument filter</label>
+                        <input aria-label="status" type="text" data-ng-model="vm.filters.instrument" data-ng-change="vm.updateFilters()">
+                    </md-input-container>
+                </td>
+                <td>
+                    <md-input-container>
+                        <label for="">Position filter</label>
+                        <input aria-label="status" type="text" data-ng-model="vm.filters.position" data-ng-change="vm.updateFilters()">
+                    </md-input-container>
+                </td>
+                <td>
+                    <md-input-container>
+                        <label for="">Portfolio filter</label>
+                        <input aria-label="status" type="text" data-ng-model="vm.filters.portfolio" data-ng-change="vm.updateFilters()">
+                    </md-input-container>
+                </td>
+                <td>
+                    <md-input-container>
+                        <label for="">Account filter</label>
+                        <input aria-label="status" type="text" data-ng-model="vm.filters.account" data-ng-change="vm.updateFilters()">
+                    </md-input-container>
+                </td>
+            </tr>
+            <tr style="height: 40px;">
+
+                <th>
+                    <md-checkbox ng-checked="vm.isAllChecked()" class="md-primary m-0"
+                                 data-ng-click="vm.toggleAll()">
+                    </md-checkbox>
+                </th>
+                <th data-ng-click="vm.sortBy('status')" class="checkForEventSortingBtn">
+                    Status
+                    <span class="sortorder"
+                          data-ng-show="vm.sort === 'status'"
+                          data-ng-class="{reverse: vm.direction}"
+                    ></span>
+                </th>
+                <th>
+                    Description
+                </th>
+                <th data-ng-click="vm.sortBy('instrument')" class="checkForEventSortingBtn">
+                    Instrument
+                    <span class="sortorder"
+                          data-ng-show="vm.sort === 'instrument'"
+                          data-ng-class="{reverse: vm.direction}"
+                    ></span>
+                </th>
+                <th>
+                    Position
+                </th>
+                <th data-ng-click="vm.sortBy('portfolio')" class="checkForEventSortingBtn">
+                    Portfolio
+                    <span flex class="sortorder"
+                          data-ng-show="vm.sort === 'portfolio'"
+                          data-ng-class="{reverse: vm.direction}"
+                    ></span>
+                </th>
+                <th data-ng-click="vm.sortBy('account')" class="checkForEventSortingBtn">
+                    Account
+                    <span flex class="sortorder"
+                          data-ng-show="vm.sort === 'account'"
+                          data-ng-class="{reverse: vm.direction}"
+                    ></span>
+                </th>
+
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr data-ng-repeat="item in vm.eventsProjection" class="{{item.active ? 'active' : ''}}" style="height: 40px">
+                <th>
+                    <md-checkbox ng-if="item.status == 1" ng-model="item.selected"
+                                 class="md-primary m-0">
+                    </md-checkbox>
+                    <md-checkbox ng-if="item.status != 1"
+                                 class="md-primary m-0 disabled-btn">
+                    </md-checkbox>
+                </th>
+                <td><span data-ng-bind="vm.getStatus(item.status)"></span>&nbsp;</td>
+
+                <td><span data-ng-if="item.event_schedule_object"
+                          data-ng-bind="item.event_schedule_object.display_description"></span>&nbsp;
+                </td>
+                <td>
+                                <span data-ng-if="item.instrument_object"
+                                      data-ng-bind="item.instrument_object.user_code"></span>&nbsp;
+                </td>
+                <td><span data-ng-bind="item.position"></span>&nbsp;</td>
+                <td><span data-ng-if="item.portfolio_object"
+                          data-ng-bind="item.portfolio_object.user_code"></span>&nbsp;
+                </td>
+                <td><span data-ng-if="item.account_object"
+                          data-ng-bind="item.account_object.user_code"></span>&nbsp;
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div data-ng-if="!vm.events.length" style="text-align: center; margin-top: 20px">No result found</div>
+
+    <div>
+        <md-button class="md-raised md-primary" data-ng-click="vm.process()" style="margin-right:20px;">
+            Process
+        </md-button>
+    </div>
+
+</div>

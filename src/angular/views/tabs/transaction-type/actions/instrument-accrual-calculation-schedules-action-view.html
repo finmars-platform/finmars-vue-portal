@@ -1,0 +1,233 @@
+<div layout="row" class="ttype-action-inputs-container">
+    <!--<md-input-container class="orange-actions-selector">
+        <label for="" content-title>Instruction if Transaction is Rebooked</label>
+        <md-select data-ng-model="item.rebook_reaction">
+            <md-option data-ng-repeat="item in vm.rebookOtherReactions"
+                       ng-value="item.id">
+                {{item.name}}
+            </md-option>
+        </md-select>
+    </md-input-container>-->
+    <dropdown-select label="Instruction if Transaction is Rebooked"
+                     model="item.rebook_reaction"
+                     menu-options="vm.rebookOtherReactions"
+                     class="width-100"></dropdown-select>
+</div>
+
+<div layout="row">
+    <div flex="50">
+
+        <div layout="row" flex="66" class="ttype-action-inputs-container p-l-0">
+
+            <!-- <div layout="row">
+                <div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.instrument_accrual_calculation_schedules.instrument_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'instrument_accrual_calculation_schedules', 'instrument')">
+                        <span data-ng-if="!!item.instrument_accrual_calculation_schedules.instrument_toggle">R</span>
+                        <span data-ng-if="!!!item.instrument_accrual_calculation_schedules.instrument_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.instrument_accrual_calculation_schedules.instrument_toggle">
+                        <entity-search-select data-item="item.instrument_accrual_calculation_schedules.instrument"
+                                              data-label="'Instrument'"
+                                              data-item-name="item.instrument_accrual_calculation_schedules.instrument_object.name"
+                                              data-entity-type="'instrument'"
+                                              is-disabled="vm.isRelationInputFieldDisabled()"></entity-search-select>
+                    </div>
+                    <div data-ng-if="!item.instrument_accrual_calculation_schedules.instrument_toggle">
+                        <md-input-container class="ttype-actions-selector-with-phantoms">
+                            <label for="" content-title>Instrument</label>
+                            <md-select
+                                    data-ng-model="item.instrument_accrual_calculation_schedules[vm.resolveInstrumentProp(item, 'instrument_accrual_calculation_schedules', 'instrument')]"
+                                    data-ng-disabled="vm.isRelationInputFieldDisabled()">
+                                <md-optgroup label="Inputs">
+                                    <md-option
+                                            data-ng-click="vm.setItemInstrumentInput(item, 'instrument_accrual_calculation_schedules', inputItem.name, 'instrument')"
+                                            data-ng-repeat="inputItem in vm.findInputs('instrument')"
+                                            ng-value="inputItem.name">
+                                        {{inputItem.name}}
+                                    </md-option>
+                                </md-optgroup>
+                                <md-optgroup label="Phantoms">
+                                    <md-option
+                                            data-ng-click="vm.setItemInstrumentPhantom(item, 'instrument_accrual_calculation_schedules', phantomItem.positionOrder, 'instrument')"
+                                            data-ng-repeat="phantomItem in vm.findPhantoms()"
+                                            ng-value="phantomItem.positionOrder">
+                                        {{phantomItem.action_notes}}
+                                    </md-option>
+                                </md-optgroup>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                </div>
+            </div> -->
+            <multitype-field label="Instrument"
+                             field-types-data="vm.actionsMultitypeFieldsList[$index].instrument"
+                             is-disabled="vm.isRelationInputFieldDisabled()"
+                             event-service="vm.actionsMFEventService"
+                             on-value-change="vm.onMultitypeFieldValChange('instrument', item, $index, 'instrument_accrual_calculation_schedules')"
+                             on-type-change="vm.onActionMultitypeFieldToggle('instrument', item, $index, 'instrument_accrual_calculation_schedules')"
+                             class="ttype-action-input p-l-0"></multitype-field>
+
+        </div>
+
+        <div layout="row">
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap p-l-0">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Accrual start date: Date</label>
+                    <input type="text" value-title data-ng-model="item.instrument_accrual_calculation_schedules.accrual_start_date">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument_accrual_calculation_schedules.accrual_start_date"></expression-editor-button>-->
+                <expression-input label="Accrual start date: Date"
+                                  model="item.instrument_accrual_calculation_schedules.accrual_start_date"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>First payment date: Date</label>
+                    <input type="text" value-title data-ng-model="item.instrument_accrual_calculation_schedules.first_payment_date">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument_accrual_calculation_schedules.first_payment_date"></expression-editor-button>-->
+                <expression-input label="First payment date: Date"
+                                  model="item.instrument_accrual_calculation_schedules.first_payment_date"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Accrual size: Number</label>
+                    <input type="text" value-title data-ng-model="item.instrument_accrual_calculation_schedules.accrual_size">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument_accrual_calculation_schedules.accrual_size"></expression-editor-button>-->
+                <expression-input label="Accrual size: Number"
+                                  model="item.instrument_accrual_calculation_schedules.accrual_size"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+        </div>
+
+    </div>
+
+    <div flex="50">
+
+        <div flex="66" layout="row" layout-align="start top" class="ttype-action-inputs-container ttype-action-expr-input-wrap">
+            <!--<md-input-container class="expression-input-container">
+                <label for="" class="uncut-text-on-focus-label" content-title>Notes: Text</label>
+                <input type="text" value-title style="color: grey;"
+                       data-ng-model="item.instrument_accrual_calculation_schedules.notes">
+            </md-input-container>
+            <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                    data-item="item.instrument_accrual_calculation_schedules.notes"></expression-editor-button>-->
+            <expression-input label="Notes: Text"
+                              model="item.instrument_accrual_calculation_schedules.notes"
+                              data-data="vm.expressionData"
+                              class="width-100"></expression-input>
+        </div>
+
+        <div layout="row" class="ttype-action-inputs-container">
+            <div flex="33" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Periodicity n: Number</label>
+                    <input type="text" value-title data-ng-model="item.instrument_accrual_calculation_schedules.periodicity_n">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument_accrual_calculation_schedules.periodicity_n"></expression-editor-button>-->
+                <expression-input label="Periodicity n: Number"
+                                  model="item.instrument_accrual_calculation_schedules.periodicity_n"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+            <div flex="33" layout="row">
+                <!--<div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.instrument_accrual_calculation_schedules.periodicity_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'instrument_accrual_calculation_schedules', 'periodicity')">
+                        <span data-ng-if="!!item.instrument_accrual_calculation_schedules.periodicity_toggle">R</span>
+                        <span data-ng-if="!!!item.instrument_accrual_calculation_schedules.periodicity_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.instrument_accrual_calculation_schedules.periodicity_toggle">
+
+                        <ttype-actions-relations-select
+                                label-title="Periodicity"
+                                model="item.instrument_accrual_calculation_schedules.periodicity"
+                                load-relation="vm.loadRelation('periodicity')"
+                                relation-items="vm.relationItems['periodicity']"
+                                selected-value="item.instrument_accrual_calculation_schedules.periodicity_object.user_code"
+                                selected-name="item.instrument_accrual_calculation_schedules.periodicity_object.name"
+                                is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-relations-select>
+                    </div>
+                    <div data-ng-if="!item.instrument_accrual_calculation_schedules.periodicity_toggle">
+
+                        <ttype-actions-input-select label-title="Periodicity"
+                                                    model="item.instrument_accrual_calculation_schedules.periodicity_input"
+                                                    find-inputs="vm.findInputs('periodicity')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+                </div>-->
+                <multitype-field label="Periodicity"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].periodicity"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('periodicity', item, $index, 'instrument_accrual_calculation_schedules')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('periodicity', item, $index, 'instrument_accrual_calculation_schedules')"
+
+                                 class="ttype-action-input p-l-0"></multitype-field>
+            </div>
+
+            <div flex="33" layout="row">
+
+                <!--<div flex="20">
+                    <md-button
+                            class="ttype-action-field-toggle md-icon-button md-raised {{!!item.instrument_accrual_calculation_schedules.accrual_calculation_model_toggle ? 'ref' : ''}}"
+                            style="transform: scale(0.7,0.7)"
+                            data-ng-click="vm.resetPropertyBtn(item, 'instrument_accrual_calculation_schedules', 'accrual_calculation_model')">
+                        <span data-ng-if="!!item.instrument_accrual_calculation_schedules.accrual_calculation_model_toggle">R</span>
+                        <span data-ng-if="!!!item.instrument_accrual_calculation_schedules.accrual_calculation_model_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.instrument_accrual_calculation_schedules.accrual_calculation_model_toggle">
+
+                        <ttype-actions-relations-select
+                                label-title="Accrual calculation model"
+                                model="item.instrument_accrual_calculation_schedules.accrual_calculation_model"
+                                load-relation="vm.loadRelation('accrual_calculation_model')"
+                                relation-items="vm.relationItems['accrual_calculation_model']"
+                                selected-value="item.instrument_accrual_calculation_schedules.accrual_calculation_model_object.user_code"
+                                selected-name="item.instrument_accrual_calculation_schedules.accrual_calculation_model_object.name"
+                                is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-relations-select>
+                    </div>
+                    <div data-ng-if="!item.instrument_accrual_calculation_schedules.accrual_calculation_model_toggle">
+
+                        <ttype-actions-input-select label-title="Accrual calculation model"
+                                                    model="item.instrument_accrual_calculation_schedules.accrual_calculation_model_input"
+                                                    find-inputs="vm.findInputs('accrual-calculation-model')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+                </div>-->
+                <multitype-field label="Accrual calculation model"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].accrual_calculation_model"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('accrual_calculation_model', item, $index, 'instrument_accrual_calculation_schedules')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('accrual_calculation_model', item, $index, 'instrument_accrual_calculation_schedules')"
+
+                                 class="ttype-action-input p-r-0"></multitype-field>
+            </div>
+        </div>
+
+    </div>
+
+</div>

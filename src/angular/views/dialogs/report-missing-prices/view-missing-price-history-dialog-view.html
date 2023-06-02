@@ -1,0 +1,119 @@
+<md-dialog aria-label="" ng-cloak class="warning-dialog draggable-dialog width-70" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Missing Price History</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="p-24">
+
+        <div>
+
+            <div class="m-b-24">
+
+                <div data-ng-if="vm.entityType === 'balance-report'">
+
+                    <div>
+                        Date: {{vm.reportOptions.report_date}}
+                    </div>
+
+                </div>
+
+                <div data-ng-if="vm.entityType === 'pl-report'">
+
+                    <div>
+                        Date from: {{vm.reportOptions.pl_first_date}}
+                    </div>
+
+                    <div>
+                        Date to: {{vm.reportOptions.report_date}}
+                    </div>
+
+                </div>
+
+                <div>
+                    Pricing Policy: {{vm.reportOptions.pricing_policy_object.name}}
+                </div>
+
+                <div>
+                    Report Type: {{vm.entityType}}
+                </div>
+
+                <div>
+                    Layout name: {{vm.layout.name}}
+                </div>
+
+            </div>
+
+            <div>
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>
+                                Instrument Name
+                            </th>
+                            <th>
+                                Short Name
+                            </th>
+                            <th>
+                                User Code
+                            </th>
+                            <th>
+                                Pricing Scheme
+                            </th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr data-ng-repeat="item in vm.items">
+                            <td>
+                                {{item.instrument_object.name}}
+                            </td>
+                            <td>
+                                {{item.instrument_object.short_name}}
+                            </td>
+                            <td>
+                                {{item.instrument_object.user_code}}
+                            </td>
+                            <td>
+                                {{item.pricing_user_code}}
+                            </td>
+                            <td>
+                                <md-button class="md-raised" data-ng-click="vm.viewInstrument($event, item)">View Instrument</md-button>
+                            </td>
+                            <td>
+                                <md-button class="md-raised" data-ng-click="vm.addPriceHistory($event, item)">Add Price</md-button>
+                            </td>
+                            <td>
+                                <md-button class="md-raised" data-ng-click="vm.viewPositions($event, item)">View Positions</md-button>
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" ng-click="vm.agree()" style="margin-right:20px;">
+            Ok
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

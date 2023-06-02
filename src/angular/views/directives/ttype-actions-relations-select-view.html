@@ -1,0 +1,39 @@
+<!--
+<md-input-container class="md-block"
+                    aria-label="select with filter">
+    <label>{{labelTitle}}</label>
+    <md-select ng-model="model"
+               md-container-class="common-select-container"
+               md-on-close="searchTerm = ''"
+               md-on-open="loadRelationsOnOpen()"
+               data-ng-disabled="isDisabled">
+
+            <md-select-header>
+                <input data-ng-model="searchTerm"
+                       type="search"
+                       placeholder="Search for a ..."
+                       class="md-text md-select-search-pattern select-input-filter"
+                       ng-keydown="$event.stopPropagation()">
+            </md-select-header>
+
+            <div class="select-options-holder">
+
+                <md-option data-ng-repeat="relationItem in relationItems | filter: filterPredicateFunction(propertyName, searchTerm)"
+                           ng-value="relationItem['{{propertyValue}}']"
+                           ng-bind="relationItem['{{propertyName}}']"
+                           ng-if="relationItems.length">
+                </md-option>
+
+                <md-option ng-if="!relationItems.length"
+                           ng-value="selectedValue">{{selectedName}}</md-option>
+
+            </div>
+
+    </md-select>
+</md-input-container> -->
+<dropdown-select label="{{labelTitle}}"
+                 model="model"
+                 item-name="selectedName"
+                 menu-options="menuOptions"
+                 load-menu-options="loadRelationsOnOpen()">
+</dropdown-select>

@@ -1,0 +1,84 @@
+<div class="rv-matrix-left-col rvMatrixLeftCol">
+    <div class="rvm-fixed-col-holder">
+
+        <div class="rv-matrix-part-to-scroll scrollableMatrixBodyColumn">
+            <div data-ng-repeat="row in matrix track by row.index"
+                 class="report-viewer-matrix-cell rv-matrix-colored-cell text-{{styles.cell.text_align}} firstColumnCell rvMatrixCell"
+                 title="{{row.row_name}}"
+                 data-ng-click="singleRowTotalClick($event, row.index)"
+                 data-ng-class="{'active': activeItem == 'row_total:' + row.index}">
+                {{row.row_name}}
+            </div>
+
+            <div class="report-viewer-matrix-cell rv-matrix-lb-cell text-{{styles.cell.text_align}} firstColumnCell rvMatrixCell"
+                 title="TOTAL"
+                 data-ng-click="rowsTotalClick($event)"
+                 data-ng-class="{'active': activeItem == 'rows_total'}">
+                TOTAL
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="rv-matrix-value-cells-container rvMatrixBodyScrolls">
+
+    <div class="position-relative rvMatrixValueRowsHolder">
+        <div data-ng-repeat="row in matrix track by row.index" class="report-viewer-matrix-row rvMatrixRow">
+
+            <div class="report-viewer-matrix-cell rvMatrixCell text-{{styles.cell.text_align}}"
+                 data-ng-repeat="item in row.items track by item.index"
+                 title="{{item.data.value}}"
+                 data-ng-click="cellClick($event, row.index, item.index)"
+                 data-ng-class="{'active': activeItem == 'cell:' + row.index + ':' + item.index, 'negative-red': checkNegative(item.data.value)}">
+
+                {{formatValue(item.data.value)}}
+
+            </div>
+
+            <!--<div data-ng-if="!matrixWithFixedTotals"
+                 class="report-viewer-matrix-cell report-viewer-cell-border-left text-{{styles.cell.text_align}} rvMatrixCell"
+                 title="{{totals.rows[row.index].total}}"
+                 data-ng-click="singleRowTotalClick($event, row.index)"
+                 data-ng-class="{'active': activeItem == 'row_total:' + row.index, 'negative-red': checkNegative(totals.rows[row.index].total)}">
+                {{formatValue(totals.rows[row.index].total)}}
+            </div>-->
+
+            <div class="report-viewer-matrix-cell report-viewer-matrix-cell-total report-viewer-cell-border-left text-{{styles.cell.text_align}} rvMatrixCell"
+                 title="{{rows[row.index].total}}"
+                 data-ng-click="singleRowTotalClick($event, row.index)"
+                 data-ng-class="{'active': activeItem == 'row_total:' + row.index, 'negative-red': checkNegative(rows[row.index].total)}">
+                {{formatValue(rows[row.index].total)}}
+            </div>
+
+        </div>
+
+        <div class="report-viewer-matrix-row report-viewer-matrix-bottom-row">
+
+            <!--<div data-ng-repeat="item in totals.columns track by $index"
+                 class="report-viewer-matrix-cell text-{{styles.cell.text_align}} rvMatrixCell"
+                 title="{{item.total}}"
+                 data-ng-click="singleColumnTotalClick($event, $index)"
+                 data-ng-class="{'active': activeItem == 'column_total:' + $index, 'negative-red': checkNegative(item.total)}">
+                {{formatValue(item.total)}}
+            </div>-->
+            <div data-ng-repeat="item in columns track by $index"
+                 class="report-viewer-matrix-cell report-viewer-matrix-cell-total text-{{styles.cell.text_align}} rvMatrixCell"
+                 title="{{item.total}}"
+                 data-ng-click="singleColumnTotalClick($event, $index)"
+                 data-ng-class="{'active': activeItem == 'column_total:' + $index, 'negative-red': checkNegative(item.total)}">
+                {{formatValue(item.total)}}
+            </div>
+
+            <div class="report-viewer-matrix-cell report-viewer-cell-border-left report-viewer-matrix-cell-total text-{{styles.cell.text_align}} rvMatrixCell"
+                 title="{{grandtotal}}"
+                 data-ng-click="totalClick($event)"
+                 data-ng-class="{'active': activeItem == 'total', 'negative-red': checkNegative(grandtotal)}">
+                {{formatValue(grandtotal)}}
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

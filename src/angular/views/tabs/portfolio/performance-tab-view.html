@@ -1,0 +1,40 @@
+<div ng-controller="PortfolioPerformanceTabController as vm">
+
+    <div ng-if="vm.readyStatus">
+        <h2 class="m-t-0 m-b-24">Related Instruments</h2>
+
+        <div custom-popup
+             popup-template-url="views/popups/selector2-popup-view.html"
+             popup-data="vm.rowActionsPopupData"
+             popup-event-service="vm.rowActionsPopupEventService"
+             popup-x="vm.raPopupX"
+             popup-y="vm.raPopupY"
+             popup-classes="prtf-registry-action-popup"
+             on-cancel="vm.rowActionsPopupData.row = null;"
+
+             class="m-b-16">
+            <grid-table gt-data-service="vm.relInstrGtDataService"
+                        gt-event-service="vm.relInstrGtEventService"
+                        class="portfolio-related-instruments-table grid-table-bottom-border"></grid-table>
+        </div>
+
+    </div>
+
+    <div class="flex-row fi-center">
+        <button class="btn-add-1 m-r-16" ng-click="vm.addNewRelInstr($event)">
+            <span class="display-block material-icons">add</span><span class="btn-text">ADD NEW RELATED INSTRUMENT</span>
+        </button>
+
+        <div ng-if="vm.creatingInstr">
+            <md-tooltip class="tooltip_2" md-direction="top">Creating related instrument</md-tooltip>
+            <progress-circular diameter="20"></progress-circular>
+        </div>
+    </div>
+
+
+    <div ng-if="!vm.readyStatus"
+         class="flex-row flex-c-center width-100" style="height: 100px;">
+        <progress-circular diameter="100"></progress-circular>
+    </div>
+
+</div>
