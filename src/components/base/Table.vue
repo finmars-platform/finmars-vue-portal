@@ -1,37 +1,44 @@
 <template>
-	<div class="table"
-			 v-bind="$attrs">
-		<div class="table-row t_header" :style="{gridTemplateColumns: colls}">
+	<div class="table">
+		<div class="table-row t_header" :style="{ gridTemplateColumns: colls }">
 			<div v-if="isActions"><FmCheckbox /></div>
-			<div v-if="isActions" class="table-cell" data-test1="1"></div>
+			<div v-if="isActions" class="table-cell"></div>
 			<div
 				class="table-cell font-weight-bold"
 				v-for="(header, index) in headers"
-				:key="index" data-test2="2"
+				:key="index"
 			>
 				{{ header }}
 			</div>
 		</div>
 
-		<div class="table-row"
-			:class="{ active: active == index, selectable: active !== undefined }"
-			:style="{gridTemplateColumns: colls}"
+		<div
+			class="table-row"
+			:class="{ active: active == index, choosible: active !== undefined }"
+			:style="{ gridTemplateColumns: colls }"
 			v-for="(row, index) in items"
-			:key="getRowKey(row, index)"
+			:key="index"
 		>
 			<div class="center" v-if="isActions"><FmCheckbox /></div>
-			<div class="table-cell" data-test3="3" v-if="$slots.actions">
+
+			<div class="table-cell no_collapsed" v-if="$slots.actions">
 				<slot name="actions" :index="index" />
 			</div>
 			<div
 				class="table-cell"
 				v-for="(item, indexRow) in row"
 				:key="indexRow"
-				@click="onRowClick(row, index)" data-test4="4"
+				@click="
+					() => {
+						if (cb) cb(index)
+					}
+				"
 			>
 				<FmLoader v-if="item === null" />
 				<template v-else-if="typeof item == 'object'">
-					<NuxtLink class="link dib" :to="item.link" v-if="item.link">{{ item.value }}</NuxtLink>
+					<NuxtLink class="link dib" :to="item.link" v-if="item.link">{{
+						item.value
+					}}</NuxtLink>
 					<template v-else>{{ item.value }}</template>
 				</template>
 				<template v-else>{{ item === '' ? '-' : item }}</template>
@@ -44,41 +51,31 @@
 </template>
 
 <script setup>
-
 	let props = defineProps({
 		headers: {
-			type: Array
+			type: Array,
 		},
 		items: {
-			type: Array
+			type: Array,
 		},
 		colls: {
-			type: String
+			type: String,
 		},
-		rowKeyProp: String,
 		cb: {
-			type: Function
+			type: Function,
 		},
-		status: { // done, loading, fail
+		status: {
+			// done, loading, fail
 			type: String,
 			default: 'done',
 		},
 		active: {
-			type: Number
+			type: Number,
 		},
 		isActions: {
-			type: Boolean
-		}
+			type: Boolean,
+		},
 	})
-
-	let getRowKey = (row, index) => props.rowKeyProp ? row[props.rowKeyProp] : index;
-
-	let onRowClick = function (row, index) {
-		if (props.cb) {
-			props.cb( getRowKey(row, index) );
-		}
-	}
-
 </script>
 
 <style lang="scss" scoped>
@@ -90,13 +87,13 @@
 	.table-row {
 		display: grid;
 		align-items: center;
-		background: #Fff;
+		background: #fff;
 		height: 36px;
 		border-bottom: 1px solid $border;
 		line-height: 36px;
 		transition: outline 0.1s;
 		outline: solid transparent;
-		&.selectable {
+		&.choosible {
 			cursor: pointer;
 
 			&:not(.active):hover {
@@ -107,7 +104,7 @@
 			background: #fac87863;
 		}
 		&.t_header {
-			background: #F2F2F2;
+			background: #f2f2f2;
 			height: 50px;
 			line-height: 50px;
 			font-weight: 500;
@@ -118,8 +115,11 @@
 		padding: 0 14px;
 		height: inherit;
 		line-height: inherit;
-		overflow: hidden;
-		text-overflow: ellipsis;
+
+		&:not(.no_collapsed) {
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
 
 		& + & {
 			border-left: 1px solid $border;
@@ -130,15 +130,5 @@
 	}
 	.link {
 		text-decoration: underline;
-	}
-
-	.table.clickable_rows {
-		.table-row:not(.t_header) {
-			cursor: pointer;
-
-			&:hover {
-				background-color: $hover-background;
-			}
-		}
 	}
 </style>
