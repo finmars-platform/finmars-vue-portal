@@ -946,7 +946,7 @@
 														:href="getUrlToOldApp('/settings/export-configuration')"
 														class="sidenav-dropdown-menu-btn"
 													>
-														<span class="side-nav-title">Export</span>
+														<span class="side-nav-title">Export (Deprecated)</span>
 													</a>
 												</li>
 												<li>
@@ -955,6 +955,22 @@
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Update</span>
+													</a>
+												</li>
+												<li>
+													<a
+														:href="getUrlToOldApp('/manage-configuration')"
+														class="sidenav-dropdown-menu-btn"
+													>
+														<span class="side-nav-title">Manage</span>
+													</a>
+												</li>
+												<li>
+													<a
+														:href="getUrlToOldApp('/marketplace')"
+														class="sidenav-dropdown-menu-btn"
+													>
+														<span class="side-nav-title">Marketplace</span>
 													</a>
 												</li>
 											</ul>
