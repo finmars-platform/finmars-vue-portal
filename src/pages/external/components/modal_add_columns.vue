@@ -706,10 +706,13 @@ function toggleFav( attr ) {
 
 	} else {
 
+		const attrData = formattedAttrs.value.find(o => o.key == attr.key);
+
 		favList.value.push({
 			key: attr.key,
 			// TODO use attributes's original name
-			name: formattedAttrs.value.find(o => o.key == attr.key).name,
+			name: attrData.name,
+			value_type: attrData.value_type,
 			customName: '',
 			customDescription: '',
 		})
