@@ -78,6 +78,9 @@ export default {
 	importSchemeLight: {
 		get: prefix + '/import/complex-transaction-import-scheme/light/',
 	},
+	configurationList: {
+		get: prefix + '/configuration/configuration/'
+	},
 	memberList: {
 		get: prefix + '/users/member/',
 	},
@@ -169,7 +172,7 @@ export default {
 	interfaceAccess: {
 		get: prefix + '/ui/portal-interface-access/',
 	},
-	configurationList: {
+	newMemberSetupConfig: {
 		get: prefix + '/configuration/new-member-setup-configuration/',
 	},
 	unifiedData: {
