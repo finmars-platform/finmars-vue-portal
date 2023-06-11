@@ -157,9 +157,9 @@
 		scope.errorDescription = description;
 	}, 1000);
 
-	function onConfigCodeChange (configCode) {
-		configCode.value = configCode;
-		emit('update:configurationCode', configCode);
+	function onConfigCodeChange (configCodeVal) {
+		configCode.value = configCodeVal;
+		emit('update:configurationCode', configCodeVal);
 	}
 
 	const assembleUserCode = function (userCodeEnd) {
