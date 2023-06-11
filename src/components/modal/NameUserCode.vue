@@ -87,7 +87,7 @@
 			}
 
 		} else {
-			emit('save', {name: newName.value, user_code: newUserCode.value});
+			emit('save', {name: newName.value, user_code: newUserCode.value, configuration_code: newUserCode.value.split(":")[0]}); // TODO refactor configuration_code should be sent to create layout, but it should be set via usercode-input component
 		}
 
 	}
