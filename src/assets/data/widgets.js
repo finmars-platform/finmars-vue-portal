@@ -139,7 +139,29 @@ export default [
 		minRows: 4,
 		inputs: [],
 		outputs: [],
-		settings: []
+		settings: [],
+	},
+	{
+		uid: null,
+		user_code: null,
+		name: 'Iframe Component',
+		componentName: 'IframeComponent',
+		tab: null,
+		_group: 'system',
+		minColls: 12,
+		minRows: 4,
+		inputs: [],
+		outputs: [],
+		settings: [
+			{
+				key: 'url',
+				name: 'URL',
+				view: {
+					type: 'input',
+				},
+				default_value: null,
+			},
+		],
 	},
 	{
 		uid: null,
@@ -158,11 +180,11 @@ export default [
 				name: 'Date',
 				type: 'date',
 				view: {
-					type: 'date'
+					type: 'date',
 				},
 				subscribedTo: [],
 				default_value: null,
-				__val: null
+				__val: null,
 			},
 			{
 				uid: null,
@@ -172,12 +194,12 @@ export default [
 				name: 'Portfolio',
 				type: 'portfolio',
 				view: {
-					type: 'portfolio'
+					type: 'portfolio',
 				},
 				subscribedTo: [],
 				default_value: null,
-				__val: null
-			}
+				__val: null,
+			},
 		],
 		outputs: [
 			{
@@ -226,13 +248,13 @@ export default [
 				view: {
 					type: 'select',
 					items: [
-						{id: 'nav', name: 'NAV'},
-						{id: 'pl', name: 'P&L'},
-					]
+						{ id: 'nav', name: 'NAV' },
+						{ id: 'pl', name: 'P&L' },
+					],
 				},
 				subscribedTo: [],
 				default_value: null,
-				__val: null
+				__val: null,
 			},
 			{
 				uid: null,
@@ -242,11 +264,11 @@ export default [
 				name: 'Date from',
 				type: 'date',
 				view: {
-					type: 'date'
+					type: 'date',
 				},
 				subscribedTo: [],
 				default_value: null,
-				__val: null
+				__val: null,
 			},
 			{
 				uid: null,
@@ -256,11 +278,11 @@ export default [
 				name: 'Date to',
 				type: 'date',
 				view: {
-					type: 'date'
+					type: 'date',
 				},
 				subscribedTo: [],
 				default_value: null,
-				__val: null
+				__val: null,
 			},
 			{
 				uid: null,
@@ -270,12 +292,12 @@ export default [
 				name: 'Portfolio',
 				type: 'portfolio',
 				view: {
-					type: 'portfolio'
+					type: 'portfolio',
 				},
 				subscribedTo: [],
 				default_value: null,
-				__val: null
-			}
+				__val: null,
+			},
 		],
 		outputs: [
 			{
@@ -299,11 +321,11 @@ export default [
 				default_value: null,
 				__val: null,
 				_children: [],
-			}
+			},
 		],
 		minColls: 6,
 		minRows: 3,
-		_group: 'base'
+		_group: 'base',
 	},
 	{
 		uid: null,
@@ -320,11 +342,11 @@ export default [
 				name: 'Portfolio',
 				type: 'portfolio',
 				view: {
-					type: 'portfolio'
+					type: 'portfolio',
 				},
 				subscribedTo: [],
 				default_value: null,
-				__val: null
+				__val: null,
 			},
 			{
 				uid: null,
@@ -334,11 +356,11 @@ export default [
 				name: 'Date',
 				type: 'date',
 				view: {
-					type: 'date'
+					type: 'date',
 				},
 				subscribedTo: [],
 				default_value: null,
-				__val: null
+				__val: null,
 			},
 			{
 				uid: null,
@@ -348,11 +370,11 @@ export default [
 				name: 'Category type',
 				type: 'period_category',
 				view: {
-					type: 'input'
+					type: 'input',
 				},
 				subscribedTo: [],
 				default_value: null,
-				__val: null
+				__val: null,
 			},
 		],
 		outputs: [],
@@ -378,11 +400,11 @@ export default [
 				name: 'Date',
 				type: 'date',
 				view: {
-					type: 'date'
+					type: 'date',
 				},
 				subscribedTo: [],
 				default_value: null,
-				__val: null
+				__val: null,
 			},
 			{
 				uid: null,
@@ -392,11 +414,11 @@ export default [
 				name: 'Portfolio',
 				type: 'portfolio',
 				view: {
-					type: 'portfolio'
+					type: 'portfolio',
 				},
 				subscribedTo: [],
 				default_value: null,
-				__val: null
+				__val: null,
 			},
 			{
 				uid: null,
@@ -406,12 +428,12 @@ export default [
 				name: 'Category type',
 				type: 'period_category',
 				view: {
-					type: 'input'
+					type: 'input',
 				},
 				subscribedTo: [],
 				default_value: null,
-				__val: null
-			}
+				__val: null,
+			},
 		],
 		outputs: [],
 		settings: [],
@@ -466,11 +488,11 @@ export default [
 				name: 'Date from',
 				type: 'date',
 				view: {
-					type: 'date'
+					type: 'date',
 				},
 				subscribedTo: [],
 				default_value: null,
-				__val: null
+				__val: null,
 			},
 			{
 				uid: null,
@@ -480,11 +502,11 @@ export default [
 				name: 'Date to',
 				type: 'date',
 				view: {
-					type: 'date'
+					type: 'date',
 				},
 				subscribedTo: [],
 				default_value: null,
-				__val: null
+				__val: null,
 			},
 			{
 				uid: null,
@@ -494,12 +516,12 @@ export default [
 				name: 'Currency',
 				type: 'currency',
 				view: {
-					type: 'currency'
+					type: 'currency',
 				},
 				subscribedTo: [],
 				default_value: null,
-				__val: null
-			}
+				__val: null,
+			},
 		],
 		outputs: [
 			{
@@ -510,12 +532,12 @@ export default [
 				name: 'Bundle',
 				type: 'bundle',
 				view: {
-					type: 'bundle'
+					type: 'bundle',
 				},
 				default_value: null,
 				__val: null,
 				_children: [],
-			}
+			},
 		],
 		settings: [
 			{
@@ -524,11 +546,11 @@ export default [
 				view: {
 					type: 'select',
 					items: [
-						{id: 'time_weighted', name: 'Time-weighted return'},
-						{id: 'money_weighted', name: 'Money weighted return'},
-					]
+						{ id: 'time_weighted', name: 'Time-weighted return' },
+						{ id: 'money_weighted', name: 'Money weighted return' },
+					],
 				},
-				default_value: null
+				default_value: null,
 			},
 		],
 
@@ -552,11 +574,11 @@ export default [
 				name: 'Bundle',
 				type: 'bundle',
 				view: {
-					type: 'bundle'
+					type: 'bundle',
 				},
 				subscribedTo: [],
 				default_value: null,
-				__val: null
+				__val: null,
 			},
 			{
 				uid: null,
@@ -566,11 +588,11 @@ export default [
 				name: 'Date from',
 				type: 'date',
 				view: {
-					type: 'date'
+					type: 'date',
 				},
 				subscribedTo: [],
 				default_value: null,
-				__val: null
+				__val: null,
 			},
 			{
 				uid: null,
@@ -580,11 +602,11 @@ export default [
 				name: 'Date to',
 				type: 'date',
 				view: {
-					type: 'date'
+					type: 'date',
 				},
 				subscribedTo: [],
 				default_value: null,
-				__val: null
+				__val: null,
 			},
 			{
 				uid: null,
@@ -594,12 +616,12 @@ export default [
 				name: 'Currency',
 				type: 'currency',
 				view: {
-					type: 'currency'
+					type: 'currency',
 				},
 				subscribedTo: [],
 				default_value: null,
-				__val: null
-			}
+				__val: null,
+			},
 		],
 		outputs: [
 			{
@@ -612,7 +634,7 @@ export default [
 				default_value: null,
 				__val: null,
 				_children: [],
-			}
+			},
 		],
 		settings: [
 			{
@@ -621,11 +643,11 @@ export default [
 				view: {
 					type: 'select',
 					items: [
-						{id: 'time_weighted', name: 'Time-weighted return'},
-						{id: 'money_weighted', name: 'Money weighted return'},
-					]
+						{ id: 'time_weighted', name: 'Time-weighted return' },
+						{ id: 'money_weighted', name: 'Money weighted return' },
+					],
 				},
-				default_value: null
+				default_value: null,
 			},
 		],
 		scopes: [],
@@ -651,8 +673,8 @@ export default [
 				type: 'bundle_year',
 				subscribedTo: [],
 				default_value: null,
-				__val: null
-			}
+				__val: null,
+			},
 		],
 		outputs: [],
 		settings: [],
