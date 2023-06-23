@@ -6,10 +6,11 @@
 		}"
 		:data-name="component.uid"
 	>
+
 		<component
 			class="widget_wrap"
-			:is="'Widgets' + component.componentName"
-			:wid="component.uid"
+			:is="compRegisteredName"
+			:uid="component.uid"
 		/>
 		<div class="board_widget_controls"
 			v-if="dashStore.isEdit"
@@ -44,24 +45,45 @@
 			<div class="bwc_bottom" @mousedown="resizeY"></div>
 		</div>
 
-		<PagesDashboardEditWidgetM
+		<PagesDashboardEditCompM
 			v-if="isEditWidget"
 			v-model="isEditWidget"
-			:wid="component.uid"
+			:uid="component.uid"
 		/>
 	</div>
 </template>
 
 <script setup>
+
 	let props = defineProps({
 		component: {
 			type: Object,
 			required: true
 		}
 	})
-
+	console.log("testing1090 component.componentName", props.component.componentName);
 	const dashStore = useStoreDashboard()
 	let isEditWidget = ref(false)
+
+	const widgetsList = [
+		'DateControl',
+		'PortfolioControl',
+		'BundleControl',
+		'CurrencyControl',
+		'DebugComponent',
+		'CardsIndicators',
+		'ChartBalancePeriod',
+		'ChartBalanceDate',
+		'ChartPnlDate',
+		'PerformanceBundles',
+		'PerformanceDetail',
+		'PerformanceChart',
+	];
+	const isAWidget = widgetsList.includes(props.component.componentName);
+	console.log("testing1090 isAWidget", isAWidget);
+	const compRegisteredName = computed(() => {
+		return isAWidget ? 'Widgets' + props.component.componentName : props.component.componentName;
+	});
 
 	function resizeX(e) {
 		let elem = e.target.closest('.board_widget')
@@ -117,6 +139,7 @@
 			elem.onmouseup = null;
 		};
 	}
+	//# region Drag and drop
 	function drag(e) {
 		// console.log('Drag start')
 
@@ -184,8 +207,10 @@
 		elem.style.zIndex = ''
 		elem.style.opacity = ''
 	}
+	//# endregion Drag and drop
+
 	function remove( id ) {
-		dashStore.removeWidget( id )
+		dashStore.removeComponent( id )
 	}
 </script>
 

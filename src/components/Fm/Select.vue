@@ -47,9 +47,21 @@
 
 				<template #rightBtn>
 					<slot name="right_btn">
-						<FmBtn type="iconBtn"
-									 :icon="isOpen ? 'arrow_drop_up' : 'arrow_drop_down'"
-									 @click="mainInput && mainInput.focus()" />
+						<div class="flex-row">
+							<FmBtn
+								v-if="clearBtn"
+								type="iconBtn"
+								icon="close"
+								class="fm_select_right_btn"
+								@click.stop="emit('update:modelValue', null)"
+							/>
+
+							<FmBtn
+								type="iconBtn"
+								:icon="isOpen ? 'arrow_drop_up' : 'arrow_drop_down'"
+								@click="mainInput && mainInput.focus()"
+							/>
+						</div>
 					</slot>
 				</template>
 
@@ -90,6 +102,7 @@
 		optionsFilter: Boolean,
 		required: Boolean,
 		attach: String,
+		clearBtn: Boolean, // button that empties select
 		errorData: Object
 	})
 
@@ -126,7 +139,7 @@
 		// else if (props.label) {
 		// 	return ' ';
 		// }
-		return 'Select option';
+		return props.label ? props.label : 'Select option';
 
 	});
 

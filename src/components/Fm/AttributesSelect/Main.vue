@@ -723,17 +723,6 @@
 
 	}
 
-	function buildViewTree() {
-
-		if (searchParam.value) {
-			return filterTree(attrsTree);
-
-		} else {
-			viewTree.value = attrsTree
-		}
-
-	}
-
 	watch(
 		formattedAttrs,
 		() => {
@@ -1121,8 +1110,17 @@
 
 					return {
 						...node,
-						...{children: filteredChildren}
+						name: highlightName(node.name),
+						...{children: filteredChildren},
 					};
+
+				}
+				else if ( nodePassesFilter(node) ) { // section name passes filter
+
+					return {
+						...node,
+						name: highlightName(node.name),
+					}
 
 				}
 
@@ -1179,7 +1177,11 @@
 		() => {
 
 			props.modelValue.forEach(attrKey => {
-				selected[attrKey] = true;
+
+				if ( props.attributes.findIndex(attr => attr.key === attrKey) > -1 ) { // attribute exist
+					selected[attrKey] = true;
+				}
+
 			})
 
 		}

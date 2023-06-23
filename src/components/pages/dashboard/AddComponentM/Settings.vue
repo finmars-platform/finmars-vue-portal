@@ -1,11 +1,13 @@
 <template>
 	<PagesDashboardAddMatrixModal
-		v-if="component.componentName === 'Matrix'"
+		v-if="component.componentName === 'DashboardMatrix'"
 		:tab="tab"
+		v-bind="$attrs"
 		class="settings"
 	/>
 
 	<div v-else
+			 v-bind="$attrs"
 			 class="settings flex">
 		<div class="settings_coll">
 			<h4>General</h4>
@@ -34,7 +36,7 @@
 		<div class="settings_coll">
 			<h4>Inputs</h4>
 
-			<div >
+			<div>
 				<PagesDashboardAddComponentMPropEditor
 					v-for="prop in component.inputs"
 					:prop="prop"

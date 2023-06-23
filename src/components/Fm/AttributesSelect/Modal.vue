@@ -27,9 +27,9 @@
 		<div class="attr_select_wrap">
 			<FmAttributesSelectMain
 				:modelValue="selAttrsKeysList"
-				:attributes="attributes"
+				:attributes="filteredAttrs"
 				:disabledAttributes="disabledAttributes"
-				:favoriteAttributes="store.favorites.attributes[contentType]"
+				:favoriteAttributes="favoriteAttrs"
 				:multiselect="multiselect"
 				:searchParameters="searchParams"
 				:isAdvanced="isAdvanced"
@@ -75,6 +75,7 @@
 			type: String,
 			required: true,
 		},
+		valueType: Number, // used to filter attributes
 		attributes: {
 			type: Array,
 			default: [],
@@ -87,7 +88,7 @@
 		multiselect: Boolean,
 	});
 
-	let emit = defineEmits(['update:modelValue', 'save']);
+	let emit = defineEmits(['update:modelValue', 'save', 'selectedAttributesChanged']);
 
 	let selAttrsKeysList = ref([]);
 	let isAdvanced = ref(false);
@@ -99,9 +100,12 @@
 		() => props.selected,
 		() => {
 
-			if ( Array.isArray(props.modelValue) ) selAttrsKeysList.value = props.selected;
+			if ( Array.isArray(props.selected) ) {
 
-			if (typeof props.selected === 'string') {
+				selAttrsKeysList.value = props.selected;
+
+			} else if (typeof props.selected === 'string') {
+
 				selAttrsKeysList.value = props.selected ? [props.selected] : []
 
 			} else {
@@ -110,6 +114,38 @@
 
 		}
 	)
+
+	const filteredAttrs = computed(() => {
+
+		if (props.valueType) {
+			return props.attributes.filter(attr => attr.value_type === props.valueType);
+		}
+
+		return props.attributes;
+
+	});
+
+	const favoriteAttrs = computed(() => {
+
+		if (props.valueType) {
+
+			return store.favorites.attributes[props.contentType].filter(fAttr => {
+
+				const fAttrData = props.attributes.find(attr => attr.key === fAttr.key);
+
+				/*
+				!fAttrData here because favorite attribute
+				without matching attribute should be shown and marked
+				*/
+				return !fAttrData || fAttrData.value_type === props.valueType;
+
+			})
+
+		}
+
+		return store.favorites.attributes[props.contentType];
+
+	})
 
 	function saveFavorites(favAttrs) {
 		store.member.data.favorites.attributes[props.contentType] = favAttrs;
@@ -121,31 +157,59 @@
 		searchParams.value = '';
 	}
 
+	function getSelAttrData(key) {
+
+		let attrData = props.attributes.find(attr => attr.key === key);
+		attrData = JSON.parse(JSON.stringify( attrData ));
+
+		const favData = favoriteAttrs.value.find(attr => attr.key === key);
+		if (favData) attrData.layout_name = favData.customName;
+
+		return attrData;
+
+	}
+
 	function save(cancelCallback) {
 
-		let val = newSelAttrs.value || null;
+		let val;
 
-		if (val !== null && typeof val !== 'string') {
-			console.error("Component FmAttributesSelectModal return value with wrong format. Expected string or null got " + typeof val);
-		}
-
-		if (!val) { // forbid selection of emptiness for selector of single attribute
-			cancelCallback();
-			return;
-		}
+		let val2; // contains full data of selected attributes
+		let selKeysList;
 
 		if ( props.multiselect ) {
 
-			val = newSelAttrs.value || [];
+			val = JSON.parse(JSON.stringify( newSelAttrs.value )) || [];
 
 			if ( !Array.isArray(val) ) {
-				console.error("Component FmAttributesSelectModal return value with wrong format. Expected array got " + typeof val);
+				throw new Error("Component FmAttributesSelectModal return value with wrong format. Expected array got " + typeof val);
 			}
 
-		}
+			val2 = val.map( key => getSelAttrData(key) );
 
+		}
+		else {
+
+			val = newSelAttrs.value || null;
+
+			if (!val) { // forbid selection of emptiness for selector of single attribute
+				cancelCallback();
+				return;
+			}
+
+			if ( typeof val !== 'string' ) {
+				throw new Error("Component FmAttributesSelectModal return value with wrong format. Expected string or null got a " + typeof val);
+			}
+
+			val2 = getSelAttrData(val);
+
+		}
+		console.log("testing1090.attributesSelectModal save ", val);
 		emit('save', val);
+		console.log("testing1090.attributesSelectModal save2 ", val2);
+		emit('selectedAttributesChanged', val2);
+
 		cancelCallback();
+
 	}
 
 	if ( !store.favorites.attributes[props.contentType] ||
