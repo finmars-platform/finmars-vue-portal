@@ -19,7 +19,7 @@
 					{{ item }}
 				</div>
 			</div>
-			<canvas :id="wid"><p>Chart</p></canvas>
+			<canvas :id="uid"><p>Chart</p></canvas>
 		</div>
 
 		<div class="content flex-column aic jcc" v-else>
@@ -58,7 +58,7 @@
 	);
 
 	const props = defineProps({
-		wid: String
+		uid: String
 	})
 	// 0-99 101-200
 	const STATUSES = {
@@ -68,8 +68,8 @@
 	let status = ref(0)
 
 	let dashStore = useStoreDashboard()
-	let historyStats = await dashStore.getHistory(props.wid)
-	let component = dashStore.getWidget(props.wid)
+	let historyStats = await dashStore.getHistory(props.uid)
+	let component = dashStore.getComponent(props.uid)
 	let widgetName = computed(() => {
 		return inputs.value.type == 'pl' ? 'P&L (Historical)' : 'Balance (Historical)'
 	})
@@ -127,7 +127,7 @@
 	watch(inputs, async () => {
 		if ( !Object.entries(inputs.value).length ) return false
 
-		historyStats = await dashStore.getHistory(props.wid)
+		historyStats = await dashStore.getHistory(props.uid)
 		updateData()
 	})
 
@@ -189,7 +189,7 @@
 		myChart.update()
 	}
 	function createChart() {
-		myChart = new Chart(props.wid, {
+		myChart = new Chart(props.uid, {
 			type: 'bar',
 			data: data,
 			plugins: [{

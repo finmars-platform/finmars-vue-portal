@@ -8,11 +8,11 @@
 <script setup>
 
 	const props = defineProps({
-		wid: String
+		uid: String
 	})
 
 	const dashStore = useStoreDashboard()
-	let component = dashStore.getWidget(props.wid)
+	let component = dashStore.getComponent(props.uid)
 	let value = ref('2022-09-09')
 
 	const outputs = computed(() => {

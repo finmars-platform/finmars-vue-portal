@@ -283,3 +283,7 @@
 		font-size: 15px;
 	}
 }
+
+.fm_select_right_btn:not([disabled]):hover {
+	opacity: .5;
+}

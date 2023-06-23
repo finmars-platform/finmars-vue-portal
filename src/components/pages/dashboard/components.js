@@ -25,6 +25,7 @@ export default [
 				key: 'date',
 				name: 'Date',
 				type: 'date',
+				value_type: 40,
 				view: {
 					type: 'date',
 				},
@@ -157,6 +158,7 @@ export default [
 				key: 'date',
 				name: 'Date',
 				type: 'date',
+				value_type: 40,
 				view: {
 					type: 'date'
 				},
@@ -241,6 +243,7 @@ export default [
 				key: 'date_from',
 				name: 'Date from',
 				type: 'date',
+				value_type: 40,
 				view: {
 					type: 'date'
 				},
@@ -255,6 +258,7 @@ export default [
 				key: 'date_to',
 				name: 'Date to',
 				type: 'date',
+				value_type: 40,
 				view: {
 					type: 'date'
 				},
@@ -296,6 +300,7 @@ export default [
 				key: 'choosed_date',
 				name: 'Choosed date',
 				type: 'date',
+				value_type: 40,
 				default_value: null,
 				__val: null,
 				_children: [],
@@ -333,6 +338,7 @@ export default [
 				key: 'date',
 				name: 'Date',
 				type: 'date',
+				value_type: 40,
 				view: {
 					type: 'date'
 				},
@@ -377,6 +383,7 @@ export default [
 				key: 'date',
 				name: 'Date',
 				type: 'date',
+				value_type: 40,
 				view: {
 					type: 'date'
 				},
@@ -454,20 +461,33 @@ export default [
 		uid: null,
 		user_code: null,
 		name: 'Matrix',
-		componentName: 'Matrix',
+		componentName: 'DashboardMatrix',
 
 		inputs: [],
 		outputs: [],
-		settings: [
-			{
-				name: 'Absciss',
-				propName: '',
+		settings: {
+			layout: null,
+			content_type: "reports.balancereport",
+			axisY: null,
+			axisX: null,
+			valueKey: null,
+			subtotal_formula_id: 1,
+			matrix_view: 'usual',
+			styles: {
+				cell: {
+					text_align: 'center'
+				}
 			},
-			{
-				name: 'Ordinate',
-				propName: '',
-			}
-		],
+			auto_refresh: false,
+			auto_scaling: false,
+			calculate_name_column_width: false,
+			// linked_components: {},
+			hide_empty_lines: '',
+			filters: {
+				show_filters_area: false,
+				show_use_from_above_filters: false,
+			},
+		},
 
 		_group: 'base',
 		minColls: 6,
@@ -488,6 +508,7 @@ export default [
 				key: 'begin_date',
 				name: 'Date from',
 				type: 'date',
+				value_type: 40,
 				view: {
 					type: 'date'
 				},
@@ -502,6 +523,7 @@ export default [
 				key: 'end_date',
 				name: 'Date to',
 				type: 'date',
+				value_type: 40,
 				view: {
 					type: 'date'
 				},
@@ -588,6 +610,7 @@ export default [
 				key: 'begin_date',
 				name: 'Date from',
 				type: 'date',
+				value_type: 40,
 				view: {
 					type: 'date'
 				},
@@ -602,6 +625,7 @@ export default [
 				key: 'end_date',
 				name: 'Date to',
 				type: 'date',
+				value_type: 40,
 				view: {
 					type: 'date'
 				},

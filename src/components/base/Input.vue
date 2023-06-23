@@ -374,9 +374,10 @@ let props = defineProps({
 		width: 100%;
 	}
 	.bi_default {
-		flex-grow: 1;
+		flex: 0 1 100%;
 		margin-left: 13px;
 		height: inherit;
+		min-width: 0;
 
 		/*input {
 			width: 100%;

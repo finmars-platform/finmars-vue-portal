@@ -30,11 +30,11 @@
 	import dayjs from 'dayjs';
 
 	const props = defineProps({
-		wid: String
+		uid: String
 	})
 
 	const dashStore = useStoreDashboard()
-	let component = dashStore.getWidget(props.wid)
+	let component = dashStore.getComponent(props.uid)
 
 	const inputs = computed(() => {
 		let props = dashStore.props.inputs.filter((prop) => prop.component_id == component.uid)
