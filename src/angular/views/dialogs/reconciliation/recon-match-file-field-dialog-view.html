@@ -1,0 +1,152 @@
+<md-dialog class="draggable-dialog"
+           aria-label="reconciliation match file data dialog"
+           style="width: 500px;"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Bank File Field</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+
+        <div class="p-24">
+
+            <div class="m-b-16">
+                <b>File Name</b>: {{vm.field.file_name}}
+            </div>
+
+            <div class="m-b-16">
+                <b>Import Scheme</b>: {{vm.field.import_user_code}}
+            </div>
+
+            <div class="m-b-16">
+                <b>Reconciliation Date</b>: {{vm.field.reference_date}}
+            </div>
+
+            <div class="m-b-16">
+                <b>{{vm.item.___index + 1}} : {{vm.item.source_id}}</b>
+            </div>
+
+            <div class="m-t-16">
+
+                <b>{{vm.field.reference_name}} <span data-ng-if="vm.field.description">({{vm.field.description}})</span></b>
+
+                <div class="m-b-16 p-l-16 p-t-8">
+
+                    <div>
+                        <b>Value Text</b>: {{vm.field.value_string}}
+                    </div>
+
+                    <div>
+                        <b>Value Float</b>: {{vm.field.value_float}}
+                    </div>
+
+                    <div>
+                        <b>Value Date</b>: {{vm.field.value_date}}
+                    </div>
+
+                </div>
+
+                <div>
+
+                    <md-input-container style="margin: 0">
+
+                        <label for="">Notes</label>
+                        <input type="text" data-ng-model="vm.field.notes" data-ng-change="vm.onFieldPropChange()">
+
+                    </md-input-container>
+
+                </div>
+
+
+                <div data-ng-if="vm.hasLinkedComplexTransaction">
+
+                    <div class="m-b-16">
+
+                        <md-input-container data-ng-if="vm.lockSelect" class="m-0 width-90">
+                            <label>Status</label>
+                            <md-select data-ng-model="vm.field.status" class="disabled-btn">
+                                <md-option ng-value="undefined">New</md-option>
+                                <md-option ng-value="1">Matched</md-option>
+                                <md-option ng-value="2">Conflict</md-option>
+                                <md-option ng-value="3">Resolved</md-option>
+                                <md-option ng-value="4">Ignore</md-option>
+                                <md-option ng-value="5">Auto Matched</md-option>
+                            </md-select>
+                        </md-input-container>
+
+                        <md-input-container data-ng-if="!vm.lockSelect" class="m-0 width-90">
+                            <label>Status</label>
+                            <md-select data-ng-model="vm.field.status">
+                                <md-option ng-value="undefined">New</md-option>
+                                <md-option ng-value="2">Conflict</md-option>
+                                <md-option ng-value="3">Resolved</md-option>
+                                <md-option ng-value="4">Ignore</md-option>
+                            </md-select>
+                        </md-input-container>
+
+
+                    </div>
+
+                    <div layout="row" data-ng-if="vm.linkedComplexTransactionField">
+
+
+                        <div class="detail-recon-dialog-card-holder">
+
+                            <div class="detail-recon-dialog-card recon-card-matched p-10" style="font-size: 13px;">
+
+                                <div>
+                                    {{vm.linkedComplexTransactionField.reference_name}}
+                                </div>
+
+                                <div>
+                                    <div title="{{'Value Text: ' + vm.linkedComplexTransactionField.value_string}}"><b>Value
+                                        Text</b>: {{vm.linkedComplexTransactionField.value_string}}
+                                    </div>
+                                    <div title="{{'Value Float ' + vm.linkedComplexTransactionField.value_float}}"><b>Value
+                                        Float</b>: {{vm.linkedComplexTransactionField.value_float}}
+                                    </div>
+                                    <div title="{{'Value Date ' + vm.linkedComplexTransactionField.value_date}}"><b>Value
+                                        Date</b>: {{vm.linkedComplexTransactionField.value_date}}
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <md-button class="md-raised" data-ng-click="vm.dismissAndUnmatch($event)" style="height: 40px">
+                            Dismiss and Unmatch
+                        </md-button>
+
+                        <md-button class="md-raised" data-ng-click="vm.dismiss($event)" style="height: 40px">
+                            Dismiss
+                        </md-button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+        <div>
+            <md-button ng-click="vm.clear($event)" ng-class="{'disabled-btn': !vm.linkedComplexTransactionField}">
+                Clear
+            </md-button>
+        </div>
+        <div>
+            <md-button ng-click="vm.agree($event)">
+                Close
+            </md-button>
+        </div>
+    </md-dialog-actions>
+</md-dialog>

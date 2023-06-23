@@ -1,0 +1,28 @@
+<div class='last-notifications-popup'>
+    <div class="fm_list">
+        <div ng-if="popupData.noti.length"
+             ng-repeat='item in popupData.noti'
+             class='fm_message_item'>
+
+            <div class='flex-row fc-space-between'>
+                <div class='fm_message_item_date' ng-bind="popupData.formatDate(item.created)"></div>
+                <div class='fm_message_item_section' ng-bind="popupData.SECTIONS[item.section]"></div>
+            </div>
+
+            <div class="fm_message_item_h" ng-bind="item.title"></div>
+            <div class="fm_message_item_t"
+                 ng-bind="item.description.length > 65 ? item.description.slice(0, 65) + '...' : item.description"></div>
+
+        </div>
+
+        <div ng-if="!popupData.noti.length" class="fm_message_item text-align-center">
+            <div>No new messages</div>
+        </div>
+
+        <div class="p-8 flex-row fc-center">
+            <a href="{{popupData.homepageUrl}}">
+                <md-button class="link-button m-0">Show ALL</md-button>
+            </a>
+        </div>
+    </div>
+</div>

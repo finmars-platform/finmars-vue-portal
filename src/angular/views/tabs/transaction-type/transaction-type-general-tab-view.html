@@ -1,0 +1,173 @@
+<div>
+    <div data-ng-if="vm.checkReadyStatus()">
+
+
+        <div layout="row" style="margin-bottom: 20px; padding-left: 12px; font-size: 16px;" >
+
+            <div data-ng-if="vm.entity.type == 1"><b>Type</b>: Transaction</div>
+            <div data-ng-if="vm.entity.type == 2"><b>Type</b>: Procedure</div>
+
+        </div>
+
+        <div layout="row">
+
+            <usercode-input ng-if="!vm.entity.id" data-item="vm.entity"></usercode-input>
+
+            <md-input-container style="width: 300px" data-ng-if="vm.entity.id">
+                <label for="">User code</label>
+                <input type="text" data-ng-model="vm.entity.user_code">
+            </md-input-container>
+
+            <crud-select label="'Group'" item="vm.entity.group" entity-type="'transaction-type-group'"
+                         options="vm.transactionTypeGroups"></crud-select>
+
+        </div>
+        <div layout="row">
+            <md-input-container style="width: 300px">
+                <label for="">Name</label>
+                <input type="text" data-ng-model="vm.entity.name">
+            </md-input-container>
+        </div>
+
+        <div layout="row">
+            <md-input-container style="width: 300px">
+                <label for="">Short name</label>
+                <input type="text" data-ng-model="vm.entity.short_name">
+            </md-input-container>
+        </div>
+
+        <div layout="row">
+            <md-input-container style="width: 300px">
+                <label for="">Notes</label>
+<!--                <textarea data-ng-model="vm.entity.notes" cols="30" rows="10"></textarea>-->
+                <input type="text" data-ng-model="vm.entity.notes">
+            </md-input-container>
+        </div>
+
+        <div layout="row">
+            <md-input-container>
+                <md-checkbox data-ng-model="vm.entity.is_valid_for_all_instruments"
+                             data-ng-change="vm.unselectAllEntities('instruments')">
+                    Valid for all instruments
+                </md-checkbox>
+            </md-input-container>
+            <md-input-container>
+                <md-checkbox data-ng-model="vm.entity.is_valid_for_all_portfolios"
+                             data-ng-change="vm.unselectAllEntities('portfolios')">
+                    Valid for all portfolios
+                </md-checkbox>
+            </md-input-container>
+        </div>
+
+        <div layout="row">
+
+            <two-fields-multiselect data-ng-model="vm.entity.instrument_types"
+                                    title="Instrument types"
+                                    items="vm.instrumentTypes"
+                                    model="vm.entity.instrument_types"
+                                    name-property="name"
+                                    on-change-callback="vm.notValidForAll('instruments')"
+                                    class="ttype-general-multiselectors"></two-fields-multiselect>
+
+            <!--<md-input-container style="min-width: 200px">
+                <label for="portfolios-ms">Portfolios</label>
+                <md-select data-ng-model="vm.entity.portfolios"
+                           id="portfolios-ms"
+                           multiple
+                           md-selected-text="vm.bindSelectedText(vm.entity.portfolios, 'Portfolio')"
+                           data-ng-change="vm.notValidForAll('portfolios')">
+                    <md-option ng-value="item.id" ng-repeat="item in vm.portfolios">{{item.name}}</md-option>
+                </md-select>
+            </md-input-container>-->
+            <two-fields-multiselect ng-model="vm.entity.portfolios"
+                                    title="Portfolios"
+                                    items="vm.portfolios"
+                                    model="vm.entity.portfolios"
+                                    name-property="name"
+                                    on-change-callback="vm.notValidForAll('portfolios')"
+                                    class="ttype-general-multiselectors"></two-fields-multiselect>
+        </div>
+
+        <div layout="row"
+             class="m-b-8">
+            <!--<md-input-container>
+                <label for="" class="uncut-text-on-focus-label">Complex Transaction Date</label>
+                <input type="text" data-ng-model="vm.entity.date_expr" value-title>
+            </md-input-container>
+
+            <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}" data-item="vm.entity.date_expr"></expression-editor-button>-->
+            <expression-input label="Complex Transaction Date"
+                              model="vm.entity.date_expr"
+                              data-data="vm.expressionData"
+                              class="custom-input-bottom-space"
+                              style="margin-left: 12px;"></expression-input>
+        </div>
+
+        <div layout="row"
+             class="m-b-16">
+            <!--<md-input-container>
+                <label for="">Display Expression</label>
+                <input type="text" data-ng-model="vm.entity.display_expr" value-title>
+            </md-input-container>
+
+            <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}" data-item="vm.entity.display_expr"></expression-editor-button>-->
+            <expression-input label="Display Expression"
+                              model="vm.entity.display_expr"
+                              data-data="vm.expressionData"
+                              class="custom-input-bottom-space"
+                              style="margin-left: 12px;"></expression-input>
+        </div>
+
+        <!--<div layout="row">
+            <md-input-container>
+                <label for="">Tags</label>
+                <ui-select multiple tagging="vm.tagTransform" ng-model="vm.entity.tags" theme="bootstrap"
+                           sortable="true" close-on-select="false">
+                    <ui-select-match placeholder="Tags">{{$item.name}}</ui-select-match>
+                    <ui-select-choices position="up"
+                                       repeat="item.id as item in vm.tags | propsFilter: {name: $select.search}">
+                        <div ng-bind-html="item.name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </md-input-container>
+
+        </div>-->
+
+        <div>
+            <md-input-container style="margin-bottom: 13px;">
+                <label >Visibility Settings</label>
+                <md-select data-ng-model="vm.entity.visibility_status">
+                    <md-option ng-value="1" >Parameters are visible</md-option>
+                    <md-option ng-value="2" >Parameters are hidden</md-option>
+                </md-select>
+            </md-input-container>
+        </div>
+
+
+        <div layout="row"
+             class="m-b-16">
+
+           <expression-input label="Transaction Unique Code Expression"
+                             model="vm.entity.transaction_unique_code_expr"
+                             data-data="vm.expressionEditorData"
+                             class="custom-input-bottom-space"
+                             style="margin-left: 12px;"></expression-input>
+        </div>
+
+        <div>
+            <md-input-container>
+                <label >Transaction Unique Code Settings</label>
+                <md-select data-ng-model="vm.entity.transaction_unique_code_options">
+                    <md-option ng-value="1" >Book without unique code</md-option>
+                    <md-option ng-value="2" >Skip</md-option>
+                </md-select>
+            </md-input-container>
+        </div>
+
+    </div>
+    <div data-ng-if="!vm.checkReadyStatus()">
+        <div layout="row" layout-sm="column" layout-align="space-around">
+            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+        </div>
+    </div>
+</div>

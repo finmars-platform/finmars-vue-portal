@@ -1,0 +1,53 @@
+<div>
+    <md-input-container class="md-block no-error-spacer">
+        <!--<label>Copy text from</label>
+        <md-select ng-model="item.options.copyFrom">
+            <md-option data-ng-repeat="attr in findStringAttributes()" ng-value="copyFromValue(attr)">
+                {{attr.name}}
+            </md-option>
+        </md-select>-->
+        <label>Copy text from</label>
+        <md-select ng-model="item.options.copyFrom"
+                   md-container-class="common-select-container"
+                   md-on-close="searchTerm = ''"
+                   style="margin-bottom: 10px">
+
+                <md-select-header>
+                    <input data-ng-model="searchTerm"
+                           type="search"
+                           placeholder="Search for a ..."
+                           class="md-text md-select-search-pattern select-input-filter"
+                           ng-keydown="$event.stopPropagation()">
+                </md-select-header>
+
+                <div class="select-options-holder">
+
+                    <md-option data-ng-repeat="attr in findStringAttributes() | filter: {name: searchTerm}"
+                               ng-value="copyFromValue(attr)"
+                               ng-bind="attr.name">
+                    </md-option>
+
+                </div>
+
+        </md-select>
+    </md-input-container>
+
+    <md-input-container class="md-block ec-input-color-checkbox-container">
+
+        <md-checkbox data-ng-model="item.options.notNull"
+                     aria-label="not null checkbox">
+            Not null
+        </md-checkbox>
+
+    </md-input-container>
+
+    <md-input-container class="md-block ec-input-color-checkbox-container">
+
+        <md-checkbox data-ng-model="item.options.isHyperlink"
+                     aria-label="is hyperlink checkbox">
+            Hyperlink
+        </md-checkbox>
+
+    </md-input-container>
+
+</div>

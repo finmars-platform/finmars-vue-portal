@@ -1,0 +1,542 @@
+<div class="g-sidebar-filter-component" layout="column">
+
+    <group-actions-block ev-data-service="evDataService"
+                         ev-event-service="evEventService"
+                         attribute-data-service="attributeDataService"
+                         sp-exchange-service="spExchangeService"
+                         content-wrap-element="contentWrapElement"></group-actions-block>
+
+    <div data-ng-if="!isReport" layout="column">
+        <div>
+            <md-card class="g-sidebar-report-card">
+
+                <md-card-content data-ng-include="'views/entity-viewer/g-ev-rv-sidebar-settings-buttons.html'"
+                                 class="p-b-0">
+
+                </md-card-content>
+
+            </md-card>
+        </div>
+    </div>
+
+    <md-button  data-ng-if="missingPricesData.items.length" class="md-raised md-warn" data-ng-click="openMissingPricesDialog($event)">Warning ({{missingPricesData.items.length}})</md-button>
+
+    <div data-ng-if="isReport" layout="column">
+        <div data-ng-if="entityType === 'balance-report' || entityType === 'pl-report'">
+            <md-card class="g-sidebar-report-card">
+
+                <md-card-content>
+
+                    <!--<p class="g-r-card-title">
+                        Report settings
+                    </p>-->
+
+                    <div data-ng-include="'views/entity-viewer/g-ev-rv-sidebar-settings-buttons.html'"></div>
+
+                    <div layout="column" style="padding-top: 16px">
+
+                        <div data-ng-if="entityType === 'pl-report'">
+                            <complex-zh-datepicker data-ng-if="!isReportFilterFromDashboard"
+                                                    data-date="reportOptions.pl_first_date"
+                                                    data-datepicker-options="reportLayoutOptions.datepickerOptions.reportFirstDatepicker"
+                                                    data-display-options="datepickerFromDisplayOptions"
+                                                    data-callback-method="updateReportOptions()"
+                                                    data-ev-data-service="evDataService"
+                                                    data-ev-event-service="evEventService"
+                                                    data-attribute-data-service="attributeDataService"
+                                                    data-is-disabled="viewContext === 'dashboard'">
+                            </complex-zh-datepicker>
+
+                            <md-input-container data-ng-if="isReportFilterFromDashboard">
+                                <label class="uncut-text-on-focus-label">From</label>
+                                <input data-ng-model="reportOptions.pl_first_date"
+                                       type="text"
+                                       class="disabled-element"
+                                       readonly>
+                            </md-input-container>
+                        </div>
+
+                        <complex-zh-datepicker data-ng-if="!isReportFilterFromDashboard"
+                                                data-date="reportOptions.report_date"
+                                                data-datepicker-options="reportLayoutOptions.datepickerOptions.reportLastDatepicker"
+                                                data-display-options="datepickerToDisplayOptions"
+                                                data-callback-method="updateReportOptions()"
+                                                ev-data-service="evDataService"
+                                                ev-event-service="evEventService"
+                                                data-attribute-data-service="attributeDataService"
+                                                data-is-disabled="viewContext === 'dashboard'">
+                        </complex-zh-datepicker>
+
+                        <md-input-container data-ng-if="isReportFilterFromDashboard">
+                            <label class="uncut-text-on-focus-label"
+                                   data-ng-bind="getNameOfReportLastDate()"></label>
+                            <input data-ng-model="reportOptions.report_date"
+                                   type="text"
+                                   class="disabled-element"
+                                   readonly>
+                        </md-input-container>
+
+                        <md-input-container style="margin-bottom: 20px;">
+                            <label>Currency</label>
+                            <md-select ng-model="reportOptions.report_currency"
+                                       md-container-class="common-select-container"
+                                       md-on-close="searchTerm = ''"
+                                       ng-change="updateReportOptions()"
+                                       data-ng-disabled="viewContext === 'dashboard'">
+                                <md-select-header>
+                                    <input data-ng-model="searchTerm"
+                                           type="search"
+                                           placeholder="Search for a ..."
+                                           class="md-text md-select-search-pattern select-input-filter"
+                                           ng-keydown="$event.stopPropagation()">
+                                </md-select-header>
+
+                                <div class="select-options-holder">
+
+                                    <md-option ng-repeat="item in currencies | filter:{name: searchTerm}"
+                                               ng-value="item.id">
+                                        {{item.name}}
+                                    </md-option>
+
+                                </div>
+
+                            </md-select>
+                        </md-input-container>
+
+                        <md-input-container>
+                            <label>Pricing Policy</label>
+                            <md-select ng-model="reportOptions.pricing_policy"
+                                       md-container-class="common-select-container"
+                                       md-on-close="searchTerm = ''"
+                                       ng-change="updateReportOptions()"
+                                       data-ng-disabled="viewContext === 'dashboard'">
+                                <md-select-header>
+                                    <input data-ng-model="searchTerm"
+                                           type="search"
+                                           placeholder="Search for a ..."
+                                           class="md-text md-select-search-pattern select-input-filter" ng-keydown="$event.stopPropagation()">
+                                </md-select-header>
+
+                                <div class="select-options-holder">
+
+                                    <md-option ng-repeat="item in pricingPolicies | filter:{name: searchTerm}"
+                                               ng-value="item.id">
+                                        {{item.name}}
+                                    </md-option>
+
+                                </div>
+
+                            </md-select>
+                        </md-input-container>
+
+                    </div>
+
+                </md-card-content>
+
+            </md-card>
+        </div>
+
+        <div data-ng-if="entityType === 'transaction-report'">
+            <md-card class="g-sidebar-report-card">
+
+                <md-card-content>
+
+                    <!--<p class="g-r-card-title">
+                        Report settings
+                    </p>-->
+
+                    <div data-ng-include="'views/entity-viewer/g-ev-rv-sidebar-settings-buttons.html'"></div>
+
+                    <div layout="column">
+
+                        <md-input-container style="margin-bottom: 24px;">
+                            <label class="uncut-text-on-focus-label" for="transaction-report-date-type">Filter by</label>
+                            <md-select ng-model="reportOptions.date_field"
+                                       md-container-class="common-select-container"
+                                       md-on-close="searchTerm = ''"
+                                       ng-change="updateReportOptions()" id="transaction-report-date-type">
+                                <md-select-header>
+                                    <input data-ng-model="searchTerm"
+                                           type="search"
+                                           placeholder="Search for a ..."
+                                           class="md-text md-select-search-pattern select-input-filter"
+                                           data-ng-keydown="$event.stopPropagation()">
+                                </md-select-header>
+
+                                <div class="select-options-holder">
+                                    <md-option ng-hide="filterItemsOutsideNgrepeat('Report date', searchTerm)" ng-value="null">Transaction date</md-option>
+                                    <md-option ng-repeat="userDate in transactionsUserDates | orderBy: userDate.name | filter:{name: searchTerm}"
+                                               ng-value="userDate.key">
+                                        {{userDate.name}}
+                                    </md-option>
+                                </div>
+
+                            </md-select>
+                        </md-input-container>
+
+                        <div>
+                            <complex-zh-datepicker data-ng-if="!isReportFilterFromDashboard"
+                                                    data-date="reportOptions.begin_date"
+                                                    data-datepicker-options="reportLayoutOptions.datepickerOptions.reportFirstDatepicker"
+                                                    data-display-options="datepickerFromDisplayOptions"
+                                                    data-callback-method="updateReportOptions()"
+                                                    ev-data-service="evDataService"
+                                                    ev-event-service="evEventService"
+                                                    data-attribute-data-service="attributeDataService"
+                                                    data-is-disabled="viewContext === 'dashboard'">
+                            </complex-zh-datepicker>
+
+                            <md-input-container data-ng-if="isReportFilterFromDashboard">
+                                <label class="uncut-text-on-focus-label">Date From</label>
+                                <input data-ng-model="reportOptions.begin_date"
+                                       type="text"
+                                       class="disabled-element"
+                                       readonly>
+                            </md-input-container>
+                        </div>
+
+                        <div>
+                            <complex-zh-datepicker data-ng-if="!isReportFilterFromDashboard"
+                                                    data-date="reportOptions.end_date"
+                                                    data-datepicker-options="reportLayoutOptions.datepickerOptions.reportLastDatepicker"
+                                                    data-display-options="datepickerToDisplayOptions"
+                                                    data-callback-method="updateReportOptions()"
+                                                    ev-data-service="evDataService"
+                                                    ev-event-service="evEventService"
+                                                    data-attribute-data-service="attributeDataService"
+                                                    data-is-disabled="viewContext === 'dashboard'">
+                            </complex-zh-datepicker>
+
+                            <md-input-container data-ng-if="isReportFilterFromDashboard">
+                                <label class="uncut-text-on-focus-label">Date From</label>
+                                <input data-ng-model="reportOptions.end_date"
+                                       type="text"
+                                       class="disabled-element"
+                                       readonly>
+                            </md-input-container>
+                        </div>
+
+                    </div>
+
+                </md-card-content>
+
+            </md-card>
+        </div>
+
+        <div data-ng-if="entityType == 'cash-flow-projection-report'">
+            <md-card class="g-sidebar-report-card">
+
+                <md-card-content>
+
+                    <p class="g-r-card-title">
+                        Report settings
+                    </p>
+
+                    <div layout="column" style="padding-top: 16px">
+
+                        <md-input-container>
+
+                            <label for="">Begin date</label>
+
+                            <zh-date-picker data-date-value="reportOptions.begin_date"
+                                            data-position="left"
+                                            data-callback-method="updateReportOptions()"></zh-date-picker>
+
+                        </md-input-container>
+
+                        <md-input-container>
+
+                            <label for="">End date</label>
+
+                            <zh-date-picker data-date-value="reportOptions.end_date"
+                                            data-position="left"
+                                            data-callback-method="updateReportOptions()"></zh-date-picker>
+
+                        </md-input-container>
+
+                        <md-input-container>
+
+                            <label for="">Balance date</label>
+
+                            <zh-date-picker data-date-value="reportOptions.balance_date"
+                                            data-position="left"
+                                            data-callback-method="updateReportOptions()"></zh-date-picker>
+
+                        </md-input-container>
+
+                        <md-input-container>
+
+                            <label for="">Report date</label>
+
+                            <zh-date-picker data-date-value="reportOptions.report_date"
+                                            position="left"
+                                            data-callback-method="updateReportOptions()"></zh-date-picker>
+
+                        </md-input-container>
+
+
+                    </div>
+
+                </md-card-content>
+
+            </md-card>
+        </div>
+
+        <div data-ng-if="entityType == 'performance-report'">
+            <md-card class="g-sidebar-report-card">
+
+                <md-card-content>
+
+                    <p class="g-r-card-title">
+                        Report settings
+                    </p>
+
+                    <div layout="column" style="padding-top: 16px">
+
+                        <md-input-container>
+
+                            <label for="">Begin Date</label>
+
+                            <zh-date-picker data-date-value="reportOptions.begin_date"
+                                            position="left"
+                                            data-callback-method="updateReportOptions()"></zh-date-picker>
+
+
+                        </md-input-container>
+
+                        <md-input-container>
+
+                            <label for="">End Date</label>
+
+                            <zh-date-picker data-date-value="reportOptions.end_date"
+                                            position="left"
+                                            data-callback-method="updateReportOptions()"></zh-date-picker>
+
+                        </md-input-container>
+
+                        <md-input-container style="margin-bottom: 20px;">
+                            <label>Currency</label>
+                            <md-select ng-model="reportOptions.report_currency"
+                                       md-container-class="common-select-container"
+                                       md-on-close="searchTerm = ''"
+                                       ng-change="updateReportOptions()"
+                                       data-ng-disabled="viewContext === 'dashboard'">
+                                <md-select-header>
+                                    <input data-ng-model="searchTerm"
+                                           type="search"
+                                           placeholder="Search for a ..."
+                                           class="md-text md-select-search-pattern select-input-filter" ng-keydown="$event.stopPropagation()">
+                                </md-select-header>
+
+                                <div class="select-options-holder">
+
+                                    <md-option ng-repeat="item in currencies | orderBy:'-'+field.name | filter:{name: searchTerm}" ng-value="item.id">
+                                        {{item.name}}
+                                    </md-option>
+
+                                </div>
+
+                            </md-select>
+                        </md-input-container>
+
+                        <md-input-container>
+                            <label>Pricing Policy</label>
+                            <md-select ng-model="reportOptions.pricing_policy"
+                                       ng-change="updateReportOptions()"
+                                       md-container-class="common-select-container"
+                                       md-on-close="searchTerm = ''"
+                                       data-ng-disabled="viewContext === 'dashboard'">
+                                <md-select-header>
+                                    <input data-ng-model="searchTerm"
+                                           type="search"
+                                           placeholder="Search for a ..."
+                                           class="md-text md-select-search-pattern select-input-filter" ng-keydown="$event.stopPropagation()">
+                                </md-select-header>
+
+                                <div class="select-options-holder">
+
+                                    <md-option ng-repeat="item in pricingPolicies | filter:{name: searchTerm}" ng-value="item.id">
+                                        {{item.name}}
+                                    </md-option>
+
+                                </div>
+
+                            </md-select>
+                        </md-input-container>
+
+                    </div>
+
+                    <div layout="column" style="margin-top: 16px;">
+
+                        <md-button data-ng-click="openPeriodsDialog($event)" class="md-primary md-raised">Periodicity
+                        </md-button>
+
+                    </div>
+
+                </md-card-content>
+
+            </md-card>
+        </div>
+    </div>
+
+    <md-button ng-hide="sideNavCollapsed"
+               class="md-button md-raised viewer-table-toggle-contextmenu-btn"
+               data-ng-click="openContextMenu($event)">Selected Item(s)</md-button>
+
+    <div class="area-title-container">
+        <p class="area-title g-section-title"><span class="g-meta-circle blue">F</span><span class="after-text">ILTER AREA</span>
+            <ng-md-icon class="tooltips-sign" icon="info" size="20" style="fill: #777777">
+                <md-tooltip class="tooltip_1" md-direction="top">tooltip text</md-tooltip>
+            </ng-md-icon>
+        </p>
+
+        <md-button aria-label="resize"
+                   class="to-small-btn filter-sidenav f-s-collapse fab md-raised"
+                   data-ng-click="resizeFilterSideNav('collapse')">
+            <md-tooltip class="" md-direction="top">Collapse area</md-tooltip>
+            <ng-md-icon icon="chevron_right"></ng-md-icon>
+        </md-button>
+    </div>
+
+    <div layout="row" layout-align="center start">
+        <md-button aria-label="resize"
+                   class="to-small-btn filter-sidenav f-s-expand fab md-raised"
+                   data-ng-click="resizeFilterSideNav('expand')">
+            <md-tooltip class="" md-direction="top">Expand area</md-tooltip>
+            <ng-md-icon icon="chevron_left"></ng-md-icon>
+        </md-button>
+    </div>
+
+    <!--<div layout="row" class="filters-control-btn s-f-expanded-btns">
+        <md-button class="md-raised" data-ng-click="selectAll()">
+            Select all
+        </md-button>
+        <md-button class="md-raised" data-ng-click="deselectAll()">
+            Deselect all
+        </md-button>
+    </div>
+    <div layout="row" class="filters-control-btn s-f-expanded-btns">
+        <md-button class="md-raised clear-all full-width" data-ng-click="clearAll()">
+            Clear all
+        </md-button>
+    </div>-->
+
+    <div layout="row" layout-align="space-between center" class="filters-control-btn s-f-expanded-btns">
+        <md-button class="md-button md-raised filters-management-btn" data-ng-click="selectAll()">
+            <ng-md-icon class="tooltip-inline-block"
+                        icon="check_box"
+                        size="30">
+            </ng-md-icon>
+            <md-tooltip class="tooltip_2" md-direction="top">Select all</md-tooltip>
+        </md-button>
+
+        <md-button class="md-raised filters-management-btn" data-ng-click="deselectAll()">
+            <ng-md-icon class="tooltip-inline-block"
+                        icon="check_box_outline_blank"
+                        size="30">
+            </ng-md-icon>
+            <md-tooltip class="tooltip_2" md-direction="top">Deselect all</md-tooltip>
+        </md-button>
+
+        <md-button class="md-raised clear-all full-width filters-management-btn" data-ng-click="clearAll()">
+            <ng-md-icon class="tooltip-inline-block"
+                        icon="cancel"
+                        size="30">
+            </ng-md-icon>
+            <md-tooltip class="tooltip_2" md-direction="top">Clear all</md-tooltip>
+        </md-button>
+    </div>
+
+    <div class="s-f-collapsed-btns" layout="column" layout-align="start center">
+        <md-button class="md-raised to-small-btn filters-management-btn" data-ng-click="selectAll()">
+            <ng-md-icon icon="check_box"></ng-md-icon>
+            <md-tooltip md-direction="top">Select all</md-tooltip>
+        </md-button>
+        <md-button class="md-raised to-small-btn filters-management-btn" data-ng-click="deselectAll()">
+            <ng-md-icon icon="check_box_outline_blank"></ng-md-icon>
+            <md-tooltip md-direction="top">Deselect all</md-tooltip>
+        </md-button>
+        <md-button class="md-raised to-small-btn clear-all filters-management-btn" data-ng-click="clearAll()">
+            <ng-md-icon icon="cancel"></ng-md-icon>
+            <md-tooltip md-direction="top">Clear all</md-tooltip>
+        </md-button>
+
+<!--        <md-button class="md-raised g-add-filter-btn" data-ng-click="addFilter()">
+            <span>+</span>
+            <md-tooltip md-direction="top">Add Filter</md-tooltip>
+        </md-button>-->
+    </div>
+
+    <md-button class="md-raised g-add-filter-btn s-f-expanded-btns" data-ng-click="addFilter()">
+        Add Filter
+    </md-button>
+    <!--<div dragula="'filters-bag'" dragula-model="filters" class="filters-holder">-->
+    <div data-ng-if="isReport">
+        <div class="g-filters-holder g-filters-holder-container">
+            <div data-ng-repeat="filter in filters track by filter.key" class="g-filter-elem">
+                <div class="filterCardHolder"
+                     data-filter-key="{{filter.key}}">
+
+                    <div ng-if="filter['value_type'] === 10 || filter['value_type'] === 30">
+                        <rv-text-filter filter="filter"
+                                        ev-data-service="evDataService"
+                                        ev-event-service="evEventService"
+                                        attribute-data-service="attributeDataService"></rv-text-filter>
+                    </div>
+
+                    <div ng-if="filter['value_type'] === 20">
+                        <rv-number-filter filter="filter"
+                                          ev-data-service="evDataService"
+                                          ev-event-service="evEventService"
+                                          attribute-data-service="attributeDataService"></rv-number-filter>
+                    </div>
+
+                    <div ng-if="filter['value_type'] === 40">
+                        <rv-date-filter filter="filter"
+                                        ev-data-service="evDataService"
+                                        ev-event-service="evEventService"
+                                        attribute-data-service="attributeDataService"></rv-date-filter>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div data-ng-if="!isReport">
+        <div class="g-filters-holder g-filters-holder-container">
+            <div data-ng-repeat="filter in filters track by filter.key" class="g-filter-elem">
+                <div class="filterCardHolder"
+                     data-filter-key="{{filter.key}}">
+
+                    <div ng-if="filter['value_type'] === 10 || filter['value_type'] === 30 || filter['value_type'] === 'field'">
+                        <ev-text-filter filter="filter"
+                                        ev-data-service="evDataService"
+                                        ev-event-service="evEventService"
+                                        attribute-data-service="attributeDataService"></ev-text-filter>
+                    </div>
+
+                    <div ng-if="filter['value_type'] === 20">
+                        <ev-number-filter filter="filter"
+                                          ev-data-service="evDataService"
+                                          ev-event-service="evEventService"
+                                          attribute-data-service="attributeDataService"></ev-number-filter>
+                    </div>
+
+                    <div ng-if="filter['value_type'] === 40">
+                        <ev-date-filter filter="filter"
+                                        ev-data-service="evDataService"
+                                        ev-event-service="evEventService"
+                                        attribute-data-service="attributeDataService"></ev-date-filter>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="drop-new-filter">
+        Drop new Filter
+    </div>
+
+</div>

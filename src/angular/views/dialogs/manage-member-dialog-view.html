@@ -1,0 +1,46 @@
+<md-dialog aria-label="" class="draggable-dialog manage-member-group width-50" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Edit member {{vm.member.username}}</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="manage-member-dialog-content p-16">
+
+        <div layout="column" data-ng-if="vm.readyStatus.content">
+
+            <p>Username: <b data-ng-bind="vm.member.username"></b></p>
+            <p>First Name: <b data-ng-bind="vm.member.first_name"></b></p>
+            <p>Last Name: <b data-ng-bind="vm.member.last_name"></b></p>
+            <p>Join Date: <b data-ng-bind="vm.member.join_date  | date:'dd/MM/yyyy'"></b></p>
+
+            <two-fields-options all-options="vm.groupsList" selected-options="vm.assignedGroupsList"
+                                name-property="name"></two-fields-options>
+
+
+
+
+            <md-checkbox data-ng-model="vm.member.is_admin" aria-label="member permission" data-ng-if="vm.isOwner">This member is Admin
+            </md-checkbox>
+
+        </div>
+
+        <div data-ng-if="!vm.readyStatus.content">
+
+            <div layout="row" layout-sm="column" layout-align="space-around" class="dashboard-loader">
+                <progress-circular diameter="50"></progress-circular>
+            </div>
+
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row" layout-align="space-between center">
+        <md-button class="md-raised" ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.agree()">
+            Save
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

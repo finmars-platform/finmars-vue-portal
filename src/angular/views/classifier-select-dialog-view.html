@@ -1,0 +1,126 @@
+<md-dialog class="classifier-select-dialog-view dialog-actions-bottom classifierSelectorElemToDrag"
+           aria-label="classifier selector dialog">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2 ng-bind="vm.label"></h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+
+        <div class="classifier-sel-content">
+
+            <div ng-hide="vm.showFavorites" class="classifier-sel-tree-wrapper">
+
+                <div ng-if="vm.tree" class="height-100">
+                    <classifier-tree tree-data="vm.tree"
+                                     classifier-tree-event-service="vm.classifierTreeEventService"
+                                     on-edit-node-cancel="vm.onEditCancelInsideTree()"
+                                     on-active-nodes-change-callback="vm.onActiveNodesChange(activeNodesList)"></classifier-tree>
+                </div>
+
+            </div>
+
+            <div ng-hide="!vm.showFavorites" class="classifier-sel-favorites-container flex-column">
+
+                <div class="classifier-tree-filter-container">
+                    <span class="material-icons">search</span>
+                    <input type="text"
+                           placeholder="Search"
+                           ng-model="vm.favoritesFilterTerms"
+                           ng-model-options="{debounce: 1000}">
+                </div>
+
+                <div class="classifier-sel-favorites-holder">
+                    <div ng-repeat="favNode in vm.favoritesList | filter: {'name': vm.favoritesFilterTerms}">
+
+                        <div class="fav-node-row"
+                             ng-class="{'active': favNode.isActive, 'edit': favNode.editOn, 'm-t-0': $first}"
+                             ng-click="vm.toggleFavNodeSelection(favNode)">
+
+                            <div ng-if="!favNode.editOn">
+                                <span ng-bind="favNode.name"></span>
+                            </div>
+
+                            <div ng-show="!favNode.editOn" class="fav-node-btns-holder">
+                                <button ng-click="vm.removeNodeFromFavorites($event, favNode.pathToNode)" class="fav-node-btn">
+                                    <span class="material-icons">remove_circle_outline</span>
+                                </button>
+                            </div>
+
+                            <div ng-show="favNode.editOn" class="flex-row flex-0-1-100 fi-center">
+                                <input class="classifier-name"
+                                       type="text"
+                                       ng-model="favNode.newName">
+                                <button data-ng-click="vm.saveNode($event, favNode)"
+                                        class="classifier-node-btn flex-row"
+                                        ng-disabled="isSaveDisabled()"><span class="material-icons">done</span></button>
+                                <button data-ng-click="vm.cancelEdit($event, favNode)"
+                                        class="classifier-node-btn flex-row"><span class="material-icons">close</span></button>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="classifier-sel-tabs-holder flex-row">
+                <div ng-click="vm.showFavorites = true;"
+                     class="classifier-sel-tab"
+                     ng-class="{'active': vm.showFavorites}">FAVORITES</div>
+
+                <div ng-click="vm.showFavorites = false;"
+                     class="classifier-sel-tab"
+                     ng-class="{'active': !vm.showFavorites}"
+                     ng-bind="vm.sellAllTabName">ALL</div>
+            </div>
+
+            <div class="classifier-tree-loader" ng-if="!vm.readyStatus">
+                <progress-circular diameter="100"></progress-circular>
+            </div>
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions class="classifier-footer">
+        <div>
+            <button data-ng-if="vm.isLock"
+                    data-ng-click="vm.isLock = false"><span class="material-icons">lock</span></button>
+            <button data-ng-if="!vm.isLock"
+                    ng-hide="vm.showFavorites"
+                    data-ng-click="vm.onAdd()"
+                    data-ng-disabled="vm.isEdit || !vm.readyStatus"><span class="material-icons">add</span></button>
+            <button data-ng-if="!vm.isLock"
+                    data-ng-click="vm.onEdit()"
+                    data-ng-disabled="!vm.activeNodesExist() || vm.isEdit || !vm.readyStatus"><span class="material-icons">edit</span></button>
+            <button data-ng-if="!vm.isLock"
+                    data-ng-click="vm.onDelete()"
+                    data-ng-disabled="!vm.activeNodesExist() || vm.isEdit || !vm.readyStatus"><span class="material-icons">delete</span></button>
+            <button ng-if="!vm.isLock"
+                    ng-hide="vm.showFavorites"
+                    ng-click="vm.sortTreeAlphabetically()"
+                    data-ng-disabled="vm.isEdit || !vm.readyStatus">
+                <span class="material-icons">sort_by_alpha</span>
+                <md-tooltip class="tooltip_1"
+                            md-direction="top">Sort tree alphabetically</md-tooltip>
+            </button>
+        </div>
+
+        <div>
+            <md-button ng-click="vm.cancel()" class="link-button">
+                <span>CANCEL</span>
+            </md-button>
+
+            <md-button ng-click="vm.agree()"
+                       ng-disabled="!vm.readyStatus" class="link-button" ng-disabled="vm.isEdit">
+                <span>OK</span>
+            </md-button>
+        </div>
+
+    </md-dialog-actions>
+
+</md-dialog>

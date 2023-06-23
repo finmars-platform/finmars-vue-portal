@@ -1,0 +1,47 @@
+<div class="g-filter-type-n-value flex-row fc-space-between">
+    <md-input-container class="g-filter-types-select">
+        <md-select ng-model="activeFilterType"
+                   ng-change="changeFilterType()"
+                   class="g-filter-tnv-back">
+            <div class="select-options-holder">
+
+                <md-option ng-repeat="type in filterTypes"
+                           ng-value="type.value"
+                           ng-bind="type.name"></md-option>
+
+                <md-option value="use_from_above" ng-click="openUseFromAboveSettings()">Linked</md-option>
+
+            </div>
+        </md-select>
+    </md-input-container>
+
+    <div class="g-filter-value-wrap">
+        <div ng-if="filter.options.filter_type !== 'from_to' && filter.options.filter_type !== 'out_of_range'"
+             class="height-100">
+
+            <input type="number"
+                   ng-model="filter.options.filter_values[0]"
+                   placeholder="Value"
+                   class="g-filter-tnv-back g-filter-input no-input-arrows" />
+
+        </div>
+
+        <div ng-if="filter.options.filter_type === 'from_to' || filter.options.filter_type === 'out_of_range'"
+             class="height-100">
+
+            <input type="number"
+                   ng-model="filter.options.filter_values.min_value"
+                   placeholder="From (incl)"
+                   class="g-filter-tnv-back g-filter-input no-input-arrows" />
+
+            <input type="number"
+                   ng-model="filter.options.filter_values.max_value"
+                   placeholder="To (incl)"
+                   class="g-filter-tnv-back g-filter-input no-input-arrows" />
+
+        </div>
+
+
+    </div>
+
+</div>

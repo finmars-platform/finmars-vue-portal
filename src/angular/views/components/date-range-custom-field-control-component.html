@@ -1,0 +1,161 @@
+<div>
+
+    <div layout="column">
+
+        <!--<div layout="row" class="drcf-before" layout-align="center center">-->
+
+            <!--<md-input-container flex="30">-->
+                <!--<label for="">Starting text</label>-->
+                <!--<input type="text" data-ng-model="$ctrl.range.before.date">-->
+            <!--</md-input-container>-->
+
+            <!--<md-input-container flex="30" style="height: 58px">-->
+                <!--<label for="">Earliest From Date format</label>-->
+                <!--<md-select data-ng-model="$ctrl.range.before.format">-->
+                    <!--<md-option data-ng-value="item.value" data-ng-repeat="item in $ctrl.dateFormats track by item.id">-->
+                        <!--{{item.caption}}-->
+                    <!--</md-option>-->
+                <!--</md-select>-->
+            <!--</md-input-container>-->
+
+            <!--<md-input-container flex="30">-->
+                <!--<label for="">Ending text</label>-->
+                <!--<input type="text" data-ng-model="$ctrl.range.before.name">-->
+            <!--</md-input-container>-->
+
+        <!--</div>-->
+
+        <div class="drcf-item" data-ng-repeat="item in $ctrl.items" layout="row">
+
+            <div class="column" flex="90">
+                <div layout="row" class="drcf-item-top" layout-align="space-between center">
+                    <md-input-container>
+                        <label for="">From date</label>
+                        <input type="text" data-ng-model="item.begin" style="width: 60%">
+
+                        <md-button class="md-raised md-primary expr-btn"
+                                   data-ng-click="$ctrl.openExpressionDialog($event, item, {key: 'begin'})">
+                            ...
+                        </md-button>
+
+                    </md-input-container>
+
+                    <md-input-container style="height: 58px">
+                        <label for="">Frequency</label>
+                        <md-select data-ng-model="item.step">
+                            <md-option data-ng-value="item.step" data-ng-repeat="item in $ctrl.frequencies track by item.id">
+                                {{item.caption}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-input-container>
+                        <label for="">To date</label>
+                        <input type="text" data-ng-model="item.end" style="width: 60%">
+
+                        <md-button class="md-raised md-primary expr-btn"
+                                   data-ng-click="$ctrl.openExpressionDialog($event, item, {key: 'end'})">
+                            ...
+                        </md-button>
+
+                    </md-input-container>
+                </div>
+
+                <div layout="column" class="drcf-item-bottom" layout-align="center center">
+
+                    <div flex="60" layout="row" layout-align="center center">
+
+                        <div flex="30">
+
+                            <md-input-container>
+                                <label for="">Starting text</label>
+                                <input type="text" data-ng-model="item.str1">
+                            </md-input-container>
+
+                        </div>
+
+                        <md-input-container flex="30" style="height: 58px">
+                            <label for="">From Date format</label>
+                            <md-select data-ng-model="item.begin_date_fmt">
+                                <md-option data-ng-value="item.value" data-ng-repeat="item in $ctrl.dateFormats track by item.id">
+                                    {{item.caption}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+
+                        <md-input-container flex="30">
+                            <label for="">Ending text</label>
+                            <input type="text" data-ng-model="item.str3">
+                        </md-input-container>
+
+                    </div>
+
+                    <div flex="60" layout="row" layout-align="center center">
+
+                        <div flex="30">
+                            <md-input-container>
+                                <label for="">Starting text</label>
+                                <input type="text" data-ng-model="item.str4">
+                            </md-input-container>
+                        </div>
+
+                        <md-input-container flex="30" style="height: 58px">
+                            <label for="">To Date Format</label>
+                            <md-select data-ng-model="item.end_date_fmt">
+                                <md-option data-ng-value="item.value" data-ng-repeat="item in $ctrl.dateFormats track by item.id">
+                                    {{item.caption}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+
+                        <md-input-container flex="30">
+                            <label for="">Ending text</label>
+                            <input type="text" data-ng-model="item.str6">
+                        </md-input-container>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row" flex="10">
+                <div>
+                    <md-button class="md-icon-button md-raised {{$ctrl.inputIsFocused ? 'disabled-btn' : ''}}"
+                               data-ng-click="$ctrl.addRange(item, $index)">
+                        <ng-md-icon icon="add"></ng-md-icon>
+                    </md-button>
+                </div>
+                <div data-ng-if="$index !== 0">
+                    <md-button class="md-icon-button md-raised" data-ng-click="$ctrl.removeRange($index)">
+                        <ng-md-icon icon="remove"></ng-md-icon>
+                    </md-button>
+                </div>
+            </div>
+
+        </div>
+
+        <!--<div layout="row" class="drcf-after" layout-align="center center">-->
+
+            <!--<md-input-container flex="30">-->
+                <!--<label for="">Starting text</label>-->
+                <!--<input type="text" data-ng-model="$ctrl.range.after.date">-->
+            <!--</md-input-container>-->
+
+            <!--<md-input-container flex="30" style="height: 58px">-->
+                <!--<label for="">Latest To Date format</label>-->
+                <!--<md-select data-ng-model="$ctrl.range.after.format">-->
+                    <!--<md-option data-ng-value="item.value" data-ng-repeat="item in $ctrl.dateFormats track by item.id">-->
+                        <!--{{item.caption}}-->
+                    <!--</md-option>-->
+                <!--</md-select>-->
+            <!--</md-input-container>-->
+
+            <!--<md-input-container flex="30">-->
+                <!--<label for="">Ending text</label>-->
+                <!--<input type="text" data-ng-model="$ctrl.range.after.name">-->
+            <!--</md-input-container>-->
+
+        <!--</div>-->
+
+    </div>
+
+</div>

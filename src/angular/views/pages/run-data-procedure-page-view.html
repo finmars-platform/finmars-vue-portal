@@ -1,0 +1,87 @@
+<div class="p-24">
+
+    <div layout="column" data-ng-if="vm.readyStatus.data">
+
+        <h1>Run Data Procedures</h1>
+
+        <table>
+
+            <thead>
+
+            <tr>
+                <th>
+                    Procedure Name
+                </th>
+
+                <th>
+                    Notes
+                </th>
+                <th>
+                    Provider
+                </th>
+                <th>
+                    Scheme name
+                </th>
+                <th>
+                    Execute
+                </th>
+                <th>
+                    Edit Procedure
+                </th>
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            <tr data-ng-repeat="item in vm.procedures">
+
+                <td>
+                    {{item.name}}
+                </td>
+
+                <td>
+                    {{item.notes_for_users}}
+                </td>
+
+                <td>
+
+                    {{item.provider_object.name}}
+
+                </td>
+
+                <td>
+
+                    {{item.scheme_user_code}}
+
+                </td>
+
+                <td>
+                    <md-button class="md-raised" data-ng-click="vm.executeProcedure($event, item)">Execute</md-button>
+                </td>
+
+                <td>
+                    <md-button class="md-raised" data-ng-click="vm.editProcedure($event, item)">Edit</md-button>
+                </td>
+
+            </tr>
+
+            </tbody>
+
+
+        </table>
+
+        <div>
+            <md-button ui-sref="app.portal.data-procedure-instance" class="md-raised">Check Procedure Status</md-button>
+        </div>
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.data" style="width: 100%">
+        <div layout="row" layout-sm="column" layout-align="space-around">
+            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+        </div>
+    </div>
+
+
+</div>

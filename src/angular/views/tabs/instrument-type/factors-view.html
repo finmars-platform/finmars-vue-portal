@@ -1,0 +1,22 @@
+<div data-ng-controller="InstrumentTypeFactorsTabController as vm">
+    <div data-ng-if="vm.readyStatus.factors">
+        <div class="instrument-type-factors-grid-table grid-table-bordered-rows">
+            <grid-table gt-data-service="vm.factorsDataGridTableDataService"
+                        gt-event-service="vm.factorsDataGridTableEventService"></grid-table>
+        </div>
+
+        <h3>Created by Default</h3>
+
+        <div class="instrument-type-factors-grid-table grid-table-bordered-rows">
+            <grid-table gt-data-service="vm.factorsGridTableDataService"
+                        gt-event-service="vm.factorsGridTableEventService"></grid-table>
+        </div>
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.factors">
+        <div layout="row" layout-sm="column" layout-align="space-around" class="">
+            <progress-circular diameter="30"></progress-circular>
+        </div>
+    </div>
+
+</div>

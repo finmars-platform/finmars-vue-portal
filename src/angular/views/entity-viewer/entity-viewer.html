@@ -1,0 +1,17 @@
+<div data-ng-controller="EntityViewerController as vm" class="entity-viewer-holder">
+    <div class="height-100">
+        <div data-ng-if="vm.readyStatus.attributes && vm.readyStatus.layout" class="g-group-table-holder">
+           <group-table
+                    attribute-data-service="vm.attributeDataService"
+                    ev-data-service="vm.entityViewerDataService"
+                    ev-event-service="vm.entityViewerEventService"
+                    sp-exchange-service="vm.splitPanelExchangeService"
+            ></group-table>
+        </div>
+        <div data-ng-if="!vm.readyStatus.attributes || !vm.readyStatus.layout">
+            <div class="e-data-loader" layout="row" layout-sm="column" layout-align="space-around">
+                <progress-circular diameter="100"></progress-circular>
+            </div>
+        </div>
+    </div>
+</div>

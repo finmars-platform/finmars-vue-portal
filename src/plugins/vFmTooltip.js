@@ -60,22 +60,38 @@ export default defineNuxtPlugin(nuxtApp => {
 
 			tooltipElem.classList.add('fm_tooltip');
 			tooltipElem.style.position = 'absolute';
-			tooltipElem.innerText = binding.value;
+			tooltipElem.innerHTML = binding.value;
 
 			if (errorMode) tooltipElem.classList.add('error');
 
 			el.addEventListener('mouseover', function () {
+
 				if (!binding.value) return;
 				body.appendChild(tooltipElem);
+
 				calculatePosition(el, tooltipElem, direction);
+
 			})
 
 			el.addEventListener('mouseleave', function () {
+
 				if (!binding.value) return;
 				body.removeChild(tooltipElem);
+
 			})
 
-		}
+		},
+
+		/*unmounted() {
+
+			const body = document.body;
+			const tooltipElem = body.querySelector('.fm_tooltip');
+
+			if (tooltipElem) {
+				body.removeChild(tooltipElem);
+			}
+
+		},*/
 
 	})
 });

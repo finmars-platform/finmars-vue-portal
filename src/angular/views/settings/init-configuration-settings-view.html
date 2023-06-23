@@ -1,0 +1,54 @@
+<div style="padding: 20px 20px 0">
+
+<!--    <p class="md-headline">Init Configuration settings</p>-->
+    <h2 class="m-b-35">Initial Configuration for Invited Users</h2>
+
+    <div data-ng-if="vm.readyStatus.content">
+
+        <div data-ng-if="vm.items.length">
+
+            <div data-ng-repeat="item in vm.items" class="configuration-item">
+
+                <div>
+
+                    <div layout="row" layout-align="space-between">
+
+                        <div class="configuration-name p-t-8">Name: {{item.name}}</div>
+
+                        <div layout="row">
+                            <md-button class="m-0" data-ng-click="vm.editItem($event, item)">Edit</md-button>
+                            <md-button class="m-0 md-warn" data-ng-click="vm.deleteItem($event, item)">Delete</md-button>
+                        </div>
+
+                    </div>
+
+
+                    <div data-ng-if="item.description" class="configuration-description">
+                        <div>Description:</div>
+                        {{item.description}}
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+        <div data-ng-if="!vm.items.length">
+            Configurations not found
+        </div>
+
+        <div>
+            <md-button class="md-raised md-primary float-right" data-ng-click="vm.addItem()">Create</md-button>
+        </div>
+
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.content">
+        <div class="m-l-16" layout="row" layout-sm="column" layout-align="space-around">
+            <md-progress-circular md-diameter="50" md-mode="indeterminate"></md-progress-circular>
+        </div>
+    </div>
+
+</div>

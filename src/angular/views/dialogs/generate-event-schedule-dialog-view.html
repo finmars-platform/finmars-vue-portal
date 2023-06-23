@@ -1,0 +1,14 @@
+<md-dialog class="draggable-dialog" aria-label="generate event schedule dialog view" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Generate event schedule</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content></md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button data-ng-click="vm.cancel()">Cancel</md-button>
+        <md-button data-ng-click="vm.agree()">Generate</md-button>
+    </md-dialog-actions>
+</md-dialog>

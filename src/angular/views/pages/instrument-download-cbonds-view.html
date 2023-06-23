@@ -1,0 +1,26 @@
+<div layout="column"
+     style="padding: 0 20px">
+
+    <h2 class="m-b-35">Instrument Import Finmars Database Manager</h2>
+
+    <div layout="row">
+        <div>
+            <md-input-container flex="40" class="m-b-0 m-l-0"   >
+                <label for="IIMISINInput">Query</label>
+                <input id="IIMISINInput" type="text" data-ng-model="vm.config.instrument_code" style="width: 300px">
+            </md-input-container>
+        </div>
+
+        <div layout="row">
+            <md-button
+                    class="md-raised colored-btn instrument-load-btn m-r-8" data-ng-click="vm.load($event)">Download
+            </md-button>
+            <div data-ng-if="vm.readyStatus.processing">
+                <progress-circular diameter="20"></progress-circular>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+

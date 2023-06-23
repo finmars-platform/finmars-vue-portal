@@ -1,0 +1,41 @@
+<md-dialog aria-label="layout selector for bookmarks" class="bookmarks-wizard-view draggable-dialog" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>UI layouts</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+
+        <div data-ng-if="vm.readyStatus.content">
+            <div data-ng-repeat="group in vm.groups">
+                <div data-ng-if="group.content.length > 0" class="bookmarks-layouts-group">
+                    <h3 data-ng-bind="group.name"></h3>
+                    <div data-ng-repeat="item in group.content"
+                         class="bookmarks-layout-row"
+                         ng-class="{ 'selected-bookmark-layout': vm.isSelectedLayout(item.id)}" data-test="test">
+                        <div data-ng-click="vm.selectLayout(item)">
+                            <span data-ng-bind="item.name"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div data-ng-if="!vm.readyStatus.content" class="dialog-loader overflow-hidden">
+            <div layout="row" layout-sm="column" layout-align="space-around">
+                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+        <md-button ng-click="vm.agree()" style="margin-right:20px;">
+            OK
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

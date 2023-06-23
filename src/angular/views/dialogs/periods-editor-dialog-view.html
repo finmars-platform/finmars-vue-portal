@@ -1,0 +1,27 @@
+<md-dialog aria-label="" ng-cloak class="warning-dialog">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Periods</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content   style="padding: 24px">
+
+        <div>
+            Original expression:
+        </div>
+
+        <div>
+            <md-input-container style="width: 100%">
+                <input type="text" data-ng-model="vm.periods">
+            </md-input-container>
+        </div>
+
+        <div data-ng-include="'views/date-custom-field-constructor-view.html'"></div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.agree()" style="margin-right:20px;">
+            Save
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,435 @@
+<div class="import-configuration-page">
+
+    <div class="import-configuration-page-state-container" data-ng-show="vm.pageState == 'default'">
+
+        <div class="import-configuration-page-drop-box">
+
+            <div class="text-center" style="font-size: 20px;">
+                Drop files to upload
+            </div>
+
+            <div class="text-center m-t-16" style="font-size: 14px;">
+                or
+            </div>
+
+            <md-input-container flex="40" class="ng-hide m-0">
+                <input type="file"
+                       accept=".fcfg"
+                       id="configurationFileImport"
+                       input-file-directive
+                       read-file="vm.configurationFile"
+                       read-file-change="vm.onFileLoad(vm.configurationFile, $event)">
+            </md-input-container>
+            <div class="input-upload-file-container">
+                <label for="configurationFileImport" class="md-button md-raised md-primary IFUlabel">
+                    <span>SELECT FILES</span></label>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="import-configuration-page-state-container" data-ng-show="vm.pageState == 'import-manager'">
+
+        <div class="p-16">
+
+            <div>
+
+                <div class="import-configuration-page-toggle-fold-control"
+                     data-ng-click="vm.allIsFolded = !vm.allIsFolded">
+                    <span class="material-icons" data-ng-show="vm.allIsFolded">arrow_right</span>
+                    <span class="material-icons" data-ng-show="!vm.allIsFolded">arrow_drop_down</span>
+                </div>
+
+                <md-checkbox ng-checked="vm.selectAllState"
+                             data-ng-click="vm.toggleSelectAll()"
+                             class="m-b-0"
+                             aria-label="checkbox">
+                </md-checkbox>
+
+                <b>Select all</b>
+
+            </div>
+
+            <div data-ng-show="!vm.allIsFolded">
+
+                <div data-ng-repeat="item in vm.items | orderBy: 'order__'">
+
+                    <h1 ng-if="item.first_level_header__"
+                        ng-bind="item.first_level_header__"
+                        class="cie-first-level-group-h1 p-l-16"></h1>
+                    <h2 data-ng-if="item.first_item__"
+                        data-ng-bind="item.first_item__"
+                        class="cie-entities-group-h2 p-l-32"></h2>
+
+                    <div class="cie-entity-holder p-l-48" data-ng-class="{
+                      'text-warning-red': item.is_duplicate && vm.settings.mode == 'overwrite',
+                      'text-warning-blue': item.is_duplicate && vm.settings.mode == 'skip'}">
+
+                        <div class="import-configuration-page-toggle-fold-control"
+                             data-ng-click="item.displayItems = !item.displayItems">
+                            <span class="material-icons" data-ng-show="vm.displayItems">arrow_right</span>
+                            <span class="material-icons" data-ng-show="!vm.displayItems">arrow_drop_down</span>
+                        </div>
+
+                        <md-checkbox data-ng-checked="item.active"
+                                     data-ng-click="vm.toggleActiveForChildren(item)"
+                                     data-ng-class="{'some-checkboxes-ticked': item.someChildsActive}"
+                                     aria-label="checkbox">
+                        </md-checkbox>
+                        <span data-ng-bind="vm.getEntityName(item)"
+                              data-ng-class="{
+                      'used-dynamic-attrs': item.attributeIsUsed__}"></span>
+                        <span class="cie-dependency"
+                              data-ng-bind="vm.getEntityDependenciesCaptions(item)"></span>
+                        ({{item.count}})
+
+                        <span data-ng-if="item.is_duplicate" class="cursor-pointer"><ng-md-icon
+                                icon="warning"
+                                size="18">
+                            <md-tooltip class="tooltip_2"
+                                        md-direction="top">Warning. Some items of this entity already exist in ecosystem</md-tooltip>
+                        </ng-md-icon></span>
+
+
+                    </div>
+
+
+                    <div data-ng-show="item.displayItems" class="cie-entity-items-holder">
+
+                        <div data-ng-repeat="child in item.content | orderBy: 'order__'">
+                            <h4 data-ng-if="child.first_item__" data-ng-bind="child.first_item__"></h4>
+                            <md-checkbox data-ng-checked="child.active"
+                                         data-ng-click="vm.updateActiveForParent(child, item)"
+                                         aria-label="checkbox">
+                            </md-checkbox>
+                            <span data-ng-class="{
+                    'used-dynamic-attrs': child.countOfUsages__ || child.countOfUsages__ === 0,
+                    'child-with-icon': vm.checkForTextIcon(item.entity, child),
+                    'text-warning-red': child.is_duplicate && vm.settings.mode == 'overwrite',
+                    'text-warning-blue': child.is_duplicate && vm.settings.mode == 'skip'}">
+                        <ng-md-icon data-ng-if="vm.checkForTextIcon(item.entity, child)"
+                                    icon="folder"
+                                    fill="#000"
+                                    size="20"></ng-md-icon>
+                        {{vm.getItemName(child)}}
+                        <span data-ng-if="child.countOfUsages__ || child.countOfUsages__ === 0">(<b>{{child.countOfUsages__}}</b>)</span>
+
+                        <span data-ng-if="child.is_duplicate && vm.settings.mode == 'overwrite'" class="cursor-pointer"><ng-md-icon
+                                icon="warning"
+                                size="18">
+                            <md-tooltip class="tooltip_2"
+                                        md-direction="top">Warning. You already have this entity, it will be overwritten</md-tooltip>
+                        </ng-md-icon></span>
+
+                        <span data-ng-if="child.is_duplicate && vm.settings.mode == 'skip'" class="cursor-pointer"><ng-md-icon
+                                icon="warning"
+                                size="18">
+                            <md-tooltip class="tooltip_2"
+                                        md-direction="top">Will not be imported as it is already exists</md-tooltip>
+                        </ng-md-icon></span>
+                    </span>
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+                <div data-ng-if="vm.dataSettings.length > 0 || vm.downloadSchemes.length > 0 || vm.systemElements.length > 0"
+                     class="p-l-16">
+
+                    <div layout="row">
+                        <div class="import-configuration-page-toggle-fold-control"
+                             data-ng-click="vm.mappingsIsFold = !vm.mappingsIsFold">
+                            <span class="material-icons" data-ng-show="vm.mappingsIsFold">arrow_right</span>
+                            <span class="material-icons" data-ng-show="!vm.mappingsIsFold">arrow_drop_down</span>
+                        </div>
+                        <h2 class="cie-first-level-group-h1">Mappings</h2>
+                    </div>
+
+                    <div data-ng-show="!vm.mappingsIsFold" class="p-l-32">
+
+                        <div ng-if="vm.dataSettings.length > 0">
+
+                            <div layout="row">
+                                <div class="import-configuration-page-toggle-fold-control"
+                                     data-ng-click="vm.mappingsDataSettigsIsFold = !vm.mappingsDataSettigsIsFold">
+                                    <span class="material-icons"
+                                          data-ng-show="vm.mappingsDataSettigsIsFold">arrow_right</span>
+                                    <span class="material-icons" data-ng-show="!vm.mappingsDataSettigsIsFold">arrow_drop_down</span>
+                                </div>
+                                <h2 class="cie-entities-group-h2">Data Settings</h2>
+                            </div>
+
+                            <div data-ng-if="!vm.mappingsDataSettigsIsFold" class="p-l-48">
+                                <div data-ng-repeat="item in vm.dataSettings"
+                                     class="cie-mapping-group-item">
+
+                                    <div class="cie-entity-holder">
+                                        <div class="import-configuration-page-toggle-fold-control"
+                                             data-ng-click="item.displayItems = !item.displayItems">
+                                            <span class="material-icons"
+                                                  data-ng-show="vm.displayItems">arrow_right</span>
+                                            <span class="material-icons"
+                                                  data-ng-show="!vm.displayItems">arrow_drop_down</span>
+                                        </div>
+
+                                        <md-checkbox data-ng-checked="item.active"
+                                                     data-ng-click="vm.toggleActiveForChildren(item)"
+                                                     data-ng-class="{'some-checkboxes-ticked': item.someChildsActive}"
+                                                     aria-label="checkbox">
+                                        </md-checkbox>
+                                        <span data-ng-bind="vm.getMappingsEntityName(item)"></span>
+                                        ({{item.count}})
+
+                                    </div>
+
+
+                                    <div data-ng-show="item.displayItems"
+                                         style="padding-left: 20px; position: relative;">
+                                        <div data-ng-repeat="child in item.content">
+                                            <md-checkbox data-ng-checked="child.active"
+                                                         data-ng-click="vm.updateActiveForParent(child, item)"
+                                                         aria-label="checkbox">
+                                            </md-checkbox>
+                                            {{child.value}}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div ng-if="vm.downloadSchemes.length > 0">
+
+                            <div layout="row">
+                                <div class="import-configuration-page-toggle-fold-control"
+                                     data-ng-click="vm.mappingsDownloadSchemesIsFold = !vm.mappingsDownloadSchemesIsFold">
+                                    <span class="material-icons"
+                                          data-ng-show="vm.mappingsDownloadSchemesIsFold">arrow_right</span>
+                                    <span class="material-icons" data-ng-show="!vm.mappingsDownloadSchemesIsFold">arrow_drop_down</span>
+                                </div>
+                                <h2 class="cie-entities-group-h2">Schemes: Download</h2>
+                            </div>
+
+                            <div data-ng-show="!vm.mappingsDownloadSchemesIsFold" class="p-l-48">
+                                <div data-ng-repeat="item in vm.downloadSchemes"
+                                     class="cie-mapping-group-item">
+
+                                    <div class="cie-entity-holder">
+
+                                        <div class="import-configuration-page-toggle-fold-control"
+                                             data-ng-click="item.displayItems = !item.displayItems">
+                                            <span class="material-icons"
+                                                  data-ng-show="vm.displayItems">arrow_right</span>
+                                            <span class="material-icons"
+                                                  data-ng-show="!vm.displayItems">arrow_drop_down</span>
+                                        </div>
+
+                                        <md-checkbox data-ng-checked="item.active"
+                                                     data-ng-click="vm.toggleActiveForChildren(item)"
+                                                     data-ng-class="{'some-checkboxes-ticked': item.someChildsActive}"
+                                                     aria-label="checkbox">
+                                        </md-checkbox>
+                                        <span data-ng-bind="vm.getMappingsEntityName(item)"></span>
+                                        ({{item.count}})
+
+                                    </div>
+
+
+                                    <div data-ng-show="item.displayItems"
+                                         style="padding-left: 20px; position: relative;">
+                                        <div data-ng-repeat="child in item.content">
+                                            <md-checkbox data-ng-checked="child.active"
+                                                         data-ng-click="vm.updateActiveForParent(child, item)"
+                                                         aria-label="checkbox">
+                                            </md-checkbox>
+                                            {{child.value}}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div ng-if="vm.systemElements.length > 0">
+
+                            <div layout="row">
+                                <div class="import-configuration-page-toggle-fold-control"
+                                     data-ng-click="vm.mappingsSystemElementsIsFold = !vm.mappingsSystemElementsIsFold">
+                                    <span class="material-icons"
+                                          data-ng-show="vm.mappingsSystemElementsIsFold">arrow_right</span>
+                                    <span class="material-icons" data-ng-show="!vm.mappingsSystemElementsIsFold">arrow_drop_down</span>
+                                </div>
+                                <h2 class="cie-entities-group-h2">System Elements</h2>
+                            </div>
+
+                            <div data-ng-if="!vm.mappingsSystemElementsIsFold" class="p-l-48">
+                                <div data-ng-repeat="item in vm.systemElements"
+                                     class="cie-mapping-group-item">
+
+                                    <div class="cie-entity-holder">
+
+                                        <div class="import-configuration-page-toggle-fold-control"
+                                             data-ng-click="item.displayItems = !item.displayItems">
+                                            <span class="material-icons"
+                                                  data-ng-show="vm.displayItems">arrow_right</span>
+                                            <span class="material-icons"
+                                                  data-ng-show="!vm.displayItems">arrow_drop_down</span>
+                                        </div>
+
+                                        <md-checkbox data-ng-checked="item.active"
+                                                     data-ng-click="vm.toggleActiveForChildren(item)"
+                                                     data-ng-class="{'some-checkboxes-ticked': item.someChildsActive}"
+                                                     aria-label="checkbox">
+                                        </md-checkbox>
+                                        <span data-ng-bind="vm.getMappingsEntityName(item)"></span>
+                                        ({{item.count}})
+
+                                    </div>
+
+
+                                    <div data-ng-show="item.displayItems"
+                                         style="padding-left: 20px; position: relative;">
+                                        <div data-ng-repeat="child in item.content">
+                                            <md-checkbox data-ng-checked="child.active"
+                                                         data-ng-click="vm.updateActiveForParent(child, item)"
+                                                         aria-label="checkbox">
+                                            </md-checkbox>
+                                            {{child.value}}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="import-configuration-page-mode-settings" layout="row">
+
+                <span style="font-size: 14px; display: inline-block; margin-right: 40px;">What to do with existing items?</span>
+                <md-radio-group ng-model="vm.settings.mode" layout="row">
+                    <md-radio-button value="skip" class="md-primary">Skip</md-radio-button>
+                    <md-radio-button value="overwrite" class="md-primary">Overwrite</md-radio-button>
+                </md-radio-group>
+
+            </div>
+
+            <md-button class="md-raised md-primary start-import-button m-t-16"
+                       data-ng-class="{'disabled-btn': vm.processing || !vm.readyStatus.member || !vm.readyStatus.groups}"
+                       ng-click="vm.importConfiguration($event)">START IMPORT
+            </md-button>
+
+        </div>
+
+
+    </div>
+
+    <div class="import-configuration-page-state-container" data-ng-show="vm.pageState == 'import-progress'">
+
+        <div class="import-configuration-page-progress-container">
+
+            <div data-ng-if="!vm.task.progress_object" class="m-b-16 f-s-20">
+                Import in progress...
+            </div>
+
+            <div data-ng-if="vm.task.progress_object">
+
+                <div class="m-t-8" layout="row" layout-align="space-between">
+                    <span>Progress:</span> <span>{{vm.task.progress_object.current}} / {{vm.task.progress_object.total}}</span>
+                </div>
+
+                <div layout="row" layout-sm="column" layout-align="space-around" class="loader-spinner">
+                    <md-progress-linear md-mode="determinate"
+                                        value="{{vm.task.progress_object.percent}}"></md-progress-linear>
+                </div>
+
+                <div class="m-t-8">
+                    Status:
+                    <div>
+                        {{vm.task.progress_object.description}}
+                    </div>
+                </div>
+
+                <div class="m-t-16 f-s-14" style="color: #747474">You can leave this page, the import will continue anyway.</div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="import-configuration-page-state-container" data-ng-show="vm.pageState == 'import-complete'">
+
+        <div class="import-configuration-page-complete-container">
+
+            <div layout="row">
+
+                <span class="material-icons import-configuration-page-complete-icon" >check_circle</span>
+
+                <div>
+
+                    <div class="m-b-16 f-s-20">
+                        Import Complete.
+                    </div>
+
+                    <div class="m-t-16 f-s-14" style="color: #747474;" data-ng-if="vm.activeItemTotal">
+                        {{vm.activeItemTotal}} entities imported.
+                    </div>
+                </div>
+            </div>
+
+            <div layout="row">
+                <md-button class="link-button md-button md-ink-ripple" ng-click="vm.showImportDetails($event)">
+                    Show details
+                </md-button>
+                <md-button class="link-button md-button md-ink-ripple"
+                           ng-click="vm.goToDefaultState($event)">
+                    Ok
+                </md-button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="import-configuration-page-state-container" data-ng-show="vm.pageState == 'import-error'">
+
+        <div class="import-configuration-page-error-container">
+
+            <div layout="row">
+
+                <span class="material-icons import-configuration-page-error-icon" >info</span>
+
+                <div>
+
+                    <div class="m-b-16 f-s-20">
+                        Import not complete.
+                    </div>
+
+                    <div class="m-t-16 f-s-14" style="color: #747474;" data-ng-if="vm.activeItemTotal">
+                        Something went wrong. {{vm.errorMessage}}
+                    </div>
+                </div>
+            </div>
+
+            <div layout="row">
+                <md-button class="link-button md-button md-ink-ripple"
+                           ng-click="vm.goToDefaultState($event)">
+                    Import New file
+                </md-button>
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>

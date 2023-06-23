@@ -262,7 +262,7 @@
 	const evAttrsStore = useEvAttributesStore();
 
 	const component = inject('component');
-	console.log("testing1090 DashboardAddMatrixModal component", component);
+	// console.log("testing1090 DashboardAddMatrixModal component", component);
 	let selDashTab = ref(props.tab);
 	let dashTabsList = computed(() => {
 		return [...dashStore.tabs, {id: 1, name: 'Top place'}]
@@ -373,7 +373,7 @@
 			};
 
 		});
-		console.log("testing1090 setAvailableAttrs ", component.value.settings);
+		// console.log("testing1090 setAvailableAttrs ", component.value.settings);
 	}
 
 	attrs.value = evAttrsStore.getDataForAttributesSelector(component.value.settings.content_type);

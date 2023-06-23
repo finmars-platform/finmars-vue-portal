@@ -1,0 +1,113 @@
+<md-dialog class="history-dialog draggable-dialog dialog-actions-bottom"
+           aria-label="history dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div>History</div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="history-dialog-content">
+
+            <div data-ng-if="vm.user_code">
+
+                <div data-ng-if="vm.readyStatus.historyRecords && vm.readyStatus.entity">
+
+                    <div data-ng-if="vm.items.length">
+
+                        <div>
+
+                            <div layout="row">
+
+                                <md-input-container class="md-block">
+                                    <label>Records</label>
+                                    <md-select ng-model="vm.activeHistoryRecordId">
+                                        <md-option ng-repeat="item in vm.items"
+                                                   data-ng-click="vm.updateSelected(item)"
+                                                   value="{{item.id}}">
+                                            {{item['user_code']}} changed by {{item.member_object.username}} at
+                                            {{item.created | date: 'yyyy-MM-dd HH:mm:ss'}}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+                                <md-button data-ng-click="vm.showJsons = !vm.showJsons">
+                                    <span data-ng-if="!vm.showJsons">Show JSONs</span>
+                                    <span data-ng-if="vm.showJsons">Hide JSONs</span>
+                                </md-button>
+                            </div>
+
+                        </div>
+
+                        <div data-ng-if="!vm.delta">
+
+                            <p>Nothing changed</p>
+
+                        </div>
+
+                        <div class="history-dialog-delta-visual">
+
+
+                        </div>
+
+                        <div data-ng-if="vm.showJsons" class="history-dialog-jsons-holder">
+
+                            <div layout="row">
+                                <div class="history-dialog-current-json">
+                                    <h2>Current</h2>
+                                    <div class="ace-editor-1">{{vm.entity_pretty}}</div>
+                                </div>
+
+
+                                <div class="history-dialog-revision-json">
+                                    <h2>Revision from
+                                        {{vm.activeHistoryRecord.created | date: 'yyyy-MM-dd HH:mm:ss'}}</h2>
+                                    <div class="ace-editor-2">{{vm.activeHistoryRecord.data_pretty}}</div>
+                                </div>
+                            </div>
+
+                            <div>
+
+                                <div class="history-dialog-delta-json">
+                                    <h2>Delta</h2>
+
+                                    {{vm.delta_pretty}}
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div data-ng-if="!vm.items.length">
+
+                        <h2>No history found for this object</h2>
+
+                    </div>
+
+                </div>
+
+                <div data-ng-if="!vm.readyStatus.historyRecords || !vm.readyStatus.entity">
+                    <div class="overlay-loader" layout="row" layout-sm="column" layout-align="space-around">
+                        <progress-circular diameter="100"></progress-circular>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div data-ng-if="!vm.user_code">
+
+                Entity is not available for history recording
+
+            </div>
+
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+        <div>
+            <md-button ng-click="vm.agree()" style="margin-right:20px;">
+                OK
+            </md-button>
+        </div>
+    </md-dialog-actions>
+</md-dialog>

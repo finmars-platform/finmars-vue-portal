@@ -1,0 +1,111 @@
+<md-dialog class="draggable-dialog width-50" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Sort Layout Manager</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="p-16" style="min-height: 200px;">
+
+        <div data-ng-if="vm.readyStatus.columnLayouts && vm.readyStatus.commonLayouts">
+
+            <h4>Column Layouts</h4>
+
+            <div>
+
+                <div data-ng-if="vm.columnLayouts.length">
+
+                    <div data-ng-repeat="item in vm.columnLayouts" class="column-sorting-layout-manager-row"
+                         data-ng-class="{'active': item.user_code == vm.column.options.sort_settings.layout_user_code}">
+
+                        {{item.user_code}}
+
+                        <md-button class="md-raised" data-ng-click="vm.editManualSortingLayout($event, item, 'column')">Edit
+                        </md-button>
+                        <md-button class="md-raised" data-ng-click="vm.deleteManualSortingLayout($event, item, 'column')">Delete
+                        </md-button>
+
+                        <md-button class="md-raised md-primary"
+                                   data-ng-click="vm.applyManualSortingLayout($event, item)">Apply
+                        </md-button>
+
+                    </div>
+
+                </div>
+
+                <div data-ng-if="!vm.columnLayouts.length">
+
+                    Column Layouts are not exist
+
+                </div>
+
+            </div>
+
+            <h4 class="m-t-16">Common Layouts</h4>
+
+            <div>
+
+                <div data-ng-if="vm.commonLayouts.length">
+
+                    <div data-ng-repeat="item in vm.commonLayouts" class="column-sorting-layout-manager-row"
+                         data-ng-class="{'active': item.user_code == vm.column.options.sort_settings.layout_user_code}">
+
+                        {{item.user_code}}
+
+                        <md-button class="md-raised" data-ng-click="vm.editManualSortingLayout($event, item, 'common')">Edit
+                        </md-button>
+                        <md-button class="md-raised" data-ng-click="vm.deleteManualSortingLayout($event, item, 'common')">Delete
+                        </md-button>
+
+                        <md-button class="md-raised md-primary"
+                                   data-ng-click="vm.applyManualSortingLayout($event, item)">Apply
+                        </md-button>
+
+                    </div>
+
+                </div>
+
+                <div data-ng-if="!vm.commonLayouts.length">
+
+                    Common Layouts are not exist
+
+                </div>
+
+            </div>
+
+
+            <div layout="row">
+
+                <md-button class="md-raised md-primary" data-ng-click="vm.createManualSortingLayout($event)">Create
+                    new
+                </md-button>
+
+            </div>
+
+
+        </div>
+
+        <div data-ng-if="!vm.readyStatus.columnLayouts || !vm.readyStatus.commonLayouts" layout="row" layout-sm="column"
+             layout-align="space-around">
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row" layout-align="space-between center">
+
+        <div>
+
+            <md-button class="md-raised" data-ng-click="vm.cancel()">CANCEL</md-button>
+            <md-button class="md-raised" data-ng-click="vm.clearManualSortingLayout($event)">Clear</md-button>
+
+        </div>
+
+        <div>
+            <md-button class="md-raised"
+                       data-ng-click="vm.agree($event)">SORT</md-button>
+        </div>
+
+    </md-dialog-actions>
+</md-dialog>

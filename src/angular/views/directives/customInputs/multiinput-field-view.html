@@ -1,0 +1,22 @@
+<div class="multifield-container">
+  <div custom-popup
+       popup-template-url="{{popupTemplateUrl}}"
+       popup-data="popupData"
+       popup-width="element"
+       position-relative-to="element"
+       close-on-click-outside="true"
+       relative-popup-y="top"
+       offset-y="-24"
+       popup-event-service="popupEventService"
+       popup-classes="{{popupClasses}}"
+       on-cancel="onPopupCancelCallback()">
+    <base-input label="{{label}}"
+                placeholder-text="{{placeholderText}}"
+                indicator-button-icon="{{indicatorButtonIcon}}"
+                model="inputModel.value"
+                event-signal="biEventObj.event"
+                on-change="onBaseInputChange()"
+                is-disabled="isDisabled"
+                on-indicator-button-click="openPopup()"></base-input>
+  </div>
+</div>

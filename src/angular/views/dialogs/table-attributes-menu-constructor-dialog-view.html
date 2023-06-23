@@ -1,0 +1,76 @@
+<md-dialog class="draggable-dialog attr-menu-constructor-dialog"
+           aria-label="table attr menu constructor dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>{{ vm.title }}</h2>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="p-16" style="min-width: 712px">
+        <div layout="row" class="column-titles-row">
+            <div>
+                <h3>Column ID</h3>
+            </div>
+
+            <div>
+                <h3>Column Alias</h3>
+            </div>
+        </div>
+
+        <div layout="row" data-ng-repeat="attr in vm.selectedAttrs | orderBy: 'order'">
+
+            <md-input-container data-ng-if="attr.is_default" style="width: 250px;">
+                <input type="text"
+                       data-ng-model="attr.attribute_data.name"
+                       aria-label="attribute name"
+                       readonly>
+            </md-input-container>
+
+            <md-input-container data-ng-if="!attr.is_default" style="width: 250px;">
+                <input type="text"
+                       data-ng-model="attr.attribute_data.name"
+                       class="attr-menu-attribute-key-input"
+                       data-ng-click="vm.changeAttributeOfMenuPosition(attr, $event)"
+                       aria-label="default attribute name">
+            </md-input-container>
+
+            <md-input-container style="width: 250px;">
+                <input type="text"
+                       data-ng-model="attr.layout_name"
+                       aria-label="attribute custom table name">
+            </md-input-container>
+
+            <div data-ng-if="!attr.is_default" layout="row" class="button-group1">
+                <md-button class="md-raised" data-ng-click="vm.moveUp(attr.order)">
+                    <ng-md-icon icon="expand_less">
+                        <md-tooltip md-direction="bottom">Move up</md-tooltip>
+                    </ng-md-icon>
+                </md-button>
+
+                <md-button class="md-raised" data-ng-click="vm.moveDown(attr.order)">
+                    <ng-md-icon icon="expand_more">
+                        <md-tooltip md-direction="bottom">Move down</md-tooltip>
+                    </ng-md-icon>
+                </md-button>
+
+                <md-button class="md-raised"
+                           data-ng-click="vm.deleteAttr($index, attr.attribute_data)">
+                    <ng-md-icon icon="close">
+                        <md-tooltip md-direction="bottom">Delete Column</md-tooltip>
+                    </ng-md-icon>
+                </md-button>
+            </div>
+        </div>
+
+        <md-button class="md-raised"
+                   data-ng-click="vm.openAttributeSelector($event)">Add Columns</md-button>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="space-between">
+        <md-button class="md-raised" data-ng-click="vm.cancel()">Close</md-button>
+        <md-button class="md-raised" data-ng-click="vm.agree()">Save</md-button>
+    </md-dialog-actions>
+</md-dialog>

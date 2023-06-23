@@ -1,0 +1,67 @@
+<div class="p-24">
+
+    <div data-ng-if="vm.readyStatus.schedules">
+
+        <div>
+
+            <h4>Pricing Schedules</h4>
+
+            <div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
+                                Name
+                            </th>
+
+                            <th>
+                                Notes
+                            </th>
+                            <th>
+                                Active
+                            </th>
+                            <th>
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-ng-repeat="item in vm.schedules">
+                            <td>
+                                {{item.name}}
+                            </td>
+                            <td>
+                                {{item.notes}}
+                            </td>
+                            <td>
+                                {{item.is_enabled}}
+                            </td>
+                            <td>
+                                <md-button class="md-raised" data-ng-click="vm.runSchedule($event, item)">Run</md-button>
+                                <md-button class="md-raised" data-ng-click="vm.editSchedule($event, item)">Edit</md-button>
+                                <md-button class="md-raised" data-ng-click="vm.deleteSchedule($event, item)">Delete</md-button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="m-t-16">
+                <md-button class="md-raised" data-ng-click="vm.addSchedule($event)">Add New
+                </md-button>
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.schedules">
+        <div class="m-16" layout="row" layout-sm="column" layout-align="space-around">
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+    </div>
+
+</div>

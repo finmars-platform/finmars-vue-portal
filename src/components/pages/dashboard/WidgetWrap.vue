@@ -61,7 +61,7 @@
 			required: true
 		}
 	})
-	console.log("testing1090 component.componentName", props.component.componentName);
+	// console.log("testing1090 component.componentName", props.component.componentName);
 	const dashStore = useStoreDashboard()
 	let isEditWidget = ref(false)
 
@@ -80,7 +80,7 @@
 		'PerformanceChart',
 	];
 	const isAWidget = widgetsList.includes(props.component.componentName);
-	console.log("testing1090 isAWidget", isAWidget);
+	// console.log("testing1090 isAWidget", isAWidget);
 	const compRegisteredName = computed(() => {
 		return isAWidget ? 'Widgets' + props.component.componentName : props.component.componentName;
 	});

@@ -1,0 +1,166 @@
+.report-viewer-table-chart {
+  
+  .report-viewer-table-chart-holder {
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .attr-selector-btns-holder {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 3;
+
+    .attr-selector-btn {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background-color: #fff;
+      padding: 0;
+      border: 1px solid @borderPale;
+      border-radius: 100%;
+
+      &[disabled] {
+        opacity: .5;
+      }
+
+      &.abscissa {
+        top: 50%;
+        transform: translateY(-50%);
+        right: -9px;
+      }
+
+      &.ordinate {
+        bottom: -9px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      span.material-icons {
+        color: @gray;
+        font-size: 18px;
+      }
+    }
+
+  }
+
+
+  .rv-table-chart-row {
+    height: 48px;
+    padding-right: 16px;
+    padding-left: 36px;
+    border-top: 1px solid #e0e0e0;
+    box-sizing: border-box;
+    outline: 0;
+    display: flex;
+    border-bottom: 1px solid rgba(224, 224, 224, 1);
+    display: flex;
+
+    &:hover {
+      cursor: pointer;
+      opacity: .9;
+    }
+  }
+
+  .rv-table-chart-border-right {
+    border-right: 1px solid rgba(224, 224, 224, 1);
+  }
+
+  .rv-table-chart-row-header {
+    background: rgba(242, 242, 242, 1);
+    font-family: 'Roboto-Bold', 'Roboto Bold', 'Roboto', sans-serif;
+    font-weight: bold;
+    color: #666;
+    font-size: 13px;
+  }
+
+  .rv-table-chart-table-cell {
+    position: relative;
+    height: 100%;
+    padding: 16px 14px 0;
+    box-sizing: border-box;
+
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 13px;
+    color: #666666;
+    white-space: nowrap;
+
+    span {
+      width: 100%;
+      overflow: hidden;
+      cursor: pointer;
+      &:focus {
+        outline: none;
+      }
+      &:hover {
+        opacity: .6;
+      }
+    }
+
+  }
+  .rv-table-chart-table-cell-column-title {
+    //min-width: 400px;
+    position: relative;
+  }
+  .rv-table-chart-table-cell-column-value {
+    //min-width: 400px;
+    position: relative;
+  }
+
+  .rv-table-chart-table-line-bar {
+    background: rgba(165, 217, 201, 1);
+    height: 25px;
+    display: none;
+  }
+  .rv-table-chart-table-line-bar-visible {
+    display: inline-block;
+  }
+
+  .rv-table-chart-table-line-bar.rv-table-chart-table-line-bar-negative {
+    background: rgba(240, 90, 34, 1);
+    padding-left: 0;
+    float: right;
+  }
+
+  .rv-table-chart-table-line-bar-title {
+    display: inline-block;
+    margin-left: 8px;
+    position: relative;
+    top: -10px;
+    font-family: 'Roboto-Regular', 'Roboto', sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 13px;
+    color: #666666;
+  }
+
+  .rv-table-chart-table-cell-column-percent {
+    flex-grow: 1;
+  }
+
+  .rv-table-chart-table-line-bar-dual-holder {
+    max-width: 90%;
+    display: inline-block;
+    width: 90%;
+  }
+
+  .rv-table-chart-table-line-bar-holder {
+    width: 100%;
+  }
+
+
+
+  .rv-table-chart-row-holder {
+    overflow: auto;
+  }
+
+  .table-chart-sort-icon {
+    position: relative;
+    top: 2px;
+    margin-right: 4px;
+  }
+
+}

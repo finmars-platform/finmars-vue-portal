@@ -1,0 +1,61 @@
+<div>
+
+    <h1 class="p-24">Dashboard Layouts</h1>
+
+    <div data-ng-if="vm.readyStatus.data" class="p-24">
+
+        <div>
+
+            <md-menu>
+                <md-button class="md-raised" data-ng-click="$mdOpenMenu($event)">
+                    Add New
+                </md-button>
+
+                <md-menu-content>
+                    <md-menu-item>
+                        <md-button class="md-raised"
+                                   data-ui-sref="app.portal.dashboard-constructor({id: 'new'})">Add Blank
+                        </md-button>
+                    </md-menu-item>
+
+                    <md-menu-item>
+                        <md-button class="md-raised"
+                                   package-manager-button
+                                   content-type="'ui.dashboardlayout'">
+                            Select from List
+                        </md-button>
+                    </md-menu-item>
+
+                </md-menu-content>
+            </md-menu>
+
+        </div>
+
+        <div data-ng-if="vm.items.length">
+
+            <div data-ng-repeat="item in vm.items track by item.id">
+
+                {{item.name}}
+
+                <md-button class="md-raised" data-ui-sref="app.portal.dashboard-constructor({id: item.id})">Edit</md-button>
+                <md-button class="md-raised md-warn" data-ng-click="vm.deleteItem($event, item)">Delete</md-button>
+
+            </div>
+
+        </div>
+
+        <div data-ng-if="!vm.items.length">
+
+            <h4>No Layouts Exists</h4>
+
+        </div>
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.data">
+        <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+    </div>
+
+</div>

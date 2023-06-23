@@ -1,0 +1,255 @@
+<div class="processes-page p-24">
+
+    <div layout="row">
+        <h1>Finmars Tasks</h1>
+
+        <button class="md-raised md-button" style="height: 24px; margin-top: 22px; margin-left: 16px;"
+                data-ng-class="{'disabled-btn': !vm.readyStatus.data}"
+                data-ng-click="vm.getData()">
+
+            <span>Refresh list</span>
+
+        </button>
+
+    </div>
+
+    <div class="m-t-8 m-b-8">
+
+
+        <md-input-container style="width: 90%">
+            <label for="">Search</label>
+            <input aria-label="search" type="text" data-ng-model="vm.query" data-ng-change="vm.searchProcesses()">
+        </md-input-container>
+
+    </div>
+
+    <div data-ng-if="vm.readyStatus.running && vm.runningItems.length">
+
+        <h1>Running Tasks</h1>
+
+        <md-card data-ng-repeat="item in vm.runningItems" layout="column" class="m-b-16">
+
+            <div layout="column">
+
+                <div class="m-8">
+                    Process name: <b>{{vm.getProcessName(item)}}</b> ({{item.type}})
+                </div>
+
+                <div class="m-8">
+                    Task id: <b>{{item.id}}</b>
+                </div>
+
+                <div class="m-8">
+                    Celery Task id: <b>{{item.celery_task_id}}</b>
+                </div>
+
+                <div class="m-8">
+                    Created: <b>{{vm.getStartedAt(item)}}</b>
+                </div>
+
+                <div class="m-8">
+                    Member: <b>{{item.member_object.display_name}}</b>
+                </div>
+
+                <div class="m-8">
+                    Status: <b>{{vm.getStatus(item)}}</b>
+                </div>
+
+                <div layout="row" class="m-8">
+
+                    <md-button class="md-raised" data-ng-click="item.show_options = !item.show_options">
+
+                        <span data-ng-if="!item.show_options">Show Options</span>
+                        <span data-ng-if="item.show_options">Hide Options</span>
+
+                    </md-button>
+
+                    <md-button class="md-raised" data-ng-click="vm.requestTaskStatus($event, item)">
+                        Request status
+                    </md-button>
+
+                    <md-button class="md-raised md-warn"  data-ng-click="vm.cancelTask($event, item)">
+                        Cancel Task
+                    </md-button>
+
+
+
+                </div>
+
+
+            </div>
+
+            <div layout="column" class="p-8">
+
+                <div data-ng-if="item.status_object">
+
+                    <div><b>Status</b></div>
+                    <div style="max-height: 300px; overflow: auto">
+                        <pre>{{item.status_object}}</pre>
+                    </div>
+
+                </div>
+
+                <div data-ng-if="item.show_options">
+                    <div><b>Options</b></div>
+                    <div style="max-height: 300px; overflow: auto">
+                        <pre>{{item.options_object}}</pre>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </md-card>
+
+
+    </div>
+
+    <div data-ng-if="vm.readyStatus.data">
+
+        <h1>Finished Tasks</h1>
+
+        <div data-ng-if="vm.items.length">
+
+
+            <div>
+
+
+                <md-card data-ng-repeat="item in vm.items" layout="column" class="m-b-16">
+
+                    <div layout="column">
+
+                        <div class="m-8">
+                            Process name: <b>{{vm.getProcessName(item)}}</b> ({{item.type}})
+                        </div>
+
+                        <div class="m-8">
+                            Task id: <b>{{item.id}}</b>
+                        </div>
+
+                        <div class="m-8">
+                            Celery Task id: <b>{{item.celery_task_id}}</b>
+                        </div>
+
+                        <div class="m-8">
+                            Created: <b>{{vm.getStartedAt(item)}}</b>
+                        </div>
+
+                        <div class="m-8">
+                            Member: <b>{{item.member_object.display_name}}</b>
+                        </div>
+
+                        <div class="m-8">
+                            Status: <b>{{vm.getStatus(item)}}</b>
+                        </div>
+
+                        <div layout="row" class="m-8">
+
+                            <md-button class="md-raised" data-ng-click="item.show_options = !item.show_options">
+
+                                <span data-ng-if="!item.show_options">Show Options</span>
+                                <span data-ng-if="item.show_options">Hide Options</span>
+
+                            </md-button>
+                            <md-button class="md-raised" data-ng-click="item.show_result = !item.show_result">
+
+                                <span data-ng-if="!item.show_result">Show Result</span>
+                                <span data-ng-if="item.show_result">Hide Result</span>
+
+                            </md-button>
+
+                            <md-button class="md-raised" data-ng-click="vm.requestTaskStatus($event, item)">
+                                Request status
+                            </md-button>
+
+                            <md-button class="md-raised md-warn" data-ng-if="item.type == 'transaction_import'" data-ng-click="vm.abortTransactionImport($event, item)">
+                                Abort Transactions
+                            </md-button>
+
+                        </div>
+
+                        <div data-ng-if="item.file_report" style="min-width: 120px" class="m-8">
+                            <a href="{{vm.getFileUrl(item.file_report)}}" download
+                               style="text-decoration: none; color: #000; display: block; margin-top: 15px; padding: 0 20px;">Download</a>
+                        </div>
+
+                    </div>
+
+                    <div layout="column" class="p-8">
+
+                        <div data-ng-if="item.status_object">
+
+                            <div><b>Status</b></div>
+                            <div style="max-height: 300px; overflow: auto">
+                                <pre>{{item.status_object}}</pre>
+                            </div>
+
+                        </div>
+
+                        <div data-ng-if="item.show_options">
+                            <div><b>Options</b></div>
+                            <div style="max-height: 300px; overflow: auto">
+                                <pre>{{item.options_object}}</pre>
+                            </div>
+                        </div>
+
+                        <div data-ng-if="item.show_result">
+                            <div><b>Result</b></div>
+                            <div style="max-height: 300px; overflow: auto">
+                                <pre>{{item.result_object}}</pre>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </md-card>
+
+
+            </div>
+
+            <div layout="row" class="m-t-16">
+                <md-button class="md-raised" data-ng-show="vm.currentPage != 1" data-ng-click="vm.openPreviousPage()">
+                    Previous
+                </md-button>
+
+                <div layout="row">
+
+                    <div data-ng-repeat="page in vm.pages">
+
+                        <md-button data-ng-click="vm.openPage(page)" data-ng-if="page.number"
+                                   class="md-raised {{vm.currentPage == page.number ? 'md-primary' : ''}}">
+                            {{page.caption}}
+                        </md-button>
+
+                        <div data-ng-if="!page.number" style="margin: 10px;">
+                            {{page.caption}}
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <md-button class="md-raised" data-ng-show="vm.currentPage < vm.totalPages"
+                           data-ng-click="vm.openNextPage()">Next
+                </md-button>
+            </div>
+
+
+        </div>
+
+
+        <div data-ng-if="!vm.items.length">
+            <h4 class="text-center">No Tasks Found</h4>
+        </div>
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.data" style="width: 100%">
+        <div layout="row" layout-sm="column" layout-align="space-around">
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+    </div>
+
+
+</div>

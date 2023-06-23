@@ -1,0 +1,22 @@
+<md-dialog aria-label="" ng-cloak class="warning-dialog">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Warning</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="p-24">
+        <p>If you leave this page all unsaved layout changes will be lost. Do you still want to proceed?</p>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" ng-click="vm.saveLayout($event)">
+            Save Layout
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.dontSave()">
+            Don't Save
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

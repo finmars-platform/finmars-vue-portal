@@ -1,0 +1,7 @@
+<md-button ui-sref-active="active" class="sidemenu-btn" ui-sref="{{section.state}}" ng-click="focusSection()">
+    <span data-ng-if="section.icon" class="side-nav-icon">
+        <ng-md-icon icon="{{section.icon}}" size="24"></ng-md-icon>
+    </span>
+    <span class="side-nav-title">{{section.title}}</span>
+    <span class="md-visually-hidden" data-ng-if="isSelected()">current page</span>
+</md-button>

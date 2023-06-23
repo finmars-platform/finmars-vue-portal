@@ -1,0 +1,149 @@
+<md-dialog aria-label="" ng-cloak class="warning-dialog draggable-dialog width-70" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Missing Historical FX Rates</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="p-24">
+
+        <div>
+
+            <div class="m-b-24">
+
+                <div data-ng-if="vm.entityType === 'balance-report'">
+
+                    <div>
+                        Date: {{vm.reportOptions.report_date}}
+                    </div>
+
+                </div>
+
+                <div data-ng-if="vm.entityType === 'pl-report'">
+
+                    <div>
+                        Date from: {{vm.reportOptions.pl_first_date}}
+                    </div>
+
+                    <div>
+                        Date to: {{vm.reportOptions.report_date}}
+                    </div>
+
+                </div>
+
+                <div>
+                    Pricing Policy: {{vm.reportOptions.pricing_policy_object.name}}
+                </div>
+
+                <div>
+                    Report Type: {{vm.entityType}}
+                </div>
+
+                <div>
+                    Layout name: {{vm.layout.name}}
+                </div>
+
+            </div>
+
+            <div>
+
+                <div layout="row">
+
+                    <div class="m-8" style="width: 90px;">
+                        &nbsp;
+                    </div>
+
+                    <div class="m-8" style="width: 120px">
+                        Currency Name
+                    </div>
+
+                    <div class="m-8" style="width: 120px">
+                        Short Name
+                    </div>
+
+                    <div class="m-8" style="width: 120px">
+                        User Code
+                    </div>
+
+                </div>
+
+                <div data-ng-repeat="group in vm.groupedItems" layout="column">
+
+                    <div layout="row">
+
+                        <md-button class="md-raised" data-ng-click="group.folded = !group.folded">
+                            <span data-ng-if="group.folded">+</span>
+                            <span data-ng-if="!group.folded">-</span>
+                        </md-button>
+
+                        <div layout="row">
+
+                            <div class="m-8" style="width: 120px">
+                                {{group.currency_object.name}}
+                            </div>
+
+                            <div class="m-8" style="width: 120px">
+                                {{group.currency_object.short_name}}
+                            </div>
+
+                            <div class="m-8" style="width: 120px">
+                                {{group.currency_object.user_code}}
+                            </div>
+
+                            <div>
+
+                                <md-button class="md-raised" data-ng-click="vm.viewCurrency($event, group)">View
+                                    Currency
+                                </md-button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div data-ng-if="!group.folded" style="padding-left: 160px; padding-top: 24px;">
+
+                        <div layout="row" class="m-b-16">
+                            <div style="width: 100px;">Date</div>
+                            <div style="width: 100px;">FX Rate</div>
+                        </div>
+
+                        <div data-ng-repeat="item in group.items" layout="row">
+
+                            <div style="width: 100px;">
+                                {{item.date}}
+                            </div>
+
+                            <div style="width: 100px;">
+
+                                <md-input-container style="width: 200px;">
+                                    <input type="text" data-ng-model="item.fx_rate">
+                                </md-input-container>
+
+                            </div>
+
+                        </div>
+
+                        <md-button class="md-raised" data-ng-class="{'disabled-btn': group.processing}"
+                                   data-ng-click="vm.saveGroup($event, group)">Save
+                        </md-button>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" ng-click="vm.agree()" style="margin-right:20px;">
+            Ok
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

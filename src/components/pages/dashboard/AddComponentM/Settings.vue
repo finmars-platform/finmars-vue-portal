@@ -12,25 +12,21 @@
 		<div class="settings_coll">
 			<h4>General</h4>
 
-			<BaseInput
-				v-model="component.user_code"
-				label="User code"
-				required
-			/>
-			<FmSelect
-				v-model="component.tab"
-				:items="tabList"
-				label="Tab"
-			/>
+			<BaseInput v-model="component.user_code" label="User code" required />
+			<FmSelect v-model="component.tab" :items="tabList" label="Tab" />
 			<h4>Settings</h4>
 
-			<FmSelect
-				v-for="stg in component.settings"
-				class="prop_row"
-				v-model="stg.default_value"
-				:label="stg.name"
-				:items="stg.view.items"
-			/>
+			<template v-for="stg in component.settings">
+				<FmSelect
+					v-if="stg.view.type == 'select'"
+					class="prop_row"
+					v-model="stg.default_value"
+					:label="stg.name"
+					:items="stg.view.items"
+				/>
+
+				<BaseInput v-else v-model="stg.default_value" :label="stg.name" />
+			</template>
 		</div>
 
 		<div class="settings_coll">
@@ -58,16 +54,15 @@
 </template>
 
 <script setup>
-
 	const props = defineProps({
-		tab: Number
+		tab: Number,
 	})
 	const dashStore = useStoreDashboard()
 	const component = inject('component')
+	console.log('component:', component)
 
 	component.value.tab = props.tab
-	let tabList = [...dashStore.tabs, {id: 1, name: 'Top place'}]
-
+	let tabList = [...dashStore.tabs, { id: 1, name: 'Top place' }]
 </script>
 
 <style lang="scss" scoped>

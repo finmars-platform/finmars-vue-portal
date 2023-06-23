@@ -1,0 +1,69 @@
+<md-dialog aria-label="ui layout list invites" ng-cloak class="list-layouts-dialog draggable-dialog" style="width: 50%" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Layouts Invites</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+
+        <div data-ng-if="vm.readyStatus.items" class="p-24">
+
+            <h4>Invitation to Layouts</h4>
+
+            <div data-ng-repeat="item in vm.invites">
+
+                <div layout="row">
+                    <div>
+                        <b>Name</b>: {{item.shared_configuration_file_object.name}}
+                    </div>
+
+                    <div style="margin-left: 10px">
+                        <b>From</b>: {{item.member_from_object.username}}
+                    </div>
+                </div>
+
+                <div data-ng-if="item.shared_configuration_file.notes" class="m-t-16">
+                    <div>
+                        <b>Description:</b>
+                    </div>
+                    <div>
+                        {{item.shared_configuration_file.notes}}
+                    </div>
+                </div>
+
+                <div data-ng-if="item.notes" class="m-t-16">
+                    <div><b>Message</b>:</div>
+                    <div>
+                        {{item.notes}}
+                    </div>
+                </div>
+
+                <div class="m-t-16">
+
+                    <md-button class="md-raised md-primary" data-ng-click="vm.acceptInvite($event, item)">Accept
+                    </md-button>
+                    <md-button class="md-raised" data-ng-click="vm.declineInvite($event, item)">Decline</md-button>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div data-ng-if="!vm.readyStatus.items" class="dialog-loader m-t-24 m-b-24">
+            <div layout="row" layout-sm="column" layout-align="space-around">
+                <progress-circular data-diameter="100"></progress-circular>
+            </div>
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="end center">
+        <md-button ng-click="vm.cancel()">
+            Close
+        </md-button>
+    </md-dialog-actions>
+
+</md-dialog>

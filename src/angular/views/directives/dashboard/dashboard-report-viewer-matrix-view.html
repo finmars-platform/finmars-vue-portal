@@ -1,0 +1,109 @@
+<div class="dashboard-component height-100 dashboardComponent"
+     ng-class="{'dashboard-component-filled-in': fillInModeData}">
+
+    <div ng-if="readyStatus.data === 'ready'"
+         class="flex-column height-100">
+
+        <div ng-if="!vm.componentData.inside_iframe" class="dashboard-component-header" flex="noshrink">
+            <div class="dashboard-component-header-left">
+
+                <div ng-if="customName || (item && item.data.name)" class="dashboard-component-name">
+                    <span class data-ng-if="customName" title="{{customName}}" data-ng-bind="customName"></span>
+                    <span data-ng-if="!customName && item" title="{{item.data.name}}" data-ng-bind="item.data.name"></span>
+                </div>
+
+                <div class="flex-row fi-start">
+                    <md-button class="small-button-icon dashboard-comp-h-btn g-filter-area-toggle"
+                               data-ng-class="{'active': showFiltersArea}"
+                               ng-click="toggleFilterBlock()">
+
+                        <span class="material-icons">filter_list</span>
+                        <md-tooltip data-md-direction="top">Toggle filter area</md-tooltip>
+
+                    </md-button>
+                </div>
+
+            </div>
+
+            <!--<md-button class="md-button dashboard-component-settings-btn"
+                       data-ng-click="openComponentSettingsDialog($event)"
+                       aria-label="dashboard component settings btn">
+                <ng-md-icon size="24" icon="settings"></ng-md-icon>
+                <md-tooltip class="tooltip_2"
+                            md-direction="top">Component settings</md-tooltip>
+            </md-button>-->
+            <div class="dashboard-component-header-right">
+
+                <md-button  ng-if="missingPricesData.items.length"
+                            class="md-raised md-warn dashboard-comp-h-btn"
+                            ng-click="openMissingPricesDialog($event)">
+                    <ng-md-icon size="24" icon="warning"></ng-md-icon>
+                    <md-tooltip data-md-direction="top"> Warning ({{missingPricesData.items.length}})</md-tooltip>
+                </md-button>
+
+                <md-button data-ng-click="clearUseFromAboveFilters()"
+                           class="dashboard-comp-h-btn">
+                    <ng-md-icon size="24" icon="leak_remove"></ng-md-icon>
+                    <md-tooltip data-md-direction="top">Clear Link to Selection filters</md-tooltip>
+                </md-button>
+
+                <md-button data-ng-if="fillInModeData"
+                           data-ng-click="disableFillInMode()"
+                           class="dashboard-comp-h-btn">
+                    <ng-md-icon size="24" icon="close"></ng-md-icon>
+                    <md-tooltip data-md-direction="top">Collapse Component</md-tooltip>
+                </md-button>
+
+                <md-button data-ng-if="!fillInModeData"
+                           data-ng-click="enableFillInMode()"
+                           class="dashboard-comp-h-btn">
+                    <ng-md-icon size="24" icon="zoom_out_map"></ng-md-icon>
+                    <md-tooltip data-md-direction="top">Expand component</md-tooltip>
+                </md-button>
+
+                <md-button class="md-button dashboard-component-settings-btn dashboard-comp-h-btn"
+                           aria-label="dashboard component settings btn"
+                           data-ng-click="openComponentSettingsDialog($event)">
+                    <ng-md-icon size="24" icon="settings"></ng-md-icon>
+                    <md-tooltip md-direction="top">Edit component settings</md-tooltip>
+                </md-button>
+
+                <!--<md-menu class="dashboard-component-settings-menu">
+                    <md-button class="md-button dashboard-component-settings-btn"
+                               aria-label="dashboard component settings btn"
+                               data-ng-click="$mdOpenMenu($event)">
+                        <ng-md-icon size="24" icon="settings"></ng-md-icon>
+                        <md-tooltip md-direction="top">Component settings</md-tooltip>
+                    </md-button>
+
+                    <md-menu-content>
+                        <md-menu-item>
+                            <md-button class="md-button dashboard-component-settings-btn"
+                                       data-ng-click="openComponentSettingsDialog($event)"
+                                       aria-label="dashboard component settings btn">
+                                Edit component settings
+                            </md-button>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu>-->
+            </div>
+        </div>
+
+        <div class="dashboard-component-body" flex="grow">
+
+            <div data-ng-if="readyStatus.disabled && readyStatus.data !== 'processing'" class="dashboard-recalculate-loader-holder">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="dashboard-component-loader">
+                    <progress-circular diameter="40"></progress-circular>
+                </div>
+            </div>
+
+            <div data-ng-include="'views/entity-viewer/dashboard-report-viewer.html'"
+                 class="report-data-layer-wrapper"></div>
+        </div>
+
+    </div>
+
+    <div data-ng-if="readyStatus.data === 'error'" class="center-text-message">
+        <span data-ng-bind="compErrorMessage"></span>
+    </div>
+</div>

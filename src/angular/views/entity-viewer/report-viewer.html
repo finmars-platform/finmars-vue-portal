@@ -1,0 +1,16 @@
+<div data-ng-controller="ReportViewerController as vm" class="report-viewer-holder height-100">
+    <div data-ng-if="vm.readyStatus.attributes && vm.readyStatus.layout" class="g-group-table-holder height-100">
+        <group-table class="height-100 display-block"
+                     attribute-data-service="vm.attributeDataService"
+                     ev-data-service="vm.entityViewerDataService"
+                     ev-event-service="vm.entityViewerEventService"
+                     sp-exchange-service="vm.splitPanelExchangeService"
+        ></group-table>
+    </div>
+    <div data-ng-if="!vm.readyStatus.attributes || !vm.readyStatus.layout">
+        <div class="e-data-loader" layout="row" layout-sm="column" layout-align="space-around">
+            <!--<md-progress-circular md-diameter="100" md-mode="indeterminate"></md-progress-circular>-->
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,66 @@
+<div class="classifier-node classifierNode"
+     ng-class="{'active': node.frontOptions.isActive, 'edit': node.frontOptions.editOn}"
+     data-node-id="{{node.id}}"
+     data-path-to-node="{{node.frontOptions.pathToNode.join(',')}}">
+
+    <div class="classifier-node-row flex-row classifierNodeRow"
+         data-ng-class="{'opened': !node.frontOptions.closed, 'has-active-child': node.frontOptions.hasActiveChild}"
+         ng-click="selectNode(node)"
+         data-node-id="{{node.id}}"
+         data-path-to-node="{{node.frontOptions.pathToNode.join(',')}}"
+         draggable="true">
+
+        <div class="row-content">
+            <span class="material-icons pointer"
+                  ng-style="{'visibility': node.children.length ? 'visible' : 'hidden'}"
+                  ng-click="toggleNodeFolding($event, node)">chevron_right</span>
+
+            <div data-ng-if="!node.frontOptions.editOn">
+                <span ng-bind="node.name"></span>
+            </div>
+
+            <div data-ng-if="node.frontOptions.editOn" class="flex-row flex-0-1-100 fi-center">
+                <input class="classifier-name"
+                       type="text"
+                       ng-model="currentEdit.name"
+                       data-ng-init="onInputInit()">
+                <button data-ng-click="onSaveNode($event, currentEdit.name)"
+                        class="classifier-node-btn flex-row"
+                        ng-disabled="isSaveDisabled()"><span class="material-icons">done</span></button>
+                <button data-ng-click="onCancelEdit($event)"
+                        class="classifier-node-btn flex-row"><span class="material-icons">close</span></button>
+            </div>
+
+            <div ng-if="node.frontOptions.nodeButtons && node.frontOptions.nodeButtons.length"
+                 ng-hide="node.frontOptions.editOn"
+                 class="classifier-node-custom-buttons-holder">
+                <button ng-repeat="nodeBtn in node.frontOptions.nodeButtons"
+                        ng-bind-html="nodeBtn.htmlTemplate"
+                        ng-click="callFnForCustomBtn($event, nodeBtn.action)"
+                        class="classifier-node-btn custom-btn"></button>
+            </div>
+
+        </div>
+
+    </div>
+
+<!--    <div class="node-drop-container-1 dropOntoNode"></div>-->
+
+    <div class="classifier-node-children" ng-hide="node.frontOptions.closed">
+
+        <div ng-if="node.children.length"
+             class="node-drop-container-2 dropAtTheBeginning"
+             data-path-to-node="{{node.frontOptions.pathToNode.join(',')}}"></div>
+
+        <div ng-repeat="subNode in node.children track by subNode.id"
+             class="classifier-node-holder">
+            <classifier-tree-node parent="node"
+                                  node="subNode"></classifier-tree-node>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="node-drop-container-2 dropAfterNode"
+     data-path-to-node="{{node.frontOptions.pathToNode.join(',')}}"></div>

@@ -1,0 +1,77 @@
+<div class="p-24">
+
+    <div data-ng-if="vm.readyStatus.content">
+
+        <table>
+
+            <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Unique Code
+                </th>
+                <th>
+                    Notes
+                </th>
+                <th>
+                    Default Instrument Pricing Scheme
+                </th>
+                <th>
+                    Default Currency Pricing Scheme
+                </th>
+                <th></th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr data-ng-repeat="item in vm.items track by $index">
+
+                <td>
+                    {{item.name}}
+                </td>
+
+                <td>
+                    {{item.user_code}}
+                </td>
+
+                <td>
+                    {{item.notes}}
+                </td>
+
+                <td>
+                    {{item.default_instrument_pricing_scheme_object.name}}
+                </td>
+
+                <td>
+                    {{item.default_currency_pricing_scheme_object.name}}
+                </td>
+
+                <td>
+                    <md-button class="md-raised" data-ng-click="vm.editPricingPolicy($event, item)">Edit</md-button>
+                    <md-button class="md-raised" data-ng-if="item.user_code != '-'" data-ng-click="vm.deletePricingPolicy($event, item, $index)">Delete
+                    </md-button>
+                </td>
+
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+        <div>
+            <md-button class="md-raised md-primary" data-ng-click="vm.addPricingPolicy($event)">Add New</md-button>
+        </div>
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.content">
+        <div class="m-16" layout="row" layout-sm="column" layout-align="space-around">
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+    </div>
+
+</div>

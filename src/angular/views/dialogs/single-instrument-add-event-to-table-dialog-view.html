@@ -1,0 +1,144 @@
+<md-dialog aria-label="add instrument event schedule dialog"
+           class="draggable-dialog width-60"
+           drag-dialog>
+
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>{{vm.regime === 'addition' ? 'Add' : 'Edit'}} Event Schedule</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="p-24">
+
+        <div layout="row">
+            <text-input label="Name"
+                        placeholder-text="Name"
+                        model="vm.event.name"
+                        class="custom-input-bottom-space"
+                        style="width: 100%"
+            ></text-input>
+        </div>
+
+        <div layout="row" class="m-t-8">
+            <text-input label="Description"
+                        placeholder-text="Description"
+                        model="vm.event.description"
+                        class="custom-input-bottom-space"
+                        style="width: 100%"
+            ></text-input>
+        </div>
+
+        <div layout="row" class="m-t-8">
+            <!--<date-input class="p-r-8"
+                        label="Effective date"
+                        model="vm.event.effective_date"
+                        style="width: 50%"
+            ></date-input>-->
+            <multitype-field label="Effective date"
+                             field-types-data="vm.effectiveDateFieldTypes"
+                             class="width-50 custom-input-bottom-space p-r-8"></multitype-field>
+
+            <!--<date-input class="p-l-8"
+                        label="Final date"
+                        model="vm.event.final_date"
+                        style="width: 50%"
+            ></date-input>-->
+            <multitype-field label="Final date"
+                             field-types-data="vm.finalDateFieldTypes"
+                             class="custom-input-bottom-space width-50 p-l-8"></multitype-field>
+        </div>
+
+        <div layout="row" class="m-t-8">
+            <dropdown-select class="p-r-8 custom-input-bottom-space"
+                             label="Event class"
+                             model="vm.event.event_class"
+                             placeholder-text="Event class"
+                             menu-options="vm.eventClasses"
+                             small-options="{tooltipText: 'Event class'}"
+                             style="width: 50%">
+            </dropdown-select>
+
+            <div class="p-l-8 flex-row flex-i-center" style="width: 50%">
+                <md-checkbox data-ng-model-options="vm.event.is_auto_generated"
+                data-ng-disabled="true">Auto generated
+                </md-checkbox>
+            </div>
+
+        </div>
+
+        <div layout="row" class="m-t-8">
+            <dropdown-select label="Notification class"
+                             model="vm.event.notification_class"
+                             placeholder-text="Notification class"
+                             menu-options="vm.notificationClasses"
+                             small-options="{tooltipText: 'Notification class'}"
+                             class="custom-input-bottom-space"
+                             style="width: 100%">
+            </dropdown-select>
+        </div>
+
+        <div layout="row" class="m-t-8">
+            <dropdown-select class="p-r-8" label="Periodicity"
+                             model="vm.event.periodicity"
+                             placeholder-text="Periodicity"
+                             menu-options="vm.periodicityItems"
+                             small-options="{tooltipText: 'Periodicity'}"
+                             class="custom-input-bottom-space"
+                             style="width: 50%">
+            </dropdown-select>
+
+            <!--<number-input class="p-l-8"
+                          label="Number of days"
+                          model="vm.event.periodicity_n"
+                          small-options="{tooltipText: 'Number of days'}"
+                          style="width: 50%">
+            </number-input>-->
+            <multitype-field label="Number of days"
+                             field-types-data="vm.periodicityNFieldTypes"
+                             class="custom-input-bottom-space width-50 p-l-8"></multitype-field>
+
+        </div>
+
+        <div>
+            <md-button class="link-button" data-ng-click="vm.openParametersManager($event)">Open Parameters Manager</md-button>
+        </div>
+
+        <div layout="row" class="m-t-8 width-50">
+
+            <number-input class="p-r-8"
+                          label="Notify in N days"
+                          model="vm.event.notify_in_n_days"
+                          small-options="{tooltipText: 'Notify in N days'}"
+                          class="custom-input-bottom-space"
+                          style="width: 100%">
+            </number-input>
+
+        </div>
+
+        <div ng-if="vm.readyStatus.actionsGridTable">
+            <grid-table data-gt-data-service="vm.eventActionsGridTableDataService"
+                        data-gt-event-service="vm.eventActionsGridTableEventService"></grid-table>
+        </div>
+
+        <div ng-if="!vm.readyStatus.actionsGridTable" class="flex-row flex-c-center width-100" style="height: 100px;">
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+
+<!--        <grid-table data-gt-data-service="vm.schedulesGridTableDataService"-->
+<!--                    data-gt-event-service="vm.schedulesGridTableEventService"></grid-table>-->
+
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.agree()" style="margin-right:20px;">
+            Save
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,170 @@
+<md-dialog class="draggable-dialog width-50"
+           aria-label="manual sorting settings dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Sort Manager</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="p-16" style="min-height: 200px;">
+
+        <div data-ng-if="vm.readyStatus.content">
+
+            <div data-ng-if="!vm.layout.is_common">
+                Column name: <b>{{vm.layout.column_key}}</b>
+            </div>
+
+            <div class="p-t-16" layout="row">
+
+                <md-input-container>
+                    <label>Name</label>
+                    <input type="text" data-ng-model="vm.layout.name">
+                </md-input-container>
+
+                <md-input-container>
+                    <label>User code</label>
+                    <input type="text" data-ng-model="vm.layout.user_code">
+                </md-input-container>
+
+                <div>
+                    <md-checkbox ng-model="vm.layout.is_common"
+                                 aria-label="common sort">
+                        Common sort
+                    </md-checkbox>
+                </div>
+
+            </div>
+
+            <div>
+
+                <div layout="row">
+                    <div class="m-8">
+                        Order
+                    </div>
+                    <div class="m-8">
+                        Value
+                    </div>
+                </div>
+
+                <div data-ng-repeat="item in vm.layout.data.items track by $index"
+                     class="flex-row fc-space-between">
+
+                    <div class="flex-row">
+                        <div class="m-8">
+                            {{item.order + 1}}
+                        </div>
+
+                        <div class="m-8">
+                            {{item.value}}
+                        </div>
+                    </div>
+
+                    <div class="flex-row">
+
+                        <md-button class="md-raised"
+                                   data-ng-disabled="item.order === 0"
+                                   data-ng-click="vm.moveUp(item)">
+                            Move up
+                        </md-button>
+                        <md-button class="md-raised"
+                                   data-ng-disabled="item.order === vm.layout.data.items.length - 1"
+                                   data-ng-click="vm.moveDown(item)">Move down
+                        </md-button>
+
+                        <md-button class="md-raised md-warn"  data-ng-click="vm.delete(item, $index)">Delete
+                        </md-button>
+
+                    </div>
+
+                </div>
+
+                <h4>
+                   Add new row
+                </h4>
+
+                <div layout="row">
+
+                    <div class="m-8">
+                        &nbsp;
+                    </div>
+
+                    <div class="m-8">
+                        <md-input-container>
+                            <label>Value</label>
+                            <input type="text" data-ng-model="vm.newValue">
+                        </md-input-container>
+                    </div>
+
+                    <div>
+                        <md-button data-ng-class="{'disabled-btn': !vm.newValue}" class="md-raised"
+                                   data-ng-click="vm.addNewValue()">Add
+                        </md-button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div data-ng-if="vm.newValues.length">
+
+                <h4>New Values</h4>
+
+                <div layour="column">
+
+                    <div layout="row">
+                        <div class="m-8">
+                            <md-checkbox data-ng-click="vm.toggleSelectAll()"
+                                         data-ng-checked="vm.selectAll"
+                                         aria-label="common sort">
+                                <md-tooltip md-direction="bottom">Select/Deselect All</md-tooltip>
+                            </md-checkbox>
+                        </div>
+                        <div class="m-8" style="width: 400px;">
+                            Value
+                        </div>
+                        <div class="m-8">
+                            <md-button class="md-raised" data-ng-click="vm.addSelectedValues()">Add Selected</md-button>
+                        </div>
+                    </div>
+
+                    <div data-ng-repeat="item in vm.newValues track by $index" layout="row">
+
+                        <div class="m-8">
+                            <md-checkbox ng-model="item.selected"
+                                         aria-label="common sort">
+                            </md-checkbox>
+                        </div>
+
+                        <div class="m-8" style="width: 400px;">
+                            {{item.value}}
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+        <div data-ng-if="!vm.readyStatus.content" layout="row" layout-sm="column" layout-align="space-around">
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row" layout-align="space-between center">
+
+        <md-button class="md-raised" data-ng-click="vm.cancel()">Close</md-button>
+
+        <md-button class="md-raised md-primary"
+                   data-ng-click="vm.agree()"
+                   data-ng-disabled="!vm.layout.user_code">Save</md-button>
+
+    </md-dialog-actions>
+</md-dialog>

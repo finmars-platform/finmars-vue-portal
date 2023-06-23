@@ -1,0 +1,107 @@
+<div class="processes-page p-24">
+
+    <h1>System Messages</h1>
+
+    <div data-ng-if="vm.systemMessagesReady">
+
+        <div class="m-t-8 m-b-8">
+
+            <md-input-container  style="width: 90%">
+                <label for="">Search</label>
+                <input aria-label="search" type="text" data-ng-model="vm.query" data-ng-change="vm.searchMessages()">
+            </md-input-container>
+
+        </div>
+
+        <div data-ng-if="vm.systemMessages.length">
+
+            <table>
+
+                <thead>
+                <tr>
+                    <td style="width: 140px;">
+                        Date
+                    </td>
+                    <td>
+                        Type
+                    </td>
+                    <td>
+                        Section
+                    </td>
+                    <td>
+                        Title
+                    </td>
+                    <td>
+                        Description
+                    </td>
+                    <td>
+                        Attachments
+                    </td>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                <tr data-ng-repeat="item in vm.systemMessages">
+
+                    <td> {{item.verbose_created}}</td>
+                    <td> {{item.verbose_type}}</td>
+                    <td> {{item.verbose_section}}</td>
+                    <td> {{item.title}}</td>
+                    <td> {{item.description}}</td>
+                    <td>
+
+                        <div data-ng-repeat="item in item.attachments">
+                            <span class="download-file-button" data-ng-click="vm.downloadFile($event, item)">{{item.file_report_object.name}}</span>
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+
+            <div layout="row" class="m-t-16">
+                <md-button class="md-raised" data-ng-show="vm.currentPage != 1" data-ng-click="vm.openPreviousPage()">
+                    Previous
+                </md-button>
+
+                <div layout="row">
+
+                    <div data-ng-repeat="page in vm.pages">
+
+                        <md-button data-ng-click="vm.openPage(page)" data-ng-if="page.number"
+                                   class="md-raised {{vm.currentPage == page.number ? 'md-primary' : ''}}">{{page.caption}}
+                        </md-button>
+
+                        <div data-ng-if="!page.number" style="margin: 10px;">
+                            {{page.caption}}
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <md-button class="md-raised" data-ng-show="vm.currentPage < vm.totalPages"
+                           data-ng-click="vm.openNextPage()">Next
+                </md-button>
+            </div>
+        </div>
+
+        <div data-ng-if="!vm.systemMessages.length">
+            <h4 class="text-center">No Messages</h4>
+        </div>
+
+    </div>
+
+    <div data-ng-if="!vm.systemMessagesReady" style="width: 100%">
+        <div layout="row" layout-sm="column" layout-align="space-around">
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+    </div>
+
+
+</div>

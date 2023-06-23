@@ -1,0 +1,129 @@
+.md-button.link-button {
+  background-color: #ffffff;
+  color: #f05a22;
+  // font-weight: 700;
+  font-weight: 500;
+  border-radius: 3px;
+
+  &:not([disabled]):hover {
+    background-color: @btnHover;
+  }
+}
+
+.cancel-small-btn {
+  min-width: 24px;
+  width: 24px;
+  min-height: 24px;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+
+  &:not([disabled]):hover {
+    background-color: transparent;
+    opacity: .5;
+  }
+
+  .material-icons {
+    color: #747474;
+    font-size: 24px;
+  }
+}
+
+md-checkbox {
+  .md-container {
+    width: 18px;
+    height: 18px;
+
+    .md-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+    }
+
+  }
+
+  &.md-checked {
+
+    .md-container .md-icon {
+      &:after {
+        top: initial;
+        bottom: 3px;
+        left: 3.7px;
+      }
+    }
+
+  }
+
+  .md-label {
+    margin-top: 4px;
+  }
+
+}
+
+span.material-icons.more-btn {
+  background-color: @paleOrange;
+  border-radius: 100%;
+}
+
+.btn-add-1 {
+  display: flex;
+  align-items: center;
+
+  span.material-icons {
+    margin-right: 12px;
+    color: #fff;
+    background-color: @orange;
+    border-radius: 100%;
+  }
+
+  .btn-text {
+    font-size: 14px;
+    color: @orange;
+  }
+
+  &:not([disabled]):hover {
+    opacity: .5;
+  }
+}
+
+.table-attr-sel:not(.disabled) {
+  cursor: pointer;
+
+  .custom-input {
+    cursor: pointer;
+  }
+}
+
+/*.close-dialog-btn {
+  position: absolute;
+  top: 20px;
+  right: 10px;
+  color: @gray;
+}*/
+.close-dialog-btn {
+  display: block;
+  min-width: 24px;
+  width: 24px;
+  min-height: 24px;
+  height: 24px;
+  padding: 0;
+  margin: 0;
+  color: @text-lighten;
+}
+
+span.material-icons.unread-notifications {
+  position: relative;
+
+  &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 2px;
+    right: 1px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #f05a22;
+    border: 2px solid #f2f1f1;
+  }
+}
