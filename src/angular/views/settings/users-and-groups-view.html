@@ -1,0 +1,208 @@
+<div class="members-groups-content">
+    <md-tabs md-selected="" md-dynamic-height>
+        <md-tab label="Members" md-active="vm.tabsActivityData.members">
+
+            <div data-ng-if="vm.readyStatus.content">
+                <table class="members-groups-table">
+                    <thead class="members-groups-thead">
+                    <tr>
+                        <th>Member name</th>
+                        <th>User role</th>
+                        <th>Date Joined</th>
+                        <th>Assigned to groups</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody class="members-groups-tbody">
+                    <tr data-ng-repeat="member in vm.members">
+                        <td>
+                            <md-button class="members-groups-name" data-ng-bind="member.display_name"
+                                       data-ng-click="vm.manageMemberDialog($event, member.id)"></md-button>
+                        </td>
+                        <td>
+                            <span data-ng-if="member.is_admin">Admin</span>
+                            <span data-ng-if="!member.is_admin">Member</span>
+                        </td>
+                        <td data-ng-bind="member.join_date | date: 'yyyy/MM/dd'"></td>
+                        <td data-ng-bind="member.assigned_groups_pretty"></td>
+                        <td class="members-groups-delete">
+                            <md-button data-ng-if="!member.is_owner" class="members-groups-delete-btn"
+                                       data-ng-click="vm.deleteMember($event, member)">
+                                <ng-md-icon icon="close" style="fill:#000000;" size="20"></ng-md-icon>
+                            </md-button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div data-ng-if="vm.readyStatus.content">
+
+                <h3>Invites</h3>
+
+                <table class="members-groups-table" data-ng-if="vm.invites.length">
+                    <thead class="members-groups-thead">
+                    <tr>
+                        <th> Username</th>
+                        <th> Invited by</th>
+                        <th> Assigned groups</th>
+                        <th> Status</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+
+                    <tbody class="members-groups-tbody">
+
+                    <tr data-ng-repeat="item in vm.invites">
+
+                        <td>{{item.user_object.username}}</td>
+                        <td>{{item.from_user_object.username}}</td>
+                        <td>{{item.assigned_groups_pretty}}</td>
+                        <td>{{vm.getInviteStatus(item)}}</td>
+                        <td class="members-groups-delete" >
+                            <md-button class="members-groups-delete-btn"
+                                       data-ng-if="item.status !== 1"
+                                       data-ng-click="vm.deleteInvite($event, item)">
+                                <ng-md-icon icon="close" style="fill:#000000;" size="20"></ng-md-icon>
+                            </md-button>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+
+                <div data-ng-if="!vm.invites.length">
+                    No invites sent yet.
+                </div>
+
+                <div class="add-member-row m-t-8" layout="row" layout-align="start center">
+                    <div flex="95">
+                        <md-button class="add-member-btn md-raised md-primary"
+                                   data-ng-click="vm.inviteMember($event)">Invite New Member
+                        </md-button>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div data-ng-if="!vm.readyStatus.content">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="dashboard-loader">
+                    <progress-circular diameter="100"></progress-circular>
+                </div>
+            </div>
+        </md-tab>
+        <md-tab label="Groups" md-active="vm.tabsActivityData.groups">
+            <div data-ng-if="vm.readyStatus.content">
+                <table class="members-groups-table">
+                    <thead class="members-groups-thead">
+                    <tr>
+                        <th>Group name</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody class="members-groups-tbody">
+                    <tr data-ng-repeat="group in vm.groups">
+                        <td ng-class="{'admin-group-row': group.role == 1}">
+                            <md-button class="members-groups-name" data-ng-bind="group.name"
+                                       data-ng-click="vm.manageGroupDialog($event, group.id)"></md-button>
+                        </td>
+                        <td class="members-groups-delete">
+                            <md-button data-ng-if="group.role != 1" class="members-groups-delete-btn"
+                                       data-ng-click="vm.deleteGroup($event, group)">
+                                <ng-md-icon icon="close" style="fill:#000000;" size="20"></ng-md-icon>
+                            </md-button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="add-member-row" layout="row" layout-align="start center">
+                    <div flex="95">
+                        <md-button class="add-member-btn md-raised md-primary"
+                                   data-ng-click="vm.createGroupDialog($event)">Add New Group
+                        </md-button>
+                    </div>
+                </div>
+            </div>
+            <div data-ng-if="!vm.readyStatus.content">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="dashboard-loader">
+                    <progress-circular diameter="100"></progress-circular>
+                </div>
+            </div>
+        </md-tab>
+
+        <!--<editor-fold desc="Deprecated">-->
+        <md-tab label="Ecosystem" md-active="vm.tabsActivityData.ecosystem">
+
+            <div class="p-t-24">
+
+                <div>
+
+                    <md-input-container class="md-block" style="width: 200px;">
+                        <label>Status</label>
+                        <md-select
+                                data-ng-model="vm.currentMasterUserStatus">
+                            <div class="select-options-holder">
+                                <md-option ng-value="1">
+                                    Online
+                                </md-option>
+                                <md-option ng-value="3">
+                                    Backup
+                                </md-option>
+                            </div>
+                        </md-select>
+                    </md-input-container>
+
+                    <div layout="row">
+
+                        <md-button ng-click="vm.saveMasterUser($event)"
+                                   class="md-raised" disabled>
+                            Save
+                        </md-button>
+
+                        <div data-ng-if="vm.readyStatus.processing" class="m-l-16 m-t-8">
+                            <progress-circular diameter="30"></progress-circular>
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+            <!--<div data-ng-if="!vm.readyStatus.masterUser">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                    <progress-circular diameter="100"></progress-circular>
+                </div>
+            </div>-->
+
+        </md-tab>
+        <!--</editor-fold>-->
+
+        <md-tab data-ng-if="vm.currentMasterUser.is_owner"
+                label="Ownership"
+                md-active="vm.tabsActivityData.ownership">
+
+            <div data-ng-if="vm.readyStatus.content">
+
+                <div>
+                    Transfer ownership to
+                </div>
+
+                <md-select data-ng-model="vm.targetMember">
+                    <md-option data-ng-repeat="item in vm.ownershipMembers" ng-value="item">
+                        {{item.username}}
+                    </md-option>
+                </md-select>
+
+                <md-button class="md-raised {{vm.processing || !vm.targetMember ? 'disabled-btn' : ''}}"  data-ng-click="vm.transferOwnership()">Transfer</md-button>
+
+            </div>
+
+        </md-tab>
+    </md-tabs>
+</div>
+
+

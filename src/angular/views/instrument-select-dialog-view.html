@@ -1,0 +1,82 @@
+<md-dialog aria-label="" ng-cloak class="instrument-select-dialog-view">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Search instrument</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content  >
+        <div layout="column">
+            <div>
+                <table class="bordered">
+                    <thead>
+                    <tr>
+                        <th>
+                            <md-input-container class="md-block">
+                                <label>Name</label>
+                                <input data-ng-model="vm.search['name']" data-ng-model-options="{debounce: 1000}"
+                                       data-ng-change="vm.updateTable()">
+                            </md-input-container>
+                        </th>
+                        <th>
+                            <md-input-container class="md-block">
+                                <label>Short name</label>
+                                <input data-ng-model="vm.search['short_name']" data-ng-model-options="{debounce: 1000}"
+                                       data-ng-change="vm.updateTable()">
+                            </md-input-container>
+                        </th>
+                        <th>
+                            <md-input-container class="md-block">
+                                <label>User code</label>
+                                <input data-ng-model="vm.search['user_code']" data-ng-model-options="{debounce: 1000}"
+                                       data-ng-change="vm.updateTable()">
+                            </md-input-container>
+                        </th>
+                        <th>
+                            <md-input-container class="md-block bind-field-input">
+                                <label>User text 1</label>
+                                <input data-ng-model="vm.search['user_text_1']" data-ng-model-options="{debounce: 1000}"
+                                       data-ng-change="vm.updateTable()">
+                            </md-input-container>
+                        </th>
+                        <th>
+
+                            <md-input-container class="md-block bind-field-input">
+                                <label>User text 2</label>
+                                <input data-ng-model="vm.search['user_text_2']" data-ng-model-options="{debounce: 1000}"
+                                       data-ng-change="vm.updateTable()">
+                            </md-input-container>
+                        </th>
+                        <th>
+                            <md-input-container class="md-block bind-field-input">
+                                <label>User text 3</label>
+                                <input data-ng-model="vm.search['user_text_3']" data-ng-model-options="{debounce: 1000}"
+                                       data-ng-change="vm.updateTable()">
+                            </md-input-container>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr data-ng-click="vm.selectRow(item)" ng-dblclick="vm.selectAndSave(item)" data-ng-repeat="item in vm.instruments" class="{{item.active ? 'active' : ''}}" style="height: 40px">
+                        <td data-ng-bind="item['name']"></td>
+                        <td data-ng-bind="item['short_name']"></td>
+                        <td data-ng-bind="item['user_code']"></td>
+                        <td data-ng-bind="item['user_text_1']"></td>
+                        <td data-ng-bind="item['user_text_2']"></td>
+                        <td data-ng-bind="item['user_text_3']"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div data-ng-if="!vm.instruments.length" style="text-align: center; margin-top: 20px">No result found</div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+        <md-button class="md-raised md-primary" ng-click="vm.agree()" style="margin-right:20px;">
+            Save
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

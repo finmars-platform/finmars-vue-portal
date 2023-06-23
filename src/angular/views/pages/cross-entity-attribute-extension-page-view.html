@@ -1,0 +1,323 @@
+<div class="p-16">
+
+    <div data-ng-if="vm.readyStatus.content && vm.readyStatus.attributeTypes">
+
+        <h2>Attribute Extension</h2>
+
+        <div layout="column">
+
+            <h1>Instrument</h1>
+
+            <div layout="column" class="p-24">
+
+                <div>
+
+                    <h2>System attributes</h2>
+
+                    <div class="p-24">
+
+                        <div data-ng-repeat="item in vm.instrument_system_attributes" layout="row" data-ng-if="!item.is_hidden">
+
+                            <div style="width: 200px;">
+                                {{item.name}}
+                            </div>
+
+                            <md-input-container aria-label="select type">
+
+                                <label for="">Type</label>
+                                <md-select ng-model="item.extension_type"
+                                           data-ng-change="item.key_to = null; item.value_to = null;"
+                                           md-container-class="common-select-container"
+                                           style="width: 200px">
+
+                                    <div class="select-options-holder">
+
+                                        <md-option value="NULL">
+                                            Null
+                                        </md-option>
+
+                                        <md-option value="CONSTANT">
+                                            Constant
+                                        </md-option>
+
+                                        <md-option value="ATTRIBUTE">
+                                            Attribute
+                                        </md-option>
+
+                                    </div>
+
+                                </md-select>
+                            </md-input-container>
+
+                            <md-input-container aria-label="select with filter" data-ng-if="item.extension_type == 'ATTRIBUTE'">
+
+                                <label for="">Map on</label>
+                                <md-select
+                                            data-ng-if="item.options_for_key_to != 'dynamic_attributes'"
+                                            ng-model="item.key_to"
+                                           md-container-class="common-select-container"
+                                           style="width: 200px">
+
+                                    <div class="select-options-holder">
+
+                                        <md-option
+                                                data-ng-repeat="item in vm.currencyAttributes"
+                                                ng-value="item.key"
+                                                ng-bind="item.name">
+                                        </md-option>
+
+                                    </div>
+
+                                </md-select>
+
+
+                                <md-select
+                                        data-ng-if="item.options_for_key_to == 'dynamic_attributes'"
+                                        ng-model="item.key_to"
+                                        md-container-class="common-select-container"
+                                        style="width: 200px">
+
+                                    <div class="select-options-holder">
+
+                                        <md-option
+                                                data-ng-repeat="item in vm.currencyAttributeTypes"
+                                                ng-value="item.key"
+                                                ng-bind="item.name">
+                                        </md-option>
+
+                                    </div>
+
+                                </md-select>
+
+                            </md-input-container>
+
+                            <md-input-container aria-label="select with filter" data-ng-if="item.extension_type == 'CONSTANT' ">
+
+                                <label for="">Value</label>
+                                <input type="text" data-ng-model="item.value_to">
+
+                            </md-input-container>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+                <div data-ng-if="vm.instrument_dynamic_attributes.length">
+
+                    <h2>User attributes</h2>
+
+                    <div class="p-24">
+
+                        <div data-ng-repeat="item in vm.instrument_dynamic_attributes"  layout="row">
+
+                            <div style="width: 200px;">
+                                {{item.name}}
+                            </div>
+
+                            <md-input-container aria-label="select type">
+
+                                <label for="">Type</label>
+                                <md-select ng-model="item.extension_type"
+                                           data-ng-change="item.key_to = null; item.value_to = null;"
+                                           md-container-class="common-select-container"
+                                           style="width: 200px">
+
+                                    <div class="select-options-holder">
+
+                                        <md-option value="NULL">
+                                            Null
+                                        </md-option>
+
+                                        <md-option value="CONSTANT">
+                                            Constant
+                                        </md-option>
+
+                                        <md-option value="ATTRIBUTE">
+                                            Attribute
+                                        </md-option>
+                                    </div>
+
+                                </md-select>
+                            </md-input-container>
+
+                            <md-input-container aria-label="select with filter" data-ng-if="item.extension_type == 'ATTRIBUTE'">
+
+                                <label for="">Map on</label>
+                                <md-select ng-model="item.key_to"
+                                           md-container-class="common-select-container"
+                                           style="width: 200px">
+
+                                    <div class="select-options-holder">
+
+                                        <md-option
+                                                data-ng-repeat="item in vm.currencyAttributeTypes | filter: {value_type: item.value_type}"
+                                                ng-value="item.key"
+                                                ng-bind="item.name">
+                                        </md-option>
+
+                                    </div>
+
+                                </md-select>
+                            </md-input-container>
+
+                            <md-input-container aria-label="select with filter" data-ng-if="item.extension_type == 'CONSTANT'">
+
+                                <label for="">Value</label>
+                                <input type="text" data-ng-model="item.value_to">
+
+                            </md-input-container>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+            <h1>Currency</h1>
+
+            <div layout="column" class="p-24">
+
+<!--                <div>-->
+
+<!--                    <h2>System attributes</h2>-->
+
+<!--                    <div class="p-24">-->
+
+<!--                        <div data-ng-repeat="item in vm.currency_system_attributes"  layout="row">-->
+
+<!--                            <div>-->
+<!--                                {{item.name}}-->
+<!--                            </div>-->
+
+<!--                            <md-input-container aria-label="select with filter">-->
+
+<!--                                <label for="">Map on</label>-->
+<!--                                <md-select ng-model="item.key_to"-->
+<!--                                           md-container-class="common-select-container"-->
+<!--                                           style="width: 200px">-->
+
+<!--                                    <div class="select-options-holder">-->
+
+<!--                                        <md-option-->
+<!--                                                data-ng-repeat="item in vm.instrumentAttributes"-->
+<!--                                                ng-value="item.key"-->
+<!--                                                ng-bind="item.name">-->
+<!--                                        </md-option>-->
+
+<!--                                    </div>-->
+
+<!--                                </md-select>-->
+<!--                            </md-input-container>-->
+
+<!--                        </div>-->
+
+
+<!--                    </div>-->
+
+<!--                </div>-->
+
+                <div data-ng-if="vm.currency_dynamic_attributes.length">
+
+                    <h2>User attributes</h2>
+
+                    <div class="p-24">
+
+                        <div data-ng-repeat="item in vm.currency_dynamic_attributes"  layout="row">
+
+                            <div style="width: 200px;">
+                                {{item.name}}
+                            </div>
+
+                            <md-input-container aria-label="select type">
+
+                                <label for="">Type</label>
+                                <md-select ng-model="item.extension_type"
+                                           data-ng-change="item.key_to = null; item.value_to = null;"
+                                           md-container-class="common-select-container"
+                                           style="width: 200px">
+
+                                    <div class="select-options-holder">
+
+                                        <md-option value="NULL">
+                                            Null
+                                        </md-option>
+
+                                        <md-option value="CONSTANT">
+                                            Constant
+                                        </md-option>
+
+                                        <md-option value="ATTRIBUTE">
+                                            Attribute
+                                        </md-option>
+
+                                    </div>
+
+                                </md-select>
+                            </md-input-container>
+
+                            <md-input-container aria-label="select with filter" data-ng-if="item.extension_type == 'ATTRIBUTE'">
+
+                                <label for="">Map on</label>
+                                <md-select ng-model="item.key_to"
+                                           md-container-class="common-select-container"
+                                           style="width: 200px">
+
+                                    <div class="select-options-holder">
+
+                                        <md-option
+                                                data-ng-repeat="item in vm.instrumentAttributeTypes | filter: {value_type: item.value_type}"
+                                                ng-value="item.key"
+                                                ng-bind="item.name">
+                                        </md-option>
+
+                                    </div>
+
+                                </md-select>
+                            </md-input-container>
+
+                            <md-input-container aria-label="select with filter" data-ng-if="item.extension_type == 'CONSTANT'">
+
+                                <label for="">Value</label>
+                                <input type="text" data-ng-model="item.value_to">
+
+                            </md-input-container>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+        <div layout="row" class="m-t-16">
+
+            <md-button class="md-raised md-primary" data-ng-class="{'disabled-btn': vm.readyStatus.processing}" data-ng-click="vm.save()">Save</md-button>
+
+            <div data-ng-if="vm.readyStatus.processing" class="m-l-16 m-t-8">
+                <progress-circular diameter="30"></progress-circular>
+            </div>
+        </div>
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.content || !vm.readyStatus.attributeTypes">
+        <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+            <progress-circular  diameter="100"></progress-circular>
+        </div>
+    </div>
+
+</div>

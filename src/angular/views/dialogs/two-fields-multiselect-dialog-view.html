@@ -1,0 +1,51 @@
+<md-dialog class="two-fields-multiselector-dialog draggable-dialog"
+           aria-label="two fields multiselector dialog"
+           drag-dialog>
+
+    <md-toolbar>
+        <is-draggable-sign></is-draggable-sign>
+    </md-toolbar>
+     <!--<md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>{{ vm.title }}</h2>
+        </div>
+    </md-toolbar>-->
+
+    <md-dialog-content class="position-relative">
+
+        <div ng-if="vm.readyStatus"
+             style="padding:20px">
+            <two-fields-options all-options="vm.items"
+                                selected-options="vm.selectedItems"
+                                name-property="{{vm.nameProperty}}"
+                                order-options="vm.orderOptions"
+                                strict-order="vm.strictOrder"
+                                options-checkboxes="vm.optionsCheckboxes"></two-fields-options>
+
+            <div ng-if="vm.optionsCheckboxes" class="flex-row">
+                <div class="two-fields-left-b-txt"></div>
+
+                <div class="two-fields-right-b-txt">
+                    <span ng-if="vm.optionsCheckboxes.selectedOptions">If checked, the calculation of the Linked Input is triggered by the change in the value of the Input-Trigger</span>
+                </div>
+            </div>
+        </div>
+
+        <div data-ng-if="!vm.readyStatus">
+            <div class="e-data-loader" layout="row" layout-sm="column" layout-align="space-around">
+                <md-progress-circular md-diameter="100" md-mode="indeterminate"></md-progress-circular>
+            </div>
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" data-ng-click="vm.cancel()">Close</md-button>
+        <md-button class="md-raised"
+                   ng-class="{'disabled-btn': !vm.readyStatus}"
+                   data-ng-click="vm.agree()">Save</md-button>
+    </md-dialog-actions>
+
+</md-dialog>

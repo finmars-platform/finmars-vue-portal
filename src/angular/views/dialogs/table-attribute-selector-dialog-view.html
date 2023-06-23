@@ -1,0 +1,114 @@
+<md-dialog class="draggable-dialog attr-selector-dialog dialog-actions-bottom tableAttrsSelectorElemToResize"
+           ng-class="{'multiselector': vm.multiselector}"
+           aria-label="table attr selector dialog"
+           drag-dialog>
+    <md-toolbar>
+        <!--<div class="md-toolbar-tools">
+            <h2>{{ vm.title }}</h2>
+
+            <div class="dialog-close-button" data-ng-click="vm.cancel()"><span class="material-icons">close</span></div>
+        </div>-->
+        <dialog-header title="{{vm.title}}" cancel-dialog="vm.cancel()"></dialog-header>
+    </md-toolbar>
+
+    <md-dialog-content class="p-16">
+
+        <div class="attr-selector-btns-holder">
+
+            <div layout="row" class="m-b-8" style="margin-left: 30px">
+
+                <!--<text-input placeholder-text="Search"
+                            class="attr-selector-search"
+                            model="vm.searchTerms"
+                            on-change-callback="vm.searchTermChange()"
+                            on-blur-callback="vm.searchTermChange()"
+                ></text-input>-->
+                <text-input placeholder-text="Search"
+                            class="attr-selector-search"
+                            model="vm.searchTerms"
+                            on-change-callback="vm.searchTermChange()"
+                ></text-input>
+
+            </div>
+
+            <div class="attr-selector-breadcrumbs" data-ng-show="vm.currentLevel > 0">
+
+                <span class="float-left material-icons attr-selector-back-btn" ng-click="vm.returnToPrevGroup()">arrow_back</span>
+
+                <div class="float-left">
+                    <span class="attr-selector-breadcrumbs-item"
+                          data-ng-click="vm.resetCurrentPath()">All columns</span>
+                </div>
+                <div class="float-left" data-ng-repeat="item in vm.currentPath track by $index">&nbsp;\ <span
+                        class="attr-selector-breadcrumbs-item"
+                        data-ng-click="vm.openFromCurrentPath(item, $index)">{{item}}</span></div>
+
+            </div>
+
+            <div class="attr-selector-breadcrumbs" data-ng-show="vm.currentLevel == 0">
+                <!--                just to keep same window height-->
+            </div>
+
+
+            <div class="attr-selector-btns-container" data-ng-show="!vm.processing">
+                <div ng-repeat="item in vm.projection.items | orderBy: ['order', 'name']">
+
+
+                    <div data-ng-if="item.isGroup">
+
+                        <div class="attribute-selector-item attribute-selector-item-folder"
+                             ng-click="vm.openGroup(item)"
+                             aria-label="open group of attributes">
+                            <span class="material-icons">folder</span>
+                            <span data-ng-if="!vm.searchTerms" data-ng-bind="item.name"></span>
+                            <span data-ng-if="vm.searchTerms" data-ng-bind-html="item.fullPathNameWithHighlight"></span>
+                            <md-tooltip data-ng-if="item.attributeObject"
+                                        class="tooltip_2"
+                                        data-md-direction="top"
+                                        data-ng-bind="item.attributeObject.key"></md-tooltip>
+                        </div>
+
+                    </div>
+
+                    <div data-ng-if="!item.isGroup">
+
+                        <div class="attribute-selector-item"
+                             ng-class="{'active': item._active}"
+                             ng-click="vm.onAttrClick(item)"
+                             ng-dblclick="vm.onAttrDblClick(item)"
+                             aria-label="open group of attributes">
+
+                            <md-checkbox data-ng-checked="item._active"
+                                         class="attribute-selector-item-checkbox"
+                                         aria-label="user attributes for filters">
+                            </md-checkbox>
+
+                            <span data-ng-if="!vm.searchTerms" data-ng-bind="item.name"></span>
+                            <span data-ng-if="vm.searchTerms" data-ng-bind-html="item.fullPathNameWithHighlight"></span>
+
+                            <md-tooltip data-ng-if="item.attributeObject"
+                                        class="tooltip_2"
+                                        data-md-direction="top"
+                                        data-ng-bind="item.attributeObject.key"></md-tooltip>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <div class="attr-selector-btns-container" data-ng-show="vm.processing">
+                <div layout="row" layout-sm="column" layout-align="space-around">
+                    <progress-circular diameter="40"></progress-circular>
+                </div>
+            </div>
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="end-center">
+        <md-button class="link-button" data-ng-click="vm.cancel()">Cancel</md-button>
+        <md-button class="link-button" data-ng-click="vm.agree()">Select</md-button>
+    </md-dialog-actions>
+</md-dialog>

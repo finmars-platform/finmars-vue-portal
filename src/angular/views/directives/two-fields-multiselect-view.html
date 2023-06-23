@@ -1,0 +1,125 @@
+<div class="multiselector-input-container">
+
+    <div ng-if="selectedItemsIndication !== 'chips'">
+        <md-input-container class="two-fields-multiselect-input"
+                            data-ng-click="handleClick($event)">
+            <label data-ng-bind="title"
+                   class="cursor-pointer"></label>
+            <input type="text"
+                   data-ng-model="inputText"
+                   class="cursor-pointer"
+                   readonly>
+        </md-input-container>
+
+        <md-tooltip data-ng-if="model && model.length > 0 && tooltipText"
+                    class="tooltip_1 f-s-15"
+                    md-direction="top"
+                    data-ng-bind="tooltipText"></md-tooltip>
+    </div>
+
+    <div ng-if="selectedItemsIndication === 'chips'">
+
+        <div class="custom-input-container">
+
+            <div ng-if="title" class="custom-input-top-row">
+                <span class="custom-input-textarea-span-pan">{{title}}</span>
+            </div>
+
+            <div class="custom-input-main-container customInputBackgroundColor">
+                <div class="custom-input-borders">
+                    <div class="custom-input-content customInputContent" style="padding-right: 0;">
+
+                        <div class="flex-row flex-i-center height-100">
+
+                            <div style="flex: 0 0 36px;">
+                                <button data-ng-if="!noIndicatorBtn"
+                                        class="custom-input-indicator-btn"
+                                        data-ng-click="openMultiselectorDialog($event)"
+                                        data-ng-disabled="isReadonly"
+                                        ng-disabled="isDisabled">
+                                    <span class="material-icons">menu</span>
+                                </button>
+                            </div>
+
+                            <div class="multiselector-input-chips-wrap twoFieldsChipsWrap"
+                                 ng-init="getChipsContainerWidth()">
+
+                                <span ng-show="!chipsList.length" ng-bind="nothingSelectedText"></span>
+
+                                <chips-list ng-show="chipsList.length"
+                                            chips-list="chipsList"
+                                            event-service="chipsListEventService"
+                                            chips-deletion="true"
+                                            on-chips-deletion="onChipsDeletion(chipsData)"
+                                            order-chips="{{chipsOrderSettings}}"
+                                            dropdown-menu-options="dropdownMenuOptions"
+                                            chips-container-width="chipsContainerWidth"></chips-list>
+
+                            </div>
+
+                        </div>
+
+                        <div class="custom-input-side-items flex-row customInputBackgroundColor">
+
+                            <div class="custom-input-custom-btns-holder">
+                                <div data-ng-if="customButtons && customButtons.length" class="height-100 flex-row">
+                                    <button data-ng-repeat="button in customButtons" class="{{button.classes}} custom-input-custom-btn"
+                                            data-ng-click="callFnForCustomBtn(button.action, $event)">
+                                        {{button.caption}}
+                                        <ng-md-icon data-ng-if="button.iconObj.type === 'angularjs-material'"
+                                                    size="24"
+                                                    icon="{{button.iconObj.icon}}"
+                                                    class="ci-icon-color"></ng-md-icon>
+                                        <span data-ng-if="button.iconObj.type === 'angular-material'"
+                                              class="material-icons ci-icon-color">{{button.iconObj.icon}}</span>
+
+                                        <md-tooltip data-ng-if="button.tooltip"
+                                                    class="tooltip_1"
+                                                    md-direction="top">{{button.tooltip}}
+                                        </md-tooltip>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div data-ng-if="error" class="custom-input-tooltip">
+                                <span class="material-icons">info</span>
+                                <md-tooltip class="error-tooltip" md-direction="top">{{error}}</md-tooltip>
+                            </div>
+
+                            <div data-ng-if="tooltipText" data-ng-show="!error" class="custom-input-tooltip">
+                                <span class="material-icons ci-icon-color">info_outline</span>
+                                <md-tooltip class="tooltip_2" md-direction="top" data-ng-bind="tooltipText"></md-tooltip>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div ng-show="dropdownMenuShown"
+                 class="custom-input-sel-menu-container custom-input-dropdown-div multiselectorMenuContainer">
+
+                <div class="custom-input-sel-menu-block">
+
+                    <input type="text"
+                           placeholder="Looking for "
+                           ng-model="menuFilterTerms[nameProperty]"
+                           class="custom-input-dropdown-menu-filter dropdownMenuFilter"
+                           ng-init="addDropdownMenuListeners()"
+                           ng-blur="onDropdownMenuFilterBlur()" />
+
+                    <div data-ng-repeat="option in dropdownMenuOptions | orderBy: orderMenuOptions | filter: menuFilterTerms"
+                         data-ng-mousedown="selectOption(option, $index)"
+                         data-ng-bind="option[nameProperty]"
+                         class="custom-input-sel-option"></div>
+                    <!--  data-ng-repeat="option in menuOptions | filter: inputText | orderBy:'-'+option.name"-->
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

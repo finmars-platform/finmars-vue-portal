@@ -1,0 +1,20 @@
+<md-dialog class="create-member-group-dialog draggable-dialog" drag-dialog>
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<is-draggable-sign></is-draggable-sign>
+
+			<h2>Notifications</h2>
+		</div>
+	</md-toolbar>
+	<md-dialog-content   class="create-member-dialog-content custom-scrollbar">
+		<div layout="column">
+			<md-button class="md-raised">Unread notifications</md-button>
+			<md-button data-ui-sref="app.portal.system.notifications" class="md-raised" data-ng-click="">All notifications</md-button>
+		</div>
+	</md-dialog-content>
+	<md-dialog-actions layout="row" layout-align="start center">
+		<div flex="70">
+			<md-button class="md-raised" data-ng-click="vm.cancel()">Cancel</md-button>
+		</div>
+	</md-dialog-actions>
+</md-dialog>

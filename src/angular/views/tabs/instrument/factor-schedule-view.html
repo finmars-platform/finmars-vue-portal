@@ -1,0 +1,106 @@
+<div data-ng-controller="FactorScheduleTabController as vm">
+    <div class="factor-schedule-tab-view">
+        <table class="bordered">
+            <thead>
+            <tr>
+                <th data-ng-click="vm.setSort('factor_value')">Value<span class="sortorder"
+                                                                          data-ng-show="vm.sort === 'factor_value'"
+                                                                          data-ng-class="{reverse: vm.direction}"></span>
+                </th>
+                <th data-ng-click="vm.setSort('effective_date')">Date<span class="sortorder"
+                                                                           data-ng-show="vm.sort === 'effective_date'"
+                                                                           data-ng-class="{reverse: vm.direction}"></span>
+                </th>
+                <th>
+                    <md-button class="md-icon-button">
+                        <ng-md-icon data-ng-click="vm.toggleQuery()" icon="search"></ng-md-icon>
+                    </md-button>
+                </th>
+            </tr>
+            <tr style="border: 0" data-ng-if="vm.queryStatus" class="filter-row-holder">
+                <th>
+                    <md-input-container>
+                        <ng-md-icon icon="search"></ng-md-icon>
+                        <input type="text" data-ng-model="vm.query.factor_value">
+                    </md-input-container>
+                </th>
+                <th>
+                    <md-input-container>
+                        <ng-md-icon icon="search"></ng-md-icon>
+                        <input type="text" data-ng-model="vm.query.effective_date">
+                    </md-input-container>
+                </th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr data-ng-repeat="item in vm.entity.factor_schedules | filter:vm.query | orderBy:vm.sort:vm.direction">
+                <td data-ng-bind="item.factor_value" data-ng-if="!item.editStatus"></td>
+                <td data-ng-bind="item.effective_date" data-ng-if="!item.editStatus"></td>
+                <td data-ng-if="!item.editStatus" class="table-misc-cell">
+                    <md-menu>
+                        <!-- Trigger element is a md-button with an icon -->
+                        <md-button ng-click="$mdOpenMenu($event)" class="md-icon-button" aria-label="Open sample menu">
+                            <ng-md-icon icon="settings"></ng-md-icon>
+                        </md-button>
+                        <md-menu-content>
+                            <md-menu-item>
+                                <md-button ng-click="vm.editItem(item)">
+                                    <ng-md-icon icon="mode_edit" style="top: 6px;
+    position: relative;
+    margin-right: 10px;"></ng-md-icon>
+                                    Edit
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="vm.deleteItem(item, $index)">
+                                    <ng-md-icon icon="delete" style="top: 6px;
+    position: relative;
+    margin-right: 10px;"></ng-md-icon>
+                                    Delete
+                                </md-button>
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
+                </td>
+                <td data-ng-if="item.editStatus" class="edit-state-td">
+                    <md-input-container>
+                        <label for="">Value</label>
+                        <input type="text" data-ng-model="item.factor_value">
+                    </md-input-container>
+                </td>
+                <td data-ng-if="item.editStatus" class="edit-state-td">
+                    <md-input-container>
+                        <label for="">Date</label>
+                        <zh-date-picker data-date-value="item.effective_date"></zh-date-picker>
+                    </md-input-container>
+                </td>
+                <td data-ng-if="item.editStatus" class="edit-state-td">
+                    <md-button data-ng-click="vm.saveItem(item)">
+                        Ok
+                    </md-button>
+                </td>
+            </tr>
+            <tr class="tab-input-row">
+                <td>
+                    <md-input-container>
+                        <!--<label for="">Value</label>-->
+                        <input type="text" data-ng-model="vm.newItem.value">
+                    </md-input-container>
+                </td>
+                <td>
+                    <md-input-container>
+                        <!--<label for="">Date</label>-->
+                        <zh-date-picker data-date-value="vm.newItem.date"></zh-date-picker>
+                    </md-input-container>
+                </td>
+                <td>
+                    <md-button data-ng-click="vm.addRow()">
+                        Add
+                    </md-button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

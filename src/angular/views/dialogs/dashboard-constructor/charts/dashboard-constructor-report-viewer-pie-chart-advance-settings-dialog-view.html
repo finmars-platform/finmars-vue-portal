@@ -1,0 +1,86 @@
+<div class="m-t-16 m-b-24">
+    <md-input-container class="dashboard-constructor-field1">
+        <label for="">Chart Form</label>
+        <md-select data-ng-model="vm.item.settings.chart_form">
+            <md-option value="doughnut">Doughnut</md-option>
+            <md-option value="pie">Pie</md-option>
+        </md-select>
+    </md-input-container>
+</div>
+
+<div layout="row" class="m-t-16 m-b-24">
+    <md-input-container class="dashboard-constructor-field1">
+        <label for="">Calculation Of Number For Bar</label>
+        <md-select data-ng-model="vm.item.settings.group_number_calc_formula">
+            <md-option value="1">Sum</md-option>
+            <md-option value="2">Weighted Market Value</md-option>
+            <md-option value="3">Weighted Market Value Percent</md-option>
+            <md-option value="4">Weighted Exposure</md-option>
+            <md-option value="5">Weighted Exposure Percent</md-option>
+            <md-option value="6">Weighted Average Market Value</md-option>
+            <md-option value="7">Weighted Average Market Value Percent</md-option>
+            <md-option value="8">Weighted Average Exposure</md-option>
+            <md-option value="9">Weighted Average Exposure Percent</md-option>
+        </md-select>
+    </md-input-container>
+</div>
+
+<div layout="row" class="">
+    <md-input-container class="dashboard-constructor-field1">
+        <label for="">Pie Size (%)</label>
+        <input data-ng-model="vm.item.settings.pie_size_percent"
+               data-ng-change="vm.onPieSizePercentChange()"
+               type="number"
+               class="no-input-arrows">
+
+    </md-input-container>
+</div>
+
+<md-checkbox data-ng-model="vm.item.settings.show_legends"
+             ng-change=""
+             style="margin-left: 10px;">Show legends</md-checkbox>
+
+<div layout="column">
+    <md-input-container class="dashboard-constructor-field1">
+        <label for="">Legends Font Size</label>
+        <input data-ng-model="vm.item.settings.legends_font_size"
+               type="number"
+               class="no-input-arrows"
+               data-ng-disabled="!vm.item.settings.show_legends">
+    </md-input-container>
+
+    <md-input-container class="dashboard-constructor-field1 m-b-16">
+        <label for="">Legends Position</label>
+        <md-select data-ng-model="vm.item.settings.legends_position"
+                   data-ng-disabled="!vm.item.settings.show_legends">
+            <md-option value="right">To the right of chart</md-option>
+            <md-option value="bottom">Below chart</md-option>
+        </md-select>
+    </md-input-container>
+
+    <md-input-container class="dashboard-constructor-field1">
+        <label for="">Legends Columns Number</label>
+        <input data-ng-model="vm.item.settings.legends_columns_number"
+               type="number"
+               class="no-input-arrows"
+               data-ng-disabled="!vm.item.settings.show_legends">
+    </md-input-container>
+</div>
+
+<md-input-container class="dashboard-constructor-field1">
+    <label for="">Tooltip Font Size</label>
+    <input data-ng-model="vm.item.settings.tooltip_font_size"
+           type="number"
+           class="no-input-arrows">
+</md-input-container>
+
+<div class="m-b-35" layout="row">
+
+    <number-format-menu data-format-settings="vm.item.settings.number_format"
+                        data-button-content="Legends Number Format"
+                        data-button-classes="md-raised"></number-format-menu>
+
+</div>
+
+<md-checkbox data-ng-model="vm.item.settings.auto_refresh"
+             style="margin-left: 10px;">Trigger Refresh on Value Change</md-checkbox>

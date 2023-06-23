@@ -1,0 +1,542 @@
+<div class="dashboard-constructor">
+    <div data-ng-if="vm.readyStatus.data && vm.readyStatus.attributes" class="dashboard-constructor-main">
+
+        <div data-ng-if="vm.layout.id || vm.layout.data.layout_type" class="dashboard-constructor-working-area">
+
+            <div class="dashboard-constructor-top-row">
+
+                <div class="p-8">
+
+                    <md-input-container style="width: 200px;">
+                        <label for="">Dashboard Layout Name</label>
+                        <input type="text" data-ng-model="vm.layout.name">
+                    </md-input-container>
+
+                </div>
+
+                <div class="p-8">
+
+                    <usercode-input data-item="vm.layout" data-ng-if="!vm.layout.id"></usercode-input>
+
+                    <md-input-container style="width: 200px;" data-ng-if="vm.layout.id">
+                        <label for="">User Code</label>
+                        <input type="text" data-ng-model="vm.layout.user_code">
+                    </md-input-container>
+
+                </div>
+
+                <div>
+
+                    <md-button class="md-raised"
+                               data-ng-if="vm.layout.data.fixed_area.status == 'disabled'"
+                               data-ng-click="vm.activateTopPanel($event)">Activate Top Panel
+                    </md-button>
+
+                    <md-button class="md-raised"
+                               data-ng-if="vm.layout.data.fixed_area.status == 'active'"
+                               data-ng-click="vm.deactivateTopPanel($event)">Deactivate Top Panel
+                    </md-button>
+
+                </div>
+
+                <div data-ng-if="vm.layout.data.layout_type" class="m-l-16 p-t-16">
+                    <b>Layout Type</b>: <span class="text-capitalize">{{vm.layout.data.layout_type}}</span>
+                </div>
+
+                <div style="margin-left: 16px; padding-top: 12px;">
+                    <md-checkbox ng-model="vm.layout.is_default"
+                                 aria-label="is default">
+                        Is Default
+                    </md-checkbox>
+                </div>
+
+            </div>
+
+<!--            <div class="position-relative flex-column">-->
+
+            <div class="flex-row">
+                <h4 data-ng-if="vm.layout.data.fixed_area.status == 'active'" class="p-l-8">Top Panel</h4>
+            </div>
+
+            <div class="layout-areas-and-components-row">
+
+                <div layout="column" class="dashboard-constructor-layout-areas-container">
+                    <div data-ng-if="vm.layout.data.fixed_area.status == 'active'" class="fixed-area-holder">
+
+                        <div class="ec-md-content ec-layout-tab dashboard-layout-holder"
+                             dashboard-constructor-grid-aligner
+                             dashboard-constructor-data-service="vm.dashboardConstructorDataService"
+                             dashboard-constructor-event-service="vm.dashboardConstructorEventService"
+                             tab-number="'fixed_area'">
+
+                            <div class="dashboard-layout position-relative">
+
+                                <div layout="column" data-ng-repeat="row in vm.layout.data.fixed_area.layout.rows">
+
+                                    <div data-ng-repeat="item in row.columns"
+                                         class="dashboard-constructor-cell"
+                                         data-tab="fixed_area"
+                                         data-row="{{row.row_number}}"
+                                         data-column="{{item.column_number}}"
+                                         data-cell-type="{{item.cell_type}}">
+
+                                        <div data-ng-if="item.cell_type === 'empty'"
+                                             class="width-100 height-100">
+
+                                            <div class="dashboard-constructor-empty-cell">
+                                                <ng-md-icon icon="add_circle"></ng-md-icon>
+                                            </div>
+
+                                        </div>
+
+                                        <div data-ng-if="item.cell_type === 'component'"
+                                             class="dashboard-constructor-cell-container">
+
+                                            <dashboard-constructor-field
+                                                    class="width-100 height-100"
+                                                    tab-number="'fixed_area'"
+                                                    row-number="row.row_number"
+                                                    column-number="item.column_number"
+                                                    item="item"
+                                                    dashboard-constructor-data-service="vm.dashboardConstructorDataService"
+                                                    dashboard-constructor-event-service="vm.dashboardConstructorEventService"
+                                                    attribute-data-service="vm.attributeDataService"
+
+                                            ></dashboard-constructor-field>
+
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+
+                                <div class="row-controls-holder">
+
+
+                                    <div class="dashboard-constructor-row-controls"
+                                         data-ng-repeat="row in vm.layout.data.fixed_area.layout.rows"
+                                         data-tab="fixed_area" data-row="{{row.row_number}}">
+
+                                        <md-button class="md-button dashboard-manage-row-btn"
+                                                   ng-click="vm.insertRowFixedArea(row)"
+                                                   ng-disabled="!vm.isRowAddableFixedArea(row)" style="right: 55px">
+                                            +
+                                            <md-tooltip class="tooltip_1" md-direction="top">Insert row below
+                                            </md-tooltip>
+                                        </md-button>
+                                        <md-button ng-if="vm.layout.data.fixed_area.layout.rows > row"
+                                                   class="md-button dashboard-manage-row-btn"
+                                                   ng-click="vm.deleteRowFixedArea(row)"
+                                                   style="right: 10px;"
+                                                   ng-disabled="!vm.isRowEmpty(row)">
+                                            -
+                                            <md-tooltip class="tooltip_1" md-direction="top"
+                                                        ng-hide="!vm.isRowEmpty(row)">Remove row
+                                            </md-tooltip>
+                                            <md-tooltip class="tooltip_1" md-direction="top"
+                                                        ng-hide="vm.isRowEmpty(row)">Empty row before removing
+                                                it
+                                            </md-tooltip>
+                                        </md-button>
+
+                                    </div>
+
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                    <div class="dashboard-constructor-tabs-area-container"
+                         data-add-tab-ec
+                         data-tabs="vm.layout.data.tabs"
+                         layout="column">
+                        <div>
+                            <md-button class="md-raised"
+                                       data-ng-click="vm.openTabsEditor($event)"
+                                       data-ng-disabled="!vm.layout.data.tabs || vm.layout.data.tabs.length < 2">Change order of tabs</md-button>
+<!--                            Deprecated since 01.2021-->
+<!--                            <md-button class="md-raised"-->
+<!--                                       data-ng-click="vm.openAccordionEditor($event)"-->
+<!--                                       data-ng-disabled="!vm.layout.data.tabs">Accordion manager</md-button>-->
+                        </div>
+
+                        <div class="dashboard-constructor-tabs-holder">
+                            <md-tabs md-border-bottom md-dynamic-height>
+                                <md-tab data-ng-repeat="tab in vm.layout.data.tabs | orderBy: 'tab_number' track by tab.id">
+                                    <md-tab-label>
+                                        <div data-ng-if="!tab.editState">
+                                            <span class="ec-tab-item-name">{{tab.name}}</span>
+                                            <md-button class="ec-tab-btn"
+                                                       data-ng-click="vm.toggleEditTab(tab)">
+                                                <ng-md-icon icon="edit"></ng-md-icon>
+                                            </md-button>
+                                            <md-button class="ec-tab-btn"
+                                                       data-ng-click="vm.deleteTab(tab)">
+                                                <ng-md-icon icon="delete"></ng-md-icon>
+                                            </md-button>
+                                        </div>
+
+                                        <div data-ng-if="tab.editState">
+                                            <md-input-container class="ec-tab-item-edit">
+                                                <label>Tab name</label>
+                                                <input type="text" ng-model="tab.captionName" class="tabNameInput" data-tab-id="{{tab.id}}">
+                                            </md-input-container>
+
+                                            <md-button class="ec-tab-btn"
+                                                       data-ng-click="vm.saveEditedTab(tab)">
+                                                <ng-md-icon icon="save"></ng-md-icon>
+                                            </md-button>
+
+                                            <md-button class="ec-tab-btn"
+                                                       data-ng-click="vm.toggleEditTab(tab, 'back', $index)">
+                                                <ng-md-icon icon="cancel"></ng-md-icon>
+                                            </md-button>
+                                        </div>
+                                    </md-tab-label>
+
+                                    <md-tab-body>
+                                        <div class="ec-md-content ec-layout-tab dashboard-layout-holder"
+                                             dashboard-constructor-grid-aligner
+                                             dashboard-constructor-data-service="vm.dashboardConstructorDataService"
+                                             dashboard-constructor-event-service="vm.dashboardConstructorEventService"
+                                             tab-number="tab.tab_number">
+<!-- Deprecated since 01.2021
+                                            <div class="dashboard-constructor-accordion-guide">
+
+                                                <div >
+
+                                                    <div data-ng-repeat="item in tab.accordions track by $index"
+                                                         class="accordion-constructor-row-accordion-guide" layout="column">
+
+                                                        <div layout="row" data-ng-if="item.type === 'accordion'" style="margin: 0; padding: 8px; height: {{((item.to - item.from)+ 1) * 50}}px">
+
+                                                            <md-card title="{{item.name}}" class="width-100 p-8 accordion-constructor-row-accordion-guide-card" >
+                                                                {{item.name}}
+                                                            </md-card>
+
+                                                        </div>
+
+                                                        <div layout="row" data-ng-if="item.type != 'accordion' && !vm.isAccordionOverlapped($index, tab)" style="height: 50px;">
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div> -->
+
+                                            <div class="dashboard-layout position-relative">
+
+                                                <div layout="column" data-ng-repeat="row in tab.layout.rows">
+
+                                                    <div data-ng-repeat="item in row.columns"
+                                                         class="dashboard-constructor-cell"
+                                                         data-tab="{{tab.tab_number}}"
+                                                         data-row="{{row.row_number}}"
+                                                         data-column="{{item.column_number}}"
+                                                         data-cell-type="{{item.cell_type}}">
+
+                                                        <div data-ng-if="item.cell_type === 'empty'"
+                                                             class="width-100 height-100">
+
+                                                            <div class="dashboard-constructor-empty-cell">
+                                                                <ng-md-icon icon="add_circle"></ng-md-icon>
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div data-ng-if="item.cell_type === 'component'"
+                                                             class="dashboard-constructor-cell-container">
+
+                                                            <dashboard-constructor-field
+                                                                    class="width-100 height-100"
+                                                                    tab-number="tab.tab_number"
+                                                                    row-number="row.row_number"
+                                                                    column-number="item.column_number"
+                                                                    item="item"
+                                                                    dashboard-constructor-data-service="vm.dashboardConstructorDataService"
+                                                                    dashboard-constructor-event-service="vm.dashboardConstructorEventService"
+                                                                    attribute-data-service="vm.attributeDataService">
+                                                            </dashboard-constructor-field>
+
+                                                        </div>
+
+
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="row-controls-holder">
+
+
+                                                    <div class="dashboard-constructor-row-controls"
+                                                         data-ng-repeat="row in tab.layout.rows"
+                                                         data-tab="{{tab.tab_number}}" data-row="{{row.row_number}}">
+
+                                                        <md-button class="md-button dashboard-manage-row-btn"
+                                                                   ng-click="vm.insertRow(tab, row)"
+                                                                   ng-disabled="!vm.isRowAddable(tab, row)" style="right: 55px">
+                                                            +
+                                                            <md-tooltip class="tooltip_1" md-direction="top">Insert row below
+                                                            </md-tooltip>
+                                                        </md-button>
+
+                                                        <md-button ng-if="tab.layout.rows > row"
+                                                                   class="md-button dashboard-manage-row-btn"
+                                                                   ng-click="vm.deleteRow(tab, row)"
+                                                                   style="right: 10px;"
+                                                                   ng-disabled="!vm.isRowEmpty(row)">
+                                                            -
+                                                            <md-tooltip class="tooltip_1" md-direction="top"
+                                                                        ng-hide="!vm.isRowEmpty(row)">Remove row
+                                                            </md-tooltip>
+                                                            <md-tooltip class="tooltip_1" md-direction="top"
+                                                                        ng-hide="vm.isRowEmpty(row)">Empty row before removing
+                                                                it
+                                                            </md-tooltip>
+                                                        </md-button>
+
+                                                    </div>
+
+
+                                                </div>
+
+                                            </div>
+
+
+                                        </div>
+                                    </md-tab-body>
+                                </md-tab>
+
+                            </md-tabs>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="dashboard-constructor-sidebar p-8">
+                    <md-menu>
+                        <md-button class="md-raised md-primary m-l-4"
+                                   ng-click="$mdOpenMenu($event)">
+                            Add New Component
+                        </md-button>
+
+                        <md-menu-content width="3">
+                            <md-menu-item>
+                                <md-button ng-click="vm.createComponent('accordion', $event)" class="g-settings-option-btn">
+                                    <span>Add Accordion</span>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="vm.createComponent('control', $event)" class="g-settings-option-btn">
+                                    <span>Add Control</span>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="vm.createComponent('button_set', $event)" class="g-settings-option-btn">
+                                    <span>Add Button set</span>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="vm.createComponent('input_form', $event)"
+                                           class="g-settings-option-btn disabled-btn">
+                                    <span>Add Input Form</span>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="vm.createComponent('report_viewer', $event)" class="g-settings-option-btn">
+                                    <span>Report Viewer</span>
+                                </md-button>
+                            </md-menu-item>
+                            <!--<md-menu-item>
+                                <md-button ng-click="vm.createComponent('report_viewer_split_panel', $event)"
+                                           class="g-settings-option-btn">
+                                    <span>Report Viewer Split Panel</span>
+                                </md-button>
+                            </md-menu-item>-->
+                            <md-menu-item>
+                                <md-button ng-click="vm.createComponent('report_viewer_grand_total', $event)"
+                                           class="g-settings-option-btn">
+                                    <span>Report Viewer Grand Total</span>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="vm.createComponent('report_viewer_matrix', $event)"
+                                           class="g-settings-option-btn">
+                                    <span>Report Viewer Matrix</span>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="vm.createComponent('report_viewer_table_chart', $event)"
+                                           class="g-settings-option-btn">
+                                    <span>Report Viewer Table Chart</span>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="vm.createComponent('report_viewer_bars_chart', $event)"
+                                           class="g-settings-option-btn">
+                                    <span>Report Viewer Charts</span>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="vm.createComponent('entity_viewer', $event)"
+                                           class="g-settings-option-btn disabled-btn">
+                                    <span>Entity Viewer</span>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="vm.createComponent('entity_viewer_split_panel', $event)"
+                                           class="g-settings-option-btn disabled-btn">
+                                    <span>Entity Viewer Split Panel</span>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="vm.importComponent('entity_viewer_split_panel', $event)"
+                                           class="g-settings-option-btn">
+                                    <span>Import from another dashboard</span>
+                                </md-button>
+                            </md-menu-item>
+
+                            <md-menu-item>
+                                <md-button ng-click="vm.createComponent('superset_dashboard', $event)"
+                                           class="g-settings-option-btn">
+                                    <span>Superset Dashboard</span>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="vm.createComponent('finmars_widget', $event)"
+                                           class="g-settings-option-btn">
+                                    <span>Finmars Widget</span>
+                                </md-button>
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
+                    <div class="p-t-24">
+
+                        <input type="text"
+                               aria-label="name filter"
+                               ng-model="nameFilterContext"
+                               placeholder="(o) Search by name"
+                               class="forms-data-constructor-filter-input">
+
+                        <input type="text"
+                               aria-label="type filter"
+                               ng-model="typeFilterContext"
+                               placeholder="(o) Search by type"
+                               class="forms-data-constructor-filter-input">
+
+                    </div>
+
+                    <p class="dashboard-constructor-comp-cards-top-text">
+                        Drag fields from here
+                    </p>
+
+                    <div class="dashboard-constructor-comp-cards-container">
+                        <div class="dashboard-constructor-draggable-card"
+                             data-ng-repeat="item in vm.availableComponentsTypes | filter: {name: nameFilterContext, type: typeFilterContext} track by item.id" style="padding: 4px">
+
+                            <md-card class=" dashboard-field-card" class="p-l-16" data-index="{{$index}}"
+                                     data-component-id="{{item.id}}" layout="row">
+
+                                <p class="name-holder"><b data-ng-bind="item.name"></b>: <span
+                                        data-ng-bind="vm.getVerboseType(item)"></span></p>
+
+                                <div class="dashboard-field-card-options">
+                                    <md-button class=""
+                                               aria-label="delete attribute"
+                                               data-ng-click="vm.deleteComponentType($event, item)">
+                                        <ng-md-icon icon="delete"></ng-md-icon>
+                                    </md-button>
+                                    <md-button class=""
+                                               aria-label="edit attribute"
+                                               data-ng-click="vm.editComponentType($event, item)">
+                                        <ng-md-icon icon="mode_edit"></ng-md-icon>
+                                    </md-button>
+                                </div>
+
+                            </md-card>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+<!--            </div>-->
+
+            <div class="dashboard-constructor-bottom-row">
+
+                <div style="padding-right: 10px">
+                    <md-button class="md-raised md-raised" data-ui-sref="app.portal.dashboard-layout-manager">Return to
+                        dashboard layouts list
+                    </md-button>
+                    <md-button ng-click="vm.goToDashboard($event)" class="md-raised">
+                        Go to Dashboard
+                    </md-button>
+                    <md-button ng-click="vm.saveLayout()" ng-class="{'disabled-btn': !vm.layout.name || (vm.layout.sourced_from_global_layout && !vm.layout.origin_for_global_layout)}"
+                               class="md-raised">
+                        Save
+                    </md-button>
+                    <md-button ng-click="vm.makeCopy($event)" data-ng-if="vm.layout.id"
+                               class="md-raised">
+                        Make Copy
+                    </md-button>
+                </div>
+            </div>
+
+        </div>
+
+        <div data-ng-if="!vm.layout.id && !vm.layout.data.layout_type" class="dashboard-constructor-layout-type">
+
+            <h4>Select Device for Dashboard Layout</h4>
+
+            <div class="dashboard-constructor-layout-type-buttons-holder">
+
+                <md-button class="layout-type-button" data-ng-click="vm.selectLayoutType('mobile')">
+
+                    <ng-md-icon icon="phone_iphone"></ng-md-icon>
+
+                    <div>
+                        Mobile
+                    </div>
+
+                </md-button>
+
+
+                <md-button class="layout-type-button" data-ng-click="vm.selectLayoutType('tablet')">
+
+                    <ng-md-icon icon="tablet_mac"></ng-md-icon>
+
+                    <div>
+                        Tablet
+                    </div>
+
+                </md-button>
+
+                <md-button class="layout-type-button" data-ng-click="vm.selectLayoutType('desktop')">
+
+                    <ng-md-icon icon="desktop_mac"></ng-md-icon>
+
+                    <div>
+                        Desktop
+                    </div>
+
+                </md-button>
+            </div>
+
+        </div>
+
+        <div data-ng-if="!vm.readyStatus.data || !vm.readyStatus.attributes">
+            <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                <progress-circular diameter="100"></progress-circular>
+            </div>
+        </div>
+    </div>
+</div>

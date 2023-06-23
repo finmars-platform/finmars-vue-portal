@@ -1,0 +1,202 @@
+<div data-ng-controller="InstrumentTypeAccrualsTabController as vm">
+    <div ng-if="vm.readyStatus.topPart" class="flex-row m-b-8">
+
+        <dropdown-select class="p-r-8"
+                         label="Accrual Currency"
+                         model="vm.entity.accrued_currency"
+                         placeholder-text="Accrual Currency"
+                         menu-options="vm.currencyFields"
+                         event-signal="vm.evEditorFieldEvent"
+                         small-options="{tooltipText: 'Accrual Currency', notNull: true}"
+                         on-change-callback="vm.onRequiredFieldChange('accrued_currency')"
+                         style="width: 200px;"></dropdown-select>
+
+        <dropdown-select class="p-r-8"
+                         label="Accrual Size Clarification"
+                         model="vm.entity.payment_size_detail"
+                         placeholder-text="Accrual Size Clarification"
+                         event-signal="vm.evEditorFieldEvent"
+                         menu-options="vm.dailyPricingModelFields"
+                         small-options="{tooltipText: 'Accrual Size Clarification', notNull: true}"
+                         on-change-callback="vm.onRequiredFieldChange('payment_size_detail')"
+                         style="width: 230px;"></dropdown-select>
+
+        <number-input class="p-r-8"
+                      label="Accrual Multiplier"
+                      model="vm.entity.accrued_multiplier"
+                      event-signal="vm.evEditorFieldEvent"
+                      small-options="{tooltipText: 'Accrual Multiplier', onlyPositive: true}"
+                      on-change-callback="vm.onRequiredFieldChange('accrued_multiplier')"
+                      style="width: 200px;"></number-input>
+
+        <number-input label="Default Accrued"
+                      model="vm.entity.default_accrued"
+                      event-signal="vm.evEditorFieldEvent"
+                      small-options="{tooltipText: 'Default Accrued', onlyPositive: true}"
+                      on-change-callback="vm.onRequiredFieldChange('default_accrued')"
+                      style="width: 200px;"></number-input>
+
+    </div>
+
+    <div ng-if="vm.readyStatus.accrualsAccordions" class="instrument-type-accruals-tab-view">
+
+        <v-accordion class="instrument-type-accordion vAccordion-type1 m-b-8" control="vm.accrualsAccordion">
+
+            <v-pane data-ng-repeat="item in vm.entity.accruals | orderBy: 'order'"
+                    expanded="item.isPaneExpanded">
+
+                <div ng-hide="!item.isPaneExpanded" class="accordion-name-input">
+                    <text-input model="item.name"
+                                event-signal="vm.evEditorFieldEvent"
+                                on-change-callback="vm.onRequiredFieldChange('events')"
+                                small-options="{notNull: true}"></text-input>
+                </div>
+
+                <v-pane-header ng-class="{'m-b-0': !$pane.isExpanded()}">
+                    <div class="accordion-header-content flex-row fc-space-between fi-center"
+                         ng-click="vm.toggleItem($pane, item, $event)">
+
+                        <div class="accordion-header-left">
+
+                            <span ng-hide="!$pane.isExpanded()"
+                                  class="material-icons accordion-expansion-icon">expand_less</span>
+                            <span ng-hide="$pane.isExpanded()"
+                                  class="material-icons accordion-expansion-icon">expand_more</span>
+
+                            <span class="text-weight-bold m-r-8"># {{$index + 1}}</span>
+
+                            <!--<span ng-hide="!item.isPaneExpanded" class="accordion-name-input">
+                                <text-input model="item.name"
+                                            event-signal="vm.evEditorFieldEvent"
+                                            small-options="{notNull: true}"
+                                            on-change-callback="vm.onRequiredFieldChange('accruals')"
+                                            ng-click="$event.stopPropagation();"></text-input>
+                            </span>-->
+
+                            <span ng-hide="item.isPaneExpanded"
+                                  class="text-weight-bold accordion-name-text"
+                                  ng-bind="item.name"></span>
+
+                        </div>
+
+                        <div class="accordion-header-right">
+                            <md-checkbox ng-model="item.autogenerate"
+                                         id="{{'accrual_autogenerate_' + $index}}"
+                                         aria-lable="instrument type accrual autogenerate"
+                                         ng-click="$event.stopPropagation();">Auto-generate</md-checkbox>
+
+                            <div class="accordion-actions m-l-35">
+                                <button class="accordion-header-icon-btn icon-btn-basics"
+                                        ng-click="vm.moveUp(item, $event)"
+                                        ng-disabled="item.order === 0">
+                                    <span class="material-icons">arrow_upward</span>
+                                </button>
+
+                                <button class="accordion-header-icon-btn icon-btn-basics"
+                                        ng-click="vm.moveDown(item, $event)"
+                                        ng-disabled="item.order + 1 === vm.entity.accruals.length">
+                                    <span class="material-icons">arrow_downward</span>
+                                </button>
+
+                                <button class="accordion-header-icon-btn icon-btn-basics"
+
+                                        custom-popup
+                                        popup-template="{{vm.accordionActionsMenu}}"
+                                        popup-data="{
+                                            deletePane: vm.deletePane,
+                                            makeCopy: vm.makeCopy,
+                                            item: item
+                                        }"
+                                        position-relative-to="element"
+                                        relative-position-x="left"
+                                        relative-position-y="top"
+                                        open-on="click"
+                                        close-on-click-outside="true"
+                                        ng-click="$event.stopPropagation();">
+                                    <span class="material-icons">more_vert</span>
+                                </button>
+                            </div>
+
+                            <!-- <md-button class="md-raised"
+                                       style="background: #ffeee8;"
+                                       data-ng-click="vm.deletePane(item, $index, $event)">Delete
+                            </md-button>
+                            <md-button class="md-raised"
+                                       data-ng-click="vm.makeCopyOfAction(item, $index, $event)">Make copy
+                            </md-button>
+                            <md-button class="md-raised" ng-disabled="$index == 0"
+                                       data-ng-click="vm.moveUp(item, $index, $event)">Move up
+                            </md-button>
+                            <md-button class="md-raised" ng-disabled="$index == vm.entity.accruals.length - 1"
+                                       data-ng-click="vm.moveDown(item, $index, $event)">Move Down
+                            </md-button>
+                            <md-button class="md-raised" data-ng-click="vm.toggleItem($pane, item, $event)">
+                                <span data-ng-if="item.isPaneExpanded">Collapse</span>
+                                <span data-ng-if="!item.isPaneExpanded">Expand</span>
+                            </md-button> -->
+                        </div>
+                    </div>
+
+                </v-pane-header>
+
+                <v-pane-content>
+
+                    <div class="flex-row p-t-10 m-b-10 instrument-type-accordion-top-fields">
+                        <text-input label="Message on the form"
+                                    placeholder-text="Message on the form"
+                                    model="item.data.form_message"
+                                    event-signal="vm.evEditorFieldEvent"
+                                    small-options="{tooltipText: 'Message on the form', notNull: true}"
+                                    on-change-callback="vm.onRequiredFieldChange('accruals')"
+                                    class="p-r-10"
+                                    style="flex-basis: 33%;"></text-input>
+                    </div>
+
+                    <div class="instrument-type-accordion-grid-table grid-table-bordered-rows m-b-16">
+                        <grid-table gt-data-service="item.accrualsGridTableDataService"
+                                    gt-event-service="item.accrualsGridTableEventService"></grid-table>
+                    </div>
+
+                    <!-- <div ng-if="!vm.accrualsReadyStatus" class="flex-row flex-c-center width-100" style="height: 100px;">
+                        <progress-circular diameter="100"></progress-circular>
+                    </div>-->
+
+                </v-pane-content>
+
+            </v-pane>
+
+        </v-accordion>
+
+        <div class="flex-row">
+            <md-button class="m-l-0 primary-button m-t-0"
+                       ng-click="vm.createInstrumentTypeAccrual()">+ ADD</md-button>
+
+           <!-- <md-button class="outline-button m-t-0">APPEND FROM TEMPLATE</md-button>
+
+            <md-button class="outline-button m-t-0">SAVE AS TEMPLATE</md-button> -->
+        </div>
+
+    </div>
+
+<!--    <div layout="row" class="transaction-type-template-controls">
+        <md-menu>
+            <md-button  class="md-raised"
+                        data-ng-class="{'disabled-btn': !vm.readyStatus.action_templates}"
+                        ng-click="$mdMenu.open($event)">
+                Append From Template
+            </md-button>
+
+            <md-menu-content width="3">
+                <md-menu-item data-ng-repeat="template in vm.actionTemplates">
+                    <md-button
+                            data-ng-click="vm.appendFromTemplate($event, template)">
+                        {{template.name}}
+                    </md-button>
+                </md-menu-item>
+            </md-menu-content>
+        </md-menu>
+
+        <md-button class="md-raised" data-ng-click="vm.saveAsTemplate($event, 'action_template')">Save as a Template
+        </md-button>
+    </div>-->
+</div>

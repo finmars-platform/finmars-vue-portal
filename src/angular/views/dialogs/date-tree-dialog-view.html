@@ -1,0 +1,90 @@
+<md-dialog class="date-tree-dialog draggable-dialog" aria-label="date tree dialog" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2 ng-bind="vm.title"></h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+
+        <div ng-if="vm.readyStatus">
+            <div class="m-b-24" layout="row">
+                <md-button class="md-raised small-folding-btn1 date-tree-folding-btn"
+                           ng-click="vm.expandCollapseAll()"
+                           aria-label="date tree fold all button">
+                    <span ng-if="vm.allGroupsExpanded">+</span>
+                    <span ng-if="!vm.allGroupsExpanded">-</span>
+                </md-button>
+                <span class="m-r-24">Expand / Collapse All</span>
+
+                <md-checkbox ng-checked="vm.allItemsSelected"
+                             ng-click="vm.toggleAllCheckboxes()"
+                             aria-label="date tree toggle all checkbox"></md-checkbox>
+                <span>Select All</span>
+            </div>
+
+            <div ng-repeat="year in vm.datesTree | orderBy: 'yearNumber'"
+                 class="m-b-8"
+                 ng-show="year.available">
+
+                <div layout="row">
+                    <md-button class="md-raised small-folding-btn1 date-tree-folding-btn"
+                               ng-click="year.showMonths = !year.showMonths"
+                               aria-label="date tree years folding button">
+                        <span ng-if="!year.showMonths">+</span>
+                        <span ng-if="year.showMonths">-</span>
+                    </md-button>
+                    <md-checkbox ng-checked="year.active"
+                                 ng-class="{'some-checkboxes-ticked': year.someChildrenActive}"
+                                 ng-click="vm.onCheckboxClick(year, {items: year.items})"
+                                 aria-label="date tree year"></md-checkbox>
+                    <span ng-bind="year.yearNumber"></span>
+                </div>
+
+                <div ng-show="year.showMonths">
+                    <div ng-repeat="month in year.items | orderBy: 'number'"
+                         ng-show="month.available"
+                         style="margin-left: 30px">
+                        <div layout="row" class="m-b-8">
+                            <md-button class="md-raised small-folding-btn1 date-tree-folding-btn"
+                                       ng-click="month.showDays = !month.showDays"
+                                       aria-label="date tree months folding button">
+                                <span ng-if="!month.showDays">+</span>
+                                <span ng-if="month.showDays">-</span>
+                            </md-button>
+                            <md-checkbox ng-checked="month.active"
+                                         ng-class="{'some-checkboxes-ticked': month.someChildrenActive}"
+                                         ng-click="vm.onCheckboxClick(month, {items: month.items, parents: [year]})"
+                                         aria-label="date tree month"></md-checkbox>
+                            <span ng-bind="month.name"></span>
+                        </div>
+
+                        <div ng-show="month.showDays">
+                            <div ng-repeat="day in month.items | orderBy: 'dayNumber'"
+                                 ng-show="day.available"
+                                 style="margin-left: 65px">
+                                <md-checkbox ng-checked="day.active"
+                                             ng-click="vm.onCheckboxClick(day, {items: month.days, parents: [month, year]})"
+                                             aria-label="date tree day"></md-checkbox>
+                                <span ng-bind="day.dayNumber"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div ng-if="!vm.readyStatus">
+            <div class="e-data-loader" layout="row" layout-sm="column" layout-align="space-around">
+                <md-progress-circular md-diameter="100" md-mode="indeterminate"></md-progress-circular>
+            </div>
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row" layout-align="space-between center">
+            <md-button ng-click="vm.cancel()" class="md-raised">Cancel</md-button>
+            <md-button ng-click="vm.agree()" class="md-raised">Apply</md-button>
+    </md-dialog-actions>
+</md-dialog>

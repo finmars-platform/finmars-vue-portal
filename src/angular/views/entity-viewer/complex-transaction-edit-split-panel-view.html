@@ -1,0 +1,239 @@
+<div>
+
+    <div class="p-l-16">
+        <h2>Rebook Transaction</h2>
+        <span flex></span>
+    </div>
+
+    <div style="min-width: 1450px">
+        <div data-ng-if="vm.checkReadyStatus()">
+
+            <div data-ng-if="vm.entityType === 'complex-transaction'" class="m-8 f-s-18 p-8"
+                 style="background: #ffeee8">
+                Transaction type: <b>{{vm.entity.transaction_type_object.name}}</b>
+            </div>
+
+            <md-tabs md-dynamic-height md-border-bottom class="tabs-colored">
+                <md-tab data-ng-repeat="tab in vm.tabs">
+                    <md-tab-label>
+                        <span>{{tab.name}}</span>
+                    </md-tab-label>
+                    <md-tab-body>
+                        <md-content class="md-padding p-t-26">
+                            <div layout="row" data-ng-repeat="row in vm.range(tab.layout.rows)"
+                                 class="entity-editor-row">
+                                <div class="ev-data-field
+								{{field.attribute['value_type'] === 'decoration' ? 'decoration-label-line' : ''}}"
+                                     data-ng-repeat="field in tab.layout.fields"
+                                     flex="{{vm.bindFlex(tab, row, field)}}"
+                                     data-ng-if="vm.checkFieldRender(tab, row, field)">
+                                    <bind-field-control entity-type="vm.entityType"
+                                                        entity="vm.entity"
+                                                        entity-change="vm.onEntityChange()"
+                                                        item="vm.attributesLayout[tab.tabOrder][field.row][field.column]"></bind-field-control>
+                                </div>
+                            </div>
+                        </md-content>
+                    </md-tab-body>
+                </md-tab>
+                <md-tab data-ng-repeat="tab in vm.entityTabs" data-ng-if="vm.checkViewState(tab)">
+                    <md-tab-lable>
+                        <span class="grey-tab">{{tab.label}}</span>
+                    </md-tab-lable>
+                    <md-tab-body>
+                        <md-content class="md-padding p-t-26">
+                            <div data-ng-include="tab.templateUrl"></div>
+                        </md-content>
+                    </md-tab-body>
+                </md-tab>
+                <md-tab data-ng-if="vm.checkPermissions()">
+                    <md-tab-label>
+                        <span class="colored-tab">Permissions</span>
+                    </md-tab-label>
+                    <md-tab-body>
+                        <md-content class="md-padding p-t-26">
+                            <md-content class="md-padding">
+                                <div data-ng-if="vm.readyStatus.permissions">
+                                    <md-tabs md-dynamic-height md-border-bottom>
+                                        <md-tab label="User permissions">
+                                            <md-content>
+                                                <div>
+                                                    <div layout="column">
+                                                        <div layout="row" layout-align="space-between center"
+                                                             class="permissions-table-header">
+                                                            <div>
+                                                                <div class="permissions-columns">User name</div>
+                                                            </div>
+                                                            <div layout="row" class="permissions-checkbox-holder"
+                                                                 flex="30"
+                                                                 layout-align="space-between center">
+                                                                <div class="permissions-columns" flex="50">Delegate
+                                                                    <ng-md-icon class="tooltip-inline-block"
+                                                                                icon="info"
+                                                                                size="20"
+                                                                                style="fill: #777777">
+                                                                        <md-tooltip class="tooltip_2"
+                                                                                    md-direction="top">
+                                                                            tooltip
+                                                                            text
+                                                                        </md-tooltip>
+                                                                    </ng-md-icon>
+                                                                </div>
+                                                                <div class="permissions-columns" flex="50">
+                                                                    Read/Write
+                                                                    <ng-md-icon class="tooltip-inline-block"
+                                                                                icon="info"
+                                                                                size="20"
+                                                                                style="fill: #777777">
+                                                                        <md-tooltip class="tooltip_2"
+                                                                                    md-direction="top">
+                                                                            tooltip
+                                                                            text
+                                                                        </md-tooltip>
+                                                                    </ng-md-icon>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                        <md-divider></md-divider>
+                                                    </div>
+                                                    <div data-ng-repeat="member in vm.members" layout="column">
+                                                        <div layout="row" layout-align="space-between center"
+                                                             class="permissions-table-row">
+                                                            <div>
+                                                                <p> {{ member["display_name"] }} </p>
+                                                            </div>
+                                                            <div layout="row" class="permissions-checkbox-holder"
+                                                                 flex="30"
+                                                                 layout-align="space-between center">
+                                                                <div flex="50" layout="center center">
+                                                                    <md-checkbox class="md-secondary"
+                                                                                 ng-model="member.objectPermissions.manage"></md-checkbox>
+                                                                </div>
+                                                                <div flex="50" layout="center center">
+                                                                    <md-checkbox class="md-secondary"
+                                                                                 ng-model="member.objectPermissions.change"></md-checkbox>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <md-divider></md-divider>
+                                                    </div>
+                                                </div>
+                                            </md-content>
+                                        </md-tab>
+                                        <md-tab label="Group permissions">
+                                            <md-content>
+                                                <div>
+                                                    <div layout="column">
+                                                        <div layout="row" layout-align="space-between center"
+                                                             class="permissions-table-header">
+                                                            <div>
+                                                                <div class="permissions-columns">Group name</div>
+                                                            </div>
+                                                            <div layout="row" class="permissions-checkbox-holder"
+                                                                 flex="30"
+                                                                 layout-align="space-between center">
+                                                                <div class="permissions-columns" flex="50">Delegate
+                                                                    <ng-md-icon class="tooltip-inline-block"
+                                                                                icon="info"
+                                                                                size="20"
+                                                                                style="fill: #777777">
+                                                                        <md-tooltip class="tooltip_2"
+                                                                                    md-direction="top">
+                                                                            tooltip
+                                                                            text
+                                                                        </md-tooltip>
+                                                                    </ng-md-icon>
+                                                                </div>
+                                                                <div class="permissions-columns" flex="50">
+                                                                    Read/Write
+                                                                    <ng-md-icon class="tooltip-inline-block"
+                                                                                icon="info"
+                                                                                size="20"
+                                                                                style="fill: #777777">
+                                                                        <md-tooltip class="tooltip_2"
+                                                                                    md-direction="top">
+                                                                            tooltip
+                                                                            text
+                                                                        </md-tooltip>
+                                                                    </ng-md-icon>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                        <md-divider></md-divider>
+                                                    </div>
+                                                    <div data-ng-repeat="group in vm.groups" layout="column">
+                                                        <div layout="row" layout-align="space-between center"
+                                                             class="permissions-table-row">
+                                                            <div>
+                                                                <p> {{ group["name"] }} </p>
+                                                            </div>
+                                                            <div layout="row" class="permissions-checkbox-holder"
+                                                                 flex="30"
+                                                                 layout-align="space-between center">
+                                                                <div flex="50" layout="center center">
+                                                                    <md-checkbox class="md-secondary"
+                                                                                 ng-model="group.objectPermissions.manage"></md-checkbox>
+                                                                </div>
+                                                                <div flex="50" layout="center center">
+                                                                    <md-checkbox class="md-secondary"
+                                                                                 ng-model="group.objectPermissions.change"></md-checkbox>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <md-divider></md-divider>
+                                                    </div>
+                                                </div>
+                                            </md-content>
+                                        </md-tab>
+                                    </md-tabs>
+                                </div>
+                                <div data-ng-if="!vm.readyStatus.permissions">
+                                    <div layout="row" layout-sm="column" layout-align="space-around"
+                                         class="m-large">
+                                        <!--<md-progress-circular md-mode="indeterminate"-->
+                                                              <!--md-diameter="96"></md-progress-circular>-->
+                                        <progress-circular diameter="100"></progress-circular>
+                                    </div>
+                                </div>
+                            </md-content>
+                        </md-content>
+                    </md-tab-body>
+                </md-tab>
+            </md-tabs>
+        </div>
+        <div data-ng-if="!vm.checkReadyStatus()">
+            <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                <!--<md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>-->
+                <progress-circular diameter="100"></progress-circular>
+            </div>
+        </div>
+    </div>
+
+    <div layout="row" layout-align="space-between center">
+
+        <div layout="row">
+            <md-button ng-click="vm.editLayout($event)" class="md-raised md-primary">
+                Edit Form
+            </md-button>
+            <md-button ng-click="vm.manageAttrs()" class="md-raised md-primary">
+                Manage attributes
+            </md-button>
+        </div>
+        <div layout="row">
+            <md-button class="md-raised m-r-24" ng-click="vm.copy()" ng-disabled="!vm.checkReadyStatus()">
+                Make a copy
+            </md-button>
+            <md-button class="md-raised" ng-click="vm.cancel()">
+                Cancel
+            </md-button>
+            <md-button class="md-raised m-r-24"
+                       data-ng-class="{'disabled-btn': !vm.formIsValid, 'disabled-btn': !vm.TTGroupChosen}"
+                       ng-click="vm.save()">
+                <span>Rebook</span>
+            </md-button>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,283 @@
+<div data-ng-if="isReport" class="settings-btn">
+
+    <div data-ng-if="column.value_type == 20">
+        <md-menu>
+            <md-button aria-label="numeric column settings"
+                       class="md-icon-button column-btns"
+                       ng-disabled="column.error_data"
+                       ng-click="$mdMenu.open($event)">
+                <ng-md-icon icon="settings"></ng-md-icon>
+            </md-button>
+
+            <md-menu-content width="4">
+
+                <md-menu-item>
+                    <md-button ng-click="renameColumn($mdMenu, $event)"
+                               class="g-settings-option-btn">
+                        <ng-md-icon icon="visibility_off"
+                                    style="visibility: hidden;"></ng-md-icon>
+                        <span>Rename</span>
+                    </md-button>
+                </md-menu-item>
+
+                <md-menu-item>
+                    <md-button ng-click="renameColumn($mdMenu, $event)"
+                               class="g-settings-option-btn">
+                        <ng-md-icon icon="visibility_off"
+                                    style="visibility: hidden;"></ng-md-icon>
+                        <span>Rename</span>
+                    </md-button>
+                </md-menu-item>
+
+                <md-menu-item>
+                    <md-button ng-click="resizeColumn($mdMenu, $event)"
+                               class="g-settings-option-btn">
+                        <ng-md-icon icon="visibility_off"
+                                    style="visibility: hidden;"></ng-md-icon>
+                        <span>Resize</span>
+                    </md-button>
+                </md-menu-item>
+
+                <md-menu-item>
+                    <md-button ng-click="openNumberFormatDialog($event)"
+                               class="g-settings-option-btn">
+                        <ng-md-icon icon="visibility_off"
+                                    style="visibility: hidden;"></ng-md-icon>
+                        <span>Number Format</span>
+                    </md-button>
+                </md-menu-item>
+
+                <md-menu-item data-ng-if="$index !== 0">
+                    <md-button ng-click="selectSubtotalType(1)"
+                               class="g-settings-option-btn">
+                        <ng-md-icon icon="done"
+                                    data-ng-show="!checkSubtotalFormula(1)"
+                                    class="z-menu-icon"
+                                    style="visibility: hidden;"></ng-md-icon>
+                        <ng-md-icon icon="done"
+                                    data-ng-show="checkSubtotalFormula(1)"
+                                    class="z-menu-icon"></ng-md-icon>
+                        <span>Subtotal SUM</span>
+                    </md-button>
+                </md-menu-item>
+
+                <md-menu-item data-ng-if="$index !== 0">
+                    <md-menu>
+                        <md-button aria-label="Open phone interactions menu"
+                                   class=""
+                                   ng-click="$mdMenu.open($event)">
+                            <ng-md-icon icon="done"
+                                        class="z-menu-icon"
+                                        style="visibility: hidden;"></ng-md-icon>
+                            <span>Subtotal Weighted</span>
+                            <ng-md-icon icon="arrow_drop_up"
+                                        class="z-dropdown-icon"></ng-md-icon>
+                        </md-button>
+                        <md-menu-content width="3">
+                            <md-menu-item>
+                                <md-button ng-click="selectSubtotalType(2)"
+                                           class="g-settings-option-btn">
+                                    <ng-md-icon icon="done"
+                                                data-ng-show="!checkSubtotalFormula(2)"
+                                                class="z-menu-icon"
+                                                style="visibility: hidden;"></ng-md-icon>
+                                    <ng-md-icon icon="done"
+                                                data-ng-show="checkSubtotalFormula(2)"
+                                                class="z-menu-icon"></ng-md-icon>
+                                    <span>Market Value</span>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="selectSubtotalType(3)"
+                                           class="g-settings-option-btn">
+                                    <ng-md-icon icon="done"
+                                                data-ng-show="!checkSubtotalFormula(3)"
+                                                class="z-menu-icon"
+                                                style="visibility: hidden;"></ng-md-icon>
+                                    <ng-md-icon icon="done"
+                                                data-ng-show="checkSubtotalFormula(3)"
+                                                class="z-menu-icon"></ng-md-icon>
+                                    <span>Market Value %</span>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="selectSubtotalType(4)"
+                                           class="g-settings-option-btn">
+                                    <ng-md-icon icon="done"
+                                                data-ng-show="!checkSubtotalFormula(4)"
+                                                class="z-menu-icon"
+                                                style="visibility: hidden;"></ng-md-icon>
+                                    <ng-md-icon icon="done"
+                                                data-ng-show="checkSubtotalFormula(4)"
+                                                class="z-menu-icon"></ng-md-icon>
+                                    <span>Exposure</span>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="selectSubtotalType(5)"
+                                           class="g-settings-option-btn">
+                                    <ng-md-icon icon="done"
+                                                data-ng-show="!checkSubtotalFormula(5)"
+                                                class="z-menu-icon"
+                                                style="visibility: hidden;"></ng-md-icon>
+                                    <ng-md-icon icon="done"
+                                                data-ng-show="checkSubtotalFormula(5)"
+                                                class="z-menu-icon"></ng-md-icon>
+                                    <span>Exposure %</span>
+                                </md-button>
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
+                </md-menu-item>
+
+                <md-menu-item data-ng-if="$index !== 0">
+                    <md-menu>
+                        <md-button aria-label="Open phone interactions menu"
+                                   class=""
+                                   ng-click="$mdMenu.open($event)">
+                            <ng-md-icon icon="done"
+                                        class="z-menu-icon"
+                                        style="visibility: hidden;"></ng-md-icon>
+                            <span>Subtotal Avg. Weighted</span>
+                            <ng-md-icon icon="arrow_drop_up"
+                                        class="z-dropdown-icon"></ng-md-icon>
+                        </md-button>
+                        <md-menu-content width="3">
+                            <md-menu-item>
+                                <md-button ng-click="selectSubtotalType(6)"
+                                           class="g-settings-option-btn">
+                                    <ng-md-icon icon="done"
+                                                data-ng-show="!checkSubtotalFormula(6)"
+                                                class="z-menu-icon"
+                                                style="visibility: hidden;"></ng-md-icon>
+                                    <ng-md-icon icon="done"
+                                                data-ng-show="checkSubtotalFormula(6)"
+                                                class="z-menu-icon"></ng-md-icon>
+                                    <span>Market Value</span>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="selectSubtotalType(7)"
+                                           class="g-settings-option-btn">
+                                    <ng-md-icon icon="done"
+                                                data-ng-show="!checkSubtotalFormula(7)"
+                                                class="z-menu-icon"
+                                                style="visibility: hidden;"></ng-md-icon>
+                                    <ng-md-icon icon="done"
+                                                data-ng-show="checkSubtotalFormula(7)"
+                                                class="z-menu-icon"></ng-md-icon>
+                                    <span>Market Value %</span>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="selectSubtotalType(8)"
+                                           class="g-settings-option-btn">
+                                    <ng-md-icon icon="done"
+                                                data-ng-show="!checkSubtotalFormula(8)"
+                                                class="z-menu-icon"
+                                                style="visibility: hidden;"></ng-md-icon>
+                                    <ng-md-icon icon="done"
+                                                data-ng-show="checkSubtotalFormula(8)"
+                                                class="z-menu-icon"></ng-md-icon>
+                                    <span>Exposure</span>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="selectSubtotalType(9)"
+                                           class="g-settings-option-btn">
+                                    <ng-md-icon icon="done"
+                                                data-ng-show="!checkSubtotalFormula(9)"
+                                                class="z-menu-icon"
+                                                style="visibility: hidden;"></ng-md-icon>
+                                    <ng-md-icon icon="done"
+                                                data-ng-show="checkSubtotalFormula(9)"
+                                                class="z-menu-icon"></ng-md-icon>
+                                    <span>Exposure %</span>
+                                </md-button>
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
+                </md-menu-item>
+
+                <!-- <md-menu-item>
+                    <md-button ng-click="reportHideSubtotal()"
+                               class="g-settings-option-btn">
+                        <ng-md-icon icon="done" style="visibility: hidden;"></ng-md-icon>
+                        <span data-ng-show="!column.report_settings.hide_subtotal">Hide subtotal</span><span
+                            data-ng-show="column.report_settings.hide_subtotal">Show subtotal</span>
+                    </md-button>
+                </md-menu-item> -->
+
+            </md-menu-content>
+        </md-menu>
+    </div>
+
+    <div data-ng-if="column.value_type != 20">
+        <md-menu>
+            <md-button aria-label="column settings"
+                       class="md-icon-button column-btns"
+                       ng-disabled="column.error_data"
+                       ng-click="$mdMenu.open($event)">
+                <ng-md-icon icon="settings"></ng-md-icon>
+            </md-button>
+
+            <md-menu-content>
+
+                <md-menu-item>
+                    <md-button ng-click="renameColumn($mdMenu, $event)"
+                               class="g-settings-option-btn">
+                        <ng-md-icon icon="visibility_off"
+                                    style="visibility: hidden;"></ng-md-icon>
+                        <span>Rename</span>
+                    </md-button>
+                    <md-menu-content style="display: none"></md-menu-content>
+                </md-menu-item>
+
+                <md-menu-item>
+                    <md-button ng-click="resizeColumn($mdMenu, $event)"
+                               class="g-settings-option-btn">
+                        <ng-md-icon icon="visibility_off"
+                                    style="visibility: hidden;"></ng-md-icon>
+                        <span>Resize</span>
+                    </md-button>
+                </md-menu-item>
+
+            </md-menu-content>
+        </md-menu>
+    </div>
+
+</div>
+
+<div data-ng-if="!isReport" class="settings-btn">
+    <md-menu>
+        <md-button aria-label="column settings"
+                   class="md-icon-button column-btns"
+                   ng-disabled="column.error_data"
+                   ng-click="$mdMenu.open($event)">
+            <ng-md-icon icon="settings"></ng-md-icon>
+        </md-button>
+
+        <md-menu-content>
+
+            <md-menu-item>
+                <md-button ng-click="renameColumn($mdMenu, $event)"
+                           class="g-settings-option-btn">
+                    <ng-md-icon icon="visibility_off"
+                                style="visibility: hidden;"></ng-md-icon>
+                    <span>Rename column</span>
+                </md-button>
+                <md-menu-content style="display: none"></md-menu-content>
+            </md-menu-item>
+
+            <md-menu-item>
+                <md-button ng-click="resizeColumn($mdMenu, $event)"
+                           class="g-settings-option-btn">
+                    <ng-md-icon icon="visibility_off"
+                                style="visibility: hidden;"></ng-md-icon>
+                    <span>Resize</span>
+                </md-button>
+            </md-menu-item>
+
+        </md-menu-content>
+    </md-menu>
+</div>

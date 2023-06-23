@@ -1,0 +1,371 @@
+// table-attributes-selector-dialog-view
+
+.dialog-close-button {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  cursor: pointer;
+  &:hover {
+    opacity: .7;
+  }
+}
+.attr-selector-dialog {
+  //min-width: 500px;
+  height: 600px;
+  padding-bottom: 52px;
+
+  width: 451px;
+
+  md-toolbar {
+    min-height: 96px;
+    height: 96px;
+    max-height: 96px;
+  }
+
+  .md-toolbar-tools {
+    padding-left: 10px;
+    min-height: 96px;
+    height: 96px;
+    max-height: 96px;
+    h2 {
+      font-weight: 500;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 28px;
+      color: #333333;
+    }
+  }
+
+  md-dialog-content {
+    padding: 0;
+  }
+
+  .attribute-selector-item {
+    height: 47px;
+
+    font-size: 14px;
+    letter-spacing: normal;
+    color: #333333;
+    padding: 0 30px;
+    line-height: 47px;
+
+    cursor: pointer;
+
+    span.material-icons {
+      position: relative;
+      top: 5px;
+      margin-right: 4px;
+      color: #747474;
+    }
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.0392156862745098);
+    }
+  }
+
+  .attr-selector-search {
+    width: 400px;
+  }
+}
+
+/* .attr-selector-dialog.multiselector {
+  .attribute-selector-item:not(.attribute-selector-item-folder) {
+    padding-left: 30px;
+  }
+} */
+
+.attr-selector-btns-holder {
+  padding: 5px 0 0;
+}
+
+.attr-selector-breadcrumbs {
+  height: 40px;
+  box-sizing: border-box;
+  padding-top: 8px;
+
+  overflow: hidden;
+
+  .attr-selector-breadcrumbs-item {
+    cursor: pointer;
+    &:hover {
+      opacity: .7;
+    }
+  }
+
+  .material-icons {
+    position: relative;
+    top: -4px;
+  }
+  span {
+    margin-left: 5px;
+  }
+}
+
+.attr-selector-back-btn {
+  position: relative;
+  cursor: pointer;
+  &:hover {
+    opacity: .7;
+  }
+}
+
+.attr-selector-filter {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #000;
+  padding: 0 0 5px 11px;
+}
+
+.attr-selector-btns-container {
+  height: 352px;
+  overflow-y: auto;
+}
+// < table-attributes-selector-dialog-view >
+
+// table-attributes-menu-constructor-dialog-view
+.attr-menu-constructor-dialog {
+
+  .column-titles-row {
+
+    div {
+      width: 250px;
+      margin: 0 10px 0 13px;
+    }
+  }
+
+  .attr-menu-attribute-key-input {
+    cursor: pointer;
+
+    &:hover {
+      border-bottom-color: rgb(63, 81, 181);
+    }
+  }
+
+}
+// < table-attributes-menu-constructor-dialog-view >
+
+// tabs-editor-dialog-view
+.tab-editor-dialog {
+  .tabs-dnd-container {
+    padding: 8px;
+  }
+}
+
+md-card.tab-editor-tab-card {
+  padding: 0 10px;
+  cursor: grab;
+}
+// < tabs-editor-dialog-view >
+
+// validation-dialog-view
+.validation-dialog {
+
+  .warning-text {
+    min-width: 500px;
+  }
+
+  .validation-dialog-table-container {
+    margin-bottom: 30px;
+  }
+
+  .validation-dialog-table-h {
+    margin-left: 10px;
+  }
+
+  .validation-dialog-errors-table {
+    th, td {
+      padding: 10px;
+    }
+  }
+
+  .vd-dev-info-toggle-btn {
+    min-height: 25px;
+    font-size: 12px;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+
+  .validation-dialog-dev-info-container {
+    width: 100%;
+    font-size: 14px;
+    padding: 0 10px;
+
+    .vd-dev-info-name {
+      min-width: 50px;
+      width: 50px;
+    }
+  }
+}
+// < validation-dialog-view >
+
+// expandable-items-selector-view
+.expandable-items-selector-dialog {
+
+  .expandable-item {
+    padding: 10px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    background-color: #fff;
+    transition: background-color .2s linear 0s;
+
+    &:hover {
+      background-color: #ffeee8;
+    }
+  }
+
+  .expandable-item.selected {
+    background-color: #ffeee8;
+  }
+
+  .empty-space-for-button {
+    padding-left: 31px;
+  }
+
+}
+
+.expandable-items-subitems-toggle {
+  margin: 0 10px 0 0;
+  border: 1px solid #000000;
+}
+
+.expandable-items-subitems-wrap {
+  padding-top: 10px;
+  padding-left: 30px;
+}
+
+.expandable-items-subitem {
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+// < expandable-items-selector-view >
+
+// text-editor-dialog
+.text-editor-dialog {
+  width: 30%;
+  height: 40%;
+}
+
+.text-editor-textarea-container {
+  width: 100%;
+  height: 100%;
+}
+
+.text-editor-textarea {
+  resize: none;
+  height: 100%;
+  width: 100%;
+}
+// < text-editor-dialog >
+
+// rename-color-dialog
+.rename-color-textinput-holder {
+  flex: 0 0 47px;
+}
+
+.rename-color-textarea {
+  flex: 0 1 100%;
+  resize: none;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+// < rename-color-dialog >
+
+// expandable-items-selector-dialog-view
+.select-layout-filter-container {
+  padding: 0 10px;
+  box-sizing: border-box;
+  width: 100%;
+  margin-bottom: 10px;
+
+  input {
+    width: 100%;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    padding-left: 10px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #cecece;
+    box-sizing: border-box;
+  }
+}
+
+.select-layout-item-card {
+  &:focus {
+    outline: none;
+  }
+}
+
+.select-layout-multiselector-checkbox {
+  position: absolute;
+  left: 0;
+}
+
+.select-layout-folding-btn {
+  border: 1px solid #000000;
+  padding: 0;
+  margin: 19px 0px 0px 11px;
+}
+// < expandable-items-selector-dialog-view >
+
+// items selector with groups
+@selectorWgItemsLeftSpace: 50px;
+
+.i-selector-wg-filter-container {
+  padding: 0 10px;
+  box-sizing: border-box;
+  width: 100%;
+  margin-bottom: 10px;
+
+  input {
+    width: 100%;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    padding-left: 10px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #cecece;
+    box-sizing: border-box;
+  }
+}
+
+.i-selector-wg-group {
+  margin-bottom: 12px;
+
+  h3 {
+    margin-left: 10px;
+  }
+
+  .i-selector-wg-row {
+    position: relative;
+    padding-left: @selectorWgItemsLeftSpace;
+    padding-top: 2px;
+    margin-bottom: 8px;
+    cursor: pointer;
+
+    &:not(.i-selector-wg-active):hover {
+      background-color: rgba(116, 116, 116, 0.2);
+    }
+  }
+
+}
+
+.i-selector-wg-active {
+  background-color: #f7b28d;
+}
+
+md-checkbox.i-selector-wg-toggle-all {
+  margin-left: 8px;
+}
+
+md-checkbox.i-selector-wg-toggle-group {
+  margin-left: @selectorWgItemsLeftSpace;
+  margin-bottom: 8px;
+}
+
+.i-selector-wg-folding-btn {
+  border: 1px solid #000000;
+  padding: 0;
+  margin: 19px 0px 0px 8px;
+}
+// < items selector with groups >

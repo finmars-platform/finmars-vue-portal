@@ -10,7 +10,7 @@
 
 		<FmMenu class="select_btn">
 			<template #btn>
-				<div class="flex aic" style="height: 42px;">
+				<div class="flex aic" style="height: 42px">
 					<div class="fm_avatar">
 						{{ selected }}
 					</div>
@@ -19,10 +19,11 @@
 
 			<template #default="{ close }">
 				<div class="fm_list">
-					<div class="fm_list_item flex sb"
+					<div
+						class="fm_list_item flex sb"
 						v-for="(item, index) in items"
 						:key="index"
-						:class="{active: item.is_active}"
+						:class="{ active: item.is_active }"
 						@click="selectType(item), close()"
 					>
 						<div>{{ item.name }}</div>
@@ -34,26 +35,26 @@
 			</template>
 		</FmMenu>
 	</div>
-
 </template>
 
 <script setup>
-
 	const props = defineProps([
-		'items', 'simpleItems', 'label', 'type', 'modelValue',
-		'prop_id'
+		'items',
+		'simpleItems',
+		'label',
+		'type',
+		'modelValue',
+		'prop_id',
 	])
-	const emit = defineEmits([
-		'update:type', 'update:modelValue'
-	])
+	const emit = defineEmits(['update:type', 'update:modelValue'])
 
-	let selectedObj = props.items.find( item => item.id == props.type)
+	let selectedObj = props.items.find((item) => item.id == props.type)
 	selectedObj.is_active = true
 
 	let selected = ref(selectedObj.icon)
 
-	function selectType( item ) {
-		props.items.forEach( item => {
+	function selectType(item) {
+		props.items.forEach((item) => {
 			item.is_active = false
 		})
 
@@ -90,5 +91,4 @@
 		text-align: center;
 		color: $separ;
 	}
-
 </style>

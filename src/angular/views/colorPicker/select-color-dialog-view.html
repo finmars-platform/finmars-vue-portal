@@ -1,0 +1,85 @@
+<md-dialog class="color-picker-dialog draggable-dialog dialog-actions-bottom colorPickerDialogElemToResize"
+           aria-label="color picker dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Color palettes settings</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="p-16 height-100">
+
+        <div data-ng-if="vm.readyStatus">
+            <div layout="row">
+                <h4 style="margin: 10px 0 0;">Palette</h4>
+
+                <md-input-container class="color-palette-selector-container">
+                    <md-select data-ng-model="vm.openedPaletteId"
+                               data-ng-change="vm.changeShowingPalette()">
+                        <md-option data-ng-repeat="palette in vm.palettesList track by palette.user_code"
+                                   data-ng-bind="palette.name"
+                                   ng-value="palette.id"></md-option>
+                    </md-select>
+                </md-input-container>
+
+                <md-button data-ng-click="vm.openPaletteSettings($event);">
+                    Edit
+                </md-button>
+            </div>
+
+            <div data-ng-repeat="palette in vm.palettesList track by palette.user_code"
+                 data-ng-show="palette.id === vm.openedPalette.id"
+                 class="color-palette-container">
+
+                <div data-ng-repeat="color in palette.colors | orderBy: 'order' track by color.order"
+                     class="palette-color-wrap"
+                     ng-class="{'active-color': vm.isColorSelected(palette, color)}">
+
+                    <div class="palette-color-label-holder">
+                        <text-input model="color.name"
+                                    placeholder-text="Label name"
+                                    small-options="{noIndicatorBtn: true, readonly: true}"></text-input>
+                    </div>
+
+                    <div class="palette-color-sample"
+                         style="background-color: {{color.value}};"
+                         data-ng-click="vm.selectColor(color)"
+                         data-ng-dblclick="vm.selectColorAndClose(color)"></div>
+
+                    <md-tooltip data-ng-if="color.tooltip"
+                                class="tooltip_1"
+                                md-direction="top"
+                                data-ng-bind="color.tooltip"></md-tooltip>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div data-ng-if="!vm.readyStatus">
+            <div layout="row" layout-sm="column" layout-align="space-around">
+                <progress-circular diameter="100"></progress-circular>
+            </div>
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions>
+        <div class="width-100" layout="row" layout-align="space-between center">
+            <md-button ng-click="vm.cancel()">
+                Cancel
+            </md-button>
+
+            <md-button ng-click="vm.agree()" style="margin-right:20px;">
+                Ok
+            </md-button>
+        </div>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+    </md-dialog-actions>
+
+</md-dialog>

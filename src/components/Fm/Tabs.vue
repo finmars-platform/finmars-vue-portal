@@ -81,7 +81,6 @@
 	function scrollRight() {
 
 		containerLeft = tabsContainerElem.value.style.left || 0;
-		console.log("testing1090 nextTabsWidth", nextTabsWidth);
 		tabsContainerElem.value.style.left = containerLeft + nextTabsWidth;
 
 		nextTabsWidth = allowedWidth - containerWidth + containerLeft;

@@ -1,0 +1,250 @@
+<md-dialog aria-label="dashboard report viewer charts constructor dialog"
+           class="draggable-dialog width-50 dialog-actions-bottom dcChartsElemToDrag"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>New Report Viewer Charts Component</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+        <div>
+
+            <md-tabs md-dynamic-height>
+
+                <md-tab label="Main">
+                    <md-content class="p-16">
+
+                        <div layout="row">
+                            <md-input-container class="dashboard-constructor-field1">
+                                <label for="">Name</label>
+                                <input type="text" data-ng-model="vm.item.name">
+                            </md-input-container>
+                        </div>
+
+                        <div layout="row">
+                            <md-input-container class="dashboard-constructor-field1">
+                                <label for="">Chart label</label>
+                                <input type="text" data-ng-model="vm.item.chart_custom_name">
+                            </md-input-container>
+                        </div>
+
+                        <div layout="row" class="m-b-24">
+                            <md-input-container class="md-block no-error-spacer dashboard-constructor-field1">
+                                <label for="">Chart Type</label>
+                                <div>
+                                    <md-select data-ng-model="vm.item.type"
+                                               ng-change="vm.chartTypeChanged()"
+                                               md-container-class="common-select-container"
+                                               class="m-0">
+
+                                        <div class="select-options-holder">
+                                            <md-option value="report_viewer_bars_chart">Chart With Bars</md-option>
+                                            <md-option value="report_viewer_pie_chart">Pie Chart</md-option>
+                                        </div>
+                                    </md-select>
+                                </div>
+                            </md-input-container>
+                        </div>
+
+                        <!-- <div class="m-t-16 m-b-16" layout="row">
+                            <md-input-container class="dashboard-constructor-field1">
+                                <label for="">Report Type</label>
+                                <md-select data-ng-model="vm.item.settings.entity_type"
+                                           data-ng-change="vm.reportTypeChange()">
+                                    <md-option value="balance-report">Balance Report</md-option>
+                                    <md-option value="pl-report">P&L Report</md-option>
+                                    <md-option value="transaction-report">Transaction Report</md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+
+                        <div class="m-t-16 m-b-16" layout="row">
+                            <expandable-items-selector data-model="vm.item.settings.layout"
+                                                       data-title="Layout"
+                                                       data-dialog-title="Choose layout"
+                                                       data-items="vm.layoutsWithLinkToFilters"
+                                                       data-is-disabled="!vm.item.settings.entity_type"
+                                                       data-on-change-callback="vm.showLinkingToFilters()"
+                                                       class="dashboard-constructor-selector-directive"></expandable-items-selector>
+                        </div> -->
+                        <div style="width: 400px;" class="m-l-10">
+                            <div ng-if="vm.readyStatus.layouts">
+                                <multitype-field label="Select layout"
+                                                 field-types-data="vm.layoutsSelectorsList"
+                                                 type-switch="selector"
+                                                 on-value-change="vm.onLayoutChange()"
+                                                 on-type-change="vm.onLayoutEntityTypeChange(activeType)"></multitype-field>
+                            </div>
+
+                            <div ng-if="!vm.readyStatus.layouts" class="flex-row fc-space-around" style="height: 40px;">
+                                <progress-circular diameter="30"></progress-circular>
+                            </div>
+                        </div>
+
+                        <div data-ng-if="vm.item.type === 'report_viewer_bars_chart'" layout="row" class="m-t-24">
+                            <table-attribute-selector data-title="Category"
+                                                      data-dialog-title="Choose Columns for Category"
+                                                      data-available-attrs="vm.attributes"
+                                                      data-item="vm.item.settings.bar_name_key"
+                                                      is-report="true"
+                                                      class="dashboard-constructor-field1"
+                                                      style="margin: 0 10px;"></table-attribute-selector>
+
+                            <table-attribute-selector data-title="Value"
+                                                      data-dialog-title="Choose Columns for Value"
+                                                      data-available-attrs="vm.numericAttributes"
+                                                      data-item="vm.item.settings.bar_number_key"
+                                                      is-report="true"
+                                                      class="dashboard-constructor-field1"
+                                                      style="margin: 0 10px;"></table-attribute-selector>
+                        </div>
+
+                        <div data-ng-if="vm.item.type === 'report_viewer_pie_chart'" layout="row" class="m-t-24">
+
+                            <table-attribute-selector data-title="Separate Chart By"
+                                                      data-dialog-title="Separate Chart By"
+                                                      data-item="vm.item.settings.group_attr"
+                                                      data-available-attrs="vm.attributes"
+                                                      is-report="true"
+                                                      class="dashboard-constructor-field1"
+                                                      style="margin: 0 10px;"></table-attribute-selector>
+
+                            <table-attribute-selector data-title="Chart Numeric Value"
+                                                      data-dialog-title="Chart Numeric Value"
+                                                      data-available-attrs="vm.numericAttributes"
+                                                      data-item="vm.item.settings.number_attr"
+                                                      is-report="true"
+                                                      class="dashboard-constructor-field1"
+                                                      style="margin: 0 10px;"></table-attribute-selector>
+
+                        </div>
+
+                    </md-content>
+                </md-tab>
+
+                <md-tab label="Advance Settings">
+                    <md-content class="p-16">
+
+                        <div data-ng-if="vm.item.type === 'report_viewer_bars_chart'"
+                             data-ng-include="'views/dialogs/dashboard-constructor/charts/dashboard-constructor-report-viewer-bars-chart-advance-settings-dialog-view.html'">
+                        </div>
+
+                        <div data-ng-if="vm.item.type === 'report_viewer_pie_chart'"
+                             data-ng-include="'views/dialogs/dashboard-constructor/charts/dashboard-constructor-report-viewer-pie-chart-advance-settings-dialog-view.html'">
+                        </div>
+
+                    </md-content>
+                </md-tab>
+
+                <md-tab label="MENU SETTINGS">
+                    <md-content class="p-16">
+
+                        <div data-ng-if="vm.item.type === 'report_viewer_bars_chart'" layout="row">
+
+                            <table-attributes-menu-constructor data-title="Category"
+                                                               data-dialog-title="Choose Columns for Category"
+                                                               data-model="vm.item.user_settings.available_attrs_keys"
+                                                               data-is-report="'true'"
+                                                               data-available-attrs="vm.attributes"
+                                                               data-default-attrs-keys="vm.item.settings.bar_name_key"></table-attributes-menu-constructor>
+
+                            <table-attributes-menu-constructor data-title="Value"
+                                                               data-dialog-title="Choose Columns for Value"
+                                                               data-model="vm.item.user_settings.available_numeric_attrs_keys"
+                                                               data-is-report="'true'"
+                                                               data-available-attrs="vm.numericAttributes"
+                                                               data-default-attrs-keys="vm.item.settings.bar_number_key"></table-attributes-menu-constructor>
+                        </div>
+
+                        <div data-ng-if="vm.item.type === 'report_viewer_pie_chart'" layout="row">
+
+                            <table-attributes-menu-constructor data-title="Category"
+                                                               data-dialog-title="Choose Columns for Category"
+                                                               data-model="vm.item.user_settings.available_attrs_keys"
+                                                               data-is-report="'true'"
+                                                               data-available-attrs="vm.attributes"
+                                                               data-default-attrs-keys="vm.item.settings.group_attr"></table-attributes-menu-constructor>
+
+                            <table-attributes-menu-constructor data-title="Value"
+                                                               data-dialog-title="Choose Columns for Value"
+                                                               data-model="vm.item.user_settings.available_numeric_attrs_keys"
+                                                               data-is-report="'true'"
+                                                               data-available-attrs="vm.numericAttributes"
+                                                               data-default-attrs-keys="vm.item.settings.number_attr"></table-attributes-menu-constructor>
+
+                        </div>
+
+                    </md-content>
+                </md-tab>
+
+                <md-tab label="LINKING">
+                    <md-content class="p-16">
+
+                        <div data-ng-if="vm.linkingToFilters && vm.linkingToFilters.length">
+                            <h4 class="m-t-0 m-b-16">Link to Selection filters of layout</h4>
+                            <div class="dashboard-constructor-linked-filters-container">
+                                <ui>
+                                    <li data-ng-repeat="lFilter in vm.linkingToFilters">
+                                        <span data-ng-bind="lFilter.name"></span>
+                                    </li>
+                                </ui>
+                            </div>
+                            <!--<div class="dashboard-constructor-linked-filters-ui">
+                                <div data-ng-repeat="lFilter in vm.linkingToFilters"
+                                    data-ng-bind="lFilter.name"
+                                    class="m-b-8 test-class"></div>
+                            </div>-->
+                        </div>
+
+                        <div layout="row">
+                            <div flex="50">
+                                <two-fields-multiselect ng-model="vm.item.settings.linked_components.active_object"
+                                                        title="Select Link to Component"
+                                                        items="vm.componentsForMultiselector"
+                                                        model="vm.item.settings.linked_components.active_object"
+                                                        name-property="name"
+                                                        data-selected-items-indication="array"
+                                                        class="dashboard-constructor-selector-directive"></two-fields-multiselect>
+                            </div>
+                        </div>
+
+                    </md-content>
+                </md-tab>
+
+                <md-tab label="CALCULATION">
+                    <md-content class="p-16"
+                                data-ng-include="'views/dialogs/dashboard-constructor/dashboard-component-settings-calculation-tab-view.html'">
+                    </md-content>
+                </md-tab>
+
+            </md-tabs>
+
+        </div>
+    </md-dialog-content>
+
+<!--    <md-dialog-actions layout="row" layout-align="space-between">-->
+    <md-dialog-actions layout="row">
+
+        <md-button ng-click="vm.exportToDashboards()" style="margin-right:20px;">
+            Export to dashboards
+        </md-button>
+
+        <md-button ng-click="vm.cancel()" style="margin-right:20px;">
+            Cancel
+        </md-button>
+        <md-button ng-click="vm.agree()"
+                   style="margin-right:20px;"
+                   ng-disabled="!vm.isFormValid()">
+            OK
+        </md-button>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               data-on-resize-callback="vm.rearrangeMdDialogActions()"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+    </md-dialog-actions>
+</md-dialog>

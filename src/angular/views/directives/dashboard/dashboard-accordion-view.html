@@ -1,0 +1,30 @@
+<div class="dashboard-accordion-component dashboard-component-id-{{item.data.id}} {{item.data.folded ? 'dashboard-accordion-folded' : ''}}" data-row-number="{{rowNumber}}">
+
+    <div  class="dashboard-accordion-header">
+
+        <button data-ng-click="toggleAccordion($event, item)" class="dashboard-accordion-toggle-button" style="left: 8px;">
+
+            <span class="material-icons" data-ng-if="!item.data.folded">expand_less</span>
+            <span class="material-icons" data-ng-if="item.data.folded" >expand_more</span>
+
+        </button>
+
+
+        <div class="dashboard-accordion-name" style="margin-left: 30px;">
+             {{componentData.name}}
+        </div>
+
+
+        <button data-ng-click="toggleAccordion($event, item)" class="dashboard-accordion-toggle-button">
+
+            <span class="material-icons" data-ng-if="!item.data.folded">expand_less</span>
+            <span class="material-icons" data-ng-if="item.data.folded" >expand_more</span>
+
+<!--            <ng-md-icon class="" data-ng-if="!item.data.folded" icon="arrow_upwards" size="14"></ng-md-icon>-->
+<!--            <ng-md-icon class="" data-ng-if="item.data.folded" icon="arrow_downward" size="14"></ng-md-icon>-->
+
+        </button>
+
+    </div>
+
+</div>

@@ -1,0 +1,92 @@
+<div class="cdsm-filter-holder">
+    <input ng-model="filterTerms"
+           ng-change="onScrollBarChange()"
+           ng-model-options="{debounce: 700}"
+           type="text"
+           placeholder="Search"
+           class="cdsm-opts-filter">
+
+    <div class="cdsm-filter-search-icon material-icons">search</div>
+</div>
+
+<div class="cdsm-content cdsContentScroll" ng-class="{'has-y-scroll': hasYScroll}">
+    <div class="favorites-area">
+        <div class="fav-area-header cdsm-row">
+            <div class="fav-area-name">Favorites</div>
+            <md-button ng-if="showDescriptionBtn"
+                       class="small-button-icon toggle-descr-btn material-icons"
+                       ng-class="{'active': showDescriptions}"
+                       ng-click="toggleDescription()">format_align_left</md-button>
+        </div>
+
+        <div ng-repeat="option in favoriteOptions | orderBy: 'name' | filter: {'name': filterTerms}"
+             class="cdsm-option"
+             ng-click="selectOptionCallback({groupName: option.groupName, option: option, _$popup: popupData})">
+
+            <div class="flex-0-1-100">
+                <div class="cdsm-option-name" ng-bind="option.name"></div>
+                <div ng-hide="!showDescriptions" class="cdsm-option-descr" ng-bind="option.description"></div>
+            </div>
+
+            <md-button class="cdsm-option-btn small-button-icon orange"
+                       ng-click="removeFromFavorites(option.id, $event)">
+                <md-tooltip class="tooltip_1"
+                            md-direction="top">Remove from favorites</md-tooltip>
+                <span class="material-icons">remove_circle</span>
+            </md-button>
+        </div>
+    </div>
+
+    <div>
+        <div ng-repeat="group in menuOptions | filter:filterGroups">
+
+            <div class="cb1-main-container"
+                 ng-class="{'cb1-block-collapsed': group.folded}"
+                 ng-hide="!group.children.length">
+
+                <div class="group-data cdsm-row" ng-click="toggleGroupFolding(group)">
+                    <div class="group-name flex-0-1-100" ng-bind="group.name"></div>
+
+                    <div class="fold-btn">
+                        <span ng-hide="!group.folded" class="material-icons">expand_more</span>
+                        <span ng-hide="group.folded" class="material-icons">expand_less</span>
+                    </div>
+                </div>
+
+                <div class="cb1-resizing-wrap">
+
+                    <div class="cdsm-group-children-wrap">
+                        <div ng-repeat="child in group.children | filter: {'name': filterTerms}"
+                             ng-click="selectOptionCallback({groupName: group.name, option: child, _$popup: popupData})"
+                             class="cdsm-option">
+
+                            <div class="flex-0-1-100">
+                                <div class="cdsm-option-name" ng-bind="child.name"></div>
+                                <div ng-hide="!showDescriptions" class="cdsm-option-descr" ng-bind="child.description"></div>
+                            </div>
+
+                            <md-button ng-hide="optionIsFavorite(child.id)"
+                                       class="cdsm-option-btn small-button-icon"
+                                       ng-click="addToFavorites(group.name, child, $event)">
+                                <md-tooltip class="tooltip_1"
+                                            md-direction="top">Add to favorites</md-tooltip>
+                                <span class="material-icons">star_outline</span>
+                            </md-button>
+
+                            <md-button ng-hide="!optionIsFavorite(child.id)"
+                                       class="cdsm-option-btn small-button-icon orange"
+                                       ng-click="removeFromFavorites(child.id, $event)">
+                                <md-tooltip class="tooltip_1"
+                                            md-direction="top">Remove from favorites</md-tooltip>
+                                <span class="material-icons">star</span>
+                            </md-button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>

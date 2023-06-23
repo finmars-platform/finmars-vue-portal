@@ -1,0 +1,56 @@
+<md-dialog aria-label="" drag-dialog ng-cloak class="custom-field-config-dialog-view draggable-dialog"
+           style="width: 60%">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Range configuration manager</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content  >
+
+        <div layout="row" layout-align="space-between center">
+            <md-input-container style="width: 100%">
+                <!--<label for="">Select field</label>-->
+                <!--<md-select data-ng-model="vm.reportField">-->
+                <!--<md-option data-ng-value="item" data-ng-repeat="item in vm.reportFields">-->
+                <!--{{item.name}}-->
+                <!--</md-option>-->
+                <!--</md-select>-->
+                <label for="">Field</label>
+                <input type="text" data-ng-model="vm.exprField">
+            </md-input-container>
+            <md-input-container style="width: 100%; height: 58px">
+                <label for="">Constructor type</label>
+                <md-select data-ng-model="vm.exprType" data-ng-change="vm.resetRanges()">
+                    <md-option value="20">
+                        Number
+                    </md-option>
+                    <md-option value="40">
+                        Date
+                    </md-option>
+                </md-select>
+
+            </md-input-container>
+        </div>
+
+        <div data-ng-if="vm.exprType == 20">
+            <div data-ng-include="'views/float-custom-field-constructor-view.html'"></div>
+        </div>
+
+        <div data-ng-if="vm.exprType == 40">
+            <div data-ng-include="'views/date-custom-field-constructor-view.html'"></div>
+        </div>
+
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.agree()" style="margin-right:20px;">
+            Save
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

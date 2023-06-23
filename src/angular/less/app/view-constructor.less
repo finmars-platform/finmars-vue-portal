@@ -1,0 +1,99 @@
+.view-constructor {
+  min-width: 600px;
+
+  .g-checkbox-row {
+    min-height: 40px;
+    margin-bottom: 8px;
+
+    md-card {
+      // display: inline-block;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: flex-end;
+      padding: .5em 1em;
+      margin-top: 0;
+    }
+
+    .view-constructor-checkboxes-container {
+      width: 122px;
+      margin-right: 10px;
+
+      md-checkbox {
+        margin-bottom: 0;
+      }
+
+      md-checkbox.md-g-green.md-checked .md-icon {
+        background-color: #58BF64;
+      }
+    }
+
+  }
+
+  .view-constructor-card-search {
+    margin-left: 0;
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #000;
+    padding-left: 5px;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+
+    &:focus {
+      border-bottom-color: rgb(53, 81, 231);
+    }
+
+  }
+
+  .view-constructor-attributes-separator {
+    border-bottom: 2px solid #4C334D;
+    padding-bottom: 5px;
+    margin: 10px 0 15px 0;
+
+    p {
+      font-size: 18px;
+      margin: 0;
+    }
+  }
+
+  .vc-groups-container-shadowed {
+    box-shadow: 0 0 8px #363636 inset;
+    background: rgba(174, 174, 174, 0.3);
+  }
+
+  .vc-shadow-elem {
+    height: 40px;
+  }
+
+  .vc-tab-selected {
+    background-color: #f3d074;
+  }
+
+  .vc-selected-add-attr-btn {
+    width: 120px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .vc-selected-attrs-holder {
+    padding-bottom: 48px;
+  }
+
+  .vc-selected-columns {
+    .vc-selected-attrs-holder {
+      padding-bottom: 40px;
+    }
+  }
+
+  .vc-selected-attrs-holder {
+    &.remove-card-space {
+      padding-bottom: 0;
+    }
+
+    &.dragged-out-card-space {
+      padding-bottom: 88px;
+    }
+  }
+
+}

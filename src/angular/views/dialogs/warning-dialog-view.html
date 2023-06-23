@@ -1,0 +1,30 @@
+<md-dialog class="warning-dialog draggable-dialog dialog-actions-bottom"
+           aria-label="warning dialog"
+           drag-dialog>
+    <md-toolbar>
+        <dialog-header title="{{vm.warning.title || 'Warning'}}"
+                       cancel-dialog="vm.cancel()"></dialog-header>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="warning-text">
+            <div data-ng-bind-html="vm.warning.description"></div>
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+        <div ng-if="!vm.actionsButtons">
+            <md-button ng-click="vm.cancel()">
+                Cancel
+            </md-button>
+            <md-button ng-click="vm.agree()" style="margin-right:20px;">
+                OK
+            </md-button>
+        </div>
+
+        <div ng-if="vm.actionsButtons">
+            <md-button ng-repeat="button in vm.actionsButtons"
+                       ng-bind="button.name"
+                       ng-click="vm.agree(button.response)"></md-button>
+        </div>
+    </md-dialog-actions>
+</md-dialog>

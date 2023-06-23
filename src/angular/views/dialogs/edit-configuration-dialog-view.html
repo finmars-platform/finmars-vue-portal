@@ -1,0 +1,60 @@
+<md-dialog aria-label="" ng-cloak class="warning-dialog width-50" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Edit Configuration</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content   class="custom-scrollbar p-24">
+
+
+        <div layout="row">
+
+            <div class="width-40">
+                <md-input-container class="width-80">
+                    <label>Name</label>
+                    <input type="text" data-ng-model="vm.item.name">
+                </md-input-container>
+
+            </div>
+
+            <div class="width-60">
+
+                <md-input-container flex="40" style="margin-bottom: 0" class="ng-hide">
+                    <input type="file" id="configurationFileImport" input-file-directive
+                           read-file="vm.file">
+                </md-input-container>
+                <div class="input-upload-file-container">
+                    <p class="configurationFileImport">Select file</p>
+                    <label for="configurationFileImport" class="md-button md-raised md-primary IFUlabel">
+                        <ng-md-icon icon="file_upload"></ng-md-icon>
+                        <span>BROWSE</span></label>
+                </div>
+
+                <div data-ng-if="vm.error" style="color: red;">
+                    File is incorrect
+                </div>
+
+            </div>
+
+        </div>
+        <div>
+            <div><label for="">Description</label></div>
+            <textarea class="width-100" name="" id="" cols="30" rows="10"
+                      data-ng-model="vm.item.description"></textarea>
+        </div>
+
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()">
+            Close
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.agree()"
+                   style="margin-right:20px;">
+            Ok
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

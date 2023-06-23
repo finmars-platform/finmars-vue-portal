@@ -1,0 +1,129 @@
+<div class="grid-table">
+  <!-- Top panel with filters will be here -->
+  <div ng-if="gridTableData.components.topPanel">
+    <grid-table-top-panel
+      data-ng-if="gridTableData.components.topPanel"
+      data-gt-data-service="gtDataService"
+      data-gt-event-service="gtEventService"
+    ></grid-table-top-panel>
+  </div>
+
+  <div
+    ng-if="gridTableData.header"
+    class="grid-table-row grid-table-header-row"
+    ng-class="{'no-checkbox': gridTableData.components.rowCheckboxes === false}"
+  >
+    <div class="grid-table-row-actions-wrap">
+      <div
+        ng-if="gridTableData.components.rowCheckboxes !== false"
+        class="grid-table-row-checkbox"
+      >
+        <md-checkbox
+          ng-checked="allRowsAreActive"
+          ng-click="toggleAllRows()"
+        ></md-checkbox>
+      </div>
+
+      <div
+        ng-if="gridTableData.components.dragAndDropElement"
+        class="grid-table-row-dnd-elem"
+      ></div>
+    </div>
+
+    <!--<div data-ng-repeat="cell in gridTableData.header.columns track by cell.key">
+
+            <grid-table-cell data-row="gridTableData.header"
+                             data-column="cell"
+                             data-gt-data-service="gtDataService"
+                             data-gt-event-service="gtEventService"></grid-table-cell>
+
+        </div>-->
+    <div class="grid-table-cells-container flex-row width-100 height-100">
+      <grid-table-cell
+        data-ng-repeat="cell in gridTableData.header.columns track by cell.key"
+        data-row="gridTableData.header"
+        data-column="cell"
+        data-gt-data-service="gtDataService"
+        data-gt-event-service="gtEventService"
+        class="grid-table-cell-elem"
+      ></grid-table-cell>
+    </div>
+  </div>
+  <!--    <div data-ng-repeat="row in gridTableData.body | orderBy: 'order' track by $index"-->
+  <div
+    data-ng-repeat="row in gridTableData.body | orderBy:sortRowsByCol:sortRowsReverse track by row.key"
+    ng-click="onRowClick($event, row)"
+    class="grid-table-row"
+    data-ng-class="{'no-checkbox': gridTableData.components.rowCheckboxes === false}"
+  >
+    <div class="grid-table-row-actions-wrap">
+      <div
+        ng-if="gridTableData.components.rowCheckboxes !== false"
+        class="grid-table-row-checkbox"
+      >
+        <md-checkbox
+          ng-checked="row.isActive"
+          ng-click="toggleRowSelection(row)"
+        ></md-checkbox>
+      </div>
+
+      <div
+        ng-if="gridTableData.components.dragAndDropElement"
+        class="grid-table-row-dnd-elem flex-column fc-center"
+      >
+        <button
+          ng-click="changeRowOrder(row.order, 'up')"
+          ng-disabled="row.order === 0"
+        >
+          <span class="material-icons">expand_less</span>
+        </button>
+
+        <button
+          ng-click="changeRowOrder(row.order, 'down')"
+          ng-disabled="row.order + 1 === gridTableData.body.length"
+        >
+          <span class="material-icons">expand_more</span>
+        </button>
+      </div>
+    </div>
+
+    <!--<div ng-if="row.isNewRow" class="grid-table-new-row-actions">
+            <md-menu>
+                <md-button ng-click="$mdOpenMenu($event)"
+                           class="grid-table-nr-actions-btn">
+                    <span class="material-icons">settings</span>
+                </md-button>
+
+                <md-menu-content>
+                    <md-menu-item>
+                        <md-button ng-click="vm.acceptNewRow(row.key)">
+                            ADD
+                        </md-button>
+                    </md-menu-item>
+                    <md-menu-item>
+                        <md-button ng-click="vm.cancelNewRow(row.key)">
+                            DELETE
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+        </div>
+
+        <div data-ng-repeat="cell in row.columns track by cell.key">
+            <grid-table-cell data-row="row"
+                             data-column="cell"
+                             data-gt-data-service="gtDataService"
+                             data-gt-event-service="gtEventService"></grid-table-cell>
+        </div>-->
+    <div class="flex-row width-100 height-100">
+      <grid-table-cell
+        data-ng-repeat="cell in row.columns track by cell.key"
+        data-row="row"
+        data-column="cell"
+        data-gt-data-service="gtDataService"
+        data-gt-event-service="gtEventService"
+        class="grid-table-cell-elem"
+      ></grid-table-cell>
+    </div>
+  </div>
+</div>

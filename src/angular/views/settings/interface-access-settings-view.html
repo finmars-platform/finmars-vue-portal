@@ -1,0 +1,19 @@
+<div flex="50" data-ng-if="vm.readyStatus.member" style="padding: 20px 20px 0">
+
+    <md-input-container class="md-block" style="height: 64px">
+        <label>Complexity</label>
+        <md-select data-ng-model="vm.member.interface_level">
+            <md-option value="5">Front Office</md-option>
+            <md-option value="10">Middle Office</md-option>
+            <md-option value="15">Sophisticated User</md-option>
+            <md-option value="20">Advanced Sophisticated User</md-option>
+        </md-select>
+    </md-input-container>
+
+    <md-button class="md-raised" data-ng-click="vm.save()">Save</md-button>
+</div>
+<div data-ng-if="!vm.readyStatus.member">
+    <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+        <md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>
+    </div>
+</div>

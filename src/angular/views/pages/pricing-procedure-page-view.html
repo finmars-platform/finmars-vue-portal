@@ -1,0 +1,101 @@
+<div class="p-24">
+
+    <div data-ng-if="vm.readyStatus.procedures">
+
+        <div>
+
+            <h4>Pricing Procedures</h4>
+
+            <div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
+                                Name
+                            </th>
+
+                            <th>
+                                Notes
+                            </th>
+                            <th>
+                                Notes for Users
+                            </th>
+                            <th>
+                                Date Range
+                            </th>
+                            <th>
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-ng-repeat="item in vm.procedures">
+                            <td>
+                                {{item.name}}
+                            </td>
+                            <td>
+                                {{item.notes}}
+                            </td>
+                            <td>
+                                {{item.notes_for_users}}
+                            </td>
+                            <td>
+                                <div data-ng-if="item.price_date_from_calculated">{{item.price_date_from_calculated}} - {{item.price_date_to_calculated}}</div>
+                                <div data-ng-if="!item.price_date_from_calculated">&nbsp;</div>
+                            </td>
+                            <td style="min-width: 350px">
+                                <md-button class="md-raised md-primary" data-ng-click="vm.executeProcedure($event, item)">Execute</md-button>
+                                <md-button class="md-raised" data-ng-click="vm.editProcedure($event, item)">Edit</md-button>
+                                <md-button class="md-raised md-warn" data-ng-click="vm.deleteProcedure($event, item)">Delete</md-button>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div>
+                <md-button ui-sref="app.portal.pricing-parent-procedure" class="md-raised">Check Procedure Status</md-button>
+            </div>
+
+            <div class="m-t-16">
+
+                <md-menu>
+                    <md-button class="md-raised" data-ng-click="$mdOpenMenu($event)">
+                        Add New
+                    </md-button>
+
+                    <md-menu-content>
+                        <md-menu-item>
+                            <md-button class="md-raised"
+                                       data-ng-click="vm.addProcedure($event)">Add Blank
+                            </md-button>
+                        </md-menu-item>
+
+                        <md-menu-item>
+                            <md-button class="md-raised"
+                                       package-manager-button
+                                       content-type="'procedures.pricingprocedure'">
+                                Select from List
+                            </md-button>
+                        </md-menu-item>
+
+                    </md-menu-content>
+                </md-menu>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.procedures">
+        <div class="m-16" layout="row" layout-sm="column" layout-align="space-around">
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+    </div>
+
+</div>

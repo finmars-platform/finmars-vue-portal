@@ -1,0 +1,63 @@
+<md-dialog aria-label="validation"
+           class="warning-dialog draggable-dialog validation-dialog dialog-actions-bottom validationDialogElemToResize"
+           drag-dialog>
+
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Input form error</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+        <div class="warning-text">
+
+            <div class="validation-dialog-table-container" data-ng-if="vm.errorRows.length">
+                <h3 class="validation-dialog-table-h">Please see list of errors</h3>
+
+                <table class="validation-dialog-errors-table">
+                    <thead>
+                        <tr>
+                            <th data-ng-repeat="columnName in vm.columnsNames" data-ng-bind="columnName"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-ng-repeat="row in vm.errorRows">
+                            <td data-ng-bind="row.name"></td>
+                            <td data-ng-bind="row.action_notes"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div  layout="row">
+                    <div data-ng-bind="row.name"></div>
+                    <div data-ng-bind="row.action_notes">row.message</div>
+                </div>
+            </div>
+
+            <md-button class="md-raised vd-dev-info-toggle-btn"
+                       data-ng-click="vm.showDevInfo = !vm.showDevInfo">Toggle Developer information</md-button>
+
+            <div data-ng-if="vm.showDevInfo" class="validation-dialog-dev-info-container">
+                <div data-ng-if="vm.errorData.stack" layout="row" class="m-b-16">
+                    <div class="vd-dev-info-name">Stack:</div><div data-ng-bind="vm.errorData.stack"></div>
+                </div>
+                <div data-ng-if="vm.errorData.status" layout="row">
+                    <div class="vd-dev-info-name">Status:</div><div data-ng-bind="vm.errorData.status" flex="100"></div>
+                </div>
+            </div>
+
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.agree()" style="margin-right:20px;">
+            OK
+        </md-button>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+    </md-dialog-actions>
+</md-dialog>

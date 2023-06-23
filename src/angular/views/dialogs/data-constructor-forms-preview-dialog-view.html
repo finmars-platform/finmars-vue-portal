@@ -1,0 +1,73 @@
+<md-dialog aria-label="input forms preview"
+           class="entity-editor-dialog draggable-dialog dialog-actions-bottom evEditorPreviewElemToResize"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Input Form Editor Preview</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="height-100">
+        <div data-ng-if="vm.checkReadyStatus()" class="position-relative">
+
+            <md-tabs md-dynamic-height md-border-bottom>
+                <md-tab data-ng-repeat="tab in vm.tabs">
+                    <md-tab-label>
+                        <span>{{tab.name}}</span>
+                    </md-tab-label>
+
+                    <md-tab-body>
+                        <md-content class="md-padding p-t-26"
+                                    ng-class="{'locked-tab-overlay': vm.entity.is_locked}">
+                            <div layout="row"
+                                 ng-repeat="row in vm.range(tab.layout.rows)"
+                                 class="entity-editor-row">
+                                <div data-ng-repeat="field in tab.layout.fields track by $index"
+                                     class="ev-data-field {{field.attribute['value_type'] === 'decoration' ? 'decoration-label-line' : ''}}"
+                                     flex="{{vm.bindFlex(tab, field)}}"
+                                     data-ng-if="vm.checkFieldRender(tab, row, field)">
+                                    <bind-field-control
+                                            entity-type="vm.entityType"
+                                            entity="vm.entity"
+                                            ev-editor-event-service="vm.evEditorEventService"
+                                            ev-editor-data-service="vm.evEditorDataService"
+                                            item="vm.attributesLayout[tab.tabOrder][field.row][field.column]"></bind-field-control>
+                                </div>
+                            </div>
+                        </md-content>
+                    </md-tab-body>
+                </md-tab>
+            </md-tabs>
+
+            <div class="transaction-recalculating-overlay" data-ng-show="vm.processing">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                    <!--<md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>-->
+                    <progress-circular diameter="100"></progress-circular>
+                </div>
+            </div>
+
+        </div>
+
+        <div data-ng-if="!vm.checkReadyStatus()">
+            <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                <!--<md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>-->
+                <progress-circular diameter="100"></progress-circular>
+            </div>
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="space-between center">
+        <div>
+            <md-button class="md-raised" data-ng-click="vm.cancel()">
+                Close
+            </md-button>
+        </div>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+    </md-dialog-actions>
+</md-dialog>

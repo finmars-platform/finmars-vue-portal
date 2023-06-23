@@ -1,0 +1,771 @@
+<div style="padding: 20px 20px 0">
+
+    <h1 class="m-t-0 m-b-24">
+        Ecosystem Default
+    </h1>
+
+    <div data-ng-if="vm.readyStatus.content">
+
+        <div layout="row" class="p-t-16">
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Instrument</label>
+                <md-select md-on-close="vm.searchTermInstrument = ''"
+                           data-ng-model="vm.default.instrument"
+                           md-on-open="vm.getRelation('instrument', 'instrument', 'instrument_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermInstrument"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.instrument_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermInstrument} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Portfolio</label>
+                <md-select md-on-close="vm.searchTermPortfolio = ''"
+                           data-ng-model="vm.default.portfolio"
+                           md-on-open="vm.getRelation('portfolio', 'portfolio', 'portfolio_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermPortfolio"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.portfolio_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermPortfolio} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Account</label>
+                <md-select md-on-close="vm.searchTermAccount = ''"
+                           data-ng-model="vm.default.account"
+                           md-on-open="vm.getRelation('account', 'account', 'account_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermAccount"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.account_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermAccount} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Currency</label>
+                <md-select md-on-close="vm.searchTermCurrency = ''"
+                           data-ng-model="vm.default.currency"
+                           md-on-open="vm.getRelation('currency', 'currency', 'currency_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermCurrency"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.currency_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermCurrency} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+
+        </div>
+
+        <div layout="row" class="m-t-16">
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Instrument Type</label>
+                <md-select md-on-close="vm.searchTermInstrumentType = ''"
+                           data-ng-model="vm.default.instrument_type"
+                           md-on-open="vm.getRelation('instrument-type', 'instrument_type', 'instrument_type_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermInstrumentType"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.instrument_type_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermInstrumentType} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Transaction Type</label>
+                <md-select md-on-close="vm.searchTermTransactionType = ''"
+                           data-ng-model="vm.default.transaction_type"
+                           md-on-open="vm.getRelation('transaction-type', 'transaction_type', 'transaction_type_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermTransactionType"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.transaction_type_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermTransactionType} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Account Type</label>
+                <md-select md-on-close="vm.searchTermAccountType = ''"
+                           data-ng-model="vm.default.account_type"
+                           md-on-open="vm.getRelation('account-type', 'account_type', 'account_type_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermAccountType"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.account_type_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermAccountType} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+        </div>
+
+        <div layout="row" class="m-t-16">
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Pricing Policy</label>
+                <md-select md-on-close="vm.searchTermPricingPolicy = ''"
+                           data-ng-model="vm.default.pricing_policy"
+                           md-on-open="vm.getRelation('pricing-policy', 'pricing_policy', 'pricing_policy_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermPricingPolicy"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.pricing_policy_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermPricingPolicy} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+            <!--            <md-input-container class="md-block" style="width: 200px;">-->
+            <!--                <label>Price Download Scheme</label>-->
+            <!--                <md-select md-on-close="vm.searchTermPriceDownloadScheme = ''"-->
+            <!--                           data-ng-model="vm.default.price_download_scheme"-->
+            <!--                           md-on-open="vm.getRelation('price-download-scheme', 'price_download_scheme', 'price_download_scheme_fields')"-->
+            <!--                           md-container-class="common-select-container">-->
+            <!--                    <md-select-header>-->
+            <!--                        <input data-ng-model="vm.searchTermPriceDownloadScheme"-->
+            <!--                               type="search"-->
+            <!--                               placeholder="Search for a ..."-->
+            <!--                               class="md-text md-select-search-pattern select-input-filter"-->
+            <!--                               ng-keydown="$event.stopPropagation()">-->
+            <!--                    </md-select-header>-->
+            <!--                    <div class="select-options-holder">-->
+            <!--                        <md-option-->
+            <!--                                data-ng-repeat="field in vm.price_download_scheme_fields | orderBy:'-'+field.user_code | filter:{user_code: vm.searchTermPriceDownloadScheme} as results track by field.id "-->
+            <!--                                ng-value="field.id">-->
+            <!--                            {{field.user_code}}-->
+            <!--                        </md-option>-->
+            <!--                    </div>-->
+            <!--                </md-select>-->
+            <!--            </md-input-container>-->
+
+        </div>
+
+        <div layout="row" class="m-t-16">
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Periodicity</label>
+                <md-select md-on-close="vm.searchTermPeriodicity = ''"
+                           data-ng-model="vm.default.periodicity"
+                           md-on-open="vm.getRelation('periodicity', 'periodicity', 'periodicity_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermPeriodicity"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.periodicity_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermPeriodicity} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Accrual Calculation Model</label>
+                <md-select md-on-close="vm.searchTermAccrual = ''"
+                           data-ng-model="vm.default.accrual_calculation_model"
+                           md-on-open="vm.getRelation('accrual-calculation-model', 'accrual_calculation_model', 'accrual_calculation_model_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermAccrual"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.accrual_calculation_model_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermAccrual} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+            <!--            <md-input-container class="md-block" style="width: 200px;">-->
+            <!--                <label>Daily Pricing Model</label>-->
+            <!--                <md-select md-on-close="vm.searchTermDailyPricingModel = ''"-->
+            <!--                           data-ng-model="vm.default.daily_pricing_model"-->
+            <!--                           md-on-open="vm.getRelation('daily-pricing-model', 'daily_pricing_model', 'daily_pricing_model_fields')"-->
+            <!--                           md-container-class="common-select-container">-->
+            <!--                    <md-select-header>-->
+            <!--                        <input data-ng-model="vm.searchTermDailyPricingModel"-->
+            <!--                               type="search"-->
+            <!--                               placeholder="Search for a ..."-->
+            <!--                               class="md-text md-select-search-pattern select-input-filter"-->
+            <!--                               ng-keydown="$event.stopPropagation()">-->
+            <!--                    </md-select-header>-->
+            <!--                    <div class="select-options-holder">-->
+            <!--                        <md-option-->
+            <!--                                data-ng-repeat="field in vm.daily_pricing_model_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermDailyPricingModel} as results track by field.id "-->
+            <!--                                ng-value="field.id">-->
+            <!--                            {{field.name}}-->
+            <!--                        </md-option>-->
+            <!--                    </div>-->
+            <!--                </md-select>-->
+            <!--            </md-input-container>-->
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Instrument Class</label>
+                <md-select md-on-close="vm.searchTermInstrumentClass = ''"
+                           data-ng-model="vm.default.instrument_class"
+                           md-on-open="vm.getRelation('instrument-class', 'instrument_class', 'instrument_class_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermInstrumentClass"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.instrument_class_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermInstrumentClass} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Payment Size Detail</label>
+                <md-select md-on-close="vm.searchTermPaymentSizeDetail = ''"
+                           data-ng-model="vm.default.payment_size_detail"
+                           md-on-open="vm.getRelation('instrument-class', 'payment_size_detail', 'payment_size_detail_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermPaymentSizeDetail"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.payment_size_detail_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermPaymentSizeDetail} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Pricing Condition</label>
+                <md-select md-on-close="vm.searchTermPricingCondition = ''"
+                           data-ng-model="vm.default.pricing_condition"
+                           md-on-open="vm.getRelation('pricing-condition', 'pricing_condition', 'pricing_condition_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermPricingCondition"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.pricing_condition_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermPricingCondition} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+        </div>
+
+        <div layout="row" class="m-t-16">
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Responsible</label>
+                <md-select md-on-close="vm.searchTermResponsible = ''"
+                           data-ng-model="vm.default.responsible"
+                           md-on-open="vm.getRelation('responsible', 'responsible', 'responsible_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermResponsible"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.responsible_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermResponsible} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Responsible Group</label>
+                <md-select md-on-close="vm.searchTermResponsibleGroup = ''"
+                           data-ng-model="vm.default.responsible_group"
+                           md-on-open="vm.getRelation('responsible-group', 'responsible_group', 'responsible_group_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermResponsibleGroup"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.responsible_group_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermResponsibleGroup} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Counterparty</label>
+                <md-select md-on-close="vm.searchTermCounterparty = ''"
+                           data-ng-model="vm.default.counterparty"
+                           md-on-open="vm.getRelation('counterparty', 'counterparty', 'counterparty_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermCounterparty"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.counterparty_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermCounterparty} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Counterparty Group</label>
+                <md-select md-on-close="vm.searchTermCounterpartyGroup = ''"
+                           data-ng-model="vm.default.counterparty_group"
+                           md-on-open="vm.getRelation('counterparty-group', 'counterparty_group', 'counterparty_group_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermCounterpartyGroup"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.counterparty_group_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermCounterpartyGroup} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+        </div>
+
+        <div layout="row" class="m-t-16">
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Strategy 1</label>
+                <md-select md-on-close="vm.searchTermStrategy1 = ''"
+                           data-ng-model="vm.default.strategy1"
+                           md-on-open="vm.getRelation('strategy-1', 'strategy1', 'strategy1_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermStrategy1"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.strategy1_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermStrategy1} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Strategy 1 Subgroup</label>
+                <md-select md-on-close="vm.searchTermStrategy1Subgroup = ''"
+                           data-ng-model="vm.default.strategy1_subgroup"
+                           md-on-open="vm.getRelation('strategy-1-subgroup', 'strategy1_subgroup', 'strategy1_subgroup_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermStrategy1Subgroup"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.strategy1_subgroup_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermStrategy1Subgroup} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Strategy 1 Group</label>
+                <md-select md-on-close="vm.searchTermStrategy1Group = ''"
+                           data-ng-model="vm.default.strategy1_group"
+                           md-on-open="vm.getRelation('strategy-1-group', 'strategy1_group', 'strategy1_group_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermStrategy1Group"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.strategy1_group_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermStrategy1Group} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+        </div>
+
+        <div layout="row" class="m-t-16">
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Strategy 2</label>
+                <md-select md-on-close="vm.searchTermStrategy2 = ''"
+                           data-ng-model="vm.default.strategy2"
+                           md-on-open="vm.getRelation('strategy-2', 'strategy2', 'strategy2_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermStrategy2"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.strategy2_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermStrategy2} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Strategy 2 Subgroup</label>
+                <md-select md-on-close="vm.searchTermStrategy2Subgroup = ''"
+                           data-ng-model="vm.default.strategy2_subgroup"
+                           md-on-open="vm.getRelation('strategy-2-subgroup', 'strategy2_subgroup', 'strategy2_subgroup_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermStrategy2Subgroup"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.strategy2_subgroup_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermStrategy2Subgroup} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Strategy 2 Group</label>
+                <md-select md-on-close="vm.searchTermStrategy2Group = ''"
+                           data-ng-model="vm.default.strategy2_group"
+                           md-on-open="vm.getRelation('strategy-2-group', 'strategy2_group', 'strategy2_group_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermStrategy2Group"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.strategy2_group_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermStrategy2Group} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+        </div>
+
+        <div layout="row" class="m-t-16">
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Strategy 3</label>
+                <md-select md-on-close="vm.searchTermStrategy3 = ''"
+                           data-ng-model="vm.default.strategy3"
+                           md-on-open="vm.getRelation('strategy-3', 'strategy3', 'strategy3_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermStrategy3"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.strategy3_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermStrategy3} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Strategy 3 Subgroup</label>
+                <md-select md-on-close="vm.searchTermStrategy3Subgroup = ''"
+                           data-ng-model="vm.default.strategy3_subgroup"
+                           md-on-open="vm.getRelation('strategy-3-subgroup', 'strategy3_subgroup', 'strategy3_subgroup_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermStrategy3Subgroup"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.strategy3_subgroup_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermStrategy3Subgroup} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Strategy 3 Group</label>
+                <md-select md-on-close="vm.searchTermStrategy3Group = ''"
+                           data-ng-model="vm.default.strategy3_group"
+                           md-on-open="vm.getRelation('strategy-3-group', 'strategy3_group', 'strategy3_group_fields')"
+                           md-container-class="common-select-container">
+                    <md-select-header>
+                        <input data-ng-model="vm.searchTermStrategy3Group"
+                               type="search"
+                               placeholder="Search for a ..."
+                               class="md-text md-select-search-pattern select-input-filter"
+                               ng-keydown="$event.stopPropagation()">
+                    </md-select-header>
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.strategy3_group_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermStrategy3Group} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+        </div>
+
+
+        <div layout="row" class="m-t-16">
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Instrument Pricing Scheme</label>
+                <md-select md-on-close="vm.searchTermPeriodicity = ''"
+                           data-ng-model="vm.default.instrument_pricing_scheme"
+                           md-on-open="vm.getRelation('instrument-pricing-scheme', 'instrument_pricing_scheme', 'instrument_pricing_scheme_fields')"
+                           md-container-class="common-select-container">
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.instrument_pricing_scheme_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermPeriodicity} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" style="width: 200px;">
+                <label>Currency Pricing Scheme</label>
+                <md-select md-on-close="vm.searchTermPeriodicity = ''"
+                           data-ng-model="vm.default.currency_pricing_scheme"
+                           md-on-open="vm.getRelation('currency-pricing-scheme', 'currency_pricing_scheme', 'currency_pricing_scheme_fields')"
+                           md-container-class="common-select-container">
+                    <div class="select-options-holder">
+                        <md-option
+                                data-ng-repeat="field in vm.currency_pricing_scheme_fields | orderBy:'-'+field.name | filter:{name: vm.searchTermPeriodicity} as results track by field.id "
+                                ng-value="field.id">
+                            {{field.name}}
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+        </div>
+
+        <div layout="row" class="m-t-16">
+
+            <md-button class="md-raised md-primary" data-ng-click="vm.save()">Save</md-button>
+
+            <div data-ng-if="vm.readyStatus.processing" class="m-l-16 m-t-8">
+                <progress-circular diameter="30"></progress-circular>
+            </div>
+
+        </div>
+
+
+        <div>
+
+            <h4>Group Tokens for User Code prefixes</h4>
+
+            <div data-ng-repeat="item in vm.usercodeGroups" layout="row">
+
+                <div class="p-t-8">{{item.value}}</div>
+
+                <md-button class="md-warn md-raised" data-ng-click="vm.deleteUsercodeGroup($event, item)">Delete
+                </md-button>
+
+            </div>
+
+            <div layout="row">
+
+                <md-input-container>
+                    <label>Group prefix</label>
+                    <input type="text" data-ng-model="vm.groupPrefix">
+                </md-input-container>
+
+                <md-button class="md-raised md-primary" data-ng-click="vm.createNewUserCodeGroup($event)">Create
+                </md-button>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.content">
+        <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+    </div>
+
+</div>

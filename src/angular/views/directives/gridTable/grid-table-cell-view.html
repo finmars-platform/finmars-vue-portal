@@ -1,0 +1,168 @@
+<div
+  class="grid-table-cell"
+  ng-class="{'gt-sorting-cell': row.order === 'header',
+                                        'gt-sorting-on': sortingOn,
+                                        'gt-cell-disabled': column.settings.isDisabled}"
+>
+  <div
+    ng-if="row.order === 'header'"
+    class="gt-header-cell-content gt-cell-content"
+  >
+    <span
+      data-ng-show="sortingOn && !sortRowsReverse"
+      class="material-icons gt-sorting-icon"
+      >arrow_upward</span
+    >
+    <span
+      data-ng-show="sortingOn && sortRowsReverse"
+      class="material-icons gt-sorting-icon"
+      >arrow_downward</span
+    >
+
+    <grid-table-header-cell
+      column="column"
+      gt-data-service="gtDataService"
+      gt-event-service="gtEventService"
+      on-load-end="onChildrenLoadEnd()"
+    ></grid-table-header-cell>
+  </div>
+
+  <div
+    ng-if="column.cellType === 'readonly_text'"
+    class="gt-cell-content gt-cell-readonly-text"
+  >
+    <span ng-bind="column.settings.value"></span>
+
+    <md-tooltip
+      ng-if="column.settings.value"
+      class="tooltip_1 f-s-14"
+      md-direction="top"
+      ng-bind="column.settings.value"
+    ></md-tooltip>
+  </div>
+
+  <!--    <div ng-if="column.cellType === 'plain_text'" class="gt-cell-content gt-cell-plain-text">
+        <span ng-bind="column.settings.value"></span>
+
+        <md-tooltip ng-if="column.settings.value"
+                    class="tooltip_1 f-s-14"
+                    md-direction="top"
+                    ng-bind="column.settings.value"></md-tooltip>
+    </div>-->
+
+  <div data-ng-if="cellWithPopup()" class="gt-cell-content">
+    <grid-table-popup-cell
+      row="row"
+      column="column"
+      gt-data-service="gtDataService"
+      gt-event-service="gtEventService"
+      on-load-end="onChildrenLoadEnd()"
+      class="gt-popup-cell"
+    ></grid-table-popup-cell>
+    <!--<div class="gt-cell-text-container">
+            <div class="gt-cell-text">
+                <span data-ng-bind="cellValue"></span>
+            </div>
+            <md-button data-ng-click="editCell($event)"
+                       class="gt-cell-edit-btn">
+                <ng-md-icon icon="edit" size="24"></ng-md-icon>
+            </md-button>
+        </div>-->
+    <md-tooltip
+      ng-if="column.settings.cellText"
+      class="tooltip_1 f-s-14"
+      md-direction="top"
+      ng-bind="column.settings.cellText"
+    ></md-tooltip>
+  </div>
+
+  <div
+    ng-if="column.cellType === 'selector'"
+    class="gt-cell-selector-container flex-row fi-center"
+  >
+    <div class="gt-cell-selector-holder">
+      <md-input-container class="m-0">
+        <md-select
+          data-ng-model="column.settings.value"
+          data-ng-change="onCellValueChange()"
+          data-md-on-open="onSelOpen()"
+          data-ng-disabled="column.settings.isDisabled"
+        >
+          <md-option
+            data-ng-repeat="options in column.settings.selectorOptions"
+            data-ng-value="options.id"
+            data-ng-bind="options.name"
+          ></md-option>
+        </md-select>
+      </md-input-container>
+    </div>
+
+    <div
+      ng-if="!column.settings.isDisabled && column.settings.unselectButton"
+      class="gt-cell-selector-unselect-btn-holder"
+    >
+      <md-button
+        class="gt-cell-selector-unselect-btn"
+        data-ng-click="unselectOptions()"
+      >
+        <span class="material-icons">close</span>
+
+        <md-tooltip class="tooltip_1" md-direction="top"
+          >Discard selected option.</md-tooltip
+        >
+      </md-button>
+    </div>
+  </div>
+
+  <div
+    ng-if="column.cellType === 'checkbox'"
+    class="gt-cell-content flex-i-center gt-cell-checkbox-holder"
+  >
+    <md-checkbox
+      ng-model="column.settings.value"
+      ng-change="onCellValueChange()"
+      ng-disabled="column.settings.readonly || column.settings.isDisabled"
+      ng-class="{'readonly': column.settings.readonly}"
+    ></md-checkbox>
+  </div>
+
+  <div
+    ng-if="column.cellType === 'button'"
+    class="gt-cell-content flex-center gt-cell-button-holder"
+  >
+    <md-button
+      ng-bind-html="column.settings.buttonContent"
+      ng-disabled="column.settings.isDisabled"
+      class="flex-row flex-i-center"
+      ng-click="onButtonClick($event)"
+    ></md-button>
+  </div>
+
+  <div ng-if="column.cellType === 'multiselector'" class="gt-cell-content">
+    <!-- <div class="gt-cell-text-container">
+            <two-fields-multiselect ng-model="column.settings.value"
+                                    items="column.settings.selectorOptions"
+                                    model="column.settings.value"
+                                    dialog-title="{{column.columnName}}"
+                                    name-property="name"
+                                    get-data-method="column.settings.getItemsMethod()"
+                                    selected-items-indication="array"
+                                    strict-order="column.settings.strictOrder"
+                                    options-checkboxes="column.settings.optionsCheckboxes"
+                                    on-change-callback="onCellValueChange()"
+                                    class="grid-table-cell-multiselector no-error-spacer">
+            </two-fields-multiselect>
+
+            <div class="gt-cell-edit-btn gtOpenMultiselectorEditor"
+                 ng-click="multiselectorEditClick()">
+                <span class="material-icons">edit</span>
+            </div>
+        </div> -->
+    <grid-table-multiselector-cell
+      row="row"
+      column="column"
+      gt-data-service="gtDataService"
+      gt-event-service="gtEventService"
+    ></grid-table-multiselector-cell>
+  </div>
+</div>

@@ -1,0 +1,358 @@
+<md-dialog
+  aria-label="add complex transaction dialog"
+  class="entity-editor-dialog draggable-dialog dialog-actions-bottom cTransactionEditorDialogElemToResize"
+  drag-dialog
+  style="height: 100%;"
+>
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <is-draggable-sign></is-draggable-sign>
+
+      <div layout="row">
+        <h2>Book Transaction</h2>
+        <span flex></span>
+
+        <div data-ng-if="vm.processing" layout="row" class="m-l-16">
+          <div
+            layout="row"
+            layout-sm="column"
+            layout-align="space-around"
+            class="m-r-8"
+          >
+            <!--<md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>-->
+            <progress-circular diameter="20"></progress-circular>
+          </div>
+          — Processing
+        </div>
+      </div>
+    </div>
+  </md-toolbar>
+  <md-dialog-content style="height: 100%;" class="position-relative">
+    <div data-ng-include="'views/entity-viewer/complex-transaction-add-content-view.html'" style="min-width: 1450px;">
+
+        <!--<div data-ng-if="vm.checkReadyStatus()">
+          <div class="p-24">
+            <div layout="row" style="height: 90px;">
+              <div
+
+                class="flex-1-1-50 p-t-24"
+
+              >
+
+                <complex-dropdown-select label="Transaction type"
+                                         model="vm.transactionTypeId"
+                                         menu-options="vm.transactionGroups"
+                                         on-change="vm.transactionTypeChange()"></complex-dropdown-select>
+
+              </div>
+
+              <div flex="50">
+                <fieldset
+                  class="fieldset-event-settings m-b-24"
+                  style="border: 0;"
+                >
+                  <legend style="color: grey;">
+                    Transaction Types Filters
+                  </legend>
+
+                  <div layout="row">
+                    <div layout="row" flex="40">
+                      <md-input-container class="width-100">
+                        <label for="">Portfolio</label>
+                        <md-select
+                          multiple
+                          data-ng-model="vm.filters.portfolios"
+                          data-ng-change="vm.filtersChange()"
+                          md-on-close="searchTerm = ''"
+                        >
+                          <md-select-header>
+                            <input
+                              data-ng-model="searchTerm"
+                              type="search"
+                              placeholder="Search for a ..."
+                              class="md-text md-select-search-pattern"
+                            />
+                          </md-select-header>
+                          <md-option
+                            data-ng-repeat="item in vm.portfolios | filter:{name: searchTerm}"
+                            ng-value="item.id"
+                          >
+                            {{item.name}}
+                          </md-option>
+                        </md-select>
+                      </md-input-container>
+                    </div>
+
+                    <div layout="row" flex="40">
+                      <md-input-container class="width-100">
+                        <label for="">Instrument Type</label>
+                        <md-select
+                          multiple
+                          data-ng-model="vm.filters.instrument_types"
+                          data-ng-change="vm.filtersChange()"
+                          md-on-close="searchTerm = ''"
+                        >
+                          <md-select-header>
+                            <input
+                              data-ng-model="searchTerm"
+                              type="search"
+                              placeholder="Search for a ..."
+                              class="md-text md-select-search-pattern"
+                            />
+                          </md-select-header>
+                          <md-option
+                            data-ng-repeat="item in vm.instrumentTypes | filter:{name: searchTerm}"
+                            ng-value="item.id"
+                          >
+                            {{item.user_code}}
+                          </md-option>
+                        </md-select>
+                      </md-input-container>
+                    </div>
+
+                    <div layout="row" flex="20" layout-align="center start">
+                      <md-button
+                        class="md-raised"
+                        data-ng-click="vm.filters.portfolios = null; vm.filters.instrument_types = null;"
+                      >
+                        Clear Filters
+                      </md-button>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+          </div>
+
+          <div data-ng-if="vm.readyStatus.layout && vm.transactionTypeId">
+            <div data-ng-if="!vm.missingLayoutError">
+              <div
+                data-ng-if="vm.fixedArea.isActive"
+                class="entity-editor-fixed-area-container"
+                ng-class="{'opacity-05': vm.entity.is_locked, 'no-pointer-events': vm.entity.is_locked}">
+                <div
+                  layout="row"
+                  ng-repeat="row in vm.range(vm.fixedArea.layout.rows)"
+                  class="entity-editor-row">
+                  <div data-ng-repeat="field in vm.fixedArea.layout.fields | orderBy: 'column' track by $index"
+                       data-ng-if="vm.checkFieldRender(vm.fixedArea, row, field)"
+                       class="ev-data-field"
+                       data-ng-class="{'decoration-label-line': field.attribute['value_type'] === 'decoration'}"
+                       flex="{{vm.bindFlex(vm.fixedArea, field)}}">
+                    <bind-field-control entity-type="vm.entityType"
+                                        entity="vm.entity"
+                                        ev-editor-data-service="vm.evEditorDataService"
+                                        ev-editor-event-service="vm.evEditorEventService"
+                                        item="vm.fixedAreaAttributesLayout[row][field.column]"
+                                        fields-data-store="vm.fieldsDataStore"
+                                        entity-change="vm.onEntityChange(fieldKey)"></bind-field-control>
+                  </div>
+                </div>
+              </div>
+
+              <md-tabs md-dynamic-height md-border-bottom class="tabs-colored">
+                <md-tab data-ng-repeat="tab in vm.tabs track by tab.name">
+                  <md-tab-label>
+                    <div class="tab-name-elem"
+                         data-tab-name="{{tab.name | lowercase}}">
+                        <span>{{tab.name}}</span>
+                    </div>
+                  </md-tab-label>
+
+                  <md-tab-body>
+                    <md-content class="md-padding p-t-26"
+                                ng-class="{'locked-tab-overlay': vm.entity.is_locked, 'canceled-tab-overlay': vm.entity.is_canceled}">
+                      <div
+                        data-ng-repeat="row in vm.range(tab.layout.rows)"
+                        layout="row"
+                        class="entity-editor-row"
+                        data-row-number="{{row}}"
+                      >
+                        <div
+                          data-ng-repeat="field in tab.layout.fields | orderBy: 'column' track by $index"
+                          data-ng-if="vm.checkFieldRender(tab, row, field)"
+                          class="ev-data-field"
+                          data-ng-class="{'decoration-label-line': field.attribute['value_type'] === 'decoration'}"
+                          flex="{{vm.bindFlex(tab, field)}}"
+                          data-row="{{row}}"
+                          data-column="{{field.column}}"
+                        >
+                          <bind-field-control
+                            entity-type="vm.entityType"
+                            entity="vm.entity"
+                            ev-editor-data-service="vm.evEditorDataService"
+                            ev-editor-event-service="vm.evEditorEventService"
+                            item="vm.attributesLayout[tab.tabOrder][field.row][field.column]"
+                            fields-data-store="vm.fieldsDataStore"
+                            entity-change="vm.onEntityChange(fieldKey)"
+                          ></bind-field-control>
+                        </div>
+                      </div>
+                    </md-content>
+                  </md-tab-body>
+                </md-tab>
+                <md-tab
+                  data-ng-repeat="tab in vm.entityTabs"
+                  data-ng-if="vm.checkViewState(tab)"
+                >
+                  <md-tab-lable>
+                    <span class="grey-tab">{{tab.label}}</span>
+                  </md-tab-lable>
+                  <md-tab-body>
+                    <md-content class="md-padding p-t-26">
+                      <div data-ng-include="tab.templateUrl"></div>
+                    </md-content>
+                  </md-tab-body>
+                </md-tab>
+              </md-tabs>
+
+              <div
+                class="transaction-recalculating-overlay"
+                data-ng-show="vm.processing"
+              >
+                <div
+                  layout="row"
+                  layout-sm="column"
+                  layout-align="space-around"
+                  class="m-large"
+                >
+
+                  <progress-circular diameter="100"></progress-circular>
+                </div>
+              </div>
+            </div>
+
+            <div data-ng-if="vm.missingLayoutError">
+              <div class="text-center p-t-24">
+                <div>Form Layout is not configured</div>
+
+                <div>
+                  <md-button
+                    ng-click="vm.editLayout()"
+                    class="md-raised md-primary"
+                  >
+                    Edit Form
+                  </md-button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div data-ng-if="!vm.readyStatus.layout && vm.transactionTypeId">
+            <div
+              layout="row"
+              layout-sm="column"
+              layout-align="space-around"
+              class="m-large"
+            >
+              &lt;!&ndash;<md-progress-circular md-mode="indeterminate" md-diameter="64"></md-progress-circular>&ndash;&gt;
+              <progress-circular diameter="60"></progress-circular>
+            </div>
+          </div>
+        </div>
+
+        <div data-ng-if="!vm.checkReadyStatus()">
+          <div
+            layout="row"
+            layout-sm="column"
+            layout-align="space-around"
+            class="m-large"
+          >
+
+            <progress-circular diameter="100"></progress-circular>
+          </div>-->
+    </div>
+    </div>
+  </md-dialog-content>
+  <md-dialog-actions layout="row" layout-align="space-between center">
+    <div layout="row">
+      <md-menu md-position-mode="target-right target">
+
+        <md-button class="outline-button" ng-click="$mdOpenMenu($event)">
+          <div class="flex-row flex-c-center">
+            <ng-md-icon icon="more_vert" class="flex-row"></ng-md-icon>
+          </div>
+        </md-button>
+
+        <md-menu-content class="universal-editor-menu-content optional-entity-menu" width="3">
+
+          <md-menu-item >
+            <md-button ng-click="vm.editLayout($event)" ng-disabled="!vm.checkReadyStatus() || !vm.entity.transaction_type">
+              <div class="flex-row flex-i-center">
+                <ng-md-icon icon="edit" class="flex-row"></ng-md-icon>
+                <span class="m-l-16">Edit Form</span>
+              </div>
+
+            </md-button>
+          </md-menu-item>
+
+        </md-menu-content>
+      </md-menu>
+<!--      <md-button-->
+<!--        ng-click="vm.manageAttrs($event)"-->
+<!--        class="md-raised md-primary"-->
+<!--        ng-disabled="!vm.checkReadyStatus()"-->
+<!--      >-->
+<!--        Manage attributes-->
+<!--      </md-button>-->
+
+      <div ng-if="vm.checkReadyStatus()">
+        <!--<md-button ng-click="vm.entity.is_locked = true"-->
+        <!--ng-if="vm.entity.is_locked == false"-->
+        <!--class="md-raised"-->
+        <!--ng-disabled="vm.entity.is_canceled == true">-->
+        <!--Lock-->
+        <!--</md-button>-->
+
+        <!--<md-button-->
+        <!--ng-click="vm.entity.is_locked = false"-->
+        <!--ng-if="vm.entity.is_locked == true"-->
+        <!--class="md-raised"-->
+        <!--ng-disabled="vm.entity.is_canceled == true">-->
+        <!--Unlock-->
+        <!--</md-button>-->
+
+        <!--<md-button ng-click="vm.entity.is_canceled = false"-->
+        <!--ng-if="vm.entity.is_canceled == true"-->
+        <!--ng-disabled="vm.entity.is_locked == true"-->
+        <!--class="md-raised">-->
+        <!--Ignore-->
+        <!--</md-button>-->
+
+        <!--<md-button-->
+        <!--ng-click="vm.entity.is_canceled = true"-->
+        <!--ng-if="vm.entity.is_canceled == false"-->
+        <!--ng-disabled="vm.entity.is_locked == true"-->
+        <!--class="md-raised">-->
+        <!--Activate-->
+        <!--</md-button>-->
+      </div>
+    </div>
+
+    <div style="margin-right: 10px;">
+      <md-button class="link-button" ng-click="vm.cancel()">
+        <span >Cancel</span>
+      </md-button>
+
+      <md-button data-ng-class="{'disabled-btn': !vm.formIsValid || vm.processing}"
+                 class="outline-button"
+                 ng-click="vm.bookAsPending()">
+        Book as pending
+      </md-button>
+
+      <md-button data-ng-class="{'disabled-btn': !vm.formIsValid || vm.processing}"
+                 ng-click="vm.book()"
+                 class="m-r-24 primary-button">
+        Book
+      </md-button>
+
+    </div>
+
+    <dialog-window-resizer
+      data-ng-if="vm.dialogElemToResize"
+      data-elem-to-resize="vm.dialogElemToResize"
+      data-on-resize-callback="vm.rearrangeMdDialogActions()"
+      class="dialog-window-resizer_type1"
+    ></dialog-window-resizer>
+  </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,69 @@
+<div class="popup-menu">
+
+    <div>
+        <md-button ng-click="popupData.changeSortMode(popupData.column, 'default')"
+                   class="popup-menu-item">
+
+            <span class="material-icons"
+                  data-ng-show="
+                    !popupData.column.options ||
+                    !popupData.column.options.sort_settings ||
+                    popupData.column.options.sort_settings.mode === 'default'">
+                done
+            </span>
+
+            <span data-ng-show="
+                    popupData.column.options &&
+                    popupData.column.options.sort_settings &&
+                    popupData.column.options.sort_settings.mode !== 'default'"
+                  class="material-icons"
+                  style="visibility: hidden;">
+                done
+            </span>
+
+            <span>Native</span>
+
+        </md-button>
+    </div>
+
+    <div>
+        <md-button ng-click="popupData.changeSortMode(popupData.column, 'manual')"
+                   data-ng-disabled="
+                    !popupData.column.options ||
+                    !popupData.column.options.sort_settings ||
+                    !popupData.column.options.sort_settings.layout_user_code
+                   "
+                   class="popup-menu-item">
+
+            <span data-ng-show="
+                    popupData.column.options &&
+                    popupData.column.options.sort_settings &&
+                    popupData.column.options.sort_settings.mode === 'manual'"
+                  class="material-icons">
+                done
+            </span>
+
+
+            <span data-ng-show="
+                    !popupData.column.options ||
+                    !popupData.column.options.sort_settings ||
+                    popupData.column.options.sort_settings.mode !== 'manual'"
+                  class="material-icons"
+                  style="visibility: hidden;">done</span>
+
+            <span>Manual</span>
+
+        </md-button>
+    </div>
+
+<!--    <div>-->
+<!--        <md-button ng-click="popupData.changeSortMode(popupData.column, 'external')"-->
+<!--                   class="popup-menu-item">-->
+<!--            <span class="material-icons" data-ng-show="popupData.column.options && popupData.column.options.sort_settings && popupData.column.options.sort_settings.mode === 'external'">done</span>-->
+<!--            <span class="material-icons" style="visibility: hidden;" data-ng-show="!popupData.column.options || !popupData.column.options.sort_settings || popupData.column.options.sort_settings.mode !== 'external'">done</span>-->
+<!--            <span>External</span>-->
+<!--        </md-button>-->
+<!--    </div>-->
+
+
+</div>

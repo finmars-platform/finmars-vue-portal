@@ -1,0 +1,152 @@
+<md-dialog aria-label="" ng-cloak class="configuration-import-dialog-view draggable-dialog width-80" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Configuration export manager</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content style="background: #fff; padding: 16px">
+
+        <div data-ng-if="vm.readyStatus.content">
+
+            <div layout="row">
+
+                <div class="width-50">
+                    <md-input-container class="width-80">
+                        <label>File Name</label>
+                        <input type="text" data-ng-model="vm.filename">
+                    </md-input-container>
+                </div>
+
+                <div class="width-50">
+
+                    <div data-ng-if="vm.readyStatus.layouts">
+
+                        <div data-ng-if="vm.layouts.length" layout="row">
+
+                            <div class="width-70">
+
+                                <md-input-container class="width-80">
+                                    <label>Layout</label>
+                                    <md-select data-ng-model="vm.activeLayout" data-ng-change="vm.syncWithLayout()">
+                                        <md-option data-ng-repeat="layout in vm.layouts" ng-value="layout">
+                                            {{ layout.name }}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+
+                            </div>
+
+                            <div class="width-30">
+                                <md-button class="md-raised" data-ng-click="vm.updateLayout()">Save layout
+                                </md-button>
+                            </div>
+
+
+                        </div>
+                        <div data-ng-if="!vm.layouts.length">
+                            <md-button class="md-raised" data-ng-click="vm.createLayout()">Save layout
+                            </md-button>
+                        </div>
+                    </div>
+
+                    <div data-ng-if="!vm.readyStatus.layouts">
+                        <div layout="row" layout-sm="column" layout-align="space-around" class="">
+                            <md-progress-circular md-mode="indeterminate" md-diameter="24"></md-progress-circular>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div>
+
+                <div layout="row" class="m-b-16 m-t-16">
+
+                    <div>
+
+                        <div><label for="">Notes</label></div>
+                        <textarea name="" data-ng-model="vm.activeLayout.data.notes" id="" cols="60" rows="5">
+
+                        </textarea>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div>
+
+                <md-checkbox data-ng-checked="vm.selectAllState"
+                             data-ng-click="vm.toggleSelectAll()"
+                             aria-label="checkbox">
+                </md-checkbox>
+
+                <b>Select all</b>
+
+            </div>
+
+            <div data-ng-repeat="item in vm.items | orderBy: 'order__'">
+
+                <h2 data-ng-if="item.first__" data-ng-bind="item.first__"></h2>
+                <div class="cie-entity-holder">
+                    <md-checkbox data-ng-checked="item.active"
+                                 data-ng-click="vm.toggleActiveForChilds(item)"
+                                 data-ng-class="{'some-checkboxes-ticked': item.someChildsActive}"
+                                 aria-label="checkbox">
+                    </md-checkbox>
+                    <span data-ng-bind="vm.getEntityName(item)"
+                          data-ng-class="{'used-dynamic-attrs': item.attributeIsUsed__}"></span> <span
+                        class="cie-dependency"
+                        data-ng-bind="vm.getEntityDependenciesCaptions(item)"></span>
+                    ({{item.count}})
+                    <md-button class="md-raised" ng-click="item.displayItems = !item.displayItems"
+                               aria-label="checkboxes show hide button"><span
+                            data-ng-if="!item.displayItems">Show</span><span data-ng-if="item.displayItems">Hide</span>
+                    </md-button>
+                </div>
+
+
+                <div data-ng-show="item.displayItems" style="padding-left: 20px">
+
+                    <div data-ng-repeat="child in item.content | orderBy: 'order__'">
+                        <h4 data-ng-if="child.first__" data-ng-bind="child.first__"></h4>
+                        <md-checkbox data-ng-checked="child.active"
+                                     data-ng-click="vm.updateActiveForParent(child, item)"
+                                     aria-label="checkbox">
+                        </md-checkbox>
+                        <span data-ng-class="{'used-dynamic-attrs': child.countOfUsages__, 'child-with-icon': vm.checkForTextIcon(item.entity, child)}">
+                            <ng-md-icon data-ng-if="vm.checkForTextIcon(item.entity, child)" icon="folder" fill="#000"
+                                        size="20"></ng-md-icon>
+                            {{vm.getItemName(child)}}
+                            <span data-ng-if="child.countOfUsages__">(<b>{{child.countOfUsages__}}</b>)</span>
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div data-ng-if="!vm.readyStatus.content">
+            <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                <md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>
+            </div>
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" ng-click="vm.cancel()" aria-label="cancel button">
+            Cancel
+        </md-button>
+
+        <a class="md-raised md-button" id="exportButton" data-ng-click="vm.agree($event)" aria-label="export button">
+            Export
+        </a>
+    </md-dialog-actions>
+</md-dialog>

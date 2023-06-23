@@ -1,0 +1,91 @@
+<md-dialog aria-label="dashboard report viewer component settings dialog"
+           class="draggable-dialog width-50"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Report Component Editor</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+
+        <md-tabs md-dynamic-height>
+
+            <md-tab label="MAIN">
+
+                <md-content class="p-16">
+
+                    <div class="dashboard-constructor-field1" style="margin: 0 10px;">
+                        <md-input-container class="m-0 width-100">
+                            <label>Chart Label</label>
+                            <input type="text" data-ng-model="vm.item.custom_component_name">
+                        </md-input-container>
+                    </div>
+
+                    <div class="m-b-24" layout="row">
+
+                        <md-input-container class="dashboard-constructor-field1" style="margin: 0 10px;">
+                            <label for="">Cell Text Align</label>
+                            <md-select data-ng-model="vm.item.settings.styles.cell.text_align">
+                                <md-option value="left">Left</md-option>
+                                <md-option value="center">Center</md-option>
+                                <md-option value="right">Right</md-option>
+                            </md-select>
+                        </md-input-container>
+
+                    </div>
+
+                </md-content>
+
+            </md-tab>
+
+            <!-- COMMITTED: 07.07.2020 -->
+            <!--<md-tab label="LINKING">
+                <md-content class="p-16">
+
+                    <h4>Linked to</h4>
+
+                    <div class="dashboard-linked-filters-container">
+                        <ui>
+                            <li data-ng-repeat="compName in vm.linkedToComps">
+                                <span data-ng-bind="compName"></span>
+                            </li>
+                        </ui>
+                    </div>
+
+                    <h4>Linked by</h4>
+
+                    <div class="dashboard-linked-filters-container">
+                        <ui>
+                            <li data-ng-repeat="compName in vm.linkedByComps">
+                                <span data-ng-bind="compName"></span>
+                            </li>
+                        </ui>
+                    </div>
+
+                </md-content>
+            </md-tab>-->
+            <!-- < COMMITTED: 07.07.2020 > -->
+
+        </md-tabs>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="space-between center">
+        <div>
+            <md-button ng-click="vm.cancel()" style="margin-right:20px;">
+                Cancel
+            </md-button>
+            <md-button ng-click="vm.agree('apply')" style="margin-right:20px;">
+                Apply
+            </md-button>
+        </div>
+
+        <div>
+            <md-button ng-click="vm.agree('save')" style="margin-right:20px;">
+                Save and Apply
+            </md-button>
+        </div>
+    </md-dialog-actions>
+</md-dialog>

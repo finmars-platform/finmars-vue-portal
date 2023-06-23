@@ -1,0 +1,111 @@
+<div class="alert-sidenav-wrapper-inner">
+
+    <div class="alert-today-title">{{vm.today}}</div>
+    <div class="alert-sidenav-close" data-ng-click="vm.close($event)">
+        <span class="material-icons">close</span>
+    </div>
+
+    <div data-ng-if="!vm.processing" class="alert-sidenav-wrapper-inner-alerts">
+
+        <md-card data-ng-repeat="alert in vm.alerts"
+                 class="alert-card {{alert.action_status == 3 ? 'alert-solved' : ''}}">
+
+            <div class="alert-card-level alert-card-level-{{alert.type}}"></div>
+            <div class="alert-card-icon alert-card-icon-{{alert.type}}">
+
+                <!-- warning -->
+                <span class="material-icons" data-ng-if="alert.type == 2">warning</span>
+
+                <!-- error -->
+                <span class="material-icons" data-ng-if="alert.type == 3">error</span>
+
+            </div>
+
+            <div class="alert-card-label alert-card-label-{{alert.type}}">
+                <span data-ng-if="alert.action_status == 2">
+                    Not solved
+                </span>
+                <span data-ng-if="alert.action_status == 3">
+                    Solved
+                </span>
+            </div>
+
+            <div class="alert-card-content">
+                <div class="alert-card-title">{{alert.title}}</div>
+                <div class="alert-card-created">{{alert.created | date:'HH:MM'}}</div>
+                <div class="alert-card-description">{{alert.description}}</div>
+            </div>
+
+            <div class="alert-card-comments" data-ng-if="alert.comments.length">
+
+                <div data-ng-repeat="comment in alert.comments"
+                     class="alert-card-comment {{vm.member.username == comment.member_object.username ? 'my-comment' : ''}}">
+
+                    <div class="alert-card-comment-user"
+                         ng-style="{'backgroundColor': vm.getAvatar(comment.member_object.username[0])}">
+
+                        {{comment.member_object.username[0]}}
+
+                    </div>
+
+                    <div class="alert-card-comment-wrap">
+                        <div class="alert-card-comment-username">
+                            {{comment.member_object.username}}
+                        </div>
+                        <div class="alert-card-comment-comment">
+                            {{comment.comment}}
+
+                            <div class="alert-card-comment-comment-time">{{comment.created | date:'HH:MM'}}</div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="alert-card-footer">
+
+                <div class="alert-card-footer-comment">
+                    <input type="text" ng-model="alert.comment" placeholder="I am going to fix this...">
+                </div>
+                <div class="alert-card-footer-send-holder">
+
+                    <md-menu>
+                        <md-button class="md-raised alert-card-footer-send" data-ng-click="$mdOpenMenu($event)">
+                            <span class="material-icons">send</span>
+                        </md-button>
+
+                        <md-menu-content>
+                            <md-menu-item>
+                                <md-button class="{{alert.action_status == 3 ? 'disabled-btn' : ''}}"
+                                           data-ng-click="vm.solve($event, alert)">Solve
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button class="{{alert.comment ? '' : 'disabled-btn'}}"
+                                           data-ng-click="vm.comment($event, alert)">Comment
+                                </md-button>
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
+
+
+                </div>
+
+
+            </div>
+
+        </md-card>
+
+    </div>
+
+    <div data-ng-if="vm.processing">
+
+        <div class="overlay-loader" layout="row" layout-sm="column" layout-align="space-around">
+            <progress-circular diameter="50"></progress-circular>
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,158 @@
+<md-dialog class="ttype-add-input-dialog dialog-actions-bottom draggable-dialog ttypeAddInputElemToResize"
+           aria-label="transaction type input addition dialog"
+           drag-dialog
+           style="min-height: 90%;">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Add transaction type input</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="p-16">
+
+<!--        <div class="flex-column flex-i-start">-->
+        <div layout="row">
+            <text-input label="Name"
+                        placeholder-text="Enter input name here"
+                        model="vm.name"
+                        small-options="{tooltipText: 'Input name'}"
+                        event-signal="vm.textEventSignal"
+                        on-blur-callback="vm.validateInputName()"
+                        class="custom-input-bottom-space width-100"></text-input>
+        </div>
+
+        <div layout="row" class="m-t-8">
+
+            <text-input label="Verbose name"
+                        placeholder-text="Enter input verbose name here"
+                        model="vm.verbose_name"
+                        small-options="{tooltipText: 'Input verbose name'}"
+                        class="custom-input-bottom-space width-100"></text-input>
+        </div>
+
+        <div layout="row" class="m-t-8">
+
+            <text-input label="Tooltip"
+                        placeholder-text="Enter input tooltip here"
+                        model="vm.tooltip"
+                        small-options="{tooltipText: 'Input tooltip'}"
+                        class="custom-input-bottom-space"
+                        style="width: 240px;"></text-input>
+        </div>
+
+        <div layout="row" class="m-t-8">
+
+            <dropdown-select class="p-r-8"
+                             label="Value type"
+                             placeholder-text="Choose input value type"
+                             model="vm.valueType"
+                             menu-options="vm.valueTypeOptions"
+                             small-options="{tooltipText: 'Input value type'}"
+                             event-signal="vm.valueTypeSignal"
+                             on-change-callback="vm.onValueTypeChange()"
+                             class="custom-input-bottom-space"
+                             style="width: 240px; margin-bottom: 13px;"></dropdown-select>
+
+            <dropdown-select class="p-l-8"
+                             label="Content type"
+                             placeholder-text="Choose content type"
+                             model="vm.contentType"
+                             menu-options="vm.contentTypeOptions"
+                             small-options="{tooltipText: 'Input content type'}"
+                             event-signal="vm.contentTypeSignal"
+                             is-disabled="vm.contentTypeDisabled()"
+                             on-change-callback="vm.onContentTypeChange()"
+                             class="custom-input-bottom-space"
+                             style="width: 240px; margin-bottom: 13px;"></dropdown-select>
+        </div>
+
+        <div layout="row" class="m-t-8">
+
+            <div class="flex-row context-selector-container width-50 p-r-8">
+
+                <dropdown-select label="Use Default Value from Context"
+                                 placeholder-text="Choose Context"
+                                 model="vm.fillFromContext"
+                                 menu-options="vm.contextProperties"
+                                 small-options="{tooltipText: 'Input Context for Default value'}"
+                                 is-disabled="vm.isFillFromContentDisabled()"
+                                 class="custom-input-bottom-space"
+                                 style="width: 240px;"></dropdown-select>
+
+                <div ng-if="!vm.isFillFromContentDisabled()"
+                     class="unselect-btn-holder">
+                    <md-button class="unselect-btn"
+                               data-ng-click="vm.unselectContextProperties()">
+                        <span class="material-icons">close</span>
+
+                        <md-tooltip md-direction="top">Discard selected option.</md-tooltip>
+                    </md-button>
+                </div>
+            </div>
+
+            <div class="flex-row width-50 p-l-8">
+
+                <expression-input label="Default value"
+                                  model="vm.defaultValue"
+                                  is-disabled="vm.valueType === 120"
+                                  data-data="vm.expressionData"
+                                  class="custom-input-bottom-space"
+                                  style="width: 240px;"></expression-input>
+
+<!--                <dropdown-select ng-if="vm.valueType === 100"
+                                 label="Default Value"
+                                 placeholder-text="Choose Default Value"
+                                 model="vm.defaultValue"
+                                 menu-options="vm.defaultValuesItems"
+                                 small-options="{tooltipText: 'Input Default value'}"
+                                 class="custom-input-bottom-space"
+                                 style="width: 240px;"></dropdown-select>-->
+            </div>
+        </div>
+
+        <div layout="row" class="m-t-8">
+
+            <expression-input class="p-r-8 custom-input-bottom-space"
+                              label="Input expression"
+                              model="vm.valueExpression"
+                              is-disabled="vm.valueType === 120"
+                              data-data="vm.expressionData"
+                              style="width: 240px;"></expression-input>
+
+            <two-fields-multiselect ng-model="vm.linkedInputsNames"
+                                    class="p-l-8 custom-input-bottom-space"
+                                    title="Linked inputs"
+                                    items="vm.inputsForMultiselector"
+                                    name-property="name"
+                                    data-selected-items-indication="array"
+                                    model="vm.linkedInputsNames"
+                                    style="width: 240px;"></two-fields-multiselect>
+        </div>
+
+<!--        </div>-->
+
+
+
+    </md-dialog-content>
+
+    <md-dialog-actions class="flex-row fc-space-between">
+        <div>
+            <md-button ng-click="vm.cancel()">
+                Cancel
+            </md-button>
+        </div>
+
+        <div>
+            <md-button ng-click="vm.agree()" style="margin-right:20px;">
+                OK
+            </md-button>
+        </div>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,144 @@
+.forum-content-padding {
+  padding: 0 20px;
+}
+
+.forum-section-header {
+  &.list {
+    // padding-left: 20px;
+    //font-weight: 100;
+    //opacity: .5;
+    font-weight: 900;
+  }
+}
+
+.thread-group-dialog-view {
+  md-dialog-content {
+    padding: 24px;
+  }
+}
+
+.thread-list-dialog-view {
+  md-dialog-content {
+    padding: 24px;
+  }
+}
+
+.forum-list-item() {
+  display: block;
+  width: 100%;
+  //height: 100%;
+  text-decoration: none;
+  color: #000;
+  height: 40px;
+  padding-left: 13px;
+  padding-top: 10px;
+  box-sizing: border-box;
+}
+
+.group-forum-list-item {
+  height: 40px;
+  min-height: 40px;
+  position: relative;
+  a {
+    .forum-list-item();
+  }
+}
+
+.thread-forum-list-item {
+  overflow: hidden;
+  position: relative;
+  a {
+    .forum-list-item();
+  }
+}
+
+.forum-manage-buttons {
+  position: absolute;
+  right: 10px;
+  top: 6px;
+}
+
+.forum-manage-btn {
+  min-width: 40px;
+  width: 40px;
+  min-height: 25px;
+  height: 27px;
+  margin: 0;
+  ng-md-icon {
+    fill: #000000;
+  }
+}
+
+.thread-message-content {
+  overflow: hidden;
+  margin: 10px 0;
+  padding: 0 16px;
+}
+
+.author-username {
+  font-size: 16px;
+  margin-top: 0;
+  display: inline-block;
+  margin-right: 10px;
+  margin-bottom: 0;
+  line-height: 1;
+}
+
+.thread-message-text {
+  // font-size: 16px;
+  float: left;
+  margin: 0;
+}
+
+.thread-message-create-data {
+  float: right;
+  font-size: 12px;
+  position: relative;
+  top: 1px;
+  display: inline-block;
+  opacity: .5;
+  margin: 0;
+}
+
+.forum-send-message-dialog {
+  width: 50%;
+  md-dialog-content {
+    padding: 20px;
+  }
+}
+
+.message-reply-btn {
+  min-height: 32px;
+  height: 29px;
+  min-width: 82px;
+  font-size: 12px;
+  margin-right: 0;
+}
+
+.forum-dialog-padding {
+  md-dialog-content {
+    padding: 20px;
+  }
+}
+
+.margin-top-5 {
+  margin-top: 5px;
+}
+
+.forum-edit-general {
+  margin-top: 25px;
+}
+
+.forum-lg-dialog {
+  width: 70%
+}
+
+.forum-quote {
+  background: rgba(249, 249, 249, 0.8);
+  padding: 16px;
+  border-left: 1px solid #ccc;
+  .forum-quote {
+    background: rgba(249, 249, 249, 0.6);
+    padding-left: 16px;
+  }
+}

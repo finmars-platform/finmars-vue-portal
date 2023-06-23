@@ -1,0 +1,24 @@
+<div>
+
+    <table>
+        <thead>
+        <tr>
+            <th style="padding: 4px">Key</th>
+            <th style="padding: 4px">Value</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr data-ng-repeat="(key, value) in vm.complexTransactionData.complex_transaction.source">
+            <td style="padding: 4px">
+                {{key}}
+            </td>
+            <td style="padding: 4px">
+                <b>{{value}}</b>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+
+</div>

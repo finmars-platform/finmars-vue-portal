@@ -49,13 +49,6 @@
 					"
 					@cancel="showSettingsDialog = false"
 				/>
-
-				<EvModalSaveLayoutAs
-					v-model="openSaveAsModal"
-					@layoutSaved="
-						layoutsStore.getListLayoutsLight(viewerData.content_type)
-					"
-				/>
 			</template>
 		</EvBaseTopPanel>
 

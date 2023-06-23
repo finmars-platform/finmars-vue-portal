@@ -1,0 +1,20 @@
+<div class="complex-datepicker-wrapper"
+     ng-class="{'range-of-dates': rangeOfDates, 'input': selectorLook === 'input'}">
+
+    <md-button custom-popup
+               popup-template-url="'views/popups/complex-zh-datepicker-popup-view.html'"
+               popup-data="popupData"
+               popup-event-service="popupEventService"
+               position-relative-to="element"
+               relative-popup-x="left"
+               open-on="click"
+               close-on-click-outside="true"
+               on-save="onPopupSave()"
+               on-cancel="onPopupCancel()"
+
+               class="complex-datepicker-popup-btn"
+               ng-disabled="isDisabled">
+        <div ng-include="templateUrl"></div>
+    </md-button>
+
+</div>

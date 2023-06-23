@@ -1,0 +1,105 @@
+<md-dialog class="items-selector-with-groups-dialog draggable-dialog iSelectorWgElemToResize"
+           aria-label="items selector with groups"
+           drag-dialog>
+
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2 ng-bind="vm.dialogTitle"></h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="p-16" style="min-height: 120px;">
+
+        <div class="i-selector-wg-filter-container">
+            <input type="text"
+                   ng-model="vm.itemsSearchTerm"
+                   data-ng-model-options="{debounce: 1000}"
+                   ng-change="vm.setLRWHeight()"
+                   placeholder="Search for ..."
+                   aria-label="items selector with groups filter">
+        </div>
+
+        <div layout="row" style="margin-bottom: 12px;">
+            <div layout="row" class="i-selector-wg-toggle-btn-container m-r-16">
+                <md-button class="md-raised small-folding-btn1"
+                           ng-click="vm.expandAll()">+</md-button>
+                <span class="m-t-8">Expand all</span>
+            </div>
+
+            <div layout="row" class="i-selector-wg-toggle-btn-container m-r-16">
+                <md-button class="md-raised small-folding-btn1"
+                           ng-click="vm.collapseAll()">-</md-button>
+                <span class="m-t-8">Collapse all</span>
+            </div>
+        </div>
+
+        <div ng-if="vm.isMultiselector" layout="row">
+            <md-checkbox ng-checked="vm.allItemsActive"
+                         ng-click="vm.toggleAllItems()"
+                         class="i-selector-wg-toggle-all">Toggle all</md-checkbox>
+        </div>
+
+        <div data-ng-repeat="group in vm.groups track by group.id">
+
+            <div class="cb1-main-container"
+                 ng-class="{'cb1-block-collapsed': vm.collapsingGroups[group.id]}">
+
+                <div data-ng-if="group.content.length" class="i-selector-wg-group">
+
+                    <div layout="row">
+                        <md-button class="i-selector-wg-folding-btn small-folding-btn1"
+                                   ng-click="vm.collapsingGroups[group.id] = !vm.collapsingGroups[group.id]"
+                                   aria-label="items selector with groups folding button">
+                            <span ng-if="vm.collapsingGroups[group.id]">+</span>
+                            <span ng-if="!vm.collapsingGroups[group.id]">-</span>
+                        </md-button>
+                        <h3 data-ng-bind="group.name"></h3>
+                    </div>
+
+                    <div class="cb1-resizing-wrap">
+
+                        <div class="selectorWgItemsHolder">
+
+                            <div ng-if="vm.isMultiselector">
+                                <md-checkbox ng-checked="group.isActive"
+                                             ng-click="vm.toggleGroupItems(group)"
+                                             class="i-selector-wg-toggle-group">Toggle all group items</md-checkbox>
+                            </div>
+
+                            <div data-ng-repeat="item in group.content | filter: {name: vm.itemsSearchTerm} as result track by item.id"
+                                 class="i-selector-wg-row"
+                                 ng-class="{'i-selector-wg-active': item.isActive}">
+
+                                <div ng-click="vm.toggleItem(group, item)">
+                                    <span data-ng-bind="item.name"></span>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="space-between center">
+        <md-button ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+        <md-button ng-click="vm.agree()" style="margin-right:20px;">
+            OK
+        </md-button>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+    </md-dialog-actions>
+</md-dialog>

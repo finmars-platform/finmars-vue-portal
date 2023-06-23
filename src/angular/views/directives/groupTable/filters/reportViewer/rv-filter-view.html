@@ -1,0 +1,55 @@
+<div class="g-filter-settings">
+
+    <div class="g-filter-header">
+
+        <div class="g-filter-header-top-row">
+            <md-checkbox ng-model="vm.filter.options.enabled"
+                         aria-label="filter activity checkbox"
+                         class="">
+                <span>{{ vm.filter.name }}</span>
+            </md-checkbox>
+
+            <md-button ng-click="vm.cancel()"
+                       class="cancel-small-btn">
+                <span class="material-icons">close</span>
+            </md-button>
+        </div>
+
+    </div>
+
+    <div class="g-filter-content">
+
+        <div ng-if="vm.filter.value_type === 10 || vm.filter.value_type === 30"
+             class="m-b-24">
+            <rv-text-filter></rv-text-filter>
+        </div>
+
+
+        <div ng-if="vm.filter.value_type === 20"
+             class="m-b-24">
+            <rv-number-filter></rv-number-filter>
+        </div>
+
+        <div ng-if="vm.filter.value_type === 40"
+             class="m-b-24">
+            <rv-date-filter></rv-date-filter>
+        </div>
+
+        <div ng-if="vm.filter.value_type === 50"
+             class="m-b-24">
+            <rv-boolean-filter></rv-boolean-filter>
+        </div>
+
+        <div class="flex-column">
+            <md-checkbox ng-model="vm.filter.options.exclude_empty_cells"
+                         aria-label="hide rows with empty cells checkbox">
+                Exclude cells with no value
+            </md-checkbox>
+        </div>
+
+    </div>
+
+    <div class="g-filter-footer flex-row fc-flex-end">
+        <md-button ng-click="vm.saveFilterSettings()" class="link-button">APPLY</md-button>
+    </div>
+</div>

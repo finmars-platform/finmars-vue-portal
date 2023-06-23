@@ -1,0 +1,120 @@
+<div class="height-100 width-100 dashboard-constructor-field-holder">
+
+    <div class="dashboard-constructor-draggable-card"
+         data-ng-class="{'height-100': !item.editMode, 'width-100': !item.editMode}">
+        <md-card data-ng-show="!item.editMode"
+                 class="dashboard-field-card dashboard-socket-card height-100 width-100"
+                 data-tab-number="{{tabNumber}}"
+                 data-row="{{rowNumber}}"
+                 data-column="{{columnNumber}}">
+
+            <div layout="row">
+
+                <div class="dc-extend-btns-holder" layout="row" style="margin-right: 5px" data-ng-if="componentData.type != 'accordion'">
+                    <button class="md-button md-raised" ng-click="decreaseRowspan()">
+                        <ng-md-icon icon="expand_less" size="16"></ng-md-icon>
+                    </button>
+
+                    <button class="md-button md-raised" ng-click="increaseRowspan()">
+                        <ng-md-icon icon="expand_more" size="16"></ng-md-icon>
+                    </button>
+                </div>
+
+                <div class="dc-extend-btns-holder" layout="row" data-ng-if="componentData.type != 'accordion'">
+                    <button class="md-button md-raised" ng-click="decreaseColspan()">
+                        <ng-md-icon icon="chevron_left" size="16"></ng-md-icon>
+                    </button>
+
+                    <button class="md-button md-raised" ng-click="increaseColspan()">
+                        <ng-md-icon icon="chevron_right" size="16"></ng-md-icon>
+                    </button>
+                </div>
+
+                <p class="name-holder">
+                    <b><span data-ng-bind="componentData.name"></span></b> (<span
+                        data-ng-bind="getVerboseType()"></span>)
+                </p>
+                <div class="dashboard-field-card-options">
+                    <md-button aria-label="delete attribute" class=""
+                               data-ng-click="deleteField()">
+                        <ng-md-icon icon="delete"  size="14"></ng-md-icon>
+                    </md-button>
+                    <md-button aria-label="edit attribute" class=""
+                               data-ng-if="componentData.type != 'accordion'"
+                               data-ng-click="toggleFieldEditMode()">
+                        <ng-md-icon icon="mode_edit" size="14"></ng-md-icon>
+                    </md-button>
+                </div>
+            </div>
+
+        </md-card>
+    </div>
+
+    <md-card data-ng-if="item.editMode" class="dashboard-field-card {{item.editMode ? 'active' : ''}}">
+
+        <md-button class="md-raised edit-component-type-button" data-ng-click="editComponentType($event)">
+            b><span data-ng-bind="componentData.name"></span></b> (<span
+                data-ng-bind="getVerboseType()"></span>)
+        </md-button>
+
+        <md-input-container
+                class="md-block no-error-spacer ec-attr-row"
+                flex-gt-sm
+                aria-label="select with filter">
+            <label>Element width</label>
+            <md-select ng-model="item.colspan"
+                       md-container-class="common-select-container"
+                       md-on-close="searchTerm = ''"
+                       ng-change="changeSpan()">
+                <div class="select-options-holder">
+                    <md-option
+                            data-ng-repeat="colspan in colspanList"
+                            ng-value="colspan">
+                        {{colspan}} column(s)
+                    </md-option>
+                </div>
+            </md-select>
+        </md-input-container>
+
+        <md-input-container
+                class="md-block no-error-spacer ec-attr-row"
+                flex-gt-sm
+                aria-label="select with filter">
+            <label>Element height</label>
+            <md-select ng-model="item.rowspan"
+                       md-container-class="common-select-container"
+                       md-on-close="searchTerm = ''"
+                       ng-change="changeSpan()">
+                <div class="select-options-holder">
+                    <md-option
+                            data-ng-repeat="rowspan in rowspanList"
+                            ng-value="rowspan">
+                        {{rowspan}} row(s)
+                    </md-option>
+                </div>
+            </md-select>
+        </md-input-container>
+
+        <!--<md-input-container-->
+        <!--class="md-block no-error-spacer ec-attr-row"-->
+        <!--data-ng-if="item.attribute.value_type != 'decoration'">-->
+        <!--<label>Custom label</label>-->
+        <!--<input data-ng-model="item.options.fieldName">-->
+        <!--</md-input-container>-->
+
+        <md-divider></md-divider>
+        <div layout="row" layout-align="space-between center"
+             class="constructor-card-actions">
+            <!--<md-button aria-label="cancel"-->
+                       <!--data-ng-click="cancelFieldEdit()">-->
+                <!--Cancel-->
+            <!--</md-button>-->
+            <md-button class="ec-field-btn"
+                       aria-label="save layout"
+                       data-ng-click="saveField()">
+                <span>Ok</span>
+            </md-button>
+        </div>
+    </md-card>
+
+</div>

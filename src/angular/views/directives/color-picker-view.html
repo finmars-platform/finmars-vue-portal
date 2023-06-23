@@ -1,0 +1,12 @@
+<div class="color-picker-directive">
+    <div ng-bind="selectedColor.name"
+         class="color-picker-palette-name"></div>
+    <md-button class="color-picker-opener" data-ng-click="openSelectColorDialog($event)">
+        <div class="color-picker-opener-content" style="{{getColorDivStyle()}}"></div>
+    </md-button>
+
+    <md-tooltip data-ng-if="selectedColor && selectedColor.tooltip"
+                class="tooltip_1"
+                md-direction="top"
+                data-ng-bind="selectedColor.tooltip"></md-tooltip>
+</div>

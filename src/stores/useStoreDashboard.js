@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 
 export default defineStore({
-	id: "dashboard",
+	id: 'dashboard',
 	state: () => {
 		return {
 			//# region DATA FROM LAYOUT
@@ -11,7 +11,7 @@ export default defineStore({
 			props: {
 				inputs: [],
 				outputs: [],
-				proxies: []
+				proxies: [],
 			},
 			//# endregion DATA FROM LAYOUT
 			isEdit: false,
@@ -22,24 +22,27 @@ export default defineStore({
 
 			history: null,
 			historyPnl: null,
-			instrColors: {}
-		};
+			instrColors: {},
+		}
 	},
 	actions: {
 		async init() {
 			await this.getLayouts()
 
-			watch(() => this.activeLayoutId, () => {
-				if ( !this.layout.data ) return false
+			watch(
+				() => this.activeLayoutId,
+				() => {
+					if (!this.layout.data) return false
 
-				this.components = this.layout.data.components || []
-				this.tabs = this.layout.data.tabs || []
-				this.activeTab = this.tabs[0]?.id
+					this.components = this.layout.data.components || []
+					this.tabs = this.layout.data.tabs || []
+					this.activeTab = this.tabs[0]?.id
 
-				if ( this.layout.data.props ) this.props = this.layout.data.props
+					if (this.layout.data.props) this.props = this.layout.data.props
 
-				this.setPropsWatchers()
-			})
+					this.setPropsWatchers()
+				}
+			)
 		},
 		getComponent(id) {
 			return this.components.find(item => item.uid == id)
@@ -52,11 +55,13 @@ export default defineStore({
 		async getLayouts() {
 			let dashboardLayout = localStorage.getItem('dashboardLayout')
 
-			let res = await useApi('dashboardLayoutList.get', {filters: {
-				name: 'dashboardV2@'
-			}});
+			let res = await useApi('dashboardLayoutList.get', {
+				filters: {
+					name: 'dashboardV2@',
+				},
+			})
 
-			if ( res.error || !res.results.length ) return false
+			if (res.error || !res.results.length) return false
 
 			this.layoutList = res.results
 			this.activeLayoutId = this.activeLayoutId || res.results[0].id
@@ -64,9 +69,14 @@ export default defineStore({
 			this.components = this.layout.data.components || []
 			this.tabs = this.layout.data.tabs || []
 			this.activeTab = this.tabs[0]?.id
-			if ( this.layout.data.props ) {
-				this.layout.data.props.inputs.forEach(prop => prop.__val = prop.default_value)
-				this.layout.data.props.outputs.forEach(prop => prop.__val = prop.default_value)
+
+			if (this.layout.data.props) {
+				this.layout.data.props.inputs.forEach(
+					(prop) => (prop.__val = prop.default_value)
+				)
+				this.layout.data.props.outputs.forEach(
+					(prop) => (prop.__val = prop.default_value)
+				)
 				this.props = this.layout.data.props
 			}
 
@@ -76,21 +86,25 @@ export default defineStore({
 		},
 		setPropsWatchers() {
 			this.props.outputs.forEach((prop) => {
-				if ( prop.__unwatch ) return false
+				if (prop.__unwatch) return false
 
 				prop.__unwatch = watch(
 					() => prop.__val,
 					(newVal, oldVal) => {
 						let uid = prop.uid
-						let props = this.props.inputs.filter(item => item.subscribedTo.includes(uid) )
+						let props = this.props.inputs.filter((item) =>
+							item.subscribedTo.includes(uid)
+						)
 
 						let log = {
 							name: prop.name,
-							componentName: this.components.find(item => item.uid == prop.component_id).user_code,
+							componentName: this.components.find(
+								(item) => item.uid == prop.component_id
+							).user_code,
 							newVal: newVal,
 							oldVal: oldVal,
 							time: dayjs().format('HH:mm:ss'),
-							children: []
+							children: [],
 						}
 
 						// console.group(
@@ -99,10 +113,12 @@ export default defineStore({
 						// 	'font-size: 16px;'
 						// )
 
-						props.forEach(childProp => {
+						props.forEach((childProp) => {
 							log.children.push({
 								name: childProp.name,
-								componentName: this.components.find(item => item.uid == childProp.component_id).user_code,
+								componentName: this.components.find(
+									(item) => item.uid == childProp.component_id
+								).user_code,
 								newVal: prop.__val,
 								oldVal: childProp.__val,
 							})
@@ -139,23 +155,24 @@ export default defineStore({
 					date_to: props.date_to,
 				},
 				params: {
-					type: 'nav'
-				}
+					type: 'nav',
+				},
 			}
 
 			this.history = await useApi('widgetsHistory.get', apiOpts)
-			if ( this.history.error ) return false
+			if (this.history.error) return false
 
-			let colors = this.generateColors();
+			let colors = this.generateColors()
 
-			for ( let category in this.history ) {
-				for ( let firstDate in this.history[category] ) {
-					Object.entries(this.history[category][firstDate].items)
-						.forEach((item, key) => {
+			for (let category in this.history) {
+				for (let firstDate in this.history[category]) {
+					Object.entries(this.history[category][firstDate].items).forEach(
+						(item, key) => {
 							this.instrColors[category + item[0]] = colors[key]
-						})
+						}
+					)
 
-					break;
+					break
 				}
 			}
 
@@ -166,8 +183,8 @@ export default defineStore({
 					date_to: props.date_to,
 				},
 				params: {
-					type: 'pl'
-				}
+					type: 'pl',
+				},
 			}
 
 			this.historyPnl = await useApi('widgetsHistory.get', apiOptsPl)
@@ -219,16 +236,16 @@ export default defineStore({
 			]
 		},
 		async getHistoryNav(opts) {
- 			if ( !this.history ) return false
+			if (!this.history) return false
 			return this.history[opts.category][opts.date]
 		},
 		async getHistoryPnl(opts) {
 			console.log('opts:', opts)
-			if ( !this.history ) return false
+			if (!this.history) return false
 			return this.historyPnl[opts.category][opts.date]
 		},
 		async saveLayout() {
-			if ( !this.layout.id ) {
+			if (!this.layout.id) {
 				let res = await useApi('dashboardLayout.post', {
 					body: {
 						name: this.layout.name + ' dashboardV2@',
@@ -237,8 +254,8 @@ export default defineStore({
 							components: this.components,
 							tabs: this.tabs,
 							props: this.props,
-						}
-					}
+						},
+					},
 				})
 
 				if (!res.error) {
@@ -246,33 +263,30 @@ export default defineStore({
 					this.activeLayoutId = res.id
 					useNotify({type: 'success', title: `Dashboard layout ${res.name} successfully saved`});
 				}
-
 			} else {
-
 				let res = await useApi('dashboardLayout.put', {
-					params: {id: this.layout.id},
+					params: { id: this.layout.id },
 					body: {
 						user_code: this.layout.user_code,
 						data: {
 							components: this.components,
 							tabs: this.tabs,
 							props: this.props,
-						}
-					}
+						},
+					},
 				})
 
 				this.isEdit = false
-
 			}
 
-			if (!this.activeLayoutId) this.activeLayoutId = this.layoutList[0].id;
+			if (!this.activeLayoutId) this.activeLayoutId = this.layoutList[0].id
 		},
 		async deleteLayout() {
 			let res = await useApi('dashboardLayout.delete', {
-				params: {id: this.layout.id},
+				params: { id: this.layout.id },
 				body: {
-					user_code: this.layout.user_code
-				}
+					user_code: this.layout.user_code,
+				},
 			})
 
 			this.getLayouts()
@@ -283,26 +297,34 @@ export default defineStore({
 			if ( index === -1 ) throw new Error('[Store:removeComponent] ID not find')
 
 			this.props.inputs
-				.filter(item => item.component_id == this.components[index].uid)
+				.filter((item) => item.component_id == this.components[index].uid)
 				.forEach((prop) => {
-					let index = this.props.inputs.findIndex(item => item.uid == prop.uid)
+					let index = this.props.inputs.findIndex(
+						(item) => item.uid == prop.uid
+					)
 
-					if ( index === -1 ) return false
+					if (index === -1) return false
 
 					this.props.inputs.splice(index, 1)
 				})
 
 			this.props.outputs
-				.filter(item => item.component_id == this.components[index].uid)
+				.filter((item) => item.component_id == this.components[index].uid)
 				.forEach((prop) => {
-					let index = this.props.outputs.findIndex(item => item.uid == prop.uid)
+					let index = this.props.outputs.findIndex(
+						(item) => item.uid == prop.uid
+					)
 
-					if ( index === -1 ) return false
+					if (index === -1) return false
 
 					this.props.inputs
-						.filter(item => item.subscribedTo.includes(this.props.outputs[index].uid) )
+						.filter((item) =>
+							item.subscribedTo.includes(this.props.outputs[index].uid)
+						)
 						.forEach((item) => {
-							let indexParent = item.subscribedTo.findIndex(id => id == this.props.outputs[index].uid)
+							let indexParent = item.subscribedTo.findIndex(
+								(id) => id == this.props.outputs[index].uid
+							)
 
 							item.subscribedTo.splice(indexParent, 1)
 						})
@@ -311,11 +333,13 @@ export default defineStore({
 				})
 
 			this.components.splice(index, 1)
-		}
+		},
 	},
 	getters: {
 		layout(state) {
-			return state.layoutList.find(item => item.id == state.activeLayoutId) || {}
-		}
+			return (
+				state.layoutList.find((item) => item.id == state.activeLayoutId) || {}
+			)
+		},
 	},
-});
+})
