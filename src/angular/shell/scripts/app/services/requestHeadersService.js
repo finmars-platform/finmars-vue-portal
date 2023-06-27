@@ -7,7 +7,7 @@ export default function (cookieService, globalDataService) {
     /*if (iframeMode) {
 
         getData = function (key) {
-            console.log("testing.880 requestHeadersService 1");
+
             const iframeData = globalDataService.getIframeData();
 
             return iframeData.dataFromParent[key];
@@ -26,7 +26,7 @@ export default function (cookieService, globalDataService) {
         }
 
     } else {
-        console.log("testing.880 requestHeadersService 2");
+
         getData = key => cookieService.getCookie(key);
 
         setData = function (key, value, options) {

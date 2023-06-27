@@ -2062,11 +2062,7 @@
 			evDataHelper.setColumnsDefaultWidth(evDataService)
 
 			let columns = evDataService.getColumns()
-			if (columns)
-				console.log(
-					'testing98.COLUMNS_CHANGE columns'
-					// JSON.parse(JSON.stringify(columns))
-				)
+
 			getColsAvailableForAdditions() // when inside dashboard
 			// flagMissingColumns();
 			makePopupDataForColumns(columns)

@@ -14,7 +14,7 @@
 
 	init()
 	async function init() {
-		let res = await useApi('portfolioLight.get')
+		let res = await useApi('portfolioListLight.get')
 
 		portfolios.value = res.results
 	}

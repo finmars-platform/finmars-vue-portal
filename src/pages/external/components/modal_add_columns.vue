@@ -124,8 +124,9 @@
 
 					<ul class="fm_list" v-show="tab == 'advanced'">
 						<template v-for="obj in advancedColumnActive">
+							<!-- Leaf -->
 							<div
-								v-if="obj.key"
+								v-if="!obj.hasOwnProperty('isOpen')"
 								class="fm_list_item attr_item flex aic sb"
 								:class="{ active: activeRow == obj.key }"
 								@click="activeRow = obj.key"
@@ -163,13 +164,13 @@
 								/>
 							</div>
 
-							<!-- Folder -->
+							<!-- Branch -->
 							<div v-else>
 								<li
 									class="fm_list_item attr_item"
 									@click="obj.isOpen = !obj.isOpen"
 								>
-									<FmIcon class="expand" icon="expand_more" />
+									<FmIcon class="expand" :icon="obj.isOpen  ? 'expand_more' : 'chevron_right'" />
 									<div v-html="obj.name"></div>
 								</li>
 
@@ -287,17 +288,23 @@
 							/>
 						</div>
 
-						<div class="desc_icons" v-if="tab == 'favorites'">
+						<div class="desc_icons m-r-16" v-if="tab == 'favorites' && isAdvanced">
 							<FmIcon
-								v-if="!isEdit"
+								v-if="!isEdit && activeRow"
 								size="20"
 								primary
 								icon="edit"
 								@click="editAttrInfo()"
 							/>
 
-							<div class="flex" v-else>
-								<FmIcon primary size="20" icon="save" @click="saveAttrInfo()" />
+							<div class="flex" v-if="isEdit">
+								<FmIcon
+									primary
+									size="20"
+									icon="save"
+									@click="saveAttrInfo()"
+								/>
+
 								<FmIcon
 									primary
 									size="20"
@@ -316,7 +323,12 @@
 						<span v-if="!isEdit">
 							{{ attrInfo.info }}
 						</span>
-						<FmInputArea v-else v-model="infoEditable.description" />
+
+						<FmInputArea
+							v-else
+							v-model="infoEditable.description"
+							class="height-100 m-b-0"
+						/>
 					</div>
 
 					<div
@@ -352,17 +364,17 @@
 </template>
 
 <script setup>
-	import attributes from '~/assets/data/attributes.js'
-	import { useRegExpEscape } from '~/composables/useUtils'
-	definePageMeta({
-		layout: 'auth',
-	})
+
+definePageMeta({
+	layout: 'auth',
+});
 
 	const iframeId = useRoute().query.iframeId
 	const foldersSeparatorRE = /\.\s(?=\S)/g // equals to ". " which have symbol after it
 
-	let tab = ref('favorites')
-	let searchParam = ref('')
+let tab = ref('favorites')
+
+let searchParam = ref('')
 
 	let activeRow = ref('')
 	let activeTree = ref(0)
@@ -487,10 +499,13 @@
 
 		formattedAttrs.value = attributes
 
-		if (formattedAttrs.value.length) {
-			activeRow.value = formattedAttrs.value[0].key
-		}
-	}
+	/*if ( formattedAttrs.value.length ) {
+		activeRow.value = formattedAttrs.value[0].key;
+	}*/
+
+	if (data.title) title.value = data.title;
+
+}
 
 	function onMessage(e) {
 		// {
@@ -533,17 +548,19 @@
 
 	let selected = reactive({})
 
-	const advancedColumns = computed(() => {
-		let tree = {}
-		console.log('tree:', tree)
-		let attrs = JSON.parse(JSON.stringify(formattedAttrs.value))
-		let searchedAttrs
 
-		// Search
-		if (searchParam.value) {
-			searchedAttrs = searchAndReplace(attrs)
-			attrs = searchedAttrs
-		}
+const advancedColumns = computed(() => {
+
+	let tree = {}
+	let attrs = JSON.parse(JSON.stringify( formattedAttrs.value ));
+	let searchedAttrs
+
+	// Search
+	if ( searchParam.value ) {
+		// searchedAttrs = searchAndReplace( attrs )
+		searchedAttrs = filterAttrs(attrs);
+		attrs = searchedAttrs
+	}
 
 		attrs = attrs.map(markDisabledAttrs)
 
@@ -558,11 +575,13 @@
 				let part = parts[i]
 
 				if (!node[part]) {
-					if (parts.length - 1 == i) {
+					if ( parts.length - 1 == i ) { // leaf
 						attr.short_name = part
 						node[part] = attr
-					} else {
-						node[part] = {}
+
+					} else { // branch
+
+					node[part] = {}
 
 						node[part].isOpen = false
 					}
@@ -571,107 +590,68 @@
 			}
 		}
 
-		attrs = toAttrsTree(tree)
+	attrs = toAttrsTree(tree);
 
-		// Search
-		if (searchParam.value) {
-			attrs.unshift({
-				name: 'All sections',
-				children: searchedAttrs,
-			})
+	// Search
+	if ( searchParam.value ) {
+		/*attrs.unshift({
+			name: 'All sections',
+			children: searchedAttrs
+		})*/
+
+		// attrs = highlightFound(attrs);
+
+		attrs = [{
+			name: 'All sections',
+			children: highlightFound(searchedAttrs),
+		}]
+
+	}
+
+	return attrs
+})
+
+function toAttrsTree( obj ) {
+	let list = []
+
+	for (let key in obj) {
+		/*let newObj = reactive({
+			name: key,
+			children: []
+		})*/
+		let newObj = {
+			name: key,
+			children: []
 		}
 
-		return attrs
-	})
+		if ( obj[key].isOpen === false ) { // obj[key] is a branch
+			newObj.isOpen = false;
+			newObj.children = toAttrsTree( obj[key] );
 
-	// const advancedColumns = computed(() => {
-	//  console.trace("testing1090 advancedColumns");
-	//  let tree = {}
-	//  let attrs = JSON.parse(JSON.stringify( formattedAttrs.value ));
-	//  let searchedAttrs
-
-	//  // Search
-	//  if ( searchParam.value ) {
-	//   // searchedAttrs = searchAndReplace( attrs )
-	//   searchedAttrs = filterAttrs(attrs);
-	//   attrs = searchedAttrs
-	//  }
-
-	//  attrs = attrs.map(markDisabledAttrs);
-	//  console.log("testing1090 attrs ", JSON.parse(JSON.stringify(attrs)) );
-	//  // Set name to display for attributes
-	//  for ( let attr of attrs ) {
-	//   // const parts = attr.name.split(" / ")
-	//   const parts = attr.name.split(". ")
-	//   parts[0] = parts[0].trim()
-
-	//   let node = tree;
-
-	//   for  (let i = 0; i < parts.length; i++ ) {
-	//    let part = parts[i]
-
-	//    if (!node[part]) {
-	//     if ( parts.length - 1 == i ) {
-	//      attr.short_name = part
-	//      node[part] = attr
-
-	//     } else {
-
-	//      node[part] = {}
-
-	//      node[part].isOpen = false
-	//     }
-	//    }
-	//    node = node[part]
-	//   }
-	//  }
-	//  console.log("testing1090 attributes after grouping ", JSON.parse(JSON.stringify(attrs)) );
-	//  console.log("testing1090 tree after grouping ", JSON.parse(JSON.stringify(tree)) );
-	//  attrs = toAttrsTree(tree);
-	//  console.log("testing1090 attributes tree ", JSON.parse(JSON.stringify(attrs)) );
-	//  // Search
-	//  if ( searchParam.value ) {
-
-	//   attrs = setFilteredAttrsNames(attrs);
-
-	//   attrs.unshift({
-	//    name: 'All sections',
-	//    children: setFilteredAttrsNames(searchedAttrs),
-	//   })
-	//  }
-
-	//  return attrs
-	// })
-	function toAttrsTree(obj) {
-		let list = []
-
-		for (let key in obj) {
-			let newObj = reactive({
-				name: key,
-				children: [],
-			})
-
-			if (obj[key].isOpen === false) {
-				newObj.isOpen = ref(false)
-				newObj.children = toAttrsTree(obj[key])
-			} else {
-				newObj = obj[key]
-			}
+		} else { // obj[key] is a leaf
+			newObj = obj[key];
+		}
 
 			if (key != 'isOpen') list.push(newObj)
 		}
 
-		return list
+	return list;
+}
+
+let advancedColumnActive = ref([]);
+
+watch(
+	[advancedColumns, activeTree],
+	() => {
+
+		advancedColumnActive.value = [];
+
+		if ( advancedColumns.value[activeTree.value] ) {
+			advancedColumnActive.value = JSON.parse(JSON.stringify( advancedColumns.value[activeTree.value].children ));
+		}
+
 	}
-
-	const advancedColumnActive = computed(() => {
-		let result = []
-
-		if (advancedColumns.value[activeTree.value])
-			result = advancedColumns.value[activeTree.value].children
-
-		return result
-	})
+)
 
 	const selectedColumns = computed(() => {
 		let props = []
@@ -797,18 +777,27 @@
 		})
 	}
 
-	function searchAndReplace(attrs) {
-		let terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*/) // characters between spaces or '/'
-		let result = attrs
+function filterAttrs( attrs ) {
+	const terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*/); // characters between spaces or '/'
 
-		terms.forEach((term, i) => {
-			term = term.toLowerCase()
+	let result = attrs;
 
-			result = result.filter((item) => item.name.toLowerCase().includes(term))
-		})
+	terms.forEach((term, i) => {
+		term = term.toLowerCase();
 
-		result = result.map((item) => {
-			let name = formatName(item.name)
+		result = result
+			.filter( (item) => item.name.toLowerCase().includes(term) );
+	})
+
+	return result;
+}
+
+/** Highlights part of names of attributes that pass filter */
+function highlightFound(attrs) {
+
+	let terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*/); // characters between spaces or '/'
+
+	attrs = attrs.map(item => {
 
 			terms = terms.map((term) => useRegExpEscape(term))
 			const searchTerm = terms.join('|')
@@ -819,8 +808,19 @@
 				(match) => `<span class="c_primary">${match}</span>`
 			)
 
-			return { ...item, name }
-		})
+		return { ...item, name }
+
+	});
+
+	return attrs;
+
+}
+
+function searchAndReplace( attrs ) {
+
+	let result = filterAttrs(attrs);
+
+	result = highlightFound(result);
 
 		return result
 	}

@@ -2086,8 +2086,7 @@ export default function (
 
 					return true
 				})
-				console.log('testing98.addColumn allAttrsList', allAttrsList)
-				console.log('testing98.addColumn availableAttrs', availableAttrs)
+
 				$mdDialog
 					.show({
 						controller: 'TableAttributeSelectorDialogController as vm',
@@ -2106,7 +2105,7 @@ export default function (
 					})
 					.then(function (res) {
 						if (res && res.status === 'agree') {
-							console.log('testing98.addColumn res', res)
+
 							res.data.columns = true
 
 							for (var i = 0; i < res.data.items.length; i = i + 1) {
@@ -2116,10 +2115,7 @@ export default function (
 								)
 								scope.columns.push(colData)
 							}
-							console.log(
-								'testing98.addColumn set columns',
-								JSON.parse(JSON.stringify(scope.columns))
-							)
+
 							scope.evDataService.setColumns(scope.columns)
 
 							scope.evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
@@ -2287,11 +2283,7 @@ export default function (
 						evDataHelper.setColumnsDefaultWidth(scope.evDataService)
 
 						scope.columns = scope.evDataService.getColumns()
-						if (scope.columns)
-							console.log(
-								'testing98.COLUMNS_CHANGE columns',
-								JSON.parse(JSON.stringify(scope.columns))
-							)
+
 						getColsAvailableForAdditions() // when inside dashboard
 						// flagMissingColumns();
 						makePopupDataForColumns(scope.columns)

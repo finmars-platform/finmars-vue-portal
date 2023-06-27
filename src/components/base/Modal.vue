@@ -7,12 +7,15 @@
 				v-show="modelValue"
 			>
 				<div class="modal" v-bind="$attrs">
-					<div class="modal_top flex aic sb" v-if="!empty_hack">
+					<div v-if="!empty_hack" class="modal_top flex aic sb">
+<!--						<div class="modal_head">{{ title }}</div>
+
+						<slot name="modalTop" />-->
 						<div class="flex aic">
 							<div class="modal_head">{{ title }}</div>
-							<slot name="top_place" />
+							<slot name="modalTop" />
 						</div>
-						<!--						<FmIcon :disabled="closingDisabled" icon="close" @click="cancel"/>-->
+
 						<FmBtn
 							:disabled="closingDisabled"
 							type="iconBtn"
@@ -122,17 +125,18 @@
 		}
 	}
 	.modal_top {
-		height: 50px;
+		height: $modal-header-height;
 		padding: 0 20px;
 		border-bottom: 1px solid $border;
 	}
 	.modal_content {
 		overflow: auto;
-		height: calc(100% - 110px);
+		max-height: calc(100% - $modal-header-height - $modal-footer-height);
 		padding: 15px 20px 0;
 		min-width: 400px; // so that FmInputEntityNames could fit in
 	}
 	.modal_bottom {
+		height: $modal-footer-height;
 		border-top: 1px solid $border;
 		padding: 10px 20px;
 	}

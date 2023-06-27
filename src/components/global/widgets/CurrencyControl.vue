@@ -15,11 +15,11 @@
 <script setup>
 
 	const props = defineProps({
-		wid: String
+		uid: String
 	})
 	const dashStore = useStoreDashboard()
 
-	let component = dashStore.getWidget(props.wid)
+	let component = dashStore.getComponent(props.uid)
 
 	const outputs = computed(() => {
 		let props = dashStore.props.outputs.filter((prop) => prop.component_id == component.uid)

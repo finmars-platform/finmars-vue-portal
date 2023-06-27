@@ -9,10 +9,10 @@
 <script setup>
 
 	let props = defineProps({
-		wid: String
+		uid: String
 	})
 	let dashStore = useStoreDashboard()
-	let widget = dashStore.getWidget(props.wid)
+	let widget = dashStore.getComponent(props.uid)
 
 	let inputs = computed(() => {
 		let props = dashStore.props.inputs.filter((prop) => prop.component_id == widget.uid )
