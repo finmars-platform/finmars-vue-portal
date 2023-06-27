@@ -18,6 +18,12 @@
 </template>
 
 <script>
+// $templateCache,
+// 	$compile,
+// 	$controller,
+// 	$mdDialog,
+// 	$state,
+// 	$transitions
 const props = defineProps([
 	'evDataService',
 	'evEventService',
