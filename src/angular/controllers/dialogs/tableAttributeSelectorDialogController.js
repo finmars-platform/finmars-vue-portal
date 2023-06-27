@@ -283,14 +283,11 @@ export default function ($scope, $mdDialog, data) {
 	}
 
 	vm.agree = function () {
-		console.log(
-			'testing98.agree vm.selectedAttributes',
-			JSON.parse(JSON.stringify(vm.selectedAttributes))
-		)
+
 		var attributes = vm.selectedAttributes.map(function (item) {
 			return item.attributeObject
 		})
-		console.log('testing98.agree attributes', attributes)
+
 		if (attributes.length) {
 			$mdDialog.hide({
 				status: 'agree',

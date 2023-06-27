@@ -6,7 +6,7 @@
 		</div>
 
 		<div v-if="status == 100" class="content">
-			<canvas :id="wid"><p>Chart</p></canvas>
+			<canvas :id="uid"><p>Chart</p></canvas>
 		</div>
 		<div class="content flex-column aic jcc" v-else>
 			<div class="flex aic">
@@ -41,7 +41,7 @@
 		Tooltip,
 	);
 	let props = defineProps({
-		wid: {
+		uid: {
 			type: String,
 			required: true
 		}
@@ -56,7 +56,7 @@
 	let status = ref(0)
 
 	let dashStore = useStoreDashboard()
-	let widget = dashStore.getWidget(props.wid)
+	let widget = dashStore.getComponent(props.uid)
 
 	let inputs = computed(() => {
 		let props = dashStore.props.inputs.filter((prop) => prop.component_id == widget.uid)
@@ -90,7 +90,7 @@
 	})
 
 	function createChart() {
-		myChart = new Chart(props.wid, {
+		myChart = new Chart(props.uid, {
 			type: 'doughnut',
 			data: data.value,
 			options: {

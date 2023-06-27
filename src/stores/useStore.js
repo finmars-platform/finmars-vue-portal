@@ -59,8 +59,43 @@ export default defineStore({
 				console.log('res.error:', res.error)
 
 			} else {
+
+				if (!res.data) {
+					res.data = {};
+				}
+
+				if (!res.data.favorites) {
+					res.data.favorites = {};
+				}
+
+				if (!res.data.favorites.transaction_type) {
+					res.data.favorites.transaction_type = [];
+				}
+
+				if (!res.data.favorites.attributes) {
+					res.data.favorites.attributes = {};
+				}
+
+				this.member = res;
+
+			}
+		},
+		async updateMember( member=this.member ) {
+
+			const options = {
+				params: {id: member.id},
+				body: {body: member},
+			};
+
+			const res = await useApi('member.put', options);
+
+			if (res.error) {
+				console.error(res.error)
+
+			} else {
 				this.member = res;
 			}
+
 		},
 
 		async fetchEcosystemDefaults() {
@@ -128,6 +163,9 @@ export default defineStore({
 				return state.member.data.group_tables[viewerType].entity_viewers_settings[entityType];
 
 			};
+		},
+		favorites(state) {
+			return state.member.data.favorites;
 		},
 	},
 });

@@ -52,7 +52,7 @@
 	import dayjs from 'dayjs'
 
 	let props = defineProps({
-		wid: {
+		uid: {
 			type: String,
 			required: true
 		}
@@ -66,7 +66,7 @@
 	let status = ref(0)
 
 	let dashStore = useStoreDashboard()
-	let widget = dashStore.getWidget(props.wid)
+	let widget = dashStore.getComponent(props.uid)
 
 	let total = ref('0 USD')
 	let instruments = ref(null)

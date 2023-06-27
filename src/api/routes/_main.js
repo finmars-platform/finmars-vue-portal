@@ -52,6 +52,9 @@ export default {
 	portfolioList: {
 		get: prefix + '/portfolios/portfolio/',
 	},
+	portfolioListLight: {
+		get: prefix + '/portfolios/portfolio/light/',
+	},
 	counterpartyList: {
 		get: prefix + '/counterparties/counterparty/',
 	},
@@ -155,6 +158,12 @@ export default {
 	ecosystemDefaults: {
 		get: prefix + '/users/ecosystem-default/',
 	},
+	balanceReport: {
+		get: prefix + 'reports/balance-report/',
+	},
+	balanceReportAttributes: {
+		get: prefix + '/reports/balance-report/attributes/',
+	},
 	portfolioBundles: {
 		get: prefix + '/portfolios/portfolio-bundle/',
 		post: prefix + '/portfolios/portfolio-bundle/',
@@ -208,10 +217,42 @@ export default {
 	transactionComplexFiltered: {
 		post: prefix + '/transactions/complex-transaction/ev-item/',
 	},
-	portfolioLight: {
-		get: prefix + '/portfolios/portfolio/light/',
+	systemAttributes: {
+		get: prefix + '/ui/system-attributes/',
 	},
 
+	//# region Entity viewer attribute types
+	portfolioAttrTypeList: {
+		get: prefix + '/portfolios/portfolio-attribute-type/',
+	},
+	accountAttrTypeList: {
+		get: prefix + '/accounts/account-attribute-type/',
+	},
+	instrumentAttrTypeList: {
+		get: prefix + '/instruments/instrument-attribute-type/',
+	},
+	responsibleAttrTypeList: {
+		get: prefix + '/counterparties/responsible-attribute-type/',
+	},
+	counterpartyAttrTypeList: {
+		get: prefix + '/counterparties/counterparty-attribute-type/',
+	},
+	transactionTypeAttrTypeList: {
+		get: prefix + '/transactions/complex-transaction-attribute-type/'
+	},
+	complexTransactionAttrTypeList: {
+		get: prefix + '/transactions/complex-transaction-attribute-type/'
+	},
+	//# endregion Entity viewer attribute types
+	balanceReportCustomFieldList: {
+		get: prefix + '/transactions/complex-transaction-attribute-type/'
+	},
+	plReportCustomFieldList: {
+		get: prefix + '/transactions/complex-transaction-attribute-type/'
+	},
+	transactionReportCustomFieldList: {
+		get: prefix + '/transactions/complex-transaction-attribute-type/'
+	},
 	// Надо отделить
 
 	widgetsHistory: {

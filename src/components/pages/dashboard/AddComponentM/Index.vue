@@ -14,7 +14,7 @@
 
 		<template #controls="{cancel}">
 			<div class="flex sb">
-				<FmBtn type="text" @click="step = 'component'">cancel</FmBtn>
+				<FmBtn type="text" @click="(step === 'component') ? cancel() : step = 'component'">cancel</FmBtn>
 				<FmBtn
 					@click="step == 'settings' ? addComponent(cancel) : step = 'settings'"
 				>
@@ -39,7 +39,7 @@
 	provide('component', component)
 
 	function addComponent( cancelFunc ) {
-		let new_widget = {
+		let new_comp = {
 			uid: generateId(component.value.componentName),
 			user_code: component.value.user_code,
 			name: component.value.name,
@@ -56,12 +56,12 @@
 		}
 
 		dashStore.$patch((state) => {
-			dashStore.components.push(new_widget)
+			dashStore.components.push(new_comp)
 
 			component.value.inputs.forEach((prop) => {
 				state.props.inputs.push({
-					uid: new_widget.uid + ' ' + prop.name,
-					component_id: new_widget.uid,
+					uid: new_comp.uid + ' ' + prop.name,
+					component_id: new_comp.uid,
 					user_code: prop.user_code,
 					name: prop.name,
 					type: prop.type,
@@ -77,8 +77,8 @@
 
 			component.value.outputs.forEach((prop) => {
 				let newProp = reactive({
-					uid: new_widget.uid + '_' + prop.name,
-					component_id: new_widget.uid,
+					uid: new_comp.uid + '_' + prop.name,
+					component_id: new_comp.uid,
 					user_code: prop.user_code,
 					name: prop.name,
 					type: prop.type,

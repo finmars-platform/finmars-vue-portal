@@ -1,5 +1,14 @@
 <template>
-	<div class="settings flex">
+	<PagesDashboardAddMatrixModal
+		v-if="component.componentName === 'DashboardMatrix'"
+		:tab="tab"
+		v-bind="$attrs"
+		class="settings"
+	/>
+
+	<div v-else
+			 v-bind="$attrs"
+			 class="settings flex">
 		<div class="settings_coll">
 			<h4>General</h4>
 
