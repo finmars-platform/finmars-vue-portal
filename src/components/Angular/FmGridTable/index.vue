@@ -22,6 +22,7 @@
 				class="g-additions-workarea"
 				v-if="verticalAdditions.type === 'reconciliation'"
 			>
+				<!--				VerticalSplitPanel.vue  ready-->
 				<!-- </g-vertical-split-panel-report-binder> -->
 				<!-- gSplitDerictiv -->
 				<!-- <g-vertical-split-panel-report-binder
@@ -31,6 +32,7 @@
 						root-wrap-elem.value="rootWrapElem"
 						class="display-block height-100"
 					/> -->
+
 				<div class="split-panel-controller-container"></div>
 				<div class="report-viewer-holder">
 					<div class="height-100">
@@ -124,6 +126,7 @@
 							:rootWrapElement="rootWrapElem"
 						/>
 
+						<!--				ViewerMatrixDirectiv.vue  ready-->
 						<!-- <report-viewer-matrix NEED RELOC
 											v-if="viewType == 'matrix'"
 											class="height-100 display-block matrix-inside-report-builder"
@@ -162,6 +165,7 @@
 
 			<div class="g-additions-workarea" v-if="additions.type === 'editor'">
 				<div class="height-100">
+					<!--				EditorBinder.vue  ready-->
 					<!-- <group-editor-binder  NEED RELOC
 							ev-data-service="evDataService"
 							ev-event-service="evEventService"
@@ -173,6 +177,7 @@
 				class="g-additions-workarea"
 				v-if="additions.type === 'permission-editor'"
 			>
+				<!--				PermissionEditorBinder.vue ready-->
 				<!-- <group-permission-editor-binder  NEED RELOC
 						class="display-block height-100"
 						ev-data-service="evDataService"
@@ -189,6 +194,7 @@
 					additions.type === 'transaction-report'
 				"
 			>
+				<!--				SplitPanelReportBinder   ready-->
 				<!-- <group-split-panel-report-binder  NEED RELOC
 						ev-data-service="evDataService"
 						ev-event-service="evEventService"
@@ -200,6 +206,7 @@
 				class="g-additions-workarea"
 				v-if="additions.type === 'reconciliation_match_editor'"
 			>
+				<!--				ReconciliationMatchEditorBinder.vue -->
 				<!-- <group-reconciliation-match-editor-binder NEED RELOC
 						class="display-block height-100"
 						ev-data-service="evDataService"

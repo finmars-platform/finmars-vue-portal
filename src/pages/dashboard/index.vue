@@ -20,8 +20,12 @@
 
 			<template #rightActions>
 				<template v-if="dashStore.isEdit">
-					<FmBtn type="text" @click="cancelEdit()">cancel</FmBtn>
-					<FmBtn @click="dashStore.saveLayout()">save</FmBtn>
+					<FmBtn :disabled="readyStatus" type="text" @click="cancelEdit()"
+						>cancel</FmBtn
+					>
+					<FmBtn :disabled="readyStatus" @click="dashStore.saveLayout()"
+						>save</FmBtn
+					>
 				</template>
 
 				<FmMenu class="m-l-10">
@@ -116,6 +120,7 @@
 	import { VAceEditor } from 'vue3-ace-editor'
 	import 'ace-builds/src-noconflict/mode-json'
 	import 'ace-builds/src-noconflict/theme-monokai'
+	import useEvAttributesStore from '~/stores/useEvAttributesStore'
 
 	definePageMeta({
 		middleware: 'auth',
@@ -127,10 +132,12 @@
 		],
 	})
 
-	const dashStore = useStoreDashboard()
+	let dashStore = useStoreDashboard()
+	let evAttrsStore = useEvAttributesStore()
 
 	dashStore.init()
 
+	let readyStatus = ref(false)
 	let isOpenJSON = ref(false)
 	let content = ref('')
 
@@ -197,6 +204,44 @@
 
 		dashStore.isEdit = false
 	}
+
+	async function downloadAttributes() {
+		let promises = []
+
+		const sharedCts = [
+			'portfolios.portfolio',
+			'accounts.account',
+			'instruments.instrument',
+			'counterparties.responsible',
+			'counterparties.counterparty',
+			'transactions.transactiontype',
+			'transactions.complextransaction',
+		]
+
+		sharedCts.forEach((contentType) => {
+			promises.push(evAttrsStore.getAttributeTypes(contentType))
+		})
+
+		promises.push(evAttrsStore.getCustomFields('reports.balancereport'))
+		promises.push(evAttrsStore.getCustomFields('reports.plreport'))
+		promises.push(evAttrsStore.getCustomFields('reports.transactionreport'))
+
+		/*const idAttribute = {
+			"key": "id",
+			"name": "Id",
+			"value_type": 20
+		};
+
+		['currency', ...sharedCts].forEach(contentType => {
+			attributesData.appendEntityAttribute(contentType, Object.assign({}, idAttribute));
+		});*/
+
+		await Promise.all(promises)
+
+		// readyStatus.attributes = true;
+	}
+
+	downloadAttributes()
 </script>
 
 <style lang="scss" scoped>

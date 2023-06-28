@@ -10,7 +10,7 @@
 		<template #btn="{ isOpen }">
 			<BaseInput
 				:errorData="errorData"
-				:modelValue="selectedName"
+				:modelValue="modelValue"
 				class="input_btn m-b-0"
 				:class="{active: isOpen, 'bi_no_borders': no_borders, small: size == 'small'}"
 				:label="label"
@@ -35,9 +35,9 @@
 				</template>
 
 				<template v-else>
-					<div class="selected_field">
+					<div class="fm_select_main_input">
 						<div
-							class="selected_field_item"
+							class="selected_text"
 							:class="{'nothing_selected': !selectedItem}"
 						>
 							{{ selectedName }}
@@ -47,9 +47,21 @@
 
 				<template #rightBtn>
 					<slot name="right_btn">
-						<FmBtn type="iconBtn"
-									 :icon="isOpen ? 'arrow_drop_up' : 'arrow_drop_down'"
-									 @click="mainInput && mainInput.focus()" />
+						<div class="flex-row">
+							<FmBtn
+								v-if="clearBtn"
+								type="iconBtn"
+								icon="close"
+								class="fm_select_right_btn"
+								@click.stop="emit('update:modelValue', null)"
+							/>
+
+							<FmBtn
+								type="iconBtn"
+								:icon="isOpen ? 'arrow_drop_up' : 'arrow_drop_down'"
+								@click="mainInput && mainInput.focus()"
+							/>
+						</div>
 					</slot>
 				</template>
 
@@ -90,6 +102,7 @@
 		optionsFilter: Boolean,
 		required: Boolean,
 		attach: String,
+		clearBtn: Boolean, // button that empties select
 		errorData: Object
 	})
 
@@ -126,7 +139,7 @@
 		// else if (props.label) {
 		// 	return ' ';
 		// }
-		return 'Select option';
+		return props.label ? props.label : 'Select option';
 
 	});
 
@@ -189,7 +202,7 @@
 			cursor: pointer;
 		}
 	}
-	.selected_field {
+	/*.selected_field {
 		height: 100%;
 		display: flex;
 		align-items: center;
@@ -197,5 +210,5 @@
 		.selected_field_item.nothing_selected {
 			color: $text-pale;
 		}
-	}
+	}*/
 </style>
