@@ -41,7 +41,7 @@
 
 					<md-select
 						v-if="entityType != 'transaction-report'"
-						data-ng-model="reportOptions.cost_method"
+						v-model="reportOptions.cost_method"
 						ng-change="updateReportOptions()"
 					>
 						<md-option ng-value="1">AVCO</md-option>
@@ -53,7 +53,7 @@
 					<md-input-container v-if="entityType != 'transaction-report'">
 						<label></label>
 						<md-select
-							ng-model="reportOptions.report_currency"
+							v-model="reportOptions.report_currency"
 							md-container-class="common-select-container"
 							md-on-close="searchTerm = ''"
 							ng-change="updateReportOptions()"
@@ -61,7 +61,7 @@
 						>
 							<md-select-header>
 								<input
-									data-ng-model="searchTerm"
+									v-model="searchTerm"
 									type="search"
 									placeholder="Search for a ..."
 									class="md-text md-select-search-pattern select-input-filter"
@@ -71,7 +71,7 @@
 
 							<div class="select-options-holder">
 								<md-option
-									ng-repeat="item in currencies | filter:{name: searchTerm}"
+									v-for="item in currencies"
 									ng-value="item.id"
 								>
 									{{ item?.name }}
@@ -81,8 +81,8 @@
 					</md-input-container>
 
 					<md-checkbox
-						ng-model="reportLayoutOptions.useDateFromAbove"
-						ng-change="toggleUseDateFromAbove()"
+						v-model="reportLayoutOptions.useDateFromAbove"
+						:change="toggleUseDateFromAbove()"
 						class="g-top-link-date-checkbox m-r-8 m-l-16"
 						>{{ useDateFromAboveName }}</md-checkbox
 					>

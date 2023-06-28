@@ -7,13 +7,13 @@
 				 class="ev-left-panel-tree-elem-line flex-row fi-center"
 				 :class="{'selected-group': item.___is_selected, 'has-selected-child-group': item.___has_selected_child}">
 
-			<div data-ng-show="!item.___is_open"
+			<div v-show="!item.___is_open"
 					 class="ev-left-panel-folding-btn"
 					 @click="unfoldGroup($event)">
 				<span class="material-icons">chevron_right</span>
 			</div>
 
-			<div data-ng-show="item.___is_open"
+			<div v-show="item.___is_open"
 					 class="ev-left-panel-folding-btn"
 					 @click="foldGroup($event)">
 				<span class="material-icons">expand_more</span>

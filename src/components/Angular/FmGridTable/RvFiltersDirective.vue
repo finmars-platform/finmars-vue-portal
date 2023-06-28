@@ -40,7 +40,7 @@
 					</md-button>
 				</div>
 
-				<div data-ng-if="!isReport" layout="row">
+				<div v-if="!isReport" layout="row">
 
 					<md-button class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
 										 @click="evAddEntity($event)"
@@ -152,8 +152,8 @@
 					<md-button v-if="thereAreFrontendFilters"
 										 class="g-toggle-filters-btn md-icon-button"
 										 @click="toggleFiltersToShow()">
-						<span ng-show="shownFiltersType === 'frontend'" class="material-icons">laptop_mac</span>
-						<span ng-show="shownFiltersType === 'backend'" class="material-icons">dns</span>
+						<span v-show="shownFiltersType === 'frontend'" class="material-icons">laptop_mac</span>
+						<span v-show="shownFiltersType === 'backend'" class="material-icons">dns</span>
 					</md-button>
 
 				</div>
@@ -253,7 +253,7 @@
 						</md-button>
 					</md-menu-item>
 
-					<md-menu-item ng-if="isReport">
+					<md-menu-item v-if="isReport">
 						<md-button @click="toggleSplitPanel($event, 'balance-report')"
 											 class="g-settings-option-btn">
 
@@ -378,7 +378,7 @@
 						</md-button>
 					</md-menu-item>
 
-					<md-menu-item ng-if="entityType !== 'complex-transaction'">
+					<md-menu-item v-if="entityType !== 'complex-transaction'">
 						<md-button @click="openCustomFieldsManager($event)" class="g-settings-option-btn">
 							<span>Custom Columns</span>
 						</md-button>
@@ -391,7 +391,7 @@
 						</md-button>
 					</md-menu-item>
 
-					<md-menu-item ng-if="!isReport">
+					<md-menu-item v-if="!isReport">
 						<md-button @click="openInputFormEditor($event)" class="g-settings-option-btn">
 							<span>Edit form</span>
 						</md-button>
