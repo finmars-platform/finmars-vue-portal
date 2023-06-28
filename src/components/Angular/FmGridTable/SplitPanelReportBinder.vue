@@ -8,9 +8,10 @@
 					@click="vm.entityViewerEventService"
 				></group-table>
 			</div>
-			<div data-ng-if="!vm.readyStatus.attributes || !vm.readyStatus.layout">
+			<div v-if="!vm.readyStatus.attributes || !vm.readyStatus.layout">
 				<div class="e-data-loader" layout="row" layout-sm="column" layout-align="space-around">
 					<!--<md-progress-circular md-diameter="100" md-mode="indeterminate"></md-progress-circular>-->
+					<!--					ProgressCircular.vue  -->
 					<progress-circular diameter="100"></progress-circular>
 				</div>
 			</div>

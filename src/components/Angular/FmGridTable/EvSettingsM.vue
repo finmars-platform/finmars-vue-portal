@@ -18,7 +18,7 @@
 			v-if="vm.entityType == 'complex-transaction'"
 		>
 			<label>Filter transactions by statuses</label>
-			<md-select data-ng-model="vm.complexTransactionFilters" multiple>
+			<md-select v-model="vm.complexTransactionFilters" multiple>
 				<md-option value="booked">Booked</md-option>
 				<md-option value="ignored">Ignored</md-option>
 			</md-select>

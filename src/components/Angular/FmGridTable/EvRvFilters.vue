@@ -226,7 +226,7 @@
 				</md-button>
 			</template>
 		</div>
-
+<!--СustomPopupDirective.vue-->
 		<div class="gFiltersContainer flex aic fww">
 			<div
 				v-if="scope.readyStatus.filters"
