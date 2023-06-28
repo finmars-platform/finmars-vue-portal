@@ -16,7 +16,7 @@
 		<template #controls>
 			<div class="flex sb">
 				<FmBtn type="text" @click="cancel()">cancel</FmBtn>
-				<FmBtn :loading="processing" @click="createDB()">create</FmBtn>
+				<FmBtn :disabled="processing" @click="createDB()">create</FmBtn>
 			</div>
 		</template>
 	</BaseModal>

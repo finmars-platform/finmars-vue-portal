@@ -16,7 +16,7 @@
 			<div class="flex-row fc-space-between">
 				<FmBtn type="basic" @click="cancel()">cancel</FmBtn>
 				<FmBtn
-					:loading="processing"
+					:disabled="processing"
 					@click="createMasterUser()"
 				>
 					create

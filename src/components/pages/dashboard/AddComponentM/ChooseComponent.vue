@@ -28,7 +28,7 @@
 
 <script setup>
 
-	import widgetList from '~/assets/data/widgets.js'
+	import widgetList from '~/components/pages/dashboard/components.js'
 
 	const component = inject('component')
 

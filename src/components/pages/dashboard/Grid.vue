@@ -28,6 +28,7 @@
 			:tab="tab"
 			@close="isOpenAddComponents = false"
 		/>
+
 	</div>
 </template>
 

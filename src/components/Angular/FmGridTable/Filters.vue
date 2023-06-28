@@ -5,7 +5,11 @@
 	>
 		<!-- IMPORTANT: for .gFiltersWrap padding should be set by styles, so that scripts can access it -->
 		<div class="gFiltersWrap" style="padding: 0px">
+
+			<!--	RvFiltersDirective.vue -->
+
 			<div v-if="$scope.isReport && ready">
+
 				<g-rv-filters
 					ev-data-service="evDataService"
 					ev-event-service="evEventService"
@@ -47,7 +51,7 @@
 				</div>
 			</div>
 		</div>
-
+<!-- RowsBulkActionsDirective.vue-->
 		<g-rows-bulk-actions
 			v-if="isRootEntityViewer && viewContext !== 'dashboard'"
 			ev-data-service="evDataService"

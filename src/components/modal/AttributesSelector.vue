@@ -5,7 +5,7 @@
 		@close="cancel()"
 		style="height: 70vh; width: 90%; width: 800px"
 	>
-		<template #top_place>
+		<template #modalTop>
 			<BaseInput
 				type="text"
 				class="small bi_no_borders bi_border_bottom m-l-20"
