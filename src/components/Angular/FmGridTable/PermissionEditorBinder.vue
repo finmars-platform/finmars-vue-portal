@@ -93,12 +93,12 @@
 								 class="md-raised md-primary"
 								 :class="{'disabled-btn': !vm.selectedRows.length}">Save
 
-				<span data-ng-if="vm.selectedRows.length > 1">for All Objects</span>
+				<span v-if="vm.selectedRows.length > 1">for All Objects</span>
 
 			</md-button>
 
 
-			<div data-ng-if="vm.entityType == 'portfolio' || vm.entityType == 'account' || vm.entityType == 'transaction-type'">
+			<div v-if="vm.entityType == 'portfolio' || vm.entityType == 'account' || vm.entityType == 'transaction-type'">
 
 				<md-button @click="vm.recalculateTransactionPermissions()"
 									 :class="{'disabled-btn': !vm.isSaved}"
@@ -107,7 +107,7 @@
 
 			</div>
 
-			<div data-ng-if="vm.entityType == 'instrument-type'">
+			<div v-if="vm.entityType == 'instrument-type'">
 
 				<md-button @click="vm.recalculateInstrumentPermissions()"
 									 :class="{'disabled-btn': !vm.isSaved}"
@@ -116,7 +116,7 @@
 
 			</div>
 
-			<div data-ng-if="vm.entityType == 'account-type'" layout="row">
+			<div v-if="vm.entityType == 'account-type'" layout="row">
 
 				<md-button @click="vm.recalculateAccountPermissions()"
 									 :class="{'disabled-btn': !vm.isSaved}"

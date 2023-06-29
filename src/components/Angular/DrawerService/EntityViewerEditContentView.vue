@@ -395,6 +395,7 @@
 					</md-tab-label>
 
 					<md-tab-body>
+						<!--						BindFieldControl.vue-->
 						<md-content class="md-padding p-t-26">
 							<div layout="row"
 									 v-for="row in vm.range(tab.layout.rows)"
@@ -522,6 +523,7 @@
 											 class="m-large">
 										<!--<md-progress-circular md-mode="indeterminate"-->
 										<!--md-diameter="96"></md-progress-circular>-->
+										<!-- ProgressCircular.vue -->
 										<progress-circular diameter="100"></progress-circular>
 									</div>
 								</div>
