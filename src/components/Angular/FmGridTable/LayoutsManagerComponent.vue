@@ -90,7 +90,7 @@
 			</div>
 		</div>
 
-		<div ng-if="viewContext === 'dashboard'">
+		<div v-if="viewContext === 'dashboard'">
 			<div class="layout-menu-item" @click="saveLayoutList()">
 				<span class="material-icons">save</span>
 				<span>Save</span>

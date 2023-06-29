@@ -47,7 +47,7 @@
 					</md-button>
 				</div>
 
-				<div data-ng-if="!isReport" layout="row">
+				<div v-if="!isReport" layout="row">
 					<md-button
 						class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
 						@click="evAddEntity($event)"
@@ -213,13 +213,11 @@
 						@click="toggleFiltersToShow()"
 					>
 						<span
-							ng-show="shownFiltersType === 'frontend'"
+							v-show="shownFiltersType === 'frontend'"
 							class="material-icons"
 							>laptop_mac</span
 						>
-						<span
-							ng-show="shownFiltersType === 'backend'"
-							class="material-icons"
+						<span v-show="shownFiltersType === 'backend'" class="material-icons"
 							>dns</span
 						>
 					</md-button>
@@ -332,7 +330,7 @@
 						</md-button>
 					</md-menu-item>
 
-					<md-menu-item ng-if="isReport">
+					<md-menu-item v-if="isReport">
 						<md-button
 							@click="toggleSplitPanel($event, 'balance-report')"
 							class="g-settings-option-btn"

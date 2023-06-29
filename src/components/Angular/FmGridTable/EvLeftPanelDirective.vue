@@ -17,7 +17,7 @@
 																		 @click="evEventService"
 																		 ev-content-element="evContentElement"></g-ev-left-panel-tree-elem>
 
-					<div ng-if="!groupTypes.length" class="ev-left-panel-drag-msg">
+					<div v-if="!groupTypes.length" class="ev-left-panel-drag-msg">
 						<span class="material-icons">file_download</span>
 						<span class="text">Drag a column here to group by</span>
 					</div>
@@ -59,7 +59,7 @@
 
 				<md-menu class="float-right" style="    margin-right: 4px;
     margin-top: -2px;">
-					<md-button class="signed-button" data-ng-click="$mdOpenMenu($event)">
+					<md-button class="signed-button" @click="$mdOpenMenu($event)">
 						<div class="flex-column flex-i-center" style="margin-top: -11px;">
 							<span class="material-icons">more_vert</span>
 						</div>
