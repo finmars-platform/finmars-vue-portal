@@ -238,20 +238,25 @@ export default {
 		get: prefix + '/counterparties/counterparty-attribute-type/',
 	},
 	transactionTypeAttrTypeList: {
-		get: prefix + '/transactions/complex-transaction-attribute-type/'
+		get: prefix + '/transactions/complex-transaction-attribute-type/',
 	},
 	complexTransactionAttrTypeList: {
-		get: prefix + '/transactions/complex-transaction-attribute-type/'
+		get: prefix + '/transactions/complex-transaction-attribute-type/',
 	},
 	//# endregion Entity viewer attribute types
 	balanceReportCustomFieldList: {
-		get: prefix + '/transactions/complex-transaction-attribute-type/'
+		get: prefix + '/transactions/complex-transaction-attribute-type/',
 	},
 	plReportCustomFieldList: {
-		get: prefix + '/transactions/complex-transaction-attribute-type/'
+		get: prefix + '/transactions/complex-transaction-attribute-type/',
 	},
 	transactionReportCustomFieldList: {
-		get: prefix + '/transactions/complex-transaction-attribute-type/'
+		get: prefix + '/transactions/complex-transaction-attribute-type/',
+	},
+	mobileLayout: {
+		get: prefix + '/ui/mobile-layout/',
+		post: prefix + '/ui/mobile-layout/',
+		put: prefix + '/ui/mobile-layout/{id}/',
 	},
 	// Надо отделить
 
