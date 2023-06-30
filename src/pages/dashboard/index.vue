@@ -2,9 +2,7 @@
 	<div>
 		<FmHorizontalPanel>
 			<template #leftActions>
-				<PagesDashboardLayoutManager
-					v-if="!dashStore.isEdit"
-				/>
+				<PagesDashboardLayoutManager v-if="!dashStore.isEdit" />
 
 				<template v-else>
 					<BaseInput
@@ -22,8 +20,12 @@
 
 			<template #rightActions>
 				<template v-if="dashStore.isEdit">
-					<FmBtn :disabled="readyStatus" type="text" @click="cancelEdit()">cancel</FmBtn>
-					<FmBtn :disabled="readyStatus" @click="dashStore.saveLayout()">save</FmBtn>
+					<FmBtn :disabled="readyStatus" type="text" @click="cancelEdit()"
+						>cancel</FmBtn
+					>
+					<FmBtn :disabled="readyStatus" @click="dashStore.saveLayout()"
+						>save</FmBtn
+					>
 				</template>
 
 				<FmMenu class="m-l-10">
@@ -33,25 +35,37 @@
 
 					<template #default="{ close }">
 						<div class="fm_list">
-							<div class="fm_list_item" @click="edit(), close()">Edit dashboard</div>
-							<div class="fm_list_item" @click="editJSON(), close()">Edit JSON</div>
+							<div class="fm_list_item" @click="edit(), close()">
+								Edit dashboard
+							</div>
+							<div class="fm_list_item" @click="editJSON(), close()">
+								Edit JSON
+							</div>
+							<NuxtLink class="fm_list_item" to="/dashboard/mobile"
+								>Mobile dashboard</NuxtLink
+							>
 						</div>
 					</template>
 				</FmMenu>
 			</template>
 		</FmHorizontalPanel>
 
-		<BaseModal v-model="isOpenJSON" no_padding title="Editor JSON"
+		<BaseModal
+			v-model="isOpenJSON"
+			no_padding
+			title="Editor JSON"
 			:controls="{
-				cancel: {name: 'Cancel'},
-				action: {name: 'Save', cb: saveJSON},
-			}">
+				cancel: { name: 'Cancel' },
+				action: { name: 'Save', cb: saveJSON },
+			}"
+		>
 			<v-ace-editor
 				v-model:value="content"
 				@init="editorInit"
 				lang="json"
 				theme="monokai"
-				style="height: 300px;width: 600px;" />
+				style="height: 300px; width: 600px"
+			/>
 		</BaseModal>
 
 		<PagesDashboardGrid :tab="1">
@@ -63,22 +77,31 @@
 			/>
 		</PagesDashboardGrid>
 
-		<div class="fm_tabs"
-			v-if="dashStore.tabs.length > 1 || dashStore.isEdit"
-		>
-			<div class="fm_tabs_item center aic"
+		<div class="fm_tabs" v-if="dashStore.tabs.length > 1 || dashStore.isEdit">
+			<div
+				class="fm_tabs_item center aic"
 				v-for="(tab, index) in dashStore.tabs"
 				:key="index"
-				:class="{active: tab.id == dashStore.activeTab}"
+				:class="{ active: tab.id == dashStore.activeTab }"
 				@click="dashStore.activeTab = tab.id"
 			>
 				<input v-if="dashStore.isEdit" v-model="tab.name" />
 				<template v-else>{{ tab.name }}</template>
 
-				<FmIcon v-if="dashStore.isEdit" @click="delTab(tab.id)" class="m-l-4" icon="delete" />
+				<FmIcon
+					v-if="dashStore.isEdit"
+					@click="delTab(tab.id)"
+					class="m-l-4"
+					icon="delete"
+				/>
 			</div>
-			<div class="fm_tabs_item flex aic" v-if="dashStore.isEdit" @click="addTab()">
-				<FmIcon primary icon="add" /> <div class="tab_add_text">Add tab</div>
+			<div
+				class="fm_tabs_item flex aic"
+				v-if="dashStore.isEdit"
+				@click="addTab()"
+			>
+				<FmIcon primary icon="add" />
+				<div class="tab_add_text">Add tab</div>
 			</div>
 		</div>
 
@@ -94,37 +117,40 @@
 </template>
 
 <script setup>
-
-	import { VAceEditor } from 'vue3-ace-editor';
-	import 'ace-builds/src-noconflict/mode-json';
-	import 'ace-builds/src-noconflict/theme-monokai';
-	import useEvAttributesStore from "~/stores/useEvAttributesStore";
+	import { VAceEditor } from 'vue3-ace-editor'
+	import 'ace-builds/src-noconflict/mode-json'
+	import 'ace-builds/src-noconflict/theme-monokai'
+	import useEvAttributesStore from '~/stores/useEvAttributesStore'
 
 	definePageMeta({
 		middleware: 'auth',
 		bread: [
 			{
 				text: 'Dashboard',
-				disabled: true
+				disabled: true,
 			},
 		],
-	});
+	})
 
 	let dashStore = useStoreDashboard()
-	let evAttrsStore = useEvAttributesStore();
+	let evAttrsStore = useEvAttributesStore()
 
 	dashStore.init()
 
-	let readyStatus = ref(false);
+	let readyStatus = ref(false)
 	let isOpenJSON = ref(false)
 	let content = ref('')
 
 	function editJSON() {
-		content.value = JSON.stringify({
-			widgets: dashStore.widgets,
-			tabs: dashStore.tabs,
-			scope: dashStore.scope,
-		}, null, 4)
+		content.value = JSON.stringify(
+			{
+				widgets: dashStore.widgets,
+				tabs: dashStore.tabs,
+				scope: dashStore.scope,
+			},
+			null,
+			4
+		)
 		isOpenJSON.value = true
 	}
 	function saveJSON() {
@@ -136,13 +162,13 @@
 	}
 
 	function editorInit(editor) {
-		editor.setHighlightActiveLine(false);
-		editor.setShowPrintMargin(false);
+		editor.setHighlightActiveLine(false)
+		editor.setShowPrintMargin(false)
 		editor.setFontSize(14)
-		editor.setBehavioursEnabled(true);
+		editor.setBehavioursEnabled(true)
 
-		editor.focus();
-		editor.navigateFileStart();
+		editor.focus()
+		editor.navigateFileStart()
 	}
 	let topComponents = computed(() => {
 		return dashStore.components.filter((item) => {
@@ -160,15 +186,15 @@
 	function addTab() {
 		dashStore.tabs.push({
 			id: Date.now(),
-			name: 'New tab'
+			name: 'New tab',
 		})
 	}
-	function delTab( id ) {
+	function delTab(id) {
 		let tabIndex = dashStore.tabs.findIndex((item) => {
 			return item.id == id
 		})
 
-		dashStore.tabs.splice( tabIndex, 1 )
+		dashStore.tabs.splice(tabIndex, 1)
 	}
 	function edit() {
 		dashStore.isEdit = true
@@ -180,8 +206,7 @@
 	}
 
 	async function downloadAttributes() {
-
-		let promises = [];
+		let promises = []
 
 		const sharedCts = [
 			'portfolios.portfolio',
@@ -191,16 +216,15 @@
 			'counterparties.counterparty',
 			'transactions.transactiontype',
 			'transactions.complextransaction',
-		];
+		]
 
-		sharedCts.forEach(contentType => {
-			promises.push( evAttrsStore.getAttributeTypes(contentType) );
+		sharedCts.forEach((contentType) => {
+			promises.push(evAttrsStore.getAttributeTypes(contentType))
 		})
 
-
-		promises.push( evAttrsStore.getCustomFields('reports.balancereport') );
-		promises.push( evAttrsStore.getCustomFields('reports.plreport') );
-		promises.push( evAttrsStore.getCustomFields('reports.transactionreport') );
+		promises.push(evAttrsStore.getCustomFields('reports.balancereport'))
+		promises.push(evAttrsStore.getCustomFields('reports.plreport'))
+		promises.push(evAttrsStore.getCustomFields('reports.transactionreport'))
 
 		/*const idAttribute = {
 			"key": "id",
@@ -212,20 +236,16 @@
 			attributesData.appendEntityAttribute(contentType, Object.assign({}, idAttribute));
 		});*/
 
-		await Promise.all(promises);
+		await Promise.all(promises)
 
 		// readyStatus.attributes = true;
-
 	}
 
-	downloadAttributes();
-
+	downloadAttributes()
 </script>
 
 <style lang="scss" scoped>
-
 	.tab_add_text {
 		color: $primary;
 	}
-
 </style>
