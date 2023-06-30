@@ -37,6 +37,7 @@ export default defineStore({
 					this.components = this.layout.data.components || []
 					this.tabs = this.layout.data.tabs || []
 					this.activeTab = this.tabs[0]?.id
+					this.__log = []
 
 					if (this.layout.data.props) this.props = this.layout.data.props
 
@@ -250,6 +251,18 @@ export default defineStore({
 		},
 		async saveLayout() {
 			if (!this.layout.id) {
+				let props = JSON.parse(JSON.stringify(this.props))
+
+				this.props.inputs.forEach((prop, k) => {
+					props.outputs[k].__val = null
+				})
+				this.props.outputs.forEach((prop, k) => {
+					props.outputs[k].default_value = prop.__val
+
+					// Need to add filtor by control
+					props.outputs[k].__val = null
+				})
+
 				let res = await useApi('dashboardLayout.post', {
 					body: {
 						name: this.layout.name + ' dashboardV2@',
@@ -258,7 +271,7 @@ export default defineStore({
 						data: {
 							components: this.components,
 							tabs: this.tabs,
-							props: this.props,
+							props: props,
 						},
 					},
 				})
@@ -273,6 +286,18 @@ export default defineStore({
 					})
 				}
 			} else {
+				let props = JSON.parse(JSON.stringify(this.props))
+
+				this.props.inputs.forEach((prop, k) => {
+					props.outputs[k].__val = null
+				})
+				this.props.outputs.forEach((prop, k) => {
+					props.outputs[k].default_value = prop.__val
+
+					// Need to add filtor by control
+					props.outputs[k].__val = null
+				})
+
 				let res = await useApi('dashboardLayout.put', {
 					params: { id: this.layout.id },
 					body: {
@@ -281,7 +306,7 @@ export default defineStore({
 						data: {
 							components: this.components,
 							tabs: this.tabs,
-							props: this.props,
+							props: props,
 						},
 					},
 				})
