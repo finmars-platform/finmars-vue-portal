@@ -870,7 +870,9 @@
 			status: 'agree',
 			data: { items: resItems },
 		})
-		delete $mdDialog.modals['AttributesSelectorDialogController']
+
+		if (window.$mdDialog)
+			delete $mdDialog.modals['AttributesSelectorDialogController']
 	}
 
 	function processMessagesFromIframe(event) {
