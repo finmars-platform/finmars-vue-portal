@@ -15,6 +15,11 @@
 						v-model="dashStore.layout.user_code"
 						label="User code"
 					/>
+					<BaseInput
+						class="bi_no_margins m-t-0"
+						v-model="dashStore.layout.configuration_code"
+						label="Configuration code"
+					/>
 				</template>
 			</template>
 
@@ -144,9 +149,9 @@
 	function editJSON() {
 		content.value = JSON.stringify(
 			{
-				widgets: dashStore.widgets,
+				components: dashStore.components,
 				tabs: dashStore.tabs,
-				scope: dashStore.scope,
+				props: dashStore.props,
 			},
 			null,
 			4
@@ -156,9 +161,9 @@
 	function saveJSON() {
 		let newStore = JSON.parse(content.value)
 
-		dashStore.widgets = newStore.widgets
+		dashStore.components = newStore.components
 		dashStore.tabs = newStore.tabs
-		dashStore.scope = newStore.scope
+		dashStore.props = newStore.props
 	}
 
 	function editorInit(editor) {
@@ -188,6 +193,8 @@
 			id: Date.now(),
 			name: 'New tab',
 		})
+
+		if (!dashStore.activeTab) dashStore.activeTab = dashStore.tabs[0].id
 	}
 	function delTab(id) {
 		let tabIndex = dashStore.tabs.findIndex((item) => {
