@@ -77,6 +77,7 @@
 			<PagesDashboardWidgetWrap
 				v-for="component of topComponents"
 				:key="component.uid"
+				:components="dashStore.components"
 				:component="component"
 				:isEdit="dashStore.isEdit"
 			/>
@@ -114,6 +115,7 @@
 			<PagesDashboardWidgetWrap
 				v-for="component of mainComponents"
 				:key="component.uid"
+				:components="dashStore.components"
 				:component="component"
 				:isEdit="isEdit"
 			/>

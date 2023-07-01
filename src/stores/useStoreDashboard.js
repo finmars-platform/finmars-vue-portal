@@ -249,6 +249,68 @@ export default defineStore({
 			if (!this.history) return false
 			return this.historyPnl[opts.category][opts.date]
 		},
+		async setAsDefault() {
+			let props = JSON.parse(JSON.stringify(this.props))
+
+			this.props.inputs.forEach((prop, k) => {
+				props.outputs[k].__val = null
+			})
+			this.props.outputs.forEach((prop, k) => {
+				props.outputs[k].default_value = prop.__val
+
+				// Need to add filtor by control
+				props.outputs[k].__val = null
+			})
+
+			let res = await useApi('dashboardLayout.put', {
+				params: { id: this.layout.id },
+				body: {
+					configuration_code: this.layout.configuration_code,
+					user_code: this.layout.user_code,
+					is_default: true,
+					data: {
+						components: this.components,
+						tabs: this.tabs,
+						props: props,
+					},
+				},
+			})
+			let index = this.layoutList.findIndex(
+				(item) => item.id == this.activeLayoutId
+			)
+			this.layoutList[index].is_default = true
+		},
+		async renameLayout(data) {
+			let props = JSON.parse(JSON.stringify(this.props))
+
+			this.props.inputs.forEach((prop, k) => {
+				props.outputs[k].__val = null
+			})
+			this.props.outputs.forEach((prop, k) => {
+				props.outputs[k].default_value = prop.__val
+
+				// Need to add filtor by control
+				props.outputs[k].__val = null
+			})
+
+			let res = await useApi('dashboardLayout.put', {
+				params: { id: this.layout.id },
+				body: {
+					configuration_code: this.layout.configuration_code,
+					...data,
+					data: {
+						components: this.components,
+						tabs: this.tabs,
+						props: props,
+					},
+				},
+			})
+			let index = this.layoutList.findIndex(
+				(item) => item.id == this.activeLayoutId
+			)
+			this.layoutList[index].name = data.name
+			this.layoutList[index].user_name = data.user_name
+		},
 		async saveLayout() {
 			if (!this.layout.id) {
 				let props = JSON.parse(JSON.stringify(this.props))
