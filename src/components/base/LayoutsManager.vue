@@ -110,12 +110,7 @@
 
 				<div class="divider_bottom">
 					<slot name="middleActions">
-						<FmBtn
-							type="text"
-							class="menu_item"
-							:disabled="!'viewerData.newLayout'"
-							@click="emit('save')"
-						>
+						<FmBtn type="text" class="menu_item" @click="emit('save'), close()">
 							<span class="material-icons">save</span>
 							Save
 						</FmBtn>
@@ -205,7 +200,6 @@
 					<FmBtn
 						type="text"
 						class="menu_item"
-						:disabled="'viewerData.newLayout'"
 						@click=";(renameIsOpened = true), close()"
 					>
 						<span class="material-icons">create</span>
@@ -250,8 +244,8 @@
 					<FmBtn
 						type="text"
 						class="menu_item"
-						:disabled="'viewerData.newLayout || viewerData.listLayout.is_default'"
-						@click="emit('setAsDefault')"
+						:disabled="activeLayout.is_default"
+						@click="emit('setAsDefault'), close()"
 					>
 						<span class="material-icons">home</span>
 						Make default
@@ -274,8 +268,8 @@
 
 	<ModalNameUserCode
 		title="Rename layout"
-		:name="'viewerData.listLayout.name'"
-		:user_code="'viewerData.listLayout.user_code'"
+		:name="activeLayout.name"
+		:user_code="activeLayout.user_code"
 		:occupiedUserCodes="occupiedUserCodes"
 		v-model="renameIsOpened"
 		@save="renameLayout"

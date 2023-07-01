@@ -1,29 +1,24 @@
 <template>
-	<div class="board_widget"
+	<div
+		class="board_widget"
 		:style="{
 			'grid-column': 'span ' + component.colls,
 			'grid-row': 'span ' + component.rows,
 		}"
 		:data-name="component.uid"
 	>
-
 		<component
 			class="widget_wrap"
 			:is="compRegisteredName"
 			:uid="component.uid"
 		/>
-		<div class="board_widget_controls"
-			v-if="dashStore.isEdit"
-		>
+		<div class="board_widget_controls" v-if="dashStore.isEdit">
 			<div class="bwc_top flex sb aic">
 				<div>{{ component.name }}</div>
 				<div class="flex aic">
 					<FmMenu anchor="bottom right">
 						<template #btn>
-							<FmIcon
-								size="24"
-								icon="settings"
-							/>
+							<FmIcon size="24" icon="settings" />
 						</template>
 
 						<div class="fm_list">
@@ -36,7 +31,6 @@
 						</div>
 					</FmMenu>
 				</div>
-
 			</div>
 			<div class="bwc_content aic center" @mousedown="drag">
 				<FmIcon icon="drag_indicator" />Drag and Drop
@@ -54,13 +48,14 @@
 </template>
 
 <script setup>
-
 	let props = defineProps({
 		component: {
 			type: Object,
-			required: true
-		}
+			required: true,
+		},
 	})
+	const emits = defineEmits(['sorted'])
+
 	// console.log("testing1090 component.componentName", props.component.componentName);
 	const dashStore = useStoreDashboard()
 	let isEditWidget = ref(false)
@@ -78,39 +73,44 @@
 		'PerformanceBundles',
 		'PerformanceDetail',
 		'PerformanceChart',
-	];
-	const isAWidget = widgetsList.includes(props.component.componentName);
+	]
+	const isAWidget = widgetsList.includes(props.component.componentName)
 	// console.log("testing1090 isAWidget", isAWidget);
 	const compRegisteredName = computed(() => {
-		return isAWidget ? 'Widgets' + props.component.componentName : props.component.componentName;
-	});
+		return isAWidget
+			? 'Widgets' + props.component.componentName
+			: props.component.componentName
+	})
 
 	function resizeX(e) {
 		let elem = e.target.closest('.board_widget')
 		let grid = e.target.closest('.grid')
-		let rect = grid.getBoundingClientRect();
+		let rect = grid.getBoundingClientRect()
 		let halfColl = (rect.width - 11 * 20) / 12 + 20
 		let startX = e.clientX
 
-		document.ondragstart = function() {
-			return false;
-		};
+		document.ondragstart = function () {
+			return false
+		}
 
-		let component = dashStore.components.find((item) => item.uid == elem.dataset.name)
+		let component = dashStore.components.find(
+			(item) => item.uid == elem.dataset.name
+		)
 		let startColls = component.colls
 
 		function onmousemove(e) {
-			let addedColls = startColls + Math.round( (e.clientX - startX) / halfColl )
+			let addedColls = startColls + Math.round((e.clientX - startX) / halfColl)
 
-			component.colls = (addedColls > component.minColls) ? addedColls : component.minColls
+			component.colls =
+				addedColls > component.minColls ? addedColls : component.minColls
 		}
 
 		document.addEventListener('mousemove', onmousemove)
 
-		document.onmouseup = function() {
-			document.removeEventListener('mousemove', onmousemove);
-			elem.onmouseup = null;
-		};
+		document.onmouseup = function () {
+			document.removeEventListener('mousemove', onmousemove)
+			elem.onmouseup = null
+		}
 	}
 	function resizeY(e) {
 		let elem = e.target.closest('.board_widget')
@@ -119,67 +119,84 @@
 		let halfRow = 70
 		let startY = e.clientY
 
-		document.ondragstart = function() {
-			return false;
-		};
+		document.ondragstart = function () {
+			return false
+		}
 
-		let component = dashStore.components.find((item) => item.uid == elem.dataset.name)
+		let component = dashStore.components.find(
+			(item) => item.uid == elem.dataset.name
+		)
 		let startRows = component.rows
 
 		function onmousemove(e) {
-			let rows = startRows + Math.round( (e.clientY - startY) / halfRow )
+			let rows = startRows + Math.round((e.clientY - startY) / halfRow)
 
-			component.rows = (rows > component.minRows) ? rows : component.minRows
+			component.rows = rows > component.minRows ? rows : component.minRows
 		}
 
 		document.addEventListener('mousemove', onmousemove)
 
-		document.onmouseup = function() {
-			document.removeEventListener('mousemove', onmousemove);
-			elem.onmouseup = null;
-		};
+		document.onmouseup = function () {
+			document.removeEventListener('mousemove', onmousemove)
+			elem.onmouseup = null
+		}
 	}
 	//# region Drag and drop
 	function drag(e) {
 		// console.log('Drag start')
 
 		let elem = e.target.closest('.board_widget')
-		let shiftX = e.clientX - elem.getBoundingClientRect().left;
-		let shiftY = e.clientY - elem.getBoundingClientRect().top;
-		let shadow = createShadowElem( elem )
+		let shiftX = e.clientX - elem.getBoundingClientRect().left
+		let shiftY = e.clientY - elem.getBoundingClientRect().top
+		let shadow = createShadowElem(elem)
 
 		elem.after(shadow)
 
-		makeAvatarFromElem( elem, shiftX, shiftY )
+		makeAvatarFromElem(elem, shiftX, shiftY)
 
 		document.ondragstart = () => false
 
 		function onmousemove(e) {
-			elem.hidden = true;
-			let elemBelow = document.elementFromPoint(e.clientX, e.clientY);
-			elem.hidden = false;
+			elem.hidden = true
+			let elemBelow = document.elementFromPoint(e.clientX, e.clientY)
+			elem.hidden = false
 			elem.style.top = e.clientY - shiftY + 'px'
 			elem.style.left = e.clientX - shiftX + 'px'
 
-			if ( !elemBelow ) return false
-			if ( !elemBelow.closest('.board_widget') ) return false
+			if (!elemBelow) return false
+			if (!elemBelow.closest('.board_widget')) return false
 
 			elemBelow.closest('.board_widget').after(shadow)
 		}
 
 		document.addEventListener('mousemove', onmousemove)
-		document.onmouseup = function() {
-			makeElementFromAvatar( elem, shadow )
+		document.onmouseup = function () {
+			document.onmouseup = null
+			makeElementFromAvatar(elem, shadow)
 			shadow.replaceWith(elem)
 
-			document.removeEventListener('mousemove', onmousemove);
-			elem.onmouseup = null;
-		};
+			let prevIndex = dashStore.components.findIndex(
+				(item) => item.uid == elem.previousSibling.dataset.name
+			)
+			let index = dashStore.components.findIndex(
+				(item) => item.uid == elem.dataset.name
+			)
+
+			let cuted = JSON.parse(JSON.stringify(dashStore.components[prevIndex]))
+			dashStore.components[prevIndex] = JSON.parse(
+				JSON.stringify(dashStore.components[index])
+			)
+			dashStore.components[index] = cuted
+			console.log('dashStore.components:', dashStore.components)
+
+			document.removeEventListener('mousemove', onmousemove)
+		}
 	}
-	function createShadowElem( elem ) {
+	function createShadowElem(elem) {
 		let div = document.createElement('div')
 
 		div.style.gridArea = elem.style.gridArea
+		div.dataset.name = elem.dataset.name
 		div.style.background = '#e6e6e6'
 		div.style.zIndex = '12'
 		div.style.opacity = '.5'
@@ -187,7 +204,7 @@
 
 		return div
 	}
-	function makeAvatarFromElem( elem ) {
+	function makeAvatarFromElem(elem) {
 		let rect = elem.getBoundingClientRect()
 
 		elem.style.width = rect.width + 'px'
@@ -198,7 +215,7 @@
 		elem.style.position = 'fixed'
 		elem.style.zIndex = '9999'
 	}
-	function makeElementFromAvatar( elem ) {
+	function makeElementFromAvatar(elem) {
 		elem.style.top = ''
 		elem.style.left = ''
 		elem.style.width = ''
@@ -209,8 +226,8 @@
 	}
 	//# endregion Drag and drop
 
-	function remove( id ) {
-		dashStore.removeComponent( id )
+	function remove(id) {
+		dashStore.removeComponent(id)
 	}
 </script>
 
@@ -221,7 +238,6 @@
 		background: $separ;
 
 		&:hover {
-
 		}
 	}
 	.widget_wrap {
@@ -238,10 +254,9 @@
 		right: 0;
 		display: grid;
 		grid-template-areas:
-			"A A"
-			"B C"
-			"D C"
-		;
+			'A A'
+			'B C'
+			'D C';
 		grid-template-columns: 1fr auto;
 		grid-template-rows: auto 1fr auto;
 		z-index: 2;
@@ -318,5 +333,4 @@
 		color: #535353;
 		cursor: move;
 	}
-
 </style>
