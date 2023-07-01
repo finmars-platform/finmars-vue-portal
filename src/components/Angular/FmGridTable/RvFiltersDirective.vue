@@ -44,10 +44,7 @@
 						</template>
 
 						<template #default="{ close }">
-							<div
-								class="fm_list"
-								@click="close()"
-							>
+							<div class="fm_list" @click="close()">
 								<div
 									v-for="item in addMenu.data.menu.root.items"
 									class="fm_list_item"
@@ -67,22 +64,19 @@
 					<!--						<span class="material-icons">link</span>-->
 					<!--					</md-button>-->
 
-					<template #btn>
-						<FmIcon
-							v-fm-tooltip="'Add'"
-							class="g-toggle-filters-btn chain-button"
-							:class="{'g-use-from-above-filters-hidden': !showUseFromAboveFilters}"
-							btn-primary
-							icon="link"
-							@click="toggleUseFromAboveFilters()"
-						/>
-					</template>
+					<FmIcon
+						v-fm-tooltip="'Add'"
+						class="g-toggle-filters-btn chain-button"
+						:class="{
+							'g-use-from-above-filters-hidden': !showUseFromAboveFilters,
+						}"
+						btn-primary
+						icon="link"
+						@click="toggleUseFromAboveFilters()"
+					/>
 				</div>
 
-				<div
-					v-if="!isReport"
-					layout="row"
-				>
+				<div v-if="!isReport" layout="row">
 					<!--					<md-button-->
 					<!--						v-if="entityType != 'instrument' && entityType != 'instrument-type' && entityType != 'account-type' && entityType != 'transaction-type'"-->
 					<!--						class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"-->
@@ -95,271 +89,241 @@
 					<!--						</md-tooltip>-->
 					<!--					</md-button>-->
 
-					<template #btn>
-						<FmIcon
-							v-if="entityType != 'instrument' && entityType != 'instrument-type' && entityType != 'account-type' && entityType != 'transaction-type'"
-							v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
-							class="g-filter-settings-big-left-btn primary-button rounded"
-							btn-primary
-							icon="add"
-							@click="evAddEntity($event)"
-						/>
-					</template>
+					<FmIcon
+						v-if="
+							entityType != 'instrument' &&
+							entityType != 'instrument-type' &&
+							entityType != 'account-type' &&
+							entityType != 'transaction-type'
+						"
+						v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
+						class="g-filter-settings-big-left-btn primary-button rounded"
+						btn-primary
+						icon="add"
+						@click="evAddEntity($event)"
+					/>
 
+					<!--					<md-menu v-if="entityType == 'instrument'">-->
+					<!--						<md-button-->
+					<!--							class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"-->
+					<!--							@click="$mdOpenMenu($event)"-->
+					<!--						>-->
+					<!--							<span class="material-icons">add</span>-->
+					<!--							<md-tooltip md-direction="top">-->
+					<!--								ADD {{ evGetEntityNameByState() }}-->
+					<!--							</md-tooltip>-->
+					<!--						</md-button>-->
 
-<!--					<md-menu v-if="entityType == 'instrument'">-->
-<!--						<md-button-->
-<!--							class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"-->
-<!--							@click="$mdOpenMenu($event)"-->
-<!--						>-->
-<!--							<span class="material-icons">add</span>-->
-<!--							<md-tooltip md-direction="top">-->
-<!--								ADD {{ evGetEntityNameByState() }}-->
-<!--							</md-tooltip>-->
-<!--						</md-button>-->
-
-<!--						<md-menu-content width="4">-->
-<!--							<md-menu-item>-->
-<!--								<md-button-->
-<!--									class="g-settings-option-btn"-->
-<!--									@click="evAddEntity($event)"-->
-<!--								>-->
-<!--									<span>Add Blank</span>-->
-<!--								</md-button>-->
-<!--							</md-menu-item>-->
-<!--							<md-menu-item>-->
-<!--								<md-button-->
-<!--									class="g-settings-option-btn"-->
-<!--									@click="openTransactionTypeDialog($event)"-->
-<!--								>-->
-<!--									<span>Add Typical</span>-->
-<!--								</md-button>-->
-<!--							</md-menu-item>-->
-<!--							<md-menu-item>-->
-<!--								<md-button-->
-<!--									class="g-settings-option-btn"-->
-<!--									@click="openSimpleImportDialog($event)"-->
-<!--								>-->
-<!--									<span>Import from File</span>-->
-<!--								</md-button>-->
-<!--							</md-menu-item>-->
-<!--							<md-menu-item>-->
-<!--								<md-button-->
-<!--									class="g-settings-option-btn"-->
-<!--									@click="addFromProvider($event)"-->
-<!--								>-->
-<!--									<span>Get From Provider</span>-->
-<!--								</md-button>-->
-<!--							</md-menu-item>-->
-<!--						</md-menu-content>-->
-<!--					</md-menu>-->
-
-
+					<!--						<md-menu-content width="4">-->
+					<!--							<md-menu-item>-->
+					<!--								<md-button-->
+					<!--									class="g-settings-option-btn"-->
+					<!--									@click="evAddEntity($event)"-->
+					<!--								>-->
+					<!--									<span>Add Blank</span>-->
+					<!--								</md-button>-->
+					<!--							</md-menu-item>-->
+					<!--							<md-menu-item>-->
+					<!--								<md-button-->
+					<!--									class="g-settings-option-btn"-->
+					<!--									@click="openTransactionTypeDialog($event)"-->
+					<!--								>-->
+					<!--									<span>Add Typical</span>-->
+					<!--								</md-button>-->
+					<!--							</md-menu-item>-->
+					<!--							<md-menu-item>-->
+					<!--								<md-button-->
+					<!--									class="g-settings-option-btn"-->
+					<!--									@click="openSimpleImportDialog($event)"-->
+					<!--								>-->
+					<!--									<span>Import from File</span>-->
+					<!--								</md-button>-->
+					<!--							</md-menu-item>-->
+					<!--							<md-menu-item>-->
+					<!--								<md-button-->
+					<!--									class="g-settings-option-btn"-->
+					<!--									@click="addFromProvider($event)"-->
+					<!--								>-->
+					<!--									<span>Get From Provider</span>-->
+					<!--								</md-button>-->
+					<!--							</md-menu-item>-->
+					<!--						</md-menu-content>-->
+					<!--					</md-menu>-->
 
 					<FmMenu v-if="entityType == 'instrument'">
 						<template #btn>
 							<FmIcon
-								class="g-filter-settings-big-left-btn  primary-button rounded"
+								class="g-filter-settings-big-left-btn primary-button rounded"
 								btn-primary
 								icon="add"
 								@click="$mdOpenMenu($event)"
 								v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
-
 							/>
 						</template>
 
 						<template #default="{ close }">
-									<template #btn>
-										<FmIcon
-											btn-primary
-											icon="link"
-											class="g-settings-option-btn"
-											@click="evAddEntity($event)">
-											<span>Add Blank</span>
-										/>
-									</template>
-							<template #btn>
-								<FmIcon
-									btn-primary
-									icon="link"
-									class="g-settings-option-btn"
-									@click="openTransactionTypeDialog($event)"
-								>
-									<span>Add Typical</span>
-									/>
-							</template>
-							<template #btn>
-								<FmIcon
-									btn-primary
-									icon="link"
-									class="g-settings-option-btn"
-									@click="openSimpleImportDialog($event)"
-								>
-									<span>Import from File</span>
-									/>
-							</template>
-							<template #btn>
-								<FmIcon
-									btn-primary
-									icon="link"
-									class="g-settings-option-btn"
-									@click="addFromProvider($event)"
-								>
-									<span>Get From Provider</span>
-									/>
-							</template>
+							<FmBtn
+								type="text"
+								class="g-settings-option-btn"
+								@click="evAddEntity($event)"
+							>
+								<span>Add Blank</span>
+							</FmBtn>
 
+							<FmBtn
+								type="text"
+								class="g-settings-option-btn"
+								@click="openTransactionTypeDialog($event)"
+							>
+								<span>Add Typical</span>
+							</FmBtn>
+
+							<FmBtn
+								type="text"
+								class="g-settings-option-btn"
+								@click="openSimpleImportDialog($event)"
+							>
+								<span>Import from File</span>
+							</FmBtn>
+
+							<FmBtn
+								type="text"
+								class="g-settings-option-btn"
+								@click="addFromProvider($event)"
+							>
+								<span>Get From Provider</span>
+							</FmBtn>
 						</template>
 					</FmMenu>
 
+					<!--					<md-menu v-if="entityType == 'instrument-type'">-->
+					<!--						<md-button-->
+					<!--							class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"-->
+					<!--							@click="$mdOpenMenu($event)"-->
+					<!--						>-->
+					<!--							<span class="material-icons">add</span>-->
+					<!--							<md-tooltip md-direction="top">-->
+					<!--								ADD {{ evGetEntityNameByState() }}-->
+					<!--							</md-tooltip>-->
+					<!--						</md-button>-->
 
-
-
-
-<!--					<md-menu v-if="entityType == 'instrument-type'">-->
-<!--						<md-button-->
-<!--							class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"-->
-<!--							@click="$mdOpenMenu($event)"-->
-<!--						>-->
-<!--							<span class="material-icons">add</span>-->
-<!--							<md-tooltip md-direction="top">-->
-<!--								ADD {{ evGetEntityNameByState() }}-->
-<!--							</md-tooltip>-->
-<!--						</md-button>-->
-
-<!--						<md-menu-content width="4">-->
-<!--							<md-menu-item>-->
-<!--								<md-button-->
-<!--									class="g-settings-option-btn"-->
-<!--									@click="evAddEntity($event)"-->
-<!--								>-->
-<!--									<span>Add Blank</span>-->
-<!--								</md-button>-->
-<!--							</md-menu-item>-->
-<!--							<md-menu-item>-->
-<!--								<md-button-->
-<!--									class="md-raised"-->
-<!--									package-manager-button-->
-<!--									content-type="'instruments.instrumenttype'"-->
-<!--								>-->
-<!--									Select from List-->
-<!--								</md-button>-->
-<!--							</md-menu-item>-->
-<!--						</md-menu-content>-->
-<!--					</md-menu>-->
-
-					<FmMenu  v-if="entityType == 'instrument-type'">
+					<!--						<md-menu-content width="4">-->
+					<!--							<md-menu-item>-->
+					<!--								<md-button-->
+					<!--									class="g-settings-option-btn"-->
+					<!--									@click="evAddEntity($event)"-->
+					<!--								>-->
+					<!--									<span>Add Blank</span>-->
+					<!--								</md-button>-->
+					<!--							</md-menu-item>-->
+					<!--							<md-menu-item>-->
+					<!--								<md-button-->
+					<!--									class="md-raised"-->
+					<!--									package-manager-button-->
+					<!--									content-type="'instruments.instrumenttype'"-->
+					<!--								>-->
+					<!--									Select from List-->
+					<!--								</md-button>-->
+					<!--							</md-menu-item>-->
+					<!--						</md-menu-content>-->
+					<!--					</md-menu>-->
+					<!-- -->
+					<FmMenu v-if="entityType == 'instrument-type'">
 						<template #btn>
 							<FmIcon
-								class="g-filter-settings-big-left-btn  primary-button rounded"
+								class="g-filter-settings-big-left-btn primary-button rounded"
 								btn-primary
 								icon="add"
 								@click="$mdOpenMenu($event)"
 								v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
-
 							/>
 						</template>
 
 						<template #default="{ close }">
-							<template #btn>
-								<FmIcon
-									btn-primary
-									icon="link"
-									class="g-settings-option-btn"
-									@click="evAddEntity($event)"
-								>
-									<span>Add Blank</span>
-									/>
-							</template>
-							<template #btn>
-								<FmIcon
-									btn-primary
-									icon="link"
-									class="g-settings-option-btn"
-									content-type="'instruments.instrumenttype'"
-									@click="openTransactionTypeDialog($event)"
-								>
-									Select from List
-									/>
-							</template>
+							<FmBtn
+								type="text"
+								class="g-settings-option-btn"
+								@click="evAddEntity($event)"
+							>
+								<span>Add Blank</span>
+							</FmBtn>
 
+							<FmBtn
+								type="text"
+								class="md-raised"
+								package-manager-button
+								content-type="'instruments.instrumenttype'"
+							>
+								<span>Select from List</span>
+							</FmBtn>
 						</template>
 					</FmMenu>
 
-<!--					<md-menu v-if="entityType == 'account-type'">-->
-<!--						<md-button-->
-<!--							class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"-->
-<!--							@click="$mdOpenMenu($event)"-->
-<!--						>-->
-<!--							<span class="material-icons">add</span>-->
-<!--							<md-tooltip md-direction="top">-->
-<!--								ADD {{ evGetEntityNameByState() }}-->
-<!--							</md-tooltip>-->
-<!--						</md-button>-->
+					<!--					<md-menu v-if="entityType == 'account-type'">-->
+					<!--						<md-button-->
+					<!--							class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"-->
+					<!--							@click="$mdOpenMenu($event)"-->
+					<!--						>-->
+					<!--							<span class="material-icons">add</span>-->
+					<!--							<md-tooltip md-direction="top">-->
+					<!--								ADD {{ evGetEntityNameByState() }}-->
+					<!--							</md-tooltip>-->
+					<!--						</md-button>-->
 
-<!--						<md-menu-content width="4">-->
-<!--							<md-menu-item>-->
-<!--								<md-button-->
-<!--									class="g-settings-option-btn"-->
-<!--									@click="evAddEntity($event)"-->
-<!--								>-->
-<!--									<span>Add Blank</span>-->
-<!--								</md-button>-->
-<!--							</md-menu-item>-->
-<!--							<md-menu-item>-->
-<!--								<md-button-->
-<!--									class="md-raised"-->
-<!--									package-manager-button-->
-<!--									content-type="'accounts.accounttype'"-->
-<!--								>-->
-<!--									Select from List-->
-<!--								</md-button>-->
-<!--							</md-menu-item>-->
-<!--						</md-menu-content>-->
-<!--					</md-menu>-->
+					<!--						<md-menu-content width="4">-->
+					<!--							<md-menu-item>-->
+					<!--								<md-button-->
+					<!--									class="g-settings-option-btn"-->
+					<!--									@click="evAddEntity($event)"-->
+					<!--								>-->
+					<!--									<span>Add Blank</span>-->
+					<!--								</md-button>-->
+					<!--							</md-menu-item>-->
+					<!--							<md-menu-item>-->
+					<!--								<md-button-->
+					<!--									class="md-raised"-->
+					<!--									package-manager-button-->
+					<!--									content-type="'accounts.accounttype'"-->
+					<!--								>-->
+					<!--									Select from List-->
+					<!--								</md-button>-->
+					<!--							</md-menu-item>-->
+					<!--						</md-menu-content>-->
+					<!--					</md-menu>-->
 
-					<FmMenu  v-if="entityType == 'account-type'">
+					<FmMenu v-if="entityType == 'account-type'">
 						<template #btn>
 							<FmIcon
-								class="g-filter-settings-big-left-btn  primary-button rounded"
+								class="g-filter-settings-big-left-btn primary-button rounded"
 								btn-primary
 								icon="add"
 								@click="$mdOpenMenu($event)"
 								v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
-
 							/>
 						</template>
 
 						<template #default="{ close }">
-							<template #btn>
-								<FmIcon
-									btn-primary
-									icon="link"
-									class="g-settings-option-btn"
-									@click="evAddEntity($event)"
-								>
-									<span>Add Blank</span>
-									/>
-							</template>
-							<template #btn>
-								<FmIcon
-									btn-primary
-									icon="link"
-									class="g-settings-option-btn"
-									content-type="'accounts.accounttype'"
-									@click="openTransactionTypeDialog($event)"
-								>
-									Select from List
-									/>
-							</template>
+							<FmBtn
+								type="text"
+								class="g-settings-option-btn"
+								@click="evAddEntity($event)"
+							>
+								<span>Add Blank</span>
+							</FmBtn>
 
+							<FmBtn
+								type="text"
+								class="md-raised"
+								package-manager-button
+								content-type="'instruments.instrumenttype'"
+							>
+								<span>Select from List</span>
+							</FmBtn>
 						</template>
 					</FmMenu>
-					<md-menu v-if="entityType == 'transaction-type'">
-						<md-button
-							class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
-							@click="$mdOpenMenu($event)"
-						>
+					<!--	<md-menu v-if="entityType == 'transaction-type'">
+						<md-button class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
+							@click="$mdOpenMenu($event)">
 							<span class="material-icons">add</span>
 							<md-tooltip md-direction="top">
 								ADD {{ evGetEntityNameByState() }}
@@ -368,756 +332,659 @@
 
 						<md-menu-content width="4">
 							<md-menu-item>
-								<md-button
-									class="g-settings-option-btn"
-									@click="evAddEntity($event)"
-								>
+								<md-button class="g-settings-option-btn" @click="evAddEntity($event)">
 									<span>Add Blank</span>
 								</md-button>
 							</md-menu-item>
 							<md-menu-item>
-								<md-button
-									class="md-raised"
-									package-manager-button
-									content-type="'transactions.transactiontype'"
-								>
+								<md-button class="md-raised" package-manager-button
+									content-type="'transactions.transactiontype'">
 									Select from List
 								</md-button>
 							</md-menu-item>
 						</md-menu-content>
 					</md-menu>
-
-					<FmMenu  v-if="entityType == 'transaction-type'">
+-->
+					<FmMenu v-if="entityType == 'transaction-type'">
 						<template #btn>
 							<FmIcon
-								class="g-filter-settings-big-left-btn  primary-button rounded"
+								class="g-filter-settings-big-left-btn primary-button rounded"
 								btn-primary
 								icon="add"
 								@click="$mdOpenMenu($event)"
 								v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
-
 							/>
 						</template>
 
 						<template #default="{ close }">
-							<template #btn>
-								<FmIcon
-									btn-primary
-									icon="link"
-									class="g-settings-option-btn"
-									@click="evAddEntity($event)"
-								>
-									<span>Add Blank</span>
-									/>
-							</template>
-							<template #btn>
-								<FmIcon
-									btn-primary
-									icon="link"
-									class="g-settings-option-btn"
-									content-type="'transactions.transactiontype'"
-								>
-									<!--									@click="openTransactionTypeDialog($event)"-->
+							<FmBtn
+								type="text"
+								class="g-settings-option-btn"
+								@click="evAddEntity($event)"
+							>
+								<span>Add Blank</span>
+							</FmBtn>
 
-									Select from List
-									/>
-							</template>
-
+							<FmBtn
+								type="text"
+								class="md-raised"
+								package-manager-button
+								content-type="'transactions.transactiontype'"
+							>
+								<span>Select from List</span>
+							</FmBtn>
 						</template>
 					</FmMenu>
-<!--					<md-button-->
-<!--						v-if="thereAreFrontendFilters"-->
-<!--						class="g-toggle-filters-btn md-icon-button"-->
-<!--						@click="toggleFiltersToShow()"-->
-<!--					>-->
-<!--						<span-->
-<!--							v-show="shownFiltersType === 'frontend'"-->
-<!--							class="material-icons"-->
-<!--						>laptop_mac</span>-->
-<!--						<span-->
-<!--							v-show="shownFiltersType === 'backend'"-->
-<!--							class="material-icons"-->
-<!--						>dns</span>-->
-<!--					</md-button>-->
-					<template #btn>
-						<FmIcon
-							v-if="thereAreFrontendFilters"
-							@click="toggleFiltersToShow()"
-							btn-primary
-							icon="link"
-							class="g-toggle-filters-btn"
-							content-type="'transactions.transactiontype'"
 
-						>
-							<!--									@click="openTransactionTypeDialog($event)"-->
+					-->
+					<!--					<md-button-->
+					<!--						v-if="thereAreFrontendFilters"-->
+					<!--						class="g-toggle-filters-btn md-icon-button"-->
+					<!--						@click="toggleFiltersToShow()"-->
+					<!--					>-->
+					<!--						<span-->
+					<!--							v-show="shownFiltersType === 'frontend'"-->
+					<!--							class="material-icons"-->
+					<!--						>laptop_mac</span>-->
+					<!--						<span-->
+					<!--							v-show="shownFiltersType === 'backend'"-->
+					<!--							class="material-icons"-->
+					<!--						>dns</span>-->
+					<!--					</md-button>-->
 
-							<span
-								v-show="shownFiltersType === 'frontend'"
-							>laptop_mac</span>
-							<span
-								v-show="shownFiltersType === 'backend'"
-							>dns</span>
-							/>
-					</template>
-				</div>
-			</div>
+					<FmBtn
+						type="text"
+						v-if="thereAreFrontendFilters"
+						class="g-toggle-filters-btn"
+						package-manager-button
+						content-type="'transactions.transactiontype'"
+						@click="toggleFiltersToShow()"
+					>
+						<span v-show="shownFiltersType === 'frontend'">laptop_mac</span>
+						<span v-show="shownFiltersType === 'backend'">dns</span>
+					</FmBtn>
 
-			<div class="gFiltersContainer">
-				<!--СustomPopupDirective.vue  ChipsListDirective.vue-->
-				<div v-if="readyStatus.filters">
-					<div
-						custom-popup
-						popup-template-url="{{filterPopupTemplate}}"
-						popup-data="popupData"
-						popup-event-service="popupEventService"
-						popup-x="popupPosX"
-						popup-y="popupPosY"
-						on-save="filterSettingsChange()"
-						class="g-filter-chips-wrap"
-					/>
-<!--					<chips-list-->
-<!--						chips-list="filtersChips"-->
-<!--						chips-deletion="true"-->
-<!--						chips-addition="ADD FILTER"-->
-<!--						on-chip-click="onFilterChipClick(chipsData, event)"-->
-<!--						hide-overflowing-chips="false"-->
-<!--						on-chips-deletion="removeFilter(chipsData)"-->
-<!--						on-add-chip-click="addFilter(event)"-->
-<!--						on-first-render-ending="onChipsFirstRender()"-->
-<!--						class="g-filter-chips"-->
-<!--					/>-->
-					<FmChips
-						v-if="scope.readyStatus.filters"
-						class="g-filter-chips"
-						:items="filtersChips"
-						canDelete
-						@chipClick="scope.onFilterChipClick($event)"
-						@delete="removeFilter($event)"
-					/>
+					<!-- </div>  -->
+
+					<!-- <div class="gFiltersContainer"> -->
+					<!--СustomPopupDirective.vue  ChipsListDirective.vue-->
+					<!-- <div v-if="readyStatus.filters">
+					<div custom-popup popup-template-url="{{filterPopupTemplate}}" popup-data="popupData"
+						popup-event-service="popupEventService" popup-x="popupPosX" popup-y="popupPosY"
+						on-save="filterSettingsChange()" class="g-filter-chips-wrap" />
+										<chips-list
+					<!--						chips-list="filtersChips"-->
+					<!--						chips-deletion="true"-->
+					<!--						chips-addition="ADD FILTER"-->
+					<!--						on-chip-click="onFilterChipClick(chipsData, event)"-->
+					<!--						hide-overflowing-chips="false"-->
+					<!--						on-chips-deletion="removeFilter(chipsData)"-->
+					<!--						on-add-chip-click="addFilter(event)"-->
+					<!--						on-first-render-ending="onChipsFirstRender()"-->
+					<!--						class="g-filter-chips"-->
+					<!--					/>-->
+
+					<!-- </div>  -->
+					<!-- <FmChips v-if="scope.readyStatus.filters" class="g-filter-chips" :items="filtersChips" canDelete
+						@chipClick="scope.onFilterChipClick($event)" @delete="removeFilter($event)" />
 
 					<FmBtn type="action" @click="addFilter">ADD FILTER</FmBtn>
 
 				</div>
 			</div>
-		</div>
 
-<!--		<div class="icon-buttons gFiltersRightPart">-->
-<!--			<md-button-->
-<!--				class="signed-button"-->
-<!--				@click="refreshTable()"-->
-<!--			>-->
-<!--				<div class="flex-column flex-i-center">-->
-<!--					<span class="material-icons">refresh</span>-->
-<!--					<span>Refresh</span>-->
-<!--					<md-tooltip md-direction="bottom">-->
-<!--						<div v-if="isReport">-->
-<!--							<div v-if="reportOptions.auth_time">-->
-<!--								Auth Time: {{ reportOptions.auth_time }}s</br>-->
-<!--								Execution Time: {{ reportOptions.execution_time }}s</br>-->
-<!--								Relation Prefetch Time: {{ reportOptions.relation_prefetch_time }}s</br>-->
-<!--								Serialization Time: {{ reportOptions.serialization_time }}s </br>-->
-<!--								Render Time: {{ renderTime }}s </br>-->
-<!--								Rows downloaded: {{ reportOptions.items.length }} </br>-->
-<!--							</div>-->
-<!--							Refresh Database Filters-->
-<!--						</div>-->
-<!--						<div v-if="!isReport">-->
-<!--							Refresh Database Filters-->
-<!--						</div>-->
-<!--					</md-tooltip>-->
-<!--				</div>-->
-<!--			</md-button>-->
+					<!--		<div class="icon-buttons gFiltersRightPart">-->
+					<!--			<md-button-->
+					<!--				class="signed-button"-->
+					<!--				@click="refreshTable()"-->
+					<!--			>-->
+					<!--				<div class="flex-column flex-i-center">-->
+					<!--					<span class="material-icons">refresh</span>-->
+					<!--					<span>Refresh</span>-->
+					<!--					<md-tooltip md-direction="bottom">-->
+					<!--						<div v-if="isReport">-->
+					<!--							<div v-if="reportOptions.auth_time">-->
+					<!--								Auth Time: {{ reportOptions.auth_time }}s</br>-->
+					<!--								Execution Time: {{ reportOptions.execution_time }}s</br>-->
+					<!--								Relation Prefetch Time: {{ reportOptions.relation_prefetch_time }}s</br>-->
+					<!--								Serialization Time: {{ reportOptions.serialization_time }}s </br>-->
+					<!--								Render Time: {{ renderTime }}s </br>-->
+					<!--								Rows downloaded: {{ reportOptions.items.length }} </br>-->
+					<!--							</div>-->
+					<!--							Refresh Database Filters-->
+					<!--						</div>-->
+					<!--						<div v-if="!isReport">-->
+					<!--							Refresh Database Filters-->
+					<!--						</div>-->
+					<!--					</md-tooltip>-->
+					<!--				</div>-->
+					<!--			</md-button>-->
 
-<!--			<md-menu-->
-<!--				v-if="isRootEntityViewer"-->
-<!--				class="full-width"-->
-<!--			>-->
-<!--				<md-button-->
-<!--					class="signed-button"-->
-<!--					@click="$mdOpenMenu($event)"-->
-<!--				>-->
-<!--					<div class="flex-column flex-i-center">-->
-<!--						<span class="material-icons">view_stream</span>-->
-<!--						<span>Split</span>-->
-<!--					</div>-->
-<!--				</md-button>-->
+					<!--			<md-menu-->
+					<!--				v-if="isRootEntityViewer"-->
+					<!--				class="full-width"-->
+					<!--			>-->
+					<!--				<md-button-->
+					<!--					class="signed-button"-->
+					<!--					@click="$mdOpenMenu($event)"-->
+					<!--				>-->
+					<!--					<div class="flex-column flex-i-center">-->
+					<!--						<span class="material-icons">view_stream</span>-->
+					<!--						<span>Split</span>-->
+					<!--					</div>-->
+					<!--				</md-button>-->
 
-<!--				<md-menu-content width="4">-->
-<!--					<md-menu-item v-if="!isReport && entityType !== 'complex-transaction'">-->
-<!--						<md-button-->
-<!--							class="g-settings-option-btn"-->
-<!--							@click="toggleSplitPanel($event, 'permission-editor')"-->
-<!--						>-->
-<!--							<span-->
-<!--								v-show="currentAdditions.type === 'permission-editor'"-->
-<!--								class="material-icons"-->
-<!--							>done</span>-->
-<!--							<span-->
-<!--								v-show="currentAdditions.type !== 'permission-editor'"-->
-<!--								class="material-icons"-->
-<!--								style="visibility: hidden;"-->
-<!--							>done</span>-->
+					<!--				<md-menu-content width="4">-->
+					<!--					<md-menu-item v-if="!isReport && entityType !== 'complex-transaction'">-->
+					<!--						<md-button-->
+					<!--							class="g-settings-option-btn"-->
+					<!--							@click="toggleSplitPanel($event, 'permission-editor')"-->
+					<!--						>-->
+					<!--							<span-->
+					<!--								v-show="currentAdditions.type === 'permission-editor'"-->
+					<!--								class="material-icons"-->
+					<!--							>done</span>-->
+					<!--							<span-->
+					<!--								v-show="currentAdditions.type !== 'permission-editor'"-->
+					<!--								class="material-icons"-->
+					<!--								style="visibility: hidden;"-->
+					<!--							>done</span>-->
 
-<!--							<span>Open permission editor</span>-->
-<!--						</md-button>-->
-<!--					</md-menu-item>-->
+					<!--							<span>Open permission editor</span>-->
+					<!--						</md-button>-->
+					<!--					</md-menu-item>-->
 
-<!--					<md-menu-item v-if="!isReport">-->
-<!--						<md-button-->
-<!--							class="g-settings-option-btn"-->
-<!--							@click="toggleSplitPanel($event, 'editor')"-->
-<!--						>-->
-<!--							<span-->
-<!--								v-show="currentAdditions.type === 'editor'"-->
-<!--								class="material-icons"-->
-<!--							>done</span>-->
-<!--							<span-->
-<!--								v-show="currentAdditions.type !== 'editor'"-->
-<!--								class="material-icons"-->
-<!--								style="visibility: hidden;"-->
-<!--							>done</span>-->
+					<!--					<md-menu-item v-if="!isReport">-->
+					<!--						<md-button-->
+					<!--							class="g-settings-option-btn"-->
+					<!--							@click="toggleSplitPanel($event, 'editor')"-->
+					<!--						>-->
+					<!--							<span-->
+					<!--								v-show="currentAdditions.type === 'editor'"-->
+					<!--								class="material-icons"-->
+					<!--							>done</span>-->
+					<!--							<span-->
+					<!--								v-show="currentAdditions.type !== 'editor'"-->
+					<!--								class="material-icons"-->
+					<!--								style="visibility: hidden;"-->
+					<!--							>done</span>-->
 
-<!--							<span>Open editor split panel</span>-->
-<!--						</md-button>-->
-<!--					</md-menu-item>-->
+					<!--							<span>Open editor split panel</span>-->
+					<!--						</md-button>-->
+					<!--					</md-menu-item>-->
 
-<!--					<md-menu-item v-if="isReport">-->
-<!--						<md-button-->
-<!--							class="g-settings-option-btn"-->
-<!--							@click="toggleSplitPanel($event, 'balance-report')"-->
-<!--						>-->
-<!--							<span-->
-<!--								v-show="currentAdditions.type === 'balance-report'"-->
-<!--								class="material-icons"-->
-<!--							>done</span>-->
-<!--							<span-->
-<!--								v-show="currentAdditions.type !== 'balance-report'"-->
-<!--								class="material-icons"-->
-<!--								style="visibility: hidden;"-->
-<!--							>done</span>-->
+					<!--					<md-menu-item v-if="isReport">-->
+					<!--						<md-button-->
+					<!--							class="g-settings-option-btn"-->
+					<!--							@click="toggleSplitPanel($event, 'balance-report')"-->
+					<!--						>-->
+					<!--							<span-->
+					<!--								v-show="currentAdditions.type === 'balance-report'"-->
+					<!--								class="material-icons"-->
+					<!--							>done</span>-->
+					<!--							<span-->
+					<!--								v-show="currentAdditions.type !== 'balance-report'"-->
+					<!--								class="material-icons"-->
+					<!--								style="visibility: hidden;"-->
+					<!--							>done</span>-->
 
-<!--							<span>Open Balance Report view panel</span>-->
-<!--						</md-button>-->
-<!--					</md-menu-item>-->
+					<!--							<span>Open Balance Report view panel</span>-->
+					<!--						</md-button>-->
+					<!--					</md-menu-item>-->
 
-<!--					<md-menu-item v-if="isReport">-->
-<!--						<md-button-->
-<!--							class="g-settings-option-btn"-->
-<!--							@click="toggleSplitPanel($event, 'pl-report')"-->
-<!--						>-->
-<!--							<span-->
-<!--								v-show="currentAdditions.type === 'pl-report'"-->
-<!--								class="material-icons"-->
-<!--							>done</span>-->
-<!--							<span-->
-<!--								v-show="currentAdditions.type !== 'pl-report'"-->
-<!--								class="material-icons"-->
-<!--								style="visibility: hidden;"-->
-<!--							>done</span>-->
+					<!--					<md-menu-item v-if="isReport">-->
+					<!--						<md-button-->
+					<!--							class="g-settings-option-btn"-->
+					<!--							@click="toggleSplitPanel($event, 'pl-report')"-->
+					<!--						>-->
+					<!--							<span-->
+					<!--								v-show="currentAdditions.type === 'pl-report'"-->
+					<!--								class="material-icons"-->
+					<!--							>done</span>-->
+					<!--							<span-->
+					<!--								v-show="currentAdditions.type !== 'pl-report'"-->
+					<!--								class="material-icons"-->
+					<!--								style="visibility: hidden;"-->
+					<!--							>done</span>-->
 
-<!--							<span>Open P&L Report view panel</span>-->
-<!--						</md-button>-->
-<!--					</md-menu-item>-->
+					<!--							<span>Open P&L Report view panel</span>-->
+					<!--						</md-button>-->
+					<!--					</md-menu-item>-->
 
-<!--					<md-menu-item v-if="isReport">-->
-<!--						<md-button-->
-<!--							class="g-settings-option-btn"-->
-<!--							@click="toggleSplitPanel($event, 'transaction-report')"-->
-<!--						>-->
-<!--							<span-->
-<!--								v-show="currentAdditions.type === 'transaction-report'"-->
-<!--								class="material-icons"-->
-<!--							>done</span>-->
-<!--							<span-->
-<!--								v-show="currentAdditions.type !== 'transaction-report'"-->
-<!--								class="material-icons"-->
-<!--								style="visibility: hidden;"-->
-<!--							>done</span>-->
+					<!--					<md-menu-item v-if="isReport">-->
+					<!--						<md-button-->
+					<!--							class="g-settings-option-btn"-->
+					<!--							@click="toggleSplitPanel($event, 'transaction-report')"-->
+					<!--						>-->
+					<!--							<span-->
+					<!--								v-show="currentAdditions.type === 'transaction-report'"-->
+					<!--								class="material-icons"-->
+					<!--							>done</span>-->
+					<!--							<span-->
+					<!--								v-show="currentAdditions.type !== 'transaction-report'"-->
+					<!--								class="material-icons"-->
+					<!--								style="visibility: hidden;"-->
+					<!--							>done</span>-->
 
-<!--							<span>Open Transaction Report view panel</span>-->
-<!--						</md-button>-->
-<!--					</md-menu-item>-->
-<!--				</md-menu-content>-->
-<!--			</md-menu>-->
+					<!--							<span>Open Transaction Report view panel</span>-->
+					<!--						</md-button>-->
+					<!--					</md-menu-item>-->
+					<!--				</md-menu-content>-->
+					<!--			</md-menu>-->
 
-<!--			<md-menu-->
-<!--				v-if="isRootEntityViewer && isReport"-->
-<!--				class="full-width"-->
-<!--			>-->
-<!--				<md-button-->
-<!--					class="signed-button"-->
-<!--					@click="$mdOpenMenu($event)"-->
-<!--				>-->
-<!--					<div class="flex-column flex-i-center">-->
-<!--						<span class="material-icons">view_module</span>-->
-<!--						<span>Matrix</span>-->
-<!--					</div>-->
-<!--				</md-button>-->
+					<!--			<md-menu-->
+					<!--				v-if="isRootEntityViewer && isReport"-->
+					<!--				class="full-width"-->
+					<!--			>-->
+					<!--				<md-button-->
+					<!--					class="signed-button"-->
+					<!--					@click="$mdOpenMenu($event)"-->
+					<!--				>-->
+					<!--					<div class="flex-column flex-i-center">-->
+					<!--						<span class="material-icons">view_module</span>-->
+					<!--						<span>Matrix</span>-->
+					<!--					</div>-->
+					<!--				</md-button>-->
 
-<!--				<md-menu-content width="4">-->
-<!--					<md-menu-item>-->
-<!--						<md-button-->
-<!--							class="g-settings-option-btn"-->
-<!--							@click="toggleMatrix($event)"-->
-<!--						>-->
-<!--							<span-->
-<!--								v-show="viewContext === 'matrix'"-->
-<!--								class="material-icons"-->
-<!--							>done</span>-->
-<!--							<span-->
-<!--								v-show="viewContext !== 'matrix'"-->
-<!--								class="material-icons"-->
-<!--								style="visibility: hidden;"-->
-<!--							>done</span>-->
+					<!--				<md-menu-content width="4">-->
+					<!--					<md-menu-item>-->
+					<!--						<md-button-->
+					<!--							class="g-settings-option-btn"-->
+					<!--							@click="toggleMatrix($event)"-->
+					<!--						>-->
+					<!--							<span-->
+					<!--								v-show="viewContext === 'matrix'"-->
+					<!--								class="material-icons"-->
+					<!--							>done</span>-->
+					<!--							<span-->
+					<!--								v-show="viewContext !== 'matrix'"-->
+					<!--								class="material-icons"-->
+					<!--								style="visibility: hidden;"-->
+					<!--							>done</span>-->
 
-<!--							<span>Open Matrix</span>-->
-<!--						</md-button>-->
-<!--					</md-menu-item>-->
-<!--				</md-menu-content>-->
-<!--			</md-menu>-->
+					<!--							<span>Open Matrix</span>-->
+					<!--						</md-button>-->
+					<!--					</md-menu-item>-->
+					<!--				</md-menu-content>-->
+					<!--			</md-menu>-->
 
-<!--			<md-menu>-->
-<!--				<md-button-->
-<!--					class="signed-button"-->
-<!--					@click="$mdOpenMenu($event)"-->
-<!--				>-->
-<!--					<div class="flex-column flex-i-center">-->
-<!--						<span class="material-icons">upgrade</span>-->
-<!--						<span>Export</span>-->
-<!--					</div>-->
-<!--				</md-button>-->
+					<!--			<md-menu>-->
+					<!--				<md-button-->
+					<!--					class="signed-button"-->
+					<!--					@click="$mdOpenMenu($event)"-->
+					<!--				>-->
+					<!--					<div class="flex-column flex-i-center">-->
+					<!--						<span class="material-icons">upgrade</span>-->
+					<!--						<span>Export</span>-->
+					<!--					</div>-->
+					<!--				</md-button>-->
 
-<!--				<md-menu-content width="4">-->
-<!--					<md-menu-item v-if="isReport">-->
-<!--						<md-button-->
-<!--							class="g-settings-option-btn"-->
-<!--							@click="exportAsPdf($event)"-->
-<!--						>-->
-<!--							<span>Export to PDF</span>-->
-<!--						</md-button>-->
-<!--					</md-menu-item>-->
+					<!--				<md-menu-content width="4">-->
+					<!--					<md-menu-item v-if="isReport">-->
+					<!--						<md-button-->
+					<!--							class="g-settings-option-btn"-->
+					<!--							@click="exportAsPdf($event)"-->
+					<!--						>-->
+					<!--							<span>Export to PDF</span>-->
+					<!--						</md-button>-->
+					<!--					</md-menu-item>-->
 
-<!--					<md-menu-item>-->
-<!--						<md-button-->
-<!--							class="g-settings-option-btn"-->
-<!--							@click="exportAsCSV()"-->
-<!--						>-->
-<!--							<span>Export to CSV</span>-->
-<!--						</md-button>-->
-<!--					</md-menu-item>-->
+					<!--					<md-menu-item>-->
+					<!--						<md-button-->
+					<!--							class="g-settings-option-btn"-->
+					<!--							@click="exportAsCSV()"-->
+					<!--						>-->
+					<!--							<span>Export to CSV</span>-->
+					<!--						</md-button>-->
+					<!--					</md-menu-item>-->
 
-<!--					<md-menu-item>-->
-<!--						<md-button-->
-<!--							class="g-settings-option-btn"-->
-<!--							@click="exportAsExcel()"-->
-<!--						>-->
-<!--							<span>Export to Excel</span>-->
-<!--						</md-button>-->
-<!--					</md-menu-item>-->
+					<!--					<md-menu-item>-->
+					<!--						<md-button-->
+					<!--							class="g-settings-option-btn"-->
+					<!--							@click="exportAsExcel()"-->
+					<!--						>-->
+					<!--							<span>Export to Excel</span>-->
+					<!--						</md-button>-->
+					<!--					</md-menu-item>-->
 
+					<!--					<md-menu-item>-->
+					<!--						<md-button-->
+					<!--							class="g-settings-option-btn"-->
+					<!--							@click="copyReport()"-->
+					<!--						>-->
+					<!--							<span>Copy all to buffer</span>-->
+					<!--						</md-button>-->
+					<!--					</md-menu-item>-->
+					<!--					<md-menu-item>-->
+					<!--						<md-button-->
+					<!--							class="g-settings-option-btn"-->
+					<!--							@click="copySelectedToBuffer()"-->
+					<!--						>-->
+					<!--							<span>Copy selected to buffer</span>-->
+					<!--						</md-button>-->
+					<!--					</md-menu-item>-->
+					<!--				</md-menu-content>-->
+					<!--			</md-menu>-->
 
-<!--					<md-menu-item>-->
-<!--						<md-button-->
-<!--							class="g-settings-option-btn"-->
-<!--							@click="copyReport()"-->
-<!--						>-->
-<!--							<span>Copy all to buffer</span>-->
-<!--						</md-button>-->
-<!--					</md-menu-item>-->
-<!--					<md-menu-item>-->
-<!--						<md-button-->
-<!--							class="g-settings-option-btn"-->
-<!--							@click="copySelectedToBuffer()"-->
-<!--						>-->
-<!--							<span>Copy selected to buffer</span>-->
-<!--						</md-button>-->
-<!--					</md-menu-item>-->
-<!--				</md-menu-content>-->
-<!--			</md-menu>-->
+					<!--			<md-menu>-->
+					<!--				<md-button-->
+					<!--					class="signed-button"-->
+					<!--					@click="$mdOpenMenu($event)"-->
+					<!--				>-->
+					<!--					<div class="flex-column flex-i-center">-->
+					<!--						<span class="material-icons">more_vert</span>-->
+					<!--						<span>More</span>-->
+					<!--					</div>-->
+					<!--				</md-button>-->
 
-<!--			<md-menu>-->
-<!--				<md-button-->
-<!--					class="signed-button"-->
-<!--					@click="$mdOpenMenu($event)"-->
-<!--				>-->
-<!--					<div class="flex-column flex-i-center">-->
-<!--						<span class="material-icons">more_vert</span>-->
-<!--						<span>More</span>-->
-<!--					</div>-->
-<!--				</md-button>-->
+					<!--				<md-menu-content width="4">-->
+					<!--					<md-menu-item>-->
+					<!--						<md-button-->
+					<!--							class="g-settings-option-btn"-->
+					<!--							@click="openViewConstructor($event)"-->
+					<!--						>-->
+					<!--							<span>View Constructor</span>-->
+					<!--						</md-button>-->
+					<!--					</md-menu-item>-->
 
-<!--				<md-menu-content width="4">-->
-<!--					<md-menu-item>-->
-<!--						<md-button-->
-<!--							class="g-settings-option-btn"-->
-<!--							@click="openViewConstructor($event)"-->
-<!--						>-->
-<!--							<span>View Constructor</span>-->
-<!--						</md-button>-->
-<!--					</md-menu-item>-->
+					<!--					<md-menu-item v-if="entityType !== 'complex-transaction'">-->
+					<!--						<md-button-->
+					<!--							class="g-settings-option-btn"-->
+					<!--							@click="openCustomFieldsManager($event)"-->
+					<!--						>-->
+					<!--							<span>Custom Columns</span>-->
+					<!--						</md-button>-->
+					<!--					</md-menu-item>-->
 
-<!--					<md-menu-item v-if="entityType !== 'complex-transaction'">-->
-<!--						<md-button-->
-<!--							class="g-settings-option-btn"-->
-<!--							@click="openCustomFieldsManager($event)"-->
-<!--						>-->
-<!--							<span>Custom Columns</span>-->
-<!--						</md-button>-->
-<!--					</md-menu-item>-->
+					<!--					<md-menu-item v-if="isReport">-->
+					<!--						<md-button-->
+					<!--							class="g-settings-option-btn"-->
+					<!--							@click="toggleAutoRefresh()"-->
+					<!--						>-->
+					<!--							<span v-if="rvAutoRefresh">Disable Auto Refresh</span>-->
+					<!--							<span v-if="!rvAutoRefresh">Enable Auto Refresh</span>-->
+					<!--						</md-button>-->
+					<!--					</md-menu-item>-->
 
-<!--					<md-menu-item v-if="isReport">-->
-<!--						<md-button-->
-<!--							class="g-settings-option-btn"-->
-<!--							@click="toggleAutoRefresh()"-->
-<!--						>-->
-<!--							<span v-if="rvAutoRefresh">Disable Auto Refresh</span>-->
-<!--							<span v-if="!rvAutoRefresh">Enable Auto Refresh</span>-->
-<!--						</md-button>-->
-<!--					</md-menu-item>-->
-
-<!--					<md-menu-item v-if="!isReport">-->
-<!--						<md-button-->
-<!--							class="g-settings-option-btn"-->
-<!--							@click="openInputFormEditor($event)"-->
-<!--						>-->
-<!--							<span>Edit form</span>-->
-<!--						</md-button>-->
-<!--					</md-menu-item>-->
-<!--				</md-menu-content>-->
-<!--			</md-menu>-->
-<!--		</div>-->
-		<div class="icon-buttons gFiltersRightPart">
-<!--			<template #btn>-->
-<!--				<FmIcon-->
-<!--					class="signed-button"-->
-<!--					@click="refreshTable()"-->
-<!--					btn-primary-->
-<!--					icon="add"-->
-<!--					v-fm-tooltip="md-tooltip весь тот что ниже тут  "-->
-
-<!--				/>-->
-<!--				<span class="material-icons">refresh</span>-->
-<!--				<span>Refresh</span>-->
-<!--				<md-tooltip md-direction="bottom">-->
-<!--					<div v-if="isReport">-->
-<!--						<div v-if="reportOptions.auth_time">-->
-<!--							Auth Time: {{ reportOptions.auth_time }}s</br>-->
-<!--							Execution Time: {{ reportOptions.execution_time }}s</br>-->
-<!--							Relation Prefetch Time: {{ reportOptions.relation_prefetch_time }}s</br>-->
-<!--							Serialization Time: {{ reportOptions.serialization_time }}s </br>-->
-<!--							Render Time: {{ renderTime }}s </br>-->
-<!--							Rows downloaded: {{ reportOptions.items.length }} </br>-->
-<!--						</div>-->
-<!--						Refresh Database Filters-->
-<!--					</div>-->
-<!--					<div v-if="!isReport">-->
-<!--						Refresh Database Filters-->
-<!--					</div>-->
-<!--				</md-tooltip>-->
-<!--			</template>-->
-			<FmMenu  v-if="isRootEntityViewer">
-				<template #btn>
-					<FmIcon
-						class="signed-button"
-						btn-primary
-						icon="add"
-						@click="$mdOpenMenu($event)"
-						v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
-
-					/>
-<!--					добавить в кнопку-->
-<!--					<div class="flex-column flex-i-center">-->
-<!--						<span class="material-icons">view_stream</span>-->
-<!--						<span>Split</span>-->
-<!--					</div>-->
-				</template>
-
-				<template #default="{ close }">
-					<template #btn v-if="!isReport && entityType !== 'complex-transaction'">
-						<FmIcon
-							btn-primary
-							icon="link"
-							class="g-settings-option-btn"
-							@click="toggleSplitPanel($event, 'permission-editor')"
-						>
-							<span
-								v-show="currentAdditions.type === 'permission-editor'"
-								class="material-icons"
-							>done</span>
-							<span
-								v-show="currentAdditions.type !== 'permission-editor'"
-								class="material-icons"
-								style="visibility: hidden;"
-							>done</span>
-
-							<span>Open permission editor</span>
-							/>
-					</template>
-					<template #btn v-if="!isReport">
-						<FmIcon
-							btn-primary
-							icon="link"
-							class="g-settings-option-btn"
-							@click="toggleSplitPanel($event, 'editor')"
-						>
-						<span
-							v-show="currentAdditions.type === 'editor'"
-							class="material-icons"
-						>done</span>
-							<span
-								v-show="currentAdditions.type !== 'editor'"
-								class="material-icons"
-								style="visibility: hidden;"
-							>done</span>
-
-							<span>Open editor split panel</span>
-							/>
-					</template>
-					<template #btn v-if="!isReport">
-						<FmIcon
-							btn-primary
-							icon="link"
-							class="g-settings-option-btn"
-							@click="toggleSplitPanel($event, 'balance-report')"
-						>
-							<span
-								v-show="currentAdditions.type === 'balance-report'"
-								class="material-icons"
-							>done</span>
-							<span
-								v-show="currentAdditions.type !== 'balance-report'"
-								class="material-icons"
-								style="visibility: hidden;"
-							>done</span>
-
-							<span>Open Balance Report view panel</span>
-							/>
-					</template>
-					<template #btn v-if="!isReport">
-						<FmIcon
-							btn-primary
-							icon="link"
-							class="g-settings-option-btn"
-							@click="toggleSplitPanel($event, 'pl-report')"
-						>
-							<span
-								v-show="currentAdditions.type === 'pl-report'"
-								class="material-icons"
-							>done</span>
-							<span
-								v-show="currentAdditions.type !== 'pl-report'"
-								class="material-icons"
-								style="visibility: hidden;"
-							>done</span>
-
-							<span>Open P&L Report view panel</span>
-							/>
-					</template>
-					<template #btn v-if="!isReport">
-						<FmIcon
-							btn-primary
-							icon="link"
-							class="g-settings-option-btn"
-							@click="toggleSplitPanel($event, 'transaction-report')"
-						>
-						<span
-							v-show="currentAdditions.type === 'transaction-report'"
-							class="material-icons"
-						>done</span>
-							<span
-								v-show="currentAdditions.type !== 'transaction-report'"
-								class="material-icons"
-								style="visibility: hidden;"
-							>done</span>
-
-							<span>Open Transaction Report view panel</span>
-							/>
-					</template>
-				</template>
-			</FmMenu>
-
-			<FmMenu v-if="isRootEntityViewer && isReport">
-				<template #btn>
-					<FmIcon
-						class="signed-button"
-						btn-primary
-						icon="add"
-						@click="$mdOpenMenu($event)"
-
-					/>
-					<div class="flex-column flex-i-center">
-						<span class="material-icons">view_module</span>
-						<span>Matrix</span>
-					</div>
-				</template>
-
-				<template #default="{ close }">
-					<template #btn>
-						<FmIcon
-							btn-primary
-							icon="link"
-							class="g-settings-option-btn"
-							@click="toggleMatrix($event)"
-						>
-							<span
-								v-show="viewContext === 'matrix'"
-								class="material-icons"
-							>done</span>
-							<span
-								v-show="viewContext !== 'matrix'"
-								class="material-icons"
-								style="visibility: hidden;"
-							>done</span>
-
-							<span>Open Matrix</span>
-							/>
-					</template>
-
-
-				</template>
-			</FmMenu>
-
-			<FmMenu >
-				<template #btn>
-					<FmIcon
-						class="signed-button"
-						btn-primary
-						icon="add"
-						@click="$mdOpenMenu($event)"
-
-					/>
-					<div class="flex-column flex-i-center">
-						<span class="material-icons">upgrade</span>
-						<span>Export</span>
-					</div>
-				</template>
-
-				<template #default="{ close }">
-					<template #btn  v-if="isReport">
-						<FmIcon
-							btn-primary
-							icon="link"
-							class="g-settings-option-btn"
-							@click="exportAsPdf($event)"
-						>
-							<span>Export to PDF</span>
-							/>
-					</template>
-					<template #btn  >
-						<FmIcon
-							btn-primary
-							icon="link"
-							class="g-settings-option-btn"
-							@click="exportAsCSV()"
-						>
-							<span>Export to CSV</span>
-							/>
-					</template>
-					<template #btn  >
-						<FmIcon
-							btn-primary
-							icon="link"
-							class="g-settings-option-btn"
-							@click="exportAsExcel()"						>
-							<span>Export to Excel</span>							/>
-					</template>
-					<template #btn  >
-						<FmIcon
-							btn-primary
-							icon="link"
-							class="g-settings-option-btn"
-							@click="copyReport()"
-						>
-							<span>Copy all to buffer</span>
-							/>
-					</template>
-					<template #btn  >
-						<FmIcon
-							btn-primary
-							icon="link"
-							class="g-settings-option-btn"
-							@click="copySelectedToBuffer()"
-						>
-							<span>Copy all to buffer</span>
-							/>
-					</template>
-				</template>
-			</FmMenu>
-
-
-			<FmMenu >
-				<template #btn>
-					<FmIcon
-						class="signed-button"
-						btn-primary
-						icon="add"
-						@click="$mdOpenMenu($event)"
-
-					/>
-					<div class="flex-column flex-i-center">
-						<span class="material-icons">more_vert</span>
-						<span>More</span>
-					</div>
-				</template>
-
-				<template #default="{ close }">
-					<template #btn  v-if="isReport">
-						<FmIcon
-							btn-primary
-							icon="link"
+					<!--					<md-menu-item v-if="!isReport">-->
+					<!--						<md-button-->
+					<!--							class="g-settings-option-btn"-->
+					<!--							@click="openInputFormEditor($event)"-->
+					<!--						>-->
+					<!--							<span>Edit form</span>-->
+					<!--						</md-button>-->
+					<!--					</md-menu-item>-->
+					<!--				</md-menu-content>-->
+					<!--			</md-menu>-->
+					<!--		</div>-->
+					<div class="gFiltersContainer">
+						<FmBtn
+							type="text"
+							v-if="thereAreFrontendFilters"
 							class="signed-button"
-							@click="$mdOpenMenu($event)"
+							@click="refreshTable()"
 						>
 							<div class="flex-column flex-i-center">
-								<span class="material-icons">more_vert</span>
-								<span>More</span>
+								<span class="material-icons">refresh</span>
+								<span>Refresh</span>
+								<md-tooltip md-direction="bottom">
+									<div v-if="isReport">
+										<div v-if="reportOptions.auth_time">
+											Auth Time: {{ reportOptions.auth_time }} Execution Time:
+											{{ reportOptions.execution_time }} Relation Prefetch Time:
+											{{ reportOptions.relation_prefetch_time }} Serialization
+											Time: {{ reportOptions.serialization_time }} Render Time:
+											{{ renderTime }} Rows downloaded:
+											{{ reportOptions.items.length }}
+										</div>
+										Refresh Database Filters
+									</div>
+									<div v-if="!isReport">Refresh Database Filters</div>
+								</md-tooltip>
 							</div>
-							/>
-					</template>
-					<template #btn  >
-						<FmIcon
-							btn-primary
-							icon="link"
-							class="g-settings-option-btn"
-							@click="openViewConstructor($event)"
-						>
-							<span>View Constructor</span>
-							/>
-					</template>
-					<template #btn v-if="entityType !== 'complex-transaction'">
-						<FmIcon
-							btn-primary
-							icon="link"
-							class="g-settings-option-btn"
-							@click="openCustomFieldsManager($event)"
-						>
-							<span>Custom Columns</span>
-					</template>
-					<template #btn  v-if="isReport" >
-						<FmIcon
-							btn-primary
-							icon="link"
-							class="g-settings-option-btn"
-							@click="toggleAutoRefresh()"
-						>
-							<span v-if="rvAutoRefresh">Disable Auto Refresh</span>
-							<span v-if="!rvAutoRefresh">Enable Auto Refresh</span>
-							/>
-					</template>
-					<template #btn v-if="!isReport"  >
-						<FmIcon
-							btn-primary
-							icon="link"
-							class="g-settings-option-btn"
-							@click="openInputFormEditor($event)"
-						>
-							<span>Edit form</span>
-							/>
-					</template>
-				</template>
-			</FmMenu>
+						</FmBtn>
+
+						<FmMenu v-if="isRootEntityViewer" class="full-width">
+							<template #btn>
+								<FmBtn
+									type="text"
+									class="g-settings-option-btn"
+									@click="evAddEntity($event)"
+									icon="view_stream"
+								>
+									<span>Split</span>
+								</FmBtn>
+							</template>
+
+							<template #default="{ close }">
+								<FmBtn
+									type="text"
+									class="g-settings-option-btn"
+									@click="toggleSplitPanel($event, 'permission-editor')"
+									v-if="!isReport && entityType !== 'complex-transaction'"
+								>
+									<span>
+										v-show="currentAdditions.type === 'permission-editor'"
+										class="material-icons" >done</span
+									>
+									<span
+										v-show="currentAdditions.type !== 'permission-editor'"
+										class="material-icons"
+										style="visibility: hidden"
+										>done</span
+									>
+
+									<span>Open permission editor</span>
+								</FmBtn>
+
+								<FmBtn
+									v-if="!isReport"
+									type="text"
+									class="g-settings-option-btn"
+									@click="toggleSplitPanel($event, 'editor')"
+								>
+									<span>
+										v-show="currentAdditions.type === 'editor'"
+										class="material-icons" >done</span
+									>
+									<span>
+										v-show="currentAdditions.type !== 'editor'"
+										class="material-icons" style="visibility: hidden;"
+										>done</span
+									>
+
+									<span>Open editor split panel</span>
+								</FmBtn>
+								<FmBtn
+									v-if="!isReport"
+									type="text"
+									class="g-settings-option-btn"
+									@click="toggleSplitPanel($event, 'balance-report')"
+								>
+									<span>
+										v-show="currentAdditions.type === 'balance-report'"
+										class="material-icons" >done</span
+									>
+									<span>
+										v-show="currentAdditions.type !== 'balance-report'"
+										class="material-icons" style="visibility: hidden;"
+										>done</span
+									>
+
+									<span>Open Balance Report view panel</span>
+								</FmBtn>
+								<FmBtn
+									v-if="!isReport"
+									type="text"
+									class="g-settings-option-btn"
+									@click="toggleSplitPanel($event, 'pl-report')"
+								>
+									<span>
+										v-show="currentAdditions.type === 'pl-report'"
+										class="material-icons" >done</span
+									>
+									<span>
+										v-show="currentAdditions.type !== 'pl-report'"
+										class="material-icons" style="visibility: hidden;"
+										>done</span
+									>
+
+									<span>Open P&L Report view panel</span>
+								</FmBtn>
+								<FmBtn
+									v-if="!isReport"
+									type="text"
+									class="g-settings-option-btn"
+									@click="toggleSplitPanel($event, 'transaction-report')"
+								>
+									<span>
+										v-show="currentAdditions.type === 'transaction-report'"
+										class="material-icons" >done</span
+									>
+									<span>
+										v-show="currentAdditions.type !== 'transaction-report'"
+										class="material-icons" style="visibility: hidden;"
+										>done</span
+									>
+
+									<span>Open Transaction Report view panel</span>
+								</FmBtn>
+							</template>
+						</FmMenu>
+						<FmMenu v-if="isRootEntityViewer && isReport">
+							<template #btn>
+								<FmBtn
+									type="text"
+									class="signed-button"
+									@click="evAddEntity($event)"
+								>
+									<div class="flex-column flex-i-center">
+										<span class="material-icons">view_module</span>
+										<span>Matrix</span>
+									</div>
+								</FmBtn>
+							</template>
+
+							<template #default="{ close }">
+								<FmBtn
+									type="text"
+									class="g-settings-option-btn"
+									@click="toggleMatrix($event)"
+								>
+									<span>
+										v-show="viewContext === 'matrix'" class="material-icons"
+										>done</span
+									>
+									<span>
+										v-show="viewContext !== 'matrix'" class="material-icons"
+										style="visibility: hidden;" >done</span
+									>
+
+									<span>Open Matrix</span>
+								</FmBtn>
+							</template>
+						</FmMenu>
+						<FmMenu>
+							<template #btn>
+								<FmBtn
+									type="text"
+									class="signed-button"
+									@click="$mdOpenMenu($event)"
+								>
+									<div class="flex-column flex-i-center">
+										<span class="material-icons">upgrade</span>
+										<span>Export</span>
+									</div>
+								</FmBtn>
+							</template>
+
+							<template #default="{ close }">
+								<FmBtn
+									type="text"
+									class="g-settings-option-btn"
+									@click="exportAsPdf($event)"
+									v-if="isReport"
+								>
+									<span>Export to PDF</span>
+								</FmBtn>
+								<FmBtn
+									type="text"
+									class="g-settings-option-btn"
+									@click="exportAsCSV()"
+								>
+									<span>Export to CSV</span>
+								</FmBtn>
+								<FmBtn
+									type="text"
+									class="g-settings-option-btn"
+									@click="copyReport()"
+								>
+									<span>Copy all to buffer</span>
+								</FmBtn>
+								<FmBtn
+									type="text"
+									class="g-settings-option-btn"
+									@click="copySelectedToBuffer()"
+								>
+									<span>Copy selected to buffer</span>
+								</FmBtn>
+							</template>
+						</FmMenu>
+
+						<FmMenu>
+							<template #btn>
+								<FmBtn
+									type="text"
+									class="signed-button"
+									@click="$mdOpenMenu($event)"
+								>
+									<div class="flex-column flex-i-center">
+										<span class="material-icons">more_vert</span>
+										<span>More</span>
+									</div>
+								</FmBtn>
+							</template>
+
+							<template #default="{ close }">
+								<FmBtn
+									type="text"
+									class="g-settings-option-btn"
+									@click="openViewConstructor($event)"
+								>
+									<span>View Constructor</span>
+								</FmBtn>
+								<FmBtn
+									v-if="entityType !== 'complex-transaction'"
+									type="text"
+									class="g-settings-option-btn"
+									@click="openCustomFieldsManager($event)"
+								>
+									<span>Custom Columns</span>
+								</FmBtn>
+								<FmBtn
+									v-if="isReport"
+									type="text"
+									class="g-settings-option-btn"
+									@click="toggleAutoRefresh()"
+								>
+									<span v-if="rvAutoRefresh">Disable Auto Refresh</span>
+									<span v-if="!rvAutoRefresh">Enable Auto Refresh</span>
+								</FmBtn>
+								<FmBtn
+									v-if="!isReport"
+									type="text"
+									class="g-settings-option-btn"
+									@click="openInputFormEditor($event)"
+								>
+									<span>Copy selected to buffer</span>
+								</FmBtn>
+							</template>
+						</FmMenu>
+					</div>
+				</div>
+			</div>
 		</div>
-		</div>
+	</div>
 </template>
 
 <script>
@@ -1163,7 +1030,7 @@
 	scope.popupPosX = gFiltersVm.popupPosX
 	scope.popupPosY = gFiltersVm.popupPosY
 	/*scope.fpBackClasses = gFiltersVm.fpBackClasses;
-                scope.fpClasses = gFiltersVm.fpClasses;*/
+		scope.fpClasses = gFiltersVm.fpClasses;*/
 
 	const gFiltersLeftPartWidth =
 		elem[0].querySelector('.gFiltersLeftPart').clientWidth
@@ -1178,8 +1045,8 @@
 	)
 
 	/* scope.calculateReport = function () {
-                    scope.evEventService.dispatchEvent(evEvents.REQUEST_REPORT);
-                }; */
+			scope.evEventService.dispatchEvent(evEvents.REQUEST_REPORT);
+		}; */
 	scope.refreshTable = function () {
 		scope.evEventService.dispatchEvent(evEvents.REQUEST_REPORT)
 	}
@@ -1211,20 +1078,20 @@
 
 	/* const getUseFromAboveFilters = function () {
 
-                    useFromAboveFilters = filters.filter((filter, index) => {
+			useFromAboveFilters = filters.filter((filter, index) => {
 
-                        if (filter.options && filter.options.use_from_above && Object.keys(filter.options.use_from_above).length) {
+				if (filter.options && filter.options.use_from_above && Object.keys(filter.options.use_from_above).length) {
 
-                            filter.filtersListIndex = index;
-                            return true;
+					filter.filtersListIndex = index;
+					return true;
 
-                        }
+				}
 
-                        return false;
+				return false;
 
-                    });
+			});
 
-                }; */
+		}; */
 
 	const formatFiltersForChips = function () {
 		scope.filtersChips = []
@@ -1239,15 +1106,15 @@
 				const filterOpts = filter.options || {}
 				/* let filterVal = filterOpts.filter_values || "";
 
-                            if (filterOpts.filter_type === 'from_to') {
+					if (filterOpts.filter_type === 'from_to') {
 
-                                filterVal = `From ${filterOpts.filter_values.min_value} to ${filterOpts.filter_values.max_value}`;
+						filterVal = `From ${filterOpts.filter_values.min_value} to ${filterOpts.filter_values.max_value}`;
 
-                            } else if (filterOpts.filter_type === 'out_of_range' ) {
+					} else if (filterOpts.filter_type === 'out_of_range' ) {
 
-                                filterVal = `Out of range from ${filterOpts.filter_values.min_value} to ${filterOpts.filter_values.max_value}`;
+						filterVal = `Out of range from ${filterOpts.filter_values.min_value} to ${filterOpts.filter_values.max_value}`;
 
-                            } */
+					} */
 
 				// hide use from above filters if needed
 				if (
@@ -1283,29 +1150,29 @@
 					filterData.text = chipText
 
 					/*
-                                if (filter.key.startsWith('custom_fields')) {
-                                    const customField = customFields.find( field => filter.key === `custom_fields.${field.user_code}`)
-                                    if (!customField) {
+						if (filter.key.startsWith('custom_fields')) {
+							const customField = customFields.find( field => filter.key === `custom_fields.${field.user_code}`)
+							if (!customField) {
 
-                                        filter.options.enabled = false;
-                                        const description = `The ${filter.groups ? 'group' : 'column'} does not exist in the Configuration`
+								filter.options.enabled = false;
+								const description = `The ${filter.groups ? 'group' : 'column'} does not exist in the Configuration`
 
-                                        filterData.error_data = {
-                                            code: 10,
-                                            description: description
-                                        }
+								filterData.error_data = {
+									code: 10,
+									description: description
+								}
 
-                                        const error = {
-                                            key: filter.key,
-                                            description: description
-                                        }
+								const error = {
+									key: filter.key,
+									description: description
+								}
 
-                                        errors.push(error)
+								errors.push(error)
 
-                                    }
+							}
 
-                                }
-                                */
+						}
+						*/
 					if (filter.key.startsWith('custom_fields')) {
 						let error
 						;[filter, filterData, error] =
