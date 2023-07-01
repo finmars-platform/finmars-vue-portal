@@ -32,11 +32,12 @@ export default defineStore({
 			watch(
 				() => this.activeLayoutId,
 				() => {
-					if (!this.layout.data) return false
+					if (!this.activeLayoutId || !this.layout.data) return false
 
 					this.components = this.layout.data.components || []
 					this.tabs = this.layout.data.tabs || []
 					this.activeTab = this.tabs[0]?.id
+					this.__log = []
 
 					if (this.layout.data.props) this.props = this.layout.data.props
 
@@ -45,11 +46,13 @@ export default defineStore({
 			)
 		},
 		getComponent(id) {
-			return this.components.find(item => item.uid == id)
+			return this.components.find((item) => item.uid == id)
 		},
 		setComponent(component) {
-			const index = this.components.findIndex(item => item.uid === component.uid);
-			this.components[index] = component;
+			const index = this.components.findIndex(
+				(item) => item.uid === component.uid
+			)
+			this.components[index] = component
 			// TODO: udpate this.props.inputs and this.props.outputs
 		},
 		async getLayouts() {
@@ -139,9 +142,11 @@ export default defineStore({
 			})
 		},
 		async getHistory(wid) {
-			let component = this.components.find(item => item.uid == wid)
+			let component = this.components.find((item) => item.uid == wid)
 
-			let list = this.props.inputs.filter((prop) => prop.component_id == component.uid)
+			let list = this.props.inputs.filter(
+				(prop) => prop.component_id == component.uid
+			)
 			let props = {}
 
 			list.forEach((prop) => {
@@ -246,14 +251,27 @@ export default defineStore({
 		},
 		async saveLayout() {
 			if (!this.layout.id) {
+				let props = JSON.parse(JSON.stringify(this.props))
+
+				this.props.inputs.forEach((prop, k) => {
+					props.outputs[k].__val = null
+				})
+				this.props.outputs.forEach((prop, k) => {
+					props.outputs[k].default_value = prop.__val
+
+					// Need to add filtor by control
+					props.outputs[k].__val = null
+				})
+
 				let res = await useApi('dashboardLayout.post', {
 					body: {
 						name: this.layout.name + ' dashboardV2@',
 						user_code: this.layout.user_code,
+						configuration_code: this.layout.configuration_code,
 						data: {
 							components: this.components,
 							tabs: this.tabs,
-							props: this.props,
+							props: props,
 						},
 					},
 				})
@@ -261,17 +279,34 @@ export default defineStore({
 				if (!res.error) {
 					this.layoutList.push(res)
 					this.activeLayoutId = res.id
-					useNotify({type: 'success', title: `Dashboard layout ${res.name} successfully saved`});
+
+					useNotify({
+						type: 'success',
+						title: `Dashboard layout ${res.name} successfully saved`,
+					})
 				}
 			} else {
+				let props = JSON.parse(JSON.stringify(this.props))
+
+				this.props.inputs.forEach((prop, k) => {
+					props.outputs[k].__val = null
+				})
+				this.props.outputs.forEach((prop, k) => {
+					props.outputs[k].default_value = prop.__val
+
+					// Need to add filtor by control
+					props.outputs[k].__val = null
+				})
+
 				let res = await useApi('dashboardLayout.put', {
 					params: { id: this.layout.id },
 					body: {
 						user_code: this.layout.user_code,
+						configuration_code: this.layout.configuration_code,
 						data: {
 							components: this.components,
 							tabs: this.tabs,
-							props: this.props,
+							props: props,
 						},
 					},
 				})
@@ -289,12 +324,23 @@ export default defineStore({
 				},
 			})
 
+			await this.clearLayoutData()
+
 			this.getLayouts()
 		},
-		removeComponent( uid ) {
-			let index = this.components.findIndex(item => item.uid == uid)
+		async clearLayoutData() {
+			this.components = []
+			await nextTick()
+			this.tabs = []
+			this.props = []
 
-			if ( index === -1 ) throw new Error('[Store:removeComponent] ID not find')
+			this.activeTab = null
+			this.activeLayoutId = null
+		},
+		removeComponent(uid) {
+			let index = this.components.findIndex((item) => item.uid == uid)
+
+			if (index === -1) throw new Error('[Store:removeComponent] ID not find')
 
 			this.props.inputs
 				.filter((item) => item.component_id == this.components[index].uid)
