@@ -3,22 +3,26 @@
 		class="m-b-0"
 		attach="body"
 		v-model="outputs.bundleId.__val"
+		:label="outputs.bundleId.name"
 		:items="bundles"
+		height="calc(100% - 6px)"
+		style="overflow: hidden"
 		prop_name="user_code"
 	/>
 </template>
 
 <script setup>
-
 	const props = defineProps({
-		uid: String
+		uid: String,
 	})
 	const dashStore = useStoreDashboard()
 
 	let component = dashStore.getComponent(props.uid)
 
 	const outputs = computed(() => {
-		let props = dashStore.props.outputs.filter((prop) => prop.component_id == component.uid)
+		let props = dashStore.props.outputs.filter(
+			(prop) => prop.component_id == component.uid
+		)
 		let obj = {}
 
 		props.forEach((prop) => {
@@ -37,6 +41,4 @@
 	}
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>
