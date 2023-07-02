@@ -1,22 +1,20 @@
 <template>
-	<BaseModal
-		no_padding
-		title="Add component"
-	>
-		<PagesDashboardAddComponentMChooseComponent
-			v-if="step == 'component'"
-		/>
+	<BaseModal no_padding title="Add component">
+		<PagesDashboardAddComponentMChooseComponent v-if="step == 'component'" />
 
-		<PagesDashboardAddComponentMSettings
-			v-if="step == 'settings'"
-			:tab="tab"
-		/>
+		<PagesDashboardAddComponentMSettings v-if="step == 'settings'" :tab="tab" />
 
-		<template #controls="{cancel}">
+		<template #controls="{ cancel }">
 			<div class="flex sb">
-				<FmBtn type="text" @click="(step === 'component') ? cancel() : step = 'component'">cancel</FmBtn>
 				<FmBtn
-					@click="step == 'settings' ? addComponent(cancel) : step = 'settings'"
+					type="text"
+					@click="step === 'component' ? cancel() : (step = 'component')"
+					>cancel</FmBtn
+				>
+				<FmBtn
+					@click="
+						step == 'settings' ? addComponent(cancel) : (step = 'settings')
+					"
 				>
 					{{ step == 'settings' ? 'finish' : 'next' }}
 				</FmBtn>
@@ -26,7 +24,6 @@
 </template>
 
 <script setup>
-
 	const props = defineProps({
 		tab: Number,
 	})
@@ -38,7 +35,11 @@
 
 	provide('component', component)
 
-	function addComponent( cancelFunc ) {
+	function addComponent(cancelFunc) {
+		if (!/\w{4, 30}/.test(component.value.user_code)) {
+			useNotify({ type: 'warn', title: 'User code is requered' })
+			return false
+		}
 		let new_comp = {
 			uid: generateId(component.value.componentName),
 			user_code: component.value.user_code,
@@ -71,7 +72,7 @@
 					subscribedTo: prop.subscribedTo,
 
 					default_value: prop.default_value,
-					__val: prop.default_value
+					__val: prop.default_value,
 				})
 			})
 
@@ -87,7 +88,7 @@
 					view: prop.view,
 
 					default_value: prop.default_value,
-					__val: prop.default_value
+					__val: prop.default_value,
 				})
 
 				state.props.outputs.push(newProp)
@@ -102,7 +103,7 @@
 		})
 		cancelFunc()
 	}
-	function generateId( id ) {
+	function generateId(id) {
 		return id + Date.now()
 	}
 </script>
