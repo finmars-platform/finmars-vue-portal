@@ -73,6 +73,7 @@
 		'PerformanceBundles',
 		'PerformanceDetail',
 		'PerformanceChart',
+		'FinmarsGrid',
 	]
 	const isAWidget = widgetsList.includes(props.component.componentName)
 	// console.log("testing1090 isAWidget", isAWidget);

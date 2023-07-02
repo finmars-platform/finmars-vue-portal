@@ -36,7 +36,7 @@
 	provide('component', component)
 
 	function addComponent(cancelFunc) {
-		if (!/\w{4, 30}/.test(component.value.user_code)) {
+		if (!/\w{4,30}/.test(component.value.user_code)) {
 			useNotify({ type: 'warn', title: 'User code is requered' })
 			return false
 		}

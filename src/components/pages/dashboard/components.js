@@ -489,7 +489,7 @@ export default [
 		outputs: [],
 		settings: {
 			layout: null,
-			content_type: "reports.balancereport",
+			content_type: 'reports.balancereport',
 			axisY: null,
 			axisX: null,
 			valueKey: null,
@@ -497,8 +497,8 @@ export default [
 			matrix_view: 'usual',
 			styles: {
 				cell: {
-					text_align: 'center'
-				}
+					text_align: 'center',
+				},
 			},
 			auto_refresh: false,
 			auto_scaling: false,
@@ -729,5 +729,63 @@ export default [
 		_group: 'base',
 		minColls: 6,
 		minRows: 4,
+	},
+	{
+		uid: null,
+		user_code: null,
+		name: 'Finmars grid',
+		componentName: 'FinmarsGrid',
+		tab: null,
+		scopes: [],
+
+		inputs: [
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'date',
+				name: 'Date',
+				type: 'date',
+				value_type: 40,
+				view: {
+					type: 'date',
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null,
+			},
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'portfolio',
+				name: 'Portfolio',
+				type: 'portfolio',
+				view: {
+					type: 'portfolio',
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null,
+			},
+		],
+		outputs: [
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'type',
+				name: 'Period type',
+				type: 'type_nav_or_pnl',
+				default_value: 'nav',
+				__val: null,
+				_children: [],
+			},
+		],
+		settings: [],
+
+		minColls: 6,
+		minRows: 2,
+		_group: 'base',
 	},
 ]
