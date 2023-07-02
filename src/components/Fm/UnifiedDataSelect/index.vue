@@ -15,6 +15,7 @@
 				:errorData="errorData"
 				:class="{ active: menuIsOpened, bi_no_borders: noBorders }"
 				:required="required"
+				:style="{ height: height }"
 				@update:errorData="(newVal) => emit('update:errorData', newVal)"
 				@click.stop="openMenu"
 			>
@@ -115,8 +116,8 @@
 </template>
 
 <script setup>
-	import * as commonHelper from "./helper"
-	import { useDebounce } from "../../../composables/useUtils"
+	import * as commonHelper from './helper'
+	import { useDebounce } from '../../../composables/useUtils'
 
 	let props = defineProps({
 		label: String,
@@ -130,12 +131,14 @@
 		noIndicatorButton: Boolean,
 		required: Boolean,
 		errorData: Object,
+
+		height: String,
 	})
 
 	let emit = defineEmits([
-		"update:modelValue",
-		"update:itemObject",
-		"update:errorData",
+		'update:modelValue',
+		'update:itemObject',
+		'update:errorData',
 	])
 
 	let disabled = ref(false)
@@ -158,15 +161,15 @@
 			name: ''
 		}
 	});*/
-	let selItem = ref(props.itemObject || { name: "" })
+	let selItem = ref(props.itemObject || { name: '' })
 
 	let valueIsValid = ref(false)
-	let inputText = ref(selItem.value.name || "")
+	let inputText = ref(selItem.value.name || '')
 
 	watch(
 		() => props.itemObject,
 		() => {
-			selItem.value = props.itemObject || { name: "" }
+			selItem.value = props.itemObject || { name: '' }
 			inputText.value = selItem.value.name
 		}
 	)
@@ -176,7 +179,7 @@
 			selItem.value = newVal
 			inputText.value = selItem.value.name
 		} else {
-			emit("update:itemObject", newVal)
+			emit('update:itemObject', newVal)
 		}
 	}
 
@@ -193,8 +196,8 @@
 	function selectItem(itemId, itemData) {
 		if (props.modelValue === itemId) return // when using inside selectDatabaseItem()
 
-		emit("update:modelValue", itemId)
-		emit("update:itemObject", JSON.parse(JSON.stringify(itemData)))
+		emit('update:modelValue', itemId)
+		emit('update:itemObject', JSON.parse(JSON.stringify(itemData)))
 
 		valueIsValid.value = true
 	}
@@ -217,14 +220,14 @@
 
 	const onLoadItemError = function (error) {
 		useNotify({
-			type: "error",
-			title: "Error",
+			type: 'error',
+			title: 'Error',
 			text: error,
 		})
 
-		emit("update:modelValue", null)
+		emit('update:modelValue', null)
 
-		selItem.value = { name: "" }
+		selItem.value = { name: '' }
 	}
 
 	async function loadItemsFromCbonds(item) {
@@ -235,7 +238,7 @@
 			},
 		}
 
-		let res = await useApi("importCurrencyCbonds.post", config)
+		let res = await useApi('importCurrencyCbonds.post', config)
 
 		if (res.errors.length) {
 			onLoadItemError(res.errors[0])
@@ -259,215 +262,215 @@
 
 	const entitiesDataList = [
 		{
-			name: "Dashboard",
-			entity: "dashboard",
-			key: "ui.dashboard",
+			name: 'Dashboard',
+			entity: 'dashboard',
+			key: 'ui.dashboard',
 		},
 		{
-			name: "Account Type",
-			entity: "account-type",
-			key: "accounts.accounttype",
+			name: 'Account Type',
+			entity: 'account-type',
+			key: 'accounts.accounttype',
 		},
 		{
-			name: "Account",
-			entity: "account",
-			key: "accounts.account",
+			name: 'Account',
+			entity: 'account',
+			key: 'accounts.account',
 		},
 		{
-			name: "Counterparty",
-			entity: "counterparty",
-			key: "counterparties.counterparty",
+			name: 'Counterparty',
+			entity: 'counterparty',
+			key: 'counterparties.counterparty',
 		},
 		{
-			name: "Responsible",
-			entity: "responsible",
-			key: "counterparties.responsible",
+			name: 'Responsible',
+			entity: 'responsible',
+			key: 'counterparties.responsible',
 		},
 		{
-			name: "Currency",
-			entity: "currency",
-			key: "currencies.currency",
+			name: 'Currency',
+			entity: 'currency',
+			key: 'currencies.currency',
 		},
 		{
-			name: "Currency history",
-			entity: "currency-history",
-			key: "currencies.currencyhistory",
+			name: 'Currency history',
+			entity: 'currency-history',
+			key: 'currencies.currencyhistory',
 		},
 		{
-			name: "Instrument",
-			entity: "instrument",
-			key: "instruments.instrument",
+			name: 'Instrument',
+			entity: 'instrument',
+			key: 'instruments.instrument',
 		},
 		{
-			name: "Generated Event",
-			entity: "generated-event",
-			key: "instruments.generatedevent",
+			name: 'Generated Event',
+			entity: 'generated-event',
+			key: 'instruments.generatedevent',
 		},
 		{
-			name: "Pricing Policy",
-			entity: "pricing-policy",
-			key: "instruments.pricingpolicy",
+			name: 'Pricing Policy',
+			entity: 'pricing-policy',
+			key: 'instruments.pricingpolicy',
 		},
 		{
-			name: "Price History",
-			entity: "price-history",
-			key: "instruments.pricehistory",
+			name: 'Price History',
+			entity: 'price-history',
+			key: 'instruments.pricehistory',
 		},
 		{
-			name: "Portfolio",
-			entity: "portfolio",
-			key: "portfolios.portfolio",
+			name: 'Portfolio',
+			entity: 'portfolio',
+			key: 'portfolios.portfolio',
 		},
 		{
-			name: "Portfolio Register",
-			entity: "portfolio-register",
-			key: "portfolios.portfolioregister",
+			name: 'Portfolio Register',
+			entity: 'portfolio-register',
+			key: 'portfolios.portfolioregister',
 		},
 		{
-			name: "Portfolio Register Record",
-			entity: "portfolio-register-record",
-			key: "portfolios.portfolioregisterrecord",
+			name: 'Portfolio Register Record',
+			entity: 'portfolio-register-record',
+			key: 'portfolios.portfolioregisterrecord',
 		},
 		{
-			name: "Instrument Type",
-			entity: "instrument-type",
-			key: "instruments.instrumenttype",
+			name: 'Instrument Type',
+			entity: 'instrument-type',
+			key: 'instruments.instrumenttype',
 		},
 		{
-			name: "Transaction",
-			entity: "transaction",
-			key: "transactions.transaction",
+			name: 'Transaction',
+			entity: 'transaction',
+			key: 'transactions.transaction',
 		},
 		{
-			name: "Transaction Type",
-			entity: "transaction-type",
-			key: "transactions.transactiontype",
+			name: 'Transaction Type',
+			entity: 'transaction-type',
+			key: 'transactions.transactiontype',
 		},
 		{
-			name: "Transaction Type Group",
-			entity: "transaction-type-group",
-			key: "transactions.transactiontypegroup",
+			name: 'Transaction Type Group',
+			entity: 'transaction-type-group',
+			key: 'transactions.transactiontypegroup',
 		},
 		{
-			name: "Counterparty group",
-			entity: "counterparty-group",
-			key: "counterparties.counterpartygroup",
+			name: 'Counterparty group',
+			entity: 'counterparty-group',
+			key: 'counterparties.counterpartygroup',
 		},
 		{
-			name: "Responsible group",
-			entity: "responsible-group",
-			key: "counterparties.responsiblegroup",
+			name: 'Responsible group',
+			entity: 'responsible-group',
+			key: 'counterparties.responsiblegroup',
 		},
 		{
-			name: "Strategy 1",
-			entity: "strategy-1",
-			key: "strategies.strategy1",
+			name: 'Strategy 1',
+			entity: 'strategy-1',
+			key: 'strategies.strategy1',
 		},
 		{
-			name: "Strategy 2",
-			entity: "strategy-2",
-			key: "strategies.strategy2",
+			name: 'Strategy 2',
+			entity: 'strategy-2',
+			key: 'strategies.strategy2',
 		},
 		{
-			name: "Strategy 3",
-			entity: "strategy-3",
-			key: "strategies.strategy3",
+			name: 'Strategy 3',
+			entity: 'strategy-3',
+			key: 'strategies.strategy3',
 		},
 		{
-			name: "Strategy 1 group",
-			entity: "strategy-1-group",
-			key: "strategies.strategy1group",
+			name: 'Strategy 1 group',
+			entity: 'strategy-1-group',
+			key: 'strategies.strategy1group',
 		},
 		{
-			name: "Strategy 2 group",
-			entity: "strategy-2-group",
-			key: "strategies.strategy2group",
+			name: 'Strategy 2 group',
+			entity: 'strategy-2-group',
+			key: 'strategies.strategy2group',
 		},
 		{
-			name: "Strategy 3 group",
-			entity: "strategy-3-group",
-			key: "strategies.strategy3group",
+			name: 'Strategy 3 group',
+			entity: 'strategy-3-group',
+			key: 'strategies.strategy3group',
 		},
 		{
-			name: "Strategy 1 subgroup",
-			entity: "strategy-1-subgroup",
-			key: "strategies.strategy1subgroup",
+			name: 'Strategy 1 subgroup',
+			entity: 'strategy-1-subgroup',
+			key: 'strategies.strategy1subgroup',
 		},
 		{
-			name: "Strategy 2 subgroup",
-			entity: "strategy-2-subgroup",
-			key: "strategies.strategy1subgroup",
+			name: 'Strategy 2 subgroup',
+			entity: 'strategy-2-subgroup',
+			key: 'strategies.strategy1subgroup',
 		},
 		{
-			name: "Strategy 3 subgroup",
-			entity: "strategy-3-subgroup",
-			key: "strategies.strategy1subgroup",
+			name: 'Strategy 3 subgroup',
+			entity: 'strategy-3-subgroup',
+			key: 'strategies.strategy1subgroup',
 		},
 		{
-			name: "Balance report",
-			entity: "balance-report",
-			key: "reports.balancereport",
+			name: 'Balance report',
+			entity: 'balance-report',
+			key: 'reports.balancereport',
 		},
 		{
-			name: "P&L report",
-			entity: "pl-report",
-			key: "reports.plreport",
+			name: 'P&L report',
+			entity: 'pl-report',
+			key: 'reports.plreport',
 		},
 		{
-			name: "Transaction report",
-			entity: "transaction-report",
-			key: "reports.transactionreport",
+			name: 'Transaction report',
+			entity: 'transaction-report',
+			key: 'reports.transactionreport',
 		},
 		{
-			name: "Cash flow projection report",
-			entity: "cash-flow-projection-report",
-			key: "reports.cashflowreport",
+			name: 'Cash flow projection report',
+			entity: 'cash-flow-projection-report',
+			key: 'reports.cashflowreport',
 		},
 		{
-			name: "Performance report",
-			entity: "performance-report",
-			key: "reports.performancereport",
+			name: 'Performance report',
+			entity: 'performance-report',
+			key: 'reports.performancereport',
 		},
 		{
-			name: "Transaction",
-			entity: "complex-transaction",
-			key: "transactions.complextransaction",
+			name: 'Transaction',
+			entity: 'complex-transaction',
+			key: 'transactions.complextransaction',
 		},
 		{
-			name: "Balance Report Custom Field",
-			entity: "balance-report-custom-field",
-			key: "reports.balancereportcustomfield",
+			name: 'Balance Report Custom Field',
+			entity: 'balance-report-custom-field',
+			key: 'reports.balancereportcustomfield',
 		},
 		{
-			name: "PL Report Custom Field",
-			entity: "pl-report-custom-field",
-			key: "reports.plreportcustomfield",
+			name: 'PL Report Custom Field',
+			entity: 'pl-report-custom-field',
+			key: 'reports.plreportcustomfield',
 		},
 		{
-			name: "Transaction Report Custom Field",
-			entity: "transaction-report-custom-field",
-			key: "reports.transactionreportcustomfield",
+			name: 'Transaction Report Custom Field',
+			entity: 'transaction-report-custom-field',
+			key: 'reports.transactionreportcustomfield',
 		},
 		{
-			name: "Price History Error",
-			entity: "price-history-error",
-			key: "pricing.pricehistoryerror",
+			name: 'Price History Error',
+			entity: 'price-history-error',
+			key: 'pricing.pricehistoryerror',
 		},
 		{
-			name: "Currency History Error",
-			entity: "currency-history-error",
-			key: "pricing.currencyhistoryerror",
+			name: 'Currency History Error',
+			entity: 'currency-history-error',
+			key: 'pricing.currencyhistoryerror',
 		},
 		{
-			name: "Audit transaction",
-			entity: "audit-transaction",
-			key: "audit.objecthistory4entry",
+			name: 'Audit transaction',
+			entity: 'audit-transaction',
+			key: 'audit.objecthistory4entry',
 		},
 
 		{
-			name: "Audit instrument",
-			entity: "audit-instrument",
-			key: "audit.objecthistory4entry",
+			name: 'Audit instrument',
+			entity: 'audit-instrument',
+			key: 'audit.objecthistory4entry',
 		},
 	]
 
@@ -489,7 +492,7 @@
 		processing.value = true
 		disabled.value = true
 
-		let res = await useApi("importUnifiedData.post", config)
+		let res = await useApi('importUnifiedData.post', config)
 
 		if (res.errors.length) {
 			onLoadItemError(res.errors[0])
@@ -512,13 +515,13 @@
 	}
 
 	async function selectDatabaseItem(item) {
-		console.log("selectDatabaseItem.item", item)
+		console.log('selectDatabaseItem.item', item)
 		menuIsOpened.value = false
 
 		selItem.value = item
 		inputText.value = item.name
 
-		if (props.content_type === "currencies.currency") {
+		if (props.content_type === 'currencies.currency') {
 			loadItemsFromCbonds(item)
 		} else {
 			// Download here?
@@ -646,7 +649,7 @@
 	function openMenu() {
 		menuIsOpened.value = true
 
-		inputText.value = ""
+		inputText.value = ''
 		getList()
 	}
 

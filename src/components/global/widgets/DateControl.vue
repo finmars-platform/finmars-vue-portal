@@ -1,5 +1,13 @@
 <template>
-	<FmInputDate :modelValue="value" @update:modelValue="saveVal" />
+	<div>
+		<FmInputDate
+			:label="outputs.date.name"
+			:modelValue="value"
+			class="m-b-0"
+			style="height: 44px"
+			@update:modelValue="saveVal"
+		/>
+	</div>
 </template>
 
 <script setup>
