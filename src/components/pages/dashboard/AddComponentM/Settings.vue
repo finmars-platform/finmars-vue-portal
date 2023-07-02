@@ -6,9 +6,7 @@
 		class="settings"
 	/>
 
-	<div v-else
-			 v-bind="$attrs"
-			 class="settings flex">
+	<div v-else v-bind="$attrs" class="settings flex">
 		<div class="settings_coll">
 			<h4>General</h4>
 
