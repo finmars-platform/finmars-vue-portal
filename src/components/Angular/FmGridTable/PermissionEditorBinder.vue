@@ -89,44 +89,85 @@
 
 		<div layout="row">
 
-			<md-button @click="vm.save()"
+			<!-- <md-button @click="vm.save()"
 								 class="md-raised md-primary"
 								 :class="{'disabled-btn': !vm.selectedRows.length}">Save
 
 				<span v-if="vm.selectedRows.length > 1">for All Objects</span>
 
-			</md-button>
+			</md-button> -->
+			<FmBtn
+				type="text"
+				@click="vm.save()"
+				class="md-raised md-primary"
+				:class="{'disabled-btn': !vm.selectedRows.length}">
+			Save <span v-if="vm.selectedRows.length > 1">for All Objects</span>
+
+			</FmBtn>
 
 
 			<div v-if="vm.entityType == 'portfolio' || vm.entityType == 'account' || vm.entityType == 'transaction-type'">
-
+<!-- 
 				<md-button @click="vm.recalculateTransactionPermissions()"
 									 :class="{'disabled-btn': !vm.isSaved}"
 									 class="md-raised md-primary">Apply new Permissions to Transactions
-				</md-button>
+				</md-button> -->
+				<FmBtn
+				type="text"
+				@click="vm.recalculateTransactionPermissions()"
+				:class="{'disabled-btn': !vm.isSaved}"
+				class="md-raised md-primary">
+									 Apply new Permissions to Transactions
+			
+			</FmBtn>
 
 			</div>
 
 			<div v-if="vm.entityType == 'instrument-type'">
 
-				<md-button @click="vm.recalculateInstrumentPermissions()"
+				<!-- <md-button @click="vm.recalculateInstrumentPermissions()"
 									 :class="{'disabled-btn': !vm.isSaved}"
 									 class="md-raised md-primary">Apply new Permissions to Instruments
-				</md-button>
+				</md-button> -->
+				<FmBtn
+				type="text"
+				@click="vm.recalculateInstrumentPermissions()"
+				:class="{'disabled-btn': !vm.isSaved}"
+				class="md-raised md-primary">
+				Apply new Permissions to Instruments
+			
+			</FmBtn>
 
 			</div>
 
 			<div v-if="vm.entityType == 'account-type'" layout="row">
-
+<!-- 
 				<md-button @click="vm.recalculateAccountPermissions()"
 									 :class="{'disabled-btn': !vm.isSaved}"
 									 class="md-raised md-primary">Apply new Permissions to Accounts
-				</md-button>
+				</md-button> -->
+
+				<FmBtn
+				type="text"
+				@click="vm.recalculateAccountPermissions()"
+									 :class="{'disabled-btn': !vm.isSaved}"
+									 class="md-raised md-primary">
+									 Apply new Permissions to Accounts
+			
+			</FmBtn>
 
 				<md-button @click="vm.recalculateAccountAndTransactionsPermissions()"
 									 :class="{'disabled-btn': !vm.isSaved}"
 									 class="md-raised md-primary">Apply new Permissions to Accounts and Transactions
 				</md-button>
+				<FmBtn
+				type="text"
+				@click="vm.recalculateAccountAndTransactionsPermissions()"
+									 :class="{'disabled-btn': !vm.isSaved}"
+									 class="md-raised md-primary">
+									 Apply new Permissions to Accounts
+			
+			</FmBtn>
 
 			</div>
 
