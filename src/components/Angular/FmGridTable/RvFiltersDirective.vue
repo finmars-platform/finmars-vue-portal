@@ -9,6 +9,7 @@
 				class="g-filter-left-part gFiltersLeftPart"
 				:class="{ 'no-ev-g-filter-switch': !thereAreFrontendFilters }"
 			>
+			
 				<div v-if="isReport" layout="row">
 					<!--<md-button class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
 										 ng-click="calculateReport()">
