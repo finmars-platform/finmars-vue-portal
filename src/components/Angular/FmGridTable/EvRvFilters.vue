@@ -65,7 +65,7 @@
 					@click="evAddEntity"
 				/>
 
-				<md-menu v-if="scope.entityType == 'instrument'">
+				<!-- <md-menu v-if="scope.entityType == 'instrument'">
 					<md-button
 						class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
 						@click="$mdOpenMenu($event)"
@@ -110,9 +110,41 @@
 							</md-button>
 						</md-menu-item>
 					</md-menu-content>
-				</md-menu>
+				</md-menu> -->
 
-				<md-menu v-if="scope.entityType == 'instrument-type'">
+				<FmMenu v-if="scope.entityType == 'instrument'">
+					<template #btn>
+						<FmIcon
+							class="add_ev_btn"
+							btnPrimary
+							icon="add"
+							@click="$mdOpenMenu($event)"
+							v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
+						/>
+					</template>
+
+					<template #default="{ close }">
+						<div class="fm_list" @click="close()">
+							<div class="fm_list_item" @click="evAddEntity($event)">
+								Add Blank
+							</div>
+							<div
+								class="fm_list_item"
+								@click="openTransactionTypeDialog($event)"
+							>
+								Add Typical
+							</div>
+							<div class="fm_list_item" @click="openSimpleImportDialog($event)">
+								Import from File
+							</div>
+							<div class="fm_list_item" @click="addFromProvider($event)">
+								Get From Provider
+							</div>
+						</div>
+					</template>
+				</FmMenu>
+
+				<!-- <md-menu v-if="scope.entityType == 'instrument-type'">
 					<md-button
 						class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
 						@click="$mdOpenMenu($event)"
@@ -142,9 +174,34 @@
 							</md-button>
 						</md-menu-item>
 					</md-menu-content>
-				</md-menu>
+				</md-menu> -->
 
-				<md-menu v-if="scope.entityType == 'account-type'">
+				<FmMenu v-if="scope.entityType == 'instrument-type'">
+					<template #btn>
+						<FmIcon
+							class="add_ev_btn"
+							btnPrimary
+							icon="add"
+							@click="$mdOpenMenu($event)"
+							v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
+						/>
+					</template>
+
+					<template #default="{ close }">
+						<div class="fm_list" @click="close()">
+							<div class="fm_list_item" @click="evAddEntity($event)">
+								Add Blank
+							</div>
+							<div
+								class="fm_list_item"
+								@click="openTransactionTypeDialog($event)"
+							>
+								Select from List
+							</div>
+						</div>
+					</template>
+				</FmMenu>
+				<!-- <md-menu v-if="scope.entityType == 'account-type'">
 					<md-button
 						class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
 						@click="$mdOpenMenu($event)"
@@ -174,9 +231,34 @@
 							</md-button>
 						</md-menu-item>
 					</md-menu-content>
-				</md-menu>
+				</md-menu> -->
+				<FmMenu v-if="scope.entityType == 'account-type'">
+					<template #btn>
+						<FmIcon
+							class="add_ev_btn"
+							btnPrimary
+							icon="add"
+							@click="$mdOpenMenu($event)"
+							v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
+						/>
+					</template>
 
-				<md-menu v-if="scope.entityType == 'transaction-type'">
+					<template #default="{ close }">
+						<div class="fm_list" @click="close()">
+							<div class="fm_list_item" @click="evAddEntity($event)">
+								Add Blank
+							</div>
+							<div
+								class="fm_list_item md-raised"
+								package-manager-button
+								content-type="'accounts.accounttype'"
+							>
+								Select from List
+							</div>
+						</div>
+					</template>
+				</FmMenu>
+				<!-- <md-menu v-if="scope.entityType == 'transaction-type'">
 					<md-button
 						class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
 						@click="$mdOpenMenu($event)"
@@ -206,9 +288,36 @@
 							</md-button>
 						</md-menu-item>
 					</md-menu-content>
-				</md-menu>
+				</md-menu> -->
 
-				<md-button
+				<FmMenu v-if="scope.entityType == 'transaction-type'">
+					<template #btn>
+						<FmIcon
+							class="add_ev_btn"
+							btnPrimary
+							icon="add"
+							@click="$mdOpenMenu($event)"
+							v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
+						/>
+					</template>
+
+					<template #default="{ close }">
+						<div class="fm_list" @click="close()">
+							<div class="fm_list_item" @click="evAddEntity($event)">
+								Add Blank
+							</div>
+							<div
+								class="fm_list_item md-raised"
+								package-manager-button
+								content-type="'transactions.transactiontype'"
+							>
+								Select from List
+							</div>
+						</div>
+					</template>
+				</FmMenu>
+
+				<!-- <md-button
 					v-if="scope.thereAreFrontendFilters"
 					class="g-toggle-filters-btn md-icon-button"
 					@click="toggleFiltersToShow()"
@@ -223,10 +332,27 @@
 						class="material-icons"
 						>dns</span
 					>
-				</md-button>
+				</md-button> -->
+				<FmBtn
+					v-if="scope.thereAreFrontendFilters"
+					type="text"
+					class="g-toggle-filters-btn"
+					@click="toggleFiltersToShow()"
+				>
+					<span
+						v-show="scope.shownFiltersType === 'frontend'"
+						class="material-icons"
+						>laptop_mac</span
+					>
+					<span
+						v-show="scope.shownFiltersType === 'backend'"
+						class="material-icons"
+						>dns</span
+					>
+				</FmBtn>
 			</template>
 		</div>
-<!--СustomPopupDirective.vue-->
+		<!--СustomPopupDirective.vue-->
 		<div class="gFiltersContainer flex aic fww">
 			<div
 				v-if="scope.readyStatus.filters"
