@@ -1,17 +1,29 @@
 <template>
 	<div layout="row">
-		<md-button class="link-button" @click="vm.cancel()">
+		<!-- <md-button class="link-button" @click="vm.cancel()">
 			<span v-if="vm.entityType !== 'transaction'">Cancel</span>
 			<span v-if="vm.entityType === 'transaction'">Close</span>
-		</md-button>
-
-		<md-button class="link-button" v-if="vm.entity.is_deleted" @click="vm.restoreDeleted()">
+		</md-button> -->
+		<FmBtn type="text" class="link-button" @click="vm.cancel()">
+			<span v-if="vm.entityType !== 'transaction'">Cancel</span>
+			<span v-if="vm.entityType === 'transaction'">Close</span>
+		</FmBtn>
+		<!-- <md-button
+			class="link-button"
+			v-if="vm.entity.is_deleted"
+			@click="vm.restoreDeleted()"
+		>
 			<span>Restore</span>
-		</md-button>
+		</md-button> -->
+		<FmBtn type="text" 	
+			class="link-button"
+			v-if="vm.entity.is_deleted"
+			@click="vm.restoreDeleted()">
+			Restore
+		</FmBtn>
 	</div>
 
-	<div style="margin-right: 10px;">
-
+	<div style="margin-right: 10px">
 		<!--<md-menu md-position-mode="target-right target">
 
 				<md-button class="outline-button" ng-click="$mdOpenMenu($event)">
@@ -110,45 +122,44 @@
 
 				</md-menu-content>
 		</md-menu>-->
-		<md-button v-if="vm.footerPopupData !== undefined"
-
-							 custom-popup
-							 popup-template-url="'views/popups/selector2-popup-view.html'"
-							 popup-data="vm.footerPopupData"
-							 open-on="click"
-							 position-relative-to="element"
-							 relative-position-y="top"
-
-							 ng-disabled="!vm.checkReadyStatus() || vm.processing"
-							 class="outline-button">
+		<md-button
+			v-if="vm.footerPopupData !== undefined"
+			custom-popup
+			popup-template-url="'views/popups/selector2-popup-view.html'"
+			popup-data="vm.footerPopupData"
+			open-on="click"
+			position-relative-to="element"
+			relative-position-y="top"
+			ng-disabled="!vm.checkReadyStatus() || vm.processing"
+			class="outline-button"
+		>
 			<div class="flex-row flex-c-center">
 				<ng-md-icon icon="more_vert" class="flex-row"></ng-md-icon>
 			</div>
 		</md-button>
 
-
-		<md-button class="outline-button" v-if="vm.entityType !== 'transaction'"
-							 :disabled="vm.saveBtnDisabled()"
-							 @click="vm.save($event, false)">
+		<md-button
+			class="outline-button"
+			v-if="vm.entityType !== 'transaction'"
+			:disabled="vm.saveBtnDisabled()"
+			@click="vm.save($event, false)"
+		>
 			Save
 		</md-button>
 
-		<md-button v-if="vm.entityType !== 'transaction'"
-							 :disabled="vm.saveBtnDisabled()"
-							 @click="vm.save($event, true)"
-							 class="m-r-24 primary-button">
+		<md-button
+			v-if="vm.entityType !== 'transaction'"
+			:disabled="vm.saveBtnDisabled()"
+			@click="vm.save($event, true)"
+			class="m-r-24 primary-button"
+		>
 			Save and Exit
 		</md-button>
-
 	</div>
 </template>
 
 <script>
-export default {
-
-}
+	export default {}
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>
