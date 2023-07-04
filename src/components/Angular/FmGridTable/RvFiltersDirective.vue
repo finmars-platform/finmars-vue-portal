@@ -9,7 +9,6 @@
 				class="g-filter-left-part gFiltersLeftPart"
 				:class="{ 'no-ev-g-filter-switch': !thereAreFrontendFilters }"
 			>
-			
 				<div v-if="isReport" layout="row">
 					<!--<md-button class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
 										 ng-click="calculateReport()">
@@ -849,6 +848,7 @@
 								</div>
 							</template>
 						</FmMenu>
+
 						<FmMenu v-if="isRootEntityViewer && isReport">
 							<template #btn>
 								<FmBtn
@@ -870,14 +870,19 @@
 										class="g-settings-option-btn fm_list_item"
 										@click="toggleMatrix($event)"
 									>
-										<span>
-											v-show="viewContext === 'matrix'" class="material-icons"
-											>done</span
+										<span
+											v-show="viewContext === 'matrix'"
+											class="material-icons"
 										>
-										<span>
-											v-show="viewContext !== 'matrix'" class="material-icons"
-											style="visibility: hidden;" >done</span
+											done
+										</span>
+										<span
+											v-show="viewContext !== 'matrix'"
+											class="material-icons"
+											style="visibility: hidden"
 										>
+											done
+										</span>
 
 										<span>Open Matrix</span>
 									</div>
@@ -994,9 +999,10 @@
 	])
 	// export default function ($mdDialog, gFiltersHelper, uiService) {
 
-	templateUrl: 'views/directives/groupTable/filters/g-ev-rv-filters-view.html',
-		// link: function (scope, elem, attrs, gFiltersVm) {
-		(scope.entityType = gFiltersVm.entityType)
+	// templateUrl: 'views/directives/groupTable/filters/g-ev-rv-filters-view.html',
+	// link: function (scope, elem, attrs, gFiltersVm) {
+	scope.entityType = gFiltersVm.entityType
+
 	scope.isReport = true
 	scope.isRootEntityViewer = scope.evDataService.isRootEntityViewer()
 	scope.showUseFromAboveFilters = !scope.hideUseFromAboveFilters
