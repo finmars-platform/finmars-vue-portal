@@ -52,7 +52,7 @@
 					<md-tooltip md-direction="top">{{ item.name }}</md-tooltip></span
 				>
 
-				<md-menu
+				<!-- <md-menu
 					class="float-right"
 					style="margin-right: 4px; margin-top: -2px"
 				>
@@ -90,7 +90,36 @@
 							</md-button>
 						</md-menu-item>
 					</md-menu-content>
-				</md-menu>
+				</md-menu> -->
+				<FmMenu>
+					<template #btn>
+						<FmIcon
+							class="g-filter-settings-big-left-btn primary-button rounded"
+							btn-primary
+							icon="more_vert"
+							@click="$mdOpenMenu($event)"
+							v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
+						/>
+					</template>
+
+					<template #default="{ close }">
+						<div class="fm_list">
+							<div
+								class="g-settings-option-btn fm_list_item"
+								@click="sortGroupType($event, item, $index, 'DESC')"
+							>
+								Sort Descending
+							</div>
+
+							<div
+								@click="sortGroupType($event, item, $index, 'ASC')"
+								class="g-settings-option-btn fm_list_item"
+							>
+								Sort Ascending
+							</div>
+						</div>
+					</template>
+				</FmMenu>
 			</div>
 
 			<div class="add-group-type-button" @click="addGroupType($event)">
