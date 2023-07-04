@@ -242,6 +242,7 @@
 	let elem = ref(null)
 
 	let additions = props.evDataService.getAdditions()
+	console.log('additions:', additions)
 	let verticalAdditions = props.evDataService.getVerticalAdditions()
 	let components = props.evDataService.getComponents()
 	let entityType = props.evDataService.getEntityType()
@@ -270,7 +271,7 @@
 		// var iframeMode = globalDataService.insideIframe()
 
 		if (viewContext === 'dashboard') {
-			let isInsideDashboard = true
+			isInsideDashboard = true
 
 			/* For old rv interface
 		interfaceLayout.groupingArea.collapsed = true;

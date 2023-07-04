@@ -12,8 +12,6 @@ export default {
 	controller: function () {
 		var vm = this
 
-		console.log('this', this)
-
 		vm.entityType = vm.options.entityType
 		vm.entityRaw = vm.options.entityRaw
 		vm.uiLayoutId = vm.options.uiLayoutId

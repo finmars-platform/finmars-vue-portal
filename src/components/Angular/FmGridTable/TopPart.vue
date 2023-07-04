@@ -70,10 +70,7 @@
 							</md-select-header>
 
 							<div class="select-options-holder">
-								<md-option
-									v-for="item in currencies"
-									ng-value="item.id"
-								>
+								<md-option v-for="item in currencies" ng-value="item.id">
 									{{ item?.name }}
 								</md-option>
 							</div>
@@ -145,9 +142,7 @@
 	// export default function (
 	// 	$state,
 	// 	usersService,
-	// 	ecosystemDefaultService,
-	// 	,
-	// 	reportHelper
+	// 	ecosystemDefaultService
 	// ) {
 	// scope: {
 	// 	evDataService: '=',
@@ -467,7 +462,8 @@
 			getCurrencies()
 
 			prepareReportLayoutOptions()
-			;[dateFromKey, dateToKey] = reportHelper.getDateProperties(entityType)
+			;[dateFromKey, dateToKey] =
+				window.reportHelper.getDateProperties(entityType)
 
 			datesData = {
 				to: reportOptions[dateToKey],
