@@ -9,7 +9,6 @@
 				class="g-filter-left-part gFiltersLeftPart"
 				:class="{ 'no-ev-g-filter-switch': !thereAreFrontendFilters }"
 			>
-
 				<div v-if="isReport" layout="row">
 					<!--<md-button class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
 										 ng-click="calculateReport()">
@@ -377,7 +376,6 @@
 						</template>
 					</FmMenu>
 
-					-->
 					<!--					<md-button-->
 					<!--						v-if="thereAreFrontendFilters"-->
 					<!--						class="g-toggle-filters-btn md-icon-button"-->
@@ -414,7 +412,7 @@
 						popup-event-service="popupEventService" popup-x="popupPosX" popup-y="popupPosY"
 						on-save="filterSettingsChange()" class="g-filter-chips-wrap" />
 										<chips-list
-					<!--						chips-list="filtersChips"-->
+											chips-list="filtersChips"-->
 					<!--						chips-deletion="true"-->
 					<!--						chips-addition="ADD FILTER"-->
 					<!--						on-chip-click="onFilterChipClick(chipsData, event)"-->
@@ -434,7 +432,7 @@
 				</div>
 			</div>
 
-					<!--		<div class="icon-buttons gFiltersRightPart">-->
+							<div class="icon-buttons gFiltersRightPart">-->
 					<!--			<md-button-->
 					<!--				class="signed-button"-->
 					<!--				@click="refreshTable()"-->
@@ -871,11 +869,17 @@
 										@click="toggleMatrix($event)"
 									>
 										<span
-											v-show="viewContext === 'matrix'" class="material-icons"
-											> done </span>
+											v-show="viewContext === 'matrix'"
+											class="material-icons"
+										>
+											done
+										</span>
 										<span
-											v-show="viewContext !== 'matrix'" class="material-icons"
-											style="visibility: hidden;" >done</span
+											v-show="viewContext !== 'matrix'"
+											class="material-icons"
+											style="visibility: hidden"
+										>
+											done</span
 										>
 
 										<span>Open Matrix</span>
