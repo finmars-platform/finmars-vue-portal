@@ -227,7 +227,7 @@
 		const allAttrs = attributeDataService.getForAttributesSelector(
 			isPnl ? 'pl-report' : 'balance-report'
 		)
-		const selectedAttrs = layout.value.balance[layoutField]
+		const selectedAttrs = layout.value[isPnl ? 'pnl' : 'balance'][layoutField]
 
 		payloadForSelector.value = {
 			data: {
@@ -238,7 +238,7 @@
 			},
 			resolve(res) {
 				console.log('res:', res)
-				layout.value.pnl[layoutField] = res.data.items
+				layout.value[isPnl ? 'pnl' : 'balance'][layoutField] = res.data.items
 				isOpenAttrsSelector.value = false
 
 				useNotify({ title: 'Changed', type: 'success' })
