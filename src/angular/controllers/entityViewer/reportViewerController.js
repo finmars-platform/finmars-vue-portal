@@ -39,13 +39,14 @@ export default function ({
 	let reportService = new reportServiceInst()
 	let entityResolverService = new entityResolverServiceNew({ reportService })
 	let customFieldService = new customFieldServiceInst()
+	window.reportHelper = new reportHelperInst()
 
-	let reportHelper = new reportHelperInst()
 	let rvDataProviderService = new rvDataProviderServiceInst(
 		entityResolverService,
 		pricesCheckerService,
-		reportHelper
+		window.reportHelper
 	)
+
 	// Globals HACK
 	window.metaContentTypesService = new metaContentTypesServiceInst()
 	window.globalDataService = new globalDataServiceInst()
@@ -64,7 +65,7 @@ export default function ({
 		pricesCheckerService,
 		expressionService,
 		rvDataProviderService,
-		reportHelper
+		window.reportHelper
 	)
 
 	vm.readyStatus = reactive({
@@ -627,7 +628,9 @@ export default function ({
 
 		vm.readyStatus.layout = false // switched to true by sharedLogicHelper.onSetLayoutEnd()
 
-		vm.entityViewerDataService = new EntityViewerDataService(reportHelper)
+		vm.entityViewerDataService = new EntityViewerDataService(
+			window.reportHelper
+		)
 		window.evDataService = vm.entityViewerDataService
 
 		vm.entityViewerEventService = new EntityViewerEventService()
@@ -643,12 +646,17 @@ export default function ({
 		console.log('vm.attributeDataService:', vm.attributeDataService)
 
 		vm.entityType = $scope.contentType
+		vm.viewContext = $scope.viewContext
 
 		// calls setEntityType, setIsReport etc
 		sharedLogicHelper.setLayoutDataForView()
 
 		vm.entityViewerDataService.setRootEntityViewer(true)
 		vm.entityViewerDataService.setViewContext(vm.viewContext)
+		console.log(
+			'vm.entityViewerDataService.getComponents():',
+			vm.entityViewerDataService.setComponents()
+		)
 
 		vm.entityViewerDataService.setLayoutChangesLossWarningState(true)
 
@@ -772,7 +780,7 @@ export default function ({
 		autosaveLayoutService = new AutosaveLayoutService(
 			metaContentTypesService,
 			uiService,
-			reportHelper
+			window.reportHelper
 		)
 
 		onUserChangeIndex = middlewareService.onMasterUserChanged(function () {

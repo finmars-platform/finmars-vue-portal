@@ -70,6 +70,7 @@
 
 	let $scope = {
 		contentType: 'reports.plreport',
+		viewContext: 'dashboard',
 	}
 
 	onMounted(() => {
