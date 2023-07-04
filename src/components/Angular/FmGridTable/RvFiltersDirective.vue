@@ -9,7 +9,7 @@
 				class="g-filter-left-part gFiltersLeftPart"
 				:class="{ 'no-ev-g-filter-switch': !thereAreFrontendFilters }"
 			>
-			
+
 				<div v-if="isReport" layout="row">
 					<!--<md-button class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
 										 ng-click="calculateReport()">
@@ -870,11 +870,10 @@
 										class="g-settings-option-btn fm_list_item"
 										@click="toggleMatrix($event)"
 									>
-										<span>
+										<span
 											v-show="viewContext === 'matrix'" class="material-icons"
-											>done</span
-										>
-										<span>
+											> done </span>
+										<span
 											v-show="viewContext !== 'matrix'" class="material-icons"
 											style="visibility: hidden;" >done</span
 										>
