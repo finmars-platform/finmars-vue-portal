@@ -67,7 +67,10 @@ export default defineStore({
 			if (res.error || !res.results.length) return false
 
 			this.layoutList = res.results
-			this.activeLayoutId = this.activeLayoutId || res.results[0].id
+
+			let defaultLayout = res.results.find((o) => o.is_default)
+			this.activeLayoutId =
+				this.activeLayoutId || defaultLayout?.id || res.results[0].id
 
 			this.components = this.layout.data.components || []
 			this.tabs = this.layout.data.tabs || []
