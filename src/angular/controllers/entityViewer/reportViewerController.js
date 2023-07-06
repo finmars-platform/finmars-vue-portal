@@ -477,7 +477,8 @@ export default function ({
 	vm.setLayout = function (layout) {
 		return new Promise(async function (resolve, reject) {
 			if (
-				typeof layout.data.reportLayoutOptions.useDateFromAbove !== 'boolean'
+				layout.data.reportLayoutOptions &&
+				typeof layout.data.reportLayoutOptions?.useDateFromAbove !== 'boolean'
 			) {
 				layout.data.reportLayoutOptions.useDateFromAbove = true
 			}

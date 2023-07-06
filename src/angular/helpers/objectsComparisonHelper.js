@@ -9,7 +9,6 @@
  * @returns {boolean} - Returns 'true' if objects have same properties and values. Otherwise, returns 'false'.
  */
 function areObjectsTheSame(obj1, obj2) {
-	console.log('object comparison objects', obj1, obj2)
 	var firstObject, secondObject
 
 	function areTwoObjectsTheSame(x, y) {
@@ -42,7 +41,6 @@ function areObjectsTheSame(obj1, obj2) {
 		// Checking of one object being a subset of another.
 		for (p in y) {
 			if (y.hasOwnProperty(p) !== x.hasOwnProperty(p)) {
-				console.log('object comparison lack of equivalent property', p)
 				return false
 			} else if (typeof y[p] !== typeof x[p]) {
 				return false
@@ -51,7 +49,6 @@ function areObjectsTheSame(obj1, obj2) {
 
 		for (p in x) {
 			if (y.hasOwnProperty(p) !== x.hasOwnProperty(p)) {
-				console.log('object comparison lack of equivalent property', p)
 				return false
 			} else if (typeof y[p] !== typeof x[p]) {
 				return false
@@ -64,7 +61,6 @@ function areObjectsTheSame(obj1, obj2) {
 					secondObject.push(y)
 
 					if (!areTwoObjectsTheSame(x[p], y[p])) {
-						console.log('object comparison not the same objects', x[p], y[p])
 						return false
 					}
 
@@ -74,17 +70,11 @@ function areObjectsTheSame(obj1, obj2) {
 
 				default:
 					if (x[p] !== y[p]) {
-						console.log(
-							'object comparison properties with various values',
-							x[p],
-							y[p]
-						)
 						return false
 					}
 					break
 			}
 		}
-		console.log('object comparison objects are equals')
 		return true
 	}
 

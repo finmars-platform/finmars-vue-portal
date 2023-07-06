@@ -35,8 +35,6 @@
 								>
 								<span class="material-icons arrow-icon">arrow_drop_down</span>
 							</md-button>
-							
-							
 						</template>
 
 						<div class="fm_list">
@@ -106,7 +104,7 @@
 			>
 				<div
 					class="g-table-header-cell-wrapper gGroupElem gColumnElem gDraggableHead gcAreaDnD"
-					v-for="column in groups"
+					v-for="(column, $index) in groups"
 					:class="{
 						'last-dragged':
 							column.frontOptions && column.frontOptions.lastDragged,
@@ -1848,7 +1846,7 @@
 		var i
 		//<editor-fold desc="Set folded groups before calling rvDataHelper.setGroupSettings()">
 		for (i = $index; i >= 0; i--) {
-			groups[i].report_settings.is_level_folded = false
+			groups.value[i].report_settings.is_level_folded = false
 		}
 
 		evDataService.setGroups(groups.value)

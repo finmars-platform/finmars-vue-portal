@@ -139,6 +139,8 @@
 						<AngularFmGridTableRvAreasDnd
 							v-if="isReport && contentWrapElem"
 							:contentWrapElement="contentWrapElem"
+							:evDataService="evDataService"
+							:evEventService="evEventService"
 						/>
 
 						<AngularFmGridTableAreasDnd
