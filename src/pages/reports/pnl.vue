@@ -62,6 +62,7 @@
 
 	let $scope = {
 		contentType: 'reports.plreport',
+		entityType: 'pl-report',
 	}
 
 	onMounted(() => {
