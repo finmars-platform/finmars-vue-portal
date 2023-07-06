@@ -1018,7 +1018,6 @@ export default function (reportHelper) {
 	}
 
 	function setListLayout(listLayout) {
-		debugger
 		data.listLayout = listLayout
 	}
 
