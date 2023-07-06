@@ -316,7 +316,7 @@ export default defineStore({
 				let props = JSON.parse(JSON.stringify(this.props))
 
 				this.props.inputs.forEach((prop, k) => {
-					props.outputs[k].__val = null
+					props.inputs[k].__val = null
 				})
 				this.props.outputs.forEach((prop, k) => {
 					props.outputs[k].default_value = prop.__val
@@ -351,7 +351,7 @@ export default defineStore({
 				let props = JSON.parse(JSON.stringify(this.props))
 
 				this.props.inputs.forEach((prop, k) => {
-					props.outputs[k].__val = null
+					props.inputs[k].__val = null
 				})
 				this.props.outputs.forEach((prop, k) => {
 					props.outputs[k].default_value = prop.__val
