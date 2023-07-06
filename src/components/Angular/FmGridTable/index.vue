@@ -229,6 +229,7 @@
 		'evEventService',
 		'evDataService',
 		'attributeDataService',
+		'components',
 		'vm',
 	])
 
@@ -242,9 +243,12 @@
 	let elem = ref(null)
 
 	let additions = props.evDataService.getAdditions()
-	console.log('additions:', additions)
 	let verticalAdditions = props.evDataService.getVerticalAdditions()
-	let components = props.evDataService.getComponents()
+
+	const components = reactive(
+		props.components || props.evDataService.getComponents()
+	)
+
 	let entityType = props.evDataService.getEntityType()
 	let activeObject = props.evDataService.getActiveObject()
 	let isReport = metaService.isReport(entityType)
