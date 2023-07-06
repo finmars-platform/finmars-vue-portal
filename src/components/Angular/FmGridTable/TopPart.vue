@@ -390,22 +390,20 @@
 			updateReportOptions()
 		}
 
-		let toggleUseDateFromAbove = function () {
-			// reportLayoutOptions.useDateFromAbove updated inside entityViewerDataService by mutation
-			updateReportLayoutOptions()
-
-			evEventService.dispatchEvent(evEvents.TOGGLE_USE_REPORT_DATE_FROM_ABOVE)
-
-			// event REPORT_OPTIONS_CHANGE dispatched from splitPanelReportViewerController as reaction to TOGGLE_USE_REPORT_DATE_FROM_ABOVE
-			if (viewContext !== 'split_panel') {
-				evEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE)
-			}
-		}
-
 		useDateFromAboveName.value =
 			entityType === 'balance-report' ? 'Link date' : 'Link date'
 	}
+	function toggleUseDateFromAbove() {
+		// reportLayoutOptions.useDateFromAbove updated inside entityViewerDataService by mutation
+		updateReportLayoutOptions()
 
+		evEventService.dispatchEvent(evEvents.TOGGLE_USE_REPORT_DATE_FROM_ABOVE)
+
+		// event REPORT_OPTIONS_CHANGE dispatched from splitPanelReportViewerController as reaction to TOGGLE_USE_REPORT_DATE_FROM_ABOVE
+		if (viewContext !== 'split_panel') {
+			evEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE)
+		}
+	}
 	let updateReportOptions = function () {
 		var reportOptions = evDataService.getReportOptions()
 		// delete reportLayoutOptions.datepickerOptions.reportFirstDatepicker.secondDate;

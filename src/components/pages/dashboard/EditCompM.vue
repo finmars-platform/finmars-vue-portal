@@ -1,23 +1,12 @@
 <template>
-	<BaseModal
-		no_padding
-		title="Edit component"
-		:controls="{
-			cancel: { name: 'Cancel' },
-			action: { name: 'Save', cb: save },
-		}"
-	>
-
+	<BaseModal no_padding title="Edit component">
 		<PagesDashboardAddMatrixModal
 			v-if="editable.componentName === 'DashboardMatrix'"
 			:tab="editable.tab"
 			class="settings"
 		/>
 
-		<div
-			v-else
-			class="settings flex"
-		>
+		<div v-else class="settings flex">
 			<div class="settings_coll">
 				<h4>General</h4>
 
@@ -60,6 +49,12 @@
 			</div>
 		</div>
 
+		<template #controls="{ cancel }">
+			<div class="flex sb">
+				<FmBtn type="text" @click="cancel(cancel)">Cancel</FmBtn>
+				<FmBtn @click="save(cancel)">Save</FmBtn>
+			</div>
+		</template>
 	</BaseModal>
 </template>
 
@@ -74,8 +69,8 @@
 	const tabList = [...dashStore.tabs, { id: 1, name: 'Top place' }]
 
 	// let component = dashStore.components.find(item => item.uid == props.uid) || {}
-	let component = dashStore.getComponent(props.uid) || {};
-	let editable = ref( JSON.parse(JSON.stringify(component)) )
+	let component = dashStore.getComponent(props.uid) || {}
+	let editable = ref(JSON.parse(JSON.stringify(component)))
 	// console.log("testing1090.pagesDashboardEditWidgetM ", editable);
 	provide('component', editable) // used by PagesDashboardAddMatrixModal
 
@@ -105,33 +100,43 @@
 			outputs.value.push(clonedProp)
 		})
 	}
-	function save() {
+	function cancel(close) {
+		editable.value = {}
+		close()
+	}
+
+	function save(close) {
+		if (
+			!editable.value.user_code ||
+			!/\w{4,30}/.test(editable.value.user_code)
+		) {
+			useNotify({ type: 'warn', title: 'User code is requered' })
+			return false
+		}
 
 		if (editable.value.componentName === 'DashboardMatrix') {
-
-			dashStore.setComponent(editable.value);
-
+			dashStore.setComponent(editable.value)
 		} else {
-
 			dashStore.$patch((state) => {
 				component.user_code = editable.value.user_code
 				component.tab = editable.value.tab
 				component.settings = editable.settings
 
-				inputs.value.forEach(prop => {
-					let input = state.props.inputs.find(item => item.uid == prop.uid)
+				inputs.value.forEach((prop) => {
+					let input = state.props.inputs.find((item) => item.uid == prop.uid)
 
 					input.default_value = prop.default_value
 					input.subscribedTo = prop.subscribedTo
 				})
 
 				outputs.value.forEach((prop) => {
-					let output = state.props.outputs.find(item => item.uid == prop.uid)
+					let output = state.props.outputs.find((item) => item.uid == prop.uid)
 
 					output.default_value = prop.default_value
 
-					let children = state.props.inputs
-						.filter(item => item.subscribedTo.includes(prop.uid))
+					let children = state.props.inputs.filter((item) =>
+						item.subscribedTo.includes(prop.uid)
+					)
 
 					children.forEach((child) => {
 						let index = child.subscribedTo.findIndex((uid) => uid == prop.uid)
@@ -142,15 +147,13 @@
 					})
 
 					prop._children.forEach((uid) => {
-						let children = state.props.inputs.find(item => item.uid == uid)
+						let children = state.props.inputs.find((item) => item.uid == uid)
 						children.subscribedTo.push(prop.uid)
 					})
 				})
 			})
-
 		}
-
-
+		cancel(close)
 	}
 </script>
 
