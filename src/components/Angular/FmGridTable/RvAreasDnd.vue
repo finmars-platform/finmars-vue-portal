@@ -91,7 +91,7 @@
 
 		scope.hiddenDnDAreas.forEach((hiddenAreaProp) => {
 			scope.dndAreas[hiddenAreaProp].addEventListener(
-				'dragenter',
+				'dragover',
 				sharedLogic.onDropAreaDragenter
 			)
 			scope.dndAreas[hiddenAreaProp].addEventListener(
