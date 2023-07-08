@@ -329,7 +329,7 @@ export default [
 			},
 		],
 		minColls: 6,
-		minRows: 3,
+		minRows: 6,
 		_group: 'base',
 	},
 	{
