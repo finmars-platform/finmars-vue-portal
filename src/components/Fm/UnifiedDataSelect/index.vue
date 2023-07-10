@@ -1,5 +1,5 @@
 <template>
-	<FmMenu
+<!--	<FmMenu
 		v-bind="$attrs"
 		:opened="menuIsOpened"
 		:openOn="false"
@@ -102,44 +102,71 @@
 				<FmLoader />
 			</div>
 		</div>
-	</FmMenu>
+	</FmMenu>-->
+	<BaseUnifiedDataSelect
+		v-bind="$attrs"
+		:modelValue="selItem"
+		:processing="processing"
+		:importingEntity="importingEntity"
+		:databaseItems="databaseItems"
+		:databaseItemsTotal="databaseItemsTotal"
+		:localItems="localItems"
+		:localItemsTotal="localItemsTotal"
+		:disabled="disabled || importingEntity"
+		@update:modelValue="selectItem"
+		@update:errorData="newVal => emit('update:errorData', newVal)"
+		@loadItems="getList"
+		@openModal="modalIsOpened = true"
+	/>
 
 	<FmUnifiedDataSelectModal
 		:content_type="content_type"
-		:modelValue="modelValue"
-		:itemObject="selItem"
+		:selectedItem="selItem"
+		:propId="propId"
 		v-model:opened="modalIsOpened"
-		@update:modelValue="(newVal) => emit('update:modelValue', newVal)"
-		@update:itemObject="onItemObjectChange"
+		@localItemSelected="applyItem"
+		@databaseItemSelected="selectDatabaseItemModal"
 	/>
 </template>
 
 <script setup>
-	import * as commonHelper from "./helper"
-	import { useDebounce } from "../../../composables/useUtils"
+	import * as commonMethods from "./helper"
 
 	let props = defineProps({
-		label: String,
+		/*label: String,
 		tooltip: String,
 		modelValue: [String, Number],
 		selectedOptionsName: String,
-		/** Object with data of selected entity **/
+		/!** Object with data of selected entity **!/
 		itemObject: Object,
 		content_type: String,
 		noBorders: Boolean,
 		noIndicatorButton: Boolean,
 		required: Boolean,
-		errorData: Object,
-	})
+		errorData: Object,*/
+		modelValue: [String, Number],
+		propId: {
+			type: String,
+			default: 'id',
+		},
+		selectedItemName: {
+			type: String,
+			default: '',
+		},
+		/** Object with data of selected entity **/
+		// itemObject: Object,
+		content_type: String,
+	});
 
 	let emit = defineEmits([
 		"update:modelValue",
-		"update:itemObject",
 		"update:errorData",
+		"itemSelected",
 	])
 
-	let disabled = ref(false)
-	let processing = ref(false)
+	let disabled = ref(false);
+	let processing = ref(false);
+	let importingEntity = ref(false);
 
 	let modalIsOpened = ref(false)
 	let menuIsOpened = ref(false)
@@ -158,30 +185,220 @@
 			name: ''
 		}
 	});*/
-	let selItem = ref(props.itemObject || { name: "" })
+	let selItem = ref({name: ""});
 
-	let valueIsValid = ref(false)
-	let inputText = ref(selItem.value.name || "")
+	let valueIsValid = ref(false);
+	let inputText = ref(selItem.value.name || "");
 
-	watch(
+	let taskIntervalId;
+	let intervalTime = 5000;
+
+	/* watch(
 		() => props.itemObject,
 		() => {
-			selItem.value = props.itemObject || { name: "" }
-			inputText.value = selItem.value.name
+			selItem.value = props.itemObject || { name: "" };
+			inputText.value = selItem.value.name;
+		}
+	) */
+	watch(
+		() => [props.modelValue, props.selectedItemName],
+		() => {
+
+			if (props.modelValue) {
+
+				selItem.value = {
+					[props.propId]: props.modelValue,
+					name: props.selectedItemName,
+				};
+
+			} else {
+
+				selItem.value = {name: ''};
+
+			}
+
 		}
 	)
 
-	function onItemObjectChange(newVal) {
-		if (props.itemObject === undefined) {
-			selItem.value = newVal
-			inputText.value = selItem.value.name
+	/*watch(
+		() => props.selectedItemName,
+		() => {
+			console.log("testing1736 props.selectedItemName", props.selectedItemName);
+			selItem.value.name = props.selectedItemName || "";
+		}
+	)*/
+
+	function selectDatabaseItemModal(data) {
+
+		setInputStates(true);
+
+		const currentName = selItem.value.name;
+
+		taskIntervalId = importItemI(data.task, currentName);
+
+	}
+
+	function setInputStates(state) {
+		disabled.value = state;
+		processing.value = state;
+		importingEntity.value = state;
+	}
+	function onImportError (errorMessage) {
+
+		clearInterval(taskIntervalId);
+
+		useNotify( {type: 'error', title: errorMessage} );
+
+		setInputStates(false);
+
+	}
+
+	/**
+	 * @param {Object} resultData - value of importTaskResponse.result_object
+	 * @param {Number} resultData.result_id - id of imported entity
+	 * @param {String} resultData.name
+	 * @param {String} resultData.short_name
+	 * @param {String} resultData.user_code
+	 **/
+	function applyDbItem(resultData) {
+
+		const prop = props.propId === 'id' ? 'result_id' : props.propId;
+
+		selItem.value = {
+			id: resultData.result_id,
+			name: resultData.name,
+			user_code: resultData.user_code,
+		};
+
+		emit( "update:modelValue", resultData[prop] );
+		emit( "itemSelected", JSON.parse(JSON.stringify(selItem.value)) );
+
+	}
+
+	/** Select item after task for import of item finishes its work */
+	function importItemI(taskId, currentlySelItem) {
+
+		return setInterval(async () => {
+
+			const taskRes = await useApi(
+				"task.get",
+				{
+					params: {id: taskId}
+				}
+			);
+
+			if ( Object.keys(taskRes).length === 1 && taskRes.error ) {
+
+				clearInterval(taskIntervalId);
+
+				selItem.value = currentlySelItem;
+
+				setInputStates(false);
+
+				throw taskRes.error;
+
+			}
+			else {
+
+				const resultData = taskRes.result_object;
+				let tasksMessagesData = {
+					'T': 'Import timed out',
+					'C': 'Import aborted',
+					'E': taskRes.error,
+				}
+
+				if (taskRes.status === 'D') { // import DONE
+
+					setInputStates(false);
+					applyDbItem(resultData);
+
+					useNotify( {type: 'success', title: `${ entitiesDataList[props.content_type] } has been loaded` } );
+
+					clearInterval(taskIntervalId);
+
+				} else if ( tasksMessagesData.hasOwnProperty(taskRes.error) ) {
+
+					applyDbItem(resultData);
+					onImportError( tasksMessagesData[taskRes.error] );
+
+				}
+
+			}
+
+		}, intervalTime);
+
+	}
+
+	async function selDatabaseItem(item) {
+
+		let res;
+		const currentlySelItem = JSON.parse(JSON.stringify(selItem.value));
+
+		selItem.value = {
+			id: item.id,
+			user_code: item.user_code,
+			name: item.name,
+		}
+
+		setInputStates(true);
+
+		res = await commonMethods.startImport(props.content_type, item);
+
+		if ( Object.keys(res).length === 1 && res.error ) {
+
+			setInputStates(false);
+
+		}
+		else if (res.errors) {
+
+			onImportError( res.errors );
+
+		}
+		else {
+
+			taskIntervalId = importItemI(res.task, currentlySelItem);
+
+		}
+
+	}
+
+	function applyItem(item) {
+
+		selItem.value = structuredClone(item);
+		delete item.frontOptions;
+
+		emit( "update:modelValue", item[props.propId] );
+		emit("itemSelected", item);
+
+	}
+
+	async function selectItem(newVal) {
+
+		/*if (props.itemObject === undefined) {
+			selItem.value = newVal;
+			inputText.value = selItem.value.name;
+
 		} else {
 			emit("update:itemObject", newVal)
+		}*/
+
+		if (!newVal) return;
+
+		let item;
+
+		if (newVal.frontOptions.type === 'database') {
+			item = await selDatabaseItem(newVal);
+
+		} else {
+			item = newVal;
 		}
+
+		applyItem(item);
+
 	}
 
 	function getHighlighted(value) {
-		return commonHelper.getHighlighted(inputText.value, value)
+		return commonMethods.getHighlighted(inputText.value, value)
 	}
 
 	function closeMenu() {
@@ -190,14 +407,14 @@
 		if (selItem.value.name) inputText.value = selItem.value.name
 	}
 
-	function selectItem(itemId, itemData) {
+	/*function selectItem(itemId, itemData) {
 		if (props.modelValue === itemId) return // when using inside selectDatabaseItem()
 
 		emit("update:modelValue", itemId)
 		emit("update:itemObject", JSON.parse(JSON.stringify(itemData)))
 
 		valueIsValid.value = true
-	}
+	}*/
 
 	function selectLocalItem(item) {
 		closeMenu()
@@ -227,7 +444,7 @@
 		selItem.value = { name: "" }
 	}
 
-	async function loadItemsFromCbonds(item) {
+	/*async function loadItemsFromCbonds(item) {
 		const config = {
 			body: {
 				currency_code: item.code,
@@ -235,17 +452,14 @@
 			},
 		}
 
-		let res = await useApi("importCurrencyCbonds.post", config)
+		let res = await useApi("importCurrencyFmDb.post", config)
 
 		if (res.errors.length) {
 			onLoadItemError(res.errors[0])
 		} else if (res.error) {
 			onLoadItemError(res.error.message)
 		} else {
-			/*emit('update:modelValue', res.result_id);
-			emit('update:itemObject', {id: res.result_id, name: item.name, user_code: item.code});
 
-			valueIsValid.value = true;*/
 			selectItem(res.result_id, {
 				id: res.result_id,
 				name: item.name,
@@ -255,7 +469,7 @@
 
 		disabled.value = false
 		processing.value = false
-	}
+	}*/
 
 	const entitiesDataList = [
 		{
@@ -511,7 +725,7 @@
 		processing.value = false
 	}
 
-	async function selectDatabaseItem(item) {
+	/*async function selectDatabaseItem(item) {
 		console.log("selectDatabaseItem.item", item)
 		menuIsOpened.value = false
 
@@ -524,7 +738,8 @@
 			// Download here?
 			loadItemsFromUnifiedDatabase(item)
 		}
-	}
+
+	}*/
 
 	/* async function findEntities() {
 
@@ -630,17 +845,19 @@
 		processing.value = false;
 
 	} */
-	async function getList() {
-		processing.value = true
+	async function getList(filterText) {
 
-		const res = await commonHelper.getList(props.content_type, inputText.value)
+		processing.value = true;
 
-		databaseItems.value = res.databaseData.items
-		databaseItemsTotal.value = res.databaseData.itemsTotal
-		localItems.value = res.localData.items
-		localItemsTotal.value = res.localData.itemsTotal
+		const res = await commonMethods.getList(props.content_type, filterText);
 
-		processing.value = false
+		databaseItems.value = res.databaseData.items;
+		databaseItemsTotal.value = res.databaseData.itemsTotal;
+		localItems.value = res.localData.items;
+		localItemsTotal.value = res.localData.itemsTotal;
+
+		processing.value = false;
+
 	}
 
 	function openMenu() {
@@ -659,52 +876,21 @@
 		if (!opened) inputText.value = selItem.value.name
 		menuIsOpened.value = opened
 	}
+
+	if (props.modelValue) {
+
+		const selObj = {
+			name: props.selectedItemName,
+		};
+
+		selObj[props.propId] = props.modelValue;
+
+		selItem.value = selObj;
+
+	}
+
 </script>
 
 <style lang="scss" scoped>
-	.sel_menu_block {
-		max-height: 380px;
-		min-width: 280px;
-		max-width: 280px;
-		width: 280px;
 
-		.sel_option {
-			padding: 11px 16px 2px 16px;
-			box-sizing: border-box;
-			width: 100%;
-			border-bottom: $opts-borders;
-
-			&:first-child {
-				border-top: $opts-borders;
-			}
-
-			&:hover {
-				background: inherit;
-				background-color: rgba(0, 0, 0, 0.03);
-				/*border: none;
-				border-radius: 0px;*/
-				-moz-box-shadow: none;
-				-webkit-box-shadow: none;
-				box-shadow: none;
-			}
-
-			span.highlight {
-				color: #f05a22;
-				font-weight: bold;
-			}
-		}
-	}
-
-	.opts_group_title {
-		font-size: 14px;
-		color: #333333;
-		margin: 8px;
-		padding-left: 10px;
-		position: sticky;
-		background: #fff;
-		cursor: pointer;
-		height: 30px;
-		padding-top: 9px;
-		box-sizing: border-box;
-	}
 </style>
