@@ -34,6 +34,7 @@
 		"keycloak-js": "^21.0.1",
 		"pinia": "^2.0.24",
 		"qrcode": "^1.5.1",
+		"swiper": "^10.0.4",
 		"vue": "^3.2.39",
 		"vue3-ace-editor": "^2.2.2"
 	}
