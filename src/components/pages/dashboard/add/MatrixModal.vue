@@ -236,7 +236,7 @@
 
 		<div v-else-if="activeTab === 'linking'" class="p-t-16"></div>
 
-		<div v-else-if="activeTab === 'calculation'" class="p-t-16">
+<!--		<div v-else-if="activeTab === 'calculation'" class="p-t-16">
 			<BaseMultiSelectInput
 				v-model="date1SelectModel"
 				:items="dateControlsOpts"
@@ -244,7 +244,7 @@
 				clearBtn
 			/>
 
-		</div>
+		</div>-->
 
 
 
@@ -261,7 +261,9 @@
 	const layoutsStore = useLayoutsStore();
 	const evAttrsStore = useEvAttributesStore();
 
-	const component = inject('component');
+	let component = inject('component');
+
+	if (!component.value.inputs) component.value.inputs = [];
 	// console.log("testing1090 DashboardAddMatrixModal component", component);
 	let selDashTab = ref(props.tab);
 	let dashTabsList = computed(() => {
@@ -415,7 +417,7 @@
 			break;
 	}
 
-	let date1SelectModel = computed({
+	/*let date1SelectModel = computed({
 		set(newVal) {
 
 			const inputIndex = component.value.inputs.findIndex( inputData => inputData.key === date1Key );
@@ -425,10 +427,10 @@
 		},
 		get() {
 
-			component.value.inputs.find( inputData => inputData.key === date1Key ).children;
+			component.value.inputs.find( inputData => inputData.key === date1Key )._children;
 
 		}
-	})
+	})*/
 	//# endregion tab: CALCULATION
 
 </script>
