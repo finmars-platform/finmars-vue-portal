@@ -173,7 +173,8 @@ let props = defineProps({
 
 		}
 
-		&:not(.bi_no_borders):focus-within, &:not(.bi_no_borders):focus {
+		&:not(.bi_no_borders):not(.disabled):focus-within,
+		&:not(.bi_no_borders):not(.disabled):focus {
 
 			.bi_top {
 				.top_left_border, .top_right_border {
@@ -193,6 +194,7 @@ let props = defineProps({
 			}
 
 		}
+
 		&.bi_no_borders {
 			margin-bottom: 0;
 
