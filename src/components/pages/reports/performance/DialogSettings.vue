@@ -15,10 +15,17 @@
 					</RvSettingsRow>
 
 					<RvSettingsRow label="Reporting currency">
-						<FmUnifiedDataSelect
+<!--						<FmUnifiedDataSelect
 							v-model="reportOptions.report_currency"
 							v-model:itemObject="reportOptions.report_currency_object"
 							content_type="currencies.currency"
+						/>-->
+						<FmUnifiedDataSelect
+							v-model="reportOptions.report_currency"
+							propId="user_code"
+							:selectedItemName="reportOptions.report_currency_object.name"
+							content_type="currencies.currency"
+							@itemSelected="newVal => reportOptions.report_currency_object = newVal"
 						/>
 					</RvSettingsRow>
 

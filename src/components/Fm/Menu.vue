@@ -30,6 +30,10 @@
 		},
 		relativeTo: [String, Node],
 
+		openOnClick: {
+			type: Boolean,
+			default: true,
+		},
 		openOnHover: {
 			type: Boolean,
 			default: false,
@@ -69,10 +73,6 @@
 	let isLeft = props.anchor.includes('left')
 	let isRight = props.anchor.includes('right')
 
-	let openEventsList = computed(() => {
-		return props.openOn ? props.openOn.split(' ') : [];
-	});
-
 	onMounted(() => {
 
 		if ( props.openOnHover ) {
@@ -84,7 +84,6 @@
 			});
 
 		} else {
-
 			activator.value.addEventListener('click', toggle);
 		}
 
@@ -273,7 +272,7 @@
 	let closeOnCo = {
 		handler: function (event) {
 			// needed when fm_drop attached to another element (e.g. body)
-			if ((popup.value && popup.value.contains(event.target)) || activator.value.contains(event.target)) return;
+			if ( ( popup.value && popup.value.contains(event.target) ) || activator.value.contains(event.target) ) return;
 
 			isOpen.value = false;
 			emit('update:opened', isOpen.value);
