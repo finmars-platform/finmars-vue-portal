@@ -8,12 +8,6 @@
 			<div class="flex-row">
 
 				<div style="width: 383px;">
-					<!--					<text-input
-											on-change-callback="vm.onInputTextChange()"
-											placeholder-text="Search"
-											model="vm.inputText"
-											small-options="{dialogParent: '.dialog-containers-wrap'}"
-											class="m-r-8"></text-input>-->
 					<FmInputText placeholder="Search"
 											 class="m-r-8"
 											 :modelValue="inputText"
@@ -44,22 +38,39 @@
 
 					<div v-if="localItems.length">
 
-						<div v-for="option in localItems"
-								 @click="selectLocalItem(option)"
-								 @dblclick="() => {selectLocalItem(option); save();}"
-								 class="database-option-row"
-								 :class="{'active': option.user_code === selLocalItem.user_code}"
+						<div
+							v-for="option in localItems"
+							@click="selItem = option"
+							@dblclick="() => {selItem = option; save();}"
+							class="database-option-row"
+							:class="{ 'active': option.user_code === selItem.user_code }"
 						>
 
-							<div class="option-name" :title="`${option.name}`" v-html="getHighlighted(option.name)">
-
+							<div
+								class="option-name"
+								:title="`${option.name}`"
+								v-html="getHighlighted(option.name)">
 							</div>
-							<div class="option-isin" :title="`${option.user_code}`" v-html="getHighlighted(option.user_code)">
 
+							<div
+								class="option-isin"
+								:title="`${option.user_code}`"
+								v-html="getHighlighted(option.user_code)">
 							</div>
-
 
 						</div>
+
+<!--						<div>
+							<FmBtn
+								v-if="localPages < localPagesTotal"
+								v-show="!loadingLocal"
+								type="basic"
+								class="control-button load-more"
+								@click="loadMoreLocalItems($event)"
+							>Load more</FmBtn>
+
+							<FmLoader v-if="loadingLocal" />
+						</div>-->
 
 					</div>
 
@@ -72,34 +83,35 @@
 
 						<div
 							v-for="option in databaseItems"
-							@click="selectDatabaseItem(option)"
-							@dblclick="() => {selectDatabaseItem(option); save();}"
+							@click="() => selItem = option"
+							@dblclick="() => {selItem = option; save();}"
 							class="database-option-row"
-							:class="{'active': option.referenceId === selDatabaseItem.referenceId}"
+							:class="{'active': option.user_code === selItem.user_code}"
 						>
 
+							<div
+								class="option-name"
+								:title="`${option.name}`"
+								v-html="getHighlighted(option.name)"
+							></div>
 
-							<div class="option-name" :title="`${option.name}`" v-html="getHighlighted(option.name)">
-
-							</div>
-
-							<div v-if="content_type === 'currencies.currency'"
-									 class="option-isin"
-									 :title="`${option.code}`" v-html="getHighlighted(option.code)"></div>
-
-							<div v-else
-									 class="option-isin"
-									 :title="`${option.user_code}`"
-									 v-html="getHighlighted(option.user_code)"></div>
-
+							<div
+								class="option-isin"
+								:title="`${option.user_code}`"
+								v-html="getHighlighted(option.user_code)"
+							></div>
 
 						</div>
 
-						<FmBtn v-if="(globalPages + 1) < totalPages"
-									 type="basic"
-									 class="control-button load-more"
-									 :class="{'disabled-btn': globalProcessing}"
-									 @click="loadMoreGlobalItems($event)">Load more</FmBtn>
+						<FmBtn
+							v-if="dbPages < dbPagesTotal"
+							v-show="!loadingFromDb"
+							type="basic"
+							class="control-button load-more"
+							@click="loadMoreGlobalItems()"
+						>Load more</FmBtn>
+
+						<FmLoader v-if="loadingFromDb" />
 
 					</div>
 
@@ -142,7 +154,20 @@
 				<div>
 					<FmBtn type="basic" class="m-r-8" @click="cancel()">CANCEL</FmBtn>
 
-					<FmBtn type="basic" @click="save()">ok</FmBtn>
+					<FmBtn
+						type="basic"
+						:disabled="saving"
+						@click="save()"
+					>
+						<span v-if="!saving">ok</span>
+
+						<!-- <div v-if="saving" v-fm-tooltip="'Starting import from unified database'">
+							<FmLoader />
+						</div>-->
+						<div v-if="saving">
+							<FmLoader />
+						</div>
+					</FmBtn>
 				</div>
 
 			</div>
@@ -152,33 +177,49 @@
 
 <script setup>
 
-	import * as commonHelper from "./helper";
+	import * as commonMethods from "./helper";
 
 	let props = defineProps({
 		opened: Boolean,
-		modelValue: [String, Number],
+		selectedItem: Object,
+		propId: {
+			type: String,
+			default: 'id',
+		},
 		content_type: String,
-		itemObject: [Object, null]
 	})
 
-	let emit = defineEmits(['update:opened', 'update:itemObject'])
+	let emit = defineEmits([
+		'update:opened',
+		'databaseItemSelected',
+		'localItemSelected',
+	]);
 
 	let processing = ref(false);
-
+	let loadingLocal = ref(false); // Will be used for loadMoreLocalItems method
+	let loadingFromDb = ref(false);
+	let saving = ref(false);
 
 	let databaseItemsTotal = ref(0);
 	let databaseItems = ref([]);
-	let selDatabaseItem = ref({});
-	let globalProcessing = ref(false);
-	let globalPages = ref(0);
+	// let selDatabaseItem = ref({});
 
-	let totalPages = computed(() => {
+	let dbPages = ref(1);
+
+	let dbPagesTotal = computed(() => {
 		return databaseItemsTotal.value ? Math.round(databaseItemsTotal.value / 40) : 0;
 	});
 
 	let localItemsTotal = ref(0);
 	let localItems = ref([]);
-	let selLocalItem = ref({});
+	// let selLocalItem = ref({});
+	let localPages = ref(1); // TODO: implement after adding pagination for local item on backend
+
+	let selItem = ref({});
+
+	let localPagesTotal = computed(() => { // TODO: implement after adding pagination for local item on backend
+		return localItemsTotal.value ? Math.round(localItemsTotal.value / 40) : 0;
+	});
 
 	// let inputText = ref(props.parentInputText);
 	let inputText = ref('');
@@ -191,66 +232,63 @@
 
 			if (!props.opened) return;
 
-			if (props.itemObject) {
-
-				if (props.itemObject.referenceId) {
-					selDatabaseItem.value = props.itemObject;
-
-				} else {
-					selLocalItem.value = props.itemObject;
-				}
-
-			} /* else if (props.parentInputText) {
-					inputText.value = props.parentInputText;
-				} */
+			if (props.selectedItem.id || props.selectedItem.user_code) {
+				selItem.value = props.selectedItem;
+			}
 
 			getList();
 
 		}
 	)
 
-	/* function filterItems (filterVal) {
-
-		inputText.value = filterVal;
-
-		globalPages.value = 0;
-
-		getList(inputText.value);
-
-	} */
 	const filterItems = useDebounce(function (filterVal) {
 
 		inputText.value = filterVal;
 
-		globalPages.value = 0;
+		dbPages.value = 1;
 
 		getList(inputText.value);
 
 	}, 500);
 
 	function getHighlighted (value) {
-		return commonHelper.getHighlighted(inputText.value, value);
+		return commonMethods.getHighlighted(inputText.value, value);
 	}
 
 	async function getList (filterTerms) {
 
 		processing.value = true;
 
-		const res = await commonHelper.getList(props.content_type, filterTerms);
+		const res = await commonMethods.getList(props.content_type, filterTerms);
 
 		databaseItems.value = res.databaseData.items;
 		databaseItemsTotal.value = res.databaseData.itemsTotal;
 
 		localItems.value = res.localData.items;
+		localItemsTotal.value = res.localData.itemsTotal;
 
 		processing.value = false;
 
 	}
 
-	function selectLocalItem (item) {
-		selLocalItem.value = item;
-		selDatabaseItem.value = {};
-	}
+	/* // TODO: implement after adding pagination for local item on backend
+
+	async function loadMoreLocalItems() {
+
+		loadingLocal.value = true;
+		const nextPage = localPages.value + 1;
+
+		const res = await commonMethods.fetchLocalEntities(props.content_type, inputText.value, nextPage);
+
+		if (!res.error) {
+			// do not increase page if error occurred
+			localPages.value = nextPage;
+			databaseItems.value = databaseItems.value.concat(res.items);
+		}
+
+		loadingLocal.value = false;
+
+	} */
 
 	function selectDatabaseItem (item) {
 		selLocalItem.value = {};
@@ -259,9 +297,22 @@
 
 	async function loadMoreGlobalItems () {
 
-		globalPages.value = globalPages.value + 1;
+		loadingFromDb.value = true;
+		const nextPage = dbPages.value + 1;
 
-		await commonHelper.findEntities(props.content_type, inputText.value, globalPages.value);
+		const res = await commonMethods.fetchDatabaseEntities(props.content_type, inputText.value, nextPage);
+
+		if (!res.error) {
+			// do not increase page if error occurred
+			dbPages.value = nextPage;
+
+			const items = commonMethods.filterDatabaseItems(res.items, localItems.value);
+
+			databaseItems.value = databaseItems.value.concat(items);
+
+		}
+
+		loadingFromDb.value = false;
 
 	}
 
@@ -269,38 +320,59 @@
 
 		emit('update:opened', false);
 
-		selDatabaseItem.value = {};
-		selLocalItem.value = {};
+		selItem.value = {};
 
 	}
 
-	function save () {
+	async function save () {
 
-		let selItem, id;
+		const sameItemSelected = props.modelValue && props.modelValue[props.propId] === selItem.value[props.propId];
 
-		if ( Object.keys(selDatabaseItem.value).length ) {
+		if ( !Object.keys(selItem).length || sameItemSelected ) {
 
-			selItem = selDatabaseItem.value;
-			id = selDatabaseItem.value.referenceId;
-
-		}
-		else if ( Object.keys(selLocalItem.value).length ) {
-
-			selItem = selLocalItem.value;
-			id = selLocalItem.value.user_code;
+			cancel();
+			return;
 
 		}
 
-		if (selItem) {
+		if ( selItem.value.frontOptions.type === 'database' ) {
 
-			emit('update:modelValue', id);
-			emit('update:itemObject', JSON.parse(JSON.stringify(selItem)));
+			saving.value = true;
+
+			const res = await commonMethods.startImport(props.content_type, JSON.parse(JSON.stringify( selItem.value )) );
+
+			if ( Object.keys(res).length === 1 && res.error ) {
+
+				saving.value = false;
+
+				return;
+
+			} else if (res.errors) {
+
+				useNotify( {type: 'error', title: res.errors} );
+
+				saving.value = false;
+
+				return;
+
+			} else {
+
+				res.id = selItem.value.id;
+				emit( 'databaseItemSelected', res );
+
+			}
+			// emit( 'databaseItemSelected', JSON.parse(JSON.stringify( selDatabaseItem.value )) );
+
+		}
+		else {
+
+			delete selItem.value.frontOptions;
+
+			emit( 'localItemSelected', JSON.parse(JSON.stringify( selItem.value )) );
 
 		}
 
-		selDatabaseItem.value = {};
-		selLocalItem.value = {};
-
+		selItem.value = {};
 		emit('update:opened', false);
 
 	}
@@ -346,6 +418,7 @@
 		position: sticky;
 		background: #fff;
 		cursor: pointer;
+		font-weight: 600;
 	}
 
 	.database-option-row {

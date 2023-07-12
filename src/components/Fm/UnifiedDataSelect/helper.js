@@ -1,27 +1,35 @@
-export function getHighlighted (inputText, value) {
+export function getHighlighted (filterText, value) {
 
-	const inputTextPieces = inputText.split(' ')
+	const inputTextPieces = filterText.replace(' ', '|');
 
 	// Case-insensitive regular expression for highlighting multiple parts inside results
-	var reg = new RegExp("(?![^<]+>)(" + inputTextPieces.join("|") + ")", "ig");
+	const reg = new RegExp(`(?![^<]+>)(${inputTextPieces})`, "ig");
 
 	return value.replace(reg, '<span class="highlight">$1</span>');
 
 }
 
-export async function findEntities(content_type, inputText, pageNumber) {
-
-	if (!pageNumber) pageNumber = 0;
+export async function fetchDatabaseEntities(content_type, filterText, pageNumber=1) {
 
 	let result = {
 		items: []
-	}
+	};
 
-	if (content_type === 'currencies.currency') {
+	const options = {
+		filters: {
+			query: filterText || '',
+			page: pageNumber,
+			page_size: 40,
+		}
+	};
+
+	let routeOpt;
+
+	/* if (content_type === 'currencies.currency') {
 
 		const options = {
 			filters: {
-				name: inputText || '',
+				name: filterText || '',
 				page: pageNumber,
 			}
 		}
@@ -48,7 +56,7 @@ export async function findEntities(content_type, inputText, pageNumber) {
 
 	const options = {
 		filters: {
-			query: inputText || '',
+			query: filterText || '',
 		}
 	}
 
@@ -60,41 +68,82 @@ export async function findEntities(content_type, inputText, pageNumber) {
 
 	}
 
-	const res = await useApi('unifiedData.get', options);
+	const res = await useApi('unifiedData.get', options); */
+
+	if (content_type === 'currencies.currency') {
+		routeOpt = 'currencyDatabaseSearch.get';
+	}
+	else if (content_type === 'counterparties.counterparty') {
+		routeOpt = 'counterpartyDatabaseSearch.get';
+	}
+
+	const res = await useApi(routeOpt, options);
 
 	if (res.error) {
 		console.error("Unified Database error occurred", res.error);
 
 	} else {
+
 		result.itemsTotal = res.count;
-		result.items = res.results;
+
+		result.items = res.results.map(item => {
+
+			item.frontOptions = {
+				type: 'database'
+			}
+
+			return item;
+
+		});
+
 	}
 
 	return result;
 
 }
 
-async function findEntitiesByUserCode(content_type, inputText) {
+export async function fetchLocalEntities(content_type, filterText, pageNumber=1) {
 
 	let result = {};
 
 	const options = {
 		listLight: true,
 		filters: {
+			page: pageNumber,
 			pageSize: 500,
-			user_code: inputText || '',
+			query: filterText || '',
 		}
 	};
 
 	let res = await useResolveEntityApi(content_type, 'get', options);
 
 	if (!res.error) {
+
 		result.itemsTotal = res.count;
-		result.items = res.results;
+
+		result.items = res.results.map(item => {
+
+			item.frontOptions = {
+				type: 'local'
+			}
+
+			return item;
+
+		});
+
 	}
 
 	return result;
 
+}
+
+/** @return {Array} - not imported database items **/
+export function filterDatabaseItems(dbItems, localItems) {
+	return dbItems.filter(function (databaseItem) {
+		// there is no such item locally
+		return !localItems.find( item => item.user_code === databaseItem.user_code );
+
+	});
 }
 
 /**
@@ -106,23 +155,43 @@ async function findEntitiesByUserCode(content_type, inputText) {
 export async function getList(content_type, inputText) {
 
 	const res = await Promise.allSettled([
-		findEntities(content_type, inputText),
-		findEntitiesByUserCode(content_type, inputText),
+		fetchDatabaseEntities(content_type, inputText),
+		fetchLocalEntities(content_type, inputText),
 	]);
 
-	let res0 = res[0].value; // databaseItems
-	let res1 = res[1].value; // localItems
+	let databaseData = res[0].value;
+	let localData = res[1].value;
 
-	res0.items = res0.items.filter(function (databaseItem) {
+	databaseData.items = filterDatabaseItems(databaseData.items, localData.items);
 
-		let userCodeProp = (content_type === 'currencies.currency') ? 'code' : 'user_code';
+	return {databaseData, localData};
 
-		let exist = !!res1.items.find(item => item.user_code === databaseItem[userCodeProp]);
+}
 
-		return !exist;
+export function startImport(contentType, item) {
 
-	})
+	if (contentType === 'currencies.currency') {
 
-	return {databaseData: res0, localData: res1};
+		const options = {
+			body: {
+				user_code: item.user_code,
+				mode: 1,
+			}
+		}
+
+		return useApi('importCurrencyFmDb.post', options);
+
+	}
+	else if (contentType === 'counterparties.counterparty') {
+
+		const options = {
+			body: {
+				company_id: item.id,
+			}
+		}
+
+		return useApi('importCurrencyFmDb.post', options);
+
+	}
 
 }

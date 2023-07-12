@@ -1,9 +1,11 @@
 <template>
 	<Teleport to="body" v-if="modelValue">
 		<transition name="fade">
-			<div class="modal_wrap flex aic jcc"
-				:class="{no_padding: no_padding}"
+			<div
 				v-show="modelValue"
+				class="modal_wrap flex aic jcc"
+				:class="{no_padding: no_padding}"
+				v-bind="$attrs"
 			>
 				<div class="modal">
 					<div class="modal_top flex aic sb">

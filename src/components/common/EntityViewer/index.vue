@@ -11,12 +11,12 @@
 					<div style="flex-basis: 175px">
 						<FmUnifiedDataSelect
 							v-model="viewerData.reportOptions.report_currency"
-							v-model:itemObject="
-								viewerData.reportOptions.report_currency_object
-							"
+							propId="user_code"
+							:selectedItemName="viewerData.reportOptions.report_currency_object.name"
 							noBorders
 							content_type="currencies.currency"
 							@update:modelValue="emit('refresh')"
+							@itemSelected="newVal => viewerData.reportOptions.report_currency_object = newVal"
 						/>
 					</div>
 
