@@ -154,7 +154,20 @@
 				<div>
 					<FmBtn type="basic" class="m-r-8" @click="cancel()">CANCEL</FmBtn>
 
-					<FmBtn type="basic" @click="save()">ok</FmBtn>
+					<FmBtn
+						type="basic"
+						:disabled="saving"
+						@click="save()"
+					>
+						<span v-if="!saving">ok</span>
+
+						<!-- <div v-if="saving" v-fm-tooltip="'Starting import from unified database'">
+							<FmLoader />
+						</div>-->
+						<div v-if="saving">
+							<FmLoader />
+						</div>
+					</FmBtn>
 				</div>
 
 			</div>
@@ -183,8 +196,9 @@
 	]);
 
 	let processing = ref(false);
-	let loadingLocal = ref(false);
+	let loadingLocal = ref(false); // Will be used for loadMoreLocalItems method
 	let loadingFromDb = ref(false);
+	let saving = ref(false);
 
 	let databaseItemsTotal = ref(0);
 	let databaseItems = ref([]);
@@ -199,11 +213,11 @@
 	let localItemsTotal = ref(0);
 	let localItems = ref([]);
 	// let selLocalItem = ref({});
-	let localPages = ref(1);
+	let localPages = ref(1); // TODO: implement after adding pagination for local item on backend
 
 	let selItem = ref({});
 
-	let localPagesTotal = computed(() => {
+	let localPagesTotal = computed(() => { // TODO: implement after adding pagination for local item on backend
 		return localItemsTotal.value ? Math.round(localItemsTotal.value / 40) : 0;
 	});
 
@@ -218,64 +232,15 @@
 
 			if (!props.opened) return;
 
-			/*if (props.itemObject) {
-
-				if (props.itemObject.id) {
-					selDatabaseItem.value = props.itemObject;
-
-				} else {
-					selLocalItem.value = props.itemObject;
-				}
-
-			}*/
-
 			if (props.selectedItem.id || props.selectedItem.user_code) {
 				selItem.value = props.selectedItem;
 			}
 
 			getList();
 
-			/*getList().then(() => {
-
-				if (props.modelValue) {
-					console.log("testing1736.modal open watcher ", props.modelValue, props.propId);
-					let selItem;
-
-					selItem = databaseItems.value.find( item => {
-						return item[props.propId] === props.modelValue
-					});
-					console.log("testing1736.modal open watcher selItem1", selItem);
-					if (selItem) {
-						selDatabaseItem.value = selItem;
-						console.log("testing1736.modal open watcher selDatabaseItem.value", selDatabaseItem.value);
-						return;
-					}
-					console.log("testing1736.modal open watcher localItems.value", localItems.value);
-					selItem = localItems.value.find( item => {
-						return item[props.propId] === props.modelValue;
-					});
-					console.log("testing1736.modal open watcher selItem2", selItem);
-					if (selItem) {
-						selLocalItem.value = selItem;
-						console.log("testing1736.modal open watcher selLocalItem.value", selLocalItem.value);
-					}
-
-				}
-
-			});*/
-
 		}
 	)
 
-	/* function filterItems (filterVal) {
-
-		inputText.value = filterVal;
-
-		dbPages.value = 0;
-
-		getList(inputText.value);
-
-	} */
 	const filterItems = useDebounce(function (filterVal) {
 
 		inputText.value = filterVal;
@@ -306,10 +271,7 @@
 
 	}
 
-	function selectLocalItem (item) {
-		selLocalItem.value = item;
-		selDatabaseItem.value = {};
-	}
+	/* // TODO: implement after adding pagination for local item on backend
 
 	async function loadMoreLocalItems() {
 
@@ -326,7 +288,7 @@
 
 		loadingLocal.value = false;
 
-	}
+	} */
 
 	function selectDatabaseItem (item) {
 		selLocalItem.value = {};
@@ -375,19 +337,27 @@
 
 		if ( selItem.value.frontOptions.type === 'database' ) {
 
+			saving.value = true;
+
 			const res = await commonMethods.startImport(props.content_type, JSON.parse(JSON.stringify( selItem.value )) );
 
 			if ( Object.keys(res).length === 1 && res.error ) {
+
+				saving.value = false;
 
 				return;
 
 			} else if (res.errors) {
 
 				useNotify( {type: 'error', title: res.errors} );
+
+				saving.value = false;
+
 				return;
 
 			} else {
 
+				res.id = selItem.value.id;
 				emit( 'databaseItemSelected', res );
 
 			}

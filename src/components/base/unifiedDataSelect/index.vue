@@ -2,6 +2,7 @@
 	<FmMenu
 		:opened="menuIsOpened"
 		attach="body"
+		:disabled="disabled"
 		class="width-100"
 		@update:opened="toggleMenu"
 	>
@@ -13,6 +14,7 @@
 				:tooltip="tooltip"
 				:errorData="errorData"
 				:class="{ active: menuIsOpened, bi_no_borders: noBorders }"
+				:disabled="disabled"
 				:required="required"
 				@update:errorData="(newVal) => emit('update:errorData', newVal)"
 				@click.stop="openMenu"
@@ -22,6 +24,7 @@
 						v-show="!importingEntity"
 						type="iconBtn"
 						icon="menu"
+						:disabled="disabled"
 						@click.stop="emit('openModal')"
 					/>
 
@@ -34,13 +37,17 @@
 					:placeholder="label"
 					:value="inputText"
 					type="text"
+					:disabled="disabled"
 					class="bi_main_input"
 					@input="onFilterChange"
 				/>
 
 				<template #rightBtn>
 					<slot name="rightBtn" />
-					<FmIcon :icon="menuIsOpened ? 'arrow_drop_up' : 'arrow_drop_down'" />
+					<FmIcon
+						:icon="menuIsOpened ? 'arrow_drop_up' : 'arrow_drop_down'"
+						:disabled="disabled"
+					/>
 				</template>
 			</BaseInput>
 		</template>
@@ -181,7 +188,7 @@
 
 	function openMenu() {
 
-		if (menuIsOpened.value) return;
+		if (menuIsOpened.value || props.disabled) return;
 
 		menuIsOpened.value = true;
 
@@ -261,5 +268,9 @@
 		height: 30px;
 		padding-top: 9px;
 		box-sizing: border-box;
+	}
+
+	.bi_main_input[disabled] {
+		color: $text-lighten;
 	}
 </style>

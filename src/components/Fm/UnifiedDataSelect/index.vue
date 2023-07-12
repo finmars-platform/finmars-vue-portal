@@ -1,108 +1,5 @@
 <template>
-<!--	<FmMenu
-		v-bind="$attrs"
-		:opened="menuIsOpened"
-		:openOn="false"
-		attach="body"
-		class="width-100"
-		@update:opened="toggleMenu"
-	>
-		<template #btn>
-			<BaseInput
-				:modelValue="modelValue"
-				:label="label"
-				:tooltip="tooltip"
-				:errorData="errorData"
-				:class="{ active: menuIsOpened, bi_no_borders: noBorders }"
-				:required="required"
-				@update:errorData="(newVal) => emit('update:errorData', newVal)"
-				@click.stop="openMenu"
-			>
-				<template v-if="!noBorders && !noIndicatorButton" #button>
-					<FmBtn
-						type="iconBtn"
-						icon="menu"
-						@click.stop="modalIsOpened = true"
-					/>
-				</template>
 
-				<input
-					:placeholder="label"
-					:value="inputText"
-					type="text"
-					class="bi_main_input"
-					@input="onFilterInputChange"
-				/>
-
-				<template #rightBtn>
-					<slot name="rightBtn" />
-					<FmIcon :icon="menuIsOpened ? 'arrow_drop_up' : 'arrow_drop_down'" />
-				</template>
-			</BaseInput>
-		</template>
-
-		<div class="sel_menu_block">
-			<div v-if="!processing" style="height: 369px; overflow-y: auto">
-				<div v-if="localItems.length" class="text-bold opts_group_title">
-					Local Records ({{ localItemsTotal }})
-				</div>
-
-				<div v-if="localItems.length">
-					<div
-						v-for="option in localItems"
-						:key="option.user_code"
-						@click="selectLocalItem(option)"
-						class="sel_option"
-					>
-						<div v-html="getHighlighted(option.name)"></div>
-
-						<div v-html="getHighlighted(option.user_code)"></div>
-					</div>
-				</div>
-
-				<div
-					v-if="databaseItems.length"
-					class="text-bold opts_group_title"
-					style="bottom: 0"
-				>
-					Global Records ({{ databaseItemsTotal }})
-				</div>
-
-				<div v-if="databaseItems.length">
-					<div
-						v-for="option in databaseItems"
-						:key="
-							content_type === 'currencies.currency'
-								? option.code
-								: option.user_code
-						"
-						@click="selectDatabaseItem(option)"
-						class="sel_option"
-					>
-						<div v-html="getHighlighted(option.name)"></div>
-
-						<div
-							v-if="content_type !== 'currencies.currency'"
-							v-html="getHighlighted(option.user_code)"
-						></div>
-
-						<div
-							v-if="content_type === 'currencies.currency'"
-							v-html="getHighlighted(option.code)"
-						></div>
-					</div>
-				</div>
-
-				<div v-if="noItemsFound">
-					<span class="text-bold opts_group_title">Not records found</span>
-				</div>
-			</div>
-
-			<div v-if="processing" class="flex-row fc-center">
-				<FmLoader />
-			</div>
-		</div>
-	</FmMenu>-->
 	<BaseUnifiedDataSelect
 		v-bind="$attrs"
 		:modelValue="selItem"
@@ -133,17 +30,6 @@
 	import * as commonMethods from "./helper"
 
 	let props = defineProps({
-		/*label: String,
-		tooltip: String,
-		modelValue: [String, Number],
-		selectedOptionsName: String,
-		/!** Object with data of selected entity **!/
-		itemObject: Object,
-		content_type: String,
-		noBorders: Boolean,
-		noIndicatorButton: Boolean,
-		required: Boolean,
-		errorData: Object,*/
 		modelValue: [String, Number],
 		propId: {
 			type: String,
@@ -175,31 +61,14 @@
 	let databaseItemsTotal = ref(0)
 	let databaseItems = ref([])
 	let localItems = ref([])
-	let noItemsFound = computed(
-		() => !localItems.value.length && !databaseItems.value.length
-	)
 
-	/*let selItem = reactive({
-		type: null,
-		data: {
-			name: ''
-		}
-	});*/
 	let selItem = ref({name: ""});
 
-	let valueIsValid = ref(false);
 	let inputText = ref(selItem.value.name || "");
 
 	let taskIntervalId;
 	let intervalTime = 5000;
 
-	/* watch(
-		() => props.itemObject,
-		() => {
-			selItem.value = props.itemObject || { name: "" };
-			inputText.value = selItem.value.name;
-		}
-	) */
 	watch(
 		() => [props.modelValue, props.selectedItemName],
 		() => {
@@ -220,19 +89,17 @@
 		}
 	)
 
-	/*watch(
-		() => props.selectedItemName,
-		() => {
-			console.log("testing1736 props.selectedItemName", props.selectedItemName);
-			selItem.value.name = props.selectedItemName || "";
-		}
-	)*/
-
 	function selectDatabaseItemModal(data) {
 
 		setInputStates(true);
 
 		const currentName = selItem.value.name;
+
+		selItem.value = {
+			id: data.id,
+			user_code: data.user_code,
+			name: data.name,
+		}
 
 		taskIntervalId = importItemI(data.task, currentName);
 
@@ -316,9 +183,11 @@
 
 					clearInterval(taskIntervalId);
 
-				} else if ( tasksMessagesData.hasOwnProperty(taskRes.error) ) {
+				} else if ( tasksMessagesData.hasOwnProperty(taskRes.status) ) {
 
+					selItem.value = currentlySelItem;
 					applyDbItem(resultData);
+
 					onImportError( tasksMessagesData[taskRes.error] );
 
 				}
@@ -374,14 +243,6 @@
 
 	async function selectItem(newVal) {
 
-		/*if (props.itemObject === undefined) {
-			selItem.value = newVal;
-			inputText.value = selItem.value.name;
-
-		} else {
-			emit("update:itemObject", newVal)
-		}*/
-
 		if (!newVal) return;
 
 		let item;
@@ -396,80 +257,6 @@
 		applyItem(item);
 
 	}
-
-	function getHighlighted(value) {
-		return commonMethods.getHighlighted(inputText.value, value)
-	}
-
-	function closeMenu() {
-		menuIsOpened.value = false
-
-		if (selItem.value.name) inputText.value = selItem.value.name
-	}
-
-	/*function selectItem(itemId, itemData) {
-		if (props.modelValue === itemId) return // when using inside selectDatabaseItem()
-
-		emit("update:modelValue", itemId)
-		emit("update:itemObject", JSON.parse(JSON.stringify(itemData)))
-
-		valueIsValid.value = true
-	}*/
-
-	function selectLocalItem(item) {
-		closeMenu()
-
-		if (item.id === props.modelValue) return
-
-		selItem.value = item
-
-		/*emit('update:modelValue', item.id);
-		emit('update:itemObject', item);
-
-		valueIsValid.value = true;*/
-		selectItem(item.id, item)
-
-		inputText.value = item.short_name
-	}
-
-	const onLoadItemError = function (error) {
-		useNotify({
-			type: "error",
-			title: "Error",
-			text: error,
-		})
-
-		emit("update:modelValue", null)
-
-		selItem.value = { name: "" }
-	}
-
-	/*async function loadItemsFromCbonds(item) {
-		const config = {
-			body: {
-				currency_code: item.code,
-				mode: 1,
-			},
-		}
-
-		let res = await useApi("importCurrencyFmDb.post", config)
-
-		if (res.errors.length) {
-			onLoadItemError(res.errors[0])
-		} else if (res.error) {
-			onLoadItemError(res.error.message)
-		} else {
-
-			selectItem(res.result_id, {
-				id: res.result_id,
-				name: item.name,
-				user_code: item.code,
-			})
-		}
-
-		disabled.value = false
-		processing.value = false
-	}*/
 
 	const entitiesDataList = [
 		{
@@ -685,166 +472,6 @@
 		},
 	]
 
-	function getEntityTypeByContentType() {
-		return entitiesDataList.find((data) => data.key === props.content_type)
-			.entity
-	}
-
-	async function loadItemsFromUnifiedDatabase(item) {
-		const config = {
-			body: {
-				id: item.id,
-				entity_type: getEntityTypeByContentType(),
-			},
-		}
-
-		selItem.value = item
-
-		processing.value = true
-		disabled.value = true
-
-		let res = await useApi("importUnifiedData.post", config)
-
-		if (res.errors.length) {
-			onLoadItemError(res.errors[0])
-		} else if (res.error) {
-			onLoadItemError(res.error.message)
-		} else {
-			/* emit('update:modelValue', res.id);
-			emit('update:itemObject', {id: res.id, name: item.name, user_code: item.user_code});
-
-			valueIsValid.value = true; */
-			selectItem(res.id, {
-				id: res.id,
-				name: item.name,
-				user_code: item.user_code,
-			})
-		}
-
-		disabled.value = false
-		processing.value = false
-	}
-
-	/*async function selectDatabaseItem(item) {
-		console.log("selectDatabaseItem.item", item)
-		menuIsOpened.value = false
-
-		selItem.value = item
-		inputText.value = item.name
-
-		if (props.content_type === "currencies.currency") {
-			loadItemsFromCbonds(item)
-		} else {
-			// Download here?
-			loadItemsFromUnifiedDatabase(item)
-		}
-
-	}*/
-
-	/* async function findEntities() {
-
-		databaseItems.value = [];
-
-		if (props.content_type === 'currencies.currency') {
-
-			const options = {
-				filters: {
-					name: inputText.value || '',
-					page: 0,
-				}
-			}
-
-			const res = await useApi('currencyDatabaseSearch.get', options);
-
-			if (res.error) {
-
-				console.error("Unified Database error occurred", res.error);
-
-			} else {
-
-				databaseItemsTotal.value = res.resultCount;
-				// TODO make request for currencyDatabaseSearch.get return empty array instead of object
-				if (Array.isArray(res.foundItems)) {
-					databaseItems.value = res.foundItems;
-				}
-
-			}
-
-			return;
-
-		}
-
-		const options = {
-			filters: {
-				query: inputText.value || '',
-			}
-		}
-
-		if (content_type === 'counterparties.counterparty') {
-
-			options.params = {
-				type: 'company'
-			}
-
-		}
-
-		const res = await useApi('unifiedData.get', options);
-
-		if (res.error) {
-
-			console.error("Unified Database error occurred", res.error);
-
-		} else {
-			databaseItemsTotal.value = res.count;
-			databaseItems.value = res.results;
-		}
-
-	}
-
-	async function findEntitiesByUserCode() {
-
-		const options = {
-			listLight: true,
-			filters: {
-				pageSize: 500,
-				user_code: inputText.value || '',
-			}
-		};
-
-		let res = await useResolveEntityApi(props.content_type, 'get', options);
-
-		if (!res.error) {
-			localItemsTotal.value = res.count;
-			localItems.value = res.results;
-		}
-
-	}
-
-	async function getList() {
-
-		processing.value = true;
-
-		var promises = [];
-
-		promises.push(findEntities());
-		promises.push(findEntitiesByUserCode())
-
-
-		await Promise.allSettled(promises);
-
-		databaseItems.value = databaseItems.value.filter(function (databaseItem) {
-
-			let userCodeProp = (props.content_type === 'currencies.currency') ? 'code' : 'user_code';
-
-			let exist = !!localItems.value.find(item => item.user_code === databaseItem[userCodeProp]);
-
-			return !exist;
-
-		})
-
-		processing.value = false;
-
-	} */
 	async function getList(filterText) {
 
 		processing.value = true;
@@ -858,23 +485,6 @@
 
 		processing.value = false;
 
-	}
-
-	function openMenu() {
-		menuIsOpened.value = true
-
-		inputText.value = ""
-		getList()
-	}
-
-	const onFilterInputChange = useDebounce(function ($event) {
-		inputText.value = $event.target.value
-		getList()
-	}, 500)
-
-	function toggleMenu(opened) {
-		if (!opened) inputText.value = selItem.value.name
-		menuIsOpened.value = opened
 	}
 
 	if (props.modelValue) {
@@ -891,6 +501,4 @@
 
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>
