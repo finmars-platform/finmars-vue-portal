@@ -178,11 +178,14 @@ function findAccessPolicyUserCodes(val) {
 async function save() {
 	let res = await useApi('role.put', {body: role.value, params: {id: route.params.id}})
 
-	if (res) useNotify({type: 'success', title: 'Saved!'})
+	if (res) {
+		useNotify({type: 'success', title: 'Saved!'})
+		router.push('/settings/permissions?tab=Roles')
+	}
 }
 
 async function cancel() {
-	router.push('/settings/permissions')
+	router.push('/settings/permissions?tab=Roles')
 }
 
 function fromatDate(date) {

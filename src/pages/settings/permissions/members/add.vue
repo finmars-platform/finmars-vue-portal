@@ -28,32 +28,31 @@
 		<template #right>
 			<FmCard title="Groups" class="m-b-6">
 				<BaseMultiSelectInput
+					v-if="readyStatus.groups"
 					v-model="form.groups"
-					title="Groups"
 					:items="groups"
-					item_id="name"
 				/>
 
-
+				<FmLoader v-if="!readyStatus.groups" />
 			</FmCard>
 
-			<FmCard title="Groups" class="m-b-6">
+			<FmCard title="Roles" class="m-b-6">
 				<BaseMultiSelectInput
+					v-if="readyStatus.roles"
 					v-model="form.roles"
-					title="Roles"
 					:items="roles"
-					item_id="name"
 				/>
 
+				<FmLoader v-if="!readyStatus.roles" />
 			</FmCard>
 			<FmCard title="Personal Access Policies" class="m-b-6">
 				<BaseMultiSelectInput
+					v-if="readyStatus.accessPolicies"
 					v-model="form.access_policies"
-					title="Personal Access Policies"
-					:items="access_policies"
-					item_id="name"
+					:items="accessPolicies"
 				/>
 
+				<FmLoader v-if="!readyStatus.accessPolicies" />
 			</FmCard>
 		</template>
 	</CommonSettingsLayout>
@@ -62,6 +61,7 @@
 <script setup>
 
 	import dayjs from 'dayjs'
+	import {loadMultiselectOpts} from "~/pages/settings/helper";
 
 	definePageMeta({
 		bread: [
@@ -80,27 +80,36 @@
 	let route = useRoute()
 	let router = useRouter()
 
+	let readyStatus = reactive({
+		groups: false,
+		roles: false,
+		accessPolicies: false,
+	})
+
 	let form = reactive({
 		groups: [],
 		base_api_url: store.current.base_api_url,
 		is_owner: false
 	})
-	let groups = ref([])
+
+	let groups = ref([]);
+	let roles = ref([]);
+	let accessPolicies = ref([]);
 
 	async function init() {
-		let res = await useApi('userGroups.get')
-		groups.value = res.results
-	}
-	function findIds( val ) {
-		if ( typeof val == 'string' ) val = val.split(',')
-		let result = []
-		val.forEach( itemArr => {
-			let elem = groups.value.find(itemObj => itemObj.name == itemArr)
-			if ( elem ) result.push( elem.id )
-		})
 
-		return result
+		const res = await Promise.all( [
+			loadMultiselectOpts('userGroups.get', readyStatus, 'groups'),
+			loadMultiselectOpts("roleList.get", readyStatus, 'roles'),
+			loadMultiselectOpts("accessPolicyList.get", readyStatus, 'accessPolicies'),
+		]);
+
+		groups.value = res[0];
+		roles.value = res[1];
+		accessPolicies.value = res[2];
+
 	}
+
 	async function save() {
 		// TODO Refactor
 		let sendedForm = {
@@ -114,11 +123,11 @@
 		if ( !res.error ) {
 			useNotify({type: 'success', title: 'Invite sent!'})
 
-			router.push('/settings/permissions')
+			router.push('/settings/permissions?tab=Members')
 		}
 	}
 	async function cancel() {
-		router.push('/settings/permissions')
+		router.push('/settings/permissions?tab=Members')
 	}
 	function fromatDate( date ) {
 		return dayjs( date ).format('DD.MM.YYYY LT')
@@ -127,8 +136,9 @@
 	if ( store.current.base_api_url ) {
 		init()
 	} else {
-		watch( () => store.current, async () => {
+		const unwatch = watch( () => store.current, async () => {
 			init()
+			unwatch();
 		})
 	}
 </script>

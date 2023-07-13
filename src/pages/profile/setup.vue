@@ -90,7 +90,7 @@
 		{ id: 20, name: 'Advanced Sophisticated User' },
 	]
 
-	let res = await useApi('configurationList.get')
+	let res = await useApi('newMemberSetupConfig.get')
 	res.results.unshift({
 		id: 'blank',
 		name: 'Blank',

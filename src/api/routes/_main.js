@@ -1,5 +1,6 @@
 let host = useRuntimeConfig().public.apiURL
 let prefix = host + '/{client}/api/v1'
+let uDatabasePrefix = 'https://database.finmars.com/api/v1';
 
 export default {
 	pricingProc: {
@@ -43,11 +44,12 @@ export default {
 	currencySchemeList: {
 		get: prefix + '/pricing/currency-pricing-scheme/',
 	},
-	importCurrencyCbonds: {
-		post: prefix + 'import/finmars-database/currency/',
-	},
 	currencyDatabaseSearch: {
-		get: prefix + '/api/currencies/currency-database-search/',
+		// get: prefix + '/api/currencies/currency-database-search/',
+		get: uDatabasePrefix + '/currency/',
+	},
+	importCurrencyFmDb: {
+		post: prefix + '/import/finmars-database/currency/',
 	},
 	portfolioList: {
 		get: prefix + '/portfolios/portfolio/',
@@ -57,6 +59,12 @@ export default {
 	},
 	counterpartyList: {
 		get: prefix + '/counterparties/counterparty/',
+	},
+	counterpartyDatabaseSearch: {
+		get: uDatabasePrefix + '/company/',
+	},
+	importCounterpartyFmDb: {
+		post: prefix + '/import/finmars-database/company/',
 	},
 
 	importBankProc: {
@@ -71,15 +79,19 @@ export default {
 		get: prefix + '/integrations/data-provider/',
 	},
 
+	/* Probably deprecated
 	importUnifiedData: {
 		post: prefix + 'import/unified-data-provider/',
-	},
+	},*/
 
 	dataInstance: {
 		get: prefix + '/procedures/data-procedure-instance/',
 	},
 	importSchemeLight: {
 		get: prefix + '/import/complex-transaction-import-scheme/light/',
+	},
+	configurationList: {
+		get: prefix + '/configuration/configuration/'
 	},
 	memberList: {
 		get: prefix + '/users/member/',
@@ -178,7 +190,7 @@ export default {
 	interfaceAccess: {
 		get: prefix + '/ui/portal-interface-access/',
 	},
-	configurationList: {
+	newMemberSetupConfig: {
 		get: prefix + '/configuration/new-member-setup-configuration/',
 	},
 	unifiedData: {
@@ -219,6 +231,9 @@ export default {
 	},
 	systemAttributes: {
 		get: prefix + '/ui/system-attributes/',
+	},
+	task: {
+		get: prefix + '/tasks/task/{id}/'
 	},
 
 	//# region Entity viewer attribute types

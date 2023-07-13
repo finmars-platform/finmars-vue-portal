@@ -1,37 +1,66 @@
 <template>
-	<div ref="tabsElem" class="fm_tabs">
 
-		<div ref="tabsContainer" class="tabs_container">
+	<div class="tabs_container">
 
 <!--			<FmBtn
-				v-if="showScrollBtns"
-				:disabled="disableScrollLeft"
-				class="display-block"
-				@click="scrollLeft()"
-			/>-->
+			v-if="showScrollBtns"
+			:disabled="disableScrollLeft"
+			class="display-block"
+			@click="scrollLeft()"
+		/>-->
+		<FmBtn
+			v-if="!swiperData.isBeginning || !swiperData.isEnd"
+			class="slide_btn"
+			type="iconBtn"
+			:disabled="swiperData.isBeginning"
+			@click="slidePrev"
+		>
+			<FmIcon icon="chevron_left" />
+		</FmBtn>
 
-			<div class="fm_tabs_item"
-					 v-for="(tab, index) in tabs"
-					 :key="index"
-					 :class="{active: tab == modelValue}"
-					 @click="$emit('update:modelValue', tab)"
+		<swiper
+			ref="swiperElem"
+			slidesPerView="auto"
+			@swiper="onSwiperInit"
+		>
+			<swiper-slide
+				v-for="(tab, index) in tabs"
+				:key="index"
 			>
-				{{ tab }}
-			</div>
+				<div class="fm_tabs_item"
+						 :class="{active: tab == modelValue}"
+						 @click="$emit('update:modelValue', tab)">
+					{{ tab }}
+				</div>
+			</swiper-slide>
+		</swiper>
+
+		<FmBtn
+			v-if="!swiperData.isBeginning || !swiperData.isEnd"
+			class="slide_btn"
+			type="iconBtn"
+			:disabled="swiperData.isEnd"
+			@click="slideNext"
+		>
+			<FmIcon icon="chevron_right" />
+		</FmBtn>
 
 <!--			<FmBtn
-				v-if="showScrollBtns"
-				:disabled="disableScrollRight"
-				class="display-block"
-				@click="scrollRight()"
-			/>-->
-
-		</div>
+			v-if="showScrollBtns"
+			:disabled="disableScrollRight"
+			class="display-block"
+			@click="scrollRight()"
+		/>-->
 
 	</div>
+
 </template>
 
 <script setup>
+
+	import {Swiper, SwiperSlide} from 'swiper/vue';
+
+	const swiperElem = ref(null);
 
 	defineProps({
 		modelValue: String,
@@ -40,6 +69,20 @@
 
 	defineEmits(['update:modelValue'])
 
+	let swiperData = ref({});
+
+	function onSwiperInit(swiperInst) {
+		swiperData.value = swiperInst;
+	}
+
+	function slidePrev() {
+		console.log("testing1090 slidePrev isSliderBeginning", swiperData.value.isBeginning);
+		swiperData.value.slidePrev();
+	}
+
+	function slideNext() {
+		swiperData.value.slideNext();
+	}
 	/*onMounted(() => {
 
 		allowedWidth = tabsElem.value.clientWidth;
@@ -87,6 +130,12 @@
 		nextTabsWidth = Math.max(0, nextTabsWidth);
 
 	}*/
+	const isSliderBeginning = computed(() => {
+		if (swiperData) console.log("testing1090 isSliderBeginning", swiperData.isBeginning);
+		return swiperData.value.isBeginning
+	} );
+
+	const isSliderEnd = computed(() => swiperData && swiperData.isEnd );
 
 </script>
 
@@ -96,12 +145,36 @@
 	}
 
 	.tabs_container {
-		position: relative;
+		/*position: relative;
 		display: flex;
-		flex-wrap: nowrap;
+		flex-wrap: nowrap;*/
+		display: flex;
 	}
 
 	.fm_tabs_item {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		height: 48px;
+		padding: 12px 24px;
 		text-wrap: nowrap;
+	}
+
+	.swiper {
+		margin: initial;
+	}
+
+	.swiper-slide {
+		width: auto;
+		flex-shrink: 1;
+	}
+
+	.slide_btn {
+		width: 32px;
+
+		&:not([disabled]):hover {
+			background-color: $primary-lighten-2;
+		}
 	}
 </style>
