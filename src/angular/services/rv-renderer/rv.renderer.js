@@ -57,16 +57,11 @@ var render = function (
 
 	console.timeEnd('Generating projection as HTML')
 
-	console.log('Rendering ' + rows.length + ' rows')
-	console.time('Rendering projection')
-
 	if (!rows.length) {
 		elem.innerHTML = "<div class='no-data-block'>No data available.</div>"
 	} else {
 		elem.innerHTML = rows.join('')
 	}
-
-	console.timeEnd('Rendering projection')
 
 	evEventService.dispatchEvent(evEvents.UPDATE_COLUMNS_SIZE)
 }
