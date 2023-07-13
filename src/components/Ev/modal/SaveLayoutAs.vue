@@ -129,6 +129,7 @@
 		let newLayout = viewerData.getLayoutCurrentConfiguration();
 		newLayout.name = namesData.name;
 		newLayout.user_code = namesData.user_code;
+		newLayout.configuration_code = namesData.configuration_code; // very important
 
 		newLayout.is_default = viewerData.isRootEntityViewer; // default layout for split panel does not have is_default === true
 		if (newLayout.id) delete newLayout.id; // if layout based on another existing layout

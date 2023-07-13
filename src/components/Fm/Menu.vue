@@ -68,27 +68,28 @@
 	let isLeft = props.anchor.includes('left')
 	let isRight = props.anchor.includes('right')
 
-	let openEventsList = computed(() => {
-		return props.openOn ? props.openOn.split(' ') : []
-	})
-
 	onMounted(() => {
-		if (props.openOnHover) {
+
+		if ( props.openOnHover ) {
+
 			activator.value.addEventListener('mouseover', () => {
 				isOpen.value = true
 			})
+
 			activator.value.addEventListener('mouseleave', () => {
 				isOpen.value = false
 			})
+
 		} else {
-			activator.value.addEventListener('click', toggle)
+			activator.value.addEventListener('click', toggle);
 		}
-	})
+
+	});
 
 	watch(
 		() => props.opened,
 		() => {
-			if (!props.disabled) isOpen.value = props.opened
+			if (!props.disabled) isOpen.value = props.opened;
 		}
 	)
 
@@ -258,15 +259,11 @@
 	let closeOnCo = {
 		handler: function (event) {
 			// needed when fm_drop attached to another element (e.g. body)
-			if (
-				popup.value &&
-				(popup.value.contains(event.target) ||
-					activator.value.contains(event.target))
-			)
-				return
+			if ( ( popup.value && popup.value.contains(event.target) ) || activator.value.contains(event.target) ) return;
 
-			isOpen.value = false
-			emit('update:opened', isOpen.value)
+			isOpen.value = false;
+			emit('update:opened', isOpen.value);
+
 		},
 		isActive: props.closeOnClickOutside,
 	}
