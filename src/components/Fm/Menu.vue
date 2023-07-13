@@ -33,6 +33,10 @@
 			type: Boolean,
 			default: false,
 		},
+		openOn: {
+			type: String,
+			default: 'click',
+		},
 		disabled: Boolean,
 		closeOnClickOutside: {
 			type: Boolean,
@@ -81,7 +85,7 @@
 				isOpen.value = false
 			})
 		} else {
-			activator.value.addEventListener('click', toggle)
+			activator.value.addEventListener(props.openOn, toggle)
 		}
 	})
 
@@ -247,8 +251,9 @@
 
 	watch(isOpen, isOpenHandler)
 
-	function toggle() {
-		if (props.disabled) return
+	function toggle(e) {
+		e.preventDefault()
+		if (props.disabled) return false
 
 		isOpen.value = !isOpen.value
 
