@@ -747,16 +747,21 @@ watch(
 		if (fav) {
 			let index = favList.value.findIndex((o) => o.key == attr.key)
 
-			favList.value.splice(index, 1)
-		} else {
-			favList.value.push({
-				key: attr.key,
-				// TODO use attributes's original name
-				name: formattedAttrs.value.find((o) => o.key == attr.key).name,
-				customName: '',
-				customDescription: '',
-			})
-		}
+		favList.value.splice(index, 1)
+
+	} else {
+
+		const attrData = formattedAttrs.value.find(o => o.key == attr.key);
+
+		favList.value.push({
+			key: attr.key,
+			// TODO use attributes's original name
+			name: attrData.name,
+			value_type: attrData.value_type,
+			customName: '',
+			customDescription: '',
+		})
+	}
 
 		send({
 			action: 'SAVE_FAVORITE_ATTRIBUTES',

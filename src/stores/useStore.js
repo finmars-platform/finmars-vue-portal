@@ -12,6 +12,7 @@ export default defineStore({
 			ws: null,
 
 			ecosystemDefaults: {},
+			defaultConfigCode: null,
 			systemErrors: [],
 		};
 	},
@@ -36,7 +37,10 @@ export default defineStore({
 
 			const activeMasterUser = this.masterUsers.find( item => location.href.includes(item.base_api_url) )
 
-			if ( activeMasterUser ) this.current = activeMasterUser
+			if ( activeMasterUser ) {
+				this.current = activeMasterUser;
+				this.defaultConfigCode = 'local.poms.' + this.current.base_api_url;
+			}
 
 			window.onerror = this.registerSysError;
 
