@@ -6,10 +6,15 @@
 			<FmInputText label="Name" v-model="newName" />
 
 			<!-- TODO: use UserCode component -->
-			<FmInputText label="User Code"
+<!--			<FmInputText label="User Code"
 									 :errorData="nucErrorData"
 									 :modelValue="newUserCode"
-									 @update:modelValue="onUserCodeChange" />
+									 @update:modelValue="onUserCodeChange" />-->
+			<FmInputUserCode
+				v-model="newUserCode"
+				:contentType="contentType"
+				v-model:errorData="nucErrorData"
+			/>
 		</div>
 
 		<template #controls="{ cancel }">
@@ -30,6 +35,7 @@
 		modelValue: Boolean,
 		name: String,
 		user_code: String,
+		contentType: String,
 		occupiedUserCodes: {
 			type: Array,
 			default: [],
@@ -81,7 +87,7 @@
 			}
 
 		} else {
-			emit('save', {name: newName.value, user_code: newUserCode.value});
+			emit('save', {name: newName.value, user_code: newUserCode.value, configuration_code: newUserCode.value.split(":")[0]}); // TODO refactor configuration_code should be sent to create layout, but it should be set via usercode-input component
 		}
 
 	}
