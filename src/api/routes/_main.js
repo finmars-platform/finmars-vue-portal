@@ -1,6 +1,6 @@
 let host = useRuntimeConfig().public.apiURL
 let prefix = host + '/{client}/api/v1'
-let uDatabasePrefix = 'https://database.finmars.com/api/v1';
+let uDatabasePrefix = 'https://database.finmars.com/api/v1'
 
 export default {
 	pricingProc: {
@@ -48,7 +48,7 @@ export default {
 	instrumentPricingСondition: {
 		get: prefix + '/instruments/pricing-condition/',
 	},
-	
+
 	pricingPolicyList: {
 		get: prefix + '/instruments/pricing-policy/',
 	},
@@ -80,15 +80,6 @@ export default {
 	counterpartyList: {
 		get: prefix + '/counterparties/counterparty/',
 	},
-<<<<<<< HEAD
-	counterpartyResponsibleLight: {
-		get: prefix + '/counterparties/responsible/light/',
-	},
-	counterpartyCounterpartyLight: {
-		get: prefix + '/counterparties/counterparty/light/',
-	},
-	
-=======
 	counterpartyDatabaseSearch: {
 		get: uDatabasePrefix + '/company/',
 	},
@@ -96,7 +87,6 @@ export default {
 		post: prefix + '/import/finmars-database/company/',
 	},
 
->>>>>>> ed7273849b7c38f1002278c0a3c49c203229e9db
 	importBankProc: {
 		get: prefix + '/procedures/request-data-procedure/',
 	},
@@ -121,7 +111,7 @@ export default {
 		get: prefix + '/import/complex-transaction-import-scheme/light/',
 	},
 	configurationList: {
-		get: prefix + '/configuration/configuration/'
+		get: prefix + '/configuration/configuration/',
 	},
 	memberList: {
 		get: prefix + '/users/member/',
@@ -263,7 +253,7 @@ export default {
 		get: prefix + '/ui/system-attributes/',
 	},
 	task: {
-		get: prefix + '/tasks/task/{id}/'
+		get: prefix + '/tasks/task/{id}/',
 	},
 
 	//# region Entity viewer attribute types
@@ -347,9 +337,7 @@ export default {
 	strategiesThirdSubgroup: {
 		get: prefix + '/strategies/3/subgroup/',
 	},
-	defaultSettings:{
+	defaultSettings: {
 		put: prefix + '/users/ecosystem-default/{id}/',
 	},
-	
-	
 }
