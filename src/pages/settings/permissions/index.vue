@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<FmTabs v-model="activeTab" :tabs="['Members', 'Groups', 'Roles', 'Access Policies']"/>
+		<FmTabs v-model="activeTab" :tabs="tabsList"/>
 
 		<div v-if="activeTab == 'Members'">
 
@@ -22,10 +22,11 @@
 					:items="members"
 					colls="50px repeat(7, 1fr)"
 					:cb="(id) => $router.push(`/settings/permissions/members/${stockMembers[id].id}`)"
+					class="clickable_rows"
 				>
 					<template #actions="{index}">
 						<div class="flex jcc aic height-100">
-							<FmMenu anchor="bottom left">
+							<FmMenu attach="body">
 								<template #btn>
 									<FmIcon icon="more_vert"/>
 								</template>
@@ -61,13 +62,15 @@
 			<div class="fm_container">
 				<BaseTable
 					:headers="['', 'Id','User Code', 'Configuration Code',  'Name', ]"
-					:items="groups"
-					colls="50px repeat(5, 1fr)"
-					:cb="(id) => $router.push(`/settings/permissions/groups/${groups[id].id}`)"
+					:items="groupsRows"
+					colls="62.5px repeat(4, 1fr)"
+					rowKeyProp="id"
+					:cb="(id) => $router.push(`/settings/permissions/groups/${id}`)"
+					class="clickable_rows"
 				>
 					<template #actions="{index}">
 						<div class="flex jcc aic height-100">
-							<FmMenu anchor="bottom left">
+							<FmMenu attach="body">
 								<template #btn>
 									<FmIcon icon="more_vert"/>
 								</template>
@@ -105,10 +108,11 @@
 					:items="roles"
 					colls="50px repeat(5, 1fr)"
 					:cb="(id) => $router.push(`/settings/permissions/roles/${roles[id].id}`)"
+					class="clickable_rows"
 				>
 					<template #actions="{index}">
 						<div class="flex jcc aic height-100">
-							<FmMenu anchor="bottom left">
+							<FmMenu attach="body">
 								<template #btn>
 									<FmIcon icon="more_vert"/>
 								</template>
@@ -147,10 +151,11 @@
 					:items="accessPolicies"
 					colls="50px repeat(4, 1fr)"
 					:cb="(id) => $router.push(`/settings/permissions/access-policies/${accessPolicies[id].id}`)"
+					class="clickable_rows"
 				>
 					<template #actions="{index}">
 						<div class="flex jcc aic height-100">
-							<FmMenu anchor="bottom left">
+							<FmMenu attach="body">
 								<template #btn>
 									<FmIcon icon="more_vert"/>
 								</template>
@@ -175,162 +180,198 @@
 
 <script setup>
 
-import dayjs from 'dayjs'
+	import dayjs from 'dayjs'
 
-definePageMeta({
-	middleware: 'auth',
-	bread: [
-		{
-			text: 'Permissions: Members',
-			disabled: true
-		}
-	],
-});
-const store = useStore()
+	definePageMeta({
+		middleware: 'auth',
+		bread: [
+			{
+				text: 'Permissions: Members',
+				disabled: true
+			}
+		],
+	});
+	const store = useStore()
+	const route = useRoute();
 
-let activeTab = ref('Members')
+	let tabsList = ['Members', 'Groups', 'Roles', 'Access Policies'];
+	let activeTab = ref('Members')
 
 
-let stockMembers = ref(null)
-let stockInvites = ref(null)
+	let stockMembers = ref(null)
+	let stockInvites = ref(null)
 
-let members = computed(() => {
-	let data = []
+	let members = computed(() => {
+		let data = []
 
-	if (!stockMembers.value || !stockInvites.value) return []
+		if (!stockMembers.value || !stockInvites.value) return []
 
-	stockMembers.value.forEach(item => {
-		let roles = []
+		stockMembers.value.forEach(item => {
+			let roles = []
 
-		if (item.is_admin) roles.push('Admin')
-		if (item.is_owner) roles.push('Owner')
-		if (!item.is_owner && !item.is_admin) roles.push('User')
+			if (item.is_admin) roles.push('Admin')
+			if (item.is_owner) roles.push('Owner')
+			if (!item.is_owner && !item.is_admin) roles.push('User')
 
-		data.push({
-			// id: item.id,
-			username: {value: item.username, link: '/settings/permissions/members/' + item.id},
-			is_admin: item.is_admin ? 'Admin' : 'No',
-			is_owner: item.is_owner ? 'Owner' : 'No',
-			status: item.is_owner ? 'Creator' : 'Accepted',
-			groups: item.groups_object.map(item => item.name).join(', '),
-			roles: item.roles_object.map(item => item.name).join(', '),
+			data.push({
+				// id: item.id,
+				username: {value: item.username, link: '/settings/permissions/members/' + item.id},
+				is_admin: item.is_admin ? 'Admin' : 'No',
+				is_owner: item.is_owner ? 'Owner' : 'No',
+				status: item.is_owner ? 'Creator' : 'Accepted',
+				groups: item.groups_object.map(item => item.name).join(', '),
+				roles: item.roles_object.map(item => item.name).join(', '),
+			})
+		})
+
+		stockInvites.value.forEach(item => {
+			if (data.find(row => row.username.value == item.user_object.username)) return false
+
+			let roles = []
+
+			if (item.is_admin) roles.push('Admin')
+			if (item.is_owner) roles.push('Owner')
+			if (!item.is_owner && !item.is_admin) roles.push('User')
+
+			data.push({
+				// id: item.id,
+				username: {value: item.user_object.username, link: '/settings/permissions/members/' + item.user},
+				role: 'Admin',
+				status: 'Pending',
+				groups: ''
+				// groups: item.groups.replace(',', ', ')
+			})
+		})
+
+		return data
+	})
+
+	let statuses = ref(null)
+	let processing = ref(false)
+
+	let groups = ref([])
+	let roles = ref([])
+	let accessPolicies = ref([])
+
+	let groupsRows = computed(() => {
+		return groups.value.map(group => {
+			return {
+				id: group.id,
+				user_code: group.user_code,
+				configuration_code: group.configuration_code,
+				name: group.name,
+			}
 		})
 	})
 
-	stockInvites.value.forEach(item => {
-		if (data.find(row => row.username.value == item.user_object.username)) return false
+	async function init() {
 
-		let roles = []
-
-		if (item.is_admin) roles.push('Admin')
-		if (item.is_owner) roles.push('Owner')
-		if (!item.is_owner && !item.is_admin) roles.push('User')
-
-		data.push({
-			// id: item.id,
-			username: {value: item.user_object.username, link: '/settings/permissions/members/' + item.user},
-			role: 'Admin',
-			status: 'Pending',
-			groups: ''
-			// groups: item.groups.replace(',', ', ')
-		})
-	})
-
-	return data
-})
-
-let statuses = ref(null)
-let processing = ref(false)
-
-let groups = ref([])
-let roles = ref([])
-let accessPolicies = ref([])
-
-
-async function init() {
-	let res = await useApi('memberList.get')
-	stockMembers.value = res.results
-
-	let groupsRes = await useApi('groupList.get')
-	groups.value = groupsRes.results
-
-	let rolesRes = await useApi('roleList.get')
-	roles.value = rolesRes.results
-
-	res = await useLoadAllPages('accessPolicyList.get', {
-		filters: {page: 1, page_size: 10000},
-	})
-	accessPolicies.value = res
-
-	res = await useApi('memberInvites.get')
-	stockInvites.value = res.results
-
-	let resStatus = await useApi('dataInstance.get')
-	statuses.value = resStatus.results
-}
-
-async function deleteMember(index) {
-	let usernameDel = members.value[index].username?.value
-
-	let isConfirm = await useConfirm({
-		title: 'Delete member',
-		text: `Do you want to delete a member "${usernameDel}"?`,
-	})
-	if (!isConfirm) return false
-
-	let res = await useApi('memberKick.post', {
-		body: {
-			username: usernameDel,
-			base_api_url: store.current.base_api_url
+		if ( route.query.tab && tabsList.includes(route.query.tab) ) {
+			activeTab.value = route.query.tab;
 		}
-	})
 
-	useNotify({type: 'success', title: `Member "${usernameDel}" was deleted.`})
+		/*let res = await useApi('memberList.get')
+		stockMembers.value = res.results
 
-	refresh()
-}
+		let groupsRes = await useApi('groupList.get')
+		groups.value = groupsRes.results
 
-async function deleteGroup(index) {
-	let group = groups.value[index]
+		let rolesRes = await useApi('roleList.get')
+		roles.value = rolesRes.results
 
-	let isConfirm = await useConfirm({
-		title: 'Delete group',
-		text: `Do you want to delete a group "${group.name}"?`,
-	})
-	if (!isConfirm) return false
+		res = await useLoadAllPages('accessPolicyList.get', {
+			filters: {page: 1, page_size: 10000},
+		})
+		accessPolicies.value = res
 
-	let res = await useApi('group.delete', {params: {id: group.id}})
+		res = await useApi('memberInvites.get')
+		stockInvites.value = res.results
 
-	useNotify({type: 'success', title: `Group "${group.name}" was deleted.`})
+		let resStatus = await useApi('dataInstance.get')
+		statuses.value = resStatus.results*/
+		const res = await Promise.all([
+			useApi('memberList.get'),
+			useApi('groupList.get'),
+			useApi('roleList.get'),
+			useApi(
+				'accessPolicyList.get',
+				{ filters: {page: 1, page_size: 10000}, }
+			),
+			useApi('memberInvites.get'),
+			useApi('dataInstance.get'),
+		]);
 
-	refresh()
-}
+		stockMembers.value = res[0].results;
+		groups.value = res[1].results;
+		roles.value = res[2].results;
+		accessPolicies.value = res[3].results;
+		stockInvites.value = res[4].results;
+		statuses.value = res[5].results;
 
-async function deleteRole(index) {
-	let role = roles.value[index]
+	}
 
-	let isConfirm = await useConfirm({
-		title: 'Delete role',
-		text: `Do you want to delete a role "${role.name}"?`,
-	})
-	if (!isConfirm) return false
+	async function deleteMember(index) {
+		let usernameDel = members.value[index].username?.value
 
-	let res = await useApi('role.delete', {params: {id: role.id}})
+		let isConfirm = await useConfirm({
+			title: 'Delete member',
+			text: `Do you want to delete a member "${usernameDel}"?`,
+		})
+		if (!isConfirm) return false
 
-	useNotify({type: 'success', title: `Role "${role.name}" was deleted.`})
+		let res = await useApi('memberKick.post', {
+			body: {
+				username: usernameDel,
+				base_api_url: store.current.base_api_url
+			}
+		})
 
-	refresh()
-}
+		useNotify({type: 'success', title: `Member "${usernameDel}" was deleted.`})
 
-init()
+		refresh()
+	}
 
-function refresh() {
+	async function deleteGroup(index) {
+		let group = groups.value[index]
+
+		let isConfirm = await useConfirm({
+			title: 'Delete group',
+			text: `Do you want to delete a group "${group.name}"?`,
+		})
+		if (!isConfirm) return false
+
+		let res = await useApi('group.delete', {params: {id: group.id}})
+
+		useNotify({type: 'success', title: `Group "${group.name}" was deleted.`})
+
+		refresh()
+	}
+
+	async function deleteRole(index) {
+		let role = roles.value[index]
+
+		let isConfirm = await useConfirm({
+			title: 'Delete role',
+			text: `Do you want to delete a role "${role.name}"?`,
+		})
+		if (!isConfirm) return false
+
+		let res = await useApi('role.delete', {params: {id: role.id}})
+
+		useNotify({type: 'success', title: `Role "${role.name}" was deleted.`})
+
+		refresh()
+	}
+
 	init()
-}
 
-function fromatDate(date) {
-	return dayjs(date).format('DD.MM.YYYY LT')
-}
+	function refresh() {
+		init()
+	}
+
+	function fromatDate(date) {
+		return dayjs(date).format('DD.MM.YYYY LT')
+	}
 </script>
 
 <style lang="scss" scoped>

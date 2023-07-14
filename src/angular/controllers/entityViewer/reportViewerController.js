@@ -477,7 +477,8 @@ export default function ({
 	vm.setLayout = function (layout) {
 		return new Promise(async function (resolve, reject) {
 			if (
-				typeof layout.data.reportLayoutOptions.useDateFromAbove !== 'boolean'
+				layout.data.reportLayoutOptions &&
+				typeof layout.data.reportLayoutOptions?.useDateFromAbove !== 'boolean'
 			) {
 				layout.data.reportLayoutOptions.useDateFromAbove = true
 			}
@@ -643,20 +644,17 @@ export default function ({
 			attributeTypeService,
 			uiService
 		)
-		console.log('vm.attributeDataService:', vm.attributeDataService)
 
-		vm.entityType = $scope.contentType
+		vm.entityType = $scope.entityType
+		vm.contentType = $scope.contentType
 		vm.viewContext = $scope.viewContext
+		vm.layout = $scope.layout
 
 		// calls setEntityType, setIsReport etc
 		sharedLogicHelper.setLayoutDataForView()
 
 		vm.entityViewerDataService.setRootEntityViewer(true)
 		vm.entityViewerDataService.setViewContext(vm.viewContext)
-		console.log(
-			'vm.entityViewerDataService.getComponents():',
-			vm.entityViewerDataService.setComponents()
-		)
 
 		vm.entityViewerDataService.setLayoutChangesLossWarningState(true)
 
@@ -760,6 +758,9 @@ export default function ({
 				layoutUserCode,
 				$mdDialog
 			)
+		} else if (vm.viewContext == 'dashboard') {
+			console.log('vm.layout:', vm.layout)
+			vm.setLayout(vm.layout)
 		} else {
 			setLayoutProm = evHelperService.getDefaultLayout(vm)
 		}

@@ -329,7 +329,7 @@ export default [
 			},
 		],
 		minColls: 6,
-		minRows: 3,
+		minRows: 6,
 		_group: 'base',
 	},
 	{
@@ -782,7 +782,20 @@ export default [
 				_children: [],
 			},
 		],
-		settings: [],
+		settings: [
+			{
+				key: 'content_type',
+				name: 'Content type',
+				view: {
+					type: 'select',
+					items: [
+						{ id: 'reports.reportspnl', name: 'P&L report' },
+						{ id: 'money_weighted', name: 'Money weighted return' },
+					],
+				},
+				default_value: null,
+			},
+		],
 
 		minColls: 6,
 		minRows: 2,

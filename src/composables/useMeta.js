@@ -39,3 +39,42 @@ export const useLogResponseError = resposeData => {
 	useNotify({type: 'error', title: resposeData.error.error.message || resposeData.error.error.details});
 	return resposeData;
 }
+
+/**
+ *
+ * @param {String} text
+ * @param {[String]} [occupiedList]
+ * @param {String} [textName]
+ * @returns {null|string} - returns 'null' if text is valid, otherwise returns an error description
+ */
+export const useTextNotValidForUserCode = (
+		text,
+		{
+			occupiedList,
+			textName,
+		}
+	) => {
+
+	if (!text) {
+		return `${ textName ? textName + ' ' : ''}should not be empty.`;
+	}
+	else if (text.match('[^1-9a-zA-Z_]')) {
+
+		if (textName) textName = ' for ' + textName;
+
+		return `Only english letters and 1-9 numbers allowed${textName}.`;
+	}
+	else if (text.match('^[0-9]')) {
+		return `${ textName ? textName + ' ' : ''}should not start with number.`;
+	}
+	else if (occupiedList && occupiedList.length) {
+
+		if (occupiedList.includes(text)) {
+			return `${ textName ? textName + ' ' : ''}should be unique.`;
+		}
+
+	}
+
+	return null;
+
+}

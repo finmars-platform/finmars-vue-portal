@@ -33,6 +33,10 @@
 			type: Boolean,
 			default: false,
 		},
+		openOn: {
+			type: String,
+			default: 'click',
+		},
 		disabled: Boolean,
 		closeOnClickOutside: {
 			type: Boolean,
@@ -68,20 +72,17 @@
 	let isLeft = props.anchor.includes('left')
 	let isRight = props.anchor.includes('right')
 
-	let openEventsList = computed(() => {
-		return props.openOn ? props.openOn.split(' ') : []
-	})
-
 	onMounted(() => {
 		if (props.openOnHover) {
 			activator.value.addEventListener('mouseover', () => {
 				isOpen.value = true
 			})
+
 			activator.value.addEventListener('mouseleave', () => {
 				isOpen.value = false
 			})
 		} else {
-			activator.value.addEventListener('click', toggle)
+			activator.value.addEventListener(props.openOn, toggle)
 		}
 	})
 
@@ -247,8 +248,9 @@
 
 	watch(isOpen, isOpenHandler)
 
-	function toggle() {
-		if (props.disabled) return
+	function toggle(e) {
+		e.preventDefault()
+		if (props.disabled) return false
 
 		isOpen.value = !isOpen.value
 
@@ -259,9 +261,8 @@
 		handler: function (event) {
 			// needed when fm_drop attached to another element (e.g. body)
 			if (
-				popup.value &&
-				(popup.value.contains(event.target) ||
-					activator.value.contains(event.target))
+				(popup.value && popup.value.contains(event.target)) ||
+				activator.value.contains(event.target)
 			)
 				return
 

@@ -856,6 +856,7 @@
 								</div>
 							</template>
 						</FmMenu>
+
 						<FmMenu v-if="isRootEntityViewer && isReport">
 							<template #btn>
 								<FmBtn
@@ -881,12 +882,14 @@
 											class="material-icons">
 											done
 										</span>
-										
+
 										<span
 											v-show="viewContext !== 'matrix'"
 											class="material-icons"
-											style="visibility: hidden">
-											done</span>
+											style="visibility: hidden"
+										>
+											done
+										</span>
 
 										<span>Open Matrix</span>
 									</div>
@@ -1003,9 +1006,10 @@
 	])
 	// export default function ($mdDialog, gFiltersHelper, uiService) {
 
-	templateUrl: 'views/directives/groupTable/filters/g-ev-rv-filters-view.html',
-		// link: function (scope, elem, attrs, gFiltersVm) {
-		(scope.entityType = gFiltersVm.entityType)
+	// templateUrl: 'views/directives/groupTable/filters/g-ev-rv-filters-view.html',
+	// link: function (scope, elem, attrs, gFiltersVm) {
+	scope.entityType = gFiltersVm.entityType
+
 	scope.isReport = true
 	scope.isRootEntityViewer = scope.evDataService.isRootEntityViewer()
 	scope.showUseFromAboveFilters = !scope.hideUseFromAboveFilters

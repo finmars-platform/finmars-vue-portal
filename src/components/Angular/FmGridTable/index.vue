@@ -65,7 +65,7 @@
 			class="g-workarea-wrap g-workarea main-area"
 			:class="{
 				'g-content-wrap-right': verticalAdditions.isOpen,
-				'g-root-content-wrap': isRootEntityViewer,
+				wrap_dashboard: viewContext == 'dashboard',
 			}"
 			v-if="domElemsAreReady"
 			ev-data-service="evDataService"
@@ -139,6 +139,8 @@
 						<AngularFmGridTableRvAreasDnd
 							v-if="isReport && contentWrapElem"
 							:contentWrapElement="contentWrapElem"
+							:evDataService="evDataService"
+							:evEventService="evEventService"
 						/>
 
 						<AngularFmGridTableAreasDnd
@@ -150,7 +152,7 @@
 			</div>
 		</div>
 
-		<div class="g-additions" v-if="isRootEntityViewer && additions?.isOpen">
+		<div class="g-additions" v-if="isRootEntityViewerRef && additions?.isOpen">
 			<div v-if="domElemsAreReady">
 				<div
 					data-g-height-aligner
@@ -229,6 +231,7 @@
 		'evEventService',
 		'evDataService',
 		'attributeDataService',
+		'components',
 		'vm',
 	])
 
@@ -242,20 +245,24 @@
 	let elem = ref(null)
 
 	let additions = props.evDataService.getAdditions()
-	console.log('additions:', additions)
 	let verticalAdditions = props.evDataService.getVerticalAdditions()
-	let components = props.evDataService.getComponents()
+
+	const components = reactive(
+		props.components || props.evDataService.getComponents()
+	)
+
 	let entityType = props.evDataService.getEntityType()
 	let activeObject = props.evDataService.getActiveObject()
 	let isReport = metaService.isReport(entityType)
 
-	let viewType = props.evDataService.getViewType()
-	let viewSettings = props.evDataService.getViewSettings(viewType)
+	let viewType = ref(props.evDataService.getViewType())
+	console.log('viewType:', viewType)
+	let viewSettings = props.evDataService.getViewSettings(viewType.value)
 	let readyToRenderTable = ref(false)
 
 	let reportOptions = props.evDataService.getReportOptions()
 	var interfaceLayout = props.evDataService.getInterfaceLayout()
-	var viewContext = props.evDataService.getViewContext()
+	var viewContext = ref(props.evDataService.getViewContext())
 	var contentType = props.evDataService.getContentType()
 	var activeLayoutConfigIsSet = false
 
@@ -265,12 +272,14 @@
 	let workareaWrapElem = ref(null)
 	let rootWrapElem = ref(null)
 
+	let isRootEntityViewerRef = ref(true)
+
 	onMounted(async () => {
 		let attrs = null
 
 		// var iframeMode = globalDataService.insideIframe()
 
-		if (viewContext === 'dashboard') {
+		if (viewContext.value === 'dashboard') {
 			isInsideDashboard = true
 
 			/* For old rv interface
@@ -290,10 +299,11 @@
 
 		let splitPanelIsActive = props.evDataService.isSplitPanelActive()
 		let isRootEntityViewer = props.evDataService.isRootEntityViewer()
+		isRootEntityViewerRef.value = isRootEntityViewer
 
 		let isRecon = false
 
-		if (viewContext === 'reconciliation_viewer') {
+		if (viewContext.value === 'reconciliation_viewer') {
 			let isRecon = true
 		}
 		domElemsAreReady.value = true
@@ -423,7 +433,7 @@
 					let activeObject = props.evDataService.getActiveObject()
 					readyToRenderTable.value = true
 
-					if (viewType === 'matrix' && !activeLayoutConfigIsSet) {
+					if (viewType.value === 'matrix' && !activeLayoutConfigIsSet) {
 						activeLayoutConfigIsSet = true
 
 						props.evDataService.setActiveLayoutConfiguration({ isReport: true }) // saving layout for checking for changes
@@ -437,10 +447,10 @@
 			props.evEventService.addEventListener(
 				evEvents.VIEW_TYPE_CHANGED,
 				function () {
-					let viewType = props.evDataService.getViewType()
-					let viewSettings = props.evDataService.getViewSettings(viewType)
+					viewType.value = props.evDataService.getViewType()
+					let viewSettings = props.evDataService.getViewSettings(viewType.value)
 
-					console.log('viewType ', viewType)
+					console.log('viewType ', viewType.value)
 					console.log('viewSettings', viewSettings)
 				}
 			)
@@ -490,4 +500,12 @@
 	}
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+	.g-wrapper .g-table-wrap {
+		overflow: auto;
+	}
+	.wrap_dashboard {
+		display: block;
+		height: 100%;
+	}
+</style>

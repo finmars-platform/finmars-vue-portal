@@ -67,7 +67,10 @@ export default defineStore({
 			if (res.error || !res.results.length) return false
 
 			this.layoutList = res.results
-			this.activeLayoutId = this.activeLayoutId || res.results[0].id
+
+			let defaultLayout = res.results.find((o) => o.is_default)
+			this.activeLayoutId =
+				this.activeLayoutId || defaultLayout?.id || res.results[0].id
 
 			this.components = this.layout.data.components || []
 			this.tabs = this.layout.data.tabs || []
@@ -316,7 +319,7 @@ export default defineStore({
 				let props = JSON.parse(JSON.stringify(this.props))
 
 				this.props.inputs.forEach((prop, k) => {
-					props.outputs[k].__val = null
+					props.inputs[k].__val = null
 				})
 				this.props.outputs.forEach((prop, k) => {
 					props.outputs[k].default_value = prop.__val
@@ -351,7 +354,7 @@ export default defineStore({
 				let props = JSON.parse(JSON.stringify(this.props))
 
 				this.props.inputs.forEach((prop, k) => {
-					props.outputs[k].__val = null
+					props.inputs[k].__val = null
 				})
 				this.props.outputs.forEach((prop, k) => {
 					props.outputs[k].default_value = prop.__val

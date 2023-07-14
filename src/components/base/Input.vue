@@ -173,9 +173,9 @@
 
 		&:not(.bi_no_borders):not(.disabled):focus-within,
 		&:not(.bi_no_borders):not(.disabled):focus {
+
 			.bi_top {
-				.top_left_border,
-				.top_right_border {
+				.top_left_border, .top_right_border {
 					border-top: $active-input-border;
 				}
 
