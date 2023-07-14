@@ -77,6 +77,8 @@
 		'rootWrapElement',
 	])
 
+	const { evEventService, evDataService } = inject('ngDependace')
+
 	let scope = reactive({
 		rootWrapElement: props.rootWrapElement,
 		contentWrapElement: props.contentWrapElement,

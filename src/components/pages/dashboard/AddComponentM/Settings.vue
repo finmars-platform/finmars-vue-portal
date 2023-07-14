@@ -23,6 +23,13 @@
 					:items="stg.view.items"
 				/>
 
+				<LazySelectorsLayout
+					v-else-if="stg.view.type == 'layout'"
+					class="prop_row"
+					v-model="stg.default_value"
+					:settings="component.settings"
+					:label="stg.name"
+				/>
 				<BaseInput v-else v-model="stg.default_value" :label="stg.name" />
 			</template>
 		</div>

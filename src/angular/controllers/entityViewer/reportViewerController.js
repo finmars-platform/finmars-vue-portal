@@ -78,7 +78,6 @@ export default function ({
 	// var doNotCheckLayoutChanges = false;
 	var autosaveLayoutService
 	var autosaveLayoutOn = globalDataService.isAutosaveLayoutOn()
-	console.log('autosave77 autosaveLayoutOn', autosaveLayoutOn)
 	// Functions for context menu
 
 	var updateTableAfterEntityChanges = function (res) {
@@ -632,10 +631,8 @@ export default function ({
 		vm.entityViewerDataService = new EntityViewerDataService(
 			window.reportHelper
 		)
-		window.evDataService = vm.entityViewerDataService
 
 		vm.entityViewerEventService = new EntityViewerEventService()
-		window.evEventService = vm.entityViewerEventService
 
 		vm.splitPanelExchangeService = new SplitPanelExchangeService()
 		vm.attributeDataService = new AttributeDataService(
