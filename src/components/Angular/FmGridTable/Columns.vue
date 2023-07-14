@@ -1965,7 +1965,9 @@
 
 		columns.forEach((column) => {
 			if (column.layout_name) {
-				const matchingGroup = groups.find((group) => group.key === column.key)
+				const matchingGroup = groups.value.find(
+					(group) => group.key === column.key
+				)
 
 				if (matchingGroup) {
 					matchingGroup.layout_name = column.layout_name
@@ -1974,7 +1976,7 @@
 			}
 		})
 
-		if (groupChanged) evDataService.setGroups(groups)
+		if (groupChanged) evDataService.setGroups(groups.value)
 	}
 
 	let onGroupsChange

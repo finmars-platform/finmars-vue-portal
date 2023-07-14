@@ -5,6 +5,7 @@ import CommonDialogsService from '@/angular/shell/scripts/app/services/commonDia
 import evEvents from '../services/entityViewerEvents'
 
 import rvHelper from '../helpers/rv.helper'
+import expressionService from '../services/expression.service'
 
 export default function (
 	viewModel,
@@ -15,7 +16,7 @@ export default function (
 	currencyHistoryService,
 	metaContentTypesService,
 	pricesCheckerService,
-	expressionService,
+	thisnull,
 	rvDataProviderService,
 	reportHelper
 ) {
@@ -301,7 +302,7 @@ export default function (
 		reportDateIndex
 	) {
 		// const dateProp = reportDateProperties[viewModel.entityType][reportDateIndex];
-		const dateProp = reportHelper.getDateProperties(viewModel.entityType)[
+		const dateProp = reportHelper.getDateProperties(viewModel.contentType)[
 			reportDateIndex
 		]
 
@@ -312,6 +313,7 @@ export default function (
             dateExprsProms.push(result);*/
 
 		return new Promise((resolve, reject) => {
+			console.log('expressionService:', expressionService)
 			expressionService
 				.getResultOfExpression({ expression: dateExpr })
 				.then(function (data) {

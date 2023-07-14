@@ -733,12 +733,23 @@ export default [
 	{
 		uid: null,
 		user_code: null,
-		name: 'Finmars grid',
+		name: 'Report viewer',
 		componentName: 'FinmarsGrid',
 		tab: null,
 		scopes: [],
 
 		inputs: [
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'selected_row',
+				name: 'Selected row',
+				type: 'report_active_object',
+				default_value: null,
+				__val: null,
+				subscribedTo: [],
+			},
 			{
 				uid: null,
 				component_id: null,
@@ -774,23 +785,32 @@ export default [
 				uid: null,
 				component_id: null,
 				user_code: null,
-				key: 'type',
-				name: 'Period type',
-				type: 'type_nav_or_pnl',
-				default_value: 'nav',
+				key: 'selected_row',
+				name: 'Selected row',
+				type: 'report_active_object',
+				default_value: null,
 				__val: null,
 				_children: [],
 			},
 		],
 		settings: [
 			{
+				key: 'layout',
+				name: 'Layout',
+				view: {
+					type: 'layout',
+				},
+				default_value: null,
+			},
+			{
 				key: 'content_type',
 				name: 'Content type',
 				view: {
 					type: 'select',
 					items: [
-						{ id: 'reports.reportspnl', name: 'P&L report' },
-						{ id: 'money_weighted', name: 'Money weighted return' },
+						{ id: 'reports.plreport', name: 'P&L report' },
+						{ id: 'reports.balancereport', name: 'Balance report' },
+						{ id: 'reports.transactionreport', name: 'Transaction report' },
 					],
 				},
 				default_value: null,

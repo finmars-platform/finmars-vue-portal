@@ -235,7 +235,13 @@
 		'vm',
 	])
 
-	const { attributeDataService } = props
+	const { attributeDataService, evEventService, evDataService } = props
+
+	provide('ngDependace', {
+		evEventService,
+		evDataService,
+		attributeDataService,
+	})
 
 	let scope = {
 		spExchangeService: '=',

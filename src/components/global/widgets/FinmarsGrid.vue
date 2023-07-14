@@ -36,6 +36,7 @@
 
 <script setup>
 	import reportViewerController from '@/angular/controllers/entityViewer/reportViewerController'
+	import entityViewerEvents from '~~/src/angular/services/entityViewerEvents'
 	const props = defineProps({
 		uid: String,
 	})
@@ -51,6 +52,14 @@
 
 		props.forEach((prop) => {
 			obj[prop.key] = prop
+		})
+		return obj
+	})
+
+	const settings = computed(() => {
+		let obj = {}
+		component.settings.forEach((prop) => {
+			obj[prop.key] = prop.default_value
 		})
 		return obj
 	})
@@ -469,11 +478,17 @@
 		},
 	}
 
+	let entities = {
+		'reports.transactionreport': 'transaction-report',
+		'reports.plreport': 'pl-report',
+		'reports.balancereport': 'balance-report',
+	}
+
 	let $scope = {
-		contentType: 'reports.plreport',
-		entityType: 'reports.plreport',
+		contentType: settings.value.content_type,
+		entityType: entities[settings.value.content_type],
 		viewContext: 'dashboard',
-		layout: layout,
+		layout: JSON.parse(settings.value.layout),
 	}
 
 	onMounted(async () => {
@@ -482,6 +497,19 @@
 			$stateParams: route.params,
 			route,
 		})
+
+		vm.value.entityViewerEventService.addEventListener(
+			entityViewerEvents.ACTIVE_OBJECT_CHANGE,
+			() => {
+				console.log('outputs:', outputs)
+
+				if (outputs.value.selected_row) {
+					outputs.value.selected_row.__val =
+						vm.value.entityViewerDataService.getActiveObjectRow()
+				}
+			}
+		)
+
 		// evEventService.addEventListener(evEvents.LAYOUT_NAME_CHANGE, function () {
 		// 	listLayout = evDataService.getListLayout()
 
