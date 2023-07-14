@@ -762,9 +762,10 @@
 										@click="toggleSplitPanel($event, 'permission-editor')"
 										v-if="!isReport && entityType !== 'complex-transaction'"
 									>
-										<span>
+										<span
 											v-show="currentAdditions.type === 'permission-editor'"
-											class="material-icons" >done</span
+											class="material-icons"
+											>done</span
 										>
 										<span
 											v-show="currentAdditions.type !== 'permission-editor'"
@@ -781,13 +782,15 @@
 										class="g-settings-option-btn fm_list_item"
 										@click="toggleSplitPanel($event, 'editor')"
 									>
-										<span>
+										<span
 											v-show="currentAdditions.type === 'editor'"
-											class="material-icons" >done</span
+											class="material-icons"
+											>done</span
 										>
-										<span>
+										<span
 											v-show="currentAdditions.type !== 'editor'"
-											class="material-icons" style="visibility: hidden;"
+											class="material-icons"
+											style="visibility: hidden"
 											>done</span
 										>
 
@@ -798,13 +801,15 @@
 										class="g-settings-option-btn fm_list_item"
 										@click="toggleSplitPanel($event, 'balance-report')"
 									>
-										<span>
+										<span
 											v-show="currentAdditions.type === 'balance-report'"
-											class="material-icons" >done</span
+											class="material-icons"
+											>done</span
 										>
-										<span>
+										<span
 											v-show="currentAdditions.type !== 'balance-report'"
-											class="material-icons" style="visibility: hidden;"
+											class="material-icons"
+											style="visibility: hidden"
 											>done</span
 										>
 
@@ -815,13 +820,15 @@
 										class="g-settings-option-btn fm_list_item"
 										@click="toggleSplitPanel($event, 'pl-report')"
 									>
-										<span>
+										<span
 											v-show="currentAdditions.type === 'pl-report'"
-											class="material-icons" >done</span
+											class="material-icons"
+											>done</span
 										>
-										<span>
+										<span
 											v-show="currentAdditions.type !== 'pl-report'"
-											class="material-icons" style="visibility: hidden;"
+											class="material-icons"
+											style="visibility: hidden"
 											>done</span
 										>
 
@@ -832,13 +839,15 @@
 										class="g-settings-option-btn fm_list_item"
 										@click="toggleSplitPanel($event, 'transaction-report')"
 									>
-										<span>
+										<span
 											v-show="currentAdditions.type === 'transaction-report'"
-											class="material-icons" >done</span
+											class="material-icons"
+											>done</span
 										>
-										<span>
+										<span
 											v-show="currentAdditions.type !== 'transaction-report'"
-											class="material-icons" style="visibility: hidden;"
+											class="material-icons"
+											style="visibility: hidden"
 											>done</span
 										>
 
@@ -867,12 +876,10 @@
 									<div
 										type="text"
 										class="g-settings-option-btn fm_list_item"
-										@click="toggleMatrix($event)"
-									>
+										@click="toggleMatrix($event)">
 										<span
 											v-show="viewContext === 'matrix'"
-											class="material-icons"
-										>
+											class="material-icons">
 											done
 										</span>
 
