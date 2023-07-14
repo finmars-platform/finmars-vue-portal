@@ -179,11 +179,14 @@ function findMemberIds(val) {
 async function save() {
 	let res = await useApi('group.put', {body: group.value, params: {id: route.params.id}})
 
-	if (res) useNotify({type: 'success', title: 'Saved!'})
+	if (res) {
+		useNotify({type: 'success', title: 'Saved!'})
+		router.push('/settings/permissions?tab=Groups')
+	}
 }
 
 async function cancel() {
-	router.push('/settings/permissions')
+	router.push('/settings/permissions?tab=Groups')
 }
 
 function fromatDate(date) {

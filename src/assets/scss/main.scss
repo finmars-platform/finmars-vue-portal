@@ -1,5 +1,6 @@
 @import 'core/core';
 @import 'angular';
+@import 'swiper';
 
 .vue-notification-wrapper {
 }
@@ -29,4 +30,8 @@
 
 .pickmeup {
 	z-index: $backdrop-z-index;
+}
+
+.error-color {
+	color: $error;
 }

@@ -208,7 +208,10 @@ return xhrService.fetch(baseUrl   +  '/' + prefix + '/' + apiVersion + '/' + 'ui
     }; */
 
 	var getDefaultListLayout = function (entityType) {
-		var contentType = entityType
+		var contentType = metaContentTypesService.findContentTypeByEntity(
+			entityType,
+			'ui'
+		)
 
 		var prefix = baseUrlService.getMasterUserPrefix()
 		var apiVersion = baseUrlService.getApiVersion()
@@ -341,8 +344,6 @@ return xhrService.fetch(baseUrl   +  '/' + prefix + '/' + apiVersion + '/' + 'ui
 	// Input Form Layout
 
 	var getListEditLayout = function (entity, options) {
-		console.log('getListEditLayout.entity', entity)
-
 		if (!options) {
 			options = {}
 		}
@@ -634,8 +635,6 @@ return xhrService.fetch(baseUrl   +  '/' + prefix + '/' + apiVersion + '/' + 'ui
 	}
 
 	var getTransactionFieldList = function (options) {
-		console.log('options', options)
-
 		var prefix = baseUrlService.getMasterUserPrefix()
 		var apiVersion = baseUrlService.getApiVersion()
 
@@ -863,8 +862,6 @@ return xhrService.fetch(baseUrl   +  '/' + prefix + '/' + apiVersion + '/' + 'ui
 	}
 
 	var getTemplateLayoutList = function (options) {
-		console.log('options', options)
-
 		var prefix = baseUrlService.getMasterUserPrefix()
 		var apiVersion = baseUrlService.getApiVersion()
 
@@ -964,8 +961,6 @@ return xhrService.fetch(baseUrl   +  '/' + prefix + '/' + apiVersion + '/' + 'ui
 	}
 
 	var getContextMenuLayoutList = function (options) {
-		console.log('options', options)
-
 		var prefix = baseUrlService.getMasterUserPrefix()
 		var apiVersion = baseUrlService.getApiVersion()
 
@@ -1061,8 +1056,6 @@ return xhrService.fetch(baseUrl   +  '/' + prefix + '/' + apiVersion + '/' + 'ui
 	}
 
 	var getEntityTooltipList = function (options) {
-		console.log('options', options)
-
 		var prefix = baseUrlService.getMasterUserPrefix()
 		var apiVersion = baseUrlService.getApiVersion()
 
@@ -1106,8 +1099,6 @@ return xhrService.fetch(baseUrl   +  '/' + prefix + '/' + apiVersion + '/' + 'ui
 	// Cross Entity Attribute Extension
 
 	var getCrossEntityAttributeExtensionList = function (options) {
-		console.log('options', options)
-
 		var prefix = baseUrlService.getMasterUserPrefix()
 		var apiVersion = baseUrlService.getApiVersion()
 
@@ -1205,8 +1196,6 @@ return xhrService.fetch(baseUrl   +  '/' + prefix + '/' + apiVersion + '/' + 'ui
 	// Column Sort Data
 
 	var getColumnSortDataList = function (options) {
-		console.log('options', options)
-
 		var prefix = baseUrlService.getMasterUserPrefix()
 		var apiVersion = baseUrlService.getApiVersion()
 

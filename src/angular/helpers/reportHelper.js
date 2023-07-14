@@ -1243,9 +1243,9 @@ export default function (expressionService) {
 	}
 
 	const reportDateProperties = {
-		'balance-report': [null, 'report_date'],
-		'pl-report': ['pl_first_date', 'report_date'],
-		'transaction-report': ['begin_date', 'end_date'],
+		'reports.balancereport': [null, 'report_date'],
+		'reports.plreport': ['pl_first_date', 'report_date'],
+		'reports.transactionreport': ['begin_date', 'end_date'],
 	}
 
 	/**

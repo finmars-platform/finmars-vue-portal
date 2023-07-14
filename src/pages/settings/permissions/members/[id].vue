@@ -119,7 +119,7 @@ let selectedRoles = computed(() => {
 })
 
 let selectedAccessPolicies = computed(() => {
-	if (!member.value.access_policies_object.length) return []
+	if (!member.value.access_policies_object?.length) return []
 	return member.value.access_policies_object.map(item => item.user_code).join(',')
 })
 
@@ -187,12 +187,12 @@ async function save() {
 
 	if (res) {
 		useNotify({type: 'success', title: 'Saved!'})
-		router.push('/settings/permissions')
+		router.push('/settings/permissions?tab=Member')
 	}
 }
 
 async function cancel() {
-	router.push('/settings/permissions')
+	router.push('/settings/permissions?tab=Member')
 }
 
 function fromatDate(date) {

@@ -70,7 +70,7 @@ export default function (scope, $mdDialog, isReport) {
 		)
 
 		scope.dndAreas.deletionAreaHolder.addEventListener(
-			'dragenter',
+			'dragover',
 			onDropAreaDragenter
 		)
 		scope.dndAreas.deletionAreaHolder.addEventListener(
@@ -273,12 +273,13 @@ export default function (scope, $mdDialog, isReport) {
 	}
 
 	const onDropAreaDragenter = function (ev) {
-		ev.stopPropagation()
+		ev.preventDefault()
 		ev.target.classList.add('dragged-over')
+		console.log('ev.target:', ev.target)
 	}
 
 	const onDropAreaDragleave = function (ev) {
-		ev.stopPropagation()
+		ev.preventDefault()
 		ev.target.classList.remove('dragged-over')
 	}
 

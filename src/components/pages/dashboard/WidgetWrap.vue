@@ -16,7 +16,7 @@
 			<div class="bwc_top flex sb aic">
 				<div>{{ component.name }}</div>
 				<div class="flex aic">
-					<FmMenu anchor="bottom right">
+					<FmMenu attach="body" anchor="bottom right">
 						<template #btn>
 							<FmIcon size="24" icon="settings" />
 						</template>

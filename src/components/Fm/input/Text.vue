@@ -1,5 +1,6 @@
 <template>
 	<BaseInput
+		v-bind="$attrs"
 		:label="label"
 		:placeholder="placeholder"
 		:tooltip="tooltip"
