@@ -18,16 +18,36 @@ export default {
 	instrumentList: {
 		get: prefix + '/instruments/instrument/',
 	},
+	instrumentListLight: {
+		get: prefix + '/instruments/instrument/light/',
+	},
 
 	instrumentTypeList: {
 		get: prefix + '/instruments/instrument-type/',
 	},
-	instrumentTypeListLight: {
-		get: prefix + '/instruments/instrument-type/',
+	instrumentSizeDetail: {
+		get: prefix + '/instruments/payment-size-detail/',
 	},
+	instrumentPeriodicity: {
+		get: prefix + '/instruments/periodicity/',
+	},
+
 	instrumentSchemeList: {
 		get: prefix + '/pricing/instrument-pricing-scheme/',
 	},
+	instrumentType: {
+		get: prefix + '/instruments/instrument-type/light/',
+	},
+	instrumentAccrualCalculationModel: {
+		get: prefix + '/instruments/accrual-calculation-model/',
+	},
+	instrumentClass: {
+		get: prefix + '/instruments/instrument-class/',
+	},
+	instrumentPricingСondition: {
+		get: prefix + '/instruments/pricing-condition/',
+	},
+	
 	pricingPolicyList: {
 		get: prefix + '/instruments/pricing-policy/',
 	},
@@ -58,7 +78,13 @@ export default {
 	counterpartyList: {
 		get: prefix + '/counterparties/counterparty/',
 	},
-
+	counterpartyResponsibleLight: {
+		get: prefix + '/counterparties/responsible/light/',
+	},
+	counterpartyCounterpartyLight: {
+		get: prefix + '/counterparties/counterparty/light/',
+	},
+	
 	importBankProc: {
 		get: prefix + '/procedures/request-data-procedure/',
 	},
@@ -228,6 +254,14 @@ export default {
 	accountAttrTypeList: {
 		get: prefix + '/accounts/account-attribute-type/',
 	},
+	accountsType: {
+		get: prefix + '/accounts/account-type/',
+	},
+
+	accountLight: {
+		get: prefix + '/accounts/account/light/',
+	},
+
 	instrumentAttrTypeList: {
 		get: prefix + '/instruments/instrument-attribute-type/',
 	},
@@ -236,6 +270,10 @@ export default {
 	},
 	counterpartyAttrTypeList: {
 		get: prefix + '/counterparties/counterparty-attribute-type/',
+	},
+
+	transactionTypeLight: {
+		get: prefix + '/transactions/transaction-type/light/',
 	},
 	transactionTypeAttrTypeList: {
 		get: prefix + '/transactions/complex-transaction-attribute-type/',
@@ -266,4 +304,33 @@ export default {
 	widgetsStats: {
 		get: prefix + '/widgets/stats/',
 	},
+	strategiesOneLight: {
+		get: prefix + '/strategies/1/strategy/light/',
+	},
+	strategiesOneSubgroup: {
+		get: prefix + '/strategies/1/subgroup/',
+	},
+	strategiesSecondLight: {
+		get: prefix + '/strategies/2/strategy/light/',
+	},
+	strategiesSecondSubgroup: {
+		get: prefix + '/strategies/2/subgroup/',
+	},
+	strategiesSecondLight: {
+		get: prefix + '/strategies/2/strategy/light/',
+	},
+	strategiesSecondSubgroup: {
+		get: prefix + '/strategies/2/subgroup/',
+	},
+	strategiesThirdLight: {
+		get: prefix + '/strategies/3/strategy/light/',
+	},
+	strategiesThirdSubgroup: {
+		get: prefix + '/strategies/3/subgroup/',
+	},
+	defaultSettings:{
+		put: prefix + '/users/ecosystem-default/{id}/',
+	},
+	
+	
 }
