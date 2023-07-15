@@ -3,7 +3,7 @@
  */
 
 export default function ($scope, $mdDialog, data) {
-	console.log('data', data)
+
 
 	var vm = this
 
@@ -59,13 +59,13 @@ export default function ($scope, $mdDialog, data) {
 
 		var flatList = vm.evDataService.getFlatList()
 
-		console.log('flatList', flatList)
+
 
 		vm.positions = flatList.filter(function (item) {
 			return item['instrument.id'] === vm.item.id
 		})
 
-		console.log('vm.positions', vm.positions)
+
 	}
 
 	vm.init()

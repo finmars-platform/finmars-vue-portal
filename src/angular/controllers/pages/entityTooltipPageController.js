@@ -178,7 +178,7 @@ export default function entityTooltipPage(
 				})
 			})
 
-			console.log('vm.tabs', vm.tabs)
+
 
 			$scope.$apply()
 		})
@@ -194,7 +194,7 @@ export default function entityTooltipPage(
 
 			promises.push(
 				new Promise(function (resolve, reject) {
-					console.log('Requesting ' + tab.content_type + ' attribute types')
+
 
 					try {
 						attributeTypeService
@@ -205,7 +205,7 @@ export default function entityTooltipPage(
 								resolve()
 							})
 					} catch (error) {
-						console.log('error', error)
+
 
 						resolve()
 					}
@@ -223,7 +223,7 @@ export default function entityTooltipPage(
 	vm.saveTooltips = function () {
 		var promises = []
 
-		console.log('Save tooltip', vm.tabs)
+
 
 		vm.tabs.forEach(function (tab) {
 			tab.items.forEach(function (item) {

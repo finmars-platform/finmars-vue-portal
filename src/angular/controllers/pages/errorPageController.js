@@ -145,7 +145,7 @@ export default function dataStatsController(
 
 				vm.readyStatus.content = true
 
-				console.log('vm.pages', vm.pages)
+
 
 				$scope.$apply()
 			})

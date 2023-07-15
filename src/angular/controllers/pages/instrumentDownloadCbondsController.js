@@ -53,7 +53,7 @@ export default function instrumentDownloadCbondsController($scope, $mdDialog) {
 				$scope.$apply()
 			})
 			.catch(function (reason) {
-				console.log('reason %s', reason)
+
 
 				$mdDialog.show({
 					controller: 'WarningDialogController as vm',

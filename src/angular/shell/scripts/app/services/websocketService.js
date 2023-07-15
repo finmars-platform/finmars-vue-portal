@@ -12,7 +12,7 @@ import cookieService from '@/angular/core/services/cookieService'
 const PROJECT_ENV = '__PROJECT_ENV__' // changed when building project by minAllScripts()
 
 const send = function (data) {
-	console.log('websocket send', data)
+
 
 	if (isOnline()) {
 		window.ws.send(JSON.stringify(data))
@@ -28,7 +28,7 @@ function addEventListener(event, callback) {
 
 	if (isOnline()) {
 		window.ws.onmessage = function (message) {
-			console.log('Websocket.message ', message)
+
 
 			try {
 				var parsedMessage = JSON.parse(message.data)
@@ -40,11 +40,11 @@ function addEventListener(event, callback) {
 						})
 					}
 				} else {
-					console.log('Websocket onmessage error. Type is not set', message)
+
 				}
 			} catch (error) {
-				console.log('Websocket onmessage error. Error: ', error)
-				console.log('Websocket onmessage error. Message: ', message)
+
+
 			}
 		}
 	}
@@ -65,11 +65,11 @@ function connect(isReconnect) {
 		// window.ws = new WebSocket("__WS_HOST__");
 		window.ws = new WebSocket(window.WS_HOST)
 
-		console.log('client try to connect...')
+
 
 		if (window.ws) {
 			window.ws.onopen = function () {
-				console.log('Websocket. Initial Auth')
+
 				window.openedSocket = true
 				window.ws.send(
 					JSON.stringify({
@@ -82,18 +82,18 @@ function connect(isReconnect) {
 			}
 
 			// window.ws.on("message", (data) => {
-			// 	console.log(data);
+			// 	;
 			// });
 
 			window.ws.onclose = function (err) {
-				console.log('WEBSOCKET_CLOSE: connection closed %o', err)
+
 				window.openedSocket = false
 
 				// toastNotificationService.error("Websocket connection is closed")
 			}
 
 			window.ws.onerror = function (err) {
-				console.log('WEBSOCKET_ERROR: Error', new Error(err.message))
+
 
 				// if (PROJECT_ENV !== 'local') toastNotificationService.error("Websocket connection is closed");
 
@@ -113,12 +113,12 @@ function connect(isReconnect) {
 }
 
 function reconnect() {
-	console.log('Trying to reconnect to Websocket Server')
+
 
 	try {
 		connect(true)
 	} catch (err) {
-		console.log('WEBSOCKET_RECONNECT: Error', new Error(err.message))
+
 	}
 }
 

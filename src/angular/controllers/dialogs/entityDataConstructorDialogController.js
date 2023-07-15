@@ -1443,7 +1443,7 @@ export default function (
 			items.push(cardsElem[i])
 		}
 
-		console.log('emptyFieldsElem', emptyFieldsElem)
+
 
 		return items
 	}
@@ -1782,7 +1782,7 @@ export default function (
 		},
 
 		destroy: function () {
-			// console.log('this.dragula', this.dragula)
+			//
 			this.dragula.destroy()
 		},
 	}

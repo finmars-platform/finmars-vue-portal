@@ -101,8 +101,8 @@ export default function (viewModel, $scope, $mdDialog) {
 		recalculationData
 	) {
 		recalculationPromise.then(function (data) {
-			console.log('data', data)
-			console.log('inputs', inputs)
+
+
 
 			inputs.forEach((inputName) => {
 				viewModel.entity.values[inputName] = data.values[inputName]

@@ -37,13 +37,15 @@
 				</FmMenu>
 
 				<FmIcon
-					btnPrimary
+					btn
 					icon="link"
+					color="primary"
 					class="g-toggle-filters-btn md-icon-button chain-button"
 					:class="{
 						'g-use-from-above-filters-hidden': !scope.showUseFromAboveFilters,
 					}"
-					@click="toggleUseFromAboveFilters()"
+					style="margin-left: 10px"
+					@click="scope.toggleUseFromAboveFilters()"
 				/>
 			</template>
 
@@ -365,23 +367,32 @@
 				on-save="filterSettingsChange()"
 				class="g-filter-chips-wrap"
 			></div>
+			<!-- <rv-filter filter-key="popupData.filterKey"
+               ev-data-service="popupData.evDataService"
+               ev-event-service="popupData.evEventService"
+               attribute-data-service="popupData.attributeDataService"
+               popup-event-service="popupEventService"
+               on-cancel="cancel()"
+               on-save="save()"> -->
+
+			<AngularFmGridTableRvFilterPopup :vm="vm" />
 
 			<FmChips
 				v-if="scope.readyStatus.filters"
 				class="g-filter-chips"
-				:items="filtersChips"
+				:items="scope.filtersChips"
 				canDelete
 				@chipClick="scope.onFilterChipClick($event)"
 				@delete="removeFilter($event)"
 			/>
 
-			<FmBtn type="action" @click="addFilter">ADD FILTER</FmBtn>
+			<FmBtn type="action" @click="scope.addFilter">ADD FILTER</FmBtn>
 		</div>
 
-		<div class="flex aic">
+		<div class="flex aic gFiltersRightPart">
 			<FmIcon
 				icon="refresh"
-				@click="refreshTable()"
+				@click="scope.refreshTable()"
 				v-fm-tooltip="'Refresh Database Filters'"
 				btn
 			/>
@@ -597,394 +608,415 @@
 </template>
 
 <script setup>
-	import uiService from '@/angular/services/uiService'
+	import gFiltersHelperInst from '~~/src/angular/helpers/gFiltersHelper'
+	import uiService from '~~/src/angular/services/uiService'
 	import evEvents from '@/angular/services/entityViewerEvents'
-
-	import evHelperService from '@/angular/services/entityViewerHelperService'
 	// import EventService from '@/angular/services/eventService';
 
-	const props = defineProps(['attributeDataService', 'vm'])
-	const gFiltersVm = props.vm
-	const { evEventService, evDataService } = inject('ngDependace')
+	const props = defineProps(['vm'])
 
-	let scope = reactive({
-		...props,
-		viewContext: evDataService.getViewContext(),
-	})
+	const { evEventService, evDataService, attributeDataService } =
+		inject('ngDependace')
+
+	let gFiltersHelper = new gFiltersHelperInst()
+
+	// link: function (attrs) {
 
 	const elem = ref(null)
 
-	let filters = ref(evDataService.getFilters())
-	let filtersChips = ref([])
+	let scope = reactive({ ...props })
+	scope.entityType = scope.vm.entityType
+	scope.readyStatus = reactive({
+		filters: false,
+	})
 
+	let filters = ref(evDataService.getFilters())
+	let useFromAboveFilters = []
+	let gFiltersLeftPartWidth
+	let gFiltersRightPartWidth
 	let filtersChipsContainer
 	let customFields
 
 	onMounted(() => {
 		elem.value = document.querySelector('.ev_toolbar.g-filters-holder')
 
+		scope.rvAutoRefresh = evDataService.getAutoRefreshState()
+
+		if (scope.rvAutoRefresh === null || scope.rvAutoRefresh === undefined) {
+			//if we missed initial state for already existing layout
+			scope.rvAutoRefresh = true
+		}
+
+		scope.filterPopupTemplate =
+			'views/popups/groupTable/filters/rv-filter-popup-view.html'
+
+		scope.popupPosX = scope.vm.popupPosX
+		scope.popupPosY = scope.vm.popupPosY
+		/*scope.fpBackClasses = scope.vm.fpBackClasses;
+		scope.fpClasses = scope.vm.fpClasses;*/
+
+		gFiltersLeftPartWidth =
+			elem.value.querySelector('.gFiltersLeftPart').clientWidth
+		gFiltersRightPartWidth =
+			elem.value.querySelector('.gFiltersRightPart').clientWidth
+
 		filtersChipsContainer = elem.value.querySelector('.gFiltersContainer')
 
-		let addFilterElem
-		customFields = scope.attributeDataService.getCustomFieldsByEntityType(
+		customFields = attributeDataService.getCustomFieldsByEntityType(
 			scope.entityType
 		)
 
 		init()
 	})
-	// link: function (, , attrs, ) {
-	scope.entityType = gFiltersVm.entityType
-	scope.isReport = false
+
+	scope.isReport = true
 	scope.isRootEntityViewer = evDataService.isRootEntityViewer()
-	scope.shownFiltersType = 'frontend' // hack
+	scope.showUseFromAboveFilters = !scope.hideUseFromAboveFilters
 
-	scope.thereAreFrontendFilters = false // needed for existing layouts with frontend filters
+	const hideUseFromAboveFilters = scope.vm.hideUseFromAboveFilters
 
-	scope.readyStatus = {
-		filters: false,
+	if (hideUseFromAboveFilters) {
+		scope.showUseFromAboveFilters = false
+	} else {
+		scope.showUseFromAboveFilters = !scope.isRootEntityViewer // show use from above filters by default inside split panel
 	}
 
-	scope.filterPopupTemplate =
-		'views/popups/groupTable/filters/ev-filter-popup-view.html'
-
-	scope.popupPosX = gFiltersVm.popupPosX
-	scope.popupPosY = gFiltersVm.popupPosY
-	/* scope.fpBackClasses = gFiltersVm.fpBackClasses;
-                scope.fpClasses = gFiltersVm.fpClasses;*/
-
-	function evGetEntityNameByState() {
-		switch ($state.current.name) {
-			case 'app.data.portfolio':
-				return 'PORTFOLIO'
-				break
-			case 'app.data.account':
-				return 'ACCOUNT'
-				break
-			case 'app.data.counterparty':
-				return 'COUNTERPARTY'
-				break
-			case 'app.data.counterparty-group':
-				return 'COUNTERPARTY GROUP'
-				break
-			case 'app.data.responsible':
-				return 'RESPONSIBLE'
-				break
-			case 'app.data.responsible-group':
-				return 'RESPONSIBLE GROUP'
-				break
-			case 'app.data.instrument':
-				return 'INSTRUMENT'
-				break
-			case 'app.data.transaction':
-				return 'TRANSACTION'
-				break
-			case 'app.data.price-history':
-				return 'PRICE HISTORY'
-				break
-			case 'app.data.currency-history':
-				return 'CURRENCY HISTORY'
-				break
-			case 'app.data.strategy':
-				return 'STRATEGY'
-				break
-			case 'app.data.strategy-subgroup':
-				return 'STRATEGY SUBGROUP'
-				break
-			case 'app.data.strategy-group':
-				return 'STRATEGY GROUP'
-				break
-			case 'app.data.account-type':
-				return 'ACCOUNT TYPES'
-				break
-			case 'app.data.instrument-type':
-				return 'INSTRUMENT TYPES'
-				break
-			/* case 'app.data.pricing-policy':
-                            return "PRICING POLICY";
-                            break; */
-			case 'app.data.transaction-type':
-				return 'TRANSACTION TYPE'
-				break
-			case 'app.data.transaction-type-group':
-				return 'TRANSACTION TYPE GROUP'
-				break
-			case 'app.data.currency':
-				return 'CURRENCY'
-				break
-			case 'app.data.complex-transaction':
-				return 'TRANSACTION'
-				break
-			default:
-				return 'ENTITIY'
-				break
-		}
+	/* scope.calculateReport = function () {
+			evEventService.dispatchEvent(evEvents.REQUEST_REPORT);
+		}; */
+	scope.refreshTable = function () {
+		evEventService.dispatchEvent(evEvents.REQUEST_REPORT)
 	}
 
-	async function evAddEntity() {
-		let editLayout,
-			entity = {}
-
-		switch (scope.entityType) {
-			case 'transaction-type':
-				editLayout = await uiService.getDefaultEditLayout(scope.entityType)
-				evHelperService.openTTypeAddDrawer(
-					evDataService,
-					evEventService,
-					editLayout,
-					$bigDrawer,
-					scope.entityType,
-					entity
-				)
-
-				break
-
-			case 'instrument-type':
-				editLayout = await uiService.getDefaultEditLayout(scope.entityType)
-				evHelperService.openInstrumentTypeAddDrawer(
-					evDataService,
-					evEventService,
-					editLayout,
-					$bigDrawer,
-					scope.entityType,
-					entity
-				)
-
-				break
-
-			case 'complex-transaction':
-				editLayout = await uiService.getDefaultEditLayout(scope.entityType)
-
-				evHelperService.openComplexTransactionAddDrawer(
-					evDataService,
-					evEventService,
-					editLayout,
-					$bigDrawer,
-					scope.entityType,
-					entity
-				)
-
-				break
-
-			default:
-				editLayout = await uiService.getDefaultEditLayout(scope.entityType)
-				evHelperService.openEntityViewerAddDrawer(
-					evDataService,
-					evEventService,
-					editLayout,
-					$bigDrawer,
-					scope.entityType,
-					entity
-				)
-
-				break
-		}
+	//region Chips
+	scope.onFilterChipClick = (chipsData) => {
+		console.log('chipsData:', chipsData.event.currentTarget)
+		chipsData.data.id
 	}
 
-	function addFromProvider($event) {
-		$mdDialog.show({
-			controller: 'InstrumentSelectDatabaseDialogController as vm',
-			templateUrl: 'views/dialogs/instrument-select-database-dialog-view.html',
-			targetEvent: $event,
-			multiple: true,
-			locals: {
-				data: {
-					context: {
-						action: 'add_instrument_dialog',
-					},
-					inputText: '',
-				},
-			},
-		})
-	}
+	scope.filterSettingsChange = function () {
+		evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
 
-	async function openTransactionTypeDialog() {
-		let editLayout,
-			entity = {}
-
-		editLayout = await uiService.getDefaultEditLayout(scope.entityType)
-		evHelperService.openTTypeAddDrawer(
-			evDataService,
-			evEventService,
-			editLayout,
-			$bigDrawer,
-			scope.entityType,
-			entity
-		)
-	}
-
-	function openSimpleImportDialog($event) {
-		$mdDialog.show({
-			controller: 'SimpleEntityImportDialogController as vm',
-			templateUrl:
-				'views/dialogs/simple-entity-import/simple-entity-import-dialog-view.html',
-			targetEvent: $event,
-			multiple: true,
-			locals: {
-				data: {},
-			},
-		})
-	}
-
-	/* function evApplyDatabaseFilters() {
-                    evDataService.resetTableContent(false);
-                    evEventService.dispatchEvent(evEvents.UPDATE_TABLE);
-                }; */
-	function refreshTable() {
-		evDataService.resetTableContent(false)
+		evDataService.resetTableContent(true)
 
 		evEventService.dispatchEvent(evEvents.UPDATE_TABLE)
 	}
 
-	//region Chips
+	scope.toggleUseFromAboveFilters = function () {
+		scope.showUseFromAboveFilters = !scope.showUseFromAboveFilters
+		evEventService.dispatchEvent(evEvents.TOGGLE_SHOW_FROM_ABOVE_FILTERS)
+		formatFiltersForChips()
+
+		setTimeout(() => {
+			const filterAreaHeightChanged = scope.vm.updateFilterAreaHeight()
+
+			if (filterAreaHeightChanged) {
+				evEventService.dispatchEvent(evEvents.UPDATE_TABLE_VIEWPORT)
+			}
+		}, 0)
+	}
+
+	/* const getUseFromAboveFilters = function () {
+
+			useFromAboveFilters = filters.filter((filter, index) => {
+
+				if (filter.options && filter.options.use_from_above && Object.keys(filter.options.use_from_above).length) {
+
+					filter.filtersListIndex = index;
+					return true;
+
+				}
+
+				return false;
+
+			});
+
+		}; */
+
 	const formatFiltersForChips = function () {
-		filtersChips.value = []
-
+		scope.filtersChips = []
 		const errors = []
-		// const shownFilters = scope.showFrontFilters ? filters.valuefrontend : filters.valuebackend;
-		filters.value[scope.shownFiltersType].forEach((filter) => {
-			const filterOpts = filter.options || {}
-			console.log('filterOpts:', filterOpts)
 
-			let filterData = {
-				id: filter.key,
-				isActive: filterOpts.enabled,
-			}
-			console.log('filterData:', filterData)
+		console.log('formatFiltersForChips.filters', filters)
 
-			const filterName = filter.layout_name ? filter.layout_name : filter.name
+		filters.value.forEach((filter) => {
+			if (filter.type !== 'filter_link') {
+				// don't show filter from dashboard component
 
-			let chipText = gFiltersVm.getChipTextElem(
-				filterName,
-				filterOpts.filter_values,
-				filterOpts.filter_type
-			)
+				const filterOpts = filter.options || {}
+				/* let filterVal = filterOpts.filter_values || "";
 
-			filterData.text = chipText
+					if (filterOpts.filter_type === 'from_to') {
 
-			if (filter.key.startsWith('custom_fields')) {
-				let error
-				;[filter, filterData, error] =
-					gFiltersVm.checkCustomFieldFilterForError(
-						filter,
-						filterData,
-						customFields
+						filterVal = `From ${filterOpts.filter_values.min_value} to ${filterOpts.filter_values.max_value}`;
+
+					} else if (filterOpts.filter_type === 'out_of_range' ) {
+
+						filterVal = `Out of range from ${filterOpts.filter_values.min_value} to ${filterOpts.filter_values.max_value}`;
+
+					} */
+
+				// hide use from above filters if needed
+				if (
+					scope.showUseFromAboveFilters ||
+					!filterOpts.use_from_above ||
+					!Object.keys(filterOpts.use_from_above).length
+				) {
+					let filterData = {
+						id: filter.key,
+						isActive: filterOpts.enabled,
+					}
+
+					const filterName = filter.layout_name
+						? filter.layout_name
+						: filter.name
+
+					let chipText = scope.vm.getChipTextElem(
+						filterName,
+						filterOpts.filter_values,
+						filterOpts.filter_type
 					)
-				if (error) errors.push(error)
-			}
 
-			if (scope.shownFiltersType === 'frontend') {
-				filterData.error_data = {
-					code: 20,
-					description: 'Outdated filter. Please delete it. ',
+					if (
+						filterOpts.use_from_above &&
+						Object.keys(filterOpts.use_from_above).length
+					) {
+						filterData.classes = 'use-from-above-filter-chip'
+						filterData.tooltipContent = chipText
+
+						chipText = '<span class="material-icons">link</span>' + chipText
+					}
+
+					filterData.text = chipText
+
+					/*
+						if (filter.key.startsWith('custom_fields')) {
+							const customField = customFields.find( field => filter.key === `custom_fields.${field.user_code}`)
+							if (!customField) {
+
+								filter.options.enabled = false;
+								const description = `The ${filter.groups ? 'group' : 'column'} does not exist in the Configuration`
+
+								filterData.error_data = {
+									code: 10,
+									description: description
+								}
+
+								const error = {
+									key: filter.key,
+									description: description
+								}
+
+								errors.push(error)
+
+							}
+
+						}
+						*/
+					if (filter.key.startsWith('custom_fields')) {
+						let error
+						;[filter, filterData, error] =
+							scope.vm.checkCustomFieldFilterForError(
+								filter,
+								filterData,
+								customFields
+							)
+						if (error) errors.push(error)
+					}
+
+					scope.filtersChips.push(filterData)
 				}
 			}
-
-			filtersChips.value.push(filterData)
 		})
-		console.log('filtersChips.value:', filtersChips.value)
 
-		if (errors.length) gFiltersVm.updateMissingCustomFieldsList(errors)
+		if (errors.length) scope.vm.updateMissingCustomFieldsList(errors)
 
-		gFiltersVm.updateFilterAreaHeight()
+		scope.vm.updateFilterAreaHeight()
 	}
 
-	scope.onFilterChipClick = gFiltersVm.onFilterChipClick
+	scope.onChipsFirstRender = scope.vm.onChipsFirstRender
 
-	function filterSettingsChange() {
-		evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
+	scope.addFilter = function ($event) {
+		scope.vm.openAddFilterDialog($event, filters.value).then((res) => {
+			if (res.status === 'agree') {
+				for (var i = 0; i < res.data.items.length; i = i + 1) {
+					filters.value.push(res.data.items[i])
+				}
 
-		if (scope.shownFiltersType === 'frontend')
-			evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
-	}
-
-	scope.onChipsFirstRender = gFiltersVm.onChipsFirstRender
-
-	async function addFilter($event) {
-		let res = await gFiltersVm.openAddFilterDialog(
-			$event,
-			filters.value[scope.shownFiltersType]
-		)
-
-		if (res.status === 'agree') {
-			for (var i = 0; i < res.data.items.length; i = i + 1) {
-				filters.value[scope.shownFiltersType].push(res.data.items[i])
+				evDataService.setFilters(filters.value)
+				evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
 			}
-
-			evDataService.setFilters(filters.value)
-			evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
-		}
+		})
 	}
 
-	function removeFilter(filtersToRemove) {
-		filters.value[scope.shownFiltersType] = filters.value[
-			scope.shownFiltersType
-		].filter((filter) => {
+	scope.removeFilter = function (filtersToRemove) {
+		filters = filters.filter((filter) => {
 			return filtersToRemove.find((item) => item.id !== filter.key)
 		})
 
-		evDataService.setFilters(filters.value)
+		evDataService.setFilters(filters)
 
 		evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
 		evEventService.dispatchEvent(evEvents.UPDATE_TABLE)
 	}
 	//endregion
 
-	function toggleFiltersToShow() {
-		// scope.showFrontFilters = !scope.showFrontFilters;
+	scope.toggleSplitPanel = scope.vm.toggleSplitPanel
 
-		scope.shownFiltersType =
-			scope.shownFiltersType === 'frontend' ? 'backend' : 'frontend'
-		scope.popupData.shownFiltersType = scope.shownFiltersType
+	scope.toggleMatrix = function ($event) {
+		var viewType = evDataService.getViewType()
+		var newViewType
 
-		if (!addFilterElem) {
-			addFilterElem = filtersChipsContainer.querySelector(
-				'.add-chip-wrap .chip-list-content'
-			)
+		if (viewType === 'matrix') {
+			newViewType = 'report_viewer'
+		} else {
+			newViewType = 'matrix'
 		}
 
-		addFilterElem.innerText =
-			scope.shownFiltersType === 'frontend' ? 'ADD FILTER' : 'ADD SERVER FILTER'
+		if (newViewType === 'matrix') {
+			var settings = evDataService.getViewSettings(newViewType)
 
-		formatFiltersForChips()
+			$mdDialog
+				.show({
+					controller: 'ReportViewerMatrixSettingsDialogController as vm',
+					templateUrl:
+						'views/dialogs/report-viewer-matrix-settings-dialog-view.html',
+					parent: angular.element(document.body),
+					clickOutsideToClose: false,
+					targetEvent: $event,
+					preserveScope: true,
+					multiple: true,
+					autoWrap: true,
+					skipHide: true,
+					locals: {
+						data: {
+							attributeDataService: attributeDataService,
+							evDataService: evDataService,
+							evEventService: evEventService,
+							settings: settings,
+						},
+					},
+				})
+				.then(function (res) {
+					if (res.status === 'agree') {
+						settings = res.data.settings
 
-		evEventService.dispatchEvent(evEvents.FILTERS_TO_SHOW_CHANGE)
+						evDataService.setViewType(newViewType)
+						evDataService.setViewSettings(newViewType, settings)
+
+						evEventService.dispatchEvent(evEvents.VIEW_TYPE_CHANGED)
+					}
+				})
+		} else {
+			evDataService.setViewType(newViewType)
+			evDataService.setViewSettings(newViewType, {})
+
+			evEventService.dispatchEvent(evEvents.VIEW_TYPE_CHANGED)
+		}
 	}
 
-	const toggleSplitPanel = gFiltersVm.toggleSplitPanel
-
-	const exportAsCSV = gFiltersVm.exportAsCSV
-	const exportAsExcel = gFiltersVm.exportAsExcel
-	const copyReport = gFiltersVm.copyReport
-	const copySelectedToBuffer = gFiltersVm.copySelectedToBuffer
-
-	const openViewConstructor = gFiltersVm.openViewConstructor
-
-	function openCustomFieldsManager($event) {
+	scope.exportAsPdf = function ($event) {
 		$mdDialog.show({
-			controller: 'AttributesManagerDialogController as vm',
-			templateUrl: 'views/dialogs/attributes-manager-dialog-view.html',
+			controller: 'ExportPdfDialogController as vm',
+			templateUrl: 'views/dialogs/export-pdf-dialog-view.html',
+			parent: angular.element(document.body),
 			targetEvent: $event,
+			locals: {
+				evDataService: evDataService,
+				evEventService: evEventService,
+				data: { entityType: scope.entityType },
+			},
+		})
+	}
+
+	scope.exportAsCSV = scope.vm.exportAsCSV
+	scope.exportAsExcel = scope.vm.exportAsExcel
+	scope.copyReport = scope.vm.copyReport
+	scope.copySelectedToBuffer = scope.vm.copySelectedToBuffer
+
+	scope.openViewConstructor = scope.vm.openViewConstructor
+
+	scope.openCustomFieldsManager = function ($event) {
+		$mdDialog.show({
+			controller: 'CustomFieldDialogController as vm',
+			templateUrl: 'views/dialogs/custom-field/custom-field-dialog-view.html',
+			parent: angular.element(document.body),
+			targetEvent: $event,
+			clickOutsideToClose: false,
+			preserveScope: true,
 			multiple: true,
 			locals: {
+				attributeDataService: attributeDataService,
+				entityViewerEventService: evEventService,
 				data: {
-					entityType: scope.entityType,
+					entityType: scope.vm.entityType,
 				},
 			},
 		})
 	}
 
-	function openInputFormEditor(ev) {
-		$mdDialog.show({
-			controller: 'EntityDataConstructorDialogController as vm',
-			templateUrl: 'views/dialogs/entity-data-constructor-dialog-view.html',
-			targetEvent: ev,
-			multiple: true,
-			locals: {
-				data: {
-					entityType: scope.entityType,
+	scope.toggleAutoRefresh = function () {
+		scope.rvAutoRefresh = !scope.rvAutoRefresh
+
+		evDataService.setAutoRefreshState(scope.rvAutoRefresh)
+	}
+
+	scope.addMenu = {
+		data: {
+			menu: {
+				root: {
+					items: [
+						{
+							action: 'book_transaction',
+							name: 'Book Transaction',
+							order: 0,
+						},
+						{
+							action: 'add_portfolio',
+							name: 'Add Portfolio',
+							order: 1,
+						},
+						{
+							action: 'add_account',
+							name: 'Add Account',
+							order: 2,
+						},
+						{
+							action: 'add_currency',
+							name: 'Add Currency',
+							order: 3,
+						},
+						{
+							action: 'add_instrument',
+							name: 'Add Instrument',
+							order: 4,
+						},
+					],
 				},
 			},
-		})
+		},
+	}
+
+	const getAddMenuLayout = function () {
+		uiService
+			.getContextMenuLayoutList({
+				filters: {
+					type: 'report_menu_add_entities',
+				},
+			})
+			.then(function (data) {
+				if (data.results.length) {
+					scope.addMenu = data.results[0]
+				}
+
+				scope.$apply()
+			})
+	}
+
+	scope.dispatchAddMenuAction = function ($event, item) {
+		evDataService.setUserRequestedAction(item.action)
+
+		evEventService.dispatchEvent(evEvents.USER_REQUEST_AN_ACTION)
 	}
 
 	const initEventListeners = function () {
@@ -992,7 +1024,7 @@
 		evEventService.addEventListener(
 			evEvents.DYNAMIC_ATTRIBUTES_CHANGE,
 			function () {
-				customFields = scope.attributeDataService.getCustomFieldsByEntityType(
+				customFields = attributeDataService.getCustomFieldsByEntityType(
 					scope.entityType
 				)
 				formatFiltersForChips()
@@ -1001,18 +1033,27 @@
 
 		evEventService.addEventListener(
 			evEvents.TABLE_SIZES_CALCULATED,
-			function () {}
+			function () {
+				scope.vm.calculateFilterChipsContainerWidth(
+					gFiltersLeftPartWidth,
+					gFiltersRightPartWidth,
+					filtersChipsContainer
+				)
+			}
 		)
 
 		evEventService.addEventListener(evEvents.FILTERS_CHANGE, function () {
-			filters.value = evDataService.getFilters()
+			filters = evDataService.getFilters()
+
+			// getUseFromAboveFilters();
+			useFromAboveFilters = gFiltersHelper.filterUseFromAboveFilters(filters)
 
 			formatFiltersForChips()
 
 			setTimeout(function () {
-				// wait until DOM elems reflow after v-if
+				// wait until DOM elems reflow after ng-repeat
 
-				const filterAreaHeightChanged = gFiltersVm.updateFilterAreaHeight()
+				const filterAreaHeightChanged = scope.vm.updateFilterAreaHeight()
 
 				if (filterAreaHeightChanged) {
 					evEventService.dispatchEvent(evEvents.UPDATE_TABLE_VIEWPORT)
@@ -1020,33 +1061,71 @@
 			}, 0)
 		})
 
+		evEventService.addEventListener(
+			evEvents.ACTIVE_OBJECT_FROM_ABOVE_CHANGE,
+			function () {
+				if (useFromAboveFilters.length) {
+					// UPDATE_TABLE or REQUEST_REPORT dispatched inside gFiltersHelper.insertActiveObjectDataIntoFilters()
+					const filtersChangedFromAbove =
+						gFiltersHelper.insertActiveObjectDataIntoFilters(
+							evDataService,
+							evEventService
+						)
+					if (filtersChangedFromAbove) formatFiltersForChips()
+				}
+			}
+		)
+
+		evEventService.addEventListener(
+			evEvents.CLEAR_USE_FROM_ABOVE_FILTERS,
+			function () {
+				if (useFromAboveFilters.length) {
+					useFromAboveFilters.forEach((ufaFilter) => {
+						filters[ufaFilter.filtersListIndex].options.filter_values = []
+					})
+
+					evDataService.setFilters(filters)
+
+					evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
+
+					evDataService.resetTableContent(true)
+
+					evEventService.dispatchEvent(evEvents.UPDATE_TABLE)
+				}
+			}
+		)
+
 		evEventService.addEventListener(evEvents.ADDITIONS_CHANGE, function () {
 			scope.currentAdditions = evDataService.getAdditions()
+		})
+
+		evEventService.addEventListener(evEvents.DATA_LOAD_END, function () {
+			scope.reportOptions = evDataService.getReportOptions() // for refresh tooltip -> auth time
+		})
+
+		evEventService.addEventListener(evEvents.FINISH_RENDER, function () {
+			scope.renderTime = evDataService.getRenderTime() // for refresh tooltip -> auth time
 		})
 	}
 
 	function init() {
-		console.log('filters.value:', filters.value)
-		if (
-			scope.viewContext !== 'reconciliation_viewer' &&
-			filters.value.frontend.length
-		)
-			scope.thereAreFrontendFilters = true
-
 		scope.currentAdditions = evDataService.getAdditions()
 
-		scope.popupEventService = gFiltersVm.popupEventService
-		scope.chipsListEventService = gFiltersVm.chipsListEventService
+		scope.popupEventService = scope.vm.popupEventService
+		scope.chipsListEventService = scope.vm.chipsListEventService
 
-		scope.popupData = gFiltersVm.popupData
+		scope.popupData = scope.vm.popupData
 
-		if (scope.popupData)
-			scope.popupData.shownFiltersType = scope.shownFiltersType
+		getAddMenuLayout()
 
+		useFromAboveFilters = gFiltersHelper.filterUseFromAboveFilters(
+			filters.value
+		)
 		formatFiltersForChips()
 
 		scope.readyStatus.filters = true
-		gFiltersVm.updateFilterAreaHeightOnInit()
+
+		scope.vm.updateFilterAreaHeightOnInit()
 
 		initEventListeners()
 	}

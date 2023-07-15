@@ -95,7 +95,7 @@ export default function (
 	//     }
 	// }).then(function (data) {
 	//
-	//     console.log('Resolved??', data);
+	//     ;
 	//
 	// });
 
@@ -765,7 +765,7 @@ export default function (
 	 * @param layoutData
 	 */
 	vm.setLayout = function (layoutData) {
-		console.log('layoutData:', layoutData)
+
 		vm.layoutId = layoutData.id
 
 		layoutData.data.filters = separateEvFilters(layoutData.data.filters)

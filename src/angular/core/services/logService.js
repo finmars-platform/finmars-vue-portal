@@ -26,37 +26,37 @@
     var property = function(name, value, importance, styles){
         var imp = importance || 10;
         var css = styles || 'color: ' + importanceResolve(themeColors.property, imp);
-        console.log('%c{"property": "' + name +'", "value": "', css, value, '"}');
+        ;
     };
 
     var collection = function(name, value, importance, styles){
         var imp = importance || 10;
         var css = styles || 'color: ' + importanceResolve(themeColors.collection, imp);
-        console.log('%c{"collection": "' + name +'", "data":', css, value , '}');
+        ;
     };
 
     var event = function(name, event, importance, styles){
         var imp = importance || 10;
         var css = styles || 'color: ' + importanceResolve(themeColors.event, imp);
-        console.log('%c{"event": "' + name +'", "data": "' + event + '"}', css);
+        ;
     };
 
     var controller = function(name, status, importance, styles) {
         var imp = importance || 10;
         var css = styles || 'color: ' + importanceResolve(themeColors.controller, imp);
-        console.log('%c{"controller": "' + name +'", "status": "' + status + '"}', css);
+        ;
     };
 
     var component = function(name, status, importance, styles) {
         var imp = importance || 10;
         var css = styles || 'color: ' + importanceResolve(themeColors.component, imp);
-        console.log('%c{"component": "' + name +'", "status": "' + status + '"}', css);
+        ;
     };
 
     var service = function(name, status, importance, styles) {
         var imp = importance || 10;
         var css = styles || 'color: ' + importanceResolve(themeColors.service, imp);
-        console.log('%c{"service": "' + name +'", "status": "' + status + '"}', css);
+        ;
     };
 
     module.exports = {

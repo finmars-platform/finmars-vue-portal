@@ -86,7 +86,7 @@ export default function (
 			entityViewerOptions.complex_transaction_filters =
 				vm.complexTransactionFilters
 		}
-		console.log('ev settings entityViewerOptions', entityViewerOptions)
+
 		entityViewerDataService.setEntityViewerOptions(entityViewerOptions)
 
 		$mdDialog.hide({ status: 'agree' })
@@ -95,7 +95,7 @@ export default function (
 	var init = function () {
 		var entityViewerOptions = entityViewerDataService.getEntityViewerOptions()
 
-		console.log('entityViewerOptions', entityViewerOptions)
+
 
 		var multselData = getMultiselectorData()
 		vm.multiselectorOptions = multselData.optionsList
@@ -108,7 +108,7 @@ export default function (
 			vm.complexTransactionFilters = ['booked']
 		}
 
-		console.log('complexTransactionFilters', vm.complexTransactionFilters)
+
 
 		// DEPRECATED
 		// if (vm.entityType === "complex-transaction" && entityViewerOptions.complex_transaction_filters) {
@@ -119,7 +119,7 @@ export default function (
 			vm.entityFilters = multselData.selectedByDefault
 		}
 
-		console.log('ev settings entityFilters ', vm.entityFilters)
+
 		vm.itemsToLoad = pagePagination.page_size
 	}
 

@@ -109,7 +109,7 @@ export default function ($scope, $mdDialog) {
 			.then(function (data) {
 				vm.generatePages(data)
 
-				console.log('simple entity data', data)
+
 				vm.entitySchemes = data.results
 				vm.readyStatus.entitySchemes = true
 				$scope.$apply()
@@ -169,7 +169,7 @@ export default function ($scope, $mdDialog) {
 			})
 			.then(function (res) {
 				if (res && res.status === 'agree') {
-					console.log('res', res.data)
+
 					/*csvImportSchemeService.update(item.id, res.data).then(function () {
                         vm.getList();
                         $scope.$apply();
@@ -198,7 +198,7 @@ export default function ($scope, $mdDialog) {
 			})
 			.then(function (res) {
 				if (res.status === 'agree') {
-					console.log('res', res.data)
+
 					csvImportSchemeService.deleteByKey(item.id).then(function () {
 						/*setTimeout(function () {
                             vm.getList();

@@ -333,7 +333,7 @@ export default function ($scope, $mdDialog, metaContentTypesService, groupId) {
 
 	vm.toggleConfigurationSection = function () {
 		var toggleTo = !vm.checkConfigurationSection()
-		console.log('permissions toggleConfigurationSection ', toggleTo)
+
 		vm.permissionTable.configuration.forEach(function (item) {
 			Object.keys(item.data).forEach(function (key) {
 				item.data[key] = toggleTo
@@ -342,7 +342,7 @@ export default function ($scope, $mdDialog, metaContentTypesService, groupId) {
 	}
 
 	vm.presetChange = function ($event) {
-		console.log('activePreset', vm.activePresetId)
+
 
 		var preset
 
@@ -352,7 +352,7 @@ export default function ($scope, $mdDialog, metaContentTypesService, groupId) {
 			}
 		})
 
-		console.log('preset', preset)
+
 
 		vm.permissionTable = vm.permissionTable.map(function (item) {
 			Object.keys(preset.data).forEach(function (key) {
@@ -366,7 +366,7 @@ export default function ($scope, $mdDialog, metaContentTypesService, groupId) {
 			$scope.$apply()
 		}, 0)
 
-		console.log('vm.permissionTable', vm.permissionTable)
+
 	}
 
 	vm.updateCheckbox = function (item, prop) {
@@ -421,7 +421,7 @@ export default function ($scope, $mdDialog, metaContentTypesService, groupId) {
 				item.data['creator_view'] = item.data[prop]
 			}
 
-			console.log('prop', prop)
+
 
 			vm.permissionTable.data.forEach(function (tableItem) {
 				tableItem.data.manage_attributes = item.data['creator_view']
@@ -483,7 +483,7 @@ export default function ($scope, $mdDialog, metaContentTypesService, groupId) {
 				entityResolverService
 					.getList(entityType, { pageSize: 1000 })
 					.then(function (data) {
-						console.log('data', data)
+
 
 						var itemsWithPermissions = data.results.map(function (item) {
 							return {
@@ -529,7 +529,7 @@ export default function ($scope, $mdDialog, metaContentTypesService, groupId) {
 							}
 						})
 
-						console.log('entityType', entityType)
+
 
 						entityResolverService
 							.updateBulk(entityType, itemsWithPermissions)
@@ -575,7 +575,7 @@ export default function ($scope, $mdDialog, metaContentTypesService, groupId) {
 			promises.push(vm.overwritePermissions($event, permissionTableRow, true))
 		})
 
-		console.log('promises', promises)
+
 
 		Promise.all(promises).then(function () {
 			$mdDialog.show({
@@ -633,8 +633,8 @@ export default function ($scope, $mdDialog, metaContentTypesService, groupId) {
 					})
 				}
 
-				console.log('vm.membersList', vm.membersList)
-				console.log('vm.assignedMembersList', vm.assignedMembersList)
+
+
 
 				vm.readyStatus.content = true
 

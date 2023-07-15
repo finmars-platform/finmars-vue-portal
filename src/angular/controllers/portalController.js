@@ -67,7 +67,7 @@ export default function (
 
 			$('body').click(function () {
 				//Hide the menus if visible
-				console.log('showWarningSideNav.click hide')
+
 				vm.showWarningSideNav = false
 				setTimeout(function () {
 					$scope.$apply()
@@ -95,7 +95,7 @@ export default function (
 
 		Promise.all(promises)
 			.then((resData) => {
-				console.log('PortalController.resData', resData)
+
 
 				vm.readyStatus = true
 
@@ -104,7 +104,7 @@ export default function (
 			})
 			.catch(function (error) {
 				error.___custom_message = 'PortalController init()'
-				console.log('PortalController.error', error)
+
 				console.error(error)
 
 				// window.open(redirectionService.getUrl('app.profile'), '_self')

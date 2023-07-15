@@ -333,7 +333,7 @@ export default function (
 
 	var getItemDefaultValue = function (defaultValue) {
 		if (defaultValue.mode === 1) {
-			console.log('defaultValue', defaultValue)
+
 
 			var setValueLabel = vm.currentContentType
 				? vm.currentContentType.name

@@ -48,7 +48,7 @@ var getId = function (item) {
 					item.___subtotal_subtype,
 			].join('')
 
-			// console.log('pattern', pattern);
+			// ;
 		} else {
 			pattern = [
 				item.___parentId,

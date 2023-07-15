@@ -98,7 +98,7 @@ export default function ($scope, $mdDialog, item, data) {
 
 		vm.selectedHelpGroup = item
 
-		console.log('vm.selectedHelpGroup', vm.selectedHelpGroup)
+
 	}
 
 	vm.undo = function () {
@@ -120,7 +120,7 @@ export default function ($scope, $mdDialog, item, data) {
 		} else {
 			vm.expressionsHistory.push(vm.item.expression)
 
-			console.log(this)
+
 			var val = $('#editorExpressionInput')[0].value
 			var cursorPosition = val.slice(
 				0,
@@ -182,8 +182,8 @@ export default function ($scope, $mdDialog, item, data) {
 
             }
 
-            console.log('indexContainer', indexContainer);
-            console.log('container', container);
+            ;
+            ;
 
             if (container.length > 0) {
                 result = false;
@@ -349,7 +349,7 @@ export default function ($scope, $mdDialog, item, data) {
 
             }
 
-            console.log('lookupForInput.count', count);
+            ;
 
 
             if (count > 0) {
@@ -606,7 +606,7 @@ export default function ($scope, $mdDialog, item, data) {
 
                 if (token) {
 
-                    console.log('token', token);
+                    ;
 
                     if (token.type === 'property') {
 
@@ -698,7 +698,7 @@ export default function ($scope, $mdDialog, item, data) {
                 }
             }
 
-            // console.log('inputsCounts', inputsCounts);
+            // ;
 
             // if (result.length > 0 && inputsCounts === 0) {
             //
@@ -715,7 +715,7 @@ export default function ($scope, $mdDialog, item, data) {
 
             return expressionService.validate(vm.item).then(function (data) { // may be useless
 
-                // console.log('data', data);
+                // ;
 
                 vm.status = 'success';
 
@@ -727,7 +727,7 @@ export default function ($scope, $mdDialog, item, data) {
 
             }).catch(function (reason) {
 
-                // console.log('reason', reason);
+                // ;
 
                 vm.status = 'error';
 
@@ -760,7 +760,7 @@ export default function ($scope, $mdDialog, item, data) {
 				$scope.$apply()
 			})
 			.catch(function (res) {
-				console.log('reason', res)
+
 
 				vm.status = 'error'
 
@@ -788,7 +788,7 @@ export default function ($scope, $mdDialog, item, data) {
 
                     if (vm.data && vm.data.functions) {
 
-                        console.log('data.functions', vm.data.functions);
+                        ;
 
                         vm.data.functions.forEach(function (items) {
 
@@ -808,7 +808,7 @@ export default function ($scope, $mdDialog, item, data) {
 
                     });
 
-                    console.log('expressions', vm.expressions);
+                    ;
 
                     vm.selectedHelpItem = vm.expressions[0];
 
@@ -825,7 +825,7 @@ export default function ($scope, $mdDialog, item, data) {
 
 		/*if (vm.data && vm.data.functions) {
 
-                console.log('data.functions', vm.data.functions);
+                ;
 
                 vm.data.functions.forEach(function (items) {
 
@@ -850,7 +850,7 @@ export default function ($scope, $mdDialog, item, data) {
 			vm.data
 		)
 
-		console.log('expressions', vm.expressions)
+
 
 		vm.selectedHelpItem = vm.expressions[0]
 	}

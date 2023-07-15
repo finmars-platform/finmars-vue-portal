@@ -5,7 +5,7 @@ export default function ($scope, $mdDialog, data) {
 
 	vm.event = data.event
 
-	console.log('vm.event', vm.event)
+
 
 	vm.skip = function () {
 		$mdDialog.hide()

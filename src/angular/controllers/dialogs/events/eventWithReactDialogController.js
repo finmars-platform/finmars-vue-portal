@@ -1,7 +1,7 @@
 import instrumentEventService from '@/angular/services/instrumentEventService'
 
 export default function ($scope, $mdDialog, data) {
-	console.log('id for event buttons', data)
+
 
 	var vm = this
 
@@ -17,7 +17,7 @@ export default function ($scope, $mdDialog, data) {
 		}
 	})
 
-	console.log('vm.event', vm.event)
+
 
 	vm.eventAction = function ($event, action) {
 		instrumentEventService
@@ -35,7 +35,7 @@ export default function ($scope, $mdDialog, data) {
 						$mdDialog.hide({ status: 'agree' })
 					})
 					.catch(function (reason) {
-						console.log('reason', reason)
+
 
 						var description = "<p>Can't process event</p>"
 

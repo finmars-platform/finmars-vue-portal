@@ -91,8 +91,8 @@ export default function (
 	}
 
 	vm.editOption = function ($event, item) {
-		console.log('Controller edit option', $event)
-		console.log('Controller edit item', item)
+
+
 
 		$mdDialog
 			.show({
@@ -240,7 +240,7 @@ export default function (
 				return contentType
 			})
 
-			console.log('vm.layoutsGrouped', vm.layoutsGrouped)
+
 
 			vm.readyStatus.layouts = true
 

@@ -11,13 +11,13 @@ export default function (entityResolverService, reportHelper) {
 			var entityType = evDataService.getEntityType()
 			var reportOptions = evDataService.getReportOptions()
 
-			// console.log('requestData.entityType', entityType);
-			// console.log('requestData.reportOptions', reportOptions);
+			// ;
+			// ;
 
 			entityResolverService
 				.getList(entityType, reportOptions)
 				.then(function (data) {
-					// console.log('requestData.data', data);
+					// ;
 
 					if (!data.hasOwnProperty('non_field_errors')) {
 						var reportOptions = evDataService.getReportOptions()
@@ -39,7 +39,7 @@ export default function (entityResolverService, reportHelper) {
 					}
 				})
 				.catch(function (reason) {
-					// console.log('here?');
+					// ;
 				})
 		})
 	}
@@ -49,7 +49,7 @@ export default function (entityResolverService, reportHelper) {
 		entityViewerDataService,
 		entityViewerEventService
 	) {
-		// console.log('injectRegularFilters.requestParameters', requestParameters);
+		// ;
 
 		var newRequestParametersBody = Object.assign({}, requestParameters.body)
 		newRequestParametersBody['filter_settings'] = []
@@ -147,7 +147,7 @@ export default function (entityResolverService, reportHelper) {
 				.then(function (data) {
 					var groupData = entityViewerDataService.getData(event.___id)
 
-					// console.log('groupData', groupData);
+					// ;
 
 					var obj
 
@@ -413,7 +413,7 @@ export default function (entityResolverService, reportHelper) {
 		evDataService,
 		evEventService
 	) {
-		// console.log('createRequestParameters.item', item);
+		// ;
 
 		var groups = evDataService.getGroups()
 
@@ -504,16 +504,16 @@ export default function (entityResolverService, reportHelper) {
 				level = level + 1
 
 				if (level < groups.length) {
-					// console.log('to next level!', level);
+					// ;
 
 					items = evDataHelper.getGroupsByLevel(level, evDataService)
 
-					// console.log('recursiveRequest.items', items);
+					// ;
 
 					var recursiveRequestPromises = []
 
 					items.forEach(function (item) {
-						// console.log('item!', item.___group_name);
+						// ;
 
 						recursiveRequestPromises.push(
 							recursiveRequest(
@@ -595,12 +595,12 @@ export default function (entityResolverService, reportHelper) {
 		evDataService,
 		evEventService
 	) {
-		// console.log('updateDataStructureByRequestParameters.requestParameters', requestParameters);
+		// ;
 
 		return new Promise(function (resolve, reject) {
 			injectRegularFilters(requestParameters, evDataService, evEventService)
 
-			// console.log('requestParameters.requestType', requestParameters.requestType);
+			// ;
 
 			if (requestParameters.requestType === 'objects') {
 				getObjectsByRequestParameters(
@@ -630,7 +630,7 @@ export default function (entityResolverService, reportHelper) {
 
 			injectRegularFilters(requestParameters, evDataService, evEventService)
 
-			console.log('Here?')
+
 
 			if (requestParameters.requestType === 'objects') {
 				getObjectsByRequestParameters(
@@ -729,7 +729,7 @@ export default function (entityResolverService, reportHelper) {
 	) {
 		var activeGroupSort = entityViewerDataService.getActiveGroupTypeSort()
 
-		console.log('sortGroupType.activeGroupSort', activeGroupSort)
+
 
 		var groupsTypes = entityViewerDataService.getGroups()
 
@@ -745,7 +745,7 @@ export default function (entityResolverService, reportHelper) {
 			}
 		})
 
-		console.log('sortGroupType.level', level)
+
 
 		var groups = evDataHelper.getGroupsByLevel(level, entityViewerDataService)
 

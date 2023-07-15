@@ -124,7 +124,7 @@ export default function ($scope, $mdDialog, data) {
 
 		vm.item.action_data.content_type = item.content_type
 
-		console.log('Update Layout', vm.item)
+
 	}
 
 	vm.cancel = function () {

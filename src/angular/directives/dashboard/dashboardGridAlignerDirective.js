@@ -25,7 +25,7 @@ export default function () {
 			scope.calculateSingleCellWidth = function () {
 				var tabWidth = elem.parent().parent().parent().width()
 
-				console.log('tabWidth', tabWidth)
+
 
 				scope.cellWidth = Math.floor(tabWidth / scope.columnsTotal)
 			}
@@ -41,7 +41,7 @@ export default function () {
 				var layout = scope.dashboardDataService.getData()
 				var projection = scope.dashboardDataService.getProjection()
 
-				console.log('resizeGridCells.projection', projection)
+
 
 				var tab
 
@@ -74,7 +74,7 @@ export default function () {
 
 				var accordions = elem.querySelectorAll('.dashboard-accordion-component')
 
-				console.log('accordions', accordions)
+
 
 				for (var i = 0; i < accordions.length; i = i + 1) {
 					var accordion = accordions[i]
@@ -86,9 +86,9 @@ export default function () {
 					}
 				}
 
-				console.log('tab', tab)
-				console.log('foldedAccordionsRows', foldedAccordionsRows)
-				console.log('accordionsRows', accordionsRows)
+
+
+
 
 				accordionsRows.forEach(function (accordionRow, index) {
 					if (foldedAccordionsRows.indexOf(accordionRow) !== -1) {
@@ -106,7 +106,7 @@ export default function () {
 					}
 				})
 
-				console.log('rowsToFold', rowsToFold)
+
 
 				for (var i = 0; i < elements.length; i = i + 1) {
 					accordionsBefore = 0

@@ -147,9 +147,9 @@ export default function crossEntityAttributeExtensionPage(
 	}
 
 	vm.createDataStructure = function (data) {
-		console.log('createDataStructure.data', data)
 
-		console.log('createDataStructure.currencyAttributes', vm.currencyAttributes)
+
+
 		console.log(
 			'createDataStructure.instrumentAttributes',
 			vm.instrumentAttributes
@@ -279,7 +279,7 @@ export default function crossEntityAttributeExtensionPage(
 
 			promises.push(
 				new Promise(function (resolve, reject) {
-					console.log('Requesting instrument attribute types')
+
 
 					try {
 						attributeTypeService
@@ -298,7 +298,7 @@ export default function crossEntityAttributeExtensionPage(
 								resolve()
 							})
 					} catch (error) {
-						console.log('error', error)
+
 
 						resolve()
 					}
@@ -307,7 +307,7 @@ export default function crossEntityAttributeExtensionPage(
 
 			promises.push(
 				new Promise(function (resolve, reject) {
-					console.log('Requesting currency attribute types')
+
 
 					try {
 						attributeTypeService
@@ -326,7 +326,7 @@ export default function crossEntityAttributeExtensionPage(
 								resolve()
 							})
 					} catch (error) {
-						console.log('error', error)
+
 
 						resolve()
 					}
@@ -380,7 +380,7 @@ export default function crossEntityAttributeExtensionPage(
 
 		Promise.all(promises)
 			.then(function (data) {
-				console.log('finished processing')
+
 
 				vm.getData()
 

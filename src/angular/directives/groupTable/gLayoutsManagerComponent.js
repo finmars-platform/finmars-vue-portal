@@ -33,7 +33,7 @@ export default function (
 	reportHelper,
 	evRvLayoutsHelper
 ) {
-	console.log('evRvLayoutsHelper:', evRvLayoutsHelper)
+
 	return {
 		restrict: 'E',
 		templateUrl: 'views/components/layouts-manager-view.html',

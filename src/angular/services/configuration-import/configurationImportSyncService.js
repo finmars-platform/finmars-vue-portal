@@ -25,7 +25,7 @@ export default function (metaContentTypesService, configurationImportGetService,
 
                         item.group = data.id;
 
-                        // console.log('___group__user_code', user_code);
+                        // ;
 
                         resolveRelation(item)
 
@@ -56,7 +56,7 @@ export default function (metaContentTypesService, configurationImportGetService,
 
             configurationImportMapService.mapFieldsInInstrumentType(item).then(function (updatedItem) {
 
-                console.log('syncInstrumentType.updatedItem', updatedItem);
+                ;
 
                 resolve(updatedItem)
 
@@ -250,13 +250,13 @@ export default function (metaContentTypesService, configurationImportGetService,
 
             Promise.all(promises).then(function (data) {
 
-                console.log("Complex Import Scheme success");
+                ;
 
                 resolve(data)
 
             }, function (error) {
 
-                console.log("Complex Import Scheme error", error);
+                ;
 
                 resolve(item);
 
@@ -323,7 +323,7 @@ export default function (metaContentTypesService, configurationImportGetService,
                 resolve(data)
             }, function (reason) {
 
-                console.log('Reject sync csv import scheme');
+                ;
                 reject(reason)
 
             });
@@ -445,7 +445,7 @@ export default function (metaContentTypesService, configurationImportGetService,
 
             }, function (reason) {
 
-                console.log('Reject sync transaction scheme?');
+                ;
                 reject(reason)
             })
 
@@ -459,8 +459,8 @@ export default function (metaContentTypesService, configurationImportGetService,
 
             errors = errors || [];
 
-            console.log('errors', errors);
-            console.log('syncItem', entity);
+            ;
+            ;
 
             try {
 
@@ -506,7 +506,7 @@ export default function (metaContentTypesService, configurationImportGetService,
 
             } catch (error) {
 
-                console.log('syncItem .error', error);
+                ;
 
                 reject(error);
 

@@ -26,7 +26,7 @@ import priceDownloadSchemeMappingService from './import/mappings/priceDownloadSc
 import pricingPolicyMappingService from './import/mappings/pricingPolicyMappingService'
 
 var getList = function (entityType, options) {
-	console.log('getList entityType', entityType)
+
 
 	switch (entityType) {
 		case 'currency':

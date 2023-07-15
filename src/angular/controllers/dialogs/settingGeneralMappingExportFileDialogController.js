@@ -13,7 +13,7 @@ export default function ($scope, $mdDialog, metaContentTypesService, file) {
 
 	vm.getFile = function () {
 		configurationService.getMappingData().then(function (data) {
-			console.log('configurationService.getConfigurationData', data)
+
 
 			vm.file = data
 

@@ -106,7 +106,7 @@ export default function ($scope, fieldResolverService) {
 				key: 'price_download_scheme',
 			})
 			.then(function (res) {
-				console.log('res', res)
+
 
 				vm.priceDownloadSchemeFields = res.data
 

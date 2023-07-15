@@ -40,7 +40,7 @@ const isFirst = function (evDataService, obj) {
 const getAreaGroupsBefore = function (evDataService, level) {
 	var groups = evDataService.getGroups()
 
-	// console.log('getAreaGroupsBefore.groups', groups);
+	// ;
 
 	var groupsBefore = groups.filter(function (group, index) {
 		return index + 1 < level
@@ -49,7 +49,7 @@ const getAreaGroupsBefore = function (evDataService, level) {
 	var areaGroupsBefore = []
 	var i
 
-	// console.log('getAreaGroupsBefore.groupsBefore', groupsBefore);
+	// ;
 
 	for (i = groupsBefore.length - 1; i >= 0; i = i - 1) {
 		if (groupsBefore[i].report_settings.subtotal_type === 'line') {

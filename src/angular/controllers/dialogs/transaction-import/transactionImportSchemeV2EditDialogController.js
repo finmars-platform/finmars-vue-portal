@@ -234,9 +234,9 @@ export default function transactionImportSchemeEditDialogController(
 				}
 			})
 
-			console.log('selector_values_projection', vm.selector_values_projection)
-			console.log('mapFields', vm.scenarios)
-			console.log('reconFields', vm.reconFields)
+
+
+
 
 			vm.readyStatus.scheme = true
 			$scope.$apply()
@@ -566,7 +566,7 @@ export default function transactionImportSchemeEditDialogController(
 	vm.executeDryRun = function (item) {
 		vm.processing = true
 
-		console.log('vm.config.json_data', vm.dryRunData)
+
 
 		let blob = new Blob([JSON.stringify(JSON.parse(vm.dryRunData))], {
 			type: 'application/json;',
@@ -593,7 +593,7 @@ export default function transactionImportSchemeEditDialogController(
 
 		vm.activeDryRunResultItem = item
 
-		console.log('vm.activeDryRunResultItem', vm.activeDryRunResultItem)
+
 
 		vm.providerFields.forEach(function (providerField) {
 			Object.keys(vm.activeDryRunResultItem.conversion_inputs).forEach(

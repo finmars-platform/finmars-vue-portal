@@ -183,7 +183,7 @@ var findEntities = function (entity, options) {
 var getByKey = function (entity, id, options) {
 	return new Promise(function (resolve) {
 		if (!entitiesGetByKey[entity]) {
-			console.log('ENTITY', entity)
+
 
 			if (options && options.hasOwnProperty('entityType')) {
 				if (options.entityType == 'responsible') {

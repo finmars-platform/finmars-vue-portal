@@ -29,7 +29,7 @@ export default function (
 			function createController() {
 				var additions = scope.evDataService.getAdditions()
 
-				console.log('create report Controller', additions)
+
 
 				var editorTemplateUrl
 				var tpl
@@ -58,7 +58,7 @@ export default function (
 				container.html(tpl)
 				container.children().data('$ngControllerController', ctrl)
 
-				console.log('container', container)
+
 
 				$compile(elem.contents())(templateScope)
 			}

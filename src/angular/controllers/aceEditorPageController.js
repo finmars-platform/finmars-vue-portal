@@ -26,7 +26,7 @@ export default function ($scope, $state, $mdDialog) {
 				is_eval: true,
 			})
 			.then(function (data) {
-				console.log('data', data)
+
 
 				if (data.result) {
 					document.querySelector('.ace-editor-page-output').innerHTML =
@@ -42,10 +42,10 @@ export default function ($scope, $state, $mdDialog) {
 				$scope.$apply()
 			})
 			.catch(function (error) {
-				console.log(error)
+
 
 				error.text().then(function (data) {
-					console.log('data', data)
+
 
 					document.querySelector('.ace-editor-page-output').innerHTML = data
 				})

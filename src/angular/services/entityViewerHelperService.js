@@ -1589,7 +1589,7 @@ var openTTypeEditDrawer = function (
 
                                         } else {
 
-                                            console.log('res', res);
+                                            ;
 
                                             var objects = vm.entityViewerDataService.getObjects();
 
@@ -1670,7 +1670,7 @@ var openTTypeEditDrawer = function (
 
                                             } else {
 
-                                                console.log('res', res);
+                                                ;
 
                                                 var objects = vm.entityViewerDataService.getObjects();
 

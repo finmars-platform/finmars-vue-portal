@@ -9,7 +9,7 @@ export default function (
 	currencyHistoryService,
 	data
 ) {
-	console.log('data', data)
+
 
 	var vm = this
 
@@ -36,7 +36,7 @@ export default function (
 	}
 
 	vm.saveGroup = function ($event, group) {
-		console.log('Save group')
+
 
 		var promises = []
 
@@ -58,7 +58,7 @@ export default function (
 		Promise.all(promises).then(function (data) {
 			toastNotificationService.success('FX Rates are updated')
 
-			console.log('data', data)
+
 
 			vm.items = vm.items.filter(function (item) {
 				var result = true
@@ -117,7 +117,7 @@ export default function (
 
 		vm.generateGroupItems()
 
-		console.log('groupedItemsObj', vm.groupedItemsObj)
+
 	}
 
 	vm.init()

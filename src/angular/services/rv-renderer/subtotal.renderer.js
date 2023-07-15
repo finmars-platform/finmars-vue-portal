@@ -309,7 +309,7 @@ var getBgColor = function (evDataService, obj, columnNumber) {
 
 	var firstFoldedParent = foldedParents[foldedParents.length - 1]
 
-	// console.log('firstFoldedParent', firstFoldedParent);
+	// ;
 
 	if (firstFoldedParent && columnNumber >= firstFoldedParent.___level) {
 		result = REPORT_BG_CSS_SELECTOR + '-' + firstFoldedParent.___level

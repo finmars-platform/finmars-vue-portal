@@ -26,7 +26,7 @@ const baseUrl = baseUrlService.resolve()
 // const authorizerUrl = baseUrlService.getAuthorizerUrl();
 
 /* var handleError = function (methodName) {
-	console.log('Method: ' + methodName + '. Cannot get data from server');
+	;
 };
 
 var login = function (login, password) {

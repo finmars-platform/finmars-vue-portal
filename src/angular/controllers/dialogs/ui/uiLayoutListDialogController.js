@@ -52,7 +52,7 @@ export default function (
 
 	//var contentType = metaContentTypesService.getContentTypeUIByEntity(options.entityType);
 
-	//console.log('contentType', contentType);
+	//;
 
 	vm.getList = function () {
 		return new Promise(function (resolve, reject) {
@@ -384,7 +384,7 @@ export default function (
 	}
 
 	vm.acceptInvite = function ($event, invite) {
-		console.log('Accept invite: ', $event, invite)
+
 
 		invite.status = 1
 
@@ -401,7 +401,7 @@ export default function (
 				new Promise(function (resolve, reject) {
 					vm.importConfiguration(resolve)
 				}).then(function (data) {
-					console.log('Import Finished')
+
 
 					vm.getInvites()
 
@@ -444,7 +444,7 @@ export default function (
 	}
 
 	vm.declineInvite = function ($event, invite) {
-		console.log('Decline invite: ', $event, invite)
+
 
 		invite.status = 2
 
@@ -474,7 +474,7 @@ export default function (
 	}
 
 	vm.pullUpdate = function ($event, item, $index) {
-		console.log('Pull Update for Layout:', item)
+
 
 		shareConfigurationFileService
 			.getByKey(item.sourced_from_global_layout)
@@ -486,7 +486,7 @@ export default function (
 				new Promise(function (resolve, reject) {
 					vm.importConfiguration(resolve)
 				}).then(function (data) {
-					console.log('Import Finished')
+
 
 					vm.getList().then(function (value) {
 						$mdDialog.show({
@@ -521,7 +521,7 @@ export default function (
 			.then(function (data) {
 				vm.invites = data.results
 
-				console.log('vm.invites', vm.invites)
+
 
 				$scope.$apply()
 			})

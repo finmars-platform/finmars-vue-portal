@@ -39,7 +39,7 @@ export default function () {
 			scope.calculateSingleCellHeight = function () {
 				// var tabHeight = elem.height();
 				//
-				// console.log('tabHeight', tabHeight);
+				// ;
 				//
 				// scope.cellHeight = Math.floor(tabHeight / scope.rowsTotal)
 
@@ -136,7 +136,7 @@ export default function () {
 
 				var columnWidth = 121
 
-				console.log('scope.cellWidth', scope.cellWidth)
+
 
 				scope.rowControlsHolderElem.style.left =
 					scope.columnsTotal * scope.cellWidth + 'px'
@@ -159,7 +159,7 @@ export default function () {
 				scope.calculateSingleCellHeight()
 				scope.calculateSingleCellWidth()
 
-				// console.log('cellHeight', scope.cellHeight);
+				// ;
 
 				scope.resizeLayoutWidth()
 				scope.resizeGridCells()
@@ -190,10 +190,10 @@ export default function () {
 						scope.resize()
 					})
 
-					console.log('elem', elem)
+
 
 					elem[0].addEventListener('scroll', function (event) {
-						//console.log('here?', event);
+						//;
 						scope.updateRowControlsHolderPosition(event)
 					})
 

@@ -20,7 +20,7 @@ export default function configurationImportDialogController(
 	configurationImportService,
 	data
 ) {
-	console.log('file', data.file)
+
 
 	var vm = this
 
@@ -673,8 +673,8 @@ export default function configurationImportDialogController(
 						.then(function (mappingsData) {
 							clearInterval(timeout)
 
-							console.log('mappingsData', configurationData)
-							console.log('mappingsData', mappingsData)
+
+
 
 							if (configurationData.errors.length) {
 								$mdDialog.hide({ status: 'errors_occurred', data: {} })
@@ -735,7 +735,7 @@ export default function configurationImportDialogController(
 	vm.getTask = function () {
 		processesService.getByKey(vm.currentTaskId).then(function (data) {
 			vm.task = data
-			console.log('vm.task', vm.task)
+
 
 			if (vm.task.status === 'D' || vm.task.status === 'E') {
 				clearInterval(vm.poolingInterval)
@@ -751,7 +751,7 @@ export default function configurationImportDialogController(
 	}
 
 	vm.importConfiguration = function ($event) {
-		console.log('vm.importConfiguration')
+
 
 		vm.processing = true
 
@@ -793,8 +793,8 @@ export default function configurationImportDialogController(
 			return true
 		})
 
-		console.log('vm.items', vm.items)
-		console.log('mappingItems', mappingItems)
+
+
 
 		var date = new Date().toISOString().slice(0, 10) // yyyy-mm-dd
 
@@ -863,7 +863,7 @@ export default function configurationImportDialogController(
 		systemMessageService
 			.viewFile(vm.task.attachments[0].file_report)
 			.then(function (data) {
-				console.log('data', data)
+
 
 				$mdDialog.show({
 					controller: 'FilePreviewDialogController as vm',
@@ -947,7 +947,7 @@ export default function configurationImportDialogController(
 					})
 				})
 
-				console.log('vm.items with duplicates indicator', vm.items)
+
 
 				vm.readyStatus.duplicates = true
 				$scope.$apply()
@@ -983,8 +983,8 @@ export default function configurationImportDialogController(
 			}
 		})
 
-		console.log('mappingItems', mappingItems)
-		console.log('vm.items', JSON.parse(JSON.stringify(vm.items)))
+
+
 
 		vm.items.forEach(function (item) {
 			item.active = false

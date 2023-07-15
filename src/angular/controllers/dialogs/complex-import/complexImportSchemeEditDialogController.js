@@ -62,14 +62,14 @@ export default function complexImportSchemeEditDialogController(
 	}
 
 	vm.addSimpleEntityImportAction = function () {
-		console.log('here?')
+
 
 		vm.scheme.actions.push({
 			action_notes: '',
 			csv_import_scheme: {},
 		})
 
-		console.log('vm.scheme.actions', vm.scheme.actions)
+
 	}
 
 	vm.addTransactionImportAction = function () {

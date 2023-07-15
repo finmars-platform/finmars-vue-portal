@@ -65,7 +65,7 @@ export default function instrumentDownloadDialogController(
 	}
 
 	vm.resolveAttributeNode = function (item) {
-		// console.log('item', item);
+		// ;
 
 		//return item.name;
 
@@ -98,7 +98,7 @@ export default function instrumentDownloadDialogController(
 		}
 
 		if (type == 'dynAttr') {
-			//console.log('item', item);
+			//;
 			if (
 				vm.config.errors &&
 				vm.config.errors.hasOwnProperty('attribute_type_' + item.attribute_type)
@@ -117,7 +117,7 @@ export default function instrumentDownloadDialogController(
 	}
 
 	vm.openMapping = function ($event, item) {
-		console.log('ITEEM', item)
+
 
 		$mdDialog.show({
 			controller: 'EntityTypeMappingDialogController as vm',
@@ -180,7 +180,7 @@ export default function instrumentDownloadDialogController(
 						}
 					})
 
-					console.log('vm.instrument', vm.instrument)
+
 
 					Promise.all(promises).then(function (data) {
 						data.forEach(function (item) {
@@ -238,7 +238,7 @@ export default function instrumentDownloadDialogController(
 			.then(function (res) {
 				if (res.status === 'agree') {
 					vm.readyStatus.schemes = false
-					console.log('res', res.data)
+
 					instrumentDownloadSchemeService
 						.update(vm.config.instrument_download_scheme, res.data)
 						.then(function (schemeData) {

@@ -86,7 +86,7 @@ export default function (
 
 	vm.getGroupList = function () {
 		return usersGroupService.getList().then(function (data) {
-			//console.log('data MEMBERS', data);
+			//;
 
 			vm.groups = data.results
 
@@ -120,7 +120,7 @@ export default function (
 
 	vm.getMemberList = function () {
 		return usersService.getMemberList().then(function (data) {
-			//console.log('data MEMBERS', data);
+			//;
 
 			vm.members = data.results
 
@@ -182,12 +182,12 @@ export default function (
 
 	vm.editRestriction = true
 
-	console.log('vm.attribute', vm.attribute)
+
 
 	// vm.valueTypes = metaService.getDynamicAttrsValueTypesCaptions();
 
 	vm.agree = function ($event) {
-		console.log('vm.attr', vm.attribute)
+
 
 		vm.attribute['user_object_permissions'] = []
 

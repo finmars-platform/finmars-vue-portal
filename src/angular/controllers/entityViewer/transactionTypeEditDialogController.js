@@ -117,7 +117,7 @@ export default function transactionTypeEditDialogController(
 		promises.push(vm.getGroupList())
 
 		Promise.all(promises).then(function (data) {
-			console.log('loadPermissions data', data)
+
 
 			vm.entity.object_permissions.forEach(function (perm) {
 				if (perm.permission === 'change_' + vm.entityType.split('-').join('')) {
@@ -199,7 +199,7 @@ export default function transactionTypeEditDialogController(
 			return true
 		}
 
-		console.log('vm.currentMember', vm.currentMember)
+
 
 		var permission_code =
 			'manage_' + vm.entityType.split('-').join('').toLowerCase()
@@ -252,7 +252,7 @@ export default function transactionTypeEditDialogController(
 		entity['user_code'] = vm.entity['user_code'] + '_copy'
 		entity['name'] = vm.entity['name'] + '_copy'
 
-		console.log('copy entity', entity)
+
 
 		// $mdDialog.hide();
 		if (windowType === 'big-drawer') {
@@ -379,7 +379,7 @@ export default function transactionTypeEditDialogController(
 						})
 					}
 
-					console.log('vm.relationItems', vm.relationItems)
+
 
 					/*vm.editLayout = function () {
                         $state.go('app.portal.data-constructor', {
@@ -437,7 +437,7 @@ export default function transactionTypeEditDialogController(
 			.then(function (data) {
 				vm.attrs = data.results
 
-				console.log('vm.attrs', vm.attrs)
+
 
 				vm.readyStatus.attrs = true
 			})
@@ -809,7 +809,7 @@ export default function transactionTypeEditDialogController(
 						}
 					})
 					.catch(function (error) {
-						console.log('error', error)
+
 
 						vm.processing = false
 
@@ -840,7 +840,7 @@ export default function transactionTypeEditDialogController(
                 });
                 /!*vm.referenceTables = data.results;
 
-                console.log('vm.referenceTables', vm.referenceTables);
+                ;
 
                 $scope.$apply();*!/
 
@@ -848,7 +848,7 @@ export default function transactionTypeEditDialogController(
         };*/
 
 	vm.recalculatePermissions = function ($event) {
-		console.log('Recalculate')
+
 
 		var config = {
 			// content_type: 'portfolios.portfolio'
@@ -878,7 +878,7 @@ export default function transactionTypeEditDialogController(
 					},
 				})
 
-				console.log('Recalculate done')
+
 			})
 	}
 
@@ -1103,7 +1103,7 @@ export default function transactionTypeEditDialogController(
 	vm.resolveRelation = sharedLogic.resolveRelation
 
 	vm.resolveDefaultValue = function (item) {
-		// console.log('vm.resolveDefaultValue.item', item);
+		// ;
 		var entityKey = ''
 
 		vm.contentTypes.forEach(function (contentType) {
@@ -1334,7 +1334,7 @@ export default function transactionTypeEditDialogController(
 				},
 			})
 			.then(function (res) {
-				console.log('here', res)
+
 
 				if (res.status === 'agree') {
 					let responseObj = { status: 'delete' }
@@ -1457,10 +1457,10 @@ export default function transactionTypeEditDialogController(
 			})
 			.then(function (res) {
 				if (res.status === 'agree') {
-					console.log('res', res.data)
+
 					item[options.key] = res.data.item.expression
 				}
-				// console.log('item', item);
+				// ;
 			})
 	}
 
@@ -1757,7 +1757,7 @@ export default function transactionTypeEditDialogController(
         }; */
 
 	vm.clearPhantoms = function () {
-		console.log('vm.clearPhantoms')
+
 
 		var count = 0
 
@@ -1997,7 +1997,7 @@ export default function transactionTypeEditDialogController(
 
 	/* vm.appendFromTemplate = function ($event, template) {
 
-            //console.log("Append from Template", template);
+            //;
 
             if (template.type === 'input_template') {
 

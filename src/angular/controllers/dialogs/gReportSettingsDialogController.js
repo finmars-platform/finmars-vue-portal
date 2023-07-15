@@ -356,7 +356,7 @@ export default function (
 		var keys = Object.keys(vm.readyStatus)
 
 		for (var i = 0; i < keys.length; i = i + 1) {
-			//console.log(keys[i], vm.readyStatus[keys[i]]);
+			//;
 
 			if (vm.readyStatus[keys[i]] == false) {
 				ready = false
@@ -367,9 +367,9 @@ export default function (
 	}
 
 	vm.saveSettings = function () {
-		// console.log('saveSettings.reportOptions', vm.reportOptions);
-		// console.log('saveSettings.accountsCash', vm.accountsCash);
-		// console.log('saveSettings.accountsPosition', vm.accountsPosition);
+		// ;
+		// ;
+		// ;
 
 		if (vm.accountsCash === 1) {
 			vm.reportOptions.accounts_cash[0] = 1
@@ -402,7 +402,7 @@ export default function (
 	}
 
 	vm.selectedCustomFieldsChanged = function () {
-		console.log('vm.selectedCustomFields', vm.selectedCustomFields)
+
 
 		vm.reportOptions.custom_fields_to_calculate =
 			vm.selectedCustomFields.join(',')
@@ -525,7 +525,7 @@ export default function (
 		uiService.getTransactionFieldList({ pageSize: 1000 }).then(function (data) {
 			vm.fieldsReady = true
 
-			console.log('transactionFields transactionFields', data.results)
+
 
 			data.results.forEach(function (field) {
 				vm.dateFieldOptions.forEach(function (item) {
