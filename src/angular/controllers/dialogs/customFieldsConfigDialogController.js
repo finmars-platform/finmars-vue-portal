@@ -40,7 +40,7 @@ export default function ($scope, $mdDialog, data) {
 	//});
 
 	vm.agree = function () {
-		console.log('vm', vm)
+
 
 		var expression = ''
 

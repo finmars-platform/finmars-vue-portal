@@ -74,7 +74,7 @@ export default function ($scope, $mdDialog, data) {
 			)
 
 			Promise.all(promises).then(function (data) {
-				console.log('data', data)
+
 
 				var result = []
 
@@ -84,7 +84,7 @@ export default function ($scope, $mdDialog, data) {
 					})
 				})
 
-				console.log('result', result)
+
 
 				resolve(result)
 			})
@@ -147,7 +147,7 @@ export default function ($scope, $mdDialog, data) {
 				listLayouts.push(vm.layout)
 			}
 
-			console.log('reportLayouts', reportLayouts)
+
 
 			var configuration = {
 				head: {

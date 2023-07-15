@@ -143,7 +143,7 @@ var loadDefaultRelations = function (cacheContainer) {
 		)
 
 		Promise.all(promises).then(function (data) {
-			console.log('default relation values', data)
+
 
 			resolve(data)
 		})

@@ -160,7 +160,7 @@ export default function (
 			)
 		}, 100)
 
-		console.log('dataService', dataService)
+
 
 		vm.componentsTypes = dataService.getComponents()
 
@@ -180,7 +180,7 @@ export default function (
 			}
 		})
 
-		console.log('vm', vm)
+
 
 		if (vm.item.id) {
 			vm.getLayouts()

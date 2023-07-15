@@ -34,7 +34,7 @@ export default function ($scope) {
 			vm.transactionCurrent = page
 		}
 
-		console.log('--------', tab, page)
+
 	}
 
 	function getInstruments() {

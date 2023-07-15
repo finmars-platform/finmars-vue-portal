@@ -317,7 +317,7 @@ export default function ($mdDialog, $state, $bigDrawer) {
 								filters[scope.shownFiltersType].push(res.data.items[i])
 							}
 
-							console.log('filters addFilter', filters)
+
 
 							scope.evDataService.setFilters(filters)
 							scope.evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)

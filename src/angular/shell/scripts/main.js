@@ -73,7 +73,7 @@ app.factory('$exceptionHandler', [
 			}
 
 			console.error('exception', exception)
-			console.log('cause', cause)
+
 
 			window.system_errors.push({
 				created: new Date().toISOString(),
@@ -91,8 +91,8 @@ app.factory('$exceptionHandler', [
 //<editor-fold desc="Websocket initialization">
 app.run([
 	function () {
-		console.log('Project environment: ' + '__PROJECT_ENV__')
-		console.log('Project build date: ' + '__BUILD_DATE__')
+
+
 
 		let controllersCount = 0
 		let directivesCount = 0
@@ -139,7 +139,7 @@ app.run([
 		// }
 
 		// window.ws.onopen = function () {
-		// 	console.log("Websocket. Initial Auth");
+		// 	;
 		// 	window.ws.send(JSON.stringify({action: "initial_auth"}));
 		// }
 

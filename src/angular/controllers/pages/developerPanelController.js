@@ -103,7 +103,7 @@ export default function ($scope, $mdDialog) {
 			})
 			.then(function (res) {
 				if (res.status === 'agree') {
-					console.log('res', res.data)
+
 					instrumentDownloadSchemeService.create(res.data).then(function () {
 						vm.getList()
 					})
@@ -197,7 +197,7 @@ export default function ($scope, $mdDialog) {
 	}
 
 	setTimeout(() => {
-		console.log(embeddedsdk.embedDashboard)
+
 
 		embeddedsdk.embedDashboard({
 			id: '3f4dfb00-93be-4969-ab37-2f4476067973', // given by the Superset embedding UI

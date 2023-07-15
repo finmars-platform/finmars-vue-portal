@@ -113,7 +113,7 @@ export default function ($mdDialog, gFiltersHelper, uiService) {
 				scope.filtersChips = []
 				const errors = []
 
-				console.log('formatFiltersForChips.filters', filters)
+
 
 				filters.forEach((filter) => {
 					if (filter.type !== 'filter_link') {

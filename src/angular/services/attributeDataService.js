@@ -942,7 +942,7 @@ export default function (
 		if (entityAttributesData[entityType]) {
 			entityAttributesData[entityType].push(field)
 		} else {
-			console.log('Cant append field')
+
 		}
 	}
 
@@ -980,8 +980,8 @@ export default function (
 			_options
 		)
 
-		// console.log('currentLevel', currentLevel);
-		// console.log('result', result);
+		// ;
+		// ;
 
 		return result
 	}
@@ -994,7 +994,7 @@ export default function (
 		parentName,
 		options
 	) {
-		// console.log('contentType', contentType);
+		// ;
 
 		var entityType =
 			metaContentTypesService.findEntityByContentType(contentType)
@@ -1020,7 +1020,7 @@ export default function (
 					attribute.code === 'user_code'
 				) {
 					if (currentLevel < options.maxDepth) {
-						// console.log('attribute', attribute);
+						// ;
 
 						_getAttributesRecursive(
 							result,

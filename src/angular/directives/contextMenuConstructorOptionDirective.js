@@ -20,7 +20,7 @@ export default function ($mdDialog) {
 		},
 		link: function (scope, elem, attrs, ngModelCtrl) {
 			scope.editOption = function ($event, item) {
-				console.log('Directive edit', item)
+
 
 				scope.editCallback({ event: $event, item: item })
 			}
@@ -34,7 +34,7 @@ export default function ($mdDialog) {
 			}
 
 			scope.addOption = function ($event, item) {
-				console.log('Directive add', item)
+
 
 				scope.addCallback({ event: $event, item: item })
 			}

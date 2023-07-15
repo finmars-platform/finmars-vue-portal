@@ -109,7 +109,7 @@ export default function () {
 			}
 
 			var getData = function () {
-				console.log('scope,', scope)
+
 				return new Promise(function (resolve, reject) {
 					if (!fieldsDataIsLoaded) {
 						referenceTableService
@@ -128,7 +128,7 @@ export default function () {
 								})
 
 								if (referenceTable) {
-									console.log('res', res)
+
 
 									// scope.fields = referenceTable.rows;
 									/*scope.fields = referenceTable.rows.filter(function (row) {

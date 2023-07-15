@@ -145,7 +145,7 @@ function convertToTree(data, rootGroup, optimize) {
 
 	var extendedKeys = Object.keys(data)
 
-	// console.log('convertToTree.extendedKeys', extendedKeys)
+	//
 	// performance update
 	extendedKeys.forEach(function (key) {
 		if (optimize) {
@@ -233,7 +233,7 @@ function convertTreeToList(tree) {
 }
 
 function fillListWithData(list, data) {
-	// console.log('fillListWithData', data);
+	// ;
 
 	list = list.map(function (item) {
 		return data[item.___id]
@@ -258,13 +258,13 @@ function convertTreeToTreeList(tree) {
 
 	toNextLevel(tree, resultAsObj)
 
-	// console.log('convertTreeToTreeList.resultAsObj', resultAsObj);
+	// ;
 
 	Object.keys(resultAsObj).forEach(function (key) {
 		result.push(resultAsObj[key])
 	})
 
-	// console.log('convertTreeToTreeList.result', resultAsObj);
+	// ;
 
 	return result
 }

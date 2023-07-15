@@ -7,7 +7,7 @@ export default function ($mdDialog) {
 		restrict: 'A',
 		require: '?ngModel',
 		link: function (scope, elem, attrs, ngModelCtrl) {
-			console.log('RESOLVER INSTRUMENT MODAL', ngModelCtrl)
+
 
 			$(elem).on('click', function (event) {
 				event.preventDefault()
@@ -36,11 +36,11 @@ export default function ($mdDialog) {
 						if (res.status === 'agree') {
 							ngModelCtrl.$setViewValue(res.data.item.id)
 							ngModelCtrl.$render()
-							console.log('ngModelCtrl', ngModelCtrl)
+
 						}
 					})
 
-				console.log('START MODAL!')
+
 			})
 		},
 	}

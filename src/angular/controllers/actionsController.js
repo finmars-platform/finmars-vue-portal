@@ -103,7 +103,7 @@ export default function ($scope, $mdDialog) {
 			})
 			.then(function (res) {
 				if (res.status === 'agree') {
-					console.log('res', res.data)
+
 					instrumentDownloadSchemeService.create(res.data).then(function () {
 						vm.getList()
 					})

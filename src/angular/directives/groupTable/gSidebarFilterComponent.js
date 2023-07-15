@@ -322,7 +322,7 @@ export default function (
 				delete newReportLayoutOptions.reportFirstDatepicker
 				delete newReportLayoutOptions.reportLastDatepicker
 				// < Delete in future >
-				console.log('report options', newReportOptions, newReportLayoutOptions)
+
 
 				scope.evDataService.setReportOptions(newReportOptions)
 				scope.evDataService.setReportLayoutOptions(newReportLayoutOptions)
@@ -364,7 +364,7 @@ export default function (
 						},
 					})
 					.then(function (res) {
-						console.log('res', res)
+
 
 						if (res.status === 'agree') {
 							// scope.externalCallback({reportOptionsUpdated: true, options: {reportOptions: res.data}});
@@ -842,7 +842,7 @@ export default function (
 			}
 
 			scope.openLayoutList = function ($event) {
-				console.log('folder button')
+
 
 				$mdDialog
 					.show({

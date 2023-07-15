@@ -8,7 +8,7 @@ import metaHelper from '../../helpers/meta.helper'
 export default function ($scope, $mdDialog, data) {
 	var vm = this
 
-	console.log('filePreviewDialogController data', data)
+
 
 	vm.data = data
 

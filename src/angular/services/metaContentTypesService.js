@@ -62,7 +62,7 @@ export default function (cookieService, xhrService) {
 	var getContentTypeUIByState = function (stateName, stateParams) {
 		var result = ''
 
-		console.log('stateName', stateName, stateParams)
+
 
 		if (
 			stateName.indexOf('app.portal.data') !== -1 ||

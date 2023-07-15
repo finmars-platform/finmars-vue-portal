@@ -91,7 +91,7 @@ export default function entityViewerPermissionEditorController(
 		vm.recalculating = true
 		vm.isSaved = false
 
-		console.log('Recalculate')
+
 
 		var config = {
 			// content_type: 'portfolios.portfolio'
@@ -124,7 +124,7 @@ export default function entityViewerPermissionEditorController(
 
 				$scope.$apply()
 
-				console.log('Recalculate done')
+
 			})
 	}
 
@@ -135,7 +135,7 @@ export default function entityViewerPermissionEditorController(
 		entityResolverService
 			.getList('instrument', { pageSize: 1000 })
 			.then(function (data) {
-				console.log('data', data)
+
 
 				var instrumentsWithPermissions = data.results.map(function (item) {
 					return {
@@ -185,7 +185,7 @@ export default function entityViewerPermissionEditorController(
 		entityResolverService
 			.getList('account', { pageSize: 1000 })
 			.then(function (data) {
-				console.log('data', data)
+
 
 				var accountsWithPermissions = data.results.map(function (item) {
 					return {
@@ -234,7 +234,7 @@ export default function entityViewerPermissionEditorController(
 		entityResolverService
 			.getList('account', { pageSize: 1000 })
 			.then(function (data) {
-				console.log('data', data)
+
 
 				var accountsWithPermissions = data.results.map(function (item) {
 					return {
@@ -354,7 +354,7 @@ export default function entityViewerPermissionEditorController(
 	vm.save = function ($event) {
 		var permissions = vm.getPermissionsFromState()
 
-		console.log('permissions', permissions)
+
 
 		vm.updatePermissions($event, permissions).then(function (value) {
 			parentEntityViewerDataService.resetData()
@@ -370,7 +370,7 @@ export default function entityViewerPermissionEditorController(
 
 			vm.isSaved = true
 
-			console.log('isSaved', vm.isSaved)
+
 
 			$scope.$apply()
 		})
@@ -399,7 +399,7 @@ export default function entityViewerPermissionEditorController(
 						multiple: true,
 					})
 					.then(function (res) {
-						console.log('res', res)
+
 						if (res.status === 'agree') {
 							group.isManageChecked = !group.isManageChecked
 							group.isManageIndeterminate = false

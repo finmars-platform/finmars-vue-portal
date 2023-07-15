@@ -11,7 +11,7 @@ export default function ($scope, $mdDialog, data) {
 
 	vm.filename = ''
 
-	console.log('vm.item', vm.item)
+
 
 	vm.readyStatus = { content: false }
 

@@ -494,7 +494,7 @@
 					return true
 				})
 
-				console.log('userFieldsComp', userFieldsComp)
+
 
 				vm.complexTransactionAttrs = vm.complexTransactionAttrs.map(function (
 					entityAttr,
@@ -511,7 +511,7 @@
 			vm.transactionTypeAttrs = []
 			vm.complexTransactionStatusAttrs = []
 
-			console.log('vm.complexTransactionAttrs', vm.complexTransactionAttrs)
+
 
 			vm.complexTransactionAttrs = vm.complexTransactionAttrs.filter(function (
 				entityAttr

@@ -12,7 +12,7 @@ export default function ($mdDialog) {
 		},
 		link: function (scope, elem, attr) {
 			scope.openUseFromAboveDialog = function ($event) {
-				//console.log('control use-from-above', scope.item, scope.data, scope.filterType, scope.attributesEntityType);
+				//;
 
 				$mdDialog
 					.show({
@@ -35,8 +35,8 @@ export default function ($mdDialog) {
 						},
 					})
 					.then(function (res) {
-						console.log('openUseFromAboveDialog.res', res)
-						console.log('openUseFromAboveDialog.scope.item', scope.item)
+
+
 
 						if (res.status === 'agree') {
 							if (

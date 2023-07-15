@@ -60,7 +60,7 @@ export default function (
 	}
 
 	vm.onFileLoad = function (file, $event) {
-		console.log('onFileLoad', file)
+
 
 		vm.configFileNotes = null
 
@@ -100,13 +100,13 @@ export default function (
 
 				vm.pageState = 'import-manager'
 
-				console.log('vm.configurationFile', vm.configurationFile)
+
 
 				vm.initImportedState()
 
 				$scope.$apply()
 			} catch (error) {
-				console.log('error', error)
+
 
 				$mdDialog.show({
 					controller: 'InfoDialogController as vm',
@@ -782,8 +782,8 @@ export default function (
 						.then(function (mappingsData) {
 							clearInterval(timeout)
 
-							console.log('mappingsData', configurationData)
-							console.log('mappingsData', mappingsData)
+
+
 
 							if (configurationData.errors.length) {
 								$mdDialog.hide({ status: 'errors_occurred', data: {} })
@@ -844,7 +844,7 @@ export default function (
 	vm.getTask = function () {
 		processesService.getByKey(vm.currentTaskId).then(function (data) {
 			vm.task = data
-			console.log('vm.task', vm.task)
+
 
 			if (vm.task.status === 'D' || vm.task.status === 'E') {
 				clearInterval(vm.poolingInterval)
@@ -860,7 +860,7 @@ export default function (
 	}
 
 	vm.importConfiguration = function ($event) {
-		console.log('vm.importConfiguration')
+
 
 		vm.processing = true
 
@@ -902,8 +902,8 @@ export default function (
 			return true
 		})
 
-		console.log('vm.items', vm.items)
-		console.log('mappingItems', mappingItems)
+
+
 
 		var date = new Date().toISOString().slice(0, 10) // yyyy-mm-dd
 
@@ -971,7 +971,7 @@ export default function (
 		systemMessageService
 			.viewFile(vm.task.attachments[0].file_report)
 			.then(function (data) {
-				console.log('data', data)
+
 
 				$mdDialog.show({
 					controller: 'FilePreviewDialogController as vm',
@@ -1051,7 +1051,7 @@ export default function (
 					})
 				})
 
-				console.log('vm.items with duplicates indicator', vm.items)
+
 
 				vm.readyStatus.duplicates = true
 				$scope.$apply()

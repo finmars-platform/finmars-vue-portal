@@ -4,7 +4,7 @@
 
 export default function ($filter) {
 	return function (value, wordwise, max, tail) {
-		console.log('value', value)
+
 		if (!value) return ''
 		var val = value.$$unwrapTrustedValue()
 

@@ -106,7 +106,7 @@ export default function ($mdDialog, fieldResolverService) {
 			}
 
 			scope.bindListFields = function (field) {
-				//console.log('scope.item.options', scope.item.options);
+				//;
 				if (scope.item.options && scope.item.options.fieldsList) {
 					var resultCaption = ''
 					scope.item.options.fieldsList.forEach(function (item, index) {
@@ -124,7 +124,7 @@ export default function ($mdDialog, fieldResolverService) {
 			}
 
 			scope.openMapping = function ($event, item) {
-				console.log('ITEEM', item)
+
 
 				$mdDialog
 					.show({
@@ -142,7 +142,7 @@ export default function ($mdDialog, fieldResolverService) {
 					})
 					.then(function (res) {
 						if (res.status === 'agree') {
-							console.log('res', res.data)
+
 						}
 					})
 			}

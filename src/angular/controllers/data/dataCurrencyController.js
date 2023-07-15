@@ -5,7 +5,7 @@
 import currencyService from '../../services/currencyService'
 
 export default function ($scope) {
-	console.log('{"controller": "DataCurrencyController", status: "initialized"}')
+
 
 	var vm = this
 

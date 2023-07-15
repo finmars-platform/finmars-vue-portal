@@ -316,7 +316,7 @@ export default function ($scope, $mdDialog, data) {
 				vm.validationResult.total_rows - vm.error_rows.length
 		}
 
-		console.log('vm.rowsSuccessCount', vm.rowsSuccessCount)
+
 
 		// setTimeout(function () {
 		//     vm.setDownloadLink();

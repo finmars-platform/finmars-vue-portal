@@ -58,8 +58,8 @@ export default function dashboardAccordionDirective($mdDialog, $state) {
 					elem.parentElement.parentElement.parentElement.parentElement
 						.parentElement.parentElement
 
-				console.log('accordion_elem', elem)
-				console.log('accordion_elem container', container)
+
+
 
 				var backdrop = document.querySelector(
 					'.dashboard-accordion-backdrop-id' + scope.item.data.id
@@ -111,7 +111,7 @@ export default function dashboardAccordionDirective($mdDialog, $state) {
 							10
 						)
 
-						console.log('nextAccordionRowNumber', nextAccordionRowNumber)
+
 
 						currentAccordionHeightInRows =
 							nextAccordionRowNumber - currentRowNumber
@@ -129,7 +129,7 @@ export default function dashboardAccordionDirective($mdDialog, $state) {
 						})
 					}
 
-					console.log('currentRowNumber', currentRowNumber)
+
 					console.log(
 						'currentAccordionHeightInRows',
 						currentAccordionHeightInRows
@@ -152,7 +152,7 @@ export default function dashboardAccordionDirective($mdDialog, $state) {
 			scope.toggleAccordion = function ($event, item) {
 				item.data.folded = !item.data.folded
 
-				console.log('here?', $event.target)
+
 
 				setTimeout(function () {
 					scope.dashboardEventService.dispatchEvent(dashboardEvents.RESIZE)
@@ -168,7 +168,7 @@ export default function dashboardAccordionDirective($mdDialog, $state) {
 
 				scope.componentName = scope.componentData.custom_component_name
 
-				console.log('Accordion data ', scope.componentData)
+
 
 				scope.dashboardDataService.setComponentStatus(
 					scope.item.data.id,

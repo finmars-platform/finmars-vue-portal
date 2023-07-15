@@ -32,7 +32,7 @@ export default function (
 
 			scope.processing = false
 
-			console.log('scope', scope.layout)
+
 
 			scope.layouts = []
 
@@ -81,7 +81,7 @@ export default function (
 			scope.openLayout = (layout) => {
 				scope.dashboardEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
 
-				console.log('openLayout.layout', layout)
+
 
 				scope.dashboardDataService.setLayoutToOpen(layout)
 

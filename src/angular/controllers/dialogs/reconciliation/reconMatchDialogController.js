@@ -73,7 +73,7 @@ export default function reconMatchDialogController($scope, $mdDialog, data) {
 			delete newField.id
 
 			reconciliationBankFieldService.create(newField).then(function (data) {
-				console.log('bank field created', data)
+
 
 				field.processing = false
 
@@ -143,7 +143,7 @@ export default function reconMatchDialogController($scope, $mdDialog, data) {
 			reconciliationBankFieldService
 				.update(field.id, field)
 				.then(function (data) {
-					console.log('bank field updated', data)
+
 
 					field.processing = false
 
@@ -176,7 +176,7 @@ export default function reconMatchDialogController($scope, $mdDialog, data) {
 			reconciliationComplexTransactionFieldService
 				.update(field.id, field)
 				.then(function (data) {
-					console.log('complex transaction field updated', data)
+
 
 					field.processing = false
 
@@ -192,7 +192,7 @@ export default function reconMatchDialogController($scope, $mdDialog, data) {
 						}
 					})
 
-					console.log('complexTransaction', complexTransaction)
+
 
 					vm.syncStatuses()
 
@@ -296,9 +296,9 @@ export default function reconMatchDialogController($scope, $mdDialog, data) {
 			})
 		}
 
-		console.log('vm.activateBankCard.$event', $event)
-		console.log('vm.activateBankCard.field', field)
-		console.log('vm.activateBankCard.line', line)
+
+
+
 	}
 
 	vm.activateComplexTransactionCard = function ($event, field, line) {
@@ -342,9 +342,9 @@ export default function reconMatchDialogController($scope, $mdDialog, data) {
 			})
 		}
 
-		console.log('vm.activateComplexTransactionCard.$event', $event)
-		console.log('vm.activateComplexTransactionCard.field', field)
-		console.log('vm.activateComplexTransactionCard.line', line)
+
+
+
 	}
 
 	vm.viewComplexTransaction = function ($event, item) {
@@ -1239,11 +1239,11 @@ export default function reconMatchDialogController($scope, $mdDialog, data) {
 									complexTransactionField.status
 								)
 
-							/*console.log("Result bankFileField?", bankFileField);
-                                console.log("Result complexTransactionField?", complexTransactionField);
+							/*;
+                                ;
 
-                                console.log("Result bankFileFieldStatus?", bankFileFieldStatus);
-                                console.log("Result complexTransactionFieldStatus?", complexTransactionFieldStatus);*/
+                                ;
+                                ;*/
 
 							if (
 								[
@@ -1555,7 +1555,7 @@ export default function reconMatchDialogController($scope, $mdDialog, data) {
 	}
 
 	vm.init = function () {
-		console.log('vm', vm)
+
 
 		scrollHelper = new ScrollHelper()
 
@@ -1577,8 +1577,8 @@ export default function reconMatchDialogController($scope, $mdDialog, data) {
 
 		vm.syncStatuses()
 
-		console.log('parentSelectedList', vm.complexTransactionList)
-		console.log('selectedList', vm.bankLinesList)
+
+
 
 		vm.initDragula()
 	}

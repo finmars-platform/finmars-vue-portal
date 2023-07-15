@@ -55,8 +55,8 @@ export default function (
 		reportHelper
 	)
 
-	console.log('parentEntityViewerDataService', parentEntityViewerDataService)
-	console.log('parentEntityViewerEventService', parentEntityViewerEventService)
+
+
 	vm.parentEntityViewerEventService = parentEntityViewerEventService // used inside RvSharedLogicHelper
 
 	vm.readyStatus = {
@@ -799,7 +799,7 @@ export default function (
 			uiService
 		)
 
-		console.log('scope, ', $scope)
+
 
 		vm.entityType = $scope.$parent.vm.entityType
 		/* vm.entityViewerDataService.setEntityType($scope.$parent.vm.entityType);

@@ -9,7 +9,7 @@ import strategySubgroupService from '../../services/strategySubgroupService'
 export default function ($scope, $stateParams) {
 	logService.controller('DataStrategySubGroupController', 'initialized')
 
-	console.log('$stateParams', $stateParams)
+
 
 	var vm = this
 
@@ -26,7 +26,7 @@ export default function ($scope, $stateParams) {
 	// strategySubgroupService.getList(vm.strategyNumber).then(function(data){
 	//     vm.entityRaw = data.results;
 	//     vm.readyStatus.content = true;
-	//     console.log('vm.entityRaw', vm.entityRaw);
+	//     ;
 	//     $scope.$apply();
 	// });
 

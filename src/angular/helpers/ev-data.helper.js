@@ -20,7 +20,7 @@ var getNextPage = function (options, event, entityViewerDataService) {
 		return _options.page
 	}
 
-	// console.log('groupData', groupData);
+	// ;
 
 	if (
 		groupData.___parentId === null &&
@@ -29,10 +29,10 @@ var getNextPage = function (options, event, entityViewerDataService) {
 	) {
 		_options.page = _options.page + 1
 	} else {
-		console.log('NOT ROOT GROUP', groupData.next)
+
 
 		if (groupData.next) {
-			console.log('INCREMENT PAGE')
+
 
 			_options.page = _options.page + 1
 		}
@@ -296,13 +296,13 @@ var getFlatStructure = function (evDataService, globalDataService) {
 
 	var list = utilsHelper.convertTreeToList(tree)
 
-	// console.log('getFlatStructure.list', list);
+	// ;
 
 	list = removeItemsFromFoldedGroups(list)
 
 	list = filterByRowColor(list, evDataService, globalDataService)
 
-	// console.log('list', list);
+	// ;
 
 	return list
 }
@@ -330,10 +330,10 @@ var calculateProjection = function (flatList, evDataService) {
 	if (from < 0) {
 		from = 0
 	}
-	// console.log('View Context ' + evDataService.getViewContext() + ' flatList length', flatList.length);
-	// console.log('View Context ' + evDataService.getViewContext() + ' from', from);
-	// console.log('View Context ' + evDataService.getViewContext() + ' to', to);
-	console.log('dubugging.rowsToShow calculateProjection from to', from, to)
+	// ;
+	// ;
+	// ;
+
 	return flatList.slice(from, to)
 }
 
@@ -588,7 +588,7 @@ var setDefaultGroups = function (
 		}
 	}
 
-	console.log('SET DEFAULT GROUPS.results', obj.results)
+
 
 	obj.results = obj.results.filter(function (item) {
 		return item.___type !== 'control'
@@ -697,10 +697,10 @@ var calculatePageFromOffset = function (requestParameters, evDataService) {
 		resultPage = maxPage
 	}
 
-	// console.log('direction', scrollDirection);
-	// console.log('offset px', offsetPx);
-	// console.log('offset', offset);
-	// console.log('page', resultPage);
+	// ;
+	// ;
+	// ;
+	// ;
 
 	return resultPage
 }

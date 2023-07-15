@@ -277,10 +277,10 @@ export default function accrualCalculationSchedulesController(
 				if (res.status === 'agree') {
 					vm.readyStatus.eventSchedulesReady = false
 
-					console.log('rebuild Events', $scope)
+
 
 					$scope.$parent.vm.updateItem().then(function (value) {
-						console.log('rebuild Events')
+
 
 						instrumentEventScheduleService
 							.rebuildEvents(vm.entity.id, vm.entity)

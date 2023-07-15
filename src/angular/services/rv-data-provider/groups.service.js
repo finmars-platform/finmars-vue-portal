@@ -57,7 +57,7 @@ var getUniqueGroups = function (items, groupType) {
 
 	var resultGroup
 
-	console.log('getUniqueGroups.group', groupType)
+
 
 	items.forEach(function (item) {
 		resultGroup = {
@@ -116,14 +116,14 @@ var getUniqueGroups = function (items, groupType) {
 			}
 		}
 
-		// console.log('resultGroup', resultGroup);
+		// ;
 
 		if (!groupAlreadyExist(resultGroup, result)) {
 			result.push(resultGroup)
 		}
 	})
 
-	console.log('result', result)
+
 
 	return result
 }
@@ -180,11 +180,11 @@ var getList = function (entityType, options, entityViewerDataService) {
 
 			var groupType = options.groups_types[options.groups_types.length - 1]
 
-			console.log('before groups ', items)
+
 
 			var groups = getUniqueGroups(items, groupType)
 
-			console.log('groups', groups)
+
 			const groupSortProperty =
 				options.groups_order === 'desc' ? '-___group_name' : '___group_name'
 
@@ -218,7 +218,7 @@ var getList = function (entityType, options, entityViewerDataService) {
 			result.results = []
 		}
 
-		// console.log('get groups', JSON.parse(JSON.stringify(result)));
+		// ;
 
 		resolve(result)
 	})

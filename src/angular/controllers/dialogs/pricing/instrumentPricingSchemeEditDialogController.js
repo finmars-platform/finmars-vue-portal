@@ -10,7 +10,7 @@ export default function instrumentPricingSchemeEditDialogController(
 	$mdDialog,
 	data
 ) {
-	console.log('data', data)
+
 
 	var vm = this
 
@@ -78,7 +78,7 @@ export default function instrumentPricingSchemeEditDialogController(
 				return deprecatedTypes.indexOf(item.id) === -1
 			})
 
-			console.log('vm.types', vm.types)
+
 
 			vm.readyStatus.types = true
 
@@ -144,7 +144,7 @@ export default function instrumentPricingSchemeEditDialogController(
 
 			vm.readyStatus.item = true
 
-			console.log('data', data)
+
 
 			vm.getAttributeTypes().then(function () {
 				if (vm.item.type_settings.data) {
@@ -178,12 +178,12 @@ export default function instrumentPricingSchemeEditDialogController(
 	}
 
 	vm.agree = function () {
-		console.log('vm.item', vm.item)
+
 
 		instrumentPricingSchemeService
 			.update(vm.item.id, vm.item)
 			.then(function (data) {
-				console.log('data', data)
+
 
 				$mdDialog.hide({ status: 'agree', data: { item: vm.item } })
 			})

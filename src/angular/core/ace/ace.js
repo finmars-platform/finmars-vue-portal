@@ -7054,7 +7054,7 @@ ace.define("ace/apply_delta",["require","exports","module"], function(require, e
     "use strict";
 
     function throwDeltaError(delta, errorText){
-        console.log("Invalid Delta:", delta);
+        ;
         throw "Invalid Delta: " + errorText;
     }
 
@@ -7945,7 +7945,7 @@ ace.define("ace/edit_session/fold_line",["require","exports","module","ace/range
                     && fold.start.column != column
                     && fold.start.row != row)
                 {
-                    window.console && window.console.log(row, column, fold);
+                    window.console && window.;
                 } else if (fold.start.row == row) {
                     folds = this.folds;
                     var i = folds.indexOf(fold);
@@ -21541,4 +21541,3 @@ ace.define("ace/ace",["require","exports","module","ace/lib/fixoldbrowsers","ace
         }
     });
 })();
-        

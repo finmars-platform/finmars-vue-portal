@@ -305,7 +305,7 @@ export default function complexTransactionAddDialogController(
 
 			var contextParameters = vm.getContextParameters()
 
-			console.log('contextParameters', contextParameters)
+
 
 			transactionTypeService
 				.initBookComplexTransaction(vm.transactionTypeId, contextParameters)
@@ -433,7 +433,7 @@ export default function complexTransactionAddDialogController(
 					vm.getFormLayout().then(function (value) {
 						vm.entity = entityState
 
-						console.log('entityState', entityState)
+
 
 						$scope.$apply()
 					})
@@ -599,7 +599,7 @@ export default function complexTransactionAddDialogController(
 			resultEntity.store = true
 			resultEntity.calculate = true
 
-			console.log('resultEntity', resultEntity)
+
 
 			vm.processing = true
 
@@ -635,7 +635,7 @@ export default function complexTransactionAddDialogController(
 								resolve(data)
 							})
 							.catch(function (data) {
-								console.log('here?', data)
+
 
 								if (
 									data.hasOwnProperty('message') &&
@@ -658,7 +658,7 @@ export default function complexTransactionAddDialogController(
 											},
 										})
 										.then(function (response) {
-											console.log('response', response)
+
 
 											if (response.reaction === 'cancel') {
 												// do nothing
@@ -865,7 +865,7 @@ export default function complexTransactionAddDialogController(
 			resultEntity.store = true
 			resultEntity.calculate = true
 
-			console.log('resultEntity', resultEntity)
+
 
 			vm.processing = true
 
@@ -901,7 +901,7 @@ export default function complexTransactionAddDialogController(
 								resolve(data)
 							})
 							.catch(function (data) {
-								console.log('here?', data)
+
 
 								if (
 									data.hasOwnProperty('message') &&
@@ -924,7 +924,7 @@ export default function complexTransactionAddDialogController(
 											},
 										})
 										.then(function (response) {
-											console.log('response', response)
+
 
 											if (response.reaction === 'cancel') {
 												// do nothing
@@ -1440,8 +1440,8 @@ export default function complexTransactionAddDialogController(
 
 		vm.evEditorDataService.setRecalculationFunction(vm.recalculate)
 
-		console.log('entity', entity)
-		console.log('data', data)
+
+
 
 		var tooltipsOptions = {
 			pageSize: 1000,
@@ -1494,7 +1494,7 @@ export default function complexTransactionAddDialogController(
                 } */
 				// if copy
 
-				console.log('Apply from make copy', entity)
+
 				notCopiedTransaction = false
 				vm.entity = entity
 				vm.entity.frontOptions = {
@@ -1515,7 +1515,7 @@ export default function complexTransactionAddDialogController(
 						vm.entity[key] = copy[key]
 					})
 
-					console.log('Copy finished vm.entity', vm.entity)
+
 
 					delete vm.entity.id
 
@@ -1537,8 +1537,8 @@ export default function complexTransactionAddDialogController(
 
 	/*vm.onEntityChange = function () {
 
-            console.log("entityChange", vm);
-            console.log("vm.oldValues", vm.oldValues);
+            ;
+            ;
 
             var changedInput = null;
 
@@ -1573,8 +1573,8 @@ export default function complexTransactionAddDialogController(
                 }
             }
 
-            console.log('changedInput', changedInput);
-            console.log('resultInput', resultInput);
+            ;
+            ;
 
         }; */
 

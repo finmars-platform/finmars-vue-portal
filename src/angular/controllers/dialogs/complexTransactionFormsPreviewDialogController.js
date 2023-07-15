@@ -303,7 +303,7 @@ export default function (
 
 			}).catch(function (reason) {
 
-				console.log("Something went wrong with recalculation", reason);
+				;
 
 				vm.processing = false;
 				vm.readyStatus.layout = true;
@@ -498,7 +498,7 @@ export default function (
 
 			var contextParameters = vm.getContextParameters()
 
-			console.log('contextParameters', contextParameters)
+
 
 			transactionTypeService
 				.initBookComplexTransaction(vm.transactionTypeId, contextParameters)

@@ -3,7 +3,7 @@
  */
 
 var controller = function ($scope, $mdDialog) {
-	console.log('this', this)
+
 
 	var vm = this
 
@@ -84,7 +84,7 @@ var controller = function ($scope, $mdDialog) {
 				if (res.status === 'agree') {
 					item[options.key] = res.data.item.expression
 				}
-				// console.log('item', item);
+				// ;
 			})
 	}
 }

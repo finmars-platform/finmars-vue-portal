@@ -262,7 +262,6 @@
 	let isReport = metaService.isReport(entityType)
 
 	let viewType = ref(props.evDataService.getViewType())
-	console.log('viewType:', viewType)
 	let viewSettings = props.evDataService.getViewSettings(viewType.value)
 	let readyToRenderTable = ref(false)
 
@@ -390,8 +389,6 @@
 				function () {
 					let additions = props.evDataService.getAdditions()
 
-					console.log('additions', additions)
-
 					let activeObject = props.evDataService.getActiveObject()
 				}
 			)
@@ -409,8 +406,6 @@
 							props.evEventService.dispatchEvent(evEvents.UPDATE_TABLE_VIEWPORT)
 						}, 200)
 					}
-
-					console.log('VERTICAL ADDITIONS CHANGE', verticalAdditions)
 				}
 			)
 
@@ -455,9 +450,6 @@
 				function () {
 					viewType.value = props.evDataService.getViewType()
 					let viewSettings = props.evDataService.getViewSettings(viewType.value)
-
-					console.log('viewType ', viewType.value)
-					console.log('viewSettings', viewSettings)
 				}
 			)
 

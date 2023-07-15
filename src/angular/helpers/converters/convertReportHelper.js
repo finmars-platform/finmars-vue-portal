@@ -28,7 +28,7 @@ var convertToExcel = function () {
 
             cells = rows[i].querySelectorAll('.g-cell');
 
-            //console.log('cells', cells);
+            //;
 
             tr = '<tr>';
 

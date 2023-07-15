@@ -57,7 +57,7 @@ export default function explorerController(
 	}
 
 	vm.triggerMenu = function ($event) {
-		console.log('$event', $event)
+
 		// Cause md-menu on right click has wrong absolute position calc
 		setTimeout(function () {
 			$event.currentTarget.querySelector('.explorer-md-menu-trigger').click()
@@ -65,11 +65,11 @@ export default function explorerController(
 	}
 
 	vm.openFolder = function ($event, item) {
-		console.log('open Folder ', item)
+
 
 		vm.currentPath.push(item.name)
 
-		console.log('vm.currentPath', vm.currentPath)
+
 
 		// IMPORTANT! State.go escaping slashes and router goes mad
 		window.location.hash = '#!/explorer/' + vm.currentPath.join('/')
@@ -175,7 +175,7 @@ export default function explorerController(
 	}
 
 	vm.initFileEditor = function () {
-		console.log('vm.initFileEditor.fileEditor ', vm.fileEditor)
+
 
 		setTimeout(function () {
 			vm.editor = ace.edit('fileEditorAceEditor')
@@ -221,8 +221,8 @@ export default function explorerController(
 
 		var content = vm.editor.getValue()
 
-		console.log('path', path)
-		console.log('name', name)
+
+
 
 		const blob = new Blob([content], { type: vm.contentType })
 		const file = new File([blob], name)
@@ -285,7 +285,7 @@ export default function explorerController(
 			}, 100)
 		})
 
-		console.log('download', item)
+
 	}
 
 	vm.renameFile = function ($mdMenu, $event, item) {
@@ -412,7 +412,7 @@ export default function explorerController(
 	vm.uploadFileHandler = function ($event) {
 		vm.processing = true
 
-		console.log('uploadFileHandler.$event', $event)
+
 
 		var fileInput = document.querySelector('#explorerFileUploadInput')
 
@@ -423,7 +423,7 @@ export default function explorerController(
 
 		var path = vm.currentPath.join('/')
 
-		console.log(path)
+
 
 		formData.append('path', path)
 
@@ -484,13 +484,13 @@ export default function explorerController(
 	vm.init = function () {
 		vm.resolveWorkflowIframeUrl()
 
-		console.log('$stateParams', $stateParams)
+
 
 		if ($stateParams.folderPath) {
 			vm.currentPath = $stateParams.folderPath.split('/')
 		}
 
-		console.log('here?')
+
 
 		vm.listFiles()
 

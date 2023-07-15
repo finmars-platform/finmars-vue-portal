@@ -368,9 +368,9 @@ export default function (
 
 		var flatList = rvDataHelper.getFlatStructure(vm.entityViewerDataService)
 
-		console.log('Grand Total Status: rootGroup', rootGroup)
-		console.log('Grand Total Status: flatList', flatList)
-		console.log('Grand Total Status: componentData', vm.componentData)
+
+
+
 
 		var root = flatList[0]
 
@@ -378,7 +378,7 @@ export default function (
 
 		var val = root.subtotal[column_key]
 
-		console.log('val', val)
+
 
 		vm.grandTotalNegative = false
 
@@ -415,7 +415,7 @@ export default function (
 		//     vm.grandTotalError = true
 		// }
 
-		console.log('vm.grandTotalValue', vm.grandTotalValue)
+
 
 		// $scope.$apply();
 	}
@@ -423,7 +423,7 @@ export default function (
 	vm.getOptionsFromDependencies = function () {
 		var reportOptions = {}
 
-		console.log('vm.componentData', vm.componentData)
+
 		if (
 			!vm.componentData ||
 			!vm.componentData.settings ||
@@ -521,9 +521,9 @@ export default function (
 			var reportLayoutOptions =
 				vm.entityViewerDataService.getReportLayoutOptions()
 
-			console.log('setLayout.vm.componentData', vm.componentData)
-			console.log('setLayout.layout', layout)
-			console.log('setLayout.reportOptions', reportOptions)
+
+
+
 			var reportOptionsFromDependenciesComponents =
 				vm.getOptionsFromDependencies()
 			console.log(
@@ -576,7 +576,7 @@ export default function (
 					var activeColumnSort =
 						vm.entityViewerDataService.getActiveColumnSort()
 
-					console.log('activeColumnSortProm.activeColumnSort', activeColumnSort)
+
 
 					if (
 						activeColumnSort &&
@@ -593,7 +593,7 @@ export default function (
 								if (data.results.length) {
 									var layout = data.results[0]
 
-									console.log('activeColumnSortProm', layout)
+
 
 									vm.entityViewerDataService.setColumnSortData(
 										activeColumnSort.key,
@@ -630,8 +630,8 @@ export default function (
 			filter_link.component_id
 		)
 
-		console.log('filters', filters)
-		console.log('componentOutput', componentOutput)
+
+
 
 		if (componentOutput && componentOutput.data) {
 			var linkedFilterIndex
@@ -685,7 +685,7 @@ export default function (
 					case 100:
 					case 'field':
 						// even if component is single selector, multiselector filter will work
-						// console.log('componentOutput.value', componentOutput.data.value)
+						//
 						linkedFilter.value_type = 'field'
 						linkedFilter.options.filter_type = 'multiselector'
 
@@ -711,7 +711,7 @@ export default function (
 		var componentOutput =
 			vm.dashboardDataService.getComponentOutput(componentId)
 
-		console.log('COMPONENT_VALUE_CHANGED_' + componentId, componentOutput)
+
 
 		//if (vm.componentData.type === 'report_viewer_split_panel' && componentOutput) {
 		if (componentOutput) {
@@ -765,11 +765,11 @@ export default function (
 
 						var reportOptions = vm.entityViewerDataService.getReportOptions();
 
-						// console.log('reportOptions', reportOptions);
-						// console.log('componentOutput', componentOutput);
+						// ;
+						// ;
 						//
-						// console.log('reportOptions[property]', reportOptions[property]);
-						// console.log('componentOutput.data.value', componentOutput.data.value);
+						// ;
+						// ;
 
 						if (reportOptions[property] !== componentOutput.data.value) {
 
@@ -1007,7 +1007,7 @@ export default function (
 				}
 			})
 
-			console.log('updateReportSettingsUsingDashboardData', reportOptions)
+
 
 			if (reportOptionsChanged) {
 				vm.entityViewerDataService.setReportOptions(reportOptions)
@@ -1049,7 +1049,7 @@ export default function (
 
 			if (vm.componentData.settings.linked_components) {
 
-				console.log('vm.componentData.settings.linked_components', vm.componentData.settings.linked_components);
+				;
 
 				if (vm.componentData.settings.linked_components.hasOwnProperty('active_object')) {
 
@@ -1075,7 +1075,7 @@ export default function (
 
 							var reportOptions = vm.entityViewerDataService.getReportOptions();
 
-							console.log('componentOutput', componentOutput);
+							;
 
 							reportOptions[property] = componentOutput.value;
 
@@ -1111,7 +1111,7 @@ export default function (
 
 					var activeObject = vm.entityViewerDataService.getActiveObject();
 
-					console.log('click report viewer active object', activeObject);
+					;
 
 					vm.dashboardDataService.setComponentOutput(vm.componentData.id, activeObject);
 
@@ -1454,9 +1454,9 @@ export default function (
 					return currencyObj;
 				};
 
-				console.log('activeObject', activeObject);
-				console.log('actionData', actionData);
-				console.log('action', action);
+				;
+				;
+				;
 
 				var contextData = getContextData(reportOptions, activeObject);
 
@@ -1652,7 +1652,7 @@ export default function (
 
 					if (action === 'edit_pricing_currency_price' && activeObject.id) {
 
-						console.log('activeObject', activeObject);
+						;
 
 						var filters = {
 							currency: activeObject['instrument.pricing_currency'],
@@ -1855,8 +1855,8 @@ export default function (
 			function () {
 				var activeTab = vm.dashboardDataService.getActiveTab()
 
-				console.log('activeTab', activeTab.tab_number)
-				console.log('$scope.$parent.vm.tabNumber', $scope.$parent.vm.tabNumber)
+
+
 
 				if (activeTab.tab_number === $scope.$parent.vm.tabNumber) {
 					//vm.applyDashboardChanges();
@@ -2203,7 +2203,7 @@ export default function (
 			uiService
 		)
 
-		//console.log('$scope.$parent.vm.componentData', $scope.$parent.vm.componentData);
+		//;
 
 		setDataFromDashboard()
 
@@ -2212,7 +2212,7 @@ export default function (
 		var downloadAttrsPromise = sharedLogicHelper.downloadAttributes()
 		vm.setEventListeners()
 
-		console.log('$scope.$parent.vm.contentType', $scope.$parent.vm.contentType)
+
 
 		/* vm.entityViewerDataService.setEntityType(vm.entityType);
 			vm.entityViewerDataService.setContentType($scope.$parent.vm.contentType);

@@ -16,13 +16,13 @@ export default function (
 			var entityType = evDataService.getEntityType()
 			var reportOptions = evDataService.getReportOptions()
 
-			// console.log('requestData.entityType', entityType);
-			// console.log('requestData.reportOptions', reportOptions);
+			// ;
+			// ;
 
 			entityResolverService
 				.getList(entityType, reportOptions)
 				.then(function (data) {
-					// console.log('requestData.data', data);
+					// ;
 
 					if (!data.hasOwnProperty('non_field_errors')) {
 						var reportOptions = evDataService.getReportOptions()
@@ -44,7 +44,7 @@ export default function (
 					}
 				})
 				.catch(function (reason) {
-					// console.log('here?');
+					// ;
 				})
 		})
 	}
@@ -54,7 +54,7 @@ export default function (
 		entityViewerDataService,
 		entityViewerEventService
 	) {
-		// console.log('injectRegularFilters.requestParameters', requestParameters);
+		// ;
 
 		var newRequestParametersBody = Object.assign({}, requestParameters.body)
 		newRequestParametersBody['filter_settings'] = []
@@ -156,7 +156,7 @@ export default function (
 
 		entityViewerDataService.setReportOptions(reportOptions)
 
-		// console.log('requestReport started');
+		// ;
 
 		entityViewerDataService.setStatusData('loading')
 
@@ -168,8 +168,6 @@ export default function (
 				reportOptions = Object.assign({}, reportOptions)
 
 				reportOptions.recieved_at = new Date().getTime()
-
-				console.log('reportOptions', reportOptions)
 
 				if (reportOptions.items && reportOptions.items.length) {
 					var attributeExtensions =
@@ -336,11 +334,6 @@ export default function (
 								obj
 							)
 
-							console.log(
-								'groupSettings.getObjects',
-								JSON.parse(JSON.stringify(groupSettings))
-							)
-
 							if (groupSettings.hasOwnProperty('is_open')) {
 								obj.___is_open = groupSettings.is_open
 							}
@@ -384,10 +377,6 @@ export default function (
 						} catch (e) {}
 
 						if (duplicateObj) {
-							console.log(
-								'Error: duplicate ___id was created for an object: ',
-								item
-							)
 							var customError = new Error(
 								'Object with an ___id ' + item.___id + ' already exist'
 							)
@@ -600,23 +589,15 @@ export default function (
 		evDataService,
 		evEventService
 	) {
-		// console.log('createRequestParameters.item', item);
+		// ;
 
 		var groups = evDataService.getGroups()
 
 		var requestParameters
 
 		var id = evRvCommonHelper.getId(item)
-		console.log(
-			'teseting1224.createRequestParameters createdIdsList.length',
-			createdIdsList.length
-		)
+
 		if (createdIdsList.includes(id)) {
-			console.log(
-				'teseting1224.createRequestParameters duplicate id Error',
-				testObj[id]
-			)
-			console.log('Error: duplicated id was created for an item: ', item)
 			var customError = new Error(
 				'Item with an ___id ' + item.___id + ' already exist'
 			)
@@ -728,17 +709,17 @@ export default function (
 				level = level + 1
 
 				if (level < groups.length) {
-					// console.log('to next level!', level);
+					// ;
 
 					items = evDataHelper
 						.getGroupsByLevel(level, evDataService)
 						.filter((item) => item.___parentId === parentId)
-					// console.log('recursiveRequest.items', items);
+					// ;
 
 					var recursiveRequestPromises = []
 
 					items.forEach(function (item) {
-						// console.log('item!', item.___group_name);
+						// ;
 
 						recursiveRequestPromises.push(
 							recursiveRequest(
@@ -767,8 +748,6 @@ export default function (
 		evDataService,
 		evEventService
 	) {
-		console.time('Creating Data Structure')
-
 		var rootGroup = evDataService.getRootGroupData()
 		var level = 0
 
@@ -778,16 +757,14 @@ export default function (
 			level,
 			evDataService,
 			evEventService
-		).then(function () {
-			console.timeEnd('Creating Data Structure')
-		})
+		).then(function () {})
 	}
 
 	var createdIdsList = []
 	var testObj = {}
 
 	var createDataStructure = function (evDataService, evEventService) {
-		// console.log('createDataStructure')
+		//
 
 		evDataService.resetData()
 		evDataService.resetRequestParameters()
@@ -802,8 +779,6 @@ export default function (
 		evEventService.dispatchEvent(evEvents.DATA_LOAD_START)
 
 		if (groupTypes.length) {
-			console.log('createDataStructure 1', defaultRootRequestParameters)
-
 			// get children groups for the rootGroup
 			getGroups(
 				defaultRootRequestParameters,
@@ -821,8 +796,6 @@ export default function (
 					evDataService,
 					evEventService
 				).then(function () {
-					console.log('createDataStructure 2', defaultRootRequestParameters)
-
 					// var activeGroupTypeSort = evDataService.getActiveGroupTypeSort();
 
 					/*
@@ -857,8 +830,6 @@ export default function (
 				})
 			})
 		} else {
-			console.log('createDataStructure 3', defaultRootRequestParameters)
-
 			injectRegularFilters(defaultRootRequestParameters, evDataService)
 
 			getObjects(
@@ -866,8 +837,6 @@ export default function (
 				evDataService,
 				evEventService
 			).then(function () {
-				console.log('createDataStructure 4', defaultRootRequestParameters)
-
 				if (activeColumnSort) {
 					sortObjects(evDataService, evEventService)
 				} else {
@@ -890,12 +859,12 @@ export default function (
 		evDataService,
 		evEventService
 	) {
-		// console.log('updateDataStructureByRequestParameters.requestParameters', requestParameters);
+		// ;
 
 		return new Promise(function (resolve, reject) {
 			injectRegularFilters(requestParameters, evDataService, evEventService)
 
-			// console.log('requestParameters.requestType', requestParameters.requestType);
+			// ;
 
 			if (requestParameters.requestType === 'objects') {
 				getObjectsByRequestParameters(
@@ -1017,8 +986,6 @@ export default function (
 	) {
 		var activeGroupTypeSort = entityViewerDataService.getActiveGroupTypeSort()
 
-		console.log('sortGroupType.activeGroupTypeSort', activeGroupTypeSort)
-
 		var groupsTypes = entityViewerDataService.getGroups()
 
 		// level of a parent used, because sorting applies to an array inside 'result' property of a parent
@@ -1029,8 +996,6 @@ export default function (
 		if (parentLevel === -1) {
 			parentLevel = 0
 		}
-
-		console.log('sortGroupType.parentLevel', parentLevel)
 
 		var groups = evDataHelper.getGroupsByLevel(
 			parentLevel,

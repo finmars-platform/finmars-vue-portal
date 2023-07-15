@@ -66,7 +66,7 @@ export default function (
 			vm.readyStatus = true
 
 			// $state.go('app.profile', {}, {});
-			console.log('redirection shellController onLogInSuccess() ')
+
 			window.open(profileUrl, '_self') // REDIRECTION: 'app.profile'
 		})
 	}
@@ -78,7 +78,7 @@ export default function (
 		authorizerService
 			.tokenLogin(vm.username, vm.password)
 			.then(function (data) {
-				console.log('authorizerService.login.data', data)
+
 
 				if (data.success) {
 					if (data.two_factor_check) {
@@ -192,7 +192,7 @@ export default function (
 			}
 
 			window.cached_requests = {}
-			console.log('Clear Cached Requests. Total: ', count_cached_requests)
+
 
 			/* var location = metaService.getCurrentLocation($state);
 
@@ -306,7 +306,7 @@ export default function (
 
                 }
 
-                console.log('master_user_change data', data);
+                ;
 
                 if (localStorage.getItem('goToSetup')) {
                     $state.go('app.portal.setup');
@@ -317,7 +317,7 @@ export default function (
 
                     } else {
                         // $state.go('app.portal.home');
-                        console.log("redirection shellController init() 1", );
+                        ;
                         window.open(homepageUrl, '_self'); // REDIRECTION: app.portal.home
                     }
 
@@ -364,7 +364,7 @@ export default function (
 			clientId: window.KEYCLOAK_CLIENT_ID,
 		})
 
-		console.log('Keycloak init')
+
 		/* //# region IMPORTANT: Only for development purpose. E.g. development of components inside iframe locally.
         let authenticated;
 
@@ -395,12 +395,12 @@ export default function (
 				globalDataService.setCurrentMasterUserStatus(false)
 
 				if (vm.PROJECT_ENV === 'local') {
-					console.log('redirection shellController init() 1')
+
 					$state.go('app.portal.home') // REDIRECTION: app.portal.home
 				} else {
 					if ($state.current.name !== 'app.profile') {
 						// $state.go('app.profile', {}, {});
-						console.log('redirection shellController init() 2')
+
 						window.open(profileUrl, '_self') // REDIRECTION: app.profile
 					}
 				}
@@ -418,14 +418,14 @@ export default function (
 					try {
 						const masterUser = await authorizerService.getCurrentMasterUser()
 
-						console.log('Setting base api url ', masterUser.base_api_url)
+
 						// baseUrlService.setMasterUserPrefix(base_api_url);
 
 						globalDataService.setCurrentMasterUserStatus(true)
 
 						if (vm.isAuthenticationPage) {
 							// $state.go('app.portal.home');
-							console.log('redirection shellController init() 3')
+
 							window.open(homepageUrl, '_self') // REDIRECTION: app.portal.home
 						}
 					} catch (e) {

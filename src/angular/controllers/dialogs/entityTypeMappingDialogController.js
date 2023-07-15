@@ -82,12 +82,12 @@ export default function entityTypeMappingDialogController(
 
 				callback(result)
 
-				console.log('mapping ui scroll result', result, startItem, endItem)
+
 			}
 		},
 	}
 
-	console.log('mapEntityType', vm.mapEntityType)
+
 
 	vm.toggleQuery = function () {
 		vm.queryStatus = !vm.queryStatus
@@ -298,8 +298,8 @@ export default function entityTypeMappingDialogController(
 		var i = 0
 
 		function updateRow() {
-			console.log('i', i)
-			console.log(vm.entityItems[i])
+
+
 			if (i < vm.entityItems.length) {
 				if (!vm.entityItems[i].hasOwnProperty('mapping')) {
 					i = i + 1

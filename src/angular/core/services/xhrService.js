@@ -72,7 +72,7 @@ const xhrService = new XhrService(errorService)
 
 					} else if (response.status >= 500 && response.status < 600) {
 
-						console.log('response', response);
+						;
 
 						try {
 
@@ -136,7 +136,7 @@ const xhrService = new XhrService(errorService)
 				errorService.recordError(reason)
 				errorService.notifyError(reason)
 
-				console.log('XHR Service catch error', reason);
+				;
 
 				throw reason;
 

@@ -217,7 +217,7 @@ export default function (
 		var columns_count = vm.getColumnsCount()
 		var rows_count = vm.getRowsCount()
 
-		// console.log('rows_count', rows_count);
+		// ;
 
 		for (var r = 0; r < rows_count; r = r + 1) {
 			tab.layout.rows[r] = {
@@ -595,8 +595,8 @@ export default function (
 			})
 
 			drake.on('drop', function (elem, target) {
-				console.log('target', { target: target })
-				console.log('elem', { elem: elem })
+
+
 				var draggedFromSocket = false
 
 				$(target).removeClass('active')
@@ -728,7 +728,7 @@ export default function (
 		},
 
 		destroy: function () {
-			// console.log('this.dragula', this.dragula)
+			//
 			this.dragula.destroy()
 		},
 	}
@@ -1047,7 +1047,7 @@ export default function (
 
 			vm.updateProxyAccordions()
 
-			console.log('vm.layout', JSON.parse(angular.toJson(vm.layout)))
+
 
 			$scope.$apply(function () {
 				setTimeout(function () {
@@ -1397,7 +1397,7 @@ export default function (
                     var dashboardLayouts = data.results;
 
                     formatLayoutsComponentsForSelector(dashboardLayouts);
-                    console.log("components import dashboardsComponents", dashboardsComponents);
+                    ;
                     openComponentImportDialog($event, dashboardsComponents);
 
                 });
@@ -1479,7 +1479,7 @@ export default function (
 		vm.dashboardConstructorEventService.addEventListener(
 			dashboardConstructorEvents.UPDATE_DASHBOARD_CONSTRUCTOR,
 			function () {
-				console.log('here?')
+
 
 				vm.layout = vm.dashboardConstructorDataService.getData()
 
@@ -1693,7 +1693,7 @@ export default function (
 				vm.dragAndDrop.init()
 			}, 500)
 
-			console.log('vm.layout', vm.layout)
+
 		}
 	}
 

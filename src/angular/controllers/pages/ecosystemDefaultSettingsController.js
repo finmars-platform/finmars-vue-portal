@@ -18,8 +18,8 @@ export default function ecosystemDefaultSettingsController(
 	vm.portfolio_fields = []
 
 	vm.getRelation = function (entityType, key, fieldsKey) {
-		console.log('entityType, key, fieldsKey', entityType, key, fieldsKey)
-		console.log('vm', vm)
+
+
 
 		if (vm[fieldsKey].length <= 1) {
 			fieldResolverService
@@ -38,7 +38,7 @@ export default function ecosystemDefaultSettingsController(
 		vm.readyStatus.content = false
 
 		ecosystemDefaultService.getList().then(function (data) {
-			console.log('data', data)
+
 
 			if (data.results.length) {
 				vm.default = data.results[0]

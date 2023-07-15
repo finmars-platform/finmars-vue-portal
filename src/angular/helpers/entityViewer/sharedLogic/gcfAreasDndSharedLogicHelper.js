@@ -275,7 +275,7 @@ export default function (scope, $mdDialog, isReport) {
 	const onDropAreaDragenter = function (ev) {
 		ev.preventDefault()
 		ev.target.classList.add('dragged-over')
-		console.log('ev.target:', ev.target)
+
 	}
 
 	const onDropAreaDragleave = function (ev) {
@@ -372,7 +372,7 @@ export default function (scope, $mdDialog, isReport) {
 
 			case 'columns':
 				GCitems = evDataService.getColumns()
-				console.log('GCitems:', GCitems)
+
 
 				updateGCFMethod = function () {
 					evDataService.setColumns(GCitems)

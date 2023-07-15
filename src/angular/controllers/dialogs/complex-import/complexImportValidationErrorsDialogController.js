@@ -152,7 +152,7 @@ export default function ($scope, $mdDialog, data) {
 	}
 
 	vm.createCsvContentSimpleEntityImport = function (validationResult, config) {
-		console.log('validationResults', validationResult)
+
 
 		var columns = ['Row number']
 

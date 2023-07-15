@@ -74,14 +74,14 @@ export default function (
 	var scrollHelper
 
 	vm.complexTransactionStatusChange = function ($event, field) {
-		console.log('vm.complexTransactionStatusChange.field', field)
+
 
 		field.processing = true
 
 		reconciliationComplexTransactionFieldService
 			.update(field.id, field)
 			.then(function (data) {
-				console.log('complex transaction field updated', data)
+
 
 				field.processing = false
 
@@ -90,7 +90,7 @@ export default function (
 	}
 
 	vm.bankFieldStatusChange = function ($event, field) {
-		console.log('vm.bankFieldStatusChange.field', field)
+
 
 		field.processing = true
 
@@ -98,7 +98,7 @@ export default function (
 			delete field.id
 
 			reconciliationBankFieldService.create(field).then(function (data) {
-				console.log('bank field created', data)
+
 
 				field.processing = false
 
@@ -110,7 +110,7 @@ export default function (
 			reconciliationBankFieldService
 				.update(field.id, field)
 				.then(function (data) {
-					console.log('bank field updated', data)
+
 
 					field.processing = false
 
@@ -124,7 +124,7 @@ export default function (
 			delete field.id
 
 			reconciliationBankFieldService.create(field).then(function (data) {
-				console.log('bank field created', data)
+
 
 				field.processing = false
 
@@ -192,7 +192,7 @@ export default function (
 			reconciliationBankFieldService
 				.update(field.id, field)
 				.then(function (data) {
-					console.log('bank field updated', data)
+
 
 					field.processing = false
 
@@ -223,7 +223,7 @@ export default function (
 			reconciliationComplexTransactionFieldService
 				.update(field.id, field)
 				.then(function (data) {
-					console.log('complex transaction field updated', data)
+
 
 					field.processing = false
 
@@ -362,9 +362,9 @@ export default function (
 			})
 		}
 
-		console.log('vm.activateBankCard.$event', $event)
-		console.log('vm.activateBankCard.field', field)
-		console.log('vm.activateBankCard.line', line)
+
+
+
 	}
 
 	vm.activateComplexTransactionCard = function ($event, field, line) {
@@ -408,9 +408,9 @@ export default function (
 			})
 		}
 
-		console.log('vm.activateComplexTransactionCard.$event', $event)
-		console.log('vm.activateComplexTransactionCard.field', field)
-		console.log('vm.activateComplexTransactionCard.line', line)
+
+
+
 	}
 
 	vm.setAllMatchedComplexTransaction = function ($event, item) {
@@ -640,11 +640,11 @@ export default function (
 				})
 
 				drake.on('drop', function (elem, target, source, nextSibling) {
-					console.log('Here vm', vm)
-					console.log('nextSibling', nextSibling)
 
-					console.log('target', target)
-					console.log('elem', elem)
+
+
+
+
 
 					var targetStatus = target.dataset.status
 					var targetType = target.dataset.type
@@ -667,11 +667,11 @@ export default function (
 						nextSiblingFieldType = nextSibling.dataset.fieldType
 					}
 
-					console.log('elemType', elemType)
-					console.log('targetType', targetType)
-					console.log('targetStatus', targetStatus)
-					console.log('elemFieldId', elemFieldId)
-					console.log('elemParentIndex', elemParentIndex)
+
+
+
+
+
 
 					if (elemType === targetType) {
 						var field
@@ -714,8 +714,8 @@ export default function (
 										nextSiblingBankFileField.status
 									)
 
-								console.log('targetStatus', targetStatus)
-								console.log('bankFileFieldStatus', bankFileFieldStatus)
+
+
 								console.log(
 									'nextSiblingBankFileFieldStatus',
 									nextSiblingBankFileFieldStatus
@@ -959,7 +959,7 @@ export default function (
 							})
 						}
 					} else {
-						console.log('Drop on other side')
+
 
 						if (nextSibling) {
 							var bankFileLine
@@ -1022,13 +1022,13 @@ export default function (
 									complexTransactionField.status
 								)
 
-							console.log('Result bankFileField?', bankFileField)
+
 							console.log(
 								'Result complexTransactionField?',
 								complexTransactionField
 							)
 
-							console.log('Result bankFileFieldStatus?', bankFileFieldStatus)
+
 							console.log(
 								'Result complexTransactionFieldStatus?',
 								complexTransactionFieldStatus
@@ -1080,7 +1080,7 @@ export default function (
 										return item.id !== bankFileField.id
 									})
 
-								console.log('bankFileLine', bankFileLine)
+
 
 								bankFileLine.matched_fields.push(bankFileField)
 
@@ -1295,8 +1295,8 @@ export default function (
 
 		var flatList = vm.reconViewerDataService.getFlatList()
 
-		console.log('parentFlatList', parentFlatList)
-		console.log('flatList', flatList)
+
+
 
 		vm.complexTransactionList = parentFlatList.filter(function (item) {
 			return (
@@ -1334,10 +1334,10 @@ export default function (
 
 		vm.getLists()
 
-		console.log('vm', vm)
 
-		console.log('parentSelectedList', vm.complexTransactionList)
-		console.log('selectedList', vm.bankLinesList)
+
+
+
 	}
 
 	vm.init()

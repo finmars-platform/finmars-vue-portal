@@ -9,7 +9,7 @@ import portfolioClassifierMappingService from './import/mappings/classifiers/por
 import instrumentClassifierMappingService from './import/mappings/classifiers/instrumentClassifierMappingService'
 
 var getList = function (entityType, attribute_type_id) {
-	console.log('getList entityType', entityType)
+
 
 	switch (entityType) {
 		case 'account':

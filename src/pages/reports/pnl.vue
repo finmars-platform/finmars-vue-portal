@@ -71,6 +71,5 @@
 			$stateParams: route.params,
 			route,
 		})
-		console.log('vm.value:', vm.value)
 	})
 </script>
