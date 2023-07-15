@@ -62,8 +62,8 @@
 		layout: 'auth',
 	});
 
-	// const windowOrigin = window.origin
-	const windowOrigin = 'http://0.0.0.0:8080'; // for development
+	const windowOrigin = window.origin
+	// const windowOrigin = 'http://0.0.0.0:8080'; // for development
 
 	const iframeId = useRoute().query.iframeId;
 
