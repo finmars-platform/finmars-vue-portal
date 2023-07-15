@@ -76,7 +76,6 @@
 	}
 
 	function slidePrev() {
-		console.log("testing1090 slidePrev isSliderBeginning", swiperData.value.isBeginning);
 		swiperData.value.slidePrev();
 	}
 
@@ -130,12 +129,6 @@
 		nextTabsWidth = Math.max(0, nextTabsWidth);
 
 	}*/
-	const isSliderBeginning = computed(() => {
-		if (swiperData) console.log("testing1090 isSliderBeginning", swiperData.isBeginning);
-		return swiperData.value.isBeginning
-	} );
-
-	const isSliderEnd = computed(() => swiperData && swiperData.isEnd );
 
 </script>
 

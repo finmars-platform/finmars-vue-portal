@@ -71,7 +71,7 @@
 	// let component = dashStore.components.find(item => item.uid == props.uid) || {}
 	let component = dashStore.getComponent(props.uid) || {}
 	let editable = ref(JSON.parse(JSON.stringify(component)))
-	// console.log("testing1090.pagesDashboardEditWidgetM ", editable);
+
 	provide('component', editable) // used by PagesDashboardAddMatrixModal
 
 	let inputs = ref([])
