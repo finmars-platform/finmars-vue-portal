@@ -279,7 +279,7 @@ export default function tasksPageController(
 				},
 			})
 			.then(function (data) {
-				console.log('vm.getData.data', data)
+
 
 				vm.generatePages(data)
 

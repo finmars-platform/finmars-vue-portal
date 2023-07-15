@@ -38,14 +38,14 @@ export default function ($scope, $mdDialog) {
 			})
 			.then(function (res) {
 				if (res.status === 'agree') {
-					console.log('res', res.data)
+
 					vm.getList()
 				}
 			})
 	}
 
 	vm.editScheme = function ($event, item) {
-		console.log('what?')
+
 
 		$mdDialog
 			.show({
@@ -59,7 +59,7 @@ export default function ($scope, $mdDialog) {
 			})
 			.then(function (res) {
 				if (res && res.status === 'agree') {
-					console.log('res', res.data)
+
 					instrumentDownloadSchemeService
 						.update(item.id, res.data)
 						.then(function () {
@@ -89,7 +89,7 @@ export default function ($scope, $mdDialog) {
 			})
 			.then(function (res) {
 				if (res.status === 'agree') {
-					console.log('res', res.data)
+
 					instrumentDownloadSchemeService.deleteByKey(item.id)
 					setTimeout(function () {
 						vm.getList()

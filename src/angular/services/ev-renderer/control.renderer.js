@@ -19,7 +19,7 @@ var render = function (evDataService, obj, prevObj, contentWidth) {
 	var rowHeight = evDataService.getRowHeight()
 	var canLoadMore = false
 
-	console.log('control.render.selectedGroups', selectedGroups)
+
 
 	if (selectedGroups && selectedGroups.length) {
 		selectedGroups.forEach(function (selectedGroup) {
@@ -39,8 +39,8 @@ var render = function (evDataService, obj, prevObj, contentWidth) {
 		var requestParameters = evDataService.getRequestParameters(obj.___parentId)
 		var pagination = requestParameters.pagination
 
-		console.log('control.render.selectedGroups', obj)
-		console.log('control.render.selectedGroups', requestParameters)
+
+
 
 		var total_pages = Math.ceil(pagination.count / pagination.page_size)
 		var page = pagination.page
@@ -50,11 +50,11 @@ var render = function (evDataService, obj, prevObj, contentWidth) {
 		}
 	}
 
-	console.log('control.render.selectedGroups', canLoadMore)
 
-	// console.log('requestParameters', requestParameters);
-	// console.log('total_pages', total_pages);
-	// console.log('page', page);
+
+	// ;
+	// ;
+	// ;
 
 	var classes = 'g-row g-control-row'
 

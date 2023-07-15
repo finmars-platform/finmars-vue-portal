@@ -26,7 +26,7 @@ export default function ($scope, $mdDialog, options) {
 		memberService.getMembersList().then(function (data) {
 			vm.members = data.results
 
-			console.log('vm.members', vm.members)
+
 
 			vm.readyStatus.members = true
 
@@ -93,7 +93,7 @@ export default function ($scope, $mdDialog, options) {
 			)
 
 			Promise.all(promises).then(function (data) {
-				console.log('data', data)
+
 
 				var result = []
 
@@ -103,7 +103,7 @@ export default function ($scope, $mdDialog, options) {
 					})
 				})
 
-				console.log('result', result)
+
 
 				resolve(result)
 			})
@@ -251,7 +251,7 @@ export default function ($scope, $mdDialog, options) {
 			.then(function (data) {
 				vm.sentInvites = data.results
 
-				console.log('vm.sentInvites', vm.sentInvites)
+
 
 				vm.members = vm.members.filter(function (member) {
 					var isSent = false
@@ -265,7 +265,7 @@ export default function ($scope, $mdDialog, options) {
 					return !isSent
 				})
 
-				console.log('Members left: ', vm.members)
+
 
 				$scope.$apply()
 			})
@@ -308,9 +308,9 @@ export default function ($scope, $mdDialog, options) {
 	}
 
 	vm.agree = function () {
-		console.log('vm.globalConfigurationFile', vm.globalConfigurationFile)
-		console.log('vm.layout', vm.layout)
-		console.log('vm.assignedMembersList', vm.assignedMembersList)
+
+
+
 
 		vm.createConfigurationFile().then(function (configuration) {
 			vm.globalConfigurationFile.data = configuration
@@ -333,9 +333,9 @@ export default function ($scope, $mdDialog, options) {
 					})
 
 					Promise.all(promises).then(function (data) {
-						console.log('Sent Invites data', data)
 
-						console.log('Saved Configuration File', vm.globalConfigurationFile)
+
+
 
 						$mdDialog.hide({ status: 'agree', data: { layout: vm.layout } })
 					})
@@ -345,9 +345,9 @@ export default function ($scope, $mdDialog, options) {
 	}
 
 	vm.agreeForce = function () {
-		console.log('vm.globalConfigurationFile', vm.globalConfigurationFile)
-		console.log('vm.layout', vm.layout)
-		console.log('vm.assignedMembersList', vm.assignedMembersList)
+
+
+
 
 		vm.createConfigurationFile().then(function (configuration) {
 			vm.globalConfigurationFile.data = configuration
@@ -372,9 +372,9 @@ export default function ($scope, $mdDialog, options) {
 					})
 
 					Promise.all(promises).then(function (data) {
-						console.log('Sent Invites data', data)
 
-						console.log('Saved Configuration File', vm.globalConfigurationFile)
+
+
 
 						$mdDialog.hide({ status: 'agree', data: { layout: vm.layout } })
 					})
@@ -384,7 +384,7 @@ export default function ($scope, $mdDialog, options) {
 	}
 
 	vm.init = function () {
-		console.log('vm.layout', vm.layout)
+
 
 		if (vm.layout) {
 			if (vm.layout.origin_for_global_layout) {

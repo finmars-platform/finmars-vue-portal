@@ -15,7 +15,7 @@ export default function ($scope, $mdDialog, entityId, $state) {
 
 	//vm.readyStatus = {content: false, permissions: false, entity: false, me: false};
 	vm.entityType = 'transaction'
-	console.log('entity edit dialog', parentScope)
+
 	vm.evAction = 'update'
 	vm.entityId = entityId
 	vm.saveCallback = '' // save callback handler in inner controller;

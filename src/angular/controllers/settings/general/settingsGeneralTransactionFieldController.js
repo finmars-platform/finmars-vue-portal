@@ -5,7 +5,7 @@
 import uiService from '@/angular/services/uiService'
 
 export default function ($scope, $mdDialog) {
-	console.log('here?')
+
 
 	var vm = this
 
@@ -229,7 +229,7 @@ export default function ($scope, $mdDialog) {
 				})
 			})
 
-			console.log('here?123123', vm.textFields)
+
 
 			vm.readyStatus.content = true
 			$scope.$apply()

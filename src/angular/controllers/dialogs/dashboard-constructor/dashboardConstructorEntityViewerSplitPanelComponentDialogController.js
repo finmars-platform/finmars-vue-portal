@@ -47,7 +47,7 @@ export default function ($scope, $mdDialog, item, dataService, eventService) {
 	}
 
 	vm.init = function () {
-		console.log('dataService', dataService)
+
 
 		vm.componentsTypes = dataService.getComponents()
 	}

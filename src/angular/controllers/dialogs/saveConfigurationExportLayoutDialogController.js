@@ -3,7 +3,7 @@
  */
 
 export default function ($scope, $mdDialog, uiService, data) {
-	console.log('data', data)
+
 
 	var vm = this
 

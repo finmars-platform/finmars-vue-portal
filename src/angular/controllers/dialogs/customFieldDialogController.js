@@ -27,7 +27,7 @@ export default function (
 		customFieldService.getList(vm.entityType).then(function (data) {
 			vm.customFields = data.results
 
-			console.log('vm.customFields', vm.customFields)
+
 
 			vm.readyStatus.customFields = true
 
@@ -124,7 +124,7 @@ export default function (
 				multiple: true,
 			})
 			.then(function (res) {
-				console.log('res', res)
+
 				if (res.status === 'agree') {
 					customFieldService
 						.deleteByKey(vm.entityType, item.id)

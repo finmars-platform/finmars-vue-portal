@@ -77,7 +77,7 @@ export default function ($mdDialog, $state) {
 				var requestParameters =
 					scope.evDataService.getRequestParameters(groupHashId)
 
-				console.log('load more ', requestParameters)
+
 
 				scope.total_pages = Math.ceil(
 					requestParameters.pagination.count /
@@ -110,7 +110,7 @@ export default function ($mdDialog, $state) {
 				var requestParameters =
 					scope.evDataService.getRequestParameters(groupHashId)
 
-				console.log('load all ', requestParameters)
+
 
 				scope.total_pages = Math.ceil(
 					requestParameters.pagination.count /
@@ -228,7 +228,7 @@ export default function ($mdDialog, $state) {
 			}
 
 			scope.getGroupType = function () {
-				// console.log('tree elem, ', scope.item)
+				//
 
 				var groups = scope.evDataService.getGroups()
 
@@ -238,8 +238,8 @@ export default function ($mdDialog, $state) {
 					scope.isLastLevel = true
 				}
 
-				// console.log('tree groups, ', groups)
-				// console.log('tree groupType, ', scope.groupType)
+				//
+				//
 			}
 
 			var init = async function () {
@@ -274,9 +274,9 @@ export default function ($mdDialog, $state) {
 
 						scope.currentPage = requestParameters.body.page
 
-						console.log('scope.requestParameters', scope.requestParameters)
-						console.log('scope.currentPage', scope.currentPage)
-						console.log('scope.total_pages', scope.total_pages)
+
+
+
 					}
 				)
 			}

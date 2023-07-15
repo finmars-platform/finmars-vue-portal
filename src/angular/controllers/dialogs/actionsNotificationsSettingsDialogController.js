@@ -35,7 +35,7 @@ export default function ($scope, $mdDialog, usersService, globalDataService) {
 				$mdDialog.hide({ status: 'success' })
 			},
 			function (error) {
-				console.log('notifications error', error)
+
 				$mdDialog.hide({ status: error })
 			}
 		)

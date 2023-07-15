@@ -95,7 +95,7 @@ export default function (
 			}
 
 			function renderReportViewer() {
-				console.log('renderReportViewer')
+
 
 				var begin = Date.now()
 
@@ -133,7 +133,7 @@ export default function (
 
 					return item
 				})
-				console.log('flat list', flatList)
+
 
 				flatList = setColorsForSubtotals(flatList, coloredSubtotals)
 
@@ -146,7 +146,7 @@ export default function (
 
 				scope.evDataService.setProjection(projection)
 
-				// console.log('projection', projection);
+				// ;
 
 				rvDomManager.calculateScroll(elements, scope.evDataService)
 
@@ -164,7 +164,7 @@ export default function (
 
 					var timeSpent = (end - begin) / 1000 // secs;
 
-					console.log('Report viewer render time', timeSpent)
+
 
 					scope.evDataService.setRenderTime(timeSpent)
 
@@ -179,7 +179,7 @@ export default function (
 					globalDataService
 				)
 
-				console.log('renderEntityViewer2.flatlist', flatList)
+
 				/* flatList = flatList.map(function (item, i) {
                         item.___flat_list_index = i;
                         return item
@@ -266,7 +266,7 @@ export default function (
 					scope.evDataService
 				)
 
-				console.log('renderEntityViewer.projection', projection)
+
 
 				scope.evDataService.setProjection(projection)
 
@@ -491,7 +491,7 @@ export default function (
 			scope.evEventService.addEventListener(
 				evEvents.DATA_LOAD_START,
 				function () {
-					console.log('gTableBodyComponent DATA_LOAD_START')
+
 
 					// progressBar.style.display = 'block';
 					/* if (scope.isReport) {
@@ -512,7 +512,7 @@ export default function (
 			scope.evEventService.addEventListener(
 				evEvents.DATA_LOAD_END,
 				function () {
-					console.log('gTableBodyComponent DATA_LOAD_END')
+
 
 					// progressBar.style.display = 'none';
 
@@ -641,7 +641,7 @@ export default function (
 						if (!scope.firstRender) {
 							// Force Table render if not rendered in first 60 second
 
-							console.log('Special render trigger')
+
 
 							updateTableContent()
 						}

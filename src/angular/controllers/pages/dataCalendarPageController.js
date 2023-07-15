@@ -273,7 +273,7 @@ export default function dataCalendarController(
 				//     trigger: 'hover',
 				//     container: 'body'
 				// });
-				// console.log('here?', info)
+				//
 				info.el.setAttribute('title', info.event.title)
 			},
 			eventClick: function (info) {
@@ -281,7 +281,7 @@ export default function dataCalendarController(
 
 				$('.fc-event').removeClass('active')
 
-				console.log('vm.calendarEvent', vm.calendarEvent)
+
 
 				info.el.classList.add('active')
 
@@ -292,7 +292,7 @@ export default function dataCalendarController(
 				}, 0)
 			},
 			events: function (info, callback) {
-				console.log('start, end', info)
+
 
 				var date_from = info.startStr.split('T')[0]
 				var date_to = info.endStr.split('T')[0]
@@ -305,7 +305,7 @@ export default function dataCalendarController(
 				calendarEventsService
 					.getList(date_from, date_to, filter_query)
 					.then(function (data) {
-						console.log('get data', data)
+
 
 						var items = data.results.map(function (item) {
 							item.allDay = false
@@ -323,7 +323,7 @@ export default function dataCalendarController(
 	vm.downloadFile = function ($event, item) {
 		// TODO WTF why systemMessage Service, replace with FilePreview Service later
 		systemMessageService.viewFile(item.file_report).then(function (data) {
-			console.log('data', data)
+
 
 			$mdDialog.show({
 				controller: 'FilePreviewDialogController as vm',

@@ -31,7 +31,7 @@ export default function (
 	vm.getFile = function () {
 		return new Promise(function (resolve, reject) {
 			configurationService.getConfigurationData().then(function (data) {
-				console.log('configurationService.getConfigurationData', data)
+
 
 				vm.file = data
 				vm.items = data.body
@@ -373,10 +373,10 @@ export default function (
 					var searchItem = childItem.value
 				}
 
-				// console.log('searchItem', searchItem);
+				// ;
 
 				layoutData.forEach(function (layoutDataItem) {
-					// console.log('layoutDataItem', layoutDataItem);
+					// ;
 
 					if (layoutDataItem) {
 						var active = true
@@ -482,7 +482,7 @@ export default function (
 			})
 		})
 
-		console.log('vm.activeLayout ', vm.activeLayout)
+
 
 		$mdDialog
 			.show({
@@ -890,8 +890,8 @@ export default function (
 		var configurationResults = vm.convertToExportStructure(configurationItems)
 		var mappingsResults = vm.convertToExportStructure(mappingsItems)
 
-		console.log('vm.export.configurationResults', configurationResults)
-		console.log('vm.export.mappingsResults', mappingsResults)
+
+
 
 		vm.file.notes = vm.activeLayout.data.notes
 		vm.file.body = []
@@ -1010,7 +1010,7 @@ export default function (
 			configurationService
 				.getMappingData()
 				.then(function (data) {
-					console.log('configurationService.getConfigurationData', data)
+
 
 					vm.file = data
 
@@ -1086,8 +1086,8 @@ export default function (
 	}
 
 	vm.updateFilters = function () {
-		console.log('vm.prefixType', vm.prefixType)
-		console.log('vm.selectedGroupPrefix', vm.selectedGroupPrefix)
+
+
 	}
 
 	// Mapping Section End

@@ -44,7 +44,7 @@ export default function EntityViewerDeleteBulkDialogController(
 			}
 		})
 
-		console.log('ids', ids)
+
 
 		vm.processing = true
 		vm.isDeleted = true

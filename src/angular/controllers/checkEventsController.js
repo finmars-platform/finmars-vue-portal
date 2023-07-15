@@ -173,7 +173,7 @@ export default function checkEventsController($scope, $mdDialog) {
 	}
 
 	vm.updateFilters = function () {
-		console.log('vm.updateFilters.filters', vm.filters)
+
 
 		vm.eventsProjection = vm.events.filter(function (item) {
 			var result = true
@@ -263,7 +263,7 @@ export default function checkEventsController($scope, $mdDialog) {
 			return result
 		})
 
-		console.log('vm.updateFilters.eventsProjection', vm.eventsProjection)
+
 	}
 
 	vm.requestEvents = function (sortingOptions) {
@@ -345,7 +345,7 @@ export default function checkEventsController($scope, $mdDialog) {
 					})
 			})
 			.catch(function (reason) {
-				console.log(reason)
+
 			})
 	}
 

@@ -95,7 +95,7 @@ export default function (
 				if (res.status === 'agree') {
 					vm.item.settings.number_format = res.data
 
-					console.log(res)
+
 				}
 			})
 	}
@@ -243,7 +243,7 @@ export default function (
 	}
 
 	vm.init = function () {
-		console.log('dataService', dataService)
+
 
 		vm.componentsTypes = dataService.getComponents()
 
@@ -284,7 +284,7 @@ export default function (
 			vm.item.id
 		)
 
-		console.log('vm', vm)
+
 
 		/* if (vm.item.id) {
 

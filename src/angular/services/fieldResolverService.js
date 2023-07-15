@@ -41,9 +41,9 @@ export default function (
 			if (!fieldKey) {
 				return reject('Invalid fieldKey: ' + fieldKey)
 			}
-			console.log('options', options)
-			console.log('fieldKey', fieldKey)
-			console.log('fieldsDataStore', fieldsDataStore)
+
+
+
 
 			if (fieldsDataStore) {
 				if (!fieldsDataStore['fieldKeys']) {
@@ -71,7 +71,7 @@ export default function (
 				if (entity === 'strategy') {
 					var strategyNumber = entityTypePieces[1]
 
-					console.log('strategyNumber', strategyNumber)
+
 
 					if (fieldKey === 'group') {
 						strategyGroupRepository

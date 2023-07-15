@@ -17,13 +17,13 @@ export default function ($scope, $mdDialog) {
 	}
 
 	vm.checkExtension = function (file, extension, $event) {
-		console.log('file', file)
+
 
 		if (file) {
 			var ext = file.name.split('.')[1]
 
-			console.log('file ext', ext)
-			console.log('extension', extension)
+
+
 
 			if (ext !== extension) {
 				$mdDialog

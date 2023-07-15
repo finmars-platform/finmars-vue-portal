@@ -22,7 +22,7 @@ export default function (
 		customFieldService.getList(vm.entityType).then(function (data) {
 			vm.customFields = data.results
 
-			console.log('vm.customFields', vm.customFields)
+
 
 			$scope.$apply()
 		})
@@ -95,7 +95,7 @@ export default function (
 				multiple: true,
 			})
 			.then(function (res) {
-				console.log('res', res)
+
 				if (res.status === 'agree') {
 					customFieldService.deleteByKey(item.id).then(function (data) {
 						if (data.status === 'conflict') {

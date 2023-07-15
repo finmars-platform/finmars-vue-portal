@@ -114,7 +114,7 @@ export default function singleInstrumentAddEventToTableDialogController(
 	const openEventActionParametersManager = function ($event, row) {
 		var action = vm.event.actions[row.order]
 
-		console.log('openEventActionParametersManager vm.event.data', vm.event.data)
+
 
 		if (!vm.event.data) {
 			vm.event.data = {}

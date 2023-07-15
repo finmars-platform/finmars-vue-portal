@@ -60,7 +60,7 @@ export default function ({
 	reportService,
 }) {
 	var getList = function (entityType, options) {
-		console.log('entityType:', entityType)
+
 		switch (entityType) {
 			case 'portfolio':
 				return portfolioService.getList(options)

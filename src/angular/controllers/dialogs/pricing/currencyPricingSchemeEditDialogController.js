@@ -6,7 +6,7 @@ import currencyPricingSchemeService from '@/angular/services/pricing/currencyPri
 import attributeTypeService from '@/angular/services/attributeTypeService'
 
 export default function ($scope, $mdDialog, data) {
-	console.log('data', data)
+
 
 	var vm = this
 
@@ -41,7 +41,7 @@ export default function ($scope, $mdDialog, data) {
 
 		var result = []
 
-		console.log('vm.attributeTypes', vm.attributeTypes)
+
 
 		var attrs = vm.attributeTypes
 			.filter(function (item) {
@@ -91,7 +91,7 @@ export default function ($scope, $mdDialog, data) {
 				return deprecatedTypes.indexOf(item.id) === -1
 			})
 
-			console.log('vm.types', vm.types)
+
 
 			vm.readyStatus.types = true
 
@@ -111,7 +111,7 @@ export default function ($scope, $mdDialog, data) {
 
 			vm.readyStatus.item = true
 
-			console.log('data', data)
+
 
 			vm.getAttributeTypes().then(function () {
 				if (vm.item.type_settings.data) {
@@ -176,7 +176,7 @@ export default function ($scope, $mdDialog, data) {
 		currencyPricingSchemeService
 			.update(vm.item.id, vm.item)
 			.then(function (data) {
-				console.log('data', data)
+
 
 				$mdDialog.hide({ status: 'agree', data: { item: vm.item } })
 			})

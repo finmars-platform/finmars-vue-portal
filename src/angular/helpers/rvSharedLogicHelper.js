@@ -97,14 +97,10 @@ export default function (
 			Promise.all(promises)
 				.then(function (data) {
 					viewModel.readyStatus.attributes = true
-					console.log(
-						'viewModel.readyStatus.attributes:',
-						viewModel.readyStatus.attributes
-					)
+
 					resolve(data)
 				})
 				.catch(function (error) {
-					console.log('error:', error)
 					resolve({ errorObj: error, errorCause: 'dynamicAttributes' })
 				})
 		})
@@ -130,8 +126,6 @@ export default function (
 
 			return false
 		})
-
-		console.log('putUseFromAboveFiltersFirst.filters', filters)
 
 		allFilters = useFromAboveFiters.concat(filters)
 
@@ -313,7 +307,6 @@ export default function (
             dateExprsProms.push(result);*/
 
 		return new Promise((resolve, reject) => {
-			console.log('expressionService:', expressionService)
 			expressionService
 				.getResultOfExpression({ expression: dateExpr })
 				.then(function (data) {
@@ -443,8 +436,6 @@ export default function (
 				locals: locals,
 			})
 			.then(function (res) {
-				console.log('res', res)
-
 				if (res.status !== 'disagree') {
 					updateTableAfterEntityChanges(res)
 				}
@@ -887,8 +878,6 @@ export default function (
 
 	const executeUserRequestedAction = function () {
 		var action = viewModel.entityViewerDataService.getUserRequestedAction()
-
-		console.log('USER_REQUEST_AN_ACTION action', action)
 
 		if (action === 'add_portfolio') {
 			var locals = {

@@ -478,7 +478,7 @@ var render = function (
 	result = result + rowSelection + rowSettings
 
 	obj.___cells_values = []
-	// console.log('render.columns', columns);
+	// ;
 
 	columns.forEach(function (column, columnIndex) {
 		var columnNumber = columnIndex + 1

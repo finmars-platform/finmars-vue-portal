@@ -326,7 +326,7 @@ export default function (
                              // $state.go('app.profile', {});
                              window.open(scope.profileUrl, '_self')
 
-                             console.log("Error activate", data)
+
 
                              if (data.message) {
 
@@ -486,7 +486,7 @@ export default function (
 					'master_user_change',
 					function (data) {
 						scope.currentMasterUser = globalDataService.getMasterUser()
-						console.log('Header master user change')
+
 					}
 				)
 			}

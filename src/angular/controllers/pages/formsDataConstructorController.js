@@ -68,7 +68,7 @@ export default function ($scope, $mdDialog) {
 		if (id) {
 			data.instanceId = id
 		}
-		console.log('forms openFOrmEditor', data, id)
+
 		$mdDialog.show({
 			controller: 'EntityDataConstructorDialogController as vm',
 			templateUrl: 'views/dialogs/entity-data-constructor-dialog-view.html',

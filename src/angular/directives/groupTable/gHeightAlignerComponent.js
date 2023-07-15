@@ -22,7 +22,7 @@ export default function () {
 			var verticalSPElem = document.querySelector('.verticalSplitPanelWrapper')
 
 			function activateHeightSlider() {
-				console.log('activateHeightSlider')
+
 
 				var splitPanelResizer = $('.g-height-slider')
 
@@ -142,7 +142,7 @@ export default function () {
 					/* if (verticalSPElem) {
                         scope.verticalAdditions = scope.evDataService.getVerticalAdditions();
 
-                        console.log('VERTICAL_ADDITIONS_CHANGE', scope.verticalAdditions)
+
 
                         if (!scope.additions.isOpen) {
                             verticalSPElem.style.height = '100%'

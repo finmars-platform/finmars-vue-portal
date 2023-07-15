@@ -78,7 +78,7 @@ export default function ($mdDialog) {
 			scope.clearHoverItem = function () {
 				setTimeout(function () {
 					scope.hoverItem = null
-					console.log('scope.hoverItem', scope.hoverItem)
+
 
 					scope.$apply()
 				}, 0)
@@ -87,7 +87,7 @@ export default function ($mdDialog) {
 			scope.setHoverItem = function ($event, option) {
 				setTimeout(function () {
 					scope.hoverItem = option
-					console.log('scope.hoverItem', scope.hoverItem)
+
 
 					scope.$apply()
 				}, 100)
@@ -122,7 +122,7 @@ export default function ($mdDialog) {
 			}
 
 			scope.selectLocalItem = function (item) {
-				console.log('selectLocalItem.item', item)
+
 
 				closeDropdownMenu()
 
@@ -155,7 +155,7 @@ export default function ($mdDialog) {
 			}
 
 			scope.selectDatabaseItem = function (item) {
-				console.log('selectDatabaseItem.item', item)
+
 
 				closeDropdownMenu()
 
@@ -355,7 +355,7 @@ export default function ($mdDialog) {
 			var onTabKeyPress = function (event) {
 				// TODO fix ALT + TAB closes
 				// var pressedKey = event.key;
-				// console.log('pressedKey', pressedKey)
+				//
 				//
 				// if (pressedKey === "Tab") {
 				//     closeDropdownMenu(true);
@@ -416,7 +416,7 @@ export default function ($mdDialog) {
 				}
 
 				scope.$watch('itemName', function () {
-					console.log('scope.model', scope.model)
+
 
 					if (scope.itemName) {
 						itemName = scope.itemName
@@ -505,7 +505,7 @@ export default function ($mdDialog) {
 
 				var promises = []
 
-				console.log('scope.inputText.length', scope.inputText.length)
+
 
 				promises.push(
 					new Promise(function (resolve, reject) {
@@ -519,7 +519,7 @@ export default function ($mdDialog) {
 									resolve()
 								})
 								.catch(function (error) {
-									console.log('Unified Database error occurred', error)
+
 
 									scope.databaseItems = []
 
@@ -540,7 +540,7 @@ export default function ($mdDialog) {
 									resolve()
 								})
 								.catch(function (error) {
-									console.log('Unified Database error occurred', error)
+
 
 									scope.databaseItems = []
 

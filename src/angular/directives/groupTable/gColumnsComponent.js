@@ -909,7 +909,7 @@ export default function (
 								column.options.sort = sort
 								column.options.sort_settings.mode = 'manual'
 
-								console.log('sortHandler.column', column)
+
 
 								scope.evDataService.setActiveColumnSort(column)
 
@@ -939,7 +939,7 @@ export default function (
 					column.options.sort = sort
 					column.options.sort_settings.mode = 'default'
 
-					console.log('sortHandler.column', column)
+
 
 					var columns = scope.evDataService.getColumns()
 
@@ -971,7 +971,7 @@ export default function (
 				}
 
 				var group = scope.groups[groupIndex]
-				console.log('groups sorting group', group)
+
 				group.options.sort = sort
 
 				var groups = scope.evDataService.getGroups()
@@ -1440,7 +1440,7 @@ export default function (
 			scope.editManualSorting = function ($event, column) {
 				scope.evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
 
-				console.log('editManualSorting', column)
+
 
 				$mdDialog
 					.show({
@@ -1971,7 +1971,7 @@ export default function (
 			/* var flagMissingColumns = function () {
 
 
-                    console.log("flagMissingColumns.columns", scope.columns);
+                    ;
 
                     var attributeTypes;
                     var attributes;
@@ -1994,7 +1994,7 @@ export default function (
 
                         }
 
-                        console.log("flagMissingColumns.attributes", attributes);
+                        ;
 
                         scope.columns = scope.columns.map(function (column) {
 
@@ -2029,7 +2029,7 @@ export default function (
 
                         attributeTypes = scope.attributeDataService.getDynamicAttributesByEntityType(scope.entityType);
 
-                        console.log("flagMissingColumns.attributeTypes", attributeTypes);
+                        ;
 
                         var user_code;
                         var isMissing;

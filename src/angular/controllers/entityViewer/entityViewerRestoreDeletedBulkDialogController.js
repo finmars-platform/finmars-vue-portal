@@ -62,7 +62,7 @@ export default function EntityViewerRestoreDeletedBulkDialogController(
 			}
 		})
 
-		console.log('restoredItems', restoredItems)
+
 
 		vm.processing = true
 		vm.isDeleted = true

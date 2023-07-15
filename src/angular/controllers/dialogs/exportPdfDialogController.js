@@ -79,16 +79,16 @@ export default function (
 		columns.map(function (column) {
 			layoutWidth = layoutWidth + parseInt(column.style.width)
 		})
-		// console.log('fit layout columns', columns);
+		// ;
 
 		var widthLimit = pageSize - pageMargins * 8.2
-		// console.log('fit layout layoutWidth, limitWidth', layoutWidth, widthLimit);
+		// ;
 		while (layoutWidth * scale > widthLimit) {
 			scale = (scale - 0.01).toFixed(2)
 		}
 
 		vm.zoomPercent = parseInt(scale * 100)
-		// console.log('fit layout final zoom', vm.zoomPercent);
+		// ;
 	}
 
 	vm.saveExportOptions = function () {
@@ -118,7 +118,7 @@ export default function (
 	}
 
 	vm.agree = function () {
-		console.log('vm.settings', vm.settings)
+
 
 		vm.settings.data.reportOptions = JSON.parse(
 			JSON.stringify(evDataService.getReportOptions())
@@ -157,8 +157,8 @@ export default function (
 
 		vm.settings.zoom = parseInt(vm.zoomPercent, 10) / 100
 
-		console.log('export pdf content', vm.settings.data.content)
-		console.log('vm.settings.zoom', vm.settings.zoom)
+
+
 
 		uiService.getDefaultListLayout(vm.entityType).then(function (res) {
 			var contentSettings = vm.settings.data

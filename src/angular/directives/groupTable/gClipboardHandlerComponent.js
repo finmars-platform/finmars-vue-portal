@@ -21,8 +21,8 @@ export default function () {
 			if (scope.isReport) {
 			} else {
 				var handler = function (event) {
-					console.log('evDataService', scope.evDataService)
-					console.log('evEventService', scope.evEventService)
+
+
 
 					console.time('Copying to buffer')
 
@@ -35,7 +35,7 @@ export default function () {
 					var columns = scope.evDataService.getColumns()
 
 					if (items.length) {
-						//console.log(copiedItems);
+						//;
 
 						var result = '<table>'
 
@@ -103,7 +103,7 @@ export default function () {
 						})
 						result = result + '</table'
 
-						console.log('result len ', result.length)
+
 
 						if (event.clipboardData) {
 							event.clipboardData.setData('text/html', result)

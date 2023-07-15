@@ -1221,7 +1221,7 @@ export default function (
 
 		/* var loadRelationRes = relationItemsResolver(contentTypeCell.settings.value);
 
-            console.log('contentTypeCell.settings.value', contentTypeCell.settings.value);
+            ;
 
             if (loadRelationRes && loadRelationRes.status === 'item_exist') {
                 changedCell.settings.selectorOptions = viewModel.relationItems[loadRelationRes.field].map(function (item) {
@@ -4249,7 +4249,7 @@ export default function (
 	}
 
 	const appendFromTemplate = function ($event, template) {
-		console.log('Append from Template', template)
+
 
 		if (template.type === 'input_template') {
 			$mdDialog

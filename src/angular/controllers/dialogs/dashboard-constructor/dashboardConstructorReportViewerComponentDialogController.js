@@ -516,7 +516,7 @@ export default function (
 			vm.item.id
 		)
 
-		console.log('vm', vm)
+
 
 		/* if (vm.item.id) {
                 // vm.getLayouts();

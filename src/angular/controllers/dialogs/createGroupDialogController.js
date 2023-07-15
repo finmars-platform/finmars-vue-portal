@@ -470,7 +470,7 @@ export default function ($scope, $mdDialog) {
 	vm.activePresetId = 6
 
 	vm.presetChange = function ($event) {
-		console.log('activePreset', vm.activePresetId)
+
 
 		var preset
 
@@ -480,7 +480,7 @@ export default function ($scope, $mdDialog) {
 			}
 		})
 
-		console.log('preset', preset)
+
 
 		vm.permissionTable.data = vm.permissionTable.data.map(function (item) {
 			Object.keys(preset.data.data).forEach(function (key) {
@@ -525,14 +525,14 @@ export default function ($scope, $mdDialog) {
 			$scope.$apply()
 		}, 0)
 
-		console.log('vm.permissionTable', vm.permissionTable)
+
 	}
 
 	vm.getData = function () {
 		membersAndGroupsService.getMembersList().then(function (data) {
 			vm.membersList = data.results
 
-			console.log('vm.membersList', vm.membersList)
+
 
 			vm.readyStatus.content = true
 

@@ -61,7 +61,7 @@ export default function ($scope, $mdDialog) {
 	}
 
 	vm.executeProcedure = function ($event, item) {
-		console.log('Execute Procedure', item)
+
 
 		item.processing = true
 		item.executed = true

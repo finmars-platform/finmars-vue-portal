@@ -38,7 +38,7 @@ export default function (
 	vm.clearHoverInstrument = function () {
 		setTimeout(function () {
 			vm.hoverInstrument = null
-			console.log('vm.hoverInstrument', vm.hoverInstrument)
+
 
 			$scope.$apply()
 		}, 0)
@@ -47,7 +47,7 @@ export default function (
 	vm.setHoverInstrument = function ($event, option) {
 		setTimeout(function () {
 			vm.hoverInstrument = option
-			console.log('scope.hoverInstrument', vm.hoverInstrument)
+
 
 			$scope.$apply()
 		}, 0)
@@ -276,7 +276,7 @@ export default function (
 			.catch(function (error) {
 				vm.globalProcessing = false
 
-				console.log('Instrument Database error occurred', error)
+
 
 				$scope.$apply()
 			})
@@ -318,7 +318,7 @@ export default function (
 							vm.totalPages = Math.round(data.resultCount / data.pageSize)
 						})
 						.catch(function (error) {
-							console.log('Instrument Database error occurred', error)
+
 
 							vm.databaseInstruments = []
 

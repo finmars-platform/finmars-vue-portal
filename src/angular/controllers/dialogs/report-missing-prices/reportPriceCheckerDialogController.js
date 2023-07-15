@@ -7,7 +7,7 @@ import downloadFileHelper from '@/angularlpers/downloadFileHelper'
 import scheduleService from '@/angular/services/scheduleService'
 
 export default function ($scope, $mdDialog, data) {
-	console.log('data', data)
+
 
 	var vm = this
 

@@ -40,7 +40,7 @@ export default function dataStatsController(
 		dataStatsService.getStats(vm.period).then(function (data) {
 			vm.stats = data
 
-			console.log('vm.stats', vm.stats)
+
 
 			vm.readyStatus.content = true
 

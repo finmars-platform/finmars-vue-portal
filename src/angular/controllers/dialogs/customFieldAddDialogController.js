@@ -75,7 +75,7 @@ export default function (
 				skipHide: true,
 			})
 			.then(function (res) {
-				console.log('res', res)
+
 
 				if (res.status === 'agree') {
 					vm.attribute.expr = res.data.expression
@@ -678,7 +678,7 @@ export default function (
 		vm.getInputFunctions(vm.entityType).then(function (data) {
 			vm.inputsFunctions = data
 
-			console.log('vm.inputsFunctions', vm.inputsFunctions)
+
 
 			vm.readyStatus.content = true
 

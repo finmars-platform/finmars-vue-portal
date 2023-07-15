@@ -78,7 +78,7 @@ export default function (
 		.filter(function (item) {
 			return !!item
 		})
-	console.log('vm.entityAttrs', vm.entityAttrs)
+
 	vm.attrs = []
 
 	vm.getAttrs = function () {
@@ -463,8 +463,8 @@ export default function (
 			//}
 
 			for (a = 0; a < vm.scheme.attributes.length; a = a + 1) {
-				console.log('vm.scheme.attributes[a]', vm.scheme.attributes[a])
-				console.log('vm.attrs', vm.attrs)
+
+
 
 				for (x = 0; x < vm.attrs.length; x = x + 1) {
 					if (vm.attrs[x].id == vm.scheme.attributes[a].attribute_type) {
@@ -500,7 +500,7 @@ export default function (
 	}
 
 	vm.resolveFieldType = function (field) {
-		console.log('field', field)
+
 
 		field.complexExpressionEntity = false
 
@@ -643,10 +643,10 @@ export default function (
 
 		vm.schemeUpdated.attributes = []
 
-		console.log('mapFields', vm.mapFields)
-		console.log('mappedFieldsDefaults', vm.mappedFieldsDefaults)
-		console.log('mappedFieldsSecond', vm.mappedFieldsSecond)
-		console.log('mappedDynamic', vm.mappedDynamic)
+
+
+
+
 
 		var i, x, y, z
 		for (i = 0; i < vm.mapFields.length; i = i + 1) {
@@ -831,7 +831,7 @@ export default function (
 	vm.getSchedules()
 
 	vm.checkAttrs = function () {
-		console.log('chack attrs?')
+
 
 		var b, e, a
 		var x, y, z, x1, y1, z1, x2, y2, z2, x3, y3, z3

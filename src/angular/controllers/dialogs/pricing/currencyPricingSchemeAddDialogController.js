@@ -57,7 +57,7 @@ export default function ($scope, $mdDialog, data) {
 				return deprecatedTypes.indexOf(item.id) === -1
 			})
 
-			console.log('vm.types', vm.types)
+
 
 			vm.readyStatus.types = true
 
@@ -98,10 +98,10 @@ export default function ($scope, $mdDialog, data) {
 	}
 
 	vm.agree = function () {
-		console.log('vm.item', vm.item)
+
 
 		currencyPricingSchemeService.create(vm.item).then(function (data) {
-			console.log('data', data)
+
 
 			$mdDialog.hide({ status: 'agree', data: { item: data } })
 		})

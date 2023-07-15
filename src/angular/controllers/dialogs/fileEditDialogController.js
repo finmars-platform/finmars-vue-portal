@@ -10,7 +10,7 @@ import toastNotificationService from '@/angular/core/services/toastNotificationS
 export default function ($scope, $mdDialog, data) {
 	var vm = this
 
-	console.log('fileEditDialogController data', data)
+
 
 	vm.data = data
 
@@ -61,8 +61,8 @@ export default function ($scope, $mdDialog, data) {
 
 		var content = vm.editor.getValue()
 
-		console.log('path', path)
-		console.log('name', name)
+
+
 
 		const blob = new Blob([content], { type: vm.contentType })
 		const file = new File([blob], name)

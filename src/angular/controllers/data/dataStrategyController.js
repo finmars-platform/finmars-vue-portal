@@ -9,7 +9,7 @@ import strategyService from '../../services/strategyService'
 export default function ($scope, $stateParams) {
 	logService.controller('DataStrategyController', 'initialized')
 
-	console.log('$stateParams', $stateParams)
+
 
 	var vm = this
 

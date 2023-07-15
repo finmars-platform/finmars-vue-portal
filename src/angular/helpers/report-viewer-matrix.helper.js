@@ -87,7 +87,7 @@ function getMatrix(
 
 	subtotal_formula_id = parseInt(subtotal_formula_id, 10)
 
-	console.log('getMatrix.subtotal_formula_id', subtotal_formula_id)
+
 
 	var result = []
 
@@ -164,7 +164,7 @@ function getMatrix(
 		}
 	})
 
-	console.log('getMatrix.result', result)
+
 
 	result.forEach(function (row) {
 		// calculating values of matrix's cells

@@ -31,7 +31,7 @@ export default function ($scope, $mdDialog) {
 				return item
 			})
 
-			console.log(vm.procedures)
+
 
 			vm.readyStatus.procedures = true
 
@@ -57,7 +57,7 @@ export default function ($scope, $mdDialog) {
 
 			vm.procedures.splice($index, 1, data)
 
-			console.log('data', data)
+
 
 			$scope.$apply()
 		})

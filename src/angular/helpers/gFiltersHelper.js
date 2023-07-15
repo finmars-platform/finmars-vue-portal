@@ -108,7 +108,7 @@ export default function () {
 	 * @memberof gFiltersHelper
 	 */
 	const filterUseFromAboveFilters = function (filters) {
-		console.log('filterUseFromAboveFilters.filters', filters)
+
 
 		const useFromAboveFilters = filters.filter((filter, index) => {
 			if (

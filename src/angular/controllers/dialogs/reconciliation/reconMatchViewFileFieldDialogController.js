@@ -23,8 +23,8 @@ export default function ($scope, $mdDialog, data) {
 
 	vm.lockSelect = true
 
-	console.log('Bank File line', vm.item)
-	console.log('Bank File field', vm.field)
+
+
 
 	vm.updateField = function () {
 		return new Promise(function (resolve, reject) {
@@ -150,7 +150,7 @@ export default function ($scope, $mdDialog, data) {
 	}
 
 	vm.init = function () {
-		console.log('vm', vm)
+
 
 		if (vm.field.linked_complex_transaction_field) {
 			vm.getLinkedComplexTransactionField()

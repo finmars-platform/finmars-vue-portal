@@ -39,7 +39,7 @@ var getList = function (entityType, options, entityViewerDataService) {
 			result.results = []
 		}
 
-		console.log('ReconDataProvider.Objects.getList', result)
+
 
 		resolve(result)
 	})

@@ -210,7 +210,7 @@ export default function ($scope, $mdDialog, data) {
 
                     });
 
-                    console.log('vm.instrumentTypes', vm.instrumentTypes);
+                    ;
                     resolve();
 
                 }).catch(function (e) { reject(e); });

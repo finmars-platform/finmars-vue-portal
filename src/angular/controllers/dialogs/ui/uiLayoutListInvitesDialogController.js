@@ -27,7 +27,7 @@ export default function (
 	}
 
 	vm.acceptInvite = function ($event, invite) {
-		console.log('Accept invite: ', $event, invite)
+
 
 		invite.status = 1
 
@@ -44,7 +44,7 @@ export default function (
 				new Promise(function (resolve, reject) {
 					vm.importConfiguration(resolve)
 				}).then(function (data) {
-					console.log('Import Finished')
+
 
 					vm.getInvites()
 
@@ -87,7 +87,7 @@ export default function (
 	}
 
 	vm.declineInvite = function ($event, invite) {
-		console.log('Decline invite: ', $event, invite)
+
 
 		invite.status = 2
 
@@ -128,7 +128,7 @@ export default function (
 
 				vm.readyStatus.items = true
 
-				console.log('vm.invites', vm.invites)
+
 
 				$scope.$apply()
 			})

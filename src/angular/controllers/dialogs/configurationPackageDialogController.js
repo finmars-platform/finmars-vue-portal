@@ -52,7 +52,7 @@ export default function (
 
 		vm.selectedGroup = item
 
-		console.log('vm.selectedGroup', vm.selectedGroup)
+
 	}
 
 	vm.cancel = function () {
@@ -81,7 +81,7 @@ export default function (
 
 				vm.readyStatus.packages = true
 
-				console.log('packages', vm.packages)
+
 
 				vm.selectedItem = vm.packages[0]
 				$scope.$apply()
@@ -134,7 +134,7 @@ export default function (
 		unifiedDataService
 			.getConfigurationPackageFile(vm.selectedItem.id)
 			.then(function (data) {
-				console.log('getConfigurationPackageFile.data', data)
+
 
 				vm.importConfig = {
 					data: data,

@@ -81,7 +81,7 @@ export default function ($scope, $stateParams, $mdDialog, $state) {
 				dataProvidersService
 					.setConfig(vm.provider.id, formData)
 					.then(function (data) {
-						console.log('test!', data)
+
 
 						$mdDialog
 							.show({

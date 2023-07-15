@@ -1220,7 +1220,7 @@ var validateComplexTransactionUserInput = function (
                                             fieldValue === null ||
                                             fieldValue === '') {
 
-                                            console.log('fieldValue', fieldValue);
+                                            ;
 
                                             var errorObj = {
                                                 locationData: getLocationOfAttribute(userInput.name, tabs, []),

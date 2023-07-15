@@ -40,7 +40,7 @@ export default function ($scope, $mdDialog, data) {
 			})
 		}
 
-		console.log('vm.attributeTypes', vm.attributeTypes)
+
 
 		var attrs = vm.attributeTypes
 			.filter(function (item) {
@@ -62,7 +62,7 @@ export default function ($scope, $mdDialog, data) {
 		return result
 	}
 
-	console.log('vm.item', vm.item)
+
 
 	if (vm.item.pricing_scheme_object) {
 		if (
@@ -112,7 +112,7 @@ export default function ($scope, $mdDialog, data) {
 
 		vm.item.data.parameters = vm.items
 
-		console.log('agree vm.item', vm.item)
+
 
 		$mdDialog.hide({ status: 'agree', data: { item: vm.item } })
 	}
@@ -175,10 +175,10 @@ export default function ($scope, $mdDialog, data) {
 			vm.schemeParameters.forEach(function (param) {
 				var exist = false
 
-				console.log('param', param)
+
 
 				vm.items.forEach(function (item) {
-					console.log('item', item)
+
 
 					if (param.index === item.index) {
 						exist = true

@@ -250,7 +250,7 @@ export default function ($scope, $mdDialog) {
 					})
 			})
 			.catch(function (reason) {
-				console.log(reason)
+
 			})
 	}
 

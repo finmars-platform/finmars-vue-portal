@@ -9,7 +9,7 @@ export default function ($scope, $mdDialog, data) {
 
 	vm.attributes = []
 
-	console.log('View Line', vm.item)
+
 
 	vm.cancel = function () {
 		$mdDialog.hide({ status: 'disagree' })
@@ -20,7 +20,7 @@ export default function ($scope, $mdDialog, data) {
 	}
 
 	vm.init = function () {
-		console.log('vm', vm)
+
 
 		vm.system_fields = [
 			'ignore_fields',

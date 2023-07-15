@@ -102,7 +102,7 @@ export default function settingsGeneralDataProvidersController(
 			.then(function (data) {
 				vm.testCertificateConfig = data
 
-				console.log('data', data)
+
 
 				if (data.task_object.status === 'D') {
 					resolve({ status: 'success' })
@@ -123,7 +123,7 @@ export default function settingsGeneralDataProvidersController(
 		new Promise(function (resolve, reject) {
 			vm.requestTestCertificate(resolve, {})
 		}).then(function (data) {
-			console.log('testBloombergCall data', data)
+
 
 			vm.testCertificateProcessing = false
 			$scope.$apply()
@@ -169,7 +169,7 @@ export default function settingsGeneralDataProvidersController(
 				]
 			}
 
-			console.log('vm.bloombergCredentials', vm.bloombergCredentials)
+
 
 			$scope.$apply()
 		})

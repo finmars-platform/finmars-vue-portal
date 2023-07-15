@@ -23,7 +23,7 @@ export default function ($scope, $mdDialog) {
 				return item
 			})
 
-			console.log('vm.procedures', vm.procedures)
+
 
 			vm.readyStatus.data = true
 
@@ -35,7 +35,7 @@ export default function ($scope, $mdDialog) {
 	vm.brokerBloombergStatus = 'Unknown'
 
 	vm.executeProcedure = function ($event, item) {
-		console.log('Execute Procedure', item)
+
 
 		pricingProcedureService.runProcedure(item.id, item).then(function (data) {
 			toastNotificationService.success('Success. Procedure is being processed')
@@ -110,7 +110,7 @@ export default function ($scope, $mdDialog) {
 					$scope.$apply()
 				})
 				.catch(function (error) {
-					console.log('error', error)
+
 
 					vm.noInfo = true
 
@@ -122,7 +122,7 @@ export default function ($scope, $mdDialog) {
 	vm.init = function () {
 		vm.getList()
 
-		console.log('Run Pricing Procedure')
+
 
 		// if ('__HEALTHCHECK_HOST__') {
 		if (window.HEALTHCHECK_HOST) {

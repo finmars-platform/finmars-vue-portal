@@ -1,7 +1,7 @@
 import instrumentEventService from '@/angular/services/instrumentEventService'
 
 export default function ($scope, $mdDialog, data) {
-	console.log('id for event buttons', data)
+
 
 	var vm = this
 
@@ -25,7 +25,7 @@ export default function ($scope, $mdDialog, data) {
 			)
 		})
 
-	console.log('vm.event', vm.event)
+
 
 	vm.recursiveHandleEvent = function (index, actions, resolve, $event) {
 		var action = actions[index]
@@ -51,7 +51,7 @@ export default function ($scope, $mdDialog, data) {
 						}
 					})
 					.catch(function (reason) {
-						console.log('reason', reason)
+
 
 						var description = "<p>Can't process event</p>"
 
@@ -134,7 +134,7 @@ export default function ($scope, $mdDialog, data) {
 
 				vm.recursiveHandleEvent(index, actions, resolve, $event)
 			}).then(function (value) {
-				console.log('resolve here?')
+
 
 				$mdDialog.hide({ status: 'agree' })
 			})

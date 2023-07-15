@@ -352,7 +352,7 @@ export default function journalPageController(
 	}
 
 	vm.init = function () {
-		console.log('$stateParams', $stateParams)
+
 
 		if ($stateParams.page) {
 			vm.currentPage = $stateParams.page
