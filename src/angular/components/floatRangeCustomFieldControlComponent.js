@@ -3,7 +3,7 @@
  */
 
 var controller = function () {
-	console.log('this', this)
+
 
 	var vm = this
 
@@ -70,7 +70,7 @@ var controller = function () {
 			}
 		}
 
-		console.log('vm.items', vm.items)
+
 	}
 
 	vm.removeRange = function ($index) {

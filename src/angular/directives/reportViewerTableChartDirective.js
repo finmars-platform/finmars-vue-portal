@@ -191,8 +191,8 @@ export default function ($mdDialog) {
 					return item
 				})
 
-				console.log('createTable.tableChartSettings', scope.tableChartSettings)
-				console.log('createTable.items', scope.items)
+
+
 
 				var positiveTotal = 0
 				var negativeTotal = 0
@@ -284,7 +284,7 @@ export default function ($mdDialog) {
 
 				activeObject[scope.tableChartSettings.title_column] = item.key
 
-				console.log('activeObject', activeObject)
+
 
 				scope.evDataService.setActiveObject(activeObject)
 				scope.evEventService.dispatchEvent(evEvents.ACTIVE_OBJECT_CHANGE)
@@ -368,7 +368,7 @@ export default function ($mdDialog) {
 						e.preventDefault()
 						e.stopPropagation()
 
-						console.log('e', e)
+
 
 						var mouseDownLeft = e.clientX
 						var diff
@@ -379,7 +379,7 @@ export default function ($mdDialog) {
 
 						var currentWidth = $(col).width()
 
-						console.log('currentWidth', currentWidth)
+
 						var elems = document.querySelectorAll(
 							'.rv-table-chart-table-cell-' + index
 						)
@@ -422,7 +422,7 @@ export default function ($mdDialog) {
 				// If we already have data (e.g. viewType changed) start
 				var flatList = rvDataHelper.getFlatStructure(scope.evDataService)
 
-				console.log('flatList', flatList)
+
 
 				if (flatList.length > 1) {
 					scope.processing = false

@@ -29,7 +29,7 @@ export default function (
 
 	vm.userCodeError = false
 
-	console.log('vm.attribute', vm.attribute)
+
 
 	vm.valueTypes = [
 		{
@@ -74,7 +74,7 @@ export default function (
 
 	vm.getGroupList = function () {
 		return usersGroupService.getList().then(function (data) {
-			//console.log('data MEMBERS', data);
+			//;
 
 			vm.groups = data.results
 
@@ -108,7 +108,7 @@ export default function (
 
 	vm.getMemberList = function () {
 		return usersService.getMemberList().then(function (data) {
-			//console.log('data MEMBERS', data);
+			//;
 
 			vm.members = data.results
 
@@ -170,7 +170,7 @@ export default function (
 	}
 
 	// vm.valueTypes = metaService.getDynamicAttrsValueTypesCaptions();
-	console.log('Value type is ', vm.valueTypes)
+
 
 	vm.agree = function ($event) {
 		vm.attribute['user_object_permissions'] = []
@@ -209,7 +209,7 @@ export default function (
 			}
 		})
 
-		console.log('vm.attr', vm.attribute)
+
 		if (vm.attribute['value_type'] == 'float') {
 			vm.attribute['value_type'] = 20
 		}

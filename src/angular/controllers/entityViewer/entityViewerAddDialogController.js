@@ -558,8 +558,8 @@ export default function entityViewerAddDialogController(
 		var table
 		var isCreator
 
-		// console.log('vm.groups', vm.groups);
-		// console.log('vm.currentMember.groups', vm.currentMember.groups);
+		// ;
+		// ;
 
 		vm.groups.forEach(function (group) {
 			if (group.permission_table && group.permission_table.data) {
@@ -614,7 +614,7 @@ export default function entityViewerAddDialogController(
 						return item.content_type === contentType
 					}).data
 
-					console.log(' checkInheritRight table', table)
+
 
 					if (table.inherit_rights) {
 						vm.isInheritRights = true
@@ -630,7 +630,7 @@ export default function entityViewerAddDialogController(
 
                 if (vm.entityType === 'instrument') {
 
-                    console.log('vm.entity', vm.entity);
+                    ;
 
                     entityResolverService.getByKey('instrument-type', vm.entity.instrument_type).then(function (data) {
 
@@ -644,7 +644,7 @@ export default function entityViewerAddDialogController(
 						//
                         // });
 						//
-                        // console.log('vm.entityPermissions', vm.entity.object_permissions);
+                        // ;
 						//
                         // vm.groups.forEach(function (group) {
 						//
@@ -675,7 +675,7 @@ export default function entityViewerAddDialogController(
 						vm.entity.object_permissions = result.objectPermissions;
 						vm.groups = result.groups;
 
-                        console.log('vm.groups', vm.groups);
+                        ;
 
                         $scope.$apply();
 
@@ -737,12 +737,12 @@ export default function entityViewerAddDialogController(
 	vm.setInheritedPricing = function () {
 		return new Promise(function (resolve, reject) {
 			if (vm.entityType === 'instrument' && vm.entity.instrument_type) {
-				console.log('vm.entity', vm.entity)
+
 
 				entityResolverService
 					.getByKey('instrument-type', vm.entity.instrument_type)
 					.then(function (data) {
-						console.log('get instrument type ', data)
+
 
 						vm.entity.pricing_policies = data.pricing_policies.map(function (
 							policy
@@ -857,7 +857,7 @@ export default function entityViewerAddDialogController(
 	}
 
 	vm.updateEntityBeforeSave = function () {
-		console.log('updateEntityBeforeSave vm.entity', vm.entity)
+
 
 		/* if (metaService.getEntitiesWithoutDynAttrsList().indexOf(vm.entityType) === -1) {
 
@@ -873,7 +873,7 @@ export default function entityViewerAddDialogController(
             } */
 
 		vm.entity.object_permissions = []
-		console.log('vm.groups', vm.groups)
+
 
 		if (vm.groups) {
 			vm.groups.forEach(function (group) {
@@ -1075,7 +1075,7 @@ export default function entityViewerAddDialogController(
 				vm.entity,
 				vm.entityType
 			)
-			console.log('resultEntity', resultEntity)
+
 
 			if (vm.dcLayoutHasBeenFixed) {
 				uiService.updateEditLayout(
@@ -1133,7 +1133,7 @@ export default function entityViewerAddDialogController(
 					}
 				})
 				.catch(function (data) {
-					console.log('save.data', data)
+
 
 					vm.processing = false
 
@@ -1194,7 +1194,7 @@ export default function entityViewerAddDialogController(
 					vm.entityType
 				)
 
-				console.log('resultEntity', resultEntity)
+
 
 				if (dcLayoutHasBeenFixed) {
 					uiService.updateEditLayout(
@@ -1588,7 +1588,7 @@ export default function entityViewerAddDialogController(
 					})
 			)
 
-		console.log('vm.attributeTypesByValueTypes', vm.attributeTypesByValueTypes)
+
 	}
 
 	vm.getCurrencyPricingSchemes = function () {
@@ -1665,14 +1665,14 @@ export default function entityViewerAddDialogController(
 					})
 			)
 
-		console.log('vm.attributeTypesByValueTypes', vm.attributeTypesByValueTypes)
+
 	}
 
 	vm.getInstrumentPricingSchemes = function () {
 		instrumentPricingSchemeService.getList().then(function (data) {
 			vm.instrumentPricingSchemes = data.results
 
-			console.log('instrumentPricingSchemes', vm.instrumentPricingSchemes)
+
 
 			vm.generateInstrumentAttributeTypesByValueTypes()
 
@@ -1712,7 +1712,7 @@ export default function entityViewerAddDialogController(
 
 	/* vm.instrumentTypeChange = function ($event) {
 
-            console.log('instrumentTypeChange', vm.entity)
+
 
             vm.sharedLogic.getFormLayout().then(formLayoutData => {
 

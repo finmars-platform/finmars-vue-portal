@@ -78,7 +78,7 @@ export default function () {
 	}
 
 	function setContentWrapElem(elem) {
-		// console.log('setContentWrapElem elem.clientWidth', elem.clientWidth);
+		// ;
 
 		contentWrapElem = elem
 		contentWrapElemHeight = elem.clientHeight
@@ -110,7 +110,7 @@ export default function () {
 	//
 
 	function setRootWrapElem(elem) {
-		// console.log('setContentWrapElem elem.clientWidth', elem.clientWidth);
+		// ;
 
 		rootWrapElem = elem
 		rootWrapElemHeight = elem.clientHeight

@@ -39,7 +39,7 @@ export default function ($scope, $mdDialog, data) {
 	vm.clearHoverItem = function () {
 		setTimeout(function () {
 			vm.hoverItem = null
-			console.log('vm.hoverItem', vm.hoverItem)
+
 
 			$scope.$apply()
 		}, 0)
@@ -48,7 +48,7 @@ export default function ($scope, $mdDialog, data) {
 	vm.setHoverItem = function ($event, option) {
 		setTimeout(function () {
 			vm.hoverItem = option
-			console.log('scope.hoverItem', vm.hoverItem)
+
 
 			$scope.$apply()
 		}, 0)
@@ -232,7 +232,7 @@ export default function ($scope, $mdDialog, data) {
 
 						vm.databaseItems = []
 
-						console.log('Database error occurred', error)
+
 
 						$scope.$apply()
 					})
@@ -259,7 +259,7 @@ export default function ($scope, $mdDialog, data) {
 
 						vm.databaseItems = []
 
-						console.log('Database error occurred', error)
+
 
 						$scope.$apply()
 					})
@@ -291,7 +291,7 @@ export default function ($scope, $mdDialog, data) {
 							resolve()
 						})
 						.catch(function (error) {
-							console.log('Database error occurred', error)
+
 
 							vm.databaseItems = []
 
@@ -314,7 +314,7 @@ export default function ($scope, $mdDialog, data) {
 							vm.totalPages = Math.round(data.count / 40)
 						})
 						.catch(function (error) {
-							console.log('Database error occurred', error)
+
 
 							vm.databaseItems = []
 

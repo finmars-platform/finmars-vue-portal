@@ -135,13 +135,13 @@ export default function (metaContentTypesService, attributeTypeService, uiServic
 
                         promises.push(new Promise(function (resolveRelation, reject) {
 
-                            // console.log('input', input);
-                            // console.log('input.content_type', input.content_type);
+                            // ;
+                            // ;
 
                             var user_code = input[user_code_prop];
                             var entity = metaContentTypesService.findEntityByContentType(input.content_type);
 
-                            // console.log('input.entity', entity);
+                            // ;
 
                             if (prop_data.code === 'user_code') {
 
@@ -225,7 +225,7 @@ export default function (metaContentTypesService, attributeTypeService, uiServic
 
         errors = errors || [];
 
-        console.log('options', options);
+        ;
 
         var item = options.item;
         var item_key = options.item_key;
@@ -519,8 +519,8 @@ export default function (metaContentTypesService, attributeTypeService, uiServic
 
                 var code_prop = '___' + propItem.key + '__' + propItem.code_type;
 
-                // console.log('code_prop', code_prop);
-                // console.log('action', action);
+                // ;
+                // ;
 
                 // TODO Make recursive like import method to make caching work properly
 
@@ -844,7 +844,7 @@ export default function (metaContentTypesService, attributeTypeService, uiServic
 
         if (items.length) {
 
-            console.log('index', index);
+            ;
 
             if (items[index].hasOwnProperty('attribute_type')) {
 
@@ -885,7 +885,7 @@ export default function (metaContentTypesService, attributeTypeService, uiServic
                         });
 
 
-                        console.log('splice items', items);
+                        ;
 
                         if (index < items.length - 1) {
                             recursiveMapItemInLayout(resolve, items, index, errors, errorOptions)
@@ -915,7 +915,7 @@ export default function (metaContentTypesService, attributeTypeService, uiServic
 
                     });
 
-                    console.log('splice items', items);
+                    ;
 
                     if (index < items.length - 1) {
                         recursiveMapItemInLayout(resolve, items, index, errors, errorOptions)
@@ -950,16 +950,16 @@ export default function (metaContentTypesService, attributeTypeService, uiServic
 
         if (items.length) {
 
-            console.log('index', index);
+            ;
 
             if (items[index].hasOwnProperty('custom_field')) {
 
                 var code = items[index].custom_field.user_code;
                 var entity = metaContentTypesService.findEntityByContentType(layoutContentType, 'ui');
 
-                console.log('layoutContentType', layoutContentType);
-                console.log('items[index].content_type', items[index]);
-                console.log('entity', entity);
+                ;
+                ;
+                ;
 
 
                 configurationImportGetService.getCustomFieldByUserCode(code, entity).then(function () {
@@ -975,7 +975,7 @@ export default function (metaContentTypesService, attributeTypeService, uiServic
 
                 }).catch(function (error) {
 
-                    console.log('error', error);
+                    ;
 
                     items.splice(index, 1);
 
@@ -996,7 +996,7 @@ export default function (metaContentTypesService, attributeTypeService, uiServic
                     });
 
 
-                    console.log('splice items', items);
+                    ;
 
                     if (index < items.length - 1) {
                         recursiveMapCustomFieldItemInLayout(resolve, items, index, errors, errorOptions, layoutContentType)
@@ -1097,7 +1097,7 @@ export default function (metaContentTypesService, attributeTypeService, uiServic
 
     var mapDashboardComponentType = function (componentType, errors, errorOptions, missedComponentTypesIds) {
 
-        console.log("mapDashboardComponentType componentType", componentType);
+        ;
 
         return new Promise(function (resolve, reject) {
 
@@ -1117,7 +1117,7 @@ export default function (metaContentTypesService, attributeTypeService, uiServic
                 }
             ).then(function (data) {
 
-                console.log('mapDashboardComponentType data', data);
+                ;
 
                 if (data.results.length) {
 
@@ -1131,14 +1131,14 @@ export default function (metaContentTypesService, attributeTypeService, uiServic
 
                     });
 
-                    console.log('componentType.settings.layout_name', componentType.settings.layout_name);
-                    console.log('mapDashboardComponentType resultItem', resultItem);
+                    ;
+                    ;
 
                     if (resultItem) {
 
                         componentType.settings.layout = resultItem.id;
 
-                        console.log('mapDashboardComponentType layout find componentType', componentType);
+                        ;
 
                         resolve();
 
@@ -1155,7 +1155,7 @@ export default function (metaContentTypesService, attributeTypeService, uiServic
 
                         });
 
-                        console.log('mapDashboardComponentType errors', errors);
+                        ;
 
                         componentType.settings.layout = null;
                         componentType.settings.layout_name = null;
@@ -1177,7 +1177,7 @@ export default function (metaContentTypesService, attributeTypeService, uiServic
 
                     });
 
-                    console.log('mapDashboardComponentType errors', errors);
+                    ;
 
                     componentType.settings.layout = null;
                     componentType.settings.layout_name = null;

@@ -125,7 +125,7 @@ export default function ($scope, $mdDialog, data, entityViewerDataService) {
 			})
 		}
 
-		console.log('vm.syncDataStructure.newValues', vm.newValues)
+
 	}
 
 	vm.moveUp = function (item) {
@@ -260,7 +260,7 @@ export default function ($scope, $mdDialog, data, entityViewerDataService) {
 	}
 
 	vm.init = function () {
-		console.log('data', data)
+
 
 		vm.column = JSON.parse(angular.toJson(data.column))
 

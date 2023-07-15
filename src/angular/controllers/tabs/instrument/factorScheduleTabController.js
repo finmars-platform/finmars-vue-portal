@@ -15,7 +15,7 @@ export default function ($scope) {
 
 	vm.evEditorEventService = $scope.$parent.vm.evEditorEventService
 
-	console.log('----------------------------------', vm.entity)
+
 
 	vm.newItem = {}
 	vm.newItem.date = new Date()

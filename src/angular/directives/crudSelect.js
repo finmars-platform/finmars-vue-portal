@@ -232,7 +232,7 @@ export default function ($mdDialog) {
 						multiple: true,
 					})
 					.then(function (res) {
-						console.log('res', res)
+
 						if (res.status === 'agree') {
 							entityResolverService.deleteByKey(entityType, item.id)
 

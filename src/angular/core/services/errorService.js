@@ -31,7 +31,7 @@ import ErrorService from "../../shell/scripts/app/services/errorService";
 
 	var getFullErrorAsHtml = function (obj, message) {
 
-		// console.log('getFullErrorAsHtml.obj', obj);
+		// ;
 
 		Object.keys(obj).forEach(function (key) {
 
@@ -86,7 +86,7 @@ import ErrorService from "../../shell/scripts/app/services/errorService";
 
 		}
 
-		console.log('notifyError.message', message)
+
 
 		toastNotificationService.error(message);
 

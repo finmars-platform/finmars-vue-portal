@@ -94,8 +94,8 @@ export default function (d3) {
 			var changeActiveObject = function (columnName) {
 				var activeObject = scope.evDataService.getActiveObject() || {}
 
-				console.log('activeObject', activeObject)
-				console.log('nameKey', nameKey)
+
+
 
 				activeObject[nameKey] = columnName
 

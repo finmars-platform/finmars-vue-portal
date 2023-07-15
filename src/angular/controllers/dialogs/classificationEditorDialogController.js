@@ -121,11 +121,11 @@ export default function ($scope, $mdDialog, data) {
 	}
 
 	vm.agree = function () {
-		console.log('vm.attr', vm.classifier)
+
 		var ref = $('#jstree_demo').jstree(true)
 		var data = ref.get_json('#')
-		console.log('ref', data)
-		console.log('classifier', vm.classifier)
+
+
 
 		vm.classifier.children = data[0].children
 		$mdDialog.hide({ status: 'agree', data: { classifier: vm.classifier } })

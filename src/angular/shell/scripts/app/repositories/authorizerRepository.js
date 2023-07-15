@@ -23,7 +23,7 @@ import baseUrlService from '../services/baseUrlService'
 const authorizerUrl = baseUrlService.getAuthorizerUrl()
 
 /* var handleError = function (methodName) {
-	console.log('Method: ' + methodName + '. Cannot get data from server');
+	;
 }; */
 
 // deprecated

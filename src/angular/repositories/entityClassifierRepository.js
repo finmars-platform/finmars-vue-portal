@@ -154,7 +154,7 @@ var deleteByKey = function (entity, id) {
 		)
 		.then(function (data) {
 			return new Promise(function (resolve, reject) {
-				console.log('data', data)
+
 				if (data.status === 409) {
 					resolve({ status: 'conflict' })
 				}

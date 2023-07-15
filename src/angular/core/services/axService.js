@@ -22,7 +22,7 @@ import baseUrlService from "../../shell/scripts/app/services/baseUrlService";
         },
         (err) => {
 
-            console.log("Axios catch error", err)
+
 
             // return other errors
             if (err.response.status !== 401) {
@@ -46,7 +46,7 @@ import baseUrlService from "../../shell/scripts/app/services/baseUrlService";
 
                 }).catch(function (error) {
 
-                    console.log("Keycloak update error", error)
+
 
                     // in case if refresh token is expired
 

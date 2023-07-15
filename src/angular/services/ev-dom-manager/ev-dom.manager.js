@@ -68,7 +68,7 @@ var requestGroups = function (
 		processedPages: [],
 	}
 
-	console.log('requestParameters', requestParameters)
+
 
 	evDataService.setRequestParameters(requestParameters)
 	evDataService.setLastClickInfo(event)
@@ -83,7 +83,7 @@ var requestObjects = function (
 	evDataService,
 	evEventService
 ) {
-	console.log('Request objects')
+
 
 	var requestParameters = evDataService.getRequestParameters(groupHashId)
 
@@ -195,7 +195,7 @@ var requestObjects = function (
 var handleShiftSelection = function (evDataService, evEventService, clickData) {
 	var lastActiveRow = evDataService.getActiveObjectRow()
 
-	console.log('lastActiveRow', lastActiveRow)
+
 
 	if (!lastActiveRow) {
 		if (clickData.___type === 'object') {
@@ -271,7 +271,7 @@ var handleShiftSelection = function (evDataService, evEventService, clickData) {
 			}
 		})
 
-		console.log('activated_ids', activated_ids)
+
 
 		// clearGroupActiveState(evDataService, evEventService);
 		evDataHelper.clearObjectActiveState(evDataService, evEventService)
@@ -519,7 +519,7 @@ var handleControlClick = function (clickData, evDataService, evEventService) {
 
 	if (selectedGroups && selectedGroups.length) {
 		selectedGroups.forEach(function (selectedGroup) {
-			console.log('selectedGroup', selectedGroup)
+
 
 			var groupHashId = selectedGroup.___id
 
@@ -644,7 +644,7 @@ var getClickData = function (event) {
 		}
 	}
 
-	console.log('clickData', clickData)
+
 
 	return clickData
 }
@@ -661,12 +661,12 @@ var initEventDelegation = function (
 
 		var entityType = evDataService.getEntityType()
 
-		console.log('clickData', clickData)
-		console.log('detail', event.detail)
+
+
 
 		var selection = window.getSelection().toString()
 
-		console.log('selection', selection)
+
 		if (clickData.___type === 'hyperlink') {
 			metaHelper.openLinkInNewTab(event)
 		} else if (event.detail === 2) {
@@ -966,7 +966,7 @@ function executeContextMenuAction(event) {
 			// obj.event = event;
 			dropdownActionData.event = event
 
-			console.log('dropdownActionData', dropdownActionData)
+
 
 			// evDataService.setActiveObject(obj);
 			/* evDataService.setActiveObjectAction(dropdownAction);
@@ -1320,9 +1320,9 @@ var initContextMenuEventDelegation = function (
 					}
 				}
 
-				console.log('initContextMenuEventDelegation.event', ev)
 
-				console.log('initContextMenuEventDelegation.objectId', objectId)
+
+
 
 				if (objectId) {
 					ev.preventDefault()
@@ -1467,7 +1467,7 @@ var calculateScroll = function (elements, evDataService, evScrollManager) {
 	//     viewportWidth = contentWrapElemWidth;
 	// }
 
-	// console.log("Calculate scroll", interfaceLayout.evLeftPanel.width);
+	// ;
 
 	viewportWidth = contentWrapElemWidth
 

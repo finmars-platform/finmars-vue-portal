@@ -39,7 +39,7 @@ export default function (
 				vm.member = data;
 
 
-				console.log('vm.member', vm.member);
+				;
 
 				vm.readyStatus.member = true;
 				$scope.$apply();
@@ -64,7 +64,7 @@ export default function (
 		uiService.getConfigurationList().then(function (data) {
 			vm.items = data.results
 
-			console.log('vm.items', vm.items)
+
 
 			vm.readyStatus.content = true
 
@@ -73,7 +73,7 @@ export default function (
 	}
 
 	vm.importConfiguration = function ($event, resolve) {
-		console.log('vm.importConfig', vm.importConfig)
+
 
 		var blob = new Blob([JSON.stringify(vm.importConfig.data)], {
 			type: 'application/json',
@@ -143,7 +143,7 @@ export default function (
 	}
 
 	vm.applyInitialConfiguration = function ($event) {
-		console.log('applyInitialConfiguration')
+
 
 		authorizerService.getInitialConfiguration().then(function (data) {
 			vm.importConfig = {

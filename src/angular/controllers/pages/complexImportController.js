@@ -160,7 +160,7 @@ export default function complexImportController(
 		})
 
 		if (currentAction && currentActionIndex && schemeObject) {
-			// console.log('currentActionIndex', currentActionIndex);
+			// ;
 
 			result.text =
 				'Processing ' +
@@ -170,7 +170,7 @@ export default function complexImportController(
 			result.total = currentAction.total_rows
 		}
 
-		// console.log('getTransactionImportProgress.result', result);
+		// ;
 
 		return result
 	}
@@ -204,7 +204,7 @@ export default function complexImportController(
 		})
 
 		if (currentAction && currentActionIndex && schemeObject) {
-			// console.log('currentActionIndex', currentActionIndex);
+			// ;
 
 			result.text =
 				'Processing ' +
@@ -214,7 +214,7 @@ export default function complexImportController(
 			result.total = currentAction.total_rows
 		}
 
-		// console.log('getTransactionImportProgress.result', result);
+		// ;
 
 		return result
 	}
@@ -230,7 +230,7 @@ export default function complexImportController(
 		formData.append('file', vm.config.file)
 		formData.append('scheme', vm.config.scheme)
 
-		// console.log('vm.config', vm.config);
+		// ;
 
 		var schemeObject
 
@@ -325,7 +325,7 @@ export default function complexImportController(
 					updateCounter
 				)
 				.then(function (data) {
-					// console.log('data', data);
+					// ;
 
 					// vm.processing = false;
 
@@ -382,7 +382,7 @@ export default function complexImportController(
 		formData.append('file', vm.config.file)
 		formData.append('scheme', vm.config.scheme)
 
-		// console.log('vm.config', vm.config);
+		// ;
 
 		var schemeObject
 
@@ -479,7 +479,7 @@ export default function complexImportController(
 					updateCounter
 				)
 				.then(function (data) {
-					// console.log('validation data', data);
+					// ;
 
 					// vm.processing = false;
 					vm.readyStatus.processing = false
@@ -530,7 +530,7 @@ export default function complexImportController(
 									updateCounter
 								)
 								.then(function (data) {
-									// console.log('data', data);
+									// ;
 
 									vm.status = 'SUCCESS'
 									// vm.processing = false;
@@ -554,7 +554,7 @@ export default function complexImportController(
 											'</div>' +
 											'</div><br/>'
 
-										// console.log('description', description);
+										// ;
 
 										description =
 											description +
@@ -598,7 +598,7 @@ export default function complexImportController(
 									$scope.$apply()
 								})
 								.catch(function (reason) {
-									// console.log('here? ', reason);
+									// ;
 
 									// vm.processing = false;
 									vm.readyStatus.processing = false
@@ -673,7 +673,7 @@ export default function complexImportController(
 				}
 			})
 
-			console.log('hasSchemeEditPermission', vm.hasSchemeEditPermission)
+
 
 			$scope.$apply()
 		})
@@ -724,7 +724,7 @@ export default function complexImportController(
 			vm.schemeValidationErrorMessage = ''
 		}
 
-		console.log('vm.validateScheme.scheme', schemeObject)
+
 	}
 
 	vm.init = function () {

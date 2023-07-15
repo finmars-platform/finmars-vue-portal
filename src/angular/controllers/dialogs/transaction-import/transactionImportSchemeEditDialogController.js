@@ -248,9 +248,9 @@ export default function transactionImportSchemeEditDialogController(
 				}
 			})
 
-			console.log('selector_values_projection', vm.selector_values_projection)
-			console.log('mapFields', vm.mapFields)
-			console.log('reconFields', vm.reconFields)
+
+
+
 
 			vm.readyStatus.scheme = true
 			$scope.$apply()

@@ -28,9 +28,9 @@ export default function () {
 	}
 
 	function dispatchEvent(eventName) {
-		console.log('Event dispatched: ' + eventName)
 
-		// console.log('events[eventName]', events[eventName]);
+
+		// ;
 
 		if (events.hasOwnProperty(eventName)) {
 			events[eventName].forEach(function (callback) {

@@ -161,7 +161,7 @@ export default function complexImportDialogController(
 		})
 
 		if (currentAction && currentActionIndex && schemeObject) {
-			// console.log('currentActionIndex', currentActionIndex);
+			// ;
 
 			result.text =
 				'Processing ' +
@@ -171,7 +171,7 @@ export default function complexImportDialogController(
 			result.total = currentAction.total_rows
 		}
 
-		// console.log('getTransactionImportProgress.result', result);
+		// ;
 
 		return result
 	}
@@ -205,7 +205,7 @@ export default function complexImportDialogController(
 		})
 
 		if (currentAction && currentActionIndex && schemeObject) {
-			// console.log('currentActionIndex', currentActionIndex);
+			// ;
 
 			result.text =
 				'Processing ' +
@@ -215,7 +215,7 @@ export default function complexImportDialogController(
 			result.total = currentAction.total_rows
 		}
 
-		// console.log('getTransactionImportProgress.result', result);
+		// ;
 
 		return result
 	}
@@ -230,7 +230,7 @@ export default function complexImportDialogController(
 		formData.append('file', vm.config.file)
 		formData.append('scheme', vm.config.scheme)
 
-		// console.log('vm.config', vm.config);
+		// ;
 
 		var schemeObject
 
@@ -325,7 +325,7 @@ export default function complexImportDialogController(
 					updateCounter
 				)
 				.then(function (data) {
-					// console.log('data', data);
+					// ;
 
 					vm.processing = false
 
@@ -379,7 +379,7 @@ export default function complexImportDialogController(
 		formData.append('file', vm.config.file)
 		formData.append('scheme', vm.config.scheme)
 
-		// console.log('vm.config', vm.config);
+		// ;
 
 		var schemeObject
 
@@ -474,7 +474,7 @@ export default function complexImportDialogController(
 					updateCounter
 				)
 				.then(function (data) {
-					// console.log('validation data', data);
+					// ;
 
 					vm.processing = false
 
@@ -523,7 +523,7 @@ export default function complexImportDialogController(
 									updateCounter
 								)
 								.then(function (data) {
-									// console.log('data', data);
+									// ;
 
 									vm.status = 'SUCCESS'
 									vm.processing = false
@@ -546,7 +546,7 @@ export default function complexImportDialogController(
 											'</div>' +
 											'</div><br/>'
 
-										// console.log('description', description);
+										// ;
 
 										description =
 											description +
@@ -588,7 +588,7 @@ export default function complexImportDialogController(
 									}
 								})
 								.catch(function (reason) {
-									// console.log('here? ', reason);
+									// ;
 
 									vm.processing = false
 
@@ -657,7 +657,7 @@ export default function complexImportDialogController(
 				}
 			})
 
-			console.log('hasSchemeEditPermission', vm.hasSchemeEditPermission)
+
 
 			$scope.$apply()
 		})
@@ -708,7 +708,7 @@ export default function complexImportDialogController(
 			vm.schemeValidationErrorMessage = ''
 		}
 
-		console.log('vm.validateScheme.scheme', schemeObject)
+
 	}
 
 	vm.init = function () {

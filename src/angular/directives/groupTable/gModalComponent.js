@@ -36,7 +36,7 @@
 
 		vm.shownFiltersType = 'backend' // used for gFilterSettingsBtnDirective inside view
 
-		console.log('vm', vm)
+
 
 		logService.property('vm.entityType', vm.entityType)
 
@@ -78,7 +78,7 @@
 			if (viewContext === 'reconciliation_viewer') {
 				/*var columns = vm.entityViewerDataService.getColumns();
 
-                console.log('columns', columns);
+                ;
 
                 vm.entityAttrs = columns.map(function (item) {
                     return item
@@ -164,7 +164,7 @@
 					vm.entityType
 				)
 
-				console.log('vm.attrs', vm.attrs)
+
 
 				vm.attrs = vm.attrs.map(function (attribute) {
 					var result = {}
@@ -567,7 +567,7 @@
 		// < format data for SELECTED tab >
 
 		vm.onSelectedAttrsChange = function (attributesList, selectedAttr) {
-			console.log('onSelectedAttrsChange', attributesList, selectedAttr)
+
 
 			for (var i = 0; i < attributesList.length; i++) {
 				if (attributesList[i].key === selectedAttr.key) {
@@ -780,7 +780,7 @@
                     {
                         accepts: function (el, target, source, sibling) {
 
-                            //console.log('el', el, target, source);
+                            //;
 
                             if (target.classList.contains('vcDraggableCard')) {
                                 return false;

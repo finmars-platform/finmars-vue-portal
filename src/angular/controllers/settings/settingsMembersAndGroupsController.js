@@ -99,13 +99,13 @@ export default function settingsMembersAndGroupsController(
 			vm.tabsActivityData.ownership = false
 		}
 
-		console.log('currentMasterUser', vm.currentMasterUser)
+
 	}
 
 	vm.getCurrentMember = function () {
 		vm.currentMember = globalDataService.getMember()
 
-		console.log('currentMember', vm.currentMember)
+
 	}
 
 	vm.saveMasterUser = function ($event) {
@@ -113,7 +113,7 @@ export default function settingsMembersAndGroupsController(
 
 			authorizerService.updateMasterUser(currentMasterUser.id, currentMasterUser).then(function (data) {
 
-                console.log('saveMasterUser data', data);
+                ;
 
                 vm.processing = false;
 
@@ -206,7 +206,7 @@ export default function settingsMembersAndGroupsController(
 				targetEvent: ev,
 			})
 			.then(function (res) {
-				console.log('res', res)
+
 
 				if (res && res.status === 'agree') {
 					vm.getData()

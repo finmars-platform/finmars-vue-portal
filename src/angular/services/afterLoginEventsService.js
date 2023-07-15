@@ -196,7 +196,7 @@ var showEvents = function ($mdDialog, events) {
 			}
 		})
 
-		console.log('resultEvents', resultEvents)
+
 
 		if (resultEvents.length) {
 			index = 0
@@ -224,7 +224,7 @@ var getAndShowEvents = function ($mdDialog) {
 			var notification_date_from = moment(new Date()).format('YYYY-MM-DD')
 			var notification_date_to = moment(new Date()).format('YYYY-MM-DD')
 
-			console.log('showing events here')
+
 
 			var options = {}
 

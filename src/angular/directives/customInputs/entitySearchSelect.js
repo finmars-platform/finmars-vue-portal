@@ -523,7 +523,7 @@ export default function ($mdDialog, metaContentTypesService) {
 
 				if (_$popup) _$popup.cancel()
 
-				console.log('scope.downloadEntity')
+
 
 				$mdDialog
 					.show({

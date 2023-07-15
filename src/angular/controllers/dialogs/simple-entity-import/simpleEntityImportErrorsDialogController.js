@@ -200,7 +200,7 @@ export default function ($scope, $mdDialog, data) {
 	}
 
 	vm.init = function () {
-		console.log('vm.scheme ', vm.scheme)
+
 
 		vm.errors = vm.validationResult.stats.filter(function (item) {
 			return item.level === 'error'

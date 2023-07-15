@@ -165,7 +165,7 @@ export default function (
             } */
 		}
 
-		console.log('clickData', clickData)
+
 
 		return clickData
 	}
@@ -176,7 +176,7 @@ export default function (
 			evDataService
 		)
 
-		console.log('foldChildGroups.childrens', childrens)
+
 
 		var item
 
@@ -245,14 +245,14 @@ export default function (
 	) {
 		var group = evDataService.getData(clickData.___parentId)
 
-		console.log('group', group)
+
 
 		if (group) {
 			// initialized only first data request
 
 			var groups = evDataService.getGroups()
 
-			// console.log('group.___is_open', group.___is_open);
+			// ;
 
 			console.log(
 				'handleFoldButtonClick.group type',
@@ -277,7 +277,7 @@ export default function (
 
                 evDataService.setData(group);*/
 
-				// console.log('folld?');
+				// ;
 
 				foldChildGroups(group.___id, evDataService)
 			} else {
@@ -315,7 +315,7 @@ export default function (
 			evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 		}
 
-		// console.log('group', group);
+		// ;
 	}
 
 	var handleShiftSelection = function (
@@ -325,7 +325,7 @@ export default function (
 	) {
 		var lastActiveRow = evDataService.getActiveObjectRow()
 
-		console.log('lastActiveRow', lastActiveRow)
+
 
 		if (!lastActiveRow) {
 			if (clickData.___type === 'object') {
@@ -407,8 +407,8 @@ export default function (
 					activated_ids.push(item.___id)
 
 					if (item.___type === 'subtotal') {
-						// console.log('item', item);
-						// console.log('index', index);
+						// ;
+						// ;
 
 						if (item.___subtotal_subtype) {
 							if (item.___subtotal_subtype === 'area') {
@@ -431,9 +431,9 @@ export default function (
 				}
 			})
 
-			// console.log('activated_ids', activated_ids);
-			// console.log('activated_area_subtotals', activated_area_subtotals);
-			// console.log('activated_line_subtotals', activated_line_subtotals);
+			// ;
+			// ;
+			// ;
 
 			// var objects = evDataService.getObjects();
 
@@ -576,7 +576,7 @@ export default function (
 		evEventService
 	) {
 		var parent = Object.assign({}, evDataService.getData(clickData.___parentId))
-		//console.log("click group handleSubtotalClick data", clickData, parent);
+		//;
 		var subtotal_type
 		var activeObjRow = evDataService.getActiveObjectRow()
 		var isActiveObject =
@@ -679,7 +679,7 @@ export default function (
 				parents.reverse()
 				parents.splice(0, 1) // removing root group
 
-				//console.log("click group groups, parents", groups, parents);
+				//;
 
 				for (var i = 0; i < parents.length; i++) {
 					groupsActiveObj[groups[i].key] = parents[i].___group_name
@@ -690,7 +690,7 @@ export default function (
 					___id: clickData.___id,
 					___parentId: clickData.___parentId,
 				})
-				//console.log("click group set group activeobj", groupsActiveObj);
+				//;
 			}
 
 			evDataService.setData(parent)
@@ -847,7 +847,7 @@ export default function (
 		evDataService,
 		evEventService
 	) {
-		console.log('column', column)
+
 
 		cellElem.classList.add('g-cell-input')
 		cellElem.innerHTML = '<input value="" autofocus>'
@@ -1062,7 +1062,7 @@ export default function (
 				} else {
 					var selection = window.getSelection().toString()
 
-					console.log('selection', selection)
+
 
 					if (clickData.isShiftPressed) {
 						switch (clickData.___type) {
@@ -1213,12 +1213,12 @@ export default function (
 
 		var viewportHeight
 
-		// console.log('calculateScroll components', components);
-		// console.log('calculateScroll contentWrapElemWidth', contentWrapElemWidth);
+		// ;
+		// ;
 
 		viewportWidth = contentWrapElemWidth
 
-		// console.log('viewportWidth', viewportWidth);
+		// ;
 
 		// viewportTop = interfaceLayout.progressBar.height;
 		viewportTop = 0
@@ -1250,10 +1250,10 @@ export default function (
 			viewportHeight = viewportHeight - 16 // TODO To show horizontal scroll. Find why
 		}
 
-		// console.log(isRootTitle +  ' calculateScroll.contentWrapElemHeight ' + contentWrapElemHeight);
-		// console.log(isRootTitle +  ' calculateScroll.viewportTop ' + viewportTop);
-		// console.log(isRootTitle +  ' calculateScroll.viewportHeight ' + viewportHeight);
-		// console.log('calculateScroll.viewportWidth', viewportWidth);
+		// ;
+		// ;
+		// ;
+		// ;
 
 		rvScrollManager.setViewportHeight(viewportHeight)
 
@@ -1291,7 +1291,7 @@ export default function (
 			rvScrollManager.setContentElemWidth(resultWidth)
 		}
 
-		// console.log('resultWidth', resultWidth);
+		// ;
 	}
 
 	// var calculateScroll = function (elements, evDataService) {
@@ -1322,8 +1322,8 @@ export default function (
 	//
 	//     };
 	//
-	//     // console.log('calculateScroll.viewportHeight', viewportHeight);
-	//     // console.log('calculateScroll.viewportWidth', viewportWidth);
+	//     // ;
+	//     // ;
 	//
 	//     rvScrollManager.setViewportHeight(viewportHeight);
 	//     if (viewportWidth) {
@@ -1445,7 +1445,7 @@ export default function (
 
         result = result + '</div></div>';
 
-        console.log('getTransactionTypesMenu result', result);
+        ;
 
         return result
 
@@ -1582,8 +1582,8 @@ export default function (
 	var getContextMenuTtypeId = function (ttypes, option) {
 		var result = null
 
-		console.log('option.action_data', option.action_data)
-		console.log('option.ttypes', ttypes)
+
+
 
 		for (var i = 0; i < ttypes.length; i++) {
 			if (ttypes[i].user_code === option.action_data) {
@@ -1592,7 +1592,7 @@ export default function (
 			}
 		}
 
-		console.log('option.result', result)
+
 
 		return result
 	}
@@ -1600,7 +1600,7 @@ export default function (
 	var getContextMenuActionLink = function (evDataService, option, obj) {
 		var result = ''
 
-		console.log('getContextMenuActionLink.option', option)
+
 
 		var urlMap = {
 			'reports.balancereport': 'reports/balance',
@@ -2319,9 +2319,9 @@ export default function (
 
                         }
 
-                        console.log('initContextMenuEventDelegation.event', ev);
+                        ;
 
-                        console.log('initContextMenuEventDelegation.objectId', objectId);
+                        ;
 
                         if (objectId) {
 

@@ -208,7 +208,7 @@ export default function ({
 		var activeObject = vm.getActiveObjectFromQueryParameters()
 
 		if (activeObject) {
-			console.log('vm.getView activeObject', activeObject)
+
 
 			var filters = vm.entityViewerDataService.getFilters()
 
@@ -273,7 +273,7 @@ export default function ({
 
 	var checkLayoutsForChanges = function () {
 		// called on attempt to change or reload page
-		console.log('autosave77 rv checkLayoutsForChanges ', autosaveLayoutOn)
+
 		/* return new Promise(function (resolve, reject) {
 
                 var checkForLayoutChanges = vm.entityViewerDataService.isLayoutChangesLossWarningNeeded();
@@ -443,7 +443,7 @@ export default function ({
 		)
 
 		if (layoutHasChanges || spChangedLayout) {
-			console.log('autosave77 ev warnAboutLayoutChangesLoss ', autosaveLayoutOn)
+
 			event.preventDefault()
 			;(event || window.event).returnValue =
 				'All unsaved changes of layout will be lost.'
@@ -574,7 +574,7 @@ export default function ({
 					var activeColumnSort =
 						vm.entityViewerDataService.getActiveColumnSort()
 
-					console.log('activeColumnSortProm.activeColumnSort', activeColumnSort)
+
 
 					if (
 						activeColumnSort &&
@@ -591,7 +591,7 @@ export default function ({
 								if (data.results.length) {
 									var layout = data.results[0]
 
-									console.log('activeColumnSortProm', layout)
+
 
 									vm.entityViewerDataService.setColumnSortData(
 										activeColumnSort.key,
@@ -679,7 +679,7 @@ export default function ({
 					},
 				})
 				.then(function (data) {
-					console.log('getCrossEntityAttributeExtensionList.data', data)
+
 
 					vm.entityViewerDataService.setCrossEntityAttributeExtensions(
 						data.results
@@ -693,7 +693,7 @@ export default function ({
 
 		middlewareService.onAutosaveLayoutToggle(function () {
 			autosaveLayoutOn = globalDataService.isAutosaveLayoutOn()
-			console.log('autosave77 rv isAutosaveLayoutOn', autosaveLayoutOn)
+
 			if (autosaveLayoutOn) {
 				autosaveLayoutService.initListenersForAutosaveLayout(
 					vm.entityViewerDataService,
@@ -756,7 +756,7 @@ export default function ({
 				$mdDialog
 			)
 		} else if (vm.viewContext == 'dashboard') {
-			console.log('vm.layout:', vm.layout)
+
 			vm.setLayout(vm.layout)
 		} else {
 			setLayoutProm = evHelperService.getDefaultLayout(vm)

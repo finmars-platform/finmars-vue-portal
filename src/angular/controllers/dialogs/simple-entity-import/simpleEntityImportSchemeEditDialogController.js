@@ -180,8 +180,8 @@ export default function simpleEntityImportSchemeEditDialogController(
 
 								vm.scheme.entity_fields.splice(entityFieldIndex, 1)
 							} else {
-								// console.log('entityField', entityField);
-								// console.log('attribute', attribute);
+								// ;
+								// ;
 
 								entityField.value_type = attribute.value_type
 								entityField.entity = attribute.value_entity
@@ -307,7 +307,7 @@ export default function simpleEntityImportSchemeEditDialogController(
 			order: lastAttributeIndex,
 		})
 
-		console.log('scheme order', vm.scheme.entity_fields)
+
 	}
 
 	vm.removeCsvField = function (item, $index) {
@@ -527,7 +527,7 @@ export default function simpleEntityImportSchemeEditDialogController(
 
 	/*vm.openMapping = function ($event, item) {
 
-            console.log('item', item);
+            ;
 
             $mdDialog.show({
                 controller: 'EntityTypeMappingDialogController as vm',
@@ -654,7 +654,7 @@ export default function simpleEntityImportSchemeEditDialogController(
 			})
 			.then(function (res) {
 				if (res.status === 'agree') {
-					console.log('res', res.data)
+
 
 					res.data.classifier.classifiers =
 						res.data.classifier.children.map(setName)

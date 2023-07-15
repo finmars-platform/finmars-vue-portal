@@ -99,7 +99,7 @@ export default function ($scope, $mdDialog, data) {
 	}
 
 	var divideTableAttrsInGroups = function () {
-		console.log('tableAttributes', tableAttributes)
+
 
 		var tableAttributesCopy = JSON.parse(JSON.stringify(tableAttributes))
 
@@ -224,7 +224,7 @@ export default function ($scope, $mdDialog, data) {
 	}
 
 	vm.searchTermChange = function () {
-		console.log('vm.searchTerms', vm.searchTerms)
+
 
 		vm.currentPath = []
 		vm.currentLevel = 0
@@ -255,7 +255,7 @@ export default function ($scope, $mdDialog, data) {
 				vm.selectedAttributes.splice(clickedAttrIndex, 1)
 			}
 
-			console.log('vm.selectedAttributes', vm.selectedAttributes)
+
 		}
 	} else {
 		vm.onAttrClick = function (item) {
@@ -269,7 +269,7 @@ export default function ($scope, $mdDialog, data) {
 				vm.selectedAttributes = [item]
 			}
 
-			console.log('vm.selectedAttributes', vm.selectedAttributes)
+
 		}
 	}
 
@@ -355,10 +355,10 @@ export default function ($scope, $mdDialog, data) {
 					items: items,
 				}
 
-				console.log('vm.projection', vm.projection)
+
 			} else {
-				console.log('tableAttrsTree', vm.tableAttrsTree)
-				console.log('vm.currentPath', vm.currentPath)
+
+
 
 				var groupToLook = vm.tableAttrsTree
 
@@ -374,7 +374,7 @@ export default function ($scope, $mdDialog, data) {
 
 				vm.projection = groupToLook
 
-				console.log('groupToLook', vm.projection)
+
 			}
 			resolve()
 		}).then(function () {

@@ -225,7 +225,7 @@ export default function (
 	})
 
 	vm.isOpen = function isOpen(section) {
-		//console.log('section', section);
+		//;
 		var isParent = false
 		if (vm.openedSection && section.hasOwnProperty('pages')) {
 			section.pages.forEach(function (item) {
@@ -324,15 +324,15 @@ export default function (
 
 	vm.applyMemberInterfacePermissions = function () {
 		if (!vm.member.is_admin && !vm.member.is_owner) {
-			console.log('Applying Member Interface Permissions')
+
 
 			vm.member.groups_object.forEach(function (group) {
-				console.log(' group.permission_table', group.permission_table)
+
 
 				if (group.permission_table) {
 					if (group.permission_table.function) {
 						group.permission_table.function.forEach(function (item) {
-							console.log('function item', item)
+
 
 							if (item.content_type === 'function.import_data') {
 								if (vm.accessTable.data_simple_import) {
@@ -455,7 +455,7 @@ export default function (
 
 	vm.getInterfaceAccess = function () {
 		uiService.getPortalInterfaceAccess().then(function (data) {
-			// console.log('vm.getInterfaceAccess', data);
+			// ;
 
 			vm.interfaceAccess = data
 
@@ -482,7 +482,7 @@ export default function (
 
                 usersService.getOwnMemberSettings().then(function (data) {
 
-                    console.log('vm.getMember.data', data);
+                    ;
 
                     vm.member = data.results[0];
 

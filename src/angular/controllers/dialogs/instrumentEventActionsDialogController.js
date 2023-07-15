@@ -34,7 +34,7 @@ export default function ($scope, $mdDialog, eventActions) {
 
 	vm.getTransactionTypes = function () {
 		transactionTypeService.getListLight().then(function (data) {
-			console.log('data', data)
+
 			vm.transactionTypes = data.results
 			vm.readyStatus.transactionTypes = true
 
@@ -165,7 +165,7 @@ export default function ($scope, $mdDialog, eventActions) {
 				break
 			}
 		}
-		//console.log('vm.attr', vm.attribute);
+		//;
 		if (!notSavedEventsExist) {
 			eventActions = vm.eventActions
 			$mdDialog.hide({ status: 'agree', eventActions: eventActions })

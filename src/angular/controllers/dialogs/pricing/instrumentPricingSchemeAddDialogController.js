@@ -59,11 +59,11 @@ export default function instrumentPricingSchemeAddDialogController(
 				return deprecatedTypes.indexOf(item.id) === -1
 			})
 
-			console.log('vm.types', vm.types)
+
 
 			vm.readyStatus.types = true
 
-			console.log('vm.readyStatus', vm.readyStatus)
+
 
 			$scope.$apply()
 		})
@@ -120,10 +120,10 @@ export default function instrumentPricingSchemeAddDialogController(
 	}
 
 	vm.agree = function () {
-		console.log('vm.item', vm.item)
+
 
 		instrumentPricingSchemeService.create(vm.item).then(function (data) {
-			console.log('data', data)
+
 
 			$mdDialog.hide({ status: 'agree' })
 		})

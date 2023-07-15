@@ -158,8 +158,8 @@ export default function transactionTypeAddDialogController(
 		var table
 		var isCreator
 
-		// console.log('vm.groups', vm.groups);
-		// console.log('vm.currentMember.groups', vm.currentMember.groups);
+		// ;
+		// ;
 
 		vm.groups.forEach(function (group) {
 			if (group.permission_table && group.permission_table.data) {
@@ -365,7 +365,7 @@ export default function transactionTypeAddDialogController(
 
                         });
 
-                        console.log('actionItemKeys', actionItemKeys);
+                        ;
 
                         actionItemKeys.forEach(function (actionItemKey) {
 
@@ -390,15 +390,15 @@ export default function transactionTypeAddDialogController(
 
                                     var valueIsEmpty = false;
 
-                                    console.log('actionItemKey', actionItemKey);
-                                    console.log('inputValue', inputValue);
-                                    console.log('relationValue', relationValue);
+                                    ;
+                                    ;
+                                    ;
 
                                     if (actionItem.hasOwnProperty(actionItemKey + '_phantom')) {
 
                                         var phantomValue = actionItem[actionItemKey + '_phantom'];
 
-                                        console.log('phantomValue', phantomValue);
+                                        ;
 
                                         if (!inputValue && !relationValue && (phantomValue === null || phantomValue === undefined)) {
                                             valueIsEmpty = true;
@@ -757,7 +757,7 @@ export default function transactionTypeAddDialogController(
 
 			var entityErrors = sharedLogic.checkEntityForEmptyFields(entityToSave)
 
-			console.log('vm.entity before save', entityToSave)
+
 
 			/*if (actionsErrors.length || entityErrors.length) {
 
@@ -974,7 +974,7 @@ export default function transactionTypeAddDialogController(
 	}
 
 	/*vm.tagTransform = function (newTag) {
-            //console.log('newTag', newTag);
+            //;
             var item = {
                 name: newTag,
                 id: null
@@ -1231,10 +1231,10 @@ export default function transactionTypeAddDialogController(
 			})
 			.then(function (res) {
 				if (res.status === 'agree') {
-					console.log('res', res.data)
+
 					item[options.key] = res.data.item.expression
 				}
-				// console.log('item', item);
+				// ;
 			})
 	}
 
@@ -1612,7 +1612,7 @@ export default function transactionTypeAddDialogController(
         }; */
 
 	vm.clearPhantoms = function () {
-		console.log('vm.clearPhantoms')
+
 
 		var count = 0
 
@@ -1792,7 +1792,7 @@ export default function transactionTypeAddDialogController(
 
         vm.loadRelation = function (field) {
 
-            console.log('field', field);
+            ;
             field = field.replace(/-/g, "_");
 
             return new Promise(function (resolve, reject) {
@@ -1898,7 +1898,7 @@ export default function transactionTypeAddDialogController(
 
 		vm.appendFromTemplate = function ($event, template) {
 
-			console.log("Append from Template", template);
+			;
 
 			if (template.type === 'input_template') {
 

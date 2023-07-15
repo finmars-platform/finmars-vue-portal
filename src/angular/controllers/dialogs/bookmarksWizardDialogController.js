@@ -180,7 +180,7 @@ export default function ($scope, $mdDialog) {
 	vm.agree = function () {
 		var ref = $('#jstree_demo').jstree(true)
 		var data = ref.get_json('#')
-		console.log('ref', data)
+
 
 		var promisesDel = []
 
@@ -208,7 +208,7 @@ export default function ($scope, $mdDialog) {
 					delete item.id
 
 					item.children.forEach(function (subItem) {
-						console.log('subItem CREATE', subItem)
+
 
 						if (isNaN(parseInt(subItem.id, 10))) {
 							subItem.list_layout = subItem.a_attr.list_layout

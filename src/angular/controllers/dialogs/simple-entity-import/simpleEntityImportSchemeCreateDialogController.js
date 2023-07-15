@@ -21,7 +21,7 @@ export default function simpleEntityImportSchemeCreateDialogController(
 
 	vm.processing = false
 
-	console.log('data', data)
+
 
 	vm.scheme = {
 		csv_fields: [],
@@ -578,7 +578,7 @@ export default function simpleEntityImportSchemeCreateDialogController(
 			})
 			.then(function (res) {
 				if (res.status === 'agree') {
-					console.log('res', res.data)
+
 
 					res.data.classifier.classifiers =
 						res.data.classifier.children.map(setName)

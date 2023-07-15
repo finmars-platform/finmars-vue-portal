@@ -51,7 +51,7 @@ export default function ($scope, $mdDialog, data) {
 				if (res.status === 'agree') {
 					vm.settings.number_format = res.data
 
-					console.log(res)
+
 				}
 			})
 	}

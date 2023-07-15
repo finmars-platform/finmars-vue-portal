@@ -16,11 +16,11 @@ export default function (entityResolverService, customFieldService, attributeTyp
                 cacheContainer[entity] = {};
             }
 
-            // console.log(JSON.parse(JSON.stringify(cacheContainer[entity])));
+            // ;
 
             if (cacheContainer[entity][user_code]) {
 
-                // console.log('From cache: ', cacheContainer[entity][user_code]);
+                // ;
 
                 resolve(cacheContainer[entity][user_code]);
 
@@ -69,7 +69,7 @@ export default function (entityResolverService, customFieldService, attributeTyp
                             return;
                         }
 
-                        console.log('entity: ' + entity + 'user_code: ' + user_code);
+                        ;
 
                         if (!exist) {
                             if (user_code !== '-') {
@@ -119,8 +119,8 @@ export default function (entityResolverService, customFieldService, attributeTyp
 
             } else {
 
-                // console.log('entity', entity);
-                // console.log('user_code', user_code);
+                // ;
+                // ;
 
                 try {
 

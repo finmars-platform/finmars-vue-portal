@@ -42,7 +42,7 @@ var getList = function (entityType, options, entityViewerDataService) {
 
 			var groupTypes = entityViewerDataService.getGroups()
 
-			// console.log('globalTableSearch', globalTableSearch);
+			// ;
 
 			items = filterService.filterTableRows(items, regularFilters, entityType)
 
@@ -64,9 +64,9 @@ var getList = function (entityType, options, entityViewerDataService) {
 
                                 }*/
 
-			// console.log('groups filters length', items.length);
+			// ;
 
-			// console.log('objectService.getList.options', options);
+			// ;
 			var sortProp = options.ordering
 			var activeColumnSort = entityViewerDataService.getActiveColumnSort()
 
@@ -94,7 +94,7 @@ var getList = function (entityType, options, entityViewerDataService) {
 				}
 			}
 
-			// console.log('sorted items, ', items);
+			// ;
 
 			result.count = items.length
 			result.results = items
@@ -103,7 +103,7 @@ var getList = function (entityType, options, entityViewerDataService) {
 			result.results = []
 		}
 
-		// console.log('objectService.getList.result', result)
+		//
 
 		resolve(result)
 	})

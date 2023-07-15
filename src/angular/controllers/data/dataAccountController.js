@@ -5,7 +5,7 @@
 import accountService from '../../services/accountService'
 
 export default function ($scope) {
-	console.log('{"controller": "DataAccountController", status: "initialized"}')
+
 
 	var vm = this
 
@@ -20,7 +20,7 @@ export default function ($scope) {
 	// accountService.getList().then(function (data) {
 	//     vm.entityRaw = data.results;
 	//     vm.readyStatus.content = true;
-	//     console.log('vm.entityRaw', vm.entityRaw);
+	//     ;
 	//     $scope.$apply();
 	// });
 

@@ -11,7 +11,7 @@ export default function (
 	uiService,
 	options
 ) {
-	console.log('selectLayoutDialogController.options', options)
+
 
 	var vm = this
 

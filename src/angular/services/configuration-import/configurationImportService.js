@@ -106,7 +106,7 @@ export default function (
 				}
 			})
 
-			console.log('assignPermissions', item)
+
 
 			resolve()
 		})
@@ -180,7 +180,7 @@ export default function (
 			entityResolverService.getList(entityType, options).then(function (data) {
 				var result
 
-				console.log('GET AND UPDATE ', contentType)
+
 
 				if (
 					[
@@ -227,7 +227,7 @@ export default function (
 			) {
 				resolve(cacheContainer[entity][item.user_code])
 			} else {
-				// console.log('contentType', contentType);
+				// ;
 
 				var entityType =
 					metaContentTypesService.findEntityByContentType(contentType)
@@ -336,12 +336,12 @@ export default function (
 
 	var createAttributeTypeIfNotExists = function (contentType, item, errors) {
 		return new Promise(function (resolve, reject) {
-			// console.log('contentType', contentType);
+			// ;
 
 			var entityType =
 				metaContentTypesService.findEntityByContentType(contentType)
 
-			// console.log('entityType', entityType);
+			// ;
 
 			var options = {
 				filters: {
@@ -431,8 +431,8 @@ export default function (
 			configurationImportSyncService
 				.syncItem(item, contentType, cacheContainer, errors)
 				.then(function (value) {
-					console.log('Overwrite contentType', contentType)
-					console.log('Overwrite item', item)
+
+
 
 					try {
 						switch (contentType) {
@@ -869,7 +869,7 @@ export default function (
 												}
 											})
 											.catch(function () {
-												console.log('Access denied?')
+
 
 												errors.push({
 													content_type: 'ui.contextmenulayout',
@@ -1225,7 +1225,7 @@ export default function (
 							case 'reference_tables.referencetable':
 								resolve(
 									new Promise(function (resolveLocal, reject) {
-										console.log('OVERWRITE REFERENCE TABLES')
+
 
 										var options = {
 											filters: {
@@ -1370,16 +1370,16 @@ export default function (
 								)
 								break
 							default:
-								console.log('No logic for overwrite -  entity', contentType)
+
 								resolve()
 								break
 						}
 					} catch (error) {
-						console.log('createItem.error', error)
+
 					}
 				})
 				.catch(function (reason) {
-					console.log('Overwrite sync error reason', reason)
+
 
 					var name = ''
 
@@ -1418,7 +1418,7 @@ export default function (
 		return new Promise(function (resolve, reject) {
 			var promises = []
 
-			console.log('overwriteEntityItems.entities', entities)
+
 
 			entities.forEach(function (entityItem) {
 				promises.push(
@@ -1437,10 +1437,10 @@ export default function (
 				)
 			})
 
-			console.log('promises', promises)
+
 
 			Promise.all(promises).then(function (data) {
-				console.log('overwriteEntityItems?', data)
+
 
 				resolve(data)
 			})
@@ -1518,7 +1518,7 @@ export default function (
 				cacheContainer,
 				errors
 			).then(function (data) {
-				console.log('Overwrite Instrument Types', data)
+
 
 				overwriteEntityItems(
 					transactionTypeGroups,
@@ -1526,7 +1526,7 @@ export default function (
 					cacheContainer,
 					errors
 				).then(function (data) {
-					console.log('Overwrite Transaction Types Groups', data)
+
 
 					overwriteEntityItems(
 						transactionTypes,
@@ -1534,7 +1534,7 @@ export default function (
 						cacheContainer,
 						errors
 					).then(function (data) {
-						console.log('Overwrite Transaction Types', data)
+
 
 						overwriteEntityItems(
 							attributeTypes,
@@ -1542,7 +1542,7 @@ export default function (
 							cacheContainer,
 							errors
 						).then(function (data) {
-							console.log('Overwrite (create attributes if not exists)', data)
+
 
 							overwriteEntityItems(
 								otherEntities,
@@ -1550,7 +1550,7 @@ export default function (
 								cacheContainer,
 								errors
 							).then(function (data) {
-								console.log('Overwrite Other Entities success', data)
+
 
 								overwriteEntityItems(
 									layoutEntities,
@@ -1558,7 +1558,7 @@ export default function (
 									cacheContainer,
 									errors
 								).then(function (data) {
-									console.log('Overwrite Layouts success', data)
+
 
 									overwriteEntityItems(
 										dashboardLayoutEntities,
@@ -1566,7 +1566,7 @@ export default function (
 										cacheContainer,
 										errors
 									).then(function (data) {
-										console.log('Overwrite Dashboard Layouts success', data)
+
 
 										overwriteEntityItems(
 											complexImportSchemes,
@@ -1662,7 +1662,7 @@ export default function (
 				.syncItem(item, entity, cacheContainer, errors)
 				.then(function (value) {
 					try {
-						console.log('entity', entity)
+
 
 						switch (entity) {
 							case 'transactions.transactiontype':
@@ -1933,7 +1933,7 @@ export default function (
 												}
 											})
 											.catch(function () {
-												console.log('Access denied?')
+
 
 												errors.push({
 													content_type: 'ui.contextmenulayout',
@@ -2063,7 +2063,7 @@ export default function (
 												},
 											})
 											.then(function (data) {
-												console.log('BOOKMARK', data)
+
 
 												if (data.results.length) {
 													item.list_layout = data.results[0].id
@@ -2093,7 +2093,7 @@ export default function (
 																			child.list_layout = data.results[0].id
 																		}
 
-																		console.log('bookmark child', child)
+
 
 																		localResolve(child)
 																	})
@@ -2826,7 +2826,7 @@ export default function (
 								break
 						}
 					} catch (reason) {
-						console.log('createItem create error reason', reason)
+
 
 						errors.push({
 							item: item,
@@ -2840,7 +2840,7 @@ export default function (
 					}
 				})
 				.catch(function (reason) {
-					console.log('createItem sync error reason', reason)
+
 
 					var name = ''
 
@@ -3011,7 +3011,7 @@ export default function (
 			// We do not need to store errors of first Instrument Types import
 			createEntityItems(instrumentTypes, settings, cacheContainer, []).then(
 				function () {
-					console.log('Instrument type import success')
+
 
 					createEntityItems(
 						transactionTypeGroups,
@@ -3019,7 +3019,7 @@ export default function (
 						cacheContainer,
 						errors
 					).then(function (value) {
-						console.log('Transaction type groups import success')
+
 
 						createEntityItems(
 							transactionTypes,
@@ -3027,11 +3027,11 @@ export default function (
 							cacheContainer,
 							errors
 						).then(function () {
-							console.log('Transaction type import success')
+
 
 							specialOverwriteInstrumentTypes(instrumentTypes[0]).then(
 								function () {
-									console.log('Instrument type overwrite success')
+
 
 									createEntityItems(
 										attributeTypes,
@@ -3039,7 +3039,7 @@ export default function (
 										cacheContainer,
 										errors
 									).then(function (data) {
-										console.log('Attribute types import success')
+
 
 										createEntityItems(
 											otherEntities,
@@ -3047,7 +3047,7 @@ export default function (
 											cacheContainer,
 											errors
 										).then(function (data) {
-											console.log('Entities import success', data)
+
 
 											createEntityItems(
 												complexImportSchemes,
@@ -3079,7 +3079,7 @@ export default function (
 															errors
 														)
 															.then(function (data) {
-																console.log('Bookmark import success', data)
+
 
 																resolve(data)
 															})
@@ -3116,7 +3116,7 @@ export default function (
 			configurationImportCompatibilityService
 				.repairItems(items)
 				.then(function () {
-					console.log('Repair items success')
+
 
 					var errors = []
 					var cacheContainer = {}
@@ -3124,11 +3124,11 @@ export default function (
 					if (settings.mode === 'skip') {
 						createEntities(items, settings, cacheContainer, errors).then(
 							function () {
-								console.log('Create items success')
 
-								console.log('Finish import success')
 
-								console.log('Error', errors)
+
+
+
 
 								resolve({
 									errors: errors,
@@ -3138,11 +3138,11 @@ export default function (
 					} else if (settings.mode === 'overwrite') {
 						overwriteEntities(items, settings, cacheContainer, errors).then(
 							function () {
-								console.log('Overwrite items success')
 
-								console.log('Finish import success')
 
-								console.log('Error', errors)
+
+
+
 
 								resolve({
 									errors: errors,
@@ -3150,9 +3150,9 @@ export default function (
 							}
 						)
 					} else {
-						console.log('Finish import success')
 
-						console.log('Error', errors)
+
+
 
 						resolve({
 							errors: errors,

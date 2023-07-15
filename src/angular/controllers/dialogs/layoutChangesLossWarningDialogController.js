@@ -16,7 +16,7 @@ export default function ($scope, data, $mdDialog) {
 	}
 
 	vm.saveLayout = function ($event) {
-		console.log('save layout')
+
 		if (data) {
 			var listLayout = evDataService.getListLayout()
 

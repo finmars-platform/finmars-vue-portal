@@ -73,10 +73,10 @@ export default function dashboardButtonSetDirective($mdDialog, $state) {
 					})
 				}
 
-				console.log('scope.grid', scope.grid)
-				console.log('scope.grid', scope.columns)
-				console.log('scope.itemsList', scope.itemsList)
-				console.log('scope.grid', scope.rows)
+
+
+
+
 
 				scope.dashboardDataService.setComponentStatus(
 					scope.item.data.id,

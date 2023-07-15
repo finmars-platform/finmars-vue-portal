@@ -78,7 +78,7 @@ export default function transactionImportSchemeInputsDialogController(
 					}
 				})
 			})
-			console.log('transaction import vm.inputs', vm.inputs)
+
 
 			vm.readyStatus.transactionType = true
 			$scope.$apply()
@@ -125,7 +125,7 @@ export default function transactionImportSchemeInputsDialogController(
 			})
 			.then(function (res) {
 				if (res.status === 'agree') {
-					console.log('res', res.data)
+
 				}
 			})
 	}

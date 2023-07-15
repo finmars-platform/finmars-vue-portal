@@ -21,7 +21,7 @@ export default function () {
 			var vAdditionsChangeIndex
 
 			scope.activateWidthSlider = function () {
-				console.log('activateWidthSlider')
+
 
 				var splitPanelResizer = $('.g-width-slider')
 
@@ -77,7 +77,7 @@ export default function () {
 			}
 
 			scope.setDefaultWidths = function () {
-				/*console.log('Width Aligner - Set Default Width');
+				/*;
 
                     contentWrapElem.style.width = 'initial';
                     contentWrapElem.style.left = '0px';*/

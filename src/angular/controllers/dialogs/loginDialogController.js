@@ -27,7 +27,7 @@ export default function LoginDialogController(
 		authorizerService
 			.tokenLogin(vm.username, vm.password)
 			.then(function (data) {
-				console.log('authorizerService.login.data', data)
+
 
 				vm.processing = false
 

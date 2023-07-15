@@ -14,7 +14,7 @@ export default function ($scope, $mdDialog) {
 	vm.getList = function () {
 		expressionProcedureInstanceService.getList().then(function (data) {
 			vm.procedures = data.results
-			console.log(vm.procedures)
+
 
 			vm.readyStatus.procedures = true
 
@@ -28,7 +28,7 @@ export default function ($scope, $mdDialog) {
 
 			vm.procedures.splice($index, 1, data)
 
-			console.log('data', data)
+
 
 			$scope.$apply()
 		})
