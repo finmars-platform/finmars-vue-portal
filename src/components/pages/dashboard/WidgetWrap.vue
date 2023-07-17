@@ -56,7 +56,6 @@
 	})
 	const emits = defineEmits(['sorted'])
 
-	// console.log("testing1090 component.componentName", props.component.componentName);
 	const dashStore = useStoreDashboard()
 	let isEditWidget = ref(false)
 
@@ -76,7 +75,7 @@
 		'FinmarsGrid',
 	]
 	const isAWidget = widgetsList.includes(props.component.componentName)
-	// console.log("testing1090 isAWidget", isAWidget);
+
 	const compRegisteredName = computed(() => {
 		return isAWidget
 			? 'Widgets' + props.component.componentName
