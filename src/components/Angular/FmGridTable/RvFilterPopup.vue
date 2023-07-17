@@ -2,13 +2,10 @@
 	<div class="g-filter-settings">
 		<div class="g-filter-header">
 			<div class="g-filter-header-top-row">
-				<md-checkbox
-					ng-model="vm.filter.options.enabled"
-					aria-label="filter activity checkbox"
-					class=""
-				>
-					<span>{{ vm.filter.name }}</span>
-				</md-checkbox>
+				<FmCheckbox
+					v-model="vm.filter.options.enabled"
+					:label="vm?.filter?.name"
+				/>
 
 				<md-button ng-click="vm.cancel()" class="cancel-small-btn">
 					<span class="material-icons">close</span>
@@ -21,7 +18,7 @@
 				ng-if="vm.filter.value_type === 10 || vm.filter.value_type === 30"
 				class="m-b-24"
 			>
-				<rv-text-filter></rv-text-filter>
+				<AngularFmGridTableRvTextFilter :vm="vm" />
 			</div>
 
 			<div ng-if="vm.filter.value_type === 20" class="m-b-24">
@@ -37,19 +34,15 @@
 			</div>
 
 			<div class="flex-column">
-				<md-checkbox
-					ng-model="vm.filter.options.exclude_empty_cells"
-					aria-label="hide rows with empty cells checkbox"
-				>
-					Exclude cells with no value
-				</md-checkbox>
+				<FmCheckbox
+					v-model="vm.filter.options.exclude_empty_cells"
+					label="Exclude cells with no value"
+				/>
 			</div>
 		</div>
 
 		<div class="g-filter-footer flex-row fc-flex-end">
-			<md-button ng-click="vm.saveFilterSettings()" class="link-button"
-				>APPLY</md-button
-			>
+			<FmBtn @click="vm.saveFilterSettings()" class="link-button">APPLY</FmBtn>
 		</div>
 	</div>
 </template>
@@ -61,218 +54,207 @@
 
 	import metaHelper from '@/angular/helpers/meta.helper'
 
-	export default function ($mdDialog, gFiltersHelper) {
-		return {
-			restrict: 'E',
-			scope: {
-				filterKey: '<',
-				evDataService: '=',
-				evEventService: '=',
-				attributeDataService: '=',
-				popupEventService: '=',
+	const props = defineProps([
+		'filterKey',
+		'popupEventService',
+		'vm',
+		'gFiltersHelper',
+	])
+	console.log('props:', props)
 
-				onCancel: '&',
-				onSave: '&',
-			},
-			templateUrl:
-				'views/directives/groupTable/filters/reportViewer/rv-filter-view.html',
-			controllerAs: 'vm',
-			controller: [
-				'$scope',
-				function RvFilterController($scope) {
-					let vm = this
+	let $scope = {
+		...props,
 
-					vm.evDataService = $scope.evDataService
-					vm.evEventService = $scope.evEventService
-					vm.attributeDataService = $scope.attributeDataService
-					vm.popupEventService = $scope.popupEventService
+		onCancel: '&',
+		onSave: '&',
+	}
+	const { evEventService, evDataService, attributeDataService } =
+		inject('ngDependace')
 
-					vm.columnRowsContent = []
-					vm.showSelectMenu = false
+	// function RvFilterController($scope) {
+	let vm = props.vm
 
-					vm.isRootEntityViewer = vm.evDataService.isRootEntityViewer()
-					vm.useFromAbove = vm.evDataService.getUseFromAbove()
+	vm.popupEventService = $scope.popupEventService
 
-					vm.filterNotFound = false
+	vm.columnRowsContent = []
+	vm.showSelectMenu = false
 
-					let filtersList
-					let useFromAboveFilters
-					let isUseFromAboveFilter = false
-					let filterIndex = -1
+	vm.isRootEntityViewer = evDataService.isRootEntityViewer()
+	vm.useFromAbove = evDataService.getUseFromAbove()
 
-					const findFilter = function () {
-						let allFilters = JSON.parse(
-							JSON.stringify(vm.evDataService.getFilters())
-						)
-						filtersList = []
-						useFromAboveFilters = []
+	vm.filterNotFound = false
 
-						isUseFromAboveFilter = false
+	let filtersList
+	let useFromAboveFilters
+	let isUseFromAboveFilter = false
+	let filterIndex = -1
 
-						allFilters.forEach((filter) => {
-							if (isUseFromAbove(filter)) {
-								useFromAboveFilters.push(filter)
+	const findFilter = function () {
+		let allFilters = JSON.parse(JSON.stringify(evDataService.getFilters()))
+		filtersList = []
+		useFromAboveFilters = []
 
-								if (filter.key === $scope.filterKey) {
-									vm.filter = filter
-									isUseFromAboveFilter = true
-									filterIndex = useFromAboveFilters.length - 1
-								}
-							} else {
-								filtersList.push(filter)
+		isUseFromAboveFilter = false
 
-								if (filter.key === $scope.filterKey) {
-									vm.filter = filter
-									filterIndex = filtersList.length - 1
-								}
-							}
-						})
+		allFilters.forEach((filter) => {
+			if (isUseFromAbove(filter)) {
+				useFromAboveFilters.push(filter)
 
-						if (filterIndex > -1) {
-							vm.filter = gFiltersHelper.setFilterDefaultOptions(
-								vm.filter,
-								true
-							)
-						} else {
-							vm.filterNotFound = true
-						}
-					}
+				if (filter.key === $scope.filterKey) {
+					vm.filter = filter
+					isUseFromAboveFilter = true
+					filterIndex = useFromAboveFilters.length - 1
+				}
+			} else {
+				filtersList.push(filter)
 
-					vm.getDataForSelects = function () {
-						var columnRowsContent = userFilterService.getCellValueByKey(
-							vm.evDataService,
-							vm.filter.key
-						)
+				if (filter.key === $scope.filterKey) {
+					vm.filter = filter
+					filterIndex = filtersList.length - 1
+				}
+			}
+		})
 
-						vm.columnRowsContent = columnRowsContent.map(
-							userFilterService.mapColRowsContent
-						)
-
-						// $scope.$apply();
-					}
-
-					var dialogParent = document.querySelector('.dialog-containers-wrap')
-
-					vm.openUseFromAboveSettings = function () {
-						return new Promise(function (resolve) {
-							$mdDialog
-								.show({
-									controller: 'UseFromAboveDialogController as vm',
-									templateUrl: 'views/dialogs/use-from-above-dialog-view.html',
-									parent: dialogParent,
-									multiple: true,
-									locals: {
-										data: {
-											item: vm.filter.options.use_from_above.key,
-											data: { value_type: vm.filter.value_type },
-											entityType:
-												vm.filter.options.use_from_above.attrs_entity_type,
-											filterType: vm.filter.options.filter_type,
-										},
-										attributeDataService: vm.attributeDataService,
-									},
-								})
-								.then(function (res) {
-									if (res.status === 'agree') {
-										if (
-											vm.filter.options.use_from_above.key !== res.data.item ||
-											vm.filter.options.filter_type !== res.data.filterType
-										) {
-											vm.filter.options.use_from_above = {}
-
-											vm.filter.options.use_from_above.key = res.data.item
-											vm.filter.options.filter_type = res.data.filterType
-											vm.filter.options.use_from_above.attrs_entity_type =
-												res.data.attrsEntityType
-
-											// resolve('use_from_above');
-											resolve(vm.filter)
-										}
-									} else {
-										// resolve(vm.filter.options.filter_type);
-										resolve(vm.filter)
-									}
-								})
-						})
-					}
-
-					const isUseFromAbove = (filterData) => {
-						return !!(
-							filterData.options.use_from_above &&
-							Object.keys(filterData.options.use_from_above).length
-						)
-					}
-
-					vm.getActiveFilterType = (filterTypesList) => {
-						if (
-							vm.filter.options.use_from_above &&
-							Object.keys(vm.filter.options.use_from_above).length
-						) {
-							return 'use_from_above'
-						} else {
-							const activeType = filterTypesList.find((type) => {
-								// return type.value === vm.filter.options.filter_type;
-								return type.id === vm.filter.options.filter_type
-							})
-
-							// return activeType ? activeType.value : null;
-							return activeType ? activeType.id : null
-						}
-					}
-
-					vm.saveFilterSettings = function () {
-						if (isUseFromAboveFilter !== isUseFromAbove(vm.filter)) {
-							// is use from above toggled
-
-							if (isUseFromAboveFilter) {
-								// became ordinary filter
-
-								filtersList.push(vm.filter)
-								useFromAboveFilters.splice(filterIndex, 1)
-							} else {
-								// became use from above filter
-
-								filtersList.splice(filterIndex, 1)
-								useFromAboveFilters.push(vm.filter)
-							}
-						}
-
-						let allFilters = useFromAboveFilters.concat(filtersList)
-
-						vm.evDataService.setFilters(allFilters)
-
-						$scope.onSave()
-						$scope.$destroy()
-					}
-
-					vm.cancel = function () {
-						$scope.onCancel()
-						$scope.$destroy()
-					}
-
-					const init = function () {
-						findFilter()
-
-						vm.evEventService.addEventListener(
-							evEvents.FILTERS_CHANGE,
-							function () {
-								findFilter()
-							}
-						)
-
-						vm.popupEventService.addEventListener(
-							popupEvents.CLOSE_POPUP,
-							function () {
-								$scope.$destroy()
-							}
-						)
-					}
-
-					init()
-				},
-			],
+		if (filterIndex > -1) {
+			vm.filter = props.gFiltersHelper.setFilterDefaultOptions(vm.filter, true)
+		} else {
+			vm.filterNotFound = true
 		}
 	}
+
+	vm.getDataForSelects = function () {
+		var columnRowsContent = userFilterService.getCellValueByKey(
+			evDataService,
+			vm.filter.key
+		)
+
+		vm.columnRowsContent = columnRowsContent.map(
+			userFilterService.mapColRowsContent
+		)
+
+		// $scope.$apply();
+	}
+
+	var dialogParent = document.querySelector('.dialog-containers-wrap')
+
+	vm.openUseFromAboveSettings = function () {
+		return new Promise(function (resolve) {
+			$mdDialog
+				.show({
+					controller: 'UseFromAboveDialogController as vm',
+					templateUrl: 'views/dialogs/use-from-above-dialog-view.html',
+					parent: dialogParent,
+					multiple: true,
+					locals: {
+						data: {
+							item: vm.filter.options.use_from_above.key,
+							data: { value_type: vm.filter.value_type },
+							entityType: vm.filter.options.use_from_above.attrs_entity_type,
+							filterType: vm.filter.options.filter_type,
+						},
+						attributeDataService: attributeDataService,
+					},
+				})
+				.then(function (res) {
+					if (res.status === 'agree') {
+						if (
+							vm.filter.options.use_from_above.key !== res.data.item ||
+							vm.filter.options.filter_type !== res.data.filterType
+						) {
+							vm.filter.options.use_from_above = {}
+
+							vm.filter.options.use_from_above.key = res.data.item
+							vm.filter.options.filter_type = res.data.filterType
+							vm.filter.options.use_from_above.attrs_entity_type =
+								res.data.attrsEntityType
+
+							// resolve('use_from_above');
+							resolve(vm.filter)
+						}
+					} else {
+						// resolve(vm.filter.options.filter_type);
+						resolve(vm.filter)
+					}
+				})
+		})
+	}
+
+	const isUseFromAbove = (filterData) => {
+		return !!(
+			filterData.options.use_from_above &&
+			Object.keys(filterData.options.use_from_above).length
+		)
+	}
+
+	vm.getActiveFilterType = (filterTypesList) => {
+		if (
+			vm.filter.options.use_from_above &&
+			Object.keys(vm.filter.options.use_from_above).length
+		) {
+			return 'use_from_above'
+		} else {
+			const activeType = filterTypesList.find((type) => {
+				// return type.value === vm.filter.options.filter_type;
+				return type.id === vm.filter.options.filter_type
+			})
+
+			// return activeType ? activeType.value : null;
+			return activeType ? activeType.id : null
+		}
+	}
+
+	vm.saveFilterSettings = function () {
+		if (isUseFromAboveFilter !== isUseFromAbove(vm.filter)) {
+			// is use from above toggled
+
+			if (isUseFromAboveFilter) {
+				// became ordinary filter
+
+				filtersList.push(vm.filter)
+				useFromAboveFilters.splice(filterIndex, 1)
+			} else {
+				// became use from above filter
+
+				filtersList.splice(filterIndex, 1)
+				useFromAboveFilters.push(vm.filter)
+			}
+		}
+
+		let allFilters = useFromAboveFilters.concat(filtersList)
+
+		evDataService.setFilters(allFilters)
+
+		$scope.onSave()
+		$scope.$destroy()
+	}
+
+	vm.cancel = function () {
+		$scope.onCancel()
+		$scope.$destroy()
+	}
+
+	const init = function () {
+		findFilter()
+
+		evEventService.addEventListener(evEvents.FILTERS_CHANGE, function () {
+			findFilter()
+		})
+
+		vm.popupEventService.addEventListener(popupEvents.CLOSE_POPUP, function () {
+			$scope.$destroy()
+		})
+	}
+
+	init()
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+	.g-filter-settings {
+		position: absolute;
+		left: 0;
+		top: 50px;
+		width: 300px;
+		background: #fff;
+		z-index: 111;
+	}
+</style>

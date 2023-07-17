@@ -322,7 +322,6 @@
 
 	let groups = ref(null)
 	groups.value = evDataService.getGroups()
-	console.log('groups.value:', groups.value)
 	let columnsToShow = ref([])
 
 	let viewContext = evDataService.getViewContext()
@@ -938,8 +937,6 @@
 
 		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 		evEventService.dispatchEvent(evEvents.ROW_ACTIVATION_CHANGE)
-
-		console.timeEnd('Selecting all rows')
 	}
 
 	let isColumnFloat = function (column) {
@@ -975,8 +972,6 @@
 
 						column.options.sort = sort
 						column.options.sort_settings.mode = 'manual'
-
-						console.log('sortHandler.column', column)
 
 						evDataService.setActiveColumnSort(column)
 
