@@ -92,11 +92,11 @@
 								<FmCheckbox
 									:modelValue="selected[item.key]"
 									:disabled="item.disabled"
-									@update:modelValue="newVal => toggleAttr(item.key, newVal)"
+									@update:modelValue="newVal => toggleAttr(item, newVal)"
 									@click.stop=""
 								/>
 
-								<div v-html="item.name"></div>
+								<div v-html="item.customName || item.name"></div>
 							</div>
 
 							<div class="flex aic">
@@ -130,13 +130,13 @@
 								class="fm_list_item attr_item flex aic sb"
 								:class="{active: activeRow == obj.key}"
 								@click="activeRow = obj.key"
-								@dblclick="toggleAttr(obj.key, !selected[obj.key])"
+								@dblclick="toggleAttr(obj, !selected[obj.key])"
 							>
 								<div class="flex aic">
 									<FmCheckbox
 										:modelValue="selected[obj.key]"
 										:disabled="obj.disabled"
-										@update:modelValue="newVal => toggleAttr(obj.key, newVal)"
+										@update:modelValue="newVal => toggleAttr(obj, newVal)"
 										@click.stop=""
 									/>
 
@@ -166,20 +166,20 @@
 										class="fm_list_item attr_item flex aic sb"
 										:class="{active: activeRow == val.key}"
 										@click="activeRow = val.key"
-										@dblclick="toggleAttr( val.key, !selected[val.key] )"
+										@dblclick="toggleAttr( val, !selected[val.key] )"
 									>-->
 									<div
 										v-for="child in obj.children"
 										class="fm_list_item attr_item flex aic sb"
 										:class="{active: activeRow == child.key}"
 										@click="activeRow = child.key"
-										@dblclick="toggleAttr( child.key, !selected[child.key] )"
+										@dblclick="toggleAttr( child, !selected[child.key] )"
 									>
 										<div class="flex aic expand_wrap">
 											<FmCheckbox
 												:modelValue="selected[child.key]"
 												:disabled="child.disabled"
-												@update:modelValue="newVal => toggleAttr( child.key, newVal )"
+												@update:modelValue="newVal => toggleAttr( child, newVal )"
 												@click.stop=""
 											/>
 
@@ -467,33 +467,38 @@
 
 	/** Disable attributes from property 'disabledAttributes' **/
 	function markDisabledAttrs(attrData) {
-		attrData.disabled = !!disabledAttrs.find(selAttr => selAttr.key === attrData.key);
+		// attrData.disabled = !!disabledAttrs.find(selAttr => selAttr.key === attrData.key);
+		attrData.disabled = props.disabledAttributes.includes(attrData.key);
 		return attrData;
 	}
 
 	let selected = reactive({});
 
-	let toggleAttr = function (attrKey, status) {
+	let toggleAttr = function (attr, status) {
 
-		selected[attrKey] = status; // in case attribute was not selected before
+		if (attr.disabled) return;
 
-		if ( selected[attrKey] ) {
+		selected[attr.key] = status; // in case attribute was not selected before
+
+		if ( selected[attr.key] ) {
 
 			Object.keys(selected).forEach(key => { // deselect other attributes except disabled
-				selected[key] = !disabledAttrs.includes(key) && key === attrKey;
+				selected[key] = !disabledAttrs.includes(key) && key === attr.key;
 			})
 
 		}
 
-		emit( 'update:modelValue', selected[attrKey] ? attrKey : null ); // 'null' if attribute was deselected
+		emit( 'update:modelValue', selected[attr.key] ? attr.key : null ); // 'null' if attribute was deselected
 
 	}
 
 	if (props.multiselect) {
 
-		toggleAttr = function (attrKey, status) {
+		toggleAttr = function (attr, status) {
 
-			selected[attrKey] = status;
+			if (attr.disabled) return;
+
+			selected[attr.key] = status;
 
 			const selKeys = Object.keys(selected).filter( key => {
 				return selected[key] && !disabledAttrs.find(attr => attr.key === key);
@@ -505,148 +510,29 @@
 
 	}
 
-	const advancedColumnsOld = computed(() => {
+	function processAttributes() {
 
-		let tree = {}
-		let attrs = JSON.parse(JSON.stringify( formattedAttrs.value ));
-		let searchedAttrs
+		attrsList = JSON.parse(JSON.stringify( props.attributes ));
 
-		// Search
-		if ( searchParam.value ) {
-			// searchedAttrs = searchAndReplace( attrs )
-			searchedAttrs = filterAttrs(attrs);
-			attrs = searchedAttrs
-		}
+		let attributes = attrsList
+			.sort(sortAttrs)
 
-		attrs = attrs.map(markDisabledAttrs);
+		disabledAttrs = attributes.filter( item => props.disabledAttributes.includes(item.key) );
 
+		disabledAttrs.forEach(sAttr => {
+			selected[sAttr.key] = true;
+		})
 
-		for ( let attr of attrs ) {
-			// const parts = attr.name.split(" / ")
-			const parts = attr.name.split(". ")
-			parts[0] = parts[0].trim()
+		formattedAttrs.value = attributes;
 
-			let node = tree;
-
-			for  (let i = 0; i < parts.length; i++ ) {
-				let part = parts[i]
-
-				if (!node[part]) {
-					if ( parts.length - 1 == i ) { // leaf
-						attr.short_name = part
-						node[part] = attr
-
-					} else { // branch
-
-						node[part] = {}
-
-						node[part].opened = false
-					}
-				}
-				node = node[part]
-			}
-		}
-
-		attrs = toAttrsTree(tree);
-
-		// Search
-		if ( searchParam.value ) {
-
-			attrs = highlightFound(attrs);
-
-			attrs.unshift({
-				name: 'All sections',
-				children: highlightFound(searchedAttrs),
-			})
-
-		}
-		/*else {
-
-			// Create tree for toAttrsTree()
-			for ( let attr of attrs ) {
-				// const parts = attr.name.split(" / ")
-				const parts = attr.name.split(". ")
-				parts[0] = parts[0].trim()
-
-				let node = tree;
-
-				for  (let i = 0; i < parts.length; i++ ) {
-					let part = parts[i]
-
-					if (!node[part]) {
-						if ( parts.length - 1 == i ) { // leaf
-							attr.display_name = part
-							node[part] = attr
-
-						} else { // branch
-
-							node[part] = {}
-
-							node[part].opened = false
-						}
-					}
-					node = node[part]
-				}
-			}
-
-		}*/
-
-		return attrs
-	})
-
-	function toAttrsTree( obj ) {
-		let list = []
-
-		for (let key in obj) {
-			/*let newObj = reactive({
-				name: key,
-				children: []
-			})*/
-			let newObj = {
-				name: key,
-				children: []
-			}
-
-			if ( obj[key].isOpen === false ) { // obj[key] is a branch
-				newObj.isOpen = false;
-				newObj.children = toAttrsTree( obj[key] );
-
-			} else { // obj[key] is a leaf
-				newObj = obj[key];
-			}
-
-			if (key != 'isOpen')
-				list.push(newObj)
-
-		}
-
-		return list;
 	}
 
-	/*const advancedColumnActive = computed(() => {
-		let result = []
-
-		if ( advancedColumns.value[activeTree.value] )
-			result = advancedColumns.value[activeTree.value].children
-
-		return result
-	})*/
-	let advancedColumnActive = ref([]);
-
-	/*watch(
-		[advancedColumns, activeTree],
+	watch(
+		() => props.attributes,
 		() => {
-
-			advancedColumnActive.value = [];
-
-			if ( advancedColumns.value[activeTree.value] ) {
-				advancedColumnActive.value = JSON.parse(JSON.stringify( advancedColumns.value[activeTree.value].children ));
-			}
-
+			processAttributes()
 		}
-	)*/
-
-	// let advancedColumns = ref([]);
+	)
 
 	function buildTreeTemplate(attrs) {
 
@@ -705,13 +591,17 @@
 			}
 
 			if ( treeTemplate[key]._branch ) {
+
 				nodeData.opened = false;
 				nodeData.children = assembleTree( treeTemplate[key], nodeData );
 
 			} else { // leaf
-				// newObj = treeTemplate[key];
+
 				nodeData.key = treeTemplate[key].key;
+				nodeData.disabled = props.disabledAttributes.includes(nodeData.key);
 				nodeData.originalName = treeTemplate[key].name;
+				nodeData.value_type = treeTemplate[key].value_type;
+
 			}
 
 			if (key !== '_branch')
@@ -731,6 +621,7 @@
 			let tree = buildTreeTemplate(attrs);
 
 			attrsTree = assembleTree(tree);
+
 			viewTree.value = searchParam.value ? filterTree(attrsTree) : attrsTree;
 
 		}
@@ -768,7 +659,6 @@
 
 		return props
 	})
-
 
 
 	let infoEditable = reactive({
@@ -852,6 +742,7 @@
 				key: attr.key,
 				// TODO use attributes's original name
 				name: formattedAttrs.value.find(o => o.key == attr.key).name,
+				value_type: attr.value_type,
 				customName: '',
 				customDescription: '',
 			})
@@ -907,7 +798,17 @@
 		searchTermsList.value.forEach(term => {
 
 			result = result
-				.filter( (item) => item.name.toLowerCase().includes(term) );
+				.filter( item => {
+
+					let passes = item.name.toLowerCase().includes(term);
+
+					if (!passes && item.customName) { // when filtering favorite attributes
+						passes = item.customName.toLowerCase().includes(term);
+					}
+
+					return passes;
+
+				});
 
 		})
 
@@ -1189,33 +1090,13 @@
 
 	function init() {
 
-		attrsList = JSON.parse(JSON.stringify( props.attributes ));
-
-		let attributes = attrsList
-			/*.map(item => {
-				item.name = item.name.replaceAll('. ', ' / ')
-
-				return item
-			})*/
-			.sort(sortAttrs)
+		processAttributes();
 
 		props.modelValue.forEach(attrKey => {
 			selected[attrKey] = true;
 		})
 
 		favList.value = JSON.parse(JSON.stringify( props.favoriteAttributes || [] ));
-
-		disabledAttrs = attributes.filter( item => props.disabledAttributes.includes(item.key) );
-
-		disabledAttrs.forEach(sAttr => {
-			selected[sAttr.key] = true;
-		})
-
-		formattedAttrs.value = attributes
-
-		/* if ( formattedAttrs.value.length ) {
-			activeRow.value = formattedAttrs.value[0].key;
-		} */
 
 	}
 

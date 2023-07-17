@@ -203,9 +203,9 @@
 			val2 = getSelAttrData(val);
 
 		}
-		// console.log("testing1090.attributesSelectModal save ", val);
+
 		emit('save', val);
-		// console.log("testing1090.attributesSelectModal save2 ", val2);
+
 		emit('selectedAttributesChanged', val2);
 
 		cancelCallback();
