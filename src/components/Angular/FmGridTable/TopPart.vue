@@ -351,7 +351,7 @@
 						// Victor 2020.12.03 may be not need
 						//getPricingPolicies(resolve, reject);
 					} else {
-						$apply()
+						// $apply()
 						resolve(true)
 					}
 				})
@@ -416,7 +416,7 @@
 		evEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE)
 
 		setTimeout(function () {
-			$apply()
+			// $apply()
 		}, 200)
 	}
 	let missingPricesData = ref(null)

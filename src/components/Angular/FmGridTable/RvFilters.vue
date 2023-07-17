@@ -358,24 +358,21 @@
 		<div class="gFiltersContainer flex aic fww">
 			<div
 				v-if="scope.readyStatus.filters"
-				custom-popup
-				popup-template-url="{{filterPopupTemplate}}"
 				popup-data="popupData"
-				popup-event-service="popupEventService"
-				popup-x="popupPosX"
-				popup-y="popupPosY"
 				on-save="filterSettingsChange()"
 				class="g-filter-chips-wrap"
 			></div>
-			<!-- <rv-filter filter-key="popupData.filterKey"
-               ev-data-service="popupData.evDataService"
-               ev-event-service="popupData.evEventService"
-               attribute-data-service="popupData.attributeDataService"
-               popup-event-service="popupEventService"
+			<!-- <rv-filter
                on-cancel="cancel()"
                on-save="save()"> -->
 
-			<AngularFmGridTableRvFilterPopup :vm="vm" />
+			<AngularFmGridTableRvFilterPopup
+				v-if="scope.popupData.filterKey"
+				:filterKey="scope.popupData.filterKey"
+				:popupEventService="scope.popupEventService"
+				:vm="vm"
+				:gFiltersHelper="scope.gFiltersHelper"
+			/>
 
 			<FmChips
 				v-if="scope.readyStatus.filters"
@@ -629,6 +626,7 @@
 	scope.readyStatus = reactive({
 		filters: false,
 	})
+	scope.gFiltersHelper = gFiltersHelper
 
 	let filters = ref(evDataService.getFilters())
 	let useFromAboveFilters = []
@@ -690,8 +688,7 @@
 
 	//region Chips
 	scope.onFilterChipClick = (chipsData) => {
-		console.log('chipsData:', chipsData.event.currentTarget)
-		chipsData.data.id
+		scope.popupData.filterKey = chipsData.data.id
 	}
 
 	scope.filterSettingsChange = function () {
@@ -736,8 +733,6 @@
 	const formatFiltersForChips = function () {
 		scope.filtersChips = []
 		const errors = []
-
-		console.log('formatFiltersForChips.filters', filters)
 
 		filters.value.forEach((filter) => {
 			if (filter.type !== 'filter_link') {
@@ -1009,7 +1004,7 @@
 					scope.addMenu = data.results[0]
 				}
 
-				scope.$apply()
+				// scope.$apply()
 			})
 	}
 
@@ -1107,14 +1102,13 @@
 			scope.renderTime = evDataService.getRenderTime() // for refresh tooltip -> auth time
 		})
 	}
+	scope.popupData = scope.vm.popupData
+	scope.popupEventService = scope.vm.popupEventService
 
 	function init() {
 		scope.currentAdditions = evDataService.getAdditions()
 
-		scope.popupEventService = scope.vm.popupEventService
 		scope.chipsListEventService = scope.vm.chipsListEventService
-
-		scope.popupData = scope.vm.popupData
 
 		getAddMenuLayout()
 

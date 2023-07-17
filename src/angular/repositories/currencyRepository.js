@@ -50,7 +50,7 @@ var getListLight = function (options) {
 				'/' +
 				apiVersion +
 				'/' +
-				'currencies/currency-light/',
+				'currencies/currency/light/',
 			options
 		),
 		{
