@@ -160,7 +160,7 @@
 			/>
 		</div>
 		<FmBtn
-			type="text"
+			type="primary"
 			class="g-toggle-filters-btn"
 			@click="defaultSettingsCreate"
 		>
@@ -231,6 +231,7 @@
 			useApi('instrumentSchemeList.get'),
 			useApi('currencySchemeList.get'),
 		])
+		
 		instrumentItems.value = res[0].results
 		billItems.value = res[1].results
 		currencyItems.value = res[2].results
@@ -256,6 +257,7 @@
 		instrumentSchemeListItems.value = res[22].results
 		currencySchemeListItems.value = res[23].results
 	}
+
 	defaultsGet()
 	async function defaultsGet() {
 		let edRes = await useApi('ecosystemDefaults.get')
@@ -285,7 +287,7 @@
 		gap: 10px 5px;
 	}
 	.container {
-		padding: 20px;
+		padding: 30px;
 	}
 	.title {
 		margin-bottom: 24px;
