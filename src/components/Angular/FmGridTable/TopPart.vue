@@ -30,36 +30,38 @@
 		<template #rightActions>
 			<div class="flex-row flex-i-center" style="padding-right: 30px">
 				<div v-if="isReport" class="flex-row flex-i-center">
-					<md-button
-						v-if="missingPricesData?.items?.length"
+					<FmBtn
 						class="missing-prices-warning-button"
+						v-if="missingPricesData?.items?.length"
+						type="action"
+						icon="warning"
 						@click="openMissingPricesDialog($event)"
-						><span class="material-icons">warning</span> Missing Data ({{
-							missingPricesData?.items?.length
-						}})
-					</md-button>
-
-					<md-select
-						v-if="entityType != 'transaction-report'"
-						v-model="reportOptions.cost_method"
-						ng-change="updateReportOptions()"
 					>
-						<md-option ng-value="1">AVCO</md-option>
-						<md-option ng-value="2">FIFO</md-option>
-						<!--<md-option ng-value="3">LIFO-->
-						<!--</md-option>-->
-					</md-select>
+						Missing Data ({{ missingPricesData?.items?.length }})
+					</FmBtn>
 
-					<md-input-container v-if="entityType != 'transaction-report'">
-						<label></label>
-						<md-select
-							v-model="reportOptions.report_currency"
-							md-container-class="common-select-container"
-							md-on-close="searchTerm = ''"
-							ng-change="updateReportOptions()"
-							data-ng-disabled="viewContext === 'dashboard'"
-						>
-							<md-select-header>
+					<FmSelect
+						class="m-b-0"
+						v-if="entityType != 'transaction-report'"
+						no_borders
+						v-model="reportOptions.cost_method"
+						:items="[
+							{ id: 1, name: 'AVCO' },
+							{ id: 2, name: 'FIFO' },
+						]"
+						@update:modelValue="updateReportOptions()"
+					/>
+
+					<FmSelect
+						class="m-b-0"
+						no_borders
+						v-if="entityType != 'transaction-report'"
+						v-model="reportOptions.report_currency"
+						:items="currencies"
+						prop_id="user_code"
+						@update:modelValue="updateReportOptions()"
+					/>
+					<!-- <md-select-header>
 								<input
 									v-model="searchTerm"
 									type="search"
@@ -67,50 +69,53 @@
 									class="md-text md-select-search-pattern select-input-filter"
 									ng-keydown="$event.stopPropagation()"
 								/>
-							</md-select-header>
+							</md-select-header> -->
 
-							<div class="select-options-holder">
-								<md-option v-for="item in currencies" ng-value="item.id">
-									{{ item?.name }}
-								</md-option>
-							</div>
-						</md-select>
-					</md-input-container>
-
-					<md-checkbox
-						v-model="reportLayoutOptions.useDateFromAbove"
-						:change="toggleUseDateFromAbove()"
+					<FmCheckbox
 						class="g-top-link-date-checkbox m-r-8 m-l-16"
-						>{{ useDateFromAboveName }}</md-checkbox
-					>
+						v-model="reportLayoutOptions.useDateFromAbove"
+						:label="useDateFromAboveName"
+						@update:model-value="toggleUseDateFromAbove()"
+					/>
 
-					<div v-if="entityType === 'balance-report'" class="flex-row">
-						<div>
-							<complex-zh-datepicker
-								date="datesData.to"
-								datepicker-options="reportLayoutOptions.datepickerOptions.reportLastDatepicker"
-								callback-method="onReportDateChange()"
-								ev-data-service="evDataService"
-								ev-event-service="evEventService"
-								attribute-data-service="attributeDataService"
-								is-disabled="viewContext === 'split_panel' && reportLayoutOptions.useDateFromAbove"
-							></complex-zh-datepicker>
-						</div>
-					</div>
+					<complex-zh-datepicker
+						v-if="entityType === 'balance-report'"
+						date="datesData.to"
+						datepicker-options="reportLayoutOptions.datepickerOptions.reportLastDatepicker"
+						callback-method="onReportDateChange()"
+						ev-data-service="evDataService"
+						ev-event-service="evEventService"
+						attribute-data-service="attributeDataService"
+						is-disabled="viewContext === 'split_panel' && reportLayoutOptions.useDateFromAbove"
+					></complex-zh-datepicker>
 
-					<div
+					<complex-zh-datepicker
 						v-if="
 							entityType === 'pl-report' || entityType === 'transaction-report'
 						"
-						class="flex-row"
+						date="datesData.from"
+						datepicker-options="reportLayoutOptions.datepickerOptions.reportFirstDatepicker"
+						second-date="datesData.to"
+						second-datepicker-options="reportLayoutOptions.datepickerOptions.reportLastDatepicker"
+						callback-method="onReportDateChange()"
+						ev-data-service="evDataService"
+						ev-event-service="evEventService"
+						attribute-data-service="attributeDataService"
+						is-disabled="viewContext === 'split_panel' && reportLayoutOptions.useDateFromAbove"
 					>
-						<div></div>
-					</div>
+					</complex-zh-datepicker>
 				</div>
 			</div>
 
 			<FmIcon icon="settings" btn @click="onSettingsClick" />
-			<AngularFmGridTableEvSettingsM
+
+			<LazyAngularFmGridTableRvSettingsM
+				v-if="$mdDialog.modals['GEntityViewerSettingsDialogController']"
+				:payload="$mdDialog.modals['GEntityViewerSettingsDialogController']"
+				:modelValue="true"
+			/>
+
+			<LazyAngularFmGridTableRvSettingsM
 				v-if="$mdDialog.modals['GEntityViewerSettingsDialogController']"
 				:payload="$mdDialog.modals['GEntityViewerSettingsDialogController']"
 				:modelValue="true"
@@ -154,7 +159,7 @@
 
 	let entityType = evDataService.getEntityType()
 	let isReport = metaService.isReport(entityType) || false
-	let reportOptions = evDataService.getReportOptions()
+	const reportOptions = ref(evDataService.getReportOptions())
 	let isRootEntityViewer = evDataService.isRootEntityViewer()
 	let viewContext = evDataService.getViewContext()
 
@@ -240,36 +245,17 @@
 		evEventService.dispatchEvent(evEvents.TOGGLE_FILTER_BLOCK)
 	}
 
-	var openReportSettings = function ($event) {
-		// var reportOptions = evDataService.getReportOptions();
+	async function openReportSettings($event) {
+		let res = await $mdDialog.show({
+			controller: 'GReportSettingsDialogController as vm',
+			templateUrl: 'views/dialogs/g-report-settings-dialog-view.html',
+		})
+		if (res.status === 'agree') {
+			evDataService.setReportLayoutOptions(res.data.reportLayoutOptions)
+			evDataService.setReportOptions(res.data.reportOptions)
 
-		$mdDialog
-			.show({
-				controller: 'GReportSettingsDialogController as vm',
-				templateUrl: 'views/dialogs/g-report-settings-dialog-view.html',
-				parent: angular.element(document.body),
-				targetEvent: $event,
-				multiple: true,
-				locals: {
-					/*reportOptions: reportOptions,
-                            options: {
-                                entityType: entityType
-                            }*/
-					data: {
-						evDataService: evDataService,
-						evEventService: evEventService,
-						attributeDataService: attributeDataService,
-					},
-				},
-			})
-			.then(function (res) {
-				if (res.status === 'agree') {
-					evDataService.setReportLayoutOptions(res.data.reportLayoutOptions)
-					evDataService.setReportOptions(res.data.reportOptions)
-
-					evEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE)
-				}
-			})
+			evEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE)
+		}
 	}
 
 	var openEntityViewerSettings = async function ($event) {
@@ -342,7 +328,7 @@
 							.getList()
 							.then((res) => res.results[0])
 						currencies.push(ecosystemDefaultData.currency_object)
-						reportOptions.report_currency =
+						reportOptions.value.report_currency =
 							ecosystemDefaultData.currency_object.id
 					}
 
@@ -381,10 +367,10 @@
 				!reportLayoutOptions.useDateFromAbove
 			) {
 				if (dateFromKey) {
-					reportOptions[dateFromKey] = datesData.from
+					reportOptions.value[dateFromKey] = datesData.from
 				}
 
-				reportOptions[dateToKey] = datesData.to
+				reportOptions.value[dateToKey] = datesData.to
 			}
 
 			updateReportOptions()
@@ -440,14 +426,14 @@
 			evEventService.addEventListener(
 				evEvents.REPORT_OPTIONS_CHANGE,
 				function () {
-					reportOptions = evDataService.getReportOptions()
+					reportOptions.value = evDataService.getReportOptions()
 					reportLayoutOptions = evDataService.getReportLayoutOptions()
 
 					if (dateFromKey) {
-						datesData.from = reportOptions[dateFromKey]
+						datesData.from = reportOptions.value[dateFromKey]
 					}
 
-					datesData.to = reportOptions[dateToKey]
+					datesData.to = reportOptions.value[dateToKey]
 				}
 			)
 		}
@@ -464,10 +450,10 @@
 				window.reportHelper.getDateProperties(entityType)
 
 			datesData = {
-				to: reportOptions[dateToKey],
+				to: reportOptions.value[dateToKey],
 			}
 
-			if (dateFromKey) datesData.from = reportOptions[dateFromKey]
+			if (dateFromKey) datesData.from = reportOptions.value[dateFromKey]
 		}
 
 		initEventListeners()
