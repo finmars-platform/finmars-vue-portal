@@ -80,6 +80,12 @@ export default {
 	counterpartyList: {
 		get: prefix + '/counterparties/counterparty/',
 	},
+	counterpartyResponsibleLight: {
+		get: prefix + '/counterparties/responsible/light/',
+	},
+	counterpartyCounterpartyLight: {
+		get: prefix + '/counterparties/counterparty/light/',
+	},
 	counterpartyDatabaseSearch: {
 		get: uDatabasePrefix + '/company/',
 	},
