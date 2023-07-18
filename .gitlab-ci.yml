@@ -10,6 +10,7 @@ default:
     - docker:20.10.16-dind
   before_script:
     - docker info
+    - echo -n $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin registry.finmars.com
 
 variables:
   # When using dind service, you must instruct docker to talk with the
@@ -28,9 +29,6 @@ variables:
   #
   # This instructs Docker not to start over TLS.
   DOCKER_TLS_CERTDIR: ""
-
-before_script:
-  - echo -n $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin registry.finmars.com
 
 Build:
   stage: build
