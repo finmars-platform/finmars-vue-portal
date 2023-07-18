@@ -169,30 +169,6 @@
 </template>
 
 <script setup>
-	const instrumentAction = ref('')
-	const billAction = ref('')
-	const currencyAction = ref('')
-	const portfolioListLightAction = ref('')
-	const instrumentTypeAction = ref('')
-	const transactionTypeLightAction = ref('')
-	const accountsTypeAction = ref('')
-	const pricingPolicyListAction = ref('')
-	const instrumentPeriodicityAction = ref('')
-	const instrumentAccrualCalculationModelAction = ref('')
-	const instrumentClassAction = ref('')
-	const instrumentSizeDetailAction = ref('')
-	const instrumentPricingСonditionAction = ref('')
-	const counterpartyResponsibleLightAction = ref('')
-	const counterpartyCounterpartyLightAction = ref('')
-	const strategiesOneLightAction = ref('')
-	const strategiesOneSubgroupAction = ref([])
-	const strategiesSecondLightAction = ref([])
-	const strategiesSecondSubgroupAction = ref([])
-	const strategiesThirdLightAction = ref([])
-	const strategiesThirdSubgroupAction = ref([])
-	const instrumentSchemeListAction = ref([])
-	const currencySchemeListAction = ref([])
-
 	const instrumentItems = ref([])
 	const billItems = ref([])
 	const currencyItems = ref([])
@@ -218,71 +194,80 @@
 	const currencySchemeListItems = ref([])
 
 	const ecosystemDefaults = ref([])
-	console.log(ecosystemDefaults.value, 'ecosystemDefaults topp')
 	init()
 	async function init() {
-		let res = await useApi('instrumentListLight.get')
-		let billGet = await useApi('accountLight.get')
-		let currencyGet = await useApi('currencyListLight.get')
-		let instrumentTypeGet = await useApi('instrumentType.get')
-		let portfolioListLightGet = await useApi('portfolioListLight.get')
-		let transactionTypeLightGet = await useApi('transactionTypeLight.get')
-		let accountsTypeGet = await useApi('accountsType.get')
-		let pricingPolicyListGet = await useApi('pricingPolicyList.get')
-		let instrumentPeriodicityGet = await useApi('instrumentPeriodicity.get')
-		let instrumentAccrualCalculationModelGet = await useApi(
-			'instrumentPeriodicity.get'
-		)
-		let instrumentClassGet = await useApi('instrumentClass.get')
-		let instrumentSizeDetailGet = await useApi('instrumentSizeDetail.get')
-		let instrumentPricingСonditionGet = await useApi(
-			'instrumentPricingСondition.get'
-		)
-		let counterpartyResponsibleLightGet = await useApi(
-			'counterpartyResponsibleLight.get'
-		)
-		let counterpartyCounterpartyLightGet = await useApi(
-			'counterpartyCounterpartyLight.get'
-		)
-		let strategiesOneLightGet = await useApi('strategiesOneLight.get')
-		let strategiesOneSubgroupGet = await useApi('strategiesOneSubgroup.get')
-		let strategiesSecondLightGet = await useApi('strategiesSecondLight.get')
-		let strategiesSecondSubgroupGet = await useApi(
-			'strategiesSecondSubgroup.get'
-		)
-		let strategiesThirdLightGet = await useApi('strategiesThirdLight.get')
-		let strategiesThirdSubgroupGet = await useApi('strategiesThirdSubgroup.get')
-		let instrumentSchemeListGet = await useApi('instrumentSchemeList.get')
-		let currencySchemeListGet = await useApi('currencySchemeList.get')
-
-		instrumentItems.value = res.results
-		billItems.value = billGet.results
-		currencyItems.value = currencyGet.results
-		portfolioListLightItems.value = portfolioListLightGet.results
-		instrumentTypeItems.value = instrumentTypeGet.results
-		transactionTypeLightItems.value = transactionTypeLightGet.results
-		instrumentSizeDetailItems.value = instrumentSizeDetailGet.results
-		accountsTypeItems.value = accountsTypeGet.results
-		pricingPolicyListItems.value = pricingPolicyListGet.results
-		instrumentPeriodicityItems.value = instrumentPeriodicityGet.results
-		instrumentAccrualCalculationModelItems.value =
-			instrumentAccrualCalculationModelGet.results
-		instrumentClassItems.value = instrumentClassGet.results
-		instrumentSizeDetailItems.value = instrumentSizeDetailGet.results
-		instrumentPricingСonditionItems.value =
-			instrumentPricingСonditionGet.results
-		counterpartyResponsibleLightItems.value =
-			counterpartyResponsibleLightGet.results
-		counterpartyCounterpartyLightItems.value =
-			counterpartyCounterpartyLightGet.results
-		strategiesOneLightItems.value = strategiesOneLightGet.results
-		strategiesOneSubgroupItems.value = strategiesOneSubgroupGet.results
-		strategiesSecondLightItems.value = strategiesSecondLightGet.results
-		strategiesSecondSubgroupItems.value = strategiesSecondSubgroupGet.results
-		strategiesThirdLightItems.value = strategiesThirdLightGet.results
-		strategiesThirdSubgroupItems.value = strategiesThirdSubgroupGet.results
-		instrumentSchemeListItems.value = instrumentSchemeListGet.results
-		currencySchemeListItems.value = currencySchemeListGet.results
+		const res = await Promise.all([
+			useApi('instrumentListLight.get'),
+			// let billGet = await
+			useApi('accountLight.get'),
+			// let currencyGet = await
+			useApi('currencyListLight.get'),
+			// let instrumentTypeGet = await
+			useApi('instrumentType.get'),
+			// let portfolioListLightGet = await
+			useApi('portfolioListLight.get'),
+			// let transactionTypeLightGet = await
+			useApi('transactionTypeLight.get'),
+			// let accountsTypeGet = await
+			useApi('accountsType.get'),
+			// let pricingPolicyListGet = await
+			useApi('pricingPolicyList.get'),
+			// let instrumentPeriodicityGet = await
+			useApi('instrumentPeriodicity.get'),
+			// let instrumentAccrualCalculationModelGet = await
+			useApi('instrumentPeriodicity.get'),
+			// let instrumentClassGet = await
+			useApi('instrumentClass.get'),
+			// let instrumentSizeDetailGet = await
+			useApi('instrumentSizeDetail.get'),
+			// let instrumentPricingСonditionGet = await
+			useApi('instrumentPricingСondition.get'),
+			// let counterpartyResponsibleLightGet = await
+			useApi('counterpartyResponsibleLight.get'),
+			// let counterpartyCounterpartyLightGet = await
+			useApi('counterpartyCounterpartyLight.get'),
+			// let strategiesOneLightGet = await
+			useApi('strategiesOneLight.get'),
+			// let strategiesOneSubgroupGet = await
+			useApi('strategiesOneSubgroup.get'),
+			// let strategiesSecondLightGet = await
+			useApi('strategiesSecondLight.get'),
+			// let strategiesSecondSubgroupGet = await
+			useApi('strategiesSecondSubgroup.get'),
+			// let strategiesThirdLightGet = await
+			useApi('strategiesThirdLight.get'),
+			// let strategiesThirdSubgroupGet = await
+			useApi('strategiesThirdSubgroup.get'),
+			// let instrumentSchemeListGet = await
+			useApi('instrumentSchemeList.get'),
+			// let currencySchemeListGet = await
+			useApi('currencySchemeList.get'),
+			
+		])
+		// instrumentItems.value = res[0].results
+		// billItems.value = res[1].results
+		// currencyItems.value = res[2].results
+		// portfolioListLightItems.value = res[3].results
+		// instrumentTypeItems.value = res[4].results
+		// transactionTypeLightItems.value = res[5].results
+		// instrumentSizeDetailItems.value = res[6].results
+		// accountsTypeItems.value = res[7].results
+		// pricingPolicyListItems.value = res[8].results
+		// instrumentPeriodicityItems.value = res[9].results
+		// instrumentAccrualCalculationModelItems.value = res[10].results
+		// instrumentClassItems.value = res[11].results
+		// instrumentSizeDetailItems.value = res[12].results
+		// instrumentPricingСonditionItems.value = res[13].results
+		// counterpartyResponsibleLightItems.value = res[14].results
+		// counterpartyCounterpartyLightItems.value = res[15].results
+		// strategiesOneLightItems.value = res[16].results
+		// strategiesOneSubgroupItems.value = res[17].results
+		// strategiesSecondLightItems.value = res[18].results
+		// strategiesSecondSubgroupItems.value = res[19].results
+		// strategiesThirdLightItems.value = res[20].results
+		// strategiesThirdSubgroupItems.value = res[21].results
+		// instrumentSchemeListItems.value = res[22].results
+		// currencySchemeListItems.value = res[23].results
 	}
 	defaultsGet()
 	async function defaultsGet() {
