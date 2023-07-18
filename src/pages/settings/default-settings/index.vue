@@ -244,30 +244,30 @@
 			useApi('currencySchemeList.get'),
 			
 		])
-		// instrumentItems.value = res[0].results
-		// billItems.value = res[1].results
-		// currencyItems.value = res[2].results
-		// portfolioListLightItems.value = res[3].results
-		// instrumentTypeItems.value = res[4].results
-		// transactionTypeLightItems.value = res[5].results
-		// instrumentSizeDetailItems.value = res[6].results
-		// accountsTypeItems.value = res[7].results
-		// pricingPolicyListItems.value = res[8].results
-		// instrumentPeriodicityItems.value = res[9].results
-		// instrumentAccrualCalculationModelItems.value = res[10].results
-		// instrumentClassItems.value = res[11].results
-		// instrumentSizeDetailItems.value = res[12].results
-		// instrumentPricingСonditionItems.value = res[13].results
-		// counterpartyResponsibleLightItems.value = res[14].results
-		// counterpartyCounterpartyLightItems.value = res[15].results
-		// strategiesOneLightItems.value = res[16].results
-		// strategiesOneSubgroupItems.value = res[17].results
-		// strategiesSecondLightItems.value = res[18].results
-		// strategiesSecondSubgroupItems.value = res[19].results
-		// strategiesThirdLightItems.value = res[20].results
-		// strategiesThirdSubgroupItems.value = res[21].results
-		// instrumentSchemeListItems.value = res[22].results
-		// currencySchemeListItems.value = res[23].results
+		instrumentItems.value = res[0].results
+		billItems.value = res[1].results
+		currencyItems.value = res[2].results
+		portfolioListLightItems.value = res[3].results
+		instrumentTypeItems.value = res[4].results
+		transactionTypeLightItems.value = res[5].results
+		instrumentSizeDetailItems.value = res[6].results
+		accountsTypeItems.value = res[7].results
+		pricingPolicyListItems.value = res[8].results
+		instrumentPeriodicityItems.value = res[9].results
+		instrumentAccrualCalculationModelItems.value = res[10].results
+		instrumentClassItems.value = res[11].results
+		instrumentSizeDetailItems.value = res[12].results
+		instrumentPricingСonditionItems.value = res[13].results
+		counterpartyResponsibleLightItems.value = res[14].results
+		counterpartyCounterpartyLightItems.value = res[15].results
+		strategiesOneLightItems.value = res[16].results
+		strategiesOneSubgroupItems.value = res[17].results
+		strategiesSecondLightItems.value = res[18].results
+		strategiesSecondSubgroupItems.value = res[19].results
+		strategiesThirdLightItems.value = res[20].results
+		strategiesThirdSubgroupItems.value = res[21].results
+		instrumentSchemeListItems.value = res[22].results
+		currencySchemeListItems.value = res[23].results
 	}
 	defaultsGet()
 	async function defaultsGet() {
