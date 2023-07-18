@@ -599,7 +599,7 @@
 			filterAreaWidth = $scope.contentWrapElement.clientWidth
 		} else if ($scope.viewContext === 'dashboard') {
 			// For dashboard components without wrapElems e.g. matrix
-			filterAreaWidth = gFiltersElemWidth
+			// filterAreaWidth = gFiltersElemWidth
 		}
 
 		const horizontalPaddings = gFiltersElemPadding * 2
