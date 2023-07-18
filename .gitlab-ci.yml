@@ -1,5 +1,9 @@
 # https://blog.callr.tech/building-docker-images-with-gitlab-ci-best-practices/
 
+stages:
+  - build
+  - push
+
 default:
   image: docker:20.10.16
   services:
@@ -24,10 +28,6 @@ variables:
   #
   # This instructs Docker not to start over TLS.
   DOCKER_TLS_CERTDIR: ""
-
-stages:
-  - build
-  - push
 
 before_script:
   - echo -n $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin registry.finmars.com
