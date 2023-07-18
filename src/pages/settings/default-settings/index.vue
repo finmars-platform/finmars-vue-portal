@@ -1,5 +1,6 @@
 <template>
 	<div class="container">
+		<h1 class="title">Ecosystem Default</h1>
 		<div class="wrapp-select">
 			<FmSelect
 				v-model="ecosystemDefaults.instrument"
@@ -169,6 +170,15 @@
 </template>
 
 <script setup>
+	definePageMeta({
+		middleware: 'auth',
+		bread: [
+			{
+				text: 'Default settings',
+				to: '/settings/default-settings',
+			},
+		],
+	})
 	const instrumentItems = ref([])
 	const billItems = ref([])
 	const currencyItems = ref([])
@@ -198,51 +208,28 @@
 	async function init() {
 		const res = await Promise.all([
 			useApi('instrumentListLight.get'),
-			// let billGet = await
 			useApi('accountLight.get'),
-			// let currencyGet = await
 			useApi('currencyListLight.get'),
-			// let instrumentTypeGet = await
 			useApi('instrumentType.get'),
-			// let portfolioListLightGet = await
 			useApi('portfolioListLight.get'),
-			// let transactionTypeLightGet = await
 			useApi('transactionTypeLight.get'),
-			// let accountsTypeGet = await
 			useApi('accountsType.get'),
-			// let pricingPolicyListGet = await
 			useApi('pricingPolicyList.get'),
-			// let instrumentPeriodicityGet = await
 			useApi('instrumentPeriodicity.get'),
-			// let instrumentAccrualCalculationModelGet = await
 			useApi('instrumentPeriodicity.get'),
-			// let instrumentClassGet = await
 			useApi('instrumentClass.get'),
-			// let instrumentSizeDetailGet = await
 			useApi('instrumentSizeDetail.get'),
-			// let instrumentPricingСonditionGet = await
 			useApi('instrumentPricingСondition.get'),
-			// let counterpartyResponsibleLightGet = await
 			useApi('counterpartyResponsibleLight.get'),
-			// let counterpartyCounterpartyLightGet = await
 			useApi('counterpartyCounterpartyLight.get'),
-			// let strategiesOneLightGet = await
 			useApi('strategiesOneLight.get'),
-			// let strategiesOneSubgroupGet = await
 			useApi('strategiesOneSubgroup.get'),
-			// let strategiesSecondLightGet = await
 			useApi('strategiesSecondLight.get'),
-			// let strategiesSecondSubgroupGet = await
 			useApi('strategiesSecondSubgroup.get'),
-			// let strategiesThirdLightGet = await
 			useApi('strategiesThirdLight.get'),
-			// let strategiesThirdSubgroupGet = await
 			useApi('strategiesThirdSubgroup.get'),
-			// let instrumentSchemeListGet = await
 			useApi('instrumentSchemeList.get'),
-			// let currencySchemeListGet = await
 			useApi('currencySchemeList.get'),
-			
 		])
 		instrumentItems.value = res[0].results
 		billItems.value = res[1].results
@@ -296,5 +283,28 @@
 		grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
 		grid-template-rows: 1fr;
 		gap: 10px 5px;
+	}
+	.container {
+		padding: 20px;
+	}
+	.title {
+		margin-bottom: 24px;
+		font-weight: 700;
+	}
+	@media  (max-width: 1200px) {
+		.wrapp-select {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+		grid-template-rows: 1fr;
+		gap: 10px 5px;
+	}
+	}
+	@media  (max-width: 767px) {
+		.wrapp-select {
+		display: grid;
+		grid-template-columns: 1fr ;
+		grid-template-rows: 1fr;
+		gap: 10px 5px;
+	}
 	}
 </style>
