@@ -5,6 +5,7 @@
 		attach="body"
 		:closeOnClickOutside="false"
 		class="width-100"
+		v-bind="$attrs"
 	>
 
 		<template #btn>
@@ -32,7 +33,7 @@
 
 		<template #default="{ close }">
 
-			<div style="width:562px;">
+			<div :style="popupWidth">
 
 				<div class="c_datepicker" :class="{'dates_range': rangeOfDates}">
 					<div class="flex-row">
@@ -166,7 +167,7 @@
 								<div v-if="rangeOfDates"
 										 :ref="initSecondDatepicker"
 										 class="datepicker-container"
-										 :class="{'empty': sDate === null, 'disabled': firstDateIsDisabled}"></div>
+										 :class="{'empty': sDate === null, 'disabled': secondDateIsDisabled}"></div>
 							</div>
 
 						</div>
@@ -239,6 +240,8 @@
 	]);
 
 	let rangeOfDates = ref(props.secondDate !== undefined);
+
+	const popupWidth = rangeOfDates.value ? 'width: 896px;' : 'width: 562px;';
 	let menuIsOpened = ref(false);
 
 	let firstDateIsDisabled = ref(false);
@@ -331,12 +334,12 @@
 
 			let val = '';
 
-			if (useDateStringIsValid(fDate.value)) {
+			if ( useDateStringIsValid(fDate.value) ) {
 				val = fDate.value;
 			}
 
-			if (useDateStringIsValid(sDate.value)) {
-				val = val + ' ' + sDate.value;
+			if ( useDateStringIsValid(sDate.value) ) {
+				val = val + ' - ' + sDate.value;
 			}
 
 			return val;
@@ -880,7 +883,7 @@
 				delete sdOptions.value.expression;
 			}
 
-			if (new Date(fDate.value) > new Date(sDate.value)) {
+			if ( new Date(sDate.value) > new Date(fDate.value) ) {
 
 				emit('update:firstDate', fDate.value);
 				emit('update:firstDatepickerOptions', fdOptions.value);

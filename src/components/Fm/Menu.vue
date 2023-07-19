@@ -249,8 +249,10 @@
 	watch(isOpen, isOpenHandler)
 
 	function toggle(e) {
-		e.preventDefault()
-		if (props.disabled) return false
+
+		if (e) e.preventDefault();
+
+		if (props.disabled) return false;
 
 		isOpen.value = !isOpen.value
 
