@@ -11,7 +11,10 @@
 		openOn="contextmenu"
 	>
 		<template #btn>
-			<div class="g-table-header-cell-wrapper gColumnElem">
+			<div
+				class="g-table-header-cell-wrapper gColumnElem"
+				:data-column-id="column.___column_id"
+			>
 				<!-- v-fm-tooltip="
 			column?.error_data ? column?.error_data.description : column.name
 		" -->
