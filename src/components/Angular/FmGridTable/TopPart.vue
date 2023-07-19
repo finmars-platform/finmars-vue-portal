@@ -109,15 +109,15 @@
 
 			<FmIcon icon="settings" btn @click="onSettingsClick" />
 
-			<LazyAngularFmGridTableRvSettingsM
+			<LazyAngularFmGridTableEvSettingsM
 				v-if="$mdDialog.modals['GEntityViewerSettingsDialogController']"
 				:payload="$mdDialog.modals['GEntityViewerSettingsDialogController']"
 				:modelValue="true"
 			/>
 
 			<LazyAngularFmGridTableRvSettingsM
-				v-if="$mdDialog.modals['GEntityViewerSettingsDialogController']"
-				:payload="$mdDialog.modals['GEntityViewerSettingsDialogController']"
+				v-if="$mdDialog.modals['GReportSettingsDialogController']"
+				:payload="$mdDialog.modals['GReportSettingsDialogController']"
 				:modelValue="true"
 			/>
 		</template>
