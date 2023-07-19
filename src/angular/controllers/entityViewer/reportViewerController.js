@@ -208,8 +208,6 @@ export default function ({
 		var activeObject = vm.getActiveObjectFromQueryParameters()
 
 		if (activeObject) {
-
-
 			var filters = vm.entityViewerDataService.getFilters()
 
 			filters.forEach(function (item) {
@@ -443,7 +441,6 @@ export default function ({
 		)
 
 		if (layoutHasChanges || spChangedLayout) {
-
 			event.preventDefault()
 			;(event || window.event).returnValue =
 				'All unsaved changes of layout will be lost.'
@@ -574,8 +571,6 @@ export default function ({
 					var activeColumnSort =
 						vm.entityViewerDataService.getActiveColumnSort()
 
-
-
 					if (
 						activeColumnSort &&
 						activeColumnSort.options.sort_settings.layout_user_code
@@ -590,8 +585,6 @@ export default function ({
 							.then(function (data) {
 								if (data.results.length) {
 									var layout = data.results[0]
-
-
 
 									vm.entityViewerDataService.setColumnSortData(
 										activeColumnSort.key,
@@ -679,8 +672,6 @@ export default function ({
 					},
 				})
 				.then(function (data) {
-
-
 					vm.entityViewerDataService.setCrossEntityAttributeExtensions(
 						data.results
 					)
@@ -756,7 +747,6 @@ export default function ({
 				$mdDialog
 			)
 		} else if (vm.viewContext == 'dashboard') {
-
 			vm.setLayout(vm.layout)
 		} else {
 			setLayoutProm = evHelperService.getDefaultLayout(vm)

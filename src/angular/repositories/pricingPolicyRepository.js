@@ -56,7 +56,7 @@ var getListLight = function (options) {
 				'/' +
 				apiVersion +
 				'/' +
-				'instruments/pricing-policy-light/',
+				'instruments/pricing-policy/light/',
 			options
 		),
 		{
