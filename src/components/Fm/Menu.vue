@@ -1,5 +1,5 @@
 <template>
-	<div class="fm_menu">
+	<div class="fm_menu" data-testId="fm_menu">
 		<div ref="activator" class="height-100">
 			<slot name="btn" :isOpen="isOpen"></slot>
 		</div>
@@ -72,7 +72,7 @@
 	let isLeft = props.anchor.includes('left')
 	let isRight = props.anchor.includes('right')
 
-	onMounted(() => {
+	onMounted(async () => {
 		if (props.openOnHover) {
 			activator.value.addEventListener('mouseover', () => {
 				isOpen.value = true

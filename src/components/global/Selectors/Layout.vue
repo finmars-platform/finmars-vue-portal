@@ -39,12 +39,17 @@
 	import 'ace-builds/src-noconflict/theme-monokai'
 
 	const emits = defineEmits(['update:modelValue'])
-	const props = defineProps(['settings'])
+	const props = defineProps(['settings', 'layout'])
 
 	let portfolios = ref([])
 	let content_type = ref('')
 	let layoutName = ref('')
 	let layout = ref('{}')
+
+	if (props.layout) {
+		layoutName.value = JSON.parse(props.layout).name
+		layout.value = props.layout
+	}
 
 	let isOpenCode = ref(false)
 

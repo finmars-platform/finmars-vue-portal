@@ -6,6 +6,7 @@
 		:menuWidth="attach === 'body' ? 'activator' : ''"
 		:attach="attach"
 		@update:opened="toggleMenu"
+		data-testId="select"
 	>
 		<template #btn="{ isOpen }">
 			<BaseInput
@@ -88,6 +89,11 @@
 </template>
 
 <script setup>
+	import FmMenu from './Menu.vue'
+	import FmBtn from './Btn.vue'
+	import BaseInput from '../base/Input.vue'
+	// import { ref, computed } from 'vue'
+
 	let props = defineProps({
 		modelValue: [String, Number],
 		items: Array,

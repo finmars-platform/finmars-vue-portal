@@ -37,12 +37,25 @@
 <script setup>
 	import reportViewerController from '@/angular/controllers/entityViewer/reportViewerController'
 	import entityViewerEvents from '~~/src/angular/services/entityViewerEvents'
+
 	const props = defineProps({
 		uid: String,
 	})
 	const dashStore = useStoreDashboard()
 
 	let component = dashStore.getComponent(props.uid)
+
+	const inputs = computed(() => {
+		let props = dashStore.props.inputs.filter(
+			(prop) => prop.component_id == component.uid
+		)
+		let obj = {}
+
+		props.forEach((prop) => {
+			obj[prop.key] = prop.__val
+		})
+		return obj
+	})
 
 	const outputs = computed(() => {
 		let props = dashStore.props.outputs.filter(
@@ -491,6 +504,27 @@
 		layout: JSON.parse(settings.value.layout),
 	}
 
+	if (settings.value.content_type == 'reports.transactionreport') {
+		watch(
+			() => inputs.value.selected_row,
+			() => {
+				vm.value.entityViewerDataService.setActiveObject(
+					inputs.value.selected_row
+				)
+				vm.value.entityViewerDataService.setActiveObjectFromAbove(
+					inputs.value.selected_row
+				)
+
+				vm.value.entityViewerEventService.dispatchEvent(
+					entityViewerEvents.ACTIVE_OBJECT_CHANGE
+				)
+				vm.value.entityViewerEventService.dispatchEvent(
+					entityViewerEvents.ACTIVE_OBJECT_FROM_ABOVE_CHANGE
+				)
+			}
+		)
+	}
+
 	onMounted(async () => {
 		vm.value = new reportViewerController({
 			$scope,
@@ -501,8 +535,6 @@
 		vm.value.entityViewerEventService.addEventListener(
 			entityViewerEvents.ACTIVE_OBJECT_CHANGE,
 			() => {
-				console.log('outputs:', outputs)
-
 				if (outputs.value.selected_row) {
 					outputs.value.selected_row.__val =
 						vm.value.entityViewerDataService.getActiveObjectRow()
