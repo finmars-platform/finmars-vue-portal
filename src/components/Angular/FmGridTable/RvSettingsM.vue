@@ -8,7 +8,7 @@
 					vm.entityType == 'performance-report'
 				"
 			>
-				<h5 class="default-f-s">General Settings</h5>
+				<h5 class="headers">General Settings</h5>
 
 				<div class="flex-column">
 					<div
@@ -30,32 +30,28 @@
 						</div>
 					</div>
 
-					<div
+					<RvSettingsRow
 						v-if="vm.entityType === 'pl-report'"
-						class="g-report-settings-row p-b-8"
+						label="Report date"
 					>
-						<div class="default-f-s">Report date</div>
-
-						<div class="g-report-settings-field">
-							<FmInputComplexDate />
-							<complex-zh-datepicker
-								date="vm.reportOptions.pl_first_date"
-								datepicker-options="vm.reportLayoutOptions.datepickerOptions.reportFirstDatepicker"
-								second-date="vm.reportOptions.report_date"
-								second-datepicker-options="vm.reportLayoutOptions.datepickerOptions.reportLastDatepicker"
-								ev-data-service="evDataService"
-								ev-event-service="evEventService"
-								attribute-data-service="attributeDataService"
-								is-disabled="vm.disableDatepicker"
-								selector-look="input"
-							></complex-zh-datepicker>
-						</div>
-					</div>
+						<FmInputDateComplex
+							:firstDate="vm.reportOptions.pl_first_date"
+							:firstDatepickerOptions="
+								vm.reportLayoutOptions.datepickerOptions.reportFirstDatepicker
+							"
+							:secondDate="vm.reportOptions.report_date"
+							:secondDatepickerOptions="
+								vm.reportLayoutOptions.datepickerOptions.reportLastDatepicker
+							"
+							is-disabled="vm.disableDatepicker"
+						/>
+					</RvSettingsRow>
 
 					<RvSettingsRow label="Currency">
 						<FmSelect
 							v-model="vm.reportOptions.report_currency"
 							:items="vm.currencies"
+							prop_id="user_code"
 						/>
 					</RvSettingsRow>
 
@@ -70,234 +66,160 @@
 						<FmSelect
 							v-model="vm.reportOptions.pricing_policy"
 							:items="vm.pricingPolicies"
+							prop_id="user_code"
 						/>
 					</RvSettingsRow>
 
 					<RvSettingsRow label="Table font size">
 						<FmSelect
-							v-model="vm.reportOptions.tableFontSize"
+							v-model="vm.reportOptions.table_font_size"
 							:items="vm.tableFontSizeOptions"
 						/>
 					</RvSettingsRow>
 				</div>
 
-				<h5 class="default-f-s">Consolidation</h5>
+				<h5 class="headers">Consolidation</h5>
 
-				<div class="flex-column">
-					<div class="g-report-settings-row p-b-8">
-						<div class="default-f-s">Portfolio mode</div>
+				<RvSettingsRow label="Portfolio mode">
+					<FmSelect
+						v-model="vm.reportOptions.portfolio_mode"
+						:items="vm.selectOptions"
+					/>
+				</RvSettingsRow>
 
-						<dropdown-select
-							model="vm.reportOptions.portfolio_mode"
-							menu-options="vm.selectOptions"
-							class="g-report-settings-field"
-						>
-						</dropdown-select>
-					</div>
+				<RvSettingsRow label="Account mode">
+					<FmSelect
+						v-model="vm.reportOptions.account_mode"
+						:items="vm.selectOptions"
+					/>
+				</RvSettingsRow>
 
-					<div class="g-report-settings-row p-b-8">
-						<div class="default-f-s">Account mode</div>
+				<RvSettingsRow label="Strategy 1 Mode">
+					<FmSelect
+						v-model="vm.reportOptions.strategy1_mode"
+						:items="vm.strategiesSelectOptions"
+					/>
+				</RvSettingsRow>
 
-						<dropdown-select
-							model="vm.reportOptions.account_mode"
-							menu-options="vm.selectOptions"
-							class="g-report-settings-field"
-						>
-						</dropdown-select>
-					</div>
+				<RvSettingsRow label="Strategy 2 Mode">
+					<FmSelect
+						v-model="vm.reportOptions.strategy2_mode"
+						:items="vm.strategiesSelectOptions"
+					/>
+				</RvSettingsRow>
 
-					<div class="g-report-settings-row p-b-8">
-						<div class="default-f-s">Strategy 1 Mode</div>
+				<RvSettingsRow label="Strategy 3 Mode">
+					<FmSelect
+						v-model="vm.reportOptions.strategy3_mode"
+						:items="vm.strategiesSelectOptions"
+					/>
+				</RvSettingsRow>
 
-						<dropdown-select
-							model="vm.reportOptions.strategy1_mode"
-							menu-options="vm.strategiesSelectOptions"
-							small-options="{tooltipText: 'Strategy 1 Mode'}"
-							class="g-report-settings-field"
-						>
-						</dropdown-select>
-					</div>
+				<RvSettingsRow
+					label="Allocation mode"
+					v-if="vm.entityType === 'pl-report'"
+				>
+					<FmSelect
+						v-model="vm.reportOptions.allocation_mode"
+						:items="vm.selectOptions"
+					/>
+				</RvSettingsRow>
 
-					<div class="g-report-settings-row p-b-8">
-						<div class="default-f-s">Strategy 2 Mode</div>
+				<RvSettingsRow label="Offsetting Size">
+					<FmSelect
+						v-model="vm.reportOptions.approach_multiplier"
+						:items="vm.approachMultiplierOptions"
+					/>
+				</RvSettingsRow>
 
-						<dropdown-select
-							model="vm.reportOptions.strategy2_mode"
-							menu-options="vm.strategiesSelectOptions"
-							small-options="{tooltipText: 'Strategy 2 Mode'}"
-							class="g-report-settings-field"
-						>
-						</dropdown-select>
-					</div>
+				<h5 class="headers">Filters</h5>
 
-					<div class="g-report-settings-row p-b-8">
-						<div class="default-f-s">Strategy 3 Mode</div>
+				<RvSettingsRow label="Portfolios multiselector">
+					<BaseMultiSelectInput
+						v-model="vm.reportOptions.portfolios"
+						:items="vm.portfolios"
+						title="Portfolios multiselector"
+						item_title="short_name"
+						item_id="id"
+					/>
+				</RvSettingsRow>
 
-						<dropdown-select
-							model="vm.reportOptions.strategy3_mode"
-							menu-options="vm.strategiesSelectOptions"
-							small-options="{tooltipText: 'Strategy 3 Mode'}"
-							class="g-report-settings-field"
-						>
-						</dropdown-select>
-					</div>
+				<RvSettingsRow label="Accounts multiselector">
+					<BaseMultiSelectInput
+						v-model="vm.reportOptions.accounts"
+						:items="vm.accounts"
+						title="Accounts multiselector"
+						item_title="short_name"
+						item_id="id"
+					/>
+				</RvSettingsRow>
 
-					<div
-						class="g-report-settings-row p-b-8"
-						v-if="vm.entityType === 'pl-report'"
-					>
-						<div class="default-f-s">Allocation mode</div>
+				<RvSettingsRow label="Strategies 1 multiselector">
+					<BaseMultiSelectInput
+						v-model="vm.reportOptions.strategies1"
+						:items="vm.strategies1"
+						title="Strategies 1 multiselector"
+						item_title="short_name"
+						item_id="id"
+					/>
+				</RvSettingsRow>
 
-						<dropdown-select
-							model="vm.reportOptions.allocation_mode"
-							menu-options="vm.selectOptions"
-							class="g-report-settings-field"
-						>
-						</dropdown-select>
-					</div>
+				<RvSettingsRow label="Strategies 2 multiselector">
+					<BaseMultiSelectInput
+						v-model="vm.reportOptions.strategies2"
+						:items="vm.strategies2"
+						title="Strategies 2 multiselector"
+						item_title="short_name"
+						item_id="id"
+					/>
+				</RvSettingsRow>
 
-					<div class="g-report-settings-row p-b-8">
-						<div class="default-f-s">Offsetting Size</div>
+				<RvSettingsRow label="Strategies 3 multiselector">
+					<BaseMultiSelectInput
+						v-model="vm.reportOptions.strategies3"
+						:items="vm.strategies3"
+						title="Strategies 3 multiselector"
+						item_title="short_name"
+						item_id="id"
+					/>
+				</RvSettingsRow>
 
-						<dropdown-select
-							model="vm.reportOptions.approach_multiplier"
-							menu-options="vm.approachMultiplierOptions"
-							class="g-report-settings-field"
-						>
-						</dropdown-select>
-					</div>
-				</div>
+				<h5 class="headers">Market Value/Exposure %</h5>
 
-				<h5 class="default-f-s">Filters</h5>
+				<RvSettingsRow
+					label="Calculation Grouping"
+					v-if="vm.entityType === 'pl-report'"
+				>
+					<FmSelect
+						v-model="vm.reportOptions.calculationGroup"
+						:items="vm.calculationGroupOptions"
+					/>
+				</RvSettingsRow>
 
-				<div class="flex-column">
-					<div class="g-report-settings-row p-b-16">
-						<div class="default-f-s">Portfolios multiselector</div>
+				<RvSettingsRow label="Custom Fields">
+					<BaseMultiSelectInput
+						v-model="vm.selectedCustomFields"
+						:items="vm.customFieldsNames"
+						title="Accounts multiselector"
+						item_title="name"
+						item_id="id"
+						@update:model-value="vm.selectedCustomFieldsChanged()"
+					/>
+				</RvSettingsRow>
 
-						<two-fields-multiselect
-							get-data-method="vm.getPortfolios(vm.optionsForMultiselect)"
-							model="vm.reportOptions.portfolios"
-							selected-items="vm.reportOptions.portfolios"
-							nothing-selected-text="Off"
-							selected-items-indication="chips"
-							name-property="short_name"
-							small-options="{tooltipText: 'Portfolios multiselector'}"
-							class="g-report-settings-field"
-						></two-fields-multiselect>
-					</div>
+				<RvSettingsRow>
+					<FmCheckbox
+						label="Show exposure details"
+						v-model="vm.reportOptions.show_balance_exposure_details"
+					/>
+				</RvSettingsRow>
 
-					<div class="g-report-settings-row p-b-16">
-						<div class="default-f-s">Accounts multiselector</div>
-
-						<two-fields-multiselect
-							get-data-method="vm.getAccounts(vm.optionsForMultiselect)"
-							model="vm.reportOptions.accounts"
-							selected-items="vm.reportOptions.accounts"
-							nothing-selected-text="Off"
-							selected-items-indication="chips"
-							name-property="short_name"
-							small-options="{tooltipText: 'Accounts multiselector'}"
-							class="g-report-settings-field"
-						></two-fields-multiselect>
-					</div>
-
-					<div class="g-report-settings-row p-b-16">
-						<div class="default-f-s">Strategies 1 multiselector</div>
-
-						<two-fields-multiselect
-							get-data-method="vm.getStrategies1(vm.optionsForMultiselect)"
-							model="vm.reportOptions.strategies1"
-							data-selected-items="vm.reportOptions.strategies1"
-							nothing-selected-text="Off"
-							selected-items-indication="chips"
-							data-name-property="short_name"
-							small-options="{tooltipText: 'Strategies 1 multiselector'}"
-							class="g-report-settings-field"
-						></two-fields-multiselect>
-					</div>
-
-					<div class="g-report-settings-row p-b-16">
-						<div class="default-f-s">Strategies 2 multiselector</div>
-
-						<two-fields-multiselect
-							get-data-method="vm.getStrategies2(vm.optionsForMultiselect)"
-							model="vm.reportOptions.strategies2"
-							data-selected-items="vm.reportOptions.strategies2"
-							nothing-selected-text="Off"
-							selected-items-indication="chips"
-							data-name-property="short_name"
-							small-options="{tooltipText: 'Strategies 2 multiselector'}"
-							class="g-report-settings-field"
-						></two-fields-multiselect>
-					</div>
-
-					<div class="g-report-settings-row p-b-16">
-						<div class="default-f-s">Strategies 3 multiselector</div>
-
-						<two-fields-multiselect
-							get-data-method="vm.getStrategies3(vm.optionsForMultiselect)"
-							model="vm.reportOptions.strategies3"
-							data-selected-items="vm.reportOptions.strategies3"
-							nothing-selected-text="Off"
-							selected-items-indication="chips"
-							data-name-property="short_name"
-							small-options="{tooltipText: 'Strategies 3 multiselector'}"
-							class="g-report-settings-field"
-						></two-fields-multiselect>
-					</div>
-				</div>
-
-				<h4 class="default-f-s">Market Value/Exposure %</h4>
-
-				<div class="flex-column">
-					<div class="g-report-settings-row p-b-8">
-						<div class="default-f-s">Calculation Grouping</div>
-
-						<dropdown-select
-							model="vm.reportOptions.calculationGroup"
-							menu-options="vm.calculationGroupOptions"
-							small-options="{tooltipText: 'Calculation Grouping'}"
-							class="g-report-settings-field"
-						>
-						</dropdown-select>
-					</div>
-
-					<div class="g-report-settings-row p-b-16">
-						<div class="default-f-s">Custom Fields</div>
-
-						<two-fields-multiselect
-							items="vm.customFieldsNames"
-							model="vm.selectedCustomFields"
-							selected-items="vm.selectedCustomFields"
-							nothing-selected-text="Off"
-							selected-items-indication="chips"
-							on-change-callback="vm.selectedCustomFieldsChanged()"
-							name-property="name"
-							class="g-report-settings-field"
-						></two-fields-multiselect>
-					</div>
-
-					<div class="flex-row-reverse">
-						<div class="g-report-settings-field">
-							<md-input-container class="m-0">
-								<md-checkbox
-									v-model="vm.reportOptions.show_balance_exposure_details"
-									class="m-b-20"
-								>
-									Show exposure details
-								</md-checkbox>
-							</md-input-container>
-
-							<md-input-container class="m-0">
-								<md-checkbox
-									v-model="vm.reportOptions.show_transaction_details"
-								>
-									Show transaction details
-								</md-checkbox>
-							</md-input-container>
-						</div>
-					</div>
-				</div>
+				<RvSettingsRow>
+					<FmCheckbox
+						label="Show transaction details"
+						v-model="vm.reportOptions.show_transaction_details"
+					/>
+				</RvSettingsRow>
 			</div>
 
 			<div v-if="vm.entityType == 'transaction-report'">
@@ -392,15 +314,6 @@
 			<FmLoader></FmLoader>
 		</div>
 
-		<RvSettingsRow label="Filter items by statuses">
-			<BaseMultiSelectInput
-				v-model="vm.entityFilters"
-				title="Filter items by statuses"
-				item_id="value"
-				:items="vm.multiselectorOptions"
-			/>
-		</RvSettingsRow>
-
 		<template #controls>
 			<div class="flex aic sb">
 				<FmBtn type="text" @click="vm.cancel()"> close </FmBtn>
@@ -417,10 +330,12 @@
 	import evEvents from '@/angular/services/entityViewerEvents'
 	import currencyService from '~~/src/angular/services/currencyService'
 	import metaContentTypesService from '~~/src/angular/services/metaContentTypesService'
+	import portfolioService from '~~/src/angular/services/portfolioService'
 	import pricingPolicyService from '~~/src/angular/services/pricingPolicyService'
 	import customFieldServiceInst from '~~/src/angular/services/reports/customFieldService'
 	import transactionClassService from '~~/src/angular/services/transaction/transactionClassService'
 
+	// portfolioService
 	let customFieldService = new customFieldServiceInst()
 	const props = defineProps(['payload'])
 	const { resolve, reject, disableChangesSaving } = props.payload
@@ -444,6 +359,7 @@
 	} else {
 		vm.accountsCash = 0
 	}
+	// console.log('vm.reportOptions:', vm.reportOptions)
 
 	if (
 		vm.reportOptions.accounts_position &&
@@ -603,7 +519,7 @@
 		await pricingPolicyService.getListLight(opitons).then(function (data) {
 			vm.pricingPolicies = data.results.map(function (pPolicy) {
 				return {
-					id: pPolicy.id,
+					user_code: pPolicy.user_code,
 					name: pPolicy.short_name,
 				}
 			})
@@ -627,7 +543,7 @@
 
 		vm.currencies = res.results.map(function (currency) {
 			return {
-				id: currency.id,
+				user_code: currency.user_code,
 				name: currency.short_name,
 			}
 		})
@@ -642,52 +558,34 @@
 		pageSize: 1000,
 	}
 
-	vm.getPortfolios = function (options) {
-		return portfolioService.getListLight(options)
-	}
+	vm.portfolios = []
 
-	/*vm.getAccounts = function () {
+	useApi('portfolioListLight.get').then((res) => {
+		vm.portfolios = res.results
+	})
 
-            vm.readyStatus.account = false;
+	vm.accounts = []
 
-            accountService.getList().then(function (data) {
+	useApi('accountLight.get').then((res) => {
+		vm.accounts = res.results
+	})
 
-                vm.accounts = data.results;
-                vm.readyStatus.account = true;
+	vm.strategies1 = []
 
-                $scope.$apply();
+	useApi('strategiesOneLight.get').then((res) => {
+		vm.strategies1 = res.results
+	})
 
-            });
-        };*/
-	vm.getAccounts = function (options) {
-		return accountService.getListLight(options)
-	}
+	vm.strategies2 = []
 
-	/*vm.getStrategies1 = function () {
+	useApi('strategiesSecondLight.get').then((res) => {
+		vm.strategies2 = res.results
+	})
 
-            vm.readyStatus.strategy1 = false;
-
-            strategyService.getList(1).then(function (data) {
-
-                vm.strategies1 = data.results;
-                vm.readyStatus.strategy1 = true;
-
-                $scope.$apply();
-
-            });
-        };*/
-
-	vm.getStrategies1 = function (options) {
-		return strategyService.getListLight(1, options)
-	}
-
-	vm.getStrategies2 = function (options) {
-		return strategyService.getListLight(2, options)
-	}
-
-	vm.getStrategies3 = function (options) {
-		return strategyService.getListLight(3, options)
-	}
+	vm.strategies3 = []
+	useApi('strategiesThirdLight.get').then((res) => {
+		vm.strategies3 = res.results
+	})
 
 	vm.getTransactionClasses = function () {
 		vm.readyStatus.transactionClass = false
@@ -732,13 +630,15 @@
 		vm.reportOptions.complex_transaction_statuses_filter =
 			vm.complex_transaction_statuses_filter.join(',')
 
-		$mdDialog.hide({
+		resolve({
 			status: 'agree',
 			data: {
 				reportOptions: vm.reportOptions,
 				reportLayoutOptions: vm.reportLayoutOptions,
 			},
 		})
+
+		delete $mdDialog.modals['GReportSettingsDialogController']
 	}
 
 	vm.cancel = function () {
@@ -878,4 +778,10 @@
 	vm.init()
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+	.headers {
+		font-weight: 600;
+		font-size: 16px;
+		margin-bottom: 20px;
+	}
+</style>

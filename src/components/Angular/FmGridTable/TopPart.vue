@@ -251,6 +251,7 @@
 			templateUrl: 'views/dialogs/g-report-settings-dialog-view.html',
 		})
 		if (res.status === 'agree') {
+			console.log('res:', res)
 			evDataService.setReportLayoutOptions(res.data.reportLayoutOptions)
 			evDataService.setReportOptions(res.data.reportOptions)
 
