@@ -4,7 +4,7 @@
 		<div class="wrapp-select">
 			<FmSelect
 				v-model="ecosystemDefaults.instrument"
-				label="Instrument"
+				label="InstrumentItems"
 				:items="instrumentItems"
 			/>
 			<FmSelect
@@ -36,7 +36,7 @@
 			/>
 			<FmSelect
 				v-model="ecosystemDefaults.account_type"
-				label="Instrument Type"
+				label="Account Type"
 				:items="accountsTypeItems"
 			/>
 		</div>
@@ -47,6 +47,7 @@
 				:items="pricingPolicyListItems"
 			/>
 		</div>
+
 		<div class="wrapp-select">
 			<FmSelect
 				v-model="ecosystemDefaults.periodicity"
@@ -110,7 +111,7 @@
 			<FmSelect
 				v-model="ecosystemDefaults.strategy1_subgroup"
 				label="Strategy 1  Subgroup"
-				:items="instrumentItems"
+				:items="''"
 			/>
 		</div>
 		<div class="wrapp-select">
@@ -127,7 +128,7 @@
 			<FmSelect
 				v-model="ecosystemDefaults.strategy2_subgroup"
 				label="Strategy 2  Subgroup"
-				:items="instrumentItems"
+				:items="''"
 			/>
 		</div>
 		<div class="wrapp-select">
@@ -144,7 +145,7 @@
 			<FmSelect
 				v-model="ecosystemDefaults.strategy3_subgroup"
 				label="Strategy 3 Subgroup"
-				:items="instrumentItems"
+				:items="''"
 			/>
 		</div>
 		<div class="wrapp-select">
@@ -162,7 +163,8 @@
 		<FmBtn
 			type="primary"
 			class="g-toggle-filters-btn"
-			@click="defaultSettingsCreate"
+			@click="defaultSettingsCreate()"
+			:disabled="disabledBtn"
 		>
 			Save
 		</FmBtn>
@@ -179,10 +181,11 @@
 			},
 		],
 	})
+
 	const instrumentItems = ref([])
+	const portfolioListLightItems = ref([])
 	const billItems = ref([])
 	const currencyItems = ref([])
-	const portfolioListLightItems = ref([])
 	const instrumentTypeItems = ref([])
 	const transactionTypeLightItems = ref([])
 	const accountsTypeItems = ref([])
@@ -203,20 +206,22 @@
 	const instrumentSchemeListItems = ref([])
 	const currencySchemeListItems = ref([])
 
-	const ecosystemDefaults = ref([])
+	const disabledBtn = ref(true)
+	const ecosystemDefaults = ref([1])
+	const BaseInputEcosystemDefaults = ref([])
 	init()
 	async function init() {
 		const res = await Promise.all([
 			useApi('instrumentListLight.get'),
+			useApi('portfolioListLight.get'),
 			useApi('accountLight.get'),
 			useApi('currencyListLight.get'),
 			useApi('instrumentType.get'),
-			useApi('portfolioListLight.get'),
 			useApi('transactionTypeLight.get'),
 			useApi('accountsType.get'),
 			useApi('pricingPolicyList.get'),
 			useApi('instrumentPeriodicity.get'),
-			useApi('instrumentPeriodicity.get'),
+			useApi('instrumentAccrualCalculationModel.get'),
 			useApi('instrumentClass.get'),
 			useApi('instrumentSizeDetail.get'),
 			useApi('instrumentPricingСondition.get'),
@@ -231,37 +236,46 @@
 			useApi('instrumentSchemeList.get'),
 			useApi('currencySchemeList.get'),
 		])
-		
+
 		instrumentItems.value = res[0].results
-		billItems.value = res[1].results
-		currencyItems.value = res[2].results
-		portfolioListLightItems.value = res[3].results
+		portfolioListLightItems.value = res[1].results
+		billItems.value = res[2].results
+		currencyItems.value = res[3].results
 		instrumentTypeItems.value = res[4].results
 		transactionTypeLightItems.value = res[5].results
-		instrumentSizeDetailItems.value = res[6].results
-		accountsTypeItems.value = res[7].results
-		pricingPolicyListItems.value = res[8].results
-		instrumentPeriodicityItems.value = res[9].results
-		instrumentAccrualCalculationModelItems.value = res[10].results
-		instrumentClassItems.value = res[11].results
-		instrumentSizeDetailItems.value = res[12].results
-		instrumentPricingСonditionItems.value = res[13].results
-		counterpartyResponsibleLightItems.value = res[14].results
-		counterpartyCounterpartyLightItems.value = res[15].results
-		strategiesOneLightItems.value = res[16].results
-		strategiesOneSubgroupItems.value = res[17].results
-		strategiesSecondLightItems.value = res[18].results
-		strategiesSecondSubgroupItems.value = res[19].results
-		strategiesThirdLightItems.value = res[20].results
-		strategiesThirdSubgroupItems.value = res[21].results
-		instrumentSchemeListItems.value = res[22].results
-		currencySchemeListItems.value = res[23].results
+		accountsTypeItems.value = res[6].results
+		pricingPolicyListItems.value = res[7].results
+		instrumentPeriodicityItems.value = res[8]
+		instrumentAccrualCalculationModelItems.value = res[9]
+		instrumentClassItems.value = res[10]
+		instrumentSizeDetailItems.value = res[11]
+		instrumentPricingСonditionItems.value = res[12]
+		counterpartyResponsibleLightItems.value = res[13].results
+		counterpartyCounterpartyLightItems.value = res[14].results
+		strategiesOneLightItems.value = res[15].results
+		strategiesOneSubgroupItems.value = res[16].results
+		strategiesSecondLightItems.value = res[17].results
+		strategiesSecondSubgroupItems.value = res[18].results
+		strategiesThirdLightItems.value = res[19].results
+		strategiesThirdSubgroupItems.value = res[20].results
+		instrumentSchemeListItems.value = res[21].results
+		currencySchemeListItems.value = res[22].results
 	}
 
+	watch(
+		ecosystemDefaults,
+		(newValue, oldValue) => {
+			if (oldValue[0] === 1) {
+			} else {
+				disabledBtn.value = false
+			}
+		},
+		{ deep: true }
+	),
 	defaultsGet()
 	async function defaultsGet() {
 		let edRes = await useApi('ecosystemDefaults.get')
-
+		BaseInputEcosystemDefaults.value = edRes
 		ecosystemDefaults.value = edRes.error ? {} : edRes.results[0]
 	}
 	async function defaultSettingsCreate() {
@@ -270,12 +284,14 @@
 			body: ecosystemDefaults.value,
 		})
 
-		console.log(
-			ecosystemDefaults.value +
-				'ecosystemDefaults.value + defaultSettingsCreate',
-			ecosystemDefaults,
-			'ecosystemDefaults'
-		)
+		if (res.error) {
+			// console.error(res.error);
+			useNotify({ type: 'error', title: res.error.message || res.error.detail })
+			throw new Error(res.error)
+		} else {
+			useNotify({ type: 'success', title: `data saved on the server` })
+		}
+		disabledBtn.value = true
 	}
 </script>
 
@@ -293,20 +309,20 @@
 		margin-bottom: 24px;
 		font-weight: 700;
 	}
-	@media  (max-width: 1200px) {
+	@media (max-width: 1200px) {
 		.wrapp-select {
-		display: grid;
-		grid-template-columns: 1fr 1fr 1fr;
-		grid-template-rows: 1fr;
-		gap: 10px 5px;
+			display: grid;
+			grid-template-columns: 1fr 1fr 1fr;
+			grid-template-rows: 1fr;
+			gap: 10px 5px;
+		}
 	}
-	}
-	@media  (max-width: 767px) {
+	@media (max-width: 767px) {
 		.wrapp-select {
-		display: grid;
-		grid-template-columns: 1fr ;
-		grid-template-rows: 1fr;
-		gap: 10px 5px;
-	}
+			display: grid;
+			grid-template-columns: 1fr;
+			grid-template-rows: 1fr;
+			gap: 10px 5px;
+		}
 	}
 </style>
