@@ -1,47 +1,42 @@
 <template>
-	<div class="g-filter-settings">
-		<div class="g-filter-header">
-			<div class="g-filter-header-top-row">
-				<FmCheckbox
-					v-model="vm.filter.options.enabled"
-					:label="vm?.filter?.name"
-				/>
-
-				<md-button ng-click="vm.cancel()" class="cancel-small-btn">
-					<span class="material-icons">close</span>
-				</md-button>
-			</div>
+	<div class="g-filter-settings" :style="{ left: positions.left + 'px' }">
+		<div class="g-filter-header flex sb aic">
+			<h4>{{ vm?.filter?.name }}</h4>
+			<FmIcon icon="close" @click="vm.cancel()" />
 		</div>
 
 		<div class="g-filter-content">
-			<div
-				ng-if="vm.filter.value_type === 10 || vm.filter.value_type === 30"
-				class="m-b-24"
-			>
-				<AngularFmGridTableRvTextFilter :vm="vm" />
-			</div>
+			<AngularFmGridTableRvTextFilter
+				v-if="vm.filter.value_type === 10 || vm.filter.value_type === 30"
+				:gFiltersHelper="gFiltersHelper"
+				:vm="vm"
+			/>
 
-			<div ng-if="vm.filter.value_type === 20" class="m-b-24">
+			<div v-if="vm.filter.value_type === 20" class="m-b-24">
 				<rv-number-filter></rv-number-filter>
 			</div>
 
-			<div ng-if="vm.filter.value_type === 40" class="m-b-24">
+			<div v-if="vm.filter.value_type === 40" class="m-b-24">
 				<rv-date-filter></rv-date-filter>
 			</div>
 
-			<div ng-if="vm.filter.value_type === 50" class="m-b-24">
+			<div v-if="vm.filter.value_type === 50" class="m-b-24">
 				<rv-boolean-filter></rv-boolean-filter>
 			</div>
 
-			<div class="flex-column">
-				<FmCheckbox
-					v-model="vm.filter.options.exclude_empty_cells"
-					label="Exclude cells with no value"
-				/>
-			</div>
+			<FmCheckbox
+				class="m-b-4"
+				v-model="vm.filter.options.enabled"
+				label="Enabled"
+			/>
+			<FmCheckbox
+				v-model="vm.filter.options.exclude_empty_cells"
+				label="Exclude cells with no value"
+			/>
 		</div>
 
-		<div class="g-filter-footer flex-row fc-flex-end">
+		<div class="g-filter-footer flex sb">
+			<FmBtn type="text" @click="vm.cancel()" class="link-button">cancel</FmBtn>
 			<FmBtn @click="vm.saveFilterSettings()" class="link-button">APPLY</FmBtn>
 		</div>
 	</div>
@@ -54,19 +49,17 @@
 
 	import metaHelper from '@/angular/helpers/meta.helper'
 
+	const emits = defineEmits(['close'])
 	const props = defineProps([
 		'filterKey',
 		'popupEventService',
+		'popupData',
 		'vm',
 		'gFiltersHelper',
 	])
-	console.log('props:', props)
 
 	let $scope = {
 		...props,
-
-		onCancel: '&',
-		onSave: '&',
 	}
 	const { evEventService, evDataService, attributeDataService } =
 		inject('ngDependace')
@@ -88,6 +81,23 @@
 	let useFromAboveFilters
 	let isUseFromAboveFilter = false
 	let filterIndex = -1
+	const positions = ref({})
+
+	onMounted(() => {
+		let elem
+
+		if (props.popupData.elem) {
+			elem = props.popupData.elem
+		} else {
+			elem = document.querySelector(
+				'.chips-list-container .chip-wrap:last-child'
+			)
+			console.log('elem:', elem)
+		}
+		let rect = elem.getBoundingClientRect()
+
+		positions.value.left = rect.left - 160
+	})
 
 	const findFilter = function () {
 		let allFilters = JSON.parse(JSON.stringify(evDataService.getFilters()))
@@ -223,26 +233,21 @@
 		let allFilters = useFromAboveFilters.concat(filtersList)
 
 		evDataService.setFilters(allFilters)
+		evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
 
-		$scope.onSave()
-		$scope.$destroy()
+		vm.cancel()
 	}
 
 	vm.cancel = function () {
-		$scope.onCancel()
-		$scope.$destroy()
+		emits('close')
 	}
 
 	const init = function () {
 		findFilter()
 
-		evEventService.addEventListener(evEvents.FILTERS_CHANGE, function () {
-			findFilter()
-		})
-
-		vm.popupEventService.addEventListener(popupEvents.CLOSE_POPUP, function () {
-			$scope.$destroy()
-		})
+		// evEventService.addEventListener(evEvents.FILTERS_CHANGE, function () {
+		// 	findFilter()
+		// })
 	}
 
 	init()
@@ -253,8 +258,24 @@
 		position: absolute;
 		left: 0;
 		top: 50px;
-		width: 300px;
+		width: 350px;
 		background: #fff;
-		z-index: 111;
+		border-radius: 5px;
+		border: 1px solid $border;
+		z-index: 43;
+	}
+	h4 {
+		font-weight: 600;
+	}
+	.g-filter-header {
+		border-bottom: 1px solid $border;
+		padding: 10px 20px;
+	}
+	.g-filter-content {
+		padding: 20px;
+	}
+	.g-filter-footer {
+		padding: 10px 20px;
+		border-top: 1px solid $border;
 	}
 </style>

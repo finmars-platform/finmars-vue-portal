@@ -35,6 +35,7 @@
 						label="Report date"
 					>
 						<FmInputDateComplex
+							class="width-100"
 							:firstDate="vm.reportOptions.pl_first_date"
 							:firstDatepickerOptions="
 								vm.reportLayoutOptions.datepickerOptions.reportFirstDatepicker
@@ -642,7 +643,8 @@
 	}
 
 	vm.cancel = function () {
-		$mdDialog.hide({ status: 'disagree' })
+		reject()
+		delete $mdDialog.modals['GReportSettingsDialogController']
 	}
 
 	vm.selectedCustomFieldsChanged = function () {

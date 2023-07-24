@@ -3,7 +3,6 @@
 		v-model:opened="menuIsOpened"
 		attach="body"
 		:closeOnClickOutside="false"
-		class="width-100"
 		v-bind="$attrs"
 	>
 		<template #btn>
@@ -214,10 +213,10 @@
 				</div>
 
 				<div class="flex-row fc-end fi-center c_datepicker_footer">
-					<FmBtn type="basic" class="m-r-8 m-l-8" @click="cancel(close)"
+					<FmBtn type="text" class="m-r-8 m-l-8" @click="cancel(close)"
 						>CANCEL</FmBtn
 					>
-					<FmBtn type="basic" class="m-r-8 m-l-8" @click="save(close)"
+					<FmBtn type="primary" class="m-r-8 m-l-8" @click="save(close)"
 						>SAVE</FmBtn
 					>
 				</div>

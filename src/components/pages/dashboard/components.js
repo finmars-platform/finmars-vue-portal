@@ -328,8 +328,8 @@ export default [
 				_children: [],
 			},
 		],
-		minColls: 6,
-		minRows: 6,
+		minColls: 12,
+		minRows: 7,
 		_group: 'base',
 	},
 	{

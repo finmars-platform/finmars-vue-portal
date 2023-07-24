@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="fm_container ev_toolbar g-filters-holder"
-		:style="{ height: '50px' }"
+		:style="{}"
 		:class="{
 			'hide-ev-front-filters':
 				!scope.isReport &&
@@ -342,12 +342,12 @@
 					@click="toggleFiltersToShow()"
 				>
 					<span
-						v-show="scope.shownFiltersType === 'frontend'"
+						v-show="scope.shownFiltersType == 'frontend'"
 						class="material-icons"
 						>laptop_mac</span
 					>
 					<span
-						v-show="scope.shownFiltersType === 'backend'"
+						v-show="scope.shownFiltersType == 'backend'"
 						class="material-icons"
 						>dns</span
 					>
@@ -356,12 +356,6 @@
 		</div>
 		<!--СustomPopupDirective.vue-->
 		<div class="gFiltersContainer flex aic fww">
-			<div
-				v-if="scope.readyStatus.filters"
-				popup-data="popupData"
-				on-save="filterSettingsChange()"
-				class="g-filter-chips-wrap"
-			></div>
 			<!-- <rv-filter
                on-cancel="cancel()"
                on-save="save()"> -->
@@ -370,8 +364,10 @@
 				v-if="scope.popupData.filterKey"
 				:filterKey="scope.popupData.filterKey"
 				:popupEventService="scope.popupEventService"
+				:popupData="scope.popupData"
 				:vm="vm"
 				:gFiltersHelper="scope.gFiltersHelper"
+				@close="scope.popupData.filterKey = null"
 			/>
 
 			<FmChips
@@ -380,7 +376,7 @@
 				:items="scope.filtersChips"
 				canDelete
 				@chipClick="scope.onFilterChipClick($event)"
-				@delete="removeFilter($event)"
+				@delete="scope.removeFilter($event)"
 			/>
 
 			<FmBtn type="action" @click="scope.addFilter">ADD FILTER</FmBtn>
@@ -628,7 +624,7 @@
 	})
 	scope.gFiltersHelper = gFiltersHelper
 
-	let filters = ref(evDataService.getFilters())
+	const filters = ref(evDataService.getFilters())
 	let useFromAboveFilters = []
 	let gFiltersLeftPartWidth
 	let gFiltersRightPartWidth
@@ -689,6 +685,7 @@
 	//region Chips
 	scope.onFilterChipClick = (chipsData) => {
 		scope.popupData.filterKey = chipsData.data.id
+		scope.popupData.elem = chipsData.event.currentTarget
 	}
 
 	scope.filterSettingsChange = function () {
@@ -845,11 +842,11 @@
 	}
 
 	scope.removeFilter = function (filtersToRemove) {
-		filters = filters.filter((filter) => {
+		filters.value = filters.value.filter((filter) => {
 			return filtersToRemove.find((item) => item.id !== filter.key)
 		})
 
-		evDataService.setFilters(filters)
+		evDataService.setFilters(filters.value)
 
 		evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
 		evEventService.dispatchEvent(evEvents.UPDATE_TABLE)
@@ -1038,22 +1035,29 @@
 		)
 
 		evEventService.addEventListener(evEvents.FILTERS_CHANGE, function () {
-			filters = evDataService.getFilters()
+			filters.value = evDataService.getFilters()
+
+			let toOpenPopup = filters.value.findIndex((o) => o.__onceOpenSettings)
+
+			if (toOpenPopup != -1) {
+				delete filters.value[toOpenPopup].__onceOpenSettings
+				evDataService.setFilters(filters.value)
+
+				scope.popupData.filterKey = filters.value[toOpenPopup].key
+			}
 
 			// getUseFromAboveFilters();
-			useFromAboveFilters = gFiltersHelper.filterUseFromAboveFilters(filters)
+			useFromAboveFilters = gFiltersHelper.filterUseFromAboveFilters(
+				filters.value
+			)
 
 			formatFiltersForChips()
 
-			setTimeout(function () {
-				// wait until DOM elems reflow after ng-repeat
+			const filterAreaHeightChanged = scope.vm.updateFilterAreaHeight()
 
-				const filterAreaHeightChanged = scope.vm.updateFilterAreaHeight()
-
-				if (filterAreaHeightChanged) {
-					evEventService.dispatchEvent(evEvents.UPDATE_TABLE_VIEWPORT)
-				}
-			}, 0)
+			if (filterAreaHeightChanged) {
+				evEventService.dispatchEvent(evEvents.UPDATE_TABLE_VIEWPORT)
+			}
 		})
 
 		evEventService.addEventListener(

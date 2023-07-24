@@ -140,16 +140,16 @@
 			allAttrsList = $scope.attributeDataService.getReconciliationAttributes()
 		} else {
 			switch (vm.entityType) {
-				case 'balance-report':
+				case 'reports.balancereport':
 					allAttrsList =
 						$scope.attributeDataService.getBalanceReportAttributes()
 					break
 
-				case 'pl-report':
+				case 'reports.plreport':
 					allAttrsList = $scope.attributeDataService.getPlReportAttributes()
 					break
 
-				case 'transaction-report':
+				case 'reports.transactionreport':
 					allAttrsList =
 						$scope.attributeDataService.getTransactionReportAttributes()
 					break
@@ -163,7 +163,6 @@
 						$scope.attributeDataService.getEntityAttributesByEntityType(
 							vm.entityType
 						)
-					console.log('vm.entityType:', vm.entityType)
 
 					entityAttrs.forEach(function (item) {
 						if (
