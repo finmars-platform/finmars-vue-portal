@@ -28,7 +28,7 @@
 		</template>
 
 		<template #rightActions>
-			<div class="flex-row flex-i-center" style="padding-right: 30px">
+			<div class="flex-row flex-i-center">
 				<div v-if="isReport" class="flex-row flex-i-center">
 					<FmBtn
 						class="missing-prices-warning-button"
@@ -98,12 +98,24 @@
 						second-date="datesData.to"
 						second-datepicker-options="reportLayoutOptions.datepickerOptions.reportLastDatepicker"
 						callback-method="onReportDateChange()"
-						ev-data-service="evDataService"
-						ev-event-service="evEventService"
-						attribute-data-service="attributeDataService"
-						is-disabled="viewContext === 'split_panel' && reportLayoutOptions.useDateFromAbove"
 					>
 					</complex-zh-datepicker>
+					<FmInputDateComplex
+						v-if="
+							entityType === 'reports.plreport' ||
+							entityType === 'reports.transactionreport'
+						"
+						noBorders
+						:firstDate="reportOptions.pl_first_date"
+						:firstDatepickerOptions="
+							reportLayoutOptions.datepickerOptions.reportFirstDatepicker
+						"
+						:secondDate="reportOptions.report_date"
+						:secondDatepickerOptions="
+							reportLayoutOptions.datepickerOptions.reportLastDatepicker
+						"
+						is-disabled="viewContext === 'split_panel' && reportLayoutOptions.useDateFromAbove"
+					/>
 				</div>
 			</div>
 

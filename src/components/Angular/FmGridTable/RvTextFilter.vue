@@ -5,13 +5,14 @@
 		class="g-filter-type-n-value flex-row fc-space-between"
 	>
 		<FmSelect
-			class="g-filter-types-select"
+			class="g-filter-types-select m-b-0"
 			v-model="scope.activeFilter.type"
 			:items="scope.filterTypes"
-			@update:modelValue="changeFilterType(scope.activeFilter.type)"
+			label="Filter type"
+			@update:modelValue="scope.changeFilterType(scope.activeFilter.type)"
 		/>
 
-		<div class="g-filter-value-wrap">
+		<div class="g-filter-value-wrap m-b-16">
 			<div
 				v-if="
 					scope.filter.options.filter_type !== 'multiselector' &&
@@ -20,8 +21,8 @@
 				class="height-100"
 			>
 				<BaseInput
-					class="ci-placeholder2"
-					v-model="scope.filter.options.filter_values[0]"
+					class="ci-placeholder2 m-b-0"
+					v-model="vm.filter.options.filter_values[0]"
 					label="Value"
 				/>
 			</div>
@@ -31,7 +32,7 @@
 				class="height-100"
 			>
 				<FmSelect
-					v-model="filter.options.filter_values[0]"
+					v-model="scope.filter.options.filter_values[0]"
 					:items="columnRowsContent"
 				/>
 			</div>
@@ -60,10 +61,9 @@
 <script setup>
 	import popupEvents from '@/angular/services/events/popupEvents'
 
-	const props = defineProps(['vm'])
+	const props = defineProps(['vm', 'gFiltersHelper'])
 
 	let scope = reactive({})
-	console.log('scope:', scope)
 	// export default function (gFiltersHelper) {
 
 	// link: function (scope, elem, attrs) {
@@ -75,7 +75,7 @@
 
 	const openUseFromAboveSettings = async function () {
 		;[scope.activeFilter.type, scope.filter.options] =
-			await gFiltersHelper.openUseFromAboveSettings(
+			await props.gFiltersHelper.openUseFromAboveSettings(
 				props.vm.openUseFromAboveSettings(),
 				scope.filter.options
 			)
@@ -110,7 +110,7 @@
 						}
 
 						scope.filter.options.filter_values = []; */
-			const resultList = gFiltersHelper.emptyTextFilter(
+			const resultList = props.gFiltersHelper.emptyTextFilter(
 				filterType,
 				scope.filter.options
 			)
@@ -154,5 +154,9 @@
 		width: 300px;
 		background: #fff;
 		z-index: 111;
+	}
+	.g-filter-type-n-value {
+		display: grid;
+		grid-template-columns: repeat(2, 49%);
 	}
 </style>

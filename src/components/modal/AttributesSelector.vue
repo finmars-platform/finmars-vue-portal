@@ -3,7 +3,7 @@
 		:title="data.title"
 		no_padding
 		@close="cancel()"
-		style="height: 70vh; width: 90%; width: 800px"
+		style="height: 90vh; width: 800px"
 	>
 		<template #modalTop>
 			<BaseInput
@@ -1007,6 +1007,9 @@
 		&:hover .favorites {
 			opacity: 1;
 		}
+	}
+	.content_grid {
+		min-height: inherit;
 	}
 
 	.desc_title {

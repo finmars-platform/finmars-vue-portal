@@ -275,7 +275,6 @@ export default function (scope, $mdDialog, isReport) {
 	const onDropAreaDragenter = function (ev) {
 		ev.preventDefault()
 		ev.target.classList.add('dragged-over')
-
 	}
 
 	const onDropAreaDragleave = function (ev) {
@@ -300,9 +299,9 @@ export default function (scope, $mdDialog, isReport) {
 		let filtersData // only for entity viewer
 
 		if (isReport) {
-			filters = evDataService.getFilters()
+			filters = scope.evDataService.getFilters()
 		} else {
-			filtersData = evDataService.getFilters()
+			filtersData = scope.evDataService.getFilters()
 			filters = filtersData[scope.shownFiltersType] // scope.shownFiltersType assigned inside evGcfAreasDragAndDrop
 		}
 
@@ -343,12 +342,12 @@ export default function (scope, $mdDialog, isReport) {
 			filters.push(filterToAdd)
 
 			if (isReport) {
-				evDataService.setFilters(filters)
+				scope.evDataService.setFilters(filters)
 			} else {
-				evDataService.setFilters(filtersData)
+				scope.evDataService.setFilters(filtersData)
 			}
 
-			evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
+			scope.evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
 		}
 	}
 
@@ -372,7 +371,6 @@ export default function (scope, $mdDialog, isReport) {
 
 			case 'columns':
 				GCitems = evDataService.getColumns()
-
 
 				updateGCFMethod = function () {
 					evDataService.setColumns(GCitems)

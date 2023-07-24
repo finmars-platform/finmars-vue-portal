@@ -548,6 +548,9 @@ let getTableAttrInFormOf = function (form, attrInstance) {
 		}
 	}
 
+	attrTypeToAdd.options.enabled = true
+	attrTypeToAdd.__onceOpenSettings = true
+
 	return attrTypeToAdd
 }
 
