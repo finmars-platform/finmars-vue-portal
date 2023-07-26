@@ -78,7 +78,7 @@ export default function HealthcheckController($scope) {
 					$scope.$apply()
 				})
 				.catch(function (error) {
-					console.log('error', error)
+
 
 					vm.noInfo = true
 

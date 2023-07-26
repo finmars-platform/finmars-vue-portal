@@ -126,7 +126,7 @@ export default function settingsGeneralTransactionImportController(
 			})
 			.then(function (res) {
 				if (res.status === 'agree') {
-					console.log('res', res.data)
+
 					vm.getData()
 				}
 			})

@@ -15,7 +15,7 @@ export default function () {
 			}
 
 			ngModelCtrl.$parsers.push(function (val) {
-				//console.log('val', val);
+				//;
 
 				var clean = val.replace(/[^-0-9\.]/g, '')
 				var negativeCheck = clean.split('-')

@@ -9,8 +9,7 @@
 </template>
 
 <script setup>
-
-let props = defineProps({
+	let props = defineProps({
 		label: String,
 		icon: String,
 		to: String,
@@ -20,10 +19,9 @@ let props = defineProps({
 		 */
 		type: {
 			type: String,
-			default: 'primary'
-		}
+			default: 'primary',
+		},
 	})
-
 </script>
 
 <style lang="scss" scoped>
@@ -78,6 +76,10 @@ let props = defineProps({
 		&.action {
 			color: $primary;
 
+			.icon {
+				color: $primary !important;
+			}
+
 			&:not([disabled]):hover {
 				background: $primary-lighten-2;
 			}
@@ -97,7 +99,7 @@ let props = defineProps({
 		}
 		&[disabled] {
 			cursor: default;
-			opacity: .6;
+			opacity: 0.6;
 
 			&.primary {
 				background: $primary-lighten;

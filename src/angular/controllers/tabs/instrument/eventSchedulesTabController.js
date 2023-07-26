@@ -244,7 +244,7 @@ export default function eventSchedulesTabController(
         } */
 
 	vm.generateEventInstrument = function ($event) {
-		console.log('Generate Events')
+
 
 		$mdDialog
 			.show({
@@ -464,7 +464,7 @@ export default function eventSchedulesTabController(
 		vm.entity.event_schedules = vm.entity.event_schedules.filter(function (
 			event
 		) {
-			console.log('deletedRowsKeys', argObj.deletedRowsKeys)
+
 
 			var eventId = event.id || event.frontOptions.gtKey
 			return argObj.deletedRowsKeys.indexOf(eventId) === -1

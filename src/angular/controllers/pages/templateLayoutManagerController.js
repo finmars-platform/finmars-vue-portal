@@ -305,7 +305,7 @@ export default function (
 	vm.addInput = function ($event) {
 		vm.activeInputTemplate.data.inputs.push({})
 
-		console.log('vm.activeInputTemplate', vm.activeInputTemplate)
+
 	}
 
 	vm.deleteInput = function ($event, input, $index) {
@@ -859,7 +859,7 @@ export default function (
 				multiple: true,
 			})
 			.then(function (res) {
-				console.log('res', res)
+
 				if (res.status === 'agree') {
 					var type = template.type
 

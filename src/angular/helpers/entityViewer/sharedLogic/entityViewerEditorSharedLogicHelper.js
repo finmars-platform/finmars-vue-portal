@@ -546,7 +546,7 @@ export default function (
 	}
 
 	const getShowByDefaultOptions = function (columns, entityType) {
-		console.log('getShowByDefaultOptions', columns, entityType)
+
 
 		let result = viewModel.showByDefaultOptions
 
@@ -775,7 +775,7 @@ export default function (
 
 								var layouts = data.instrument_form_layouts.split(',');
 
-								console.log('Resolving Edit Layout. Layouts', layouts)
+
 
 								uiService.getListEditLayout(viewModel.entityType).then(function (data) {
 
@@ -800,7 +800,7 @@ export default function (
 
 									})
 
-									console.log('result', result);
+									;
 
 									if (result) {
 										resolve({ // Array?
@@ -1081,7 +1081,7 @@ export default function (
 		entity['user_code'] = viewModel.entity['user_code'] + '_copy'
 		entity['name'] = viewModel.entity['name'] + '_copy'
 
-		console.log('copy entity', entity)
+
 
 		if (windowType === 'big-drawer') {
 			const responseObj = {

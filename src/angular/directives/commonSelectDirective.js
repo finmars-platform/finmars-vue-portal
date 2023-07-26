@@ -15,7 +15,7 @@ export default function () {
 		},
 		templateUrl: 'views/directives/common-select-view.html',
 		link: function (scope, elem, attrs) {
-			console.log('common select scope', scope.optionsValue, scope.optionsName)
+
 			if (!scope.labelTitle) {
 				scope.labelTitle = ''
 			}

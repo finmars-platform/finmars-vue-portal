@@ -157,7 +157,7 @@ export default function unifiedEntityImportController(
 					)
 				} else {
 					if (vm.config.task_status === 'SUCCESS') {
-						console.log('resolve?')
+
 
 						resolve(data)
 					} else {
@@ -195,7 +195,7 @@ export default function unifiedEntityImportController(
 				// vm.processing = false;
 				vm.readyStatus.processing = false
 
-				console.log('import.data', data)
+
 
 				vm.readyStatus.processing = false
 				vm.dataIsImported = true

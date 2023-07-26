@@ -548,6 +548,9 @@ let getTableAttrInFormOf = function (form, attrInstance) {
 		}
 	}
 
+	attrTypeToAdd.options.enabled = true
+	attrTypeToAdd.__onceOpenSettings = true
+
 	return attrTypeToAdd
 }
 
@@ -1589,7 +1592,7 @@ var openTTypeEditDrawer = function (
 
                                         } else {
 
-                                            console.log('res', res);
+                                            ;
 
                                             var objects = vm.entityViewerDataService.getObjects();
 
@@ -1670,7 +1673,7 @@ var openTTypeEditDrawer = function (
 
                                             } else {
 
-                                                console.log('res', res);
+                                                ;
 
                                                 var objects = vm.entityViewerDataService.getObjects();
 

@@ -25,8 +25,8 @@
 		vm.tabs = []
 		vm.entityType = entityViewerDataService.getEntityType()
 
-		//console.log('parentScope', parentScope);
-		//console.log('vm', vm);
+		//;
+		//;
 
 		logService.property('vm.entityType', vm.entityType)
 
@@ -74,14 +74,14 @@
 						}
 					}
 				}
-				//console.log('vm.tabs[i].attrs', vm.tabs[0].attrs)
+				//
 			}
 
 			function fillTabAttrs() {
 				var a, t, c, b, e
 				var tab, tabAttr, attr, baseAttr, attributeIsExist, entityAttr
-				//console.log('METHOD: restoreAttrs, data: vm.tabs, value: ', vm.tabs);
-				//console.log('METHOD: restoreAttrs, data: vm.attrs, value: ', vm.attrs);
+				//;
+				//;
 				for (t = 0; t < vm.tabs.length; t = t + 1) {
 					tab = vm.tabs[t]
 					for (c = 0; c < tab.attrs.length; c = c + 1) {
@@ -406,8 +406,8 @@
 				attrs[i].filters = false
 				attrs[i].groups = false
 				columns.map(function (item) {
-					//console.log('item', item);
-					//console.log('attrs[i]', attrs[i]);
+					//;
+					//;
 					if (attrs[i].name === item.name) {
 						attrs[i].columns = true
 					}
@@ -544,7 +544,7 @@
 				}
 			}
 
-			// console.log('attributes in modal ', vm.attrs, vm.baseAttrs, vm.entityAttrs, parentScope);
+			// ;
 		}
 
 		vm.updateAttrs = function () {
@@ -605,15 +605,15 @@
 					})
 				})
 				this.dragula.on('drop', function (elem, target) {
-					//console.log('here?', target); //TODO fallback to ids instead of name/key
+					//; //TODO fallback to ids instead of name/key
 					$(target).removeClass('active')
 					var name = $(elem).html()
 					var i
 
-					//console.log('elem111111111111111111111111111111', elem);
-					//console.log('columns111111111111111111111111111111', columns);
-					//console.log('grouping111111111111111111111111111111', grouping);
-					//console.log('filters111111111111111111111111111111', filters);
+					//;
+					//;
+					//;
+					//;
 
 					var identifier
 					if ($(elem).attr('data-key-identifier')) {
@@ -661,8 +661,8 @@
 
 					if (!exist && target) {
 						var a
-						//console.log('target', {target: target});
-						//console.log('elem', {elem: elem});
+						//;
+						//;
 
 						var nodes = Array.prototype.slice.call(target.children)
 						var index = nodes.indexOf(elem)
@@ -800,7 +800,7 @@
 
 				this.dragula = dragula(items, {
 					accepts: function (el, target, source, sibling) {
-						//console.log('el', el, target, source);
+						//;
 
 						if (target.classList.contains('g-modal-draggable-card')) {
 							return false
@@ -813,13 +813,13 @@
 			},
 
 			destroy: function () {
-				// console.log('this.dragula', this.dragula)
+				//
 				this.dragula.destroy()
 			},
 		}
 
 		var addColumn = function () {
-			//console.log('parentScope.columns', parentScope.columns);
+			//;
 
 			//if (currentColumnsWidth < parentScope.columns.length) {
 			metaService.columnsWidthGroups(true)

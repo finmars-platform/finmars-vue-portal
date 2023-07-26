@@ -22,7 +22,7 @@ export default function (globalDataService) {
 		},
 		templateUrl: 'views/directives/groupTable/g-table-component-view.html',
 		link: function (scope, elem, attrs) {
-			console.log('gTableComponent.Link', scope, elem, attrs)
+
 
 			scope.additions = scope.evDataService.getAdditions()
 			scope.verticalAdditions = scope.evDataService.getVerticalAdditions()
@@ -37,7 +37,7 @@ export default function (globalDataService) {
 
 			scope.reportOptions = scope.evDataService.getReportOptions()
 
-			console.log('scope.components', scope.components)
+
 			var iframeMode = globalDataService.insideIframe()
 			var interfaceLayout = scope.evDataService.getInterfaceLayout()
 			var viewContext = scope.evDataService.getViewContext()
@@ -91,10 +91,10 @@ export default function (globalDataService) {
 				scope.contentWrapElem.style.height = splitPanelHeight + 'px'
 			}
 
-			console.log('updateDomElementsReadyStatus. scope', scope)
-			console.log('groupTable.rootWrapElem', scope.rootWrapElem)
-			console.log('groupTable.contentWrapElem', scope.contentWrapElem)
-			console.log('groupTable.workareaWrapElem', scope.workareaWrapElem)
+
+
+
+
 
 			// IMPORTANT, that variable blocks child component rendering
 			// because child components require some elements that render in this component
@@ -109,7 +109,7 @@ export default function (globalDataService) {
 			// That trigger $digest and everything start refreshing
 			// Slowdown really visible in dashboard
 
-			console.log('scope.additions', scope.additions)
+
 
 			scope.toggleGroupAndColumnArea = function () {
 				interfaceLayout = scope.evDataService.getInterfaceLayout()
@@ -177,7 +177,7 @@ export default function (globalDataService) {
 					function () {
 						scope.additions = scope.evDataService.getAdditions()
 
-						console.log('scope.additions', scope.additions)
+
 
 						scope.activeObject = scope.evDataService.getActiveObject()
 					}
@@ -199,7 +199,7 @@ export default function (globalDataService) {
 							}, 200)
 						}
 
-						console.log('VERTICAL ADDITIONS CHANGE', scope.verticalAdditions)
+
 					}
 				)
 
@@ -248,8 +248,8 @@ export default function (globalDataService) {
 							scope.viewType
 						)
 
-						console.log('scope.viewType ', scope.viewType)
-						console.log('scope.viewSettings', scope.viewSettings)
+
+
 					}
 				)
 
@@ -278,17 +278,17 @@ export default function (globalDataService) {
 			scope.init()
 
 			scope.$on('$destroy', function () {
-				console.log('==== Table is destroyed ==== ')
+
 			})
 		},
 		// controller: function ($scope) {
 		//
 		//     $scope.domElemsAreReady = false;
 		//
-		//     console.log("gTableComponent.Controller", $scope);
+		//     ;
 		//
 		//     this.$postLink = function () {
-		//         console.log("gTableComponent.PostLink", $scope);
+		//         ;
 		//     }
 		//
 		// }

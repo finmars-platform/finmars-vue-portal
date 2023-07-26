@@ -3,7 +3,7 @@ function downloadFile(blobParts, blobType, downloadFileName) {
 	// otherwise only Chrome works like it should
 	var newBlob = new Blob([blobParts], { type: blobType })
 
-	console.log(newBlob)
+
 
 	// IE doesn't allow using a blob object directly as link href
 	// instead it is necessary to use msSaveOrOpenBlob

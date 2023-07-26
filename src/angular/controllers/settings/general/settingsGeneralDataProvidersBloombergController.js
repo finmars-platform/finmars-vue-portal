@@ -54,7 +54,7 @@ export default function settingsGeneralDataProvidersBloombergController(
 	}
 
 	vm.saveConfig = function ($event) {
-		console.log('vm.saveConfig', vm.item)
+
 
 		$event.preventDefault()
 		$event.stopPropagation()

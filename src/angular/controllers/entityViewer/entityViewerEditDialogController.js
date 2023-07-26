@@ -281,7 +281,7 @@ export default function entityViewerEditDialogController(
 				// Victor 19.10.2020
 				//vm.currencies = data.results;
 				vm.currencies = metaHelper.textWithDashSort(data.results)
-				console.log('vm.currencies', vm.currencies)
+
 
 				$scope.$apply()
 			})
@@ -428,7 +428,7 @@ export default function entityViewerEditDialogController(
 	}
 
 	vm.restoreDeleted = function () {
-		console.log('Restore deleted here')
+
 
 		vm.processing = true
 
@@ -692,7 +692,7 @@ export default function entityViewerEditDialogController(
 				.then(function (data) {
 					vm.entity = data
 
-					console.log('vm.entity', vm.entity)
+
 
 					vm.entity.$_isValid = true
 					// vm.readyStatus.entity = true;
@@ -845,7 +845,7 @@ export default function entityViewerEditDialogController(
 	}
 
 	vm.updateItem = function () {
-		console.log('updateItem', vm.entity.$_isValid)
+
 
 		// TMP save method for instrument
 
@@ -1509,7 +1509,7 @@ export default function entityViewerEditDialogController(
 					})
 			)
 
-		console.log('vm.attributeTypesByValueTypes', vm.attributeTypesByValueTypes)
+
 	}
 
 	vm.getCurrencyPricingSchemes = function () {
@@ -1586,7 +1586,7 @@ export default function entityViewerEditDialogController(
 					})
 			)
 
-		console.log('vm.attributeTypesByValueTypes', vm.attributeTypesByValueTypes)
+
 	}
 
 	vm.getInstrumentPricingSchemes = function () {
@@ -1597,7 +1597,7 @@ export default function entityViewerEditDialogController(
 
 			vm.generateInstrumentAttributeTypesByValueTypes()
 
-			console.log('instrumentPricingSchemes', vm.instrumentPricingSchemes)
+
 
 			$scope.$apply()
 		})
@@ -2098,7 +2098,7 @@ export default function entityViewerEditDialogController(
 
 	/*vm.onEntityChange = function () {
 
-            console.log("entityChange", vm);
+            ;
 
         };*/
 }

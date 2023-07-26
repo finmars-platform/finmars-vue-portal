@@ -298,7 +298,7 @@ export default function ($scope, $mdDialog) {
 						})
 					})
 
-					console.log('here?123123', vm.textFields)
+
 					resolve()
 				})
 				.catch((error) => reject(error))

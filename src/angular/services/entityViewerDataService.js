@@ -599,7 +599,7 @@ export default function (reportHelper) {
 	}
 
 	function setObject(obj) {
-		// console.log('setData.obj', obj);
+		// ;
 
 		if (
 			data.data[obj.___parentId] &&
@@ -692,7 +692,7 @@ export default function (reportHelper) {
 		var rootHash = stringHelper.toHash('root')
 		var defaultRootGroup = getDefaultRootGroup()
 
-		console.log('defaultRootGroup', defaultRootGroup)
+
 
 		setData(defaultRootGroup)
 	}

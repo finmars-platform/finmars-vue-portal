@@ -77,6 +77,8 @@
 		'rootWrapElement',
 	])
 
+	const { evEventService, evDataService } = inject('ngDependace')
+
 	let scope = reactive({
 		rootWrapElement: props.rootWrapElement,
 		contentWrapElement: props.contentWrapElement,
@@ -123,7 +125,6 @@
 		var activeLayoutConfigIsSet = false
 
 		if (!scope.isReport) {
-			console.log('scope.workareaWrapElement:', scope.workareaWrapElement)
 			elements.leftPanelElem = scope.workareaWrapElement.querySelector(
 				'.gEvLeftPanelHolder'
 			)
@@ -140,8 +141,6 @@
 		}
 
 		function renderReportViewer() {
-			console.log('renderReportViewer')
-
 			var begin = Date.now()
 
 			evDataService.setDataLoadStatus(true)
@@ -178,7 +177,6 @@
 
 				return item
 			})
-			console.log('flat list', flatList)
 
 			flatList = setColorsForSubtotals(flatList, coloredSubtotals)
 
@@ -190,7 +188,7 @@
 
 			// console.log('projection', projection);
 
-			rvDomManager.calculateScroll(elements, evDataService)
+			// rvDomManager.calculateScroll(elements, evDataService)
 
 			rvRenderer.render(
 				contentElem,
@@ -204,8 +202,6 @@
 			var end = Date.now()
 
 			var timeSpent = (end - begin) / 1000 // secs;
-
-			console.log('Report viewer render time', timeSpent)
 
 			evDataService.setRenderTime(timeSpent)
 
@@ -432,18 +428,18 @@
 			// for vertical split panel contentWrapElem width calculated by gWidthAlignerComponent.js
 			// horizontal split panel contentWrapElem take all available width
 			if (isRootEntityViewer) {
-				evRvDomManagerService.calculateContentWrapWidth(
-					elements.rootWrapElem,
-					elements.contentWrapElem,
-					evDataService
-				)
+				// evRvDomManagerService.calculateContentWrapWidth(
+				// 	elements.rootWrapElem,
+				// 	elements.contentWrapElem,
+				// 	evDataService
+				// )
 			}
 
-			evRvDomManagerService.calculateWorkareaWrapWidth(
-				elements.contentWrapElem,
-				elements.workareaWrapElem,
-				evDataService
-			)
+			// evRvDomManagerService.calculateWorkareaWrapWidth(
+			// 	elements.contentWrapElem,
+			// 	elements.workareaWrapElem,
+			// 	evDataService
+			// )
 		}
 
 		evEventService.addEventListener(evEvents.UPDATE_PROJECTION, function () {
@@ -451,7 +447,7 @@
 			if (scope.isReport) {
 				projection = rvDataHelper.calculateProjection(flatList, evDataService)
 
-				rvDomManager.calculateScroll(elements, evDataService)
+				// rvDomManager.calculateScroll(elements, evDataService)
 				rvRenderer.render(
 					contentElem,
 					projection,
@@ -476,8 +472,6 @@
 		})
 
 		evEventService.addEventListener(evEvents.DATA_LOAD_START, function () {
-			console.log('gTableBodyComponent DATA_LOAD_START')
-
 			// progressBar.style.display = 'block';
 			/* if (scope.isReport) {
 	                       contentElem.style.opacity = '0.7';
@@ -574,8 +568,6 @@
 					if (!scope.firstRender) {
 						// Force Table render if not rendered in first 60 second
 
-						console.log('Special render trigger')
-
 						updateTableContent()
 					}
 				}, 60 * 1000)
@@ -593,7 +585,7 @@
 				calculateElemsWrapsSizes()
 
 				if (scope.isReport) {
-					rvDomManager.calculateScroll(elements, evDataService)
+					// rvDomManager.calculateScroll(elements, evDataService)
 
 					rvDomManager.initEventDelegation(
 						contentElem,
@@ -604,11 +596,11 @@
 					)
 					// rvDomManager.initContextMenuEventDelegation(contentElem, evDataService, evEventService);
 
-					rvDomManager.addScrollListener(
-						elements,
-						evDataService,
-						evEventService
-					)
+					// rvDomManager.addScrollListener(
+					// 	elements,
+					// 	evDataService,
+					// 	evEventService
+					// )
 
 					evEventService.addEventListener(
 						evEvents.RESIZE_COLUMNS_START,
@@ -718,4 +710,11 @@
 	})
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+	.g-table-body {
+		height: calc(100% - 50px);
+	}
+	.report-viewer-holder .ev-viewport {
+		height: 100%;
+	}
+</style>

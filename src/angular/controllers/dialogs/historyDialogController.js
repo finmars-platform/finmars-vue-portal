@@ -89,7 +89,7 @@ export default function ($scope, $mdDialog, globalDataService, data) {
 	}
 
 	vm.init = function () {
-		console.log('data', data)
+
 
 		vm.content_type = data.content_type
 		vm.entityType = data.entityType

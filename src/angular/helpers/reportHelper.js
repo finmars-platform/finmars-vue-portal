@@ -317,7 +317,7 @@ export default function (expressionService) {
 					item.strategy1
 				)
 
-				console.log('Strategy injected')
+
 			}
 
 			if (item.strategy2 && reportOptions.item_strategies2.length) {
@@ -399,7 +399,7 @@ export default function (expressionService) {
 			}
 		})
 
-		// console.log('INJECTED', items);
+		// ;
 
 		return items
 	}
@@ -448,8 +448,8 @@ export default function (expressionService) {
 	}
 
 	var joinFlatRelationToItem = function (item, key, relation) {
-		// console.log('joinFlatRelationToItem.key', key)
-		// console.log('joinFlatRelationToItem.item', item[key])
+		//
+		//
 
 		if (relation) {
 			Object.keys(relation).forEach(function (relation_key) {
@@ -476,7 +476,7 @@ export default function (expressionService) {
 			reportOptions.item_portfolios
 		)
 
-		console.log('portfolios_as_dict', portfolios_as_dict)
+
 
 		var counterparties_as_dict = null
 		if (reportOptions.item_counterparties) {
@@ -785,7 +785,7 @@ export default function (expressionService) {
 			}
 		})
 
-		// console.log('INJECTED', items);
+		// ;
 
 		return items
 	}
@@ -813,7 +813,7 @@ export default function (expressionService) {
 		var groupsTotalExposure = {}
 
 		Object.keys(groups).forEach(function (key) {
-			console.log('key', key)
+
 
 			groups[key].forEach(function (item) {
 				if (!groupsTotalMarketValue.hasOwnProperty(key)) {
@@ -836,7 +836,7 @@ export default function (expressionService) {
 			})
 		})
 
-		console.log('calculateMarketValueAndExposurePercents.groups', groups)
+
 		console.log(
 			'calculateMarketValueAndExposurePercents.groupsTotalMarketValue',
 			groupsTotalMarketValue
@@ -905,7 +905,7 @@ export default function (expressionService) {
 	) {
 		// var attributes = modelService.getAttributesByContentType(contentType);
 
-		// console.log('contentType', contentType)
+		//
 		var attributes = models[contentType] // Performance improvement trick,
 		var resultKey
 
@@ -956,7 +956,7 @@ export default function (expressionService) {
 		contentType,
 		source
 	) {
-		// console.log('unwrapDynamicAttributes.source', source);
+		// ;
 
 		if (source.hasOwnProperty('attributes')) {
 			var resultKey = parentKey + '.attributes'

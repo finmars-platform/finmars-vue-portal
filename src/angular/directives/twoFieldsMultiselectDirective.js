@@ -80,7 +80,7 @@ export default function ($mdDialog) {
 
 			let getSelectedOptionsIds = function () {
 				if (scope.model) {
-					console.log('# scope.model', scope.model)
+
 
 					selOptionsIdsList = scope.model.map(function (selOption) {
 						let optionId = selOption

@@ -65,7 +65,7 @@
 			class="g-workarea-wrap g-workarea main-area"
 			:class="{
 				'g-content-wrap-right': verticalAdditions.isOpen,
-				'g-root-content-wrap': isRootEntityViewer,
+				wrap_dashboard: viewContext == 'dashboard',
 			}"
 			v-if="domElemsAreReady"
 			ev-data-service="evDataService"
@@ -81,7 +81,7 @@
 			/>
 
 			<AngularFmGridTableFilters
-				v-if="components.filterArea"
+				v-show="components.filterArea"
 				:attributeDataService="attributeDataService"
 				:hideFiltersBlock="hideFiltersBlock"
 				:hideUseFromAboveFilters="hideUseFromAboveFilters"
@@ -152,7 +152,7 @@
 			</div>
 		</div>
 
-		<div class="g-additions" v-if="isRootEntityViewer && additions?.isOpen">
+		<div class="g-additions" v-if="isRootEntityViewerRef && additions?.isOpen">
 			<div v-if="domElemsAreReady">
 				<div
 					data-g-height-aligner
@@ -235,7 +235,13 @@
 		'vm',
 	])
 
-	const { attributeDataService } = props
+	const { attributeDataService, evEventService, evDataService } = props
+
+	provide('ngDependace', {
+		evEventService,
+		evDataService,
+		attributeDataService,
+	})
 
 	let scope = {
 		spExchangeService: '=',
@@ -244,25 +250,23 @@
 	}
 	let elem = ref(null)
 
-	let additions = props.evDataService.getAdditions()
-	let verticalAdditions = props.evDataService.getVerticalAdditions()
+	let additions = evDataService.getAdditions()
+	let verticalAdditions = evDataService.getVerticalAdditions()
 
-	const components = reactive(
-		props.components || props.evDataService.getComponents()
-	)
+	const components = reactive(props.components || evDataService.getComponents())
 
-	let entityType = props.evDataService.getEntityType()
-	let activeObject = props.evDataService.getActiveObject()
+	let entityType = evDataService.getEntityType()
+	let activeObject = evDataService.getActiveObject()
 	let isReport = metaService.isReport(entityType)
 
-	let viewType = props.evDataService.getViewType()
-	let viewSettings = props.evDataService.getViewSettings(viewType)
+	let viewType = ref(evDataService.getViewType())
+	let viewSettings = evDataService.getViewSettings(viewType.value)
 	let readyToRenderTable = ref(false)
 
-	let reportOptions = props.evDataService.getReportOptions()
-	var interfaceLayout = props.evDataService.getInterfaceLayout()
-	var viewContext = props.evDataService.getViewContext()
-	var contentType = props.evDataService.getContentType()
+	let reportOptions = evDataService.getReportOptions()
+	var interfaceLayout = evDataService.getInterfaceLayout()
+	var viewContext = ref(evDataService.getViewContext())
+	var contentType = evDataService.getContentType()
 	var activeLayoutConfigIsSet = false
 
 	let isInsideDashboard = false
@@ -271,12 +275,14 @@
 	let workareaWrapElem = ref(null)
 	let rootWrapElem = ref(null)
 
+	let isRootEntityViewerRef = ref(true)
+
 	onMounted(async () => {
 		let attrs = null
 
 		// var iframeMode = globalDataService.insideIframe()
 
-		if (viewContext === 'dashboard') {
+		if (viewContext.value === 'dashboard') {
 			isInsideDashboard = true
 
 			/* For old rv interface
@@ -285,21 +291,22 @@
 		interfaceLayout.columnArea.collapsed = true;
 		interfaceLayout.columnArea.height = 37;
 
-		props.evDataService.setInterfaceLayout(interfaceLayout);
+		evDataService.setInterfaceLayout(interfaceLayout);
 		*/
 
 			additions.isOpen = false
-			props.evDataService.setAdditions(additions)
+			evDataService.setAdditions(additions)
 		}
 
 		let dashboardFilterCollapsed = true
 
-		let splitPanelIsActive = props.evDataService.isSplitPanelActive()
-		let isRootEntityViewer = props.evDataService.isRootEntityViewer()
+		let splitPanelIsActive = evDataService.isSplitPanelActive()
+		let isRootEntityViewer = evDataService.isRootEntityViewer()
+		isRootEntityViewerRef.value = isRootEntityViewer
 
 		let isRecon = false
 
-		if (viewContext === 'reconciliation_viewer') {
+		if (viewContext.value === 'reconciliation_viewer') {
 			let isRecon = true
 		}
 		domElemsAreReady.value = true
@@ -335,12 +342,12 @@
 		// Slowdown really visible in dashboard
 
 		let toggleGroupAndColumnArea = function () {
-			interfaceLayout = props.evDataService.getInterfaceLayout()
+			interfaceLayout = evDataService.getInterfaceLayout()
 
 			//let groupingAndColumnAreaCollapsed = groupingAndColumnAreaCollapsed;
 
-			props.evDataService.setInterfaceLayout(interfaceLayout)
-			props.evEventService.dispatchEvent(evEvents.UPDATE_TABLE_VIEWPORT)
+			evDataService.setInterfaceLayout(interfaceLayout)
+			evEventService.dispatchEvent(evEvents.UPDATE_TABLE_VIEWPORT)
 		}
 
 		let toggleDashboardFilter = function () {
@@ -348,14 +355,14 @@
 		}
 
 		var applyGroupsFoldingFromLocalStorage = function () {
-			var listLayout = props.evDataService.getListLayout()
+			var listLayout = evDataService.getListLayout()
 			var reportData = localStorageService.getReportDataForLayout(
 				contentType,
 				listLayout.user_code
 			)
 
 			if (reportData.groupsList && reportData.groupsList.length) {
-				var groups = props.evDataService.getGroups()
+				var groups = evDataService.getGroups()
 
 				reportData.groupsList.forEach((groupObj) => {
 					var group = groups.find((group) => group.key === groupObj.key)
@@ -368,93 +375,74 @@
 					}
 				})
 
-				props.evDataService.setGroups(groups)
+				evDataService.setGroups(groups)
 
 				rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService)
 			}
 		}
 
 		var initEventListeners = function () {
-			props.evEventService.addEventListener(
-				evEvents.ADDITIONS_CHANGE,
-				function () {
-					let additions = props.evDataService.getAdditions()
+			evEventService.addEventListener(evEvents.ADDITIONS_CHANGE, function () {
+				let additions = evDataService.getAdditions()
 
-					console.log('additions', additions)
+				let activeObject = evDataService.getActiveObject()
+			})
 
-					let activeObject = props.evDataService.getActiveObject()
-				}
-			)
-
-			props.evEventService.addEventListener(
+			evEventService.addEventListener(
 				evEvents.VERTICAL_ADDITIONS_CHANGE,
 				function () {
-					let verticalAdditions = props.evDataService.getVerticalAdditions()
+					let verticalAdditions = evDataService.getVerticalAdditions()
 
 					if (!verticalAdditions || !verticalAdditions.isOpen) {
 						setTimeout(function () {
 							// wait for angular to remove vertical split panel
 
-							// delete props.evEventService.dispatchEvent(evEvents.UPDATE_ENTITY_VIEWER_CONTENT_WRAP_SIZE);
-							props.evEventService.dispatchEvent(evEvents.UPDATE_TABLE_VIEWPORT)
+							// delete evEventService.dispatchEvent(evEvents.UPDATE_ENTITY_VIEWER_CONTENT_WRAP_SIZE);
+							evEventService.dispatchEvent(evEvents.UPDATE_TABLE_VIEWPORT)
 						}, 200)
 					}
-
-					console.log('VERTICAL ADDITIONS CHANGE', verticalAdditions)
 				}
 			)
 
-			props.evEventService.addEventListener(
+			evEventService.addEventListener(
 				evEvents.ACTIVE_OBJECT_CHANGE,
 				function () {
-					let activeObject = props.evDataService.getActiveObject()
+					let activeObject = evDataService.getActiveObject()
 				}
 			)
 
-			props.evEventService.addEventListener(
-				evEvents.FILTERS_RENDERED,
-				function () {
-					readyToRenderTable.value = true
+			evEventService.addEventListener(evEvents.FILTERS_RENDERED, function () {
+				readyToRenderTable.value = true
 
-					setTimeout(() => {
-						$apply()
-					}, 0)
+				setTimeout(() => {
+					$apply()
+				}, 0)
+			})
+
+			evEventService.addEventListener(evEvents.DATA_LOAD_END, function () {
+				let additions = evDataService.getAdditions()
+				let activeObject = evDataService.getActiveObject()
+				readyToRenderTable.value = true
+
+				if (viewType.value === 'matrix' && !activeLayoutConfigIsSet) {
+					activeLayoutConfigIsSet = true
+
+					evDataService.setActiveLayoutConfiguration({ isReport: true }) // saving layout for checking for changes
+					evEventService.dispatchEvent(
+						evEvents.ACTIVE_LAYOUT_CONFIGURATION_CHANGED
+					)
 				}
-			)
+			})
 
-			props.evEventService.addEventListener(
-				evEvents.DATA_LOAD_END,
-				function () {
-					let additions = props.evDataService.getAdditions()
-					let activeObject = props.evDataService.getActiveObject()
-					readyToRenderTable.value = true
+			evEventService.addEventListener(evEvents.VIEW_TYPE_CHANGED, function () {
+				viewType.value = evDataService.getViewType()
+				let viewSettings = evDataService.getViewSettings(viewType.value)
+			})
 
-					if (viewType === 'matrix' && !activeLayoutConfigIsSet) {
-						activeLayoutConfigIsSet = true
-
-						props.evDataService.setActiveLayoutConfiguration({ isReport: true }) // saving layout for checking for changes
-						props.evEventService.dispatchEvent(
-							evEvents.ACTIVE_LAYOUT_CONFIGURATION_CHANGED
-						)
-					}
-				}
-			)
-
-			props.evEventService.addEventListener(
-				evEvents.VIEW_TYPE_CHANGED,
-				function () {
-					let viewType = props.evDataService.getViewType()
-					let viewSettings = props.evDataService.getViewSettings(viewType)
-
-					console.log('viewType ', viewType)
-					console.log('viewSettings', viewSettings)
-				}
-			)
-
-			props.evEventService.addEventListener(
+			evEventService.addEventListener(
 				evEvents.REPORT_OPTIONS_CHANGE,
 				function () {
-					let reportOptions = props.evDataService.getReportOptions()
+					let reportOptions = evDataService.getReportOptions()
 				}
 			)
 		}
@@ -469,7 +457,7 @@
 					.querySelector('body')
 					.classList.contains('filter-side-nav-collapsed')
 			) {
-				props.evDataService.toggleRightSidebar(true)
+				evDataService.toggleRightSidebar(true)
 			}
 		}
 
@@ -484,7 +472,7 @@
 			classes = 'g-reconciliation-wrapper'
 		}
 
-		if (props.evDataService.isVerticalSplitPanelActive()) {
+		if (evDataService.isVerticalSplitPanelActive()) {
 			classes += ' g-v-split-panel-active'
 		}
 
@@ -496,4 +484,12 @@
 	}
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+	.g-wrapper .g-table-wrap {
+		overflow: auto;
+	}
+	.wrap_dashboard {
+		display: block;
+		height: 100%;
+	}
+</style>

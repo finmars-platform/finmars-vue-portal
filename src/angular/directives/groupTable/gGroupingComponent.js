@@ -498,7 +498,7 @@ export default function ($mdDialog) {
 			}
 
 			var flagMissingGroups = function () {
-				console.log('flagMissingColumns.columns', scope.columns)
+
 
 				var attributeTypes
 				var attributes
@@ -520,7 +520,7 @@ export default function ($mdDialog) {
 							break
 					}
 
-					console.log('flagMissingColumns.attributes', attributes)
+
 
 					scope.groups = scope.groups.map(function (group) {
 						group.status = 'ok'
@@ -549,7 +549,7 @@ export default function ($mdDialog) {
 							scope.entityType
 						)
 
-					console.log('flagMissingColumns.attributeTypes', attributeTypes)
+
 
 					var user_code
 					var isMissing

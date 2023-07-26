@@ -113,8 +113,8 @@ export default function ($mdDialog, gFiltersHelper) {
 								},
 							})
 							.then(function (res) {
-								console.log('openUseFromAboveSettings.res', res)
-								console.log('openUseFromAboveSettings.vm.filter', vm.filter)
+
+
 
 								if (res.status === 'agree') {
 									if (
@@ -147,7 +147,7 @@ export default function ($mdDialog, gFiltersHelper) {
 				}
 
 				vm.getActiveFilterType = (filterTypesList) => {
-					console.log('vm.getActiveFilterType vm.filter', vm.filter)
+
 
 					if (
 						vm.filter.options.use_from_above &&

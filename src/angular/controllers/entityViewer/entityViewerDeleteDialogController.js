@@ -10,7 +10,7 @@ export default function ($scope, $mdDialog, entity, entityType) {
 	logService.controller('EntityViewerDeleteDialogController', 'initialized')
 
 	var vm = this
-	console.log('vm.entity', entity)
+
 	vm.entity = entity
 	vm.entityType = entityType
 
@@ -29,7 +29,7 @@ export default function ($scope, $mdDialog, entity, entityType) {
 		entityResolverService
 			.deleteByKey(vm.entityType, vm.entity.id)
 			.then(function (data) {
-				console.log('deleted!', data)
+
 
 				$mdDialog.hide({ status: 'agree', data: { id: vm.entity.id } })
 			})

@@ -185,7 +185,7 @@ export default function ($mdDialog, uiService, dashboardHelper) {
 								scope.item.data.id
 							)
 
-							console.log('tableChart.status', status)
+
 
 							if (status === dashboardComponentStatuses.START) {
 								// Init calculation of a component
@@ -279,7 +279,7 @@ export default function ($mdDialog, uiService, dashboardHelper) {
 			scope.init = function () {
 				scope.initEventListeners()
 
-				console.log('tableChart.scope.fillInModeData, ', scope.fillInModeData)
+
 
 				if (!scope.fillInModeData) {
 					scope.dashboardDataService.setComponentRefreshRestriction(

@@ -20,7 +20,7 @@ export default function (toastNotificationService) {
     // DEPRECATED
     const handleXhrErrors = function (response) {
 
-        // console.log('handleXhrErrors.response', response);
+        // ;
 
         return new Promise(function (resolve, reject) {
 
@@ -72,7 +72,7 @@ export default function (toastNotificationService) {
 
     const getFullErrorAsHtml = function (obj, message) {
 
-        // console.log('getFullErrorAsHtml.obj', obj);
+        // ;
 
         Object.keys(obj).forEach(function (key) {
 
@@ -114,7 +114,7 @@ export default function (toastNotificationService) {
 
     const notifyError = function (reason) {
 
-        console.log('notifyError.reason', reason);
+        ;
 
         let error_object = reason.response.data.error
 

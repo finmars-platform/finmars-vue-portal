@@ -12,6 +12,8 @@
 	var evContent
 	var minWidth = 65
 
+	const { evEventService, evDataService } = inject('ngDependace')
+
 	onMounted(() => {
 		init()
 	})

@@ -554,7 +554,7 @@ export default function transactionImportSchemeAddDialogController(
                 }
             }).then(function (res) {
                 if (res.status === 'agree') {
-                    console.log("res", res.data);
+                    ;
                 }
             });
         };*/

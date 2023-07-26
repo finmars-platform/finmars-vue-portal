@@ -651,7 +651,7 @@ export default function (
 		vm.getInputFunctions(vm.entityType).then(function (data) {
 			vm.inputsFunctions = data
 
-			console.log('vm.inputsFunctions', vm.inputsFunctions)
+
 
 			vm.readyStatus.content = true
 

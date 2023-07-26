@@ -10,7 +10,7 @@ export default function ($scope, $mdDialog, data) {
 	vm.entityType = data.entityType
 	vm.item = data.item
 
-	console.log('vm.item', vm.item)
+
 
 	vm.readyStatus = { content: false }
 
@@ -18,7 +18,7 @@ export default function ($scope, $mdDialog, data) {
 	vm.mode = 'skip'
 
 	vm.checkExtension = function (file, extension, $event) {
-		console.log('file', file)
+
 
 		if (file) {
 			var ext = file.name.split('.')[1]
@@ -58,19 +58,19 @@ export default function ($scope, $mdDialog, data) {
 
 		reader.onload = function (evt) {
 			try {
-				console.log('evt.target', evt.target)
+
 
 				var file = evt.target.result
 
-				console.log('file', file)
+
 
 				var lines = file.split(/\r\n|\n|\r/)
 
-				console.log('lines', lines)
+
 
 				lines.splice(0, 1)
 
-				console.log('lines', lines)
+
 
 				if (vm.mode === 'skip') {
 					var itemsExists = []
@@ -143,7 +143,7 @@ export default function ($scope, $mdDialog, data) {
 							multiple: true,
 						})
 						.then(function (res) {
-							console.log('res', res)
+
 							if (res.status === 'agree') {
 								vm.classifier.classifiers = []
 								vm.classifier.classifiers_flat = []
@@ -189,7 +189,7 @@ export default function ($scope, $mdDialog, data) {
 						})
 				}
 			} catch (error) {
-				console.log('error', error)
+
 
 				$mdDialog.show({
 					controller: 'WarningDialogController as vm',

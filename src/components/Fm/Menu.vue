@@ -1,5 +1,5 @@
 <template>
-	<div class="fm_menu">
+	<div class="fm_menu" data-testId="fm_menu">
 		<div ref="activator" class="height-100">
 			<slot name="btn" :isOpen="isOpen"></slot>
 		</div>
@@ -32,6 +32,10 @@
 		openOnHover: {
 			type: Boolean,
 			default: false,
+		},
+		openOn: {
+			type: String,
+			default: 'click',
 		},
 		disabled: Boolean,
 		closeOnClickOutside: {
@@ -68,10 +72,8 @@
 	let isLeft = props.anchor.includes('left')
 	let isRight = props.anchor.includes('right')
 
-	onMounted(() => {
-
-		if ( props.openOnHover ) {
-
+	onMounted(async () => {
+		if (props.openOnHover) {
 			activator.value.addEventListener('mouseover', () => {
 				isOpen.value = true
 			})
@@ -79,17 +81,15 @@
 			activator.value.addEventListener('mouseleave', () => {
 				isOpen.value = false
 			})
-
 		} else {
-			activator.value.addEventListener('click', toggle);
+			activator.value.addEventListener(props.openOn, toggle)
 		}
-
-	});
+	})
 
 	watch(
 		() => props.opened,
 		() => {
-			if (!props.disabled) isOpen.value = props.opened;
+			if (!props.disabled) isOpen.value = props.opened
 		}
 	)
 
@@ -248,8 +248,11 @@
 
 	watch(isOpen, isOpenHandler)
 
-	function toggle() {
-		if (props.disabled) return
+	function toggle(e) {
+
+		if (e) e.preventDefault();
+
+		if (props.disabled) return false;
 
 		isOpen.value = !isOpen.value
 
@@ -259,11 +262,14 @@
 	let closeOnCo = {
 		handler: function (event) {
 			// needed when fm_drop attached to another element (e.g. body)
-			if ( ( popup.value && popup.value.contains(event.target) ) || activator.value.contains(event.target) ) return;
+			if (
+				(popup.value && popup.value.contains(event.target)) ||
+				activator.value.contains(event.target)
+			)
+				return
 
-			isOpen.value = false;
-			emit('update:opened', isOpen.value);
-
+			isOpen.value = false
+			emit('update:opened', isOpen.value)
 		},
 		isActive: props.closeOnClickOutside,
 	}

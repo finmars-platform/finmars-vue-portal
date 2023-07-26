@@ -20,7 +20,7 @@ var importSimple = function (resolve, reject, config, index, updateCounter) {
 		formData.append('mode', config.mode)
 	}
 
-	// console.log('action', action);
+	// ;
 
 	importEntityService
 		.validateImport(formData)
@@ -63,7 +63,7 @@ var handleCsvImportAction = function (
 			mode: action.mode,
 		}
 
-		// console.log('handleComplexTransactionImportAction.config', config)
+		//
 
 		importSimple(resolve, reject, config, index, updateCounter)
 	})
@@ -133,7 +133,7 @@ var handleComplexTransactionImportAction = function (
 			delimiter: delimiter,
 		}
 
-		// console.log('handleComplexTransactionImportAction.config', config)
+		//
 
 		importComplexTransactions(resolve, reject, config, index, updateCounter)
 	})
@@ -188,7 +188,7 @@ var processActionOneByOne = function (
 ) {
 	processAction(actions[index], file, delimiter, index, updateCounter)
 		.then(function (res) {
-			// console.log('processAction.res', res);
+			// ;
 			result.configs[index] = res.config
 			result.errors[index] = []
 
@@ -242,8 +242,8 @@ var processActionOneByOne = function (
 
 var validateImport = function (file, delimiter, scheme, updateCounter) {
 	return new Promise(function (resolve, reject) {
-		// console.log('file', file);
-		// console.log('config', scheme);
+		// ;
+		// ;
 
 		var result = {
 			import_results: [],

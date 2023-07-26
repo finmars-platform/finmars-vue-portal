@@ -33,7 +33,7 @@ export default function reconProcessBankFileDialogController(
 	vm.schemes = []
 
 	vm.checkExtension = function (file, extension, $event) {
-		console.log('file', file)
+
 
 		if (file) {
 			var ext = file.name.split('.')[1]
@@ -122,7 +122,7 @@ export default function reconProcessBankFileDialogController(
 
 					vm.parsedFile = text.split('\n')
 
-					console.log('File readed', vm.parsedFile)
+
 
 					resolve(formData)
 				}
@@ -152,7 +152,7 @@ export default function reconProcessBankFileDialogController(
 				$scope.$apply()
 
 				if (vm.config.task_status === 'SUCCESS') {
-					console.log('Processing is finished', data)
+
 
 					$mdDialog.hide({
 						status: 'agree',

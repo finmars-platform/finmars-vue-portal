@@ -19,7 +19,7 @@ export default function ($scope, $mdDialog) {
 
 			vm.readyStatus.content = true
 
-			console.log('vm.items', vm.items)
+
 
 			$scope.$apply()
 		})

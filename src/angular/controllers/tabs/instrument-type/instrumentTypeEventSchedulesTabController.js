@@ -464,7 +464,7 @@ export default function instrumentTypeEventSchedulesTabController(
 		)
 		var action = event.data.actions[row.order]
 
-		console.log('openEventActionParametersManager vm.event.data', event.data)
+
 
 		if (!event.data) {
 			event.data = {}
@@ -493,7 +493,7 @@ export default function instrumentTypeEventSchedulesTabController(
 				},
 			})
 			.then((res) => {
-				console.log('openEventParametersManager.res', res)
+
 
 				if (res.status === 'agree') {
 					event.data.actions[row.order] = res.data.item
@@ -1046,12 +1046,12 @@ export default function instrumentTypeEventSchedulesTabController(
 		eventActionsGridTableDataService,
 		eventActionsGridTableEventService
 	) {
-		console.log('item', item)
+
 
 		var gridTableData = eventActionsGridTableDataService.getTableData()
 
 		var newRow = gridTableData.body[0]
-		console.log('newRow', newRow)
+
 
 		var newAction = {
 			transaction_type: '',
@@ -1261,7 +1261,7 @@ export default function instrumentTypeEventSchedulesTabController(
 				},
 			})
 			.then((res) => {
-				console.log('openEventParametersManager.res', res)
+
 
 				if (res.status === 'agree') {
 					item.data.parameters = res.data.item.data.parameters

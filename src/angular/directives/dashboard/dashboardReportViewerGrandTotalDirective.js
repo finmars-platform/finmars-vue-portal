@@ -29,7 +29,7 @@ export default function ($mdDialog) {
 
 			var componentData
 
-			console.log('componentData scope.item', scope.item)
+
 
 			if (scope.item && scope.item.data) {
 				componentData = scope.dashboardDataService.getComponentById(

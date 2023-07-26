@@ -48,8 +48,8 @@ export default function (metaContentTypesService, fieldResolverService) {
 
 			var fieldsDataIsLoaded = false
 			var elIndexesData = {}
-			// console.log('scope.item.name', scope.item);
-			// console.log('scope.entity', scope.entity);
+			// ;
+			// ;
 
 			if (
 				[
@@ -62,7 +62,7 @@ export default function (metaContentTypesService, fieldResolverService) {
 				scope.type = 'multiple-ids'
 			}
 
-			// console.log('scope.type', scope.type);
+			// ;
 
 			scope.isSpecialSearchRelation = function () {
 				return (
@@ -81,7 +81,7 @@ export default function (metaContentTypesService, fieldResolverService) {
 			}
 
 			scope.getValueEntity = function () {
-				// console.log('scope.getModelKeyEntity scope.item.key', scope.item.key)
+				//
 
 				//var key;
 				var valueEntity = scope.item.key
@@ -91,7 +91,7 @@ export default function (metaContentTypesService, fieldResolverService) {
 						scope.item.content_type
 					)
 
-					// console.log('valueEntity', valueEntity);
+					// ;
 				} else {
 					if (
 						scope.item.key &&
@@ -320,8 +320,8 @@ export default function (metaContentTypesService, fieldResolverService) {
 					}
 				}
 
-				console.log('scope.fields', scope.fields)
-				console.log('getInputTextForEntitySearch', result)
+
+
 
 				return result
 			}
@@ -357,7 +357,7 @@ export default function (metaContentTypesService, fieldResolverService) {
 						}
 
 						if (scope.entityType === 'complex-transaction') {
-							console.log('scope.fieldsDataStore', scope.fieldsDataStore)
+
 
 							if (scope.fieldsDataStore['fieldKeys']) {
 								delete scope.fieldsDataStore['fieldKeys']['currencies.currency']
@@ -373,7 +373,7 @@ export default function (metaContentTypesService, fieldResolverService) {
 									scope.fieldsDataStore
 								)
 								.then(function (res) {
-									console.log('res', res)
+
 
 									scope.type = res.type
 									scope.fields = res.data

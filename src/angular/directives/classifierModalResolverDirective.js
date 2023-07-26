@@ -48,7 +48,7 @@ export default function ($mdDialog) {
 						if (res.status === 'agree') {
 							ngModelCtrl.$setViewValue(res.data.item)
 							ngModelCtrl.$render()
-							console.log('ngModelCtrl', scope.classifierValue)
+
 						}
 					})
 			})

@@ -60,6 +60,7 @@ export default function ({
 	reportService,
 }) {
 	var getList = function (entityType, options) {
+
 		switch (entityType) {
 			case 'portfolio':
 				return portfolioService.getList(options)
@@ -194,13 +195,13 @@ export default function ({
 			case 'pricing-procedure':
 				return pricingProcedureService.getList(options)
 				break
-			case 'balance-report':
+			case 'reports.balancereport':
 				return reportService.getBalanceReport(options)
 				break
 			case 'reports.plreport': // CONTENT TYPE
 				return reportService.getPnlReport(options)
 				break
-			case 'transaction-report':
+			case 'reports.transactionreport':
 				return reportService.getTransactionReport(options)
 				break
 

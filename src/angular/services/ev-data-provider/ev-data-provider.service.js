@@ -691,7 +691,7 @@ var getGroups = function (
 							}
 						})
 						.catch(function (data) {
-							console.log('error request requestParameters', requestParameters)
+
 
 							requestParameters.loadAll = false
 
@@ -843,7 +843,7 @@ var sortGroupType = function (
 ) {
 	var activeGroupSort = entityViewerDataService.getActiveGroupTypeSort()
 
-	console.log('sortGroupType.activeGroupSort', activeGroupSort)
+
 
 	var groupsTypes = entityViewerDataService.getGroups()
 
@@ -859,7 +859,7 @@ var sortGroupType = function (
 		}
 	})
 
-	console.log('sortGroupType.level', level)
+
 
 	var groups = evDataHelper.getGroupsByLevel(level, entityViewerDataService)
 

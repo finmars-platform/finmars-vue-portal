@@ -133,7 +133,7 @@ export default function (metaContentTypesService, uiService, reportHelper) {
 		return new Promise((resolve, reject) => {
 			let layout = evDataService.getLayoutCurrentConfiguration(isReport)
 
-			layout = JSON.parse(angular.toJson(layout))
+			layout = JSON.parse(JSON.stringify(layout))
 
 			delete layout.id
 			delete layout.modified

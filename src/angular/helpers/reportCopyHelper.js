@@ -6,7 +6,7 @@ import convertReportHelper from './converters/convertReportHelper'
 
         var listener = function (e) {
 
-            console.log('table', table);
+            ;
 
             e.clipboardData.setData('text/html', table);
 
@@ -69,7 +69,7 @@ var copy = function (evDataService, isReport, copyType) {
 		)
 
 		var listener = function (e) {
-			// console.log('covert copy selected csv', csv);
+			// ;
 
 			e.clipboardData.setData('text/plain', table)
 
