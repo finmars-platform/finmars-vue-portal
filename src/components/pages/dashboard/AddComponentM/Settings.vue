@@ -56,7 +56,7 @@
 		tab: Number,
 	})
 	const dashStore = useStoreDashboard()
-	const component = inject('component')
+	const { component } = inject('component')
 	console.log('component:', component)
 
 	component.value.tab = props.tab

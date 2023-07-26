@@ -120,16 +120,38 @@ export default defineStore({
 						// )
 
 						props.forEach((childProp) => {
-							log.children.push({
+							/*log.children.push({
 								name: childProp.name,
 								componentName: this.components.find(
 									(item) => item.uid == childProp.component_id
 								).user_code,
 								newVal: prop.__val,
 								oldVal: childProp.__val,
-							})
+							})*/
 
-							childProp.__val = prop.__val
+							if ( childProp.subscribedTo[uid].dynamicOutputs ) {
+
+								const propName = childProp.subscribedTo[uid].propName;
+
+								childProp.__val = newVal[propName];
+
+							} else {
+								childProp.__val = prop.__val
+							}
+
+							if (typeof newVal === 'object') {
+
+								const propName = childProp.subscribedTo[uid].propName;
+
+								childProp.__val = newVal[propName];
+
+							}
+							else {
+
+								childProp.__val = prop.__val
+
+							}
+
 
 							// console.log(
 							// 	`=> ${this.components.find(item => item.id == childProp.cid).user_code} / %c${childProp.name}`,

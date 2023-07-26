@@ -132,7 +132,7 @@
 	}
 	.modal_content {
 		overflow: auto;
-		max-height: calc(100% - $modal-header-height - $modal-footer-height);
+		max-height: calc(90vh - $modal-header-height - $modal-footer-height);
 		padding: 15px 20px 0;
 		min-width: 400px; // so that FmInputEntityNames could fit in
 	}
