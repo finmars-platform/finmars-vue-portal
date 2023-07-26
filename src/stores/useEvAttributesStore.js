@@ -329,6 +329,7 @@ export default defineStore({
 
 			});
 
+
 			this.systemAttrs = res;
 
 		},

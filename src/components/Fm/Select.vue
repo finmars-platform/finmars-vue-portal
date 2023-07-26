@@ -106,7 +106,10 @@
 		no_borders: Boolean,
 		optionsFilter: Boolean,
 		required: Boolean,
-		attach: String,
+		attach: {
+			type: String,
+			default: 'body',
+		},
 		clearBtn: Boolean, // button that empties select
 		errorData: Object,
 	})

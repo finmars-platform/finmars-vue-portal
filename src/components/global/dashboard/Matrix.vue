@@ -1,12 +1,12 @@
 <template>
 	<div>
-		<iframe v-if="readyStatus"
+<!--		<iframe v-if="readyStatus"
 						height="100%"
 						width="100%"
 						ref="iframeElem"
 						:src="source"></iframe>
 
-		<div v-if="errorMessage" class="red-text">{{ errorMessage }}</div>
+		<div v-if="errorMessage" class="red-text">{{ errorMessage }}</div>-->
 	</div>
 </template>
 

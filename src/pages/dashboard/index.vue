@@ -251,6 +251,8 @@
 	}
 
 	downloadAttributes()
+
+	console.log("testing1090 outputs", dashStore.props.outputs);
 </script>
 
 <style lang="scss" scoped>

@@ -33,7 +33,15 @@
 	let step = ref('component')
 	let component = ref({})
 
-	provide('component', component)
+	function updateComponent(componentData) {
+		component.value = componentData;
+		console.log("testing1090.updateComponent ", component.value );
+	}
+
+	provide('component', {
+		component,
+		updateComponent,
+	})
 
 	function addComponent(cancelFunc) {
 		if (
@@ -60,6 +68,7 @@
 		}
 
 		dashStore.$patch((state) => {
+			console.log( "testing1090.addComponent new_comp", JSON.parse(JSON.stringify( new_comp )) );
 			dashStore.components.push(new_comp)
 
 			component.value.inputs.forEach((prop) => {
@@ -87,12 +96,17 @@
 					name: prop.name,
 					type: prop.type,
 					key: prop.key,
+					value_type: prop.value_type,
 
 					view: prop.view,
 
 					default_value: prop.default_value,
 					__val: prop.default_value,
 				})
+
+				if (newProp.value_type === 100) {
+					newProp.value_content_type = prop.value_content_type;
+				}
 
 				state.props.outputs.push(newProp)
 
@@ -102,6 +116,7 @@
 					inputProp.subscribedTo.push(newProp.uid)
 				})
 			})
+
 			dashStore.setPropsWatchers()
 		})
 		cancelFunc()
