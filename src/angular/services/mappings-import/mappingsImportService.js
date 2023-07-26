@@ -124,7 +124,7 @@ function mapContentObj(entity, item) {
 				})
 			}
 
-			console.log('MAP OBJECT ', item)
+
 
 			resolve(item)
 		})
@@ -165,7 +165,7 @@ function mapItem(item, existingMappings, entityType, errors) {
 
 		if (exists === false) {
 			mapContentObj(entityType, item).then(function (resultItem) {
-				// console.log('resultItem', resultItem);
+				// ;
 
 				if (resultItem.content_object) {
 					entityTypeMappingResolveService
@@ -260,7 +260,7 @@ function mapEntityItems(entityItem, settings, errors) {
 					function (resultMappings) {
 						existingMappings = resultMappings
 
-						// console.log('existingMappings', existingMappings);
+						// ;
 
 						var promises = []
 
@@ -273,7 +273,7 @@ function mapEntityItems(entityItem, settings, errors) {
 						})
 
 						Promise.all(promises).then(function (data) {
-							// console.log('Entities imported');
+							// ;
 
 							resolve(data)
 						})
@@ -299,7 +299,7 @@ var importMappings = function (items, settings) {
 		})
 
 		Promise.all(promises).then(function (data) {
-			console.log('import success', data)
+
 
 			resolve({
 				data: data,

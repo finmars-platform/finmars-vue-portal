@@ -75,7 +75,7 @@ export default function dashboardFinmarsWidgetDirective(
 						var componentsOutputs =
 							scope.dashboardDataService.getAllComponentsOutputs()
 
-						console.log('componentsOutputs', componentsOutputs)
+
 
 						Object.keys(componentsOutputs).forEach(function (compKey) {
 							if (componentsOutputs[compKey]) {
@@ -94,7 +94,7 @@ export default function dashboardFinmarsWidgetDirective(
 										}
 									}
 								} catch (error) {
-									console.log('could not fetch value')
+
 								}
 							}
 						})
@@ -126,8 +126,8 @@ export default function dashboardFinmarsWidgetDirective(
 
 				// document.querySelector(scope.containerId).innerHTML = '';
 
-				// console.log('scope.portfolio ', scope.portfolio)
-				// console.log('scope.data ',scope.date_to )
+				//
+				//
 
 				// let FinmarsWidgets2 = new window.FinmarsWidgets({
 				//     apiUrl: baseUrl + '/v/',
@@ -170,7 +170,7 @@ export default function dashboardFinmarsWidgetDirective(
 			scope.createWidgetIfNotExists = function () {
 				if (!scope.widgetCreated) {
 					if (scope.portfolio && scope.date_to) {
-						console.log('createWidgetIfNotExists going to create widget')
+
 
 						scope.componentData = scope.dashboardDataService.getComponentById(
 							scope.item.data.id
@@ -182,10 +182,10 @@ export default function dashboardFinmarsWidgetDirective(
 						scope.currentMasterUser = globalDataService.getMasterUser()
 						scope.containerId = '#finmars-widget-container-' + scope.id
 
-						console.log(document.querySelector(scope.containerId))
+
 
 						if (document.querySelector(scope.containerId)) {
-							console.log('createWidgetIfNotExists div exists, initing widget')
+
 
 							scope.componentName = scope.componentData.custom_component_name
 

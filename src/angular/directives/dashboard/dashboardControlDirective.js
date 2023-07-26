@@ -137,8 +137,8 @@ export default function (
 			}
 
 			scope.valueChanged = function () {
-				console.log('valueChanged', scope.item.data.store)
-				console.log('valueChanged.value', scope.item.data.store.value)
+
+
 
 				if (scope.componentData.settings.value_type === 100) {
 					if (scope.componentData.settings.multiple) {

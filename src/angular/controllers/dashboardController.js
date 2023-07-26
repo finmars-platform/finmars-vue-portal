@@ -38,7 +38,7 @@ export default function ($scope, $stateParams, $mdDialog) {
 	vm.generateProjection = function (layout) {
 		var result = []
 
-		console.log('generateProjection.vm.layout', layout)
+
 
 		var data = JSON.parse(JSON.stringify(layout.data))
 
@@ -58,7 +58,7 @@ export default function ($scope, $stateParams, $mdDialog) {
 					}
 				})
 
-				console.log('rowsUsedInAccordions', rowsUsedInAccordions)
+
 
 				tab.layout.rows.forEach(function (item, index) {
 					if (rowsUsedInAccordions.indexOf(index) === -1) {
@@ -122,7 +122,7 @@ export default function ($scope, $stateParams, $mdDialog) {
 			result.push(tab)
 		})
 
-		console.log('generateProjection.result', result)
+
 
 		return result
 	}
@@ -141,8 +141,8 @@ export default function ($scope, $stateParams, $mdDialog) {
 
 			vm.layout = data
 
-			console.log('vm.layout', vm.layout)
-			console.log('vm.popupData', vm.popupData)
+
+
 
 			vm.initEventListeners()
 
@@ -203,7 +203,7 @@ export default function ($scope, $stateParams, $mdDialog) {
 		vm.readyStatus.data = false
 		var activeLayoutUserCode = $stateParams.layoutUserCode
 
-		console.log('activeLayoutUserCode', activeLayoutUserCode)
+
 
 		if (activeLayoutUserCode) {
 			uiService
@@ -220,7 +220,7 @@ export default function ($scope, $stateParams, $mdDialog) {
 						}
 					}
 
-					console.log('vm.layout', vm.layout)
+
 
 					vm.dashboardDataService.setData(vm.layout)
 					vm.dashboardDataService.setListLayout(

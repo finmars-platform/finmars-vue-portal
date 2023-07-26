@@ -96,7 +96,7 @@ export default function systemMEssagesController(
 
 	vm.downloadFile = function ($event, item) {
 		systemMessageService.viewFile(item.file_report).then(function (data) {
-			console.log('data', data)
+
 
 			$mdDialog.show({
 				controller: 'FilePreviewDialogController as vm',
@@ -160,7 +160,7 @@ export default function systemMEssagesController(
 						item.verbose_type = 'Success'
 					}
 
-					console.log('item', item)
+
 
 					if (item.section === 0) {
 						item.verbose_section = 'General'

@@ -6,7 +6,7 @@
 
 export default function () {
 
-    // toastr.options.onclick = function() { console.log('clicked'); }
+    // toastr.options.onclick = function() { ; }
 
     const success = function (message) {
         toastr.success(message);

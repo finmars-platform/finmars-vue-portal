@@ -499,7 +499,7 @@ export default function ($mdDialog) {
 			scope.saveField = function () {
 				scope.item.editMode = false
 
-				console.log('saveField scope.item', scope.item)
+
 
 				var layout = scope.dashboardConstructorDataService.getData()
 
@@ -531,9 +531,9 @@ export default function ($mdDialog) {
 			}
 
 			scope.deleteField = function () {
-				console.log('scope.tab_number', scope.tabNumber)
-				console.log('scope.row_number', scope.rowNumber)
-				console.log('scope.column_number', scope.columnNumber)
+
+
+
 
 				var layout = scope.dashboardConstructorDataService.getData()
 
@@ -567,7 +567,7 @@ export default function ($mdDialog) {
 					}
 				}
 
-				console.log('tab', tab)
+
 
 				// set hidden empty cells to visible end
 

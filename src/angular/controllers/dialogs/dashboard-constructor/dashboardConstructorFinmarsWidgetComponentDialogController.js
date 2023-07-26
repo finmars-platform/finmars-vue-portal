@@ -14,7 +14,7 @@ export default function dashboardConstructorFinmarsWidgetComponentDialogControll
 ) {
 	var vm = this
 
-	console.log('item', item)
+
 
 	if (item) {
 		vm.item = item
@@ -34,7 +34,7 @@ export default function dashboardConstructorFinmarsWidgetComponentDialogControll
 	}
 
 	vm.agree = function () {
-		console.log('vm.item', vm.item)
+
 
 		if (vm.item.id) {
 			/*vm.componentsTypes = vm.componentsTypes.map(function (item) {
@@ -69,11 +69,11 @@ export default function dashboardConstructorFinmarsWidgetComponentDialogControll
 	}
 
 	vm.init = function () {
-		console.log('dataService', dataService)
+
 
 		vm.componentsTypes = dataService.getComponents()
 
-		console.log('vm.item.settings', vm.item)
+
 	}
 
 	vm.init()

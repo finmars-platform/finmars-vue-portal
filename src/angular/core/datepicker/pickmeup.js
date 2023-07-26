@@ -81,7 +81,7 @@
         },
         change: function () {
 
-            //console.log('here change?');
+            //;
 
             var i;
 
@@ -232,7 +232,7 @@
                 .text(header);
             html = '';
 
-            //console.log('current_date', current_date);
+            //;
 
             var is_year_selected = function (year) {
                 return (
@@ -412,7 +412,7 @@
                     local_date.addDays(1);
                 }
 
-                //console.log('RENDER', days);
+                //;
 
                 html += tpl.body(days, 'pmu-days');
             })();
@@ -511,7 +511,7 @@
 
     function formatDate(date, format, locale) {
 
-        //console.log('format');
+        //;
 
         var m = date.getMonth();
         var d = date.getDate();
@@ -603,7 +603,7 @@
 
     function update_date() {
 
-        //console.log('update_date');
+        //;
 
         var $this = $(this),
             options = $this.data('pickmeup-options'),
@@ -639,7 +639,7 @@
                 break;
             default:
 
-                //console.log('update_date', current_date);
+                //;
 
                 options.date	= current_date.valueOf();
                 break;
@@ -659,7 +659,7 @@
 
     function click(e) {
 
-        //console.log('click!');
+        //;
 
         var el = $(e.target);
         if (!el.hasClass('pmu-button')) {
@@ -983,8 +983,8 @@
         options.binded.fill();
         if ($this.is('input') && options.default_date !== false) {
 
-            //console.log('options', options);
-            //console.log('$this', $this);
+            //;
+            //;
 
             var prepared_date = prepareDate(options);
             if (!$this.val()) {

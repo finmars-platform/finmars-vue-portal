@@ -36,10 +36,10 @@ export default function settingsGeneralComplexImportController(
 				},
 			})
 			.then(function (res) {
-				console.log('res', res)
+
 
 				if (res.status === 'agree') {
-					console.log('res', res.data)
+
 					vm.getList()
 				}
 			})
@@ -58,7 +58,7 @@ export default function settingsGeneralComplexImportController(
 			})
 			.then(function (res) {
 				if (res && res.status === 'agree') {
-					console.log('res', res.data)
+
 
 					vm.getList()
 				}
@@ -84,7 +84,7 @@ export default function settingsGeneralComplexImportController(
 			})
 			.then(function (res) {
 				if (res.status === 'agree') {
-					console.log('res', res.data)
+
 					complexImportSchemeService.deleteByKey(item.id)
 					setTimeout(function () {
 						vm.getList()

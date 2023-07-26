@@ -143,7 +143,7 @@ var getListLight = function (options) {
 				'/' +
 				apiVersion +
 				'/' +
-				'portfolios/portfolio-light/',
+				'portfolios/portfolio/light/',
 			options
 		),
 		{

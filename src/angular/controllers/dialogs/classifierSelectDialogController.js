@@ -562,7 +562,7 @@ export default function ($scope, $mdDialog, commonDialogsService, data) {
 							$('#js-tree-select-wrapper').jstree("deselect_all");
 						}, 300); // idk, wtf is this
 						setTimeout(function () {
-							console.log('vm.classifierId', vm.classifierValue);
+							;
 							$('#js-tree-select-wrapper').jstree("select_node", "#" + vm.classifierValue);
 						}, 301); // idk, wtf is this
 					}); */
@@ -737,7 +737,7 @@ export default function ($scope, $mdDialog, commonDialogsService, data) {
                 }
             }).then(function (res) {
                 if (res.status === 'agree') {
-                    console.log("res", res.data);
+                    ;
 
                     res.data.classifier.classifiers = res.data.classifier.children.map(setName);
                     // $('#js-tree-select-wrapper').jstree(true).destroy();

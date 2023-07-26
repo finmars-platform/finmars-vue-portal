@@ -10,7 +10,7 @@ export default function runPricingInstrumentDialogController(
 	$mdDialog,
 	data
 ) {
-	console.log('runPricingInstrumentDialogController.data', data)
+
 
 	var vm = this
 

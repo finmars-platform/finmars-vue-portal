@@ -23,7 +23,7 @@ export default function ($scope, $state, $stateParams) {
 		vm.notificationsListType = 'all'
 	}
 
-	console.log('notification state', $state, $stateParams)
+
 
 	vm.changePage = function (page) {
 		vm.notificationsCurrent = page
@@ -55,7 +55,7 @@ export default function ($scope, $state, $stateParams) {
 				read_date: moment(new Date()).format('YYYY-MM-DD[T]HH:mm:ssZZ'),
 			}
 			if (item.read_date == null) {
-				// console.log('notification marked as readed is', item);
+				// ;
 				notificationsService.markAsReaded(
 					notificationId,
 					notificationsReadedDate

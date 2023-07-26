@@ -102,7 +102,7 @@ export default function ($scope, $mdDialog, data) {
 				})
 			}
 
-			console.log('filledRows', filledRows)
+
 
 			tab.layout.rows.forEach(function (row, index) {
 				if (filledRows.indexOf(index) === -1) {
@@ -115,9 +115,9 @@ export default function ($scope, $mdDialog, data) {
 	}
 
 	vm.addAccordion = function ($event, tab, row, name, $index) {
-		console.log('vm.layout', vm.layout)
-		console.log('tab', tab)
-		console.log('row', row)
+
+
+
 
 		if (!tab.accordions) {
 			tab.accordions = []
@@ -182,7 +182,7 @@ export default function ($scope, $mdDialog, data) {
 	}
 
 	vm.init = function () {
-		console.log(' vm.layout', vm.layout)
+
 
 		vm.updateCanCreateRowStatus()
 		vm.updateProxyAccordions()

@@ -6,7 +6,7 @@ import entityTypeMappingResolveService from '../../services/entityTypeMappingRes
 import entityResolverService from '../../services/entityResolverService'
 
 export default function ($scope, $mdDialog, metaContentTypesService, file) {
-	console.log('file', file)
+
 
 	var vm = this
 
@@ -263,7 +263,7 @@ export default function ($scope, $mdDialog, metaContentTypesService, file) {
 					})
 				}
 
-				console.log('MAP OBJECT ', item)
+
 
 				resolve(item)
 			})
@@ -304,7 +304,7 @@ export default function ($scope, $mdDialog, metaContentTypesService, file) {
 
 			if (exists === false) {
 				mapContentObj(entityType, item).then(function (resultItem) {
-					// console.log('resultItem', resultItem);
+					// ;
 
 					if (resultItem.content_object) {
 						entityTypeMappingResolveService
@@ -390,8 +390,8 @@ export default function ($scope, $mdDialog, metaContentTypesService, file) {
 
 			var entityType = getEntityTypeByMappingContentType(entityItem.entity)
 
-			// console.log('entityItem.entity', entityItem.entity);
-			// console.log('entityType', entityType);
+			// ;
+			// ;
 
 			entityTypeMappingResolveService
 				.getList(entityType, mappingOptions)
@@ -405,7 +405,7 @@ export default function ($scope, $mdDialog, metaContentTypesService, file) {
 					).then(function (resultMappings) {
 						existingMappings = resultMappings
 
-						// console.log('existingMappings', existingMappings);
+						// ;
 
 						var promises = []
 
@@ -418,7 +418,7 @@ export default function ($scope, $mdDialog, metaContentTypesService, file) {
 						})
 
 						Promise.all(promises).then(function (data) {
-							// console.log('Entities imported');
+							// ;
 
 							resolve(data)
 						})
@@ -439,7 +439,7 @@ export default function ($scope, $mdDialog, metaContentTypesService, file) {
 			})
 
 			Promise.all(promises).then(function (data) {
-				console.log('import success', data)
+
 
 				resolve({
 					data: data,

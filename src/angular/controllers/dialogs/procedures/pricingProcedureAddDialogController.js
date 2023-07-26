@@ -122,7 +122,7 @@ export default function ($scope, $mdDialog, data) {
 
                 });
 
-                console.log('vm.portfolios', vm.portfolios);
+                ;
 
                 $scope.$apply();
 
@@ -145,7 +145,7 @@ export default function ($scope, $mdDialog, data) {
 
                 });
 
-                console.log('vm.instrumentPricingSchemes', vm.instrumentPricingSchemes);
+                ;
 
                 $scope.$apply();
 
@@ -168,7 +168,7 @@ export default function ($scope, $mdDialog, data) {
 
                 });
 
-                console.log('vm.currencyPricingSchemes', vm.currencyPricingSchemes);
+                ;
 
                 $scope.$apply();
 
@@ -191,7 +191,7 @@ export default function ($scope, $mdDialog, data) {
 
                 });
 
-                console.log('vm.instrumentTypes', vm.instrumentTypes);
+                ;
 
                 $scope.$apply();
 

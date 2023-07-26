@@ -214,7 +214,7 @@ export default function simpleEntityImportController(
 					websocketService.addEventListener(
 						'simple_import_status',
 						function (data) {
-							console.log('simple_import_status.data', data)
+
 
 							if (vm.validateConfig.task_id === data.task_id) {
 								vm.loaderData = {
@@ -273,7 +273,7 @@ export default function simpleEntityImportController(
 				// vm.processing = false;
 				vm.readyStatus.processing = false
 
-				console.log('validateImport.data', data)
+
 
 				var hasErrors = false
 
@@ -288,7 +288,7 @@ export default function simpleEntityImportController(
 					}
 				})
 
-				console.log('hasErrors', hasErrors)
+
 
 				if (!hasErrors) {
 					$mdDialog.show({
@@ -315,7 +315,7 @@ export default function simpleEntityImportController(
 						}
 					})
 
-					console.log('data', data)
+
 
 					$mdDialog.show({
 						controller: 'SimpleEntityImportErrorsDialogController as vm',
@@ -396,7 +396,7 @@ export default function simpleEntityImportController(
 					)
 				} else {
 					if (vm.config.task_status === 'SUCCESS') {
-						console.log('resolve?')
+
 
 						resolve(data)
 					} else {
@@ -433,7 +433,7 @@ export default function simpleEntityImportController(
 				// vm.processing = false;
 				vm.readyStatus.processing = false
 
-				console.log('validateImport.data', data)
+
 
 				var hasErrors = false
 
@@ -448,7 +448,7 @@ export default function simpleEntityImportController(
 					}
 				})
 
-				console.log('hasErrors', hasErrors)
+
 
 				if (!hasErrors) {
 					vm.startImport($event)
@@ -461,7 +461,7 @@ export default function simpleEntityImportController(
 						}
 					})
 
-					console.log('data', data)
+
 
 					$mdDialog
 						.show({
@@ -520,7 +520,7 @@ export default function simpleEntityImportController(
 	vm.getTask = function () {
 		processesService.getByKey(vm.currentTaskId).then(function (data) {
 			vm.task = data
-			console.log('vm.task', vm.task)
+
 
 			if (vm.task.status === 'D' || vm.task.status === 'E') {
 				clearInterval(vm.poolingInterval)
@@ -654,7 +654,7 @@ export default function simpleEntityImportController(
 		var formData = new FormData()
 
 		if (vm.config.json_data) {
-			console.log('vm.config.json_data', vm.config.json_data)
+
 
 			let blob = new Blob([JSON.stringify(JSON.parse(vm.config.json_data))], {
 				type: 'application/json;',
@@ -718,7 +718,7 @@ export default function simpleEntityImportController(
 	vm.downloadFile = function ($event, item) {
 		// TODO WTF why systemMessage Service, replace with FilePreview Service later
 		systemMessageService.viewFile(item.file_report).then(function (data) {
-			console.log('data', data)
+
 
 			$mdDialog.show({
 				controller: 'FilePreviewDialogController as vm',

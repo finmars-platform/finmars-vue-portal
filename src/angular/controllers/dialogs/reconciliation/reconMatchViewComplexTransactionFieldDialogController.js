@@ -15,8 +15,8 @@ export default function ($scope, $mdDialog, data) {
 
 	vm.linkedBankFields = []
 
-	console.log('Complex Transaction line', vm.item)
-	console.log('Complex Transaction field', vm.field)
+
+
 
 	vm.cancel = function () {
 		$mdDialog.hide({ status: 'disagree' })
@@ -99,7 +99,7 @@ export default function ($scope, $mdDialog, data) {
 	vm.init = function () {
 		vm.getLinkedBankFields()
 
-		console.log('vm', vm)
+
 	}
 
 	vm.init()

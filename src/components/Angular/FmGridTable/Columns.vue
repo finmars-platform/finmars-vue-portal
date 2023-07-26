@@ -102,7 +102,7 @@
 				v-if="isReport"
 				class="flex-row g-groups-holder gGroupsHolder gcAreaDnD"
 			>
-				<div
+				<!-- <div
 					class="g-table-header-cell-wrapper gGroupElem gColumnElem gDraggableHead gcAreaDnD"
 					v-for="(column, $index) in groups"
 					:class="{
@@ -155,21 +155,7 @@
 							class="g-column-sort-settings-opener"
 						></div>
 
-						<div
-							v-if="column.report_settings.is_level_folded"
-							class="g-cell-button"
-							@click="unfoldLevel(column, $index)"
-						>
-							<span class="material-icons">add</span>
-						</div>
 
-						<div
-							v-if="!column.report_settings.is_level_folded"
-							class="g-cell-button"
-							@click="foldLevel(column, $index)"
-						>
-							<span class="material-icons">remove</span>
-						</div>
 
 						<span v-if="column?.error_data" class="material-icons error"
 							>error</span
@@ -188,7 +174,6 @@
 										<span v-if="column.status == 'missing'">(Deleted)</span>
 									</div>
 
-									<!--                                <span class="material-icons arrow-down">arrow_drop_down</span>-->
 
 									<span
 										v-if="
@@ -231,12 +216,32 @@
 					</div>
 
 					<AngularFmGridTableColumnResizer />
-					<!-- gDraggableHeadArea used to prevent call of event "dragleave" by children of gcAreaDnD -->
 					<div
 						class="g-table-header-drop gDraggableHeadArea"
 						:data-attr-key="column.key"
 					></div>
-				</div>
+				</div> -->
+				<AngularFmGridTableColumnCell
+					v-for="(column, index) in groups"
+					:column="column"
+					:style="column.style"
+					:isGroup="true"
+					:key="index + '_' + column.___column_id"
+					:isReport="isReport"
+					@sort="
+						changeSortDirection(
+							column,
+							column?.options.sort == 'DESC' ? 'ASC' : 'DESC'
+						)
+					"
+					@groupUnfold="unfoldLevel(column, index)"
+					@groupFold="foldLevel(column, index)"
+					:popup-template-url="getPopupMenuTemplate(column)"
+					:popup-data="columnsPopupsData[column.key]"
+					popup-classes="{{getPopupMenuClasses(column)}}"
+					on-cancel="onSubtotalTypeSelectCancel()"
+					popup-event-service="evEventService"
+				/>
 			</div>
 
 			<div class="flex-row width-100 g-cols-holder gColumnsHolder gcAreaDnD">
@@ -317,7 +322,6 @@
 
 	let groups = ref(null)
 	groups.value = evDataService.getGroups()
-	console.log('groups.value:', groups.value)
 	let columnsToShow = ref([])
 
 	let viewContext = evDataService.getViewContext()
@@ -933,8 +937,6 @@
 
 		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 		evEventService.dispatchEvent(evEvents.ROW_ACTIVATION_CHANGE)
-
-		console.timeEnd('Selecting all rows')
 	}
 
 	let isColumnFloat = function (column) {
@@ -970,8 +972,6 @@
 
 						column.options.sort = sort
 						column.options.sort_settings.mode = 'manual'
-
-						console.log('sortHandler.column', column)
 
 						evDataService.setActiveColumnSort(column)
 
@@ -1422,9 +1422,6 @@
 	}
 
 	let addColumnEntityToGrouping = function (column) {
-		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
-
-		var groups = evDataService.getGroups()
 		var groupToAdd = evHelperService.getTableAttrInFormOf('group', column)
 
 		groups.value.push(groupToAdd)
@@ -1553,7 +1550,7 @@
 	}
 
 	let unGroup = function (groupKey, _$popup) {
-		_$popup.cancel()
+		// _$popup.cancel()
 		// evEventService.dispatchEvent(popupEvents.CLOSE_POPUP);
 
 		var groups = evDataService.getGroups()
@@ -1591,7 +1588,7 @@
 			}
 		}
 
-		groups = groups
+		groups.value = groups
 		evDataService.setGroups(groups)
 		evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
 
@@ -1771,7 +1768,8 @@
 	}
 
 	let foldLevel = function (key, $index) {
-		groups.value = evDataService.getGroups()
+		// groups.value = evDataService.getGroups()
+		console.log('evDataService.getGroups():', evDataService.getGroups())
 
 		var item = groups.value[$index]
 		item.report_settings.is_level_folded = true
@@ -1783,6 +1781,7 @@
 
 		evDataService.setGroups(groups.value)
 		//</editor-fold">
+		console.log('evDataService.getGroups():', evDataService.getGroups())
 
 		for (i = $index; i < groups.value.length; i++) {
 			var groupsContent = evDataHelper.getGroupsByLevel(i + 1, evDataService)
@@ -1961,7 +1960,9 @@
 
 		columns.forEach((column) => {
 			if (column.layout_name) {
-				const matchingGroup = groups.find((group) => group.key === column.key)
+				const matchingGroup = groups.value.find(
+					(group) => group.key === column.key
+				)
 
 				if (matchingGroup) {
 					matchingGroup.layout_name = column.layout_name
@@ -1970,7 +1971,7 @@
 			}
 		})
 
-		if (groupChanged) evDataService.setGroups(groups)
+		if (groupChanged) evDataService.setGroups(groups.value)
 	}
 
 	let onGroupsChange

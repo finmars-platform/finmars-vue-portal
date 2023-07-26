@@ -108,7 +108,7 @@ export default function ($scope, $state, data, $mdDialog) {
 			})
 			.then(function (res) {
 				if (res.status === 'agree') {
-					console.log('res', res.data)
+
 
 					res.data.classifier.classifiers =
 						res.data.classifier.children.map(setName)
@@ -124,7 +124,7 @@ export default function ($scope, $state, data, $mdDialog) {
 	}
 
 	vm.openClassifierMapping = function ($event, item) {
-		console.log('import classifier item', item)
+
 		$mdDialog.show({
 			controller: 'EntityTypeClassifierMappingDialogController as vm',
 			templateUrl:
@@ -285,7 +285,7 @@ export default function ($scope, $state, data, $mdDialog) {
 	}
 
 	vm.recalculateAttributes = function ($event, item) {
-		console.log('attributes recalculate')
+
 
 		attributeTypeService
 			.getRecalculateAttributeCount(vm.entityType, item.id)
@@ -310,7 +310,7 @@ export default function ($scope, $state, data, $mdDialog) {
 						multiple: true,
 					})
 					.then(function (res) {
-						console.log('res', res)
+
 						if (res.status === 'agree') {
 							attributeTypeService
 								.recalculateAttributes(vm.entityType, item.id)

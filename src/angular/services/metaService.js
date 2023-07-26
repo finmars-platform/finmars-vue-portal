@@ -78,7 +78,7 @@ var getTypeCaptions = function () {
 		}
 		return item
 	})
-	//console.log(typeCaptions);
+	//;
 	return typeCaptions
 }
 
@@ -118,7 +118,7 @@ var getDynamicAttrsValueTypesCaptions = function () {
 		}
 		return item
 	})
-	//console.log(typeCaptions);
+	//;
 	return typeCaptions
 }
 

@@ -3,7 +3,7 @@
  */
 
 export default function ($scope, $customDialog, data) {
-	console.log('data', data)
+
 
 	var vm = this
 
@@ -14,7 +14,7 @@ export default function ($scope, $customDialog, data) {
 	}
 
 	vm.cancel = function () {
-		console.log('$customDialog', $customDialog)
+
 
 		$customDialog.hide({ status: 'disagree' })
 	}

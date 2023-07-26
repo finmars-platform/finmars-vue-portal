@@ -15,7 +15,7 @@
 
 				<h4>Settings</h4>
 
-				<template v-for="stg in editable.settings">
+				<template v-for="stg in component.settings">
 					<FmSelect
 						v-if="stg.view.type == 'select'"
 						class="prop_row"
@@ -24,6 +24,14 @@
 						:items="stg.view.items"
 					/>
 
+					<LazySelectorsLayout
+						v-else-if="stg.view.type == 'layout'"
+						class="prop_row"
+						v-model="stg.default_value"
+						:layout="stg.default_value"
+						:settings="component.settings"
+						:label="stg.name"
+					/>
 					<BaseInput v-else v-model="stg.default_value" :label="stg.name" />
 				</template>
 			</div>
@@ -71,7 +79,7 @@
 	// let component = dashStore.components.find(item => item.uid == props.uid) || {}
 	let component = dashStore.getComponent(props.uid) || {}
 	let editable = ref(JSON.parse(JSON.stringify(component)))
-	// console.log("testing1090.pagesDashboardEditWidgetM ", editable);
+
 	provide('component', editable) // used by PagesDashboardAddMatrixModal
 
 	let inputs = ref([])

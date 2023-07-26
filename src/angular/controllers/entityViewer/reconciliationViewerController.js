@@ -31,10 +31,10 @@ export default function (
 ) {
 	var vm = this
 
-	console.log('Vertical Split Panel Report Viewer Controller init')
 
-	console.log('parentEntityViewerDataService', parentEntityViewerDataService)
-	console.log('parentEntityViewerEventService', parentEntityViewerEventService)
+
+
+
 
 	// vm.readyStatus = {
 	//     attributes: false,
@@ -57,7 +57,7 @@ export default function (
 	var horizontalSpIsActive
 
 	vm.bookSelected = function () {
-		console.log('Book Selected!')
+
 
 		var flatList = vm.entityViewerDataService.getFlatList()
 
@@ -65,13 +65,13 @@ export default function (
 			return item.___is_activated
 		})
 
-		console.log('selectedRows', selectedRows)
+
 
 		var fileText = []
 
 		vm.parsedFile = vm.entityViewerDataService.getReconciliationFile()
 
-		console.log('vm.parsedFile', vm.parsedFile)
+
 
 		fileText.push(vm.parsedFile[0]) // header;
 
@@ -81,13 +81,13 @@ export default function (
 
 		fileText = fileText.join('\n')
 
-		console.log('file', fileText)
+
 
 		var file = new File([fileText], 'tmp.csv', { type: 'text/plain' })
 
 		var event = new Event('click')
 
-		console.log('vm.reconciliationImportConfig', vm.reconciliationImportConfig)
+
 
 		vm.config = Object.assign({}, vm.reconciliationImportConfig)
 		vm.config.file = file
@@ -131,7 +131,7 @@ export default function (
 		}
 
 		importTransactionService.startImport(formData).then(function (data) {
-			console.log('data', data)
+
 
 			vm.config = data
 
@@ -366,8 +366,8 @@ export default function (
 						var reconciliationData =
 							vm.entityViewerDataService.getReconciliationData()
 
-						/* console.log('activeObject', activeObject);
-                            console.log('reconciliationData', reconciliationData); */
+						/* ;
+                            ; */
 
 						reconciliationData = reconciliationData.filter(function (item) {
 							return item.source_id !== activeObject.source_id
@@ -389,7 +389,7 @@ export default function (
 		vm.entityViewerEventService.addEventListener(
 			evEvents.UPDATE_TABLE,
 			function () {
-				console.log('vm.reconciliationData', vm.reconciliationData)
+
 
 				vm.entityViewerDataService.setReconciliationData(vm.reconciliationData) // needed because on GroupChange we do evDataService.resetData
 
@@ -518,7 +518,7 @@ export default function (
 			parentEntityViewerEventService
 		)
 
-		console.log('scope, ', $scope)
+
 
 		vm.entityType = 'reconciliation'
 
@@ -566,7 +566,7 @@ export default function (
 			reconciliationImportConfig
 		)
 
-		console.log('Get View Vertical panel?', reconciliationData)
+
 
 		var config = vm.entityViewerDataService.getReconciliationImportConfig()
 

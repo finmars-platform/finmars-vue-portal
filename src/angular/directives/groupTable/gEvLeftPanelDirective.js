@@ -52,7 +52,7 @@ export default function ($mdDialog, $state) {
 			scope.generateGroupsTree = function () {
 				var result = evDataHelper.getGroupsAsTree(scope.evDataService)
 
-				console.log('generateGroupsTree.result', result)
+
 				var selectedGroups = scope.evDataService.getSelectedGroups()
 
 				scope.recursiveMarkHasSelected(result, selectedGroups)
@@ -93,7 +93,7 @@ export default function ($mdDialog, $state) {
 				)
 
 				slider.addEventListener('mousedown', function (event) {
-					console.log('mousedown event', event)
+
 
 					var clientX = event.clientX
 					var clientY = event.clientY
@@ -238,7 +238,7 @@ export default function ($mdDialog, $state) {
 					var drake = this.dragula
 
 					drake.on('drop', function (elem, target, source, nextSibling) {
-						console.log('scope.elem', elem)
+
 
 						var elemKey = elem.dataset.key
 						var nextSiblingKey
@@ -292,8 +292,8 @@ export default function ($mdDialog, $state) {
 
 						scope.evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
 
-						console.log('dragPanelLeft.nextSibling', nextSibling)
-						console.log('dragPanelLeft.groupTypes', scope.groupTypes)
+
+
 					})
 				},
 
@@ -322,7 +322,7 @@ export default function ($mdDialog, $state) {
 				}
 
 				var group = scope.groupTypes[$index]
-				console.log('groups sorting group', group)
+
 				item.options.sort = type
 
 				scope.groupTypes.forEach(function (item) {
@@ -510,7 +510,7 @@ export default function ($mdDialog, $state) {
 
 				scope.groupTypes = scope.evDataService.getGroups()
 
-				console.log('scope.groupTypes', scope.groupTypes)
+
 
 				scope.tree = JSON.parse(JSON.stringify(scope.generateGroupsTree()))
 

@@ -189,7 +189,7 @@ export default function simpleEntityImportDialogController(
 				websocketService.addEventListener(
 					'simple_import_status',
 					function (data) {
-						console.log('simple_import_status.data', data)
+
 
 						if (vm.validateConfig.task_id === data.task_id) {
 							vm.loaderData = {
@@ -242,7 +242,7 @@ export default function simpleEntityImportDialogController(
 		}).then(function (data) {
 			vm.processing = false
 
-			console.log('validateImport.data', data)
+
 
 			var hasErrors = false
 
@@ -257,7 +257,7 @@ export default function simpleEntityImportDialogController(
 				}
 			})
 
-			console.log('hasErrors', hasErrors)
+
 
 			if (!hasErrors) {
 				$mdDialog.show({
@@ -284,7 +284,7 @@ export default function simpleEntityImportDialogController(
 					}
 				})
 
-				console.log('data', data)
+
 
 				$mdDialog.show({
 					controller: 'SimpleEntityImportErrorsDialogController as vm',
@@ -359,7 +359,7 @@ export default function simpleEntityImportDialogController(
 				)
 			} else {
 				if (vm.config.task_status === 'SUCCESS') {
-					console.log('resolve?')
+
 
 					resolve(data)
 				} else {
@@ -391,7 +391,7 @@ export default function simpleEntityImportDialogController(
 
 			vm.processing = false
 
-			console.log('import.data', data)
+
 
 			vm.readyStatus.processing = false
 			vm.dataIsImported = true
@@ -402,7 +402,7 @@ export default function simpleEntityImportDialogController(
 				return item.level === 'error'
 			})
 
-			console.log('errors', errors)
+
 
 			var description
 
@@ -482,7 +482,7 @@ export default function simpleEntityImportDialogController(
 
 			vm.processing = false
 
-			console.log('validateImport.data', data)
+
 
 			var hasErrors = false
 
@@ -497,7 +497,7 @@ export default function simpleEntityImportDialogController(
 				}
 			})
 
-			console.log('hasErrors', hasErrors)
+
 
 			if (!hasErrors) {
 				vm.startImport($event)
@@ -510,7 +510,7 @@ export default function simpleEntityImportDialogController(
 					}
 				})
 
-				console.log('data', data)
+
 
 				$mdDialog
 					.show({

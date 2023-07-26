@@ -285,7 +285,7 @@ export default function transactionImportController(
 
 	// TODO DEPRECATED LOGIC
 	vm.startImportWithValidation = function ($event) {
-		console.log('startImportWithValidation starting validation')
+
 		return new Promise(function (resolve, reject) {
 			// vm.processing = true;
 			vm.readyStatus.processing = true
@@ -302,8 +302,8 @@ export default function transactionImportController(
 			vm.validate(resolve, reject, $event)
 		})
 			.then(function (data) {
-				console.log('startImportWithValidation validation finished')
-				console.log('startImportWithValidation validation finished data', data)
+
+
 
 				var errorsCount = 0
 
@@ -366,7 +366,7 @@ export default function transactionImportController(
 						status: vm.config.task_status,
 					}
 
-					console.log('startImportWithValidation starting import')
+
 
 					vm.startImport($event)
 				}
@@ -378,7 +378,7 @@ export default function transactionImportController(
 	}
 	// TODO DEPRECATED LOGIC
 	vm.validate = function (resolve, reject, $event) {
-		console.log('Validate')
+
 
 		vm.readyStatus.processing = true
 
@@ -409,12 +409,12 @@ export default function transactionImportController(
 				$scope.$apply()
 
 				if (websocketService.isOnline()) {
-					console.log('Websocket Online. Fetching status')
+
 
 					websocketService.addEventListener(
 						'transaction_import_status',
 						function (data) {
-							console.log('transaction_import_status.data', data)
+
 
 							// If parent task is finished
 							if (vm.validateConfig.task_id === data.task_id) {
@@ -464,7 +464,7 @@ export default function transactionImportController(
 						}
 					)
 				} else {
-					console.log('Websocket is Offline. Falling back to polling')
+
 
 					if (vm.validateConfig.task_status === 'SUCCESS') {
 						resolve(data)
@@ -483,7 +483,7 @@ export default function transactionImportController(
 	vm.getTask = function () {
 		processesService.getByKey(vm.currentTaskId).then(function (data) {
 			vm.task = data
-			console.log('vm.task', vm.task)
+
 
 			if (vm.task.status === 'D' || vm.task.status === 'E') {
 				clearInterval(vm.poolingInterval)
@@ -500,7 +500,7 @@ export default function transactionImportController(
 	vm.downloadFile = function ($event, item) {
 		// TODO WTF why systemMessage Service, replace with FilePreview Service later
 		systemMessageService.viewFile(item.file_report).then(function (data) {
-			console.log('data', data)
+
 
 			$mdDialog.show({
 				controller: 'FilePreviewDialogController as vm',
@@ -533,7 +533,7 @@ export default function transactionImportController(
 		var formData = new FormData()
 
 		if (vm.config.json_data) {
-			console.log('vm.config.json_data', vm.config.json_data)
+
 
 			let blob = new Blob([JSON.stringify(JSON.parse(vm.config.json_data))], {
 				type: 'application/json;',
@@ -692,7 +692,7 @@ export default function transactionImportController(
 				}
 			})
 
-			console.log('hasSchemeEditPermission', vm.hasSchemeEditPermission)
+
 
 			$scope.$apply()
 		})
@@ -703,7 +703,7 @@ export default function transactionImportController(
 			vm.transactionSchemes = data.results
 			vm.readyStatus.schemes = true
 
-			console.log('transactionSchemes', vm.transactionSchemes)
+
 			$scope.$apply()
 		})
 	}
@@ -719,7 +719,7 @@ export default function transactionImportController(
 		var formData = new FormData()
 
 		if (vm.config.json_data) {
-			console.log('vm.config.json_data', vm.config.json_data)
+
 
 			let blob = new Blob([JSON.stringify(JSON.parse(vm.config.json_data))], {
 				type: 'application/json;',

@@ -131,7 +131,7 @@ function weightedAverageExposurePercent(items, column) {
 }
 
 function resolveSubtotalFunction(items, column) {
-	// console.log('resolveSubtotalFunction.column', column);
+	// ;
 
 	if (column.report_settings && column.report_settings.subtotal_formula_id) {
 		switch (column.report_settings.subtotal_formula_id) {
@@ -160,7 +160,7 @@ function resolveSubtotalFunction(items, column) {
 var calculate = function (items, columns) {
 	var result = {}
 
-	// console.log('calculate.columns', columns);
+	// ;
 
 	columns.forEach(function (column) {
 		if (column.value_type === 20) {

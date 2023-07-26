@@ -29,11 +29,11 @@ export default function () {
 				// posY = document.all ? window.event.clientY : e.pageY;
 				posX = e.pageX
 				posY = e.pageY
-				//console.log('posX', posX);
-				//console.log('elemLeft', elemLeft);
-				//console.log(posX - elemLeft);
-				//console.log(posY - elemTop);
-				//console.log(initMouseX, initMouseY, posX, posY, elemLeft, elemTop);
+				//;
+				//;
+				//;
+				//;
+				//;
 
 				// elemToMove[0].style.left = (posX - elemLeft + 8) + 'px';
 				// elemToMove[0].style.top = (posY - elemTop - 8 - 150) + 'px';
@@ -54,11 +54,11 @@ export default function () {
 				// elemLeft = posX - elemToMove[0].offsetLeft;
 				// elemTop = posY - elemToMove[0].offsetTop;
 				// }
-				//console.log(elemLeft, elemTop);
+				//;
 				$(window).bind('mousemove', mousemove)
 
 				$(window).bind('mouseup', function (e) {
-					//console.log('unbind');
+					//;
 					$(window).unbind('mousemove')
 				})
 				return false

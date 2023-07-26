@@ -9,7 +9,7 @@ import ScrollHelper from '../../helpers/scrollHelper'
 var scrollHelper = new ScrollHelper()
 
 export default function ($scope, $mdDialog, data) {
-	console.log('data', data)
+
 
 	var vm = this
 

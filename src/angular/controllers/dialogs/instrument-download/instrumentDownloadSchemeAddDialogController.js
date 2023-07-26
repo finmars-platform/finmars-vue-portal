@@ -358,14 +358,14 @@ export default function ($scope, $mdDialog, importSchemesMethodsService) {
 	}
 
 	vm.removeProviderField = function (item, $index) {
-		console.log('$index', $index)
+
 
 		vm.providerFields.splice($index, 1)
 
 		vm.inputsFunctions = vm.getFunctions()
 
 		//$scope.$apply();
-		console.log('vm.providerFields', vm.providerFields)
+
 	}
 
 	vm.removeMappingField = function (item, $index) {
@@ -499,8 +499,8 @@ export default function ($scope, $mdDialog, importSchemesMethodsService) {
 			}
 
 			for (a = 0; a < vm.scheme.attributes.length; a = a + 1) {
-				console.log('vm.scheme.attributes[a]', vm.scheme.attributes[a])
-				console.log('vm.attrs', vm.attrs)
+
+
 
 				for (x = 0; x < vm.attrs.length; x = x + 1) {
 					if (vm.attrs[x].id == vm.scheme.attributes[a].attribute_type) {
@@ -537,7 +537,7 @@ export default function ($scope, $mdDialog, importSchemesMethodsService) {
 		instrumentDownloadSchemeService
 			.create(vm.scheme)
 			.then(function (data) {
-				console.log('DATA', data)
+
 				$mdDialog.hide({ status: 'agree' })
 			})
 			.catch(function (reason) {
@@ -648,7 +648,7 @@ export default function ($scope, $mdDialog, importSchemesMethodsService) {
                 }
             }).then(function (res) {
                 if (res.status === 'agree') {
-                    console.log("res", res.data);
+                    ;
                     item.expression = res.data.item.expression;
                     $scope.$apply();
                 }
@@ -656,7 +656,7 @@ export default function ($scope, $mdDialog, importSchemesMethodsService) {
         };*/
 
 	vm.resolveFieldType = function (field) {
-		console.log('field', field)
+
 
 		if (field.value.hasOwnProperty('key')) {
 			field.key = field.value.key

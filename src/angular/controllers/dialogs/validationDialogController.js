@@ -40,7 +40,7 @@ export default function ($scope, $mdDialog, validationData) {
 
         vm.bindValue = function (item) {
 
-            //console.log('ITEM', item);
+            //;
 
             if (Array.isArray(item.value)) {
 

@@ -201,7 +201,7 @@ var destroyConsole = function () {
 }
 
 var init = function () {
-	console.log('Init Developer Console')
+
 
 	document.addEventListener('keyup', function (event) {
 		if (event.key === '`' || event.key === 'ё' || event.key === '~') {

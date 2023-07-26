@@ -111,7 +111,7 @@ export default function complexTransactionEditDialogController(
 
 	vm.entityTabs = metaService.getEntityTabs(vm.entityType)
 
-	console.log('vm.entityTabs', vm.entityTabs)
+
 
 	vm.entityTabsMenuTplt = sharedLogicHelper.entityTabsMenuTplt
 	vm.entityTabsMenuPopupData = { viewModel: vm }
@@ -191,7 +191,7 @@ export default function complexTransactionEditDialogController(
 
 			var contextParameters = vm.getContextParameters()
 
-			console.log('contextParameters', contextParameters)
+
 
 			transactionTypeService
 				.initBookComplexTransaction(vm.transactionTypeId, contextParameters)
@@ -572,7 +572,7 @@ export default function complexTransactionEditDialogController(
 	}
 
 	vm.viewBaseTransaction = function ($event, item) {
-		console.log('View Base Transaction ', item)
+
 
 		$mdDialog.show({
 			controller: 'EntityViewerEditDialogController as vm',
@@ -780,7 +780,7 @@ export default function complexTransactionEditDialogController(
 		complexTransactionService
 			.updateProperties(vm.entity.id, { is_locked: vm.entity.is_locked })
 			.then(function () {
-				// console.log('here');
+				// ;
 				vm.updateTableOnClose.lockedStatusChanged =
 					!vm.updateTableOnClose.lockedStatusChanged
 
@@ -805,7 +805,7 @@ export default function complexTransactionEditDialogController(
 				status: status,
 			})
 			.then(function () {
-				// console.log('here');
+				// ;
 				vm.updateTableOnClose.cancelStatusChanged =
 					!vm.updateTableOnClose.cancelStatusChanged
 
@@ -832,7 +832,7 @@ export default function complexTransactionEditDialogController(
 				},
 			})
 			.then(function (res) {
-				console.log('here', res)
+
 
 				if (res.status === 'agree') {
 					var responseObj = { status: 'delete' }
@@ -875,12 +875,12 @@ export default function complexTransactionEditDialogController(
 			})
 		}
 
-		console.log('Update Permissions', permissions)
+
 
 		complexTransactionService
 			.updateProperties(vm.entity.id, { object_permissions: permissions })
 			.then(function () {
-				// console.log('here');
+				// ;
 
 				$mdDialog.show({
 					controller: 'InfoDialogController as vm',

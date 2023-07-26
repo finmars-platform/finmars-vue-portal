@@ -20,14 +20,14 @@ export default function (
 	systemMessageService,
 	redirectionService
 ) {
-	console.log('Home Controller')
+
 
 	var vm = this
 
 	/* const PROJECT_ENV = '__PROJECT_ENV__'; // changed when building project by minAllScripts()
 
         if (PROJECT_ENV !== 'local') {
-            console.log("redirection homeController redirection");
+            ;
             window.open(redirectionService.getUrl('app.portal.home'), '_self');
         } */
 
@@ -57,7 +57,7 @@ export default function (
 
 	vm.downloadFile = function ($event, item) {
 		systemMessageService.viewFile(item.file_report).then(function (data) {
-			console.log('data', data)
+
 
 			$mdDialog.show({
 				controller: 'FilePreviewDialogController as vm',
@@ -254,7 +254,7 @@ export default function (
 						item.verbose_type = 'Success'
 					}
 
-					console.log('item', item)
+
 
 					if (item.section === 0) {
 						item.verbose_section = 'General'

@@ -44,8 +44,8 @@ export default function ($scope, $mdDialog, data) {
 
                 var i;
                 for (i = 0; i < datesList.length; i++) {
-                    console.log("date tree compare dates", datesList[i], sDate);
-                    console.log("date tree compare dates", datesList[i].value.toDateString(), new Date(sDate.value).toDateString());
+                    ;
+                    ;
                     if (datesList[i].value.toDateString() === new Date(sDate.value).toDateString()) {
 
                         datesList[i].available = true;
@@ -65,7 +65,7 @@ export default function ($scope, $mdDialog, data) {
 
             });
 
-            console.log("date tree unavailableDates", datesList, unavailableDates);
+            ;
 
         };*/
 

@@ -56,7 +56,7 @@ var checkForEmptyRegularFilter = function (regularFilterValue, filterType) {
 var filterTableRows = function (items, regularFilters, entityType) {
 	var match
 
-	console.log('filterTableRows.regularFilters', regularFilters)
+
 
 	return items.filter(function (item, tableRowIndex) {
 		match = true
@@ -355,7 +355,7 @@ var getFilterMatch = function (item, key, value) {
 		}
 	}
 
-	// console.log('match', match);
+	// ;
 
 	return match
 }
@@ -396,7 +396,7 @@ var filterByGroupsFilters = function (items, options, groupTypes) {
 			for (i = 0; i < options.groups_values.length; i = i + 1) {
 				key = options.groups_types[i].key
 
-				// console.log('key', key)
+				//
 
 				value = options.groups_values[i]
 
@@ -458,7 +458,7 @@ var getRegularFilters = function (options) {
 		})
 	}
 
-	// console.log("filter getRegularFilters result", result);
+	// ;
 	return result
 }
 

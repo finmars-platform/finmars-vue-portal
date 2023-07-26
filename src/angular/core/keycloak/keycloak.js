@@ -1751,7 +1751,7 @@
 					break;
 			}
 
-			console.log("Here keyclaok?")
+
 
 			supportedParams.push('error');
 			supportedParams.push('error_description');

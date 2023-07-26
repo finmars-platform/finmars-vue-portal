@@ -307,7 +307,6 @@ $evGRowSettingsWidth: 124px;
 	}
 
 	.ev-viewport {
-		overflow: auto;
 		position: relative;
 	}
 
@@ -1796,6 +1795,7 @@ $gTableBackgroundColor: #fafafa;
 	.g-table-section {
 		background-color: #fff;
 		overflow: hidden;
+		height: 100%;
 	}
 
 	.g-cell:last-child {
@@ -2154,7 +2154,9 @@ $gTableBackgroundColor: #fafafa;
 	}
 
 	.g-column-area-wrap {
-		position: relative;
+		position: sticky;
+		top: 0;
+		z-index: 41;
 	}
 
 	/* .g-table-body {
@@ -4207,7 +4209,6 @@ $gFilterFieldsHeight: 40px;
   } */
 
 	.ev-viewport {
-		overflow: auto;
 		position: relative;
 	}
 

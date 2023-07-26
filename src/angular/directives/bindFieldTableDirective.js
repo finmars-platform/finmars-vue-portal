@@ -971,7 +971,7 @@ export default function (
 								name: 'Build accruals',
 								onClick: function ($event, _$popup) {
 									_$popup.cancel()
-									console.log('build accruals')
+
 								},
 							})
 						}
@@ -1047,7 +1047,7 @@ export default function (
 								name: 'Build events',
 								onClick: function ($event, _$popup) {
 									_$popup.cancel()
-									console.log('build events')
+
 								},
 							})
 						}

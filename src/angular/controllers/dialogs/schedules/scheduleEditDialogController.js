@@ -63,7 +63,7 @@ export default function scheduleEditDialogController($scope, $mdDialog, data) {
 
 	vm.getItem = function () {
 		scheduleService.getByKey(vm.itemId).then(function (data) {
-			console.log('data', data)
+
 
 			vm.schedule = data
 			vm.originalItem = data
@@ -71,7 +71,7 @@ export default function scheduleEditDialogController($scope, $mdDialog, data) {
 
 			var values = vm.schedule.cron_expr.split(' ')
 
-			console.log('value', values)
+
 
 			if (values.length === 5) {
 				vm.cron.time = new Date()
@@ -100,7 +100,7 @@ export default function scheduleEditDialogController($scope, $mdDialog, data) {
 				}
 			}
 
-			console.log('vm.periodicity', vm.periodicity)
+
 
 			$scope.$apply()
 		})
@@ -114,20 +114,20 @@ export default function scheduleEditDialogController($scope, $mdDialog, data) {
 		var minutes = moment(new Date(vm.cron.time)).format('mm')
 		var hours = moment(new Date(vm.cron.time)).format('HH')
 
-		console.log('cron.time', vm.cron.time)
-		console.log('vm.cron.', vm.cron)
-		console.log('minutes', minutes)
-		console.log('hours', hours)
+
+
+
+
 
 		vm.cron.periodicity = parseInt(vm.cron.periodicity, 10)
 
 		if (vm.cron.periodicity === 1) {
-			console.log(parseInt(minutes) + ' ' + parseInt(hours) + ' * * *')
+
 			vm.schedule.cron_expr =
 				parseInt(minutes) + ' ' + parseInt(hours) + ' * * *'
 		}
 		if (vm.cron.periodicity === 2) {
-			//console.log(minutes + ' ' + parseInt(hours) + ' * * ' + vm.cron.day);
+			//;
 			vm.schedule.cron_expr =
 				parseInt(minutes) +
 				' ' +
@@ -136,7 +136,7 @@ export default function scheduleEditDialogController($scope, $mdDialog, data) {
 				vm.cron.day.join(',')
 		}
 		if (vm.cron.periodicity === 3) {
-			//console.log(minutes + ' ' + parseInt(hours) + ' * ' + vm.cron.month + ' ' + vm.cron.day);
+			//;
 			vm.schedule.cron_expr =
 				parseInt(minutes) +
 				' ' +
@@ -152,7 +152,7 @@ export default function scheduleEditDialogController($scope, $mdDialog, data) {
 	vm.agree = function ($event) {
 		vm.schedule.is_enabled = true
 
-		console.log('vm.schedule', vm.schedule)
+
 
 		scheduleService
 			.update(vm.schedule.id, vm.schedule)

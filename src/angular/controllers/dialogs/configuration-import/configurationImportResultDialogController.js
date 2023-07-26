@@ -107,7 +107,7 @@ export default function ($scope, $mdDialog, metaContentTypesService, data) {
 	}
 
 	vm.init = function () {
-		console.log('vm.data', vm.data)
+
 
 		Object.keys(vm.data.stats).forEach(function (sectionKey) {
 			Object.keys(vm.data.stats[sectionKey]).forEach(function (entityKey) {
@@ -117,7 +117,7 @@ export default function ($scope, $mdDialog, metaContentTypesService, data) {
 			})
 		})
 
-		console.log('vm.records', vm.records)
+
 
 		setTimeout(function () {
 			vm.setDownloadLink()

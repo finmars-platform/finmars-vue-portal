@@ -3,7 +3,7 @@
  */
 
 export default function ($scope, $mdDialog, metaContentTypesService, data) {
-	console.log('data', data)
+
 
 	var vm = this
 

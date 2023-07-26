@@ -78,7 +78,6 @@ export default function ({
 	// var doNotCheckLayoutChanges = false;
 	var autosaveLayoutService
 	var autosaveLayoutOn = globalDataService.isAutosaveLayoutOn()
-	console.log('autosave77 autosaveLayoutOn', autosaveLayoutOn)
 	// Functions for context menu
 
 	var updateTableAfterEntityChanges = function (res) {
@@ -209,8 +208,6 @@ export default function ({
 		var activeObject = vm.getActiveObjectFromQueryParameters()
 
 		if (activeObject) {
-			console.log('vm.getView activeObject', activeObject)
-
 			var filters = vm.entityViewerDataService.getFilters()
 
 			filters.forEach(function (item) {
@@ -274,7 +271,7 @@ export default function ({
 
 	var checkLayoutsForChanges = function () {
 		// called on attempt to change or reload page
-		console.log('autosave77 rv checkLayoutsForChanges ', autosaveLayoutOn)
+
 		/* return new Promise(function (resolve, reject) {
 
                 var checkForLayoutChanges = vm.entityViewerDataService.isLayoutChangesLossWarningNeeded();
@@ -444,7 +441,6 @@ export default function ({
 		)
 
 		if (layoutHasChanges || spChangedLayout) {
-			console.log('autosave77 ev warnAboutLayoutChangesLoss ', autosaveLayoutOn)
 			event.preventDefault()
 			;(event || window.event).returnValue =
 				'All unsaved changes of layout will be lost.'
@@ -575,8 +571,6 @@ export default function ({
 					var activeColumnSort =
 						vm.entityViewerDataService.getActiveColumnSort()
 
-					console.log('activeColumnSortProm.activeColumnSort', activeColumnSort)
-
 					if (
 						activeColumnSort &&
 						activeColumnSort.options.sort_settings.layout_user_code
@@ -591,8 +585,6 @@ export default function ({
 							.then(function (data) {
 								if (data.results.length) {
 									var layout = data.results[0]
-
-									console.log('activeColumnSortProm', layout)
 
 									vm.entityViewerDataService.setColumnSortData(
 										activeColumnSort.key,
@@ -632,10 +624,8 @@ export default function ({
 		vm.entityViewerDataService = new EntityViewerDataService(
 			window.reportHelper
 		)
-		window.evDataService = vm.entityViewerDataService
 
 		vm.entityViewerEventService = new EntityViewerEventService()
-		window.evEventService = vm.entityViewerEventService
 
 		vm.splitPanelExchangeService = new SplitPanelExchangeService()
 		vm.attributeDataService = new AttributeDataService(
@@ -682,8 +672,6 @@ export default function ({
 					},
 				})
 				.then(function (data) {
-					console.log('getCrossEntityAttributeExtensionList.data', data)
-
 					vm.entityViewerDataService.setCrossEntityAttributeExtensions(
 						data.results
 					)
@@ -696,7 +684,7 @@ export default function ({
 
 		middlewareService.onAutosaveLayoutToggle(function () {
 			autosaveLayoutOn = globalDataService.isAutosaveLayoutOn()
-			console.log('autosave77 rv isAutosaveLayoutOn', autosaveLayoutOn)
+
 			if (autosaveLayoutOn) {
 				autosaveLayoutService.initListenersForAutosaveLayout(
 					vm.entityViewerDataService,
@@ -759,7 +747,6 @@ export default function ({
 				$mdDialog
 			)
 		} else if (vm.viewContext == 'dashboard') {
-			console.log('vm.layout:', vm.layout)
 			vm.setLayout(vm.layout)
 		} else {
 			setLayoutProm = evHelperService.getDefaultLayout(vm)

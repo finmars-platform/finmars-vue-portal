@@ -67,7 +67,7 @@ function weightedMarketValue(flatListItem, valueInTotal, numberKey) {
 		}
 	} else if (flatListItem['market_value'] !== 0) {
 		// throw Error("market_value is not set");
-		console.log('market_value is not set', flatListItem)
+
 	}
 
 	return result
@@ -88,7 +88,7 @@ function weightedMarketValuePercent(flatListItem, valueInTotal, numberKey) {
 		}
 	} else if (flatListItem['market_value_percent'] !== 0) {
 		// throw Error("market_value_percent is not set")
-		console.log('market_value_percent is not set', flatListItem)
+
 	}
 
 	return result
@@ -109,7 +109,7 @@ function weightedExposure(flatListItem, valueInTotal, numberKey) {
 		}
 	} else if (flatListItem['exposure'] !== 0) {
 		// throw Error('exposure is not set')
-		console.log('exposure is not set', flatListItem)
+
 	}
 
 	return result
@@ -130,7 +130,7 @@ function weightedExposurePercent(flatListItem, valueInTotal, numberKey) {
 		}
 	} else if (flatListItem['exposure_percent'] !== 0) {
 		// throw Error("exposure_percent is not set");
-		console.log('exposure_percent is not set', flatListItem)
+
 	}
 
 	return result
@@ -154,7 +154,7 @@ function weightedAverageMarketValue(
 			total = total + parseFloat(flatList[i]['market_value'])
 		} else if (flatList[i]['market_value'] !== 0) {
 			// throw Error("market_value is not set");
-			console.log('market_value is not set', flatList[i])
+
 		}
 	}
 
@@ -185,7 +185,7 @@ function weightedAverageMarketValuePercent(
 			total = total + parseFloat(flatList[i]['market_value_percent'])
 		} else if (flatList[i]['market_value_percent'] !== 0) {
 			// throw Error("market_value_percent is not set");
-			console.log('market_value_percent is not set', flatList[i])
+
 		}
 	}
 
@@ -216,7 +216,7 @@ function weightedAverageExposure(
 			total = total + parseFloat(flatList[i]['exposure'])
 		} else if (flatList[i]['exposure'] !== 0) {
 			// throw Error("exposure is not set");
-			console.log('exposure is not set', flatList[i])
+
 		}
 	}
 
@@ -248,7 +248,7 @@ function weightedAverageExposurePercent(
 			total = total + parseFloat(flatList[i]['exposure_percent'])
 		} else if (flatList[i]['exposure_percent'] !== 0) {
 			// throw Error("exposure_percent is not set");
-			console.log('exposure_percent is not set', flatList[i])
+
 		}
 	}
 

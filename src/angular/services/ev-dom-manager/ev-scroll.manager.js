@@ -100,7 +100,7 @@ export default function () {
 	// root wrapper elem
 
 	function setRootWrapElem(elem) {
-		// console.log('setContentWrapElem elem.clientWidth', elem.clientWidth);
+		// ;
 
 		rootWrapElem = elem
 		rootWrapElemHeight = elem.clientHeight

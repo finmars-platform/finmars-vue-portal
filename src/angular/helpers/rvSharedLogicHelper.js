@@ -5,6 +5,7 @@ import CommonDialogsService from '@/angular/shell/scripts/app/services/commonDia
 import evEvents from '../services/entityViewerEvents'
 
 import rvHelper from '../helpers/rv.helper'
+import expressionService from '../services/expression.service'
 
 export default function (
 	viewModel,
@@ -15,7 +16,7 @@ export default function (
 	currencyHistoryService,
 	metaContentTypesService,
 	pricesCheckerService,
-	expressionService,
+	thisnull,
 	rvDataProviderService,
 	reportHelper
 ) {
@@ -96,14 +97,10 @@ export default function (
 			Promise.all(promises)
 				.then(function (data) {
 					viewModel.readyStatus.attributes = true
-					console.log(
-						'viewModel.readyStatus.attributes:',
-						viewModel.readyStatus.attributes
-					)
+
 					resolve(data)
 				})
 				.catch(function (error) {
-					console.log('error:', error)
 					resolve({ errorObj: error, errorCause: 'dynamicAttributes' })
 				})
 		})
@@ -129,8 +126,6 @@ export default function (
 
 			return false
 		})
-
-		console.log('putUseFromAboveFiltersFirst.filters', filters)
 
 		allFilters = useFromAboveFiters.concat(filters)
 
@@ -301,7 +296,7 @@ export default function (
 		reportDateIndex
 	) {
 		// const dateProp = reportDateProperties[viewModel.entityType][reportDateIndex];
-		const dateProp = reportHelper.getDateProperties(viewModel.entityType)[
+		const dateProp = reportHelper.getDateProperties(viewModel.contentType)[
 			reportDateIndex
 		]
 
@@ -441,8 +436,6 @@ export default function (
 				locals: locals,
 			})
 			.then(function (res) {
-				console.log('res', res)
-
 				if (res.status !== 'disagree') {
 					updateTableAfterEntityChanges(res)
 				}
@@ -885,8 +878,6 @@ export default function (
 
 	const executeUserRequestedAction = function () {
 		var action = viewModel.entityViewerDataService.getUserRequestedAction()
-
-		console.log('USER_REQUEST_AN_ACTION action', action)
 
 		if (action === 'add_portfolio') {
 			var locals = {

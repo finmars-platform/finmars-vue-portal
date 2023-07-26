@@ -31,7 +31,7 @@ module.exports =
 			instrumentDownloadSchemes: false,
 		}
 
-		console.log('item', item)
+
 
 		if (item) {
 			vm.item = item
@@ -400,7 +400,7 @@ module.exports =
 		}
 
 		vm.agree = function () {
-			console.log('vm.item', vm.item)
+
 
 			if (vm.item.id) {
 				/*vm.componentsTypes = vm.componentsTypes.map(function (item) {
@@ -572,7 +572,7 @@ module.exports =
 					return excludes.indexOf(item.value) === -1
 				})
 
-			console.log('vm.targets', vm.targets)
+
 		}
 
 		vm.checkReadyStatus = function () {
@@ -606,13 +606,13 @@ module.exports =
 			vm.getInstrumentDownloadSchemes()
 			vm.getContentTypes()
 
-			console.log('dataService', dataService)
+
 
 			vm.componentsTypes = dataService.getComponents()
 
 			vm.initGrid()
 
-			console.log('vm.item.settings', vm.item)
+
 		}
 
 		vm.init()

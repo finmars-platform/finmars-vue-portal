@@ -17,7 +17,7 @@ export default function ($mdDialog) {
 		link: function (scope, elem, attr) {
 			scope.activeItem = null
 
-			// console.log('Report Viewer Matrix Component', scope);
+			// ;
 			scope.processing = true
 			scope.matrixCreationInProgress = false
 
@@ -392,7 +392,7 @@ export default function ($mdDialog) {
 			}
 
 			scope.columnsTotalClick = function ($event) {
-				console.log('columnsTotalClick')
+
 
 				scope.activeItem = 'columns_total'
 
@@ -400,7 +400,7 @@ export default function ($mdDialog) {
 				//
 				// delete activeObject[scope.matrixSettings.abscissa];
 				//
-				// console.log('activeObject', activeObject);
+				// ;
 
 				var activeObject = {}
 
@@ -409,7 +409,7 @@ export default function ($mdDialog) {
 			}
 
 			scope.rowsTotalClick = function ($event) {
-				console.log('rowsTotalClick')
+
 
 				scope.activeItem = 'rows_total'
 
@@ -417,7 +417,7 @@ export default function ($mdDialog) {
 				//
 				// delete activeObject[scope.matrixSettings.ordinate];
 				//
-				// console.log('activeObject', activeObject);
+				// ;
 
 				var activeObject = {}
 
@@ -426,7 +426,7 @@ export default function ($mdDialog) {
 			}
 
 			scope.totalClick = function ($event) {
-				console.log('totalClick')
+
 
 				scope.activeItem = 'total'
 
@@ -443,14 +443,14 @@ export default function ($mdDialog) {
 
 				activeObject[scope.matrixSettings.abscissa] = scope.columns[index].key
 
-				console.log('activeObject', activeObject)
+
 
 				scope.evDataService.setActiveObject(activeObject)
 				scope.evEventService.dispatchEvent(evEvents.ACTIVE_OBJECT_CHANGE)
 			}
 
 			scope.singleRowTotalClick = function ($event, index) {
-				console.log('singleRowTotalClick, index', index)
+
 
 				scope.activeItem = 'row_total:' + index
 
@@ -458,7 +458,7 @@ export default function ($mdDialog) {
 
 				activeObject[scope.matrixSettings.ordinate] = scope.rows[index].key
 
-				console.log('activeObject', activeObject)
+
 
 				scope.evDataService.setActiveObject(activeObject)
 				scope.evEventService.dispatchEvent(evEvents.ACTIVE_OBJECT_CHANGE)
@@ -479,7 +479,7 @@ export default function ($mdDialog) {
 				activeObject[scope.matrixSettings.abscissa] =
 					scope.columns[columnIndex].key
 
-				console.log('activeObject', activeObject)
+
 
 				scope.evDataService.setActiveObject(activeObject)
 				scope.evEventService.dispatchEvent(evEvents.ACTIVE_OBJECT_CHANGE)

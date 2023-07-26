@@ -267,12 +267,12 @@ export default function transactionImportDialogController(
 				vm.dataIsImported = true
 			})
 			.catch(function (error) {
-				console.log('error occurred', error)
+
 			})
 	}
 
 	vm.startImportWithValidation = function ($event) {
-		console.log('startImportWithValidation starting validation')
+
 
 		return new Promise(function (resolve, reject) {
 			vm.processing = true
@@ -288,8 +288,8 @@ export default function transactionImportDialogController(
 
 			vm.validate(resolve, $event)
 		}).then(function (data) {
-			console.log('startImportWithValidation validation finished')
-			console.log('startImportWithValidation validation finished data', data)
+
+
 
 			var errorsCount = 0
 
@@ -351,7 +351,7 @@ export default function transactionImportDialogController(
 					status: vm.config.task_status,
 				}
 
-				console.log('startImportWithValidation starting import')
+
 
 				vm.startImport($event)
 			}
@@ -359,7 +359,7 @@ export default function transactionImportDialogController(
 	}
 
 	vm.validate = function (resolve, $event) {
-		console.log('Validate')
+
 
 		vm.readyStatus.processing = true
 
@@ -388,12 +388,12 @@ export default function transactionImportDialogController(
 			$scope.$apply()
 
 			if (websocketService.isOnline()) {
-				console.log('Websocket Online. Fetching status')
+
 
 				websocketService.addEventListener(
 					'transaction_import_status',
 					function (data) {
-						console.log('transaction_import_status.data', data)
+
 
 						// If parent task is finished
 						if (vm.validateConfig.task_id === data.task_id) {
@@ -443,7 +443,7 @@ export default function transactionImportDialogController(
 					}
 				)
 			} else {
-				console.log('Websocket is Offline. Falling back to polling')
+
 
 				if (vm.validateConfig.task_status === 'SUCCESS') {
 					resolve(data)
@@ -638,7 +638,7 @@ export default function transactionImportDialogController(
 				}
 			})
 
-			console.log('hasSchemeEditPermission', vm.hasSchemeEditPermission)
+
 
 			$scope.$apply()
 		})
@@ -656,13 +656,13 @@ export default function transactionImportDialogController(
 		vm.getSchemeList()
 		vm.getMember()
 
-		console.log('data', data)
+
 
 		if (data.scheme) {
 			vm.config.scheme = data.scheme.id
 		}
 
-		console.log('vm.config', vm.config)
+
 	}
 
 	vm.init()

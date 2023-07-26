@@ -37,7 +37,7 @@ var getUniqueGroups = function (items, group) {
 
 	var resultGroup
 
-	console.log('recon heere?')
+
 
 	items.forEach(function (item) {
 		resultGroup = {
@@ -53,7 +53,7 @@ var getUniqueGroups = function (items, group) {
 			resultGroup.___group_name = item_value.toString()
 		}
 
-		// console.log('resultGroup', resultGroup);
+		// ;
 
 		if (!groupAlreadyExist(resultGroup, result)) {
 			result.push(resultGroup)
@@ -98,7 +98,7 @@ var getList = function (entityType, options, entityViewerDataService) {
 
 			var groups = getUniqueGroups(items, group)
 
-			// console.log('getUniqueGroups groups', groups);
+			// ;
 
 			if (options.groups_order === 'desc') {
 				groups = sortService.sortItems(groups, '-___group_name')
@@ -113,7 +113,7 @@ var getList = function (entityType, options, entityViewerDataService) {
 			result.results = []
 		}
 
-		// console.log('get groups', JSON.parse(JSON.stringify(result)));
+		// ;
 
 		resolve(result)
 	})

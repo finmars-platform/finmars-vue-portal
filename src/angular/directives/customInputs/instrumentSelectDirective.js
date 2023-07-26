@@ -74,7 +74,7 @@ export default function (
 			scope.clearHoverInstrument = function () {
 				setTimeout(function () {
 					scope.hoverInstrument = null
-					console.log('scope.hoverInstrument', scope.hoverInstrument)
+
 
 					scope.$apply()
 				}, 0)
@@ -110,7 +110,7 @@ export default function (
 						scope.hoverInstrument.available_for_update = false
 					}
 
-					console.log('scope.hoverInstrument', scope.hoverInstrument)
+
 
 					scope.$apply()
 				}, 100)
@@ -145,7 +145,7 @@ export default function (
 			}
 
 			scope.selectLocalInstrument = function (item) {
-				console.log('selectLocalInstrument.item', item)
+
 
 				closeDropdownMenu()
 
@@ -171,7 +171,7 @@ export default function (
 			}
 
 			scope.selectDatabaseInstrument = function (item) {
-				console.log('selectDatabaseInstrument.item', item)
+
 
 				closeDropdownMenu()
 
@@ -196,7 +196,7 @@ export default function (
 				importInstrumentCbondsService
 					.download(config)
 					.then(function (data) {
-						console.log('data', data)
+
 
 						scope.isDisabled = false
 						scope.processing = false
@@ -244,7 +244,7 @@ export default function (
 						}
 					})
 					.catch(function (e) {
-						console.log('selectDatabaseInstrument.error ', e)
+
 
 						scope.processing = false
 						scope.isDisabled = false
@@ -300,7 +300,7 @@ export default function (
 			var onTabKeyPress = function (event) {
 				// TODO fix ALT + TAB closes
 				// var pressedKey = event.key;
-				// console.log('pressedKey', pressedKey)
+				//
 				//
 				// if (pressedKey === "Tab") {
 				//     closeDropdownMenu(true);
@@ -433,7 +433,7 @@ export default function (
 				}
 
 				scope.$watch('itemName', function () {
-					console.log('scope.model', scope.model)
+
 
 					if (scope.itemName) {
 						// itemName = scope.itemName;
@@ -540,7 +540,7 @@ export default function (
 									resolve()
 								})
 								.catch(function (error) {
-									console.log('Instrument Database error occurred', error)
+
 
 									scope.databaseInstruments = []
 

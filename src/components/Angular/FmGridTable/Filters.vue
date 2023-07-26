@@ -5,29 +5,15 @@
 	>
 		<!-- IMPORTANT: for .gFiltersWrap padding should be set by styles, so that scripts can access it -->
 		<div class="gFiltersWrap" style="padding: 0px">
+			<template v-if="ready">
+				<AngularFmGridTableRvFilters v-if="$scope.isReport" :vm="vm" />
 
-			<!--	RvFiltersDirective.vue -->
-
-			<div v-if="$scope.isReport && ready">
-
-				<g-rv-filters
-					ev-data-service="evDataService"
-					ev-event-service="evEventService"
-					attribute-data-service="attributeDataService"
-				></g-rv-filters>
-			</div>
-
-			<!-- <AngularFmGridTableEvRvFilters
-				v-if="!$scope.isReport && ready"
-				:vm="vm"
-				:attributeDataService="attributeDataService"
-			/> -->
-
-			<AngularFmGridTableEvRvFilters
-				v-if="ready"
-				:vm="vm"
-				:attributeDataService="attributeDataService"
-			/>
+				<AngularFmGridTableEvRvFilters
+					v-else
+					:vm="vm"
+					:attributeDataService="attributeDataService"
+				/>
+			</template>
 
 			<div
 				v-if="viewContext !== 'dashboard' && ready"
@@ -51,7 +37,7 @@
 				</div>
 			</div>
 		</div>
-<!-- RowsBulkActionsDirective.vue-->
+		<!-- RowsBulkActionsDirective.vue-->
 		<g-rows-bulk-actions
 			v-if="isRootEntityViewer && viewContext !== 'dashboard'"
 			ev-data-service="evDataService"
@@ -86,8 +72,6 @@
 	// 	evRvLayoutsHelper,
 	// ) {
 	// scope: {
-	// 		evDataService: '=',
-	// 		evEventService: '=',
 	// 		attributeDataService: '=',
 	// 		contentWrapElement: '=',
 	// 		dashboardComponentElement: '=',
@@ -95,6 +79,8 @@
 	// 		hideUseFromAboveFilters: '=',
 	// 	},
 	const props = defineProps(['attributeDataService', 'contentWrapElement'])
+
+	const { evEventService, evDataService } = inject('ngDependace')
 
 	let $scope = reactive({ ...props })
 	let vm = {}
@@ -154,16 +140,16 @@
 			allAttrsList = $scope.attributeDataService.getReconciliationAttributes()
 		} else {
 			switch (vm.entityType) {
-				case 'balance-report':
+				case 'reports.balancereport':
 					allAttrsList =
 						$scope.attributeDataService.getBalanceReportAttributes()
 					break
 
-				case 'pl-report':
+				case 'reports.plreport':
 					allAttrsList = $scope.attributeDataService.getPlReportAttributes()
 					break
 
-				case 'transaction-report':
+				case 'reports.transactionreport':
 					allAttrsList =
 						$scope.attributeDataService.getTransactionReportAttributes()
 					break
@@ -177,7 +163,6 @@
 						$scope.attributeDataService.getEntityAttributesByEntityType(
 							vm.entityType
 						)
-					console.log('vm.entityType:', vm.entityType)
 
 					entityAttrs.forEach(function (item) {
 						if (
@@ -613,7 +598,7 @@
 			filterAreaWidth = $scope.contentWrapElement.clientWidth
 		} else if ($scope.viewContext === 'dashboard') {
 			// For dashboard components without wrapElems e.g. matrix
-			filterAreaWidth = gFiltersElemWidth
+			// filterAreaWidth = gFiltersElemWidth
 		}
 
 		const horizontalPaddings = gFiltersElemPadding * 2
@@ -624,8 +609,6 @@
 	}
 
 	vm.onFilterChipClick = function (chipsData) {
-		vm.popupData.filterKey = chipsData.data.id
-
 		vm.popupEventService.dispatchEvent(popupEvents.OPEN_POPUP, {
 			doNotUpdateScope: true,
 		})

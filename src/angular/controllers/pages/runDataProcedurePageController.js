@@ -17,7 +17,7 @@ export default function ($scope, $mdDialog) {
 		dataProcedureService.getList().then(function (data) {
 			vm.procedures = data.results
 
-			console.log('vm.procedures', vm.procedures)
+
 
 			vm.readyStatus.data = true
 
@@ -26,7 +26,7 @@ export default function ($scope, $mdDialog) {
 	}
 
 	vm.executeProcedure = function ($event, item) {
-		console.log('Execute Procedure', item)
+
 
 		dataProcedureService.runProcedure(item.id, item).then(function (data) {
 			toastNotificationService.success('Success. Procedure is being processed')

@@ -585,7 +585,7 @@ export default function ($mdDialog) {
 			}
 
 			scope.findSelected = function (fields, val) {
-				//console.log(fields, val);
+				//;
 
 				if (fields && val) {
 					if (fields.join(' ') === val.join(' ')) {
@@ -713,7 +713,7 @@ export default function ($mdDialog) {
 					.then(function (res) {
 						if (res.status === 'agree') {
 							scope.item.options.number_format = res.data
-							console.log('number format scope.item', scope.item)
+
 						}
 					})
 			}

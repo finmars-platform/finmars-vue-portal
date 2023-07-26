@@ -5,7 +5,7 @@
 import referenceTablesService from '../../services/referenceTablesService'
 
 export default function ($scope, $mdDialog, data) {
-	console.log('data', data)
+
 
 	var vm = this
 

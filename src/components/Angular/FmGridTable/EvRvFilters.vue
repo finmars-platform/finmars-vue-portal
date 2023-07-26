@@ -605,6 +605,7 @@
 
 	const props = defineProps(['attributeDataService', 'vm'])
 	const gFiltersVm = props.vm
+	const { evEventService, evDataService } = inject('ngDependace')
 
 	let scope = reactive({
 		...props,
@@ -1025,13 +1026,12 @@
 	}
 
 	function init() {
+		console.log('filters.value:', filters.value)
 		if (
 			scope.viewContext !== 'reconciliation_viewer' &&
 			filters.value.frontend.length
 		)
 			scope.thereAreFrontendFilters = true
-
-		console.log('scope.thereAreFrontendFilters:', scope.thereAreFrontendFilters)
 
 		scope.currentAdditions = evDataService.getAdditions()
 

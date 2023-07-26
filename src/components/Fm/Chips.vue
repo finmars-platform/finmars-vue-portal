@@ -14,7 +14,7 @@
 				class="chip flex aic"
 				:class="{ active: chip.isActive }"
 				v-fm-tooltip="scope.getTooltipContent(chip)"
-				@click="$emit('chipClick', { data: chip })"
+				@click="$emit('chipClick', { data: chip, event: $event })"
 			>
 				<span v-if="chip.error_data" class="material-icons error">error</span>
 

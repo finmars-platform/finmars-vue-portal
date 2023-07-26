@@ -19,7 +19,7 @@ var getMatchingAttributesList = function (entity) {
 	if (processedEntity.indexOf(' ') != -1) {
 		processedEntity = processedEntity.split(' ').join('-')
 	}
-	console.log('processedEntity is', processedEntity)
+
 	var eAttrs = metaService.getEntityAttrs(processedEntity),
 		relatedAttrs = getRelatedAttributesList(),
 		attrMatchingAttributes = []
