@@ -150,6 +150,12 @@ export default [
 			"content_type": "reports.balancereport"
 	},
 	{
+			"key": "return_annually_fixed",
+			"name": "Balance. Return annually Fixed",
+			"value_type": 20,
+			"content_type": "reports.balancereport"
+	},
+	{
 			"key": "net_cost_price_loc",
 			"name": "Balance. Net cost price (Pricing Currency)",
 			"value_type": 20,
@@ -210,6 +216,18 @@ export default [
 			"content_type": "reports.balancereport"
 	},
 	{
+			"key": "principal_invested_fixed",
+			"name": "Balance. Principal invested Fixed",
+			"value_type": 20,
+			"content_type": "reports.balancereport"
+	},
+	{
+			"key": "principal_invested_fixed_loc",
+			"name": "Balance. Principal invested Fixed (Pricing Currency)",
+			"value_type": 20,
+			"content_type": "reports.balancereport"
+	},
+	{
 			"key": "amount_invested",
 			"name": "Balance. Amount invested",
 			"value_type": 20,
@@ -218,6 +236,18 @@ export default [
 	{
 			"key": "amount_invested_loc",
 			"name": "Balance. Amount invested (Pricing Currency)",
+			"value_type": 20,
+			"content_type": "reports.balancereport"
+	},
+	{
+			"key": "amount_invested_fixed",
+			"name": "Balance. Amount invested Fixed",
+			"value_type": 20,
+			"content_type": "reports.balancereport"
+	},
+	{
+			"key": "amount_invested_fixed_loc",
+			"name": "Balance. Amount invested Fixed (Pricing Currency)",
 			"value_type": 20,
 			"content_type": "reports.balancereport"
 	},
