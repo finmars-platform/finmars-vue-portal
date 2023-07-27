@@ -354,6 +354,30 @@ export default [
 			"content_type": "reports.balancereportperformance"
 	},
 	{
+			"key": "net_position_return_fixed",
+			"name": "Performance. Net Position Return Fixed",
+			"value_type": 20,
+			"content_type": "reports.balancereportperformance"
+	},
+	{
+			"key": "net_position_return_fixed_loc",
+			"name": "Performance. Net Position Return Fixed (Pricing Currency)",
+			"value_type": 20,
+			"content_type": "reports.balancereportperformance"
+	},
+	{
+			"key": "position_return_fixed",
+			"name": "Performance. Position Return Fixed",
+			"value_type": 20,
+			"content_type": "reports.balancereportperformance"
+	},
+	{
+			"key": "position_return_fixed_loc",
+			"name": "Performance. Position Return Fixed (Pricing Currency)",
+			"value_type": 20,
+			"content_type": "reports.balancereportperformance"
+	},
+	{
 			"key": "daily_price_change",
 			"name": "Performance. Daily price change",
 			"value_type": 20,
