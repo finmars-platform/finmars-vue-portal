@@ -58,6 +58,8 @@
 				></md-tooltip>
 			</div>
 		</div>
+
+		<slot></slot>
 	</div>
 </template>
 
@@ -328,11 +330,23 @@
 		background-color: rgb(235, 235, 235);
 		border-radius: 16px;
 		padding: 6px 12px;
-		margin: 0 4px;
+		margin: 4px;
 		font-size: 14px;
+
+		.icon {
+			color: $primary;
+
+			&:hover {
+				color: #fff;
+			}
+		}
 
 		&:hover {
 			background-color: rgba(216, 216, 216, 1);
+
+			.icon {
+				color: #fff;
+			}
 		}
 
 		&:focus {

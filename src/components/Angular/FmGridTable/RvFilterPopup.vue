@@ -1,5 +1,8 @@
 <template>
-	<div class="g-filter-settings" :style="{ left: positions.left + 'px' }">
+	<div
+		class="g-filter-settings"
+		:style="{ left: positions.left + 'px', top: positions.top + 'px' }"
+	>
 		<div class="g-filter-header flex sb aic">
 			<h4>{{ vm?.filter?.name }}</h4>
 			<FmIcon icon="close" @click="vm.cancel()" />
@@ -12,9 +15,11 @@
 				:vm="vm"
 			/>
 
-			<div v-if="vm.filter.value_type === 20" class="m-b-24">
-				<rv-number-filter></rv-number-filter>
-			</div>
+			<AngularFmGridTableRvNumberFilter
+				v-if="vm.filter.value_type === 20"
+				:gFiltersHelper="gFiltersHelper"
+				:vm="vm"
+			/>
 
 			<div v-if="vm.filter.value_type === 40" class="m-b-24">
 				<rv-date-filter></rv-date-filter>
@@ -89,14 +94,14 @@
 		if (props.popupData.elem) {
 			elem = props.popupData.elem
 		} else {
-			elem = document.querySelector(
-				'.chips-list-container .chip-wrap:last-child'
-			)
-			console.log('elem:', elem)
+			let chips = document.querySelectorAll('.chips-list-container .chip-wrap')
+
+			elem = chips[chips.length - 1]
 		}
 		let rect = elem.getBoundingClientRect()
 
 		positions.value.left = rect.left - 160
+		positions.value.top = rect.top - 60
 	})
 
 	const findFilter = function () {
@@ -260,6 +265,7 @@
 		top: 50px;
 		width: 350px;
 		background: #fff;
+		box-shadow: 0 1px 4px hsl(0deg 0% 40% / 25%);
 		border-radius: 5px;
 		border: 1px solid $border;
 		z-index: 43;
