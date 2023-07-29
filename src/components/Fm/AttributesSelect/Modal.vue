@@ -143,7 +143,7 @@
 
 		}
 
-		return store.favorites.attributes[props.contentType];
+		return store.favorites.attributes[props.contentType] || [];
 
 	})
 

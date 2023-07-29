@@ -1,6 +1,6 @@
 <template>
-	<div>
-		<FmSelect
+	<div class="flex-row">
+<!--		<FmSelect
 			v-if="content_type"
 			:items="portfolios"
 			label="Layout"
@@ -10,20 +10,53 @@
 			@update:modelValue="getData($event), (layoutName = $event)"
 		/>
 
-		<FmBtn v-if="layoutName" @click="isOpenCode = true">Edit layout</FmBtn>
+		<FmBtn v-if="layoutName" @click="isOpenCode = true">Edit layout</FmBtn>-->
+		<div class="flex-0-1-100">
+			<FmSelect
+				label="Layout"
+				:modelValue="selLayoutUc"
+				:items="layoutsList"
+				prop_id="user_code"
+				:disabled="loadingLayout"
+				@update:modelValue="fetchLayout"
+			>
+				<template #left_icon>
+					<FmBtn
+						v-if="!loadingLayout"
+						type="iconBtn"
+						icon="menu"
+						@click.stop="isOpenCode = true"
+					/>
+
+					<div v-if="loadingLayout" v-fm-tooltip.error="'Loading layout'">
+						<FmLoader />
+					</div>
+				</template>
+			</FmSelect>
+		</div>
+
+		<div style="flex: 0 0 180px;">
+			<FmSelect
+				title="Report type"
+				:modelValue="contentType"
+				:items="contentTypeOpts"
+				:disabled="loadingLayout"
+				@update:modelValue="emit('update:contentType')"
+			/>
+		</div>
 
 		<BaseModal
 			v-model="isOpenCode"
 			no_padding
 			title="Edit layout"
 			:controls="{
-				cancel: { name: 'Cancel', cb: () => (isOpenCode = false) },
+				cancel: { name: 'Cancel', cb: cancelLayoutEdition },
 				action: { name: 'Save', cb: saveLayout },
 			}"
 			style="z-index: 500"
 		>
 			<v-ace-editor
-				v-model:value="layout"
+				v-model:value="layoutString"
 				@init="editorInit"
 				lang="json"
 				theme="monokai"
@@ -38,22 +71,46 @@
 	import 'ace-builds/src-noconflict/mode-json'
 	import 'ace-builds/src-noconflict/theme-monokai'
 
-	const emits = defineEmits(['update:modelValue'])
-	const props = defineProps(['settings', 'layout'])
+	const layoutsStore = useLayoutsStore();
 
-	let portfolios = ref([])
-	let content_type = ref('')
-	let layoutName = ref('')
-	let layout = ref('{}')
+	// const props = defineProps(['settings', 'layout'])
+	const props = defineProps({
+		modelValue: String, // stringified object of layout
+		contentType: {
+			type: String,
+			default: 'reports.balancereport',
+		},
+	})
 
-	if (props.layout) {
-		layoutName.value = JSON.parse(props.layout).name
-		layout.value = props.layout
+	const emit = defineEmits(['update:modelValue', 'update:contentType', 'userCodeChanged'])
+
+	const loadingLayout = ref(false);
+	const contentTypeOpts = [
+		{ id: 'reports.balancereport', name: 'Balance report' },
+		{ id: 'reports.plreport', name: 'P&L report' },
+		{ id: 'reports.transactionreport', name: 'Transaction report' },
+	];
+
+	let layoutsList = ref([])
+	// let content_type = ref(props.contentType);
+	// let layoutName = ref('')
+	let layoutString = ref('{}')
+
+	if (props.modelValue) {
+		// layoutName.value = JSON.parse(props.layout).name
+		layoutString.value = props.modelValue;
 	}
+
+	watch(
+		() => props.modelValue,
+		() => {
+			layoutString.value = props.modelValue || '{}';
+		}
+	)
 
 	let isOpenCode = ref(false)
 
-	if (props.settings.find((o) => o.key == 'content_type')) {
+	/*if (props.settings.find((o) => o.key == 'content_type')) {
 		let stg = props.settings.find((o) => o.key == 'content_type')
 
 		content_type.value = stg.default_value
@@ -71,7 +128,17 @@
 			init()
 		},
 		{ deep: true }
-	)
+	)*/
+
+	let selLayoutUc = computed(() => {
+
+		if ( props.modelValue ) {
+			return JSON.parse(props.modelValue).user_code;
+		}
+
+		return null;
+
+	});
 
 	function editorInit(editor) {
 		editor.setHighlightActiveLine(false)
@@ -83,31 +150,44 @@
 		editor.navigateFileStart()
 	}
 
-	async function getData(name) {
-		let res = await useApi('listLayoutList.get', {
+	async function fetchLayout(userCode) {
+		/*let res = await useApi('listLayoutList.get', {
 			filters: {
-				name: name,
+				user_code: userCode,
 			},
-		})
-		console.log('res:', res)
+		})*/
+		let res = await layoutsStore.getLayoutByUserCode(props.contentType, userCode);
+		console.log("testing1090.fetchLayout res", res);
+		if (!res.error) {
+			layoutString.value = JSON.stringify(res, null, 4);
+			console.log("testing1090.fetchLayout layoutString.value", layoutString.value);
+			emit('userCodeChanged', res.user_code);
+			emit('update:modelValue', layoutString.value);
+		}
 
-		layout.value = JSON.stringify(res.results[0], null, 4)
-
-		emits('update:modelValue', layout.value)
 	}
-	async function saveLayout() {
-		emits('update:modelValue', layout.value)
+
+	function cancelLayoutEdition() {
+		isOpenCode.value = false;
+		layoutString.value = props.modelValue;
+	}
+
+	function saveLayout() {
+		emit('update:modelValue', layoutString.value)
 	}
 
 	async function init() {
-		let res = await useApi('listLayoutListLight.get', {
+		/*let res = await useApi('listLayoutListLight.get', {
 			filters: {
 				content_type: content_type.value,
 			},
 		})
 
-		portfolios.value = res.results
+		portfolios.value = res.results*/
+		layoutsList.value = await layoutsStore.getListLayoutsLight(props.contentType);
 	}
+
+	init();
 </script>
 
 <style lang="scss" scoped></style>

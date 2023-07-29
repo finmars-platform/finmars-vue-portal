@@ -69,13 +69,14 @@
 		return obj
 	})
 
-	const settings = computed(() => {
+	/*const settings = computed(() => {
 		let obj = {}
 		component.settings.forEach((prop) => {
 			obj[prop.key] = prop.default_value
 		})
 		return obj
-	})
+	})*/
+	// let layoutData = computed(() => component.settings.layoutData );
 
 	const route = {
 		current: {
@@ -497,14 +498,20 @@
 		'reports.balancereport': 'balance-report',
 	}
 
-	let $scope = {
+	/*let $scope = {
 		contentType: settings.value.content_type,
 		entityType: entities[settings.value.content_type],
 		viewContext: 'dashboard',
 		layout: JSON.parse(settings.value.layout),
+	}*/
+	let $scope = {
+		contentType: component.settings.content_type,
+		entityType: entities[ component.settings.content_type ],
+		viewContext: 'dashboard',
+		layout: JSON.parse(component.settings.layout),
 	}
 
-	if (settings.value.content_type == 'reports.transactionreport') {
+	if ( component.settings.content_type == 'reports.transactionreport' ) {
 		watch(
 			() => inputs.value.selected_row,
 			() => {

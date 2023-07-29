@@ -58,6 +58,7 @@
 			componentName: component.value.componentName,
 			tab: component.value.tab,
 			scopes: component.value.scopes,
+			dynamicOutputs: component.value.dynamicOutputs,
 
 			colls: component.value.minColls,
 			rows: component.value.minRows,
