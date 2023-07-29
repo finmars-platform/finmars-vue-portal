@@ -4,8 +4,10 @@
 			"path": "."
 		},
 		{
-			"path": "../fn_cypress"
+			"path": "../finmars_mobile"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"testing.automaticallyOpenPeekView": "never"
+	}
 }
