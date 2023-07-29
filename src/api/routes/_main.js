@@ -331,12 +331,6 @@ export default {
 	strategiesSecondSubgroup: {
 		get: prefix + '/strategies/2/subgroup/',
 	},
-	strategiesSecondLight: {
-		get: prefix + '/strategies/2/strategy/light/',
-	},
-	strategiesSecondSubgroup: {
-		get: prefix + '/strategies/2/subgroup/',
-	},
 	strategiesThirdLight: {
 		get: prefix + '/strategies/3/strategy/light/',
 	},

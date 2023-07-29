@@ -92,7 +92,7 @@
 				label="Tab"
 			/>
 
-			<div class="flex-row">
+<!--			<div class="flex-row">
 				<div class="flex-0-1-100">
 					<FmSelect
 						label="Layout"
@@ -110,7 +110,12 @@
 					/>
 				</div>
 
-			</div>
+			</div>-->
+			<LazySelectorsLayout
+				v-model="component.settings.layout"
+				v-model:contentType="component.settings.content_type"
+				@userCodeChanged="newUc => component.settings.user_code = newUc"
+			/>
 
 			<FmAttributesSelect
 				v-model="component.settings.axisX"
@@ -237,7 +242,7 @@
 
 		<div v-else-if="activeTab === 'linking'" class="p-t-16">
 
-			<div v-for="input in component.inputs" class="flex-row">
+<!--			<div v-for="input in component.inputs" class="flex-row">
 
 				<FmCard>
 					<div>
@@ -248,10 +253,7 @@
 							v-for="(outputData, compUid) in input.subscribedTo"
 							:key="compUid"
 						>
-<!--						<div
-							v-for="outputData in input.subscribedTo"
-							:key="outputData.componentName"
-						>-->
+
 							<FmSelect
 								:modelValue="compUid"
 								label="component"
@@ -287,44 +289,12 @@
 
 			</div>
 
-			<FmBtn>Add input</FmBtn>
+			<FmBtn>Add input</FmBtn>-->
+			<PagesDashboardAddLinkingTab />
 
 		</div>
 
 	</div>
-
-	<BaseModal
-		v-model="addLinkingData.opened"
-		title="Link to component"
-	>
-
-		<div>
-			<FmSelect
-				label="component"
-				:modelValue="addLinkingData.comp?.uid"
-				:items="getLinkCompOpts(addLinkingData.input, true)"
-				prop_id="uid"
-				prop_name="user_code"
-				attach="body"
-				@update:modelValue="uid => addLinkingData.comp = dashStore.getComponent(uid)"
-			/>
-
-			<FmAttributesSelect
-				v-if="addLinkingData.comp?.dynamicOutputs"
-				v-model="addLinkingData.comp.propertyName"
-				label="Attribute"
-				:items="evAttrsStore.getDataForAttributesSelector( dashStore.getComponent(addLinkingData.comp.uid) )"
-			/>
-		</div>
-
-		<template #controls>
-			<div class="flex aic sb">
-				<FmBtn type="text" @click="closeInputLiking">CANCEL</FmBtn>
-
-				<FmBtn @click="subscribeToComp">SAVE</FmBtn>
-			</div>
-		</template>
-	</BaseModal>
 
 </template>
 
@@ -457,295 +427,9 @@
 
 	attrs.value = evAttrsStore.getDataForAttributesSelector(component.value.settings.content_type);
 
-	//# region LINKING
-	let dateControlsOpts = computed(() => {
-
-		const result = [];
-
-		dashStore.props.outputs.forEach(outputData => {
-
-			if (outputData.component_id === component.value.uid || outputData.value_type !== 40) {
-				return;
-			}
-
-			const compUserCode = dashStore.components.find(comp => comp.uid === outputData.component_id).user_code;
-
-			result.push({
-				id: outputData.uid,
-				name: `${compUserCode}. ${outputData.name}`,
-			})
-
-		})
-
-		return result;
-
-	});
-
-	let date1Key;
-	let date2Key;
-
-	/*let date1SelectModel = computed({
-		set(newVal) {
-
-			const inputIndex = component.value.inputs.findIndex( inputData => inputData.key === date1Key );
-
-			component.value.inputs[inputIndex]._children = newVal;
-
-		},
-		get() {
-
-			component.value.inputs.find( inputData => inputData.key === date1Key )._children;
-
-		}
-	});*/
-
-	let linkingOptsData = {};
-
-	function assembleOptionsForLinking() {
-
-		linkingOptsData = {
-			10: [],
-			20: [],
-			40: [],
-			100: {},
-		};
-
-		/*component.value.inputs.forEach(input => {
-
-			linkingOptsData[input.key] = dashStore.components.find( comp => {
-
-				if (comp.dynamicOutputs) {
-					return true;
-				}
-
-				return comp.outputs.find(output => output.value_type === input.value_type);
-
-			});
-
-		})*/
-
-		const components = dashStore.components;
-
-		components.forEach(comp => {
-
-			if (comp.dynamicOutputs) {
-
-				Object.keys(linkingOptsData).forEach(valueType => {
-
-					if (valueType == 100) {
-
-						Object.keys( linkingOptsData[100] ).forEach(contentType => {
-
-							linkingOptsData[100][contentType].push({
-								uid: comp.uid,
-								user_code: comp.user_code,
-							});
-
-						})
-
-					} else {
-
-						linkingOptsData[valueType].push({
-							uid: comp.uid,
-							user_code: comp.user_code,
-						});
-
-					}
-
-
-				})
-
-			}
-
-		})
-		console.log("testing1090 getOptionsForInputs ", linkingOptsData);
-		return linkingOptsData;
-
-	}
-
-	function openInputLinking (input) {
-		addLinkingData.input = input;
-		addLinkingData.opened = true;
-	}
-
-	function unlinkInput(input) {
-
-		const inputIndex = component.value.inputs.findIndex(inputData => inputData.uid === input.uid );
-		component.value.inputs.splice(inputIndex, 1);
-
-		updateComponent( component.value );
-
-	}
-
-	let addLinkingData = reactive({
-		opened: false,
-		input: null,
-		comp: null,
-	});
-
-	function closeInputLiking() {
-		addLinkingData.opened = false;
-		addLinkingData.comp = null;
-		addLinkingData.input = null;
-	}
-
-	function subscribeToComp() {
-
-		if (!addLinkingData.input.uid) {
-			throw new Error(`Input ${addLinkingData.input.name} has no uid`);
-		}
-		console.log("testing1090.subscribeToComp addLinkingData", JSON.parse(JSON.stringify( addLinkingData )) );
-		const compToSub = dashStore.getComponent(addLinkingData.comp.uid);
-		console.log("testing1090.subscribeToComp compToSub", compToSub);
-		const input = component.value.inputs.find( inputData => inputData.uid === addLinkingData.input.uid );
-		console.log("testing1090.subscribeToComp input", input);
-		if (compToSub.dynamicOutputs) {
-
-			input.subscribedTo[compToSub.uid] = {
-				componentName: compToSub.name,
-				propertyName: addLinkingData.comp.propertyName,
-				outputUid: dashStore.props.outputs[0].uid,
-			};
-			/*input.subscribedTo = [{
-				componentName: compToSub.name,
-				propertyName: addLinkingData.comp.propertyName,
-				outputUid: null,
-			}]*/
-
-		} else {
-
-			input.subscribedTo[compToSub.uid] = {
-				componentName: compToSub.name,
-				outputUid: dashStore.props.outputs[0].uid,
-			};
-			/*input.subscribedTo = [{
-				componentName: compToSub.name,
-				outputUid: null,
-			}]*/
-
-		}
-
-		updateComponent( component.value );
-		console.log( "testing1090.subscribeToComp result ", component.value, input );
-		closeInputLiking();
-
-	}
-
-	function getLinkCompOpts (input, filterSelectedComps) {
-
-		if (!input) return;
-
-		let result = dashStore.components
-			.filter(comp => {
-				console.log("testing1090.getLinkCompOpts comp", comp);
-				if (comp.dynamicOutputs) {
-					return true;
-				}
-
-				/*const differentValueType = !comp.outputs.find( output => {
-					return output.value_type === input.value.value_type;
-				});*/
-				const differentValueType = !dashStore.props.outputs.find( output => {
-
-					return output.component_id === comp.uid &&
-						output.value_type === input.value_type;
-
-				});
-				console.log("testing1090.getLinkCompOpts differentValueType", differentValueType);
-				if (differentValueType) {
-					return false;
-				}
-
-				if (input.value_type === 100) {
-
-					const differentContentType = !dashStore.props.outputs.find( output => {
-						return output.value_content_type === input.value_content_type;
-					});
-					console.log("testing1090.getLinkCompOpts differentContentType", differentContentType);
-					if (differentContentType) {
-						return false;
-					}
-
-				}
-				console.log("testing1090.getLinkCompOpts pass");
-				return true;
-
-			});
-
-		if (filterSelectedComps) {
-
-			result = result.filter(comp => {
-				return comp.dynamicOutputs || !input.subscribedTo.hasOwnProperty(comp.uid);
-			});
-
-		}
-
-		return result;
-
-	}
-
-	//# endregion tab: LINKING
-
 	function init () {
 
-		const date1KeysData = {
-			'reports.balancereport': 'report_date',
-			'reports.plreport': 'pl_first_date',
-			'reports.transactionreport': 'begin_date',
-		};
 
-		const date2KeysData = {
-			'reports.balancereport': null,
-			'reports.plreport': 'report_date',
-			'reports.transactionreport': 'end_date',
-		};
-
-		date1Key = date1KeysData[component.value.settings.content_type];
-		date2Key = date2KeysData[component.value.settings.content_type];
-
-		if (date2Key) {
-
-			component.value.inputs.unshift({
-				uid: null,
-				component_id: null,
-				user_code: null,
-				key: 'report_options_date2',
-				name: 'Date to',
-				value_type: 40,
-				// type: '',
-				view: {
-					type: 'select',
-					items: [],
-				},
-				subscribedTo: [],
-				default_value: null,
-				__val: null,
-			});
-
-		}
-
-		component.value.inputs.unshift({
-			uid: null,
-			component_id: null,
-			user_code: null,
-			key: 'report_options_date1',
-			name: date2Key ? 'Date from' : 'Date',
-			value_type: 40,
-			// type: '',
-			view: {
-				type: 'select',
-				items: [],
-			},
-			subscribedTo: [],
-			default_value: null,
-			__val: null,
-		});
-
-		// linkingOptsData = assembleOptionsForLinking();
-		component.value.inputs = component.value.inputs.map((input, index) => {
-			input.uid = useGenerateUniqueId('input' + index);
-			return input;
-		});
 
 	}
 
