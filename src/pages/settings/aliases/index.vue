@@ -642,45 +642,45 @@
 		},
 		{ deep: true }
 	),
-	complexTransactionUserFieldCreate()
-	async function complexTransactionUserFieldCreate() {
-		let res = await useApi('complexTransactionUserField.post', {
+	// complexTransactionUserFieldCreate()
+	// async function complexTransactionUserFieldCreate() {
+	// 	// let res = await useApi('complexTransactionUserField.post', {
 			
-			textTransactionFieldsItems.forEach(function (textField) {
-				params: { id: textField.value.id },
+	// 	// 	textTransactionFieldsItems.forEach(function (textField) {
+	// 	// 		params: { id: textField.value.id },
 
-			body: textField.value,
-				})
+	// 	// 	body: textField.value,
+	// 	// 		})
 
-				numberTransactionFieldsItems.forEach(function (numberField) {
-					if (
-						numberField.key === field.key &&
-						field.key.includes('user_number')
-					) {
-						numberField.is_active = field.is_active
-						numberField.name = field.name
-						numberField.id = field.id
-					}
-				})
+	// 	// 		numberTransactionFieldsItems.forEach(function (numberField) {
+	// 	// 			if (
+	// 	// 				numberField.key === field.key &&
+	// 	// 				field.key.includes('user_number')
+	// 	// 			) {
+	// 	// 				numberField.is_active = field.is_active
+	// 	// 				numberField.name = field.name
+	// 	// 				numberField.id = field.id
+	// 	// 			}
+	// 	// 		})
 
-				dateTransactionFieldItems.forEach(function (dateField) {
-					if (dateField.key === field.key && field.key.includes('user_date')) {
-						dateField.is_active = field.is_active
-						dateField.name = field.name
-						dateField.id = field.id
-					}
-				})
+	// 	// 		dateTransactionFieldItems.forEach(function (dateField) {
+	// 	// 			if (dateField.key === field.key && field.key.includes('user_date')) {
+	// 	// 				dateField.is_active = field.is_active
+	// 	// 				dateField.name = field.name
+	// 	// 				dateField.id = field.id
+	// 	// 			}
+	// 	// 		})
 
-		})
+	// 	// })
 
-		if (res.error) {
-			// console.error(res.error);
-			useNotify({ type: 'error', title: res.error.message || res.error.detail })
-			throw new Error(res.error)
-		} else {
-			useNotify({ type: 'success', title: `data saved on the server` })
-		}
-	}
+	// 	if (res.error) {
+	// 		// console.error(res.error);
+	// 		useNotify({ type: 'error', title: res.error.message || res.error.detail })
+	// 		throw new Error(res.error)
+	// 	} else {
+	// 		useNotify({ type: 'success', title: `data saved on the server` })
+	// 	}
+	// }
 	instrumentTextFieldsCreate()
 	async function instrumentTextFieldsCreate() {
 		let res = await useApi('complexTransactionUserField.post', {
