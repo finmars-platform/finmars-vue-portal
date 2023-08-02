@@ -502,8 +502,27 @@
 		// )
 		viewSettings.value = {
 			abscissa: 'instrument.user_code',
-			ordinate: 'allocation.attributes.pricing_policy_notes_DFT',
-			value_key: 'allocation.default_price',
+			ordinate: 'portfolio.user_code',
+			value_key: 'position_size',
+
+			subtotal_formula_id: 1,
+			matrix_view: 'usual',
+			auto_refresh: false,
+			auto_scaling: false,
+			calculate_name_column_width: false,
+			// linked_components: {},
+			hide_empty_lines: '',
+			filters: {
+				show_filters_area: false,
+				show_use_from_above_filters: false,
+			},
+			user_settings: {},
+
+			styles: {
+				cell: {
+					text_align: 'center',
+				},
+			},
 		}
 		provide('ngDependace', {
 			evDataService: vmE.entityViewerDataService,
