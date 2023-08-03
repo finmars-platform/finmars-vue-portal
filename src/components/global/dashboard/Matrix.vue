@@ -506,7 +506,7 @@
 			value_key: 'position_size',
 
 			subtotal_formula_id: 1,
-			matrix_view: 'usual',
+			matrix_view: 'fixed-totals',
 			auto_refresh: false,
 			auto_scaling: false,
 			calculate_name_column_width: false,

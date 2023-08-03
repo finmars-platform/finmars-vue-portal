@@ -82,11 +82,13 @@
 					<div class="rvm-header-row-holder">
 						<div class="rv-matrix-part-to-scroll rvmHeaderScrollableRow">
 							<div
-								v-for="column in scope.columns"
+								v-for="(column, $index) in scope.columns"
 								class="report-viewer-matrix-column-header-cell rvMatrixCell"
-								:class="{ active: activeItem == 'column_total:' + $index }"
+								:class="{
+									active: scope.activeItem == 'column_total:' + $index,
+								}"
 								title="{{column.key}}"
-								@click="singleColumnTotalClick($event, $index)"
+								@click="scope.singleColumnTotalClick($event, $index)"
 							>
 								{{ column.key }}
 							</div>
@@ -96,7 +98,7 @@
 								class="report-viewer-matrix-column-header-cell report-viewer-cell-border-left rvMatrixCell"
 								:class="[
 									`text-${scope.styles.cell.text_align}`,
-									{ active: activeItem == 'columns_total' },
+									{ active: scope.activeItem == 'columns_total' },
 								]"
 								title="TOTAL"
 								@click="columnsTotalClick($event)"
@@ -114,7 +116,7 @@
 						class="rv-matrix-header-total-cell rvMatrixCell"
 						:class="[
 							`text-${scope.styles.cell.text_align}`,
-							{ active: activeItem == 'columns_total' },
+							{ active: scope.activeItem == 'columns_total' },
 						]"
 						title="TOTAL"
 						@click="columnsTotalClick($event)"
@@ -123,25 +125,20 @@
 					</div>
 				</div>
 
-				<div class="rv-matrix-body" v-if="scope.matrixView !== 'fixed-totals'">
+				<div
+					class="rv-matrix-body flex"
+					v-if="scope.matrixView !== 'fixed-totals'"
+				>
 					<div class="rv-matrix-fixed-bottom-row rvMatrixFixedBottomRow">
 						<div class="rv-matrix-part-to-scroll rvmBottomRowScrollableElem">
-							<!--<div data-ng-repeat="item in totals.columns track by $index"
-             class="report-viewer-matrix-cell rv-matrix-colored-cell text-{{styles.cell.text_align}} rvMatrixCell"
-             title="{{item.total}}"
-             data-ng-click="singleColumnTotalClick($event, $index)"
-             data-ng-class="{'active': activeItem == 'column_total:' + $index, 'negative-red': checkNegative(item.total)}">
-            {{formatValue(item.total)}}
-        </div>-->
-
 							<div
-								v-for="item in scope.columns"
+								v-for="(item, $index) in scope.columns"
 								class="report-viewer-matrix-cell report-viewer-matrix-cell-total rv-matrix-colored-cell rvMatrixCell"
 								title="{{item.total}}"
 								:class="[
 									`text-${scope.styles.cell.text_align}`,
 									{
-										active: activeItem == 'column_total:' + $index,
+										active: scope.activeItem == 'column_total:' + $index,
 										'negative-red': scope.checkNegative(item.total),
 									},
 								]"
@@ -153,11 +150,11 @@
 
 						<div
 							class="report-viewer-matrix-cell rv-matrix-lb-cell firstColumnCell rvMatrixCell"
+							style="position: relative; z-index: 10"
 							:class="[
 								`text-${scope.styles.cell.text_align}`,
-								{ active: activeItem == 'rows_total' },
+								{ active: scope.activeItem == 'rows_total' },
 							]"
-							title="TOTAL"
 							@click="scope.rowsTotalClick($event)"
 						>
 							TOTAL
@@ -166,7 +163,7 @@
 						<!--<div class="report-viewer-matrix-cell rv-matrix-rb-cell text-{{styles.cell.text_align}} rvMatrixCell"
          title="{{totals.total}}"
          data-ng-click="totalClick($event)"
-         data-ng-class="{'active': activeItem == 'total', 'negative-red': checkNegative(totals.total)}">
+         data-ng-class="{'active': scope.activeItem == 'total', 'negative-red': checkNegative(totals.total)}">
         {{formatValue(totals.total)}}
     </div>-->
 						<div
@@ -174,14 +171,14 @@
 							:class="[
 								`text-${scope.styles.cell.text_align}`,
 								{
-									active: activeItem == 'total',
-									'negative-red': scope.checkNegative(grandtotal),
+									active: scope.activeItem == 'total',
+									'negative-red': scope.checkNegative(scope.grandtotal),
 								},
 							]"
 							title="{{grandtotal}}"
 							@click="scope.totalClick($event)"
 						>
-							{{ scope.formatValue(grandtotal) }}
+							{{ scope.formatValue(scope.grandtotal) }}
 						</div>
 					</div>
 
@@ -193,7 +190,7 @@
 									class="report-viewer-matrix-cell rv-matrix-colored-cell firstColumnCell rvMatrixCell"
 									:class="[
 										`text-${scope.styles.cell.text_align}`,
-										{ active: activeItem == 'row_total:' + row.index },
+										{ active: scope.activeItem == 'row_total:' + row.index },
 									]"
 									title="{{row.row_name}}"
 									@click="singleRowTotalClick($event, row.index)"
@@ -219,7 +216,156 @@
 										`text-${scope.styles.cell.text_align}`,
 										{
 											active:
-												activeItem == 'cell:' + row.index + ':' + item.index,
+												scope.activeItem ==
+												'cell:' + row.index + ':' + item.index,
+											'negative-red': scope.checkNegative(item.data.value),
+										},
+									]"
+								>
+									{{ scope.formatValue(item.data.value) }}
+								</div>
+
+								<!-- Blank cell that serves as placeholder for position absolute row with totals -->
+								<div class="report-viewer-matrix-cell rvMatrixCell">
+									{{ scope.formatValue(scope.rows[row.index].total) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="rv-matrix-right-col rvMatrixRightCol">
+						<div class="rv-matrix-part-to-scroll scrollableMatrixBodyColumn">
+							<div
+								v-for="row in scope.matrix"
+								class="report-viewer-matrix-row rvMatrixRow"
+							>
+								<!--<div class="report-viewer-matrix-cell report-viewer-cell-border-left rv-matrix-colored-cell text-{{styles.cell.text_align}} rvMatrixCell"
+                 title="{{totals.rows[row.index].total}}"
+                 data-ng-click="singleRowTotalClick($event, row.index)"
+                 data-ng-class="{'active': scope.activeItem == 'row_total:' + row.index, 'negative-red': checkNegative(totals.rows[row.index].total)}">
+                {{formatValue(totals.rows[row.index].total)}}
+            </div>-->
+								<div
+									class="report-viewer-matrix-cell report-viewer-matrix-cell-total report-viewer-cell-border-left rv-matrix-colored-cell rvMatrixCell"
+									:title="scope.rows[row.index].total"
+									@click="scope.singleRowTotalClick($event, row.index)"
+									:class="[
+										`text-${scope.styles.cell.text_align}`,
+										{
+											active: scope.activeItem == 'row_total:' + row.index,
+											'negative-red': scope.checkNegative(
+												scope.rows[row.index].total
+											),
+										},
+									]"
+								>
+									{{ scope.formatValue(scope.rows[row.index].total) }}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div
+					class="rv-matrix-body flex"
+					v-if="scope.matrixView === 'fixed-totals'"
+				>
+					<div class="rv-matrix-fixed-bottom-row rvMatrixFixedBottomRow">
+						<div class="rv-matrix-part-to-scroll rvmBottomRowScrollableElem">
+							<!--<div data-ng-repeat="item in totals.columns track by $index"
+             class="report-viewer-matrix-cell rv-matrix-colored-cell text-{{styles.cell.text_align}} rvMatrixCell"
+             title="{{item.total}}"
+             data-ng-click="singleColumnTotalClick($event, $index)"
+             data-ng-class="{'active': scope.activeItem == 'column_total:' + $index, 'negative-red': checkNegative(item.total)}">
+            {{formatValue(item.total)}}
+        </div>-->
+
+							<div
+								v-for="(item, $index) in scope.columns"
+								class="report-viewer-matrix-cell report-viewer-matrix-cell-total rv-matrix-colored-cell rvMatrixCell"
+								title="{{item.total}}"
+								@click="scope.singleColumnTotalClick($event, $index)"
+								:class="[
+									`text-${scope.styles.cell.text_align}`,
+									{
+										active: scope.activeItem == 'column_total:' + $index,
+										'negative-red': scope.checkNegative(item.total),
+									},
+								]"
+							>
+								{{ scope.formatValue(item.total) }}
+							</div>
+						</div>
+
+						<div
+							class="report-viewer-matrix-cell rv-matrix-lb-cell firstColumnCell rvMatrixCell"
+							title="TOTAL"
+							@click="scope.rowsTotalClick($event)"
+							:class="[
+								`text-${scope.styles.cell.text_align}`,
+								{ active: scope.activeItem == 'rows_total' },
+							]"
+						>
+							TOTAL
+						</div>
+
+						<!--<div class="report-viewer-matrix-cell rv-matrix-rb-cell text-{{styles.cell.text_align}} rvMatrixCell"
+         title="{{totals.total}}"
+         data-ng-click="totalClick($event)"
+         data-ng-class="{'active': scope.activeItem == 'total', 'negative-red': checkNegative(totals.total)}">
+        {{formatValue(totals.total)}}
+    </div>-->
+						<div
+							class="report-viewer-matrix-cell rv-matrix-rb-cell report-viewer-matrix-cell-total rvMatrixCell"
+							@click="scope.totalClick($event)"
+							:class="[
+								`text-${scope.styles.cell.text_align}`,
+								{
+									active: scope.activeItem == 'total',
+									'negative-red': scope.checkNegative(scope.grandtotal),
+								},
+							]"
+						>
+							{{ scope.formatValue(scope.grandtotal) }}
+						</div>
+					</div>
+
+					<div class="rv-matrix-left-col rvMatrixLeftCol">
+						<div class="rvm-fixed-col-holder">
+							<div class="rv-matrix-part-to-scroll scrollableMatrixBodyColumn">
+								<div
+									v-for="row in scope.matrix"
+									class="report-viewer-matrix-cell rv-matrix-colored-cell firstColumnCell rvMatrixCell"
+									title="{{row.row_name}}"
+									@click="scope.singleRowTotalClick($event, row.index)"
+									:class="[
+										`text-${scope.styles.cell.text_align}`,
+										{ active: scope.activeItem == 'row_total:' + row.index },
+									]"
+								>
+									{{ row.row_name }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="rv-matrix-value-cells-container rvMatrixBodyScrolls">
+						<div class="position-relative rvMatrixValueRowsHolder">
+							<div
+								v-for="row in scope.matrix"
+								class="report-viewer-matrix-row rvMatrixRow"
+							>
+								<div
+									class="report-viewer-matrix-cell rvMatrixCell"
+									v-for="item in row.items"
+									title="{{item.data.value}}"
+									@click="scope.cellClick($event, row.index, item.index)"
+									:class="[
+										`text-${scope.styles.cell.text_align}`,
+										{
+											active:
+												scope.activeItem ==
+												'cell:' + row.index + ':' + item.index,
 											'negative-red': scope.checkNegative(item.data.value),
 										},
 									]"
@@ -242,131 +388,23 @@
 								<!--<div class="report-viewer-matrix-cell report-viewer-cell-border-left rv-matrix-colored-cell text-{{styles.cell.text_align}} rvMatrixCell"
                  title="{{totals.rows[row.index].total}}"
                  data-ng-click="singleRowTotalClick($event, row.index)"
-                 data-ng-class="{'active': activeItem == 'row_total:' + row.index, 'negative-red': checkNegative(totals.rows[row.index].total)}">
+                 data-ng-class="{'active': scope.activeItem == 'row_total:' + row.index, 'negative-red': checkNegative(totals.rows[row.index].total)}">
                 {{formatValue(totals.rows[row.index].total)}}
             </div>-->
 								<div
-									class="report-viewer-matrix-cell report-viewer-matrix-cell-total report-viewer-cell-border-left rv-matrix-colored-cell text-{{styles.cell.text_align}} rvMatrixCell"
-									:title="scope.rows[row.index].total"
+									class="report-viewer-matrix-cell report-viewer-matrix-cell-total report-viewer-cell-border-left rv-matrix-colored-cell rvMatrixCell"
 									@click="scope.singleRowTotalClick($event, row.index)"
-									:class="{
-										active: activeItem == 'row_total:' + row.index,
-										'negative-red': scope.checkNegative(
-											scope.rows[row.index].total
-										),
-									}"
+									:class="[
+										`text-${scope.styles.cell.text_align}`,
+										{
+											active: scope.activeItem == 'row_total:' + row.index,
+											'negative-red': scope.checkNegative(
+												scope.rows[row.index].total
+											),
+										},
+									]"
 								>
 									{{ scope.formatValue(scope.rows[row.index].total) }}
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="rv-matrix-body" v-if="scope.matrixView === 'fixed-totals'">
-					<div class="rv-matrix-fixed-bottom-row rvMatrixFixedBottomRow">
-						<div class="rv-matrix-part-to-scroll rvmBottomRowScrollableElem">
-							<!--<div data-ng-repeat="item in totals.columns track by $index"
-             class="report-viewer-matrix-cell rv-matrix-colored-cell text-{{styles.cell.text_align}} rvMatrixCell"
-             title="{{item.total}}"
-             data-ng-click="singleColumnTotalClick($event, $index)"
-             data-ng-class="{'active': activeItem == 'column_total:' + $index, 'negative-red': checkNegative(item.total)}">
-            {{formatValue(item.total)}}
-        </div>-->
-
-							<div
-								v-for="item in scope.columns"
-								class="report-viewer-matrix-cell report-viewer-matrix-cell-total rv-matrix-colored-cell text-{{styles.cell.text_align}} rvMatrixCell"
-								title="{{item.total}}"
-								data-ng-click="singleColumnTotalClick($event, $index)"
-								data-ng-class="{'active': activeItem == 'column_total:' + $index, 'negative-red': checkNegative(item.total)}"
-							>
-								{{ formatValue(item.total) }}
-							</div>
-						</div>
-
-						<div
-							class="report-viewer-matrix-cell rv-matrix-lb-cell text-{{styles.cell.text_align}} firstColumnCell rvMatrixCell"
-							title="TOTAL"
-							data-ng-click="rowsTotalClick($event)"
-							data-ng-class="{'active': activeItem == 'rows_total'}"
-						>
-							TOTAL
-						</div>
-
-						<!--<div class="report-viewer-matrix-cell rv-matrix-rb-cell text-{{styles.cell.text_align}} rvMatrixCell"
-         title="{{totals.total}}"
-         data-ng-click="totalClick($event)"
-         data-ng-class="{'active': activeItem == 'total', 'negative-red': checkNegative(totals.total)}">
-        {{formatValue(totals.total)}}
-    </div>-->
-						<div
-							class="report-viewer-matrix-cell rv-matrix-rb-cell report-viewer-matrix-cell-total text-{{styles.cell.text_align}} rvMatrixCell"
-							title="{{grandtotal}}"
-							data-ng-click="totalClick($event)"
-							data-ng-class="{'active': activeItem == 'total', 'negative-red': checkNegative(grandtotal)}"
-						>
-							{{ formatValue(grandtotal) }}
-						</div>
-					</div>
-
-					<div class="rv-matrix-left-col rvMatrixLeftCol">
-						<div class="rvm-fixed-col-holder">
-							<div class="rv-matrix-part-to-scroll scrollableMatrixBodyColumn">
-								<div
-									v-for="row in scope.matrix"
-									class="report-viewer-matrix-cell rv-matrix-colored-cell text-{{styles.cell.text_align}} firstColumnCell rvMatrixCell"
-									title="{{row.row_name}}"
-									data-ng-click="singleRowTotalClick($event, row.index)"
-									data-ng-class="{'active': activeItem == 'row_total:' + row.index}"
-								>
-									{{ row.row_name }}
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="rv-matrix-value-cells-container rvMatrixBodyScrolls">
-						<div class="position-relative rvMatrixValueRowsHolder">
-							<div
-								v-for="row in scope.matrix"
-								class="report-viewer-matrix-row rvMatrixRow"
-							>
-								<div
-									class="report-viewer-matrix-cell text-{{scope.styles.cell.text_align}} rvMatrixCell"
-									v-for="item in row.items"
-									title="{{item.data.value}}"
-									data-ng-click="cellClick($event, row.index, item.index)"
-									data-ng-class="{'active': activeItem == 'cell:' + row.index + ':' + item.index, 'negative-red': checkNegative(item.data.value)}"
-								>
-									{{ formatValue(item.data.value) }}
-								</div>
-
-								<!-- Blank cell that serves as placeholder for position absolute row with totals -->
-								<div class="report-viewer-matrix-cell rvMatrixCell"></div>
-							</div>
-						</div>
-					</div>
-
-					<div class="rv-matrix-right-col rvMatrixRightCol">
-						<div class="rv-matrix-part-to-scroll scrollableMatrixBodyColumn">
-							<div
-								v-for="row in scope.matrix"
-								class="report-viewer-matrix-row rvMatrixRow"
-							>
-								<!--<div class="report-viewer-matrix-cell report-viewer-cell-border-left rv-matrix-colored-cell text-{{styles.cell.text_align}} rvMatrixCell"
-                 title="{{totals.rows[row.index].total}}"
-                 data-ng-click="singleRowTotalClick($event, row.index)"
-                 data-ng-class="{'active': activeItem == 'row_total:' + row.index, 'negative-red': checkNegative(totals.rows[row.index].total)}">
-                {{formatValue(totals.rows[row.index].total)}}
-            </div>-->
-								<div
-									class="report-viewer-matrix-cell report-viewer-matrix-cell-total report-viewer-cell-border-left rv-matrix-colored-cell text-{{styles.cell.text_align}} rvMatrixCell"
-									title="{{rows[row.index].total}}"
-									data-ng-click="singleRowTotalClick($event, row.index)"
-									data-ng-class="{'active': activeItem == 'row_total:' + row.index, 'negative-red': checkNegative(rows[row.index].total)}"
-								>
-									{{ formatValue(rows[row.index].total) }}
 								</div>
 							</div>
 						</div>
@@ -456,7 +494,7 @@
 		init()
 
 		setTimeout(() => {
-			scope.alignGrid()
+			// scope.alignGrid()
 		}, 1000)
 	})
 
@@ -490,7 +528,7 @@
 		}
 	}
 
-	var getCellWidth = function (columnsCount) {
+	function getCellWidth(columnsCount) {
 		var elemWidth = elem.value.getBoundingClientRect().width
 		var cellWidth = 0
 		var minWidth = props.matrixSettings.auto_scaling ? 46 : 100
@@ -579,7 +617,8 @@
 		return result
 	}
 
-	scope.alignGrid = function () {
+	scope.alignGrid = async function () {
+		await nextTick()
 		/*var elemWidth = elem.width();
 					var elemHeight = elem.height();*/
 
@@ -784,7 +823,7 @@
 		var activeObject = {}
 
 		evDataService.setActiveObject(activeObject)
-		scope.evEventService.dispatchEvent(evEvents.ACTIVE_OBJECT_CHANGE)
+		evEventService.dispatchEvent(evEvents.ACTIVE_OBJECT_CHANGE)
 	}
 
 	scope.rowsTotalClick = function ($event) {
@@ -801,7 +840,7 @@
 		var activeObject = {}
 
 		evDataService.setActiveObject(activeObject)
-		scope.evEventService.dispatchEvent(evEvents.ACTIVE_OBJECT_CHANGE)
+		evEventService.dispatchEvent(evEvents.ACTIVE_OBJECT_CHANGE)
 	}
 
 	scope.totalClick = function ($event) {
@@ -812,7 +851,7 @@
 		var activeObject = {}
 
 		evDataService.setActiveObject(activeObject)
-		scope.evEventService.dispatchEvent(evEvents.ACTIVE_OBJECT_CHANGE)
+		evEventService.dispatchEvent(evEvents.ACTIVE_OBJECT_CHANGE)
 	}
 
 	scope.singleColumnTotalClick = function ($event, index) {
@@ -825,7 +864,7 @@
 		console.log('activeObject', activeObject)
 
 		evDataService.setActiveObject(activeObject)
-		scope.evEventService.dispatchEvent(evEvents.ACTIVE_OBJECT_CHANGE)
+		evEventService.dispatchEvent(evEvents.ACTIVE_OBJECT_CHANGE)
 	}
 
 	scope.singleRowTotalClick = function ($event, index) {
@@ -840,7 +879,7 @@
 		console.log('activeObject', activeObject)
 
 		evDataService.setActiveObject(activeObject)
-		scope.evEventService.dispatchEvent(evEvents.ACTIVE_OBJECT_CHANGE)
+		evEventService.dispatchEvent(evEvents.ACTIVE_OBJECT_CHANGE)
 	}
 
 	scope.cellClick = function ($event, rowIndex, columnIndex) {
@@ -860,7 +899,7 @@
 		console.log('activeObject', activeObject)
 
 		evDataService.setActiveObject(activeObject)
-		scope.evEventService.dispatchEvent(evEvents.ACTIVE_OBJECT_CHANGE)
+		evEventService.dispatchEvent(evEvents.ACTIVE_OBJECT_CHANGE)
 	}
 
 	var getValuesForMatrix = function () {
@@ -1058,9 +1097,7 @@
 
 			option.isActive = true
 
-			scope.evEventService.dispatchEvent(
-				evEvents.DASHBOARD_COMPONENT_DATA_CHANGED
-			)
+			evEventService.dispatchEvent(evEvents.DASHBOARD_COMPONENT_DATA_CHANGED)
 		}
 	}
 
@@ -1143,12 +1180,12 @@
 		}
 	}
 	//</editor-fold desc="Popup-selector of attributes for axises">
+	scope.styles = props.matrixSettings.styles
 
 	function init() {
 		evDataService.setActiveObject({})
 
 		// scope.top_left_title = props.matrixSettings.top_left_title;
-		scope.styles = props.matrixSettings.styles
 
 		initAxisAttrsSelectors()
 
@@ -1215,4 +1252,8 @@
 	})
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+	.report-viewer-matrix .rv-matrix-left-col {
+		height: auto;
+	}
+</style>
