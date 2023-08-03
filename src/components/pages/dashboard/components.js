@@ -72,6 +72,36 @@ export default [
 	{
 		uid: null,
 		user_code: null,
+		name: 'Pricing policy control',
+		componentName: 'DashboardPricingPolicyControl',
+		tab: null,
+		scopes: [],
+
+		inputs: [],
+		outputs: [
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'pricing_policy',
+				name: 'Pricong policy',
+				type: 'pricing_policy',
+				view: {
+					type: 'pricing_policy',
+				},
+				default_value: null,
+				__val: null,
+				_children: [],
+			},
+		],
+		settings: [],
+		_group: 'system',
+		minColls: 2,
+		minRows: 1,
+	},
+	{
+		uid: null,
+		user_code: null,
 		name: 'Bundle control',
 		componentName: 'BundleControl',
 		tab: null,
