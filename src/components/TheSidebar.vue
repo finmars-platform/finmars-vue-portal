@@ -645,6 +645,16 @@
 														>
 													</a>
 												</li>
+												<li>
+													<a
+														:href="getUrlToOldApp('/transaction-type-group')"
+														class="sidenav-dropdown-menu-btn"
+													>
+														<span class="side-nav-title"
+														>Transaction Type Groups</span
+														>
+													</a>
+												</li>
 												<!-- <li v-if="accessTable.configuration_pricing_policy">
 														<button class="sidenav-dropdown-menu-btn"
 																			 ui-sref="app.portal.data.pricing-policy">
