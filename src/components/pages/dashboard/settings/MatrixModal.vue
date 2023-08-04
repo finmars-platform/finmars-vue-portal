@@ -113,7 +113,7 @@
 			</div>-->
 			<LazySelectorsLayout
 				:modelValue="component.settings.layout"
-				v-model:contentType="component.settings.content_type"
+				v-model:content_type="component.settings.content_type"
 				@update:modelValue="newVal => component.settings.layout = copyRvLayoutForDashboard(newVal)"
 				@userCodeChanged="newUc => component.settings.user_code = newUc"
 			/>
@@ -319,6 +319,11 @@
 			default: [],
 		},
 	});
+
+	function testM(newVal) {
+		console.log('testing1090 content_type', newVal);
+		component.value.settings.content_type = newVal;
+	}
 
 	const emit = defineEmits(['update:inputs', 'update:outputs'])
 

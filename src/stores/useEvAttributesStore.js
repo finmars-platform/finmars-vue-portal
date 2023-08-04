@@ -48,6 +48,12 @@ const dynamicAttrsRouteOpts = {
 	'transactions.complextransaction': 'complexTransactionAttrTypeList',
 }
 
+const userFieldsRouteOpts = {
+	'transactions.transaction': 'transactionUserField',
+	'transactions.complextransaction': 'complexTransactionUserField',
+	'instruments.instrument': 'instrumentUserField',
+}
+
 const customFieldsRouteOpts = {
 	'reports.balancereport': 'balanceReportCustomFieldList',
 	'reports.plreport': 'plReportCustomFieldList',
@@ -141,8 +147,10 @@ export default defineStore({
 			userFields: {}, // contains fields like user_text_1, user_number_3, etc. grouped by content type
 
 			customFields: {
-				'reports.balancereport': []
-			}, // reports have them
+				'reports.balancereport': null,
+				'reports.plreport': null,
+				'reports.transactionreport': null,
+			}, // for reports
 		};
 	},
 	actions: {
@@ -377,6 +385,7 @@ export default defineStore({
 			}
 
 			this.customFields[contentType] = res.results;
+
 		},
 
 		async getCustomFields(contentType) {
@@ -710,17 +719,18 @@ export default defineStore({
 
 		applyAliasesToAttrs(attributes, contentType, keyPrefix='', namePrefix='') {
 
-			const customFieldsObj = {
-				'transactions.transaction': this.customFields['transactions.transaction'],
-				'transactions.complextransaction': this.customFields['transactions.complextransaction'],
-				'instruments.instrument': this.customFields['instruments.instrument'],
+			const userFieldsObj = {
+				'transactions.transaction': this.userFields['transactions.transaction'],
+				'transactions.complextransaction': this.userFields['transactions.complextransaction'],
+				'instruments.instrument': this.userFields['instruments.instrument'],
 			}
-
-			if ( !customFieldsObj.hasOwnProperty(contentType) ) {
+			console.log("testing1090.994 userFieldsObj 1", userFieldsObj, JSON.parse(JSON.stringify(userFieldsObj)) );
+			if ( !userFieldsObj.hasOwnProperty(contentType) ) {
 				throw new Error("There are no user fields for contentType: " + contentType)
 			}
-
-			customFieldsObj[contentType].forEach(function (field) {
+			console.trace("testing1090.994 ");
+			console.log("testing1090.994 customFieldsObj", JSON.parse(JSON.stringify(userFieldsObj)) );
+			userFieldsObj[contentType].forEach(function (field) {
 
 				attributes = attributes.map(function (attr) {
 

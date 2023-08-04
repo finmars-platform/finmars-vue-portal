@@ -175,6 +175,10 @@ export default {
 	instrumentsEventInformed: {
 		put: prefix + '/instruments/generated-event/{id}/informed/',
 	},
+	instrumentUserField:{
+		get: prefix + '/ui/instrument-user-field/',
+	},
+
 	listLayoutList: {
 		get: prefix + '/ui/list-layout/',
 	},
@@ -340,4 +344,12 @@ export default {
 	defaultSettings: {
 		put: prefix + '/users/ecosystem-default/{id}/',
 	},
+	complexTransactionUserField: {
+		get: prefix + '	/ui/complex-transaction-user-field/',
+		post: prefix + '	/ui/complex-transaction-user-field/{id}/',
+	},
+	transactionUserField: {
+		get: prefix + '	/ui/transaction-user-field/',
+	},
+
 }

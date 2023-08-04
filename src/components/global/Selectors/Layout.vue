@@ -38,10 +38,10 @@
 		<div style="flex: 0 0 180px;">
 			<FmSelect
 				title="Report type"
-				:modelValue="contentType"
+				:modelValue="content_type"
 				:items="contentTypeOpts"
 				:disabled="loadingLayout"
-				@update:modelValue="emit('update:contentType')"
+				@update:modelValue="newVal => emit('update:content_type', newVal)"
 			/>
 		</div>
 
@@ -76,13 +76,13 @@
 	// const props = defineProps(['settings', 'layout'])
 	const props = defineProps({
 		modelValue: String, // stringified object of layout
-		contentType: {
+		content_type: {
 			type: String,
 			default: 'reports.balancereport',
 		},
 	})
 
-	const emit = defineEmits(['update:modelValue', 'update:contentType', 'userCodeChanged'])
+	const emit = defineEmits(['update:modelValue', 'update:content_type', 'userCodeChanged'])
 
 	const loadingLayout = ref(false);
 	const contentTypeOpts = [
@@ -90,6 +90,13 @@
 		{ id: 'reports.plreport', name: 'P&L report' },
 		{ id: 'reports.transactionreport', name: 'Transaction report' },
 	];
+
+	watch(
+		() => props.content_type,
+		async () => {
+			layoutsList.value = await layoutsStore.getListLayoutsLight(props.content_type);
+		}
+	)
 
 	let layoutsList = ref([])
 	// let content_type = ref(props.contentType);
@@ -156,7 +163,8 @@
 				user_code: userCode,
 			},
 		})*/
-		let res = await layoutsStore.getLayoutByUserCode(props.contentType, userCode);
+		loadingLayout.value = true;
+		let res = await layoutsStore.getLayoutByUserCode(props.content_type, userCode);
 		console.log("testing1090.fetchLayout res", res);
 		if (!res.error) {
 
@@ -166,6 +174,8 @@
 			emit('update:modelValue', layoutString.value);
 
 		}
+
+		loadingLayout.value = false;
 
 	}
 
@@ -186,7 +196,7 @@
 		})
 
 		portfolios.value = res.results*/
-		layoutsList.value = await layoutsStore.getListLayoutsLight(props.contentType);
+		layoutsList.value = await layoutsStore.getListLayoutsLight(props.content_type);
 	}
 
 	init();
