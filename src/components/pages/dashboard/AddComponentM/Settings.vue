@@ -11,6 +11,8 @@
 	<PagesDashboardSettingsReportViewerModal
 		v-else-if="component.componentName === 'FinmarsGrid'"
 		:tab="tab"
+		v-model:inputs="component.inputs"
+		v-model:outputs="component.outputs"
 		v-bind="$attrs"
 		class="settings"
 	/>

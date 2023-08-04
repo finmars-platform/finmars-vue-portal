@@ -81,6 +81,7 @@
 			? 'Widgets' + props.component.componentName
 			: props.component.componentName
 	})
+	console.log('compRegisteredName:', compRegisteredName)
 
 	function resizeX(e) {
 		let elem = e.target.closest('.board_widget')
