@@ -1,4 +1,7 @@
 import { defineStore } from "pinia";
+import pnlReportPropsModel from "~/angular/models/pnlReportPropsModel";
+import reportAddonPerformancePnlPropsModel from "~/angular/models/reportAddonPerformancePnlPropsModel";
+import reportMismatchPnlPropsModel from "~/angular/models/reportMismatchPnlPropsModel";
 
 /** Attributes from balance report that belong to group "reports.balancereportperformance" */
 const balancePerformanceKeys = [
@@ -329,7 +332,13 @@ export default defineStore({
 
 			});
 
-
+			//# regions Pnl attributes
+			// TODO: move to backend
+			res['reports.plreport'] = pnlReportPropsModel.getAttributes();
+			res['reports.plreportmismatch'] = reportAddonPerformancePnlPropsModel.getAttributes();
+			res['reports.plreportperformance'] = reportMismatchPnlPropsModel.getAttributes();
+			//# endregion Pnl attributes
+			console.log("testing1090.fetchSystemAttributes res", res);
 			this.systemAttrs = res;
 
 		},
@@ -732,6 +741,12 @@ export default defineStore({
 
 		},
 
+		/**
+		 *
+		 * @param contentType
+		 * @param [viewContext]
+		 * @return {*[]}
+		 */
 		getAllAttributesByContentType(contentType, viewContext) {
 
 			let result;

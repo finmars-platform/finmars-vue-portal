@@ -112,8 +112,9 @@
 
 			</div>-->
 			<LazySelectorsLayout
-				v-model="component.settings.layout"
+				:modelValue="component.settings.layout"
 				v-model:contentType="component.settings.content_type"
+				@update:modelValue="newVal => component.settings.layout = copyRvLayoutForDashboard(newVal)"
 				@userCodeChanged="newUc => component.settings.user_code = newUc"
 			/>
 
@@ -290,7 +291,12 @@
 			</div>
 
 			<FmBtn>Add input</FmBtn>-->
-			<PagesDashboardAddLinkingTab />
+			<PagesDashboardSettingsLinkingTab
+				:inputs="inputsList"
+				:outputs="outputsList"
+				@update:inputs="newVal => emit('update:inputs', newVal)"
+				@update:outputs="newVal => emit('update:outputs', newVal)"
+			/>
 
 		</div>
 
@@ -300,17 +306,59 @@
 
 <script setup>
 
+	import {copyRvLayoutForDashboard} from "~/utils/dashboard";
+
 	const props = defineProps({
 		tab: Number,
+		inputs: {
+			type: Array,
+			default: [],
+		},
+		outputs: {
+			type: Array,
+			default: [],
+		},
 	});
+
+	const emit = defineEmits(['update:inputs', 'update:outputs'])
 
 	const dashStore = useStoreDashboard();
 	const layoutsStore = useLayoutsStore();
 	const evAttrsStore = useEvAttributesStore();
 
 	let { component, updateComponent } = inject('component');
+	console.log("testing1090 components 1", component);
 	console.log("testing1090 components", component.value);
-	if (!component.value.inputs) component.value.inputs = [];
+	let creatingNewComp = !component.value.uid;
+	// if (!component.value.inputs) component.value.inputs = [];
+	let inputsList = ref( JSON.parse(JSON.stringify(props.inputs)) || [] );
+	let outputsList = ref( JSON.parse(JSON.stringify(props.outputs)) || [] );
+
+	watch(
+		() => props.inputs,
+		() => {
+
+			if ( Array.isArray(props.inputs) ) {
+				inputsList.value =  JSON.parse(JSON.stringify(props.inputs));
+			} else {
+				inputsList.value = [];
+			}
+
+		}
+	)
+
+	watch(
+		() => props.outputs,
+		() => {
+
+			if (Array.isArray(props.outputs)) {
+				outputsList.value =  JSON.parse(JSON.stringify(props.outputs));
+			} else {
+				outputsList.value = [];
+			}
+
+		}
+	)
 
 	let selDashTab = ref(props.tab);
 	let dashTabsList = computed(() => {

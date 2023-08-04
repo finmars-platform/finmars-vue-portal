@@ -1,5 +1,15 @@
 import dayjs from 'dayjs'
 
+function inputOutputIncompatible(input, output) {
+
+	// TODO: check that value_types of input and output are compatible
+	/*if (input.value_type !== output.value_type) {
+
+	}*/
+	return false;
+
+}
+
 export default defineStore({
 	id: 'dashboard',
 	state: () => {
@@ -91,21 +101,24 @@ export default defineStore({
 			// console.table(this.props)
 		},
 		setPropsWatchers() {
-			this.props.outputs.forEach((prop) => {
-				if (prop.__unwatch) return false
+			this.props.outputs.forEach(outputProp => {
+				console.log("testing1090.useStoreDashboard outputProp ", outputProp);
+				if (outputProp.__unwatch) return false
 
-				prop.__unwatch = watch(
-					() => prop.__val,
+				const dynamicOutput = this.getComponent(outputProp.component_id).dynamicOutputs;
+
+				outputProp.__unwatch = watch(
+					() => outputProp.__val,
 					(newVal, oldVal) => {
-						let uid = prop.uid
-						let props = this.props.inputs.filter((item) =>
-							item.subscribedTo.includes(uid)
-						)
 
+						let inputsProps = this.props.inputs.filter((item) =>
+							item.subscribedTo.find(data => data.output_id === outputProp.uid)
+						)
+						console.log("testing1090.useStoreDashboard outputProp ", outputProp);
 						let log = {
-							name: prop.name,
+							name: outputProp.name,
 							componentName: this.components.find(
-								(item) => item.uid == prop.component_id
+								(item) => item.uid == outputProp.component_id
 							).user_code,
 							newVal: newVal,
 							oldVal: oldVal,
@@ -119,7 +132,7 @@ export default defineStore({
 						// 	'font-size: 16px;'
 						// )
 
-						props.forEach((childProp) => {
+						inputsProps.forEach((inputProp) => {
 							/*log.children.push({
 								name: childProp.name,
 								componentName: this.components.find(
@@ -129,36 +142,26 @@ export default defineStore({
 								oldVal: childProp.__val,
 							})*/
 
-							if ( childProp.subscribedTo[uid].dynamicOutputs ) {
+							if ( dynamicOutput ) {
 
-								const propName = childProp.subscribedTo[uid].propName;
+								if ( inputOutputIncompatible(inputProp, outputProp) ) {
+									return;
+								}
 
-								childProp.__val = newVal[propName];
+								const subToData = inputProp.subscribedTo.find( data => data.output_id === outputProp.uid );
+
+								inputProp.__val = newVal[subToData.propName];
 
 							} else {
-								childProp.__val = prop.__val
+								inputProp.__val = outputProp.__val;
 							}
-
-							if (typeof newVal === 'object') {
-
-								const propName = childProp.subscribedTo[uid].propName;
-
-								childProp.__val = newVal[propName];
-
-							}
-							else {
-
-								childProp.__val = prop.__val
-
-							}
-
 
 							// console.log(
 							// 	`=> ${this.components.find(item => item.id == childProp.cid).user_code} / %c${childProp.name}`,
 							// 	'font-size: 14px;'
 							// )
 						})
-
+						console.log("testing1090.useStoreDashboard inputsProps ", this.props);
 						// console.groupEnd()
 
 						this.__log.push(log)

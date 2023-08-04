@@ -1,8 +1,10 @@
 <template>
 	<BaseModal no_padding title="Edit component">
-		<PagesDashboardAddMatrixModal
+		<PagesDashboardSettingsMatrixModal
 			v-if="editable.componentName === 'DashboardMatrix'"
 			:tab="editable.tab"
+			v-model:inputs="inputs"
+			v-model:outputs="outputs"
 			class="settings"
 		/>
 
@@ -79,8 +81,15 @@
 	// let component = dashStore.components.find(item => item.uid == props.uid) || {}
 	let component = dashStore.getComponent(props.uid) || {}
 	let editable = ref(JSON.parse(JSON.stringify(component)))
-
-	provide('component', editable) // used by PagesDashboardAddMatrixModal
+	console.log("testing1090 editable", editable, editable.value);
+	function updateComponent(componentData) {
+		editable.value = componentData;
+	}
+	console.log("testing1090 editable 2", JSON.parse(JSON.stringify(editable)) );
+	provide('component', {
+		component: editable,
+		updateComponent
+	}); // used by PagesDashboardSettingsMatrixModal
 
 	let inputs = ref([])
 	let outputs = ref([])
