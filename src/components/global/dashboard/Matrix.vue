@@ -1,13 +1,15 @@
 <template>
 	<div>
-		<AngularFmGridTableMatrix v-if="vm" :matrixSettings="viewSettings" />
+<!--		<AngularFmGridTableMatrix v-if="vm" :matrixSettings="viewSettings" />-->
 
 		<div v-if="errorMessage" class="red-text">{{ errorMessage }}</div>
 	</div>
 </template>
 
 <script setup>
-	import reportViewerController from '~~/src/angular/controllers/entityViewer/reportViewerController'
+	import reportViewerController from '~~/src/angular/controllers/entityViewer/reportViewerController';
+
+	import evEvents from '@/angular/services/entityViewerEvents';
 
 	let props = defineProps({
 		uid: String,
@@ -16,6 +18,7 @@
 	onMounted(() => {})
 
 	const dashStore = useStoreDashboard()
+	const evAttrsStore = useEvAttributesStore();
 	const layoutsStore = useLayoutsStore()
 	const component = computed(() => dashStore.getComponent(props.uid))
 	console.log('component:', component)
@@ -26,6 +29,27 @@
 
 	let reportLayoutUc = component.value.settings.layout
 	let reportLayoutId
+
+	let inputs = computed(() => {
+		// computeInputsForWatcher(dashStore.props.inputs, component.value)
+		console.log("testing1090.dashboardMatrix computed inputs");
+		return dashStore.props.inputs.filter(input => input.component_id === component.value.uid );
+	});
+
+	/*let inputsVals = computed( () => {
+
+		let result = {};
+
+		const some = dashStore.props.inputs.filter(input => input.component_id === component.value.uid )
+		console.log("testing1090.dashboardMatrix computed inputsVals some", some);
+		some.forEach(input => {
+			console.log("testing1090.dashboardMatrix inputsVals input", input);
+			result[input.uid] = input.__val;
+		})
+		console.log("testing1090.dashboardMatrix inputsVals result", result);
+		return result;
+
+	})*/
 
 	async function getLayoutId() {
 		let res = await layoutsStore.getLayoutByUserCode(
@@ -70,7 +94,7 @@
 		'reports.balancereport': 'balance-report',
 	}
 
-	let layout = {
+	/*let layout = {
 		id: 698,
 		content_type: 'reports.plreport',
 		name: 'New layout',
@@ -457,7 +481,8 @@
 			model_name: 'listlayout',
 			space_code: 'space0crgw',
 		},
-	}
+	}*/
+	let layout = JSON.parse(component.value.settings.layout);
 
 	const route = {
 		current: {
@@ -490,20 +515,162 @@
 
 	let viewSettings = ref({})
 
+	/**
+	 * @param {Object} evDataService
+	 * @return {Array} - filters after adding filters for linked inputs
+	 */
+	function addFiltersForInputs(evDataService) {
+
+		let notReportOptionsInputs = inputs.value.filter( input => !input.key.startsWith('reportOptions__' ) );
+
+		let filtersList = evDataService.getFilters();
+		const attrsList = evAttrsStore.getAllAttributesByContentType(layout.content_type);
+
+		notReportOptionsInputs.forEach(input => {
+			console.log("testing1090.dashboardMatrix addFiltersForInputs input", input, input.key);
+			let filterForInput = filtersList.find(filter => filter.key === input.key);
+
+			if (!filterForInput) {
+
+				const attr = attrsList.find(attr => attr.key === input.key);
+				console.log("testing1090.dashboardMatrix addFiltersForInputs attr", attr);
+				const filter = getEvRvAttrInFormOf('filter', attr);
+
+				filtersList.push(filter);
+
+			}
+
+		})
+
+		return filtersList;
+
+	}
+
+	watch(() => dashStore.props.inputs[3].__val, () => {
+		console.log("testing1090.dashboardMatrix dashStore.props.inputs[3].__val watcher", dashStore.props.inputs[3]);
+	})
+
+	watch(
+		() => inputs.value.map(input => input.__val), // watching only 'inputs' does not trigger watcher on __val change
+		() => {
+		console.log("testing1090.dashboardMatrix inputs watcher called");
+		let filtersChanged = false;
+		let reportOptionsChanged = false;
+
+		inputs.value.forEach(input => {
+
+			// const inputValData = inputsVals.value[prop];
+			if ( input.key.startsWith('reportOptions__') ) {
+
+				let ro = vm.value.entityViewerDataService.getReportOptions();
+				const prop = input.key.slice(15); // e.g. portfolios, pricing_policy etc
+
+				let inputVal = input.__val;
+
+				if ( Array.isArray( ro[prop] ) ) {
+
+					if ( !Array.isArray(input.__val) ) {
+						inputVal = [input.__val];
+					}
+
+				} else if ( Array.isArray(input.__val) ) { // report options' property is not multi selector but value of input is an array
+
+					inputVal = input.__val[0];
+
+				}
+
+				ro[prop] = inputVal;
+
+				vm.value.entityViewerDataService.setReportOptions(ro);
+				reportOptionsChanged = true;
+
+			}
+			else {
+
+				const filters = vm.value.entityViewerDataService.getFilters();
+
+				let filterForInput = filters.find(filter => filter.key === input.key);
+
+				/*if (filterForInput.value_type === input.value_type) {
+
+					filterForInput.options.filter_values = [input.__value];
+
+					vmE.evDataService.setFilters(filters);
+					filtersChanged = true;
+
+				} else {
+					console.warn("Can not link properties with different value_type")
+				}*/
+				filterForInput.options.filter_values = [input.__val];
+
+				vm.value.entityViewerDataService.setFilters(filters);
+				filtersChanged = true;
+
+			}
+
+		})
+
+		if (filtersChanged) {
+
+			vm.value.entityViewerEventService.dispatchEvent(evEvents.FILTERS_CHANGE);
+
+			if (layout.content_type === 'reports.transactionreport') {
+				/*
+				Some of layout.data.filters of transaction report are backend filters.
+				Requesting report from backend in case of changes of backend filters.
+				*/
+				evEventService.dispatchEvent(evEvents.REQUEST_REPORT);
+
+			} else {
+				evEventService.dispatchEvent(evEvents.UPDATE_TABLE);
+			}
+
+		}
+
+		if (reportOptionsChanged) {
+			console.log("testing1090.dashboardMatrix inputs watcher reportOptions after", vm.value.entityViewerDataService.getReportOptions());
+			vm.value.entityViewerEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE);
+		}
+
+	})
+
 	function init() {
 		let vmE = new reportViewerController({
 			$scope,
 			$stateParams: route.params,
 			route,
 		})
+		console.log("testing1090.dashboardMatrix init vmE", vmE);
+		const filtersList = addFiltersForInputs(vmE.entityViewerDataService);
+		vmE.entityViewerDataService.setFilters(filtersList);
 
 		// viewSettings.value = vmE.entityViewerDataService.getViewSettings(
 		// 	vmE.entityViewerDataService.getViewType()
 		// )
-		viewSettings.value = {
+		/*viewSettings.value = {
 			abscissa: 'instrument.user_code',
 			ordinate: 'allocation.attributes.pricing_policy_notes_DFT',
 			value_key: 'allocation.default_price',
+		}*/
+		viewSettings.value = {
+			abscissa: component.value.settings.axisX,
+			ordinate: component.value.settings.axisY,
+			value_key: component.value.settings.valueKey,
+
+			available_abscissa_keys: [],
+			available_ordinate_keys: [],
+			available_value_keys: [],
+
+			number_format: component.value.settings.number_format,
+			subtotal_formula_id: component.value.settings.subtotal_formula_id,
+
+			matrix_view: component.value.settings.matrix_view, // DEPRECATED possibly
+
+			styles: component.value.settings.styles,
+			auto_scaling: component.value.settings.auto_scaling,
+			calculate_name_column_width: component.value.settings.calculate_name_column_width,
+			hide_empty_lines: component.value.settings.hide_empty_lines
+
 		}
 		provide('ngDependace', {
 			evDataService: vmE.entityViewerDataService,
@@ -512,6 +679,7 @@
 		})
 
 		vm.value = vmE
+		console.log("testing1090.dashboardMatrix init vm.value", vm.value);
 	}
 
 	init()

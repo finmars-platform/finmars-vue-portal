@@ -26,7 +26,7 @@
 
 		<div v-else-if="activeTab === 'linking'" class="p-t-16">
 
-			<PagesDashboardAddLinkingTab />
+			<PagesDashboardSettingsLinkingTab />
 
 		</div>
 

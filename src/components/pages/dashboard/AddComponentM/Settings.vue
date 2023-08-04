@@ -1,12 +1,14 @@
 <template>
-	<PagesDashboardAddMatrixModal
+	<PagesDashboardSettingsMatrixModal
 		v-if="component.componentName === 'DashboardMatrix'"
 		:tab="tab"
+		v-model:inputs="component.inputs"
+		v-model:outputs="component.outputs"
 		v-bind="$attrs"
 		class="settings"
 	/>
 
-	<PagesDashboardAddReportViewerModal
+	<PagesDashboardSettingsReportViewerModal
 		v-else-if="component.componentName === 'FinmarsGrid'"
 		:tab="tab"
 		v-bind="$attrs"

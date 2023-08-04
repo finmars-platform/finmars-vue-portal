@@ -2,7 +2,7 @@
 
 	<div>
 
-		<div v-for="input in component.inputs" class="flex-row">
+		<div v-for="input in inputs" class="flex-row">
 
 			<FmCard>
 				<div>
@@ -11,7 +11,7 @@
 
 					<div
 						v-for="outputData in input.subscribedTo"
-						:key="outputData.componentUid"
+						:key="outputData.component_id"
 						class="flex-row"
 					>
 						<!--						<div
@@ -22,7 +22,7 @@
 							:modelValue="outputData.componentUid"
 							label="component"
 							:items="getLinkCompOpts(input)"
-							prop_id="uid"
+							prop_id="componentUid"
 							prop_name="user_code"
 							class="m-r-8"
 							@update:modelValue="selCompUid => changeSubscribedComp(outputData.componentUid, selCompUid, input.uid)"
@@ -97,28 +97,39 @@
 
 <script setup>
 
-	let { component, updateComponent } = inject('component');
+	const props = defineProps({
+		inputs: {
+			type: Array,
+			default: [],
+		},
+		outputs: {
+			type: Array,
+			default: [],
+		},
+	});
+
+	const emit = defineEmits(['update:inputs', 'update:outputs'])
+
+	let { component } = inject('component');
 
 	const dashStore = useStoreDashboard();
 	const layoutsStore = useLayoutsStore();
 	const evAttrsStore = useEvAttributesStore();
 
 	//# region LINKING
-
-	let date1Key;
-	let date2Key;
-
+	let creatingNewComp = !component.value.uid;
+	console.log("testing1090 creatingNewComp", creatingNewComp);
 	/*let date1SelectModel = computed({
 		set(newVal) {
 
-			const inputIndex = component.value.inputs.findIndex( inputData => inputData.key === date1Key );
+			const inputIndex = props.inputs.findIndex( inputData => inputData.key === date1Key );
 
-			component.value.inputs[inputIndex]._children = newVal;
+			props.inputs[inputIndex]._children = newVal;
 
 		},
 		get() {
 
-			component.value.inputs.find( inputData => inputData.key === date1Key )._children;
+			props.inputs.find( inputData => inputData.key === date1Key )._children;
 
 		}
 	});*/
@@ -135,10 +146,10 @@
 
 	function unlinkInput(input) {
 
-		const inputIndex = component.value.inputs.findIndex(inputData => inputData.uid === input.uid );
-		component.value.inputs.splice(inputIndex, 1);
+		const inputIndex = props.inputs.findIndex(inputData => inputData.uid === input.uid );
+		props.inputs.splice(inputIndex, 1);
 
-		updateComponent( component.value );
+		emit('update:inputs', props.inputs);
 
 	}
 
@@ -162,13 +173,13 @@
 		console.log("testing1090.subscribeToComp addLinkingData", JSON.parse(JSON.stringify( addLinkingData )) );
 		const compToSub = dashStore.getComponent(addLinkingData.comp.uid);
 		console.log("testing1090.subscribeToComp compToSub", compToSub);
-		const input = component.value.inputs.find( inputData => inputData.uid === addLinkingData.input.uid );
+		const input = props.inputs.find( inputData => inputData.uid === addLinkingData.input.uid );
 		console.log("testing1090.subscribeToComp input", input);
 
 		let outputData = {
-			componentUid: compToSub.uid,
+			component_id: compToSub.uid,
 			componentUserCode: compToSub.user_code,
-			outputUid: dashStore.props.outputs[0].uid,
+			output_id: dashStore.props.outputs[0].uid,
 		}
 
 
@@ -178,7 +189,7 @@
 			/*input.subscribedTo = [{
 				componentName: compToSub.name,
 				propertyName: addLinkingData.comp.propertyName,
-				outputUid: null,
+				output_id: null,
 			}]*/
 
 		} else {
@@ -186,13 +197,13 @@
 
 			/*input.subscribedTo = [{
 				componentName: compToSub.name,
-				outputUid: null,
+				output_id: null,
 			}]*/
 
 		}
 		input.subscribedTo.push(outputData);
 
-		updateComponent( component.value );
+		emit('update:inputs', props.inputs);
 		console.log( "testing1090.subscribeToComp result ", component.value, input );
 		closeInputLiking();
 
@@ -202,13 +213,13 @@
 
 		const compToSub = dashStore.getComponent(newCompUid);
 
-		const input = component.value.inputs.find( inputData => inputData.uid === inputUid );
-		const outputIndex = input.subscribedTo.findIndex( output => output.componentUid === compUid );
+		const input = props.inputs.find( inputData => inputData.uid === inputUid );
+		const outputIndex = input.subscribedTo.findIndex( output => output.component_id === compUid );
 
 		let newOutputData = {
-			componentUid: compToSub.uid,
+			component_id: compToSub.uid,
 			componentUserCode: compToSub.user_code,
-			outputUid: dashStore.props.outputs[0].uid,
+			output_id: dashStore.props.outputs[0].uid,
 		}
 
 		if (compToSub.dynamicOutputs) {
@@ -216,7 +227,7 @@
 		}
 
 		input.subscribedTo[outputIndex] = newOutputData;
-		updateComponent( component.value );
+		emit('update:inputs', props.inputs);
 
 	}
 
@@ -275,65 +286,83 @@
 
 	//# endregion tab: LINKING
 
-	const date1KeysData = {
-		'reports.balancereport': 'report_date',
-		'reports.plreport': 'pl_first_date',
-		'reports.transactionreport': 'begin_date',
-	};
+	function init() {
 
-	const date2KeysData = {
-		'reports.balancereport': null,
-		'reports.plreport': 'report_date',
-		'reports.transactionreport': 'end_date',
-	};
+		if (creatingNewComp) {
 
-	date1Key = date1KeysData[component.value.settings.content_type];
-	date2Key = date2KeysData[component.value.settings.content_type];
+			let date1Key;
+			let date2Key;
 
-	if (date2Key) {
+			const date1KeysData = {
+				'reports.balancereport': 'report_date',
+				'reports.plreport': 'pl_first_date',
+				'reports.transactionreport': 'begin_date',
+			};
 
-		component.value.inputs.unshift({
-			uid: null,
-			component_id: null,
-			user_code: null,
-			key: 'report_options_date2',
-			name: 'Date to',
-			value_type: 40,
-			// type: '',
-			view: {
-				type: 'select',
-				items: [],
-			},
-			subscribedTo: [],
-			default_value: null,
-			__val: null,
-		});
+			const date2KeysData = {
+				'reports.balancereport': null,
+				'reports.plreport': 'report_date',
+				'reports.transactionreport': 'end_date',
+			};
+
+			date1Key = date1KeysData[component.value.settings.content_type];
+			date2Key = date2KeysData[component.value.settings.content_type];
+
+			if (date2Key) {
+
+				props.inputs.unshift({
+					uid: null,
+					component_id: null,
+					user_code: null,
+					key: 'reportOptions__' + date2Key,
+					name: 'Date to',
+					value_type: 40,
+					// type: '',
+					view: {
+						type: 'select',
+						items: [],
+					},
+					subscribedTo: [],
+					default_value: null,
+					__val: null,
+				});
+
+			}
+
+			props.inputs.unshift({
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'reportOptions__' + date1Key,
+				name: date2Key ? 'Date from' : 'Date',
+				value_type: 40,
+				// type: '',
+				view: {
+					type: 'select',
+					items: [],
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null,
+			});
+
+			props.inputs = props.inputs.map((input, index) => {
+				input.uid = useGenerateUniqueId('input' + index);
+				return input;
+			});
+
+			emit('update:inputs', props.inputs);
+			console.log("testing1090 props.inputs", props.inputs);
+		}
+		else {
+
+
+
+		}
 
 	}
 
-	component.value.inputs.unshift({
-		uid: null,
-		component_id: null,
-		user_code: null,
-		key: 'report_options_date1',
-		name: date2Key ? 'Date from' : 'Date',
-		value_type: 40,
-		// type: '',
-		view: {
-			type: 'select',
-			items: [],
-		},
-		subscribedTo: [],
-		default_value: null,
-		__val: null,
-	});
-
-	component.value.inputs = component.value.inputs.map((input, index) => {
-		input.uid = useGenerateUniqueId('input' + index);
-		return input;
-	});
-
-	updateComponent( component.value );
+	init();
 
 </script>
 
