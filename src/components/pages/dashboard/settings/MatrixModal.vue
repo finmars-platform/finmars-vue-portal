@@ -75,7 +75,8 @@
 			</div>
 		</template>
 	</BaseModal>-->
-	<div style="width: 630px;">
+	<div v-bind="$attrs"
+			 style="width: 630px;">
 		<FmTabs v-model="activeTab" :tabs="tabsList" class="width-100" />
 
 		<div v-if="activeTab === 'main'" class="p-t-16">
@@ -91,7 +92,7 @@
 				label="Tab"
 			/>
 
-			<div class="flex-row">
+<!--			<div class="flex-row">
 				<div class="flex-0-1-100">
 					<FmSelect
 						label="Layout"
@@ -109,12 +110,18 @@
 					/>
 				</div>
 
-			</div>
+			</div>-->
+			<LazySelectorsLayout
+				:modelValue="component.settings.layout"
+				v-model:content_type="component.settings.content_type"
+				@update:modelValue="newVal => component.settings.layout = copyRvLayoutForDashboard(newVal)"
+				@userCodeChanged="newUc => component.settings.user_code = newUc"
+			/>
 
 			<FmAttributesSelect
 				v-model="component.settings.axisX"
 				title="Axis X Columns"
-				:attributes="attrs"
+				:attributes="evAttrsStore.getDataForAttributesSelector(component.settings.content_type)"
 				:valueType="10"
 				:contentType="component.settings.content_type"
 				:disabled="!component.settings.layout"
@@ -124,7 +131,7 @@
 			<FmAttributesSelect
 				v-model="component.settings.axisY"
 				title="Axis Y Columns"
-				:attributes="attrs"
+				:attributes="evAttrsStore.getDataForAttributesSelector(component.settings.content_type)"
 				:valueType="10"
 				:contentType="component.settings.content_type"
 				:disabled="!component.settings.layout"
@@ -134,7 +141,7 @@
 			<FmAttributesSelect
 				v-model="component.settings.valueKey"
 				title="Value"
-				:attributes="attrs"
+				:attributes="evAttrsStore.getDataForAttributesSelector(component.settings.content_type)"
 				:valueType="20"
 				:contentType="component.settings.content_type"
 				:disabled="!component.settings.layout"
@@ -201,8 +208,8 @@
 
 			<FmAttributesSelect
 				:modelValue="availableAxisXKeys"
-				title="Axis X Columns 1"
-				:attributes="attrs"
+				title="Axis X Columns"
+				:attributes="evAttrsStore.getDataForAttributesSelector(component.settings.content_type)"
 				:valueType="10"
 				:contentType="component.settings.content_type"
 				multiselect
@@ -213,7 +220,7 @@
 			<FmAttributesSelect
 				:modelValue="availableAxisYKeys"
 				title="Axis Y Columns"
-				:attributes="attrs"
+				:attributes="evAttrsStore.getDataForAttributesSelector(component.settings.content_type)"
 				:valueType="10"
 				:contentType="component.settings.content_type"
 				multiselect
@@ -224,7 +231,7 @@
 			<FmAttributesSelect
 				:modelValue="availableValueKeys"
 				title="Values"
-				:attributes="attrs"
+				:attributes="evAttrsStore.getDataForAttributesSelector(component.settings.content_type)"
 				:valueType="20"
 				:contentType="component.settings.content_type"
 				multiselect
@@ -234,36 +241,122 @@
 
 		</div>
 
-		<div v-else-if="activeTab === 'linking'" class="p-t-16"></div>
+		<div v-show="activeTab === 'linking'" class="p-t-16">
 
-<!--		<div v-else-if="activeTab === 'calculation'" class="p-t-16">
-			<BaseMultiSelectInput
-				v-model="date1SelectModel"
-				:items="dateControlsOpts"
-				label="Date"
-				clearBtn
+<!--			<div v-for="input in component.inputs" class="flex-row">
+
+				<FmCard>
+					<div>
+						<h3>{{ input.name }}</h3>
+						Linked to:
+
+						<div
+							v-for="(outputData, compUid) in input.subscribedTo"
+							:key="compUid"
+						>
+
+							<FmSelect
+								:modelValue="compUid"
+								label="component"
+								:items="getLinkCompOpts(input)"
+								prop_id="uid"
+								prop_name="user_code"
+								@update:modelValue="selCompUid => subscribeToComp(selCompUid, input)"
+							/>
+
+							<FmAttributesSelect
+								v-if="outputData.dynamicOutputs"
+								v-model="outputData.propertyName"
+								label="Attribute"
+								:items="evAttrsStore.getDataForAttributesSelector( dashStore.getComponent(compUid) )"
+							/>
+
+
+						</div>
+
+						<FmBtn
+							type="basic"
+							@click="openInputLinking(input)"
+						>LINK</FmBtn>
+
+						<FmBtn
+							type="basic"
+							icon="close"
+							@click="unlinkInput(input)"
+						/>
+
+					</div>
+				</FmCard>
+
+			</div>
+
+			<FmBtn>Add input</FmBtn>-->
+			<PagesDashboardSettingsLinkingTab
+				:inputs="inputsList"
+				:outputs="outputsList"
+				@update:inputs="newVal => emit('update:inputs', newVal)"
+				@update:outputs="newVal => emit('update:outputs', newVal)"
 			/>
 
-		</div>-->
-
-
+		</div>
 
 	</div>
+
 </template>
 
 <script setup>
 
+	import {copyRvLayoutForDashboard} from "~/utils/dashboard";
+
 	const props = defineProps({
 		tab: Number,
+		inputs: {
+			type: Array,
+			default: [],
+		},
+		outputs: {
+			type: Array,
+			default: [],
+		},
 	});
+
+	const emit = defineEmits(['update:inputs', 'update:outputs'])
 
 	const dashStore = useStoreDashboard();
 	const layoutsStore = useLayoutsStore();
 	const evAttrsStore = useEvAttributesStore();
 
-	let component = inject('component');
+	let { component, updateComponent } = inject('component');
 
-	if (!component.value.inputs) component.value.inputs = [];
+	// if (!component.value.inputs) component.value.inputs = [];
+	let inputsList = ref( JSON.parse(JSON.stringify(props.inputs)) || [] );
+	let outputsList = ref( JSON.parse(JSON.stringify(props.outputs)) || [] );
+
+	watch(
+		() => props.inputs,
+		() => {
+
+			if ( Array.isArray(props.inputs) ) {
+				inputsList.value =  JSON.parse(JSON.stringify(props.inputs));
+			} else {
+				inputsList.value = [];
+			}
+
+		}
+	)
+
+	watch(
+		() => props.outputs,
+		() => {
+
+			if (Array.isArray(props.outputs)) {
+				outputsList.value =  JSON.parse(JSON.stringify(props.outputs));
+			} else {
+				outputsList.value = [];
+			}
+
+		}
+	)
 
 	let selDashTab = ref(props.tab);
 	let dashTabsList = computed(() => {
@@ -361,9 +454,9 @@
 	const availableAxisYKeys = computed( () => getAvailableAttrsKeys('available_axis_y_attributes') );
 	const availableValueKeys = computed( () => getAvailableAttrsKeys('available_value_attributes') );
 
-	function setAvailableAttrs(attrs, settingsProp) {
+	function setAvailableAttrs(attributes, settingsProp) {
 
-		component.value.settings[settingsProp] = attrs.map( (attr, index) => {
+		component.value.settings[settingsProp] = attributes.map( (attr, index) => {
 
 			const layoutName = attr.layout_name || '';
 			delete attr.layout_name;
@@ -379,59 +472,6 @@
 	}
 
 	attrs.value = evAttrsStore.getDataForAttributesSelector(component.value.settings.content_type);
-	//# region tab: CALCULATION
-	let dateControlsOpts = computed(() => {
-
-		const result = [];
-
-		dashStore.props.outputs.forEach(outputData => {
-
-			if (outputData.component_id === component.value.uid || outputData.value_type !== 40) {
-				return;
-			}
-
-			const compUserCode = dashStore.components.find(comp => comp.uid === outputData.component_id).user_code;
-
-			result.push({
-				id: outputData.uid,
-				name: `${compUserCode}. ${outputData.name}`,
-			})
-
-		})
-
-		return result;
-
-	});
-
-	let date1Key;
-
-	switch (component.value.settings.content_type) {
-		case 'reports.balancereport':
-			date1Key = 'report_date';
-			break;
-		case 'reports.plreport':
-			date1Key = 'pl_first_date';
-			break;
-		case 'reports.transactionreport':
-			date1Key = 'begin_date';
-			break;
-	}
-
-	/*let date1SelectModel = computed({
-		set(newVal) {
-
-			const inputIndex = component.value.inputs.findIndex( inputData => inputData.key === date1Key );
-
-			component.value.inputs[inputIndex]._children = newVal;
-
-		},
-		get() {
-
-			component.value.inputs.find( inputData => inputData.key === date1Key )._children;
-
-		}
-	})*/
-	//# endregion tab: CALCULATION
 
 </script>
 
