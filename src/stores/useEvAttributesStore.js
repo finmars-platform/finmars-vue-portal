@@ -346,7 +346,7 @@ export default defineStore({
 			res['reports.plreportmismatch'] = reportAddonPerformancePnlPropsModel.getAttributes();
 			res['reports.plreportperformance'] = reportMismatchPnlPropsModel.getAttributes();
 			//# endregion Pnl attributes
-			console.log("testing1090.fetchSystemAttributes res", res);
+
 			this.systemAttrs = res;
 
 		},
@@ -724,12 +724,11 @@ export default defineStore({
 				'transactions.complextransaction': this.userFields['transactions.complextransaction'],
 				'instruments.instrument': this.userFields['instruments.instrument'],
 			}
-			console.log("testing1090.994 userFieldsObj 1", userFieldsObj, JSON.parse(JSON.stringify(userFieldsObj)) );
+
 			if ( !userFieldsObj.hasOwnProperty(contentType) ) {
 				throw new Error("There are no user fields for contentType: " + contentType)
 			}
-			console.trace("testing1090.994 ");
-			console.log("testing1090.994 customFieldsObj", JSON.parse(JSON.stringify(userFieldsObj)) );
+
 			userFieldsObj[contentType].forEach(function (field) {
 
 				attributes = attributes.map(function (attr) {

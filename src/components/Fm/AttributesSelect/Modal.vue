@@ -88,6 +88,10 @@
 		multiselect: Boolean,
 	});
 
+	/*
+	 * save - returns key or array of keys of selected attributes
+	 * selectedAttributesChanged - returns object or array of objects of selected attributes
+	 */
 	let emit = defineEmits(['update:modelValue', 'save', 'selectedAttributesChanged']);
 
 	let selAttrsKeysList = ref([]);

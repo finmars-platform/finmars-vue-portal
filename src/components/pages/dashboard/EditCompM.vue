@@ -8,6 +8,14 @@
 			class="settings"
 		/>
 
+		<PagesDashboardSettingsReportViewerModal
+			v-else-if="editable.componentName === 'FinmarsGrid'"
+			:tab="editable.tab"
+			v-model:inputs="inputs"
+			v-model:outputs="outputs"
+			class="settings"
+		/>
+
 		<div v-else class="settings flex">
 			<div class="settings_coll">
 				<h4>General</h4>
@@ -81,11 +89,11 @@
 	// let component = dashStore.components.find(item => item.uid == props.uid) || {}
 	let component = dashStore.getComponent(props.uid) || {}
 	let editable = ref(JSON.parse(JSON.stringify(component)))
-	console.log("testing1090 editable", editable, editable.value);
+
 	function updateComponent(componentData) {
 		editable.value = componentData;
 	}
-	console.log("testing1090 editable 2", JSON.parse(JSON.stringify(editable)) );
+
 	provide('component', {
 		component: editable,
 		updateComponent
@@ -118,7 +126,7 @@
 		})
 	}
 	function cancel(close) {
-		editable.value = {}
+		// editable.value = {}
 		close()
 	}
 
@@ -131,8 +139,43 @@
 			return false
 		}
 
-		if (editable.value.componentName === 'DashboardMatrix') {
-			dashStore.setComponent(editable.value)
+		if ( ['DashboardMatrix', 'FinmarsGrid'].includes(editable.value.componentName) ) {
+
+			dashStore.setComponent(editable.value);
+
+			dashStore.$patch((state) => {
+				inputs.value.forEach((prop) => {
+					let input = state.props.inputs.find((item) => item.uid == prop.uid)
+
+					input.default_value = prop.default_value
+					input.subscribedTo = prop.subscribedTo
+				})
+
+				outputs.value.forEach((prop) => {
+					let output = state.props.outputs.find((item) => item.uid == prop.uid)
+
+					output.default_value = prop.default_value
+
+					let children = state.props.inputs.filter((item) =>
+						item.subscribedTo.includes(prop.uid)
+					)
+
+					children.forEach((child) => {
+						let index = child.subscribedTo.findIndex((uid) => uid == prop.uid)
+
+						if (index !== -1) {
+							child.subscribedTo.splice(index, 1)
+						}
+					})
+
+					prop._children.forEach((uid) => {
+						let children = state.props.inputs.find((item) => item.uid == uid)
+						children.subscribedTo.push(prop.uid)
+					})
+				})
+
+			})
+
 		} else {
 			dashStore.$patch((state) => {
 				component.user_code = editable.value.user_code
