@@ -35,7 +35,6 @@
 
 	function updateComponent(componentData) {
 		component.value = componentData;
-		console.log("testing1090.updateComponent ", component.value );
 	}
 
 	provide('component', {
@@ -69,29 +68,36 @@
 		}
 
 		dashStore.$patch((state) => {
-			console.log( "testing1090.addComponent new_comp", JSON.parse(JSON.stringify( new_comp )) );
+			// console.log( "testing1090.addComponent new_comp", JSON.parse(JSON.stringify( new_comp )) );
 			dashStore.components.push(new_comp)
 
 			component.value.inputs.forEach((prop) => {
-				state.props.inputs.push({
-					uid: new_comp.uid + ' ' + prop.name,
+
+				let newProp = {
+					uid: new_comp.uid + ' ' + prop.key,
 					component_id: new_comp.uid,
 					user_code: prop.user_code,
 					name: prop.name,
 					type: prop.type,
 					key: prop.key,
+					value_type: prop.value_type,
 
 					view: prop.view,
 					subscribedTo: prop.subscribedTo,
 
 					default_value: prop.default_value,
 					__val: prop.default_value,
-				})
+				}
+
+				if (newProp.value_type === 100) newProp.value_content_type = prop.value_content_type;
+
+				state.props.inputs.push(newProp);
+
 			})
 
 			component.value.outputs.forEach((prop) => {
 				let newProp = reactive({
-					uid: new_comp.uid + '_' + prop.name,
+					uid: new_comp.uid + '_' + prop.key,
 					component_id: new_comp.uid,
 					user_code: prop.user_code,
 					name: prop.name,
@@ -104,7 +110,7 @@
 					default_value: prop.default_value,
 					__val: prop.default_value,
 				})
-
+				console.log("testing1090 addComponent newProp", JSON.parse(JSON.stringify(newProp)) );
 				if (newProp.value_type === 100) {
 					newProp.value_content_type = prop.value_content_type;
 				}

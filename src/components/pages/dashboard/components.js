@@ -6,7 +6,7 @@ const getRvInputs = () => {
 			user_code: null,
 			key: 'reportOptions__currency',
 			name: 'Currency',
-			value_type: 100,
+			value_type: 10,
 			value_content_type: 'currencies.currency',
 			// type: '',
 			view: {
@@ -23,7 +23,7 @@ const getRvInputs = () => {
 			user_code: null,
 			key: 'reportOptions__pricing_policy',
 			name: 'Pricing Policy',
-			value_type: 100,
+			value_type: 10,
 			value_content_type: 'instruments.pricingpolicy',
 			// type: '',
 			view: {
@@ -40,7 +40,7 @@ const getRvInputs = () => {
 			user_code: null,
 			key: 'reportOptions__portfolios',
 			name: 'Portfolios',
-			value_type: 100,
+			value_type: 10,
 			value_content_type: 'portfolios.portfolio',
 			// type: '',
 			view: {
@@ -57,7 +57,7 @@ const getRvInputs = () => {
 			user_code: null,
 			key: 'reportOptions__accounts',
 			name: 'Accounts',
-			value_type: 100,
+			value_type: 10,
 			value_content_type: 'accounts.account',
 			// type: '',
 			view: {
@@ -72,7 +72,7 @@ const getRvInputs = () => {
 			uid: null,
 			component_id: null,
 			user_code: null,
-			value_type: 100,
+			value_type: 10,
 			key: 'reportOptions__strategies1',
 			name: 'Strategies 1',
 			value_content_type: 'strategies.strategy1',
@@ -89,7 +89,7 @@ const getRvInputs = () => {
 			uid: null,
 			component_id: null,
 			user_code: null,
-			value_type: 100,
+			value_type: 10,
 			key: 'reportOptions__strategies2',
 			name: 'Strategies 2',
 			value_content_type: 'strategies.strategy2',
@@ -106,7 +106,7 @@ const getRvInputs = () => {
 			uid: null,
 			component_id: null,
 			user_code: null,
-			value_type: 100,
+			value_type: 10,
 			key: 'reportOptions__strategies3',
 			name: 'Strategies 3',
 			value_content_type: 'strategies.strategy3',
@@ -181,7 +181,7 @@ export default [
 				key: 'portfolio',
 				name: 'Portfolio',
 				type: 'portfolio',
-				value_type: 100,
+				value_type: 10,
 				value_content_type: 'portfolios.portfolio',
 				view: {
 					type: 'portfolio',
@@ -641,9 +641,20 @@ export default [
 		user_code: null,
 		name: 'Matrix',
 		componentName: 'DashboardMatrix',
+		view: {},
 
 		inputs: getRvInputs(),
-		outputs: [],
+		outputs: [
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'active_object',
+				default_value: null,
+				__val: null,
+				_children: [],
+			},
+		],
 		dynamicOutputs: true,
 
 		settings: {
@@ -897,6 +908,8 @@ export default [
 		tab: null,
 		scopes: [],
 
+		view: {},
+
 		/*inputs: [
 			{
 				uid: null,
@@ -945,7 +958,7 @@ export default [
 				uid: null,
 				component_id: null,
 				user_code: null,
-				key: 'selected_row',
+				key: 'active_object',
 				name: 'Selected row',
 				type: 'report_active_object',
 				default_value: null,

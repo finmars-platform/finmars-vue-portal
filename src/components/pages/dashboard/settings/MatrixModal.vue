@@ -241,7 +241,7 @@
 
 		</div>
 
-		<div v-else-if="activeTab === 'linking'" class="p-t-16">
+		<div v-show="activeTab === 'linking'" class="p-t-16">
 
 <!--			<div v-for="input in component.inputs" class="flex-row">
 
@@ -320,11 +320,6 @@
 		},
 	});
 
-	function testM(newVal) {
-		console.log('testing1090 content_type', newVal);
-		component.value.settings.content_type = newVal;
-	}
-
 	const emit = defineEmits(['update:inputs', 'update:outputs'])
 
 	const dashStore = useStoreDashboard();
@@ -332,9 +327,7 @@
 	const evAttrsStore = useEvAttributesStore();
 
 	let { component, updateComponent } = inject('component');
-	console.log("testing1090 components 1", component);
-	console.log("testing1090 components", component.value);
-	let creatingNewComp = !component.value.uid;
+
 	// if (!component.value.inputs) component.value.inputs = [];
 	let inputsList = ref( JSON.parse(JSON.stringify(props.inputs)) || [] );
 	let outputsList = ref( JSON.parse(JSON.stringify(props.outputs)) || [] );
@@ -479,14 +472,6 @@
 	}
 
 	attrs.value = evAttrsStore.getDataForAttributesSelector(component.value.settings.content_type);
-
-	function init () {
-
-
-
-	}
-
-	init();
 
 </script>
 

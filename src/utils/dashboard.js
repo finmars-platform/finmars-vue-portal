@@ -1,3 +1,5 @@
+import * as entityReportViewers from './entityReportViewers';
+
 /** Copying layout removing use from above filters */
 export const copyRvLayoutForDashboard = function (layout) {
 
@@ -21,19 +23,89 @@ export const copyRvLayoutForDashboard = function (layout) {
 
 }
 
-export const computeInputsForWatcher = function (inputs, component) {
+export const updateReportOptionsWithDashInputs = function (input, evDataService) {
 
-	const matchingInputs = inputs.filter( input => input.component_id === component.uid )
+	let ro = evDataService.getReportOptions();
 
-	let obj = {}
+	const prop = input.key.slice(15); // e.g. portfolios, pricing_policy etc
 
-	matchingInputs.forEach(input => {
-		obj[input.propertyName] = {
-			value_type: input.value_type,
-			value: input.__val,
+	let inputVal = input.__val;
+
+	if ( Array.isArray( ro[prop] ) ) {
+
+		if ( !Array.isArray(input.__val) ) {
+			inputVal = [input.__val];
 		}
+
+	} else if ( Array.isArray(input.__val) ) { // report options' property is not multi selector but value of input is an array
+
+		inputVal = input.__val[0];
+
+	}
+
+	ro[prop] = inputVal;
+
+	// evDataService.setReportOptions(ro);
+	return ro;
+
+}
+
+export const updateFiltersWithDashInputs = function (input, evDataService) {
+
+	let filters = evDataService.getFilters();
+	let filterForInput = filters.find(filter => filter.key === input.key);
+
+	/*if (filterForInput.value_type === input.value_type) {
+
+		filterForInput.options.filter_values = [input.__value];
+
+		vmE.evDataService.setFilters(filters);
+		filtersChanged = true;
+
+	} else {
+		console.warn("Can not link properties with different value_type")
+	}*/
+	filterForInput.options.filter_values = [input.__val];
+
+	return filters;
+
+}
+
+/**
+ *
+ * @param {Array} inputs - inputs of dashboard's component
+ * @param {String} contentType
+ * @param {Object} evDataService
+ * @param evAttrsStore
+ * @return {Array} - filters after adding filters for linked inputs
+ */
+export const formatFiltersForDashInputs = function (inputs, contentType, evDataService, evAttrsStore) {
+
+	let notReportOptionsInputs = inputs.filter( input => !input.key.startsWith('reportOptions__' ) );
+
+	let filtersList = evDataService.getFilters();
+	const attrsList = evAttrsStore.getAllAttributesByContentType(contentType);
+
+	notReportOptionsInputs.forEach(input => {
+
+		let filterForInput = filtersList.find(filter => filter.key === input.key);
+
+		if (!filterForInput) {
+
+			const attr = attrsList.find(attr => attr.key === input.key);
+
+			const filter = entityReportViewers.getEvRvAttrInFormOf('filter', attr);
+			filter.options.filter_type = 'equal';
+			filter.options.enabled = true;
+
+			filtersList.push(filter);
+
+		} else {
+			filterForInput.options.filter_type = 'equal';
+		}
+
 	})
 
-	return obj;
+	return filtersList;
 
 }

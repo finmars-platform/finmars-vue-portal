@@ -1,3 +1,12 @@
+export const getDefaultEvRvFilterType = function (valueType) {
+
+	const defaultFt = "contains";
+	const defaultNumberFt = "equal";
+
+	return ( [10, 30, 'field'].includes(valueType) ) ? defaultFt : defaultNumberFt;
+
+}
+
 /**
  * Turn table attribute into group, column or filter
  * @param {string} form - In what form get attribute. Can be 'column', 'group', 'filter'.
@@ -68,7 +77,7 @@ export const getEvRvAttrInFormOf = function (form, attrInstance) {
 			attrTypeToAdd.filters = true;
 
 			if (!attrTypeToAdd.options.filter_type) {
-				attrTypeToAdd.options.filter_type = metaHelper.getDefaultFilterType(attrTypeToAdd.value_type);
+				attrTypeToAdd.options.filter_type = getDefaultEvRvFilterType(attrTypeToAdd.value_type);
 			}
 
 			if (!attrTypeToAdd.options.filter_values) {

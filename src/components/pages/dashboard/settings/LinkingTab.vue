@@ -19,22 +19,28 @@
 													:key="outputData.componentName"
 												>-->
 						<FmSelect
-							:modelValue="outputData.componentUid"
+							:modelValue="outputData.component_id"
 							label="component"
 							:items="getLinkCompOpts(input)"
-							prop_id="componentUid"
+							prop_id="uid"
 							prop_name="user_code"
 							class="m-r-8"
-							@update:modelValue="selCompUid => changeSubscribedComp(outputData.componentUid, selCompUid, input.uid)"
+							@update:modelValue="selCompUid => changeSubscribedComp(outputData.component_id, selCompUid, input.uid)"
 						/>
 
 						<FmAttributesSelect
 							v-if="outputData.hasOwnProperty('propertyName')"
 							v-model="outputData.propertyName"
 							label="Attribute"
-							:contentType="dashStore.getComponent(outputData.componentUid).settings.content_type"
+							:contentType="dashStore.getComponent(outputData.component_id).settings.content_type"
 							:valueType="input.value_type"
-							:attributes="getAttributesForLinking(outputData.componentUid)"
+							:attributes="getAttributesForLinking(outputData.component_id)"
+						/>
+
+						<FmBtn
+							type="iconBtn"
+							icon="close"
+							@click="removeOutput(input.uid, outputData.output_id)"
 						/>
 
 					</div>
@@ -44,18 +50,20 @@
 						@click="openInputLinking(input)"
 					>LINK</FmBtn>
 
-					<FmBtn
-						type="basic"
-						icon="close"
-						@click="unlinkInput(input)"
-					/>
+					<div>
+						<FmBtn
+							type="basic"
+							@click="removeInput(input)"
+						>DELETE INPUT</FmBtn>
+					</div>
+
 
 				</div>
 			</FmCard>
 
 		</div>
 
-		<FmBtn>Add input</FmBtn>
+		<FmBtn @click="iAdditionOpened = true">Add input</FmBtn>
 
 		<BaseModal
 			v-model="addLinkingData.opened"
@@ -78,6 +86,7 @@
 					v-model="addLinkingData.comp.propertyName"
 					label="Attribute"
 					:contentType="dashStore.getComponent(addLinkingData.comp.uid).settings.content_type"
+					:valueType="addLinkingData.input.value_type"
 					:attributes="getAttributesForLinking(addLinkingData.comp.uid)"
 				/>
 			</div>
@@ -90,6 +99,17 @@
 				</div>
 			</template>
 		</BaseModal>
+
+		<FmAttributesSelectModal
+			v-model="iAdditionOpened"
+			title="Select attribute for input"
+			:contentType="component.settings.content_type"
+			:attributes="evAttrsStore.getDataForAttributesSelector(component.settings.content_type)"
+			:selected="attrsUsedByInputs"
+			:disabledAttributes="attrsUsedByInputs"
+			:multiselect="true"
+			@selectedAttributesChanged="selAttrs => addInputs(selAttrs)"
+		/>
 
 	</div>
 
@@ -118,7 +138,6 @@
 
 	//# region LINKING
 	let creatingNewComp = !component.value.uid;
-	console.log("testing1090 creatingNewComp", creatingNewComp);
 	/*let date1SelectModel = computed({
 		set(newVal) {
 
@@ -144,10 +163,21 @@
 		return evAttrsStore.getDataForAttributesSelector(ct);
 	}
 
-	function unlinkInput(input) {
+	function removeInput(input) {
 
 		const inputIndex = props.inputs.findIndex(inputData => inputData.uid === input.uid );
 		props.inputs.splice(inputIndex, 1);
+
+		emit('update:inputs', props.inputs);
+
+	}
+
+	function removeOutput(inputUid, outputUid) {
+
+		const inputData = props.inputs.find(input => input.uid === inputUid);
+		const outputIndex = inputData.subscribedTo.findIndex(output => output.output_id === outputUid);
+
+		inputData.subscribedTo.splice(outputIndex, 1);
 
 		emit('update:inputs', props.inputs);
 
@@ -165,21 +195,70 @@
 		addLinkingData.input = null;
 	}
 
+	//# region Addition of inputs
+	let iAdditionOpened = ref(false);
+
+	let attrsUsedByInputs = computed(() => {
+
+		// const attrs = evAttrsStore.getDataForAttributesSelector(component.value.settings.content_type);
+
+		/*attrs.filter(attr => {
+			return !props.inputs.find(input => input.key === attr.key);
+		})*/
+
+		const notRo = props.inputs.filter( input => !input.key.startsWith('reportOptions__') );
+
+		return notRo.map(input => input.key);
+
+	});
+
+	function addInputs(attrs) {
+
+		const newInputs = attrs.map(attr => {
+
+			return {
+				uid: useGenerateUniqueId('input' + attr.key),
+				component_id: component.value.settings.uid,
+				user_code: null,
+				key: attr.key,
+				name: attr.name,
+				value_type: 10,
+				view: {
+				type: 'select',
+					items: [],
+				},
+				subscribedTo: [],
+				default_value: null,
+				__val: null,
+			};
+
+		});
+
+		emit( 'update:inputs', props.inputs.concat(newInputs) );
+
+	}
+	//# endregion
+
 	function subscribeToComp() {
 
 		if (!addLinkingData.input.uid) {
 			throw new Error(`Input ${addLinkingData.input.name} has no uid`);
 		}
-		console.log("testing1090.subscribeToComp addLinkingData", JSON.parse(JSON.stringify( addLinkingData )) );
+		// console.log("testing1090.subscribeToComp addLinkingData", JSON.parse(JSON.stringify( addLinkingData )) );
 		const compToSub = dashStore.getComponent(addLinkingData.comp.uid);
-		console.log("testing1090.subscribeToComp compToSub", compToSub);
+		// console.log("testing1090.subscribeToComp compToSub", compToSub);
 		const input = props.inputs.find( inputData => inputData.uid === addLinkingData.input.uid );
-		console.log("testing1090.subscribeToComp input", input);
+		// console.log("testing1090.subscribeToComp input", input);
+
+		const outputToSub = dashStore.props.outputs.find(output => {
+			return output.component_id === compToSub.uid;
+		});
 
 		let outputData = {
+			output_id: outputToSub.uid,
 			component_id: compToSub.uid,
 			componentUserCode: compToSub.user_code,
-			output_id: dashStore.props.outputs[0].uid,
+			// output_id: dashStore.props.outputs[0].uid,
 		}
 
 
@@ -201,10 +280,11 @@
 			}]*/
 
 		}
+
 		input.subscribedTo.push(outputData);
 
 		emit('update:inputs', props.inputs);
-		console.log( "testing1090.subscribeToComp result ", component.value, input );
+		// console.log( "testing1090.subscribeToComp result ", props.inputs, input );
 		closeInputLiking();
 
 	}
@@ -237,7 +317,11 @@
 
 		let result = dashStore.components
 			.filter(comp => {
-				console.log("testing1090.getLinkCompOpts comp", comp);
+
+				if (comp.uid === component.value.uid) {
+					return false;
+				}
+
 				if (comp.dynamicOutputs) {
 					return true;
 				}
@@ -245,29 +329,38 @@
 				/*const differentValueType = !comp.outputs.find( output => {
 					return output.value_type === input.value.value_type;
 				});*/
-				const differentValueType = !dashStore.props.outputs.find( output => {
+				const incompatibleValueTypes = !dashStore.props.outputs.find( output => {
+
+					if (output.component_id !== comp.uid) {
+						return false;
+					}
+
+					if (input.value_type === 10 && output.value_type === 100) {
+						return true;
+					}
 
 					return output.component_id === comp.uid &&
-						output.value_type === input.value_type;
+						( output.value_type === input.value_type ||
+							input.value_type === 10 && output.value_type === 100 );
 
 				});
 
-				if (differentValueType) {
+				if (incompatibleValueTypes) {
 					return false;
 				}
 
-				if (input.value_type === 100) {
+				if (input.value_content_type) {
 
 					const differentContentType = !dashStore.props.outputs.find( output => {
 						return output.value_content_type === input.value_content_type;
 					});
-					console.log("testing1090.getLinkCompOpts differentContentType", differentContentType);
+
 					if (differentContentType) {
 						return false;
 					}
 
 				}
-				console.log("testing1090.getLinkCompOpts pass");
+
 				return true;
 
 			});
@@ -318,10 +411,7 @@
 					name: 'Date to',
 					value_type: 40,
 					// type: '',
-					view: {
-						type: 'select',
-						items: [],
-					},
+					view: {},
 					subscribedTo: [],
 					default_value: null,
 					__val: null,
@@ -337,10 +427,7 @@
 				name: date2Key ? 'Date from' : 'Date',
 				value_type: 40,
 				// type: '',
-				view: {
-					type: 'select',
-					items: [],
-				},
+				view: {},
 				subscribedTo: [],
 				default_value: null,
 				__val: null,
@@ -352,7 +439,7 @@
 			});
 
 			emit('update:inputs', props.inputs);
-			console.log("testing1090 props.inputs", props.inputs);
+
 		}
 		else {
 

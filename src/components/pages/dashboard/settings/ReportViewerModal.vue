@@ -24,7 +24,7 @@
 
 		</div>
 
-		<div v-else-if="activeTab === 'linking'" class="p-t-16">
+		<div v-show="activeTab === 'linking'" class="p-t-16">
 
 			<PagesDashboardSettingsLinkingTab
 				:inputs="inputsList"
@@ -57,7 +57,7 @@
 	const dashStore = useStoreDashboard();
 
 	let { component, updateComponent } = inject('component');
-	console.log("testing1090 components", component.value);
+
 	if (!component.value.inputs) component.value.inputs = [];
 
 	let inputsList = ref( JSON.parse(JSON.stringify(props.inputs)) || [] );

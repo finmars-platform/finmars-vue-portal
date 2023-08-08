@@ -138,7 +138,7 @@
 	)*/
 
 	let selLayoutUc = computed(() => {
-		console.log("testing1090.selectorsLayout selLayoutUc props.modelValue", props.modelValue );
+;
 		if ( props.modelValue ) {
 			return JSON.parse(props.modelValue).user_code;
 		}
@@ -165,7 +165,7 @@
 		})*/
 		loadingLayout.value = true;
 		let res = await layoutsStore.getLayoutByUserCode(props.content_type, userCode);
-		console.log("testing1090.fetchLayout res", res);
+
 		if (!res.error) {
 
 			layoutString.value = JSON.stringify(res, null, 4);
