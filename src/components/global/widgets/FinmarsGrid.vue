@@ -137,6 +137,24 @@
 		)
 	}
 
+	watch(
+		() => inputs.value.matrix_row,
+		() => {
+			console.log('inputs.value.matrix_row:', inputs.value.matrix_row)
+			vm.value.entityViewerDataService.setActiveObject(inputs.value.matrix_row)
+			vm.value.entityViewerDataService.setActiveObjectFromAbove(
+				inputs.value.matrix_row
+			)
+
+			vm.value.entityViewerEventService.dispatchEvent(
+				entityViewerEvents.ACTIVE_OBJECT_CHANGE
+			)
+			vm.value.entityViewerEventService.dispatchEvent(
+				entityViewerEvents.ACTIVE_OBJECT_FROM_ABOVE_CHANGE
+			)
+		}
+	)
+
 	onMounted(async () => {
 		vm.value = new reportViewerController({
 			$scope,

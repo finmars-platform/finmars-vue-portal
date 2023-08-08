@@ -69,7 +69,7 @@
 				@init="editorInit"
 				lang="json"
 				theme="monokai"
-				style="height: 300px; width: 600px"
+				style="height: 80vh; width: 80vw"
 			/>
 		</BaseModal>
 
