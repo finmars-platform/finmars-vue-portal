@@ -6,64 +6,67 @@
 				v-model="configurationListActive"
 				label="Configuration"
 				:items="configurationListItems"
+				prop_id="configuration_code"
 			/>
 		</div>
-		<div class="transaction-fields">
-			<div class="transaction-fields__text">
-				<h2 class="transaction-fields__title title-block">Text Fields</h2>
-				<div
-					class="transaction-fields__block"
-					v-for="(item, index) in textComplexTransactionUserFieldItems"
-					:key="index"
-				>
-					<div class="complex-input">
-						<!-- -->
-						<div class="complex-input__header">
-							<div class="complex-input__name">{{ item?.key }}</div>
-							<div class="complex-input__lable">Not created yet</div>
-						</div>
-						<div class="complex-input__body">
-							<FmCheckbox :size="18" v-model="item.is_active" />
-							<!-- v-model="selected[item.is_active]" -->
-							<FmInputText label="" v-model="item.name" />
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="transaction-fields__number">
-				<h2 class="transaction-fields__title title-block">Number Fields</h2>
-				<div
-					class="transaction-fields__block"
-					v-for="(item, index) in numberComplexTransactionUserFieldItems"
-					:key="index"
-				>
-					<div class="complex-input">
-						<div class="complex-input__header">
-							<div class="complex-input__name">{{ item?.key }}</div>
-							<div class="complex-input__lable">Not created yet</div>
-						</div>
-						<div class="complex-input__body">
-							<FmCheckbox :size="18" v-model="item.is_active" />
-							<FmInputText label="" v-model="item.name" />
+		<div class="fields-block">
+			<div class="transaction-fields">
+				<div class="transaction-fields__text">
+					<h2 class="transaction-fields__title title-block">Text Fields</h2>
+					<div
+						class="transaction-fields__block"
+						v-for="(item, index) in textComplexTransactionUserFieldItems"
+						:key="index"
+					>
+						<div class="complex-input">
+							<!-- -->
+							<div class="complex-input__header">
+								<div class="complex-input__name">{{ item?.key }}</div>
+								<div class="complex-input__lable">Not created yet</div>
+							</div>
+							<div class="complex-input__body">
+								<FmCheckbox :size="18" v-model="item.is_active" />
+								<!-- v-model="selected[item.is_active]" -->
+								<FmInputText label="" v-model="item.name" />
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="transaction-fields__date">
-				<h2 class="transaction-fields__title title-block">Date Fields</h2>
-				<div
-					class="transaction-fields__block"
-					v-for="(item, index) in dateComplexTransactionUserFieldItems"
-					:key="index"
-				>
-					<div class="complex-input">
-						<div class="complex-input__header">
-							<div class="complex-input__name">{{ item?.key }}</div>
-							<div class="complex-input__lable">Not created yet</div>
+				<div class="transaction-fields__number">
+					<h2 class="transaction-fields__title title-block">Number Fields</h2>
+					<div
+						class="transaction-fields__block"
+						v-for="(item, index) in numberComplexTransactionUserFieldItems"
+						:key="index"
+					>
+						<div class="complex-input">
+							<div class="complex-input__header">
+								<div class="complex-input__name">{{ item?.key }}</div>
+								<div class="complex-input__lable">Not created yet</div>
+							</div>
+							<div class="complex-input__body">
+								<FmCheckbox :size="18" v-model="item.is_active" />
+								<FmInputText label="" v-model="item.name" />
+							</div>
 						</div>
-						<div class="complex-input__body">
-							<FmCheckbox :size="18" v-model="item.is_active" />
-							<FmInputText label="" v-model="item.name" />
+					</div>
+				</div>
+				<div class="transaction-fields__date">
+					<h2 class="transaction-fields__title title-block">Date Fields</h2>
+					<div
+						class="transaction-fields__block"
+						v-for="(item, index) in dateComplexTransactionUserFieldItems"
+						:key="index"
+					>
+						<div class="complex-input">
+							<div class="complex-input__header">
+								<div class="complex-input__name">{{ item?.key }}</div>
+								<div class="complex-input__lable">Not created yet</div>
+							</div>
+							<div class="complex-input__body">
+								<FmCheckbox :size="18" v-model="item.is_active" />
+								<FmInputText label="" v-model="item.name" />
+							</div>
 						</div>
 					</div>
 				</div>
@@ -71,37 +74,38 @@
 			<FmBtn
 				type="primary"
 				class="btn-transaction"
-				@click="complexTransactionUserFieldCreate()"
+				@click="complexTransactionUserFieldItemsCreate()"
 				>Apply</FmBtn
 			>
 		</div>
 
-		<div class="transaction-fields">
+		<div class="fields-block">
 			<h2 class="title">Instrument Fields</h2>
-			<div class="transaction-fields__text">
-				<h2 class="transaction-fields__title title-block">Text Fields</h2>
-				<div
-					class="transaction-fields__block"
-					v-for="(item, index) in textInstrumentTextFieldsItems"
-					:key="index"
-				>
-					<div class="complex-input">
-						<!-- -->
-						<div class="complex-input__header">
-							<div class="complex-input__name">{{ item?.key }}</div>
-							<div class="complex-input__lable">Not created yet</div>
-						</div>
-						<div class="complex-input__body">
-							<FmCheckbox :size="18" v-model="item.is_active" />
-							<!-- v-model="selected[item.is_active]" -->
-							<FmInputText label="" v-model="item.name" />
+			<div class="transaction-fields">
+				<div class="transaction-fields__text">
+					<h2 class="transaction-fields__title title-block">Text Fields</h2>
+					<div
+						class="transaction-fields__block"
+						v-for="(item, index) in textInstrumentTextFieldsItems"
+						:key="index"
+					>
+						<div class="complex-input">
+							<!-- -->
+							<div class="complex-input__header">
+								<div class="complex-input__name">{{ item?.key }}</div>
+								<div class="complex-input__lable">Not created yet</div>
+							</div>
+							<div class="complex-input__body">
+								<FmCheckbox :size="18" v-model="item.is_active" />
+								<!-- v-model="selected[item.is_active]" -->
+								<FmInputText label="" v-model="item.name" />
+							</div>
 						</div>
 					</div>
 				</div>
+				<div></div>
+				<div></div>
 			</div>
-			<div></div>
-			<div></div>
-
 			<FmBtn
 				type="primary"
 				class="btn-transaction"
@@ -110,64 +114,65 @@
 			>
 		</div>
 
-		<div class="transaction-fields">
+		<div class="fields-block">
 			<h2 class="title">Transaction Fields</h2>
-
-			<div class="transaction-fields__text">
-				<h2 class="transaction-fields__title title-block">Text Fields</h2>
-				<div
-					class="transaction-fields__block"
-					v-for="(item, index) in textTransactionFieldsItems"
-					:key="index"
-				>
-					<div class="complex-input">
-						<!-- -->
-						<div class="complex-input__header">
-							<div class="complex-input__name">{{ item?.key }}</div>
-							<div class="complex-input__lable">Not created yet</div>
-						</div>
-						<div class="complex-input__body">
-							<FmCheckbox :size="18" v-model="item.is_active" />
-							<!-- v-model="selected[item.is_active]" -->
-							<FmInputText label="" v-model="item.name" />
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="transaction-fields__number">
-				<h2 class="transaction-fields__title title-block">Number Fields</h2>
-				<div
-					class="transaction-fields__block"
-					v-for="(item, index) in numberTransactionFieldsItems"
-					:key="index"
-				>
-					<div class="complex-input">
-						<div class="complex-input__header">
-							<div class="complex-input__name">{{ item?.key }}</div>
-							<div class="complex-input__lable">Not created yet</div>
-						</div>
-						<div class="complex-input__body">
-							<FmCheckbox :size="18" v-model="item.is_active" />
-							<FmInputText label="" v-model="item.name" />
+			<div class="transaction-fields">
+				<div class="transaction-fields__text">
+					<h2 class="transaction-fields__title title-block">Text Fields</h2>
+					<div
+						class="transaction-fields__block"
+						v-for="(item, index) in textTransactionFieldsItems"
+						:key="index"
+					>
+						<div class="complex-input">
+							<!-- -->
+							<div class="complex-input__header">
+								<div class="complex-input__name">{{ item?.key }}</div>
+								<div class="complex-input__lable">Not created yet</div>
+							</div>
+							<div class="complex-input__body">
+								<FmCheckbox :size="18" v-model="item.is_active" />
+								<!-- v-model="selected[item.is_active]" -->
+								<FmInputText label="" v-model="item.name" />
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="transaction-fields__date">
-				<h2 class="transaction-fields__title title-block">Date Fields</h2>
-				<div
-					class="transaction-fields__block"
-					v-for="(item, index) in dateTransactionFieldItems"
-					:key="index"
-				>
-					<div class="complex-input">
-						<div class="complex-input__header">
-							<div class="complex-input__name">{{ item?.key }}</div>
-							<div class="complex-input__lable">Not created yet</div>
+				<div class="transaction-fields__number">
+					<h2 class="transaction-fields__title title-block">Number Fields</h2>
+					<div
+						class="transaction-fields__block"
+						v-for="(item, index) in numberTransactionFieldsItems"
+						:key="index"
+					>
+						<div class="complex-input">
+							<div class="complex-input__header">
+								<div class="complex-input__name">{{ item?.key }}</div>
+								<div class="complex-input__lable">Not created yet</div>
+							</div>
+							<div class="complex-input__body">
+								<FmCheckbox :size="18" v-model="item.is_active" />
+								<FmInputText label="" v-model="item.name" />
+							</div>
 						</div>
-						<div class="complex-input__body">
-							<FmCheckbox :size="18" v-model="item.is_active" />
-							<FmInputText label="" v-model="item.name" />
+					</div>
+				</div>
+				<div class="transaction-fields__date">
+					<h2 class="transaction-fields__title title-block">Date Fields</h2>
+					<div
+						class="transaction-fields__block"
+						v-for="(item, index) in dateTransactionFieldItems"
+						:key="index"
+					>
+						<div class="complex-input">
+							<div class="complex-input__header">
+								<div class="complex-input__name">{{ item?.key }}</div>
+								<div class="complex-input__lable">Not created yet</div>
+							</div>
+							<div class="complex-input__body">
+								<FmCheckbox :size="18" v-model="item.is_active" />
+								<FmInputText label="" v-model="item.name" />
+							</div>
 						</div>
 					</div>
 				</div>
@@ -175,7 +180,7 @@
 			<FmBtn
 				type="primary"
 				class="btn-transaction"
-				@click="transactionFieldsCreate()"
+				@click="textTransactionFieldsCreate()"
 				>Apply</FmBtn
 			>
 		</div>
@@ -480,9 +485,9 @@
 			},
 		]
 
-		const configurationListItems = ref([])
-		const systemMessagesItems = ref([])
-		const configurationListActive = ref([1])
+	const configurationListItems = ref([])
+	const systemMessagesItems = ref([])
+	const configurationListActive = ref('local.poms.space0crgw')
 
 		const instrumentUserFieldItems = ref([])
 		let textInstrumentTextFieldsItems = defaultInstrumentTextFields.concat()
@@ -501,148 +506,286 @@
 		let numberTransactionFieldsItems = defaultTransactionNumberFields.concat()
 		let dateTransactionFieldItems = defaultTransactionDateFields.concat()
 
-		// const disabledBtn = ref(true)
-		const ecosystemDefaults = ref([1])
-		const BaseInputEcosystemDefaults = ref([])
-		const test = ref('lol lol eeee')
-		// fetchConfigurationList()
-		init()
+	const ecosystemDefaults = ref('local.poms.space0crgw')
+	const BaseInputEcosystemDefaults = ref([])
 
-		// async function fetchConfigurationList() {
-		// 	let res = await useApi('configurationList.get'),
-
-		// 	configurationListItems.value = res.results.filter(function (item) {
-		// 			return !item.is_package
-		// 		}).map(function (item) {
-		// 			return {
-		// 				id: item.configuration_code,
-		// 				name: item.configuration_code,
-		// 			}
-		// 		})
-		// }
-		async function init() {
-			const res = await Promise.all([
-				useApi('instrumentUserField.get'),
-				// useApi('instrumentUserField.get', { params: { id: item.id }}),
-				useApi('complexTransactionUserField.get'),
-				// useApi('complexTransactionUserField.get', { params: { id: item.id }}),
-				useApi('transactionUserField.get', {
-					params: { id: configurationListActive.value },
-				}),
-			])
-
-			instrumentUserFieldItems.value = res[0].results
-
-			complexTransactionUserFieldItems.value = res[1].results
-			transactionUserFieldItems.value = res[2].results
-			complexTransactionUserFieldGet()
-			async function complexTransactionUserFieldGet() {
-				complexTransactionUserFieldItems.value.forEach(function (field) {
-					console.log('instrumentUserFieldItems первый цикл', field)
-					textComplexTransactionUserFieldItems.forEach(function (textField) {
-						if (textField.key === field.key && field.key.includes('user_text')) {
-							textField.is_active = field.is_active
-							textField.name = field.name
-							textField.id = field.id
-						}
-					})
-
-					numberComplexTransactionUserFieldItems.forEach(function (numberField) {
-						if (
-							numberField.key === field.key &&
-							field.key.includes('user_number')
-						) {
-							numberField.is_active = field.is_active
-							numberField.name = field.name
-							numberField.id = field.id
-						}
-					})
-
-					dateComplexTransactionUserFieldItems.forEach(function (dateField) {
-						if (dateField.key === field.key && field.key.includes('user_date')) {
-							dateField.is_active = field.is_active
-							dateField.name = field.name
-							dateField.id = field.id
-						}
-					})
-				})
-			}
-			transactionUserFieldGet()
-			async function transactionUserFieldGet() {
-				transactionUserFieldItems.value.forEach(function (field) {
-					textTransactionFieldsItems.forEach(function (textField) {
-						if (textField.key === field.key && field.key.includes('user_text')) {
-							textField.is_active = field.is_active
-							textField.name = field.name
-							textField.id = field.id
-						}
-					})
-
-					numberTransactionFieldsItems.forEach(function (numberField) {
-						if (
-							numberField.key === field.key &&
-							field.key.includes('user_number')
-						) {
-							numberField.is_active = field.is_active
-							numberField.name = field.name
-							numberField.id = field.id
-						}
-					})
-
-					dateTransactionFieldItems.forEach(function (dateField) {
-						if (dateField.key === field.key && field.key.includes('user_date')) {
-							dateField.is_active = field.is_active
-							dateField.name = field.name
-							dateField.id = field.id
-						}
-					})
-				})
-			}
-			console.log(
-				'instrumentUserFieldItems.value',
-				transactionUserFieldItems.value
-			)
-			console.log(
-				'textComplexTransactionUserFieldItems',
-				textComplexTransactionUserFieldItems
-			)
-			// console.log(
-			// 	textTransactionUserFieldItems.value,
-			// 	'textTransactionUserFieldItems'
-			// )
-
-			// console.log(
-			// 	transactionUserFieldItems.value,
-			// 	'transactionUserFieldItems',
-			// 	transactionUserFieldItems.value[2].key,
-			// 	'transactionUserFieldItems.value[2].key'
-			// 	// transactionUserFieldItems.value[2].key.match(/user_text/g))
-			// )
-			// console.log(configurationListActive, 'configurationListActive')
-		}
-
-		const filteredList = computed(() => {
-			// return (textTransactionUserFieldItems = transactionUserFieldItems.filter(
-			// 	function (elem) {
-			// 		if (transactionUserFieldItems.key === indexOf("user_text")) return true
-			// 	}
-			// ))
-			// console.log(test.value, "test.value")
-			return test.value.filter((i) => i.key && i.key.match(/lol/g))
-		})
-
-		watch(
-			configurationListActive,
-			(newValue, oldValue) => {
-				if (oldValue[0] === 1) {
-				} else {
-					init()
-					// disabledBtn.value = false
-				}
-			},
-			{ deep: true }
+	configurationDefaultsGet()
+	async function configurationDefaultsGet() {
+		let edRes = await useApi('configurationList.get')
+		configurationListItems.value = edRes.error ? {} : edRes.results
+		console.log(
+			'edRes',
+			edRes,
+			'configurationListItems',
+			configurationListItems.value
 		)
+	}
+	init()
 
+	async function init() {
+		const res = await Promise.all([
+			useApi('instrumentUserField.get', {
+				filters: { configuration_code: configurationListActive.value },
+			}),
+
+			useApi('complexTransactionUserField.get', {
+				filters: { configuration_code: configurationListActive.value },
+			}),
+			useApi('transactionUserField.get', {
+				filters: { configuration_code: configurationListActive.value },
+			}),
+		])
+
+		instrumentUserFieldItems.value = res[0].results
+		complexTransactionUserFieldItems.value = res[1].results
+		transactionUserFieldItems.value = res[2].results
+		console.log(
+			'complexTransactionUserFieldItems.value',
+			complexTransactionUserFieldItems.value,
+			'configurationListActive.value',
+			configurationListActive.value
+		)
+		complexTransactionUserFieldGet()
+		async function complexTransactionUserFieldGet() {
+			// console.log('textField до фильтрации совсем',complexTransactionUserFieldItems.value )
+
+			complexTransactionUserFieldItems.value.forEach(function (field) {
+				// console.log('textField до фильтрации', complexTransactionUserFieldItems.value )
+				textComplexTransactionUserFieldItems.forEach(function (textField) {
+					// console.log('textField при фильтрации', textField)
+					if (
+						textField.key === field.key &&
+						field.key.includes('user_text') &&
+						!!textField.id
+					) {
+						textField.is_active = field.is_active
+						textField.name = field.name
+						textField.id = field.id
+					}
+				})
+
+				numberComplexTransactionUserFieldItems.forEach(function (numberField) {
+					if (
+						numberField.key === field.key &&
+						field.key.includes('user_number')
+					) {
+						numberField.is_active = field.is_active
+						numberField.name = field.name
+						numberField.id = field.id
+					}
+				})
+
+				dateComplexTransactionUserFieldItems.forEach(function (dateField) {
+					if (dateField.key === field.key && field.key.includes('user_date')) {
+						dateField.is_active = field.is_active
+						dateField.name = field.name
+						dateField.id = field.id
+					}
+				})
+			})
+		}
+		transactionUserFieldGet()
+		async function transactionUserFieldGet() {
+			transactionUserFieldItems.value.forEach(function (field) {
+				textTransactionFieldsItems.forEach(function (textField) {
+					if (textField.key === field.key && field.key.includes('user_text')) {
+						textField.is_active = field.is_active
+						textField.name = field.name
+						textField.id = field.id
+					}
+				})
+
+				numberTransactionFieldsItems.forEach(function (numberField) {
+					if (
+						numberField.key === field.key &&
+						field.key.includes('user_number')
+					) {
+						numberField.is_active = field.is_active
+						numberField.name = field.name
+						numberField.id = field.id
+					}
+				})
+
+				dateTransactionFieldItems.forEach(function (dateField) {
+					if (dateField.key === field.key && field.key.includes('user_date')) {
+						dateField.is_active = field.is_active
+						dateField.name = field.name
+						dateField.id = field.id
+					}
+				})
+			})
+		}
+		// console.log(
+		// 	'instrumentUserFieldItems.value',
+		// 	transactionUserFieldItems.value
+		// )
+		// console.log(
+		// 	'textComplexTransactionUserFieldItems',
+		// 	textComplexTransactionUserFieldItems
+		// )
+	}
+
+	watch(
+		configurationListActive,
+		(newValue, oldValue) => {
+			if (oldValue[0] === 1) {
+			} else {
+				init()
+				// disabledBtn.value = false
+			}
+		},
+		{ deep: true }
+	)
+
+	async function textTransactionFieldsCreate() {
+		textTransactionFieldsItems.forEach(function (textField) {
+			if (textField.id >= 0) {
+				let res = useApi('transactionUserField.put', {
+					params: { id: textField.id },
+					body: textField.value,
+				})
+				if (res.error) {
+					// console.error(res.error);
+					useNotify({
+						type: 'error',
+						title: res.error.message || res.error.detail,
+					})
+					throw new Error(res.error)
+				} else {
+					useNotify({ type: 'success', title: `data saved on the server` })
+				}
+			}
+		})
+		numberTransactionFieldsItems.forEach(function (textField) {
+			if (textField.id >= 0) {
+				let res = useApi('transactionUserField.put', {
+					params: { id: textField.id },
+					body: textField.value,
+				})
+				if (res.error) {
+					// console.error(res.error);
+					useNotify({
+						type: 'error',
+						title: res.error.message || res.error.detail,
+					})
+					throw new Error(res.error)
+				} else {
+					useNotify({ type: 'success', title: `data saved on the server` })
+				}
+			}
+		})
+		dateTransactionFieldItems.forEach(function (textField) {
+			if (textField.id >= 0) {
+				let res = useApi('transactionUserField.put', {
+					params: { id: textField.id },
+					body: textField.value,
+				})
+				if (res.error) {
+					// console.error(res.error);
+					useNotify({
+						type: 'error',
+						title: res.error.message || res.error.detail,
+					})
+					throw new Error(res.error)
+				} else {
+					useNotify({ type: 'success', title: `data saved on the server` })
+				}
+			}
+		})
+	}
+
+	function complexTransactionUserFieldItemsCreate() {
+		textComplexTransactionUserFieldItems.forEach(function (textField) {
+			console.log(
+				'textField',
+				textField,
+				'textField.id',
+				textField.id,
+				!textField.id
+			)
+			if (textField.id >= 0) {
+				let res = useApi('complexTransactionUserField.put', {
+					params: { id: textField.id },
+					body: textField.value,
+				})
+				console.log(
+					'внутри',
+					'textField',
+					textField,
+					'textField.id',
+					textField.id,
+					!textField.id
+				)
+				if (res.error) {
+					// console.error(res.error);
+					useNotify({
+						type: 'error',
+						title: res.error.message || res.error.detail,
+					})
+					throw new Error(res.error)
+				} else {
+					useNotify({ type: 'success', title: `data saved on the server` })
+				}
+			}
+		})
+		numberComplexTransactionUserFieldItems.forEach(function (textField) {
+			if (textField.id >= 0) {
+				let res = useApi('complexTransactionUserField.put', {
+					params: { id: textField.id },
+					body: textField.value,
+				})
+				if (res.error) {
+					// console.error(res.error);
+					useNotify({
+						type: 'error',
+						title: res.error.message || res.error.detail,
+					})
+					throw new Error(res.error)
+				} else {
+					useNotify({ type: 'success', title: `data saved on the server` })
+				}
+			}
+		})
+		dateComplexTransactionUserFieldItems.forEach(function (textField) {
+			if (textField.id >= 0) {
+				let res = useApi('complexTransactionUserField.put', {
+					params: { id: textField.id },
+					body: textField.value,
+				})
+				if (res.error) {
+					// console.error(res.error);
+					useNotify({
+						type: 'error',
+						title: res.error.message || res.error.detail,
+					})
+					throw new Error(res.error)
+				} else {
+					useNotify({ type: 'success', title: `data saved on the server` })
+				}
+			}
+		})
+	}
+
+	async function instrumentTextFieldsCreate() {
+		textInstrumentTextFieldsItems.forEach(function (textField) {
+			if (textField.id >= 0) {
+				let res = useApi('instrumentUserField.put', {
+					params: { id: textField.id },
+					body: textField.value,
+				})
+				if (res.error) {
+					// console.error(res.error);
+					useNotify({
+						type: 'error',
+						title: res.error.message || res.error.detail,
+					})
+					throw new Error(res.error)
+				} else {
+					useNotify({ type: 'success', title: `data saved on the server` })
+				}
+			}
+		})
+	}
 </script>
 
 <style lang="scss" scoped>
@@ -664,9 +807,6 @@
 		display: grid;
 		grid-template-columns: 1fr 1fr 1fr;
 		grid-template-rows: auto auto;
-		grid-template-areas:
-			'title-block title-block title-block'
-			'. . .';
 
 		gap: 20px 20px;
 		// .transaction-fields__block
@@ -731,6 +871,9 @@
 			grid-template-rows: 1fr;
 			gap: 10px 5px;
 		}
+		.transaction-fields {
+			grid-template-columns: 1fr 1fr;
+		}
 	}
 	@media (max-width: 767px) {
 		.wrapp-select {
@@ -738,6 +881,9 @@
 			grid-template-columns: 1fr;
 			grid-template-rows: 1fr;
 			gap: 10px 5px;
+		}
+		.transaction-fields {
+			grid-template-columns: 1fr;
 		}
 	}
 </style>
