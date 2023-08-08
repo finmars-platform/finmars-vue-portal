@@ -1,7 +1,18 @@
 <template>
-	<PagesDashboardAddMatrixModal
+	<PagesDashboardSettingsMatrixModal
 		v-if="component.componentName === 'DashboardMatrix'"
 		:tab="tab"
+		v-model:inputs="component.inputs"
+		v-model:outputs="component.outputs"
+		v-bind="$attrs"
+		class="settings"
+	/>
+
+	<PagesDashboardSettingsReportViewerModal
+		v-else-if="component.componentName === 'FinmarsGrid'"
+		:tab="tab"
+		v-model:inputs="component.inputs"
+		v-model:outputs="component.outputs"
 		v-bind="$attrs"
 		class="settings"
 	/>
@@ -63,7 +74,7 @@
 		tab: Number,
 	})
 	const dashStore = useStoreDashboard()
-	const component = inject('component')
+	const { component } = inject('component')
 	console.log('component:', component)
 
 	component.value.tab = props.tab

@@ -231,9 +231,13 @@
 			promises.push(evAttrsStore.getAttributeTypes(contentType))
 		})
 
-		promises.push(evAttrsStore.getCustomFields('reports.balancereport'))
-		promises.push(evAttrsStore.getCustomFields('reports.plreport'))
-		promises.push(evAttrsStore.getCustomFields('reports.transactionreport'))
+		promises.push( evAttrsStore.fetchCustomFields('reports.balancereport') )
+		promises.push( evAttrsStore.fetchCustomFields('reports.plreport') )
+		promises.push( evAttrsStore.fetchCustomFields('reports.transactionreport') )
+
+		promises.push( evAttrsStore.fetchUserFields('transactions.transaction') )
+		promises.push( evAttrsStore.fetchUserFields('transactions.complextransaction') )
+		promises.push( evAttrsStore.fetchUserFields('instruments.instrument') )
 
 		/*const idAttribute = {
 			"key": "id",
@@ -251,6 +255,7 @@
 	}
 
 	downloadAttributes()
+
 </script>
 
 <style lang="scss" scoped>
