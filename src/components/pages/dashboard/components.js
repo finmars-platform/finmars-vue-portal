@@ -516,7 +516,19 @@ export default [
 		componentName: 'DashboardMatrix',
 
 		inputs: [],
-		outputs: [],
+		outputs: [
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'matrix_row',
+				name: 'Matrix row',
+				type: 'matrix_active_object',
+				default_value: null,
+				__val: null,
+				_children: [],
+			},
+		],
 		settings: {
 			layout: null,
 			content_type: 'reports.balancereport',
@@ -776,6 +788,17 @@ export default [
 				key: 'selected_row',
 				name: 'Selected row',
 				type: 'report_active_object',
+				default_value: null,
+				__val: null,
+				subscribedTo: [],
+			},
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'matrix_row',
+				name: 'Matrix row',
+				type: 'matrix_active_object',
 				default_value: null,
 				__val: null,
 				subscribedTo: [],

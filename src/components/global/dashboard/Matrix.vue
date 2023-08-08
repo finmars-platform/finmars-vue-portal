@@ -8,6 +8,7 @@
 
 <script setup>
 	import reportViewerController from '~~/src/angular/controllers/entityViewer/reportViewerController'
+	import entityViewerEvents from '~~/src/angular/services/entityViewerEvents'
 
 	let props = defineProps({
 		uid: String,
@@ -18,7 +19,6 @@
 	const dashStore = useStoreDashboard()
 	const layoutsStore = useLayoutsStore()
 	const component = computed(() => dashStore.getComponent(props.uid))
-	console.log('component:', component)
 
 	let readyStatus = ref(false)
 
@@ -59,6 +59,18 @@
 			windowOrigin
 		)
 	}
+
+	const outputs = computed(() => {
+		let props = dashStore.props.outputs.filter(
+			(prop) => prop.component_id == component.value.uid
+		)
+		let obj = {}
+
+		props.forEach((prop) => {
+			obj[prop.key] = prop
+		})
+		return obj
+	})
 
 	watch(component, updateMatrix)
 
@@ -531,6 +543,16 @@
 		})
 
 		vm.value = vmE
+
+		vm.value.entityViewerEventService.addEventListener(
+			entityViewerEvents.ACTIVE_OBJECT_CHANGE,
+			() => {
+				if (outputs.value.matrix_row) {
+					outputs.value.matrix_row.__val =
+						vm.value.entityViewerDataService.getActiveObject()
+				}
+			}
+		)
 	}
 
 	init()
