@@ -940,7 +940,7 @@ export default [
 			{
 				uid: null,
 				component_id: null,
-				user_code: null,
+				user_code: null,1
 				key: 'portfolio',
 				name: 'Portfolio',
 				type: 'portfolio',
