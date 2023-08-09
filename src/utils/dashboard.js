@@ -109,3 +109,65 @@ export const formatFiltersForDashInputs = function (inputs, contentType, evDataS
 	return filtersList;
 
 }
+
+export const getDashInputsByContentType = function (contentType) {
+
+	if ( !['reports.balancereport', 'reports.plreport', 'reports.transactionreport'].includes(contentType) ) {
+		throw new Error(`Invalid contentType: ${contentType}`);
+	}
+
+	let inputs = [];
+
+	let date1Key;
+	let date2Key;
+
+	const date1KeysData = {
+		'reports.balancereport': 'report_date',
+		'reports.plreport': 'pl_first_date',
+		'reports.transactionreport': 'begin_date',
+	};
+
+	const date2KeysData = {
+		'reports.balancereport': null,
+		'reports.plreport': 'report_date',
+		'reports.transactionreport': 'end_date',
+	};
+
+	date1Key = date1KeysData[contentType];
+	date2Key = date2KeysData[contentType];
+
+	inputs.push({
+		uid: null,
+		component_id: null,
+		user_code: null,
+		key: 'reportOptions__' + date1Key,
+		name: date2Key ? 'Date from' : 'Date',
+		value_type: 40,
+		// type: '',
+		view: {},
+		subscribedTo: [],
+		default_value: null,
+		__val: null,
+	});
+
+	if (date2Key) {
+
+		inputs.push({
+			uid: null,
+			component_id: null,
+			user_code: null,
+			key: 'reportOptions__' + date2Key,
+			name: 'Date to',
+			value_type: 40,
+			// type: '',
+			view: {},
+			subscribedTo: [],
+			default_value: null,
+			__val: null,
+		});
+
+	}
+
+	return inputs;
+
+}

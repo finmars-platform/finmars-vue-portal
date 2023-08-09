@@ -79,7 +79,7 @@
 			 style="width: 630px;">
 		<FmTabs v-model="activeTab" :tabs="tabsList" class="width-100" />
 
-		<div v-if="activeTab === 'main'" class="p-t-16">
+		<div v-show="activeTab === 'main'" class="p-t-16">
 			<BaseInput
 				v-model="component.user_code"
 				label="User code"
@@ -113,9 +113,9 @@
 			</div>-->
 			<LazySelectorsLayout
 				:modelValue="component.settings.layout"
-				v-model:content_type="component.settings.content_type"
+				:content_type="component.settings.content_type"
 				@update:modelValue="newVal => component.settings.layout = copyRvLayoutForDashboard(newVal)"
-				@userCodeChanged="newUc => component.settings.user_code = newUc"
+				@update:content_type="onContentTypeChange"
 			/>
 
 			<FmAttributesSelect
@@ -172,7 +172,7 @@
 
 		</div>
 
-		<div v-else-if="activeTab === 'advance settings'" class="p-t-16">
+		<div v-if="activeTab === 'advance settings'" class="p-t-16">
 
 			<FmSelect
 				:modelValue="component.settings.hide_empty_lines"
@@ -306,7 +306,7 @@
 
 <script setup>
 
-	import {copyRvLayoutForDashboard} from "~/utils/dashboard";
+	import componentsList from "~/components/pages/dashboard/components.js"
 
 	const props = defineProps({
 		tab: Number,
@@ -472,6 +472,56 @@
 	}
 
 	attrs.value = evAttrsStore.getDataForAttributesSelector(component.value.settings.content_type);
+
+	function getDefaultInputs() {
+
+		const inputs = componentsList.find(component => {
+
+			return component.componentName === 'DashboardMatrix';
+
+		}).inputs;
+
+		return structuredClone(inputs);
+
+	}
+
+	function onContentTypeChange(contentType) {
+		// console.log("testing1090.settingsMatrixModal onContentTypeChange contentType ", contentType);
+		/*inputsList.value = inputsList.value.filter(input => {
+
+			return ![
+				'reportOptions__report_date',
+				'reportOptions__pl_first_date',
+				'reportOptions__begin_date',
+				'reportOptions__end_date'
+			].includes(input.key);
+
+		});*/
+
+		const inputs = getDashInputsByContentType(contentType);
+
+		inputsList.value = inputs.concat( getDefaultInputs() );
+
+		inputsList.value = inputsList.value.map((input, index) => {
+			input.uid = useGenerateUniqueId('input' + index);
+			return input;
+		});
+
+		emit('update:inputs', inputsList.value);
+		// console.log("testing1090.settingsMatrixModal onContentTypeChange inputsList.value ", inputsList.value);
+		component.value.settings.axisX = null;
+		component.value.settings.axisY = null;
+		component.value.settings.valueKey = null;
+
+		component.value.settings.layout = null;
+
+		component.value.settings.content_type = contentType;
+
+		// component.value.settings.user_settings
+		attrs.value = evAttrsStore.getDataForAttributesSelector(contentType);
+
+		// console.log("testing1090.settingsMatrixModal onContentTypeChange component ", component.value);
+	}
 
 </script>
 

@@ -474,6 +474,15 @@ export default defineStore({
 			this.activeTab = null
 			this.activeLayoutId = null
 		},
+		removeInput(uid) {
+			let index = this.props.inputs.findIndex(
+				(item) => item.uid === uid
+			)
+
+			if (index === -1) return false;
+
+			this.props.inputs.splice(index, 1);
+		},
 		removeComponent(uid) {
 			let index = this.components.findIndex((item) => item.uid == uid)
 
@@ -482,13 +491,7 @@ export default defineStore({
 			this.props.inputs
 				.filter((item) => item.component_id == this.components[index].uid)
 				.forEach((prop) => {
-					let index = this.props.inputs.findIndex(
-						(item) => item.uid == prop.uid
-					)
-
-					if (index === -1) return false
-
-					this.props.inputs.splice(index, 1)
+					this.removeInput(prop.uid)
 				})
 
 			this.props.outputs
