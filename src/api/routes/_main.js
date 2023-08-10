@@ -179,7 +179,7 @@ export default {
 		get: prefix + '/ui/instrument-user-field/',
 		put: prefix + '/ui/instrument-user-field/{id}/',
 	},
-	
+
 	listLayoutList: {
 		get: prefix + '/ui/list-layout/',
 	},
@@ -336,12 +336,6 @@ export default {
 	strategiesSecondSubgroup: {
 		get: prefix + '/strategies/2/subgroup/',
 	},
-	strategiesSecondLight: {
-		get: prefix + '/strategies/2/strategy/light/',
-	},
-	strategiesSecondSubgroup: {
-		get: prefix + '/strategies/2/subgroup/',
-	},
 	strategiesThirdLight: {
 		get: prefix + '/strategies/3/strategy/light/',
 	},
@@ -359,7 +353,5 @@ export default {
 		get: prefix + '/ui/transaction-user-field/',
 		put: prefix + '/ui/transaction-user-field/{id}/',
 	},
-	
-	
 
 }
