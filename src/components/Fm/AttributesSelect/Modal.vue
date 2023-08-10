@@ -84,10 +84,14 @@
 			type: Array,
 			default: [],
 		},
-		selected: [Array, String, null], // Array for multiselect, String and null for select
+		selected: [Array, String], // Array for multiselect, String and null for select
 		multiselect: Boolean,
 	});
 
+	/*
+	 * save - returns key or array of keys of selected attributes
+	 * selectedAttributesChanged - returns object or array of objects of selected attributes
+	 */
 	let emit = defineEmits(['update:modelValue', 'save', 'selectedAttributesChanged']);
 
 	let selAttrsKeysList = ref([]);
@@ -108,7 +112,7 @@
 
 				selAttrsKeysList.value = props.selected ? [props.selected] : []
 
-			} else {
+			} else if (props.selected || props.selected === 0) {
 				throw new Error("Wrong format of modelValue: " + typeof props.selected)
 			}
 
@@ -143,7 +147,7 @@
 
 		}
 
-		return store.favorites.attributes[props.contentType];
+		return store.favorites.attributes[props.contentType] || [];
 
 	})
 

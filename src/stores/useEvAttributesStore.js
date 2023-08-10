@@ -1,4 +1,7 @@
 import { defineStore } from "pinia";
+import pnlReportPropsModel from "~/angular/models/pnlReportPropsModel";
+import reportAddonPerformancePnlPropsModel from "~/angular/models/reportAddonPerformancePnlPropsModel";
+import reportMismatchPnlPropsModel from "~/angular/models/reportMismatchPnlPropsModel";
 
 /** Attributes from balance report that belong to group "reports.balancereportperformance" */
 const balancePerformanceKeys = [
@@ -43,6 +46,12 @@ const dynamicAttrsRouteOpts = {
 	'counterparties.counterparty': 'counterpartyAttrTypeList',
 	'transactions.transactiontype': 'transactionTypeAttrTypeList',
 	'transactions.complextransaction': 'complexTransactionAttrTypeList',
+}
+
+const userFieldsRouteOpts = {
+	'transactions.transaction': 'transactionUserField',
+	'transactions.complextransaction': 'complexTransactionUserField',
+	'instruments.instrument': 'instrumentUserField',
 }
 
 const customFieldsRouteOpts = {
@@ -138,8 +147,10 @@ export default defineStore({
 			userFields: {}, // contains fields like user_text_1, user_number_3, etc. grouped by content type
 
 			customFields: {
-				'reports.balancereport': []
-			}, // reports have them
+				'reports.balancereport': null,
+				'reports.plreport': null,
+				'reports.transactionreport': null,
+			}, // for reports
 		};
 	},
 	actions: {
@@ -329,6 +340,13 @@ export default defineStore({
 
 			});
 
+			//# regions Pnl attributes
+			// TODO: move to backend
+			res['reports.plreport'] = pnlReportPropsModel.getAttributes();
+			res['reports.plreportmismatch'] = reportAddonPerformancePnlPropsModel.getAttributes();
+			res['reports.plreportperformance'] = reportMismatchPnlPropsModel.getAttributes();
+			//# endregion Pnl attributes
+
 			this.systemAttrs = res;
 
 		},
@@ -367,6 +385,7 @@ export default defineStore({
 			}
 
 			this.customFields[contentType] = res.results;
+
 		},
 
 		async getCustomFields(contentType) {
@@ -700,17 +719,17 @@ export default defineStore({
 
 		applyAliasesToAttrs(attributes, contentType, keyPrefix='', namePrefix='') {
 
-			const customFieldsObj = {
-				'transactions.transaction': this.customFields['transactions.transaction'],
-				'transactions.complextransaction': this.customFields['transactions.complextransaction'],
-				'instruments.instrument': this.customFields['instruments.instrument'],
+			const userFieldsObj = {
+				'transactions.transaction': this.userFields['transactions.transaction'],
+				'transactions.complextransaction': this.userFields['transactions.complextransaction'],
+				'instruments.instrument': this.userFields['instruments.instrument'],
 			}
 
-			if ( !customFieldsObj.hasOwnProperty(contentType) ) {
+			if ( !userFieldsObj.hasOwnProperty(contentType) ) {
 				throw new Error("There are no user fields for contentType: " + contentType)
 			}
 
-			customFieldsObj[contentType].forEach(function (field) {
+			userFieldsObj[contentType].forEach(function (field) {
 
 				attributes = attributes.map(function (attr) {
 
@@ -731,6 +750,12 @@ export default defineStore({
 
 		},
 
+		/**
+		 *
+		 * @param contentType
+		 * @param [viewContext]
+		 * @return {*[]}
+		 */
 		getAllAttributesByContentType(contentType, viewContext) {
 
 			let result;
