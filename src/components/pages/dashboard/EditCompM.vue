@@ -1,8 +1,18 @@
 <template>
 	<BaseModal no_padding title="Edit component">
-		<PagesDashboardAddMatrixModal
+		<PagesDashboardSettingsMatrixModal
 			v-if="editable.componentName === 'DashboardMatrix'"
 			:tab="editable.tab"
+			v-model:inputs="inputs"
+			v-model:outputs="outputs"
+			class="settings"
+		/>
+
+		<PagesDashboardSettingsReportViewerModal
+			v-else-if="editable.componentName === 'FinmarsGrid'"
+			:tab="editable.tab"
+			v-model:inputs="inputs"
+			v-model:outputs="outputs"
 			class="settings"
 		/>
 
@@ -80,7 +90,14 @@
 	let component = dashStore.getComponent(props.uid) || {}
 	let editable = ref(JSON.parse(JSON.stringify(component)))
 
-	provide('component', editable) // used by PagesDashboardAddMatrixModal
+	function updateComponent(componentData) {
+		editable.value = componentData;
+	}
+
+	provide('component', {
+		component: editable,
+		updateComponent
+	}); // used by PagesDashboardSettingsMatrixModal
 
 	let inputs = ref([])
 	let outputs = ref([])
@@ -109,7 +126,7 @@
 		})
 	}
 	function cancel(close) {
-		editable.value = {}
+		// editable.value = {}
 		close()
 	}
 
@@ -122,8 +139,73 @@
 			return false
 		}
 
-		if (editable.value.componentName === 'DashboardMatrix') {
-			dashStore.setComponent(editable.value)
+		if ( ['DashboardMatrix', 'FinmarsGrid'].includes(editable.value.componentName) ) {
+
+			dashStore.setComponent(editable.value);
+
+			dashStore.$patch((state) => {
+
+				/*inputs.value.forEach((prop) => {
+					let input = state.props.inputs.find((item) => item.uid == prop.uid)
+
+					input.default_value = prop.default_value
+					input.subscribedTo = prop.subscribedTo
+				})*/
+				dashStore.props.inputs
+					.filter(input => input.component_id === component.uid)
+					.forEach(input => {
+						dashStore.removeInput(input.uid)
+					});
+
+				inputs.value.forEach((prop) => {
+
+					let newProp = {
+						uid: component.uid + ' ' + prop.key,
+						component_id: component.uid,
+						user_code: prop.user_code,
+						name: prop.name,
+						type: prop.type,
+						key: prop.key,
+						value_type: prop.value_type,
+
+						view: prop.view,
+						subscribedTo: prop.subscribedTo,
+
+						default_value: prop.default_value,
+						__val: prop.default_value,
+					}
+
+					if (newProp.value_type === 100) newProp.value_content_type = prop.value_content_type;
+
+					state.props.inputs.push(newProp);
+
+				})
+				// console.log("testing1090.EditCompM save inputs", state.props.inputs);
+				outputs.value.forEach((prop) => {
+					let output = state.props.outputs.find((item) => item.uid == prop.uid)
+
+					output.default_value = prop.default_value
+
+					let children = state.props.inputs.filter((item) =>
+						item.subscribedTo.includes(prop.uid)
+					)
+
+					children.forEach((child) => {
+						let index = child.subscribedTo.findIndex((uid) => uid == prop.uid)
+
+						if (index !== -1) {
+							child.subscribedTo.splice(index, 1)
+						}
+					})
+
+					prop._children.forEach((uid) => {
+						let children = state.props.inputs.find((item) => item.uid == uid)
+						children.subscribedTo.push(prop.uid)
+					})
+				})
+
+			})
+
 		} else {
 			dashStore.$patch((state) => {
 				component.user_code = editable.value.user_code
