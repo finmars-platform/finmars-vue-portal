@@ -144,13 +144,43 @@
 			dashStore.setComponent(editable.value);
 
 			dashStore.$patch((state) => {
-				inputs.value.forEach((prop) => {
+
+				/*inputs.value.forEach((prop) => {
 					let input = state.props.inputs.find((item) => item.uid == prop.uid)
 
 					input.default_value = prop.default_value
 					input.subscribedTo = prop.subscribedTo
-				})
+				})*/
+				dashStore.props.inputs
+					.filter(input => input.component_id === component.uid)
+					.forEach(input => {
+						dashStore.removeInput(input.uid)
+					});
 
+				inputs.value.forEach((prop) => {
+
+					let newProp = {
+						uid: component.uid + ' ' + prop.key,
+						component_id: component.uid,
+						user_code: prop.user_code,
+						name: prop.name,
+						type: prop.type,
+						key: prop.key,
+						value_type: prop.value_type,
+
+						view: prop.view,
+						subscribedTo: prop.subscribedTo,
+
+						default_value: prop.default_value,
+						__val: prop.default_value,
+					}
+
+					if (newProp.value_type === 100) newProp.value_content_type = prop.value_content_type;
+
+					state.props.inputs.push(newProp);
+
+				})
+				// console.log("testing1090.EditCompM save inputs", state.props.inputs);
 				outputs.value.forEach((prop) => {
 					let output = state.props.outputs.find((item) => item.uid == prop.uid)
 

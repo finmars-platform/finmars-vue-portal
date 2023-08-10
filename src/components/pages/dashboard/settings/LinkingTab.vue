@@ -117,6 +117,7 @@
 
 <script setup>
 
+
 	const props = defineProps({
 		inputs: {
 			type: Array,
@@ -284,7 +285,7 @@
 		input.subscribedTo.push(outputData);
 
 		emit('update:inputs', props.inputs);
-		// console.log( "testing1090.subscribeToComp result ", props.inputs, input );
+
 		closeInputLiking();
 
 	}
@@ -383,55 +384,9 @@
 
 		if (creatingNewComp) {
 
-			let date1Key;
-			let date2Key;
+			const defaultInputs = getDashInputsByContentType(component.value.settings.content_type);
 
-			const date1KeysData = {
-				'reports.balancereport': 'report_date',
-				'reports.plreport': 'pl_first_date',
-				'reports.transactionreport': 'begin_date',
-			};
-
-			const date2KeysData = {
-				'reports.balancereport': null,
-				'reports.plreport': 'report_date',
-				'reports.transactionreport': 'end_date',
-			};
-
-			date1Key = date1KeysData[component.value.settings.content_type];
-			date2Key = date2KeysData[component.value.settings.content_type];
-
-			if (date2Key) {
-
-				props.inputs.unshift({
-					uid: null,
-					component_id: null,
-					user_code: null,
-					key: 'reportOptions__' + date2Key,
-					name: 'Date to',
-					value_type: 40,
-					// type: '',
-					view: {},
-					subscribedTo: [],
-					default_value: null,
-					__val: null,
-				});
-
-			}
-
-			props.inputs.unshift({
-				uid: null,
-				component_id: null,
-				user_code: null,
-				key: 'reportOptions__' + date1Key,
-				name: date2Key ? 'Date from' : 'Date',
-				value_type: 40,
-				// type: '',
-				view: {},
-				subscribedTo: [],
-				default_value: null,
-				__val: null,
-			});
+			props.inputs = defaultInputs.concat(props.inputs);
 
 			props.inputs = props.inputs.map((input, index) => {
 				input.uid = useGenerateUniqueId('input' + index);
@@ -439,11 +394,6 @@
 			});
 
 			emit('update:inputs', props.inputs);
-
-		}
-		else {
-
-
 
 		}
 

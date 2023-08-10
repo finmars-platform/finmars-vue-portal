@@ -84,7 +84,7 @@
 			type: Array,
 			default: [],
 		},
-		selected: [Array, String, null], // Array for multiselect, String and null for select
+		selected: [Array, String], // Array for multiselect, String and null for select
 		multiselect: Boolean,
 	});
 
@@ -112,7 +112,7 @@
 
 				selAttrsKeysList.value = props.selected ? [props.selected] : []
 
-			} else {
+			} else if (props.selected || props.selected === 0) {
 				throw new Error("Wrong format of modelValue: " + typeof props.selected)
 			}
 
@@ -133,7 +133,9 @@
 
 		if (props.valueType) {
 
-			return store.favorites.attributes[props.contentType].filter(fAttr => {
+			const favAttrs = store.favorites.attributes[props.contentType] || [];
+
+			return favAttrs.filter(fAttr => {
 
 				const fAttrData = props.attributes.find(attr => attr.key === fAttr.key);
 
