@@ -3,7 +3,7 @@
 			 style="width: 630px;">
 		<FmTabs v-model="activeTab" :tabs="tabsList" class="width-100" />
 
-		<div v-if="activeTab === 'main'" class="p-t-16">
+		<div v-show="activeTab === 'main'" class="p-t-16">
 			<BaseInput
 				v-model="component.user_code"
 				label="User code"
@@ -17,14 +17,15 @@
 			/>
 
 			<LazySelectorsLayout
-				v-model="component.settings.layout"
-				v-model:content_type="component.settings.content_type"
-				@userCodeChanged="newUc => component.settings.user_code = newUc"
+				:modelValue="component.settings.layout"
+				:content_type="component.settings.content_type"
+				@update:modelValue="newVal => component.settings.layout = copyRvLayoutForDashboard(newVal)"
+				@update:content_type="onContentTypeChange"
 			/>
 
 		</div>
 
-		<div v-show="activeTab === 'linking'" class="p-t-16">
+		<div v-if="activeTab === 'linking'" class="p-t-16">
 
 			<PagesDashboardSettingsLinkingTab
 				:inputs="inputsList"
@@ -39,6 +40,8 @@
 </template>
 
 <script setup>
+
+	import componentsList from "~/components/pages/dashboard/components";
 
 	const props = defineProps({
 		tab: Number,
@@ -96,6 +99,54 @@
 
 	const tabsList = ['main', 'linking'];
 	let activeTab = ref('main');
+
+	function getDefaultInputs() {
+
+		const inputs = componentsList.find(component => {
+
+			return component.componentName === 'FinmarsGrid';
+
+		}).inputs;
+
+		return structuredClone(inputs);
+
+	}
+
+	function onContentTypeChange(contentType) {
+		// console.log("testing1090.settingsMatrixModal onContentTypeChange contentType ", contentType);
+		/*inputsList.value = inputsList.value.filter(input => {
+
+			return ![
+				'reportOptions__report_date',
+				'reportOptions__pl_first_date',
+				'reportOptions__begin_date',
+				'reportOptions__end_date'
+			].includes(input.key);
+
+		});*/
+
+		const inputs = getDashInputsByContentType(contentType);
+
+		inputsList.value = inputs.concat( getDefaultInputs() );
+
+		inputsList.value = inputsList.value.map((input, index) => {
+			input.uid = useGenerateUniqueId('input' + index);
+			return input;
+		});
+
+		emit('update:inputs', inputsList.value);
+		// console.log("testing1090.settingsMatrixModal onContentTypeChange inputsList.value ", inputsList.value);
+		component.value.settings.axisX = null;
+		component.value.settings.axisY = null;
+		component.value.settings.valueKey = null;
+
+		component.value.settings.layout = null;
+
+		component.value.settings.content_type = contentType;
+
+		// component.value.settings.user_settings
+		// console.log("testing1090.settingsMatrixModal onContentTypeChange component ", component.value);
+	}
 
 </script>
 
