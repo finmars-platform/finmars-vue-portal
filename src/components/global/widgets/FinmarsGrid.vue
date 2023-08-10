@@ -66,6 +66,20 @@
 		return dashStore.props.inputs.filter(input => input.component_id === component.uid );
 	});
 
+	let inputsVals = computed( () => {
+
+		let result = {};
+
+		// const some = dashStore.props.inputs.filter(input => input.component_id === component.uid )
+
+		inputs.value.forEach(input => {
+			result[input.uid] = input.__val;
+		})
+
+		return result;
+
+	})
+
 	/* ME 2023-08-06
 	const outputs = computed(() => {
 		let props = dashStore.props.outputs.filter(
@@ -155,14 +169,43 @@
 	}*/
 
 	// debounce needed because multiple inputs change consecutively
-	const updateRvAfterInputsChange = useDebounce(function () {
+	/*const updateRvAfterInputsChange = useDebounce(function () {
 
 			// console.log("testing1090.finmarsGrid updateRvAfterInputsChange called");
 			vm.value.entityViewerEventService.dispatchEvent(evEvents.FILTERS_CHANGE);
 			vm.value.entityViewerEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE);
 			vm.value.entityViewerEventService.dispatchEvent(evEvents.REQUEST_REPORT);
 
-	}, 200)
+	}, 200)*/
+
+	const inputsValsWatcherCb = useDebounce(function () {
+		// console.log("testing1090.finmarsGrid inputsValsWatcherCb", inputsVals.value);
+		Object.keys(inputsVals.value).forEach(inputId => {
+
+			const input = dashStore.props.inputs.find( input => input.uid === inputId );
+			// console.log("testing1090.finmarsGrid inputsValsWatcherCb input", input);
+			if ( input.key.startsWith('reportOptions__') ) {
+
+				const ro = updateReportOptionsWithDashInputs(input, vm.value.entityViewerDataService);
+				// console.log("testing1090.finmarsGrid report options input changed", input, ro);
+				vm.value.entityViewerDataService.setReportOptions(ro);
+
+			}
+			else {
+
+				const filters = updateFiltersWithDashInputs(input, vm.value.entityViewerDataService);
+				// console.log("testing1090.finmarsGrid filter input changed", input, filters);
+				vm.value.entityViewerDataService.setFilters(filters);
+
+			}
+
+			vm.value.entityViewerEventService.dispatchEvent(evEvents.FILTERS_CHANGE);
+			vm.value.entityViewerEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE);
+			vm.value.entityViewerEventService.dispatchEvent(evEvents.REQUEST_REPORT);
+
+		})
+
+	}, 200);
 
 	/*watch(
 		() => inputs.value.map(input => input.__val), // watching only 'inputs' does not trigger watcher on __val change
@@ -206,7 +249,7 @@
 		const filtersList = formatFiltersForDashInputs(inputs.value, layout.content_type, vm.value.entityViewerDataService, evAttrsStore);
 		vm.value.entityViewerDataService.setFilters(filtersList);
 
-		inputs.value.forEach(input => {
+		/*inputs.value.forEach(input => {
 
 			let watcherCb;
 
@@ -241,7 +284,12 @@
 				watcherCb
 			)
 
-		})
+		})*/
+
+		watch(
+			inputsVals,
+			inputsValsWatcherCb,
+		)
 
 		/* ME 2023-08-06
 		vm.value.entityViewerEventService.addEventListener(

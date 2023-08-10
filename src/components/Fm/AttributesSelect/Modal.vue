@@ -133,7 +133,9 @@
 
 		if (props.valueType) {
 
-			return store.favorites.attributes[props.contentType].filter(fAttr => {
+			const favAttrs = store.favorites.attributes[props.contentType] || [];
+
+			return favAttrs.filter(fAttr => {
 
 				const fAttrData = props.attributes.find(attr => attr.key === fAttr.key);
 
