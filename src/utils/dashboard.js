@@ -34,7 +34,7 @@ export const updateReportOptionsWithDashInputs = function (input, evDataService)
 	if ( Array.isArray( ro[prop] ) ) {
 
 		if ( !Array.isArray(input.__val) ) {
-			inputVal = [input.__val];
+			inputVal = input.__val ? [input.__val] : [];
 		}
 
 	} else if ( Array.isArray(input.__val) ) { // report options' property is not multi selector but value of input is an array
