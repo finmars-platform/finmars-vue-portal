@@ -1,7 +1,7 @@
 <template>
 	<div class="report-viewer-holder height-100">
 		<AngularFmGridTable
-			v-if="vm && vm.readyStatus.attributes && vm.readyStatus.layout"
+			v-if="store.current && vm && vm.readyStatus.attributes && vm.readyStatus.layout"
 			class="g-group-table-holder"
 			:attributeDataService="vm.attributeDataService"
 			:evDataService="vm.entityViewerDataService"
@@ -44,6 +44,7 @@
 		uid: String,
 	})
 
+	const store = useStore();
 	const dashStore = useStoreDashboard();
 	const evAttrsStore = useEvAttributesStore();
 
@@ -178,9 +179,13 @@
 
 	}, 200)*/
 
-	const inputsValsWatcherCb = useDebounce(function () {
-		// console.log("testing1090.finmarsGrid inputsValsWatcherCb", inputsVals.value);
-		Object.keys(inputsVals.value).forEach(inputId => {
+	const inputsValsWatcherCb = useDebounce(function (newVal, oldVal) {
+		// console.log("testing1090.finmarsGrid inputsValsWatcherCb", newVal, oldVal);
+		Object.keys(newVal).forEach(inputId => {
+
+			if ( newVal[inputId] === oldVal[inputId] ) {
+				return;
+			}
 
 			const input = dashStore.props.inputs.find( input => input.uid === inputId );
 			// console.log("testing1090.finmarsGrid inputsValsWatcherCb input", input);
@@ -199,11 +204,11 @@
 
 			}
 
-			vm.value.entityViewerEventService.dispatchEvent(evEvents.FILTERS_CHANGE);
-			vm.value.entityViewerEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE);
-			vm.value.entityViewerEventService.dispatchEvent(evEvents.REQUEST_REPORT);
-
 		})
+
+		vm.value.entityViewerEventService.dispatchEvent(evEvents.FILTERS_CHANGE);
+		vm.value.entityViewerEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE);
+		vm.value.entityViewerEventService.dispatchEvent(evEvents.REQUEST_REPORT);
 
 	}, 200);
 
@@ -289,6 +294,7 @@
 		watch(
 			inputsVals,
 			inputsValsWatcherCb,
+
 		)
 
 		/* ME 2023-08-06
