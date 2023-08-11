@@ -658,7 +658,7 @@
 			if (textField.id >= 0) {
 				let res = useApi('transactionUserField.put', {
 					params: { id: textField.id },
-					body: textField.value,
+					body: textField,
 				})
 				if (res.error) {
 					// console.error(res.error);
@@ -672,7 +672,7 @@
 				textField.configuration_code = configurationListActive.value
 				textField.user_code = `${configurationListActive.value}:${textField.key}`
 				let res = useApi('transactionUserField.post', {
-					body: textField.value,
+					body: textField,
 				})
 				if (res.error) {
 					// console.error(res.error);
@@ -689,7 +689,7 @@
 			if (textField.id >= 0) {
 				let res = useApi('transactionUserField.put', {
 					params: { id: textField.id },
-					body: textField.value,
+					body: textField,
 				})
 				if (res.error) {
 					// console.error(res.error);
@@ -703,7 +703,7 @@
 				textField.configuration_code = configurationListActive.value
 				textField.user_code = `${configurationListActive.value}:${textField.key}`
 				let res = useApi('transactionUserField.post', {
-					body: textField.value,
+					body: textField,
 				})
 				if (res.error) {
 					// console.error(res.error);
@@ -720,7 +720,7 @@
 			if (textField.id >= 0) {
 				let res = useApi('transactionUserField.put', {
 					params: { id: textField.id },
-					body: textField.value,
+					body: textField,
 				})
 				if (res.error) {
 					// console.error(res.error);
@@ -734,7 +734,7 @@
 				textField.configuration_code = configurationListActive.value
 				textField.user_code = `${configurationListActive.value}:${textField.key}`
 				let res = useApi('transactionUserField.post', {
-					body: textField.value,
+					body: textField,
 				})
 				if (res.error) {
 					// console.error(res.error);
@@ -758,7 +758,7 @@
 			// 	textField.id,
 			// 	!textField.id
 			// )
-			// console.log('textField.value', textField)
+			// console.log('textField', textField)
 			if (textField.id >= 0) {
 				let res = useApi('complexTransactionUserField.put', {
 					params: { id: textField.id },
@@ -784,11 +784,11 @@
 				textField.configuration_code = configurationListActive.value
 				textField.user_code = `${configurationListActive.value}:${textField.key}`
 				console.log(
-					'textField.value complexTransactionUserField.post',
+					'textField complexTransactionUserField.post',
 					textField
 				)
 				let res = useApi('complexTransactionUserField.post', {
-					body: textField.value,
+					body: textField,
 				})
 				if (res.error) {
 					// console.error(res.error);
@@ -819,7 +819,7 @@
 				textField.configuration_code = configurationListActive.value
 				textField.user_code = `${configurationListActive.value}:${textField.key}`
 				let res = useApi('complexTransactionUserField.post', {
-					body: textField.value,
+					body: textField,
 				})
 				if (res.error) {
 					// console.error(res.error);
@@ -850,7 +850,7 @@
 				textField.configuration_code = configurationListActive.value
 				textField.user_code = `${configurationListActive.value}:${textField.key}`
 				let res = useApi('complexTransactionUserField.post', {
-					body: textField.value,
+					body: textField,
 				})
 				if (res.error) {
 					// console.error(res.error);
@@ -870,7 +870,7 @@
 			if (textField.id >= 0) {
 				let res = useApi('instrumentUserField.put', {
 					params: { id: textField.id },
-					body: textField.value,
+					body: textField,
 				})
 				if (res.error) {
 					// console.error(res.error);
@@ -884,7 +884,7 @@
 				textField.configuration_code = configurationListActive.value
 				textField.user_code = `${configurationListActive.value}:${textField.key}`
 				let res = useApi('instrumentUserField.post', {
-					body: textField.value,
+					body: textField,
 				})
 				if (res.error) {
 					// console.error(res.error);
