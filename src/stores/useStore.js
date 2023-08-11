@@ -27,9 +27,9 @@ export default defineStore({
 		async init() {
 			this.getUser()
 			await this.getMasterUsers()
-			// if(this.current){
-			// 	this.defaultConfigCode = await useApi('configurationList.get')
-			// }
+			if(this.current){
+				this.defaultConfigCode = await useApi('configurationList.get')
+			}
 
 		},
 		async getMasterUsers() {
