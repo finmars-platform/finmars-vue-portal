@@ -85,8 +85,7 @@
 	attributesList.value = JSON.parse(JSON.stringify( props.attributes ));
 
 	function getSelAttrsKeysList() {
-		console.log(`testing1090.attributesSelect ${props.title} `, props.modelValue);
-		console.log(`testing1090.attributesSelect ${props.title} invalid`, (props.modelValue || props.modelValue === 0) );
+
 		if ( Array.isArray(props.modelValue) ) {
 
 			selAttrsKeysList.value = JSON.parse(JSON.stringify( props.modelValue ));
@@ -97,7 +96,6 @@
 			selAttrsKeysList.value = props.modelValue ? [props.modelValue] : []
 
 		} else if (props.modelValue || props.modelValue === 0) {
-			console.log(`testing1090.attributesSelect ${props.title} 3`, props.modelValue, (props.modelValue || props.modelValue === 0) );
 			throw new Error("Wrong format of modelValue: " + typeof props.modelValue)
 		}
 
