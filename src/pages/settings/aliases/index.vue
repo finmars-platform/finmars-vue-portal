@@ -202,123 +202,131 @@
 				key: 'user_text_1',
 				name: 'User Text 1',
 			},
-			{
-				key: 'user_text_2',
-				name: 'User Text 2',
-			},
-			{
-				key: 'user_text_3',
-				name: 'User Text 3',
-			},
-			{
-				key: 'user_text_4',
-				name: 'User Text 4',
-			},
-			{
-				key: 'user_text_5',
-				name: 'User Text 5',
-			},
-			{
-				key: 'user_text_6',
-				name: 'User Text 6',
-			},
-			{
-				key: 'user_text_7',
-				name: 'User Text 7',
-			},
-			{
-				key: 'user_text_8',
-				name: 'User Text 8',
-			},
-			{
-				key: 'user_text_9',
-				name: 'User Text 9',
-			},
-			{
-				key: 'user_text_10',
-				name: 'User Text 10',
-			},
-			{
-				key: 'user_text_11',
-				name: 'User Text 11',
-			},
-			{
-				key: 'user_text_12',
-				name: 'User Text 12',
-			},
-			{
-				key: 'user_text_13',
-				name: 'User Text 13',
-			},
-			{
-				key: 'user_text_14',
-				name: 'User Text 14',
-			},
-			{
-				key: 'user_text_15',
-				name: 'User Text 15',
-			},
-			{
-				key: 'user_text_16',
-				name: 'User Text 16',
-			},
-			{
-				key: 'user_text_17',
-				name: 'User Text 17',
-			},
-			{
-				key: 'user_text_18',
-				name: 'User Text 18',
-			},
-			{
-				key: 'user_text_19',
-				name: 'User Text 19',
-			},
-			{
-				key: 'user_text_20',
-				name: 'User Text 20',
-			},
-			{
-				key: 'user_text_21',
-				name: 'User Text 21',
-			},
-			{
-				key: 'user_text_22',
-				name: 'User Text 22',
-			},
-			{
-				key: 'user_text_23',
-				name: 'User Text 23',
-			},
-			{
-				key: 'user_text_24',
-				name: 'User Text 24',
-			},
-			{
-				key: 'user_text_25',
-				name: 'User Text 25',
-			},
-			{
-				key: 'user_text_26',
-				name: 'User Text 26',
-			},
-			{
-				key: 'user_text_27',
-				name: 'User Text 27',
-			},
-			{
-				key: 'user_text_28',
-				name: 'User Text 28',
-			},
-			{
-				key: 'user_text_29',
-				name: 'User Text 29',
-			},
-			{
-				key: 'user_text_30',
-				name: 'User Text 30',
-			},
-		]
+		],
+	})
+	let store = useStore()
+	let defaultComplexTransactionTextFields = [
+		{
+			key: 'user_text_1',
+			name: 'User Text 1',
+		},
+		{
+			key: 'user_text_2',
+			name: 'User Text 2',
+		},
+		{
+			key: 'user_text_3',
+			name: 'User Text 3',
+		},
+		{
+			key: 'user_text_4',
+			name: 'User Text 4',
+		},
+		{
+			key: 'user_text_5',
+			name: 'User Text 5',
+		},
+		{
+			key: 'user_text_6',
+			name: 'User Text 6',
+		},
+		{
+			key: 'user_text_7',
+			name: 'User Text 7',
+		},
+		{
+			key: 'user_text_8',
+			name: 'User Text 8',
+		},
+		{
+			key: 'user_text_9',
+			name: 'User Text 9',
+		},
+		{
+			key: 'user_text_10',
+			name: 'User Text 10',
+		},
+		{
+			key: 'user_text_11',
+			name: 'User Text 11',
+		},
+		{
+			key: 'user_text_12',
+			name: 'User Text 12',
+		},
+		{
+			key: 'user_text_13',
+			name: 'User Text 13',
+		},
+		{
+			key: 'user_text_14',
+			name: 'User Text 14',
+		},
+		{
+			key: 'user_text_15',
+			name: 'User Text 15',
+		},
+		{
+			key: 'user_text_16',
+			name: 'User Text 16',
+		},
+		{
+			key: 'user_text_17',
+			name: 'User Text 17',
+		},
+		{
+			key: 'user_text_18',
+			name: 'User Text 18',
+		},
+		{
+			key: 'user_text_19',
+			name: 'User Text 19',
+		},
+		{
+			key: 'user_text_20',
+			name: 'User Text 20',
+		},
+		{
+			key: 'user_text_21',
+			name: 'User Text 21',
+		},
+		{
+			key: 'user_text_22',
+			name: 'User Text 22',
+		},
+		{
+			key: 'user_text_23',
+			name: 'User Text 23',
+		},
+		{
+			key: 'user_text_24',
+			name: 'User Text 24',
+		},
+		{
+			key: 'user_text_25',
+			name: 'User Text 25',
+		},
+		{
+			key: 'user_text_26',
+			name: 'User Text 26',
+		},
+		{
+			key: 'user_text_27',
+			name: 'User Text 27',
+		},
+		{
+			key: 'user_text_28',
+			name: 'User Text 28',
+		},
+		{
+			key: 'user_text_29',
+			name: 'User Text 29',
+		},
+		{
+			key: 'user_text_30',
+			name: 'User Text 30',
+		},
+	]
 
 		let defaultComplexTransactionNumberFields = [
 			{
@@ -486,6 +494,7 @@
 		]
 
 	const configurationListItems = ref([])
+	configurationListItems.value = store.defaultConfigCode.results
 	const systemMessagesItems = ref([])
 	const configurationListActive = ref('local.poms.space0crgw')
 
@@ -509,19 +518,25 @@
 	const ecosystemDefaults = ref('local.poms.space0crgw')
 	const BaseInputEcosystemDefaults = ref([])
 
-	configurationDefaultsGet()
-	async function configurationDefaultsGet() {
-		let edRes = await useApi('configurationList.get')
-		configurationListItems.value = edRes.error ? {} : edRes.results
-		// console.log(
-		// 	'edRes',
-		// 	edRes,
-		// 	'configurationListItems',
-		// 	configurationListItems.value
-		// )
-	}
+	// configurationDefaultsGet()
+	// async function configurationDefaultsGet() {
+	// 	let edRes = await useApi('configurationList.get')
+	// 	configurationListItems.value = edRes.error ? {} : edRes.results
+	// 	// console.log(
+	// 	// 	'edRes',
+	// 	// 	edRes,
+	// 	// 	'configurationListItems',
+	// 	// 	configurationListItems.value
+	// 	// )
+	// }
 	init()
-	// console.log(store.defaultConfigCode, 'store.defaultConfigCode')
+	// console.log(
+	// 	store.defaultConfigCode,
+	// 	'store.defaultConfigCode',
+	// 	configurationListItems.value,
+	// 	'configurationListItems.value',
+	// 	configurationListItems.value.results
+	// )
 	async function init() {
 		const res = await Promise.all([
 			useApi('instrumentUserField.get', {
@@ -552,17 +567,14 @@
 			complexTransactionUserFieldItems.value.forEach(function (field) {
 				// console.log('textField до фильтрации', complexTransactionUserFieldItems.value )
 				textComplexTransactionUserFieldItems.forEach(function (textField) {
-					console.log(
-						'textField при фильтрации',
-						textField
-					)
+					// console.log('textField при фильтрации', textField)
 					if (textField.key == field.key && field.key.includes('user_text')) {
 						textField.is_active = field.is_active
 						textField.name = field.name
 						textField.id = field.id
 						textField.configuration_code = configurationListActive.value
-						textField.user_code = ` ${configurationListActive.value} :  ${field.key}`
-					} 
+						textField.user_code = `${configurationListActive.value}:${field.key}`
+					}
 				})
 				// console.log('textComplexTransactionUserFieldItems', textComplexTransactionUserFieldItems)
 				numberComplexTransactionUserFieldItems.forEach(function (numberField) {
@@ -573,8 +585,8 @@
 						numberField.is_active = field.is_active
 						numberField.name = field.name
 						numberField.id = field.id
-						textField.configuration_code = configurationListActive.value
-						textField.user_code = ` ${configurationListActive.value} :  ${field.key}`
+						numberField.configuration_code = configurationListActive.value
+						numberField.user_code = `${configurationListActive.value}:${field.key}`
 					}
 				})
 
@@ -583,8 +595,8 @@
 						dateField.is_active = field.is_active
 						dateField.name = field.name
 						dateField.id = field.id
-						textField.configuration_code = configurationListActive.value
-						textField.user_code = ` ${configurationListActive.value} :  ${field.key}`
+						dateField.configuration_code = configurationListActive.value
+						dateField.user_code = `${configurationListActive.value}:${field.key}`
 					}
 				})
 			})
@@ -598,7 +610,7 @@
 						textField.name = field.name
 						textField.id = field.id
 						textField.configuration_code = configurationListActive.value
-						textField.user_code = ` ${configurationListActive.value}:${field.key}`
+						textField.user_code = `${configurationListActive.value}:${field.key}`
 					}
 				})
 
@@ -610,8 +622,8 @@
 						numberField.is_active = field.is_active
 						numberField.name = field.name
 						numberField.id = field.id
-						textField.configuration_code = configurationListActive.value
-						textField.user_code = ` ${configurationListActive.value} :  ${field.key}`
+						numberField.configuration_code = configurationListActive.value
+						numberField.user_code = `${configurationListActive.value}:${field.key}`
 					}
 				})
 
@@ -620,8 +632,8 @@
 						dateField.is_active = field.is_active
 						dateField.name = field.name
 						dateField.id = field.id
-						textField.configuration_code = configurationListActive.value
-						textField.user_code = ` ${configurationListActive.value} :  ${field.key}`
+						dateField.configuration_code = configurationListActive.value
+						dateField.user_code = `${configurationListActive.value}:${field.key}`
 					}
 				})
 			})
@@ -653,7 +665,21 @@
 			if (textField.id >= 0) {
 				let res = useApi('transactionUserField.put', {
 					params: { id: textField.id },
-					body: textField.value,
+					body: textField,
+				})
+				if (res.error) {
+					// console.error(res.error);
+					useNotify({
+						type: 'error',
+						title: res.error.message || res.error.detail,
+					})
+					throw new Error(res.error)
+				}
+			} else {
+				textField.configuration_code = configurationListActive.value
+				textField.user_code = `${configurationListActive.value}:${textField.key}`
+				let res = useApi('transactionUserField.post', {
+					body: textField,
 				})
 				if (res.error) {
 					// console.error(res.error);
@@ -670,7 +696,21 @@
 			if (textField.id >= 0) {
 				let res = useApi('transactionUserField.put', {
 					params: { id: textField.id },
-					body: textField.value,
+					body: textField,
+				})
+				if (res.error) {
+					// console.error(res.error);
+					useNotify({
+						type: 'error',
+						title: res.error.message || res.error.detail,
+					})
+					throw new Error(res.error)
+				}
+			} else {
+				textField.configuration_code = configurationListActive.value
+				textField.user_code = `${configurationListActive.value}:${textField.key}`
+				let res = useApi('transactionUserField.post', {
+					body: textField,
 				})
 				if (res.error) {
 					// console.error(res.error);
@@ -687,7 +727,21 @@
 			if (textField.id >= 0) {
 				let res = useApi('transactionUserField.put', {
 					params: { id: textField.id },
-					body: textField.value,
+					body: textField,
+				})
+				if (res.error) {
+					// console.error(res.error);
+					useNotify({
+						type: 'error',
+						title: res.error.message || res.error.detail,
+					})
+					throw new Error(res.error)
+				}
+			} else {
+				textField.configuration_code = configurationListActive.value
+				textField.user_code = `${configurationListActive.value}:${textField.key}`
+				let res = useApi('transactionUserField.post', {
+					body: textField,
 				})
 				if (res.error) {
 					// console.error(res.error);
@@ -711,7 +765,7 @@
 			// 	textField.id,
 			// 	!textField.id
 			// )
-			console.log("textField.value", textField)
+			// console.log('textField', textField)
 			if (textField.id >= 0) {
 				let res = useApi('complexTransactionUserField.put', {
 					params: { id: textField.id },
@@ -733,6 +787,24 @@
 					})
 					throw new Error(res.error)
 				}
+			} else {
+				textField.configuration_code = configurationListActive.value
+				textField.user_code = `${configurationListActive.value}:${textField.key}`
+				console.log(
+					'textField complexTransactionUserField.post',
+					textField
+				)
+				let res = useApi('complexTransactionUserField.post', {
+					body: textField,
+				})
+				if (res.error) {
+					// console.error(res.error);
+					useNotify({
+						type: 'error',
+						title: res.error.message || res.error.detail,
+					})
+					throw new Error(res.error)
+				}
 			}
 		})
 		useNotify({ type: 'success', title: `data saved on the server` })
@@ -740,6 +812,20 @@
 			if (textField.id >= 0) {
 				let res = useApi('complexTransactionUserField.put', {
 					params: { id: textField.id },
+					body: textField,
+				})
+				if (res.error) {
+					// console.error(res.error);
+					useNotify({
+						type: 'error',
+						title: res.error.message || res.error.detail,
+					})
+					throw new Error(res.error)
+				}
+			} else {
+				textField.configuration_code = configurationListActive.value
+				textField.user_code = `${configurationListActive.value}:${textField.key}`
+				let res = useApi('complexTransactionUserField.post', {
 					body: textField,
 				})
 				if (res.error) {
@@ -767,6 +853,20 @@
 					})
 					throw new Error(res.error)
 				}
+			} else {
+				textField.configuration_code = configurationListActive.value
+				textField.user_code = `${configurationListActive.value}:${textField.key}`
+				let res = useApi('complexTransactionUserField.post', {
+					body: textField,
+				})
+				if (res.error) {
+					// console.error(res.error);
+					useNotify({
+						type: 'error',
+						title: res.error.message || res.error.detail,
+					})
+					throw new Error(res.error)
+				}
 			}
 		})
 		useNotify({ type: 'success', title: `data saved on the server` })
@@ -777,7 +877,21 @@
 			if (textField.id >= 0) {
 				let res = useApi('instrumentUserField.put', {
 					params: { id: textField.id },
-					body: textField.value,
+					body: textField,
+				})
+				if (res.error) {
+					// console.error(res.error);
+					useNotify({
+						type: 'error',
+						title: res.error.message || res.error.detail,
+					})
+					throw new Error(res.error)
+				}
+			} else {
+				textField.configuration_code = configurationListActive.value
+				textField.user_code = `${configurationListActive.value}:${textField.key}`
+				let res = useApi('instrumentUserField.post', {
+					body: textField,
 				})
 				if (res.error) {
 					// console.error(res.error);
