@@ -35,19 +35,50 @@
 		return dashStore.props.inputs.filter(input => input.component_id === component.uid );
 	});
 
-	/*let inputsVals = computed( () => {
+	let inputsVals = computed( () => {
 
 		let result = {};
 
-		const some = dashStore.props.inputs.filter(input => input.component_id === component.uid )
+		// const some = dashStore.props.inputs.filter(input => input.component_id === component.uid )
 
-		some.forEach(input => {
+		inputs.value.forEach(input => {
 			result[input.uid] = input.__val;
 		})
 
 		return result;
 
-	})*/
+	});
+
+	const inputsValsWatcherCb = useDebounce(function (newVal, oldVal) {
+		// console.log("testing1090.matrix inputsValsWatcherCb", newVal, oldVal);
+		Object.keys(inputsVals.value).forEach(inputId => {
+
+			if ( newVal[inputId] === oldVal[inputId] ) {
+				return;
+			}
+
+			const input = dashStore.props.inputs.find( input => input.uid === inputId );
+
+			if ( input.key.startsWith('reportOptions__') ) {
+
+				const ro = updateReportOptionsWithDashInputs(input, vm.value.entityViewerDataService);
+				vm.value.entityViewerDataService.setReportOptions(ro);
+
+			}
+			else {
+
+				const filters = updateFiltersWithDashInputs(input, vm.value.entityViewerDataService);
+				vm.value.entityViewerDataService.setFilters(filters);
+
+			}
+
+		})
+
+		vm.value.entityViewerEventService.dispatchEvent(evEvents.FILTERS_CHANGE);
+		vm.value.entityViewerEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE);
+		vm.value.entityViewerEventService.dispatchEvent(evEvents.REQUEST_REPORT);
+
+	}, 200);
 
 	async function getLayoutId() {
 		let res = await layoutsStore.getLayoutByUserCode(
@@ -536,7 +567,7 @@
 		const filtersList = formatFiltersForDashInputs(inputs.value, layout.content_type, vmE.entityViewerDataService, evAttrsStore);
 		vmE.entityViewerDataService.setFilters(filtersList);
 
-		inputs.value.forEach(input => {
+		/*inputs.value.forEach(input => {
 
 			let watcherCb;
 
@@ -571,7 +602,12 @@
 				watcherCb
 			)
 
-		})
+		})*/
+
+		watch(
+			inputsVals,
+			inputsValsWatcherCb,
+		)
 
 		vmE.entityViewerEventService.addEventListener(
 			entityViewerEvents.ACTIVE_OBJECT_CHANGE,
