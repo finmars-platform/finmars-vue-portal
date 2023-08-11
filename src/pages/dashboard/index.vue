@@ -28,7 +28,7 @@
 					<FmBtn :disabled="readyStatus" type="text" @click="cancelEdit()"
 						>cancel</FmBtn
 					>
-					<FmBtn :disabled="readyStatus" @click="dashStore.saveLayout()"
+					<FmBtn :disabled="readyStatus" @click="save"
 						>save</FmBtn
 					>
 				</template>
@@ -207,6 +207,11 @@
 	}
 	function edit() {
 		dashStore.isEdit = true
+	}
+
+	function save() {
+		dashStore.saveLayout();
+		dashStore.isEdit = false;
 	}
 	function cancelEdit() {
 		dashStore.getLayouts()
