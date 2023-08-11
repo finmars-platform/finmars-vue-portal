@@ -4,7 +4,7 @@
 		<div class="wrapp-select">
 			<FmSelect
 				v-model="configurationListActive"
-				label="Configuration"
+				label="Configuration Code"
 				:items="configurationListItems"
 				prop_id="configuration_code"
 			/>
@@ -188,22 +188,16 @@
 </template>
 
 <script setup>
-		definePageMeta({
-			middleware: 'auth',
-			bread: [
-				{
-					text: 'Settings aliases',
-					to: '/settings/aliases',
-				},
-			],
-		})
-		let defaultComplexTransactionTextFields = [
+	definePageMeta({
+		middleware: 'auth',
+		bread: [
 			{
-				key: 'user_text_1',
-				name: 'User Text 1',
+				text: 'Settings aliases',
+				to: '/settings/aliases',
 			},
 		],
 	})
+
 	let store = useStore()
 	let defaultComplexTransactionTextFields = [
 		{
@@ -328,192 +322,192 @@
 		},
 	]
 
-		let defaultComplexTransactionNumberFields = [
-			{
-				key: 'user_number_1',
-				name: 'User Number 1',
-			},
-			{
-				key: 'user_number_2',
-				name: 'User Number 2',
-			},
-			{
-				key: 'user_number_3',
-				name: 'User Number 3',
-			},
-			{
-				key: 'user_number_4',
-				name: 'User Number 4',
-			},
-			{
-				key: 'user_number_5',
-				name: 'User Number 5',
-			},
-			{
-				key: 'user_number_6',
-				name: 'User Number 6',
-			},
-			{
-				key: 'user_number_7',
-				name: 'User Number 7',
-			},
-			{
-				key: 'user_number_8',
-				name: 'User Number 8',
-			},
-			{
-				key: 'user_number_9',
-				name: 'User Number 9',
-			},
-			{
-				key: 'user_number_10',
-				name: 'User Number 10',
-			},
-			{
-				key: 'user_number_11',
-				name: 'User Number 11',
-			},
-			{
-				key: 'user_number_12',
-				name: 'User Number 12',
-			},
-			{
-				key: 'user_number_13',
-				name: 'User Number 13',
-			},
-			{
-				key: 'user_number_14',
-				name: 'User Number 14',
-			},
-			{
-				key: 'user_number_15',
-				name: 'User Number 15',
-			},
-			{
-				key: 'user_number_16',
-				name: 'User Number 16',
-			},
-			{
-				key: 'user_number_17',
-				name: 'User Number 17',
-			},
-			{
-				key: 'user_number_18',
-				name: 'User Number 18',
-			},
-			{
-				key: 'user_number_19',
-				name: 'User Number 19',
-			},
-			{
-				key: 'user_number_20',
-				name: 'User Number 20',
-			},
-		]
+	let defaultComplexTransactionNumberFields = [
+		{
+			key: 'user_number_1',
+			name: 'User Number 1',
+		},
+		{
+			key: 'user_number_2',
+			name: 'User Number 2',
+		},
+		{
+			key: 'user_number_3',
+			name: 'User Number 3',
+		},
+		{
+			key: 'user_number_4',
+			name: 'User Number 4',
+		},
+		{
+			key: 'user_number_5',
+			name: 'User Number 5',
+		},
+		{
+			key: 'user_number_6',
+			name: 'User Number 6',
+		},
+		{
+			key: 'user_number_7',
+			name: 'User Number 7',
+		},
+		{
+			key: 'user_number_8',
+			name: 'User Number 8',
+		},
+		{
+			key: 'user_number_9',
+			name: 'User Number 9',
+		},
+		{
+			key: 'user_number_10',
+			name: 'User Number 10',
+		},
+		{
+			key: 'user_number_11',
+			name: 'User Number 11',
+		},
+		{
+			key: 'user_number_12',
+			name: 'User Number 12',
+		},
+		{
+			key: 'user_number_13',
+			name: 'User Number 13',
+		},
+		{
+			key: 'user_number_14',
+			name: 'User Number 14',
+		},
+		{
+			key: 'user_number_15',
+			name: 'User Number 15',
+		},
+		{
+			key: 'user_number_16',
+			name: 'User Number 16',
+		},
+		{
+			key: 'user_number_17',
+			name: 'User Number 17',
+		},
+		{
+			key: 'user_number_18',
+			name: 'User Number 18',
+		},
+		{
+			key: 'user_number_19',
+			name: 'User Number 19',
+		},
+		{
+			key: 'user_number_20',
+			name: 'User Number 20',
+		},
+	]
 
-		let defaultComplexTransactionDateFields = [
-			{
-				key: 'user_date_1',
-				name: 'User Date 1',
-			},
-			{
-				key: 'user_date_2',
-				name: 'User Date 2',
-			},
-			{
-				key: 'user_date_3',
-				name: 'User Date 3',
-			},
-			{
-				key: 'user_date_4',
-				name: 'User Date 4',
-			},
-			{
-				key: 'user_date_5',
-				name: 'User Date 5',
-			},
-		]
+	let defaultComplexTransactionDateFields = [
+		{
+			key: 'user_date_1',
+			name: 'User Date 1',
+		},
+		{
+			key: 'user_date_2',
+			name: 'User Date 2',
+		},
+		{
+			key: 'user_date_3',
+			name: 'User Date 3',
+		},
+		{
+			key: 'user_date_4',
+			name: 'User Date 4',
+		},
+		{
+			key: 'user_date_5',
+			name: 'User Date 5',
+		},
+	]
 
-		let defaultTransactionTextFields = [
-			{
-				key: 'user_text_1',
-				name: 'User Text 1',
-			},
-			{
-				key: 'user_text_2',
-				name: 'User Text 2',
-			},
-			{
-				key: 'user_text_3',
-				name: 'User Text 3',
-			},
-		]
+	let defaultTransactionTextFields = [
+		{
+			key: 'user_text_1',
+			name: 'User Text 1',
+		},
+		{
+			key: 'user_text_2',
+			name: 'User Text 2',
+		},
+		{
+			key: 'user_text_3',
+			name: 'User Text 3',
+		},
+	]
 
-		let defaultTransactionNumberFields = [
-			{
-				key: 'user_number_1',
-				name: 'User Number 1',
-			},
-			{
-				key: 'user_number_2',
-				name: 'User Number 2',
-			},
-			{
-				key: 'user_number_3',
-				name: 'User Number 3',
-			},
-		]
+	let defaultTransactionNumberFields = [
+		{
+			key: 'user_number_1',
+			name: 'User Number 1',
+		},
+		{
+			key: 'user_number_2',
+			name: 'User Number 2',
+		},
+		{
+			key: 'user_number_3',
+			name: 'User Number 3',
+		},
+	]
 
-		let defaultTransactionDateFields = [
-			{
-				key: 'user_date_1',
-				name: 'User Date 1',
-			},
-			{
-				key: 'user_date_2',
-				name: 'User Date 2',
-			},
-			{
-				key: 'user_date_3',
-				name: 'User Date 3',
-			},
-		]
-		var defaultInstrumentTextFields = [
-			{
-				key: 'user_text_1',
-				name: 'User Text 1',
-			},
-			{
-				key: 'user_text_2',
-				name: 'User Text 2',
-			},
-			{
-				key: 'user_text_3',
-				name: 'User Text 3',
-			},
-		]
+	let defaultTransactionDateFields = [
+		{
+			key: 'user_date_1',
+			name: 'User Date 1',
+		},
+		{
+			key: 'user_date_2',
+			name: 'User Date 2',
+		},
+		{
+			key: 'user_date_3',
+			name: 'User Date 3',
+		},
+	]
+	var defaultInstrumentTextFields = [
+		{
+			key: 'user_text_1',
+			name: 'User Text 1',
+		},
+		{
+			key: 'user_text_2',
+			name: 'User Text 2',
+		},
+		{
+			key: 'user_text_3',
+			name: 'User Text 3',
+		},
+	]
 
 	const configurationListItems = ref([])
 	configurationListItems.value = store.defaultConfigCode.results
 	const systemMessagesItems = ref([])
 	const configurationListActive = ref('local.poms.space0crgw')
 
-		const instrumentUserFieldItems = ref([])
-		let textInstrumentTextFieldsItems = defaultInstrumentTextFields.concat()
+	const instrumentUserFieldItems = ref([])
+	let textInstrumentTextFieldsItems = defaultInstrumentTextFields.concat()
 
-		const complexTransactionUserFieldItems = ref([])
+	const complexTransactionUserFieldItems = ref([])
 
-		let textComplexTransactionUserFieldItems =
-			defaultComplexTransactionTextFields.concat()
-		let numberComplexTransactionUserFieldItems =
-			defaultComplexTransactionNumberFields.concat()
-		let dateComplexTransactionUserFieldItems =
-			defaultComplexTransactionDateFields.concat()
+	let textComplexTransactionUserFieldItems =
+		defaultComplexTransactionTextFields.concat()
+	let numberComplexTransactionUserFieldItems =
+		defaultComplexTransactionNumberFields.concat()
+	let dateComplexTransactionUserFieldItems =
+		defaultComplexTransactionDateFields.concat()
 
-		const transactionUserFieldItems = ref([])
-		let textTransactionFieldsItems = defaultTransactionTextFields.concat()
-		let numberTransactionFieldsItems = defaultTransactionNumberFields.concat()
-		let dateTransactionFieldItems = defaultTransactionDateFields.concat()
+	const transactionUserFieldItems = ref([])
+	let textTransactionFieldsItems = defaultTransactionTextFields.concat()
+	let numberTransactionFieldsItems = defaultTransactionNumberFields.concat()
+	let dateTransactionFieldItems = defaultTransactionDateFields.concat()
 
 	const ecosystemDefaults = ref('local.poms.space0crgw')
 	const BaseInputEcosystemDefaults = ref([])
@@ -790,10 +784,7 @@
 			} else {
 				textField.configuration_code = configurationListActive.value
 				textField.user_code = `${configurationListActive.value}:${textField.key}`
-				console.log(
-					'textField complexTransactionUserField.post',
-					textField
-				)
+				console.log('textField complexTransactionUserField.post', textField)
 				let res = useApi('complexTransactionUserField.post', {
 					body: textField,
 				})
