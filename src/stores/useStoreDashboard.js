@@ -387,20 +387,24 @@ export default defineStore({
 			this.layoutList[index].user_name = data.user_name
 		},
 		async saveLayout() {
+
+			let props = JSON.parse(JSON.stringify(this.props))
+
+			this.props.inputs.forEach((prop, k) => {
+				props.inputs[k].__val = null
+			})
+			this.props.outputs.forEach((prop, k) => {
+				props.outputs[k].default_value = prop.__val
+
+				// Need to add filtor by control
+				props.outputs[k].__val = null
+			})
+
+			let res;
+
 			if (!this.layout.id) {
-				let props = JSON.parse(JSON.stringify(this.props))
 
-				this.props.inputs.forEach((prop, k) => {
-					props.inputs[k].__val = null
-				})
-				this.props.outputs.forEach((prop, k) => {
-					props.outputs[k].default_value = prop.__val
-
-					// Need to add filtor by control
-					props.outputs[k].__val = null
-				})
-
-				let res = await useApi('dashboardLayout.post', {
+				res = await useApi('dashboardLayout.post', {
 					body: {
 						name: this.layout.name + ' dashboardV2@',
 						user_code: this.layout.user_code,
@@ -413,29 +417,10 @@ export default defineStore({
 					},
 				})
 
-				if (!res.error) {
-					this.layoutList.push(res)
-					this.activeLayoutId = res.id
+			}
+			else {
 
-					useNotify({
-						type: 'success',
-						title: `Dashboard layout ${res.name} successfully saved`,
-					})
-				}
-			} else {
-				let props = JSON.parse(JSON.stringify(this.props))
-
-				this.props.inputs.forEach((prop, k) => {
-					props.inputs[k].__val = null
-				})
-				this.props.outputs.forEach((prop, k) => {
-					props.outputs[k].default_value = prop.__val
-
-					// Need to add filtor by control
-					props.outputs[k].__val = null
-				})
-
-				let res = await useApi('dashboardLayout.put', {
+				res = await useApi('dashboardLayout.put', {
 					params: { id: this.layout.id },
 					body: {
 						user_code: this.layout.user_code,
@@ -448,7 +433,18 @@ export default defineStore({
 					},
 				})
 
-				this.isEdit = false
+			}
+
+			if (!res.error) {
+
+				this.layoutList.push(res)
+				this.activeLayoutId = res.id
+				// this.isEdit = false
+
+				useNotify({
+					type: 'success',
+					title: `Dashboard layout ${res.name} successfully saved`,
+				})
 			}
 
 			if (!this.activeLayoutId) this.activeLayoutId = this.layoutList[0].id

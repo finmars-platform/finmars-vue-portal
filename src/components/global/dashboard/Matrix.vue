@@ -46,8 +46,13 @@
 		return result
 	})
 
-	const inputsValsWatcherCb = useDebounce(function () {
+	const inputsValsWatcherCb = useDebounce(function (newVal, oldVal) {
+		// console.log("testing1090.matrix inputsValsWatcherCb", newVal, oldVal);
 		Object.keys(inputsVals.value).forEach((inputId) => {
+			if (newVal[inputId] === oldVal[inputId]) {
+				return
+			}
+
 			const input = dashStore.props.inputs.find(
 				(input) => input.uid === inputId
 			)
@@ -65,13 +70,13 @@
 				)
 				vm.value.entityViewerDataService.setFilters(filters)
 			}
-
-			vm.value.entityViewerEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
-			vm.value.entityViewerEventService.dispatchEvent(
-				evEvents.REPORT_OPTIONS_CHANGE
-			)
-			vm.value.entityViewerEventService.dispatchEvent(evEvents.REQUEST_REPORT)
 		})
+
+		vm.value.entityViewerEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
+		vm.value.entityViewerEventService.dispatchEvent(
+			evEvents.REPORT_OPTIONS_CHANGE
+		)
+		vm.value.entityViewerEventService.dispatchEvent(evEvents.REQUEST_REPORT)
 	}, 200)
 
 	async function getLayoutId() {
