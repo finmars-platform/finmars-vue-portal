@@ -27,9 +27,9 @@ export default defineStore({
 		async init() {
 			this.getUser()
 			await this.getMasterUsers()
-			// if(this.current){
-			// 	this.defaultConfigCode = await useApi('configurationList.get')
-			// }
+			if(this.current){
+				this.defaultConfigCode = await useApi('configurationList.get')
+			}
 
 		},
 		async getMasterUsers() {
@@ -42,6 +42,8 @@ export default defineStore({
 			const activeMasterUser = this.masterUsers.find( item => location.href.includes(item.base_api_url) )
 
 			if ( activeMasterUser ) {
+				window.base_api_url = activeMasterUser.base_api_url; // needed for angularjs components
+
 				this.current = activeMasterUser;
 				this.defaultConfigCode = 'local.poms.' + this.current.base_api_url;
 			}
