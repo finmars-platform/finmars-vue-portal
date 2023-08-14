@@ -12,11 +12,16 @@
 						<FmUnifiedDataSelect
 							v-model="viewerData.reportOptions.report_currency"
 							propId="user_code"
-							:selectedItemName="viewerData.reportOptions.report_currency_object.name"
+							:selectedItemName="
+								viewerData.reportOptions.report_currency_object.name
+							"
 							noBorders
 							content_type="currencies.currency"
 							@update:modelValue="emit('refresh')"
-							@itemSelected="newVal => viewerData.reportOptions.report_currency_object = newVal"
+							@itemSelected="
+								(newVal) =>
+									(viewerData.reportOptions.report_currency_object = newVal)
+							"
 						/>
 					</div>
 
@@ -173,7 +178,7 @@
 				await fetchListLayout()
 				viewerData.layoutToOpen = null
 
-				refresh()
+				emit('refresh')
 			}
 		}
 	)
@@ -211,7 +216,7 @@
 		addPrtfRegisterItem(newRegister)
 		addRegisterIsOpen.value = false
 
-		refresh()
+		emit('refresh')
 	}
 	fetchPortfolioBundles()
 
@@ -232,7 +237,7 @@
 		let res = await useApi('portfolioBundles.post', { body: newBundleData })
 
 		if (res) {
-			refresh()
+			emit('refresh')
 
 			useNotify({
 				type: 'success',
