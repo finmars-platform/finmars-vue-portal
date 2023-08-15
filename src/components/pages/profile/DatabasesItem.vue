@@ -98,8 +98,8 @@
 		</div>
 
 
-		<template #controls>
-			<div class="flex sb aic">
+		<template #controls style="padding: 0;">
+			<div class="flex space-card-actions sb aic">
 				<div>
 					<div class="fm_card_text">Role: {{ db.is_owner ? "owner" : "admin" }}</div>
 					<div class="clipboard flex aic">
@@ -128,6 +128,13 @@
 
 					<FmBtn @click="save()">save</FmBtn>
 				</template>
+
+
+
+			</div>
+
+			<div v-if="db.is_update_available" class="space-card-update-bar">
+				<FmBtn @click="initUpdateDatabase()">Update</FmBtn>
 			</div>
 		</template>
 
@@ -294,6 +301,14 @@
 			})
 		}
 	}
+
+	async function initUpdateDatabase(){
+
+		await useApi( 'masterInitUpdate.put', { params: {id: props.db.id} } )
+
+		store.getMasterUsers()
+
+	}
 	async function open() {
 		window.location.href = '/' + props.db.base_api_url + '/v/home'
 	}
@@ -368,5 +383,20 @@
 .edit_hover:hover .edit_icon {
 	visibility: visible;
 	opacity: 1;
+}
+.fm_container {
+	div.fm_card_actions {
+		padding: 0;
+	}
+}
+
+.space-card-actions {
+	padding: 20px;
+	padding-bottom: 20px;
+}
+.space-card-update-bar {
+	.fm_btn {
+		width: 100%;
+	}
 }
 </style>

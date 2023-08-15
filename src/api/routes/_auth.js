@@ -91,5 +91,8 @@ export default {
 		get:  prefix + '/invite-to-user/?base_api_url={client}',
 		post:  prefix + '/create-invite-to-user/',
 	},
+	masterInitUpdate: {
+		put:  prefix + '/master-user/{id}/init-update/'
+	}
 
 };
