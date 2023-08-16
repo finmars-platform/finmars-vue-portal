@@ -2196,6 +2196,7 @@ padding: 0;
 }
 .side-nav-versions-block {
 	margin-bottom: 10px;
+	font-size: 8.8px;
 }
 
 .sidenav-api-link, .finmars-site-link {
