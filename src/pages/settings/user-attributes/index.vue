@@ -14,44 +14,255 @@
 					type="primary"
 					class="btn-transaction"
 					@click="complexTransactionUserFieldCreate()"
-					>SHOW HIDDEN ATTRIBUTES </FmBtn
-				>
+					>SHOW HIDDEN ATTRIBUTES
+				</FmBtn>
 			</div>
-			<span>You could add new user attributes here</span>
+			<span class="not-atribute">You could add new user attributes here</span>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Account Attributes">
-			<span>You could add new user attributes here</span>
+			<div class="attributes-header">
+				<FmBtn
+					type="primary"
+					class="btn-transaction mr-20"
+					@click="complexTransactionUserFieldCreate()"
+					>Add New</FmBtn
+				>
+				<FmBtn
+					type="primary"
+					class="btn-transaction"
+					@click="complexTransactionUserFieldCreate()"
+					>SHOW HIDDEN ATTRIBUTES
+				</FmBtn>
+			</div>
+			<span class="not-atribute">You could add new user attributes here</span>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Instruments Attributes">
-            <div v-if="ecosystemDefaults"></div>
+			<div class="attributes-header">
+				<FmBtn
+					type="primary"
+					class="btn-transaction mr-20"
+					@click="complexTransactionUserFieldCreate()"
+					>Add New</FmBtn
+				>
+				<FmBtn
+					type="primary"
+					class="btn-transaction"
+					@click="complexTransactionUserFieldCreate()"
+					>SHOW HIDDEN ATTRIBUTES
+				</FmBtn>
+			</div>
+			<div v-if="ecosystemDefaults">
+				<div
+					class="layouts-card"
+					v-for="(item, index) in ecosystemDefaults"
+					:key="index"
+				>
+					<div class="layouts-card__inner">
+						<div class="layouts-card__name">
+							<FmIcon btn icon="visibility" v-fm-tooltip="'Delete Attribute'" />
+							<div class="layouts-card__text">
+								<h3 class="layouts-card__title">
+									{{ item?.name }}
+								</h3>
+								<div class="layouts-card__subtitle">
+									{{ item?.user_code }}
+								</div>
+							</div>
+						</div>
+
+						<div class="layouts-card__setting">
+							<div class="layouts-card__item layouts-card__rename">
+								<FmIcon
+									btn
+									icon="file_download"
+									v-fm-tooltip="'Export Classifier'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__default">
+								<FmIcon
+									btn
+									icon="file_upload"
+									v-fm-tooltip="'Import Classifiers from .csv file'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="map"
+									v-fm-tooltip="'Open Classifier Mappings'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="format_align_right"
+									v-fm-tooltip="'Edit Classifier tre'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon btn icon="edit" v-fm-tooltip="'Edit Attribute'" />
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon btn icon="delete" v-fm-tooltip="'Delete Attribute'" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 			<span v-else>You could add new user attributes here</span>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Responsible Attributes">
-			<span>You could add new user attributes here</span>
+			<div class="attributes-header">
+				<FmBtn
+					type="primary"
+					class="btn-transaction mr-20"
+					@click="complexTransactionUserFieldCreate()"
+					>Add New</FmBtn
+				>
+				<FmBtn
+					type="primary"
+					class="btn-transaction"
+					@click="complexTransactionUserFieldCreate()"
+					>SHOW HIDDEN ATTRIBUTES
+				</FmBtn>
+			</div>
+			<span class="not-atribute">You could add new user attributes here</span>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Counterparty Attributes">
-			<span>You could add new user attributes here</span>
+			<div class="attributes-header">
+				<FmBtn
+					type="primary"
+					class="btn-transaction mr-20"
+					@click="complexTransactionUserFieldCreate()"
+					>Add New</FmBtn
+				>
+				<FmBtn
+					type="primary"
+					class="btn-transaction"
+					@click="complexTransactionUserFieldCreate()"
+					>SHOW HIDDEN ATTRIBUTES
+				</FmBtn>
+			</div>
+			<span class="not-atribute">You could add new user attributes here</span>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Counterparty Attributes">
-			<span>You could add new user attributes here</span>
+			<div class="attributes-header">
+				<FmBtn
+					type="primary"
+					class="btn-transaction mr-20"
+					@click="complexTransactionUserFieldCreate()"
+					>Add New</FmBtn
+				>
+				<FmBtn
+					type="primary"
+					class="btn-transaction"
+					@click="complexTransactionUserFieldCreate()"
+					>SHOW HIDDEN ATTRIBUTES
+				</FmBtn>
+			</div>
+			<span class="not-atribute">You could add new user attributes here</span>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Currency Attributes">
-			<span>You could add new user attributes here</span>
+			<div class="attributes-header">
+				<FmBtn
+					type="primary"
+					class="btn-transaction mr-20"
+					@click="complexTransactionUserFieldCreate()"
+					>Add New</FmBtn
+				>
+				<FmBtn
+					type="primary"
+					class="btn-transaction"
+					@click="complexTransactionUserFieldCreate()"
+					>SHOW HIDDEN ATTRIBUTES
+				</FmBtn>
+			</div>
+			<span class="not-atribute">You could add new user attributes here</span>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Strategy 1 Attributes">
-			<span>You could add new user attributes here</span>
+			<div class="attributes-header">
+				<FmBtn
+					type="primary"
+					class="btn-transaction mr-20"
+					@click="complexTransactionUserFieldCreate()"
+					>Add New</FmBtn
+				>
+				<FmBtn
+					type="primary"
+					class="btn-transaction"
+					@click="complexTransactionUserFieldCreate()"
+					>SHOW HIDDEN ATTRIBUTES
+				</FmBtn>
+			</div>
+			<span class="not-atribute">You could add new user attributes here</span>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Strategy 2 Attributes">
-			<span>You could add new user attributes here</span>
+			<div class="attributes-header">
+				<FmBtn
+					type="primary"
+					class="btn-transaction mr-20"
+					@click="complexTransactionUserFieldCreate()"
+					>Add New</FmBtn
+				>
+				<FmBtn
+					type="primary"
+					class="btn-transaction"
+					@click="complexTransactionUserFieldCreate()"
+					>SHOW HIDDEN ATTRIBUTES
+				</FmBtn>
+			</div>
+			<span class="not-atribute">You could add new user attributes here</span>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Strategy 3 Attributes">
+			<div class="attributes-header">
+				<FmBtn
+					type="primary"
+					class="btn-transaction mr-20"
+					@click="complexTransactionUserFieldCreate()"
+					>Add New</FmBtn
+				>
+				<FmBtn
+					type="primary"
+					class="btn-transaction"
+					@click="complexTransactionUserFieldCreate()"
+					>SHOW HIDDEN ATTRIBUTES
+				</FmBtn>
+			</div>
 			<span>This entity has no layouts.</span>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Account Type Attributes">
-			<span>You could add new user attributes here</span>
+			<div class="attributes-header">
+				<FmBtn
+					type="primary"
+					class="btn-transaction mr-20"
+					@click="complexTransactionUserFieldCreate()"
+					>Add New</FmBtn
+				>
+				<FmBtn
+					type="primary"
+					class="btn-transaction"
+					@click="complexTransactionUserFieldCreate()"
+					>SHOW HIDDEN ATTRIBUTES
+				</FmBtn>
+			</div>
+			<span class="not-atribute">You could add new user attributes here</span>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Transaction Type Attributes">
-			<span>You could add new user attributes here</span>
+			<div class="attributes-header">
+				<FmBtn
+					type="primary"
+					class="btn-transaction mr-20"
+					@click="complexTransactionUserFieldCreate()"
+					>Add New</FmBtn
+				>
+				<FmBtn
+					type="primary"
+					class="btn-transaction"
+					@click="complexTransactionUserFieldCreate()"
+					>SHOW HIDDEN ATTRIBUTES
+				</FmBtn>
+			</div>
+			<span class="not-atribute">You could add new user attributes here</span>
 		</FmExpansionPanel>
 	</div>
 </template>
@@ -156,11 +367,12 @@
 		},
 		{ deep: true }
 	),
-	defaultsGet()
+		defaultsGet()
 	async function defaultsGet() {
 		let edRes = await useApi('instrumentAttrTypeList.get')
-        console.log(edRes,"edRes")
-		ecosystemDefaults.value = edRes.error ? {} : edRes.results[0]
+		console.log(edRes, 'edRes')
+		ecosystemDefaults.value = edRes.error ? {} : edRes.results
+		console.log(ecosystemDefaults.value, 'edRes')
 	}
 	async function defaultSettingsCreate() {
 		let res = await useApi('defaultSettings.put', {
@@ -194,68 +406,80 @@
 		margin-bottom: 24px;
 		font-weight: 700;
 	}
-	.transaction-fields {
-		display: grid;
-		grid-template-columns: 1fr 1fr 1fr;
-		grid-template-rows: auto auto;
-		grid-template-areas:
-			'title-block title-block title-block'
-			'. . .';
-
-		gap: 20px 20px;
-		// .transaction-fields__block
-
-		&__block {
-		}
-
-		// .transaction-fields__title
-
-		&__title {
-			font-weight: 700;
-			font-size: 16px;
-			margin: 20px 0;
-		}
-	}
-	.complex-input {
+	.layouts-card {
 		display: flex;
-		flex-direction: column;
-		// .complex-input__header
+		box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+			0 2px 1px -1px rgba(0, 0, 0, 0.12);
+		margin-bottom: 8px;
+		border-radius: 2px;
+		// .layouts-card__inner
 
-		&__header {
+		&__inner {
 			display: flex;
-			align-items: center;
-			margin-bottom: 5px;
+			justify-content: space-between;
+			width: 100%;
+			padding: 20px;
 		}
 
-		// .complex-input__name
+		// .layouts-card__name
 
 		&__name {
-			font-weight: 700;
-			font-size: 16px;
-			margin-right: 10px;
-		}
-
-		// .complex-input__lable
-
-		&__lable {
-			font-weight: 400;
-			font-size: 11px;
-			color: grey;
-		}
-		// .complex-input__body
-		&__body {
 			display: flex;
-			align-items: center;
+		}
+
+		// .layouts-card__setting
+
+		&__setting {
+			display: flex;
+		}
+
+		// .layouts-card__item
+
+		&__item {
+		}
+
+		// .layouts-card__rename
+
+		&__rename {
+		}
+
+		// .layouts-card__default
+
+		&__default {
+		}
+
+		// .layouts-card__delete
+
+		&__delete {
+		}
+
+		// .layouts-card__layout
+
+		&__layout {
 		}
 	}
-	.title {
-		grid-area: title-block;
+
+	.menu {
+		// .menu_item
+
+		&_item {
+		}
 	}
-	.footer {
-		grid-area: footer;
-	}
-	.btn-transaction {
+	.attributes-header {
+		display: flex;
+		justify-content: space-between;
 		margin-bottom: 20px;
+	}
+	.mr-20 {
+		margin-right: 20px;
+	}
+	.not-atribute {
+        display: flex;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 32px;
+        margin: 20px 0;
+        
 	}
 
 	@media (max-width: 1200px) {
