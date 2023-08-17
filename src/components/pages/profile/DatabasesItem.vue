@@ -592,10 +592,15 @@ setTimeout(() => {
 		position: absolute;
 		top: 8px;
 		right: 8px;
+		opacity: 0;
 	}
 	&:hover {
 		.space-card-provision-log {
 			display: block;
+			opacity: 0.7;
+			&:hover {
+				opacity: 1
+			}
 		}
 	}
 
