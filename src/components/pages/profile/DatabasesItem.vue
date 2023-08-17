@@ -1,5 +1,5 @@
 <template>
-	<FmCard class="db" controls v-if="db.is_healty"
+	<FmCard class="db" controls v-if="db.is_healthy"
 					:class="{red: diffDateKey <= 0, warn: diffDateKey > 0 && diffDateKey <= 30}"
 	>
 		<div class="flex aic sb">
@@ -148,7 +148,7 @@
 
 	</FmCard>
 
-	<FmCard v-if="!db.is_healty" class="space-card-unhealthy " :class="'db-' + db.base_api_url">
+	<FmCard v-if="!db.is_healthy" class="space-card-unhealthy " :class="'db-' + db.base_api_url">
 
 		<div class="space-card-foreground">
 
