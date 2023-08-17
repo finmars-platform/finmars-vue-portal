@@ -653,13 +653,14 @@ setTimeout(() => {
 
 	.container {
 		width: 100%;
-		height: 160px;
+		height: 100%;
 		background-color: black;
 		position: relative;
 		overflow: hidden;
 
 		.background__lights {
 			width: 100%;
+			height: 100%;
 		}
 
 		svg#lines {
