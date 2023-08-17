@@ -38,6 +38,9 @@ export default {
 	masterLog: {
 		get: prefix + '/master-user-log/?base_api_url={baseApi}'
 	},
+	masterHealth: {
+		get: prefix + '/master-user-health/?base_api_url={baseApi}'
+	},
 	masterStart: {
 		get: prefix + '/master-user-start/?base_api_url={baseApi}'
 	},
