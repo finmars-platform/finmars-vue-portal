@@ -30,11 +30,23 @@
 
 	}
 
-	setInterval(() => {
+	const interval = setInterval(() => {
 		getData()
 	}, 2 * 1000)
 
+	const checkHealth = async function() {
+
+		console.log('checkHealth')
+
+		await useApi("masterHealth.get", {
+			params: {baseApi: props.baseApiUrl}
+		})
+
+	}
+	checkHealth()
+
 	function cancel() {
+		clearInterval(interval)
 		emit('update:modelValue', false)
 	}
 
