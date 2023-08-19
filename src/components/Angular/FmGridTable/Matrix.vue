@@ -25,16 +25,27 @@
 						<span class="material-icons">chevron_right</span>
 					</button>
 
-					<button
-						v-if="scope.canChangeOrdinateAttr"
-						custom-popup
-						popup-template-url="'views/popups/selector-popup-view.html'"
-						popup-data="ordinateSelectorData"
-						close-on-click-outside="true"
-						class="flex-row flex-center axis-attr-selector-btn ordinate"
-					>
-						<span class="material-icons">expand_more</span>
-					</button>
+					<FmMenu v-if="scope.canChangeOrdinateAttr">
+						<template #btn>
+							<button
+								popup-template-url="'views/popups/selector-popup-view.html'"
+								popup-data="ordinateSelectorData"
+								class="flex-row flex-center axis-attr-selector-btn ordinate"
+							>
+								<span class="material-icons">expand_more</span>
+							</button>
+						</template>
+
+						<div class="fm_list">
+							<div
+								class="fm_list_item"
+								v-for="item in scope.ordinateSelectorData"
+								@click="selectOption(item)"
+							>
+								{{ item.name }}
+							</div>
+						</div>
+					</FmMenu>
 				</div>
 
 				<div class="report-viewer-matrix-row rv-matrix-header">
@@ -221,30 +232,32 @@
 									{{ scope.formatValue(scope.rows[row.index].total) }}
 								</div>
 							</div>
-						</div>
-					</div>
 
-					<div class="rv-matrix-right-col rvMatrixRightCol">
-						<div class="rv-matrix-part-to-scroll scrollableMatrixBodyColumn">
-							<div
-								v-for="row in scope.matrix"
-								class="report-viewer-matrix-row rvMatrixRow"
-							>
+							<div class="rv-matrix-right-col rvMatrixRightCol">
 								<div
-									class="report-viewer-matrix-cell report-viewer-matrix-cell-total report-viewer-cell-border-left rv-matrix-colored-cell rvMatrixCell"
-									:title="scope.rows[row.index].total"
-									@click="scope.singleRowTotalClick($event, row.index)"
-									:class="[
-										`text-${scope.styles.cell.text_align}`,
-										{
-											active: scope.activeItem == 'row_total:' + row.index,
-											'negative-red': scope.checkNegative(
-												scope.rows[row.index].total
-											),
-										},
-									]"
+									class="rv-matrix-part-to-scroll scrollableMatrixBodyColumn"
 								>
-									{{ scope.formatValue(scope.rows[row.index].total) }}
+									<div
+										v-for="row in scope.matrix"
+										class="report-viewer-matrix-row rvMatrixRow"
+									>
+										<div
+											class="report-viewer-matrix-cell report-viewer-matrix-cell-total report-viewer-cell-border-left rv-matrix-colored-cell rvMatrixCell"
+											:title="scope.rows[row.index].total"
+											@click="scope.singleRowTotalClick($event, row.index)"
+											:class="[
+												`text-${scope.styles.cell.text_align}`,
+												{
+													active: scope.activeItem == 'row_total:' + row.index,
+													'negative-red': scope.checkNegative(
+														scope.rows[row.index].total
+													),
+												},
+											]"
+										>
+											{{ scope.formatValue(scope.rows[row.index].total) }}
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -1050,14 +1063,7 @@
 	 * @param axisProp {String} - can be 'abscissa' or 'ordinate'
 	 * @param _$popup {Object} - data from popup
 	 */
-	var onAxisAttrsOptionSelect = function (
-		option,
-		optionsList,
-		axisProp,
-		_$popup
-	) {
-		_$popup.cancel()
-
+	var onAxisAttrsOptionSelect = function (option, optionsList, axisProp) {
 		if (option.id !== props.matrixSettings[axisProp]) {
 			props.matrixSettings[axisProp] = option.id
 			if (axisProp === 'value_key') scope.matrixValueAttrName = option.name
@@ -1095,7 +1101,9 @@
 
 		return false
 	}
-
+	function selectOption(option) {
+		onAxisAttrsOptionSelect(option, scope.ordinateSelectorData, 'ordinate')
+	}
 	var initAxisAttrsSelectors = function () {
 		scope.abscissaSelectorData = {
 			options: formatAttrsForSelector(
@@ -1112,20 +1120,10 @@
 			},
 		}
 
-		scope.ordinateSelectorData = {
-			options: formatAttrsForSelector(
-				scope.availableOrdinateAttrs,
-				props.matrixSettings.ordinate
-			),
-			selectOption: function (option, _$popup) {
-				onAxisAttrsOptionSelect(
-					option,
-					scope.ordinateSelectorData.options,
-					'ordinate',
-					_$popup
-				)
-			},
-		}
+		scope.ordinateSelectorData = formatAttrsForSelector(
+			scope.availableOrdinateAttrs,
+			props.matrixSettings.ordinate
+		)
 
 		scope.valueSelectorData = {
 			options: formatAttrsForSelector(
@@ -1227,5 +1225,8 @@
 <style lang="scss" scoped>
 	.report-viewer-matrix .rv-matrix-left-col {
 		height: auto;
+	}
+	.report-viewer-matrix .rv-matrix-body {
+		height: calc(100% - 46px);
 	}
 </style>
