@@ -473,6 +473,7 @@
 	.mr-20 {
 		margin-right: 20px;
 	}
+	
 	.not-atribute {
         display: flex;
         justify-content: center;
