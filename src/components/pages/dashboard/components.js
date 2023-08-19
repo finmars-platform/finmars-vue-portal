@@ -303,15 +303,15 @@ export default [
 		uid: null,
 		user_code: null,
 		name: 'Iframe Component',
-		componentName: 'IframeComponent',
+		componentName: 'DashboardIframeComponent',
 		tab: null,
 		_group: 'system',
 		minColls: 12,
 		minRows: 4,
 		inputs: [],
 		outputs: [],
-		settings: [
-			{
+		settings: {
+			url: {
 				key: 'url',
 				name: 'URL',
 				view: {
@@ -319,7 +319,7 @@ export default [
 				},
 				default_value: null,
 			},
-		],
+		},
 	},
 	{
 		uid: null,

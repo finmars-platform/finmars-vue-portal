@@ -72,11 +72,15 @@
 			}
 		})
 
-		vm.value.entityViewerEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
 		vm.value.entityViewerEventService.dispatchEvent(
-			evEvents.REPORT_OPTIONS_CHANGE
+			entityViewerEvents.FILTERS_CHANGE
 		)
-		vm.value.entityViewerEventService.dispatchEvent(evEvents.REQUEST_REPORT)
+		vm.value.entityViewerEventService.dispatchEvent(
+			entityViewerEvents.REPORT_OPTIONS_CHANGE
+		)
+		vm.value.entityViewerEventService.dispatchEvent(
+			entityViewerEvents.REQUEST_REPORT
+		)
 	}, 200)
 
 	async function getLayoutId() {
@@ -173,9 +177,15 @@
 	// debounce needed because multiple inputs change consecutively
 	const updateRvAfterInputsChange = useDebounce(function () {
 		// console.log("testing1090.finmarsGrid updateRvAfterInputsChange called");
-		vmE.entityViewerEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
-		vmE.entityViewerEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE)
-		vmE.entityViewerEventService.dispatchEvent(evEvents.REQUEST_REPORT)
+		vmE.entityViewerEventService.dispatchEvent(
+			entityViewerEvents.FILTERS_CHANGE
+		)
+		vmE.entityViewerEventService.dispatchEvent(
+			entityViewerEvents.REPORT_OPTIONS_CHANGE
+		)
+		vmE.entityViewerEventService.dispatchEvent(
+			entityViewerEvents.REQUEST_REPORT
+		)
 	}, 200)
 
 	function init() {
