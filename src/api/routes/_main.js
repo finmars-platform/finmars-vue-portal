@@ -113,7 +113,9 @@ export default {
 	performanceReport: {
 		post: prefix + '/reports/performance-report/',
 	},
-
+	transactionReport: {
+		post: prefix + '/reports/transaction-report/',
+	},
 	systemMessagesStats: {
 		get: prefix + '/system-messages/message/stats/',
 	},
