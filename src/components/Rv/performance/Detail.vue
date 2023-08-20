@@ -85,7 +85,7 @@
 			type: [Number, String],
 		},
 	})
-	const emits = defineEmits(['setMonth', 'refresh'])
+	const emits = defineEmits(['setYear', 'refresh'])
 
 	let currentBundle = computed(() => {
 		if (typeof props.bundleId == 'object') return props.bundleId
@@ -142,9 +142,10 @@
 		activeYear.value = id
 		detailYear.value = portfolioYears.value[id]
 
-		emits('setMonth', {
+		emits('setYear', {
 			datasetMonth: portfolioItems.value[id],
 			datasetLine: portfolioItemsCumm.value[id],
+			detailYear: detailYear.value,
 		})
 	}
 	async function getMonthDetails() {

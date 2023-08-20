@@ -1,6 +1,6 @@
 <template>
 	<!-- <FmExpansionPanel :title="detailPortfolio + ' - ' + detailYear"> -->
-	<FmExpansionPanel title="chart">
+	<FmExpansionPanel title="Chart">
 		<div style="height: 350px;">
 			<canvas id="myChart"><p>Chart</p></canvas>
 		</div>
@@ -10,6 +10,8 @@
 <script setup>
 
 	import Chart from 'chart.js/auto';
+
+	const emits = defineEmits(['setMonth', 'refresh'])
 
 	const props = defineProps({
 		yearData: {
@@ -67,6 +69,41 @@
 			options: {
 				responsive: true,
 				maintainAspectRatio: false,
+				events: ['click'],
+				onClick: function(event, array) {
+					console.log("onclick", event, array);
+					if (array.length > 0) {
+						var chartElement = array[0];
+
+						// Get the clicked bar's index and dataset
+						var index = chartElement.index;
+						var datasetIndex = chartElement.datasetIndex;
+
+						// Access any property of the clicked bar, e.g., label or data
+						var label = this.data.labels[index];
+						var value = this.data.datasets[datasetIndex].data[index];
+
+						// Reset all borders to 0
+						Object.keys(this.data.datasets).forEach( (key) => {
+							this.data.datasets[key].borderWidth = 0
+						})
+
+						console.log('this.data.datasets', this.data.datasets);
+
+						// Add a border to the clicked bar
+						this.data.datasets[datasetIndex].borderWidth = 3;  // Adjust the border width as needed
+
+						this.data.datasets[datasetIndex].borderColor = 'orange';
+
+						console.log(`Clicked on: ${label}, Value: ${value}`);
+
+						emits('setMonth', {
+							currentMonth: label,
+						})
+
+						// Add any other logic you want on bar click
+					}
+				},
 				plugins: {
 					legend: {
 						position: 'top',
