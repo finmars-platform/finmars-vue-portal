@@ -110,11 +110,6 @@
 			id: props.uid,
 			settings: settings,
 		}
-
-		iframeWindow.postMessage(
-			{ action: 'SETTINGS_CHANGE', payload: payload },
-			windowOrigin
-		)
 	}
 
 	const outputs = computed(() => {
@@ -293,10 +288,10 @@
 
 			available_abscissa_keys: [
 				{
-					key: 'instrument.short_name',
-					name: 'Instrument. Short name',
+					key: 'portfolio.user_code',
+					name: 'Portfolio. User code',
 					value_type: 10,
-					content_type: 'instruments.instrument',
+					content_type: 'portfolios.portfolio',
 				},
 				{
 					key: 'instrument.user_code',
@@ -304,35 +299,36 @@
 					value_type: 10,
 					content_type: 'instruments.instrument',
 				},
-				{
-					key: 'instrument.public_name',
-					name: 'Instrument. Public name',
-					value_type: 10,
-					content_type: 'instruments.instrument',
-				},
 			],
 			available_ordinate_keys: [
 				{
-					key: 'portfolio.short_name',
-					name: 'Portfolio. Short name',
+					key: 'instrument.user_code',
+					name: 'Instrument. User code',
 					value_type: 10,
-					content_type: 'portfolios.portfolio',
+					content_type: 'instruments.instrument',
 				},
+
 				{
 					key: 'portfolio.user_code',
 					name: 'Portfolio. User code',
 					value_type: 10,
 					content_type: 'portfolios.portfolio',
 				},
+			],
+			available_value_keys: [
 				{
-					key: 'portfolio.public_name',
-					name: 'Portfolio. Public name',
-					value_type: 10,
-					allow_null: true,
-					content_type: 'portfolios.portfolio',
+					key: 'position_size',
+					name: 'Balance. Position size',
+					value_type: 20,
+					content_type: 'reports.balancereport',
+				},
+				{
+					key: 'market_value',
+					name: 'Balance. Market value',
+					value_type: 20,
+					content_type: 'reports.balancereport',
 				},
 			],
-			available_value_keys: [],
 
 			number_format: component.value.settings.number_format,
 			subtotal_formula_id: component.value.settings.subtotal_formula_id,
