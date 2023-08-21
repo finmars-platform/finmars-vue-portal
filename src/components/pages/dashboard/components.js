@@ -660,6 +660,7 @@ export default [
 		settings: {
 			content_type: 'reports.balancereport',
 			layout: null,
+			layoutUserCode: null,
 			axisY: null,
 			axisX: null,
 			valueKey: null,
@@ -1005,6 +1006,7 @@ export default [
 		settings: {
 			content_type: 'reports.balancereport',
 			layout: null,
+			layoutUserCode: null,
 		},
 
 		minColls: 6,

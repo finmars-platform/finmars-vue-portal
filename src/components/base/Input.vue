@@ -42,7 +42,7 @@
 				<slot name="sideItems"></slot>
 
 				<div class="bi_side_item" v-if="tooltip">
-					<FmIcon v-fm-tooltip.error="tooltip" icon="info_outlined" />
+					<FmIcon v-fm-tooltip="tooltip" icon="info_outlined" />
 				</div>
 			</div>
 
@@ -50,7 +50,7 @@
 				v-if="errorData && errorData.longMessage"
 				class="bi_side_item error_icon"
 			>
-				<FmIcon v-fm-tooltip="errorData.longMessage" icon="info" />
+				<FmIcon v-fm-tooltip.error="errorData.longMessage" icon="info" />
 			</div>
 
 			<div class="right_btn">

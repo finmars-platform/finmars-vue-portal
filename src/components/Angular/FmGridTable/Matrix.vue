@@ -1104,9 +1104,9 @@
 	var formatAttrsForSelector = function (attrsList, selectedAttrKey) {
 		return attrsList.map((attr) => {
 			return {
-				name: attr.layout_name || attr?.name,
-				id: attr.key,
-				isActive: attr.key === selectedAttrKey,
+				name: attr.layout_name || attr.attribute_data.name,
+				id: attr.attribute_data.key,
+				isActive: attr.attribute_data.key === selectedAttrKey,
 			}
 		})
 	}
@@ -1147,12 +1147,12 @@
 		)
 
 		var activeValueAttr = scope.availableValueAttrs.find((attr) => {
-			return attr.key === props.matrixSettings.value_key
+			return attr.attribute_data.key === props.matrixSettings.value_key
 		})
 
 		if (activeValueAttr) {
 			scope.matrixValueAttrName =
-				activeValueAttr.layout_name || activeValueAttr.name
+				activeValueAttr.layout_name || activeValueAttr.attribute_data.name
 		}
 	}
 	//</editor-fold desc="Popup-selector of attributes for axises">
@@ -1160,7 +1160,6 @@
 
 	function init() {
 		evDataService.setActiveObject({})
-
 		// scope.top_left_title = props.matrixSettings.top_left_title;
 
 		initAxisAttrsSelectors()
@@ -1217,6 +1216,10 @@
 		)
 		// window.addEventListener('resize', scope.alignGrid);
 	}
+
+	defineExpose({
+		init
+	});
 
 	onUnmounted(() => {
 		window.removeEventListener('resize', scope.alignGrid)
