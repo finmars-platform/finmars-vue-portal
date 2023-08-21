@@ -11,10 +11,8 @@
 </template>
 
 <script setup>
-	import reportViewerController from '~~/src/angular/controllers/entityViewer/reportViewerController';
-
-	import evEvents from '@/angular/services/entityViewerEvents';
-	import entityViewerEvents from "~/angular/services/entityViewerEvents";
+	import reportViewerController from '~~/src/angular/controllers/entityViewer/reportViewerController'
+	import entityViewerEvents from '~~/src/angular/services/entityViewerEvents'
 
 	let props = defineProps({
 		uid: String,
@@ -23,7 +21,7 @@
 	onMounted(() => {})
 
 	const dashStore = useStoreDashboard()
-	const evAttrsStore = useEvAttributesStore();
+	const evAttrsStore = useEvAttributesStore()
 	const layoutsStore = useLayoutsStore()
 	const component = computed(() => dashStore.getComponent(props.uid))
 	console.log('component:', component)
@@ -37,50 +35,54 @@
 		return dashStore.props.inputs.filter(input => input.component_id === component.value.uid );
 	});
 
-	let inputsVals = computed( () => {
-
-		let result = {};
+	let inputsVals = computed(() => {
+		let result = {}
 
 		// const some = dashStore.props.inputs.filter(input => input.component_id === component.value.uid )
 
-		inputs.value.forEach(input => {
-			result[input.uid] = input.__val;
+		inputs.value.forEach((input) => {
+			result[input.uid] = input.__val
 		})
 
-		return result;
-
-	});
+		return result
+	})
 
 	const inputsValsWatcherCb = useDebounce(function (newVal, oldVal) {
 		// console.log("testing1090.matrix inputsValsWatcherCb", newVal, oldVal);
-		Object.keys(inputsVals.value).forEach(inputId => {
-
-			if ( newVal[inputId] === oldVal[inputId] ) {
-				return;
+		Object.keys(inputsVals.value).forEach((inputId) => {
+			if (newVal[inputId] === oldVal[inputId]) {
+				return
 			}
 
-			const input = dashStore.props.inputs.find( input => input.uid === inputId );
+			const input = dashStore.props.inputs.find(
+				(input) => input.uid === inputId
+			)
 
-			if ( input.key.startsWith('reportOptions__') ) {
-
-				const ro = updateReportOptionsWithDashInputs(input, vm.value.entityViewerDataService);
-				vm.value.entityViewerDataService.setReportOptions(ro);
-
+			if (input.key.startsWith('reportOptions__')) {
+				const ro = updateReportOptionsWithDashInputs(
+					input,
+					vm.value.entityViewerDataService
+				)
+				vm.value.entityViewerDataService.setReportOptions(ro)
+			} else {
+				const filters = updateFiltersWithDashInputs(
+					input,
+					vm.value.entityViewerDataService
+				)
+				vm.value.entityViewerDataService.setFilters(filters)
 			}
-			else {
-
-				const filters = updateFiltersWithDashInputs(input, vm.value.entityViewerDataService);
-				vm.value.entityViewerDataService.setFilters(filters);
-
-			}
-
 		})
 
-		vm.value.entityViewerEventService.dispatchEvent(evEvents.FILTERS_CHANGE);
-		vm.value.entityViewerEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE);
-		vm.value.entityViewerEventService.dispatchEvent(evEvents.REQUEST_REPORT);
-
-	}, 200);
+		vm.value.entityViewerEventService.dispatchEvent(
+			entityViewerEvents.FILTERS_CHANGE
+		)
+		vm.value.entityViewerEventService.dispatchEvent(
+			entityViewerEvents.REPORT_OPTIONS_CHANGE
+		)
+		vm.value.entityViewerEventService.dispatchEvent(
+			entityViewerEvents.REQUEST_REPORT
+		)
+	}, 200)
 
 	async function getLayoutId() {
 		let res = await layoutsStore.getLayoutByUserCode(
@@ -523,7 +525,7 @@
 		layout: layout,
 	}
 
-	let vmE;
+	let vmE
 
 	let viewSettings = computed(() => {
 		return {
@@ -538,7 +540,7 @@
 			number_format: component.value.settings.numberFormat,
 			subtotal_formula_id: component.value.settings.subtotal_formula_id,
 
-			matrix_view: component.value.settings.matrix_view, // DEPRECATED possibly
+			matrix_view: component.value.settings.matrix_view, // possibly DEPRECATED
 
 			styles: component.value.settings.styles,
 			auto_scaling: component.value.settings.auto_scaling,
@@ -550,12 +552,16 @@
 
 	// debounce needed because multiple inputs change consecutively
 	const updateRvAfterInputsChange = useDebounce(function () {
-
 		// console.log("testing1090.finmarsGrid updateRvAfterInputsChange called");
-		vmE.entityViewerEventService.dispatchEvent(evEvents.FILTERS_CHANGE);
-		vmE.entityViewerEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE);
-		vmE.entityViewerEventService.dispatchEvent(evEvents.REQUEST_REPORT);
-
+		vmE.entityViewerEventService.dispatchEvent(
+			entityViewerEvents.FILTERS_CHANGE
+		)
+		vmE.entityViewerEventService.dispatchEvent(
+			entityViewerEvents.REPORT_OPTIONS_CHANGE
+		)
+		vmE.entityViewerEventService.dispatchEvent(
+			entityViewerEvents.REQUEST_REPORT
+		)
 	}, 200)
 
 	watch(
@@ -572,14 +578,26 @@
 	)
 	function prepareData() {
 
+		$scope = {
+			contentType: component.value.settings.content_type,
+			entityType: entities[component.value.settings.content_type],
+			viewContext: 'dashboard',
+			layout: layout,
+		}
+
 		vmE = new reportViewerController({
 			$scope,
 			$stateParams: route.params,
 			route,
 		})
 
-		const filtersList = formatFiltersForDashInputs(inputs.value, layout.content_type, vmE.entityViewerDataService, evAttrsStore);
-		vmE.entityViewerDataService.setFilters(filtersList);
+		const filtersList = formatFiltersForDashInputs(
+			inputs.value,
+			layout.content_type,
+			vmE.entityViewerDataService,
+			evAttrsStore
+		)
+		vmE.entityViewerDataService.setFilters(filtersList)
 
 		vmE.entityViewerEventService.addEventListener(
 			entityViewerEvents.ACTIVE_OBJECT_CHANGE,
@@ -598,27 +616,63 @@
 		// 	vmE.entityViewerDataService.getViewType()
 		// )
 		/*viewSettings.value = {
-			abscissa: 'instrument.user_code',
-			ordinate: 'portfolio.user_code',
-			value_key: 'position_size',
+			abscissa: component.value.settings.axisX,
+			ordinate: component.value.settings.axisY,
+			value_key: component.value.settings.valueKey,
 
-			subtotal_formula_id: 1,
-			matrix_view: 'fixed-totals',
-			auto_refresh: false,
-			auto_scaling: false,
-			calculate_name_column_width: false,
-			hide_empty_lines: '',
-			filters: {
-				show_filters_area: false,
-				show_use_from_above_filters: false,
-			},
-			user_settings: {},
-
-			styles: {
-				cell: {
-					text_align: 'center',
+			available_abscissa_keys: [
+				{
+					key: 'instrument.short_name',
+					name: 'Instrument. Short name',
+					value_type: 10,
+					content_type: 'instruments.instrument',
 				},
-			},
+				{
+					key: 'instrument.user_code',
+					name: 'Instrument. User code',
+					value_type: 10,
+					content_type: 'instruments.instrument',
+				},
+				{
+					key: 'instrument.public_name',
+					name: 'Instrument. Public name',
+					value_type: 10,
+					content_type: 'instruments.instrument',
+				},
+			],
+			available_ordinate_keys: [
+				{
+					key: 'portfolio.short_name',
+					name: 'Portfolio. Short name',
+					value_type: 10,
+					content_type: 'portfolios.portfolio',
+				},
+				{
+					key: 'portfolio.user_code',
+					name: 'Portfolio. User code',
+					value_type: 10,
+					content_type: 'portfolios.portfolio',
+				},
+				{
+					key: 'portfolio.public_name',
+					name: 'Portfolio. Public name',
+					value_type: 10,
+					allow_null: true,
+					content_type: 'portfolios.portfolio',
+				},
+			],
+			available_value_keys: [],
+
+			number_format: component.value.settings.number_format,
+			subtotal_formula_id: component.value.settings.subtotal_formula_id,
+
+			matrix_view: component.value.settings.matrix_view, // DEPRECATED possibly
+
+			styles: component.value.settings.styles,
+			auto_scaling: component.value.settings.auto_scaling,
+			calculate_name_column_width:
+				component.value.settings.calculate_name_column_width,
+			hide_empty_lines: component.value.settings.hide_empty_lines,
 		}*/
 
 		provide('ngDependace', {
@@ -630,6 +684,16 @@
 		vm.value = vmE;
 
 	}
+
+	/*vm.value.entityViewerEventService.addEventListener(
+		entityViewerEvents.ACTIVE_OBJECT_CHANGE,
+		() => {
+			if (outputs.value.matrix_row) {
+				outputs.value.matrix_row.__val =
+					vm.value.entityViewerDataService.getActiveObject()
+			}
+		}
+	)*/
 
 	function init() {
 

@@ -197,6 +197,7 @@
 			},
 		],
 	})
+	let store = useStore()
 	let defaultComplexTransactionTextFields = [
 		{
 			key: 'user_text_1',
@@ -486,6 +487,7 @@
 	]
 
 	const configurationListItems = ref([])
+	configurationListItems.value = store.defaultConfigCode.results
 	const systemMessagesItems = ref([])
 	const configurationListActive = ref('local.poms.space0crgw')
 
@@ -509,19 +511,9 @@
 	const ecosystemDefaults = ref('local.poms.space0crgw')
 	const BaseInputEcosystemDefaults = ref([])
 
-	configurationDefaultsGet()
-	async function configurationDefaultsGet() {
-		let edRes = await useApi('configurationList.get')
-		configurationListItems.value = edRes.error ? {} : edRes.results
-		// console.log(
-		// 	'edRes',
-		// 	edRes,
-		// 	'configurationListItems',
-		// 	configurationListItems.value
-		// )
-	}
+
 	init()
-	// console.log(store.defaultConfigCode, 'store.defaultConfigCode')
+
 	async function init() {
 		const res = await Promise.all([
 			useApi('instrumentUserField.get', {
@@ -539,32 +531,20 @@
 		instrumentUserFieldItems.value = res[0].results
 		complexTransactionUserFieldItems.value = res[1].results
 		transactionUserFieldItems.value = res[2].results
-		// console.log(
-		// 	'complexTransactionUserFieldItems.value',
-		// 	complexTransactionUserFieldItems.value,
-		// 	'configurationListActive.value',
-		// 	configurationListActive.value
-		// )
+
 		complexTransactionUserFieldGet()
 		async function complexTransactionUserFieldGet() {
-			// console.log('textField до фильтрации совсем',complexTransactionUserFieldItems.value )
 
 			complexTransactionUserFieldItems.value.forEach(function (field) {
-				// console.log('textField до фильтрации', complexTransactionUserFieldItems.value )
 				textComplexTransactionUserFieldItems.forEach(function (textField) {
-					console.log(
-						'textField при фильтрации',
-						textField
-					)
 					if (textField.key == field.key && field.key.includes('user_text')) {
 						textField.is_active = field.is_active
 						textField.name = field.name
 						textField.id = field.id
 						textField.configuration_code = configurationListActive.value
-						textField.user_code = ` ${configurationListActive.value} :  ${field.key}`
-					} 
+						textField.user_code = `${configurationListActive.value}:${field.key}`
+					}
 				})
-				// console.log('textComplexTransactionUserFieldItems', textComplexTransactionUserFieldItems)
 				numberComplexTransactionUserFieldItems.forEach(function (numberField) {
 					if (
 						numberField.key == field.key &&
@@ -573,8 +553,8 @@
 						numberField.is_active = field.is_active
 						numberField.name = field.name
 						numberField.id = field.id
-						textField.configuration_code = configurationListActive.value
-						textField.user_code = ` ${configurationListActive.value} :  ${field.key}`
+						numberField.configuration_code = configurationListActive.value
+						numberField.user_code = `${configurationListActive.value}:${field.key}`
 					}
 				})
 
@@ -583,8 +563,8 @@
 						dateField.is_active = field.is_active
 						dateField.name = field.name
 						dateField.id = field.id
-						textField.configuration_code = configurationListActive.value
-						textField.user_code = ` ${configurationListActive.value} :  ${field.key}`
+						dateField.configuration_code = configurationListActive.value
+						dateField.user_code = `${configurationListActive.value}:${field.key}`
 					}
 				})
 			})
@@ -598,7 +578,7 @@
 						textField.name = field.name
 						textField.id = field.id
 						textField.configuration_code = configurationListActive.value
-						textField.user_code = ` ${configurationListActive.value}:${field.key}`
+						textField.user_code = `${configurationListActive.value}:${field.key}`
 					}
 				})
 
@@ -610,8 +590,8 @@
 						numberField.is_active = field.is_active
 						numberField.name = field.name
 						numberField.id = field.id
-						textField.configuration_code = configurationListActive.value
-						textField.user_code = ` ${configurationListActive.value} :  ${field.key}`
+						numberField.configuration_code = configurationListActive.value
+						numberField.user_code = `${configurationListActive.value}:${field.key}`
 					}
 				})
 
@@ -620,20 +600,13 @@
 						dateField.is_active = field.is_active
 						dateField.name = field.name
 						dateField.id = field.id
-						textField.configuration_code = configurationListActive.value
-						textField.user_code = ` ${configurationListActive.value} :  ${field.key}`
+						dateField.configuration_code = configurationListActive.value
+						dateField.user_code = `${configurationListActive.value}:${field.key}`
 					}
 				})
 			})
 		}
-		// console.log(
-		// 	'instrumentUserFieldItems.value',
-		// 	transactionUserFieldItems.value
-		// )
-		// console.log(
-		// 	'textComplexTransactionUserFieldItems',
-		// 	textComplexTransactionUserFieldItems
-		// )
+	
 	}
 
 	watch(
@@ -653,10 +626,22 @@
 			if (textField.id >= 0) {
 				let res = useApi('transactionUserField.put', {
 					params: { id: textField.id },
-					body: textField.value,
+					body: textField,
 				})
 				if (res.error) {
-					// console.error(res.error);
+					useNotify({
+						type: 'error',
+						title: res.error.message || res.error.detail,
+					})
+					throw new Error(res.error)
+				}
+			} else {
+				textField.configuration_code = configurationListActive.value
+				textField.user_code = `${configurationListActive.value}:${textField.key}`
+				let res = useApi('transactionUserField.post', {
+					body: textField,
+				})
+				if (res.error) {
 					useNotify({
 						type: 'error',
 						title: res.error.message || res.error.detail,
@@ -670,10 +655,22 @@
 			if (textField.id >= 0) {
 				let res = useApi('transactionUserField.put', {
 					params: { id: textField.id },
-					body: textField.value,
+					body: textField,
 				})
 				if (res.error) {
-					// console.error(res.error);
+					useNotify({
+						type: 'error',
+						title: res.error.message || res.error.detail,
+					})
+					throw new Error(res.error)
+				}
+			} else {
+				textField.configuration_code = configurationListActive.value
+				textField.user_code = `${configurationListActive.value}:${textField.key}`
+				let res = useApi('transactionUserField.post', {
+					body: textField,
+				})
+				if (res.error) {
 					useNotify({
 						type: 'error',
 						title: res.error.message || res.error.detail,
@@ -687,10 +684,22 @@
 			if (textField.id >= 0) {
 				let res = useApi('transactionUserField.put', {
 					params: { id: textField.id },
-					body: textField.value,
+					body: textField,
 				})
 				if (res.error) {
-					// console.error(res.error);
+					useNotify({
+						type: 'error',
+						title: res.error.message || res.error.detail,
+					})
+					throw new Error(res.error)
+				}
+			} else {
+				textField.configuration_code = configurationListActive.value
+				textField.user_code = `${configurationListActive.value}:${textField.key}`
+				let res = useApi('transactionUserField.post', {
+					body: textField,
+				})
+				if (res.error) {
 					useNotify({
 						type: 'error',
 						title: res.error.message || res.error.detail,
@@ -704,29 +713,28 @@
 
 	function complexTransactionUserFieldItemsCreate() {
 		textComplexTransactionUserFieldItems.forEach(function (textField) {
-			// console.log(
-			// 	'textField',
-			// 	textField,
-			// 	'textField.id',
-			// 	textField.id,
-			// 	!textField.id
-			// )
-			console.log("textField.value", textField)
+
 			if (textField.id >= 0) {
 				let res = useApi('complexTransactionUserField.put', {
 					params: { id: textField.id },
 					body: textField,
 				})
-				// console.log(
-				// 	'внутри',
-				// 	'textField',
-				// 	textField,
-				// 	'textField.id',
-				// 	textField.id,
-				// 	!textField.id
-				// )
+			
 				if (res.error) {
-					// console.error(res.error);
+					useNotify({
+						type: 'error',
+						title: res.error.message || res.error.detail,
+					})
+					throw new Error(res.error)
+				}
+			} else {
+				textField.configuration_code = configurationListActive.value
+				textField.user_code = `${configurationListActive.value}:${textField.key}`
+				
+				let res = useApi('complexTransactionUserField.post', {
+					body: textField,
+				})
+				if (res.error) {
 					useNotify({
 						type: 'error',
 						title: res.error.message || res.error.detail,
@@ -743,7 +751,19 @@
 					body: textField,
 				})
 				if (res.error) {
-					// console.error(res.error);
+					useNotify({
+						type: 'error',
+						title: res.error.message || res.error.detail,
+					})
+					throw new Error(res.error)
+				}
+			} else {
+				textField.configuration_code = configurationListActive.value
+				textField.user_code = `${configurationListActive.value}:${textField.key}`
+				let res = useApi('complexTransactionUserField.post', {
+					body: textField,
+				})
+				if (res.error) {
 					useNotify({
 						type: 'error',
 						title: res.error.message || res.error.detail,
@@ -760,7 +780,19 @@
 					body: textField,
 				})
 				if (res.error) {
-					// console.error(res.error);
+					useNotify({
+						type: 'error',
+						title: res.error.message || res.error.detail,
+					})
+					throw new Error(res.error)
+				}
+			} else {
+				textField.configuration_code = configurationListActive.value
+				textField.user_code = `${configurationListActive.value}:${textField.key}`
+				let res = useApi('complexTransactionUserField.post', {
+					body: textField,
+				})
+				if (res.error) {
 					useNotify({
 						type: 'error',
 						title: res.error.message || res.error.detail,
@@ -777,7 +809,20 @@
 			if (textField.id >= 0) {
 				let res = useApi('instrumentUserField.put', {
 					params: { id: textField.id },
-					body: textField.value,
+					body: textField,
+				})
+				if (res.error) {
+					useNotify({
+						type: 'error',
+						title: res.error.message || res.error.detail,
+					})
+					throw new Error(res.error)
+				}
+			} else {
+				textField.configuration_code = configurationListActive.value
+				textField.user_code = `${configurationListActive.value}:${textField.key}`
+				let res = useApi('instrumentUserField.post', {
+					body: textField,
 				})
 				if (res.error) {
 					// console.error(res.error);

@@ -85,7 +85,7 @@
 			type: [Number, String],
 		},
 	})
-	const emits = defineEmits(['setMonth', 'refresh'])
+	const emits = defineEmits(['setMonth', 'currentBundle.value'])
 
 	let currentBundle = computed(() => {
 		if (typeof props.bundleId == 'object') return props.bundleId
@@ -250,7 +250,7 @@
 	}
 
 	async function updateBundle(bundleData) {
-		let updatedData = JSON.parse(JSON.stringify(props.currentBundle))
+		let updatedData = JSON.parse(JSON.stringify(currentBundle.value))
 
 		updatedData = { ...updatedData, ...bundleData }
 		updatedData.short_name = bundleData.name
@@ -279,7 +279,7 @@
 	async function deleteBundle() {
 		let isConfirm = await useConfirm({
 			title: 'Delete bundle',
-			text: `Do you want to delete the bundle “${props.currentBundle.user_code}” permanently?`,
+			text: `Do you want to delete the bundle “${currentBundle.value.user_code}” permanently?`,
 		})
 
 		if (!isConfirm) return false
@@ -291,9 +291,9 @@
 		if (!res.error) {
 			useNotify({
 				type: 'success',
-				title: `Bundle ${props.currentBundle.user_code} was successfully deleted.`,
+				title: `Bundle ${currentBundle.value.user_code} was successfully deleted.`,
 			})
-			refresh()
+			emits('refresh')
 		}
 	}
 	// double
