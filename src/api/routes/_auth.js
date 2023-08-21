@@ -38,6 +38,9 @@ export default {
 	masterLog: {
 		get: prefix + '/master-user-log/?base_api_url={baseApi}'
 	},
+	masterHealth: {
+		get: prefix + '/master-user-health/?base_api_url={baseApi}'
+	},
 	masterStart: {
 		get: prefix + '/master-user-start/?base_api_url={baseApi}'
 	},
@@ -91,5 +94,8 @@ export default {
 		get:  prefix + '/invite-to-user/?base_api_url={client}',
 		post:  prefix + '/create-invite-to-user/',
 	},
+	masterInitUpdate: {
+		put:  prefix + '/master-user/{id}/init-update/'
+	}
 
 };
