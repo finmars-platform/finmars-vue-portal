@@ -1,6 +1,10 @@
 <template>
 	<div>
-		<AngularFmGridTableMatrix v-if="vm" :matrixSettings="viewSettings" />
+		<AngularFmGridTableMatrix
+			v-if="vm"
+			:matrixSettings="viewSettings"
+			ref="matrixComp"
+		/>
 
 		<div v-if="errorMessage" class="red-text">{{ errorMessage }}</div>
 	</div>
@@ -21,25 +25,23 @@
 	const dashStore = useStoreDashboard()
 	const evAttrsStore = useEvAttributesStore();
 	const layoutsStore = useLayoutsStore()
-	const component = dashStore.getComponent(props.uid);
+	const component = computed(() => dashStore.getComponent(props.uid))
 	console.log('component:', component)
 
 	let readyStatus = ref(false)
+	let matrixComp = ref(null);
 
 	let errorMessage = ref('')
 
-	let reportLayoutUc = component.settings.layout
-	let reportLayoutId
-
 	let inputs = computed(() => {
-		return dashStore.props.inputs.filter(input => input.component_id === component.uid );
+		return dashStore.props.inputs.filter(input => input.component_id === component.value.uid );
 	});
 
 	let inputsVals = computed( () => {
 
 		let result = {};
 
-		// const some = dashStore.props.inputs.filter(input => input.component_id === component.uid )
+		// const some = dashStore.props.inputs.filter(input => input.component_id === component.value.uid )
 
 		inputs.value.forEach(input => {
 			result[input.uid] = input.__val;
@@ -82,39 +84,17 @@
 
 	async function getLayoutId() {
 		let res = await layoutsStore.getLayoutByUserCode(
-			component.settings.content_type,
-			component.settings.layout
+			component.value.settings.content_type,
+			component.value.settings.layout
 		)
 
 		if (res.error) {
-			errorMessage.value = `ERROR: Layout with user code: ${component.settings.layout} not found`
+			errorMessage.value = `ERROR: Layout with user code: ${component.value.settings.layout} not found`
 			throw res.error
 		} else {
 			return res.id
 		}
 	}
-
-	async function updateMatrix() {
-		if (component.settings.layout !== reportLayoutUc) {
-			// user code changed
-			reportLayoutId = await getLayoutId()
-		}
-
-		let settings = JSON.parse(JSON.stringify(component.settings))
-		settings.layout = reportLayoutId
-
-		const payload = {
-			id: props.uid,
-			settings: settings,
-		}
-
-		iframeWindow.postMessage(
-			{ action: 'SETTINGS_CHANGE', payload: payload },
-			windowOrigin
-		)
-	}
-
-	watch(component, updateMatrix)
 
 	let vm = ref(null)
 
@@ -512,7 +492,7 @@
 			space_code: 'space0crgw',
 		},
 	}*/
-	let layout = JSON.parse(component.settings.layout);
+	let layout = JSON.parse(component.value.settings.layout);
 
 	const route = {
 		current: {
@@ -537,15 +517,36 @@
 	provide('$mdDialog', window.$mdDialog)
 
 	let $scope = {
-		contentType: component.settings.content_type,
-		entityType: entities[component.settings.content_type],
+		contentType: component.value.settings.content_type,
+		entityType: entities[component.value.settings.content_type],
 		viewContext: 'dashboard',
 		layout: layout,
 	}
 
 	let vmE;
 
-	let viewSettings = ref({})
+	let viewSettings = computed(() => {
+		return {
+			abscissa: component.value.settings.axisX,
+			ordinate: component.value.settings.axisY,
+			value_key: component.value.settings.valueKey,
+
+			available_abscissa_keys: component.value.settings.availableAxisXAttributes,
+			available_ordinate_keys: component.value.settings.availableAxisYAttributes,
+			available_value_keys: component.value.settings.availableValueAttributes,
+
+			number_format: component.value.settings.numberFormat,
+			subtotal_formula_id: component.value.settings.subtotal_formula_id,
+
+			matrix_view: component.value.settings.matrix_view, // DEPRECATED possibly
+
+			styles: component.value.settings.styles,
+			auto_scaling: component.value.settings.auto_scaling,
+			calculate_name_column_width: component.value.settings.calculate_name_column_width,
+			hide_empty_lines: component.value.settings.hide_empty_lines
+
+		}
+	})
 
 	// debounce needed because multiple inputs change consecutively
 	const updateRvAfterInputsChange = useDebounce(function () {
@@ -557,7 +558,20 @@
 
 	}, 200)
 
-	function init() {
+	watch(
+		() => component.value.settings,
+		() => {
+
+			if (component.value.layout) {
+				prepareData();
+				matrixComp.value.init();
+			}
+
+		},
+		{deep: true}
+	)
+	function prepareData() {
+
 		vmE = new reportViewerController({
 			$scope,
 			$stateParams: route.params,
@@ -567,48 +581,6 @@
 		const filtersList = formatFiltersForDashInputs(inputs.value, layout.content_type, vmE.entityViewerDataService, evAttrsStore);
 		vmE.entityViewerDataService.setFilters(filtersList);
 
-		/*inputs.value.forEach(input => {
-
-			let watcherCb;
-
-			if ( input.key.startsWith('reportOptions__') ) {
-
-				watcherCb = () => {
-
-					const ro = updateReportOptionsWithDashInputs(input, vmE.entityViewerDataService);
-					// console.log("testing1090.finmarsGrid report options input changed", input, ro);
-					vmE.entityViewerDataService.setReportOptions(ro);
-
-					updateRvAfterInputsChange();
-
-				}
-
-			} else {
-
-				watcherCb = () => {
-
-					const filters = updateFiltersWithDashInputs(input, vmE.entityViewerDataService);
-					// console.log("testing1090.finmarsGrid filter input changed", input, filters);
-					vmE.entityViewerDataService.setFilters(filters);
-
-					updateRvAfterInputsChange();
-
-				}
-
-			}
-
-			watch(
-				() => input.__val,
-				watcherCb
-			)
-
-		})*/
-
-		watch(
-			inputsVals,
-			inputsValsWatcherCb,
-		)
-
 		vmE.entityViewerEventService.addEventListener(
 			entityViewerEvents.ACTIVE_OBJECT_CHANGE,
 			() => {
@@ -616,7 +588,7 @@
 					outputs.value.selected_row.__val =
 						vm.value.entityViewerDataService.getActiveObjectRow()
 				}*/
-				const output = dashStore.getComponentOutputByKey(component.uid, 'active_object');
+				const output = dashStore.getComponentOutputByKey(component.value.uid, 'active_object');
 				dashStore.setComponentOutputValue( output.uid, vmE.entityViewerDataService.getActiveObject() );
 
 			}
@@ -648,37 +620,30 @@
 				},
 			},
 		}*/
-		viewSettings.value = {
-			abscissa: component.settings.axisX,
-			ordinate: component.settings.axisY,
-			value_key: component.settings.valueKey,
 
-			available_abscissa_keys: [],
-			available_ordinate_keys: [],
-			available_value_keys: [],
-
-			number_format: component.settings.number_format,
-			subtotal_formula_id: component.settings.subtotal_formula_id,
-
-			matrix_view: component.settings.matrix_view, // DEPRECATED possibly
-
-			styles: component.settings.styles,
-			auto_scaling: component.settings.auto_scaling,
-			calculate_name_column_width: component.settings.calculate_name_column_width,
-			hide_empty_lines: component.settings.hide_empty_lines
-
-		}
 		provide('ngDependace', {
 			evDataService: vmE.entityViewerDataService,
 			evEventService: vmE.entityViewerEventService,
 			attributeDataService: vmE.attributeDataService,
 		})
 
-		vm.value = vmE
-		// console.log("testing1090.dashboardMatrix init vm.value", vm.value);
+		vm.value = vmE;
+
+	}
+
+	function init() {
+
+		prepareData();
+
+		watch(
+			inputsVals,
+			inputsValsWatcherCb,
+		)
+
 	}
 
 	init()
+
 </script>
 
 <style lang="scss" scoped></style>
