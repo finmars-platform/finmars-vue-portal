@@ -178,6 +178,7 @@ export default {
 	instrumentUserField:{
 		get: prefix + '/ui/instrument-user-field/',
 		put: prefix + '/ui/instrument-user-field/{id}/',
+		post: prefix + '/ui/instrument-user-field/',
 	},
 
 	listLayoutList: {
@@ -348,10 +349,12 @@ export default {
 	complexTransactionUserField: {
 		get: prefix + '/ui/complex-transaction-user-field/',
 		put: prefix + '/ui/complex-transaction-user-field/{id}/',
+		post: prefix + '/ui/complex-transaction-user-field/',
 	},
 	transactionUserField: {
 		get: prefix + '/ui/transaction-user-field/',
 		put: prefix + '/ui/transaction-user-field/{id}/',
+		post: prefix + '/ui/transaction-user-field/',
 	},
 
 }

@@ -119,7 +119,7 @@ const getRvInputs = () => {
 			default_value: null,
 			__val: null,
 		},
-	];
+	]
 }
 
 export default [
@@ -303,15 +303,15 @@ export default [
 		uid: null,
 		user_code: null,
 		name: 'Iframe Component',
-		componentName: 'IframeComponent',
+		componentName: 'DashboardIframeComponent',
 		tab: null,
 		_group: 'system',
 		minColls: 12,
 		minRows: 4,
 		inputs: [],
 		outputs: [],
-		settings: [
-			{
+		settings: {
+			url: {
 				key: 'url',
 				name: 'URL',
 				view: {
@@ -319,7 +319,7 @@ export default [
 				},
 				default_value: null,
 			},
-		],
+		},
 	},
 	{
 		uid: null,
@@ -919,6 +919,17 @@ export default [
 				key: 'selected_row',
 				name: 'Selected row',
 				type: 'report_active_object',
+				default_value: null,
+				__val: null,
+				subscribedTo: [],
+			},
+			{
+				uid: null,
+				component_id: null,
+				user_code: null,
+				key: 'matrix_row',
+				name: 'Matrix row',
+				type: 'matrix_active_object',
 				default_value: null,
 				__val: null,
 				subscribedTo: [],
