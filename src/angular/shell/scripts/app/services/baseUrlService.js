@@ -1,7 +1,5 @@
 window.base_api_url = ''
 
-const store = useStore()
-
 const resolve = () => {
 	if ('__PROJECT_ENV__') {
 		// const host = '__API_HOST__';
@@ -25,7 +23,7 @@ const setMasterUserPrefix = function (_prefix) {
 
 const getMasterUserPrefix = () => {
 	// return window.base_api_url;
-	return store.current.base_api_url
+	return window.base_api_url
 }
 
 const getApiVersion = () => {
