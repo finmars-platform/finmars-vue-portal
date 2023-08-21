@@ -1,11 +1,11 @@
 <template>
 
 	<FmExpansionPanel title="Transactions">
-		<div>
+		<div class="performance-transactions-table-holder">
 
 			<table v-if="transactions.length" class="performance-transactions">
 				<thead>
-				<th>№</th>
+				<th>#</th>
 				<th @click="sortTable('transaction_code')">
 
 					Code
@@ -23,16 +23,21 @@
 					</span>
 
 				</th>
-				<th>Transaction Class</th>
-				<th @click="sortTable('entry_item_name')">
-					Name
-					<span v-if="sortState.column === 'entry_item_name'">
+				<th @click="sortTable('transaction_class_name')">Transaction Class
+
+					<span v-if="sortState.column === 'transaction_class_name'">
 							{{ sortState.ascending ? '↑' : '↓' }}
 					</span>
+
 				</th>
-				<th>Amount</th>
-				<th>Account</th>
+				<th>Principal</th>
+				<th>Carry</th>
+				<th>Overheads</th>
+				<th>Transaction Currency</th>
+				<th>Cash Consideration</th>
 				<th>Settlement Currency</th>
+				<th>Position</th>
+				<th>Instrument</th>
 				<th>Notes</th>
 				</thead>
 				<tbody>
@@ -41,11 +46,19 @@
 					<td>{{ item.transaction_code }}</td>
 					<td>{{ item.accounting_date }}</td>
 					<td>{{ item.transaction_class.name }}</td>
-					<td>{{ item.entry_item_name }}</td>
-					<td>{{ item.entry_amount }}</td>
-					<td>{{ item.entry_account.name }}</td>
-					<td>{{ item.settlement_currency.name }}</td>
-					<td>{{ item.notes }}</td>
+					<td>{{ formatNumber(item.principal_with_sign) }}</td>
+					<td>{{ formatNumber(item.carry_with_sign) }}</td>
+					<td>{{ formatNumber(item.overheads_with_sign) }}</td>
+					<td>{{ item.transaction_currency.short_name }}</td>
+					<td>{{ formatNumber(item.cash_consideration) }}</td>
+					<td>{{ item.settlement_currency.short_name }}</td>
+					<td>{{ formatNumber(item.position_size_with_sign) }}</td>
+					<td>
+						<span v-if="item.instrument">{{ item.instrument.short_name }}</span>
+					</td>
+					<td>
+						<span>{{ item.notes }}</span>
+					</td>
 				</tr>
 				</tbody>
 			</table>
@@ -99,6 +112,18 @@ function getMonthStartAndEnd(monthName, year) {
 	};
 }
 
+function formatNumber(num) {
+
+	const parts = num.toString().split(".");
+
+	// Use a regex to add the single quote as a thousands separator
+	parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, "'");
+
+	// Return the formatted number
+	return parts.join(".");
+
+}
+
 function joinProperty(items, propertyKey, relatedObjects) {
 	return items.map(item => {
 		// Find the related object based on the property key and the corresponding id in the transaction
@@ -145,7 +170,7 @@ let getTransactions = async () => {
 				begin_date: dates.monthStart,
 				end_date: dates.monthEnd,
 				date_field: 'transaction_date',
-				depth_level: 'entry'
+				depth_level: 'base_transaction',
 			},
 		})
 
@@ -156,6 +181,14 @@ let getTransactions = async () => {
 		result_items = joinProperty(result_items, 'entry_account', res.item_accounts);
 		result_items = joinProperty(result_items, 'settlement_currency', res.item_currencies);
 		result_items = joinProperty(result_items, 'transaction_currency', res.item_currencies);
+		result_items = joinProperty(result_items, 'instrument', res.item_instruments);
+
+		result_items = result_items.map(function (item) {
+
+			item.transaction_class_name = item.transaction_class.name;
+
+			return item
+		})
 
 		transactions.value = result_items;
 
@@ -176,12 +209,34 @@ watch(
 
 <style lang="scss" scoped>
 
+.performance-transactions-table-holder {
+	width: 100%;
+	overflow: auto;
+}
+
 .performance-transactions {
 	font-size: 14px;
 	text-align: left;
 
+	border-collapse: collapse;
+
 	th {
-		padding: 8px;
+		padding: 8px 16px;
+		background: #f9f9f9;
+		color: #363636;
+		opacity: .9;
+	}
+
+	span {
+		display: block;
+		max-height: 24px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: pre;
+	}
+
+	tr {
+		border: 1px solid #e0e0e0;
 	}
 
 	td {
