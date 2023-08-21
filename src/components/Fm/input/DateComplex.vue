@@ -253,15 +253,15 @@
 		firstDate: String,
 		firstDatepickerOptions: {
 			type: Object,
-			default: {
-				datepickerMode: 'yesterday-business',
+			default() {
+				return {datepickerMode: 'yesterday-business'};
 			},
 		},
 		secondDate: String,
 		secondDatepickerOptions: {
 			type: Object,
-			default: {
-				datepickerMode: 'datepicker',
+			default() {
+				return {datepickerMode: 'datepicker'};
 			},
 		},
 		label: String,

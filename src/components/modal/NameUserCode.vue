@@ -38,7 +38,7 @@
 		contentType: String,
 		occupiedUserCodes: {
 			type: Array,
-			default: [],
+			default() { return [] },
 		},
 	});
 

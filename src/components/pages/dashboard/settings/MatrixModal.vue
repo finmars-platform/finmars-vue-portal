@@ -114,6 +114,7 @@
 			<LazySelectorsLayout
 				:modelValue="component.settings.layout"
 				:content_type="component.settings.content_type"
+				@userCodeChange="newVal => component.settings.layoutUserCode = newVal"
 				@update:modelValue="newVal => component.settings.layout = copyRvLayoutForDashboard(newVal)"
 				@update:content_type="onContentTypeChange"
 			/>
@@ -170,6 +171,8 @@
 				label="Matrix type"
 			/>
 
+			<FmBtn  @click="openNumberFormatM = true">NUMBER FORMAT</FmBtn>
+
 		</div>
 
 		<div v-if="activeTab === 'advance settings'" class="p-t-16">
@@ -206,7 +209,7 @@
 
 		<div v-else-if="activeTab === 'menu settings'" class="p-t-16">
 
-			<FmAttributesSelect
+<!--			<FmAttributesSelect
 				:modelValue="availableAxisXKeys"
 				title="Axis X Columns"
 				:attributes="evAttrsStore.getDataForAttributesSelector(component.settings.content_type)"
@@ -237,6 +240,26 @@
 				multiselect
 				@selectedAttributesChanged="newVal => setAvailableAttrs(newVal, 'available_value_attributes')"
 				class="dashboard-field m-b-24"
+			/>-->
+			<FmAttrsOptionsMakerInput
+				v-model="component.settings.availableAxisXAttributes"
+				title="Axis X Columns"
+				:attributes="evAttrsStore.getDataForAttributesSelector(component.settings.content_type, 10)"
+				:defaultAttrKey="component.settings.axisX"
+			/>
+
+			<FmAttrsOptionsMakerInput
+				v-model="component.settings.availableAxisYAttributes"
+				title="Axis Y Columns"
+				:attributes="evAttrsStore.getDataForAttributesSelector(component.settings.content_type, 10)"
+				:defaultAttrKey="component.settings.axisY"
+			/>
+
+			<FmAttrsOptionsMakerInput
+				v-model="component.settings.availableValueAttributes"
+				title="Values"
+				:attributes="evAttrsStore.getDataForAttributesSelector(component.settings.content_type, 20)"
+				:defaultAttrKey="component.settings.valueKey"
 			/>
 
 		</div>
@@ -312,11 +335,11 @@
 		tab: Number,
 		inputs: {
 			type: Array,
-			default: [],
+			default() { return [] },
 		},
 		outputs: {
 			type: Array,
-			default: [],
+			default() { return [] },
 		},
 	});
 
@@ -439,7 +462,7 @@
 
 	});
 
-	const getAvailableAttrsKeys = prop => {
+	/*const getAvailableAttrsKeys = prop => {
 
 		if ( !component.value.settings[prop] ) {
 			return null;
@@ -450,9 +473,9 @@
 		})
 	};
 
-	const availableAxisXKeys = computed( () => getAvailableAttrsKeys('available_axis_x_attributes') );
+	const availableAxisXKeys = computed( () => component.value.settings.availableAxisXAttributes );
 	const availableAxisYKeys = computed( () => getAvailableAttrsKeys('available_axis_y_attributes') );
-	const availableValueKeys = computed( () => getAvailableAttrsKeys('available_value_attributes') );
+	const availableValueKeys = computed( () => getAvailableAttrsKeys('available_value_attributes') );*/
 
 	function setAvailableAttrs(attributes, settingsProp) {
 

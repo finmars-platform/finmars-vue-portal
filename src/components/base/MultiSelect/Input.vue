@@ -1,24 +1,43 @@
 <template>
-	<div>
-		<BaseInput class="ms_wrap"
-							 :label="title"
-							 @click="isOpen = true"
-							 modelValue=" "
+	<div ref="inputContainer">
+		<BaseInput
+			class="ms_wrap"
+			:label="title"
+			@click="isOpen = true"
+			modelValue=" "
 		>
 			<template #button><FmIcon icon="menu" /></template>
 
-			<div class="flex aic" style="height: inherit;">
-				<div class="flex-row fi-center fm_chip"
-						 v-for="item in selectedList"
-						 :key="selectedList[item_id]"
+			<div style="height: inherit;">
+				<div
+					:class="{'visibility-hidden': chipsDoNotFit}"
+					style="height: inherit;"
 				>
-					<FmIcon v-if="item.error_data"
-									error
-									icon="info"
-									size="16"
-									class="m-r-8"
-									style="height: 16px;" />
-					<span>{{ item[item_title] }}</span>
+
+					<div
+						ref="chipsElemsList"
+						v-for="item in selectedList"
+						:key="selectedList[item_id]"
+					>
+						<div class="flex-row fi-center fm_chip">
+							<FmIcon
+								v-if="item.error_data"
+								error
+								icon="info"
+								size="16"
+								class="m-r-8"
+								style="height: 16px;"
+							/>
+							<span>{{ item[item_title] }}</span>
+						</div>
+					</div>
+
+				</div>
+
+				<div v-if="chipsDoNotFit" style="height: inherit;">
+					<div class="flex-row fi-center fm_chip">
+						<span>+{{selectedFilter.length}}</span>
+					</div>
 				</div>
 			</div>
 		</BaseInput>
@@ -88,14 +107,16 @@
 						</div>
 					</template>
 				</BaseModal>-->
-		<BaseMultiSelectModal :title="title"
-													:items="items"
-													v-model:opened="isOpen"
-													v-model="props.modelValue"
-													:item_id="item_id"
-													:item_title="item_title"
-													@cancel="isOpen = false"
-													@save="save" />
+		<BaseMultiSelectModal
+			:title="title"
+			:items="items"
+			v-model:opened="isOpen"
+			v-model="props.modelValue"
+			:item_id="item_id"
+			:item_title="item_title"
+			@cancel="isOpen = false"
+			@save="save"
+		/>
 	</div>
 </template>
 
@@ -105,12 +126,12 @@ import {getSelectedFilter} from "./multiSelectHelper";
 let props = defineProps({
 	items: {
 		type: Array,
-		default: []
+		default() { return [] },
 	},
 	/** Unique keys or objects of selected items as string separated by comma or inside an array  */
 	modelValue: {
 		type: [String, Array],
-		default: [],
+		default() { return [] },
 	},
 	title: String,
 	item_id: {
@@ -122,8 +143,27 @@ let props = defineProps({
 		default: 'name'
 	},
 })
+
 let emit = defineEmits(['update:modelValue'])
 
+onMounted(async () => {
+
+	await nextTick();
+
+	let chipsMaxWidth = inputContainer.value.clientWidth;
+
+	const chipsList = chipsElemsList.value || [];
+
+	const chipsWidth = chipsList.reduce(
+		(accumulator, current) => accumulator + current.clientWidth,
+		0
+	);
+
+	chipsDoNotFit.value = chipsWidth > chipsMaxWidth;
+
+})
+
+let chipsDoNotFit = ref(false);
 let isOpen = ref(false)
 let availableSearch = ref('')
 let selectedSearch = ref('')
@@ -194,6 +234,9 @@ let selectedList = computed(() => {
 	})
 
 });
+
+let inputContainer = ref(null);
+let chipsElemsList = ref(null);
 
 /*let filteredSelList = computed(() => {
 	return selectedList.value.filter(selItem => {

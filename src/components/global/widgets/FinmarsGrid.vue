@@ -2,6 +2,7 @@
 	<div class="report-viewer-holder height-100">
 		<AngularFmGridTable
 			v-if="store.current && vm && vm.readyStatus.attributes && vm.readyStatus.layout"
+			ref="rvComp"
 			class="g-group-table-holder"
 			:attributeDataService="vm.attributeDataService"
 			:evDataService="vm.entityViewerDataService"
@@ -48,13 +49,14 @@
 	const dashStore = useStoreDashboard();
 	const evAttrsStore = useEvAttributesStore();
 
-	let component = dashStore.getComponent(props.uid)
+	let component = computed(() => dashStore.getComponent(props.uid));
+	let rvComp = ref(null);
 
-	let layout = JSON.parse(component.settings.layout);
+	let layout = JSON.parse(component.value.settings.layout);
 
 	/*const inputs = computed(() => {
 		let props = dashStore.props.inputs.filter(
-			(prop) => prop.component_id == component.uid
+			(prop) => prop.component_id == component.value.uid
 		)
 		let obj = {}
 
@@ -64,14 +66,14 @@
 		return obj
 	})*/
 	let inputs = computed(() => {
-		return dashStore.props.inputs.filter(input => input.component_id === component.uid );
+		return dashStore.props.inputs.filter(input => input.component_id === component.value.uid );
 	});
 
 	let inputsVals = computed( () => {
 
 		let result = {};
 
-		// const some = dashStore.props.inputs.filter(input => input.component_id === component.uid )
+		// const some = dashStore.props.inputs.filter(input => input.component_id === component.value.uid )
 
 		inputs.value.forEach(input => {
 			result[input.uid] = input.__val;
@@ -84,7 +86,7 @@
 	/* ME 2023-08-06
 	const outputs = computed(() => {
 		let props = dashStore.props.outputs.filter(
-			(prop) => prop.component_id == component.uid
+			(prop) => prop.component_id == component.value.uid
 		)
 		let obj = {}
 
@@ -96,12 +98,12 @@
 
 	/*const settings = computed(() => {
 		let obj = {}
-		component.settings.forEach((prop) => {
+		component.value.settings.forEach((prop) => {
 			obj[prop.key] = prop.default_value
 		})
 		return obj
 	})*/
-	// let layoutData = computed(() => component.settings.layoutData );
+	// let layoutData = computed(() => component.value.settings.layoutData );
 
 	const route = {
 		current: {
@@ -142,13 +144,13 @@
 		layout: JSON.parse(settings.value.layout),
 	}*/
 	let $scope = {
-		contentType: component.settings.content_type,
-		entityType: entities[ component.settings.content_type ],
+		contentType: component.value.settings.content_type,
+		entityType: entities[ component.value.settings.content_type ],
 		viewContext: 'dashboard',
 		layout: layout,
 	}
 
-	/*if ( component.settings.content_type == 'reports.transactionreport' ) {
+	/*if ( component.value.settings.content_type == 'reports.transactionreport' ) {
 		watch(
 			() => inputs.value.selected_row,
 			() => {
@@ -243,8 +245,8 @@
 
 		}
 	)*/
+	function prepareData() {
 
-	onMounted(async () => {
 		vm.value = new reportViewerController({
 			$scope,
 			$stateParams: route.params,
@@ -291,12 +293,6 @@
 
 		})*/
 
-		watch(
-			inputsVals,
-			inputsValsWatcherCb,
-
-		)
-
 		/* ME 2023-08-06
 		vm.value.entityViewerEventService.addEventListener(
 			entityViewerEvents.ACTIVE_OBJECT_CHANGE,
@@ -314,19 +310,36 @@
 					outputs.value.selected_row.__val =
 						vm.value.entityViewerDataService.getActiveObjectRow()
 				}*/
-				const output = dashStore.getComponentOutputByKey(component.uid, 'active_object');
+				const output = dashStore.getComponentOutputByKey(component.value.uid, 'active_object');
 				dashStore.setComponentOutputValue( output.uid, vm.value.entityViewerDataService.getActiveObjectRow() )
 
 			}
 		)
 
-		// evEventService.addEventListener(evEvents.LAYOUT_NAME_CHANGE, function () {
-		// 	listLayout = evDataService.getListLayout()
+	}
 
-		// 	if (listLayout && listLayout.name) {
-		// 		layoutData.name = listLayout.name
-		// 	}
-		// })
+	watch(
+		() => component.value.settings,
+		() => {
+
+			if (component.value.layout) {
+				prepareData();
+				rvComp.value.init();
+			}
+
+		},
+		{deep: true}
+	)
+
+	onMounted(async () => {
+
+		watch(
+			inputsVals,
+			inputsValsWatcherCb,
+		)
+
+		prepareData();
+
 	})
 
 </script>
