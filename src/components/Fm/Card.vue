@@ -41,8 +41,8 @@
 		bottom: 0;
 		left: 0;
 		width: 100%;
-		padding: inherit;
-		padding-bottom: 20px;
+		//padding: inherit;
+		//padding-bottom: 20px;
 		padding-top: 0;
 	}
 	.with_controls {

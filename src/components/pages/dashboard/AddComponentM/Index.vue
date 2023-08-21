@@ -68,7 +68,7 @@
 		}
 
 		dashStore.$patch((state) => {
-			// console.log( "testing1090.addComponent new_comp", JSON.parse(JSON.stringify( new_comp )) );
+
 			dashStore.components.push(new_comp)
 
 			component.value.inputs.forEach((prop) => {

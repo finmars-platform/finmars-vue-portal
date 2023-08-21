@@ -19,6 +19,7 @@
 			<LazySelectorsLayout
 				:modelValue="component.settings.layout"
 				:content_type="component.settings.content_type"
+				@userCodeChange="newVal => component.settings.layoutUserCode = newVal"
 				@update:modelValue="newVal => component.settings.layout = copyRvLayoutForDashboard(newVal)"
 				@update:content_type="onContentTypeChange"
 			/>
@@ -47,11 +48,11 @@
 		tab: Number,
 		inputs: {
 			type: Array,
-			default: [],
+			default() { return [] },
 		},
 		outputs: {
 			type: Array,
-			default: [],
+			default() { return [] },
 		},
 	});
 
