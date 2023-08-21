@@ -306,8 +306,8 @@ export default [
 		componentName: 'DashboardIframeComponent',
 		tab: null,
 		_group: 'system',
-		minColls: 12,
-		minRows: 4,
+		minColls: 2,
+		minRows: 1,
 		inputs: [],
 		outputs: [],
 		settings: {
