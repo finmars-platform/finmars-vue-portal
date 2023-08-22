@@ -26,6 +26,8 @@ export default defineStore({
 			this.getUser()
 			await this.getMasterUsers()
 			if (this.current) {
+				// hack for repots
+				window.base_api_url = this.current.base_api_url
 				this.defaultConfigCode = await useApi('configurationList.get')
 			}
 		},
