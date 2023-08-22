@@ -1,5 +1,3 @@
-window.base_api_url = ''
-
 const resolve = () => {
 	if ('__PROJECT_ENV__') {
 		// const host = '__API_HOST__';
