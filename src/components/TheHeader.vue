@@ -293,7 +293,6 @@ header {
 	align-items: center;
 	.user-profile-picture {
 		width: 32px;
-		height: 32px;
 		margin-right: 8px;
 	}
 }
