@@ -54,7 +54,7 @@
 							<li>
 								<NuxtLink to="/home" class="sidemenu-btn">
 									<FmIcon icon="home" class="side-nav-icon"></FmIcon>
-									<span class="side-nav-title">Homepage</span>
+									<span class="side-nav-title">Home</span>
 								</NuxtLink>
 							</li>
 
@@ -395,17 +395,17 @@
 												</span>
 											</a>
 										</li>
-										<li v-if="accessTable.data_simple_import">
-											<a
-												:href="getUrlToOldApp('/import/unified-entity-import')"
-												class="sidenav-dropdown-menu-btn two-line-text"
-											>
-												<span class="side-nav-title">
-													Instrument<br/>
-													(from file)
-												</span>
-											</a>
-										</li>
+<!--										<li v-if="accessTable.data_simple_import">-->
+<!--											<a-->
+<!--												:href="getUrlToOldApp('/import/unified-entity-import')"-->
+<!--												class="sidenav-dropdown-menu-btn two-line-text"-->
+<!--											>-->
+<!--												<span class="side-nav-title">-->
+<!--													Instrument<br/>-->
+<!--													(from file)-->
+<!--												</span>-->
+<!--											</a>-->
+<!--										</li>-->
 										<li v-if="accessTable.data_transaction_import">
 											<a
 												:href="getUrlToOldApp('/import/transaction-import')"
@@ -450,17 +450,17 @@
 												</span>
 											</a>
 										</li>
-										<li v-if="accessTable.data_prices_download">
-											<a
-												:href="getUrlToOldApp('/import/prices-import')"
-												class="sidenav-dropdown-menu-btn two-line-text"
-											>
-												<span class="side-nav-title">
-													Prices/FX<br/>
-													(from provider)
-												</span>
-											</a>
-										</li>
+<!--										<li v-if="accessTable.data_prices_download">-->
+<!--											<a-->
+<!--												:href="getUrlToOldApp('/import/prices-import')"-->
+<!--												class="sidenav-dropdown-menu-btn two-line-text"-->
+<!--											>-->
+<!--												<span class="side-nav-title">-->
+<!--													Prices/FX<br/>-->
+<!--													(from provider)-->
+<!--												</span>-->
+<!--											</a>-->
+<!--										</li>-->
 										<li>
 											<a
 												:href="getUrlToOldApp('/run-data-procedures')"
@@ -805,16 +805,16 @@
 														>
 													</a>
 												</li>
-												<li
-													v-if="accessTable.configuration_complex_import_scheme"
-												>
-													<a
-														:href="getUrlToOldApp('/settings/complex-import')"
-														class="sidenav-dropdown-menu-btn"
-													>
-														<span class="side-nav-title">Complex Import</span>
-													</a>
-												</li>
+<!--												<li-->
+<!--													v-if="accessTable.configuration_complex_import_scheme"-->
+<!--												>-->
+<!--													<a-->
+<!--														:href="getUrlToOldApp('/settings/complex-import')"-->
+<!--														class="sidenav-dropdown-menu-btn"-->
+<!--													>-->
+<!--														<span class="side-nav-title">Complex Import</span>-->
+<!--													</a>-->
+<!--												</li>-->
 											</ul>
 										</div>
 									</li>
@@ -1828,13 +1828,13 @@ padding: 0;
 		padding-left: 1em;
 		margin-left: 0;
 		margin-bottom: 6px;
-		font-size: 11px;
+		font-size: 12px;
 		line-height: 2;
 		/*padding-top: 12px;
 		padding-bottom: 10px;*/
 		padding-top: 3px;
 		padding-bottom: 3px;
-		text-transform: uppercase;
+		text-transform: capitalize;
 
 		&:not([disabled]):hover {
 			@include option-hover;
@@ -1914,7 +1914,7 @@ padding: 0;
 
 	text-align: left;
 	line-height: 2;
-	text-transform: uppercase;
+	text-transform: capitalize;
 
 	//padding-top: 11px;
 	//padding-bottom: 2px;
@@ -1932,7 +1932,7 @@ padding: 0;
 	}
 
 	&:not(.f-s-10) {
-		font-size: 10px;
+		font-size: 12px;
 	}
 
 	.icon {
