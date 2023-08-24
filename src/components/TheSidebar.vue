@@ -1063,17 +1063,17 @@
 
 		<div class="build-date">
 
-			<div class="side-nav-versions-block">
-				<div v-for="version of store.current.versions">
+<!--			<div class="side-nav-versions-block">-->
+<!--				<div v-for="version of store.current.versions">-->
 
-					<div>{{ version.app }}:{{ version.version }}</div>
+<!--					<div>{{ version.app }}:{{ version.version }}</div>-->
 
-				</div>
-			</div>
+<!--				</div>-->
+<!--			</div>-->
 
-			<div>
-				Session Remaining Time: {{ remainingTimePretty }}
-			</div>
+<!--			<div>-->
+<!--				Session Remaining Time: {{ remainingTimePretty }}-->
+<!--			</div>-->
 
 			<a href="https://finmars.com" target="_blank" class="finmars-site-link">© {{ currentYear }} Finmars
 				SCSA</a>
@@ -1892,9 +1892,9 @@ padding: 0;
 		color: $separ;
 		display: inline-block;
 		position: absolute;
-		left: 11px;
+		left: 17px;
 		// left: 17px;
-		bottom: 3px;
+		//bottom: 3px;
 		// bottom: 0;
 	}
 }
@@ -1909,14 +1909,15 @@ padding: 0;
 	position: relative;
 	width: 100%;
 	height: 36px;
-	display: block;
+	display: flex;
+	align-items: center;
 
 	text-align: left;
 	line-height: 2;
 	text-transform: uppercase;
 
-	padding-top: 11px;
-	padding-bottom: 2px;
+	//padding-top: 11px;
+	//padding-bottom: 2px;
 	/*padding-top: 0;
 	padding-bottom: 0;*/
 	padding-left: 55px;
@@ -1931,7 +1932,11 @@ padding: 0;
 	}
 
 	&:not(.f-s-10) {
-		font-size: 11px;
+		font-size: 10px;
+	}
+
+	.icon {
+		font-size: 20px;
 	}
 
 	&:not([disabled]):hover {
@@ -1959,7 +1964,8 @@ padding: 0;
 
 .side-menu-bottom-menu {
 	position: absolute;
-	bottom: 75px;
+	//bottom: 75px;
+	bottom: 20px;
 	width: 100%;
 }
 
@@ -2201,10 +2207,21 @@ padding: 0;
 
 .sidenav-api-link, .finmars-site-link {
 	color: #fff;
-	text-decoration: none;
+	margin-top: 2px;
+	display: block;
+	color: rgba(255,255,255,.6);
+	padding-left: 24px;
+
+	&:visited {
+		color: rgba(255,255,255,.6);
+	}
+
+	&:active {
+		color: rgba(255,255,255,.6);
+	}
 
 	&:hover {
-		opacity: 0.7;
+		color: rgba(255,255,255,1);
 	}
 }
 
