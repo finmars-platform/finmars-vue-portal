@@ -78,11 +78,11 @@
 		valueType: Number, // used to filter attributes
 		attributes: {
 			type: Array,
-			default: [],
+			default() { return [] },
 		},
 		disabledAttributes: {
 			type: Array,
-			default: [],
+			default() { return [] },
 		},
 		selected: [Array, String], // Array for multiselect, String and null for select
 		multiselect: Boolean,
@@ -99,6 +99,11 @@
 
 	let searchParams = ref('');
 	let newSelAttrs = ref( props.multiselect ? [] : '' );
+
+	watch(
+		() => props.multiselect,
+		() => { newSelAttrs.value = props.multiselect ? [] : ''; }
+	)
 
 	watch(
 		() => props.selected,

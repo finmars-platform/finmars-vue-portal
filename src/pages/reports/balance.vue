@@ -1,6 +1,6 @@
 <template>
 	<div class="report-viewer-holder height-100">
-		<LazyAngularFmGridTable
+		<AngularFmGridTable
 			v-if="vm && vm.readyStatus.attributes && vm.readyStatus.layout"
 			class="g-group-table-holder"
 			:attributeDataService="vm.attributeDataService"
@@ -28,7 +28,7 @@
 		middleware: 'auth',
 		bread: [
 			{
-				text: 'Reports: P&L',
+				text: 'Reports: Balance',
 				disabled: true,
 			},
 		],
@@ -36,7 +36,7 @@
 
 	const route = {
 		current: {
-			name: 'app.portal.reports.profit-and-lost',
+			name: 'app.portal.reports.balance',
 		},
 		params: useRoute().query,
 	}
@@ -61,8 +61,8 @@
 	let vm = ref(null)
 
 	let $scope = {
-		contentType: 'reports.plreport',
-		entityType: 'pl-report',
+		contentType: 'reports.balancereport',
+		entityType: 'balance-report',
 	}
 
 	onMounted(() => {

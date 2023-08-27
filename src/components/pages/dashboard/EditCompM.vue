@@ -83,6 +83,9 @@
 			required: true,
 		},
 	})
+
+	const emit = defineEmits(['save']);
+
 	const dashStore = useStoreDashboard()
 	const tabList = [...dashStore.tabs, { id: 1, name: 'Top place' }]
 
@@ -243,6 +246,9 @@
 				})
 			})
 		}
+
+		emit('save');
+
 		cancel(close)
 	}
 </script>

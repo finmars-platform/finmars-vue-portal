@@ -69,7 +69,7 @@
 		valueType: Number, // used to filter attributes
 		attributes: {
 			type: Array,
-			default: []
+			default() { return [] },
 		},
 		multiselect: Boolean,
 		disabled: Boolean,
@@ -112,12 +112,6 @@
 
 	function openDialog() {
 		if (!props.disabled) modalIsOpen.value = true;
-	}
-
-	function onSelectedAttrsChange() {
-
-
-
 	}
 
 	let selectedAttrs = computed(() => {
