@@ -212,6 +212,13 @@
 			cursor: pointer;
 		}
 	}
+
+	.selected_text {
+		-webkit-line-clamp: 1;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
 	/*.selected_field {
 		height: 100%;
 		display: flex;
