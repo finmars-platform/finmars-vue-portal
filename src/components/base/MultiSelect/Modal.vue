@@ -29,12 +29,12 @@
 
 		items: {
 			type: Array,
-			default: []
+			default() { return [] },
 		},
 		/** Unique keys or objects of selected items as string separated by comma or inside an array  */
 		modelValue: {
 			type: [String, Array],
-			default: [],
+			default() { return [] },
 		},
 		item_id: {
 			type: String,

@@ -108,8 +108,6 @@ export default function () {
 	 * @memberof gFiltersHelper
 	 */
 	const filterUseFromAboveFilters = function (filters) {
-
-
 		const useFromAboveFilters = filters.filter((filter, index) => {
 			if (
 				filter.options &&

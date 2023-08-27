@@ -135,14 +135,14 @@
 
 		localItems: {
 			type: Array,
-			default: [],
+			default() { return [] },
 		},
 
 		localItemsTotal: Number,
 
 		databaseItems: {
 			type: Array,
-			default: [],
+			default() { return [] },
 		},
 
 		databaseItemsTotal: Number,

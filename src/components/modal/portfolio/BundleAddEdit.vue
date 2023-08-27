@@ -45,7 +45,7 @@
 		},
 		bundleRegisters: {
 			type: Array,
-			default: [],
+			default() { return [] },
 		}
 	});
 

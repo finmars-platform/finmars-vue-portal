@@ -277,6 +277,8 @@
 
 	let isRootEntityViewerRef = ref(true)
 
+	let init;
+
 	onMounted(async () => {
 		let attrs = null
 
@@ -413,10 +415,6 @@
 
 			evEventService.addEventListener(evEvents.FILTERS_RENDERED, function () {
 				readyToRenderTable.value = true
-
-				setTimeout(() => {
-					$apply()
-				}, 0)
 			})
 
 			evEventService.addEventListener(evEvents.DATA_LOAD_END, function () {
@@ -447,7 +445,7 @@
 			)
 		}
 
-		let init = function () {
+		init = function () {
 			initEventListeners()
 
 			if (isReport) applyGroupsFoldingFromLocalStorage()
@@ -463,6 +461,7 @@
 
 		init()
 	})
+
 	function getWrapperClasses() {
 		var classes = ''
 		return classes
@@ -482,6 +481,10 @@
 
 		return classes
 	}
+
+	defineExpose({
+		init
+	})
 </script>
 
 <style lang="scss" scoped>

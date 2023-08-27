@@ -1,7 +1,3 @@
-'use strict'
-
-window.base_api_url = ''
-
 const resolve = () => {
 	if ('__PROJECT_ENV__') {
 		// const host = '__API_HOST__';
@@ -24,7 +20,8 @@ const setMasterUserPrefix = function (_prefix) {
 }
 
 const getMasterUserPrefix = () => {
-	return window.base_api_url || 'space0crgw'
+	// return window.base_api_url;
+	return window.base_api_url
 }
 
 const getApiVersion = () => {

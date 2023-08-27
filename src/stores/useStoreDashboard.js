@@ -1,5 +1,15 @@
 import dayjs from 'dayjs'
 
+function inputOutputIncompatible(input, output) {
+
+	// TODO: check that value_types of input and output are compatible
+	/*if (input.value_type !== output.value_type) {
+
+	}*/
+	return false;
+
+}
+
 export default defineStore({
 	id: 'dashboard',
 	state: () => {
@@ -44,6 +54,13 @@ export default defineStore({
 					this.setPropsWatchers()
 				}
 			)
+
+			/*watch(
+				() => this.props.inputs,
+				() => {
+					console.trace("testing1090.useStoreDashboard inputs changed");
+				}
+			)*/
 		},
 		getComponent(id) {
 			return this.components.find((item) => item.uid == id)
@@ -54,6 +71,15 @@ export default defineStore({
 			)
 			this.components[index] = component
 			// TODO: udpate this.props.inputs and this.props.outputs
+		},
+		getComponentOutputByKey(compUid, outputKey) {
+			return this.props.outputs.find(output => {
+				return output.component_id === compUid && output.key === outputKey;
+			});
+		},
+		setComponentOutputValue(uid, val) {
+			const output = this.props.outputs.find(output => output.uid === uid);
+			output.__val = val;
 		},
 		async getLayouts() {
 			let dashboardLayout = localStorage.getItem('dashboardLayout')
@@ -91,21 +117,24 @@ export default defineStore({
 			// console.table(this.props)
 		},
 		setPropsWatchers() {
-			this.props.outputs.forEach((prop) => {
-				if (prop.__unwatch) return false
+			this.props.outputs.forEach(outputProp => {
+				// console.log("testing1090.useStoreDashboard outputProp ", outputProp);
+				if (outputProp.__unwatch) return false
 
-				prop.__unwatch = watch(
-					() => prop.__val,
+				const dynamicOutput = this.getComponent(outputProp.component_id).dynamicOutputs;
+
+				outputProp.__unwatch = watch(
+					() => outputProp.__val,
 					(newVal, oldVal) => {
-						let uid = prop.uid
-						let props = this.props.inputs.filter((item) =>
-							item.subscribedTo.includes(uid)
-						)
 
+						let inputsProps = this.props.inputs.filter((item) =>
+							item.subscribedTo.find(data => data.output_id === outputProp.uid)
+						)
+						// console.log("testing1090.useStoreDashboard outputProp ", outputProp);
 						let log = {
-							name: prop.name,
+							name: outputProp.name,
 							componentName: this.components.find(
-								(item) => item.uid == prop.component_id
+								(item) => item.uid == outputProp.component_id
 							).user_code,
 							newVal: newVal,
 							oldVal: oldVal,
@@ -119,24 +148,67 @@ export default defineStore({
 						// 	'font-size: 16px;'
 						// )
 
-						props.forEach((childProp) => {
-							log.children.push({
+						/* ============================================================
+						 * ===== ME: 2023-07-07 Can be used in later refactoring ======
+						 * ============================================================
+
+						inputs.forEach((input) => {
+
+							if ( newVal && input.outputToInput ) {
+
+								let inputVal = {};
+
+								input.outputToInput.forEach(data => {
+
+									if ( newVal.hasOwnProperty(data.output.property) ) {
+
+										inputVal[data.input.property] = newVal[data.output.property];
+
+									}
+
+								});
+
+								input.__val = inputVal;
+
+
+							} else {
+								input.__val = outputProp.__val;
+							}
+
+						}) */
+
+						inputsProps.forEach((inputProp) => {
+							/*log.children.push({
 								name: childProp.name,
 								componentName: this.components.find(
 									(item) => item.uid == childProp.component_id
 								).user_code,
 								newVal: prop.__val,
 								oldVal: childProp.__val,
-							})
+							})*/
+							// console.log("testing1090.useStoreDashboard inputProp", inputProp);
+							if ( dynamicOutput ) {
 
-							childProp.__val = prop.__val
+								/*if ( inputOutputIncompatible(inputProp, outputProp) ) {
+									return;
+								}*/
+
+								const subToData = inputProp.subscribedTo.find( data => data.output_id === outputProp.uid );
+								// console.log("testing1090.useStoreDashboard subToData", subToData, newVal, newVal[subToData.propertyName]);
+								inputProp.__val = newVal[subToData.propertyName];
+								// console.log("testing1090.useStoreDashboard inputProp after", inputProp, JSON.parse(JSON.stringify(inputProp)) );
+							} else {
+								// console.log("testing1090.useStoreDashboard 2 outputProp ", outputProp.__val, JSON.parse(JSON.stringify(outputProp)) );
+								inputProp.__val = outputProp.__val;
+
+							}
 
 							// console.log(
 							// 	`=> ${this.components.find(item => item.id == childProp.cid).user_code} / %c${childProp.name}`,
 							// 	'font-size: 14px;'
 							// )
 						})
-
+						// console.log("testing1090.useStoreDashboard props ", this.props);
 						// console.groupEnd()
 
 						this.__log.push(log)
@@ -315,20 +387,24 @@ export default defineStore({
 			this.layoutList[index].user_name = data.user_name
 		},
 		async saveLayout() {
+
+			let props = JSON.parse(JSON.stringify(this.props))
+
+			this.props.inputs.forEach((prop, k) => {
+				props.inputs[k].__val = null
+			})
+			this.props.outputs.forEach((prop, k) => {
+				props.outputs[k].default_value = prop.__val
+
+				// Need to add filtor by control
+				props.outputs[k].__val = null
+			})
+
+			let res;
+
 			if (!this.layout.id) {
-				let props = JSON.parse(JSON.stringify(this.props))
 
-				this.props.inputs.forEach((prop, k) => {
-					props.inputs[k].__val = null
-				})
-				this.props.outputs.forEach((prop, k) => {
-					props.outputs[k].default_value = prop.__val
-
-					// Need to add filtor by control
-					props.outputs[k].__val = null
-				})
-
-				let res = await useApi('dashboardLayout.post', {
+				res = await useApi('dashboardLayout.post', {
 					body: {
 						name: this.layout.name + ' dashboardV2@',
 						user_code: this.layout.user_code,
@@ -341,29 +417,10 @@ export default defineStore({
 					},
 				})
 
-				if (!res.error) {
-					this.layoutList.push(res)
-					this.activeLayoutId = res.id
+			}
+			else {
 
-					useNotify({
-						type: 'success',
-						title: `Dashboard layout ${res.name} successfully saved`,
-					})
-				}
-			} else {
-				let props = JSON.parse(JSON.stringify(this.props))
-
-				this.props.inputs.forEach((prop, k) => {
-					props.inputs[k].__val = null
-				})
-				this.props.outputs.forEach((prop, k) => {
-					props.outputs[k].default_value = prop.__val
-
-					// Need to add filtor by control
-					props.outputs[k].__val = null
-				})
-
-				let res = await useApi('dashboardLayout.put', {
+				res = await useApi('dashboardLayout.put', {
 					params: { id: this.layout.id },
 					body: {
 						user_code: this.layout.user_code,
@@ -376,7 +433,18 @@ export default defineStore({
 					},
 				})
 
-				this.isEdit = false
+			}
+
+			if (!res.error) {
+
+				this.layoutList.push(res)
+				this.activeLayoutId = res.id
+				// this.isEdit = false
+
+				useNotify({
+					type: 'success',
+					title: `Dashboard layout ${res.name} successfully saved`,
+				})
 			}
 
 			if (!this.activeLayoutId) this.activeLayoutId = this.layoutList[0].id
@@ -402,21 +470,24 @@ export default defineStore({
 			this.activeTab = null
 			this.activeLayoutId = null
 		},
+		removeInput(uid) {
+			let index = this.props.inputs.findIndex(
+				(item) => item.uid === uid
+			)
+
+			if (index === -1) return false;
+
+			this.props.inputs.splice(index, 1);
+		},
 		removeComponent(uid) {
 			let index = this.components.findIndex((item) => item.uid == uid)
 
-			if (index === -1) throw new Error('[Store:removeComponent] ID not find')
+			if (index === -1) throw new Error('[Store:removeComponent] ID not found')
 
 			this.props.inputs
 				.filter((item) => item.component_id == this.components[index].uid)
 				.forEach((prop) => {
-					let index = this.props.inputs.findIndex(
-						(item) => item.uid == prop.uid
-					)
-
-					if (index === -1) return false
-
-					this.props.inputs.splice(index, 1)
+					this.removeInput(prop.uid)
 				})
 
 			this.props.outputs
@@ -430,7 +501,8 @@ export default defineStore({
 
 					this.props.inputs
 						.filter((item) =>
-							item.subscribedTo.includes(this.props.outputs[index].uid)
+							// item.subscribedTo.includes(this.props.outputs[index].uid)
+							item.subscribedTo.find(data => data.output_id === prop.uid)
 						)
 						.forEach((item) => {
 							let indexParent = item.subscribedTo.findIndex(

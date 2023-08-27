@@ -15,10 +15,10 @@
 						:key="item[item_id]"
 						:class="{ selected: item.selected }"
 						@click="item.selected = !item.selected"
-						@dblclick="
-							item.selected = true
-							addItem()
-						"
+						@dblclick="() => {
+							item.selected = true;
+							addItem();
+						}"
 					>
 						{{ item[item_title] }}
 					</div>
@@ -52,10 +52,9 @@
 						:key="item[item_id]"
 						:class="{ selected: item.selected }"
 						@click="item.selected = !item.selected"
-						@dblclick="
-							item.selected = true
-							removeItem()
-						"
+						@dblclick="() => {
+							item.selected = false; removeItem();
+						}"
 					>
 						{{ item[item_title] }}
 					</div>
@@ -75,7 +74,7 @@
 	let props = defineProps({
 		items: {
 			type: Array,
-			default: [],
+			default() { return [] },
 		},
 		/** Unique keys or objects of selected items as string separated by comma or inside an array */
 		modelValue: [String, Array],

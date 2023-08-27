@@ -2,7 +2,7 @@
 	<div
 		v-bind="$attrs"
 		v-if="scope.readyStatus"
-		class="g-filter-type-n-value flex-row fc-space-between"
+		class="g-filter-type-n-value flex-row fc-space-between m-b-16"
 	>
 		<FmSelect
 			class="g-filter-types-select m-b-0"
@@ -12,7 +12,7 @@
 			@update:modelValue="scope.changeFilterType(scope.activeFilter.type)"
 		/>
 
-		<div class="g-filter-value-wrap m-b-16">
+		<div class="g-filter-value-wrap">
 			<div
 				v-if="
 					scope.filter.options.filter_type !== 'multiselector' &&
