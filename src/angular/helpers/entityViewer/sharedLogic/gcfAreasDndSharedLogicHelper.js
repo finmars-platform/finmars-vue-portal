@@ -107,6 +107,7 @@ export default function (scope, $mdDialog, isReport) {
 	const getDndAreas = function () {
 		scope.dndAreas.columns =
 			scope.contentWrapElement.querySelector('.gColumnsHolder')
+		console.log('scope.contentWrapElement:', scope.contentWrapElement)
 		if (isReport)
 			scope.dndAreas.groups =
 				scope.contentWrapElement.querySelector('.gGroupsHolder')
@@ -148,11 +149,11 @@ export default function (scope, $mdDialog, isReport) {
 					break
 
 				case 'columns':
-					GCitems = evDataService.getColumns()
+					GCitems = scope.evDataService.getColumns()
 
 					updateGCFMethod = function () {
-						evDataService.setColumns(GCitems)
-						evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
+						scope.evDataService.setColumns(GCitems)
+						scope.evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
 					}
 
 					break
@@ -179,7 +180,7 @@ export default function (scope, $mdDialog, isReport) {
 
 			updateGCFMethod()
 
-			evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+			scope.evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 		}
 	}
 
@@ -360,21 +361,21 @@ export default function (scope, $mdDialog, isReport) {
 
 		switch (droppedItemData.itemOrigin) {
 			case 'groups':
-				GCitems = evDataService.getGroups()
+				GCitems = scope.evDataService.getGroups()
 
 				updateGCFMethod = function () {
-					evDataService.setGroups(GCitems)
-					evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
+					scope.evDataService.setGroups(GCitems)
+					scope.evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
 				}
 
 				break
 
 			case 'columns':
-				GCitems = evDataService.getColumns()
+				GCitems = scope.evDataService.getColumns()
 
 				updateGCFMethod = function () {
-					evDataService.setColumns(GCitems)
-					evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
+					scope.evDataService.setColumns(GCitems)
+					scope.evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
 				}
 				break
 		}
@@ -385,7 +386,7 @@ export default function (scope, $mdDialog, isReport) {
 		GCitems.splice(deletedItemIndex, 1)
 
 		updateGCFMethod()
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+		scope.evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 	}
 
 	/** @module gcfAreasDndSharedLogicHelper **/

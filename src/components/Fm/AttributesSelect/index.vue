@@ -63,13 +63,13 @@
 <script setup>
 
 	let props = defineProps({
-		modelValue: [Array, String, null], // Array for multiselect, String and null for select
+		modelValue: [Array, String], // Array for multiselect, String and null for select
 		title: String,
 		contentType: String,
 		valueType: Number, // used to filter attributes
 		attributes: {
 			type: Array,
-			default: []
+			default() { return [] },
 		},
 		multiselect: Boolean,
 		disabled: Boolean,
@@ -112,12 +112,6 @@
 
 	function openDialog() {
 		if (!props.disabled) modalIsOpen.value = true;
-	}
-
-	function onSelectedAttrsChange() {
-
-
-
 	}
 
 	let selectedAttrs = computed(() => {

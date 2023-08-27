@@ -1,13 +1,13 @@
 <template>
 	<ModalSystemErrorLog v-model="showErrorLog"
-											 @cancel="showErrorLog = false" />
+											 @cancel="showErrorLog = false"/>
 
 	<div class="sidenav-wrapper">
 		<div class="sidenav-left">
 			<div class="sidenav-logo-container">
 				<div class="sidenav-logo-wrapper">
 					<NuxtLink to="/home">
-						<img src="/img/logo.png" class="sidenav-logo" alt="" />
+						<img src="/img/logo.png" class="sidenav-logo" alt=""/>
 					</NuxtLink>
 				</div>
 				<div class="panel-resizer-holder sidenav-resizer-holder">
@@ -390,7 +390,7 @@
 												class="sidenav-dropdown-menu-btn two-line-text"
 											>
 												<span class="side-nav-title">
-													Data<br />
+													Data<br/>
 													(from file)
 												</span>
 											</a>
@@ -401,7 +401,7 @@
 												class="sidenav-dropdown-menu-btn two-line-text"
 											>
 												<span class="side-nav-title">
-													Instrument<br />
+													Instrument<br/>
 													(from file)
 												</span>
 											</a>
@@ -412,7 +412,7 @@
 												class="sidenav-dropdown-menu-btn two-line-text"
 											>
 												<span class="side-nav-title">
-													Transactions<br />
+													Transactions<br/>
 													(from file)
 												</span>
 											</a>
@@ -423,7 +423,7 @@
 												class="sidenav-dropdown-menu-btn two-line-text"
 											>
 												<span class="side-nav-title">
-													Data and Transactions<br />
+													Data and Transactions<br/>
 													(from file)
 												</span>
 											</a>
@@ -434,7 +434,7 @@
 												class="sidenav-dropdown-menu-btn two-line-text"
 											>
 												<span class="side-nav-title">
-													Instrument<br />
+													Instrument<br/>
 													(from provider)
 												</span>
 											</a>
@@ -445,7 +445,7 @@
 												class="sidenav-dropdown-menu-btn two-line-text"
 											>
 												<span class="side-nav-title">
-													Instrument<br />
+													Instrument<br/>
 													(from Finmars Database)
 												</span>
 											</a>
@@ -456,7 +456,7 @@
 												class="sidenav-dropdown-menu-btn two-line-text"
 											>
 												<span class="side-nav-title">
-													Prices/FX<br />
+													Prices/FX<br/>
 													(from provider)
 												</span>
 											</a>
@@ -642,6 +642,16 @@
 													>
 														<span class="side-nav-title"
 														>Transaction Types</span
+														>
+													</a>
+												</li>
+												<li>
+													<a
+														:href="getUrlToOldApp('/transaction-type-group')"
+														class="sidenav-dropdown-menu-btn"
+													>
+														<span class="side-nav-title"
+														>Transaction Type Groups</span
 														>
 													</a>
 												</li>
@@ -1052,44 +1062,22 @@
 		</div>
 
 		<div class="build-date">
-			<div class="flex-row">
-				<div>Build date: {{ buildDate }}</div>
 
-				<div class="ws-status"
-						 :class="getWsStatus()"
-						 :title="`Websocket status: ${getWsStatus()}`"></div>
-			</div>
+			<div class="side-nav-versions-block">
+				<div v-for="version of store.current.versions">
 
-			<div class="sidenav-error-subtitle" @click="showErrorLog = true">
-				<span :class="{'text-warning-red': store.systemErrors.length}">Errors: {{ store.systemErrors.length }}</span>
+					<div>{{ version.app }}:{{ version.version }}</div>
+
+				</div>
 			</div>
 
 			<div>
-				<a :href="`${config.public.apiURL}/${store.current.base_api_url}/api/v1/`"
-					 class="display-inline highlight link">API:</a>&nbsp;
-
-				<span title="Copy" class="cursor-pointer link" @click="copyToBuffer(store.current.base_api_url)">{{store.current.base_api_url}}</span>&nbsp;
-
-				<a :href="getUrlToOldApp('/update-center')"
-					 class="display-inline highlight link">{{store.current.version}}</a>
+				Session Remaining Time: {{ remainingTimePretty }}
 			</div>
-			<!--				<span class="websocket-connection-status {{vm.getWsStatus()}}"
-										title="Websocket status: {{vm.getWsStatus()}}"></span>
 
-							<br/>
-							<div class="sidenav-error-subtitle" data-ng-click="vm.openSystemErrorLogDialog($event)">
-								<span class="{{vm.getErrorCount() ? 'text-warning-red' : ''}}">Errors: {{ vm.getErrorCount() }}</span>
-							</div>
+			<a href="https://finmars.com" target="_blank" class="finmars-site-link">© {{ currentYear }} Finmars
+				SCSA</a>
 
-							<div classs="sidenav-api-subtitle">
-							<span><a class="sidenav-api-link" href="{{ vm.getCurrentApiUrl() }}" target="_blank">API</a>: <span
-								data-ng-click="vm.copyToBuffer(vm.getCurrentBaseApiUrl())" class="sidenav-tech-button">
-									{{ vm.getCurrentBaseApiUrl() }}
-
-									<md-tooltip class="tooltip_1" md-direction="top">Copy</md-tooltip>
-
-							</span></span>
-							</div>-->
 		</div>
 	</div>
 </template>
@@ -1100,6 +1088,10 @@ const store = useStore()
 const config = useRuntimeConfig()
 const buildDate = config.public.buildDATE
 const apiUrl = config.public.apiURL;
+const currentYear = new Date().getFullYear();
+const remainingTimePretty = ref('');
+
+// console.log('store.current', JSON.stringify(store.current, null, 4))
 
 let readyStatus = reactive({
 	// will be used by getInterfaceAccess()
@@ -1190,11 +1182,11 @@ let sidenavExpanded = true;
 
 let sidenav_width = useState("sidenav_width", () => 160)
 
-function getUrlToOldApp (suffix) {
+function getUrlToOldApp(suffix) {
 
 	let baseApiUrl = '';
 
-	if ( Object.keys(store.current).length ) {
+	if (Object.keys(store.current).length) {
 		baseApiUrl = '/' + store.current.base_api_url;
 	}
 
@@ -1314,6 +1306,32 @@ mounted: (el) => {
 	});
 }
 }*/
+
+function secondsToHms(d) {
+	d = Number(d);
+	const h = Math.floor(d / 3600);
+	const m = Math.floor(d % 3600 / 60);
+	const s = Math.floor(d % 3600 % 60);
+
+	const hDisplay = h > 0 ? (h < 10 ? '0' + h : h) + ':' : '00:';
+	const mDisplay = m > 0 ? (m < 10 ? '0' + m : m) + ':' : '00:';
+	const sDisplay = s > 0 ? (s < 10 ? '0' + s : s) : '00';
+	return hDisplay + mDisplay + sDisplay;
+}
+
+const getSessionRemainingTime = function () {
+
+	const token = useCookie("refresh_token").value
+	const decodedToken = JSON.parse(atob(token.split('.')[1]));
+	const currentTime = Math.floor(new Date().getTime() / 1000); // Current time in seconds since epoch
+	const remainingTime = decodedToken.exp - currentTime;
+
+	remainingTimePretty.value = secondsToHms(remainingTime);
+
+	// console.log('getSessionRemainingTime', vm.remainingTimePretty);
+
+}
+getSessionRemainingTime() // todo do it update every second
 
 const showSubmenu = function ($event) {
 	const el = $event.target
@@ -1582,11 +1600,11 @@ const copyToBuffer = function (content) {
 
 	}
 
-	document.addEventListener("copy", listener, { once: true })
+	document.addEventListener("copy", listener, {once: true})
 
 	document.execCommand("copy")
 
-	useNotify({ type: "success", title: "Copied" })
+	useNotify({type: "success", title: "Copied"})
 }
 
 // function toggleSettingsSideMenu() {
@@ -1941,7 +1959,7 @@ padding: 0;
 
 .side-menu-bottom-menu {
 	position: absolute;
-	bottom: 40px;
+	bottom: 75px;
 	width: 100%;
 }
 
@@ -2176,8 +2194,12 @@ padding: 0;
 		opacity: 0.7;
 	}
 }
+.side-nav-versions-block {
+	margin-bottom: 10px;
+	font-size: 8.8px;
+}
 
-.sidenav-api-link {
+.sidenav-api-link, .finmars-site-link {
 	color: #fff;
 	text-decoration: none;
 
@@ -2185,4 +2207,6 @@ padding: 0;
 		opacity: 0.7;
 	}
 }
+
+
 </style>

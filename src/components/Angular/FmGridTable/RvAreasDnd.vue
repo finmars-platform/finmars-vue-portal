@@ -15,10 +15,13 @@
 		'evDataService',
 		'evEventService',
 	])
+	const { evEventService, evDataService, attributeDataService } =
+		inject('ngDependace')
+
 	const scope = {
 		contentWrapElement: props.contentWrapElement,
-		evDataService: props.evDataService,
-		evEventService: props.evEventService,
+		evDataService: evDataService,
+		evEventService: evEventService,
 	}
 
 	let sharedLogic

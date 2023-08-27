@@ -78,16 +78,20 @@
 		valueType: Number, // used to filter attributes
 		attributes: {
 			type: Array,
-			default: [],
+			default() { return [] },
 		},
 		disabledAttributes: {
 			type: Array,
-			default: [],
+			default() { return [] },
 		},
-		selected: [Array, String, null], // Array for multiselect, String and null for select
+		selected: [Array, String], // Array for multiselect, String and null for select
 		multiselect: Boolean,
 	});
 
+	/*
+	 * save - returns key or array of keys of selected attributes
+	 * selectedAttributesChanged - returns object or array of objects of selected attributes
+	 */
 	let emit = defineEmits(['update:modelValue', 'save', 'selectedAttributesChanged']);
 
 	let selAttrsKeysList = ref([]);
@@ -95,6 +99,11 @@
 
 	let searchParams = ref('');
 	let newSelAttrs = ref( props.multiselect ? [] : '' );
+
+	watch(
+		() => props.multiselect,
+		() => { newSelAttrs.value = props.multiselect ? [] : ''; }
+	)
 
 	watch(
 		() => props.selected,
@@ -108,7 +117,7 @@
 
 				selAttrsKeysList.value = props.selected ? [props.selected] : []
 
-			} else {
+			} else if (props.selected || props.selected === 0) {
 				throw new Error("Wrong format of modelValue: " + typeof props.selected)
 			}
 
@@ -129,7 +138,9 @@
 
 		if (props.valueType) {
 
-			return store.favorites.attributes[props.contentType].filter(fAttr => {
+			const favAttrs = store.favorites.attributes[props.contentType] || [];
+
+			return favAttrs.filter(fAttr => {
 
 				const fAttrData = props.attributes.find(attr => attr.key === fAttr.key);
 
@@ -143,7 +154,7 @@
 
 		}
 
-		return store.favorites.attributes[props.contentType];
+		return store.favorites.attributes[props.contentType] || [];
 
 	})
 

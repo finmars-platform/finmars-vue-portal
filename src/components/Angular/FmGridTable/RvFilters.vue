@@ -377,9 +377,11 @@
 				canDelete
 				@chipClick="scope.onFilterChipClick($event)"
 				@delete="scope.removeFilter($event)"
-			/>
-
-			<FmBtn type="action" @click="scope.addFilter">ADD FILTER</FmBtn>
+			>
+				<FmBtn type="action" @click="scope.addFilter" style="margin: 2px 0"
+					>ADD FILTER</FmBtn
+				>
+			</FmChips>
 		</div>
 
 		<div class="flex aic gFiltersRightPart">
@@ -515,7 +517,7 @@
 
 				<template #default="{ close }">
 					<div class="fm_list" @click="close()">
-						<div class="fm_list_item" @click="toggleMatrix">
+						<div class="fm_list_item" @click="scope.toggleMatrix">
 							<FmIcon
 								v-show="scope.currentAdditions?.type === 'permission-editor'"
 								icon="matrix"
@@ -597,6 +599,12 @@
 				</template>
 			</FmMenu>
 		</div>
+
+		<AngularFmGridTableMatrixSettingsM
+			v-if="$mdDialog.modals['ReportViewerMatrixSettingsDialogController']"
+			:payload="$mdDialog.modals['ReportViewerMatrixSettingsDialogController']"
+			:modelValue="true"
+		/>
 	</div>
 </template>
 
@@ -610,6 +618,7 @@
 
 	const { evEventService, evDataService, attributeDataService } =
 		inject('ngDependace')
+	const $mdDialog = inject('$mdDialog')
 
 	let gFiltersHelper = new gFiltersHelperInst()
 
@@ -698,6 +707,7 @@
 
 	scope.toggleUseFromAboveFilters = function () {
 		scope.showUseFromAboveFilters = !scope.showUseFromAboveFilters
+		console.log('scope.showUseFromAboveFilters:', scope.showUseFromAboveFilters)
 		evEventService.dispatchEvent(evEvents.TOGGLE_SHOW_FROM_ABOVE_FILTERS)
 		formatFiltersForChips()
 
@@ -871,20 +881,8 @@
 			$mdDialog
 				.show({
 					controller: 'ReportViewerMatrixSettingsDialogController as vm',
-					templateUrl:
-						'views/dialogs/report-viewer-matrix-settings-dialog-view.html',
-					parent: angular.element(document.body),
-					clickOutsideToClose: false,
-					targetEvent: $event,
-					preserveScope: true,
-					multiple: true,
-					autoWrap: true,
-					skipHide: true,
 					locals: {
 						data: {
-							attributeDataService: attributeDataService,
-							evDataService: evDataService,
-							evEventService: evEventService,
 							settings: settings,
 						},
 					},
@@ -1133,12 +1131,15 @@
 	.ev_toolbar {
 		display: grid;
 		grid-template-columns: auto 1fr auto;
-		gap: 20px;
-		align-items: center;
+		gap: 6px;
+		align-items: flex-start;
 		justify-content: space-between;
 		background: $separ;
-		padding-top: 0;
-		padding-bottom: 0;
+		padding-top: 10px;
+		padding-bottom: 10px;
 		border-bottom: 1px solid $border;
+	}
+	.g-use-from-above-filters-hidden {
+		color: $primary;
 	}
 </style>

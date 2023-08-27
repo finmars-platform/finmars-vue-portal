@@ -1,16 +1,16 @@
 <template>
 	<div>
-		<FmHorizontalPanel>
+		<FmHorizontalPanel :height="dashStore.isEdit ? '135px' : '50px'">
 			<template #leftActions>
 				<PagesDashboardLayoutManager v-if="!dashStore.isEdit" />
 
 				<template v-else>
 					<BaseInput
-						class="bi_no_margins m-t-0 m-r-4"
+						class="bi_no_margins m-t-0 m-r-16"
 						v-model="dashStore.layout.name"
 						label="Name"
 					/>
-					<BaseInput
+<!--					<BaseInput
 						class="bi_no_margins m-t-0"
 						v-model="dashStore.layout.user_code"
 						label="User code"
@@ -19,6 +19,10 @@
 						class="bi_no_margins m-t-0"
 						v-model="dashStore.layout.configuration_code"
 						label="Configuration code"
+					/>-->
+					<FmInputUserCode
+						v-model="dashStore.layout.user_code"
+						@update:configuration_code="newVal => dashStore.layout.configuration_code = newVal"
 					/>
 				</template>
 			</template>
@@ -28,7 +32,7 @@
 					<FmBtn :disabled="readyStatus" type="text" @click="cancelEdit()"
 						>cancel</FmBtn
 					>
-					<FmBtn :disabled="readyStatus" @click="dashStore.saveLayout()"
+					<FmBtn :disabled="readyStatus" @click="save"
 						>save</FmBtn
 					>
 				</template>
@@ -69,7 +73,7 @@
 				@init="editorInit"
 				lang="json"
 				theme="monokai"
-				style="height: 300px; width: 600px"
+				style="height: 80vh; width: 80vw"
 			/>
 		</BaseModal>
 
@@ -208,6 +212,11 @@
 	function edit() {
 		dashStore.isEdit = true
 	}
+
+	function save() {
+		dashStore.saveLayout();
+		dashStore.isEdit = false;
+	}
 	function cancelEdit() {
 		dashStore.getLayouts()
 
@@ -231,9 +240,13 @@
 			promises.push(evAttrsStore.getAttributeTypes(contentType))
 		})
 
-		promises.push(evAttrsStore.getCustomFields('reports.balancereport'))
-		promises.push(evAttrsStore.getCustomFields('reports.plreport'))
-		promises.push(evAttrsStore.getCustomFields('reports.transactionreport'))
+		promises.push( evAttrsStore.fetchCustomFields('reports.balancereport') )
+		promises.push( evAttrsStore.fetchCustomFields('reports.plreport') )
+		promises.push( evAttrsStore.fetchCustomFields('reports.transactionreport') )
+
+		promises.push( evAttrsStore.fetchUserFields('transactions.transaction') )
+		promises.push( evAttrsStore.fetchUserFields('transactions.complextransaction') )
+		promises.push( evAttrsStore.fetchUserFields('instruments.instrument') )
 
 		/*const idAttribute = {
 			"key": "id",
@@ -251,6 +264,7 @@
 	}
 
 	downloadAttributes()
+
 </script>
 
 <style lang="scss" scoped>
