@@ -6,7 +6,14 @@
 			@click=";(isOpen = !isOpen), $emit('update:open', !isOpen)"
 		>
 			<div>{{ title }}</div>
-
+			<div class="subtitle">
+				<div v-if="!open" class="subtitle__main subtitle__text">
+					{{ subtitle }}
+				</div>
+				<div v-if="open" class="subtitle__open subtitle__text">
+					{{ subtitleOpen }}
+				</div>
+			</div>
 			<div class="flex-row">
 				<slot name="rightActions" />
 
@@ -26,6 +33,8 @@
 <script setup>
 	const props = defineProps({
 		title: String,
+		subtitle: String,
+		subtitleOpen: String,
 		open: {
 			type: Boolean,
 			default: true,
@@ -59,5 +68,9 @@
 		&.active {
 			border-bottom: 1px solid $border;
 		}
+	}
+	.subtitle__text {
+		color: $gray;
+		font-weight: 400;
 	}
 </style>
