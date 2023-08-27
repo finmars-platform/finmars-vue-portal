@@ -49,23 +49,25 @@
 	//region Dragstart
 
 	const initItemListeners = function (sameHolderType, anotherHolderType) {
+		console.log('anotherHolderType:', anotherHolderType)
 		scope.dndAreas[sameHolderType].addEventListener(
 			'dragover',
 			sharedLogic.onSameHolderDragenter
 		)
+		scope.dndAreas[sameHolderType].addEventListener(
+			'dragleave',
+			sharedLogic.removeDraggedOverClasses
+		)
+		console.log(
+			'fsdg',
+			scope.dndAreas[anotherHolderType].closest('.g-group-table-holder')
+		)
+
 		scope.dndAreas[anotherHolderType].addEventListener(
 			'dragover',
 			onAnotherHolderDragover
 		)
 
-		// scope.dndAreas[sameHolderType]
-		// 	.closest('.g-group-table-holder')
-		// 	.addEventListener('dragover', sharedLogic.onSameHolderDragenter)
-
-		scope.dndAreas[sameHolderType].addEventListener(
-			'dragleave',
-			sharedLogic.removeDraggedOverClasses
-		)
 		scope.dndAreas[anotherHolderType].addEventListener(
 			'dragleave',
 			onAnotherHolderDragleave
@@ -164,6 +166,7 @@
 	//endregion Dragstart
 
 	const onAnotherHolderDragover = function (ev) {
+		ev.preventDefault()
 		const anotherHolderType = ev.dataTransfer.types.includes('columns')
 			? 'groups'
 			: 'columns'
@@ -174,6 +177,7 @@
 	}
 
 	const onAnotherHolderDragleave = function (ev) {
+		ev.preventDefault()
 		const anotherHolder = ev.dataTransfer.types.includes('columns')
 			? 'groups'
 			: 'columns'

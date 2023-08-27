@@ -798,6 +798,9 @@ $evGRowSettingsWidth: 124px;
 		z-index: 1;
 	}
 }
+.border-right-transparent {
+	border-right: transparent !important;
+}
 .ev-content {
 	.g-row {
 		.g-cell {
@@ -813,10 +816,6 @@ $evGRowSettingsWidth: 124px;
 			height: 100%;
 			padding: 0;
 			z-index: 1;
-		}
-
-		.border-right-transparent {
-			border-right: transparent;
 		}
 
 		.border-bottom-transparent {

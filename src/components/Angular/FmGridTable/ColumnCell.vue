@@ -2,7 +2,7 @@
 	<FmMenu
 		class="g-table-header-cell-wrapper gColumnElem gDraggableHead gcAreaDnD"
 		draggable="true"
-		:data-column-id="column.___column_id"
+		:data-column-id="column.___column_id || column.___group_type_id"
 		:data-attr-key="column.key"
 		:class="{
 			'last-dragged': column.frontOptions && column.frontOptions.lastDragged,
@@ -11,10 +11,7 @@
 		openOn="contextmenu"
 	>
 		<template #btn>
-			<div
-				class="g-table-header-cell-wrapper gColumnElem"
-				:data-column-id="column.___column_id"
-			>
+			<div class="g-table-header-cell-wrapper">
 				<!-- v-fm-tooltip="
 			column?.error_data ? column?.error_data.description : column.name
 		" -->
@@ -102,376 +99,409 @@
 				<div
 					class="g-table-header-drop gDraggableHeadArea"
 					:data-attr-key="column.key"
-				></div></div
-		></template>
-
-		<template #default>
-			<div class="fm_list">
-				<div
-					v-if="popupData.data.isAGroup"
-					ng-include="'views/popups/entity-viewer/g-rv-group-settings-menu-options.html'"
 				></div>
-				<div>
-					<md-button
+			</div>
+		</template>
+
+		<template #default="{ close }">
+			<div class="fm_list">
+				<template v-if="popupData.data.isAGroup">
+					<div
+						class="fm_list_item"
 						@click="
-							popupData.data.renameColumn(
-								popupData.data.item.key,
-								null,
-								$event,
-								_$popup
-							)
+							popupData.data.reportSetSubtotalType(popupData.data.item, 'line'),
+								close()
 						"
-						class="popup-menu-item"
 					>
-						<!--            <ng-md-icon icon="visibility_off"
-										style="visibility: hidden;"></ng-md-icon>-->
-						<span class="material-icons" style="visibility: hidden">done</span>
-						<span>Rename</span>
-					</md-button>
+						<FmIcon
+							icon="done"
+							v-show="
+								popupData.data.item.report_settings.subtotal_type == 'line'
+							"
+						/>
+						<span>Subtotal on Top</span>
+					</div>
+
+					<div
+						class="fm_list_item"
+						@click="
+							popupData.data.reportSetSubtotalType(popupData.data.item, 'area'),
+								close()
+						"
+					>
+						<FmIcon
+							icon="done"
+							v-show="
+								popupData.data.item.report_settings.subtotal_type == 'area'
+							"
+						/>
+						<span>Subtotal on Bottom</span>
+					</div>
+
+					<div
+						class="fm_list_item"
+						@click="
+							popupData.data.reportSetSubtotalType(
+								popupData.data.item,
+								'arealine'
+							),
+								close()
+						"
+					>
+						<FmIcon
+							icon="done"
+							v-show="
+								popupData.data.item.report_settings.subtotal_type == 'arealine'
+							"
+						/>
+						<span>Subtotal on Top and Bottom</span>
+					</div>
+				</template>
+
+				<div
+					class="fm_list_item"
+					@click="popupData.data.renameColumn(popupData.data.item.key), close()"
+				>
+					Rename
 				</div>
 
 				<div
+					class="fm_list_item"
 					v-if="
 						!popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)
 					"
+					@click="
+						popupData.data.addColumnEntityToGrouping(popupData.data.item),
+							close()
+					"
 				>
-					<md-button
-						@click="
-							popupData.data.addColumnEntityToGrouping(popupData.data.item)
-						"
-						class="popup-menu-item"
-					>
-						<!--            <ng-md-icon icon="visibility_off"
-										style="visibility: hidden;"></ng-md-icon>-->
-						<span class="material-icons" style="visibility: hidden">done</span>
-						<span>Add to grouping</span>
-					</md-button>
+					Add to grouping
 				</div>
 
 				<div
+					class="fm_list_item"
 					v-if="
 						!popupData.data.isReport ||
 						popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)
 					"
+					@click="
+						popupData.data.unGroup(popupData.data.item.key, _$popup), close()
+					"
 				>
-					<md-button
-						@click="popupData.data.unGroup(popupData.data.item.key, _$popup)"
-						class="popup-menu-item"
-					>
-						<!--            <ng-md-icon icon="visibility_off"
-																style="visibility: hidden;"></ng-md-icon>-->
-						<span class="material-icons" style="visibility: hidden">done</span>
-						<span>Ungroup</span>
-					</md-button>
+					Ungroup
 				</div>
 
-				<div>
-					<md-button
-						data-ng-disabled="!popupData.data.checkForFilteringBySameAttr(popupData.data.item.key) || popupData.data.viewContext === 'dashboard'"
-						@click="popupData.data.addFiltersWithColAttr(popupData.data.item)"
-						class="popup-menu-item"
-					>
-						<!--            <ng-md-icon icon="visibility_off"
-										style="visibility: hidden;"></ng-md-icon>-->
-						<span class="material-icons" style="visibility: hidden">done</span>
-						<span>Add to Filters</span>
-					</md-button>
+				<div
+					class="fm_list_item"
+					v-if="
+						popupData.data.checkForFilteringBySameAttr(
+							popupData.data.item.key
+						) && popupData.data.viewContext != 'dashboard'
+					"
+					@click="
+						popupData.data.addFiltersWithColAttr(popupData.data.item), close()
+					"
+				>
+					Add to Filters
 				</div>
 
-				<md-menu-divider></md-menu-divider>
+				<template v-if="popupData.data.item.value_type == 20">
+					<hr />
 
-				<div>
-					<md-button
-						@click="popupData.data.openNumberFormatDialog(popupData.data.item)"
-						class="popup-menu-item"
+					<div
+						class="fm_list_item"
+						@click="
+							popupData.data.openNumberFormatDialog(popupData.data.item),
+								close()
+						"
 					>
-						<span class="material-icons" style="visibility: hidden">done</span>
-						<span>Number Format</span>
-					</md-button>
-				</div>
+						Number Format
+					</div>
+					<hr />
 
-				<md-menu-divider></md-menu-divider>
-
-				<div v-if="popupData.data.$index !== 0">
-					<md-button
-						@click="popupData.data.onSubtotalSumClick(popupData.data.item, 1)"
-						class="popup-menu-item"
+					<div
+						class="fm_list_item"
+						@click="
+							popupData.data.onSubtotalSumClick(popupData.data.item, 1), close()
+						"
 					>
-						<span
-							class="material-icons"
-							data-ng-show="popupData.data.isSubtotalSum"
-							>done</span
-						>
-						<span
-							class="material-icons"
-							data-ng-show="!popupData.data.isSubtotalSum"
-							style="visibility: hidden"
-							>done</span
-						>
+						<FmIcon icon="done" v-show="popupData.data.isSubtotalSum" />
+
 						<span>Subtotal SUM</span>
-					</md-button>
-				</div>
+					</div>
 
-				<div
-					v-if="
-						popupData.data.$index !== 0 &&
-						!popupData.data.isSubtotalWeightedShouldBeExcluded(
-							popupData.data.item
-						)
-					"
-				>
-					<md-button
+					<div
+						class="fm_list_item"
+						v-if="
+							popupData.data.$index !== 0 &&
+							!popupData.data.isSubtotalWeightedShouldBeExcluded(
+								popupData.data.item
+							)
+						"
 						@click="popupData.data.onSubtotalWeightedClick(popupData.data.item)"
-						class="popup-menu-item"
 					>
-						<span
-							class="material-icons"
-							data-ng-show="popupData.data.isSubtotalWeighted"
-							>done</span
-						>
-						<span
-							class="material-icons"
-							style="visibility: hidden"
-							data-ng-show="!popupData.data.isSubtotalWeighted"
-							>done</span
-						>
+						<FmIcon icon="done" v-show="popupData.data.isSubtotalWeighted" />
 						<span>Subtotal Weighted</span>
-					</md-button>
-				</div>
+					</div>
 
-				<div
-					v-if="
-						popupData.data.$index !== 0 &&
-						!popupData.data.isSubtotalWeightedShouldBeExcluded(
-							popupData.data.item
-						)
-					"
-				>
-					<md-button
+					<div
+						class="fm_list_item"
+						v-if="
+							popupData.data.$index !== 0 &&
+							!popupData.data.isSubtotalWeightedShouldBeExcluded(
+								popupData.data.item
+							)
+						"
 						@click="
 							popupData.data.onSubtotalAvgWeightedClick(popupData.data.item)
 						"
-						class="popup-menu-item"
 					>
-						<span
-							class="material-icons"
-							data-ng-show="popupData.data.isSubtotalAvgWeighted"
-							>done</span
-						>
-						<span
-							class="material-icons"
-							style="visibility: hidden"
-							data-ng-show="!popupData.data.isSubtotalAvgWeighted"
-							>done</span
-						>
+						<FmIcon icon="done" v-show="popupData.data.isSubtotalAvgWeighted" />
 						<span>Subtotal Avg. Weighted</span>
-					</md-button>
-				</div>
+					</div>
 
-				<div>
-					<md-button
-						@click="popupData.data.reportHideGrandTotal(popupData.data.item)"
-						class="popup-menu-item"
+					<div
+						class="fm_list_item"
+						@click="
+							popupData.data.reportHideGrandTotal(popupData.data.item), close()
+						"
 					>
-						<ng-md-icon icon="done" style="visibility: hidden"></ng-md-icon>
-						<span
-							data-ng-show="!popupData.data.item.report_settings.hide_grandtotal"
-							>Hide Grand Total</span
-						>
-						<span
-							data-ng-show="popupData.data.item.report_settings.hide_grandtotal"
-							>Show Grand Total</span
-						>
-					</md-button>
-				</div>
+						{{
+							popupData.data.item.report_settings?.hide_grandtotal
+								? 'Show Grand Total'
+								: 'Hide Grand Total'
+						}}
+					</div>
 
-				<md-menu-divider
-					v-if="
-						popupData.data.$index !== 0 &&
-						!popupData.data.isSubtotalWeightedShouldBeExcluded(
-							popupData.data.item
-						)
-					"
-				></md-menu-divider>
+					<hr />
 
-				<div
-					v-if="
-						popupData.data.$index !== 0 &&
-						!popupData.data.isSubtotalWeightedShouldBeExcluded(
-							popupData.data.item
-						)
-					"
-					data-ng-init="subtotalFormula = popupData.data.getSubtotalFormula(popupData.data.item)"
-				>
-					<md-button
+					<div
+						class="fm_list_item"
+						v-if="
+							popupData.data.$index !== 0 &&
+							!popupData.data.isSubtotalWeightedShouldBeExcluded(
+								popupData.data.item
+							)
+						"
+						:class="{
+							disabled:
+								!popupData.data.isSubtotalWeighted &&
+								!popupData.data.isSubtotalAvgWeighted,
+						}"
 						@click="
 							popupData.data.selectSubtotalType(
 								popupData.data.item,
 								2 + 4 * popupData.data.isSubtotalAvgWeighted
+							),
+								close()
+						"
+					>
+						<FmIcon
+							icon="done"
+							v-show="
+								!popupData.data.isTemporaryWeighted &&
+								(popupData.data.getSubtotalFormula(popupData.data.item) === 2 ||
+									popupData.data.getSubtotalFormula(popupData.data.item) === 6)
+							"
+						/>
+
+						<span>Market Value</span>
+					</div>
+
+					<div
+						class="fm_list_item"
+						v-if="
+							popupData.data.$index !== 0 &&
+							!popupData.data.isSubtotalWeightedShouldBeExcluded(
+								popupData.data.item
 							)
 						"
-						class="popup-menu-item"
-						data-ng-disabled="!popupData.data.isSubtotalWeighted && !popupData.data.isSubtotalAvgWeighted"
-					>
-						<span
-							class="material-icons"
-							data-ng-show="!popupData.data.isTemporaryWeighted && (subtotalFormula === 2 || subtotalFormula === 6)"
-							>done</span
-						>
-						<span
-							class="material-icons"
-							style="visibility: hidden"
-							data-ng-show="popupData.data.isTemporaryWeighted || subtotalFormula !== 2 && subtotalFormula !== 6"
-							>done</span
-						>
-						<span>Market Value</span>
-					</md-button>
-				</div>
-
-				<div
-					v-if="
-						popupData.data.$index !== 0 &&
-						!popupData.data.isSubtotalWeightedShouldBeExcluded(
-							popupData.data.item
-						)
-					"
-					data-ng-init="subtotalFormula = popupData.data.getSubtotalFormula(popupData.data.item)"
-				>
-					<md-button
+						:class="{
+							disabled:
+								!popupData.data.isSubtotalWeighted &&
+								!popupData.data.isSubtotalAvgWeighted,
+						}"
 						@click="
 							popupData.data.selectSubtotalType(
 								popupData.data.item,
 								3 + 4 * popupData.data.isSubtotalAvgWeighted
+							),
+								close()
+						"
+					>
+						<FmIcon
+							icon="done"
+							v-show="
+								!popupData.data.isTemporaryWeighted &&
+								(popupData.data.getSubtotalFormula(popupData.data.item) === 3 ||
+									popupData.data.getSubtotalFormula(popupData.data.item) === 7)
+							"
+						/>
+						<span>Market Value %</span>
+					</div>
+
+					<div
+						class="fm_list_item"
+						v-if="
+							popupData.data.$index !== 0 &&
+							!popupData.data.isSubtotalWeightedShouldBeExcluded(
+								popupData.data.item
 							)
 						"
-						class="popup-menu-item"
-						data-ng-disabled="!popupData.data.isSubtotalWeighted && !popupData.data.isSubtotalAvgWeighted"
-					>
-						<span
-							class="material-icons"
-							data-ng-show="!popupData.data.isTemporaryWeighted && (subtotalFormula === 3 || subtotalFormula === 7)"
-							>done</span
-						>
-						<span
-							class="material-icons"
-							style="visibility: hidden"
-							data-ng-show="popupData.data.isTemporaryWeighted || subtotalFormula !== 3 && subtotalFormula !== 7"
-							>done</span
-						>
-						<span>Market Value %</span>
-					</md-button>
-				</div>
-
-				<div
-					v-if="
-						popupData.data.$index !== 0 &&
-						!popupData.data.isSubtotalWeightedShouldBeExcluded(
-							popupData.data.item
-						)
-					"
-					data-ng-init="subtotalFormula = popupData.data.getSubtotalFormula(popupData.data.item)"
-				>
-					<md-button
+						:class="{
+							disabled:
+								!popupData.data.isSubtotalWeighted &&
+								!popupData.data.isSubtotalAvgWeighted,
+						}"
 						@click="
 							popupData.data.selectSubtotalType(
 								popupData.data.item,
 								4 + 4 * popupData.data.isSubtotalAvgWeighted
+							),
+								close()
+						"
+					>
+						<FmIcon
+							icon="done"
+							v-show="
+								!popupData.data.isTemporaryWeighted &&
+								(popupData.data.getSubtotalFormula(popupData.data.item) === 4 ||
+									popupData.data.getSubtotalFormula(popupData.data.item) === 8)
+							"
+						/>
+						<span>Exposure</span>
+					</div>
+
+					<div
+						class="fm_list_item"
+						v-if="
+							popupData.data.$index !== 0 &&
+							!popupData.data.isSubtotalWeightedShouldBeExcluded(
+								popupData.data.item
 							)
 						"
-						class="popup-menu-item"
-						data-ng-disabled="!popupData.data.isSubtotalWeighted && !popupData.data.isSubtotalAvgWeighted"
-					>
-						<span
-							class="material-icons"
-							data-ng-show="!popupData.data.isTemporaryWeighted && (subtotalFormula === 4 || subtotalFormula === 8)"
-							>done</span
-						>
-						<span
-							class="material-icons"
-							style="visibility: hidden"
-							data-ng-show="popupData.data.isTemporaryWeighted || subtotalFormula !== 4 && subtotalFormula !== 8"
-							>done</span
-						>
-						<span>Exposure</span>
-					</md-button>
-				</div>
-
-				<div
-					v-if="
-						popupData.data.$index !== 0 &&
-						!popupData.data.isSubtotalWeightedShouldBeExcluded(
-							popupData.data.item
-						)
-					"
-					data-ng-init="subtotalFormula = popupData.data.getSubtotalFormula(popupData.data.item)"
-				>
-					<md-button
+						:class="{
+							disabled:
+								!popupData.data.isSubtotalWeighted &&
+								!popupData.data.isSubtotalAvgWeighted,
+						}"
 						@click="
 							popupData.data.selectSubtotalType(
 								popupData.data.item,
 								5 + 4 * popupData.data.isSubtotalAvgWeighted
 							)
 						"
-						class="popup-menu-item"
-						data-ng-disabled="!popupData.data.isSubtotalWeighted && !popupData.data.isSubtotalAvgWeighted"
 					>
-						<span
-							class="material-icons"
-							data-ng-show="!popupData.data.isTemporaryWeighted && (subtotalFormula === 5 || subtotalFormula === 9)"
-							>done</span
-						>
-						<span
-							class="material-icons"
-							style="visibility: hidden"
-							data-ng-show="popupData.data.isTemporaryWeighted || subtotalFormula !== 5 && subtotalFormula !== 9"
-							>done</span
-						>
+						<FmIcon
+							icon="done"
+							v-show="
+								!popupData.data.isTemporaryWeighted &&
+								(popupData.data.getSubtotalFormula(popupData.data.item) === 5 ||
+									popupData.data.getSubtotalFormula(popupData.data.item) === 9)
+							"
+						/>
 						<span>Exposure %</span>
-					</md-button>
+					</div>
+				</template>
+
+				<div
+					v-if="popupData.data.item.value_type === 10"
+					class="fm_list_item"
+					@click="popupData.data.editManualSorting($event, popupData.data.item)"
+				>
+					Manual Sort
 				</div>
+				<hr />
 
 				<div
 					v-if="
 						!popupData.data.isReport ||
 						!popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)
 					"
-					ng-include="'views/popups/groupTable/columnSettings/g-column-alignment-menu-options.html'"
-					class="flex-column"
-				></div>
+					class="fm_list_item disabled flex aic"
+				>
+					<FmIcon
+						class="i_align"
+						icon="format_align_left"
+						v-fm-tooltip="'Left alignment'"
+						@click="
+							popupData.data.changeColumnTextAlign(popupData.data.item, 'left'),
+								close()
+						"
+						:class="{
+							active: popupData.data.checkColTextAlign(
+								popupData.data.item,
+								'left'
+							),
+						}"
+					/>
+
+					<FmIcon
+						class="i_align"
+						icon="format_align_center"
+						v-fm-tooltip="'Center alignment'"
+						@click="
+							popupData.data.changeColumnTextAlign(
+								popupData.data.item,
+								'center'
+							),
+								close()
+						"
+						:class="{
+							active: popupData.data.checkColTextAlign(
+								popupData.data.item,
+								'center'
+							),
+						}"
+					/>
+
+					<FmIcon
+						class="i_align"
+						icon="format_align_right"
+						v-fm-tooltip="'Right alignment'"
+						@click="
+							popupData.data.changeColumnTextAlign(
+								popupData.data.item,
+								'right'
+							),
+								close()
+						"
+						:class="{
+							active: popupData.data.checkColTextAlign(
+								popupData.data.item,
+								'right'
+							),
+						}"
+					/>
+				</div>
+
+				<hr />
 
 				<div
+					class="fm_list_item"
 					v-if="
 						!popupData.data.isReport ||
 						popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)
 					"
+					@click="
+						popupData.data.removeGroup(
+							popupData.data.item.___column_id ||
+								popupData.data.item.___group_type_id
+						)
+					"
 				>
-					<md-button
-						@click="
-							popupData.data.removeGroup(
-								popupData.data.item.___column_id ||
-									popupData.data.item.___group_type_id
-							)
-						"
-						class="popup-menu-item"
-					>
-						<span class="material-icons" style="visibility: hidden">done</span>
-						<span>Remove</span>
-					</md-button>
+					Remove
 				</div>
 
 				<div
+					class="fm_list_item"
 					v-if="
 						!popupData.data.isReport ||
 						!popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)
 					"
+					@click="popupData.data.removeColumn(popupData.data.item)"
 				>
-					<md-button
-						@click="popupData.data.removeColumn(popupData.data.item)"
-						class="popup-menu-item"
-					>
-						<span class="material-icons" style="visibility: hidden">done</span>
-						<span>Remove</span>
-					</md-button>
+					Remove
 				</div>
 			</div>
 		</template>
@@ -483,4 +513,39 @@
 	const emits = defineEmits(['sort', 'groupFold', 'groupUnfold'])
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+	.fm_list_item {
+		border-top: none;
+		padding-left: 40px;
+		height: 40px;
+		position: relative;
+
+		.icon:not(.i_align) {
+			position: absolute;
+			left: 10px;
+		}
+		&.disabled {
+			color: $text-lighten;
+			&:hover {
+				background: none;
+			}
+		}
+	}
+	.i_align {
+		& + & {
+			margin-left: 15px;
+		}
+		&:hover.icon,
+		&.active.icon {
+			color: $primary;
+		}
+	}
+	hr {
+		height: 1px;
+		background: $border;
+
+		& + & {
+			display: none;
+		}
+	}
+</style>

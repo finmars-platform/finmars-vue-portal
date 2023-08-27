@@ -15,7 +15,7 @@
 			<div class="top_right_border"></div>
 		</div>
 
-		<div class="bi_wrap">
+		<div class="bi_wrap" :class="{ readonly }">
 			<div class="bi_button"><slot name="button"></slot></div>
 
 			<div class="bi_default">
@@ -171,11 +171,11 @@
 			}
 		}
 
-		&:not(.bi_no_borders):not(.disabled):focus-within,
-		&:not(.bi_no_borders):not(.disabled):focus {
-
+		&:not(.bi_no_borders):not(.disabled, .readonly):focus-within,
+		&:not(.bi_no_borders):not(.disabled, .readonly):focus {
 			.bi_top {
-				.top_left_border, .top_right_border {
+				.top_left_border,
+				.top_right_border {
 					border-top: $active-input-border;
 				}
 
@@ -364,6 +364,10 @@
 		// min-height: 42px;
 		height: 100%;
 		width: 100%;
+
+		&.readonly {
+			border-left: 5px solid $border !important;
+		}
 	}
 	.bi_default {
 		flex: 0 1 100%;
