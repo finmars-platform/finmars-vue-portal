@@ -121,11 +121,11 @@
 	const props = defineProps({
 		inputs: {
 			type: Array,
-			default: [],
+			default() { return [] },
 		},
 		outputs: {
 			type: Array,
-			default: [],
+			default() { return [] },
 		},
 	});
 

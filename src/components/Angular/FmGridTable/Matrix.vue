@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="report-viewer-matrix rvMatrix"
-		:class="{ 'matrix-with-fixed-totals': matrixView === 'fixed-totals' }"
+		:class="{ 'matrix-with-fixed-totals': scope.matrixView === 'fixed-totals' }"
 		ref="elem"
 	>
 		<div v-if="!processing" class="height-100 rvMatrixWrap">
@@ -10,34 +10,47 @@
 					v-if="scope.viewContext === 'dashboard'"
 					class="axis-attr-selector-btns-holder axisAttrSelectorBtnsHolder"
 				>
-					<button
-						v-if="canChangeAbscissaAttr"
-						custom-popup
-						popup-template-url="'views/popups/selector-popup-view.html'"
-						popup-data="abscissaSelectorData"
-						position-relative-to="element"
-						relative-popup-x="left"
-						relative-popup-y="top"
-						open-on="click"
-						close-on-click-outside="true"
-						class="flex-row flex-center axis-attr-selector-btn abscissa"
+					<FmMenu
+						class="axis-attr-selector-btn abscissa"
+						v-if="scope.canChangeAbscissaAttr"
 					>
-						<span class="material-icons">chevron_right</span>
-					</button>
+						<template #btn>
+							<FmIcon icon="chevron_right" size="16" />
+						</template>
 
-					<button
-						v-if="canChangeOrdinateAttr"
-						custom-popup
-						popup-template-url="'views/popups/selector-popup-view.html'"
-						popup-data="ordinateSelectorData"
-						position-relative-to="element"
-						relative-popup-y="top"
-						open-on="click"
-						close-on-click-outside="true"
-						class="flex-row flex-center axis-attr-selector-btn ordinate"
+						<template #default="{ close }"
+							><div class="fm_list" @click="close()">
+								<div
+									class="fm_list_item"
+									v-for="item in scope.abscissaSelectorData"
+									@click="selectOption(item, 'abscissa')"
+								>
+									{{ item.name }}
+								</div>
+							</div></template
+						>
+					</FmMenu>
+
+					<FmMenu
+						class="axis-attr-selector-btn ordinate"
+						v-if="scope.canChangeOrdinateAttr"
 					>
-						<span class="material-icons">expand_more</span>
-					</button>
+						<template #btn>
+							<FmIcon icon="expand_more" size="16" />
+						</template>
+
+						<template #default="{ close }"
+							><div class="fm_list" @click="close()">
+								<div
+									class="fm_list_item"
+									v-for="item in scope.ordinateSelectorData"
+									@click="selectOption(item)"
+								>
+									{{ item.name }}
+								</div>
+							</div></template
+						>
+					</FmMenu>
 				</div>
 
 				<div class="report-viewer-matrix-row rv-matrix-header">
@@ -49,33 +62,45 @@
 							`report-viewer-empty-header-cell text-${scope.styles.cell.text_align}`,
 						]"
 					>
-						<div v-if="canChangeValueAttr" class="selector-button-popup">
-							<button
-								custom-popup
-								popup-template-url="'views/popups/selector-popup-view.html'"
-								popup-data="valueSelectorData"
-								position-relative-to="element"
-								open-on="click"
-								close-on-click-outside="true"
-								class="selector-button-popup-btn"
-								title="{{matrixValueAttrName}}"
-							>
-								<!-- If .selected-option-name is not a block, text-overflow: ellipsis; clips text when it actually fits -->
-								<div
-									class="selected-option-name"
-									v-bind="matrixValueAttrName"
-								></div>
-								<span class="arrow_downward-icon material-icons"
-									>arrow_drop_down</span
-								>
-							</button>
-						</div>
+						<FmMenu
+							v-if="scope.canChangeValueAttr"
+							attach="body"
+							style="width: 100%"
+						>
+							<template #btn>
+								<div class="flex aic" v-fm-tooltip="scope.matrixValueAttrName">
+									<span
+										style="
+											white-space: nowrap;
+											overflow: hidden;
+											text-overflow: ellipsis;
+											display: inline-block;
+											width: calc(100% - 16px);
+										"
+										>{{ scope.matrixValueAttrName }}</span
+									>
+									<FmIcon icon="arrow_drop_down" size="16" />
+								</div>
+							</template>
+
+							<template #default="{ close }">
+								<div class="fm_list" @click="close()">
+									<div
+										class="fm_list_item"
+										v-for="item in scope.valueSelectorData"
+										@click="selectOption(item, 'value')"
+									>
+										{{ item.name }}
+									</div>
+								</div>
+							</template>
+						</FmMenu>
 
 						<div
 							v-if="!canChangeValueAttr"
 							v-bind="matrixValueAttrName"
 							class="report-viewer-matrix-value-name"
-							title="{{matrixValueAttrName}}"
+							v-fm-tooltip="matrixValueAttrName"
 						></div>
 					</div>
 
@@ -87,21 +112,21 @@
 								:class="{
 									active: scope.activeItem == 'column_total:' + $index,
 								}"
-								title="{{column.key}}"
+								v-fm-tooltip="column.key"
 								@click="scope.singleColumnTotalClick($event, $index)"
 							>
 								{{ column.key }}
 							</div>
 
 							<div
-								v-if="matrixView !== 'fixed-totals'"
+								v-if="scope.matrixView !== 'fixed-totals'"
 								class="report-viewer-matrix-column-header-cell report-viewer-cell-border-left rvMatrixCell"
 								:class="[
 									`text-${scope.styles.cell.text_align}`,
 									{ active: scope.activeItem == 'columns_total' },
 								]"
-								title="TOTAL"
-								@click="columnsTotalClick($event)"
+								vFmTootip="TOTAL"
+								@click="scope.columnsTotalClick($event)"
 							>
 								TOTAL
 							</div>
@@ -112,14 +137,15 @@
 					</div>
 
 					<div
-						v-if="matrixView === 'fixed-totals'"
+						v-if="scope.matrixView === 'fixed-totals'"
 						class="rv-matrix-header-total-cell rvMatrixCell"
 						:class="[
 							`text-${scope.styles.cell.text_align}`,
 							{ active: scope.activeItem == 'columns_total' },
 						]"
-						title="TOTAL"
-						@click="columnsTotalClick($event)"
+						style="right: 15px"
+						v-fm-tooltip="'TOTAL'"
+						@click="scope.columnsTotalClick($event)"
 					>
 						TOTAL
 					</div>
@@ -134,7 +160,7 @@
 							<div
 								v-for="(item, $index) in scope.columns"
 								class="report-viewer-matrix-cell report-viewer-matrix-cell-total rv-matrix-colored-cell rvMatrixCell"
-								title="{{item.total}}"
+								v-fm-tooltip="item.total"
 								:class="[
 									`text-${scope.styles.cell.text_align}`,
 									{
@@ -160,12 +186,6 @@
 							TOTAL
 						</div>
 
-						<!--<div class="report-viewer-matrix-cell rv-matrix-rb-cell text-{{styles.cell.text_align}} rvMatrixCell"
-         title="{{totals.total}}"
-         data-ng-click="totalClick($event)"
-         data-ng-class="{'active': scope.activeItem == 'total', 'negative-red': checkNegative(totals.total)}">
-        {{formatValue(totals.total)}}
-    </div>-->
 						<div
 							class="report-viewer-matrix-cell rv-matrix-rb-cell report-viewer-matrix-cell-total rvMatrixCell"
 							:class="[
@@ -175,7 +195,7 @@
 									'negative-red': scope.checkNegative(scope.grandtotal),
 								},
 							]"
-							title="{{grandtotal}}"
+							v-fm-tooltip="scope.grandtotal"
 							@click="scope.totalClick($event)"
 						>
 							{{ scope.formatValue(scope.grandtotal) }}
@@ -192,8 +212,8 @@
 										`text-${scope.styles.cell.text_align}`,
 										{ active: scope.activeItem == 'row_total:' + row.index },
 									]"
-									title="{{row.row_name}}"
-									@click="singleRowTotalClick($event, row.index)"
+									v-fm-tooltip="row.row_name"
+									@click="scope.singleRowTotalClick($event, row.index)"
 								>
 									{{ row.row_name }}
 								</div>
@@ -210,7 +230,7 @@
 								<div
 									class="report-viewer-matrix-cell rvMatrixCell"
 									v-for="item in row.items"
-									title="{{item.data.value}}"
+									v-fm-tooltip="item.data.value"
 									@click="scope.cellClick($event, row.index, item.index)"
 									:class="[
 										`text-${scope.styles.cell.text_align}`,
@@ -230,36 +250,32 @@
 									{{ scope.formatValue(scope.rows[row.index].total) }}
 								</div>
 							</div>
-						</div>
-					</div>
 
-					<div class="rv-matrix-right-col rvMatrixRightCol">
-						<div class="rv-matrix-part-to-scroll scrollableMatrixBodyColumn">
-							<div
-								v-for="row in scope.matrix"
-								class="report-viewer-matrix-row rvMatrixRow"
-							>
-								<!--<div class="report-viewer-matrix-cell report-viewer-cell-border-left rv-matrix-colored-cell text-{{styles.cell.text_align}} rvMatrixCell"
-                 title="{{totals.rows[row.index].total}}"
-                 data-ng-click="singleRowTotalClick($event, row.index)"
-                 data-ng-class="{'active': scope.activeItem == 'row_total:' + row.index, 'negative-red': checkNegative(totals.rows[row.index].total)}">
-                {{formatValue(totals.rows[row.index].total)}}
-            </div>-->
+							<div class="rv-matrix-right-col rvMatrixRightCol">
 								<div
-									class="report-viewer-matrix-cell report-viewer-matrix-cell-total report-viewer-cell-border-left rv-matrix-colored-cell rvMatrixCell"
-									:title="scope.rows[row.index].total"
-									@click="scope.singleRowTotalClick($event, row.index)"
-									:class="[
-										`text-${scope.styles.cell.text_align}`,
-										{
-											active: scope.activeItem == 'row_total:' + row.index,
-											'negative-red': scope.checkNegative(
-												scope.rows[row.index].total
-											),
-										},
-									]"
+									class="rv-matrix-part-to-scroll scrollableMatrixBodyColumn"
 								>
-									{{ scope.formatValue(scope.rows[row.index].total) }}
+									<div
+										v-for="row in scope.matrix"
+										class="report-viewer-matrix-row rvMatrixRow"
+									>
+										<div
+											class="report-viewer-matrix-cell report-viewer-matrix-cell-total report-viewer-cell-border-left rv-matrix-colored-cell rvMatrixCell"
+											v-fm-tooltip="scope.rows[row.index].total"
+											@click="scope.singleRowTotalClick($event, row.index)"
+											:class="[
+												`text-${scope.styles.cell.text_align}`,
+												{
+													active: scope.activeItem == 'row_total:' + row.index,
+													'negative-red': scope.checkNegative(
+														scope.rows[row.index].total
+													),
+												},
+											]"
+										>
+											{{ scope.formatValue(scope.rows[row.index].total) }}
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -270,20 +286,15 @@
 					class="rv-matrix-body flex"
 					v-if="scope.matrixView === 'fixed-totals'"
 				>
-					<div class="rv-matrix-fixed-bottom-row rvMatrixFixedBottomRow">
+					<div
+						class="rv-matrix-fixed-bottom-row rvMatrixFixedBottomRow"
+						style="right: 15px"
+					>
 						<div class="rv-matrix-part-to-scroll rvmBottomRowScrollableElem">
-							<!--<div data-ng-repeat="item in totals.columns track by $index"
-             class="report-viewer-matrix-cell rv-matrix-colored-cell text-{{styles.cell.text_align}} rvMatrixCell"
-             title="{{item.total}}"
-             data-ng-click="singleColumnTotalClick($event, $index)"
-             data-ng-class="{'active': scope.activeItem == 'column_total:' + $index, 'negative-red': checkNegative(item.total)}">
-            {{formatValue(item.total)}}
-        </div>-->
-
 							<div
 								v-for="(item, $index) in scope.columns"
 								class="report-viewer-matrix-cell report-viewer-matrix-cell-total rv-matrix-colored-cell rvMatrixCell"
-								title="{{item.total}}"
+								v-fm-tooltip="item.total"
 								@click="scope.singleColumnTotalClick($event, $index)"
 								:class="[
 									`text-${scope.styles.cell.text_align}`,
@@ -299,7 +310,7 @@
 
 						<div
 							class="report-viewer-matrix-cell rv-matrix-lb-cell firstColumnCell rvMatrixCell"
-							title="TOTAL"
+							v-fm-tooltip="'TOTAL'"
 							@click="scope.rowsTotalClick($event)"
 							:class="[
 								`text-${scope.styles.cell.text_align}`,
@@ -309,12 +320,6 @@
 							TOTAL
 						</div>
 
-						<!--<div class="report-viewer-matrix-cell rv-matrix-rb-cell text-{{styles.cell.text_align}} rvMatrixCell"
-         title="{{totals.total}}"
-         data-ng-click="totalClick($event)"
-         data-ng-class="{'active': scope.activeItem == 'total', 'negative-red': checkNegative(totals.total)}">
-        {{formatValue(totals.total)}}
-    </div>-->
 						<div
 							class="report-viewer-matrix-cell rv-matrix-rb-cell report-viewer-matrix-cell-total rvMatrixCell"
 							@click="scope.totalClick($event)"
@@ -336,7 +341,7 @@
 								<div
 									v-for="row in scope.matrix"
 									class="report-viewer-matrix-cell rv-matrix-colored-cell firstColumnCell rvMatrixCell"
-									title="{{row.row_name}}"
+									v-fm-tooltip="row.row_name"
 									@click="scope.singleRowTotalClick($event, row.index)"
 									:class="[
 										`text-${scope.styles.cell.text_align}`,
@@ -358,7 +363,7 @@
 								<div
 									class="report-viewer-matrix-cell rvMatrixCell"
 									v-for="item in row.items"
-									title="{{item.data.value}}"
+									v-fm-tooltip="item.data.value"
 									@click="scope.cellClick($event, row.index, item.index)"
 									:class="[
 										`text-${scope.styles.cell.text_align}`,
@@ -379,7 +384,7 @@
 						</div>
 					</div>
 
-					<div class="rv-matrix-right-col rvMatrixRightCol">
+					<div class="rv-matrix-right-col rvMatrixRightCol" style="right: 15px">
 						<div class="rv-matrix-part-to-scroll scrollableMatrixBodyColumn">
 							<div
 								v-for="row in scope.matrix"
@@ -403,6 +408,7 @@
 											),
 										},
 									]"
+									v-fm-tooltip="scope.formatValue(scope.rows[row.index].total)"
 								>
 									{{ scope.formatValue(scope.rows[row.index].total) }}
 								</div>
@@ -437,27 +443,28 @@
 
 	scope.viewContext = evDataService.getViewContext()
 	scope.dashboardFilterCollapsed = true
-	scope.matrixView = props.matrixSettings.matrix_view
+	// scope.matrixView = props.matrixSettings.matrix_view
+	scope.matrixView = 'fixed-totals'
 	scope.emptyLinesHidingType = ''
 
 	scope.availableAbscissaAttrs =
 		props.matrixSettings.available_abscissa_keys || []
 	if (scope.availableAbscissaAttrs.length)
 		scope.availableAbscissaAttrs = JSON.parse(
-			angular.toJson(scope.availableAbscissaAttrs)
+			JSON.stringify(scope.availableAbscissaAttrs)
 		)
 
 	scope.availableOrdinateAttrs =
 		props.matrixSettings.available_ordinate_keys || []
 	if (scope.availableOrdinateAttrs.length)
 		scope.availableOrdinateAttrs = JSON.parse(
-			angular.toJson(scope.availableOrdinateAttrs)
+			JSON.stringify(scope.availableOrdinateAttrs)
 		)
 
 	scope.availableValueAttrs = props.matrixSettings.available_value_keys || []
 	if (scope.availableValueAttrs.length)
 		scope.availableValueAttrs = JSON.parse(
-			angular.toJson(scope.availableValueAttrs)
+			JSON.stringify(scope.availableValueAttrs)
 		)
 
 	if (props.matrixSettings.hide_empty_lines) {
@@ -490,9 +497,9 @@
 
 	let elem = ref(null)
 
-	onMounted(() => {
+	onMounted(async () => {
+		await nextTick()
 		init()
-
 		setTimeout(() => {
 			// scope.alignGrid()
 		}, 1000)
@@ -652,7 +659,7 @@
 
                     } */
 		if (props.matrixSettings.auto_scaling) {
-			var elemHeight = elem.height()
+			var elemHeight = elem.value.getBoundingClientRect().height
 			var cellHeight = Math.floor(elemHeight / rowsCount)
 
 			cellHeight = Math.max(cellHeight, 14)
@@ -1078,14 +1085,7 @@
 	 * @param axisProp {String} - can be 'abscissa' or 'ordinate'
 	 * @param _$popup {Object} - data from popup
 	 */
-	var onAxisAttrsOptionSelect = function (
-		option,
-		optionsList,
-		axisProp,
-		_$popup
-	) {
-		_$popup.cancel()
-
+	var onAxisAttrsOptionSelect = function (option, optionsList, axisProp) {
 		if (option.id !== props.matrixSettings[axisProp]) {
 			props.matrixSettings[axisProp] = option.id
 			if (axisProp === 'value_key') scope.matrixValueAttrName = option.name
@@ -1123,52 +1123,28 @@
 
 		return false
 	}
-
+	function selectOption(option, axis = 'ordinate') {
+		onAxisAttrsOptionSelect(
+			option,
+			scope[axis + 'SelectorData'],
+			axis == 'value' ? 'value_key' : axis
+		)
+	}
 	var initAxisAttrsSelectors = function () {
-		scope.abscissaSelectorData = {
-			options: formatAttrsForSelector(
-				scope.availableAbscissaAttrs,
-				props.matrixSettings.abscissa
-			),
-			selectOption: function (option, _$popup) {
-				onAxisAttrsOptionSelect(
-					option,
-					scope.abscissaSelectorData.options,
-					'abscissa',
-					_$popup
-				)
-			},
-		}
+		scope.abscissaSelectorData = formatAttrsForSelector(
+			scope.availableAbscissaAttrs,
+			props.matrixSettings.abscissa
+		)
 
-		scope.ordinateSelectorData = {
-			options: formatAttrsForSelector(
-				scope.availableOrdinateAttrs,
-				props.matrixSettings.ordinate
-			),
-			selectOption: function (option, _$popup) {
-				onAxisAttrsOptionSelect(
-					option,
-					scope.ordinateSelectorData.options,
-					'ordinate',
-					_$popup
-				)
-			},
-		}
+		scope.ordinateSelectorData = formatAttrsForSelector(
+			scope.availableOrdinateAttrs,
+			props.matrixSettings.ordinate
+		)
 
-		scope.valueSelectorData = {
-			options: formatAttrsForSelector(
-				scope.availableValueAttrs,
-				props.matrixSettings.value_key
-			),
-			selectOption: function (option, _$popup) {
-				onAxisAttrsOptionSelect(
-					option,
-					scope.valueSelectorData.options,
-					'value_key',
-					_$popup
-				)
-			},
-		}
+		scope.valueSelectorData = formatAttrsForSelector(
+			scope.availableValueAttrs,
+			props.matrixSettings.value_key
+		)
 
 		var activeValueAttr = scope.availableValueAttrs.find((attr) => {
 			return attr.attribute_data.key === props.matrixSettings.value_key
@@ -1184,7 +1160,6 @@
 
 	function init() {
 		evDataService.setActiveObject({})
-
 		// scope.top_left_title = props.matrixSettings.top_left_title;
 
 		initAxisAttrsSelectors()
@@ -1242,6 +1217,10 @@
 		// window.addEventListener('resize', scope.alignGrid);
 	}
 
+	defineExpose({
+		init
+	});
+
 	onUnmounted(() => {
 		window.removeEventListener('resize', scope.alignGrid)
 
@@ -1255,5 +1234,8 @@
 <style lang="scss" scoped>
 	.report-viewer-matrix .rv-matrix-left-col {
 		height: auto;
+	}
+	.report-viewer-matrix .rv-matrix-body {
+		height: calc(100% - 46px);
 	}
 </style>

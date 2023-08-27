@@ -819,10 +819,15 @@ export default defineStore({
 		},
 		/**
 		 * @param {String} contentType
+		 * @param {Number} [value_type]
 		 * @param {String} [viewContext]
 		 */
-		getDataForAttributesSelector(contentType, viewContext) {
+		getDataForAttributesSelector(contentType, value_type, viewContext) {
 			const attrs = this.getAllAttributesByContentType(contentType, viewContext);
+
+			if (value_type) {
+				return attrs.filter( attr => attr.value_type === value_type );
+			}
 
 			return attrs.filter(attr => {
 				return attr.value_type !== 'mc_field';

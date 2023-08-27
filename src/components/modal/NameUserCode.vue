@@ -14,7 +14,8 @@
 									 @update:modelValue="onUserCodeChange" />-->
 			<FmInputUserCode
 				v-model="newUserCode"
-				:contentType="contentType"
+				v-model:configuration_code="configCode"
+				:content_type="content_type"
 				v-model:errorData="nucErrorData"
 			/>
 		</div>
@@ -36,17 +37,18 @@
 		modelValue: Boolean,
 		name: String,
 		user_code: String,
-		contentType: String,
+		content_type: String,
 		occupiedUserCodes: {
 			type: Array,
-			default: [],
+			default() { return [] },
 		},
 	})
 
 	let emit = defineEmits(['save', 'update:modelValue'])
 
 	let newName = ref(props.name)
-	let newUserCode = ref(props.user_code)
+	let newUserCode = ref(props.user_code);
+	let configCode = ref('');
 	let nucErrorData = ref(null)
 
 	watch(
@@ -89,8 +91,8 @@
 			emit('save', {
 				name: newName.value,
 				user_code: newUserCode.value,
-				configuration_code: newUserCode.value.split(':')[0],
-			}) // TODO refactor configuration_code should be sent to create layout, but it should be set via usercode-input component
+				configuration_code: configCode.value,
+			})
 		}
 	}
 

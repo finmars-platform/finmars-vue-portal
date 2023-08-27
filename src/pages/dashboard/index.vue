@@ -1,16 +1,16 @@
 <template>
 	<div>
-		<FmHorizontalPanel>
+		<FmHorizontalPanel :height="dashStore.isEdit ? '135px' : '50px'">
 			<template #leftActions>
 				<PagesDashboardLayoutManager v-if="!dashStore.isEdit" />
 
 				<template v-else>
 					<BaseInput
-						class="bi_no_margins m-t-0 m-r-4"
+						class="bi_no_margins m-t-0 m-r-16"
 						v-model="dashStore.layout.name"
 						label="Name"
 					/>
-					<BaseInput
+<!--					<BaseInput
 						class="bi_no_margins m-t-0"
 						v-model="dashStore.layout.user_code"
 						label="User code"
@@ -19,6 +19,10 @@
 						class="bi_no_margins m-t-0"
 						v-model="dashStore.layout.configuration_code"
 						label="Configuration code"
+					/>-->
+					<FmInputUserCode
+						v-model="dashStore.layout.user_code"
+						@update:configuration_code="newVal => dashStore.layout.configuration_code = newVal"
 					/>
 				</template>
 			</template>
@@ -69,7 +73,7 @@
 				@init="editorInit"
 				lang="json"
 				theme="monokai"
-				style="height: 300px; width: 600px"
+				style="height: 80vh; width: 80vw"
 			/>
 		</BaseModal>
 

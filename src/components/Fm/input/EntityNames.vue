@@ -99,7 +99,7 @@ let props = defineProps({
 	editing: Boolean,
 	errorData: {
 		type: Object,
-		default: {}
+		default() { return {} },
 	}
 });
 

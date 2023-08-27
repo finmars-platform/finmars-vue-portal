@@ -14,7 +14,7 @@
 			<FmSelect
 				:modelValue="configCode"
 				label="Configuration Code"
-				:items="scope.configuration_codes"
+				:items="configCodesList"
 				@update:modelValue="onConfigCodeChange"
 			/>
 
@@ -26,7 +26,7 @@
 							 data-ng-keyup="updateUserCode(scope.userCode, configuration_code)">
 			</md-input-container>-->
 			<BaseInput
-				:modelValue="scope.userCode"
+				:modelValue="userCodeEnd"
 				label="User code"
 				@update:modelValue="onUserCodeChange"
 				tooltip="Allowed symbols: Numbers:
@@ -75,14 +75,14 @@
 	let props = defineProps({
 		/** Full user_code **/
 		modelValue: String,
-		configurationCode: String,
-		contentType: String,
+		configuration_code: String,
+		content_type: String,
 		errorData: String,
 	})
 
 	let emit = defineEmits([
 		'update:modelValue',
-		'update:configurationCode',
+		'update:configuration_code',
 		'update:errorData',
 	])
 
@@ -90,9 +90,18 @@
 
 	let scope = reactive({})
 
-	let configCode = ref(props.configurationCode || store.defaultConfigCode)
+	let configCodesList = ref([]);
+	let configCode = ref(props.configuration_code);
 
-	scope.userCode = ''
+	if (!configCode.value) {
+
+		configCode.value = store.defaultConfigCode;
+
+		emit('update:configuration_code', configCode.value); // in case of creating user code for new item
+
+	}
+
+	let userCodeEnd = ref('');
 
 	let convertedUserCode = ''
 
@@ -114,6 +123,7 @@
 	)
 
 	const parseUserCode = function () {
+
 		if (!props.modelValue) {
 			return
 		}
@@ -121,20 +131,23 @@
 		const parts = props.modelValue.split(':')
 
 		if (parts.length === 1) {
-			scope.userCode = parts[0]
-		} else {
-			configCode.value = parts[0]
-			scope.userCode = parts.at(-1)
+			userCodeEnd.value = parts[0];
+
 		}
+		else {
+			configCode.value = parts[0];
+			userCodeEnd.value = parts.at(-1)
+		}
+
 	}
 
 	watch(() => props.modelValue, parseUserCode)
 
-	if (props.configurationCode !== undefined) {
+	if (props.configuration_code !== undefined) {
 		watch(
-			() => props.configurationCode,
+			() => props.configuration_code,
 			() => {
-				configCode.value = props.configurationCode
+				configCode.value = props.configuration_code
 			}
 		)
 	}
@@ -144,18 +157,22 @@
 	}, 1000)
 
 	function onConfigCodeChange(configCodeVal) {
-		configCode.value = configCodeVal
-		emit('update:configurationCode', configCodeVal)
+
+		configCode.value = configCodeVal;
+
+		emit('update:configuration_code', configCodeVal);
+		emit( 'update:modelValue', assembleUserCode(userCodeEnd.value) );
+
 	}
 
-	const assembleUserCode = function (userCodeEnd) {
-		let userCode = store.defaultConfigCode + ':'
+	const assembleUserCode = function (ucEnd) {
+		let userCode = configCode.value + ':'
 
-		if (props.contentType) {
-			userCode = userCode + scope.item.contentType + ':'
+		if (props.content_type) {
+			userCode = userCode + props.content_type + ':'
 		}
 
-		return userCode + userCodeEnd
+		return userCode + ucEnd
 	}
 
 	function onUserCodeChange(userCode) {
@@ -164,9 +181,9 @@
 		validateUserCode(userCode)
 
 		if (!props.errorData) {
-			scope.userCode = userCode
+			userCodeEnd.value = userCode
 
-			emit('update:modelValue', assembleUserCode(userCode))
+			emit( 'update:modelValue', assembleUserCode(userCodeEnd.value) )
 		}
 	}
 
@@ -195,7 +212,7 @@
 		if (res.error) {
 			throw new Error(res.error)
 		} else {
-			scope.configuration_codes = res.results
+			configCodesList.value = res.results
 				.filter(function (item) {
 					return !item.is_package // TODO Move to backend filtering someday
 				})

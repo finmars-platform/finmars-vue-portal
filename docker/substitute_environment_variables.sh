@@ -31,4 +31,4 @@ done
 
 echo "DONE REPLACE"
 # Starting server
-npm start
+PORT=8080 node .output/server/index.mjs
