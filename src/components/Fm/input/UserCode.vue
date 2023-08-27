@@ -17,6 +17,7 @@
 				:modelValue="configCode"
 				label="Configuration"
 				:items="scope.configuration_codes"
+				attach="body"
 				@update:modelValue="onConfigCodeChange"
 			/>
 
@@ -93,12 +94,9 @@
 	let store = useStore();
 
 	let scope = reactive({});
-
 	let configCode = ref(props.configurationCode || store.defaultConfigCode);
 
 	scope.userCode = '';
-
-	let convertedUserCode = '';
 
 	let error = ref(props.errorData || null);
 
@@ -208,9 +206,9 @@
 
 	}
 
-	const init = async function () {
+	const init = function () {
 
-		const res = await useApi('configurationList.get');
+		/*const res = await useApi('configurationList.get');
 
 		if ( res.error ) {
 			throw new Error(res.error);
@@ -228,7 +226,18 @@
 
 			parseUserCode();
 
-		}
+		}*/
+
+		scope.configuration_codes = store.configCodes.filter(function (item) {
+			return !item.is_package; // TODO Move to backend filtering someday
+		}).map(function (item) {
+			return {
+				id: item.configuration_code,
+				name: item.configuration_code,
+			}
+		});
+
+		parseUserCode();
 
 	}
 
