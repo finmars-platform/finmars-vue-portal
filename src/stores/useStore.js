@@ -10,6 +10,7 @@ export default defineStore({
 			ws: null,
 
 			ecosystemDefaults: {},
+			configCodes: [],
 			defaultConfigCode: null,
 			systemErrors: [],
 		}
@@ -25,11 +26,20 @@ export default defineStore({
 		async init() {
 			this.getUser()
 			await this.getMasterUsers()
-			if (this.current) {
+			if(this.current){
 				// hack for repots
-				window.base_api_url = this.current.base_api_url
-				this.defaultConfigCode = await useApi('configurationList.get')
+
+				window.base_api_url = this.current.base_api_url;
+				const res = await useApi('configurationList.get');
+
+				if (!res.error) {
+					this.configCodes = res.results;
+				}
+
+				this.defaultConfigCode = this.configCodes.find( conf => conf.is_primary ).configuration_code;
+
 			}
+
 		},
 		async getMasterUsers() {
 			let res = await useApi('masterUser.get')
