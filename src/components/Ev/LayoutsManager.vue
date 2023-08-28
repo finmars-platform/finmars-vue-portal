@@ -3,22 +3,24 @@
 		v-bind="$attrs"
 		:activeLayout="viewerData.listLayout"
 		:layouts="layoutsList"
-											:autosaveLayout="autosaveLayout"
-											:loadingLayout="loadingLayout"
-											:loadingLayoutsList="loadingLayoutsList"
-											:isLayoutDefault="isLayoutDefault"
+		:content_type="viewerData.listLayout.content_type"
+		:autosaveLayout="autosaveLayout"
+		:loadingLayout="loadingLayout"
+		:loadingLayoutsList="loadingLayoutsList"
+		:isLayoutDefault="isLayoutDefault"
 
-											@createNewLayout="createNewLayout"
-											@save="saveLayout"
-											@saveAs="openSaveAsModal = true"
-											@setAsDefault="setAsDefault"
-											@rename="renameLayout"
-											@delete="deleteLayout"
-											@export="openLayoutExport"
+		@createNewLayout="createNewLayout"
+		@save="saveLayout"
+		@saveAs="openSaveAsModal = true"
+		@setAsDefault="setAsDefault"
+		@rename="renameLayout"
+		@delete="deleteLayout"
+		@export="openLayoutExport"
 		@changeLayout="viewerData.layoutToOpen = $event"
 	/>
 
 	<EvModalSaveLayoutAs v-model="openSaveAsModal"
+											 :content_type="viewerData.listLayout.content_type"
 											 @layoutSaved="getLayouts" />
 
 	<ModalExportListLayout :isReport="viewerData.isReport"
@@ -91,6 +93,7 @@
 
 		viewerData.setLayoutCurrentConfiguration(null, store.ecosystemDefaults);
 		viewerData.listLayout.name = 'New layout';
+		viewerData.listLayout.newLayout = true;
 
 		refresh();
 
@@ -162,6 +165,7 @@
 
 		layout.name = namesData.name;
 		layout.user_code = namesData.user_code;
+		layout.configuration_code = namesData.configuration_code;
 
 		const res = await layoutsStore.updateLayout(layout.id, layout);
 
