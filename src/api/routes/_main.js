@@ -99,7 +99,9 @@ export default {
 		delete: prefix + '/users/member/{id}/',
 		put: prefix + '/users/member/{id}/',
 	},
-
+	memberSendInvite: {
+		put: prefix + '/users/member/{id}/send-invite/',
+	},
 	userGroups: {
 		get: prefix + '/users/group/',
 	},
