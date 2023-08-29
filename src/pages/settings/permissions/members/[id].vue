@@ -43,7 +43,7 @@
 
 				</div>
 
-				<div v-if="member.is_deleted">
+				<div v-if="member.is_deleted || member.status == 'invite_declined'">
 
 					<FmBtn @click="resendInvite()">Resend Invite</FmBtn>
 
