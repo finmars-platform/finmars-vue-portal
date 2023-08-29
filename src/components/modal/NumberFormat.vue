@@ -267,13 +267,13 @@
 
 	//         vm.onNumberFormatChange();
 	// };
-	
-	const onNumberFormatChange = function () {
-		 positiveNumberExample = formatValue(4878.2308)
-	 zeroExample = formatValue(0)
-		 negativeNumberExample = formatValue(-9238.1294)
 
-		 negativeFormat = getNegativeFormat(vm.settings)
+	const onNumberFormatChange = function () {
+		positiveNumberExample.value = formatNumberNegative(4878.2308)
+		zeroExample.value = formatNumberNegative(0)
+		negativeNumberExample.value = formatNumberNegative(-9238.1294)
+
+		//  negativeFormat = getNegativeFormat(vm.settings)
 
 		// clearAllPresetSelection()
 		// const currentPreset = getActivePreset()
@@ -283,40 +283,47 @@
 
 		// setTimeout(() => $scope.$apply())
 	}
-	console.log(negativeNumberExample,"negativeNumberExample", formatValue(4878.2308), "formatValue(4878.2308)")
+	// console.log(
+	// 	positiveNumberExample.value,
+	// 	'positiveNumberExample',
+	// 	zeroExample.value,
+	// 	'zeroExample',
+	// 	negativeNumberExample.value,
+	// 	'negativeNumberExample'
+	// )
 	onNumberFormatChange()
-	const getZeroName = function () {
-		return zeroFormats[vm.settings.zero_format_id].name
-	}
+	// console.log(negativeNumberExample,"negativeNumberExample", formatValue(4878.2308), "formatValue(4878.2308)")
+	// onNumberFormatChange()
+	// const getZeroName = function () {
+	// 	return zeroFormats[vm.settings.zero_format_id].name
+	// }
 
-	const getNegativeName = function () {
-		return negativeFormats[vm.negativeFormat].name
-	}
+	// const getNegativeName = function () {
+	// 	return negativeFormats[vm.negativeFormat].name
+	// }
 
-	const getRoundingName = function () {
-		return vm.settings.round_format_id === 0
-			? 'No rounding'
-			: vm.formatRounding(0)
-	}
+	// const getRoundingName = function () {
+	// 	return vm.settings.round_format_id === 0
+	// 		? 'No rounding'
+	// 		: formatRounding(0)
+	// }
 
-	const getSeparationName = function () {
-		return vm.separationFormats[vm.settings.thousands_separator_format_id].name
-	}
+	// const getSeparationName = function () {
+	// 	return vm.separationFormats[vm.settings.thousands_separator_format_id].name
+	// }
 
-	const getPercentageName = function () {
-		return vm.percentageFormats[vm.settings.percentage_format_id].name
-	}
+	// const getPercentageName = function () {
+	// 	return vm.percentageFormats[vm.settings.percentage_format_id].name
+	// }
 
-	const formatRounding = (value) =>
-		renderHelper.formatRounding(value, { report_settings: vm.settings })
+	// const formatRounding = (value) =>
+	// 	renderHelper.formatRounding(value, { report_settings: vm.settings })
 
-	const formatValue = (value) =>
-		renderHelper.formatValue(
-			{ example: value },
-			{ key: 'example', report_settings: vm.settings }
-		)
-
-		
+	// const formatValue = (value) =>
+	// 	renderHelper.formatValue(
+	// 		{ example: value },
+	// 		{ key: 'example', report_settings: vm.settings }
+	// 	)
 </script>
 
 <style lang="scss" scoped>

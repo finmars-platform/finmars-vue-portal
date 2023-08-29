@@ -4,17 +4,6 @@
 		:class="getWrapperClasses()"
 		:ref="(el) => (elem = jquery(el))"
 	>
-		<FmBtn @click=";(renameIsOpened = true)">fgsbtrs</FmBtn>
-		<ModalNumberFormat
-			title="Rename layout"
-			
-			v-model="renameIsOpened"
-			
-		></ModalNumberFormat>
-		<!-- :name="activeLayout.name"
-			:user_code="activeLayout.user_code"
-			:occupiedUserCodes="occupiedUserCodes"
-		@save="renameLayout" -->
 		<div
 			class="g-recon verticalSplitPanelWrapper"
 			v-if="isRootEntityViewer && verticalAdditions.isOpen && domElemsAreReady"
@@ -264,7 +253,6 @@
 	let additions = evDataService.getAdditions()
 	let verticalAdditions = evDataService.getVerticalAdditions()
 
-	let renameIsOpened = ref(false)
 	const components = reactive(props.components || evDataService.getComponents())
 
 	let entityType = evDataService.getEntityType()
