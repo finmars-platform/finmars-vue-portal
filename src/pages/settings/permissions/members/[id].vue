@@ -43,6 +43,12 @@
 
 				</div>
 
+				<div v-if="member.is_deleted">
+
+					<FmBtn @click="resendInvite()">Resend Invite</FmBtn>
+
+				</div>
+
 			</FmCard>
 		</template>
 		<template #right>
@@ -114,6 +120,16 @@ let member = ref({})
 let groups = ref([])
 let roles = ref([])
 let accessPolicies = ref([])
+
+async function resendInvite() {
+
+	let res = await useApi('memberSendInvite.put', {params: {id: route.params.id}})
+
+	if (res) {
+		useNotify({type: 'success', title: 'Invite sent!'})
+	}
+
+}
 
 let statuses = ref([
 	{id: 'active', name: 'Active'},
