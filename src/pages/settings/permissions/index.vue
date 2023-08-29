@@ -18,9 +18,9 @@
 
 			<div class="fm_container">
 				<BaseTable
-					:headers="['', 'id', 'Name', 'Is Admin', 'Is Owner',  'Status', 'Groups', 'Roles']"
+					:headers="['', 'id', 'Name', 'Is Admin', 'Is Owner', 'Is Deleted', 'Status', 'Groups', 'Roles']"
 					:items="members"
-					colls="50px repeat(7, 1fr)"
+					colls="50px repeat(9, 1fr)"
 					:cb="(id) => $router.push(`/settings/permissions/members/${stockMembers[id].id}`)"
 					class="clickable_rows"
 				>
@@ -206,17 +206,13 @@ let members = computed(() => {
 	if (!stockMembers.value) return []
 
 	stockMembers.value.forEach(item => {
-		let roles = []
-
-		if (item.is_admin) roles.push('Admin')
-		if (item.is_owner) roles.push('Owner')
-		if (!item.is_owner && !item.is_admin) roles.push('User')
 
 		data.push({
 			id: item.id,
 			username: {value: item.username, link: '/settings/permissions/members/' + item.id},
 			is_admin: item.is_admin ? 'Admin' : 'No',
 			is_owner: item.is_owner ? 'Owner' : 'No',
+			is_deleted: item.is_deleted ? 'Deleted' : 'No',
 			status: item.status,
 			groups: item.groups_object.map(item => item.name).join(', '),
 			roles: item.roles_object.map(item => item.name).join(', '),
@@ -226,7 +222,7 @@ let members = computed(() => {
 	return data
 })
 
-let statuses = ref(null)
+
 let processing = ref(false)
 
 let groups = ref([])
@@ -276,16 +272,13 @@ async function init() {
 		useApi(
 			'accessPolicyList.get',
 			{filters: {page: 1, page_size: 10000},}
-		),
-		useApi('memberInvites.get'),
-		useApi('dataInstance.get'),
+		)
 	]);
 
 	stockMembers.value = res[0].results;
 	groups.value = res[1].results;
 	roles.value = res[2].results;
 	accessPolicies.value = res[3].results;
-	statuses.value = res[5].results;
 
 }
 
