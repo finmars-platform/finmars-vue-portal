@@ -13,12 +13,6 @@
 				/>
 
 				<BaseInput
-					v-if="invite.id"
-					label="Invited by"
-					:modelValue="invite.from_user_object.username"
-					disabled
-				/>
-				<BaseInput
 					label="Date joined"
 					:modelValue="fromatDate(member.join_date)"
 					disabled
@@ -34,6 +28,20 @@
 					v-model="member.is_admin"
 					label="Admin"
 				/>
+
+				<div style="margin-top: 16px;">
+
+					<div v-if="member.status != 'invited' && member.status != 'deleted'">
+						<FmSelect label="Status"
+											:items="statuses"
+											v-model="member.status"/>
+					</div>
+
+					<div v-if="member.status == 'invited' || member.status == 'deleted'">
+						Status: <b>{{ member.status }}</b>
+					</div>
+
+				</div>
 
 			</FmCard>
 		</template>
@@ -103,10 +111,14 @@ let route = useRoute()
 let router = useRouter()
 
 let member = ref({})
-let invite = ref({})
 let groups = ref([])
 let roles = ref([])
 let accessPolicies = ref([])
+
+let statuses = ref([
+	{id: 'active', name: 'Active'},
+	{id: 'blocked', name: 'Blocked'},
+]);
 
 let selectedGroups = computed(() => {
 	if (!member.value.groups_object.length) return []
@@ -124,8 +136,6 @@ let selectedAccessPolicies = computed(() => {
 })
 
 
-
-
 async function init() {
 	let res = await useApi('member.get', {params: {id: route.params.id}})
 	member.value = res
@@ -138,12 +148,10 @@ async function init() {
 
 	// res = await useApi('accessPolicyList.get', {params: {page_size: '10000'}})
 	res = await useLoadAllPages('accessPolicyList.get', {
-		filters: { page: 1, page_size: 10000 },
+		filters: {page: 1, page_size: 10000},
 	})
 	accessPolicies.value = res
 
-	res = await useApi('memberInvites.get')
-	invite.value = res.results.find(item => item.id == route.params.id) || {}
 }
 
 function findGroupIds(val) {
