@@ -237,7 +237,7 @@
 		]
 
 		sharedCts.forEach((contentType) => {
-			promises.push(evAttrsStore.getAttributeTypes(contentType))
+			promises.push(evAttrsStore.getFetchAttributeTypes(contentType))
 		})
 
 		promises.push( evAttrsStore.fetchCustomFields('reports.balancereport') )

@@ -41,9 +41,15 @@ const balanceMismatchKeys = ["mismatch","mismatch_portfolio","mismatch_account"]
 const dynamicAttrsRouteOpts = {
 	'portfolios.portfolio': 'portfolioAttrTypeList',
 	'accounts.account': 'accountAttrTypeList',
+	'accounts.accounttype': 'accountTypeAttrTypeList',
 	'instruments.instrument': 'instrumentAttrTypeList',
+	'instruments.instrumenttype': 'instrumentTypeAttrTypeList',
 	'counterparties.responsible': 'responsibleAttrTypeList',
 	'counterparties.counterparty': 'counterpartyAttrTypeList',
+	'currencies.currency': 'currencyAttrTypeList',
+	'strategies.strategy1': 'strategy1AttrTypeList',
+	'strategies.strategy2': 'strategy2AttrTypeList',
+	'strategies.strategy3': 'strategy3AttrTypeList',
 	'transactions.transactiontype': 'transactionTypeAttrTypeList',
 	'transactions.complextransaction': 'complexTransactionAttrTypeList',
 }
@@ -76,6 +82,12 @@ const ttypeUserFields  = [
 
 	'complex_transaction.transaction_type.user_date_1', 'complex_transaction.transaction_type.user_date_2', 'complex_transaction.transaction_type.user_date_3', 'complex_transaction.transaction_type.user_date_4', 'complex_transaction.transaction_type.user_date_5'
 ];
+
+const basicFilters = {
+	filters: {
+		page_size: 1000,
+	},
+};
 
 /**
  *
@@ -129,7 +141,7 @@ function formatCustomFields(customFields) {
 
 }
 
-// Used by state._getCommonDynamicAttrs() in calling state.getDynamicAttrs()
+// Used by state._getCommonAttrTypes() in calling state.getAttributeTypes()
 const reportCommonDynamicAttrs = {
 	'portfolioDAttrs': ['portfolios.portfolio', 'portfolio', 'Portfolio'],
 	'accountDAttrs': ['accounts.account', 'account', 'Account'],
@@ -228,6 +240,33 @@ export default defineStore({
 		},
 
 		/**
+		 * Get list of entity attribute types.
+		 * @param {object[]} attrTypes - source list of attribute types.
+		 * @param {string} contentType - content type
+		 * @param {string} rootKey - key prefix for root level attributes.
+		 * @param {string} rootName - name prefix for root level attributes.
+		 * @return {Object[]} Array of Attributes.
+		 * @memberof module:attributeDataService
+		 */
+		formatAttributeTypes(attrTypes, contentType, rootKey, rootName) {
+
+			return attrTypes.map(attribute => {
+
+				let result = {};
+
+				result.attribute_type = Object.assign({}, attribute);
+				result.value_type = attribute.value_type;
+				result.content_type = contentType;
+				result.key = rootKey + '.attributes.' + attribute.user_code;
+				result.name = rootName + '. ' + attribute.name;
+
+				return result
+
+			})
+
+		},
+
+		/**
 		 * Get list of system attributes and all children attributes.
 		 * @param {string} rootContentType - content type (e.g. instruments.instrument).
 		 * @param {string} rootKey - key prefix for root level attributes.
@@ -252,7 +291,7 @@ export default defineStore({
 
 		},
 
-		getDynamicAttrs(contentType, rootKey, rootName) {
+		getAttributeTypes(contentType, rootKey, rootName) {
 
 			if ( !this.attrTypes[contentType] ) {
 				console.warn(`Attribute types for contentType: '${contentType}' not loaded`);
@@ -279,9 +318,9 @@ export default defineStore({
 
 		/** Get dynamic attributes common between reports
 		 * @return {Object} - data with applied dynamic attributes for portfolio, account, instrument, linked_instrument */
-		_getCommonDynamicAttrs(attrsData) {
+		_getCommonAttrTypes(attrsData) {
 			Object.keys(reportCommonDynamicAttrs).forEach(key => {
-				attrsData[key] = this.getDynamicAttrs( ...reportCommonDynamicAttrs[key] )
+				attrsData[key] = this.getAttributeTypes( ...reportCommonDynamicAttrs[key] );
 			})
 
 			return attrsData;
@@ -311,7 +350,7 @@ export default defineStore({
 
 		//# region Loading attributes
 		async fetchSystemAttributes() {
-			let res = await useApi('systemAttributes.get');
+			let res = await useApi('systemAttributes.get', basicFilters);
 
 			if (res.error) {
 				throw res.error;
@@ -359,7 +398,7 @@ export default defineStore({
 		}*/
 		async fetchAttributeTypes(contentType) {
 
-			const res = await useApi( resolveRouteOpt(contentType, dynamicAttrsRouteOpts, 'get') );
+			const res = await useApi( resolveRouteOpt(contentType, dynamicAttrsRouteOpts, 'get'), basicFilters );
 
 			if (res.error) {
 				throw res.error;
@@ -369,7 +408,7 @@ export default defineStore({
 
 		},
 
-		async getAttributeTypes(contentType) {
+		async getFetchAttributeTypes(contentType) {
 			if ( !this.attrTypes[contentType] ) {
 				await this.fetchAttributeTypes(contentType);
 			}
@@ -377,8 +416,17 @@ export default defineStore({
 			return this.attrTypes[contentType];
 		},
 
+		async getFetchAllAttributeTypes() {
+
+			const promises = Object.keys(dynamicAttrsRouteOpts).map(contentType => {
+				return this.getFetchAttributeTypes(contentType);
+			});
+
+			return Promise.allSettled(promises);
+		},
+
 		async fetchCustomFields(contentType) {
-			const res = await useApi( resolveRouteOpt(contentType, customFieldsRouteOpts, 'get') );
+			const res = await useApi( resolveRouteOpt(contentType, customFieldsRouteOpts, 'get'), basicFilters );
 
 			if (res.error) {
 				throw res.error;
@@ -388,7 +436,7 @@ export default defineStore({
 
 		},
 
-		async getCustomFields(contentType) {
+		async getFetchCustomFields(contentType) {
 			if ( !this.customFields[contentType] ) {
 				return await this.fetchCustomFields(contentType);
 			}
@@ -396,8 +444,17 @@ export default defineStore({
 			return this.customFields[contentType];
 		},
 
+		async getFetchAllCustomFields() {
+			const promises = Object.keys(customFieldsRouteOpts)
+				.map(contentType => {
+					return this.getFetchCustomFields(contentType);
+				});
+
+			return Promise.allSettled(promises);
+		},
+
 		async fetchUserFields(contentType) {
-			const res = await useApi( resolveRouteOpt(contentType, userFieldsRouteOpts, 'get') );
+			const res = await useApi( resolveRouteOpt(contentType, userFieldsRouteOpts, 'get'), basicFilters );
 
 			if (res.error) {
 				throw res.error;
@@ -406,10 +463,21 @@ export default defineStore({
 			this.userFields[contentType] = res.results;
 		},
 
-		async getUserFields(contentType) {
+		async getFetchUserFields(contentType) {
 			if ( !this.userFields[contentType] ) {
 				return await this.fetchUserFields(contentType)
 			}
+
+			return this.customFields[contentType];
+		},
+
+		async getFetchAllUserFields() {
+			const promises = Object.keys(userFieldsRouteOpts)
+				.map(contentType => {
+					return this.getFetchUserFields(contentType);
+				});
+
+			return Promise.allSettled(promises);
 		},
 		//# endregion Loading attributes
 
@@ -445,9 +513,9 @@ export default defineStore({
 
 			result.custom = formatCustomFields( this.customFields['reports.balancereport'] );
 
-			//# regions Dynamic attributes
-			result = this._getCommonDynamicAttrs(result);
-			result.allocationInstrumentDAttrs = this.getDynamicAttrs('instruments.instrument', 'allocation', 'Allocation');
+			//# region Dynamic attributes
+			result = this._getCommonAttrTypes(result);
+			result.allocationInstrumentDAttrs = this.getAttributeTypes('instruments.instrument', 'allocation', 'Allocation');
 			//# endregion
 
 			// remove attributes that area already inside currency from balance
@@ -491,7 +559,7 @@ export default defineStore({
 
 			let result = {};
 
-			//# regions System attributes
+			//# region System attributes
 			result.balanceAttrs = this.getAllAttributesAsFlatList('reports.plreport', '', 'Balance', {maxDepth: 1});
 
 			result.balanceMismatchAttrs = this.getAllAttributesAsFlatList('reports.plreportmismatch', '', 'Mismatch', {maxDepth: 1});
@@ -521,8 +589,8 @@ export default defineStore({
 			result.custom = formatCustomFields( this.customFields['reports.plreportmismatch'] );
 
 			//# region Dynamic attributes
-			result = this._getCommonDynamicAttrs(result);
-			result.allocationInstrumentDAttrs = this.getDynamicAttrs('instruments.instrument', 'allocation', 'Allocation');
+			result = this._getCommonAttrTypes(result);
+			result.allocationInstrumentDAttrs = this.getAttributeTypes('instruments.instrument', 'allocation', 'Allocation');
 			//# endregion
 
 			/*result = result.concat(balanceAttrs);
@@ -651,19 +719,19 @@ export default defineStore({
 			var accountPositionDynamicAttrsFormatted = formatAttributeTypes(accountPositionDynamicAttrs, 'accounts.account', 'account_position', 'Account Position');
 			var accountCashDynamicAttrsFormatted = formatAttributeTypes(accountCashDynamicAttrs, 'accounts.account', 'account_cash', 'Account Cash');
 			var accountInterimDynamicAttrsFormatted = formatAttributeTypes(accountInterimDynamicAttrs, 'accounts.account', 'account_interim', 'Account Interim');*/
-			result = this._getCommonDynamicAttrs(result);
+			result = this._getCommonAttrTypes(result);
 
-			result.complexTransactionDAttrs = this.getDynamicAttrs('transactions.complextransaction', 'complex_transaction', 'Complex Transaction');
-			result.transactionTypeDAttrs = this.getDynamicAttrs('transactions.transactiontype', 'transaction_type', 'Transaction Type');
-			result.responsibleDAttrs = this.getDynamicAttrs('counterparties.responsible', 'responsible', 'Responsible');
-			result.counterpartyDAttrs = this.getDynamicAttrs('counterparties.counterparty', 'counterparty', 'Counterparty');
+			result.complexTransactionDAttrs = this.getAttributeTypes('transactions.complextransaction', 'complex_transaction', 'Complex Transaction');
+			result.transactionTypeDAttrs = this.getAttributeTypes('transactions.transactiontype', 'transaction_type', 'Transaction Type');
+			result.responsibleDAttrs = this.getAttributeTypes('counterparties.responsible', 'responsible', 'Responsible');
+			result.counterpartyDAttrs = this.getAttributeTypes('counterparties.counterparty', 'counterparty', 'Counterparty');
 
-			result.allocationBalanceDAttrs = this.getDynamicAttrs('instruments.instrument', 'allocation_balance', 'Allocation Balance');
-			result.allocationPlDAttrs = this.getDynamicAttrs('instruments.instrument', 'allocation_pl', 'Allocation P&L');
+			result.allocationBalanceDAttrs = this.getAttributeTypes('instruments.instrument', 'allocation_balance', 'Allocation Balance');
+			result.allocationPlDAttrs = this.getAttributeTypes('instruments.instrument', 'allocation_pl', 'Allocation P&L');
 
-			result.accountPositionDAttrs = this.getDynamicAttrs('accounts.account', 'account_position', 'Account Position');
-			result.accountCashDAttrs = this.getDynamicAttrs('accounts.account', 'account_cash', 'Account Cash');
-			result.accountInterimDAttrs = this.getDynamicAttrs('accounts.account', 'account_interim', 'Account Interim');
+			result.accountPositionDAttrs = this.getAttributeTypes('accounts.account', 'account_position', 'Account Position');
+			result.accountCashDAttrs = this.getAttributeTypes('accounts.account', 'account_cash', 'Account Cash');
+			result.accountInterimDAttrs = this.getAttributeTypes('accounts.account', 'account_interim', 'Account Interim');
 
 			//# endregion
 
