@@ -199,12 +199,11 @@ let activeTab = ref('Members')
 
 
 let stockMembers = ref(null)
-let stockInvites = ref(null)
 
 let members = computed(() => {
 	let data = []
 
-	if (!stockMembers.value || !stockInvites.value) return []
+	if (!stockMembers.value) return []
 
 	stockMembers.value.forEach(item => {
 		let roles = []
@@ -218,28 +217,9 @@ let members = computed(() => {
 			username: {value: item.username, link: '/settings/permissions/members/' + item.id},
 			is_admin: item.is_admin ? 'Admin' : 'No',
 			is_owner: item.is_owner ? 'Owner' : 'No',
-			status: item.is_owner ? 'Creator' : 'Accepted',
+			status: item.status,
 			groups: item.groups_object.map(item => item.name).join(', '),
 			roles: item.roles_object.map(item => item.name).join(', '),
-		})
-	})
-
-	stockInvites.value.forEach(item => {
-		if (data.find(row => row.username.value == item.user_object.username)) return false
-
-		let roles = []
-
-		if (item.is_admin) roles.push('Admin')
-		if (item.is_owner) roles.push('Owner')
-		if (!item.is_owner && !item.is_admin) roles.push('User')
-
-		data.push({
-			// id: item.id,
-			username: {value: item.user_object.username, link: '/settings/permissions/members/' + item.user},
-			role: 'Admin',
-			status: 'Pending',
-			groups: ''
-			// groups: item.groups.replace(',', ', ')
 		})
 	})
 
@@ -305,7 +285,6 @@ async function init() {
 	groups.value = res[1].results;
 	roles.value = res[2].results;
 	accessPolicies.value = res[3].results;
-	stockInvites.value = res[4].results;
 	statuses.value = res[5].results;
 
 }
