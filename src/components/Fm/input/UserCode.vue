@@ -165,6 +165,9 @@
 	}
 
 	const assembleUserCode = function (ucEnd) {
+
+		if (!ucEnd) return '';
+
 		let userCode = configCode.value + ':'
 
 		if (props.content_type) {

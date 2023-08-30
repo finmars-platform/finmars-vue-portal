@@ -1,5 +1,13 @@
 <template>
 	<div>
+		<div>
+			<FmInputUserCode
+				style="width: 600px;"
+				v-model="userCode"
+				v-model:configuration_code="configCode"
+			/>
+		</div>
+
 		<div class="fm_tabs">
 			<div
 				class="fm_tabs_item"
@@ -236,9 +244,12 @@
     ],
   })
 
+	let store = useStore();
   let evAttrsStore = useEvAttributesStore();
 
   let tab = ref('balance')
+	let userCode = ref('');
+	let configCode = ref('');
   let layout = ref({})
 
   // let payloadForSelector = ref({});
@@ -421,13 +432,19 @@
   let layoutStock
 
   async function saveLayout() {
-    let res = await useApi('mobileLayout.put', {
+
+		if (!userCode.value) {
+			useNotify({ type: 'warning', title: 'User code should not be empty'})
+			return;
+		}
+
+		let res = await useApi('mobileLayout.put', {
       params: {
         id: layoutStock.id,
       },
       body: {
-        user_code: 'only_one',
-        configuration_code: 'local',
+        user_code: userCode.value,
+        configuration_code: configCode.value,
         data: layout.value,
       },
     })
@@ -437,11 +454,9 @@
   async function fetchMobileLayout() {
     let res = await useApi('mobileLayout.get')
 
-    layoutStock = res.results[0]
-    layout.value = layoutStock?.data
-
     if (!res.results.length) {
-      layout.value = {
+
+			layout.value = {
         balance: {
           fieldToAggrigate: [],
           fieldsToGroup: [],
@@ -454,16 +469,25 @@
         transactions: {},
         global: {},
       }
-      let res = await useApi('mobileLayout.post', {
+
+			const creatingRes = await useApi('mobileLayout.post', {
         body: {
           name: 'Only one',
-          user_code: 'only_one',
-          configuration_code: 'local',
+          user_code: `${store.defaultConfigCode}:only_one`,
+          configuration_code: store.defaultConfigCode,
           data: layout.value,
         },
       })
-      layoutStock = res
-    }
+
+			layoutStock = creatingRes;
+
+    } else {
+			layoutStock = res.results[0];
+		}
+
+		layout.value = layoutStock.data;
+		userCode.value = layoutStock.user_code;
+		configCode.value = layoutStock.configuration_code;
     console.log('layout.value:', layout.value)
   }
 
