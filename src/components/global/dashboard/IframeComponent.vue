@@ -1,7 +1,7 @@
 <template>
 	<div class="wrap">
 		<iframe
-			:src="component.settings[0].default_value"
+			:src="component.settings.url.default_value"
 			width="100%"
 			height="100%"
 			frameborder="0"
@@ -11,11 +11,11 @@
 
 <script setup>
 	const props = defineProps({
-		wid: String,
+		uid: String,
 	})
 
 	const dashStore = useStoreDashboard()
-	let component = dashStore.getWidget(props.wid)
+	let component = dashStore.getComponent(props.uid)
 	console.log('component:', component)
 </script>
 

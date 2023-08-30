@@ -338,7 +338,7 @@
 	let props = defineProps({
 		modelValue: {
 			type: Array,
-			default: [],
+			default() { return [] },
 		}, // selected attributes
 		title: {
 			type: String,
@@ -346,12 +346,12 @@
 		},
 		attributes: {
 			type: Array,
-			default: [],
+			default() { return [] },
 		},
 		favoriteAttributes: Array,
 		disabledAttributes: { // e.g. attributes that are already used when adding new columns
 			type: Array,
-			default: [],
+			default() { return [] },
 		},
 		multiselect: Boolean,
 		searchParameters: String,
@@ -474,45 +474,89 @@
 
 	let selected = reactive({});
 
-	let toggleAttr = function (attr, status) {
+	let toggleAttr;
+	function setToggleAttrFn () {
 
-		if (attr.disabled) return;
+		if (props.multiselect) {
 
-		selected[attr.key] = status; // in case attribute was not selected before
+			return function (attr, status) {
 
-		if ( selected[attr.key] ) {
+				if (attr.disabled) return;
 
-			Object.keys(selected).forEach(key => { // deselect other attributes except disabled
-				selected[key] = !disabledAttrs.includes(key) && key === attr.key;
-			})
+				selected[attr.key] = status;
+
+				const selKeys = Object.keys(selected).filter( key => {
+					return selected[key] && !disabledAttrs.find(attr => attr.key === key);
+				});
+				// const selAttrs = props.attributes.filter( attr => selKeys.includes(attr.key) );
+
+				emit('update:modelValue', selKeys);
+			}
 
 		}
 
-		emit( 'update:modelValue', selected[attr.key] ? attr.key : null ); // 'null' if attribute was deselected
-
-	}
-
-	if (props.multiselect) {
-
-		toggleAttr = function (attr, status) {
+		return function (attr, status) {
 
 			if (attr.disabled) return;
 
-			selected[attr.key] = status;
+			selected[attr.key] = status; // in case attribute was not selected before
 
-			const selKeys = Object.keys(selected).filter( key => {
-				return selected[key] && !disabledAttrs.find(attr => attr.key === key);
-			});
-			// const selAttrs = props.attributes.filter( attr => selKeys.includes(attr.key) );
+			if ( selected[attr.key] ) {
 
-			emit('update:modelValue', selKeys);
+				Object.keys(selected).forEach(key => { // deselect other attributes except disabled
+					selected[key] = !disabledAttrs.includes(key) && key === attr.key;
+				})
+
+			}
+
+			emit( 'update:modelValue', selected[attr.key] ? attr.key : null ); // 'null' if attribute was deselected
+
 		}
+
+	}
+
+	toggleAttr = setToggleAttrFn();
+
+	watch(
+		() => props.multiselect,
+		() => {
+			toggleAttr = setToggleAttrFn();
+		},
+	)
+
+	function formatAttrName (attr) {
+
+		let formattedName = attr.name;
+
+		if ( attr.attribute_type ) {
+
+			const namePieces = formattedName.split( foldersSeparatorRE );
+			const last = namePieces.pop();
+			const namePiece = attr.key.includes("pricing_policy_") ? "Pricing" : "User Attributes";
+
+			namePieces.push(namePiece);
+			namePieces.push(last);
+
+			formattedName = namePieces.join('. ');
+
+		}
+		/* if attribute does not fit any group
+		 * place it into a group General */
+		else if ( !attr.name.match( foldersSeparatorRE ) ) {
+			formattedName = "General. " + attr.name;
+		}
+
+		attr.name = formattedName;
+
+		return attr;
 
 	}
 
 	function processAttributes() {
 
 		attrsList = JSON.parse(JSON.stringify( props.attributes ));
+
+		attrsList = attrsList.map(formatAttrName);
 
 		let attributes = attrsList
 			.sort(sortAttrs)
@@ -644,6 +688,7 @@
 			if ( !selected[prop] || oldSel ) continue
 
 			let selAttr = formattedAttrs.value.find((item) => item.key == prop );
+
 			selAttr = JSON.parse(JSON.stringify( selAttr ));
 
 			props.push(selAttr)

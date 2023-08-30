@@ -73,7 +73,8 @@
 	display: grid;
 	grid-template-columns: repeat(3, 360px);
 	grid-gap: 30px;
-	justify-content: flex-start;
+	//justify-content: flex-start;
+	justify-content: center;
 	padding-bottom: $content-padding-x;
 }
 </style>

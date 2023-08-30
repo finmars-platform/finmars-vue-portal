@@ -1,6 +1,6 @@
 <template>
 	<div class="report-viewer-holder height-100">
-		<AngularFmGridTable
+		<LazyAngularFmGridTable
 			v-if="vm && vm.readyStatus.attributes && vm.readyStatus.layout"
 			class="g-group-table-holder"
 			:attributeDataService="vm.attributeDataService"

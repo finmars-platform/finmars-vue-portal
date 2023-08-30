@@ -736,6 +736,12 @@ flex-c-space-around {
 	justify-content: center;
 	align-items: center;
 }
+.grid {
+	display: grid;
+}
+.grid-col-2 {
+	grid-template-columns: 1fr 1fr;
+}
 
 .flex-1-1-100 {
 	flex: 1 1 100%;

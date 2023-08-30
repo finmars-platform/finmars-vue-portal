@@ -1,3 +1,4 @@
+
 function calculatePosition( targetElem, tooltipElem, direction ) {
 
 	const activatorRect = targetElem.getBoundingClientRect();
@@ -50,16 +51,21 @@ function calculatePosition( targetElem, tooltipElem, direction ) {
 export default defineNuxtPlugin(nuxtApp => {
 	nuxtApp.vueApp.directive('fm-tooltip', {
 
+
 		mounted(el, binding) {
 
 			const errorMode = !!binding.modifiers.error;
 			const direction = binding.modifiers.bottom ? 'bottom' : 'top';
+			const tooltipElemId = 'vtooltip' + useGenerateUniqueId();
+			el.dataset.tooltipId = tooltipElemId;
 
 			const body = document.body;
 			const tooltipElem = document.createElement('div');
 
+			tooltipElem.id = tooltipElemId;
 			tooltipElem.classList.add('fm_tooltip');
 			tooltipElem.style.position = 'absolute';
+			tooltipElem.style.zIndex = 999;
 			tooltipElem.innerHTML = binding.value;
 
 			if (errorMode) tooltipElem.classList.add('error');
@@ -82,16 +88,17 @@ export default defineNuxtPlugin(nuxtApp => {
 
 		},
 
-		/*unmounted() {
+		unmounted(el) {
+			const tooltipElemId = el.dataset.tooltipId;
 
 			const body = document.body;
-			const tooltipElem = body.querySelector('.fm_tooltip');
+			const tooltipElem = body.querySelector(`#${tooltipElemId}`);
 
 			if (tooltipElem) {
 				body.removeChild(tooltipElem);
 			}
 
-		},*/
+		},
 
 	})
 });
