@@ -31,15 +31,21 @@
 
 				<div style="margin-top: 16px;">
 
-					<div v-if="member.status != 'invited' && member.status != 'deleted'">
+					<div v-if="member.status != 'invited' && member.status != 'deleted' && member.status != 'invite_declined'">
 						<FmSelect label="Status"
 											:items="statuses"
 											v-model="member.status"/>
 					</div>
 
-					<div v-if="member.status == 'invited' || member.status == 'deleted'">
+					<div v-if="member.status == 'invited' || member.status == 'deleted' || member.status == 'invite_declined'">
 						Status: <b>{{ member.status }}</b>
 					</div>
+
+				</div>
+
+				<div v-if="member.is_deleted || member.status == 'invite_declined'">
+
+					<FmBtn @click="resendInvite()">Resend Invite</FmBtn>
 
 				</div>
 
@@ -114,6 +120,16 @@ let member = ref({})
 let groups = ref([])
 let roles = ref([])
 let accessPolicies = ref([])
+
+async function resendInvite() {
+
+	let res = await useApi('memberSendInvite.put', {params: {id: route.params.id}})
+
+	if (res) {
+		useNotify({type: 'success', title: 'Invite sent!'})
+	}
+
+}
 
 let statuses = ref([
 	{id: 'active', name: 'Active'},
