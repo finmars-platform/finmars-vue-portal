@@ -31,13 +31,13 @@
 
 				<div style="margin-top: 16px;">
 
-					<div v-if="member.status != 'invited' && member.status != 'deleted'">
+					<div v-if="member.status != 'invited' && member.status != 'deleted' && member.status != 'invite_declined'">
 						<FmSelect label="Status"
 											:items="statuses"
 											v-model="member.status"/>
 					</div>
 
-					<div v-if="member.status == 'invited' || member.status == 'deleted'">
+					<div v-if="member.status == 'invited' || member.status == 'deleted' || member.status == 'invite_declined'">
 						Status: <b>{{ member.status }}</b>
 					</div>
 
