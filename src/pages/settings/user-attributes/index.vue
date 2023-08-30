@@ -17,7 +17,65 @@
 					>SHOW HIDDEN ATTRIBUTES
 				</FmBtn>
 			</div>
-			<span class="not-atribute">You could add new user attributes here</span>
+			<div v-if="portfolioItems">
+				<div
+					class="layouts-card"
+					v-for="(item, index) in portfolioItems"
+					:key="index"
+				>
+					<div class="layouts-card__inner">
+						<div class="layouts-card__name">
+							<FmIcon btn icon="visibility" v-fm-tooltip="'Delete Attribute'" />
+							<div class="layouts-card__text">
+								<h3 class="layouts-card__title">
+									{{ item?.name }}
+								</h3>
+								<div class="layouts-card__subtitle">
+									{{ item?.user_code }}
+								</div>
+							</div>
+						</div>
+
+						<div class="layouts-card__setting">
+							<div class="layouts-card__item layouts-card__rename">
+								<FmIcon
+									btn
+									icon="file_download"
+									v-fm-tooltip="'Export Classifier'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__default">
+								<FmIcon
+									btn
+									icon="file_upload"
+									v-fm-tooltip="'Import Classifiers from .csv file'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="map"
+									v-fm-tooltip="'Open Classifier Mappings'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="format_align_right"
+									v-fm-tooltip="'Edit Classifier tre'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon btn icon="edit" v-fm-tooltip="'Edit Attribute'" />
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon btn icon="delete" v-fm-tooltip="'Delete Attribute'" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<span v-else class="not-atribute">You could add new user attributes here</span>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Account Attributes">
 			<div class="attributes-header">
@@ -34,7 +92,65 @@
 					>SHOW HIDDEN ATTRIBUTES
 				</FmBtn>
 			</div>
-			<span class="not-atribute">You could add new user attributes here</span>
+			<div v-if="accountItems">
+				<div
+					class="layouts-card"
+					v-for="(item, index) in accountItems"
+					:key="index"
+				>
+					<div class="layouts-card__inner">
+						<div class="layouts-card__name">
+							<FmIcon btn icon="visibility" v-fm-tooltip="'Delete Attribute'" />
+							<div class="layouts-card__text">
+								<h3 class="layouts-card__title">
+									{{ item?.name }}
+								</h3>
+								<div class="layouts-card__subtitle">
+									{{ item?.user_code }}
+								</div>
+							</div>
+						</div>
+
+						<div class="layouts-card__setting">
+							<div class="layouts-card__item layouts-card__rename">
+								<FmIcon
+									btn
+									icon="file_download"
+									v-fm-tooltip="'Export Classifier'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__default">
+								<FmIcon
+									btn
+									icon="file_upload"
+									v-fm-tooltip="'Import Classifiers from .csv file'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="map"
+									v-fm-tooltip="'Open Classifier Mappings'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="format_align_right"
+									v-fm-tooltip="'Edit Classifier tre'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon btn icon="edit" v-fm-tooltip="'Edit Attribute'" />
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon btn icon="delete" v-fm-tooltip="'Delete Attribute'" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<span v-else class="not-atribute">You could add new user attributes here</span>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Instruments Attributes">
 			<div class="attributes-header">
@@ -51,10 +167,10 @@
 					>SHOW HIDDEN ATTRIBUTES
 				</FmBtn>
 			</div>
-			<div v-if="ecosystemDefaults">
+			<div v-if="instrumentItems">
 				<div
 					class="layouts-card"
-					v-for="(item, index) in ecosystemDefaults"
+					v-for="(item, index) in instrumentItems"
 					:key="index"
 				>
 					<div class="layouts-card__inner">
@@ -278,8 +394,8 @@
 	})
 
 	const instrumentItems = ref([])
-	const portfolioListLightItems = ref([])
-	const billItems = ref([])
+	const portfolioItems = ref([])
+	const accountItems = ref([])
 	const currencyItems = ref([])
 	const instrumentTypeItems = ref([])
 	const transactionTypeLightItems = ref([])
@@ -304,58 +420,58 @@
 	const disabledBtn = ref(true)
 	const ecosystemDefaults = ref([1])
 	const BaseInputEcosystemDefaults = ref([])
-	init()
-	async function init() {
-		const res = await Promise.all([
-			useApi('instrumentListLight.get'),
-			useApi('portfolioListLight.get'),
-			useApi('accountLight.get'),
-			useApi('currencyListLight.get'),
-			useApi('instrumentType.get'),
-			useApi('transactionTypeLight.get'),
-			useApi('accountsType.get'),
-			useApi('pricingPolicyList.get'),
-			useApi('instrumentPeriodicity.get'),
-			useApi('instrumentAccrualCalculationModel.get'),
-			useApi('instrumentClass.get'),
-			useApi('instrumentSizeDetail.get'),
-			useApi('instrumentPricingСondition.get'),
-			useApi('counterpartyResponsibleLight.get'),
-			useApi('counterpartyCounterpartyLight.get'),
-			useApi('strategiesOneLight.get'),
-			useApi('strategiesOneSubgroup.get'),
-			useApi('strategiesSecondLight.get'),
-			useApi('strategiesSecondSubgroup.get'),
-			useApi('strategiesThirdLight.get'),
-			useApi('strategiesThirdSubgroup.get'),
-			useApi('instrumentSchemeList.get'),
-			useApi('currencySchemeList.get'),
-		])
+	// init()
+	// async function init() {
+	// 	const res = await Promise.all([
+	// 		useApi('instrumentListLight.get'),
+	// 		useApi('portfolioListLight.get'),
+	// 		useApi('accountLight.get'),
+	// 		useApi('currencyListLight.get'),
+	// 		useApi('instrumentType.get'),
+	// 		useApi('transactionTypeLight.get'),
+	// 		useApi('accountsType.get'),
+	// 		useApi('pricingPolicyList.get'),
+	// 		useApi('instrumentPeriodicity.get'),
+	// 		useApi('instrumentAccrualCalculationModel.get'),
+	// 		useApi('instrumentClass.get'),
+	// 		useApi('instrumentSizeDetail.get'),
+	// 		useApi('instrumentPricingСondition.get'),
+	// 		useApi('counterpartyResponsibleLight.get'),
+	// 		useApi('counterpartyCounterpartyLight.get'),
+	// 		useApi('strategiesOneLight.get'),
+	// 		useApi('strategiesOneSubgroup.get'),
+	// 		useApi('strategiesSecondLight.get'),
+	// 		useApi('strategiesSecondSubgroup.get'),
+	// 		useApi('strategiesThirdLight.get'),
+	// 		useApi('strategiesThirdSubgroup.get'),
+	// 		useApi('instrumentSchemeList.get'),
+	// 		useApi('currencySchemeList.get'),
+	// 	])
 
-		instrumentItems.value = res[0].results
-		portfolioListLightItems.value = res[1].results
-		billItems.value = res[2].results
-		currencyItems.value = res[3].results
-		instrumentTypeItems.value = res[4].results
-		transactionTypeLightItems.value = res[5].results
-		accountsTypeItems.value = res[6].results
-		pricingPolicyListItems.value = res[7].results
-		instrumentPeriodicityItems.value = res[8]
-		instrumentAccrualCalculationModelItems.value = res[9]
-		instrumentClassItems.value = res[10]
-		instrumentSizeDetailItems.value = res[11]
-		instrumentPricingСonditionItems.value = res[12]
-		counterpartyResponsibleLightItems.value = res[13].results
-		counterpartyCounterpartyLightItems.value = res[14].results
-		strategiesOneLightItems.value = res[15].results
-		strategiesOneSubgroupItems.value = res[16].results
-		strategiesSecondLightItems.value = res[17].results
-		strategiesSecondSubgroupItems.value = res[18].results
-		strategiesThirdLightItems.value = res[19].results
-		strategiesThirdSubgroupItems.value = res[20].results
-		instrumentSchemeListItems.value = res[21].results
-		currencySchemeListItems.value = res[22].results
-	}
+	// 	instrumentItems.value = res[0].results
+	// 	portfolioListLightItems.value = res[1].results
+	// 	billItems.value = res[2].results
+	// 	currencyItems.value = res[3].results
+	// 	instrumentTypeItems.value = res[4].results
+	// 	transactionTypeLightItems.value = res[5].results
+	// 	accountsTypeItems.value = res[6].results
+	// 	pricingPolicyListItems.value = res[7].results
+	// 	instrumentPeriodicityItems.value = res[8]
+	// 	instrumentAccrualCalculationModelItems.value = res[9]
+	// 	instrumentClassItems.value = res[10]
+	// 	instrumentSizeDetailItems.value = res[11]
+	// 	instrumentPricingСonditionItems.value = res[12]
+	// 	counterpartyResponsibleLightItems.value = res[13].results
+	// 	counterpartyCounterpartyLightItems.value = res[14].results
+	// 	strategiesOneLightItems.value = res[15].results
+	// 	strategiesOneSubgroupItems.value = res[16].results
+	// 	strategiesSecondLightItems.value = res[17].results
+	// 	strategiesSecondSubgroupItems.value = res[18].results
+	// 	strategiesThirdLightItems.value = res[19].results
+	// 	strategiesThirdSubgroupItems.value = res[20].results
+	// 	instrumentSchemeListItems.value = res[21].results
+	// 	currencySchemeListItems.value = res[22].results
+	// }
 
 	watch(
 		ecosystemDefaults,
@@ -367,13 +483,29 @@
 		},
 		{ deep: true }
 	),
-		defaultsGet()
-	async function defaultsGet() {
+	instrumentAttrGet()
+	portfolioAttrGet()
+	accountAttrGet()
+	async function instrumentAttrGet() {
 		let edRes = await useApi('instrumentAttrTypeList.get')
 		console.log(edRes, 'edRes')
-		ecosystemDefaults.value = edRes.error ? {} : edRes.results
+		instrumentItems.value = edRes.error ? {} : edRes.results
 		console.log(ecosystemDefaults.value, 'edRes')
 	}
+	async function portfolioAttrGet() {
+		let edRes = await useApi('portfolioAttrTypeList.get')
+		console.log(edRes, 'edRes')
+		portfolioItems.value = edRes.error ? {} : edRes.results
+		console.log(ecosystemDefaults.value, 'edRes')
+	}
+	async function accountAttrGet() {
+		let edRes = await useApi('accountAttrTypeList.get')
+		console.log(edRes, 'edRes')
+		accountItems.value = edRes.error ? {} : edRes.results
+		console.log(ecosystemDefaults.value, 'edRes')
+	}
+	
+	
 	async function defaultSettingsCreate() {
 		let res = await useApi('defaultSettings.put', {
 			params: { id: ecosystemDefaults.value.id },
