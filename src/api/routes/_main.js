@@ -29,6 +29,11 @@ export default {
 	instrumentSchemeList: {
 		get: prefix + '/pricing/instrument-pricing-scheme/',
 	},
+	instrumentUserField:{
+		get: prefix + '/ui/instrument-user-field/',
+		put: prefix + '/ui/instrument-user-field/{id}/',
+		post: prefix + '/ui/instrument-user-field/',
+	},
 	pricingPolicyList: {
 		get: prefix + '/instruments/pricing-policy/',
 	},
@@ -56,6 +61,12 @@ export default {
 	},
 	counterpartyList: {
 		get: prefix + '/counterparties/counterparty/',
+	},
+	accountLight: {
+		get: prefix + '/accounts/account/light/',
+	},
+	accountTypeList: {
+		get: prefix + '/accounts/account-type/',
 	},
 	counterpartyDatabaseSearch: {
 		get: uDatabasePrefix + '/company/',
@@ -223,11 +234,85 @@ export default {
 	transactionComplexFiltered: {
 		post: prefix + '/transactions/complex-transaction/ev-item/',
 	},
+	systemAttributes: {
+			get: prefix + '/ui/system-attributes/',
+	},
 	portfolioLight: {
 		get: prefix + '/portfolios/portfolio/light/',
 	},
 	task: {
 		get: prefix + '/tasks/task/{id}/'
+	},
+
+	//# region Entity viewer attribute types
+	portfolioAttrTypeList: {
+		get: prefix + '/portfolios/portfolio-attribute-type/',
+	},
+	accountAttrTypeList: {
+		get: prefix + '/accounts/account-attribute-type/',
+	},
+
+	instrumentAttrTypeList: {
+		get: prefix + '/instruments/instrument-attribute-type/',
+	},
+	instrumentTypeAttrTypeList: {
+		get: prefix + '/instruments/instrument-type-attribute-type/',
+	},
+	responsibleAttrTypeList: {
+		get: prefix + '/counterparties/responsible-attribute-type/',
+	},
+	currencyAttrTypeList: {
+		get: prefix + '/currencies/currency-attribute-type/',
+	},
+	counterpartyAttrTypeList: {
+		get: prefix + '/counterparties/counterparty-attribute-type/',
+	},
+	strategy1AttrTypeList: {
+		get: prefix + '/strategies/1/strategy-attribute-type/',
+	},
+	strategy2AttrTypeList: {
+		get: prefix + '/strategies/2/strategy-attribute-type/',
+	},
+	strategy3AttrTypeList: {
+		get: prefix + '/strategies/3/strategy-attribute-type/',
+	},
+
+	transactionTypeLight: {
+		get: prefix + '/transactions/transaction-type/light/',
+	},
+	transactionTypeAttrTypeList: {
+		get: prefix + '/transactions/complex-transaction-attribute-type/',
+	},
+	complexTransactionAttrTypeList: {
+		get: prefix + '/transactions/complex-transaction-attribute-type/',
+	},
+	//# endregion Entity viewer attribute types
+
+	complexTransactionUserField: {
+		get: prefix + '/ui/complex-transaction-user-field/',
+		put: prefix + '/ui/complex-transaction-user-field/{id}/',
+		post: prefix + '/ui/complex-transaction-user-field/',
+	},
+	transactionUserField: {
+		get: prefix + '/ui/transaction-user-field/',
+		put: prefix + '/ui/transaction-user-field/{id}/',
+		post: prefix + '/ui/transaction-user-field/',
+	},
+
+	balanceReportCustomFieldList: {
+			get: prefix + '/reports/balance-report/custom-field/',
+	},
+	plReportCustomFieldList: {
+			get: prefix + '/reports/transaction-report/custom-field/',
+	},
+	transactionReportCustomFieldList: {
+			get: prefix + '/reports/transaction-report/custom-field/',
+	},
+
+	mobileLayout: {
+			get: prefix + '/ui/mobile-layout/',
+			post: prefix + '/ui/mobile-layout/',
+			put: prefix + '/ui/mobile-layout/{id}/',
 	},
 
 	// Надо отделить
