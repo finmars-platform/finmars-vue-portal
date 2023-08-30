@@ -578,6 +578,15 @@
 														<span class="side-nav-title">Manual Sorting</span>
 													</a>
 												</li>
+
+                        <li>
+                          <NuxtLink
+                              to="/dashboard/mobile"
+                              class="sidenav-dropdown-menu-btn"
+                          >
+                            <span class="side-nav-title">Mobile</span>
+                          </NuxtLink>
+                        </li>
 											</ul>
 										</div>
 									</li>
