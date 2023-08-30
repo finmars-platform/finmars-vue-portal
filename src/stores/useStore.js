@@ -96,6 +96,20 @@ export default defineStore({
 				this.member = res
 			}
 		},
+		async updateMember(member = this.member) {
+			const options = {
+				params: { id: member.id },
+				body: member,
+			}
+
+			const res = await useApi('member.put', options)
+
+			if (res.error) {
+				console.error(res.error)
+			} else {
+				this.member = res
+			}
+		},
 
 		async fetchEcosystemDefaults() {
 

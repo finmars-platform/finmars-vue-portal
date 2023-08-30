@@ -63,7 +63,7 @@
 <script setup>
 
 let props = defineProps({
-	modelValue: [Array, String], // Array for multiselect, String and null for select
+	modelValue: [Array, String], // Array of Strings (keys) for multiselect, String (key) and null for select
 	title: String,
 	contentType: String,
 	valueType: Number, // used to filter attributes

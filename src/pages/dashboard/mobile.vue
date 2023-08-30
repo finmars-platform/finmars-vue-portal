@@ -78,15 +78,16 @@
 					"
 				>
 					<div class="fm_card_title" style="font-size: 14px">
-						{{ item.name }}
+						{{ item.layout_name || item.name }}
 					</div>
 					<div style="padding-bottom: 40px">
 						<b>Sum by:</b>
 
-						{{
-							layout?.balance?.fieldToAggrigate &&
+<!--						{{
+							layout.balance.fieldToAggrigate &&
 							layout.balance.fieldToAggrigate[0]?.name
-						}}
+						}}-->
+            {{ getAggAttrName('balance') }}
 					</div>
 
 					<template #controls>
@@ -148,15 +149,16 @@
 					"
 				>
 					<div class="fm_card_title" style="font-size: 14px">
-						{{ item.name }}
+						{{ item.layout_name || item.name }}
 					</div>
 					<div style="padding-bottom: 40px">
 						<b>Sum by:</b>
 
-						{{
-							layout?.pnl?.fieldToAggrigate &&
+<!--						{{
+							layout.pnl.fieldToAggrigate &&
 							layout.pnl.fieldToAggrigate[0]?.name
-						}}
+						}}-->
+            {{ getAggAttrName('pnl') }}
 					</div>
 
 					<template #controls>
@@ -202,10 +204,11 @@
 			title="Add column"
 			:contentType="attrsSelContentType"
 			:attributes="allAttrs"
-			:selected="selAttrs"
-			:disabledAttributes="selAttrs"
+			:selected="selAttrsKeys"
+			:disabledAttributes="selAttrsKeys"
 			multiselect
 			@selectedAttributesChanged="attrs => applySelAttrs(attrs)"
+      @favoritesChanged="favAttrs => renameAttrs('fieldsToGroup', favAttrs)"
 		/>
 
 		<FmAttributesSelectModal
@@ -214,253 +217,268 @@
 			:contentType="attrsSelContentType"
 			:valueType="20"
 			:attributes="allAttrs"
-			:selected="selAttrs[0]"
+			:selected="selAttrsKeys[0]"
 			@selectedAttributesChanged="attr => applyAggAttr(attr)"
+      @favoritesChanged="favAttrs => renameAttrs('fieldToAggrigate', favAttrs)"
 		/>
 	</div>
 </template>
 
 <script setup>
-/*import attributeDataServiceInst from '~~/src/angular/services/attributeDataService'
-import evRvLayoutsHelperInst from '@/angular/helpers/evRvLayoutsHelper'
-import globalDataServiceInst from '@/angular/shell/scripts/app/services/globalDataService'
-import middlewareServiceInst from '@/angular/shell/scripts/app/services/middlewareService'
-import metaContentTypesServiceInst from '@/angular/services/metaContentTypesService'
-import customFieldService from '@/angular/services/reports/customFieldService'
-import attributeTypeService from '@/angular/services/attributeTypeService'
-import xhrService from '@/angular/shell/scripts/app/services/xhrService'
-import cookieService from '@/angular/shell/scripts/app/services/cookieService'
-import uiService from '~~/src/angular/services/uiService'
-import evHelperService from '~~/src/angular/services/entityViewerHelperService'*/
 
-definePageMeta({
-	middleware: 'auth',
-	bread: [
-		{
-			text: 'Mobile dashboard',
-			disabled: true,
-		},
-	],
-})
+  definePageMeta({
+    middleware: 'auth',
+    bread: [
+      {
+        text: 'Mobile dashboard',
+        disabled: true,
+      },
+    ],
+  })
 
-let evAttrsStore = useEvAttributesStore();
+  let evAttrsStore = useEvAttributesStore();
 
-let tab = ref('balance')
-let layout = ref({})
+  let tab = ref('balance')
+  let layout = ref({})
 
-let payloadForSelector = ref({});
+  // let payloadForSelector = ref({});
 
-let reportProp = computed(() => {
+  let reportProp = computed(() => {
 
-	if ( ['balance', 'pnl'].includes(tab.value) ) return tab.value;
+    if ( ['balance', 'pnl'].includes(tab.value) ) return tab.value;
 
-	return '';
+    return '';
 
-});
-// let isPnl = ref(false);
-let attrsSelContentType = ref('reports.balancereport');
-let allAttrs = ref([]);
-let selAttrs = ref([]);
+  });
+  // let isPnl = ref(false);
+  let attrsSelContentType = ref('reports.balancereport');
+  let allAttrs = ref([]);
+  let selAttrs = ref([]);
+  let selAttrsKeys = computed( () => selAttrs.value.map( attr => attr.key ) );
 
-const attrsSelectorIsOpen = ref(false);
-let aggAttrsSelIsOpen = ref(false);
+  const attrsSelectorIsOpen = ref(false);
+  let aggAttrsSelIsOpen = ref(false);
 
-/*function openAttrSelector(layoutField, isPnl = false) {
-	window.evRvLayoutsHelper = new evRvLayoutsHelperInst()
-	let middlewareService = new middlewareServiceInst()
+  /*function openAttrSelector(layoutField, isPnl = false) {
+    window.evRvLayoutsHelper = new evRvLayoutsHelperInst()
+    let middlewareService = new middlewareServiceInst()
 
-	// Globals HACK
-	window.metaContentTypesService = new metaContentTypesServiceInst()
-	window.globalDataService = new globalDataServiceInst()
-	window.xhrService = new xhrService()
-	window.cookieService = new cookieService()
+    // Globals HACK
+    window.metaContentTypesService = new metaContentTypesServiceInst()
+    window.globalDataService = new globalDataServiceInst()
+    window.xhrService = new xhrService()
+    window.cookieService = new cookieService()
 
-	attrsSelectorIsOpen.value = true
+    attrsSelectorIsOpen.value = true
 
-	let attributeDataService = new attributeDataServiceInst(
-		metaContentTypesService,
-		customFieldService,
-		attributeTypeService,
-		uiService
-	)
+    let attributeDataService = new attributeDataServiceInst(
+      metaContentTypesService,
+      customFieldService,
+      attributeTypeService,
+      uiService
+    )
 
-	allAttrs = attributeDataService.getForAttributesSelector(
-		isPnl ? 'pl-report' : 'balance-report'
-	)
-	const selectedAttrs = layout.value[isPnl ? 'pnl' : 'balance'][layoutField]
+    allAttrs = attributeDataService.getForAttributesSelector(
+      isPnl ? 'pl-report' : 'balance-report'
+    )
+    const selectedAttrs = layout.value[isPnl ? 'pnl' : 'balance'][layoutField]
 
-	payloadForSelector.value = {
-		data: {
-			title: 'Add columns',
-			attributes: allAttrs,
-			selectedAttributes: [],
-			contentType: isPnl ? 'reports.plreport' : 'reports.balancereport',
-		},
-		resolve(res) {
-			console.log('res:', res)
-			layout.value[isPnl ? 'pnl' : 'balance'][layoutField] = res.data.items
-			attrsSelectorIsOpen.value = false
+    payloadForSelector.value = {
+      data: {
+        title: 'Add columns',
+        attributes: allAttrs,
+        selectedAttributes: [],
+        contentType: isPnl ? 'reports.plreport' : 'reports.balancereport',
+      },
+      resolve(res) {
+        console.log('res:', res)
+        layout.value[isPnl ? 'pnl' : 'balance'][layoutField] = res.data.items
+        attrsSelectorIsOpen.value = false
 
-			useNotify({ title: 'Changed', type: 'success' })
-		},
-		reject(res) {
-			attrsSelectorIsOpen.value = false
-		},
-	}
-}*/
-function openAttrSelector(layoutField, content_type = 'reports.balancereport') {
+        useNotify({ title: 'Changed', type: 'success' })
+      },
+      reject(res) {
+        attrsSelectorIsOpen.value = false
+      },
+    }
+  }*/
+  function openAttrSelector(layoutField, content_type = 'reports.balancereport') {
 
-	attrsSelContentType.value = content_type;
+    attrsSelContentType.value = content_type;
 
-	// TODO: with use of evAttributesStore delete services from angularjs
-	/*window.evRvLayoutsHelper = new evRvLayoutsHelperInst()
-	// let middlewareService = new middlewareServiceInst()
+    // TODO: with use of evAttributesStore delete services from angularjs
+    /*window.evRvLayoutsHelper = new evRvLayoutsHelperInst()
+    // let middlewareService = new middlewareServiceInst()
 
-	// Globals HACK
-	window.metaContentTypesService = new metaContentTypesServiceInst()
-	window.globalDataService = new globalDataServiceInst()
-	window.xhrService = new xhrService()
-	window.cookieService = new cookieService()*/
+    // Globals HACK
+    window.metaContentTypesService = new metaContentTypesServiceInst()
+    window.globalDataService = new globalDataServiceInst()
+    window.xhrService = new xhrService()
+    window.cookieService = new cookieService()*/
 
-	if (layoutField === 'fieldsToGroup') {
-		attrsSelectorIsOpen.value = true;
+    if (layoutField === 'fieldsToGroup') {
+      attrsSelectorIsOpen.value = true;
 
-	} else {
-		aggAttrsSelIsOpen.value = true;
-	}
+    } else {
+      aggAttrsSelIsOpen.value = true;
+    }
 
-	/*let attributeDataService = new attributeDataServiceInst(
-		metaContentTypesService,
-		customFieldService,
-		attributeTypeService,
-		uiService
-	)*/
+    /*let attributeDataService = new attributeDataServiceInst(
+      metaContentTypesService,
+      customFieldService,
+      attributeTypeService,
+      uiService
+    )*/
 
-	/*allAttrs = attributeDataService.getForAttributesSelector(
-		isPnl ? 'pl-report' : 'balance-report'
-	)*/
-	allAttrs.value = evAttrsStore.getAllAttributesByContentType(content_type);
-	selAttrs.value = [];
+    /*allAttrs = attributeDataService.getForAttributesSelector(
+      isPnl ? 'pl-report' : 'balance-report'
+    )*/
+    allAttrs.value = evAttrsStore.getAllAttributesByContentType(content_type);
+    selAttrs.value = [];
 
-	if ( layout.value[reportProp.value][layoutField] ) {
+    if ( layout.value[reportProp.value][layoutField] ) {
 
-		selAttrs.value = layout.value[reportProp.value][layoutField]
-			.map( attr => attr.key );
+      selAttrs.value = JSON.parse(JSON.stringify( layout.value[reportProp.value][layoutField] ));
 
-	} else {
-		layout.value[reportProp.value][layoutField] = [];
-	}
+    } else {
+      layout.value[reportProp.value][layoutField] = [];
+    }
 
-	/*payloadForSelector.value = {
-		data: {
-			title: 'Add columns',
-			attributes: allAttrs,
-			selectedAttributes: [],
-			contentType: isPnl ? 'reports.plreport' : 'reports.balancereport',
-		},
-		resolve(res) {
-			console.log('res:', res)
-			layout.value[isPnl ? 'pnl' : 'balance'][layoutField] = res.data.items
-			attrsSelectorIsOpen.value = false
+    /*payloadForSelector.value = {
+      data: {
+        title: 'Add columns',
+        attributes: allAttrs,
+        selectedAttributes: [],
+        contentType: isPnl ? 'reports.plreport' : 'reports.balancereport',
+      },
+      resolve(res) {
+        console.log('res:', res)
+        layout.value[isPnl ? 'pnl' : 'balance'][layoutField] = res.data.items
+        attrsSelectorIsOpen.value = false
 
-			useNotify({ title: 'Changed', type: 'success' })
-		},
-		reject(res) {
-			attrsSelectorIsOpen.value = false
-		},
-	}*/
+        useNotify({ title: 'Changed', type: 'success' })
+      },
+      reject(res) {
+        attrsSelectorIsOpen.value = false
+      },
+    }*/
 
 
-}
+  }
 
-function applySelAttrs(attrs) {
-	layout.value[reportProp.value].fieldsToGroup =
-		layout.value[reportProp.value].fieldsToGroup.concat(attrs);
-	// useNotify({ title: 'Changed', type: 'success' });
-}
+  function applySelAttrs(attrs) {
+    layout.value[reportProp.value].fieldsToGroup =
+      layout.value[reportProp.value].fieldsToGroup.concat(attrs);
+  }
 
-function applyAggAttr(attr) {
-	if (attr) {
-		layout.value[reportProp.value].fieldToAggrigate = [attr];
-	}
-}
+  function renameAttrs(layoutField, favAttrs) {
 
-function clearAttr(attrKey) {
+    layout.value[reportProp.value][layoutField] =
 
-	const index = layout.value[reportProp.value].fieldsToGroup.findIndex(
-		attr => attr.key === attrKey
-	);
+      layout.value[reportProp.value][layoutField].map(attr => {
 
-	layout.value[reportProp.value].fieldsToGroup.splice(index, 1);
+        const favAttr = favAttrs.find(fAttr => fAttr.key === attr.key);
 
-}
+        if (favAttr) attr.layout_name = favAttr.customName;
 
-function clearAttrs() {
-	layout.value[reportProp.value].fieldToAggrigate = [];
-	layout.value[reportProp.value].fieldsToGroup = [];
-}
+        return attr;
 
-let layoutStock
+      });
 
-async function saveLayout() {
-	let res = await useApi('mobileLayout.put', {
-		params: {
-			id: layoutStock.id,
-		},
-		body: {
-			user_code: 'only_one',
-			configuration_code: 'local',
-			data: layout.value,
-		},
-	})
-	useNotify({ title: 'Mobile layout has been saved.', type: 'success' })
-}
+  }
 
-async function fetchMobileLayout() {
-	let res = await useApi('mobileLayout.get')
+  function applyAggAttr(attr) {
+    if (attr) {
+      layout.value[reportProp.value].fieldToAggrigate = [attr];
+      useNotify({ title: 'Changed attribute for aggregation' });
+    }
+  }
 
-	layoutStock = res.results[0]
-	layout.value = layoutStock?.data
+  function getAggAttrName(reportProperty) {
 
-	if (!res.results.length) {
-		layout.value = {
-			balance: {
-				fieldToAggrigate: [],
-				fieldsToGroup: [],
-			},
-			pnl: {
-				fieldToAggrigate: [],
-				fieldsToGroup: [],
-			},
-			dashboard: {},
-			transactions: {},
-			global: {},
-		}
-		let res = await useApi('mobileLayout.post', {
-			body: {
-				name: 'Only one',
-				user_code: 'only_one',
-				configuration_code: 'local',
-				data: layout.value,
-			},
-		})
-		layoutStock = res
-	}
-	console.log('layout.value:', layout.value)
-}
+    const fta = layout.value[reportProperty].fieldToAggrigate;
 
-async function init () {
+    if ( fta && fta[0] ) return fta[0].layout_name || fta[0].name;
 
-	let res = await Promise.all([
-		fetchMobileLayout(),
-		evAttrsStore.getFetchAllAttributeTypes(),
-		evAttrsStore.getFetchAllCustomFields(),
-		evAttrsStore.getFetchAllUserFields(),
-	]);
+    return '';
+  }
 
-}
+  function clearAttr(attrKey) {
 
-init();
+    const index = layout.value[reportProp.value].fieldsToGroup.findIndex(
+      attr => attr.key === attrKey
+    );
+
+    layout.value[reportProp.value].fieldsToGroup.splice(index, 1);
+
+  }
+
+  function clearAttrs() {
+    layout.value[reportProp.value].fieldToAggrigate = [];
+    layout.value[reportProp.value].fieldsToGroup = [];
+  }
+
+  let layoutStock
+
+  async function saveLayout() {
+    let res = await useApi('mobileLayout.put', {
+      params: {
+        id: layoutStock.id,
+      },
+      body: {
+        user_code: 'only_one',
+        configuration_code: 'local',
+        data: layout.value,
+      },
+    })
+    useNotify({ title: 'Mobile layout has been saved.', type: 'success' })
+  }
+
+  async function fetchMobileLayout() {
+    let res = await useApi('mobileLayout.get')
+
+    layoutStock = res.results[0]
+    layout.value = layoutStock?.data
+
+    if (!res.results.length) {
+      layout.value = {
+        balance: {
+          fieldToAggrigate: [],
+          fieldsToGroup: [],
+        },
+        pnl: {
+          fieldToAggrigate: [],
+          fieldsToGroup: [],
+        },
+        dashboard: {},
+        transactions: {},
+        global: {},
+      }
+      let res = await useApi('mobileLayout.post', {
+        body: {
+          name: 'Only one',
+          user_code: 'only_one',
+          configuration_code: 'local',
+          data: layout.value,
+        },
+      })
+      layoutStock = res
+    }
+    console.log('layout.value:', layout.value)
+  }
+
+  async function init () {
+
+    let res = await Promise.all([
+      fetchMobileLayout(),
+      evAttrsStore.getFetchAllAttributeTypes(),
+      evAttrsStore.getFetchAllCustomFields(),
+      evAttrsStore.getFetchAllUserFields(),
+    ]);
+
+  }
+
+  init();
 
 </script>
 
