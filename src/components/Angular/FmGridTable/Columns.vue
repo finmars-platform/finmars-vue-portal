@@ -173,6 +173,31 @@
 				}
 			"
 		/>
+
+		<LazyModalNumberFormat
+			v-if="$mdDialog.modals['NumberFormatSettingsDialogController']"
+			:modelValue="true"
+			:multiselect="true"
+			:settings="
+				$mdDialog.modals['NumberFormatSettingsDialogController'].data.settings
+			"
+			@save="
+				(settings) => {
+					$mdDialog.modals['NumberFormatSettingsDialogController'].resolve({
+						status: 'agree',
+						data: { settings: settings },
+					})
+					delete $mdDialog.modals['NumberFormatSettingsDialogController']
+				}
+			"
+			@close="
+				() => {
+					$mdDialog.modals['NumberFormatSettingsDialogController'].resolve({})
+					delete $mdDialog.modals['NumberFormatSettingsDialogController']
+				}
+			"
+		/>
+
 		<BaseModal
 			v-if="$mdDialog.modals['RenameFieldDialogController']"
 			:modelValue="true"
@@ -417,11 +442,9 @@
 			settings: {},
 		}
 		// column.options.number_format
-		if (column.options) {
+		if (column.options.numberFormat) {
 			dialogData.settings = column.options.numberFormat
-		}
-
-		if (!column.options) {
+		} else {
 			dialogData.settings = column.report_settings
 		}
 		// for old layouts
@@ -432,6 +455,7 @@
 		) {
 			dialogData.settings = column.report_settings
 		}
+		console.log('dialogData:', dialogData)
 
 		let res = await $mdDialog.show({
 			controller: 'NumberFormatSettingsDialogController as vm',
@@ -447,6 +471,7 @@
 			if (!column.options) column.options = {}
 
 			column.options.numberFormat = res.data
+			console.log('res:', res)
 
 			evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 			evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
