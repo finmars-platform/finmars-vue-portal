@@ -1,26 +1,26 @@
 <template>
 	<div class="attrs_sel_container">
-<!--		<div class="modal_top flex aic sb">
-			<div class="flex aic">
-				<div class="modal_head">{{ title }}</div>
+		<!--		<div class="modal_top flex aic sb">
+					<div class="flex aic">
+						<div class="modal_head">{{ title }}</div>
 
-				<BaseInput type="text"
-									 class="small bi_no_borders bi_border_bottom m-l-20"
-									 placeholder="Search"
-									 :modelValue="searchParam"
-									 @update:modelValue="search"
-				>
-					<template #button>
-						<FmIcon icon="search" />
-					</template>
-					<template #rightBtn>
-						<FmIcon size="16" icon="close" @click="searchParam = ''" />
-					</template>
-				</BaseInput>
-			</div>
+						<BaseInput type="text"
+											 class="small bi_no_borders bi_border_bottom m-l-20"
+											 placeholder="Search"
+											 :modelValue="searchParam"
+											 @update:modelValue="search"
+						>
+							<template #button>
+								<FmIcon icon="search" />
+							</template>
+							<template #rightBtn>
+								<FmIcon size="16" icon="close" @click="searchParam = ''" />
+							</template>
+						</BaseInput>
+					</div>
 
-			<FmBtn type="iconBtn" icon="close" @click="emit('cancel')" />
-		</div>-->
+					<FmBtn type="iconBtn" icon="close" @click="emit('cancel')" />
+				</div>-->
 
 		<div class="attrs_sel_content scrollable">
 			<div
@@ -122,7 +122,7 @@
 
 					<ul class="fm_list" v-show="tab == 'advanced'">
 						<template v-if="viewTree[activeTree]"
-							v-for="obj in viewTree[activeTree].children"
+											v-for="obj in viewTree[activeTree].children"
 						>
 							<!-- Leaf -->
 							<div
@@ -140,7 +140,7 @@
 										@click.stop=""
 									/>
 
-<!--									<div v-html="advancedColumns[activeTree].name == 'All sections' ? obj.name : obj.short_name"></div>-->
+									<!--									<div v-html="advancedColumns[activeTree].name == 'All sections' ? obj.name : obj.short_name"></div>-->
 									<div v-html="obj.name"></div>
 								</div>
 
@@ -161,13 +161,13 @@
 								</li>
 
 								<template v-if="obj.opened">
-<!--									<div
-										v-for="(val, prop) in obj"
-										class="fm_list_item attr_item flex aic sb"
-										:class="{active: activeRow == val.key}"
-										@click="activeRow = val.key"
-										@dblclick="toggleAttr( val, !selected[val.key] )"
-									>-->
+									<!--									<div
+																			v-for="(val, prop) in obj"
+																			class="fm_list_item attr_item flex aic sb"
+																			:class="{active: activeRow == val.key}"
+																			@click="activeRow = val.key"
+																			@dblclick="toggleAttr( val, !selected[val.key] )"
+																		>-->
 									<div
 										v-for="child in obj.children"
 										class="fm_list_item attr_item flex aic sb"
@@ -311,25 +311,25 @@
 			</div>
 		</div>
 
-<!--		<div class="modal_bottom flex sb">
-			<div class="flex aic">
-				<FmBtn
-					type="text"
-					@click="emit('cancel')"
-				>
-					Cancel
-				</FmBtn>
+		<!--		<div class="modal_bottom flex sb">
+					<div class="flex aic">
+						<FmBtn
+							type="text"
+							@click="emit('cancel')"
+						>
+							Cancel
+						</FmBtn>
 
-				<FmIcon
-					class="m-l-24"
-					primary
-					:icon="isAdvanced ? 'lock_open' : 'lock'"
-					@click="isAdvanced = !isAdvanced"
-				/>
-			</div>
+						<FmIcon
+							class="m-l-24"
+							primary
+							:icon="isAdvanced ? 'lock_open' : 'lock'"
+							@click="isAdvanced = !isAdvanced"
+						/>
+					</div>
 
-			<FmBtn @click="save()">OK</FmBtn>
-		</div>-->
+					<FmBtn @click="save()">OK</FmBtn>
+				</div>-->
 	</div>
 </template>
 
@@ -349,7 +349,7 @@
 			default() { return [] },
 		},
 		favoriteAttributes: Array,
-		disabledAttributes: { // e.g. attributes that are already used when adding new columns
+		disabledAttributes: { // Array contains Strings (keys). e.g. attributes that are already used when adding new columns
 			type: Array,
 			default() { return [] },
 		},
@@ -358,13 +358,14 @@
 		isAdvanced: Boolean, // if false, only tab "favorites" available
 	});
 
-	let emit = defineEmits(['update:modelValue', 'save', 'cancel', 'favoritesChanged']);
+	let emit = defineEmits(['update:modelValue', 'update:isAdvanced', 'save', 'cancel', 'favoritesChanged']);
 
 	const foldersSeparatorRE = /\.\s(?=\S)/g; // equals to ". " which have symbol after it
 
 	let tab = ref('favorites')
 
 	if ( !props.favoriteAttributes || !props.favoriteAttributes.length ) {
+		emit('update:isAdvanced', true);
 		tab.value = 'advanced';
 	}
 
@@ -389,13 +390,13 @@
 	let attrsTree;
 	let viewTree = ref([]);
 	// let selectedOld = []
-	let disabledAttrs = [];
+	let disabledAttrs = ref([]);
 	let favList = ref([/*{
-			key: 'pricing_currency.reference_for_pricing',
-			name: 'test',
-			customName: 'test',
-			customDescription: 'test',
-		}*/])
+					key: 'pricing_currency.reference_for_pricing',
+					name: 'test',
+					customName: 'test',
+					customDescription: 'test',
+				}*/])
 
 	const favoritesAttrs = computed(() => {
 		let attrs = JSON.parse(JSON.stringify( favList.value ));
@@ -467,7 +468,7 @@
 
 	/** Disable attributes from property 'disabledAttributes' **/
 	function markDisabledAttrs(attrData) {
-		// attrData.disabled = !!disabledAttrs.find(selAttr => selAttr.key === attrData.key);
+		// attrData.disabled = !!disabledAttrs.value.find(selAttr => selAttr.key === attrData.key);
 		attrData.disabled = props.disabledAttributes.includes(attrData.key);
 		return attrData;
 	}
@@ -486,7 +487,7 @@
 				selected[attr.key] = status;
 
 				const selKeys = Object.keys(selected).filter( key => {
-					return selected[key] && !disabledAttrs.find(attr => attr.key === key);
+					return selected[key] && !disabledAttrs.value.find(attr => attr.key === key);
 				});
 				// const selAttrs = props.attributes.filter( attr => selKeys.includes(attr.key) );
 
@@ -504,7 +505,7 @@
 			if ( selected[attr.key] ) {
 
 				Object.keys(selected).forEach(key => { // deselect other attributes except disabled
-					selected[key] = !disabledAttrs.includes(key) && key === attr.key;
+					selected[key] = !disabledAttrs.value.includes(key) && key === attr.key;
 				})
 
 			}
@@ -561,11 +562,7 @@
 		let attributes = attrsList
 			.sort(sortAttrs)
 
-		disabledAttrs = attributes.filter( item => props.disabledAttributes.includes(item.key) );
-
-		disabledAttrs.forEach(sAttr => {
-			selected[sAttr.key] = true;
-		})
+		disabledAttrs.value = attributes.filter( item => props.disabledAttributes.includes(item.key) );
 
 		formattedAttrs.value = attributes;
 
@@ -683,15 +680,21 @@
 
 		for ( let prop in selected) {
 
-			const oldSel = disabledAttrs.find( attr => attr.key === prop );
+			/*const oldSel = disabledAttrs.value.find( attr => attr.key === prop );
 
-			if ( !selected[prop] || oldSel ) continue
+			if ( !selected[prop] || oldSel ) continue*/
+			if ( !selected[prop] ) continue;
 
 			let selAttr = formattedAttrs.value.find((item) => item.key == prop );
+			if (selAttr) {
 
-			selAttr = JSON.parse(JSON.stringify( selAttr ));
+				selAttr = JSON.parse(JSON.stringify( selAttr ));
 
-			props.push(selAttr)
+				props.push(selAttr)
+
+			} else {
+				console.warn(`Selected attribute not found: ${prop}`);
+			}
 
 		}
 

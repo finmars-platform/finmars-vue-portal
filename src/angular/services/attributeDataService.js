@@ -62,7 +62,11 @@ export default function (
 	attributeTypeService,
 	uiService
 ) {
-	var reportsEntityTypes = ['balance-report', 'pl-report', 'transaction-report']
+	var reportsEntityTypes = [
+		'balance-report',
+		'reports.plreport',
+		'transaction-report',
+	]
 
 	var entityAttributesData = {
 		portfolio: portfolioPropsModel.getAttributes(),
@@ -812,15 +816,15 @@ export default function (
 
 			result = dynamicAttributes.concat(entityAttributes)
 		} else {
-			if (entityType === 'balance-report') {
+			if (entityType === 'reports.balancereport') {
 				result = _getBalanceReportAttributes()
 			}
 
-			if (entityType === 'pl-report') {
+			if (entityType === 'reports.plreport') {
 				result = _getPlReportAttributes()
 			}
 
-			if (entityType === 'transaction-report') {
+			if (entityType === 'reports.transactionreport') {
 				result = _getTransactionReportAttributes()
 			}
 		}
@@ -942,7 +946,6 @@ export default function (
 		if (entityAttributesData[entityType]) {
 			entityAttributesData[entityType].push(field)
 		} else {
-
 		}
 	}
 
@@ -1100,8 +1103,8 @@ export default function (
 	function getAttributesAvailableForColumns() {
 		return attributesAvailableForColumns
 	}
-	function getForAttributesSelector(entityType, viewContext) {
-		var attrs = getAllAttributesByEntityType(entityType, viewContext)
+	function getForAttributesSelector(contentType, viewContext) {
+		var attrs = getAllAttributesByEntityType(contentType, viewContext)
 
 		return attrs.filter(function (attr) {
 			return attr.value_type !== 'mc_field'
