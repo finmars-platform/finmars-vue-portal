@@ -324,7 +324,7 @@ export default {
 		get: prefix + '/reports/transaction-report/custom-field/',
 	},
 	transactionReportCustomFieldList: {
-		get: prefix + '/transactions/complex-transaction-attribute-type/',
+		get: prefix + '/reports/transaction-report/custom-field/',
 	},
 	mobileLayout: {
 		get: prefix + '/ui/mobile-layout/',

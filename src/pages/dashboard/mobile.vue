@@ -1,12 +1,20 @@
 <template>
 	<div>
+		<div>
+			<FmInputUserCode
+				style="width: 600px;"
+				v-model="userCode"
+				v-model:configuration_code="configCode"
+			/>
+		</div>
+
 		<div class="fm_tabs">
 			<div
 				class="fm_tabs_item"
 				:class="{ active: tab == 'balance' }"
 				@click="tab = 'balance'"
 			>
-				Balacne
+				Balance
 			</div>
 			<div
 				class="fm_tabs_item"
@@ -22,8 +30,8 @@
 			>
 				Dashboard
 			</div>
-<!--			<div class="fm_tabs_item">Transactions</div>
-			<div class="fm_tabs_item">Settings</div>-->
+			<!--			<div class="fm_tabs_item">Transactions</div>
+						<div class="fm_tabs_item">Settings</div>-->
 		</div>
 
 		<div
@@ -78,15 +86,16 @@
 					"
 				>
 					<div class="fm_card_title" style="font-size: 14px">
-						{{ item.name }}
+						{{ item.layout_name || item.name }}
 					</div>
-					<div class="">
+					<div style="padding-bottom: 40px">
 						<b>Sum by:</b>
 
-						{{
-							layout?.balance?.fieldToAggrigate &&
-							layout.balance.fieldToAggrigate[0]?.name
-						}}
+						<!--						{{
+													layout.balance.fieldToAggrigate &&
+													layout.balance.fieldToAggrigate[0]?.name
+												}}-->
+						{{ getAggAttrName('balance') }}
 					</div>
 
 					<template #controls>
@@ -148,15 +157,16 @@
 					"
 				>
 					<div class="fm_card_title" style="font-size: 14px">
-						{{ item.name }}
+						{{ item.layout_name || item.name }}
 					</div>
-					<div class="">
+					<div style="padding-bottom: 40px">
 						<b>Sum by:</b>
 
-						{{
-							layout?.pnl?.fieldToAggrigate &&
-							layout.pnl.fieldToAggrigate[0]?.name
-						}}
+						<!--						{{
+													layout.pnl.fieldToAggrigate &&
+													layout.pnl.fieldToAggrigate[0]?.name
+												}}-->
+						{{ getAggAttrName('pnl') }}
 					</div>
 
 					<template #controls>
@@ -192,20 +202,21 @@
 			<FmBtn @click="saveLayout()">save</FmBtn>
 		</div>
 
-<!--		<ModalAttributesSelector
-			v-if="attrsSelectorIsOpen"
-			:payload="payloadForSelector"
-			:modelValue="true"
-		></ModalAttributesSelector>-->
+		<!--		<ModalAttributesSelector
+					v-if="attrsSelectorIsOpen"
+					:payload="payloadForSelector"
+					:modelValue="true"
+				></ModalAttributesSelector>-->
 		<FmAttributesSelectModal
 			v-model="attrsSelectorIsOpen"
 			title="Add column"
 			:contentType="attrsSelContentType"
 			:attributes="allAttrs"
-			:selected="selAttrs"
-			:disabledAttributes="selAttrs"
+			:selected="selAttrsKeys"
+			:disabledAttributes="selAttrsKeys"
 			multiselect
 			@selectedAttributesChanged="attrs => applySelAttrs(attrs)"
+			@favoritesChanged="favAttrs => renameAttrs('fieldsToGroup', favAttrs)"
 		/>
 
 		<FmAttributesSelectModal
@@ -214,24 +225,14 @@
 			:contentType="attrsSelContentType"
 			:valueType="20"
 			:attributes="allAttrs"
-			:selected="selAttrs[0]"
+			:selected="selAttrsKeys[0]"
 			@selectedAttributesChanged="attr => applyAggAttr(attr)"
+			@favoritesChanged="favAttrs => renameAttrs('fieldToAggrigate', favAttrs)"
 		/>
 	</div>
 </template>
 
 <script setup>
-	import attributeDataServiceInst from '~~/src/angular/services/attributeDataService'
-	import evRvLayoutsHelperInst from '@/angular/helpers/evRvLayoutsHelper'
-	import globalDataServiceInst from '@/angular/shell/scripts/app/services/globalDataService'
-	import middlewareServiceInst from '@/angular/shell/scripts/app/services/middlewareService'
-	import metaContentTypesServiceInst from '@/angular/services/metaContentTypesService'
-	import customFieldService from '@/angular/services/reports/customFieldService'
-	import attributeTypeService from '@/angular/services/attributeTypeService'
-	import xhrService from '@/angular/shell/scripts/app/services/xhrService'
-	import cookieService from '@/angular/shell/scripts/app/services/cookieService'
-	import uiService from '~~/src/angular/services/uiService'
-	import evHelperService from '~~/src/angular/services/entityViewerHelperService'
 
 	definePageMeta({
 		middleware: 'auth',
@@ -243,12 +244,15 @@
 		],
 	})
 
+	let store = useStore();
 	let evAttrsStore = useEvAttributesStore();
 
 	let tab = ref('balance')
+	let userCode = ref('');
+	let configCode = ref('');
 	let layout = ref({})
 
-	let payloadForSelector = ref({});
+	// let payloadForSelector = ref({});
 
 	let reportProp = computed(() => {
 
@@ -261,6 +265,7 @@
 	let attrsSelContentType = ref('reports.balancereport');
 	let allAttrs = ref([]);
 	let selAttrs = ref([]);
+	let selAttrsKeys = computed( () => selAttrs.value.map( attr => attr.key ) );
 
 	const attrsSelectorIsOpen = ref(false);
 	let aggAttrsSelIsOpen = ref(false);
@@ -313,14 +318,14 @@
 		attrsSelContentType.value = content_type;
 
 		// TODO: with use of evAttributesStore delete services from angularjs
-		window.evRvLayoutsHelper = new evRvLayoutsHelperInst()
+		/*window.evRvLayoutsHelper = new evRvLayoutsHelperInst()
 		// let middlewareService = new middlewareServiceInst()
 
 		// Globals HACK
 		window.metaContentTypesService = new metaContentTypesServiceInst()
 		window.globalDataService = new globalDataServiceInst()
 		window.xhrService = new xhrService()
-		window.cookieService = new cookieService()
+		window.cookieService = new cookieService()*/
 
 		if (layoutField === 'fieldsToGroup') {
 			attrsSelectorIsOpen.value = true;
@@ -344,8 +349,7 @@
 
 		if ( layout.value[reportProp.value][layoutField] ) {
 
-			selAttrs.value = layout.value[reportProp.value][layoutField]
-				.map( attr => attr.key );
+			selAttrs.value = JSON.parse(JSON.stringify( layout.value[reportProp.value][layoutField] ));
 
 		} else {
 			layout.value[reportProp.value][layoutField] = [];
@@ -376,13 +380,38 @@
 	function applySelAttrs(attrs) {
 		layout.value[reportProp.value].fieldsToGroup =
 			layout.value[reportProp.value].fieldsToGroup.concat(attrs);
-		// useNotify({ title: 'Changed', type: 'success' });
+	}
+
+	function renameAttrs(layoutField, favAttrs) {
+
+		layout.value[reportProp.value][layoutField] =
+
+			layout.value[reportProp.value][layoutField].map(attr => {
+
+				const favAttr = favAttrs.find(fAttr => fAttr.key === attr.key);
+
+				if (favAttr) attr.layout_name = favAttr.customName;
+
+				return attr;
+
+			});
+
 	}
 
 	function applyAggAttr(attr) {
 		if (attr) {
 			layout.value[reportProp.value].fieldToAggrigate = [attr];
+			useNotify({ title: 'Changed attribute for aggregation' });
 		}
+	}
+
+	function getAggAttrName(reportProperty) {
+
+		const fta = layout.value[reportProperty].fieldToAggrigate;
+
+		if ( fta && fta[0] ) return fta[0].layout_name || fta[0].name;
+
+		return '';
 	}
 
 	function clearAttr(attrKey) {
@@ -403,13 +432,19 @@
 	let layoutStock
 
 	async function saveLayout() {
+
+		if (!userCode.value) {
+			useNotify({ type: 'warning', title: 'User code should not be empty'})
+			return;
+		}
+
 		let res = await useApi('mobileLayout.put', {
 			params: {
 				id: layoutStock.id,
 			},
 			body: {
-				user_code: 'only_one',
-				configuration_code: 'local',
+				user_code: userCode.value,
+				configuration_code: configCode.value,
 				data: layout.value,
 			},
 		})
@@ -419,10 +454,8 @@
 	async function fetchMobileLayout() {
 		let res = await useApi('mobileLayout.get')
 
-		layoutStock = res.results[0]
-		layout.value = layoutStock?.data
-
 		if (!res.results.length) {
+
 			layout.value = {
 				balance: {
 					fieldToAggrigate: [],
@@ -436,16 +469,25 @@
 				transactions: {},
 				global: {},
 			}
-			let res = await useApi('mobileLayout.post', {
+
+			const creatingRes = await useApi('mobileLayout.post', {
 				body: {
 					name: 'Only one',
-					user_code: 'only_one',
-					configuration_code: 'local',
+					user_code: `${store.defaultConfigCode}:only_one`,
+					configuration_code: store.defaultConfigCode,
 					data: layout.value,
 				},
 			})
-			layoutStock = res
+
+			layoutStock = creatingRes;
+
+		} else {
+			layoutStock = res.results[0];
 		}
+
+		layout.value = layoutStock.data;
+		userCode.value = layoutStock.user_code;
+		configCode.value = layoutStock.configuration_code;
 		console.log('layout.value:', layout.value)
 	}
 
