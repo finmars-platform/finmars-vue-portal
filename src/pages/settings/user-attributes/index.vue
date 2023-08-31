@@ -7,7 +7,7 @@
 				<FmBtn
 					type="primary"
 					class="btn-transaction mr-20"
-					@click="complexTransactionUserFieldCreate()"
+					@click=";(editAttributBtn = true), close()"
 					>Add New</FmBtn
 				>
 				<FmBtn
@@ -42,6 +42,7 @@
 									btn
 									icon="file_download"
 									v-fm-tooltip="'Export Classifier'"
+									@click=";(exportClassifiersBtn = true), close()"
 								/>
 							</div>
 							<div class="layouts-card__item layouts-card__default">
@@ -66,16 +67,23 @@
 								/>
 							</div>
 							<div class="layouts-card__item layouts-card__delete">
-								<FmIcon btn icon="edit" v-fm-tooltip="'Edit Attribute'" />
+								<FmIcon
+									btn
+									icon="edit"
+									v-fm-tooltip="'Edit Attribute'"
+									@click=";(editAttributBtn = true), close()"
+								/>
 							</div>
 							<div class="layouts-card__item layouts-card__delete">
-								<FmIcon btn icon="delete" v-fm-tooltip="'Delete Attribute'" />
+								<FmIcon btn icon="delete" v-fm-tooltip="'Delete Attribute'" @click=";(deleteAttributBtn = true), close()" />
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<span v-else class="not-atribute">You could add new user attributes here</span>
+			<span v-else class="not-atribute"
+				>You could add new user attributes here</span
+			>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Account Attributes">
 			<div class="attributes-header">
@@ -150,7 +158,9 @@
 					</div>
 				</div>
 			</div>
-			<span v-else class="not-atribute">You could add new user attributes here</span>
+			<span v-else class="not-atribute"
+				>You could add new user attributes here</span
+			>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Instruments Attributes">
 			<div class="attributes-header">
@@ -380,6 +390,28 @@
 			</div>
 			<span class="not-atribute">You could add new user attributes here</span>
 		</FmExpansionPanel>
+		<ModalUserAttributes
+			title="Attribute manager"
+			v-model="editAttributBtn"
+			@save="renameLayout"
+		/>
+		<ModalWarning
+			title="Warning"
+			v-model="deleteAttributBtn"
+			@save="renameLayout"
+		/>
+		<ModalExportClassifiers
+			title="Export Classifiers"
+			v-model="exportClassifiersBtn"
+			@save="renameLayout"
+		/>
+		
+		<!-- title="Rename layout"
+			:name="activeLayout.name"
+			:user_code="activeLayout.user_code"
+			:configuration_code="activeLayout.configuration_code"
+			:content_type="content_type"
+			:occupiedUserCodes="occupiedUserCodes" -->
 	</div>
 </template>
 <script setup>
@@ -417,6 +449,10 @@
 	const instrumentSchemeListItems = ref([])
 	const currencySchemeListItems = ref([])
 
+	const editAttributBtn = ref(false)
+	const deleteAttributBtn = ref(false)
+	const exportClassifiersBtn = ref(false)
+	
 	const disabledBtn = ref(true)
 	const ecosystemDefaults = ref([1])
 	const BaseInputEcosystemDefaults = ref([])
@@ -483,7 +519,7 @@
 		},
 		{ deep: true }
 	),
-	instrumentAttrGet()
+		instrumentAttrGet()
 	portfolioAttrGet()
 	accountAttrGet()
 	async function instrumentAttrGet() {
@@ -504,8 +540,11 @@
 		accountItems.value = edRes.error ? {} : edRes.results
 		console.log(ecosystemDefaults.value, 'edRes')
 	}
-	
-	
+	function renameLayout(newNamesData) {
+		emit('rename', newNamesData)
+		renameIsOpened.value = false
+	}
+
 	async function defaultSettingsCreate() {
 		let res = await useApi('defaultSettings.put', {
 			params: { id: ecosystemDefaults.value.id },
@@ -605,14 +644,13 @@
 	.mr-20 {
 		margin-right: 20px;
 	}
-	
+
 	.not-atribute {
-        display: flex;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 32px;
-        margin: 20px 0;
-        
+		display: flex;
+		justify-content: center;
+		font-weight: 700;
+		font-size: 32px;
+		margin: 20px 0;
 	}
 
 	@media (max-width: 1200px) {
