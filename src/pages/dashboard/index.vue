@@ -22,7 +22,7 @@
 					/>-->
 					<FmInputUserCode
 						v-model="dashStore.layout.user_code"
-						@update:configurationCode="newVal => dashStore.layout.configuration_code = newVal"
+						@update:configuration_code="newVal => dashStore.layout.configuration_code = newVal"
 					/>
 				</template>
 			</template>

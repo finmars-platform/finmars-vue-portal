@@ -27,8 +27,9 @@
 					<template #default="{ close }">
 						<div class="fm_list" @click="close()">
 							<div
+								v-for="item in scope.addMenu.data.menu.root.items"
 								class="fm_list_item"
-								@click="dispatchAddMenuAction($event, item)"
+								@click="scope.dispatchAddMenuAction($event, item)"
 							>
 								{{ item.name }}
 							</div>

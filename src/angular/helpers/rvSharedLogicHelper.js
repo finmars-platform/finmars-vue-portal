@@ -379,7 +379,7 @@ export default function (
 		}
 	}
 
-	const createEntity = function (event, locals) {
+	async function createEntity(event, locals) {
 		var dialogController = 'EntityViewerAddDialogController as vm'
 		var dialogTemplateUrl =
 			'views/entity-viewer/entity-viewer-add-dialog-view.html'
@@ -389,29 +389,28 @@ export default function (
 			dialogTemplateUrl =
 				'views/entity-viewer/complex-transaction-add-dialog-view.html'
 		}
+		console.log('dialogController:', dialogController)
+		console.log('dialogTemplateUrl:', dialogTemplateUrl)
+		console.log('locals:', locals)
 
-		$mdDialog
-			.show({
-				controller: dialogController,
-				templateUrl: dialogTemplateUrl,
-				parent: angular.element(document.body),
-				targetEvent: event,
-				locals: locals,
-			})
-			.then(function (res) {
-				if (res && res.status === 'agree') {
-					const autoRefreshState =
-						viewModel.entityViewerDataService.getAutoRefreshState()
+		let res = await $mdDialog.show({
+			controller: dialogController,
+			templateUrl: dialogTemplateUrl,
+			locals: locals,
+		})
 
-					if (autoRefreshState) {
-						viewModel.entityViewerEventService.dispatchEvent(
-							evEvents.REQUEST_REPORT
-						)
-					}
+		if (res && res.status === 'agree') {
+			const autoRefreshState =
+				viewModel.entityViewerDataService.getAutoRefreshState()
 
-					updateTableAfterEntityChanges(res)
-				}
-			})
+			if (autoRefreshState) {
+				viewModel.entityViewerEventService.dispatchEvent(
+					evEvents.REQUEST_REPORT
+				)
+			}
+
+			updateTableAfterEntityChanges(res)
+		}
 	}
 
 	const editEntity = function (activeObject, locals) {
