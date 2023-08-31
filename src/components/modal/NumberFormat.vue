@@ -1,5 +1,5 @@
 <template>
-	<BaseModal :title="title">
+	<BaseModal title="Number format">
 		<div style="padding: 5px 0 20px">
 			<div class="header">
 				<FmSelect label="Select Preset" :items="presetSelectorData"></FmSelect>
@@ -112,23 +112,25 @@
 		</div>
 
 		<template #controls="{ cancel }">
-			<slot name="controls" :cancel="cancel">
-				<div>
-					<FmBtn type="basic" @click="cancel">CANCEL</FmBtn>
-				</div>
-			</slot>
+			<div class="flex sb">
+				<FmBtn type="text" @click="cancel">CANCEL</FmBtn>
+
+				<FmBtn type="primary" @click="save">save</FmBtn>
+			</div>
 		</template>
 	</BaseModal>
 </template>
 
 <script setup>
-	let props = defineProps({
-		title: {
-			type: String,
-			default: 'Complex Transaction Code: Number Format',
+	import renderHelper from '~~/src/angular/helpers/render.helper'
+
+	const props = defineProps({
+		settings: {
+			type: Object,
 		},
-		description: String,
 	})
+	const emits = defineEmits(['save'])
+
 	const SuffixActive = ref([])
 	const PrefixActive = ref([])
 	const MultiplierActive = ref([])
@@ -218,112 +220,178 @@
 			percentage_format_id: 3,
 		},
 	}
-	//  const onNegativeFormatChange = function () {
-	// 	negativeFormats.negative_format_id = vm.negativeFormat < 2 ? 0 : 1;
-	//         vm.settings.negative_color_format_id = vm.negativeFormat % 2;
-	//         onNumberFormatChange();
-	//     };
 
-	// 	const   onRoundingChange = function () {
-	//         if (vm.settings.round_format_id !== 0) {
-	//             vm.settings.percentage_format_id = 0;
+	let vm = reactive({ settings: props.settings })
+	console.log('vm:', vm)
 
-	//             vm.settings.number_multiplier = null;
-	//             vm.settings.number_suffix = "";
-	//             vm.settings.number_prefix = "";
-
-	//         }
-
-	//         vm.onNumberFormatChange();
-	//     };
-
-	//     vm.onPercentageChange = function () {
-	//         if (vm.settings.percentage_format_id !== 0) {
-	//             vm.settings.round_format_id = 0;
-	//         } else {
-
-	//             vm.settings.number_multiplier = null;
-	//             vm.settings.number_suffix = "";
-	//             vm.settings.number_prefix = "";
-
-	//         }
-
-	//         if (vm.settings.percentage_format_id > 0 &&
-	//             vm.settings.percentage_format_id < 4) {
-
-	//             vm.settings.number_multiplier = 100;
-	//             vm.settings.number_suffix = "%";
-	//             vm.settings.number_prefix = "";
-
-	//         }
-
-	//         if (vm.settings.percentage_format_id > 3) {
-
-	//             vm.settings.number_multiplier = 10000;
-	//             vm.settings.number_suffix = "bps";
-	//             vm.settings.number_prefix = "";
-
-	//         }
-
-	//         vm.onNumberFormatChange();
-	// };
-
-	const onNumberFormatChange = function () {
-		positiveNumberExample.value = formatNumberNegative(4878.2308)
-		zeroExample.value = formatNumberNegative(0)
-		negativeNumberExample.value = formatNumberNegative(-9238.1294)
-
-		//  negativeFormat = getNegativeFormat(vm.settings)
-
-		// clearAllPresetSelection()
-		// const currentPreset = getActivePreset()
-		// const currentPresetName = currentPreset
-		// 	? currentPreset.name
-		// 	: 'Select Preset'
-
-		// setTimeout(() => $scope.$apply())
+	function save() {
+		emits('save', { status: 'agree', data: props.settings })
 	}
-	// console.log(
-	// 	positiveNumberExample.value,
-	// 	'positiveNumberExample',
-	// 	zeroExample.value,
-	// 	'zeroExample',
-	// 	negativeNumberExample.value,
-	// 	'negativeNumberExample'
-	// )
-	onNumberFormatChange()
-	// console.log(negativeNumberExample,"negativeNumberExample", formatValue(4878.2308), "formatValue(4878.2308)")
-	// onNumberFormatChange()
-	// const getZeroName = function () {
-	// 	return zeroFormats[vm.settings.zero_format_id].name
-	// }
+	const setContainersHeight = function (containers) {
+		containers.forEach((container) => {
+			const contentElement = container.querySelector(
+				'.numberFormatAccordionHeight'
+			)
 
-	// const getNegativeName = function () {
-	// 	return negativeFormats[vm.negativeFormat].name
-	// }
+			if (contentElement) {
+				container.style.height = contentElement.clientHeight + 'px'
+			}
+		})
+	}
 
-	// const getRoundingName = function () {
-	// 	return vm.settings.round_format_id === 0
-	// 		? 'No rounding'
-	// 		: formatRounding(0)
-	// }
+	const isObjectContain = function (obj, targetObj) {
+		return Object.keys(targetObj).every((key) => targetObj[key] === obj[key])
+	}
 
-	// const getSeparationName = function () {
-	// 	return vm.separationFormats[vm.settings.thousands_separator_format_id].name
-	// }
+	const getActivePreset = function () {
+		const selectedPreset = vm.presetSelectorData.options.find((option) => {
+			const requiredProps = presetsSettings[option.id]
+			const currentProps = vm.settings
 
-	// const getPercentageName = function () {
-	// 	return vm.percentageFormats[vm.settings.percentage_format_id].name
-	// }
+			return isObjectContain(currentProps, requiredProps)
+		})
 
-	// const formatRounding = (value) =>
-	// 	renderHelper.formatRounding(value, { report_settings: vm.settings })
+		if (selectedPreset) {
+			selectedPreset.isActive = true
+		}
 
-	// const formatValue = (value) =>
-	// 	renderHelper.formatValue(
-	// 		{ example: value },
-	// 		{ key: 'example', report_settings: vm.settings }
-	// 	)
+		return selectedPreset
+	}
+
+	const clearAllPresetSelection = function () {
+		vm.presetSelectorData.options.forEach((it) => (it.isActive = false))
+	}
+
+	// Negative format in new design differ from settings structure
+	const getNegativeFormat = function (reportSettings) {
+		// 0 0 -> 0
+		// 0 1 -> 1
+		// 1 0 -> 2
+		// 1 1 -> 3
+		const { negative_format_id, negative_color_format_id } = reportSettings
+
+		return parseInt('' + negative_format_id + negative_color_format_id, 2)
+	}
+
+	vm.onNegativeFormatChange = function () {
+		vm.settings.negative_format_id = vm.negativeFormat < 2 ? 0 : 1
+		vm.settings.negative_color_format_id = vm.negativeFormat % 2
+		vm.onNumberFormatChange()
+	}
+
+	vm.onRoundingChange = function () {
+		if (vm.settings.round_format_id !== 0) {
+			vm.settings.percentage_format_id = 0
+
+			vm.settings.number_multiplier = null
+			vm.settings.number_suffix = ''
+			vm.settings.number_prefix = ''
+		}
+
+		vm.onNumberFormatChange()
+	}
+
+	vm.onPercentageChange = function () {
+		if (vm.settings.percentage_format_id !== 0) {
+			vm.settings.round_format_id = 0
+		} else {
+			vm.settings.number_multiplier = null
+			vm.settings.number_suffix = ''
+			vm.settings.number_prefix = ''
+		}
+
+		if (
+			vm.settings.percentage_format_id > 0 &&
+			vm.settings.percentage_format_id < 4
+		) {
+			vm.settings.number_multiplier = 100
+			vm.settings.number_suffix = '%'
+			vm.settings.number_prefix = ''
+		}
+
+		if (vm.settings.percentage_format_id > 3) {
+			vm.settings.number_multiplier = 10000
+			vm.settings.number_suffix = 'bps'
+			vm.settings.number_prefix = ''
+		}
+
+		vm.onNumberFormatChange()
+	}
+
+	vm.onNumberFormatChange = function () {
+		vm.positiveNumberExample = vm.formatValue(4878.2308)
+		vm.zeroExample = vm.formatValue(0)
+		vm.negativeNumberExample = vm.formatValue(-9238.1294)
+
+		vm.negativeFormat = getNegativeFormat(vm.settings)
+
+		clearAllPresetSelection()
+		const currentPreset = getActivePreset()
+		vm.currentPresetName = currentPreset ? currentPreset.name : 'Select Preset'
+	}
+
+	vm.getZeroName = function () {
+		return vm.zeroFormats[vm.settings.zero_format_id].name
+	}
+
+	vm.getNegativeName = function () {
+		return vm.negativeFormats[vm.negativeFormat].name
+	}
+
+	vm.getRoundingName = function () {
+		return vm.settings.round_format_id === 0
+			? 'No rounding'
+			: vm.formatRounding(0)
+	}
+
+	vm.getSeparationName = function () {
+		return vm.separationFormats[vm.settings.thousands_separator_format_id].name
+	}
+
+	vm.getPercentageName = function () {
+		return vm.percentageFormats[vm.settings.percentage_format_id].name
+	}
+
+	vm.formatRounding = (value) =>
+		renderHelper.formatRounding(value, { report_settings: vm.settings })
+
+	vm.formatValue = (value) =>
+		renderHelper.formatValue(
+			{ example: value },
+			{ key: 'example', report_settings: vm.settings }
+		)
+
+	vm.presetSelectorData = {
+		options: [
+			{ id: 'price', name: `Price (0)`, isActive: false },
+			{ id: 'market_value', name: `Market Value (000'000)`, isActive: false },
+			{ id: 'amount', name: `Amount (000'000.00)`, isActive: false },
+			{ id: 'exposure', name: `Exposure (0.0%)`, isActive: false },
+			{ id: 'return', name: `Return (0.00%)`, isActive: false },
+		],
+		selectOption: (option, _$popup) => {
+			_$popup.cancel()
+
+			vm.presetSelectorData.options.forEach(
+				(it) => (it.isActive = it === option)
+			)
+
+			const numberFormat = presetsSettings[option.id]
+			Object.assign(vm.settings, numberFormat)
+
+			vm.onNumberFormatChange()
+		},
+	}
+
+	const init = function () {
+		vm.onNumberFormatChange()
+
+		// const animatedContainers =
+		// 	$element[0].querySelectorAll('.cb1-resizing-wrap')
+		// setTimeout(() => setContainersHeight(animatedContainers)) // for height animation
+	}
+
+	init()
 </script>
 
 <style lang="scss" scoped>
