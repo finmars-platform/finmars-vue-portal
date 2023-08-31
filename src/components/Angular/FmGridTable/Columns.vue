@@ -410,7 +410,7 @@
 		}
 	}
 
-	function openNumberFormatDialog(column) {
+	async function openNumberFormatDialog(column) {
 		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
 
 		let dialogData = {
@@ -433,27 +433,24 @@
 			dialogData.settings = column.report_settings
 		}
 
-		$mdDialog
-			.show({
-				controller: 'NumberFormatSettingsDialogController as vm',
-				templateUrl: 'views/dialogs/number-format-settings-dialog-view.html',
-				parent: angular.element(document.body),
-				locals: {
-					data: dialogData,
-				},
-			})
-			.then((res) => {
-				if (res.status === 'agree') {
-					// column.report_settings = res.data;
+		let res = await $mdDialog.show({
+			controller: 'NumberFormatSettingsDialogController as vm',
+			templateUrl: 'views/dialogs/number-format-settings-dialog-view.html',
+			locals: {
+				data: dialogData,
+			},
+		})
 
-					if (!column.options) column.options = {}
+		if (res.status === 'agree') {
+			// column.report_settings = res.data;
 
-					column.options.numberFormat = res.data
+			if (!column.options) column.options = {}
 
-					evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
-					evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
-				}
-			})
+			column.options.numberFormat = res.data
+
+			evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+			evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
+		}
 	}
 
 	// Victor 2020.12.14 #69 New report viewer design

@@ -4,7 +4,7 @@
 		<div class="wrapp-select">
 			<FmSelect
 				v-model="configurationListActive"
-				label="Configuration"
+				label="Configuration Code"
 				:items="configurationListItems"
 				prop_id="configuration_code"
 			/>
@@ -188,6 +188,7 @@
 </template>
 
 <script setup>
+
 	definePageMeta({
 		middleware: 'auth',
 		bread: [
@@ -197,6 +198,7 @@
 			},
 		],
 	})
+
 	let store = useStore()
 	let defaultComplexTransactionTextFields = [
 		{
@@ -487,9 +489,9 @@
 	]
 
 	const configurationListItems = ref([])
-	configurationListItems.value = store.defaultConfigCode.results
+	configurationListItems.value = store.configCodes
 	const systemMessagesItems = ref([])
-	const configurationListActive = ref('local.poms.space0crgw')
+	const configurationListActive = ref(store.defaultConfigCode)
 
 	const instrumentUserFieldItems = ref([])
 	let textInstrumentTextFieldsItems = defaultInstrumentTextFields.concat()
@@ -606,7 +608,7 @@
 				})
 			})
 		}
-	
+
 	}
 
 	watch(
@@ -719,7 +721,7 @@
 					params: { id: textField.id },
 					body: textField,
 				})
-			
+
 				if (res.error) {
 					useNotify({
 						type: 'error',
@@ -730,7 +732,7 @@
 			} else {
 				textField.configuration_code = configurationListActive.value
 				textField.user_code = `${configurationListActive.value}:${textField.key}`
-				
+
 				let res = useApi('complexTransactionUserField.post', {
 					body: textField,
 				})
