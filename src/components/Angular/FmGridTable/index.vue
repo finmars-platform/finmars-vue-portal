@@ -277,7 +277,7 @@
 
 	let isRootEntityViewerRef = ref(true)
 
-	let init;
+	let init
 
 	onMounted(async () => {
 		let attrs = null
@@ -483,7 +483,7 @@
 	}
 
 	defineExpose({
-		init
+		init,
 	})
 </script>
 
