@@ -2,11 +2,11 @@
 	<div class="container">
 		<h2 class="title">Complex Transaction Fields</h2>
 		<div class="wrapp-select">
-			<FmSelect
+			<FmInputSelect
 				v-model="configurationListActive"
 				label="Configuration Code"
 				:items="configurationListItems"
-				prop_id="configuration_code"
+				prop_name="configuration_code"
 			/>
 		</div>
 		<div class="fields-block">
