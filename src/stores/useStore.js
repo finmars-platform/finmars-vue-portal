@@ -99,7 +99,7 @@ export default defineStore({
 		async updateMember(member = this.member) {
 			const options = {
 				params: { id: member.id },
-				body: { body: member },
+				body: member,
 			}
 
 			const res = await useApi('member.put', options)

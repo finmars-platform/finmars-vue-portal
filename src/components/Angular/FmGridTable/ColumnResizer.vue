@@ -182,12 +182,15 @@
 		var gColumnElem
 
 		if (isNewDesign) {
-			gColumnElem = jquery(this).parents('.g-table-header-cell-wrapper') // Victor 2020.12.16 New report viewer design
+			gColumnElem = jquery(this).parents(
+				'.g-table-header-cell-wrapper.gColumnElem'
+			) // Victor 2020.12.16 New report viewer design
 		} else {
-			gColumnElem = jquery(this).parents('md-card.g-cell.g-column')
+			gColumnElem = jquery(this).parents('md-card.g-cell.g-column.gColumnElem')
 		}
 
 		var column = findColumnById(gColumnElem[0].dataset.columnId)
+		console.log('gColumnElem:', gColumnElem)
 		var columnIndex = findColumnIndexById(gColumnElem[0].dataset.columnId)
 
 		var mouseDownLeft = e.clientX

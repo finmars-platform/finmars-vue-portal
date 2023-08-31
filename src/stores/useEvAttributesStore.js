@@ -382,8 +382,8 @@ export default defineStore({
 			//# regions Pnl attributes
 			// TODO: move to backend
 			res['reports.plreport'] = pnlReportPropsModel.getAttributes();
-			res['reports.plreportmismatch'] = reportAddonPerformancePnlPropsModel.getAttributes();
-			res['reports.plreportperformance'] = reportMismatchPnlPropsModel.getAttributes();
+			res['reports.plreportmismatch'] = reportMismatchPnlPropsModel.getAttributes();
+			res['reports.plreportperformance'] = reportAddonPerformancePnlPropsModel.getAttributes();
 			//# endregion Pnl attributes
 
 			this.systemAttrs = res;

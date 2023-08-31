@@ -249,10 +249,9 @@
 	watch(isOpen, isOpenHandler)
 
 	function toggle(e) {
+		if (e) e.preventDefault()
 
-		if (e) e.preventDefault();
-
-		if (props.disabled) return false;
+		if (props.disabled) return false
 
 		isOpen.value = !isOpen.value
 
@@ -261,16 +260,18 @@
 
 	let closeOnCo = {
 		handler: function (event) {
+			console.log('event:', event)
 			// needed when fm_drop attached to another element (e.g. body)
 			if (
 				(popup.value && popup.value.contains(event.target)) ||
-				activator.value.contains(event.target)
+				(activator.value && activator.value.contains(event.target))
 			)
-				return
+				return false
 
 			isOpen.value = false
 			emit('update:opened', isOpen.value)
 		},
+		events: ['dblclick', 'click', 'contextmenu'],
 		isActive: props.closeOnClickOutside,
 	}
 </script>
