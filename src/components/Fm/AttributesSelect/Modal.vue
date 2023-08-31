@@ -32,9 +32,9 @@
 				:favoriteAttributes="favoriteAttrs"
 				:multiselect="multiselect"
 				:searchParameters="searchParams"
-				:isAdvanced="isAdvanced"
+				v-model:isAdvanced="isAdvanced"
 
-				@update:modelValue="newVal => newSelAttrs = newVal"
+				@update:modelValue="applySelAttrs"
 				@favoritesChanged="saveFavorites"
 			/>
 		</div>
@@ -80,11 +80,11 @@
 			type: Array,
 			default() { return [] },
 		},
-		disabledAttributes: {
+		disabledAttributes: { // Array of Strings (attribute's keys)
 			type: Array,
 			default() { return [] },
 		},
-		selected: [Array, String], // Array for multiselect, String and null for select
+		selected: [Array, String], // Array of Strings (keys) for multiselect, String (key) and null for select
 		multiselect: Boolean,
 	});
 
@@ -92,12 +92,21 @@
 	 * save - returns key or array of keys of selected attributes
 	 * selectedAttributesChanged - returns object or array of objects of selected attributes
 	 */
-	let emit = defineEmits(['update:modelValue', 'save', 'selectedAttributesChanged']);
+	let emit = defineEmits([
+		'update:modelValue',
+		'save',
+		'selectedAttributesChanged',
+		'favoritesChanged'
+	]);
 
+	let searchParams = ref('');
 	let selAttrsKeysList = ref([]);
 	let isAdvanced = ref(false);
 
-	let searchParams = ref('');
+	/**
+	 * Contains array of keys or a key of the selected attribute(s)
+	 * @type {{value: Array|String}}
+	 */
 	let newSelAttrs = ref( props.multiselect ? [] : '' );
 
 	watch(
@@ -161,9 +170,25 @@
 	function saveFavorites(favAttrs) {
 		store.member.data.favorites.attributes[props.contentType] = favAttrs;
 		store.updateMember();
+		emit( 'favoritesChanged', structuredClone(favAttrs) );
+	}
+
+	function applySelAttrs(newVal) {
+
+		if (props.multiselect) {
+
+			newSelAttrs.value = newVal.filter(
+				attrKey => !selAttrsKeysList.value.includes(attrKey)
+			)
+
+		} else {
+			newSelAttrs.value = newVal;
+		}
+
 	}
 
 	function onClose() {
+		newSelAttrs.value = props.multiselect ? [] : '';
 		isAdvanced.value = false;
 		searchParams.value = '';
 	}
@@ -187,7 +212,7 @@
 		let val2; // contains full data of selected attributes
 		let selKeysList;
 
-		if ( props.multiselect ) {
+		if ( props.multiselect ) { // emit array
 
 			val = JSON.parse(JSON.stringify( newSelAttrs.value )) || [];
 
@@ -198,7 +223,7 @@
 			val2 = val.map( key => getSelAttrData(key) );
 
 		}
-		else {
+		else { // emit string and Object of selected attribute
 
 			val = newSelAttrs.value || null;
 
@@ -223,13 +248,6 @@
 
 	}
 
-	if ( !store.favorites.attributes[props.contentType] ||
-		   !store.favorites.attributes[props.contentType].length ) {
-
-		isAdvanced.value = true;
-
-	}
-
 </script>
 
 <style lang="scss" scoped>
@@ -240,5 +258,4 @@
 		width: 80vw;
 		max-width: 1000px;
 	}
-
 </style>
