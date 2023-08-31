@@ -3,6 +3,7 @@
 		v-bind="$attrs"
 		:activeLayout="viewerData.listLayout"
 		:layouts="layoutsList"
+		:content_type="viewerData.content_type"
 		:autosaveLayout="autosaveLayout"
 		:loadingLayout="loadingLayout"
 		:loadingLayoutsList="loadingLayoutsList"
@@ -150,10 +151,12 @@
 	}
 
 	async function renameLayout(namesData) {
+
 		const layout = JSON.parse(JSON.stringify(viewerData.listLayout))
 
-		layout.name = namesData.name
-		layout.user_code = namesData.user_code
+		layout.name = namesData.name;
+		layout.user_code = namesData.user_code;
+		layout.configuration_code = namesData.configuration_code;
 
 		const res = await layoutsStore.updateLayout(layout.id, layout)
 

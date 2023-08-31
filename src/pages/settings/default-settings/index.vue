@@ -271,7 +271,7 @@
 			}
 		},
 		{ deep: true }
-	),
+	)
 	defaultsGet()
 	async function defaultsGet() {
 		let edRes = await useApi('ecosystemDefaults.get')

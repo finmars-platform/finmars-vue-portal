@@ -524,10 +524,39 @@
 		},
 	)
 
+	function formatAttrName (attr) {
+
+		let formattedName = attr.name;
+
+		if ( attr.attribute_type ) {
+
+			const namePieces = formattedName.split( foldersSeparatorRE );
+			const last = namePieces.pop();
+			const namePiece = attr.key.includes("pricing_policy_") ? "Pricing" : "User Attributes";
+
+			namePieces.push(namePiece);
+			namePieces.push(last);
+
+			formattedName = namePieces.join('. ');
+
+		}
+		/* if attribute does not fit any group
+		 * place it into a group General */
+		else if ( !attr.name.match( foldersSeparatorRE ) ) {
+			formattedName = "General. " + attr.name;
+		}
+
+		attr.name = formattedName;
+
+		return attr;
+
+	}
 
 	function processAttributes() {
 
 		attrsList = JSON.parse(JSON.stringify( props.attributes ));
+
+		attrsList = attrsList.map(formatAttrName);
 
 		let attributes = attrsList
 			.sort(sortAttrs)

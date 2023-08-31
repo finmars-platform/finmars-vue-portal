@@ -22,11 +22,14 @@
 			>
 				Dashboard
 			</div>
-			<div class="fm_tabs_item">Transactions</div>
-			<div class="fm_tabs_item">Settings</div>
+<!--			<div class="fm_tabs_item">Transactions</div>
+			<div class="fm_tabs_item">Settings</div>-->
 		</div>
 
-		<div class="p-24" v-if="tab == 'balance' && layout.balance">
+		<div
+			v-if="tab == 'balance' && layout.balance"
+			class="p-24"
+		>
 			<!-- <FmInputText v-model="" /> -->
 			<h4>Total NAV with History chart</h4>
 
@@ -39,6 +42,7 @@
 			<FmCheckbox
 				label="P&L daily, MTD, YTD"
 				v-model="layout.balance.isShowIndicatorsPnl"
+				class="m-b-8"
 			/>
 			<FmCheckbox
 				label="Standart indicators"
@@ -48,12 +52,18 @@
 			<h4>Doughnut charts</h4>
 
 			<div class="flex">
-				<FmBtn @click="openAttrSelector('fieldsToGroup')"
-					>set columns to groupping</FmBtn
+				<FmBtn
+					@click="openAttrSelector('fieldsToGroup')"
+					class="m-r-8"
 				>
-				<FmBtn @click="openAttrSelector('fieldToAggrigate')"
-					>set one column to Aggrigate by sum</FmBtn
+					set columns to groupping
+				</FmBtn>
+				<FmBtn
+					@click="openAttrSelector('fieldToAggrigate')"
+					class="m-r-8"
 				>
+					set one column to Aggrigate by sum
+				</FmBtn>
 				<FmBtn type="text" @click="clearAttrs()">Clear all attrs</FmBtn>
 			</div>
 
@@ -78,13 +88,20 @@
 							layout.balance.fieldToAggrigate[0]?.name
 						}}
 					</div>
+
+					<template #controls>
+						<FmBtn class="m-8" @click="clearAttr(item.key)">REMOVE</FmBtn>
+					</template>
 				</FmCard>
 			</div>
 			<br /><br />
 			<FmBtn @click="saveLayout()">save</FmBtn>
 		</div>
 
-		<div class="p-24" v-if="tab == 'pnl' && layout.pnl">
+		<div
+			class="p-24"
+			v-if="tab == 'pnl' && layout.pnl"
+		>
 			<!-- <FmInputText v-model="" /> -->
 			<h4>Total with History chart</h4>
 
@@ -97,6 +114,7 @@
 			<FmCheckbox
 				label="P&L daily, MTD, YTD"
 				v-model="layout.pnl.isShowIndicatorsPnl"
+				class="m-b-8"
 			/>
 			<FmCheckbox
 				label="Standart indicators"
@@ -106,12 +124,16 @@
 			<h4>Doughnut charts</h4>
 
 			<div class="flex">
-				<FmBtn @click="openAttrSelector('fieldsToGroup', true)"
-					>set columns to groupping</FmBtn
-				>
-				<FmBtn @click="openAttrSelector('fieldToAggrigate', true)"
-					>set one column to Aggrigate by sum</FmBtn
-				>
+				<FmBtn
+					@click="openAttrSelector('fieldsToGroup', 'reports.plreport')"
+					class="m-r-8"
+				>set columns to groupping</FmBtn>
+
+				<FmBtn
+					@click="openAttrSelector('fieldToAggrigate', 'reports.plreport')"
+					class="m-r-8"
+				>set one column to Aggrigate by sum</FmBtn>
+
 				<FmBtn type="text" @click="clearAttrs()">Clear all attrs</FmBtn>
 			</div>
 
@@ -136,6 +158,10 @@
 							layout.pnl.fieldToAggrigate[0]?.name
 						}}
 					</div>
+
+					<template #controls>
+						<FmBtn class="m-8" @click="clearAttr(item.key)">REMOVE</FmBtn>
+					</template>
 				</FmCard>
 			</div>
 			<br /><br />
@@ -155,6 +181,7 @@
 			<FmCheckbox
 				label="P&L daily, MTD, YTD"
 				v-model="layout.dashboard.isShowIndicatorsPnl"
+				class="m-b-8"
 			/>
 			<FmCheckbox
 				label="Standart indicators"
@@ -165,11 +192,31 @@
 			<FmBtn @click="saveLayout()">save</FmBtn>
 		</div>
 
-		<ModalAttributesSelector
-			v-if="isOpenAttrsSelector"
+<!--		<ModalAttributesSelector
+			v-if="attrsSelectorIsOpen"
 			:payload="payloadForSelector"
 			:modelValue="true"
-		></ModalAttributesSelector>
+		></ModalAttributesSelector>-->
+		<FmAttributesSelectModal
+			v-model="attrsSelectorIsOpen"
+			title="Add column"
+			:contentType="attrsSelContentType"
+			:attributes="allAttrs"
+			:selected="selAttrs"
+			:disabledAttributes="selAttrs"
+			multiselect
+			@selectedAttributesChanged="attrs => applySelAttrs(attrs)"
+		/>
+
+		<FmAttributesSelectModal
+			v-model="aggAttrsSelIsOpen"
+			title="Select column"
+			:contentType="attrsSelContentType"
+			:valueType="20"
+			:attributes="allAttrs"
+			:selected="selAttrs[0]"
+			@selectedAttributesChanged="attr => applyAggAttr(attr)"
+		/>
 	</div>
 </template>
 
@@ -196,16 +243,29 @@
 		],
 	})
 
+	let evAttrsStore = useEvAttributesStore();
+
 	let tab = ref('balance')
 	let layout = ref({})
 
-	let payloadForSelector = ref({})
+	let payloadForSelector = ref({});
 
-	const isOpenAttrsSelector = ref(false)
+	let reportProp = computed(() => {
 
-	fetchMobileLayout()
+		if ( ['balance', 'pnl'].includes(tab.value) ) return tab.value;
 
-	function openAttrSelector(layoutField, isPnl = false) {
+		return '';
+
+	});
+	// let isPnl = ref(false);
+	let attrsSelContentType = ref('reports.balancereport');
+	let allAttrs = ref([]);
+	let selAttrs = ref([]);
+
+	const attrsSelectorIsOpen = ref(false);
+	let aggAttrsSelIsOpen = ref(false);
+
+	/*function openAttrSelector(layoutField, isPnl = false) {
 		window.evRvLayoutsHelper = new evRvLayoutsHelperInst()
 		let middlewareService = new middlewareServiceInst()
 
@@ -215,7 +275,7 @@
 		window.xhrService = new xhrService()
 		window.cookieService = new cookieService()
 
-		isOpenAttrsSelector.value = true
+		attrsSelectorIsOpen.value = true
 
 		let attributeDataService = new attributeDataServiceInst(
 			metaContentTypesService,
@@ -224,7 +284,7 @@
 			uiService
 		)
 
-		const allAttrs = attributeDataService.getForAttributesSelector(
+		allAttrs = attributeDataService.getForAttributesSelector(
 			isPnl ? 'pl-report' : 'balance-report'
 		)
 		const selectedAttrs = layout.value[isPnl ? 'pnl' : 'balance'][layoutField]
@@ -239,17 +299,106 @@
 			resolve(res) {
 				console.log('res:', res)
 				layout.value[isPnl ? 'pnl' : 'balance'][layoutField] = res.data.items
-				isOpenAttrsSelector.value = false
+				attrsSelectorIsOpen.value = false
 
 				useNotify({ title: 'Changed', type: 'success' })
 			},
 			reject(res) {
-				isOpenAttrsSelector.value = false
+				attrsSelectorIsOpen.value = false
 			},
+		}
+	}*/
+	function openAttrSelector(layoutField, content_type = 'reports.balancereport') {
+
+		attrsSelContentType.value = content_type;
+
+		// TODO: with use of evAttributesStore delete services from angularjs
+		window.evRvLayoutsHelper = new evRvLayoutsHelperInst()
+		// let middlewareService = new middlewareServiceInst()
+
+		// Globals HACK
+		window.metaContentTypesService = new metaContentTypesServiceInst()
+		window.globalDataService = new globalDataServiceInst()
+		window.xhrService = new xhrService()
+		window.cookieService = new cookieService()
+
+		if (layoutField === 'fieldsToGroup') {
+			attrsSelectorIsOpen.value = true;
+
+		} else {
+			aggAttrsSelIsOpen.value = true;
+		}
+
+		/*let attributeDataService = new attributeDataServiceInst(
+			metaContentTypesService,
+			customFieldService,
+			attributeTypeService,
+			uiService
+		)*/
+
+		/*allAttrs = attributeDataService.getForAttributesSelector(
+			isPnl ? 'pl-report' : 'balance-report'
+		)*/
+		allAttrs.value = evAttrsStore.getAllAttributesByContentType(content_type);
+		selAttrs.value = [];
+
+		if ( layout.value[reportProp.value][layoutField] ) {
+
+			selAttrs.value = layout.value[reportProp.value][layoutField]
+				.map( attr => attr.key );
+
+		} else {
+			layout.value[reportProp.value][layoutField] = [];
+		}
+
+		/*payloadForSelector.value = {
+			data: {
+				title: 'Add columns',
+				attributes: allAttrs,
+				selectedAttributes: [],
+				contentType: isPnl ? 'reports.plreport' : 'reports.balancereport',
+			},
+			resolve(res) {
+				console.log('res:', res)
+				layout.value[isPnl ? 'pnl' : 'balance'][layoutField] = res.data.items
+				attrsSelectorIsOpen.value = false
+
+				useNotify({ title: 'Changed', type: 'success' })
+			},
+			reject(res) {
+				attrsSelectorIsOpen.value = false
+			},
+		}*/
+
+
+	}
+
+	function applySelAttrs(attrs) {
+		layout.value[reportProp.value].fieldsToGroup =
+			layout.value[reportProp.value].fieldsToGroup.concat(attrs);
+		// useNotify({ title: 'Changed', type: 'success' });
+	}
+
+	function applyAggAttr(attr) {
+		if (attr) {
+			layout.value[reportProp.value].fieldToAggrigate = [attr];
 		}
 	}
 
-	function clearAttrs() {}
+	function clearAttr(attrKey) {
+
+		const index = layout.value[reportProp.value].fieldsToGroup.findIndex(
+			attr => attr.key === attrKey
+		);
+
+		layout.value[reportProp.value].fieldsToGroup.splice(index, 1);
+
+	}
+
+	function clearAttrs() {
+		layout.value[reportProp.value].fieldToAggrigate = [];
+		layout.value[reportProp.value].fieldsToGroup = [];
+	}
 
 	let layoutStock
 
@@ -275,8 +424,14 @@
 
 		if (!res.results.length) {
 			layout.value = {
-				balance: {},
-				pnl: {},
+				balance: {
+					fieldToAggrigate: [],
+					fieldsToGroup: [],
+				},
+				pnl: {
+					fieldToAggrigate: [],
+					fieldsToGroup: [],
+				},
 				dashboard: {},
 				transactions: {},
 				global: {},
@@ -293,6 +448,20 @@
 		}
 		console.log('layout.value:', layout.value)
 	}
+
+	async function init () {
+
+		let res = await Promise.all([
+			fetchMobileLayout(),
+			evAttrsStore.getFetchAllAttributeTypes(),
+			evAttrsStore.getFetchAllCustomFields(),
+			evAttrsStore.getFetchAllUserFields(),
+		]);
+
+	}
+
+	init();
+
 </script>
 
 <style lang="scss" scoped>

@@ -270,6 +270,8 @@
 		title="Rename layout"
 		:name="activeLayout.name"
 		:user_code="activeLayout.user_code"
+		:configuration_code="activeLayout.configuration_code"
+		:content_type="content_type"
 		:occupiedUserCodes="occupiedUserCodes"
 		v-model="renameIsOpened"
 		@save="renameLayout"
@@ -287,6 +289,7 @@
 		autosaveLayout: Object,
 		loadingLayout: Boolean,
 		loadingLayoutsList: Boolean,
+		content_type: String,
 
 		isLayoutDefault: Function,
 	})
