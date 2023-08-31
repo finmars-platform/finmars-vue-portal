@@ -77,6 +77,12 @@ export default {
 	portfolioListLight: {
 		get: prefix + '/portfolios/portfolio/light/',
 	},
+	accountLight: {
+		get: prefix + '/accounts/account/light/',
+	},
+	accountTypeList: {
+		get: prefix + '/accounts/account-type/',
+	},
 	counterpartyList: {
 		get: prefix + '/counterparties/counterparty/',
 	},
@@ -275,22 +281,30 @@ export default {
 	accountAttrTypeList: {
 		get: prefix + '/accounts/account-attribute-type/',
 	},
-	accountsType: {
-		get: prefix + '/accounts/account-type/',
-	},
-
-	accountLight: {
-		get: prefix + '/accounts/account/light/',
-	},
 
 	instrumentAttrTypeList: {
 		get: prefix + '/instruments/instrument-attribute-type/',
 	},
+	instrumentTypeAttrTypeList: {
+		get: prefix + '/instruments/instrument-type-attribute-type/',
+	},
 	responsibleAttrTypeList: {
 		get: prefix + '/counterparties/responsible-attribute-type/',
 	},
+	currencyAttrTypeList: {
+		get: prefix + '/currencies/currency-attribute-type/',
+	},
 	counterpartyAttrTypeList: {
 		get: prefix + '/counterparties/counterparty-attribute-type/',
+	},
+	strategy1AttrTypeList: {
+		get: prefix + '/strategies/1/strategy-attribute-type/',
+	},
+	strategy2AttrTypeList: {
+		get: prefix + '/strategies/2/strategy-attribute-type/',
+	},
+	strategy3AttrTypeList: {
+		get: prefix + '/strategies/3/strategy-attribute-type/',
 	},
 
 	transactionTypeLight: {
@@ -304,10 +318,10 @@ export default {
 	},
 	//# endregion Entity viewer attribute types
 	balanceReportCustomFieldList: {
-		get: prefix + '/transactions/complex-transaction-attribute-type/',
+		get: prefix + '/reports/balance-report/custom-field/',
 	},
 	plReportCustomFieldList: {
-		get: prefix + '/transactions/complex-transaction-attribute-type/',
+		get: prefix + '/reports/transaction-report/custom-field/',
 	},
 	transactionReportCustomFieldList: {
 		get: prefix + '/transactions/complex-transaction-attribute-type/',
