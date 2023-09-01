@@ -1,0 +1,89 @@
+<div class="fixed-area-popup-content">
+    <div data-ng-if="popupData.fields.name">
+        <text-input
+                label="Report Name (Name)"
+                placeholder-text="Report Name (Name)"
+                model="popupData.fields.name.value"
+                event-signal="popupData.fields.name.event"
+                small-options="{dialogParent: '.dialog-containers-wrap', notNull: true}"></text-input>
+    </div>
+
+    <div data-ng-if="popupData.fields.short_name &&
+                     (['strategy-1', 'strategy-2', 'strategy-3', 'responsible', 'counterparty'].includes(popupData.entityType))">
+        <text-input
+                label="System Name (Short Name)"
+                placeholder-text="System Name (Short Name)"
+                model="popupData.fields.short_name.value"
+                small-options="{dialogParent: '.dialog-containers-wrap'}"></text-input>
+    </div>
+
+     <div data-ng-if="popupData.fields.short_name &&
+                     (popupData.tabColumns < 6 ||
+                     popupData.entityType === 'instrument' ||
+                     popupData.entityType === 'account' ||
+                     popupData.entityType === 'instrument-type')">
+         <text-input
+                 label="System Name (Short Name)"
+                 placeholder-text="System Name (Short Name)"
+                 model="popupData.fields.short_name.value"
+                 small-options="{dialogParent: '.dialog-containers-wrap'}"></text-input>
+     </div>
+
+    <div data-ng-if="popupData.fields.user_code && (popupData.tabColumns < 6 || popupData.entityType === 'instrument' || popupData.entityType === 'account' || popupData.entityType === 'instrument-type')">
+        <text-input
+                label="Unique Code (User Code)"
+                placeholder-text="Unique Code (User Code)"
+                model="popupData.fields.user_code.value"
+                small-options="{dialogParent: '.dialog-containers-wrap'}"></text-input>
+    </div>
+
+    <div data-ng-if="popupData.fields.public_name">
+        <text-input
+                label="Name if Hidden (Public Name)"
+                placeholder-text="Name if Hidden (Public Name)"
+                model="popupData.fields.public_name.value"
+                small-options="{dialogParent: '.dialog-containers-wrap'}"></text-input>
+    </div>
+
+    <div data-ng-if="popupData.fields.showByDefault">
+        <dropdown-select label="Show by default"
+                         model="popupData.fields.showByDefault.value"
+                         placeholder-text="Show by default"
+                         menu-options="popupData.fields.showByDefault.options"
+                         small-options="{tooltipText: 'Show by default', indicatorBtnIcon: 'type1', dialogParent: '.dialog-containers-wrap'}"
+                         class="ev-editor-field"></dropdown-select>
+    </div>
+
+    <div data-ng-if="popupData.fields.transaction_details_expr">
+        <text-input
+                label="Transaction details expr"
+                placeholder-text="Transaction details expr"
+                model="popupData.fields.transaction_details_expr.value"
+                small-options="{dialogParent: '.dialog-containers-wrap'}"></text-input>
+    </div>
+
+    <!--            Popup for add entity viewer does not have field for status -->
+
+    <div data-ng-if="(popupData.fields.type || popupData.fields.group) && popupData.tabColumns < 3">
+        <!-- For entities except responsible, counterparty, strategy 1,2,3 -->
+        <dropdown-select ng-if="popupData.fields.type"
+                         label="{{popupData.fields.type.name}}"
+                         model="popupData.fields.type.value"
+                         placeholder-text="{{popupData.fields.type.name}}"
+                         menu-options="popupData.fields.type.options"
+                         small-options="{tooltipText: '{{popupData.fields.type.name}}', indicatorBtnIcon: 'type1', dialogParent: '.dialog-containers-wrap'}"
+                         class="ev-editor-field"></dropdown-select>
+
+        <!-- For responsible, counterparty, strategy 1,2,3 -->
+        <crud-select ng-if="popupData.fields.group"
+                     label="popupData.fields.group.name"
+                     item="popupData.fields.group.value"
+                     entity-type="popupData.fields.group.entityType"
+                     data-options="popupData.fields.group.options"
+                     event-signal="popupData.fields.group.event"
+                     small-options="{notNull: options.notNull, dialogParent: '.dialog-containers-wrap'}"></crud-select>
+    </div>
+
+</div>
+
+<div data-ng-include="'views/popups/popup-footer.html'" class="popup-footer"></div>

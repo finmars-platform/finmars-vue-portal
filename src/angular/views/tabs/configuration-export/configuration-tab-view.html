@@ -1,0 +1,63 @@
+<div>
+
+    <div>
+
+        <md-checkbox data-ng-checked="vm.selectAllState"
+                     data-ng-click="vm.toggleSelectAll()"
+                     class="m-b-0"
+                     aria-label="checkbox">
+        </md-checkbox>
+
+        <b>Select all</b>
+
+    </div>
+
+    <div data-ng-repeat="item in vm.items | orderBy: 'order__'">
+
+        <h1 ng-if="item.first_level_header__"
+            ng-bind="item.first_level_header__"
+            class="cie-first-level-group-h1"></h1>
+        <h2 ng-if="item.first_item__"
+            ng-bind="item.first_item__"
+            class="cie-entities-group-h2"></h2>
+
+        <div class="cie-entity-holder cie-configuration-group-item" data-group-entity="{{item.entity}}">
+            <md-checkbox data-ng-checked="item.active"
+                         data-ng-click="vm.toggleActiveForChildren(item)"
+                         data-ng-class="{'some-checkboxes-ticked': item.someChildsActive}"
+                         aria-label="checkbox">
+            </md-checkbox>
+            <span data-ng-bind="vm.getEntityName(item)"
+                  data-ng-class="{'used-dynamic-attrs': item.attributeIsUsed__}"></span> <span
+                class="cie-dependency"
+                data-ng-bind="vm.getEntityDependenciesCaptions(item)"></span>
+            ({{item.count}})
+            <md-button class="md-raised" ng-click="item.displayItems = !item.displayItems"
+                       aria-label="checkboxes show hide button">
+                <span data-ng-if="!item.displayItems">Show</span>
+                <span data-ng-if="item.displayItems">Hide</span>
+            </md-button>
+        </div>
+
+
+        <div data-ng-show="item.displayItems" class="cie-entity-items-holder">
+
+            <div data-ng-repeat="child in item.content | orderBy: 'order__'">
+                <h4 data-ng-if="child.first_item__" data-ng-bind="child.first_item__"></h4>
+                <md-checkbox data-ng-checked="child.active"
+                             data-ng-click="vm.updateActiveForParent(child, item)"
+                             aria-label="checkbox">
+                </md-checkbox>
+                <span data-ng-class="{'used-dynamic-attrs': child.countOfUsages__ || child.countOfUsages__ === 0, 'child-with-icon': vm.checkForTextIcon(item.entity, child)}">
+                        <ng-md-icon data-ng-if="vm.checkForTextIcon(item.entity, child)" icon="folder" fill="#000"
+                                    size="20"></ng-md-icon>
+                        {{vm.getItemName(child)}}
+                        <span data-ng-if="child.countOfUsages__ || child.countOfUsages__ === 0">(<b>{{child.countOfUsages__}}</b>)</span>
+                    </span>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

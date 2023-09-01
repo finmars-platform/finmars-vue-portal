@@ -1,0 +1,129 @@
+<div style="padding: 20px 20px 0" class="export-configuration-page">
+
+    <div data-ng-if="vm.readyStatus.content" class="configuration-export-page">
+
+        <h2 class="m-b-35">Configuration Export Manager</h2>
+
+        <div layout="row" class="m-b-24">
+            <div data-ng-if="vm.readyStatus.layouts">
+
+                <div layout="row">
+                    <div data-ng-if="vm.layouts.length" class="export-configuration-layout-select-container">
+                        <md-input-container class="width-80">
+                            <label>Layout</label>
+                            <md-select data-ng-model="vm.activeLayout" data-ng-change="vm.syncWithLayout()">
+                                <md-option data-ng-repeat="layout in vm.layouts" ng-value="layout">
+                                    {{ layout.name }}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+
+                    <div class="width-30">
+                        <md-button class="md-raised"
+                                   ng-class="{'m-l-0': !vm.layouts.length}"
+                                   ng-click="vm.updateLayout()">Save Export Settings
+                        </md-button>
+                    </div>
+                </div>
+
+                <!-- <div data-ng-if="!vm.layouts.length">
+                    <md-button class="md-raised" data-ng-click="vm.createLayout()">Manage Configuration Export Settings
+                    </md-button>
+                </div> -->
+            </div>
+
+            <div data-ng-if="!vm.readyStatus.layouts">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="">
+                    <progress-circular diameter="30"></progress-circular>
+                </div>
+            </div>
+        </div>
+
+        <div layout="row" class="m-b-24 m-t-16">
+            <div>
+                <div><label for="">Notes</label></div>
+                <textarea name=""
+                          data-ng-model="vm.activeLayout.data.notes"
+                          id=""
+                          cols="60"
+                          rows="5">
+                </textarea>
+            </div>
+        </div>
+
+        <div layout="row" class="m-b-35">
+            <div>
+                <md-button class="md-button md-raised md-primary export-configuration-export-btn"
+                           ng-click="vm.export()">Export To File
+                </md-button>
+            </div>
+
+            <div>
+                <md-input-container class="export-configuration-file-name-input">
+                    <label>File Name</label>
+                    <input type="text" data-ng-model="vm.filename">
+                </md-input-container>
+            </div>
+        </div>
+
+        <div>
+            <hr>
+
+            <h4>Filters</h4>
+
+            <div layout="row">
+
+                <md-input-container class="export-configuration-file-name-input">
+                    <label>Prefix Type</label>
+                    <md-select data-ng-model="vm.prefixType" data-ng-change="vm.updateFilters()">
+                        <md-option ng-value="2">
+                            User ID
+                        </md-option>
+                        <md-option ng-value="5">
+                            Hashed User ID
+                        </md-option>
+                        <md-option ng-value="4">
+                            Group Name
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+
+                <md-input-container class="export-configuration-file-name-input" data-ng-if="vm.prefixType == 4">
+                    <label>Prefix Value</label>
+                    <md-select data-ng-model="vm.selectedGroupPrefix" data-ng-change="vm.updateFilters()">
+                        <md-option  data-ng-repeat="item in vm.groupPrefixes" ng-value="item.value">
+                            {{item.value}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+
+            </div>
+
+        </div>
+
+        <div class="overflow-hidden"
+             layout="column"
+             style="position: relative;">
+
+            <div class="export-section export-section-configuration">
+
+                <div data-ng-include="'views/tabs/configuration-export/configuration-tab-view.html'"></div>
+
+
+                <div data-ng-include="'views/tabs/configuration-export/mappings-tab-view.html'"></div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.content">
+        <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,27 @@
+<div class="complex-datepicker-popup">
+
+    <complex-datepicker date="popupData.date"
+                        datepicker-options="popupData.datepickerOptions"
+                        second-date="popupData.secondDate"
+                        second-datepicker-options="popupData.secondDatepickerOptions"
+                        ev-data-service="popupData.evDataService"
+                        ev-event-service="popupData.evEventService"
+                        attribute-data-service="popupData.attributeDataService"
+                        popup-event-service="popupEventService"
+                        dates-range="popupData.datesRange"></complex-datepicker>
+
+    <div class="flex-row fc-flex-end fi-center complex-datepicker-popup-footer">
+        <div>
+            <md-button ng-click="cancel()" class="link-button">
+                <span>CANCEL</span>
+            </md-button>
+        </div>
+
+        <div>
+            <md-button ng-click="save()" class="link-button">
+                <span>SAVE</span>
+            </md-button>
+        </div>
+    </div>
+
+</div>

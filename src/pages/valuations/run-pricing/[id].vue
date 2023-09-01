@@ -167,7 +167,7 @@
 		useApi('instrumentTypeList.get').then( res => typeList.value = res.results )
 		useApi('instrumentSchemeList.get').then( res => instrumentList.value = res.results )
 		useApi('pricingPolicyList.get').then( res => policyList.value = res.results )
-		useApi('portfolioList.get').then( res => portfolioList.value = res.results )
+		useApi('portfolioListList.get').then( res => portfolioList.value = res.results )
 		useApi('currencySchemeList.get').then( res => currencyList.value = res.results )
 
 		let res = await useApi('pricingProcId.get', {params: {id: route.params.id}})

@@ -1,0 +1,70 @@
+<md-dialog aria-label="" ng-cloak class="draggable-dialog width-80" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Finmars Widget Component</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="p-24">
+
+            <md-tabs>
+
+                <md-tab label="Main">
+                    <md-content class="p-16">
+                        <md-input-container style="width: 200px;">
+                            <label for="">Name</label>
+                            <input type="text" data-ng-model="vm.item.name">
+                        </md-input-container>
+
+                        <div>
+                            <md-input-container class="dashboard-constructor-field1">
+                                <label for="">Label</label>
+                                <input type="text" data-ng-model="vm.item.custom_component_name">
+                            </md-input-container>
+                        </div>
+
+
+                        <div>
+
+                            <md-input-container class="dashboard-constructor-field2">
+                                <label for="">Id</label>
+                                <input type="text" data-ng-model="vm.item.settings.id">
+                            </md-input-container>
+
+                        </div>
+
+                        <div>
+
+                            <md-input-container class="dashboard-constructor-field2">
+                                <label for="">Name</label>
+                                <input type="text" data-ng-model="vm.item.settings.name">
+                            </md-input-container>
+
+                        </div>
+
+                    </md-content>
+                </md-tab>
+
+
+            </md-tabs>
+
+
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+
+        <md-button ng-click="vm.exportToDashboards()" style="margin-right:20px;">
+            Export to dashboards
+        </md-button>
+
+        <md-button ng-click="vm.cancel()" style="margin-right:20px;">
+            Cancel
+        </md-button>
+
+        <md-button ng-click="vm.agree()" style="margin-right:20px;">
+            OK
+        </md-button>
+
+    </md-dialog-actions>
+</md-dialog>

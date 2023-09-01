@@ -1,0 +1,114 @@
+<div>
+    <div class="tt-inputs-tab-view">
+        <table class="bordered">
+            <thead>
+            <tr>
+                <th>Reference Name</th>
+                <th>Name</th>
+                <th>Value Text</th>
+                <th>Value Number</th>
+                <th>Value Date</th>
+                <th style="text-align: center">
+                    &nbsp;
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr data-ng-repeat="item in vm.entity.recon_fields track by $index">
+
+                <td class="edit-state-td">
+                    <md-input-container class="no-error-spacer">
+                        <input type="text" ng-model="item.reference_name">
+                    </md-input-container>
+                </td>
+                <td class="edit-state-td">
+                    <md-input-container class="no-error-spacer">
+                        <input type="text" ng-model="item.description">
+                    </md-input-container>
+                </td>
+                <td class="edit-state-td">
+                    <div layout="row">
+
+                        <md-input-container class="no-error-spacer">
+                            <input type="text" ng-model="item.value_string">
+                        </md-input-container>
+                        <expression-editor-button
+                                data-item="item.value_string"></expression-editor-button>
+
+                    </div>
+                </td>
+                <td class="edit-state-td">
+                    <div layout="row">
+
+                        <md-input-container class="no-error-spacer">
+                            <input type="text" ng-model="item.value_float">
+                        </md-input-container>
+                        <expression-editor-button
+                                data-item="item.value_float"></expression-editor-button>
+
+                    </div>
+                </td>
+                <td class="edit-state-td">
+                    <div layout="row">
+
+
+                        <md-input-container class="no-error-spacer">
+                            <input type="text" ng-model="item.value_date">
+                        </md-input-container>
+                        <expression-editor-button
+                                data-item="item.value_date"></expression-editor-button>
+
+                    </div>
+                </td>
+                <td class="edit-state-td">
+                    <md-button data-ng-click="vm.deleteReconField($event, $index)">
+                        Delete
+                    </md-button>
+                </td>
+
+            </tr>
+
+            <!--Add row-->
+
+            <tr class="tab-input-row">
+                <td>
+                    <md-input-container class="no-error-spacer m-0">
+                        <input type="text" data-ng-model="vm.newReconField.reference_name">
+                    </md-input-container>
+                </td>
+
+                <td>
+                    <md-input-container class="no-error-spacer m-0">
+                        <input type="text" data-ng-model="vm.newReconField.description">
+                    </md-input-container>
+                </td>
+
+                <td>
+                    <md-input-container class="no-error-spacer m-0">
+                        <input type="text" data-ng-model="vm.newReconField.value_string">
+                    </md-input-container>
+                </td>
+
+                <td>
+                    <md-input-container class="no-error-spacer m-0">
+                        <input type="text" data-ng-model="vm.newReconField.value_float">
+                    </md-input-container>
+                </td>
+
+                <td>
+                    <md-input-container class="no-error-spacer m-0">
+                        <input type="text" data-ng-model="vm.newReconField.value_date">
+                    </md-input-container>
+                </td>
+
+                <td class="ttype-inputs-actions-td">
+                    <md-button data-ng-click="vm.addReconField()">
+                        Add
+                    </md-button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>

@@ -1,22 +1,20 @@
 <template>
-	<BaseModal
-		no_padding
-		title="Add component"
-	>
-		<PagesDashboardAddComponentMChooseComponent
-			v-if="step == 'component'"
-		/>
+	<BaseModal no_padding title="Add component">
+		<PagesDashboardAddComponentMChooseComponent v-if="step == 'component'" />
 
-		<PagesDashboardAddComponentMSettings
-			v-if="step == 'settings'"
-			:tab="tab"
-		/>
+		<PagesDashboardAddComponentMSettings v-if="step == 'settings'" :tab="tab" />
 
-		<template #controls="{cancel}">
+		<template #controls="{ cancel }">
 			<div class="flex sb">
-				<FmBtn type="text" @click="step = 'component'">cancel</FmBtn>
 				<FmBtn
-					@click="step == 'settings' ? addComponent(cancel) : step = 'settings'"
+					type="text"
+					@click="step === 'component' ? cancel() : (step = 'component')"
+					>cancel</FmBtn
+				>
+				<FmBtn
+					@click="
+						step == 'settings' ? addComponent(cancel) : (step = 'settings')
+					"
 				>
 					{{ step == 'settings' ? 'finish' : 'next' }}
 				</FmBtn>
@@ -26,7 +24,6 @@
 </template>
 
 <script setup>
-
 	const props = defineProps({
 		tab: Number,
 	})
@@ -36,16 +33,31 @@
 	let step = ref('component')
 	let component = ref({})
 
-	provide('component', component)
+	function updateComponent(componentData) {
+		component.value = componentData;
+	}
 
-	function addComponent( cancelFunc ) {
-		let new_widget = {
+	provide('component', {
+		component,
+		updateComponent,
+	})
+
+	function addComponent(cancelFunc) {
+		if (
+			!component.value.user_code ||
+			!/\w{4,30}/.test(component.value.user_code)
+		) {
+			useNotify({ type: 'warn', title: 'User code is requered' })
+			return false
+		}
+		let new_comp = {
 			uid: generateId(component.value.componentName),
 			user_code: component.value.user_code,
 			name: component.value.name,
 			componentName: component.value.componentName,
 			tab: component.value.tab,
 			scopes: component.value.scopes,
+			dynamicOutputs: component.value.dynamicOutputs,
 
 			colls: component.value.minColls,
 			rows: component.value.minRows,
@@ -56,39 +68,52 @@
 		}
 
 		dashStore.$patch((state) => {
-			dashStore.components.push(new_widget)
+
+			dashStore.components.push(new_comp)
 
 			component.value.inputs.forEach((prop) => {
-				state.props.inputs.push({
-					uid: new_widget.uid + ' ' + prop.name,
-					component_id: new_widget.uid,
+
+				let newProp = {
+					uid: new_comp.uid + ' ' + prop.key,
+					component_id: new_comp.uid,
 					user_code: prop.user_code,
 					name: prop.name,
 					type: prop.type,
 					key: prop.key,
+					value_type: prop.value_type,
 
 					view: prop.view,
 					subscribedTo: prop.subscribedTo,
 
 					default_value: prop.default_value,
-					__val: prop.default_value
-				})
+					__val: prop.default_value,
+				}
+
+				if (newProp.value_type === 100) newProp.value_content_type = prop.value_content_type;
+
+				state.props.inputs.push(newProp);
+
 			})
 
 			component.value.outputs.forEach((prop) => {
 				let newProp = reactive({
-					uid: new_widget.uid + '_' + prop.name,
-					component_id: new_widget.uid,
+					uid: new_comp.uid + '_' + prop.key,
+					component_id: new_comp.uid,
 					user_code: prop.user_code,
 					name: prop.name,
 					type: prop.type,
 					key: prop.key,
+					value_type: prop.value_type,
 
 					view: prop.view,
 
 					default_value: prop.default_value,
-					__val: prop.default_value
+					__val: prop.default_value,
 				})
+				// console.log("testing1090 addComponent newProp", JSON.parse(JSON.stringify(newProp)) );
+				if (newProp.value_type === 100) {
+					newProp.value_content_type = prop.value_content_type;
+				}
 
 				state.props.outputs.push(newProp)
 
@@ -98,11 +123,12 @@
 					inputProp.subscribedTo.push(newProp.uid)
 				})
 			})
+			// console.log("testing1090.AddComponentM inputs", dashStore.props.inputs);
 			dashStore.setPropsWatchers()
 		})
 		cancelFunc()
 	}
-	function generateId( id ) {
+	function generateId(id) {
 		return id + Date.now()
 	}
 </script>

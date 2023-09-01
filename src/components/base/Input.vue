@@ -1,24 +1,21 @@
 <template>
-	<div class="base-input"
-			 :class="{'error': errorData, 'disabled': disabled}"
-			 tabindex="-1"
-
-			 @click="onBiClick"
+	<div
+		class="base-input"
+		:class="{ error: errorData, disabled: disabled }"
+		tabindex="-1"
+		@click="onBiClick"
 	>
 		<div class="bi_top">
 			<div class="top_left_border"></div>
 
-			<div class="bi_label"
-					 v-if="label"
-					 :class="{filling: modelValue}"
-			>
+			<div class="bi_label" v-if="label" :class="{ filling: modelValue }">
 				{{ label }}
 			</div>
 
 			<div class="top_right_border"></div>
 		</div>
 
-		<div class="bi_wrap">
+		<div class="bi_wrap" :class="{ readonly }">
 			<div class="bi_button"><slot name="button"></slot></div>
 
 			<div class="bi_default">
@@ -30,17 +27,18 @@
 						:value="modelValue"
 						:readonly="readonly"
 						:disabled="disabled"
-
 						@input="$emit('update:modelValue', $event.target.value)"
 						@focus="$emit('onFocus')"
 						@blur="$emit('onBlur')"
-
 						class="bi_main_input"
 					/>
 				</slot>
 			</div>
 
-			<div class="bi_side_items flex" :class="{'empty': !tooltip && !$slots.sideItems}">
+			<div
+				class="bi_side_items flex"
+				:class="{ empty: !tooltip && !$slots.sideItems }"
+			>
 				<slot name="sideItems"></slot>
 
 				<div class="bi_side_item" v-if="tooltip">
@@ -48,9 +46,10 @@
 				</div>
 			</div>
 
-
-			<div v-if="errorData && errorData.longMessage"
-					 class="bi_side_item error_icon">
+			<div
+				v-if="errorData && errorData.longMessage"
+				class="bi_side_item error_icon"
+			>
 				<FmIcon v-fm-tooltip.error="errorData.longMessage" icon="info" />
 			</div>
 
@@ -63,8 +62,7 @@
 </template>
 
 <script setup>
-
-let props = defineProps({
+	let props = defineProps({
 		modelValue: [String, Number],
 		type: String,
 		label: String,
@@ -77,42 +75,45 @@ let props = defineProps({
 		errorData: Object,
 	})
 
-	let emit = defineEmits(['update:modelValue', 'update:errorData', 'onBlur', 'onFocus']);
-	let mainInput = ref(null);
+	let emit = defineEmits([
+		'update:modelValue',
+		'update:errorData',
+		'onBlur',
+		'onFocus',
+	])
+	let mainInput = ref(null)
 
 	defineExpose({
-		mainInput
+		mainInput,
 	})
 
-	let slots = useSlots();
+	let slots = useSlots()
 
 	watch(
 		() => props.modelValue,
 		() => {
-			if (props.errorData && props.errorData.code === 30 && props.modelValue) emit('update:errorData', null);
+			if (props.errorData && props.errorData.code === 30 && props.modelValue)
+				emit('update:errorData', null)
 		}
 	)
 
 	if (props.required) {
-
 		watch(
-			() => props.errorData ? props.errorData.validate : false,
+			() => (props.errorData ? props.errorData.validate : false),
 			(newVal) => {
-
 				if (newVal) {
-
-					const error = props.modelValue ? null : {message: "Field should not be null"};
-					emit('update:errorData', error);
-
+					const error = props.modelValue
+						? null
+						: { message: 'Field should not be null' }
+					emit('update:errorData', error)
 				}
 			}
 		)
-
 	}
 
 	function onBiClick() {
-		if (props.disabled) return;
-		if (mainInput.value) mainInput.value.focus();
+		if (props.disabled) return
+		if (mainInput.value) mainInput.value.focus()
 	}
 
 	/*function onModelValueChange (newVal) {
@@ -124,11 +125,9 @@ let props = defineProps({
 		emit('update:modelValue', newVal);
 
 	}*/
-
 </script>
 
 <style lang="scss" scoped>
-
 	$input-border: 1px solid $border-darken;
 	$active-input-border: 1px solid $border-active;
 	$side-items-padding: 0 8px;
@@ -170,14 +169,13 @@ let props = defineProps({
 				border-top-color: transparent;
 				border-radius: $border-radius;
 			}
-
 		}
 
-		&:not(.bi_no_borders):not(.disabled):focus-within,
-		&:not(.bi_no_borders):not(.disabled):focus {
-
+		&:not(.bi_no_borders):not(.disabled, .readonly):focus-within,
+		&:not(.bi_no_borders):not(.disabled, .readonly):focus {
 			.bi_top {
-				.top_left_border, .top_right_border {
+				.top_left_border,
+				.top_right_border {
 					border-top: $active-input-border;
 				}
 
@@ -192,14 +190,12 @@ let props = defineProps({
 				border-bottom: $active-input-border;
 				border-left: $active-input-border;
 			}
-
 		}
 
 		&.bi_no_borders {
 			margin-bottom: 0;
 
 			&.bi_border_bottom {
-
 				.bi_default {
 					border-bottom: 1px solid $border;
 					padding-left: 7px;
@@ -229,11 +225,9 @@ let props = defineProps({
 			}
 
 			.bi_top {
-
 				.bi_label {
 					color: $error;
 				}
-
 			}
 
 			.bi_button {
@@ -246,9 +240,9 @@ let props = defineProps({
 		}
 
 		&.error:not(.disabled):not(.bi_no_borders) {
-
 			.bi_top {
-				.top_left_border, .top_right_border {
+				.top_left_border,
+				.top_right_border {
 					border-color: $error;
 				}
 			}
@@ -272,9 +266,15 @@ let props = defineProps({
 		color: $text-pale;
 
 		&:not(.bi_no_borders) {
+			.bi_top {
+				.top_left_border,
+				.top_right_border {
+					border-color: $borer-lighten;
+				}
 
-			.top_left_border, .top_right_border {
-				border-color: $borer-lighten;
+				.bi_label {
+					color: $text-pale2;
+				}
 			}
 
 			.bi_wrap {
@@ -355,8 +355,6 @@ let props = defineProps({
 			border-top: $input-border;
 			border-top-right-radius: $border-radius;
 		}
-
-
 	}
 
 	.bi_wrap {
@@ -366,11 +364,16 @@ let props = defineProps({
 		// min-height: 42px;
 		height: 100%;
 		width: 100%;
+
+		&.readonly {
+			border-left: 5px solid $border !important;
+		}
 	}
 	.bi_default {
-		flex-grow: 1;
+		flex: 0 1 100%;
 		margin-left: 13px;
 		height: inherit;
+		min-width: 0;
 
 		/*input {
 			width: 100%;
@@ -414,5 +417,4 @@ let props = defineProps({
 			margin-left: 1px;
 		}
 	}
-
 </style>

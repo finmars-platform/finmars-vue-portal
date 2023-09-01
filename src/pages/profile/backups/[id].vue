@@ -2,7 +2,8 @@
 	<div>
 		<FmTopRefresh @refresh="refresh()">
 			<template #action>
-				<BaseInput type="text"
+				<BaseInput
+					type="text"
 					v-model="searchParam"
 					placeholder="Search"
 					class="bi_no_borders"
@@ -19,18 +20,24 @@
 			<BaseTable
 				colls="50px 1fr 200px 100px 200px 100px 1fr"
 				:items="backupsByMU"
-				:headers="['', 'Name', 'Date', 'Status', 'Performed by', 'Size', 'Notes']"
+				:headers="[
+					'',
+					'Name',
+					'Date',
+					'Status',
+					'Performed by',
+					'Size',
+					'Notes',
+				]"
 			>
-				<template #actions="{index}">
+				<template #actions="{ index }">
 					<div class="flex jcc">
 						<FmMenu anchor="bottom left">
 							<template #btn>
 								<FmIcon icon="more_vert" />
 							</template>
 							<div class="fm_list">
-								<div class="fm_list_item"
-									@click="edit(index)"
-								>
+								<div class="fm_list_item" @click="edit(index)">
 									<FmIcon class="m-r-4" icon="edit" /> Edit
 								</div>
 
@@ -47,16 +54,19 @@
 									class="fm_list_item"
 									@click="restore(index)"
 								>
-									<FmIcon class="m-r-4" icon="settings_backup_restore" /> Restore
+									<FmIcon class="m-r-4" icon="settings_backup_restore" />
+									Restore
 								</div>
-								<div class="fm_list_item"
-									@click="isShowRestore = true, restoredID = backups[index].id"
+								<div
+									class="fm_list_item"
+									@click="
+										;(isShowRestore = true), (restoredID = backups[index].id)
+									"
 								>
-									<FmIcon class="m-r-4" icon="add_circle" /> Create new workspace
+									<FmIcon class="m-r-4" icon="add_circle" /> Create new
+									workspace
 								</div>
-								<div class="fm_list_item"
-									@click="deleteBackup(index)"
-								>
+								<div class="fm_list_item" @click="deleteBackup(index)">
 									<FmIcon class="m-r-4" icon="delete" /> Delete
 								</div>
 							</div>
@@ -67,15 +77,17 @@
 		</div>
 		<!-- <div v-else class="text-h4">No backups found</div> -->
 
-		<BaseModal title="Edit backup" v-model="isOpenEdit"
+		<BaseModal
+			title="Edit backup"
+			v-model="isOpenEdit"
 			:controls="{
 				cancel: {
 					name: 'cancel',
-					cb: () => {}
+					cb: () => {},
 				},
 				action: {
 					name: 'Save',
-					cb: saveBackup
+					cb: saveBackup,
 				},
 			}"
 		>
@@ -87,38 +99,36 @@
 		<PagesProfileRestoreFromBackup
 			v-model="isShowRestore"
 			:backupId="restoredID"
-			@cancel="isShowRestore = false, restoredID = null"
+			@cancel=";(isShowRestore = false), (restoredID = null)"
 		/>
 	</div>
 </template>
 
 <script setup>
-
 	import dayjs from 'dayjs'
 
 	definePageMeta({
 		middleware: 'auth',
-		isHideSidebar: true,
 		bread: [
 			{
-				text: "Profile",
-				to: "/profile",
+				text: 'Profile',
+				to: '/profile',
 			},
 			{
-				text: "Backups",
-				to: "/profile?tab=Backups",
+				text: 'Backups',
+				to: '/profile?tab=Backups',
 			},
 			{
-				text: "Backup detail",
-				disabled: true
-			}
+				text: 'Backup detail',
+				disabled: true,
+			},
 		],
 	})
 	const config = useRuntimeConfig()
 	const store = useStore()
 	const route = useRoute()
 
-	let searchParam = ref("")
+	let searchParam = ref('')
 	let processing = false
 
 	let backupsByMU = ref([])
@@ -132,12 +142,12 @@
 	refresh()
 
 	async function refresh() {
-		let res = await useApi("masterBackups.get", {
+		let res = await useApi('masterBackups.get', {
 			filters: {
 				space_id: route.params.id,
-				query: searchParam.value
-			}
-		});
+				query: searchParam.value,
+			},
+		})
 		backups = res.results
 		backupsByMU.value = []
 
@@ -152,32 +162,35 @@
 			})
 		})
 	}
-	function edit( index ) {
+	function edit(index) {
 		editable.value = backups[index]
 		isOpenEdit.value = true
 	}
+
 	async function saveBackup() {
 		let res = await useApi('masterBackupsSave.put', {
-			params: {id: editable.value.id },
-			body: editable.value
+			params: { id: editable.value.id },
+			body: editable.value,
 		})
 
 		refresh()
 	}
 	async function restore(index) {
-		let isConfirm = await useConfirm({text: `Are you sure you want to restore ${backups[index].master_user_base_api_url} from
-			backup ${backups[index].name}? All data that was created after this backup will be deleted.`})
-		if ( !isConfirm ) return false
+		let isConfirm = await useConfirm({
+			text: `Are you sure you want to restore ${backups[index].master_user_base_api_url} from
+			backup ${backups[index].name}? All data that was created after this backup will be deleted.`,
+		})
+		if (!isConfirm) return false
 
-		let res = await useApi("masterRollback.put", {
+		let res = await useApi('masterRollback.put', {
 			params: { id: backups[index].master_user },
 			body: {
 				master_user_backup_id: backups[index].id,
-				create_backup_before_rollback: true
-			}
+				create_backup_before_rollback: true,
+			},
 		})
 
-		if ( !res.error ) {
+		if (!res.error) {
 			useNotify({
 				type: 'success',
 				title: 'Success',
@@ -190,20 +203,23 @@
 		}
 	}
 	async function deleteBackup(index) {
-		let isConfirm = await useConfirm({text: `Are you sure you want to delete ${backups[index].name}?`})
-		if ( !isConfirm ) return false
+		let isConfirm = await useConfirm({
+			text: `Are you sure you want to delete ${backups[index].name}?`,
+		})
+		if (!isConfirm) return false
 
-		let res = await useApi('masterBackups.delete', {params: {id: backups[index].id }})
+		let res = await useApi('masterBackups.delete', {
+			params: { id: backups[index].id },
+		})
 		refresh()
 	}
-
 </script>
 
 <style lang="scss" scoped>
-.backups {
-	display: grid;
-	grid-template-columns: repeat(3, auto);
-	grid-gap: 30px;
-	justify-content: flex-start;
-}
+	.backups {
+		display: grid;
+		grid-template-columns: repeat(3, auto);
+		grid-gap: 30px;
+		justify-content: flex-start;
+	}
 </style>

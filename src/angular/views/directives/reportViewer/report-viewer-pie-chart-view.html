@@ -1,0 +1,56 @@
+<div class="report-viewer-charts">
+
+    <!--<div layout="row" class="m-b-16">
+        <h3 data-ng-bind="chartName" class="dashboard-chart-name-h"></h3>
+    </div>-->
+    <div data-ng-show="readyStatuses.chartIsReady" class="report-viewer-charts-scrollable-container">
+        <!-- <div data-ng-if="viewContext === 'dashboard'" class="g-dashboard-filter-holder">
+
+            <md-button class="toggle-dashboard-filter-btn"
+                       ng-click="dashboardFilterCollapsed = !dashboardFilterCollapsed">
+                <ng-md-icon ng-hide="dashboardFilterCollapsed"
+                            icon="keyboard_arrow_left"></ng-md-icon>
+                <ng-md-icon ng-hide="!dashboardFilterCollapsed"
+                            icon="keyboard_arrow_right"></ng-md-icon>
+            </md-button>
+
+            <div class="g-dashboard-filter">
+
+                <group-dashboard-filter data-ng-show="!dashboardFilterCollapsed"
+                                        ev-data-service="evDataService"
+                                        ev-event-service="evEventService"></group-dashboard-filter>
+            </div>
+        </div> -->
+
+        <div ng-class="getPieChartGlobalClasses()"
+             layout="{{pieChartLayout}}"
+             layout-align="{{pieChartLayoutAlign}}">
+
+            <div class="report-viewer-chart-holder"></div>
+
+            <div ng-if="readyStatuses.legendsAreReady" class="pie-chart-legends-holder">
+                <ul class="pie-chart-legends-ul" style="{{setLegendsUlStyle()}}">
+                    <li ng-repeat="legend in chartDataWithPosNums" class="pie-chart-legend">
+                        <div class="pie-chart-legend-color" style="{{getLegendBackgroundColor(legend.colorNumber)}}"></div>
+                        <span class="pie-chart-legend-value" style="{{getLegendTextStyle()}}">{{legend.name}}: {{formatValue(legend.numericValue)}}; {{legend.percentage}}%</span>
+                        <!--<md-tooltip class="tooltip_1"
+                                    md-direction="top"
+                                    style="{{getTooltipStyle()}}">{{formatValue(legend.numericValue)}}</md-tooltip>-->
+                    </li>
+
+                    <li ng-repeat="legend in chartDataWithNegNums" class="pie-chart-legend">
+                        <div class="pie-chart-legend-color" style="{{getLegendBackgroundColor(legend.colorNumber)}}"></div>
+                        <span class="pie-chart-legend-value" style="{{getLegendTextStyle()}}">{{legend.name}}: -{{formatValue(legend.numericValue)}}; -{{legend.percentage}}%</span>
+                        <md-tooltip class="tooltip_1"
+                                    ng-class="{'red-text': number_format.negative_color_format_id === 1}"
+                                    md-direction="top"
+                                    style="{{getTooltipStyle()}}">
+                            {{formatValue(legend.numericValue, true)}}
+                        </md-tooltip>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>

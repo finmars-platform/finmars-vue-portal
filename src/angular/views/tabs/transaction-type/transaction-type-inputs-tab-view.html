@@ -1,0 +1,446 @@
+<div>
+    <div class="tt-inputs-tab-view">
+        <!--<table class="bordered">
+            <thead>
+
+                <tr>
+                    <th data-ng-click="vm.setSort('name')">Name<span class="sortorder"
+                                                                     data-ng-show="vm.sort === 'name'"
+                                                                     data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th data-ng-click="vm.setSort('verbose_name')">Verbose name<span class="sortorder"
+                                                                                     data-ng-show="vm.sort === 'verbose_name'"
+                                                                                     data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th data-ng-click="vm.setSort('tooltip')">Tooltip<span class="sortorder"
+                                                                           data-ng-show="vm.sort === 'tooltip'"
+                                                                           data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th data-ng-click="vm.setSort('value_type_name')">Value type<span class="sortorder"
+                                                                                      data-ng-show="vm.sort === 'value_type_name'"
+                                                                                      data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th data-ng-click="vm.setSort('content_type_name')">Content type<span class="sortorder"
+                                                                                          data-ng-show="vm.sort === 'content_type_name'"
+                                                                                          data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th>Use Default Value from Context</th>
+                    <th>Default value</th>
+                    <th>Input expr</th>
+                    <th>Linked Inputs</th>
+                    <th style="text-align: center">
+                        <md-button class="md-icon-button" aria-label="ttype inputs search button">
+                            <ng-md-icon data-ng-click="vm.toggleQuery()" icon="search"></ng-md-icon>
+                        </md-button>
+                    </th>
+                </tr>
+
+                <tr style="border: 0" data-ng-if="vm.queryStatus" class="filter-row-holder">
+                    <th>
+                        <md-input-container class="no-error-spacer">
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.name">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container class="no-error-spacer">
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.verbose_name">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container class="no-error-spacer">
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.tooltip">
+                        </md-input-container>
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+
+            </thead>
+            <tbody>
+            <tr data-ng-repeat="item in vm.entity.inputs | filter:vm.query | orderBy:vm.sort:vm.direction">
+
+                <td class="edit-state-td">
+                    <span ng-bind="item.name"></span>
+                </td>
+                <td class="edit-state-td">
+                    <md-input-container class="no-error-spacer">
+                        <input type="text" ng-model="item.verbose_name">
+                    </md-input-container>
+                </td>
+                <td class="edit-state-td">
+                    <md-input-container class="no-error-spacer">
+                        <input type="text" ng-model="item.tooltip">
+                    </md-input-container>
+                </td>
+                <td class="edit-state-td">
+
+                    <span ng-bind="vm.getNameByValueType(item.value_type)"></span>
+                </td>
+
+                <td class="edit-state-td">
+
+                    <span data-ng-if="item.value_type == 110" ng-bind="item.reference_table"></span>
+                    <span data-ng-if="item.value_type == 100"
+                          ng-bind="vm.getNameByContentType(item.content_type)"></span>
+                </td>
+
+                <td class="edit-state-td ttype-inputs-checkbox-td">
+                    <md-input-container class="no-error-spacer" data-ng-if="item.value_type == 100">
+                        <md-checkbox data-ng-model="item.is_fill_from_context"
+                        ></md-checkbox>
+                    </md-input-container>
+                </td>
+
+                <td class="edit-state-td">
+
+                    <div data-ng-if="item.value_type != 100">
+
+                        <md-input-container class="no-error-spacer ttinputs-input-with-expression">
+                            <input type="text" data-ng-model="item.value">
+                        </md-input-container>
+
+                        <expression-editor-button data-item="item.value"></expression-editor-button>
+
+                    </div>
+
+                    <div data-ng-if="item.is_fill_from_context && item.value_type == 100">
+
+                        <md-select ng-model="item.context_property"
+                                   md-container-class="common-select-container">
+
+                            <div class="select-options-holder">
+
+                                <md-option
+                                        data-ng-repeat="item in vm.contextProperties[item.content_type]"
+                                        ng-value="item.key">
+                                    {{item.name}}
+                                </md-option>
+
+                            </div>
+                        </md-select>
+
+                    </div>
+
+                    <div data-ng-if="!item.is_fill_from_context && item.value_type == 100">
+
+                        <md-input-container
+                                aria-label="select with filter"
+                                class="no-error-spacer"
+                                style="width: 213px;"
+                                md-no-float="">
+                            <md-select ng-model="item[vm.resolveRelation(item)]"
+                                       md-container-class="common-select-container"
+                                       md-on-open="vm.loadRelation(vm.resolveRelation(item))"
+                                       md-on-close="vm.searchTerms[vm.getInputsFilterST('defaultValueSearchTerms', $index)] = ''"
+                                       id="ttype-relation-item-input">
+                                <md-select-header>
+                                    <input data-ng-model="vm.searchTerms[vm.getInputsFilterST('defaultValueSearchTerms', $index)]"
+                                           type="search"
+                                           placeholder="Search for a ..."
+                                           class="md-text md-select-search-pattern select-input-filter"
+                                           ng-keydown="$event.stopPropagation()">
+                                </md-select-header>
+
+                                <div class="select-options-holder">
+
+                                    <md-option
+                                            data-ng-repeat="relationItem in vm.relationItems[vm.resolveRelation(item)] | filter:{name: vm.searchTerms[vm.getInputsFilterST('defaultValueSearchTerms', $index)]}"
+                                            ng-value="relationItem.id">
+                                        {{relationItem.name}}
+                                    </md-option>
+
+                                </div>
+                            </md-select>
+
+                            &lt;!&ndash;<div ng-if="item[vm.resolveRelation(item)]"&ndash;&gt;
+                                 &lt;!&ndash;ng-init="vm.loadRelation(vm.resolveRelation(item))"></div>&ndash;&gt;
+
+                        </md-input-container>
+
+                    </div>
+
+                </td>
+
+                <td class="edit-state-td">
+                    <md-input-container class="no-error-spacer">
+                        <input type="text" data-ng-model="item.value_expr">
+                    </md-input-container>
+
+                    <expression-editor-button data-item="item.value_expr"></expression-editor-button>
+
+                </td>
+
+                <td>
+                    <two-fields-multiselect ng-model="item.settings.linked_inputs_names"
+                                            data-get-data-method="vm.getInputForLinking()"
+                                            data-model="item.settings.linked_inputs_names"
+
+                                            data-name-property="name"
+                                            class="table-filter-input-container">
+                    </two-fields-multiselect>
+                </td>
+
+                <td class="ttype-inputs-actions-td">
+                    &lt;!&ndash;<md-button ng-if="vm.entity.id"
+                               data-ng-click="vm.saveInputsRow(item)"
+                               aria-label="ttype save input row button">
+                        Apply
+                    </md-button>&ndash;&gt;
+                    <md-button data-ng-click="vm.deleteInput(item, $index, $event)"
+                               aria-label="ttype delete input row button"
+                               class="small-button-icon" style="top: 6px;">
+                        <ng-md-icon icon="delete"></ng-md-icon>
+                    </md-button>
+                </td>
+            </tr>
+
+            &lt;!&ndash;Add row&ndash;&gt;
+
+            <tr class="tab-input-row">
+                <td>
+                    <md-input-container class="no-error-spacer m-0">
+                        <input type="text" data-ng-model="vm.newItem.name">
+                    </md-input-container>
+                </td>
+
+                <td>
+                    <md-input-container class="no-error-spacer m-0">
+                        <input type="text" data-ng-model="vm.newItem.verbose_name">
+                    </md-input-container>
+                </td>
+
+                <td>
+
+                    <md-input-container class="md-block m-0"
+                                        aria-label="select with filter"
+                                        md-no-float="">
+                        <md-select ng-model="vm.newItem.value_type"
+                                   md-container-class="common-select-container"
+                                   ng-change="vm.valueTypeChanged(vm.newItem)"
+                                   md-on-close="newItemValueTypeSearchTerm = ''"
+                                   id="ttype-inputs-value-type">
+                            <md-select-header>
+                                <input data-ng-model="newItemValueTypeSearchTerm"
+                                       type="search"
+                                       placeholder="Search for a ..."
+                                       class="md-text md-select-search-pattern select-input-filter"
+                                       ng-keydown="$event.stopPropagation()">
+                            </md-select-header>
+
+                            <div class="select-options-holder">
+
+                                <md-option
+                                        data-ng-repeat="item in vm.valueTypes | filter:{display_name: newItemValueTypeSearchTerm}"
+                                        ng-value="item.value">
+                                    {{item.display_name}}
+                                </md-option>
+
+                            </div>
+                        </md-select>
+                    </md-input-container>
+                </td>
+                <td>
+
+
+                    <md-input-container data-ng-if="vm.newItem.value_type !== 110" class="md-block m-0"
+                                        aria-label="content type input"
+                                        md-no-float="">
+                        <label for="ttype-inputs-default-value"></label>
+                        <md-select ng-model="vm.newItem.content_type"
+                                   md-container-class="common-select-container"
+                                   md-on-close="newItemContentTypeSearchTerm = ''"
+                                   id="ttype-inputs-default-value"
+                                   aria-label="select with filter"
+                                   ng-disabled="vm.newItem.value_type !== 100">
+
+                            <md-select-header>
+                                <input data-ng-model="newItemContentTypeSearchTerm"
+                                       type="search"
+                                       placeholder="Search for a ..."
+                                       class="md-text md-select-search-pattern select-input-filter"
+                                       ng-keydown="$event.stopPropagation()">
+                            </md-select-header>
+
+                            <div class="select-options-holder">
+
+                                <md-option
+                                        data-ng-repeat="item in vm.contentTypes | filter:{name: newItemContentTypeSearchTerm}"
+                                        ng-value="item.key">
+                                    {{item.name}}
+                                </md-option>
+
+                            </div>
+
+                        </md-select>
+                    </md-input-container>
+
+                    <md-input-container data-ng-if="vm.newItem.value_type === 110" class="md-block m-0"
+                                        aria-label="content type input"
+                                        md-no-float="">
+                        <label for="ttype-inputs-default-value"></label>
+                        <md-select ng-model="vm.newItem.reference_table"
+                                   md-container-class="common-select-container"
+                                   md-on-close="newItemContentTypeSearchTerm = ''"
+                                   id="ttype-inputs-selector-default-value"
+                                   aria-label="select with filter"
+                                   ng-disabled="vm.newItem.value_type !== 110">
+
+                            <md-select-header>
+                                <input data-ng-model="newItemReferenceTableSearchTerm"
+                                       type="search"
+                                       placeholder="Search for a ..."
+                                       class="md-text md-select-search-pattern select-input-filter"
+                                       ng-keydown="$event.stopPropagation()">
+                            </md-select-header>
+
+                            <div class="select-options-holder">
+
+                                <md-option
+                                        data-ng-repeat="item in vm.referenceTables | filter:{name: newItemReferenceTableSearchTerm}"
+                                        ng-value="item.name">
+                                    {{item.name}}
+                                </md-option>
+
+                            </div>
+
+                        </md-select>
+                    </md-input-container>
+
+
+                </td>
+
+                <td class="ttype-inputs-checkbox-td">
+                    <md-input-container class="no-error-spacer m-0" data-ng-if="vm.newItem.value_type == 100">
+                        <md-checkbox data-ng-model="vm.newItem.is_fill_from_context"></md-checkbox>
+                    </md-input-container>
+                </td>
+
+                <td>
+
+                    <div data-ng-if="!vm.newItem.is_fill_from_context && vm.newItem.value_type != 100">
+
+                        <md-input-container class="no-error-spacer ttinputs-input-with-expression m-0">
+                            <input type="text" data-ng-model="vm.newItem.value">
+                        </md-input-container>
+
+                        <expression-editor-button data-item="vm.newItem.value"></expression-editor-button>
+
+                    </div>
+
+                    &lt;!&ndash;<div data-ng-if="item.is_fill_from_context && item.value_type == 100">
+
+                        <md-select ng-model="item.context_property"
+                                   md-container-class="common-select-container">
+
+                            <div class="select-options-holder">
+
+                                <md-option
+                                        data-ng-repeat="item in vm.contextProperties[item.content_type]"
+                                        ng-value="item.key">
+                                    {{item.name}}
+                                </md-option>
+
+                            </div>
+                        </md-select>
+
+                    </div>&ndash;&gt;
+
+                    <div data-ng-if="!vm.newItem.is_fill_from_context && vm.newItem.value_type == 100">
+
+                        <md-input-container
+                                class="m-0"
+                                md-no-float=""
+                                style="width: 213px;">
+
+                            <md-select ng-model="vm.newItem[vm.resolveRelation(vm.newItem)]"
+                                       md-container-class="common-select-container"
+                                       md-on-open="vm.loadRelation(vm.resolveRelation(vm.newItem))"
+                                       md-on-close="newItemRelationsSearchTerm = ''">
+
+                                <md-select-header>
+                                    <input data-ng-model="newItemRelationsSearchTerm"
+                                           type="search"
+                                           placeholder="Search for a ..."
+                                           class="md-text md-select-search-pattern select-input-filter"
+                                           ng-keydown="$event.stopPropagation()">
+                                </md-select-header>
+
+                                <div class="select-options-holder">
+
+                                    <md-option
+                                            data-ng-repeat="item in vm.relationItems[vm.resolveRelation(vm.newItem)] | filter:{name: newItemRelationsSearchTerm}"
+                                            ng-value="item.id">
+                                        {{item.name}}
+                                    </md-option>
+
+                                </div>
+
+                            </md-select>
+                        </md-input-container>
+
+                    </div>
+
+                </td>
+
+
+                <td>
+                    <md-input-container class="no-error-spacer m-0">
+                        <input type="text" data-ng-model="vm.newItem.value_expr">
+                    </md-input-container>
+
+                    <expression-editor-button data-item="vm.newItem.value_expr"></expression-editor-button>
+                </td>
+
+                <td>
+                    <md-input-container class="no-error-spacer">
+                        <input type="text" data-ng-model="item.settings.linked_inputs_names">
+                    </md-input-container>
+                </td>
+
+                <td class="ttype-inputs-actions-td">
+                    <md-button data-ng-click="vm.addRow($event)" aria-label="ttype add input row button">
+                        Add
+                    </md-button>
+                </td>
+            </tr>
+            </tbody>
+        </table>-->
+
+        <grid-table data-gt-data-service="vm.inputsGridTableDataService"
+                    data-gt-event-service="vm.inputsGridTableEventService"></grid-table>
+
+        <div layout="row">
+
+            <md-menu>
+                <md-button  class="md-raised"
+                           data-ng-class="{'disabled-btn': !vm.readyStatus.input_templates}"
+                           ng-click="$mdMenu.open($event)">
+                    Append From Template
+                </md-button>
+
+                <md-menu-content width="3">
+                    <md-menu-item data-ng-repeat="template in vm.inputTemplates">
+                        <md-button
+                                   data-ng-click="vm.appendFromTemplate($event, template)">
+                            {{template.name}}
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+
+            <md-button class="md-raised" data-ng-click="vm.saveAsTemplate($event, 'input_template')">
+                Save as a Template
+            </md-button>
+
+        </div>
+
+    </div>
+</div>

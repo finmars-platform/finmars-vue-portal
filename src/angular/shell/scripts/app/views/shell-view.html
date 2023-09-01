@@ -1,0 +1,36 @@
+<div class="shell-view-container min-height position-relative">
+
+    <div data-ng-if="vm.PROJECT_ENV === 'local'" class="flex-row flex-center text-bold development-bar">
+        DEV
+    </div>
+
+    <div ng-if="vm.showPageContent()" class="height-100">
+
+        <!--       <div data-ng-if="vm.isIdentified && vm.readyStatus.masterUsers" class="min-height-100">-->
+        <div class="height-100">
+            <div data-ui-view class="shell-view min-height"></div>
+        </div>
+
+        <!-- Needed to solve problem with selects and mdDialog nesting -->
+        <div class="dialog-containers-wrap"></div>
+
+        <!-- < Needed to solve problem with selects and mdDialog nesting > -->
+        <!--        </div>-->
+
+    </div>
+
+    <div data-ng-if="!vm.showPageContent()" style="padding-top: 120px;">
+
+        <div class="overlay-loader" layout="row" layout-sm="column" layout-align="space-around">
+            <progress-linear></progress-linear>
+        </div>
+
+        <div class="m-t-16 text-center">
+            Loading Database
+        </div>
+
+    </div>
+
+    <div class="log-containers-wrap"></div>
+
+</div>

@@ -1,0 +1,32 @@
+<md-dialog aria-label="complex import scheme errors dialog">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Complex import scheme errors</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="p-16">
+
+        <table class="complex-import-scheme-errors-table">
+            <thead>
+                <tr>
+                    <td class="cise-action-hCol-1">Action #</td>
+                    <td class="cise-action-hCol-2">Action notes</td>
+                    <td class="cise-action-hCol-3">Action error</td>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr ng-repeat="actionErrors in vm.schemeErrors">
+                    <td ng-bind="actionErrors.action_number" style="text-align: center"></td>
+                    <td ng-bind="actionErrors.action_notes"></td>
+                    <td>This fields should not be empty: {{actionErrors.empty_fields}}.</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" ng-click="vm.close()">Close</md-button>
+    </md-dialog-actions>
+</md-dialog>

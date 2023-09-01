@@ -1,0 +1,226 @@
+<md-toolbar class="header">
+
+    <div class="toolbar-wrapper flex-row fc-space-between">
+
+        <div class="md-toolbar-tools flex-row fc-start fi-center">
+            <div ng-if="openedInside === 'portal'" class="flex-row flex-i-center">
+                <div class="header-breadcrumbs">
+                    <h4 ng-bind="currentLocation" class="m-r-20"></h4>
+                </div>
+
+                <md-input-container ng-if="showAutosaveLayoutCheckbox"
+                                    class="display-block p-0 m-0 layouts-autosave-toggle-container">
+                    <md-checkbox ng-model="member.data.autosave_layouts"
+                                 ng-change="onAutosaveToggle()"
+                                 ng-model-options="{debounce: 300}"
+                                 class="">Autosave
+                    </md-checkbox>
+                </md-input-container>
+            </div>
+        </div>
+
+        <div class="md-toolbar-tools flex-row fc-end fi-center">
+
+            <div class="header-misc" layout="row">
+
+                <div ng-if="openedInside === 'profile'">
+
+                    <a ng-if="currentMasterUser"
+                       class="md-button header-left-icon-btn header-help-btn"
+                       href="{{homepageUrl}}">
+                        <ng-md-icon icon="home" size="24">
+                            <md-tooltip class="tooltip_1" md-direction="bottom">Homepage</md-tooltip>
+                        </ng-md-icon>
+                    </a>
+
+                </div>
+
+                <div ng-if="currentMasterUser">
+                    <md-button custom-popup
+                               popup-template-url="'views/popups/last-notifications-popup-view.html'"
+                               popup-data="notiPopupData"
+                               open-on="click"
+                               position-relative-to="element"
+                               offset-x="11"
+
+                               class="md-button header-left-icon-btn">
+                        <span class="material-icons" ng-class="{'unread-notifications': notiPopupData.noti.length}">notifications</span>
+                    </md-button>
+                </div>
+
+                <md-button ng-if="openedInside === 'portal' && alertsCount"
+                           class="md-button header-left-icon-btn header-cloud-layout-btn alerts-button-icon {{alertsStatus}}"
+                           data-ng-click="toggleWarningsSideNav($event)">
+                    <!--<ng-md-icon icon="cloud_download" size="24">
+                        <md-tooltip class="tooltip_1" md-direction="bottom">Open Active
+                            Processes
+                        </md-tooltip>
+                    </ng-md-icon>-->
+                    <span class="material-icons" data-ng-if="alertsStatus == 'danger'">heart_broken</span>
+                    <span class="material-icons" data-ng-if="alertsStatus == 'warn'">heart_broken</span>
+                    <span class="material-icons" data-ng-if="alertsStatus == 'healthy'"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M7.5 4A5.5 5.5 0 0 0 2 9.5c0 .5.09 1 .22 1.5H6.3l1.27-3.37c.3-.8 1.48-.88 1.86 0L11.5 13l.59-1.42c.13-.33.48-.58.91-.58h8.78c.13-.5.22-1 .22-1.5A5.5 5.5 0 0 0 16.5 4c-1.86 0-3.5.93-4.5 2.34C11 4.93 9.36 4 7.5 4M3 12.5a1 1 0 0 0-1 1a1 1 0 0 0 1 1h2.44L11 20c1 .9 1 .9 2 0l5.56-5.5H21a1 1 0 0 0 1-1a1 1 0 0 0-1-1h-7.6l-.93 2.3c-.4 1.01-1.55.87-1.92.03L8.5 9.5l-.96 2.33c-.15.38-.49.67-.94.67H3Z"/></svg></span>
+                    <span class="alerts-button-icon-tag">{{alertsCount > 99 ? '99+' : alertsCount}}</span>
+                    <md-tooltip class="tooltip_1" md-direction="bottom">Alerts ({{alertsCount}})</md-tooltip>
+                </md-button>
+
+                <!--                <md-button ng-if="openedInside === 'portal'"-->
+                <!--                           class="md-button header-left-icon-btn header-cloud-layout-btn"-->
+                <!--                           data-ui-sref="app.portal.processes">-->
+                <!--                    &lt;!&ndash;<ng-md-icon icon="cloud_download" size="24">-->
+                <!--                        <md-tooltip class="tooltip_1" md-direction="bottom">Open Active-->
+                <!--                            Processes-->
+                <!--                        </md-tooltip>-->
+                <!--                    </ng-md-icon>&ndash;&gt;-->
+                <!--                    <span class="material-icons">cloud_download</span>-->
+                <!--                    <md-tooltip class="tooltip_1" md-direction="bottom">Open Active Processes</md-tooltip>-->
+                <!--                </md-button>-->
+
+                <!--<md-button class="md-button toggle-bookmarks-panel-btn header-cloud-layout-btn"
+                           data-ng-click="toggleBookmarksPanel()">
+                    <ng-md-icon icon="bookmark" size="24">
+                        <md-tooltip class="tooltip_1" md-direction="bottom">Open bookmark
+                            panel
+                        </md-tooltip>
+                    </ng-md-icon>
+                </md-button>-->
+
+                <a ng-if="openedInside === 'portal'"
+                   class="md-button header-left-icon-btn header-help-btn"
+                   href="https://marscapital.finmars.com/documentation"
+                   aria-label="Notifications">
+                    <!--<ng-md-icon icon="help" size="24">
+                        <md-tooltip class="tooltip_1" md-direction="bottom">Open help menu</md-tooltip>
+                    </ng-md-icon>-->
+                    <span class="material-icons">help</span>
+                    <md-tooltip class="tooltip_1" md-direction="bottom">Open help menu</md-tooltip>
+                </a>
+
+                <!--<md-button style="margin-left: 0"
+                           data-ui-sref="app.portal.system.notifications({notificationsListType: 'unreaded'})"
+                           aria-label="Notifications">
+                    <ng-md-icon icon="flag"></ng-md-icon>
+                    <span data-ng-show="vm.unreadedNotificationsAmount"
+                          data-ng-if="vm.unreadedNotificationsAmount <= 99 "
+                          class="unreaded-notifications-number">
+                                                {{vm.unreadedNotificationsAmount}}
+                                            </span>
+                    <span data-ng-show="vm.unreadedNotificationsAmount"
+                          data-ng-if="vm.unreadedNotificationsAmount > 99 "
+                          class="unreaded-notifications-number">
+                                                99+
+                                            </span>
+                </md-button>
+
+                <md-button style="margin-left: 0"
+                           data-ui-sref="app.portal.system-messages"
+                           aria-label="System Messages">
+                    <ng-md-icon icon="email"></ng-md-icon>
+                </md-button>-->
+
+                <div ng-if="currentMasterUser"
+                     class="header-masteruser">
+
+                    <!--<div ng-if="openedInside === 'profile'"
+                         class="header-masteruser-name flex-column fc-center height-100"
+                         ng-bind="currentMasterUser.name"></div>-->
+
+                    <md-menu>
+                        <md-button class="md-button header-account-btn"
+                                   ng-click="$mdOpenMenu($event)"
+                                   aria-label="Account button">
+                            <span class="header-masteruser-name"
+                                  data-ng-bind="currentMasterUser.name"></span>
+                        </md-button>
+
+                        <md-menu-content>
+                            <md-menu-item data-ng-repeat="masterUser in masterUsers">
+                                <md-button data-ng-click="selectMaster(masterUser)"
+                                           aria-label="Select master">
+                                    <!-- <span ng-class="{'text-bold': master.is_current}">{{master.name}}</span>
+                                    &lt;!&ndash;<span data-ng-if="master.is_current"><b>{{master.name}}</b></span>
+                                    <span data-ng-if="!master.is_current">{{master.name}}</span>&ndash;&gt; -->
+                                    <span ng-class="{'text-bold': masterUser.id == currentMasterUser.id}"
+                                          ng-bind="masterUser.name"></span>
+                                </md-button>
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
+
+                </div>
+
+
+                <div class="header-profile">
+                    <md-menu>
+                        <md-button class="md-button header-account-btn" aria-label="Account button"
+                                   ng-click="$mdOpenMenu($event)">
+                            <ng-md-icon icon="account_box" size="24"></ng-md-icon>
+                            <span class="header-profile-name"
+                                  data-ng-bind="userName"></span>
+                        </md-button>
+                        <md-menu-content>
+                            <md-menu-item style="border-bottom: 1px solid #ddd;">
+                                <a class="md-button" href="{{profileUrl}}">Profile</a>
+                            </md-menu-item>
+                            <md-menu-item style="border-bottom: 1px solid #ddd;">
+                                <a class="md-button" href="{{keycloakAccountPage}}">Account Security</a>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <!--                                <md-button data-ng-click="logOutMethod()">Log Out</md-button>-->
+                                <md-button href="/logout">Log Out</md-button>
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!--<editor-fold desc="Bookmarks">-->
+    <div data-ng-controller="BookmarksController as vm"
+         layout="row"
+         class="bookmarks-list-container"
+         data-ng-if="showBookmarks">
+
+        <div class="bookmarks-list" layout="row" layout-align="space-between center">
+            <div layout="row" class="bookmarks-container">
+                <div data-ng-repeat="item in vm.items track by item.id">
+                    <div data-ng-if="item.children.length" layout="row"
+                         layout-align="start start">
+                        <md-menu>
+                            <!-- Trigger element is a md-button with an icon -->
+
+                            <md-button ng-click="$mdMenu.open($event)"
+                                       aria-label="Open sample menu"
+                                       class="bookmark-menu-btn">
+                                {{item.name}}
+                            </md-button>
+                            <md-menu-content>
+                                <md-menu-item data-ng-repeat="subItem in item.children">
+                                    <md-button data-ng-click="vm.goToState(subItem)">
+                                        {{subItem.name}}
+                                    </md-button>
+                                </md-menu-item>
+                            </md-menu-content>
+                        </md-menu>
+                    </div>
+                    <div data-ng-if="!item.children.length">
+                        <md-button class="bookmark-a-btn"
+                                   data-ng-click="vm.goToState(item)">{{item.name}}
+                        </md-button>
+                    </div>
+                </div>
+            </div>
+
+            <div layout="row">
+                <md-button class="md-button header-cloud-layout-btn"
+                           data-ng-click="vm.openSettings($event)">
+                    <ng-md-icon icon="settings" size="36"></ng-md-icon>
+                </md-button>
+            </div>
+        </div>
+
+    </div>
+    <!--</editor-fold>-->
+
+</md-toolbar>

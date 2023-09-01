@@ -1,0 +1,37 @@
+<div ng-if="vm.readyStatus" class="height-100">
+
+    <div class="page-dnd-wrapper height-100 position-relative overflow-x-hidden" dnd-files-on-page>
+
+        <div class="flex-column height-100">
+            <main-header ng-if="!vm.iframeMode"
+                         opened-inside="portal"
+                         class="portal-header"></main-header>
+
+            <md-content class="app-md-content flex-0-1-100">
+                <div ui-view class="min-height space-for-sidenav"></div>
+            </md-content>
+        </div>
+
+        <div layout="row" class="sidenav-wrapper" data-ng-controller="SideNavController as vm"
+             data-ng-include="'views/side-nav-view.html'"></div>
+
+        <div layout="row" class="alert-sidenav-wrapper {{vm.showWarningSideNav ? 'alert-sidenav-visible' : ''}}">
+            <div data-ng-controller="AlertSideNavController as vm" style="width: 100%; height: 100%"
+                 data-ng-include="'views/alert-side-nav-view.html'"></div>
+        </div>
+
+    </div>
+
+</div>
+
+<div ng-if="!vm.readyStatus" style="padding-top: 120px;">
+
+    <div class="overlay-loader" layout="row" layout-sm="column" layout-align="space-around">
+        <progress-linear></progress-linear>
+    </div>
+
+    <div class="m-t-16 text-center">
+        Loading Database
+    </div>
+
+</div>

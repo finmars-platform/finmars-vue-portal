@@ -1,0 +1,140 @@
+<md-dialog aria-label="personal data provider config settings"
+           class="draggable-dialog width-50"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Edit identification config for {{vm.provider.name}}</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <form class="p-24" name="credentialForm">
+
+            <!--<div class="p-r-24 p-t-24" style="width: 300px;">-->
+
+                <!--<md-input-container class="width-100">-->
+                    <!--<label for="">Config Name</label>-->
+                    <!--<input type="text"-->
+                           <!--required-->
+                           <!--name="name"-->
+                           <!--data-ng-model="vm.name">-->
+                    <!--<div ng-messages="credentialForm.name.$error">-->
+                        <!--<div ng-message="required">This is required.</div>-->
+                    <!--</div>-->
+                <!--</md-input-container>-->
+
+            <!--</div>-->
+
+            <!--<div class="p-r-24" style="width: 300px;">-->
+
+                <!--<md-input-container class="width-100" data-ng-class="{'md-input-invalid': vm.userCodeIsTouched && vm.userCodeError}">-->
+                    <!--<label data-ng-class="{'color-danger': vm.userCodeIsTouched && vm.userCodeError}">User Code</label>-->
+                    <!--<input data-ng-class="{'ng-invalid': vm.userCodeIsTouched && vm.userCodeError}"-->
+                           <!--required-->
+                           <!--data-ng-model="vm.user_code"-->
+                           <!--name="userCode"-->
+                           <!--data-ng-keydown="vm.userCodeIsTouched = true"-->
+                           <!--data-ng-keyup="vm.validateUserCode()">-->
+                    <!--<div class="color-danger f-s-12" data-ng-if="vm.userCodeIsTouched && vm.userCodeError">-->
+                        <!--Only alphabet, numbers and underscores allowed-->
+                    <!--</div>-->
+                    <!--<div ng-messages="credentialForm.userCode.$error">-->
+                        <!--<div ng-message="required">This is required.</div>-->
+                    <!--</div>-->
+
+                <!--</md-input-container>-->
+            <!--</div>-->
+
+            <div class="p-r-24" style="width: 300px;">
+                <md-input-container class="width-100">
+                    <label for="">Login</label>
+                    <input type="text"
+                           required
+                           name="login"
+                           data-ng-model="vm.username"
+                           data-ng-change="vm.error = false">
+                    <div ng-messages="credentialForm.login.$error">
+                        <div ng-message="required">This is required.</div>
+                    </div>
+                </md-input-container>
+            </div>
+
+            <div class="p-r-24" style="width: 300px;">
+                <md-input-container class="width-100">
+                    <label for="">Password</label>
+                    <input type="password"
+                           name="password"
+                           data-ng-model="vm.password"
+                           data-ng-change="vm.error = false">
+                    <div ng-messages="credentialForm.password.$error">
+                        <div ng-message="required">This is required.</div>
+                    </div>
+                </md-input-container>
+            </div>
+
+            <div style="width: 300px;  margin-bottom: 24px;">
+
+                <label for="">Private key</label>
+
+                <md-input-container flex="40" style="margin-bottom: 0" class="ng-hide">
+                    <input type="file" id="privateKeyInput" input-file-directive
+                           data-read-file="vm.private_key">
+                </md-input-container>
+                <div class="input-upload-file-container">
+                    <p class="privateKeyInput">Select file</p>
+                    <label for="privateKeyInput" class="md-button md-raised md-primary IFUlabel">
+                        <ng-md-icon icon="file_upload"></ng-md-icon>
+                        <span>BROWSE</span></label>
+                </div>
+
+            </div>
+
+            <!--<div style="width: 300px;  margin-bottom: 24px;">-->
+
+                <!--<label for="">Public key</label>-->
+
+                <!--<md-input-container flex="40" style="margin-bottom: 0" class="ng-hide">-->
+                    <!--<input type="file" id="publicKeyInput" input-file-directive-->
+                           <!--data-read-file="vm.public_key">-->
+                <!--</md-input-container>-->
+                <!--<div class="input-upload-file-container">-->
+                    <!--<p class="publicKeyInput">Select file</p>-->
+                    <!--<label for="publicKeyInput" class="md-button md-raised md-primary IFUlabel">-->
+                        <!--<ng-md-icon icon="file_upload"></ng-md-icon>-->
+                        <!--<span>BROWSE</span></label>-->
+                <!--</div>-->
+
+            <!--</div>-->
+
+            <!--<div class="p-r-24" style="width: 300px;">-->
+                <!--<md-input-container class="width-100">-->
+                    <!--<label for="">Public key</label>-->
+                    <!--<input type="text"-->
+                           <!--required-->
+                           <!--name="key"-->
+                           <!--data-ng-model="vm.key"-->
+                           <!--data-ng-change="vm.error = false">-->
+                    <!--<div ng-messages="credentialForm.key.$error">-->
+                        <!--<div ng-message="required">This is required.</div>-->
+                    <!--</div>-->
+                <!--</md-input-container>-->
+            <!--</div>-->
+
+        </form>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()" style="margin-right:20px;">
+            Cancel
+        </md-button>
+        <md-button ng-click="vm.clear($event)"
+                   data-ng-disabled="!vm.provider.credential"
+                   style="margin-right:20px;">
+            Clear
+        </md-button>
+        <md-button ng-click="vm.agree($event)"
+                   data-ng-disabled="credentialForm.$invalid"
+                   style="margin-right:20px;">
+            Save
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

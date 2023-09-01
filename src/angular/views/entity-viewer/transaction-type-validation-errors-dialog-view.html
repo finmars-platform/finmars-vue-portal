@@ -1,0 +1,83 @@
+<md-dialog aria-label="ttype validation errors"
+           class="import-entity-errors-dialog-view draggable-dialog"
+           style="width: 40%;"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Transaction Type Validation Errors</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content style="background: #E5E5E5;">
+        <md-content>
+            <md-card>
+                <md-card-content>
+                    <h3>Please see below the list of errors</h3>
+
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Location (Tab, Input or Action Name)</th>
+                            <th>Field name</th>
+                            <th>Message</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <tr data-ng-repeat="item in vm.entityErrors track by $index">
+                            <td>
+                                {{item.action_notes}}
+                            </td>
+                            <td>
+                                {{item.name}}
+                            </td>
+                            <td>
+                                <span ng-if="!item.message">Value must be not null.</span>
+                                <div ng-if="item.message" ng-bind-html="item.message"></div>
+                            </td>
+                        </tr>
+
+                        <tr data-ng-repeat="item in vm.actionErrors track by $index">
+                            <td>
+                                {{item.action_notes}}
+                            </td>
+                            <td>
+                                {{item.key}}
+                            </td>
+                            <td>
+                                <span data-ng-if="!item.message">Value must be not null.</span>
+                                <div ng-if="item.message" ng-bind-html="item.message"></div>
+                            </td>
+                        </tr>
+
+                        <!--<tr data-ng-repeat="item in vm.inputsErrors">
+                            <td>
+                                {{item.action_notes}}
+                            </td>
+                            <td>
+                                {{item.key}}
+                            </td>
+                            <td>
+                                <span>Value must be not null.</span>
+                            </td>
+                        </tr>-->
+
+                        </tbody>
+
+                    </table>
+
+                </md-card-content>
+            </md-card>
+
+        </md-content>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+        <md-button class="md-raised md-warn" ng-click="vm.agree()">
+            Proceed anyway
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

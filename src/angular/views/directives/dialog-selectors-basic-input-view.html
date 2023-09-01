@@ -1,0 +1,8 @@
+<md-input-container class="expandable-item-selector-input">
+    <label data-ng-bind="title" ng-class="{'cursor-pointer': !isDisabled}"></label>
+    <input type="text"
+           data-ng-model="inputText"
+           ng-class="{'cursor-pointer': !isDisabled}"
+           data-ng-disabled="isDisabled"
+           readonly>
+</md-input-container>

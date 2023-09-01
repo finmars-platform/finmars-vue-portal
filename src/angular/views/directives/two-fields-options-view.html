@@ -1,0 +1,132 @@
+<div layout="row" layout-align="center stretch"
+     class="two-fields-options-content"
+     ng-class="{'two-fields-strict-order': strictOrder}">
+
+	<div class="two-fields-field-container"
+		 layout="column"
+         ng-class="{'two-fields-options-with-checkboxes': availableOptionsCheckboxes}"
+		 style="width: 450px">
+		<p class="two-fields-area-h text-bold">Available</p>
+
+        <input type="search"
+			   placeholder="Search for a ..."
+			   data-ng-model="availableSearchTerm"
+			   class="two-fields-filter-input">
+
+        <div class="all-options-field two-fields-options">
+
+            <div ng-repeat="option in allOptions | orderBy: optionsOrderSettings | filter: {[nameProperty]: availableSearchTerm} as results track by option.id"
+                 class="two-fields-available-option two-fields-option"
+                 ng-class="{'active-option': option.isActive}"
+                 data-ng-click="option.isActive = !option.isActive"
+                 ng-dblclick="switchOptionOnDoubleClick('select', option.id)"
+                 data-option-id="{{option.id}}">
+
+                <md-checkbox ng-if="availableOptionsCheckboxes"
+                             ng-model="sOption.isChecked"
+                             ng-click="$event.stopPropagation()"
+                             class="two-fields-options-checkbox"></md-checkbox>
+
+                <p class="two-fields-option-text" ng-bind="option['{{nameProperty}}']"></p>
+
+            </div>
+		</div>
+	</div>
+
+	<div class="two-fields-buttons" layout="column" layout-align="space-between center">
+
+        <div layout="column" layout-align="center center">
+
+            <md-button class="two-fields-select-btn two-fields-btn"
+                       data-ng-click="switchOptions('select')">
+    <!--			<ng-md-icon icon="chevron_right" size="30"></ng-md-icon>-->
+                <span class="material-icons">chevron_right</span>
+            </md-button>
+
+            <md-button class="two-fields-select-all-btn two-fields-btn"
+                       data-ng-click="selectAll()">
+                <!--<ng-md-icon class="two-fields-two-chevron-icons"
+                            icon="chevron_right"
+                            size="30"
+                            style="left: 7px;"></ng-md-icon>
+                <ng-md-icon class="two-fields-two-chevron-icons"
+                            icon="chevron_right"
+                            size="30"
+                            style="left: 15px;"></ng-md-icon>-->
+                <span class="material-icons two-fields-two-chevron-icons">chevron_right</span>
+                <span class="material-icons two-fields-two-chevron-icons">chevron_right</span>
+            </md-button>
+
+            <md-button class="two-fields-select-btn two-fields-btn"
+                       data-ng-click="switchOptions('deselect')">
+    <!--			<ng-md-icon icon="chevron_left" size="30"></ng-md-icon>-->
+                <span class="material-icons">chevron_left</span>
+            </md-button>
+
+            <md-button class="two-fields-select-all-btn two-fields-btn"
+                       data-ng-click="deselectAll()">
+                <!--<ng-md-icon class="two-fields-two-chevron-icons"
+                            icon="chevron_left"
+                            size="30"
+                            style="left: 7px;"></ng-md-icon>
+                <ng-md-icon class="two-fields-two-chevron-icons"
+                            icon="chevron_left"
+                            size="30"
+                            style="left: 15px;"></ng-md-icon>-->
+                <span class="material-icons two-fields-two-chevron-icons">chevron_left</span>
+                <span class="material-icons two-fields-two-chevron-icons">chevron_left</span>
+            </md-button>
+
+        </div>
+
+        <div data-ng-if="strictOrder" layout="column" layout-align="space-between center">
+            <md-button class="two-fields-select-btn two-fields-btn"
+                       data-ng-click="changeOrder('up')">
+                <span class="material-icons">expand_less</span>
+            </md-button>
+
+            <md-button class="two-fields-select-btn two-fields-btn"
+                       data-ng-click="changeOrder('down')">
+                <span class="material-icons">expand_more</span>
+            </md-button>
+        </div>
+
+	</div>
+
+	<div class="two-fields-field-container"
+		 layout="column"
+		 style="width: 450px"
+         ng-class="{'two-fields-options-with-checkboxes': selOptionsCheckboxes}">
+			<p class="two-fields-area-h text-bold">Selected</p>
+
+        <input type="search"
+				   placeholder="Search for a ..."
+				   ng-model="selOptionsFilter"
+				   class="two-fields-filter-input">
+
+            <div class="selected-options-field two-fields-options twoFieldsSelRowsContainer">
+				<div ng-repeat="sOption in selectedOptions | orderBy: selOptionsOrderSettings | filter: {[nameProperty]: selOptionsFilter} as results track by sOption.id"
+                     class="two-fields-selected-option two-fields-option"
+                     ng-class="{'active-option': sOption.isActive}"
+                     data-ng-click="sOption.isActive = !sOption.isActive"
+                     ng-dblclick="switchOptionOnDoubleClick('deselect', sOption.id)"
+                     ng-init="$last && initDnDEnabled && selOptionsDragAndDrop.init()"
+                     data-option-id="{{sOption.id}}">
+
+                    <div class="two-fields-option-left-part flex-row">
+                        <span ng-if="strictOrder"
+                              class="material-icons two-fields-option-dragger"
+                              ng-mousedown="turnOnDragging()">drag_indicator</span>
+
+                        <md-checkbox ng-if="selOptionsCheckboxes"
+                                     ng-model="sOption.isChecked"
+                                     ng-click="$event.stopPropagation()"
+                                     class="two-fields-options-checkbox"></md-checkbox>
+                    </div>
+
+                    <p class="two-fields-option-text" ng-bind="sOption['{{nameProperty}}']"></p>
+
+                </div>
+			</div>
+	</div>
+</div>

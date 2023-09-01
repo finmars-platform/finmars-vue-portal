@@ -1,6 +1,6 @@
 let host = useRuntimeConfig().public.apiURL
 let prefix = host + '/{client}/api/v1'
-let uDatabasePrefix = 'https://database.finmars.com/api/v1';
+let uDatabasePrefix = 'https://database.finmars.com/api/v1'
 
 export default {
 	pricingProc: {
@@ -19,21 +19,36 @@ export default {
 	instrumentList: {
 		get: prefix + '/instruments/instrument/',
 	},
+	instrumentListLight: {
+		get: prefix + '/instruments/instrument/light/',
+	},
 
 	instrumentTypeList: {
 		get: prefix + '/instruments/instrument-type/',
 	},
-	instrumentTypeListLight: {
-		get: prefix + '/instruments/instrument-type/',
+	instrumentSizeDetail: {
+		get: prefix + '/instruments/payment-size-detail/',
 	},
+	instrumentPeriodicity: {
+		get: prefix + '/instruments/periodicity/',
+	},
+
 	instrumentSchemeList: {
 		get: prefix + '/pricing/instrument-pricing-scheme/',
 	},
-	instrumentUserField:{
-		get: prefix + '/ui/instrument-user-field/',
-		put: prefix + '/ui/instrument-user-field/{id}/',
-		post: prefix + '/ui/instrument-user-field/',
+	instrumentType: {
+		get: prefix + '/instruments/instrument-type/light/',
 	},
+	instrumentAccrualCalculationModel: {
+		get: prefix + '/instruments/accrual-calculation-model/',
+	},
+	instrumentClass: {
+		get: prefix + '/instruments/instrument-class/',
+	},
+	instrumentPricingСondition: {
+		get: prefix + '/instruments/pricing-condition/',
+	},
+
 	pricingPolicyList: {
 		get: prefix + '/instruments/pricing-policy/',
 	},
@@ -59,14 +74,23 @@ export default {
 	portfolioList: {
 		get: prefix + '/portfolios/portfolio/',
 	},
-	counterpartyList: {
-		get: prefix + '/counterparties/counterparty/',
+	portfolioListLight: {
+		get: prefix + '/portfolios/portfolio/light/',
 	},
 	accountLight: {
 		get: prefix + '/accounts/account/light/',
 	},
 	accountTypeList: {
 		get: prefix + '/accounts/account-type/',
+	},
+	counterpartyList: {
+		get: prefix + '/counterparties/counterparty/',
+	},
+	counterpartyResponsibleLight: {
+		get: prefix + '/counterparties/responsible/light/',
+	},
+	counterpartyCounterpartyLight: {
+		get: prefix + '/counterparties/counterparty/light/',
 	},
 	counterpartyDatabaseSearch: {
 		get: uDatabasePrefix + '/company/',
@@ -99,7 +123,7 @@ export default {
 		get: prefix + '/import/complex-transaction-import-scheme/light/',
 	},
 	configurationList: {
-		get: prefix + '/configuration/configuration/'
+		get: prefix + '/configuration/configuration/',
 	},
 	memberList: {
 		get: prefix + '/users/member/',
@@ -162,6 +186,12 @@ export default {
 	instrumentsEventInformed: {
 		put: prefix + '/instruments/generated-event/{id}/informed/',
 	},
+	instrumentUserField:{
+		get: prefix + '/ui/instrument-user-field/',
+		put: prefix + '/ui/instrument-user-field/{id}/',
+		post: prefix + '/ui/instrument-user-field/',
+	},
+
 	listLayoutList: {
 		get: prefix + '/ui/list-layout/',
 	},
@@ -182,6 +212,12 @@ export default {
 	},
 	ecosystemDefaults: {
 		get: prefix + '/users/ecosystem-default/',
+	},
+	balanceReport: {
+		get: prefix + 'reports/balance-report/',
+	},
+	balanceReportAttributes: {
+		get: prefix + '/reports/balance-report/attributes/',
 	},
 	portfolioBundles: {
 		get: prefix + '/portfolios/portfolio-bundle/',
@@ -237,13 +273,10 @@ export default {
 		post: prefix + '/transactions/complex-transaction/ev-item/',
 	},
 	systemAttributes: {
-			get: prefix + '/ui/system-attributes/',
-	},
-	portfolioLight: {
-		get: prefix + '/portfolios/portfolio/light/',
+		get: prefix + '/ui/system-attributes/',
 	},
 	task: {
-		get: prefix + '/tasks/task/{id}/'
+		get: prefix + '/tasks/task/{id}/',
 	},
 
 	//# region Entity viewer attribute types
@@ -289,7 +322,49 @@ export default {
 		get: prefix + '/transactions/complex-transaction-attribute-type/',
 	},
 	//# endregion Entity viewer attribute types
+	balanceReportCustomFieldList: {
+		get: prefix + '/reports/balance-report/custom-field/',
+	},
+	plReportCustomFieldList: {
+		get: prefix + '/reports/pl-report/custom-field/',
+	},
+	transactionReportCustomFieldList: {
+		get: prefix + '/reports/transaction-report/custom-field/',
+	},
+	mobileLayout: {
+		get: prefix + '/ui/mobile-layout/',
+		post: prefix + '/ui/mobile-layout/',
+		put: prefix + '/ui/mobile-layout/{id}/',
+	},
+	// Надо отделить
 
+	widgetsHistory: {
+		get: prefix + '/widgets/history/{type}/',
+	},
+	widgetsStats: {
+		get: prefix + '/widgets/stats/',
+	},
+	strategiesOneLight: {
+		get: prefix + '/strategies/1/strategy/light/',
+	},
+	strategiesOneSubgroup: {
+		get: prefix + '/strategies/1/subgroup/',
+	},
+	strategiesSecondLight: {
+		get: prefix + '/strategies/2/strategy/light/',
+	},
+	strategiesSecondSubgroup: {
+		get: prefix + '/strategies/2/subgroup/',
+	},
+	strategiesThirdLight: {
+		get: prefix + '/strategies/3/strategy/light/',
+	},
+	strategiesThirdSubgroup: {
+		get: prefix + '/strategies/3/subgroup/',
+	},
+	defaultSettings: {
+		put: prefix + '/users/ecosystem-default/{id}/',
+	},
 	complexTransactionUserField: {
 		get: prefix + '/ui/complex-transaction-user-field/',
 		put: prefix + '/ui/complex-transaction-user-field/{id}/',
@@ -301,28 +376,4 @@ export default {
 		post: prefix + '/ui/transaction-user-field/',
 	},
 
-	balanceReportCustomFieldList: {
-			get: prefix + '/reports/balance-report/custom-field/',
-	},
-	plReportCustomFieldList: {
-			get: prefix + '/reports/transaction-report/custom-field/',
-	},
-	transactionReportCustomFieldList: {
-			get: prefix + '/reports/transaction-report/custom-field/',
-	},
-
-	mobileLayout: {
-			get: prefix + '/ui/mobile-layout/',
-			post: prefix + '/ui/mobile-layout/',
-			put: prefix + '/ui/mobile-layout/{id}/',
-	},
-
-	// Надо отделить
-
-	widgetsHistory: {
-		get: prefix + '/widgets/history/{type}/',
-	},
-	widgetsStats: {
-		get: prefix + '/widgets/stats/',
-	},
 }

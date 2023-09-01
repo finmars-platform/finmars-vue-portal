@@ -1,0 +1,37 @@
+<md-dialog aria-label="event" class="draggable-dialog" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Event: {{vm.event.event_schedule_object.name}} (Do not react)</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content   class="custom-scrollbar md-padding">
+
+        <p>
+            {{vm.event.event_schedule_object.display_description}}
+        </p>
+
+        <br/>
+
+        <p><b>Nothing will be booked.</b></p>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="column">
+        <div layout="row" layout-align="space-between center" class="width-100">
+            <md-button aria-label="cancel" class="md-raised md-warn" data-ng-click="vm.skip()">
+                Skip
+            </md-button>
+            <md-button aria-label="cancel" class="md-raised" data-ng-click="vm.informed()">
+                Ok, do nothing
+            </md-button>
+        </div>
+        <div class="width-100">
+            <md-button aria-label="cancel" class="md-warn skip-all-button"
+                       data-ng-click="vm.skipAll()">
+                Skip All
+            </md-button>
+        </div>
+
+    </md-dialog-actions>
+</md-dialog>

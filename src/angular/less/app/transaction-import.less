@@ -1,0 +1,268 @@
+.transaction-import-error-holder {
+  width: 100%;
+  overflow: auto;
+  height: 400px;
+
+  th, td {
+    padding: 8px;
+    vertical-align: top;
+  }
+}
+
+.transaction-import-scheme-selector-values-dialog {
+
+  .selector-values-columns-filters-container {
+    margin: 0 8px;
+    padding-left: 16px;
+
+    .selector-values-value-filter {
+      width: 292px;
+    }
+
+    .selector-values-notes-filter {
+      width: 294px;
+    }
+  }
+
+  .selector-values-columns-names-container {
+    margin-bottom: 24px;
+
+    div:first-child {
+      box-sizing: border-box;
+      padding-left: 35px;
+    }
+  }
+}
+
+
+md-dialog.transaction-scheme-manager-dialog-view-v2 {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  font-size: 14px;
+  padding-bottom: 32px;
+
+  md-toolbar:not(.md-menu-toolbar) {
+    height: 16px;
+    min-height: 16px;
+
+    .md-toolbar-tools {
+      height: 16px;
+      min-height: 16px;
+      font-size: 12px;
+    }
+  }
+
+  md-tabs-canvas {
+    background: #fff;
+  }
+
+  md-dialog-actions {
+    background: #fff;
+    height: 32px;
+    min-height: 32px;
+  }
+
+  md-tabs-canvas {
+    height: 32px;
+    min-height: 32px;
+  }
+
+  .md-tab {
+    line-height: 10px;
+    font-size: 12px;
+  }
+
+  md-card {
+    margin: 4px 2px;
+  }
+
+  md-card md-card-content {
+    padding: 4px;
+  }
+
+  md-tabs-content-wrapper {
+    top: 32px;
+  }
+
+  md-pagination-wrapper {
+    height: 32px;
+  }
+
+  .transaction-import-scheme-v2-card-header {
+    height: 16px;
+    font-size: 12px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+  }
+
+  .transaction-import-scheme-v2-file-input {
+    margin: 8px 0;
+    padding: 8px 0;
+    justify-content: flex-start;
+    flex-direction: row;
+    display: flex;
+  }
+
+  .transaction-import-scheme-v2-calculated-input-expression {
+    cursor: pointer;
+    border: 1px solid #ddd;
+
+    resize: none;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px;
+    white-space: pre;
+    max-width: 400px;
+    min-width: 400px;
+    overflow: hidden;
+
+    &:hover {
+      opacity: .7;
+    }
+  }
+
+  .transaction-import-scheme-v2-calculated-input {
+    margin: 8px 0;
+    padding: 8px 0;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row;
+  }
+
+  .transaction-import-scheme-v2-cards-holder {
+    overflow-x: auto;
+    display: inline-flex;
+  }
+
+  .transaction-import-scheme-v2-file-inputs-holder {
+    overflow: auto;
+    min-width: 420px;
+  }
+
+  .transaction-import-scheme-v2-calculated-inputs-holder {
+    overflow: auto;
+    min-width: 420px;
+  }
+
+  .transaction-import-scheme-v2-scenarios-holder {
+    overflow: auto;
+    min-width: 600px;
+  }
+
+  md-input-container {
+    margin: 0 2px;
+  }
+
+  .transaction-import-scheme-v2-scenario {
+    overflow: hidden;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 8px;
+    padding-top: 14px;
+
+    &.active {
+      background: rgba(173, 216, 230, 0.3);
+    }
+  }
+
+  .transaction-import-scheme-v2-scenario-inputs-holder {
+    padding: 4px 12px;
+  }
+
+  .transaction-import-scheme-v2-cards-holder {
+    .custom-small-icon-btn {
+      line-height: 1;
+      margin: 2px;
+
+      &.md-primary {
+        fill: #fff;
+      }
+    }
+  }
+
+  textarea.dry-run-data-textarea {
+
+    resize: none;
+    min-width: 600px;
+    min-height: 400px;
+    border: 1px solid #ddd;
+    padding: 8px;
+
+  }
+  
+  .dry-run-result-item {
+    cursor: pointer;
+    &.active {
+      background: rgba(173, 216, 230, 0.3);
+    }
+    &:hover {
+      opacity: .7;
+    }
+  }
+
+  .dry-run-result {
+
+  }
+
+  .dry-run-execute {
+    height: 24px;
+  }
+
+  input.transaction-import-scheme-v2-card-header-search {
+    height: 8px;
+    width: 200px;
+    position: relative;
+  }
+
+  button.md-raised.dry-run-button {
+    min-height: 24px;
+    height: 24px;
+    line-height: 1;
+  }
+
+  span.dry-run-result-value {
+
+    background: rgba(173, 216, 230, 0.3);
+    display: inline-block;
+    min-width: 24px;
+    padding: 4px;
+    min-height: 24px;
+    margin: 2px;
+    box-sizing: border-box;
+    white-space: pre;
+
+  }
+
+  .transaction-import-scheme-input-container {
+    min-width: 160px;
+  }
+
+  .transaction-import-scheme-v2-file-inputs-holder {
+
+    .transaction-import-scheme-v2-calculated-input-expression {
+
+      max-width: 200px;
+      min-width: 200px;
+
+    }
+
+  }
+
+  .transaction-import-scheme-v2-scenario-inputs {
+    //display: flex;
+    //justify-content: space-between;
+  }
+
+  //.transaction-import-scheme-v2-scenario-inputs-input-name {
+  //  max-width: 140px;
+  //  min-width: 140px;
+  //}
+  .transaction-import-scheme-v2-scenario-inputs-input-expressio {
+    max-width: 160px;
+    min-width: 160px;
+  }
+
+
+}

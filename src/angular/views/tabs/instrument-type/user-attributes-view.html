@@ -1,0 +1,128 @@
+<div data-ng-controller="InstrumentTypeUserAttributesTabController as vm" class="user-attributes">
+
+    <div layout="row">
+        <div class="user-attributes-list" >
+            <h3>User attributes of Instruments</h3>
+
+            <table data-ng-if="vm.readyStatus.attrs">
+                <thead>
+                <tr class="attribute-row">
+                    <td class="attribute-name">Attribute</td>
+                    <td class="default-value">Default value</td>
+                    <td></td>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr ng-repeat="attr in vm.instrumentAttrTypes">
+                    <td class="attribute-name">{{attr.name}}</td>
+                    <td class="default-value">
+                        <div data-ng-if="attr.value_type === 10">
+                            <text-input model="attr.value"
+                                        placeholder-text="{{attr.name}}"
+                                        on-change-callback="vm.attrChange()"
+                                        is-disabled="attr.___isDisabled"
+                                        small-options="{readonly: attr.___isDisabled}"></text-input>
+
+                        </div>
+                        <div data-ng-if="attr.value_type === 20">
+                            <number-input class=""
+                                          model="attr.value"
+                                          on-change-callback="vm.attrChange()"
+                                          is-disabled="attr.___isDisabled"
+                                          style="width: 200px;"></number-input>
+                        </div>
+                        <div data-ng-if="attr.value_type === 30" class="position-relative">
+                            <classifier-select placeholder-text="{{attr.name}}"
+                                               model="attr.value"
+                                               model-prop="name"
+                                               classifier-attr="!attr.___isDisabled ? attr : null"
+                                               classifier-value="attr.value"
+                                               entity-type="'instrument'"
+                                               is-disabled="attr.___isDisabled"
+                                               item-name="attr.value"
+                                               on-change-callback="vm.attrChange()"
+                                               value-property="'name'"
+                            ></classifier-select>
+
+                            <md-button class="small-button-icon position-absolute m-0"
+                                       style="right: -25px; top: 50%; transform: translateY(-50%);"
+                                       ng-click="vm.clearSelector(attr)">X</md-button>
+                        </div>
+                        <div data-ng-if="attr.value_type === 40">
+                            <date-input model="attr.value"
+                                        is-disabled="attr.___isDisabled"
+                                        on-change-callback="vm.attrChange()"></date-input>
+
+                        </div>
+
+                    </td>
+                    <td>
+                        <button data-ng-if="attr.___isDisabled" data-ng-click="vm.deleteAttr($event, attr)">
+                            <span class="material-icons">delete</span>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div data-ng-if="!vm.readyStatus.attrs">
+                <div class="e-data-loader" layout="row" layout-sm="column" layout-align="space-around">
+                    <progress-circular diameter="100"></progress-circular>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="user-attributes-list">
+            <h3 class="instrument-type-header">User attributes of Instrument Type</h3>
+
+            <div data-ng-if="vm.readyStatus.instrumentTypeAttrs" class="instrument-type-attrs">
+                <div data-ng-repeat="attr in vm.instrumentTypeAttrs" class="instrument-type-attr">
+                    <div data-ng-if="attr.value_type === 10">
+                        <text-input model="vm.entity[attr.user_code]"
+                                    label="{{attr.name}}"
+                                    placeholder-text="{{attr.name}}"
+                                    on-change-callback=""
+                                    small-options="{readonly: attr.___isDisabled}"></text-input>
+
+                    </div>
+                    <div data-ng-if="attr.value_type === 20">
+                        <number-input class=""
+                                      model="vm.entity[attr.user_code]"
+                                      label="{{attr.name}}"
+                                      on-change-callback=""
+                                      style="width: 200px;"></number-input>
+                    </div>
+                    <div data-ng-if="attr.value_type === 30">
+                        <classifier-select placeholder-text="{{attr.name}}"
+                                           label="{{attr.name}}"
+                                           model="vm.entity[attr.user_code]"
+                                           classifier-attr="!attr.___isDisabled ? attr : null"
+                                           classifier-value="attr.value"
+                                           entity-type="'instrument-type'"
+                                           on-change-callback=""
+                                           value-property="'id'"
+                        ></classifier-select>
+
+                    </div>
+                    <div data-ng-if="attr.value_type === 40">
+                        <date-input model="vm.entity[attr.user_code]"
+                                    label="{{attr.name}}"
+                                    on-change-callback=""></date-input>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div data-ng-if="!vm.readyStatus.instrumentTypeAttrs">
+                <div class="e-data-loader" layout="row" layout-sm="column" layout-align="space-around">
+                    <progress-circular diameter="100"></progress-circular>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

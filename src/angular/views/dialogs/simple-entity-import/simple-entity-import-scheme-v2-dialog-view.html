@@ -1,0 +1,479 @@
+<md-dialog class="simple-entity-import-scheme-v2 dialog-actions-bottom">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Simple Entity Import Scheme Manager (v2)</h2>
+            <div data-ng-if="vm.processing" layout="row" class="m-l-16">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="m-r-8">
+                    <progress-circular diameter="20"></progress-circular>
+                </div>
+                — Processing
+            </div>
+        </div>
+    </md-toolbar>
+    <md-dialog-content style="background: #E5E5E5;">
+        <md-content class="height-100">
+            <div data-ng-if="vm.checkReadyStatus()" class="position-relative height-100">
+
+                <md-tabs class="height-100">
+                    <md-tab>
+                        <md-tab-label>General</md-tab-label>
+
+                        <md-tab-body>
+
+                            <!-- Scheme General Settings -->
+                            <div layout="row">
+                                <md-card flex="100" class="inm-card-special">
+                                    <md-card-content layout="column">
+                                        <md-input-container class="md-block">
+                                            <label>User Code</label>
+                                            <input aria-label="scheme user code" type="text"
+                                                   data-ng-model="vm.scheme.user_code">
+                                        </md-input-container>
+
+                                        <md-input-container class="md-block">
+                                            <label>Name</label>
+                                            <input aria-label="scheme name" type="text" data-ng-model="vm.scheme.name">
+                                        </md-input-container>
+
+                                        <md-input-container class="md-block">
+                                            <label>Short name</label>
+                                            <input aria-label="short name" type="text"
+                                                   data-ng-model="vm.scheme.short_name">
+                                        </md-input-container>
+
+                                        <div layout="row">
+                                            <md-input-container class="md-block" flex="95">
+                                                <label>Filter Condition (line is imported if the Filter Expression
+                                                    returns True,
+                                                    executed before the conversions)</label>
+                                                <input aria-label="scheme name" type="text"
+                                                       data-ng-model="vm.scheme.filter_expr">
+                                            </md-input-container>
+                                            <div flex="5">
+                                                <expression-editor-button data-item="vm.scheme.filter_expr"
+                                                                          data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                                          style="float: right"></expression-editor-button>
+                                            </div>
+
+                                        </div>
+
+                                        <div layout="row">
+
+                                            <md-input-container>
+                                                <label>Error handling</label>
+                                                <md-select data-ng-model="vm.scheme.error_handler">
+                                                    <md-option value="continue">Continue</md-option>
+                                                    <md-option value="break">Break on first error</md-option>
+                                                </md-select>
+                                            </md-input-container>
+
+                                            <md-input-container>
+                                                <label>Separator</label>
+                                                <md-select data-ng-model="vm.scheme.delimiter">
+                                                    <md-option value=",">Comma (,)</md-option>
+                                                    <md-option value=";">Semicolon (;)</md-option>
+                                                    <md-option value="\t">Tab</md-option>
+                                                </md-select>
+                                            </md-input-container>
+
+                                            <md-input-container>
+                                                <label>Mode</label>
+                                                <md-select data-ng-model="vm.scheme.mode">
+                                                    <md-option value="skip">Skip if exists</md-option>
+                                                    <md-option value="overwrite">Overwrite</md-option>
+                                                </md-select>
+                                            </md-input-container>
+
+                                            <md-input-container style="width: 255px;">
+                                                <label>Import Rules - if object is not found</label>
+                                                <md-select
+                                                        data-ng-model="vm.scheme.missing_data_handler">
+                                                    <md-option value="throw_error">Treat as Error</md-option>
+                                                    <md-option value="set_defaults">Replace with Default Value
+                                                    </md-option>
+                                                </md-select>
+                                            </md-input-container>
+
+                                            <md-input-container style="width: 485px;">
+                                                <label>Import Rules - If User Attribute-Classifier doesn't have such
+                                                    category</label>
+                                                <md-select
+                                                        data-ng-model="vm.scheme.classifier_handler">
+                                                    <md-option value="skip">Skip (assign Null)</md-option>
+                                                    <md-option value="append">Append Category (assign the appended
+                                                        category)
+                                                    </md-option>
+                                                </md-select>
+                                            </md-input-container>
+
+
+                                        </div>
+
+                                        <div layout="row">
+                                            <md-input-container style="width: 245px;">
+                                                <label>Column Matcher</label>
+                                                <md-select
+                                                        data-ng-model="vm.scheme.column_matcher">
+                                                    <md-option value="index">Index</md-option>
+                                                    <md-option value="name">Name</md-option>
+                                                </md-select>
+                                            </md-input-container>
+
+
+                                            <md-input-container class="md-block">
+                                                <label for="">Spreadsheet start cell</label>
+                                                <input type="text" data-ng-model="vm.scheme.spreadsheet_start_cell">
+                                            </md-input-container>
+
+                                            <md-input-container class="md-block">
+                                                <label for="">Spreadsheet active tab</label>
+                                                <input type="text"
+                                                       data-ng-model="vm.scheme.spreadsheet_active_tab_name">
+                                            </md-input-container>
+
+                                            <md-input-container class="md-block"
+                                                                data-ng-if="vm.scheme.content_type === 'instruments.instrument'">
+                                                <label for="">Reference column</label>
+                                                <input type="text"
+                                                       data-ng-model="vm.scheme.instrument_reference_column">
+                                            </md-input-container>
+
+                                        </div>
+
+                                        <md-input-container class="SC-entity-select-container"
+                                                            aria-label="select with filter"
+                                                            data-ng-if="!vm.scheme.id">
+                                            <!--<label>Data type</label>
+                                            <md-select data-ng-model="vm.scheme.content_type"
+                                                       data-ng-change="vm.updateEntityFields()">
+                                                <md-option
+                                                        data-ng-repeat="item in vm.contentTypes"
+                                                        data-ng-value="item.key">
+                                                    {{item.name}}
+                                                </md-option>
+                                            </md-select>-->
+
+                                            <label>Data type</label>
+                                            <md-select ng-model="vm.scheme.content_type"
+                                                       md-container-class="common-select-container"
+                                                       md-on-close="searchTerm = ''"
+                                                       data-ng-change="vm.updateEntityFields()">
+
+                                                <md-select-header>
+                                                    <input data-ng-model="searchTerm"
+                                                           type="search"
+                                                           placeholder="Search for a ..."
+                                                           class="md-text md-select-search-pattern select-input-filter"
+                                                           ng-keydown="$event.stopPropagation()">
+                                                </md-select-header>
+
+                                                <div class="select-options-holder">
+
+                                                    <md-option
+                                                            data-ng-repeat="item in vm.contentTypes | filter: {name: searchTerm}"
+                                                            ng-value="item.key"
+                                                            ng-bind="item.name">
+                                                    </md-option>
+
+                                                </div>
+
+                                            </md-select>
+                                        </md-input-container>
+
+                                    </md-card-content>
+                                </md-card>
+                            </div>
+
+                        </md-tab-body>
+                    </md-tab>
+
+                    <md-tab>
+                        <md-tab-label>Scheme</md-tab-label>
+
+                        <md-tab-body>
+
+                            <!-- Scheme Body -->
+                            <div layout="row" class="height-100" style="overflow: auto">
+                                <!--  Scheme Sidebar -->
+                                <div layout="column" style="min-width: 40%">
+
+                                    <md-card>
+                                        <md-card-content>
+
+                                            <div layout="row">
+                                                <h3 style="padding-left: 10px; margin: 0">Calculated Columns</h3>
+                                            </div>
+
+                                            <div data-ng-repeat="item in vm.scheme.calculated_inputs track by $index">
+                                                <div class="fields-holder" layout="row">
+                                                    <div class="iscm-item" layout="row">
+                                                        <span style="position: relative; top: 8px">#</span>
+                                                        <md-input-container style="position: relative">
+                                                            <!--<label for="">Number</label>-->
+                                                            <input class="no-input-arrows"
+                                                                   type="number"
+                                                                   ng-model="item.column"
+                                                                   aria-label="provider field column number">
+                                                        </md-input-container>
+
+                                                        <md-input-container>
+                                                            <!--<label for="">Name</label>-->
+                                                            <input type="text"
+                                                                   data-ng-model="item.name"
+                                                                   ng-blur="vm.onCalculatedFieldNameBlur(item)"
+                                                                   aria-label="provider field name">
+                                                        </md-input-container>
+                                                    </div>
+
+                                                    <div>
+                                                        <md-button ng-click="vm.removeCalculatedField(item, $index)"
+                                                                   class="md-raised"
+                                                                   style="min-width: 40px;">x
+                                                        </md-button>
+                                                    </div>
+
+                                                    <div>
+                                                        <md-button class="md-raised"
+                                                                   ng-click="vm.openCalcFieldFxBtnExprBuilder(item, $event)"
+                                                                   data-ng-class="vm.getCalcFieldFxBtnClasses(item)"
+                                                                   style="min-width: 40px;">f(x)
+                                                        </md-button>
+
+                                                        <md-tooltip
+                                                                data-ng-show="item.frontOptions && item.frontOptions.noNameExpr"
+                                                                md-direction="top"
+                                                                class="error-tooltip">No expression defined for the
+                                                            calculated
+                                                            variable.
+                                                        </md-tooltip>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div layout="row">
+                                                <md-button class="md-raised" ng-click="vm.addCalculatedField()">
+                                                    Add field
+                                                </md-button>
+                                            </div>
+                                        </md-card-content>
+
+                                    </md-card>
+
+                                    <md-card>
+                                        <md-card-content>
+
+                                            <div layout="row">
+                                                <h3 style="padding-left: 10px; margin: 0">Imported Columns</h3>
+                                            </div>
+
+                                            <div data-ng-repeat="item in vm.scheme.csv_fields track by $index">
+                                                <div class="fields-holder" layout="row">
+                                                    <div class="iscm-item" layout="row">
+                                                        <md-input-container style="width: 22px;">
+                                                            <input class="no-input-arrows"
+                                                                   type="number"
+                                                                   data-ng-model="item.column"
+                                                                   aria-label="index">
+                                                        </md-input-container>
+                                                        <md-input-container>
+                                                            <!--<label for="">Name</label>-->
+                                                            <input type="text"
+                                                                   data-ng-model="item.column_name"
+                                                                   placeholder="column name"
+                                                                   aria-label="provider field name">
+                                                        </md-input-container>
+                                                        <md-input-container>
+                                                            <input aria-label="key"
+                                                                   type="text"
+                                                                   placeholder="name"
+                                                                   data-ng-model="item.name"
+                                                                   ng-blur="vm.setProviderFieldExpression(item)">
+                                                        </md-input-container>
+                                                    </div>
+                                                    <div
+                                                            ng-click="vm.openProviderFieldExpressionBuilder(item, $event)"
+                                                            ng-class="vm.checkForUserExpr(item)"
+                                                            class="simple-entity-import-scheme-v2-input-expression">
+                                                        {{item.name_expr}}
+                                                    </div>
+                                                    <div>
+                                                        <md-button style="min-width: 40px;"
+                                                                   data-ng-click="vm.removeCsvField(item, $index)"
+                                                                   class="md-raised"
+                                                                   style="line-height: 1">x
+                                                        </md-button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </md-card-content>
+                                    </md-card>
+
+                                    <div layout="row">
+                                        <md-button class="md-raised" data-ng-click="vm.addCsvField()">
+                                            Add field
+                                        </md-button>
+                                    </div>
+
+                                </div>
+                                <!--  Scheme Body -->
+                                <div layout="column" style="min-width: 0%">
+
+                                    <md-card>
+                                        <md-card-content>
+
+                                            <div layout="row">
+                                                <h3 style="padding-left: 10px; margin: 0">Data matching</h3>
+                                            </div>
+
+                                            <div layout="column">
+
+                                                <div data-ng-repeat="item in vm.scheme.entity_fields | orderBy: item.order as results track by $index"
+                                                >
+                                                    <div class="fields-holder" layout="row"
+                                                         data-ng-if="item.system_property_key">
+                                                        <div class="iscm-item width-100" layout="row">
+                                                            <md-input-container
+                                                                    style="width: 160px;"
+                                                                    aria-label="select with filter">
+
+                                                                <div data-ng-if="item.system_property_key"
+                                                                     data-ng-bind="item.name"
+                                                                     style="padding-top: 10px">
+
+                                                                </div>
+
+                                                            </md-input-container>
+
+                                                            <div ng-click="vm.openEntityFieldExpressionBuilder(item, $event)"
+                                                                 class="simple-entity-import-scheme-v2-input-expression">
+                                                                {{item.expression}}
+                                                            </div>
+
+                                                            <div style="min-width: 48px">
+
+                                                                <md-button
+                                                                        data-ng-click="vm.openMapping($event, item)"
+                                                                        class="md-raised md-primary import-mapping-small-btn"
+                                                                        data-ng-if="item.value_type === 'field'">
+                                                                    <ng-md-icon icon="import_contacts"
+                                                                                size="20"></ng-md-icon>
+                                                                </md-button>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div layout="column">
+
+                                                <div data-ng-repeat="item in vm.scheme.entity_fields | orderBy: item.order as results track by $index"
+                                                >
+                                                    <div class="fields-holder" layout="row"
+                                                         data-ng-if="item.attribute_user_code">
+                                                        <div class="iscm-item width-100" layout="row">
+
+                                                            <md-input-container
+                                                                    style="width: 160px;"
+                                                                    aria-label="select with filter">
+
+                                                                <div data-ng-if="item.attribute_user_code"
+                                                                     data-ng-bind="item.name"
+                                                                     style="padding-top: 10px">
+
+                                                                </div>
+
+                                                            </md-input-container>
+
+                                                            <div ng-click="vm.openEntityFieldExpressionBuilder(item, $event)"
+                                                                 class="simple-entity-import-scheme-v2-input-expression">
+                                                                {{item.expression}}
+                                                            </div>
+                                                            <div layout="row">
+
+<!--                                                                <div ng-if="vm.checkForClassifierMapping(item.attribute_user_code)"-->
+<!--                                                                     style="display: inline-block">-->
+<!--                                                                    <md-button-->
+<!--                                                                            data-ng-click="vm.openClassifierMapping(item.dynamic_attribute_id, $event)"-->
+<!--                                                                            class="md-raised md-primary import-mapping-small-btn">-->
+<!--                                                                        <ng-md-icon icon="import_contacts"-->
+<!--                                                                                    size="20"></ng-md-icon>-->
+<!--                                                                    </md-button>-->
+<!--                                                                </div>-->
+
+<!--                                                                <div ng-if="vm.checkForClassifierMapping(item.dynamic_attribute_id)"-->
+<!--                                                                     style="display: inline-block">-->
+<!--                                                                    <md-button-->
+<!--                                                                            data-ng-click="vm.editTreeAttr(item.dynamic_attribute_id, $event)"-->
+<!--                                                                            class="md-raised md-primary import-mapping-small-btn">-->
+<!--                                                                        <ng-md-icon-->
+<!--                                                                                icon="format_align_right"-->
+<!--                                                                                size="20">-->
+<!--                                                                            <md-tooltip md-direction="top">-->
+<!--                                                                                Edit-->
+<!--                                                                                Classifier tree-->
+<!--                                                                            </md-tooltip>-->
+<!--                                                                        </ng-md-icon>-->
+<!--                                                                    </md-button>-->
+<!--                                                                </div>-->
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div style="padding-left: 10px; ">
+                                                <div layout="row">
+                                                    <h3 style="margin: 0; margin-bottom: 4px">Post Process Script</h3>
+                                                </div>
+
+                                                <div ng-click="vm.openItemPostProcessScriptExpressionBuilder($event)"
+                                                     style="min-height: 48px; max-width: 100%; width: 100%;"
+                                                     class="simple-entity-import-scheme-v2-input-expression">
+                                                    {{vm.scheme.item_post_process_script}}
+                                                </div>
+
+                                            </div>
+
+                                        </md-card-content>
+                                    </md-card>
+
+                                </div>
+                            </div>
+                        </md-tab-body>
+
+                </md-tabs>
+
+                <div class="loader-overlay" data-ng-show="vm.processing">
+                    <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                        <!--<md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>-->
+                        <progress-circular diameter="100"></progress-circular>
+                    </div>
+                </div>
+
+            </div>
+            <div data-ng-if="!vm.checkReadyStatus()">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                    <progress-circular diameter="100"></progress-circular>
+                </div>
+            </div>
+        </md-content>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" ng-click="vm.editAsJson($event)">
+            Edit as JSON
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.makeCopy($event)" data-ng-class="{'disabled-btn': vm.processing}"
+                   data-ng-if="vm.scheme.id">
+            Make Copy
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.agree()" style="margin-right:20px;"
+                   data-ng-class="{'disabled-btn': vm.processing}">
+            Update
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,270 @@
+<div layout="row">
+
+    <div layout="column">
+
+        <div data-ng-if="vm.item.settings.entity_type == 'balance-report'">
+
+            <div class="m-t-16 m-b-16">
+
+                <md-input-container class="dashboard-constructor-field1">
+                    <label for="">Date</label>
+                    <md-select data-ng-model="vm.item.settings.linked_components.report_settings.report_date">
+                        <md-option
+                                data-ng-repeat="componentType in vm.dateControlComponentsTypes | orderBy:'-name' track by componentType.id "
+                                ng-value="componentType.id">{{componentType.name}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+
+                <md-button data-ng-click="vm.clearSelect(vm.item.settings.linked_components.report_settings, 'report_date');"
+                           class="md-raised">clear</md-button>
+
+            </div>
+
+        </div>
+
+        <div data-ng-if="vm.item.settings.entity_type == 'pl-report'">
+
+            <div class="m-t-16" style="margin-bottom: 32px;">
+
+                <md-input-container class="dashboard-constructor-field1">
+                    <label for="">Date From</label>
+                    <md-select data-ng-model="vm.item.settings.linked_components.report_settings.pl_first_date">
+                        <md-option
+                                data-ng-repeat="componentType in vm.dateControlComponentsTypes | orderBy:'-name' track by componentType.id "
+                                ng-value="componentType.id">{{componentType.name}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+
+                <md-button data-ng-click="vm.clearSelect(vm.item.settings.linked_components.report_settings, 'pl_first_date');"
+                           class="md-raised">clear</md-button>
+
+            </div>
+
+            <div class="m-t-16 m-b-16">
+
+                <md-input-container class="dashboard-constructor-field1">
+                    <label for="">Date To</label>
+                    <md-select data-ng-model="vm.item.settings.linked_components.report_settings.report_date">
+                        <md-option
+                                data-ng-repeat="componentType in vm.dateControlComponentsTypes | orderBy:'-name' track by componentType.id "
+                                ng-value="componentType.id">{{componentType.name}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+
+                <md-button data-ng-click="vm.clearSelect(vm.item.settings.linked_components.report_settings, 'report_date');"
+                           class="md-raised">clear</md-button>
+
+            </div>
+
+        </div>
+
+        <div data-ng-if="vm.item.settings.entity_type == 'transaction-report'">
+
+            <div class="m-t-16" style="margin-bottom: 32px;">
+
+                <md-input-container class="dashboard-constructor-field1">
+                    <label for="">Date From</label>
+                    <md-select data-ng-model="vm.item.settings.linked_components.report_settings.begin_date">
+                        <md-option
+                                data-ng-repeat="componentType in vm.dateControlComponentsTypes | orderBy:'-name' track by componentType.id "
+                                ng-value="componentType.id">{{componentType.name}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+
+                <md-button data-ng-click="vm.clearSelect(vm.item.settings.linked_components.report_settings, 'begin_date');"
+                           class="md-raised">clear</md-button>
+
+            </div>
+
+            <div class="m-t-16 m-b-16">
+
+                <md-input-container class="dashboard-constructor-field1">
+                    <label for="">Date To</label>
+                    <md-select data-ng-model="vm.item.settings.linked_components.report_settings.end_date">
+                        <md-option
+                                data-ng-repeat="componentType in vm.dateControlComponentsTypes | orderBy:'-name' track by componentType.id "
+                                ng-value="componentType.id">{{componentType.name}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+
+                <md-button data-ng-click="vm.clearSelect(vm.item.settings.linked_components.report_settings, 'end_date');"
+                           class="md-raised">clear</md-button>
+
+            </div>
+
+        </div>
+
+        <div class="m-t-16 m-b-16">
+
+            <md-input-container class="dashboard-constructor-field1">
+                <label for="">Currency</label>
+                <md-select data-ng-model="vm.item.settings.linked_components.report_settings.report_currency">
+                    <md-option
+                            data-ng-repeat="componentType in vm.currencyControlComponentsTypes | orderBy:'-name' track by componentType.id "
+                            ng-value="componentType.id">{{componentType.name}}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-button data-ng-click="vm.clearSelect(vm.item.settings.linked_components.report_settings, 'report_currency');"
+                       class="md-raised">clear</md-button>
+
+        </div>
+
+        <div class="m-t-16 m-b-16">
+
+            <md-input-container class="dashboard-constructor-field1">
+                <label for="">Pricing Policy</label>
+                <md-select data-ng-model="vm.item.settings.linked_components.report_settings.pricing_policy">
+                    <md-option
+                            data-ng-repeat="componentType in vm.pricingPolicyControlComponentsTypes | orderBy:'-name' track by componentType.id "
+                            ng-value="componentType.id">{{componentType.name}}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-button data-ng-click="vm.clearSelect(vm.item.settings.linked_components.report_settings, 'pricing_policy');"
+                       class="md-raised">clear</md-button>
+
+        </div>
+
+        <div class="m-t-16 m-b-16">
+            <!--<two-fields-multiselect get-data-method="vm.getPortfolios()"
+                                    model="vm.item.settings.linked_components.report_settings.portfolios"
+                                    title="Portfolios"
+                                    nothing-selected-text="Off"
+                                    name-property="short_name"
+                                    class="no-error-spacer"></two-fields-multiselect>-->
+
+            <md-input-container class="dashboard-constructor-field1">
+                <label for="">Portfolios</label>
+                <md-select data-ng-model="vm.item.settings.linked_components.report_settings.portfolios">
+                    <md-option
+                            data-ng-repeat="componentType in vm.portfoliosComponentTypes | orderBy:'-name' track by componentType.id "
+                            ng-value="componentType.id">{{componentType.name}}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-button data-ng-click="vm.clearSelect(vm.item.settings.linked_components.report_settings, 'portfolios');"
+                       class="md-raised">clear</md-button>
+
+        </div>
+
+    </div>
+
+    <div layout="column">
+
+        <div class="m-t-16 m-b-16">
+            <!--<two-fields-multiselect get-data-method="vm.getPortfolios()"
+                                    model="vm.item.settings.linked_components.report_settings.portfolios"
+                                    title="Portfolios"
+                                    nothing-selected-text="Off"
+                                    name-property="short_name"
+                                    class="no-error-spacer"></two-fields-multiselect>-->
+
+            <md-input-container class="dashboard-constructor-field1">
+                <label for="">Accounts</label>
+                <md-select data-ng-model="vm.item.settings.linked_components.report_settings.accounts">
+                    <md-option
+                            data-ng-repeat="componentType in vm.accountsComponentTypes | orderBy:'-name' track by componentType.id "
+                            ng-value="componentType.id">{{componentType.name}}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-button data-ng-click="vm.clearSelect(vm.item.settings.linked_components.report_settings, 'accounts');"
+                       class="md-raised">clear</md-button>
+
+        </div>
+
+        <div class="m-t-16 m-b-16">
+            <!--<two-fields-multiselect get-data-method="vm.getStrategies(1)"
+                                    model="vm.item.settings.linked_components.report_settings.strategies1"
+                                    title="Strategies 1"
+                                    nothing-selected-text="Off"
+                                    name-property="short_name"
+                                    class="no-error-spacer"></two-fields-multiselect>-->
+
+            <md-input-container class="dashboard-constructor-field1">
+                <label for="">Strategies 1</label>
+                <md-select data-ng-model="vm.item.settings.linked_components.report_settings.strategies1">
+                    <md-option
+                            data-ng-repeat="componentType in vm.strategies1ComponentTypes | orderBy:'-name' track by componentType.id "
+                            ng-value="componentType.id">{{componentType.name}}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-button data-ng-click="vm.clearSelect(vm.item.settings.linked_components.report_settings, 'strategies1');"
+                       class="md-raised">clear</md-button>
+        </div>
+
+        <div class="m-t-16 m-b-16">
+            <!--<two-fields-multiselect get-data-method="vm.getStrategies(2)"
+                                    model="vm.item.settings.linked_components.report_settings.strategies2"
+                                    title="Strategies 2"
+                                    nothing-selected-text="Off"
+                                    name-property="short_name"
+                                    class="no-error-spacer"></two-fields-multiselect>-->
+
+            <md-input-container class="dashboard-constructor-field1">
+                <label for="">Strategies 2</label>
+                <md-select data-ng-model="vm.item.settings.linked_components.report_settings.strategies2">
+                    <md-option
+                            data-ng-repeat="componentType in vm.strategies2ComponentTypes | orderBy:'-name' track by componentType.id "
+                            ng-value="componentType.id">{{componentType.name}}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-button data-ng-click="vm.clearSelect(vm.item.settings.linked_components.report_settings, 'strategies2');"
+                       class="md-raised">clear</md-button>
+        </div>
+
+        <div class="m-t-16 m-b-16">
+            <!--<two-fields-multiselect get-data-method="vm.getStrategies(3)"
+                                    model="vm.item.settings.linked_components.report_settings.strategies3"
+                                    title="Strategies 3"
+                                    nothing-selected-text="Off"
+                                    name-property="short_name"
+                                    class="no-error-spacer"></two-fields-multiselect>-->
+
+            <md-input-container class="dashboard-constructor-field1">
+                <label for="">Strategies 3</label>
+                <md-select data-ng-model="vm.item.settings.linked_components.report_settings.strategies3">
+                    <md-option
+                            data-ng-repeat="componentType in vm.strategies3ComponentTypes | orderBy:'-name' track by componentType.id "
+                            ng-value="componentType.id">{{componentType.name}}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-button data-ng-click="vm.clearSelect(vm.item.settings.linked_components.report_settings, 'strategies3');"
+                       class="md-raised">clear</md-button>
+        </div>
+
+    </div>
+
+    <!--<md-input-container class="dashboard-constructor-field1">
+        <label for="">Portfolios</label>
+        <md-select data-ng-model="vm.item.settings.linked_components.report_settings.portfolios">
+            <md-option
+                    data-ng-repeat="componentType in vm.pricingPolicyControlComponentsTypes | orderBy:'-name' track by componentType.id "
+                    ng-value="componentType.id">{{componentType.name}}
+            </md-option>
+        </md-select>
+    </md-input-container>-->
+</div>
+
+<md-input-container style="height: 58px">
+    <md-checkbox data-ng-model="vm.item.settings.auto_refresh"
+                 aria-label="component autorefresh on report settings change">Trigger
+        Refresh on Value Change
+    </md-checkbox>
+</md-input-container>

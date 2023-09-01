@@ -1,0 +1,50 @@
+<div>
+
+    <div data-ng-repeat="item in $ctrl.items" layout="column">
+
+        <div layout="column">
+
+            <div layout="row" layout-align="space-between center">
+                <div flex="30" layout-align="center center" layout="row" style="height: 58px">
+                    <span data-ng-bind="item.value_left"></span>
+                </div>
+                <div flex="15" layout-align="center center" layout="row" style="height: 58px">
+                    &#60; X &#60;=
+                </div>
+                <div flex="30" style="height: 58px" layout="row" layout-align="center center">
+                    <div data-ng-if="item.is_active == true">
+                        <md-input-container>
+                            <input type="text" data-ng-model="item.value_right"
+                                   data-ng-blur="$ctrl.checkRange(item, $index)"
+                                   data-ng-keyup="$ctrl.syncActiveItem(item, $index)">
+                        </md-input-container>
+                    </div>
+                    <span data-ng-if="!item.is_active" data-ng-bind="item.value_right"></span>
+                </div>
+                <div flex="15">
+                    <md-input-container>
+                        <input type="text" data-ng-model="item.___group_name">
+                    </md-input-container>
+                </div>
+                <div flex="10" layout-align="center start" layout="row" style="height: 58px">
+                    <div>
+                        <md-button class="md-icon-button md-raised {{$ctrl.inputIsFocused ? 'disabled-btn' : ''}}" data-ng-click="$ctrl.addRange(item, $index)">
+                            <ng-md-icon icon="add"></ng-md-icon>
+                        </md-button>
+                    </div>
+                    <div data-ng-if="$index !== 0">
+                        <md-button class="md-icon-button md-raised" data-ng-click="$ctrl.removeRange($index)">
+                            <ng-md-icon icon="remove"></ng-md-icon>
+                        </md-button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+</div>

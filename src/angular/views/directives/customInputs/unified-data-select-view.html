@@ -1,0 +1,156 @@
+<div class="custom-input-container unified-data-input-container unifiedDataSelectInputContainer"
+         data-ng-class="getInputContainerClasses()">
+
+    <div ng-if="label" class="custom-input-top-row">
+        <span class="custom-input-textarea-span-pan">{{label}}</span>
+    </div>
+
+    <div class="custom-input-main-container customInputBackgroundColor">
+        <div class="custom-input-borders">
+            <div class="custom-input-content">
+
+                <div class="flex-row">
+
+                    <button data-ng-if="!noIndicatorBtn"
+                                    class="custom-input-indicator-btn position-relative"
+                                    data-ng-click="openSelectorDialog($event)"
+                                    ng-disabled="isDisabled">
+                        <span class="material-icons">menu</span>
+                    </button>
+
+                    <input
+                        type="text"
+                        placeholder="{{label}}"
+                        data-ng-model="inputText"
+                        data-ng-model-options="{debounce: 1000}"
+                        data-ng-change="onInputTextChange()"
+                        data-ng-focus="onInputFocus()"
+                        data-ng-blur="onInputBlur()"
+                        data-ng-disabled="isDisabled"
+                        data-ng-keypress="selectFirst($event)"
+                        class="custom-input unified-data-input unifiedDataSelectInputElem"
+                    />
+
+                </div>
+
+                <div class="custom-input-side-items flex-row customInputBackgroundColor">
+
+                    <div class="custom-input-custom-btns-holder">
+                        <div data-ng-if="customButtons && customButtons.length" class="height-100 flex-row">
+                            <button data-ng-repeat="button in customButtons" class="{{button.classes}} custom-input-custom-btn"
+                                            data-ng-click="callFnForCustomBtn(button.action)">
+                                {{button.caption}}
+                                <ng-md-icon data-ng-if="button.iconObj.type === 'angularjs-material'"
+                                                        size="24"
+                                                        icon="{{button.iconObj.icon}}"
+                                                        class="ci-custom-btn-icon"></ng-md-icon>
+
+                                <md-tooltip data-ng-if="button.tooltip"
+                                                        class="tooltip_1"
+                                                        md-direction="top">{{button.tooltip}}
+                                </md-tooltip>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div data-ng-if="error" class="custom-input-tooltip">
+                        <span class="material-icons">info</span>
+                        <md-tooltip class="error-tooltip" md-direction="top">{{error}}</md-tooltip>
+                    </div>
+
+                    <div data-ng-if="tooltipText" data-ng-show="!error" class="custom-input-tooltip">
+                        <span class="material-icons ci-icon-color">info_outline</span>
+                        <md-tooltip class="tooltip_2" md-direction="top" data-ng-bind="tooltipText"></md-tooltip>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div ng-if="dropdownMenuShown"
+         class="custom-input-sel-menu-container custom-input-dropdown-div selectMenuContainer" >
+
+        <div class="custom-input-sel-menu-block"  >
+
+            <div data-ng-if="!processing" style="height: 369px; overflow-y: auto">
+
+                <b data-ng-if="localItems.length" class="unified-data-select-options-group-title">Local Records ({{localItemsTotal}})</b>
+
+                <div data-ng-if="localItems.length">
+
+                    <div
+                            data-ng-repeat="option in localItems"
+                            data-ng-click="selectLocalItem(option)"
+                            class="unified-data-select-input-sel-option"
+
+
+                    >
+
+                        <div class="unified-data-select-name" data-ng-bind-html="getHighlighted(option.name)">
+
+                        </div>
+                        <div class="unified-data-select-user-code" data-ng-bind-html="getHighlighted(option.user_code)">
+
+                        </div>
+
+<!--                        <div class="unified-data-select--ticker" data-ng-if="option.reference_for_pricing">-->
+<!--                            {{option.reference_for_pricing}}-->
+<!--                        </div>-->
+
+                    </div>
+
+                </div>
+
+
+                <b data-ng-if="databaseItems.length" style=" bottom: 0px;" class="unified-data-select-options-group-title">Global Records ({{databaseItemsTotal}})</b>
+
+
+                <div data-ng-if="databaseItems.length">
+
+                    <div
+                            data-ng-repeat="option in databaseItems"
+                            data-ng-click="selectDatabaseItem(option)"
+                            class="unified-data-select-input-sel-option"
+
+                            >
+
+
+                        <div class="unified-data-select-name" data-ng-bind-html="getHighlighted(option.name)">
+
+                        </div>
+
+                        <div data-ng-if="entityType != 'currency'" class="unified-data-select-user-code" data-ng-bind-html="getHighlighted(option.user_code)">
+
+                        </div>
+                        <div data-ng-if="entityType == 'currency'" class="unified-data-select-user-code" data-ng-bind-html="getHighlighted(option.code)">
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+                <div data-ng-if="!localItems.length && !databaseItems.length">
+                    <b class="unified-data-select-options-group-title">Not records found</b>
+                </div>
+
+
+
+            </div>
+
+            <div data-ng-if="processing"  layout="row" layout-sm="column" layout-align="space-around" class="p-8">
+                <progress-circular diameter="50"></progress-circular>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div ng-if="error"
+         ng-bind="error"
+         class="custom-input-bottom-error-text"></div>
+
+</div>

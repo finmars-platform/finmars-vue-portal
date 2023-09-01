@@ -28,15 +28,15 @@
 
 <script setup>
 
-	import widgetList from '~/assets/data/widgets.js'
+	import widgetList from '~/components/pages/dashboard/components.js'
 
-	const component = inject('component')
+	const { component, updateComponent } = inject('component')
 
 	let systems = widgetList.filter((item) => item._group == 'system')
 	let bases = widgetList.filter((item) => item._group == 'base')
 
 	function chooseComponent( item ) {
-		component.value = structuredClone(item)
+		updateComponent( structuredClone(item) )
 	}
 
 </script>

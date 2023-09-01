@@ -1,0 +1,134 @@
+<md-dialog aria-label="manage attributes"
+           class="attributes-manager-dialog dialog-actions-bottom draggable-dialog manageAttrsElemToResize"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h1 class="entity-data-constructor-title">
+                <span class="ec-entity-type">
+                    {{vm.entityType}}
+                    <ng-md-icon icon="chevron_right"
+                                size="24"
+                                style="fill:#8B8B8B;"></ng-md-icon>
+                </span>
+                MANAGE ATTRIBUTES
+            </h1>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="height-100">
+        <div class="attributes-manager-view" style="height: 100%;">
+
+            <div layout="row" class="p-t-16">
+                <div layout="row" flex="50" layout-align="start center">
+                    <md-button class="md-raised" data-ng-click="vm.addAttribute($event)">
+                        ADD NEW
+                    </md-button>
+                </div>
+
+                <div layout="row" flex="50" layout-align="end center">
+                    <md-button class="md-raised" data-ng-click="vm.toggleHidden($event)">
+                        <span data-ng-show="!vm.showHidden">
+                            SHOW HIDDEN ATTRIBUTES
+                        </span>
+                                <span data-ng-show="vm.showHidden">
+                            HIDE ATTRIBUTES
+                        </span>
+                    </md-button>
+                    <!--<md-button class="md-raised md-primary" data-ui-sref="{{vm.getReturnSref()}}">
+                        RETURN TO VIEW
+                    </md-button>-->
+                    <!--<md-button class="md-raised md-primary"
+                               data-ng-click="vm.editLayout()">
+                        RETURN TO FORM EDITOR
+                    </md-button>-->
+                </div>
+            </div>
+
+            <div data-ng-if="vm.attrs.length">
+                <md-card data-ng-if="vm.checkIsHidden(item)"
+                         data-ng-repeat="item in vm.attrs"
+                         class="am-attr-card"
+                         data-ng-class="{'attribute-with-recalculation': item.can_recalculate}">
+                    <div class="am-attr-card__wrapper">
+                        <div class="am-attr-card__left-side">
+                            <ng-md-icon class="am-attr-card__status" data-ng-if="!item.is_hidden"
+                                        icon="visibility"></ng-md-icon>
+                            <ng-md-icon class="am-attr-card__status" data-ng-if="item.is_hidden"
+                                        icon="visibility_off"></ng-md-icon>
+
+                            <b data-ng-bind="item.name"></b> (<span data-ng-bind="vm.bindType(item)"></span>) <span data-ng-if="item.kind = 2"> System</span>
+                        </div>
+                        <div class="am-attr-misc">
+
+                            <md-button class="am-attr-btn" data-ng-if="item.can_recalculate"
+                                       data-ng-click="vm.recalculateAttributes($event, item)">
+                                <ng-md-icon icon="memory">
+                                    <md-tooltip md-direction="top">Recalculate all attributes</md-tooltip>
+                                </ng-md-icon>
+                            </md-button>
+
+                            <md-button data-ng-if="item['value_type'] === 30" class="am-attr-btn"
+                                       data-ng-click="vm.exportClassifiers($event, item)">
+                                <ng-md-icon icon="file_upload">
+                                    <md-tooltip md-direction="top">Export Classifier</md-tooltip>
+                                </ng-md-icon>
+                            </md-button>
+                            <md-button data-ng-if="item['value_type'] === 30" class="am-attr-btn"
+                                       data-ng-click="vm.importClassifiers($event, item)">
+                                <ng-md-icon icon="file_download">
+                                    <md-tooltip md-direction="top">Import Classifiers from .csv file</md-tooltip>
+                                </ng-md-icon>
+                            </md-button>
+                            <md-button data-ng-if="item['value_type'] === 30" class="am-attr-btn"
+                                       data-ng-click="vm.openClassifierMapping($event, item)">
+                                <ng-md-icon icon="map">
+                                    <md-tooltip md-direction="top">Open Classifier Mappings</md-tooltip>
+                                </ng-md-icon>
+                            </md-button>
+                            <md-button data-ng-if="item['value_type'] === 30" class="am-attr-btn"
+                                       data-ng-click="vm.editTreeAttr($event, item)">
+                                <ng-md-icon icon="format_align_right">
+                                    <md-tooltip md-direction="top">Edit Classifier tree</md-tooltip>
+                                </ng-md-icon>
+                            </md-button>
+                            <md-button class="am-attr-btn"
+                                       data-ng-click="vm.editAttr($event, item)">
+                                <ng-md-icon icon="edit">
+                                    <md-tooltip md-direction="top">Edit Attribute</md-tooltip>
+                                </ng-md-icon>
+                            </md-button>
+                            <md-button class="am-attr-btn"
+                                       data-ng-click="vm.deleteAttr($event, item)" data-ng-if="item.kind == 1">
+                                <ng-md-icon icon="delete">
+                                    <md-tooltip md-direction="top">Delete Attribute</md-tooltip>
+                                </ng-md-icon>
+                            </md-button>
+                        </div>
+                    </div>
+                </md-card>
+            </div>
+
+            <div data-ng-if="!vm.attrs.length">
+                <div layout="row" class="add-more-tip" layout-sm="column" layout-align="center center">
+                    <h1>You could add new user attributes here</h1>
+                </div>
+            </div>
+
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions>
+        <div layout="row" layout-align="space-between center" class="width-100 p-r-16">
+            <md-button ng-click="vm.cancel()" class="md-raised">
+                Close
+            </md-button>
+        </div>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+    </md-dialog-actions>
+</md-dialog>

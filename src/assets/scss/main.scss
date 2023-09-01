@@ -1,4 +1,6 @@
-@import "core/core";
+@import 'core/core';
+@import 'angular';
+@import 'swiper';
 
 .vue-notification-wrapper {
 }
@@ -12,7 +14,7 @@
 	padding-left: 5px;
 
 	.func {
-	color: green;
+		color: green;
 	}
 	.signs {
 		color: red;

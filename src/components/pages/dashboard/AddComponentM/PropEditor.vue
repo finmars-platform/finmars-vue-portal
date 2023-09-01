@@ -33,8 +33,14 @@
 			:items="prop.view.items"
 		/>
 
-		<FmBtn class="sub_btn" :disabled="!oppositeProps.length" @click="isOpen = true">
-			{{  type == 'inputs' ? 'Listen outputs' : 'broadcast in inputs' }} [{{ propRelation.length }}]
+		<FmBtn
+			class="sub_btn"
+			:disabled="!oppositeProps.length"
+			@click="isOpen = true"
+		>
+			{{ type == 'inputs' ? 'Listen outputs' : 'broadcast in inputs' }} [{{
+				propRelation.length
+			}}]
 		</FmBtn>
 
 		<BaseMultiSelectModal
@@ -45,54 +51,59 @@
 			:items="oppositeProps"
 			:item_id="'id'"
 			@cancel="isOpen = false"
-			@save="propRelation = $event, isOpen = false"
+			@save=";(propRelation = $event), (isOpen = false)"
 		/>
 	</div>
 </template>
 
 <script setup>
-
 	const props = defineProps({
 		prop: Object,
 		type: {
 			type: String,
-			required: true
-		}
+			required: true,
+		},
 	})
 	const dashStore = useStoreDashboard()
 
 	const propRelation = computed({
 		get() {
-			if ( props.type == 'inputs' ) return props.prop.subscribedTo
+			if (props.type == 'inputs') return props.prop.subscribedTo
 			return props.prop._children
 		},
 		set(newVal) {
-			if ( props.type == 'inputs' ) props.prop.subscribedTo = newVal
+			if (props.type == 'inputs') props.prop.subscribedTo = newVal
 			else props.prop._children = newVal
-		}
+		},
 	})
 
 	let isOpen = ref(false)
 	let oppositeTypeMap = {
 		inputs: 'outputs',
-		outputs: 'inputs'
+		outputs: 'inputs',
 	}
 
 	const oppositeProps = computed(() => {
-		let oppositeType = oppositeTypeMap[ props.type ]
+		let oppositeType = oppositeTypeMap[props.type]
 
-		let oppositeProps = dashStore.props[ oppositeType ]
-			.filter((prop) => prop.type == props.prop.type && prop.component_id != props.prop.component_id )
+		let oppositeProps = dashStore.props[oppositeType]
+			.filter(
+				(prop) =>
+					prop.type == props.prop.type &&
+					prop.component_id != props.prop.component_id
+			)
 			.map((prop) => {
 				return {
 					id: prop.uid,
-					name: `${dashStore.components.find(comp => comp.uid == prop.component_id).user_code}/${prop.name}`
+					name: `${
+						dashStore.components.find((comp) => comp.uid == prop.component_id)
+							.user_code
+					}/${prop.name}`,
 				}
 			})
 
-		return JSON.parse( JSON.stringify(oppositeProps) )
+		return JSON.parse(JSON.stringify(oppositeProps))
 	})
-
 </script>
 
 <style lang="scss" scoped>

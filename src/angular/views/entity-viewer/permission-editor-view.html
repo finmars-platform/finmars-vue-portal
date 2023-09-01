@@ -1,0 +1,135 @@
+<div>
+
+    <div layout="row" layout-align="center center">
+        <h3>Groups Permission Manager</h3>
+    </div>
+
+    <div style="margin-bottom: 16px; margin-left: 8px;">
+
+        <div style="margin-right: 8px; background: lightblue; display: inline-block; width: 16px; height: 16px">
+
+        </div>
+
+        You are a member of this group
+
+    </div>
+
+    <div layout="row" layout-align="space-between center" style="margin-bottom: 8px; padding: 0 16px">
+        <div layout="row" layout-align="begin center">
+            Group Name
+        </div>
+        <div layout="row" layout-align="center center">
+            <div layout="row" layout-align="center center" style="width: 210px">
+                <b>Manage</b>
+                <md-tooltip class="tooltip_1" md-direction="top">Allow/forbid change the Access Rights</md-tooltip>
+            </div>
+            <div layout="row" layout-align="center center" style="width: 210px">
+                <b>Edit</b>
+                <md-tooltip class="tooltip_1" md-direction="top">Allow/forbid to make changes to the Object</md-tooltip>
+            </div>
+            <div layout="row" layout-align="center center" style="width: 210px">
+                <b>View</b>
+                <md-tooltip class="tooltip_1" md-direction="top">Reveal/conceal to object to the Group</md-tooltip>
+            </div>
+        </div>
+    </div>
+
+    <div layout="column" class="ev-permission-editor-item">
+
+        <div layout="row" layout-align="space-between"
+             class="m-b-8 {{group.current_member_in_group ? 'member-in-group' : ''}}"
+             data-ng-repeat="group in vm.groups"
+             style="height: 48px;">
+
+            <div layout="row" layout-align="begin center">
+                <span data-ng-bind="group.name"></span>
+                </span>
+            </div>
+
+
+            <div layout="row" layout-align="center center">
+
+                <div style="width: 210px">
+
+                    <md-checkbox class="permission-checkbox"
+                                 data-ng-checked="group.isManageChecked"
+                                 md-indeterminate="group.isManageIndeterminate == true"
+                                 data-ng-click="vm.toggleManage($event, group)">
+                    </md-checkbox>
+
+                </div>
+
+                <div style="width: 210px">
+
+                    <md-checkbox class="permission-checkbox"
+                                 data-ng-checked="group.isChangeChecked"
+                                 md-indeterminate="group.isChangeIndeterminate == true"
+                                 data-ng-click="vm.toggleChange($event, group)">
+                    </md-checkbox>
+
+                </div>
+
+                <div style="width: 210px">
+
+                    <md-checkbox class="permission-checkbox"
+                                 data-ng-checked="group.isViewChecked"
+                                 md-indeterminate="group.isViewIndeterminate == true"
+                                 data-ng-click="vm.toggleView($event, group)">
+                    </md-checkbox>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <div layout="row">
+
+        <md-button data-ng-click="vm.save()" class="md-raised md-primary"
+                   data-ng-class="{'disabled-btn': !vm.selectedRows.length}">Save
+
+            <span data-ng-if="vm.selectedRows.length > 1">for All Objects</span>
+
+        </md-button>
+
+
+        <div data-ng-if="vm.entityType == 'portfolio' || vm.entityType == 'account' || vm.entityType == 'transaction-type'">
+
+            <md-button data-ng-click="vm.recalculateTransactionPermissions()"
+                       data-ng-class="{'disabled-btn': !vm.isSaved}"
+                       class="md-raised md-primary">Apply new Permissions to Transactions
+            </md-button>
+
+        </div>
+
+        <div data-ng-if="vm.entityType == 'instrument-type'">
+
+            <md-button data-ng-click="vm.recalculateInstrumentPermissions()"
+                       data-ng-class="{'disabled-btn': !vm.isSaved}"
+                       class="md-raised md-primary">Apply new Permissions to Instruments
+            </md-button>
+
+        </div>
+
+        <div data-ng-if="vm.entityType == 'account-type'" layout="row">
+
+            <md-button data-ng-click="vm.recalculateAccountPermissions()" data-ng-class="{'disabled-btn': !vm.isSaved}"
+                       class="md-raised md-primary">Apply new Permissions to Accounts
+            </md-button>
+
+            <md-button data-ng-click="vm.recalculateAccountAndTransactionsPermissions()"
+                       data-ng-class="{'disabled-btn': !vm.isSaved}"
+                       class="md-raised md-primary">Apply new Permissions to Accounts and Transactions
+            </md-button>
+
+        </div>
+
+
+        <progress-circular diameter="20" data-ng-if="vm.recalculating" class="m-t-8"></progress-circular>
+
+    </div>
+
+</div>

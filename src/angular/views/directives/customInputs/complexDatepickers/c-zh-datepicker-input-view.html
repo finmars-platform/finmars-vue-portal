@@ -1,0 +1,32 @@
+<div class="custom-input-container complex-datepicker-custom-input"
+     data-ng-class="getInputContainerClasses()">
+  <div ng-if="label"
+       class="custom-input-top-row">
+    <span class="custom-input-textarea-span-pan">{{label}}</span>
+  </div>
+
+  <div class="custom-input-main-container customInputBackgroundColor">
+    <div class="custom-input-borders">
+      <div class="custom-input-content">
+
+        <div class="flex-row">
+
+          <button class="custom-input-indicator-btn"
+                  ng-disabled="isDisabled">
+            <span class="material-icons">event</span>
+          </button>
+
+          <input type="text"
+                 ng-model="dateText"
+                 ng-disabled="isDisabled"
+                 placeholder="{{placeholderText}}"
+                 readonly
+                 class="custom-input" />
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

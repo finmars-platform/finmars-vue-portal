@@ -1,0 +1,140 @@
+<div layout="column">
+
+
+    <div layout="row">
+
+        <div layout="column">
+            <div class="m-8">
+
+                <dropdown-select label="Exposure Co-Directional Currency"
+                                 model="vm.entity.co_directional_exposure_currency"
+                                 placeholder-text="Exposure Co-Directional Currency"
+                                 menu-options="vm.currenciesSelectorOptions"
+                                 small-options="{tooltipText: 'Exposure Co-Directional Currency'}"
+                                 style="width: 100%">
+                </dropdown-select>
+
+            </div>
+
+            <div class="m-8">
+
+                <dropdown-select label="Exposure Counter-Directional Currency"
+                                 model="vm.entity.counter_directional_exposure_currency"
+                                 placeholder-text="Exposure Counter-Directional Currency"
+                                 menu-options="vm.currenciesSelectorOptions"
+                                 small-options="{tooltipText: 'Exposure Counter-Directional Currency'}"
+                                 style="width: 100%">
+                </dropdown-select>
+
+            </div>
+        </div>
+
+        <div layout="column">
+
+            <div class="m-8">
+
+                <dropdown-select label="Long Underlying Instrument"
+                                 model="vm.entity.long_underlying_instrument"
+                                 placeholder-text="Long Underlying Instrument"
+                                 menu-options="vm.instrumentsSelectorOptions"
+                                 small-options="{tooltipText: 'Long Underlying Instrument'}"
+                                 style="width: 100%">
+                </dropdown-select>
+
+            </div>
+
+            <div class="m-8">
+
+                <dropdown-select label="Short Underlying Instrument"
+                                 model="vm.entity.short_underlying_instrument"
+                                 placeholder-text="Short Underlying Instrument"
+                                 menu-options="vm.instrumentsSelectorOptions"
+                                 small-options="{tooltipText: 'Short Underlying Instrument'}"
+                                 style="width: 100%">
+                </dropdown-select>
+
+            </div>
+
+        </div>
+
+        <div layout="column">
+
+            <div class="m-8">
+
+                <number-input  label="Underlying Long Multiplier"
+                               model="vm.entity.underlying_long_multiplier"
+                ></number-input>
+
+            </div>
+
+            <div class="m-8">
+
+                <number-input  label="Underlying Short Multiplier"
+                               model="vm.entity.underlying_short_multiplier"
+                ></number-input>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div layout="column">
+
+        <div class="m-8">
+
+            <dropdown-select label="Exposure Calculation Model"
+                             model="vm.entity.exposure_calculation_model"
+                             placeholder-text="Exposure Calculation Model"
+                             menu-options="vm.exposureCalculationModelSelectorOptions"
+                             small-options="{tooltipText: 'Exposure Calculation Model'}"
+                             style="width: 100%">
+            </dropdown-select>
+
+        </div>
+
+        <div class="m-8">
+
+            <dropdown-select label="Long Underlying Exposure"
+                             model="vm.entity.long_underlying_exposure"
+                             placeholder-text="Long Underlying Exposure"
+                             menu-options="vm.longUnderlyingExposureSelectorOptions"
+                             small-options="{tooltipText: 'Long Underlying Exposure'}"
+                             style="width: 100%">
+            </dropdown-select>
+
+        </div>
+
+        <div class="m-8">
+
+            <dropdown-select label="Short Underlying Exposure"
+                             model="vm.entity.short_underlying_exposure"
+                             placeholder-text="Short Underlying Exposure"
+                             menu-options="vm.shortUnderlyingExposureSelectorOptions"
+                             small-options="{tooltipText: 'Short Underlying Exposure'}"
+                             style="width: 100%">
+            </dropdown-select>
+
+        </div>
+
+    </div>
+
+    <div class="m-8">
+
+
+        <dropdown-select label="Position Reporting"
+                         model="vm.entity.position_reporting"
+                         placeholder-text="Position Reporting"
+                         menu-options="vm.positionReportingSelectorOptions"
+                         small-options="{tooltipText: 'Position Reporting'}"
+                         style="width: 100%">
+        </dropdown-select>
+
+    </div>
+
+    <br>
+    <br>
+    <br>
+    <br>
+
+</div>

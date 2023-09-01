@@ -1,0 +1,44 @@
+<div>
+
+    <div data-ng-if="vm.readyStatus.content" layout="row">
+
+        <div layout="column" flex="33">
+
+            <h4>
+                Text Fields
+            </h4>
+
+            <div class="overflow-hidden">
+
+                <div data-ng-repeat="item in vm.textFields" class="float-left m-b-8" style="width: 310px">
+                    <b>{{item.key}}</b>
+                    <md-input-container style="height: 32px">
+                        <input type="text" data-ng-model="item.name" value-title>
+                    </md-input-container>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div layout="row" class="m-t-16">
+
+        <md-button class="md-raised md-primary" data-ng-click="vm.save()">Save</md-button>
+
+        <div data-ng-if="vm.readyStatus.processing" class="m-l-16 m-t-8">
+            <md-progress-circular md-mode="indeterminate"
+                                  md-diameter="24"></md-progress-circular>
+        </div>
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.content">
+        <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+            <md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>
+        </div>
+    </div>
+
+</div>
+

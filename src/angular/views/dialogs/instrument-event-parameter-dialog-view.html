@@ -1,0 +1,128 @@
+<md-dialog class="instrument-event-parameter-dialog draggable-dialog dialog-actions-bottom"
+           aria-label="instrument event parameter dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Instrument Event Parameter Dialog</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+
+        <div class="event-parameter-holder">
+
+            <div class="m-t-16">
+
+                <div data-ng-repeat="parameter in vm.item.data.parameters" layout="row" data-ng-if="parameter.index != 0">
+
+<!--                    <md-input-container>-->
+<!--                        <label>Index</label>-->
+<!--                        <input type="text" data-ng-model="parameter.index" class="disabled-btn">-->
+<!--                    </md-input-container>-->
+
+                    <md-input-container>
+                        <label>Name</label>
+                        <input type="text"
+                               data-ng-model="parameter.name"
+                               data-ng-disabled="vm.changeOnlyValue">
+                    </md-input-container>
+
+                    <md-input-container class="m-t-16">
+                        <label>Value Type</label>
+                        <md-select data-ng-model="parameter.value_type"
+                                   data-ng-change="vm.multipleParameterValueTypeUpdate(vm.item, parameter.index)"
+                                   data-ng-disabled="vm.changeOnlyValue">
+                            <md-option value="10">Text</md-option>
+                            <md-option value="20">Number</md-option>
+                            <md-option value="40">Date</md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <div ng-hide="!parameter.value_type" class="flex-row flex-center">
+
+                        <div ng-if="parameter.___switch_state === 'default_value'">
+                            <text-input ng-if="parameter.value_type == 10"
+                                        label="Default value"
+                                        model="parameter.default_value"></text-input>
+
+                            <number-input ng-if="parameter.value_type == 20"
+                                          label="Default value"
+                                          model="parameter.default_value"></number-input>
+
+                            <date-input ng-if="parameter.value_type == 40"
+                                        label="Default value"
+                                        model="parameter.default_value"></date-input>
+                        </div>
+
+                        <div ng-if="parameter.___switch_state === 'attribute_key'">
+                            <dropdown-select label="Options"
+                                             model="parameter.attribute_key"
+                                             menu-options="vm.optionsForMultipleParameters[parameter.value_type]"
+                                             sorted="vm.attrsOptsSorted"></dropdown-select>
+                        </div>
+
+                        <md-button class="md-raised md-primary"
+                                   data-ng-click="vm.switchParameter($event, vm.item, parameter)">Switch
+                        </md-button>
+                        <!--<div layout="row" data-ng-if="parameter.___switch_state == 'default_value'">
+
+                            <md-input-container>
+                                <label>Default Value</label>
+                                <input type="text" data-ng-model="parameter.default_value">
+                            </md-input-container>
+
+                            <md-button class="md-raised md-primary"
+                                       data-ng-click="vm.switchParameter($event, vm.item, parameter)">Switch
+                            </md-button>
+
+                        </div>
+
+                        <div layout="row" data-ng-if="parameter.___switch_state == 'attribute_key'">
+
+                            <md-input-container class="m-t-16">
+                                <label>Options</label>
+                                <md-select data-ng-model="parameter.attribute_key">
+                                    <md-option ng-value="parameter.user_code"
+                                               data-ng-repeat="parameter in vm.optionsForMultipleParameters[parameter.value_type]">
+                                        {{parameter.name}} ({{parameter.user_code}})
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+
+                            <md-button class="md-raised md-primary"
+                                       data-ng-click="vm.switchParameter($event, vm.item, parameter)">Switch
+                            </md-button>
+
+                        </div>-->
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+            <div>
+                <md-button ng-if="!vm.changeOnlyValue"
+                           class="md-raised"
+                           data-ng-click="vm.addParameter($event, vm.item)">Add Parameter</md-button>
+            </div>
+
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+        <div>
+            <md-button ng-click="vm.cancel()">
+                Cancel
+            </md-button>
+            <md-button ng-click="vm.agree()" style="margin-right:20px;">
+                OK
+            </md-button>
+        </div>
+
+    </md-dialog-actions>
+</md-dialog>

@@ -1,7 +1,6 @@
 <template>
 	<button
 		:class="['fm_btn', { icon }, type]"
-		:disabled="loading"
 		@click="to ? $router.push(to) : ''"
 	>
 		<div v-if="icon" :class="`icon material-icons`">{{ icon }}</div>
@@ -10,22 +9,19 @@
 </template>
 
 <script setup>
-
-let props = defineProps({
+	let props = defineProps({
 		label: String,
 		icon: String,
 		to: String,
-		loading: Boolean,
 		/**
 		 * Type of button
 		 * @values primary, basic, text, action, iconBtn
 		 */
 		type: {
 			type: String,
-			default: 'primary'
-		}
+			default: 'primary',
+		},
 	})
-
 </script>
 
 <style lang="scss" scoped>
@@ -80,6 +76,10 @@ let props = defineProps({
 		&.action {
 			color: $primary;
 
+			.icon {
+				color: $primary !important;
+			}
+
 			&:not([disabled]):hover {
 				background: $primary-lighten-2;
 			}
@@ -99,7 +99,7 @@ let props = defineProps({
 		}
 		&[disabled] {
 			cursor: default;
-			opacity: .6;
+			opacity: 0.6;
 
 			&.primary {
 				background: $primary-lighten;

@@ -1,0 +1,47 @@
+<div class="custom-select-popup popup-menu"
+     ng-init="popupData.onInit()">
+
+    <!--<div class="popup-select-filter-wrap">
+        <input type="text"
+               ng-model="popupData.filterTerm"
+               ng-model-options="{debounce: 1000}"
+               ng-init="popupData.focusInput()"
+               class="popup-select-filter" />
+    </div>-->
+
+    <div>
+
+        <div data-ng-repeat="group in popupData.options | orderBy:'name':false:popupData.optionsComparator | filter: popupData.filterTerm"
+             class="custom-input-sel-group">
+
+            <div ng-if="group.content.length">
+                <div class="group-name" ng-bind="group.name"></div>
+
+                <md-button ng-repeat="option in group.content | orderBy:'name':false:popupData.optionsComparator | filter: popupData.filterTerm"
+                           ng-click="popupData.selectOption(option, _$popup, $event)"
+                           class="popup-menu-item">
+                    <span class="material-icons" ng-class="{'visibility-hidden': !option.isActive}">done</span>
+                    <span ng-bind="option.name"></span>
+                </md-button>
+            </div>
+
+        </div>
+
+        <div ng-if="popupData.entitySearch" class="custom-input-sel-menu-block-btns-pan flex_c">
+            <button class="md-raised md-primary md-button md-ink-ripple m-b-8"
+                    data-ng-click="popupData.entitySearch.createEntity($event)">
+                Create
+            </button>
+            <button data-ng-if="entityType === 'instrument'"
+                    class="md-raised md-primary md-button md-ink-ripple m-b-8"
+                    data-ng-click="popupData.entitySearch.downloadEntity($event)">
+                Download
+            </button>
+            <button data-ng-if="entityType === 'instrument'" class="md-raised md-primary md-button md-ink-ripple">
+                Generate
+            </button>
+        </div>
+
+    </div>
+
+</div>

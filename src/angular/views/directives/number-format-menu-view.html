@@ -1,0 +1,54 @@
+<md-menu>
+    <md-button class="number-format-menu-button"
+               data-ng-class="getButtonClasses()"
+               data-ng-click="$mdOpenMenu($event)"
+               data-ng-bind-html="buttonContent | trustAsHtml"
+               aria-label="open number format menu btn">
+    </md-button>
+
+    <md-menu-content width="4">
+
+        <md-menu-item>
+            <md-button ng-click="setNumberFormatPreset('price')"
+                       class="g-settings-option-btn">
+                <span>Price (0)</span>
+            </md-button>
+        </md-menu-item>
+
+        <md-menu-item>
+            <md-button ng-click="setNumberFormatPreset('market_value')"
+                       class="g-settings-option-btn">
+                <span>Market Value (000'000)</span>
+            </md-button>
+        </md-menu-item>
+
+        <md-menu-item>
+            <md-button class="g-settings-option-btn"
+                       ng-click="setNumberFormatPreset('amount')">
+                <span>Amount (000'000.00)</span>
+            </md-button>
+        </md-menu-item>
+
+        <md-menu-item>
+            <md-button class="g-settings-option-btn"
+                       ng-click="setNumberFormatPreset('exposure')">
+                <span>Exposure (0.0%)</span>
+            </md-button>
+        </md-menu-item>
+
+        <md-menu-item>
+            <md-button class="g-settings-option-btn"
+                       ng-click="setNumberFormatPreset('return')">
+                <span>Return (0.00%)</span>
+            </md-button>
+        </md-menu-item>
+
+        <md-menu-item>
+            <md-button class="g-settings-option-btn"
+                       ng-click="openNumberFormatSettings($event, $mdMenu)">
+                <span>Custom</span>
+            </md-button>
+        </md-menu-item>
+
+    </md-menu-content>
+</md-menu>

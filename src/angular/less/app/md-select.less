@@ -1,0 +1,78 @@
+.md-select-holder {
+  overflow: hidden;
+  display: block;
+  max-height: 240px;
+  box-sizing: border-box;
+
+  md-select-header {
+    height: 48px;
+    display: block;
+    overflow: hidden;
+  }
+
+  .md-select-options-holder {
+    max-height: 208px;
+    overflow: auto;
+  }
+
+}
+
+.common-select-container {
+  md-select-menu {
+    max-height: 400px;
+    md-content {
+      max-height: 400px;
+    }
+  }
+
+  md-select-header {
+    display: block;
+    height: 35px;
+    border-bottom: solid 1px #a6a6a6;
+    margin: 0 5px 5px;
+
+    .select-input-filter {
+      height: 30px;
+    }
+  }
+
+  .select-options-holder {
+    max-height: 320px;
+    overflow: auto;
+
+    md-optgroup {
+      label {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        font-weight: 600;
+      }
+    }
+
+    md-option {
+      height: 35px;
+    }
+  }
+}
+
+.simple-search-select {
+  md-select-menu {
+    max-height: 345px;
+    md-content {
+      max-height: 345px;
+
+      .simple-search-filter-input {
+        height: 35px;
+      }
+
+      md-option {
+        height: 30px;
+      }
+    }
+  }
+}
+
+.common-select-container.small-select {
+  .simple-search-filter-input {
+    visibility: hidden;
+  }
+}

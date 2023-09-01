@@ -1,0 +1,122 @@
+<md-dialog aria-label="" ng-cloak class="transaction-scheme-manager-errors-dialog-view draggable-dialog"
+           style="width: 75%;" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Transaction transaction - Errors</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content style="background: #E5E5E5;">
+        <md-content>
+            <md-card>
+                <md-card-content class="overflow-hidden">
+                    <h3>Please see below the list of records we failed to import</h3>
+
+                    <div class="overflow-hidden m-b-24">
+
+                        <div>
+
+                            <div class="float-left width-40">
+
+                                <h3 class="margin-0 m-b-8">Info</h3>
+
+                                <div><b>Type</b>: Transaction Import</div>
+                                <div><b>Error handler</b>: {{vm.scheme.error_handler}}</div>
+                                <div><b>Filename</b>: {{vm.config.file.name}}</div>
+                                <div><b>Import Rules - if object is not found</b>: {{vm.scheme.missing_data_handler}}
+                                </div>
+
+                                <div class="m-t-8">
+<!--                                    <a href="javascript:void(0)" class="download-error-link">Download error file</a>-->
+                                    <a href="{{vm.getFileUrl(vm.validationResult.stats_file_report)}}" download>Download Report File</a>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="float-left width-40">
+
+                            <h3 class="margin-0 m-b-8">Stats</h3>
+
+                            <div data-ng-if="vm.data.process_mode != 'validate'">
+
+                                <div>Rows total: {{vm.validationResult.total_rows}}</div>
+                                <div>Rows success import: {{vm.rowsSuccessCount}}
+                                </div>
+                                <div>Rows fail import: {{vm.error_rows.length}}</div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="transaction-import-error-holder">
+
+                        <div data-ng-show="vm.error_rows.length" style="margin-top: 24px">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>
+                                        Row number
+                                    </th>
+                                    <th style="min-width:200px; width: 200px">Inputs</th>
+                                    <th style="max-width: 460px; width: 460px">Row content</th>
+                                    <th style="min-width:300px; width: 300px">Message</th>
+                                    <th>Reaction</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr data-ng-repeat="item in vm.error_rows">
+                                    <td>
+                                        <span data-ng-bind="item.original_row_index"></span>
+                                    </td>
+                                    <td style="min-width:200px; width: 200px">
+                                        <div data-ng-repeat="(key, val) in item.inputs">
+                                            <b data-ng-bind="key"></b>: {{val}}
+                                        </div>
+                                    </td>
+                                    <td style="max-width: 460px; width: 460px" data-ng-bind="item.original_row_pretty"></td>
+                                    <td style="min-width:300px; width: 300px" data-ng-bind="item.error_message"></td>
+                                    <td><span data-ng-bind="item.error_reaction"></span></td>
+                                </tr>
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </md-card-content>
+            </md-card>
+
+        </md-content>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+
+        <div data-ng-if="vm.validationResult.process_mode != 'validate'">
+
+            <md-button class="md-raised"
+                       ng-click="vm.cancel()">
+                Cancel
+            </md-button>
+
+            <md-button class="md-raised md-warn" ng-click="vm.agree()">
+                Ok, proceed
+            </md-button>
+
+
+        </div>
+
+        <div data-ng-if="vm.validationResult.process_mode == 'validate'">
+
+            <md-button class="md-raised"
+                       ng-click="vm.cancel()">
+                Ok
+            </md-button>
+
+        </div>
+    </md-dialog-actions>
+</md-dialog>

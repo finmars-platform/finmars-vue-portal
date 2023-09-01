@@ -1,0 +1,44 @@
+<md-dialog class="draggable-dialog dialog-actions-bottom"
+           aria-label="enter user code dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2 ng-bind="vm.title"></h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="p-16">
+
+        <div class="inputs-dialog-inputs-container">
+
+            <div>
+                <text-input model="vm.userCode"
+                            label="{{vm.inputLabel}}"
+                            event-signal="vm.eventObj.event"
+                            on-change-callback="vm.validateUserCode()"
+                            small-options="{notNull: true}"></text-input>
+            </div>
+
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions>
+        <div layout="row" layout-align="space-between center">
+            <md-button ng-click="vm.cancel()">
+                Cancel
+            </md-button>
+
+            <md-button ng-click="vm.agree()"
+                       ng-disabled="!vm.userCodeIsValid"
+                       style="margin-right:20px;">
+                OK
+            </md-button>
+        </div>
+
+    </md-dialog-actions>
+
+</md-dialog>

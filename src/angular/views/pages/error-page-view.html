@@ -1,0 +1,76 @@
+<div class="error-page p-24">
+
+    <h1 layout="row" style="margin: 0 0 16px">Error Log</h1>
+    <div>
+        Records count: {{vm.count}}
+
+        <a href="{{vm.getExportLogsUrl()}}" download>Export Logs</a>
+    </div>
+
+    <div class="m-t-8 m-b-8">
+
+        <md-input-container style="width: 90%">
+            <label for="">Search</label>
+            <input aria-label="search" type="text" data-ng-model="vm.query" data-ng-change="vm.searchMessages()">
+        </md-input-container>
+
+    </div>
+
+    <div data-ng-if="vm.readyStatus.content">
+
+        <div data-ng-repeat="item in vm.items">
+
+            <div class="error-record-card">
+
+                <h3 data-ng-if="item.status_code == 500">Server Error</h3>
+                <h3 data-ng-if="item.status_code == 400">Client Error</h3>
+                <div class="error-record-card-field"><span>URL</span>: {{item.url}}</div>
+                <div class="error-record-card-field"><span>Username</span>: {{item.username}}</div>
+                <div class="error-record-card-field"><span>Message</span>: {{item.message}}</div>
+                <div class="error-record-card-field"><span>Code</span>: {{item.status_code}}</div>
+                <div class="error-record-card-field"><span>Date & Time</span>: {{item.created}}</div>
+
+                <div>
+                    <pre>{{item.details}}</pre>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div layout="row" class="m-t-16">
+            <md-button class="md-raised" data-ng-show="vm.currentPage != 1" data-ng-click="vm.openPreviousPage()">
+                Previous
+            </md-button>
+
+            <div layout="row">
+
+                <div data-ng-repeat="page in vm.pages">
+
+                    <md-button data-ng-click="vm.openPage(page)" data-ng-if="page.number"
+                               class="md-raised {{vm.currentPage == page.number ? 'md-primary' : ''}}">{{page.caption}}
+                    </md-button>
+
+                    <div data-ng-if="!page.number" style="margin: 10px;">
+                        {{page.caption}}
+                    </div>
+
+                </div>
+
+            </div>
+
+            <md-button class="md-raised" data-ng-show="vm.currentPage < vm.totalPages"
+                       data-ng-click="vm.openNextPage()">Next
+            </md-button>
+        </div>
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.content" style="width: 100%">
+        <div layout="row" layout-sm="column" layout-align="space-around">
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+    </div>
+
+</div>

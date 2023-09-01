@@ -1,0 +1,155 @@
+<md-dialog class="draggable-dialog width-50" aria-label="reconciliation init dialog" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Reconciliation</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="p-24" style="min-height: 500px;">
+
+            <div data-ng-if="vm.readyStatus.schemes" layout="column">
+                <div layout="row" style="margin-bottom: 20px">
+                    <div layout="column">
+
+                        <md-input-container flex="40" style="margin-bottom: 0" class="ng-hide">
+                            <input type="file" id="importDataUploadInput"
+                                   input-file-directive
+                                   read-file="vm.config.file"
+                                   read-file-change="vm.checkExtension(vm.config.file, 'csv', $event)">
+                        </md-input-container>
+                        <div class="input-upload-file-container">
+                            <p class="importDataUploadInput">Select file</p>
+                            <label for="importDataUploadInput" class="md-button md-raised md-primary IFUlabel">
+                                <ng-md-icon icon="file_upload"></ng-md-icon>
+                                <span>BROWSE</span></label>
+                        </div>
+
+                    </div>
+                    <div layout="row">
+
+                        <md-input-container aria-label="select with filter">
+
+                            <label for="">Import scheme</label>
+                            <md-select ng-model="vm.config.scheme"
+                                       md-container-class="common-select-container"
+                                       md-on-close="searchTerm = ''"
+                                       style="width: 200px">
+
+                                <md-select-header>
+                                    <input data-ng-model="searchTerm"
+                                           type="search"
+                                           placeholder="Search for a ..."
+                                           class="md-text md-select-search-pattern select-input-filter"
+                                           ng-keydown="$event.stopPropagation()">
+                                </md-select-header>
+
+                                <div class="select-options-holder">
+
+                                    <md-option
+                                            data-ng-repeat="item in vm.schemes | filter: {user_code: searchTerm}"
+                                            ng-value="item.id"
+                                            ng-bind="item.user_code">
+                                    </md-option>
+
+                                </div>
+
+                            </md-select>
+                        </md-input-container>
+                        <md-button
+                                class="instrument-mapping-btn md-fab"
+                                data-ng-class="{'disabled-btn': !vm.config.scheme}"
+                                data-ng-click="vm.editScheme($event)">
+                            <ng-md-icon icon="edit" size="24" style="fill:rgb(63,81,181);"></ng-md-icon>
+                            <md-tooltip class="tooltip_1" md-direction="top">Edit Scheme</md-tooltip>
+                        </md-button>
+                    </div>
+                    <div layout="row">
+
+
+                        <md-button
+                                class="md-raised colored-btn"
+                                data-ng-class="{'disabled-btn': !vm.loadIsAvailable()}"
+                                data-ng-click="vm.process($event)">
+                            PROCESS
+                        </md-button>
+                        <div data-ng-if="vm.readyStatus.processing" class="m-l-16 p-t-8">
+                            <progress-circular diameter="30"></progress-circular>
+                        </div>
+                    </div>
+                </div>
+                <div layout="row">
+                    <md-input-container>
+                        <label for="">Error handling</label>
+                        <md-select data-ng-model="vm.config.error_handling">
+                            <md-option value="continue">Continue</md-option>
+                            <md-option value="break">Break on first error</md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-input-container>
+                        <label>Separator</label>
+                        <md-select data-ng-model="vm.config.delimiter">
+                            <md-option value=",">Comma (,)</md-option>
+                            <md-option value="">Semicolon (;)</md-option>
+                            <md-option value="\t">Tab</md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-input-container style="width: 245px;">
+                        <label>Import Rules - if object is not found</label>
+                        <md-select
+                                data-ng-model="vm.config.missing_data_handler">
+                            <md-option value="throw_error">Treat as Error</md-option>
+                            <md-option value="set_defaults">Replace with Default Value</md-option>
+                        </md-select>
+                    </md-input-container>
+
+                </div>
+            </div>
+            <div data-ng-if="!vm.readyStatus.schemes" class="p-t-24">
+                <div layout="row" layout-sm="column" layout-align="space-around">
+                    <progress-circular diameter="100"></progress-circular>
+                </div>
+            </div>
+
+            <div class="loader-dialog" data-ng-if="vm.readyStatus.processing">
+
+                <div>
+
+                    <div data-ng-if="vm.loaderData.total" class="loader-description">
+                        <b>{{vm.loaderData.text}}</b> {{vm.loaderData.current}} / {{vm.loaderData.total}}
+                    </div>
+
+                    <div data-ng-if="vm.loaderData.additional.length">
+
+                        <div data-ng-repeat="item in vm.loaderData.additional">
+
+                            <div data-ng-if="item.total" class="text-center">
+                                <b>{{item.text}}</b> {{item.current}} / {{item.total}}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div layout="row" layout-sm="column" layout-align="space-around" class="loader-spinner">
+                        <progress-circular diameter="100"></progress-circular>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <div>
+            <md-button ng-click="vm.cancel()">
+                Close
+            </md-button>
+        </div>
+    </md-dialog-actions>
+</md-dialog>

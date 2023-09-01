@@ -1,0 +1,82 @@
+<md-dialog class="width-50 draggable-dialog dialog-actions-bottom"
+           aria-label="warning dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>System Error log</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="warning-text p-16">
+
+            <div data-ng-repeat="item in vm.errors" layout="column" style="margin-bottom: 24px; border-bottom: 1px solid #000;"    >
+
+                <div layout="column">
+                    <div style="width: 360px">
+                        <b>Date</b>: {{item.created | date:'dd/MM/yyyy HH:mm'}}
+                    </div>
+
+                    <div style="word-break: break-word;">
+                        <b>Website location</b>: {{item.location}}
+                    </div>
+
+                </div>
+
+                <div>
+                    <div data-ng-if="item.data" layout="column">
+
+                        <div>
+                            <b>Status</b>: {{item.data.status}} {{item.data.statusText}}
+                        </div>
+
+                        <div data-ng-if="item.data.message.url">
+                            <b>API URL</b>: {{item.data.message.url}}
+                        </div>
+
+                        <div class="m-t-16" data-ng-if="item.data.message.message">
+
+                            <b>Message</b>:
+                            <p>
+                                {{item.data.message.message}}
+                            </p>
+                        </div>
+
+                        <div class="p-b-16" data-ng-if="item.data.message.trace">
+
+                            <div><b >Traceback</b>:</div>
+
+                            <code data-ng-bind-html="item.data.message.trace" style="white-space: pre;">
+                            </code>
+
+                        </div>
+
+                        <div data-ng-if="item.textMessage">
+                            <code data-ng-bind-html="item.textMessage" style="white-space: pre;">
+                            </code>
+                        </div>
+
+
+                    </div>
+
+                    <div data-ng-if="!item.data">
+                        {{item.text}}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="space-between center">
+        <a class="md-button download-system-error-log" style="margin-right:20px;">
+            Download Error File
+        </a>
+        <md-button ng-click="vm.cancel()">
+            Close
+        </md-button>
+
+    </md-dialog-actions>
+</md-dialog>
