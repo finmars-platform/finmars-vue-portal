@@ -12,6 +12,7 @@ export default defineStore({
 			ws: null,
 
 			ecosystemDefaults: {},
+			configCodes: [],
 			defaultConfigCode: null,
 			systemErrors: [],
 		};
@@ -27,6 +28,12 @@ export default defineStore({
 		async init() {
 			this.getUser()
 			await this.getMasterUsers()
+
+			if(this.current){
+				// hack for repots
+				window.base_api_url = this.current.base_api_url; // needed for angularjs components
+			}
+
 		},
 		async getMasterUsers() {
 			let res = await useApi("masterUser.get");
@@ -39,7 +46,15 @@ export default defineStore({
 
 			if ( activeMasterUser ) {
 				this.current = activeMasterUser;
-				this.defaultConfigCode = 'local.poms.' + this.current.base_api_url;
+
+				const res = await useApi('configurationList.get');
+
+				if (!res.error) {
+					this.configCodes = res.results;
+				}
+
+				this.defaultConfigCode = this.configCodes.find( conf => conf.is_primary ).configuration_code;
+
 			}
 
 			window.onerror = this.registerSysError;
@@ -61,9 +76,38 @@ export default defineStore({
 
 			if (res.error) {
 				console.log('res.error:', res.error)
-
 			} else {
-				this.member = res;
+				if (!res.data) {
+					res.data = {}
+				}
+
+				if (!res.data.favorites) {
+					res.data.favorites = {}
+				}
+
+				if (!res.data.favorites.transaction_type) {
+					res.data.favorites.transaction_type = []
+				}
+
+				if (!res.data.favorites.attributes) {
+					res.data.favorites.attributes = {}
+				}
+
+				this.member = res
+			}
+		},
+		async updateMember(member = this.member) {
+			const options = {
+				params: { id: member.id },
+				body: member,
+			}
+
+			const res = await useApi('member.put', options)
+
+			if (res.error) {
+				console.error(res.error)
+			} else {
+				this.member = res
 			}
 		},
 
@@ -131,7 +175,10 @@ export default defineStore({
 
 				return state.member.data.group_tables[viewerType].entity_viewers_settings[entityType];
 
-			};
+			}
+		},
+		favorites(state) {
+				return state.member.data.favorites
 		},
 	},
 });

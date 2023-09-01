@@ -2,6 +2,7 @@
 	<FmMenu
 		v-model:opened="menuIsOpened"
 		:disabled="loadingLayout"
+		v-bind="$attrs"
 	>
 		<template #btn="{ isOpen }">
 			<FmBtn
@@ -171,7 +172,7 @@
 
 					<FmBtn type="text"
 								 class="menu_item"
-								 :disabled="'viewerData.newLayout'"
+								 :disabled="activeLayout.newLayout"
 								 @click="renameIsOpened = true, close()">
 						<span class="material-icons">create</span>
 						Rename
@@ -240,11 +241,11 @@
 
 	<ModalNameUserCode
 		title="Rename layout"
-										 :name="'viewerData.listLayout.name'"
-										 :user_code="'viewerData.listLayout.user_code'"
-										 :occupiedUserCodes="occupiedUserCodes"
-										 v-model="renameIsOpened"
-
+		:name="activeLayout.name"
+		:user_code="activeLayout.user_code"
+		:content_type="content_type"
+		:occupiedUserCodes="occupiedUserCodes"
+		v-model="renameIsOpened"
 		@save="renameLayout"
 	/>
 
@@ -263,6 +264,7 @@
 		autosaveLayout: Object,
 		loadingLayout: Boolean,
 		loadingLayoutsList: Boolean,
+		content_type: String,
 
 		isLayoutDefault: Function
 	});
@@ -346,7 +348,7 @@
 	async function deleteLayout() {
 		let confirm = await useConfirm({
 			title: 'Confirm action',
-			text: `Do you want to delete "this.layout" layout?`
+			text: `Do you want to delete "${props.activeLayout.name}" layout?`
 		})
 
 		if ( confirm ) {
