@@ -461,6 +461,7 @@
 
 			getLayoutCurrentConfiguration() {
 				let listLayout = useRecursiveDeepCopy(this.listLayout)
+				delete listLayout.newLayout;
 
 				listLayout.data.components = { ...{}, ...this.components }
 				listLayout.data.reportLayoutOptions = JSON.parse(

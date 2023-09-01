@@ -9,9 +9,14 @@
 			>
 				<div class="modal">
 					<div class="modal_top flex aic sb">
-						<div class="modal_head">{{ title }}</div>
-<!--						<FmIcon :disabled="closingDisabled" icon="close" @click="cancel"/>-->
-						<FmBtn :disabled="closingDisabled" type="iconBtn" icon="close" @click="cancel" />
+<!--						<div class="modal_head">{{ title }}</div>
+						<FmIcon :disabled="closingDisabled" icon="close" @click="cancel"/>-->
+            <div class="flex aic">
+              <div class="modal_head">{{ title }}</div>
+              <slot name="modalTop" />
+            </div>
+
+            <FmBtn :disabled="closingDisabled" type="iconBtn" icon="close" @click="cancel" />
 					</div>
 
 					<div class="modal_content scrollable">

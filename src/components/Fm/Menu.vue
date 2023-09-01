@@ -194,15 +194,17 @@
 			let activatorRect = activator.value.getBoundingClientRect();
 			// let popupRect = popup.value.getBoundingClientRect()
 
+			popup.value.style['min-width'] = activatorRect.width + 'px';
+
 			let popupHeight = popup.value.clientHeight;
 			let popupWidth = popup.value.clientWidth;
 
-			if (props.menuWidth === 'activator') {
+			/*if (props.menuWidth === 'activator') {
 
 				popupWidth = activatorRect.width;
 				popup.value.style.width = popupWidth + 'px';
 
-			}
+			}*/
 
 			if (!positionX) {
 

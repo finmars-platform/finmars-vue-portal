@@ -15,10 +15,11 @@
 <script setup>
 	import Stream from "~/services/WebSocket.js"
 
-	const store = useStore()
-	const config = useRuntimeConfig()
+	const store = useStore();
+  const evAttrsStore = useEvAttributesStore();
+	const config = useRuntimeConfig();
 
-	await store.init()
+	await store.init();
 
 	let notLoadingMember = ref(true);
 
@@ -50,7 +51,11 @@
 
 			notLoadingMember.value = false;
 
-			await Promise.all([store.getMe(), store.fetchEcosystemDefaults()]);
+			await Promise.all([
+        store.getMe(),
+        store.fetchEcosystemDefaults(),
+        evAttrsStore.fetchSystemAttributes(),
+      ]);
 
 			notLoadingMember.value = true;
 

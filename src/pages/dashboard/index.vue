@@ -42,7 +42,7 @@
 		</FmHorizontalPanel>
 
 		<BaseModal v-model="isOpenJSON" no_padding title="Editor JSON"
-			:controls="{
+							 :controls="{
 				cancel: {name: 'Cancel'},
 				action: {name: 'Save', cb: saveJSON},
 			}">
@@ -64,13 +64,13 @@
 		</PagesDashboardGrid>
 
 		<div class="fm_tabs"
-			v-if="dashStore.tabs.length > 1 || dashStore.isEdit"
+				 v-if="dashStore.tabs.length > 1 || dashStore.isEdit"
 		>
 			<div class="fm_tabs_item center aic"
-				v-for="(tab, index) in dashStore.tabs"
-				:key="index"
-				:class="{active: tab.id == dashStore.activeTab}"
-				@click="dashStore.activeTab = tab.id"
+					 v-for="(tab, index) in dashStore.tabs"
+					 :key="index"
+					 :class="{active: tab.id == dashStore.activeTab}"
+					 @click="dashStore.activeTab = tab.id"
 			>
 				<input v-if="dashStore.isEdit" v-model="tab.name" />
 				<template v-else>{{ tab.name }}</template>
@@ -95,92 +95,92 @@
 
 <script setup>
 
-	import { VAceEditor } from 'vue3-ace-editor';
-	import 'ace-builds/src-noconflict/mode-json';
-	import 'ace-builds/src-noconflict/theme-monokai';
+import { VAceEditor } from 'vue3-ace-editor';
+import 'ace-builds/src-noconflict/mode-json';
+import 'ace-builds/src-noconflict/theme-monokai';
 
-	definePageMeta({
-		middleware: 'auth',
-		bread: [
-			{
-				text: 'Dashboard',
-				disabled: true
-			},
-		],
-	});
+definePageMeta({
+	middleware: 'auth',
+	bread: [
+		{
+			text: 'Dashboard',
+			disabled: true
+		},
+	],
+});
 
-	const dashStore = useStoreDashboard()
+const dashStore = useStoreDashboard()
 
-	dashStore.init()
+dashStore.init()
 
-	let isOpenJSON = ref(false)
-	let content = ref('')
+let isOpenJSON = ref(false)
+let content = ref('')
 
-	function editJSON() {
-		content.value = JSON.stringify({
-			widgets: dashStore.widgets,
-			tabs: dashStore.tabs,
-			scope: dashStore.scope,
-		}, null, 4)
-		isOpenJSON.value = true
-	}
-	function saveJSON() {
-		let newStore = JSON.parse(content.value)
+function editJSON() {
+	content.value = JSON.stringify({
+		widgets: dashStore.widgets,
+		tabs: dashStore.tabs,
+		scope: dashStore.scope,
+	}, null, 4)
+	isOpenJSON.value = true
+}
+function saveJSON() {
+	let newStore = JSON.parse(content.value)
 
-		dashStore.widgets = newStore.widgets
-		dashStore.tabs = newStore.tabs
-		dashStore.scope = newStore.scope
-	}
+	dashStore.widgets = newStore.widgets
+	dashStore.tabs = newStore.tabs
+	dashStore.scope = newStore.scope
+}
 
-	function editorInit(editor) {
-		editor.setHighlightActiveLine(false);
-		editor.setShowPrintMargin(false);
-		editor.setFontSize(14)
-		editor.setBehavioursEnabled(true);
+function editorInit(editor) {
+	editor.setHighlightActiveLine(false);
+	editor.setShowPrintMargin(false);
+	editor.setFontSize(14)
+	editor.setBehavioursEnabled(true);
 
-		editor.focus();
-		editor.navigateFileStart();
-	}
-	let topComponents = computed(() => {
-		return dashStore.components.filter((item) => {
-			return item.tab == '1'
-		})
+	editor.focus();
+	editor.navigateFileStart();
+}
+let topComponents = computed(() => {
+	return dashStore.components.filter((item) => {
+		return item.tab == '1'
 	})
-	let mainComponents = computed(() => {
-		return dashStore.components.filter((item) => {
-			return item.tab == dashStore.activeTab
-		})
+})
+let mainComponents = computed(() => {
+	return dashStore.components.filter((item) => {
+		return item.tab == dashStore.activeTab
+	})
+})
+
+let isEdit = ref(false)
+
+function addTab() {
+	dashStore.tabs.push({
+		id: Date.now(),
+		name: 'New tab'
+	})
+}
+function delTab( id ) {
+	let tabIndex = dashStore.tabs.findIndex((item) => {
+		return item.id == id
 	})
 
-	let isEdit = ref(false)
+	dashStore.tabs.splice( tabIndex, 1 )
+}
+function edit() {
+	dashStore.isEdit = true
+}
+function cancelEdit() {
+	dashStore.getLayouts()
 
-	function addTab() {
-		dashStore.tabs.push({
-			id: Date.now(),
-			name: 'New tab'
-		})
-	}
-	function delTab( id ) {
-		let tabIndex = dashStore.tabs.findIndex((item) => {
-			return item.id == id
-		})
-
-		dashStore.tabs.splice( tabIndex, 1 )
-	}
-	function edit() {
-		dashStore.isEdit = true
-	}
-	function cancelEdit() {
-		dashStore.getLayouts()
-
-		dashStore.isEdit = false
-	}
+	dashStore.isEdit = false
+}
 </script>
 
 <style lang="scss" scoped>
 
-	.tab_add_text {
-		color: $primary;
-	}
+.tab_add_text {
+	color: $primary;
+}
 
 </style>
