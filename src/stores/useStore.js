@@ -26,18 +26,10 @@ export default defineStore({
 		async init() {
 			this.getUser()
 			await this.getMasterUsers()
+
 			if(this.current){
 				// hack for repots
-
-				window.base_api_url = this.current.base_api_url;
-				const res = await useApi('configurationList.get');
-
-				if (!res.error) {
-					this.configCodes = res.results;
-				}
-
-				this.defaultConfigCode = this.configCodes.find( conf => conf.is_primary ).configuration_code;
-
+				window.base_api_url = this.current.base_api_url; // needed for angularjs components
 			}
 
 		},
@@ -52,17 +44,28 @@ export default defineStore({
 				location.href.includes(item.base_api_url)
 			)
 
-			if (activeMasterUser) {
-				window.base_api_url = activeMasterUser.base_api_url // needed for angularjs components
+			if ( activeMasterUser ) {
+				this.current = activeMasterUser;
 
-				this.current = activeMasterUser
-				this.defaultConfigCode = 'local.poms.' + this.current.base_api_url
+				const res = await useApi('configurationList.get');
+
+				if (!res.error) {
+					this.configCodes = res.results;
+				}
+
+				this.defaultConfigCode = this.configCodes.find( conf => conf.is_primary ).configuration_code;
+
 			}
 
 			window.onerror = this.registerSysError
 		},
 		async getUser() {
 			let res = await useApi('me.get')
+
+			if (res.error) {
+				throw res.error;
+			}
+
 			this.user = res
 
 			if (!this.user.data) this.user.data = {}
@@ -167,7 +170,8 @@ export default defineStore({
 				// let member = setUpMemberData(state.member, viewerType, entityType);
 
 				return state.member.data.group_tables[viewerType]
-					.entity_viewers_settings[entityType]
+					.entity_viewers_settings[entityType];
+
 			}
 		},
 		favorites(state) {
