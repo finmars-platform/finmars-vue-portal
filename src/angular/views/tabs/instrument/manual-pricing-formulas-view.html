@@ -1,0 +1,268 @@
+<!-- DEPRECATED  SINCE 29.04.2020 -->
+
+<div data-ng-controller="ManualPricingFormulasTabController as vm">
+    <div>
+        <div data-ng-if="vm.readyStatus.content">
+
+            <div layout="row">
+
+                <md-input-container class="md-block" style="width: 200px;">
+                    <label>Pricing Currency</label>
+                    <md-select md-on-close="vm.searchTermCurrency = ''"
+                               data-ng-model="vm.entity.pricing_currency"
+                               md-on-open="vm.getCurrencyFields()"
+                               md-container-class="common-select-container">
+                        <md-select-header>
+                            <input data-ng-model="vm.searchTermCurrency"
+                                   type="search"
+                                   placeholder="Search for a ..."
+                                   class="md-text md-select-search-pattern select-input-filter"
+                                   ng-keydown="$event.stopPropagation()">
+                        </md-select-header>
+                        <div class="select-options-holder">
+                            <md-option
+                                    data-ng-repeat="field in vm.currencyFields | orderBy:'-'+field.name | filter:{name: vm.searchTermCurrency} as results track by field.id "
+                                    ng-value="field.id">
+                                {{field.name}}
+                            </md-option>
+                        </div>
+                    </md-select>
+                </md-input-container>
+
+                <md-input-container style="width: 200px;">
+                    <label for="">Pricing Multiplier</label>
+                    <input type="text" data-ng-model="vm.entity.price_multiplier">
+                </md-input-container>
+
+                <md-input-container style="width: 200px;">
+                    <label for="">Default Price</label>
+                    <input type="text" data-ng-model="vm.entity.default_price">
+                </md-input-container>
+
+            </div>
+
+            <div layout="row">
+
+                <md-input-container class="md-block" style="width: 550px;">
+                    <label>Pricing Algorithm</label>
+                    <md-select md-on-close="vm.searchTermDailyPricingModel = ''"
+                               data-ng-model="vm.entity.daily_pricing_model"
+                               md-on-open="vm.getDailyPricingModelFields()"
+                               md-container-class="common-select-container">
+                        <md-select-header>
+                            <input data-ng-model="vm.searchTermDailyPricingModel"
+                                   type="search"
+                                   placeholder="Search for a ..."
+                                   class="md-text md-select-search-pattern select-input-filter"
+                                   ng-keydown="$event.stopPropagation()">
+                        </md-select-header>
+                        <div class="select-options-holder">
+                            <md-option
+                                    data-ng-repeat="field in vm.dailyPricingModelFields | orderBy:'-'+field.name | filter:{name: vm.searchTermDailyPricingModel} as results track by field.id "
+                                    ng-value="field.id">
+                                {{field.name}}
+                            </md-option>
+                        </div>
+                    </md-select>
+                </md-input-container>
+
+                <md-input-container class="md-block" style="width: 200px;">
+                    <label>Price Download Scheme</label>
+                    <md-select md-on-close="vm.searchTermScheme = ''"
+                               data-ng-model="vm.entity.price_download_scheme"
+                               md-on-open="vm.getPriceDownloadSchemeFields()"
+                               md-container-class="common-select-container">
+                        <md-select-header>
+                            <input data-ng-model="vm.searchTermScheme"
+                                   type="search"
+                                   placeholder="Search for a ..."
+                                   class="md-text md-select-search-pattern select-input-filter"
+                                   ng-keydown="$event.stopPropagation()">
+                        </md-select-header>
+                        <div class="select-options-holder">
+                            <md-option
+                                    data-ng-repeat="field in vm.priceDownloadSchemeFields | orderBy:'-'+field.user_code | filter:{user_code: vm.searchTermScheme} as results track by field.id "
+                                    ng-value="field.id">
+                                {{field.user_code}}
+                            </md-option>
+                        </div>
+                    </md-select>
+                </md-input-container>
+
+                <md-input-container style="width: 200px;">
+                    <label for="">ID for Price Downloading</label>
+                    <input type="text" data-ng-model="vm.entity.reference_for_pricing">
+                </md-input-container>
+
+            </div>
+
+            <div style="font-size: 18px; padding-left: 6px; margin-bottom: 24px;
+                        font-weight: bold; border-top: 1px solid #ddd; padding-top: 16px;
+                        margin-top: 8px;">
+                Formulas to Override Pricing Policy
+            </div>
+
+            <table class="bordered">
+                <thead>
+
+                <tr>
+                    <th data-ng-click="vm.setSort('policy_name')">Pricing policy<span class="sortorder"
+                                                                                      data-ng-show="vm.sort === 'policy_name'"
+                                                                                      data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th data-ng-click="vm.setSort('expr')">Expression<span class="sortorder"
+                                                                           data-ng-show="vm.sort === 'expr'"
+                                                                           data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th data-ng-click="vm.setSort('notes')">Notes<span class="sortorder"
+                                                                       data-ng-show="vm.sort === 'notes'"
+                                                                       data-ng-class="{reverse: vm.direction}"></span>
+                    </th>
+                    <th>
+                        <md-button class="md-icon-button">
+                            <ng-md-icon data-ng-click="vm.toggleQuery()" icon="search"></ng-md-icon>
+                        </md-button>
+                    </th>
+                </tr>
+                <tr style="border: 0" data-ng-if="vm.queryStatus" class="filter-row-holder">
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.policy_name">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.expr">
+                        </md-input-container>
+                    </th>
+                    <th>
+                        <md-input-container>
+                            <ng-md-icon icon="search"></ng-md-icon>
+                            <input type="text" data-ng-model="vm.query.notes">
+                        </md-input-container>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr data-ng-repeat="item in vm.entity.manual_pricing_formulas | filter:vm.query">
+                    <td data-ng-if="!item.editStatus" data-ng-bind="vm.bindPricingPolicy(item)"></td>
+                    <td data-ng-if="!item.editStatus" data-ng-bind="item.expr"></td>
+                    <td data-ng-if="!item.editStatus" data-ng-bind="item.notes"></td>
+                    <td data-ng-if="!item.editStatus" class="table-misc-cell">
+                        <md-menu>
+                            <!-- Trigger element is a md-button with an icon -->
+                            <md-button ng-click="$mdOpenMenu($event)" class="md-icon-button"
+                                       aria-label="Open sample menu">
+                                <ng-md-icon icon="settings"></ng-md-icon>
+                            </md-button>
+                            <md-menu-content>
+                                <md-menu-item>
+                                    <md-button ng-click="vm.editItem(item)">
+                                        <ng-md-icon icon="mode_edit" style="top: 6px;
+    position: relative;
+    margin-right: 10px;"></ng-md-icon>
+                                        Edit
+                                    </md-button>
+                                </md-menu-item>
+                                <md-menu-item>
+                                    <md-button ng-click="vm.deleteItem(item, $index)">
+                                        <ng-md-icon icon="delete" style="top: 6px;
+    position: relative;
+    margin-right: 10px;"></ng-md-icon>
+                                        Delete
+                                    </md-button>
+                                </md-menu-item>
+                            </md-menu-content>
+                        </md-menu>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td" style="padding-top: 12px">
+                        <md-input-container>
+                            <label for="">Pricing policy</label>
+                            <md-select data-ng-model="item.pricing_policy">
+                                <md-option data-ng-repeat="policy in vm.policies" ng-value="policy.id">{{policy.name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <label for="">Expression</label>
+                            <input type="text" data-ng-model="item.expr">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-input-container>
+                            <label for="">Notes</label>
+                            <input type="text" data-ng-model="item.notes">
+                        </md-input-container>
+                    </td>
+                    <td data-ng-if="item.editStatus" class="edit-state-td">
+                        <md-button data-ng-click="vm.saveItem(item)">
+                            Ok
+                        </md-button>
+                    </td>
+                </tr>
+                <tr class="tab-input-row">
+                    <td>
+                        <md-input-container style="margin-bottom: 21px;" aria-label="select with filter">
+                            <!--<md-select data-ng-model="vm.newItem.pricing_policy">
+                                <md-option data-ng-repeat="policy in vm.policies" ng-value="policy.id">{{policy.name}}
+                                </md-option>
+                            </md-select>-->
+
+                            <label></label>
+                            <md-select ng-model="vm.newItem.pricing_policy"
+                                       md-container-class="common-select-container"
+                                       md-on-close="searchTerm = ''">
+
+                                <md-select-header>
+                                    <input data-ng-model="searchTerm"
+                                           type="search"
+                                           placeholder="Search for a ..."
+                                           class="md-text md-select-search-pattern select-input-filter"
+                                           ng-keydown="$event.stopPropagation()">
+                                </md-select-header>
+
+                                <div class="select-options-holder">
+
+                                    <md-option
+                                            data-ng-repeat="policy in vm.policies | filter: {name: searchTerm}"
+                                            ng-value="policy.id"
+                                            ng-bind="policy.name">
+                                    </md-option>
+
+                                </div>
+
+                            </md-select>
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-input-container>
+                            <!--<label for="">Expression</label>-->
+                            <input type="text" data-ng-model="vm.newItem.expr">
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-input-container>
+                            <!--<label for="">Notes</label>-->
+                            <input type="text" data-ng-model="vm.newItem.notes">
+                        </md-input-container>
+                    </td>
+                    <td>
+                        <md-button data-ng-click="vm.addRow()">
+                            Add
+                        </md-button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div data-ng-if="!vm.readyStatus.content">
+            <div layout="row" layout-sm="column" layout-align="space-around">
+                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            </div>
+        </div>
+    </div>
+</div>

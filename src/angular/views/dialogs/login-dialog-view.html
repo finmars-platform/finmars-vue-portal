@@ -1,0 +1,59 @@
+<md-dialog class="login-dialog"
+           aria-label="login dialog">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2 class="auth-header">Authentication</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+
+        <div class="p-24" style="min-height: 120px; padding-bottom: 0;">
+
+            <div data-ng-if="!vm.processing">
+
+                <div class="p-r-24">
+
+                    <md-input-container class="width-100">
+                        <label for="">Username</label>
+                        <input type="text" class="auth-username" data-ng-model="vm.username" data-ng-change="vm.error = false">
+                    </md-input-container>
+
+                </div>
+
+                <div class="p-r-24">
+                    <md-input-container class="width-100">
+                        <label for="">Password</label>
+                        <input type="password" class="auth-password" data-ng-model="vm.password" data-ng-change="vm.error = false">
+                    </md-input-container>
+                </div>
+
+                <div data-ng-if="vm.error" class="m-t-8 m-b-8" style="padding: 0 10px;">
+
+                    <div class="color-danger">The username or password that you have entered is incorrect.</div>
+
+                    <div class="color-danger">{{vm.errorMessage}}</div>
+
+                </div>
+
+            </div>
+
+            <div data-ng-if="vm.processing">
+
+                <div class="overlay-loader" layout="row" layout-sm="column" layout-align="space-around">
+                    <progress-circular diameter="50"></progress-circular>
+                </div>
+
+            </div>
+
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="center center">
+        <md-button class="md-raised md-primary auth-login" ng-click="vm.agree()" style="margin-right:20px;">
+            Sign In
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

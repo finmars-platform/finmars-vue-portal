@@ -1,0 +1,103 @@
+<md-dialog aria-label="" ng-cloak class="draggable-dialog width-50" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Run Pricing</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="p-24">
+
+        <div>
+
+            <h3 class="m-0 m-b-16 text-center">Settings</h3>
+
+            <div>
+
+                <div layout="row">
+
+                    <md-input-container>
+                        <label for="">Date from</label>
+                        <zh-date-picker data-date-value="vm.item.price_date_from"></zh-date-picker>
+                    </md-input-container>
+
+                    <md-input-container>
+                        <label for="">Date to</label>
+                        <zh-date-picker data-date-value="vm.item.price_date_to"></zh-date-picker>
+                    </md-input-container>
+
+                </div>
+
+                <div style="border: 1px solid #ccc; padding: 10px; padding-top: 26px">
+
+                    <div>
+
+                        <div layout="row">
+
+                            <div style="width: 240px" class="m-r-16">
+
+                                <md-checkbox ng-model="vm.item.price_overwrite_principal_prices"
+                                             aria-label="override">
+                                    Overwrite Principal Prices
+                                    <ng-md-icon class="tooltip-inline-block" icon="info" size="20"
+                                                style="fill: #777777">
+                                        <md-tooltip class="tooltip_1" md-direction="top">tooltip text</md-tooltip>
+                                    </ng-md-icon>
+                                </md-checkbox>
+
+                            </div>
+
+                            <div style="width: 240px">
+
+                                <md-checkbox ng-model="vm.item.price_overwrite_accrued_prices"
+                                             aria-label="override">
+                                    Overwrite Accruals
+                                    <ng-md-icon class="tooltip-inline-block" icon="info" size="20"
+                                                style="fill: #777777">
+                                        <md-tooltip class="tooltip_1" md-direction="top">tooltip text</md-tooltip>
+                                    </ng-md-icon>
+                                </md-checkbox>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+            <div class="m-t-16">
+
+                <h4>Pricing Policies</h4>
+
+                <div class="p-l-8">
+
+                    <div data-ng-repeat="policy in vm.pricingPolicies">
+
+                        <md-checkbox ng-model="vm.pricingPolicyFilter[policy.id]"
+                                     aria-label="override">
+                            {{policy.name}}
+                        </md-checkbox>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.agree()" style="margin-right:20px;">
+            Run
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

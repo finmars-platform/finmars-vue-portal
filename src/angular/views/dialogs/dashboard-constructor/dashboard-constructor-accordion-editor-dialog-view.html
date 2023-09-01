@@ -1,0 +1,154 @@
+<md-dialog aria-label="dashboard constructor accordion editor component"
+           class="draggable-dialog width-50"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Accordion Manager</h2>
+            <span flex></span>
+
+            <div data-ng-if="vm.processing" class="dialog-toolbar-loader">
+                <progress-circular diameter="20"></progress-circular>
+            </div>
+
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+
+        <div class="p-16">
+
+            <md-tabs md-border-bottom md-dynamic-height>
+                <md-tab data-ng-repeat="tab in vm.layout.data.tabs | orderBy: 'tab_number' track by tab.id">
+                    <md-tab-label>
+                        <span class="ec-tab-item-name">{{tab.name}}</span>
+                    </md-tab-label>
+                    <md-tab-body>
+
+                        <div class="p-16" layout="row">
+
+                            <div layout="column">
+
+                                <h3 class="p-l-8 text-center">Existing Accordions</h3>
+
+                                <div class="p-8">
+
+                                    <div data-ng-repeat="item in tab.accordions track by $index"
+                                         class="accordion-constructor-row-accordion" layout="column">
+
+
+                                            <div layout="row" class="width-100" data-ng-if="item.type === 'accordion'"
+                                                 style="margin: 0; padding: 8px; height: {{((item.to - item.from)+ 1) * 50}}px">
+
+                                                <md-card title="{{item.name}}"
+                                                         class="width-100 p-8 accordion-constructor-row-accordion-guide-card">
+                                                    <div class="m-r-8" style="padding-top: 4px;">
+                                                        {{item.name}}
+                                                    </div>
+
+                                                    <div>
+
+                                                        <md-button class="ec-tab-btn md-raised md-warn"
+                                                                   data-ng-click="vm.deleteAccordion($event, tab, $index)">
+                                                            <ng-md-icon icon="delete" class="ng-scope"></ng-md-icon>
+                                                        </md-button>
+
+                                                        <md-button class="ec-tab-btn md-raised"
+                                                                   data-ng-click="vm.increaseAccordion($event, item)"
+                                                                   data-ng-disabled="vm.isNextSlotAnAccordion(item, tab)">
+                                                            <ng-md-icon icon="expand_more" size="16"></ng-md-icon>
+                                                        </md-button>
+
+                                                        <md-button class="ec-tab-btn md-raised"
+                                                                   data-ng-click="vm.decreaseAccordion($event, item)"
+                                                                   data-ng-disabled="item.from == item.to - 1">
+                                                            <ng-md-icon icon="expand_less" size="16"></ng-md-icon>
+                                                        </md-button>
+                                                    </div>
+
+                                                </md-card>
+
+                                            </div>
+
+                                            <div layout="row"
+                                                 data-ng-if="item.type != 'accordion' && !vm.isAccordionOverlapped($index, tab)"
+                                                 style="height: 50px;">
+
+                                            </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div>
+
+                                <h3 class="p-l-8 text-center">Constructor Preview</h3>
+
+                                <div layout="column" style="background: #ddd" class="p-8">
+                                    <div data-ng-repeat="row in tab.layout.rows track by $index"
+                                         class="accordion-constructor-row" layout="row">
+
+                                        <div data-ng-if="!row.canCreateAccordion"
+                                             style="width: 200px; box-sizing: border-box; height: 25px;"
+                                             class="p-8 m-8">
+
+                                        </div>
+
+                                        <div data-ng-if="row.canCreateAccordion" style="background: #fff; width: 200px"
+                                             class="p-8 m-8" layout="row">
+
+                                            <md-input-container style="width: 50%">
+                                                <label for="">Name</label>
+                                                <input type="text" data-ng-model="row.accordionName">
+                                            </md-input-container>
+
+                                            <md-button
+                                                    class="ec-tab-btn md-raised"
+                                                    data-ng-click="vm.addAccordion($event, tab, row, row.accordionName, $index)">
+                                                <ng-md-icon icon="add_circle"></ng-md-icon>
+                                            </md-button>
+
+                                        </div>
+
+                                        <div class="accordion-constructor-empty-cell-holder p-8" layout="row">
+
+                                            <div class="dashboard-constructor-empty-cell m-8">
+                                                <ng-md-icon icon="add_circle"></ng-md-icon>
+                                            </div>
+
+                                            <div class="dashboard-constructor-empty-cell m-8" style="opacity: .5">
+                                                <ng-md-icon icon="add_circle"></ng-md-icon>
+                                            </div>
+
+                                            <div class="dashboard-constructor-empty-cell m-8" style="opacity: .2">
+                                                <ng-md-icon icon="add_circle"></ng-md-icon>
+                                            </div>
+
+
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </md-tab-body>
+                </md-tab>
+            </md-tabs>
+
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+
+        <md-button ng-click="vm.cancel()" style="margin-right:20px;">
+            Close
+        </md-button>
+
+        <md-button ng-click="vm.agree()" style="margin-right:20px;">
+            OK
+        </md-button>
+
+    </md-dialog-actions>
+</md-dialog>

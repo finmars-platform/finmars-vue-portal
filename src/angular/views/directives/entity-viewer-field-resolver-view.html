@@ -1,0 +1,381 @@
+<div ng-if="readyStatus.content">
+
+    <div data-ng-if="type === 'id'">
+
+        <div data-ng-if="isSpecialSearchRelation()">
+
+
+            <div data-ng-if="valueEntity == 'instrument'">
+
+                <instrument-select
+                        label="{{getName()}}"
+                        model="modelObj.model"
+                        item-object="entity[fieldKey + '_object']"
+                        on-change-callback="changeHandler()"
+                        item-name="inputTextObj.value"
+                        custom-buttons="item.buttons"
+                        custom-styles="customStyles"
+                        event-signal="ciEventObj.event"
+                        small-options="{notNull: options.notNull, tooltipText: tooltipText, dialogParent: '.dialog-containers-wrap'}"
+                        on-change-callback="changeHandler()"
+                ></instrument-select>
+
+            </div>
+
+            <div data-ng-if="valueEntity == 'counterparty' || valueEntity == 'currency'">
+
+                <unified-data-select
+                        label="{{getName()}}"
+                        model="modelObj.model"
+                        item-object="entity[fieldKey + '_object']"
+                        item-name="inputTextObj.value"
+                        custom-buttons="item.buttons"
+                        custom-styles="customStyles"
+                        event-signal="ciEventObj.event"
+                        small-options="{notNull: options.notNull, tooltipText: tooltipText, dialogParent: '.dialog-containers-wrap'}"
+                        entity-type="valueEntity"
+                        on-change-callback="changeHandler()"
+                ></unified-data-select>
+
+            </div>
+
+            <div data-ng-if="valueEntity !== 'instrument' && valueEntity !== 'counterparty' && valueEntity !== 'currency'">
+                <entity-search-select item="modelObj.model"
+                                      label="getName()"
+                                      item-name="inputTextObj.value"
+                                      item-object="entity[fieldKey + '_object']"
+                                      on-change-callback="changeHandler()"
+                                      custom-buttons="item.buttons"
+                                      custom-styles="customStyles"
+                                      event-signal="ciEventObj.event"
+                                      small-options="{
+                                        notNull: options.notNull,
+                                        tooltipText: tooltipText,
+                                        dialogParent: '.dialog-containers-wrap'
+                                      }"
+                                      entity-type="valueEntity"
+                                      on-change-callback="changeHandler()"></entity-search-select>
+            </div>
+        </div>
+
+        <div data-ng-if="!isSpecialSearchRelation()">
+            <div data-ng-if="checkComplexEntityType()">
+                <md-input-container
+                        class="md-block no-error-spacer"
+                        aria-label="select with search"
+                >
+                    <label data-ng-bind="getName()"></label>
+
+                    <md-select
+                            md-on-close="searchTerm = ''"
+                            data-ng-model="modelObj.model"
+                            data-ng-change="changeHandler()"
+                            md-on-open="getDataApply()"
+                            md-selected-text="bindFormFields()"
+                            md-container-class="common-select-container"
+                            style="{{inputBackgroundColor()}}">
+                        <md-select-header>
+                            <input
+                                    data-ng-model="searchTerm"
+                                    type="search"
+                                    placeholder="Search for a ..."
+                                    class="md-text md-select-search-pattern select-input-filter"
+                                    ng-keydown="$event.stopPropagation()"
+                            />
+                        </md-select-header>
+
+                        <div data-ng-if="groups" class="select-options-holder">
+                            <md-optgroup
+                                    data-ng-repeat="group in groups | orderBy:'-'+group.name track by group.id"
+                                    data-ng-if="group.fields.length"
+                                    label="{{group.name}}"
+                            >
+                                <md-option
+                                        data-ng-repeat="field in group.fields | orderBy:resolveSort(field) | filter:{name: searchTerm} track by $index"
+                                        ng-value="field.id"
+                                >
+                                    {{bindListFields(field)}}
+                                </md-option>
+                            </md-optgroup>
+                        </div>
+
+                        <div
+                                data-ng-if="!groups && field && field[0]"
+                                class="select-options-holder"
+                        >
+                            <md-option data-ng-value="fields[0].id"
+                            >{{bindListFields(fields[0])}}
+                            </md-option
+                            >
+                        </div>
+                    </md-select>
+                </md-input-container>
+            </div>
+
+            <div data-ng-if="!checkComplexEntityType()">
+                <div data-ng-if="fieldKey !== 'price_download_scheme'">
+                    <div data-ng-if="!checkForCrudSelects()">
+<!--                                      <md-input-container class="md-block no-error-spacer md-select-pan">
+                                        <label data-ng-bind="getName()"></label>
+                                        <md-select
+                                          md-on-close="searchTerm = ''"
+                                          data-ng-model="entity[fieldKey]"
+                                          data-ng-change="changeHandler()"
+                                          md-on-open="getDataApply()"
+                                          md-selected-text="bindFormFields()"
+                                          md-container-class="common-select-container"
+                                          style="{{inputBackgroundColor()}}"
+                                        >
+                                          <md-select-header>
+                                            <input
+                                              data-ng-model="searchTerm"
+                                              type="search"
+                                              placeholder="Search for a ..."
+                                              class="md-text md-select-search-pattern select-input-filter"
+                                              ng-keydown="$event.stopPropagation()"
+                                            />
+                                          </md-select-header>
+
+                                          <div class="select-options-holder">
+                                            <md-option
+                                              data-ng-repeat="field in fields | orderBy:resolveSort(field) | filter:{name: searchTerm} as results track by field.id "
+                                              ng-value="field.id">
+                                              {{bindListFields(field)}}
+                                            </md-option>
+                                          </div>
+
+                                        </md-select>
+                                      </md-input-container>-->
+
+                        <dropdown-select label="{{getName()}}"
+                                         model="modelObj.model"
+                                         placeholder-text="{{getName()}}"
+                                         event-signal="ciEventObj.event"
+                                         menu-options="selectorOptions"
+                                         small-options="{
+                                            notNull: options.notNull,
+                                            tooltipText: '{{getName()}}',
+                                            dialogParent: '.dialog-containers-wrap'
+                                         }"
+                                         custom-styles="customStyles"
+                                         sorted="sorted"
+                                        on-change-callback="changeHandler()">
+                        </dropdown-select>
+
+                    </div>
+
+                    <div data-ng-if="checkForCrudSelects()">
+
+                        <div data-ng-if="readyStatus.content">
+                            <crud-select data-label="getName()"
+                                         data-item="modelObj.model"
+                                         data-entity-type="crudEntityType"
+                                         data-options="fields"
+                                         data-ng-click="getDataApply()"
+                                         event-signal="ciEventObj.event"
+                                         small-options="{notNull: options.notNull}"
+                            ></crud-select>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div data-ng-if="fieldKey == 'price_download_scheme'">
+
+                    <!--                <md-input-container class="md-block no-error-spacer">
+                                        <label data-ng-bind="getName()"></label>
+                                        <md-select
+                                                md-on-close="searchTerm = ''"
+                                                data-ng-model="entity[fieldKey]"
+                                                data-ng-change="changeHandler()"
+                                                md-on-open="getDataApply()"
+                                                md-container-class="common-select-container"
+                                                style="{{inputBackgroundColor()}}"
+                                        >
+                                            <md-select-header>
+                                                <input
+                                                        data-ng-model="searchTerm"
+                                                        type="search"
+                                                        placeholder="Search for a ..."
+                                                        class="md-text md-select-search-pattern select-input-filter"
+                                                        ng-keydown="$event.stopPropagation()"
+                                                />
+                                            </md-select-header>
+                                            <div class="select-options-holder">
+                                                <md-option
+                                                        data-ng-repeat="field in fields | orderBy:'-'+field.user_code | filter:{user_code:searchTerm} track by field.id "
+                                                        ng-value="field.id"
+                                                >
+                                                    {{field['user_code']}}
+                                                </md-option>
+                                            </div>
+                                        </md-select>
+                                    </md-input-container>-->
+                    <dropdown-select label="{{getName()}}"
+                                     model="modelObj.model"
+                                     placeholder-text="{{getName()}}"
+                                     event-signal="ciEventObj.event"
+                                     menu-options="schemeSortedFields"
+                                     small-options="{notNull: options.notNull, tooltipText: '{{getName()}}', dialogParent: '.dialog-containers-wrap'}"
+                                     custom-styles="customStyles"
+                                     sorted="sorted"
+                                     on-change-callback="changeHandler()">
+                    </dropdown-select>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div data-ng-if="type === 'multiple-ids'">
+
+        <div data-ng-if="checkComplexEntityType()">
+
+            <two-fields-multiselect ng-model="modelObj.model"
+                                    title="{{getName()}}"
+                                    model="modelObj.model"
+                                    items="selectorOptions"
+                                    name-property="bindFieldsName"
+                                    selected-items-indication="chips"
+                                    small-options="{dialogParent: '.dialog-containers-wrap'}"
+                                    on-change-callback="changeHandler()"></two-fields-multiselect>
+
+        </div>
+
+        <div data-ng-if="!checkComplexEntityType()">
+            <div data-ng-if="fieldKey !== 'content_types'">
+                <!--        <md-input-container class="md-block no-error-spacer">
+                          <label data-ng-bind="getName()"></label>
+                          <md-select
+                            md-on-close="searchTerm = ''"
+                            md-on-open="getDataApply()"
+                            data-ng-model="entity[fieldKey]"
+                            data-ng-change="changeHandler()"
+                            md-selected-text="bindMCField()"
+                            multiple="true"
+                            style="{{inputBackgroundColor()}}"
+                          >
+                            <md-select-header>
+                              <input
+                                data-ng-model="searchTerm"
+                                type="search"
+                                placeholder="Search for a ..."
+                                class="md-text md-select-search-pattern"
+                                ng-keydown="$event.stopPropagation()"
+                              />
+                            </md-select-header>
+                            <md-option
+                              data-ng-repeat="field in fields | orderBy:resolveSort(field) | filter:{name: searchTerm} track by field.id"
+                              ng-value="field.id"
+                            >
+                              {{bindListFields(field)}}
+                            </md-option>
+                          </md-select>
+                        </md-input-container>-->
+
+                <!--TODO ask when to use 2020.10.21 -->
+                <!--Victor: I it got back because server need the array-->
+                <two-fields-multiselect ng-model="modelObj.model"
+                                        title="{{getName()}}"
+                                        model="modelObj.model"
+                                        name-property="bindFieldsName"
+                                        items="selectorOptions"
+                                        data-selected-items-indication="chips"
+                                        small-options="{dialogParent: '.dialog-containers-wrap'}"
+                                        on-change-callback="changeHandler()"></two-fields-multiselect>
+
+
+                <!--        <md-input-container class="md-block no-error-spacer">
+                          <label data-ng-bind="getName()"></label>
+                          <md-select
+                            md-on-close="searchTerm = ''"
+                            md-on-open="getDataApply()"
+                            data-ng-model="entity[fieldKey]"
+                            data-ng-change="changeHandler()"
+                            md-selected-text="bindFormFields()"
+                            md-container-class="common-select-container"
+                            style="{{inputBackgroundColor()}}"
+                          >
+                            <md-select-header>
+                              <input
+                                data-ng-model="searchTerm"
+                                type="search"
+                                placeholder="Search for a ..."
+                                class="md-text md-select-search-pattern select-input-filter"
+                                ng-keydown="$event.stopPropagation()"
+                              />
+                            </md-select-header>
+                            <div class="select-options-holder">
+                              <md-option
+                                data-ng-repeat="field in fields | orderBy:resolveSort(field) | filter:{name: searchTerm} track by field.id"
+                                ng-value="field.id">
+                                {{bindListFields(field)}}
+                              </md-option>
+                            </div>
+                          </md-select>
+                        </md-input-container>-->
+
+                <!--    Victor: dropdown return one value, but server need array. I use two-fields-multiselect above
+                        <dropdown-select class="p-r-8" label="{{getName()}}"
+                                         model="entity[fieldKey]"
+                                         placeholder-text="{{getName()}}"
+                                         menu-options="selectorOptions"
+                                         small-options="{tooltipText: '{{getName()}}'}"
+                                         sorted="sorted"
+                                         style="{{inputBackgroundColor()}}">
+                        </dropdown-select>
+                -->
+            </div>
+
+            <div data-ng-if="fieldKey === 'content_types'">
+                <!--        <md-input-container class="md-block no-error-spacer">
+                          <label data-ng-bind="getName()"></label>
+                          <md-select
+                            md-on-close="searchTerm = ''"
+                            md-on-open="getDataApply()"
+                            data-ng-model="entity[fieldKey]"
+                            data-ng-change="changeHandler()"
+                            md-selected-text="bindMCField()"
+                            multiple="true"
+                            style="{{inputBackgroundColor()}}"
+                          >
+                            <md-select-header>
+                              <input
+                                data-ng-model="searchTerm"
+                                type="search"
+                                placeholder="Search for a ..."
+                                class="md-text md-select-search-pattern"
+                                ng-keydown="$event.stopPropagation()"
+                              />
+                            </md-select-header>
+                            <md-option
+                              data-ng-repeat="field in fields | orderBy:'-'+field.name | filter:{name: searchTerm}"
+                              ng-value="field.key"
+                            >
+                              {{field.name}}
+                            </md-option>
+                          </md-select>
+                        </md-input-container>-->
+
+                <dropdown-select label="{{getName()}}"
+                                 model="modelObj.model"
+                                 placeholder-text="{{getName()}}"
+                                 event-signal="ciEventObj.event"
+                                 menu-options="selectorOptions"
+                                 small-options="{
+                                    notNull: options.notNull,
+                                    tooltipText: '{{getName()}}',
+                                    dialogParent: '.dialog-containers-wrap'
+                                 }"
+                                 custom-styles="customStyles"
+                                 sorted="sorted"
+                                 on-change-callback="changeHandler()">
+                </dropdown-select>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>

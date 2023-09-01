@@ -1,0 +1,41 @@
+<div class="g-table-body position-relative">
+  <!--<div class="ev-progressbar-holder" layout="row" layout-sm="column">
+        <progress-linear class="ev-progressbar"></progress-linear>
+    </div>-->
+
+  <div class="ev-viewport">
+    <div class="ev-content" data-ng-show="dataLoadStatus"></div>
+
+    <div ng-if="!dataLoadStatus" class="ev-content-loader">
+      <div
+        class="e-data-loader"
+        layout="row"
+        layout-sm="column"
+        layout-align="space-around"
+      >
+        <progress-circular diameter="100"></progress-circular>
+      </div>
+    </div>
+  </div>
+
+  <div
+    ng-if="isReport"
+    class="drop-area-wrap left-side-groups-drop-area display-none gLeftSideGroupsHolder"
+  >
+    <div class="g-drop-area gDropArea"></div>
+
+    <div class="drop-area-content">
+      <span>Drop here to add grouping</span>
+    </div>
+  </div>
+
+  <div
+    class="drop-area-wrap right-side-columns-drop-area display-none gRightSideColumnsHolder"
+  >
+    <div class="g-drop-area gDropArea"></div>
+
+    <div class="drop-area-content">
+      <span>Drop here to add column</span>
+    </div>
+  </div>
+</div>

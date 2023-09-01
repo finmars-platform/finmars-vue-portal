@@ -1,0 +1,52 @@
+<div style="padding: 20px 20px 0">
+
+    <h2 class="m-b-35">Data Providers</h2>
+    <div data-ng-if="vm.readyStatus.provider">
+        <md-card class="m-l-0 m-r-0">
+            <form action="" data-ng-submit="vm.saveConfig($event)" name="sertForm">
+                <md-card-content>
+                    <!-- <md-input-container class="md-block"> -->
+                    <div style="width: 300px;  margin-bottom: 24px;">
+                        <h4>Certificate</h4>
+
+                        <md-input-container flex="40" style="margin-bottom: 0" class="ng-hide">
+                            <input type="file" id="configurationFileImport" input-file-directive
+                                   data-read-file="vm.provider.p12cert" data-read-file-change="vm.checkExtension($event)">
+                        </md-input-container>
+                        <div class="input-upload-file-container">
+                            <p class="configurationFileImport">Select file</p>
+                            <label for="configurationFileImport" class="md-button md-raised md-primary IFUlabel">
+                                <ng-md-icon icon="file_upload"></ng-md-icon>
+                                <span>BROWSE</span></label>
+                        </div>
+
+                    </div>
+                    <!-- </md-input-container> -->
+
+                    <div style="width: 300px;">
+
+                        <md-input-container class="md-block">
+                            <label>Password for the Certificate</label>
+                            <input type="password" data-ng-model="vm.provider.password">
+                        </md-input-container>
+
+                    </div>
+
+                </md-card-content>
+                <md-card-actions>
+                    <div layout="row" layout-align="end center" class="m-r-16">
+                        <md-button class="md-raised"
+                                   type="submit">
+                            Save
+                        </md-button>
+                    </div>
+                </md-card-actions>
+            </form>
+        </md-card>
+    </div>
+    <div data-ng-if="!vm.readyStatus.provider">
+        <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+            <md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>
+        </div>
+    </div>
+</div>

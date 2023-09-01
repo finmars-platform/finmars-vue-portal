@@ -1,7 +1,5 @@
-import { defineStore } from "pinia";
-
 export default defineStore({
-	id: "global",
+	id: 'global',
 	state: () => {
 		return {
 			user: {},
@@ -15,14 +13,14 @@ export default defineStore({
 			configCodes: [],
 			defaultConfigCode: null,
 			systemErrors: [],
-		};
+		}
 	},
 	actions: {
-		registerSysError (error) {
+		registerSysError(error) {
 			this.systemErrors.push({
 				created: new Date().toISOString(),
 				location: window.location.href,
-				text: JSON.stringify(error)
+				text: JSON.stringify(error),
 			})
 		},
 		async init() {
@@ -36,13 +34,15 @@ export default defineStore({
 
 		},
 		async getMasterUsers() {
-			let res = await useApi("masterUser.get");
+			let res = await useApi('masterUser.get')
 
-			if (res.error) return;
+			if (res.error) return
 
-			this.masterUsers = res.results;
+			this.masterUsers = res.results
 
-			const activeMasterUser = this.masterUsers.find( item => location.href.includes(item.base_api_url) )
+			const activeMasterUser = this.masterUsers.find((item) =>
+				location.href.includes(item.base_api_url)
+			)
 
 			if ( activeMasterUser ) {
 				this.current = activeMasterUser;
@@ -57,22 +57,25 @@ export default defineStore({
 
 			}
 
-			window.onerror = this.registerSysError;
-
+			window.onerror = this.registerSysError
 		},
 		async getUser() {
 			let res = await useApi('me.get')
-			this.user = res
 
-			if (!this.user.data) this.user.data = {};
-
-			if (typeof this.user.data.autosave_layouts !== 'boolean') {
-				this.user.data.autosave_layouts = true;
+			if (res.error) {
+				throw res.error;
 			}
 
+			this.user = res
+
+			if (!this.user.data) this.user.data = {}
+
+			if (typeof this.user.data.autosave_layouts !== 'boolean') {
+				this.user.data.autosave_layouts = true
+			}
 		},
 		async getMe() {
-			const res = await useApi('member.get', {params: {id: 0}});
+			const res = await useApi('member.get', { params: { id: 0 } })
 
 			if (res.error) {
 				console.log('res.error:', res.error)
@@ -112,73 +115,67 @@ export default defineStore({
 		},
 
 		async fetchEcosystemDefaults() {
-
-			const res = await useApi('ecosystemDefaults.get');
+			const res = await useApi('ecosystemDefaults.get')
 
 			if (!res.error) {
-				this.ecosystemDefaults = res.results[0];
+				this.ecosystemDefaults = res.results[0]
 			}
-
 		},
 
-		setupMemberData (isReport, entityType) {
-
-			if (!this.member.data) this.member.data = {};
-			if (!this.member.data.group_tables) this.member.data.group_tables = {};
+		setupMemberData(isReport, entityType) {
+			if (!this.member.data) this.member.data = {}
+			if (!this.member.data.group_tables) this.member.data.group_tables = {}
 
 			if (!this.member.data.group_tables.entity_viewer) {
 				this.member.data.group_tables.entity_viewer = {
-					entity_viewers_settings: {}
-				};
+					entity_viewers_settings: {},
+				}
 			}
 
 			if (!this.member.data.group_tables.report_viewer) {
 				this.member.data.group_tables.report_viewer = {
-					entity_viewers_settings: {}
-				};
+					entity_viewers_settings: {},
+				}
 			}
 
-			const viewerType = isReport ? 'report_viewer' : 'entity_viewer';
-			let entityTypesSettings = this.member.data.group_tables[viewerType].entity_viewers_settings;
+			const viewerType = isReport ? 'report_viewer' : 'entity_viewer'
+			let entityTypesSettings =
+				this.member.data.group_tables[viewerType].entity_viewers_settings
 
 			if (!entityTypesSettings[entityType]) {
-
 				entityTypesSettings[entityType] = {
 					marked_rows: {},
-					row_type_filter: 'none'
-				};
-
+					row_type_filter: 'none',
+				}
 			}
 
-			return this.member;
-
+			return this.member
 		},
 
 		setMemberEntityViewerSettings(settings, isReport, entityType) {
-
-			const viewerType = isReport ? 'report_viewer' : 'entity_viewer';
+			const viewerType = isReport ? 'report_viewer' : 'entity_viewer'
 			/* let member = setUpMemberData(this.member, viewerType, entityType);
 
 			member.data.group_tables[viewerType].entity_viewers_settings[entityType] = settings; */
 
-			this.member.data.group_tables[viewerType].entity_viewers_settings[entityType] = settings;
-
+			this.member.data.group_tables[viewerType].entity_viewers_settings[
+				entityType
+			] = settings
 		},
-
 	},
 	getters: {
 		memberEntityViewerSettings(state) {
 			return (isReport, entityType) => {
-
-				const viewerType = isReport ? 'report_viewer' : 'entity_viewer';
+				const viewerType = isReport ? 'report_viewer' : 'entity_viewer'
 				// let member = setUpMemberData(state.member, viewerType, entityType);
 
-				return state.member.data.group_tables[viewerType].entity_viewers_settings[entityType];
+				return state.member.data.group_tables[viewerType]
+					.entity_viewers_settings[entityType];
 
 			}
 		},
 		favorites(state) {
-				return state.member.data.favorites
+			return state.member.data.favorites
 		},
 	},
-});
+})

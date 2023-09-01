@@ -1,0 +1,253 @@
+<md-dialog aria-label="edit complex transaction dialog"
+           class="entity-editor-dialog draggable-dialog dialog-actions-bottom cTransactionEditorDialogElemToResize"
+           drag-dialog
+           style="height: 100%">
+    <md-toolbar>
+        <div class="md-toolbar-tools" data-ng-if="vm.checkReadyStatus()"
+             data-ng-class="{'disabled-input-form': !vm.hasEditPermission}">
+            <is-draggable-sign></is-draggable-sign>
+
+            <div layout="row">
+
+                <h2 data-ng-if="vm.hasEditPermission">Rebook Transaction</h2>
+                <h2 data-ng-if="!vm.hasEditPermission">View Transaction</h2>
+                <span data-ng-if="!vm.hasEditPermission" style="margin-left: 12px;">
+                    <ng-md-icon icon="lock" size="24">
+                            <md-tooltip md-direction="bottom">You don't have permission to rebook this Transaction</md-tooltip>
+                    </ng-md-icon>
+                </span>
+                <span flex></span>
+
+                <div data-ng-if="vm.processing" layout="row" class="m-l-16">
+                    <div layout="row" layout-sm="column" layout-align="space-around" class="m-r-8">
+                        <!--<md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>-->
+                        <progress-circular diameter="20"></progress-circular>
+                    </div>
+                    — Processing
+                </div>
+
+            </div>
+
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content style="height: 100%" class="position-relative">
+
+        <div data-ng-include="'views/entity-viewer/complex-transaction-edit-content-view.html'" style="min-width: 1450px">
+
+            <!--<div data-ng-if="vm.checkReadyStatus()" class="position-relative">
+
+                <div class="m-8 f-s-18 p-8"
+                     style="background: #ffeee8">
+                    <span class="display-inline-block" style="width: 125px">Transaction type:</span> <b>{{vm.entity.transaction_type_object.name}}</b><br/>
+                    <span class="display-inline-block" style="width: 125px">Status:</span>
+                    <b data-ng-if="vm.entity.status == 1">Booked</b>
+                    <b data-ng-if="vm.entity.status == 2">Pending</b>
+                    <b data-ng-if="vm.entity.status == 3">Ignored</b>
+                </div>
+
+                <div data-ng-if="vm.fixedArea.isActive"
+                     class="entity-editor-fixed-area-container"
+                     ng-class="{'opacity-05': vm.entity.is_locked, 'no-pointer-events': vm.entity.is_locked}">
+                    <div layout="row"
+                         ng-repeat="row in vm.range(vm.fixedArea.layout.rows)"
+                         class="entity-editor-row">
+                        <div data-ng-repeat="field in vm.fixedArea.layout.fields | orderBy: 'column' track by $index"
+                             data-ng-if="vm.checkFieldRender(vm.fixedArea, row, field)"
+                             class="ev-data-field"
+                             data-ng-class="{'decoration-label-line': field.attribute['value_type'] === 'decoration'}"
+                             flex="{{vm.bindFlex(vm.fixedArea, field)}}">
+                            <bind-field-control
+                                    entity-type="vm.entityType"
+                                    entity="vm.entity"
+                                    ev-editor-event-service="vm.evEditorEventService"
+                                    ev-editor-data-service="vm.evEditorDataService"
+                                    item="vm.fixedAreaAttributesLayout[$index]"
+                                    fields-data-store="vm.fieldsDataStore"
+                                    entity-change="vm.onEntityChange(fieldKey)"></bind-field-control>
+                        </div>
+                    </div>
+                </div>
+
+                <md-tabs md-dynamic-height md-border-bottom class="tabs-colored">
+
+                    <md-tab data-ng-repeat="tab in vm.tabs track by tab.name">
+                        <md-tab-label>
+                            <div class="tab-name-elem" data-tab-name="{{tab.name | lowercase}}">
+                                <span>{{tab.name}}</span>
+                            </div>
+                        </md-tab-label>
+
+                        <md-tab-body>
+                            <md-content class="md-padding p-t-26"
+                                        ng-class="{'locked-tab-overlay': vm.entity.is_locked, 'canceled-tab-overlay': vm.entity.is_canceled}">
+                                <div layout="row"
+                                     ng-repeat="row in vm.range(tab.layout.rows)"
+                                     class="entity-editor-row">
+                                    <div data-ng-repeat="field in tab.layout.fields | orderBy: 'column' track by $index"
+                                         class="ev-data-field {{field.attribute['value_type'] === 'decoration' ? 'decoration-label-line' : ''}}"
+                                         flex="{{vm.bindFlex(tab, field)}}"
+                                         data-ng-if="vm.checkFieldRender(tab, row, field)">
+                                        <bind-field-control
+                                                entity-type="vm.entityType"
+                                                entity="vm.entity"
+                                                ev-editor-event-service="vm.evEditorEventService"
+                                                ev-editor-data-service="vm.evEditorDataService"
+                                                item="vm.attributesLayout[tab.tabOrder][field.row][field.column]"
+                                                fields-data-store="vm.fieldsDataStore"
+                                                entity-change="vm.onEntityChange(fieldKey)"></bind-field-control>
+                                    </div>
+                                </div>
+                            </md-content>
+                        </md-tab-body>
+                    </md-tab>
+
+                    <md-tab>
+                        <md-tab-lable>
+                            <span class="grey-tab">Fields</span>
+                        </md-tab-lable>
+                        <md-tab-body>
+                            <md-content class="md-padding p-t-26">
+                                <div data-ng-include="'views/tabs/complex-transaction/complex-transaction-fields-tab.html'"></div>
+                            </md-content>
+                        </md-tab-body>
+                    </md-tab>
+
+                    <md-tab>
+                        <md-tab-lable>
+                            <span class="grey-tab">Inputs</span>
+                        </md-tab-lable>
+                        <md-tab-body>
+                            <md-content class="md-padding p-t-26">
+                                <div data-ng-include="'views/tabs/complex-transaction/complex-transaction-inputs-tab.html'"></div>
+                            </md-content>
+                        </md-tab-body>
+                    </md-tab>
+
+                    <md-tab>
+                        <md-tab-lable>
+                            <span class="grey-tab">Base Transactions</span>
+                        </md-tab-lable>
+                        <md-tab-body>
+                            <md-content class="md-padding p-t-26">
+                                <div data-ng-include="'views/tabs/complex-transaction/complex-transaction-base-transactions-tab.html'"></div>
+                            </md-content>
+                        </md-tab-body>
+                    </md-tab>
+
+                    <md-tab>
+                        <md-tab-lable>
+                            <span class="grey-tab">Reconciliation</span>
+                        </md-tab-lable>
+                        <md-tab-body>
+                            <md-content class="md-padding p-t-26">
+                                <div data-ng-include="'views/tabs/complex-transaction/complex-transaction-reconciliation-tab.html'"></div>
+                            </md-content>
+                        </md-tab-body>
+                    </md-tab>
+
+                </md-tabs>
+
+                <div class="transaction-recalculating-overlay" data-ng-show="vm.processing">
+                    <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                        <progress-circular diameter="100"></progress-circular>
+                    </div>
+                </div>
+
+            </div>
+
+            <div data-ng-if="!vm.checkReadyStatus()">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                    <progress-circular diameter="100"></progress-circular>
+                </div>
+            </div>-->
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row" layout-align="space-between center">
+
+        <!--<div layout="row">
+            <md-button ng-click="vm.editLayout($event)" class="md-raised md-primary">
+                Edit Form
+            </md-button>
+&lt;!&ndash;            <md-button ng-click="vm.manageAttrs($event)" class="md-raised md-primary">&ndash;&gt;
+&lt;!&ndash;                Manage attributes&ndash;&gt;
+&lt;!&ndash;            </md-button>&ndash;&gt;
+
+            <div ng-if="vm.checkReadyStatus()">
+
+                <md-button ng-click="vm.toggleLockStatus($event)"
+                           ng-if="vm.entity.is_locked == false"
+                           ng-disabled="vm.entity.is_canceled == true || !vm.hasEditPermission || vm.processing"
+                           class="md-raised">
+                    Lock
+                </md-button>
+
+                <md-button
+                        ng-click="vm.toggleLockStatus($event)"
+                        ng-if="vm.entity.is_locked == true"
+                        ng-disabled="vm.entity.is_canceled == true || !vm.hasEditPermission || vm.processing"
+                        class="md-raised">
+                    Unlock
+                </md-button>
+
+                <md-button ng-click="vm.toggleCancelStatus($event)"
+                           ng-if="vm.entity.is_canceled == true"
+                           ng-disabled="vm.entity.is_locked == true || !vm.hasEditPermission || vm.processing"
+                           class="md-raised">
+                    Activate
+                </md-button>
+
+                <md-button
+                        ng-click="vm.toggleCancelStatus($event)"
+                        ng-if="vm.entity.is_canceled == false"
+                        ng-disabled="vm.entity.is_locked == true || !vm.hasEditPermission || vm.processing"
+                        class="md-raised">
+                    Ignore
+                </md-button>
+
+                <md-button
+                        ng-click="vm.delete($event)"
+                        ng-disabled="vm.entity.is_locked == true || !vm.hasEditPermission || vm.processing"
+                        class="md-raised md-warn">
+                    Delete
+                </md-button>
+
+            </div>
+
+        </div>
+
+        <div style="margin-right: 10px;">
+            <md-button class="md-raised m-r-24" ng-click="vm.copy()"
+                       ng-disabled="!vm.checkReadyStatus() || vm.entity.is_canceled || !vm.hasEditPermission || vm.processing" >
+                Make a copy
+            </md-button>
+
+            <md-button class="md-raised" ng-click="vm.cancel()">
+                <span data-ng-show="!vm.entity.is_locked && !vm.entity.is_canceled">Cancel</span>
+                <span data-ng-show="vm.entity.is_locked || vm.entity.is_canceled">Ok</span>
+            </md-button>
+
+            <md-button class="md-raised m-r-24"
+                       data-ng-class="{'disabled-btn': !vm.formIsValid || vm.processing}"
+                       ng-click="vm.rebookAsPending()">
+                Rebook as pending
+            </md-button>
+
+            <md-button class="md-raised m-r-24"
+                       data-ng-class="{'disabled-btn': !vm.formIsValid || vm.entity.is_canceled || vm.entity.is_locked || !vm.hasEditPermission || vm.processing}"
+                       ng-click="vm.rebook()">
+                Rebook
+            </md-button>
+
+        </div>-->
+
+        <div class="dialog-footer flex-row fc-space-between"
+             data-ng-include="'views/entity-viewer/complex-transaction-edit-footer-view.html'"></div>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               data-on-resize-callback="vm.rearrangeMdDialogActions()"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,39 @@
+<div class="usercode-input" layout="row">
+
+    <md-input-container>
+        <label>Type</label>
+        <md-select data-ng-model="prefixType" data-ng-change="updateUserCode()">
+            <md-option ng-value="1">
+                No Prefix
+            </md-option>
+            <md-option ng-value="2">
+                User ID
+            </md-option>
+            <md-option ng-value="5">
+                Hashed User ID
+            </md-option>
+            <md-option ng-value="3">
+                Unique User Code
+            </md-option>
+            <md-option ng-value="4">
+                Group Name
+            </md-option>
+        </md-select>
+    </md-input-container>
+
+    <md-input-container style="height: 56px;" data-ng-if="prefixType == 4">
+        <label>Prefix</label>
+        <md-select data-ng-model="selectedGroupPrefix" data-ng-change="updateUserCode()">
+            <md-option  data-ng-repeat="item in groupPrefixes" ng-value="item.value">
+                {{item.value}}
+            </md-option>
+        </md-select>
+    </md-input-container>
+
+    <md-input-container data-ng-if="prefixType != 3">
+        <label>User code</label>
+        <input type="text" data-ng-model="usercode" data-ng-keyup="updateUserCode(usercode)" >
+    </md-input-container>
+
+
+</div>

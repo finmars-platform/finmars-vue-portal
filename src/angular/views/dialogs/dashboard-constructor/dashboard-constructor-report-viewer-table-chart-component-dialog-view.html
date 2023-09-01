@@ -1,0 +1,218 @@
+<md-dialog aria-label="dashboard table chart constructor dialog"
+           class="draggable-dialog width-50 dialog-actions-bottom dcMatrixElemToDrag"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>New Report Viewer Table Chart Component</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+        <md-tabs>
+
+            <md-tab label="Main">
+                <md-content class="p-16">
+
+                    <div>
+                        <md-input-container style="width: 200px;">
+                            <label for="">Name</label>
+                            <input type="text" data-ng-model="vm.item.name">
+                        </md-input-container>
+
+                        <div>
+                            <md-input-container style="width: 200px;">
+                                <label for="">Label</label>
+                                <input type="text" data-ng-model="vm.item.custom_component_name">
+                            </md-input-container>
+                        </div>
+
+                        <!-- <div class="m-t-16 m-b-16">
+
+                            <md-input-container style="width: 200px;">
+                                <label for="">Report Type</label>
+                                <md-select data-ng-model="vm.item.settings.entity_type"
+                                           data-ng-change="vm.reportTypeChange()">
+                                    <md-option value="balance-report">Balance Report</md-option>
+                                    <md-option value="pl-report">P&L Report</md-option>
+                                    <md-option value="transaction-report">Transaction Report</md-option>
+                                </md-select>
+                            </md-input-container>
+
+                        </div>
+
+
+                        <div class="m-t-16 m-b-16">
+
+                            <expandable-items-selector data-model="vm.item.settings.layout"
+                                                       data-title="Layout"
+                                                       data-dialog-title="Choose layout"
+                                                       data-items="vm.layoutsWithLinkToFilters"
+                                                       data-is-disabled="!vm.item.settings.entity_type"
+                                                       data-on-change-callback="vm.showLinkingToFilters()"
+                                                       class="dashboard-constructor-selector-directive"></expandable-items-selector>
+
+
+                        </div> -->
+                        <div style="width: 400px;" class="m-l-10">
+                            <div ng-if="vm.readyStatus.layouts">
+                                <multitype-field label="Select layout"
+                                                 field-types-data="vm.layoutsSelectorsList"
+                                                 type-switch="selector"
+                                                 on-value-change="vm.onLayoutChange()"
+                                                 on-type-change="vm.onLayoutEntityTypeChange(activeType)"></multitype-field>
+                            </div>
+
+                            <div ng-if="!vm.readyStatus.layouts" class="flex-row fc-space-around" style="height: 40px;">
+                                <progress-circular diameter="30"></progress-circular>
+                            </div>
+                        </div>
+
+                        <div class="m-t-16 m-b-16 m-l-10">
+
+                            <table-attribute-selector title="Title column"
+                                                      dialog-title="Title column"
+                                                      available-attrs="vm.attributes"
+                                                      item="vm.item.settings.title_column"
+                                                      is-report="true"
+                                                      class="dashboard-constructor-field1 md-block"></table-attribute-selector>
+
+                            <div>
+                                <md-input-container style="width: 200px;">
+                                    <label for="">Title Column Name</label>
+                                    <input type="text" data-ng-model="vm.item.settings.title_column_name">
+                                </md-input-container>
+                            </div>
+
+                        </div>
+
+                        <div layout="row">
+
+                            <div class="m-t-16 m-b-16">
+
+                                <table-attribute-selector title="Numeric column"
+                                                          dialog-title="Value"
+                                                          available-attrs="vm.numericAttributes"
+                                                          item="vm.item.settings.value_column"
+                                                          is-report="true"
+                                                          class="dashboard-constructor-field1"
+                                                          style="margin: 0 10px;"></table-attribute-selector>
+
+                            </div>
+
+                            <md-button class="md-raised md-primary" ng-click="vm.openNumberFormatSettings($event)" style="margin-right:20px;">
+                                Format Settings
+                            </md-button>
+
+
+                        </div>
+
+                        <div>
+                            <md-input-container style="width: 200px;">
+                                <label for="">Value Column Name</label>
+                                <input type="text" data-ng-model="vm.item.settings.value_column_name">
+                            </md-input-container>
+                        </div>
+
+                    </div>
+
+                </md-content>
+            </md-tab>
+
+            <md-tab label="ADVANCE SETTINGS">
+                <md-content class="p-16">
+
+
+                </md-content>
+            </md-tab>
+
+            <md-tab label="MENU SETTINGS">
+                <md-content class="p-16">
+
+                    <div layout="column">
+                        <div class="dashboard-constructor-field1">
+                            <table-attributes-menu-constructor data-title="Title Column"
+                                                               data-dialog-title="Title Column"
+                                                               data-model="vm.item.user_settings.available_title_column_keys"
+                                                               data-is-report="'true'"
+                                                               data-available-attrs="vm.attributes"
+                                                               data-default-attrs-keys="vm.item.settings.title_column"></table-attributes-menu-constructor>
+                        </div>
+
+
+                        <div class="dashboard-constructor-field1">
+                            <table-attributes-menu-constructor data-title="Values"
+                                                               data-dialog-title="Values"
+                                                               data-model="vm.item.user_settings.available_value_column_keys"
+                                                               data-is-report="'true'"
+                                                               data-available-attrs="vm.numericAttributes"
+                                                               data-default-attrs-keys="vm.item.settings.value_column"></table-attributes-menu-constructor>
+                        </div>
+                    </div>
+
+                </md-content>
+            </md-tab>
+
+
+            <md-tab label="LINKING">
+                <md-content class="p-16">
+                    <div data-ng-if="vm.linkingToFilters && vm.linkingToFilters.length">
+                        <h4 class="m-t-0 m-b-16">Link to Selection filters of layout</h4>
+                        <div class="dashboard-constructor-linked-filters-container">
+                            <ui>
+                                <li data-ng-repeat="lFilter in vm.linkingToFilters">
+                                    <span data-ng-bind="lFilter.name"></span>
+                                </li>
+                            </ui>
+                        </div>
+                        <!--<div class="dashboard-constructor-linked-filters-ui">
+                            <div data-ng-repeat="lFilter in vm.linkingToFilters"
+                                data-ng-bind="lFilter.name"
+                                class="m-b-8 test-class"></div>
+                        </div>-->
+                    </div>
+
+                    <div layout="row">
+                        <div flex="50">
+                            <two-fields-multiselect ng-model="vm.item.settings.linked_components.active_object"
+                                                    title="Select Link to Component"
+                                                    items="vm.componentsForMultiselector"
+                                                    model="vm.item.settings.linked_components.active_object"
+                                                    name-property="name"
+                                                    data-selected-items-indication="array"
+                                                    class="dashboard-constructor-selector-directive"></two-fields-multiselect>
+                        </div>
+                    </div>
+
+                </md-content>
+            </md-tab>
+
+            <md-tab label="CALCULATION">
+                <md-content class="p-16"
+                            data-ng-include="'views/dialogs/dashboard-constructor/dashboard-component-settings-calculation-tab-view.html'">
+                </md-content>
+            </md-tab>
+
+        </md-tabs>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+
+        <md-button ng-click="vm.exportToDashboards()" style="margin-right:20px;">
+            Export to dashboards
+        </md-button>
+
+        <md-button ng-click="vm.cancel()" style="margin-right:20px;">
+            Cancel
+        </md-button>
+
+        <md-button ng-click="vm.agree()" style="margin-right:20px;">
+            OK
+        </md-button>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               data-on-resize-callback="vm.rearrangeMdDialogActions()"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+    </md-dialog-actions>
+</md-dialog>

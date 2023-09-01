@@ -1,0 +1,36 @@
+<div class="settings-btn">
+    <!--<md-button aria-label="report viewer filter settings"
+               class="md-icon-button"
+               ng-disabled="filter.error_data"
+
+               custom-popup
+               popup-template-url="'views/popups/entity-viewer/g-filter-settings.html'"
+               popup-data="popupData"
+               popup-event-service="popupEventService"
+               open-on="click"
+               position-relative-to="element"
+               offset-x="-370"
+               backdrop-classes="'z-index-48'"
+               popup-classes="'z-index-49'"
+               on-save="filterSettingsChange()">
+        <ng-md-icon icon="settings"></ng-md-icon>
+    </md-button>-->
+
+    <md-button aria-label="report viewer filter settings"
+               class="md-icon-button"
+               ng-disabled="filter.error_data"
+
+               custom-popup
+               popup-template-url="{{filterPopupTemplate}}"
+               popup-data="popupData"
+               popup-event-service="popupEventService"
+               open-on="click"
+               position-relative-to="element"
+               offset-x="-370"
+               on-save="filterSettingsChange()">
+
+        <span class="material-icons">settings</span>
+
+    </md-button>
+
+</div>

@@ -1,0 +1,26 @@
+<md-dialog aria-label="" ng-cloak class="reference-table draggable-dialog" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Rename Reference Table</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content   class="custom-scrollbar p-24">
+        <div>
+            <md-input-container>
+                <label>Name</label>
+                <input type="text" data-ng-model="vm.referenceTable.name">
+            </md-input-container>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()">
+            Close
+        </md-button>
+        <md-button class="md-raised md-primary" ng-click="vm.agree()" style="margin-right:20px;">
+            Update
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

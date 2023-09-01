@@ -1,0 +1,27 @@
+<md-dialog aria-label="" ng-cloak class="delete-portfolio-dialog width-50">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Warning</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content  >
+        <div class="warning-text" data-ng-if="!vm.processing">
+            <!--<p>Are you sure to delete this  <b>{{vm.displayCaption()}}?</b></p>-->
+            <p>Are you sure you want to permanently delete the chosen objects?</p>
+        </div>
+        <div data-ng-if="vm.processing">
+            <div layout="row" layout-sm="column" layout-align="space-around" style="margin: 24px auto">
+                <progress-circular diameter="50"></progress-circular>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()" data-ng-class="{'disabled-btn': vm.processing}">
+            Cancel
+        </md-button>
+        <md-button ng-click="vm.delete($event)" data-ng-class="{'disabled-btn': vm.processing || vm.isDeleted}" style="margin-right:20px;">
+            Delete
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

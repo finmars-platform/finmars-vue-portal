@@ -1,0 +1,42 @@
+<md-dialog class="color-palettes-settings-dialog draggable-dialog dialog-actions-bottom colorPickerDialogElemToResize"
+           aria-label="color palettes settings dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Edit palettes</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="p-16 height-100">
+
+        <div data-ng-if="vm.readyStatus">
+            <div data-ng-include="'views/colorPicker/color-palettes-settings-view.html'"></div>
+        </div>
+
+        <div data-ng-if="!vm.readyStatus">
+            <div layout="row" layout-sm="column" layout-align="space-around">
+                <progress-circular diameter="100"></progress-circular>
+            </div>
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions>
+        <div class="width-100 flex-row flex_cb">
+            <md-button ng-click="vm.cancel()">
+                Cancel
+            </md-button>
+
+            <md-button ng-click="vm.agree()">
+                Save
+            </md-button>
+        </div>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+    </md-dialog-actions>
+</md-dialog>

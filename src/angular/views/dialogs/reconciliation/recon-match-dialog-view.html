@@ -1,0 +1,353 @@
+<md-dialog class="draggable-dialog width-90 recon-match-holder"
+           aria-label="recon match dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Reconciliation Matching</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="dndScrollableElem">
+        <div class="p-24 recon-match-content-holder">
+
+            <div class="recon-match-header" layout="row">
+
+                <div layout="row" style="margin-right: 20px; padding: 15px;">
+
+                    <div class="recon-header-box">
+                        Ignore
+                    </div>
+
+                    <div class="recon-header-box">
+                        Auto-Matched
+                    </div>
+
+                    <div class="recon-header-box">
+                        Matched
+                    </div>
+
+                    <div class="recon-header-box">
+                        Resolved
+                    </div>
+
+                    <div class="recon-header-box">
+                        Conflicts
+                    </div>
+
+                    <div class="recon-header-box" style="border:  0">
+                        New
+                    </div>
+
+                </div>
+
+                <div layout="row" style="padding: 15px;">
+
+                    <div class="recon-header-box">
+                        Unmatched
+                    </div>
+
+                    <div class="recon-header-box">
+                        Matched
+                    </div>
+
+                    <div class="recon-header-box">
+                        Auto-Matched
+                    </div>
+
+                    <div class="recon-header-box" style="border: 0;">
+                        Ignore
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="recon-match-body" layout="row">
+
+                <div class="recon-match-body-file-transactions dialogBankLineContainerHolder" layout="column" style="margin-right: 20px; width: 825px;">
+
+                    <div data-ng-repeat="item in vm.bankLinesList track by $index" class="recon-match-fields-container">
+
+                        <is-draggable-sign data-ng-mousedown="vm.turnOnDragging()"></is-draggable-sign>
+
+                        <div style="padding-left: 50px">
+
+                            <div class="recon-match-line-title"
+                                 title="{{(item.___index + 1) + ' : ' + item.source_id}}">
+                                {{item.___index + 1}} : {{item.source_id}}
+                            </div>
+
+                        </div>
+
+                        <md-menu class="match-recon-body-line-settings-button">
+                            <md-button data-ng-click="$mdOpenMenu($event)"
+                                       class="md-icon-button"
+                                       aria-label="datepicker settings menu">
+                                <ng-md-icon icon="list"></ng-md-icon>
+                            </md-button>
+
+                            <md-menu-content>
+                                <md-menu-item>
+                                    <md-button data-ng-click="vm.viewBankLine($event, item)">View File Line</md-button>
+                                </md-menu-item>
+                                <md-menu-item>
+                                    <md-button data-ng-click="vm.removeBankLine($event, item)">Remove</md-button>
+                                </md-menu-item>
+                            </md-menu-content>
+                        </md-menu>
+
+                        <div layout="row">
+
+                            <div class="recon-body-box dialogBankLineContainer {{'dialogBankLineContainer-' + item.___match_index}}"
+                                 data-status="ignore" data-type="bank-file">
+
+                                <match-recon-card data-ng-repeat="field in item.ignore_fields"
+                                                  data-field-id="{{field.id}}"
+                                                  data-field-type="{{field.type}}"
+                                                  data-parent-index="{{item.___match_index}}"
+                                                  data-field-index="{{$index}}"
+                                                  data-type="bank-file"
+                                                  item="item"
+                                                  field="field"
+                                                  data-ng-class="{'active': field.active}"
+                                                  data-ng-click="vm.activateBankCard($event, field, item)"
+                                >
+
+                                </match-recon-card>
+
+                            </div>
+
+                            <div class="recon-body-box dialogBankLineContainer {{'dialogBankLineContainer-' + item.___match_index}}"
+                                 data-status="auto_matched" data-type="bank-file">
+
+                                <match-recon-card data-ng-repeat="field in item.auto_matched_fields"
+                                                  data-field-id="{{field.id}}"
+                                                  data-field-type="{{field.type}}"
+                                                  data-parent-index="{{item.___match_index}}"
+                                                  data-field-index="{{$index}}"
+                                                  data-type="bank-file"
+                                                  item="item"
+                                                  field="field"
+                                                  data-ng-class="{'active': field.active}"
+                                                  data-ng-click="vm.activateBankCard($event, field, item)"
+                                >
+
+                                </match-recon-card>
+
+                            </div>
+
+                            <div class="recon-body-box dialogBankLineContainer {{'dialogBankLineContainer-' + item.___match_index}}"
+                                 data-status="matched" data-type="bank-file">
+
+                                <match-recon-card data-ng-repeat="field in item.matched_fields"
+                                                  data-field-id="{{field.id}}"
+                                                  data-field-type="{{field.type}}"
+                                                  data-parent-index="{{item.___match_index}}"
+                                                  data-field-index="{{$index}}"
+                                                  data-type="bank-file"
+                                                  item="item"
+                                                  field="field"
+                                                  data-ng-class="{'active': field.active}"
+                                                  data-ng-click="vm.activateBankCard($event, field, item)"
+                                >
+
+                                </match-recon-card>
+
+                            </div>
+
+                            <div class="recon-body-box dialogBankLineContainer {{'dialogBankLineContainer-' + item.___match_index}}"
+                                 data-status="resolved" data-type="bank-file">
+
+                                <match-recon-card data-ng-repeat="field in item.resolved_fields"
+                                                  data-field-id="{{field.id}}"
+                                                  data-field-type="{{field.type}}"
+                                                  data-parent-index="{{item.___match_index}}"
+                                                  data-field-index="{{$index}}"
+                                                  data-type="bank-file"
+                                                  item="item"
+                                                  field="field"
+                                                  data-ng-class="{'active': field.active}"
+                                                  data-ng-click="vm.activateBankCard($event, field, item)">
+                                </match-recon-card>
+
+
+                            </div>
+
+                            <div class="recon-body-box dialogBankLineContainer {{'dialogBankLineContainer-' + item.___match_index}}"
+                                 data-status="conflict" data-type="bank-file">
+
+                                <match-recon-card data-ng-repeat="field in item.conflicts_fields"
+                                                  data-field-id="{{field.id}}"
+                                                  data-field-type="{{field.type}}"
+                                                  data-parent-index="{{item.___match_index}}"
+                                                  data-field-index="{{$index}}"
+                                                  data-type="bank-file"
+                                                  item="item"
+                                                  field="field"
+                                                  data-ng-class="{'active': field.active}"
+                                                  data-ng-click="vm.activateBankCard($event, field, item)">
+                                </match-recon-card>
+
+                            </div>
+
+                            <div class="recon-body-box dialogBankLineContainer {{'dialogBankLineContainer-' + item.___match_index}}"
+                                 data-status="new" data-type="bank-file">
+
+                                <match-recon-card data-ng-repeat="field in item.new_fields"
+                                                  data-field-id="{{field.id}}"
+                                                  data-field-type="{{field.type}}"
+                                                  data-parent-index="{{item.___match_index}}"
+                                                  data-field-index="{{$index}}"
+                                                  data-type="bank-file"
+                                                  item="item"
+                                                  field="field"
+                                                  data-ng-class="{'active': field.active}"
+                                                  data-ng-click="vm.activateBankCard($event, field, item)">
+                                </match-recon-card>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="recon-match-body-complex-transactions dialogComplexTransactionLineContainerHolder" layout="column">
+
+                    <div data-ng-repeat="item in vm.complexTransactionList track by $index"
+                         class="recon-match-fields-container">
+
+                        <is-draggable-sign data-ng-mousedown="vm.turnOnDragging()"></is-draggable-sign>
+
+                        <div style="padding-left: 50px">
+                            <div class="recon-match-line-title" title="{{item.code + ' : ' + item.text}}">
+                                {{item.code}} : {{item.text}}
+                            </div>
+                        </div>
+
+                        <md-menu class="match-recon-body-line-settings-button">
+                            <md-button data-ng-click="$mdOpenMenu($event)"
+                                       class="md-icon-button"
+                                       aria-label="datepicker settings menu">
+                                <ng-md-icon icon="list"></ng-md-icon>
+                            </md-button>
+
+                            <md-menu-content>
+                                <md-menu-item>
+                                    <md-button data-ng-click="vm.viewComplexTransaction($event, item)">View
+                                        Transaction
+                                    </md-button>
+                                </md-menu-item>
+                                <md-menu-item>
+                                    <md-button data-ng-click="vm.setAllMatchedComplexTransaction($event, item)">Set All
+                                        Matched
+                                    </md-button>
+                                </md-menu-item>
+                                <md-menu-item>
+                                    <md-button data-ng-click="vm.setAllUnmatchedComplexTransaction($event, item)">Set
+                                        All Unmatched
+                                    </md-button>
+                                </md-menu-item>
+                            </md-menu-content>
+                        </md-menu>
+
+                        <div layout="row">
+
+                            <div class="recon-body-box dialogComplexTransactionLineContainer {{'dialogComplexTransactionLineContainer-' + item.___match_index}}"
+                                 data-status="unmatched" data-type="complex-transaction">
+
+                                <match-recon-card data-ng-repeat="field in item.unmatched_fields"
+                                                  data-field-id="{{field.id}}"
+                                                  data-parent-index="{{item.___match_index}}"
+                                                  data-field-index="{{$index}}"
+                                                  data-type="complex-transaction"
+                                                  item="item"
+                                                  field="field"
+                                                  data-ng-class="{'active': field.active}"
+                                                  data-ng-click="vm.activateComplexTransactionCard($event, field, item)">
+
+                                </match-recon-card>
+
+                            </div>
+
+                            <div class="recon-body-box dialogComplexTransactionLineContainer {{'dialogComplexTransactionLineContainer-' + item.___match_index}}"
+                                 data-status="matched" data-type="complex-transaction">
+
+                                <match-recon-card data-ng-repeat="field in item.matched_fields"
+                                                  data-field-id="{{field.id}}"
+                                                  data-parent-index="{{item.___match_index}}"
+                                                  data-field-index="{{$index}}"
+                                                  data-type="complex-transaction"
+                                                  item="item"
+                                                  field="field"
+                                                  data-ng-class="{'active': field.active}"
+                                                  data-ng-click="vm.activateComplexTransactionCard($event, field, item)">
+
+                                </match-recon-card>
+
+                            </div>
+
+                            <div class="recon-body-box dialogComplexTransactionLineContainer {{'dialogComplexTransactionLineContainer-' + item.___match_index}}"
+                                 data-status="auto_matched" data-type="complex-transaction">
+
+                                <match-recon-card data-ng-repeat="field in item.auto_matched_fields"
+                                                  data-field-id="{{field.id}}"
+                                                  data-parent-index="{{item.___match_index}}"
+                                                  data-field-index="{{$index}}"
+                                                  data-type="complex-transaction"
+                                                  item="item"
+                                                  field="field"
+                                                  data-ng-class="{'active': field.active}"
+                                                  data-ng-click="vm.activateComplexTransactionCard($event, field, item)">
+                                </match-recon-card>
+
+                            </div>
+
+                            <div class="recon-body-box dialogComplexTransactionLineContainer {{'dialogComplexTransactionLineContainer-' + item.___match_index}}"
+                                 data-status="ignore" data-type="complex-transaction">
+
+                                <match-recon-card data-ng-repeat="field in item.ignore_fields"
+                                                  data-field-id="{{field.id}}"
+                                                  data-parent-index="{{item.___match_index}}"
+                                                  data-field-index="{{$index}}"
+                                                  data-type="complex-transaction"
+                                                  item="item"
+                                                  field="field"
+                                                  data-ng-class="{'active': field.active}"
+                                                  data-ng-click="vm.activateComplexTransactionCard($event, field, item)">
+                                </match-recon-card>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div data-ng-if="vm.processing" class="recon-processing-overlay">
+
+            <div class="overlay-loader" layout="row" layout-sm="column" layout-align="space-around">
+                <progress-circular diameter="100"></progress-circular>
+            </div>
+
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+
+        <div>
+            <md-button ng-click="vm.agree()">
+                Ok
+            </md-button>
+        </div>
+    </md-dialog-actions>
+</md-dialog>

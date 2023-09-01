@@ -1,0 +1,183 @@
+<md-dialog aria-label="" ng-cloak class="warning-dialog draggable-dialog width-50" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Input Templates</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="p-24">
+        <div>
+
+
+            <table>
+
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Verbose Name</th>
+                    <th>Value Type</th>
+                    <th>Content Type</th>
+                    <th>Use Default Value from Context</th>
+                    <th>Default Value</th>
+                    <th>Input Expression</th>
+                </tr>
+
+                <tr data-ng-repeat="input in vm.template.data.inputs track by $index">
+
+                    <td>
+                        <md-checkbox ng-model="input.is_active">
+                        </md-checkbox>
+                    </td>
+
+                    <td>
+                        <md-input-container class="no-error-spacer m-0">
+                            <input type="text" data-ng-model="input.name">
+                        </md-input-container>
+                    </td>
+
+                    <td>
+                        <md-input-container class="no-error-spacer m-0">
+                            <input type="text" data-ng-model="input.verbose_name">
+                        </md-input-container>
+                    </td>
+
+                    <td>
+
+                        <md-input-container class="md-block m-0"
+                                            aria-label="select with filter"
+                                            md-no-float="">
+                            <md-select ng-model="input.value_type"
+                                       md-container-class="common-select-container"
+                                       ng-change="vm.valueTypeChanged(input)"
+                                       md-on-close="newItemValueTypeSearchTerm = ''"
+                                       id="ttype-inputs-value-type">
+                                <md-select-header>
+                                    <input data-ng-model="newItemValueTypeSearchTerm"
+                                           type="search"
+                                           placeholder="Search for a ..."
+                                           class="md-text md-select-search-pattern select-input-filter"
+                                           ng-keydown="$event.stopPropagation()">
+                                </md-select-header>
+
+                                <div class="select-options-holder">
+
+                                    <md-option
+                                            data-ng-repeat="item in vm.valueTypes | filter:{display_name: newItemValueTypeSearchTerm}"
+                                            ng-value="item.value">
+                                        {{item.display_name}}
+                                    </md-option>
+
+                                </div>
+                            </md-select>
+                        </md-input-container>
+                    </td>
+
+                    <td>
+                        <md-input-container class="md-block m-0"
+                                            aria-label="content type input"
+                                            md-no-float="">
+                            <label for="ttype-inputs-default-value"></label>
+                            <md-select ng-model="input.content_type"
+                                       md-container-class="common-select-container"
+                                       md-on-close="newItemContentTypeSearchTerm = ''"
+                                       id="ttype-inputs-default-value"
+                                       aria-label="select with filter"
+                                       ng-disabled="input.value_type !== 100">
+
+                                <md-select-header>
+                                    <input data-ng-model="newItemContentTypeSearchTerm"
+                                           type="search"
+                                           placeholder="Search for a ..."
+                                           class="md-text md-select-search-pattern select-input-filter"
+                                           ng-keydown="$event.stopPropagation()">
+                                </md-select-header>
+
+                                <div class="select-options-holder">
+
+                                    <md-option
+                                            data-ng-repeat="item in vm.contentTypes | filter:{name: newItemContentTypeSearchTerm}"
+                                            ng-value="item.key">
+                                        {{item.name}}
+                                    </md-option>
+
+                                </div>
+
+                            </md-select>
+                        </md-input-container>
+
+                    </td>
+
+                    <td class="edit-state-td ttype-inputs-checkbox-td">
+
+                        <md-input-container class="no-error-spacer" data-ng-if="input.value_type == 100">
+                            <md-checkbox data-ng-model="input.is_fill_from_context"
+                            ></md-checkbox>
+                        </md-input-container>
+
+                        <div data-ng-if="input.value_type != 100">
+                            &nbsp;
+                        </div>
+
+                    </td>
+
+                    <td>
+                        <div data-ng-if="input.value_type != 100">
+
+                            <md-input-container class="no-error-spacer m-0">
+                                <input type="text" data-ng-model="input.value">
+                            </md-input-container>
+
+                        </div>
+
+                        <div data-ng-if="input.is_fill_from_context && input.value_type == 100">
+
+                            <md-select ng-model="input.context_property"
+                                       md-container-class="common-select-container">
+
+                                <div class="select-options-holder">
+
+                                    <md-option
+                                            data-ng-repeat="item in vm.contextProperties[input.content_type]"
+                                            ng-value="item.key">
+                                        {{item.name}}
+                                    </md-option>
+
+                                </div>
+                            </md-select>
+
+                        </div>
+
+                        <div data-ng-if="!input.is_fill_from_context && input.value_type == 100">
+
+                            <md-input-container class="no-error-spacer m-0">
+                                <input type="text" data-ng-model="input.value" disabled>
+                            </md-input-container>
+
+                        </div>
+
+                    </td>
+
+                    <td>
+                        <md-input-container class="no-error-spacer m-0">
+                            <input type="text" data-ng-model="input.value_expr">
+                        </md-input-container>
+                    </td>
+
+                </tr>
+
+            </table>
+
+
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()">
+            Close
+        </md-button>
+        <md-button class="md-raised" ng-click="vm.agree()" style="margin-right:20px;">
+            Ok
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

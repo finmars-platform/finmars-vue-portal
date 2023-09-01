@@ -1,0 +1,45 @@
+<div data-ng-if="item">
+    <md-input-container class="md-block no-error-spacer"
+                        data-ng-if="item.attribute.key !== 'instrument'"
+                        style="margin-bottom: 20px">
+        <label>Display fields in list</label>
+        <md-select ng-model="item.options.fieldsList">
+            <md-option ng-selected="{{findSelected(item.options.fieldsList, ['name','short_name','user_code'])}}" ng-value="['name','short_name','user_code']">
+                Long / Short / User code
+            </md-option>
+            <md-option ng-selected="{{findSelected(item.options.fieldsList, ['short_name','user_code'])}}" ng-value="['short_name','user_code']">
+                Short / User code
+            </md-option>
+            <md-option ng-selected="{{findSelected(item.options.fieldsList, ['short_name'])}}" ng-value="['short_name']">
+                Short
+            </md-option>
+            <md-option ng-selected="{{findSelected(item.options.fieldsList, ['name'])}}" ng-value="['name']">
+                Long
+            </md-option>
+            <md-option ng-selected="{{findSelected(item.options.fieldsList, ['user_code'])}}" ng-value="['user_code']">
+                User code
+            </md-option>
+        </md-select>
+    </md-input-container>
+    <md-input-container class="md-block no-error-spacer"
+                        style="margin-bottom: 20px">
+        <label>Display fields on form</label>
+        <md-select ng-model="item.options.fieldsForm">
+            <md-option ng-selected="{{findSelected(item.options.fieldsForm, ['name','short_name','user_code'])}}" ng-value="['name','short_name','user_code']">
+                Long / Short / User code
+            </md-option>
+            <md-option ng-selected="{{findSelected(item.options.fieldsForm, ['short_name','user_code'])}}" ng-value="['short_name','user_code']">
+                Short / User code
+            </md-option>
+            <md-option ng-selected="{{findSelected(item.options.fieldsForm, ['short_name'])}}" ng-value="['short_name']">
+                Short
+            </md-option>
+            <md-option ng-selected="{{findSelected(item.options.fieldsForm, ['name'])}}" ng-value="['name']">
+                Long
+            </md-option>
+            <md-option ng-selected="{{findSelected(item.options.fieldsForm, ['user_code'])}}" ng-value="['user_code']">
+                User code
+            </md-option>
+        </md-select>
+    </md-input-container>
+</div>

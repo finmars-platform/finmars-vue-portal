@@ -9,20 +9,22 @@
 		v-model="outputs.currency.__val"
 		noBorders
 		content_type="currencies.currency"
+		height="50px"
 	/>
 </template>
 
 <script setup>
-
 	const props = defineProps({
-		wid: String
+		uid: String,
 	})
 	const dashStore = useStoreDashboard()
 
-	let component = dashStore.getWidget(props.wid)
+	let component = dashStore.getComponent(props.uid)
 
 	const outputs = computed(() => {
-		let props = dashStore.props.outputs.filter((prop) => prop.component_id == component.uid)
+		let props = dashStore.props.outputs.filter(
+			(prop) => prop.component_id == component.uid
+		)
 		let obj = {}
 
 		props.forEach((prop) => {
@@ -34,11 +36,7 @@
 	let currencies = ref([])
 
 	init()
-	async function init() {
-
-	}
+	async function init() {}
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

@@ -1,0 +1,33 @@
+<md-dialog aria-label="edit tabs dialog"
+           class="tab-editor-dialog draggable-dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Tabs Editor</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="p-16">
+        <h2 style="margin-left: 15px;">Drag cards to change order of tabs</h2>
+        <div class="tabs-dnd-container" layout="row">
+
+            <md-card data-ng-repeat="tab in vm.tabs track by tab[vm.tabUniqueProp]"
+                     data-ng-init="$last && vm.tabsDragAndDrop.init()"
+                     class="tab-editor-tab-card"
+                     data-tab-id="{{tab[vm.tabUniqueProp]}}">
+                <p data-ng-bind="tab.name"></p>
+            </md-card>
+
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="space-between center">
+        <md-button ng-click="vm.cancel()" style="margin-right:20px;">
+            Cancel
+        </md-button>
+        <md-button ng-click="vm.agree()" style="margin-right:20px;">
+            Save
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,880 @@
+<div>
+
+    <h1 class="p-8">Template Layouts</h1>
+
+    <div data-ng-if="vm.readyStatus.input && vm.readyStatus.field && vm.readyStatus.action">
+
+        <md-tabs md-dynamic-height md-border-bottom id="dialogbag">
+
+            <md-tab label="Input Templates">
+
+                <div class="p-24">
+
+                    <div class="template-control-row" layout="row">
+
+                        <md-input-container class="md-block" style="width: 200px;">
+                            <label>Template</label>
+                            <md-select
+                                    data-ng-model="vm.activeInputTemplateId"
+                                    data-ng-change="vm.setActiveTemplate()"
+                                    md-container-class="common-select-container">
+                                <div class="select-options-holder">
+                                    <md-option
+                                            data-ng-repeat="template in vm.inputTemplates track by template.id "
+                                            ng-value="template.id">
+                                        {{template.name}}
+                                    </md-option>
+                                </div>
+                            </md-select>
+                        </md-input-container>
+
+                        <md-input-container style="width: 200px;">
+                            <label for="">User Code</label>
+                            <input type="text" data-ng-model="vm.activeInputTemplate.user_code">
+                        </md-input-container>
+
+                        <md-button class="md-raised" ng-class="{'disabled-btn': !vm.activeInputTemplate.id}"
+                                   data-ng-click="vm.saveTemplate($event, vm.activeInputTemplate)">Save
+                            Template
+                        </md-button>
+                        <md-button class="md-raised"
+                                   data-ng-click="vm.saveTemplateAs($event, vm.activeInputTemplate)">
+                            Save
+                            Template
+                            As
+                        </md-button>
+                        <md-button class="md-raised" ng-class="{'disabled-btn': !vm.activeInputTemplate.id}"
+                                   data-ng-click="vm.renameTemplate($event, vm.activeInputTemplate)">
+                            Rename
+                            Template
+                        </md-button>
+                        <md-button class="md-raised" ng-class="{'disabled-btn': !vm.activeInputTemplate.id}"
+                                   data-ng-click="vm.deleteTemplate($event, vm.activeInputTemplate)">
+                            Delete
+                            Template
+                        </md-button>
+
+                    </div>
+
+                    <div class="template-form-div m-t-8 m-b-8 p-r-16">
+
+                        <table>
+
+                            <tr>
+                                <th>Name</th>
+                                <th>Verbose Name</th>
+                                <th>Value Type</th>
+                                <th>Content Type</th>
+                                <th>Use Default Value from Context</th>
+                                <th>Default Value</th>
+                                <th>Input Expression</th>
+                                <th></th>
+                            </tr>
+
+                            <tr data-ng-repeat="input in vm.activeInputTemplate.data.inputs track by $index">
+
+                                <td>
+                                    <md-input-container class="no-error-spacer m-0">
+                                        <input type="text" data-ng-model="input.name">
+                                    </md-input-container>
+                                </td>
+
+                                <td>
+                                    <md-input-container class="no-error-spacer m-0">
+                                        <input type="text" data-ng-model="input.verbose_name">
+                                    </md-input-container>
+                                </td>
+
+                                <td>
+
+                                    <md-input-container class="md-block m-0"
+                                                        aria-label="select with filter"
+                                                        md-no-float="">
+                                        <md-select ng-model="input.value_type"
+                                                   md-container-class="common-select-container"
+                                                   ng-change="vm.valueTypeChanged(vm.newItem)"
+                                                   md-on-close="newItemValueTypeSearchTerm = ''"
+                                                   id="ttype-inputs-value-type">
+                                            <md-select-header>
+                                                <input data-ng-model="newItemValueTypeSearchTerm"
+                                                       type="search"
+                                                       placeholder="Search for a ..."
+                                                       class="md-text md-select-search-pattern select-input-filter"
+                                                       ng-keydown="$event.stopPropagation()">
+                                            </md-select-header>
+
+                                            <div class="select-options-holder">
+
+                                                <md-option
+                                                        data-ng-repeat="item in vm.valueTypes | filter:{display_name: newItemValueTypeSearchTerm}"
+                                                        ng-value="item.value">
+                                                    {{item.display_name}}
+                                                </md-option>
+
+                                            </div>
+                                        </md-select>
+                                    </md-input-container>
+                                </td>
+
+                                <td>
+                                    <md-input-container class="md-block m-0"
+                                                        aria-label="content type input"
+                                                        md-no-float="">
+                                        <label for="ttype-inputs-default-value"></label>
+                                        <md-select ng-model="input.content_type"
+                                                   md-container-class="common-select-container"
+                                                   md-on-close="newItemContentTypeSearchTerm = ''"
+                                                   id="ttype-inputs-default-value"
+                                                   aria-label="select with filter"
+                                                   ng-disabled="input.value_type !== 100">
+
+                                            <md-select-header>
+                                                <input data-ng-model="newItemContentTypeSearchTerm"
+                                                       type="search"
+                                                       placeholder="Search for a ..."
+                                                       class="md-text md-select-search-pattern select-input-filter"
+                                                       ng-keydown="$event.stopPropagation()">
+                                            </md-select-header>
+
+                                            <div class="select-options-holder">
+
+                                                <md-option
+                                                        data-ng-repeat="item in vm.contentTypes | filter:{name: newItemContentTypeSearchTerm}"
+                                                        ng-value="item.key">
+                                                    {{item.name}}
+                                                </md-option>
+
+                                            </div>
+
+                                        </md-select>
+                                    </md-input-container>
+
+                                </td>
+
+                                <td class="edit-state-td ttype-inputs-checkbox-td">
+
+                                    <md-input-container class="no-error-spacer" data-ng-if="input.value_type == 100">
+                                        <md-checkbox data-ng-model="input.is_fill_from_context"
+                                        ></md-checkbox>
+                                    </md-input-container>
+
+                                    <div data-ng-if="input.value_type != 100">
+                                        &nbsp;
+                                    </div>
+
+                                </td>
+
+                                <td>
+                                    <div data-ng-if="input.value_type != 100">
+
+                                        <md-input-container class="no-error-spacer m-0">
+                                            <input type="text" data-ng-model="input.value">
+                                        </md-input-container>
+
+                                    </div>
+
+                                    <div data-ng-if="input.is_fill_from_context && input.value_type == 100">
+
+                                        <md-select ng-model="input.context_property"
+                                                   md-container-class="common-select-container">
+
+                                            <div class="select-options-holder">
+
+                                                <md-option
+                                                        data-ng-repeat="item in vm.contextProperties[input.content_type]"
+                                                        ng-value="item.key">
+                                                    {{item.name}}
+                                                </md-option>
+
+                                            </div>
+                                        </md-select>
+
+                                    </div>
+
+                                    <div data-ng-if="!input.is_fill_from_context && input.value_type == 100">
+
+                                        <md-input-container class="no-error-spacer m-0">
+                                            <input type="text" data-ng-model="input.value" disabled>
+                                        </md-input-container>
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+                                    <md-input-container class="no-error-spacer m-0">
+                                        <input type="text" data-ng-model="input.value_expr">
+                                    </md-input-container>
+                                </td>
+
+                                <td>
+                                    <md-button data-ng-click="vm.deleteInput($event, input, $index)"
+                                               aria-label="ttype delete input row button"
+                                               class="small-button-icon" style="top: 6px;">
+                                        <ng-md-icon icon="delete"></ng-md-icon>
+                                    </md-button>
+                                </td>
+
+                            </tr>
+
+                        </table>
+
+                        <md-button class="md-raised" data-ng-click="vm.addInput($event)">Add Input</md-button>
+
+
+                    </div>
+
+
+                </div>
+
+            </md-tab>
+
+            <md-tab label="Field Templates">
+
+                <div class="p-24">
+
+                    <div class="template-control-row" layout="row">
+
+                        <md-input-container class="md-block" style="width: 200px;">
+                            <label>Template</label>
+                            <md-select
+                                    data-ng-model="vm.activeFieldTemplateId"
+                                    md-container-class="common-select-container"
+                                    data-ng-change="vm.setActiveTemplate()">
+                                <div class="select-options-holder">
+                                    <md-option
+                                            data-ng-repeat="template in vm.fieldTemplates track by template.id "
+                                            ng-value="template.id">
+                                        {{template.name}}
+                                    </md-option>
+                                </div>
+                            </md-select>
+                        </md-input-container>
+
+                        <md-button class="md-raised" ng-class="{'disabled-btn': !vm.activeFieldTemplate.id}"
+                                   data-ng-click="vm.saveTemplate($event, vm.activeFieldTemplate)">Save
+                            Template
+                        </md-button>
+                        <md-button class="md-raised"
+                                   data-ng-click="vm.saveTemplateAs($event, vm.activeFieldTemplate)">
+                            Save
+                            Template
+                            As
+                        </md-button>
+                        <md-button class="md-raised" ng-class="{'disabled-btn': !vm.activeFieldTemplate.id}"
+                                   data-ng-click="vm.renameTemplate($event, vm.activeFieldTemplate)">
+                            Rename
+                            Template
+                        </md-button>
+                        <md-button class="md-raised" ng-class="{'disabled-btn': !vm.activeFieldTemplate.id}"
+                                   data-ng-click="vm.deleteTemplate($event, vm.activeFieldTemplate)">
+                            Delete
+                            Template
+                        </md-button>
+
+                    </div>
+
+                    <div class="template-form-div m-t-8 m-b-8">
+
+                        <div class="ttype-fields-list-container" layout="row">
+
+                            <div class="ttype-fields-group-container"
+                                 layout="column"
+                                 flex="33">
+
+                                <h4 class="ttype-fields-group-header">Text fields</h4>
+
+                                <div layout="column">
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_text_1']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_text_1">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_text_1"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_text_2']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_text_2">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_text_2"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_text_3']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_text_3">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_text_3"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_text_4']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_text_4">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_text_4"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_text_5']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_text_5">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_text_5"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_text_6']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_text_6">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_text_6"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_text_7']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_text_7">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_text_7"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_text_8']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_text_8">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_text_8"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_text_9']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_text_9">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_text_9"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_text_10']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_text_10">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_text_10"></expression-editor-button>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="ttype-fields-group-container"
+                                 layout="column"
+                                 flex="33">
+
+                                <h4 class="ttype-fields-group-header">Number fields</h4>
+
+                                <div layout="column">
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_number_1']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_number_1">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_number_1"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_number_2']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_number_2">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_number_2"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_number_3']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_number_3">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_number_3"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_number_4']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_number_4">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_number_4"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_number_5']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_number_5">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_number_5"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_number_6']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_number_6">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_number_6"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_number_7']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_number_7">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_number_7"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_number_8']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_number_8">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_number_8"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_number_9']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_number_9">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_number_9"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_number_10']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_number_10">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_number_10"></expression-editor-button>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="ttype-fields-group-container"
+                                 layout="column"
+                                 flex="33">
+
+                                <h4 class="ttype-fields-group-header">Date fields</h4>
+
+                                <div layout="column">
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_date_1']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_date_1">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_date_1"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_date_2']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_date_2">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_date_2"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_date_3']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_date_3">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_date_3"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_date_4']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_date_4">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_date_4"></expression-editor-button>
+                                    </div>
+
+                                    <div class="ttype-fields-field-wrap">
+                                        <md-input-container>
+                                            <label for=""
+                                                   data-ng-bind="vm.transactionUserFields['user_date_5']"></label>
+                                            <input type="text"
+                                                   data-ng-model="vm.activeFieldTemplate.data.fields.user_date_5">
+                                        </md-input-container>
+
+                                        <expression-editor-button
+                                                data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                data-item="vm.activeFieldTemplate.data.fields.user_date_5"></expression-editor-button>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </md-tab>
+
+            <md-tab label="Action Templates">
+
+                <div class="p-24">
+
+                    <div class="template-control-row" layout="row">
+
+                        <md-input-container class="md-block" style="width: 200px;">
+                            <label>Template</label>
+                            <md-select
+                                    data-ng-model="vm.activeActionTemplateId"
+                                    md-container-class="common-select-container"
+                                    data-ng-change="vm.setActiveTemplate()">
+                                <div class="select-options-holder">
+                                    <md-option
+                                            data-ng-repeat="template in vm.actionTemplates track by template.id "
+                                            ng-value="template.id">
+                                        {{template.name}}
+                                    </md-option>
+                                </div>
+                            </md-select>
+                        </md-input-container>
+
+                        <md-button class="md-raised" ng-class="{'disabled-btn': !vm.activeActionTemplate.id}"
+                                   data-ng-click="vm.saveTemplate($event, vm.activeActionTemplate)">Save
+                            Template
+                        </md-button>
+                        <md-button class="md-raised"
+                                   data-ng-click="vm.saveTemplateAs($event, vm.activeActionTemplate)">
+                            Save
+                            Template
+                            As
+                        </md-button>
+                        <md-button class="md-raised" ng-class="{'disabled-btn': !vm.activeActionTemplate.id}"
+                                   data-ng-click="vm.renameTemplate($event, vm.activeActionTemplate)">
+                            Rename
+                            Template
+                        </md-button>
+                        <md-button class="md-raised" ng-class="{'disabled-btn': !vm.activeActionTemplate.id}"
+                                   data-ng-click="vm.deleteTemplate($event, vm.activeActionTemplate)">
+                            Delete
+                            Template
+                        </md-button>
+
+                    </div>
+
+                </div>
+
+                <div class="template-form-div m-t-8 m-b-8 p-r-16">
+
+
+                    <div class="template-ttype-actions transaction-type-actions-wrapper">
+
+                        <v-accordion multiple control="vm.accordion" oncollapse="vm.onActionAccordionCollapse(index, id)"
+                                     class="vAccordion-type1">
+
+                            <v-pane data-ng-repeat="item in vm.activeActionTemplate.data.actions track by $index"
+                                    expanded="item.isPaneExpanded">
+                                <v-pane-header ng-class="{'m-b-0': !$pane.isExpanded()}" inactive class="transaction-type-action-pane">
+                                    <!--<div layout="row"
+                                         layout-align="space-between center"
+                                         ng-click="vm.toggleItem($pane, item, $event)">
+
+                                        <div layout="row"
+                                             class="ttype-action-info-container"
+                                             layout-align="start center">
+
+                                            <span class="m-t-16" ng-click="$event.stopPropagation()">
+                                                <expression-editor-button
+                                                        data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                                                        data-item="item.condition_expr"></expression-editor-button>
+                                                <md-tooltip class="tooltip_2"
+                                                            md-direction="bottom">Condition to execute the Action</md-tooltip>
+                                            </span>
+
+                                            <span class="text-bold"># {{$index + 1}}</span>
+
+                                            <span class="text-bold"
+                                                  ng-bind="vm.getActionTypeName(item) + ':'"
+                                                  style="width: 270px"></span>
+
+                                            <span ng-if="item.isPaneExpanded">
+                                                <md-input-container class="no-error-spacer" style="min-height: 35px">
+                                                    <label></label>
+                                                    <input ng-keydown="vm.preventSpace($event)"
+                                                           type="text"
+                                                           ng-model="item.action_notes"
+                                                           class="ttype-action-notes-input"
+                                                           placeholder="Action notes">
+                                                </md-input-container>
+                                            </span>
+                                            <span ng-if="!item.isPaneExpanded"
+                                                  ng-bind="item.action_notes"></span>
+                                        </div>
+
+                                        <div layout="row">
+                                            <md-button class="md-raised"
+                                                       style="background: #ffeee8;"
+                                                       data-ng-click="vm.deletePane(item, $index, $event)">Delete
+                                            </md-button>
+                                            &lt;!&ndash;<md-button class="md-raised"
+                                                       data-ng-click="vm.makeCopyOfAction(item, $index, $event)">Make copy
+                                            </md-button>&ndash;&gt;
+                                            <md-button class="md-raised" ng-disabled="$index == 0"
+                                                       data-ng-click="vm.moveUp(item, $index, $event)">Move up
+                                            </md-button>
+                                            <md-button class="md-raised"
+                                                       ng-disabled="$index == vm.activeActionTemplate.data.actions.length - 1"
+                                                       data-ng-click="vm.moveDown(item, $index, $event)">Move Down
+                                            </md-button>
+                                            <md-button class="md-raised"
+                                                       data-ng-click="vm.toggleItem($pane, item, $event)">
+                                                <span data-ng-if="item.isPaneExpanded">Collapse</span>
+                                                <span data-ng-if="!item.isPaneExpanded">Expand</span>
+                                            </md-button>
+                                        </div>
+
+                                    </div>-->
+                                    <div ng-include="'views/tabs/transaction-type/transaction-type-action-accordion-header-view.html'"></div>
+                                </v-pane-header>
+
+<!--                                <v-pane-content class="template-ttype-action-pane-content" style="padding: 20px;">-->
+                                <v-pane-content class="transaction-type-actions-fields" ng-class="{'p-t-10': $pane.isExpanded()}">
+
+                                    <div data-ng-if="item.transaction != null"
+                                         data-ng-include="'views/tabs/transaction-type/actions/transaction-action-view.html'">
+
+                                    </div>
+                                    <div data-ng-if="item.instrument != null"
+                                         data-ng-include="'views/tabs/transaction-type/actions/instrument-action-view.html'">
+                                    </div>
+
+                                    <div data-ng-if="item.instrument_factor_schedule != null"
+                                         data-ng-include="'views/tabs/transaction-type/actions/instrument-factor-schedule-action-view.html'">
+                                    </div>
+
+                                    <div data-ng-if="item.instrument_manual_pricing_formula != null"
+                                         data-ng-include="'views/tabs/transaction-type/actions/instrument-manual-pricing-formula-action-view.html'">
+
+                                    </div>
+
+                                    <div data-ng-if="item.instrument_accrual_calculation_schedules != null"
+                                         data-ng-include="'views/tabs/transaction-type/actions/instrument-accrual-calculation-schedules-action-view.html'">
+                                    </div>
+
+                                    <div data-ng-if="item.instrument_event_schedule != null"
+                                         data-ng-include="'views/tabs/transaction-type/actions/instrument-event-schedule-action-view.html'">
+                                    </div>
+
+                                    <div data-ng-if="item.instrument_event_schedule_action != null"
+                                         data-ng-include="'views/tabs/transaction-type/actions/instrument-event-schedule-action-action-view.html'">
+                                    </div>
+
+                                </v-pane-content>
+                            </v-pane>
+
+                        </v-accordion>
+
+
+                    </div>
+
+                    <div>
+
+                        <div class="transaction-type-operations-block">
+
+                            <p class="text-right text-bold m-b-16">General operations:</p>
+
+                            <div layout="row" layout-align="end center">
+                                <md-button class="md-raised" data-ng-click="vm.addAction('transaction')">
+                                    Create base transaction
+                                </md-button>
+                                <md-button class="md-raised" data-ng-click="vm.addAction('instrument')">
+                                    Create instrument
+                                </md-button>
+                                <md-button class="md-raised" data-ng-click="vm.addAction('execute_command')">
+                                    Execute Command
+                                </md-button>
+                            </div>
+
+                        </div>
+
+                        <div class="transaction-type-operations-block m-t-24">
+
+                            <p class="text-right text-bold m-b-16">Instrument operations:</p>
+
+                            <div layout="row" layout-align="end center">
+                                <md-button class="md-raised" data-ng-click="vm.addAction('instrument_factor_schedule')">
+                                    Create factor
+                                </md-button>
+
+                                <md-button class="md-raised"
+                                           data-ng-click="vm.addAction('instrument_manual_pricing_formula')">
+                                    Create pricing
+                                </md-button>
+
+                                <md-button class="md-raised"
+                                           data-ng-click="vm.addAction('instrument_accrual_calculation_schedules')">
+                                    Create accrual
+                                </md-button>
+                                <md-button class="md-raised" data-ng-click="vm.addAction('instrument_event_schedule')">
+                                    Create event
+                                </md-button>
+
+                            </div>
+
+                            <div layout="row" layout-align="end center">
+                                <md-button class="md-raised"
+                                           data-ng-click="vm.addAction('instrument_event_schedule_action')">
+                                    Create Event Action
+                                </md-button>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </md-tab>
+
+        </md-tabs>
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.input || !vm.readyStatus.field || !vm.readyStatus.action">
+        <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+            <md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>
+        </div>
+    </div>
+
+</div>

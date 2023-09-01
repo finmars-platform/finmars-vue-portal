@@ -1,0 +1,141 @@
+<md-dialog aria-label="data scheme manager" ng-cloak class="transaction-scheme-manager-dialog-view draggable-dialog" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Data scheme creator</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content   style="background: #E5E5E5;">
+        <md-content>
+            <div data-ng-if="vm.readyStatus.dataTypes">
+                <div layout="row" layout-align="center center">
+                    <md-card flex="100" class="inm-card-special">
+                        <md-card-content layout="column">
+                            <md-input-container class="md-block">
+                                <label>Scheme name</label>
+                                <input aria-label="scheme name" type="text" data-ng-model="vm.schemeName">
+                            </md-input-container>
+                            <md-input-container class="SC-entity-select-container">
+                                <label>Data type</label>
+                                <md-select data-ng-model="vm.schemeDataType"
+                                           data-ng-model-options="{trackBy: '$value.id'}"
+                                           data-ng-change="vm.updateMatchingAttributes(vm.schemeDataType.name)">
+                                    <md-option
+                                            data-ng-repeat="dataType in vm.dataTypes"
+                                            data-ng-value="{name:dataType.name,id:dataType.id}">
+                                        {{dataType.name}}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                            <!--<md-input-container flex="40" style="margin-bottom: 0">-->
+                                <!--<label>Expression</label>-->
+                                <!--<input type="text" data-ng-model="vm.scheme.rule_expr">-->
+                            <!--</md-input-container>-->
+                        </md-card-content>
+                    </md-card>
+                </div>
+                <div layout="row">
+                    <div layout="column" flex-md="35" flex-lg="30">
+                        <div>
+                            <h4 style="padding-left: 10px">Imported Columns</h4>
+                        </div>
+                        <!--<div layout="column">-->
+
+                        <md-card>
+                            <md-card-content>
+                                <div data-ng-repeat="item in vm.providerFields track by $index" flex="100">
+                                    <div class="fields-holder" layout="row">
+                                        <div class="iscm-item" layout="row">
+                                            <span style="position: relative; top: 8px">#</span>
+                                            <md-input-container flex="20">
+                                                <!--<label>Number</label>-->
+                                                <input aria-label="column number" type="text" data-ng-model="item.num">
+                                            </md-input-container>
+                                            <md-input-container flex="70">
+                                                <!--<label>Name</label>-->
+                                                <input aria-label="column name" type="text" data-ng-model="item.source">
+                                            </md-input-container>
+                                        </div>
+                                        <div>
+                                            <md-button style="min-width: 40px;"
+                                                       data-ng-click="vm.removeProviderField(item, $index)"
+                                                       class="md-raised">x
+                                            </md-button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </md-card-content>
+                        </md-card>
+                        <div>
+                            <md-button class="md-raised" data-ng-click="vm.addProviderField()">
+                                Add field
+                            </md-button>
+                        </div>
+
+                    </div>
+
+                    <!--</div>-->
+                    <div layout="column" flex-md="65" flex-lg="70">
+                        <div>
+                            <h4 style="padding-left: 10px">Data type matching</h4>
+                        </div>
+
+                        <md-card>
+                            <md-card-content>
+                                <div layout="column">
+                                    <div data-ng-repeat="item in vm.mapFields" layout="row">
+                                        <div flex-md="25" flex-lg="30">
+                                            <div layout="row">
+                                                <div flex="auto" flex-lg="80">
+                                                    <md-input-container>
+                                                        <input aria-label="model field"
+                                                               type="text"
+                                                               data-ng-model="item.name" readonly>
+                                                    </md-input-container>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div flex-md="35" flex-lg="40">
+                                            <md-input-container style="width: 80%">
+                                                <label>Expression</label>
+                                                <input aria-label="matching key input"
+                                                       type="text"
+                                                       data-ng-model="item.expression">
+                                            </md-input-container>
+                                        </div>
+                                        <div flex-md="40" flex-lg="30">
+                                            <md-button style="min-width: 40px;"
+                                                       data-ng-click="vm.openExpressionDialog($event, item)"
+                                                       class="md-raised md-primary">
+                                                ...
+                                            </md-button>
+                                            <md-button data-ng-if="item.related"
+                                                       data-ng-click="vm.openMapping($event, {complexExpressionEntity: item.related})"
+                                                       class="md-raised md-primary ESD-edit-mapping-btn">Edit mapping
+                                            </md-button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </md-card-content>
+                        </md-card>
+                    </div>
+                </div>
+            </div>
+            <div data-ng-if="!vm.readyStatus.dataTypes">
+                <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                    <md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>
+                </div>
+            </div>
+        </md-content>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" data-ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+        <md-button class="md-raised" data-ng-click="vm.create()" style="margin-right:20px;">
+            Save
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

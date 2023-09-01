@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-	import Stream from "~/services/WebSocket.js"
+	import Stream from '~/services/WebSocket.js'
 
 	const store = useStore();
   const evAttrsStore = useEvAttributesStore();
@@ -21,7 +21,7 @@
 
 	await store.init();
 
-	let notLoadingMember = ref(true);
+	let notLoadingMember = ref(true)
 
 	// let ws = new Stream({
 	// 	url: config.public.wsURL,
@@ -43,13 +43,11 @@
 	// 	}
 	// })
 
-	watchEffect( async ( onCleanup ) => {
-
-		if ( store.current.base_api_url ) {
-
+	watchEffect(async (onCleanup) => {
+		if (store.current.base_api_url) {
 			onCleanup(() => {})
 
-			notLoadingMember.value = false;
+			notLoadingMember.value = false
 
 			await Promise.all([
         store.getMe(),
@@ -57,16 +55,14 @@
         evAttrsStore.fetchSystemAttributes(),
       ]);
 
-			notLoadingMember.value = true;
+			notLoadingMember.value = true
 
 			// store.ws.send({
 			// 	action: "update_user_state",
 			// 	data: { member: store.member },
 			// })
-
 		}
 	})
-
 </script>
 <style lang="scss" scoped>
 	.wrap {

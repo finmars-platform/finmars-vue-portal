@@ -1,0 +1,25 @@
+<div class="classifier-tree-container">
+    <div class="classifier-tree-filter-container"
+         ng-class="{'disabled': vm.editingNode}">
+        <span class="material-icons">search</span>
+        <input type="text"
+               placeholder="Search"
+               ng-model="vm.treeFilterTerms"
+               ng-change="vm.filterTree(vm.treeFilterTerms)"
+               ng-model-options="{debounce: 1000}"
+               ng-disabled="vm.editingNode">
+    </div>
+
+    <div class="classifier-tree classifierTree">
+
+        <div class="node-drop-container-2 dropAtTheBeginning"
+             data-path-to-node=""></div>
+
+        <div ng-repeat="node in vm.filteredTree track by node.id"
+             class="classifier-node-holder">
+            <classifier-tree-node node="node"
+                                  parent="treeData"></classifier-tree-node>
+        </div>
+
+    </div>
+</div>

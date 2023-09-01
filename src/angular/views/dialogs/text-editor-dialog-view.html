@@ -1,0 +1,38 @@
+<md-dialog class="text-editor-dialog draggable-dialog dialog-actions-bottom textEditorDialogElemToResize"
+           aria-label="text editor dialog"
+           drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2 data-ng-bind-html="vm.dialogTitle"></h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="p-16 height-100">
+        <div class="text-editor-textarea-container">
+            <!--<md-input-container style="max-width: 100%">
+                <label></label>
+                <input type="text" data-ng-model="vm.text" style="width: 100%;">
+            </md-input-container>-->
+            <textarea class="text-editor-textarea" data-ng-model="vm.text"></textarea>
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions>
+        <div layout="row" layout-align="space-between center">
+            <md-button ng-click="vm.cancel()">
+                Cancel
+            </md-button>
+
+            <md-button ng-click="vm.agree()" style="margin-right:20px;">
+                OK
+            </md-button>
+        </div>
+
+        <dialog-window-resizer data-ng-if="vm.dialogElemToResize"
+                               data-elem-to-resize="vm.dialogElemToResize"
+                               class="dialog-window-resizer_type1"></dialog-window-resizer>
+    </md-dialog-actions>
+</md-dialog>

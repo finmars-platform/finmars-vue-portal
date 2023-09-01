@@ -1,0 +1,57 @@
+<div>
+
+    <div data-ng-if="vm.textFields.length">
+
+        <h4>Text</h4>
+
+        <div data-ng-repeat="item in vm.textFields" class="m-8" title="{{item.key}}">
+
+            {{item.name}}: <b>{{item.value}}</b>
+
+            <a ng-click="vm.copyUserFieldContent(item.value)" class="copy-text-button">
+                <ng-md-icon icon="content_copy" size="16">
+                    <md-tooltip class="tooltip_2" md-direction="top">Copy to clipboard</md-tooltip>
+                </ng-md-icon>
+            </a>
+
+        </div>
+
+    </div>
+
+    <div data-ng-if="vm.numberFields.length">
+
+        <h4>Numbers</h4>
+
+        <div data-ng-repeat="item in vm.numberFields" class="m-8" title="{{item.key}}">
+
+            {{item.name}}: <b>{{item.value}}</b>
+
+            <a ng-click="vm.copyUserFieldContent(item.value)" class="copy-text-button">
+                <ng-md-icon icon="content_copy" size="16">
+                    <md-tooltip class="tooltip_2" md-direction="top">Copy to clipboard</md-tooltip>
+                </ng-md-icon>
+            </a>
+
+        </div>
+
+    </div>
+
+    <div data-ng-if="vm.dateFields.length">
+
+        <h4>Dates</h4>
+
+        <div data-ng-repeat="item in vm.dateFields" class="m-8" title="{{item.key}}">
+
+            {{item.name}}: <b>{{item.value}}</b>
+
+            <a ng-click="vm.copyUserFieldContent(item.value)" class="copy-text-button">
+                <ng-md-icon icon="content_copy" size="16">
+                    <md-tooltip class="tooltip_2" md-direction="top">Copy to clipboard</md-tooltip>
+                </ng-md-icon>
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

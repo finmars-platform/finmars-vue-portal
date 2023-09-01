@@ -1,0 +1,58 @@
+<div>
+
+    <table>
+
+        <thead>
+
+        <tr>
+            <th>
+                ID
+            </th>
+
+            <th>
+                Type
+            </th>
+
+            <th>
+                Portfolio
+            </th>
+
+            <th>
+                Account Position
+            </th>
+
+            <th>
+                Instrument
+            </th>
+
+            <th>
+                Settlement Currency
+            </th>
+
+            <th>
+
+            </th>
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        <tr data-ng-repeat="item in vm.baseTransactions">
+
+            <td data-ng-bind="item.transaction_code"></td>
+            <td data-ng-bind="item.transaction_class_object.name"></td>
+            <td data-ng-bind="item.portfolio_object.name"></td>
+            <td data-ng-bind="item.account_position_object.name"></td>
+            <td data-ng-bind="item.instrument_object.name"></td>
+            <td data-ng-bind="item.settlement_currency_object.name"></td>
+            <td>
+                <md-button class="md-raised" data-ng-click="vm.viewBaseTransaction($event, item)">View</md-button>
+            </td>
+        </tr>
+
+        </tbody>
+
+    </table>
+
+</div>

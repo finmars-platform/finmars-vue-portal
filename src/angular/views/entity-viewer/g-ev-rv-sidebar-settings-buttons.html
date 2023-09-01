@@ -1,0 +1,78 @@
+<div class="layout-settings-layout-name-holder">
+    <span data-ng-bind="layoutName" class="layout-settings-layout-name">
+        <md-tooltip data-ng-if="layoutName"
+                    md-direction="top"
+                    data-ng-bind="layoutName"></md-tooltip>
+    </span>
+
+    <div data-ng-if="viewContext !== 'dashboard'">
+        <md-button data-ng-if="isLayoutDefault"
+                   class="layout-settings-is-layout-default-btn">
+            <ng-md-icon icon="star"
+                        size="22">
+                <md-tooltip md-direction="top">Default Layout</md-tooltip>
+            </ng-md-icon>
+        </md-button>
+        <md-button data-ng-if="!isLayoutDefault"
+                   class="layout-settings-is-layout-default-btn"
+                   data-ng-click="setLayoutAsDefault($event)">
+            <ng-md-icon icon="star_border"
+                        size="22">
+                <md-tooltip md-direction="top">Not default layout</md-tooltip>
+            </ng-md-icon>
+        </md-button>
+    </div>
+
+    <md-button data-ng-if="viewContext !== 'dashboard'"
+               data-ng-click="renameLayout($event)"
+               class="layout-settings-rename-btn"
+               aria-label="open rename layout dialog">
+        <ng-md-icon icon="edit" size="22">
+            <md-tooltip md-direction="top">Rename Layout</md-tooltip>
+        </ng-md-icon>
+    </md-button>
+</div>
+
+<div layout="row" layout-align="space-between center" class="layout-settings-actions-btns-container">
+
+    <dvi flex="60" layout="row" layout-align="start center">
+        <md-button aria-label="save viewer layout" data-ng-click="saveLayoutList()">
+            <ng-md-icon icon="save" size="22">
+                <md-tooltip md-direction="top">Save Layout</md-tooltip>
+            </ng-md-icon>
+        </md-button>
+
+        <md-button data-ng-if="viewContext !== 'dashboard'"
+                   data-ng-click="openLayoutList($event)"
+                   aria-label="open viewer layout">
+            <ng-md-icon icon="folder_open" size="22">
+                <md-tooltip md-direction="top">Open Layout</md-tooltip>
+            </ng-md-icon>
+        </md-button>
+
+        <md-button data-ng-if="viewContext !== 'dashboard'"
+                   data-ng-click="exportLayout($event)"
+                   aria-label="export viewer layout configuration">
+            <ng-md-icon icon="forward" size="22">
+                <md-tooltip md-direction="top">Export Layout</md-tooltip>
+            </ng-md-icon>
+        </md-button>
+    </dvi>
+
+    <div flex="40" layout="row" layout-align="end center">
+        <md-button data-ng-if="viewContext !== 'dashboard'"
+                   data-ng-click="openViewConstructor($event)"
+                   aria-label="open view constructor">
+            <ng-md-icon icon="view_list" size="22">
+                <md-tooltip md-direction="top">View Constructor</md-tooltip>
+            </ng-md-icon>
+        </md-button>
+
+        <md-button aria-label="open report settings" data-ng-click="openSettings($event)">
+            <ng-md-icon icon="settings" size="22">
+                <md-tooltip md-direction="top">Settings</md-tooltip>
+            </ng-md-icon>
+        </md-button>
+    </div>
+
+</div>

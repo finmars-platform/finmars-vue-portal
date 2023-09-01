@@ -2,7 +2,7 @@
 	"private": true,
 	"scripts": {
 		"build": "nuxt build ",
-		"dev": "nuxt --rootDir=./v/ dev -p=8080",
+		"dev": "nuxt --rootDir=./v/ dev -p=3000",
 		"dev-proxy": "API_HOST=https://dev.finmars.com AUTH_HOST=https://dev.finmars.com/authorizer APP_HOST=http://localhost:3000/v WS_HOST='wss://dev.finmars.com/ws/' NUXT_HOST=0.0.0.0 nuxt --rootDir=./v/ dev",
 		"dev-local": "NUXT_APP_BASE_URL=/space00000/v API_HOST=http://0.0.0.0:8000 AUTH_HOST=http://0.0.0.0:8083/authorizer APP_HOST=http://localhost:3000/v OLD_APP_URL='http://0.0.0.0:8080/#!/' WS_HOST='ws://0.0.0.0:6969/' NUXT_HOST=0.0.0.0 nuxt --rootDir=./v/ dev",
 		"dev-local-sz": "API_HOST=http://0.0.0.0:8000 AUTH_HOST=http://0.0.0.0:8083/authorizer APP_HOST=http://0.0.0.0:3000/v WS_HOST='wss://dev.finmars.com/ws/' NUXT_HOST=0.0.0.0 nuxt --rootDir=./v/ dev",
@@ -15,12 +15,19 @@
 	"devDependencies": {
 		"@nuxt/image-edge": "^1.0.0-27809804.194d2d6",
 		"@nuxt/test-utils-edge": "^3.0.1-rc.0-27833302.52421a9",
+		"@testing-library/vue": "^7.0.0",
+		"@vitest/coverage-v8": "^0.33.0",
 		"eslint": "^8.24.0",
 		"eslint-plugin-vue": "^9.6.0",
+		"happy-dom": "^10.5.1",
 		"jsdom": "^20.0.3",
 		"nuxt": "^3.0.0",
 		"prettier": "2.6.2",
-		"sass": "^1.54.9"
+		"sass": "^1.54.9",
+		"unplugin-auto-import": "^0.16.6",
+		"unplugin-vue-components": "^0.25.1",
+		"vite-plugin-commonjs": "^0.7.1",
+		"vitest": "^0.33.0"
 	},
 	"dependencies": {
 		"@chenfengyuan/vue-qrcode": "^2.0.0",
@@ -29,9 +36,11 @@
 		"chart.js": "^3.9.1",
 		"click-outside-vue3": "^4.0.1",
 		"dayjs": "^1.11.7",
+		"jquery": "^3.3.1",
 		"keycloak-js": "^21.0.1",
 		"pinia": "^2.0.24",
 		"qrcode": "^1.5.1",
+		"swiper": "^10.0.4",
 		"vue": "^3.2.39",
 		"vue3-ace-editor": "^2.2.2"
 	}

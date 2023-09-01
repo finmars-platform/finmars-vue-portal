@@ -1,0 +1,93 @@
+<div class="dashboard-control dashboardControl">
+
+<!--    <div class="dashboard-component-name text-center">
+        <span class data-ng-if="customName" title="{{customName}}" data-ng-bind="customName"></span>
+        <span data-ng-if="!customName && item" title="{{item.data.name}}" data-ng-bind="item.data.name"></span>
+    </div>-->
+
+    <div ng-if="readyStatus.componentWidthCalculated">
+
+        <div data-ng-if="componentData.settings.value_type == 10">
+
+            <text-input label="{{customName}}"
+                        model="item.data.store.value"
+                        small-options="{notNull: options.notNull}"
+                        on-change-callback="valueChanged()"
+            ></text-input>
+
+        </div>
+
+        <div data-ng-if="componentData.settings.value_type == 20">
+
+            <number-input label="{{customName}}"
+                          model="item.data.store.value"
+                          small-options="{notNull: options.notNull}"
+                          on-change-callback="valueChanged()"
+            ></number-input>
+
+        </div>
+
+        <div data-ng-if="componentData.settings.value_type == 40">
+
+            <date-input
+                    label="{{customName}}"
+                    model="item.data.store.value"
+                    custom-buttons="buttons"
+                    custom-styles="customStyles"
+                    small-options="{notNull: options.notNull}"
+                    on-change-callback="valueChanged()"
+            ></date-input>
+
+            <!--        <md-input-container class="field-date-pick-holder no-error-spacer md-block">-->
+            <!--            <label data-ng-bind="item.data.name"></label>-->
+            <!--            <zh-date-picker data-date-value="item.data.store.value" callback-method="valueChanged()"></zh-date-picker>-->
+            <!--        </md-input-container>-->
+
+        </div>
+
+        <div data-ng-if="componentData.settings.value_type == 100" class="position-relative">
+
+            <div class="width-100">
+
+                <div data-ng-if="!componentData.settings.multiple">
+
+                    <entity-search-select
+                            data-item="item.data.store.value"
+                            data-item-object="entityData.value"
+                            data-label="customName"
+                            data-input-text="item.data.store.name"
+                            data-item-name="item.data.store.name"
+                            data-entity-type="entityType"
+                            data-on-change-callback="valueChanged()"></entity-search-select>
+                </div>
+
+                <div data-ng-if="componentData.settings.multiple">
+
+                    <two-fields-multiselect title="{{customName}}"
+                                            items="fields"
+                                            model="item.data.store.user_codes"
+                                            selected-items-indication="chips"
+                                            get-data-method="getDataForMultiselect()"
+                                            multiselect-event-service="multiselectEventService"
+                                            on-change-callback="valueChanged()"
+                                            class="two-fields-multiselect no-error-spacer dashboard-control-multiselect"></two-fields-multiselect>
+                </div>
+
+            </div>
+
+            <md-button class="control-clear-btn" data-ng-click="clearValue()">
+                <ng-md-icon icon="clear" size="12"></ng-md-icon>
+            </md-button>
+
+        </div>
+
+    </div>
+
+    <div ng-if="!readyStatus.componentWidthCalculated">
+        <div layout="row" layout-sm="column" layout-align="space-around">
+            <progress-circular diameter="30"></progress-circular>
+        </div>
+    </div>
+
+
+</div>

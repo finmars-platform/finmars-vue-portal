@@ -1,0 +1,72 @@
+<div>
+    <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab label="Membership" data-ui-sref="app.portal.settings.general.profile"
+                md-active="$state.includes('app.settings.general.profile')">
+            <md-content class="md-padding">
+                <div data-ui-view="profile"></div>
+            </md-content>
+        </md-tab>
+        <md-tab label="Change Password" data-ui-sref="app.portal.settings.general.change-password"
+                md-active="$state.includes('app.settings.general.change-password')">
+            <md-content class="md-padding">
+                <div data-ui-view="change-password"></div>
+            </md-content>
+        </md-tab>
+        <md-tab label="Data providers" data-ui-sref="app.portal.settings.general.data-providers"
+                md-active="vm.checkProviders()">
+            <md-content class=" md-padding
+        ">
+                <div data-ui-view="data-providers"></div>
+            </md-content>
+        </md-tab>
+        <md-tab label="Transaction Fields" data-ui-sref="app.portal.settings.general.transaction-field"
+                md-active="$state.includes('app.settings.general.transaction-field')">
+            <md-content class="md-padding">
+                <div data-ui-view="transaction-field"></div>
+            </md-content>
+        </md-tab>
+        <md-tab label="Instrument Fields" data-ui-sref="app.portal.settings.general.instrument-field"
+                md-active="$state.includes('app.settings.general.instrument-field')">
+            <md-content class="md-padding">
+                <div data-ui-view="instrument-field"></div>
+            </md-content>
+        </md-tab>
+        <md-tab label="Instrument import" data-ui-sref="app.portal.settings.general.instrument-import"
+                md-active="$state.includes('app.settings.general.instrument-import')">
+            <md-content class="md-padding">
+                <div data-ui-view="instrument-import"></div>
+            </md-content>
+        </md-tab>
+        <md-tab label="Simple entity import" data-ui-sref="app.portal.settings.general.simple-entity-import"
+                md-active="$state.includes('app.settings.general.simple-entity-import')">
+            <md-content class="md-padding">
+                <div data-ui-view="simple-entity-import"></div>
+            </md-content>
+        </md-tab>
+        <md-tab label="Transaction import" data-ui-sref="app.portal.settings.general.transaction-import"
+                md-active="$state.includes('app.settings.general.transaction-import')">
+            <md-content class="md-padding">
+                <div data-ui-view="transaction-import"></div>
+            </md-content>
+        </md-tab>
+        <md-tab label="Complex import" data-ui-sref="app.portal.settings.general.complex-import"
+                md-active="$state.includes('app.settings.general.complex-import')">
+            <md-content class="md-padding">
+                <div data-ui-view="complex-import"></div>
+            </md-content>
+        </md-tab>
+        <md-tab label="Configuration" data-ui-sref="app.portal.settings.general.configuration"
+                md-active="$state.includes('app.settings.general.configuration')">
+            <md-content class="md-padding">
+                <div data-ui-view="configuration"></div>
+            </md-content>
+        </md-tab>
+        <md-tab label="Init Configuration" data-ui-sref="app.portal.settings.general.init-configuration"
+                md-active="$state.includes('app.settings.general.init-configuration')">
+            <md-content class="md-padding">
+                <div data-ui-view="init-configuration"></div>
+            </md-content>
+        </md-tab>
+
+    </md-tabs>
+</div>

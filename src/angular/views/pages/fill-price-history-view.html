@@ -1,0 +1,104 @@
+<md-tabs md-dynamic-height md-border-bottom>
+    <md-tab label="Prices">
+        <div style="padding: 20px 20px 0">
+            <div>
+                <md-checkbox ng-model="vm.priceSettings.isRange" aria-label="override">
+                    Date range
+                </md-checkbox>
+            </div>
+            <div data-ng-if="!vm.priceSettings.isRange">
+                <md-input-container class="m-l-0">
+                    <label for="">Date</label>
+                    <zh-date-picker data-date-value="vm.price.date_both"></zh-date-picker>
+                </md-input-container>
+                <ng-md-icon class="tooltip-inline-block" icon="info" size="20" style="fill: #777777">
+                    <md-tooltip class="tooltip_1" md-direction="top">tooltip text</md-tooltip>
+                </ng-md-icon>
+            </div>
+            <div data-ng-if="vm.priceSettings.isRange">
+                <md-input-container>
+                    <label for="">Date from</label>
+                    <zh-date-picker data-date-value="vm.price.date_from"></zh-date-picker>
+                </md-input-container>
+                <md-input-container>
+                    <label for="">Date to</label>
+                    <zh-date-picker data-date-value="vm.price.date_to"></zh-date-picker>
+                </md-input-container>
+                <ng-md-icon class="tooltip-inline-block" icon="info" size="20" style="fill: #777777">
+                    <md-tooltip class="tooltip_1" md-direction="top">tooltip text</md-tooltip>
+                </ng-md-icon>
+            </div>
+            <div data-ng-if="vm.priceSettings.isRange">
+                <md-input-container>
+                    <label for="">Portfolio balance date</label>
+                    <zh-date-picker data-date-value="vm.price.balance_date"></zh-date-picker>
+                </md-input-container>
+                <ng-md-icon class="tooltip-inline-block" icon="info" size="20" style="fill: #777777">
+                    <md-tooltip class="tooltip_1" md-direction="top">tooltip text</md-tooltip>
+                </ng-md-icon>
+            </div>
+            <div style="border: 1px solid #ccc; padding: 10px; padding-top: 26px">
+                <div>
+                    <md-input-container style="width: 60%">
+                        <label for="">Roll prices for N days forward</label>
+                        <input type="text" data-ng-model="vm.price.fill_days" placeholder="days">
+                    </md-input-container>
+                    <ng-md-icon class="tooltip-inline-block" icon="info" size="20"
+                                style="fill: #777777">
+                        <md-tooltip class="tooltip_1" md-direction="top">tooltip text</md-tooltip>
+                    </ng-md-icon>
+                </div>
+                <div style="padding-left: 12px">
+                    <md-checkbox ng-model="vm.price.override_existed" aria-label="override">
+                        Override old prices
+                        <ng-md-icon class="tooltip-inline-block" icon="info" size="20"
+                                    style="fill: #777777">
+                            <md-tooltip class="tooltip_1" md-direction="top">tooltip text</md-tooltip>
+                        </ng-md-icon>
+                    </md-checkbox>
+                </div>
+            </div>
+            <div layout="row">
+                <md-button class="md-raised" data-ng-click="vm.uploadPrice()" style="margin-left: 0">
+                    Download
+                </md-button>
+                <div style="padding-top: 10px;">
+                    <md-progress-circular data-ng-if="vm.readyStatus.processing" md-mode="indeterminate"
+                                          md-diameter="32"></md-progress-circular>
+                </div>
+            </div>
+        </div>
+    </md-tab>
+    
+    <md-tab label="Accruals">
+        <div style="padding: 20px 20px 0">
+            <div>
+                <md-input-container>
+                    <label for="">Date from</label>
+                    <zh-date-picker data-date-value="vm.recalculate.date_from"></zh-date-picker>
+                </md-input-container>
+                <md-input-container>
+                    <label for="">Date to</label>
+                    <zh-date-picker data-date-value="vm.recalculate.date_to"></zh-date-picker>
+                </md-input-container>
+            </div>
+            <div layout="row">
+                <md-button class="md-raised" data-ng-click="vm.startRecalculation()">
+                    Recalculate
+                </md-button>
+                <div data-ng-if="vm.readyStatus.recalculationProcessing">
+                    <md-progress-circular md-mode="indeterminate"
+                                          md-diameter="48"></md-progress-circular>
+                </div>
+                <span data-ng-if="vm.readyStatus.recalculationDone"
+                      style="padding-top: 12px;fill: green;">
+                <ng-md-icon icon="check_circle"></ng-md-icon>
+            </span>
+                <span data-ng-if="vm.readyStatus.recalculationError"
+                      style="padding-top: 12px;fill: red;">
+                <ng-md-icon icon="block"></ng-md-icon>
+            </span>
+            </div>
+        </div>
+    </md-tab>
+</md-tabs>

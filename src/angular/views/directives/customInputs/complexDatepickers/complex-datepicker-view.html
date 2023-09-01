@@ -1,0 +1,126 @@
+<div class="complex-datepicker" ng-class="{'range-of-dates': rangeOfDates}">
+    <div class="flex-row">
+
+        <div ng-if="!rangeOfDates"
+             class="complex-datepicker-left">
+
+            <div class="complex-datepicker-mode-container"
+                 ng-class="{'active': modeIsActive(['datepicker', 'expression'])}"
+                 ng-click="activateCustomMode()">Custom</div>
+
+            <div class="complex-datepicker-mode-container"
+                 ng-class="{'active': modeIsActive('today')}"
+                 ng-click="activateMode('today')">Today</div>
+
+            <div class="complex-datepicker-mode-container"
+                 ng-class="{'active': modeIsActive('yesterday-business')}"
+                 ng-click="activateMode('yesterday-business')">Yesterday (Business)</div>
+
+            <!--<div class="complex-datepicker-mode-container"
+                 ng-class="{'active': modeIsActive('inception')}"
+                 ng-click="activateMode('inception')">All time</div>-->
+
+        </div>
+
+        <div ng-if="rangeOfDates"
+             class="complex-datepicker-left">
+
+            <div class="complex-datepicker-mode-container"
+                 ng-class="{'active': modeIsActive(['datepicker', 'expression'])}"
+                 ng-click="activateCustomMode()">Custom</div>
+
+            <div class="complex-datepicker-mode-container"
+                 ng-class="{'active': modeIsActive('week-to-date')}"
+                 ng-click="activateRangeMode('week-to-date')">WTD</div>
+
+            <div class="complex-datepicker-mode-container"
+                 ng-class="{'active': modeIsActive('month-to-date')}"
+                 ng-click="activateRangeMode('month-to-date')">MTD</div>
+
+            <div class="complex-datepicker-mode-container"
+                 ng-class="{'active': modeIsActive('quarter-to-date')}"
+                 ng-click="activateRangeMode('quarter-to-date')">QTD</div>
+
+            <div class="complex-datepicker-mode-container"
+                 ng-class="{'active': modeIsActive('year-to-date')}"
+                 ng-click="activateRangeMode('year-to-date')">YTD</div>
+
+            <div class="complex-datepicker-mode-container"
+                 ng-class="{'active': modeIsActive('inception')}"
+                 ng-click="activateRangeMode('inception')">All time</div>
+
+        </div>
+
+        <div class="flex-column">
+
+            <div class="flex-row m-b-10" style="margin-left: 18px;">
+
+                <div class="complex-datepicker-date-input-holder"
+                     ng-class="{'expression-mode': datepickerOptions.datepickerMode === 'expression'}">
+
+                    <div ng-if="datepickerOptions.datepickerMode !== 'inception'">
+
+                        <button ng-show="modeIsActive(['datepicker', 'expression'])"
+                                class="expression-builder-btn"
+                                ng-click="openEditExpressionDialog($event, 1)"
+                                ng-disabled="dateIsDisabled">
+<!--                            <span class="material-icons">functions</span>-->
+                            <img class="btn-icon" src="shell/content/img/fx-icon.png" alt="function">
+                        </button>
+
+                        <date-input model="inputsModels.date"
+                                    on-change-callback="onDateInputChange(inputsModels.date)"
+                                    small-options="{noIndicatorBtn: true}"
+                                    is-disabled="dateIsDisabled"></date-input>
+                        <!--<md-input-container class="no-error-spacer">
+                            <input type="text"
+                                   ng-model="date"
+                                   ng-change="onDateInputChange()" />
+                        </md-input-container>-->
+                    </div>
+
+                    <div ng-if="datepickerOptions.datepickerMode === 'inception'">
+                        <p class="complex-datepicker-text">Inception</p>
+                    </div>
+
+                </div>
+
+                <div ng-if="rangeOfDates" class="flex-row fi-center">
+
+                    <div class="complex-datepicker-date-fields-divider">-</div>
+
+                    <div class="complex-datepicker-date-input-holder"
+                         ng-class="{'expression-mode': secondDatepickerOptions.datepickerMode === 'expression'}">
+
+                        <button ng-show="modeIsActive(['datepicker', 'expression'])"
+                                class="expression-builder-btn"
+                                ng-click="openEditExpressionDialog($event, 2)">
+<!--                            <span class="material-icons">functions</span>-->
+                            <img class="btn-icon" src="shell/content/img/fx-icon.png" alt="function">
+                        </button>
+
+                        <date-input model="inputsModels.secondDate"
+                                    on-change-callback="onSecondDateInputChange(inputsModels.secondDate)"
+                                    small-options="{noIndicatorBtn: true}"
+                                    is-disabled="secondDateIsDisabled"></date-input>
+                        <!--<md-input-container class="no-error-spacer">
+                            <input type="text"
+                                   ng-model="date"
+                                   ng-change="onDateInputChange()" />
+                        </md-input-container>-->
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="flex-row">
+                <div class="datepicker-container firstCalendar" ng-class="{'empty': date === null}"></div>
+
+                <div class="datepicker-container secondCalendar" ng-class="{'empty': secondDate === null}"></div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,85 @@
+<div class="color-palette-settings">
+
+    <div data-ng-if="vm.readyStatus">
+
+        <div layout="row">
+            <h4 style="margin: 10px 0 0;">Palette</h4>
+
+            <md-input-container class="color-palette-selector-container">
+                <md-select data-ng-model="vm.openedPaletteId">
+                    <md-option data-ng-repeat="palette in vm.palettesList track by palette.user_code"
+                               data-ng-bind="palette.name"
+                               ng-value="palette.id"
+                               ng-click="vm.beforeShowingPaletteChange(palette.id, $event)"></md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-button class="color-palette-managing-btn"
+                       data-ng-click="vm.renamePalette($event)">
+                <i class="fas fa-pen"></i>
+            </md-button>
+
+            <md-button class="color-palette-managing-btn"
+                       data-ng-click="vm.makePaletteCopy()">
+                <i class="far fa-clone"></i>
+            </md-button>
+
+            <md-button class="color-palette-managing-btn"
+                       data-ng-click="vm.deletePalette();"
+                       data-ng-disabled="vm.openedPalette.is_default">
+                <i class="fas fa-trash"></i>
+            </md-button>
+        </div>
+
+        <div class="m-b-35">
+            <div data-ng-repeat="palette in vm.palettesList track by palette.user_code"
+                 data-ng-show="palette.id === vm.openedPalette.id"
+                 class="color-palette-container">
+
+                <div ng-repeat="color in palette.colors | orderBy: 'order' track by color.order"
+                     class="palette-color-wrap">
+                    <div class="palette-color-label-holder colorLabelHolder">
+
+                        <text-input model="color.name"
+                                    placeholder-text="Label name"
+                                    small-options="{noIndicatorBtn: true, readonly: true}"></text-input>
+
+                        <md-button class="color-palette-rename-color-btn"
+                                   data-ng-click="vm.renameColor(color, $event)">
+                            <span class="material-icons">edit</span>
+                        </md-button>
+
+                    </div>
+
+                    <div class="palette-color-sample"
+                         style="background-color: {{color.value}};"
+                         data-ng-click="vm.openColorPicker(color, $event)"></div>
+
+                    <md-tooltip data-ng-if="color.tooltip"
+                                class="tooltip_1"
+                                md-direction="top"
+                                data-ng-bind="color.tooltip"></md-tooltip>
+                </div>
+
+            </div>
+        </div>
+
+        <div ng-if="!vm.openedInside">
+            <md-button ng-click="vm.savePaletteSettings()"
+                       class="md-raised">SAVE CURRENT PALETTE</md-button>
+            <md-button class="md-raised"
+                       package-manager-button
+                       content-type="'ui.colorpalette'">
+                Select from List
+            </md-button>
+        </div>
+    </div>
+
+
+    <div data-ng-if="!vm.readyStatus">
+        <div layout="row" layout-sm="column" layout-align="space-around">
+            <progress-circular diameter="100"></progress-circular>
+        </div>
+    </div>
+
+</div>

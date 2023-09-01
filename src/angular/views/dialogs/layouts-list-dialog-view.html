@@ -1,0 +1,31 @@
+<md-dialog class="layouts-list-dialog draggable-dialog"
+           drag-dialog
+           aria-label="layouts list dialog">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Layouts</h2>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="p-16">
+        <div ng-repeat="layout in vm.layouts"
+             layout="row"
+             layout-align="space-between center"
+             class="layouts-list-row">
+            <p ng-bind="layout.name"></p>
+            <md-button ng-click="vm.openLayout(layout)" class="md-raised">Open layout</md-button>
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row"
+                       layout-align="end center"
+                       class="entity-editor-dialog__footer">
+        <div>
+            <md-button class="md-raised" ng-click="vm.cancel()">
+                Close
+            </md-button>
+        </div>
+    </md-dialog-actions>
+</md-dialog>

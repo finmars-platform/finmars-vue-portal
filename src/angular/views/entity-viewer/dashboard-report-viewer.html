@@ -1,0 +1,140 @@
+<div data-ng-controller="DashboardReportViewerController as vm" class="report-viewer-holder height-100">
+    <div class="height-100">
+        <div data-ng-if="vm.readyStatus.attributes && vm.readyStatus.layout" class="g-group-table-holder height-100">
+
+            <div data-ng-if="vm.componentData.type === 'report_viewer' || vm.componentData.type === 'report_viewer_split_panel'"
+                 class="height-100">
+                <group-table class="height-100 display-block"
+                             attribute-data-service="vm.attributeDataService"
+                             ev-data-service="vm.entityViewerDataService"
+                             ev-event-service="vm.entityViewerEventService"
+                             sp-exchange-service="vm.splitPanelExchangeService"
+                             hide-filters-block="!showFiltersArea"
+                             hide-use-from-above-filters="!showUseFromAboveFilters"
+                ></group-table>
+            </div>
+
+            <!--<div data-ng-if="vm.componentData.type === 'report_viewer_split_panel'" class="height-100">
+                <group-table class="height-100 display-block"
+                             attribute-data-service="vm.attributeDataService"
+                             ev-data-service="vm.entityViewerDataService"
+                             ev-event-service="vm.entityViewerEventService"
+                             sp-exchange-service="vm.splitPanelExchangeService"
+                ></group-table>
+            </div>-->
+
+            <div data-ng-if="vm.componentData.type === 'report_viewer_grand_total'" class="height-100">
+
+                <!--<div class="grand-total-title">{{vm.componentData.name}}</div>-->
+
+                <div data-ng-if="vm.grandTotalProcessing"  class="dashboard-grand-total-component dashboard-grand-total-component-loading">
+                    <div  layout="row" layout-sm="column" layout-align="space-around">
+                        <!--<md-progress-circular md-diameter="100" md-mode="indeterminate"></md-progress-circular>-->
+                        <progress-circular diameter="20"></progress-circular>
+                    </div>
+                </div>
+
+                <div data-ng-if="!vm.grandTotalProcessing" class="dashboard-grand-total-component">
+
+<!--                    <div data-ng-if="vm.grandTotalError" class="text-center">-->
+<!--                        Something went wrong-->
+<!--                    </div>-->
+
+<!--                    <div data-ng-if="!vm.grandTotalError">-->
+
+                        <text-input
+                                label="{{vm.componentData.custom_component_name}}"
+                                model="vm.grandTotalValue"
+                                small-options="{noIndicatorBtn: true}"
+                                is-disabled="true"
+                        ></text-input>
+
+<!--                    </div>-->
+
+<!--                    <div class="grand-total-value" ng-class="{'negative-red': vm.grandTotalNegative}">{{vm.grandTotalValue}}</div>-->
+                </div>
+
+            </div>
+
+            <div data-ng-if="vm.componentData.type === 'report_viewer_table_chart'" class="height-100">
+                <report-viewer-table-chart class="height-100 display-block"
+                                           table-chart-settings="vm.tableChartSettings"
+                                           ev-data-service="vm.entityViewerDataService"
+                                           ev-event-service="vm.entityViewerEventService"></report-viewer-table-chart>
+            </div>
+
+            <div ng-if="vm.hasFiltersArea()" class="flex-column height-100 overflow-auto">
+
+                <div class="flex-1-0-auto">
+                    <g-filters ev-data-service="vm.entityViewerDataService"
+                               ev-event-service="vm.entityViewerEventService"
+                               attribute-data-service="vm.attributeDataService"
+                               dashboard-component-element="vm.dashboardComponentElement"
+                               hide-filters-block="!showFiltersArea"
+                               hide-use-from-above-filters="!showUseFromAboveFilters"></g-filters>
+                </div>
+
+                <div ng-if="vm.componentData.type === 'report_viewer_bars_chart'" class="flex-0-1-100">
+                    <report-viewer-bars-chart class="height-100 display-block"
+                                              rv-charts-settings="vm.rvChartsSettings"
+                                              ev-data-service="vm.entityViewerDataService"
+                                              ev-event-service="vm.entityViewerEventService"></report-viewer-bars-chart>
+                </div>
+
+                <div ng-if="vm.componentData.type === 'report_viewer_pie_chart'" class="flex-0-1-100">
+                    <report-viewer-pie-chart class="height-100 display-block"
+                                             rv-charts-settings="vm.rvChartsSettings"
+                                             ev-data-service="vm.entityViewerDataService"
+                                             ev-event-service="vm.entityViewerEventService"></report-viewer-pie-chart>
+                </div>
+
+                <div ng-if="vm.componentData.type === 'report_viewer_matrix'" class="flex-0-1-100 height-100">
+                    <report-viewer-matrix class="height-100 display-block"
+                                          matrix-settings="vm.matrixSettings"
+                                          ev-data-service="vm.entityViewerDataService"
+                                          ev-event-service="vm.entityViewerEventService"></report-viewer-matrix>
+                </div>
+
+            </div>
+
+            <!-- <div ng-if="vm.componentData.type === 'report_viewer_bars_chart'" class="height-100">
+                <report-viewer-bars-chart class="height-100 display-block"
+                                      rv-charts-settings="vm.rvChartsSettings"
+                                      ev-data-service="vm.entityViewerDataService"
+                                      ev-event-service="vm.entityViewerEventService"></report-viewer-bars-chart>
+            </div>
+
+            <div ng-if="vm.componentData.type === 'report_viewer_pie_chart'" class="height-100">
+                <report-viewer-pie-chart class="height-100 display-block"
+                                          rv-charts-settings="vm.rvChartsSettings"
+                                          ev-data-service="vm.entityViewerDataService"
+                                          ev-event-service="vm.entityViewerEventService"></report-viewer-pie-chart>
+            </div>
+
+            <div data-ng-if="vm.componentData.type === 'report_viewer_matrix'" class="flex-column height-100 overflow-auto">
+                <div style="flex: 1 0 auto;">
+                    <g-filters ev-data-service="vm.entityViewerDataService"
+                               ev-event-service="vm.entityViewerEventService"
+                               attribute-data-service="vm.attributeDataService"
+                               hide-filters-block="!showFiltersArea"
+                               hide-use-from-above-filters="!showUseFromAboveFilters"></g-filters>
+                </div>
+
+                <div class="flex-0-1-100">
+                    <report-viewer-matrix class="height-100 display-block"
+                                          matrix-settings="vm.matrixSettings"
+                                          ev-data-service="vm.entityViewerDataService"
+                                          ev-event-service="vm.entityViewerEventService"></report-viewer-matrix>
+                </div>
+            </div> -->
+
+        </div>
+
+        <div data-ng-if="vm.componentData.type != 'report_viewer_grand_total' && !readyStatus.disabled && (!vm.readyStatus.attributes || !vm.readyStatus.layout)">
+            <div class="e-data-loader" layout="row" layout-sm="column" layout-align="space-around">
+                <!--<md-progress-circular md-diameter="100" md-mode="indeterminate"></md-progress-circular>-->
+                <progress-circular diameter="100"></progress-circular>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,96 @@
+<div style="padding: 20px 20px 0">
+
+    <h2 class="m-b-35">Data Import</h2>
+
+    <div data-ng-if="vm.readyStatus.entitySchemes">
+        <div layout="row" layout-align="end center">
+
+            <md-menu>
+                <md-button class="md-raised" data-ng-click="$mdOpenMenu($event)">
+                    Add New
+                </md-button>
+
+                <md-menu-content>
+                    <md-menu-item>
+                        <md-button class="md-raised"
+                                   data-ng-click="vm.addScheme($event)">Add Blank
+                        </md-button>
+                    </md-menu-item>
+
+                    <md-menu-item>
+                        <md-button class="md-raised"
+                                   package-manager-button
+                                   content-type="'csv_import.csvimportscheme'">
+                            Select from List
+                        </md-button>
+                    </md-menu-item>
+
+                </md-menu-content>
+            </md-menu>
+
+
+        </div>
+        <div layout="column" data-ng-if="vm.entitySchemes.length">
+            <div layout="row">
+                <h4 style="padding-left: 20px">Scheme name</h4>
+            </div>
+            <div layout="column">
+                <md-card data-ng-repeat="item in vm.entitySchemes" flex="100">
+                    <md-card-content>
+                        <div layout="row" layout-align="space-between center">
+                            <div>
+                                <span data-ng-bind="item['user_code']"></span>
+                            </div>
+                            <div>
+                                <md-button
+                                        class="scheme-edit-button md-fab"
+                                        style="background: orange;"
+                                        data-ng-click="vm.editSchemeV2($event, item)">
+                                    <ng-md-icon icon="developer_dashboard" size="24"></ng-md-icon>
+                                    <md-tooltip class="tooltip_1" md-direction="top">Edit Scheme (v2)</md-tooltip>
+                                </md-button>
+                                <md-button style="min-width: 42px"
+                                           data-ng-click="vm.editScheme($event, item)"
+                                           aria-label="edit entity scheme button">
+                                    <ng-md-icon icon="edit"></ng-md-icon>
+                                </md-button>
+                                <md-button style="min-width: 42px"
+                                           data-ng-click="vm.deleteScheme($event, item)"
+                                           aria-label="edit entity scheme button">
+                                    <ng-md-icon icon="delete"></ng-md-icon>
+                                </md-button>
+                            </div>
+                        </div>
+                    </md-card-content>
+                </md-card>
+
+
+                <div layout="row">
+
+                    <div data-ng-repeat="page in vm.pages">
+
+                        <md-button data-ng-click="vm.openPage(page)" data-ng-if="page.number"
+                                   class="md-raised {{vm.currentPage == page.number ? 'md-primary' : ''}}">
+                            {{page.caption}}
+                        </md-button>
+
+                        <div data-ng-if="!page.number" style="margin: 10px;">
+                            {{page.caption}}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <div layout="row" data-ng-if="!vm.entitySchemes.length" layout-align="center center">
+            <h3>Import schemes do not exist</h3>
+        </div>
+    </div>
+    <div data-ng-if="!vm.readyStatus.entitySchemes">
+        <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+            <md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>
+        </div>
+    </div>
+</div>

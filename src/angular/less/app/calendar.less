@@ -1,0 +1,148 @@
+a.fc-event.system {
+  color: #777;
+}
+
+.fc-daygrid-event {
+  cursor: pointer;
+}
+
+
+.data-calendar-filter-checkbox {
+  max-width: 100px;
+  font-size: 11px;
+}
+
+.data-calendar-page-content {
+  #calendar {
+    width: 100%;
+    padding-right: 30vw;
+
+    &.big-calendar {
+      width: 230vw;
+    }
+  }
+
+  .calendar-event-detail {
+    padding: 16px;
+    width: 30vw;
+    position: fixed;
+    right: 0;
+    box-sizing: border-box;
+    background: #fff;
+    height: 100%;
+    top: 40px;
+    z-index: 1;
+    overflow: auto;
+    padding-bottom: 100px;
+    border-left: 1px solid #ddd;
+    font-size: 14px;
+
+    pre {
+      background: #ddd;
+      border: 1px solid grey;
+      padding: 8px;
+      overflow: auto;
+    }
+  }
+
+
+}
+
+a.refresh-calendar-event-payload {
+  position: absolute;
+  right: 10px;
+  z-index: 1;
+  display: block;
+  padding: 8px;
+  top: 0;
+  cursor: pointer;
+  color: #f05a22;
+  border-radius: 16px;
+
+  &:hover {
+    background-color: rgba(240, 90, 34, .1);
+
+  }
+}
+
+a.delete-calendar-event-payload {
+  position: absolute;
+  right: 120px;
+  z-index: 1;
+  display: block;
+  padding: 8px;
+  top: 0;
+  cursor: pointer;
+  color: red;
+  border-radius: 16px;
+
+  &:hover {
+    background-color: rgba(240, 90, 34, .1);
+
+  }
+}
+
+.calendar-detail-status-green {
+  color: green;
+}
+
+.calendar-detail-status-red {
+  color: red;
+}
+
+.calendar-event-detail-content {
+  padding-top: 24px;
+}
+.calendar-event-detail-field {
+  margin: 4px 0;
+}
+
+.calendar-event-detail-field-definition {
+  font-weight: bold;
+}
+
+.data-calendar-page {
+  padding: 8px;
+  .fc-list-event {
+
+    cursor: pointer;
+
+    &:hover {
+      opacity: .6;
+    }
+  }
+
+}
+
+.fc-event.active {
+ background: #ddd;
+}
+
+.calendar-event-detail-error-message {
+  white-space: pre;
+  color: rgba(255,0,0,.7);
+  padding: 8px;
+}
+
+.calendar-detail-workflow-task {
+  margin: 16px 0;
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+a.calendar-event-payload-open-workflow {
+  position: absolute;
+  right: 120px;
+  z-index: 1;
+  display: block;
+  padding: 8px;
+  top: 0;
+  cursor: pointer;
+  color: red;
+  border-radius: 16px;
+
+  &:hover {
+    background-color: rgba(240, 90, 34, .1);
+
+  }
+}

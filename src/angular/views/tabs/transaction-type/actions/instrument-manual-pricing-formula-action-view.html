@@ -1,0 +1,150 @@
+<div layout="row" class="ttype-action-inputs-container">
+    <!--<md-input-container class="orange-actions-selector">
+        <label for="" content-title>Instruction if Transaction is Rebooked</label>
+        <md-select data-ng-model="item.rebook_reaction">
+            <md-option data-ng-repeat="item in vm.rebookOtherReactions"
+                       ng-value="item.id">
+                {{item.name}}
+            </md-option>
+        </md-select>
+    </md-input-container>-->
+    <dropdown-select label="Instruction if Transaction is Rebooked"
+                     model="item.rebook_reaction"
+                     menu-options="vm.rebookOtherReactions"
+                     class="width-100"></dropdown-select>
+</div>
+<div layout="row">
+    <div flex="50">
+
+        <div layout="row" class="ttype-action-inputs-container">
+            <div flex="50">
+                <div layout="row">
+                    <!-- <div flex="20">
+                        <md-button
+                                class="ttype-action-field-toggle md-icon-button md-raised {{!!item.instrument_manual_pricing_formula.instrument_toggle ? 'ref' : ''}}"
+                                style="transform: scale(0.7,0.7)"
+                                data-ng-click="vm.resetPropertyBtn(item, 'instrument_manual_pricing_formula', 'instrument')">
+                            <span data-ng-if="!!item.instrument_manual_pricing_formula.instrument_toggle">R</span>
+                            <span data-ng-if="!!!item.instrument_manual_pricing_formula.instrument_toggle">I</span>
+                        </md-button>
+                    </div>
+                    <div flex="80">
+                        <div data-ng-if="item.instrument_manual_pricing_formula.instrument_toggle">
+                            <entity-search-select data-item="item.instrument_manual_pricing_formula.instrument"
+                                                  data-user-code-for-item="true"
+                                                  data-label="'Instrument'"
+                                                  data-item-name="item.instrument_manual_pricing_formula.instrument_object.name"
+                                                  data-entity-type="'instrument'"
+                                                  is-disabled="vm.isRelationInputFieldDisabled()"></entity-search-select>
+                        </div>
+                        <div data-ng-if="!item.instrument_manual_pricing_formula.instrument_toggle">
+                            <md-input-container class="ttype-actions-selector-with-phantoms">
+                                <label for="" content-title>Instrument</label>
+                                <md-select
+                                        data-ng-model="item.instrument_manual_pricing_formula[vm.resolveInstrumentProp(item, 'instrument_manual_pricing_formula', 'instrument')]"
+                                        data-ng-disabled="vm.isRelationInputFieldDisabled()">
+                                    <md-optgroup label="Inputs">
+                                        <md-option
+                                                data-ng-click="vm.setItemInstrumentInput(item, 'instrument_manual_pricing_formula', inputItem.name, 'instrument')"
+                                                data-ng-repeat="inputItem in vm.findInputs('instrument')"
+                                                ng-value="inputItem.name">
+                                            {{inputItem.name}}
+                                        </md-option>
+                                    </md-optgroup>
+                                    <md-optgroup label="Phantoms">
+                                        <md-option
+                                                data-ng-click="vm.setItemInstrumentPhantom(item, 'instrument_manual_pricing_formula', phantomItem.positionOrder, 'instrument')"
+                                                data-ng-repeat="phantomItem in vm.findPhantoms()"
+                                                ng-value="phantomItem.positionOrder">
+                                            {{phantomItem.action_notes}}
+                                        </md-option>
+                                    </md-optgroup>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+                    </div> -->
+                    <multitype-field label="Instrument"
+                                     field-types-data="vm.actionsMultitypeFieldsList[$index].instrument"
+                                     is-disabled="vm.isRelationInputFieldDisabled()"
+                                     event-service="vm.actionsMFEventService"
+                                     on-value-change="vm.onMultitypeFieldValChange('instrument', item, $index, 'instrument_manual_pricing_formula')"
+                                     on-type-change="vm.onActionMultitypeFieldToggle('instrument', item, $index, 'instrument_manual_pricing_formula')"
+
+                                     class="ttype-action-input p-l-0"></multitype-field>
+                </div>
+            </div>
+        </div>
+
+        <div layout="row" class="ttype-action-inputs-container">
+
+            <div flex="50" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap p-l-0">
+                <expression-input label="Expression: Text"
+                                  model="item.instrument_manual_pricing_formula.expr"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div flex="50">
+
+        <div layout="row" class="ttype-action-inputs-container">
+            <div flex="50" layout="row" layout-align="start top" class="ttype-action-expr-input-wrap p-r-0">
+                <!--<md-input-container class="expression-input-container">
+                    <label for="" class="uncut-text-on-focus-label" content-title>Notes: Text</label>
+                    <input type="text" value-title style="color: grey;"
+                           data-ng-model="item.instrument_manual_pricing_formula.notes">
+                </md-input-container>
+                <expression-editor-button data-data="{groups: [vm.inputsGroup], functions: [vm.inputsFunctions]}"
+                        data-item="item.instrument_manual_pricing_formula.notes"></expression-editor-button>-->
+                <expression-input label="Notes: Text"
+                                  model="item.instrument_manual_pricing_formula.notes"
+                                  data-data="vm.expressionData"
+                                  class="width-100"></expression-input>
+            </div>
+        </div>
+
+        <div layout="row" class="ttype-action-inputs-container">
+            <div flex="50" layout="row">
+                <!--<div flex="20">
+                    <md-button class="ttype-action-field-toggle md-icon-button md-raised {{!!item.instrument_manual_pricing_formula.pricing_policy_toggle ? 'ref' : ''}}"
+                               style="transform: scale(0.7,0.7)"
+                               data-ng-click="vm.resetPropertyBtn(item, 'instrument_manual_pricing_formula', 'pricing_policy')">
+                        <span data-ng-if="!!item.instrument_manual_pricing_formula.pricing_policy_toggle">R</span>
+                        <span data-ng-if="!!!item.instrument_manual_pricing_formula.pricing_policy_toggle">I</span>
+                    </md-button>
+                </div>
+                <div flex="80">
+                    <div data-ng-if="item.instrument_manual_pricing_formula.pricing_policy_toggle">
+
+                        <ttype-actions-relations-select label-title="Pricing Policy"
+                                                        model="item.instrument_manual_pricing_formula.pricing_policy"
+                                                        load-relation="vm.loadRelation('pricing_policy')"
+                                                        relation-items="vm.relationItems['pricing_policy']"
+                                                        selected-value="item.instrument_manual_pricing_formula.pricing_policy_object.user_code"
+                                                        selected-name="item.instrument_manual_pricing_formula.pricing_policy_object.name"
+                                                        is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-relations-select>
+                    </div>
+                    <div data-ng-if="!item.instrument_manual_pricing_formula.pricing_policy_toggle">
+
+                        <ttype-actions-input-select label-title="Pricing Policy"
+                                                    model="item.instrument_manual_pricing_formula.pricing_policy_input"
+                                                    find-inputs="vm.findInputs('pricing-policy')"
+                                                    is-disabled="vm.isRelationInputFieldDisabled()"></ttype-actions-input-select>
+                    </div>
+                </div>-->
+                <multitype-field label="Pricing Policy"
+                                 field-types-data="vm.actionsMultitypeFieldsList[$index].pricing_policy"
+                                 is-disabled="vm.isRelationInputFieldDisabled()"
+                                 event-service="vm.actionsMFEventService"
+                                 on-value-change="vm.onMultitypeFieldValChange('pricing_policy', item, $index, 'instrument_manual_pricing_formula')"
+                                 on-type-change="vm.onActionMultitypeFieldToggle('pricing_policy', item, $index, 'instrument_manual_pricing_formula')"
+
+                                 class="ttype-action-input width-100 p-r-0"></multitype-field>
+            </div>
+        </div>
+
+    </div>
+</div>

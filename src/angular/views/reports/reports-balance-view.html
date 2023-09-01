@@ -1,0 +1,10 @@
+<div class="height-100">
+    <div data-ng-if="vm.readyStatus.content" class="height-100">
+        <div data-ng-include="'views/entity-viewer/report-viewer.html'" class="report-data-layer-wrapper"></div>
+    </div>
+    <div data-ng-if="!vm.readyStatus.content">
+        <div class="e-data-loader" layout="row" layout-sm="column" layout-align="space-around">
+            <md-progress-circular md-diameter="100" md-mode="indeterminate"></md-progress-circular>
+        </div>
+    </div>
+</div>

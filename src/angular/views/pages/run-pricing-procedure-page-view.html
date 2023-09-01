@@ -1,0 +1,106 @@
+<div class="p-24">
+
+    <div layout="column" data-ng-if="vm.readyStatus.data">
+
+        <h1>Run Pricing</h1>
+
+        <div class="m-t-16 m-b-16">
+
+            <div>Mediator Service status: {{vm.mediatorStatus}}</div>
+            <div>Bloomberg Data Provider Service status: {{vm.brokerBloombergStatus}}</div>
+
+        </div>
+
+        <table>
+
+            <thead>
+
+            <tr>
+                <th>
+                    Procedure Name
+                </th>
+
+                <th>
+                    Notes
+                </th>
+                <th>
+                    Date Range
+                </th>
+                <th>
+                    Execute
+                </th>
+                <th>
+                    Edit Procedure
+                </th>
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            <tr data-ng-repeat="item in vm.procedures">
+
+                <td>
+                    {{item.name}}
+                </td>
+
+                <td>
+                    {{item.notes_for_users}}
+                </td>
+
+                <td>
+
+                    <div layout="row">
+                        <div>
+
+                            <md-input-container>
+                                <label for="">Date from</label>
+                                <zh-date-picker data-date-value="item.user_price_date_from"></zh-date-picker>
+                            </md-input-container>
+
+                        </div>
+
+                        <div>
+
+                            <md-input-container>
+                                <label for="">Date To</label>
+                                <zh-date-picker data-date-value="item.user_price_date_to"></zh-date-picker>
+                            </md-input-container>
+
+                        </div>
+
+                    </div>
+
+                    <!--<div data-ng-if="item.price_date_from_calculated">{{item.price_date_from_calculated}} - {{item.price_date_to_calculated}}</div>-->
+                    <!--<div data-ng-if="!item.price_date_from_calculated">&nbsp;</div>-->
+                </td>
+
+                <td>
+                    <md-button class="md-raised" data-ng-click="vm.executeProcedure($event, item)">Execute</md-button>
+                </td>
+
+                <td>
+                    <md-button class="md-raised" data-ng-click="vm.editProcedure($event, item)">Edit</md-button>
+                </td>
+
+            </tr>
+
+            </tbody>
+
+
+        </table>
+
+        <div>
+            <md-button ui-sref="app.portal.pricing-parent-procedure" class="md-raised">Check Procedure Status</md-button>
+        </div>
+
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.data" style="width: 100%">
+        <div layout="row" layout-sm="column" layout-align="space-around">
+            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+        </div>
+    </div>
+
+
+</div>

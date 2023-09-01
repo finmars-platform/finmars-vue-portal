@@ -1,0 +1,299 @@
+<div>
+
+    <div class="p-l-16">
+        <h2>Edit {{vm.entityTypeSlug()}}</h2>
+        <span flex></span>
+    </div>
+
+    <div style="min-width: 1450px">
+        <div data-ng-if="vm.checkReadyStatus()">
+
+            <div data-ng-if="vm.fixedFieldsAttributes.length > 0"
+                 class="entity-editor-fixed-fields-container"
+                 data-ng-class="{'disabled-element': !vm.entity.is_enabled && vm.hasEnabledStatus}">
+                <div layout="row"
+                     class="entity-editor-row">
+                    <div class="ev-data-field"
+                         data-ng-class="{'decoration-label-line': field.attribute['value_type'] === 'decoration'}"
+                         flex="50">
+                        <bind-field-control data-ng-if="vm.fixedFieldsAttributes[0]"
+                                            entity-type="vm.entityType"
+                                            entity="vm.entity"
+                                            item="vm.fixedFieldsAttributes[0]"></bind-field-control>
+                    </div>
+
+                    <div class="ev-data-field"
+                         data-ng-class="{'decoration-label-line': field.attribute['value_type'] === 'decoration'}"
+                         flex="35">
+                        <bind-field-control data-ng-if="vm.fixedFieldsAttributes[1]"
+                                            entity-type="vm.entityType"
+                                            entity="vm.entity"
+                                            item="vm.fixedFieldsAttributes[1]"></bind-field-control>
+                    </div>
+
+                    <div class="ev-data-field"
+                         data-ng-class="{'decoration-label-line': field.attribute['value_type'] === 'decoration'}"
+                         flex="15">
+                        <bind-field-control data-ng-if="vm.fixedFieldsAttributes[2]"
+                                            entity-type="vm.entityType"
+                                            entity="vm.entity"
+                                            item="vm.fixedFieldsAttributes[2]"></bind-field-control>
+                    </div>
+                </div>
+
+                <div layout="row"
+                     class="entity-editor-row">
+                    <div class="ev-data-field"
+                         data-ng-class="{'decoration-label-line': field.attribute['value_type'] === 'decoration'}"
+                         flex="50">
+                        <bind-field-control data-ng-if="vm.fixedFieldsAttributes[3]"
+                                            entity-type="vm.entityType"
+                                            entity="vm.entity"
+                                            item="vm.fixedFieldsAttributes[3]"></bind-field-control>
+                    </div>
+
+                    <div class="ev-data-field"
+                         data-ng-class="{'decoration-label-line': field.attribute['value_type'] === 'decoration'}"
+                         flex="35">
+                        <bind-field-control data-ng-if="vm.fixedFieldsAttributes[4]"
+                                            entity-type="vm.entityType"
+                                            entity="vm.entity"
+                                            item="vm.fixedFieldsAttributes[4]"></bind-field-control>
+                    </div>
+
+                    <div class="ev-data-field"
+                         data-ng-class="{'decoration-label-line': field.attribute['value_type'] === 'decoration'}"
+                         flex="15">
+                        <md-input-container class="md-block">
+                            <label>Status</label>
+                            <md-select data-ng-model="vm.entityStatus"
+                                       data-ng-change="vm.entityStatusChanged()">
+                                <md-option data-ng-if="vm.entityType === 'instrument'" value="active">Active</md-option>
+                                <md-option data-ng-if="vm.entityType === 'instrument'" value="inactive">Inactive</md-option>
+
+                                <md-option data-ng-if="vm.entityType !== 'instrument'"
+                                           value="enabled">Enabled</md-option>
+                                <md-option value="disabled">Disabled</md-option>
+                                <md-option value="deleted">Deleted</md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                </div>
+
+                <div class="entity-editor-divider-holder">
+                    <div></div>
+                </div>
+            </div>
+
+            <md-tabs md-dynamic-height md-border-bottom class="tabs-colored">
+
+                <md-tab data-ng-repeat="tab in vm.tabs track by tab.name">
+                    <md-tab-label>
+                        <span>{{tab.name}}</span>
+                    </md-tab-label>
+                    <md-tab-body>
+                        <md-content class="md-padding p-t-26"
+                                    ng-class="{'locked-tab-overlay': !vm.entity.is_enabled && vm.hasEnabledStatus}">
+                            <div layout="row"
+                                 data-ng-repeat="row in vm.range(tab.layout.rows)"
+                                 class="entity-editor-row">
+                                <div data-ng-repeat="field in tab.layout.fields track by $index"
+                                     data-ng-if="vm.checkFieldRender(tab, row, field)"
+                                     class="ev-data-field"
+                                     data-ng-class="{'decoration-label-line': field.attribute['value_type'] === 'decoration'}"
+                                     flex="{{vm.bindFlex(tab, field)}}">
+                                    <bind-field-control entity-type="vm.entityType"
+                                                        entity="vm.entity"
+                                                        item="vm.attributesLayout[tab.tabOrder][field.row][field.column]"></bind-field-control>
+                                </div>
+                            </div>
+                        </md-content>
+                    </md-tab-body>
+                </md-tab>
+
+                <md-tab data-ng-repeat="tab in vm.entityTabs" data-ng-if="vm.checkViewState(tab)">
+                    <md-tab-lable>
+                        <span class="grey-tab">{{tab.label}}</span>
+                    </md-tab-lable>
+                    <md-tab-body>
+                        <md-content class="md-padding p-t-26"
+                                    ng-class="{'locked-tab-overlay': !vm.entity.is_enabled && vm.hasEnabledStatus}">
+                            <div data-ng-include="tab.templateUrl"></div>
+                        </md-content>
+                    </md-tab-body>
+                </md-tab>
+
+                <md-tab data-ng-if="vm.checkPermissions() && vm.canManagePermissions">
+                    <md-tab-label>
+                        <span class="colored-tab">Permissions</span>
+                    </md-tab-label>
+                    <md-tab-body>
+                        <md-content class="md-padding p-t-26">
+                            <md-content class="md-padding">
+                                <div>
+
+                                    <h3>Group permissions</h3>
+
+                                    <div>
+                                        <div layout="column">
+                                            <div layout="row" layout-align="space-between center"
+                                                 class="permissions-table-header">
+                                                <div>
+                                                    <div class="permissions-columns">Group name</div>
+                                                </div>
+                                                <div layout="row" class="permissions-checkbox-holder"
+                                                     flex="30"
+                                                     layout-align="space-between center">
+                                                    <div class="permissions-columns" flex="33">Delegate
+                                                        <ng-md-icon class="tooltip-inline-block"
+                                                                    icon="info"
+                                                                    size="20"
+                                                                    style="fill: #777777">
+                                                            <md-tooltip class="tooltip_2"
+                                                                        md-direction="top">
+                                                                tooltip
+                                                                text
+                                                            </md-tooltip>
+                                                        </ng-md-icon>
+                                                    </div>
+                                                    <div class="permissions-columns" flex="33">
+                                                        Write
+                                                        <ng-md-icon class="tooltip-inline-block"
+                                                                    icon="info"
+                                                                    size="20"
+                                                                    style="fill: #777777">
+                                                            <md-tooltip class="tooltip_2"
+                                                                        md-direction="top">
+                                                                tooltip
+                                                                text
+                                                            </md-tooltip>
+                                                        </ng-md-icon>
+                                                    </div>
+                                                    <div class="permissions-columns" flex="33" data-ng-if="vm.entityType !== 'currency'"    >
+                                                        Read
+                                                        <ng-md-icon class="tooltip-inline-block"
+                                                                    icon="info"
+                                                                    size="20"
+                                                                    style="fill: #777777">
+                                                            <md-tooltip class="tooltip_2"
+                                                                        md-direction="top">
+                                                                tooltip
+                                                                text
+                                                            </md-tooltip>
+                                                        </ng-md-icon>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <md-divider></md-divider>
+                                        </div>
+
+                                        <div data-ng-repeat="group in vm.groups" layout="column">
+                                            <div layout="row" layout-align="space-between center"
+                                                 class="permissions-table-row">
+                                                <div>
+                                                    <p> {{ group.name }} </p>
+                                                </div>
+                                                <div layout="row" class="permissions-checkbox-holder"
+                                                     flex="30"
+                                                     layout-align="space-between center">
+                                                    <div flex="33" layout="center center">
+                                                        <md-checkbox class="md-secondary"
+                                                                     data-ng-class="{'disabled-btn': !group.objectPermissions.manage  && !vm.currentMember.is_admin}"
+                                                                     ng-model="group.objectPermissions.manage"></md-checkbox>
+                                                    </div>
+                                                    <div flex="33" layout="center center">
+                                                        <md-checkbox class="md-secondary"
+                                                                     data-ng-class="{'disabled-btn': !group.objectPermissions.manage  && !vm.currentMember.is_admin}"
+                                                                     ng-model="group.objectPermissions.change"></md-checkbox>
+                                                    </div>
+                                                    <div flex="33" layout="center center" data-ng-if="vm.entityType !== 'currency'">
+                                                        <md-checkbox class="md-secondary"
+                                                                     data-ng-class="{'disabled-btn': !group.objectPermissions.manage  && !vm.currentMember.is_admin}"
+                                                                     ng-model="group.objectPermissions.view"></md-checkbox>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <md-divider></md-divider>
+                                        </div>
+                                    </div>
+
+                                    <div>
+
+                                        <div data-ng-if="vm.entityType === 'account-type'">
+
+                                            <md-button ng-click="vm.recalculateAccountPermissions()" class="md-raised">
+                                                Save and Recalculate Account Permissions
+                                            </md-button>
+
+                                            <md-button ng-click="vm.recalculateAccountWithTransactionPermissions()" class="md-raised">
+                                                Save Recalculate Account Permissions and Transaction Permissions
+                                            </md-button>
+
+                                        </div>
+
+                                        <div data-ng-if="vm.entityType === 'instrument-type'">
+
+                                            <md-button ng-click="vm.recalculateInstrumentsPermissions()" class="md-raised">
+                                                Save and Recalculate Instruments Permissions
+                                            </md-button>
+
+                                        </div>
+
+                                        <md-button ng-click="vm.recalculatePermissions()" class="md-raised"
+                                                   data-ng-if="vm.entityType === 'portfolio' || vm.entityType === 'account'">
+                                            Save and Recalculate Transaction Permissions
+                                        </md-button>
+
+                                    </div>
+
+                                </div>
+
+                                <div data-ng-if="!vm.readyStatus.permissions">
+                                    <div layout="row" layout-sm="column" layout-align="space-around"
+                                         class="m-large">
+                                        <progress-circular diameter="100"></progress-circular>
+                                    </div>
+                                </div>
+                            </md-content>
+                        </md-content>
+                    </md-tab-body>
+                </md-tab>
+
+            </md-tabs>
+        </div>
+
+        <div data-ng-if="!vm.checkReadyStatus()">
+            <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                <!--<md-progress-circular md-mode="indeterminate" md-diameter="96"></md-progress-circular>-->
+                <progress-circular diameter="100"></progress-circular>
+            </div>
+        </div>
+    </div>
+
+    <div layout="row" layout-align="space-between center">
+
+        <div layout="row">
+            <md-button ng-click="vm.editLayout($event)" class="md-raised md-primary">
+                Edit Form
+            </md-button>
+            <md-button ng-click="vm.manageAttrs()" class="md-raised md-primary">
+                Manage attributes
+            </md-button>
+        </div>
+        <div layout="row">
+            <md-button class="md-raised m-r-24" ng-click="vm.copy()" ng-disabled="!vm.checkReadyStatus()">
+                Make a copy
+            </md-button>
+            <md-button class="md-raised" ng-click="vm.cancel()">
+                Cancel
+            </md-button>
+            <md-button class="md-raised m-r-24"
+                       data-ng-class="{'disabled-btn': !vm.formIsValid, 'disabled-btn': !vm.TTGroupChosen}"
+                       ng-click="vm.save()">
+                <span>Save</span>
+            </md-button>
+        </div>
+
+    </div>
+</div>

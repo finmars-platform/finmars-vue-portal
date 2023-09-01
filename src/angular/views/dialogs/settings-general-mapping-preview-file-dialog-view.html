@@ -1,0 +1,95 @@
+<md-dialog aria-label="" ng-cloak class="configuration-import-dialog-view draggable-dialog" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Mapping import preview</h2>
+            <span flex></span>
+            <div data-ng-if="vm.activeItemTotal">
+                {{vm.counter}} / {{vm.activeItemTotal}}
+            </div>
+        </div>
+    </md-toolbar>
+    <md-dialog-content style="background: #fff; padding: 16px">
+
+        <div>
+
+            <md-checkbox data-ng-checked="vm.selectAllState"
+                         data-ng-click="vm.toggleSelectAll()"
+                         aria-label="checkbox">
+            </md-checkbox>
+
+            <b>Select all</b>
+
+        </div>
+
+        <div data-ng-repeat="item in vm.items">
+
+            <div class="cie-entity-holder">
+                <md-checkbox data-ng-checked="item.active"
+                             data-ng-click="vm.toggleActiveForChilds(item)"
+                             data-ng-class="{'some-checkboxes-ticked': item.someChildsActive}"
+                             aria-label="checkbox">
+                </md-checkbox>
+                <span data-ng-bind="vm.getEntityName(item)"></span> <span class="cie-dependency"
+                                                                          data-ng-bind="vm.getEntityDependenciesCaptions(item)"></span>
+                ({{item.count}})
+                <md-button class="md-raised" ng-click="item.displayItems = !item.displayItems" aria-label="display item button"><span
+                        data-ng-if="!item.displayItems">Show</span><span data-ng-if="item.displayItems">Hide</span>
+                </md-button>
+            </div>
+
+
+            <div data-ng-show="item.displayItems" style="padding-left: 20px">
+
+                <div data-ng-repeat="child in item.content">
+                    <md-checkbox data-ng-checked="child.active"
+                                 data-ng-click="vm.updateActiveForParent(child, item)"
+                                 aria-label="checkbox">
+                    </md-checkbox>
+                    {{child.value}}
+                </div>
+
+            </div>
+
+
+        </div>
+
+        <div class="configuration-import-loader" data-ng-if="vm.processing">
+            <md-progress-circular md-mode="indeterminate"
+                                  md-diameter="48"></md-progress-circular>
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row" layout-align="space-between">
+
+        <div>
+
+            <div class="p-t-8">
+
+                <md-input-container style="width: 540px;">
+                    <label>Actions to do with the configurable entities in case if entity User Code exists</label>
+                    <md-select
+                            data-ng-model="vm.settings.mode">
+                        <md-option value="skip">Skip</md-option>
+                        <md-option value="overwrite">Overwrite</md-option>
+                    </md-select>
+                </md-input-container>
+
+            </div>
+
+        </div>
+
+        <div layout="row">
+
+            <md-button class="md-raised" ng-click="vm.cancel()" aria-label="cancel button">
+                Close
+            </md-button>
+
+            <md-button class="md-raised" ng-click="vm.agree($event)" style="margin-right:20px;" aria-label="import button">
+                Import
+            </md-button>
+
+        </div>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,25 @@
+<md-dialog aria-label="" ng-cloak class="list-layouts-dialog draggable-dialog" style="width: 50%" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Upload layout</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content  >
+
+        <h2>Upload</h2>
+
+        <input type="file" id="inputFile">
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+        <md-button class="md-default md-raised" ng-click="vm.uploadFile()" style="margin-right:20px;">
+            Upload
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

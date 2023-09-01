@@ -1,67 +1,114 @@
 import dayjs from 'dayjs'
 
+function inputOutputIncompatible(input, output) {
+
+	// TODO: check that value_types of input and output are compatible
+	/*if (input.value_type !== output.value_type) {
+
+	}*/
+	return false;
+
+}
+
 export default defineStore({
-	id: "dashboard",
+	id: 'dashboard',
 	state: () => {
 		return {
-			// DATA FROM LAYOUT
+			//# region DATA FROM LAYOUT
 			tabs: [],
 			scopes: [],
 			components: [],
 			props: {
 				inputs: [],
 				outputs: [],
-				proxies: []
+				proxies: [],
 			},
-			// END DATA
+			//# endregion DATA FROM LAYOUT
 			isEdit: false,
 			layoutList: [],
 			activeLayoutId: null,
 			activeTab: null,
 			__log: [],
-			//test
+
 			history: null,
 			historyPnl: null,
-			instrColors: {}
-		};
+			instrColors: {},
+		}
 	},
 	actions: {
 		async init() {
 			await this.getLayouts()
 
-			watch(() => this.activeLayoutId, () => {
-				if ( !this.layout.data ) return false
+			watch(
+				() => this.activeLayoutId,
+				() => {
+					if (!this.activeLayoutId || !this.layout.data) return false
 
-				this.components = this.layout.data.components || []
-				this.tabs = this.layout.data.tabs || []
-				this.activeTab = this.tabs[0]?.id
+					this.components = this.layout.data.components || []
+					this.tabs = this.layout.data.tabs || []
+					this.activeTab = this.tabs[0]?.id
+					this.__log = []
 
-				if ( this.layout.data.props ) this.props = this.layout.data.props
+					if (this.layout.data.props) this.props = this.layout.data.props
 
-				this.setPropsWatchers()
-			})
+					this.setPropsWatchers()
+				}
+			)
+
+			/*watch(
+				() => this.props.inputs,
+				() => {
+					console.trace("testing1090.useStoreDashboard inputs changed");
+				}
+			)*/
 		},
-		getWidget(id) {
-			return this.components.find(item => item.uid == id)
+		getComponent(id) {
+			return this.components.find((item) => item.uid == id)
+		},
+		setComponent(component) {
+			const index = this.components.findIndex(
+				(item) => item.uid === component.uid
+			)
+			this.components[index] = component
+			// TODO: udpate this.props.inputs and this.props.outputs
+		},
+		getComponentOutputByKey(compUid, outputKey) {
+			return this.props.outputs.find(output => {
+				return output.component_id === compUid && output.key === outputKey;
+			});
+		},
+		setComponentOutputValue(uid, val) {
+			const output = this.props.outputs.find(output => output.uid === uid);
+			output.__val = val;
 		},
 		async getLayouts() {
 			let dashboardLayout = localStorage.getItem('dashboardLayout')
 
-			let res = await useApi('dashboardLayoutList.get', {filters: {
-				name: 'dashboardV2@'
-			}});
+			let res = await useApi('dashboardLayoutList.get', {
+				filters: {
+					name: 'dashboardV2@',
+				},
+			})
 
-			if ( res.error || !res.results.length ) return false
+			if (res.error || !res.results.length) return false
 
 			this.layoutList = res.results
-			this.activeLayoutId = this.activeLayoutId || res.results[0].id
+
+			let defaultLayout = res.results.find((o) => o.is_default)
+			this.activeLayoutId =
+				this.activeLayoutId || defaultLayout?.id || res.results[0].id
 
 			this.components = this.layout.data.components || []
 			this.tabs = this.layout.data.tabs || []
 			this.activeTab = this.tabs[0]?.id
-			if ( this.layout.data.props ) {
-				this.layout.data.props.inputs.forEach(prop => prop.__val = prop.default_value)
-				this.layout.data.props.outputs.forEach(prop => prop.__val = prop.default_value)
+
+			if (this.layout.data.props) {
+				this.layout.data.props.inputs.forEach(
+					(prop) => (prop.__val = prop.default_value)
+				)
+				this.layout.data.props.outputs.forEach(
+					(prop) => (prop.__val = prop.default_value)
+				)
 				this.props = this.layout.data.props
 			}
 
@@ -70,22 +117,29 @@ export default defineStore({
 			// console.table(this.props)
 		},
 		setPropsWatchers() {
-			this.props.outputs.forEach((prop) => {
-				if ( prop.__unwatch ) return false
+			this.props.outputs.forEach(outputProp => {
+				// console.log("testing1090.useStoreDashboard outputProp ", outputProp);
+				if (outputProp.__unwatch) return false
 
-				prop.__unwatch = watch(
-					() => prop.__val,
+				const dynamicOutput = this.getComponent(outputProp.component_id).dynamicOutputs;
+
+				outputProp.__unwatch = watch(
+					() => outputProp.__val,
 					(newVal, oldVal) => {
-						let uid = prop.uid
-						let props = this.props.inputs.filter(item => item.subscribedTo.includes(uid) )
 
+						let inputsProps = this.props.inputs.filter((item) =>
+							item.subscribedTo.find(data => data.output_id === outputProp.uid)
+						)
+						// console.log("testing1090.useStoreDashboard outputProp ", outputProp);
 						let log = {
-							name: prop.name,
-							componentName: this.components.find(item => item.uid == prop.component_id).user_code,
+							name: outputProp.name,
+							componentName: this.components.find(
+								(item) => item.uid == outputProp.component_id
+							).user_code,
 							newVal: newVal,
 							oldVal: oldVal,
 							time: dayjs().format('HH:mm:ss'),
-							children: []
+							children: [],
 						}
 
 						// console.group(
@@ -94,22 +148,67 @@ export default defineStore({
 						// 	'font-size: 16px;'
 						// )
 
-						props.forEach(childProp => {
-							log.children.push({
+						/* ============================================================
+						 * ===== ME: 2023-07-07 Can be used in later refactoring ======
+						 * ============================================================
+
+						inputs.forEach((input) => {
+
+							if ( newVal && input.outputToInput ) {
+
+								let inputVal = {};
+
+								input.outputToInput.forEach(data => {
+
+									if ( newVal.hasOwnProperty(data.output.property) ) {
+
+										inputVal[data.input.property] = newVal[data.output.property];
+
+									}
+
+								});
+
+								input.__val = inputVal;
+
+
+							} else {
+								input.__val = outputProp.__val;
+							}
+
+						}) */
+
+						inputsProps.forEach((inputProp) => {
+							/*log.children.push({
 								name: childProp.name,
-								componentName: this.components.find(item => item.uid == childProp.component_id).user_code,
+								componentName: this.components.find(
+									(item) => item.uid == childProp.component_id
+								).user_code,
 								newVal: prop.__val,
 								oldVal: childProp.__val,
-							})
+							})*/
+							// console.log("testing1090.useStoreDashboard inputProp", inputProp);
+							if ( dynamicOutput ) {
 
-							childProp.__val = prop.__val
+								/*if ( inputOutputIncompatible(inputProp, outputProp) ) {
+									return;
+								}*/
+
+								const subToData = inputProp.subscribedTo.find( data => data.output_id === outputProp.uid );
+								// console.log("testing1090.useStoreDashboard subToData", subToData, newVal, newVal[subToData.propertyName]);
+								inputProp.__val = newVal[subToData.propertyName];
+								// console.log("testing1090.useStoreDashboard inputProp after", inputProp, JSON.parse(JSON.stringify(inputProp)) );
+							} else {
+								// console.log("testing1090.useStoreDashboard 2 outputProp ", outputProp.__val, JSON.parse(JSON.stringify(outputProp)) );
+								inputProp.__val = outputProp.__val;
+
+							}
 
 							// console.log(
 							// 	`=> ${this.components.find(item => item.id == childProp.cid).user_code} / %c${childProp.name}`,
 							// 	'font-size: 14px;'
 							// )
 						})
-
+						// console.log("testing1090.useStoreDashboard props ", this.props);
 						// console.groupEnd()
 
 						this.__log.push(log)
@@ -118,9 +217,11 @@ export default defineStore({
 			})
 		},
 		async getHistory(wid) {
-			let widget = this.components.find(item => item.uid == wid)
+			let component = this.components.find((item) => item.uid == wid)
 
-			let list = this.props.inputs.filter((prop) => prop.component_id == widget.uid)
+			let list = this.props.inputs.filter(
+				(prop) => prop.component_id == component.uid
+			)
 			let props = {}
 
 			list.forEach((prop) => {
@@ -134,23 +235,24 @@ export default defineStore({
 					date_to: props.date_to,
 				},
 				params: {
-					type: 'nav'
-				}
+					type: 'nav',
+				},
 			}
 
 			this.history = await useApi('widgetsHistory.get', apiOpts)
-			if ( this.history.error ) return false
+			if (this.history.error) return false
 
-			let colors = this.generateColors();
+			let colors = this.generateColors()
 
-			for ( let category in this.history ) {
-				for ( let firstDate in this.history[category] ) {
-					Object.entries(this.history[category][firstDate].items)
-						.forEach((item, key) => {
+			for (let category in this.history) {
+				for (let firstDate in this.history[category]) {
+					Object.entries(this.history[category][firstDate].items).forEach(
+						(item, key) => {
 							this.instrColors[category + item[0]] = colors[key]
-						})
+						}
+					)
 
-					break;
+					break
 				}
 			}
 
@@ -161,8 +263,8 @@ export default defineStore({
 					date_to: props.date_to,
 				},
 				params: {
-					type: 'pl'
-				}
+					type: 'pl',
+				},
 			}
 
 			this.historyPnl = await useApi('widgetsHistory.get', apiOptsPl)
@@ -214,89 +316,198 @@ export default defineStore({
 			]
 		},
 		async getHistoryNav(opts) {
- 			if ( !this.history ) return false
+			if (!this.history) return false
 			return this.history[opts.category][opts.date]
 		},
 		async getHistoryPnl(opts) {
 			console.log('opts:', opts)
-			if ( !this.history ) return false
+			if (!this.history) return false
 			return this.historyPnl[opts.category][opts.date]
 		},
+		async setAsDefault() {
+			let props = JSON.parse(JSON.stringify(this.props))
+
+			this.props.inputs.forEach((prop, k) => {
+				props.outputs[k].__val = null
+			})
+			this.props.outputs.forEach((prop, k) => {
+				props.outputs[k].default_value = prop.__val
+
+				// Need to add filtor by control
+				props.outputs[k].__val = null
+			})
+
+			let res = await useApi('dashboardLayout.put', {
+				params: { id: this.layout.id },
+				body: {
+					configuration_code: this.layout.configuration_code,
+					user_code: this.layout.user_code,
+					is_default: true,
+					data: {
+						components: this.components,
+						tabs: this.tabs,
+						props: props,
+					},
+				},
+			})
+			let index = this.layoutList.findIndex(
+				(item) => item.id == this.activeLayoutId
+			)
+			this.layoutList[index].is_default = true
+		},
+		async renameLayout(data) {
+			let props = JSON.parse(JSON.stringify(this.props))
+
+			this.props.inputs.forEach((prop, k) => {
+				props.outputs[k].__val = null
+			})
+			this.props.outputs.forEach((prop, k) => {
+				props.outputs[k].default_value = prop.__val
+
+				// Need to add filtor by control
+				props.outputs[k].__val = null
+			})
+
+			let res = await useApi('dashboardLayout.put', {
+				params: { id: this.layout.id },
+				body: {
+					configuration_code: this.layout.configuration_code,
+					...data,
+					data: {
+						components: this.components,
+						tabs: this.tabs,
+						props: props,
+					},
+				},
+			})
+			let index = this.layoutList.findIndex(
+				(item) => item.id == this.activeLayoutId
+			)
+			this.layoutList[index].name = data.name
+			this.layoutList[index].user_name = data.user_name
+		},
 		async saveLayout() {
-			if ( !this.layout.id ) {
-				let res = await useApi('dashboardLayout.post', {
+
+			let props = JSON.parse(JSON.stringify(this.props))
+
+			this.props.inputs.forEach((prop, k) => {
+				props.inputs[k].__val = null
+			})
+			this.props.outputs.forEach((prop, k) => {
+				props.outputs[k].default_value = prop.__val
+
+				// Need to add filtor by control
+				props.outputs[k].__val = null
+			})
+
+			let res;
+
+			if (!this.layout.id) {
+
+				res = await useApi('dashboardLayout.post', {
 					body: {
 						name: this.layout.name + ' dashboardV2@',
 						user_code: this.layout.user_code,
+						configuration_code: this.layout.configuration_code,
 						data: {
 							components: this.components,
 							tabs: this.tabs,
-							props: this.props,
-						}
-					}
+							props: props,
+						},
+					},
 				})
 
-				if (!res.error) {
-					this.layoutList.push(res)
-					this.activeLayoutId = res.id
-				}
+			}
+			else {
 
-			} else {
-
-				let res = await useApi('dashboardLayout.put', {
-					params: {id: this.layout.id},
+				res = await useApi('dashboardLayout.put', {
+					params: { id: this.layout.id },
 					body: {
 						user_code: this.layout.user_code,
+						configuration_code: this.layout.configuration_code,
 						data: {
 							components: this.components,
 							tabs: this.tabs,
-							props: this.props,
-						}
-					}
+							props: props,
+						},
+					},
 				})
-
-				this.isEdit = false
 
 			}
 
-			if (!this.activeLayoutId) this.activeLayoutId = this.layoutList[0].id;
+			if (!res.error) {
+
+				this.layoutList.push(res)
+				this.activeLayoutId = res.id
+				// this.isEdit = false
+
+				useNotify({
+					type: 'success',
+					title: `Dashboard layout ${res.name} successfully saved`,
+				})
+			}
+
+			if (!this.activeLayoutId) this.activeLayoutId = this.layoutList[0].id
 		},
 		async deleteLayout() {
 			let res = await useApi('dashboardLayout.delete', {
-				params: {id: this.layout.id},
+				params: { id: this.layout.id },
 				body: {
-					user_code: this.layout.user_code
-				}
+					user_code: this.layout.user_code,
+				},
 			})
+
+			await this.clearLayoutData()
 
 			this.getLayouts()
 		},
-		removeWidget( uid ) {
-			let index = this.components.findIndex(item => item.uid == uid)
+		async clearLayoutData() {
+			this.components = []
+			await nextTick()
+			this.tabs = []
+			this.props = []
 
-			if ( index === -1 ) throw new Error('[Store:removeWidget] ID not find')
+			this.activeTab = null
+			this.activeLayoutId = null
+		},
+		removeInput(uid) {
+			let index = this.props.inputs.findIndex(
+				(item) => item.uid === uid
+			)
+
+			if (index === -1) return false;
+
+			this.props.inputs.splice(index, 1);
+		},
+		removeComponent(uid) {
+			let index = this.components.findIndex((item) => item.uid == uid)
+
+			if (index === -1) throw new Error('[Store:removeComponent] ID not found')
 
 			this.props.inputs
-				.filter(item => item.component_id == this.components[index].uid)
+				.filter((item) => item.component_id == this.components[index].uid)
 				.forEach((prop) => {
-					let index = this.props.inputs.findIndex(item => item.uid == prop.uid)
-
-					if ( index === -1 ) return false
-
-					this.props.inputs.splice(index, 1)
+					this.removeInput(prop.uid)
 				})
 
 			this.props.outputs
-				.filter(item => item.component_id == this.components[index].uid)
+				.filter((item) => item.component_id == this.components[index].uid)
 				.forEach((prop) => {
-					let index = this.props.outputs.findIndex(item => item.uid == prop.uid)
+					let index = this.props.outputs.findIndex(
+						(item) => item.uid == prop.uid
+					)
 
-					if ( index === -1 ) return false
+					if (index === -1) return false
 
 					this.props.inputs
-						.filter(item => item.subscribedTo.includes(this.props.outputs[index].uid) )
+						.filter((item) =>
+							// item.subscribedTo.includes(this.props.outputs[index].uid)
+							item.subscribedTo.find(data => data.output_id === prop.uid)
+						)
 						.forEach((item) => {
-							let indexParent = item.subscribedTo.findIndex(id => id == this.props.outputs[index].uid)
+							let indexParent = item.subscribedTo.findIndex(
+								(id) => id == this.props.outputs[index].uid
+							)
 
 							item.subscribedTo.splice(indexParent, 1)
 						})
@@ -305,11 +516,13 @@ export default defineStore({
 				})
 
 			this.components.splice(index, 1)
-		}
+		},
 	},
 	getters: {
 		layout(state) {
-			return state.layoutList.find(item => item.id == state.activeLayoutId) || {}
-		}
+			return (
+				state.layoutList.find((item) => item.id == state.activeLayoutId) || {}
+			)
+		},
 	},
-});
+})

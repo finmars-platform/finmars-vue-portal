@@ -1,0 +1,157 @@
+<md-dialog class="entity-search-dialog draggable-dialog entityEditorElemToResize" drag-dialog
+  aria-label="entity search dialog">
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <is-draggable-sign></is-draggable-sign>
+
+      <h2>Search {{vm.entityType}}</h2>
+      <span flex></span>
+    </div>
+  </md-toolbar>
+
+  <div ng-if="vm.recentlyCreatedItems.length > 0">
+    <h4 class="entity-search-recently-crated-header">Created recently</h4>
+    <div class="entity-search-recently-crated-wrapper">
+      <table>
+        <thead>
+        <tr>
+          <th data-ng-repeat="column in vm.columns[vm.entityType]">
+            <dvi layout="row">
+              <b class="entity-search-recently-created-col">{{column.name}}</b>
+            </dvi>
+          </th>
+          <th class="entity-search-settings-header"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-ng-click="vm.recentlyCreatedSelectRow(item)" ng-dblclick="vm.selectAndSave(item)"
+            data-ng-repeat="item in vm.recentlyCreatedItems track by item.id" ng-class="{'active': item.active}"
+            class="entity-search-row">
+          <td data-ng-repeat="column in vm.columns[vm.entityType]" data-ng-bind="vm.getTdValue(item, column.key)">
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <div>
+
+    <div data-ng-if="vm.readyStatus.data">
+      <div class="entity-search-fixed-thead-wrapper">
+        <md-progress-linear data-ng-if="vm.processing" md-mode="indeterminate"></md-progress-linear>
+        <table>
+          <thead>
+          <tr>
+            <th data-ng-repeat="column in vm.columns[vm.entityType]">
+              <md-input-container class="md-block entity-search-filter" data-ng-if="column.name !== 'Instrument type'">
+                <label>{{column.name}}</label>
+                <input data-ng-model="vm.search[vm.entityType][column.key]" data-ng-model-options="{debounce: 1000}"
+                       data-ng-change="vm.getEntityItems('reloadTable')" />
+              </md-input-container>
+            </th>
+            <th class="entity-search-settings-header"></th>
+          </tr>
+          <tr>
+            <th data-ng-repeat="column in vm.columns[vm.entityType]">
+              <dvi layout="row" data-ng-click="vm.sortBy(column.key)">
+                <b class="entity-search-col-b">
+                  {{column.name}}
+                  <span class="sortorder" data-ng-show="vm.sort === column.key"
+                        data-ng-class="{reverse: vm.sortDescending}"></span>
+                </b>
+              </dvi>
+            </th>
+            <th class="entity-search-settings-header"></th>
+          </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <md-dialog-content class="entity-search-scroll-container">
+    <div>
+      <div class="entity-search-table-container">
+        <table class="bordered entity-search-table">
+          <thead>
+            <tr>
+              <th data-ng-repeat="column in vm.columns[vm.entityType]">
+                <div layout="row">
+                  <b class="entity-search-col-b">{{column.name}}</b>
+                </div>
+              </th>
+              <th class="entity-search-settings-header"></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr data-ng-click="vm.selectRow(item)" ng-dblclick="vm.selectAndSave(item)"
+              data-ng-repeat="item in vm.items track by item.id" ng-class="{'active': item.active}"
+              class="entity-search-row">
+              <td data-ng-repeat="column in vm.columns[vm.entityType]" data-ng-bind="vm.getTdValue(item, column.key)">
+              </td>
+              <td>
+                <md-menu data-ng-hide="item.user_code === '-'">
+                  <md-button data-ng-click="$mdOpenMenu($event)" class="md-icon-button entity-filter-options-btn"
+                    aria-label="smart search setting menu">
+                    <ng-md-icon icon="settings"></ng-md-icon>
+                  </md-button>
+
+                  <md-menu-content>
+                    <md-menu-item>
+                      <md-button ng-click="vm.editItem(item.id, $event)">
+                        <ng-md-icon icon="mode_edit" class="dialog-table-settings-btns-icons"></ng-md-icon>
+                        Edit
+                      </md-button>
+                    </md-menu-item>
+                    <md-menu-item>
+                      <md-button ng-click="vm.deleteItem(item, $index)">
+                        <ng-md-icon icon="delete" class="dialog-table-settings-btns-icons"></ng-md-icon>
+                        Delete
+                      </md-button>
+                    </md-menu-item>
+                  </md-menu-content>
+                </md-menu>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div data-ng-if="!vm.items.length" style="text-align: center; margin-top: 20px;">
+          No result found
+        </div>
+      </div>
+    </div>
+
+    <div data-ng-if="!vm.readyStatus.data">
+      <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+        <progress-circular diameter="100"></progress-circular>
+      </div>
+    </div>
+  </md-dialog-content>
+<!--  <md-dialog-actions layout="row" data-ng-if="vm.entityType==='instrument'" class="flex_cb">-->
+  <md-dialog-actions layout="row" class="flex_cb">
+    <div>
+      <md-button class="md-raised" data-ng-click="vm.createEntity($event)">
+        Create
+      </md-button>
+      <md-button class="md-raised" data-ng-if="vm.entityType==='instrument'" data-ng-click="vm.downloadEntity($event)">
+        Download
+      </md-button>
+    </div>
+    <div>
+      <md-button class="md-raised" ng-click="vm.cancel()">
+        Cancel
+      </md-button>
+      <md-button class="md-raised md-primary" ng-click="vm.agree()" style="margin-right: 20px;">
+        Select
+      </md-button>
+    </div>
+
+    <dialog-window-resizer data-ng-if="vm.dialogElemToResize" data-elem-to-resize="vm.dialogElemToResize"
+      class="dialog-window-resizer_type1"></dialog-window-resizer>
+  </md-dialog-actions>
+</md-dialog>

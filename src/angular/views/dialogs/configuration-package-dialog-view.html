@@ -1,0 +1,74 @@
+<md-dialog aria-label="expression builder dialog"
+           class="expression-editor-dialog draggable-dialog"
+           drag-dialog style="width: 75%">
+    <md-toolbar>
+        <div class="md-toolbar-tools" style="height: 64px;">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Configuration Package Manager</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+
+
+        <div layout="row">
+            <div flex="100" class="position-relative">
+                <h2 class="text-center">Available Packages</h2>
+            </div>
+        </div>
+
+        <div class="expression-functions-block" layout="row">
+
+            <div class="expression-editor-column expression-editor-groups-col" layout="column">
+
+                <div class="{{item.isSelected ? 'selected' : ''}} help-item-menu-item"
+                     data-ng-repeat="item in vm.groups"
+                     data-ng-click="vm.selectGroup(item)" data-ng-bind-html="item.name">
+                </div>
+            </div>
+
+            <div class="expression-editor-column expression-editor-exprs-col exprEditorExprsCol p-t-8" layout="column">
+
+                <md-input-container class="help-search-control">
+                    <input type="text" data-ng-model="vm.searchExpr" placeholder="Search">
+                </md-input-container>
+
+                <div class="help-functions-holder">
+                    <div>
+                        <div class="{{item.isSelected ? 'selected' : ''}} help-item-menu-item"
+                             data-ng-repeat="item in vm.packages | filter: vm.getFilters()"
+                             data-ng-click="vm.selectItem(item)" >
+                            {{item.name}}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="expression-editor-cols-resizer exprEditorColsResizer"></div>
+
+            <div class="expression-editor-column description-column exprEditorDescriptionCol" layout="column">
+
+                <div class="description-column-header" data-ng-bind-html="vm.selectedItem.name"></div>
+
+                <div class="description-column-body"
+                     data-ng-bind-html="vm.selectedItem.notes | trustAsHtml">
+                </div>
+
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row" layout-align="space-between">
+        <div>
+            &nbsp;
+        </div>
+        <div>
+            <md-button ng-click="vm.cancel()">
+                Cancel
+            </md-button>
+            <md-button ng-click="vm.agree()" class="md-raised md-primary m-r-24 {{vm.selectedItem ? '' : 'disabled-btn'}}" >
+                Import
+            </md-button>
+        </div>
+    </md-dialog-actions>
+</md-dialog>

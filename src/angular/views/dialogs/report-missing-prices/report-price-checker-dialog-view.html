@@ -1,0 +1,77 @@
+<md-dialog aria-label="" ng-cloak class="warning-dialog draggable-dialog width-70" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Report Missing Prices report</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="p-24">
+        <div>
+
+            <h4>Report warning</h4>
+
+            <div data-ng-if="vm.missingHistoryPrices.length" layout="row" class="m-b-24">
+
+                <div class="p-t-16" style="min-width: 600px;">
+                    Some Instrument Prices are absent as of the Reporting Date ({{vm.missingHistoryPrices.length}})
+                </div>
+
+                <md-button class="md-raised" data-ng-click="vm.viewMissingPriceHistory($event)">View</md-button>
+
+                <md-button class="md-raised" data-ui-sref="app.portal.data.price-history" target="_blank"> Go to Prices</md-button>
+
+                <md-button class="md-raised" data-ng-click="vm.downloadPriceHistoryCSV($event)">CSV</md-button>
+
+            </div>
+
+            <div data-ng-if="vm.missingFxRates.length" layout="row" class="m-b-24">
+
+                <div class="p-t-16" style="min-width: 600px;">
+                    Some FX rates are absent as of the Reporting Date ({{vm.missingFxRates.length}})
+                </div>
+
+                <md-button class="md-raised" data-ng-click="vm.viewMissingFxRates($event)">View</md-button>
+
+                <md-button class="md-raised" data-ui-sref="app.portal.data.currency-history" target="_blank">Go to FX Rates</md-button>
+
+                <md-button class="md-raised" data-ng-click="vm.downloadFxRatesCSV($event)">CSV</md-button>
+
+            </div>
+
+            <div data-ng-if="vm.missingHistoricalFxRates.length" layout="row" class="m-b-24">
+
+                <div class="p-t-16" style="min-width: 600px;">
+                    Some Historical FX rates are absent (needed for correct P&L accounting) ({{vm.missingHistoricalFxRates.length}})
+                </div>
+
+                <md-button class="md-raised" data-ng-click="vm.viewMissingHistoricalFxRates($event)">View</md-button>
+
+                <md-button class="md-raised" data-ui-sref="app.portal.data.currency-history" target="_blank">Go to FX Rates</md-button>
+
+                <md-button class="md-raised" data-ng-click="vm.downloadHistoricalFxRatesCSV($event)">CSV</md-button>
+
+            </div>
+
+            <div data-ng-if="vm.missingCustomFields.length" layout="row" class="m-b-24">
+
+                <div class="p-t-16" style="min-width: 600px;">
+                    Some Custom Fields are absent ({{vm.missingCustomFields.length}})
+                </div>
+
+                <md-button class="md-raised" data-ng-click="vm.viewMissingCustomFields($event)">View</md-button>
+
+            </div>
+
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" ng-click="vm.agree()" style="margin-right:20px;">
+            Ok
+        </md-button>
+        <md-button class="md-raised {{vm.readyStatus.schedules ? '' : 'disabled-btn'}}" ng-click="vm.runPricing()" style="margin-right:20px;">
+            Run Pricing
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

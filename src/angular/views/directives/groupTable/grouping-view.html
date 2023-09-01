@@ -1,0 +1,274 @@
+<div class="g-grouping-component">
+
+    <div class="g-first-line" layout="row" layout-align="space-between end" layout>
+        <div layout="row">
+            <div>
+                <p class="g-drag-section-title">
+                    <span class="g-meta-circle green">G</span>ROUPING AREA
+                    <ng-md-icon class="tooltips-sign" icon="info" size="20" style="fill: #777777">
+                        <md-tooltip class="tooltip_1" md-direction="top">tooltip text</md-tooltip>
+                    </ng-md-icon>
+                </p>
+            </div>
+
+            <md-card data-ng-if="isReport"
+                     data-ng-class="{'opacity-05': !isGrandTotalAvailable()}"
+                     class="card grouping-area-settings-card"
+                     layout="row">
+                <p>Grand Total</p>
+                <div class="grouping-area-settings-container">
+                    <md-menu>
+                        <md-button class="md-icon-button grouping-area-settings-btn"
+                                   aria-label="grand total settings"
+                                   ng-click="openGroupSettings($mdOpenMenu, $event)"
+                                   ng-disabled="!isGrandTotalAvailable()">
+                            <ng-md-icon icon="settings" size="21"></ng-md-icon>
+                        </md-button>
+
+                        <md-menu-content width="4">
+                            <md-menu-item>
+                                <md-button md-prevent-menu-close="md-prevent-menu-close"
+                                           ng-click="reportSetGrandtotalType('line')"
+                                           class="g-settings-option-btn">
+                                    <ng-md-icon icon="done"
+                                                data-ng-show="rootGroupOptions.subtotal_type === 'line'"></ng-md-icon>
+                                    <ng-md-icon icon="done"
+                                                style="visibility:hidden;"
+                                                data-ng-show="rootGroupOptions.subtotal_type !== 'line'"></ng-md-icon>
+                                    <span>Grand Total on Top</span>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button md-prevent-menu-close="md-prevent-menu-close"
+                                           ng-click="reportSetGrandtotalType('area')"
+                                           class="g-settings-option-btn">
+                                    <ng-md-icon icon="done"
+                                                data-ng-show="rootGroupOptions.subtotal_type === 'area'"></ng-md-icon>
+                                    <ng-md-icon icon="done"
+                                                style="visibility:hidden;"
+                                                data-ng-show="rootGroupOptions.subtotal_type !== 'area'"></ng-md-icon>
+                                    <span>Grand Total on Bottom</span>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button md-prevent-menu-close="md-prevent-menu-close"
+                                           ng-click="reportSetGrandtotalType('arealine')"
+                                           class="g-settings-option-btn">
+                                    <ng-md-icon icon="done"
+                                                data-ng-show="rootGroupOptions.subtotal_type === 'arealine'"></ng-md-icon>
+                                    <ng-md-icon icon="done"
+                                                style="visibility:hidden;"
+                                                data-ng-show="rootGroupOptions.subtotal_type !== 'arealine'"></ng-md-icon>
+                                    <span>Grand Total on Top and Bottom</span>
+                                </md-button>
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
+                </div>
+                <md-tooltip data-ng-if="!isGrandTotalAvailable()"
+                            class="tooltip_2"
+                            md-direction="top">Select Grouping Column to apply Grand Total</md-tooltip>
+            </md-card>
+        </div>
+
+        <div class="g-delete-card-area" id="gc-delete-area">
+            <ng-md-icon icon="delete" size="35">
+                <md-tooltip class="tooltip_2" md-direction="top">Drag here column or group to delete</md-tooltip>
+            </ng-md-icon>
+        </div>
+    </div>
+
+    <div class="g-second-line" style="overflow: auto">
+
+        <div class="groups-holder" layout="row">
+
+            <div class="g-groups-holder">
+
+                <md-card data-ng-repeat="item in groups track by item.key"
+                         class="group-item card group-status-{{item.status}}"
+                         data-group-key="{{item.key}}"
+                         data-group-type-id="{{item.___group_type_id}}">
+
+                    <div class="sort">
+                        <md-button class="group-sort" data-ng-show="item.options.sort === 'ASC'"
+                                   aria-label="open settings" data-ng-click="sortHandler(item, 'DESC')">
+                            <ng-md-icon icon="keyboard_arrow_down"></ng-md-icon>
+                        </md-button>
+                        <md-button class="group-sort-up" data-ng-show="item.options.sort === 'DESC'"
+                                   aria-label="open settings" data-ng-click="sortHandler(item, 'ASC')">
+                            <ng-md-icon icon="keyboard_arrow_up"></ng-md-icon>
+                        </md-button>
+                        <md-button class="group-sort group-both-sorted" data-ng-show="!item.options.sort"
+                                   aria-label="open settings" data-ng-click="sortHandler(item, 'DESC')">
+                            <ng-md-icon class="c-up" icon="keyboard_arrow_up"></ng-md-icon>
+                            <ng-md-icon class="c-down" icon="keyboard_arrow_down"></ng-md-icon>
+                        </md-button>
+                    </div>
+
+                    <!--<div class="sort" data-ng-if="!isReport">
+                        <md-button class="group-sort" data-ng-show="item.options.fold"
+                                   aria-label="open settings" data-ng-click="toggleFold(item)">
+                            -
+                        </md-button>
+                        <md-button class="group-sort group-both-sorted" data-ng-show="!item.options.fold"
+                                   aria-label="open settings" data-ng-click="toggleFold(item)">
+                            +
+                        </md-button>
+                    </div>-->
+
+                    <div data-ng-if="isReport">
+                        <div class="ev-fold-button m-t-8" data-ng-if="item.report_settings.is_level_folded"
+                             data-ng-click="unfoldLevel(item, $index)">+
+                        </div>
+                        <div class="ev-fold-button m-t-8" data-ng-if="!item.report_settings.is_level_folded"
+                             data-ng-click="foldLevel(item, $index)">-
+                        </div>
+                    </div>
+
+                    <div class="caption">
+
+                        <span data-ng-if="!item.layout_name">{{item.name}}</span>
+                        <span data-ng-if="item.layout_name">{{item.layout_name}}</span>
+                        <span data-ng-if="item.status == 'missing'">(Deleted)</span>
+
+                    </div>
+                    <div class="settings-btn">
+                        <md-menu data-ng-if="isReport">
+                            <md-button aria-label="Open phone interactions menu" class="md-icon-button"
+                                       ng-click="openGroupSettings($mdOpenMenu, $event)">
+                                <ng-md-icon icon="settings"></ng-md-icon>
+                            </md-button>
+                            <md-menu-content width="4">
+
+                                <md-menu-item>
+                                    <md-button md-prevent-menu-close="md-prevent-menu-close"
+                                               ng-click="reportSetSubtotalType(item, 'line')"
+                                               class="g-settings-option-btn">
+                                        <ng-md-icon icon="done"
+                                                    data-ng-show="item.report_settings.subtotal_type == 'line'"></ng-md-icon>
+                                        <ng-md-icon icon="done" style="visibility: hidden;"
+                                                    data-ng-show="item.report_settings.subtotal_type != 'line'"></ng-md-icon>
+                                        <span>Subtotal on Top</span>
+                                    </md-button>
+                                </md-menu-item>
+
+                                <md-menu-item>
+                                    <md-button md-prevent-menu-close="md-prevent-menu-close"
+                                               ng-click="reportSetSubtotalType(item, 'area')"
+                                               class="g-settings-option-btn">
+                                        <ng-md-icon icon="done"
+                                                    data-ng-show="item.report_settings.subtotal_type == 'area'"></ng-md-icon>
+                                        <ng-md-icon icon="done" style="visibility: hidden;"
+                                                    data-ng-show="item.report_settings.subtotal_type != 'area'"></ng-md-icon>
+                                        <span>Subtotal on Bottom</span>
+                                    </md-button>
+                                </md-menu-item>
+
+                                <md-menu-item>
+                                    <md-button md-prevent-menu-close="md-prevent-menu-close"
+                                               ng-click="reportSetSubtotalType(item, 'arealine')"
+                                               class="g-settings-option-btn">
+                                        <ng-md-icon icon="done"
+                                                    data-ng-show="item.report_settings.subtotal_type == 'arealine'"></ng-md-icon>
+                                        <ng-md-icon icon="done" style="visibility: hidden;"
+                                                    data-ng-show="item.report_settings.subtotal_type != 'arealine'"></ng-md-icon>
+                                        <span>Subtotal on Top and Bottom</span>
+                                    </md-button>
+                                </md-menu-item>
+
+                                <md-menu-item>
+                                    <md-button md-prevent-menu-close="md-prevent-menu-close"
+                                               ng-click="reportSetBlankLineType(item, 'area', $index)"
+                                               class="g-settings-option-btn">
+                                        <ng-md-icon icon="done"
+                                                    data-ng-show="item.report_settings.blankline_type == 'area'"></ng-md-icon>
+                                        <ng-md-icon icon="done" style="visibility: hidden;"
+                                                    data-ng-show="item.report_settings.blankline_type != 'area'"></ng-md-icon>
+                                        <span>Add blank line</span>
+                                    </md-button>
+                                </md-menu-item>
+                                <md-menu-item>
+                                    <md-menu>
+                                        <md-button ng-click="renameGroup(item, $mdMenu, $event)"
+                                                   class="g-settings-option-btn">
+                                            <ng-md-icon icon="visibility_off"
+                                                        style="visibility: hidden;"></ng-md-icon>
+                                            <span>Rename</span>
+                                        </md-button>
+                                        <md-menu-content style="display: none"></md-menu-content>
+                                    </md-menu>
+                                </md-menu-item>
+                                <md-menu-item data-ng-if="checkForFilteringBySameAttr(item.key)">
+                                    <md-button ng-click="addFiltersWithGroupAttr(item)"
+                                               class="g-settings-option-btn">
+                                        <ng-md-icon icon="visibility_off"
+                                                    style="visibility: hidden;"></ng-md-icon>
+                                        <span>Add to Filters</span>
+                                    </md-button>
+                                </md-menu-item>
+                                <md-menu-item>
+                                    <md-button ng-click="removeGroup(item)"
+                                               class="g-settings-option-btn">
+                                        <ng-md-icon icon="visibility_off"></ng-md-icon>
+                                        <span>Remove from group</span>
+                                    </md-button>
+                                </md-menu-item>
+                            </md-menu-content>
+                        </md-menu>
+
+                        <md-menu data-ng-if="!isReport">
+                            <md-button aria-label="ev groups settings" class="md-icon-button"
+                                       ng-click="openGroupSettings($mdOpenMenu, $event)">
+                                <ng-md-icon icon="settings"></ng-md-icon>
+                            </md-button>
+                            <md-menu-content width="4">
+                                <md-menu-item>
+                                    <md-menu>
+                                        <md-button ng-click="renameGroup(item, $mdMenu, $event)"
+                                                   class="g-settings-option-btn">
+                                            <ng-md-icon icon="visibility_off"
+                                                        style="visibility: hidden;"></ng-md-icon>
+                                            <span>Rename</span>
+                                        </md-button>
+                                        <md-menu-content style="display: none"></md-menu-content>
+                                    </md-menu>
+                                </md-menu-item>
+                                <md-menu-item data-ng-if="checkForFilteringBySameAttr(item.key)">
+                                    <md-button ng-click="addFiltersWithGroupAttr(item)"
+                                               class="g-settings-option-btn">
+                                        <ng-md-icon icon="visibility_off"
+                                                    style="visibility: hidden;"></ng-md-icon>
+                                        <span>Add to Filters</span>
+                                    </md-button>
+                                </md-menu-item>
+                                <md-menu-item>
+                                    <md-button ng-click="removeGroup(item)" class="g-settings-option-btn">
+                                        <ng-md-icon icon="visibility_off"></ng-md-icon>
+                                        <span>Remove from group</span>
+                                    </md-button>
+                                </md-menu-item>
+                            </md-menu-content>
+                        </md-menu>
+                    </div>
+                </md-card>
+            </div>
+
+            <div class="drop-new-group" id="groupsbag">
+                <!-- Drop level {{groups.length + 1}} Group -->
+                Drop New Grouping Level
+            </div>
+
+            <md-button class="md-raised g-add-group-btn" data-ng-click="addGroup()">
+                Add Grouping
+            </md-button>
+        </div>
+
+        <!--<md-button data-ng-if="components.fieldManagerBtn == true" class="md-fab g-settings-btn" aria-label="drag modal"-->
+        <!--data-ng-click="openModalSettings($event)">-->
+        <!--<ng-md-icon icon="view_week"></ng-md-icon>-->
+        <!--</md-button>-->
+
+        <div class="ev-loader" data-ng-show="dataLoader"></div>
+
+    </div>
+</div>

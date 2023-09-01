@@ -1,0 +1,144 @@
+<md-dialog aria-label="ui layout list" ng-cloak class="list-layouts-dialog draggable-dialog" style="width: 50%" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Layouts</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+
+<!--        <div data-ng-if="vm.invites.length" class="p-24">
+
+            <h4>Invitation to Layouts</h4>
+
+            <div data-ng-repeat="item in vm.invites">
+
+                <div layout="row">
+                    <div>
+                        <b>Name</b>: {{item.shared_configuration_file_object.name}}
+                    </div>
+
+                    <div style="margin-left: 10px">
+                        <b>From</b>: {{item.member_from_object.username}}
+                    </div>
+                </div>
+
+                <div data-ng-if="item.shared_configuration_file.notes" class="m-t-16">
+                    <div>
+                        <b>Description:</b>
+                    </div>
+                    <div>
+                        {{item.shared_configuration_file.notes}}
+                    </div>
+                </div>
+
+                <div data-ng-if="item.notes" class="m-t-16">
+                    <div><b>Message</b>:</div>
+                    <div>
+                        {{item.notes}}
+                    </div>
+                </div>
+
+                <div class="m-t-16">
+
+                    <md-button class="md-raised md-primary" data-ng-click="vm.acceptInvite($event, item)">Accept
+                    </md-button>
+                    <md-button class="md-raised" data-ng-click="vm.declineInvite($event, item)">Decline</md-button>
+
+                </div>
+            </div>
+
+        </div>-->
+
+        <div data-ng-if="vm.readyStatus.items">
+            <div data-ng-repeat="item in vm.items"
+                 class="ll-layout-item"
+                 layout="row"
+                 layout-align="space-between center"
+                 style="padding: 10px"
+                 ng-dblclick="vm.openLayout(item, $event)"
+                 ng-click="vm.selectLayout(item, $event)">
+                <div layout="row" class="ll-name">
+                    <ng-md-icon ng-if="item.hasUseFromAboveFilter"
+                                icon="flag"
+                                size="17"
+                                class="ll-use-from-above-indicator">
+                        <md-tooltip class="tooltip_2" md-direction="top">Has Linked to Selection filter</md-tooltip>
+                    </ng-md-icon>
+                    <span ng-bind="item.name"></span>
+                    <span data-ng-if="item.origin_for_global_layout" style="padding-left: 10px; position: relative; top: -3px;">
+                        <md-tooltip md-direction="top">Layout is used for sharing</md-tooltip>
+                        <ng-md-icon icon="people" size="24"></ng-md-icon>
+                    </span>
+                </div>
+
+                <div>
+<!--                    <md-button class="md-button ll-delete-btn" ng-click="vm.pullUpdate($event, item, $index)"
+                               data-ng-if="item.sourced_from_global_layout && !item.origin_for_global_layout">
+                        <md-tooltip md-direction="top">Update Layout</md-tooltip>
+                        <ng-md-icon icon="file_download" size="24"></ng-md-icon>
+                    </md-button>
+                    <md-button class="md-button ll-delete-btn" data-ng-if="!item.sourced_from_global_layout || item.origin_for_global_layout" ng-click="vm.shareLayout($event, item, $index)">
+                        <md-tooltip md-direction="top">Share Settings</md-tooltip>
+                        <ng-md-icon icon="share" size="24"></ng-md-icon>
+                    </md-button>-->
+                    <md-button class="md-button ll-delete-btn" ng-click="vm.renameLayout($event, item, $index)">
+                        <md-tooltip md-direction="top">Rename</md-tooltip>
+                        <ng-md-icon icon="mode_edit" size="24"></ng-md-icon>
+                    </md-button>
+                    <md-button class="md-button ll-delete-btn" ng-click="vm.setAsDefault($event, item, $index)">
+                        <md-tooltip md-direction="top">Set as default</md-tooltip>
+                        <ng-md-icon ng-hide="vm.isDefaultLayout(item)" icon="star_border" size="24"></ng-md-icon>
+                        <ng-md-icon ng-hide="!vm.isDefaultLayout(item)" icon="star" size="24"></ng-md-icon>
+                    </md-button>
+                    <md-button class="md-button ll-delete-btn" ng-click="vm.deleteItem($event, item, $index)">
+                        <md-tooltip md-direction="top">Delete</md-tooltip>
+                        <ng-md-icon icon="delete" size="24"></ng-md-icon>
+                    </md-button>
+                </div>
+            </div>
+
+            <div ng-if="vm.autosaveLayout.id"
+                 class="ll-layout-item border-bottom-none"
+                 layout="row"
+                 layout-align="space-between center"
+                 style="padding: 10px"
+                 ng-dblclick="vm.openLayout(vm.autosaveLayout, $event)"
+                 ng-click="vm.selectLayout(vm.autosaveLayout, $event)">
+
+                <div layout="row" class="ll-name">
+                    <span ng-bind="vm.autosaveLayout.name" class="text-bold"></span>
+                </div>
+
+                <div>
+                    <div class="md-button ll-delete-btn"></div>
+                    <md-button class="md-button ll-delete-btn" ng-click="vm.setAsDefault($event, vm.autosaveLayout, $index)">
+                        <md-tooltip md-direction="top">Set as default</md-tooltip>
+                        <ng-md-icon ng-hide="vm.isDefaultLayout(vm.autosaveLayout)" icon="star_border" size="24"></ng-md-icon>
+                        <ng-md-icon ng-hide="!vm.isDefaultLayout(vm.autosaveLayout)" icon="star" size="24"></ng-md-icon>
+                    </md-button>
+                    <div class="md-button ll-delete-btn"></div>
+                </div>
+            </div>
+        </div>
+
+        <div data-ng-if="!vm.readyStatus.items" class="dialog-loader m-t-24 m-b-24">
+            <div layout="row" layout-sm="column" layout-align="space-around">
+                <progress-circular data-diameter="100"></progress-circular>
+            </div>
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="end center">
+        <md-button ng-click="vm.cancel()">
+            Close
+        </md-button>
+        <md-button ng-click="vm.agree()" data-ng-disabled="!vm.selectedLayout" style="margin-right:20px;">
+            Open
+        </md-button>
+    </md-dialog-actions>
+
+</md-dialog>

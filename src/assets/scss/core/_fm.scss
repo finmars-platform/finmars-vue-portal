@@ -100,7 +100,8 @@
 			color: $gray;
 		}
 
-		.pmu-months, .pmu-years {
+		.pmu-months,
+		.pmu-years {
 			.pmu-button {
 				width: 46px;
 				height: 47px;
@@ -114,7 +115,7 @@
 					color: #fff;
 
 					&:hover {
-						opacity: .5;
+						opacity: 0.5;
 					}
 				}
 
@@ -151,7 +152,7 @@
 
 				&.pmu-not-in-month {
 					// visibility: hidden;
-					opacity: .4;
+					opacity: 0.4;
 				}
 
 				&.pmu-selected {
@@ -163,17 +164,15 @@
 					background-color: $paleOrange;
 				}
 			}
-
 		}
 
 		.ax_default {
 			color: #333333;
 		}
-
 	}
 
-	.pmu-instance:first-child, .pmu-instance:last-child {
-
+	.pmu-instance:first-child,
+	.pmu-instance:last-child {
 		.pmu-prev {
 			// order: 1;
 			width: 16px;
@@ -194,7 +193,6 @@
 			&:hover {
 				color: $orange;
 			}
-
 		}
 
 		.pmu-next {
@@ -208,20 +206,14 @@
 				color: $orange;
 			}
 		}
-
 	}
-
 }
 
 .dates_range {
 	.pickmeup.fm_cd_pickmeup {
-
 		.pmu-instance {
-
 			.pmu-days {
-
 				.pmu-button.pmu-selected:not(.custom-pmu-date-from-to) {
-
 					&.custom-pmu-date-from {
 						background-color: $orange;
 						border-top-right-radius: 0;
@@ -235,11 +227,9 @@
 						border-bottom-left-radius: 0;
 						margin-left: 0;
 					}
-
 				}
 
 				.pmu-button:not(.pmu-selected) {
-
 					&.custom-pmu-day-in-range {
 						width: 44px;
 						background-color: #fcd7ca;
@@ -247,29 +237,39 @@
 						margin-right: 0;
 						margin-left: 0;
 					}
-
 				}
-
 			}
-
 		}
-
 	}
 }
 //# endregion pickmeup inside FmInputDateComplex
+
+.fm_select_main_input {
+	height: 100%;
+	display: flex;
+	align-items: center;
+
+	.selected_text.nothing_selected {
+		color: $text-pale;
+	}
+}
 
 // vFmTooltip directive
 .fm_tooltip {
 	padding: 3px 6px;
 	border-radius: 4px;
 	color: #fff;
-	background-color: #1a1a1aff;
-	opacity: .8;
-	font-size: 14px;
+	background-color: #646464;
+	opacity: 0.8;
+	font-size: 11px;
 	z-index: 60;
 
 	&.error {
 		background-color: $error;
-		font-size: 15px;
+		font-size: 13px;
 	}
+}
+
+.fm_select_right_btn:not([disabled]):hover {
+	opacity: .5;
 }

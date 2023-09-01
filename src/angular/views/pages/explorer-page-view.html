@@ -1,0 +1,217 @@
+<div class="explorer-page  {{vm.explorerStateClass}}">
+
+    <div class="explorer-explorer-section ">
+
+        <div layout="column">
+            <h1>Finmars Explorer</h1>
+            <div class="explorer-toolbar" layout="row">
+                <md-button class="md-raised" data-ng-click="vm.createFile($event)">Create File</md-button>
+                <md-button class="md-raised" data-ng-click="vm.createFolder($event)">Create Folder</md-button>
+                <md-button class="md-raised" data-ng-click="vm.uploadFiles($event)">Upload Files</md-button>
+                <md-button class="md-raised" data-ng-click="vm.toggleHidden($event)">
+
+                    <span data-ng-if="!vm.showHiddenFiles">Show Invisible Files</span>
+                    <span data-ng-if="vm.showHiddenFiles">Hide Invisible Files</span>
+
+                </md-button>
+
+                <md-button class="md-raised" data-ng-click="vm.listFiles($event)">Refresh</md-button>
+                <md-button class="md-raised" data-ng-click="vm.toggleWorkflow()">
+                    <span data-ng-if="!vm.showWorkflow">Show Workflow</span>
+                    <span data-ng-if="vm.showWorkflow">Hide Workflow</span>
+                </md-button>
+
+                <input type="file" style="display: none" multiple id="explorerFileUploadInput" input-file-directive
+                       read-file="vm.fileUploadInput"
+                       read-file-change="vm.uploadFileHandler($event)">
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="explorer-content">
+
+            <div class="explorer-breadcrumbs">
+
+                <div class="explorer-breadcrumbs-item" data-ng-click="vm.breadcrumbsNavigation(-1)">My Finmars</div>
+
+                <span class="explorer-breadcrumbs-item-divider" data-ng-if="vm.currentPath.length">></span>
+
+                <div data-ng-repeat="item in vm.currentPath track by $index">
+
+                    <span data-ng-click="vm.breadcrumbsNavigation($index)"
+                          class="explorer-breadcrumbs-item">{{item}}</span>
+
+                    <span class="explorer-breadcrumbs-item-divider"
+                          data-ng-if="$index < vm.currentPath.length - 1">></span>
+
+                </div>
+
+            </div>
+
+            <div data-ng-if="!vm.processing">
+
+                <div data-ng-repeat="item in vm.items">
+
+                    <div class="explorer-{{item.type}} explorer-item {{item.selected ? 'selected' : ''}}"
+                         data-ng-if="item.type == 'dir'">
+
+                        <md-menu>
+
+                            <div ng-right-click="vm.triggerMenu($event)" data-ng-click="vm.selectItem($event, item)"
+                                 data-ng-dblclick="vm.openFolder($event, item)">
+                                <div data-ng-click="$mdMenu.open()" class="explorer-md-menu-trigger"></div>
+                                <span class="material-icons"
+                                      data-ng-if="item.name !== vm.member.username && item.name !== 'import'">folder</span>
+                                <span class="material-icons"
+                                      data-ng-if="item.name === vm.member.username">folder_shared</span>
+                                <span class="material-icons" data-ng-if="item.name === 'import'">folder_special</span>
+                                <span class="explorer-item-name" title="{{item.name}}">{{item.name}}</span>
+                            </div>
+
+                            <md-menu-content width="4">
+
+                                <md-menu-item>
+                                    <md-button ng-click="vm.deleteFile($mdMenu, $event, item)"
+                                    >
+                                        <ng-md-icon icon="visibility_off"
+                                                    style="visibility: hidden;"></ng-md-icon>
+                                        <span>Delete</span>
+                                    </md-button>
+                                </md-menu-item>
+
+                            </md-menu-content>
+
+                        </md-menu>
+
+                    </div>
+
+                    <div class="explorer-{{item.type}} explorer-item {{item.selected ? 'selected' : ''}}"
+                         data-ng-if="item.type == 'file'">
+
+                        <md-menu>
+
+                            <div ng-right-click="vm.triggerMenu($event)" data-ng-click="vm.selectItem($event, item)"
+                                 data-ng-dblclick="vm.editFile($event, item)">
+                                <div data-ng-click="$mdMenu.open()" class="explorer-md-menu-trigger"></div>
+                                <span class="material-icons">text_snippet</span>
+                                <span class="explorer-item-name" title="{{item.name}}">{{item.name}}</span>
+                            </div>
+
+
+                            <md-menu-content width="4">
+
+                                <md-menu-item>
+                                    <md-button ng-click="vm.previewFileDialog($event, item, $mdMenu)"
+                                    >
+                                        <ng-md-icon icon="visibility_off"
+                                                    style="visibility: hidden;"></ng-md-icon>
+                                        <span>Preview (In Dialog)</span>
+                                    </md-button>
+                                </md-menu-item>
+
+                                <md-menu-item>
+                                    <md-button ng-click="vm.editFileDialog($event, item, $mdMenu)"
+                                    >
+                                        <ng-md-icon icon="visibility_off"
+                                                    style="visibility: hidden;"></ng-md-icon>
+                                        <span>Edit (In Dialog)</span>
+                                    </md-button>
+                                </md-menu-item>
+
+                                <md-menu-item>
+                                    <md-button ng-click="vm.editFile($event, item, $mdMenu)"
+                                    >
+                                        <ng-md-icon icon="visibility_off"
+                                                    style="visibility: hidden;"></ng-md-icon>
+                                        <span>Edit</span>
+                                    </md-button>
+                                </md-menu-item>
+
+                                <md-menu-item>
+                                    <md-button ng-click="vm.copyFilePath($event, item, $mdMenu)"
+                                    >
+                                        <ng-md-icon icon="visibility_off"
+                                                    style="visibility: hidden;"></ng-md-icon>
+                                        <span>Copy File Path</span>
+                                    </md-button>
+                                </md-menu-item>
+
+                                <md-menu-item>
+                                    <md-button ng-click="vm.downloadFile($mdMenu, $event, item)"
+                                    >
+                                        <ng-md-icon icon="visibility_off"
+                                                    style="visibility: hidden;"></ng-md-icon>
+                                        <span>Download</span>
+                                    </md-button>
+                                </md-menu-item>
+
+
+                                <md-menu-item data-ng-if="item.name != '.init'">
+                                    <md-button ng-click="vm.deleteFile($mdMenu, $event, item)"
+                                    >
+                                        <ng-md-icon icon="visibility_off"
+                                                    style="visibility: hidden;"></ng-md-icon>
+                                        <span>Delete</span>
+                                    </md-button>
+                                </md-menu-item>
+
+                            </md-menu-content>
+
+                        </md-menu>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div data-ng-if="vm.processing">
+
+                <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                    <progress-circular diameter="100"></progress-circular>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="explorer-file-edit-section" data-ng-if="vm.showEditor">
+
+        <div data-ng-if="!vm.fileEditorLoading" class="height-100">
+
+            <div layout="row" class="explorer-file-edit-section-toolbar">
+                <md-button class="md-raised" data-ng-click="vm.closeFileEditor($event)">Close Editor</md-button>
+                <md-button class="md-raised" data-ng-click="vm.saveFileEditor($event)">Save</md-button>
+                <div layout="row" layout-sm="column" layout-align="space-around" style="padding-top: 8px"
+                     data-ng-if="vm.fileSaveProcessing">
+                    <progress-circular diameter="20"></progress-circular>
+                </div>
+            </div>
+
+            <div
+                    class="file-preview-content-wrap">
+                <div class="ace-editor" id="fileEditorAceEditor"></div>
+            </div>
+
+        </div>
+
+        <div data-ng-if="vm.fileEditorLoading" class="height-100">
+
+            <div layout="row" layout-sm="column" layout-align="space-around" class="m-large">
+                <progress-circular diameter="100"></progress-circular>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="explorer-workflow-section" data-ng-if="vm.showWorkflow">
+
+        <iframe ng-src="{{vm.trustSrc(vm.workflowIframeUrl)}}" frameborder="0"
+                style="width: 100%; height: 100%"></iframe>
+
+    </div>
+</div>

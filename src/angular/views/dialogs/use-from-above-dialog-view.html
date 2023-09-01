@@ -1,0 +1,91 @@
+<md-dialog class="use-from-above-dialog draggable-dialog"
+           drag-dialog aria-label="use from above dialog"
+           style="width: 680px">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2>Use from above manager</h2>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="p-16">
+
+        <div layout="row" class="m-b-16">
+            <!--<md-input-container style="width: 400px">
+                <label for="">Report Type</label>
+                <md-select data-ng-model="vm.attrsEntityType"
+                           data-ng-change="vm.onAttrsTypeChange()">
+                    <md-option value="balance-report">Balance Report</md-option>
+                    <md-option value="pl-report">P&L Report</md-option>
+                    <md-option value="transaction-report">Transaction Report</md-option>
+                </md-select>
+            </md-input-container>-->
+            <dropdown-select label="Report Type"
+                             model="vm.attrsEntityType"
+                             menu-options="vm.reportTypesOpts"
+                             on-change-callback="vm.onAttrsTypeChange()"></dropdown-select>
+        </div>
+
+        <div layout="row">
+
+            <table-attribute-selector title="Select field"
+                                      dialog-title="Select field"
+                                      available-attrs="vm.attributes"
+                                      item="vm.item"
+                                      is-report="true"
+                                      is-disabled="!vm.attrsEntityType"
+                                      class="dashboard-constructor-field1 m-r-10"
+                                      style="width: 400px;"></table-attribute-selector>
+
+            <!--<md-input-container class="md-block" style="width: 200px">
+
+                <label>Filter type</label>
+                <div>
+                    <md-select data-ng-model="vm.filterType"
+                               md-container-class="common-select-container"
+                               md-on-close="searchTerm = ''"
+                               data-ng-disabled="vm.filterTypes.length < 2"
+                               class="m-0">
+                        <md-select-header>
+                            <input data-ng-model="filterTypeSearchTerm"
+                                   type="search"
+                                   placeholder="Search for a ..."
+                                   class="md-text md-select-search-pattern select-input-filter"
+                                   ng-keydown="$event.stopPropagation()">
+                        </md-select-header>
+
+                        <div class="select-options-holder">
+
+                            <md-option data-ng-repeat="filterType in vm.filterTypes | filter:{name: filterTypeSearchTerm}"
+                                       ng-value="filterType.key"
+                                       ng-bind="filterType.name">
+                            </md-option>
+
+                        </div>
+
+                    </md-select>
+                </div>
+
+            </md-input-container>-->
+            <dropdown-select2 model="vm.filterType"
+                              menu-options="vm.filterTypes"
+                              is-disabled="vm.filterTypesSelDisabled"
+                              class="g-filter-types-select"></dropdown-select2>
+
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="space-between">
+
+        <div>
+            <md-button ng-click="vm.cancel()">
+                Cancel
+            </md-button>
+            <md-button ng-click="vm.agree()" class="md-raised md-primary m-r-24">
+                OK
+            </md-button>
+        </div>
+    </md-dialog-actions>
+</md-dialog>

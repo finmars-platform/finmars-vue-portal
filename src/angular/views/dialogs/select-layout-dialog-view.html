@@ -1,0 +1,100 @@
+<md-dialog aria-label="" ng-cloak class="select-layout-dialog draggable-dialog" drag-dialog>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <is-draggable-sign></is-draggable-sign>
+
+            <h2 ng-bind="vm.dialogTitle"></h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="m-t-16 p-16" style="min-width: 350px">
+
+        <div data-ng-if="vm.readyStatus.content" ng-class="{'bookmarks-layout-without-fold': vm.noFolding}">
+
+            <div class="select-layout-filter-container">
+                <input type="text"
+                       ng-model="layoutSearchTerm"
+                       data-ng-model-options="{debounce: 1000}"
+                       ng-change="vm.setLRWHeight()"
+                       placeholder="Search for ..."
+                       aria-label="select layout filter input">
+            </div>
+
+            <div layout="row">
+                <div layout="row" class="select-layout-toggle-btn-container m-r-16">
+                    <md-button class="md-raised small-folding-btn1"
+                               ng-click="vm.expandAll()">+</md-button>
+                    <span class="m-t-8">Expand all</span>
+                </div>
+
+                <div layout="row" class="select-layout-toggle-btn-container m-r-16">
+                    <md-button class="md-raised small-folding-btn1"
+                               ng-click="vm.collapseAll()">-</md-button>
+                    <span class="m-t-8">Collapse all</span>
+                </div>
+            </div>
+
+            <div data-ng-repeat="group in vm.groups">
+
+                <div class="cb1-main-container"
+                     ng-class="{'cb1-block-collapsed': vm.collapsingGroups[group.key]}">
+
+                    <div data-ng-if="group.content.length > 0" class="bookmarks-layouts-group">
+
+                        <div layout="row">
+                            <md-button ng-if="!vm.noFolding"
+                                       class="md-button select-layout-folding-btn small-folding-btn1"
+                                       ng-click="vm.collapsingGroups[group.key] = !vm.collapsingGroups[group.key]"
+                                       aria-label="folding layouts group button">
+                                <span ng-if="vm.collapsingGroups[group.key]">+</span>
+                                <span ng-if="!vm.collapsingGroups[group.key]">-</span>
+                            </md-button>
+                            <h3 data-ng-bind="group.name"></h3>
+                        </div>
+
+                        <div ng-class="{'cb1-resizing-wrap': !vm.noFolding}">
+
+                            <div class="select-layouts-layouts-holder">
+                                <div data-ng-repeat="item in group.content | filter: {name: layoutSearchTerm}"
+                                     class="bookmarks-layout-row"
+                                     ng-class="{ 'selected-bookmark-layout': vm.isSelectedLayout(item.id)}">
+
+                                    <ng-md-icon ng-if="item.hasUseFromAboveFilter"
+                                                icon="flag"
+                                                size="17"
+                                                class="bookmarks-use-from-above-indicator">
+                                        <md-tooltip class="tooltip_2" md-direction="top">Has Linked to Selection filter</md-tooltip>
+                                    </ng-md-icon>
+
+                                    <div data-ng-click="vm.selectLayout(item)">
+                                        <span data-ng-bind="item.name"></span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div data-ng-if="!vm.readyStatus.content" class="dialog-loader overflow-hidden">
+            <div layout="row" layout-sm="column" layout-align="space-around">
+                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row" layout-align="space-between center">
+        <md-button ng-click="vm.cancel()">
+            Cancel
+        </md-button>
+        <md-button ng-click="vm.agree()" style="margin-right:20px;">
+            OK
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>
