@@ -54,7 +54,7 @@
 							<li>
 								<NuxtLink to="/home" class="sidemenu-btn">
 									<FmIcon icon="home" class="side-nav-icon"></FmIcon>
-									<span class="side-nav-title">Homepage</span>
+									<span class="side-nav-title">Home</span>
 								</NuxtLink>
 							</li>
 
@@ -395,17 +395,17 @@
 												</span>
 											</a>
 										</li>
-										<li v-if="accessTable.data_simple_import">
-											<a
-												:href="getUrlToOldApp('/import/unified-entity-import')"
-												class="sidenav-dropdown-menu-btn two-line-text"
-											>
-												<span class="side-nav-title">
-													Instrument<br/>
-													(from file)
-												</span>
-											</a>
-										</li>
+<!--										<li v-if="accessTable.data_simple_import">-->
+<!--											<a-->
+<!--												:href="getUrlToOldApp('/import/unified-entity-import')"-->
+<!--												class="sidenav-dropdown-menu-btn two-line-text"-->
+<!--											>-->
+<!--												<span class="side-nav-title">-->
+<!--													Instrument<br/>-->
+<!--													(from file)-->
+<!--												</span>-->
+<!--											</a>-->
+<!--										</li>-->
 										<li v-if="accessTable.data_transaction_import">
 											<a
 												:href="getUrlToOldApp('/import/transaction-import')"
@@ -450,17 +450,17 @@
 												</span>
 											</a>
 										</li>
-										<li v-if="accessTable.data_prices_download">
-											<a
-												:href="getUrlToOldApp('/import/prices-import')"
-												class="sidenav-dropdown-menu-btn two-line-text"
-											>
-												<span class="side-nav-title">
-													Prices/FX<br/>
-													(from provider)
-												</span>
-											</a>
-										</li>
+<!--										<li v-if="accessTable.data_prices_download">-->
+<!--											<a-->
+<!--												:href="getUrlToOldApp('/import/prices-import')"-->
+<!--												class="sidenav-dropdown-menu-btn two-line-text"-->
+<!--											>-->
+<!--												<span class="side-nav-title">-->
+<!--													Prices/FX<br/>-->
+<!--													(from provider)-->
+<!--												</span>-->
+<!--											</a>-->
+<!--										</li>-->
 										<li>
 											<a
 												:href="getUrlToOldApp('/run-data-procedures')"
@@ -814,16 +814,16 @@
 														>
 													</a>
 												</li>
-												<li
-													v-if="accessTable.configuration_complex_import_scheme"
-												>
-													<a
-														:href="getUrlToOldApp('/settings/complex-import')"
-														class="sidenav-dropdown-menu-btn"
-													>
-														<span class="side-nav-title">Complex Import</span>
-													</a>
-												</li>
+<!--												<li-->
+<!--													v-if="accessTable.configuration_complex_import_scheme"-->
+<!--												>-->
+<!--													<a-->
+<!--														:href="getUrlToOldApp('/settings/complex-import')"-->
+<!--														class="sidenav-dropdown-menu-btn"-->
+<!--													>-->
+<!--														<span class="side-nav-title">Complex Import</span>-->
+<!--													</a>-->
+<!--												</li>-->
 											</ul>
 										</div>
 									</li>
@@ -1072,17 +1072,17 @@
 
 		<div class="build-date">
 
-			<div class="side-nav-versions-block">
-				<div v-for="version of store.current.versions">
+<!--			<div class="side-nav-versions-block">-->
+<!--				<div v-for="version of store.current.versions">-->
 
-					<div>{{ version.app }}:{{ version.version }}</div>
+<!--					<div>{{ version.app }}:{{ version.version }}</div>-->
 
-				</div>
-			</div>
+<!--				</div>-->
+<!--			</div>-->
 
-			<div>
-				Session Remaining Time: {{ remainingTimePretty }}
-			</div>
+<!--			<div>-->
+<!--				Session Remaining Time: {{ remainingTimePretty }}-->
+<!--			</div>-->
 
 			<a href="https://finmars.com" target="_blank" class="finmars-site-link">© {{ currentYear }} Finmars
 				SCSA</a>
@@ -1837,13 +1837,13 @@ padding: 0;
 		padding-left: 1em;
 		margin-left: 0;
 		margin-bottom: 6px;
-		font-size: 11px;
+		font-size: 12px;
 		line-height: 2;
 		/*padding-top: 12px;
 		padding-bottom: 10px;*/
 		padding-top: 3px;
 		padding-bottom: 3px;
-		text-transform: uppercase;
+		text-transform: capitalize;
 
 		&:not([disabled]):hover {
 			@include option-hover;
@@ -1901,9 +1901,9 @@ padding: 0;
 		color: $separ;
 		display: inline-block;
 		position: absolute;
-		left: 11px;
+		left: 17px;
 		// left: 17px;
-		bottom: 3px;
+		//bottom: 3px;
 		// bottom: 0;
 	}
 }
@@ -1918,14 +1918,15 @@ padding: 0;
 	position: relative;
 	width: 100%;
 	height: 36px;
-	display: block;
+	display: flex;
+	align-items: center;
 
 	text-align: left;
 	line-height: 2;
-	text-transform: uppercase;
+	text-transform: capitalize;
 
-	padding-top: 11px;
-	padding-bottom: 2px;
+	//padding-top: 11px;
+	//padding-bottom: 2px;
 	/*padding-top: 0;
 	padding-bottom: 0;*/
 	padding-left: 55px;
@@ -1940,7 +1941,11 @@ padding: 0;
 	}
 
 	&:not(.f-s-10) {
-		font-size: 11px;
+		font-size: 12px;
+	}
+
+	.icon {
+		font-size: 20px;
 	}
 
 	&:not([disabled]):hover {
@@ -1968,7 +1973,8 @@ padding: 0;
 
 .side-menu-bottom-menu {
 	position: absolute;
-	bottom: 75px;
+	//bottom: 75px;
+	bottom: 20px;
 	width: 100%;
 }
 
@@ -2210,10 +2216,21 @@ padding: 0;
 
 .sidenav-api-link, .finmars-site-link {
 	color: #fff;
-	text-decoration: none;
+	margin-top: 2px;
+	display: block;
+	color: rgba(255,255,255,.6);
+	padding-left: 24px;
+
+	&:visited {
+		color: rgba(255,255,255,.6);
+	}
+
+	&:active {
+		color: rgba(255,255,255,.6);
+	}
 
 	&:hover {
-		opacity: 0.7;
+		color: rgba(255,255,255,1);
 	}
 }
 
