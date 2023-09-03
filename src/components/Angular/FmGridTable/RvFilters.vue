@@ -575,8 +575,9 @@
 						<div
 							class="fm_list_item"
 							v-if="scope.entityType !== 'complex-transaction'"
-							@click="openCustomFieldsManager"
+							@click=";(isOpenCustomColumns = true), close()"
 						>
+							<!-- @click="openCustomFieldsManager" -->
 							Custom Columns
 						</div>
 
@@ -606,6 +607,7 @@
 			:payload="$mdDialog.modals['ReportViewerMatrixSettingsDialogController']"
 			:modelValue="true"
 		/>
+		<ModalCustomColumns title="Custom Field Manager" v-model="isOpenCustomColumns"></ModalCustomColumns>
 	</div>
 </template>
 
@@ -616,7 +618,7 @@
 	// import EventService from '@/angular/services/eventService';
 
 	const props = defineProps(['vm'])
-
+	const isOpenCustomColumns = ref(false)
 	const { evEventService, evDataService, attributeDataService } =
 		inject('ngDependace')
 	const $mdDialog = inject('$mdDialog')
@@ -927,24 +929,24 @@
 
 	scope.openViewConstructor = scope.vm.openViewConstructor
 
-	scope.openCustomFieldsManager = function ($event) {
-		$mdDialog.show({
-			controller: 'CustomFieldDialogController as vm',
-			templateUrl: 'views/dialogs/custom-field/custom-field-dialog-view.html',
-			parent: angular.element(document.body),
-			targetEvent: $event,
-			clickOutsideToClose: false,
-			preserveScope: true,
-			multiple: true,
-			locals: {
-				attributeDataService: attributeDataService,
-				entityViewerEventService: evEventService,
-				data: {
-					entityType: scope.vm.entityType,
-				},
-			},
-		})
-	}
+	// scope.openCustomFieldsManager = function ($event) {
+	// 	$mdDialog.show({
+	// 		controller: 'CustomFieldDialogController as vm',
+	// 		templateUrl: 'views/dialogs/custom-field/custom-field-dialog-view.html',
+	// 		parent: angular.element(document.body),
+	// 		targetEvent: $event,
+	// 		clickOutsideToClose: false,
+	// 		preserveScope: true,
+	// 		multiple: true,
+	// 		locals: {
+	// 			attributeDataService: attributeDataService,
+	// 			entityViewerEventService: evEventService,
+	// 			data: {
+	// 				entityType: scope.vm.entityType,
+	// 			},
+	// 		},
+	// 	})
+	// }
 
 	scope.toggleAutoRefresh = function () {
 		scope.rvAutoRefresh = !scope.rvAutoRefresh
