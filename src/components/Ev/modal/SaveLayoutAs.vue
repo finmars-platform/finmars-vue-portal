@@ -2,6 +2,8 @@
 	<ModalNameUserCode title="New layout"
 										 :name="viewerData.listLayout.name"
 										 :modelValue="modelValue"
+										 :content_type="content_type"
+										 v-bind="$attrs"
 
 										 @update:modelValue="newVal => emit('update:modelValue', newVal)"
 										 @save="saveLayout" />
@@ -29,6 +31,7 @@
 
 	let props = defineProps({
 		modelValue: Boolean,
+		content_type: String,
 		// occupiedUserCodes: Array,
 	});
 
@@ -52,7 +55,7 @@
 
 		viewerData.listLayout = newLayout;
 		// viewerData.setActiveLayoutConfiguration();
-		viewerData.newLayout = false;
+		delete viewerData.newLayout;
 
 		emit('layoutSaved', JSON.parse(JSON.stringify(newLayout)));
 

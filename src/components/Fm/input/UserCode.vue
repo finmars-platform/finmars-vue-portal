@@ -1,6 +1,6 @@
 <template>
 	<div class="usercode-input flex-column">
-		<div class="fi-center  grid  grid-col-2 m-b-8">
+		<div class="fi-center grid grid-col-2 m-b-8">
 			<!--				<md-input-container>
 				<label>Configuration</label>
 				<md-select data-ng-model="scope.configuration_code.value">
@@ -15,6 +15,8 @@
 				:modelValue="configCode"
 				label="Configuration Code"
 				:items="configCodesList"
+				attach="body"
+				:disabled="disabled"
 				@update:modelValue="onConfigCodeChange"
 			/>
 
@@ -28,6 +30,7 @@
 			<BaseInput
 				:modelValue="userCodeEnd"
 				label="User code"
+				:disabled="disabled"
 				@update:modelValue="onUserCodeChange"
 				tooltip="Allowed symbols: Numbers:
 						0-9, Letters: a-z (lowercase) Special Symbols: _, - (underscore, dash)"
@@ -65,18 +68,22 @@
 			<p v-show="scope.errorDescription" class="small-text error-color">
 				{{ scope.errorDescription }}
 			</p>
+
 		</div>
+
 	</div>
 </template>
 
 <script setup>
-	import { useTextNotValidForUserCode } from '~/composables/useMeta'
+
+	import {useTextNotValidForUserCode} from "~/composables/useMeta";
 
 	let props = defineProps({
 		/** Full user_code **/
 		modelValue: String,
 		configuration_code: String,
 		content_type: String,
+		disabled: Boolean,
 		errorData: String,
 	})
 
@@ -92,14 +99,6 @@
 
 	let configCodesList = ref([]);
 	let configCode = ref(props.configuration_code);
-
-	if (!configCode.value) {
-
-		configCode.value = store.defaultConfigCode;
-
-		emit('update:configuration_code', configCode.value); // in case of creating user code for new item
-
-	}
 
 	let userCodeEnd = ref('');
 
@@ -188,6 +187,7 @@
 
 			emit( 'update:modelValue', assembleUserCode(userCodeEnd.value) )
 		}
+
 	}
 
 	const validateUserCode = function (userCodeVal) {
@@ -207,30 +207,56 @@
 		if (errorVal !== error) {
 			emit('update:errorData', errorVal)
 		}
+
 	}
 
-	const init = async function () {
-		const res = await useApi('configurationList.get')
+	const init = function () {
 
-		if (res.error) {
-			throw new Error(res.error)
+		/*const res = await useApi('configurationList.get');
+
+		if ( res.error ) {
+			throw new Error(res.error);
+
 		} else {
-			configCodesList.value = res.results
-				.filter(function (item) {
-					return !item.is_package // TODO Move to backend filtering someday
-				})
-				.map(function (item) {
-					return {
-						id: item.configuration_code,
-						name: item.configuration_code,
-					}
-				})
 
-			parseUserCode()
+			scope.configuration_codes = res.results.filter(function (item) {
+				return !item.is_package; // TODO Move to backend filtering someday
+			}).map(function (item) {
+				return {
+					id: item.configuration_code,
+					name: item.configuration_code,
+				}
+			});
+
+			parseUserCode();
+
+		}*/
+
+		configCodesList.value = store.configCodes.filter(function (item) {
+			return !item.is_package; // TODO Move to backend filtering someday
+		}).map(function (item) {
+			return {
+				id: item.configuration_code,
+				name: item.configuration_code,
+			}
+		});
+
+		parseUserCode();
+
+		if (!configCode.value) {
+			configCode.value = store.defaultConfigCode;
 		}
+
+		if (!props.configuration_code) {
+			/* in case of creating user code for new item
+			 * without specifying configuration_code */
+			emit('update:configuration_code', configCode.value);
+		}
+
 	}
 
-	init()
+	init();
+
 </script>
 
 <style lang="scss" scoped>
@@ -245,6 +271,7 @@
 	:deep(div.base-input:not(.bi_no_margins)) {
 		margin-bottom: 0;
 	}
+
 	.small-text {
 		color: #747474;
 		font-size: 13px;
