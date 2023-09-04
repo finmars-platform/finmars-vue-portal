@@ -168,8 +168,8 @@
   })
 
   function saveFavorites(favAttrs) {
-    store.member.data.favorites.attributes[props.contentType] = favAttrs;
-    store.updateMember();
+    store.memberLayout.data.favorites.attributes[props.contentType] = favAttrs;
+    store.updateMemberLayout();
     emit( 'favoritesChanged', structuredClone(favAttrs) );
   }
 
