@@ -2,14 +2,17 @@
 	<BaseModal title="Number format">
 		<div style="padding: 5px 0 20px">
 			<div class="header">
-				<FmSelect label="Select Preset" :items="presetSelectorData"></FmSelect>
+				<FmSelect
+					label="Select Preset"
+					:items="vm.presetSelectorData.options"
+				></FmSelect>
 
 				<div class="examples">
 					<div class="examples__name">Examples:</div>
 					<div class="examples-number">
-						<span>{{ positiveNumberExample }}</span>
-						<span>{{ zeroExample }}</span>
-						<span>{{ negativeNumberExample }}</span>
+						<span>{{ vm.positiveNumberExample }}</span>
+						<span>{{ vm.zeroExample }}</span>
+						<span>{{ vm.negativeNumberExample }}</span>
 					</div>
 				</div>
 			</div>
@@ -17,11 +20,17 @@
 				<FmExpansionPanel title="Zero">
 					<div
 						class="panel-content"
-						v-for="(item, index) in zeroFormats"
+						v-for="(item, index) in vm.zeroFormats"
 						:key="index"
 					>
 						<div class="radio-input">
-							<input type="radio" class="input" name="Zero" value="0" />
+							<input
+								type="radio"
+								class="input"
+								name="Zero"
+								v-bind:value="item.id"
+								v-modal="activeZero"
+							/>
 							<label>{{ item?.name }}</label>
 						</div>
 						<!-- id=`'ZeroBase' + ${item?.id}` for="ZeroBase" -->
@@ -30,11 +39,17 @@
 				<FmExpansionPanel title="Negative">
 					<div
 						class="panel-content"
-						v-for="(item, index) in negativeFormats"
+						v-for="(item, index) in vm.negativeFormats"
 						:key="index"
 					>
 						<div class="radio-input">
-							<input type="radio" class="input" name="Negative" value="0" />
+							<input
+								type="radio"
+								class="input"
+								name="Negative"
+								v-bind:value="item.id"
+								v-modal="activeNegative"
+							/>
 							<label>{{ item?.name }}</label>
 						</div>
 						<!-- id=`'ZeroBase' + ${item?.id}` for="ZeroBase" -->
@@ -43,11 +58,17 @@
 				<FmExpansionPanel title="Rounding">
 					<div
 						class="panel-content"
-						v-for="(item, index) in percentageFormats"
+						v-for="(item, index) in vm.percentageFormats"
 						:key="index"
 					>
 						<div class="radio-input">
-							<input type="radio" class="input" name="Rounding" value="0" />
+							<input
+								type="radio"
+								class="input"
+								name="Rounding"
+								v-bind:value="item.id"
+								v-modal="activeRounding"
+							/>
 							<label>{{ item?.name }}</label>
 						</div>
 						<!-- id=`'ZeroBase' + ${item?.id}` for="ZeroBase" -->
@@ -56,7 +77,7 @@
 				<FmExpansionPanel title="Thousands separation">
 					<div
 						class="panel-content"
-						v-for="(item, index) in separationFormats"
+						v-for="(item, index) in vm.separationFormats"
 						:key="index"
 					>
 						<div class="radio-input">
@@ -64,7 +85,8 @@
 								type="radio"
 								class="input"
 								name="ThousandsSeparation"
-								value="0"
+								v-bind:value="item.id"
+								v-modal="activeThousandsSeparation"
 							/>
 							<label>{{ item?.name }}</label>
 						</div>
@@ -75,15 +97,16 @@
 				<FmExpansionPanel title="Percentage">
 					<div
 						class="panel-content"
-						v-for="(item, index) in percentageFormats"
+						v-for="(item, index) in vm.percentageFormats"
 						:key="index"
 					>
 						<div class="radio-input">
 							<input
 								type="radio"
 								class="input"
-								name="ThousandsSeparation"
-								value="0"
+								name="percentageFormats"
+								v-bind:value="item.id"
+								v-modal="activePercentageFormats"
 							/>
 							<label>{{ item?.name }}</label>
 						</div>
@@ -97,14 +120,17 @@
 				</FmExpansionPanel>
 				<FmExpansionPanel title="Prefix">
 					<div class="panel-content">
-						<FmInputText label="Prefix" v-modal="PrefixActive"></FmInputText>
+						<FmInputText
+							label="Prefix"
+							v-modal="vm.settings.number_suffix"
+						></FmInputText>
 					</div>
 				</FmExpansionPanel>
 				<FmExpansionPanel title="Multiplier">
 					<div class="panel-content">
 						<FmInputText
 							label="Multiplier"
-							v-modal="MultiplierActive"
+							v-modal="vm.settings.number_prefix"
 						></FmInputText>
 					</div>
 				</FmExpansionPanel>
@@ -130,10 +156,18 @@
 		},
 	})
 	const emits = defineEmits(['save'])
+	let vm = reactive({ settings: props.settings })
+	console.log('vm:', vm)
+	console.log('props.settings:', props.settings)
 
-	const SuffixActive = ref([])
+	const activeZero = ref([])
+	const activeNegative = ref([])
+	const activeRounding = ref([])
+	const activeThousandsSeparation = ref([])
+	const activePercentageFormats = ref([])
 	const PrefixActive = ref([])
 	const MultiplierActive = ref([])
+
 	const defaultReportSettings = {
 		zero_format_id: 0,
 		negative_format_id: 0,
@@ -145,38 +179,40 @@
 		number_suffix: '',
 		number_prefix: '',
 	}
-
-	const zeroFormats = ref([
+	// if (vm) {
+	//     const report_settings = JSON.parse(JSON.stringify(data.settings));
+	//     vm.settings = {...defaultReportSettings, ...report_settings}
+	// } else {
+	//     vm.settings = {...defaultReportSettings};
+	// }
+	vm.zeroFormats = [
 		{ id: 0, name: '0' },
 		{ id: 1, name: '-' },
 		{ id: 2, name: '(empty)' },
-	])
-	const negativeFormats = ref([
+	]
+
+	vm.negativeFormats = [
 		{ id: 0, name: '-100', color: 'black' },
 		{ id: 1, name: '-100', color: 'red' },
 		{ id: 2, name: '(100)', color: 'black' },
 		{ id: 3, name: '(100)', color: 'red' },
-	])
-	const separationFormats = ref([
+	]
+
+	vm.separationFormats = [
 		{ id: 0, name: 'No separation' },
 		{ id: 1, name: 'Space' },
 		{ id: 2, name: 'Apostrophe' },
-	])
-	const percentageFormats = ref([
+	]
+
+	vm.percentageFormats = [
 		{ id: 0, name: 'N/A' },
 		{ id: 1, name: '0%' },
 		{ id: 2, name: '0.0%' },
 		{ id: 3, name: '0.00%' },
 		{ id: 4, name: '0 bps' },
 		{ id: 5, name: '0.0 bps' },
-	])
-	const presetSelectorData = ref([
-		{ id: 'price', name: `Price (0)`, isActive: false },
-		{ id: 'market_value', name: `Market Value (000'000)`, isActive: false },
-		{ id: 'amount', name: `Amount (000'000.00)`, isActive: false },
-		{ id: 'exposure', name: `Exposure (0.0%)`, isActive: false },
-		{ id: 'return', name: `Return (0.00%)`, isActive: false },
-	])
+	]
+
 	const positiveNumberExample = ref([])
 	const zeroExample = ref([])
 	const negativeNumberExample = ref([])
@@ -220,9 +256,6 @@
 			percentage_format_id: 3,
 		},
 	}
-
-	let vm = reactive({ settings: props.settings })
-	console.log('vm:', vm)
 
 	function save() {
 		emits('save', { status: 'agree', data: props.settings })
