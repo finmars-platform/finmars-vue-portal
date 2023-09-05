@@ -607,7 +607,11 @@
 			:payload="$mdDialog.modals['ReportViewerMatrixSettingsDialogController']"
 			:modelValue="true"
 		/>
-		<ModalCustomColumns title="Custom Field Manager" v-model="isOpenCustomColumns"></ModalCustomColumns>
+		<ModalCustomColumns
+			title="Custom Field Manager"
+			v-model="isOpenCustomColumns"
+			:content_type="scope.content_type"
+		></ModalCustomColumns>
 	</div>
 </template>
 
@@ -631,6 +635,7 @@
 
 	let scope = reactive({ ...props })
 	scope.entityType = scope.vm.entityType
+	scope.content_type = evDataService.getContentType()
 	scope.readyStatus = reactive({
 		filters: false,
 	})
