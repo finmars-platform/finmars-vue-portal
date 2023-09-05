@@ -36,14 +36,14 @@
 <script setup>
 	let props = defineProps({
 		title: String,
-		description: String,
+		content_type: String,
 	})
-	var vm = this
 
+	let vm = reactive()
+	console.log(' test props.content_type', props.content_type)
 	vm.attributeDataService = attributeDataService
 	vm.entityViewerEventService = entityViewerEventService
 	vm.customFields = []
-	vm.entityType = data.entityType
 
 	vm.readyStatus = { customFields: false, attributes: false }
 
@@ -71,6 +71,12 @@
 		display: flex;
 		justify-content: space-between;
 		margin-bottom: 20px;
+	}
+	.card {
+		padding: 14px;
+		box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 3px 0px,
+			rgba(0, 0, 0, 0.14) 0px 1px 1px 0px, rgba(0, 0, 0, 0.12) 0px 2px 1px -1px;
+		margin: 8px;
 	}
 	.card__btn {
 		display: flex;
