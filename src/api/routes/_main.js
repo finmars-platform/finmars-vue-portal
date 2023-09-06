@@ -130,10 +130,13 @@ export default {
 	},
 	member: {
 		get: prefix + '/users/member/{id}/',
+		post: prefix + '/users/member/',
 		delete: prefix + '/users/member/{id}/',
 		put: prefix + '/users/member/{id}/',
 	},
-
+	memberSendInvite: {
+		put: prefix + '/users/member/{id}/send-invite/',
+	},
 	userGroups: {
 		get: prefix + '/users/group/',
 	},
@@ -148,7 +151,9 @@ export default {
 	performanceReport: {
 		post: prefix + '/reports/performance-report/',
 	},
-
+	transactionReport: {
+		post: prefix + '/reports/transaction-report/',
+	},
 	systemMessagesStats: {
 		get: prefix + '/system-messages/message/stats/',
 	},
@@ -321,7 +326,7 @@ export default {
 		get: prefix + '/reports/balance-report/custom-field/',
 	},
 	plReportCustomFieldList: {
-		get: prefix + '/reports/transaction-report/custom-field/',
+		get: prefix + '/reports/pl-report/custom-field/',
 	},
 	transactionReportCustomFieldList: {
 		get: prefix + '/reports/transaction-report/custom-field/',

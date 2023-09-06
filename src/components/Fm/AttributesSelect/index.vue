@@ -14,25 +14,25 @@
 	>
 		<template #button><FmIcon icon="menu" /></template>
 
-<!--		<div v-if="multiselect" class="flex aic" style="height: inherit;">
+		<!--		<div v-if="multiselect" class="flex aic" style="height: inherit;">
 
-			<div
-				class="flex-row fi-center"
-				v-for="item in modelValue"
-				:key="item.key"
-			>
-				<FmIcon
-					v-if="item.error_data"
-					error
-					icon="info"
-					size="16"
-					class="m-r-8"
-					style="height: 16px;"
-				/>
-				<span>{{ item.name }}</span>
-			</div>
+					<div
+						class="flex-row fi-center"
+						v-for="item in modelValue"
+						:key="item.key"
+					>
+						<FmIcon
+							v-if="item.error_data"
+							error
+							icon="info"
+							size="16"
+							class="m-r-8"
+							style="height: 16px;"
+						/>
+						<span>{{ item.name }}</span>
+					</div>
 
-		</div>-->
+				</div>-->
 		<div class="fm_select_main_input">
 
 			<div
@@ -62,115 +62,115 @@
 
 <script setup>
 
-	let props = defineProps({
-		modelValue: [Array, String], // Array of Strings (keys) for multiselect, String (key) and null for
-		title: String,
-		contentType: String,
-		valueType: Number, // used to filter attributes
-		attributes: {
-			type: Array,
-			default() { return [] },
-		},
-		multiselect: Boolean,
-		disabled: Boolean,
-	});
+let props = defineProps({
+	modelValue: [Array, String], // Array of Strings (keys) for multiselect, String (key) and null for select
+	title: String,
+	contentType: String,
+	valueType: Number, // used to filter attributes
+	attributes: {
+		type: Array,
+		default() { return [] },
+	},
+	multiselect: Boolean,
+	disabled: Boolean,
+});
 
-	let emit = defineEmits(['update:modelValue', 'selectedAttributesChanged']);
-	// let evAttrsStore = useEvAttributesStore();
+let emit = defineEmits(['update:modelValue', 'selectedAttributesChanged']);
+// let evAttrsStore = useEvAttributesStore();
 
-	let attributesList = ref(null);
-	let selAttrsKeysList = ref([]);
-	let modalIsOpen = ref(false);
+let attributesList = ref(null);
+let selAttrsKeysList = ref([]);
+let modalIsOpen = ref(false);
 
+attributesList.value = JSON.parse(JSON.stringify( props.attributes ));
+
+function getSelAttrsKeysList() {
+
+	if ( Array.isArray(props.modelValue) ) {
+
+		selAttrsKeysList.value = JSON.parse(JSON.stringify( props.modelValue ));
+
+	}
+	else if (typeof props.modelValue === 'string') {
+
+		selAttrsKeysList.value = props.modelValue ? [props.modelValue] : []
+
+	} else if (props.modelValue || props.modelValue === 0) {
+		throw new Error("Wrong format of modelValue: " + typeof props.modelValue)
+	}
+
+}
+
+watch(() => props.attributes, () => {
 	attributesList.value = JSON.parse(JSON.stringify( props.attributes ));
+})
 
-	function getSelAttrsKeysList() {
+watch(
+	() => props.modelValue,
+	getSelAttrsKeysList,
+)
 
-		if ( Array.isArray(props.modelValue) ) {
+function openDialog() {
+	if (!props.disabled) modalIsOpen.value = true;
+}
 
-			selAttrsKeysList.value = JSON.parse(JSON.stringify( props.modelValue ));
+let selectedAttrs = computed(() => {
+	return attributesList.value.filter( attr => selAttrsKeysList.value.includes(attr.key) );
+});
 
-		}
-		else if (typeof props.modelValue === 'string') {
+let selectedName = computed( () => {
 
-			selAttrsKeysList.value = props.modelValue ? [props.modelValue] : []
+	if ( selectedAttrs.value[0] ) {
 
-		} else if (props.modelValue || props.modelValue === 0) {
-			throw new Error("Wrong format of modelValue: " + typeof props.modelValue)
-		}
+		return selectedAttrs.value[0].layout_name || selectedAttrs.value[0].name;
 
 	}
 
-	watch(() => props.attributes, () => {
-		attributesList.value = JSON.parse(JSON.stringify( props.attributes ));
-	})
+	return props.title || '';
 
-	watch(
-		() => props.modelValue,
-		getSelAttrsKeysList,
-	)
+});
 
-	function openDialog() {
-		if (!props.disabled) modalIsOpen.value = true;
+/*let selectedName = computed( () => {
+
+	if ( selectedAttrs.value[0] ) {
+
+		return selectedAttrs.value[0].layout_name || selectedAttrs.value[0].name;
+
 	}
 
-	let selectedAttrs = computed(() => {
-		return attributesList.value.filter( attr => selAttrsKeysList.value.includes(attr.key) );
-	});
+	return props.title || '';
 
-	let selectedName = computed( () => {
+});*/
 
-			if ( selectedAttrs.value[0] ) {
+if (props.multiselect) {
 
-				return selectedAttrs.value[0].layout_name || selectedAttrs.value[0].name;
+	selectedName = computed( () => {
 
-			}
-
+		if ( !selectedAttrs.value.length ) {
 			return props.title || '';
+		}
+
+		const names = selectedAttrs.value.map( attr => attr.layout_name || attr.name );
+
+		return `[ ${names.join(', ')} ]`;
 
 	});
 
-	/*let selectedName = computed( () => {
+}
 
-		if ( selectedAttrs.value[0] ) {
-
-			return selectedAttrs.value[0].layout_name || selectedAttrs.value[0].name;
-
-		}
-
-		return props.title || '';
-
-	});*/
-
-	if (props.multiselect) {
-
-		selectedName = computed( () => {
-
-			if ( !selectedAttrs.value.length ) {
-				return props.title || '';
-			}
-
-			const names = selectedAttrs.value.map( attr => attr.layout_name || attr.name );
-
-			return `[ ${names.join(', ')} ]`;
-
-		});
-
-	}
-
-	// watch(() => props.modelValue, modelValueWatchHandler)
-	getSelAttrsKeysList();
+// watch(() => props.modelValue, modelValueWatchHandler)
+getSelAttrsKeysList();
 
 </script>
 
 <style lang="scss" scoped>
-	:deep(.base-input) {
-		margin-bottom: 0;
-	}
+:deep(.base-input) {
+	margin-bottom: 0;
+}
 
-	.selected_text {
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-	}
+.selected_text {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
 </style>
