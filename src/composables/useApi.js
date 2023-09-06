@@ -26,6 +26,11 @@ export default async function useApi(
 	const config = useRuntimeConfig()
 
 	const [route, method] = route_opt.split('.')
+
+	if (!routes[route]) {
+		throw new Error(`Route: ${route} is not registered`)
+	}
+
 	let url = routes[route][method]
 
 	if (!url) {
