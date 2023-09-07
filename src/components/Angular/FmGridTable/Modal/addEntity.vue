@@ -1,75 +1,78 @@
 <template>
-	<BaseModal :title="`Add ${vm.entityTypeSlug()}`">
-		<div v-if="vm.readyStatus.permissions && vm.readyStatus.entity">
+	<BaseModal
+		no_padding
+		:title="`Add ${vm.entityTypeSlug()}`"
+		style="width: 85vw; max-width: 1350px"
+		@close="vm.cancel()"
+	>
+		<template v-if="vm.readyStatus.permissions && vm.readyStatus.entity">
 			<div
+				class="entity-editor-fa-row p-16 p-b-0"
 				v-if="vm.fixedFieldsAttributes.length > 0"
-				class="entity-editor-fixed-area"
+				:style="{
+					display: 'grid',
+					gridTemplateColumns: `repeat(${2}, 1fr)`,
+					gap: '15px',
+				}"
 			>
-				<div class="entity-editor-fa-row">
-					<div class="fa-field1" :class="vm.getFaField1Classes()">
-						<FmInputEntityNames
-							v-model:name="vm.entity.name"
-							v-model:short_name="vm.entity.short_name"
-							v-model:user_code="vm.entity.user_code"
-							v-model:public_name="vm.entity.public_name"
-							:label="vm.entityTypeSlug()"
-						/>
-					</div>
+				<FmInputEntityNames
+					v-model:name="vm.entity.name"
+					v-model:short_name="vm.entity.short_name"
+					v-model:user_code="vm.entity.user_code"
+					v-model:public_name="vm.entity.public_name"
+					:label="vm.entityTypeSlug()"
+				/>
 
-					<div class="fa-field3" :class="vm.getFaField2Classes()">
-						<FmSelect
-							v-if="
-								vm.entityType === 'instrument' ||
-								vm.entityType === 'account' ||
-								vm.entityType === 'instrument-type'
-							"
-							class="ev-editor-field"
-							:label="vm.typeFieldLabel"
-							model="vm.entity[vm.typeFieldName]"
-							:items="vm.typeSelectorOptions"
-							small-options="{tooltipText: 'Type', indicatorBtnIcon: 'type1', dialogParent: '.dialog-containers-wrap'}"
-							on-change-callback="vm.typeSelectorChange()"
-						/>
+				<FmSelect
+					v-if="
+						vm.entityType === 'instrument' ||
+						vm.entityType === 'account' ||
+						vm.entityType === 'instrument-type'
+					"
+					class="ev-editor-field"
+					:label="vm.typeFieldLabel"
+					v-model="vm.entity[vm.typeFieldName]"
+					:items="vm.typeSelectorOptions"
+					small-options="{tooltipText: 'Type', indicatorBtnIcon: 'type1', dialogParent: '.dialog-containers-wrap'}"
+					@update:modelValue="vm.typeSelectorChange()"
+				/>
 
-						<crud-select
-							v-if="
-								vm.entityType === 'responsible' ||
-								vm.entityType === 'counterparty'
-							"
-							data-label="vm.groupSelectorLabel"
-							data-item="vm.entity.group"
-							data-entity-type="vm.groupSelectorEntityType"
-							data-options="vm.groupSelectorOptions"
-							event-signal="vm.fixedAreaEventObj.event"
-							small-options="{notNull: true, dialogParent: '.dialog-containers-wrap'}"
-							class="ev-editor-field"
-						></crud-select>
+				<crud-select
+					v-if="
+						vm.entityType === 'responsible' || vm.entityType === 'counterparty'
+					"
+					data-label="vm.groupSelectorLabel"
+					data-item="vm.entity.group"
+					data-entity-type="vm.groupSelectorEntityType"
+					data-options="vm.groupSelectorOptions"
+					event-signal="vm.fixedAreaEventObj.event"
+					small-options="{notNull: true, dialogParent: '.dialog-containers-wrap'}"
+					class="ev-editor-field"
+				></crud-select>
 
-						<crud-select
-							v-if="
-								vm.entityType === 'strategy-1' ||
-								vm.entityType === 'strategy-2' ||
-								vm.entityType === 'strategy-3'
-							"
-							data-label="vm.groupSelectorLabel"
-							data-item="vm.entity.subgroup"
-							data-entity-type="vm.groupSelectorEntityType"
-							data-options="vm.groupSelectorOptions"
-							event-signal="vm.fixedAreaEventObj.event"
-							small-options="{notNull: true, dialogParent: '.dialog-containers-wrap'}"
-							class="ev-editor-field"
-						></crud-select>
-					</div>
-				</div>
+				<crud-select
+					v-if="
+						vm.entityType === 'strategy-1' ||
+						vm.entityType === 'strategy-2' ||
+						vm.entityType === 'strategy-3'
+					"
+					data-label="vm.groupSelectorLabel"
+					data-item="vm.entity.subgroup"
+					data-entity-type="vm.groupSelectorEntityType"
+					data-options="vm.groupSelectorOptions"
+					event-signal="vm.fixedAreaEventObj.event"
+					small-options="{notNull: true, dialogParent: '.dialog-containers-wrap'}"
+					class="ev-editor-field"
+				></crud-select>
 			</div>
 
-			<div v-if="vm.readyStatus.layout" class="position-relative">
+			<template v-if="vm.readyStatus.layout">
 				<FmTabs v-model="vm.activeTab" :tabs="vm.tabs.map((t) => t.name)" />
 
-				<div class="md-padding p-t-26" v-for="tab in vm.tabs">
+				<template v-for="tab in vm.tabs">
 					<div
-						class="entity-editor-row"
-						v-for="row in vm.range(tab.layout.rows)"
+						class="p-16"
+						v-if="tab.name == vm.activeTab"
 						:style="{
 							display: 'grid',
 							gridTemplateColumns: `repeat(${tab.layout.columns}, 1fr)`,
@@ -93,7 +96,7 @@
 							]"
 						/>
 					</div>
-				</div>
+				</template>
 
 				<md-tab v-for="tab in vm.entityTabs">
 					<md-tab-body v-if="vm.checkViewState(tab)">
@@ -103,157 +106,7 @@
 					</md-tab-body>
 				</md-tab>
 
-				<md-tab
-					v-if="vm.canManagePermissions"
-					md-active="vm.activeTab === 'permissions'"
-				>
-					<md-tab-body>
-						<md-content class="md-padding p-t-26">
-							<md-content class="md-padding permissions-table">
-								<div
-									v-if="vm.readyStatus.permissions"
-									class="permissions-table"
-									style="min-width: 410px"
-								>
-									<h3>Group permissions</h3>
-
-									<div>
-										<div class="flex-column">
-											<div
-												class="flex-row fc-space-between fi-end permissions-table-header"
-											>
-												<div class="flex-0-1-100">
-													<div class="permissions-columns">Group name</div>
-												</div>
-
-												<div
-													class="flex-row fc-space-between fi-center permissions-checkbox-holder"
-													style="flex: 0 0 295px"
-												>
-													<div class="flex-33 flex-center permissions-columns">
-														Delegate
-														<ng-md-icon
-															class="tooltip-inline-block"
-															icon="info"
-															size="20"
-															style="fill: #777777"
-														>
-															<md-tooltip class="tooltip_2" md-direction="top">
-																tooltip text
-															</md-tooltip>
-														</ng-md-icon>
-													</div>
-
-													<div class="flex-33 flex-center permissions-columns">
-														Write
-														<ng-md-icon
-															class="tooltip-inline-block"
-															icon="info"
-															size="20"
-															style="fill: #777777"
-														>
-															<md-tooltip class="tooltip_2" md-direction="top">
-																tooltip text
-															</md-tooltip>
-														</ng-md-icon>
-													</div>
-
-													<div
-														class="flex-33 flex-center permissions-columns"
-														v-if="vm.entityType !== 'currency'"
-													>
-														Read
-														<ng-md-icon
-															class="tooltip-inline-block"
-															icon="info"
-															size="20"
-															style="fill: #777777"
-														>
-															<md-tooltip class="tooltip_2" md-direction="top">
-																tooltip text
-															</md-tooltip>
-														</ng-md-icon>
-													</div>
-												</div>
-											</div>
-											<md-divider></md-divider>
-										</div>
-
-										<div v-for="group in vm.groups" class="flex-column">
-											<div
-												class="flex-row fc-space-between permissions-table-row"
-											>
-												<div class="flex-0-1-100">
-													<p>{{ group.name }}</p>
-												</div>
-
-												<div
-													class="flex-row fc-space-between fi-center permissions-checkbox-holder"
-													style="flex: 0 0 295px"
-												>
-													<div class="flex-33 flex-center permissions-columns">
-														<md-checkbox
-															class="md-secondary"
-															:class="{
-																'disabled-btn':
-																	(vm.isInheritRights ||
-																		!group.objectPermissions.manage) &&
-																	!vm.currentMember.is_admin,
-															}"
-															ng-model="group.objectPermissions.manage"
-														></md-checkbox>
-													</div>
-													<div class="flex-33 flex-center permissions-columns">
-														<md-checkbox
-															class="md-secondary"
-															:class="{
-																'disabled-btn':
-																	(vm.isInheritRights ||
-																		!group.objectPermissions.manage) &&
-																	!vm.currentMember.is_admin,
-															}"
-															ng-model="group.objectPermissions.change"
-														></md-checkbox>
-													</div>
-													<div
-														v-if="vm.entityType !== 'currency'"
-														class="flex-33 flex-center permissions-columns"
-													>
-														<md-checkbox
-															class="md-secondary"
-															:class="{
-																'disabled-btn':
-																	(vm.isInheritRights ||
-																		!group.objectPermissions.manage) &&
-																	!vm.currentMember.is_admin,
-															}"
-															ng-model="group.objectPermissions.view"
-														></md-checkbox>
-													</div>
-												</div>
-											</div>
-											<md-divider></md-divider>
-										</div>
-									</div>
-								</div>
-								<div v-if="!vm.readyStatus.permissions">
-									<div
-										layout="row"
-										layout-sm="column"
-										layout-align="space-around"
-										class="m-large"
-									>
-										<!--<md-progress-circular md-mode="indeterminate"-->
-										<!--md-diameter="96"></md-progress-circular>-->
-										<progress-circular diameter="100"></progress-circular>
-									</div>
-								</div>
-							</md-content>
-						</md-content>
-					</md-tab-body>
-				</md-tab>
-
-				<div
+				<!-- <div
 					class="entity-tabs-menu entityTabsMenu"
 					:class="{ active: vm.isEntityTabActive() }"
 					custom-popup
@@ -279,22 +132,50 @@
 							>Tabs with error</md-tooltip
 						>
 					</div>
-				</div>
-			</div>
-		</div>
+				</div> -->
+			</template>
+		</template>
 
-		<div v-if="!vm.checkReadyStatus()">
-			<div class="flex-row fc-space-around m-large">
-				<progress-circular diameter="100"></progress-circular>
-			</div>
+		<div class="flex-row fc-space-around m-large" v-else>
+			<FmLoader></FmLoader>
 		</div>
 
 		<template #controls>
 			<div class="flex sb">
-				<div
-					class="dialog-footer flex-row fc-space-between"
-					data-ng-include="'views/entity-viewer/entity-viewer-universal-add-footer-view.html'"
-				></div>
+				<FmBtn type="text" @click="vm.cancel()"> Cancel </FmBtn>
+
+				<div class="flex aic" style="gap: 10px; margin-right: 10px">
+					<FmMenu>
+						<template #btn>
+							<FmIcon btn icon="more_vert" />
+						</template>
+
+						<div class="fm_list">
+							<div class="fm_list_item" @click="vm.editLayout">Edit Form</div>
+							<div
+								class="fm_list_item"
+								@click="vm.sharedLogic.manageAttributeTypes"
+							>
+								Manage Attributes
+							</div>
+						</div>
+					</FmMenu>
+
+					<FmBtn
+						type="action"
+						:disabled="!vm.formIsValid || vm.processing"
+						@click="vm.save($event, false)"
+					>
+						Create
+					</FmBtn>
+
+					<FmBtn
+						:disabled="!vm.formIsValid || vm.processing"
+						@click="vm.save($event, true)"
+					>
+						Create and Exit
+					</FmBtn>
+				</div>
 			</div>
 		</template>
 	</BaseModal>
@@ -347,11 +228,11 @@
 	const props = defineProps({
 		payload: Object,
 	})
-	console.log('props:', props)
 
 	const vm = reactive({})
 
-	const { entityType, entity, data } = props.payload
+	const { entityType, entity, data, resolve } = props.payload
+	console.log('props.payload:', props.payload)
 	const $mdDialog = inject('$mdDialog')
 	// const {  attributeTypeService } = inject('ngDependace')
 
@@ -377,7 +258,7 @@
 
 	vm.readyStatus = { permissions: false, entity: false, layout: false }
 
-	vm.entity = { $_isValid: true }
+	vm.entity = reactive({ $_isValid: true })
 	vm.dataConstructorLayout = {}
 	vm.dcLayoutHasBeenFixed = false
 
@@ -695,9 +576,11 @@
 	}
 
 	vm.cancel = function () {
-		metaHelper.closeComponent(vm.openedIn, $mdDialog, $bigDrawer, {
+		resolve({
 			status: 'disagree',
 		})
+
+		delete $mdDialog.modals['EntityViewerAddDialogController']
 	}
 
 	vm.editLayout = function (option, _$popup) {
@@ -729,21 +612,6 @@
 					getEntityAttrs()
 				}
 			})
-	}
-
-	vm.footerPopupData = {
-		options: [
-			{
-				icon: 'list',
-				name: 'Edit Form',
-				onClick: vm.editLayout,
-			},
-			{
-				icon: 'edit',
-				name: 'Manage Attributes',
-				onClick: vm.sharedLogic.manageAttributeTypes,
-			},
-		],
 	}
 
 	// vm.manageAttrs = vm.sharedLogic.manageAttributeTypes;
@@ -888,11 +756,6 @@
 				vm.entityType,
 				vm.enfEventService
 			)
-
-			/*if (processResult) {
-                    vm.fixedAreaPopup = processResult;
-                    vm.originalFixedAreaPopupFields = JSON.parse(JSON.stringify(vm.fixedAreaPopup.fields));
-                }*/
 		} else {
 			// var resultEntity = entityEditorHelper.removeNullFields(vm.entity, vm.entityType);
 			var resultEntity = entityEditorHelper.clearEntityBeforeSave(
@@ -912,6 +775,7 @@
 			entityResolverService
 				.create(vm.entityType, resultEntity)
 				.then(function (responseData) {
+					console.log('responseData:', responseData)
 					vm.processing = false
 
 					var entityTypeVerbose = vm.entityType
@@ -919,41 +783,31 @@
 						.join(' ')
 						.capitalizeFirstLetter()
 
-					toastNotificationService.success(
-						entityTypeVerbose +
+					useNotify({
+						type: 'success',
+						title:
+							entityTypeVerbose +
 							' ' +
 							vm.entity.name +
-							' was successfully created'
-					)
+							' was successfully created',
+					})
 
 					if (isAutoExitAfterSave) {
-						let responseObj = { status: 'agree', data: responseData }
-						metaHelper.closeComponent(
-							vm.openedIn,
-							$mdDialog,
-							$bigDrawer,
-							responseObj
-						)
+						resolve({ status: 'agree', data: responseData })
 					} else {
 						vm.entity = { ...vm.entity, ...responseData }
 						vm.entity.$_isValid = true
 						vm.evEditorEventService.dispatchEvent(evEditorEvents.ENTITY_UPDATED)
 
-						const responseObj = {
+						resolve({
 							status: 'edit',
 							data: {
 								entityType: vm.entityType,
 								entity: vm.entity,
 							},
-						}
-
-						metaHelper.closeComponent(
-							vm.openedIn,
-							$mdDialog,
-							$bigDrawer,
-							responseObj
-						)
+						})
 					}
+					delete $mdDialog.modals['EntityViewerAddDialogController']
 				})
 				.catch(function (data) {
 					vm.processing = false
@@ -982,7 +836,6 @@
 							controller: 'ValidationDialogController as vm',
 							templateUrl: 'views/dialogs/validation-dialog-view.html',
 							targetEvent: $event,
-							parent: angular.element(document.body),
 							multiple: true,
 							locals: {
 								validationData: {
@@ -1025,20 +878,14 @@
 				entityResolverService
 					.create(vm.entityType, resultEntity)
 					.then(function (data) {
-						var responseObj = { res: 'agree', data: data }
-						metaHelper.closeComponent(
-							vm.openedIn,
-							$mdDialog,
-							$bigDrawer,
-							responseObj
-						)
+						resolve({ res: 'agree', data })
+						delete $mdDialog.modals['EntityViewerAddDialogController']
 					})
 					.catch(function (data) {
 						$mdDialog.show({
 							controller: 'ValidationDialogController as vm',
 							templateUrl: 'views/dialogs/validation-dialog-view.html',
 							targetEvent: $event,
-							parent: angular.element(document.body),
 							multiple: true,
 							locals: {
 								validationData: {
@@ -1208,11 +1055,15 @@
 					})
 
 					// vm.entity.object_permissions = data.instrument_type_object.object_permissions;
-					const result = vm.sharedLogic.mapPermissionsToInstrument(
-						data.instrument_type_object.object_permissions
-					)
-					vm.entity.object_permissions = result.objectPermissions
-					vm.groups = result.groups
+					// console.log(
+					// 	'data.instrument_type_object.object_permissions:',
+					// 	data.instrument_type_object
+					// )
+					// const result = vm.sharedLogic.mapPermissionsToInstrument(
+					// 	data.instrument_type_object.object_permissions
+					// )
+					// vm.entity.object_permissions = result.objectPermissions
+					// vm.groups = result.groups
 
 					vm.evEditorEventService.dispatchEvent(evEditorEvents.ENTITY_UPDATED)
 
@@ -1440,7 +1291,6 @@
 				controller: 'PricingMultipleParametersDialogController as vm',
 				templateUrl:
 					'views/dialogs/pricing/pricing-multiple-parameter-dialog-view.html',
-				parent: angular.element(document.body),
 				targetEvent: $event,
 				clickOutsideToClose: false,
 				preserveScope: true,
@@ -1507,7 +1357,38 @@
 		vm.sharedLogic.getFormLayout(formLayoutFromAbove).then((formLayoutData) => {
 			vm.typeSelectorOptions = formLayoutData.typeSelectorOptions
 			vm.groupSelectorOptions = formLayoutData.groupSelectorOptions
-			console.log('tab.layout.columns:', formLayoutData)
+			console.log('formLayoutData', formLayoutData)
+
+			formLayoutData.tabs.forEach((o) => {
+				let docorators = o.layout.fields
+					.filter((item) => item.attribute_class == 'decorationAttr')
+					.map((o) => o.row)
+				console.log('docorators:', docorators)
+
+				o.layout.fields = o.layout.fields
+					.filter(
+						(o) =>
+							!docorators.includes(o.row) &&
+							o.attribute_class != 'decorationAttr'
+					)
+					.sort((a, b) => {
+						if (a.row < b.row) {
+							return -1
+						}
+						if (a.row > b.row) {
+							return 1
+						}
+
+						if (a.column < b.column) {
+							return -1
+						}
+						if (a.column > b.column) {
+							return 1
+						}
+
+						return 0
+					})
+			})
 
 			if (['responsible', 'counterparty'].indexOf(vm.entityType) !== -1) {
 				vm.entity.group = vm.groupSelectorOptions[0].id

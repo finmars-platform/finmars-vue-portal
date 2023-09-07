@@ -383,22 +383,24 @@
 						<div
 							class="fm_list_item"
 							v-if="scope.isReport"
-							@click="exportAsPdf"
+							@click="scope.exportAsPdf"
 						>
 							Export to PDF
 						</div>
 
-						<div class="fm_list_item" @click="exportAsCSV">Export to CSV</div>
+						<div class="fm_list_item" @click="scope.exportAsCSV">
+							Export to CSV
+						</div>
 
-						<div class="fm_list_item" @click="exportAsExcel">
+						<div class="fm_list_item" @click="scope.exportAsExcel">
 							Export to Excel
 						</div>
 
-						<div class="fm_list_item" @click="copyReport">
+						<div class="fm_list_item" @click="scope.copyReport">
 							Copy all to buffer
 						</div>
 
-						<div class="fm_list_item" @click="copySelectedToBuffer">
+						<div class="fm_list_item" @click="scope.copySelectedToBuffer">
 							Copy selected to buffer
 						</div>
 					</div>

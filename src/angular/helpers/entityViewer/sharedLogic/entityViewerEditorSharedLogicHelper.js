@@ -912,27 +912,6 @@ export default function (
 	 * @param {Array} iTypePermissions
 	 */
 	const mapPermissionsToInstrument = (iTypePermissions) => {
-		/* viewModel.groups.forEach(group => {
-
-				iTypePermissions.forEach(pData => {
-
-					if (pData.group === group.id) {
-
-						let permissionToDo = ['manage_', 'change_', 'view_'].find(action => pData.permission.startsWith(action));
-						permissionToDo = permissionToDo + viewModel.entityType.split('-').join('');
-
-						objectPermissions.push({
-							member: null,
-							group: group.id,
-							permission: permissionToDo
-						});
-
-					}
-
-				})
-
-			}); */
-
 		viewModel.entity.object_permissions = iTypePermissions.map(function (item) {
 			var result = Object.assign({}, item)
 
