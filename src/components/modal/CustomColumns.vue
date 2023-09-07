@@ -39,6 +39,8 @@
 		content_type: String,
 	})
 
+	const evAttrsStore = useEvAttributesStore()
+console.log("evAttrsStore", evAttrsStore)
 	let vm = reactive()
 	console.log(' test props.content_type', props.content_type)
 	vm.attributeDataService = attributeDataService
@@ -47,23 +49,28 @@
 
 	vm.readyStatus = { customFields: false, attributes: false }
 
-	vm.getList = function () {
-		customFieldService.getList(vm.entityType).then(function (data) {
-			vm.customFields = data.results
+	// vm.getList = function () {
+	// 	customFieldService.getList(props.content_type).then(function (data) {
+	// 		vm.customFields = data.results
 
-			console.log('vm.customFields', vm.customFields)
+	// 		console.log('vm.customFields', vm.customFields)
 
-			vm.readyStatus.customFields = true
+	// 		vm.readyStatus.customFields = true
 
-			$scope.$apply()
-		})
-	}
-
-	async function init() {
-		let res = await Promise.all([evAttrsStore.getFetchCustomFields()])
-	}
+	// 		$scope.$apply()
+	// 	})
+	// }
 
 	init()
+	async function init() {
+		let res = await Promise.all([
+			evAttrsStore.getFetchCustomFields(),
+
+			console.log('evAttrsStore', evAttrsStore),
+		])
+		evAttrsStore.value = res[0].results
+	}
+	console.log('evAttrsStore', evAttrsStore)
 </script>
 
 <style lang="scss" scoped>
