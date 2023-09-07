@@ -9,18 +9,34 @@
 			<div class="content">
 				<div class="card">
 					<div class="card__inner">
-						<h3 class="card__title"></h3>
+						<h3 class="card__title">Position Reverse (Lombard)</h3>
 						<div class="card__btn">
-							<div class="card__edit">
-								<FmIcon class="m-l-4" icon="edit" />
+							<div class="card__edit" @click=";(isOpenDeleteCustomColumns = true), close()">
+								<FmIcon
+									class="m-l-4"
+									icon="edit"
+									
+								/>
 							</div>
-							<div class="card__delete">
-								<FmIcon class="m-l-4" icon="delete" />
+							<div class="card__delete" @click=";(isOpenEditCustomColumns = true), close()">
+								<FmIcon
+									class="m-l-4"
+									icon="delete"
+									
+								/>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
+			<ModalDeleteCustomColumns
+				title="Custom Field Manager"
+				v-model="isOpenDeleteCustomColumns"
+			></ModalDeleteCustomColumns>
+			<ModalEditCustomColumns
+				title="Custom Field Manager"
+				v-model="isOpenEditCustomColumns"
+			></ModalEditCustomColumns>
 		</div>
 
 		<template #controls="{ cancel }">
@@ -38,9 +54,10 @@
 		title: String,
 		content_type: String,
 	})
-
+	const isOpenDeleteCustomColumns = ref(false)
+	const isOpenEditCustomColumns = ref(false)
 	const evAttrsStore = useEvAttributesStore()
-console.log("evAttrsStore", evAttrsStore)
+	console.log('evAttrsStore', evAttrsStore)
 	let vm = reactive()
 	console.log(' test props.content_type', props.content_type)
 	vm.attributeDataService = attributeDataService
@@ -61,16 +78,16 @@ console.log("evAttrsStore", evAttrsStore)
 	// 	})
 	// }
 
-	init()
-	async function init() {
-		let res = await Promise.all([
-			evAttrsStore.getFetchCustomFields(),
+	// init()
+	// async function init() {
+	// 	let res = await Promise.all([
+	// 		evAttrsStore.getFetchCustomFields(),
 
-			console.log('evAttrsStore', evAttrsStore),
-		])
-		evAttrsStore.value = res[0].results
-	}
-	console.log('evAttrsStore', evAttrsStore)
+	// 		console.log('evAttrsStore', evAttrsStore),
+	// 	])
+	// 	evAttrsStore.value = res[0].results
+	// }
+	// console.log('evAttrsStore', evAttrsStore)
 </script>
 
 <style lang="scss" scoped>
@@ -78,6 +95,7 @@ console.log("evAttrsStore", evAttrsStore)
 		display: flex;
 		justify-content: space-between;
 		margin-bottom: 20px;
+		min-width: 610px;
 	}
 	.card {
 		padding: 14px;
@@ -91,5 +109,10 @@ console.log("evAttrsStore", evAttrsStore)
 	.card__inner {
 		display: flex;
 		justify-content: space-between;
+	}
+	.card__title {
+		color: rgba(0, 0, 0, 0.87);
+		font-size: 16px;
+		font-weight: 700;
 	}
 </style>
