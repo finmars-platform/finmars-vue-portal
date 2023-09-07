@@ -1,7 +1,7 @@
 <template>
 	<div v-if="scope.readyStatus.content">
-		<div v-if="scope.type === 'id'">
-			<div v-if="isSpecialSearchRelation()">
+		<template v-if="scope.type === 'id'">
+			<template v-if="scope.isSpecialSearchRelation()">
 				<div v-if="scope.valueEntity == 'instrument'">
 					<instrument-select
 						label="{{getName()}}"
@@ -60,10 +60,10 @@
 						entity-type="valueEntity"
 					></entity-search-select>
 				</div>
-			</div>
+			</template>
 
-			<div v-if="!scope.isSpecialSearchRelation()">
-				<div v-if="scope.checkComplexEntityType()">
+			<template v-else>
+				<template v-if="scope.checkComplexEntityType()">
 					<md-input-container
 						class="md-block no-error-spacer"
 						aria-label="select with search"
@@ -114,64 +114,51 @@
 							</div>
 						</md-select>
 					</md-input-container>
-				</div>
+				</template>
 
-				<div v-if="!scope.checkComplexEntityType()">
-					<div v-if="scope.fieldKey !== 'price_download_scheme'">
-						<div v-if="!scope.checkForCrudSelects()">
-							<dropdown-select
-								label="{{scope.getName()}}"
-								model="modelObj.model"
-								placeholder-text="{{scope.getName()}}"
-								event-signal="ciEventObj.event"
-								menu-options="selectorOptions"
-								small-options="{
-																				notNull: options.notNull,
-																				tooltipText: '{{scope.getName()}}',
-																				dialogParent: '.dialog-containers-wrap'
-																		 }"
-								custom-styles="customStyles"
-								sorted="sorted"
-								on-change-callback="changeHandler()"
-							>
-							</dropdown-select>
-						</div>
-
-						<div v-if="checkForCrudSelects()">
-							<div v-if="scope.readyStatus.content">
-								<crud-select
-									data-label="getName()"
-									data-item="modelObj.model"
-									data-entity-type="crudEntityType"
-									data-options="fields"
-									data-ng-click="getDataApply()"
-									event-signal="ciEventObj.event"
-									small-options="{notNull: options.notNull}"
-								></crud-select>
-							</div>
-						</div>
-					</div>
-
-					<div v-if="scope.fieldKey == 'price_download_scheme'">
-						<dropdown-select
-							label="{{getName()}}"
-							model="modelObj.model"
-							placeholder-text="{{getName()}}"
+				<template v-else>
+					<template v-if="scope.fieldKey !== 'price_download_scheme'">
+						<FmSelect
+							v-if="!scope.checkForCrudSelects()"
+							v-model="scope.modelObj.model"
+							:label="scope.getName()"
+							:items="scope.selectorOptions"
+							@update:modelValue="scope.changeHandler()"
 							event-signal="ciEventObj.event"
-							menu-options="schemeSortedFields"
-							small-options="{notNull: options.notNull, tooltipText: '{{getName()}}', dialogParent: '.dialog-containers-wrap'}"
-							custom-styles="customStyles"
-							sorted="sorted"
-							on-change-callback="changeHandler()"
-						>
-						</dropdown-select>
-					</div>
-				</div>
-			</div>
-		</div>
+						/>
+
+						<crud-select
+							v-else
+							data-label="getName()"
+							data-item="modelObj.model"
+							data-entity-type="crudEntityType"
+							data-options="fields"
+							data-ng-click="getDataApply()"
+							event-signal="ciEventObj.event"
+							small-options="{notNull: options.notNull}"
+						></crud-select>
+					</template>
+
+					<dropdown-select
+						v-if="scope.fieldKey == 'price_download_scheme'"
+						label="{{getName()}}"
+						model="modelObj.model"
+						placeholder-text="{{getName()}}"
+						event-signal="ciEventObj.event"
+						menu-options="schemeSortedFields"
+						small-options="{notNull: options.notNull, tooltipText: '{{getName()}}', dialogParent: '.dialog-containers-wrap'}"
+						custom-styles="customStyles"
+						sorted="sorted"
+						on-change-callback="changeHandler()"
+					>
+					</dropdown-select>
+				</template>
+			</template>
+		</template>
 
 		<template v-if="scope.type === 'multiple-ids'">
 			<BaseMultiSelectInput
+				class="m-b-0"
 				v-if="scope.checkComplexEntityType()"
 				v-model="scope.modelObj.model"
 				:title="scope.getName()"
@@ -190,6 +177,7 @@
 					:items="scope.selectorOptions"
 					name-property="bindFieldsName"
 					@update:model-value="scope.changeHandler()"
+					class="m-b-0"
 				/>
 
 				<dropdown-select

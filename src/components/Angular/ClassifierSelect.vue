@@ -4,7 +4,7 @@
 		:class="scope.getInputContainerClasses()"
 		ref="elem"
 	>
-		<FmMenu>
+		<FmMenu style="display: block">
 			<template #btn>
 				<BaseInput
 					v-model="scope.inputText"
@@ -12,7 +12,7 @@
 					:disabled="scope.isDisabled"
 					@update:modelValue="scope.onInputTextChange()"
 					@onFocus="onFocus"
-					class="custom-input dropdown-select-input dropdownSelectInputElem"
+					class="m-b-0 custom-input dropdown-select-input dropdownSelectInputElem"
 				>
 					<template #button>
 						<FmIcon

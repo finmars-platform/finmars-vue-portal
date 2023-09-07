@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<BaseInput
-			class="ms_wrap"
+			class="ms_wrap m-b-0"
 			:label="title"
 			@click="isOpen = true"
 			modelValue=" "

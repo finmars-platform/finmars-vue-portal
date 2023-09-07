@@ -1,13 +1,15 @@
 <template>
-	<div ng-class="{'disabled-field': !isEditableField()}">
-		<div ng-class="{'display-none': !vm.readyStatus.content}">
+	<div :class="{ 'disabled-field': !$scope.isEditableField() }">
+		<div :class="{ 'display-none': !vm.readyStatus.content }">
 			<div
 				v-if="vm.fieldType['display_name'] === 'Number'"
 				class="bind-field-number-field-container"
 			>
-				<number-input
-					label="{{$scope.getName()}}"
-					model="vm.model"
+				<BaseInput
+					class="m-b-0"
+					type="number"
+					:label="$scope.getName()"
+					v-model="vm.model"
 					number-format="item.options.number_format"
 					custom-buttons="item.buttons"
 					custom-styles="customStyles"
@@ -16,13 +18,13 @@
                       tooltipText: tooltipText,
                       notNull: options.notNull,
                       dialogParent: '.dialog-containers-wrap'}"
-					on-change-callback="vm.itemChange()"
-				>
-				</number-input>
+					@update:modelValue="vm.itemChange()"
+				/>
 			</div>
 
 			<div v-if="vm.fieldType['display_name'] === 'String'">
 				<BaseInput
+					class="m-b-0"
 					:label="$scope.getName()"
 					v-model="vm.model"
 					custom-buttons="item.buttons"
@@ -50,22 +52,16 @@
 				:fields-data-store="$scope.fieldsDataStore"
 			/>
 
-			<div
+			<FmInputDate
 				v-if="vm.fieldType['display_name'] === 'Date'"
-				class="field-date-pick"
-			>
-				<date-input
-					label="{{$scope.getName()}}"
-					model="vm.model"
-					custom-buttons="item.buttons"
-					custom-styles="customStyles"
-					event-signal="ciEventObj.event"
-					small-options="{tooltipText: tooltipText, notNull: options.notNull, dialogParent: '.dialog-containers-wrap'}"
-					empty-input-button="{{showEmptyInputBtn}}"
-					on-change-callback="onDateChange()"
-				>
-				</date-input>
-			</div>
+				v-model="vm.model"
+				:label="$scope.getName()"
+				custom-buttons="item.buttons"
+				custom-styles="customStyles"
+				event-signal="ciEventObj.event"
+				empty-input-button="{{showEmptyInputBtn}}"
+				@update:modelValue="$scope.onDateChange()"
+			/>
 
 			<div
 				v-if="vm.fieldType['display_name'] === 'Datetime'"
@@ -110,7 +106,7 @@
 				:eventSignal="$scope.ciEventObj.event"
 				:entityType="vm.entityType"
 				small-options="{tooltipText: tooltipText, notNull: options.notNull, dialogParent: '.dialog-containers-wrap'}"
-				on-change-callback="$scope.changeClassifier()"
+				@update:modelValue="$scope.changeClassifier()"
 			/>
 
 			<div

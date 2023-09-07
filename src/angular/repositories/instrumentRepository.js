@@ -52,7 +52,7 @@ export default function (cookieService, xhrService) {
 					'/' +
 					apiVersion +
 					'/' +
-					'instruments/instrument-light/',
+					'instruments/instrument/light/',
 				options
 			),
 			{
