@@ -369,6 +369,9 @@
 			border-left: 5px solid $border !important;
 		}
 	}
+	.base-input.bi_no_borders .bi_wrap.readonly {
+		border: none !important;
+	}
 	.bi_default {
 		flex: 0 1 100%;
 		margin-left: 13px;
