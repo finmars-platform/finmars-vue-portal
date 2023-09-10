@@ -3,6 +3,7 @@
 		<div style="padding: 5px 0 20px">
 			<div class="header">
 				<FmSelect
+					v-model="vm.currentPresetName"
 					label="Select Preset"
 					:items="vm.presetSelectorData.options"
 				></FmSelect>
@@ -16,6 +17,7 @@
 					</div>
 				</div>
 			</div>
+
 			<div class="content">
 				<FmExpansionPanel title="Zero">
 					<div
@@ -28,16 +30,24 @@
 								type="radio"
 								class="input"
 								name="Zero"
-								v-bind:value="item.id"
-								v-modal="activeZero"
+								:value="item.id"
+								v-model="vm.settings.zero_format_id"
+								@input="
+									$emit(
+										'update:vm.settings.zero_format_id',
+										vm.onNumberFormatChange()
+									)
+								"
 							/>
 							<label>{{ item?.name }}</label>
 						</div>
+						<!-- vm.settings.zero_format_id  -->
+						<!-- @update:v-modal="vm.onNumberFormatChange()" -->
 						<!-- id=`'ZeroBase' + ${item?.id}` for="ZeroBase" -->
 					</div>
 				</FmExpansionPanel>
 				<FmExpansionPanel title="Negative">
-					<div
+					<divs
 						class="panel-content"
 						v-for="(item, index) in vm.negativeFormats"
 						:key="index"
@@ -48,12 +58,17 @@
 								class="input"
 								name="Negative"
 								v-bind:value="item.id"
-								v-modal="activeNegative"
+								v-model="vm.negativeFormat"
+								@update:v-modal="vm.onNegativeFormatChange()"
+								@input="
+									$emit('update:vm.negativeFormat', vm.onNegativeFormatChange())
+								"
 							/>
 							<label>{{ item?.name }}</label>
 						</div>
+						<!-- @update:v-modal="vm.onNegativeFormatChange()" -->
 						<!-- id=`'ZeroBase' + ${item?.id}` for="ZeroBase" -->
-					</div>
+					</divs>
 				</FmExpansionPanel>
 				<FmExpansionPanel title="Rounding">
 					<div
@@ -67,10 +82,17 @@
 								class="input"
 								name="Rounding"
 								v-bind:value="item.id"
-								v-modal="activeRounding"
+								v-model="vm.settings.round_format_id"
+								@input="
+									$emit(
+										'update:vm.settings.round_format_id',
+										vm.onRoundingChange()
+									)
+								"
 							/>
 							<label>{{ item?.name }}</label>
 						</div>
+						<!-- @update:v-modal="vm.onRoundingChange()" -->
 						<!-- id=`'ZeroBase' + ${item?.id}` for="ZeroBase" -->
 					</div>
 				</FmExpansionPanel>
@@ -86,10 +108,17 @@
 								class="input"
 								name="ThousandsSeparation"
 								v-bind:value="item.id"
-								v-modal="activeThousandsSeparation"
+								v-model="vm.settings.thousands_separator_format_id"
+								@input="
+									$emit(
+										'update:vm.settings.thousands_separator_format_id',
+										vm.onNumberFormatChange()
+									)
+								"
 							/>
 							<label>{{ item?.name }}</label>
 						</div>
+						<!-- @update:v-modal="vm.onNumberFormatChange()" -->
 						<!-- id=`'ZeroBase' + ${item?.id}` for="ZeroBase" -->
 					</div>
 				</FmExpansionPanel>
@@ -106,23 +135,35 @@
 								class="input"
 								name="percentageFormats"
 								v-bind:value="item.id"
-								v-modal="activePercentageFormats"
+								v-model="vm.settings.percentage_format_id"
+								@input="
+									$emit(
+										'update:vm.settings.percentage_format_id',
+										vm.onPercentageChange()
+									)
+								"
 							/>
 							<label>{{ item?.name }}</label>
 						</div>
+						<!-- 	@update:v-modal="vm.onPercentageChange()" -->
 						<!-- id=`'ZeroBase' + ${item?.id}` for="ZeroBase" -->
 					</div>
 				</FmExpansionPanel>
 				<FmExpansionPanel title="Suffix">
 					<div class="panel-content">
-						<FmInputText label="Suffix" v-modal="SuffixActive"></FmInputText>
+						<FmInputText
+							label="Suffix"
+							@update:v-modal="vm.onNumberFormatChange()"
+							v-modal="SuffixActive"
+						></FmInputText>
 					</div>
 				</FmExpansionPanel>
 				<FmExpansionPanel title="Prefix">
 					<div class="panel-content">
 						<FmInputText
 							label="Prefix"
-							v-modal="vm.settings.number_suffix"
+							@update:v-modal="vm.onNumberFormatChange()"
+							v-model="vm.settings.number_suffix"
 						></FmInputText>
 					</div>
 				</FmExpansionPanel>
@@ -130,7 +171,7 @@
 					<div class="panel-content">
 						<FmInputText
 							label="Multiplier"
-							v-modal="vm.settings.number_prefix"
+							v-model="vm.settings.number_prefix"
 						></FmInputText>
 					</div>
 				</FmExpansionPanel>
@@ -156,7 +197,11 @@
 		},
 	})
 	const emits = defineEmits(['save'])
-	let vm = reactive({ settings: props.settings })
+	let vm = reactive({
+		settings: props.settings,
+		presetSelectorData: {options: { id: String, name: String, isActive: Boolean }},
+		// selectOption: (option, _$popup) => void
+	})
 	console.log('vm:', vm)
 	console.log('props.settings:', props.settings)
 
@@ -179,12 +224,12 @@
 		number_suffix: '',
 		number_prefix: '',
 	}
-	// if (vm) {
-	//     const report_settings = JSON.parse(JSON.stringify(data.settings));
-	//     vm.settings = {...defaultReportSettings, ...report_settings}
-	// } else {
-	//     vm.settings = {...defaultReportSettings};
-	// }
+	if (vm) {
+		const report_settings = JSON.parse(JSON.stringify(props.settings))
+		vm.settings = { ...defaultReportSettings, ...report_settings }
+	} else {
+		vm.settings = { ...defaultReportSettings }
+	}
 	vm.zeroFormats = [
 		{ id: 0, name: '0' },
 		{ id: 1, name: '-' },
@@ -213,11 +258,6 @@
 		{ id: 5, name: '0.0 bps' },
 	]
 
-	const positiveNumberExample = ref([])
-	const zeroExample = ref([])
-	const negativeNumberExample = ref([])
-
-	const negativeFormat = ref([])
 	const presetsSettings = {
 		price: {
 			zero_format_id: 1,
@@ -260,17 +300,6 @@
 	function save() {
 		emits('save', { status: 'agree', data: props.settings })
 	}
-	const setContainersHeight = function (containers) {
-		containers.forEach((container) => {
-			const contentElement = container.querySelector(
-				'.numberFormatAccordionHeight'
-			)
-
-			if (contentElement) {
-				container.style.height = contentElement.clientHeight + 'px'
-			}
-		})
-	}
 
 	const isObjectContain = function (obj, targetObj) {
 		return Object.keys(targetObj).every((key) => targetObj[key] === obj[key])
@@ -280,7 +309,9 @@
 		const selectedPreset = vm.presetSelectorData.options.find((option) => {
 			const requiredProps = presetsSettings[option.id]
 			const currentProps = vm.settings
-
+			// console.log(requiredProps, 'getActivePreset ')
+			// console.log(vm.settings, 'vm.settings')
+			// console.log(isObjectContain(currentProps, requiredProps), 'isObjectContain(currentProps, requiredProps)')
 			return isObjectContain(currentProps, requiredProps)
 		})
 
@@ -361,6 +392,9 @@
 		clearAllPresetSelection()
 		const currentPreset = getActivePreset()
 		vm.currentPresetName = currentPreset ? currentPreset.name : 'Select Preset'
+		console.log(currentPreset, 'currentPreset onNumberFormatChange ')
+		console.log(currentPreset.name, 'currentPreset.name onNumberFormatChange')
+		setTimeout(() => $scope.$apply())
 	}
 
 	vm.getZeroName = function () {
@@ -416,15 +450,37 @@
 		},
 	}
 
-	const init = function () {
-		vm.onNumberFormatChange()
+	// watch(
+	// 	vm.settings.zero_format_id,
+	// 	(newValue, oldValue) => {
+	// 		if (oldValue[0] === 0) {
+	// 			console.log(
+	// 				'vm.settings.zero_format_id внутри первый',
+	// 				vm.settings.zero_format_id,
+	// 				vm.settings.zero_format_id === 0
+	// 			)
+	// 		} else {
+	// 			console.log(
+	// 				'vm.settings.zero_format_id внутри второй',
+	// 				vm.settings.zero_format_id,
+	// 				vm.settings.zero_format_id === 0
+	// 			)
+	// 			vm.onNumberFormatChange()
+	// 			// disabledBtn.value = false
+	// 		}
+	// 	},
+	// 	{ deep: true }
+	// )
 
-		// const animatedContainers =
-		// 	$element[0].querySelectorAll('.cb1-resizing-wrap')
-		// setTimeout(() => setContainersHeight(animatedContainers)) // for height animation
-	}
+	// const init = function () {
+	// 	vm.onNumberFormatChange()
 
-	init()
+	// 	// const animatedContainers =
+	// 	// 	$element[0].querySelectorAll('.cb1-resizing-wrap')
+	// 	// setTimeout(() => setContainersHeight(animatedContainers)) // for height animation
+	// }
+
+	// init()
 </script>
 
 <style lang="scss" scoped>
