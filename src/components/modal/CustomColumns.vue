@@ -53,17 +53,21 @@
 	let props = defineProps({
 		title: String,
 		content_type: String,
+		attributeDataService:String,
+		entityViewerEventService: String,
 	})
 	const isOpenDeleteCustomColumns = ref(false)
 	const isOpenEditCustomColumns = ref(false)
 	const evAttrsStore = useEvAttributesStore()
-	console.log('evAttrsStore', evAttrsStore)
-	let vm = reactive()
-	console.log(' test props.content_type', props.content_type)
-	vm.attributeDataService = attributeDataService
-	vm.entityViewerEventService = entityViewerEventService
-	vm.customFields = []
+	
+	let vm = reactive({ content_type: props.content_type })
+	// console.log(' test props.content_type', props.content_type)
+	console.log(' vm', vm)
 
+	// vm.attributeDataService = attributeDataService
+	// vm.entityViewerEventService = entityViewerEventService
+	vm.customFields = []
+	evAttrsStore.getFetchCustomColumn
 	vm.readyStatus = { customFields: false, attributes: false }
 
 	// vm.getList = function () {
