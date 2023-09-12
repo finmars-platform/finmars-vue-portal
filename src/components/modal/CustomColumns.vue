@@ -11,19 +11,17 @@
 					<div class="card__inner">
 						<h3 class="card__title">Position Reverse (Lombard)</h3>
 						<div class="card__btn">
-							<div class="card__edit" @click=";(isOpenDeleteCustomColumns = true), close()">
-								<FmIcon
-									class="m-l-4"
-									icon="edit"
-									
-								/>
+							<div
+								class="card__edit"
+								@click=";(isOpenDeleteCustomColumns = true), close()"
+							>
+								<FmIcon class="m-l-4" icon="edit" />
 							</div>
-							<div class="card__delete" @click=";(isOpenEditCustomColumns = true), close()">
-								<FmIcon
-									class="m-l-4"
-									icon="delete"
-									
-								/>
+							<div
+								class="card__delete"
+								@click=";(isOpenEditCustomColumns = true), close()"
+							>
+								<FmIcon class="m-l-4" icon="delete" />
 							</div>
 						</div>
 					</div>
@@ -53,13 +51,13 @@
 	let props = defineProps({
 		title: String,
 		content_type: String,
-		attributeDataService:String,
+		attributeDataService: String,
 		entityViewerEventService: String,
 	})
 	const isOpenDeleteCustomColumns = ref(false)
 	const isOpenEditCustomColumns = ref(false)
 	const evAttrsStore = useEvAttributesStore()
-	
+
 	let vm = reactive({ content_type: props.content_type })
 	// console.log(' test props.content_type', props.content_type)
 	console.log(' vm', vm)
@@ -67,9 +65,12 @@
 	// vm.attributeDataService = attributeDataService
 	// vm.entityViewerEventService = entityViewerEventService
 	vm.customFields = []
-	evAttrsStore.getFetchCustomColumn
+	const attrsList = evAttrsStore.getFetchCustomColumns(props.content_type)
+	const attrsList2 = evAttrsStore.getDataForAttributesSelector(props.content_type)
 	vm.readyStatus = { customFields: false, attributes: false }
 
+	console.log('attrsList', attrsList)
+	console.log('attrsList2', attrsList2)
 	// vm.getList = function () {
 	// 	customFieldService.getList(props.content_type).then(function (data) {
 	// 		vm.customFields = data.results
