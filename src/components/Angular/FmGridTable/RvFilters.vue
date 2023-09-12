@@ -452,6 +452,12 @@
 			:payload="$mdDialog.modals['ReportViewerMatrixSettingsDialogController']"
 			:modelValue="true"
 		/>
+
+		<AngularFmGridTableExportPdf
+			v-if="$mdDialog.modals['ExportPdfDialogController']"
+			:payload="$mdDialog.modals['ExportPdfDialogController']"
+			:modelValue="true"
+		/>
 	</div>
 </template>
 
@@ -756,7 +762,6 @@
 		$mdDialog.show({
 			controller: 'ExportPdfDialogController as vm',
 			templateUrl: 'views/dialogs/export-pdf-dialog-view.html',
-			parent: angular.element(document.body),
 			targetEvent: $event,
 			locals: {
 				evDataService: evDataService,

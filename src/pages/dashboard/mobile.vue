@@ -2,7 +2,7 @@
 	<div>
 		<div>
 			<FmInputUserCode
-				style="width: 600px;"
+				style="width: 600px"
 				v-model="userCode"
 				v-model:configuration_code="configCode"
 			/>
@@ -34,10 +34,7 @@
 						<div class="fm_tabs_item">Settings</div>-->
 		</div>
 
-		<div
-			v-if="tab == 'balance' && layout.balance"
-			class="p-24"
-		>
+		<div v-if="tab == 'balance' && layout.balance" class="p-24">
 			<!-- <FmInputText v-model="" /> -->
 			<h4>Total NAV with History chart</h4>
 
@@ -60,16 +57,10 @@
 			<h4>Doughnut charts</h4>
 
 			<div class="flex">
-				<FmBtn
-					@click="openAttrSelector('fieldsToGroup')"
-					class="m-r-8"
-				>
+				<FmBtn @click="openAttrSelector('fieldsToGroup')" class="m-r-8">
 					set columns to groupping
 				</FmBtn>
-				<FmBtn
-					@click="openAttrSelector('fieldToAggrigate')"
-					class="m-r-8"
-				>
+				<FmBtn @click="openAttrSelector('fieldToAggrigate')" class="m-r-8">
 					set one column to Aggrigate by sum
 				</FmBtn>
 				<FmBtn type="text" @click="clearAttrs()">Clear all attrs</FmBtn>
@@ -91,11 +82,11 @@
 					<div style="padding-bottom: 40px">
 						<b>Sum by:</b>
 
-<!--						{{
+						<!--						{{
 							layout.balance.fieldToAggrigate &&
 							layout.balance.fieldToAggrigate[0]?.name
 						}}-->
-            {{ getAggAttrName('balance') }}
+						{{ getAggAttrName('balance') }}
 					</div>
 
 					<template #controls>
@@ -107,10 +98,7 @@
 			<FmBtn @click="saveLayout()">save</FmBtn>
 		</div>
 
-		<div
-			class="p-24"
-			v-if="tab == 'pnl' && layout.pnl"
-		>
+		<div class="p-24" v-if="tab == 'pnl' && layout.pnl">
 			<!-- <FmInputText v-model="" /> -->
 			<h4>Total with History chart</h4>
 
@@ -136,12 +124,14 @@
 				<FmBtn
 					@click="openAttrSelector('fieldsToGroup', 'reports.plreport')"
 					class="m-r-8"
-				>set columns to groupping</FmBtn>
+					>set columns to groupping</FmBtn
+				>
 
 				<FmBtn
 					@click="openAttrSelector('fieldToAggrigate', 'reports.plreport')"
 					class="m-r-8"
-				>set one column to Aggrigate by sum</FmBtn>
+					>set one column to Aggrigate by sum</FmBtn
+				>
 
 				<FmBtn type="text" @click="clearAttrs()">Clear all attrs</FmBtn>
 			</div>
@@ -162,11 +152,11 @@
 					<div style="padding-bottom: 40px">
 						<b>Sum by:</b>
 
-<!--						{{
+						<!--						{{
 							layout.pnl.fieldToAggrigate &&
 							layout.pnl.fieldToAggrigate[0]?.name
 						}}-->
-            {{ getAggAttrName('pnl') }}
+						{{ getAggAttrName('pnl') }}
 					</div>
 
 					<template #controls>
@@ -215,8 +205,8 @@
 			:selected="selAttrsKeys"
 			:disabledAttributes="selAttrsKeys"
 			multiselect
-			@selectedAttributesChanged="attrs => applySelAttrs(attrs)"
-      @favoritesChanged="favAttrs => renameAttrs('fieldsToGroup', favAttrs)"
+			@selectedAttributesChanged="(attrs) => applySelAttrs(attrs)"
+			@favoritesChanged="(favAttrs) => renameAttrs('fieldsToGroup', favAttrs)"
 		/>
 
 		<FmAttributesSelectModal
@@ -226,51 +216,50 @@
 			:valueType="20"
 			:attributes="allAttrs"
 			:selected="selAttrsKeys[0]"
-			@selectedAttributesChanged="attr => applyAggAttr(attr)"
-      @favoritesChanged="favAttrs => renameAttrs('fieldToAggrigate', favAttrs)"
+			@selectedAttributesChanged="(attr) => applyAggAttr(attr)"
+			@favoritesChanged="
+				(favAttrs) => renameAttrs('fieldToAggrigate', favAttrs)
+			"
 		/>
 	</div>
 </template>
 
 <script setup>
+	definePageMeta({
+		middleware: 'auth',
+		bread: [
+			{
+				text: 'Mobile dashboard',
+				disabled: true,
+			},
+		],
+	})
 
-  definePageMeta({
-    middleware: 'auth',
-    bread: [
-      {
-        text: 'Mobile dashboard',
-        disabled: true,
-      },
-    ],
-  })
+	let store = useStore()
+	let evAttrsStore = useEvAttributesStore()
 
-	let store = useStore();
-  let evAttrsStore = useEvAttributesStore();
+	let tab = ref('balance')
+	let userCode = ref('')
+	let configCode = ref('')
+	let layout = ref({})
 
-  let tab = ref('balance')
-	let userCode = ref('');
-	let configCode = ref('');
-  let layout = ref({})
+	// let payloadForSelector = ref({});
 
-  // let payloadForSelector = ref({});
+	let reportProp = computed(() => {
+		if (['balance', 'pnl'].includes(tab.value)) return tab.value
 
-  let reportProp = computed(() => {
+		return ''
+	})
+	// let isPnl = ref(false);
+	let attrsSelContentType = ref('reports.balancereport')
+	let allAttrs = ref([])
+	let selAttrs = ref([])
+	let selAttrsKeys = computed(() => selAttrs.value.map((attr) => attr.key))
 
-    if ( ['balance', 'pnl'].includes(tab.value) ) return tab.value;
+	const attrsSelectorIsOpen = ref(false)
+	let aggAttrsSelIsOpen = ref(false)
 
-    return '';
-
-  });
-  // let isPnl = ref(false);
-  let attrsSelContentType = ref('reports.balancereport');
-  let allAttrs = ref([]);
-  let selAttrs = ref([]);
-  let selAttrsKeys = computed( () => selAttrs.value.map( attr => attr.key ) );
-
-  const attrsSelectorIsOpen = ref(false);
-  let aggAttrsSelIsOpen = ref(false);
-
-  /*function openAttrSelector(layoutField, isPnl = false) {
+	/*function openAttrSelector(layoutField, isPnl = false) {
     window.evRvLayoutsHelper = new evRvLayoutsHelperInst()
     let middlewareService = new middlewareServiceInst()
 
@@ -313,12 +302,14 @@
       },
     }
   }*/
-  function openAttrSelector(layoutField, content_type = 'reports.balancereport') {
+	function openAttrSelector(
+		layoutField,
+		content_type = 'reports.balancereport'
+	) {
+		attrsSelContentType.value = content_type
 
-    attrsSelContentType.value = content_type;
-
-    // TODO: with use of evAttributesStore delete services from angularjs
-    /*window.evRvLayoutsHelper = new evRvLayoutsHelperInst()
+		// TODO: with use of evAttributesStore delete services from angularjs
+		/*window.evRvLayoutsHelper = new evRvLayoutsHelperInst()
     // let middlewareService = new middlewareServiceInst()
 
     // Globals HACK
@@ -327,35 +318,34 @@
     window.xhrService = new xhrService()
     window.cookieService = new cookieService()*/
 
-    if (layoutField === 'fieldsToGroup') {
-      attrsSelectorIsOpen.value = true;
+		if (layoutField === 'fieldsToGroup') {
+			attrsSelectorIsOpen.value = true
+		} else {
+			aggAttrsSelIsOpen.value = true
+		}
 
-    } else {
-      aggAttrsSelIsOpen.value = true;
-    }
-
-    /*let attributeDataService = new attributeDataServiceInst(
+		/*let attributeDataService = new attributeDataServiceInst(
       metaContentTypesService,
       customFieldService,
       attributeTypeService,
       uiService
     )*/
 
-    /*allAttrs = attributeDataService.getForAttributesSelector(
+		/*allAttrs = attributeDataService.getForAttributesSelector(
       isPnl ? 'pl-report' : 'balance-report'
     )*/
-    allAttrs.value = evAttrsStore.getAllAttributesByContentType(content_type);
-    selAttrs.value = [];
+		allAttrs.value = evAttrsStore.getAllAttributesByContentType(content_type)
+		selAttrs.value = []
 
-    if ( layout.value[reportProp.value][layoutField] ) {
+		if (layout.value[reportProp.value][layoutField]) {
+			selAttrs.value = JSON.parse(
+				JSON.stringify(layout.value[reportProp.value][layoutField])
+			)
+		} else {
+			layout.value[reportProp.value][layoutField] = []
+		}
 
-      selAttrs.value = JSON.parse(JSON.stringify( layout.value[reportProp.value][layoutField] ));
-
-    } else {
-      layout.value[reportProp.value][layoutField] = [];
-    }
-
-    /*payloadForSelector.value = {
+		/*payloadForSelector.value = {
       data: {
         title: 'Add columns',
         attributes: allAttrs,
@@ -373,143 +363,128 @@
         attrsSelectorIsOpen.value = false
       },
     }*/
+	}
 
+	function applySelAttrs(attrs) {
+		layout.value[reportProp.value].fieldsToGroup =
+			layout.value[reportProp.value].fieldsToGroup.concat(attrs)
+	}
 
-  }
+	function renameAttrs(layoutField, favAttrs) {
+		layout.value[reportProp.value][layoutField] = layout.value[
+			reportProp.value
+		][layoutField].map((attr) => {
+			const favAttr = favAttrs.find((fAttr) => fAttr.key === attr.key)
 
-  function applySelAttrs(attrs) {
-    layout.value[reportProp.value].fieldsToGroup =
-      layout.value[reportProp.value].fieldsToGroup.concat(attrs);
-  }
+			if (favAttr) attr.layout_name = favAttr.customName
 
-  function renameAttrs(layoutField, favAttrs) {
+			return attr
+		})
+	}
 
-    layout.value[reportProp.value][layoutField] =
+	function applyAggAttr(attr) {
+		if (attr) {
+			layout.value[reportProp.value].fieldToAggrigate = [attr]
+			useNotify({ title: 'Changed attribute for aggregation' })
+		}
+	}
 
-      layout.value[reportProp.value][layoutField].map(attr => {
+	function getAggAttrName(reportProperty) {
+		const fta = layout.value[reportProperty].fieldToAggrigate
 
-        const favAttr = favAttrs.find(fAttr => fAttr.key === attr.key);
+		if (fta && fta[0]) return fta[0].layout_name || fta[0].name
 
-        if (favAttr) attr.layout_name = favAttr.customName;
+		return ''
+	}
 
-        return attr;
+	function clearAttr(attrKey) {
+		const index = layout.value[reportProp.value].fieldsToGroup.findIndex(
+			(attr) => attr.key === attrKey
+		)
 
-      });
+		layout.value[reportProp.value].fieldsToGroup.splice(index, 1)
+	}
 
-  }
+	function clearAttrs() {
+		layout.value[reportProp.value].fieldToAggrigate = []
+		layout.value[reportProp.value].fieldsToGroup = []
+	}
 
-  function applyAggAttr(attr) {
-    if (attr) {
-      layout.value[reportProp.value].fieldToAggrigate = [attr];
-      useNotify({ title: 'Changed attribute for aggregation' });
-    }
-  }
+	let layoutStock
 
-  function getAggAttrName(reportProperty) {
-
-    const fta = layout.value[reportProperty].fieldToAggrigate;
-
-    if ( fta && fta[0] ) return fta[0].layout_name || fta[0].name;
-
-    return '';
-  }
-
-  function clearAttr(attrKey) {
-
-    const index = layout.value[reportProp.value].fieldsToGroup.findIndex(
-      attr => attr.key === attrKey
-    );
-
-    layout.value[reportProp.value].fieldsToGroup.splice(index, 1);
-
-  }
-
-  function clearAttrs() {
-    layout.value[reportProp.value].fieldToAggrigate = [];
-    layout.value[reportProp.value].fieldsToGroup = [];
-  }
-
-  let layoutStock
-
-  async function saveLayout() {
-
+	async function saveLayout() {
 		if (!userCode.value) {
-			useNotify({ type: 'warning', title: 'User code should not be empty'})
-			return;
+			useNotify({ type: 'warning', title: 'User code should not be empty' })
+			return
 		}
 
 		let res = await useApi('mobileLayout.put', {
-      params: {
-        id: layoutStock.id,
-      },
-      body: {
-        user_code: userCode.value,
-        configuration_code: configCode.value,
-        data: layout.value,
-      },
-    })
-    useNotify({ title: 'Mobile layout has been saved.', type: 'success' })
-  }
+			params: {
+				id: layoutStock.id,
+			},
+			body: {
+				user_code: userCode.value,
+				configuration_code: configCode.value,
+				data: layout.value,
+			},
+		})
+		useNotify({ title: 'Mobile layout has been saved.', type: 'success' })
+	}
 
-  async function fetchMobileLayout() {
-    let res = await useApi('mobileLayout.get')
+	async function fetchMobileLayout() {
+		let res = await useApi('mobileLayout.get')
 
-    if (!res.results.length) {
-
+		if (!res.results.length) {
 			layout.value = {
-        balance: {
-          fieldToAggrigate: [],
-          fieldsToGroup: [],
-        },
-        pnl: {
-          fieldToAggrigate: [],
-          fieldsToGroup: [],
-        },
-        dashboard: {},
-        transactions: {},
-        global: {},
-      }
+				balance: {
+					fieldToAggrigate: [],
+					fieldsToGroup: [],
+				},
+				pnl: {
+					fieldToAggrigate: [],
+					fieldsToGroup: [],
+				},
+				dashboard: {},
+				transactions: {},
+				global: {},
+			}
 
 			const creatingRes = await useApi('mobileLayout.post', {
-        body: {
-          name: 'Only one',
-          user_code: `${store.defaultConfigCode}:only_one`,
-          configuration_code: store.defaultConfigCode,
-          data: layout.value,
-        },
-      })
+				body: {
+					name: 'Only one',
+					user_code: `${store.defaultConfigCode}:only_one`,
+					configuration_code: store.defaultConfigCode,
+					data: layout.value,
+				},
+			})
 
-			layoutStock = creatingRes;
-
-    } else {
-			layoutStock = res.results[0];
+			layoutStock = creatingRes
+		} else {
+			layoutStock = res.results[0]
 		}
 
-		layout.value = layoutStock.data;
-		userCode.value = layoutStock.user_code;
-		configCode.value = layoutStock.configuration_code;
-    console.log('layout.value:', layout.value)
-  }
+		layout.value = layoutStock.data
+		userCode.value = layoutStock.user_code
+		configCode.value = layoutStock.configuration_code
+		console.log('layout.value:', layout.value)
+	}
 
-  async function init () {
+	async function init() {
+		let res = await Promise.all([
+			fetchMobileLayout(),
+			evAttrsStore.getFetchAllAttributeTypes(),
+			evAttrsStore.getFetchAllCustomFields(),
+			evAttrsStore.getFetchAllUserFields(),
+		])
+	}
 
-    let res = await Promise.all([
-      fetchMobileLayout(),
-      evAttrsStore.getFetchAllAttributeTypes(),
-      evAttrsStore.getFetchAllCustomFields(),
-      evAttrsStore.getFetchAllUserFields(),
-    ]);
-
-  }
-
-  init();
-
+	init()
 </script>
 
 <style lang="scss" scoped>
-  h4 {
-    font-weight: 600;
-    font-size: 16px;
-    margin-bottom: 10px;
-  }
+	h4 {
+		font-weight: 600;
+		font-size: 16px;
+		margin-bottom: 10px;
+	}
 </style>
