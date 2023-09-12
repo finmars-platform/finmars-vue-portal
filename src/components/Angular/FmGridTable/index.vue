@@ -82,9 +82,11 @@
 
 			<AngularFmGridTableFilters
 				v-show="components.filterArea"
+				v-if="contentWrapElem"
 				:attributeDataService="attributeDataService"
 				:hideFiltersBlock="hideFiltersBlock"
 				:hideUseFromAboveFilters="hideUseFromAboveFilters"
+				:contentWrapElement="contentWrapElem"
 				:vm="vm"
 			/>
 

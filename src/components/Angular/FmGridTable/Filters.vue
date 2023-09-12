@@ -38,12 +38,10 @@
 			</div>
 		</div>
 		<!-- RowsBulkActionsDirective.vue-->
-		<g-rows-bulk-actions
-			v-if="isRootEntityViewer && viewContext !== 'dashboard'"
-			ev-data-service="evDataService"
-			ev-event-service="evEventService"
-			content-wrap-element="contentWrapElement"
-		></g-rows-bulk-actions>
+		<AngularFmGridTableRowsBulkActions
+			v-if="$scope.isRootEntityViewer && $scope.viewContext !== 'dashboard'"
+			:contentWrapElement="$scope.contentWrapElement"
+		/>
 	</div>
 </template>
 
@@ -79,6 +77,7 @@
 	// 		hideUseFromAboveFilters: '=',
 	// 	},
 	const props = defineProps(['attributeDataService', 'contentWrapElement'])
+	console.log('props:', props)
 
 	const { evEventService, evDataService } = inject('ngDependace')
 
