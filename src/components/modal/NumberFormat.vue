@@ -153,8 +153,13 @@
 					<div class="panel-content">
 						<FmInputText
 							label="Suffix"
-							@update:v-modal="vm.onNumberFormatChange()"
-							v-modal="SuffixActive"
+							@input="
+								$emit(
+									'update:vm.settings.number_suffix',
+									vm.onNumberFormatChange()
+								)
+							"
+							v-model="vm.settings.number_suffix"
 						></FmInputText>
 					</div>
 				</FmExpansionPanel>
@@ -162,8 +167,13 @@
 					<div class="panel-content">
 						<FmInputText
 							label="Prefix"
-							@update:v-modal="vm.onNumberFormatChange()"
-							v-model="vm.settings.number_suffix"
+							@input="
+								$emit(
+									'update:vm.settings.number_prefix',
+									vm.onNumberFormatChange()
+								)
+							"
+							v-model="vm.settings.number_prefix"
 						></FmInputText>
 					</div>
 				</FmExpansionPanel>
@@ -171,7 +181,13 @@
 					<div class="panel-content">
 						<FmInputText
 							label="Multiplier"
-							v-model="vm.settings.number_prefix"
+							@input="
+								$emit(
+									'update:vm.settings.number_multiplier',
+									vm.onNumberFormatChange()
+								)
+							"
+							v-model="vm.settings.number_multiplier"
 						></FmInputText>
 					</div>
 				</FmExpansionPanel>
@@ -199,19 +215,11 @@
 	const emits = defineEmits(['save'])
 	let vm = reactive({
 		settings: props.settings,
-		presetSelectorData: {options: { id: String, name: String, isActive: Boolean }},
+		// presetSelectorData: {options: { id: String, name: String, isActive: Boolean }},
 		// selectOption: (option, _$popup) => void
 	})
 	console.log('vm:', vm)
 	console.log('props.settings:', props.settings)
-
-	const activeZero = ref([])
-	const activeNegative = ref([])
-	const activeRounding = ref([])
-	const activeThousandsSeparation = ref([])
-	const activePercentageFormats = ref([])
-	const PrefixActive = ref([])
-	const MultiplierActive = ref([])
 
 	const defaultReportSettings = {
 		zero_format_id: 0,
@@ -294,6 +302,27 @@
 			negative_color_format_id: 1,
 			negative_format_id: 0,
 			percentage_format_id: 3,
+		},
+	}
+	vm.presetSelectorData = {
+		options: [
+			{ id: 'price', name: `Price (0)`, isActive: false },
+			{ id: 'market_value', name: `Market Value (000'000)`, isActive: false },
+			{ id: 'amount', name: `Amount (000'000.00)`, isActive: false },
+			{ id: 'exposure', name: `Exposure (0.0%)`, isActive: false },
+			{ id: 'return', name: `Return (0.00%)`, isActive: false },
+		],
+		selectOption: (option, _$popup) => {
+			_$popup.cancel()
+
+			vm.presetSelectorData.options.forEach(
+				(it) => (it.isActive = it === option)
+			)
+
+			const numberFormat = presetsSettings[option.id]
+			Object.assign(vm.settings, numberFormat)
+
+			vm.onNumberFormatChange()
 		},
 	}
 
@@ -392,9 +421,8 @@
 		clearAllPresetSelection()
 		const currentPreset = getActivePreset()
 		vm.currentPresetName = currentPreset ? currentPreset.name : 'Select Preset'
-		console.log(currentPreset, 'currentPreset onNumberFormatChange ')
-		console.log(currentPreset.name, 'currentPreset.name onNumberFormatChange')
-		setTimeout(() => $scope.$apply())
+		// console.log(currentPreset, 'currentPreset onNumberFormatChange ')
+		// console.log(currentPreset.name, 'currentPreset.name onNumberFormatChange')
 	}
 
 	vm.getZeroName = function () {
@@ -427,27 +455,8 @@
 			{ example: value },
 			{ key: 'example', report_settings: vm.settings }
 		)
-
-	vm.presetSelectorData = {
-		options: [
-			{ id: 'price', name: `Price (0)`, isActive: false },
-			{ id: 'market_value', name: `Market Value (000'000)`, isActive: false },
-			{ id: 'amount', name: `Amount (000'000.00)`, isActive: false },
-			{ id: 'exposure', name: `Exposure (0.0%)`, isActive: false },
-			{ id: 'return', name: `Return (0.00%)`, isActive: false },
-		],
-		selectOption: (option, _$popup) => {
-			_$popup.cancel()
-
-			vm.presetSelectorData.options.forEach(
-				(it) => (it.isActive = it === option)
-			)
-
-			const numberFormat = presetsSettings[option.id]
-			Object.assign(vm.settings, numberFormat)
-
-			vm.onNumberFormatChange()
-		},
+	vm.agree = function () {
+		$mdDialog.hide({ status: 'agree', data: vm.settings })
 	}
 
 	// watch(
