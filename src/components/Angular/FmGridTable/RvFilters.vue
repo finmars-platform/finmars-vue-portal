@@ -43,7 +43,7 @@
 					color="primary"
 					class="g-toggle-filters-btn md-icon-button chain-button"
 					:class="{
-						'g-use-from-above-filters-hidden': !scope.showUseFromAboveFilters,
+						'g-use-from-above-filters-hidden': scope.showUseFromAboveFilters,
 					}"
 					style="margin-left: 10px"
 					@click="scope.toggleUseFromAboveFilters()"
@@ -873,16 +873,16 @@
 			}
 		)
 
-		evEventService.addEventListener(
-			evEvents.TABLE_SIZES_CALCULATED,
-			function () {
-				scope.vm.calculateFilterChipsContainerWidth(
-					gFiltersLeftPartWidth,
-					gFiltersRightPartWidth,
-					filtersChipsContainer
-				)
-			}
-		)
+		// evEventService.addEventListener(
+		// 	evEvents.TABLE_SIZES_CALCULATED,
+		// 	function () {
+		// 		scope.vm.calculateFilterChipsContainerWidth(
+		// 			gFiltersLeftPartWidth,
+		// 			gFiltersRightPartWidth,
+		// 			filtersChipsContainer
+		// 		)
+		// 	}
+		// )
 
 		evEventService.addEventListener(evEvents.FILTERS_CHANGE, function () {
 			filters.value = evDataService.getFilters()

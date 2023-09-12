@@ -77,7 +77,6 @@
 	// 		hideUseFromAboveFilters: '=',
 	// 	},
 	const props = defineProps(['attributeDataService', 'contentWrapElement'])
-	console.log('props:', props)
 
 	const { evEventService, evDataService } = inject('ngDependace')
 
@@ -545,7 +544,7 @@
 			const selectedAttrs = filters.map((col) => col.key)
 
 			let res = await $mdDialog.show({
-				controller: 'AttributesSelectorDialogController as vm',
+				controller: 'AttributesSelectorFilters as vm',
 				multiple: true,
 				locals: {
 					data: {
@@ -558,6 +557,7 @@
 					},
 				},
 			})
+			console.log('res:', res)
 
 			if (res && res.status === 'agree') {
 				for (var i = 0; i < res.data.items.length; i = i + 1) {
