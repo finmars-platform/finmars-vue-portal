@@ -173,6 +173,35 @@
 				}
 			"
 		/>
+		<LazyFmAttributesSelectModal
+			v-if="$mdDialog.modals['AttributesSelectorFilters']"
+			:modelValue="true"
+			class="m-b-24"
+			:multiselect="true"
+			:selected="
+				$mdDialog.modals['AttributesSelectorFilters'].data.selectedAttributes
+			"
+			:title="$mdDialog.modals['AttributesSelectorFilters'].data.title"
+			:attributes="
+				$mdDialog.modals['AttributesSelectorFilters'].data.attributes
+			"
+			:contentType="contentType"
+			@selectedAttributesChanged="
+				(selected) => {
+					$mdDialog.modals['AttributesSelectorFilters'].resolve({
+						status: 'agree',
+						data: { items: selected },
+					})
+					delete $mdDialog.modals['AttributesSelectorFilters']
+				}
+			"
+			@close="
+				() => {
+					$mdDialog.modals['AttributesSelectorFilters'].resolve({})
+					delete $mdDialog.modals['AttributesSelectorFilters']
+				}
+			"
+		/>
 
 		<LazyModalNumberFormat
 			v-if="$mdDialog.modals['NumberFormatSettingsDialogController']"
