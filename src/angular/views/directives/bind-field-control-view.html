@@ -1,95 +1,107 @@
 <div ng-class="{'disabled-field': !isEditableField()}">
-
-    <div ng-class="{'display-none': !vm.readyStatus.content}">
-
-        <div data-ng-if="vm.fieldType['display_name'] === 'Number'"
-             class="bind-field-number-field-container">
-
-            <number-input
-                    label="{{getName()}}"
-                    model="vm.model"
-                    number-format="item.options.number_format"
-                    custom-buttons="item.buttons"
-                    custom-styles="customStyles"
-                    event-signal="ciEventObj.event"
-                    small-options="{onlyPositive: item.options.onlyPositive,
+	<div ng-class="{'display-none': !vm.readyStatus.content}">
+		<div
+			data-ng-if="vm.fieldType['display_name'] === 'Number'"
+			class="bind-field-number-field-container"
+		>
+			<number-input
+				label="{{getName()}}"
+				model="vm.model"
+				number-format="item.options.number_format"
+				custom-buttons="item.buttons"
+				custom-styles="customStyles"
+				event-signal="ciEventObj.event"
+				small-options="{onlyPositive: item.options.onlyPositive,
                       tooltipText: tooltipText,
                       notNull: options.notNull,
                       dialogParent: '.dialog-containers-wrap'}"
-                    on-change-callback="vm.itemChange()">
-            </number-input>
-        </div>
+				on-change-callback="vm.itemChange()"
+			>
+			</number-input>
+		</div>
 
-        <div ng-if="vm.fieldType['display_name'] === 'String'">
+		<div ng-if="vm.fieldType['display_name'] === 'String'">
+			<text-input
+				label="{{getName()}}"
+				placeholder-text="text"
+				model="vm.model"
+				custom-buttons="item.buttons"
+				custom-styles="customStyles"
+				event-signal="ciEventObj.event"
+				small-options="{tooltipText: tooltipText, notNull: options.notNull, dialogParent: '.dialog-containers-wrap'}"
+				render-hyperlinks="item.options.isHyperlink"
+				on-change-callback="vm.itemChange()"
+				on-blur-callback="inputBlur()"
+			></text-input>
+		</div>
 
-            <text-input label="{{getName()}}"
-                        placeholder-text="text"
-                        model="vm.model"
-                        custom-buttons="item.buttons"
-                        custom-styles="customStyles"
-                        event-signal="ciEventObj.event"
-                        small-options="{tooltipText: tooltipText, notNull: options.notNull, dialogParent: '.dialog-containers-wrap'}"
-                        render-hyperlinks="item.options.isHyperlink"
-                        on-change-callback="vm.itemChange()"
-                        on-blur-callback="inputBlur()"></text-input>
+		<div
+			data-ng-if="vm.fieldType['display_name'] === 'Field' || vm.fieldType['display_name'] === 'Multiple choice field'"
+		>
+			<div>
+				<ev-field-resolver
+					data-item="item"
+					data-entity="entity"
+					data-options="options"
+					ev-editor-data-service="evEditorDataService"
+					ev-editor-event-service="evEditorEventService"
+					data-entity-type="vm.entityType"
+					fields-data-store="fieldsDataStore"
+				>
+				</ev-field-resolver>
+			</div>
+		</div>
 
-        </div>
+		<div
+			ng-if="vm.fieldType['display_name'] === 'Date'"
+			class="field-date-pick"
+		>
+			<date-input
+				label="{{getName()}}"
+				model="vm.model"
+				custom-buttons="item.buttons"
+				custom-styles="customStyles"
+				event-signal="ciEventObj.event"
+				small-options="{tooltipText: tooltipText, notNull: options.notNull, dialogParent: '.dialog-containers-wrap'}"
+				empty-input-button="{{showEmptyInputBtn}}"
+				on-change-callback="onDateChange()"
+			>
+			</date-input>
+		</div>
 
-        <div data-ng-if="vm.fieldType['display_name'] === 'Field' || vm.fieldType['display_name'] === 'Multiple choice field'">
+		<div
+			ng-if="vm.fieldType['display_name'] === 'Datetime'"
+			class="field-date-pick"
+		>
+			<datetime-input
+				label="{{getName()}}"
+				model="vm.model"
+				custom-buttons="item.buttons"
+				is-readonly="item.readonly"
+				custom-styles="customStyles"
+				event-signal="ciEventObj.event"
+				small-options="{tooltipText: tooltipText, notNull: options.notNull, dialogParent: '.dialog-containers-wrap'}"
+				on-change-callback="onDateChange()"
+			>
+			</datetime-input>
+		</div>
 
-            <div>
-                <ev-field-resolver data-item="item"
-                                   data-entity="entity"
-                                   data-options="options"
-                                   ev-editor-data-service="evEditorDataService"
-                                   ev-editor-event-service="evEditorEventService"
-                                   data-entity-type="vm.entityType"
-                                   fields-data-store="fieldsDataStore">
-                </ev-field-resolver>
-            </div>
+		<div
+			data-ng-if="vm.fieldType['display_name'] === 'Boolean' && hideIscanceledCheckbox(getName())"
+		>
+			<md-checkbox
+				class="checkbox-bind-field"
+				data-ng-model="vm.model"
+				data-ng-change="vm.itemChange()"
+				aria-label="checkbox"
+			>
+				<label data-ng-bind="getName()"></label>
+			</md-checkbox>
+		</div>
 
-        </div>
-
-        <div ng-if="vm.fieldType['display_name'] === 'Date'" class="field-date-pick">
-            <date-input
-                    label="{{getName()}}"
-                    model="vm.model"
-                    custom-buttons="item.buttons"
-                    custom-styles="customStyles"
-                    event-signal="ciEventObj.event"
-                    small-options="{tooltipText: tooltipText, notNull: options.notNull, dialogParent: '.dialog-containers-wrap'}"
-                    empty-input-button="{{showEmptyInputBtn}}"
-                    on-change-callback="onDateChange()">
-            </date-input>
-        </div>
-
-        <div ng-if="vm.fieldType['display_name'] === 'Datetime'" class="field-date-pick">
-            <datetime-input
-                    label="{{getName()}}"
-                    model="vm.model"
-                    custom-buttons="item.buttons"
-                    is-readonly="item.readonly"
-                    custom-styles="customStyles"
-                    event-signal="ciEventObj.event"
-                    small-options="{tooltipText: tooltipText, notNull: options.notNull, dialogParent: '.dialog-containers-wrap'}"
-                    on-change-callback="onDateChange()">
-            </datetime-input>
-        </div>
-
-        <div data-ng-if="vm.fieldType['display_name'] === 'Boolean' && hideIscanceledCheckbox(getName())">
-            <md-checkbox
-                    class="checkbox-bind-field"
-                    data-ng-model="vm.model"
-                    data-ng-change="vm.itemChange()"
-                    aria-label="checkbox">
-                <label data-ng-bind="getName()"></label>
-            </md-checkbox>
-        </div>
-
-        <div data-ng-if="vm.fieldType['display_name'] === 'Classifier'">
-            <div data-ng-if="vm.readyStatus.classifier">
-
-                <!--  Victor 2020.10.23 Change for classifier-select
+		<div data-ng-if="vm.fieldType['display_name'] === 'Classifier'">
+			<div data-ng-if="vm.readyStatus.classifier">
+				<!--  Victor 2020.10.23 Change for classifier-select
                       <md-input-container class="md-block md-select-pan">
                         <label data-ng-bind="getName()"></label>
 
@@ -108,78 +120,105 @@
                           </md-option>
                         </md-select>
                       </md-input-container>-->
-                <classifier-select label="{{getName()}}"
-                                   placeholder-text="{{getName()}}"
-                                   model="vm.model"
-                                   classifier-attr="item"
-                                   classifier-value="vm.model"
-                                   event-signal="ciEventObj.event"
-                                   entity-type="vm.entityType"
-                                   small-options="{tooltipText: tooltipText, notNull: options.notNull, dialogParent: '.dialog-containers-wrap'}"
-                                   on-change-callback="changeClassifier()"
-                ></classifier-select>
+				<classifier-select
+					label="{{getName()}}"
+					placeholder-text="{{getName()}}"
+					model="vm.model"
+					classifier-attr="item"
+					classifier-value="vm.model"
+					event-signal="ciEventObj.event"
+					entity-type="vm.entityType"
+					small-options="{tooltipText: tooltipText, notNull: options.notNull, dialogParent: '.dialog-containers-wrap'}"
+					on-change-callback="changeClassifier()"
+				></classifier-select>
+			</div>
 
-            </div>
+			<div data-ng-if="!vm.readyStatus.classifier">
+				<div layout="row" layout-sm="column" layout-align="space-around">
+					<progress-circular diameter="20"></progress-circular>
+				</div>
+			</div>
+		</div>
 
-            <div data-ng-if="!vm.readyStatus.classifier">
-                <div layout="row" layout-sm="column" layout-align="space-around">
-                    <progress-circular diameter="20"></progress-circular>
-                </div>
-            </div>
-        </div>
+		<div
+			data-ng-if="vm.fieldType['display_name'] === 'Decoration' && item.key === 'layoutLine'"
+			class="ec-decoration-container"
+		>
+			<span
+				class="ec-decoration line"
+				style="{{vm.inputBackgroundColor()}}"
+			></span>
+		</div>
 
-        <div data-ng-if="vm.fieldType['display_name'] === 'Decoration' && item.key === 'layoutLine'"
-             class="ec-decoration-container">
-            <span class="ec-decoration line" style="{{vm.inputBackgroundColor()}}"></span>
-        </div>
+		<div
+			data-ng-if="vm.fieldType['display_name'] === 'Decoration' && item.key === 'layoutLineWithLabel'"
+			class="ec-decoration-container"
+		>
+			<span class="ec-decoration labeled" data-ng-if="item.options.labelText">
+				<span class="w-rp" data-ng-bind="item.options.labelText"></span>
+			</span>
+		</div>
 
-        <div data-ng-if="vm.fieldType['display_name'] === 'Decoration' && item.key === 'layoutLineWithLabel'"
-             class="ec-decoration-container">
-            <span class="ec-decoration labeled" data-ng-if="item.options.labelText">
-                <span class="w-rp" data-ng-bind="item.options.labelText"></span>
-            </span>
-        </div>
+		<div
+			data-ng-if="vm.fieldType['display_name'] === 'Decoration' && item.key === 'layoutPlainText'"
+			class="ec-decoration-container"
+		>
+			<span
+				class="ec-decoration plain-text"
+				data-ng-bind="item.options.plainText"
+			></span>
+		</div>
 
-        <div data-ng-if="vm.fieldType['display_name'] === 'Decoration' && item.key === 'layoutPlainText'"
-             class="ec-decoration-container">
-            <span class="ec-decoration plain-text" data-ng-bind="item.options.plainText"></span>
-        </div>
+		<div
+			data-ng-if="vm.fieldType['display_name'] === 'Decoration' && item.key === 'layoutCalculatedText'"
+			class="ec-decoration-container"
+		>
+			<span
+				class="ec-decoration plain-text"
+				data-ng-bind="item.options.result"
+			></span>
+		</div>
 
-        <div data-ng-if="vm.fieldType['display_name'] === 'Decoration' && item.key === 'layoutCalculatedText'"
-             class="ec-decoration-container">
-            <span class="ec-decoration plain-text" data-ng-bind="item.options.result"></span>
-        </div>
+		<div data-ng-if="vm.fieldType['display_name'] === 'Selector'">
+			<div>
+				<ev-selector-resolver
+					item="item"
+					options="options"
+					ev-editor-event-service="evEditorEventService"
+					item-change="vm.itemChange()"
+				>
+				</ev-selector-resolver>
+			</div>
+		</div>
 
-        <div data-ng-if="vm.fieldType['display_name'] === 'Selector'">
+		<div data-ng-if="vm.fieldType['display_name'] === 'Button'">
+			<div class="custom-input-container">
+				<md-button class="md-raised md-primary" data-ng-click="recalculate()">
+					{{getName()}}
+				</md-button>
+			</div>
+		</div>
 
-            <div>
-                <ev-selector-resolver item="item"
-                                      options="options"
-                                      ev-editor-event-service="evEditorEventService"
-                                      item-change="vm.itemChange()">
-                </ev-selector-resolver>
-            </div>
+		<div
+			ng-if="vm.fieldType['display_name'] === 'Table'"
+			style="padding: 0 10px"
+		>
+			<bind-field-table item="item" entity="entity"></bind-field-table>
+		</div>
+	</div>
 
-        </div>
-
-        <div data-ng-if="vm.fieldType['display_name'] === 'Button'">
-            <div class="custom-input-container">
-                <md-button class="md-raised md-primary" data-ng-click="recalculate()">
-                    {{getName()}}
-                </md-button>
-            </div>
-        </div>
-
-        <div ng-if="vm.fieldType['display_name'] === 'Table'" style="padding: 0 10px;">
-            <bind-field-table item="item" entity="entity"></bind-field-table>
-        </div>
-
-    </div>
-
-    <div ng-if="!vm.readyStatus.content" class="bind-field-loader" style="height: 42px; margin-bottom: 13px;">
-        <div layout="row" layout-sm="column" layout-align="space-around space-around" class="height-100">
-            <progress-circular diameter="30"></progress-circular>
-        </div>
-    </div>
-
+	<div
+		ng-if="!vm.readyStatus.content"
+		class="bind-field-loader"
+		style="height: 42px; margin-bottom: 13px"
+	>
+		<div
+			layout="row"
+			layout-sm="column"
+			layout-align="space-around space-around"
+			class="height-100"
+		>
+			<progress-circular diameter="30"></progress-circular>
+		</div>
+	</div>
 </div>

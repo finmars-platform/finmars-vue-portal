@@ -217,6 +217,12 @@
 					></group-reconciliation-match-editor-binder> -->
 			</div>
 		</div>
+
+		<LazyAngularFmGridTableModalAddEntity
+			v-if="$mdDialog.modals['EntityViewerAddDialogController']"
+			:modelValue="true"
+			:payload="$mdDialog.modals['EntityViewerAddDialogController']"
+		/>
 	</div>
 </template>
 
@@ -236,6 +242,7 @@
 	])
 
 	const { attributeDataService, evEventService, evDataService } = props
+	const $mdDialog = inject('$mdDialog')
 
 	provide('ngDependace', {
 		evEventService,

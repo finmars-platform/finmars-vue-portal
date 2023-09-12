@@ -28,7 +28,7 @@
 						:readonly="readonly"
 						:disabled="disabled"
 						@input="$emit('update:modelValue', $event.target.value)"
-						@focus="$emit('onFocus')"
+						@focus.stop="$emit('onFocus')"
 						@blur="$emit('onBlur')"
 						class="bi_main_input"
 					/>
@@ -368,6 +368,9 @@
 		&.readonly {
 			border-left: 5px solid $border !important;
 		}
+	}
+	.base-input.bi_no_borders .bi_wrap.readonly {
+		border: none !important;
 	}
 	.bi_default {
 		flex: 0 1 100%;

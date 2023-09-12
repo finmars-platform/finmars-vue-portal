@@ -59,8 +59,8 @@ export default function ({
 	currencyHistoryService,
 	reportService,
 }) {
+	console.log('instrumentService:', instrumentService)
 	var getList = function (entityType, options) {
-
 		switch (entityType) {
 			case 'portfolio':
 				return portfolioService.getList(options)

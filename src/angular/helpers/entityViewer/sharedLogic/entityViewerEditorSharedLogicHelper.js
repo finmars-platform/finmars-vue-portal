@@ -3,12 +3,11 @@ import evHelperService from '@/angular/services/entityViewerHelperService'
 
 import instrumentTypeService from '@/angular/services/instrumentTypeService'
 
-import entityEditorHelper from '@/angularlpers/entity-editor.helper'
+import entityEditorHelper from '@/angular/helpers/entity-editor.helper'
 
 import evEditorEvents from '@/angular/services/ev-editor/entityViewerEditorEvents'
 
-import metaHelper from '@/angularlpers/meta.helper'
-;('use strict')
+import metaHelper from '@/angular/helpers/meta.helper'
 
 export default function (
 	viewModel,
@@ -546,8 +545,6 @@ export default function (
 	}
 
 	const getShowByDefaultOptions = function (columns, entityType) {
-
-
 		let result = viewModel.showByDefaultOptions
 
 		if (
@@ -915,27 +912,6 @@ export default function (
 	 * @param {Array} iTypePermissions
 	 */
 	const mapPermissionsToInstrument = (iTypePermissions) => {
-		/* viewModel.groups.forEach(group => {
-
-				iTypePermissions.forEach(pData => {
-
-					if (pData.group === group.id) {
-
-						let permissionToDo = ['manage_', 'change_', 'view_'].find(action => pData.permission.startsWith(action));
-						permissionToDo = permissionToDo + viewModel.entityType.split('-').join('');
-
-						objectPermissions.push({
-							member: null,
-							group: group.id,
-							permission: permissionToDo
-						});
-
-					}
-
-				})
-
-			}); */
-
 		viewModel.entity.object_permissions = iTypePermissions.map(function (item) {
 			var result = Object.assign({}, item)
 
@@ -1080,8 +1056,6 @@ export default function (
 
 		entity['user_code'] = viewModel.entity['user_code'] + '_copy'
 		entity['name'] = viewModel.entity['name'] + '_copy'
-
-
 
 		if (windowType === 'big-drawer') {
 			const responseObj = {

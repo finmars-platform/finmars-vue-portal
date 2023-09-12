@@ -21,9 +21,11 @@
 				:vm="vm"
 			/>
 
-			<div v-if="vm.filter.value_type === 40" class="m-b-24">
-				<rv-date-filter></rv-date-filter>
-			</div>
+			<AngularFmGridTableRvDateFilter
+				v-if="vm.filter.value_type === 40"
+				:gFiltersHelper="gFiltersHelper"
+				:vm="vm"
+			/>
 
 			<div v-if="vm.filter.value_type === 50" class="m-b-24">
 				<rv-boolean-filter></rv-boolean-filter>
@@ -91,13 +93,17 @@
 	onMounted(() => {
 		let elem
 
-		if (props.popupData.elem) {
-			elem = props.popupData.elem
-		} else {
-			let chips = document.querySelectorAll('.chips-list-container .chip-wrap')
+		// if (props.popupData.elem) {
+		// 	elem = props.popupData.elem
+		// 	console.log('elem:', elem)
+		// } else {
 
-			elem = chips[chips.length - 1]
-		}
+		// }
+
+		let chips = document.querySelectorAll('.chips-list-container .chip-wrap')
+
+		elem = chips[chips.length - 1]
+
 		let rect = elem.getBoundingClientRect()
 
 		positions.value.left = rect.left - 160
@@ -239,6 +245,7 @@
 
 		evDataService.setFilters(allFilters)
 		evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
+		evEventService.dispatchEvent(evEvents.REQUEST_REPORT)
 
 		vm.cancel()
 	}
