@@ -389,9 +389,6 @@ export default function (
 			dialogTemplateUrl =
 				'views/entity-viewer/complex-transaction-add-dialog-view.html'
 		}
-		console.log('dialogController:', dialogController)
-		console.log('dialogTemplateUrl:', dialogTemplateUrl)
-		console.log('locals:', locals)
 
 		let res = await $mdDialog.show({
 			controller: dialogController,

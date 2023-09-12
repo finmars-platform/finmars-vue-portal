@@ -114,7 +114,7 @@
 		required: Boolean,
 		attach: {
 			type: String,
-			default: 'body',
+			// default: 'body',
 		},
 		clearBtn: Boolean, // button that empties select
 		errorData: Object,

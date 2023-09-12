@@ -25,6 +25,7 @@ const xhrService = new XhrService(errorService, cookieService)
 const multitypeFieldService = new MultitypeFieldService()
 
 const gridTableHelperService = new GridTableHelperService(multitypeFieldService)
+console.log('uiService:', uiService)
 
 const instrumentService = new InstrumentService(
 	cookieService,
@@ -40,10 +41,10 @@ const currencyHistoryService = new CurrencyHistoryService(
 )
 const reportService = new ReportService(cookieService, xhrService)
 
-export default new EntityResolverService(
+export default new EntityResolverService({
 	instrumentService,
 	transactionTypeService,
 	priceHistoryService,
 	currencyHistoryService,
-	reportService
-)
+	reportService,
+})
