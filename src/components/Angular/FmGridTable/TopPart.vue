@@ -23,6 +23,7 @@
 				class="bi_no_borders"
 				v-model="globalTableSearch"
 				@keyup.enter="onGlobalTableSearchChange()"
+				@change="onGlobalTableSearchChange()"
 				placeholder="Search for a ..."
 			/>
 		</template>
@@ -323,7 +324,7 @@
 			reportLayoutOptions.useDateFromAbove = true
 		}
 	}
-	let currencies
+	let currencies = ref([])
 	const getCurrencies = function () {
 		const currencyOptions = {
 			pageSize: 1000,
@@ -334,13 +335,13 @@
 			currencyService
 				.getListLight(currencyOptions)
 				.then(async function (data) {
-					currencies = currencies.concat(data.results)
+					currencies.value = currencies.value.concat(data.results)
 
 					if (!currencies.length) {
 						const ecosystemDefaultData = await ecosystemDefaultService
 							.getList()
 							.then((res) => res.results[0])
-						currencies.push(ecosystemDefaultData.currency_object)
+						currencies.value.push(ecosystemDefaultData.currency_object)
 						reportOptions.value.report_currency =
 							ecosystemDefaultData.currency_object.id
 					}
@@ -371,7 +372,7 @@
 	}
 
 	if (isReport) {
-		currencies = []
+		currencies.value = []
 		/*dateFrom = reportOptions[dateFromKey];
                     dateTo = reportOptions[dateToKey];*/
 		let onReportDateChange = function () {

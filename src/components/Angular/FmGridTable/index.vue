@@ -498,6 +498,9 @@
 	.g-wrapper .g-table-wrap {
 		overflow: auto;
 	}
+	.g-table-wrap::-webkit-scrollbar {
+		height: 14px;
+	}
 	.wrap_dashboard {
 		display: block;
 		height: 100%;

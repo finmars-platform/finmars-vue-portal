@@ -213,7 +213,7 @@
 			<BaseInput
 				readonly
 				:label="renemedColumn.__isOriginal ? 'Original' : 'Current'"
-				:modelValue="renemedColumn.layout_name || renemedColumn.name"
+				:modelValue="renemedColumn.oldName"
 			/>
 			<BaseInput label="Name" v-model="renemedColumn.layout_name" />
 
@@ -1089,6 +1089,8 @@
 		let column = columns.find((column) => column.key === itemKey)
 
 		renemedColumn.value = structuredClone(column)
+		renemedColumn.value.oldName =
+			renemedColumn.value.layout_name || renemedColumn.value.name
 
 		if (!renemedColumn.value.layout_name) {
 			renemedColumn.value.__isOriginal = true
@@ -1468,33 +1470,21 @@
 	 * @param _$popup {Object} - data from popup
 	 */
 	let removeGroup = function (groupKey, _$popup) {
-		var groups = evDataService.getGroups()
-
-		var groupToRemoveIndex = groups.findIndex(
+		var groupToRemoveIndex = groups.value.findIndex(
 			(group) => group.___group_type_id === groupKey
 		)
 
 		if (groupToRemoveIndex > -1) {
-			groups.splice(groupToRemoveIndex, 1)
+			groups.value.splice(groupToRemoveIndex, 1)
 		} else {
 			throw new Error('No group with such key found: ' + groupKey)
 		}
 
-		evDataService.setGroups(groups)
+		evDataService.setGroups(groups.value)
 		evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
 
-		/** remove column */
-		/* var c;
-	                   for (c = 0; c < columns.length; c++) {
-
-	                       if (columns[c].___column_id === columnTableId) {
-	                           columns.splice(c, 1);
-	                           break;
-	                       }
-
-	                   } */
 		var colToRemoveIndex = columns.findIndex(
-			(column) => column.key === groupKey
+			(column) => column.___column_id === groupKey
 		)
 		if (colToRemoveIndex > -1) {
 			columns.splice(colToRemoveIndex, 1)
