@@ -35,9 +35,10 @@
 			<ModalEditCustomColumns
 				title="Edit Custom Column"
 				v-model="isOpenEditCustomColumns"
-				:content_type="content_type"
-				@save="renameCustomColumns"
+				
 			></ModalEditCustomColumns>
+			<!-- :content_type="content_type"
+				@save="renameCustomColumns" -->
 			<!-- :name="activeLayout.name"
 		:user_code="activeLayout.user_code"
 		:content_type="content_type"
@@ -60,17 +61,18 @@
 	let props = defineProps({
 		title: String,
 		content_type: String,
-		attributeDataService: String,
-		entityViewerEventService: String,
-		activeLayout: Object,
-		layouts: Array,
-		autosaveLayout: Object,
-		loadingLayout: Boolean,
-		loadingLayoutsList: Boolean,
-		content_type: String,
-
-		isLayoutDefault: Function,
+	
 	})
+	// // 	attributeDataService: String,
+	// 	entityViewerEventService: String,
+	// 	activeLayout: Object,
+	// 	layouts: Array,
+	// 	autosaveLayout: Object,
+	// 	loadingLayout: Boolean,
+	// 	loadingLayoutsList: Boolean,
+	// 	content_type: String,
+
+	// 	isLayoutDefault: Function,
 	const isOpenDeleteCustomColumns = ref(false)
 	const isOpenEditCustomColumns = ref(false)
 	const evAttrsStore = useEvAttributesStore()
@@ -102,25 +104,26 @@
 	// function renameCustomColumns(newNamesData) {
 
 	// }
-	// function deleteCustomColumns(item) {
-	// 	let res = useApi('balanceReportCustomFieldList.put', {
-	// 		params: { id: item.id },
-	// 		body: item,
-	// 	})
-	// 	if (res.error) {
-	// 		useNotify({
-	// 			type: 'error',
-	// 			title: res.error.message || res.error.detail,
-	// 		})
-	// 		throw new Error(res.error)
-	// 	} else if (res.status === 'conflict') {
-	// 		useNotify({
-	// 			type: 'error',
-	// 			title: 'You can not delete attributed that already in use',
-	// 		})
-	// 		throw new Error(res.error)
-	// 	}
-	// }
+	function deleteCustomColumns(item) {
+		let res = useApi('balanceReportCustomFieldList.delete', {
+			params: { id: item.id },
+			body: item,
+		})
+		if (res.error) {
+			useNotify({
+				type: 'error',
+				title: res.error.message || res.error.detail,
+			})
+			throw new Error(res.error)
+		} else if (res.status === 'conflict') {
+			useNotify({
+				type: 'error',
+				title: 'You can not delete attributed that already in use',
+			})
+			throw new Error(res.error)
+		}
+		useNotify({ type: 'success', title: `data delete on the server` })
+	}
 	// vm.getList = function () {
 	// 	customFieldService.getList(props.content_type).then(function (data) {
 	// 		vm.customFields = data.results

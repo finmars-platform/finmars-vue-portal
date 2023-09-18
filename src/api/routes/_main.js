@@ -326,6 +326,7 @@ export default {
 		get: prefix + '/reports/balance-report/custom-field/',
 		post: prefix + '/reports/balance-report/custom-field/',
 		put: prefix + '/reports/balance-report/custom-field/{id}/',
+		delete: prefix + '/reports/balance-report/custom-field/{id}/',
 	},
 	plReportCustomFieldList: {
 		get: prefix + '/reports/pl-report/custom-field/',
