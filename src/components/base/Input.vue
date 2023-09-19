@@ -171,8 +171,8 @@
 			}
 		}
 
-		&:not(.bi_no_borders):not(.disabled, .readonly):focus-within,
-		&:not(.bi_no_borders):not(.disabled, .readonly):focus {
+		&:not(.bi_no_borders):not(.disabled):not(.readonly):focus-within,
+		&:not(.bi_no_borders):not(.disabled):not(.readonly):focus {
 			.bi_top {
 				.top_left_border,
 				.top_right_border {
@@ -364,11 +364,14 @@
 		// min-height: 42px;
 		height: 100%;
 		width: 100%;
+	}
 
-		&.readonly {
-			border-left: 5px solid $border !important;
+	.base-input:not(.no-readonly-styles) {
+		.bi_wrap.readonly {
+			border-left: 5px solid $border;
 		}
 	}
+
 	.bi_default {
 		flex: 0 1 100%;
 		margin-left: 13px;

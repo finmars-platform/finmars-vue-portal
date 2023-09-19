@@ -1,6 +1,12 @@
 <template>
 	<div>
-		<div>
+		<div class="flex-row fi-center">
+			<FmInputText
+				label="Name"
+				v-model="layoutName"
+				class="m-r-16 m-l-16"
+			/>
+
 			<FmInputUserCode
 				style="width: 600px;"
 				v-model="userCode"
@@ -248,6 +254,7 @@
   let evAttrsStore = useEvAttributesStore();
 
   let tab = ref('balance')
+	let layoutName = ref('');
 	let userCode = ref('');
 	let configCode = ref('');
   let layout = ref({})
@@ -486,6 +493,7 @@
 		}
 
 		layout.value = layoutStock.data;
+		layoutName.value = layoutStock.name;
 		userCode.value = layoutStock.user_code;
 		configCode.value = layoutStock.configuration_code;
     console.log('layout.value:', layout.value)
