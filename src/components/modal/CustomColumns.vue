@@ -1,5 +1,9 @@
 <template>
-	<BaseModal :title="title">
+	<BaseModal
+		:title="title"
+		:modelValue="modelValue"
+		@update:modelValue="(newVal) => emit('update:modelValue', newVal)"
+	>
 		<div style="padding: 5px 0 20px">
 			<div class="header">
 				<FmBtn type="text" @click=";(isOpenEditCustomColumns = true), close()"
@@ -15,7 +19,7 @@
 						<div class="card__btn">
 							<div class="card__edit">
 								<FmIcon
-									@click=";(isOpenEditCustomColumns = true), close()"
+									@click="editCustomColumns(item)"
 									class="m-l-4"
 									icon="edit"
 								/>
@@ -35,7 +39,9 @@
 			<ModalEditCustomColumns
 				title="Edit Custom Column"
 				v-model="isOpenEditCustomColumns"
-				
+				:name="activeCustomColumns.name"
+				:user_code="activeCustomColumns.user_code"
+				@save="renameLayout"
 			></ModalEditCustomColumns>
 			<!-- :content_type="content_type"
 				@save="renameCustomColumns" -->
@@ -61,8 +67,9 @@
 	let props = defineProps({
 		title: String,
 		content_type: String,
-	
 	})
+
+	let emit = defineEmits(['rename'])
 	// // 	attributeDataService: String,
 	// 	entityViewerEventService: String,
 	// 	activeLayout: Object,
@@ -78,14 +85,29 @@
 	const evAttrsStore = useEvAttributesStore()
 
 	let vm = reactive({ content_type: props.content_type })
+	let activeCustomColumns = ref()
 	// console.log(' test props.content_type', props.content_type)
 	// console.log(' vm', vm)
 
 	// vm.attributeDataService = attributeDataService
 	// vm.entityViewerEventService = entityViewerEventService
 	vm.customFields = []
+	// async function getAttrsList() {}
 
-	const attrsList = await evAttrsStore.getFetchCustomFields(props.content_type)
+	// let attrsList = ref()
+
+	let attrsList = await evAttrsStore.getFetchCustomFields(props.content_type)
+
+	// async function init() {
+	// 	let res = await evAttrsStore.getFetchCustomFields(props.content_type)
+	// 	console.log('res внутри ', res)
+	// 	return attrsList = res
+	// }
+
+	// init()
+	// console.log('attrsListfv снаружи', attrsList)
+
+	// getAttrsList()
 
 	vm.readyStatus = { customFields: false, attributes: false }
 
@@ -100,10 +122,7 @@
 			deleteCustomColumns(item)
 		}
 	}
-	console.log('attrsListfv', attrsList)
-	// function renameCustomColumns(newNamesData) {
 
-	// }
 	function deleteCustomColumns(item) {
 		let res = useApi('balanceReportCustomFieldList.delete', {
 			params: { id: item.id },
@@ -124,6 +143,13 @@
 		}
 		useNotify({ type: 'success', title: `data delete on the server` })
 	}
+
+	function editCustomColumns(newNamesData) {
+		activeCustomColumns = newNamesData
+		// emit('rename', newNamesData)
+		isOpenEditCustomColumns.value = false
+	}
+
 	// vm.getList = function () {
 	// 	customFieldService.getList(props.content_type).then(function (data) {
 	// 		vm.customFields = data.results
