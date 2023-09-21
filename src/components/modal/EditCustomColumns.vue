@@ -1,7 +1,8 @@
 <template>
 	<BaseModal :title="title">
 		<div class="wrapp">
-			<FmInputText label="Custom Column Name" v-model="newName" />
+			<FmInputText label="Custom Column Name" v-model="newName"  />
+			<!-- @update:newName="emits('newName', $event)" -->
 			<FmInputText
 				label="Custom Column Reference Code (use programming language naming rules)"
 				v-model="newUserCode"
@@ -32,45 +33,44 @@
 <script setup>
 	let props = defineProps({
 		title: String,
-		modelValue: Boolean,
 		name: String,
 		user_code: String,
-		content_type: String,
+		
 	})
-	let emit = defineEmits(['save', 'update:modelValue'])
+	// let emit = defineEmits(['save', 'update:modelValue'])
 
-	let newName = ref(props.name)
-	let newUserCode = ref(props.user_code)
-	let configCode = ref('')
-	let nucErrorData = ref(null)
-	watch(
-		() => props.name,
-		() => (newName.value = props.name)
-	)
-	watch(
-		() => props.user_code,
-		() => (newUserCode.value = props.user_code)
-	)
-	function save() {
-		if (!newUserCode.value) {
-			nucErrorData.value = {
-				message: 'User code should not be empty',
-			}
-		} else {
-			emit('save', {
-				name: newName.value,
-				user_code: newUserCode.value,
-				configuration_code: configCode.value,
-			})
-		}
-	}
+	// let newName = ref(props.name)
+	// let newUserCode = ref(props.user_code)
+	// let configCode = ref('')
+	// let nucErrorData = ref(null)
+	// watch(
+	// 	() => props.name,
+	// 	() => (newName.value = props.name)
+	// )
+	// watch(
+	// 	() => props.user_code,
+	// 	() => (newUserCode.value = props.user_code)
+	// )
+	// function save() {
+	// 	if (!newUserCode.value) {
+	// 		nucErrorData.value = {
+	// 			message: 'User code should not be empty',
+	// 		}
+	// 	} else {
+	// 		emit('save', {
+	// 			name: newName.value,
+	// 			user_code: newUserCode.value,
+	// 			configuration_code: configCode.value,
+	// 		})
+	// 	}
+	// }
 
-	function cancelModal(cancelFn) {
-		newName.value = props.name
-		newUserCode.value = props.user_code
+	// function cancelModal(cancelFn) {
+	// 	newName.value = props.name
+	// 	newUserCode.value = props.user_code
 
-		cancelFn()
-	}
+	// 	cancelFn()
+	// }
 </script>
 
 <style lang="scss" scoped>

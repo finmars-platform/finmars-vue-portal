@@ -1,8 +1,6 @@
 <template>
 	<BaseModal
 		:title="title"
-		:modelValue="modelValue"
-		@update:modelValue="(newVal) => emit('update:modelValue', newVal)"
 	>
 		<div style="padding: 5px 0 20px">
 			<div class="header">
@@ -39,10 +37,17 @@
 			<ModalEditCustomColumns
 				title="Edit Custom Column"
 				v-model="isOpenEditCustomColumns"
-				:name="activeCustomColumns.name"
-				:user_code="activeCustomColumns.user_code"
+
+				
 				@save="renameLayout"
 			></ModalEditCustomColumns>
+			<!-- :name="activeCustomColumns.name"
+
+:user_code="activeCustomColumns.user_code" -->
+			<!-- :name="activeCustomColumns.name"
+
+
+				:user_code="activeCustomColumns.user_code" -->
 			<!-- :content_type="content_type"
 				@save="renameCustomColumns" -->
 			<!-- :name="activeLayout.name"
@@ -69,7 +74,6 @@
 		content_type: String,
 	})
 
-	let emit = defineEmits(['rename'])
 	// // 	attributeDataService: String,
 	// 	entityViewerEventService: String,
 	// 	activeLayout: Object,
@@ -86,6 +90,8 @@
 
 	let vm = reactive({ content_type: props.content_type })
 	let activeCustomColumns = ref()
+	// activeCustomColumns.name = ""
+	// activeCustomColumns.user_code = ""
 	// console.log(' test props.content_type', props.content_type)
 	// console.log(' vm', vm)
 
@@ -142,12 +148,14 @@
 			throw new Error(res.error)
 		}
 		useNotify({ type: 'success', title: `data delete on the server` })
+		
 	}
 
 	function editCustomColumns(newNamesData) {
 		activeCustomColumns = newNamesData
 		// emit('rename', newNamesData)
-		isOpenEditCustomColumns.value = false
+		isOpenEditCustomColumns.value = true
+		
 	}
 
 	// vm.getList = function () {
