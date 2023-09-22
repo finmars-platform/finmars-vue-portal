@@ -1,7 +1,5 @@
 <template>
 	<BaseModal
-		:modelValue="modelValue"
-		@update:modelValue="(newVal) => emit('update:modelValue', newVal)"
 		class="modal--rename"
 	>
 		<div>
@@ -38,17 +36,17 @@
 <script setup>
 
 	let props = defineProps({
-		modelValue: Boolean,
-		name: String,
-		user_code: String,
-		content_type: String,
-		occupiedUserCodes: {
-			type: Array,
-			default() { return [] },
-		},
+		
 	})
-
-	let emit = defineEmits(['save', 'update:modelValue'])
+    // modelValue: Boolean,
+	// 	name: String,
+	// 	user_code: String,
+	// 	content_type: String,
+	// 	occupiedUserCodes: {
+	// 		type: Array,
+	// 		default() { return [] },
+	// 	},
+	// let emit = defineEmits(['save', 'update:modelValue'])
 
 	let newName = ref(props.name)
 	let newUserCode = ref(props.user_code);

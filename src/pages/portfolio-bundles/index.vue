@@ -20,29 +20,44 @@
 					<!-- <td>{{ item.default_instrument_pricing_scheme_object.name }}</td> -->
 					<!-- <td>{{ item.default_currency_pricing_scheme_object.name }}</td>  -->
 					<td>
-						<FmBtn type="text" class="g-toggle-filters-btn" @click="editPricingPolicy(item)">Edit </FmBtn>
-                        <FmBtn type="text" class="g-toggle-filters-btn" @click="deletePricingPolicy(item)"> Delete </FmBtn>
+						<FmBtn
+							type="text"
+							class="g-toggle-filters-btn"
+							@click="editPricingPolicy(item)"
+							>Edit
+						</FmBtn>
+						<FmBtn
+							type="text"
+							class="g-toggle-filters-btn"
+							@click="deletePricingPolicy(item)"
+						>
+							Delete
+						</FmBtn>
 					</td>
 				</tr>
 			</tbody>
 		</table>
-		<FmBtn type="primary" class="g-toggle-filters-btn" @click="createPricingPolicy(item)">
+		<FmBtn
+			type="primary"
+			class="g-toggle-filters-btn"
+			@click="createPricingPolicy(item)"
+		>
 			<!-- @click="defaultSettingsCreate()"
 			:disabled="disabledBtn" -->
 			Add New
 		</FmBtn>
-		<ModalPortfolioBundleManager
+		<!-- <ModalPortfolioBundleManager
 				title="Portfolio Bundle Manager"
 				v-model="isOpenEditPricingPolicy"
 				
-			></ModalPortfolioBundleManager>
-			<!-- :name="activeCustomColumns.name"
+			></ModalPortfolioBundleManager> -->
+		<!-- :name="activeCustomColumns.name"
 				:user_code="activeCustomColumns.user_code"
 				@save="renameLayout" -->
 	</div>
 </template>
 
-<script setup>
+<!-- <script setup>
 	definePageMeta({
 		middleware: 'auth',
 		bread: [
@@ -54,12 +69,12 @@
 	})
 	const pricingPolicyList = ref([])
 	let activePolicyList = ref([])
-	let isOpenEditPricingPolicy  = ref(false)
+	let isOpenEditPricingPolicy = ref(false)
 	defaultsGet()
 	async function defaultsGet() {
 		let edRes = await useApi('portfolioBundles.get')
 		// let edRes = await useApi('pricingPolicyList.get')
-		
+
 		pricingPolicyList.value = edRes.error ? {} : edRes.results
 	}
 	console.log('portfolioBundles', pricingPolicyList)
@@ -106,7 +121,7 @@
 		// emit('rename', newNamesData)
 		isOpenEditPricingPolicy.value = true
 	}
-	
+
 	// async function defaultSettingsCreate() {
 	// 	let res = await useApi('defaultSettings.put', {
 	// 		params: { id: ecosystemDefaults.value.id },
@@ -122,7 +137,7 @@
 	// 	}
 	// 	disabledBtn.value = true
 	// }
-</script>
+</script> -->
 
 <style lang="scss" scoped>
 	td,
@@ -141,10 +156,10 @@
 		margin-bottom: 24px;
 		font-weight: 700;
 	}
-    .portfolio-table{
+	.portfolio-table {
 		width: 100%;
-        margin-bottom: 40px;
-    }
+		margin-bottom: 40px;
+	}
 	@media (max-width: 1200px) {
 		.wrapp-select {
 			display: grid;
