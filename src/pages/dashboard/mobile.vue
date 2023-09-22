@@ -450,6 +450,7 @@
         id: layoutStock.id,
       },
       body: {
+				name: layoutName.value,
         user_code: userCode.value,
         configuration_code: configCode.value,
         data: layout.value,
