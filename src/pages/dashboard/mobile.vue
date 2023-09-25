@@ -10,7 +10,7 @@
 			<FmInputUserCode
 				style="width: 600px;"
 				v-model="userCode"
-				v-model:configuration_code="configCode"
+				@configurationCodeChanged="newVal => configCode = newVal"
 			/>
 		</div>
 
