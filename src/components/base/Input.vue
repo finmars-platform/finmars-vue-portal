@@ -146,7 +146,7 @@
 	.base-input {
 		position: relative;
 		display: block;
-		height: 42px;
+		// min-height: 42px;
 		// border: 1px solid $border-darken;
 		border-radius: $border-radius;
 		transition: border 0.3s;
@@ -360,9 +360,8 @@
 	.bi_wrap {
 		display: flex;
 		align-items: center;
-		// height: 40px;
-		// min-height: 42px;
-		height: 100%;
+		height: 42px;
+		// height: 100%;
 		width: 100%;
 	}
 
