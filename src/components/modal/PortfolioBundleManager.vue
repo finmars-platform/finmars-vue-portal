@@ -1,11 +1,25 @@
 <template>
 	<BaseModal
 		class="modal--rename"
+		:modelValue="modelValue"
+		@update:modelValue="(newVal) => emit('update:modelValue', newVal)"
 	>
 		<div>
-			<FmInputText label="Name" v-model="newName" @update:modelValue="emits('selected', $event)"/>
-            <FmInputText label="User Code" v-model="newName1" @update:modelValue="emits('selected', $event)" />
-            <textarea name="" id="" cols="30" rows="10" @update:modelValue="emits('selected', $event)"></textarea>
+			<FmInputText label="Name" v-model="newName" />
+            <FmInputText label="User Code" v-model="newUserCode"/>
+        	<textarea
+				class="bi_area"
+				cols="60"
+				rows="5"
+				v-model="newNotes"
+			></textarea>
+			<BaseMultiSelectInput
+						
+						title="Accounts multiselector"
+						item_title="name"
+						item_id="id"
+						@update:model-value="vm.selectedCustomFieldsChanged()"
+					/>
 			
             
 		</div>

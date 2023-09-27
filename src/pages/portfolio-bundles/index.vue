@@ -46,18 +46,18 @@
 			:disabled="disabledBtn" -->
 			Add New
 		</FmBtn>
-		<!-- <ModalPortfolioBundleManager
+		<ModalPortfolioBundleManager
 				title="Portfolio Bundle Manager"
 				v-model="isOpenEditPricingPolicy"
 				
-			></ModalPortfolioBundleManager> -->
+			></ModalPortfolioBundleManager>
 		<!-- :name="activeCustomColumns.name"
 				:user_code="activeCustomColumns.user_code"
 				@save="renameLayout" -->
 	</div>
 </template>
 
-<!-- <script setup>
+<script setup>
 	definePageMeta({
 		middleware: 'auth',
 		bread: [
@@ -137,7 +137,7 @@
 	// 	}
 	// 	disabledBtn.value = true
 	// }
-</script> -->
+</script>
 
 <style lang="scss" scoped>
 	td,
