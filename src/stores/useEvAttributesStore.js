@@ -433,16 +433,20 @@ export default defineStore({
 			}
 
 			this.customFields[contentType] = res.results;
-
+			
 		},
+	
 
 		async getFetchCustomFields(contentType) {
+			
 			if ( !this.customFields[contentType] ) {
-				return await this.fetchCustomFields(contentType);
+				 await this.fetchCustomFields(contentType);
 			}
-
+			
 			return this.customFields[contentType];
 		},
+
+	
 
 		async getFetchAllCustomFields() {
 			const promises = Object.keys(customFieldsRouteOpts)

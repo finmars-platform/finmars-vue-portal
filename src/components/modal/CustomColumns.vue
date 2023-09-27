@@ -1,17 +1,13 @@
 <template>
-	<BaseModal
-		:title="title"
-	>
+	<BaseModal :title="title">
 		<div style="padding: 5px 0 20px">
 			<div class="header">
-				<FmBtn type="text" @click=";(isOpenEditCustomColumns = true), close()"
-					>Add New</FmBtn
-				>
+				<FmBtn type="text" @click="createCustomColumns(item)">Add New</FmBtn>
 
 				<FmBtn type="primary" @click="save">RETURN TO VIEW</FmBtn>
 			</div>
 			<div class="content">
-				<div class="card" v-for="(item, index) in attrsList" :key="index">
+				<div class="card" v-for="(item, index) in newAttrsList" :key="index">
 					<div class="card__inner">
 						<h3 class="card__title">{{ item?.name }}</h3>
 						<div class="card__btn">
@@ -33,26 +29,28 @@
 					</div>
 				</div>
 			</div>
+			<div v-if="isOpenEditCustomColumns">
+				<ModalEditCustomColumns
+					title="Edit Custom Column"
+					v-model="isOpenEditCustomColumns"
+					:name="activeCustomColumns.name"
+					:user_code="activeCustomColumns.user_code"
+					:notes="activeCustomColumns.notes"
+					:value_type="activeCustomColumns.value_type"
+					:expr="activeCustomColumns.expr"
+					:valueTypeItems="valueTypeItems"
+					:typeModal="typeModal"
+					@save="putEditCustomColumns"
+					@create="getCreateCustomColumns"
+				></ModalEditCustomColumns>
+			</div>
 
-			<ModalEditCustomColumns
-				title="Edit Custom Column"
-				v-model="isOpenEditCustomColumns"
-
-				
-				@save="renameLayout"
-			></ModalEditCustomColumns>
 			<!-- :name="activeCustomColumns.name"
 
-:user_code="activeCustomColumns.user_code" -->
-			<!-- :name="activeCustomColumns.name"
-
-
-				:user_code="activeCustomColumns.user_code" -->
-			<!-- :content_type="content_type"
-				@save="renameCustomColumns" -->
-			<!-- :name="activeLayout.name"
-		:user_code="activeLayout.user_code"
+			 :user_code="activeCustomColumns.user_code"
 		:content_type="content_type"
+				@save="renameCustomColumns" 
+
 		:occupiedUserCodes="occupiedUserCodes"
 		v-model="renameIsOpened"
 		@save="renameLayout" -->
@@ -69,27 +67,55 @@
 </template>
 
 <script setup>
+	import { VAceEditor } from 'vue3-ace-editor'
+	import 'ace-builds/src-noconflict/mode-json'
+	import 'ace-builds/src-noconflict/theme-monokai'
 	let props = defineProps({
 		title: String,
 		content_type: String,
 	})
 
-	// // 	attributeDataService: String,
-	// 	entityViewerEventService: String,
-	// 	activeLayout: Object,
-	// 	layouts: Array,
-	// 	autosaveLayout: Object,
-	// 	loadingLayout: Boolean,
-	// 	loadingLayoutsList: Boolean,
-	// 	content_type: String,
-
-	// 	isLayoutDefault: Function,
 	const isOpenDeleteCustomColumns = ref(false)
 	const isOpenEditCustomColumns = ref(false)
 	const evAttrsStore = useEvAttributesStore()
 
 	let vm = reactive({ content_type: props.content_type })
-	let activeCustomColumns = ref()
+	let valueTypeItems = reactive([
+		{
+			id: 10,
+			name: 'Text',
+		},
+		{
+			id: 20,
+			name: 'Number',
+		},
+		{
+			id: 40,
+			name: 'Date',
+		},
+	])
+	let typeModal = ref()
+	let activeCustomColumns = ref([
+		{
+			expr: '',
+		},
+		{
+			id: '',
+		},
+		{
+			name: '',
+		},
+		{
+			notes: '',
+		},
+		{
+			user_code: '',
+		},
+		{
+			value_type: '',
+		},
+	])
+
 	// activeCustomColumns.name = ""
 	// activeCustomColumns.user_code = ""
 	// console.log(' test props.content_type', props.content_type)
@@ -103,6 +129,10 @@
 	// let attrsList = ref()
 
 	let attrsList = await evAttrsStore.getFetchCustomFields(props.content_type)
+	let newAttrsList = ref(attrsList)
+
+	// console.log('attrsListfv снаружиs', attrsList)
+	// console.log('newAttrsList снаружиs', newAttrsList.value)
 
 	// async function init() {
 	// 	let res = await evAttrsStore.getFetchCustomFields(props.content_type)
@@ -118,7 +148,7 @@
 	vm.readyStatus = { customFields: false, attributes: false }
 
 	async function deleteColumns(item) {
-		console.log('itemitem', item)
+		// console.log('itemitem', item)
 		let confirm = await useConfirm({
 			title: 'Confirm action',
 			text: `Do you want to delete "${item.name}" layout?`,
@@ -148,16 +178,82 @@
 			throw new Error(res.error)
 		}
 		useNotify({ type: 'success', title: `data delete on the server` })
-		
+		newAttrsList = newAttrsList.value.filter((number) => number.id !== item.id)
+		// console.log('newAttrsList  deleteCustomColumns', newAttrsList)
 	}
 
 	function editCustomColumns(newNamesData) {
 		activeCustomColumns = newNamesData
+		console.log('activeCustomColumns снаружиs', activeCustomColumns)
 		// emit('rename', newNamesData)
+		typeModal = 'edit'
 		isOpenEditCustomColumns.value = true
-		
+	}
+	function createCustomColumns(newNamesData) {
+		// console.log('activeCustomColumns снаружиs', activeCustomColumns)
+		// emit('rename', newNamesData)
+		typeModal = 'create'
+		isOpenEditCustomColumns.value = true
+	}
+	function putEditCustomColumns(newNamesData) {
+		console.log('putEditCustomColumns newNamesData.id', activeCustomColumns.id)
+		let res = useApi('balanceReportCustomFieldList.put', {
+			params: { id: activeCustomColumns.id },
+			body: newNamesData,
+		})
+		if (res.error) {
+			useNotify({
+				type: 'error',
+				title: res.error.message || res.error.detail,
+			})
+			throw new Error(res.error)
+		} else if (res.status === 'conflict') {
+			useNotify({
+				type: 'error',
+				title: 'You can not Edit CustomColumns that already in use',
+			})
+			throw new Error(res.error)
+		}
+		useNotify({ type: 'success', title: `data Edit on the server` })
+		console.log(
+			'isOpenEditCustomColumns.value сначала',
+			isOpenEditCustomColumns.value
+		)
+		isOpenEditCustomColumns.value = false
+		console.log(
+			'isOpenEditCustomColumns.value снаружиs',
+			isOpenEditCustomColumns.value
+		)
 	}
 
+	function getCreateCustomColumns(newNamesData) {
+		let res = useApi('balanceReportCustomFieldList.get', {
+			body: newNamesData,
+		})
+		if (res.error) {
+			useNotify({
+				type: 'error',
+				title: res.error.message || res.error.detail,
+			})
+			throw new Error(res.error)
+		} else if (res.status === 'conflict') {
+			useNotify({
+				type: 'error',
+				title: 'You can not Edit CustomColumns that already in use',
+			})
+			throw new Error(res.error)
+		}
+		useNotify({ type: 'success', title: `data Edit on the server` })
+		console.log(
+			'isOpenEditCustomColumns.value сначала',
+			isOpenEditCustomColumns.value
+		)
+		isOpenEditCustomColumns.value = false
+		console.log(
+			'isOpenEditCustomColumns.value снаружиs',
+			isOpenEditCustomColumns.value
+		)
+	}
 	// vm.getList = function () {
 	// 	customFieldService.getList(props.content_type).then(function (data) {
 	// 		vm.customFields = data.results
