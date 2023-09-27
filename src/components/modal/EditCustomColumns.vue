@@ -1,7 +1,12 @@
 <template>
-	<BaseModal :title="title">
+	<BaseModal
+		:title="title"
+		:modelValue="modelValue"
+		@update:modelValue="(newVal) => emit('update:modelValue', newVal)"
+		class="modal--rename"
+	>
 		<div class="wrapp">
-			<FmInputText label="Custom Column Name" v-model="newName"  />
+			<FmInputText label="Custom Column Name" v-model="newName" />
 			<!-- @update:newName="emits('newName', $event)" -->
 			<FmInputText
 				label="Custom Column Reference Code (use programming language naming rules)"
@@ -10,9 +15,34 @@
 				:content_type="content_type"
 				v-model:errorData="nucErrorData"
 			/>
-			<FmSelect label="Value type"></FmSelect>
-			<textarea name="" id="" cols="30" rows="10"></textarea>
-			<FmInputText label="Custom Column Expression" />
+			<FmSelect
+				label="Value type"
+				v-model="newValueType"
+				:items="dataValueType"
+			></FmSelect>
+			<textarea
+				class="bi_area"
+				cols="60"
+				rows="5"
+				v-model="newNotes"
+			></textarea>
+
+			<!-- <FmInputText label="Custom Column Expression" /> -->
+			<BaseInput label="Custom Column Expression" v-model="newExpression" />
+
+			<!-- <v-ace-editor
+					v-model:value="policyJson"
+					@init="editorInit"
+					lang="json"
+					theme="monokai"
+					style="height: 300px;width: 600px;"/> -->
+			<v-ace-editor
+				v-model:value="content"
+				@init="editorInit"
+				lang="json"
+				theme="monokai"
+				style="height: 300px; width: 600px"
+			/>
 			<!-- 	:modelValue="name"
 						:errorData="errors.name"
 						@update:modelValue="emit('update:name', $event)"
@@ -21,10 +51,24 @@
 
 		<template #controls="{ cancel }">
 			<slot name="controls" :cancel="cancel">
-				<FmBtn type="basic" @click="() => cancelModal(cancel)">CANCEL</FmBtn>
-				<FmBtn type="primary" :disabled="!!nucErrorData" @click="save()"
-					>Save</FmBtn
-				>
+				<div class="modal-bottom">
+					<FmBtn type="basic" @click="() => cancelModal(cancel)">CANCEL</FmBtn>
+
+					<FmBtn
+						v-if="activeTypeModal == 'edit'"
+						type="primary"
+						:disabled="!!nucErrorData"
+						@click="save()"
+						>Save</FmBtn
+					>
+					<FmBtn
+						v-else
+						type="primary"
+						:disabled="!!nucErrorData"
+						@click="create()"
+						>Save</FmBtn
+					>
+				</div>
 			</slot>
 		</template>
 	</BaseModal>
@@ -35,47 +79,127 @@
 		title: String,
 		name: String,
 		user_code: String,
-		
+		notes: String,
+		value_type: String,
+		expr: String,
+		valueTypeItems: Object,
+		typeModal: String,
 	})
-	// let emit = defineEmits(['save', 'update:modelValue'])
+	let emit = defineEmits(['save', 'create', 'update:modelValue' ])
 
-	// let newName = ref(props.name)
-	// let newUserCode = ref(props.user_code)
-	// let configCode = ref('')
-	// let nucErrorData = ref(null)
-	// watch(
-	// 	() => props.name,
-	// 	() => (newName.value = props.name)
-	// )
-	// watch(
-	// 	() => props.user_code,
-	// 	() => (newUserCode.value = props.user_code)
-	// )
-	// function save() {
-	// 	if (!newUserCode.value) {
-	// 		nucErrorData.value = {
-	// 			message: 'User code should not be empty',
-	// 		}
-	// 	} else {
-	// 		emit('save', {
-	// 			name: newName.value,
-	// 			user_code: newUserCode.value,
-	// 			configuration_code: configCode.value,
-	// 		})
-	// 	}
-	// }
+	let dataValueType = ref(props.valueTypeItems)
+	let activeTypeModal = ref(props.typeModal)
+	let newName = ref(props.name)
+	let newNotes = ref(props.notes)
+	let newValueType = ref(props.value_type)
+	let newExpression = ref(props.expr)
+	let newUserCode = ref(props.user_code)
+	let configCode = ref('')
+	let nucErrorData = ref(null)
 
-	// function cancelModal(cancelFn) {
-	// 	newName.value = props.name
-	// 	newUserCode.value = props.user_code
+	watch(
+		() => props.name,
+		() => (newName.value = props.name)
+	)
+	watch(
+		() => props.notes,
+		() => (newUserCode.value = props.user_code)
+	)
+	watch(
+		() => props.value_type,
+		() => (newName.value = props.name)
+	)
+	watch(
+		() => props.expr,
+		() => (newUserCode.value = props.user_code)
+	)
+	watch(
+		() => props.user_code,
+		() => (newName.value = props.name)
+	)
 
-	// 	cancelFn()
-	// }
+	console.log('newName = ref(props.name)', newName.value)
+	console.log('newUserCode = ref(props.user_code)', newUserCode.value)
+	function editorInit(editor) {
+		editor.setHighlightActiveLine(false)
+		editor.setShowPrintMargin(false)
+		editor.setFontSize(14)
+		editor.setBehavioursEnabled(true)
+
+		editor.focus()
+		editor.navigateFileStart()
+	}
+	function save() {
+		emit('save', {
+			name: newName.value,
+			user_code: newUserCode.value,
+			configuration_code: configCode.value,
+			notes: newNotes.value,
+			value_type: newValueType.value,
+			expr: newExpression.value,
+		})
+		console.log('newValueType', newValueType.value)
+		console.log('newName = ref(props.name) ин save()', newName.value)
+		console.log(
+			'newUserCode = ref(props.user_code) ин save()',
+			newUserCode.value
+		)
+		// if (!newUserCode.value) {
+		// 	nucErrorData.value = {
+		// 		message: 'User code should not be empty',
+		// 	}
+		// } else {
+		// 	emit('save', {
+		// 		name: newName.value,
+		// 		user_code: newUserCode.value,
+		// 		configuration_code: configCode.value,
+		// 	})
+		// }
+	}
+	function create() {
+		emit('create', {
+			name: newName.value,
+			user_code: newUserCode.value,
+			configuration_code: configCode.value,
+			notes: newNotes.value,
+			value_type: newValueType.value,
+			expr: newExpression.value,
+		})
+		console.log('newValueType', newValueType.value)
+		console.log('newName = ref(props.name) ин save()', newName.value)
+		console.log(
+			'newUserCode = ref(props.user_code) ин save()',
+			newUserCode.value
+		)
+		// if (!newUserCode.value) {
+		// 	nucErrorData.value = {
+		// 		message: 'User code should not be empty',
+		// 	}
+		// } else {
+		// 	emit('save', {
+		// 		name: newName.value,
+		// 		user_code: newUserCode.value,
+		// 		configuration_code: configCode.value,
+		// 	})
+		// }
+	}
+
+
+	function cancelModal(cancelFn) {
+		newName.value = props.name
+		newUserCode.value = props.user_code
+
+		cancelFn()
+	}
 </script>
 
 <style lang="scss" scoped>
 	.wrapp {
 		padding: 0px 15px;
 		min-width: 500px;
+	}
+	.modal-bottom {
+		display: flex;
+		justify-content: flex-end;
 	}
 </style>
