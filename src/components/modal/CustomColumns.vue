@@ -7,7 +7,7 @@
 				<FmBtn type="primary" @click="save">RETURN TO VIEW</FmBtn>
 			</div>
 			<div class="content">
-				<div class="card" v-for="(item, index) in newAttrsList" :key="index">
+				<div class="card" v-for="(item, index) in attrsList" :key="index">
 					<div class="card__inner">
 						<h3 class="card__title">{{ item?.name }}</h3>
 						<div class="card__btn">
@@ -45,15 +45,7 @@
 				></ModalEditCustomColumns>
 			</div>
 
-			<!-- :name="activeCustomColumns.name"
 
-			 :user_code="activeCustomColumns.user_code"
-		:content_type="content_type"
-				@save="renameCustomColumns" 
-
-		:occupiedUserCodes="occupiedUserCodes"
-		v-model="renameIsOpened"
-		@save="renameLayout" -->
 		</div>
 
 		<template #controls="{ cancel }">
@@ -67,9 +59,6 @@
 </template>
 
 <script setup>
-	import { VAceEditor } from 'vue3-ace-editor'
-	import 'ace-builds/src-noconflict/mode-json'
-	import 'ace-builds/src-noconflict/theme-monokai'
 	let props = defineProps({
 		title: String,
 		content_type: String,
@@ -116,34 +105,17 @@
 		},
 	])
 
-	// activeCustomColumns.name = ""
-	// activeCustomColumns.user_code = ""
-	// console.log(' test props.content_type', props.content_type)
-	// console.log(' vm', vm)
 
-	// vm.attributeDataService = attributeDataService
-	// vm.entityViewerEventService = entityViewerEventService
 	vm.customFields = []
-	// async function getAttrsList() {}
 
-	// let attrsList = ref()
 
-	let attrsList = await evAttrsStore.getFetchCustomFields(props.content_type)
-	let newAttrsList = ref(attrsList)
+	await evAttrsStore.getFetchCustomFields(props.content_type)
 
-	// console.log('attrsListfv снаружиs', attrsList)
-	// console.log('newAttrsList снаружиs', newAttrsList.value)
 
-	// async function init() {
-	// 	let res = await evAttrsStore.getFetchCustomFields(props.content_type)
-	// 	console.log('res внутри ', res)
-	// 	return attrsList = res
-	// }
-
-	// init()
-	// console.log('attrsListfv снаружи', attrsList)
-
-	// getAttrsList()
+	let attrsList = computed(() => {
+		return evAttrsStore.customFields[props.content_type]
+	})
+	
 
 	vm.readyStatus = { customFields: false, attributes: false }
 
@@ -178,26 +150,21 @@
 			throw new Error(res.error)
 		}
 		useNotify({ type: 'success', title: `data delete on the server` })
-		newAttrsList = newAttrsList.value.filter((number) => number.id !== item.id)
-		// console.log('newAttrsList  deleteCustomColumns', newAttrsList)
 	}
 
 	function editCustomColumns(newNamesData) {
 		activeCustomColumns = newNamesData
 		console.log('activeCustomColumns снаружиs', activeCustomColumns)
-		// emit('rename', newNamesData)
 		typeModal = 'edit'
 		isOpenEditCustomColumns.value = true
 	}
 	function createCustomColumns(newNamesData) {
-		// console.log('activeCustomColumns снаружиs', activeCustomColumns)
-		// emit('rename', newNamesData)
 		typeModal = 'create'
 		isOpenEditCustomColumns.value = true
 	}
-	function putEditCustomColumns(newNamesData) {
+	async function putEditCustomColumns(newNamesData) {
 		console.log('putEditCustomColumns newNamesData.id', activeCustomColumns.id)
-		let res = useApi('balanceReportCustomFieldList.put', {
+		let res = await useApi('balanceReportCustomFieldList.put', {
 			params: { id: activeCustomColumns.id },
 			body: newNamesData,
 		})
@@ -215,19 +182,13 @@
 			throw new Error(res.error)
 		}
 		useNotify({ type: 'success', title: `data Edit on the server` })
-		console.log(
-			'isOpenEditCustomColumns.value сначала',
-			isOpenEditCustomColumns.value
-		)
+
+		await evAttrsStore.fetchCustomFields(props.content_type)
 		isOpenEditCustomColumns.value = false
-		console.log(
-			'isOpenEditCustomColumns.value снаружиs',
-			isOpenEditCustomColumns.value
-		)
 	}
 
-	function getCreateCustomColumns(newNamesData) {
-		let res = useApi('balanceReportCustomFieldList.get', {
+	async function getCreateCustomColumns(newNamesData) {
+		let res = await useApi('balanceReportCustomFieldList.post', {
 			body: newNamesData,
 		})
 		if (res.error) {
@@ -244,68 +205,9 @@
 			throw new Error(res.error)
 		}
 		useNotify({ type: 'success', title: `data Edit on the server` })
-		console.log(
-			'isOpenEditCustomColumns.value сначала',
-			isOpenEditCustomColumns.value
-		)
+		await evAttrsStore.fetchCustomFields(props.content_type)
 		isOpenEditCustomColumns.value = false
-		console.log(
-			'isOpenEditCustomColumns.value снаружиs',
-			isOpenEditCustomColumns.value
-		)
 	}
-	// vm.getList = function () {
-	// 	customFieldService.getList(props.content_type).then(function (data) {
-	// 		vm.customFields = data.results
-
-	// 		console.log('vm.customFields', vm.customFields)
-
-	// 		vm.readyStatus.customFields = true
-
-	// 		$scope.$apply()
-	// 	})
-	// }
-
-	// init()
-	// async function init() {
-	// 	let res = await Promise.all([
-	// 		evAttrsStore.getFetchCustomFields(),
-
-	// 		console.log('evAttrsStore', evAttrsStore),
-	// 	])
-	// 	evAttrsStore.value = res[0].results
-	// }
-	// console.log('evAttrsStore', evAttrsStore)
-	// delete.forEach(function (textField) {
-	// 		if (textField.id >= 0) {
-	// 			let res = useApi('complexTransactionUserField.put', {
-	// 				params: { id: textField.id },
-	// 				body: textField,
-	// 			})
-	// 			if (res.error) {
-	// 				useNotify({
-	// 					type: 'error',
-	// 					title: res.error.message || res.error.detail,
-	// 				})
-	// 				throw new Error(res.error)
-	// 			}
-	// 		} else {
-	// 			textField.configuration_code = configurationListActive.value
-	// 			textField.user_code = `${configurationListActive.value}:${textField.key}`
-	// 			let res = useApi('complexTransactionUserField.post', {
-	// 				body: textField,
-	// 			})
-	// 			if (res.error) {
-	// 				useNotify({
-	// 					type: 'error',
-	// 					title: res.error.message || res.error.detail,
-	// 				})
-	// 				throw new Error(res.error)
-	// 			}
-	// 		}
-	// 	})
-	// 	useNotify({ type: 'success', title: `data saved on the server` })
-	// }
 </script>
 
 <style lang="scss" scoped>
