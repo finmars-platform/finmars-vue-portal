@@ -1,14 +1,12 @@
 <template>
 	<div class="container">
-		<!-- <h1 class="title">Ecosystem Default</h1> -->
 		<table class="portfolio-table">
 			<thead>
 				<tr>
 					<th>Name</th>
 					<th>Unique Code</th>
 					<th>Notes</th>
-					<!-- <th>Default Instrument Pricing Scheme</th>
-					<th>Default Currency Pricing Scheme</th> -->
+
 					<th></th>
 				</tr>
 			</thead>
@@ -17,8 +15,7 @@
 					<td>{{ item.name }}</td>
 					<td>{{ item.user_code }}</td>
 					<td>{{ item.notes }}</td>
-					<!-- <td>{{ item.default_instrument_pricing_scheme_object.name }}</td> -->
-					<!-- <td>{{ item.default_currency_pricing_scheme_object.name }}</td>  -->
+
 					<td>
 						<FmBtn
 							type="text"
@@ -42,18 +39,23 @@
 			class="g-toggle-filters-btn"
 			@click="createPricingPolicy(item)"
 		>
-			<!-- @click="defaultSettingsCreate()"
-			:disabled="disabledBtn" -->
 			Add New
 		</FmBtn>
-		<ModalPortfolioBundleManager
+		<div v-if="isOpenEditPricingPolicy">
+			<ModalPortfolioBundleManager
 				title="Portfolio Bundle Manager"
 				v-model="isOpenEditPricingPolicy"
-				
+				:name="activePolicyList.name"
+				:user_code="activePolicyList.user_code"
+				:notes="activePolicyList.notes"
+				:typeModal="typeModal"
+				:registers="activePolicyList.registers"
+				:registersItems="portfolioRegister"
+				@save="putEditPortfolioBundle"
+				@create="getCreatePortfolioBundle"
 			></ModalPortfolioBundleManager>
-		<!-- :name="activeCustomColumns.name"
-				:user_code="activeCustomColumns.user_code"
-				@save="renameLayout" -->
+		
+		</div>
 	</div>
 </template>
 
@@ -70,10 +72,11 @@
 	const pricingPolicyList = ref([])
 	let activePolicyList = ref([])
 	let isOpenEditPricingPolicy = ref(false)
+	let typeModal = ref()
+	let portfolioRegister = ref()
 	defaultsGet()
 	async function defaultsGet() {
 		let edRes = await useApi('portfolioBundles.get')
-		// let edRes = await useApi('pricingPolicyList.get')
 
 		pricingPolicyList.value = edRes.error ? {} : edRes.results
 	}
@@ -89,7 +92,14 @@
 			deletePricingPolicyItem(item)
 		}
 	}
-
+	
+	
+	async function getPortfolioRegister() {
+		let edRes = await useApi('portfolioRegisterList.get')
+		portfolioRegister.value = edRes.error ? {} : edRes.results
+	}
+	getPortfolioRegister()
+	console.log('portfolioRegister', portfolioRegister)
 	function deletePricingPolicyItem(item) {
 		let res = useApi('portfolioBundles.delete', {
 			params: { id: item.id },
@@ -113,12 +123,14 @@
 	}
 	function editPricingPolicy(newNamesData) {
 		activePolicyList = newNamesData
-		// emit('rename', newNamesData)
+		console.log('activePolicyList.registers', activePolicyList.registers)
+	
+		typeModal = 'edit'
 		isOpenEditPricingPolicy.value = true
 	}
 	function createPricingPolicy(newNamesData) {
-		activePolicyList = newNamesData
-		// emit('rename', newNamesData)
+	
+		typeModal = 'create'
 		isOpenEditPricingPolicy.value = true
 	}
 
