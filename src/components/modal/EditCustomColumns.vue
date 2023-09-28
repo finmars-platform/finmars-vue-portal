@@ -7,7 +7,6 @@
 	>
 		<div class="wrapp">
 			<FmInputText label="Custom Column Name" v-model="newName" />
-			<!-- @update:newName="emits('newName', $event)" -->
 			<FmInputText
 				label="Custom Column Reference Code (use programming language naming rules)"
 				v-model="newUserCode"
@@ -22,31 +21,19 @@
 			></FmSelect>
 			<textarea
 				class="bi_area"
-				cols="60"
+				cols="73"
 				rows="5"
 				v-model="newNotes"
 			></textarea>
 
-			<!-- <FmInputText label="Custom Column Expression" /> -->
-			<BaseInput label="Custom Column Expression" v-model="newExpression" />
-
-			<!-- <v-ace-editor
-					v-model:value="policyJson"
-					@init="editorInit"
-					lang="json"
-					theme="monokai"
-					style="height: 300px;width: 600px;"/> -->
+			<h4 class="title-custom">Custom Column Expression</h4>
 			<v-ace-editor
-				v-model:value="content"
+				v-model:value="newExpression"
 				@init="editorInit"
 				lang="json"
 				theme="monokai"
 				style="height: 300px; width: 600px"
 			/>
-			<!-- 	:modelValue="name"
-						:errorData="errors.name"
-						@update:modelValue="emit('update:name', $event)"
-						@update:errorData="(newVal) => onErrorDataChange('name', newVal)" -->
 		</div>
 
 		<template #controls="{ cancel }">
@@ -75,6 +62,9 @@
 </template>
 
 <script setup>
+	import { VAceEditor } from 'vue3-ace-editor'
+	import 'ace-builds/src-noconflict/mode-json'
+	import 'ace-builds/src-noconflict/theme-monokai'
 	let props = defineProps({
 		title: String,
 		name: String,
@@ -85,7 +75,7 @@
 		valueTypeItems: Object,
 		typeModal: String,
 	})
-	let emit = defineEmits(['save', 'create', 'update:modelValue' ])
+	let emit = defineEmits(['save', 'create', 'update:modelValue'])
 
 	let dataValueType = ref(props.valueTypeItems)
 	let activeTypeModal = ref(props.typeModal)
@@ -118,8 +108,6 @@
 		() => (newName.value = props.name)
 	)
 
-	console.log('newName = ref(props.name)', newName.value)
-	console.log('newUserCode = ref(props.user_code)', newUserCode.value)
 	function editorInit(editor) {
 		editor.setHighlightActiveLine(false)
 		editor.setShowPrintMargin(false)
@@ -130,60 +118,37 @@
 		editor.navigateFileStart()
 	}
 	function save() {
-		emit('save', {
-			name: newName.value,
-			user_code: newUserCode.value,
-			configuration_code: configCode.value,
-			notes: newNotes.value,
-			value_type: newValueType.value,
-			expr: newExpression.value,
-		})
-		console.log('newValueType', newValueType.value)
-		console.log('newName = ref(props.name) ин save()', newName.value)
-		console.log(
-			'newUserCode = ref(props.user_code) ин save()',
-			newUserCode.value
-		)
-		// if (!newUserCode.value) {
-		// 	nucErrorData.value = {
-		// 		message: 'User code should not be empty',
-		// 	}
-		// } else {
-		// 	emit('save', {
-		// 		name: newName.value,
-		// 		user_code: newUserCode.value,
-		// 		configuration_code: configCode.value,
-		// 	})
-		// }
+		if (!newUserCode.value) {
+			nucErrorData.value = {
+				message: 'User code should not be empty',
+			}
+		} else {
+			emit('save', {
+				name: newName.value,
+				user_code: newUserCode.value,
+				configuration_code: configCode.value,
+				notes: newNotes.value,
+				value_type: newValueType.value,
+				expr: newExpression.value,
+			})
+		}
 	}
 	function create() {
-		emit('create', {
-			name: newName.value,
-			user_code: newUserCode.value,
-			configuration_code: configCode.value,
-			notes: newNotes.value,
-			value_type: newValueType.value,
-			expr: newExpression.value,
-		})
-		console.log('newValueType', newValueType.value)
-		console.log('newName = ref(props.name) ин save()', newName.value)
-		console.log(
-			'newUserCode = ref(props.user_code) ин save()',
-			newUserCode.value
-		)
-		// if (!newUserCode.value) {
-		// 	nucErrorData.value = {
-		// 		message: 'User code should not be empty',
-		// 	}
-		// } else {
-		// 	emit('save', {
-		// 		name: newName.value,
-		// 		user_code: newUserCode.value,
-		// 		configuration_code: configCode.value,
-		// 	})
-		// }
+		if (!newUserCode.value) {
+			nucErrorData.value = {
+				message: 'User code should not be empty',
+			}
+		} else {
+			emit('create', {
+				name: newName.value,
+				user_code: newUserCode.value,
+				configuration_code: configCode.value,
+				notes: newNotes.value,
+				value_type: newValueType.value,
+				expr: newExpression.value,
+			})
+		}
 	}
-
 
 	function cancelModal(cancelFn) {
 		newName.value = props.name
@@ -201,5 +166,8 @@
 	.modal-bottom {
 		display: flex;
 		justify-content: flex-end;
+	}
+	.title-custom {
+		padding: 20px 0;
 	}
 </style>
