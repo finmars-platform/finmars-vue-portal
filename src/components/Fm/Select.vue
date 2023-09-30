@@ -16,7 +16,6 @@
 				:class="{
 					active: isOpen,
 					bi_no_borders: no_borders,
-					small: size == 'small',
 				}"
 				:label="label"
 				:tooltip="tooltip"
@@ -108,7 +107,6 @@
 			default: 'name',
 		},
 		height: String,
-		size: String,
 		no_borders: Boolean,
 		optionsFilter: Boolean,
 		required: Boolean,
