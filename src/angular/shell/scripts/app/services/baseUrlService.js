@@ -2,7 +2,7 @@ const resolve = () => {
 	if ('__PROJECT_ENV__') {
 		// const host = '__API_HOST__';
 		// IMPORTANT
-		const host = 'https://dev.finmars.com'
+		const host = 'https://stage.finmars.com'
 
 		return host
 	}
