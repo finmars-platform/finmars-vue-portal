@@ -51,7 +51,7 @@
 		<template #controls="{ cancel }">
 			<slot name="controls" :cancel="cancel">
 				<div>
-					<FmBtn type="basic" @click="cancel">CANCEL</FmBtn>
+					<FmBtn type="basic" @click="cancel">CLOSE</FmBtn>
 				</div>
 			</slot>
 		</template>
