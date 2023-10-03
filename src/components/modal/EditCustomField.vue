@@ -17,14 +17,14 @@
 			<FmSelect
 				label="Value type"
 				v-model="newValueType"
-				:items="dataValueType"
+				:items="valueTypeItems"
 			></FmSelect>
-			<textarea
+			<FmInputArea
 				class="bi_area"
 				cols="73"
 				rows="5"
 				v-model="newNotes"
-			></textarea>
+			></FmInputArea>
 
 			<h4 class="title-custom">Custom Column Expression</h4>
 			<v-ace-editor
@@ -72,12 +72,10 @@
 		notes: String,
 		value_type: String,
 		expr: String,
-		valueTypeItems: Object,
-		typeModal: String,
+		create: String,
 	})
 	let emit = defineEmits(['save', 'create', 'update:modelValue'])
 
-	let dataValueType = ref(props.valueTypeItems)
 	let activeTypeModal = ref(props.typeModal)
 	let newName = ref(props.name)
 	let newNotes = ref(props.notes)
@@ -86,6 +84,20 @@
 	let newUserCode = ref(props.user_code)
 	let configCode = ref('')
 	let nucErrorData = ref(null)
+	let valueTypeItems = reactive([
+		{
+			id: 10,
+			name: 'Text',
+		},
+		{
+			id: 20,
+			name: 'Number',
+		},
+		{
+			id: 40,
+			name: 'Date',
+		},
+	])
 
 	watch(
 		() => props.name,
