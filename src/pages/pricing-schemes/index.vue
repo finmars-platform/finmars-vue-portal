@@ -5,12 +5,13 @@
 				<tr>
 					<th>Name</th>
 					<th>Unique Code</th>
+					<th>Notes</th>
 
 					<th></th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr v-for="(item, index) in transactionTypeList" :key="index">
+				<tr v-for="(item, index) in pricingPolicyList" :key="index">
 					<td>{{ item.name }}</td>
 					<td>{{ item.user_code }}</td>
 					<td>{{ item.notes }}</td>
@@ -68,18 +69,18 @@
 			},
 		],
 	})
-	const transactionTypeList = ref([])
+	const pricingPolicyList = ref([])
 	let activePolicyList = ref([])
 	let isOpenEditPricingPolicy = ref(false)
 	let typeModal = ref()
 	let portfolioRegister = ref()
 	defaultsGet()
 	async function defaultsGet() {
-		let edRes = await useApi('transactionTypeGroup.get')
+		let edRes = await useApi('portfolioBundles.get')
 
-		transactionTypeList.value = edRes.error ? {} : edRes.results
+		pricingPolicyList.value = edRes.error ? {} : edRes.results
 	}
-	console.log('portfolioBundles', transactionTypeList)
+	console.log('portfolioBundles', pricingPolicyList)
 	async function deletePricingPolicy(item) {
 		console.log('itemitem', item)
 		let confirm = await useConfirm({
@@ -154,7 +155,7 @@
 	td,
 	th {
 		width: 25%;
-		padding: 5px 5px;
+		padding: 0 5px;
 		display: table-cell;
 		text-align: left;
 		vertical-align: middle;
