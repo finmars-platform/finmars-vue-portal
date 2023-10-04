@@ -19,13 +19,13 @@
 						<FmBtn
 							type="text"
 							class="g-toggle-filters-btn"
-							@click="editPricingPolicy(item)"
+							@click="editTransactionType(item)"
 							>Edit
 						</FmBtn>
 						<FmBtn
 							type="text"
 							class="g-toggle-filters-btn"
-							@click="deletePricingPolicy(item)"
+							@click="deleteTransaction(item)"
 						>
 							Delete
 						</FmBtn>
@@ -36,24 +36,22 @@
 		<FmBtn
 			type="primary"
 			class="g-toggle-filters-btn"
-			@click="createPricingPolicy(item)"
+			@click="createTransactionType(item)"
 		>
 			Add New
 		</FmBtn>
-		<div v-if="isOpenEditPricingPolicy">
-			<ModalPortfolioBundleManager
-				title="Portfolio Bundle Manager"
-				v-model="isOpenEditPricingPolicy"
-				:name="activePolicyList.name"
-				:user_code="activePolicyList.user_code"
-				:notes="activePolicyList.notes"
-				:typeModal="typeModal"
-				:registers="activePolicyList.registers"
-				:registersItems="portfolioRegister"
-				@save="putEditPortfolioBundle"
-				@create="getCreatePortfolioBundle"
-			></ModalPortfolioBundleManager>
-		
+		<div v-if="isOpenEditTransactionType">
+			<ModalTransactionTypeGroup
+				title="Transaction Type Group"
+				v-model="isOpenEditTransactionType"
+				:name="activeTransactionTypeList.name"
+				:user_code="activeTransactionTypeList.user_code"
+				:ShortName="activeTransactionTypeList.short_name"
+				:configCode="activeTransactionTypeList.configuration_code"
+				:сreation="сreation"
+				@save="putEditTransactionType"
+				@create="getCreateTransactionType"
+			></ModalTransactionTypeGroup>
 		</div>
 	</div>
 </template>
@@ -69,38 +67,32 @@
 		],
 	})
 	const transactionTypeList = ref([])
-	let activePolicyList = ref([])
-	let isOpenEditPricingPolicy = ref(false)
-	let typeModal = ref()
-	let portfolioRegister = ref()
+	let activeTransactionTypeList = ref([])
+
+	let isOpenEditTransactionType = ref(false)
+	let сreation = ref(false)
+
 	defaultsGet()
 	async function defaultsGet() {
 		let edRes = await useApi('transactionTypeGroup.get')
 
 		transactionTypeList.value = edRes.error ? {} : edRes.results
 	}
-	console.log('portfolioBundles', transactionTypeList)
-	async function deletePricingPolicy(item) {
-		console.log('itemitem', item)
+	console.log('transactionTypeList', transactionTypeList)
+	async function deleteTransaction(item) {
+		// console.log('itemitem', item)
 		let confirm = await useConfirm({
 			title: 'Confirm action',
 			text: `Do you want to delete "${item.name}" layout?`,
 		})
 
 		if (confirm) {
-			deletePricingPolicyItem(item)
+			deleteTransactionType(item)
 		}
 	}
-	
-	
-	async function getPortfolioRegister() {
-		let edRes = await useApi('portfolioRegisterList.get')
-		portfolioRegister.value = edRes.error ? {} : edRes.results
-	}
-	getPortfolioRegister()
-	console.log('portfolioRegister', portfolioRegister)
-	function deletePricingPolicyItem(item) {
-		let res = useApi('portfolioBundles.delete', {
+
+	function deleteTransactionType(item) {
+		let res = useApi('transactionTypeGroup.delete', {
 			params: { id: item.id },
 			body: item,
 		})
@@ -117,37 +109,70 @@
 			})
 			throw new Error(res.error)
 		}
-		useNotify({ type: 'success', title: `data delete on the server` })
 		defaultsGet()
-	}
-	function editPricingPolicy(newNamesData) {
-		activePolicyList = newNamesData
-		console.log('activePolicyList.registers', activePolicyList.registers)
-	
-		typeModal = 'edit'
-		isOpenEditPricingPolicy.value = true
-	}
-	function createPricingPolicy(newNamesData) {
-	
-		typeModal = 'create'
-		isOpenEditPricingPolicy.value = true
+		useNotify({ type: 'success', title: `data delete on the server` })
 	}
 
-	// async function defaultSettingsCreate() {
-	// 	let res = await useApi('defaultSettings.put', {
-	// 		params: { id: ecosystemDefaults.value.id },
-	// 		body: ecosystemDefaults.value,
-	// 	})
+	function editTransactionType(newNamesData) {
+		activeTransactionTypeList = newNamesData
+		console.log('activeTransactionTypeснаружиs', activeTransactionTypeList)
+		сreation = false
+		console.log('сreation', сreation)
+		isOpenEditTransactionType.value = true
+	}
+	function createTransactionType(newNamesData) {
+		console.log('activeTransactionTypeснаружиs2', activeTransactionTypeList)
+		сreation = true
+		console.log('сreation 2', сreation)
 
-	// 	if (res.error) {
-	// 		// console.error(res.error);
-	// 		useNotify({ type: 'error', title: res.error.message || res.error.detail })
-	// 		throw new Error(res.error)
-	// 	} else {
-	// 		useNotify({ type: 'success', title: `data saved on the server` })
-	// 	}
-	// 	disabledBtn.value = true
-	// }
+		isOpenEditTransactionType.value = true
+	}
+	async function putEditTransactionType(newNamesData) {
+		console.log('putEditTransactionType newNamesData', newNamesData)
+		let res = await useApi('transactionTypeGroup.put', {
+			params: { id: activeTransactionTypeList.id },
+			body: newNamesData,
+		})
+		if (res.error) {
+			useNotify({
+				type: 'error',
+				title: res.error.message || res.error.detail,
+			})
+			throw new Error(res.error)
+		} else if (res.status === 'conflict') {
+			useNotify({
+				type: 'error',
+				title: 'You can not Edit CustomColumns that already in use',
+			})
+			throw new Error(res.error)
+		}
+		useNotify({ type: 'success', title: `data Edit on the server` })
+		defaultsGet()
+		isOpenEditTransactionType.value = false
+	}
+
+	async function getCreateTransactionType(newNamesData) {
+		activeTransactionTypeList = {}
+		let res = await useApi('transactionTypeGroup.post', {
+			body: newNamesData,
+		})
+		if (res.error) {
+			useNotify({
+				type: 'error',
+				title: res.error.message || res.error.detail,
+			})
+			throw new Error(res.error)
+		} else if (res.status === 'conflict') {
+			useNotify({
+				type: 'error',
+				title: 'You can not Edit CustomColumns that already in use',
+			})
+			throw new Error(res.error)
+		}
+		useNotify({ type: 'success', title: `data Edit on the server` })
+		defaultsGet()
+		isOpenEditTransactionType.value = false
+	}
 </script>
 
 <style lang="scss" scoped>
