@@ -375,5 +375,11 @@ export default {
 		put: prefix + '/ui/transaction-user-field/{id}/',
 		post: prefix + '/ui/transaction-user-field/',
 	},
+	transactionTypeGroup: {
+		get: prefix + '/transactions/transaction-type-group/',
+		put: prefix + '/transactions/transaction-type-group/{id}/',
+		post: prefix + '/transactions/transaction-type-group/',
+		delete: prefix + '/transactions/transaction-type-group/{id}/',
+	},
 
 }
