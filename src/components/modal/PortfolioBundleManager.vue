@@ -31,13 +31,18 @@
 
 				<FmBtn
 					type="primary"
-					v-if="activeTypeModal == 'edit'"
+					v-if="activeCreation == false"
 					:disabled="!!nucErrorData"
 					@click="save()"
 				>
 					SAVE
 				</FmBtn>
-				<FmBtn v-else type="primary" :disabled="!!nucErrorData" @click="save()">
+				<FmBtn
+					v-else
+					type="primary"
+					:disabled="!!nucErrorData"
+					@click="create()"
+				>
 					SAVE
 				</FmBtn>
 			</div>
@@ -54,17 +59,11 @@
 		typeModal: String,
 		registers: Object,
 		registersItems: Object,
+		publicName: String,
+		shortName: String,
+		сreation: String,
 	})
 	let emit = defineEmits(['save', 'create', 'update:modelValue'])
-	// modelValue: Boolean,
-	// 	name: String,
-	// 	user_code: String,
-	// 	content_type: String,
-	// 	occupiedUserCodes: {
-	// 		type: Array,
-	// 		default() { return [] },
-	// 	},
-	// let emit = defineEmits(['save', 'update:modelValue'])
 
 	let newName = ref(props.name)
 	let newUserCode = ref(props.user_code)
@@ -73,6 +72,11 @@
 	let activeTypeModal = ref(props.typeModal)
 	let newRegisters = ref(props.registers)
 	let registersItems = ref(props.registersItems)
+	let activeCreation = ref(props.сreation)
+	let newNote = ref(props.notes)
+	let newPublicName = ref(props.publicName)
+	let newShortName = ref(props.shortName)
+
 	console.log('registersItems', registersItems)
 	watch(
 		() => props.name,
@@ -87,6 +91,8 @@
 		() => (newUserCode.value = props.user_code)
 	)
 
+	console.log('activeCreation save', props.сreation)
+
 	function save() {
 		if (!newUserCode.value) {
 			nucErrorData.value = {
@@ -96,7 +102,26 @@
 			emit('save', {
 				name: newName.value,
 				user_code: newUserCode.value,
-				configuration_code: configCode.value,
+				registers: newRegisters.value,
+				notes: newNote.value,
+				public_name: newPublicName.value,
+				short_name: newShortName.value,
+			})
+		}
+	}
+	function create() {
+		if (!newUserCode.value) {
+			nucErrorData.value = {
+				message: 'User code should not be empty',
+			}
+		} else {
+			emit('create', {
+				name: newName.value,
+				user_code: newUserCode.value,
+				registers: newRegisters.value,
+				notes: newNote.value,
+				public_name: newPublicName.value,
+				short_name: newShortName.value,
 			})
 		}
 	}

@@ -11,7 +11,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr v-for="(item, index) in pricingPolicyList" :key="index">
+				<tr v-for="(item, index) in PortfolioBundleList" :key="index">
 					<td>{{ item.name }}</td>
 					<td>{{ item.user_code }}</td>
 					<td>{{ item.notes }}</td>
@@ -20,13 +20,13 @@
 						<FmBtn
 							type="text"
 							class="g-toggle-filters-btn"
-							@click="editPricingPolicy(item)"
+							@click="editPortfolioBundle(item)"
 							>Edit
 						</FmBtn>
 						<FmBtn
 							type="text"
 							class="g-toggle-filters-btn"
-							@click="deletePricingPolicy(item)"
+							@click="deletePortfolioBundle(item)"
 						>
 							Delete
 						</FmBtn>
@@ -37,24 +37,25 @@
 		<FmBtn
 			type="primary"
 			class="g-toggle-filters-btn"
-			@click="createPricingPolicy(item)"
+			@click="createPortfolioBundle(item)"
 		>
 			Add New
 		</FmBtn>
-		<div v-if="isOpenEditPricingPolicy">
+		<div v-if="isOpenEditPortfolioBundle">
 			<ModalPortfolioBundleManager
 				title="Portfolio Bundle Manager"
-				v-model="isOpenEditPricingPolicy"
-				:name="activePolicyList.name"
-				:user_code="activePolicyList.user_code"
-				:notes="activePolicyList.notes"
-				:typeModal="typeModal"
-				:registers="activePolicyList.registers"
+				v-model="isOpenEditPortfolioBundle"
+				:name="activePortfolioBundleList.name"
+				:user_code="activePortfolioBundleList.user_code"
+				:notes="activePortfolioBundleList.notes"
+				:сreation="сreation"
+				:publicName="activePortfolioBundleList.public_name"
+				:registers="activePortfolioBundleList.registers"
 				:registersItems="portfolioRegister"
+				:shortName="activePortfolioBundleList.short_name"
 				@save="putEditPortfolioBundle"
 				@create="getCreatePortfolioBundle"
 			></ModalPortfolioBundleManager>
-		
 		</div>
 	</div>
 </template>
@@ -69,19 +70,20 @@
 			},
 		],
 	})
-	const pricingPolicyList = ref([])
-	let activePolicyList = ref([])
-	let isOpenEditPricingPolicy = ref(false)
-	let typeModal = ref()
+	const PortfolioBundleList = ref([])
+	let activePortfolioBundleList = ref([])
+	console.log('activePortfolioBundleList', activePortfolioBundleList)
+	let isOpenEditPortfolioBundle = ref(false)
+	let сreation = ref(false)
 	let portfolioRegister = ref()
 	defaultsGet()
 	async function defaultsGet() {
 		let edRes = await useApi('portfolioBundles.get')
 
-		pricingPolicyList.value = edRes.error ? {} : edRes.results
+		PortfolioBundleList.value = edRes.error ? {} : edRes.results
 	}
-	console.log('portfolioBundles', pricingPolicyList)
-	async function deletePricingPolicy(item) {
+	console.log('portfolioBundles', PortfolioBundleList)
+	async function deletePortfolioBundle(item) {
 		console.log('itemitem', item)
 		let confirm = await useConfirm({
 			title: 'Confirm action',
@@ -89,18 +91,17 @@
 		})
 
 		if (confirm) {
-			deletePricingPolicyItem(item)
+			deletePortfolioBundleItem(item)
 		}
 	}
-	
-	
+	getPortfolioRegister()
 	async function getPortfolioRegister() {
 		let edRes = await useApi('portfolioRegisterList.get')
 		portfolioRegister.value = edRes.error ? {} : edRes.results
 	}
-	getPortfolioRegister()
+
 	console.log('portfolioRegister', portfolioRegister)
-	function deletePricingPolicyItem(item) {
+	function deletePortfolioBundleItem(item) {
 		let res = useApi('portfolioBundles.delete', {
 			params: { id: item.id },
 			body: item,
@@ -120,35 +121,73 @@
 		}
 		useNotify({ type: 'success', title: `data delete on the server` })
 		defaultsGet()
-	}
-	function editPricingPolicy(newNamesData) {
-		activePolicyList = newNamesData
-		console.log('activePolicyList.registers', activePolicyList.registers)
-	
-		typeModal = 'edit'
-		isOpenEditPricingPolicy.value = true
-	}
-	function createPricingPolicy(newNamesData) {
-	
-		typeModal = 'create'
-		isOpenEditPricingPolicy.value = true
+		
 	}
 
-	// async function defaultSettingsCreate() {
-	// 	let res = await useApi('defaultSettings.put', {
-	// 		params: { id: ecosystemDefaults.value.id },
-	// 		body: ecosystemDefaults.value,
-	// 	})
+	function editPortfolioBundle(newNamesData) {
+		// activePortfolioBundleList = " "
+		activePortfolioBundleList = newNamesData
+		console.log('activePortfolioBundleснаружиs', activePortfolioBundleList)
+		сreation = false
+		console.log('сreation', сreation)
+		isOpenEditPortfolioBundle.value = true
+	}
+	function createPortfolioBundle(newNamesData) {
+		activePortfolioBundleList = " "
+		console.log('activePortfolioBundleснаружиs2', activePortfolioBundleList)
+		сreation = true
+		console.log('сreation 2', сreation)
 
-	// 	if (res.error) {
-	// 		// console.error(res.error);
-	// 		useNotify({ type: 'error', title: res.error.message || res.error.detail })
-	// 		throw new Error(res.error)
-	// 	} else {
-	// 		useNotify({ type: 'success', title: `data saved on the server` })
-	// 	}
-	// 	disabledBtn.value = true
-	// }
+		isOpenEditPortfolioBundle.value = true
+	}
+	async function putEditPortfolioBundle(newNamesData) {
+		// activePortfolioBundleList = []
+		console.log('putEditPortfolioBundle newNamesData', newNamesData)
+		let res = await useApi('portfolioBundles.put', {
+			params: { id: activePortfolioBundleList.id },
+			body: newNamesData,
+		})
+		if (res.error) {
+			useNotify({
+				type: 'error',
+				title: res.error.message || res.error.detail,
+			})
+			throw new Error(res.error)
+		} else if (res.status === 'conflict') {
+			useNotify({
+				type: 'error',
+				title: 'You can not Edit CustomColumns that already in use',
+			})
+			throw new Error(res.error)
+		}
+		useNotify({ type: 'success', title: `data Edit on the server` })
+		defaultsGet()
+		
+		isOpenEditPortfolioBundle.value = false
+	}
+
+	async function getCreatePortfolioBundle(newNamesData) {
+		activePortfolioBundleList = {}
+		let res = await useApi('portfolioBundles.post', {
+			body: newNamesData,
+		})
+		if (res.error) {
+			useNotify({
+				type: 'error',
+				title: res.error.message || res.error.detail,
+			})
+			throw new Error(res.error)
+		} else if (res.status === 'conflict') {
+			useNotify({
+				type: 'error',
+				title: 'You can not Edit CustomColumns that already in use',
+			})
+			throw new Error(res.error)
+		}
+		useNotify({ type: 'success', title: `data Edit on the server` })
+		defaultsGet()
+		isOpenEditPortfolioBundle.value = false
+	}
 </script>
 
 <style lang="scss" scoped>

@@ -144,6 +144,8 @@ export default {
 	portfolioRegisterList: {
 		get: prefix + '/portfolios/portfolio-register/',
 		post: prefix + '/portfolios/portfolio-register/',
+		delete: prefix + '/portfolios/portfolio-register/{id}/',
+		put: prefix + '/portfolios/portfolio-register/{id}/',
 	},
 	portfolioRegisterEvFiltered: {
 		post: prefix + '/portfolios/portfolio-register/ev-item/',
