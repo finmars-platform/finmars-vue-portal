@@ -14,13 +14,15 @@
 				rows="5"
 				v-model="newNotes"
 			></textarea>
-			<BaseMultiSelectInput
-				title="Accounts multiselector"
-				item_title="name"
-				item_id="id"
-				v-model="newRegisters"
-				:items="registersItems"
-			/>
+			<div class="multi-select">
+				<BaseMultiSelectInput
+					title="Accounts multiselector"
+					item_title="name"
+					item_id="id"
+					v-model="newRegisters"
+					:items="registersItems"
+				/>
+			</div>
 		</div>
 		<!-- v-model="newRegisters" -->
 		<!-- :items="newRegisters" -->
@@ -152,5 +154,8 @@
 			display: flex;
 			padding: 0 8px;
 		}
+	}
+	.multi-select{
+		margin: 20px 0;
 	}
 </style>
