@@ -9,7 +9,7 @@
 
 		<textarea
 			class="bi_area"
-			:rows="calcRow"
+			:rows="rows"
 			:value="modelValue"
     	@input="$emit('update:modelValue', $event.target.value)"
 		></textarea>
@@ -20,18 +20,22 @@
 	let props = defineProps({
 		modelValue: [String, Number],
 		label: String,
-		auto: {
+		rows: {
 			type: Boolean,
-			default: true,
+			default: 7,
 		}
+		// auto: {
+		// 	type: Boolean,
+		// 	default: true,
+		// }
 	})
 	defineEmits(['update:modelValue'])
 
-	const calcRow = computed(() => {
-		if ( !props.auto ) return 7;
+	// const calcRow = computed(() => {
+	// 	if ( !props.auto || !props.modelValue ) return 7 ;
 
-		return props.modelValue.split("\n").length
-	})
+	// 	return props.modelValue.split("\n").length
+	// })
 </script>
 
 <style lang="scss" scoped>
