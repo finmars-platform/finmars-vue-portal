@@ -11,7 +11,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr v-for="(item, index) in PortfolioBundleList" :key="index">
+				<tr v-for="(item, index) in portfolioBundleList" :key="index">
 					<td>{{ item.name }}</td>
 					<td>{{ item.user_code }}</td>
 					<td>{{ item.notes }}</td>
@@ -70,7 +70,7 @@
 			},
 		],
 	})
-	const PortfolioBundleList = ref([])
+	const portfolioBundleList = ref([])
 	let activePortfolioBundleList = ref([])
 	console.log('activePortfolioBundleList', activePortfolioBundleList)
 	let isOpenEditPortfolioBundle = ref(false)
@@ -80,9 +80,9 @@
 	async function defaultsGet() {
 		let edRes = await useApi('portfolioBundles.get')
 
-		PortfolioBundleList.value = edRes.error ? {} : edRes.results
+		portfolioBundleList.value = edRes.error ? {} : edRes.results
 	}
-	console.log('portfolioBundles', PortfolioBundleList)
+	console.log('portfolioBundles', portfolioBundleList)
 	async function deletePortfolioBundle(item) {
 		console.log('itemitem', item)
 		let confirm = await useConfirm({
@@ -101,8 +101,8 @@
 	}
 
 	console.log('portfolioRegister', portfolioRegister)
-	function deletePortfolioBundleItem(item) {
-		let res = useApi('portfolioBundles.delete', {
+	async function deletePortfolioBundleItem(item) {
+		let res = await useApi('portfolioBundles.delete', {
 			params: { id: item.id },
 			body: item,
 		})
@@ -121,7 +121,6 @@
 		}
 		useNotify({ type: 'success', title: `data delete on the server` })
 		defaultsGet()
-		
 	}
 
 	function editPortfolioBundle(newNamesData) {
@@ -133,7 +132,7 @@
 		isOpenEditPortfolioBundle.value = true
 	}
 	function createPortfolioBundle(newNamesData) {
-		activePortfolioBundleList = " "
+		activePortfolioBundleList = ' '
 		console.log('activePortfolioBundleснаружиs2', activePortfolioBundleList)
 		сreation = true
 		console.log('сreation 2', сreation)
@@ -162,7 +161,7 @@
 		}
 		useNotify({ type: 'success', title: `data Edit on the server` })
 		defaultsGet()
-		
+
 		isOpenEditPortfolioBundle.value = false
 	}
 
