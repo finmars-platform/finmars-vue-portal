@@ -15,12 +15,13 @@
 				:content_type="content_type"
 				v-model:errorData="nucErrorData"
 			></FmInputUserCode>
-			<!-- <FmInputArea
+
+			<FmInputArea
 				class="bi_area"
 				cols="73"
 				rows="5"
 				v-model="newNotes"
-			></FmInputArea> -->
+			></FmInputArea>
 
 			<FmSelect title="Default Instrument Pricing Scheme" :items="itemsInstrumentSchemeList"/>
 			<FmSelect title="Default Currency Pricing Scheme"  :items="itemsCurrencySchemeList"/>
@@ -80,8 +81,8 @@
 	let newNote = ref(props.notes)
 	let newPublicName = ref(props.publicName)
 	let newShortName = ref(props.shortName)
-	let itemsInstrumentSchemeList = []
-	let itemsCurrencySchemeList = []
+	let itemsInstrumentSchemeList =  ref([])
+	let itemsCurrencySchemeList =  ref([])
 
 	async function getInstrumentSchemeList() {
 		let edRes = await useApi('instrumentSchemeList.get')
