@@ -7,11 +7,23 @@
 	>
 		<div>
 			<FmInputText label="Name" v-model="newName" />
-			
-			<FmInputArea v-model="newNotes"> </FmInputArea>
+			<FmInputUserCode
+				style="width: 400px"
+				class="m-b-20"
+				v-model="newUserCode"
+				v-model:configuration_code="configCode"
+				:content_type="content_type"
+				v-model:errorData="nucErrorData"
+			></FmInputUserCode>
+			<!-- <FmInputArea
+				class="bi_area"
+				cols="73"
+				rows="5"
+				v-model="newNotes"
+			></FmInputArea> -->
 
-			<FmSelect title="Default Instrument Pricing Scheme" />
-			<FmSelect title="Default Currency Pricing Scheme" />
+			<FmSelect title="Default Instrument Pricing Scheme" :items="itemsInstrumentSchemeList"/>
+			<FmSelect title="Default Currency Pricing Scheme"  :items="itemsCurrencySchemeList"/>
 		</div>
 		<!-- v-model="newRegisters" -->
 		<!-- :items="newRegisters" -->
@@ -46,17 +58,18 @@
 		title: String,
 		name: String,
 		user_code: String,
-		notes: String,
 		typeModal: String,
 		registers: Object,
 		registersItems: Object,
 		publicName: String,
 		shortName: String,
 		сreation: String,
+		notes: String,
 	})
 	let emit = defineEmits(['save', 'create', 'update:modelValue'])
 
 	let newName = ref(props.name)
+	let newNotes = ref(props.notes)
 	let newUserCode = ref(props.user_code)
 	let configCode = ref('')
 	let nucErrorData = ref(null)
@@ -67,8 +80,21 @@
 	let newNote = ref(props.notes)
 	let newPublicName = ref(props.publicName)
 	let newShortName = ref(props.shortName)
+	let itemsInstrumentSchemeList = []
+	let itemsCurrencySchemeList = []
 
-	console.log('registersItems', registersItems)
+	async function getInstrumentSchemeList() {
+		let edRes = await useApi('instrumentSchemeList.get')
+		itemsInstrumentSchemeList.value = edRes.error ? {} : edRes.results
+	}
+	getInstrumentSchemeList()
+	
+	async function getCurrencySchemeList() {
+		let edRes = await useApi('currencySchemeList.get')
+		itemsCurrencySchemeList.value = edRes.error ? {} : edRes.results
+	}
+	getCurrencySchemeList()
+	console.log('itemsInstrumentSchemeList', itemsInstrumentSchemeList)
 	watch(
 		() => props.name,
 		() => (newName.value = props.name)

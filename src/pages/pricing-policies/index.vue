@@ -67,8 +67,8 @@
 		middleware: 'auth',
 		bread: [
 			{
-				text: 'Default settings',
-				to: '/settings/default-settings',
+				text: 'Pricing policies',
+				to: '/pricing-policies',
 			},
 		],
 	})
