@@ -51,6 +51,9 @@ export default {
 
 	pricingPolicyList: {
 		get: prefix + '/instruments/pricing-policy/',
+		post: prefix + '/instruments/pricing-policy/',
+		delete: prefix + '/instruments/pricing-policy/{id}/',
+		put: prefix + '/instruments/pricing-policy/{id}/',
 	},
 	pricingPolicyListLight: {
 		get: prefix + '/instruments/pricing-policy/light/',
