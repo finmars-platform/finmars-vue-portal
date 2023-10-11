@@ -53,6 +53,7 @@
 				:registers="activePortfolioBundleList.registers"
 				:registersItems="portfolioRegister"
 				:shortName="activePortfolioBundleList.short_name"
+				:modelValue="true"
 				@save="putEditPortfolioBundle"
 				@create="getCreatePortfolioBundle"
 			></ModalPortfolioBundleManager>

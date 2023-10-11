@@ -54,6 +54,7 @@
 
 <script setup>
 	let props = defineProps({
+		modelValue: Boolean,
 		title: String,
 		name: String,
 		user_code: String,
@@ -79,21 +80,19 @@
 	let newPublicName = ref(props.publicName)
 	let newShortName = ref(props.shortName)
 
-	console.log('registersItems', registersItems)
 	watch(
-		() => props.name,
-		() => (newName.value = props.name)
+		() => props.modelValue,
+		() => {
+			if (props.modelValue) {
+				;(newName.value = props.name),
+					(newUserCode.value = props.user_code),
+					(newNote.value = props.notes),
+					(newShortName.value = props.shortName),
+					(newRegisters.value = props.registers),
+					(newPublicName.value = props.publicName)
+			}
+		}
 	)
-	watch(
-		() => props.user_code,
-		() => (newUserCode.value = props.user_code)
-	)
-	watch(
-		() => props.notes,
-		() => (newUserCode.value = props.user_code)
-	)
-
-	console.log('activeCreation save', props.сreation)
 
 	function save() {
 		if (!newUserCode.value) {
@@ -155,7 +154,7 @@
 			padding: 0 8px;
 		}
 	}
-	.multi-select{
+	.multi-select {
 		margin: 20px 0;
 	}
 </style>
