@@ -49,8 +49,10 @@
 				:ShortName="activeTransactionTypeList.short_name"
 				:configCode="activeTransactionTypeList.configuration_code"
 				:сreation="сreation"
+				:modelValue="true"
 				@save="putEditTransactionType"
 				@create="getCreateTransactionType"
+
 			></ModalTransactionTypeGroup>
 		</div>
 	</div>
@@ -78,9 +80,7 @@
 
 		transactionTypeList.value = edRes.error ? {} : edRes.results
 	}
-	console.log('transactionTypeList', transactionTypeList)
 	async function deleteTransaction(item) {
-		// console.log('itemitem', item)
 		let confirm = await useConfirm({
 			title: 'Confirm action',
 			text: `Do you want to delete "${item.name}" layout?`,
@@ -91,8 +91,8 @@
 		}
 	}
 
-	function deleteTransactionType(item) {
-		let res = useApi('transactionTypeGroup.delete', {
+	async function deleteTransactionType(item) {
+		let res =  await useApi('transactionTypeGroup.delete', {
 			params: { id: item.id },
 			body: item,
 		})
@@ -115,20 +115,16 @@
 
 	function editTransactionType(newNamesData) {
 		activeTransactionTypeList = newNamesData
-		console.log('activeTransactionTypeснаружиs', activeTransactionTypeList)
 		сreation = false
-		console.log('сreation', сreation)
 		isOpenEditTransactionType.value = true
 	}
 	function createTransactionType(newNamesData) {
-		console.log('activeTransactionTypeснаружиs2', activeTransactionTypeList)
+		activeTransactionTypeList = ' '
 		сreation = true
-		console.log('сreation 2', сreation)
 
 		isOpenEditTransactionType.value = true
 	}
 	async function putEditTransactionType(newNamesData) {
-		console.log('putEditTransactionType newNamesData', newNamesData)
 		let res = await useApi('transactionTypeGroup.put', {
 			params: { id: activeTransactionTypeList.id },
 			body: newNamesData,
