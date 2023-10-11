@@ -11,9 +11,11 @@
 				class="m-b-20"
 				v-model="newUserCode"
 				v-model:configuration_code="newConfigCode"
-				:content_type="configurationList"
+				:content_type="content_type"
 				v-model:errorData="nucErrorData"
 			/>
+			
+
 			<FmInputText label="Name" v-model="newName" />
 			<FmInputText label="Short Name" v-model="newShortName" />
 		</div>
@@ -48,6 +50,7 @@
 	import 'ace-builds/src-noconflict/mode-json'
 	import 'ace-builds/src-noconflict/theme-monokai'
 	let props = defineProps({
+		modelValue: Boolean,
 		title: String,
 		name: String,
 		user_code: String,
@@ -56,45 +59,33 @@
 		сreation: Boolean,
 	})
 	let emit = defineEmits(['save', 'create', 'update:modelValue'])
-
+	let modelValue = ref(props.modelValue)
 	let activeCreation = ref(props.сreation)
-	console.log('activeCreation ', activeCreation)
 	let newName = ref(props.name)
 	let newUserCode = ref(props.user_code)
 	let newConfigCode = ref(props.configuration_code)
 	let newShortName = ref(props.ShortName)
 	let nucErrorData = ref(null)
 	let configurationList = ref()
+
 	watch(
-		() => props.name,
-		() => (newName.value = props.name)
-	)
-	watch(
-		() => props.notes,
-		() => (newUserCode.value = props.user_code)
-	)
-	watch(
-		() => props.value_type,
-		() => (newName.value = props.name)
-	)
-	watch(
-		() => props.expr,
-		() => (newUserCode.value = props.user_code)
-	)
-	watch(
-		() => props.user_code,
-		() => (newName.value = props.name)
+		() => props.modelValue,
+		() => {
+			if (props.modelValue) {
+				;(newName.value = props.name),
+					(newUserCode.value = props.user_code),
+					(newShortName.value = props.ShortName),
+					(newConfigCode.value = props.configuration_code)
+			}
+		}
 	)
 	async function getСonfigurationList() {
 		let edRes = await useApi('configurationList.get')
 		configurationList.value = edRes.error ? {} : edRes.results
 	}
 	getСonfigurationList()
-	console.log('configurationList', configurationList)
 
 	function save() {
-		console.log('activeCreation save', props.сreation)
-
 		if (!newUserCode.value) {
 			nucErrorData.value = {
 				message: 'User code should not be empty',
