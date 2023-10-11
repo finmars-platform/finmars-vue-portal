@@ -2,11 +2,13 @@
 	<BaseModal title="Number format">
 		<div style="padding: 5px 0 20px">
 			<div class="header">
-				<FmSelect
-					v-model="vm.currentPresetName"
-					label="Select Preset"
-					:items="vm.presetSelectorData.options"
-				></FmSelect>
+				<div class="select-main">
+					<FmSelect
+						v-model="vm.currentPresetName"
+						label="Select Preset"
+						:items="vm.presetSelectorData.options"
+					></FmSelect>
+				</div>
 
 				<div class="examples">
 					<div class="examples__name">Examples:</div>
@@ -29,8 +31,9 @@
 							<input
 								type="radio"
 								class="input"
-								name="Zero"
 								:value="item.id"
+								:name="'Zero_' + item.id"
+								:id="'Zero_' + item.id"
 								v-model="vm.settings.zero_format_id"
 								@input="
 									$emit(
@@ -39,15 +42,12 @@
 									)
 								"
 							/>
-							<label>{{ item?.name }}</label>
+							<label :for="'Zero_' + item.id">{{ item?.name }}</label>
 						</div>
-						<!-- vm.settings.zero_format_id  -->
-						<!-- @update:v-modal="vm.onNumberFormatChange()" -->
-						<!-- id=`'ZeroBase' + ${item?.id}` for="ZeroBase" -->
 					</div>
 				</FmExpansionPanel>
 				<FmExpansionPanel title="Negative">
-					<divs
+					<div
 						class="panel-content"
 						v-for="(item, index) in vm.negativeFormats"
 						:key="index"
@@ -56,19 +56,18 @@
 							<input
 								type="radio"
 								class="input"
-								name="Negative"
+								:name="'Negative_' + item.id"
+								:id="'Negative_' + item.id"
 								v-bind:value="item.id"
 								v-model="vm.negativeFormat"
-								@update:v-modal="vm.onNegativeFormatChange()"
+								@update:v-model="vm.onNegativeFormatChange()"
 								@input="
 									$emit('update:vm.negativeFormat', vm.onNegativeFormatChange())
 								"
 							/>
-							<label>{{ item?.name }}</label>
+							<label :for="'Negative_' + item.id">{{ item?.name }}</label>
 						</div>
-						<!-- @update:v-modal="vm.onNegativeFormatChange()" -->
-						<!-- id=`'ZeroBase' + ${item?.id}` for="ZeroBase" -->
-					</divs>
+					</div>
 				</FmExpansionPanel>
 				<FmExpansionPanel title="Rounding">
 					<div
@@ -80,7 +79,8 @@
 							<input
 								type="radio"
 								class="input"
-								name="Rounding"
+								:name="'Rounding_' + item.id"
+								:id="'Rounding_' + item.id"
 								v-bind:value="item.id"
 								v-model="vm.settings.round_format_id"
 								@input="
@@ -90,10 +90,8 @@
 									)
 								"
 							/>
-							<label>{{ item?.name }}</label>
+							<label :for="'Rounding_' + item.id">{{ item?.name }}</label>
 						</div>
-						<!-- @update:v-modal="vm.onRoundingChange()" -->
-						<!-- id=`'ZeroBase' + ${item?.id}` for="ZeroBase" -->
 					</div>
 				</FmExpansionPanel>
 				<FmExpansionPanel title="Thousands separation">
@@ -106,7 +104,8 @@
 							<input
 								type="radio"
 								class="input"
-								name="ThousandsSeparation"
+								:name="'ThousandsSeparation_' + item.id"
+								:id="'ThousandsSeparation_' + item.id"
 								v-bind:value="item.id"
 								v-model="vm.settings.thousands_separator_format_id"
 								@input="
@@ -116,10 +115,10 @@
 									)
 								"
 							/>
-							<label>{{ item?.name }}</label>
+							<label :for="'ThousandsSeparation_' + item.id">{{
+								item?.name
+							}}</label>
 						</div>
-						<!-- @update:v-modal="vm.onNumberFormatChange()" -->
-						<!-- id=`'ZeroBase' + ${item?.id}` for="ZeroBase" -->
 					</div>
 				</FmExpansionPanel>
 
@@ -133,7 +132,8 @@
 							<input
 								type="radio"
 								class="input"
-								name="percentageFormats"
+								:name="'percentageFormats_' + item.id"
+								:id="'percentageFormats_' + item.id"
 								v-bind:value="item.id"
 								v-model="vm.settings.percentage_format_id"
 								@input="
@@ -143,10 +143,10 @@
 									)
 								"
 							/>
-							<label>{{ item?.name }}</label>
+							<label :for="'percentageFormats_' + item.id">{{
+								item?.name
+							}}</label>
 						</div>
-						<!-- 	@update:v-modal="vm.onPercentageChange()" -->
-						<!-- id=`'ZeroBase' + ${item?.id}` for="ZeroBase" -->
 					</div>
 				</FmExpansionPanel>
 				<FmExpansionPanel title="Suffix">
@@ -458,38 +458,6 @@
 	vm.agree = function () {
 		$mdDialog.hide({ status: 'agree', data: vm.settings })
 	}
-
-	// watch(
-	// 	vm.settings.zero_format_id,
-	// 	(newValue, oldValue) => {
-	// 		if (oldValue[0] === 0) {
-	// 			console.log(
-	// 				'vm.settings.zero_format_id внутри первый',
-	// 				vm.settings.zero_format_id,
-	// 				vm.settings.zero_format_id === 0
-	// 			)
-	// 		} else {
-	// 			console.log(
-	// 				'vm.settings.zero_format_id внутри второй',
-	// 				vm.settings.zero_format_id,
-	// 				vm.settings.zero_format_id === 0
-	// 			)
-	// 			vm.onNumberFormatChange()
-	// 			// disabledBtn.value = false
-	// 		}
-	// 	},
-	// 	{ deep: true }
-	// )
-
-	// const init = function () {
-	// 	vm.onNumberFormatChange()
-
-	// 	// const animatedContainers =
-	// 	// 	$element[0].querySelectorAll('.cb1-resizing-wrap')
-	// 	// setTimeout(() => setContainersHeight(animatedContainers)) // for height animation
-	// }
-
-	// init()
 </script>
 
 <style lang="scss" scoped>
@@ -499,24 +467,94 @@
 		width: 100%;
 		min-width: 570px;
 	}
+	.select-main {
+		width: 50%;
+	}
 	.panel-content {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		padding-left: 90px;
+		padding-left: 40%;
 		justify-content: center;
 	}
 	.radio-input {
+		position: relative;
 		display: flex;
 		align-items: center;
+		margin: 10px 0;
+		cursor: pointer;
+
 		.input {
-			margin-right: 20px;
+			position: absolute;
+			z-index: -1;
+			opacity: 0;
+			cursor: pointer;
+
+			& + label {
+				display: inline-flex;
+				align-items: center;
+				user-select: none;
+				padding-left: 30px;
+			}
+			& + label::before {
+				box-sizing: border-box;
+				background-color: transparent;
+				border-radius: 50%;
+				content: '';
+				position: absolute;
+				display: block;
+				height: auto;
+				left: 0;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				transition: all 0.5s;
+				width: auto;
+				border-color: rgba(0, 0, 0, 0.54);
+				width: 20px;
+				border-style: solid;
+				border-width: 2px;
+				cursor: pointer;
+			}
+			&:checked + label::before {
+				border-color: #f05a22;
+			}
+			&:checked + label::after {
+				content: '';
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				right: 0;
+				bottom: 0;
+				height: 10px;
+				width: 10px;
+				left: 0;
+				border-radius: 50%;
+				transform: translate(50%, -50%);
+				background-color: #f05a22;
+			}
+			&:not(:disabled):not(:checked) + label:hover::before {
+				box-shadow: 0 0 0 10px rgba(240, 90, 34, 0.2);
+				transition: 0.5s;
+			}
+			&:focus {
+				box-shadow: 0 0 0 10px rgba(240, 90, 34, 0.2);
+				transition: 0.5s;
+			}
+			&:active {
+				box-shadow: 0 0 0 10px rgba(240, 90, 34, 0.2);
+				transition: 0.5s;
+			}
+			&:hover {
+				box-shadow: 0 0 0 10px rgba(240, 90, 34, 0.2);
+				transition: 0.5s;
+			}
 		}
 	}
 	.examples {
 		display: flex;
 		flex-direction: column;
-		margin-top: 15px;
+		margin-top: 10px;
 		margin-left: 20px;
 		// .examples__name
 
@@ -524,6 +562,7 @@
 			display: flex;
 			font-size: 12px;
 			color: $gray;
+			margin-bottom: 10px;
 		}
 	}
 	.examples-number {
