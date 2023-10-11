@@ -8,10 +8,10 @@
 		<div>
 			<FmInputText label="Name" v-model="newName" />
 			<FmInputUserCode
-				style="width: 400px"
+				style="width: 550px"
 				class="m-b-20"
 				v-model="newUserCode"
-				v-model:configuration_code="configCode"
+				v-model:configuration_code="newConfigurationCode"
 				:content_type="content_type"
 				v-model:errorData="nucErrorData"
 			></FmInputUserCode>
@@ -23,11 +23,17 @@
 				v-model="newNotes"
 			></FmInputArea>
 
-			<FmSelect title="Default Instrument Pricing Scheme" :items="itemsInstrumentSchemeList"/>
-			<FmSelect title="Default Currency Pricing Scheme"  :items="itemsCurrencySchemeList"/>
+			<FmSelect
+				label="Default Instrument Pricing Scheme"
+				:items="itemsInstrumentSchemeList"
+				v-model="newDefaultInstrumentPricingScheme"
+			/>
+			<FmSelect
+				label="Default Instrument Pricing Scheme"
+				:items="itemsCurrencySchemeList"
+				v-model="newDefaultCurrencyPricingScheme"
+			/>
 		</div>
-		<!-- v-model="newRegisters" -->
-		<!-- :items="newRegisters" -->
 
 		<template #controls="{ cancel }">
 			<div class="flex-row fc-space-between">
@@ -56,8 +62,10 @@
 
 <script setup>
 	let props = defineProps({
+		modelValue: Boolean,
 		title: String,
 		name: String,
+		notes: String,
 		user_code: String,
 		typeModal: String,
 		registers: Object,
@@ -65,51 +73,68 @@
 		publicName: String,
 		shortName: String,
 		сreation: String,
-		notes: String,
+		configuration_code: String,
+		default_currency_pricing_scheme: String,
+		default_currency_pricing_scheme_object: Object,
+		default_instrument_pricing_scheme: String,
+		default_instrument_pricing_scheme_object: Object,
+		meta: Object,
+		expr: String,
 	})
+
 	let emit = defineEmits(['save', 'create', 'update:modelValue'])
 
 	let newName = ref(props.name)
-	let newNotes = ref(props.notes)
 	let newUserCode = ref(props.user_code)
-	let configCode = ref('')
-	let nucErrorData = ref(null)
-	let activeTypeModal = ref(props.typeModal)
-	let newRegisters = ref(props.registers)
-	let registersItems = ref(props.registersItems)
-	let activeCreation = ref(props.сreation)
 	let newNote = ref(props.notes)
-	let newPublicName = ref(props.publicName)
+	let nucErrorData = ref(null)
+	let activeCreation = ref(props.сreation)
+
 	let newShortName = ref(props.shortName)
-	let itemsInstrumentSchemeList =  ref([])
-	let itemsCurrencySchemeList =  ref([])
+	let itemsInstrumentSchemeList = ref([])
+	let itemsCurrencySchemeList = ref([])
+	let newDefaultCurrencyPricingScheme = ref('')
+	let newDefaultInstrumentPricingScheme = ref('')
+	let newDefaultCurrencyPricingShcemeObject = ref(
+		props.default_currency_pricing_scheme_object
+	)
+	let newMeta = ref(props.meta)
+	let newExpr = ref(props.expr)
+	let newDefaultInstrumentPricingSchemeObject = ref(
+		props.default_instrument_pricing_scheme_object
+	)
+	let newConfigurationCode = ref(props.configuration_code)
 
 	async function getInstrumentSchemeList() {
 		let edRes = await useApi('instrumentSchemeList.get')
-		itemsInstrumentSchemeList.value = edRes.error ? {} : edRes.results
+		itemsInstrumentSchemeList.value = edRes.error ? [] : edRes.results
 	}
 	getInstrumentSchemeList()
-	
+
 	async function getCurrencySchemeList() {
 		let edRes = await useApi('currencySchemeList.get')
-		itemsCurrencySchemeList.value = edRes.error ? {} : edRes.results
+		itemsCurrencySchemeList.value = edRes.error ? [] : edRes.results
 	}
 	getCurrencySchemeList()
-	console.log('itemsInstrumentSchemeList', itemsInstrumentSchemeList)
-	watch(
-		() => props.name,
-		() => (newName.value = props.name)
-	)
-	watch(
-		() => props.user_code,
-		() => (newUserCode.value = props.user_code)
-	)
-	watch(
-		() => props.notes,
-		() => (newUserCode.value = props.user_code)
-	)
 
-	console.log('activeCreation save', props.сreation)
+	watch(
+		() => props.modelValue,
+		() => {
+			if (props.modelValue) {
+				;(newName.value = props.name),
+					(newUserCode.value = props.user_code),
+					(newNote.value = props.notes),
+					(newShortName.value = props.shortName),
+					(newMeta.value = props.meta),
+					(newExpr.value = props.expr),
+					(newDefaultCurrencyPricingShcemeObject.value =
+						props.default_currency_pricing_scheme_object),
+					(newDefaultInstrumentPricingSchemeObject.value =
+						props.default_instrument_pricing_scheme_object),
+					(newConfigurationCode.value = props.configuration_code)
+			}
+		}
+	)
 
 	function save() {
 		if (!newUserCode.value) {
@@ -118,12 +143,20 @@
 			}
 		} else {
 			emit('save', {
+				configuration_code: newConfigurationCode.value,
 				name: newName.value,
 				user_code: newUserCode.value,
-				registers: newRegisters.value,
 				notes: newNote.value,
-				public_name: newPublicName.value,
 				short_name: newShortName.value,
+				default_currency_pricing_scheme: newDefaultCurrencyPricingScheme.value,
+				default_instrument_pricing_scheme:
+					newDefaultInstrumentPricingScheme.value,
+				default_currency_pricing_scheme_object:
+					newDefaultCurrencyPricingShcemeObject.value,
+				default_instrument_pricing_scheme_object:
+					newDefaultInstrumentPricingSchemeObject.value,
+				meta: newMeta.value,
+				expr: newExpr.value,
 			})
 		}
 	}
@@ -134,12 +167,20 @@
 			}
 		} else {
 			emit('create', {
+				configuration_code: newConfigurationCode.value,
 				name: newName.value,
 				user_code: newUserCode.value,
-				registers: newRegisters.value,
 				notes: newNote.value,
-				public_name: newPublicName.value,
 				short_name: newShortName.value,
+				default_currency_pricing_scheme: newDefaultCurrencyPricingScheme.value,
+				default_currency_pricing_scheme_object:
+					newDefaultCurrencyPricingShcemeObject.value,
+				default_instrument_pricing_scheme_object:
+					newDefaultInstrumentPricingSchemeObject.value,
+				default_instrument_pricing_scheme:
+					newDefaultInstrumentPricingScheme.value,
+				meta: newMeta.value,
+				expr: newExpr.value,
 			})
 		}
 	}

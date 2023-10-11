@@ -6,8 +6,8 @@
 					<th>Name</th>
 					<th>Unique Code</th>
 					<th>Notes</th>
-                    <th>Default Instrument Pricing Scheme	</th>
-                    <th>Default Currency Pricing Scheme	</th>
+					<th>Default Instrument Pricing Scheme</th>
+					<th>Default Currency Pricing Scheme</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -16,8 +16,8 @@
 					<td>{{ item.name }}</td>
 					<td>{{ item.user_code }}</td>
 					<td>{{ item.notes }}</td>
-                    <td>{{ item.default_instrument_pricing_scheme_object?.name }}</td>
-                    <td>{{ item.default_currency_pricing_scheme_object?.name }}</td>
+					<td>{{ item.default_instrument_pricing_scheme_object?.name }}</td>
+					<td>{{ item.default_currency_pricing_scheme_object?.name }}</td>
 					<td>
 						<FmBtn
 							type="text"
@@ -51,9 +51,22 @@
 				:user_code="activePricingPolicyList.user_code"
 				:notes="activePricingPolicyList.notes"
 				:сreation="сreation"
+				:configuration_code="activePricingPolicyList.configuration_code"
+				:default_currency_pricing_scheme="
+					activePricingPolicyList.default_currency_pricing_scheme
+				"
+				:default_currency_pricing_scheme_object="
+					activePricingPolicyList.default_currency_pricing_scheme_object
+				"
+				:default_instrument_pricing_scheme="
+					activePricingPolicyList.default_instrument_pricing_scheme
+				"
+				:default_instrument_pricing_scheme_object="
+					activePricingPolicyList.default_instrument_pricing_scheme_object
+				"
+				:meta="activePricingPolicyList.meta"
+				:expr="activePricingPolicyList.expr"
 				:publicName="activePricingPolicyList.public_name"
-				:registers="activePricingPolicyList.registers"
-				:registersItems="portfolioRegister"
 				:shortName="activePricingPolicyList.short_name"
 				@save="putEditPortfolioBundle"
 				@create="getCreatePortfolioBundle"
@@ -74,7 +87,7 @@
 	})
 	const pricingPolicyList = ref([])
 	let activePricingPolicyList = ref([])
-	console.log('activePricingPolicyList', activePricingPolicyList)
+
 	let isOpenEditPortfolioBundle = ref(false)
 	let сreation = ref(false)
 	let portfolioRegister = ref()
@@ -82,11 +95,10 @@
 	async function defaultsGet() {
 		let edRes = await useApi('pricingPolicyList.get')
 
-		pricingPolicyList.value = edRes.error ? {} : edRes.results
+		pricingPolicyList.value = edRes.error ? [] : edRes.results
 	}
-	console.log('portfolioBundles', pricingPolicyList)
+
 	async function deletePortfolioBundle(item) {
-		console.log('itemitem', item)
 		let confirm = await useConfirm({
 			title: 'Confirm action',
 			text: `Do you want to delete "${item.name}" layout?`,
@@ -96,15 +108,9 @@
 			deletePortfolioBundleItem(item)
 		}
 	}
-	getPortfolioRegister()
-	async function getPortfolioRegister() {
-		let edRes = await useApi('portfolioRegisterList.get')
-		portfolioRegister.value = edRes.error ? {} : edRes.results
-	}
 
-	console.log('portfolioRegister', portfolioRegister)
-	function deletePortfolioBundleItem(item) {
-		let res = useApi('portfolioBundles.delete', {
+	async function deletePortfolioBundleItem(item) {
+		let res = await useApi('pricingPolicyList.delete', {
 			params: { id: item.id },
 			body: item,
 		})
@@ -123,29 +129,22 @@
 		}
 		useNotify({ type: 'success', title: `data delete on the server` })
 		defaultsGet()
-		
 	}
 
 	function editPortfolioBundle(newNamesData) {
 		// activePricingPolicyList = " "
 		activePricingPolicyList = newNamesData
-		console.log('activePortfolioBundleснаружиs', activePricingPolicyList)
 		сreation = false
-		console.log('сreation', сreation)
 		isOpenEditPortfolioBundle.value = true
 	}
 	function createPortfolioBundle(newNamesData) {
-		activePricingPolicyList = " "
-		console.log('activePortfolioBundleснаружиs2', activePricingPolicyList)
+		activePricingPolicyList = ' '
 		сreation = true
-		console.log('сreation 2', сreation)
 
 		isOpenEditPortfolioBundle.value = true
 	}
 	async function putEditPortfolioBundle(newNamesData) {
-		// activePricingPolicyList = []
-		console.log('putEditPortfolioBundle newNamesData', newNamesData)
-		let res = await useApi('portfolioBundles.put', {
+		let res = await useApi('pricingPolicyList.put', {
 			params: { id: activePricingPolicyList.id },
 			body: newNamesData,
 		})
@@ -164,13 +163,13 @@
 		}
 		useNotify({ type: 'success', title: `data Edit on the server` })
 		defaultsGet()
-		
+
 		isOpenEditPortfolioBundle.value = false
 	}
 
 	async function getCreatePortfolioBundle(newNamesData) {
 		activePricingPolicyList = {}
-		let res = await useApi('portfolioBundles.post', {
+		let res = await useApi('pricingPolicyList.post', {
 			body: newNamesData,
 		})
 		if (res.error) {
@@ -195,7 +194,8 @@
 <style lang="scss" scoped>
 	td,
 	th {
-		width: 25%;
+		min-width: 120px;
+		width: auto;
 		padding: 0 5px;
 		display: table-cell;
 		text-align: left;
