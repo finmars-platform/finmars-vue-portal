@@ -21,132 +21,107 @@
 			</div>
 
 			<div class="content">
-				<FmExpansionPanel title="Zero">
+				<FmExpansionPanel title="Zero" subtitle="0" subtitleOpen="Select zero number format">
 					<div
 						class="panel-content"
 						v-for="(item, index) in vm.zeroFormats"
 						:key="index"
 					>
-						<div class="radio-input">
-							<input
-								type="radio"
-								class="input"
-								:value="item.id"
-								:name="'Zero_' + item.id"
-								:id="'Zero_' + item.id"
-								v-model="vm.settings.zero_format_id"
-								@input="
-									$emit(
-										'update:vm.settings.zero_format_id',
-										vm.onNumberFormatChange()
-									)
-								"
-							/>
-							<label :for="'Zero_' + item.id">{{ item?.name }}</label>
-						</div>
+						<FmInputRadio
+							:name="'Zero'"
+							:id="item.id"
+							:label="item?.name"
+							:value="item.id"
+							v-model="vm.settings.zero_format_id"
+							@input="
+								$emit(
+									'update:vm.settings.zero_format_id',
+									vm.onNumberFormatChange()
+								)
+							"
+						></FmInputRadio>
 					</div>
 				</FmExpansionPanel>
-				<FmExpansionPanel title="Negative">
+				<FmExpansionPanel title="Negative" subtitle="100" subtitleOpen="Select negative number format"> 
 					<div
 						class="panel-content"
 						v-for="(item, index) in vm.negativeFormats"
 						:key="index"
 					>
-						<div class="radio-input">
-							<input
-								type="radio"
-								class="input"
-								:name="'Negative_' + item.id"
-								:id="'Negative_' + item.id"
-								v-bind:value="item.id"
-								v-model="vm.negativeFormat"
-								@update:v-model="vm.onNegativeFormatChange()"
-								@input="
-									$emit('update:vm.negativeFormat', vm.onNegativeFormatChange())
-								"
-							/>
-							<label :for="'Negative_' + item.id">{{ item?.name }}</label>
-						</div>
+						<FmInputRadio
+							:name="'Negative'"
+							:id="item.id"
+							:label="item?.name"
+							:value="item.id"
+							v-model="vm.negativeFormat"
+							@input="
+								$emit('update:vm.negativeFormat', vm.onNegativeFormatChange())
+							"
+						></FmInputRadio>
 					</div>
 				</FmExpansionPanel>
-				<FmExpansionPanel title="Rounding">
+				<FmExpansionPanel title="Rounding" subtitle="No rounding" subtitleOpen="Select negative number format">
 					<div
 						class="panel-content"
 						v-for="(item, index) in vm.percentageFormats"
 						:key="index"
 					>
-						<div class="radio-input">
-							<input
-								type="radio"
-								class="input"
-								:name="'Rounding_' + item.id"
-								:id="'Rounding_' + item.id"
-								v-bind:value="item.id"
-								v-model="vm.settings.round_format_id"
-								@input="
-									$emit(
-										'update:vm.settings.round_format_id',
-										vm.onRoundingChange()
-									)
-								"
-							/>
-							<label :for="'Rounding_' + item.id">{{ item?.name }}</label>
-						</div>
+						<FmInputRadio
+							:name="'Rounding'"
+							:id="item.id"
+							:label="item?.name"
+							:value="item.id"
+							v-model="vm.settings.round_format_id"
+							@input="
+								$emit(
+									'update:vm.settings.round_format_id',
+									vm.onRoundingChange()
+								)
+							"
+						></FmInputRadio>
 					</div>
 				</FmExpansionPanel>
-				<FmExpansionPanel title="Thousands separation">
+				<FmExpansionPanel title="Thousands separation" subtitle="No separation" subtitleOpen="Select separation format">
 					<div
 						class="panel-content"
 						v-for="(item, index) in vm.separationFormats"
 						:key="index"
 					>
-						<div class="radio-input">
-							<input
-								type="radio"
-								class="input"
-								:name="'ThousandsSeparation_' + item.id"
-								:id="'ThousandsSeparation_' + item.id"
-								v-bind:value="item.id"
-								v-model="vm.settings.thousands_separator_format_id"
-								@input="
-									$emit(
-										'update:vm.settings.thousands_separator_format_id',
-										vm.onNumberFormatChange()
-									)
-								"
-							/>
-							<label :for="'ThousandsSeparation_' + item.id">{{
-								item?.name
-							}}</label>
-						</div>
+						<FmInputRadio
+							:name="'ThousandsSeparation'"
+							:id="item.id"
+							:label="item?.name"
+							:value="item.id"
+							v-model="vm.settings.thousands_separator_format_id"
+							@input="
+								$emit(
+									'update:vm.settings.thousands_separator_format_id',
+									vm.onNumberFormatChange()
+								)
+							"
+						></FmInputRadio>
 					</div>
 				</FmExpansionPanel>
 
-				<FmExpansionPanel title="Percentage">
+				<FmExpansionPanel title="Percentage" subtitle="N/A" subtitleOpen="Select percentage format">
 					<div
 						class="panel-content"
 						v-for="(item, index) in vm.percentageFormats"
 						:key="index"
 					>
-						<div class="radio-input">
-							<input
-								type="radio"
-								class="input"
-								:name="'percentageFormats_' + item.id"
-								:id="'percentageFormats_' + item.id"
-								v-bind:value="item.id"
-								v-model="vm.settings.percentage_format_id"
-								@input="
-									$emit(
-										'update:vm.settings.percentage_format_id',
-										vm.onPercentageChange()
-									)
-								"
-							/>
-							<label :for="'percentageFormats_' + item.id">{{
-								item?.name
-							}}</label>
-						</div>
+						<FmInputRadio
+							:name="'percentageFormats'"
+							:id="item.id"
+							:label="item?.name"
+							:value="item.id"
+							v-model="vm.settings.percentage_format_id"
+							@input="
+								$emit(
+									'update:vm.settings.percentage_format_id',
+									vm.onPercentageChange()
+								)
+							"
+						></FmInputRadio>
 					</div>
 				</FmExpansionPanel>
 				<FmExpansionPanel title="Suffix">
@@ -213,6 +188,12 @@
 		},
 	})
 	const emits = defineEmits(['save'])
+	const selectCh = ref([])
+	console.log('select', selectCh)
+	watch(
+		() => selectCh.value,
+		() => console.log('select watch ', selectCh)
+	)
 	let vm = reactive({
 		settings: props.settings,
 		// presetSelectorData: {options: { id: String, name: String, isActive: Boolean }},
@@ -338,9 +319,6 @@
 		const selectedPreset = vm.presetSelectorData.options.find((option) => {
 			const requiredProps = presetsSettings[option.id]
 			const currentProps = vm.settings
-			// console.log(requiredProps, 'getActivePreset ')
-			// console.log(vm.settings, 'vm.settings')
-			// console.log(isObjectContain(currentProps, requiredProps), 'isObjectContain(currentProps, requiredProps)')
 			return isObjectContain(currentProps, requiredProps)
 		})
 
