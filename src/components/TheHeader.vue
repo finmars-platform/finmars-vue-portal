@@ -157,6 +157,8 @@
 <script setup>
 import dayjs from "dayjs"
 
+import formbricks from "@/services/formbricks";
+
 const store = useStore()
 const config = useRuntimeConfig()
 const apiUrl = config.public.apiURL;
@@ -210,6 +212,20 @@ async function setCurrent(item) {
 
 	if (res) window.location.href = '/' + item.base_api_url + '/v/home'
 }
+
+
+
+console.log('store.user', store.user.username)
+console.log('store.email', store.user.email)
+console.log('store.us', store.user)
+formbricks.setAttribute('host', window.location.href)
+formbricks.setAttribute('username', store.user.username)
+formbricks.setAttribute('first_name', store.user.first_name)
+formbricks.setAttribute('last_name', store.user.last_name)
+formbricks.setUserId(store.user.id)
+formbricks.setEmail(store.user.email)
+formbricks.registerRouteChange();
+
 </script>
 
 <style lang="scss" scoped>
