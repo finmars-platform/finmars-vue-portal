@@ -100,40 +100,14 @@
 	])
 
 	watch(
-		() => props.name,
-		() => (newName.value = props.name)
-	)
-	watch(
-		() => props.notes,
-		() => (newUserCode.value = props.user_code)
-	)
-	watch(
-		() => props.value_type,
-		() => (newName.value = props.name)
-	)
-	watch(
-		() => props.expr,
-		() => (newUserCode.value = props.user_code)
-	)
-	watch(
-		() => props.user_code,
-		() => (newName.value = props.name)
-	)
-	watch(
 		() => props.modelValue,
 		() => {
 			if (props.modelValue) {
 				;(newName.value = props.name),
 					(newUserCode.value = props.user_code),
 					(newNote.value = props.notes),
-					(newShortName.value = props.shortName),
-					(newMeta.value = props.meta),
-					(newExpr.value = props.expr),
-					(newDefaultCurrencyPricingShcemeObject.value =
-						props.default_currency_pricing_scheme_object),
-					(newDefaultInstrumentPricingSchemeObject.value =
-						props.default_instrument_pricing_scheme_object),
-					(newConfigurationCode.value = props.configuration_code)
+					(newValueType.value = props.value_type),
+					(newExpression.value = props.expr)
 			}
 		}
 	)
