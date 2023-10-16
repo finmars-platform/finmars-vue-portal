@@ -75,7 +75,12 @@
 								/>
 							</div>
 							<div class="layouts-card__item layouts-card__delete">
-								<FmIcon btn icon="delete" v-fm-tooltip="'Delete Attribute'" @click=";(deleteAttributBtn = true), close()" />
+								<FmIcon
+									btn
+									icon="delete"
+									v-fm-tooltip="'Delete Attribute'"
+									@click=";(deleteAttributBtn = true), close()"
+								/>
 							</div>
 						</div>
 					</div>
@@ -252,7 +257,78 @@
 					>SHOW HIDDEN ATTRIBUTES
 				</FmBtn>
 			</div>
-			<span class="not-atribute">You could add new user attributes here</span>
+			<div v-if="responsibleAttrItems">
+				<div
+					class="layouts-card"
+					v-for="(item, index) in responsibleAttrItems"
+					:key="index"
+				>
+					<div class="layouts-card__inner">
+						<div class="layouts-card__name">
+							<FmIcon btn icon="visibility" v-fm-tooltip="'Delete Attribute'" />
+							<div class="layouts-card__text">
+								<h3 class="layouts-card__title">
+									{{ item?.name }}
+								</h3>
+								<div class="layouts-card__subtitle">
+									{{ item?.user_code }}
+								</div>
+							</div>
+						</div>
+
+						<div class="layouts-card__setting">
+							<div class="layouts-card__item layouts-card__rename">
+								<FmIcon
+									btn
+									icon="file_download"
+									v-fm-tooltip="'Export Classifier'"
+									@click=";(exportClassifiersBtn = true), close()"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__default">
+								<FmIcon
+									btn
+									icon="file_upload"
+									v-fm-tooltip="'Import Classifiers from .csv file'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="map"
+									v-fm-tooltip="'Open Classifier Mappings'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="format_align_right"
+									v-fm-tooltip="'Edit Classifier tre'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="edit"
+									v-fm-tooltip="'Edit Attribute'"
+									@click=";(editAttributBtn = true), close()"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="delete"
+									v-fm-tooltip="'Delete Attribute'"
+									@click=";(deleteAttributBtn = true), close()"
+								/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<span v-else class="not-atribute"
+				>You could add new user attributes here</span
+			>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Counterparty Attributes">
 			<div class="attributes-header">
@@ -269,25 +345,80 @@
 					>SHOW HIDDEN ATTRIBUTES
 				</FmBtn>
 			</div>
-			<span class="not-atribute">You could add new user attributes here</span>
-		</FmExpansionPanel>
-		<FmExpansionPanel title="Counterparty Attributes">
-			<div class="attributes-header">
-				<FmBtn
-					type="primary"
-					class="btn-transaction mr-20"
-					@click="complexTransactionUserFieldCreate()"
-					>Add New</FmBtn
+			<div v-if="counterpartyAttributeTypeItems">
+				<div
+					class="layouts-card"
+					v-for="(item, index) in counterpartyAttributeTypeItems"
+					:key="index"
 				>
-				<FmBtn
-					type="primary"
-					class="btn-transaction"
-					@click="complexTransactionUserFieldCreate()"
-					>SHOW HIDDEN ATTRIBUTES
-				</FmBtn>
+					<div class="layouts-card__inner">
+						<div class="layouts-card__name">
+							<FmIcon btn icon="visibility" v-fm-tooltip="'Delete Attribute'" />
+							<div class="layouts-card__text">
+								<h3 class="layouts-card__title">
+									{{ item?.name }}
+								</h3>
+								<div class="layouts-card__subtitle">
+									{{ item?.user_code }}
+								</div>
+							</div>
+						</div>
+
+						<div class="layouts-card__setting">
+							<div class="layouts-card__item layouts-card__rename">
+								<FmIcon
+									btn
+									icon="file_download"
+									v-fm-tooltip="'Export Classifier'"
+									@click=";(exportClassifiersBtn = true), close()"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__default">
+								<FmIcon
+									btn
+									icon="file_upload"
+									v-fm-tooltip="'Import Classifiers from .csv file'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="map"
+									v-fm-tooltip="'Open Classifier Mappings'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="format_align_right"
+									v-fm-tooltip="'Edit Classifier tre'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="edit"
+									v-fm-tooltip="'Edit Attribute'"
+									@click=";(editAttributBtn = true), close()"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="delete"
+									v-fm-tooltip="'Delete Attribute'"
+									@click=";(deleteAttributBtn = true), close()"
+								/>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
-			<span class="not-atribute">You could add new user attributes here</span>
+			<span v-else class="not-atribute"
+				>You could add new user attributes here</span
+			>
 		</FmExpansionPanel>
+
 		<FmExpansionPanel title="Currency Attributes">
 			<div class="attributes-header">
 				<FmBtn
@@ -303,7 +434,78 @@
 					>SHOW HIDDEN ATTRIBUTES
 				</FmBtn>
 			</div>
-			<span class="not-atribute">You could add new user attributes here</span>
+			<div v-if="counterpartyAttributeTypeItems">
+				<div
+					class="layouts-card"
+					v-for="(item, index) in counterpartyAttributeTypeItems"
+					:key="index"
+				>
+					<div class="layouts-card__inner">
+						<div class="layouts-card__name">
+							<FmIcon btn icon="visibility" v-fm-tooltip="'Delete Attribute'" />
+							<div class="layouts-card__text">
+								<h3 class="layouts-card__title">
+									{{ item?.name }}
+								</h3>
+								<div class="layouts-card__subtitle">
+									{{ item?.user_code }}
+								</div>
+							</div>
+						</div>
+
+						<div class="layouts-card__setting">
+							<div class="layouts-card__item layouts-card__rename">
+								<FmIcon
+									btn
+									icon="file_download"
+									v-fm-tooltip="'Export Classifier'"
+									@click=";(exportClassifiersBtn = true), close()"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__default">
+								<FmIcon
+									btn
+									icon="file_upload"
+									v-fm-tooltip="'Import Classifiers from .csv file'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="map"
+									v-fm-tooltip="'Open Classifier Mappings'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="format_align_right"
+									v-fm-tooltip="'Edit Classifier tre'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="edit"
+									v-fm-tooltip="'Edit Attribute'"
+									@click=";(editAttributBtn = true), close()"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="delete"
+									v-fm-tooltip="'Delete Attribute'"
+									@click=";(deleteAttributBtn = true), close()"
+								/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<span v-else class="not-atribute"
+				>You could add new user attributes here</span
+			>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Strategy 1 Attributes">
 			<div class="attributes-header">
@@ -320,7 +522,79 @@
 					>SHOW HIDDEN ATTRIBUTES
 				</FmBtn>
 			</div>
-			<span class="not-atribute">You could add new user attributes here</span>
+
+			<div v-if="strategy1AttrTypeItems">
+				<div
+					class="layouts-card"
+					v-for="(item, index) in strategy1AttrTypeItems"
+					:key="index"
+				>
+					<div class="layouts-card__inner">
+						<div class="layouts-card__name">
+							<FmIcon btn icon="visibility" v-fm-tooltip="'Delete Attribute'" />
+							<div class="layouts-card__text">
+								<h3 class="layouts-card__title">
+									{{ item?.name }}
+								</h3>
+								<div class="layouts-card__subtitle">
+									{{ item?.user_code }}
+								</div>
+							</div>
+						</div>
+
+						<div class="layouts-card__setting">
+							<div class="layouts-card__item layouts-card__rename">
+								<FmIcon
+									btn
+									icon="file_download"
+									v-fm-tooltip="'Export Classifier'"
+									@click=";(exportClassifiersBtn = true), close()"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__default">
+								<FmIcon
+									btn
+									icon="file_upload"
+									v-fm-tooltip="'Import Classifiers from .csv file'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="map"
+									v-fm-tooltip="'Open Classifier Mappings'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="format_align_right"
+									v-fm-tooltip="'Edit Classifier tre'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="edit"
+									v-fm-tooltip="'Edit Attribute'"
+									@click=";(editAttributBtn = true), close()"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="delete"
+									v-fm-tooltip="'Delete Attribute'"
+									@click=";(deleteAttributBtn = true), close()"
+								/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<span v-else class="not-atribute"
+				>You could add new user attributes here</span
+			>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Strategy 2 Attributes">
 			<div class="attributes-header">
@@ -337,7 +611,78 @@
 					>SHOW HIDDEN ATTRIBUTES
 				</FmBtn>
 			</div>
-			<span class="not-atribute">You could add new user attributes here</span>
+			<div v-if="strategy2AttrTypeItems">
+				<div
+					class="layouts-card"
+					v-for="(item, index) in strategy2AttrTypeItems"
+					:key="index"
+				>
+					<div class="layouts-card__inner">
+						<div class="layouts-card__name">
+							<FmIcon btn icon="visibility" v-fm-tooltip="'Delete Attribute'" />
+							<div class="layouts-card__text">
+								<h3 class="layouts-card__title">
+									{{ item?.name }}
+								</h3>
+								<div class="layouts-card__subtitle">
+									{{ item?.user_code }}
+								</div>
+							</div>
+						</div>
+
+						<div class="layouts-card__setting">
+							<div class="layouts-card__item layouts-card__rename">
+								<FmIcon
+									btn
+									icon="file_download"
+									v-fm-tooltip="'Export Classifier'"
+									@click=";(exportClassifiersBtn = true), close()"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__default">
+								<FmIcon
+									btn
+									icon="file_upload"
+									v-fm-tooltip="'Import Classifiers from .csv file'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="map"
+									v-fm-tooltip="'Open Classifier Mappings'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="format_align_right"
+									v-fm-tooltip="'Edit Classifier tre'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="edit"
+									v-fm-tooltip="'Edit Attribute'"
+									@click=";(editAttributBtn = true), close()"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="delete"
+									v-fm-tooltip="'Delete Attribute'"
+									@click=";(deleteAttributBtn = true), close()"
+								/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<span v-else class="not-atribute"
+				>You could add new user attributes here</span
+			>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Strategy 3 Attributes">
 			<div class="attributes-header">
@@ -354,7 +699,77 @@
 					>SHOW HIDDEN ATTRIBUTES
 				</FmBtn>
 			</div>
-			<span>This entity has no layouts.</span>
+			
+			<div v-if="strategy3AttrTypeList">
+				<div
+					class="layouts-card"
+					v-for="(item, index) in strategy3AttrTypeList"
+					:key="index"
+				>
+					<div class="layouts-card__inner">
+						<div class="layouts-card__name">
+							<FmIcon btn icon="visibility" v-fm-tooltip="'Delete Attribute'" />
+							<div class="layouts-card__text">
+								<h3 class="layouts-card__title">
+									{{ item?.name }}
+								</h3>
+								<div class="layouts-card__subtitle">
+									{{ item?.user_code }}
+								</div>
+							</div>
+						</div>
+
+						<div class="layouts-card__setting">
+							<div class="layouts-card__item layouts-card__rename">
+								<FmIcon
+									btn
+									icon="file_download"
+									v-fm-tooltip="'Export Classifier'"
+									@click=";(exportClassifiersBtn = true), close()"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__default">
+								<FmIcon
+									btn
+									icon="file_upload"
+									v-fm-tooltip="'Import Classifiers from .csv file'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="map"
+									v-fm-tooltip="'Open Classifier Mappings'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="format_align_right"
+									v-fm-tooltip="'Edit Classifier tre'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="edit"
+									v-fm-tooltip="'Edit Attribute'"
+									@click=";(editAttributBtn = true), close()"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="delete"
+									v-fm-tooltip="'Delete Attribute'"
+									@click=";(deleteAttributBtn = true), close()"
+								/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<span v-else class="not-atribute" >This entity has no layouts.</span>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Account Type Attributes">
 			<div class="attributes-header">
@@ -371,7 +786,77 @@
 					>SHOW HIDDEN ATTRIBUTES
 				</FmBtn>
 			</div>
-			<span class="not-atribute">You could add new user attributes here</span>
+			
+			<div v-if="accountTypeAttributeItems">
+				<div
+					class="layouts-card"
+					v-for="(item, index) in accountTypeAttributeItems"
+					:key="index"
+				>
+					<div class="layouts-card__inner">
+						<div class="layouts-card__name">
+							<FmIcon btn icon="visibility" v-fm-tooltip="'Delete Attribute'" />
+							<div class="layouts-card__text">
+								<h3 class="layouts-card__title">
+									{{ item?.name }}
+								</h3>
+								<div class="layouts-card__subtitle">
+									{{ item?.user_code }}
+								</div>
+							</div>
+						</div>
+
+						<div class="layouts-card__setting">
+							<div class="layouts-card__item layouts-card__rename">
+								<FmIcon
+									btn
+									icon="file_download"
+									v-fm-tooltip="'Export Classifier'"
+									@click=";(exportClassifiersBtn = true), close()"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__default">
+								<FmIcon
+									btn
+									icon="file_upload"
+									v-fm-tooltip="'Import Classifiers from .csv file'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="map"
+									v-fm-tooltip="'Open Classifier Mappings'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="format_align_right"
+									v-fm-tooltip="'Edit Classifier tre'"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="edit"
+									v-fm-tooltip="'Edit Attribute'"
+									@click=";(editAttributBtn = true), close()"
+								/>
+							</div>
+							<div class="layouts-card__item layouts-card__delete">
+								<FmIcon
+									btn
+									icon="delete"
+									v-fm-tooltip="'Delete Attribute'"
+									@click=";(deleteAttributBtn = true), close()"
+								/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<span v-else class="not-atribute">You could add new user attributes here</span>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Transaction Type Attributes">
 			<div class="attributes-header">
@@ -405,7 +890,7 @@
 			v-model="exportClassifiersBtn"
 			@save="renameLayout"
 		/>
-		
+
 		<!-- title="Rename layout"
 			:name="activeLayout.name"
 			:user_code="activeLayout.user_code"
@@ -428,9 +913,10 @@
 	const instrumentItems = ref([])
 	const portfolioItems = ref([])
 	const accountItems = ref([])
-	const currencyItems = ref([])
-	const instrumentTypeItems = ref([])
-	const transactionTypeLightItems = ref([])
+	const responsibleAttrItems = ref([])
+	const counterpartyAttributeTypeItems = ref([])
+	const currencyAttrTypeItems = ref([])
+	const strategy1AttrTypeItems = ref([])
 	const accountsTypeItems = ref([])
 	const pricingPolicyListItems = ref([])
 	const instrumentPeriodicityItems = ref([])
@@ -452,7 +938,7 @@
 	const editAttributBtn = ref(false)
 	const deleteAttributBtn = ref(false)
 	const exportClassifiersBtn = ref(false)
-	
+
 	const disabledBtn = ref(true)
 	const ecosystemDefaults = ref([1])
 	const BaseInputEcosystemDefaults = ref([])
@@ -522,24 +1008,77 @@
 		instrumentAttrGet()
 	portfolioAttrGet()
 	accountAttrGet()
+	responsibleAttrGet()
+	counterpartyAttributeTypeGet()
+	currencyAttrTypeListGet()
+	strategy1AttrTypeListGet()
+	strategy2AttrTypeListGet()
+	strategy3AttrTypeListGet()
+	accountTypeAttributeGet()
+
+	
 	async function instrumentAttrGet() {
 		let edRes = await useApi('instrumentAttrTypeList.get')
-		console.log(edRes, 'edRes')
-		instrumentItems.value = edRes.error ? {} : edRes.results
+		instrumentItems.value = edRes.error ? [] : edRes.results
 		console.log(ecosystemDefaults.value, 'edRes')
 	}
 	async function portfolioAttrGet() {
 		let edRes = await useApi('portfolioAttrTypeList.get')
-		console.log(edRes, 'edRes')
-		portfolioItems.value = edRes.error ? {} : edRes.results
+
+		portfolioItems.value = edRes.error ? [] : edRes.results
 		console.log(ecosystemDefaults.value, 'edRes')
 	}
 	async function accountAttrGet() {
 		let edRes = await useApi('accountAttrTypeList.get')
-		console.log(edRes, 'edRes')
-		accountItems.value = edRes.error ? {} : edRes.results
+
+		accountItems.value = edRes.error ? [] : edRes.results
 		console.log(ecosystemDefaults.value, 'edRes')
 	}
+	async function responsibleAttrGet() {
+		let edRes = await useApi('responsibleAttrTypeList.get')
+
+		responsibleAttrItems.value = edRes.error ? [] : edRes.results
+		console.log(ecosystemDefaults.value, 'edRes')
+	}
+	async function counterpartyAttributeTypeGet() {
+		let edRes = await useApi('counterpartyAttributeTypeList.get')
+
+		counterpartyAttributeTypeItems.value = edRes.error ? [] : edRes.results
+		console.log(ecosystemDefaults.value, 'edRes')
+	}
+	async function currencyAttrTypeListGet() {
+		let edRes = await useApi('currencyAttrTypeList.get')
+
+		currencyAttrTypeItems.value = edRes.error ? [] : edRes.results
+		console.log(ecosystemDefaults.value, 'edRes')
+	}
+	async function strategy1AttrTypeListGet() {
+		let edRes = await useApi('strategy1AttrTypeList.get')
+
+		strategy1AttrTypeItems.value = edRes.error ? [] : edRes.results
+		console.log(ecosystemDefaults.value, 'edRes')
+	}
+	async function strategy2AttrTypeListGet() {
+		let edRes = await useApi('strategy1AttrTypeList.get')
+
+		strategy2AttrTypeItems.value = edRes.error ? [] : edRes.results
+		console.log(ecosystemDefaults.value, 'edRes')
+	}
+
+	async function strategy3AttrTypeListGet() {
+		let edRes = await useApi('strategy3AttrTypeList.get')
+
+		strategy3AttrTypeItems.value = edRes.error ? [] : edRes.results
+		console.log(ecosystemDefaults.value, 'edRes')
+	}
+	async function accountTypeAttributeGet() {
+		let edRes = await useApi('accountTypeAttributeType.get')
+
+		accountTypeAttributeItems.value = edRes.error ? [] : edRes.results
+		console.log(ecosystemDefaults.value, 'edRes')
+	}
+	
+
 	function renameLayout(newNamesData) {
 		emit('rename', newNamesData)
 		renameIsOpened.value = false

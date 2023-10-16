@@ -277,34 +277,78 @@ export default {
 	//# region Entity viewer attribute types
 	portfolioAttrTypeList: {
 		get: prefix + '/portfolios/portfolio-attribute-type/',
+		put: prefix + '/portfolios/portfolio-attribute-type/{id}/',
+		post: prefix + '/portfolios/portfolio-attribute-type/',
+		delete: prefix + '/portfolios/portfolio-attribute-type/{id}/',
 	},
 	accountAttrTypeList: {
 		get: prefix + '/accounts/account-attribute-type/',
+		put: prefix + '/accounts/account-attribute-type/{id}/',
+		post: prefix + '/accounts/account-attribute-type/',
+		delete: prefix + '/accounts/account-attribute-type/{id}/',
 	},
 
 	instrumentAttrTypeList: {
 		get: prefix + '/instruments/instrument-attribute-type/',
+		put: prefix + '/instruments/instrument-attribute-type/{id}/',
+		post: prefix + '/instruments/instrument-attribute-type/',
+		delete: prefix + '/instruments/instrument-attribute-type/{id}/',
 	},
 	instrumentTypeAttrTypeList: {
 		get: prefix + '/instruments/instrument-type-attribute-type/',
+		put: prefix + '/instruments/instrument-type-attribute-type/{id}/',
+		post: prefix + '/instruments/instrument-type-attribute-type/',
+		delete: prefix + '/instruments/instrument-type-attribute-type/{id}/',
 	},
 	responsibleAttrTypeList: {
 		get: prefix + '/counterparties/responsible-attribute-type/',
+		put: prefix + '/instruments/instrument-attribute-type/{id}/',
+		post: prefix + '/instruments/instrument-attribute-type/',
+		delete: prefix + '/instruments/instrument-attribute-type/{id}/',
 	},
 	currencyAttrTypeList: {
 		get: prefix + '/currencies/currency-attribute-type/',
+		put: prefix + '/currencies/currency-attribute-type/{id}/',
+		post: prefix + '/currencies/currency-attribute-type/',
+		delete: prefix + '/currencies/currency-attribute-type/{id}/',
 	},
-	counterpartyAttrTypeList: {
+	counterpartyAttributeTypeList: {
 		get: prefix + '/counterparties/counterparty-attribute-type/',
+		put: prefix + '/counterparties/counterparty-attribute-type/{id}/',
+		post: prefix + '/counterparties/counterparty-attribute-type/',
+		delete: prefix + '/counterparties/counterparty-attribute-type/{id}/',
+	},
+	
+	counterpartyAttrTypeList: {
+		get: prefix + '/currencies/currency-attribute-type/',
+		put: prefix + '/currencies/currency-attribute-type/{id}/',
+		post: prefix + '/currencies/currency-attribute-type/',
+		delete: prefix + '/currencies/currency-attribute-type/{id}/',
 	},
 	strategy1AttrTypeList: {
 		get: prefix + '/strategies/1/strategy-attribute-type/',
+		put: prefix + '/strategies/1/strategy-attribute-type/{id}/',
+		post: prefix + '/strategies/1/strategy-attribute-type/',
+		delete: prefix + '/strategies/1/strategy-attribute-type/{id}/',
 	},
 	strategy2AttrTypeList: {
 		get: prefix + '/strategies/2/strategy-attribute-type/',
+		put: prefix + '/strategies/2/strategy-attribute-type/{id}/',
+		post: prefix + '/strategies/2/strategy-attribute-type/',
+		delete: prefix + '/strategies/2/strategy-attribute-type/{id}/',
 	},
 	strategy3AttrTypeList: {
 		get: prefix + '/strategies/3/strategy-attribute-type/',
+		put: prefix + '/strategies/3/strategy-attribute-type/{id}/',
+		post: prefix + '/strategies/3/strategy-attribute-type/',
+		delete: prefix + '/strategies/3/strategy-attribute-type/{id}/',
+	},
+	
+	accountTypeAttributeType: {
+		get: prefix + '/accounts/account-type-attribute-type/',
+		put: prefix + '/accounts/account-type-attribute-type/{id}/',
+		post: prefix + '/accounts/account-type-attribute-type/',
+		delete: prefix + '/accounts/account-type-attribute-type/{id}/',
 	},
 
 	transactionTypeLight: {
