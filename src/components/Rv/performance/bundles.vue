@@ -65,16 +65,20 @@
 	async function fetchPortfolioBundles() {
 		// readyStatusData.bundles = false;
 
-		let res = await useApi('portfolioBundles.get')
+		let res = await useApi('portfolioBundles.get');
 
-		bundles.value = res.results
+		const delUserCodeRe = /^del\d{17}$/;
+
+		bundles.value = res.results.filter(
+			bundle => !bundle.user_code.match(delUserCodeRe)
+		);
 
 		if (props.reportOptions?.bundles?.length) {
+
 			bundles.value = bundles.value.filter(
-				(o) =>
-					!props.reportOptions?.bundles ||
-					props.reportOptions.bundles.includes(o.id)
+				bundle => props.reportOptions.bundles.includes(bundle.id)
 			)
+
 		}
 		// readyStatusData.bundles = true;
 
