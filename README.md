@@ -21,6 +21,23 @@ pnpm install --shamefully-hoist
 
 Start the development server on http://localhost:3000
 
+Create file .env in project's root directory.
+
+.env example:
+
+```txt
+NUXT_APP_BASE_URL='/space00000/v'
+
+KEYCLOAK_URL='https://stage-auth.finmars.com'
+KEYCLOAK_REALM='finmars'
+KEYCLOAK_CLIENT_ID='finmars'
+
+APP_HOST='http://localhost:3000/v'
+API_HOST='https://stage.finmars.com'
+AUTH_HOST='https://stage.finmars.com/authorizer'
+```
+Run command:
+
 ```bash
 npm run dev
 ```

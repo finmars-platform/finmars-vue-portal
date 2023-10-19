@@ -134,6 +134,10 @@ export default {
 		delete: prefix + '/users/member/{id}/',
 		put: prefix + '/users/member/{id}/',
 	},
+	memberLayout: {
+		get: prefix + '/ui/member-layout/',
+		put: prefix + '/ui/member-layout/{id}/',
+	},
 	memberSendInvite: {
 		put: prefix + '/users/member/{id}/send-invite/',
 	},
