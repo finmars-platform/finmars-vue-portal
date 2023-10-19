@@ -146,7 +146,7 @@
 	.base-input {
 		position: relative;
 		display: block;
-		height: 42px;
+		// min-height: 42px;
 		// border: 1px solid $border-darken;
 		border-radius: $border-radius;
 		transition: border 0.3s;
@@ -171,8 +171,8 @@
 			}
 		}
 
-		&:not(.bi_no_borders):not(.disabled, .readonly):focus-within,
-		&:not(.bi_no_borders):not(.disabled, .readonly):focus {
+		&:not(.bi_no_borders):not(.disabled):not(.readonly):focus-within,
+		&:not(.bi_no_borders):not(.disabled):not(.readonly):focus {
 			.bi_top {
 				.top_left_border,
 				.top_right_border {
@@ -360,15 +360,17 @@
 	.bi_wrap {
 		display: flex;
 		align-items: center;
-		// height: 40px;
-		// min-height: 42px;
-		height: 100%;
+		height: 42px;
+		// height: 100%;
 		width: 100%;
+	}
 
-		&.readonly {
-			border-left: 5px solid $border !important;
+	.base-input:not(.no-readonly-styles) {
+		.bi_wrap.readonly {
+			border-left: 5px solid $border;
 		}
 	}
+
 	.bi_default {
 		flex: 0 1 100%;
 		margin-left: 13px;

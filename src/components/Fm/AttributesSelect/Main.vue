@@ -863,6 +863,12 @@
     return result;
   }
 
+	/**
+	 * If originalName of leaf passed, it will be formatted.
+	 *
+	 * @param {string} name - name of branch or leaf
+	 * @returns {string} - html string with names that match filter highlighted
+	 */
   function highlightName(name) {
 
     name = formatName(name);
@@ -1022,9 +1028,22 @@
     return tree.map(node => {
 
       if (node.originalName) {
-        return node
+				/*
+       	* Spreading object literals used below
+       	* so that highlightName() will not change properties 'name'
+       	* inside the object attrsTree
+       	* */
+        return {
+					...node,
+					name: highlightName( node.pathToNode.join(' / ') ),
+				};
       }
 
+			/*
+       * Spreading object literals used below
+       * so that highlightName() will not change properties 'name'
+       * inside the object attrsTree
+       * */
       return {
         ...node,
         name: highlightName( node.pathToNode.join(' / ') ),
@@ -1064,7 +1083,7 @@
           };
 
         }
-        else if ( nodePassesFilter(node) ) { // section name passes filter
+        else if ( nodePassesFilter(node) ) { // name of section passes filter
 
           return {
             ...node,

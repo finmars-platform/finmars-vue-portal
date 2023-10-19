@@ -6,6 +6,7 @@ export default defineStore({
 			masterUsers: [],
 			current: {},
 			member: {},
+			memberLayout: {},
 
 			ws: null,
 
@@ -75,16 +76,46 @@ export default defineStore({
 			}
 		},
 		async getMe() {
-			const res = await useApi('member.get', { params: { id: 0 } })
+			const memberProm = useApi('member.get', { params: { id: 0 } })
+			const memberLayoutProm = useApi(
+				'memberLayout.get',
+				{
+					filters: { is_default: true },
+				}
+			)
 
-			if (res.error) {
-				console.log('res.error:', res.error)
+			const res = await Promise.all([memberProm, memberLayoutProm]);
+
+			if ( res[0].error || res[1].error ) {
+				console.error('Error while fetching data of member:', res[0].error || res[1].error );
+
 			} else {
-				if (!res.data) {
-					res.data = {}
+
+				let member = res[0];
+
+				if (!member.data) {
+					member.data = {}
 				}
 
-				if (!res.data.favorites) {
+				let memberLayout = res[1].results[0];
+
+				if (!memberLayout.data) {
+						memberLayout.data = {}
+				}
+
+				if (!memberLayout.data.favorites) {
+            		memberLayout.data.favorites = {}
+				}
+
+				if (!memberLayout.data.favorites.transaction_type) {
+            		memberLayout.data.favorites.transaction_type = []
+				}
+
+				if (!memberLayout.data.favorites.attributes) {
+            		memberLayout.data.favorites.attributes = {}
+				}
+
+				/*if (!res.data.favorites) {
 					res.data.favorites = {}
 				}
 
@@ -94,9 +125,10 @@ export default defineStore({
 
 				if (!res.data.favorites.attributes) {
 					res.data.favorites.attributes = {}
-				}
+				}*/
 
-				this.member = res
+				this.member = member;
+				this.memberLayout = memberLayout;
 			}
 		},
 		async updateMember(member = this.member) {
@@ -111,6 +143,22 @@ export default defineStore({
 				console.error(res.error)
 			} else {
 				this.member = res
+			}
+		},
+
+		async updateMemberLayout(memberLayout = this.memberLayout) {
+
+			const options = {
+					params: { id: memberLayout.id },
+					body: memberLayout,
+			}
+
+			const res = await useApi('memberLayout.put', options)
+
+			if (res.error) {
+					console.error(res.error)
+			} else {
+					this.memberLayout = res
 			}
 		},
 
@@ -175,7 +223,7 @@ export default defineStore({
 			}
 		},
 		favorites(state) {
-			return state.member.data.favorites
+			return state.memberLayout.data.favorites
 		},
 	},
 })

@@ -46,6 +46,8 @@
 		navigator.clipboard.writeText( JSON.stringify(value, null, 2) ).then(() => {
     });
 	}
+
+
 </script>
 
 <style lang="scss" scoped>
