@@ -1,6 +1,9 @@
 import evEvents from '@/angular/services/entityViewerEvents'
 import evHelperService from '@/angular/services/entityViewerHelperService'
 
+/**
+ * Used by AngularFmGridTableRvAreasDnd.vue
+ */
 export default function (scope, $mdDialog, isReport) {
 	const defaultHiddenDnDAreas = [
 		'filtersHolder',
@@ -139,11 +142,11 @@ export default function (scope, $mdDialog, isReport) {
 
 			switch (orderOf) {
 				case 'groups':
-					GCitems = evDataService.getGroups()
+					GCitems = scope.evDataService.getGroups()
 
 					updateGCFMethod = function () {
-						evDataService.setGroups(GCitems)
-						evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
+						scope.evDataService.setGroups(GCitems)
+						scope.evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
 					}
 
 					break
@@ -315,12 +318,8 @@ export default function (scope, $mdDialog, isReport) {
 				? filterAlreadyExist.layout_name
 				: filterAlreadyExist.name
 
-			$mdDialog.show({
+			/*$mdDialog.show({
 				controller: 'WarningDialogController as vm',
-				templateUrl: 'views/dialogs/warning-dialog-view.html',
-				parent: angular.element(document.body),
-				clickOutsideToClose: false,
-				multiple: true,
 				locals: {
 					warning: {
 						title: 'Error',
@@ -333,7 +332,9 @@ export default function (scope, $mdDialog, isReport) {
 						],
 					},
 				},
-			})
+			})*/
+			useNotify({type: 'error', title: `Filter ${filterName} already exist'`});
+
 		} else {
 			const filterToAdd = evHelperService.getTableAttrInFormOf(
 				'filter',

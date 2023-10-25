@@ -34,6 +34,14 @@
 		],
 	})
 
+	let evAttrsStore = useEvAttributesStore();
+
+	/*
+	 * TIPS:
+	 * vm.value.readyStatus set inside reportViewerController()
+	 *
+	 * */
+
 	const route = {
 		current: {
 			name: 'app.portal.reports.balance',
@@ -44,18 +52,7 @@
 	window.$state = route
 
 	// Modal hack
-	window.$mdDialog = {
-		modals: reactive({}),
-		show(opts) {
-			return new Promise((resolve, reject) => {
-				window.$mdDialog.modals[opts.controller.replace(' as vm', '')] = {
-					resolve,
-					reject,
-					...opts.locals,
-				}
-			})
-		},
-	}
+	window.$mdDialog = getMdDialogData()
 	provide('$mdDialog', window.$mdDialog)
 
 	let vm = ref(null)
@@ -65,11 +62,21 @@
 		entityType: 'balance-report',
 	}
 
-	onMounted(() => {
-		vm.value = new reportViewerController({
+	onMounted(async () => {
+
+		/*vm.value = new reportViewerController({
 			$scope,
 			$stateParams: route.params,
-			route,
-		})
+		})*/
+
+    vm.value = await initReportViewerController(
+        $scope.contentType,
+				evAttrsStore,
+				{
+          $scope,
+          $stateParams: route.params,
+      	}
+      )
+
 	})
 </script>

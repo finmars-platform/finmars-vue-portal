@@ -23,6 +23,7 @@
 
 <script setup>
 	import reportViewerController from '@/angular/controllers/entityViewer/reportViewerController'
+	import {getMdDialogData} from "~/composables/useEntityReportViewer";
 
 	definePageMeta({
 		middleware: 'auth',
@@ -44,18 +45,7 @@
 	window.$state = route
 
 	// Modal hack
-	window.$mdDialog = {
-		modals: reactive({}),
-		show(opts) {
-			return new Promise((resolve, reject) => {
-				window.$mdDialog.modals[opts.controller.replace(' as vm', '')] = {
-					resolve,
-					reject,
-					...opts.locals,
-				}
-			})
-		},
-	}
+	window.$mdDialog = getMdDialogData()
 	provide('$mdDialog', window.$mdDialog)
 
 	let vm = ref(null)

@@ -12,11 +12,12 @@
 
 	const props = defineProps([
 		'contentWrapElement',
-		'evDataService',
-		'evEventService',
 	])
+
 	const { evEventService, evDataService, attributeDataService } =
-		inject('ngDependace')
+		inject('ngDependace');
+
+	const $mdDialog = inject('$mdDialog');
 
 	const scope = {
 		contentWrapElement: props.contentWrapElement,

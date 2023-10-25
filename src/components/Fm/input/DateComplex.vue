@@ -15,7 +15,7 @@
 				:class="{ bi_no_borders: noBorders }"
 			>
 				<template v-if="!noBorders" #button>
-					<FmBtn type="iconBtn" icon="calendar_month" />
+					<FmBtn type="icon" icon="calendar_month" />
 				</template>
 
 				<template v-if="noBorders" #rightBtn>
@@ -126,7 +126,7 @@
 										>
 											<template #button>
 												<FmBtn
-													type="iconBtn"
+													type="icon"
 													class="expression-builder-btn"
 													:disabled="firstDateIsDisabled"
 													@click="openFirstEe = true"
@@ -170,7 +170,7 @@
 										>
 											<template #button>
 												<FmBtn
-													type="iconBtn"
+													type="icon"
 													class="expression-builder-btn"
 													:disabled="secondDateIsDisabled"
 													@click="openSecondEe = true"

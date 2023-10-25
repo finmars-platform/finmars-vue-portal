@@ -19,7 +19,7 @@
 				</BaseInput>
 			</div>
 
-			<FmBtn type="iconBtn" icon="close" @click="cancel" />
+			<FmBtn type="icon" icon="close" @click="cancel" />
 		</div>
 
 		<div class="modal_content scrollable">

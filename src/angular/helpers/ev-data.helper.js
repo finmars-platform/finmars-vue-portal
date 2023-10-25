@@ -764,6 +764,7 @@ var separateNotGroupingColumns = function (columns, groups) {
 }
 
 var importGroupsStylesFromColumns = function (groups, columns) {
+
 	let columnStyles = {}
 
 	columns.forEach((column) => {
@@ -773,6 +774,9 @@ var importGroupsStylesFromColumns = function (groups, columns) {
 	groups.forEach((group) => {
 		group.style = columnStyles[group.key]
 	})
+
+	return groups;
+
 }
 
 var clearLastActiveObject = function (evDataService) {

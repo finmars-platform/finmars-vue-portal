@@ -14,8 +14,11 @@ a {
 	display: block;
 }
 button {
-	cursor: pointer;
 	background: none;
+
+	&:not([disabled]) {
+		cursor: pointer;
+	}
 }
 h1,
 h2,
