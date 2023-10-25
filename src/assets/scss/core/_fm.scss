@@ -8,18 +8,22 @@
 .fm_drop {
 	background: $separ;
 }
+
 .fm_list_item {
 	display: flex;
 	align-items: center;
 	// height: 40px;
 	height: 36px;
 	padding: 0 16px;
-	cursor: pointer;
 	transition: 0.3s;
 	white-space: nowrap;
-	color: #747474;
 
-	&:hover {
+	&:not([disabled]) {
+		color: #747474;
+		cursor: pointer;
+	}
+
+	&:not([disabled]):hover {
 		background: $main;
 	}
 	&.active {
@@ -27,6 +31,16 @@
 	}
 	& + & {
 		border-top: $opts-borders;
+	}
+}
+
+button.fm_list_item {
+	width: 100%;
+}
+
+.fm_the_table_menu3 {
+	.menu_item {
+		height: 48px;
 	}
 }
 
@@ -38,7 +52,7 @@
 	}
 }
 
-// Card
+//# region Card
 .fm_card_title {
 	font-size: 24px;
 	margin-bottom: 25px;
@@ -81,6 +95,7 @@
 		}
 	}
 }
+//# endregion Card
 
 //# region pickmeup inside FmInputDateComplex
 

@@ -38,7 +38,7 @@
 						/>
 
 						<FmBtn
-							type="iconBtn"
+							type="icon"
 							icon="close"
 							@click="removeOutput(input.uid, outputData.output_id)"
 						/>
@@ -245,11 +245,9 @@
 		if (!addLinkingData.input.uid) {
 			throw new Error(`Input ${addLinkingData.input.name} has no uid`);
 		}
-		// console.log("testing1090.subscribeToComp addLinkingData", JSON.parse(JSON.stringify( addLinkingData )) );
+
 		const compToSub = dashStore.getComponent(addLinkingData.comp.uid);
-		// console.log("testing1090.subscribeToComp compToSub", compToSub);
 		const input = props.inputs.find( inputData => inputData.uid === addLinkingData.input.uid );
-		// console.log("testing1090.subscribeToComp input", input);
 
 		const outputToSub = dashStore.props.outputs.find(output => {
 			return output.component_id === compToSub.uid;

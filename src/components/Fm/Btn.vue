@@ -15,7 +15,7 @@
 		to: String,
 		/**
 		 * Type of button
-		 * @values primary, basic, text, action, iconBtn
+		 * @values primary, basic, text, action, icon
 		 */
 		type: {
 			type: String,
@@ -84,7 +84,7 @@
 				background: $primary-lighten-2;
 			}
 		}
-		&.iconBtn {
+		&.icon {
 			padding: 0;
 			min-width: 0;
 			height: auto;
@@ -115,7 +115,7 @@
 			color: $text-lighten;
 		}
 
-		&:not(.iconBtn) .icon {
+		&:not(.icon) .icon {
 			margin-right: 7px;
 		}
 	}

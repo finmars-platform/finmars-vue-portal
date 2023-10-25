@@ -3,6 +3,7 @@
 		class="g-wrapper position-relative"
 		:class="getWrapperClasses()"
 		:ref="(el) => (elem = jquery(el))"
+		v-bind="$attrs"
 	>
 		<div
 			class="g-recon verticalSplitPanelWrapper"
@@ -218,6 +219,76 @@
 			</div>
 		</div>
 	</div>
+
+	<BaseModal
+		v-if="$mdDialog.modals['WarningDialogController']"
+		:modelValue="true"
+		:title="
+			`${
+				$mdDialog.modals['WarningDialogController'].warning.title ||
+				'Warning'
+			}`
+		"
+		@close="
+				() => {
+					$mdDialog.modals['WarningDialogController'].resolve({})
+					delete $mdDialog.modals['WarningDialogController']
+				}
+			"
+	>
+
+		<div class="warning-text">
+			<div v-html="$mdDialog.modals['WarningDialogController'].warning.description"></div>
+		</div>
+
+		<template #controls>
+			<div
+				v-if="$mdDialog.modals['WarningDialogController'].warning.actionsButtons"
+				class="flex sb">
+
+				<FmBtn
+					v-for="btnData in $mdDialog.modals['WarningDialogController'].warning.actionsButtons"
+					type="text"
+					@click="
+							() => {
+								$mdDialog.modals['WarningDialogController'].resolve( btnData.response )
+								delete $mdDialog.modals['WarningDialogController']
+							}
+						"
+				>
+					{{ btnData.name }}
+				</FmBtn>
+
+			</div>
+
+			<div v-else class="flex sb">
+
+				<FmBtn
+					type="text"
+					@click="
+							() => {
+								$mdDialog.modals['WarningDialogController'].resolve({})
+								delete $mdDialog.modals['WarningDialogController']
+							}
+						"
+				>cancel</FmBtn>
+
+				<FmBtn
+					@click="
+							() => {
+								$mdDialog.modals['WarningDialogController'].resolve({
+									status: 'agree',
+								})
+								delete $mdDialog.modals['WarningDialogController']
+							}
+						"
+				>save</FmBtn>
+
+			</div>
+
+		</template>
+	</BaseModal>
+
 </template>
 
 <script setup>
@@ -242,6 +313,8 @@
 		evDataService,
 		attributeDataService,
 	})
+
+	let $mdDialog = inject('$mdDialog');
 
 	let scope = {
 		spExchangeService: '=',

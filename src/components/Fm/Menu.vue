@@ -4,7 +4,7 @@
 			<slot name="btn" :isOpen="isOpen"></slot>
 		</div>
 
-		<Teleport :to="attach" :disabled="!attach">
+		<Teleport :to="attach">
 			<transition>
 				<div
 					v-if="isOpen"
@@ -38,13 +38,21 @@
 			type: Boolean,
 			default: false,
 		},
+		openOnRightClick: {
+			type: Boolean,
+			default: false,
+		},
+
 		disabled: Boolean,
 		closeOnClickOutside: {
 			type: Boolean,
 			default: true,
 		},
 
-		attach: String,
+		attach: {
+			type: String,
+			default: 'body',
+		},
 
 		minHeight: String,
 		menuWidth: [Number, String], // depricated
@@ -83,7 +91,20 @@
 				isOpen.value = false
 			});
 
-		} else {
+		}
+		else if (props.openOnRightClick) {
+
+			activator.value.addEventListener('contextmenu', event => {
+
+				event.preventDefault();
+				event.stopPropagation();
+
+				isOpen.value = true;
+
+			});
+
+		}
+		else {
 			activator.value.addEventListener('click', toggle);
 		}
 
@@ -114,7 +135,7 @@
 
 	}
 
-	let isOpenHandler = async () => {
+	/*let isOpenHandler = async () => {
 
 		if ( !isOpen.value ) return false
 		await openHandlerBegins();
@@ -172,92 +193,94 @@
 			popup.value.style.left = 0 + props.offsetX + 'px'
 		}
 
-	};
+	};*/
 
-	if (props.attach && props.attach.toLowerCase() === 'body') {
+	const isOpenHandler = async () => {
 
-		isOpenHandler = async () => {
+		if ( !isOpen.value ) return false;
 
-			if ( !isOpen.value ) return false
-			await openHandlerBegins();
+		/* Close other popups and dialogs with close on click outside
+		 * Have to emulate click because of preventDefault(), preventPropagation()
+		 * */
+		document.body.click();
 
-			popup.value.style.position = 'absolute';
-			popup.value.style['z-index'] = 55; // should be same as $backdrop-z-index inside variables.scss
+		await openHandlerBegins();
 
-			// const coords = targetElement.getBoundingClientRect();
-			let positionX;
-			if (props.positionX) positionX = props.positionX;
+		popup.value.style.position = 'absolute';
+		popup.value.style['z-index'] = 55; // should be same as $backdrop-z-index inside variables.scss
 
-			let positionY;
-			if (props.positionY) positionY = props.positionY;
+		// const coords = targetElement.getBoundingClientRect();
+		let positionX;
+		if (props.positionX) positionX = props.positionX;
 
-			let activatorRect = activator.value.getBoundingClientRect();
-			// let popupRect = popup.value.getBoundingClientRect()
+		let positionY;
+		if (props.positionY) positionY = props.positionY;
 
-			popup.value.style['min-width'] = activatorRect.width + 'px';
+		let activatorRect = activator.value.getBoundingClientRect();
+		// let popupRect = popup.value.getBoundingClientRect()
 
-			let popupHeight = popup.value.clientHeight;
-			let popupWidth = popup.value.clientWidth;
+		popup.value.style['min-width'] = activatorRect.width + 'px';
 
-			/*if (props.menuWidth === 'activator') {
+		let popupHeight = popup.value.clientHeight;
+		let popupWidth = popup.value.clientWidth;
 
-				popupWidth = activatorRect.width;
-				popup.value.style.width = popupWidth + 'px';
+		/*if (props.menuWidth === 'activator') {
 
-			}*/
+			popupWidth = activatorRect.width;
+			popup.value.style.width = popupWidth + 'px';
 
-			if (!positionX) {
+		}*/
 
-				if (isLeft) {
-					positionX = activatorRect['left'];
+		if (!positionX) {
 
-				} else {
-					positionX = activatorRect['right'];
-				}
-
-			}
-
-			if (!positionY) {
-				positionY = isTop ? activatorRect['top'] : activatorRect['bottom'];
-			}
-
-			if (props.offsetX) {
-				positionX = positionX + props.offsetX;
-			}
-
-			if (props.offsetY) {
-				positionY = positionY + props.offsetY;
-			}
-
-			//#region Prevents popup from creeping out of window
-			const windowHeight = document.body.clientHeight;
-			const windowWidth = document.body.clientWidth;
-
-			if (popupHeight > windowHeight) popupHeight = windowHeight;
-
-			if (positionX + popupWidth > windowWidth) {
-				popup.value.style.right = '0';
-				popup.value.style.left = "auto";
+			if (isLeft) {
+				positionX = activatorRect['left'];
 
 			} else {
-				popup.value.style.left = positionX + 'px';
-				popup.value.style.right = "";
+				positionX = activatorRect['right'];
 			}
 
-			if (positionY + popupHeight > windowHeight) {
-				popup.value.style.bottom = '0';
-				popup.value.style.top = "auto";
+		}
 
-			}
-			else {
-				popup.value.style.top = positionY + 'px';
-				popup.value.style.bottom = "";
-			}
-			//#endregion Prevents popup from creeping out of window >
+		if (!positionY) {
+			positionY = isTop ? activatorRect['top'] : activatorRect['bottom'];
+		}
 
-		};
+		if (props.offsetX) {
+			positionX = positionX + props.offsetX;
+		}
 
-	}
+		if (props.offsetY) {
+			positionY = positionY + props.offsetY;
+		}
+
+		//#region Prevents popup from creeping out of window
+		const windowHeight = document.body.clientHeight;
+		const windowWidth = document.body.clientWidth;
+
+		if (popupHeight > windowHeight) popupHeight = windowHeight;
+
+		if (positionX + popupWidth > windowWidth) {
+			popup.value.style.right = '0';
+			popup.value.style.left = "auto";
+
+		} else {
+			popup.value.style.left = positionX + 'px';
+			popup.value.style.right = "";
+		}
+
+		if (positionY + popupHeight > windowHeight) {
+			popup.value.style.bottom = '0';
+			popup.value.style.top = "auto";
+
+		}
+		else {
+			popup.value.style.top = positionY + 'px';
+			popup.value.style.bottom = "";
+		}
+		//#endregion Prevents popup from creeping out of window >
+
+	};
 
 	watch(isOpen, isOpenHandler)
 
@@ -280,6 +303,7 @@
 			emit('update:opened', isOpen.value);
 
 		},
+		events: ['click', 'contextmenu'],
 		isActive: props.closeOnClickOutside
 	};
 

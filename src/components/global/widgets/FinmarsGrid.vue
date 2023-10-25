@@ -171,7 +171,6 @@
 	// debounce needed because multiple inputs change consecutively
 	/*const updateRvAfterInputsChange = useDebounce(function () {
 
-			// console.log("testing1090.finmarsGrid updateRvAfterInputsChange called");
 			vm.value.entityViewerEventService.dispatchEvent(evEvents.FILTERS_CHANGE);
 			vm.value.entityViewerEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE);
 			vm.value.entityViewerEventService.dispatchEvent(evEvents.REQUEST_REPORT);
@@ -179,7 +178,7 @@
 	}, 200)*/
 
 	const inputsValsWatcherCb = useDebounce(function (newVal, oldVal) {
-		// console.log("testing1090.finmarsGrid inputsValsWatcherCb", newVal, oldVal);
+
 		Object.keys(newVal).forEach(inputId => {
 
 			if ( newVal[inputId] === oldVal[inputId] ) {
@@ -187,18 +186,18 @@
 			}
 
 			const input = dashStore.props.inputs.find( input => input.uid === inputId );
-			// console.log("testing1090.finmarsGrid inputsValsWatcherCb input", input);
+
 			if ( input.key.startsWith('reportOptions__') ) {
 
 				const ro = updateReportOptionsWithDashInputs(input, vm.value.entityViewerDataService);
-				// console.log("testing1090.finmarsGrid report options input changed", input, ro);
+
 				vm.value.entityViewerDataService.setReportOptions(ro);
 
 			}
 			else {
 
 				const filters = updateFiltersWithDashInputs(input, vm.value.entityViewerDataService);
-				// console.log("testing1090.finmarsGrid filter input changed", input, filters);
+
 				vm.value.entityViewerDataService.setFilters(filters);
 
 			}
@@ -262,7 +261,6 @@
 				watcherCb = () => {
 
 					const ro = updateReportOptionsWithDashInputs(input, vm.value.entityViewerDataService);
-					// console.log("testing1090.finmarsGrid report options input changed", input, ro);
 					vm.value.entityViewerDataService.setReportOptions(ro);
 
 					updateRvAfterInputsChange();
@@ -274,7 +272,6 @@
 				watcherCb = () => {
 
 					const filters = updateFiltersWithDashInputs(input, vm.value.entityViewerDataService);
-					// console.log("testing1090.finmarsGrid filter input changed", input, filters);
 					vm.value.entityViewerDataService.setFilters(filters);
 
 					updateRvAfterInputsChange();

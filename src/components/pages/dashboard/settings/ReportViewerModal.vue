@@ -114,7 +114,7 @@
 	}
 
 	function onContentTypeChange(contentType) {
-		// console.log("testing1090.settingsMatrixModal onContentTypeChange contentType ", contentType);
+
 		/*inputsList.value = inputsList.value.filter(input => {
 
 			return ![
@@ -136,7 +136,7 @@
 		});
 
 		emit('update:inputs', inputsList.value);
-		// console.log("testing1090.settingsMatrixModal onContentTypeChange inputsList.value ", inputsList.value);
+
 		component.value.settings.axisX = null;
 		component.value.settings.axisY = null;
 		component.value.settings.valueKey = null;
@@ -146,7 +146,6 @@
 		component.value.settings.content_type = contentType;
 
 		// component.value.settings.user_settings
-		// console.log("testing1090.settingsMatrixModal onContentTypeChange component ", component.value);
 	}
 
 </script>
