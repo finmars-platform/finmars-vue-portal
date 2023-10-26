@@ -1,60 +1,114 @@
 <template>
 	<div class="container">
-		<table class="portfolio-table">
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>Unique Code</th>
-					<th>Notes</th>
-
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr v-for="(item, index) in pricingPolicyList" :key="index">
-					<td>{{ item.name }}</td>
-					<td>{{ item.user_code }}</td>
-					<td>{{ item.notes }}</td>
-
-					<td>
-						<FmBtn
-							type="text"
-							class="g-toggle-filters-btn"
-							@click="editPricingPolicy(item)"
-							>Edit
-						</FmBtn>
-						<FmBtn
-							type="text"
-							class="g-toggle-filters-btn"
-							@click="deletePricingPolicy(item)"
-						>
-							Delete
-						</FmBtn>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<FmBtn
-			type="primary"
-			class="g-toggle-filters-btn"
-			@click="createPricingPolicy(item)"
-		>
-			Add New
-		</FmBtn>
-		<div v-if="isOpenEditPricingPolicy">
-			<ModalPortfolioBundleManager
+		<FmTabs v-model="activeTab" :tabs="tabsList" />
+		<div v-show="activeTab === 'Instruments Pricing Schemes'" class="p-t-16">
+			<table class="portfolio-table">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>User Code</th>
+						<th>Type</th>
+						<th>Notes</th>
+						<th>Clarification for Users:</th>
+						<th>Error Handler</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="(item, index) in instrumentSchemeList" :key="index">
+						<td>{{ item.name }}</td>
+						<td>{{ item.user_code }}</td>
+						<td>{{ item.type_object.name }}</td>
+						<td>{{ item.notes }}</td>
+						<td>{{ item.notes_for_users }}</td>
+						<td>{{ getErrorHandler(item) }}</td>
+						<td>
+							<FmBtn
+								type="text"
+								class="g-toggle-filters-btn"
+								@click="afterEditItems(item)"
+								>Edit
+							</FmBtn>
+							<FmBtn
+								type="text"
+								class="g-toggle-filters-btn"
+								@click="deleteItem(item)"
+							>
+								Delete
+							</FmBtn>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<FmBtn
+				type="primary"
+				class="g-toggle-filters-btn"
+				@click="afterCreateItems(item)"
+			>
+				Add New
+			</FmBtn>
+		</div>
+		<div v-show="activeTab === 'Currencies Pricing Schemes'" class="p-t-16">
+			<table class="portfolio-table">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>User Code</th>
+						<th>Type</th>
+						<th>Notes</th>
+						<th>Clarification for Users:</th>
+						<th>Error Handler</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="(item, index) in currencySchemeList" :key="index">
+						<td>{{ item.name }}</td>
+						<td>{{ item.user_code }}</td>
+						<td>{{ item.type_object.name }}</td>
+						<td>{{ item.notes }}</td>
+						<td>{{ item.notes_for_users }}</td>
+						<td>{{ getErrorHandler(item) }}</td>
+						<td>
+							<FmBtn
+								type="text"
+								class="g-toggle-filters-btn"
+								@click="afterEditItems(item)"
+								>Edit
+							</FmBtn>
+							<FmBtn
+								type="text"
+								class="g-toggle-filters-btn"
+								@click="deleteItem(item)"
+							>
+								Delete
+							</FmBtn>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<FmBtn
+				type="primary"
+				class="g-toggle-filters-btn"
+				@click="afterCreateItems(item)"
+			>
+				Add New
+			</FmBtn>
+		</div>
+		<div v-if="isOpenEditModal">
+			<PricingSchemesManager
 				title="Portfolio Bundle Manager"
-				v-model="isOpenEditPricingPolicy"
-				:name="activePolicyList.name"
-				:user_code="activePolicyList.user_code"
-				:notes="activePolicyList.notes"
+				v-model="isOpenEditModal"
+				:name="activeList.name"
+				:user_code="activeList.user_code"
+				:notes="activeList.notes"
 				:typeModal="typeModal"
-				:registers="activePolicyList.registers"
+				:registers="activeList.registers"
 				:registersItems="portfolioRegister"
-				@save="putEditPortfolioBundle"
-				@create="getCreatePortfolioBundle"
-			></ModalPortfolioBundleManager>
-		
+				:instrument = 'instrument'
+				@save="getCreateItem"
+				@create="getCreateItem"
+			></PricingSchemesManager>
 		</div>
 	</div>
 </template>
@@ -69,39 +123,58 @@
 			},
 		],
 	})
-	const pricingPolicyList = ref([])
-	let activePolicyList = ref([])
-	let isOpenEditPricingPolicy = ref(false)
+	const instrumentSchemeList = ref([])
+	const currencySchemeList = ref([])
+	let activeList = ref([])
+	let isOpenEditModal = ref(false)
 	let typeModal = ref()
 	let portfolioRegister = ref()
+	const tabsList = ['Instruments Pricing Schemes', 'Currencies Pricing Schemes']
+	let activeTab = ref('Instruments Pricing Schemes')
+
 	defaultsGet()
 	async function defaultsGet() {
-		let edRes = await useApi('portfolioBundles.get')
+		let edResInstrument = await useApi('instrumentSchemeList.get')
+		let edResCurrency = await useApi('currencySchemeList.get')
 
-		pricingPolicyList.value = edRes.error ? {} : edRes.results
+		instrumentSchemeList.value = edResInstrument.error
+			? []
+			: edResInstrument.results
+		currencySchemeList.value = edResCurrency.error ? [] : edResCurrency.results
+		console.log('instrumentSchemeList', instrumentSchemeList)
+		console.log('currencySchemeList', currencySchemeList)
 	}
-	console.log('portfolioBundles', pricingPolicyList)
-	async function deletePricingPolicy(item) {
-		console.log('itemitem', item)
+
+	let getErrorHandler = function (item) {
+		if (item.error_handler === 1) {
+			return 'Add to Error Table and notify in the End'
+		}
+
+		if (item.error_handler === 2) {
+			return 'Add to Error Table, no notification'
+		}
+
+		if (item.error_handler === 3) {
+			return 'Add to Error Table, notify directly'
+		}
+
+		if (item.error_handler === 3) {
+			return 'Notify Directly and request Prices'
+		}
+	}
+	async function deleteItem(item) {
 		let confirm = await useConfirm({
 			title: 'Confirm action',
 			text: `Do you want to delete "${item.name}" layout?`,
 		})
 
 		if (confirm) {
-			deletePricingPolicyItem(item)
+			confirmDeleteItem(item)
 		}
 	}
-	
-	
-	async function getPortfolioRegister() {
-		let edRes = await useApi('portfolioRegisterList.get')
-		portfolioRegister.value = edRes.error ? {} : edRes.results
-	}
-	getPortfolioRegister()
-	console.log('portfolioRegister', portfolioRegister)
-	function deletePricingPolicyItem(item) {
-		let res = useApi('portfolioBundles.delete', {
+
+	async function confirmDeleteItem(item) {
+		let res = await useApi('pricingPolicyList.delete', {
 			params: { id: item.id },
 			body: item,
 		})
@@ -121,41 +194,72 @@
 		useNotify({ type: 'success', title: `data delete on the server` })
 		defaultsGet()
 	}
-	function editPricingPolicy(newNamesData) {
-		activePolicyList = newNamesData
-		console.log('activePolicyList.registers', activePolicyList.registers)
-	
-		typeModal = 'edit'
-		isOpenEditPricingPolicy.value = true
+
+	function afterEditItems(newNamesData) {
+		// activePricingPolicyList = " "
+		activePricingPolicyList = newNamesData
+		сreation = false
+		isOpenEditPortfolioBundle.value = true
 	}
-	function createPricingPolicy(newNamesData) {
-	
-		typeModal = 'create'
-		isOpenEditPricingPolicy.value = true
+	function afterCreateItems(newNamesData) {
+		activePricingPolicyList = ' '
+		сreation = true
+
+		isOpenEditPortfolioBundle.value = true
+	}
+	async function getEditItem(newNamesData) {
+		let res = await useApi('pricingPolicyList.put', {
+			params: { id: activePricingPolicyList.id },
+			body: newNamesData,
+		})
+		if (res.error) {
+			useNotify({
+				type: 'error',
+				title: res.error.message || res.error.detail,
+			})
+			throw new Error(res.error)
+		} else if (res.status === 'conflict') {
+			useNotify({
+				type: 'error',
+				title: 'You can not Edit CustomColumns that already in use',
+			})
+			throw new Error(res.error)
+		}
+		useNotify({ type: 'success', title: `data Edit on the server` })
+		defaultsGet()
+
+		isOpenEditPortfolioBundle.value = false
 	}
 
-	// async function defaultSettingsCreate() {
-	// 	let res = await useApi('defaultSettings.put', {
-	// 		params: { id: ecosystemDefaults.value.id },
-	// 		body: ecosystemDefaults.value,
-	// 	})
-
-	// 	if (res.error) {
-	// 		// console.error(res.error);
-	// 		useNotify({ type: 'error', title: res.error.message || res.error.detail })
-	// 		throw new Error(res.error)
-	// 	} else {
-	// 		useNotify({ type: 'success', title: `data saved on the server` })
-	// 	}
-	// 	disabledBtn.value = true
-	// }
+	async function getCreateItem(newNamesData) {
+		activePricingPolicyList = {}
+		let res = await useApi('pricingPolicyList.post', {
+			body: newNamesData,
+		})
+		if (res.error) {
+			useNotify({
+				type: 'error',
+				title: res.error.message || res.error.detail,
+			})
+			throw new Error(res.error)
+		} else if (res.status === 'conflict') {
+			useNotify({
+				type: 'error',
+				title: 'You can not Edit CustomColumns that already in use',
+			})
+			throw new Error(res.error)
+		}
+		useNotify({ type: 'success', title: `data Edit on the server` })
+		defaultsGet()
+		isOpenEditPortfolioBundle.value = false
+	}
 </script>
 
 <style lang="scss" scoped>
 	td,
 	th {
 		width: 25%;
-		padding: 0 5px;
+		padding: 5px 5px;
 		display: table-cell;
 		text-align: left;
 		vertical-align: middle;

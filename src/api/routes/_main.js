@@ -35,6 +35,9 @@ export default {
 
 	instrumentSchemeList: {
 		get: prefix + '/pricing/instrument-pricing-scheme/',
+		post: prefix + '/pricing/instrument-pricing-scheme/',
+		delete: prefix + '/pricing/instrument-pricing-scheme/{id}/',
+		put: prefix + '/pricing/instrument-pricing-scheme/{id}/',
 	},
 	instrumentType: {
 		get: prefix + '/instruments/instrument-type/light/',
@@ -63,6 +66,9 @@ export default {
 	},
 	currencySchemeList: {
 		get: prefix + '/pricing/currency-pricing-scheme/',
+		post: prefix + '/pricing/currency-pricing-scheme/',
+		delete: prefix + '/pricing/currency-pricing-scheme/{id}/',
+		put: prefix + '/pricing/currency-pricing-scheme/{id}/',
 	},
 	currencyDatabaseSearch: {
 		// get: prefix + '/api/currencies/currency-database-search/',
