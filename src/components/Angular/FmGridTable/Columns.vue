@@ -204,7 +204,7 @@
 					"
 				/>-->
 
-		<BaseModal
+<!--		<BaseModal
 			v-if="$mdDialog.modals['RenameFieldDialogController']"
 			:modelValue="true"
 			title="Rename column"
@@ -215,13 +215,13 @@
 				}
 			"
 		>
-			<BaseInput readonly label="ID" v-model="renemedColumn.key" />
+			<BaseInput readonly label="ID" v-model="columnToRename.key" />
 			<BaseInput
 				readonly
 				label="Original"
-				:modelValue="renemedColumn.name"
+				:modelValue="columnToRename.name"
 			/>
-			<BaseInput label="Name" v-model="renemedColumn.layout_name" />
+			<BaseInput label="Name" v-model="columnToRename.layout_name" />
 
 			<template #controls>
 				<div class="flex sb">
@@ -249,7 +249,37 @@
 					>
 				</div>
 			</template>
+		</BaseModal>-->
+
+		<BaseModal
+			v-model="renameOpened"
+			title="Rename"
+			@close="columnToRename = null"
+		>
+			<BaseInput readonly label="ID" v-model="columnToRename.key" />
+			<BaseInput
+				readonly
+				label="Original"
+				:modelValue="columnToRename.name"
+			/>
+			<BaseInput label="Name" v-model="columnToRename.layout_name" />
+
+			<template #controls="{ cancel }">
+				<div class="flex sb">
+
+					<FmBtn
+						type="text"
+						@click="cancel()"
+					>cancel</FmBtn>
+
+					<FmBtn
+						@click="renameColumn(cancel)"
+					>save</FmBtn>
+				</div>
+			</template>
+
 		</BaseModal>
+
 	</div>
 </template>
 
@@ -1780,53 +1810,47 @@
 
 	//# region Data to provide for components-children
 	// Must be after assignment of checkForFilteringBySameAttr
+	let renameOpened = ref(false);
+	let columnToRename = ref(null)
 
-	let renemedColumn = ref(null)
-
-	/**
-	 * Can be called by a group.
-	 *
-	 * @param {string} itemKey - key of a column or a group
-	 * @param {Function} closeCb - callback to close FmMenu
-	 */
-	let renameColumn = async function (itemKey, closeCb) {
+	/*let renameColumn = async function (itemKey, closeCb) {
 
 		closeCb();
 
 		let colsList = evDataService.getColumns();
 		let column = colsList.find((column) => column.key === itemKey)
 
-		renemedColumn.value = structuredClone(column)
+		columnToRename.value = structuredClone(column)
 
-		if (!renemedColumn.value.layout_name) {
-			renemedColumn.value.__isOriginal = true
+		if (!columnToRename.value.layout_name) {
+			columnToRename.value.__isOriginal = true
 		}
 
 		let res = await $mdDialog.show({
 			controller: 'RenameFieldDialogController as vm',
 			templateUrl: 'views/dialogs/rename-field-dialog-view.html',
 			locals: {
-				data: renemedColumn.value,
+				data: columnToRename.value,
 			},
 		})
 
 		if (res.status === 'agree') {
 
-			delete renemedColumn.value.__isOriginal
+			delete columnToRename.value.__isOriginal
 
-			column.layout_name = renemedColumn.value.layout_name;
+			column.layout_name = columnToRename.value.layout_name;
 			evDataService.setColumns(colsList);
 
 			evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
 
-			if ( columnHasCorrespondingGroup(renemedColumn.value.key) ) {
+			if ( columnHasCorrespondingGroup(columnToRename.value.key) ) {
 
 				// var group = groups.value.find((group) => group.key === itemKey)
 
 				let groupsList = evDataService.getGroups();
 				let group = groupsList.find(group => group.key === itemKey)
 
-				group.layout_name = renemedColumn.value.layout_name
+				group.layout_name = columnToRename.value.layout_name
 
 				evDataService.setGroups(groupsList)
 				evEventService.dispatchEvent(evEvents.GROUPS_CHANGE);
@@ -1838,11 +1862,11 @@
 			if (isReport) {
 
 				const filter = filters.find(
-					(filter) => filter.key === renemedColumn.value.key
+					(filter) => filter.key === columnToRename.value.key
 				)
 
 				if (filter) {
-					filter.layout_name = renemedColumn.value.layout_name
+					filter.layout_name = columnToRename.value.layout_name
 
 					evDataService.setFilters(filters)
 
@@ -1858,11 +1882,11 @@
 					// search among frontend and backend filters
 
 					const filter = filters[filtersProp].find(
-						(filter) => filter.key === renemedColumn.value.key
+						(filter) => filter.key === columnToRename.value.key
 					)
 
 					if (filter) {
-						filter.layout_name = renemedColumn.value.layout_name
+						filter.layout_name = columnToRename.value.layout_name
 						filterLayoutNameChanged = true
 					}
 				}
@@ -1876,6 +1900,96 @@
 
 			// columnsToShow.value = getColumnsToShow()
 		}
+	} */
+
+	/**
+	 *
+	 * @param {String} itemKey - key of column or group
+	 * @param {Function} closeCb - callback to close FmMenu
+	 */
+	function openRenameColumn(itemKey, closeCb) {
+
+		closeCb();
+
+		let column = getColumnByKey(itemKey);
+		columnToRename.value = structuredClone(column);
+		renameOpened.value = true;
+
+	}
+
+	/**
+	 * Inside report viewer can be called by a group.
+	 *
+	 * @param {Function} closeModal
+	 */
+	function renameColumn(closeModal) {
+
+		let column = getColumnByKey(columnToRename.value.key);
+
+		column.layout_name = columnToRename.value.layout_name;
+
+		setColumn(column);
+
+		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
+
+		if ( columnHasCorrespondingGroup(columnToRename.value.key) ) {
+
+			// var group = groups.value.find((group) => group.key === itemKey)
+
+			let groupsList = evDataService.getGroups();
+			let group = groupsList.find(group => group.key === columnToRename.value.key)
+
+			group.layout_name = columnToRename.value.layout_name
+
+			evDataService.setGroups(groupsList)
+			evEventService.dispatchEvent(evEvents.GROUPS_CHANGE);
+
+		}
+
+		const filters = evDataService.getFilters()
+
+		if (isReport) {
+
+			const filter = filters.find(
+				(filter) => filter.key === columnToRename.value.key
+			)
+
+			if (filter) {
+				filter.layout_name = columnToRename.value.layout_name
+
+				evDataService.setFilters(filters)
+
+				evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
+			}
+
+		}
+		else {
+
+			let filterLayoutNameChanged = false
+
+			for (let filtersProp in filters) {
+				// search among frontend and backend filters
+
+				const filter = filters[filtersProp].find(
+					(filter) => filter.key === columnToRename.value.key
+				)
+
+				if (filter) {
+					filter.layout_name = columnToRename.value.layout_name
+					filterLayoutNameChanged = true
+				}
+			}
+
+			if (filterLayoutNameChanged) {
+				evDataService.setFilters(filters)
+				evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
+			}
+
+		}
+
+		// Must be at the bottom, because closing modal empties ref columnToRename
+		closeModal();
+
 	}
 
 	let columnHasCorrespondingGroup = function (columnKey) {
@@ -2207,7 +2321,7 @@
 
 	/** Used to pass data into AngularFmGridTableColumnCell */
 	let columnsData = reactive({
-		renameColumn: renameColumn,
+		openRenameColumn: openRenameColumn,
 		columnHasCorrespondingGroup: columnHasCorrespondingGroup,
 		addColumnEntityToGrouping: addColumnEntityToGrouping,
 		checkForFilteringBySameAttr: checkForFilteringBySameAttr,

@@ -151,7 +151,7 @@
 
 				<div
 					class="fm_list_item"
-					@click="columnsData.renameColumn(item.key, close)"
+					@click="columnsData.openRenameColumn(item.key, close)"
 				>
 					Rename
 				</div>
