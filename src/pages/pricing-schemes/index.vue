@@ -96,7 +96,7 @@
 			</FmBtn>
 		</div>
 		<div v-if="isOpenEditModal">
-			<PricingSchemesManager
+			<ModalPricingSchemesManager
 				title="Portfolio Bundle Manager"
 				v-model="isOpenEditModal"
 				:name="activeList.name"
@@ -106,9 +106,10 @@
 				:registers="activeList.registers"
 				:registersItems="portfolioRegister"
 				:instrument = 'instrument'
+				:typeObject="activeList.type_object"
 				@save="getCreateItem"
 				@create="getCreateItem"
-			></PricingSchemesManager>
+			></ModalPricingSchemesManager>
 		</div>
 	</div>
 </template>
@@ -131,7 +132,7 @@
 	let portfolioRegister = ref()
 	const tabsList = ['Instruments Pricing Schemes', 'Currencies Pricing Schemes']
 	let activeTab = ref('Instruments Pricing Schemes')
-
+	let сreation = ref()
 	defaultsGet()
 	async function defaultsGet() {
 		let edResInstrument = await useApi('instrumentSchemeList.get')
@@ -196,20 +197,20 @@
 	}
 
 	function afterEditItems(newNamesData) {
-		// activePricingPolicyList = " "
-		activePricingPolicyList = newNamesData
+		// activeList= " "
+		activeList= newNamesData
 		сreation = false
-		isOpenEditPortfolioBundle.value = true
+		isOpenEditModal.value = true
 	}
 	function afterCreateItems(newNamesData) {
-		activePricingPolicyList = ' '
+		activeList= ' '
 		сreation = true
 
-		isOpenEditPortfolioBundle.value = true
+		isOpenEditModal.value = true
 	}
 	async function getEditItem(newNamesData) {
 		let res = await useApi('pricingPolicyList.put', {
-			params: { id: activePricingPolicyList.id },
+			params: { id: activeList.id },
 			body: newNamesData,
 		})
 		if (res.error) {
@@ -232,7 +233,7 @@
 	}
 
 	async function getCreateItem(newNamesData) {
-		activePricingPolicyList = {}
+		activeList= {}
 		let res = await useApi('pricingPolicyList.post', {
 			body: newNamesData,
 		})

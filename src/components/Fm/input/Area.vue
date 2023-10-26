@@ -8,7 +8,7 @@
 		</div>
 
 		<textarea
-			class="bi_area"
+			class="bi_area textarea_bi_area"
 			:rows="calcRow"
 			:value="modelValue"
     	@input="$emit('update:modelValue', $event.target.value)"
@@ -35,7 +35,13 @@
 </script>
 
 <style lang="scss" scoped>
-
+textarea{
+	border: none;
+	padding: 0;
+}
+.bi_area.textarea_bi_area{
+	padding: 0;
+}
 .base-input {
 	position: relative;
 	border: 1px solid $border-darken;
