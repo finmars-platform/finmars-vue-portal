@@ -942,141 +942,145 @@
 	const disabledBtn = ref(true)
 	const ecosystemDefaults = ref([1])
 	const BaseInputEcosystemDefaults = ref([])
-	// init()
-	// async function init() {
-	// 	const res = await Promise.all([
-	// 		useApi('instrumentListLight.get'),
-	// 		useApi('portfolioListLight.get'),
-	// 		useApi('accountLight.get'),
-	// 		useApi('currencyListLight.get'),
-	// 		useApi('instrumentType.get'),
-	// 		useApi('transactionTypeLight.get'),
-	// 		useApi('accountsType.get'),
-	// 		useApi('pricingPolicyList.get'),
-	// 		useApi('instrumentPeriodicity.get'),
-	// 		useApi('instrumentAccrualCalculationModel.get'),
-	// 		useApi('instrumentClass.get'),
-	// 		useApi('instrumentSizeDetail.get'),
-	// 		useApi('instrumentPricingСondition.get'),
-	// 		useApi('counterpartyResponsibleLight.get'),
-	// 		useApi('counterpartyCounterpartyLight.get'),
-	// 		useApi('strategiesOneLight.get'),
-	// 		useApi('strategiesOneSubgroup.get'),
-	// 		useApi('strategiesSecondLight.get'),
-	// 		useApi('strategiesSecondSubgroup.get'),
-	// 		useApi('strategiesThirdLight.get'),
-	// 		useApi('strategiesThirdSubgroup.get'),
-	// 		useApi('instrumentSchemeList.get'),
-	// 		useApi('currencySchemeList.get'),
-	// 	])
+	const activeAttributList = ref([])
 
-	// 	instrumentItems.value = res[0].results
-	// 	portfolioListLightItems.value = res[1].results
-	// 	billItems.value = res[2].results
-	// 	currencyItems.value = res[3].results
-	// 	instrumentTypeItems.value = res[4].results
-	// 	transactionTypeLightItems.value = res[5].results
-	// 	accountsTypeItems.value = res[6].results
-	// 	pricingPolicyListItems.value = res[7].results
-	// 	instrumentPeriodicityItems.value = res[8]
-	// 	instrumentAccrualCalculationModelItems.value = res[9]
-	// 	instrumentClassItems.value = res[10]
-	// 	instrumentSizeDetailItems.value = res[11]
-	// 	instrumentPricingСonditionItems.value = res[12]
-	// 	counterpartyResponsibleLightItems.value = res[13].results
-	// 	counterpartyCounterpartyLightItems.value = res[14].results
-	// 	strategiesOneLightItems.value = res[15].results
-	// 	strategiesOneSubgroupItems.value = res[16].results
-	// 	strategiesSecondLightItems.value = res[17].results
-	// 	strategiesSecondSubgroupItems.value = res[18].results
-	// 	strategiesThirdLightItems.value = res[19].results
-	// 	strategiesThirdSubgroupItems.value = res[20].results
-	// 	instrumentSchemeListItems.value = res[21].results
-	// 	currencySchemeListItems.value = res[22].results
-	// }
+	const evAttrsStore = useEvAttributesStore();
 
-	watch(
-		ecosystemDefaults,
-		(newValue, oldValue) => {
-			if (oldValue[0] === 1) {
-			} else {
-				disabledBtn.value = false
-			}
-		},
-		{ deep: true }
-	),
-		instrumentAttrGet()
-	portfolioAttrGet()
-	accountAttrGet()
-	responsibleAttrGet()
-	counterpartyAttributeTypeGet()
-	currencyAttrTypeListGet()
-	strategy1AttrTypeListGet()
-	strategy2AttrTypeListGet()
-	strategy3AttrTypeListGet()
-	accountTypeAttributeGet()
+	let attributMap = ref({
+		'portfolios.portfolio': [],
+		'reports.plreport': [],
+		'reports.balancereport': [],
+		'reports.transactionreport': [],
+		'accounts.account': [],
+		'accounts.accounttype': [],
+		'instruments.instrument': [],
+		'instruments.instrumenttype': [],
+		'counterparties.responsible': [],
+		'counterparties.counterparty': [],
+		'currencies.currency': [],
+		'strategies.strategy1': [],
+		'strategies.strategy2': [],
+		'strategies.strategy3': [],
+		'transactions.transactiontype': [],
+		'transactions.complextransaction': [],
+	})
+	getAttributList()
+	async function getAttributList() {
+		attributMap = ref({
+			'portfolios.portfolio': [],
+			'reports.plreport': [],
+			'reports.balancereport': [],
+			'reports.transactionreport': [],
+			'accounts.account': [],
+			'accounts.accounttype': [],
+			'instruments.instrument': [],
+			'instruments.instrumenttype': [],
+			'counterparties.responsible': [],
+			'counterparties.counterparty': [],
+			'currencies.currency': [],
+			'strategies.strategy1': [],
+			'strategies.strategy2': [],
+			'strategies.strategy3': [],
+			'transactions.transactiontype': [],
+			'transactions.complextransaction': [],
+		})
+		const res = await evAttrsStore.getListLayouts()
+		activeAttributList.value = res
+		console.log('res getLayouts', res)
+
+		activeAttributList.value.forEach((layout) => {
+			layoutMap.value[layout.content_type].push(layout)
+		})
+		console.log('layoutMap activeAttributList', layoutMap)
+		// console.log(
+		// 	"layoutMap.value['portfolios.portfolio']",
+		// 	layoutMap.value['portfolios.portfolio']
+		// )
+	}
+
+
+	// watch(
+	// 	ecosystemDefaults,
+	// 	(newValue, oldValue) => {
+	// 		if (oldValue[0] === 1) {
+	// 		} else {
+	// 			disabledBtn.value = false
+	// 		}
+	// 	},
+	// 	{ deep: true }
+	// ),
+	// 	instrumentAttrGet()
+	// portfolioAttrGet()
+	// accountAttrGet()
+	// responsibleAttrGet()
+	// counterpartyAttributeTypeGet()
+	// currencyAttrTypeListGet()
+	// strategy1AttrTypeListGet()
+	// strategy2AttrTypeListGet()
+	// strategy3AttrTypeListGet()
+	// accountTypeAttributeGet()
 
 	
-	async function instrumentAttrGet() {
-		let edRes = await useApi('instrumentAttrTypeList.get')
-		instrumentItems.value = edRes.error ? [] : edRes.results
-		console.log(ecosystemDefaults.value, 'edRes')
-	}
-	async function portfolioAttrGet() {
-		let edRes = await useApi('portfolioAttrTypeList.get')
+	// async function instrumentAttrGet() {
+	// 	let edRes = await useApi('instrumentAttrTypeList.get')
+	// 	instrumentItems.value = edRes.error ? [] : edRes.results
+	// 	console.log(ecosystemDefaults.value, 'edRes')
+	// }
+	// async function portfolioAttrGet() {
+	// 	let edRes = await useApi('portfolioAttrTypeList.get')
 
-		portfolioItems.value = edRes.error ? [] : edRes.results
-		console.log(ecosystemDefaults.value, 'edRes')
-	}
-	async function accountAttrGet() {
-		let edRes = await useApi('accountAttrTypeList.get')
+	// 	portfolioItems.value = edRes.error ? [] : edRes.results
+	// 	console.log(ecosystemDefaults.value, 'edRes')
+	// }
+	// async function accountAttrGet() {
+	// 	let edRes = await useApi('accountAttrTypeList.get')
 
-		accountItems.value = edRes.error ? [] : edRes.results
-		console.log(ecosystemDefaults.value, 'edRes')
-	}
-	async function responsibleAttrGet() {
-		let edRes = await useApi('responsibleAttrTypeList.get')
+	// 	accountItems.value = edRes.error ? [] : edRes.results
+	// 	console.log(ecosystemDefaults.value, 'edRes')
+	// }
+	// async function responsibleAttrGet() {
+	// 	let edRes = await useApi('responsibleAttrTypeList.get')
 
-		responsibleAttrItems.value = edRes.error ? [] : edRes.results
-		console.log(ecosystemDefaults.value, 'edRes')
-	}
-	async function counterpartyAttributeTypeGet() {
-		let edRes = await useApi('counterpartyAttributeTypeList.get')
+	// 	responsibleAttrItems.value = edRes.error ? [] : edRes.results
+	// 	console.log(ecosystemDefaults.value, 'edRes')
+	// }
+	// async function counterpartyAttributeTypeGet() {
+	// 	let edRes = await useApi('counterpartyAttributeTypeList.get')
 
-		counterpartyAttributeTypeItems.value = edRes.error ? [] : edRes.results
-		console.log(ecosystemDefaults.value, 'edRes')
-	}
-	async function currencyAttrTypeListGet() {
-		let edRes = await useApi('currencyAttrTypeList.get')
+	// 	counterpartyAttributeTypeItems.value = edRes.error ? [] : edRes.results
+	// 	console.log(ecosystemDefaults.value, 'edRes')
+	// }
+	// async function currencyAttrTypeListGet() {
+	// 	let edRes = await useApi('currencyAttrTypeList.get')
 
-		currencyAttrTypeItems.value = edRes.error ? [] : edRes.results
-		console.log(ecosystemDefaults.value, 'edRes')
-	}
-	async function strategy1AttrTypeListGet() {
-		let edRes = await useApi('strategy1AttrTypeList.get')
+	// 	currencyAttrTypeItems.value = edRes.error ? [] : edRes.results
+	// 	console.log(ecosystemDefaults.value, 'edRes')
+	// }
+	// async function strategy1AttrTypeListGet() {
+	// 	let edRes = await useApi('strategy1AttrTypeList.get')
 
-		strategy1AttrTypeItems.value = edRes.error ? [] : edRes.results
-		console.log(ecosystemDefaults.value, 'edRes')
-	}
-	async function strategy2AttrTypeListGet() {
-		let edRes = await useApi('strategy1AttrTypeList.get')
+	// 	strategy1AttrTypeItems.value = edRes.error ? [] : edRes.results
+	// 	console.log(ecosystemDefaults.value, 'edRes')
+	// }
+	// async function strategy2AttrTypeListGet() {
+	// 	let edRes = await useApi('strategy1AttrTypeList.get')
 
-		strategy2AttrTypeItems.value = edRes.error ? [] : edRes.results
-		console.log(ecosystemDefaults.value, 'edRes')
-	}
+	// 	strategy2AttrTypeItems.value = edRes.error ? [] : edRes.results
+	// 	console.log(ecosystemDefaults.value, 'edRes')
+	// }
 
-	async function strategy3AttrTypeListGet() {
-		let edRes = await useApi('strategy3AttrTypeList.get')
+	// async function strategy3AttrTypeListGet() {
+	// 	let edRes = await useApi('strategy3AttrTypeList.get')
 
-		strategy3AttrTypeItems.value = edRes.error ? [] : edRes.results
-		console.log(ecosystemDefaults.value, 'edRes')
-	}
-	async function accountTypeAttributeGet() {
-		let edRes = await useApi('accountTypeAttributeType.get')
+	// 	strategy3AttrTypeItems.value = edRes.error ? [] : edRes.results
+	// 	console.log(ecosystemDefaults.value, 'edRes')
+	// }
+	// async function accountTypeAttributeGet() {
+	// 	let edRes = await useApi('accountTypeAttributeType.get')
 
-		accountTypeAttributeItems.value = edRes.error ? [] : edRes.results
-		console.log(ecosystemDefaults.value, 'edRes')
-	}
+	// 	accountTypeAttributeItems.value = edRes.error ? [] : edRes.results
+	// 	console.log(ecosystemDefaults.value, 'edRes')
+	// }
 	
 
 	function renameLayout(newNamesData) {
