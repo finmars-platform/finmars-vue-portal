@@ -251,7 +251,8 @@
 			</template>
 		</BaseModal>-->
 
-		<BaseModal
+		<LazyBaseModal
+			v-if="renameOpened"
 			v-model="renameOpened"
 			title="Rename"
 			@close="columnToRename = null"
@@ -278,7 +279,7 @@
 				</div>
 			</template>
 
-		</BaseModal>
+		</LazyBaseModal>
 
 	</div>
 </template>
