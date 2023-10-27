@@ -984,7 +984,7 @@
 			'transactions.transactiontype': [],
 			'transactions.complextransaction': [],
 		})
-		const res = await evAttrsStore.getListLayouts()
+		const res = await evAttrsStore.getFetchAllAttributeTypes()
 		activeAttributList.value = res
 		console.log('res getLayouts', res)
 
