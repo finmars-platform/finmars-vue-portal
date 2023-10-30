@@ -1031,12 +1031,12 @@
 										</NuxtLink>
 									</li>
 									<li v-if="accessTable.settings_ecosystem_default">
-										<a
-											:href="getUrlToOldApp('/settings/default-settings')"
-											class="sidemenu-btn"
-										>
-											<span class="side-nav-title">Default Settings</span>
-										</a>
+                    <NuxtLink
+                        to="/settings/default-settings"
+                        class="sidemenu-btn"
+                    >
+                      <span class="side-nav-title">Default Settings</span>
+                    </NuxtLink>
 									</li>
 									<!--									<li>
 																			<a

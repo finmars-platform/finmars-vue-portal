@@ -82,9 +82,11 @@
 
 			<AngularFmGridTableFilters
 				v-show="components.filterArea"
+				v-if="contentWrapElem"
 				:attributeDataService="attributeDataService"
 				:hideFiltersBlock="hideFiltersBlock"
 				:hideUseFromAboveFilters="hideUseFromAboveFilters"
+				:contentWrapElement="contentWrapElem"
 				:vm="vm"
 			/>
 
@@ -497,6 +499,9 @@
 <style lang="scss" scoped>
 	.g-wrapper .g-table-wrap {
 		overflow: auto;
+	}
+	.g-table-wrap::-webkit-scrollbar {
+		height: 14px;
 	}
 	.wrap_dashboard {
 		display: block;

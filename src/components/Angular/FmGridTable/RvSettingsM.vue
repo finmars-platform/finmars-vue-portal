@@ -573,18 +573,18 @@
 
 	vm.strategies1 = []
 
-	useApi('strategiesOneLight.get').then((res) => {
+	useApi('strategies1Light.get').then((res) => {
 		vm.strategies1 = res.results
 	})
 
 	vm.strategies2 = []
 
-	useApi('strategiesSecondLight.get').then((res) => {
+	useApi('strategies2ListLight.get').then((res) => {
 		vm.strategies2 = res.results
 	})
 
 	vm.strategies3 = []
-	useApi('strategiesThirdLight.get').then((res) => {
+	useApi('strategies3ListLight.get').then((res) => {
 		vm.strategies3 = res.results
 	})
 

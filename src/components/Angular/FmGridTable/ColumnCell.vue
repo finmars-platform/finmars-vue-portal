@@ -75,7 +75,7 @@
 
 							<div
 								:class="['sort', column?.options.sort ? 'has-sort' : '']"
-								@click="$emit('sort')"
+								@click.stop="$emit('sort')"
 							>
 								<span
 									v-show="

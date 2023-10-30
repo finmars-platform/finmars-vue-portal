@@ -21,7 +21,7 @@
 				<div
 					v-html="chip.text"
 					:class="{ 'custom-field-error': !!chip.error_data }"
-					class="chip_content"
+					class="chip_content flex aic"
 				></div>
 
 				<FmIcon
