@@ -102,125 +102,6 @@
 				v-if="isReport"
 				class="flex-row g-groups-holder gGroupsHolder gcAreaDnD"
 			>
-				<!-- <div
-					class="g-table-header-cell-wrapper gGroupElem gColumnElem gDraggableHead gcAreaDnD"
-					v-for="(column, $index) in groups"
-					:class="{
-						'last-dragged':
-							column.frontOptions && column.frontOptions.lastDragged,
-						error: column.error_data,
-					}"
-					:key="column.key"
-					:style="column.style"
-					:data-column-id="column.___group_type_id"
-					:data-attr-key="column.key"
-					:draggable="groupsAreaDraggable"
-					custom-popup
-					popup-id="{{column.key}}"
-					popup-template-url="{{getPopupMenuTemplate(column)}}"
-					position-relative-to="mouse"
-					open-on="right_click"
-					close-on-click-outside="true"
-					prevent-default="'true'"
-					on-save-callback=""
-					:popup-data="columnsPopupsData[column.key]"
-					offset-x="-10"
-					offset-y="-10"
-					popup-classes="{{getPopupMenuClasses(column)}}"
-					backdrop-classes="'low-z-index-backdrop'"
-					on-cancel="onSubtotalTypeSelectCancel()"
-					popup-event-service="evEventService"
-					v-fm-tooltip="
-						column.name + column.status == 'missing'
-							? '(Deleted)'
-							: '' + column?.error_data
-							? column?.error_data?.description
-							: ''
-					"
-				>
-					<div
-						class="g-cell g-table-header-cell g-table-header-group-cell position-relative"
-					>
-						<div
-							custom-popup
-							popup-id="{{column.key}}"
-							popup-template-url="'views/popups/entity-viewer/g-report-viewer-column-sort-popup-menu.html'"
-							popup-data="{column: column, changeSortMode: changeSortMode}"
-							position-relative-to="element"
-							relative-popup-x="left"
-							open-on="click"
-							close-on-click-outside="true"
-							popup-classes="column-sort-popup"
-							popup-event-service="evEventService"
-							class="g-column-sort-settings-opener"
-						></div>
-
-
-
-						<span v-if="column?.error_data" class="material-icons error"
-							>error</span
-						>
-
-						<div class="g-table-header-button">
-							<div class="column-name-wrapper">
-								<div class="flex-row flex-i-center name-block">
-									<div v-if="!column.layout_name">
-										<span>{{ column.name }}</span>
-										<span v-if="column.status == 'missing'">(Deleted)</span>
-									</div>
-
-									<div v-if="column.layout_name">
-										<span>{{ column.layout_name }}</span>
-										<span v-if="column.status == 'missing'">(Deleted)</span>
-									</div>
-
-
-									<span
-										v-if="
-											column?.options?.sort_settings &&
-											column?.options.sort_settings.mode === 'manual'
-										"
-										class="column-manual-sort-icon"
-									>
-										m
-										<md-tooltip md-direction="top">
-											Manual Sorting Activated
-										</md-tooltip>
-									</span>
-								</div>
-
-								<div
-									class="sort"
-									@click="
-										changeSortDirection(
-											column,
-											column?.options.sort === 'DESC' ? 'ASC' : 'DESC'
-										)
-									"
-								>
-									<span
-										v-show="
-											column?.options.sort === 'DESC' || !column?.options.sort
-										"
-										class="material-icons gt-sorting-icon"
-										>arrow_upward</span
-									>
-									<span
-										v-show="column?.options.sort === 'ASC'"
-										class="material-icons gt-sorting-icon"
-										>arrow_downward</span
-									>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<AngularFmGridTableColumnResizer />
-					<div
-						class="g-table-header-drop gDraggableHeadArea"
-						:data-attr-key="column.key"
-					></div>
-				</div> -->
 				<AngularFmGridTableColumnCell
 					v-for="(column, index) in groups"
 					:column="column"
@@ -236,11 +117,7 @@
 					"
 					@groupUnfold="unfoldLevel(column, index)"
 					@groupFold="foldLevel(column, index)"
-					:popup-template-url="getPopupMenuTemplate(column)"
 					:popup-data="columnsPopupsData[column.key]"
-					popup-classes="{{getPopupMenuClasses(column)}}"
-					on-cancel="onSubtotalTypeSelectCancel()"
-					popup-event-service="evEventService"
 				/>
 			</div>
 
@@ -251,17 +128,13 @@
 					:style="column.style"
 					:key="index + '_' + column.___column_id"
 					:isReport="isReport"
+					:popup-data="columnsPopupsData[column.key]"
 					@sort="
 						changeSortDirection(
 							column,
 							column?.options.sort == 'DESC' ? 'ASC' : 'DESC'
 						)
 					"
-					:popup-template-url="getPopupMenuTemplate(column)"
-					:popup-data="columnsPopupsData[column.key]"
-					popup-classes="{{getPopupMenuClasses(column)}}"
-					on-cancel="onSubtotalTypeSelectCancel()"
-					popup-event-service="evEventService"
 				/>
 
 				<button class="g-cell g-add-column-button" @click="addColumn($event)">
@@ -270,11 +143,136 @@
 			</div>
 		</div>
 
-		<ModalAttributesSelector
+		<LazyFmAttributesSelectModal
 			v-if="$mdDialog.modals['AttributesSelectorDialogController']"
-			:payload="$mdDialog.modals['AttributesSelectorDialogController']"
 			:modelValue="true"
-		></ModalAttributesSelector>
+			class="m-b-24"
+			:multiselect="true"
+			:selected="
+				$mdDialog.modals['AttributesSelectorDialogController'].data
+					.selectedAttributes
+			"
+			:title="$mdDialog.modals['AttributesSelectorDialogController'].data.title"
+			:attributes="
+				$mdDialog.modals['AttributesSelectorDialogController'].data.attributes
+			"
+			:contentType="contentType"
+			@save="
+				(selected) => {
+					$mdDialog.modals['AttributesSelectorDialogController'].resolve({
+						status: 'agree',
+						data: { items: selected },
+					})
+					delete $mdDialog.modals['AttributesSelectorDialogController']
+				}
+			"
+			@close="
+				() => {
+					$mdDialog.modals['AttributesSelectorDialogController'].resolve({})
+					delete $mdDialog.modals['AttributesSelectorDialogController']
+				}
+			"
+		/>
+		<LazyFmAttributesSelectModal
+			v-if="$mdDialog.modals['AttributesSelectorFilters']"
+			:modelValue="true"
+			class="m-b-24"
+			:multiselect="true"
+			:selected="
+				$mdDialog.modals['AttributesSelectorFilters'].data.selectedAttributes
+			"
+			:title="$mdDialog.modals['AttributesSelectorFilters'].data.title"
+			:attributes="
+				$mdDialog.modals['AttributesSelectorFilters'].data.attributes
+			"
+			:contentType="contentType"
+			@selectedAttributesChanged="
+				(selected) => {
+					$mdDialog.modals['AttributesSelectorFilters'].resolve({
+						status: 'agree',
+						data: { items: selected },
+					})
+					delete $mdDialog.modals['AttributesSelectorFilters']
+				}
+			"
+			@close="
+				() => {
+					$mdDialog.modals['AttributesSelectorFilters'].resolve({})
+					delete $mdDialog.modals['AttributesSelectorFilters']
+				}
+			"
+		/>
+
+		<LazyModalNumberFormat
+			v-if="$mdDialog.modals['NumberFormatSettingsDialogController']"
+			:modelValue="true"
+			:multiselect="true"
+			:settings="
+				$mdDialog.modals['NumberFormatSettingsDialogController'].data.settings
+			"
+			@save="
+				(settings) => {
+					$mdDialog.modals['NumberFormatSettingsDialogController'].resolve({
+						status: 'agree',
+						data: { settings: settings },
+					})
+					delete $mdDialog.modals['NumberFormatSettingsDialogController']
+				}
+			"
+			@close="
+				() => {
+					$mdDialog.modals['NumberFormatSettingsDialogController'].resolve({})
+					delete $mdDialog.modals['NumberFormatSettingsDialogController']
+				}
+			"
+		/>
+
+		<BaseModal
+			v-if="$mdDialog.modals['RenameFieldDialogController']"
+			:modelValue="true"
+			title="Rename column"
+			@close="
+				() => {
+					$mdDialog.modals['RenameFieldDialogController'].resolve({})
+					delete $mdDialog.modals['RenameFieldDialogController']
+				}
+			"
+		>
+			<BaseInput readonly label="ID" v-model="renemedColumn.key" />
+			<BaseInput
+				readonly
+				:label="renemedColumn.__isOriginal ? 'Original' : 'Current'"
+				:modelValue="renemedColumn.oldName"
+			/>
+			<BaseInput label="Name" v-model="renemedColumn.layout_name" />
+
+			<template #controls>
+				<div class="flex sb">
+					<FmBtn
+						type="text"
+						@click="
+							() => {
+								$mdDialog.modals['RenameFieldDialogController'].resolve({})
+								delete $mdDialog.modals['RenameFieldDialogController']
+							}
+						"
+						>cancel</FmBtn
+					>
+
+					<FmBtn
+						@click="
+							() => {
+								$mdDialog.modals['RenameFieldDialogController'].resolve({
+									status: 'agree',
+								})
+								delete $mdDialog.modals['RenameFieldDialogController']
+							}
+						"
+						>save</FmBtn
+					>
+				</div>
+			</template>
+		</BaseModal>
 	</div>
 </template>
 
@@ -445,6 +443,7 @@
 
 	function onSubtotalWeightedClick(column) {
 		popupData = columnsPopupsData[column.key].data
+		console.log('popupData:', popupData)
 
 		if (popupData) {
 			popupData.isSubtotalSum = false
@@ -465,18 +464,16 @@
 		}
 	}
 
-	function openNumberFormatDialog(column) {
+	async function openNumberFormatDialog(column) {
 		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
 
 		let dialogData = {
 			settings: {},
 		}
 		// column.options.number_format
-		if (column.options) {
+		if (column.options.numberFormat) {
 			dialogData.settings = column.options.numberFormat
-		}
-
-		if (!column.options) {
+		} else {
 			dialogData.settings = column.report_settings
 		}
 		// for old layouts
@@ -487,28 +484,27 @@
 		) {
 			dialogData.settings = column.report_settings
 		}
+		console.log('dialogData:', dialogData)
 
-		$mdDialog
-			.show({
-				controller: 'NumberFormatSettingsDialogController as vm',
-				templateUrl: 'views/dialogs/number-format-settings-dialog-view.html',
-				parent: angular.element(document.body),
-				locals: {
-					data: dialogData,
-				},
-			})
-			.then((res) => {
-				if (res.status === 'agree') {
-					// column.report_settings = res.data;
+		let res = await $mdDialog.show({
+			controller: 'NumberFormatSettingsDialogController as vm',
+			templateUrl: 'views/dialogs/number-format-settings-dialog-view.html',
+			locals: {
+				data: dialogData,
+			},
+		})
 
-					if (!column.options) column.options = {}
+		if (res.status === 'agree') {
+			// column.report_settings = res.data;
 
-					column.options.numberFormat = res.data
+			if (!column.options) column.options = {}
 
-					evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
-					evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
-				}
-			})
+			column.options.numberFormat = res.data
+			console.log('res:', res)
+
+			evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+			evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
+		}
 	}
 
 	// Victor 2020.12.14 #69 New report viewer design
@@ -1063,7 +1059,13 @@
 			column.report_settings.subtotal_formula_id = type
 		}
 
-		makePopupDataForColumns(columns)
+		popupData = columnsPopupsData[column.key].data
+
+		if (popupData) {
+			popupData.isTemporaryWeighted = false
+		}
+
+		// makePopupDataForColumns(columns)
 
 		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
@@ -1110,74 +1112,77 @@
 	 * @param $event {Object} event object
 	 * @param _$popup
 	 */
-	let renameColumn = function (itemKey, $mdMenu, $event, _$popup) {
-		// TODO after reworking entity viewer, remove $mdMenu argument
 
-		if ($mdMenu) {
-			$mdMenu.close()
-		} else {
-			_$popup.cancel()
+	let renemedColumn = ref(null)
+	let renameColumn = async function (itemKey) {
+		let column = columns.find((column) => column.key === itemKey)
+
+		renemedColumn.value = structuredClone(column)
+		renemedColumn.value.oldName =
+			renemedColumn.value.layout_name || renemedColumn.value.name
+
+		if (!renemedColumn.value.layout_name) {
+			renemedColumn.value.__isOriginal = true
 		}
+		let res = await $mdDialog.show({
+			controller: 'RenameFieldDialogController as vm',
+			templateUrl: 'views/dialogs/rename-field-dialog-view.html',
+			locals: {
+				data: renemedColumn.value,
+			},
+		})
 
-		var column = columns.find((column) => column.key === itemKey)
+		if (res.status == 'agree') {
+			delete renemedColumn.value.__isOriginal
+			column.layout_name = renemedColumn.value.layout_name
+			evDataService.setColumns(columns)
 
-		$mdDialog
-			.show({
-				controller: 'RenameFieldDialogController as vm',
-				templateUrl: 'views/dialogs/rename-field-dialog-view.html',
-				parent: angular.element(document.body),
-				targetEvent: $event,
-				locals: {
-					data: column,
-				},
-			})
-			.then((res) => {
-				if (res.status === 'agree') {
-					column.layout_name = res.data.layout_name
-					evDataService.setColumns(columns)
+			if (columnHasCorrespondingGroup(renemedColumn.value.key)) {
+				var group = groups.value.find((group) => group.key === itemKey)
 
-					if (columnHasCorrespondingGroup(column.key)) {
-						var group = groups.value.find((group) => group.key === itemKey)
-						group.layout_name = res.data.layout_name
+				group.layout_name = renemedColumn.value.layout_name
 
-						evDataService.setGroups(groups.value)
-					}
+				evDataService.setGroups(renemedColumn.value)
+			}
 
-					const filters = evDataService.getFilters()
+			const filters = evDataService.getFilters()
 
-					if (isReport) {
-						const filter = filters.find((filter) => filter.key === res.data.key)
+			if (isReport) {
+				const filter = filters.find(
+					(filter) => filter.key === renemedColumn.value.key
+				)
 
-						if (filter) {
-							filter.layout_name = res.data.layout_name
+				if (filter) {
+					filter.layout_name = renemedColumn.value.layout_name
 
-							evDataService.setFilters(filters)
+					evDataService.setFilters(filters)
 
-							evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
-						}
-					} else {
-						let filterLayoutNameChanged = false
+					evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
+				}
+			} else {
+				let filterLayoutNameChanged = false
 
-						for (var filtersProp in filters) {
-							// search among front and back filters
+				for (var filtersProp in filters) {
+					// search among front and back filters
 
-							const filter = filters[filtersProp].find(
-								(filter) => filter.key === res.data.key
-							)
+					const filter = filters[filtersProp].find(
+						(filter) => filter.key === renemedColumn.value.key
+					)
 
-							if (filter) {
-								filter.layout_name = res.data.layout_name
-								filterLayoutNameChanged = true
-							}
-						}
-
-						if (filterLayoutNameChanged) {
-							evDataService.setFilters(filters)
-							evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
-						}
+					if (filter) {
+						filter.layout_name = renemedColumn.value.layout_name
+						filterLayoutNameChanged = true
 					}
 				}
-			})
+
+				if (filterLayoutNameChanged) {
+					evDataService.setFilters(filters)
+					evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
+				}
+			}
+
+			columnsToShow.value = getColumnsToShow()
+		}
 	}
 
 	let resizeColumn = function (column, $mdMenu, $event) {
@@ -1494,42 +1499,21 @@
 	 * @param _$popup {Object} - data from popup
 	 */
 	let removeGroup = function (groupKey, _$popup) {
-		_$popup.cancel()
-		// evEventService.dispatchEvent(popupEvents.CLOSE_POPUP);
-
-		var groups = evDataService.getGroups()
-
-		/** remove group */
-		/* var i;
-	                   for (i = 0; i < groups .value.length; i++) {
-	                       if (groups[i].___group_type_id === columnTableId) {
-	                           groups .value.splice(i, 1);
-	                           break;
-	                       }
-	                   } */
-		var groupToRemoveIndex = groups.findIndex((group) => group.key === groupKey)
+		var groupToRemoveIndex = groups.value.findIndex(
+			(group) => group.___group_type_id === groupKey
+		)
 
 		if (groupToRemoveIndex > -1) {
-			groups.splice(groupToRemoveIndex, 1)
+			groups.value.splice(groupToRemoveIndex, 1)
 		} else {
 			throw new Error('No group with such key found: ' + groupKey)
 		}
 
-		evDataService.setGroups(groups)
+		evDataService.setGroups(groups.value)
 		evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
 
-		/** remove column */
-		/* var c;
-	                   for (c = 0; c < columns.length; c++) {
-
-	                       if (columns[c].___column_id === columnTableId) {
-	                           columns.splice(c, 1);
-	                           break;
-	                       }
-
-	                   } */
 		var colToRemoveIndex = columns.findIndex(
-			(column) => column.key === groupKey
+			(column) => column.___column_id === groupKey
 		)
 		if (colToRemoveIndex > -1) {
 			columns.splice(colToRemoveIndex, 1)
@@ -1609,7 +1593,7 @@
 	                   });*/
 		for (var i = 0; i < columns.length; i++) {
 			if (column.___column_id === columns[i].___column_id) {
-				colToDeleteAttr = JSON.parse(angular.toJson(columns[i]))
+				colToDeleteAttr = JSON.parse(JSON.stringify(columns[i]))
 				columns.splice(i, 1)
 				break
 			}
@@ -1916,11 +1900,12 @@
 		})
 
 		if (res && res.status == 'agree') {
-			console.log('res:', res)
-			for (var i = 0; i < res.data.items.length; i = i + 1) {
+			let newAttrs = allAttrs.filter((o) => res.data.items.includes(o.key))
+
+			for (var i = 0; i < newAttrs.length; i = i + 1) {
 				var colData = evHelperService.getTableAttrInFormOf(
 					'column',
-					res.data.items[i]
+					newAttrs[i]
 				)
 				columns.push(colData)
 			}
@@ -1978,7 +1963,9 @@
 
 	if (isReport) {
 		checkForFilteringBySameAttr = function (columnKey) {
+			console.log('columnKey:', columnKey)
 			var filters = evDataService.getFilters()
+			console.log('filters:', filters)
 
 			for (var i = 0; i < filters.length; i++) {
 				if (filters[i].key === columnKey) {
@@ -2139,7 +2126,7 @@
 	init()
 
 	function getPopupData(item, $index, isAGroup) {
-		let data = {
+		let data = reactive({
 			$index: $index,
 			isAGroup: isAGroup,
 			item: item, // can be column or group
@@ -2179,7 +2166,7 @@
 			onSubtotalAvgWeightedClick: onSubtotalAvgWeightedClick,
 
 			openNumberFormatDialog: openNumberFormatDialog,
-		}
+		})
 
 		if (isAGroup) {
 			data.reportSetSubtotalType = reportSetSubtotalType

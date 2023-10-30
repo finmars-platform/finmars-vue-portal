@@ -11,7 +11,7 @@
 				:modelValue="selectedVal"
 				:readonly="true"
 				:errorData="error"
-				class="cursor-pointer"
+				class="cursor-pointer no-readonly-styles"
 				:class="{ bi_no_borders: noBorders }"
 			>
 				<template v-if="!noBorders" #button>

@@ -36,6 +36,9 @@ export default function () {
 			}
 		}
 
+		filter.options.enabled = true
+		filter.__onceOpenSettings = true
+
 		return filter
 	}
 	/**

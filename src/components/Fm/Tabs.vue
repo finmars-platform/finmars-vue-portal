@@ -1,8 +1,6 @@
 <template>
-
 	<div class="tabs_container">
-
-<!--			<FmBtn
+		<!--			<FmBtn
 			v-if="showScrollBtns"
 			:disabled="disableScrollLeft"
 			class="display-block"
@@ -18,18 +16,13 @@
 			<FmIcon icon="chevron_left" />
 		</FmBtn>
 
-		<swiper
-			ref="swiperElem"
-			slidesPerView="auto"
-			@swiper="onSwiperInit"
-		>
-			<swiper-slide
-				v-for="(tab, index) in tabs"
-				:key="index"
-			>
-				<div class="fm_tabs_item"
-						 :class="{active: tab == modelValue}"
-						 @click="$emit('update:modelValue', tab)">
+		<swiper ref="swiperElem" slidesPerView="auto" @swiper="onSwiperInit">
+			<swiper-slide v-for="(tab, index) in tabs" :key="index">
+				<div
+					class="fm_tabs_item"
+					:class="{ active: tab == modelValue }"
+					@click="$emit('update:modelValue', tab)"
+				>
 					{{ tab }}
 				</div>
 			</swiper-slide>
@@ -45,42 +38,39 @@
 			<FmIcon icon="chevron_right" />
 		</FmBtn>
 
-<!--			<FmBtn
+		<!--			<FmBtn
 			v-if="showScrollBtns"
 			:disabled="disableScrollRight"
 			class="display-block"
 			@click="scrollRight()"
 		/>-->
-
 	</div>
-
 </template>
 
 <script setup>
+	import { Swiper, SwiperSlide } from 'swiper/vue'
 
-	import {Swiper, SwiperSlide} from 'swiper/vue';
-
-	const swiperElem = ref(null);
+	const swiperElem = ref(null)
 
 	defineProps({
 		modelValue: String,
-		tabs: Array
+		tabs: Array,
 	})
 
 	defineEmits(['update:modelValue'])
 
-	let swiperData = ref({});
+	let swiperData = ref({})
 
 	function onSwiperInit(swiperInst) {
-		swiperData.value = swiperInst;
+		swiperData.value = swiperInst
 	}
 
 	function slidePrev() {
-		swiperData.value.slidePrev();
+		swiperData.value.slidePrev()
 	}
 
 	function slideNext() {
-		swiperData.value.slideNext();
+		swiperData.value.slideNext()
 	}
 	/*onMounted(() => {
 
@@ -129,7 +119,6 @@
 		nextTabsWidth = Math.max(0, nextTabsWidth);
 
 	}*/
-
 </script>
 
 <style lang="scss">

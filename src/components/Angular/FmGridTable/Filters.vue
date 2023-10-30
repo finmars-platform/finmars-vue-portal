@@ -38,12 +38,10 @@
 			</div>
 		</div>
 		<!-- RowsBulkActionsDirective.vue-->
-		<g-rows-bulk-actions
-			v-if="isRootEntityViewer && viewContext !== 'dashboard'"
-			ev-data-service="evDataService"
-			ev-event-service="evEventService"
-			content-wrap-element="contentWrapElement"
-		></g-rows-bulk-actions>
+		<AngularFmGridTableRowsBulkActions
+			v-if="$scope.isRootEntityViewer && $scope.viewContext !== 'dashboard'"
+			:contentWrapElement="$scope.contentWrapElement"
+		/>
 	</div>
 </template>
 
@@ -546,7 +544,7 @@
 			const selectedAttrs = filters.map((col) => col.key)
 
 			let res = await $mdDialog.show({
-				controller: 'AttributesSelectorDialogController as vm',
+				controller: 'AttributesSelectorFilters as vm',
 				multiple: true,
 				locals: {
 					data: {
@@ -559,6 +557,7 @@
 					},
 				},
 			})
+			console.log('res:', res)
 
 			if (res && res.status === 'agree') {
 				for (var i = 0; i < res.data.items.length; i = i + 1) {

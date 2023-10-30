@@ -66,7 +66,7 @@
 	</div>
 
 	<script type="module">
-		import FinmarsWidgets from 'https://dev.finmars.com/v/finmarsWidgets.js'
+		import FinmarsWidgets from 'https://stage.finmars.com/v/finmarsWidgets.js'
 
 		let FinmarsWidgets2
 
@@ -75,7 +75,7 @@
 		function create() {
 			console.log('FinmarsWidgets2:', FinmarsWidgets2)
 			FinmarsWidgets2 = new FinmarsWidgets({
-				apiUrl: "https://dev.finmars.com/v/",
+				apiUrl: "https://stage.finmars.com/v/",
 				apiToken: document.getElementById('token').value, // access token
 				workspace: 'client0s6sf5crgw',
 				options: {

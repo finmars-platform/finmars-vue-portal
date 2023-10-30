@@ -173,6 +173,7 @@
 
 			<FmBtn  @click="openNumberFormatM = true">NUMBER FORMAT</FmBtn>
 
+		
 		</div>
 
 		<div v-if="activeTab === 'advance settings'" class="p-t-16">

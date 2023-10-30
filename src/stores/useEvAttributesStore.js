@@ -382,8 +382,8 @@ export default defineStore({
 			//# regions Pnl attributes
 			// TODO: move to backend
 			res['reports.plreport'] = pnlReportPropsModel.getAttributes();
-			res['reports.plreportmismatch'] = reportAddonPerformancePnlPropsModel.getAttributes();
-			res['reports.plreportperformance'] = reportMismatchPnlPropsModel.getAttributes();
+			res['reports.plreportmismatch'] = reportMismatchPnlPropsModel.getAttributes();
+			res['reports.plreportperformance'] = reportAddonPerformancePnlPropsModel.getAttributes();
 			//# endregion Pnl attributes
 
 			this.systemAttrs = res;
@@ -835,51 +835,51 @@ export default defineStore({
 			else {*/
 
 			switch (contentType) {
-					case 'reports.balancereport':
-						result = this.getBalanceReportAttributes();
-						break;
+				case 'reports.balancereport':
+					result = this.getBalanceReportAttributes();
+					break;
 
-					case 'reports.plreport':
-						result = this.getPlReportAttributes();
-						break;
+				case 'reports.plreport':
+					result = this.getPlReportAttributes();
+					break;
 
-					case 'reports.transactionreport':
-						result = this.getTransactionReportAttributes();
-						break;
+				case 'reports.transactionreport':
+					result = this.getTransactionReportAttributes();
+					break;
 
-					default: // get attributes for entity viewer
+				default: // get attributes for entity viewer
 
-						let entityAttrs = [];
-						let dynamicAttrs = [];
+					let entityAttrs = [];
+					let dynamicAttrs = [];
 
-						result = [];
+					result = [];
 
-						if ( this.systemAttrs[contentType] ) {
-							entityAttrs = JSON.parse(JSON.stringify( this.systemAttrs[contentType] ))
-						}
+					if ( this.systemAttrs[contentType] ) {
+						entityAttrs = JSON.parse(JSON.stringify( this.systemAttrs[contentType] ))
+					}
 
-						if ( this.attrTypes[contentType] ) {
-							dynamicAttrs = JSON.parse(JSON.stringify( this.attrTypes[contentType] ))
-						}
+					if ( this.attrTypes[contentType] ) {
+						dynamicAttrs = JSON.parse(JSON.stringify( this.attrTypes[contentType] ))
+					}
 
-						dynamicAttrs = dynamicAttrs.map(function (attribute) {
+					dynamicAttrs = dynamicAttrs.map(function (attribute) {
 
-							var result = {};
+						var result = {};
 
-							result.attribute_type = Object.assign({}, attribute);
-							result.value_type = attribute.value_type;
-							result.content_type = contentType;
-							result.key = 'attributes.' + attribute.user_code;
-							result.name = attribute.name;
+						result.attribute_type = Object.assign({}, attribute);
+						result.value_type = attribute.value_type;
+						result.content_type = contentType;
+						result.key = 'attributes.' + attribute.user_code;
+						result.name = attribute.name;
 
-							return result
+						return result
 
-						});
+					});
 
-						result = result.concat(entityAttrs);
-						result = result.concat(dynamicAttrs);
+					result = result.concat(entityAttrs);
+					result = result.concat(dynamicAttrs);
 
-				}
+			}
 
 			// }
 
