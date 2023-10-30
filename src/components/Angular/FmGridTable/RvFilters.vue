@@ -457,11 +457,11 @@
 			:modelValue="true"
 		/>
 
-		<ModalCustomColumns
+		<ModalCustomFields
 			title="Custom Field Manager"
 			v-model="isOpenCustomColumns"
 			:content_type="scope.content_type"
-		></ModalCustomColumns>
+		></ModalCustomFields>
 	</div>
 </template>
 

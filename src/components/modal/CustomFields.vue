@@ -30,7 +30,7 @@
 				</div>
 			</div>
 			<div v-if="isOpenEditCustomColumns">
-				<ModalEditCustomColumns
+				<ModalEditCustomField
 					title="Edit Custom Column"
 					v-model="isOpenEditCustomColumns"
 					:name="activeCustomColumns.name"
@@ -42,7 +42,7 @@
 					:typeModal="typeModal"
 					@save="putEditCustomColumns"
 					@create="getCreateCustomColumns"
-				></ModalEditCustomColumns>
+				></ModalEditCustomField>
 			</div>
 
 
@@ -115,7 +115,7 @@
 	let attrsList = computed(() => {
 		return evAttrsStore.customFields[props.content_type]
 	})
-	
+
 
 	vm.readyStatus = { customFields: false, attributes: false }
 
