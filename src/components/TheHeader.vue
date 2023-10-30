@@ -123,14 +123,30 @@
 				</template>
 				<template #default="{ close }">
 					<div class="fm_list">
-						<div
+<!--						<div
 							class="fm_list_item"
 							v-for="(item, index) in menu"
 							:key="index"
 							@click="item.cb(), close()"
 						>
 							{{ item.name }}
-						</div>
+						</div>-->
+            <NuxtLink
+                to="/profile"
+                class="fm_list_item"
+            >
+              <span class="side-nav-title">Profile</span>
+            </NuxtLink>
+
+            <div
+                class="fm_list_item"
+                @click="openAccManager"
+            >Account Security</div>
+
+            <a
+                class="fm_list_item"
+                :href="`${apiUrl}/logout`"
+            >Logout</a>
 					</div>
 				</template>
 			</FmMenu>
@@ -141,8 +157,11 @@
 <script setup>
 import dayjs from "dayjs"
 
+import formbricks from "@/services/formbricks";
+
 const store = useStore()
 const config = useRuntimeConfig()
+const apiUrl = config.public.apiURL;
 
 const SECTIONS = {
 	1: "Events",
@@ -157,29 +176,11 @@ const SECTIONS = {
 	10: "Other",
 }
 
-let menu = ref([
-	{
-		name: "Profile",
-		cb: () => {
-			navigateTo("/profile")
-		},
-	},
-	{
-		name: "Account Security",
-		cb: async () => {
-			let kc = await uKeycloak()
-			kc.accountManagement()
-		},
-	},
-	{
-		name: "Logout",
-		cb: () => {
-			useCookie("access_token").value = null
-			useCookie("refresh_token").value = null
-			window.location.href = "/logout"
-		},
-	},
-])
+async function openAccManager() {
+  const kc = await uKeycloak();
+  kc.accountManagement();
+}
+
 let noti = ref(null)
 
 watchEffect(
@@ -211,6 +212,25 @@ async function setCurrent(item) {
 
 	if (res) window.location.href = '/' + item.base_api_url + '/v/home'
 }
+
+
+async function init() {
+
+	console.log('store.user', store.user.username)
+	console.log('store.email', store.user.email)
+	console.log('store.us', store.user)
+	await formbricks.setAttribute('host', window.location.href)
+	await formbricks.setAttribute('username', store.user.username)
+	await formbricks.setAttribute('first_name', store.user.first_name)
+	await formbricks.setAttribute('last_name', store.user.last_name)
+	await formbricks.setUserId(store.user.id)
+	await formbricks.setEmail(store.user.email)
+	await formbricks.registerRouteChange();
+}
+
+init()
+
+
 </script>
 
 <style lang="scss" scoped>
