@@ -1,13 +1,16 @@
 const resolve = () => {
-	if ('__PROJECT_ENV__') {
+	/*if ('__PROJECT_ENV__') {
 		// const host = '__API_HOST__';
 		// IMPORTANT
-		const host = 'https://dev.finmars.com'
+		// const host = 'https://stage.finmars.com'
+		const host = useRuntimeConfig().public.apiURL;
 
-		return host
+		return host;
 	}
 
-	return ''
+	return ''*/
+
+	return useRuntimeConfig().public.apiURL;
 }
 
 const getAuthorizerUrl = () => {
