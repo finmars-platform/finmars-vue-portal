@@ -15,7 +15,7 @@
 			<div class="top_right_border"></div>
 		</div>
 
-		<div class="bi_wrap">
+		<div class="bi_wrap" :class="{ readonly }">
 			<div class="bi_button"><slot name="button"></slot></div>
 
 			<div class="bi_default">
@@ -28,7 +28,7 @@
 						:readonly="readonly"
 						:disabled="disabled"
 						@input="$emit('update:modelValue', $event.target.value)"
-						@focus="$emit('onFocus')"
+						@focus.stop="$emit('onFocus')"
 						@blur="$emit('onBlur')"
 						class="bi_main_input"
 					/>
@@ -146,7 +146,7 @@
 	.base-input {
 		position: relative;
 		display: block;
-		height: 42px;
+		// min-height: 42px;
 		// border: 1px solid $border-darken;
 		border-radius: $border-radius;
 		transition: border 0.3s;
@@ -171,11 +171,11 @@
 			}
 		}
 
-		&:not(.bi_no_borders):not(.disabled):focus-within,
-		&:not(.bi_no_borders):not(.disabled):focus {
-
+		&:not(.bi_no_borders):not(.disabled):not(.readonly):focus-within,
+		&:not(.bi_no_borders):not(.disabled):not(.readonly):focus {
 			.bi_top {
-				.top_left_border, .top_right_border {
+				.top_left_border,
+				.top_right_border {
 					border-top: $active-input-border;
 				}
 
@@ -360,11 +360,17 @@
 	.bi_wrap {
 		display: flex;
 		align-items: center;
-		// height: 40px;
-		// min-height: 42px;
-		height: 100%;
+		height: 42px;
+		// height: 100%;
 		width: 100%;
 	}
+
+	.base-input:not(.no-readonly-styles) {
+		.bi_wrap.readonly {
+			border-left: 5px solid $border;
+		}
+	}
+
 	.bi_default {
 		flex: 0 1 100%;
 		margin-left: 13px;

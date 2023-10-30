@@ -1,5 +1,5 @@
 <template>
-	<div class="fm_menu" data-testId="fm_menu">
+	<div class="fm_menu">
 		<div ref="activator" class="height-100">
 			<slot name="btn" :isOpen="isOpen"></slot>
 		</div>
@@ -29,13 +29,13 @@
 		},
 		relativeTo: [String, Node],
 
+		openOnClick: {
+			type: Boolean,
+			default: true,
+		},
 		openOnHover: {
 			type: Boolean,
 			default: false,
-		},
-		openOn: {
-			type: String,
-			default: 'click',
 		},
 		disabled: Boolean,
 		closeOnClickOutside: {
@@ -72,17 +72,16 @@
 	let isLeft = props.anchor.includes('left')
 	let isRight = props.anchor.includes('right')
 
-	onMounted(async () => {
+	onMounted(() => {
 		if (props.openOnHover) {
 			activator.value.addEventListener('mouseover', () => {
 				isOpen.value = true
 			})
-
 			activator.value.addEventListener('mouseleave', () => {
 				isOpen.value = false
 			})
 		} else {
-			activator.value.addEventListener(props.openOn, toggle)
+			activator.value.addEventListener('click', toggle)
 		}
 	})
 
@@ -181,7 +180,7 @@
 			await openHandlerBegins()
 
 			popup.value.style.position = 'absolute'
-			popup.value.style['z-index'] = 55 // should be same as $backdrop-z-index inside variables.scss
+			// popup.value.style['z-index'] = 55; // should be same as $backdrop-z-index inside variables.scss
 
 			// const coords = targetElement.getBoundingClientRect();
 			let positionX
@@ -193,13 +192,17 @@
 			let activatorRect = activator.value.getBoundingClientRect()
 			// let popupRect = popup.value.getBoundingClientRect()
 
+			popup.value.style['min-width'] = activatorRect.width + 'px'
+
 			let popupHeight = popup.value.clientHeight
 			let popupWidth = popup.value.clientWidth
 
-			if (props.menuWidth === 'activator') {
-				popupWidth = activatorRect.width
-				popup.value.style.width = popupWidth + 'px'
-			}
+			/*if (props.menuWidth === 'activator') {
+
+				popupWidth = activatorRect.width;
+				popup.value.style.width = popupWidth + 'px';
+
+			}*/
 
 			if (!positionX) {
 				if (isLeft) {
@@ -248,11 +251,8 @@
 
 	watch(isOpen, isOpenHandler)
 
-	function toggle(e) {
-
-		if (e) e.preventDefault();
-
-		if (props.disabled) return false;
+	function toggle() {
+		if (props.disabled) return
 
 		isOpen.value = !isOpen.value
 

@@ -8,8 +8,13 @@
 		<template #left>
 			<FmCard title="General" class="mb-6">
 				<BaseInput
-					label="Name"
+					label="Username"
 					v-model="form.username"
+				/>
+
+				<BaseInput
+					label="Email"
+					v-model="form.email"
 				/>
 
 				<FmCheckbox
@@ -99,7 +104,7 @@
 	async function init() {
 
 		const res = await Promise.all( [
-			loadMultiselectOpts('userGroups.get', readyStatus, 'groups'),
+			loadMultiselectOpts('groupList.get', readyStatus, 'groups'),
 			loadMultiselectOpts("roleList.get", readyStatus, 'roles'),
 			loadMultiselectOpts("accessPolicyList.get", readyStatus, 'accessPolicies'),
 		]);
@@ -114,11 +119,11 @@
 		// TODO Refactor
 		let sendedForm = {
 			...form,
-			groups: form.groups.join(','),
-			roles: form.groups.join(',')
+			groups: form.groups,
+			roles: form.roles
 		}
 
-		let res = await useApi('memberInvites.post', {body: sendedForm, params: {id: route.params.id}})
+		let res = await useApi('member.post', {body: sendedForm, params: {id: route.params.id}})
 
 		if ( !res.error ) {
 			useNotify({type: 'success', title: 'Invite sent!'})

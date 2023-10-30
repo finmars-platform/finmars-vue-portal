@@ -4,6 +4,59 @@
 
 import evRequiredAttrs from '@/angular/vocabulary/requiredEntityViewerAttrs'
 
+import auditTransactionPropsModel from '../models/auditTransactionPropsModel'
+import auditInstrumentPropsModel from '../models/auditInstrumentPropsModel'
+import accountPropsModel from '../models/accountPropsModel'
+import tagPropsModel from '../models/tagPropsModel'
+import accountTypePropsModel from '../models/accountTypePropsModel'
+import counterpartyPropsModel from '../models/counterpartyPropsModel'
+import counterpartyGroupPropsModel from '../models/counterpartyGroupPropsModel'
+import responsiblePropsModel from '../models/responsiblePropsModel'
+import responsibleGroupPropsModel from '../models/responsibleGroupPropsModel'
+import pricingPolicyPropsModel from '../models/pricingPolicyPropsModel'
+import instrumentTypePropsModel from '../models/instrumentTypePropsModel'
+import instrumentPropsModel from '../models/instrumentPropsModel'
+import generatedEventPropsModel from '../models/generatedEventPropsModel'
+import transactionPropsModel from '../models/transactionPropsModel'
+import transactionTypeGroupPropsModel from '../models/transactionTypeGroupPropsModel'
+import transactionTypePropsModel from '../models/transactionTypePropsModel'
+import currencyPropsModel from '../models/currencyPropsModel'
+import currencyHistoryPropsModel from '../models/currencyHistoryPropsModel'
+import priceHistoryPropsModel from '../models/priceHistoryPropsModel'
+import strategy1PropsModel from '../models/strategy1PropsModel'
+import strategy2PropsModel from '../models/strategy2PropsModel'
+import strategy3PropsModel from '../models/strategy3PropsModel'
+
+import strategy1subgroupPropsModel from '../models/strategy1subgroupPropsModel'
+import strategy2subgroupPropsModel from '../models/strategy2subgroupPropsModel'
+import strategy3subgroupPropsModel from '../models/strategy3subgroupPropsModel'
+
+import strategy1groupPropsModel from '../models/strategy1groupPropsModel'
+import strategy2groupPropsModel from '../models/strategy2groupPropsModel'
+import strategy3groupPropsModel from '../models/strategy3groupPropsModel'
+
+import complexTransactionPropsModel from '../models/complexTransactionPropsModel'
+import instrumentSchemePropsModel from '../models/instrumentSchemePropsModel'
+import balanceReportPropsModel from '../models/balanceReportPropsModel'
+import reportAddonPerformancePropsModel from '../models/reportAddonPerformancePropsModel'
+import reportMismatchPropsModel from '../models/reportMismatchPropsModel'
+import pnlReportPropsModel from '../models/pnlReportPropsModel'
+import reportAddonPerformancePnlPropsModel from '../models/reportAddonPerformancePnlPropsModel'
+import reportMismatchPnlPropsModel from '../models/reportMismatchPnlPropsModel'
+import transactionReportPropsModel from '../models/transactionReportPropsModel'
+import cashFlowProjectionReportPropsModel from '../models/cashFlowProjectionReportPropsModel'
+import performanceReportPropsModel from '../models/performanceReportPropsModel'
+import portfolioPropsModel from '../models/portfolioPropsModel'
+
+import countryPropsModel from '../models/countryPropsModel'
+import transactionClassPropsModel from '../models/transactionClassPropsModel'
+
+import currencyHistoryErrorPropsModel from '../models/currencyHistoryErrorPropsModel'
+import priceHistoryErrorPropsModel from '../models/priceHistoryErrorPropsModel'
+import complextransactionStatusPropsModel from '../models/complextransactionStatusPropsModel'
+import portfolioRegisterRecordPropsModel from '../models/portfolioRegisterRecordPropsModel'
+import portfolioRegisterPropsModel from '../models/portfolioRegisterPropsModel'
+
 var getMenu = async function () {
 	let res = await window.fetch('portal/content/json/menu.json')
 	return await res.json()
@@ -69,75 +122,56 @@ var getEntitiesWithoutDynAttrsList = function () {
 
 var getEntityAttrs = function (entity) {
 	var entityAttrs = {
-		portfolio: require('../models/portfolioPropsModel').getAttributes(),
-		'portfolio-register':
-			require('../models/portfolioRegisterPropsModel').getAttributes(),
+		portfolio: portfolioPropsModel.getAttributes(),
+		'portfolio-register': portfolioRegisterPropsModel.getAttributes(),
 		'portfolio-register-record':
-			require('../models/portfolioRegisterRecordPropsModel').getAttributes(),
-		'audit-transaction':
-			require('../models/auditTransactionPropsModel').getAttributes(),
-		'audit-instrument':
-			require('../models/auditInstrumentPropsModel').getAttributes(),
-		account: require('../models/accountPropsModel').getAttributes(),
-		tag: require('../models/tagPropsModel').getAttributes(),
-		'account-type': require('../models/accountTypePropsModel').getAttributes(),
-		counterparty: require('../models/counterpartyPropsModel').getAttributes(),
-		'counterparty-group':
-			require('../models/counterpartyGroupPropsModel').getAttributes(),
-		responsible: require('../models/responsiblePropsModel').getAttributes(),
-		'responsible-group':
-			require('../models/responsibleGroupPropsModel').getAttributes(),
-		'pricing-policy':
-			require('../models/pricingPolicyPropsModel').getAttributes(),
-		'instrument-type':
-			require('../models/instrumentTypePropsModel').getAttributes(),
-		instrument: require('../models/instrumentPropsModel').getAttributes(),
-		'generated-event':
-			require('../models/generatedEventPropsModel').getAttributes(),
-		transaction: require('../models/transactionPropsModel').getAttributes(),
-		'transaction-type-group':
-			require('../models/transactionTypeGroupPropsModel').getAttributes(),
-		'transaction-type':
-			require('../models/transactionTypePropsModel').getAttributes(),
-		currency: require('../models/currencyPropsModel').getAttributes(),
-		'currency-history':
-			require('../models/currencyHistoryPropsModel').getAttributes(),
-		'price-history':
-			require('../models/priceHistoryPropsModel').getAttributes(),
-		'strategy-1': require('../models/strategy1PropsModel').getAttributes(),
-		'strategy-2': require('../models/strategy2PropsModel').getAttributes(),
-		'strategy-3': require('../models/strategy3PropsModel').getAttributes(),
-		'strategy-1-subgroup':
-			require('../models/strategy1subgroupPropsModel').getAttributes(),
-		'strategy-2-subgroup':
-			require('../models/strategy2subgroupPropsModel').getAttributes(),
-		'strategy-3-subgroup':
-			require('../models/strategy3subgroupPropsModel').getAttributes(),
-		'strategy-1-group':
-			require('../models/strategy1groupPropsModel').getAttributes(),
-		'strategy-2-group':
-			require('../models/strategy2groupPropsModel').getAttributes(),
-		'strategy-3-group':
-			require('../models/strategy3groupPropsModel').getAttributes(),
-		'balance-report':
-			require('../models/balanceReportPropsModel').getAttributes(),
-		'report-addon-performance':
-			require('../models/reportAddonPerformancePropsModel').getAttributes(),
-		'report-addon-performance-pnl':
-			require('../models/reportAddonPerformancePnlPropsModel').getAttributes(),
-		'report-mismatch':
-			require('../models/reportMismatchPropsModel').getAttributes(),
-		'pl-report': require('../models/pnlReportPropsModel').getAttributes(),
-		'transaction-report':
-			require('../models/transactionReportPropsModel').getAttributes(),
+			portfolioRegisterRecordPropsModel.getAttributes(),
+		'audit-transaction': auditTransactionPropsModel.getAttributes(),
+		'audit-instrument': auditInstrumentPropsModel.getAttributes(),
+		account: accountPropsModel.getAttributes(),
+		tag: tagPropsModel.getAttributes(),
+		'account-type': accountTypePropsModel.getAttributes(),
+		counterparty: counterpartyPropsModel.getAttributes(),
+		'counterparty-group': counterpartyGroupPropsModel.getAttributes(),
+		responsible: responsiblePropsModel.getAttributes(),
+		'responsible-group': responsibleGroupPropsModel.getAttributes(),
+		'pricing-policy': pricingPolicyPropsModel.getAttributes(),
+		'instrument-type': instrumentTypePropsModel.getAttributes(),
+		instrument: instrumentPropsModel.getAttributes(),
+		'generated-event': generatedEventPropsModel.getAttributes(),
+
+		transaction: transactionPropsModel.getAttributes(),
+		'transaction-type-group': transactionTypeGroupPropsModel.getAttributes(),
+		'transaction-type': transactionTypePropsModel.getAttributes(),
+		currency: currencyPropsModel.getAttributes(),
+		'currency-history': currencyHistoryPropsModel.getAttributes(),
+		'price-history': priceHistoryPropsModel.getAttributes(),
+		'strategy-1': strategy1PropsModel.getAttributes(),
+		'strategy-2': strategy2PropsModel.getAttributes(),
+		'strategy-3': strategy3PropsModel.getAttributes(),
+		'strategy-1-subgroup': strategy1subgroupPropsModel.getAttributes(),
+		'strategy-2-subgroup': strategy2subgroupPropsModel.getAttributes(),
+		'strategy-3-subgroup': strategy3subgroupPropsModel.getAttributes(),
+		'strategy-1-group': strategy1groupPropsModel.getAttributes(),
+		'strategy-2-group': strategy2groupPropsModel.getAttributes(),
+		'strategy-3-group': strategy3groupPropsModel.getAttributes(),
+		'complex-transaction': complexTransactionPropsModel.getAttributes(),
+		'instrument-scheme': instrumentSchemePropsModel.getAttributes(),
+		'balance-report': balanceReportPropsModel.getAttributes(),
+
+		'pl-report': pnlReportPropsModel.getAttributes(),
+
+		'transaction-report': transactionReportPropsModel.getAttributes(),
 		'cash-flow-projection-report':
-			require('../models/cashFlowProjectionReportPropsModel').getAttributes(),
-		'performance-report':
-			require('../models/performanceReportPropsModel').getAttributes(),
-		'complex-transaction':
-			require('../models/complexTransactionPropsModel').getAttributes(),
-		'instrument-scheme':
-			require('../models/instrumentSchemePropsModel').getAttributes(),
+			cashFlowProjectionReportPropsModel.getAttributes(),
+		'performance-report': performanceReportPropsModel.getAttributes(),
+
+		'transaction-class': transactionClassPropsModel.getAttributes(),
+		'report-addon-performance-pnl':
+			reportAddonPerformancePnlPropsModel.getAttributes(),
+		'report-addon-performance':
+			reportAddonPerformancePropsModel.getAttributes(),
+		'report-mismatch': reportMismatchPropsModel.getAttributes(),
 	}
 
 	return entityAttrs[entity]

@@ -6,6 +6,7 @@ export default defineStore({
 			masterUsers: [],
 			current: {},
 			member: {},
+			memberLayout: {},
 
 			ws: null,
 
@@ -26,18 +27,10 @@ export default defineStore({
 		async init() {
 			this.getUser()
 			await this.getMasterUsers()
+
 			if(this.current){
 				// hack for repots
-
-				window.base_api_url = this.current.base_api_url;
-				const res = await useApi('configurationList.get');
-
-				if (!res.error) {
-					this.configCodes = res.results;
-				}
-
-				this.defaultConfigCode = this.configCodes.find( conf => conf.is_primary ).configuration_code;
-
+				window.base_api_url = this.current.base_api_url; // needed for angularjs components
 			}
 
 		},
@@ -52,17 +45,28 @@ export default defineStore({
 				location.href.includes(item.base_api_url)
 			)
 
-			if (activeMasterUser) {
-				window.base_api_url = activeMasterUser.base_api_url // needed for angularjs components
+			if ( activeMasterUser ) {
+				this.current = activeMasterUser;
 
-				this.current = activeMasterUser
-				this.defaultConfigCode = 'local.poms.' + this.current.base_api_url
+				const res = await useApi('configurationList.get');
+
+				if (!res.error) {
+					this.configCodes = res.results;
+				}
+
+				this.defaultConfigCode = this.configCodes.find( conf => conf.is_primary ).configuration_code;
+
 			}
 
 			window.onerror = this.registerSysError
 		},
 		async getUser() {
 			let res = await useApi('me.get')
+
+			if (res.error) {
+				throw res.error;
+			}
+
 			this.user = res
 
 			if (!this.user.data) this.user.data = {}
@@ -72,16 +76,46 @@ export default defineStore({
 			}
 		},
 		async getMe() {
-			const res = await useApi('member.get', { params: { id: 0 } })
+			const memberProm = useApi('member.get', { params: { id: 0 } })
+			const memberLayoutProm = useApi(
+				'memberLayout.get',
+				{
+					filters: { is_default: true },
+				}
+			)
 
-			if (res.error) {
-				console.log('res.error:', res.error)
+			const res = await Promise.all([memberProm, memberLayoutProm]);
+
+			if ( res[0].error || res[1].error ) {
+				console.error('Error while fetching data of member:', res[0].error || res[1].error );
+
 			} else {
-				if (!res.data) {
-					res.data = {}
+
+				let member = res[0];
+
+				if (!member.data) {
+					member.data = {}
 				}
 
-				if (!res.data.favorites) {
+				let memberLayout = res[1].results[0];
+
+				if (!memberLayout.data) {
+						memberLayout.data = {}
+				}
+
+				if (!memberLayout.data.favorites) {
+            		memberLayout.data.favorites = {}
+				}
+
+				if (!memberLayout.data.favorites.transaction_type) {
+            		memberLayout.data.favorites.transaction_type = []
+				}
+
+				if (!memberLayout.data.favorites.attributes) {
+            		memberLayout.data.favorites.attributes = {}
+				}
+
+				/*if (!res.data.favorites) {
 					res.data.favorites = {}
 				}
 
@@ -91,15 +125,16 @@ export default defineStore({
 
 				if (!res.data.favorites.attributes) {
 					res.data.favorites.attributes = {}
-				}
+				}*/
 
-				this.member = res
+				this.member = member;
+				this.memberLayout = memberLayout;
 			}
 		},
 		async updateMember(member = this.member) {
 			const options = {
 				params: { id: member.id },
-				body: { body: member },
+				body: member,
 			}
 
 			const res = await useApi('member.put', options)
@@ -108,6 +143,22 @@ export default defineStore({
 				console.error(res.error)
 			} else {
 				this.member = res
+			}
+		},
+
+		async updateMemberLayout(memberLayout = this.memberLayout) {
+
+			const options = {
+					params: { id: memberLayout.id },
+					body: memberLayout,
+			}
+
+			const res = await useApi('memberLayout.put', options)
+
+			if (res.error) {
+					console.error(res.error)
+			} else {
+					this.memberLayout = res
 			}
 		},
 
@@ -167,11 +218,12 @@ export default defineStore({
 				// let member = setUpMemberData(state.member, viewerType, entityType);
 
 				return state.member.data.group_tables[viewerType]
-					.entity_viewers_settings[entityType]
+					.entity_viewers_settings[entityType];
+
 			}
 		},
 		favorites(state) {
-			return state.member.data.favorites
+			return state.memberLayout.data.favorites
 		},
 	},
 })

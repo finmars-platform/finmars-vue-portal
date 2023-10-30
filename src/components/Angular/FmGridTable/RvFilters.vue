@@ -27,8 +27,9 @@
 					<template #default="{ close }">
 						<div class="fm_list" @click="close()">
 							<div
+								v-for="item in scope.addMenu.data.menu.root.items"
 								class="fm_list_item"
-								@click="dispatchAddMenuAction($event, item)"
+								@click="scope.dispatchAddMenuAction($event, item)"
 							>
 								{{ item.name }}
 							</div>
@@ -42,7 +43,7 @@
 					color="primary"
 					class="g-toggle-filters-btn md-icon-button chain-button"
 					:class="{
-						'g-use-from-above-filters-hidden': !scope.showUseFromAboveFilters,
+						'g-use-from-above-filters-hidden': scope.showUseFromAboveFilters,
 					}"
 					style="margin-left: 10px"
 					@click="scope.toggleUseFromAboveFilters()"
@@ -66,53 +67,6 @@
 					v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
 					@click="evAddEntity"
 				/>
-
-				<!-- <md-menu v-if="scope.entityType == 'instrument'">
-					<md-button
-						class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
-						@click="$mdOpenMenu($event)"
-					>
-						<span class="material-icons">add</span>
-						<md-tooltip md-direction="top"
-							>ADD {{ evGetEntityNameByState() }}</md-tooltip
-						>
-					</md-button>
-
-					<md-menu-content width="4">
-						<md-menu-item>
-							<md-button
-								@click="evAddEntity($event)"
-								class="g-settings-option-btn"
-							>
-								<span>Add Blank</span>
-							</md-button>
-						</md-menu-item>
-						<md-menu-item>
-							<md-button
-								@click="openTransactionTypeDialog($event)"
-								class="g-settings-option-btn"
-							>
-								<span>Add Typical</span>
-							</md-button>
-						</md-menu-item>
-						<md-menu-item>
-							<md-button
-								@click="openSimpleImportDialog($event)"
-								class="g-settings-option-btn"
-							>
-								<span>Import from File</span>
-							</md-button>
-						</md-menu-item>
-						<md-menu-item>
-							<md-button
-								@click="addFromProvider($event)"
-								class="g-settings-option-btn"
-							>
-								<span>Get From Provider</span>
-							</md-button>
-						</md-menu-item>
-					</md-menu-content>
-				</md-menu> -->
 
 				<FmMenu v-if="scope.entityType == 'instrument'">
 					<template #btn>
@@ -146,38 +100,6 @@
 					</template>
 				</FmMenu>
 
-				<!-- <md-menu v-if="scope.entityType == 'instrument-type'">
-					<md-button
-						class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
-						@click="$mdOpenMenu($event)"
-					>
-						<span class="material-icons">add</span>
-						<md-tooltip md-direction="top"
-							>ADD {{ evGetEntityNameByState() }}</md-tooltip
-						>
-					</md-button>
-
-					<md-menu-content width="4">
-						<md-menu-item>
-							<md-button
-								@click="evAddEntity($event)"
-								class="g-settings-option-btn"
-							>
-								<span>Add Blank</span>
-							</md-button>
-						</md-menu-item>
-						<md-menu-item>
-							<md-button
-								class="md-raised"
-								package-manager-button
-								content-type="'instruments.instrumenttype'"
-							>
-								Select from List
-							</md-button>
-						</md-menu-item>
-					</md-menu-content>
-				</md-menu> -->
-
 				<FmMenu v-if="scope.entityType == 'instrument-type'">
 					<template #btn>
 						<FmIcon
@@ -203,37 +125,7 @@
 						</div>
 					</template>
 				</FmMenu>
-				<!-- <md-menu v-if="scope.entityType == 'account-type'">
-					<md-button
-						class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
-						@click="$mdOpenMenu($event)"
-					>
-						<span class="material-icons">add</span>
-						<md-tooltip md-direction="top"
-							>ADD {{ evGetEntityNameByState() }}</md-tooltip
-						>
-					</md-button>
 
-					<md-menu-content width="4">
-						<md-menu-item>
-							<md-button
-								@click="evAddEntity($event)"
-								class="g-settings-option-btn"
-							>
-								<span>Add Blank</span>
-							</md-button>
-						</md-menu-item>
-						<md-menu-item>
-							<md-button
-								class="md-raised"
-								package-manager-button
-								content-type="'accounts.accounttype'"
-							>
-								Select from List
-							</md-button>
-						</md-menu-item>
-					</md-menu-content>
-				</md-menu> -->
 				<FmMenu v-if="scope.entityType == 'account-type'">
 					<template #btn>
 						<FmIcon
@@ -260,37 +152,6 @@
 						</div>
 					</template>
 				</FmMenu>
-				<!-- <md-menu v-if="scope.entityType == 'transaction-type'">
-					<md-button
-						class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
-						@click="$mdOpenMenu($event)"
-					>
-						<span class="material-icons">add</span>
-						<md-tooltip md-direction="top"
-							>ADD {{ evGetEntityNameByState() }}</md-tooltip
-						>
-					</md-button>
-
-					<md-menu-content width="4">
-						<md-menu-item>
-							<md-button
-								@click="evAddEntity($event)"
-								class="g-settings-option-btn"
-							>
-								<span>Add Blank</span>
-							</md-button>
-						</md-menu-item>
-						<md-menu-item>
-							<md-button
-								class="md-raised"
-								package-manager-button
-								content-type="'transactions.transactiontype'"
-							>
-								Select from List
-							</md-button>
-						</md-menu-item>
-					</md-menu-content>
-				</md-menu> -->
 
 				<FmMenu v-if="scope.entityType == 'transaction-type'">
 					<template #btn>
@@ -319,22 +180,6 @@
 					</template>
 				</FmMenu>
 
-				<!-- <md-button
-					v-if="scope.thereAreFrontendFilters"
-					class="g-toggle-filters-btn md-icon-button"
-					@click="toggleFiltersToShow()"
-				>
-					<span
-						v-show="scope.shownFiltersType === 'frontend'"
-						class="material-icons"
-						>laptop_mac</span
-					>
-					<span
-						v-show="scope.shownFiltersType === 'backend'"
-						class="material-icons"
-						>dns</span
-					>
-				</md-button> -->
 				<FmBtn
 					v-if="scope.thereAreFrontendFilters"
 					type="text"
@@ -538,22 +383,24 @@
 						<div
 							class="fm_list_item"
 							v-if="scope.isReport"
-							@click="exportAsPdf"
+							@click="scope.exportAsPdf"
 						>
 							Export to PDF
 						</div>
 
-						<div class="fm_list_item" @click="exportAsCSV">Export to CSV</div>
+						<div class="fm_list_item" @click="scope.exportAsCSV">
+							Export to CSV
+						</div>
 
-						<div class="fm_list_item" @click="exportAsExcel">
+						<div class="fm_list_item" @click="scope.exportAsExcel">
 							Export to Excel
 						</div>
 
-						<div class="fm_list_item" @click="copyReport">
+						<div class="fm_list_item" @click="scope.copyReport">
 							Copy all to buffer
 						</div>
 
-						<div class="fm_list_item" @click="copySelectedToBuffer">
+						<div class="fm_list_item" @click="scope.copySelectedToBuffer">
 							Copy selected to buffer
 						</div>
 					</div>
@@ -603,6 +450,12 @@
 		<AngularFmGridTableMatrixSettingsM
 			v-if="$mdDialog.modals['ReportViewerMatrixSettingsDialogController']"
 			:payload="$mdDialog.modals['ReportViewerMatrixSettingsDialogController']"
+			:modelValue="true"
+		/>
+
+		<AngularFmGridTableExportPdf
+			v-if="$mdDialog.modals['ExportPdfDialogController']"
+			:payload="$mdDialog.modals['ExportPdfDialogController']"
 			:modelValue="true"
 		/>
 	</div>
@@ -909,7 +762,6 @@
 		$mdDialog.show({
 			controller: 'ExportPdfDialogController as vm',
 			templateUrl: 'views/dialogs/export-pdf-dialog-view.html',
-			parent: angular.element(document.body),
 			targetEvent: $event,
 			locals: {
 				evDataService: evDataService,
@@ -1021,16 +873,16 @@
 			}
 		)
 
-		evEventService.addEventListener(
-			evEvents.TABLE_SIZES_CALCULATED,
-			function () {
-				scope.vm.calculateFilterChipsContainerWidth(
-					gFiltersLeftPartWidth,
-					gFiltersRightPartWidth,
-					filtersChipsContainer
-				)
-			}
-		)
+		// evEventService.addEventListener(
+		// 	evEvents.TABLE_SIZES_CALCULATED,
+		// 	function () {
+		// 		scope.vm.calculateFilterChipsContainerWidth(
+		// 			gFiltersLeftPartWidth,
+		// 			gFiltersRightPartWidth,
+		// 			filtersChipsContainer
+		// 		)
+		// 	}
+		// )
 
 		evEventService.addEventListener(evEvents.FILTERS_CHANGE, function () {
 			filters.value = evDataService.getFilters()

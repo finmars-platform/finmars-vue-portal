@@ -6,22 +6,10 @@
 	>
 		<template #left>
 			<FmCard title="Global" class="mb-x">
-				<BaseInput
-					label="Name"
-					v-model="procedure.name"
-				/>
-				<BaseInput
-					label="User code"
-					v-model="procedure.user_code"
-				/>
-				<BaseInput
-					label="Notes"
-					v-model="procedure.notes"
-				/>
-				<BaseInput
-					label="Notes for user"
-					v-model="procedure.notes_for_users"
-				/>
+				<BaseInput label="Name" v-model="procedure.name" />
+				<BaseInput label="User code" v-model="procedure.user_code" />
+				<BaseInput label="Notes" v-model="procedure.notes" />
+				<BaseInput label="Notes for user" v-model="procedure.notes_for_users" />
 			</FmCard>
 
 			<FmCard title="Period" class="mb-x">
@@ -69,33 +57,15 @@
 				</template>
 
 				<template v-if="procedure.provider == 4">
-					<BaseInput
-						label="Code"
-						v-model="procedure.data.code"
-					/>
-					<BaseInput
-						label="Issuer"
-						v-model="procedure.data.issuer"
-					/>
-					<BaseInput
-						label="Client id"
-						v-model="procedure.data.client_id"
-					/>
-					<BaseInput
-						label="jwt"
-						v-model="procedure.data.jwt"
-					/>
+					<BaseInput label="Code" v-model="procedure.data.code" />
+					<BaseInput label="Issuer" v-model="procedure.data.issuer" />
+					<BaseInput label="Client id" v-model="procedure.data.client_id" />
+					<BaseInput label="jwt" v-model="procedure.data.jwt" />
 				</template>
 
 				<template v-if="procedure.provider == 5">
-					<BaseInput
-						label="Sender pattern"
-						v-model="procedure.data.sender"
-					/>
-					<BaseInput
-						label="Subject pattern"
-						v-model="procedure.data.subject"
-					/>
+					<BaseInput label="Sender pattern" v-model="procedure.data.sender" />
+					<BaseInput label="Subject pattern" v-model="procedure.data.subject" />
 					<BaseInput
 						label="Filename pattern"
 						v-model="procedure.data.filename"
@@ -103,17 +73,14 @@
 				</template>
 
 				<template v-if="procedure.provider == 6">
-					<BaseInput
-						label="Url"
-						v-model="procedure.data.url"
-					/>
+					<BaseInput label="Url" v-model="procedure.data.url" />
 					<BaseInput
 						label="Security token"
 						v-model="procedure.data.security_token"
 					/>
 					<FmInputArea
 						label="JSON"
-						:modelValue="JSON.stringify( procedure.data, null, 2)"
+						:modelValue="JSON.stringify(procedure.data, null, 2)"
 						@update:modelValue="procedure.data = JSON.parse($event)"
 					/>
 				</template>
@@ -123,20 +90,19 @@
 </template>
 
 <script setup>
-
 	definePageMeta({
 		bread: [
 			{
 				text: 'Import: Import from bank ',
 				to: '/import/bank',
-				disabled: false
+				disabled: false,
 			},
 			{
 				text: 'Update Data Procedure ',
-				disabled: true
+				disabled: true,
 			},
 		],
-	});
+	})
 	const store = useStore()
 	let route = useRoute()
 
@@ -147,19 +113,19 @@
 	let simpleItems = ref()
 
 	let types = ref([
-		{id: 'simple_import', name: 'Simple Import', icon: 'SI'},
-		{id: 'transaction_import', name: 'Transaction Import', icon: 'TI'},
+		{ id: 'simple_import', name: 'Simple Import', icon: 'SI' },
+		{ id: 'transaction_import', name: 'Transaction Import', icon: 'TI' },
 	])
 
-	let {data: procedure} = await useAsyncData('importBankProcId', () => {
-		return useApi('importBankProcId.get', {params: {id: route.params.id}})
+	let { data: procedure } = await useAsyncData('importBankProcId', () => {
+		return useApi('importBankProcId.get', { params: { id: route.params.id } })
 	})
 
 	async function init() {
-		if ( !procedure.value.data ) procedure.value.data = {}
+		if (!procedure.value.data) procedure.value.data = {}
 
 		simpleItems.value = (await useApi('importSchemeLight.get')).results
-		simpleItems.value.forEach(item => {
+		simpleItems.value.forEach((item) => {
 			item.title = item.name
 			item.value = item.name
 		})
@@ -168,23 +134,26 @@
 	}
 
 	async function save() {
-		let res = await useApi('importBankProcId.put', {body: procedure.value, params: {id: route.params.id}})
+		let res = await useApi('importBankProcId.put', {
+			body: procedure.value,
+			params: { id: route.params.id },
+		})
 
-		if ( res ) {
-			useNotify({type: 'success', title: 'Saved!'})
+		if (res) {
+			useNotify({ type: 'success', title: 'Saved!' })
 		}
 	}
 
-	if ( store.current.base_api_url ) {
+	if (store.current.base_api_url) {
 		init()
 	} else {
-		watch( () => store.current, async () => {
-			init()
-		})
+		watch(
+			() => store.current,
+			async () => {
+				init()
+			}
+		)
 	}
-
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

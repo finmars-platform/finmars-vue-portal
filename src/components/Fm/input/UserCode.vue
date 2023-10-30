@@ -1,6 +1,6 @@
 <template>
 	<div class="usercode-input flex-column">
-		<div class="fi-center  grid  grid-col-2 m-b-8">
+		<div class="fi-start grid grid-col-2 m-b-8">
 			<!--				<md-input-container>
 				<label>Configuration</label>
 				<md-select data-ng-model="scope.configuration_code.value">
@@ -15,6 +15,10 @@
 				:modelValue="configCode"
 				label="Configuration Code"
 				:items="configCodesList"
+				attach="body"
+				:disabled="disabled"
+				:required="true"
+				v-model:errorData="configCodeSelEd"
 				@update:modelValue="onConfigCodeChange"
 			/>
 
@@ -28,6 +32,7 @@
 			<BaseInput
 				:modelValue="userCodeEnd"
 				label="User code"
+				:disabled="disabled"
 				@update:modelValue="onUserCodeChange"
 				tooltip="Allowed symbols: Numbers:
 						0-9, Letters: a-z (lowercase) Special Symbols: _, - (underscore, dash)"
@@ -65,24 +70,27 @@
 			<p v-show="scope.errorDescription" class="small-text error-color">
 				{{ scope.errorDescription }}
 			</p>
+
 		</div>
+
 	</div>
 </template>
 
 <script setup>
-	import { useTextNotValidForUserCode } from '~/composables/useMeta'
+
+	import {useTextNotValidForUserCode} from "~/composables/useMeta";
 
 	let props = defineProps({
 		/** Full user_code **/
 		modelValue: String,
-		configuration_code: String,
 		content_type: String,
+		disabled: Boolean,
 		errorData: String,
 	})
 
 	let emit = defineEmits([
 		'update:modelValue',
-		'update:configuration_code',
+		'configurationCodeChanged',
 		'update:errorData',
 	])
 
@@ -91,15 +99,8 @@
 	let scope = reactive({})
 
 	let configCodesList = ref([]);
-	let configCode = ref(props.configuration_code);
-
-	if (!configCode.value) {
-
-		configCode.value = store.defaultConfigCode;
-
-		emit('update:configuration_code', configCode.value); // in case of creating user code for new item
-
-	}
+	let configCode = ref(null);
+	let configCodeSelEd = ref(null);
 
 	let userCodeEnd = ref('');
 
@@ -143,14 +144,14 @@
 
 	watch(() => props.modelValue, parseUserCode)
 
-	if (props.configuration_code !== undefined) {
+	/*if (props.configuration_code !== undefined) {
 		watch(
 			() => props.configuration_code,
 			() => {
 				configCode.value = props.configuration_code
 			}
 		)
-	}
+	}*/
 
 	const setErrorDescrD = useDebounce(function (description) {
 		scope.errorDescription = description
@@ -158,14 +159,18 @@
 
 	function onConfigCodeChange(configCodeVal) {
 
+		configCodeSelEd.value = null;
 		configCode.value = configCodeVal;
 
-		emit('update:configuration_code', configCodeVal);
+		emit('configurationCodeChanged', configCodeVal);
 		emit( 'update:modelValue', assembleUserCode(userCodeEnd.value) );
 
 	}
 
 	const assembleUserCode = function (ucEnd) {
+
+		if (!ucEnd) return '';
+
 		let userCode = configCode.value + ':'
 
 		if (props.content_type) {
@@ -185,6 +190,7 @@
 
 			emit( 'update:modelValue', assembleUserCode(userCodeEnd.value) )
 		}
+
 	}
 
 	const validateUserCode = function (userCodeVal) {
@@ -201,33 +207,54 @@
 			errorVal = 'User code should be unique.'
 		}
 
-		if (errorVal !== error) {
+		if (errorVal !== error.value) {
 			emit('update:errorData', errorVal)
 		}
+
 	}
 
-	const init = async function () {
-		const res = await useApi('configurationList.get')
+	const init = function () {
 
-		if (res.error) {
-			throw new Error(res.error)
+		/*const res = await useApi('configurationList.get');
+
+		if ( res.error ) {
+			throw new Error(res.error);
+
 		} else {
-			configCodesList.value = res.results
-				.filter(function (item) {
-					return !item.is_package // TODO Move to backend filtering someday
-				})
-				.map(function (item) {
-					return {
-						id: item.configuration_code,
-						name: item.configuration_code,
-					}
-				})
 
-			parseUserCode()
+			scope.configuration_codes = res.results.filter(function (item) {
+				return !item.is_package; // TODO Move to backend filtering someday
+			}).map(function (item) {
+				return {
+					id: item.configuration_code,
+					name: item.configuration_code,
+				}
+			});
+
+			parseUserCode();
+
+		}*/
+
+		configCodesList.value = store.configCodes.filter(function (item) {
+			return !item.is_package; // TODO Move to backend filtering someday
+		}).map(function (item) {
+			return {
+				id: item.configuration_code,
+				name: item.configuration_code,
+			}
+		});
+
+		parseUserCode();
+
+		// show selector of config codes empty in case of deprecated or invalid configurationCode
+		if (!configCode.value) {
+			configCodeSelEd.value = {message: "Invalid configuration code"};
 		}
+
 	}
 
-	init()
+	init();
+
 </script>
 
 <style lang="scss" scoped>
@@ -242,6 +269,7 @@
 	:deep(div.base-input:not(.bi_no_margins)) {
 		margin-bottom: 0;
 	}
+
 	.small-text {
 		color: #747474;
 		font-size: 13px;

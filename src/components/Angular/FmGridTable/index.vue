@@ -82,9 +82,11 @@
 
 			<AngularFmGridTableFilters
 				v-show="components.filterArea"
+				v-if="contentWrapElem"
 				:attributeDataService="attributeDataService"
 				:hideFiltersBlock="hideFiltersBlock"
 				:hideUseFromAboveFilters="hideUseFromAboveFilters"
+				:contentWrapElement="contentWrapElem"
 				:vm="vm"
 			/>
 
@@ -217,6 +219,12 @@
 					></group-reconciliation-match-editor-binder> -->
 			</div>
 		</div>
+
+		<LazyAngularFmGridTableModalAddEntity
+			v-if="$mdDialog.modals['EntityViewerAddDialogController']"
+			:modelValue="true"
+			:payload="$mdDialog.modals['EntityViewerAddDialogController']"
+		/>
 	</div>
 </template>
 
@@ -236,6 +244,7 @@
 	])
 
 	const { attributeDataService, evEventService, evDataService } = props
+	const $mdDialog = inject('$mdDialog')
 
 	provide('ngDependace', {
 		evEventService,
@@ -277,7 +286,7 @@
 
 	let isRootEntityViewerRef = ref(true)
 
-	let init;
+	let init
 
 	onMounted(async () => {
 		let attrs = null
@@ -483,13 +492,16 @@
 	}
 
 	defineExpose({
-		init
+		init,
 	})
 </script>
 
 <style lang="scss" scoped>
 	.g-wrapper .g-table-wrap {
 		overflow: auto;
+	}
+	.g-table-wrap::-webkit-scrollbar {
+		height: 14px;
 	}
 	.wrap_dashboard {
 		display: block;

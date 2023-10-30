@@ -7,32 +7,41 @@
 		<div>
 			<FmInputText label="Name" v-model="newName" />
 
-			<!-- TODO: use UserCode component -->
-			<!--			<FmInputText label="User Code"
-									 :errorData="nucErrorData"
-									 :modelValue="newUserCode"
-									 @update:modelValue="onUserCodeChange" />-->
 			<FmInputUserCode
+				style="width: 700px"
+				class="m-b-20"
 				v-model="newUserCode"
-				v-model:configuration_code="configCode"
 				:content_type="content_type"
 				v-model:errorData="nucErrorData"
+				@configurationCodeChanged="newVal => configCode = newVal"
 			/>
 		</div>
 
 		<template #controls="{ cancel }">
 			<div class="flex-row fc-space-between">
-				<FmBtn type="basic" @click="() => cancelModal(cancel)">CANCEL</FmBtn>
-
-				<FmBtn type="primary" :disabled="!!nucErrorData" @click="save()"
-					>SAVE</FmBtn
+				<FmBtn
+					type="basic"
+					@click="() => cancelModal(cancel)"
 				>
+					CANCEL
+				</FmBtn>
+
+				<FmBtn
+				    type="primary"
+				    :disabled="!!nucErrorData"
+				    @click="save()"
+				>
+					SAVE
+				</FmBtn>
 			</div>
 		</template>
+
 	</BaseModal>
+
 </template>
 
 <script setup>
+
 	let props = defineProps({
 		modelValue: Boolean,
 		name: String,
@@ -60,51 +69,37 @@
 		() => (newUserCode.value = props.user_code)
 	)
 
-	function onUserCodeChange(newVal) {
-		if (!newVal) {
-			nucErrorData.value = {
-				message: 'User code should not be empty',
-			}
-		} else if (
-			!nucErrorData.value &&
-			props.occupiedUserCodes.includes(newVal)
-		) {
-			nucErrorData.value = {
-				message: 'User code is occupied enter another one.',
-			}
-		} else if (
-			nucErrorData.value &&
-			!props.occupiedUserCodes.includes(newVal)
-		) {
-			nucErrorData.value = null
-		}
-
-		newUserCode.value = newVal
-	}
-
 	function save() {
+
 		if (!newUserCode.value) {
+
 			nucErrorData.value = {
 				message: 'User code should not be empty',
 			}
+
 		} else {
+
 			emit('save', {
 				name: newName.value,
 				user_code: newUserCode.value,
 				configuration_code: configCode.value,
 			})
+
 		}
+
 	}
 
 	function cancelModal(cancelFn) {
-		newName.value = props.name
-		newUserCode.value = props.user_code
+		newName.value = props.name;
+		configCode.value = '';
+		newUserCode.value = props.user_code;
 
-		cancelFn()
+		cancelFn();
 	}
+
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 	.modal.modal--rename {
 		min-width: 600px;
 		& .bi_main_input {

@@ -1,26 +1,26 @@
 <template>
 	<div class="attrs_sel_container">
-<!--		<div class="modal_top flex aic sb">
-			<div class="flex aic">
-				<div class="modal_head">{{ title }}</div>
+		<!--		<div class="modal_top flex aic sb">
+					<div class="flex aic">
+						<div class="modal_head">{{ title }}</div>
 
-				<BaseInput type="text"
-									 class="small bi_no_borders bi_border_bottom m-l-20"
-									 placeholder="Search"
-									 :modelValue="searchParam"
-									 @update:modelValue="search"
-				>
-					<template #button>
-						<FmIcon icon="search" />
-					</template>
-					<template #rightBtn>
-						<FmIcon size="16" icon="close" @click="searchParam = ''" />
-					</template>
-				</BaseInput>
-			</div>
+						<BaseInput type="text"
+											 class="small bi_no_borders bi_border_bottom m-l-20"
+											 placeholder="Search"
+											 :modelValue="searchParam"
+											 @update:modelValue="search"
+						>
+							<template #button>
+								<FmIcon icon="search" />
+							</template>
+							<template #rightBtn>
+								<FmIcon size="16" icon="close" @click="searchParam = ''" />
+							</template>
+						</BaseInput>
+					</div>
 
-			<FmBtn type="iconBtn" icon="close" @click="emit('cancel')" />
-		</div>-->
+					<FmBtn type="iconBtn" icon="close" @click="emit('cancel')" />
+				</div>-->
 
 		<div class="attrs_sel_content scrollable">
 			<div
@@ -122,7 +122,7 @@
 
 					<ul class="fm_list" v-show="tab == 'advanced'">
 						<template v-if="viewTree[activeTree]"
-							v-for="obj in viewTree[activeTree].children"
+											v-for="obj in viewTree[activeTree].children"
 						>
 							<!-- Leaf -->
 							<div
@@ -140,7 +140,7 @@
 										@click.stop=""
 									/>
 
-<!--									<div v-html="advancedColumns[activeTree].name == 'All sections' ? obj.name : obj.short_name"></div>-->
+									<!--									<div v-html="advancedColumns[activeTree].name == 'All sections' ? obj.name : obj.short_name"></div>-->
 									<div v-html="obj.name"></div>
 								</div>
 
@@ -161,13 +161,13 @@
 								</li>
 
 								<template v-if="obj.opened">
-<!--									<div
-										v-for="(val, prop) in obj"
-										class="fm_list_item attr_item flex aic sb"
-										:class="{active: activeRow == val.key}"
-										@click="activeRow = val.key"
-										@dblclick="toggleAttr( val, !selected[val.key] )"
-									>-->
+									<!--									<div
+																			v-for="(val, prop) in obj"
+																			class="fm_list_item attr_item flex aic sb"
+																			:class="{active: activeRow == val.key}"
+																			@click="activeRow = val.key"
+																			@dblclick="toggleAttr( val, !selected[val.key] )"
+																		>-->
 									<div
 										v-for="child in obj.children"
 										class="fm_list_item attr_item flex aic sb"
@@ -311,1019 +311,1041 @@
 			</div>
 		</div>
 
-<!--		<div class="modal_bottom flex sb">
-			<div class="flex aic">
-				<FmBtn
-					type="text"
-					@click="emit('cancel')"
-				>
-					Cancel
-				</FmBtn>
+		<!--		<div class="modal_bottom flex sb">
+					<div class="flex aic">
+						<FmBtn
+							type="text"
+							@click="emit('cancel')"
+						>
+							Cancel
+						</FmBtn>
 
-				<FmIcon
-					class="m-l-24"
-					primary
-					:icon="isAdvanced ? 'lock_open' : 'lock'"
-					@click="isAdvanced = !isAdvanced"
-				/>
-			</div>
+						<FmIcon
+							class="m-l-24"
+							primary
+							:icon="isAdvanced ? 'lock_open' : 'lock'"
+							@click="isAdvanced = !isAdvanced"
+						/>
+					</div>
 
-			<FmBtn @click="save()">OK</FmBtn>
-		</div>-->
+					<FmBtn @click="save()">OK</FmBtn>
+				</div>-->
 	</div>
 </template>
 
 <script setup>
 
-	let props = defineProps({
-		modelValue: {
-			type: Array,
-			default() { return [] },
-		}, // selected attributes
-		title: {
-			type: String,
-			default: "Select attribute,"
-		},
-		attributes: {
-			type: Array,
-			default() { return [] },
-		},
-		favoriteAttributes: Array,
-		disabledAttributes: { // e.g. attributes that are already used when adding new columns
-			type: Array,
-			default() { return [] },
-		},
-		multiselect: Boolean,
-		searchParameters: String,
-		isAdvanced: Boolean, // if false, only tab "favorites" available
-	});
+  let props = defineProps({
+    modelValue: {
+      type: Array,
+      default() { return [] },
+    }, // selected attributes
+    title: {
+      type: String,
+      default: "Select attribute,"
+    },
+    attributes: {
+      type: Array,
+      default() { return [] },
+    },
+    favoriteAttributes: Array,
+    disabledAttributes: { // Array contains Strings (keys). e.g. attributes that are already used when adding new columns
+      type: Array,
+      default() { return [] },
+    },
+    multiselect: Boolean,
+    searchParameters: String,
+    isAdvanced: Boolean, // if false, only tab "favorites" available
+  });
+
+  let emit = defineEmits(['update:modelValue', 'update:isAdvanced', 'save', 'cancel', 'favoritesChanged']);
 
-	let emit = defineEmits(['update:modelValue', 'save', 'cancel', 'favoritesChanged']);
+  const foldersSeparatorRE = /\.\s(?=\S)/g; // equals to ". " which have symbol after it
 
-	const foldersSeparatorRE = /\.\s(?=\S)/g; // equals to ". " which have symbol after it
+  let tab = ref('favorites')
 
-	let tab = ref('favorites')
+  if ( !props.favoriteAttributes || !props.favoriteAttributes.length ) {
+    emit('update:isAdvanced', true);
+    tab.value = 'advanced';
+  }
 
-	if ( !props.favoriteAttributes || !props.favoriteAttributes.length ) {
-		tab.value = 'advanced';
-	}
+  let searchParam = ref('')
 
-	let searchParam = ref('')
+  let activeRow = ref('')
+  let activeTree = ref(0)
 
-	let activeRow = ref('')
-	let activeTree = ref(0)
+  // let isAdvanced = ref(false)
+  let isEdit = ref(false)
+  let isCollapsedInfo = ref(false)
+  let isOpenSelect = reactive({
+    current: true,
+    new: true
+  })
 
-	// let isAdvanced = ref(false)
-	let isEdit = ref(false)
-	let isCollapsedInfo = ref(false)
-	let isOpenSelect = reactive({
-		current: true,
-		new: true
-	})
+  let attrsList = [];
+  const windowOrigin = window.origin;
+  // const windowOrigin = 'http://0.0.0.0:8080'; // for development
 
-	let attrsList = [];
-	const windowOrigin = window.origin;
-	// const windowOrigin = 'http://0.0.0.0:8080'; // for development
+  let formattedAttrs = ref([]);
+  let attrsTree;
+  let viewTree = ref([]);
+  // let selectedOld = []
+  let disabledAttrs = ref([]);
+  let favList = ref([/*{
+        key: 'pricing_currency.reference_for_pricing',
+        name: 'test',
+        customName: 'test',
+        customDescription: 'test',
+      }*/])
 
-	let formattedAttrs = ref([]);
-	let attrsTree;
-	let viewTree = ref([]);
-	// let selectedOld = []
-	let disabledAttrs = [];
-	let favList = ref([/*{
-			key: 'pricing_currency.reference_for_pricing',
-			name: 'test',
-			customName: 'test',
-			customDescription: 'test',
-		}*/])
+  const favoritesAttrs = computed(() => {
+    let attrs = JSON.parse(JSON.stringify( favList.value ));
 
-	const favoritesAttrs = computed(() => {
-		let attrs = JSON.parse(JSON.stringify( favList.value ));
+    attrs = attrs.map(markDisabledAttrs);
 
-		attrs = attrs.map(markDisabledAttrs);
+    // mark favorites that refers to nonexistent attributes
+    attrs = attrs.map(fAttr => {
 
-		// mark favorites that refers to nonexistent attributes
-		attrs = attrs.map(fAttr => {
+      const index = attrsList.findIndex(attr => attr.key === fAttr.key);
 
-			const index = attrsList.findIndex(attr => attr.key === fAttr.key);
+      if (index < 0) {
+        fAttr.error = "Attribute does not exist in the Configuration";
+        fAttr.disabled = true;
+      }
 
-			if (index < 0) {
-				fAttr.error = "Attribute does not exist in the Configuration";
-				fAttr.disabled = true;
-			}
+      return fAttr;
 
-			return fAttr;
+    });
+    // if ( !attrs ) return []
+    if ( searchParam.value ) {
+      attrs = searchAndReplace( attrs )
 
-		});
-		// if ( !attrs ) return []
-		if ( searchParam.value ) {
-			attrs = searchAndReplace( attrs )
+    } else {
+      attrs = formatNames(attrs);
+    }
 
-		} else {
-			attrs = formatNames(attrs);
-		}
+    return attrs
+  })
 
-		return attrs
-	})
 
+  const getAttrPriority = attr => {
 
-	const getAttrPriority = attr => {
+    let priority = 3;
 
-		let priority = 3;
+    if ( attr.key.includes('attributes.') ) {
+      priority = 1;
 
-		if ( attr.key.includes('attributes.') ) {
-			priority = 1;
+      if ( attr.key.includes('pricing_policy_') ) {
+        priority = 2;
+      }
 
-			if ( attr.key.includes('pricing_policy_') ) {
-				priority = 2;
-			}
+    }
 
-		}
+    return priority;
 
-		return priority;
+  }
 
-	}
+  function compareAttrFolders(a, b) {
+    let priority = b.name.match(foldersSeparatorRE).length - a.name.match(foldersSeparatorRE).length;
 
-	function compareAttrFolders(a, b) {
-		let priority = b.name.match(foldersSeparatorRE).length - a.name.match(foldersSeparatorRE).length;
+    if (priority === 0) { // attributes have the same folders quantity
+      // place "User Attributes", "Pricing" after other folders
+      priority = getAttrPriority(b) - getAttrPriority(a);
+    }
 
-		if (priority === 0) { // attributes have the same folders quantity
-			// place "User Attributes", "Pricing" after other folders
-			priority = getAttrPriority(b) - getAttrPriority(a);
-		}
+    return priority;
+  }
 
-		return priority;
-	}
+  function sortAttrs(a, b) {
 
-	function sortAttrs(a, b) {
+    const priority = compareAttrFolders(a, b);
 
-		const priority = compareAttrFolders(a, b);
+    if ( priority !== 0 ) return priority;
 
-		if ( priority !== 0 ) return priority;
+    return a.name.localeCompare(b.name);
 
-		return a.name.localeCompare(b.name);
+  }
 
-	}
+  /** Disable attributes from property 'disabledAttributes' **/
+  function markDisabledAttrs(attrData) {
+    // attrData.disabled = !!disabledAttrs.value.find(selAttr => selAttr.key === attrData.key);
+    attrData.disabled = props.disabledAttributes.includes(attrData.key);
+    return attrData;
+  }
 
-	/** Disable attributes from property 'disabledAttributes' **/
-	function markDisabledAttrs(attrData) {
-		// attrData.disabled = !!disabledAttrs.find(selAttr => selAttr.key === attrData.key);
-		attrData.disabled = props.disabledAttributes.includes(attrData.key);
-		return attrData;
-	}
+  let selected = reactive({});
 
-	let selected = reactive({});
+  let toggleAttr;
+  function setToggleAttrFn () {
 
-	let toggleAttr;
-	function setToggleAttrFn () {
+    if (props.multiselect) {
 
-		if (props.multiselect) {
+      return function (attr, status) {
 
-			return function (attr, status) {
+        if (attr.disabled) return;
 
-				if (attr.disabled) return;
+        selected[attr.key] = status;
 
-				selected[attr.key] = status;
+        const selKeys = Object.keys(selected).filter( key => {
+          return selected[key] && !disabledAttrs.value.find(attr => attr.key === key);
+        });
+        // const selAttrs = props.attributes.filter( attr => selKeys.includes(attr.key) );
 
-				const selKeys = Object.keys(selected).filter( key => {
-					return selected[key] && !disabledAttrs.find(attr => attr.key === key);
-				});
-				// const selAttrs = props.attributes.filter( attr => selKeys.includes(attr.key) );
+        emit('update:modelValue', selKeys);
+      }
 
-				emit('update:modelValue', selKeys);
-			}
+    }
 
-		}
+    return function (attr, status) {
 
-		return function (attr, status) {
+      if (attr.disabled) return;
 
-			if (attr.disabled) return;
+      selected[attr.key] = status; // in case attribute was not selected before
 
-			selected[attr.key] = status; // in case attribute was not selected before
+      if ( selected[attr.key] ) {
 
-			if ( selected[attr.key] ) {
+        Object.keys(selected).forEach(key => { // deselect other attributes except disabled
+          selected[key] = !disabledAttrs.value.includes(key) && key === attr.key;
+        })
 
-				Object.keys(selected).forEach(key => { // deselect other attributes except disabled
-					selected[key] = !disabledAttrs.includes(key) && key === attr.key;
-				})
+      }
 
-			}
+      emit( 'update:modelValue', selected[attr.key] ? attr.key : null ); // 'null' if attribute was deselected
 
-			emit( 'update:modelValue', selected[attr.key] ? attr.key : null ); // 'null' if attribute was deselected
+    }
 
-		}
+  }
 
-	}
+  toggleAttr = setToggleAttrFn();
 
-	toggleAttr = setToggleAttrFn();
+  watch(
+    () => props.multiselect,
+    () => {
+      toggleAttr = setToggleAttrFn();
+    },
+  )
 
-	watch(
-		() => props.multiselect,
-		() => {
-			toggleAttr = setToggleAttrFn();
-		},
-	)
+  function formatAttrName (attr) {
 
-	function formatAttrName (attr) {
+    let formattedName = attr.name;
 
-		let formattedName = attr.name;
+    if ( attr.attribute_type ) {
 
-		if ( attr.attribute_type ) {
+      const namePieces = formattedName.split( foldersSeparatorRE );
+      const last = namePieces.pop();
+      const namePiece = attr.key.includes("pricing_policy_") ? "Pricing" : "User Attributes";
 
-			const namePieces = formattedName.split( foldersSeparatorRE );
-			const last = namePieces.pop();
-			const namePiece = attr.key.includes("pricing_policy_") ? "Pricing" : "User Attributes";
+      namePieces.push(namePiece);
+      namePieces.push(last);
 
-			namePieces.push(namePiece);
-			namePieces.push(last);
+      formattedName = namePieces.join('. ');
 
-			formattedName = namePieces.join('. ');
+    }
+    /* if attribute does not fit any group
+     * place it into a group General */
+    else if ( !attr.name.match( foldersSeparatorRE ) ) {
+      formattedName = "General. " + attr.name;
+    }
 
-		}
-		/* if attribute does not fit any group
-		 * place it into a group General */
-		else if ( !attr.name.match( foldersSeparatorRE ) ) {
-			formattedName = "General. " + attr.name;
-		}
+    attr.name = formattedName;
 
-		attr.name = formattedName;
+    return attr;
 
-		return attr;
+  }
 
-	}
+  function processAttributes() {
 
-	function processAttributes() {
+    attrsList = JSON.parse(JSON.stringify( props.attributes ));
 
-		attrsList = JSON.parse(JSON.stringify( props.attributes ));
+    attrsList = attrsList.map(formatAttrName);
 
-		attrsList = attrsList.map(formatAttrName);
+    let attributes = attrsList
+      .sort(sortAttrs)
 
-		let attributes = attrsList
-			.sort(sortAttrs)
+    disabledAttrs.value = attributes.filter( item => props.disabledAttributes.includes(item.key) );
 
-		disabledAttrs = attributes.filter( item => props.disabledAttributes.includes(item.key) );
+    formattedAttrs.value = attributes;
 
-		disabledAttrs.forEach(sAttr => {
-			selected[sAttr.key] = true;
-		})
+  }
 
-		formattedAttrs.value = attributes;
+  watch(
+    () => props.attributes,
+    () => {
+      processAttributes()
+    }
+  )
 
-	}
+  function buildTreeTemplate(attrs) {
 
-	watch(
-		() => props.attributes,
-		() => {
-			processAttributes()
-		}
-	)
+    let tree = {};
 
-	function buildTreeTemplate(attrs) {
+    for ( let attr of attrs ) {
+      // const parts = attr.name.split(" / ")
+      const parts = attr.name.split(". ")
+      parts[0] = parts[0].trim()
 
-		let tree = {};
+      let node = tree;
 
-		for ( let attr of attrs ) {
-			// const parts = attr.name.split(" / ")
-			const parts = attr.name.split(". ")
-			parts[0] = parts[0].trim()
+      for  (let i = 0; i < parts.length; i++ ) {
+        let part = parts[i]
 
-			let node = tree;
+        if (!node[part]) {
+          if ( parts.length - 1 == i ) { // leaf
+            // attr.short_name = part
+            node[part] = attr
 
-			for  (let i = 0; i < parts.length; i++ ) {
-				let part = parts[i]
+          } else { // branch
 
-				if (!node[part]) {
-					if ( parts.length - 1 == i ) { // leaf
-						// attr.short_name = part
-						node[part] = attr
+            node[part] = {}
 
-					} else { // branch
+            node[part]._branch = true;
+          }
+        }
+        node = node[part]
+      }
+    }
 
-						node[part] = {}
+    return tree;
 
-						node[part]._branch = true;
-					}
-				}
-				node = node[part]
-			}
-		}
+  }
 
-		return tree;
+  function assembleTree( treeTemplate, parent ) {
 
-	}
+    let list = [];
 
-	function assembleTree( treeTemplate, parent ) {
+    for (let key in treeTemplate) {
 
-		let list = [];
+      let pathToNode = [key];
+      // let level = 0;
 
-		for (let key in treeTemplate) {
+      if ( parent ) {
 
-			let pathToNode = [key];
-			// let level = 0;
+        pathToNode = parent.pathToNode.concat(pathToNode);
+        // level = parent.level + 1;
 
-			if ( parent ) {
+      }
 
-				pathToNode = parent.pathToNode.concat(pathToNode);
-				// level = parent.level + 1;
+      let nodeData = {
+        name: key,
+        pathToNode: pathToNode,
+        // level: level,
+      }
 
-			}
+      if ( treeTemplate[key]._branch ) {
 
-			let nodeData = {
-				name: key,
-				pathToNode: pathToNode,
-				// level: level,
-			}
+        nodeData.opened = false;
+        nodeData.children = assembleTree( treeTemplate[key], nodeData );
 
-			if ( treeTemplate[key]._branch ) {
+      } else { // leaf
 
-				nodeData.opened = false;
-				nodeData.children = assembleTree( treeTemplate[key], nodeData );
+        nodeData.key = treeTemplate[key].key;
+        nodeData.disabled = props.disabledAttributes.includes(nodeData.key);
+        nodeData.originalName = treeTemplate[key].name;
+        nodeData.value_type = treeTemplate[key].value_type;
 
-			} else { // leaf
+      }
 
-				nodeData.key = treeTemplate[key].key;
-				nodeData.disabled = props.disabledAttributes.includes(nodeData.key);
-				nodeData.originalName = treeTemplate[key].name;
-				nodeData.value_type = treeTemplate[key].value_type;
+      if (key !== '_branch')
+        list.push(nodeData)
 
-			}
+    }
 
-			if (key !== '_branch')
-				list.push(nodeData)
+    return list;
 
-		}
+  }
 
-		return list;
+  watch(
+    formattedAttrs,
+    () => {
 
-	}
+      let attrs = JSON.parse(JSON.stringify( formattedAttrs.value ));
+      let tree = buildTreeTemplate(attrs);
 
-	watch(
-		formattedAttrs,
-		() => {
+      attrsTree = assembleTree(tree);
 
-			let attrs = JSON.parse(JSON.stringify( formattedAttrs.value ));
-			let tree = buildTreeTemplate(attrs);
+      viewTree.value = searchParam.value ? filterTree(attrsTree) : attrsTree;
 
-			attrsTree = assembleTree(tree);
+    }
+  )
 
-			viewTree.value = searchParam.value ? filterTree(attrsTree) : attrsTree;
+  watch(
+    searchParam,
+    () => {
+      viewTree.value = searchParam.value ? filterTree(attrsTree) : attrsTree;
+    }
+  )
 
-		}
-	)
+  const selectedColumns = computed(() => {
+    let props = []
 
-	watch(
-		searchParam,
-		() => {
-			viewTree.value = searchParam.value ? filterTree(attrsTree) : attrsTree;
-		}
-	)
+    for ( let prop in selected) {
 
-	const selectedColumns = computed(() => {
-		let props = []
+      /*const oldSel = disabledAttrs.value.find( attr => attr.key === prop );
 
-		for ( let prop in selected) {
+      if ( !selected[prop] || oldSel ) continue*/
+      if ( !selected[prop] ) continue;
 
-			const oldSel = disabledAttrs.find( attr => attr.key === prop );
+      let selAttr = formattedAttrs.value.find((item) => item.key == prop );
+      if (selAttr) {
 
-			if ( !selected[prop] || oldSel ) continue
+        selAttr = JSON.parse(JSON.stringify( selAttr ));
 
-			let selAttr = formattedAttrs.value.find((item) => item.key == prop );
+        props.push(selAttr)
 
-			selAttr = JSON.parse(JSON.stringify( selAttr ));
+      } else {
+        console.warn(`Selected attribute not found: ${prop}`);
+      }
 
-			props.push(selAttr)
+    }
 
-		}
+    if ( searchParam.value ) {
+      props = searchAndReplace( props )
 
-		if ( searchParam.value ) {
-			props = searchAndReplace( props )
+    } else {
+      props = formatNames( props )
+    }
 
-		} else {
-			props = formatNames( props )
-		}
+    return props
+  })
 
-		return props
-	})
 
+  let infoEditable = reactive({
+    name: '',
+    key: '',
+    description: ''
+  })
 
-	let infoEditable = reactive({
-		name: '',
-		key: '',
-		description: ''
-	})
+  const attrInfo = computed(() => {
+    let attr = formattedAttrs.value.find(item => item.key == activeRow.value)
+    if ( !attr ) return {name: ''}
 
-	const attrInfo = computed(() => {
-		let attr = formattedAttrs.value.find(item => item.key == activeRow.value)
-		if ( !attr ) return {name: ''}
+    let name = 'No name'
+    let description = attr.description || 'No info';
 
-		let name = 'No name'
-		let description = attr.description || 'No info';
+    if ( tab.value == 'favorites' ) {
 
-		if ( tab.value == 'favorites' ) {
+      let fav = favList.value.find(o => o.key == attr.key)
 
-			let fav = favList.value.find(o => o.key == attr.key)
+      if (fav) {
 
-			if (fav) {
+        name =  fav.customName || formatName(attr.name);
+        description = fav.customDescription || description;
 
-				name =  fav.customName || formatName(attr.name);
-				description = fav.customDescription || description;
+      }
 
-			}
+    }
 
-		}
+    if ( tab.value == 'selected' ) {
+      name = attr.customName || formatName(attr.name);
+    }
 
-		if ( tab.value == 'selected' ) {
-			name = attr.customName || formatName(attr.name);
-		}
+    return {
+      name,
+      path: formatName(attr.name),
+      key: attr.key,
+      info: description,
+    }
+  })
 
-		return {
-			name,
-			path: formatName(attr.name),
-			key: attr.key,
-			info: description,
-		}
-	})
+  function editAttrInfo() {
 
-	function editAttrInfo() {
+    const selFavAttr = favList.value.find(fAttr => fAttr.key === attrInfo.value.key);
 
-		const selFavAttr = favList.value.find(fAttr => fAttr.key === attrInfo.value.key);
+    if ( !attrInfo.value.key || !selFavAttr ) {
+      return;
+    }
 
-		if ( !attrInfo.value.key || !selFavAttr ) {
-			return;
-		}
+    infoEditable.key = selFavAttr.key;
+    infoEditable.name = selFavAttr.customName;
+    infoEditable.description = selFavAttr.customDescription;
 
-		infoEditable.key = selFavAttr.key;
-		infoEditable.name = selFavAttr.customName;
-		infoEditable.description = selFavAttr.customDescription;
+    isEdit.value = true;
 
-		isEdit.value = true;
+  }
 
-	}
+  function saveAttrInfo() {
+    let fav = favList.value.find(o => o.key == infoEditable.key);
 
-	function saveAttrInfo() {
-		let fav = favList.value.find(o => o.key == infoEditable.key);
+    fav.customName = infoEditable.name
+    fav.customDescription = infoEditable.description
 
-		fav.customName = infoEditable.name
-		fav.customDescription = infoEditable.description
+    // TODO: after modal_add_columns starts to return array of objects, change 'layout_name' inside formattedAttrs and / or attrsList
 
-		// TODO: after modal_add_columns starts to return array of objects, change 'layout_name' inside formattedAttrs and / or attrsList
+    isEdit.value = false
 
-		isEdit.value = false
+    emit('favoritesChanged', JSON.parse(JSON.stringify( favList.value )) );
 
-		emit('favoritesChanged', JSON.parse(JSON.stringify( favList.value )) );
+  }
+  function toggleFav( attr ) {
+    let fav = favList.value.find(o => o.key == attr.key)
 
-	}
-	function toggleFav( attr ) {
-		let fav = favList.value.find(o => o.key == attr.key)
+    if ( fav ) {
+      let index = favList.value.findIndex(o => o.key == attr.key)
 
-		if ( fav ) {
-			let index = favList.value.findIndex(o => o.key == attr.key)
+      favList.value.splice(index, 1)
 
-			favList.value.splice(index, 1)
+    } else {
 
-		} else {
+      favList.value.push({
+        key: attr.key,
+        // TODO use attributes's original name
+        name: formattedAttrs.value.find(o => o.key == attr.key).name,
+        value_type: attr.value_type,
+        customName: '',
+        customDescription: '',
+      })
+    }
 
-			favList.value.push({
-				key: attr.key,
-				// TODO use attributes's original name
-				name: formattedAttrs.value.find(o => o.key == attr.key).name,
-				value_type: attr.value_type,
-				customName: '',
-				customDescription: '',
-			})
-		}
+    emit('favoritesChanged', JSON.parse(JSON.stringify( favList.value )) );
 
-		emit('favoritesChanged', JSON.parse(JSON.stringify( favList.value )) );
+  }
 
-	}
+  // '. ' are not replaced inside attributes themselves because ' / ' can be used inside names of dynamic attributes
+  /**
+   * @param {string} name
+   * @returns {string} - name after replacing '. ' with ' / '
+   */
+  const formatName = name => name.replaceAll(foldersSeparatorRE, ' / ');
+  function formatNames (attrs) {
 
-	// '. ' are not replaced inside attributes themselves because ' / ' can be used inside names of dynamic attributes
+    return attrs.map(attr => {
+
+      attr.name = formatName(attr.name);
+      return attr;
+
+    });
+
+  }
+
+  const searchTermsList = computed(() => {
+
+    if ( !searchParam.value ) {
+      return [];
+    }
+
+    const terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*/); // characters between spaces or '/'
+
+    return terms.map( term => term.toLowerCase() );
+
+  });
+
+  function filterAttrs( attrs ) {
+    /*const terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*!/); // characters between spaces or '/'
+
+    let result = attrs;
+
+    terms.forEach((term, i) => {
+      term = term.toLowerCase();
+
+      result = result
+        .filter( (item) => item.name.toLowerCase().includes(term) );
+    })*/
+
+    let result = attrs;
+
+    searchTermsList.value.forEach(term => {
+
+      result = result
+        .filter( item => {
+
+          let passes = item.name.toLowerCase().includes(term);
+
+          if (!passes && item.customName) { // when filtering favorite attributes
+            passes = item.customName.toLowerCase().includes(term);
+          }
+
+          return passes;
+
+        });
+
+    })
+
+    return result;
+  }
+
 	/**
-	 * @param {string} name
-	 * @returns {string} - name after replacing '. ' with ' / '
+	 * If originalName of leaf passed, it will be formatted.
+	 *
+	 * @param {string} name - name of branch or leaf
+	 * @returns {string} - html string with names that match filter highlighted
 	 */
-	const formatName = name => name.replaceAll(foldersSeparatorRE, ' / ');
-	function formatNames (attrs) {
+  function highlightName(name) {
 
-		return attrs.map(attr => {
+    name = formatName(name);
 
-			attr.name = formatName(attr.name);
-			return attr;
+    const terms = searchTermsList.value.map( term => useRegExpEscape(term) );
+    const searchTerm = terms.join('|');
 
-		});
+    return name.replaceAll(
+      new RegExp(`(${searchTerm})`, 'gi'),
+      // new RegExp(pattern, 'gi'),
+      (match) => `<span class="c_primary">${match}</span>`
+    )
 
-	}
+  }
 
-	const searchTermsList = computed(() => {
+  /** Format names of attributes that pass filter and highlight its parts  */
+  function highlightFound(attrs) {
 
-		if ( !searchParam.value ) {
-			return [];
-		}
+    // let terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*/); // characters between spaces or '/'
 
-		const terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*/); // characters between spaces or '/'
+    attrs = attrs.map(item => {
 
-		return terms.map( term => term.toLowerCase() );
+      /*let name = formatName( item.name );
 
-	});
+      terms = terms.map( term => useRegExpEscape(term) );
+      const searchTerm = terms.join('|');
 
-	function filterAttrs( attrs ) {
-		/*const terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*!/); // characters between spaces or '/'
+      name = name.replaceAll(
+        new RegExp(`(${searchTerm})`, 'gi'),
+        // new RegExp(pattern, 'gi'),
+        (match) => `<span class="c_primary">${match}</span>`
+      )*/
+      const name = highlightName(item.name);
 
-		let result = attrs;
+      return { ...item, name }
 
-		terms.forEach((term, i) => {
-			term = term.toLowerCase();
+    });
 
-			result = result
-				.filter( (item) => item.name.toLowerCase().includes(term) );
-		})*/
+    return attrs;
 
-		let result = attrs;
+  }
 
-		searchTermsList.value.forEach(term => {
+  /*function searchAndReplace( attrs ) {
+    let terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*!/) // characters between spaces or '/'
+    let result = attrs
 
-			result = result
-				.filter( item => {
+    terms.forEach((term, i) => {
+      term = term.toLowerCase()
 
-					let passes = item.name.toLowerCase().includes(term);
+      result = result
+        .filter( (item) => item.name.toLowerCase().includes(term) )
+    })
 
-					if (!passes && item.customName) { // when filtering favorite attributes
-						passes = item.customName.toLowerCase().includes(term);
-					}
+    result = result.map(item => {
 
-					return passes;
+      let name = formatName( item.name );
 
-				});
+      terms = terms.map( term => useRegExpEscape(term) );
+      const searchTerm = terms.join('|');
 
-		})
+      name = name.replaceAll(
+        new RegExp(`(${searchTerm})`, 'gi'),
+        // new RegExp(pattern, 'gi'),
+        (match) => `<span class="c_primary">${match}</span>`
+      )
 
-		return result;
-	}
+      return { ...item, name }
 
-	function highlightName(name) {
+    })
 
-		name = formatName(name);
+    return result
+  }*/
+  function searchAndReplace( attrs ) {
 
-		const terms = searchTermsList.value.map( term => useRegExpEscape(term) );
-		const searchTerm = terms.join('|');
+    let result = filterAttrs(attrs);
 
-		return name.replaceAll(
-			new RegExp(`(${searchTerm})`, 'gi'),
-			// new RegExp(pattern, 'gi'),
-			(match) => `<span class="c_primary">${match}</span>`
-		)
+    result = highlightFound(result);
 
-	}
+    return result
+  }
 
-	/** Format names of attributes that pass filter and highlight its parts  */
-	function highlightFound(attrs) {
+  function nodePassesFilter(node) {
+    const name = node.name.toLowerCase();
+    // all terms should be found inside name or originalName
 
-		// let terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*/); // characters between spaces or '/'
+    if (node.originalName) { // leaf
 
-		attrs = attrs.map(item => {
+      const originalName = formatName(node.originalName).toLowerCase();
+      // all terms should be found inside originalName and at least one term inside name
+      return !searchTermsList.value.find(term => !originalName.includes(term) ) &&
+        !!searchTermsList.value.find(term => name.includes(term) );
 
-			/*let name = formatName( item.name );
+    }
+    // all terms should be found inside name
+    return !searchTermsList.value.find(term => !name.includes(term) );
 
-			terms = terms.map( term => useRegExpEscape(term) );
-			const searchTerm = terms.join('|');
+  }
 
-			name = name.replaceAll(
-				new RegExp(`(${searchTerm})`, 'gi'),
-				// new RegExp(pattern, 'gi'),
-				(match) => `<span class="c_primary">${match}</span>`
-			)*/
-			const name = highlightName(item.name);
+  function filterNodesR( tree, filteredTree = [] ) {
 
-			return { ...item, name }
+    tree.forEach(node => {
+      /*let name = node.originalName ? formatName(node.originalName) : node.name;
+      name = name.toLowerCase();*/
+      if ( nodePassesFilter(node) ) {
 
-		});
+        let filteredNode;
 
-		return attrs;
+        /*
+        * Spreading object literals used below
+        * so that highlightName() will not change properties 'name'
+        * inside the object attrsTree
+        * */
+        /*if (node.children) {
 
-	}
+          filteredNode = {
+            ...node,
+            name: highlightName(node.name)
+          };
 
-	/*function searchAndReplace( attrs ) {
-		let terms = searchParam.value.trim().split(/\s*(?:\s|\/)\s*!/) // characters between spaces or '/'
-		let result = attrs
+        } else {
 
-		terms.forEach((term, i) => {
-			term = term.toLowerCase()
+          filteredNode = {
+            ...node,
+            name: highlightName(node.originalName),
+          };
 
-			result = result
-				.filter( (item) => item.name.toLowerCase().includes(term) )
-		})
+        }*/
 
-		result = result.map(item => {
+        /*
+        * Spreading object literals used below
+        * so that highlightName() will not change properties 'name'
+        * inside the object attrsTree
+        * */
+        filteredNode = {
+          ...node,
+          name: highlightName(node.originalName || node.name),
+        };
 
-			let name = formatName( item.name );
+        filteredTree.push(filteredNode);
 
-			terms = terms.map( term => useRegExpEscape(term) );
-			const searchTerm = terms.join('|');
+      }
 
-			name = name.replaceAll(
-				new RegExp(`(${searchTerm})`, 'gi'),
-				// new RegExp(pattern, 'gi'),
-				(match) => `<span class="c_primary">${match}</span>`
-			)
+      // should be called after filteredTree.push(filteredNode) to place nodes after their parents
+      if (node.children) {
+        filteredTree = filterNodesR(node.children, filteredTree);
+      }
 
-			return { ...item, name }
+    })
 
-		})
+    return filteredTree;
 
-		return result
-	}*/
-	function searchAndReplace( attrs ) {
+  }
 
-		let result = filterAttrs(attrs);
+  /** Format names of branches for section - All sections */
+  function formatSecsBrsNames(tree) {
 
-		result = highlightFound(result);
+    return tree.map(node => {
 
-		return result
-	}
-
-	function nodePassesFilter(node) {
-		const name = node.name.toLowerCase();
-		// all terms should be found inside name or originalName
-
-		if (node.originalName) { // leaf
-
-			const originalName = formatName(node.originalName).toLowerCase();
-			// all terms should be found inside originalName and at least one term inside name
-			return !searchTermsList.value.find(term => !originalName.includes(term) ) &&
-				!!searchTermsList.value.find(term => name.includes(term) );
-
-		}
-		// all terms should be found inside name
-		return !searchTermsList.value.find(term => !name.includes(term) );
-
-	}
-
-	function filterNodesR( tree, filteredTree = [] ) {
-
-		tree.forEach(node => {
-			/*let name = node.originalName ? formatName(node.originalName) : node.name;
-			name = name.toLowerCase();*/
-			if ( nodePassesFilter(node) ) {
-
-				let filteredNode;
-
+      if (node.originalName) {
 				/*
-				* Spreading object literals used below
-				* so that highlightName() will not change properties 'name'
-				* inside the object attrsTree
-				* */
-				/*if (node.children) {
-
-					filteredNode = {
-						...node,
-						name: highlightName(node.name)
-					};
-
-				} else {
-
-					filteredNode = {
-						...node,
-						name: highlightName(node.originalName),
-					};
-
-				}*/
-
-				/*
-				* Spreading object literals used below
-				* so that highlightName() will not change properties 'name'
-				* inside the object attrsTree
-				* */
-				filteredNode = {
+       	* Spreading object literals used below
+       	* so that highlightName() will not change properties 'name'
+       	* inside the object attrsTree
+       	* */
+        return {
 					...node,
-					name: highlightName(node.originalName || node.name),
+					name: highlightName( node.pathToNode.join(' / ') ),
 				};
+      }
 
-				filteredTree.push(filteredNode);
+			/*
+       * Spreading object literals used below
+       * so that highlightName() will not change properties 'name'
+       * inside the object attrsTree
+       * */
+      return {
+        ...node,
+        name: highlightName( node.pathToNode.join(' / ') ),
+        children: formatSecsBrsNames(node.children),
+      };
 
-			}
+    });
 
-			// should be called after filteredTree.push(filteredNode) to place nodes after their parents
-			if (node.children) {
-				filteredTree = filterNodesR(node.children, filteredTree);
-			}
+  }
 
-		})
+  function getAllSectionsChildren(tree) {
 
-		return filteredTree;
+    let result = tree.reduce(
+      (accumulator, currentSection) => accumulator.concat(currentSection.children),
+      [],
+    );
 
-	}
+    result = formatSecsBrsNames(result);
 
-	/** Format names of branches for section - All sections */
-	function formatSecsBrsNames(tree) {
+    return result;
 
-		return tree.map(node => {
+  }
 
-			if (node.originalName) {
-				return node
-			}
+  function filterTree(tree) {
 
-			return {
-				...node,
-				name: highlightName( node.pathToNode.join(' / ') ),
-				children: formatSecsBrsNames(node.children),
-			};
+    const filteredTree = tree
+      .map(node => {
 
-		});
+        const filteredChildren = filterNodesR(node.children);
 
-	}
+        if (filteredChildren.length) {
 
-	function getAllSectionsChildren(tree) {
+          return {
+            ...node,
+            name: highlightName(node.name),
+            ...{children: filteredChildren},
+          };
 
-		let result = tree.reduce(
-			(accumulator, currentSection) => accumulator.concat(currentSection.children),
-			[],
-		);
+        }
+        else if ( nodePassesFilter(node) ) { // name of section passes filter
 
-		result = formatSecsBrsNames(result);
+          return {
+            ...node,
+            name: highlightName(node.name),
+          }
 
-		return result;
+        }
 
-	}
+        return null;
 
-	function filterTree(tree) {
+      })
+      .filter(node => node);
 
-		const filteredTree = tree
-			.map(node => {
+    const allSections = {
+      name: 'All sections',
+      children: getAllSectionsChildren(filteredTree),
+    }
 
-				const filteredChildren = filterNodesR(node.children);
+    filteredTree.unshift(allSections);
 
-				if (filteredChildren.length) {
+    return filteredTree;
 
-					return {
-						...node,
-						name: highlightName(node.name),
-						...{children: filteredChildren},
-					};
+  }
 
-				}
-				else if ( nodePassesFilter(node) ) { // section name passes filter
+  let searchTimer;
+  function search( value ) {
 
-					return {
-						...node,
-						name: highlightName(node.name),
-					}
+    clearTimeout(searchTimer)
 
-				}
+    searchTimer = setTimeout(() => {
+      searchParam.value = value
 
-				return null;
+      if ( searchParam.value ) {
 
-			})
-			.filter(node => node);
+        viewTree.value = filterTree(attrsTree);
 
-		const allSections = {
-			name: 'All sections',
-			children: getAllSectionsChildren(filteredTree),
-		}
+      } else {
+        viewTree.value = attrsTree
+      }
 
-		filteredTree.unshift(allSections);
+    }, 1000)
+  }
 
-		return filteredTree;
+  watch(() => props.searchParameters, search)
 
-	}
+  /* function save() {
 
-	let searchTimer;
-	function search( value ) {
+    const selKeys = Object.keys(selected).filter( key => {
+      return !selectedOld.find(attr => attr.key === key);
+    });
 
-		clearTimeout(searchTimer)
+    const selAttrs = props.attributes.filter( attr => selKeys.includes(attr.key) );
 
-		searchTimer = setTimeout(() => {
-			searchParam.value = value
+    emit('save', selAttrs);
 
-			if ( searchParam.value ) {
+  } */
+  watch(
+    () => props.modelValue,
+    () => {
 
-				viewTree.value = filterTree(attrsTree);
+      props.modelValue.forEach(attrKey => {
 
-			} else {
-				viewTree.value = attrsTree
-			}
+        if ( props.attributes.findIndex(attr => attr.key === attrKey) > -1 ) { // attribute exist
+          selected[attrKey] = true;
+        }
 
-		}, 1000)
-	}
+      })
 
-	watch(() => props.searchParameters, search)
+    }
+  )
 
-	/* function save() {
+  function init() {
 
-		const selKeys = Object.keys(selected).filter( key => {
-			return !selectedOld.find(attr => attr.key === key);
-		});
+    processAttributes();
 
-		const selAttrs = props.attributes.filter( attr => selKeys.includes(attr.key) );
+    props.modelValue.forEach(attrKey => {
+      selected[attrKey] = true;
+    })
 
-		emit('save', selAttrs);
+    favList.value = JSON.parse(JSON.stringify( props.favoriteAttributes || [] ));
 
-	} */
-	watch(
-		() => props.modelValue,
-		() => {
+  }
 
-			props.modelValue.forEach(attrKey => {
-
-				if ( props.attributes.findIndex(attr => attr.key === attrKey) > -1 ) { // attribute exist
-					selected[attrKey] = true;
-				}
-
-			})
-
-		}
-	)
-
-	function init() {
-
-		processAttributes();
-
-		props.modelValue.forEach(attrKey => {
-			selected[attrKey] = true;
-		})
-
-		favList.value = JSON.parse(JSON.stringify( props.favoriteAttributes || [] ));
-
-	}
-
-	init();
+  init();
 
 </script>
 
 <style lang="scss" scoped>
-	.modal_top {
-		height: 50px;
-		padding: 0 20px;
-		border-bottom: 1px solid $border;
-	}
-	.attrs_sel_content {
-		height: 100%;
-		// overflow: auto;
-		// height: calc(100vh - 106px);
-		min-width: 400px; // so that FmInputEntityNames could fit in
-	}
-	.modal_bottom {
-		position: absolute;
-		bottom: 0;
-		width: 100%;
-		border-top: 1px solid $border;
-		padding: 10px 20px;
-	}
-	.attrs_sel_container {
-		position: relative;
-		background: #fff;
-		width: 100%;
-		height: 100vh;
-		max-height: 100%;
-		border-radius: 4px;
-		z-index: 2;
+  .modal_top {
+    height: 50px;
+    padding: 0 20px;
+    border-bottom: 1px solid $border;
+  }
+  .attrs_sel_content {
+    height: 100%;
+    // overflow: auto;
+    // height: calc(100vh - 106px);
+    min-width: 400px; // so that FmInputEntityNames could fit in
+  }
+  .modal_bottom {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    border-top: 1px solid $border;
+    padding: 10px 20px;
+  }
+  .attrs_sel_container {
+    position: relative;
+    background: #fff;
+    width: 100%;
+    height: 100vh;
+    max-height: 100%;
+    border-radius: 4px;
+    z-index: 2;
 
-		.close {
-			cursor: pointer;
+    .close {
+      cursor: pointer;
 
-			path {
-				transition: 0.3s;
-			}
+      path {
+        transition: 0.3s;
+      }
 
-			&:hover path {
-				stroke: $primary !important;
-			}
-		}
+      &:hover path {
+        stroke: $primary !important;
+      }
+    }
 
-		&_head {
-			font-weight: 500;
-			font-size: 20px;
-		}
-	}
+    &_head {
+      font-weight: 500;
+      font-size: 20px;
+    }
+  }
 
-	.select_count {
-		background: $primary;
-		width: 18px;
-		height: 18px;
-		line-height: 18px;
-		text-align: center;
-		color: #fff;
-		margin-left: 11px;
-		font-size: 12px;
-		font-weight: 400;
-		border-radius: 2px;
-	}
-	.content_grid {
-		display: grid;
-		grid-template-columns: 1fr 200px;
-		height: 100%;
+  .select_count {
+    background: $primary;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    text-align: center;
+    color: #fff;
+    margin-left: 11px;
+    font-size: 12px;
+    font-weight: 400;
+    border-radius: 2px;
+  }
+  .content_grid {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    height: 100%;
 
-		&.collapsed {
-			grid-template-columns: 1fr 32px;
-		}
-		&.advanced_mod {
-			height: calc(100% - 48px);
-		}
+    &.collapsed {
+      grid-template-columns: 1fr 32px;
+    }
+    &.advanced_mod {
+      height: calc(100% - 48px);
+    }
 
-		&.advanced {
-			grid-template-columns: 160px 1fr 200px;
-		}
+    &.advanced {
+      grid-template-columns: 160px 1fr 200px;
+    }
 
-		&_left {
-			border-right: 1px solid $border;
-			height: 100%;
-			overflow: auto;
-			padding: 9px 0;
-		}
-		&_main {
-			height: 100%;
-			overflow: auto;
-			padding: 10px 0;
-		}
-		&_right {
-			position: relative;
-			border-left: 1px solid $border;
-			height: 100%;
-			// overflow: auto;
+    &_left {
+      border-right: 1px solid $border;
+      height: 100%;
+      overflow: auto;
+      padding: 9px 0;
+    }
+    &_main {
+      height: 100%;
+      overflow: auto;
+      padding: 10px 0;
+    }
+    &_right {
+      position: relative;
+      border-left: 1px solid $border;
+      height: 100%;
+      // overflow: auto;
 
-			&.collapsed {
-				.desc_title, .desc_subtitle, .desc_about, .desc_icons {
-					display: none;
-				}
-			}
+      &.collapsed {
+        .desc_title, .desc_subtitle, .desc_about, .desc_icons {
+          display: none;
+        }
+      }
 
-			&:hover .collapse {
-				opacity: 1;
-				visibility: visible;
-			}
-		}
-	}
+      &:hover .collapse {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+  }
 
-	.attr_item {
-		padding: 0 20px;
-		height: 26px;
-		user-select: none;
-		border: none;
-		&.active {
-			background: $primary-lighten-2;
-			.favorites {
-				opacity: 1;
-			}
-		}
-		&:hover .favorites {
-			opacity: 1;
-		}
-	}
+  .attr_item {
+    padding: 0 20px;
+    height: 26px;
+    user-select: none;
+    border: none;
+    &.active {
+      background: $primary-lighten-2;
+      .favorites {
+        opacity: 1;
+      }
+    }
+    &:hover .favorites {
+      opacity: 1;
+    }
+  }
 
-	.content_grid_right {
-		display: flex;
-		flex-direction: column;
-	}
+  .content_grid_right {
+    display: flex;
+    flex-direction: column;
+  }
 
-	.desc_title {
-		padding: 0 13px;
-		height: 40px;
-		word-wrap: break-word;
-	}
-	.desc_subtitle {
-		padding: 10px 13px;
-		background: $main;
-		border-top: 1px solid $border;
-		border-bottom: 1px solid $border;
-		color: $text-lighten;
-		word-wrap: break-word;
-	}
-	.desc_about {
-		flex-grow: 1;
-		padding: 10px 13px;
-		color: $text-lighten;
-	}
-	.collapse {
-		position: absolute;
-		top: 10px;
-		left: -12px;
-		border: 1px solid $border;
-		background: #fff;
-		border-radius: 50%;
-		opacity: 0;
-		visibility: hidden;
-		transition: 0.3s;
+  .desc_title {
+    padding: 0 13px;
+    height: 40px;
+    word-wrap: break-word;
+  }
+  .desc_subtitle {
+    padding: 10px 13px;
+    background: $main;
+    border-top: 1px solid $border;
+    border-bottom: 1px solid $border;
+    color: $text-lighten;
+    word-wrap: break-word;
+  }
+  .desc_about {
+    flex-grow: 1;
+    padding: 10px 13px;
+    color: $text-lighten;
+  }
+  .collapse {
+    position: absolute;
+    top: 10px;
+    left: -12px;
+    border: 1px solid $border;
+    background: #fff;
+    border-radius: 50%;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s;
 
-		&.active {
-			visibility: visible;
-			opacity: 1;
-		}
-	}
-	.favorites {
-		opacity: 0;
-		transition: 0.3s;
+    &.active {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+  .favorites {
+    opacity: 0;
+    transition: 0.3s;
 
-		&.active {
-			opacity: 1;
-		}
-	}
-	.expand_wrap {
-		padding-left: 31px;
-	}
-	.expand {
-		margin-left: -2px;
-		margin-right: 9px;
-	}
-	.select_old {
-		color: $text-lighten;
-	}
+    &.active {
+      opacity: 1;
+    }
+  }
+  .expand_wrap {
+    padding-left: 31px;
+  }
+  .expand {
+    margin-left: -2px;
+    margin-right: 9px;
+  }
+  .select_old {
+    color: $text-lighten;
+  }
 </style>

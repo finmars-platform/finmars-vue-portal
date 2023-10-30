@@ -49,7 +49,7 @@ var getListLight = function (options) {
 				'/' +
 				apiVersion +
 				'/' +
-				'instruments/instrument-type-light/',
+				'instruments/instrument-type/light/',
 			options
 		),
 		{
