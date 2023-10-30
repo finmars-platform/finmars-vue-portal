@@ -699,7 +699,7 @@
 					>SHOW HIDDEN ATTRIBUTES
 				</FmBtn>
 			</div>
-			
+
 			<div v-if="strategy3AttrTypeList">
 				<div
 					class="layouts-card"
@@ -769,7 +769,7 @@
 					</div>
 				</div>
 			</div>
-			<span v-else class="not-atribute" >This entity has no layouts.</span>
+			<span v-else class="not-atribute">This entity has no layouts.</span>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Account Type Attributes">
 			<div class="attributes-header">
@@ -786,7 +786,7 @@
 					>SHOW HIDDEN ATTRIBUTES
 				</FmBtn>
 			</div>
-			
+
 			<div v-if="accountTypeAttributeItems">
 				<div
 					class="layouts-card"
@@ -856,7 +856,9 @@
 					</div>
 				</div>
 			</div>
-			<span v-else class="not-atribute">You could add new user attributes here</span>
+			<span v-else class="not-atribute"
+				>You could add new user attributes here</span
+			>
 		</FmExpansionPanel>
 		<FmExpansionPanel title="Transaction Type Attributes">
 			<div class="attributes-header">
@@ -878,11 +880,6 @@
 		<ModalUserAttributes
 			title="Attribute manager"
 			v-model="editAttributBtn"
-			@save="renameLayout"
-		/>
-		<ModalWarning
-			title="Warning"
-			v-model="deleteAttributBtn"
 			@save="renameLayout"
 		/>
 		<ModalExportClassifiers
@@ -944,7 +941,7 @@
 	const BaseInputEcosystemDefaults = ref([])
 	const activeAttributList = ref([])
 
-	const evAttrsStore = useEvAttributesStore();
+	const evAttrsStore = useEvAttributesStore()
 
 	let attributMap = ref({
 		'portfolios.portfolio': [],
@@ -985,19 +982,31 @@
 			'transactions.complextransaction': [],
 		})
 		const res = await evAttrsStore.getFetchAllAttributeTypes()
-		activeAttributList.value = res
 		console.log('res getLayouts', res)
+		
+		const res2 = res.then((results) =>
+			results.forEach((result) => console.log(result.status))
+		)
 
-		activeAttributList.value.forEach((layout) => {
-			layoutMap.value[layout.content_type].push(layout)
+		console.log('res getLayouts res2', res2)
+		activeAttributList.value = res.then(
+			function (result) {
+				console.log('res getLayoutsewefwf', result)
+			},
+			function (error) {
+				/* обработает ошибку */
+			}
+		)
+
+		activeAttributList.value.forEach((Attribut) => {
+			// attributMap.value[Attribut.content_type].push(layout)
 		})
-		console.log('layoutMap activeAttributList', layoutMap)
+		console.log('AttributMap activeAttributList', attributMap)
 		// console.log(
-		// 	"layoutMap.value['portfolios.portfolio']",
-		// 	layoutMap.value['portfolios.portfolio']
+		// 	"AttributMap.value['portfolios.portfolio']",
+		// 	AttributMap.value['portfolios.portfolio']
 		// )
 	}
-
 
 	// watch(
 	// 	ecosystemDefaults,
@@ -1020,7 +1029,6 @@
 	// strategy3AttrTypeListGet()
 	// accountTypeAttributeGet()
 
-	
 	// async function instrumentAttrGet() {
 	// 	let edRes = await useApi('instrumentAttrTypeList.get')
 	// 	instrumentItems.value = edRes.error ? [] : edRes.results
@@ -1081,7 +1089,6 @@
 	// 	accountTypeAttributeItems.value = edRes.error ? [] : edRes.results
 	// 	console.log(ecosystemDefaults.value, 'edRes')
 	// }
-	
 
 	function renameLayout(newNamesData) {
 		emit('rename', newNamesData)
