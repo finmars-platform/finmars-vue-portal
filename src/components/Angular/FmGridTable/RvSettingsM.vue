@@ -573,7 +573,7 @@
 
 	vm.strategies1 = []
 
-	useApi('strategiesOneLight.get').then((res) => {
+	useApi('strategies1Light.get').then((res) => {
 		vm.strategies1 = res.results
 	})
 

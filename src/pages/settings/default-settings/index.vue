@@ -104,15 +104,15 @@
 				:items="strategiesOneLightItems"
 			/>
 			<FmSelect
-				v-model="ecosystemDefaults.strategy1_group"
+				v-model="ecosystemDefaults.strategy1_subgroup"
 				label="Strategy 1 Group "
 				:items="strategiesOneSubgroupItems"
 			/>
-			<FmSelect
+<!--			<FmSelect
 				v-model="ecosystemDefaults.strategy1_subgroup"
 				label="Strategy 1  Subgroup"
-				:items="''"
-			/>
+				:items=""
+			/>-->
 		</div>
 		<div class="wrapp-select">
 			<FmSelect
@@ -121,15 +121,15 @@
 				:items="strategiesSecondLightItems"
 			/>
 			<FmSelect
-				v-model="ecosystemDefaults.strategy2_group"
-				label="Strategy 2  Group"
+				v-model="ecosystemDefaults.strategy2_subgroup"
+				label="Strategy 2 Group"
 				:items="strategiesSecondSubgroupItems"
 			/>
-			<FmSelect
+<!--			<FmSelect
 				v-model="ecosystemDefaults.strategy2_subgroup"
 				label="Strategy 2  Subgroup"
 				:items="''"
-			/>
+			/>-->
 		</div>
 		<div class="wrapp-select">
 			<FmSelect
@@ -138,15 +138,15 @@
 				:items="strategiesThirdLightItems"
 			/>
 			<FmSelect
-				v-model="ecosystemDefaults.strategy3_group"
+				v-model="ecosystemDefaults.strategy3_subgroup"
 				label="Strategy 3 Group"
 				:items="strategiesThirdSubgroupItems"
 			/>
-			<FmSelect
+<!--			<FmSelect
 				v-model="ecosystemDefaults.strategy3_subgroup"
 				label="Strategy 3 Subgroup"
 				:items="''"
-			/>
+			/>-->
 		</div>
 		<div class="wrapp-select">
 			<FmSelect
@@ -172,7 +172,7 @@
 </template>
 
 <script setup>
-	definePageMeta({
+  definePageMeta({
 		middleware: 'auth',
 		bread: [
 			{
@@ -209,7 +209,9 @@
 	const disabledBtn = ref(true)
 	const ecosystemDefaults = ref([1])
 	const BaseInputEcosystemDefaults = ref([])
+
 	init()
+
 	async function init() {
 		const res = await Promise.all([
 			useApi('instrumentListLight.get'),
@@ -218,7 +220,7 @@
 			useApi('currencyListLight.get'),
 			useApi('instrumentType.get'),
 			useApi('transactionTypeLight.get'),
-			useApi('accountsType.get'),
+			useApi('accountTypeList.get'),
 			useApi('pricingPolicyList.get'),
 			useApi('instrumentPeriodicity.get'),
 			useApi('instrumentAccrualCalculationModel.get'),
