@@ -176,7 +176,7 @@
 		middleware: 'auth',
 		bread: [
 			{
-				text: 'Default settings',
+				text: 'settings: DEFAULT SETTINGS',
 				to: '/settings/default-settings',
 			},
 		],
@@ -229,12 +229,12 @@
 			useApi('instrumentPricingСondition.get'),
 			useApi('counterpartyResponsibleLight.get'),
 			useApi('counterpartyCounterpartyLight.get'),
-			useApi('strategiesOneLight.get'),
-			useApi('strategiesOneSubgroup.get'),
-			useApi('strategiesSecondLight.get'),
-			useApi('strategiesSecondSubgroup.get'),
-			useApi('strategiesThirdLight.get'),
-			useApi('strategiesThirdSubgroup.get'),
+			useApi('strategies1ListLight.get'),
+			useApi('strategies1SubgroupList.get'),
+			useApi('strategies2ListLight.get'),
+			useApi('strategies2SubgroupList.get'),
+			useApi('strategies3ListLight.get'),
+			useApi('strategies3SubgroupList.get'),
 			useApi('instrumentSchemeList.get'),
 			useApi('currencySchemeList.get'),
 		])
