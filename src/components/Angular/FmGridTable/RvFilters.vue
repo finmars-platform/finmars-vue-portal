@@ -61,9 +61,6 @@
 					btnPrimary
 					icon="add"
 					class="g-filter-settings-big-left-btn"
-					:class="{
-						'g-use-from-above-filters-hidden': !scope.showUseFromAboveFilters,
-					}"
 					v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
 					@click="evAddEntity"
 				/>
@@ -453,6 +450,13 @@
 			:payload="$mdDialog.modals['ReportViewerMatrixSettingsDialogController']"
 			:modelValue="true"
 		/>
+
+		<AngularFmGridTableExportPdf
+			v-if="$mdDialog.modals['ExportPdfDialogController']"
+			:payload="$mdDialog.modals['ExportPdfDialogController']"
+			:modelValue="true"
+		/>
+
 		<ModalCustomColumns
 			title="Custom Field Manager"
 			v-model="isOpenCustomColumns"
@@ -763,7 +767,6 @@
 		$mdDialog.show({
 			controller: 'ExportPdfDialogController as vm',
 			templateUrl: 'views/dialogs/export-pdf-dialog-view.html',
-			parent: angular.element(document.body),
 			targetEvent: $event,
 			locals: {
 				evDataService: evDataService,
@@ -875,16 +878,16 @@
 			}
 		)
 
-		evEventService.addEventListener(
-			evEvents.TABLE_SIZES_CALCULATED,
-			function () {
-				scope.vm.calculateFilterChipsContainerWidth(
-					gFiltersLeftPartWidth,
-					gFiltersRightPartWidth,
-					filtersChipsContainer
-				)
-			}
-		)
+		// evEventService.addEventListener(
+		// 	evEvents.TABLE_SIZES_CALCULATED,
+		// 	function () {
+		// 		scope.vm.calculateFilterChipsContainerWidth(
+		// 			gFiltersLeftPartWidth,
+		// 			gFiltersRightPartWidth,
+		// 			filtersChipsContainer
+		// 		)
+		// 	}
+		// )
 
 		evEventService.addEventListener(evEvents.FILTERS_CHANGE, function () {
 			filters.value = evDataService.getFilters()
@@ -993,7 +996,13 @@
 		padding-bottom: 10px;
 		border-bottom: 1px solid $border;
 	}
-	.g-use-from-above-filters-hidden {
-		color: $primary;
-	}
+
+  .chain-button:not(.g-use-from-above-filters-hidden) {
+    color: $primary;
+
+    &:hover {
+      color: $primary;
+    }
+  }
+
 </style>

@@ -134,6 +134,10 @@ export default {
 		delete: prefix + '/users/member/{id}/',
 		put: prefix + '/users/member/{id}/',
 	},
+	memberLayout: {
+		get: prefix + '/ui/member-layout/',
+		put: prefix + '/ui/member-layout/{id}/',
+	},
 	memberSendInvite: {
 		put: prefix + '/users/member/{id}/send-invite/',
 	},
@@ -351,22 +355,22 @@ export default {
 	widgetsStats: {
 		get: prefix + '/widgets/stats/',
 	},
-	strategiesOneLight: {
+	strategies1ListLight: {
 		get: prefix + '/strategies/1/strategy/light/',
 	},
-	strategiesOneSubgroup: {
+	strategies1SubgroupList: {
 		get: prefix + '/strategies/1/subgroup/',
 	},
-	strategiesSecondLight: {
+	strategies2ListLight: {
 		get: prefix + '/strategies/2/strategy/light/',
 	},
-	strategiesSecondSubgroup: {
+	strategies2SubgroupList: {
 		get: prefix + '/strategies/2/subgroup/',
 	},
-	strategiesThirdLight: {
+	strategies3ListLight: {
 		get: prefix + '/strategies/3/strategy/light/',
 	},
-	strategiesThirdSubgroup: {
+	strategies3SubgroupList: {
 		get: prefix + '/strategies/3/subgroup/',
 	},
 	defaultSettings: {

@@ -107,7 +107,6 @@ export default function (scope, $mdDialog, isReport) {
 	const getDndAreas = function () {
 		scope.dndAreas.columns =
 			scope.contentWrapElement.querySelector('.gColumnsHolder')
-		console.log('scope.contentWrapElement:', scope.contentWrapElement)
 		if (isReport)
 			scope.dndAreas.groups =
 				scope.contentWrapElement.querySelector('.gGroupsHolder')

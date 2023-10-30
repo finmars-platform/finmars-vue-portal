@@ -11,9 +11,9 @@
 				style="width: 700px"
 				class="m-b-20"
 				v-model="newUserCode"
-				v-model:configuration_code="configCode"
 				:content_type="content_type"
 				v-model:errorData="nucErrorData"
+				@configurationCodeChanged="newVal => configCode = newVal"
 			/>
 		</div>
 
@@ -78,17 +78,20 @@
 			}
 
 		} else {
+
 			emit('save', {
 				name: newName.value,
 				user_code: newUserCode.value,
 				configuration_code: configCode.value,
 			})
+
 		}
 
 	}
 
 	function cancelModal(cancelFn) {
 		newName.value = props.name;
+		configCode.value = '';
 		newUserCode.value = props.user_code;
 
 		cancelFn();
