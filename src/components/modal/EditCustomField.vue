@@ -6,27 +6,30 @@
 		class="modal--rename"
 	>
 		<div class="wrapp">
-			<FmInputText label="Custom Column Name" v-model="newName" />
-			<FmInputText
-				label="Custom Column Reference Code (use programming language naming rules)"
+
+      <FmInputText label="Custom Column Name" v-model="newName" />
+
+      <FmInputUserCode
+				userCodeLabel="Custom Column Reference Code (use programming language naming rules)"
 				v-model="newUserCode"
-				v-model:configuration_code="configCode"
-				:content_type="content_type"
-				v-model:errorData="nucErrorData"
+				@configurationCodeChanged="newVal => configCode = newVal"
+				class="m-b-24"
 			/>
-			<FmSelect
+
+      <FmSelect
 				label="Value type"
 				v-model="newValueType"
 				:items="valueTypeItems"
 			></FmSelect>
+
 			<FmInputArea
-				class="bi_area"
+				label="Notes"
 				cols="73"
-				rows="5"
 				v-model="newNotes"
+				class="m-b-24"
 			></FmInputArea>
 
-			<h4 class="title-custom">Custom Column Expression</h4>
+			<h4 class="p-b-8">Custom Column Expression</h4>
 			<v-ace-editor
 				v-model:value="newExpression"
 				@init="editorInit"
@@ -82,7 +85,17 @@
 	let newValueType = ref(props.value_type)
 	let newExpression = ref(props.expr)
 	let newUserCode = ref(props.user_code)
+
 	let configCode = ref('')
+
+	if (newUserCode.value) {
+
+		let ucParts = newUserCode.value.split(':');
+
+		if (ucParts.length) configCode.value = ucParts[0];
+
+	}
+
 	let nucErrorData = ref(null)
 	let valueTypeItems = reactive([
 		{
@@ -122,11 +135,15 @@
 		editor.navigateFileStart()
 	}
 	function save() {
+
 		if (!newUserCode.value) {
+
 			nucErrorData.value = {
 				message: 'User code should not be empty',
 			}
+
 		} else {
+
 			emit('save', {
 				name: newName.value,
 				user_code: newUserCode.value,
@@ -135,7 +152,9 @@
 				value_type: newValueType.value,
 				expr: newExpression.value,
 			})
+
 		}
+
 	}
 	function create() {
 		if (!newUserCode.value) {

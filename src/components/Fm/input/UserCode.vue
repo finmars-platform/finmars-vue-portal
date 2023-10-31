@@ -31,7 +31,7 @@
 			</md-input-container>-->
 			<BaseInput
 				:modelValue="userCodeEnd"
-				label="User code"
+				:label="userCodeLabel"
 				:disabled="disabled"
 				@update:modelValue="onUserCodeChange"
 				tooltip="Allowed symbols: Numbers:
@@ -82,6 +82,10 @@
 
 	let props = defineProps({
 		/** Full user_code **/
+		userCodeLabel: {
+			type: String,
+			default: 'User code'
+		},
 		modelValue: String,
 		content_type: String,
 		disabled: Boolean,
