@@ -1,22 +1,21 @@
 <template>
 	<BaseModal
-		:title="title"
+		:title="activeTitle"
 		:modelValue="modelValue"
 		@update:modelValue="(newVal) => emit('update:modelValue', newVal)"
 		class="modal--rename"
 	>
 		<div class="wrapp">
+			<FmInputText label="Custom Column Name" v-model="newName" />
 
-      <FmInputText label="Custom Column Name" v-model="newName" />
-
-      <FmInputUserCode
+			<FmInputUserCode
 				userCodeLabel="Custom Column Reference Code (use programming language naming rules)"
 				v-model="newUserCode"
-				@configurationCodeChanged="newVal => configCode = newVal"
+				@configurationCodeChanged="(newVal) => (configCode = newVal)"
 				class="m-b-24"
 			/>
 
-      <FmSelect
+			<FmSelect
 				label="Value type"
 				v-model="newValueType"
 				:items="valueTypeItems"
@@ -45,7 +44,7 @@
 					<FmBtn type="basic" @click="() => cancelModal(cancel)">CANCEL</FmBtn>
 
 					<FmBtn
-						v-if="activeTypeModal == 'edit'"
+						v-if="activeEditing == 'edit'"
 						type="primary"
 						:disabled="!!nucErrorData"
 						@click="save()"
@@ -75,11 +74,11 @@
 		notes: String,
 		value_type: String,
 		expr: String,
-		create: String,
+		editing: String,
 	})
 	let emit = defineEmits(['save', 'create', 'update:modelValue'])
 
-	let activeTypeModal = ref(props.typeModal)
+	let activeEditing = ref(props.editing)
 	let newName = ref(props.name)
 	let newNotes = ref(props.notes)
 	let newValueType = ref(props.value_type)
@@ -88,12 +87,13 @@
 
 	let configCode = ref('')
 
+	let activeTitle =
+		activeEditing.value == 'edit' ? props.title : 'Create Custom Column'
+
 	if (newUserCode.value) {
+		let ucParts = newUserCode.value.split(':')
 
-		let ucParts = newUserCode.value.split(':');
-
-		if (ucParts.length) configCode.value = ucParts[0];
-
+		if (ucParts.length) configCode.value = ucParts[0]
 	}
 
 	let nucErrorData = ref(null)
@@ -135,15 +135,11 @@
 		editor.navigateFileStart()
 	}
 	function save() {
-
 		if (!newUserCode.value) {
-
 			nucErrorData.value = {
 				message: 'User code should not be empty',
 			}
-
 		} else {
-
 			emit('save', {
 				name: newName.value,
 				user_code: newUserCode.value,
@@ -152,9 +148,7 @@
 				value_type: newValueType.value,
 				expr: newExpression.value,
 			})
-
 		}
-
 	}
 	function create() {
 		if (!newUserCode.value) {
