@@ -3,8 +3,6 @@
 		<div style="padding: 5px 0 20px">
 			<div class="header">
 				<FmBtn type="text" @click="createCustomColumns(item)">Add New</FmBtn>
-
-				<FmBtn type="primary" @click="save">RETURN TO VIEW</FmBtn>
 			</div>
 			<div class="content">
 				<div class="card" v-for="(item, index) in attrsList" :key="index">
@@ -83,7 +81,9 @@
 			name: 'Date',
 		},
 	])
+
 	let typeModal = ref()
+
 	let activeCustomColumns = ref([
 		{
 			expr: '',
@@ -105,17 +105,13 @@
 		},
 	])
 
-
 	vm.customFields = []
 
-
 	await evAttrsStore.getFetchCustomFields(props.content_type)
-
 
 	let attrsList = computed(() => {
 		return evAttrsStore.customFields[props.content_type]
 	})
-
 
 	vm.readyStatus = { customFields: false, attributes: false }
 
@@ -132,23 +128,23 @@
 	}
 
 	function deleteCustomColumns(item) {
+
 		let res = useApi('balanceReportCustomFieldList.delete', {
 			params: { id: item.id },
 			body: item,
 		})
+
 		if (res.error) {
+
 			useNotify({
 				type: 'error',
 				title: res.error.message || res.error.detail,
 			})
+
 			throw new Error(res.error)
-		} else if (res.status === 'conflict') {
-			useNotify({
-				type: 'error',
-				title: 'You can not delete attributed that already in use',
-			})
-			throw new Error(res.error)
+
 		}
+
 		useNotify({ type: 'success', title: `data delete on the server` })
 	}
 
@@ -164,23 +160,23 @@
 	}
 	async function putEditCustomColumns(newNamesData) {
 		console.log('putEditCustomColumns newNamesData.id', activeCustomColumns.id)
+
 		let res = await useApi('balanceReportCustomFieldList.put', {
 			params: { id: activeCustomColumns.id },
 			body: newNamesData,
 		})
+
 		if (res.error) {
+
 			useNotify({
 				type: 'error',
 				title: res.error.message || res.error.detail,
 			})
+
 			throw new Error(res.error)
-		} else if (res.status === 'conflict') {
-			useNotify({
-				type: 'error',
-				title: 'You can not Edit CustomColumns that already in use',
-			})
-			throw new Error(res.error)
+
 		}
+
 		useNotify({ type: 'success', title: `data Edit on the server` })
 
 		await evAttrsStore.fetchCustomFields(props.content_type)
