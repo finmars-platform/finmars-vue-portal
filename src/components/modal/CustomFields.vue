@@ -2,23 +2,27 @@
 	<BaseModal :title="title">
 		<div style="padding: 5px 0 20px">
 			<div class="header">
-				<FmBtn type="text" @click="createCustomColumns(item)">Add New</FmBtn>
+				<FmBtn type="text" @click="addCustomField(item)">Add New</FmBtn>
 			</div>
 			<div class="content">
-				<div class="card" v-for="(item, index) in attrsList" :key="index">
+				<div
+					class="card"
+					v-for="(item, index) in customFieldsList"
+					:key="index"
+				>
 					<div class="card__inner">
 						<h3 class="card__title">{{ item?.name }}</h3>
 						<div class="card__btn">
-							<div class="card__edit">
+							<div class="card__edit m-r-10">
 								<FmIcon
-									@click="editCustomColumns(item)"
+									@click="editCustomField(item)"
 									class="m-l-4"
 									icon="edit"
 								/>
 							</div>
 							<div class="card__delete">
 								<FmIcon
-									@click="deleteColumns(item)"
+									@click="deleteColumn(item)"
 									class="m-l-4"
 									icon="delete"
 								/>
@@ -27,23 +31,20 @@
 					</div>
 				</div>
 			</div>
-			<div v-if="isOpenEditCustomColumns">
+			<div v-if="isOpeneditCustomField">
 				<ModalEditCustomField
 					title="Edit Custom Column"
-					v-model="isOpenEditCustomColumns"
-					:name="activeCustomColumns.name"
-					:user_code="activeCustomColumns.user_code"
-					:notes="activeCustomColumns.notes"
-					:value_type="activeCustomColumns.value_type"
-					:expr="activeCustomColumns.expr"
-					:valueTypeItems="valueTypeItems"
-					:typeModal="typeModal"
-					@save="putEditCustomColumns"
-					@create="getCreateCustomColumns"
+					v-model="isOpeneditCustomField"
+					:name="activeCustomColumn.name"
+					:user_code="activeCustomColumn.user_code"
+					:notes="activeCustomColumn.notes"
+					:value_type="activeCustomColumn.value_type"
+					:expr="activeCustomColumn.expr"
+					:editing="editing"
+					@save="updateCustomField"
+					@create="postCustomColumn"
 				></ModalEditCustomField>
 			</div>
-
-
 		</div>
 
 		<template #controls="{ cancel }">
@@ -61,30 +62,15 @@
 		title: String,
 		content_type: String,
 	})
-
-	const isOpenDeleteCustomColumns = ref(false)
-	const isOpenEditCustomColumns = ref(false)
+	
+	const isOpeneditCustomField = ref(false)
 	const evAttrsStore = useEvAttributesStore()
-
+	let editing = ref('')
 	let vm = reactive({ content_type: props.content_type })
-	let valueTypeItems = reactive([
-		{
-			id: 10,
-			name: 'Text',
-		},
-		{
-			id: 20,
-			name: 'Number',
-		},
-		{
-			id: 40,
-			name: 'Date',
-		},
-	])
 
-	let typeModal = ref()
 
-	let activeCustomColumns = ref([
+
+	let activeCustomColumn = ref([
 		{
 			expr: '',
 		},
@@ -109,81 +95,77 @@
 
 	await evAttrsStore.getFetchCustomFields(props.content_type)
 
-	let attrsList = computed(() => {
+	let customFieldsList = computed(() => {
 		return evAttrsStore.customFields[props.content_type]
 	})
 
 	vm.readyStatus = { customFields: false, attributes: false }
 
-	async function deleteColumns(item) {
-		// console.log('itemitem', item)
+	async function deleteColumn(item) {
 		let confirm = await useConfirm({
 			title: 'Confirm action',
 			text: `Do you want to delete "${item.name}" layout?`,
 		})
 
 		if (confirm) {
-			deleteCustomColumns(item)
+			deleteCustomColumn(item)
 		}
 	}
 
-	function deleteCustomColumns(item) {
-
-		let res = useApi('balanceReportCustomFieldList.delete', {
+	async function deleteCustomColumn(item) {
+		let res = await useApi('balanceReportCustomFieldList.delete', {
 			params: { id: item.id },
 			body: item,
 		})
 
 		if (res.error) {
-
 			useNotify({
 				type: 'error',
 				title: res.error.message || res.error.detail,
 			})
 
 			throw new Error(res.error)
-
 		}
-
-		useNotify({ type: 'success', title: `data delete on the server` })
+		await evAttrsStore.fetchCustomFields(props.content_type)
+		useNotify({ type: 'success', title: `Column delete on the server` })
+		
+		isOpeneditCustomField.value = false
+	
 	}
 
-	function editCustomColumns(newNamesData) {
-		activeCustomColumns = newNamesData
-		console.log('activeCustomColumns снаружиs', activeCustomColumns)
-		typeModal = 'edit'
-		isOpenEditCustomColumns.value = true
+	function editCustomField(newNamesData) {
+		activeCustomColumn = newNamesData
+		editing = 'edit'
+		isOpeneditCustomField.value = true
 	}
-	function createCustomColumns(newNamesData) {
-		typeModal = 'create'
-		isOpenEditCustomColumns.value = true
+	function addCustomField(newNamesData) {
+		activeCustomColumn = []
+		editing = 'create'
+		isOpeneditCustomField.value = true
 	}
-	async function putEditCustomColumns(newNamesData) {
-		console.log('putEditCustomColumns newNamesData.id', activeCustomColumns.id)
+	async function updateCustomField(newNamesData) {
 
 		let res = await useApi('balanceReportCustomFieldList.put', {
-			params: { id: activeCustomColumns.id },
+			params: { id: activeCustomColumn.id },
 			body: newNamesData,
 		})
 
 		if (res.error) {
-
 			useNotify({
 				type: 'error',
 				title: res.error.message || res.error.detail,
 			})
 
 			throw new Error(res.error)
-
 		}
 
-		useNotify({ type: 'success', title: `data Edit on the server` })
+		useNotify({ type: 'success', title: `Column Edit on the server` })
 
 		await evAttrsStore.fetchCustomFields(props.content_type)
-		isOpenEditCustomColumns.value = false
+		isOpeneditCustomField.value = false
 	}
 
-	async function getCreateCustomColumns(newNamesData) {
+	async function postCustomColumn(newNamesData) {
 		let res = await useApi('balanceReportCustomFieldList.post', {
 			body: newNamesData,
 		})
@@ -193,16 +175,10 @@
 				title: res.error.message || res.error.detail,
 			})
 			throw new Error(res.error)
-		} else if (res.status === 'conflict') {
-			useNotify({
-				type: 'error',
-				title: 'You can not Edit CustomColumns that already in use',
-			})
-			throw new Error(res.error)
-		}
-		useNotify({ type: 'success', title: `data Edit on the server` })
+		} 
+		useNotify({ type: 'success', title: `Column create on the server` })
 		await evAttrsStore.fetchCustomFields(props.content_type)
-		isOpenEditCustomColumns.value = false
+		isOpeneditCustomField.value = false
 	}
 </script>
 
