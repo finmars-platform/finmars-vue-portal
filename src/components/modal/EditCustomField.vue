@@ -86,6 +86,7 @@
 	let newUserCode = ref(props.user_code)
 
 	let configCode = ref('')
+	
 
 	let activeTitle =
 		activeEditing.value == 'edit' ? props.title : 'Create Custom Column'
