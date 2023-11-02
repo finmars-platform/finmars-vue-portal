@@ -3,7 +3,7 @@
 	"scripts": {
 		"build": "nuxt build ",
 		"dev": "nuxt --rootDir=./v/ dev -p=3000",
-		"dev-local": "NUXT_APP_BASE_URL=/space00000/v API_HOST=http://0.0.0.0:8000 AUTH_HOST=http://0.0.0.0:8083/authorizer APP_HOST=http://localhost:3000/v OLD_APP_URL='http://0.0.0.0:8080/#!/' NUXT_HOST=0.0.0.0 nuxt --rootDir=./v/ dev",
+		"dev-local": "NUXT_APP_BASE_URL=/space00000/v API_HOST=http://0.0.0.0:8000 AUTH_HOST=http://0.0.0.0:8083/authorizer APP_HOST=http://localhost:3000/v KEYCLOAK_URL=https://stage-auth.finmars.com KEYCLOAK_REALM=finmars KEYCLOAK_CLIENT_ID=finmars OLD_APP_URL='http://0.0.0.0:8080/#!/' NUXT_HOST=0.0.0.0 nuxt --rootDir=./v/ dev",
 		"dev-local-sz": "API_HOST=http://0.0.0.0:8000 AUTH_HOST=http://0.0.0.0:8083/authorizer APP_HOST=http://0.0.0.0:3000/v WS_HOST='wss://stage.finmars.com/ws/' NUXT_HOST=0.0.0.0 nuxt --rootDir=./v/ dev",
 		"start": "PORT=8080 node .output/server/index.mjs",
 		"generate": "nuxt generate",
