@@ -255,8 +255,8 @@
     min-height: 340px;
     min-width: 400px;
     height: calc(80vh - $modal-header-height - $modal-footer-height);
-    width: 80vw;
-    max-width: 1000px;
+    width: 70vw;
+    max-width: 800px ;
   }
 
 </style>
