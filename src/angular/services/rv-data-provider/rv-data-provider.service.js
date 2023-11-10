@@ -1,6 +1,6 @@
 import evEvents from '../entityViewerEvents'
-import groupsService from './groups.service'
-import objectsService from './objects.service'
+// import groupsService from './groups.service'
+// import objectsService from './objects.service'
 import evDataHelper from '../../helpers/ev-data.helper'
 import evRvCommonHelper from '../../helpers/ev-rv-common.helper'
 import rvDataHelper from '../../helpers/rv-data.helper'
@@ -9,614 +9,448 @@ import queryParamsHelper from '../../helpers/queryParamsHelper'
 export default function (
 	entityResolverService,
 	pricesCheckerService,
-	reportHelper
+	reportHelper,
+	groupsService,
+	objectsService,
 ) {
 	var requestData = function (evDataService) {
+
 		return new Promise(function (resolve, reject) {
-			var entityType = evDataService.getEntityType()
-			var reportOptions = evDataService.getReportOptions()
 
-			// ;
-			// ;
+			var entityType = evDataService.getEntityType();
+			var reportOptions = evDataService.getReportOptions();
 
-			entityResolverService
-				.getList(entityType, reportOptions)
-				.then(function (data) {
-					// ;
+			// console.log('requestData.entityType', entityType);
+			// console.log('requestData.reportOptions', reportOptions);
 
-					if (!data.hasOwnProperty('non_field_errors')) {
-						var reportOptions = evDataService.getReportOptions()
+			entityResolverService.getList(entityType, reportOptions).then(function (data) {
 
-						reportOptions = Object.assign({}, reportOptions, data)
+				// console.log('requestData.data', data);
 
-						evDataService.setReportOptions(reportOptions)
+				// Checkout finmarsOngoingRequests
+				// need to ensure that each copy of report will modify own data;
+				data = JSON.parse(JSON.stringify(data))
 
-						if (
-							data.hasOwnProperty('task_status') &&
-							data.task_status !== 'SUCCESS'
-						) {
-							setTimeout(function () {
-								resolve(requestData(evDataService))
-							}, 500)
-						} else {
-							resolve(data)
-						}
+				if (!data.hasOwnProperty('non_field_errors')) {
+
+					var reportOptions = evDataService.getReportOptions();
+
+					reportOptions = Object.assign({}, reportOptions, data);
+
+					evDataService.setReportOptions(reportOptions);
+
+					if (data.hasOwnProperty('task_status') && data.task_status !== 'SUCCESS') {
+
+						setTimeout(function () {
+							resolve(requestData(evDataService));
+						}, 500)
+
+					} else {
+
+						resolve(data);
+
 					}
-				})
-				.catch(function (reason) {
-					// ;
-				})
+				}
+
+			}).catch(function (reason) {
+
+				// console.log('here?');
+
+			})
 		})
-	}
 
-	var injectRegularFilters = function (
-		requestParameters,
-		entityViewerDataService,
-		entityViewerEventService
-	) {
-		// ;
 
-		var newRequestParametersBody = Object.assign({}, requestParameters.body)
-		newRequestParametersBody['filter_settings'] = []
+	};
 
-		var filters = entityViewerDataService.getFilters()
+	var injectRegularFilters = function (requestParameters, entityViewerDataService, entityViewerEventService) {
 
-		/* var isFilterValid = function (filterItem) {
+		// console.log('injectRegularFilters.requestParameters', requestParameters);
 
-            if (filterItem.options && filterItem.options.enabled) { // if filter is enabled
+		var newRequestParametersBody = Object.assign({}, requestParameters.body);
+		newRequestParametersBody['filter_settings'] = [];
 
-                var filterType = filterItem.options.filter_type;
-
-                if (filterType === 'empty' ||
-                    filterItem.options.exclude_empty_cells) { // if filter works for empty cells
-
-                    return true;
-
-                } else if (filterItem.options.filter_values) { // if filter values can be used for filtering (not empty)
-
-                    var filterValues = filterItem.options.filter_values;
-
-                    if (filterType === 'from_to' || filterType === 'out_of_range') {
-
-                        if ((filterValues.min_value || filterValues.min_value === 0) &&
-                            (filterValues.max_value || filterValues.max_value === 0)) {
-                            return true;
-                        }
-
-                    } else if (Array.isArray(filterValues)) {
-
-                        if (filterValues[0] || filterValues[0] === 0) {
-                            return true;
-                        }
-
-                    }
-                }
-
-            }
-
-            return false;
-        }; */
+		var filters = entityViewerDataService.getFilters();
 
 		filters.forEach(function (item) {
+
 			if (evRvCommonHelper.isFilterValid(item)) {
-				var key = queryParamsHelper.entityPluralToSingular(item.key)
+
+				var key = queryParamsHelper.entityPluralToSingular(item.key);
 
 				var filterSettings = {
 					key: key,
 					filter_type: item.options.filter_type,
 					exclude_empty_cells: item.options.exclude_empty_cells,
 					value_type: item.value_type,
-					value: item.options.filter_values,
-				}
+					value: item.options.filter_values
+				};
 
-				newRequestParametersBody['filter_settings'].push(filterSettings)
+				newRequestParametersBody['filter_settings'].push(filterSettings);
+
 			}
-		})
 
-		requestParameters.body = newRequestParametersBody
+		});
 
-		entityViewerDataService.setRequestParameters(requestParameters)
-	}
+		requestParameters.body = newRequestParametersBody;
 
-	var requestReport = function (
-		entityViewerDataService,
-		entityViewerEventService
-	) {
-		entityViewerEventService.dispatchEvent(evEvents.DATA_LOAD_START)
+		entityViewerDataService.setRequestParameters(requestParameters);
 
-		var entityType = entityViewerDataService.getEntityType()
-		var reportOptions = entityViewerDataService.getReportOptions()
+	};
 
-		//# region Delete report options items">
-		/* delete reportOptions.items;
-        delete reportOptions.custom_fields;
-        delete reportOptions.custom_fields_object;
-        delete reportOptions.item_complex_transactions;
-        delete reportOptions.item_counterparties;
-        delete reportOptions.item_responsibles;
-        delete reportOptions.item_strategies3;
-        delete reportOptions.item_strategies2;
-        delete reportOptions.item_strategies1;
-        delete reportOptions.item_portfolios;
-        delete reportOptions.item_instruments;
-        delete reportOptions.item_instrument_pricings;
-        delete reportOptions.item_instrument_accruals;
-        delete reportOptions.item_currency_fx_rates;
-        delete reportOptions.item_currencies;
-        delete reportOptions.item_accounts; */
-		reportOptions = reportHelper.cleanReportOptionsFromTmpProps(reportOptions)
-		reportOptions.filters = entityViewerDataService.getFilters() // for transaction report only
-		//# endregion
+	var requestReport = function (entityViewerDataService, entityViewerEventService) {
 
-		reportOptions.task_id = null
+		entityViewerEventService.dispatchEvent(evEvents.DATA_LOAD_START);
+
+		var entityType = entityViewerDataService.getEntityType();
+		var reportOptions = entityViewerDataService.getReportOptions();
+
+		reportOptions = reportHelper.cleanReportOptionsFromTmpProps(reportOptions);
+		reportOptions.filters = entityViewerDataService.getFilters(); // for transaction report only
+
+		reportOptions.task_id = null;
 
 		if (entityType === 'pl-report') {
-			reportOptions.date_field = 'accounting_date'
+			reportOptions.date_field = 'accounting_date';
 		}
 
-		entityViewerDataService.setReportOptions(reportOptions)
+		entityViewerDataService.setReportOptions(reportOptions);
 
-		// ;
+		// console.log('requestReport started');
 
-		entityViewerDataService.setStatusData('loading')
+		entityViewerDataService.setStatusData('loading');
 
-		requestData(entityViewerDataService, entityViewerEventService).then(
-			function (data) {
-				var reportOptions = entityViewerDataService.getReportOptions()
-				var entityType = entityViewerDataService.getEntityType()
+		requestData(entityViewerDataService, entityViewerEventService).then(function (data) {
 
-				reportOptions = Object.assign({}, reportOptions)
+			var reportOptions = entityViewerDataService.getReportOptions();
+			var entityType = entityViewerDataService.getEntityType();
 
-				reportOptions.recieved_at = new Date().getTime()
+			reportOptions = Object.assign({}, reportOptions);
 
-				if (reportOptions.items && reportOptions.items.length) {
-					var attributeExtensions =
-						entityViewerDataService.getCrossEntityAttributeExtensions()
+			reportOptions.recieved_at = new Date().getTime();
 
-					reportOptions.items = reportHelper.injectIntoItemsV2(
-						reportOptions.items,
-						reportOptions,
-						entityType
-					)
+			console.log('reportOptions', reportOptions);
 
-					// reportOptions.items = reportHelper.injectIntoItems(reportOptions.items, reportOptions, entityType);
-					// reportOptions.items = reportHelper.injectIntoItems(reportOptions.items, reportOptions);
-					// reportOptions.items = reportHelper.convertItemsToFlat(reportOptions.items);
-					reportOptions.items = reportHelper.extendAttributes(
-						reportOptions.items,
-						attributeExtensions
-					)
+			if (reportOptions.items && reportOptions.items.length) {
 
-					// Report options.items - origin table without filtering and grouping. Save to entityViewerDataService.
-					reportOptions.items =
-						reportHelper.calculateMarketValueAndExposurePercents(
-							reportOptions.items,
-							reportOptions
-						)
+				var attributeExtensions = entityViewerDataService.getCrossEntityAttributeExtensions();
 
-					entityViewerDataService.setUnfilteredFlatList(reportOptions.items)
-				}
+				reportOptions.items = reportHelper.injectIntoItemsV2(reportOptions.items, reportOptions, entityType);
+				reportOptions.items = reportHelper.extendAttributes(reportOptions.items, attributeExtensions);
 
-				entityViewerDataService.setReportOptions(reportOptions)
+				reportOptions.items = reportHelper.calculateMarketValueAndExposurePercents(reportOptions.items, reportOptions);
 
-				entityViewerDataService.setStatusData('loaded')
+				entityViewerDataService.setUnfilteredFlatList(reportOptions.items);
 
-				createDataStructure(entityViewerDataService, entityViewerEventService)
+
 			}
-		)
+
+			entityViewerDataService.setReportOptions(reportOptions);
+
+			entityViewerDataService.setStatusData('loaded');
+
+			createDataStructure(entityViewerDataService, entityViewerEventService)
+
+		});
+
 
 		// Price checker below
 
 		if (entityType !== 'transaction-report') {
+
 			pricesCheckerService.check(reportOptions).then(function (data) {
+
 				data.items = data.items.map(function (item) {
-					if (
-						item.type === 'missing_principal_pricing_history' ||
-						item.type === 'missing_accrued_pricing_history'
-					) {
+
+					if (item.type === 'missing_principal_pricing_history' || item.type === 'missing_accrued_pricing_history') {
+
 						data.item_instruments.forEach(function (instrument) {
+
 							if (item.id === instrument.id) {
-								item.instrument_object = instrument
+								item.instrument_object = instrument;
 							}
+
 						})
+
 					}
 
-					if (
-						item.type === 'fixed_calc' ||
-						item.type === 'stl_cur_fx' ||
-						item.type === 'missing_instrument_currency_fx_rate'
-					) {
+
+					if (item.type === 'fixed_calc' || item.type === 'stl_cur_fx' || item.type === 'missing_instrument_currency_fx_rate') {
+
 						data.item_currencies.forEach(function (currency) {
+
 							if (item.transaction_currency_id === currency.id) {
-								item.currency_object = currency
+								item.currency_object = currency;
 							}
 
 							if (item.id === currency.id) {
-								item.currency_object = currency
+								item.currency_object = currency;
 							}
+
 						})
+
 					}
 
 					return item
-				})
 
-				entityViewerDataService.setMissingPrices(data)
+				});
+
+				entityViewerDataService.setMissingPrices(data);
 
 				entityViewerEventService.dispatchEvent(evEvents.MISSING_PRICES_LOAD_END)
-			})
+
+			});
+
 		}
-	}
+	};
 
-	var getObjects = function (
-		requestParameters,
-		entityViewerDataService,
-		entityViewerEventService
-	) {
-		requestParameters.status = 'loading'
 
-		entityViewerDataService.setRequestParameters(requestParameters)
+	var getObjects = function (requestParameters, entityViewerDataService, entityViewerEventService) {
+
+		console.log('getObjects.requestParameters', requestParameters);
+
+		requestParameters.status = 'loading';
+
+		entityViewerDataService.setRequestParameters(requestParameters);
 
 		return new Promise(function (resolve, reject) {
-			var entityType = entityViewerDataService.getEntityType()
 
-			var options = requestParameters.body
-			var event = requestParameters.event
+			var entityType = entityViewerDataService.getEntityType();
 
-			var page = parseInt(options.page.toString(), 10) - 1
-			var step = 10000 // TODO fix pagination problem in future
-			var i
+			var options = requestParameters.body;
+			var event = requestParameters.event;
 
-			objectsService
-				.getList(entityType, options, entityViewerDataService)
-				.then(function (data) {
-					var groupData = entityViewerDataService.getData(event.___id)
+			var page = parseInt(options.page.toString(), 10) - 1;
+			var step = 10000; // TODO fix pagination problem in future
+			var i;
 
-					var obj
 
-					if (!event.___id) {
-						var rootGroupData = entityViewerDataService.getRootGroupData()
+			objectsService.getList(options, entityViewerDataService).then(function (data) {
 
-						obj = Object.assign({}, rootGroupData)
+				var parentGroup = entityViewerDataService.getData(requestParameters.id);
 
-						obj.count = data.count
-						obj.next = data.next
-						obj.previous = data.previous
-						obj.results = data.results
+				data.results.map(function (item, index) {
 
-						// for (i = 0; i < step; i = i + 1) {
-						//     if (page * step + i < obj.count) {
-						//         obj.results[page * step + i] = data.results[i];
-						//     }
-						// }
-					} else {
-						if (groupData) {
-							obj = Object.assign({}, groupData)
+					item.___parentId = parentGroup.___id;
+					item.___type = 'object';
+					item.___index = index;
+					item.___level = parentGroup.___level + 1;
 
-							obj.___group_name = groupData.___group_name
-								? groupData.___group_name
-								: '-'
-							obj.___group_identifier = groupData.___group_identifier
-								? groupData.___group_identifier
-								: '-'
+					//# region Create an ___id
+					item.___id = evRvCommonHelper.getId(item);
 
-							obj.count = data.count
-							obj.next = data.next
-							obj.previous = data.previous
-							obj.results = data.results
-							// for (i = 0; i < step; i = i + 1) {
-							//     if (page * step + i < obj.count) {
-							//         obj.results[page * step + i] = data.results[i];
-							//     }
-							// }
-						} else {
-							var parentGroup = entityViewerDataService.getData(
-								event.parentGroupId
-							)
+					var duplicateObj;
 
-							obj = Object.assign({}, data)
-
-							obj.___group_name = event.groupName ? event.groupName : '-'
-							obj.___group_identifier = event.groupId ? event.groupId : '-'
-
-							obj.___is_open = true
-							// obj.___is_activated = evDataHelper.isGroupSelected(event.___id, event.parentGroupId, entityViewerDataService);
-
-							obj.___parentId = event.parentGroupId
-							obj.___type = 'group'
-							obj.___id = event.___id
-							obj.___level = evRvCommonHelper.getParents(
-								event.parentGroupId,
-								entityViewerDataService
-							).length
-
-							var groupSettings = rvDataHelper.getOrCreateGroupSettings(
-								entityViewerDataService,
-								obj
-							)
-
-							if (groupSettings.hasOwnProperty('is_open')) {
-								obj.___is_open = groupSettings.is_open
-							}
-
-							if (!parentGroup.___is_open) {
-								obj.___is_open = false
-								groupSettings.is_open = false
-
-								rvDataHelper.setGroupSettings(
-									entityViewerDataService,
-									obj,
-									groupSettings
-								)
-							}
-						}
+					try {
+						// returns an error if a matching object is not found
+						duplicateObj = entityViewerDataService.getObject(item.___id, item.___parentId);
+					} catch (e) {
+						console.error(e);
 					}
 
-					obj.results = obj.results.map(function (item, index) {
-						item.___group_name = item.___group_name ? item.___group_name : '-'
-						item.___group_identifier = item.___group_identifier
-							? item.___group_identifier
-							: '-'
+					if (duplicateObj) {
+						console.log("Error: duplicate ___id was created for an object: ", item);
+						var customError = new Error("Object with an ___id " + item.___id + " already exist");
+						customError.___item_data = item;
 
-						// item.___is_activated = evDataHelper.isSelected(entityViewerDataService);
+						throw customError;
 
-						item.___parentId = obj.___id
-						item.___type = 'object'
-						item.___index = index
-						item.___level = obj.___level + 1
+					}
 
-						//# region Create an ___id
-						item.___id = evRvCommonHelper.getId(item)
+					entityViewerDataService.setData(item);
+				});
 
-						var duplicateObj
+				requestParameters.status = 'loaded';
 
-						try {
-							duplicateObj = entityViewerDataService.getObject(
-								item.___id,
-								item.___parentId
-							) // returns an error if a matching object is not found
-						} catch (e) {}
+				entityViewerDataService.setRequestParameters(requestParameters);
 
-						if (duplicateObj) {
-							var customError = new Error(
-								'Object with an ___id ' + item.___id + ' already exist'
-							)
-							customError.___item_data = item
+				resolve();
 
-							throw customError
-						}
-						//# endregion
+			}).catch(function (error) {
 
-						return item
-					})
+				console.error('getObjects.error', error);
 
-					entityViewerDataService.setData(obj)
+				requestParameters.status = 'error';
 
-					requestParameters.status = 'loaded'
+				entityViewerDataService.setRequestParameters(requestParameters);
 
-					entityViewerDataService.setRequestParameters(requestParameters)
+				reject();
 
-					resolve(obj)
-				})
-		})
-	}
+			})
 
-	var getGroups = function (
-		requestParameters,
-		entityViewerDataService,
-		entityViewerEventService
-	) {
-		requestParameters.status = 'loading'
+		});
+
+	};
+
+	var getGroups = function (requestParameters, entityViewerDataService, entityViewerEventService) {
+
+		console.log('getGroups.requestParameters', requestParameters);
+
+		requestParameters.status = 'loading';
 
 		// var groupTypes = entityViewerDataService.getGroups();
-		var matchingGTypeIndex = requestParameters.body.groups_types.length - 1
-		var groupType = requestParameters.body.groups_types[matchingGTypeIndex]
+		var matchingGTypeIndex = requestParameters.body.groups_types.length - 1;
+		var groupType = requestParameters.body.groups_types[matchingGTypeIndex];
 
 		if (groupType.options.sort) {
-			requestParameters.body.groups_order =
-				groupType.options.sort.toLocaleLowerCase()
-			requestParameters.body.ordering_mode =
-				groupType.options.sort_settings.mode
+
+			requestParameters.body.groups_order = groupType.options.sort.toLocaleLowerCase();
+			requestParameters.body.ordering_mode = groupType.options.sort_settings.mode;
+
 		}
 
-		entityViewerDataService.setRequestParameters(requestParameters)
+		entityViewerDataService.setRequestParameters(requestParameters);
 
 		return new Promise(function (resolve, reject) {
-			var entityType = entityViewerDataService.getEntityType()
 
-			var options = requestParameters.body
-			var event = requestParameters.event
+			var entityType = entityViewerDataService.getEntityType();
 
-			var page = Number(options.page) - 1
+			var options = requestParameters.body;
+			var event = requestParameters.event;
+
+			var page = Number(options.page) - 1;
 			// var pagination = entityViewerDataService.getPagination();
-			var step = 10000 // TODO fix pagination problem in future
-			var i
+			var step = 10000; // TODO fix pagination problem in future
+			var i;
 
-			groupsService
-				.getList(entityType, options, entityViewerDataService)
-				.then(function (data) {
-					var obj = {}
+			groupsService.getList(options, entityViewerDataService).then(function (data) {
 
-					if (!event.___id) {
-						var rootGroupData = entityViewerDataService.getRootGroupData()
+				// console.log('groupsService.getList.data', data)
 
-						obj = Object.assign({}, rootGroupData)
+				var parentGroup = entityViewerDataService.getData(requestParameters.id);
 
-						obj.count = data.count
-						obj.next = data.next
-						obj.previous = data.previous
-						for (i = 0; i < step; i = i + 1) {
-							if (page * step + i < obj.count) {
-								obj.results[page * step + i] = data.results[i]
-							}
-						}
-					} else {
-						var groupData = entityViewerDataService.getData(event.___id)
+				data.results.map(function (item, index) {
 
-						if (groupData) {
-							obj = Object.assign({}, groupData)
+					item.___parentId = requestParameters.id;
+					item.___group_name = item.___group_name ? item.___group_name : '-';
+					item.___group_identifier = item.___group_identifier ? item.___group_identifier : '-';
 
-							obj.___group_name = groupData.___group_name
-								? groupData.___group_name
-								: '-'
-							obj.___group_identifier = groupData.___group_identifier
-								? groupData.___group_identifier
-								: '-'
 
-							obj.count = data.count
-							obj.next = data.next
-							obj.previous = data.previous
+					item.___level = parentGroup.___level + 1;
+					item.___index = index;
 
-							for (i = 0; i < step; i = i + 1) {
-								if (page * step + i < obj.count) {
-									obj.results[page * step + i] = data.results[i]
-								}
-							}
-						} else {
-							var parentGroup = entityViewerDataService.getData(
-								event.parentGroupId
-							)
+					item.___type = 'group';
 
-							obj = Object.assign({}, data)
-							obj.___group_name = event.groupName ? event.groupName : '-'
-							obj.___group_identifier = event.groupId ? event.groupId : '-'
-							obj.___is_open = true
+					item.___id = evRvCommonHelper.getId(item); // order matters
 
-							// obj.___is_activated = evDataHelper.isGroupSelected(event.___id, event.parentGroupId, entityViewerDataService);
+					var groupSettings = rvDataHelper.getOrCreateGroupSettings(entityViewerDataService, item);
 
-							obj.___parentId = event.parentGroupId
-							obj.___type = 'group'
-							obj.___id = event.___id
-							obj.___level = evRvCommonHelper.getParents(
-								event.parentGroupId,
-								entityViewerDataService
-							).length
-
-							var groupSettings = rvDataHelper.getOrCreateGroupSettings(
-								entityViewerDataService,
-								obj
-							)
-
-							if (groupSettings.hasOwnProperty('is_open')) {
-								obj.___is_open = groupSettings.is_open
-							}
-
-							if (!parentGroup.___is_open) {
-								obj.___is_open = false
-								groupSettings.is_open = false
-
-								rvDataHelper.setGroupSettings(
-									entityViewerDataService,
-									obj,
-									groupSettings
-								)
-							}
-						}
+					if (groupSettings.hasOwnProperty('is_open')) {
+						item.___is_open = groupSettings.is_open;
 					}
 
-					var groups = entityViewerDataService.getGroups()
-					var parents = []
+					if (!parentGroup.___is_open) {
 
-					if (obj.___parentId !== null) {
-						parents = evRvCommonHelper.getParents(
-							obj.___parentId,
-							entityViewerDataService
-						)
+						item.___is_open = false;
+						groupSettings.is_open = false;
+
+						rvDataHelper.setGroupSettings(entityViewerDataService, item, groupSettings);
+
 					}
 
-					parents.push(obj)
-					// generate data for group's children
-					obj.results = obj.results.map(function (item, index) {
-						item.___parentId = obj.___id
-						item.___group_name = item.___group_name ? item.___group_name : '-'
-						item.___group_identifier = item.___group_identifier
-							? item.___group_identifier
-							: '-'
+					var entityType = entityViewerDataService.getEntityType();
+					var viewContext = entityViewerDataService.getViewContext();
 
-						// item.___is_activated = evDataHelper.isSelected(entityViewerDataService);
+					if (entityType === 'transaction-report' && viewContext === 'split_panel') {
+						item.___is_open = true;
+					}
 
-						item.___level = obj.___level + 1
-						item.___index = index
+					// console.log('parentGroup.___is_open', parentGroup.___is_open)
+					// console.log('item.___is_open', item.___is_open)
 
-						if (groups.length >= parents.length) {
-							item.___type = 'group'
-						} else {
-							item.___type = 'object'
+					entityViewerDataService.setData(item);
+
+					if (item.___is_open) { // Request Data for group if open. TODO refactor it, I dont like it, probably will be issues on large data sets
+
+						// TODO discuss
+						// What I propose
+						// We need to have ONE GENERAL queue list for all requests
+						// E.G. if we know that user has 70k transactions
+						// We need to prevent him to do more then 10 requests on level
+
+						if (!entityViewerDataService.isRequestParametersExist(item.___id)) {
+
+							var newRequestParameters = createRequestParameters(item, item.___level - 1, entityViewerDataService, entityViewerEventService,)
+
+							// console.log('rvDataProvider_cascade_download.item', item);
+							// console.log('rvDataProvider_cascade_download.requestParameters', newRequestParameters);
+
+							updateDataStructureByRequestParameters(newRequestParameters, entityViewerDataService, entityViewerEventService).then(function () {
+
+								entityViewerEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+
+							})
+
 						}
 
-						item.___id = evRvCommonHelper.getId(item)
+					}
 
-						return item
-					})
+				});
 
-					entityViewerDataService.setData(obj)
+				requestParameters.status = 'loaded';
 
-					requestParameters.status = 'loaded'
+				entityViewerDataService.setRequestParameters(requestParameters);
 
-					entityViewerDataService.setRequestParameters(requestParameters)
+				resolve();
 
-					resolve(obj)
-				})
+			}).catch(function (error) {
+
+				console.error('getGroups.error', error);
+
+				requestParameters.status = 'error';
+
+				entityViewerDataService.setRequestParameters(requestParameters);
+
+				reject();
+
+			})
+
 		})
-	}
 
-	var getObjectsByRequestParameters = function (
-		requestParameters,
-		entityViewerDataService,
-		entityViewerEventService
-	) {
-		return getObjects(
-			requestParameters,
-			entityViewerDataService,
-			entityViewerEventService
-		)
-	}
+	};
 
-	var getGroupsByRequestParameters = function (
-		requestParameters,
-		entityViewerDataService,
-		entityViewerEventService
-	) {
-		return getGroups(
-			requestParameters,
-			entityViewerDataService,
-			entityViewerEventService
-		)
-	}
+	var getObjectsByRequestParameters = function (requestParameters, entityViewerDataService, entityViewerEventService) {
 
-	var createRequestParameters = function (
-		item,
-		level,
-		evDataService,
-		evEventService
-	) {
-		// ;
+		return getObjects(requestParameters, entityViewerDataService, entityViewerEventService)
 
-		var groups = evDataService.getGroups()
+	};
 
-		var requestParameters
+	var getGroupsByRequestParameters = function (requestParameters, entityViewerDataService, entityViewerEventService) {
 
-		var id = evRvCommonHelper.getId(item)
+		return getGroups(requestParameters, entityViewerDataService, entityViewerEventService)
+
+	};
+
+	var createRequestParameters = function (item, level, evDataService, evEventService, createdIdsList = []) {
+
+		console.log('createRequestParameters.item', item);
+
+		var groups = evDataService.getGroups();
+
+		var requestParameters;
+
+		// var id = evRvCommonHelper.getId(item);
+		var id = item.___id;
 
 		if (createdIdsList.includes(id)) {
-			var customError = new Error(
-				'Item with an ___id ' + item.___id + ' already exist'
-			)
-			customError.___item_data = item
 
-			throw customError
+			console.log("Error: duplicated id was created for an item: ", item);
+			var customError = new Error("Item with an ___id " + item.___id + " already exist");
+			customError.___item_data = item;
+
+			throw customError;
+
 		}
 
-		createdIdsList.push(id)
+		createdIdsList.push(id);
 
-		var groups_types = evDataHelper.getGroupsTypesToLevel(
-			level + 1,
-			evDataService
-		)
-		var groups_values = evDataHelper.getGroupsValuesByItem(item, evDataService)
+		var groups_types = evDataHelper.getGroupsTypesToLevel(level + 1, evDataService);
+		var groups_values = evDataHelper.getGroupsValuesByItem(item, evDataService);
 
-		groups_values.push(item.___group_identifier)
+
+		groups_values.push(item.___group_identifier);
 
 		if (groups.length && level + 1 < groups.length) {
+
 			requestParameters = {
 				requestType: 'groups',
 				id: id,
@@ -625,16 +459,18 @@ export default function (
 					___id: id,
 					groupName: item.___group_name,
 					groupId: item.___group_identifier ? item.___group_identifier : '-',
-					parentGroupId: item.___parentId,
+					parentGroupId: item.___parentId
 				},
 				body: {
 					groups_types: groups_types,
 					page: 1,
 					groups_values: groups_values,
-					groups_order: 'asc',
-				},
-			}
+					groups_order: 'asc'
+				}
+			};
+
 		} else {
+
 			requestParameters = {
 				requestType: 'objects',
 				id: id,
@@ -643,26 +479,24 @@ export default function (
 					___id: id,
 					groupName: item.___group_name,
 					groupId: item.___group_identifier ? item.___group_identifier : '-',
-					parentGroupId: item.___parentId,
+					parentGroupId: item.___parentId
 				},
 				body: {
 					groups_types: groups_types,
 					page: 1,
 					groups_values: groups_values,
-					groups_order: 'asc',
-				},
-			}
+					groups_order: 'asc'
+				}
+			};
+
 		}
 
-		testObj[id] = {
-			requestParameters: requestParameters,
-			item: item,
-		}
 
-		evDataService.setRequestParameters(requestParameters)
+		evDataService.setRequestParameters(requestParameters);
 
-		return requestParameters
-	}
+		return requestParameters;
+
+	};
 
 	/**
 	 * @function
@@ -676,115 +510,106 @@ export default function (
 	 * @param {Object} evEventService
 	 * @returns {Promise<[]>} - returns arrays of nested promises for called methods updateDataStructureByRequestParameters
 	 */
-	var recursiveRequest = function (
-		parentId,
-		items,
-		level,
-		evDataService,
-		evEventService
-	) {
-		return new Promise(function RecursiveRequestPromise(resolve, reject) {
-			var promises = []
-			var requestParameters
+	var recursiveRequest = function (parentId, level, evDataService, evEventService, createdIdsList) {
 
-			items.forEach(function (item) {
-				requestParameters = createRequestParameters(
-					item,
-					level,
-					evDataService,
-					evEventService
-				)
-				promises.push(
-					updateDataStructureByRequestParameters(
-						requestParameters,
-						evDataService,
-						evEventService
-					)
-				)
+		return new Promise(function RecursiveRequestPromise(resolve, reject) {
+
+			var promises = [];
+			var requestParameters;
+
+			var dataList = evDataService.getDataAsList();
+
+			var items = []
+
+			dataList.forEach(function (dataItem) {
+
+				if (dataItem.___parentId === parentId) {
+					items.push(dataItem)
+				}
+
 			})
 
-			Promise.all(promises).then(function (data) {
-				var groups = evDataService.getGroups()
+			items.forEach(function (item) {
 
-				level = level + 1
+				requestParameters = createRequestParameters(item, level, evDataService, evEventService, createdIdsList);
+				promises.push(updateDataStructureByRequestParameters(requestParameters, evDataService, evEventService));
+
+			});
+
+
+			Promise.all(promises).then(function (data) {
+
+				var groups = evDataService.getGroups();
+
+				level = level + 1;
 
 				if (level < groups.length) {
-					// ;
 
-					items = evDataHelper
-						.getGroupsByLevel(level, evDataService)
-						.filter((item) => item.___parentId === parentId)
-					// ;
+					// console.log('to next level!', level);
 
-					var recursiveRequestPromises = []
+					items = evDataHelper.getGroupsByLevel(level, evDataService)
+						.filter(item => item.___parentId === parentId);
+					// console.log('recursiveRequest.items', items);
+
+					var recursiveRequestPromises = [];
 
 					items.forEach(function (item) {
-						// ;
 
-						recursiveRequestPromises.push(
-							recursiveRequest(
-								item.___id,
-								item.results,
-								level,
-								evDataService,
-								evEventService
-							)
-						)
-					})
+						// console.log('item!', item.___group_name);
+
+						recursiveRequestPromises.push(recursiveRequest(item.___id, level, evDataService, evEventService, createdIdsList));
+
+					});
 
 					Promise.all(recursiveRequestPromises).then(function (data) {
-						resolve(data)
+						resolve(data);
 					})
-				} else {
-					//
+
+
+				} else { //
 
 					resolve([])
 				}
-			})
+
+			});
+
 		})
-	}
 
-	var initRecursiveRequestParametersCreation = function (
-		evDataService,
-		evEventService
-	) {
-		var rootGroup = evDataService.getRootGroupData()
-		var level = 0
+	};
 
-		return recursiveRequest(
-			rootGroup.___id,
-			rootGroup.results,
-			level,
-			evDataService,
-			evEventService
-		).then(function () {})
-	}
+	var initRecursiveRequestParametersCreation = function (evDataService, evEventService, createdIdsList) {
 
-	var createdIdsList = []
-	var testObj = {}
+		console.time('Creating Data Structure');
+
+		var rootGroup = evDataService.getRootGroupData();
+		var level = 0;
+
+		return recursiveRequest(rootGroup.___id, level, evDataService, evEventService, createdIdsList).then(function () {
+			console.timeEnd('Creating Data Structure');
+		})
+
+	};
+
+	var createdIdsList = []; // WTF VERY BAD PATTERN, never do it again
 
 	var createDataStructure = function (evDataService, evEventService) {
-		//
+		// console.log('createDataStructure')
 
-		evDataService.resetData()
-		evDataService.resetRequestParameters()
-		createdIdsList = []
-		testObj = {}
+		evDataService.resetData();
+		evDataService.resetRequestParameters();
+		var createdIdsList = [];
 
-		var defaultRootRequestParameters =
-			evDataService.getActiveRequestParameters()
-		var groupTypes = evDataService.getGroups()
-		var activeColumnSort = evDataService.getActiveColumnSort()
+		var defaultRootRequestParameters = evDataService.getActiveRequestParameters();
+		var groupTypes = evDataService.getGroups();
+		var activeColumnSort = evDataService.getActiveColumnSort();
 
-		evEventService.dispatchEvent(evEvents.DATA_LOAD_START)
+		evEventService.dispatchEvent(evEvents.DATA_LOAD_START);
 
 		if (groupTypes.length) {
+			console.log('createDataStructure 1', defaultRootRequestParameters)
+
 			// get children groups for the rootGroup
-			getGroups(
-				defaultRootRequestParameters,
-				evDataService,
-				evEventService
-			).then(function () {
+			getGroups(defaultRootRequestParameters, evDataService, evEventService).then(function () {
 				/*
 				 * Get children groups for every group level
 				 *
@@ -792,59 +617,68 @@ export default function (
 				 * that is inside recursiveRequest()
 				 * that is inside initRecursiveRequestParametersCreation()
 				 */
-				initRecursiveRequestParametersCreation(
-					evDataService,
-					evEventService
-				).then(function () {
+				initRecursiveRequestParametersCreation(evDataService, evEventService, createdIdsList).then(function () {
+					console.log('createDataStructure 2', defaultRootRequestParameters)
+
 					// var activeGroupTypeSort = evDataService.getActiveGroupTypeSort();
 
 					/*
-                    if (sortByGroupType) {
+					if (sortByGroupType) {
 
-                        sortGroupType(evDataService, evEventService, false).then(function () {
+							sortGroupType(evDataService, evEventService, false).then(function () {
 
-                            if (activeColumnSort) {
-                                sortObjects(evDataService, evEventService);
+									if (activeColumnSort) {
+											sortObjects(evDataService, evEventService);
 
-                            } else {
-                                evEventService.dispatchEvent(evEvents.DATA_LOAD_END);
-                            }
+									} else {
+											evEventService.dispatchEvent(evEvents.DATA_LOAD_END);
+									}
 
-                        });
+							});
 
-                    }
-
-                    if (activeColumnSort) {
-                        sortObjects(evDataService, evEventService);
-                    }
-
-                    if (!sortByGroupType && !activeColumnSort) {
-                        evEventService.dispatchEvent(evEvents.DATA_LOAD_END);
-                    }
-                    */
-					if (activeColumnSort) {
-						sortObjects(evDataService, evEventService)
-					} else {
-						evEventService.dispatchEvent(evEvents.DATA_LOAD_END)
 					}
-				})
-			})
-		} else {
-			injectRegularFilters(defaultRootRequestParameters, evDataService)
 
-			getObjects(
-				defaultRootRequestParameters,
-				evDataService,
-				evEventService
-			).then(function () {
+					if (activeColumnSort) {
+							sortObjects(evDataService, evEventService);
+					}
+
+					if (!sortByGroupType && !activeColumnSort) {
+							evEventService.dispatchEvent(evEvents.DATA_LOAD_END);
+					}
+					*/
+					if (activeColumnSort) {
+						sortObjects(evDataService, evEventService);
+					} else {
+						evEventService.dispatchEvent(evEvents.DATA_LOAD_END);
+					}
+
+
+				})
+
+			});
+
+		} else {
+
+			console.log('createDataStructure 3', defaultRootRequestParameters)
+
+			injectRegularFilters(defaultRootRequestParameters, evDataService);
+
+			getObjects(defaultRootRequestParameters, evDataService, evEventService).then(function () {
+				console.log('createDataStructure 4', defaultRootRequestParameters)
+
 				if (activeColumnSort) {
-					sortObjects(evDataService, evEventService)
+					sortObjects(evDataService, evEventService);
+
 				} else {
-					evEventService.dispatchEvent(evEvents.DATA_LOAD_END)
+					evEventService.dispatchEvent(evEvents.DATA_LOAD_END);
 				}
+
 			})
+
 		}
-	}
+
+
+	};
 
 	/**
 	 * @function
@@ -854,203 +688,199 @@ export default function (
 	 * @param evEventService
 	 * @returns {Promise<unknown>}
 	 */
-	var updateDataStructureByRequestParameters = function (
-		requestParameters,
-		evDataService,
-		evEventService
-	) {
-		// ;
+	var updateDataStructureByRequestParameters = function (requestParameters, evDataService, evEventService) {
+
+		// console.log('updateDataStructureByRequestParameters.requestParameters', requestParameters);
+
+		evEventService.dispatchEvent(evEvents.DATA_LOAD_START);
 
 		return new Promise(function (resolve, reject) {
-			injectRegularFilters(requestParameters, evDataService, evEventService)
 
-			// ;
+			injectRegularFilters(requestParameters, evDataService, evEventService);
+
+			// console.log('requestParameters.requestType', requestParameters.requestType);
 
 			if (requestParameters.requestType === 'objects') {
-				getObjectsByRequestParameters(
-					requestParameters,
-					evDataService,
-					evEventService
-				).then(function (data) {
+
+				getObjectsByRequestParameters(requestParameters, evDataService, evEventService).then(function (data) {
 					resolve(data)
+
+					evEventService.dispatchEvent(evEvents.DATA_LOAD_END);
+
 				})
+
 			}
 
 			if (requestParameters.requestType === 'groups') {
-				getGroupsByRequestParameters(
-					requestParameters,
-					evDataService,
-					evEventService
-				).then(function (data) {
+
+				getGroupsByRequestParameters(requestParameters, evDataService, evEventService).then(function (data) {
 					resolve(data)
+
+					evEventService.dispatchEvent(evEvents.DATA_LOAD_END);
 				})
 			}
+
 		})
-	}
+
+	};
 
 	var updateDataStructure = function (evDataService, evEventService) {
-		return new Promise(function (resolve, reject) {
-			var requestParameters = evDataService.getActiveRequestParameters()
 
-			injectRegularFilters(requestParameters, evDataService, evEventService)
+		var requestParameters = evDataService.getActiveRequestParameters();
 
-			if (requestParameters.requestType === 'objects') {
-				getObjectsByRequestParameters(
-					requestParameters,
-					evDataService,
-					evEventService
-				).then(function (data) {
-					resolve(data)
-				})
-			}
+		injectRegularFilters(requestParameters, evDataService, evEventService);
 
-			if (requestParameters.requestType === 'groups') {
-				getGroupsByRequestParameters(
-					requestParameters,
-					evDataService,
-					evEventService
-				).then(function (data) {
-					resolve(data)
-				})
-			}
-		})
-	}
+		evEventService.dispatchEvent(evEvents.DATA_LOAD_START);
 
-	var sortObjects = function (
-		entityViewerDataService,
-		entityViewerEventService
-	) {
-		var activeColumnSort = entityViewerDataService.getActiveColumnSort()
-		var level = entityViewerDataService.getGroups().length
+		if (requestParameters.requestType === 'objects') {
 
-		var levelGroups = evDataHelper.getGroupsByLevel(
-			level,
-			entityViewerDataService
-		)
-		var requestsParameters = entityViewerDataService.getAllRequestParameters()
-		var levelRequestParameters = []
+			getObjectsByRequestParameters(requestParameters, evDataService, evEventService).then(function (data) {
+
+				evEventService.dispatchEvent(evEvents.DATA_LOAD_END); // backend logic
+
+			})
+
+		}
+
+		if (requestParameters.requestType === 'groups') {
+
+			getGroupsByRequestParameters(requestParameters, evDataService, evEventService).then(function (data) {
+
+				evEventService.dispatchEvent(evEvents.DATA_LOAD_END); // backend logic
+
+			})
+		}
+
+
+	};
+
+	var sortObjects = function (entityViewerDataService, entityViewerEventService) {
+
+		entityViewerDataService.resetOnlyItems();
+
+		var activeColumnSort = entityViewerDataService.getActiveColumnSort();
+		var level = entityViewerDataService.getGroups().length;
+
+		var levelGroups = evDataHelper.getGroupsByLevel(level, entityViewerDataService);
+		var requestsParameters = entityViewerDataService.getAllRequestParameters();
+		var levelRequestParameters = [];
 
 		Object.keys(requestsParameters).forEach(function (key) {
+
 			levelGroups.forEach(function (group) {
+
 				if (group.___id === requestsParameters[key].id) {
+
 					//# region apply sorting settings
-					requestsParameters[key].body.page = 1
+					requestsParameters[key].body.page = 1;
+					requestsParameters[key].body.ordering = activeColumnSort.key;
+					requestsParameters[key].body.ordering_mode = activeColumnSort.options.sort_settings.mode
 
-					/*if (activeColumnSort.options.sort === 'ASC') {
-                        requestsParameters[key].body.ordering = activeColumnSort.key
-                    } else if (activeColumnSort.options.sort === 'DESC') {
-                        requestsParameters[key].body.ordering = '-' + activeColumnSort.key
-                    }*/
-					requestsParameters[key].body.ordering = activeColumnSort.key
-					requestsParameters[key].body.ordering_mode =
-						activeColumnSort.options.sort_settings.mode
-
-					entityViewerDataService.setRequestParameters(requestsParameters[key])
+					entityViewerDataService.setRequestParameters(requestsParameters[key]);
 					//# endregion Apply sorting settings
 
-					levelRequestParameters.push(requestsParameters[key])
+					levelRequestParameters.push(requestsParameters[key]);
+
 				}
-			})
-		})
 
-		levelGroups.forEach(function (group) {
-			// delete current content of groups, before adding sorted one
+			});
 
-			group.results = []
+		});
 
-			entityViewerDataService.setData(group)
-		})
+		var promises = [];
 
-		var promises = []
-
-		levelRequestParameters.forEach(function (requestParameters) {
-			// get sorted content
-			promises.push(
-				getObjects(
-					requestParameters,
-					entityViewerDataService,
-					entityViewerEventService
-				)
-			)
-		})
+		levelRequestParameters.forEach(function (requestParameters) { // get sorted content
+			promises.push(getObjects(requestParameters, entityViewerDataService, entityViewerEventService));
+		});
 
 		Promise.all(promises).then(function () {
-			entityViewerEventService.dispatchEvent(evEvents.DATA_LOAD_END)
+			entityViewerEventService.dispatchEvent(evEvents.DATA_LOAD_END);
 		})
-	}
 
-	var sortGroupType = function (
-		entityViewerDataService,
-		entityViewerEventService,
-		signalDataLoadEnd
-	) {
-		var activeGroupTypeSort = entityViewerDataService.getActiveGroupTypeSort()
+	};
 
-		var groupsTypes = entityViewerDataService.getGroups()
+	var sortGroupType = function (entityViewerDataService, entityViewerEventService, signalDataLoadEnd) {
+
+		var activeGroupTypeSort = entityViewerDataService.getActiveGroupTypeSort();
+
+		console.log('sortGroupType.activeGroupTypeSort', activeGroupTypeSort);
+
+		var groupsTypes = entityViewerDataService.getGroups();
 
 		// level of a parent used, because sorting applies to an array inside 'result' property of a parent
 		var parentLevel = groupsTypes.findIndex(function (item) {
-			return item.key === activeGroupTypeSort.key
-		})
+			return item.key === activeGroupTypeSort.key;
+		});
 
 		if (parentLevel === -1) {
-			parentLevel = 0
+			parentLevel = 0;
 		}
 
-		var groups = evDataHelper.getGroupsByLevel(
-			parentLevel,
-			entityViewerDataService
-		)
 
-		var requestsParameters = entityViewerDataService.getAllRequestParameters()
-		var requestParametersForUnfoldedGroups = []
+		console.log('sortGroupType.parentLevel', parentLevel);
+
+		var groups = evDataHelper.getGroupsByLevel(parentLevel, entityViewerDataService);
+
+		var requestsParameters = entityViewerDataService.getAllRequestParameters();
+		var requestParametersForUnfoldedGroups = [];
 
 		Object.keys(requestsParameters).forEach(function (key) {
+
 			groups.forEach(function (group) {
+
 				if (group.___id === requestsParameters[key].id) {
-					requestParametersForUnfoldedGroups.push(requestsParameters[key])
+					requestParametersForUnfoldedGroups.push(requestsParameters[key]);
 				}
+
 			})
-		})
+
+		});
+
+		// should be called after requestParametersForUnfoldedGroups assembled
+		entityViewerDataService.resetOnlyGroups();
 
 		groups.forEach(function (group) {
-			group.results = []
+
+			group.results = [];
 
 			entityViewerDataService.setData(group)
-		})
 
-		var promises = []
+		});
+
+		var promises = [];
 
 		requestParametersForUnfoldedGroups.forEach(function (requestParameters) {
-			promises.push(
-				getGroups(
-					requestParameters,
-					entityViewerDataService,
-					entityViewerEventService
-				)
-			)
-		})
+			promises.push(getGroups(requestParameters, entityViewerDataService, entityViewerEventService));
+		});
 
 		return new Promise(function (resolve, reject) {
-			Promise.all(promises)
-				.then(function (data) {
-					if (signalDataLoadEnd !== false) {
-						entityViewerEventService.dispatchEvent(evEvents.DATA_LOAD_END)
-					}
 
-					resolve()
-				})
-				.catch(function (error) {
-					reject(error)
-				})
+			Promise.all(promises).then(function (data) {
+
+				if (signalDataLoadEnd !== false) {
+					entityViewerEventService.dispatchEvent(evEvents.DATA_LOAD_END);
+				}
+
+				resolve();
+
+			}).catch(function (error) {
+				reject(error)
+			})
+
 		})
-	}
+
+	};
 
 	return {
 		createDataStructure: createDataStructure,
 		requestReport: requestReport,
 		updateDataStructure: updateDataStructure,
+
 		sortObjects: sortObjects,
 		sortGroupType: sortGroupType,
+
+		createRequestParameters: createRequestParameters,
+		updateDataStructureByRequestParameters: updateDataStructureByRequestParameters,
 	}
+
 }

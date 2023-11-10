@@ -6,6 +6,7 @@ import evEvents from '../services/entityViewerEvents'
 
 import rvHelper from '../helpers/rv.helper'
 import expressionService from '../services/expression.service'
+import localStorageService from "@/angular/shell/scripts/app/services/localStorageService";
 
 export default function (
 	viewModel,
@@ -16,94 +17,15 @@ export default function (
 	currencyHistoryService,
 	metaContentTypesService,
 	pricesCheckerService,
-	thisnull,
 	rvDataProviderService,
 	reportHelper
 ) {
+
 	const commonDialogsService = new CommonDialogsService($mdDialog)
 
-	const downloadAttributes = function () {
-		return new Promise(function (resolve, reject) {
-			var promises = []
-
-			promises.push(
-				viewModel.attributeDataService.downloadCustomFieldsByEntityType(
-					'balance-report'
-				)
-			)
-			promises.push(
-				viewModel.attributeDataService.downloadCustomFieldsByEntityType(
-					'pl-report'
-				)
-			)
-			promises.push(
-				viewModel.attributeDataService.downloadCustomFieldsByEntityType(
-					'transaction-report'
-				)
-			)
-
-			promises.push(
-				viewModel.attributeDataService.downloadDynamicAttributesByEntityType(
-					'portfolio'
-				)
-			)
-			promises.push(
-				viewModel.attributeDataService.downloadDynamicAttributesByEntityType(
-					'account'
-				)
-			)
-			promises.push(
-				viewModel.attributeDataService.downloadDynamicAttributesByEntityType(
-					'instrument'
-				)
-			)
-			promises.push(
-				viewModel.attributeDataService.downloadDynamicAttributesByEntityType(
-					'responsible'
-				)
-			)
-			promises.push(
-				viewModel.attributeDataService.downloadDynamicAttributesByEntityType(
-					'counterparty'
-				)
-			)
-			promises.push(
-				viewModel.attributeDataService.downloadDynamicAttributesByEntityType(
-					'transaction-type'
-				)
-			)
-			promises.push(
-				viewModel.attributeDataService.downloadDynamicAttributesByEntityType(
-					'complex-transaction'
-				)
-			)
-
-			if (
-				viewModel.entityType === 'balance-report' ||
-				viewModel.entityType === 'pl-report' ||
-				viewModel.entityType === 'transaction-report'
-			) {
-				promises.push(
-					viewModel.attributeDataService.downloadInstrumentUserFields()
-				)
-			}
-
-			if (viewModel.entityType === 'transaction-report') {
-				promises.push(
-					viewModel.attributeDataService.downloadTransactionUserFields()
-				)
-			}
-
-			Promise.all(promises)
-				.then(function (data) {
-					viewModel.readyStatus.attributes = true
-
-					resolve(data)
-				})
-				.catch(function (error) {
-					resolve({ errorObj: error, errorCause: 'dynamicAttributes' })
-				})
-		})
+	const downloadAttributes = async function () {
+		viewModel.readyStatus.attributes = true;
+		console.error("download attributes should not be called");
 	}
 
 	const putUseFromAboveFiltersFirst = function () {
@@ -130,17 +52,19 @@ export default function (
 		allFilters = useFromAboveFiters.concat(filters)
 
 		viewModel.entityViewerDataService.setFilters(allFilters)
+
 	}
 
 	const setLayoutDataForView = function () {
-		viewModel.entityViewerDataService.setEntityType($scope.contentType)
-		viewModel.entityViewerDataService.setContentType($scope.contentType)
-		viewModel.entityViewerDataService.setIsReport(true)
-		viewModel.entityViewerDataService.setCurrentMember(viewModel.currentMember)
-		viewModel.entityViewerDataService.setVirtualScrollStep(500)
-		// viewModel.entityViewerDataService.setVirtualScrollStep(50);
 
-		viewModel.entityViewerDataService.setRowHeight(36)
+		viewModel.entityViewerDataService.setEntityType($scope.entityType);
+		viewModel.entityViewerDataService.setContentType($scope.contentType);
+		viewModel.entityViewerDataService.setIsReport(true);
+		viewModel.entityViewerDataService.setCurrentMember(viewModel.currentMember);
+		// viewModel.entityViewerDataService.setVirtualScrollStep(200);
+		viewModel.entityViewerDataService.setVirtualScrollStep(50);
+
+		viewModel.entityViewerDataService.setRowHeight(36);
 
 		// var rowFilterColor = localStorageService.getRowTypeFilter(true, viewModel.entityType);
 		const rvSettings = globalDataService.getMemberEntityViewersSettings(
@@ -152,9 +76,11 @@ export default function (
 		rowTypeFiltersData.markedRowFilters = rvSettings.row_type_filter
 
 		viewModel.entityViewerDataService.setRowTypeFilters(rowTypeFiltersData)
+
 	}
 
 	const onSetLayoutEnd = () => {
+
 		viewModel.readyStatus.layout = true
 
 		let reportOptions = viewModel.entityViewerDataService.getReportOptions()
@@ -205,16 +131,69 @@ export default function (
 
 		const viewContext = viewModel.entityViewerDataService.getViewContext()
 
-		if (viewContext !== 'split_panel' || entityType !== 'transaction-report') {
-			rvDataProviderService.requestReport(
-				viewModel.entityViewerDataService,
-				viewModel.entityViewerEventService
-			)
+		var localStorageReportData = localStorageService.getReportData();
+
+		console.log('onSetLayoutEnd.localStorageReportData', localStorageReportData);
+
+		var layout = viewModel.entityViewerDataService.getListLayout();
+		var contentType = viewModel.entityViewerDataService.getContentType();
+
+		viewModel.possibleToRequestReport = true // in case if user open too many groups, then we need to ask him if his ready
+
+		if (localStorageReportData) {
+
+			if (localStorageReportData[contentType]) {
+
+				if (localStorageReportData[contentType][layout.user_code]) {
+
+					if (localStorageReportData[contentType][layout.user_code].hasOwnProperty('groups')) {
+
+						viewModel.openGroupsCount = 0;
+
+						Object.keys(localStorageReportData[contentType][layout.user_code].groups).forEach(function (key) {
+
+							var _group = localStorageReportData[contentType][layout.user_code].groups[key]
+
+							if (_group.is_open) {
+								viewModel.openGroupsCount = viewModel.openGroupsCount + 1;
+							}
+
+						})
+
+						if (viewModel.openGroupsCount > 10) {
+							viewModel.possibleToRequestReport = false;
+						}
+
+					}
+
+				}
+			}
+
 		}
 
-		// $scope.$apply()
+		if (viewModel.possibleToRequestReport) {
 
-		return viewModel.readyStatus.layout
+			if (viewContext !== 'split_panel' || entityType !== 'transaction-report') {
+
+				if (viewContext === 'dashboard') {
+
+					// If we are in matrix, then we do not need request normal report,
+					// matrix will handle on it own
+					// TODO refactor, put matrix separately from Report
+					if (!viewModel.matrixSettings) {
+						rvDataProviderService.updateDataStructure(viewModel.entityViewerDataService, viewModel.entityViewerEventService);
+					}
+
+				} else {
+					rvDataProviderService.updateDataStructure(viewModel.entityViewerDataService, viewModel.entityViewerEventService);
+				}
+
+			}
+
+		}
+
+		return viewModel.readyStatus.layout;
+
 	}
 
 	var datePropsMatchData = {
@@ -280,6 +259,7 @@ export default function (
 		})
 
 		return Promise.allSettled(result)
+
 	}
 
 	/**
@@ -296,9 +276,8 @@ export default function (
 		reportDateIndex
 	) {
 		// const dateProp = reportDateProperties[viewModel.entityType][reportDateIndex];
-		const dateProp = reportHelper.getDateProperties(viewModel.contentType)[
-			reportDateIndex
-		]
+		const dateProp =
+			reportHelper.getDateProperties(viewModel.contentType)[reportDateIndex]
 
 		/*const result = expressionService.getResultOfExpression({"expression": dateExpr}).then(function (data) {
                 reportOptions[dateProp] = data.result
@@ -314,10 +293,12 @@ export default function (
 					resolve()
 				})
 				.catch((error) => reject(error))
-		})
+		});
+
 	}
 
 	const calculateReportDatesExprs = function (options) {
+
 		if (!options) {
 			options = {}
 		}
@@ -345,46 +326,52 @@ export default function (
 			dateExprsProms.push(dateToProm)
 		}
 
-		return Promise.all(dateExprsProms)
+		return Promise.all(dateExprsProms);
+
 	}
 
 	//region Execute actions from report viewer table
 
 	var updateTableAfterEntityChanges = function (res) {
+
 		const autoRefreshState =
 			viewModel.entityViewerDataService.getAutoRefreshState()
 
 		if (autoRefreshState) {
 			viewModel.entityViewerEventService.dispatchEvent(evEvents.REQUEST_REPORT)
-		} else {
+		}
+		else {
+
 			viewModel.entityViewerDataService.setRowsActionData(null)
 
 			if (res && res.status === 'agree') {
-				/* viewModel.entityViewerDataService.resetData();
-                    viewModel.entityViewerDataService.resetRequestParameters();
 
-                    var rootGroup = viewModel.entityViewerDataService.getRootGroupData();
+				viewModel.entityViewerDataService.resetTableContent(true);
 
-                    viewModel.entityViewerDataService.setActiveRequestParametersId(rootGroup.___id); */
-				viewModel.entityViewerDataService.resetTableContent(true)
-
-				viewModel.entityViewerEventService.dispatchEvent(evEvents.UPDATE_TABLE)
+				viewModel.entityViewerEventService.dispatchEvent(evEvents.UPDATE_TABLE);
 
 				const viewContext = viewModel.entityViewerDataService.getViewContext()
-				if (viewContext === 'split_panel')
+
+				if (viewContext === 'split_panel') {
+
 					viewModel.parentEntityViewerEventService.dispatchEvent(
 						evEvents.UPDATE_TABLE
 					)
+
+				}
+
 			}
 		}
+
 	}
 
 	async function createEntity(event, locals) {
+
 		var dialogController = 'EntityViewerAddDialogController as vm'
 		var dialogTemplateUrl =
 			'views/entity-viewer/entity-viewer-add-dialog-view.html'
 
-		if (locals.entityType && locals.entityType === 'complex-transaction') {
+		if (locals.entityType === 'complex-transaction') {
 			dialogController = 'ComplexTransactionAddDialogController as vm'
 			dialogTemplateUrl =
 				'views/entity-viewer/complex-transaction-add-dialog-view.html'
@@ -399,35 +386,36 @@ export default function (
 			locals: locals,
 		})
 
-		if (res && res.status === 'agree') {
+		if (res?.status === 'agree') {
+
 			const autoRefreshState =
 				viewModel.entityViewerDataService.getAutoRefreshState()
 
-			if (autoRefreshState) {
-				viewModel.entityViewerEventService.dispatchEvent(
-					evEvents.REQUEST_REPORT
-				)
-			}
+            if (autoRefreshState) {
+                viewModel.entityViewerEventService.dispatchEvent(evEvents.REQUEST_REPORT);
+            }
 
 			updateTableAfterEntityChanges(res)
+
 		}
+
 	}
 
 	const editEntity = function (activeObject, locals) {
+
 		var dialogController = 'EntityViewerEditDialogController as vm'
 		var dialogTemplateUrl =
 			'views/entity-viewer/entity-viewer-edit-dialog-view.html'
 
 		locals.openedIn = 'modal'
 
-		if (locals.entityType && locals.entityType === 'complex-transaction') {
+		if (locals.entityType === 'complex-transaction') {
 			dialogController = 'ComplexTransactionEditDialogController as vm'
 			dialogTemplateUrl =
 				'views/entity-viewer/complex-transaction-edit-dialog-view.html'
 		}
 
-		$mdDialog
-			.show({
+		$mdDialog.show({
 				controller: dialogController,
 				templateUrl: dialogTemplateUrl,
 				parent: angular.element(document.body),
@@ -435,40 +423,39 @@ export default function (
 				locals: locals,
 			})
 			.then(function (res) {
-				if (res.status !== 'disagree') {
-					updateTableAfterEntityChanges(res)
-				}
+
+				console.log('res', res);
+
+                if (res.status === 'copy') {
+
+                    locals = {
+                        entity: res.data.entity,
+                        entityType: res.data.entityType,
+                        data: {
+                            openedIn: 'modal',
+                        }
+                    };
+
+                    if (locals.entityType === 'complex-transaction') {
+
+                        locals.data.isCopy = true;
+                        locals.data.originalComplexTransaction = res.data.originalComplexTransaction;
+
+                    }
+
+                    createEntity(locals);
+
+                } else if (res.status !== 'disagree') {
+
+                    updateTableAfterEntityChanges(res);
+
+                }
+
 			})
+
 	}
 
-	const offerToCreateEntity = function (
-		event,
-		warningDescription,
-		createEntityLocals
-	) {
-		/* $mdDialog.show({
-                controller: 'WarningDialogController as vm',
-                templateUrl: 'views/dialogs/warning-dialog-view.html',
-                parent: angular.element(document.body),
-                targetEvent: event,
-                preserveScope: true,
-                autoWrap: true,
-                multiple: true,
-                skipHide: true,
-                locals: {
-                    warning: {
-                        title: 'Warning',
-                        description: warningDescription
-                    }
-                }
-
-            }).then(function (res) {
-                if (res.status === 'agree') {
-
-                    createEntity(event, createEntityLocals);
-
-                }
-            }); */
+	const offerToCreateEntity = function (warningDescription, createEntityLocals) {
 
 		const warningLocals = {
 			warning: {
@@ -479,41 +466,47 @@ export default function (
 
 		commonDialogsService.warning(warningLocals).then(function (res) {
 			if (res.status === 'agree') {
-				createEntity(event, createEntityLocals)
+				createEntity(createEntityLocals)
 			}
 		})
 	}
 
 	const executeRowAction = function () {
-		const actionData = viewModel.entityViewerDataService.getRowsActionData()
-		const action = actionData.actionKey
-		const reportOptions = viewModel.entityViewerDataService.getReportOptions()
-		let flatList = viewModel.entityViewerDataService.getFlatList()
-		const activeRowIndex = flatList.findIndex(
-			(object) => object.___is_activated
-		)
-		const activeRowExist = activeRowIndex > -1
+
+		const actionData = viewModel.entityViewerDataService.getRowsActionData();
+
+        const action = actionData.actionKey;
+        const reportOptions = viewModel.entityViewerDataService.getReportOptions();
+        let flatList = viewModel.entityViewerDataService.getFlatList();
+        const activeRowIndex = flatList.findIndex(object => object.___is_activated);
+        const activeRowExist = activeRowIndex > -1;
 
 		let currencies = reportOptions.item_currencies
 
 		var getCurrencyObject = function (currencyKey) {
+
 			let currencyObj = {}
 
 			currencies.forEach(function (item) {
+
 				if (item.id === actionData.object[currencyKey]) {
 					currencyObj.id = item.id
 					currencyObj.name = item.name
 					currencyObj.short_name = item.short_name
 					currencyObj.user_code = item.user_code
 				}
+
 			})
 
 			return currencyObj
+
 		}
 
 		// if (activeObject) {
 		if (actionData.object || activeRowExist) {
+
 			if (action === 'edit_instrument') {
+
 				var locals = {
 					entityType: 'instrument',
 					entityId: actionData.object['instrument.id'],
@@ -521,7 +514,10 @@ export default function (
 				}
 
 				editEntity(actionData.event, locals)
-			} else if (action === 'edit_account') {
+
+			}
+			else if (action === 'edit_account') {
+
 				var locals = {
 					entityType: 'account',
 					entityId: actionData.object['account.id'],
@@ -529,7 +525,10 @@ export default function (
 				}
 
 				editEntity(actionData.event, locals)
-			} else if (action === 'edit_portfolio') {
+
+			}
+			else if (action === 'edit_portfolio') {
+
 				var locals = {
 					entityType: 'portfolio',
 					entityId: actionData.object['portfolio.id'],
@@ -537,7 +536,10 @@ export default function (
 				}
 
 				editEntity(actionData.event, locals)
-			} else if (action === 'edit_currency') {
+
+			}
+			else if (action === 'edit_currency') {
+
 				var locals = {
 					entityType: 'currency',
 					entityId: actionData.object['currency.id'],
@@ -545,7 +547,9 @@ export default function (
 				}
 
 				editEntity(actionData.event, locals)
-			} else if (action === 'edit_pricing_currency') {
+
+			}
+			else if (action === 'edit_pricing_currency') {
 				var locals = {
 					entityType: 'currency',
 					entityId: actionData.object['instrument.pricing_currency.id'],
@@ -553,7 +557,10 @@ export default function (
 				}
 
 				editEntity(actionData.event, locals)
-			} else if (action === 'edit_accrued_currency') {
+
+			}
+			else if (action === 'edit_accrued_currency') {
+
 				var locals = {
 					entityType: 'currency',
 					entityId: actionData.object['instrument.accrued_currency.id'],
@@ -561,7 +568,10 @@ export default function (
 				}
 
 				editEntity(actionData.event, locals)
-			} else if (action === 'edit_price') {
+
+			}
+			else if (action === 'edit_price') {
+
 				var filters = {
 					instrument: actionData.object['instrument.id'],
 					pricing_policy: reportOptions.pricing_policy,
@@ -570,7 +580,9 @@ export default function (
 				}
 
 				priceHistoryService.getList({ filters: filters }).then(function (data) {
+
 					if (data.results.length) {
+
 						var item = data.results[0]
 
 						var locals = {
@@ -580,6 +592,7 @@ export default function (
 						}
 
 						editEntity(actionData.event, locals)
+
 					} else {
 						var warningDescription =
 							'No corresponding record in Price History. Do you want to add the record?'
@@ -601,14 +614,15 @@ export default function (
 							data: {},
 						}
 
-						offerToCreateEntity(
-							actionData.event,
-							warningDescription,
-							createEntityLocals
-						)
+						offerToCreateEntity(warningDescription, createEntityLocals);
+
 					}
+
 				})
-			} else if (action === 'edit_fx_rate') {
+
+			}
+			else if (action === 'edit_fx_rate') {
+
 				var filters = {
 					currency: actionData.object['currency.id'],
 					pricing_policy: reportOptions.pricing_policy,
@@ -619,7 +633,9 @@ export default function (
 				currencyHistoryService
 					.getList({ filters: filters })
 					.then(function (data) {
+
 						if (data.results.length) {
+
 							var item = data.results[0]
 							// let contextData = getContextDataForRowAction(reportOptions, actionData.object);
 							let contextData = rvHelper.getContextDataForRowAction(
@@ -657,17 +673,18 @@ export default function (
 								data: {},
 							}
 
-							offerToCreateEntity(
-								actionData.event,
-								warningDescription,
-								createEntityLocals
-							)
+							offerToCreateEntity(warningDescription, createEntityLocals);
+
 						}
+
 					})
-			} else if (
+
+			}
+			else if (
 				action === 'edit_pricing_currency_price' &&
 				actionData.object.id
 			) {
+
 				var filters = {
 					currency: actionData.object['instrument.pricing_currency'],
 					instrument: actionData.object['instrument.id'],
@@ -679,7 +696,9 @@ export default function (
 				currencyHistoryService
 					.getList({ filters: filters })
 					.then(function (data) {
+
 						if (data.results.length) {
+
 							var item = data.results[0]
 
 							var locals = {
@@ -689,7 +708,9 @@ export default function (
 							}
 
 							editEntity(actionData.event, locals)
+
 						} else {
+
 							var warningDescription =
 								'No corresponding record in FX Rates History. Do you want to add the record?'
 
@@ -708,17 +729,18 @@ export default function (
 								data: {},
 							}
 
-							offerToCreateEntity(
-								actionData.event,
-								warningDescription,
-								createEntityLocals
-							)
+							offerToCreateEntity(warningDescription, createEntityLocals);
+
 						}
+
 					})
-			} else if (
+
+			}
+			else if (
 				action === 'edit_accrued_currency_fx_rate' &&
 				actionData.object.id
 			) {
+
 				var filters = {
 					currency: actionData.object['instrument.accrued_currency.id'],
 					// instrument: actionData.object['instrument.id'],
@@ -730,7 +752,9 @@ export default function (
 				currencyHistoryService
 					.getList({ filters: filters })
 					.then(function (data) {
+
 						if (data.results.length) {
+
 							var item = data.results[0]
 
 							var locals = {
@@ -740,7 +764,9 @@ export default function (
 							}
 
 							editEntity(actionData.event, locals)
+
 						} else {
+
 							var warningDescription =
 								'No corresponding record in FX Rates History. Do you want to add the record?'
 
@@ -759,17 +785,18 @@ export default function (
 								data: {},
 							}
 
-							offerToCreateEntity(
-								actionData.event,
-								warningDescription,
-								createEntityLocals
-							)
+							offerToCreateEntity(warningDescription, createEntityLocals);
+
 						}
+
 					})
-			} else if (
+
+			}
+			else if (
 				action === 'edit_pricing_currency_fx_rate' &&
 				actionData.object.id
 			) {
+
 				var filters = {
 					currency: actionData.object['instrument.pricing_currency.id'],
 					// instrument: actionData.object['instrument.id'],
@@ -810,14 +837,13 @@ export default function (
 								data: {},
 							}
 
-							offerToCreateEntity(
-								actionData.event,
-								warningDescription,
-								createEntityLocals
-							)
+							offerToCreateEntity(warningDescription, createEntityLocals);
+
 						}
 					})
-			} else if (action === 'book_transaction') {
+			}
+			else if (action === 'book_transaction') {
+
 				var locals = {
 					entityType: 'complex-transaction',
 					entity: {},
@@ -837,8 +863,10 @@ export default function (
 				)
 				locals.data.contextData = contextData
 
-				createEntity(actionData.event, locals)
-			} else if (action === 'book_transaction_specific') {
+				createEntity(locals)
+
+			}
+			else if (action === 'book_transaction_specific') {
 				// const contextData = getContextDataForRowAction(reportOptions, actionData.object);
 				const contextData = rvHelper.getContextDataForRowAction(
 					reportOptions,
@@ -858,8 +886,11 @@ export default function (
 					locals.entity.transaction_type = actionData.id
 				}
 
-				createEntity(actionData.event, locals)
-			} else if (action === 'rebook_transaction') {
+				createEntity(locals);
+
+			}
+			else if (action === 'rebook_transaction') {
+
 				var complex_transaction_id =
 					actionData.object['complex_transaction.id'] ||
 					actionData.object['complex_transaction']
@@ -871,7 +902,9 @@ export default function (
 				}
 
 				editEntity(actionData.event, locals)
+
 			}
+
 		}
 	}
 
@@ -948,6 +981,7 @@ export default function (
 
 		updateTableAfterEntityChanges: updateTableAfterEntityChanges,
 		executeRowAction: executeRowAction,
-		executeUserRequestedAction: executeUserRequestedAction,
+		executeUserRequestedAction: executeUserRequestedAction
 	}
+
 }

@@ -4,7 +4,7 @@ export default defineStore({
 		return {
 			user: {},
 			masterUsers: [],
-			current: {},
+			current: {}, // master user
 			member: {},
 			memberLayout: {},
 

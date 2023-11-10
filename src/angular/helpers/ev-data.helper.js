@@ -5,705 +5,799 @@ import stringHelper from './stringHelper'
 import utilsHelper from './utils.helper'
 import evRvCommonHelper from './ev-rv-common.helper'
 
-var getNextPage = function (options, event, entityViewerDataService) {
-	var _options = Object.assign({}, options)
-
-	var groupData
-
-	if (!event.___id) {
-		groupData = entityViewerDataService.getRootGroupData()
-	} else {
-		groupData = entityViewerDataService.getData(event.___id)
-	}
-
-	if (!groupData) {
-		return _options.page
-	}
-
-	// ;
-
-	if (
-		groupData.___parentId === null &&
-		groupData.next === null &&
-		groupData.results.length === 0
-	) {
-		_options.page = _options.page + 1
-	} else {
-
-
-		if (groupData.next) {
-
-
-			_options.page = _options.page + 1
-		}
-	}
-
-	return _options.page
-}
-
 var ifFirstRequestForRootGroup = function (event, evDataService) {
-	var groupData
+
+	var groupData;
 
 	if (!event.___id) {
-		groupData = evDataService.getRootGroupData()
+		groupData = evDataService.getRootGroupData();
 	} else {
-		groupData = evDataService.getData(event.___id)
+		groupData = evDataService.getData(event.___id);
 	}
 
 	if (!groupData) {
-		return false
+		return false;
 	}
 
-	return !groupData.___parentId && !groupData.results.length
-}
+	return !groupData.___parentId && !groupData.results.length;
+
+};
 
 var isFirstRequestForObjects = function (event, evDataService) {
-	var groupData
+
+	var groupData;
 
 	if (!event.___id) {
-		groupData = evDataService.getRootGroupData()
+		groupData = evDataService.getRootGroupData();
 	} else {
-		groupData = evDataService.getData(event.___id)
+		groupData = evDataService.getData(event.___id);
 	}
 
 	if (!groupData) {
-		return true
+		return true;
 	}
 
-	return false
-}
+	return false;
+
+};
 
 var getGroupNameFromParent = function (id, parentId, evDataService) {
-	var parent = evDataService.getData(parentId)
+
+	/*var parent = evDataService.getData(parentId);
 
 	var result = parent.results.find(function (item) {
-		return item.___id === id
-	})
+
+			return item.___id === id;
+
+	});*/
+	var result = evDataService.getData(id);
 
 	return result.___group_name
-}
+
+};
 
 var getGroupIdentifierFromParent = function (id, parentId, evDataService) {
-	var parent = evDataService.getData(parentId)
+
+	/*var parent = evDataService.getData(parentId);
 
 	var result = parent.results.find(function (item) {
-		return item.___id === id
-	})
+
+			return item.___id === id;
+
+	});*/
+	var result = evDataService.getData(id);
 
 	return result.___group_identifier
-}
+
+};
 
 var _getChildrenGroups = function (parentGroupId, evDataService, results) {
-	var item = evDataService.getData(parentGroupId)
 
-	if (item && item.___type === 'group' && item.results) {
-		item.results.forEach(function (child) {
-			results.push(child)
+	var parentGroup = evDataService.getData(parentGroupId);
+	var dataAsList = evDataService.getDataAsList();
 
-			_getChildrenGroups(child.___id, evDataService, results)
+	if (parentGroup && parentGroup.___type === 'group') {
+
+		dataAsList.forEach(function (item) {
+
+			if (item.___parentId === parentGroupId) {
+				results.push(item);
+
+				_getChildrenGroups(item.___id, evDataService, results);
+			}
+
+
 		})
 	}
-}
+
+
+};
 
 var getAllChildrenGroups = function (parentGroupId, evDataService) {
-	var results = []
 
-	_getChildrenGroups(parentGroupId, evDataService, results)
+	var results = [];
+
+	_getChildrenGroups(parentGroupId, evDataService, results);
 
 	return results
-}
+
+};
 
 var getObject = function (objectId, parentGroupHashId, evDataService) {
-	var parent = evDataService.getData(parentGroupHashId)
-	var result = null
 
-	if (parent) {
-		parent.results.forEach(function (item) {
-			if (item.___id === objectId) {
-				result = item
-			}
-		})
-	}
+	var result = evDataService.getData(objectId);
+
+	// var parent = evDataService.getData(parentGroupHashId);
+	// var result = null;
+	//
+	// if (parent) {
+	//
+	//     parent.results.forEach(function (item) {
+	//
+	//         if (item.___id === objectId) {
+	//             result = item;
+	//         }
+	//
+	//     });
+	//
+	// }
 
 	return result
-}
+
+};
 
 var getGroupTypeId = function (groupType) {
-	var pattern
+
+	var pattern;
 
 	if (groupType.hasOwnProperty('key')) {
-		pattern = [groupType.name, stringHelper.toHash(groupType.key)].join('')
+
+		pattern = [groupType.name, stringHelper.toHash(groupType.key)].join('');
+
 	}
 
 	/* if (groupType.hasOwnProperty('id')) {
 
-            pattern = [groupType.name, stringHelper.toHash(groupType.id)].join('');
+			pattern = [groupType.name, stringHelper.toHash(groupType.id)].join('');
 
-        } */
+	} */
 
 	return stringHelper.toHash(pattern)
-}
+
+};
 
 var getColumnId = function (column) {
-	var pattern
+
+	var pattern;
 
 	if (column.hasOwnProperty('key')) {
-		pattern = [column.name, stringHelper.toHash(column.key)].join('')
+
+		pattern = [column.name, stringHelper.toHash(column.key)].join('');
+
 	}
 
 	/* if (column.hasOwnProperty('id')) {
 
-            pattern = [column.name, stringHelper.toHash(column.id)].join('');
+			pattern = [column.name, stringHelper.toHash(column.id)].join('');
 
-        } */
+	} */
 
 	return stringHelper.toHash(pattern)
-}
+
+};
 
 var getGroupTypes = function (id, parentId, evDataService) {
-	var result = []
 
-	var groups = evDataService.getGroups()
+	var result = [];
 
-	var parentsCount = evRvCommonHelper.getParents(parentId, evDataService).length
+	var groups = evDataService.getGroups();
 
-	var groupsCount
+	var parentsCount = evRvCommonHelper.getParents(parentId, evDataService).length;
+
+	var groupsCount;
 
 	if (groups.length > parentsCount) {
-		groupsCount = parentsCount + 1
+		groupsCount = parentsCount + 1;
 	} else {
-		groupsCount = parentsCount
+		groupsCount = parentsCount;
 	}
 
 	for (var i = 0; i < groupsCount; i = i + 1) {
+
 		if (groups[i].key) {
 			result.push(groups[i])
 		}
+
 	}
 
-	return result
-}
+	return result;
+
+};
 
 var getGroupsValues = function (id, parentId, evDataService) {
-	var parents = evRvCommonHelper.getParents(parentId, evDataService).reverse()
 
-	var result = []
+	var parents = evRvCommonHelper.getParents(parentId, evDataService).reverse();
+
+	var result = [];
 
 	for (var i = 0; i < parents.length; i = i + 1) {
+
 		if (parents[i].___parentId !== null) {
+
 			result.push(parents[i].___group_identifier)
+
 		}
+
 	}
 
-	var currentValue = getGroupIdentifierFromParent(id, parentId, evDataService)
+	var currentValue = getGroupIdentifierFromParent(id, parentId, evDataService);
 
-	result.push(currentValue)
+	result.push(currentValue);
 
-	return result
-}
+	return result;
+
+};
 
 var getUnfoldedGroups = function (evDataService) {
-	var data = evDataService.getData()
-	var keys = Object.keys(data)
 
-	var items = []
+	var data = evDataService.getData();
+	var keys = Object.keys(data);
+
+	var items = [];
 
 	keys.forEach(function (key) {
 		items.push(data[key])
-	})
+	});
 
 	return items.filter(function (item) {
 		return item.___is_open
 	})
-}
+
+};
 
 var getUnfoldedGroupsByLevel = function (level, evDataService) {
-	var unfoldedGroups = getUnfoldedGroups(evDataService)
+
+	var unfoldedGroups = getUnfoldedGroups(evDataService);
 
 	return unfoldedGroups.filter(function (group) {
-		return group.___level === level
+		return group.___level === level;
 	})
-}
+
+};
 
 var getGroupsByLevel = function (level, evDataService) {
-	var data = evDataService.getData()
 
-	var keys = Object.keys(data)
+	var data = evDataService.getData();
 
-	var items = []
+	var keys = Object.keys(data);
+
+	var items = [];
 
 	keys.forEach(function (key) {
 		items.push(data[key])
-	})
+	});
 
 	return items.filter(function (group) {
-		return group.___level === level
+		return group.___level === level;
 	})
-}
+
+};
+
+var getAllGroupsByLevel = function (maxLevel, evDataService) {
+
+	var data = evDataService.getData();
+
+	var keys = Object.keys(data);
+
+	var items = [];
+
+	keys.forEach(function (key) {
+		items.push(data[key])
+	});
+
+	var groupsByLevel = {};
+
+	var $index;
+
+	for ($index = 0; $index < maxLevel; $index = $index + 1) {
+
+		groupsByLevel[$index] = []
+
+		items.forEach(function (group) {
+
+			if (group.___level === $index) {
+				groupsByLevel[$index].push(group)
+			}
+
+		})
+
+	}
+
+	return groupsByLevel;
+
+};
 
 var removeItemsFromFoldedGroups = function (list) {
-	var _list = list.concat()
 
-	var foldedGroupsIds = []
+	var _list = list.concat();
+
+	var foldedGroupsIds = [];
 
 	_list = _list.filter(function (item) {
+
 		if (item.___type === 'group' && !item.___is_open) {
-			foldedGroupsIds.push(item.___id)
+			foldedGroupsIds.push(item.___id);
 		}
 
 		if (foldedGroupsIds.indexOf(item.___parentId) !== -1) {
 			return false
 		}
 
-		return true
-	})
+		return true;
 
-	return _list
-}
+	});
+
+	return _list;
+
+};
 
 const filterByRowColor = function (flatList, evDataService, globalDataService) {
-	var rowTypeFilters = evDataService.getRowTypeFilters()
-	var filterByColor = rowTypeFilters.markedRowFilters
 
-	if (filterByColor === 'none') {
-		//  color filter disabled
-		return flatList
+	var rowTypeFilters = evDataService.getRowTypeFilters();
+	var filterByColor = rowTypeFilters.markedRowFilters;
+
+	if (filterByColor === 'none') { //  color filter disabled
+		return flatList;
 	}
 
-	var entityType = evDataService.getEntityType()
+	var entityType = evDataService.getEntityType();
 	// var markedRows = localStorageService.getMarkedRows(false, entityType);
-	var rvSettings = globalDataService.getMemberEntityViewersSettings(
-		false,
-		entityType
-	)
-	var markedRows = rvSettings.marked_rows
+	var rvSettings = globalDataService.getMemberEntityViewersSettings(false, entityType);
+	var markedRows = rvSettings.marked_rows;
 
-	return flatList.filter((item) => {
-		if (item.___type !== 'object') return true
+	return flatList.filter(item => {
+
+		if (item.___type !== 'object') return true;
 		// does color of row matches to filter
-		return (
-			markedRows.hasOwnProperty(item.id) &&
-			markedRows[item.id].color === filterByColor
-		)
-	})
-}
+		return markedRows.hasOwnProperty(item.id) && markedRows[item.id].color === filterByColor;
+
+	});
+
+};
 
 var getFlatStructure = function (evDataService, globalDataService) {
-	var data = JSON.parse(JSON.stringify(evDataService.getData()))
-	var rootGroup = JSON.parse(JSON.stringify(evDataService.getRootGroupData()))
 
-	var tree = utilsHelper.convertToTree(data, rootGroup)
+	var data = JSON.parse(JSON.stringify(evDataService.getData()));
+	var rootGroup = JSON.parse(JSON.stringify(evDataService.getRootGroupData()));
 
-	var list = utilsHelper.convertTreeToList(tree)
+	var tree = utilsHelper.convertToTree(data, rootGroup);
 
-	// ;
+	console.log('getFlatStructure.data', data);
+	console.log('getFlatStructure.rootGroup', rootGroup);
+	console.log('getFlatStructure.tree', tree);
 
-	list = removeItemsFromFoldedGroups(list)
+	var list = utilsHelper.convertTreeToList(tree);
 
-	list = filterByRowColor(list, evDataService, globalDataService)
+	// console.log('getFlatStructure.list', list);
 
-	// ;
+	list = removeItemsFromFoldedGroups(list);
 
-	return list
-}
+	list = filterByRowColor(list, evDataService, globalDataService);
+
+	// console.log('list', list);
+
+	return list;
+
+};
 
 var calculateProjection = function (flatList, evDataService) {
-	console.time('Creating projection')
 
-	var rowHeight = evDataService.getRowHeight()
-	var offsetPx = evDataService.getVirtualScrollOffsetPx()
-	var from = Math.ceil(offsetPx / rowHeight)
-	var step = evDataService.getVirtualScrollStep()
-	// console.log(
-	// 	'dubugging.rowsToShow calculateProjection data',
-	// 	rowHeight,
-	// 	offsetPx,
-	// 	step
-	// )
-	evDataService.setProjectionLastFrom(from)
+	console.time('Creating projection');
 
-	var to = from + step / 2
+	var rowHeight = evDataService.getRowHeight();
+	var offsetPx = evDataService.getVirtualScrollOffsetPx();
+	var from = Math.ceil(offsetPx / rowHeight);
+	var step = evDataService.getVirtualScrollStep();
+	console.log("dubugging.rowsToShow calculateProjection data", rowHeight, offsetPx, step);
+	evDataService.setProjectionLastFrom(from);
 
-	console.timeEnd('Creating projection')
-	from = from - step / 2 // two rows, before viewport
+	var to = from + (step / 2);
+
+	console.timeEnd('Creating projection');
+	from = from - (step / 2); // two rows, before viewport
 
 	if (from < 0) {
-		from = 0
+		from = 0;
 	}
-	// ;
-	// ;
-	// ;
+	// console.log('View Context ' + evDataService.getViewContext() + ' flatList length', flatList.length);
+	// console.log('View Context ' + evDataService.getViewContext() + ' from', from);
+	// console.log('View Context ' + evDataService.getViewContext() + ' to', to);
+	console.log("dubugging.rowsToShow calculateProjection from to", from, to);
+	return flatList.slice(from, to);
 
-	return flatList.slice(from, to)
-}
+};
 
 var isGroupSelected = function (groupId, parentGroupId, evDataService) {
-	if (isSelected(evDataService)) {
+
+	if ( isSelected(evDataService) ) { // select all rows is active
 		return true
 	}
 
-	var parentGroup = evDataService.getData(parentGroupId)
+	/*var parentGroup = evDataService.getData(parentGroupId);
 
-	var selected = false
+	var selected = false;
 
 	parentGroup.results.forEach(function (item) {
-		if (item.___id === groupId) {
-			selected = item.___is_activated
-		}
-	})
 
-	return selected
-}
+			if (item.___id === groupId) {
+					selected = item.___is_activated;
+			}
+
+	});*/
+	const group = evDataService.getData(groupId);
+
+	return group.___is_activated;
+
+};
 
 var isSelected = function (evDataService) {
-	return evDataService.getSelectAllRowsState()
-}
+
+	return evDataService.getSelectAllRowsState();
+
+};
 
 var getColumnWidth = function (column) {
-	var defaultWidth = 100 + 'px'
+
+	var defaultWidth = 100 + 'px';
 
 	if (column.hasOwnProperty('id')) {
-		var groupsWidth = metaService.columnsWidthGroups()
+
+		var groupsWidth = metaService.columnsWidthGroups();
 
 		switch (column.value_type) {
 			case 10:
-				return groupsWidth.groupThree
-				break
+				return groupsWidth.groupThree;
+				break;
 			case 40:
-				return groupsWidth.groupFive
-				break
+				return groupsWidth.groupFive;
+				break;
 			case 30:
-				return groupsWidth.groupFive
-				break
+				return groupsWidth.groupFive;
+				break;
 			default:
-				return defaultWidth
-				break
+				return defaultWidth;
+				break;
 		}
+
 	} else if (column.hasOwnProperty('key')) {
-		return defaultWidth
+		return defaultWidth;
 	}
 
-	return undefined
-}
+	return undefined;
+
+};
 
 var setColumnsDefaultWidth = function (evDataService) {
-	var columns = evDataService.getColumns()
+
+	var columns = evDataService.getColumns();
 
 	// var groupsWidth = metaService.columnsWidthGroups();
 
 	// var defaultWidth = 100;
 
 	columns.forEach(function (column) {
+
 		if (!column.style) {
 			column.style = {}
 		}
 
 		if (!column.style.width) {
+
 			/* if (column.hasOwnProperty('key')) {
-                    column.style.width = defaultWidth + 'px';
-                }
+					column.style.width = defaultWidth + 'px';
+			}
 
-                if (column.hasOwnProperty('id')) {
+			if (column.hasOwnProperty('id')) {
 
-                    switch (column.value_type) {
-                        case 10:
-                            column.style.width = groupsWidth.groupThree;
-                            break;
-                        case 20:
-                            column.style.width = defaultWidth + 'px';
-                            break;
-                        case 40:
-                            column.style.width = groupsWidth.groupFive;
-                            break;
-                        case 30:
-                            column.style.width = groupsWidth.groupFive;
-                            break;
-                    }
+					switch (column.value_type) {
+							case 10:
+									column.style.width = groupsWidth.groupThree;
+									break;
+							case 20:
+									column.style.width = defaultWidth + 'px';
+									break;
+							case 40:
+									column.style.width = groupsWidth.groupFive;
+									break;
+							case 30:
+									column.style.width = groupsWidth.groupFive;
+									break;
+					}
 
-                } */
-			column.style.width = getColumnWidth(column)
+			} */
+			column.style.width = getColumnWidth(column);
+
 		}
-	})
 
-	evDataService.setColumns(columns)
-}
+	});
+
+	evDataService.setColumns(columns);
+
+};
 
 var updateColumnsIds = function (evDataService) {
-	var columns = evDataService.getColumns()
+
+	var columns = evDataService.getColumns();
 
 	columns.forEach(function (item) {
-		item.___column_id = getColumnId(item)
-	})
 
-	evDataService.setColumns(columns)
-}
+		item.___column_id = getColumnId(item);
 
-var setDefaultObjects = function (
-	entityViewerDataService,
-	entityViewerEventService,
-	requestParameters,
-	page
-) {
-	var obj
-	var step = requestParameters.pagination.page_size
-	var event = requestParameters.event
-	var pageAsIndex = parseInt(page, 10) - 1
-	var i
+	});
+
+	evDataService.setColumns(columns);
+
+};
+
+var setDefaultObjects = function (entityViewerDataService, entityViewerEventService, requestParameters, page) {
+
+	var obj;
+	var step = requestParameters.pagination.page_size;
+	var event = requestParameters.event;
+	var pageAsIndex = parseInt(page, 10) - 1;
+	var i;
 
 	if (!event.___id) {
-		var rootGroupData = entityViewerDataService.getRootGroupData()
 
-		obj = Object.assign({}, rootGroupData)
+		var rootGroupData = entityViewerDataService.getRootGroupData();
+
+		obj = Object.assign({}, rootGroupData);
+
 	} else {
-		var groupData = entityViewerDataService.getData(event.___id)
+		var groupData = entityViewerDataService.getData(event.___id);
 
 		if (groupData) {
-			obj = Object.assign({}, groupData)
+			obj = Object.assign({}, groupData);
 		} else {
 			obj = {
-				results: [],
+				results: []
 			}
 		}
 	}
 
 	for (i = 0; i < step; i = i + 1) {
 		if (pageAsIndex * step + i < obj.count) {
+
 			if (!obj.results[pageAsIndex * step + i]) {
+
 				obj.results[pageAsIndex * step + i] = {
 					id: '___placeholder_object_' + (pageAsIndex * step + i),
 					___type: 'placeholder_object',
 					___parentId: obj.___id,
-					___index: pageAsIndex * step + i,
-				}
+					___index: pageAsIndex * step + i
+				};
 
-				obj.results[pageAsIndex * step + i].___id = evRvCommonHelper.getId(
-					obj.results[pageAsIndex * step + i]
-				)
+				obj.results[pageAsIndex * step + i].___id = evRvCommonHelper.getId(obj.results[pageAsIndex * step + i]);
+
 			}
+
 		}
 	}
 
 	obj.results = obj.results.filter(function (item) {
-		return item.___type !== 'control'
-	})
+		return item.___type !== 'control';
+	});
 
 	/* var controlObj = {
-            ___parentId: obj.___id,
-            ___type: 'control',
-            ___level: obj.___level + 1
-        };
+			___parentId: obj.___id,
+			___type: 'control',
+			___level: obj.___level + 1
+	};
 
-        controlObj.___id = evRvCommonHelper.getId(controlObj);
+	controlObj.___id = evRvCommonHelper.getId(controlObj);
 
-        obj.results.push(controlObj); */
+	obj.results.push(controlObj); */
 
-	entityViewerDataService.setData(obj)
-}
+	entityViewerDataService.setData(obj);
 
-var deleteDefaultObjects = function (
-	entityViewerDataService,
-	entityViewerEventService,
-	requestParameters,
-	errorMessage
-) {
-	var obj
-	var event = requestParameters.event
+};
+
+var deleteDefaultObjects = function (entityViewerDataService, entityViewerEventService, requestParameters, errorMessage) {
+
+	var obj;
+	var event = requestParameters.event;
 
 	if (!event.___id) {
-		var rootGroupData = entityViewerDataService.getRootGroupData()
 
-		obj = Object.assign({}, rootGroupData)
+		var rootGroupData = entityViewerDataService.getRootGroupData();
+
+		obj = Object.assign({}, rootGroupData);
+
 	} else {
-		var groupData = entityViewerDataService.getData(event.___id)
+		var groupData = entityViewerDataService.getData(event.___id);
 
 		if (groupData) {
-			obj = Object.assign({}, groupData)
+			obj = Object.assign({}, groupData);
 		} else {
 			obj = {
-				results: [],
+				results: []
 			}
 		}
 	}
 
 	obj.results = obj.results.filter(function (item) {
-		return item.___type !== 'control' && item.___type !== 'placeholder_object'
-	})
+		return item.___type !== 'control' && item.___type !== 'placeholder_object';
+	});
 
 	/* var controlObj = {
 			___errorMessage: errorMessage,
 			___parentId: obj.___id,
 			___type: 'control',
 			___level: obj.___level + 1
-		};
+	};
 
-		controlObj.___id = evRvCommonHelper.getId(controlObj);
+	controlObj.___id = evRvCommonHelper.getId(controlObj);
 
-        obj.results.push(controlObj); */
+	obj.results.push(controlObj); */
 
-	entityViewerDataService.setData(obj)
-}
+	entityViewerDataService.setData(obj);
 
-var setDefaultGroups = function (
-	entityViewerDataService,
-	entityViewerEventService,
-	requestParameters,
-	page
-) {
-	var obj
-	var step = requestParameters.pagination.page_size
-	var event = requestParameters.event
-	var pageAsIndex = parseInt(page, 10) - 1
-	var i
+};
+
+var setDefaultGroups = function (entityViewerDataService, entityViewerEventService, requestParameters, page) {
+
+	var obj;
+	var step = requestParameters.pagination.page_size;
+	var event = requestParameters.event;
+	var pageAsIndex = parseInt(page, 10) - 1;
+	var i;
 
 	if (!event.___id) {
-		var rootGroupData = entityViewerDataService.getRootGroupData()
 
-		obj = Object.assign({}, rootGroupData)
+		var rootGroupData = entityViewerDataService.getRootGroupData();
+
+		obj = Object.assign({}, rootGroupData);
+
 	} else {
-		var groupData = entityViewerDataService.getData(event.___id)
+		var groupData = entityViewerDataService.getData(event.___id);
 
 		if (groupData) {
-			obj = Object.assign({}, groupData)
+			obj = Object.assign({}, groupData);
 		} else {
 			obj = {
-				results: [],
+				results: []
 			}
 		}
 	}
 
+
+	console.log('setDefaultGroups obj.count', obj.count);
+
 	for (i = 0; i < step; i = i + 1) {
 		if (pageAsIndex * step + i < obj.count) {
+
 			if (!obj.results[pageAsIndex * step + i]) {
+
 				obj.results[pageAsIndex * step + i] = {
 					id: '___placeholder_group_' + (pageAsIndex * step + i),
 					___type: 'placeholder_group',
 					___parentId: obj.___id,
-					___index: pageAsIndex * step + i,
-				}
+					___index: pageAsIndex * step + i
+				};
 
-				obj.results[pageAsIndex * step + i].___id = evRvCommonHelper.getId(
-					obj.results[pageAsIndex * step + i]
-				)
+				obj.results[pageAsIndex * step + i].___id = evRvCommonHelper.getId(obj.results[pageAsIndex * step + i]);
+
 			}
+
 		}
 	}
 
-
+	console.log('SET DEFAULT GROUPS.results', obj.results);
 
 	obj.results = obj.results.filter(function (item) {
 		return item.___type !== 'control'
-	})
+	});
 
 	var controlObj = {
 		___parentId: obj.___id,
 		___type: 'control',
-		___level: obj.___level + 1,
-	}
+		___level: obj.___level + 1
+	};
 
-	controlObj.___id = evRvCommonHelper.getId(controlObj)
+	controlObj.___id = evRvCommonHelper.getId(controlObj);
 
-	obj.results.push(controlObj)
+	obj.results.push(controlObj);
 
-	entityViewerDataService.setData(obj)
-}
+	entityViewerDataService.setData(obj);
 
-var deleteDefaultGroups = function (
-	entityViewerDataService,
-	entityViewerEventService,
-	requestParameters,
-	errorMessage
-) {
-	var obj
-	var event = requestParameters.event
+};
+
+var deleteDefaultGroups = function (entityViewerDataService, entityViewerEventService, requestParameters, errorMessage) {
+
+	var obj;
+	var event = requestParameters.event;
 
 	if (!event.___id) {
-		var rootGroupData = entityViewerDataService.getRootGroupData()
 
-		obj = Object.assign({}, rootGroupData)
+		var rootGroupData = entityViewerDataService.getRootGroupData();
+
+		obj = Object.assign({}, rootGroupData);
+
 	} else {
-		var groupData = entityViewerDataService.getData(event.___id)
+		var groupData = entityViewerDataService.getData(event.___id);
 
 		if (groupData) {
-			obj = Object.assign({}, groupData)
+			obj = Object.assign({}, groupData);
 		} else {
 			obj = {
-				results: [],
+				results: []
 			}
 		}
 	}
 
 	obj.results = obj.results.filter(function (item) {
 		return item.___type !== 'control'
-	})
+	});
 
 	var controlObj = {
 		___errorMessage: errorMessage,
 		___parentId: obj.___id,
 		___type: 'control',
-		___level: obj.___level + 1,
-	}
+		___level: obj.___level + 1
+	};
 
-	controlObj.___id = evRvCommonHelper.getId(controlObj)
+	controlObj.___id = evRvCommonHelper.getId(controlObj);
 
 	obj.results = obj.results.filter(function (item) {
-		return item.___type !== 'placeholder_group'
-	})
+		return item.___type !== 'placeholder_group';
+	});
 
-	obj.results.push(controlObj)
+	obj.results.push(controlObj);
 
-	entityViewerDataService.setData(obj)
-}
+	entityViewerDataService.setData(obj);
+
+};
+
 
 var calculatePageFromOffset = function (requestParameters, evDataService) {
-	var group = evDataService.getGroup(requestParameters.id)
-	var resultPage
+
+	var group = evDataService.getGroup(requestParameters.id);
+	var resultPage;
 
 	if (!group) {
-		resultPage = 1
+		resultPage = 1;
 		return resultPage
 	}
 
-	var rowHeight = evDataService.getRowHeight()
+	console.log('group', group);
 
-	var previousOffsetPx = evDataService.getVirtualScrollPreviousOffsetPx()
-	var offsetPx = evDataService.getVirtualScrollOffsetPx()
-	var scrollDirection = evDataService.getVirtualScrollDirection()
-	var offset = Math.floor(offsetPx / rowHeight)
+	var rowHeight = evDataService.getRowHeight();
 
-	var pagination = evDataService.getPagination()
-	var step = pagination.page_size
+	var previousOffsetPx = evDataService.getVirtualScrollPreviousOffsetPx();
+	var offsetPx = evDataService.getVirtualScrollOffsetPx();
+	var scrollDirection = evDataService.getVirtualScrollDirection();
+	var offset = Math.floor(offsetPx / rowHeight);
 
-	var maxPage = Math.ceil(group.count / step)
+	var pagination = evDataService.getPagination();
+	var step = pagination.page_size;
 
-	resultPage = Math.ceil(offset / step)
+	var maxPage = Math.ceil(group.count / step);
+
+	resultPage = Math.ceil(offset / step);
 
 	if (Math.abs(offsetPx - previousOffsetPx) < 100) {
+
 		if (scrollDirection === 'top') {
-			resultPage = Math.ceil(offset / step) - 1
+			resultPage = Math.ceil(offset / step) - 1;
 		}
 
 		if (scrollDirection === 'bottom') {
+
 			if (offset - resultPage * step < 5) {
 				resultPage = Math.ceil(offset / step) + 1
 			}
 		}
+
 	}
 
+
 	if (resultPage === 0 || resultPage < 0) {
-		resultPage = 1
+		resultPage = 1;
 	}
 
 	if (resultPage > maxPage) {
-		resultPage = maxPage
+		resultPage = maxPage;
 	}
 
-	// ;
-	// ;
-	// ;
-	// ;
+	// console.log('direction', scrollDirection);
+	// console.log('offset px', offsetPx);
+	// console.log('offset', offset);
+	// console.log('page', resultPage);
 
-	return resultPage
-}
+	return resultPage;
+
+
+};
 /**
  * Returns group type and chain of parent group types based on level
  *
@@ -712,16 +806,18 @@ var calculatePageFromOffset = function (requestParameters, evDataService) {
  * @returns {*[]}
  */
 var getGroupsTypesToLevel = function (level, evDataService) {
-	var groups = evDataService.getGroups()
-	var group_types = []
 
-	var to = level
+	var groups = evDataService.getGroups();
+	var group_types = [];
+
+	var to = level;
 
 	if (level >= groups.length) {
-		to = groups.length - 1
+		to = groups.length - 1;
 	}
 
 	for (var i = 0; i <= to; i = i + 1) {
+
 		group_types.push(groups[i])
 
 		// if (groups[i].hasOwnProperty('id')) {
@@ -731,145 +827,228 @@ var getGroupsTypesToLevel = function (level, evDataService) {
 		// }
 	}
 
-	return group_types
-}
+	return group_types;
+
+};
 
 var getGroupsValuesByItem = function (item, evDataService) {
-	var parents = evRvCommonHelper.getParents(item.___parentId, evDataService)
-	var groups_values = []
+
+	var parents = evRvCommonHelper.getParents(item.___parentId, evDataService);
+	var groups_values = [];
 
 	parents.forEach(function (parentItem) {
-		if (parentItem.___parentId) {
-			groups_values.push(parentItem.___group_identifier)
-		}
-	})
 
-	return groups_values.reverse()
-}
+		if (parentItem.___parentId) {
+
+			groups_values.push(parentItem.___group_identifier);
+
+		}
+
+	});
+
+	return groups_values.reverse();
+
+};
 
 var separateNotGroupingColumns = function (columns, groups) {
-	const notGroupingColumns = []
 
-	columns.forEach((column) => {
-		const isGroupingColumn = groups.find((group) => {
-			return group.key === column.key
-		})
+	const notGroupingColumns = [];
+
+	columns.forEach(column => {
+
+		const isGroupingColumn = groups.find(group => {
+
+			return group.key === column.key;
+
+		});
 
 		if (!isGroupingColumn) {
-			notGroupingColumns.push(column)
-		}
-	})
 
-	return notGroupingColumns
-}
+			notGroupingColumns.push(column);
+
+		}
+
+	});
+
+	return notGroupingColumns;
+};
 
 var importGroupsStylesFromColumns = function (groups, columns) {
 
-	let columnStyles = {}
+	let columnStyles = {};
 
-	columns.forEach((column) => {
+	columns.forEach(column => {
+
 		columnStyles[column.key] = column.style
-	})
 
-	groups.forEach((group) => {
+	});
+
+	groups.forEach(group => {
+
 		group.style = columnStyles[group.key]
-	})
 
-	return groups;
+	});
 
-}
+
+};
 
 var clearLastActiveObject = function (evDataService) {
-	var objects = evDataService.getObjects()
+
+	var objects = evDataService.getObjects();
 
 	objects.forEach(function (item) {
-		item.___is_active_object = false
-		evDataService.setObject(item)
-	})
-}
+
+		item.___is_active_object = false;
+		evDataService.setObject(item);
+
+	});
+
+};
 
 var clearObjectActiveState = function (evDataService) {
-	var objects = evDataService.getObjects()
+
+	var objects = evDataService.getObjects();
 
 	objects.forEach(function (item) {
-		item.___is_activated = false
-		item.___is_active_object = false
 
-		evDataService.setObject(item)
-	})
-}
+		item.___is_activated = false;
+		item.___is_active_object = false;
+
+		evDataService.setObject(item);
+
+	});
+
+};
 
 // MATERIAL DESIGN ENTITY VIEWER LOGIC
 
 var getObjectsFromSelectedGroups = function (evDataService, globalDataService) {
-	var result = []
 
-	var selectedGroups = evDataService.getSelectedGroups()
-	var multiselectState = evDataService.getSelectedGroupsMultiselectState()
+	var result = [];
 
-	var controlObj = null
+	var selectedGroups = evDataService.getSelectedGroups();
+	// var multiselectState = evDataService.getSelectedGroupsMultiselectState();
+
+	let controlObj = null;
+
+	const dataAsList = evDataService.getDataAsList()
+
+	let groupsList;
 
 	if (selectedGroups.length) {
-		selectedGroups.forEach(function (group) {
-			var rawData = evDataService.getData(group.___id)
+		groupsList = selectedGroups;
 
-			if (rawData) {
-				var data = JSON.parse(JSON.stringify(rawData))
-
-				data.results.forEach(function (item) {
-					if (item.___type === 'object') {
-						result.push(item)
-					} else if (item.___type === 'placeholder_object') {
-						result.push(item)
-					} else if (item.___type === 'control') {
-						// if (!multiselectState) {
-						controlObj = item
-						// }
-					}
-				})
-			}
-		})
-	} else {
-		var rawData = evDataService.getRootGroupData()
-
-		if (rawData) {
-			var data = JSON.parse(JSON.stringify(rawData))
-
-			data.results.forEach(function (item) {
-				if (item.___type === 'object') {
-					result.push(item)
-				} else if (item.___type === 'placeholder_object') {
-					result.push(item)
-				} else if (item.___type === 'control') {
-					// if (!multiselectState) {
-					controlObj = item
-					// }
-				}
-			})
-		}
 	}
+	else { // for entity viewer without groups
+
+		groupsList = [evDataService.getRootGroupData()]
+
+		/*dataAsList.forEach(function (dataItem) {
+
+				if (dataItem.___parentId === rootGroup.___id) {
+
+						var item = JSON.parse(JSON.stringify(dataItem));
+
+						if (item.___type === 'object') {
+								result.push(item);
+						} else if (item.___type === 'placeholder_object') {
+								result.push(item);
+						} else if (item.___type === 'control') {
+								controlObj = item
+						}
+
+				}
+
+		})*/
+
+	}
+
+	groupsList.forEach(function (group) {
+
+		/*dataAsList.forEach(function (dataItem) {
+
+				if (dataItem.___parentId === group.___id) {
+
+						var item = JSON.parse(JSON.stringify(dataItem));
+
+						if (item.___type === 'object') {
+								result.push(item);
+						} else if (item.___type === 'placeholder_object') {
+								result.push(item);
+						} else if (item.___type === 'control') {
+								controlObj = item
+						}
+
+				}
+
+		})*/
+		const dataItems = dataAsList.filter(
+			item => item.___parentId === group.___id
+		);
+
+		if (!dataItems.length) {
+			return;
+		}
+
+		dataItems.forEach(dataItem => {
+
+			const item = JSON.parse(JSON.stringify(dataItem));
+
+			if (
+				item.___type === 'object' ||
+				item.___type === 'placeholder_object'
+			) {
+
+				result.push(item);
+
+			} else if (item.___type === 'control') {
+				controlObj = item
+			}
+
+		})
+
+	})
+
+	result.sort( (a, b) => a.___index - b.___index );
 
 	if (controlObj) {
 		result.push(controlObj)
 	}
 
-	evDataService.setUnfilteredFlatList(result)
+	evDataService.setUnfilteredFlatList(result);
 
-	result = filterByRowColor(result, evDataService, globalDataService)
+	result = filterByRowColor(result, evDataService, globalDataService);
 
-	return result
+	console.log('getObjectsFromSelectedGroups.result', result)
+
+	return result;
+
 }
 
+/**
+ * Returns nested object with groups without objects
+ *
+ * @param {Object} evDataService
+ * @returns {*}
+ */
 var getGroupsAsTree = function (evDataService) {
-	var data = JSON.parse(JSON.stringify(evDataService.getData()))
-	var rootGroup = JSON.parse(JSON.stringify(evDataService.getRootGroupData()))
 
-	var tree = utilsHelper.convertToTree(data, rootGroup)
+	var data = structuredClone( evDataService.getData() );
+	var rootGroup = structuredClone( evDataService.getRootGroupData() );
 
-	return tree
-}
+	var tree = utilsHelper.convertToTree(data, rootGroup);
+
+	console.log('getFlatStructure.data', data);
+	console.log('getFlatStructure.rootGroup', rootGroup);
+	console.log('getFlatStructure.tree', tree);
+
+
+	return tree;
+
+};
 
 export default {
+
 	getGroupNameFromParent: getGroupNameFromParent,
 	getGroupIdentifierFromParent: getGroupIdentifierFromParent,
 
@@ -882,10 +1061,11 @@ export default {
 	getUnfoldedGroups: getUnfoldedGroups,
 	getUnfoldedGroupsByLevel: getUnfoldedGroupsByLevel,
 	getGroupsByLevel: getGroupsByLevel,
+	getAllGroupsByLevel: getAllGroupsByLevel,
 
 	getObject: getObject,
 
-	getNextPage: getNextPage,
+	// getNextPage: getNextPage,
 
 	getGroupTypeId: getGroupTypeId,
 	getColumnId: getColumnId,
@@ -901,11 +1081,11 @@ export default {
 	calculatePageFromOffset: calculatePageFromOffset,
 
 	/* prepareRowAndGetPopupMenu: prepareRowAndGetPopupMenu,
-        prepareSubtotalAndGetPopupMenu: prepareSubtotalAndGetPopupMenu,
+	prepareSubtotalAndGetPopupMenu: prepareSubtotalAndGetPopupMenu,
 
-        preparePopupMenuType2: preparePopupMenuType2,
-        calculateMenuPosition: calculateMenuPosition,
-        calculateStaticMenuPosition: calculateStaticMenuPosition, */
+	preparePopupMenuType2: preparePopupMenuType2,
+	calculateMenuPosition: calculateMenuPosition,
+	calculateStaticMenuPosition: calculateStaticMenuPosition, */
 
 	setDefaultGroups: setDefaultGroups,
 	setDefaultObjects: setDefaultObjects,
@@ -924,6 +1104,7 @@ export default {
 	clearLastActiveObject: clearLastActiveObject,
 	clearObjectActiveState: clearObjectActiveState,
 
+
 	getObjectsFromSelectedGroups: getObjectsFromSelectedGroups,
-	getGroupsAsTree: getGroupsAsTree,
+	getGroupsAsTree: getGroupsAsTree
 }
