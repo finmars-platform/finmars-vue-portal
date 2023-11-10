@@ -53,7 +53,7 @@
 						:class="{ selected: item.selected }"
 						@click="item.selected = !item.selected"
 						@dblclick="() => {
-							item.selected = false; removeItem();
+							item.selected = true; removeItem();
 						}"
 					>
 						{{ item[item_title] }}

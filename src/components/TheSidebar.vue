@@ -1001,7 +1001,7 @@
 							<div
 								class="side-menu-group-btn-container side-menu-settings-border-top-1"
 								v-if="
-									accessSectionTable.settings_administration && store.member.is_admin
+									accessSectionTable.settings_administration
 								"
 							>
 								<h3 class="sms-btn-group-header">Administration</h3>
