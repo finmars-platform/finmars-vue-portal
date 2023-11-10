@@ -2,6 +2,7 @@ import AutosaveLayoutService from '../../services/autosaveLayoutService'
 import evHelperService from '../../services/entityViewerHelperService'
 import uiService from '../../services/uiService'
 import evEvents from '../../services/entityViewerEvents'
+import localStorageService from "@/angular/shell/scripts/app/services/localStorageService";
 
 import metaService from '../../services/metaService'
 
@@ -19,6 +20,8 @@ import attributeTypeService from '../../services/attributeTypeService'
 import xhrService from '../../shell/scripts/app/services/xhrService'
 import cookieService from '../../shell/scripts/app/services/cookieService'
 import pricesCheckerServiceInst from '../../services/reports/pricesCheckerService'
+import GroupsService from '@/angular/services/rv-data-provider/groups.service'
+import ObjectsService from '@/angular/services/rv-data-provider/objects.service';
 import rvDataProviderServiceInst from '@/angular/services/rv-data-provider/rv-data-provider.service'
 import reportHelperInst from '../../helpers/reportHelper'
 import entityResolverServiceNew from '../../services/entityResolverServiceNew'
@@ -40,11 +43,16 @@ export default function ({
 	let entityResolverService = new entityResolverServiceNew({ reportService })
 	let customFieldService = new customFieldServiceInst()
 	window.reportHelper = new reportHelperInst()
+	const groupsService = new GroupsService();
+	const objectsService = new ObjectsService();
+
 
 	let rvDataProviderService = new rvDataProviderServiceInst(
 		entityResolverService,
 		pricesCheckerService,
-		window.reportHelper
+		window.reportHelper,
+		groupsService,
+		objectsService,
 	)
 
 	// Globals HACK
@@ -58,12 +66,11 @@ export default function ({
 		vm,
 		$scope,
 		$mdDialog,
-		globalDataService,
+		window.globalDataService,
 		priceHistoryService,
 		currencyHistoryService,
-		metaContentTypesService,
+		window.metaContentTypesService,
 		pricesCheckerService,
-		expressionService,
 		rvDataProviderService,
 		window.reportHelper
 	)
@@ -77,29 +84,14 @@ export default function ({
 
 	// var doNotCheckLayoutChanges = false;
 	var autosaveLayoutService
-	var autosaveLayoutOn = globalDataService.isAutosaveLayoutOn()
+	var autosaveLayoutOn = window.globalDataService.isAutosaveLayoutOn()
 	// Functions for context menu
-
-	var updateTableAfterEntityChanges = function (res) {
-		vm.entityViewerDataService.setRowsActionData(null)
-
-		if (res && res.res === 'agree') {
-			vm.entityViewerDataService.resetData()
-			vm.entityViewerDataService.resetRequestParameters()
-
-			var rootGroup = vm.entityViewerDataService.getRootGroupData()
-
-			vm.entityViewerDataService.setActiveRequestParametersId(rootGroup.___id)
-
-			vm.entityViewerEventService.dispatchEvent(evEvents.UPDATE_TABLE)
-		}
-	}
 
 	vm.setEventListeners = function () {
 		vm.entityViewerEventService.addEventListener(
 			evEvents.UPDATE_TABLE,
 			function () {
-				rvDataProviderService.createDataStructure(
+				rvDataProviderService.updateDataStructure(
 					vm.entityViewerDataService,
 					vm.entityViewerEventService
 				)
@@ -136,11 +128,6 @@ export default function ({
 			}
 		)
 
-		/* vm.entityViewerEventService.addEventListener(evEvents.LIST_LAYOUT_CHANGE, function () {
-
-                vm.getView();
-
-            }); */
 		vm.entityViewerEventService.addEventListener(
 			evEvents.LIST_LAYOUT_CHANGE,
 			function () {
@@ -161,20 +148,27 @@ export default function ({
 		)
 
 		if (autosaveLayoutOn) {
+
+			const alccHandler = () => {
+
+				autosaveLayoutService.initListenersForAutosaveLayout(
+					vm.entityViewerDataService,
+					vm.entityViewerEventService,
+					true
+				)
+
+				vm.entityViewerEventService.removeEventListener(
+					evEvents.ACTIVE_LAYOUT_CONFIGURATION_CHANGED,
+					alcIndex
+				)
+
+			}
+
 			const alcIndex = vm.entityViewerEventService.addEventListener(
 				evEvents.ACTIVE_LAYOUT_CONFIGURATION_CHANGED,
-				function () {
-					autosaveLayoutService.initListenersForAutosaveLayout(
-						vm.entityViewerDataService,
-						vm.entityViewerEventService,
-						true
-					)
-					vm.entityViewerEventService.removeEventListener(
-						evEvents.ACTIVE_LAYOUT_CONFIGURATION_CHANGED,
-						alcIndex
-					)
-				}
+				alccHandler
 			)
+
 		}
 	}
 
@@ -202,6 +196,44 @@ export default function ({
 
 			return result
 		}
+	}
+
+	vm.closeGroupsAndContinueReportGeneration = function () {
+
+		var localStorageReportData = localStorageService.getReportData();
+
+		var layout = vm.entityViewerDataService.getListLayout();
+		var contentType = vm.entityViewerDataService.getContentType();
+
+		delete localStorageReportData[contentType][layout.user_code]
+
+		var groups = vm.entityViewerDataService.getGroups();
+
+		groups.forEach(function (group) {
+
+			if (!group.report_settings) {
+				group.report_settings = {}
+			}
+
+			group.report_settings.is_level_folded = true;
+
+		})
+
+		vm.entityViewerDataService.setGroups(groups);
+
+		localStorageService.cacheReportData(localStorageReportData);
+
+		vm.possibleToRequestReport = true;
+
+		rvDataProviderService.updateDataStructure(vm.entityViewerDataService, vm.entityViewerEventService);
+
+	}
+
+	vm.continueReportGeneration = function () {
+
+		vm.possibleToRequestReport = true;
+
+		rvDataProviderService.updateDataStructure(vm.entityViewerDataService, vm.entityViewerEventService);
 	}
 
 	vm.setFiltersValuesFromQueryParameters = function () {
@@ -233,39 +265,6 @@ export default function ({
             });
 
             dateExprsProms.push(result);
-
-        }; */
-
-	var deregisterOnBeforeTransitionHook
-
-	/* var checkRootLayoutForChanges = function (activeLayoutConfig, layoutCurrentConfig) {
-
-            if (activeLayoutConfig === undefined) {
-                activeLayoutConfig = vm.entityViewerDataService.getActiveLayoutConfiguration();
-            }
-
-            if (activeLayoutConfig && activeLayoutConfig.data) {
-
-                if (layoutCurrentConfig === undefined){
-                    layoutCurrentConfig = vm.entityViewerDataService.getLayoutCurrentConfiguration(true);
-                }
-
-                return !evHelperService.checkForLayoutConfigurationChanges(activeLayoutConfig, layoutCurrentConfig, true);
-            }
-
-            return false;
-
-        };
-
-        var checkSplitPanelForChanges = function () {
-
-            var additions = vm.entityViewerDataService.getAdditions();
-
-            if (additions.isOpen) {
-                return vm.splitPanelExchangeService.getSplitPanelChangedLayout();
-            }
-
-            return false;
 
         }; */
 
@@ -441,26 +440,20 @@ export default function ({
 		)
 
 		if (layoutHasChanges || spChangedLayout) {
-			event.preventDefault()
-			;(event || window.event).returnValue =
-				'All unsaved changes of layout will be lost.'
+
+			event.preventDefault();
+
+			(event || window.event).returnValue =
+				'All unsaved changes of layout will be lost.';
+
 		}
 	}
 
-	// IMPORTANT
 	var initTransitionListeners = function () {
-		// deregisterOnBeforeTransitionHook = $transitions.onBefore(
-		// 	{},
-		// 	checkLayoutsForChanges
-		// )
 		window.addEventListener('beforeunload', warnAboutLayoutChangesLoss)
 	}
 
 	var removeTransitionListeners = function () {
-		if (deregisterOnBeforeTransitionHook) {
-			deregisterOnBeforeTransitionHook()
-		}
-
 		window.removeEventListener('beforeunload', warnAboutLayoutChangesLoss)
 	}
 
@@ -472,12 +465,10 @@ export default function ({
 	 */
 	vm.setLayout = function (layout) {
 		return new Promise(async function (resolve, reject) {
-			if (
-				layout.data.reportLayoutOptions &&
-				typeof layout.data.reportLayoutOptions?.useDateFromAbove !== 'boolean'
-			) {
-				layout.data.reportLayoutOptions.useDateFromAbove = true
-			}
+
+            if (typeof layout.data.reportLayoutOptions?.useDateFromAbove !== 'boolean') {
+                layout.data.reportLayoutOptions.useDateFromAbove = true;
+            }
 
 			vm.entityViewerDataService.setLayoutCurrentConfiguration(
 				layout,
@@ -499,28 +490,21 @@ export default function ({
 				interfaceLayout.splitPanel.height > 0
 			) {
 				try {
-					await uiService.pingListLayoutByKey(additions.layoutData.layoutId, {
-						notifyError: false,
-					})
+
+					await uiService.pingListLayoutByKey(
+                        additions.layoutData.layoutId,
+                        {
+                            notifyError: false,
+                        }
+					)
+
 					vm.entityViewerDataService.setSplitPanelStatus(true)
+
 				} catch (error) {
 					// layout for split panel was not found
 
-					var errorObj = {
-						___custom_message:
-							'Error on getting layout with id: ' +
-							additions.layoutData.layoutId +
-							' for split panel',
-					}
-
-					if (error && typeof error === 'object') {
-						errorObj = { ...errorObj, ...error }
-					} else {
-						errorObj.error = error
-					}
-
-					console.error(errorObj)
-					if (error.response && error.response.status === 404) {
+                    console.error('Error on getting layout with an id: ' + additions.layoutData.layoutId + ' for split panel');
+					if (error.response?.status === 404) {
 						/* interfaceLayout.splitPanel.height = 0;
                             vm.entityViewerDataService.setInterfaceLayout(interfaceLayout);
 
@@ -542,25 +526,7 @@ export default function ({
 
 			// Check if there is need to solve report datepicker expression
 			if (reportLayoutOptions && reportLayoutOptions.datepickerOptions) {
-				/* var firstDateExpr = reportLayoutOptions.datepickerOptions.reportFirstDatepicker.expression; // for pl_first_date, begin_date
-                    var secondDateExpr = reportLayoutOptions.datepickerOptions.reportLastDatepicker.expression; // for report_date, end_date
 
-                    var dateExprsProms = [];
-
-                    if (firstDateExpr) {
-                        calculateReportDateExpr(firstDateExpr, reportOptions, 0, dateExprsProms);
-                    }
-
-                    if (secondDateExpr) {
-                        calculateReportDateExpr(secondDateExpr, reportOptions, 1, dateExprsProms);
-                    }
-
-                    Promise.all(dateExprsProms).then(function () {
-                        onSetLayoutEnd();
-
-                    }).catch(function () {
-                        onSetLayoutEnd();
-                    }); */
 				await sharedLogicHelper.calculateReportDatesExprs()
 				vm.readyStatus.layout = sharedLogicHelper.onSetLayoutEnd()
 
@@ -571,17 +537,13 @@ export default function ({
 					var activeColumnSort =
 						vm.entityViewerDataService.getActiveColumnSort()
 
-					if (
-						activeColumnSort &&
-						activeColumnSort.options.sort_settings.layout_user_code
-					) {
-						uiService
-							.getColumnSortDataList({
-								filters: {
-									user_code:
-										activeColumnSort.options.sort_settings.layout_user_code,
-								},
-							})
+					if (activeColumnSort?.options.sort_settings.layout_user_code) {
+
+						uiService.getColumnSortDataList({
+                            filters: {
+                                user_code: activeColumnSort.options.sort_settings.layout_user_code,
+                            },
+						})
 							.then(function (data) {
 								if (data.results.length) {
 									var layout = data.results[0]
@@ -629,7 +591,7 @@ export default function ({
 
 		vm.splitPanelExchangeService = new SplitPanelExchangeService()
 		vm.attributeDataService = new AttributeDataService(
-			metaContentTypesService,
+			window.metaContentTypesService,
 			customFieldService,
 			attributeTypeService,
 			uiService
@@ -661,29 +623,10 @@ export default function ({
 		var downloadAttrsProm = sharedLogicHelper.downloadAttributes()
 		var setLayoutProm
 
-		var crossEntityAttributeExtensionProm = new Promise(function (
-			resolve,
-			reject
-		) {
-			uiService
-				.getCrossEntityAttributeExtensionList({
-					filters: {
-						context_content_type: $scope.contentType,
-					},
-				})
-				.then(function (data) {
-					vm.entityViewerDataService.setCrossEntityAttributeExtensions(
-						data.results
-					)
-					resolve()
-				})
-				.catch((error) => reject(error))
-		})
-
 		vm.setEventListeners()
 
 		middlewareService.onAutosaveLayoutToggle(function () {
-			autosaveLayoutOn = globalDataService.isAutosaveLayoutOn()
+			autosaveLayoutOn = window.globalDataService.isAutosaveLayoutOn()
 
 			if (autosaveLayoutOn) {
 				autosaveLayoutService.initListenersForAutosaveLayout(
@@ -715,10 +658,12 @@ export default function ({
 		var layoutUserCode
 
 		if (vm.isLayoutFromUrl()) {
+
 			var queryParams = window.location.href.split('?')[1]
 			var params = queryParams.split('&')
 
 			params.forEach(function (param) {
+
 				var pieces = param.split('=')
 				var key = pieces[0]
 				var value = pieces[1]
@@ -727,7 +672,7 @@ export default function ({
 					layoutUserCode = value
 
 					if (layoutUserCode.indexOf('%20') !== -1) {
-						layoutUserCode = layoutUserCode.replace(/%20/g, ' ')
+						layoutUserCode = layoutUserCode.replace(/%20/g, " ")
 					}
 				}
 			})
@@ -739,6 +684,7 @@ export default function ({
 				$mdDialog
 			)
 		} else if ($stateParams.layoutUserCode) {
+
 			layoutUserCode = $stateParams.layoutUserCode
 			// vm.getLayoutByUserCode(layoutUserCode);
 			setLayoutProm = evHelperService.getLayoutByUserCode(
@@ -746,30 +692,29 @@ export default function ({
 				layoutUserCode,
 				$mdDialog
 			)
-		} else if (vm.viewContext == 'dashboard') {
-			vm.setLayout(vm.layout)
+
 		} else {
 			setLayoutProm = evHelperService.getDefaultLayout(vm)
 		}
 
-		Promise.allSettled([
-			downloadAttrsProm,
-			setLayoutProm,
-			crossEntityAttributeExtensionProm,
-		]).then(function (getViewData) {
-			metaService.logRejectedPromisesAfterAllSettled(
-				getViewData,
-				'report viewer get view'
-			)
-		})
+            Promise.allSettled([
+                downloadAttrsProm,
+                setLayoutProm
+            ])
+                .then(function (getViewData) {
+
+                    metaService.logRejectedPromisesAfterAllSettled(
+                        getViewData, 'report viewer get view'
+                    );
+
+                });
 	}
 
 	vm.init = function () {
+
 		autosaveLayoutService = new AutosaveLayoutService(
-			metaContentTypesService,
-			uiService,
-			window.reportHelper
-		)
+			window.metaContentTypesService, uiService, reportHelper, window.globalDataService
+		);
 
 		onUserChangeIndex = middlewareService.onMasterUserChanged(function () {
 			vm.entityViewerDataService.setLayoutChangesLossWarningState(false)
@@ -781,28 +726,7 @@ export default function ({
 			removeTransitionListeners()
 		})
 
-		/*middlewareService.onAutosaveLayoutToggle(function () {
-
-                vm.currentMember = globalDataService.getMember();
-
-                if (vm.currentMember.data.autosave_layouts) {
-                    autosaveLayoutService.initListenersForAutosaveLayout(vm.entityViewerDataService, vm.entityViewerEventService, true);
-                    initTransitionListeners();
-
-                } else {
-                    autosaveLayoutService.removeChangesTrackingEventListeners();
-                    removeTransitionListeners();
-                }
-
-            });*/
-
-		// vm.getCurrentMember();
-
 		if (!autosaveLayoutOn) {
-			console.log(
-				'autosave77 rv init initTransitionListeners',
-				autosaveLayoutOn
-			)
 			initTransitionListeners()
 		}
 

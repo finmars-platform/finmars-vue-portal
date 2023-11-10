@@ -330,7 +330,7 @@
 
 	let entityType = evDataService.getEntityType()
 	let activeObject = evDataService.getActiveObject()
-	let isReport = metaService.isReport(entityType)
+	let isReport = evDataService.isEntityReport()
 
 	let viewType = ref(evDataService.getViewType())
 	let viewSettings = evDataService.getViewSettings(viewType.value)
@@ -430,92 +430,97 @@
 		}
 
 		var applyGroupsFoldingFromLocalStorage = function () {
-			var listLayout = evDataService.getListLayout()
-			var reportData = localStorageService.getReportDataForLayout(
-				contentType,
-				listLayout.user_code
-			)
+
+			var listLayout = evDataService.getListLayout();
+			var reportData = localStorageService.getReportDataForLayout(contentType, listLayout.user_code);
 
 			if (reportData.groupsList && reportData.groupsList.length) {
+
 				var groups = evDataService.getGroups()
 
 				reportData.groupsList.forEach((groupObj) => {
+
 					var group = groups.find((group) => group.key === groupObj.key)
 
 					if (group) {
+
 						if (!group.report_settings) group.report_settings = {}
 
-						group.report_settings.is_level_folded =
-							groupObj.report_settings.is_level_folded
+						group.report_settings.is_level_folded = groupObj.report_settings.is_level_folded
+
 					}
+
 				})
 
 				evDataService.setGroups(groups)
 
 				rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService)
+
 			}
+
 		}
 
 		var initEventListeners = function () {
-			evEventService.addEventListener(evEvents.ADDITIONS_CHANGE, function () {
-				let additions = evDataService.getAdditions()
 
+      evEventService.addEventListener(evEvents.ADDITIONS_CHANGE, function () {
+
+        let additions = evDataService.getAdditions()
 				let activeObject = evDataService.getActiveObject()
+
 			})
 
-			evEventService.addEventListener(
-				evEvents.VERTICAL_ADDITIONS_CHANGE,
-				function () {
-					let verticalAdditions = evDataService.getVerticalAdditions()
+			evEventService.addEventListener(evEvents.VERTICAL_ADDITIONS_CHANGE, function () {
 
-					if (!verticalAdditions || !verticalAdditions.isOpen) {
-						setTimeout(function () {
+				let verticalAdditions = evDataService.getVerticalAdditions()
+
+				if (!verticalAdditions || !verticalAdditions.isOpen) {
+
+					setTimeout(function () {
 							// wait for angular to remove vertical split panel
 
 							// delete evEventService.dispatchEvent(evEvents.UPDATE_ENTITY_VIEWER_CONTENT_WRAP_SIZE);
 							evEventService.dispatchEvent(evEvents.UPDATE_TABLE_VIEWPORT)
-						}, 200)
-					}
-				}
-			)
+					}, 200)
 
-			evEventService.addEventListener(
-				evEvents.ACTIVE_OBJECT_CHANGE,
-				function () {
-					let activeObject = evDataService.getActiveObject()
 				}
-			)
+
+			})
+
+			evEventService.addEventListener(evEvents.ACTIVE_OBJECT_CHANGE, function () {
+					let activeObject = evDataService.getActiveObject()
+			})
 
 			evEventService.addEventListener(evEvents.FILTERS_RENDERED, function () {
 				readyToRenderTable.value = true
 			})
 
 			evEventService.addEventListener(evEvents.DATA_LOAD_END, function () {
+
 				let additions = evDataService.getAdditions()
 				let activeObject = evDataService.getActiveObject()
-				readyToRenderTable.value = true
 
 				if (viewType.value === 'matrix' && !activeLayoutConfigIsSet) {
+
 					activeLayoutConfigIsSet = true
 
 					evDataService.setActiveLayoutConfiguration({ isReport: true }) // saving layout for checking for changes
-					evEventService.dispatchEvent(
-						evEvents.ACTIVE_LAYOUT_CONFIGURATION_CHANGED
-					)
+					evEventService.dispatchEvent(evEvents.ACTIVE_LAYOUT_CONFIGURATION_CHANGED)
+
 				}
-			})
+
+			});
 
 			evEventService.addEventListener(evEvents.VIEW_TYPE_CHANGED, function () {
-				viewType.value = evDataService.getViewType()
-				let viewSettings = evDataService.getViewSettings(viewType.value)
+
+				scope.viewType = scope.evDataService.getViewType();
+        scope.viewSettings = scope.evDataService.getViewSettings(scope.viewType);
+
 			})
 
-			evEventService.addEventListener(
-				evEvents.REPORT_OPTIONS_CHANGE,
-				function () {
+			evEventService.addEventListener(evEvents.REPORT_OPTIONS_CHANGE, function () {
 					let reportOptions = evDataService.getReportOptions()
-				}
-			)
+			})
+
 		}
 
 		init = function () {
@@ -537,14 +542,14 @@
 
 	function getWrapperClasses() {
 		var classes = ''
-		return classes
-		if (isRootEntityViewer) {
+
+		if (isRootEntityViewerRef.value) {
 			classes = 'g-root-wrapper'
 		} else if (isRecon) {
 			classes = 'g-reconciliation-wrapper'
 		}
 
-		if (evDataService.isVerticalSplitPanelActive()) {
+		if ( evDataService.isVerticalSplitPanelActive() ) {
 			classes += ' g-v-split-panel-active'
 		}
 
@@ -552,12 +557,14 @@
 			classes += ' g-is-report'
 		}
 
-		return classes
+		return classes;
+
 	}
 
 	defineExpose({
 		init,
 	})
+
 </script>
 
 <style lang="scss" scoped>
