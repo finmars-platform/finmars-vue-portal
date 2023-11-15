@@ -4,58 +4,52 @@ import localStorageService from '@/angular/shell/scripts/app/services/localStora
 import evEvents from '../services/entityViewerEvents'
 
 export default function () {
-	// IMPORTANT: if you are changing popupMenu variables, also change them in 'entity-viewer.less'
-	const popupMenuWidth = 320
-	const popupMenuOptionHeight = 33
 
-	function calculateContentWrapHeight(
-		rootWrapElem,
-		contentWrapElement,
-		evDataService
-	) {
-		var splitPanelIsActive = evDataService.isSplitPanelActive()
+// IMPORTANT: if you are changing popupMenu variables, also change them in 'entity-viewer.less'
+	const popupMenuWidth = 320;
+	const popupMenuOptionHeight = 33;
 
-		if (splitPanelIsActive) {
-			// for root entity / report viewer
+	function calculateContentWrapHeight(rootWrapElem, contentWrapElement, evDataService) {
 
-			var interfaceLayout = evDataService.getInterfaceLayout()
+		var splitPanelIsActive = evDataService.isSplitPanelActive();
+
+		if (splitPanelIsActive) { // for root entity / report viewer
+
+			var interfaceLayout = evDataService.getInterfaceLayout();
 			//var contentWrapElementHeight = document.body.clientHeight - interfaceLayout.headerToolbar.height - interfaceLayout.splitPanel.height;
-			var rootWrapElemHeight = rootWrapElem.clientHeight
-			var contentWrapElementHeight =
-				rootWrapElemHeight - interfaceLayout.splitPanel.height
+			var rootWrapElemHeight = rootWrapElem.clientHeight;
+			var contentWrapElementHeight = rootWrapElemHeight - interfaceLayout.splitPanel.height;
 
-			contentWrapElement.style.height = contentWrapElementHeight + 'px'
+			contentWrapElement.style.height = contentWrapElementHeight + "px";
+
 		} else {
-			contentWrapElement.style.height = ''
+			contentWrapElement.style.height = "";
 		}
+
 	}
 
-	function calculateContentWrapWidth(
-		rootWrapElem,
-		contentWrapElement,
-		evDataService
-	) {
-		var vSplitPanelIsActive = evDataService.isVerticalSplitPanelActive()
+	function calculateContentWrapWidth(rootWrapElem, contentWrapElement, evDataService) {
+
+		var vSplitPanelIsActive = evDataService.isVerticalSplitPanelActive();
 
 		if (vSplitPanelIsActive) {
-			var interfaceLayout = evDataService.getInterfaceLayout()
-			var rootWrapElemWidth = rootWrapElem.clientWidth
-			var contentWrapElementWidth =
-				rootWrapElemWidth - interfaceLayout.verticalSplitPanel.width - 1
 
-			contentWrapElement.style.width = contentWrapElementWidth + 'px'
+			var interfaceLayout = evDataService.getInterfaceLayout();
+			var rootWrapElemWidth = rootWrapElem.clientWidth;
+			var contentWrapElementWidth = rootWrapElemWidth - interfaceLayout.verticalSplitPanel.width - 1;
+
+			contentWrapElement.style.width = contentWrapElementWidth + "px"
+
 		} else {
-			contentWrapElement.style.width = ''
+			contentWrapElement.style.width = ""
 		}
+
 	}
 
-	function calculateWorkareaWrapWidth(
-		contentWrapElement,
-		workareaWrapElement,
-		evDataService
-	) {
-		var components = evDataService.getComponents()
-		var contentWrapWidth = contentWrapElement.clientWidth
+	function calculateWorkareaWrapWidth (contentWrapElement, workareaWrapElement, evDataService) {
+
+		var components = evDataService.getComponents();
+		var contentWrapWidth = contentWrapElement.clientWidth;
 
 		// if (components.sidebar) {
 		//
@@ -67,110 +61,130 @@ export default function () {
 		// }
 
 		workareaWrapElement.style.width = contentWrapWidth + 'px'
+
 	}
 
-	function clearDropdowns(
-		eventListenerFn2Args,
-		clearDropdownsAndRowsArgs,
-		executeContextMenuActionFn,
-		callClearDropdownsAndRowsFn
-	) {
-		let popupsToClear = []
-		const dropdowns = document.querySelectorAll('.evDropdown')
+	function clearDropdowns (eventListenerFn2Args, clearDropdownsAndRowsArgs, executeContextMenuActionFn, callClearDropdownsAndRowsFn) {
+
+
+
+		let popupsToClear = [];
+		const dropdowns = document.querySelectorAll('.evDropdown');
 		/* for (var i = 0; i < dropdowns.length; i = i + 1) {
-				dropdowns[i].remove();
-			} */
-		dropdowns.forEach((dropdown) => {
+			dropdowns[i].remove();
+		} */
+
+		console.log('clearDropdowns.dropdowns', dropdowns)
+
+		dropdowns.forEach(dropdown => {
 			// remove popup after animation
 			if (!popupsToClear.includes(dropdown.id)) {
-				dropdown.classList.add('fade-out')
 
-				popupsToClear.push(dropdown.id)
-				var dropdownIndex = popupsToClear.length - 1
+				dropdown.classList.add("fade-out");
+
+				popupsToClear.push(dropdown.id);
+				var dropdownIndex = popupsToClear.length - 1;
 
 				setTimeout(function () {
-					dropdown.parentElement.removeChild(dropdown)
-					popupsToClear.splice(dropdownIndex, 1)
-				}, 200) // duration of animation
+
+					dropdown.parentElement.removeChild(dropdown);
+					popupsToClear.splice(dropdownIndex, 1);
+
+				}, 200); // duration of animation
+
 			}
-		})
+
+		});
 
 		//region Remove dropdown related listeners
 		for (const prop in eventListenerFn2Args) {
-			eventListenerFn2Args[prop] = null
+			eventListenerFn2Args[prop] = null;
 		}
-		window.removeEventListener('click', executeContextMenuActionFn)
+		window.removeEventListener('click', executeContextMenuActionFn);
 
-		clearDropdownsAndRowsArgs.evDataService = null
-		clearDropdownsAndRowsArgs.evEventService = null
-		window.removeEventListener('contextmenu', callClearDropdownsAndRowsFn)
+		clearDropdownsAndRowsArgs.evDataService = null;
+		clearDropdownsAndRowsArgs.evEventService = null;
+		window.removeEventListener('contextmenu', callClearDropdownsAndRowsFn);
 		//endregion
 		/* window.removeEventListener('click', executeContextMenuAction);
-			window.removeEventListener('click', executeSubtotalContextMenuAction);
+		window.removeEventListener('click', executeSubtotalContextMenuAction);
 
-			clearDropdownsAndRowsArgs.evDataService = null;
-			clearDropdownsAndRowsArgs.evEventService = null;
-			window.removeEventListener('contextmenu', callClearDropdownsAndRows); */
-		return [eventListenerFn2Args, clearDropdownsAndRowsArgs]
+		clearDropdownsAndRowsArgs.evDataService = null;
+		clearDropdownsAndRowsArgs.evEventService = null;
+		window.removeEventListener('contextmenu', callClearDropdownsAndRows); */
+		return [eventListenerFn2Args, clearDropdownsAndRowsArgs];
+
 	}
 
 	//region ev rv tables menus
 
-	function calculateMenuPosition(popup, menuPosition) {
-		var bodyWidth = document.body.clientWidth
-		var bodyHeight = document.body.clientHeight
+	function calculateMenuPosition (popup, menuPosition) {
 
-		var menuOptionsContainer = popup.querySelector('.ev-dropdown-container')
-		var submenuItem = menuOptionsContainer.querySelector('.ev-dropdown-submenu')
+		var bodyWidth = document.body.clientWidth;
+		var bodyHeight = document.body.clientHeight;
+
+		var menuOptionsContainer = popup.querySelector('.ev-dropdown-container');
+		var submenuItem = menuOptionsContainer.querySelector('.ev-dropdown-submenu');
 
 		if (bodyWidth <= menuPosition.positionX + popupMenuWidth) {
-			popup.classList.add('ev-dropdown-opens-left')
-			popup.style.right = 0
-		} else if (
-			submenuItem &&
-			bodyWidth <= menuPosition.positionX + popupMenuWidth * 2
-		) {
-			// multiplying by 2 because of possibility of at least one submenu
-			popup.classList.add('ev-dropdown-opens-left')
+
+			popup.classList.add('ev-dropdown-opens-left');
+			popup.style.right = 0;
+
 		} else {
-			popup.style.left = menuPosition.positionX + 'px'
+
+			if ( submenuItem && bodyWidth <= menuPosition.positionX + (popupMenuWidth * 2) ) { // multiplying by 2 because of the possibility of at least one submenu
+				popup.classList.add('ev-dropdown-opens-left');
+			}
+
+			popup.style.left = menuPosition.positionX + 'px';
+
 		}
 
-		var firstLevelOptionsNumber = menuOptionsContainer.childElementCount
-		var menuHeight = firstLevelOptionsNumber * popupMenuOptionHeight
+		var firstLevelOptionsNumber = menuOptionsContainer.childElementCount;
+		var menuHeight = firstLevelOptionsNumber * popupMenuOptionHeight;
 
 		if (bodyHeight < menuPosition.positionY + menuHeight) {
-			popup.classList.add('ev-dropdown-opens-top')
+
+			popup.classList.add('ev-dropdown-opens-top');
 			popup.style.bottom = 0
+
 		} else {
 			popup.style.top = menuPosition.positionY + 'px'
 		}
 
 		//popup.style.cssText = menuPosition;
+
 	}
 
-	function calculateStaticMenuPosition(popup, menuElem, popupHeight) {
-		var menuElemRect = menuElem.getBoundingClientRect()
-		// "-24" to create more space between mouse and popup borders
-		var popupTop = menuElemRect.top - 24
-		popup.style.left = menuElemRect.left - 24 + 'px'
+	function calculateStaticMenuPosition (popup, menuElem, popupHeight) {
 
-		var bodyHeight = document.body.clientHeight
+		var menuElemRect = menuElem.getBoundingClientRect();
+		// "-24" to create more space between mouse and popup borders
+		var popupTop = menuElemRect.top - 24;
+		popup.style.left = (menuElemRect.left - 24) + "px"
+
+		var bodyHeight = document.body.clientHeight;
 
 		if (bodyHeight < popupTop + popupHeight) {
-			popup.style.bottom = 0
+
+			popup.style.bottom = 0;
+
 		} else {
 			popup.style.top = popupTop + 'px'
 		}
+
 	}
 
-	function customizePopup(popup, objectId) {
-		popup.id = 'dropdown-' + objectId
-		popup.classList.add('ev-dropdown', 'fade-in', 'evDropdown')
+	function customizePopup (popup, objectId) {
 
-		popup.style.position = 'absolute'
+		popup.id = 'dropdown-' + objectId;
+		popup.classList.add('ev-dropdown', 'fade-in', 'evDropdown');
 
-		return popup
+		popup.style.position = 'absolute';
+
+		return popup;
+
 	}
 
 	/**
@@ -182,43 +196,42 @@ export default function () {
 	 * @param isReport {Boolean}
 	 * @returns {HTMLDivElement} - HTML element for context menu of row
 	 */
-	function prepareRowAndGetPopupMenu(
-		objectId,
-		parentGroupHashId,
-		evDataService,
-		isReport
-	) {
-		var popup = document.createElement('div')
+	function prepareRowAndGetPopupMenu (objectId, parentGroupHashId, evDataService, isReport) {
+
+		var popup = document.createElement('div');
 		// Victor 2021.02.01 #75 On right mouse click row don't need selected
 		/* if (isReport) {
 
-				var objects = evDataService.getObjects();
+			var objects = evDataService.getObjects();
 
-				objects.forEach(function (item) {
-					item.___is_activated = false;
-					item.___is_active_object = false;
+			objects.forEach(function (item) {
+				item.___is_activated = false;
+				item.___is_active_object = false;
 
-					evDataService.setObject(item);
+				evDataService.setObject(item);
 
-				});
+			});
 
-			}*/
+		}*/
 
-		var obj = evDataHelper.getObject(objectId, parentGroupHashId, evDataService)
+		var obj = evDataHelper.getObject(objectId, parentGroupHashId, evDataService);
 
 		if (obj) {
-			// obj.___is_activated = true;
-			obj.___context_menu_is_opened = true
-			/*if (isReport) {
-					obj.___context_menu_opened = true;
-				}*/
 
-			evDataService.setObject(obj)
+			// obj.___is_activated = true;
+			obj.___context_menu_is_opened = true;
+			/*if (isReport) {
+				obj.___context_menu_opened = true;
+			}*/
+
+			evDataService.setObject(obj);
+
 		}
 
-		popup = customizePopup(popup)
+		popup = customizePopup(popup);
 
-		return popup
+		return popup;
+
 	}
 
 	/**
@@ -229,202 +242,182 @@ export default function () {
 	 * @param evDataService {Object}
 	 * @returns {HTMLDivElement} - html for context menu popup
 	 */
-	function prepareSubtotalAndGetPopupMenu(
-		subtotalId,
-		type,
-		parentGroupHashId,
-		evDataService
-	) {
-		var popup = document.createElement('div')
+	function prepareSubtotalAndGetPopupMenu (subtotalId, type, parentGroupHashId, evDataService) {
+
+		var popup = document.createElement('div');
 		// Victor 2021.02.01 #75 On right mouse click row don't need selected
 		/* if (isReport) {
 
-				var objects = evDataService.getObjects();
+			var objects = evDataService.getObjects();
 
-				objects.forEach(function (item) {
-					item.___is_activated = false;
-					item.___is_active_object = false;
+			objects.forEach(function (item) {
+				item.___is_activated = false;
+				item.___is_active_object = false;
 
-					evDataService.setObject(item);
+				evDataService.setObject(item);
 
-				});
+			});
 
-			}*/
+		}*/
 
-		var parent = Object.assign({}, evDataService.getData(parentGroupHashId))
+		var parent = Object.assign({}, evDataService.getData(parentGroupHashId));
 		// var subtotalType = obj.___subtotal_subtype ? obj.___subtotal_subtype : obj.___subtotal_type;
 
 		if (type === 'area') {
-			parent.___area_subtotal_context_menu_is_opened = true
+			parent.___area_subtotal_context_menu_is_opened = true;
+
 		} else if (type === 'line') {
-			parent.___line_subtotal_context_menu_is_opened = true
+			parent.___line_subtotal_context_menu_is_opened = true;
 		}
 
-		evDataService.setData(parent)
+		evDataService.setData(parent);
 
-		popup = customizePopup(popup, subtotalId)
+		popup = customizePopup(popup, subtotalId);
 
-		return popup
+		return popup;
+
 	}
 
-	function preparePopupMenuType2(objectId, classesList) {
-		var popup = document.createElement('div')
+	function preparePopupMenuType2 (objectId, classesList) {
 
-		popup.id = 'dropdown-' + objectId
+		var popup = document.createElement('div');
 
-		classesList = classesList || []
-		classesList = classesList.concat(['fade-in', 'evDropdown'])
+		popup.id = 'dropdown-' + objectId;
 
-		popup.classList.add(...classesList)
+		classesList = classesList || [];
+		classesList = classesList.concat(["fade-in", "evDropdown"]);
 
-		popup.style.position = 'absolute'
+		popup.classList.add(...classesList);
 
-		return popup
+		popup.style.position = 'absolute';
+
+		return popup;
+
 	}
 
-	function addEventListenersForPopupMenuOptions(
-		popupMenuElem,
-		optionClickCallback,
-		clearDropdownsFn
-	) {
-		var colorOpts = popupMenuElem.querySelectorAll('.gPopupMenuOption')
+	function addEventListenersForPopupMenuOptions (popupMenuElem, optionClickCallback, clearDropdownsFn) {
+
+		var colorOpts = popupMenuElem.querySelectorAll('.gPopupMenuOption');
 
 		colorOpts.forEach(function (option) {
 			option.addEventListener('click', optionClickCallback)
-		})
+		});
 
-		popupMenuElem.addEventListener('mouseleave', clearDropdownsFn)
+		popupMenuElem.addEventListener('mouseleave', clearDropdownsFn);
+
 	}
 
-	function markRowByColor(
-		objectId,
-		parentGroupHashId,
-		evDataService,
-		evEventService,
-		usersService,
-		globalDataService,
-		color
-	) {
-		var isReport = evDataService.isEntityReport()
-		var obj = evDataHelper.getObject(objectId, parentGroupHashId, evDataService)
+	function markRowByColor (objectId, parentGroupHashId, evDataService, evEventService, usersService, globalDataService, color) {
 
-		if (isReport && obj === null) {
-			// row is subtotal
+		var isReport = evDataService.isEntityReport();
+		var obj = evDataHelper.getObject(objectId, parentGroupHashId, evDataService);
 
-			const markedSubtotals = evDataService.getMarkedSubtotals()
+		if (isReport && obj === null) { // row is subtotal
+
+			const markedSubtotals = evDataService.getMarkedSubtotals();
 
 			if (color === 'undo_mark_row') {
-				delete markedSubtotals[objectId]
+				delete markedSubtotals[objectId];
 			} else {
-				markedSubtotals[objectId] = color
+				markedSubtotals[objectId] = color;
 			}
 
-			evDataService.setMarkedSubtotals(markedSubtotals)
-			evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
-			return
+			evDataService.setMarkedSubtotals(markedSubtotals);
+			evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+			return;
+
 		}
 
 		/* var entityType = evDataService.getEntityType();
-			var markedReportRows = localStorageService.getMarkedRows(isReport, entityType);
+		var markedReportRows = localStorageService.getMarkedRows(isReport, entityType);
 
-			if (color === 'undo_mark_row') {
-				delete markedReportRows[obj.id];
-			} else {
-				markedReportRows[obj.id] = {
-					color: color
-				};
-			}
+		if (color === 'undo_mark_row') {
+			delete markedReportRows[obj.id];
+		} else {
+			markedReportRows[obj.id] = {
+				color: color
+			};
+		}
 
-			localStorageService.cacheMarkedRows(isReport, entityType, markedReportRows) */
+		localStorageService.cacheMarkedRows(isReport, entityType, markedReportRows) */
 
-		var entityType = evDataService.getEntityType()
-		var entityViewersSettings =
-			globalDataService.getMemberEntityViewersSettings(isReport, entityType)
-		var markedReportRows = entityViewersSettings.marked_rows
+		var entityType = evDataService.getEntityType();
+		var entityViewersSettings = globalDataService.getMemberEntityViewersSettings(isReport, entityType);
+		var markedReportRows = entityViewersSettings.marked_rows;
 
 		/* var entityTypesSettings = member.group_tables[viewerType].tables_settings;
 
-			if (!entityTypesSettings[entityType]) {
-				entityTypesSettings[entityType] = {};
-			}
+		if (!entityTypesSettings[entityType]) {
+			entityTypesSettings[entityType] = {};
+		}
 
-			if (!entityTypesSettings[entityType].marked_rows) {
-				entityTypesSettings[entityType].marked_rows = {};
-			}
+		if (!entityTypesSettings[entityType].marked_rows) {
+			entityTypesSettings[entityType].marked_rows = {};
+		}
 
-			var markedReportRows = entityTypesSettings[entityType].marked_rows; */
+		var markedReportRows = entityTypesSettings[entityType].marked_rows; */
 
 		if (color === 'undo_mark_row') {
-			delete markedReportRows[obj.id]
+			delete markedReportRows[obj.id];
 		} else {
 			markedReportRows[obj.id] = {
-				color: color,
-			}
+				color: color
+			};
 		}
 
-		globalDataService.setMemberEntityViewersSettings(
-			entityViewersSettings,
-			isReport,
-			entityType
-		)
+		globalDataService.setMemberEntityViewersSettings(entityViewersSettings, isReport, entityType);
 
-		var member = globalDataService.getMember()
+		var member = globalDataService.getMember();
 
-		usersService.updateMember(member.id, member)
+		usersService.updateMember(member.id, member);
 
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+
 	}
 
-	function removeColorMarkFromAllRows(
-		evDataService,
-		evEventService,
-		usersService,
-		globalDataService
-	) {
-		var isReport = evDataService.isEntityReport()
-		var viewerType = isReport ? 'report_viewer' : 'entity_viewer'
+	function removeColorMarkFromAllRows (evDataService, evEventService, usersService, globalDataService) {
+
+		var isReport = evDataService.isEntityReport();
+		var viewerType = isReport ? 'report_viewer' : 'entity_viewer';
 		/* var entityType = evDataService.getEntityType();
 
-			localStorageService.cacheMarkedRows(isReport, entityType, {});
-			localStorageService.cacheRowTypeFilter(isReport, entityType, 'none'); */
-		var member = globalDataService.getMember()
-		var entityViewersSettings =
-			member.data.group_tables[viewerType].entity_viewers_settings
+		localStorageService.cacheMarkedRows(isReport, entityType, {});
+		localStorageService.cacheRowTypeFilter(isReport, entityType, 'none'); */
+		var member = globalDataService.getMember();
+		var entityViewersSettings = member.data.group_tables[viewerType].entity_viewers_settings;
 
 		if (entityViewersSettings) {
+
 			Object.keys(entityViewersSettings).forEach(function (entityType) {
-				entityViewersSettings[entityType].marked_rows = {}
+
+				entityViewersSettings[entityType].marked_rows = {};
 				entityViewersSettings[entityType].row_type_filter = 'none'
-			})
+
+			});
+
 		}
 
-		if (isReport) evDataService.setMarkedSubtotals({}) // removing color mark from all subtotal rows for specific table
+		if (isReport) evDataService.setMarkedSubtotals({}); // removing color mark from all subtotal rows for specific table
 
-		globalDataService.setMember(member)
-		usersService.updateMember(member.id, member)
+		globalDataService.setMember(member);
+		usersService.updateMember(member.id, member);
 
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+
 	}
 
-	function createRowColorPickerMenu(
-		clickData,
-		evDataService,
-		evEventService,
-		usersService,
-		globalDataService,
-		clearDropdownsFn
-	) {
+	function createRowColorPickerMenu (clickData, evDataService, evEventService, usersService, globalDataService, clearDropdownsFn) {
+
 		// var menuElem = clickData.actionElem;
-		var menuElem = clickData.target
-		var popup = preparePopupMenuType2(clickData.___id, ['ev-dropdown-popup'])
+		var menuElem = clickData.target;
+		var popup = preparePopupMenuType2(clickData.___id, ['ev-dropdown-popup']);
 
-		clearDropdownsFn()
+		clearDropdownsFn();
 
-		calculateStaticMenuPosition(popup, menuElem, 208)
+		calculateStaticMenuPosition(popup, menuElem, 208);
 
 		//region Color picker content div
-		popup.innerHTML =
-			'<div class="ev-dropdown-content g-row-color-picker-content">' +
+		popup.innerHTML = '<div class="ev-dropdown-content g-row-color-picker-content">' +
 			'<button class="g-row-color-picker-option gPopupMenuOption" data-color="undo_mark_row">' +
 			'<span class="material-icons">label_outline</span>' +
 			'</button>' +
@@ -440,24 +433,19 @@ export default function () {
 			'</div>'
 		//endregion
 
-		document.body.appendChild(popup)
+		document.body.appendChild(popup);
 
 		var onOptionClick = function (event) {
-			var rowColor = event.currentTarget.dataset.color
-			markRowByColor(
-				clickData.___id,
-				clickData.___parentId,
-				evDataService,
-				evEventService,
-				usersService,
-				globalDataService,
-				rowColor
-			)
 
-			clearDropdownsFn()
-		}
+			var rowColor = event.currentTarget.dataset.color;
+			markRowByColor(clickData.___id, clickData.___parentId, evDataService, evEventService, usersService, globalDataService, rowColor);
 
-		addEventListenersForPopupMenuOptions(popup, onOptionClick, clearDropdownsFn)
+			clearDropdownsFn();
+
+		};
+
+		addEventListenersForPopupMenuOptions(popup, onOptionClick, clearDropdownsFn);
+
 	}
 
 	//endregion
@@ -478,7 +466,7 @@ export default function () {
 
 		markRowByColor: markRowByColor,
 		removeColorMarkFromAllRows: removeColorMarkFromAllRows,
-		createRowColorPickerMenu: createRowColorPickerMenu,
+		createRowColorPickerMenu: createRowColorPickerMenu
 		//endregion
 	}
 }

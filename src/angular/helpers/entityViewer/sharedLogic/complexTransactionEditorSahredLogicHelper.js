@@ -6,155 +6,155 @@ import entityEditorHelper from '@/angularlpers/entity-editor.helper'
 import transactionHelper from '@/angularlpers/transaction.helper'
 
 export default function (viewModel, $scope, $mdDialog) {
-	const entityTabsMenuTplt =
-		'<div class="ev-editor-tabs-popup-content popup-menu">' +
-		'<md-button ng-repeat="tab in popupData.viewModel.entityTabs" ' +
-		'class="entity-tabs-menu-option popup-menu-option" ' +
-		'ng-class="popupData.viewModel.sharedLogic.getTabBtnClasses(tab)" ' +
-		'ng-click="popupData.viewModel.activeTab = tab">' +
-		'<span>{{tab.label}}</span>' +
-		'<div ng-if="popupData.viewModel.sharedLogic.isTabWithErrors(tab)" class="tab-option-error-icon">' +
-		'<span class="material-icons orange-text">info<md-tooltip class="tooltip_2 error-tooltip" md-direction="top">Tab has errors</md-tooltip></span>' +
-		'</div>' +
-		'</md-button>' +
-		'</div>'
+    const entityTabsMenuTplt =
+        '<div class="ev-editor-tabs-popup-content popup-menu">' +
+        '<md-button ng-repeat="tab in popupData.viewModel.entityTabs" ' +
+        'class="entity-tabs-menu-option popup-menu-option" ' +
+        'ng-class="popupData.viewModel.sharedLogic.getTabBtnClasses(tab)" ' +
+        'ng-click="popupData.viewModel.activeTab = tab">' +
+        '<span>{{tab.label}}</span>' +
+        '<div ng-if="popupData.viewModel.sharedLogic.isTabWithErrors(tab)" class="tab-option-error-icon">' +
+        '<span class="material-icons orange-text">info<md-tooltip class="tooltip_2 error-tooltip" md-direction="top">Tab has errors</md-tooltip></span>' +
+        '</div>' +
+        '</md-button>' +
+        '</div>'
 
-	const getTabBtnClasses = function (tab) {
-		var result = []
+    const getTabBtnClasses = function (tab) {
+        var result = []
 
-		if (viewModel.activeTab.label === tab.label) {
-			result.push('active-tab-button')
-		}
+        if (viewModel.activeTab.label === tab.label) {
+            result.push('active-tab-button')
+        }
 
-		// if (isTabWithErrors(tab)) {
-		// 	result.push('error-menu-option');
-		// }
+        // if (isTabWithErrors(tab)) {
+        //     result.push('error-menu-option');
+        // }
 
-		return result
-	}
+        return result
+    }
 
-	const removeUserInputsInvalidForRecalculation = function (
-		inputsList,
-		actualUserInputs
-	) {
-		inputsList.forEach(function (inputName, index) {
-			// remove deleted inputs from list for recalculation
+    const removeUserInputsInvalidForRecalculation = function (
+        inputsList,
+        actualUserInputs
+    ) {
+        inputsList.forEach(function (inputName, index) {
+            // remove deleted inputs from list for recalculation
 
-			let inputInvalid = true
+            let inputInvalid = true
 
-			if (inputName) {
-				for (let i = 0; i < actualUserInputs.length; i++) {
-					if (inputName === actualUserInputs[i].name) {
-						// whether input actually exist
+            if (inputName) {
+                for (let i = 0; i < actualUserInputs.length; i++) {
+                    if (inputName === actualUserInputs[i].name) {
+                        // whether input actually exist
 
-						if (actualUserInputs[i].value_expr) {
-							// whether input has expression for recalculation
+                        if (actualUserInputs[i].value_expr) {
+                            // whether input has expression for recalculation
 
-							inputInvalid = false
-						}
+                            inputInvalid = false
+                        }
 
-						break
-					}
-				}
-			}
+                        break
+                    }
+                }
+            }
 
-			if (inputInvalid) {
-				inputsList.splice(index, 1)
-			}
-		})
+            if (inputInvalid) {
+                inputsList.splice(index, 1)
+            }
+        })
 
-		// return inputsList;
-	}
+        // return inputsList;
+    }
 
-	const preRecalculationActions = (inputs, updateScope) => {
-		let book = {
-			transaction_type: viewModel.entity.transaction_type,
-			recalculate_inputs: inputs,
-			process_mode: 'recalculate',
-			values: {},
-		}
+    const preRecalculationActions = (inputs, updateScope) => {
+        let book = {
+            transaction_type: viewModel.entity.transaction_type,
+            recalculate_inputs: inputs,
+            process_mode: 'recalculate',
+            values: {},
+        }
 
-		// const allUserInputs = viewModel.transactionType.inputs || [];
+        // const allUserInputs = viewModel.transactionType.inputs || [];
 
-		/* viewModel.userInputs.forEach(function (item) {
+        /* viewModel.userInputs.forEach(function (item) {
                 book.values[item.name] = viewModel.entity[item.name]
             });
 
             allUserInputs.forEach(function (item) {
                 book.values[item.name] = viewModel.entity[item.name]
             }); */
-		book.values = mapUserInputsOnEntityValues(book.values)
+        book.values = mapUserInputsOnEntityValues(book.values)
 
-		viewModel.evEditorDataService.setUserInputsToRecalculate(inputs)
-		viewModel.evEditorEventService.dispatchEvent(
-			evEditorEvents.FIELDS_RECALCULATION_START
-		)
+        viewModel.evEditorDataService.setUserInputsToRecalculate(inputs)
+        viewModel.evEditorEventService.dispatchEvent(
+            evEditorEvents.FIELDS_RECALCULATION_START
+        )
 
-		if (updateScope) $scope.$apply()
+        if (updateScope) $scope.$apply()
 
-		return book
-	}
+        return book
+    }
 
-	const processRecalculationResolve = function (
-		recalculationPromise,
-		inputs,
-		recalculationData
-	) {
-		recalculationPromise.then(function (data) {
+    const processRecalculationResolve = function (
+        recalculationPromise,
+        inputs,
+        recalculationData
+    ) {
+        recalculationPromise.then(function (data) {
 
 
 
-			inputs.forEach((inputName) => {
-				viewModel.entity.values[inputName] = data.values[inputName]
+            inputs.forEach((inputName) => {
+                viewModel.entity.values[inputName] = data.values[inputName]
 
-				if (data.values[inputName + '_object']) {
-					viewModel.entity.values[inputName + '_object'] =
-						data.values[inputName + '_object']
-				}
+                if (data.values[inputName + '_object']) {
+                    viewModel.entity.values[inputName + '_object'] =
+                        data.values[inputName + '_object']
+                }
 
-				let recalculatedUserInput = viewModel.userInputs.find(
-					(input) => input.name === inputName
-				)
+                let recalculatedUserInput = viewModel.userInputs.find(
+                    (input) => input.name === inputName
+                )
 
-				if (recalculatedUserInput)
-					recalculatedUserInput.frontOptions.recalculated = recalculationData
-			})
+                if (recalculatedUserInput)
+                    recalculatedUserInput.frontOptions.recalculated = recalculationData
+            })
 
-			viewModel.evEditorEventService.dispatchEvent(
-				evEditorEvents.FIELDS_RECALCULATION_END
-			)
+            viewModel.evEditorEventService.dispatchEvent(
+                evEditorEvents.FIELDS_RECALCULATION_END
+            )
 
-			$scope.$apply()
-		})
-	}
+            $scope.$apply()
+        })
+    }
 
-	const mapUserInputsOnEntityValues = function (entityValues) {
-		if (!entityValues) entityValues = {}
-		const allUserInputs = viewModel.transactionType.inputs || []
+    const mapUserInputsOnEntityValues = function (entityValues) {
+        if (!entityValues) entityValues = {}
+        const allUserInputs = viewModel.transactionType.inputs || []
 
-		allUserInputs.forEach((uInput) => {
-			if (uInput !== null) {
-				if (viewModel.entity.values.hasOwnProperty(uInput.name)) {
-					entityValues[uInput.name] = viewModel.entity.values[uInput.name]
+        allUserInputs.forEach((uInput) => {
+            if (uInput !== null) {
+                if (viewModel.entity.values.hasOwnProperty(uInput.name)) {
+                    entityValues[uInput.name] = viewModel.entity.values[uInput.name]
 
-					if (uInput.value_type === 120) entityValues[uInput.name] = true // Required for button user input
-				}
-			}
-		})
+                    if (uInput.value_type === 120) entityValues[uInput.name] = true // Required for button user input
+                }
+            }
+        })
 
-		return entityValues
-	}
+        return entityValues
+    }
 
-	const updateAttributesInsideEntity = function (attrsList) {
-		viewModel.tabs.forEach(function (tab) {
-			tab.layout.fields.forEach(function (field) {
-				if (field.attribute_class === 'attr') {
-					const attrType = viewModel.attrs.find(
-						(attr) => attr.user_code === field.attribute.user_code
-					)
+    const updateAttributesInsideEntity = function (attrsList) {
+        viewModel.tabs.forEach(function (tab) {
+            tab.layout.fields.forEach(function (field) {
+                if (field.attribute_class === 'attr') {
+                    const attrType = viewModel.attrs.find(
+                        (attr) => attr.user_code === field.attribute.user_code
+                    )
 
-					if (attrType) {
-						/* const attrIndex = attrsList.findIndex(attr => attr.attribute_type_object.user_code === field.attribute.user_code);
+                    if (attrType) {
+                        /* const attrIndex = attrsList.findIndex(attr => attr.attribute_type_object.user_code === field.attribute.user_code);
 
                             if (attrIndex < 0) {
                                 attrsList.push(entityEditorHelper.appendAttribute(attrType));
@@ -176,73 +176,73 @@ export default function (viewModel, $scope, $mdDialog) {
                                 }
 
                             } */
-						attrsList = entityEditorHelper.updateAttribute(attrsList, attrType)
-					} /*else {
-							// TODO: process dynamic attributes inside tabs that were deleted or whose user_code changed
-						}*/
-				}
-			})
-		})
+                        attrsList = entityEditorHelper.updateAttribute(attrsList, attrType)
+                    } /*else {
+                            // TODO: process dynamic attributes inside tabs that were deleted or whose user_code changed
+                        }*/
+                }
+            })
+        })
 
-		return attrsList
-	}
+        return attrsList
+    }
 
-	const postBookRebookActions = function (cTransactionData, recalculateFn) {
-		// ng-repeat with bindFieldControlDirective may not update without this
-		viewModel.tabs = {}
-		viewModel.fixedArea = {}
-		// < ng-repeat with bindFieldControlDirective may not update without this >
+    const postBookRebookActions = function (cTransactionData, recalculateFn) {
+        // ng-repeat with bindFieldControlDirective may not update without this
+        viewModel.tabs = {}
+        viewModel.fixedArea = {}
+        // < ng-repeat with bindFieldControlDirective may not update without this >
 
-		if (Array.isArray(cTransactionData.book_transaction_layout.data)) {
-			viewModel.tabs = cTransactionData.book_transaction_layout.data
-		} else {
-			viewModel.tabs = cTransactionData.book_transaction_layout.data.tabs
-			viewModel.fixedArea =
-				cTransactionData.book_transaction_layout.data.fixedArea
-		}
+        if (Array.isArray(cTransactionData.book_transaction_layout.data)) {
+            viewModel.tabs = cTransactionData.book_transaction_layout.data
+        } else {
+            viewModel.tabs = cTransactionData.book_transaction_layout.data.tabs
+            viewModel.fixedArea =
+                cTransactionData.book_transaction_layout.data.fixedArea
+        }
 
-		const dataConstructorLayout = JSON.parse(
-			JSON.stringify(cTransactionData.book_transaction_layout)
-		) // unchanged layout that is used to remove fields without attributes
+        const dataConstructorLayout = JSON.parse(
+            JSON.stringify(cTransactionData.book_transaction_layout)
+        ) // unchanged layout that is used to remove fields without attributes
 
-		viewModel.entity.attributes = updateAttributesInsideEntity(
-			viewModel.entity.attributes
-		)
+        viewModel.entity.attributes = updateAttributesInsideEntity(
+            viewModel.entity.attributes
+        )
 
-		viewModel.userInputs = transactionHelper.updateTransactionUserInputs(
-			viewModel.userInputs,
-			viewModel.tabs,
-			viewModel.fixedArea,
-			viewModel.transactionType
-		)
+        viewModel.userInputs = transactionHelper.updateTransactionUserInputs(
+            viewModel.userInputs,
+            viewModel.tabs,
+            viewModel.fixedArea,
+            viewModel.transactionType
+        )
 
-		viewModel.inputsWithCalculations =
-			cTransactionData.transaction_type_object.inputs
+        viewModel.inputsWithCalculations =
+            cTransactionData.transaction_type_object.inputs
 
-		if (viewModel.inputsWithCalculations) {
-			viewModel.inputsWithCalculations.forEach(function (inputWithCalc) {
-				viewModel.userInputs.forEach(function (userInput) {
-					if (userInput.name === inputWithCalc.name) {
-						if (!userInput.buttons) {
-							userInput.buttons = []
-						}
+        if (viewModel.inputsWithCalculations) {
+            viewModel.inputsWithCalculations.forEach(function (inputWithCalc) {
+                viewModel.userInputs.forEach(function (userInput) {
+                    if (userInput.name === inputWithCalc.name) {
+                        if (!userInput.buttons) {
+                            userInput.buttons = []
+                        }
 
-						if (inputWithCalc.can_recalculate === true) {
-							userInput.buttons.push({
-								// iconObj: {type: 'fontawesome', icon: 'fas fa-redo'},
-								iconObj: { type: 'angular-material', icon: 'refresh' },
-								tooltip: 'Recalculate this field',
-								caption: '',
-								classes: '',
-								action: {
-									key: 'input-recalculation',
-									callback: recalculateFn,
-									parameters: {
-										inputs: [inputWithCalc.name],
-										recalculationData: 'input',
-									},
-								},
-							})
+                        if (inputWithCalc.can_recalculate === true) {
+                            userInput.buttons.push({
+                                // iconObj: {type: 'fontawesome', icon: 'fas fa-redo'},
+                                iconObj: { type: 'angular-material', icon: 'refresh' },
+                                tooltip: 'Recalculate this field',
+                                caption: '',
+                                classes: '',
+                                action: {
+                                    key: 'input-recalculation',
+                                    callback: recalculateFn,
+                                    parameters: {
+                                        inputs: [inputWithCalc.name],
+                                        recalculationData: 'input',
+                                    },
+                                },
+    						})
 						}
 
 						if (

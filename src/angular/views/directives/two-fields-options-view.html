@@ -2,16 +2,16 @@
      class="two-fields-options-content"
      ng-class="{'two-fields-strict-order': strictOrder}">
 
-	<div class="two-fields-field-container"
-		 layout="column"
+    <div class="two-fields-field-container"
+         layout="column"
          ng-class="{'two-fields-options-with-checkboxes': availableOptionsCheckboxes}"
-		 style="width: 450px">
-		<p class="two-fields-area-h text-bold">Available</p>
+         style="width: 450px">
+        <p class="two-fields-area-h text-bold">Available</p>
 
         <input type="search"
-			   placeholder="Search for a ..."
-			   data-ng-model="availableSearchTerm"
-			   class="two-fields-filter-input">
+               placeholder="Search for a ..."
+               data-ng-model="availableSearchTerm"
+               class="two-fields-filter-input">
 
         <div class="all-options-field two-fields-options">
 
@@ -30,16 +30,16 @@
                 <p class="two-fields-option-text" ng-bind="option['{{nameProperty}}']"></p>
 
             </div>
-		</div>
-	</div>
+        </div>
+    </div>
 
-	<div class="two-fields-buttons" layout="column" layout-align="space-between center">
+    <div class="two-fields-buttons" layout="column" layout-align="space-between center">
 
         <div layout="column" layout-align="center center">
 
             <md-button class="two-fields-select-btn two-fields-btn"
                        data-ng-click="switchOptions('select')">
-    <!--			<ng-md-icon icon="chevron_right" size="30"></ng-md-icon>-->
+    <!--            <ng-md-icon icon="chevron_right" size="30"></ng-md-icon>-->
                 <span class="material-icons">chevron_right</span>
             </md-button>
 
@@ -59,7 +59,7 @@
 
             <md-button class="two-fields-select-btn two-fields-btn"
                        data-ng-click="switchOptions('deselect')">
-    <!--			<ng-md-icon icon="chevron_left" size="30"></ng-md-icon>-->
+    <!--            <ng-md-icon icon="chevron_left" size="30"></ng-md-icon>-->
                 <span class="material-icons">chevron_left</span>
             </md-button>
 
@@ -91,21 +91,21 @@
             </md-button>
         </div>
 
-	</div>
+    </div>
 
-	<div class="two-fields-field-container"
-		 layout="column"
-		 style="width: 450px"
+    <div class="two-fields-field-container"
+         layout="column"
+         style="width: 450px"
          ng-class="{'two-fields-options-with-checkboxes': selOptionsCheckboxes}">
-			<p class="two-fields-area-h text-bold">Selected</p>
+            <p class="two-fields-area-h text-bold">Selected</p>
 
         <input type="search"
-				   placeholder="Search for a ..."
-				   ng-model="selOptionsFilter"
-				   class="two-fields-filter-input">
+                   placeholder="Search for a ..."
+                   ng-model="selOptionsFilter"
+                   class="two-fields-filter-input">
 
             <div class="selected-options-field two-fields-options twoFieldsSelRowsContainer">
-				<div ng-repeat="sOption in selectedOptions | orderBy: selOptionsOrderSettings | filter: {[nameProperty]: selOptionsFilter} as results track by sOption.id"
+                <div ng-repeat="sOption in selectedOptions | orderBy: selOptionsOrderSettings | filter: {[nameProperty]: selOptionsFilter} as results track by sOption.id"
                      class="two-fields-selected-option two-fields-option"
                      ng-class="{'active-option': sOption.isActive}"
                      data-ng-click="sOption.isActive = !sOption.isActive"
@@ -127,6 +127,6 @@
                     <p class="two-fields-option-text" ng-bind="sOption['{{nameProperty}}']"></p>
 
                 </div>
-			</div>
-	</div>
+            </div>
+    </div>
 </div>

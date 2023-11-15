@@ -12,138 +12,138 @@ import ErrorService from '../../shell/scripts/app/services/errorService'
 import XhrService from '../../shell/scripts/app/services/xhrService'
 
 /*var errorService = require('./errorService');
-	var axService = require('./axService');*/
+    var axService = require('./axService');*/
 const toastNotificationService = new ToastNotificationService()
 const errorService = new ErrorService(toastNotificationService)
 const xhrService = new XhrService(errorService)
 
 /*var fetch = function (url, params, options) {
 
-		if (!options) options = {};
+        if (!options) options = {};
 
-		var requestId;
+        var requestId;
 
-		if (window.developerConsoleService) {
-			requestId = window.developerConsoleService.pushRequest({
-				url: url,
-				params: params
-			})
-		}
+        if (window.developerConsoleService) {
+            requestId = window.developerConsoleService.pushRequest({
+                url: url,
+                params: params
+            })
+        }
 
-		params.url = url
+        params.url = url
 
-		return axService.ax.request(params)
-			.then(function (response) {
+        return axService.ax.request(params)
+            .then(function (response) {
 
-				return new Promise(function (resolve, reject) {
+                return new Promise(function (resolve, reject) {
 
-					if (window.developerConsoleService) {
-						window.developerConsoleService.resolveRequest(requestId, response.clone())
-					}
+                    if (window.developerConsoleService) {
+                        window.developerConsoleService.resolveRequest(requestId, response.clone())
+                    }
 
-					if (response.status === 204) { // No content
-						resolve(response);
-					}
-					else if (response.status >= 400 && response.status < 500) {
+                    if (response.status === 204) { // No content
+                        resolve(response);
+                    }
+                    else if (response.status >= 400 && response.status < 500) {
 
-						if (response.headers.get('Content-Type').indexOf('json') !== -1 ) {
+                        if (response.headers.get('Content-Type').indexOf('json') !== -1 ) {
 
-							response.json().then(function (data) {
+                            response.json().then(function (data) {
 
-								var error = {
-									status: response.status,
-									statusText: response.statusText,
-									message: data
-								};
+                                var error = {
+                                    status: response.status,
+                                    statusText: response.statusText,
+                                    message: data
+                                };
 
-								reject(error)
+                                reject(error)
 
-							})
-						} else {
-							var error = {
-								status: response.status,
-								statusText: response.statusText,
-								message: '-'
-							};
+                            })
+                        } else {
+                            var error = {
+                                status: response.status,
+                                statusText: response.statusText,
+                                message: '-'
+                            };
 
-							reject(error)
+                            reject(error)
 
-						}
+                        }
 
-					} else if (response.status >= 500 && response.status < 600) {
+                    } else if (response.status >= 500 && response.status < 600) {
 
-						;
+                        ;
 
-						try {
+                        try {
 
-							response.json().then(function (data) {
+                            response.json().then(function (data) {
 
-								var error = {
-									status: response.status,
-									statusText: response.statusText,
-									message: data
-								};
+                                var error = {
+                                    status: response.status,
+                                    statusText: response.statusText,
+                                    message: data
+                                };
 
-								reject(error)
+                                reject(error)
 
-							}).catch(function(data){
+                            }).catch(function(data){
 
-								var error = {
-									status: response.status,
-									statusText: response.statusText,
-									message: data
-								};
+                                var error = {
+                                    status: response.status,
+                                    statusText: response.statusText,
+                                    message: data
+                                };
 
-								reject(error)
+                                reject(error)
 
-							})
+                            })
 
-						} catch (e) {
+                        } catch (e) {
 
-							var error = {
-								status: response.status,
-								statusText: response.statusText,
-								message: response.text()
-							};
+                            var error = {
+                                status: response.status,
+                                statusText: response.statusText,
+                                message: response.text()
+                            };
 
-							reject(error)
+                            reject(error)
 
-						}
+                        }
 
-					} else {
+                    } else {
 
-						if (params.method !== "DELETE") {
-							resolve(response.data);
-						}
-						else {
-							resolve(response);
-						}
+                        if (params.method !== "DELETE") {
+                            resolve(response.data);
+                        }
+                        else {
+                            resolve(response);
+                        }
 
 
 
-					}
+                    }
 
-				})
-			})
-			.catch(function (reason) {
+                })
+            })
+            .catch(function (reason) {
 
-				if (window.developerConsoleService) {
-					window.developerConsoleService.rejectRequest(requestId, reason)
-				}
+                if (window.developerConsoleService) {
+                    window.developerConsoleService.rejectRequest(requestId, reason)
+                }
 
-				// if (options.notifyError !== false) errorService.notifyError(reason);
+                // if (options.notifyError !== false) errorService.notifyError(reason);
 
-				errorService.recordError(reason)
-				errorService.notifyError(reason)
+                errorService.recordError(reason)
+                errorService.notifyError(reason)
 
-				;
+                ;
 
-				throw reason;
+                throw reason;
 
-			})
+            })
 
-	};*/
+    };*/
 
 export default {
-	fetch: xhrService.fetch,
+    fetch: xhrService.fetch,
 }

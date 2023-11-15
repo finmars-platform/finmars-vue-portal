@@ -34,6 +34,7 @@
 		],
 	})
 
+    let store = useStore();
 	let evAttrsStore = useEvAttributesStore();
 
 	/*
@@ -71,10 +72,11 @@
 
     vm.value = await initReportViewerController(
         $scope.contentType,
-				evAttrsStore,
-				{
-          $scope,
-          $stateParams: route.params,
+		evAttrsStore,
+		{
+            $scope,
+            store,
+            $stateParams: route.params,
       	}
       )
 
