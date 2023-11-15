@@ -3,9 +3,9 @@ import main from './_main.js'
 import iam from './_iam.js'
 
 export default {
-	// Auth service
-	...auth,
-	// Main service
-	...main,
-	...iam
+    // Auth service
+    ...auth,
+    // Main service
+    ...main,
+    ...iam
 };

@@ -12,39 +12,44 @@ export default function () {
 		controller: [
 			'$scope',
 			function gFiltersController($scope) {
-				let vm = this
 
-				$scope.isReport = $scope.evDataService.isEntityReport()
+				let vm = this;
 
-				$scope.selectedRowsCount = 0
-				const selectedRowsActionBlockElement =
-					$scope.contentWrapElement.querySelector('.activeRowsActions')
+				$scope.isReport = $scope.evDataService.isEntityReport();
 
-				const countSelectedRows = (tree) => {
-					let count = 0
+				$scope.selectedRowsCount = 0;
+				const selectedRowsActionBlockElement = $scope.contentWrapElement.querySelector('.activeRowsActions');
 
-					tree.forEach((subtotal) => {
-						const isSubtotalSelected =
-							subtotal.___level !== 0 &&
-							(subtotal.___is_area_subtotal_activated ||
-								subtotal.___is_line_subtotal_activated)
+				const countSelectedRows = rowsList => {
+
+					let count = 0;
+
+					rowsList.forEach(rowData => {
+
+						//# region For report viewer
+						const isSubtotalSelected = rowData.___level !== 0 && (rowData.___is_area_subtotal_activated || rowData.___is_line_subtotal_activated);
 
 						if (isSubtotalSelected) {
-							count++
+							count++;
+						}
+						//# endregions
+
+						/*if (rowData.results) {
+                            rowData.results.forEach(obj => {
+                                const isObjSelected = obj.id && obj.___is_activated
+                                if (isObjSelected) {
+                                    count++;
+                                }
+                            })
+                        }*/
+						if (rowData.___type === 'object' && rowData.___is_activated) {
+							count++;
 						}
 
-						if (subtotal.results) {
-							subtotal.results.forEach((obj) => {
-								const isObjSelected = obj.id && obj.___is_activated
-								if (isObjSelected) {
-									count++
-								}
-							})
-						}
-					})
+					});
 
-					return count
-				}
+					return count;
+				};
 
 				/* const clearAllRowsSelection = () => {
 
@@ -77,36 +82,38 @@ export default function () {
 				}; */
 
 				$scope.closeSelectedRowsActions = function () {
+
 					// $scope.selectedRowsCount = 0;
 					// clearAllRowsSelection();
-					selectedRowsActionBlockElement.classList.add('display-none')
-				}
+					selectedRowsActionBlockElement.classList.add('display-none');
+
+				};
 
 				const init = function () {
-					$scope.evEventService.addEventListener(
-						evEvents.ROW_ACTIVATION_CHANGE,
-						function () {
-							const allData = $scope.evDataService.getDataAsList()
-							$scope.selectedRowsCount = countSelectedRows(allData)
 
-							if ($scope.selectedRowsCount > 1) {
-								selectedRowsActionBlockElement.classList.remove('display-none')
-								setTimeout(() => $scope.$apply())
-							} else {
-								selectedRowsActionBlockElement.classList.add('display-none')
-							}
+					$scope.evEventService.addEventListener(evEvents.ROW_ACTIVATION_CHANGE, function () {
+
+						const allData = $scope.evDataService.getDataAsList();
+						$scope.selectedRowsCount = countSelectedRows(allData);
+
+						if ($scope.selectedRowsCount > 1) {
+
+							selectedRowsActionBlockElement.classList.remove('display-none');
+							setTimeout(() => $scope.$apply());
+
+						} else {
+							$scope.closeSelectedRowsActions();
 						}
-					)
 
-					$scope.evEventService.addEventListener(
-						evEvents.HIDE_BULK_ACTIONS_AREA,
-						function () {
-							selectedRowsActionBlockElement.classList.add('display-none')
-						}
-					)
-				}
+					});
 
-				init()
+					$scope.evEventService.addEventListener(evEvents.HIDE_BULK_ACTIONS_AREA, $scope.closeSelectedRowsActions);
+
+					$scope.evEventService.addEventListener(evEvents.DATA_LOAD_START, $scope.closeSelectedRowsActions);
+				};
+
+				init();
+
 			},
 		],
 	}

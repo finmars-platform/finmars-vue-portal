@@ -436,3 +436,29 @@ export const initReportViewerController = async function (contentType, evAttrsSt
 	return new reportViewerController(reportViewerOptions);
 
 }
+
+const _getParent = function (parentId, evDataService, results) {
+
+	var item = evDataService.getData(parentId);
+
+	results.push(item);
+
+	if (item.___parentId !== null) {
+
+		_getParent(item.___parentId, evDataService, results);
+
+	}
+
+	return results;
+
+};
+
+export const useGetEvRvParents = function (parentId, evDataService) {
+
+	var results = [];
+
+	results = _getParent(parentId, evDataService, results);
+
+	return results;
+
+};
