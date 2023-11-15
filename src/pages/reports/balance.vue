@@ -16,7 +16,7 @@
 			layout-sm="column"
 			layout-align="space-around"
 		>
-			<FmLoader></FmLoader>
+			<FmLoader />
 		</div>
 	</div>
 </template>

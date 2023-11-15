@@ -271,10 +271,11 @@
 			title="Add columns"
 			:attributes="allAttrs"
 			:selected="selectedAttrs"
+			:disabledAttributes="selectedAttrs"
 			:type="contentType"
 			@selectedAttributesChanged="addColumn"
-		>
-		</LazyFmAttributesSelectModal>
+		/>
+
 		<LazyFmNumberFormat
 			v-if="numberFormatEdit"
 			v-model="numberFormatEdit"
@@ -374,11 +375,14 @@
 
 	const isOpenAttrsSelector = ref(false)
 
-	let columns = ref(getColumns())
+	let columns = ref( getColumns() )
 
-	let groupsRef = ref(null)
-	groupsRef.value = getGroups()
+	let groupsRef = ref( getGroups() )
 
+	/** @type {ComputedRef<Array<String>>} - array of keys of attributes for groups and columns */
+	let selectedAttrs = computed(() => {
+		return columns.value.map(item => item.key);
+	});
 	// let columnsToShow = ref([])
 
 	let filters = evDataService.getFilters()
@@ -2032,7 +2036,7 @@
 
 	let columnsEdit = ref(false)
 	const allAttrs = ref([])
-	const selectedAttrs = ref([])
+	// const selectedAttrs = ref([])
 	const numberFormatEdit = ref(false)
 	/*let renameColumn = asyncrenameOpened function (itemKey, closeCb) {
 
@@ -2145,7 +2149,7 @@
 		// }
 
 		allAttrs.value = evAttrsStore.getDataForAttributesSelector(contentType)
-		selectedAttrs.value = columns.value.map((col) => col.key)
+		// selectedAttrs.value = columns.value.map((col) => col.key)
 
 		// console.log('columns', columns.value)
 		// console.log('selectedAttrs', selectedAttrs)
