@@ -26,83 +26,83 @@ const baseUrl = baseUrlService.resolve()
 // const authorizerUrl = baseUrlService.getAuthorizerUrl();
 
 /* var handleError = function (methodName) {
-	;
+    ;
 };
 
 var login = function (login, password) {
 
-	var prefix = baseUrlService.getMasterUserPrefix();
-	var apiVersion = baseUrlService.getApiVersion();
+    var prefix = baseUrlService.getMasterUserPrefix();
+    var apiVersion = baseUrlService.getApiVersion();
 
-	return xhrService.fetch(baseUrl + '/' + prefix + '/' + apiVersion + '/' + 'users/login/', {
-		method: 'POST',
-		credentials: 'include',
-		headers: {
-			'X-CSRFToken': cookieService.getCookie('csrftoken'),
-			'Authorization': 'Token ' + cookieService.getCookie('access_token'),
-			Accept: 'application/json',
-			'Content-type': 'application/json'
-		},
-		body: JSON.stringify({username: login, password: password})
-	})
+    return xhrService.fetch(baseUrl + '/' + prefix + '/' + apiVersion + '/' + 'users/login/', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'X-CSRFToken': cookieService.getCookie('csrftoken'),
+            'Authorization': 'Token ' + cookieService.getCookie('access_token'),
+            Accept: 'application/json',
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify({username: login, password: password})
+    })
 };
 
 var logout = function () {
 
-	var prefix = baseUrlService.getMasterUserPrefix();
-	var apiVersion = baseUrlService.getApiVersion();
+    var prefix = baseUrlService.getMasterUserPrefix();
+    var apiVersion = baseUrlService.getApiVersion();
 
-	return xhrService.fetch(baseUrl + '/' + prefix + '/' + apiVersion + '/' + 'users/logout/', {
-		method: 'POST',
-		credentials: 'include',
-		headers: {
-			'X-CSRFToken': cookieService.getCookie('csrftoken'),
-			'Authorization': 'Token ' + cookieService.getCookie('access_token'),
-			Accept: 'application/json',
-			'Content-type': 'application/json'
-		},
-		body: JSON.stringify({})
-	})
+    return xhrService.fetch(baseUrl + '/' + prefix + '/' + apiVersion + '/' + 'users/logout/', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'X-CSRFToken': cookieService.getCookie('csrftoken'),
+            'Authorization': 'Token ' + cookieService.getCookie('access_token'),
+            Accept: 'application/json',
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify({})
+    })
 }; */
 
 export default function () {
-	const ping = function () {
-		const prefix = baseUrlService.getMasterUserPrefix()
-		const apiVersion = baseUrlService.getApiVersion()
+    const ping = function () {
+        const prefix = baseUrlService.getMasterUserPrefix()
+        const apiVersion = baseUrlService.getApiVersion()
 
-		return xhrService.fetch(
-			baseUrl + '/' + prefix + '/' + apiVersion + '/' + 'users/ping/',
-			{
-				method: 'GET',
-				credentials: 'include',
-				headers: {
-					Authorization: 'Token ' + cookieService.getCookie('access_token'),
-					Accept: 'application/json',
-					'Content-type': 'application/json',
-				},
-			}
-		)
-	}
+        return xhrService.fetch(
+            baseUrl + '/' + prefix + '/' + apiVersion + '/' + 'users/ping/',
+            {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    Authorization: 'Token ' + cookieService.getCookie('access_token'),
+                    Accept: 'application/json',
+                    'Content-type': 'application/json',
+                },
+            }
+        )
+    }
 
-	const protectedPing = function () {
-		const prefix = baseUrlService.getMasterUserPrefix()
-		const apiVersion = baseUrlService.getApiVersion()
+    const protectedPing = function () {
+        const prefix = baseUrlService.getMasterUserPrefix()
+        const apiVersion = baseUrlService.getApiVersion()
 
-		return xhrService.fetch(
-			baseUrl + '/' + prefix + '/' + apiVersion + '/' + 'users/protected-ping/',
-			{
-				method: 'GET',
-				credentials: 'include',
-				headers: {
-					Authorization: 'Token ' + cookieService.getCookie('access_token'),
-					Accept: 'application/json',
-					'Content-type': 'application/json',
-				},
-			}
-		)
-	}
+        return xhrService.fetch(
+            baseUrl + '/' + prefix + '/' + apiVersion + '/' + 'users/protected-ping/',
+            {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    Authorization: 'Token ' + cookieService.getCookie('access_token'),
+                    Accept: 'application/json',
+                    'Content-type': 'application/json',
+                },
+            }
+        )
+    }
 
-	/* const getList = function () {
+    /* const getList = function () {
 
         const prefix = baseUrlService.getMasterUserPrefix();
         const apiVersion = baseUrlService.getApiVersion();
@@ -354,145 +354,145 @@ export default function () {
         })
     }; */
 
-	const getMyCurrentMember = function () {
-		const baseUrl = baseUrlService.resolve()
-		const prefix = baseUrlService.getMasterUserPrefix()
+    const getMyCurrentMember = function () {
+        const baseUrl = baseUrlService.resolve()
+        const prefix = baseUrlService.getMasterUserPrefix()
 
-		const apiVersion = baseUrlService.getApiVersion()
+        const apiVersion = baseUrlService.getApiVersion()
 
-		return xhrService.fetch(
-			baseUrl + '/' + prefix + '/' + apiVersion + '/' + 'users/member/0/',
-			{
-				method: 'GET',
-				credentials: 'include',
-				headers: {
-					Authorization: 'Token ' + cookieService.getCookie('access_token'),
-					Accept: 'application/json',
-					'Content-type': 'application/json',
-				},
-			}
-		)
-	}
+        return xhrService.fetch(
+            baseUrl + '/' + prefix + '/' + apiVersion + '/' + 'users/member/0/',
+            {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    Authorization: 'Token ' + cookieService.getCookie('access_token'),
+                    Accept: 'application/json',
+                    'Content-type': 'application/json',
+                },
+            }
+        )
+    }
 
-	const getMemberList = function () {
-		var prefix = baseUrlService.getMasterUserPrefix()
-		var apiVersion = baseUrlService.getApiVersion()
+    const getMemberList = function () {
+        var prefix = baseUrlService.getMasterUserPrefix()
+        var apiVersion = baseUrlService.getApiVersion()
 
-		return xhrService.fetch(
-			baseUrl + '/' + prefix + '/' + apiVersion + '/' + 'users/member/',
-			{
-				method: 'GET',
-				credentials: 'include',
-				headers: {
-					Authorization: 'Token ' + cookieService.getCookie('access_token'),
-					Accept: 'application/json',
-					'Content-type': 'application/json',
-				},
-			}
-		)
-	}
+        return xhrService.fetch(
+            baseUrl + '/' + prefix + '/' + apiVersion + '/' + 'users/member/',
+            {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    Authorization: 'Token ' + cookieService.getCookie('access_token'),
+                    Accept: 'application/json',
+                    'Content-type': 'application/json',
+                },
+            }
+        )
+    }
 
-	const getMemberByKey = function (id) {
-		var prefix = baseUrlService.getMasterUserPrefix()
-		var apiVersion = baseUrlService.getApiVersion()
+    const getMemberByKey = function (id) {
+        var prefix = baseUrlService.getMasterUserPrefix()
+        var apiVersion = baseUrlService.getApiVersion()
 
-		return xhrService.fetch(
-			baseUrl + '/' + prefix + '/' + apiVersion + '/' + 'users/member/' + id,
-			{
-				method: 'GET',
-				credentials: 'include',
-				headers: {
-					Authorization: 'Token ' + cookieService.getCookie('access_token'),
-					Accept: 'application/json',
-					'Content-type': 'application/json',
-				},
-			}
-		)
-	}
+        return xhrService.fetch(
+            baseUrl + '/' + prefix + '/' + apiVersion + '/' + 'users/member/' + id,
+            {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    Authorization: 'Token ' + cookieService.getCookie('access_token'),
+                    Accept: 'application/json',
+                    'Content-type': 'application/json',
+                },
+            }
+        )
+    }
 
-	const updateMember = function (id, user) {
-		var prefix = baseUrlService.getMasterUserPrefix()
-		var apiVersion = baseUrlService.getApiVersion()
+    const updateMember = function (id, user) {
+        var prefix = baseUrlService.getMasterUserPrefix()
+        var apiVersion = baseUrlService.getApiVersion()
 
-		return xhrService.fetch(
-			baseUrl +
-				'/' +
-				prefix +
-				'/' +
-				apiVersion +
-				'/' +
-				'users/member/' +
-				id +
-				'/',
-			{
-				method: 'PUT',
-				credentials: 'include',
-				headers: {
-					Authorization: 'Token ' + cookieService.getCookie('access_token'),
-					Accept: 'application/json',
-					'Content-type': 'application/json',
-				},
-				body: JSON.stringify(user),
-			}
-		)
-	}
+        return xhrService.fetch(
+            baseUrl +
+                '/' +
+                prefix +
+                '/' +
+                apiVersion +
+                '/' +
+                'users/member/' +
+                id +
+                '/',
+            {
+                method: 'PUT',
+                credentials: 'include',
+                headers: {
+                    Authorization: 'Token ' + cookieService.getCookie('access_token'),
+                    Accept: 'application/json',
+                    'Content-type': 'application/json',
+                },
+                body: JSON.stringify(user),
+            }
+        )
+    }
 
-	const patchMember = function (id, user) {
-		var prefix = baseUrlService.getMasterUserPrefix()
-		var apiVersion = baseUrlService.getApiVersion()
+    const patchMember = function (id, user) {
+        var prefix = baseUrlService.getMasterUserPrefix()
+        var apiVersion = baseUrlService.getApiVersion()
 
-		return xhrService.fetch(
-			baseUrl + '/' + prefix + '/' + apiVersion + '/' + 'users/member/' + id,
-			{
-				method: 'PATCH',
-				credentials: 'include',
-				headers: {
-					Authorization: 'Token ' + cookieService.getCookie('access_token'),
-					Accept: 'application/json',
-					'Content-type': 'application/json',
-				},
-				body: JSON.stringify(user),
-			}
-		)
-	}
+        return xhrService.fetch(
+            baseUrl + '/' + prefix + '/' + apiVersion + '/' + 'users/member/' + id,
+            {
+                method: 'PATCH',
+                credentials: 'include',
+                headers: {
+                    Authorization: 'Token ' + cookieService.getCookie('access_token'),
+                    Accept: 'application/json',
+                    'Content-type': 'application/json',
+                },
+                body: JSON.stringify(user),
+            }
+        )
+    }
 
-	const deleteMemberByKey = function (id) {
-		var prefix = baseUrlService.getMasterUserPrefix()
-		var apiVersion = baseUrlService.getApiVersion()
+    const deleteMemberByKey = function (id) {
+        var prefix = baseUrlService.getMasterUserPrefix()
+        var apiVersion = baseUrlService.getApiVersion()
 
-		return xhrService.fetch(
-			baseUrl + '/' + prefix + '/' + apiVersion + '/' + 'users/member/' + id,
-			{
-				method: 'DELETE',
-				credentials: 'include',
-				headers: {
-					Authorization: 'Token ' + cookieService.getCookie('access_token'),
-					Accept: 'application/json',
-					'Content-type': 'application/json',
-				},
-			}
-		)
-	}
+        return xhrService.fetch(
+            baseUrl + '/' + prefix + '/' + apiVersion + '/' + 'users/member/' + id,
+            {
+                method: 'DELETE',
+                credentials: 'include',
+                headers: {
+                    Authorization: 'Token ' + cookieService.getCookie('access_token'),
+                    Accept: 'application/json',
+                    'Content-type': 'application/json',
+                },
+            }
+        )
+    }
 
-	const getGroupList = function () {
-		var prefix = baseUrlService.getMasterUserPrefix()
-		var apiVersion = baseUrlService.getApiVersion()
+    const getGroupList = function () {
+        var prefix = baseUrlService.getMasterUserPrefix()
+        var apiVersion = baseUrlService.getApiVersion()
 
-		return xhrService.fetch(
-			baseUrl + '/' + prefix + '/' + apiVersion + '/' + 'users/group/',
-			{
-				method: 'GET',
-				credentials: 'include',
-				headers: {
-					Authorization: 'Token ' + cookieService.getCookie('access_token'),
-					Accept: 'application/json',
-					'Content-type': 'application/json',
-				},
-			}
-		)
-	}
+        return xhrService.fetch(
+            baseUrl + '/' + prefix + '/' + apiVersion + '/' + 'users/group/',
+            {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    Authorization: 'Token ' + cookieService.getCookie('access_token'),
+                    Accept: 'application/json',
+                    'Content-type': 'application/json',
+                },
+            }
+        )
+    }
 
-	/* const getOwnMemberSettings = function () {
+    /* const getOwnMemberSettings = function () {
 
         var prefix = baseUrlService.getMasterUserPrefix();
         var apiVersion = baseUrlService.getApiVersion();
@@ -508,126 +508,126 @@ export default function () {
         })
     }; */
 
-	const updateOwnMemberSettings = function (id, member) {
-		var prefix = baseUrlService.getMasterUserPrefix()
-		var apiVersion = baseUrlService.getApiVersion()
+    const updateOwnMemberSettings = function (id, member) {
+        var prefix = baseUrlService.getMasterUserPrefix()
+        var apiVersion = baseUrlService.getApiVersion()
 
-		return xhrService.fetch(
-			baseUrl +
-				'/' +
-				prefix +
-				'/' +
-				apiVersion +
-				'/' +
-				'users/user-member/' +
-				id +
-				'/',
-			{
-				method: 'PUT',
-				credentials: 'include',
-				headers: {
-					'X-CSRFToken': cookieService.getCookie('csrftoken'),
-					Authorization: 'Token ' + cookieService.getCookie('access_token'),
-					Accept: 'application/json',
-					'Content-type': 'application/json',
-				},
-				body: JSON.stringify(member),
-			}
-		)
-	}
+        return xhrService.fetch(
+            baseUrl +
+                '/' +
+                prefix +
+                '/' +
+                apiVersion +
+                '/' +
+                'users/user-member/' +
+                id +
+                '/',
+            {
+                method: 'PUT',
+                credentials: 'include',
+                headers: {
+                    'X-CSRFToken': cookieService.getCookie('csrftoken'),
+                    Authorization: 'Token ' + cookieService.getCookie('access_token'),
+                    Accept: 'application/json',
+                    'Content-type': 'application/json',
+                },
+                body: JSON.stringify(member),
+            }
+        )
+    }
 
-	// TODO: move request for usercode prefixes to separate repository
-	const getUsercodePrefixList = function () {
-		var prefix = baseUrlService.getMasterUserPrefix()
-		var apiVersion = baseUrlService.getApiVersion()
+    // TODO: move request for usercode prefixes to separate repository
+    const getUsercodePrefixList = function () {
+        var prefix = baseUrlService.getMasterUserPrefix()
+        var apiVersion = baseUrlService.getApiVersion()
 
-		return xhrService.fetch(
-			baseUrl +
-				'/' +
-				prefix +
-				'/' +
-				apiVersion +
-				'/' +
-				'users/usercode-prefix/',
-			{
-				method: 'GET',
-				credentials: 'include',
-				headers: {
-					Authorization: 'Token ' + cookieService.getCookie('access_token'),
-					Accept: 'application/json',
-					'Content-type': 'application/json',
-				},
-			}
-		)
-	}
+        return xhrService.fetch(
+            baseUrl +
+                '/' +
+                prefix +
+                '/' +
+                apiVersion +
+                '/' +
+                'users/usercode-prefix/',
+            {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    Authorization: 'Token ' + cookieService.getCookie('access_token'),
+                    Accept: 'application/json',
+                    'Content-type': 'application/json',
+                },
+            }
+        )
+    }
 
-	const createUsercodePrefix = function (item) {
-		var prefix = baseUrlService.getMasterUserPrefix()
-		var apiVersion = baseUrlService.getApiVersion()
+    const createUsercodePrefix = function (item) {
+        var prefix = baseUrlService.getMasterUserPrefix()
+        var apiVersion = baseUrlService.getApiVersion()
 
-		return xhrService.fetch(
-			baseUrl +
-				'/' +
-				prefix +
-				'/' +
-				apiVersion +
-				'/' +
-				'users/usercode-prefix/',
-			{
-				method: 'POST',
-				credentials: 'include',
-				headers: {
-					'X-CSRFToken': cookieService.getCookie('csrftoken'),
-					Authorization: 'Token ' + cookieService.getCookie('access_token'),
-					Accept: 'application/json',
-					'Content-type': 'application/json',
-				},
-				body: JSON.stringify(item),
-			}
-		)
-	}
+        return xhrService.fetch(
+            baseUrl +
+                '/' +
+                prefix +
+                '/' +
+                apiVersion +
+                '/' +
+                'users/usercode-prefix/',
+            {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'X-CSRFToken': cookieService.getCookie('csrftoken'),
+                    Authorization: 'Token ' + cookieService.getCookie('access_token'),
+                    Accept: 'application/json',
+                    'Content-type': 'application/json',
+                },
+                body: JSON.stringify(item),
+            }
+        )
+    }
 
-	const deleteUserCodePrefixByKey = function (id) {
-		var prefix = baseUrlService.getMasterUserPrefix()
-		var apiVersion = baseUrlService.getApiVersion()
+    const deleteUserCodePrefixByKey = function (id) {
+        var prefix = baseUrlService.getMasterUserPrefix()
+        var apiVersion = baseUrlService.getApiVersion()
 
-		return xhrService
-			.fetch(
-				baseUrl +
-					'/' +
-					prefix +
-					'/' +
-					apiVersion +
-					'/' +
-					'users/usercode-prefix/' +
-					id +
-					'/',
-				{
-					method: 'DELETE',
-					credentials: 'include',
-					headers: {
-						Authorization: 'Token ' + cookieService.getCookie('access_token'),
-						Accept: 'application/json',
-						'Content-type': 'application/json',
-					},
-				}
-			)
-			.then(function (data) {
-				return new Promise(function (resolve, reject) {
-					resolve({ status: 'deleted' })
-				})
-				//return data.json();
-			})
-	}
+        return xhrService
+            .fetch(
+                baseUrl +
+                    '/' +
+                    prefix +
+                    '/' +
+                    apiVersion +
+                    '/' +
+                    'users/usercode-prefix/' +
+                    id +
+                    '/',
+                {
+                    method: 'DELETE',
+                    credentials: 'include',
+                    headers: {
+                        Authorization: 'Token ' + cookieService.getCookie('access_token'),
+                        Accept: 'application/json',
+                        'Content-type': 'application/json',
+                    },
+                }
+            )
+            .then(function (data) {
+                return new Promise(function (resolve, reject) {
+                    resolve({ status: 'deleted' })
+                })
+                //return data.json();
+            })
+    }
 
-	return {
-		/* login: login,
+    return {
+        /* login: login,
         logout: logout, */
 
-		ping: ping,
-		protectedPing: protectedPing,
+        ping: ping,
+        protectedPing: protectedPing,
 
-		/* getList: getList,
+        /* getList: getList,
         getByKey: getByKey,
         getMe: getMe,
         getCurrentUser: getCurrentUser,
@@ -646,22 +646,22 @@ export default function () {
         deleteMasterByKey: deleteMasterByKey,
         setMasterUser: setMasterUser, */
 
-		getMyCurrentMember: getMyCurrentMember,
-		getMemberList: getMemberList,
-		getMemberByKey: getMemberByKey,
-		updateMember: updateMember,
-		patchMember: patchMember,
-		deleteMemberByKey: deleteMemberByKey,
+        getMyCurrentMember: getMyCurrentMember,
+        getMemberList: getMemberList,
+        getMemberByKey: getMemberByKey,
+        updateMember: updateMember,
+        patchMember: patchMember,
+        deleteMemberByKey: deleteMemberByKey,
 
-		getGroupList: getGroupList,
+        getGroupList: getGroupList,
 
-		// getOwnMemberSettings: getOwnMemberSettings,
-		updateOwnMemberSettings: updateOwnMemberSettings,
+        // getOwnMemberSettings: getOwnMemberSettings,
+        updateOwnMemberSettings: updateOwnMemberSettings,
 
-		getUsercodePrefixList: getUsercodePrefixList,
-		createUsercodePrefix: createUsercodePrefix,
-		deleteUserCodePrefixByKey: deleteUserCodePrefixByKey,
-	}
+        getUsercodePrefixList: getUsercodePrefixList,
+        createUsercodePrefix: createUsercodePrefix,
+        deleteUserCodePrefixByKey: deleteUserCodePrefixByKey,
+    }
 }
 
 // }());

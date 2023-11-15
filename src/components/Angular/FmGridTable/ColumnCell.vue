@@ -74,8 +74,10 @@
 								</span>
 							</div>
 
-							<div
+							<FmBtn
+                type="icon"
 								:class="['sort', item.options.sort ? 'has-sort' : '']"
+                :disabled="columnsData.dataIsLoading"
 								@click="$emit('sort')"
 							>
 								<span
@@ -90,7 +92,7 @@
 									class="material-icons gt-sorting-icon"
 									>arrow_downward</span
 								>
-							</div>
+							</FmBtn>
 						</div>
 					</div>
 				</div>

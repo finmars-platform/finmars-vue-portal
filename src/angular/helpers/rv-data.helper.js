@@ -6,10 +6,10 @@ import evDataHelper from './ev-data.helper'
 
 var getGroupsByParent = function (parentId, evDataService) {
 
-	var items = evDataService.getDataAsList();
+    var items = evDataService.getDataAsList();
 
-	return items.filter(function (item) {
-		return item.___parentId === parentId;
+    return items.filter(function (item) {
+        return item.___parentId === parentId;
 	})
 
 };

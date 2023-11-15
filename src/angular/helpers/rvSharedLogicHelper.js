@@ -25,7 +25,7 @@ export default function (
 
 	const downloadAttributes = async function () {
 		viewModel.readyStatus.attributes = true;
-		console.error("download attributes should not be called");
+		console.error("Error: download attributes should not be called");
 	}
 
 	const putUseFromAboveFiltersFirst = function () {
@@ -129,7 +129,7 @@ export default function (
 
 		putUseFromAboveFiltersFirst()
 
-		const viewContext = viewModel.entityViewerDataService.getViewContext()
+		/* const viewContext = viewModel.entityViewerDataService.getViewContext()
 
 		var localStorageReportData = localStorageService.getReportData();
 
@@ -190,7 +190,7 @@ export default function (
 
 			}
 
-		}
+		}*/
 
 		return viewModel.readyStatus.layout;
 

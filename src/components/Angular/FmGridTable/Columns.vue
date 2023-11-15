@@ -107,7 +107,7 @@
 				class="flex-row g-groups-holder gGroupsHolder gcAreaDnD"
 			>
 				<AngularFmGridTableColumnCell
-					v-for="(column, index) in groups"
+					v-for="(column, index) in groupsRef"
 					:key="column.key"
 					:item="column"
 					:itemIndex="index"
@@ -294,6 +294,7 @@
 	import rvDataHelper from '@/angular/helpers/rv-data.helper'
 
 	import localStorageService from '@/angular/shell/scripts/app/services/localStorageService'
+  import {useGetEvRvParents} from "~/composables/useEntityReportViewer";
 
 	const props = defineProps([
 		'vm',
@@ -320,7 +321,9 @@
 	let isReport = evDataService.isEntityReport()
 
 	let entityType = evDataService.getEntityType()
-	let rowStatusFilterIcon = `<span class="material-icons">star_outline</span>`
+	let rowStatusFilterIcon = `<span class="material-icons">star_outline</span>`;
+
+  let dataIsLoadingRef = ref(null);
 
 	const getColumns = () => {
 		return JSON.parse(JSON.stringify( evDataService.getColumns() ));
@@ -380,8 +383,8 @@
 
 	let columns = ref( getColumns() );
 
-	let groups = ref(null)
-	groups.value = getGroups();
+	let groupsRef = ref(null)
+	groupsRef.value = getGroups();
 
 	// let columnsToShow = ref([])
 
@@ -400,7 +403,7 @@
 	 */
 	const columnsToShow = computed(() => {
 		if (isReport) {
-			return evDataHelper.separateNotGroupingColumns(columns.value, groups.value)
+			return evDataHelper.separateNotGroupingColumns(columns.value, groupsRef.value)
 		} else {
 			return columns.value
 		}
@@ -408,7 +411,7 @@
 
 	/*const getColumnsToShow = function () {
 		if (isReport) {
-			return evDataHelper.separateNotGroupingColumns(columns, groups.value)
+			return evDataHelper.separateNotGroupingColumns(columns, groupsRef.value)
 		} else {
 			return columns.value
 		}
@@ -703,29 +706,50 @@
 		if (!columnOrGroup.options) columnOrGroup.options = {}
 
 		columnOrGroup.options.sort = direction
-		sort(columnOrGroup)
+		sortDeb(columnOrGroup)
+
 	}
 
 	const signalSortChange = function (columnOrGroup) {
-		if ( columnHasCorrespondingGroup(columnOrGroup.key) ) {
-			const placeholder1 = groups.value.find(
-				(group) => group.key === columnOrGroup.key
-			)
-			placeholder1.options.sort = columnOrGroup.options.sort
-			placeholder1.options.sort_settings = columnOrGroup.options.sort_settings
+    /* *
+     * For some reason dispatch evEvents.DATA_LOAD_START from
+     * ev-data-provider.service -> getObjects() do not register.
+     * Whence dataIsLoading = true;
+     * */
+    columnsData.dataIsLoading = true;
 
-			setGroups(groups.value)
+    if ( isReport && columnHasCorrespondingGroup(columnOrGroup.key) ) {
 
-			evDataService.setActiveGroupTypeSort(columnOrGroup)
-			evEventService.dispatchEvent(evEvents.GROUP_TYPE_SORT_CHANGE)
-		} else {
-			evDataService.setActiveColumnSort(columnOrGroup)
-			evEventService.dispatchEvent(evEvents.COLUMN_SORT_CHANGE)
-		}
+      const groupsList = evDataService.getGroups();
+
+      const group = groupsList.find(group => group.key === columnOrGroup.key);
+      group.options.sort = columnOrGroup.options.sort;
+      group.options.sort_settings = columnOrGroup.options.sort_settings;
+
+      evDataService.setGroups(groupsList);
+
+      evDataService.setActiveGroupTypeSort(
+          JSON.parse(JSON.stringify( columnOrGroup ))
+      );
+
+      evEventService.dispatchEvent(evEvents.GROUP_TYPE_SORT_CHANGE);
+
+    }
+    else {
+
+      evDataService.setActiveGroupTypeSort(
+          JSON.parse(JSON.stringify( columnOrGroup ))
+      );
+
+      evEventService.dispatchEvent(evEvents.COLUMN_SORT_CHANGE);
+
+    }
+
 	}
 
 	const sort = function (columnOrGroup) {
-		if (columnOrGroup.options.sort_settings.mode === 'manual') {
+
+    if (columnOrGroup.options.sort_settings.mode === 'manual') {
 			// manual sort handler
 
 			uiService
@@ -735,21 +759,33 @@
 					},
 				})
 				.then(function (data) {
-					if (data.results.length) {
-						var layout = data.results[0]
+
+          if (data.results.length) {
+
+            var layout = data.results[0]
 
 						evDataService.setColumnSortData(columnOrGroup.key, layout.data)
 
 						signalSortChange(columnOrGroup)
+
 					} else {
-						toastNotificationService.error('Manual Sort is not configured')
+
+            useNotify({type: 'error', title: 'Manual Sort is not configured'})
 						columnOrGroup.options.sort_settings.layout_user_code = null
+
 					}
+
 				})
+
 		} else {
 			signalSortChange(columnOrGroup)
 		}
+
 	}
+
+  const sortDeb = useDebounce(function (columnOrGroup) {
+    sort(columnOrGroup);
+  }, 500);
 
 	// <Victor 2021.04.07 #90 sort setting for column>
 
@@ -889,171 +925,167 @@
 	watch(isAllSelected, selectAllRows)
 
 	function selectAllRows() {
-		var flatList
-		var dataList = []
-		// var activateItems;
 
-		if (isReport) {
-			flatList = rvDataHelper.getFlatStructure(evDataService)
-		} else {
-			flatList = evDataHelper.getObjectsFromSelectedGroups(
-				evDataService,
-				globalDataService
-			)
-		}
+    console.time('Selecting all rows');
 
-		flatList.forEach(function (item) {
-			if (item.___type === 'object') {
-				item.___is_activated = isAllSelected.value
-			}
-		})
+    let flatList;
+    let dataList;
 
-		if (isReport) {
-			/* dataList.forEach(function (dataListItem) {
+    if (isReport) {
+      flatList = rvDataHelper.getFlatStructure(evDataService);
 
-														 if (dataListItem.results && dataListItem.results.length) {
+    } else {
+      flatList = evDataHelper.getObjectsFromSelectedGroups(evDataService, globalDataService);
+    }
 
-																 dataListItem.results.forEach(function (childItem) {
+    isAllSelected = evDataService.getSelectAllRowsState();
 
-																		 childItem.___is_activated = false;
+    isAllSelected = !isAllSelected;
 
-																		 flatList.forEach(function (item) {
+    flatList.forEach(function (item) {
+      if (item.___type === 'object') {
+        item.___is_activated = isAllSelected;
+      }
+    });
 
-																				 if (childItem.___id === item.___id) {
+    if (isReport) {
 
-																						 childItem.___is_activated = item.___is_activated
+      dataList = evDataService.getDataAsList();
 
-																				 }
+    }
+    else {
 
-																		 })
+      let groupsIds = evDataService.getSelectedGroups();
 
+      if (!groupsIds.length) {
+        groupsIds = [ evDataService.getRootGroupData() ];
+      }
 
-																 });
+      groupsIds = groupsIds.map(group => group.___id);
 
-														 }
+      dataList = evDataService.getDataAsList();
 
+      dataList = dataList.filter(item => {
+        return groupsIds.includes(item.___parentId);
+      })
 
-												 }); */
-			dataList = evDataService.getDataAsList()
-		} else {
-			var selGroups = evDataService.getSelectedGroups()
+    }
 
-			if (selGroups.length) {
-				selGroups.forEach(function (sGroup) {
-					var rawData = evDataService.getData(sGroup.___id)
-					dataList.push(rawData)
-				})
-			} else {
-				var rawData = evDataService.getRootGroupData()
+    selectRowsInsideData(dataList);
 
-				dataList.push(rawData)
-			}
-		}
+    evDataService.setSelectAllRowsState(isAllSelected);
 
-		selectRowsInsideData(dataList)
+    evDataService.setFlatList(flatList);
 
-		evDataService.setSelectAllRowsState(isAllSelected.value)
+    evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+    evEventService.dispatchEvent(evEvents.ROW_ACTIVATION_CHANGE);
 
-		evDataService.setFlatList(flatList)
+    console.timeEnd('Selecting all rows');
 
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
-		evEventService.dispatchEvent(evEvents.ROW_ACTIVATION_CHANGE)
-	}
+  }
 
 	let isColumnFloat = function (column) {
 		return column.value_type == 20
 	}
 
-	let sortHandler = function (columnData, sort) {
+	let sortHandler = function (column, sort) {
 
-		let colsList = evDataService.getColumns();
-		const column = colsList.find(col => col.key === columnData.key);
+    if (!column.options) column.options = {};
+    if (!column.options.sort_settings) column.options.sort_settings = {};
 
-		if (!column.options) column.options = {}
-		if (!column.options.sort_settings) column.options.sort_settings = {}
+    if (column.options.sort_settings.layout_user_code) { // manual sort handler
 
-		if (column.options.sort_settings.layout_user_code) {
-			// manual sort handler
+      uiService.getColumnSortDataList({
+        filters: {
+          user_code: column.options.sort_settings.layout_user_code
+        }
+      }).then(function (data) {
 
-			uiService
-				.getColumnSortDataList({
-					filters: {
-						user_code: column.options.sort_settings.layout_user_code,
-					},
-				})
-				.then(function (data) {
-					if (data.results.length) {
-						var layout = data.results[0]
+        if (data.results.length) {
 
-						evDataService.setColumnSortData(column.key, layout.data)
+          var layout = data.results[0];
 
-						var i
-						for (i = 0; i < colsList.length; i = i + 1) {
-							if (!colsList[i].options) {
-								colsList[i].options = {}
-							}
-							colsList[i].options.sort = null
-						}
+          evDataService.setColumnSortData(column.key, layout.data)
 
-						column.options.sort = sort
-						column.options.sort_settings.mode = 'manual'
+          var i;
+          for (i = 0; i < columns.length; i = i + 1) {
+            if (!columns[i].options) {
+              columns[i].options = {};
+            }
+            columns[i].options.sort = null;
+          }
 
-						evDataService.setActiveColumnSort(column)
+          column.options.sort = sort;
+          column.options.sort_settings.mode = 'manual';
 
-						/*if (isReport) {
-							columnsToShow.value = getColumnsToShow()
-						}*/
+          console.log('sortHandler.column', column);
 
-						// collectMissingCustomFieldsErrors()
-						evEventService.dispatchEvent(evEvents.COLUMN_SORT_CHANGE)
+          evDataService.setActiveColumnSort(column);
 
-					} else {
-						toastNotificationService.error('Manual Sort is not configured')
+          if (isReport) {
+            columns.value = getColumns();
+          }
 
-						column.options.sort_settings.layout_user_code = null
-					}
-				})
-		}
-		else {
-			// default sort handler
+          collectMissingCustomFieldsErrors();
+          evEventService.dispatchEvent(evEvents.COLUMN_SORT_CHANGE);
 
-			var i
-			for (i = 0; i < colsList.length; i = i + 1) {
-				if (!colsList[i].options) {
-					colsList[i].options = {}
-				}
-				colsList[i].options.sort = null
-			}
+        } else {
 
-			column.options.sort = sort
-			column.options.sort_settings.mode = 'default'
+          useNotify({type: 'error', title: "Manual Sort is not configured"});
 
-			console.log('sortHandler.column', column)
+          column.options.sort_settings.layout_user_code = null;
 
-			// var columns = evDataService.getColumns()
+        }
 
-			colsList.forEach(function (item) {
-				if (column.key === item.key) {
-					item = column
-				}
-			})
+      })
 
-			evDataService.setActiveColumnSort(column)
 
-			evDataService.setColumns(colsList)
+    }
+    else { // default sort handler
 
-			// columnsToShow.value = getColumnsToShow()
+      let columnsList = evDataService.getColumns();
 
-			// collectMissingCustomFieldsErrors()
+      var i;
+      for (i = 0; i < columnsList.length; i = i + 1) {
+        if (!columnsList[i].options) {
+          columnsList[i].options = {};
+        }
+        columnsList[i].options.sort = null;
+      }
 
-			evEventService.dispatchEvent(evEvents.COLUMN_SORT_CHANGE)
-		}
+      column.options.sort = sort;
+      column.options.sort_settings.mode = 'default';
+
+      console.log('sortHandler.column', column);
+
+      /*columnsList.forEach(function (item) {
+
+        if (column.key === item.key) {
+          item = column;
+        }
+
+      });*/
+      const columnIndex = columnsList.findIndex(col => col.key === column.key);
+      columnsList[columnIndex] = structuredClone(column);
+
+      evDataService.setActiveColumnSort(column);
+
+      evDataService.setColumns(columns);
+
+      columns.value = getColumns();
+
+      collectMissingCustomFieldsErrors();
+
+      evEventService.dispatchEvent(evEvents.COLUMN_SORT_CHANGE);
+
+    }
+
 	}
 
-	let groupsSortHandler = function (groupIndex, sort) {
+	/*let groupsSortHandler = function (groupIndex, sort) {
 		// reset sorting for other groups
 		var i
-		for (i = 0; i < groups.value.length; i = i + 1) {
+		for (i = 0; i < groupsRef.value.length; i = i + 1) {
 			if (!groups[i].options) {
 				groups[i].options = {}
 			}
@@ -1063,26 +1095,19 @@
 		console.log('groups sorting group', group)
 		group.options.sort = sort
 
-		groups.value = getGroups();
+		groupsRef.value = getGroups();
 
-		groups.value.forEach(function (item) {
+		groupsRef.value.forEach(function (item) {
 			if (group.key === item.key || group.id === item.id) {
 				item = group
 			}
 		})
 
-		setGroups(groups.value)
+		setGroups(groupsRef.value)
 		evDataService.setActiveGroupTypeSort(group)
 
 		evEventService.dispatchEvent(evEvents.GROUP_TYPE_SORT_CHANGE)
-	}
-
-
-
-
-
-
-
+	}*/
 
 	let checkColTextAlign = function (column, type) {
 		if (column.hasOwnProperty('style') && column.style) {
@@ -1350,7 +1375,7 @@
 
 		}
 
-		// groups.value = groups;
+		// groupsRef.value = groups;
 		evDataService.setGroups(groupsList)
 		evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
 
@@ -1386,21 +1411,22 @@
 	}
 
 	const updateGroupTypeIds = function () {
-		groups.value = getGroups();
 
-		groups.value.forEach((item) => {
+		groupsRef.value = getGroups();
+
+		groupsRef.value.forEach((item) => {
 			item.___group_type_id = evDataHelper.getGroupTypeId(item)
 		})
 
-		setGroups(groups.value)
+		setGroups(groupsRef.value)
 
-		return groups.value;
+		return groupsRef.value;
 	}
 
 	const setDefaultGroupType = function () {
-		groups.value = getGroups();
+		groupsRef.value = getGroups();
 
-		groups.value.forEach(function (group) {
+		groupsRef.value.forEach(function (group) {
 			if (!group.hasOwnProperty('report_settings')) {
 				group.report_settings = {}
 			}
@@ -1414,23 +1440,37 @@
 			}
 		})
 
-		setGroups(groups.value)
+		setGroups(groupsRef.value)
 	}
 
 	const updateGroupFoldingState = function () {
-		groups.value = getGroups();
+
+    let groupsList = evDataService.getGroups();
 		let parentGroupFullyFolded = false
 
-		groups.value.forEach((group) => {
-			if (parentGroupFullyFolded) {
-				group.report_settings.is_level_folded = true
-			} else if (group.report_settings.is_level_folded) {
-				// if group is fully folded, groups after it must be folded too
-				parentGroupFullyFolded = true
-			}
+		groupsList.forEach((group) => {
+
+      if (!group.report_settings) {
+        group.report_settings = {}
+      }
+
+      if (typeof group.report_settings.is_level_folded !== 'boolean') {
+        group.report_settings.is_level_folded = true;
+      }
+
+      if (parentGroupFullyFolded) {
+        group.report_settings.is_level_folded = true;
+
+      } else if (group.report_settings.is_level_folded) { // if group is fully folded, groups after it must be folded too
+        parentGroupFullyFolded = true;
+      }
+
 		})
 
-		setGroups(groups.value)
+		evDataService.setGroups(groupsList);
+
+    groupsRef.value = getGroups();
+
 	}
 
 	const syncColumnsWithGroups = function () {
@@ -1478,7 +1518,7 @@
 	let hasFoldingBtn = function ($index) {
 		var groups = evDataService.getGroups()
 
-		if (isReport && $index < groups.value.length) {
+		if (isReport && $index < groupsRef.value.length) {
 			return true
 		}
 
@@ -1486,111 +1526,322 @@
 	}
 
 	let foldLevel = function (key, $index) {
-		// groups.value = evDataService.getGroups()
-		console.log('evDataService.getGroups():', evDataService.getGroups())
+    // Optimized unfold logic
+    // TODO probabaly still need a refactor, code looks too complicated
 
-		var item = groups.value[$index]
-		item.report_settings.is_level_folded = true
-		var i
-		//# region "Set folded groups before calling rvDataHelper.setGroupSettings()">
-		for (i = $index; i < groups.value.length; i++) {
-			groups.value[i].report_settings.is_level_folded = true
-		}
+    var layout = evDataService.getListLayout();
+    var contentType = evDataService.getContentType();
 
-		setGroups(groups.value)
-		//# endregion
-		console.log('evDataService.getGroups():', evDataService.getGroups())
+    let groupsList = evDataService.getGroups();
 
-		for (i = $index; i < groups.value.length; i++) {
-			var groupsContent = evDataHelper.getGroupsByLevel(i + 1, evDataService)
+    var item = groupsList[$index];
+    item.report_settings.is_level_folded = true;
 
-			groupsContent.forEach(function (groupItem) {
-				groupItem.___is_open = false
+    var i;
+    //# region Set folded groups before calling rvDataHelper.setGroupSettings()
+    for (i = $index; i < groupsList.length; i++) {
+      groupsList[i].report_settings.is_level_folded = true;
+    }
 
-				var groupSettings = rvDataHelper.getOrCreateGroupSettings(
-					evDataService,
-					groupItem
-				)
-				groupSettings.is_open = false
-				rvDataHelper.setGroupSettings(evDataService, groupItem, groupSettings)
+    evDataService.setGroups(groupsList);
+    //# endregion
 
-				var childrens = evDataHelper.getAllChildrenGroups(
-					groupItem.___id,
-					evDataService
-				)
+    var maxLevel = 10
+    var groupsByLevel = evDataHelper.getAllGroupsByLevel(maxLevel, evDataService);
 
-				childrens.forEach(function (children) {
-					if (children.___type === 'group') {
-						item = evDataService.getData(children.___id)
+    var reportData = localStorageService.getReportData();
 
-						var groupSettings = rvDataHelper.getOrCreateGroupSettings(
-							evDataService,
-							children
-						)
-						groupSettings.is_open = false
-						rvDataHelper.setGroupSettings(
-							evDataService,
-							children,
-							groupSettings
-						)
+    for (i = $index; i < groupsList.length; i++) {
 
-						if (item) {
-							item.___is_open = false
-							evDataService.setData(item)
-						} else {
-							children.___is_open = false
-							evDataService.setData(children)
-						}
-					}
-				})
-			})
-		}
+      var groupsContent = groupsByLevel[i + 1];
 
-		// rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService);
+      groupsContent.forEach(function (groupItem) {
 
-		evEventService.dispatchEvent(evEvents.GROUPS_LEVEL_FOLD)
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
-	}
+        var parents = useGetEvRvParents(groupItem.___parentId, evDataService);
 
-	let unfoldLevel = function (key, $index) {
-		groups.value = getGroups()
+        parents.pop() // skip root group
 
-		var item = groups.value[$index]
+        if (!reportData[contentType]) {
+          reportData[contentType] = {};
+        }
 
-		item.report_settings.is_level_folded = false
+        if (!reportData[contentType][layout.user_code]) {
+          reportData[contentType][layout.user_code] = {
+            groups: {}
+          }
+        }
 
-		// groups.value = getGroups()
-		var i
-		//# region "Set folded groups before calling rvDataHelper.setGroupSettings()">
-		for (i = $index; i >= 0; i--) {
-			groups.value[i].report_settings.is_level_folded = false
-		}
+        var full_path = parents.map(function (item) {
+          return item.___group_name
+        })
 
-		setGroups(groups.value)
-		//# endregion
+        full_path.push(groupItem.___group_name);
 
-		for (i = $index; i >= 0; i--) {
-			var groupsContent = evDataHelper.getGroupsByLevel(i + 1, evDataService)
+        var full_path_prop = full_path.join('___'); // TODO check if safe enough
 
-			groupsContent.forEach(function (groupItem) {
-				var groupSettings = rvDataHelper.getOrCreateGroupSettings(
-					evDataService,
-					groupItem
-				)
+        var groupSettings;
 
-				groupItem.___is_open = true
-				groupSettings.is_open = true
+        if (reportData[contentType][layout.user_code]['groups'][full_path_prop]) {
+          groupSettings = reportData[contentType][layout.user_code]['groups'][full_path_prop];
+        }
 
-				rvDataHelper.setGroupSettings(evDataService, groupItem, groupSettings)
+        if (!groupSettings) {
 
-				evDataService.setData(groupItem)
-			})
-		}
+          groupSettings = {
+            full_path: full_path,
+            is_open: false
+          }
 
-		rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService)
+          reportData[contentType][layout.user_code]['groups'][full_path_prop] = groupSettings;
 
-		evEventService.dispatchEvent(evEvents.GROUPS_LEVEL_UNFOLD)
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+        }
+
+        groupItem.___is_open = false;
+        groupSettings.is_open = false;
+
+        if (!reportData[contentType][layout.user_code]['groups']) {
+          reportData[contentType][layout.user_code]['groups'] = {}
+        }
+
+        var full_path_prop = groupSettings.full_path;
+
+        if (Array.isArray(full_path_prop)) {
+          full_path_prop = full_path_prop.join('___')
+        }
+
+        reportData[contentType][layout.user_code]['groups'][full_path_prop] = groupSettings;
+
+        reportData[contentType][layout.user_code].groupsList = [];
+
+        groupsList.forEach(group => {
+
+          var groupObj = {
+            key: group.key,
+            report_settings: {
+              is_level_folded: false
+            }
+          };
+
+          if (group.report_settings) {
+            groupObj.report_settings.is_level_folded = !!group.report_settings.is_level_folded;
+          }
+
+
+          reportData[contentType][layout.user_code].groupsList.push(groupObj);
+
+        });
+
+        evDataService.setData(groupItem);
+
+      });
+
+    }
+
+    localStorageService.cacheReportData(reportData);
+
+    evEventService.dispatchEvent(evEvents.GROUPS_LEVEL_FOLD);
+    evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+
+  }
+
+	let unfoldLevel = async function (key, $index) {
+
+    var layout = evDataService.getListLayout();
+    var contentType = evDataService.getContentType();
+
+    let groupsList = evDataService.getGroups();
+
+    var item = groupsList[$index];
+
+    item.report_settings.is_level_folded = false;
+
+    var i;
+
+    //# region Set folded groups before calling rvDataHelper.setGroupSettings()
+    for (i = $index; i >= 0; i--) {
+      groupsList[i].report_settings.is_level_folded = false;
+    }
+
+    evDataService.setGroups(groupsList);
+    groupsRef.value = getGroups();
+
+    var maxLevel = 10
+    var groupsByLevel = evDataHelper.getAllGroupsByLevel(maxLevel, evDataService);
+
+    console.log('groupsByLevel', groupsByLevel);
+    console.log('maxLevel', $index);
+    //# endregion
+
+    var reportData = localStorageService.getReportData();
+
+    for (i = $index; i >= 0; i--) {
+
+      var groupsContent = groupsByLevel[i + 1];
+
+      groupsContent.forEach(function (groupItem) {
+
+        var parents = useGetEvRvParents(groupItem.___parentId, evDataService);
+
+        parents.pop() // skip root group
+
+        if (!reportData[contentType]) {
+          reportData[contentType] = {};
+        }
+
+        if (!reportData[contentType][layout.user_code]) {
+          reportData[contentType][layout.user_code] = {
+            groups: {}
+          }
+        }
+
+        var full_path = parents.map(function (item) {
+          return item.___group_name
+        })
+
+        full_path.push(groupItem.___group_name);
+
+        var full_path_prop = full_path.join('___'); // TODO check if safe enough
+
+        var groupSettings;
+
+        if (reportData[contentType][layout.user_code]['groups'][full_path_prop]) {
+          groupSettings = reportData[contentType][layout.user_code]['groups'][full_path_prop];
+        }
+
+        if (!groupSettings) {
+
+          groupSettings = {
+            full_path: full_path,
+            is_open: true
+          }
+
+          reportData[contentType][layout.user_code]['groups'][full_path_prop] = groupSettings;
+
+        }
+
+        groupItem.___is_open = true;
+        groupSettings.is_open = true;
+
+        if (!reportData[contentType][layout.user_code]['groups']) {
+          reportData[contentType][layout.user_code]['groups'] = {}
+        }
+
+        var full_path_prop = groupSettings.full_path;
+
+        if (Array.isArray(full_path_prop)) {
+          full_path_prop = full_path_prop.join('___')
+        }
+
+        reportData[contentType][layout.user_code]['groups'][full_path_prop] = groupSettings;
+
+        reportData[contentType][layout.user_code].groupsList = [];
+
+        groupsList.forEach(group => {
+
+          var groupObj = {
+            key: group.key,
+            report_settings: {
+              is_level_folded: false
+            }
+          };
+
+          if (group.report_settings) {
+            groupObj.report_settings.is_level_folded = !!group.report_settings.is_level_folded;
+          }
+
+
+          reportData[contentType][layout.user_code].groupsList.push(groupObj);
+
+        });
+
+        evDataService.setData(groupItem);
+
+      });
+
+    }
+
+    localStorageService.cacheReportData(reportData);
+    // localStorageService.cacheReportDataForLayout(contentType, layout.user_code, reportData);
+
+    rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService);
+
+    evEventService.dispatchEvent(evEvents.GROUPS_LEVEL_UNFOLD);
+    evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+
+
+    // New Backend Logic, Try To Request New Unrequested Open Groups
+
+    var unfoldPromises = []
+
+    const currentLevelGroups = structuredClone(
+        evDataHelper.getGroupsByLevel($index + 1, evDataService)
+    );
+
+    currentLevelGroups.forEach(function (group) {
+
+      console.log('handleFoldButtonClick.group', group);
+
+      if (group.___is_open) {
+
+        if (!evDataService.isRequestParametersExist(group.___id)) {
+
+          unfoldPromises.push(function (){
+
+            var requestParameters = window.rvDataProviderService.createRequestParameters(
+                group, group.___level - 1, evDataService, evEventService
+            )
+
+            console.log('handleFoldButtonClick.group', group);
+            console.log('handleFoldButtonClick.requestParameters', requestParameters);
+
+            return window.rvDataProviderService.updateDataStructureByRequestParameters(
+                requestParameters, evDataService, evEventService
+            )
+
+          })
+
+        }
+
+      }
+
+    })
+
+    console.log('unfoldLevel.unfoldPromises', unfoldPromises);
+
+    const unfoldGroups = async function () {
+
+      let promisesToExecute = unfoldPromises.map(func => func());
+
+      await Promise.all(promisesToExecute)
+
+      evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+
+    }
+
+    if (unfoldPromises.length > 10) {
+
+      let res= await $mdDialog.show({
+        controller: 'WarningDialogController as vm',
+        locals: {
+          warning: {
+            title: 'Warning',
+            description: "You are trying to unfold " + unfoldPromises.length + " groups. It may take a while. Do you want to continue?",
+          }
+        }
+
+      });
+
+      if (res.status === 'agree') {
+        await unfoldGroups();
+
+      } else {
+        foldLevel(key, $index); // then fold this level back
+      }
+
+    } else {
+      await unfoldGroups();
+    }
+
 	}
 
 	let groupLevelIsFolded = function ($index) {
@@ -1686,8 +1937,8 @@
 
 		rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService)
 
-		groups.value = getGroups()
-		groups.value = evDataHelper.importGroupsStylesFromColumns(groups.value, columns)
+		groupsRef.value = getGroups();
+		groupsRef.value = evDataHelper.importGroupsStylesFromColumns(columns.value, groupsRef.value)
 
 		// if (argumentsObj && argumentsObj.updateScope) $apply()
 	}
@@ -1702,7 +1953,7 @@
 				return;
 			}
 
-			const matchingGroup = groups.value.find(
+			const matchingGroup = groupsRef.value.find(
 				(group) => group.key === column.key
 			)
 
@@ -1712,9 +1963,9 @@
 
 		})
 
-		setGroups(groups.value)
+		setGroups(groupsRef.value)
 
-		return groups.value;
+		return groupsRef.value;
 
 	}
 
@@ -1739,12 +1990,12 @@
 
 		onGroupsChange = function () {
 
-			groups.value = updateGroupTypeIds();
+			groupsRef.value = updateGroupTypeIds();
 
 			setDefaultGroupType()
 			updateGroupFoldingState()
 
-			// groups.value = evDataService.getGroups()
+			// groupsRef.value = evDataService.getGroups()
 			evDataService.resetTableContent(isReport)
 
 			const res = syncColumnsWithGroups();
@@ -1752,18 +2003,18 @@
 			columns.value = res.columns;
 			const colsChanged = res.columnsHaveBeenSynced;
 
-			groups.value = evDataHelper.importGroupsStylesFromColumns(groups.value, columns.value)
+			groupsRef.value = evDataHelper.importGroupsStylesFromColumns(groupsRef.value, columns.value)
 
 			// columnsToShow.value = getColumnsToShow()
 
 			collectMissingCustomFieldsErrors()
 			// setFiltersLayoutNames();
-			var foldedGroup = groups.value.find(
+			var foldedGroup = groupsRef.value.find(
 				(group) =>
 					group.report_settings && group.report_settings.is_level_folded
 			)
 
-			groups.value = setGroupsFrontOptions();
+			groupsRef.value = setGroupsFrontOptions();
 
 			if (!foldedGroup) {
 				rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService)
@@ -1781,10 +2032,10 @@
 
 		onGroupsChange = function () {
 
-			groups.value = updateGroupTypeIds();
+			groupsRef.value = updateGroupTypeIds();
 			setDefaultGroupType();
 
-			groups.value = setGroupsFrontOptions();
+			groupsRef.value = setGroupsFrontOptions();
 
 			// groups = evDataService.getGroups();
 			evDataService.resetTableContent(isReport);
@@ -1846,7 +2097,7 @@
 
 			if ( columnHasCorrespondingGroup(columnToRename.value.key) ) {
 
-				// var group = groups.value.find((group) => group.key === itemKey)
+				// var group = groupsRef.value.find((group) => group.key === itemKey)
 
 				let groupsList = evDataService.getGroups();
 				let group = groupsList.find(group => group.key === itemKey)
@@ -1935,7 +2186,7 @@
 
 		if ( columnHasCorrespondingGroup(columnToRename.value.key) ) {
 
-			// var group = groups.value.find((group) => group.key === itemKey)
+			// var group = groupsRef.value.find((group) => group.key === itemKey)
 
 			let groupsList = evDataService.getGroups();
 			let group = groupsList.find(group => group.key === columnToRename.value.key)
@@ -1994,7 +2245,7 @@
 	}
 
 	let columnHasCorrespondingGroup = function (columnKey) {
-		var groupIndex = groups.value.findIndex((group) => group.key === columnKey)
+		var groupIndex = groupsRef.value.findIndex((group) => group.key === columnKey)
 
 		return groupIndex > -1
 	}
@@ -2002,7 +2253,7 @@
 	let addColumnEntityToGrouping = function (column) {
 		const groupToAdd = evHelperService.getTableAttrInFormOf('group', column)
 
-		// groups.value.push(groupToAdd)
+		// groupsRef.value.push(groupToAdd)
 		let groupsList = evDataService.getGroups();
 		groupsList.push(groupToAdd);
 
@@ -2274,32 +2525,46 @@
 		column.frontOptions.subtotalAvgWeightedActive = false;
 		column.frontOptions.subtotalWeightedActive = false;
 
+    evDataService.resetTableContent(isReport);
+    evEventService.dispatchEvent(evEvents.GROUPS_CHANGE); // make request to backend to recalculate subtotals
+
 		selectSubtotalType(column, 1);
+
 	}
 
-	function onSubtotalWeightedClick(column) {
+  function subtotalWeightedChange() {
 
+    evDataService.resetTableContent(isReport);
+
+    evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
+    evEventService.dispatchEvent(evEvents.GROUPS_CHANGE); // make request to backend to recalculate subtotals
+    evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+
+  }
+
+	function onSubtotalWeightedClick(column) {
+    // column is an object inside ref columns
 		column.frontOptions.subtotalAvgWeightedActive = false;
 		column.report_settings.subtotal_formula_id = null;
 
 		column.frontOptions.subtotalWeightedActive = !column.frontOptions.subtotalWeightedActive;
 
 		setColumns(columns.value);
-		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
+
+    subtotalWeightedChange();
 
 	}
 
 	function onSubtotalAvgWeightedClick(column) {
-
-		const columnsList =
-
+    // column is an object inside ref columns
 		column.frontOptions.subtotalWeightedActive = false;
 		column.report_settings.subtotal_formula_id = null;
 
 		column.frontOptions.subtotalAvgWeightedActive = !column.frontOptions.subtotalAvgWeightedActive;
 
 		setColumns(columns.value);
-		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
+
+    subtotalWeightedChange();
 
 	}
 
@@ -2337,6 +2602,8 @@
 		changeColumnTextAlign: changeColumnTextAlign,
 		checkColTextAlign: checkColTextAlign,
 		removeGroup: removeGroup,
+
+    dataIsLoading: false,
 
 		//# region Subtotals
 		selectSubtotalType: selectSubtotalType,
@@ -2399,6 +2666,14 @@
 			onGroupLevelFoldingSwitch
 		)
 
+    evEventService.addEventListener(evEvents.DATA_LOAD_START, function () {
+      columnsData.dataIsLoading = true;
+    });
+
+    evEventService.addEventListener(evEvents.DATA_LOAD_END, function () {
+      columnsData.dataIsLoading = false;
+    });
+
 		if (isReport) {
 
 			evEventService.addEventListener(evEvents.UPDATE_GROUPS_SIZE, function (argumentsObj) {
@@ -2411,7 +2686,7 @@
 					groupsList = evDataHelper.importGroupsStylesFromColumns(groupsList, columnsList);
 					evDataService.setGroups(groupsList);
 
-					groups.value = getGroups();
+					groupsRef.value = getGroups();
 
 				}
 
@@ -2446,9 +2721,9 @@
 
 		columns.value = setColumnsFrontOptions();
 
-		evDataHelper.importGroupsStylesFromColumns(groups.value, columns.value)
+		evDataHelper.importGroupsStylesFromColumns(groupsRef.value, columns.value)
 
-		groups.value = updateGroupTypeIds()
+		groupsRef.value = updateGroupTypeIds()
 
 		if (isReport) {
 
@@ -2458,8 +2733,8 @@
 
 		}
 
-		groups.value = syncGroupLayoutNamesWithColumns()
-		groups.value = setGroupsFrontOptions();
+		groupsRef.value = syncGroupLayoutNamesWithColumns()
+		groupsRef.value = setGroupsFrontOptions();
 
 		setColumns(columns.value);
 		// columns = evDataService.getColumns()
@@ -2484,7 +2759,7 @@
 		let rowFilterColor = evSettings.row_type_filter
 
 		// update refs after functions above changed groups and columns
-		groups.value = getGroups();
+		groupsRef.value = getGroups();
 		columns.value = getColumns();
 
 		initEventListeners()
