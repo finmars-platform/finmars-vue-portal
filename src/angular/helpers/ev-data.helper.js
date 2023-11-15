@@ -7,392 +7,392 @@ import evRvCommonHelper from './ev-rv-common.helper'
 
 var ifFirstRequestForRootGroup = function (event, evDataService) {
 
-	var groupData;
+    var groupData;
 
-	if (!event.___id) {
-		groupData = evDataService.getRootGroupData();
-	} else {
-		groupData = evDataService.getData(event.___id);
-	}
+    if (!event.___id) {
+        groupData = evDataService.getRootGroupData();
+    } else {
+        groupData = evDataService.getData(event.___id);
+    }
 
-	if (!groupData) {
-		return false;
-	}
+    if (!groupData) {
+        return false;
+    }
 
-	return !groupData.___parentId && !groupData.results.length;
+    return !groupData.___parentId && !groupData.results.length;
 
 };
 
 var isFirstRequestForObjects = function (event, evDataService) {
 
-	var groupData;
+    var groupData;
 
-	if (!event.___id) {
-		groupData = evDataService.getRootGroupData();
-	} else {
-		groupData = evDataService.getData(event.___id);
-	}
+    if (!event.___id) {
+        groupData = evDataService.getRootGroupData();
+    } else {
+        groupData = evDataService.getData(event.___id);
+    }
 
-	if (!groupData) {
-		return true;
-	}
+    if (!groupData) {
+        return true;
+    }
 
-	return false;
+    return false;
 
 };
 
 var getGroupNameFromParent = function (id, parentId, evDataService) {
 
-	/*var parent = evDataService.getData(parentId);
+    /*var parent = evDataService.getData(parentId);
 
-	var result = parent.results.find(function (item) {
+    var result = parent.results.find(function (item) {
 
-			return item.___id === id;
+            return item.___id === id;
 
-	});*/
-	var result = evDataService.getData(id);
+    });*/
+    var result = evDataService.getData(id);
 
-	return result.___group_name
+    return result.___group_name
 
 };
 
 var getGroupIdentifierFromParent = function (id, parentId, evDataService) {
 
-	/*var parent = evDataService.getData(parentId);
+    /*var parent = evDataService.getData(parentId);
 
-	var result = parent.results.find(function (item) {
+    var result = parent.results.find(function (item) {
 
-			return item.___id === id;
+            return item.___id === id;
 
-	});*/
-	var result = evDataService.getData(id);
+    });*/
+    var result = evDataService.getData(id);
 
-	return result.___group_identifier
+    return result.___group_identifier
 
 };
 
 var _getChildrenGroups = function (parentGroupId, evDataService, results) {
 
-	var parentGroup = evDataService.getData(parentGroupId);
-	var dataAsList = evDataService.getDataAsList();
+    var parentGroup = evDataService.getData(parentGroupId);
+    var dataAsList = evDataService.getDataAsList();
 
-	if (parentGroup && parentGroup.___type === 'group') {
+    if (parentGroup && parentGroup.___type === 'group') {
 
-		dataAsList.forEach(function (item) {
+        dataAsList.forEach(function (item) {
 
-			if (item.___parentId === parentGroupId) {
-				results.push(item);
+            if (item.___parentId === parentGroupId) {
+                results.push(item);
 
-				_getChildrenGroups(item.___id, evDataService, results);
-			}
+                _getChildrenGroups(item.___id, evDataService, results);
+            }
 
 
-		})
-	}
+        })
+    }
 
 
 };
 
 var getAllChildrenGroups = function (parentGroupId, evDataService) {
 
-	var results = [];
+    var results = [];
 
-	_getChildrenGroups(parentGroupId, evDataService, results);
+    _getChildrenGroups(parentGroupId, evDataService, results);
 
-	return results
+    return results
 
 };
 
 var getObject = function (objectId, parentGroupHashId, evDataService) {
 
-	var result = evDataService.getData(objectId);
+    var result = evDataService.getData(objectId);
 
-	// var parent = evDataService.getData(parentGroupHashId);
-	// var result = null;
-	//
-	// if (parent) {
-	//
-	//     parent.results.forEach(function (item) {
-	//
-	//         if (item.___id === objectId) {
-	//             result = item;
-	//         }
-	//
-	//     });
-	//
-	// }
+    // var parent = evDataService.getData(parentGroupHashId);
+    // var result = null;
+    //
+    // if (parent) {
+    //
+    //     parent.results.forEach(function (item) {
+    //
+    //         if (item.___id === objectId) {
+    //             result = item;
+    //         }
+    //
+    //     });
+    //
+    // }
 
-	return result
+    return result
 
 };
 
 var getGroupTypeId = function (groupType) {
 
-	var pattern;
+    var pattern;
 
-	if (groupType.hasOwnProperty('key')) {
+    if (groupType.hasOwnProperty('key')) {
 
-		pattern = [groupType.name, stringHelper.toHash(groupType.key)].join('');
+        pattern = [groupType.name, stringHelper.toHash(groupType.key)].join('');
 
-	}
+    }
 
-	/* if (groupType.hasOwnProperty('id')) {
+    /* if (groupType.hasOwnProperty('id')) {
 
-			pattern = [groupType.name, stringHelper.toHash(groupType.id)].join('');
+            pattern = [groupType.name, stringHelper.toHash(groupType.id)].join('');
 
-	} */
+    } */
 
-	return stringHelper.toHash(pattern)
+    return stringHelper.toHash(pattern)
 
 };
 
 var getColumnId = function (column) {
 
-	var pattern;
+    var pattern;
 
-	if (column.hasOwnProperty('key')) {
+    if (column.hasOwnProperty('key')) {
 
-		pattern = [column.name, stringHelper.toHash(column.key)].join('');
+        pattern = [column.name, stringHelper.toHash(column.key)].join('');
 
-	}
+    }
 
-	/* if (column.hasOwnProperty('id')) {
+    /* if (column.hasOwnProperty('id')) {
 
-			pattern = [column.name, stringHelper.toHash(column.id)].join('');
+            pattern = [column.name, stringHelper.toHash(column.id)].join('');
 
-	} */
+    } */
 
-	return stringHelper.toHash(pattern)
+    return stringHelper.toHash(pattern)
 
 };
 
 var getGroupTypes = function (id, parentId, evDataService) {
 
-	var result = [];
+    var result = [];
 
-	var groups = evDataService.getGroups();
+    var groups = evDataService.getGroups();
 
-	var parentsCount = evRvCommonHelper.getParents(parentId, evDataService).length;
+    var parentsCount = evRvCommonHelper.getParents(parentId, evDataService).length;
 
-	var groupsCount;
+    var groupsCount;
 
-	if (groups.length > parentsCount) {
-		groupsCount = parentsCount + 1;
-	} else {
-		groupsCount = parentsCount;
-	}
+    if (groups.length > parentsCount) {
+        groupsCount = parentsCount + 1;
+    } else {
+        groupsCount = parentsCount;
+    }
 
-	for (var i = 0; i < groupsCount; i = i + 1) {
+    for (var i = 0; i < groupsCount; i = i + 1) {
 
-		if (groups[i].key) {
-			result.push(groups[i])
-		}
+        if (groups[i].key) {
+            result.push(groups[i])
+        }
 
-	}
+    }
 
-	return result;
+    return result;
 
 };
 
 var getGroupsValues = function (id, parentId, evDataService) {
 
-	var parents = evRvCommonHelper.getParents(parentId, evDataService).reverse();
+    var parents = evRvCommonHelper.getParents(parentId, evDataService).reverse();
 
-	var result = [];
+    var result = [];
 
-	for (var i = 0; i < parents.length; i = i + 1) {
+    for (var i = 0; i < parents.length; i = i + 1) {
 
-		if (parents[i].___parentId !== null) {
+        if (parents[i].___parentId !== null) {
 
-			result.push(parents[i].___group_identifier)
+            result.push(parents[i].___group_identifier)
 
-		}
+        }
 
-	}
+    }
 
-	var currentValue = getGroupIdentifierFromParent(id, parentId, evDataService);
+    var currentValue = getGroupIdentifierFromParent(id, parentId, evDataService);
 
-	result.push(currentValue);
+    result.push(currentValue);
 
-	return result;
+    return result;
 
 };
 
 var getUnfoldedGroups = function (evDataService) {
 
-	var data = evDataService.getData();
-	var keys = Object.keys(data);
+    var data = evDataService.getData();
+    var keys = Object.keys(data);
 
-	var items = [];
+    var items = [];
 
-	keys.forEach(function (key) {
-		items.push(data[key])
-	});
+    keys.forEach(function (key) {
+        items.push(data[key])
+    });
 
-	return items.filter(function (item) {
-		return item.___is_open
-	})
+    return items.filter(function (item) {
+        return item.___is_open
+    })
 
 };
 
 var getUnfoldedGroupsByLevel = function (level, evDataService) {
 
-	var unfoldedGroups = getUnfoldedGroups(evDataService);
+    var unfoldedGroups = getUnfoldedGroups(evDataService);
 
-	return unfoldedGroups.filter(function (group) {
-		return group.___level === level;
-	})
+    return unfoldedGroups.filter(function (group) {
+        return group.___level === level;
+    })
 
 };
 
 var getGroupsByLevel = function (level, evDataService) {
 
-	var data = evDataService.getData();
+    var data = evDataService.getData();
 
-	var keys = Object.keys(data);
+    var keys = Object.keys(data);
 
-	var items = [];
+    var items = [];
 
-	keys.forEach(function (key) {
-		items.push(data[key])
-	});
+    keys.forEach(function (key) {
+        items.push(data[key])
+    });
 
-	return items.filter(function (group) {
-		return group.___level === level;
-	})
+    return items.filter(function (group) {
+        return group.___level === level;
+    })
 
 };
 
 var getAllGroupsByLevel = function (maxLevel, evDataService) {
 
-	var data = evDataService.getData();
+    var data = evDataService.getData();
 
-	var keys = Object.keys(data);
+    var keys = Object.keys(data);
 
-	var items = [];
+    var items = [];
 
-	keys.forEach(function (key) {
-		items.push(data[key])
-	});
+    keys.forEach(function (key) {
+        items.push(data[key])
+    });
 
-	var groupsByLevel = {};
+    var groupsByLevel = {};
 
-	var $index;
+    var $index;
 
-	for ($index = 0; $index < maxLevel; $index = $index + 1) {
+    for ($index = 0; $index < maxLevel; $index = $index + 1) {
 
-		groupsByLevel[$index] = []
+        groupsByLevel[$index] = []
 
-		items.forEach(function (group) {
+        items.forEach(function (group) {
 
-			if (group.___level === $index) {
-				groupsByLevel[$index].push(group)
-			}
+            if (group.___level === $index) {
+                groupsByLevel[$index].push(group)
+            }
 
-		})
+        })
 
-	}
+    }
 
-	return groupsByLevel;
+    return groupsByLevel;
 
 };
 
 var removeItemsFromFoldedGroups = function (list) {
 
-	var _list = list.concat();
+    var _list = list.concat();
 
-	var foldedGroupsIds = [];
+    var foldedGroupsIds = [];
 
-	_list = _list.filter(function (item) {
+    _list = _list.filter(function (item) {
 
-		if (item.___type === 'group' && !item.___is_open) {
-			foldedGroupsIds.push(item.___id);
-		}
+        if (item.___type === 'group' && !item.___is_open) {
+            foldedGroupsIds.push(item.___id);
+        }
 
-		if (foldedGroupsIds.indexOf(item.___parentId) !== -1) {
-			return false
-		}
+        if (foldedGroupsIds.indexOf(item.___parentId) !== -1) {
+            return false
+        }
 
-		return true;
+        return true;
 
-	});
+    });
 
-	return _list;
+    return _list;
 
 };
 
 const filterByRowColor = function (flatList, evDataService, globalDataService) {
 
-	var rowTypeFilters = evDataService.getRowTypeFilters();
-	var filterByColor = rowTypeFilters.markedRowFilters;
+    var rowTypeFilters = evDataService.getRowTypeFilters();
+    var filterByColor = rowTypeFilters.markedRowFilters;
 
-	if (filterByColor === 'none') { //  color filter disabled
-		return flatList;
-	}
+    if (filterByColor === 'none') { //  color filter disabled
+        return flatList;
+    }
 
-	var entityType = evDataService.getEntityType();
-	// var markedRows = localStorageService.getMarkedRows(false, entityType);
-	var rvSettings = globalDataService.getMemberEntityViewersSettings(false, entityType);
-	var markedRows = rvSettings.marked_rows;
+    var entityType = evDataService.getEntityType();
+    // var markedRows = localStorageService.getMarkedRows(false, entityType);
+    var rvSettings = globalDataService.getMemberEntityViewersSettings(false, entityType);
+    var markedRows = rvSettings.marked_rows;
 
-	return flatList.filter(item => {
+    return flatList.filter(item => {
 
-		if (item.___type !== 'object') return true;
-		// does color of row matches to filter
-		return markedRows.hasOwnProperty(item.id) && markedRows[item.id].color === filterByColor;
+        if (item.___type !== 'object') return true;
+        // does color of row matches to filter
+        return markedRows.hasOwnProperty(item.id) && markedRows[item.id].color === filterByColor;
 
-	});
+    });
 
 };
 
 var getFlatStructure = function (evDataService, globalDataService) {
 
-	var data = JSON.parse(JSON.stringify(evDataService.getData()));
-	var rootGroup = JSON.parse(JSON.stringify(evDataService.getRootGroupData()));
+    var data = JSON.parse(JSON.stringify(evDataService.getData()));
+    var rootGroup = JSON.parse(JSON.stringify(evDataService.getRootGroupData()));
 
-	var tree = utilsHelper.convertToTree(data, rootGroup);
+    var tree = utilsHelper.convertToTree(data, rootGroup);
 
-	console.log('getFlatStructure.data', data);
-	console.log('getFlatStructure.rootGroup', rootGroup);
-	console.log('getFlatStructure.tree', tree);
+    console.log('getFlatStructure.data', data);
+    console.log('getFlatStructure.rootGroup', rootGroup);
+    console.log('getFlatStructure.tree', tree);
 
-	var list = utilsHelper.convertTreeToList(tree);
+    var list = utilsHelper.convertTreeToList(tree);
 
-	// console.log('getFlatStructure.list', list);
+    // console.log('getFlatStructure.list', list);
 
-	list = removeItemsFromFoldedGroups(list);
+    list = removeItemsFromFoldedGroups(list);
 
-	list = filterByRowColor(list, evDataService, globalDataService);
+    list = filterByRowColor(list, evDataService, globalDataService);
 
-	// console.log('list', list);
+    // console.log('list', list);
 
-	return list;
+    return list;
 
 };
 
 var calculateProjection = function (flatList, evDataService) {
 
-	console.time('Creating projection');
+    console.time('Creating projection');
 
-	var rowHeight = evDataService.getRowHeight();
-	var offsetPx = evDataService.getVirtualScrollOffsetPx();
-	var from = Math.ceil(offsetPx / rowHeight);
-	var step = evDataService.getVirtualScrollStep();
-	console.log("dubugging.rowsToShow calculateProjection data", rowHeight, offsetPx, step);
-	evDataService.setProjectionLastFrom(from);
+    var rowHeight = evDataService.getRowHeight();
+    var offsetPx = evDataService.getVirtualScrollOffsetPx();
+    var from = Math.ceil(offsetPx / rowHeight);
+    var step = evDataService.getVirtualScrollStep();
+    console.log("dubugging.rowsToShow calculateProjection data", rowHeight, offsetPx, step);
+    evDataService.setProjectionLastFrom(from);
 
-	var to = from + (step / 2);
+    var to = from + (step / 2);
 
-	console.timeEnd('Creating projection');
-	from = from - (step / 2); // two rows, before viewport
+    console.timeEnd('Creating projection');
+    from = from - (step / 2); // two rows, before viewport
 
-	if (from < 0) {
-		from = 0;
-	}
-	// console.log('View Context ' + evDataService.getViewContext() + ' flatList length', flatList.length);
-	// console.log('View Context ' + evDataService.getViewContext() + ' from', from);
-	// console.log('View Context ' + evDataService.getViewContext() + ' to', to);
-	console.log("dubugging.rowsToShow calculateProjection from to", from, to);
+    if (from < 0) {
+        from = 0;
+    }
+    // console.log('View Context ' + evDataService.getViewContext() + ' flatList length', flatList.length);
+    // console.log('View Context ' + evDataService.getViewContext() + ' from', from);
+    // console.log('View Context ' + evDataService.getViewContext() + ' to', to);
+    console.log("dubugging.rowsToShow calculateProjection from to", from, to);
 	return flatList.slice(from, to);
 
 };
@@ -889,7 +889,7 @@ var importGroupsStylesFromColumns = function (groups, columns) {
 
 	});
 
-
+	return groups;
 };
 
 var clearLastActiveObject = function (evDataService) {

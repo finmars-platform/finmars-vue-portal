@@ -3,10 +3,10 @@
  */
 
 export default function ($sce) {
-	return function (val) {
-		//;
-		if (val) {
-			return $sce.trustAsResourceUrl(val.toString())
-		}
-	}
+    return function (val) {
+        //;
+        if (val) {
+            return $sce.trustAsResourceUrl(val.toString())
+        }
+    }
 }

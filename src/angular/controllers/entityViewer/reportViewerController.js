@@ -1,6 +1,6 @@
 import AutosaveLayoutService from '../../services/autosaveLayoutService'
 import evHelperService from '../../services/entityViewerHelperService'
-import uiService from '../../services/uiService'
+import UiService from '../../services/uiServiceNew'
 import evEvents from '../../services/entityViewerEvents'
 import localStorageService from "@/angular/shell/scripts/app/services/localStorageService";
 
@@ -33,8 +33,10 @@ export default function ({
 	$stateParams,
 	priceHistoryService,
 	currencyHistoryService,
+	store,
 	expressionService,
 }) {
+
 	var vm = this
 
 	let middlewareService = new middlewareServiceInst()
@@ -42,25 +44,43 @@ export default function ({
 	let reportService = new reportServiceInst()
 	let entityResolverService = new entityResolverServiceNew({ reportService })
 	let customFieldService = new customFieldServiceInst()
-	window.reportHelper = new reportHelperInst()
-	const groupsService = new GroupsService();
-	const objectsService = new ObjectsService();
+	const groupsService = new GroupsService(entityResolverService);
+	const objectsService = new ObjectsService(entityResolverService);
 
+	//# region Globals HACK
 
-	let rvDataProviderService = new rvDataProviderServiceInst(
-		entityResolverService,
-		pricesCheckerService,
-		window.reportHelper,
-		groupsService,
-		objectsService,
+	if (!window.reportHelper) window.reportHelper = new reportHelperInst()
+	if (!window.globalDataService) window.globalDataService = new globalDataServiceInst()
+    if (!window.xhrService) window.xhrService = new xhrService()
+    if (!window.cookieService) window.cookieService = new cookieService()
+
+    if (!window.metaContentTypesService) {
+		window.metaContentTypesService = new metaContentTypesServiceInst(
+            window.cookieService, window.xhrService
+		)
+    }
+
+	if (!window.evRvLayoutsHelper) window.evRvLayoutsHelper = new evRvLayoutsHelperInst()
+
+	if (!window.rvDataProviderService) {
+
+		window.rvDataProviderService = new rvDataProviderServiceInst(
+          entityResolverService,
+          pricesCheckerService,
+          window.reportHelper,
+          groupsService,
+          objectsService,
+      )
+
+  }
+	//# endregion
+
+    const uiService = new UiService(
+		window.cookieService,
+		window.xhrService,
+		window.metaContentTypesService,
+		store,
 	)
-
-	// Globals HACK
-	window.metaContentTypesService = new metaContentTypesServiceInst()
-	window.globalDataService = new globalDataServiceInst()
-	window.xhrService = new xhrService()
-	window.cookieService = new cookieService()
-	window.evRvLayoutsHelper = new evRvLayoutsHelperInst()
 
 	var sharedLogicHelper = new RvSharedLogicHelper(
 		vm,
@@ -71,7 +91,7 @@ export default function ({
 		currencyHistoryService,
 		window.metaContentTypesService,
 		pricesCheckerService,
-		rvDataProviderService,
+		window.rvDataProviderService,
 		window.reportHelper
 	)
 
@@ -91,7 +111,7 @@ export default function ({
 		vm.entityViewerEventService.addEventListener(
 			evEvents.UPDATE_TABLE,
 			function () {
-				rvDataProviderService.updateDataStructure(
+        window.rvDataProviderService.updateDataStructure(
 					vm.entityViewerDataService,
 					vm.entityViewerEventService
 				)
@@ -101,7 +121,7 @@ export default function ({
 		vm.entityViewerEventService.addEventListener(
 			evEvents.COLUMN_SORT_CHANGE,
 			function () {
-				rvDataProviderService.sortObjects(
+        window.rvDataProviderService.sortObjects(
 					vm.entityViewerDataService,
 					vm.entityViewerEventService
 				)
@@ -111,7 +131,7 @@ export default function ({
 		vm.entityViewerEventService.addEventListener(
 			evEvents.GROUP_TYPE_SORT_CHANGE,
 			function () {
-				rvDataProviderService.sortGroupType(
+        window.rvDataProviderService.sortGroupType(
 					vm.entityViewerDataService,
 					vm.entityViewerEventService
 				)
@@ -121,7 +141,7 @@ export default function ({
 		vm.entityViewerEventService.addEventListener(
 			evEvents.REQUEST_REPORT,
 			function () {
-				rvDataProviderService.requestReport(
+        window.rvDataProviderService.requestReport(
 					vm.entityViewerDataService,
 					vm.entityViewerEventService
 				)
@@ -196,44 +216,6 @@ export default function ({
 
 			return result
 		}
-	}
-
-	vm.closeGroupsAndContinueReportGeneration = function () {
-
-		var localStorageReportData = localStorageService.getReportData();
-
-		var layout = vm.entityViewerDataService.getListLayout();
-		var contentType = vm.entityViewerDataService.getContentType();
-
-		delete localStorageReportData[contentType][layout.user_code]
-
-		var groups = vm.entityViewerDataService.getGroups();
-
-		groups.forEach(function (group) {
-
-			if (!group.report_settings) {
-				group.report_settings = {}
-			}
-
-			group.report_settings.is_level_folded = true;
-
-		})
-
-		vm.entityViewerDataService.setGroups(groups);
-
-		localStorageService.cacheReportData(localStorageReportData);
-
-		vm.possibleToRequestReport = true;
-
-		rvDataProviderService.updateDataStructure(vm.entityViewerDataService, vm.entityViewerEventService);
-
-	}
-
-	vm.continueReportGeneration = function () {
-
-		vm.possibleToRequestReport = true;
-
-		rvDataProviderService.updateDataStructure(vm.entityViewerDataService, vm.entityViewerEventService);
 	}
 
 	vm.setFiltersValuesFromQueryParameters = function () {
@@ -578,7 +560,7 @@ export default function ({
 		})
 	}
 
-	vm.getView = function () {
+	vm.getView = async function () {
 		// middlewareService.setNewSplitPanelLayoutName(false); // reset split panel layout name
 
 		vm.readyStatus.layout = false // switched to true by sharedLogicHelper.onSetLayoutEnd()
@@ -620,7 +602,8 @@ export default function ({
 
             } */
 
-		var downloadAttrsProm = sharedLogicHelper.downloadAttributes()
+		// var downloadAttrsProm = sharedLogicHelper.downloadAttributes()
+		vm.readyStatus.attributes = true;
 		var setLayoutProm
 
 		vm.setEventListeners()
@@ -697,17 +680,18 @@ export default function ({
 			setLayoutProm = evHelperService.getDefaultLayout(vm)
 		}
 
-            Promise.allSettled([
-                downloadAttrsProm,
-                setLayoutProm
-            ])
-                .then(function (getViewData) {
 
-                    metaService.logRejectedPromisesAfterAllSettled(
-                        getViewData, 'report viewer get view'
-                    );
+		const getViewRes = await Promise.allSettled([
+				// downloadAttrsProm,
+				setLayoutProm
+		])
 
-                });
+		metaService.logRejectedPromisesAfterAllSettled(
+			getViewRes, 'report viewer get view'
+		);
+
+		return vm;
+
 	}
 
 	vm.init = function () {
@@ -730,15 +714,16 @@ export default function ({
 			initTransitionListeners()
 		}
 
-		vm.getView()
+		return vm.getView()
 	}
 
-	this.$onDestroy = function () {
+	/*this.$onDestroy = function () {
 		middlewareService.removeOnUserChangedListeners(onUserChangeIndex)
 		middlewareService.removeOnLogOutListener(onLogoutIndex)
 
 		removeTransitionListeners()
-	}
+	}*/
 
-	vm.init()
+	return vm.init()
+
 }

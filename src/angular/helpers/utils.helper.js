@@ -7,18 +7,18 @@
 
 function debounce(func, wait, immediate) {
 
-	var timeout;
-	return function () {
-		var context = this, args = arguments;
-		var later = function () {
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		};
-		var callNow = immediate && !timeout;
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args);
-	};
+    var timeout;
+    return function () {
+        var context = this, args = arguments;
+        var later = function () {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+    };
 
 }
 
@@ -41,32 +41,32 @@ function debounce(func, wait, immediate) {
  */
 function throttle(fn, wait, options) {
 
-	var time = Date.now();
-	var timeout = null;
-	options = options || {};
+    var time = Date.now();
+    var timeout = null;
+    options = options || {};
 
-	return function () {
-		var waitRemains = time + wait - Date.now();
+    return function () {
+        var waitRemains = time + wait - Date.now();
 
-		if (waitRemains < 0) {
-			if (timeout) {
-				clearTimeout(timeout);
-				timeout = null;
-			}
-			fn();
-			time = Date.now();
-		} else if (options.trailing !== false && !timeout && waitRemains > 0) {
-			timeout = setTimeout(function () {
-				timeout = null;
-				fn();
-				time = Date.now();
-			}, waitRemains);
-		}
-	};
+        if (waitRemains < 0) {
+            if (timeout) {
+                clearTimeout(timeout);
+                timeout = null;
+            }
+            fn();
+            time = Date.now();
+        } else if (options.trailing !== false && !timeout && waitRemains > 0) {
+            timeout = setTimeout(function () {
+                timeout = null;
+                fn();
+                time = Date.now();
+            }, waitRemains);
+        }
+    };
 }
 
 function floor10(value, exp) {
-	return decimalAdjust('floor', value, exp);
+    return decimalAdjust('floor', value, exp);
 }
 
 // Old method, not efficient
@@ -90,104 +90,104 @@ function floor10(value, exp) {
 // }
 
 function flattenTree(root, key) {
-	const stack = [root];
-	const result = [];
+    const stack = [root];
+    const result = [];
 
-	while (stack.length) {
-		const node = stack.pop();
+    while (stack.length) {
+        const node = stack.pop();
 
-		if (node) {
-			result.push(Object.assign({}, node));
+        if (node) {
+            result.push(Object.assign({}, node));
 
-			if (node[key]) {
-				for (let i = node[key].length - 1; i >= 0; i--) {
-					stack.push(node[key][i]);
-				}
-			}
-		}
-	}
+            if (node[key]) {
+                for (let i = node[key].length - 1; i >= 0; i--) {
+                    stack.push(node[key][i]);
+                }
+            }
+        }
+    }
 
-	return result;
+    return result;
 }
 
 function insertItemInNode(list, map, node, data) {
 
-	var index = 0;
+    var index = 0;
 
-	data[node.___parentId].results.forEach(function (item, i) {
+    data[node.___parentId].results.forEach(function (item, i) {
 
-		if (item && item.___id === node.___id) {
-			index = i;
-		}
+        if (item && item.___id === node.___id) {
+            index = i;
+        }
 
-	});
+    });
 
-	list[map[node.___parentId]].results[index] = node;
+    list[map[node.___parentId]].results[index] = node;
 
 }
 
 function convertToTree(data, rootGroup, optimize) {
 
-	var list = [];
+    var list = [];
 
-	// var dataOrderReference = {}; // Only need for keep tracking on original item index
-	var referenceItem;
-
-
-	for (const item of rootGroup.results) {
-		if (!data[item.___id]) {
-
-			if (item.___type === 'group' || item.___type === 'placeholder_group') {
-				data[item.___id] = item;
-			}
-		}
-	}
-
-	var originalKeys = Object.keys(data);
-
-	originalKeys.forEach(function (key) {
-
-		if (data[key].___type === 'group' || data[key].___type === 'placeholder_group') {
-
-			if (data[key].hasOwnProperty('results')) {
-
-				data[key].results.forEach(function (item) {
-					if (!data[item.___id]) {
-						data[item.___id] = item;
-					}
-				});
-
-			}
-
-		}
-
-	});
-
-	console.timeEnd("convertToTree.thirdLoop");
-
-	var extendedKeys = Object.keys(data);
-
-	console.time("convertToTree.forthLoop");
-
-	// console.log('convertToTree.extendedKeys', extendedKeys)
-	// performance update
+    // var dataOrderReference = {}; // Only need for keep tracking on original item index
+    var referenceItem;
 
 
-	extendedKeys.forEach(function (key, index) {
+    for (const item of rootGroup.results) {
+        if (!data[item.___id]) {
 
-		list.push({
-			___index: index,
-			___id: data[key].___id,
-			___parentId: data[key].___parentId,
-			___level: data[key].___level,
-			___type: data[key].___type,
-			___subtotal_type: data[key].___subtotal_type,
-			___items_count: data[key].___items_count,
-			___group_name: data[key].___group_name,
-			___is_open: data[key].___is_open,
-			___is_selected: data[key].___is_selected,
-			___has_selected_child: data[key].___has_selected_child,
-			___group_identifier: data[key].___group_identifier
+            if (item.___type === 'group' || item.___type === 'placeholder_group') {
+                data[item.___id] = item;
+            }
+        }
+    }
+
+    var originalKeys = Object.keys(data);
+
+    originalKeys.forEach(function (key) {
+
+        if (data[key].___type === 'group' || data[key].___type === 'placeholder_group') {
+
+            if (data[key].hasOwnProperty('results')) {
+
+                data[key].results.forEach(function (item) {
+                    if (!data[item.___id]) {
+                        data[item.___id] = item;
+                    }
+                });
+
+            }
+
+        }
+
+    });
+
+    console.timeEnd("convertToTree.thirdLoop");
+
+    var extendedKeys = Object.keys(data);
+
+    console.time("convertToTree.forthLoop");
+
+    // console.log('convertToTree.extendedKeys', extendedKeys)
+    // performance update
+
+
+    extendedKeys.forEach(function (key, index) {
+
+        list.push({
+            ___index: index,
+            ___id: data[key].___id,
+            ___parentId: data[key].___parentId,
+            ___level: data[key].___level,
+            ___type: data[key].___type,
+            ___subtotal_type: data[key].___subtotal_type,
+            ___items_count: data[key].___items_count,
+            ___group_name: data[key].___group_name,
+            ___is_open: data[key].___is_open,
+            ___is_selected: data[key].___is_selected,
+            ___has_selected_child: data[key].___has_selected_child,
+            ___group_identifier: data[key].___group_identifier
 		});
 
 

@@ -4,13 +4,13 @@
 @gFilterFieldsHeight: 40px;
 
 .g-filters-menu-opts() {
-	font-size: 14px;
-	min-height: 30px;
-	height: 30px;
-	line-height: initial;
-	text-align: left;
-	text-transform: initial;
-	margin: 3px 8px;
+    font-size: 14px;
+    min-height: 30px;
+    height: 30px;
+    line-height: initial;
+    text-align: left;
+    text-transform: initial;
+    margin: 3px 8px;
 }
 
 //region old group table filters
@@ -240,395 +240,395 @@ md-checkbox.g-filter-options-checkbox {
 //endregion old group table filters
 
 .g-filters {
-	position: relative;
-	height: 0;
-	overflow: hidden;
-	box-sizing: border-box;
-	// transition: max-height 0.5s linear;
-	color: @gray;
-	font-size: 14px;
-	background-color: white;
+    position: relative;
+    height: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+    // transition: max-height 0.5s linear;
+    color: @gray;
+    font-size: 14px;
+    background-color: white;
 
-	&.open-filters {
-		height: auto;
-		overflow: visible;
-	}
+    &.open-filters {
+        height: auto;
+        overflow: visible;
+    }
 
-	.g-filters-holder {
-		// float: left;
-		box-sizing: border-box;
+    .g-filters-holder {
+        // float: left;
+        box-sizing: border-box;
 
-		.modal-dialog-card {
-			margin: 8px;
-			width: 100%;
-			min-height: 66px;
-		}
-	}
+        .modal-dialog-card {
+            margin: 8px;
+            width: 100%;
+            min-height: 66px;
+        }
+    }
 
-	.g-filter-left-part {
-		display: flex;
-		flex: 0 0 104px;
+    .g-filter-left-part {
+        display: flex;
+        flex: 0 0 104px;
 
-		&.no-ev-g-filter-switch {
-			flex-basis: 52px;
-		}
-	}
+        &.no-ev-g-filter-switch {
+            flex-basis: 52px;
+        }
+    }
 
-	.g-filters-holder.hide-ev-front-filters {
-		.add-chip-wrap {
-			display: none;
-		}
-	}
+    .g-filters-holder.hide-ev-front-filters {
+        .add-chip-wrap {
+            display: none;
+        }
+    }
 
-	.g-filter-settings-big-left-btn {
-		display: flex;
-		justify-content: center;
-	}
+    .g-filter-settings-big-left-btn {
+        display: flex;
+        justify-content: center;
+    }
 
-	.g-toggle-filters-btn {
-		border-radius: 100%;
+    .g-toggle-filters-btn {
+        border-radius: 100%;
 
-		&:not([disabled]):hover {
-			background-color: @paleOrange;
-			color: @orange;
-		}
+        &:not([disabled]):hover {
+            background-color: @paleOrange;
+            color: @orange;
+        }
 
-	}
+    }
 
 }
 
 .g-filter-chips-wrap {
-	// max-width: 800px;
-	padding-top: 4px;
+    // max-width: 800px;
+    padding-top: 4px;
 }
 
 .g-filter-chips {
-	.chip-div {
-		max-width: 240px;
-		height: 33px;
-		padding-top: 9px;
-		padding-bottom: 9px;
-		margin-bottom: 9px;
-		cursor: pointer;
+    .chip-div {
+        max-width: 240px;
+        height: 33px;
+        padding-top: 9px;
+        padding-bottom: 9px;
+        margin-bottom: 9px;
+        cursor: pointer;
 
-		// Victor 2021.03.26 #85 only active filters must be orange
-		&.active {
-			background-color: rgba(240, 90, 34, 0.1);
-			color: @orange;
+        // Victor 2021.03.26 #85 only active filters must be orange
+        &.active {
+            background-color: rgba(240, 90, 34, 0.1);
+            color: @orange;
 
-			&:hover {
-				background-color: @orange;
-				color: #fff;
+            &:hover {
+                background-color: @orange;
+                color: #fff;
 
-				span.error {
-					color: #fff;
-				}
-			}
+                span.error {
+                    color: #fff;
+                }
+            }
 
 
-			// <Victor 2021.03.26 #85 only active filters must be orange>
+            // <Victor 2021.03.26 #85 only active filters must be orange>
 
-		}
+        }
 
-		.chip-list-content {
-			display: flex;
-			flex-direction: row;
-			align-items: center;
+        .chip-list-content {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
 
-			.g-filter-chips-text {
-				width: 100%;
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
-		}
+            .g-filter-chips-text {
+                width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
 
-		.material-icons:not(.error) {
-			color: inherit;
-		}
-	}
+        .material-icons:not(.error) {
+            color: inherit;
+        }
+    }
 
-	.chip-wrap.use-from-above-filter-chip {
+    .chip-wrap.use-from-above-filter-chip {
 
-		.chip-div {
-			padding-top: 5px;
-			padding-bottom: 5px;
+        .chip-div {
+            padding-top: 5px;
+            padding-bottom: 5px;
 
-			.material-icons {
-				margin-right: 5px;
-			}
+            .material-icons {
+                margin-right: 5px;
+            }
 
-		}
+        }
 
-	}
+    }
 
-	.chip-wrap:not(.use-from-above-filter-chip) {
+    .chip-wrap:not(.use-from-above-filter-chip) {
 
-		.chip-div {
-			padding-top: 9px;
-			padding-bottom: 9px;
+        .chip-div {
+            padding-top: 9px;
+            padding-bottom: 9px;
 
-			.chip-list-content {
-				&.custom-field-error {
-					padding-left: 5px;
-				}
-			}
-		}
+            .chip-list-content {
+                &.custom-field-error {
+                    padding-left: 5px;
+                }
+            }
+        }
 
-	}
+    }
 
-	.add-chip-wrap {
+    .add-chip-wrap {
 
-		.chip-div {
-			color: @orange;
-			background-color: initial;
+        .chip-div {
+            color: @orange;
+            background-color: initial;
 
-			&:hover {
-				background-color: rgba(240, 90, 34, 0.1);
-			}
-		}
+            &:hover {
+                background-color: rgba(240, 90, 34, 0.1);
+            }
+        }
 
-	}
+    }
 
 }
 
 .g-filter-value-containers() {
-	margin: 0;
-	padding: 0;
-	width: 145px;
-	height: @gFilterFieldsHeight;
+    margin: 0;
+    padding: 0;
+    width: 145px;
+    height: @gFilterFieldsHeight;
 }
 
 .g-filter-popup-content {
-	min-width: 380px;
+    min-width: 380px;
 
-	md-checkbox {
-		font-size: 14px;
-		margin-bottom: 0;
-	}
+    md-checkbox {
+        font-size: 14px;
+        margin-bottom: 0;
+    }
 
-	/* .filter-input {
-		width: 100%;
-		height: @gFilterFieldsHeight;
-		padding-left: @gFilterFieldLeftIndent;
-		padding-bottom: 1px;
-		border: none;
-		border-bottom: @gFilterFieldBottomBorder;
-		box-sizing: border-box;
+    /* .filter-input {
+        width: 100%;
+        height: @gFilterFieldsHeight;
+        padding-left: @gFilterFieldLeftIndent;
+        padding-bottom: 1px;
+        border: none;
+        border-bottom: @gFilterFieldBottomBorder;
+        box-sizing: border-box;
 
-		&:focus {
-			outline: none;
-			padding-bottom: 0;
-			border-bottom: 2px solid @orange;
-		}
-	} */
-
-
-	/*input.g-filter-input {
-		.filter-input
-	}*/
-
-	.g-filter-tnv-back {
-		background-color: @tnvBackColor;
-	}
-
-	.multiselector-input-container {
-
-		.custom-input-container {
-			margin-bottom: 0;
-			background-color: @tnvBackColor;
-		}
-
-		.custom-input-borders {
-			height: @gFilterFieldsHeight;
-			/*border-radius: 0;
-			border: none;
-			border-bottom: @gFilterFieldBottomBorder;*/
-		}
-
-	}
-
-	.g-filter-header {
-		padding: 0 2px;
-
-		.g-filter-header-top-row {
-			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
-			padding: 18px;
-			border-bottom: 1px solid @gray;
-
-			md-checkbox {
-				font-size: 14px;
-				font-weight: bold;
-			}
-		}
-
-	}
-
-	.g-filter-content {
-		padding: 20px;
-
-		.g-filter-value-wrap {
-			width: 170px;
+        &:focus {
+            outline: none;
+            padding-bottom: 0;
+            border-bottom: 2px solid @orange;
+        }
+    } */
 
 
-			/*md-input-container {
-				margin: 0 0;
-				max-height: 50px;
-			}*/
+    /*input.g-filter-input {
+        .filter-input
+    }*/
 
-			/*input:nth-child(2) {
-				margin-top: 10px;
-			}*/
+    .g-filter-tnv-back {
+        background-color: @tnvBackColor;
+    }
 
-			/*input {
-				.filter-input;
-				background-color: @tnvBackColor;
-			}*/
+    .multiselector-input-container {
 
-			.date-tree {
-				md-input-container {
-					margin: 0;
-					padding: 0;
+        .custom-input-container {
+            margin-bottom: 0;
+            background-color: @tnvBackColor;
+        }
 
-					input {
-						margin-top: 0;
-					}
-				}
+        .custom-input-borders {
+            height: @gFilterFieldsHeight;
+            /*border-radius: 0;
+            border: none;
+            border-bottom: @gFilterFieldBottomBorder;*/
+        }
 
-			}
+    }
 
-		}
+    .g-filter-header {
+        padding: 0 2px;
 
-		.g-filter-types-select {
-			.g-filter-value-containers();
-		}
+        .g-filter-header-top-row {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            padding: 18px;
+            border-bottom: 1px solid @gray;
 
-		.g-filter-value-container {
-			display: block;
-			width: 100%;
-			height: 100%;
-			margin: 0;
-			padding: 0;
+            md-checkbox {
+                font-size: 14px;
+                font-weight: bold;
+            }
+        }
 
-			input {
-				width: 100%;
-				height: 100%;
-			}
+    }
 
-		}
+    .g-filter-content {
+        padding: 20px;
 
-	}
+        .g-filter-value-wrap {
+            width: 170px;
 
-	.g-filter-type-loader {
-		height: @gFilterFieldsHeight;
-	}
 
-	.g-filter-footer {
-		.md-button {
-			min-width: 73px;
-			width: 73px;
-		}
-	}
+            /*md-input-container {
+                margin: 0 0;
+                max-height: 50px;
+            }*/
+
+            /*input:nth-child(2) {
+                margin-top: 10px;
+            }*/
+
+            /*input {
+                .filter-input;
+                background-color: @tnvBackColor;
+            }*/
+
+            .date-tree {
+                md-input-container {
+                    margin: 0;
+                    padding: 0;
+
+                    input {
+                        margin-top: 0;
+                    }
+                }
+
+            }
+
+        }
+
+        .g-filter-types-select {
+            .g-filter-value-containers();
+        }
+
+        .g-filter-value-container {
+            display: block;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+
+            input {
+                width: 100%;
+                height: 100%;
+            }
+
+        }
+
+    }
+
+    .g-filter-type-loader {
+        height: @gFilterFieldsHeight;
+    }
+
+    .g-filter-footer {
+        .md-button {
+            min-width: 73px;
+            width: 73px;
+        }
+    }
 
 }
 
 .g-filter-select-options-holder {
-	min-height: 390px;
+    min-height: 390px;
 
-	md-option {
-		.g-filters-menu-opts();
-	}
+    md-option {
+        .g-filters-menu-opts();
+    }
 }
 
 .entity-viewer-holder {
 
-	.g-filters .icon-buttons {
-		display: flex;
-		justify-content: flex-end;
-		flex: 0 0 252px;
-		/* display: flex;
-				justify-content: flex-end;
-				flex: 0 0 191px; */
-		//& > div {
-		//  width: 252px;
-		//}
+    .g-filters .icon-buttons {
+        display: flex;
+        justify-content: flex-end;
+        flex: 0 0 252px;
+        /* display: flex;
+                justify-content: flex-end;
+                flex: 0 0 191px; */
+        //& > div {
+        //  width: 252px;
+        //}
 
-		.refresh-button-with-progress {
-			display: flex;
-			justify-content: end;
-			width: 60px;
-			align-items: center;
+        .refresh-button-with-progress {
+            display: flex;
+            justify-content: flex-end;
+            width: 60px;
+            align-items: center;
 
-			.md-button {
-				min-width: 60px;
-			}
+            .md-button {
+                min-width: 60px;
+            }
 
-			progress-circular {
-				margin-right: 8px;
-			}
-		}
-	}
+            progress-circular {
+                margin-right: 8px;
+            }
+        }
+    }
 
 }
 
 .report-viewer-holder {
 
-	.g-filter-sidebar {
-		display: none;
-	}
+    .g-filter-sidebar {
+        display: none;
+    }
 
-	.g-filters {
+    .g-filters {
 
-		.md-button.chain-button {
-			color: @orange;
+        .md-button.chain-button {
+            color: @orange;
 
-			&.g-use-from-above-filters-hidden {
-				color: @gray;
+            &.g-use-from-above-filters-hidden {
+                color: @gray;
 
-				ng-md-icon svg {
-					fill: @gray;
-				}
-			}
-		}
+                ng-md-icon svg {
+                    fill: @gray;
+                }
+            }
+        }
 
-	}
+    }
 
-	.g-filters .icon-buttons {
+    .g-filters .icon-buttons {
 
-		display: flex;
-		justify-content: flex-end;
-		flex: 0 0 252px;
-		/* display: flex;
-				justify-content: flex-end;
-				flex: 0 0 191px; */
-		//& > div {
-		//  width: 252px;
-		//}
+        display: flex;
+        justify-content: flex-end;
+        flex: 0 0 252px;
+        /* display: flex;
+                justify-content: flex-end;
+                flex: 0 0 191px; */
+        //& > div {
+        //  width: 252px;
+        //}
 
-		.refresh-button-with-progress {
-			display: flex;
-			justify-content: end;
-			width: 60px;
+        .refresh-button-with-progress {
+            display: flex;
+            justify-content: flex-end;
+            width: 60px;
 
-			align-items: center;
+            align-items: center;
 
-			.md-button {
-				min-width: 60px;
-			}
+            .md-button {
+                min-width: 60px;
+            }
 
-			progress-circular {
-				margin-right: 8px;
-			}
-		}
+            progress-circular {
+                margin-right: 8px;
+            }
+        }
 
-		//flex: 0 0 252px;
-		///* display: flex;
-		//    justify-content: flex-end;
-		//    flex: 0 0 191px; */
-		//& > div {
-		//  width: 252px;
-		//}
-	}
+        //flex: 0 0 252px;
+        ///* display: flex;
+        //    justify-content: flex-end;
+        //    flex: 0 0 191px; */
+        //& > div {
+        //  width: 252px;
+        //}
+    }
 
 }

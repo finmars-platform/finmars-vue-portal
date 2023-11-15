@@ -1,11 +1,11 @@
 @font-face {
-	font-family: 'Material Icons';
-	font-style: normal;
-	font-weight: 400;
-	src: local('Material Icons'),
-	local('material-icons'),
-	url('../fonts/MaterialIcons/material-icons.woff2') format('woff2'),
-	url('../fonts/MaterialIcons/material-icons.woff') format('woff');
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Material Icons'),
+    local('material-icons'),
+    url('../fonts/MaterialIcons/material-icons.woff2') format('woff2'),
+    url('../fonts/MaterialIcons/material-icons.woff') format('woff');
 }
 
 .material-icons {
@@ -27,13 +27,13 @@
 }
 
 @font-face {
-	font-family: 'Material Icons Outlined';
-	font-style: normal;
-	font-weight: 400;
-	src: local('Material Icons Outlined'),
-	local('material-icons-outlined'),
-	url('../fonts/MaterialIcons/material-icons-outlined.woff2') format('woff2'),
-	url('../fonts/MaterialIcons/material-icons-outlined.woff') format('woff');
+    font-family: 'Material Icons Outlined';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Material Icons Outlined'),
+    local('material-icons-outlined'),
+    url('../fonts/MaterialIcons/material-icons-outlined.woff2') format('woff2'),
+    url('../fonts/MaterialIcons/material-icons-outlined.woff') format('woff');
 }
 
 .material-icons-outlined {
@@ -55,13 +55,13 @@
 }
 
 @font-face {
-	font-family: 'Material Icons Round';
-	font-style: normal;
-	font-weight: 400;
-	src: local('Material Icons Round'),
-	local('material-icons-round'),
-	url('../fonts/MaterialIcons/material-icons-round.woff2') format('woff2'),
-	url('../fonts/MaterialIcons/material-icons-round.woff') format('woff');
+    font-family: 'Material Icons Round';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Material Icons Round'),
+    local('material-icons-round'),
+    url('../fonts/MaterialIcons/material-icons-round.woff2') format('woff2'),
+    url('../fonts/MaterialIcons/material-icons-round.woff') format('woff');
 }
 
 .material-icons-round {
@@ -83,13 +83,13 @@
 }
 
 @font-face {
-	font-family: 'Material Icons Sharp';
-	font-style: normal;
-	font-weight: 400;
-	src: local('Material Icons Sharp'),
-	local('material-icons-sharp'),
-	url('../fonts/MaterialIcons/material-icons-sharp.woff2') format('woff2'),
-	url('../fonts/MaterialIcons/material-icons-sharp.woff') format('woff');
+    font-family: 'Material Icons Sharp';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Material Icons Sharp'),
+    local('material-icons-sharp'),
+    url('../fonts/MaterialIcons/material-icons-sharp.woff2') format('woff2'),
+    url('../fonts/MaterialIcons/material-icons-sharp.woff') format('woff');
 }
 
 .material-icons-sharp {
@@ -111,13 +111,13 @@
 }
 
 @font-face {
-	font-family: 'Material Icons Two Tone';
-	font-style: normal;
-	font-weight: 400;
-	src: local('Material Icons Two Tone'),
-	local('material-icons-two-tone'),
-	url('../fonts/MaterialIcons/material-icons-two-tone.woff2') format('woff2'),
-	url('../fonts/MaterialIcons/material-icons-two-tone.woff') format('woff');
+    font-family: 'Material Icons Two Tone';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Material Icons Two Tone'),
+    local('material-icons-two-tone'),
+    url('../fonts/MaterialIcons/material-icons-two-tone.woff2') format('woff2'),
+    url('../fonts/MaterialIcons/material-icons-two-tone.woff') format('woff');
 }
 
 .material-icons-two-tone {

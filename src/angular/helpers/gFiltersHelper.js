@@ -5,120 +5,120 @@ import evEvents from '../services/entityViewerEvents'
 /** @module: gFiltersHelper */
 export default function () {
 
-	/**
-	 *
-	 * @param filter {Object}
-	 * @param isReport {Object=}
-	 * @returns {Object} - changed filter
-	 * @memberof gFiltersHelper
-	 */
-	const setFilterDefaultOptions = (filter, isReport) => {
+    /**
+     *
+     * @param filter {Object}
+     * @param isReport {Object=}
+     * @returns {Object} - changed filter
+     * @memberof gFiltersHelper
+     */
+    const setFilterDefaultOptions = (filter, isReport) => {
 
-		if (!filter.options) {
-			filter.options = {}
-		}
+        if (!filter.options) {
+            filter.options = {}
+        }
 
-		if (!filter.options.filter_type) {
-			filter.options.filter_type = metaHelper.getDefaultFilterType(filter.value_type);
-		}
+        if (!filter.options.filter_type) {
+            filter.options.filter_type = metaHelper.getDefaultFilterType(filter.value_type);
+        }
 
-		if (!filter.options.filter_values) {
-			filter.options.filter_values = []
-		}
+        if (!filter.options.filter_values) {
+            filter.options.filter_values = []
+        }
 
-		if (!filter.options.hasOwnProperty('exclude_empty_cells')) {
-			filter.options.exclude_empty_cells = false;
-		}
+        if (!filter.options.hasOwnProperty('exclude_empty_cells')) {
+            filter.options.exclude_empty_cells = false;
+        }
 
-		if (isReport) {
+        if (isReport) {
 
-			if (!filter.options.use_from_above) {
-				filter.options.use_from_above = {}
-			}
+            if (!filter.options.use_from_above) {
+                filter.options.use_from_above = {}
+            }
 
-		}
+        }
 
-		return filter;
+        return filter;
 
-	};
-	/**
-	 *
-	 * @param filterType {string} - filter mode
-	 * @param filterOptions {Object}
-	 * @returns {Array} - array with filterType and emptied filterOptions
-	 * @memberof gFiltersHelper
-	 */
-	const emptyTextFilter = (filterType, filterOptions) => {
+    };
+    /**
+     *
+     * @param filterType {string} - filter mode
+     * @param filterOptions {Object}
+     * @returns {Array} - array with filterType and emptied filterOptions
+     * @memberof gFiltersHelper
+     */
+    const emptyTextFilter = (filterType, filterOptions) => {
 
-		filterOptions.filter_type = filterType;
+        filterOptions.filter_type = filterType;
 
-		if (filterType === 'empty') {
-			filterOptions.exclude_empty_cells = false;
-		}
+        if (filterType === 'empty') {
+            filterOptions.exclude_empty_cells = false;
+        }
 
-		filterOptions.filter_values = [];
+        filterOptions.filter_values = [];
 
-		return [filterType, filterOptions];
+        return [filterType, filterOptions];
 
-	};
-	/**
-	 * @param filterType {string} - filter mode
-	 * @param filterOptions {Object}
-	 * @returns {Array} - array with filterType and emptied filterOptions
-	 * @memberof gFiltersHelper
-	 */
-	const emptyNumberFilter = (filterType, filterOptions) => {
+    };
+    /**
+     * @param filterType {string} - filter mode
+     * @param filterOptions {Object}
+     * @returns {Array} - array with filterType and emptied filterOptions
+     * @memberof gFiltersHelper
+     */
+    const emptyNumberFilter = (filterType, filterOptions) => {
 
-		filterOptions.filter_type = filterType;
+        filterOptions.filter_type = filterType;
 
-		if (filterType === 'from_to' || filterType === 'out_of_range') {
+        if (filterType === 'from_to' || filterType === 'out_of_range') {
 
-			filterOptions.filter_values = {}
+            filterOptions.filter_values = {}
 
-		} else {
+        } else {
 
-			if (filterType === 'empty') {
-				filterOptions.exclude_empty_cells = false;
-			}
+            if (filterType === 'empty') {
+                filterOptions.exclude_empty_cells = false;
+            }
 
-			filterOptions.filter_values = [];
+            filterOptions.filter_values = [];
 
-		}
+        }
 
-		return [filterType, filterOptions];
+        return [filterType, filterOptions];
 
-	};
-	/**
-	 * @param filterType {string} - filter mode
-	 * @param filterOptions {Object}
-	 * @returns {Array} - array with filterType and emptied filterOptions
-	 * @memberof gFiltersHelper
-	 */
-	const emptyDateFilter = (filterType, filterOptions) => {
+    };
+    /**
+     * @param filterType {string} - filter mode
+     * @param filterOptions {Object}
+     * @returns {Array} - array with filterType and emptied filterOptions
+     * @memberof gFiltersHelper
+     */
+    const emptyDateFilter = (filterType, filterOptions) => {
 
-		filterOptions.filter_type = filterType;
+        filterOptions.filter_type = filterType;
 
-		if (filterType === 'date_tree') {
-			filterOptions.dates_tree = [];
+        if (filterType === 'date_tree') {
+            filterOptions.dates_tree = [];
 
-		}
-		else if (filterType === 'from_to' || filterType === 'out_of_range') {
+        }
+        else if (filterType === 'from_to' || filterType === 'out_of_range') {
 
-			filterOptions.filter_values = {}
+            filterOptions.filter_values = {}
 
-		} else {
+        } else {
 
-			if (filterType === 'empty') {
-				filterOptions.exclude_empty_cells = false;
-			}
+            if (filterType === 'empty') {
+                filterOptions.exclude_empty_cells = false;
+            }
 
-			filterOptions.filter_values = [];
+            filterOptions.filter_values = [];
 
-		}
+        }
 
-		return [filterType, filterOptions];
+        return [filterType, filterOptions];
 
-	};
+    };
 	/**
 	 * Returns useFromAboveFilters without changing original array.
 	 *
