@@ -23,7 +23,7 @@
                             <div layout="row" data-ng-repeat="row in vm.range(tab.layout.rows)"
                                  class="entity-editor-row">
                                 <div class="ev-data-field
-								{{field.attribute['value_type'] === 'decoration' ? 'decoration-label-line' : ''}}"
+                                {{field.attribute['value_type'] === 'decoration' ? 'decoration-label-line' : ''}}"
                                      data-ng-repeat="field in tab.layout.fields"
                                      flex="{{vm.bindFlex(tab, row, field)}}"
                                      data-ng-if="vm.checkFieldRender(tab, row, field)">

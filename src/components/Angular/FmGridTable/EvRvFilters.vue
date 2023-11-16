@@ -379,12 +379,13 @@
 		</div>
 
 		<div class="flex aic">
-			<FmIcon
-				icon="refresh"
+			<FmBtn
 				@click="refreshTable()"
 				v-fm-tooltip="'Refresh Database Filters'"
-				btn
-			/>
+				type="icon"
+			>
+				<FmIcon icon="refresh" />
+			</FmBtn>
 
 			<FmMenu v-if="scope.isRootEntityViewer">
 				<template #btn>
@@ -619,18 +620,20 @@
 
 	let filtersChipsContainer
 	let customFields
+	let addFilterElem = null;
 
 	onMounted(() => {
+
 		elem.value = document.querySelector('.ev_toolbar.g-filters-holder')
 
 		filtersChipsContainer = elem.value.querySelector('.gFiltersContainer')
 
-		let addFilterElem
 		customFields = scope.attributeDataService.getCustomFieldsByEntityType(
 			scope.entityType
 		)
 
 		init()
+
 	})
 	// link: function (, , attrs, ) {
 	scope.entityType = gFiltersVm.entityType
@@ -999,11 +1002,6 @@
 			}
 		)
 
-		evEventService.addEventListener(
-			evEvents.TABLE_SIZES_CALCULATED,
-			function () {}
-		)
-
 		evEventService.addEventListener(evEvents.FILTERS_CHANGE, function () {
 			filters.value = evDataService.getFilters()
 
@@ -1023,6 +1021,7 @@
 		evEventService.addEventListener(evEvents.ADDITIONS_CHANGE, function () {
 			scope.currentAdditions = evDataService.getAdditions()
 		})
+
 	}
 
 	function init() {

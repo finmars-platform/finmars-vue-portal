@@ -16,7 +16,6 @@
 				:class="{
 					active: isOpen,
 					bi_no_borders: no_borders,
-					small: size == 'small',
 				}"
 				:label="label"
 				:tooltip="tooltip"
@@ -55,14 +54,14 @@
 						<div class="flex-row">
 							<FmBtn
 								v-if="clearBtn"
-								type="iconBtn"
+								type="icon"
 								icon="close"
 								class="fm_select_right_btn"
 								@click.stop="emit('update:modelValue', null)"
 							/>
 
 							<FmBtn
-								type="iconBtn"
+								type="icon"
 								:icon="isOpen ? 'arrow_drop_up' : 'arrow_drop_down'"
 								@click="mainInput && mainInput.focus()"
 							/>
@@ -108,7 +107,6 @@
 			default: 'name',
 		},
 		height: String,
-		size: String,
 		no_borders: Boolean,
 		optionsFilter: Boolean,
 		required: Boolean,
