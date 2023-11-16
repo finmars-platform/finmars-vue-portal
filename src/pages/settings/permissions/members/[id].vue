@@ -96,140 +96,143 @@
 
 <script setup>
 
-import dayjs from 'dayjs'
+	import dayjs from 'dayjs'
 
-definePageMeta({
-	middleware: 'auth',
-	bread: [
-		{
-			text: 'Permissions: Members',
-			to: '/settings/permissions',
-			disabled: false
-		},
-		{
-			text: 'Update member',
-			disabled: true
-		},
-	],
-});
-const store = useStore()
-let route = useRoute()
-let router = useRouter()
+	definePageMeta({
+		middleware: 'auth',
+		bread: [
+			{
+				text: 'Permissions: Members',
+				to: '/settings/permissions',
+				disabled: false
+			},
+			{
+				text: 'Update member',
+				disabled: true
+			},
+		],
+	});
+	const store = useStore()
+	let route = useRoute()
+	let router = useRouter()
 
-let member = ref({})
-let groups = ref([])
-let roles = ref([])
-let accessPolicies = ref([])
+	let member = ref({})
+	let groups = ref([])
+	let roles = ref([])
+	let accessPolicies = ref([])
 
-async function resendInvite() {
+	async function resendInvite() {
 
-	let res = await useApi('memberSendInvite.put', {params: {id: route.params.id}})
+		let res = await useApi('memberSendInvite.put', {params: {id: route.params.id}})
 
-	if (res) {
-		useNotify({type: 'success', title: 'Invite sent!'})
+		if (res) {
+			useNotify({type: 'success', title: 'Invite sent!'})
+		}
+
 	}
 
-}
+	let statuses = ref([
+		{id: 'active', name: 'Active'},
+		{id: 'blocked', name: 'Blocked'},
+	]);
 
-let statuses = ref([
-	{id: 'active', name: 'Active'},
-	{id: 'blocked', name: 'Blocked'},
-]);
-
-let selectedGroups = computed(() => {
-	if (!member.value.groups_object.length) return []
-	return member.value.groups_object.map(item => item.name).join(',')
-})
-
-let selectedRoles = computed(() => {
-	if (!member.value.roles_object.length) return []
-	return member.value.roles_object.map(item => item.name).join(',')
-})
-
-let selectedAccessPolicies = computed(() => {
-	if (!member.value.access_policies_object?.length) return []
-	return member.value.access_policies_object.map(item => item.user_code).join(',')
-})
-
-
-async function init() {
-	let res = await useApi('member.get', {params: {id: route.params.id}})
-	member.value = res
-
-	res = await useApi('groupList.get')
-	groups.value = res.results
-
-	res = await useApi('roleList.get')
-	roles.value = res.results
-
-	// res = await useApi('accessPolicyList.get', {params: {page_size: '10000'}})
-	res = await useLoadAllPages('accessPolicyList.get', {
-		filters: {page: 1, page_size: 10000},
-	})
-	accessPolicies.value = res
-
-}
-
-function findGroupIds(val) {
-	if (typeof val == 'string') val = val.split(',')
-	member.value.groups_object = []
-
-	val.forEach(itemArr => {
-		let elem = groups.value.find(itemObj => itemObj.name == itemArr)
-		if (elem) member.value.groups_object.push(elem)
+	let selectedGroups = computed(() => {
+		if (!member.value.groups_object.length) return [];
+		return member.value.groups_object.map(item => item.name);
 	})
 
-	member.value.groups = member.value.groups_object.map(item => item.id)
-}
-
-function findRoleIds(val) {
-	if (typeof val == 'string') val = val.split(',')
-	member.value.roles_object = []
-
-	val.forEach(itemArr => {
-		let elem = roles.value.find(itemObj => itemObj.name == itemArr)
-		if (elem) member.value.roles_object.push(elem)
+	let selectedRoles = computed(() => {
+		if (!member.value.roles_object.length) return [];
+		return member.value.roles_object.map(item => item.name);
 	})
 
-	member.value.roles = member.value.roles_object.map(item => item.id)
-}
-
-function findAccessPolicyIds(val) {
-	if (typeof val == 'string') val = val.split(',')
-	member.value.access_policies_object = []
-
-	val.forEach(itemArr => {
-		let elem = accessPolicies.value.find(itemObj => itemObj.user_code == itemArr)
-		if (elem) member.value.access_policies_object.push(elem)
+	let selectedAccessPolicies = computed(() => {
+		if (!member.value.access_policies_object?.length) return [];
+		return member.value.access_policies_object.map(item => item.user_code);
 	})
 
-	member.value.access_policies = member.value.access_policies_object.map(item => item.id)
-}
 
-async function save() {
-	let res = await useApi('member.put', {body: member.value, params: {id: route.params.id}})
+	async function init() {
+		let res = await useApi('member.get', {params: {id: route.params.id}})
+		member.value = res
 
-	if (res) {
-		useNotify({type: 'success', title: 'Saved!'})
+		res = await useApi('groupList.get')
+		groups.value = res.results
+
+		res = await useApi('roleList.get')
+		roles.value = res.results
+
+		// res = await useApi('accessPolicyList.get', {params: {page_size: '10000'}})
+		res = await useLoadAllPages('accessPolicyList.get', {
+			filters: {page: 1, page_size: 10000},
+		})
+		accessPolicies.value = res
+
+	}
+
+	function findGroupIds(val) {
+		if (typeof val == 'string') val = val.split(',')
+		member.value.groups_object = []
+
+		val.forEach(itemArr => {
+			let elem = groups.value.find(itemObj => itemObj.name == itemArr)
+			if (elem) member.value.groups_object.push(elem)
+		})
+
+		member.value.groups = member.value.groups_object.map(item => item.id)
+	}
+
+	function findRoleIds(val) {
+		if (typeof val == 'string') val = val.split(',')
+		member.value.roles_object = []
+
+		val.forEach(itemArr => {
+			let elem = roles.value.find(itemObj => itemObj.name == itemArr)
+			if (elem) member.value.roles_object.push(elem)
+		})
+
+		member.value.roles = member.value.roles_object.map(item => item.id)
+	}
+
+	function findAccessPolicyIds(val) {
+		if (typeof val == 'string') val = val.split(',')
+		member.value.access_policies_object = []
+
+		val.forEach(itemArr => {
+			let elem = accessPolicies.value.find(itemObj => itemObj.user_code == itemArr)
+			if (elem) member.value.access_policies_object.push(elem)
+		})
+
+		member.value.access_policies = member.value.access_policies_object.map(item => item.id)
+	}
+
+	async function save() {
+
+		let res = await useApi('member.put', {body: member.value, params: {id: route.params.id}})
+
+		if (!res.error) {
+			useNotify({type: 'success', title: 'Saved!'})
+			router.push('/settings/permissions?tab=Member')
+		}
+
+	}
+
+	async function cancel() {
 		router.push('/settings/permissions?tab=Member')
 	}
-}
 
-async function cancel() {
-	router.push('/settings/permissions?tab=Member')
-}
+	function fromatDate(date) {
+		return dayjs(date).format('DD.MM.YYYY LT')
+	}
 
-function fromatDate(date) {
-	return dayjs(date).format('DD.MM.YYYY LT')
-}
-
-if (store.current.base_api_url) {
-	init()
-} else {
-	watch(() => store.current, async () => {
+	if (store.current.base_api_url) {
 		init()
-	})
-}
+	} else {
+		watch(() => store.current, async () => {
+			init()
+		})
+	}
+
 </script>
 
 <style lang="scss" scoped>

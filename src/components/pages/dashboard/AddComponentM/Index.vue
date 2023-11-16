@@ -110,7 +110,7 @@
 					default_value: prop.default_value,
 					__val: prop.default_value,
 				})
-				// console.log("testing1090 addComponent newProp", JSON.parse(JSON.stringify(newProp)) );
+
 				if (newProp.value_type === 100) {
 					newProp.value_content_type = prop.value_content_type;
 				}
@@ -123,7 +123,7 @@
 					inputProp.subscribedTo.push(newProp.uid)
 				})
 			})
-			// console.log("testing1090.AddComponentM inputs", dashStore.props.inputs);
+
 			dashStore.setPropsWatchers()
 		})
 		cancelFunc()

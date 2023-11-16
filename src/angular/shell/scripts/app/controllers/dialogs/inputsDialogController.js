@@ -6,21 +6,21 @@
 
 export default function ($scope, $mdDialog, data) {
 
-	let vm = this;
+    let vm = this;
 
-	vm.title = data.title;
-	vm.inputsList = data.inputsList;
+    vm.title = data.title;
+    vm.inputsList = data.inputsList;
 
-	vm.cancel = function () {
-		$mdDialog.hide({status: 'disagree'});
-	};
+    vm.cancel = function () {
+        $mdDialog.hide({status: 'disagree'});
+    };
 
-	vm.agree = function () {
+    vm.agree = function () {
 
-		const resData = vm.inputsList.map(input => input.model);
+        const resData = vm.inputsList.map(input => input.model);
 
-		$mdDialog.hide({status: 'agree', data: resData});
+        $mdDialog.hide({status: 'agree', data: resData});
 
-	};
+    };
 
 }

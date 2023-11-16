@@ -1,735 +1,735 @@
 export default [
-	{
-			"key": "name",
-			"name": "Balance. Name",
-			"value_type": 10,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "short_name",
-			"name": "Balance. Short name",
-			"value_type": 10,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "user_code",
-			"name": "Balance. User code",
-			"value_type": 10,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "item_type_name",
-			"name": "Balance. Item Type",
-			"value_type": 10,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "position_size",
-			"name": "Balance. Position size",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "pricing_currency.name",
-			"name": "Balance. Pricing Currency. Name",
-			"value_type": 10,
-			"content_type": "currencies.currency"
-	},
-	{
-			"key": "pricing_currency.short_name",
-			"name": "Balance. Pricing Currency. Short name",
-			"value_type": 10,
-			"content_type": "currencies.currency"
-	},
-	{
-			"key": "pricing_currency.user_code",
-			"name": "Balance. Pricing Currency. User code",
-			"value_type": 10,
-			"content_type": "currencies.currency"
-	},
-	{
-			"key": "pricing_currency.public_name",
-			"name": "Balance. Pricing Currency. Public name",
-			"value_type": 10,
-			"content_type": "currencies.currency"
-	},
-	{
-			"key": "pricing_currency.notes",
-			"name": "Balance. Pricing Currency. Notes",
-			"value_type": 10,
-			"content_type": "currencies.currency"
-	},
-	{
-			"key": "pricing_currency.reference_for_pricing",
-			"name": "Balance. Pricing Currency. Reference for pricing",
-			"value_type": 10,
-			"content_type": "currencies.currency"
-	},
-	{
-			"key": "pricing_currency.default_fx_rate",
-			"name": "Balance. Pricing Currency. Default FX rate",
-			"value_type": 20,
-			"content_type": "currencies.currency"
-	},
-	{
-			"key": "instrument_pricing_currency_fx_rate",
-			"name": "Balance. Pricing currency fx rate",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "instrument_accrued_currency_fx_rate",
-			"name": "Balance. Accrued currency fx rate",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "instrument_accrual_object_accrual_size",
-			"name": "Balance. Current Payment Size",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "instrument_accrual_object_periodicity_object_name",
-			"name": "Balance. Current Payment Frequency",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "instrument_accrual_object_periodicity_n",
-			"name": "Balance. Current Payment Periodicity N",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "date",
-			"name": "Balance. Date",
-			"value_type": 40,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "ytm",
-			"name": "Balance. YTM",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "modified_duration",
-			"name": "Balance. Modified duration",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "last_notes",
-			"name": "Balance. Last notes",
-			"value_type": 10,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "gross_cost_price_loc",
-			"name": "Balance. Gross cost price (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "ytm_at_cost",
-			"name": "Balance. YTM at cost",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "time_invested",
-			"name": "Balance. Time invested",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "return_annually",
-			"name": "Balance. Return annually",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "return_annually_fixed",
-			"name": "Balance. Return annually Fixed",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "net_cost_price_loc",
-			"name": "Balance. Net cost price (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "exposure_currency.name",
-			"name": "Balance.  Exposure Currency. Name",
-			"value_type": 10,
-			"content_type": "currencies.currency"
-	},
-	{
-			"key": "exposure_currency.short_name",
-			"name": "Balance.  Exposure Currency. Short name",
-			"value_type": 10,
-			"content_type": "currencies.currency"
-	},
-	{
-			"key": "exposure_currency.user_code",
-			"name": "Balance.  Exposure Currency. User code",
-			"value_type": 10,
-			"content_type": "currencies.currency"
-	},
-	{
-			"key": "exposure_currency.public_name",
-			"name": "Balance.  Exposure Currency. Public name",
-			"value_type": 10,
-			"content_type": "currencies.currency"
-	},
-	{
-			"key": "exposure_currency.notes",
-			"name": "Balance.  Exposure Currency. Notes",
-			"value_type": 10,
-			"content_type": "currencies.currency"
-	},
-	{
-			"key": "exposure_currency.reference_for_pricing",
-			"name": "Balance.  Exposure Currency. Reference for pricing",
-			"value_type": 10,
-			"content_type": "currencies.currency"
-	},
-	{
-			"key": "exposure_currency.default_fx_rate",
-			"name": "Balance.  Exposure Currency. Default FX rate",
-			"value_type": 20,
-			"content_type": "currencies.currency"
-	},
-	{
-			"key": "principal_invested",
-			"name": "Balance. Principal invested",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "principal_invested_loc",
-			"name": "Balance. Principal invested (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "principal_invested_fixed",
-			"name": "Balance. Principal invested Fixed",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "principal_invested_fixed_loc",
-			"name": "Balance. Principal invested Fixed (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "amount_invested",
-			"name": "Balance. Amount invested",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "amount_invested_loc",
-			"name": "Balance. Amount invested (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "amount_invested_fixed",
-			"name": "Balance. Amount invested Fixed",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "amount_invested_fixed_loc",
-			"name": "Balance. Amount invested Fixed (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "market_value",
-			"name": "Balance. Market value",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "market_value_loc",
-			"name": "Balance. Market value (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "market_value_percent",
-			"name": "Balance. Market value %",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "exposure",
-			"name": "Balance. Exposure",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "exposure_percent",
-			"name": "Balance. Exposure %",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "exposure_loc",
-			"name": "Balance. Exposure (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "instrument_principal_price",
-			"name": "Balance. Current Price",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "instrument_accrued_price",
-			"name": "Balance. Current Accrued",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "pricing_currency_fx_rate",
-			"name": "Balance. Pricing Ccy FX rate",
-			"value_type": 20,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "detail",
-			"name": "Balance. Transaction Detail",
-			"value_type": 10,
-			"content_type": "reports.balancereport"
-	},
-	{
-			"key": "mismatch",
-			"name": "Mismatch. Mismatch",
-			"value_type": 20,
-			"content_type": "reports.balancereportmismatch"
-	},
-	{
-			"key": "mismatch_portfolio",
-			"name": "Mismatch. Mismatch Portfolio",
-			"value_type": "field",
-			"content_type": "reports.balancereportmismatch"
-	},
-	{
-			"key": "mismatch_account",
-			"name": "Mismatch. Mismatch Account",
-			"value_type": "field",
-			"content_type": "reports.balancereportmismatch"
-	},
-	{
-			"key": "net_position_return",
-			"name": "Performance. Net position return",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "net_position_return_loc",
-			"name": "Performance. Net position return (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "position_return",
-			"name": "Performance. Position return",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "position_return_loc",
-			"name": "Performance. Position return (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "net_position_return_fixed",
-			"name": "Performance. Net Position Return Fixed",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "net_position_return_fixed_loc",
-			"name": "Performance. Net Position Return Fixed (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "position_return_fixed",
-			"name": "Performance. Position Return Fixed",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "position_return_fixed_loc",
-			"name": "Performance. Position Return Fixed (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "daily_price_change",
-			"name": "Performance. Daily price change",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "mtd_price_change",
-			"name": "Performance. MTD price change",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "principal_fx",
-			"name": "Performance. Principal FX",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "principal_fx_loc",
-			"name": "Performance. Principal FX (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "principal_fx_opened",
-			"name": "Performance. Principal FX opened",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "principal_fx_opened_loc",
-			"name": "Performance. Principal FX opened (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "principal_fixed",
-			"name": "Performance. Principal fixed",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "principal_fixed_loc",
-			"name": "Performance. Principal fixed (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "principal_fixed_opened",
-			"name": "Performance. Principal fixed opened",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "principal_fixed_opened_loc",
-			"name": "Performance. Principal fixed opened (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "carry_fx",
-			"name": "Performance. Carry FX",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "carry_fx_loc",
-			"name": "Performance. Carry FX (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "carry_fx_opened",
-			"name": "Performance. Carry FX opened",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "carry_fx_opened_loc",
-			"name": "Performance. Carry FX opened (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "carry_fixed",
-			"name": "Performance. Carry fixed",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "carry_fixed_loc",
-			"name": "Performance. Carry fixed (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "carry_fixed_opened",
-			"name": "Performance. Carry fixed opened",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "carry_fixed_opened_loc",
-			"name": "Performance. Carry fixed opened (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "overheads_fx",
-			"name": "Performance. Overheads FX",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "overheads_fx_loc",
-			"name": "Performance. Overheads FX (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "overheads_fx_opened",
-			"name": "Performance. Overheads FX opened",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "overheads_fx_opened_loc",
-			"name": "Performance. Overheads FX opened (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "overheads_fixed",
-			"name": "Performance. Overheads fixed",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "overheads_fixed_loc",
-			"name": "Performance. Overheads fixed (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "overheads_fixed_opened",
-			"name": "Performance. Overheads fixed opened",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "overheads_fixed_opened_loc",
-			"name": "Performance. Overheads fixed opened (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "principal",
-			"name": "Performance. Principal",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "carry",
-			"name": "Performance. Carry",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "overheads",
-			"name": "Performance. Overheads",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "total",
-			"name": "Performance. Total",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "principal_loc",
-			"name": "Performance. Pricnipal (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "carry_loc",
-			"name": "Performance. Carry (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "overheads_loc",
-			"name": "Performance. Overheads (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "total_loc",
-			"name": "Performance. Total (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "principal_closed",
-			"name": "Performance. Principal closed",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "carry_closed",
-			"name": "Performance. Carry closed",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "overheads_closed",
-			"name": "Performance. Overheads closed",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "total_closed",
-			"name": "Performance. Total closed",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "principal_closed_loc",
-			"name": "Performance. Principal closed (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "carry_closed_loc",
-			"name": "Performance. Carry closed (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "overheads_closed_loc",
-			"name": "Performance. Overheads closed (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "total_closed_loc",
-			"name": "Performance. Total closed (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "principal_opened",
-			"name": "Performance. Principal opened",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "carry_opened",
-			"name": "Performance. Carry opened",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "overheads_opened",
-			"name": "Performance. Overheads opened",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "total_opened",
-			"name": "Performance. Total opened",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "principal_opened_loc",
-			"name": "Performance. Principal opened (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "carry_opened_loc",
-			"name": "Performance. Carry opened (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "overheads_opened_loc",
-			"name": "Performance. Overheads opened (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "total_opened_loc",
-			"name": "Performance. Total opened (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "total_fx",
-			"name": "Performance. Total FX",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "total_fx_loc",
-			"name": "Performance. Total FX (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "principal_fx_closed",
-			"name": "Performance. Principal FX closed",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "carry_fx_closed",
-			"name": "Performance. Carry FX closed",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "overheads_fx_closed",
-			"name": "Performance. Overheads FX closed",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "total_fx_closed",
-			"name": "Performance. Total FX closed",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "principal_fx_closed_loc",
-			"name": "Performance. Principal FX closed (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "carry_fx_closed_loc",
-			"name": "Performance. Carry FX closed (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
-	},
-	{
-			"key": "overheads_fx_closed_loc",
-			"name": "Performance. Overheads FX closed (Pricing Currency)",
-			"value_type": 20,
-			"content_type": "reports.balancereportperformance"
+    {
+            "key": "name",
+            "name": "Balance. Name",
+            "value_type": 10,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "short_name",
+            "name": "Balance. Short name",
+            "value_type": 10,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "user_code",
+            "name": "Balance. User code",
+            "value_type": 10,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "item_type_name",
+            "name": "Balance. Item Type",
+            "value_type": 10,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "position_size",
+            "name": "Balance. Position size",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "pricing_currency.name",
+            "name": "Balance. Pricing Currency. Name",
+            "value_type": 10,
+            "content_type": "currencies.currency"
+    },
+    {
+            "key": "pricing_currency.short_name",
+            "name": "Balance. Pricing Currency. Short name",
+            "value_type": 10,
+            "content_type": "currencies.currency"
+    },
+    {
+            "key": "pricing_currency.user_code",
+            "name": "Balance. Pricing Currency. User code",
+            "value_type": 10,
+            "content_type": "currencies.currency"
+    },
+    {
+            "key": "pricing_currency.public_name",
+            "name": "Balance. Pricing Currency. Public name",
+            "value_type": 10,
+            "content_type": "currencies.currency"
+    },
+    {
+            "key": "pricing_currency.notes",
+            "name": "Balance. Pricing Currency. Notes",
+            "value_type": 10,
+            "content_type": "currencies.currency"
+    },
+    {
+            "key": "pricing_currency.reference_for_pricing",
+            "name": "Balance. Pricing Currency. Reference for pricing",
+            "value_type": 10,
+            "content_type": "currencies.currency"
+    },
+    {
+            "key": "pricing_currency.default_fx_rate",
+            "name": "Balance. Pricing Currency. Default FX rate",
+            "value_type": 20,
+            "content_type": "currencies.currency"
+    },
+    {
+            "key": "instrument_pricing_currency_fx_rate",
+            "name": "Balance. Pricing currency fx rate",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "instrument_accrued_currency_fx_rate",
+            "name": "Balance. Accrued currency fx rate",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "instrument_accrual_object_accrual_size",
+            "name": "Balance. Current Payment Size",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "instrument_accrual_object_periodicity_object_name",
+            "name": "Balance. Current Payment Frequency",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "instrument_accrual_object_periodicity_n",
+            "name": "Balance. Current Payment Periodicity N",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "date",
+            "name": "Balance. Date",
+            "value_type": 40,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "ytm",
+            "name": "Balance. YTM",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "modified_duration",
+            "name": "Balance. Modified duration",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "last_notes",
+            "name": "Balance. Last notes",
+            "value_type": 10,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "gross_cost_price_loc",
+            "name": "Balance. Gross cost price (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "ytm_at_cost",
+            "name": "Balance. YTM at cost",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "time_invested",
+            "name": "Balance. Time invested",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "return_annually",
+            "name": "Balance. Return annually",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "return_annually_fixed",
+            "name": "Balance. Return annually Fixed",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "net_cost_price_loc",
+            "name": "Balance. Net cost price (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "exposure_currency.name",
+            "name": "Balance.  Exposure Currency. Name",
+            "value_type": 10,
+            "content_type": "currencies.currency"
+    },
+    {
+            "key": "exposure_currency.short_name",
+            "name": "Balance.  Exposure Currency. Short name",
+            "value_type": 10,
+            "content_type": "currencies.currency"
+    },
+    {
+            "key": "exposure_currency.user_code",
+            "name": "Balance.  Exposure Currency. User code",
+            "value_type": 10,
+            "content_type": "currencies.currency"
+    },
+    {
+            "key": "exposure_currency.public_name",
+            "name": "Balance.  Exposure Currency. Public name",
+            "value_type": 10,
+            "content_type": "currencies.currency"
+    },
+    {
+            "key": "exposure_currency.notes",
+            "name": "Balance.  Exposure Currency. Notes",
+            "value_type": 10,
+            "content_type": "currencies.currency"
+    },
+    {
+            "key": "exposure_currency.reference_for_pricing",
+            "name": "Balance.  Exposure Currency. Reference for pricing",
+            "value_type": 10,
+            "content_type": "currencies.currency"
+    },
+    {
+            "key": "exposure_currency.default_fx_rate",
+            "name": "Balance.  Exposure Currency. Default FX rate",
+            "value_type": 20,
+            "content_type": "currencies.currency"
+    },
+    {
+            "key": "principal_invested",
+            "name": "Balance. Principal invested",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "principal_invested_loc",
+            "name": "Balance. Principal invested (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "principal_invested_fixed",
+            "name": "Balance. Principal invested Fixed",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "principal_invested_fixed_loc",
+            "name": "Balance. Principal invested Fixed (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "amount_invested",
+            "name": "Balance. Amount invested",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "amount_invested_loc",
+            "name": "Balance. Amount invested (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "amount_invested_fixed",
+            "name": "Balance. Amount invested Fixed",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "amount_invested_fixed_loc",
+            "name": "Balance. Amount invested Fixed (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "market_value",
+            "name": "Balance. Market value",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "market_value_loc",
+            "name": "Balance. Market value (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "market_value_percent",
+            "name": "Balance. Market value %",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "exposure",
+            "name": "Balance. Exposure",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "exposure_percent",
+            "name": "Balance. Exposure %",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "exposure_loc",
+            "name": "Balance. Exposure (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "instrument_principal_price",
+            "name": "Balance. Current Price",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "instrument_accrued_price",
+            "name": "Balance. Current Accrued",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "pricing_currency_fx_rate",
+            "name": "Balance. Pricing Ccy FX rate",
+            "value_type": 20,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "detail",
+            "name": "Balance. Transaction Detail",
+            "value_type": 10,
+            "content_type": "reports.balancereport"
+    },
+    {
+            "key": "mismatch",
+            "name": "Mismatch. Mismatch",
+            "value_type": 20,
+            "content_type": "reports.balancereportmismatch"
+    },
+    {
+            "key": "mismatch_portfolio",
+            "name": "Mismatch. Mismatch Portfolio",
+            "value_type": "field",
+            "content_type": "reports.balancereportmismatch"
+    },
+    {
+            "key": "mismatch_account",
+            "name": "Mismatch. Mismatch Account",
+            "value_type": "field",
+            "content_type": "reports.balancereportmismatch"
+    },
+    {
+            "key": "net_position_return",
+            "name": "Performance. Net position return",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "net_position_return_loc",
+            "name": "Performance. Net position return (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "position_return",
+            "name": "Performance. Position return",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "position_return_loc",
+            "name": "Performance. Position return (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "net_position_return_fixed",
+            "name": "Performance. Net Position Return Fixed",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "net_position_return_fixed_loc",
+            "name": "Performance. Net Position Return Fixed (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "position_return_fixed",
+            "name": "Performance. Position Return Fixed",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "position_return_fixed_loc",
+            "name": "Performance. Position Return Fixed (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "daily_price_change",
+            "name": "Performance. Daily price change",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "mtd_price_change",
+            "name": "Performance. MTD price change",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "principal_fx",
+            "name": "Performance. Principal FX",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "principal_fx_loc",
+            "name": "Performance. Principal FX (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "principal_fx_opened",
+            "name": "Performance. Principal FX opened",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "principal_fx_opened_loc",
+            "name": "Performance. Principal FX opened (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "principal_fixed",
+            "name": "Performance. Principal fixed",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "principal_fixed_loc",
+            "name": "Performance. Principal fixed (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "principal_fixed_opened",
+            "name": "Performance. Principal fixed opened",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "principal_fixed_opened_loc",
+            "name": "Performance. Principal fixed opened (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "carry_fx",
+            "name": "Performance. Carry FX",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "carry_fx_loc",
+            "name": "Performance. Carry FX (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "carry_fx_opened",
+            "name": "Performance. Carry FX opened",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "carry_fx_opened_loc",
+            "name": "Performance. Carry FX opened (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "carry_fixed",
+            "name": "Performance. Carry fixed",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "carry_fixed_loc",
+            "name": "Performance. Carry fixed (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "carry_fixed_opened",
+            "name": "Performance. Carry fixed opened",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "carry_fixed_opened_loc",
+            "name": "Performance. Carry fixed opened (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "overheads_fx",
+            "name": "Performance. Overheads FX",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "overheads_fx_loc",
+            "name": "Performance. Overheads FX (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "overheads_fx_opened",
+            "name": "Performance. Overheads FX opened",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "overheads_fx_opened_loc",
+            "name": "Performance. Overheads FX opened (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "overheads_fixed",
+            "name": "Performance. Overheads fixed",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "overheads_fixed_loc",
+            "name": "Performance. Overheads fixed (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "overheads_fixed_opened",
+            "name": "Performance. Overheads fixed opened",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "overheads_fixed_opened_loc",
+            "name": "Performance. Overheads fixed opened (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "principal",
+            "name": "Performance. Principal",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "carry",
+            "name": "Performance. Carry",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "overheads",
+            "name": "Performance. Overheads",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "total",
+            "name": "Performance. Total",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "principal_loc",
+            "name": "Performance. Pricnipal (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "carry_loc",
+            "name": "Performance. Carry (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "overheads_loc",
+            "name": "Performance. Overheads (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "total_loc",
+            "name": "Performance. Total (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "principal_closed",
+            "name": "Performance. Principal closed",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "carry_closed",
+            "name": "Performance. Carry closed",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "overheads_closed",
+            "name": "Performance. Overheads closed",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "total_closed",
+            "name": "Performance. Total closed",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "principal_closed_loc",
+            "name": "Performance. Principal closed (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "carry_closed_loc",
+            "name": "Performance. Carry closed (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "overheads_closed_loc",
+            "name": "Performance. Overheads closed (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "total_closed_loc",
+            "name": "Performance. Total closed (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "principal_opened",
+            "name": "Performance. Principal opened",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "carry_opened",
+            "name": "Performance. Carry opened",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "overheads_opened",
+            "name": "Performance. Overheads opened",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "total_opened",
+            "name": "Performance. Total opened",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "principal_opened_loc",
+            "name": "Performance. Principal opened (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "carry_opened_loc",
+            "name": "Performance. Carry opened (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "overheads_opened_loc",
+            "name": "Performance. Overheads opened (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "total_opened_loc",
+            "name": "Performance. Total opened (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "total_fx",
+            "name": "Performance. Total FX",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "total_fx_loc",
+            "name": "Performance. Total FX (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "principal_fx_closed",
+            "name": "Performance. Principal FX closed",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "carry_fx_closed",
+            "name": "Performance. Carry FX closed",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "overheads_fx_closed",
+            "name": "Performance. Overheads FX closed",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "total_fx_closed",
+            "name": "Performance. Total FX closed",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "principal_fx_closed_loc",
+            "name": "Performance. Principal FX closed (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "carry_fx_closed_loc",
+            "name": "Performance. Carry FX closed (Pricing Currency)",
+            "value_type": 20,
+            "content_type": "reports.balancereportperformance"
+    },
+    {
+            "key": "overheads_fx_closed_loc",
+            "name": "Performance. Overheads FX closed (Pricing Currency)",
+            "value_type": 20,
+    		"content_type": "reports.balancereportperformance"
 	},
 	{
 			"key": "total_fx_closed_loc",

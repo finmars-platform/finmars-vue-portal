@@ -5,6 +5,7 @@
 <script setup>
 	import evEvents from '@/angular/services/entityViewerEvents'
 	import jquery from 'jquery'
+	import evDataHelper from '@/angular/helpers/ev-data.helper'
 
 	let elem = ref(null)
 
@@ -211,6 +212,21 @@
 				column.style.width = result + 'px'
 
 				updateColumn(column)
+
+				/*let groups = evDataService.getGroups();
+				const columnForGroup = groups.some(group => group.key === column.key);
+
+				if (columnForGroup) {
+
+					const columns = evDataService.getColumns();
+
+					groups = evDataHelper.importGroupsStylesFromColumns(groups, columns);
+					evDataService.setGroups(groups);
+
+					evEventService.dispatchEvent(evEvents.UPDATE_GROUPS_SIZE);
+
+				}*/
+				evEventService.dispatchEvent(evEvents.UPDATE_GROUPS_SIZE, {key: column.key});
 
 				// utilsHelper.debounce(updateCellsWidth(column, columnIndex), 5);
 				updateCellsWidth(column, columnIndex)

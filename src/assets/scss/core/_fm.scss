@@ -1,275 +1,291 @@
 .fm_container {
-	padding: 15px $content-padding-x;
+    padding: 15px $content-padding-x;
 }
 .fm_page_title {
-	font-size: 24px;
-	margin-bottom: 15px;
+    font-size: 24px;
+    margin-bottom: 15px;
 }
 .fm_drop {
-	background: $separ;
+    background: $separ;
 }
-.fm_list_item {
-	display: flex;
-	align-items: center;
-	// height: 40px;
-	height: 36px;
-	padding: 0 16px;
-	cursor: pointer;
-	transition: 0.3s;
-	white-space: nowrap;
 
-	&:hover {
-		background: $main;
-	}
-	&.active {
-		background: $main-darken;
-	}
-	& + & {
-		border-top: $opts-borders;
-	}
+.fm_list_item {
+    display: flex;
+    align-items: center;
+    // height: 40px;
+    height: 36px;
+    padding: 0 16px;
+    transition: 0.3s;
+    white-space: nowrap;
+
+    &:not([disabled]) {
+        color: #747474;
+        cursor: pointer;
+    }
+
+    &:not([disabled]):hover {
+        background: $main;
+    }
+    &.active {
+        background: $main-darken;
+    }
+    & + & {
+        border-top: $opts-borders;
+    }
+}
+
+button.fm_list_item {
+    width: 100%;
+}
+
+.fm_the_table_menu3 {
+    .menu_item {
+        height: 48px;
+    }
 }
 
 // Custom inputs
 .bi_default {
-	.bi_main_input {
-		width: 100%;
-		height: inherit;
-	}
+    .bi_main_input {
+        width: 100%;
+        height: inherit;
+    }
 }
 
-// Card
+//# region Card
 .fm_card_title {
-	font-size: 24px;
-	margin-bottom: 25px;
+    font-size: 24px;
+    margin-bottom: 25px;
 }
 .fm_card_subtitle {
-	color: $text-lighten;
-	margin-top: -20px;
-	padding-bottom: 24px;
+    color: $text-lighten;
+    margin-top: -20px;
+    padding-bottom: 24px;
 }
 .fm_card_text {
-	color: $text-lighten;
+    color: $text-lighten;
 }
 .fm_tabs {
-	display: flex;
-	background: $separ;
-	border-bottom: 1px solid $border;
-	height: 48px;
-	line-height: 48px;
+    display: flex;
+    background: $separ;
+    border-bottom: 1px solid $border;
+    height: 48px;
+    line-height: 48px;
 
-	&_item {
-		height: inherit;
-		line-height: inherit;
-		padding: 0 $content-padding-x;
-		text-transform: uppercase;
-		font-size: 14px;
-		letter-spacing: 0.4px;
-		transition: background 0.3s;
-		cursor: pointer;
+    &_item {
+        height: inherit;
+        line-height: inherit;
+        padding: 0 $content-padding-x;
+        text-transform: uppercase;
+        font-size: 14px;
+        letter-spacing: 0.4px;
+        transition: background 0.3s;
+        cursor: pointer;
 
-		&:hover {
-			background: $main-darken;
-		}
-		&.active {
-			color: $primary;
-			border-bottom: 2px solid $primary;
+        &:hover {
+            background: $main-darken;
+        }
+        &.active {
+            color: $primary;
+            border-bottom: 2px solid $primary;
 
-			&:hover {
-				background: $primary-lighten-2;
-			}
-		}
-	}
+            &:hover {
+                background: $primary-lighten-2;
+            }
+        }
+    }
 }
+//# endregion Card
 
 //# region pickmeup inside FmInputDateComplex
 
 .pickmeup.fm_cd_pickmeup {
-	background: #fff;
+    background: #fff;
 
-	.pmu-instance {
-		// width: 340px;
-		width: 334px;
-		height: 340px;
-		padding: 8px 0;
+    .pmu-instance {
+        // width: 340px;
+        width: 334px;
+        height: 340px;
+        padding: 8px 0;
 
-		.pmu-today {
-			background-color: #fff;
-		}
+        .pmu-today {
+            background-color: #fff;
+        }
 
-		.pmu-button {
-			color: $gray;
-		}
+        .pmu-button {
+            color: $gray;
+        }
 
-		.pmu-months,
-		.pmu-years {
-			.pmu-button {
-				width: 46px;
-				height: 47px;
-				margin: 5px;
-				line-height: 48px;
-				border-radius: 100%;
-				color: #000;
+        .pmu-months,
+        .pmu-years {
+            .pmu-button {
+                width: 46px;
+                height: 47px;
+                margin: 5px;
+                line-height: 48px;
+                border-radius: 100%;
+                color: #000;
 
-				&.pmu-selected {
-					background-color: $orange;
-					color: #fff;
+                &.pmu-selected {
+                    background-color: $orange;
+                    color: #fff;
 
-					&:hover {
-						opacity: 0.5;
-					}
-				}
+                    &:hover {
+                        opacity: 0.5;
+                    }
+                }
 
-				&:not(.pmu-selected):hover {
-					background-color: $paleOrange;
-				}
-			}
-		}
+                &:not(.pmu-selected):hover {
+                    background-color: $paleOrange;
+                }
+            }
+        }
 
-		.pmu-day-of-week {
-			padding: 0 13px;
-			border-bottom: 2px solid $borderPale;
+        .pmu-day-of-week {
+            padding: 0 13px;
+            border-bottom: 2px solid $borderPale;
 
-			& > div {
-				color: $gray;
-				width: 44px;
-			}
-		}
+            & > div {
+                color: $gray;
+                width: 44px;
+            }
+        }
 
-		.pmu-days {
-			padding: 0 13px;
-			width: 334px;
+        .pmu-days {
+            padding: 0 13px;
+            width: 334px;
 
-			.pmu-button {
-				border-radius: 100%;
-				height: 36px;
-				width: 36px;
-				font-size: 12px;
-				padding: 10px 0;
-				font-size: 12px;
-				box-sizing: border-box;
-				margin: 4px;
-				color: #000;
+            .pmu-button {
+                border-radius: 100%;
+                height: 36px;
+                width: 36px;
+                font-size: 12px;
+                padding: 10px 0;
+                font-size: 12px;
+                box-sizing: border-box;
+                margin: 4px;
+                color: #000;
 
-				&.pmu-not-in-month {
-					// visibility: hidden;
-					opacity: 0.4;
-				}
+                &.pmu-not-in-month {
+                    // visibility: hidden;
+                    opacity: 0.4;
+                }
 
-				&.pmu-selected {
-					background: $orange;
-					color: #fff;
-				}
+                &.pmu-selected {
+                    background: $orange;
+                    color: #fff;
+                }
 
-				&:not(.pmu-selected):hover {
-					background-color: $paleOrange;
-				}
-			}
-		}
+                &:not(.pmu-selected):hover {
+                    background-color: $paleOrange;
+                }
+            }
+        }
 
-		.ax_default {
-			color: #333333;
-		}
-	}
+        .ax_default {
+            color: #333333;
+        }
+    }
 
-	.pmu-instance:first-child,
-	.pmu-instance:last-child {
-		.pmu-prev {
-			// order: 1;
-			width: 16px;
-			padding: 0 4px;
-			// margin-right: 8px;
-			margin-left: 18px;
-			box-sizing: content-box;
+    .pmu-instance:first-child,
+    .pmu-instance:last-child {
+        .pmu-prev {
+            // order: 1;
+            width: 16px;
+            padding: 0 4px;
+            // margin-right: 8px;
+            margin-left: 18px;
+            box-sizing: content-box;
 
-			&:hover {
-				color: $orange;
-			}
-		}
+            &:hover {
+                color: $orange;
+            }
+        }
 
-		.pmu-month {
-			width: 258px;
-			margin: 0 16px;
+        .pmu-month {
+            width: 258px;
+            margin: 0 16px;
 
-			&:hover {
-				color: $orange;
-			}
-		}
+            &:hover {
+                color: $orange;
+            }
+        }
 
-		.pmu-next {
-			// order: 2;
-			width: 16px;
-			padding: 0 4px;
-			// margin-left: 8px;
-			box-sizing: content-box;
+        .pmu-next {
+            // order: 2;
+            width: 16px;
+            padding: 0 4px;
+            // margin-left: 8px;
+            box-sizing: content-box;
 
-			&:hover {
-				color: $orange;
-			}
-		}
-	}
+            &:hover {
+                color: $orange;
+            }
+        }
+    }
 }
 
 .dates_range {
-	.pickmeup.fm_cd_pickmeup {
-		.pmu-instance {
-			.pmu-days {
-				.pmu-button.pmu-selected:not(.custom-pmu-date-from-to) {
-					&.custom-pmu-date-from {
-						background-color: $orange;
-						border-top-right-radius: 0;
-						border-bottom-right-radius: 0;
-						margin-right: 0;
-					}
+    .pickmeup.fm_cd_pickmeup {
+        .pmu-instance {
+            .pmu-days {
+                .pmu-button.pmu-selected:not(.custom-pmu-date-from-to) {
+                    &.custom-pmu-date-from {
+                        background-color: $orange;
+                        border-top-right-radius: 0;
+                        border-bottom-right-radius: 0;
+                        margin-right: 0;
+                    }
 
-					&.custom-pmu-date-to {
-						background-color: $orange;
-						border-top-left-radius: 0;
-						border-bottom-left-radius: 0;
-						margin-left: 0;
-					}
-				}
+                    &.custom-pmu-date-to {
+                        background-color: $orange;
+                        border-top-left-radius: 0;
+                        border-bottom-left-radius: 0;
+                        margin-left: 0;
+                    }
+                }
 
-				.pmu-button:not(.pmu-selected) {
-					&.custom-pmu-day-in-range {
-						width: 44px;
-						background-color: #fcd7ca;
-						border-radius: 0;
-						margin-right: 0;
-						margin-left: 0;
-					}
-				}
-			}
-		}
-	}
+                .pmu-button:not(.pmu-selected) {
+                    &.custom-pmu-day-in-range {
+                        width: 44px;
+                        background-color: #fcd7ca;
+                        border-radius: 0;
+                        margin-right: 0;
+                        margin-left: 0;
+                    }
+                }
+            }
+        }
+    }
 }
 //# endregion pickmeup inside FmInputDateComplex
 
 .fm_select_main_input {
-	height: 100%;
-	display: flex;
-	align-items: center;
+    height: 100%;
+    display: flex;
+    align-items: center;
 
-	.selected_text.nothing_selected {
-		color: $text-pale;
-	}
+    .selected_text.nothing_selected {
+        color: $text-pale;
+    }
 }
 
 // vFmTooltip directive
 .fm_tooltip {
-	padding: 3px 6px;
-	border-radius: 4px;
-	color: #fff;
-	background-color: #646464;
-	opacity: 0.8;
-	font-size: 11px;
-	z-index: 60;
+    padding: 3px 6px;
+    border-radius: 4px;
+    color: #fff;
+    background-color: #646464;
+    opacity: 0.8;
+    font-size: 11px;
+    z-index: 60;
 
-	&.error {
-		background-color: $error;
-		font-size: 13px;
-	}
+    &.error {
+        background-color: $error;
+        font-size: 13px;
+    }
 }
 
 .fm_select_right_btn:not([disabled]):hover {
-	opacity: .5;
+    opacity: .5;
 }

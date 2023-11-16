@@ -11,7 +11,7 @@
 	>
 		<template #button>
 			<FmBtn
-				type="iconBtn"
+				type="icon"
 				icon="edit"
 				@click="teIsOpened = true"
 			/>

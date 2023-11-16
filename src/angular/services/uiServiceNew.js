@@ -9,9 +9,10 @@ import metaService from './metaService'
 export default function (
 	cookieService,
 	xhrService,
-	ecosystemDefaultService,
-	metaContentTypesService
+	metaContentTypesService,
+	store,
 ) {
+
 	const uiRepository = new UiRepository(
 		cookieService,
 		xhrService,
@@ -336,27 +337,38 @@ export default function (
 		}
 	}
 
-	const applyDefaultSettingsToLayoutTemplate = async function (layoutTemplate) {
-		const ecosystemDefaultData = await ecosystemDefaultService
-			.getList()
-			.then((res) => res.results[0])
+	const applyDefaultSettingsToLayoutTemplate = async function (layoutTemplate, isReport) {
 
-		const reportOptions = {
-			account_mode: 1,
-			calculationGroup: 'portfolio',
-			cost_method: 1,
-			report_date: new Date().toISOString().slice(0, 10),
-			portfolio_mode: 1,
-			strategy1_mode: 0,
-			strategy2_mode: 0,
-			strategy3_mode: 0,
-			table_font_size: 'small',
-			pricing_policy: ecosystemDefaultData.pricing_policy,
+		if (isReport) {
+
+			// const ecosystemDefaultData = await ecosystemDefaultService.getList().then (res => res.results[0]);
+			const ecosystemDefaultData = store.ecosystemDefaults;
+
+			const reportOptions = {
+				"account_mode": 1,
+				"calculationGroup": "portfolio",
+				"cost_method": 1,
+				"report_date" : new Date().toISOString().slice(0, 10),
+				"portfolio_mode": 1,
+				"strategy1_mode": 0,
+				"strategy2_mode": 0,
+				"strategy3_mode": 0,
+				"table_font_size": "small",
+				"pricing_policy": ecosystemDefaultData.pricing_policy,
+			};
+
+			layoutTemplate.data.reportOptions = reportOptions;
+
+		}
+		else {
+
+			layoutTemplate.data.rowSettings = {};
+			layoutTemplate.data.ev_options = {};
+
 		}
 
-		layoutTemplate[0].data.reportOptions = reportOptions
+		return layoutTemplate;
 
-		return layoutTemplate
 	}
 
 	const getDefaultListLayout = function (entityType) {
@@ -542,9 +554,29 @@ export default function (
 		return uiRepository.deleteConfigurationExportLayoutByKey(id)
 	}
 
+	const getComplexTransactionFieldList = function (options) {
+		return uiRepository.getComplexTransactionFieldList(options)
+	};
+
+	const getComplexTransactionFieldPrimaryList = function (options) {
+		return uiRepository.getComplexTransactionFieldPrimaryList(options)
+	};
+
+	const createComplexTransactionField = function (data) {
+		return uiRepository.createComplexTransactionField(data);
+	};
+
+	const updateComplexTransactionField = function (id, data) {
+		return uiRepository.updateComplexTransactionField(id, data);
+	};
+
 	const getTransactionFieldList = function (options) {
 		return uiRepository.getTransactionFieldList(options)
 	}
+
+	const getTransactionFieldPrimaryList = function (options) {
+		return uiRepository.getTransactionFieldPrimaryList(options)
+	};
 
 	const createTransactionField = function (data) {
 		return uiRepository.createTransactionField(data)
@@ -557,6 +589,10 @@ export default function (
 	const getInstrumentFieldList = function () {
 		return uiRepository.getInstrumentFieldList()
 	}
+
+	const getInstrumentFieldPrimaryList = function () {
+		return uiRepository.getInstrumentFieldPrimaryList()
+	};
 
 	const createInstrumentField = function (data) {
 		return uiRepository.createInstrumentField(data)
@@ -730,38 +766,93 @@ export default function (
 				})
 		})
 	}
+
+	const getDefaultMemberLayout = async function () {
+
+		try {
+			/*let data = await uiRepository.getDefaultMemberLayout();
+
+			data = data.results[0];
+
+			if (!data.data) data.data = {};
+
+			if (typeof data.data.autosave_layouts !== 'boolean') {
+				data.data.autosave_layouts = true;
+			}
+
+			if (!data.data.favorites) {
+				data.data.favorites = {};
+			}
+
+			if (!data.data.favorites.attributes) {
+				data.data.favorites.attributes = {};
+			}
+
+			globalDataService.setMemberLayout(data);
+
+			return data;*/
+			return store.memberLayout;
+
+		} catch (error) { throw error; }
+
+	}
+
+	const updateMemberLayout = async function (id, ui) {
+
+		try {
+			/*const data = await uiRepository.updateMemberLayout(id, ui);
+
+			globalDataService.setMemberLayout(data);*/
+			if (!ui) {
+				console.error("No member layout specified for updating:", ui)
+				throw "No member layout specified for updating";
+			}
+
+			if (!ui.id) {
+				console.error("Member layout does not have the id: ", ui)
+				throw "Member layout does not have the id";
+			}
+
+			store.memberLayout = ui;
+			store.updateMemberLayout(ui)
+
+		} catch (error) { throw error; }
+
+	};
+
 	/** @module uiService */
 	return {
-		isCachedLayoutActual: isCachedLayoutActual,
+
 		getPortalInterfaceAccess: getPortalInterfaceAccess,
 
-		getListLayoutTemplate: getListLayoutTemplate,
+
 		getDefaultListLayout: getDefaultListLayout,
-		/*autosaveListLayout: autosaveListLayout,
-    getAutosaveListLayout: getAutosaveListLayout,*/
+
+		// getActiveListLayout: getActiveListLayout,
+
+		getListLayoutTemplate: getListLayoutTemplate,
 
 		getListLayout: getListLayout,
 		getListLayoutLight: getListLayoutLight,
-		// getListLayoutDefault: getListLayoutDefault,
 		getListLayoutByKey: getListLayoutByKey,
-		getListLayoutByUserCode: getListLayoutByUserCode,
+		// getListLayoutDefault: getListLayoutDefault,
 		createListLayout: createListLayout,
 		updateListLayout: updateListLayout,
-
 		deleteListLayoutByKey: deleteListLayoutByKey,
 
 		pingListLayoutByKey: pingListLayoutByKey,
 
-		//<editor-fold desc="Input form editor layout management">
+		// Input Form Layout
+
 		getListEditLayout: getListEditLayout,
 		getDefaultEditLayout: getDefaultEditLayout,
 		getEditLayoutByKey: getEditLayoutByKey,
 		getEditLayoutByUserCode: getEditLayoutByUserCode,
 		createEditLayout: createEditLayout,
 		updateEditLayout: updateEditLayout,
-
 		deleteEditLayoutByKey: deleteEditLayoutByKey,
-		//</editor-fold>
+
+		// Configuration Layout
 
 		getConfigurationList: getConfigurationList,
 		createConfiguration: createConfiguration,
@@ -773,11 +864,19 @@ export default function (
 		updateConfigurationExportLayout: updateConfigurationExportLayout,
 		deleteConfigurationExportLayoutByKey: deleteConfigurationExportLayoutByKey,
 
+		getComplexTransactionFieldList: getComplexTransactionFieldList,
+		getComplexTransactionFieldPrimaryList: getComplexTransactionFieldPrimaryList,
+		createComplexTransactionField: createComplexTransactionField,
+		updateComplexTransactionField: updateComplexTransactionField,
+
 		getTransactionFieldList: getTransactionFieldList,
+		getTransactionFieldPrimaryList: getTransactionFieldPrimaryList,
 		createTransactionField: createTransactionField,
 		updateTransactionField: updateTransactionField,
 
+
 		getInstrumentFieldList: getInstrumentFieldList,
+		getInstrumentFieldPrimaryList: getInstrumentFieldPrimaryList,
 		createInstrumentField: createInstrumentField,
 		updateInstrumentField: updateInstrumentField,
 
@@ -789,12 +888,14 @@ export default function (
 		updateDashboardLayout: updateDashboardLayout,
 		deleteDashboardLayoutByKey: deleteDashboardLayoutByKey,
 
+
 		getTemplateLayoutList: getTemplateLayoutList,
 		getTemplateLayoutByKey: getTemplateLayoutByKey,
 		getDefaultTemplateLayout: getDefaultTemplateLayout,
 		createTemplateLayout: createTemplateLayout,
 		updateTemplateLayout: updateTemplateLayout,
 		deleteTemplateLayoutByKey: deleteTemplateLayoutByKey,
+
 
 		getContextMenuLayoutList: getContextMenuLayoutList,
 		getContextMenuLayoutByKey: getContextMenuLayoutByKey,
@@ -817,5 +918,9 @@ export default function (
 		createColumnSortData: createColumnSortData,
 		updateColumnSortData: updateColumnSortData,
 		deleteColumnSortData: deleteColumnSortData,
+
+		getDefaultMemberLayout: getDefaultMemberLayout,
+		updateMemberLayout: updateMemberLayout,
+
 	}
 }

@@ -7,7 +7,6 @@
 					<FmSelect
 						v-model="action"
 						:items="actionsItems"
-						size="small"
 						class="m-b-0"
 						@update:modelValue="dateFilter()"
 					/>
@@ -944,13 +943,17 @@
 		height: 44px;
 	}
 	.hp_actions_select {
+
 		:deep(.base-input) {
 			margin-top: 0;
+			font-size: 14px;
 
 			.bi_wrap {
 				min-height: 0;
+				height: auto;
 			}
 		}
+
 	}
 	.hp_content {
 		position: relative;

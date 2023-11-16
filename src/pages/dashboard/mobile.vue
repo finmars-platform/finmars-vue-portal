@@ -1,235 +1,241 @@
 <template>
-	<div>
-		<div>
-			<FmInputUserCode
-				style="width: 600px;"
-				v-model="userCode"
-				v-model:configuration_code="configCode"
-			/>
-		</div>
+    <div>
+        <div class="flex-row fi-center">
+            <FmInputText
+                label="Name"
+                v-model="layoutName"
+                class="m-r-16 m-l-16"
+            />
 
-		<div class="fm_tabs">
-			<div
-				class="fm_tabs_item"
-				:class="{ active: tab == 'balance' }"
-				@click="tab = 'balance'"
-			>
-				Balance
-			</div>
-			<div
-				class="fm_tabs_item"
-				:class="{ active: tab == 'pnl' }"
-				@click="tab = 'pnl'"
-			>
-				P&L
-			</div>
-			<div
-				class="fm_tabs_item"
-				:class="{ active: tab == 'dashboard' }"
-				@click="tab = 'dashboard'"
-			>
-				Dashboard
-			</div>
-			<!--			<div class="fm_tabs_item">Transactions</div>
-						<div class="fm_tabs_item">Settings</div>-->
-		</div>
+            <FmInputUserCode
+                style="width: 600px;"
+                v-model="userCode"
+                @configurationCodeChanged="newVal => configCode = newVal"
+            />
+        </div>
 
-		<div
-			v-if="tab == 'balance' && layout.balance"
-			class="p-24"
-		>
-			<!-- <FmInputText v-model="" /> -->
-			<h4>Total NAV with History chart</h4>
+        <div class="fm_tabs">
+            <div
+                class="fm_tabs_item"
+                :class="{ active: tab == 'balance' }"
+                @click="tab = 'balance'"
+            >
+                Balance
+            </div>
+            <div
+                class="fm_tabs_item"
+                :class="{ active: tab == 'pnl' }"
+                @click="tab = 'pnl'"
+            >
+                P&L
+            </div>
+            <div
+                class="fm_tabs_item"
+                :class="{ active: tab == 'dashboard' }"
+                @click="tab = 'dashboard'"
+            >
+                Dashboard
+            </div>
+            <!--            <div class="fm_tabs_item">Transactions</div>
+                        <div class="fm_tabs_item">Settings</div>-->
+        </div>
 
-			<FmCheckbox
-				label="Total NAV with History chart"
-				v-model="layout.balance.isShowHistoryChart"
-			/>
-			<br />
-			<h4>Indicators</h4>
-			<FmCheckbox
-				label="P&L daily, MTD, YTD"
-				v-model="layout.balance.isShowIndicatorsPnl"
-				class="m-b-8"
-			/>
-			<FmCheckbox
-				label="Standart indicators"
-				v-model="layout.balance.isShowIndicators"
-			/>
-			<br />
-			<h4>Doughnut charts</h4>
+        <div
+            v-if="tab == 'balance' && layout.balance"
+            class="p-24"
+        >
+            <!-- <FmInputText v-model="" /> -->
+            <h4>Total NAV with History chart</h4>
 
-			<div class="flex">
-				<FmBtn
-					@click="openAttrSelector('fieldsToGroup')"
-					class="m-r-8"
-				>
-					set columns to groupping
-				</FmBtn>
-				<FmBtn
-					@click="openAttrSelector('fieldToAggrigate')"
-					class="m-r-8"
-				>
-					set one column to Aggrigate by sum
-				</FmBtn>
-				<FmBtn type="text" @click="clearAttrs()">Clear all attrs</FmBtn>
-			</div>
+            <FmCheckbox
+                label="Total NAV with History chart"
+                v-model="layout.balance.isShowHistoryChart"
+            />
+            <br />
+            <h4>Indicators</h4>
+            <FmCheckbox
+                label="P&L daily, MTD, YTD"
+                v-model="layout.balance.isShowIndicatorsPnl"
+                class="m-b-8"
+            />
+            <FmCheckbox
+                label="Standart indicators"
+                v-model="layout.balance.isShowIndicators"
+            />
+            <br />
+            <h4>Doughnut charts</h4>
 
-			<div class="flex">
-				<FmCard
-					v-for="item in layout.balance.fieldsToGroup"
-					style="
-						background: #fff;
-						width: 280px;
-						margin-right: 10px;
-						margin-top: 10px;
-					"
-				>
-					<div class="fm_card_title" style="font-size: 14px">
-						{{ item.layout_name || item.name }}
-					</div>
-					<div style="padding-bottom: 40px">
-						<b>Sum by:</b>
+            <div class="flex">
+                <FmBtn
+                    @click="openAttrSelector('fieldsToGroup')"
+                    class="m-r-8"
+                >
+                    set columns to groupping
+                </FmBtn>
+                <FmBtn
+                    @click="openAttrSelector('fieldToAggrigate')"
+                    class="m-r-8"
+                >
+                    set one column to Aggrigate by sum
+                </FmBtn>
+                <FmBtn type="text" @click="clearAttrs()">Clear all attrs</FmBtn>
+            </div>
 
-<!--						{{
-							layout.balance.fieldToAggrigate &&
-							layout.balance.fieldToAggrigate[0]?.name
-						}}-->
+            <div class="flex">
+                <FmCard
+                    v-for="item in layout.balance.fieldsToGroup"
+                    style="
+                        background: #fff;
+                        width: 280px;
+                        margin-right: 10px;
+                        margin-top: 10px;
+                    "
+                >
+                    <div class="fm_card_title" style="font-size: 14px">
+                        {{ item.layout_name || item.name }}
+                    </div>
+                    <div style="padding-bottom: 40px">
+                        <b>Sum by:</b>
+
+<!--                        {{
+                            layout.balance.fieldToAggrigate &&
+                            layout.balance.fieldToAggrigate[0]?.name
+                        }}-->
             {{ getAggAttrName('balance') }}
-					</div>
+                    </div>
 
-					<template #controls>
-						<FmBtn class="m-8" @click="clearAttr(item.key)">REMOVE</FmBtn>
-					</template>
-				</FmCard>
-			</div>
-			<br /><br />
-			<FmBtn @click="saveLayout()">save</FmBtn>
-		</div>
+                    <template #controls>
+                        <FmBtn class="m-8" @click="clearAttr(item.key)">REMOVE</FmBtn>
+                    </template>
+                </FmCard>
+            </div>
+            <br /><br />
+            <FmBtn @click="saveLayout()">save</FmBtn>
+        </div>
 
-		<div
-			class="p-24"
-			v-if="tab == 'pnl' && layout.pnl"
-		>
-			<!-- <FmInputText v-model="" /> -->
-			<h4>Total with History chart</h4>
+        <div
+            class="p-24"
+            v-if="tab == 'pnl' && layout.pnl"
+        >
+            <!-- <FmInputText v-model="" /> -->
+            <h4>Total with History chart</h4>
 
-			<FmCheckbox
-				label="Total with History chart"
-				v-model="layout.pnl.isShowHistoryChart"
-			/>
-			<br />
-			<h4>Indicators</h4>
-			<FmCheckbox
-				label="P&L daily, MTD, YTD"
-				v-model="layout.pnl.isShowIndicatorsPnl"
-				class="m-b-8"
-			/>
-			<FmCheckbox
-				label="Standart indicators"
-				v-model="layout.pnl.isShowIndicators"
-			/>
-			<br />
-			<h4>Doughnut charts</h4>
+            <FmCheckbox
+                label="Total with History chart"
+                v-model="layout.pnl.isShowHistoryChart"
+            />
+            <br />
+            <h4>Indicators</h4>
+            <FmCheckbox
+                label="P&L daily, MTD, YTD"
+                v-model="layout.pnl.isShowIndicatorsPnl"
+                class="m-b-8"
+            />
+            <FmCheckbox
+                label="Standart indicators"
+                v-model="layout.pnl.isShowIndicators"
+            />
+            <br />
+            <h4>Doughnut charts</h4>
 
-			<div class="flex">
-				<FmBtn
-					@click="openAttrSelector('fieldsToGroup', 'reports.plreport')"
-					class="m-r-8"
-				>set columns to groupping</FmBtn>
+            <div class="flex">
+                <FmBtn
+                    @click="openAttrSelector('fieldsToGroup', 'reports.plreport')"
+                    class="m-r-8"
+                >set columns to groupping</FmBtn>
 
-				<FmBtn
-					@click="openAttrSelector('fieldToAggrigate', 'reports.plreport')"
-					class="m-r-8"
-				>set one column to Aggrigate by sum</FmBtn>
+                <FmBtn
+                    @click="openAttrSelector('fieldToAggrigate', 'reports.plreport')"
+                    class="m-r-8"
+                >set one column to Aggrigate by sum</FmBtn>
 
-				<FmBtn type="text" @click="clearAttrs()">Clear all attrs</FmBtn>
-			</div>
+                <FmBtn type="text" @click="clearAttrs()">Clear all attrs</FmBtn>
+            </div>
 
-			<div class="flex">
-				<FmCard
-					v-for="item in layout.pnl.fieldsToGroup"
-					style="
-						background: #fff;
-						width: 280px;
-						margin-right: 10px;
-						margin-top: 10px;
-					"
-				>
-					<div class="fm_card_title" style="font-size: 14px">
-						{{ item.layout_name || item.name }}
-					</div>
-					<div style="padding-bottom: 40px">
-						<b>Sum by:</b>
+            <div class="flex">
+                <FmCard
+                    v-for="item in layout.pnl.fieldsToGroup"
+                    style="
+                        background: #fff;
+                        width: 280px;
+                        margin-right: 10px;
+                        margin-top: 10px;
+                    "
+                >
+                    <div class="fm_card_title" style="font-size: 14px">
+                        {{ item.layout_name || item.name }}
+                    </div>
+                    <div style="padding-bottom: 40px">
+                        <b>Sum by:</b>
 
-<!--						{{
-							layout.pnl.fieldToAggrigate &&
-							layout.pnl.fieldToAggrigate[0]?.name
-						}}-->
+<!--                        {{
+                            layout.pnl.fieldToAggrigate &&
+                            layout.pnl.fieldToAggrigate[0]?.name
+                        }}-->
             {{ getAggAttrName('pnl') }}
-					</div>
+                    </div>
 
-					<template #controls>
-						<FmBtn class="m-8" @click="clearAttr(item.key)">REMOVE</FmBtn>
-					</template>
-				</FmCard>
-			</div>
-			<br /><br />
-			<FmBtn @click="saveLayout()">save</FmBtn>
-		</div>
+                    <template #controls>
+                        <FmBtn class="m-8" @click="clearAttr(item.key)">REMOVE</FmBtn>
+                    </template>
+                </FmCard>
+            </div>
+            <br /><br />
+            <FmBtn @click="saveLayout()">save</FmBtn>
+        </div>
 
-		<div class="p-24" v-if="tab == 'dashboard' && layout.dashboard">
-			<!-- <FmInputText v-model="" /> -->
-			<h4>All Portfolios History chart</h4>
+        <div class="p-24" v-if="tab == 'dashboard' && layout.dashboard">
+            <!-- <FmInputText v-model="" /> -->
+            <h4>All Portfolios History chart</h4>
 
-			<FmCheckbox
-				label="All Portfolios History chart"
-				v-model="layout.dashboard.isShowHistoryChart"
-			/>
-			<br />
-			<h4>Indicators</h4>
-			<FmCheckbox
-				label="P&L daily, MTD, YTD"
-				v-model="layout.dashboard.isShowIndicatorsPnl"
-				class="m-b-8"
-			/>
-			<FmCheckbox
-				label="Standart indicators"
-				v-model="layout.dashboard.isShowIndicators"
-			/>
+            <FmCheckbox
+                label="All Portfolios History chart"
+                v-model="layout.dashboard.isShowHistoryChart"
+            />
+            <br />
+            <h4>Indicators</h4>
+            <FmCheckbox
+                label="P&L daily, MTD, YTD"
+                v-model="layout.dashboard.isShowIndicatorsPnl"
+                class="m-b-8"
+            />
+            <FmCheckbox
+                label="Standart indicators"
+                v-model="layout.dashboard.isShowIndicators"
+            />
 
-			<br /><br />
-			<FmBtn @click="saveLayout()">save</FmBtn>
-		</div>
+            <br /><br />
+            <FmBtn @click="saveLayout()">save</FmBtn>
+        </div>
 
-		<!--		<ModalAttributesSelector
-					v-if="attrsSelectorIsOpen"
-					:payload="payloadForSelector"
-					:modelValue="true"
-				></ModalAttributesSelector>-->
-		<FmAttributesSelectModal
-			v-model="attrsSelectorIsOpen"
-			title="Add column"
-			:contentType="attrsSelContentType"
-			:attributes="allAttrs"
-			:selected="selAttrsKeys"
-			:disabledAttributes="selAttrsKeys"
-			multiselect
-			@selectedAttributesChanged="attrs => applySelAttrs(attrs)"
+        <!--        <ModalAttributesSelector
+                    v-if="attrsSelectorIsOpen"
+                    :payload="payloadForSelector"
+                    :modelValue="true"
+                ></ModalAttributesSelector>-->
+        <FmAttributesSelectModal
+            v-model="attrsSelectorIsOpen"
+            title="Add column"
+            :contentType="attrsSelContentType"
+            :attributes="allAttrs"
+            :selected="selAttrsKeys"
+            :disabledAttributes="selAttrsKeys"
+            multiselect
+            @selectedAttributesChanged="attrs => applySelAttrs(attrs)"
       @favoritesChanged="favAttrs => renameAttrs('fieldsToGroup', favAttrs)"
-		/>
+        />
 
-		<FmAttributesSelectModal
-			v-model="aggAttrsSelIsOpen"
-			title="Select column"
-			:contentType="attrsSelContentType"
-			:valueType="20"
-			:attributes="allAttrs"
-			:selected="selAttrsKeys[0]"
-			@selectedAttributesChanged="attr => applyAggAttr(attr)"
+        <FmAttributesSelectModal
+            v-model="aggAttrsSelIsOpen"
+            title="Select column"
+            :contentType="attrsSelContentType"
+            :valueType="20"
+            :attributes="allAttrs"
+            :selected="selAttrsKeys[0]"
+            @selectedAttributesChanged="attr => applyAggAttr(attr)"
       @favoritesChanged="favAttrs => renameAttrs('fieldToAggrigate', favAttrs)"
-		/>
-	</div>
+        />
+    </div>
 </template>
 
 <script setup>
@@ -244,12 +250,13 @@
     ],
   })
 
-	let store = useStore();
+    let store = useStore();
   let evAttrsStore = useEvAttributesStore();
 
   let tab = ref('balance')
-	let userCode = ref('');
-	let configCode = ref('');
+    let layoutName = ref('');
+    let userCode = ref('');
+    let configCode = ref('');
   let layout = ref({})
 
   // let payloadForSelector = ref({});
@@ -433,16 +440,17 @@
 
   async function saveLayout() {
 
-		if (!userCode.value) {
-			useNotify({ type: 'warning', title: 'User code should not be empty'})
-			return;
-		}
+        if (!userCode.value) {
+            useNotify({ type: 'warning', title: 'User code should not be empty'})
+            return;
+        }
 
-		let res = await useApi('mobileLayout.put', {
+        let res = await useApi('mobileLayout.put', {
       params: {
         id: layoutStock.id,
       },
       body: {
+                name: layoutName.value,
         user_code: userCode.value,
         configuration_code: configCode.value,
         data: layout.value,
@@ -456,7 +464,7 @@
 
     if (!res.results.length) {
 
-			layout.value = {
+            layout.value = {
         balance: {
           fieldToAggrigate: [],
           fieldsToGroup: [],
@@ -470,7 +478,7 @@
         global: {},
       }
 
-			const creatingRes = await useApi('mobileLayout.post', {
+            const creatingRes = await useApi('mobileLayout.post', {
         body: {
           name: 'Only one',
           user_code: `${store.defaultConfigCode}:only_one`,
@@ -479,15 +487,16 @@
         },
       })
 
-			layoutStock = creatingRes;
+            layoutStock = creatingRes;
 
     } else {
-			layoutStock = res.results[0];
-		}
+            layoutStock = res.results[0];
+        }
 
-		layout.value = layoutStock.data;
-		userCode.value = layoutStock.user_code;
-		configCode.value = layoutStock.configuration_code;
+        layout.value = layoutStock.data;
+        layoutName.value = layoutStock.name;
+        userCode.value = layoutStock.user_code;
+        configCode.value = layoutStock.configuration_code;
     console.log('layout.value:', layout.value)
   }
 

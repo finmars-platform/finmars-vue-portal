@@ -11,7 +11,7 @@
 		<FmBtn
 			v-if="!swiperData.isBeginning || !swiperData.isEnd"
 			class="slide_btn"
-			type="iconBtn"
+			type="icon"
 			:disabled="swiperData.isBeginning"
 			@click="slidePrev"
 		>
@@ -38,7 +38,7 @@
 		<FmBtn
 			v-if="!swiperData.isBeginning || !swiperData.isEnd"
 			class="slide_btn"
-			type="iconBtn"
+			type="icon"
 			:disabled="swiperData.isEnd"
 			@click="slideNext"
 		>

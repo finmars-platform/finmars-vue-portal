@@ -4,7 +4,7 @@
 		:ref="(el) => (elem = jquery(el))"
 	>
 		<div class="ev-viewport">
-			<div class="ev-content" v-show="scope.dataLoadStatus"></div>
+			<!--			<div class="ev-content" v-show="scope.dataLoadStatus"></div>
 
 			<div v-if="!scope.dataLoadStatus" class="ev-content-loader">
 				<div
@@ -13,9 +13,15 @@
 					layout-sm="column"
 					layout-align="space-around"
 				>
-					<progress-circular diameter="100"></progress-circular>loader
+          <FmLoader :size="100" />
 				</div>
-			</div>
+			</div>-->
+			<div class="ev-content"></div>
+			<FmLoader
+				v-show="!scope.firstRender"
+				:size="100"
+				positionCenter
+			/>
 		</div>
 
 		<div
@@ -84,6 +90,9 @@
 		contentWrapElement: props.contentWrapElement,
 		workareaWrapElement: props.workareaWrapElement,
 	})
+
+	/** Changed to 'true' after table fully loaded first time on webpage start */
+	scope.firstRender = false;
 	// function (
 	// 	toastNotificationService,
 	//
@@ -91,6 +100,7 @@
 	let elem = ref(null)
 
 	onMounted(() => {
+
 		var contentElem = elem.value[0].querySelector('.ev-content')
 		var viewportElem = elem.value[0].querySelector('.ev-viewport')
 		// var progressBar = elem[0].querySelector('.ev-progressbar');
@@ -111,7 +121,7 @@
 		var entityType = evDataService.getEntityType()
 		var viewContext = evDataService.getViewContext()
 
-		scope.isReport = metaService.isReport(entityType)
+		scope.isReport = evDataService.isEntityReport()
 		var isRootEntityViewer = evDataService.isRootEntityViewer()
 
 		var rvDomManager = new RvDomManager(
@@ -119,7 +129,8 @@
 			transactionTypeService,
 			priceHistoryService,
 			uiService,
-			evRvDomManagerService
+			evRvDomManagerService,
+			window.rvDataProviderService,
 		)
 
 		var activeLayoutConfigIsSet = false
@@ -349,7 +360,7 @@
 							while (
 								cellContentHolder.offsetWidth > cellSpaceForText &&
 								nextCellIndex + 1 < cellWraps.length
-							) {
+								) {
 								var nextCellIndex = nextCellIndex + 1
 
 								var nextCellWrap = cellWraps[nextCellIndex],
@@ -392,6 +403,7 @@
 		}
 
 		function updateTableContent() {
+
 			scope.dataLoadStatus = true
 			scope.firstRender = true // IF SOMETHING WENT WRONG AND SOMEHOW REPORT IS NOT RENDERER, WE HAVE 1 min timeoout to render
 
@@ -400,6 +412,7 @@
 			} else {
 				renderEntityViewer()
 			}
+
 		}
 
 		function clearOverflowingCells() {
@@ -419,6 +432,7 @@
 			})
 		}
 
+		//# region Event listeners
 		var calculateElemsWrapsSizes = function () {
 			// evRvDomManagerService.calculateContentWrapHeight(
 			// 	elements.rootWrapElem,
@@ -443,7 +457,9 @@
 		}
 
 		evEventService.addEventListener(evEvents.UPDATE_PROJECTION, function () {
+
 			var flatList = evDataService.getFlatList()
+
 			if (scope.isReport) {
 				projection = rvDataHelper.calculateProjection(flatList, evDataService)
 
@@ -458,6 +474,7 @@
 
 				clearOverflowingCells()
 				cellContentOverflow()
+
 			} else {
 				projection = evDataHelper.calculateProjection(flatList, evDataService)
 
@@ -559,155 +576,173 @@
 			}
 		}
 
+		//# endregion Event listeners
+
 		var init = function () {
+
 			if (viewContext == 'split_panel' && entityType == 'transaction-report') {
+
 				scope.dataLoadStatus = true
 				scope.firstRender = true
+
 			} else {
+
 				setTimeout(function () {
+
 					if (!scope.firstRender) {
 						// Force Table render if not rendered in first 60 second
 
 						updateTableContent()
 					}
+
 				}, 60 * 1000)
-			}
 
-			// window.addEventListener('resize', onWindowResize)
 
-			if (!scope.isReport) {
-				scope.scrollManager = new EvScrollManager()
-			}
+				// window.addEventListener('resize', onWindowResize)
 
-			setTimeout(function () {
-				// prevents scroll from interfering with sizes of table parts calculation
-
-				calculateElemsWrapsSizes()
-
-				if (scope.isReport) {
-					// rvDomManager.calculateScroll(elements, evDataService)
-
-					rvDomManager.initEventDelegation(
-						contentElem,
-						evDataService,
-						evEventService,
-						usersService,
-						globalDataService
-					)
-					// rvDomManager.initContextMenuEventDelegation(contentElem, evDataService, evEventService);
-
-					// rvDomManager.addScrollListener(
-					// 	elements,
-					// 	evDataService,
-					// 	evEventService
-					// )
-
-					evEventService.addEventListener(
-						evEvents.RESIZE_COLUMNS_START,
-						function () {
-							clearOverflowingCells()
-						}
-					)
-
-					evEventService.addEventListener(
-						evEvents.RESIZE_COLUMNS_END,
-						function () {
-							cellContentOverflow()
-						}
-					)
-
-					// If we already have data (e.g. viewType changed)
-					var flatList = rvDataHelper.getFlatStructure(
-						evDataService,
-						globalDataService
-					)
-
-					if (flatList.length > 1) {
-						// progressBar.style.display = 'none';
-
-						if (scope.isReport) {
-							contentElem.style.opacity = '1'
-						}
-
-						if (evDataService.didDataLoadEnd()) {
-							updateTableContent()
-						}
-					}
-
-					//  If we already have data (e.g. viewType changed) end
-
-					/*evEventService.addEventListener(evEvents.START_CELLS_OVERFLOW, function () {
-			                           cellContentOverflow();
-			                       });*/
-				} else {
-					evDomManager.calculateScroll(
-						elements,
-						evDataService,
-						scope.scrollManager
-					)
-
-					evDomManager.initEventDelegation(
-						contentElem,
-						evDataService,
-						evEventService,
-						usersService,
-						globalDataService
-					)
-					evDomManager.initContextMenuEventDelegation(
-						contentElem,
-						evDataService,
-						evEventService
-					)
-
-					evDomManager.addScrollListener(
-						elements,
-						evDataService,
-						evEventService,
-						scope.scrollManager
-					)
+				if (!scope.isReport) {
+					scope.scrollManager = new EvScrollManager()
 				}
 
-				evEventService.dispatchEvent(evEvents.TABLE_SIZES_CALCULATED)
-			}, 500)
+				setTimeout(function () {
+					// prevents scroll from interfering with sizes of table parts calculation
 
-			if (!activeLayoutConfigIsSet && viewContext !== 'reconciliation_viewer') {
-				activeLayoutConfigIsSet = true
+					calculateElemsWrapsSizes()
 
-				evDataService.setActiveLayoutConfiguration({
-					isReport: scope.isReport,
-				}) // saving layout for checking for changes
-				evEventService.dispatchEvent(
-					evEvents.ACTIVE_LAYOUT_CONFIGURATION_CHANGED
-				)
-			}
+					if (scope.isReport) {
+						// rvDomManager.calculateScroll(elements, evDataService)
 
-			if (toggleBookmarksBtn) {
-				toggleBookmarksBtn.addEventListener('click', function () {
-					var interfaceLayout = evDataService.getInterfaceLayout()
+						rvDomManager.initEventDelegation(
+							contentElem,
+							evDataService,
+							evEventService,
+							usersService,
+							globalDataService
+						)
+						// rvDomManager.initContextMenuEventDelegation(contentElem, evDataService, evEventService);
 
-					var headerToolbar = document.querySelector('md-toolbar.header')
+						// rvDomManager.addScrollListener(
+						// 	elements,
+						// 	evDataService,
+						// 	evEventService
+						// )
 
-					interfaceLayout.headerToolbar.height = headerToolbar.clientHeight
+						evEventService.addEventListener(
+							evEvents.RESIZE_COLUMNS_START,
+							function () {
+								clearOverflowingCells()
+							}
+						)
 
-					evDataService.setInterfaceLayout(interfaceLayout)
+						evEventService.addEventListener(
+							evEvents.RESIZE_COLUMNS_END,
+							function () {
+								cellContentOverflow()
+							}
+						)
 
-					/* delete var splitPanelIsActive = evDataService.isSplitPanelActive();
+						// If we already have data (e.g. viewType changed)
+						var flatList = rvDataHelper.getFlatStructure(
+							evDataService,
+							globalDataService
+						)
 
-	                            if (isRootEntityViewer && splitPanelIsActive) {
-	                               evEventService.dispatchEvent(evEvents.UPDATE_ENTITY_VIEWER_CONTENT_WRAP_SIZE);
-	                           } */
+						if (flatList.length > 1) {
+							// progressBar.style.display = 'none';
 
-					evEventService.dispatchEvent(evEvents.UPDATE_TABLE_VIEWPORT)
-				})
+							if (scope.isReport) {
+								contentElem.style.opacity = '1'
+							}
+
+							if (evDataService.didDataLoadEnd()) {
+								updateTableContent()
+							}
+						}
+
+						//  If we already have data (e.g. viewType changed) end
+
+						/*evEventService.addEventListener(evEvents.START_CELLS_OVERFLOW, function () {
+										   cellContentOverflow();
+									   });*/
+					} else {
+
+						evDomManager.calculateScroll(
+							elements,
+							evDataService,
+							scope.scrollManager
+						)
+
+						evDomManager.initEventDelegation(
+							contentElem,
+							evDataService,
+							evEventService,
+							usersService,
+							globalDataService
+						)
+						evDomManager.initContextMenuEventDelegation(
+							contentElem,
+							evDataService,
+							evEventService
+						)
+
+						evDomManager.addScrollListener(
+							elements,
+							evDataService,
+							evEventService,
+							scope.scrollManager
+						)
+					}
+
+					evEventService.dispatchEvent(evEvents.TABLE_SIZES_CALCULATED)
+				}, 500)
+
+				if (!activeLayoutConfigIsSet && viewContext !== 'reconciliation_viewer') {
+
+					activeLayoutConfigIsSet = true
+
+					evDataService.setActiveLayoutConfiguration({
+						isReport: scope.isReport,
+					}) // saving layout for checking for changes
+					evEventService.dispatchEvent(
+						evEvents.ACTIVE_LAYOUT_CONFIGURATION_CHANGED
+					)
+
+				}
+
+				if (toggleBookmarksBtn) {
+
+					toggleBookmarksBtn.addEventListener('click', function () {
+
+						var interfaceLayout = evDataService.getInterfaceLayout()
+
+						var headerToolbar = document.querySelector('md-toolbar.header')
+
+						interfaceLayout.headerToolbar.height = headerToolbar.clientHeight
+
+						evDataService.setInterfaceLayout(interfaceLayout)
+
+						/* delete var splitPanelIsActive = evDataService.isSplitPanelActive();
+
+									if (isRootEntityViewer && splitPanelIsActive) {
+									   evEventService.dispatchEvent(evEvents.UPDATE_ENTITY_VIEWER_CONTENT_WRAP_SIZE);
+								   } */
+
+						evEventService.dispatchEvent(evEvents.UPDATE_TABLE_VIEWPORT)
+
+					})
+
+				}
+
 			}
 		}
 
-		init()
+		init();
 
-		onBeforeUnmount(() => {
+	});
+		/*onBeforeUnmount(() => {
 			window.removeEventListener('resize', onWindowResize)
-		})
-	})
+		})*/
+
 </script>
 
 <style lang="scss" scoped>

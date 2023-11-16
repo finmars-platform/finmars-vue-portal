@@ -1,37 +1,37 @@
 <md-menu-divider></md-menu-divider>
 
 <div
-	data-ng-if="!popupData.data.isReport || !popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)"
-	class="alignment-menu-item text-column"
+    data-ng-if="!popupData.data.isReport || !popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)"
+    class="alignment-menu-item text-column"
 >
-	<md-button
-		class="md-icon-button align-button rounded"
-		data-ng-class="{active: popupData.data.checkColTextAlign(popupData.data.item, 'left')}"
-		ng-click="popupData.data.changeColumnTextAlign(popupData.data.item, 'left')"
-	>
-		<span class="material-icons">format_align_left</span>
-		<md-tooltip md-direction="top">Left alignment</md-tooltip>
-	</md-button>
+    <md-button
+        class="md-icon-button align-button rounded"
+        data-ng-class="{active: popupData.data.checkColTextAlign(popupData.data.item, 'left')}"
+        ng-click="popupData.data.changeColumnTextAlign(popupData.data.item, 'left')"
+    >
+        <span class="material-icons">format_align_left</span>
+        <md-tooltip md-direction="top">Left alignment</md-tooltip>
+    </md-button>
 
-	<md-button
-		class="md-icon-button align-button rounded"
-		data-ng-class="{active: popupData.data.checkColTextAlign(popupData.data.item, 'center')}"
-		ng-click="popupData.data.changeColumnTextAlign(popupData.data.item, 'center')"
-	>
-		<span class="material-icons">format_align_center</span>
-		<md-tooltip md-direction="top">Center alignment</md-tooltip>
-	</md-button>
+    <md-button
+        class="md-icon-button align-button rounded"
+        data-ng-class="{active: popupData.data.checkColTextAlign(popupData.data.item, 'center')}"
+        ng-click="popupData.data.changeColumnTextAlign(popupData.data.item, 'center')"
+    >
+        <span class="material-icons">format_align_center</span>
+        <md-tooltip md-direction="top">Center alignment</md-tooltip>
+    </md-button>
 
-	<md-button
-		class="md-icon-button align-button rounded"
-		data-ng-class="{active: popupData.data.checkColTextAlign(popupData.data.item, 'right')}"
-		ng-click="popupData.data.changeColumnTextAlign(popupData.data.item, 'right')"
-	>
-		<span class="material-icons">format_align_right</span>
-		<md-tooltip md-direction="top">Right alignment</md-tooltip>
-	</md-button>
+    <md-button
+        class="md-icon-button align-button rounded"
+        data-ng-class="{active: popupData.data.checkColTextAlign(popupData.data.item, 'right')}"
+        ng-click="popupData.data.changeColumnTextAlign(popupData.data.item, 'right')"
+    >
+        <span class="material-icons">format_align_right</span>
+        <md-tooltip md-direction="top">Right alignment</md-tooltip>
+    </md-button>
 </div>
 
 <md-menu-divider
-	data-ng-if="!popupData.data.isReport || !popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)"
+    data-ng-if="!popupData.data.isReport || !popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)"
 ></md-menu-divider>
