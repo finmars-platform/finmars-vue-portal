@@ -265,8 +265,8 @@
 		</LazyBaseModal>
 
 		<LazyFmAttributesSelectModal
-			v-if="columnsEdit"
-			v-model="columnsEdit"
+			v-if="openColsAddition"
+			v-model="openColsAddition"
 			multiselect
 			title="Add columns"
 			:attributes="allAttrs"
@@ -276,11 +276,11 @@
 			@selectedAttributesChanged="addColumn"
 		/>
 
-		<LazyFmNumberFormat
-			v-if="numberFormatEdit"
-			v-model="numberFormatEdit"
+		<LazyModalNumberFormat
+			v-if="colNumberFormatRef.opened"
+			v-model="colNumberFormatRef.opened"
 			title="Add columns"
-		></LazyFmNumberFormat>
+		></LazyModalNumberFormat>
 	</div>
 </template>
 
@@ -372,8 +372,6 @@
 	function setGroups(groups) {
 		return evDataService.setGroups(JSON.parse(JSON.stringify(groups)))
 	}
-
-	const isOpenAttrsSelector = ref(false)
 
 	let columns = ref( getColumns() )
 
@@ -514,9 +512,9 @@
 	 * @param {Function} closeCb - callback to close FmMenu
 	 * @return {Promise<void>}
 	 */
-	async function openNumberFormatDialog(column, closeCb) {
+	/*async function openNumberFormatDialog(column, closeCb) {
 		console.log('fvafd')
-		columnsEdit.value = true
+		openColsAddition.value = true
 		closeCb()
 
 		let dialogData = {
@@ -553,6 +551,43 @@
 			evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 			evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
 		}
+	}*/
+
+	/**
+	 * Data for ModalNumberFormat
+	 *
+	 * @type {Ref<{opened: Boolean, key: String, numberFormat: Object|null}>}
+	 */
+	let colNumberFormatData = reactive({
+		opened: false,
+		key: '',
+		numberFormat: null,
+	});
+
+	/**
+	 *
+	 * @param {String} columnKey
+	 * @param {Function} closeCb - callback to close FmMenu
+	 * @return {Promise<void>}
+	 */
+	function openNumberFormatDialog(columnKey, closeCb) {
+
+		closeCb()
+
+		const column = getColumnByKey(columnKey);
+		let numberFormat;
+
+		if (column.options?.numberFormat) {
+			numberFormat = column.options.numberFormat;
+		}
+		else if (isReport && !column.options?.hasOwnProperty('numberFormat')) {
+			numberFormat = column.report_settings
+		}
+
+		colNumberFormatData.key = columnKey;
+		colNumberFormatData.numberFormat = numberFormat;
+		colNumberFormatData.opened = true;
+
 	}
 
 	// Victor 2020.12.14 #69 New report viewer design
@@ -2034,7 +2069,7 @@
 	let renameOpened = ref(false)
 	let columnToRename = ref(null)
 
-	let columnsEdit = ref(false)
+	let openColsAddition = ref(false)
 	const allAttrs = ref([])
 	// const selectedAttrs = ref([])
 	const numberFormatEdit = ref(false)
@@ -2141,46 +2176,28 @@
 	}
 
 	function columnsAdditionOpened(itemKey, closeCb) {
-		// let newAttrs = allAttrs.filter((o) => res.data.items.includes(o.key))
-
-		// for (var i = 0; i < newAttrs.length; i = i + 1) {
-		// 	var colData = evHelperService.getTableAttrInFormOf('column', newAttrs[i])
-		// 	columns.push(colData)
-		// }
 
 		allAttrs.value = evAttrsStore.getDataForAttributesSelector(contentType)
-		// selectedAttrs.value = columns.value.map((col) => col.key)
 
-		// console.log('columns', columns.value)
-		// console.log('selectedAttrs', selectedAttrs)
-		// console.log('allAttrs.value', allAttrs.value )
-
-		columnsEdit.value = true
+		openColsAddition.value = true
 	}
+
 	function addColumn(newAttrs) {
+
 		let columnsList = evDataService.getColumns()
-		console.log(
-			'columns.value addColumn сначала',
-			JSON.parse(JSON.stringify(columnsList))
-		)
-		console.log('newAttrs', JSON.parse(JSON.stringify(newAttrs)))
 
 		for (var i = 0; i < newAttrs.length; i = i + 1) {
 			var colData = evHelperService.getTableAttrInFormOf('column', newAttrs[i])
 			columnsList.push(colData)
-			console.log('columnsData', colData, JSON.parse(JSON.stringify(newAttrs)))
 		}
-		// columnsList.JSON.parse(JSON.stringify(columnsList))
-		console.log(
-			'columns.value addColumn после',
-			JSON.parse(JSON.stringify(columnsList))
-		)
+
 		evDataService.setColumns(columnsList)
 
 		columns.value = getColumns()
 
 		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
 		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+
 	}
 
 	/**
