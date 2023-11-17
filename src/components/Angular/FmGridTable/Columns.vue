@@ -277,9 +277,10 @@
 		/>
 
 		<LazyModalNumberFormat
-			v-if="colNumberFormatRef.opened"
-			v-model="colNumberFormatRef.opened"
-			title="Add columns"
+			v-if="colNumberFormatData.opened"
+			v-model="colNumberFormatData.opened"
+			:title="`${colNumberFormatData.name}: Number Format`"
+			@save="editColNumberFormat"
 		></LazyModalNumberFormat>
 	</div>
 </template>
@@ -556,11 +557,12 @@
 	/**
 	 * Data for ModalNumberFormat
 	 *
-	 * @type {Ref<{opened: Boolean, key: String, numberFormat: Object|null}>}
+	 * @type {Ref<{opened: Boolean, key: String, name: String, numberFormat: Object|null}>}
 	 */
 	let colNumberFormatData = reactive({
 		opened: false,
 		key: '',
+		name: '',
 		numberFormat: null,
 	});
 
@@ -585,8 +587,15 @@
 		}
 
 		colNumberFormatData.key = columnKey;
+		colNumberFormatData.name = column.name || column.layout_name;
 		colNumberFormatData.numberFormat = numberFormat;
 		colNumberFormatData.opened = true;
+
+	}
+
+	function editColNumberFormat(newNumberFormat) {
+		console.log("testing2271 editColNumberFormat ", newNumberFormat);
+		const column = getColumnByKey(colNumberFormatData.key);
 
 	}
 
