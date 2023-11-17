@@ -1,60 +1,53 @@
 <template>
-	<div class="radio-input" :class="{ disabled: disabled }">
+	<div
+		class="radio_input_holder"
+		:class="{
+			'disabled': disabled,
+			'checked': modelValue === value
+		}"
+		@click="inputElem.click()"
+	>
+
 		<input
+			ref="inputElem"
 			type="radio"
-			class="input"
-			:value="newValue"
-			:name="newName"
-			:id="newName + '_' + newId"
+			class="radio_input"
+			:class="{ 'checked': modelValue === value }"
+			:name="name"
+			:checked="modelValue === value"
 			:disabled="disabled"
-			@input="$emit('update:modelValue', $event.target.value)"
+			@change="$emit('update:modelValue', value)"
+			@click.stop
 		/>
-		<label :for="newName + '_' + newId">{{ newLabel }}</label>
+
+		<div v-if="label" class="radio_label">{{ label }}</div>
 	</div>
 </template>
 
 <script setup>
+
 	let props = defineProps({
+		modelValue: [Number, String, Boolean],
 		value: {
-			default: '',
-			type: String,
+			type: [Number, String, Boolean],
 		},
-		name: {
-			default: '',
-			type: String,
-		},
-		id: {
-			default: '',
-			type: String,
-		},
+		name: String,
 		label: {
 			default: '',
 			type: String,
 		},
-		checked: {
-			default: false,
-			type: Boolean,
-		},
-		disabled: {
-			default: false,
-			type: Boolean,
-		},
+		disabled:Boolean,
 	})
 
-	let newName = ref(props.name)
-	let newValue = ref(props.value)
-	let newLabel = ref(props.label)
-	let newId = ref(props.id)
-	let checked = ref(props.checked)
-	let disabled = ref(props.disabled)
-	let emit = defineEmits(['update:checkedValue'])
-	let mainInput = ref(null)
+	let emit = defineEmits(['update:modelValue'])
 
-	let slots = useSlots()
+	let inputElem = ref(null);
+
 </script>
 
 <style lang="scss" scoped>
-	.radio-input {
+
+	.radio_input_holder {
 		height: 20px;
 		position: relative;
 		display: flex;
@@ -62,7 +55,11 @@
 		margin: 10px 0;
 		cursor: pointer;
 
-		.input {
+		&.disabled {
+			cursor: default;
+		}
+
+		/*.radio_input {
 			position: absolute;
 			z-index: -1;
 			opacity: 0;
@@ -126,7 +123,7 @@
 				background-color: #f05a22;
 				transition: 0.5s;
 				scale: 1;
-				
+
 			}
 			&:not(:disabled):not(:checked) + label:hover::before {
 				box-shadow: 0 0 0 10px rgba(240, 90, 34, 0.2);
@@ -180,6 +177,70 @@
 				transition: 0.5s;
 				scale: 1;
 			}
+		}*/
+
+
+	}
+
+	.radio_input {
+		position: relative;
+		appearance: none;
+
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		border-style: solid;
+		border-width: 2px;
+		transition: border-color ease .28s;
+		box-sizing: border-box;
+
+		&::after {
+			content: "";
+			position: absolute;
+			display: block;
+			height: 10px;
+			width: 10px;
+			background-color: transparent;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			border-radius: 50%;
+			box-sizing: border-box;
+		}
+
+		&:not([disabled]):focus {
+			box-shadow: 0 0 14px rgba(240, 90, 34);
+		}
+
+		&:not(.checked)[disabled] {
+			border-color: $borer-lighten;
+		}
+
+	}
+
+	.radio_input.checked {
+		border-color: $primary;
+
+		&:not([disabled])::after {
+			background-color: $primary;
+		}
+
+		&[disabled] {
+			border-color: $primary-lighten;
+		}
+
+		&[disabled]::after {
+			background-color: $primary-lighten;
 		}
 	}
+
+	.radio_input:not([disabled]) {
+		cursor: pointer;
+	}
+
+	.radio_label {
+		margin-left: 10px;
+	}
+
+
 </style>
