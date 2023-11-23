@@ -116,7 +116,7 @@
 			right: 0;
 			left: 0;
 			bottom: 0;
-			z-index: 1;
+			z-index: 50;
 		}
 		&.no_padding {
 			.modal_content {
@@ -147,7 +147,7 @@
 		min-width: 300px;
 		max-width: 90%;
 		border-radius: 4px;
-		z-index: 2;
+		z-index: 51;
 
 		.close {
 			cursor: pointer;

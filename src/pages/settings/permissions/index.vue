@@ -20,7 +20,7 @@
 				<BaseTable
 					:headers="['', 'id', 'Name', 'Is Admin', 'Is Owner', 'Is Deleted', 'Status', 'Groups', 'Roles']"
 					:items="members"
-					colls="50px repeat(9, 1fr)"
+					colls="50px repeat(8, 1fr)"
 					:cb="(id) => $router.push(`/settings/permissions/members/${stockMembers[id].id}`)"
 					class="clickable_rows"
 				>
@@ -106,7 +106,7 @@
 				<BaseTable
 					:headers="['', 'Id','User Code', 'Configuration Code',  'Name', ]"
 					:items="roles"
-					colls="50px repeat(5, 1fr)"
+					colls="50px repeat(4, 1fr)"
 					:cb="(id) => $router.push(`/settings/permissions/roles/${roles[id].id}`)"
 					class="clickable_rows"
 				>
