@@ -1,6 +1,6 @@
 <template>
 	<div class="usercode-input flex-column">
-		<div class="fi-center grid grid-col-2 m-b-8">
+		<div class="fi-start grid grid-col-2 m-b-8">
 			<!--				<md-input-container>
 				<label>Configuration</label>
 				<md-select data-ng-model="scope.configuration_code.value">
@@ -17,6 +17,8 @@
 				:items="configCodesList"
 				attach="body"
 				:disabled="disabled"
+				:required="true"
+				v-model:errorData="configCodeSelEd"
 				@update:modelValue="onConfigCodeChange"
 			/>
 
@@ -29,7 +31,7 @@
 			</md-input-container>-->
 			<BaseInput
 				:modelValue="userCodeEnd"
-				label="User code"
+				:label="userCodeLabel"
 				:disabled="disabled"
 				@update:modelValue="onUserCodeChange"
 				tooltip="Allowed symbols: Numbers:
@@ -80,8 +82,11 @@
 
 	let props = defineProps({
 		/** Full user_code **/
+		userCodeLabel: {
+			type: String,
+			default: 'User code'
+		},
 		modelValue: String,
-		configuration_code: String,
 		content_type: String,
 		disabled: Boolean,
 		errorData: String,
@@ -89,7 +94,7 @@
 
 	let emit = defineEmits([
 		'update:modelValue',
-		'update:configuration_code',
+		'configurationCodeChanged',
 		'update:errorData',
 	])
 
@@ -98,7 +103,8 @@
 	let scope = reactive({})
 
 	let configCodesList = ref([]);
-	let configCode = ref(props.configuration_code);
+	let configCode = ref(null);
+	let configCodeSelEd = ref(null);
 
 	let userCodeEnd = ref('');
 
@@ -142,14 +148,14 @@
 
 	watch(() => props.modelValue, parseUserCode)
 
-	if (props.configuration_code !== undefined) {
+	/*if (props.configuration_code !== undefined) {
 		watch(
 			() => props.configuration_code,
 			() => {
 				configCode.value = props.configuration_code
 			}
 		)
-	}
+	}*/
 
 	const setErrorDescrD = useDebounce(function (description) {
 		scope.errorDescription = description
@@ -157,9 +163,10 @@
 
 	function onConfigCodeChange(configCodeVal) {
 
+		configCodeSelEd.value = null;
 		configCode.value = configCodeVal;
 
-		emit('update:configuration_code', configCodeVal);
+		emit('configurationCodeChanged', configCodeVal);
 		emit( 'update:modelValue', assembleUserCode(userCodeEnd.value) );
 
 	}
@@ -204,7 +211,7 @@
 			errorVal = 'User code should be unique.'
 		}
 
-		if (errorVal !== error) {
+		if (errorVal !== error.value) {
 			emit('update:errorData', errorVal)
 		}
 
@@ -243,14 +250,9 @@
 
 		parseUserCode();
 
+		// show selector of config codes empty in case of deprecated or invalid configurationCode
 		if (!configCode.value) {
-			configCode.value = store.defaultConfigCode;
-		}
-
-		if (!props.configuration_code) {
-			/* in case of creating user code for new item
-			 * without specifying configuration_code */
-			emit('update:configuration_code', configCode.value);
+			configCodeSelEd.value = {message: "Invalid configuration code"};
 		}
 
 	}

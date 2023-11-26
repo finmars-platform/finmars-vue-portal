@@ -54,7 +54,7 @@
 				@save="putEditPortfolioBundle"
 				@create="getCreatePortfolioBundle"
 			></ModalPortfolioBundleManager>
-
+		
 		</div>
 	</div>
 </template>
@@ -92,8 +92,8 @@
 			deletePricingPolicyItem(item)
 		}
 	}
-
-
+	
+	
 	async function getPortfolioRegister() {
 		let edRes = await useApi('portfolioRegisterList.get')
 		portfolioRegister.value = edRes.error ? {} : edRes.results
@@ -124,12 +124,12 @@
 	function editPricingPolicy(newNamesData) {
 		activePolicyList = newNamesData
 		console.log('activePolicyList.registers', activePolicyList.registers)
-
+	
 		typeModal = 'edit'
 		isOpenEditPricingPolicy.value = true
 	}
 	function createPricingPolicy(newNamesData) {
-
+	
 		typeModal = 'create'
 		isOpenEditPricingPolicy.value = true
 	}

@@ -130,7 +130,8 @@
 		},
 	})
 	const emits = defineEmits(['save'])
-
+	const isOpenDeleteCustomColumns = ref(false)
+	const isOpenEditCustomColumns = ref(false)
 	const SuffixActive = ref([])
 	const PrefixActive = ref([])
 	const MultiplierActive = ref([])
