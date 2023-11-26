@@ -73,19 +73,20 @@
 	})
 	const portfolioBundleList = ref([])
 	let activePortfolioBundleList = ref([])
-	console.log('activePortfolioBundleList', activePortfolioBundleList)
 	let isOpenEditPortfolioBundle = ref(false)
 	let сreation = ref(false)
 	let portfolioRegister = ref()
+
 	defaultsGet()
+
 	async function defaultsGet() {
 		let edRes = await useApi('portfolioBundles.get')
 
 		portfolioBundleList.value = edRes.error ? {} : edRes.results
 	}
-	console.log('portfolioBundles', portfolioBundleList)
+
 	async function deletePortfolioBundle(item) {
-		console.log('itemitem', item)
+
 		let confirm = await useConfirm({
 			title: 'Confirm action',
 			text: `Do you want to delete "${item.name}" layout?`,
@@ -95,13 +96,14 @@
 			deletePortfolioBundleItem(item)
 		}
 	}
+
 	getPortfolioRegister()
+
 	async function getPortfolioRegister() {
 		let edRes = await useApi('portfolioRegisterList.get')
 		portfolioRegister.value = edRes.error ? {} : edRes.results
 	}
 
-	console.log('portfolioRegister', portfolioRegister)
 	async function deletePortfolioBundleItem(item) {
 		let res = await useApi('portfolioBundles.delete', {
 			params: { id: item.id },

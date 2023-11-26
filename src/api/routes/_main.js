@@ -134,6 +134,10 @@ export default {
 		delete: prefix + '/users/member/{id}/',
 		put: prefix + '/users/member/{id}/',
 	},
+	memberLayout: {
+		get: prefix + '/ui/member-layout/',
+		put: prefix + '/ui/member-layout/{id}/',
+	},
 	memberSendInvite: {
 		put: prefix + '/users/member/{id}/send-invite/',
 	},
@@ -188,7 +192,7 @@ export default {
 	instrumentsEventInformed: {
 		put: prefix + '/instruments/generated-event/{id}/informed/',
 	},
-	instrumentUserField:{
+	instrumentUserField: {
 		get: prefix + '/ui/instrument-user-field/',
 		put: prefix + '/ui/instrument-user-field/{id}/',
 		post: prefix + '/ui/instrument-user-field/',
@@ -326,12 +330,19 @@ export default {
 	//# endregion Entity viewer attribute types
 	balanceReportCustomFieldList: {
 		get: prefix + '/reports/balance-report/custom-field/',
+		post: prefix + '/reports/balance-report/custom-field/',
+		put: prefix + '/reports/balance-report/custom-field/{id}/',
+		delete: prefix + '/reports/balance-report/custom-field/{id}/',
 	},
 	plReportCustomFieldList: {
 		get: prefix + '/reports/pl-report/custom-field/',
+		post: prefix + '/reports/pl-report/custom-field/',
+		put: prefix + '/reports/pl-report/custom-field/{id}/'
 	},
 	transactionReportCustomFieldList: {
 		get: prefix + '/reports/transaction-report/custom-field/',
+		post: prefix + '/reports/transaction-report/custom-field/',
+		put: prefix + '/reports/transaction-report/custom-field/{id}/'
 	},
 	mobileLayout: {
 		get: prefix + '/ui/mobile-layout/',
@@ -346,22 +357,22 @@ export default {
 	widgetsStats: {
 		get: prefix + '/widgets/stats/',
 	},
-	strategiesOneLight: {
+	strategies1ListLight: {
 		get: prefix + '/strategies/1/strategy/light/',
 	},
-	strategiesOneSubgroup: {
+	strategies1SubgroupList: {
 		get: prefix + '/strategies/1/subgroup/',
 	},
-	strategiesSecondLight: {
+	strategies2ListLight: {
 		get: prefix + '/strategies/2/strategy/light/',
 	},
-	strategiesSecondSubgroup: {
+	strategies2SubgroupList: {
 		get: prefix + '/strategies/2/subgroup/',
 	},
-	strategiesThirdLight: {
+	strategies3ListLight: {
 		get: prefix + '/strategies/3/strategy/light/',
 	},
-	strategiesThirdSubgroup: {
+	strategies3SubgroupList: {
 		get: prefix + '/strategies/3/subgroup/',
 	},
 	defaultSettings: {
@@ -377,5 +388,4 @@ export default {
 		put: prefix + '/ui/transaction-user-field/{id}/',
 		post: prefix + '/ui/transaction-user-field/',
 	},
-
 }

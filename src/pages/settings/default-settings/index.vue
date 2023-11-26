@@ -3,46 +3,46 @@
 		<h1 class="title">Ecosystem Default</h1>
 		<div class="wrapp-select">
 			<FmSelect
-				v-model="ecosystemDefaults.instrument"
+				v-model="ecosystemDefaultsRef.instrument"
 				label="InstrumentItems"
 				:items="instrumentItems"
 			/>
 			<FmSelect
-				v-model="ecosystemDefaults.portfolio"
+				v-model="ecosystemDefaultsRef.portfolio"
 				label="Portfolio"
 				:items="portfolioListLightItems"
 			/>
 			<FmSelect
-				v-model="ecosystemDefaults.account"
+				v-model="ecosystemDefaultsRef.account"
 				label="Account"
 				:items="billItems"
 			/>
 			<FmSelect
-				v-model="ecosystemDefaults.currency"
+				v-model="ecosystemDefaultsRef.currency"
 				label="Currency"
 				:items="currencyItems"
 			/>
 		</div>
 		<div class="wrapp-select">
 			<FmSelect
-				v-model="ecosystemDefaults.instrument_type"
+				v-model="ecosystemDefaultsRef.instrument_type"
 				label="Instrument Type"
 				:items="instrumentTypeItems"
 			/>
 			<FmSelect
-				v-model="ecosystemDefaults.transaction_type"
+				v-model="ecosystemDefaultsRef.transaction_type"
 				label="Transaction Type"
 				:items="transactionTypeLightItems"
 			/>
 			<FmSelect
-				v-model="ecosystemDefaults.account_type"
+				v-model="ecosystemDefaultsRef.account_type"
 				label="Account Type"
 				:items="accountsTypeItems"
 			/>
 		</div>
 		<div class="wrapp-select">
 			<FmSelect
-				v-model="ecosystemDefaults.pricing_policy"
+				v-model="ecosystemDefaultsRef.pricing_policy"
 				label="Pricing Policy"
 				:items="pricingPolicyListItems"
 			/>
@@ -50,112 +50,112 @@
 
 		<div class="wrapp-select">
 			<FmSelect
-				v-model="ecosystemDefaults.periodicity"
+				v-model="ecosystemDefaultsRef.periodicity"
 				label="Periodicity"
 				:items="instrumentPeriodicityItems"
 			/>
 			<FmSelect
-				v-model="ecosystemDefaults.accrual_calculation_model"
+				v-model="ecosystemDefaultsRef.accrual_calculation_model"
 				label="Accrual Calculation Model"
 				:items="instrumentAccrualCalculationModelItems"
 			/>
 			<FmSelect
-				v-model="ecosystemDefaults.instrument_class"
+				v-model="ecosystemDefaultsRef.instrument_class"
 				label="Instrument Class"
 				:items="instrumentClassItems"
 			/>
 			<FmSelect
-				v-model="ecosystemDefaults.payment_size_detail"
+				v-model="ecosystemDefaultsRef.payment_size_detail"
 				label="Payment Size Detail"
 				:items="instrumentSizeDetailItems"
 			/>
 			<FmSelect
-				v-model="ecosystemDefaults.pricing_condition"
+				v-model="ecosystemDefaultsRef.pricing_condition"
 				label="Pricing Condition"
 				:items="instrumentPricingСonditionItems"
 			/>
 		</div>
 		<div class="wrapp-select">
 			<FmSelect
-				v-model="ecosystemDefaults.responsible"
+				v-model="ecosystemDefaultsRef.responsible"
 				label="Responsible"
 				:items="counterpartyResponsibleLightItems"
 			/>
 			<FmSelect
-				v-model="ecosystemDefaults.responsible_group"
+				v-model="ecosystemDefaultsRef.responsible_group"
 				label="Responsible Group"
 				:items="instrumentItems"
 			/>
 			<FmSelect
-				v-model="ecosystemDefaults.counterparty"
+				v-model="ecosystemDefaultsRef.counterparty"
 				label="Counterparty"
 				:items="counterpartyCounterpartyLightItems"
 			/>
 			<FmSelect
-				v-model="ecosystemDefaults.counterparty_group"
+				v-model="ecosystemDefaultsRef.counterparty_group"
 				label="Counterparty Group"
 				:items="instrumentItems"
 			/>
 		</div>
 		<div class="wrapp-select">
 			<FmSelect
-				v-model="ecosystemDefaults.strategy1"
+				v-model="ecosystemDefaultsRef.strategy1"
 				label="Strategy 1"
 				:items="strategiesOneLightItems"
 			/>
 			<FmSelect
-				v-model="ecosystemDefaults.strategy1_group"
+				v-model="ecosystemDefaultsRef.strategy1_subgroup"
 				label="Strategy 1 Group "
 				:items="strategiesOneSubgroupItems"
 			/>
-			<FmSelect
-				v-model="ecosystemDefaults.strategy1_subgroup"
+<!--			<FmSelect
+				v-model="ecosystemDefaultsRef.strategy1_subgroup"
 				label="Strategy 1  Subgroup"
-				:items="''"
-			/>
+				:items=""
+			/>-->
 		</div>
 		<div class="wrapp-select">
 			<FmSelect
-				v-model="ecosystemDefaults.strategy2"
+				v-model="ecosystemDefaultsRef.strategy2"
 				label="Strategy 2"
 				:items="strategiesSecondLightItems"
 			/>
 			<FmSelect
-				v-model="ecosystemDefaults.strategy2_group"
-				label="Strategy 2  Group"
+				v-model="ecosystemDefaultsRef.strategy2_subgroup"
+				label="Strategy 2 Group"
 				:items="strategiesSecondSubgroupItems"
 			/>
-			<FmSelect
-				v-model="ecosystemDefaults.strategy2_subgroup"
+<!--			<FmSelect
+				v-model="ecosystemDefaultsRef.strategy2_subgroup"
 				label="Strategy 2  Subgroup"
 				:items="''"
-			/>
+			/>-->
 		</div>
 		<div class="wrapp-select">
 			<FmSelect
-				v-model="ecosystemDefaults.strategy3"
+				v-model="ecosystemDefaultsRef.strategy3"
 				label="Strategy 3"
 				:items="strategiesThirdLightItems"
 			/>
 			<FmSelect
-				v-model="ecosystemDefaults.strategy3_group"
+				v-model="ecosystemDefaultsRef.strategy3_subgroup"
 				label="Strategy 3 Group"
 				:items="strategiesThirdSubgroupItems"
 			/>
-			<FmSelect
-				v-model="ecosystemDefaults.strategy3_subgroup"
+<!--			<FmSelect
+				v-model="ecosystemDefaultsRef.strategy3_subgroup"
 				label="Strategy 3 Subgroup"
 				:items="''"
-			/>
+			/>-->
 		</div>
 		<div class="wrapp-select">
 			<FmSelect
-				v-model="ecosystemDefaults.instrument_pricing_scheme"
+				v-model="ecosystemDefaultsRef.instrument_pricing_scheme"
 				label="Instrument Pricing Scheme"
 				:items="instrumentSchemeListItems"
 			/>
 			<FmSelect
-				v-model="ecosystemDefaults.currency_pricing_scheme"
+				v-model="ecosystemDefaultsRef.currency_pricing_scheme"
 				label="Currency Pricing Scheme"
 				:items="currencySchemeListItems"
 			/>
@@ -172,15 +172,17 @@
 </template>
 
 <script setup>
-	definePageMeta({
+  definePageMeta({
 		middleware: 'auth',
 		bread: [
 			{
-				text: 'Default settings',
+				text: 'settings: DEFAULT SETTINGS',
 				to: '/settings/default-settings',
 			},
 		],
 	})
+
+	const store = useStore();
 
 	const instrumentItems = ref([])
 	const portfolioListLightItems = ref([])
@@ -206,10 +208,11 @@
 	const instrumentSchemeListItems = ref([])
 	const currencySchemeListItems = ref([])
 
-	const disabledBtn = ref(true)
-	const ecosystemDefaults = ref([1])
-	const BaseInputEcosystemDefaults = ref([])
+	const disabledBtn = ref(false)
+	const ecosystemDefaultsRef = ref( JSON.parse(JSON.stringify(store.ecosystemDefaults)) );
+
 	init()
+
 	async function init() {
 		const res = await Promise.all([
 			useApi('instrumentListLight.get'),
@@ -218,7 +221,7 @@
 			useApi('currencyListLight.get'),
 			useApi('instrumentType.get'),
 			useApi('transactionTypeLight.get'),
-			useApi('accountsType.get'),
+			useApi('accountTypeList.get'),
 			useApi('pricingPolicyList.get'),
 			useApi('instrumentPeriodicity.get'),
 			useApi('instrumentAccrualCalculationModel.get'),
@@ -227,12 +230,12 @@
 			useApi('instrumentPricingСondition.get'),
 			useApi('counterpartyResponsibleLight.get'),
 			useApi('counterpartyCounterpartyLight.get'),
-			useApi('strategiesOneLight.get'),
-			useApi('strategiesOneSubgroup.get'),
-			useApi('strategiesSecondLight.get'),
-			useApi('strategiesSecondSubgroup.get'),
-			useApi('strategiesThirdLight.get'),
-			useApi('strategiesThirdSubgroup.get'),
+			useApi('strategies1ListLight.get'),
+			useApi('strategies1SubgroupList.get'),
+			useApi('strategies2ListLight.get'),
+			useApi('strategies2SubgroupList.get'),
+			useApi('strategies3ListLight.get'),
+			useApi('strategies3SubgroupList.get'),
 			useApi('instrumentSchemeList.get'),
 			useApi('currencySchemeList.get'),
 		])
@@ -262,36 +265,26 @@
 		currencySchemeListItems.value = res[22].results
 	}
 
-	watch(
-		ecosystemDefaults,
-		(newValue, oldValue) => {
-			if (oldValue[0] === 1) {
-			} else {
-				disabledBtn.value = false
-			}
-		},
-		{ deep: true }
-	)
-	defaultsGet()
-	async function defaultsGet() {
-		let edRes = await useApi('ecosystemDefaults.get')
-		BaseInputEcosystemDefaults.value = edRes
-		ecosystemDefaults.value = edRes.error ? {} : edRes.results[0]
-	}
 	async function defaultSettingsCreate() {
+
+		disabledBtn.value = true;
+
 		let res = await useApi('defaultSettings.put', {
-			params: { id: ecosystemDefaults.value.id },
-			body: ecosystemDefaults.value,
+			params: { id: ecosystemDefaultsRef.value.id },
+			body: ecosystemDefaultsRef.value,
 		})
 
 		if (res.error) {
 			// console.error(res.error);
 			useNotify({ type: 'error', title: res.error.message || res.error.detail })
-			throw new Error(res.error)
+
 		} else {
 			useNotify({ type: 'success', title: `data saved on the server` })
+			store.ecosystemDefaults = structuredClone(res);
 		}
-		disabledBtn.value = true
+
+		disabledBtn.value = false;
+
 	}
 </script>
 

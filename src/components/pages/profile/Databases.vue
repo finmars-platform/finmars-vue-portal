@@ -66,6 +66,9 @@
 
 	let isShowNewBackup = ref(false)
 
+	import formbricks from "@/services/formbricks";
+	await formbricks.registerRouteChange();
+
 </script>
 
 <style lang="scss" scoped>
