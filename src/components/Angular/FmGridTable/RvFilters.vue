@@ -43,7 +43,7 @@
 					color="primary"
 					class="g-toggle-filters-btn md-icon-button chain-button"
 					:class="{
-						'g-use-from-above-filters-hidden': scope.showUseFromAboveFilters,
+						'g-use-from-above-filters-hidden': !scope.showUseFromAboveFilters,
 					}"
 					style="margin-left: 10px"
 					@click="scope.toggleUseFromAboveFilters()"
@@ -61,9 +61,6 @@
 					btnPrimary
 					icon="add"
 					class="g-filter-settings-big-left-btn"
-					:class="{
-						'g-use-from-above-filters-hidden': !scope.showUseFromAboveFilters,
-					}"
 					v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
 					@click="evAddEntity"
 				/>
@@ -421,8 +418,9 @@
 						<div
 							class="fm_list_item"
 							v-if="scope.entityType !== 'complex-transaction'"
-							@click="openCustomFieldsManager"
+							@click=";(isOpenCustomColumns = true), close()"
 						>
+							<!-- @click="openCustomFieldsManager" -->
 							Custom Columns
 						</div>
 
@@ -458,6 +456,12 @@
 			:payload="$mdDialog.modals['ExportPdfDialogController']"
 			:modelValue="true"
 		/>
+
+		<ModalCustomFields
+			title="Custom Field Manager"
+			v-model="isOpenCustomColumns"
+			:content_type="scope.content_type"
+		></ModalCustomFields>
 	</div>
 </template>
 
@@ -468,7 +472,7 @@
 	// import EventService from '@/angular/services/eventService';
 
 	const props = defineProps(['vm'])
-
+	const isOpenCustomColumns = ref(false)
 	const { evEventService, evDataService, attributeDataService } =
 		inject('ngDependace')
 	const $mdDialog = inject('$mdDialog')
@@ -481,6 +485,7 @@
 
 	let scope = reactive({ ...props })
 	scope.entityType = scope.vm.entityType
+	scope.content_type = evDataService.getContentType()
 	scope.readyStatus = reactive({
 		filters: false,
 	})
@@ -778,24 +783,24 @@
 
 	scope.openViewConstructor = scope.vm.openViewConstructor
 
-	scope.openCustomFieldsManager = function ($event) {
-		$mdDialog.show({
-			controller: 'CustomFieldDialogController as vm',
-			templateUrl: 'views/dialogs/custom-field/custom-field-dialog-view.html',
-			parent: angular.element(document.body),
-			targetEvent: $event,
-			clickOutsideToClose: false,
-			preserveScope: true,
-			multiple: true,
-			locals: {
-				attributeDataService: attributeDataService,
-				entityViewerEventService: evEventService,
-				data: {
-					entityType: scope.vm.entityType,
-				},
-			},
-		})
-	}
+	// scope.openCustomFieldsManager = function ($event) {
+	// 	$mdDialog.show({
+	// 		controller: 'CustomFieldDialogController as vm',
+	// 		templateUrl: 'views/dialogs/custom-field/custom-field-dialog-view.html',
+	// 		parent: angular.element(document.body),
+	// 		targetEvent: $event,
+	// 		clickOutsideToClose: false,
+	// 		preserveScope: true,
+	// 		multiple: true,
+	// 		locals: {
+	// 			attributeDataService: attributeDataService,
+	// 			entityViewerEventService: evEventService,
+	// 			data: {
+	// 				entityType: scope.vm.entityType,
+	// 			},
+	// 		},
+	// 	})
+	// }
 
 	scope.toggleAutoRefresh = function () {
 		scope.rvAutoRefresh = !scope.rvAutoRefresh
@@ -991,7 +996,13 @@
 		padding-bottom: 10px;
 		border-bottom: 1px solid $border;
 	}
-	.g-use-from-above-filters-hidden {
-		color: $primary;
-	}
+
+  .chain-button:not(.g-use-from-above-filters-hidden) {
+    color: $primary;
+
+    &:hover {
+      color: $primary;
+    }
+  }
+
 </style>

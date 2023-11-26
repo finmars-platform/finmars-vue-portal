@@ -120,7 +120,7 @@
 		let sendedForm = {
 			...form,
 			groups: form.groups,
-			roles: form.groups
+			roles: form.roles
 		}
 
 		let res = await useApi('member.post', {body: sendedForm, params: {id: route.params.id}})

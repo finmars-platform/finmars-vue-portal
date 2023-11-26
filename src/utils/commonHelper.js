@@ -110,3 +110,15 @@ export const formatNumberNegative = function (value, column) {
 
 	return value
 }
+
+function editorInit(editor) {
+	editor.setHighlightActiveLine(false);
+	editor.setShowPrintMargin(false);
+	editor.setFontSize(14)
+	editor.setBehavioursEnabled(true);
+
+	editor.focus();
+	editor.navigateFileStart();
+
+	editor = initEditor(editor)
+}
