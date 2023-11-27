@@ -55,6 +55,10 @@ export default {
     pricingPolicyListLight: {
         get: prefix + '/instruments/pricing-policy/light/',
     },
+    taskListLight: {
+        get: prefix + '/tasks/task/light/',
+    },
+    
     currencyList: {
         get: prefix + '/currencies/currency/',
     },
