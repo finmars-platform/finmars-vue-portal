@@ -5,24 +5,24 @@
 import evRvCommonHelper from './ev-rv-common.helper'
 
 var icons = {
-	checkIcon:
-		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg>',
-	lockIcon:
-		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"></path></svg>',
-	lock2Icon:
-		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path d="M18 20H6V10h12zM12 2.9c1.71 0 3.1 1.39 3.1 3.1v2H9V6l-.002-.008C8.998 4.282 10.29 2.9 12 2.9zM18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2z"></path><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path></svg>',
-	starIcon:
-		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>',
-	cancelIcon:
-		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"></path></svg>',
-	partiallyVisibleIcon:
-		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path d="M12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5z"></path><path d="M12 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"></path></svg>',
-	deletedIcon:
-		'<span class="entity-viewer-table-icon material-icons">delete</span>',
-	disabledIcon:
-		'<span class="entity-viewer-table-icon material-icons">visibility_off</span>',
-	inactiveIcon:
-		'<span class="entity-viewer-table-icon material-icons">pause</span>',
+    checkIcon:
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg>',
+    lockIcon:
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"></path></svg>',
+    lock2Icon:
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path d="M18 20H6V10h12zM12 2.9c1.71 0 3.1 1.39 3.1 3.1v2H9V6l-.002-.008C8.998 4.282 10.29 2.9 12 2.9zM18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2z"></path><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path></svg>',
+    starIcon:
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>',
+    cancelIcon:
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"></path></svg>',
+    partiallyVisibleIcon:
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path d="M12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5z"></path><path d="M12 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"></path></svg>',
+    deletedIcon:
+        '<span class="entity-viewer-table-icon material-icons">delete</span>',
+    disabledIcon:
+        '<span class="entity-viewer-table-icon material-icons">visibility_off</span>',
+    inactiveIcon:
+        '<span class="entity-viewer-table-icon material-icons">pause</span>',
 }
 
 /* var checkIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg>';
@@ -57,7 +57,7 @@ var icons = {
     }; */
 
 var getIconByKey = function (key) {
-	return icons[key] || ''
+    return icons[key] || ''
 }
 /**
  * @param object {Object} - data of row
@@ -65,21 +65,21 @@ var getIconByKey = function (key) {
  * @memberof module:renderHelper
  */
 var getRowSelectionElem = function (object) {
-	var rowSelectionBtnContent = ''
-	var rowSelectionBtnClasses = 'g-row-selection-button'
+    var rowSelectionBtnContent = ''
+    var rowSelectionBtnClasses = 'g-row-selection-button'
 
-	if (object.___is_active_object || object.___is_activated) {
-		rowSelectionBtnClasses += ' checked'
-		rowSelectionBtnContent = getIconByKey('checkIcon')
-	}
+    if (object.___is_active_object || object.___is_activated) {
+        rowSelectionBtnClasses += ' checked'
+        rowSelectionBtnContent = getIconByKey('checkIcon')
+    }
 
-	return (
-		'<div class="g-row-selection"><div class="' +
-		rowSelectionBtnClasses +
-		'">' +
-		rowSelectionBtnContent +
-		'</div></div>'
-	)
+    return (
+        '<div class="g-row-selection"><div class="' +
+        rowSelectionBtnClasses +
+        '">' +
+        rowSelectionBtnContent +
+        '</div></div>'
+    )
 }
 /**
  * @param rowType {string} - can be 'object', 'subtotal', 'blankLine'
@@ -88,59 +88,59 @@ var getRowSelectionElem = function (object) {
  * @returns {string} - HTML for column with row settings
  */
 var getRowSettings = function (rowType, color, statusIcon) {
-	/* return '<div class="g-row-settings g-row-settings-table gRowSettings">' +
-				'<button class="' + classes + '" data-click-action-type="open_row_color_picker">' +
-					'<span class="material-icons label-icon">' + icon + '</span>' +
-					'<span class="material-icons arrow-icon">arrow_drop_down</span>' +
-				'</button>' +
-			'</div>'; */
+    /* return '<div class="g-row-settings g-row-settings-table gRowSettings">' +
+                '<button class="' + classes + '" data-click-action-type="open_row_color_picker">' +
+                    '<span class="material-icons label-icon">' + icon + '</span>' +
+                    '<span class="material-icons arrow-icon">arrow_drop_down</span>' +
+                '</button>' +
+            '</div>'; */
 
-	/* return `<div class="g-row-settings g-row-settings-table gRowSettings">
+    /* return `<div class="g-row-settings g-row-settings-table gRowSettings">
             <div class="context-menu-btn-wrapper">${contextMenuBtnTemplate}</div>
             <button class="${classes}" data-click-action-type="open_row_color_picker">
                 <span class="material-icons label-icon">label_outline</span>
                 <span class="material-icons arrow-icon">arrow_drop_down</span>
             </button>
         </div>`; */
-	let contextMenuBtn = ''
+    let contextMenuBtn = ''
 
-	if (rowType === 'object' || rowType === 'subtotal') {
-		contextMenuBtn = `<div class="context-menu-btn-wrapper">
-					<div class="context-menu-btn position-relative">
-						<span class="material-icons">more_vert</span>
-						<button class="g-click-catcher gTableActionBtn" data-click-action-type="open_context_menu"></button>
-					</div>
-				</div>`
-	} else {
-		contextMenuBtn = '<div class="context-menu-btn-wrapper"></div>'
-	}
+    if (rowType === 'object' || rowType === 'subtotal') {
+        contextMenuBtn = `<div class="context-menu-btn-wrapper">
+                    <div class="context-menu-btn position-relative">
+                        <span class="material-icons">more_vert</span>
+                        <button class="g-click-catcher gTableActionBtn" data-click-action-type="open_context_menu"></button>
+                    </div>
+                </div>`
+    } else {
+        contextMenuBtn = '<div class="context-menu-btn-wrapper"></div>'
+    }
 
-	//region for entity viewer
-	let rowStatus = ''
+    //region for entity viewer
+    let rowStatus = ''
 
-	if (statusIcon !== undefined) {
-		if (!statusIcon) statusIcon = 'star_outline'
+    if (statusIcon !== undefined) {
+        if (!statusIcon) statusIcon = 'star_outline'
 
-		rowStatus = `<div class="g-row-settings-btn position-relative" disabled>
-					${statusIcon}
-					<span class="material-icons arrow-icon visibility-hidden">arrow_drop_down</span>
-					<button class="g-click-catcher gTableActionBtn" data-click-action-type="open_row_status_picker"></button>
-				</div>`
-	}
-	//endregion
+        rowStatus = `<div class="g-row-settings-btn position-relative" disabled>
+                    ${statusIcon}
+                    <span class="material-icons arrow-icon visibility-hidden">arrow_drop_down</span>
+                    <button class="g-click-catcher gTableActionBtn" data-click-action-type="open_row_status_picker"></button>
+                </div>`
+    }
+    //endregion
 
-	const colorIcon = ['red', 'yellow', 'green'].includes(color)
-		? 'label'
-		: 'label_outline'
+    const colorIcon = ['red', 'yellow', 'green'].includes(color)
+        ? 'label'
+        : 'label_outline'
 
-	/* let rowColorpickerClasses = "g-row-color-picker-btn gTableActionBtn";
+    /* let rowColorpickerClasses = "g-row-color-picker-btn gTableActionBtn";
 
-		if (buttonClasses) {
-			rowColorpickerClasses = rowColorpickerClasses + " " + buttonClasses;
-		} */
+        if (buttonClasses) {
+            rowColorpickerClasses = rowColorpickerClasses + " " + buttonClasses;
+        } */
 
-	const rowColorPicker = `<div class="g-row-settings-btn g-row-color-picker position-relative">
-				<span class="material-icons label-icon">${colorIcon}</span>
+    const rowColorPicker = `<div class="g-row-settings-btn g-row-color-picker position-relative">
+            	<span class="material-icons label-icon">${colorIcon}</span>
 				<span class="material-icons arrow-icon">arrow_drop_down</span>
 
 				<button class="g-click-catcher gTableActionBtn" data-click-action-type="open_row_color_picker"></button>

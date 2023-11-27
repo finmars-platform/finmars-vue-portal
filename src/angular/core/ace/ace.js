@@ -4401,10 +4401,10 @@ ace.define("ace/lib/bidiutil",["require","exports","module"], function(require, 
     var dir = 0, hiLevel = 0;
     var lastArabic = false, hasUBAT_AL = false,  hasUBAT_B = false,  hasUBAT_S = false, hasBlockSep = false, hasSegSep = false;
 
-    var impTab_LTR = [	[	0,		3,		0,		1,		0,		0,		0	],	[	0,		3,		0,		1,		2,		2,		0	],	[	0,		3,		0,		0x11,		2,		0,		1	],	[	0,		3,		5,		5,		4,		1,		0	],	[	0,		3,		0x15,		0x15,		4,		0,		1	],	[	0,		3,		5,		5,		4,		2,		0	]
+    var impTab_LTR = [    [    0,        3,        0,        1,        0,        0,        0    ],    [    0,        3,        0,        1,        2,        2,        0    ],    [    0,        3,        0,        0x11,        2,        0,        1    ],    [    0,        3,        5,        5,        4,        1,        0    ],    [    0,        3,        0x15,        0x15,        4,        0,        1    ],    [    0,        3,        5,        5,        4,        2,        0    ]
     ];
 
-    var impTab_RTL = [	[	2,		0,		1,		1,		0,		1,		0	],	[	2,		0,		1,		1,		0,		2,		0	],	[	2,		0,		2,		1,		3,		2,		0	],	[	2,		0,		2,		0x21,		3,		1,		1	]
+    var impTab_RTL = [    [    2,        0,        1,        1,        0,        1,        0    ],    [    2,        0,        1,        1,        0,        2,        0    ],    [    2,        0,        2,        1,        3,        2,        0    ],    [    2,        0,        2,        0x21,        3,        1,        1    ]
     ];
 
     var LTR = 0, RTL = 1;
@@ -4445,7 +4445,7 @@ ace.define("ace/lib/bidiutil",["require","exports","module"], function(require, 
     ];
 
     var UnicodeTBL20 = [
-        WS,WS,WS,WS,WS,WS,WS,WS,WS,WS,WS,BN,BN,BN,L,R	,
+        WS,WS,WS,WS,WS,WS,WS,WS,WS,WS,WS,BN,BN,BN,L,R    ,
         ON,ON,ON,ON,ON,ON,ON,ON,ON,ON,ON,ON,ON,ON,ON,ON,
         ON,ON,ON,ON,ON,ON,ON,ON,WS,B,LRE,RLE,PDF,LRO,RLO,CS,
         ET,ET,ET,ET,ET,ON,ON,ON,ON,ON,ON,ON,ON,ON,ON,ON,

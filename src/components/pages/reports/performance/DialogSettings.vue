@@ -127,8 +127,8 @@
 			name: 'Time-Weighted Return',
 		},
 		{
-			id: 'money_weighted',
-			name: 'Money Weighted Return',
+			id: 'modified_dietz',
+			name: 'Modified Dietz',
 		},
 		/*{
 			id: "",

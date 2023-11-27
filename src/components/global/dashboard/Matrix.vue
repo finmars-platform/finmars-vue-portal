@@ -48,7 +48,7 @@
 	})
 
 	const inputsValsWatcherCb = useDebounce(function (newVal, oldVal) {
-		// console.log("testing1090.matrix inputsValsWatcherCb", newVal, oldVal);
+
 		Object.keys(inputsVals.value).forEach((inputId) => {
 			if (newVal[inputId] === oldVal[inputId]) {
 				return
@@ -552,7 +552,7 @@
 
 	// debounce needed because multiple inputs change consecutively
 	const updateRvAfterInputsChange = useDebounce(function () {
-		// console.log("testing1090.finmarsGrid updateRvAfterInputsChange called");
+
 		vmE.entityViewerEventService.dispatchEvent(
 			entityViewerEvents.FILTERS_CHANGE
 		)

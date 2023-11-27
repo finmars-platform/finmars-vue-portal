@@ -6,7 +6,7 @@
 			<FmBtn
 				v-if="!showBundleActions"
 				class="primaryIcon"
-				type="iconBtn"
+				type="icon"
 				icon="lock"
 				@click.stop="showBundleActions = true"
 			/>
@@ -15,7 +15,7 @@
 				<FmBtn
 					:disabled="!portfolioItems.length"
 					class="primaryIcon m-r-8"
-					type="iconBtn"
+					type="icon"
 					icon="edit"
 					@click.stop="editBundleIsOpened = true"
 				/>
@@ -23,7 +23,7 @@
 				<FmBtn
 					:disabled="!portfolioItems.length"
 					class="primaryIcon"
-					type="iconBtn"
+					type="icon"
 					icon="delete"
 					@click.stop="deleteBundle()"
 				/>

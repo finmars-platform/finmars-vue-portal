@@ -219,12 +219,12 @@ async function init() {
 	console.log('store.user', store.user.username)
 	console.log('store.email', store.user.email)
 	console.log('store.us', store.user)
-	await formbricks.setAttribute('host', window.location.href)
-	await formbricks.setAttribute('username', store.user.username)
-	await formbricks.setAttribute('first_name', store.user.first_name)
-	await formbricks.setAttribute('last_name', store.user.last_name)
-	await formbricks.setUserId(store.user.id)
-	await formbricks.setEmail(store.user.email)
+	// await formbricks.setAttribute('host', window.location.href)
+	// await formbricks.setAttribute('username', store.user.username)
+	// await formbricks.setAttribute('first_name', store.user.first_name)
+	// await formbricks.setAttribute('last_name', store.user.last_name)
+	formbricks.setUserId(store.user.id)
+	formbricks.setEmail(store.user.email)
 	await formbricks.registerRouteChange();
 }
 

@@ -183,7 +183,7 @@
 					state.props.inputs.push(newProp);
 
 				})
-				// console.log("testing1090.EditCompM save inputs", state.props.inputs);
+
 				outputs.value.forEach((prop) => {
 					let output = state.props.outputs.find((item) => item.uid == prop.uid)
 

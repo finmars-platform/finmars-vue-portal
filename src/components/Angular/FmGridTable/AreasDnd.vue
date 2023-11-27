@@ -10,9 +10,16 @@
 
 	import GcfAreasDndSharedLogicHelper from '@/angular/helpers/entityViewer/sharedLogic/gcfAreasDndSharedLogicHelper'
 
-	const props = defineProps(['contentWrapElement'])
+	const props = defineProps([
+		'contentWrapElement',
+		'evDataService',
+		'evEventService',
+	])
+
 	const scope = {
 		contentWrapElement: props.contentWrapElement,
+		evDataService: props.evDataService,
+		evEventService: props.evEventService,
 	}
 
 	let sharedLogic

@@ -1,161 +1,193 @@
 /** @module globalDataService */
 
 export default function () {
-	const store = useStore()
+    const store = useStore()
 
-	let userHaveCurrentMasterUser = false
+    let userHaveCurrentMasterUser = false
 
-	let data = {
-		masterUser: store.current,
-		member: store.member,
-		user: store.user,
-	}
+    let data = {
+        masterUser: store.current,
+        member: store.member,
+        memberLayout: store.memberLayout,
+        user: store.user,
+    };
 
-	let iframeMode = false // used when app inside iframe
+    let iframeMode = false; // used when app inside iframe
 
-	const doUserHasCurrentMasterUser = function () {
-		return userHaveCurrentMasterUser
-	}
+    const doUserHasCurrentMasterUser = function () {
+        return userHaveCurrentMasterUser;
+    };
 
-	/**
-	 * Set whether user has current master user.
-	 *
-	 * @memberOf module:globalDataService
-	 * @param currentMasterUserIsSet {boolean}
-	 */
-	const setCurrentMasterUserStatus = function (currentMasterUserIsSet) {
-		userHaveCurrentMasterUser = currentMasterUserIsSet
-	}
+    /**
+     * Set whether user has current master user.
+     *
+     * @memberOf module:globalDataService
+     * @param currentMasterUserIsSet {boolean}
+     */
+    const setCurrentMasterUserStatus = function (currentMasterUserIsSet) {
+        userHaveCurrentMasterUser = currentMasterUserIsSet;
+    };
 
-	const setUser = function (user) {
-		data.user = user
-	}
+    const setUser = function (user) {
 
-	const getUser = () => {
-		return data.user
-	}
+        if (!user.data) user.data = {};
 
-	const setMasterUser = function (masterUser) {
-		data.masterUser = masterUser
-	}
+        if ( typeof user.data.autosave_layouts !== 'boolean' ) {
+            user.data.autosave_layouts = true;
+        }
 
-	const getMasterUser = () => {
-		return data.masterUser
-	}
+        data.user = user;
+    };
 
-	const setMember = function (member) {
-		data.member = member
-	}
+    const getUser = () => {
+        return data.user;
+    };
 
-	const getMember = () => {
-		return data.member
-	}
+    const setMasterUser = function (masterUser) {
+        data.masterUser = masterUser;
+    };
 
-	const setUpMemberData = (member, viewerType, entityType) => {
-		if (!member.data) member.data = {}
-		if (!member.data.group_tables) member.data.group_tables = {}
+    const getMasterUser = () => {
+        return data.masterUser;
+    };
 
-		if (!member.data.group_tables.entity_viewer) {
-			member.data.group_tables.entity_viewer = {
-				entity_viewers_settings: {},
-			}
-		}
+    const setMember = function (member) {
+        // console.trace("autosave77 setMember");
+        // console.log("autosave77 setMember", member);
+        /*if ( typeof member.data.autosave_layouts !== 'boolean' ) {
+            member.data.autosave_layouts = true;
+        }*/
 
-		if (!member.data.group_tables.report_viewer) {
-			member.data.group_tables.report_viewer = {
-				entity_viewers_settings: {},
-			}
-		}
+        data.member = member;
+    };
 
-		let entityTypesSettings =
-			member.data.group_tables[viewerType].entity_viewers_settings
+    const getMember = () => {
+        return data.member;
+    };
 
-		if (!entityTypesSettings[entityType]) {
-			entityTypesSettings[entityType] = {
-				marked_rows: {},
-				row_type_filter: 'none',
-			}
-		}
+    const setUpMemberData = (member, viewerType, entityType) => {
 
-		return member
-	}
+        if (!member.data) member.data = {};
+        if (!member.data.group_tables) member.data.group_tables = {};
 
-	const getMemberEntityViewersSettings = (isReport, entityType) => {
-		const viewerType = isReport ? 'report_viewer' : 'entity_viewer'
-		let member = setUpMemberData(data.member, viewerType, entityType)
+        if (!member.data.group_tables.entity_viewer) {
+            member.data.group_tables.entity_viewer = {
+                entity_viewers_settings: {}
+            };
+        }
 
-		return JSON.parse(
-			JSON.stringify(
-				member.data.group_tables[viewerType].entity_viewers_settings[entityType]
-			)
-		)
-	}
+        if (!member.data.group_tables.report_viewer) {
+            member.data.group_tables.report_viewer = {
+                entity_viewers_settings: {}
+            };
+        }
 
-	const setMemberEntityViewersSettings = function (
-		settings,
-		isReport,
-		entityType
-	) {
-		const viewerType = isReport ? 'report_viewer' : 'entity_viewer'
-		let member = setUpMemberData(data.member, viewerType, entityType)
+        let entityTypesSettings = member.data.group_tables[viewerType].entity_viewers_settings;
 
-		member.data.group_tables[viewerType].entity_viewers_settings[entityType] =
-			settings
-	}
+        if (!entityTypesSettings[entityType]) {
 
-	const isAutosaveLayoutOn = function () {
-		const user = getUser()
-		const member = getMember()
+            entityTypesSettings[entityType] = {
+                marked_rows: {},
+                row_type_filter: 'none'
+            };
 
-		if (!member) {
-			throw 'Method should be called after getting member'
-		}
+        }
 
-		if (!member.data) member.data = {}
+        return member;
 
-		const autosave77 =
-			user.data.autosave_layouts && member.data.autosave_layouts
+    };
 
-		if (!autosave77) {
-		}
+    const getMemberEntityViewersSettings = (isReport, entityType) => {
 
-		return autosave77
-	}
+        const viewerType = isReport ? 'report_viewer' : 'entity_viewer';
+        let member = setUpMemberData(data.member, viewerType, entityType);
 
-	const clearAllData = function () {
-		userHaveCurrentMasterUser = false
+        return JSON.parse(JSON.stringify(member.data.group_tables[viewerType].entity_viewers_settings[entityType]));
 
-		for (const prop in data) {
-			data[prop] = null
-		}
-	}
+    };
 
-	const setIframeMode = function (modeStatus) {
-		iframeMode = modeStatus
-	}
+    const setMemberEntityViewersSettings = function (settings, isReport, entityType) {
 
-	const insideIframe = function () {
-		return iframeMode
-	}
+        const viewerType = isReport ? 'report_viewer' : 'entity_viewer';
+        let member = setUpMemberData(data.member, viewerType, entityType);
 
-	return {
-		setCurrentMasterUserStatus: setCurrentMasterUserStatus,
-		doUserHasCurrentMasterUser: doUserHasCurrentMasterUser,
+        member.data.group_tables[viewerType].entity_viewers_settings[entityType] = settings;
 
-		setUser: setUser,
-		getUser: getUser,
-		setMasterUser: setMasterUser,
-		getMasterUser: getMasterUser,
-		setMember: setMember,
-		getMember: getMember,
-		getMemberEntityViewersSettings: getMemberEntityViewersSettings,
-		setMemberEntityViewersSettings: setMemberEntityViewersSettings,
+    };
 
-		isAutosaveLayoutOn: isAutosaveLayoutOn,
+    const setMemberLayout = function (layout) {
+        data.memberLayout = layout;
+    }
 
-		clearAllData: clearAllData,
+    const getMemberLayout = () => data.memberLayout;
 
-		setIframeMode: setIframeMode,
-		insideIframe: insideIframe,
-	}
+    const isAutosaveLayoutOn = function () {
+
+        const user = getUser();
+        const memberLayout = getMemberLayout();
+
+        if (!memberLayout) {
+            throw "Method should be called after getting member layout"
+        }
+
+        if (!memberLayout.data) memberLayout.data = {};
+
+        const autosave77 = user.data.autosave_layouts && memberLayout.data.autosave_layouts;
+
+        if (!autosave77) {
+            console.log("autosave77 isAutosaveLayoutOn user, memberLayout", user, memberLayout);
+        }
+
+        return autosave77;
+
+    };
+
+    const clearAllData = function () {
+
+        userHaveCurrentMasterUser = false;
+
+        for (const prop in data) {
+            data[prop] = null;
+        }
+
+    };
+
+    const setIframeMode = function (modeStatus) {
+        iframeMode = modeStatus;
+    }
+
+    const insideIframe = function () {
+        return iframeMode;
+    }
+
+    const getDefaultConfigurationCode = function (){
+
+        return 'local.poms.' + data.masterUser.base_api_url
+
+    }
+
+    return {
+        setCurrentMasterUserStatus: setCurrentMasterUserStatus,
+        doUserHasCurrentMasterUser: doUserHasCurrentMasterUser,
+
+        setUser: setUser,
+        getUser: getUser,
+        setMasterUser: setMasterUser,
+        getMasterUser: getMasterUser,
+        setMember: setMember,
+        getMember: getMember,
+        getMemberEntityViewersSettings: getMemberEntityViewersSettings,
+        setMemberEntityViewersSettings: setMemberEntityViewersSettings,
+        setMemberLayout: setMemberLayout,
+        getMemberLayout: getMemberLayout,
+
+        isAutosaveLayoutOn: isAutosaveLayoutOn,
+
+        clearAllData: clearAllData,
+
+        setIframeMode: setIframeMode,
+        insideIframe: insideIframe,
+
+        getDefaultConfigurationCode: getDefaultConfigurationCode
+    }
 }

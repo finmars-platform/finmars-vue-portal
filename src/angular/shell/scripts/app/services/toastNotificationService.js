@@ -18,7 +18,7 @@ export default function () {
 
         // if (searchParams.get('debug') === 'true') {
 
-		toastr.error(message, title, options);
+        toastr.error(message, title, options);
 
         // }
 

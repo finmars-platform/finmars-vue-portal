@@ -22,7 +22,7 @@
 				<template v-if="!noBorders && !noIndicatorButton" #button>
 					<FmBtn
 						v-show="!importingEntity"
-						type="iconBtn"
+						type="icon"
 						icon="menu"
 						:disabled="disabled"
 						@click.stop="emit('openModal')"

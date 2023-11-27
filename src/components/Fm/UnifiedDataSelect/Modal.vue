@@ -136,14 +136,14 @@
 				<div>
 					<!--	TODO: add creation after making entityViewerAddDialog
 									<FmBtn v-if="!showActions"
-													 type="iconBtn"
+													 type="icon"
 													 icon="lock"
 													 tooltip="Show more"
 													 @click="showActions = true"></FmBtn>
 
 										<div v-if="showActions"
 												 class="flex-row">
-											<FmBtn type="iconBtn"
+											<FmBtn type="icon"
 														 icon="add"
 														 tooltip="Create new"
 														 @click="showActions = true"></FmBtn>

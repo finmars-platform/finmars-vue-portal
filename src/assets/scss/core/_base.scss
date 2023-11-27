@@ -1,47 +1,47 @@
 body {
-	font: 400 16px/1.2 $font-family, sans-serif;
-	color: $text;
-	overflow: initial;
+    font: 400 16px/1.2 $font-family, sans-serif;
+    color: $text;
+    overflow: initial;
 }
 html {
-	overflow: initial !important;
+    overflow: initial !important;
 }
 button {
-	font-family: $font-family, sans-serif;
-	white-space: nowrap;
+    font-family: $font-family, sans-serif;
+    white-space: nowrap;
 }
 p {
-	line-height: 1.35;
+    line-height: 1.35;
 }
 a {
-	color: $text;
+    color: $text;
 }
 input[type=file] {
-	display: none;
+    display: none;
 }
 input, textarea {
-	font: 400 16px/1.2 $font-family, sans-serif;
-	color: $text;
+    font: 400 16px/1.2 $font-family, sans-serif;
+    color: $text;
 }
 
 .ev_top_panel {
-	height: 50px;
+    height: 50px;
 }
 
 textarea {
-	border: 1px solid;
+    border: 1px solid;
 }
 
 ::-webkit-scrollbar-thumb {
-	background: $primary-lighten;
-	border: 3px solid #fff;
+    background: $primary-lighten;
+    border: 3px solid #fff;
 }
 ::-webkit-scrollbar-track {
-	background: #fff;
-	border-left: 1px solid #fff;
+    background: #fff;
+    border-left: 1px solid #fff;
 }
 ::-webkit-scrollbar {
-	height: 8px;
-	width: 10px;
+    height: 8px;
+    width: 10px;
 }
 

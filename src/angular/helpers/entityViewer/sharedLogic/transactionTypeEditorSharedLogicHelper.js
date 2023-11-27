@@ -9,236 +9,236 @@ import helpExpressionsService from '@/angular/services/helpExpressionsService'
 ;('use strict')
 
 export default function (
-	viewModel,
-	$scope,
-	$mdDialog,
-	ecosystemDefaultService,
-	uiService,
-	fieldResolverService,
-	gridTableHelperService
+    viewModel,
+    $scope,
+    $mdDialog,
+    ecosystemDefaultService,
+    uiService,
+    fieldResolverService,
+    gridTableHelperService
 ) {
-	// const gridTableHelperService = new GridTableHelperService();
-	const loadedRelationsList = []
+    // const gridTableHelperService = new GridTableHelperService();
+    const loadedRelationsList = []
 
-	const valueTypes = [
-		{
-			name: 'Number',
-			id: 20,
-		},
-		{
-			name: 'String',
-			id: 10,
-		},
-		{
-			name: 'Date',
-			id: 40,
-		},
-		{
-			name: 'Relation',
-			id: 100,
-		},
-		{
-			name: 'Selector',
-			id: 110,
-		},
-		{
-			name: 'Button',
-			id: 120,
-		},
-	]
-	let ecosystemDefaultData = {}
+    const valueTypes = [
+        {
+            name: 'Number',
+            id: 20,
+        },
+        {
+            name: 'String',
+            id: 10,
+        },
+        {
+            name: 'Date',
+            id: 40,
+        },
+        {
+            name: 'Relation',
+            id: 100,
+        },
+        {
+            name: 'Selector',
+            id: 110,
+        },
+        {
+            name: 'Button',
+            id: 120,
+        },
+    ]
+    let ecosystemDefaultData = {}
 
-	const getValueTypes = function () {
-		return valueTypes
-	}
+    const getValueTypes = function () {
+        return valueTypes
+    }
 
-	const contextProperties = {
-		'instruments.instrument': [
-			{
-				id: 'context_instrument',
-				name: 'Context Instrument',
-			},
+    const contextProperties = {
+        'instruments.instrument': [
+            {
+                id: 'context_instrument',
+                name: 'Context Instrument',
+            },
 
-			// TODO is not in use now
-			// {
-			//     id: 9,
-			//     name: 'position'
-			// },
-			// {
-			//     id: 10,
-			//     name: 'effective_date'
-			// }
-		],
-		'currencies.currency': [
-			{
-				id: 'context_pricing_currency',
-				name: 'Context Pricing Currency',
-			},
-			{
-				id: 'context_accrued_currency',
-				name: 'Context Accrued Currency',
-			},
-			{
-				id: 'context_currency',
-				name: 'Context Currency',
-			},
-		],
-		'portfolios.portfolio': [
-			{
-				id: 'context_portfolio',
-				name: 'Context Portfolio',
-			},
-		],
-		'accounts.account': [
-			{
-				id: 'context_account',
-				name: 'Context Account',
-			},
-		],
-		'strategies.strategy1': [
-			{
-				id: 'context_strategy1',
-				name: 'Context Strategy 1',
-			},
-		],
-		'strategies.strategy2': [
-			{
-				id: 'context_strategy2',
-				name: 'Context Strategy 2',
-			},
-		],
-		'strategies.strategy3': [
-			{
-				id: 'context_strategy3',
-				name: 'Context Strategy 3',
-			},
-		],
-	}
+            // TODO is not in use now
+            // {
+            //     id: 9,
+            //     name: 'position'
+            // },
+            // {
+            //     id: 10,
+            //     name: 'effective_date'
+            // }
+        ],
+        'currencies.currency': [
+            {
+                id: 'context_pricing_currency',
+                name: 'Context Pricing Currency',
+            },
+            {
+                id: 'context_accrued_currency',
+                name: 'Context Accrued Currency',
+            },
+            {
+                id: 'context_currency',
+                name: 'Context Currency',
+            },
+        ],
+        'portfolios.portfolio': [
+            {
+                id: 'context_portfolio',
+                name: 'Context Portfolio',
+            },
+        ],
+        'accounts.account': [
+            {
+                id: 'context_account',
+                name: 'Context Account',
+            },
+        ],
+        'strategies.strategy1': [
+            {
+                id: 'context_strategy1',
+                name: 'Context Strategy 1',
+            },
+        ],
+        'strategies.strategy2': [
+            {
+                id: 'context_strategy2',
+                name: 'Context Strategy 2',
+            },
+        ],
+        'strategies.strategy3': [
+            {
+                id: 'context_strategy3',
+                name: 'Context Strategy 3',
+            },
+        ],
+    }
 
-	const getContextProperties = function () {
-		return contextProperties
-	}
+    const getContextProperties = function () {
+        return contextProperties
+    }
 
-	const onActionAccordionCollapse = function (index, id) {
-		removeEmptySpaceFromAction(id)
-	}
+    const onActionAccordionCollapse = function (index, id) {
+        removeEmptySpaceFromAction(id)
+    }
 
-	const toggleItem = function (pane, item, $index, $event) {
-		$event.stopPropagation()
+    const toggleItem = function (pane, item, $index, $event) {
+        $event.stopPropagation()
 
-		if (!$event.target.classList.contains('ttype-action-notes-input')) {
-			pane.toggle()
-			item.isPaneExpanded = !item.isPaneExpanded
-		}
-	}
+        if (!$event.target.classList.contains('ttype-action-notes-input')) {
+            pane.toggle()
+            item.isPaneExpanded = !item.isPaneExpanded
+        }
+    }
 
-	const updateInputFunctions = function () {
-		viewModel.expressionData.groups[0] = {
-			name: '<b>Inputs</b>',
-			key: 'input',
-		}
+    const updateInputFunctions = function () {
+        viewModel.expressionData.groups[0] = {
+            name: '<b>Inputs</b>',
+            key: 'input',
+        }
 
-		if (viewModel.entity.inputs.length) {
-			viewModel.expressionData.functions[0] = viewModel.entity.inputs.map(
-				function (input) {
-					return {
-						name: 'Input: ' + input.verbose_name + ' (' + input.name + ')',
-						description:
-							'Transaction Type Input: ' +
-							input.verbose_name +
-							' (' +
-							input.name +
-							') ',
-						groups: 'input',
-						func: input.name,
-						validation: {
-							func: input.name,
-						},
-					}
-				}
-			)
-		} else {
-			viewModel.expressionData.functions[0] = []
-		}
+        if (viewModel.entity.inputs.length) {
+            viewModel.expressionData.functions[0] = viewModel.entity.inputs.map(
+                function (input) {
+                    return {
+                        name: 'Input: ' + input.verbose_name + ' (' + input.name + ')',
+                        description:
+                            'Transaction Type Input: ' +
+                            input.verbose_name +
+                            ' (' +
+                            input.name +
+                            ') ',
+                        groups: 'input',
+                        func: input.name,
+                        validation: {
+                            func: input.name,
+                        },
+                    }
+                }
+            )
+        } else {
+            viewModel.expressionData.functions[0] = []
+        }
 
-		return viewModel.expressionData
-	}
+        return viewModel.expressionData
+    }
 
-	const updateContextParametersFunctions = function () {
-		viewModel.expressionData.groups[1] = {
-			name: '<b>Context Parameters</b>',
-			key: 'context_parameters',
-		}
+    const updateContextParametersFunctions = function () {
+        viewModel.expressionData.groups[1] = {
+            name: '<b>Context Parameters</b>',
+            key: 'context_parameters',
+        }
 
-		if (viewModel.entity.context_parameters.length) {
-			viewModel.expressionData.functions[1] =
-				viewModel.entity.context_parameters.map(function (cParam) {
-					return {
-						name:
-							'Context Parameter: ' +
-							cParam.name +
-							' (' +
-							cParam.user_code +
-							')',
-						description:
-							'Transaction Type Context Parameter: ' +
-							cParam.name +
-							' (' +
-							cParam.user_code +
-							')',
-						groups: 'context_parameters',
-						func: cParam.user_code,
-						validation: {
-							func: cParam.user_code,
-						},
-					}
-				})
-		} else {
-			viewModel.expressionData.functions[1] = []
-		}
-	}
+        if (viewModel.entity.context_parameters.length) {
+            viewModel.expressionData.functions[1] =
+                viewModel.entity.context_parameters.map(function (cParam) {
+                    return {
+                        name:
+                            'Context Parameter: ' +
+                            cParam.name +
+                            ' (' +
+                            cParam.user_code +
+                            ')',
+                        description:
+                            'Transaction Type Context Parameter: ' +
+                            cParam.name +
+                            ' (' +
+                            cParam.user_code +
+                            ')',
+                        groups: 'context_parameters',
+                        func: cParam.user_code,
+                        validation: {
+                            func: cParam.user_code,
+                        },
+                    }
+                })
+        } else {
+            viewModel.expressionData.functions[1] = []
+        }
+    }
 
-	// const useIdForRelList = ['pricing_condition', 'payment_size_detail', 'accrual_calculation_model', 'notification_class', 'event_class', 'periodicity'];
+    // const useIdForRelList = ['pricing_condition', 'payment_size_detail', 'accrual_calculation_model', 'notification_class', 'event_class', 'periodicity'];
 
-	const formatRelationForSelector = function (key, relationsList) {
-		if (key === 'transaction_class') {
-			// relations with specific properties to use as 'id' or (and) 'name'
+    const formatRelationForSelector = function (key, relationsList) {
+        if (key === 'transaction_class') {
+            // relations with specific properties to use as 'id' or (and) 'name'
 
-			return relationsList.map((rItem) => {
-				return { id: rItem.id, name: rItem.name }
-			})
-		}
+            return relationsList.map((rItem) => {
+                return { id: rItem.id, name: rItem.name }
+            })
+        }
 
-		// const propForId = useIdForRelList.includes(key) ? 'id' : 'user_code';
+        // const propForId = useIdForRelList.includes(key) ? 'id' : 'user_code';
 
-		return relationsList.map((rItem) => {
-			return {
-				id: rItem.user_code,
-				name: rItem.hasOwnProperty('short_name')
-					? rItem.short_name
-					: rItem.name,
-			}
-		})
-	}
-	// needed because back does not send _object for selected transaction_class
+        return relationsList.map((rItem) => {
+            return {
+                id: rItem.user_code,
+                name: rItem.hasOwnProperty('short_name')
+                    ? rItem.short_name
+                    : rItem.name,
+            }
+        })
+    }
+    // needed because back does not send _object for selected transaction_class
 
-	const loadRelation = function (field, noScopeUpdate) {
-		field = field.replace(/-/g, '_') // replace all '_' with '-'
-		/* if (!loadedRelationsList.includes(field)) {
+    const loadRelation = function (field, noScopeUpdate) {
+        field = field.replace(/-/g, '_') // replace all '_' with '-'
+        /* if (!loadedRelationsList.includes(field)) {
 
-				return new Promise(function (resolve, reject) {
+                return new Promise(function (resolve, reject) {
 
-					fieldResolverService.getFields(field).then(function (data) {
+                    fieldResolverService.getFields(field).then(function (data) {
 
-						viewModel.relationItems[field] = formatRelationForSelector(field, data.data);
+                        viewModel.relationItems[field] = formatRelationForSelector(field, data.data);
 
-						loadedRelationsList.push(field);
+                        loadedRelationsList.push(field);
 
-						if (noScopeUpdate) {
-							$scope.$apply();
-						}
+                        if (noScopeUpdate) {
+                            $scope.$apply();
+                        }
 
-						resolve(viewModel.relationItems[field]);
+            			resolve(viewModel.relationItems[field]);
 					})
 
 				});
