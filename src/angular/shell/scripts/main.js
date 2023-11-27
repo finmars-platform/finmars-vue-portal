@@ -40,117 +40,117 @@ import dndFilesOnPageDirective from './app/directives/dndFilesOnPageDirective.js
 const PROJECT_ENV = '__PROJECT_ENV__' // changed when building project by minAllScripts()
 
 const app = angular.module('finmars', [
-	'ngAria',
-	'ngMaterial',
-	'ngMessages',
-	'ngMdIcons',
-	'ngResource',
-	'ngSanitize',
-	'ui.router',
+    'ngAria',
+    'ngMaterial',
+    'ngMessages',
+    'ngMdIcons',
+    'ngResource',
+    'ngSanitize',
+    'ui.router',
 
-	'finmars.profile',
-	'finmars.database',
-	'finmars.portal',
-	// 'finmars.forum'
+    'finmars.profile',
+    'finmars.database',
+    'finmars.portal',
+    // 'finmars.forum'
 ])
 
 // app.config(['$stateProvider', '$urlServiceProvider', require('./app/router.js')]);
 app.config(['$stateProvider', '$urlServiceProvider', router])
 app.config([
-	'$mdDateLocaleProvider',
-	function ($mdDateLocaleProvider) {
-		$mdDateLocaleProvider.formatDate = (date) => {
-			return moment(date).format('YYYY-MM-DD')
-		}
-	},
+    '$mdDateLocaleProvider',
+    function ($mdDateLocaleProvider) {
+        $mdDateLocaleProvider.formatDate = (date) => {
+            return moment(date).format('YYYY-MM-DD')
+        }
+    },
 ])
 
 app.factory('$exceptionHandler', [
-	function () {
-		return function myExceptionHandler(exception, cause) {
-			if (!window.system_errors) {
-				window.system_errors = []
-			}
+    function () {
+        return function myExceptionHandler(exception, cause) {
+            if (!window.system_errors) {
+                window.system_errors = []
+            }
 
-			console.error('exception', exception)
+            console.error('exception', exception)
 
 
-			window.system_errors.push({
-				created: new Date().toISOString(),
-				location: window.location.href,
-				data: {
-					exception: exception,
-					cause: cause,
-				},
-				text: exception.toString(),
-			})
-		}
-	},
+            window.system_errors.push({
+                created: new Date().toISOString(),
+                location: window.location.href,
+                data: {
+                    exception: exception,
+                    cause: cause,
+                },
+                text: exception.toString(),
+            })
+        }
+    },
 ])
 
 //<editor-fold desc="Websocket initialization">
 app.run([
-	function () {
+    function () {
 
 
 
-		let controllersCount = 0
-		let directivesCount = 0
+        let controllersCount = 0
+        let directivesCount = 0
 
-		app._invokeQueue.forEach(function (item) {
-			if (item[0] === '$controllerProvider') {
-				controllersCount = controllersCount + 1
-			}
+        app._invokeQueue.forEach(function (item) {
+            if (item[0] === '$controllerProvider') {
+                controllersCount = controllersCount + 1
+            }
 
-			if (item[0] === '$compileProvider' && item[1] === 'directive') {
-				directivesCount = directivesCount + 1
-			}
-		})
+            if (item[0] === '$compileProvider' && item[1] === 'directive') {
+                directivesCount = directivesCount + 1
+            }
+        })
 
-		console.log(
-			'angular.js info: ' + controllersCount + ' controllers registered'
-		)
-		console.log(
-			'angular.js info: ' + directivesCount + ' directives registered'
-		)
+        console.log(
+            'angular.js info: ' + controllersCount + ' controllers registered'
+        )
+        console.log(
+            'angular.js info: ' + directivesCount + ' directives registered'
+        )
 
-		// import developerConsoleService from '../../portal/scripts/app/services/developerConsoleService';
-		// import websocketService from './app/services/websocketService';
-		import toastNotificationService from '../../core/services/toastNotificationService'
+        // import developerConsoleService from '../../portal/scripts/app/services/developerConsoleService';
+        // import websocketService from './app/services/websocketService';
+        import toastNotificationService from '../../core/services/toastNotificationService'
 
-		// window.developerConsoleService = developerConsoleService;
+        // window.developerConsoleService = developerConsoleService;
 
-		// developerConsoleService.init();
+        // developerConsoleService.init();
 
-		// try {
+        // try {
 
-		// window.ws = new WebSocket("__WS_HOST__");
+        // window.ws = new WebSocket("__WS_HOST__");
 
-		// if (PROJECT_ENV !== 'local') {
+        // if (PROJECT_ENV !== 'local') {
 
-		// DEPRECATED
-		// websocketService.connect();
-		// websocketService.reconnectIfError();
-		//
-		// websocketService.addEventListener('simple_message', function (data) {
-		//     toastNotificationService.info(data.message)
-		// })
+        // DEPRECATED
+        // websocketService.connect();
+        // websocketService.reconnectIfError();
+        //
+        // websocketService.addEventListener('simple_message', function (data) {
+        //     toastNotificationService.info(data.message)
+        // })
 
-		// }
+        // }
 
-		// window.ws.onopen = function () {
-		// 	;
-		// 	window.ws.send(JSON.stringify({action: "initial_auth"}));
-		// }
+        // window.ws.onopen = function () {
+        //     ;
+        //     window.ws.send(JSON.stringify({action: "initial_auth"}));
+        // }
 
-		// } catch (error) {
-		//
-		// 	console.error("Can't connect to Websocket server. Error ", error);
-		//
-		// 	window.ws = null;
-		//
-		// }
-	},
+        // } catch (error) {
+        //
+        //     console.error("Can't connect to Websocket server. Error ", error);
+        //
+        //     window.ws = null;
+        //
+        // }
+    },
 ])
 //</editor-fold>
 
@@ -162,22 +162,22 @@ app.service('xhrService', ['errorService', 'cookieService', xhrService])
 app.service('broadcastChannelService', [broadcastChannelService])
 app.service('globalDataService', [globalDataService])
 app.service('authorizerService', [
-	'cookieService',
-	'globalDataService',
-	'xhrService',
-	authorizerService,
+    'cookieService',
+    'globalDataService',
+    'xhrService',
+    authorizerService,
 ])
 app.service('middlewareService', [middlewareService])
 app.service('usersService', [
-	'cookieService',
-	'globalDataService',
-	'xhrService',
-	usersService,
+    'cookieService',
+    'globalDataService',
+    'xhrService',
+    usersService,
 ])
 app.service('usersGroupService', ['globalDataService', usersGroupService])
 app.service('backendConfigurationImportService', [
-	'cookieService',
-	backendConfigurationImportService,
+    'cookieService',
+    backendConfigurationImportService,
 ])
 app.service('systemMessageService', [systemMessageService])
 
@@ -185,37 +185,37 @@ app.service('redirectionService', [redirectionService])
 app.service('commonDialogsService', ['$mdDialog', commonDialogsService])
 
 app.controller('ShellController', [
-	'$scope',
-	'$state',
-	'$transitions',
-	'$urlService',
-	'$uiRouterGlobals',
-	'$mdDialog',
-	'toastNotificationService',
-	'cookieService',
-	'broadcastChannelService',
-	'middlewareService',
-	'authorizerService',
-	'globalDataService',
-	'redirectionService',
-	shellController,
+    '$scope',
+    '$state',
+    '$transitions',
+    '$urlService',
+    '$uiRouterGlobals',
+    '$mdDialog',
+    'toastNotificationService',
+    'cookieService',
+    'broadcastChannelService',
+    'middlewareService',
+    'authorizerService',
+    'globalDataService',
+    'redirectionService',
+    shellController,
 ])
 
 app.controller('WarningDialogController', [
-	'$scope',
-	'$mdDialog',
-	'warning',
-	warningDialogController,
+    '$scope',
+    '$mdDialog',
+    'warning',
+    warningDialogController,
 ])
 app.controller('InputsDialogController', [
-	'$scope',
-	'$mdDialog',
-	'data',
-	inputsDialogController,
+    '$scope',
+    '$mdDialog',
+    'data',
+    inputsDialogController,
 ])
 
 app.directive('dndFilesOnPage', [
-	'$state',
-	'commonDialogsService',
-	dndFilesOnPageDirective,
+    '$state',
+    'commonDialogsService',
+    dndFilesOnPageDirective,
 ])

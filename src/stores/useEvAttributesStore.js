@@ -434,6 +434,8 @@ export default defineStore({
 
 			this.customFields[contentType] = res.results;
 
+			return this.customFields[contentType];
+
 		},
 
 		async getFetchCustomFields(contentType) {

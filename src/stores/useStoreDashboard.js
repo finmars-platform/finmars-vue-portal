@@ -55,12 +55,6 @@ export default defineStore({
 				}
 			)
 
-			/*watch(
-				() => this.props.inputs,
-				() => {
-					console.trace("testing1090.useStoreDashboard inputs changed");
-				}
-			)*/
 		},
 		getComponent(id) {
 			return this.components.find((item) => item.uid == id)
@@ -118,7 +112,7 @@ export default defineStore({
 		},
 		setPropsWatchers() {
 			this.props.outputs.forEach(outputProp => {
-				// console.log("testing1090.useStoreDashboard outputProp ", outputProp);
+
 				if (outputProp.__unwatch) return false
 
 				const dynamicOutput = this.getComponent(outputProp.component_id).dynamicOutputs;
@@ -130,7 +124,7 @@ export default defineStore({
 						let inputsProps = this.props.inputs.filter((item) =>
 							item.subscribedTo.find(data => data.output_id === outputProp.uid)
 						)
-						// console.log("testing1090.useStoreDashboard outputProp ", outputProp);
+
 						let log = {
 							name: outputProp.name,
 							componentName: this.components.find(
@@ -186,7 +180,7 @@ export default defineStore({
 								newVal: prop.__val,
 								oldVal: childProp.__val,
 							})*/
-							// console.log("testing1090.useStoreDashboard inputProp", inputProp);
+
 							if ( dynamicOutput ) {
 
 								/*if ( inputOutputIncompatible(inputProp, outputProp) ) {
@@ -194,11 +188,11 @@ export default defineStore({
 								}*/
 
 								const subToData = inputProp.subscribedTo.find( data => data.output_id === outputProp.uid );
-								// console.log("testing1090.useStoreDashboard subToData", subToData, newVal, newVal[subToData.propertyName]);
+
 								inputProp.__val = newVal[subToData.propertyName];
-								// console.log("testing1090.useStoreDashboard inputProp after", inputProp, JSON.parse(JSON.stringify(inputProp)) );
+
 							} else {
-								// console.log("testing1090.useStoreDashboard 2 outputProp ", outputProp.__val, JSON.parse(JSON.stringify(outputProp)) );
+
 								inputProp.__val = outputProp.__val;
 
 							}
@@ -208,7 +202,6 @@ export default defineStore({
 							// 	'font-size: 14px;'
 							// )
 						})
-						// console.log("testing1090.useStoreDashboard props ", this.props);
 						// console.groupEnd()
 
 						this.__log.push(log)

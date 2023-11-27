@@ -38,12 +38,12 @@
 			</div>
 		</div>
 		<!-- RowsBulkActionsDirective.vue-->
-		<g-rows-bulk-actions
+<!--		<g-rows-bulk-actions
 			v-if="isRootEntityViewer && viewContext !== 'dashboard'"
 			ev-data-service="evDataService"
 			ev-event-service="evEventService"
 			content-wrap-element="contentWrapElement"
-		></g-rows-bulk-actions>
+		></g-rows-bulk-actions>-->
 	</div>
 </template>
 

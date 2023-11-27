@@ -5,33 +5,33 @@
 .vue-notification-wrapper {
 }
 .v-navigation-drawer__content {
-	overflow-x: inherit !important;
-	overflow-y: inherit !important;
+    overflow-x: inherit !important;
+    overflow-y: inherit !important;
 }
 
 .code_block {
-	padding: 15px 10px;
-	padding-left: 5px;
+    padding: 15px 10px;
+    padding-left: 5px;
 
-	.func {
-		color: green;
-	}
-	.signs {
-		color: red;
-	}
-	.numbers {
-		color: purple;
-	}
+    .func {
+        color: green;
+    }
+    .signs {
+        color: red;
+    }
+    .numbers {
+        color: purple;
+    }
 }
 
 .c_primary {
-	color: $primary;
+    color: $primary;
 }
 
 .pickmeup {
-	z-index: $backdrop-z-index;
+    z-index: $backdrop-z-index;
 }
 
 .error-color {
-	color: $error;
+    color: $error;
 }

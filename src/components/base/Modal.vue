@@ -18,7 +18,7 @@
 
 						<FmBtn
 							:disabled="closingDisabled"
-							type="iconBtn"
+							type="icon"
 							icon="close"
 							@click="cancel"
 						/>

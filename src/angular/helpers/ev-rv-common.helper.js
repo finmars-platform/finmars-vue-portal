@@ -1,112 +1,123 @@
 import stringHelper from './stringHelper'
 
 var _getParent = function (parentId, evDataService, results) {
-	var item = evDataService.getData(parentId)
 
-	results.push(item)
+	var item = evDataService.getData(parentId);
+
+	results.push(item);
 
 	if (item.___parentId !== null) {
-		_getParent(item.___parentId, evDataService, results)
+
+		_getParent(item.___parentId, evDataService, results);
+
 	}
 
-	return results
-}
+	return results;
+
+};
 
 var getParents = function (parentId, evDataService) {
-	var results = []
 
-	results = _getParent(parentId, evDataService, results)
+	var results = [];
 
-	return results
+	results = _getParent(parentId, evDataService, results);
+
+	return results;
+
+};
+
+var getDirectChildren = function (id, evDataService) {
+
+	const list = evDataService.getDataAsList();
+
+	return list.filter(item => item.___parentId === id);
+
 }
 
 var getId = function (item) {
-	var pattern
-	var entityViewerData
+
+	var pattern;
+	var entityViewerData;
 
 	if (item.___type === 'group' || item.___type === 'placeholder_group') {
-		pattern = [
-			item.___parentId,
-			item.___group_type_key,
-			item.___group_name,
-			item.___group_identifier,
-		].join('')
+
+		pattern = [item.___parentId, item.___group_type_key, item.___group_name, item.___group_identifier].join('');// seems its not working good
+		// pattern = [item.___parentId, stringHelper.toHash(item.___group_name + item.___group_identifier), item.___index].join('');
+
 	}
 
 	if (item.___type === 'object' || item.___type === 'placeholder_object') {
-		pattern = [item.___parentId, item.id].join('')
+
+		pattern = [item.___parentId, item.id].join('');
+
 	}
 
 	if (item.___type === 'subtotal') {
-		if (item.___subtotal_subtype) {
-			pattern = [
-				item.___parentId,
-				item.___type +
-					'_' +
-					item.___subtotal_type +
-					'_' +
-					item.___subtotal_subtype,
-			].join('')
 
-			// ;
+		if (item.___subtotal_subtype) {
+			pattern = [item.___parentId, item.___type + '_' + item.___subtotal_type + '_' + item.___subtotal_subtype].join('');
+
+			// console.log('pattern', pattern);
+
 		} else {
-			pattern = [
-				item.___parentId,
-				item.___type + '_' + item.___subtotal_type,
-			].join('')
+			pattern = [item.___parentId, item.___type + '_' + item.___subtotal_type].join('');
 		}
+
 	}
 
 	if (item.___type === 'blankline') {
-		pattern = [
-			item.___parentId,
-			item.___type + '_' + item.___blankline_type,
-		].join('')
+		pattern = [item.___parentId, item.___type + '_' + item.___blankline_type].join('');
 	}
 
 	if (item.___type === 'control') {
-		pattern = [item.___parentId, item.___type].join('')
+		pattern = [item.___parentId, item.___type].join('');
 	}
 
 	return stringHelper.toHash(pattern)
-}
+
+};
 
 var isFilterValid = function (filterObj) {
-	if (filterObj.options && filterObj.options.enabled) {
-		// if filter is enabled
 
-		var filterType = filterObj.options.filter_type
+	if (filterObj.options && filterObj.options.enabled) { // if filter is enabled
 
-		if (filterType === 'empty' || filterObj.options.exclude_empty_cells) {
-			// if filter works for empty cells
+		var filterType = filterObj.options.filter_type;
 
-			return true
-		} else if (filterObj.options.filter_values) {
-			// if filter values can be used for filtering (not empty)
+		if (filterType === 'empty' ||
+			filterObj.options.exclude_empty_cells) { // if filter works for empty cells
 
-			var filterValues = filterObj.options.filter_values
+			return true;
+
+		} else if (filterObj.options.filter_values) { // if filter values can be used for filtering (not empty)
+
+			var filterValues = filterObj.options.filter_values;
 
 			if (filterType === 'from_to' || filterType === 'out_of_range') {
-				if (
-					(filterValues.min_value || filterValues.min_value === 0) &&
-					(filterValues.max_value || filterValues.max_value === 0)
-				) {
-					return true
+
+				if ((filterValues.min_value || filterValues.min_value === 0) &&
+					(filterValues.max_value || filterValues.max_value === 0)) {
+					return true;
 				}
+
 			} else if (Array.isArray(filterValues)) {
+
 				if (filterValues[0] || filterValues[0] === 0) {
-					return true
+					return true;
 				}
+
 			}
 		}
+
 	}
 
-	return false
-}
+	return false;
+
+};
 
 export default {
 	getId: getId,
 	getParents: getParents,
+	getDirectChildren: getDirectChildren,
 
-	isFilterValid: isFilterValid,
+	isFilterValid: isFilterValid
 }

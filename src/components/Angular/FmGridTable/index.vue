@@ -1,20 +1,50 @@
 <template>
+
 	<div
+		v-if="!possibleToRequestReportRef"
+	>
+
+		<h1 class="text-center m-t-20 m-b-20 text-bold">Warning</h1>
+		<p class="text-center m-t-16 m-b-16">
+
+			We've noticed that you've opened <b>{{ openGroupsCountRef }}</b> groups since your last session. This
+			might result in slower loading times. Do you wish to continue?
+
+		</p>
+
+		<div class="flex-row flex-center">
+
+			<FmBtn
+				type="outlined"
+				class="m-8"
+				@click="resetUnfoldedGroups()"
+				v-fm-tooltip="'Close all previously opened groups. All other settings will remain'"
+			>START NEW
+			</FmBtn>
+
+			<FmBtn
+				type="outlined"
+				class="m-8"
+				@click="continueReportGeneration()"
+				v-fm-tooltip="'Loading Report could take time.'"
+			>RESTORE SESSION
+			</FmBtn>
+
+		</div>
+
+	</div>
+
+	<div
+		v-if="possibleToRequestReportRef"
 		class="g-wrapper position-relative"
 		:class="getWrapperClasses()"
 		:ref="(el) => (elem = jquery(el))"
+		v-bind="$attrs"
 	>
 		<div
 			class="g-recon verticalSplitPanelWrapper"
-			v-if="isRootEntityViewer && verticalAdditions.isOpen && domElemsAreReady"
+			v-if="isRootEntityViewerRef && verticalAdditions.isOpen && domElemsAreReady"
 		>
-			<div
-				group-width-aligner
-				root-wrap-elem.value="rootWrapElem"
-				content-wrap-elem.value="contentWrapElem"
-				ev-data-service="evDataService"
-				ev-event-service="evEventService"
-			></div>
 
 			<div class="g-width-slider"></div>
 
@@ -40,11 +70,7 @@
 							v-if="vm.readyStatus.attributes && vm.readyStatus.layout"
 							class="g-group-table-holder"
 						>
-							<!-- <group-table
-									attribute-data-service="vm.attributeDataService"
-									ev-data-service="vm.entityViewerDataService"
-									ev-event-service="vm.entityViewerEventService"
-								></group-table> -->
+
 						</div>
 						<div v-if="!vm.readyStatus.attributes || !vm.readyStatus.layout">
 							<div
@@ -218,9 +244,82 @@
 			</div>
 		</div>
 	</div>
+
+	<BaseModal
+		v-if="$mdDialog.modals['WarningDialogController']"
+		:modelValue="true"
+		:title="
+			`${
+				$mdDialog.modals['WarningDialogController'].warning.title ||
+				'Warning'
+			}`
+		"
+		@close="
+				() => {
+					$mdDialog.modals['WarningDialogController'].resolve({})
+					delete $mdDialog.modals['WarningDialogController']
+				}
+			"
+	>
+
+		<div class="warning-text">
+			<div v-html="$mdDialog.modals['WarningDialogController'].warning.description"></div>
+		</div>
+
+		<template #controls>
+			<div
+				v-if="$mdDialog.modals['WarningDialogController'].warning.actionsButtons"
+				class="flex sb">
+
+				<FmBtn
+					v-for="btnData in $mdDialog.modals['WarningDialogController'].warning.actionsButtons"
+					type="text"
+					@click="
+							() => {
+								$mdDialog.modals['WarningDialogController'].resolve( btnData.response )
+								delete $mdDialog.modals['WarningDialogController']
+							}
+						"
+				>
+					{{ btnData.name }}
+				</FmBtn>
+
+			</div>
+
+			<div v-else class="flex sb">
+
+				<FmBtn
+					type="text"
+					@click="
+							() => {
+								$mdDialog.modals['WarningDialogController'].resolve({})
+								delete $mdDialog.modals['WarningDialogController']
+							}
+						"
+				>cancel
+				</FmBtn>
+
+				<FmBtn
+					@click="
+							() => {
+								$mdDialog.modals['WarningDialogController'].resolve({
+									status: 'agree',
+								})
+								delete $mdDialog.modals['WarningDialogController']
+							}
+						"
+				>save
+				</FmBtn>
+
+			</div>
+
+		</template>
+	</BaseModal>
+
 </template>
 
 <script setup>
+
 	import evEvents from '@/angular/services/entityViewerEvents'
 	import metaService from '@/angular/services/metaService'
 	import rvDataHelper from '@/angular/helpers/rv-data.helper'
@@ -235,7 +334,7 @@
 		'vm',
 	])
 
-	const { attributeDataService, evEventService, evDataService } = props
+	const {attributeDataService, evEventService, evDataService} = props
 
 	provide('ngDependace', {
 		evEventService,
@@ -243,11 +342,14 @@
 		attributeDataService,
 	})
 
+	let $mdDialog = inject('$mdDialog');
+
 	let scope = {
 		spExchangeService: '=',
 		hideFiltersBlock: '=',
 		hideUseFromAboveFilters: '=',
 	}
+
 	let elem = ref(null)
 
 	let additions = evDataService.getAdditions()
@@ -257,7 +359,7 @@
 
 	let entityType = evDataService.getEntityType()
 	let activeObject = evDataService.getActiveObject()
-	let isReport = metaService.isReport(entityType)
+	let isReport = evDataService.isEntityReport()
 
 	let viewType = ref(evDataService.getViewType())
 	let viewSettings = evDataService.getViewSettings(viewType.value)
@@ -269,17 +371,229 @@
 	var contentType = evDataService.getContentType()
 	var activeLayoutConfigIsSet = false
 
-	let isInsideDashboard = false
+	let isInsideDashboard = false;
+	let isRecon = false;
+
+	let possibleToRequestReportRef = ref(true);
+	let openGroupsCountRef = ref(0);
+
+	/* *
+	 * TODO: rework this inside vue
+	 * IMPORTANT, variable domElemsAreReady blocks child component rendering
+	 * because child components require some elements that render in this component
+	 * we need to query from DOM rootWrapElem, contentWrapElem, workareaWrapElem
+	 * Here how it looks like in 2 steps:
+	 * 1) template create .g-wrapper, .g-content-wrap, .g-workarea-wrap' and we query them here
+	 * 2) then we set domElemsAreReady to true, and components children start rendering and we pass queried elements to them
+	 * */
 	let domElemsAreReady = ref(true)
+
 	let contentWrapElem = ref(null)
 	let workareaWrapElem = ref(null)
 	let rootWrapElem = ref(null)
 
-	let isRootEntityViewerRef = ref(true)
+	let isRootEntityViewerRef = ref(true);
 
-	let init
+	async function renderTemplate() {
+
+		domElemsAreReady.value = true
+
+		await nextTick()
+
+		contentWrapElem.value = elem.value[0].querySelector('.g-workarea-wrap')
+		workareaWrapElem.value = elem.value[0].querySelector('.g-workarea-wrap')
+		rootWrapElem.value = document.querySelector('.g-wrapper.g-root-wrapper') // we are looking for parent
+
+		if (isRootEntityViewerRef.value) {
+			// we took a local root wrapper = .g-wrapper
+			// because there is an issue with ng-class, we can't set 'g-root-wrapper' before querying it from DOM
+
+			rootWrapElem.value = elem.value[0]
+
+		} else {
+
+			// if this component inside split panel, set .g-content-wrap height
+			var splitPanelHeight = elem.value.parents('.g-additions').height()
+			contentWrapElem.value.style.height = splitPanelHeight + 'px'
+
+		}
+
+	}
+
+	function checkForGroupsFolding() {
+
+		let localStorageReportData = localStorageService.getReportData();
+
+		const layout = evDataService.getListLayout();
+
+		possibleToRequestReportRef.value = true // in case if user open too many groups, then we need to ask him if his ready
+
+		if (localStorageReportData) {
+
+			if (localStorageReportData[contentType]) {
+
+				if (localStorageReportData[contentType][layout.user_code]) {
+
+					if (localStorageReportData[contentType][layout.user_code].hasOwnProperty('groups')) {
+
+						openGroupsCountRef.value = 0;
+
+						Object.keys(localStorageReportData[contentType][layout.user_code].groups).forEach(function (key) {
+
+							var _group = localStorageReportData[contentType][layout.user_code].groups[key]
+
+							if (_group.is_open) {
+								openGroupsCountRef.value = openGroupsCountRef.value + 1;
+							}
+
+						})
+
+						if (openGroupsCountRef.value > 10) {
+							possibleToRequestReportRef.value = false;
+						}
+
+					}
+
+				}
+			}
+
+		}
+
+		/* *
+		 * Because full transaction report takes a long time to calculate,
+		 * calculation does not start until active object from above changes
+		 * and filters are applied
+		 * */
+		let notSpWithTransactionReport =
+			viewContext !== 'split_panel' ||
+			entityType !== 'transaction-report';
+
+		if (possibleToRequestReportRef.value && notSpWithTransactionReport) {
+
+			rvDataProviderService.updateDataStructure(evDataService, evEventService);
+
+		}
+
+	}
+
+	var applyGroupsFoldingFromLocalStorage = function () {
+
+		var listLayout = evDataService.getListLayout();
+		var reportData = localStorageService.getReportDataForLayout(contentType, listLayout.user_code);
+
+		if (reportData.groupsList && reportData.groupsList.length) {
+
+			var groups = evDataService.getGroups()
+
+			reportData.groupsList.forEach((groupObj) => {
+
+				var group = groups.find((group) => group.key === groupObj.key)
+
+				if (group) {
+
+					if (!group.report_settings) group.report_settings = {}
+
+					group.report_settings.is_level_folded = groupObj.report_settings.is_level_folded
+
+				}
+
+			})
+
+			evDataService.setGroups(groups)
+
+			rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService)
+
+		}
+
+	}
+
+	function initEventListeners() {
+
+		evEventService.addEventListener(evEvents.ADDITIONS_CHANGE, function () {
+
+			let additions = evDataService.getAdditions()
+			let activeObject = evDataService.getActiveObject()
+
+		})
+
+		evEventService.addEventListener(evEvents.VERTICAL_ADDITIONS_CHANGE, function () {
+
+			let verticalAdditions = evDataService.getVerticalAdditions()
+
+			if (!verticalAdditions || !verticalAdditions.isOpen) {
+
+				setTimeout(function () {
+					// wait for angular to remove vertical split panel
+
+					// delete evEventService.dispatchEvent(evEvents.UPDATE_ENTITY_VIEWER_CONTENT_WRAP_SIZE);
+					evEventService.dispatchEvent(evEvents.UPDATE_TABLE_VIEWPORT)
+				}, 200)
+
+			}
+
+		})
+
+		evEventService.addEventListener(evEvents.ACTIVE_OBJECT_CHANGE, function () {
+			let activeObject = evDataService.getActiveObject()
+		})
+
+		evEventService.addEventListener(evEvents.FILTERS_RENDERED, function () {
+			readyToRenderTable.value = true
+		})
+
+		evEventService.addEventListener(evEvents.DATA_LOAD_END, function () {
+
+			let additions = evDataService.getAdditions()
+			let activeObject = evDataService.getActiveObject()
+
+			if (viewType.value === 'matrix' && !activeLayoutConfigIsSet) {
+
+				activeLayoutConfigIsSet = true
+
+				evDataService.setActiveLayoutConfiguration({isReport: true}) // saving layout for checking for changes
+				evEventService.dispatchEvent(evEvents.ACTIVE_LAYOUT_CONFIGURATION_CHANGED)
+
+			}
+
+		});
+
+		evEventService.addEventListener(evEvents.VIEW_TYPE_CHANGED, function () {
+
+			scope.viewType = scope.evDataService.getViewType();
+			scope.viewSettings = scope.evDataService.getViewSettings(scope.viewType);
+
+		})
+
+		evEventService.addEventListener(evEvents.REPORT_OPTIONS_CHANGE, function () {
+			let reportOptions = evDataService.getReportOptions()
+		})
+
+	}
+
+	/**
+	 * Should be called after values assigned to
+	 * isReport, isRootEntityViewerRef, isInsideDashboard (inside onMounted)
+	 */
+	function init() {
+
+		initEventListeners()
+
+		if (isReport) applyGroupsFoldingFromLocalStorage()
+
+		if (
+			document
+				.querySelector('body')
+				.classList.contains('filter-side-nav-collapsed')
+		) {
+			evDataService.toggleRightSidebar(true)
+		}
+
+	}
+
+	checkForGroupsFolding(); // have to be executed before scripts inside hook onMounted
 
 	onMounted(async () => {
+
 		let attrs = null
 
 		// var iframeMode = globalDataService.insideIframe()
@@ -303,45 +617,18 @@
 		let dashboardFilterCollapsed = true
 
 		let splitPanelIsActive = evDataService.isSplitPanelActive()
-		let isRootEntityViewer = evDataService.isRootEntityViewer()
-		isRootEntityViewerRef.value = isRootEntityViewer
-
-		let isRecon = false
+		// isRootEntityViewer = evDataService.isRootEntityViewer()
+		isRootEntityViewerRef.value = evDataService.isRootEntityViewer();
 
 		if (viewContext.value === 'reconciliation_viewer') {
-			let isRecon = true
-		}
-		domElemsAreReady.value = true
-		await nextTick()
-
-		contentWrapElem.value = elem.value[0].querySelector('.g-workarea-wrap')
-		workareaWrapElem.value = elem.value[0].querySelector('.g-workarea-wrap')
-		rootWrapElem.value = document.querySelector('.g-wrapper.g-root-wrapper') // we are looking for parent
-
-		if (isRootEntityViewer) {
-			// we took a local root wrapper = .g-wrapper
-			// because there is an issue with ng-class, we can't set 'g-root-wrapper' before querying it from DOM
-
-			rootWrapElem.value = elem.value[0]
+			isRecon = true
 		}
 
-		if (!isRootEntityViewer) {
-			// if this component inside split panel, set .g-content-wrap height
-			var splitPanelHeight = elem.value.parents('.g-additions').height()
-			contentWrapElem.value.style.height = splitPanelHeight + 'px'
+		if (!possibleToRequestReportRef.value) {
+			return;
 		}
 
-		// IMPORTANT, that variable blocks child component rendering
-		// because child components require some elements that render in this component
-		// we need to query from DOM rootWrapElem, contentWrapElem, workareaWrapElem
-		// Here how it looks like in 2 steps:
-		// 1) template create .g-wrapper, .g-content-wrap, .g-workarea-wrap' and we query them here
-		// 2) then we set domElemsAreReady to true, and child components start rendering and we pass queried elements to them
-
-		// The point of this complexity is to remove extra
-		// setTimeout(function() {... $apply()}, 0)
-		// That trigger $digest and everything start refreshing
-		// Slowdown really visible in dashboard
+		renderTemplate();
 
 		let toggleGroupAndColumnArea = function () {
 			interfaceLayout = evDataService.getInterfaceLayout()
@@ -356,116 +643,14 @@
 			let dashboardFilterCollapsed = !dashboardFilterCollapsed
 		}
 
-		var applyGroupsFoldingFromLocalStorage = function () {
-			var listLayout = evDataService.getListLayout()
-			var reportData = localStorageService.getReportDataForLayout(
-				contentType,
-				listLayout.user_code
-			)
-
-			if (reportData.groupsList && reportData.groupsList.length) {
-				var groups = evDataService.getGroups()
-
-				reportData.groupsList.forEach((groupObj) => {
-					var group = groups.find((group) => group.key === groupObj.key)
-
-					if (group) {
-						if (!group.report_settings) group.report_settings = {}
-
-						group.report_settings.is_level_folded =
-							groupObj.report_settings.is_level_folded
-					}
-				})
-
-				evDataService.setGroups(groups)
-
-				rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService)
-			}
-		}
-
-		var initEventListeners = function () {
-			evEventService.addEventListener(evEvents.ADDITIONS_CHANGE, function () {
-				let additions = evDataService.getAdditions()
-
-				let activeObject = evDataService.getActiveObject()
-			})
-
-			evEventService.addEventListener(
-				evEvents.VERTICAL_ADDITIONS_CHANGE,
-				function () {
-					let verticalAdditions = evDataService.getVerticalAdditions()
-
-					if (!verticalAdditions || !verticalAdditions.isOpen) {
-						setTimeout(function () {
-							// wait for angular to remove vertical split panel
-
-							// delete evEventService.dispatchEvent(evEvents.UPDATE_ENTITY_VIEWER_CONTENT_WRAP_SIZE);
-							evEventService.dispatchEvent(evEvents.UPDATE_TABLE_VIEWPORT)
-						}, 200)
-					}
-				}
-			)
-
-			evEventService.addEventListener(
-				evEvents.ACTIVE_OBJECT_CHANGE,
-				function () {
-					let activeObject = evDataService.getActiveObject()
-				}
-			)
-
-			evEventService.addEventListener(evEvents.FILTERS_RENDERED, function () {
-				readyToRenderTable.value = true
-			})
-
-			evEventService.addEventListener(evEvents.DATA_LOAD_END, function () {
-				let additions = evDataService.getAdditions()
-				let activeObject = evDataService.getActiveObject()
-				readyToRenderTable.value = true
-
-				if (viewType.value === 'matrix' && !activeLayoutConfigIsSet) {
-					activeLayoutConfigIsSet = true
-
-					evDataService.setActiveLayoutConfiguration({ isReport: true }) // saving layout for checking for changes
-					evEventService.dispatchEvent(
-						evEvents.ACTIVE_LAYOUT_CONFIGURATION_CHANGED
-					)
-				}
-			})
-
-			evEventService.addEventListener(evEvents.VIEW_TYPE_CHANGED, function () {
-				viewType.value = evDataService.getViewType()
-				let viewSettings = evDataService.getViewSettings(viewType.value)
-			})
-
-			evEventService.addEventListener(
-				evEvents.REPORT_OPTIONS_CHANGE,
-				function () {
-					let reportOptions = evDataService.getReportOptions()
-				}
-			)
-		}
-
-		init = function () {
-			initEventListeners()
-
-			if (isReport) applyGroupsFoldingFromLocalStorage()
-
-			if (
-				document
-					.querySelector('body')
-					.classList.contains('filter-side-nav-collapsed')
-			) {
-				evDataService.toggleRightSidebar(true)
-			}
-		}
-
 		init()
+
 	})
 
 	function getWrapperClasses() {
 		var classes = ''
-		return classes
-		if (isRootEntityViewer) {
+
+		if (isRootEntityViewerRef.value) {
 			classes = 'g-root-wrapper'
 		} else if (isRecon) {
 			classes = 'g-reconciliation-wrapper'
@@ -479,18 +664,66 @@
 			classes += ' g-is-report'
 		}
 
-		return classes
+		return classes;
+
+	}
+
+
+	function continueReportGeneration() {
+
+		possibleToRequestReportRef.value = true;
+
+		renderTemplate();
+		init();
+
+		window.rvDataProviderService.updateDataStructure(
+			evDataService, evEventService
+		);
+
+		// evEventService.dispatchEvent(evEvents.UPDATE_TABLE);
+
+	}
+
+	function resetUnfoldedGroups() {
+
+		var localStorageReportData = localStorageService.getReportData();
+
+		var layout = evDataService.getListLayout();
+		var contentType = evDataService.getContentType();
+
+		delete localStorageReportData[contentType][layout.user_code]
+
+		var groups = evDataService.getGroups();
+
+		groups.forEach(function (group) {
+
+			if (!group.report_settings) {
+				group.report_settings = {}
+			}
+
+			group.report_settings.is_level_folded = true;
+
+		})
+
+		evDataService.setGroups(groups);
+
+		localStorageService.cacheReportData(localStorageReportData);
+
+		continueReportGeneration();
+
 	}
 
 	defineExpose({
 		init,
 	})
+
 </script>
 
 <style lang="scss" scoped>
 	.g-wrapper .g-table-wrap {
 		overflow: auto;
 	}
+
 	.wrap_dashboard {
 		display: block;
 		height: 100%;
