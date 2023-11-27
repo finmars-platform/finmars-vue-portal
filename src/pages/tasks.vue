@@ -7,26 +7,26 @@
 			</h1>
 			<div class="task__header">
 				<div class="task__date"></div>
-				<!-- <div class="search-input">
+				<div class="search-input">
 					<FmInputText v-model="filterText" label="Search" />
-				</div> -->
+				</div>
 			</div>
 			<div class="task__content">
 				<div class="task-stats">
 					<div class="task-stats__title">Stats</div>
 					<div class="task-stats__link">
 						<!-- <a
-						:href="getUrlToOldApp(store, apiUrl, '/workers')"
-						class="link-primary"
-					>
-						<span class="side-nav-title">Configure</span>
-					</a> -->
+							:href="getUrlToOldApp(store, apiUrl, '/workers')"
+							class="link-primary"
+						>
+							<span class="side-nav-title">Configure</span>
+						</a> -->
 					</div>
 					<div class="task-stats__item">
 						<span class="title"></span>
 					</div>
 				</div>
-				<!-- <BaseTable
+				<BaseTable
 					:headers="['Status', 'Date', 'Task', 'User']"
 					:items="members"
 					colls="50px repeat(4, 1fr)"
@@ -53,10 +53,224 @@
 							</FmMenu>
 						</div>
 					</template>
-				</BaseTable> -->
+				</BaseTable>
 			</div>
 		</div>
-		<div class="task__aside"><h2>Click on event to see details</h2></div>
+		<div class="task__aside">
+			<!-- <div v-if="activeTask">
+				<div v-if="!activeTaskProcessing">
+					<a data-ng-click="refreshTask($event)" class="refresh-task-button"
+						><span class="material-icons">refresh</span>
+						<md-tooltip md-direction="bottom">Refresh</md-tooltip>
+					</a>
+
+					<a
+						data-ng-click="cancelTask($event)"
+						v-if="
+							activeTask.status == 'I' ||
+							activeTask.status == 'P' ||
+							activeTask.status == 'progress' ||
+							activeTask.status == 'W'
+						"
+						class="cancel-task-button"
+						><span class="material-icons">cancel</span>
+						<md-tooltip md-direction="bottom">Cancel</md-tooltip>
+					</a>
+
+					<h1>
+						{{ activeTask.verbose_name }}
+					</h1>
+
+					<div class="task-detail">
+						<span class="task-detail__title">Id</span>:
+						{{ activeTask.id }}
+					</div>
+					<div class="task-detail">
+						<span class="task-detail__title">Type</span>:
+						{{ activeTask.type }}
+					</div>
+
+					<div class="task-detail">
+						<span class="task-detail__title">Start Date</span>:
+						{{activeTask.created | date:'yyyy-MM-dd' : 'UTC'}}
+					</div>
+					<div class="task-detail">
+						<span class="task-detail__title">Start Time</span>:
+						{{activeTask.created | date:'HH:mm:ss' : 'UTC'}}
+						<md-tooltip md-direction="bottom">{{
+							activeTask.created
+						}}</md-tooltip>
+					</div>
+
+					<div class="task-detail" v-if="activeTask.finished_at">
+						<span class="task-detail__title">Finished Time</span>:
+						{{activeTask.finished_at | date:'HH:mm:ss' : 'UTC'}}
+						<md-tooltip md-direction="bottom">{{
+							activeTask.finished_at
+						}}</md-tooltip>
+					</div>
+
+					<div class="task-detail" v-if="activeTask.execution_time_pretty">
+						<span class="task-detail__title">Execution Time</span>:
+
+						{{ activeTask.execution_time_pretty }}
+					</div>
+
+					<div class="task-detail">
+						<span class="task-detail__title">Status</span>:
+						<span
+							v-if="activeTask.status == 'D'"
+							class="{{activeTask.status == 'D' ? 'calendar-detail-status-green' : '' }}"
+						>
+							Success
+						</span>
+						<span
+							v-if="activeTask.status == 'E'"
+							class="{{activeTask.status == 'E' ? 'calendar-detail-status-red' : '' }}"
+						>
+							Error
+						</span>
+						<span v-if="activeTask.status != 'D' && activeTask.status != 'D'">
+							{{ activeTask.status }}
+						</span>
+					</div>
+
+					<div class="task-detail" v-if="activeTask.member_object">
+						<span class="task-detail__title">Member</span>:
+						{{ activeTask.member_object.username }}
+					</div>
+
+					<div class="task-detail">
+						<span class="task-detail__title">Worker</span>:
+						{{ activeTask.worker_name }}
+					</div>
+
+					<hr />
+
+					<div class="task-detail" v-if="activeTask.notes">
+						<span class="task-detail__title">Notes</span>:
+
+						<div>
+							{{ activeTask.notes }}
+						</div>
+					</div>
+
+					<hr />
+
+					<div class="task-detail" v-if="activeTask.verbose_result">
+						<span class="task-detail__title">Verbose result</span>:
+
+						<div>
+							{{ activeTask.verbose_result }}
+						</div>
+
+						<hr />
+					</div>
+
+					<div class="task-detail" v-if="activeTaskPayload.notes">
+						<span class="task-detail__title">Notes</span>:
+						<div>
+							{{ activeTask.notes }}
+						</div>
+					</div>
+
+					<div class="task-detail" v-if="activeTask.error_message">
+						<span class="task-detail__title">Error Message</span>:
+						<div class="task-detail-error-message">
+							{{ activeTask.error_message }}
+						</div>
+
+						<hr />
+					</div>
+
+					<div class="task-detail" v-if="activeTask.options_object">
+						<span class="task-detail__title">Options</span>
+
+						<div>
+							<json-editor
+								data-source="activeTask.options_object"
+								data-index="1"
+							></json-editor>
+						</div>
+						<hr />
+					</div>
+
+					<div
+						class="task-detail"
+						v-if="activeTask.status == 'P' && activeTask.progress_object"
+					>
+						<div class="task-detail__title m-b-8">Progress</div>
+
+						<div>
+							<div
+								layout="row"
+								layout-sm="column"
+								layout-align="space-around"
+								class="loader-spinner"
+							>
+								<md-progress-linear
+									md-mode="determinate"
+									value="{{activeTask.progress_object.percent}}"
+								></md-progress-linear>
+								<md-tooltip class="tooltip_2" md-direction="bottom">
+									{{ activeTask.progress_object.percent }}%
+								</md-tooltip>
+							</div>
+
+							<div class="task-card-progress-text">
+								{{ activeTask.description }}
+							</div>
+						</div>
+
+						<hr />
+					</div>
+
+					<div class="task-detail" v-if="activeTask.result_object">
+						<span class="task-detail__title">Results</span>
+
+						<div>
+							<json-editor
+								data-source="activeTask.result_object"
+								data-index="2"
+							></json-editor>
+						</div>
+
+						<hr />
+					</div>
+
+					<div class="task-detail" v-if="activeTask.attachments.length">
+						<span class="task-detail__title">Attachments</span>
+
+						<div data-ng-repeat="item inactiveTask.attachments">
+							<span
+								class="download-file-button"
+								data-ng-click="downloadFile($event, item)"
+								>{{ item.file_report_object.name }}</span
+							>
+						</div>
+					</div>
+
+					<div>
+						<h3>Actions:</h3>
+
+						<md-button
+							class="md-raised md-warn"
+							v-if="activeTask.type == 'transaction_import'"
+							data-ng-click="abortTransactionImport($event,activeTask)"
+						>
+							Abort Transactions
+						</md-button>
+					</div>
+				</div>
+
+				<div v-if="activeTaskProcessing">
+					<div layout="row" layout-sm="column" layout-align="space-around">
+						<progress-circular diameter="50"></progress-circular>
+					</div>
+				</div>
+			</div> -->
+			<h1>Click on event to see details</h1>
+		</div>
 	</div>
 </template>
 
@@ -88,14 +302,37 @@
 	let activeDefaultLayout = ref(false)
 
 	let defaultsList = ref(false)
+	let activeTask = ref([])
 
+	let tableList = ref([])
+
+	let tableFilterItems= null
+
+	// async function refresh() {
+	// 	let res = await useApi('taskListLight.get', {
+		
+	// 	})
+	// 	tableList = res.results
+	// 	tableFilterItems.value = []
+
+	// 	tableList.forEach((item) => {
+	// 		tableFilterItems.value.push({
+	// 			name: item.name,
+	// 			date: dayjs(item.created_at).format('DD MMM YYYY HH:mm'),
+	// 			status: item.status,
+	// 			created_by: item.created_by_object.username,
+	// 			file_size: Math.round(item.file_size / 1024) + ' KB',
+	// 			notes: item.notes,
+	// 		})
+	// 	})
+	// }
 	// const filterTask = (task) => {
 	// 	let inputFilter = filterText.value
 
 	// 	if (!inputFilter) return task
 
 	// 	return task.filter(function (layout) {
-	// 		return layout.name.toLowerCase().includes(inputFilter.toLowerCase())
+	// 		return task.name.toLowerCase().includes(inputFilter.toLowerCase())
 	// 	})
 	// }
 
@@ -235,7 +472,18 @@
 		width: 100%;
 	}
 	.task__aside {
-		width: 400px;
+		padding: 16px 16px 100px;
+		width: 450px;
+		position: fixed;
+		right: 0;
+		top: 50px;
+		box-sizing: border-box;
+		background: #fff;
+		height: 100%;
+		z-index: 1;
+		overflow: auto;
+		border-left: 1px solid #ddd;
+		font-size: 14px;
 	}
 
 	@media (max-width: 1200px) {
