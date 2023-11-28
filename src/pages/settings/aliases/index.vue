@@ -518,14 +518,14 @@
 
 	async function init() {
 		const res = await Promise.all([
-			useApi('instrumentUserField.get', {
+			useApi('instrumentUserFieldList.get', {
 				filters: { configuration_code: configurationListActive.value },
 			}),
 
-			useApi('complexTransactionUserField.get', {
+			useApi('complexTransactionUserFieldList.get', {
 				filters: { configuration_code: configurationListActive.value },
 			}),
-			useApi('transactionUserField.get', {
+			useApi('transactionUserFieldList.get', {
 				filters: { configuration_code: configurationListActive.value },
 			}),
 		])

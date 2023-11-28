@@ -1,262 +1,262 @@
 <template>
-	<div class="modal">
-		<div class="modal_top flex aic sb">
-			<div class="flex aic">
-				<div class="modal_head">{{ title }}</div>
+    <div class="modal">
+        <div class="modal_top flex aic sb">
+            <div class="flex aic">
+                <div class="modal_head">{{ title }}</div>
 
-				<BaseInput
-					type="text"
-					class="small bi_no_borders bi_border_bottom m-l-20"
-					placeholder="Search"
-					v-model="searchParams"
-				>
-					<template #button>
-						<FmIcon icon="search" />
-					</template>
-					<template #rightBtn>
-						<FmIcon size="16" icon="close" @click="searchParams = ''" />
-					</template>
-				</BaseInput>
-			</div>
+                <BaseInput
+                    type="text"
+                    class="small bi_no_borders bi_border_bottom m-l-20"
+                    placeholder="Search"
+                    v-model="searchParams"
+                >
+                    <template #button>
+                        <FmIcon icon="search" />
+                    </template>
+                    <template #rightBtn>
+                        <FmIcon size="16" icon="close" @click="searchParams = ''" />
+                    </template>
+                </BaseInput>
+            </div>
 
-			<FmBtn type="iconBtn" icon="close" @click="cancel" />
-		</div>
+            <FmBtn type="icon" icon="close" @click="cancel" />
+        </div>
 
-		<div class="modal_content scrollable">
-			<div v-if="readyStatus" class="attr_select_wrap">
-				<FmAttributesSelectMain
-					:modelValue="selAttrsKeysList"
-					:attributes="attrsList"
-					:favoriteAttributes="favoriteAttributes"
-					:disabledAttributes="disabledAttributes"
-					:multiselect="true"
-					:searchParameters="searchParams"
-					:isAdvanced="isAdvanced"
+        <div class="modal_content scrollable">
+            <div v-if="readyStatus" class="attr_select_wrap">
+                <FmAttributesSelectMain
+                    :modelValue="selAttrsKeysList"
+                    :attributes="attrsList"
+                    :favoriteAttributes="favoriteAttributes"
+                    :disabledAttributes="disabledAttributes"
+                    :multiselect="true"
+                    :searchParameters="searchParams"
+                    :isAdvanced="isAdvanced"
 
-					@update:modelValue="newVal => newSelAttrs = newVal"
-					@favoritesChanged="saveFavorites"
-				/>
-			</div>
-		</div>
+                    @update:modelValue="newVal => newSelAttrs = newVal"
+                    @favoritesChanged="saveFavorites"
+                />
+            </div>
+        </div>
 
-		<div class="modal_bottom flex sb">
-			<div class="flex aic">
-				<FmBtn type="text" @click="cancel()"> Cancel </FmBtn>
+        <div class="modal_bottom flex sb">
+            <div class="flex aic">
+                <FmBtn type="text" @click="cancel()"> Cancel </FmBtn>
 
-				<FmIcon
-					class="m-l-24"
-					primary
-					:icon="isAdvanced ? 'lock_open' : 'lock'"
-					@click="isAdvanced = !isAdvanced"
-				/>
-			</div>
+                <FmIcon
+                    class="m-l-24"
+                    primary
+                    :icon="isAdvanced ? 'lock_open' : 'lock'"
+                    @click="isAdvanced = !isAdvanced"
+                />
+            </div>
 
-			<FmBtn @click="save()">OK</FmBtn>
-		</div>
-	</div>
+            <FmBtn @click="save()">OK</FmBtn>
+        </div>
+    </div>
 </template>
 
 <script setup>
 
-	definePageMeta({
-		layout: 'auth',
-	});
+    definePageMeta({
+        layout: 'auth',
+    });
 
-	const windowOrigin = window.origin
-	// const windowOrigin = 'http://0.0.0.0:8080'; // for development
+    const windowOrigin = window.origin
+    // const windowOrigin = 'http://0.0.0.0:8080'; // for development
 
-	const iframeId = useRoute().query.iframeId;
+    const iframeId = useRoute().query.iframeId;
 
-	let readyStatus = ref(false);
+    let readyStatus = ref(false);
 
-	let title = ref('');
+    let title = ref('');
 
-	let attrsList = ref([]);
-	let selAttrsKeysList = ref([]);
-	let newSelAttrs = ref();
-	let favoriteAttributes = ref([]);
-	let disabledAttributes = ref([]);
+    let attrsList = ref([]);
+    let selAttrsKeysList = ref([]);
+    let newSelAttrs = ref();
+    let favoriteAttributes = ref([]);
+    let disabledAttributes = ref([]);
 
-	let isAdvanced = ref(false);
+    let isAdvanced = ref(false);
 
-	let searchParams = ref('');
+    let searchParams = ref('');
 
-	const onMessageStack = {
-		INITIALIZATION_SETTINGS_TRANSMISSION: init,
-	}
+    const onMessageStack = {
+        INITIALIZATION_SETTINGS_TRANSMISSION: init,
+    }
 
-	function send(data, source = window.parent) {
+    function send(data, source = window.parent) {
 
-		data.iframeId = iframeId
+        data.iframeId = iframeId
 
-		let dataObj = Object.assign(data, {
-			iframeId: iframeId,
-		});
+        let dataObj = Object.assign(data, {
+            iframeId: iframeId,
+        });
 
-		source.postMessage(dataObj, windowOrigin);
+        source.postMessage(dataObj, windowOrigin);
 
-	}
+    }
 
-	onMounted(() => {
-		window.addEventListener('message', onMessage)
+    onMounted(() => {
+        window.addEventListener('message', onMessage)
 
-		send({
-			action: 'IFRAME_READY',
-		})
-	})
+        send({
+            action: 'IFRAME_READY',
+        })
+    })
 
-	function saveFavorites(favAttrs) {
+    function saveFavorites(favAttrs) {
 
-		favoriteAttributes.value = favAttrs;
+        favoriteAttributes.value = favAttrs;
 
-		send({
-			action: 'SAVE_FAVORITE_ATTRIBUTES',
-			payload: JSON.parse(JSON.stringify(favAttrs)), // JSON.parse prevents error when postMessage tries to copy an array proxy
-		})
+        send({
+            action: 'SAVE_FAVORITE_ATTRIBUTES',
+            payload: JSON.parse(JSON.stringify(favAttrs)), // JSON.parse prevents error when postMessage tries to copy an array proxy
+        })
 
-	}
+    }
 
-	function onMessage(e) {
-		// {
-		// 	action: 'name',
-		// 	iframeId: 'modal',
-		// 	payload: {}
-		// }
+    function onMessage(e) {
+        // {
+        //     action: 'name',
+        //     iframeId: 'modal',
+        //     payload: {}
+        // }
 
-		if (!e.data.action) {
-			console.warn('Message without action sent')
-			return false
-		}
+        if (!e.data.action) {
+            console.warn('Message without action sent')
+            return false
+        }
 
-		if (e.origin !== windowOrigin) {
-			console.error('Received message from a different origin', e.origin)
-			return false
-		}
+        if (e.origin !== windowOrigin) {
+            console.error('Received message from a different origin', e.origin)
+            return false
+        }
 
-		if (onMessageStack[e.data.action])
-			onMessageStack[e.data.action](e.data.payload)
-		else console.log('e.data.action:', e.data)
+        if (onMessageStack[e.data.action])
+            onMessageStack[e.data.action](e.data.payload)
+        else console.log('e.data.action:', e.data)
 
-	}
+    }
 
-	function cancel() {
-		send({
-			action: 'CANCEL_DIALOG',
-		})
-	}
+    function cancel() {
+        send({
+            action: 'CANCEL_DIALOG',
+        })
+    }
 
-	function save() {
+    function save() {
 
-		send({
-			action: 'SAVE_DIALOG',
-			payload: {
-				selectedAttributes: JSON.parse(JSON.stringify( newSelAttrs.value )),
-			},
-		})
+        send({
+            action: 'SAVE_DIALOG',
+            payload: {
+                selectedAttributes: JSON.parse(JSON.stringify( newSelAttrs.value )),
+            },
+        })
 
-	}
+    }
 
-	function init(data) {
+    function init(data) {
 
-		attrsList.value = data.attributes;
+        attrsList.value = data.attributes;
 
-		/*disabledAttributes.value = data.attributes.filter(attr => {
-			return data.selectedAttributes.includes(attr.key);
-		});*/
-		disabledAttributes.value = data.selectedAttributes;
+        /*disabledAttributes.value = data.attributes.filter(attr => {
+            return data.selectedAttributes.includes(attr.key);
+        });*/
+        disabledAttributes.value = data.selectedAttributes;
 
-		favoriteAttributes.value = data.favoriteAttributes;
+        favoriteAttributes.value = data.favoriteAttributes;
 
-		if ( !favoriteAttributes.value || !favoriteAttributes.value.length) {
-			isAdvanced.value = true;
-		}
+        if ( !favoriteAttributes.value || !favoriteAttributes.value.length) {
+            isAdvanced.value = true;
+        }
 
-		selAttrsKeysList.value = data.selectedAttributes;
+        selAttrsKeysList.value = data.selectedAttributes;
 
-		if (data.title) title.value = data.title;
+        if (data.title) title.value = data.title;
 
-		readyStatus.value = true;
+        readyStatus.value = true;
 
-	}
+    }
 
 </script>
 
 <style lang="scss" scoped>
-	.modal_top {
-		height: 50px;
-		padding: 0 20px;
-		border-bottom: 1px solid $border;
-	}
-	.modal_content {
-		overflow: auto;
-		height: calc(100vh - 106px);
-		min-width: 400px; // so that FmInputEntityNames could fit in
-	}
-	.modal_bottom {
-		position: absolute;
-		bottom: 0;
-		width: 100%;
-		border-top: 1px solid $border;
-		padding: 10px 20px;
-	}
-	.modal {
-		position: relative;
-		background: #fff;
-		width: 100%;
-		height: 100vh;
-		max-height: 100%;
-		border-radius: 4px;
-		z-index: 2;
+    .modal_top {
+        height: 50px;
+        padding: 0 20px;
+        border-bottom: 1px solid $border;
+    }
+    .modal_content {
+        overflow: auto;
+        height: calc(100vh - 106px);
+        min-width: 400px; // so that FmInputEntityNames could fit in
+    }
+    .modal_bottom {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        border-top: 1px solid $border;
+        padding: 10px 20px;
+    }
+    .modal {
+        position: relative;
+        background: #fff;
+        width: 100%;
+        height: 100vh;
+        max-height: 100%;
+        border-radius: 4px;
+        z-index: 2;
 
-		.close {
-			cursor: pointer;
+        .close {
+            cursor: pointer;
 
-			path {
-				transition: 0.3s;
-			}
+            path {
+                transition: 0.3s;
+            }
 
-			&:hover path {
-				stroke: $primary !important;
-			}
-		}
+            &:hover path {
+                stroke: $primary !important;
+            }
+        }
 
-		&_head {
-			font-weight: 500;
-			font-size: 20px;
-		}
-	}
+        &_head {
+            font-weight: 500;
+            font-size: 20px;
+        }
+    }
 
-	.select_count {
-		background: $primary;
-		width: 18px;
-		height: 18px;
-		line-height: 18px;
-		text-align: center;
-		color: #fff;
-		margin-left: 11px;
-		font-size: 12px;
-		font-weight: 400;
-		border-radius: 2px;
-	}
-	.content_grid {
-		display: grid;
-		grid-template-columns: 1fr 200px;
-		height: 100%;
+    .select_count {
+        background: $primary;
+        width: 18px;
+        height: 18px;
+        line-height: 18px;
+        text-align: center;
+        color: #fff;
+        margin-left: 11px;
+        font-size: 12px;
+        font-weight: 400;
+        border-radius: 2px;
+    }
+    .content_grid {
+        display: grid;
+        grid-template-columns: 1fr 200px;
+        height: 100%;
 
-		&.collapsed {
-			grid-template-columns: 1fr 32px;
-		}
-		&.advanced_mod {
-			height: calc(100% - 48px);
-		}
+        &.collapsed {
+            grid-template-columns: 1fr 32px;
+        }
+        &.advanced_mod {
+            height: calc(100% - 48px);
+        }
 
-		&.advanced {
-			grid-template-columns: 160px 1fr 200px;
-		}
+        &.advanced {
+            grid-template-columns: 160px 1fr 200px;
+        }
 
-		&_left {
-			border-right: 1px solid $border;
-			height: 100%;
+        &_left {
+            border-right: 1px solid $border;
+    		height: 100%;
 			overflow: auto;
 			padding: 9px 0;
 		}

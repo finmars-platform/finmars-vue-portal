@@ -1,20 +1,20 @@
 <template>
-	<div class="fm_expansion_panel">
+	<div class="fm_expansion_panel" :class="{ active: isOpen }">
 		<div
 			class="fm_expansion_panel_title"
 			:class="{ active: isOpen }"
 			@click=";(isOpen = !isOpen), $emit('update:open', !isOpen)"
 		>
-			<div>{{ title }}</div>
+			<div class="name">{{ title }}</div>
 			<div class="subtitle">
-				<div v-if="!open" class="subtitle__main subtitle__text">
+				<div v-if="!isOpen" class="subtitle__main subtitle__text">
 					{{ subtitle }}
 				</div>
-				<div v-if="open" class="subtitle__open subtitle__text">
+				<div v-if="isOpen" class="subtitle__open subtitle__text">
 					{{ subtitleOpen }}
 				</div>
 			</div>
-			<div class="flex-row">
+			<div class="flex-row arrow">
 				<slot name="rightActions" />
 
 				<FmIcon
@@ -48,17 +48,29 @@
 <style lang="scss" scoped>
 	.fm_expansion_panel {
 		border: 1px solid $border;
-		margin-bottom: 15px;
+		
 		background: $separ;
 		border-radius: 4px;
 		max-width: 100%;
+		box-shadow: 2px 0 2px rgba(0, 0, 0, 0.1), 0 2px 2px rgba(0, 0, 0, 0.1),
+			-2px 0 2px rgba(0, 0, 0, 0.1);
+	}
+	.fm_expansion_panel.active {
+		margin-bottom: 15px;
 	}
 	.fm_expansion_panel_content {
 		padding: 15px;
 	}
+	.name{
+		width: 35%;
+	}
+	.arrow{
+		margin-left: auto;
+		margin-right: 0;
+	}
 	.fm_expansion_panel_title {
 		display: flex;
-		justify-content: space-between;
+		justify-content: flex-start;
 		align-items: center;
 		height: 48px;
 		padding: 0 22px;

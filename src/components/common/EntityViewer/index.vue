@@ -221,7 +221,7 @@
 	fetchPortfolioBundles()
 
 	async function fetchPortfolioBundles() {
-		let res = await useApi('portfolioBundles.get')
+		let res = await useApi('portfolioBundleList.get')
 
 		bundles.value = res.results
 	}
@@ -234,7 +234,7 @@
 			registers: bundleData.registers,
 		}
 
-		let res = await useApi('portfolioBundles.post', { body: newBundleData })
+		let res = await useApi('portfolioBundle.post', { body: newBundleData })
 
 		if (res) {
 			emit('refresh')

@@ -62,7 +62,7 @@
 		title: String,
 		content_type: String,
 	})
-	
+
 	const isOpeneditCustomField = ref(false)
 	const evAttrsStore = useEvAttributesStore()
 	let editing = ref('')
@@ -113,7 +113,7 @@
 	}
 
 	async function deleteCustomColumn(item) {
-		let res = await useApi('balanceReportCustomFieldList.delete', {
+		let res = await useApi('balanceReportCustomField.delete', {
 			params: { id: item.id },
 			body: item,
 		})
@@ -128,9 +128,9 @@
 		}
 		await evAttrsStore.fetchCustomFields(props.content_type)
 		useNotify({ type: 'success', title: `Column delete on the server` })
-		
+
 		isOpeneditCustomField.value = false
-	
+
 	}
 
 	function editCustomField(newNamesData) {
@@ -145,7 +145,7 @@
 	}
 	async function updateCustomField(newNamesData) {
 
-		let res = await useApi('balanceReportCustomFieldList.put', {
+		let res = await useApi('balanceReportCustomField.put', {
 			params: { id: activeCustomColumn.id },
 			body: newNamesData,
 		})
@@ -166,7 +166,7 @@
 	}
 
 	async function postCustomColumn(newNamesData) {
-		let res = await useApi('balanceReportCustomFieldList.post', {
+		let res = await useApi('balanceReportCustomField.post', {
 			body: newNamesData,
 		})
 		if (res.error) {
@@ -175,7 +175,7 @@
 				title: res.error.message || res.error.detail,
 			})
 			throw new Error(res.error)
-		} 
+		}
 		useNotify({ type: 'success', title: `Column create on the server` })
 		await evAttrsStore.fetchCustomFields(props.content_type)
 		isOpeneditCustomField.value = false

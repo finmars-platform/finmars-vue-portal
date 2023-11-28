@@ -10,143 +10,143 @@ import evEditorEvents from '@/angular/services/ev-editor/entityViewerEditorEvent
 import metaHelper from '@/angular/helpers/meta.helper'
 
 export default function (
-	viewModel,
-	$scope,
-	$mdDialog,
-	$bigDrawer,
-	instrumentService,
-	entityResolverService,
-	fieldResolverService,
-	attributeTypeService,
-	uiService
+    viewModel,
+    $scope,
+    $mdDialog,
+    $bigDrawer,
+    instrumentService,
+    entityResolverService,
+    fieldResolverService,
+    attributeTypeService,
+    uiService
 ) {
-	let bigDrawerResizeButton
+    let bigDrawerResizeButton
 
-	let readyStatusObj = { permissions: false, entity: false, layout: false }
+    let readyStatusObj = { permissions: false, entity: false, layout: false }
 
-	if (viewModel.entityType === 'instrument') readyStatusObj.exposureTab = false
+    if (viewModel.entityType === 'instrument') readyStatusObj.exposureTab = false
 
-	const typeSelectorValueEntities = {
-		instrument: 'instrument-type',
-		account: 'account-type',
-		'instrument-type': 'instrument-class',
-	}
+    const typeSelectorValueEntities = {
+        instrument: 'instrument-type',
+        account: 'account-type',
+        'instrument-type': 'instrument-class',
+    }
 
-	const groupSelectorValueEntities = {
-		'strategy-1': 'strategy-1-subgroup',
-		'strategy-2': 'strategy-2-subgroup',
-		'strategy-3': 'strategy-3-subgroup',
-		responsible: 'responsible-group',
-		counterparty: 'counterparty-group',
-	}
+    const groupSelectorValueEntities = {
+        'strategy-1': 'strategy-1-subgroup',
+        'strategy-2': 'strategy-2-subgroup',
+        'strategy-3': 'strategy-3-subgroup',
+        responsible: 'responsible-group',
+        counterparty: 'counterparty-group',
+    }
 
-	// let instrumentTypesList = [];
-	const reqSysAttrs = metaService.getRequiredEntityAttrs(viewModel.entityType)
-	const noEntityTabs = ['']
-	const dialogParent = document.querySelector('.dialog-containers-wrap')
+    // let instrumentTypesList = [];
+    const reqSysAttrs = metaService.getRequiredEntityAttrs(viewModel.entityType)
+    const noEntityTabs = ['']
+    const dialogParent = document.querySelector('.dialog-containers-wrap')
 
-	//region entityTabsMenuTplt
-	const entityTabsMenuTplt =
-		'<div class="ev-editor-tabs-popup-content popup-menu">' +
-		'<md-button ng-repeat="tab in popupData.viewModel.entityTabs" ' +
-		'class="entity-tabs-menu-option popup-menu-option" ' +
-		'ng-class="popupData.viewModel.sharedLogic.getTabBtnClasses(tab)" ' +
-		'ng-click="popupData.viewModel.activeTab = tab">' +
-		'<span>{{tab.label}}</span>' +
-		'<div ng-if="popupData.viewModel.sharedLogic.isTabWithErrors(tab)" class="tab-option-error-icon">' +
-		'<span class="material-icons orange-text">info<md-tooltip class="tooltip_2 error-tooltip" md-direction="top">Tab has errors</md-tooltip></span>' +
-		'</div>' +
-		'</md-button>' +
-		'<md-button ng-if="popupData.viewModel.canManagePermissions" class="entity-tabs-menu-option popup-menu-option" ng-class="{\'active-tab-button\': popupData.viewModel.activeTab === \'permissions\'}" ng-click="popupData.viewModel.activeTab = \'permissions\'">' +
-		'<span>Permissions</span>' +
-		'</md-button>' +
-		'</div>'
-	//endregion
+    //region entityTabsMenuTplt
+    const entityTabsMenuTplt =
+        '<div class="ev-editor-tabs-popup-content popup-menu">' +
+        '<md-button ng-repeat="tab in popupData.viewModel.entityTabs" ' +
+        'class="entity-tabs-menu-option popup-menu-option" ' +
+        'ng-class="popupData.viewModel.sharedLogic.getTabBtnClasses(tab)" ' +
+        'ng-click="popupData.viewModel.activeTab = tab">' +
+        '<span>{{tab.label}}</span>' +
+        '<div ng-if="popupData.viewModel.sharedLogic.isTabWithErrors(tab)" class="tab-option-error-icon">' +
+        '<span class="material-icons orange-text">info<md-tooltip class="tooltip_2 error-tooltip" md-direction="top">Tab has errors</md-tooltip></span>' +
+        '</div>' +
+        '</md-button>' +
+        '<md-button ng-if="popupData.viewModel.canManagePermissions" class="entity-tabs-menu-option popup-menu-option" ng-class="{\'active-tab-button\': popupData.viewModel.activeTab === \'permissions\'}" ng-click="popupData.viewModel.activeTab = \'permissions\'">' +
+        '<span>Permissions</span>' +
+        '</md-button>' +
+        '</div>'
+    //endregion
 
-	//region Fixed area
-	/*const getFixedAreaPopup = function () {
-			return {
-				fields: {
-					showByDefault: {
-						value: viewModel.showByDefault
-					}
-				},
-				entityType: viewModel.entityType,
-				tabColumns: null,
-				event: {}
-			};
-		};*/
+    //region Fixed area
+    /*const getFixedAreaPopup = function () {
+            return {
+                fields: {
+                    showByDefault: {
+                        value: viewModel.showByDefault
+                    }
+                },
+                entityType: viewModel.entityType,
+                tabColumns: null,
+                event: {}
+            };
+        };*/
 
-	const getEditFormFieldsInFixedArea = function () {
-		const fieldsInFixedArea = []
+    const getEditFormFieldsInFixedArea = function () {
+        const fieldsInFixedArea = []
 
-		if (viewModel.fixedAreaPopup.tabColumns > 2) {
-			if (
-				viewModel.entityType === 'instrument' ||
-				viewModel.entityType === 'account' ||
-				viewModel.entityType === 'instrument-type'
-			) {
-				fieldsInFixedArea.push(viewModel.typeFieldName)
-			} else {
-				fieldsInFixedArea.push('short_name')
-			}
-		}
+        if (viewModel.fixedAreaPopup.tabColumns > 2) {
+            if (
+                viewModel.entityType === 'instrument' ||
+                viewModel.entityType === 'account' ||
+                viewModel.entityType === 'instrument-type'
+            ) {
+                fieldsInFixedArea.push(viewModel.typeFieldName)
+            } else {
+                fieldsInFixedArea.push('short_name')
+            }
+        }
 
-		return fieldsInFixedArea
-	}
+        return fieldsInFixedArea
+    }
 
-	const getAddFormFieldsInFixedArea = function () {
-		const fieldsInFixedArea = []
+    const getAddFormFieldsInFixedArea = function () {
+        const fieldsInFixedArea = []
 
-		if (viewModel.fixedAreaPopup.tabColumns > 2) {
-			switch (viewModel.entityType) {
-				case 'instrument':
-				case 'account':
-				case 'instrument-type':
-					fieldsInFixedArea.push(viewModel.typeFieldName)
-					break
+        if (viewModel.fixedAreaPopup.tabColumns > 2) {
+            switch (viewModel.entityType) {
+                case 'instrument':
+                case 'account':
+                case 'instrument-type':
+                    fieldsInFixedArea.push(viewModel.typeFieldName)
+                    break
 
-				case 'counterparty':
-				case 'responsible':
-					fieldsInFixedArea.push('group')
-					break
+                case 'counterparty':
+                case 'responsible':
+                    fieldsInFixedArea.push('group')
+                    break
 
-				case 'strategy-1':
-				case 'strategy-2':
-				case 'strategy-3':
-					fieldsInFixedArea.push('subgroup')
-					break
+                case 'strategy-1':
+                case 'strategy-2':
+                case 'strategy-3':
+                    fieldsInFixedArea.push('subgroup')
+                    break
 
-				default:
-					fieldsInFixedArea.push('short_name')
-					break
-			}
-		}
+                default:
+                    fieldsInFixedArea.push('short_name')
+                    break
+            }
+        }
 
-		if (viewModel.fixedAreaPopup.tabColumns > 5) {
-			if (
-				viewModel.entityType === 'instrument' ||
-				viewModel.entityType === 'account' ||
-				viewModel.entityType === 'instrument-type'
-			) {
-				fieldsInFixedArea.push('short_name')
-			} else {
-				fieldsInFixedArea.push('user_code')
-			}
-		}
+        if (viewModel.fixedAreaPopup.tabColumns > 5) {
+            if (
+                viewModel.entityType === 'instrument' ||
+                viewModel.entityType === 'account' ||
+                viewModel.entityType === 'instrument-type'
+            ) {
+                fieldsInFixedArea.push('short_name')
+            } else {
+                fieldsInFixedArea.push('user_code')
+            }
+        }
 
-		return fieldsInFixedArea
-	}
+        return fieldsInFixedArea
+    }
 
-	const getFieldsOutsideOfPopup = function () {
-		if (viewModel.action === 'edit') {
-			return getEditFormFieldsInFixedArea()
-		} else {
-			return getAddFormFieldsInFixedArea()
-		}
-	}
+    const getFieldsOutsideOfPopup = function () {
+        if (viewModel.action === 'edit') {
+            return getEditFormFieldsInFixedArea()
+        } else {
+            return getAddFormFieldsInFixedArea()
+        }
+    }
 
-	/* FIXED AREA POPUP
+    /* FIXED AREA POPUP
 
         const onPopupSaveCallback = async function () {
 
@@ -154,24 +154,24 @@ export default function (
             // Fixating showByDefault because viewModel.fixedAreaPopup.fields.showByDefault.value can be changed by getAndFormatUserTabs();
             const showByDefaultAfterSave = viewModel.fixedAreaPopup.fields.showByDefault.value;
 
-			if (viewModel.entityType === 'instrument') {
+            if (viewModel.entityType === 'instrument') {
 
-				// On change of instrument type for instrument
-				if (viewModel.fixedAreaPopup.tabColumns < 3 &&
-					viewModel.fixedAreaPopup.fields.type.value !== viewModel.entity.instrument_type) {
+                // On change of instrument type for instrument
+                if (viewModel.fixedAreaPopup.tabColumns < 3 &&
+                    viewModel.fixedAreaPopup.fields.type.value !== viewModel.entity.instrument_type) {
 
-					viewModel.entity.instrument_type = viewModel.fixedAreaPopup.fields.type.value;
-					// const showByDefaultValue = viewModel.showByDefault;
-					const formLayoutData = await getAndFormatUserTabs();
+                    viewModel.entity.instrument_type = viewModel.fixedAreaPopup.fields.type.value;
+                    // const showByDefaultValue = viewModel.showByDefault;
+                    const formLayoutData = await getAndFormatUserTabs();
 
-					viewModel.tabs = formLayoutData.tabs;
-					viewModel.attributesLayout = formLayoutData.attributesLayout;
-					$scope.$apply();
-					// set 'show by default' that user saved in popup after it was changed by getAndFormatUserTabs()
-					// viewModel.showByDefault = showByDefaultValue;
-				}
+                    viewModel.tabs = formLayoutData.tabs;
+                    viewModel.attributesLayout = formLayoutData.attributesLayout;
+                    $scope.$apply();
+                    // set 'show by default' that user saved in popup after it was changed by getAndFormatUserTabs()
+                    // viewModel.showByDefault = showByDefaultValue;
+                }
 
-			}
+            }
 
             viewModel.keysOfFixedFieldsAttrs.forEach(key => { // transfer changes from popup to entity
 
@@ -180,7 +180,7 @@ export default function (
                 }
 
                 // const fieldKey = (key === 'instrument_type' || key === 'instrument_class') ? 'type' : key
-				const fieldKey = entityEditorHelper.getFieldKeyForFAPopup(key, viewModel.entityType);
+                const fieldKey = entityEditorHelper.getFieldKeyForFAPopup(key, viewModel.entityType);
                 viewModel.entity[key] = viewModel.fixedAreaPopup.fields[fieldKey].value;
 
             });
@@ -197,63 +197,63 @@ export default function (
             if (viewModel.showByDefault !== showByDefaultAfterSave) {
 
                 viewModel.nameToShow = showByDefaultAfterSave;
-				// viewModel.fixedAreaPopup.fields.showByDefault.value = viewModel.nameToShow;
+                // viewModel.fixedAreaPopup.fields.showByDefault.value = viewModel.nameToShow;
                 // save layout settings
                 viewModel.dataConstructorLayout.data.fixedArea.showByDefault = viewModel.nameToShow;
                 uiService.updateEditLayout(viewModel.dataConstructorLayout.id, viewModel.dataConstructorLayout).then(layoutData => {
-                	viewModel.dataConstructorLayout = JSON.parse(JSON.stringify(layoutData));
-				});
+                    viewModel.dataConstructorLayout = JSON.parse(JSON.stringify(layoutData));
+                });
 
             }
 
             if (viewModel.fixedAreaPopup.error) {
 
-            	let popupHasNoErrors = true;
+                let popupHasNoErrors = true;
 
-				/!* const attributes = {
-					entityAttrs: viewModel.entityAttrs,
-					attrsTypes: viewModel.attributeTypes
-				} *!/
+                /!* const attributes = {
+                    entityAttrs: viewModel.entityAttrs,
+                    attrsTypes: viewModel.attributeTypes
+                } *!/
 
-            	for (const popupFieldKey in viewModel.originalFixedAreaPopupFields) {
+                for (const popupFieldKey in viewModel.originalFixedAreaPopupFields) {
 
-					const fieldError = viewModel.originalFixedAreaPopupFields[popupFieldKey].error;
-					const efKey = viewModel.originalFixedAreaPopupFields[popupFieldKey].entityFieldKey;
+                    const fieldError = viewModel.originalFixedAreaPopupFields[popupFieldKey].error;
+                    const efKey = viewModel.originalFixedAreaPopupFields[popupFieldKey].entityFieldKey;
 
-					if (fieldError) {
+                    if (fieldError) {
 
-						// entityEditorHelper.checkTabsForErrorFields(efKey, viewModel.evEditorDataService, attributes, viewModel.entity, viewModel.entityType, viewModel.tabs);
-						entityEditorHelper.checkFixedAreaForErrorFields(efKey, viewModel.evEditorDataService, viewModel.entityAttrs, viewModel.entity);
-						const formErrorsList = viewModel.evEditorDataService.getFormErrorsList();
-						const fieldErrorNotCorrected = formErrorsList.includes(efKey);
+                        // entityEditorHelper.checkTabsForErrorFields(efKey, viewModel.evEditorDataService, attributes, viewModel.entity, viewModel.entityType, viewModel.tabs);
+                        entityEditorHelper.checkFixedAreaForErrorFields(efKey, viewModel.evEditorDataService, viewModel.entityAttrs, viewModel.entity);
+                        const formErrorsList = viewModel.evEditorDataService.getFormErrorsList();
+                        const fieldErrorNotCorrected = formErrorsList.includes(efKey);
 
-						if (fieldErrorNotCorrected) {
+                        if (fieldErrorNotCorrected) {
 
-							viewModel.fixedAreaPopup.fields[popupFieldKey].event = {key: 'error', error: fieldError};
-							popupHasNoErrors = false;
+                            viewModel.fixedAreaPopup.fields[popupFieldKey].event = {key: 'error', error: fieldError};
+                            popupHasNoErrors = false;
 
-						} else {
+                        } else {
 
-							delete viewModel.fixedAreaPopup.fields[popupFieldKey].event;
+                            delete viewModel.fixedAreaPopup.fields[popupFieldKey].event;
 
-							// remove error mode from Group crud selector in case of expanding drawer
-							if (efKey === 'group') viewModel.groupSelectorEventObj.event = {key: 'reset'};
+                            // remove error mode from Group crud selector in case of expanding drawer
+                            if (efKey === 'group') viewModel.groupSelectorEventObj.event = {key: 'reset'};
 
-						}
+                        }
 
-					}
+                    }
 
-				}
+                }
 
-            	if (popupHasNoErrors) {
-            		delete viewModel.fixedAreaPopup.error;
-					viewModel.fixedAreaPopup.event = {key: 'reset'};
+                if (popupHasNoErrors) {
+                    delete viewModel.fixedAreaPopup.error;
+                    viewModel.fixedAreaPopup.event = {key: 'reset'};
 
-				} else { // resending signal about error, in case of error mode was disabled inside textInputDirective
-					viewModel.fixedAreaPopup.event = {key: "error", error: viewModel.fixedAreaPopup.error};
-				}
+                } else { // resending signal about error, in case of error mode was disabled inside textInputDirective
+                    viewModel.fixedAreaPopup.event = {key: "error", error: viewModel.fixedAreaPopup.error};
+                }
 
-			}
+            }
 
             viewModel.originalFixedAreaPopupFields = JSON.parse(JSON.stringify(viewModel.fixedAreaPopup.fields));
 
@@ -261,37 +261,37 @@ export default function (
 
         const onFixedAreaPopupCancel = function () {
 
-        	viewModel.fixedAreaPopup.fields = JSON.parse(JSON.stringify(viewModel.originalFixedAreaPopupFields));
+            viewModel.fixedAreaPopup.fields = JSON.parse(JSON.stringify(viewModel.originalFixedAreaPopupFields));
 
-			for (const fieldKey in viewModel.fixedAreaPopup.fields) { // turn on error mode of fields when popup opens
+            for (const fieldKey in viewModel.fixedAreaPopup.fields) { // turn on error mode of fields when popup opens
 
-				const fieldData = viewModel.fixedAreaPopup.fields[fieldKey];
+                const fieldData = viewModel.fixedAreaPopup.fields[fieldKey];
 
-				if (fieldData.error) {
-					viewModel.fixedAreaPopup.fields[fieldKey].event = {key: 'error', error: fieldData.error};
-				}
+                if (fieldData.error) {
+                    viewModel.fixedAreaPopup.fields[fieldKey].event = {key: 'error', error: fieldData.error};
+                }
 
-			}
+            }
 
         }; */
-	const onNameToShowChange = function () {
-		if (
-			viewModel.nameToShow !==
-			viewModel.dataConstructorLayout.data.fixedArea.showByDefault
-		) {
-			// save layout settings
-			viewModel.dataConstructorLayout.data.fixedArea.showByDefault =
-				viewModel.nameToShow
+    const onNameToShowChange = function () {
+        if (
+            viewModel.nameToShow !==
+            viewModel.dataConstructorLayout.data.fixedArea.showByDefault
+        ) {
+            // save layout settings
+            viewModel.dataConstructorLayout.data.fixedArea.showByDefault =
+                viewModel.nameToShow
 
-			uiService
-				.updateEditLayout(
-					viewModel.dataConstructorLayout.id,
-					viewModel.dataConstructorLayout
-				)
-				.then((layoutData) => {
-					viewModel.dataConstructorLayout = JSON.parse(
-						JSON.stringify(layoutData)
-					)
+            uiService
+                .updateEditLayout(
+                    viewModel.dataConstructorLayout.id,
+                    viewModel.dataConstructorLayout
+                )
+                .then((layoutData) => {
+                    viewModel.dataConstructorLayout = JSON.parse(
+                        JSON.stringify(layoutData)
+    				)
 				})
 		}
 	}

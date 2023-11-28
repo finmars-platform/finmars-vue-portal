@@ -79,7 +79,7 @@
 						@update:model-value="toggleUseDateFromAbove()"
 					/>
 
-					<complex-zh-datepicker
+<!--					<complex-zh-datepicker
 						v-if="entityType === 'balance-report'"
 						date="datesData.to"
 						datepicker-options="reportLayoutOptions.datepickerOptions.reportLastDatepicker"
@@ -100,7 +100,7 @@
 						second-datepicker-options="reportLayoutOptions.datepickerOptions.reportLastDatepicker"
 						callback-method="onReportDateChange()"
 					>
-					</complex-zh-datepicker>
+					</complex-zh-datepicker>-->
 					<FmInputDateComplex
 						v-if="
 							entityType === 'reports.plreport' ||
@@ -203,9 +203,7 @@
 	let onGlobalTableSearchChange = function () {
 		evDataService.setGlobalTableSearch(globalTableSearch.value)
 
-		if (!isReport) {
-			evDataService.resetTableContent(false)
-		}
+		evDataService.resetTableContent(false)
 
 		evEventService.dispatchEvent(evEvents.UPDATE_TABLE)
 	}

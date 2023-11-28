@@ -194,7 +194,7 @@ const newBundleData = {
 	registers: bundleData.registers,
 };
 
-let res = await useApi('portfolioBundles.post', {body: newBundleData})
+let res = await useApi('portfolioBundle.post', {body: newBundleData})
 
 if ( res ) {
 
@@ -223,7 +223,7 @@ if ( res ) {
 			body: updatedData,
 		};
 
-		let res = await useApi('portfolioBundles.put', opts);
+		let res = await useApi('portfolioBundle.put', opts);
 
 		if (!res.error) {
 
@@ -241,7 +241,7 @@ if ( res ) {
 
 		const bundleToDelete = bundles.value[activePeriod.value];
 
-		const res = await useApi( 'portfolioBundles.delete', {params: {id: bundleToDelete.id}} );
+		const res = await useApi( 'portfolioBundle.delete', {params: {id: bundleToDelete.id}} );
 
 		if (!res.error) {
 

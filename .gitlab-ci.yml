@@ -40,7 +40,7 @@ Versioning:
     - pip install haikunator
   script:
     - |
-      if [[ $CI_COMMIT_REF_NAME == *"-rc" ]]; then
+      if [[ $CI_COMMIT_REF_NAME == *"-rc" || $CI_COMMIT_REF_NAME == *"-stable" ]]; then
 
         # Fancy Name Generation using Haikunator
         FANCY_NAME=$(python -c 'from haikunator import Haikunator; print(Haikunator().haikunate(token_length=0))')
@@ -56,7 +56,7 @@ Versioning:
     reports:
       dotenv: build.env
   only:
-    - /^.*-rc$/
+    - /^.*-(rc|stable)$/
 
 Build:
   stage: build
@@ -74,16 +74,25 @@ Push Version:
     - apt install curl git
   script:
     - |
+
+      if [[ "$CI_COMMIT_REF_NAME" == *"-rc" ]]; then
+          CHANNEL="rc"
+      elif [[ "$CI_COMMIT_REF_NAME" == *"-stable" ]]; then
+          CHANNEL="stable"
+      else
+          CHANNEL="unknown"
+      fi
+
       # Create the JSON payload
       NOTES=$(git log -1 --pretty=%B)
-      JSON_PAYLOAD="{ \"app\": \"$CI_PROJECT_NAME\", \"version\": \"$IMAGE_TAG\", \"build_number\": $CI_PIPELINE_ID, \"notes\": \"$NOTES\" }"
+      JSON_PAYLOAD="{ \"app\": \"$CI_PROJECT_NAME\", \"version\": \"$IMAGE_TAG\", \"build_number\": $CI_PIPELINE_ID, \"notes\": \"$NOTES\", \"channel\": \"$CHANNEL\" }"
 
       # Pass the payload to curl
       curl --request POST https://license.finmars.com/api/v1/version/ \
       --header "Content-Type: application/json" \
       --data "$JSON_PAYLOAD"
   only:
-    - /^.*-rc$/
+    - /^.*-(rc|stable)$/
     - tags
 
 

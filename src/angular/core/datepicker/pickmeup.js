@@ -641,7 +641,7 @@
 
                 //;
 
-                options.date	= current_date.valueOf();
+                options.date    = current_date.valueOf();
                 break;
         }
         var prepared_date = prepareDate(options);
@@ -857,10 +857,10 @@
 
     function hide(e) {
         if (
-            !e || !e.target ||														//Called directly
+            !e || !e.target ||                                                        //Called directly
             (
-                e.target != this &&												//Clicked not on element itself
-                !(this.pickmeup.get(0).compareDocumentPosition(e.target) & 16)	//And not o its children
+                e.target != this &&                                                //Clicked not on element itself
+                !(this.pickmeup.get(0).compareDocumentPosition(e.target) & 16)    //And not o its children
             )
         ) {
             var pickmeup = this.pickmeup,
@@ -2214,10 +2214,10 @@
             options      = target.__pickmeup.options;
         //noinspection JSBitwiseOperatorUsage,JSCheckFunctionSignatures
         if (
-            !event || !event.target ||										//Called directly
+            !event || !event.target ||                                        //Called directly
             (
-                event.target !== target &&									//Clicked not on element itself
-                !(root_element.compareDocumentPosition(event.target) & 16)	//And not on its children
+                event.target !== target &&                                    //Clicked not on element itself
+                !(root_element.compareDocumentPosition(event.target) & 16)    //And not on its children
             )
         ) {
             if (dom_dispatch_event(target, 'hide')) {

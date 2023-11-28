@@ -76,7 +76,7 @@
 
 	defaultsGet()
 	async function defaultsGet() {
-		let edRes = await useApi('transactionTypeGroup.get')
+		let edRes = await useApi('transactionTypeGroupList.get')
 
 		transactionTypeList.value = edRes.error ? {} : edRes.results
 	}

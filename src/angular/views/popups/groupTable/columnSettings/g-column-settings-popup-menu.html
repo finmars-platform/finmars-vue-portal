@@ -1,115 +1,115 @@
 <div class="popup-menu">
-	<div
-		ng-if="popupData.data.isReport && popupData.data.isAGroup"
-		ng-include="'views/popups/entity-viewer/g-rv-group-settings-menu-options.html'"
-	></div>
+    <div
+        ng-if="popupData.data.isReport && popupData.data.isAGroup"
+        ng-include="'views/popups/entity-viewer/g-rv-group-settings-menu-options.html'"
+    ></div>
 
-	<div>
-		<md-button
-			ng-click="popupData.data.renameColumn(popupData.data.item.key, null, $event, _$popup)"
-			class="popup-menu-item"
-		>
-			<span class="material-icons" style="visibility: hidden">done</span>
-			<span>Rename</span>
-		</md-button>
-	</div>
+    <div>
+        <md-button
+            ng-click="popupData.data.renameColumn(popupData.data.item.key, null, $event, _$popup)"
+            class="popup-menu-item"
+        >
+            <span class="material-icons" style="visibility: hidden">done</span>
+            <span>Rename</span>
+        </md-button>
+    </div>
 
-	<div
-		data-ng-if="!popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)"
-	>
-		<md-button
-			data-ng-click="popupData.data.addColumnEntityToGrouping(popupData.data.item)"
-			ng-disabled="popupData.data.item.error_data"
-			class="popup-menu-item"
-		>
-			<span class="material-icons" style="visibility: hidden">done</span>
-			<span>Add to grouping</span>
-		</md-button>
-	</div>
+    <div
+        data-ng-if="!popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)"
+    >
+        <md-button
+            data-ng-click="popupData.data.addColumnEntityToGrouping(popupData.data.item)"
+            ng-disabled="popupData.data.item.error_data"
+            class="popup-menu-item"
+        >
+            <span class="material-icons" style="visibility: hidden">done</span>
+            <span>Add to grouping</span>
+        </md-button>
+    </div>
 
-	<div
-		ng-if="popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)"
-	>
-		<md-button
-			data-ng-click="popupData.data.unGroup(popupData.data.item.key, _$popup)"
-			class="popup-menu-item"
-		>
-			<!--            <ng-md-icon icon="visibility_off"
+    <div
+        ng-if="popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)"
+    >
+        <md-button
+            data-ng-click="popupData.data.unGroup(popupData.data.item.key, _$popup)"
+            class="popup-menu-item"
+        >
+            <!--            <ng-md-icon icon="visibility_off"
                                     style="visibility: hidden;"></ng-md-icon>-->
-			<span class="material-icons" style="visibility: hidden">done</span>
-			<span>Ungroup</span>
-		</md-button>
-	</div>
+            <span class="material-icons" style="visibility: hidden">done</span>
+            <span>Ungroup</span>
+        </md-button>
+    </div>
 
-	<div>
-		<md-button
-			data-ng-disabled="!popupData.data.checkForFilteringBySameAttr(popupData.data.item.key) || popupData.data.item.error_data"
-			data-ng-click="popupData.data.addFiltersWithColAttr(popupData.data.item)"
-			class="popup-menu-item"
-		>
-			<span class="material-icons" style="visibility: hidden">done</span>
-			<span>Add to Filters</span>
-		</md-button>
-	</div>
+    <div>
+        <md-button
+            data-ng-disabled="!popupData.data.checkForFilteringBySameAttr(popupData.data.item.key) || popupData.data.item.error_data"
+            data-ng-click="popupData.data.addFiltersWithColAttr(popupData.data.item)"
+            class="popup-menu-item"
+        >
+            <span class="material-icons" style="visibility: hidden">done</span>
+            <span>Add to Filters</span>
+        </md-button>
+    </div>
 
-	<div
-		data-ng-if="popupData.data.item.value_type === 20"
-		class="menu-divider-top"
-		style="padding-top: 4px"
-	>
-		<md-button
-			data-ng-click="popupData.data.openNumberFormatDialog(popupData.data.item)"
-			class="popup-menu-item"
-		>
-			<span class="material-icons" style="visibility: hidden">done</span>
-			<span>Number Format</span>
-		</md-button>
-	</div>
+    <div
+        data-ng-if="popupData.data.item.value_type === 20"
+        class="menu-divider-top"
+        style="padding-top: 4px"
+    >
+        <md-button
+            data-ng-click="popupData.data.openNumberFormatDialog(popupData.data.item)"
+            class="popup-menu-item"
+        >
+            <span class="material-icons" style="visibility: hidden">done</span>
+            <span>Number Format</span>
+        </md-button>
+    </div>
 
-	<div data-ng-if="popupData.data.item.value_type === 10">
-		<md-button
-			data-ng-click="popupData.data.editManualSorting($event, popupData.data.item)"
-			class="popup-menu-item"
-		>
-			<span class="material-icons" style="visibility: hidden">done</span>
-			<span>Manual Sort</span>
-		</md-button>
-	</div>
+    <div data-ng-if="popupData.data.item.value_type === 10">
+        <md-button
+            data-ng-click="popupData.data.editManualSorting($event, popupData.data.item)"
+            class="popup-menu-item"
+        >
+            <span class="material-icons" style="visibility: hidden">done</span>
+            <span>Manual Sort</span>
+        </md-button>
+    </div>
 
-	<!--    <div>
+    <!--    <div>
         <md-button ng-click="popupData.data.resizeColumn(popupData.data.item, $mdMenu, $event)"
                    class="popup-menu-item">
             <span>Resize</span>
         </md-button>
     </div>-->
 
-	<div
-		data-ng-if="!popupData.data.isReport || !popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)"
-		ng-include="'views/popups/groupTable/columnSettings/g-column-alignment-menu-options.html'"
-		class="flex-column"
-	></div>
+    <div
+        data-ng-if="!popupData.data.isReport || !popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)"
+        ng-include="'views/popups/groupTable/columnSettings/g-column-alignment-menu-options.html'"
+        class="flex-column"
+    ></div>
 
-	<div
-		data-ng-if="popupData.data.isReport && popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)"
-	>
-		<md-button
-			data-ng-click="popupData.data.removeGroup(popupData.data.item.key, _$popup)"
-			class="popup-menu-item"
-		>
-			<span class="material-icons" style="visibility: hidden">done</span>
-			<span>Remove</span>
-		</md-button>
-	</div>
+    <div
+        data-ng-if="popupData.data.isReport && popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)"
+    >
+        <md-button
+            data-ng-click="popupData.data.removeGroup(popupData.data.item.key, _$popup)"
+            class="popup-menu-item"
+        >
+            <span class="material-icons" style="visibility: hidden">done</span>
+            <span>Remove</span>
+        </md-button>
+    </div>
 
-	<div
-		data-ng-if="!popupData.data.isReport || !popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)"
-	>
-		<md-button
-			ng-click="popupData.data.removeColumn(popupData.data.item)"
-			class="popup-menu-item"
-		>
-			<span class="material-icons" style="visibility: hidden">done</span>
-			<span>Remove</span>
-		</md-button>
-	</div>
+    <div
+        data-ng-if="!popupData.data.isReport || !popupData.data.columnHasCorrespondingGroup(popupData.data.item.key)"
+    >
+        <md-button
+            ng-click="popupData.data.removeColumn(popupData.data.item)"
+            class="popup-menu-item"
+        >
+            <span class="material-icons" style="visibility: hidden">done</span>
+            <span>Remove</span>
+        </md-button>
+    </div>
 </div>

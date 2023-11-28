@@ -4,7 +4,7 @@ export default defineStore({
 		return {
 			user: {},
 			masterUsers: [],
-			current: {},
+			current: {}, // master user
 			member: {},
 			memberLayout: {},
 
@@ -100,7 +100,11 @@ export default defineStore({
 				let memberLayout = res[1].results[0];
 
 				if (!memberLayout.data) {
-						memberLayout.data = {}
+					memberLayout.data = {}
+				}
+
+				if (typeof memberLayout.data.autosave_layouts !== 'boolean') {
+					memberLayout.data.autosave_layouts = true;
 				}
 
 				if (!memberLayout.data.favorites) {
