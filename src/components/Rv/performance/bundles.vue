@@ -65,7 +65,7 @@
 	async function fetchPortfolioBundles() {
 		// readyStatusData.bundles = false;
 
-		let res = await useApi('portfolioBundles.get');
+		let res = await useApi('portfolioBundleList.get');
 
 		const delUserCodeRe = /^del\d{17}$/;
 

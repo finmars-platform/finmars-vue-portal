@@ -35,7 +35,7 @@
 
 	init()
 	async function init() {
-		let res = await useApi('portfolioBundles.get')
+		let res = await useApi('portfolioBundleList.get')
 
 		bundles.value = res.results
 	}

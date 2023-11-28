@@ -162,22 +162,22 @@ export default function (toastNotificationService) {
         // DEPRECATED
         // if (reason.statusText) {
         //
-        // 	message = reason.statusText + ' (' + reason.status + ')';
+        //     message = reason.statusText + ' (' + reason.status + ')';
         //
-        // 	if (reason.hasOwnProperty('message')) {
+        //     if (reason.hasOwnProperty('message')) {
         //
-        // 		if (typeof reason.message === 'object') {
+        //         if (typeof reason.message === 'object') {
         //
-        // 			message = getFullErrorAsHtml(reason.message, message)
+        //             message = getFullErrorAsHtml(reason.message, message)
         //
-        // 		}
+        //         }
         //
         //
-        // 	}
+        //     }
         //
         // } else if (reason.message) {
         //
-        // 	message = reason.message
+        //     message = reason.message
         //
         // }
         //

@@ -12,7 +12,7 @@
 		<template #button>
 			<slot name="button">
 				<FmBtn
-					type="iconBtn"
+					type="icon"
 					icon="calendar_month"
 					:disabled="disabled"
 					@click="showDatepicker"

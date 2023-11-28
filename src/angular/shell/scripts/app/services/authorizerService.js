@@ -11,29 +11,29 @@ import { getVersions } from '@/angular/portal/scripts/app/controllers/pages/upda
 // import usersRepository from "../repositories/usersRepository";
 /** @module authorizerService */
 export default function (cookieService, globalDataService, xhrService) {
-	const authorizerRepository = new AuthorizerRepository(
-		cookieService,
-		xhrService
-	)
-	// Deprecated
-	// const login = function (login, password) {
-	// 	return authorizerRepository.login(login, password);
-	// };
+    const authorizerRepository = new AuthorizerRepository(
+        cookieService,
+        xhrService
+    )
+    // Deprecated
+    // const login = function (login, password) {
+    //     return authorizerRepository.login(login, password);
+    // };
 
-	const tokenLogin = function (login, password) {
-		return authorizerRepository.tokenLogin(login, password)
-	}
+    const tokenLogin = function (login, password) {
+        return authorizerRepository.tokenLogin(login, password)
+    }
 
-	const logout = function () {
-		globalDataService.clearAllData()
-		return authorizerRepository.logout()
-	}
+    const logout = function () {
+        globalDataService.clearAllData()
+        return authorizerRepository.logout()
+    }
 
-	const changePassword = function (id, user) {
-		return authorizerRepository.changePassword(id, user)
-	}
+    const changePassword = function (id, user) {
+        return authorizerRepository.changePassword(id, user)
+    }
 
-	/* const getUser = function () {
+    /* const getUser = function () {
 
         return new Promise ((resolve, reject) => {
 
@@ -55,12 +55,12 @@ export default function (cookieService, globalDataService, xhrService) {
 
     }; */
 
-	const ping = function () {
-		// debugger for FN-880
-		return authorizerRepository.ping()
-	}
+    const ping = function () {
+        // debugger for FN-880
+        return authorizerRepository.ping()
+    }
 
-	/* const getUsersList = function () {
+    /* const getUsersList = function () {
         return authorizerRepository.getUsersList();
     };
 
@@ -97,262 +97,262 @@ export default function (cookieService, globalDataService, xhrService) {
     const deleteByKey = function (id) {
         return authorizerRepository.deleteByKey(id);
     }; */
-	//<editor-fold desc="User">
-	const getMe = function () {
-		return new Promise((resolve, reject) => {
-			authorizerRepository
-				.getMe()
-				.then((userData) => {
-					if (!userData.data) userData.data = {}
-					globalDataService.setUser(userData)
-					resolve(userData)
-				})
-				.catch((error) => reject(error))
-		})
+    //<editor-fold desc="User">
+    const getMe = function () {
+        return new Promise((resolve, reject) => {
+            authorizerRepository
+                .getMe()
+                .then((userData) => {
+                    if (!userData.data) userData.data = {}
+                    globalDataService.setUser(userData)
+                    resolve(userData)
+                })
+                .catch((error) => reject(error))
+        })
 
-		// return authorizerRepository.getMe();
-	}
+        // return authorizerRepository.getMe();
+    }
 
-	const getUserByKey = function (id) {
-		return new Promise((resolve, reject) => {
-			authorizerRepository
-				.getUserByKey(id)
-				.then((userData) => {
-					if (!userData.data) userData.data = {}
-					resolve(userData)
-				})
-				.catch((error) => reject(error))
-		})
-	}
+    const getUserByKey = function (id) {
+        return new Promise((resolve, reject) => {
+            authorizerRepository
+                .getUserByKey(id)
+                .then((userData) => {
+                    if (!userData.data) userData.data = {}
+                    resolve(userData)
+                })
+                .catch((error) => reject(error))
+        })
+    }
 
-	const updateUser = function (id, user) {
-		return new Promise((resolve, reject) => {
-			authorizerRepository
-				.updateUser(id, user)
-				.then((updatedUser) => {
-					globalDataService.setUser(updatedUser)
-					resolve(updatedUser)
-				})
-				.catch((error) => reject(error))
-		})
-	}
+    const updateUser = function (id, user) {
+        return new Promise((resolve, reject) => {
+            authorizerRepository
+                .updateUser(id, user)
+                .then((updatedUser) => {
+                    globalDataService.setUser(updatedUser)
+                    resolve(updatedUser)
+                })
+                .catch((error) => reject(error))
+        })
+    }
 
-	const patchUser = function (id, user) {
-		return new Promise((resolve, reject) => {
-			authorizerRepository
-				.patchUser(id, user)
-				.then((patchedUser) => {
-					globalDataService.setUser(patchedUser)
-					resolve(patchedUser)
-				})
-				.catch((error) => reject(error))
-		})
-	}
+    const patchUser = function (id, user) {
+        return new Promise((resolve, reject) => {
+            authorizerRepository
+                .patchUser(id, user)
+                .then((patchedUser) => {
+                    globalDataService.setUser(patchedUser)
+                    resolve(patchedUser)
+                })
+                .catch((error) => reject(error))
+        })
+    }
 
-	const deleteUserByKey = function (id) {
-		return new Promise((resolve, reject) => {
-			authorizerRepository
-				.deleteMasterUserByKey(id)
-				.then(() => {
-					const currentUser = globalDataService.getUser()
-					const currentUserIsDeleted = currentUser && currentUser.id === id
+    const deleteUserByKey = function (id) {
+        return new Promise((resolve, reject) => {
+            authorizerRepository
+                .deleteMasterUserByKey(id)
+                .then(() => {
+                    const currentUser = globalDataService.getUser()
+                    const currentUserIsDeleted = currentUser && currentUser.id === id
 
-					if (currentUserIsDeleted) globalDataService.setMasterUser(null)
+                    if (currentUserIsDeleted) globalDataService.setMasterUser(null)
 
-					resolve('deleted')
-				})
-				.catch((error) => reject(error))
-		})
-	}
+                    resolve('deleted')
+                })
+                .catch((error) => reject(error))
+        })
+    }
 
-	const checkUsernameUniqueness = function (username) {
-		return authorizerRepository.checkUsernameUniqueness(username)
-	}
+    const checkUsernameUniqueness = function (username) {
+        return authorizerRepository.checkUsernameUniqueness(username)
+    }
 
-	const transferOwner = function (data) {
-		return authorizerRepository.transferOwner(data)
-	}
-	//</editor-fold>
+    const transferOwner = function (data) {
+        return authorizerRepository.transferOwner(data)
+    }
+    //</editor-fold>
 
-	//<editor-fold desc="Master user">
-	const createMasterUser = function (masterUser) {
-		return authorizerRepository.createMasterUser(masterUser)
-	}
+    //<editor-fold desc="Master user">
+    const createMasterUser = function (masterUser) {
+        return authorizerRepository.createMasterUser(masterUser)
+    }
 
-	const getMasterUsersList = function () {
-		return authorizerRepository.getMasterUsersList()
-	}
+    const getMasterUsersList = function () {
+        return authorizerRepository.getMasterUsersList()
+    }
 
-	const getMasterUserByKey = function (id) {
-		return authorizerRepository.getMasterUserByKey(id)
-	}
+    const getMasterUserByKey = function (id) {
+        return authorizerRepository.getMasterUserByKey(id)
+    }
 
-	const getCurrentMasterUser = function () {
-		return new Promise((resolve, reject) => {
-			authorizerRepository
-				.getMasterUsersList()
-				.then((masterUsersData) => {
-					// const base_api_url = window.location.pathname.split('/')[1];
-					const pathNamePartsList = window.location.pathname.split('/')
-					const base_api_url = pathNamePartsList.find((part) =>
-						part.startsWith('space')
-					)
+    const getCurrentMasterUser = function () {
+        return new Promise((resolve, reject) => {
+            authorizerRepository
+                .getMasterUsersList()
+                .then((masterUsersData) => {
+                    // const base_api_url = window.location.pathname.split('/')[1];
+                    const pathNamePartsList = window.location.pathname.split('/')
+                    const base_api_url = pathNamePartsList.find((part) =>
+                        part.startsWith('space')
+                    )
 
-					let currentMasterUser = null
+                    let currentMasterUser = null
 
-					if (base_api_url.startsWith('space')) {
-						currentMasterUser = masterUsersData.results.find(
-							(master) => master.base_api_url === base_api_url
-						)
-					}
+                    if (base_api_url.startsWith('space')) {
+                        currentMasterUser = masterUsersData.results.find(
+                            (master) => master.base_api_url === base_api_url
+                        )
+                    }
 
-					globalDataService.setMasterUser(currentMasterUser)
+                    globalDataService.setMasterUser(currentMasterUser)
 
-					resolve(currentMasterUser)
-				})
-				.catch((error) => reject(error))
-		})
-		// return authorizerRepository.getCurrentMasterUser();
-	}
+                    resolve(currentMasterUser)
+                })
+                .catch((error) => reject(error))
+        })
+        // return authorizerRepository.getCurrentMasterUser();
+    }
 
-	const updateMasterUser = function (id, masterUser) {
-		return new Promise((resolve, reject) => {
-			authorizerRepository
-				.updateMasterUser(id, masterUser)
-				.then((updatedMasterUser) => {
-					globalDataService.setMasterUser(updatedMasterUser)
-					resolve(updatedMasterUser)
-				})
-				.catch((error) => reject(error))
-		})
-	}
+    const updateMasterUser = function (id, masterUser) {
+        return new Promise((resolve, reject) => {
+            authorizerRepository
+                .updateMasterUser(id, masterUser)
+                .then((updatedMasterUser) => {
+                    globalDataService.setMasterUser(updatedMasterUser)
+                    resolve(updatedMasterUser)
+                })
+                .catch((error) => reject(error))
+        })
+    }
 
-	const patchMasterUser = function (id, masterUser) {
-		return new Promise((resolve, reject) => {
-			authorizerRepository
-				.patchMasterUser(id, masterUser)
-				.then((patchedMasterUser) => {
-					globalDataService.setMasterUser(patchedMasterUser)
-					resolve(patchedMasterUser)
-				})
-				.catch((error) => reject(error))
-		})
-	}
+    const patchMasterUser = function (id, masterUser) {
+        return new Promise((resolve, reject) => {
+            authorizerRepository
+                .patchMasterUser(id, masterUser)
+                .then((patchedMasterUser) => {
+                    globalDataService.setMasterUser(patchedMasterUser)
+                    resolve(patchedMasterUser)
+                })
+                .catch((error) => reject(error))
+        })
+    }
 
-	const deleteMasterUserByKey = function (id) {
-		return new Promise((resolve, reject) => {
-			authorizerRepository
-				.deleteMasterUserByKey(id)
-				.then((deletionData) => {
-					const currentMasterUser = globalDataService.getMasterUser()
-					const currentMasterUserIsDeleted =
-						currentMasterUser && currentMasterUser.id === id
+    const deleteMasterUserByKey = function (id) {
+        return new Promise((resolve, reject) => {
+            authorizerRepository
+                .deleteMasterUserByKey(id)
+                .then((deletionData) => {
+                    const currentMasterUser = globalDataService.getMasterUser()
+                    const currentMasterUserIsDeleted =
+                        currentMasterUser && currentMasterUser.id === id
 
-					if (currentMasterUserIsDeleted) globalDataService.setMasterUser(null)
+                    if (currentMasterUserIsDeleted) globalDataService.setMasterUser(null)
 
-					resolve('deleted')
-				})
-				.catch((error) => reject(error))
-		})
-	}
+                    resolve('deleted')
+                })
+                .catch((error) => reject(error))
+        })
+    }
 
-	const getMasterUsersListLight = function () {
-		return authorizerRepository.getMasterUsersListLight()
-	}
-	//</editor-fold>
+    const getMasterUsersListLight = function () {
+        return authorizerRepository.getMasterUsersListLight()
+    }
+    //</editor-fold>
 
-	//<editor-fold desc="Invites">
-	const inviteUser = function (data) {
-		return authorizerRepository.inviteUser(data)
-	}
+    //<editor-fold desc="Invites">
+    const inviteUser = function (data) {
+        return authorizerRepository.inviteUser(data)
+    }
 
-	const getInvitesList = function (base_api_url) {
-		return authorizerRepository.getInvitesList(base_api_url)
-	}
+    const getInvitesList = function (base_api_url) {
+        return authorizerRepository.getInvitesList(base_api_url)
+    }
 
-	const deleteInviteByKey = function (id) {
-		return authorizerRepository.deleteInviteByKey(id)
-	}
+    const deleteInviteByKey = function (id) {
+        return authorizerRepository.deleteInviteByKey(id)
+    }
 
-	const authTokenManagerGetList = function () {
-		return authorizerRepository.authTokenManagerGetList()
-	}
+    const authTokenManagerGetList = function () {
+        return authorizerRepository.authTokenManagerGetList()
+    }
 
-	const authTokenManagerDeleteToken = function (id) {
-		return authorizerRepository.authTokenManagerDeleteToken(id)
-	}
+    const authTokenManagerDeleteToken = function (id) {
+        return authorizerRepository.authTokenManagerDeleteToken(id)
+    }
 
-	const authTokenManagerCreateToken = function (data) {
-		return authorizerRepository.authTokenManagerCreateToken(data)
-	}
+    const authTokenManagerCreateToken = function (data) {
+        return authorizerRepository.authTokenManagerCreateToken(data)
+    }
 
-	const getVersions = function () {
-		return authorizerRepository.getVersions()
-	}
+    const getVersions = function () {
+        return authorizerRepository.getVersions()
+    }
 
-	const updateFinmars = function (base_api_url, tag) {
-		return authorizerRepository.updateFinmars(base_api_url, tag)
-	}
+    const updateFinmars = function (base_api_url, tag) {
+        return authorizerRepository.updateFinmars(base_api_url, tag)
+    }
 
-	const kickMember = function (data) {
-		return authorizerRepository.kickMember(data)
-	}
+    const kickMember = function (data) {
+        return authorizerRepository.kickMember(data)
+    }
 
-	const getInitialConfiguration = function () {
-		return authorizerRepository.getInitialConfiguration()
-	}
+    const getInitialConfiguration = function () {
+        return authorizerRepository.getInitialConfiguration()
+    }
 
-	//</editor-fold>
+    //</editor-fold>
 
-	return {
-		tokenLogin: tokenLogin,
-		logout: logout,
-		changePassword: changePassword,
+    return {
+        tokenLogin: tokenLogin,
+        logout: logout,
+        changePassword: changePassword,
 
-		// getUser: getUser,
+        // getUser: getUser,
 
-		ping: ping,
+        ping: ping,
 
-		/* getUsersList: getUsersList,
+        /* getUsersList: getUsersList,
         getUserByKey: getUserByKey,
 
         update: update,
         patchUser: patchUser,
         deleteByKey: deleteByKey, */
-		getMe: getMe,
-		getUserByKey: getUserByKey,
-		updateUser: updateUser,
-		patchUser: patchUser,
-		deleteUserByKey: deleteUserByKey,
+        getMe: getMe,
+        getUserByKey: getUserByKey,
+        updateUser: updateUser,
+        patchUser: patchUser,
+        deleteUserByKey: deleteUserByKey,
 
-		checkUsernameUniqueness: checkUsernameUniqueness,
+        checkUsernameUniqueness: checkUsernameUniqueness,
 
-		createMasterUser: createMasterUser,
-		getMasterUsersList: getMasterUsersList,
-		getMasterUsersListLight: getMasterUsersListLight,
-		getMasterUserByKey: getMasterUserByKey,
-		getCurrentMasterUser: getCurrentMasterUser,
-		updateMasterUser: updateMasterUser,
-		patchMasterUser: patchMasterUser,
-		deleteMasterUserByKey: deleteMasterUserByKey,
+        createMasterUser: createMasterUser,
+        getMasterUsersList: getMasterUsersList,
+        getMasterUsersListLight: getMasterUsersListLight,
+        getMasterUserByKey: getMasterUserByKey,
+        getCurrentMasterUser: getCurrentMasterUser,
+        updateMasterUser: updateMasterUser,
+        patchMasterUser: patchMasterUser,
+        deleteMasterUserByKey: deleteMasterUserByKey,
 
-		inviteUser: inviteUser,
-		getInvitesList: getInvitesList,
-		deleteInviteByKey: deleteInviteByKey,
+        inviteUser: inviteUser,
+        getInvitesList: getInvitesList,
+        deleteInviteByKey: deleteInviteByKey,
 
-		transferOwner: transferOwner,
+        transferOwner: transferOwner,
 
-		authTokenManagerGetList: authTokenManagerGetList,
-		authTokenManagerDeleteToken: authTokenManagerDeleteToken,
-		authTokenManagerCreateToken: authTokenManagerCreateToken,
+        authTokenManagerGetList: authTokenManagerGetList,
+        authTokenManagerDeleteToken: authTokenManagerDeleteToken,
+        authTokenManagerCreateToken: authTokenManagerCreateToken,
 
-		getVersions: getVersions,
-		updateFinmars: updateFinmars,
+        getVersions: getVersions,
+        updateFinmars: updateFinmars,
 
-		kickMember: kickMember,
+        kickMember: kickMember,
 
-		getInitialConfiguration: getInitialConfiguration,
-	}
+        getInitialConfiguration: getInitialConfiguration,
+    }
 }
 
 // })();

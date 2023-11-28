@@ -20,7 +20,7 @@
 				<BaseTable
 					:headers="['', 'id', 'Name', 'Is Admin', 'Is Owner', 'Is Deleted', 'Status', 'Groups', 'Roles']"
 					:items="members"
-					colls="50px repeat(9, 1fr)"
+					colls="50px repeat(8, 1fr)"
 					:cb="(id) => $router.push(`/settings/permissions/members/${stockMembers[id].id}`)"
 					class="clickable_rows"
 				>
@@ -106,7 +106,7 @@
 				<BaseTable
 					:headers="['', 'Id','User Code', 'Configuration Code',  'Name', ]"
 					:items="roles"
-					colls="50px repeat(5, 1fr)"
+					colls="50px repeat(4, 1fr)"
 					:cb="(id) => $router.push(`/settings/permissions/roles/${roles[id].id}`)"
 					class="clickable_rows"
 				>
@@ -191,6 +191,7 @@ definePageMeta({
 		}
 	],
 });
+
 const store = useStore()
 const route = useRoute();
 
@@ -240,46 +241,8 @@ let groupsRows = computed(() => {
 	})
 })
 
-async function init() {
-
-	if (route.query.tab && tabsList.includes(route.query.tab)) {
-		activeTab.value = route.query.tab;
-	}
-
-	/*let res = await useApi('memberList.get')
-	stockMembers.value = res.results
-
-	let groupsRes = await useApi('groupList.get')
-	groups.value = groupsRes.results
-
-	let rolesRes = await useApi('roleList.get')
-	roles.value = rolesRes.results
-
-	res = await useLoadAllPages('accessPolicyList.get', {
-		filters: {page: 1, page_size: 10000},
-	})
-	accessPolicies.value = res
-
-	res = await useApi('memberInvites.get')
-	stockInvites.value = res.results
-
-	let resStatus = await useApi('dataInstance.get')
-	statuses.value = resStatus.results*/
-	const res = await Promise.all([
-		useApi('memberList.get'),
-		useApi('groupList.get'),
-		useApi('roleList.get'),
-		useApi(
-			'accessPolicyList.get',
-			{filters: {page: 1, page_size: 10000},}
-		)
-	]);
-
-	stockMembers.value = res[0].results;
-	groups.value = res[1].results;
-	roles.value = res[2].results;
-	accessPolicies.value = res[3].results;
-
+function fromatDate(date) {
+	return dayjs(date).format('DD.MM.YYYY LT')
 }
 
 async function deleteMember(index) {
@@ -332,14 +295,52 @@ async function deleteRole(index) {
 	refresh()
 }
 
+async function init() {
+
+	if (route.query.tab && tabsList.includes(route.query.tab)) {
+		activeTab.value = route.query.tab;
+	}
+
+	/*let res = await useApi('memberList.get')
+	stockMembers.value = res.results
+
+	let groupsRes = await useApi('groupList.get')
+	groups.value = groupsRes.results
+
+	let rolesRes = await useApi('roleList.get')
+	roles.value = rolesRes.results
+
+	res = await useLoadAllPages('accessPolicyList.get', {
+		filters: {page: 1, page_size: 10000},
+	})
+	accessPolicies.value = res
+
+	res = await useApi('memberInvites.get')
+	stockInvites.value = res.results
+
+	let resStatus = await useApi('dataInstance.get')
+	statuses.value = resStatus.results*/
+	const res = await Promise.all([
+		useApi('memberList.get'),
+		useApi('groupList.get'),
+		useApi('roleList.get'),
+		useApi(
+			'accessPolicyList.get',
+			{filters: {page: 1, page_size: 10000},}
+		)
+	]);
+
+	stockMembers.value = res[0].results;
+	groups.value = res[1].results;
+	roles.value = res[2].results;
+	accessPolicies.value = res[3].results;
+
+}
+
 init()
 
 function refresh() {
 	init()
-}
-
-function fromatDate(date) {
-	return dayjs(date).format('DD.MM.YYYY LT')
 }
 </script>
 

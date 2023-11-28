@@ -18,84 +18,88 @@
 						<span class="material-icons arrow-icon">arrow_drop_down</span>
 					</button>
 
-					<FmMenu class="header_item header_icon_btn">
+					<FmMenu anchor="top left"
+									class="header_item header_icon_btn">
 						<template #btn="{ isOpen }">
-							<md-button
+
+							<button
 								class="g-cell-button g-row-settings-btn g-row-color-picker-btn"
 								:class="rowFilterColor"
-								@click="$mdOpenMenu($event)"
 							>
 								<span
 									class="material-icons label-icon"
 									v-if="rowFilterColor === 'none'"
-									>label_outline</span
+								>label_outline</span
 								>
 								<span class="material-icons" v-if="rowFilterColor !== 'none'"
-									>label</span
+								>label</span
 								>
 								<span class="material-icons arrow-icon">arrow_drop_down</span>
-							</md-button>
+							</button>
+
 						</template>
 
-						<div class="fm_list">
-							<md-menu-item>
-								<md-button
+						<div class="fm_the_table_menu3">
+							<div class="menu_item">
+								<button
 									class="g-cell-button g-row-color-picker-option"
 									@click="changeRowFilterColor('none')"
 								>
 									<span class="material-icons">label_outline</span>
-								</md-button>
-							</md-menu-item>
+								</button>
+							</div>
 
-							<md-menu-item>
-								<md-button
+							<div class="menu_item">
+								<button
 									class="g-cell-button g-row-color-picker-option red"
 									@click="changeRowFilterColor('red')"
 								>
 									<span class="material-icons">label</span>
-								</md-button>
-							</md-menu-item>
+								</button>
+							</div>
 
-							<md-menu-item>
-								<md-button
+							<div class="menu_item">
+								<button
 									class="g-cell-button g-row-color-picker-option yellow"
 									@click="changeRowFilterColor('yellow')"
 								>
 									<span class="material-icons">label</span>
-								</md-button>
-							</md-menu-item>
+								</button>
+							</div>
 
-							<md-menu-item>
-								<md-button
+							<div class="menu_item">
+								<button
 									class="g-cell-button g-row-color-picker-option green"
 									@click="changeRowFilterColor('green')"
 								>
 									<span class="material-icons">label</span>
-								</md-button>
-							</md-menu-item>
+								</button>
+							</div>
 
-							<md-menu-item>
-								<md-button
+							<div class="menu_item">
+								<button
 									class="g-cell-button g-row-color-picker-option divider"
 									@click="removeColorMarkFromAllRows($event)"
 								>
 									<span class="material-icons">label_off</span>
-								</md-button>
-							</md-menu-item>
+								</button>
+							</div>
+
 						</div>
 					</FmMenu>
 				</div>
 
-				<md-button class="g-row-settings-toggle" @click="rowFiltersToggle()">
+				<button class="g-row-settings-toggle"
+								@click="rowFiltersToggle()">
 					<div class="center aic height-100">
 						<span v-show="!hideRowSettings" class="material-icons f-s-16"
-							>keyboard_arrow_left</span
+						>keyboard_arrow_left</span
 						>
 						<span v-show="hideRowSettings" class="material-icons f-s-16"
-							>keyboard_arrow_right</span
+						>keyboard_arrow_right</span
 						>
 					</div>
-				</md-button>
+				</button>
 			</div>
 
 			<div
@@ -103,12 +107,14 @@
 				class="flex-row g-groups-holder gGroupsHolder gcAreaDnD"
 			>
 				<AngularFmGridTableColumnCell
-					v-for="(column, index) in groups"
-					:column="column"
-					:style="column.style"
-					:isGroup="true"
-					:key="index + '_' + column.___column_id"
+					v-for="(column, index) in groupsRef"
+					:key="column.key"
+					:item="column"
+					:itemIndex="index"
 					:isReport="isReport"
+					:isGroup="true"
+					:viewContext="viewContext"
+					:style="column.style"
 					@sort="
 						changeSortDirection(
 							column,
@@ -117,22 +123,22 @@
 					"
 					@groupUnfold="unfoldLevel(column, index)"
 					@groupFold="foldLevel(column, index)"
-					:popup-data="columnsPopupsData[column.key]"
 				/>
 			</div>
 
 			<div class="flex-row width-100 g-cols-holder gColumnsHolder gcAreaDnD">
 				<AngularFmGridTableColumnCell
 					v-for="(column, index) in columnsToShow"
-					:column="column"
-					:style="column.style"
-					:key="index + '_' + column.___column_id"
+					:key="column.key"
+					:item="column"
+					:itemIndex="index"
 					:isReport="isReport"
-					:popup-data="columnsPopupsData[column.key]"
+					:viewContext="viewContext"
+					:style="column.style"
 					@sort="
 						changeSortDirection(
 							column,
-							column?.options.sort == 'DESC' ? 'ASC' : 'DESC'
+							column?.options.sort === 'DESC' ? 'ASC' : 'DESC'
 						)
 					"
 				/>
@@ -143,91 +149,62 @@
 			</div>
 		</div>
 
-		<LazyFmAttributesSelectModal
-			v-if="$mdDialog.modals['AttributesSelectorDialogController']"
-			:modelValue="true"
-			class="m-b-24"
-			:multiselect="true"
-			:selected="
-				$mdDialog.modals['AttributesSelectorDialogController'].data
-					.selectedAttributes
-			"
-			:title="$mdDialog.modals['AttributesSelectorDialogController'].data.title"
-			:attributes="
-				$mdDialog.modals['AttributesSelectorDialogController'].data.attributes
-			"
-			:contentType="contentType"
-			@save="
-				(selected) => {
-					$mdDialog.modals['AttributesSelectorDialogController'].resolve({
-						status: 'agree',
-						data: { items: selected },
-					})
-					delete $mdDialog.modals['AttributesSelectorDialogController']
-				}
-			"
-			@close="
-				() => {
-					$mdDialog.modals['AttributesSelectorDialogController'].resolve({})
-					delete $mdDialog.modals['AttributesSelectorDialogController']
-				}
-			"
-		/>
-		<LazyFmAttributesSelectModal
-			v-if="$mdDialog.modals['AttributesSelectorFilters']"
-			:modelValue="true"
-			class="m-b-24"
-			:multiselect="true"
-			:selected="
-				$mdDialog.modals['AttributesSelectorFilters'].data.selectedAttributes
-			"
-			:title="$mdDialog.modals['AttributesSelectorFilters'].data.title"
-			:attributes="
-				$mdDialog.modals['AttributesSelectorFilters'].data.attributes
-			"
-			:contentType="contentType"
-			@selectedAttributesChanged="
-				(selected) => {
-					$mdDialog.modals['AttributesSelectorFilters'].resolve({
-						status: 'agree',
-						data: { items: selected },
-					})
-					delete $mdDialog.modals['AttributesSelectorFilters']
-				}
-			"
-			@close="
-				() => {
-					$mdDialog.modals['AttributesSelectorFilters'].resolve({})
-					delete $mdDialog.modals['AttributesSelectorFilters']
-				}
-			"
-		/>
+		<!--		<LazyFmAttributesSelectModal
+					v-if="$mdDialog.modals['AttributesSelectorDialogController']"
+					:modelValue="true"
+					class="m-b-24"
+					:multiselect="true"
+					:selected="
+						$mdDialog.modals['AttributesSelectorDialogController'].data
+							.selectedAttributes
+					"
+					:title="$mdDialog.modals['AttributesSelectorDialogController'].data.title"
+					:attributes="
+						$mdDialog.modals['AttributesSelectorDialogController'].data.attributes
+					"
+					:contentType="contentType"
+					@save="
+						(selected) => {
+							$mdDialog.modals['AttributesSelectorDialogController'].resolve({
+								status: 'agree',
+								data: { items: selected },
+							})
+							delete $mdDialog.modals['AttributesSelectorDialogController']
+						}
+					"
+					@close="
+						() => {
+							$mdDialog.modals['AttributesSelectorDialogController'].resolve({})
+							delete $mdDialog.modals['AttributesSelectorDialogController']
+						}
+					"
+				/>-->
 
-		<LazyModalNumberFormat
-			v-if="$mdDialog.modals['NumberFormatSettingsDialogController']"
-			:modelValue="true"
-			:multiselect="true"
-			:settings="
-				$mdDialog.modals['NumberFormatSettingsDialogController'].data.settings
-			"
-			@save="
-				(settings) => {
-					$mdDialog.modals['NumberFormatSettingsDialogController'].resolve({
-						status: 'agree',
-						data: { settings: settings },
-					})
-					delete $mdDialog.modals['NumberFormatSettingsDialogController']
-				}
-			"
-			@close="
-				() => {
-					$mdDialog.modals['NumberFormatSettingsDialogController'].resolve({})
-					delete $mdDialog.modals['NumberFormatSettingsDialogController']
-				}
-			"
-		/>
+		<!--		<LazyModalNumberFormat
+					v-if="$mdDialog.modals['NumberFormatSettingsDialogController']"
+					:modelValue="true"
+					:multiselect="true"
+					:settings="
+						$mdDialog.modals['NumberFormatSettingsDialogController'].data.settings
+					"
+					@save="
+						(settings) => {
+							$mdDialog.modals['NumberFormatSettingsDialogController'].resolve({
+								status: 'agree',
+								data: { settings: settings },
+							})
+							delete $mdDialog.modals['NumberFormatSettingsDialogController']
+						}
+					"
+					@close="
+						() => {
+							$mdDialog.modals['NumberFormatSettingsDialogController'].resolve({})
+							delete $mdDialog.modals['NumberFormatSettingsDialogController']
+						}
+					"
+				/>-->
 
-		<BaseModal
+<!--		<BaseModal
 			v-if="$mdDialog.modals['RenameFieldDialogController']"
 			:modelValue="true"
 			title="Rename column"
@@ -238,13 +215,13 @@
 				}
 			"
 		>
-			<BaseInput readonly label="ID" v-model="renemedColumn.key" />
+			<BaseInput readonly label="ID" v-model="columnToRename.key" />
 			<BaseInput
 				readonly
-				:label="renemedColumn.__isOriginal ? 'Original' : 'Current'"
-				:modelValue="renemedColumn.oldName"
+				label="Original"
+				:modelValue="columnToRename.name"
 			/>
-			<BaseInput label="Name" v-model="renemedColumn.layout_name" />
+			<BaseInput label="Name" v-model="columnToRename.layout_name" />
 
 			<template #controls>
 				<div class="flex sb">
@@ -256,7 +233,7 @@
 								delete $mdDialog.modals['RenameFieldDialogController']
 							}
 						"
-						>cancel</FmBtn
+					>cancel</FmBtn
 					>
 
 					<FmBtn
@@ -268,11 +245,42 @@
 								delete $mdDialog.modals['RenameFieldDialogController']
 							}
 						"
-						>save</FmBtn
+					>save</FmBtn
 					>
 				</div>
 			</template>
-		</BaseModal>
+		</BaseModal>-->
+
+		<LazyBaseModal
+			v-if="renameOpened"
+			v-model="renameOpened"
+			title="Rename"
+			@close="columnToRename = null"
+		>
+			<BaseInput readonly label="ID" v-model="columnToRename.key" />
+			<BaseInput
+				readonly
+				label="Original"
+				:modelValue="columnToRename.name"
+			/>
+			<BaseInput label="Name" v-model="columnToRename.layout_name" />
+
+			<template #controls="{ cancel }">
+				<div class="flex sb">
+
+					<FmBtn
+						type="text"
+						@click="cancel()"
+					>cancel</FmBtn>
+
+					<FmBtn
+						@click="renameColumn(cancel)"
+					>save</FmBtn>
+				</div>
+			</template>
+
+		</LazyBaseModal>
+
 	</div>
 </template>
 
@@ -286,6 +294,7 @@
 	import rvDataHelper from '@/angular/helpers/rv-data.helper'
 
 	import localStorageService from '@/angular/shell/scripts/app/services/localStorageService'
+  import {useGetEvRvParents} from "~/composables/useEntityReportViewer";
 
 	const props = defineProps([
 		'vm',
@@ -294,40 +303,90 @@
 		'attributeDataService',
 		'contentWrapElement',
 	])
+
+	const evAttrsStore = useEvAttributesStore();
+
 	const $mdDialog = inject('$mdDialog')
-	/**
-	 * Created by szhitenev on 05.05.2016.
-	 */
 
-	// export default function (
-	// 	$mdDialog,
-	// 	toastNotificationService,
-	// 	usersService,
-	// 	globalDataService,
-	// 	uiService,
-	// 	evRvDomManagerService
-	// ) {
 	const {
-		evDataService,
-		evEventService,
-		attributeDataService,
-		contentWrapElement,
-	} = props
-
-	const isOpenAttrsSelector = ref(false)
-
-	let columns = evDataService.getColumns()
-
-	let groups = ref(null)
-	groups.value = evDataService.getGroups()
-	let columnsToShow = ref([])
+			evDataService,
+			evEventService,
+			attributeDataService,
+			contentWrapElement,
+		} = props
 
 	let viewContext = evDataService.getViewContext()
 	// let isReport = metaService.isReport(entityType);
+	let contentType = evDataService.getContentType()
 	let isReport = evDataService.isEntityReport()
 
 	let entityType = evDataService.getEntityType()
-	let rowStatusFilterIcon = `<span class="material-icons">star_outline</span>`
+	let rowStatusFilterIcon = `<span class="material-icons">star_outline</span>`;
+
+  let dataIsLoadingRef = ref(null);
+
+	const getColumns = () => {
+		return JSON.parse(JSON.stringify( evDataService.getColumns() ));
+	};
+
+	const setColumns = (columns) => {
+		evDataService.setColumns( JSON.parse(JSON.stringify( columns )) );
+	};
+
+	/**
+	 *
+	 * @param key
+	 * @return {Object} - column from entityViewerDataService
+	 */
+	const getColumnByKey = key => {
+
+		const columnsList = evDataService.getColumns();
+		const column = columnsList.find(col => col.key === key);
+
+		if (!column) {
+			throw new Error(`No column found with the key: ${key}`)
+		}
+
+		return column;
+
+	};
+
+	/**
+	 * Update column inside entityViewerDataService
+	 *
+	 * @param columnData
+	 */
+	const setColumn = columnData => {
+
+		const columnsList = evDataService.getColumns();
+		const colIndex = columnsList.findIndex(
+			col => col.key === columnData.key
+		);
+
+		if (!colIndex) {
+			throw new Error(`No column found with the key: ${columnData.key}`)
+		}
+
+		columnsList[colIndex] = columnData;
+
+	};
+
+	function getGroups() {
+		return JSON.parse(JSON.stringify( evDataService.getGroups() ));
+	}
+
+	function setGroups(groups) {
+		return evDataService.setGroups( JSON.parse(JSON.stringify( groups )) );
+	}
+
+	const isOpenAttrsSelector = ref(false)
+
+	let columns = ref( getColumns() );
+
+	let groupsRef = ref(null)
+	groupsRef.value = getGroups();
+
+	// let columnsToShow = ref([])
 
 	let filters = evDataService.getFilters()
 	/**
@@ -336,25 +395,39 @@
 	 */
 	let showFrontEvFilters = !isReport && filters.frontend.length > 0
 
-	let isSubtotalWeightedShouldBeExcluded = function (column) {
-		return [
-			'market_value',
-			'market_value_percent',
-			'exposure',
-			'exposure_percent',
-		].some((excludedKey) => column.key === excludedKey)
-	}
-	const getColumnsToShow = function () {
+	/**
+	 * Needed because columns inside dashboard
+	 * can be different from columns saved in an ev / rv layout
+	 *
+	 * @type {ComputedRef<Array>}
+	 */
+	const columnsToShow = computed(() => {
 		if (isReport) {
-			return evDataHelper.separateNotGroupingColumns(columns, groups.value)
+			return evDataHelper.separateNotGroupingColumns(columns.value, groupsRef.value)
 		} else {
-			return columns
+			return columns.value
 		}
-	}
+	})
 
-	// Victor 2021.03.29 #88 fix bug with deleted custom fields
-	let customFields =
-		attributeDataService.getCustomFieldsByEntityType(entityType)
+	/*const getColumnsToShow = function () {
+		if (isReport) {
+			return evDataHelper.separateNotGroupingColumns(columns, groupsRef.value)
+		} else {
+			return columns.value
+		}
+	}*/
+	/*let customFields =
+		attributeDataService.getCustomFieldsByEntityType(entityType)*/
+	let customFields = computed(() => {
+		return evAttrsStore.customFields[contentType];
+	})
+
+	watch(
+		customFields,
+		() => {
+			collectMissingCustomFieldsErrors()
+		}
+	)
 
 	/**
 	 * Collects errors from columns.
@@ -368,8 +441,10 @@
 			itemType,
 			errorsList
 		) {
+
 			if (item.key.startsWith('custom_fields')) {
-				const customField = customFields.find(
+
+				const customField = customFields.value.find(
 					(field) => item.key === `custom_fields.${field.user_code}`
 				)
 
@@ -391,31 +466,41 @@
 					errorsList.push(error)
 				}
 			}
+
+			return item;
+
 		}
 
 		if (isReport) {
-			groups.value = evDataService.getGroups()
 
-			groups.value.forEach((group) => {
-				markItemUsingMissingCustomField(group, 'group', groupsErrorsList)
+			let groupsList = evDataService.getGroups();
+
+			groupsList = groupsList.map(group => {
+				return markItemUsingMissingCustomField(group, 'group', groupsErrorsList)
 			})
+
+			evDataService.setGroups(groupsList);
+
 		}
 
-		let columns = evDataService.getColumns()
+		// columns.value = JSON.parse(JSON.stringify( evDataService.getColumns() ));
+		let colsList = evDataService.getColumns();
 
-		columns.forEach((column) => {
-			markItemUsingMissingCustomField(column, 'column', columnsErrorsList)
+		colsList = colsList.map(column => {
+			return markItemUsingMissingCustomField(column, 'column', columnsErrorsList)
 		})
+
+		evDataService.setColumns(colsList);
 
 		evDataService.setMissingCustomFields({
 			forColumns: columnsErrorsList,
 			forGroups: groupsErrorsList,
 		})
+
 	}
 
 	let components = evDataService.getComponents()
 	let downloadedItemsCount = null
-	let contentType = evDataService.getContentType()
 	let columnAreaCollapsed = false
 
 	let isAllSelected = ref(evDataService.getSelectAllRowsState())
@@ -427,45 +512,16 @@
 	let dynamicAttrs = []
 
 	// var keysOfColsToHide = [];
-	let popupData
-	function onSubtotalSumClick(column) {
-		popupData = columnsPopupsData[column.key].data
 
-		if (popupData) {
-			popupData.isSubtotalAvgWeighted = false
-			popupData.isSubtotalWeighted = false
-			popupData.isTemporaryWeighted = false
-			popupData.isSubtotalSum = !popupData.isSubtotalSum
-		}
+	/**
+	 *
+	 * @param {Object} column
+	 * @param {Function} closeCb - callback to close FmMenu
+	 * @return {Promise<void>}
+	 */
+	async function openNumberFormatDialog(column, closeCb) {
 
-		selectSubtotalType(column, 1)
-	}
-
-	function onSubtotalWeightedClick(column) {
-		popupData = columnsPopupsData[column.key].data
-		console.log('popupData:', popupData)
-
-		if (popupData) {
-			popupData.isSubtotalSum = false
-			popupData.isSubtotalAvgWeighted = false
-			popupData.isTemporaryWeighted = true
-			popupData.isSubtotalWeighted = !popupData.isSubtotalWeighted
-		}
-	}
-
-	function onSubtotalAvgWeightedClick(column) {
-		popupData = columnsPopupsData[column.key].data
-
-		if (popupData) {
-			popupData.isSubtotalSum = false
-			popupData.isSubtotalWeighted = false
-			popupData.isTemporaryWeighted = true
-			popupData.isSubtotalAvgWeighted = !popupData.isSubtotalAvgWeighted
-		}
-	}
-
-	async function openNumberFormatDialog(column) {
-		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
+		closeCb();
 
 		let dialogData = {
 			settings: {},
@@ -478,9 +534,7 @@
 		}
 		// for old layouts
 		if (
-			isReport &&
-			column.options &&
-			!column.options.hasOwnProperty('numberFormat')
+			isReport && !column.options?.hasOwnProperty('numberFormat')
 		) {
 			dialogData.settings = column.report_settings
 		}
@@ -504,30 +558,14 @@
 
 			evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 			evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
+
 		}
+
 	}
 
 	// Victor 2020.12.14 #69 New report viewer design
 	let rowFilterColor = 'none'
 
-	let columnsPopupsData = null
-
-	function makePopupDataForColumns(columns) {
-		columnsPopupsData = {}
-
-		columns.forEach((column, index) => {
-			var matchingGroup = groups.value.find((group) => group.key === column.key)
-			var item = matchingGroup || column
-
-			columnsPopupsData[column.key] = {
-				data: getPopupData(item, index, !!matchingGroup),
-			}
-		})
-	}
-
-	let onSubtotalTypeSelectCancel = function () {
-		makePopupDataForColumns(columns)
-	}
 	let checkForFilteringBySameAttr
 
 	let getPopupMenuTemplate = function (column) {
@@ -550,7 +588,7 @@
 		hideRowSettings.value = !hideRowSettings.value
 		/* var rowColorsColumnCollapsed = evDataService.getRowColorsColumnData();
 
-	                   rowColorsColumnCollapsed = !rowColorsColumnCollapsed; */
+										 rowColorsColumnCollapsed = !rowColorsColumnCollapsed; */
 
 		var rowSettings = evDataService.getRowSettings(hideRowSettings.value)
 
@@ -625,16 +663,16 @@
 
 	let showArrowDown = ($event) => {
 		/* activeNameBlockElement = $event.target.closest('.name-block');
-	                   activeNameBlockElement.classList.add('active'); */
+										 activeNameBlockElement.classList.add('active'); */
 		columnWithOpenSortMenuElem = $event.target.closest('.gColumnElem')
 		columnWithOpenSortMenuElem.classList.add('sort-menu-opened')
 	}
 
 	let hideArrowDown = () => {
 		/* if (activeNameBlockElement) {
-	                       activeNameBlockElement.classList.remove('active');
-	                       activeNameBlockElement = null;
-	                   } */
+												 activeNameBlockElement.classList.remove('active');
+												 activeNameBlockElement = null;
+										 } */
 		if (columnWithOpenSortMenuElem) {
 			columnWithOpenSortMenuElem.classList.remove('sort-menu-opened')
 			columnWithOpenSortMenuElem = null
@@ -664,34 +702,54 @@
 	}
 
 	let changeSortDirection = function (columnOrGroup, direction) {
-		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
 
 		if (!columnOrGroup.options) columnOrGroup.options = {}
 
 		columnOrGroup.options.sort = direction
-		sort(columnOrGroup)
+		sortDeb(columnOrGroup)
+
 	}
 
 	const signalSortChange = function (columnOrGroup) {
-		if (columnHasCorrespondingGroup(columnOrGroup.key)) {
-			const placeholder1 = groups.value.find(
-				(group) => group.key === columnOrGroup.key
-			)
-			placeholder1.options.sort = columnOrGroup.options.sort
-			placeholder1.options.sort_settings = columnOrGroup.options.sort_settings
+    /* *
+     * For some reason dispatch evEvents.DATA_LOAD_START from
+     * ev-data-provider.service -> getObjects() do not register.
+     * Whence dataIsLoading = true;
+     * */
+    columnsData.dataIsLoading = true;
 
-			evDataService.setGroups(groups.value)
+    if ( isReport && columnHasCorrespondingGroup(columnOrGroup.key) ) {
 
-			evDataService.setActiveGroupTypeSort(columnOrGroup)
-			evEventService.dispatchEvent(evEvents.GROUP_TYPE_SORT_CHANGE)
-		} else {
-			evDataService.setActiveColumnSort(columnOrGroup)
-			evEventService.dispatchEvent(evEvents.COLUMN_SORT_CHANGE)
-		}
+      const groupsList = evDataService.getGroups();
+
+      const group = groupsList.find(group => group.key === columnOrGroup.key);
+      group.options.sort = columnOrGroup.options.sort;
+      group.options.sort_settings = columnOrGroup.options.sort_settings;
+
+      evDataService.setGroups(groupsList);
+
+      evDataService.setActiveGroupTypeSort(
+          JSON.parse(JSON.stringify( columnOrGroup ))
+      );
+
+      evEventService.dispatchEvent(evEvents.GROUP_TYPE_SORT_CHANGE);
+
+    }
+    else {
+
+      evDataService.setActiveGroupTypeSort(
+          JSON.parse(JSON.stringify( columnOrGroup ))
+      );
+
+      evEventService.dispatchEvent(evEvents.COLUMN_SORT_CHANGE);
+
+    }
+
 	}
 
 	const sort = function (columnOrGroup) {
-		if (columnOrGroup.options.sort_settings.mode === 'manual') {
+
+    if (columnOrGroup.options.sort_settings.mode === 'manual') {
 			// manual sort handler
 
 			uiService
@@ -701,21 +759,33 @@
 					},
 				})
 				.then(function (data) {
-					if (data.results.length) {
-						var layout = data.results[0]
+
+          if (data.results.length) {
+
+            var layout = data.results[0]
 
 						evDataService.setColumnSortData(columnOrGroup.key, layout.data)
 
 						signalSortChange(columnOrGroup)
+
 					} else {
-						toastNotificationService.error('Manual Sort is not configured')
+
+            useNotify({type: 'error', title: 'Manual Sort is not configured'})
 						columnOrGroup.options.sort_settings.layout_user_code = null
+
 					}
+
 				})
+
 		} else {
 			signalSortChange(columnOrGroup)
 		}
+
 	}
+
+  const sortDeb = useDebounce(function (columnOrGroup) {
+    sort(columnOrGroup);
+  }, 500);
 
 	// <Victor 2021.04.07 #90 sort setting for column>
 
@@ -799,7 +869,13 @@
 		return allAttrsList
 	}
 
-	let reportSetSubtotalType = function (group, type) {
+	/**
+	 *
+	 * @param group
+	 * @param type
+	 * @param {Function} closeCb - - callback to close FmMenu
+	 */
+	let reportSetSubtotalType = function (group, type, closeCb) {
 		if (
 			!group.hasOwnProperty('report_settings') ||
 			group.report_settings === undefined
@@ -813,27 +889,12 @@
 			group.report_settings.subtotal_type = type
 		}
 
+		closeCb();
+
 		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
 	}
 
-	let columnHasCorrespondingGroup = function (columnKey) {
-		var groupIndex = groups.value.findIndex((group) => group.key === columnKey)
-
-		return groupIndex > -1
-	}
-
-	let checkReportSortButton = function (column, index) {
-		if (isReport && index < groups.value.length) {
-			if (column.key === groups[index].key) {
-				return false
-			}
-
-			return true
-		}
-
-		return true
-	}
 
 	/**
 	 * @param dataList {Array<Object>} - For rv list of all groups' data. For ev list of selected groups' data.
@@ -864,165 +925,167 @@
 	watch(isAllSelected, selectAllRows)
 
 	function selectAllRows() {
-		var flatList
-		var dataList = []
-		// var activateItems;
 
-		if (isReport) {
-			flatList = rvDataHelper.getFlatStructure(evDataService)
-		} else {
-			flatList = evDataHelper.getObjectsFromSelectedGroups(
-				evDataService,
-				globalDataService
-			)
-		}
+    console.time('Selecting all rows');
 
-		flatList.forEach(function (item) {
-			if (item.___type === 'object') {
-				item.___is_activated = isAllSelected.value
-			}
-		})
+    let flatList;
+    let dataList;
 
-		if (isReport) {
-			/* dataList.forEach(function (dataListItem) {
+    if (isReport) {
+      flatList = rvDataHelper.getFlatStructure(evDataService);
 
-	                           if (dataListItem.results && dataListItem.results.length) {
+    } else {
+      flatList = evDataHelper.getObjectsFromSelectedGroups(evDataService, globalDataService);
+    }
 
-	                               dataListItem.results.forEach(function (childItem) {
+    isAllSelected = evDataService.getSelectAllRowsState();
 
-	                                   childItem.___is_activated = false;
+    isAllSelected = !isAllSelected;
 
-	                                   flatList.forEach(function (item) {
+    flatList.forEach(function (item) {
+      if (item.___type === 'object') {
+        item.___is_activated = isAllSelected;
+      }
+    });
 
-	                                       if (childItem.___id === item.___id) {
+    if (isReport) {
 
-	                                           childItem.___is_activated = item.___is_activated
+      dataList = evDataService.getDataAsList();
 
-	                                       }
+    }
+    else {
 
-	                                   })
+      let groupsIds = evDataService.getSelectedGroups();
 
+      if (!groupsIds.length) {
+        groupsIds = [ evDataService.getRootGroupData() ];
+      }
 
-	                               });
+      groupsIds = groupsIds.map(group => group.___id);
 
-	                           }
+      dataList = evDataService.getDataAsList();
 
+      dataList = dataList.filter(item => {
+        return groupsIds.includes(item.___parentId);
+      })
 
-	                       }); */
-			dataList = evDataService.getDataAsList()
-		} else {
-			var selGroups = evDataService.getSelectedGroups()
+    }
 
-			if (selGroups.length) {
-				selGroups.forEach(function (sGroup) {
-					var rawData = evDataService.getData(sGroup.___id)
-					dataList.push(rawData)
-				})
-			} else {
-				var rawData = evDataService.getRootGroupData()
+    selectRowsInsideData(dataList);
 
-				dataList.push(rawData)
-			}
-		}
+    evDataService.setSelectAllRowsState(isAllSelected);
 
-		selectRowsInsideData(dataList)
+    evDataService.setFlatList(flatList);
 
-		evDataService.setSelectAllRowsState(isAllSelected.value)
+    evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+    evEventService.dispatchEvent(evEvents.ROW_ACTIVATION_CHANGE);
 
-		evDataService.setFlatList(flatList)
+    console.timeEnd('Selecting all rows');
 
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
-		evEventService.dispatchEvent(evEvents.ROW_ACTIVATION_CHANGE)
-	}
+  }
 
 	let isColumnFloat = function (column) {
 		return column.value_type == 20
 	}
 
 	let sortHandler = function (column, sort) {
-		if (!column.options) column.options = {}
-		if (!column.options.sort_settings) column.options.sort_settings = {}
 
-		if (column.options.sort_settings.layout_user_code) {
-			// manual sort handler
+    if (!column.options) column.options = {};
+    if (!column.options.sort_settings) column.options.sort_settings = {};
 
-			uiService
-				.getColumnSortDataList({
-					filters: {
-						user_code: column.options.sort_settings.layout_user_code,
-					},
-				})
-				.then(function (data) {
-					if (data.results.length) {
-						var layout = data.results[0]
+    if (column.options.sort_settings.layout_user_code) { // manual sort handler
 
-						evDataService.setColumnSortData(column.key, layout.data)
+      uiService.getColumnSortDataList({
+        filters: {
+          user_code: column.options.sort_settings.layout_user_code
+        }
+      }).then(function (data) {
 
-						var i
-						for (i = 0; i < columns.length; i = i + 1) {
-							if (!columns[i].options) {
-								columns[i].options = {}
-							}
-							columns[i].options.sort = null
-						}
+        if (data.results.length) {
 
-						column.options.sort = sort
-						column.options.sort_settings.mode = 'manual'
+          var layout = data.results[0];
 
-						evDataService.setActiveColumnSort(column)
+          evDataService.setColumnSortData(column.key, layout.data)
 
-						if (isReport) {
-							columnsToShow.value = getColumnsToShow()
-						}
+          var i;
+          for (i = 0; i < columns.length; i = i + 1) {
+            if (!columns[i].options) {
+              columns[i].options = {};
+            }
+            columns[i].options.sort = null;
+          }
 
-						collectMissingCustomFieldsErrors()
-						evEventService.dispatchEvent(evEvents.COLUMN_SORT_CHANGE)
-					} else {
-						toastNotificationService.error('Manual Sort is not configured')
+          column.options.sort = sort;
+          column.options.sort_settings.mode = 'manual';
 
-						column.options.sort_settings.layout_user_code = null
-					}
-				})
-		} else {
-			// default sort handler
+          console.log('sortHandler.column', column);
 
-			var i
-			for (i = 0; i < columns.length; i = i + 1) {
-				if (!columns[i].options) {
-					columns[i].options = {}
-				}
-				columns[i].options.sort = null
-			}
+          evDataService.setActiveColumnSort(column);
 
-			column.options.sort = sort
-			column.options.sort_settings.mode = 'default'
+          if (isReport) {
+            columns.value = getColumns();
+          }
 
-			console.log('sortHandler.column', column)
+          collectMissingCustomFieldsErrors();
+          evEventService.dispatchEvent(evEvents.COLUMN_SORT_CHANGE);
 
-			var columns = evDataService.getColumns()
+        } else {
 
-			columns.forEach(function (item) {
-				if (column.key === item.key) {
-					item = column
-				}
-			})
+          useNotify({type: 'error', title: "Manual Sort is not configured"});
 
-			evDataService.setActiveColumnSort(column)
+          column.options.sort_settings.layout_user_code = null;
 
-			evDataService.setColumns(columns)
+        }
 
-			columnsToShow.value = getColumnsToShow()
+      })
 
-			collectMissingCustomFieldsErrors()
 
-			evEventService.dispatchEvent(evEvents.COLUMN_SORT_CHANGE)
-		}
+    }
+    else { // default sort handler
+
+      let columnsList = evDataService.getColumns();
+
+      var i;
+      for (i = 0; i < columnsList.length; i = i + 1) {
+        if (!columnsList[i].options) {
+          columnsList[i].options = {};
+        }
+        columnsList[i].options.sort = null;
+      }
+
+      column.options.sort = sort;
+      column.options.sort_settings.mode = 'default';
+
+      console.log('sortHandler.column', column);
+
+      /*columnsList.forEach(function (item) {
+
+        if (column.key === item.key) {
+          item = column;
+        }
+
+      });*/
+      const columnIndex = columnsList.findIndex(col => col.key === column.key);
+      columnsList[columnIndex] = structuredClone(column);
+
+      evDataService.setActiveColumnSort(column);
+
+      evDataService.setColumns(columns);
+
+      columns.value = getColumns();
+
+      collectMissingCustomFieldsErrors();
+
+      evEventService.dispatchEvent(evEvents.COLUMN_SORT_CHANGE);
+
+    }
+
 	}
 
-	let groupsSortHandler = function (groupIndex, sort) {
+	/*let groupsSortHandler = function (groupIndex, sort) {
 		// reset sorting for other groups
 		var i
-		for (i = 0; i < groups.value.length; i = i + 1) {
+		for (i = 0; i < groupsRef.value.length; i = i + 1) {
 			if (!groups[i].options) {
 				groups[i].options = {}
 			}
@@ -1032,183 +1095,19 @@
 		console.log('groups sorting group', group)
 		group.options.sort = sort
 
-		groups.value = evDataService.getGroups()
+		groupsRef.value = getGroups();
 
-		groups.value.forEach(function (item) {
+		groupsRef.value.forEach(function (item) {
 			if (group.key === item.key || group.id === item.id) {
 				item = group
 			}
 		})
 
-		evDataService.setGroups(groups.value)
+		setGroups(groupsRef.value)
 		evDataService.setActiveGroupTypeSort(group)
 
 		evEventService.dispatchEvent(evEvents.GROUP_TYPE_SORT_CHANGE)
-	}
-
-	let selectSubtotalType = function (column, type) {
-		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
-
-		if (!column.hasOwnProperty('report_settings')) {
-			column.report_settings = {}
-		}
-
-		if (column.report_settings.subtotal_formula_id == type) {
-			column.report_settings.subtotal_formula_id = null
-		} else {
-			column.report_settings.subtotal_formula_id = type
-		}
-
-		popupData = columnsPopupsData[column.key].data
-
-		if (popupData) {
-			popupData.isTemporaryWeighted = false
-		}
-
-		// makePopupDataForColumns(columns)
-
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
-		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
-	}
-
-	function getSubtotalFormula(column) {
-		if (column.hasOwnProperty('report_settings')) {
-			return column.report_settings.subtotal_formula_id
-		}
-
-		return null
-	}
-
-	function isSubtotalSum(column) {
-		const subtotalFormula = getSubtotalFormula(column)
-		return subtotalFormula === 1
-	}
-
-	function isSubtotalWeighted(column) {
-		const subtotalFormula = getSubtotalFormula(column)
-		return subtotalFormula >= 2 && subtotalFormula <= 5
-	}
-
-	function isSubtotalAvgWeighted(column) {
-		const subtotalFormula = getSubtotalFormula(column)
-		return subtotalFormula >= 6 && subtotalFormula <= 9
-	}
-
-	let checkSubtotalFormula = function (column, type) {
-		if (column.hasOwnProperty('report_settings') && column.report_settings) {
-			if (column.report_settings.subtotal_formula_id === type) {
-				return true
-			}
-		}
-
-		return false
-	}
-
-	/**
-	 * Can be called by a group.
-	 *
-	 * @param itemKey {string} - key of column or group
-	 * @param $mdMenu {Object} - object with data of $mdMenu
-	 * @param $event {Object} event object
-	 * @param _$popup
-	 */
-
-	let renemedColumn = ref(null)
-	let renameColumn = async function (itemKey) {
-		let column = columns.find((column) => column.key === itemKey)
-
-		renemedColumn.value = structuredClone(column)
-		renemedColumn.value.oldName =
-			renemedColumn.value.layout_name || renemedColumn.value.name
-
-		if (!renemedColumn.value.layout_name) {
-			renemedColumn.value.__isOriginal = true
-		}
-		let res = await $mdDialog.show({
-			controller: 'RenameFieldDialogController as vm',
-			templateUrl: 'views/dialogs/rename-field-dialog-view.html',
-			locals: {
-				data: renemedColumn.value,
-			},
-		})
-
-		if (res.status == 'agree') {
-			delete renemedColumn.value.__isOriginal
-			column.layout_name = renemedColumn.value.layout_name
-			evDataService.setColumns(columns)
-
-			if (columnHasCorrespondingGroup(renemedColumn.value.key)) {
-				var group = groups.value.find((group) => group.key === itemKey)
-
-				group.layout_name = renemedColumn.value.layout_name
-
-				evDataService.setGroups(renemedColumn.value)
-			}
-
-			const filters = evDataService.getFilters()
-
-			if (isReport) {
-				const filter = filters.find(
-					(filter) => filter.key === renemedColumn.value.key
-				)
-
-				if (filter) {
-					filter.layout_name = renemedColumn.value.layout_name
-
-					evDataService.setFilters(filters)
-
-					evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
-				}
-			} else {
-				let filterLayoutNameChanged = false
-
-				for (var filtersProp in filters) {
-					// search among front and back filters
-
-					const filter = filters[filtersProp].find(
-						(filter) => filter.key === renemedColumn.value.key
-					)
-
-					if (filter) {
-						filter.layout_name = renemedColumn.value.layout_name
-						filterLayoutNameChanged = true
-					}
-				}
-
-				if (filterLayoutNameChanged) {
-					evDataService.setFilters(filters)
-					evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
-				}
-			}
-
-			columnsToShow.value = getColumnsToShow()
-		}
-	}
-
-	let resizeColumn = function (column, $mdMenu, $event) {
-		if ($mdMenu) {
-			$mdMenu.close()
-		} else {
-			evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
-		}
-
-		$mdDialog
-			.show({
-				controller: 'ResizeFieldDialogController as vm',
-				templateUrl: 'views/dialogs/resize-field-dialog-view.html',
-				parent: angular.element(document.body),
-				targetEvent: $event,
-				locals: {
-					data: column,
-				},
-			})
-			.then(function (res) {
-				if (res.status === 'agree') {
-					evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
-					evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
-				}
-			})
-	}
+	}*/
 
 	let checkColTextAlign = function (column, type) {
 		if (column.hasOwnProperty('style') && column.style) {
@@ -1220,7 +1119,13 @@
 		return false
 	}
 
-	let changeColumnTextAlign = function (column, type) {
+	/**
+	 *
+	 * @param column
+	 * @param type
+	 * @param {Function} closeCb - callback to close FmMenu
+	 */
+	let changeColumnTextAlign = function (column, type, closeCb) {
 		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
 
 		if (!column.hasOwnProperty('style')) {
@@ -1233,6 +1138,7 @@
 			column.style.text_align = type
 		}
 
+		closeCb();
 		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 	}
 
@@ -1376,204 +1282,101 @@
 		return true
 	}
 
-	let activateColumnNumberRenderingPreset = function (column, rendPreset) {
-		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
 
-		if (!column.report_settings) {
-			column.report_settings = {}
-		}
 
-		switch (rendPreset) {
-			case 'price':
-				column.report_settings.zero_format_id = 1
-				column.report_settings.negative_color_format_id = 0
-				column.report_settings.negative_format_id = 0
-				column.report_settings.round_format_id = 1
-				column.report_settings.percentage_format_id = 0
-				break
-			case 'market_value':
-				column.report_settings.zero_format_id = 1
-				column.report_settings.negative_color_format_id = 1
-				column.report_settings.negative_format_id = 1
-				column.report_settings.thousands_separator_format_id = 2
-				column.report_settings.round_format_id = 1
-				column.report_settings.percentage_format_id = 0
-				break
-			case 'amount':
-				column.report_settings.zero_format_id = 1
-				column.report_settings.negative_color_format_id = 1
-				column.report_settings.negative_format_id = 0
-				column.report_settings.thousands_separator_format_id = 2
-				column.report_settings.round_format_id = 3
-				column.report_settings.percentage_format_id = 0
-				break
-			case 'exposure':
-				column.report_settings.zero_format_id = 1
-				column.report_settings.negative_color_format_id = 1
-				column.report_settings.negative_format_id = 1
-				column.report_settings.round_format_id = 0
-				column.report_settings.percentage_format_id = 2
-				break
-			case 'return':
-				column.report_settings.zero_format_id = 1
-				column.report_settings.negative_color_format_id = 1
-				column.report_settings.negative_format_id = 0
-				column.report_settings.percentage_format_id = 3
-				break
-		}
 
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
-		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
-	}
-
-	let addColumnEntityToGrouping = function (column) {
-		var groupToAdd = evHelperService.getTableAttrInFormOf('group', column)
-
-		groups.value.push(groupToAdd)
-		evDataService.setGroups(groups.value)
-
-		evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
-	}
-
-	let editManualSorting = function ($event, column) {
-		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
-
-		console.log('editManualSorting', column)
-
-		$mdDialog
-			.show({
-				controller: 'ManualSortingLayoutManagerDialogController as vm',
-				templateUrl:
-					'views/dialogs/manual-sorting-layout-manager-dialog-view.html',
-				targetEvent: $event,
-				multiple: true,
-				locals: {
-					data: {
-						column: column,
-					},
-					entityViewerDataService: evDataService,
-				},
-			})
-			.then(function (res) {
-				if (res.status === 'agree') {
-					/* evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-	                           evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED); */
-
-					column.options.sort_settings = {
-						...column.options.sort_settings,
-						...res.data.sort_settings,
-					}
-
-					if (!column.options.sort) column.options.sort = 'ASC'
-
-					sort(column)
-				}
-			})
-	}
-
-	let addFiltersWithColAttr = function (column) {
-		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
-
-		var filters = evDataService.getFilters()
-		var filterToAdd = evHelperService.getTableAttrInFormOf('filter', column)
-		filterToAdd.options.enabled = true
-
-		if (isReport) {
-			filters.push(filterToAdd)
-		} else {
-			if (showFrontEvFilters) {
-				filters.frontend.push(filterToAdd)
-			} else {
-				filters.backend.push(filterToAdd)
-			}
-		}
-
-		evDataService.setFilters(filters)
-
-		evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
-	}
 	/**
 	 * Used in only by report viewer.
 	 * @param groupKey {string}
-	 * @param _$popup {Object} - data from popup
+	 * @param closeCb {Function} - callback to close FmMenu
 	 */
-	let removeGroup = function (groupKey, _$popup) {
-		var groupToRemoveIndex = groups.value.findIndex(
+	let removeGroup = function (groupKey, closeCb) {
+
+		let groupsList = evDataService.getGroups()
+
+		/*var groupToRemoveIndex = groupsList.findIndex(
 			(group) => group.___group_type_id === groupKey
+		)*/
+		const groupToRemoveIndex = groupsList.findIndex(
+			group => group.key === groupKey
 		)
 
 		if (groupToRemoveIndex > -1) {
-			groups.value.splice(groupToRemoveIndex, 1)
+			groupsList.splice(groupToRemoveIndex, 1)
 		} else {
 			throw new Error('No group with such key found: ' + groupKey)
 		}
 
-		evDataService.setGroups(groups.value)
-		evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
+		evDataService.setGroups(groupsList)
 
-		var colToRemoveIndex = columns.findIndex(
-			(column) => column.___column_id === groupKey
+		const columnsList = evDataService.getColumns();
+
+		const colToRemoveIndex = columnsList.findIndex(
+			(column) => column.key === groupKey
 		)
+
 		if (colToRemoveIndex > -1) {
-			columns.splice(colToRemoveIndex, 1)
+			columnsList.splice(colToRemoveIndex, 1)
 		} else {
 			throw new Error('No column with such key found: ' + groupKey)
 		}
 
-		evDataService.setColumns(columns)
+		evDataService.setColumns(columnsList)
 
-		columnsToShow.value = getColumnsToShow()
+		// columnsToShow.value = getColumnsToShow()
 
 		collectMissingCustomFieldsErrors()
 
+		evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
 		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
 		evEventService.dispatchEvent(evEvents.UPDATE_COLUMNS_SIZE)
 
 		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+
+		closeCb();
+
 	}
 
-	let unGroup = function (groupKey, _$popup) {
-		// _$popup.cancel()
-		// evEventService.dispatchEvent(popupEvents.CLOSE_POPUP);
+	/**
+	 *
+	 * @param {String} groupKey
+	 * @param {Function} closeCb - callback to close FmMenu
+	 */
+	let unGroup = function (groupKey, closeCb) {
 
-		var groups = evDataService.getGroups()
+		closeCb();
+		let groupsList = getGroups()
 
-		/** remove group */
-		var groupToRemoveIndex = groups.findIndex((group) => group.key === groupKey)
+		var groupToRemoveIndex = groupsList.findIndex((group) => group.key === groupKey)
 
-		/*var i;
-	                   for (i = 0; i < groups.length; i++) {
-	                       if (groups[i].___group_type_id === columnTableId) {
-	                           groups.splice(i, 1);
-	                           break;
-	                       }
-	                   }*/
 		if (groupToRemoveIndex > -1) {
-			groups.splice(groupToRemoveIndex, 1)
+			groupsList.splice(groupToRemoveIndex, 1)
 		} else {
 			throw new Error('No group with such key found: ' + groupKey)
 		}
 
 		if (isReport) {
+
 			const lastDraggedElem = contentWrapElement.querySelector(
 				'.gDraggableHead.last-dragged'
 			)
+
 			if (lastDraggedElem) lastDraggedElem.classList.remove('last-dragged')
 
-			const columns = evDataService.getColumns()
-			const ungroupedColumn = columns.find((column) => column.key === groupKey)
+			const columnsList = evDataService.getColumns()
+			const ungroupedColumn = columnsList.find((column) => column.key === groupKey)
 
 			if (ungroupedColumn) {
 				if (!ungroupedColumn.frontOptions) ungroupedColumn.frontOptions = {}
 
 				ungroupedColumn.frontOptions.lastDragged = true
-				evDataService.setColumns(columns)
+				evDataService.setColumns(columnsList);
 			}
+
 		}
 
-		groups.value = groups
-		evDataService.setGroups(groups)
+		// groupsRef.value = groups;
+		evDataService.setGroups(groupsList)
 		evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
 
 		if (isReport) {
@@ -1584,56 +1387,6 @@
 		}
 	}
 
-	let removeColumn = function (column) {
-		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
-
-		var colToDeleteAttr = ''
-		/*let columns = columns.filter(function (item) {
-	                       return column.___column_id !== item.___column_id;
-	                   });*/
-		for (var i = 0; i < columns.length; i++) {
-			if (column.___column_id === columns[i].___column_id) {
-				colToDeleteAttr = JSON.parse(JSON.stringify(columns[i]))
-				columns.splice(i, 1)
-				break
-			}
-		}
-
-		if (viewContext === 'dashboard') {
-			var hasAttrAlready = false
-			var availableCols =
-				attributeDataService.getAttributesAvailableForColumns()
-
-			for (var i = 0; i < availableCols.length; i++) {
-				if (availableCols[i].attribute_data.key === colToDeleteAttr.key) {
-					hasAttrAlready = true
-					break
-				}
-			}
-
-			if (!hasAttrAlready) {
-				var newAvailableCol = {
-					attribute_data: {
-						key: colToDeleteAttr.key,
-						name: colToDeleteAttr.name,
-						content_type: colToDeleteAttr.content_type,
-						value_type: colToDeleteAttr.value_type,
-					},
-					is_default: false,
-					layout_name: colToDeleteAttr.layout_name || '',
-					order: colsAvailableForAdditions.length,
-				}
-
-				availableCols.push(newAvailableCol)
-				attributeDataService.setAttributesAvailableForColumns(availableCols)
-			}
-		}
-
-		evDataService.setColumns(columns)
-		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
-		evEventService.dispatchEvent(evEvents.UPDATE_COLUMNS_SIZE)
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
-	}
 
 	const hideSubtotalForColumn = function (prop, column) {
 		if (!column.hasOwnProperty('report_settings')) {
@@ -1646,10 +1399,6 @@
 		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
 	}
 
-	let reportHideGrandTotal = function (column) {
-		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
-		hideSubtotalForColumn('hide_grandtotal', column)
-	}
 
 	var getDownloadedTableItemsCount = function () {
 		var unfilteredFlatList = evDataService.getUnfilteredFlatList()
@@ -1662,19 +1411,22 @@
 	}
 
 	const updateGroupTypeIds = function () {
-		groups.value = evDataService.getGroups()
 
-		groups.value.forEach((item) => {
+		groupsRef.value = getGroups();
+
+		groupsRef.value.forEach((item) => {
 			item.___group_type_id = evDataHelper.getGroupTypeId(item)
 		})
 
-		evDataService.setGroups(groups.value)
+		setGroups(groupsRef.value)
+
+		return groupsRef.value;
 	}
 
 	const setDefaultGroupType = function () {
-		groups.value = evDataService.getGroups()
+		groupsRef.value = getGroups();
 
-		groups.value.forEach(function (group) {
+		groupsRef.value.forEach(function (group) {
 			if (!group.hasOwnProperty('report_settings')) {
 				group.report_settings = {}
 			}
@@ -1688,63 +1440,85 @@
 			}
 		})
 
-		evDataService.setGroups(groups.value)
+		setGroups(groupsRef.value)
 	}
 
 	const updateGroupFoldingState = function () {
-		groups.value = evDataService.getGroups()
+
+    let groupsList = evDataService.getGroups();
 		let parentGroupFullyFolded = false
 
-		groups.value.forEach((group) => {
-			if (parentGroupFullyFolded) {
-				group.report_settings.is_level_folded = true
-			} else if (group.report_settings.is_level_folded) {
-				// if group is fully folded, groups after it must be folded too
-				parentGroupFullyFolded = true
-			}
+		groupsList.forEach((group) => {
+
+      if (!group.report_settings) {
+        group.report_settings = {}
+      }
+
+      if (typeof group.report_settings.is_level_folded !== 'boolean') {
+        group.report_settings.is_level_folded = true;
+      }
+
+      if (parentGroupFullyFolded) {
+        group.report_settings.is_level_folded = true;
+
+      } else if (group.report_settings.is_level_folded) { // if group is fully folded, groups after it must be folded too
+        parentGroupFullyFolded = true;
+      }
+
 		})
 
-		evDataService.setGroups(groups.value)
+		evDataService.setGroups(groupsList);
+
+    groupsRef.value = getGroups();
+
 	}
 
 	const syncColumnsWithGroups = function () {
-		let columns = evDataService.getColumns()
-		groups.value = evDataService.getGroups()
+
+		let columnsList = evDataService.getColumns()
+		let groups = getGroups()
 
 		let columnsHaveBeenSynced = false
 
-		groups.value.forEach((group, groupIndex) => {
-			if (group.key !== columns[groupIndex].key) {
+		groups.forEach((group, groupIndex) => {
+
+			if (group.key !== columnsList[groupIndex].key) {
+
 				let columnToAdd
-				let groupColumnIndex = columns.findIndex(
+				let groupColumnIndex = columnsList.findIndex(
 					(column) => group.key === column.key
 				)
 
 				if (groupColumnIndex > -1) {
-					columnToAdd = JSON.parse(JSON.stringify(columns[groupColumnIndex]))
-					columns.splice(groupColumnIndex, 1)
+					columnToAdd = JSON.parse(JSON.stringify( columnsList[groupColumnIndex] ))
+					columnsList.splice(groupColumnIndex, 1)
 				} else {
 					columnToAdd = evHelperService.getTableAttrInFormOf('column', group)
 				}
 
-				columns.splice(groupIndex, 0, columnToAdd)
+				columnsList.splice(groupIndex, 0, columnToAdd)
 
 				columnsHaveBeenSynced = true
 			}
+
 		})
 
-		evDataService.setColumns(columns)
+		evDataService.setColumns(columnsList);
 
 		/* if (columnsHaveBeenSynced) {
-	                       evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
-	                   } */
-		return columnsHaveBeenSynced
+												 evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
+										 } */
+		return {
+			columns: JSON.parse(JSON.stringify(columnsList)),
+			columnsHaveBeenSynced
+		}
+
 	}
 
 	let hasFoldingBtn = function ($index) {
 		var groups = evDataService.getGroups()
 
-		if (isReport && $index < groups.value.length) {
+		if (isReport && $index < groupsRef.value.length) {
 			return true
 		}
 
@@ -1752,117 +1526,359 @@
 	}
 
 	let foldLevel = function (key, $index) {
-		// groups.value = evDataService.getGroups()
-		console.log('evDataService.getGroups():', evDataService.getGroups())
+    // Optimized unfold logic
+    // TODO probabaly still need a refactor, code looks too complicated
 
-		var item = groups.value[$index]
-		item.report_settings.is_level_folded = true
-		var i
-		//<editor-fold desc="Set folded groups before calling rvDataHelper.setGroupSettings()">
-		for (i = $index; i < groups.value.length; i++) {
-			groups.value[i].report_settings.is_level_folded = true
-		}
+    var layout = evDataService.getListLayout();
+    var contentType = evDataService.getContentType();
 
-		evDataService.setGroups(groups.value)
-		//</editor-fold">
-		console.log('evDataService.getGroups():', evDataService.getGroups())
+    let groupsList = evDataService.getGroups();
 
-		for (i = $index; i < groups.value.length; i++) {
-			var groupsContent = evDataHelper.getGroupsByLevel(i + 1, evDataService)
+    var item = groupsList[$index];
+    item.report_settings.is_level_folded = true;
 
-			groupsContent.forEach(function (groupItem) {
-				groupItem.___is_open = false
+    var i;
+    //# region Set folded groups before calling rvDataHelper.setGroupSettings()
+    for (i = $index; i < groupsList.length; i++) {
+      groupsList[i].report_settings.is_level_folded = true;
+    }
 
-				var groupSettings = rvDataHelper.getOrCreateGroupSettings(
-					evDataService,
-					groupItem
-				)
-				groupSettings.is_open = false
-				rvDataHelper.setGroupSettings(evDataService, groupItem, groupSettings)
+    evDataService.setGroups(groupsList);
+    //# endregion
 
-				var childrens = evDataHelper.getAllChildrenGroups(
-					groupItem.___id,
-					evDataService
-				)
+    var maxLevel = 10
+    var groupsByLevel = evDataHelper.getAllGroupsByLevel(maxLevel, evDataService);
 
-				childrens.forEach(function (children) {
-					if (children.___type === 'group') {
-						item = evDataService.getData(children.___id)
+    var reportData = localStorageService.getReportData();
 
-						var groupSettings = rvDataHelper.getOrCreateGroupSettings(
-							evDataService,
-							children
-						)
-						groupSettings.is_open = false
-						rvDataHelper.setGroupSettings(
-							evDataService,
-							children,
-							groupSettings
-						)
+    for (i = $index; i < groupsList.length; i++) {
 
-						if (item) {
-							item.___is_open = false
-							evDataService.setData(item)
-						} else {
-							children.___is_open = false
-							evDataService.setData(children)
-						}
-					}
-				})
-			})
-		}
+      var groupsContent = groupsByLevel[i + 1];
 
-		// rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService);
+      groupsContent.forEach(function (groupItem) {
 
-		evEventService.dispatchEvent(evEvents.GROUPS_LEVEL_FOLD)
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
-	}
+        var parents = useGetEvRvParents(groupItem.___parentId, evDataService);
 
-	let unfoldLevel = function (key, $index) {
-		groups.value = evDataService.getGroups()
+        parents.pop() // skip root group
 
-		var item = groups.value[$index]
+        if (!reportData[contentType]) {
+          reportData[contentType] = {};
+        }
 
-		item.report_settings.is_level_folded = false
+        if (!reportData[contentType][layout.user_code]) {
+          reportData[contentType][layout.user_code] = {
+            groups: {}
+          }
+        }
 
-		groups.value = evDataService.getGroups()
-		var i
-		//<editor-fold desc="Set folded groups before calling rvDataHelper.setGroupSettings()">
-		for (i = $index; i >= 0; i--) {
-			groups.value[i].report_settings.is_level_folded = false
-		}
+        var full_path = parents.map(function (item) {
+          return item.___group_name
+        })
 
-		evDataService.setGroups(groups.value)
-		//</editor-fold>
+        full_path.push(groupItem.___group_name);
 
-		for (i = $index; i >= 0; i--) {
-			var groupsContent = evDataHelper.getGroupsByLevel(i + 1, evDataService)
+        var full_path_prop = full_path.join('___'); // TODO check if safe enough
 
-			groupsContent.forEach(function (groupItem) {
-				var groupSettings = rvDataHelper.getOrCreateGroupSettings(
-					evDataService,
-					groupItem
-				)
+        var groupSettings;
 
-				groupItem.___is_open = true
-				groupSettings.is_open = true
+        if (reportData[contentType][layout.user_code]['groups'][full_path_prop]) {
+          groupSettings = reportData[contentType][layout.user_code]['groups'][full_path_prop];
+        }
 
-				rvDataHelper.setGroupSettings(evDataService, groupItem, groupSettings)
+        if (!groupSettings) {
 
-				evDataService.setData(groupItem)
-			})
-		}
+          groupSettings = {
+            full_path: full_path,
+            is_open: false
+          }
 
-		rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService)
+          reportData[contentType][layout.user_code]['groups'][full_path_prop] = groupSettings;
 
-		evEventService.dispatchEvent(evEvents.GROUPS_LEVEL_UNFOLD)
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+        }
+
+        groupItem.___is_open = false;
+        groupSettings.is_open = false;
+
+        if (!reportData[contentType][layout.user_code]['groups']) {
+          reportData[contentType][layout.user_code]['groups'] = {}
+        }
+
+        var full_path_prop = groupSettings.full_path;
+
+        if (Array.isArray(full_path_prop)) {
+          full_path_prop = full_path_prop.join('___')
+        }
+
+        reportData[contentType][layout.user_code]['groups'][full_path_prop] = groupSettings;
+
+        reportData[contentType][layout.user_code].groupsList = [];
+
+        groupsList.forEach(group => {
+
+          var groupObj = {
+            key: group.key,
+            report_settings: {
+              is_level_folded: false
+            }
+          };
+
+          if (group.report_settings) {
+            groupObj.report_settings.is_level_folded = !!group.report_settings.is_level_folded;
+          }
+
+
+          reportData[contentType][layout.user_code].groupsList.push(groupObj);
+
+        });
+
+        evDataService.setData(groupItem);
+
+      });
+
+    }
+
+    localStorageService.cacheReportData(reportData);
+
+    evEventService.dispatchEvent(evEvents.GROUPS_LEVEL_FOLD);
+    evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+
+  }
+
+	let unfoldLevel = async function (key, $index) {
+
+    var layout = evDataService.getListLayout();
+    var contentType = evDataService.getContentType();
+
+    let groupsList = evDataService.getGroups();
+
+    var item = groupsList[$index];
+
+    item.report_settings.is_level_folded = false;
+
+    var i;
+
+    //# region Set folded groups before calling rvDataHelper.setGroupSettings()
+    for (i = $index; i >= 0; i--) {
+      groupsList[i].report_settings.is_level_folded = false;
+    }
+
+    evDataService.setGroups(groupsList);
+    groupsRef.value = getGroups();
+
+    var maxLevel = 10
+    var groupsByLevel = evDataHelper.getAllGroupsByLevel(maxLevel, evDataService);
+
+    console.log('groupsByLevel', groupsByLevel);
+    console.log('maxLevel', $index);
+    //# endregion
+
+    var reportData = localStorageService.getReportData();
+
+    for (i = $index; i >= 0; i--) {
+
+      var groupsContent = groupsByLevel[i + 1];
+
+      groupsContent.forEach(function (groupItem) {
+
+        var parents = useGetEvRvParents(groupItem.___parentId, evDataService);
+
+        parents.pop() // skip root group
+
+        if (!reportData[contentType]) {
+          reportData[contentType] = {};
+        }
+
+        if (!reportData[contentType][layout.user_code]) {
+          reportData[contentType][layout.user_code] = {
+            groups: {}
+          }
+        }
+
+        var full_path = parents.map(function (item) {
+          return item.___group_name
+        })
+
+        full_path.push(groupItem.___group_name);
+
+        var full_path_prop = full_path.join('___'); // TODO check if safe enough
+
+        var groupSettings;
+
+        if (reportData[contentType][layout.user_code]['groups'][full_path_prop]) {
+          groupSettings = reportData[contentType][layout.user_code]['groups'][full_path_prop];
+        }
+
+        if (!groupSettings) {
+
+          groupSettings = {
+            full_path: full_path,
+            is_open: true
+          }
+
+          reportData[contentType][layout.user_code]['groups'][full_path_prop] = groupSettings;
+
+        }
+
+        groupItem.___is_open = true;
+        groupSettings.is_open = true;
+
+        if (!reportData[contentType][layout.user_code]['groups']) {
+          reportData[contentType][layout.user_code]['groups'] = {}
+        }
+
+        var full_path_prop = groupSettings.full_path;
+
+        if (Array.isArray(full_path_prop)) {
+          full_path_prop = full_path_prop.join('___')
+        }
+
+        reportData[contentType][layout.user_code]['groups'][full_path_prop] = groupSettings;
+
+        reportData[contentType][layout.user_code].groupsList = [];
+
+        groupsList.forEach(group => {
+
+          var groupObj = {
+            key: group.key,
+            report_settings: {
+              is_level_folded: false
+            }
+          };
+
+          if (group.report_settings) {
+            groupObj.report_settings.is_level_folded = !!group.report_settings.is_level_folded;
+          }
+
+
+          reportData[contentType][layout.user_code].groupsList.push(groupObj);
+
+        });
+
+        evDataService.setData(groupItem);
+
+      });
+
+    }
+
+    localStorageService.cacheReportData(reportData);
+    // localStorageService.cacheReportDataForLayout(contentType, layout.user_code, reportData);
+
+    rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService);
+
+    evEventService.dispatchEvent(evEvents.GROUPS_LEVEL_UNFOLD);
+    evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+
+
+    // New Backend Logic, Try To Request New Unrequested Open Groups
+
+    var unfoldPromises = []
+
+    const currentLevelGroups = structuredClone(
+        evDataHelper.getGroupsByLevel($index + 1, evDataService)
+    );
+
+    currentLevelGroups.forEach(function (group) {
+
+      console.log('handleFoldButtonClick.group', group);
+
+      if (group.___is_open) {
+
+        if (!evDataService.isRequestParametersExist(group.___id)) {
+
+          unfoldPromises.push(function (){
+
+            var requestParameters = window.rvDataProviderService.createRequestParameters(
+                group, group.___level - 1, evDataService, evEventService
+            )
+
+            console.log('handleFoldButtonClick.group', group);
+            console.log('handleFoldButtonClick.requestParameters', requestParameters);
+
+            return window.rvDataProviderService.updateDataStructureByRequestParameters(
+                requestParameters, evDataService, evEventService
+            )
+
+          })
+
+        }
+
+      }
+
+    })
+
+    console.log('unfoldLevel.unfoldPromises', unfoldPromises);
+
+    const unfoldGroups = async function () {
+
+      let promisesToExecute = unfoldPromises.map(func => func());
+
+      await Promise.all(promisesToExecute)
+
+      evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+
+    }
+
+    if (unfoldPromises.length > 10) {
+
+      let res= await $mdDialog.show({
+        controller: 'WarningDialogController as vm',
+        locals: {
+          warning: {
+            title: 'Warning',
+            description: "You are trying to unfold " + unfoldPromises.length + " groups. It may take a while. Do you want to continue?",
+          }
+        }
+
+      });
+
+      if (res.status === 'agree') {
+        await unfoldGroups();
+
+      } else {
+        foldLevel(key, $index); // then fold this level back
+      }
+
+    } else {
+      await unfoldGroups();
+    }
+
 	}
 
 	let groupLevelIsFolded = function ($index) {
 		var groups = evDataService.getGroups()
 
 		return groups[$index].report_settings.is_level_folded
+	}
+
+	const setUpFrontOptions = item => {
+
+		item.frontOptions = item.frontOptions || {};
+
+		return item;
+	}
+
+	const setColumnsFrontOptions = function() {
+
+  	let columnsList = evDataService.getColumns();
+
+		columnsList = columnsList.map(setUpFrontOptions)
+
+		evDataService.setColumns(columnsList);
+
+		return getColumns();
+
+  }
+
+	const setGroupsFrontOptions = function() {
+
+		let groupsList = evDataService.getGroups();
+
+		groupsList = groupsList.map(setUpFrontOptions)
+
+		evDataService.setGroups(groupsList);
+
+		return getGroups();
+
 	}
 
 	var getColsAvailableForAdditions = function () {
@@ -1917,51 +1933,47 @@
 		}
 	}
 
-	let addColumnToDashboardReport = function (attribute) {
-		var colData = JSON.parse(JSON.stringify(attribute.attribute_data))
-
-		colData.columns = true
-		if (attribute.layout_name) {
-			colData.layout_name = JSON.parse(JSON.stringify(attribute.layout_name))
-		}
-		columns.push(colData)
-		evDataService.setColumns(columns)
-
-		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
-	}
-
 	const onGroupLevelFoldingSwitch = function (argumentsObj) {
+
 		rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService)
 
-		groups.value = evDataService.getGroups()
-		evDataHelper.importGroupsStylesFromColumns(groups.value, columns)
+		groupsRef.value = getGroups();
+		groupsRef.value = evDataHelper.importGroupsStylesFromColumns(columns.value, groupsRef.value)
 
 		// if (argumentsObj && argumentsObj.updateScope) $apply()
 	}
 
 	const syncGroupLayoutNamesWithColumns = function () {
-		var groupChanged = false
 
-		columns.forEach((column) => {
-			if (column.layout_name) {
-				const matchingGroup = groups.value.find(
-					(group) => group.key === column.key
-				)
+		const columnsList = evDataService.getColumns();
 
-				if (matchingGroup) {
-					matchingGroup.layout_name = column.layout_name
-					groupChanged = true
-				}
+		columnsList.forEach((column) => {
+
+			if (!column.layout_name) {
+				return;
 			}
+
+			const matchingGroup = groupsRef.value.find(
+				(group) => group.key === column.key
+			)
+
+			if (matchingGroup) {
+				matchingGroup.layout_name = column.layout_name
+			}
+
 		})
 
-		if (groupChanged) evDataService.setGroups(groups.value)
+		setGroups(groupsRef.value)
+
+		return groupsRef.value;
+
 	}
 
 	let onGroupsChange
 
+	// Must be called before declaring columnsData
 	if (isReport) {
+
 		checkForFilteringBySameAttr = function (columnKey) {
 			console.log('columnKey:', columnKey)
 			var filters = evDataService.getFilters()
@@ -1977,43 +1989,58 @@
 		}
 
 		onGroupsChange = function () {
-			updateGroupTypeIds()
+
+			groupsRef.value = updateGroupTypeIds();
+
 			setDefaultGroupType()
 			updateGroupFoldingState()
 
-			groups = evDataService.getGroups()
+			// groupsRef.value = evDataService.getGroups()
 			evDataService.resetTableContent(isReport)
 
-			const colsChanged = syncColumnsWithGroups()
+			const res = syncColumnsWithGroups();
 
-			evDataHelper.importGroupsStylesFromColumns(groups, columns)
+			columns.value = res.columns;
+			const colsChanged = res.columnsHaveBeenSynced;
 
-			columnsToShow.value = getColumnsToShow()
+			groupsRef.value = evDataHelper.importGroupsStylesFromColumns(groupsRef.value, columns.value)
+
+			// columnsToShow.value = getColumnsToShow()
 
 			collectMissingCustomFieldsErrors()
 			// setFiltersLayoutNames();
-			var foldedGroup = groups.find(
+			var foldedGroup = groupsRef.value.find(
 				(group) =>
 					group.report_settings && group.report_settings.is_level_folded
 			)
+
+			groupsRef.value = setGroupsFrontOptions();
 
 			if (!foldedGroup) {
 				rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService)
 			}
 
-			if (colsChanged) evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
+			if (colsChanged) {
+				evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
+			}
 
 			evEventService.dispatchEvent(evEvents.UPDATE_TABLE)
 		}
-	} else {
+
+	}
+	else {
+
 		onGroupsChange = function () {
-			updateGroupTypeIds()
-			setDefaultGroupType()
 
-			groups = evDataService.getGroups()
-			evDataService.resetTableContent(isReport)
+			groupsRef.value = updateGroupTypeIds();
+			setDefaultGroupType();
 
-			collectMissingCustomFieldsErrors()
+			groupsRef.value = setGroupsFrontOptions();
+
+			// groups = evDataService.getGroups();
+			evDataService.resetTableContent(isReport);
+
+			collectMissingCustomFieldsErrors();
 
 			evEventService.dispatchEvent(evEvents.UPDATE_TABLE)
 		}
@@ -2030,35 +2057,604 @@
 
 			return true
 		}
+
 	}
+
+	//# region Data to provide for components-children
+	// Must be after assignment of checkForFilteringBySameAttr
+	let renameOpened = ref(false);
+	let columnToRename = ref(null)
+
+	/*let renameColumn = async function (itemKey, closeCb) {
+
+		closeCb();
+
+		let colsList = evDataService.getColumns();
+		let column = colsList.find((column) => column.key === itemKey)
+
+		columnToRename.value = structuredClone(column)
+
+		if (!columnToRename.value.layout_name) {
+			columnToRename.value.__isOriginal = true
+		}
+
+		let res = await $mdDialog.show({
+			controller: 'RenameFieldDialogController as vm',
+			templateUrl: 'views/dialogs/rename-field-dialog-view.html',
+			locals: {
+				data: columnToRename.value,
+			},
+		})
+
+		if (res.status === 'agree') {
+
+			delete columnToRename.value.__isOriginal
+
+			column.layout_name = columnToRename.value.layout_name;
+			evDataService.setColumns(colsList);
+
+			evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
+
+			if ( columnHasCorrespondingGroup(columnToRename.value.key) ) {
+
+				// var group = groupsRef.value.find((group) => group.key === itemKey)
+
+				let groupsList = evDataService.getGroups();
+				let group = groupsList.find(group => group.key === itemKey)
+
+				group.layout_name = columnToRename.value.layout_name
+
+				evDataService.setGroups(groupsList)
+				evEventService.dispatchEvent(evEvents.GROUPS_CHANGE);
+
+			}
+
+			const filters = evDataService.getFilters()
+
+			if (isReport) {
+
+				const filter = filters.find(
+					(filter) => filter.key === columnToRename.value.key
+				)
+
+				if (filter) {
+					filter.layout_name = columnToRename.value.layout_name
+
+					evDataService.setFilters(filters)
+
+					evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
+				}
+
+			}
+			else {
+
+				let filterLayoutNameChanged = false
+
+				for (let filtersProp in filters) {
+					// search among frontend and backend filters
+
+					const filter = filters[filtersProp].find(
+						(filter) => filter.key === columnToRename.value.key
+					)
+
+					if (filter) {
+						filter.layout_name = columnToRename.value.layout_name
+						filterLayoutNameChanged = true
+					}
+				}
+
+				if (filterLayoutNameChanged) {
+					evDataService.setFilters(filters)
+					evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
+				}
+
+			}
+
+			// columnsToShow.value = getColumnsToShow()
+		}
+	} */
+
+	/**
+	 *
+	 * @param {String} itemKey - key of column or group
+	 * @param {Function} closeCb - callback to close FmMenu
+	 */
+	function openRenameColumn(itemKey, closeCb) {
+
+		closeCb();
+
+		let column = getColumnByKey(itemKey);
+		columnToRename.value = structuredClone(column);
+		renameOpened.value = true;
+
+	}
+
+	/**
+	 * Inside report viewer can be called by a group.
+	 *
+	 * @param {Function} closeModal
+	 */
+	function renameColumn(closeModal) {
+
+		let column = getColumnByKey(columnToRename.value.key);
+
+		column.layout_name = columnToRename.value.layout_name;
+
+		setColumn(column);
+
+		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
+
+		if ( columnHasCorrespondingGroup(columnToRename.value.key) ) {
+
+			// var group = groupsRef.value.find((group) => group.key === itemKey)
+
+			let groupsList = evDataService.getGroups();
+			let group = groupsList.find(group => group.key === columnToRename.value.key)
+
+			group.layout_name = columnToRename.value.layout_name
+
+			evDataService.setGroups(groupsList)
+			evEventService.dispatchEvent(evEvents.GROUPS_CHANGE);
+
+		}
+
+		const filters = evDataService.getFilters()
+
+		if (isReport) {
+
+			const filter = filters.find(
+				(filter) => filter.key === columnToRename.value.key
+			)
+
+			if (filter) {
+				filter.layout_name = columnToRename.value.layout_name
+
+				evDataService.setFilters(filters)
+
+				evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
+			}
+
+		}
+		else {
+
+			let filterLayoutNameChanged = false
+
+			for (let filtersProp in filters) {
+				// search among frontend and backend filters
+
+				const filter = filters[filtersProp].find(
+					(filter) => filter.key === columnToRename.value.key
+				)
+
+				if (filter) {
+					filter.layout_name = columnToRename.value.layout_name
+					filterLayoutNameChanged = true
+				}
+			}
+
+			if (filterLayoutNameChanged) {
+				evDataService.setFilters(filters)
+				evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
+			}
+
+		}
+
+		// Must be at the bottom, because closing modal empties ref columnToRename
+		closeModal();
+
+	}
+
+	let columnHasCorrespondingGroup = function (columnKey) {
+		var groupIndex = groupsRef.value.findIndex((group) => group.key === columnKey)
+
+		return groupIndex > -1
+	}
+
+	let addColumnEntityToGrouping = function (column) {
+		const groupToAdd = evHelperService.getTableAttrInFormOf('group', column)
+
+		// groupsRef.value.push(groupToAdd)
+		let groupsList = evDataService.getGroups();
+		groupsList.push(groupToAdd);
+
+		setGroups(groupsList);
+
+		evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+	}
+
+	let addFiltersWithColAttr = function (column) {
+		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
+
+		var filters = evDataService.getFilters()
+		var filterToAdd = evHelperService.getTableAttrInFormOf('filter', column)
+		filterToAdd.options.enabled = true
+
+		if (isReport) {
+			filters.push(filterToAdd)
+		} else {
+			if (showFrontEvFilters) {
+				filters.frontend.push(filterToAdd)
+			} else {
+				filters.backend.push(filterToAdd)
+			}
+		}
+
+		evDataService.setFilters(filters)
+
+		evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
+	}
+
+	let editManualSorting = function ($event, column) {
+		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
+
+		console.log('editManualSorting', column)
+
+		$mdDialog
+			.show({
+				controller: 'ManualSortingLayoutManagerDialogController as vm',
+				templateUrl:
+					'views/dialogs/manual-sorting-layout-manager-dialog-view.html',
+				targetEvent: $event,
+				multiple: true,
+				locals: {
+					data: {
+						column: column,
+					},
+					entityViewerDataService: evDataService,
+				},
+			})
+			.then(function (res) {
+				if (res.status === 'agree') {
+					/* evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+														 evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED); */
+
+					column.options.sort_settings = {
+						...column.options.sort_settings,
+						...res.data.sort_settings,
+					}
+
+					if (!column.options.sort) column.options.sort = 'ASC'
+
+					sort(column)
+				}
+			})
+	}
+
+	let activateColumnNumberRenderingPreset = function (column, rendPreset) {
+		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
+
+		if (!column.report_settings) {
+			column.report_settings = {}
+		}
+
+		switch (rendPreset) {
+			case 'price':
+				column.report_settings.zero_format_id = 1
+				column.report_settings.negative_color_format_id = 0
+				column.report_settings.negative_format_id = 0
+				column.report_settings.round_format_id = 1
+				column.report_settings.percentage_format_id = 0
+				break
+			case 'market_value':
+				column.report_settings.zero_format_id = 1
+				column.report_settings.negative_color_format_id = 1
+				column.report_settings.negative_format_id = 1
+				column.report_settings.thousands_separator_format_id = 2
+				column.report_settings.round_format_id = 1
+				column.report_settings.percentage_format_id = 0
+				break
+			case 'amount':
+				column.report_settings.zero_format_id = 1
+				column.report_settings.negative_color_format_id = 1
+				column.report_settings.negative_format_id = 0
+				column.report_settings.thousands_separator_format_id = 2
+				column.report_settings.round_format_id = 3
+				column.report_settings.percentage_format_id = 0
+				break
+			case 'exposure':
+				column.report_settings.zero_format_id = 1
+				column.report_settings.negative_color_format_id = 1
+				column.report_settings.negative_format_id = 1
+				column.report_settings.round_format_id = 0
+				column.report_settings.percentage_format_id = 2
+				break
+			case 'return':
+				column.report_settings.zero_format_id = 1
+				column.report_settings.negative_color_format_id = 1
+				column.report_settings.negative_format_id = 0
+				column.report_settings.percentage_format_id = 3
+				break
+		}
+
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
+	}
+
+	let resizeColumn = function (column, $mdMenu, $event) {
+		if ($mdMenu) {
+			$mdMenu.close()
+		} else {
+			evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
+		}
+
+		$mdDialog
+			.show({
+				controller: 'ResizeFieldDialogController as vm',
+				templateUrl: 'views/dialogs/resize-field-dialog-view.html',
+				parent: angular.element(document.body),
+				targetEvent: $event,
+				locals: {
+					data: column,
+				},
+			})
+			.then(function (res) {
+				if (res.status === 'agree') {
+					evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
+					evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+				}
+			})
+	}
+
+	/**
+	 *
+	 * @param column
+	 * @param {Function} closeCb - callback to close FmMenu
+	 */
+	let removeColumn = function (column, closeCb) {
+
+		closeCb();
+		let columnsList = evDataService.getColumns();
+		let colToDeleteAttr = null;
+		/*let columnsList = columnsList.filter(function (item) {
+												 return column.___column_id !== item.___column_id;
+										 });*/
+		for (let i = 0; i < columnsList.length; i++) {
+
+			if (column.___column_id === columnsList[i].___column_id) {
+
+				colToDeleteAttr = JSON.parse(JSON.stringify( columnsList[i] ));
+				columnsList.splice(i, 1);
+				break
+
+			}
+
+		}
+
+		if (viewContext === 'dashboard') {
+
+			var hasAttrAlready = false
+			var availableCols =
+				attributeDataService.getAttributesAvailableForColumns()
+
+			for (var i = 0; i < availableCols.length; i++) {
+				if (availableCols[i].attribute_data.key === colToDeleteAttr.key) {
+					hasAttrAlready = true
+					break
+				}
+			}
+
+			if (!hasAttrAlready) {
+
+				var newAvailableCol = {
+					attribute_data: {
+						key: colToDeleteAttr.key,
+						name: colToDeleteAttr.name,
+						content_type: colToDeleteAttr.content_type,
+						value_type: colToDeleteAttr.value_type,
+					},
+					is_default: false,
+					layout_name: colToDeleteAttr.layout_name || '',
+					order: colsAvailableForAdditions.length,
+				}
+
+				availableCols.push(newAvailableCol)
+				attributeDataService.setAttributesAvailableForColumns(availableCols);
+
+			}
+
+		}
+
+		evDataService.setColumns(columnsList)
+		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
+		evEventService.dispatchEvent(evEvents.UPDATE_COLUMNS_SIZE)
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+	}
+
+	/**
+	 *
+	 * @param column
+	 * @param {Function} closeCb - callback to close FmMenu
+	 */
+	let reportHideGrandTotal = function (column, closeCb) {
+		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
+		hideSubtotalForColumn('hide_grandtotal', column)
+	}
+
+	//# region Subtotals
+
+	/*
+	 * Values for the property subtotal_formula_id
+	 *
+	 * 1 - Sum
+	 * 2 - weighted by market value
+	 * 3 - weighted by market value %
+	 * 4 - weighted by exposure
+	 * 5 - weighted by exposure %
+	 * 6 - average weighted by market value
+	 * 7 - average weighted by market value %
+	 * 8 - average weighted by exposure
+	 * 9 - average weighted by exposure %
+	 * */
+
+	/**
+	 *
+	 * @param {Object} column
+	 * @param {Number} type
+	 * @param {Function} [closeCb] - callback to close FmMenu
+	 */
+	let selectSubtotalType = function (column, type, closeCb) {
+
+		if (closeCb) closeCb();
+
+		const col = getColumnByKey(column.key);
+
+		if (!col.hasOwnProperty('report_settings')) {
+			col.report_settings = {};
+		}
+
+		if (col.report_settings.subtotal_formula_id === type) {
+			// turn off subtotal after clicking on an active subtotal type
+			col.report_settings.subtotal_formula_id = null;
+
+		} else {
+			col.report_settings.subtotal_formula_id = type;
+		}
+
+		col.frontOptions.temporaryWeightedActive = false;
+
+		setColumn(col);
+		columns.value = getColumns();
+
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED);
+	};
+
+	function onSubtotalSumClick(column) {
+
+		column.frontOptions.subtotalAvgWeightedActive = false;
+		column.frontOptions.subtotalWeightedActive = false;
+
+    evDataService.resetTableContent(isReport);
+    evEventService.dispatchEvent(evEvents.GROUPS_CHANGE); // make request to backend to recalculate subtotals
+
+		selectSubtotalType(column, 1);
+
+	}
+
+  function subtotalWeightedChange() {
+
+    evDataService.resetTableContent(isReport);
+
+    evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
+    evEventService.dispatchEvent(evEvents.GROUPS_CHANGE); // make request to backend to recalculate subtotals
+    evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+
+  }
+
+	function onSubtotalWeightedClick(column) {
+    // column is an object inside ref columns
+		column.frontOptions.subtotalAvgWeightedActive = false;
+		column.report_settings.subtotal_formula_id = null;
+
+		column.frontOptions.subtotalWeightedActive = !column.frontOptions.subtotalWeightedActive;
+
+		setColumns(columns.value);
+
+    subtotalWeightedChange();
+
+	}
+
+	function onSubtotalAvgWeightedClick(column) {
+    // column is an object inside ref columns
+		column.frontOptions.subtotalWeightedActive = false;
+		column.report_settings.subtotal_formula_id = null;
+
+		column.frontOptions.subtotalAvgWeightedActive = !column.frontOptions.subtotalAvgWeightedActive;
+
+		setColumns(columns.value);
+
+    subtotalWeightedChange();
+
+	}
+
+	function getSubtotalFormula(column) {
+		if ( column.hasOwnProperty('report_settings') ) {
+			return column.report_settings.subtotal_formula_id;
+		}
+
+		return null;
+	}
+
+	function onContextMenuClose(item) {
+
+		item.frontOptions.subtotalWeightedActive = false;
+		item.frontOptions.subtotalAvgWeightedActive = false;
+
+	}
+	//# endregion
+
+
+	/** Used to pass data into AngularFmGridTableColumnCell */
+	let columnsData = reactive({
+		openRenameColumn: openRenameColumn,
+		columnHasCorrespondingGroup: columnHasCorrespondingGroup,
+		addColumnEntityToGrouping: addColumnEntityToGrouping,
+		checkForFilteringBySameAttr: checkForFilteringBySameAttr,
+		addFiltersWithColAttr: addFiltersWithColAttr,
+		editManualSorting: editManualSorting,
+		activateColumnNumberRenderingPreset: activateColumnNumberRenderingPreset,
+		// openColumnNumbersRenderingSettings: openColumnNumbersRenderingSettings,
+		resizeColumn: resizeColumn,
+		removeColumn: removeColumn,
+		unGroup: unGroup,
+
+		changeColumnTextAlign: changeColumnTextAlign,
+		checkColTextAlign: checkColTextAlign,
+		removeGroup: removeGroup,
+
+    dataIsLoading: false,
+
+		//# region Subtotals
+		selectSubtotalType: selectSubtotalType,
+		// isSubtotalFormulaSelected: isSubtotalFormulaSelected,
+		getSubtotalFormula: getSubtotalFormula,
+		// reportHideSubtotal: reportHideSubtotal,
+		reportHideGrandTotal: reportHideGrandTotal,
+
+		subtotalFormula: getSubtotalFormula,
+
+		onSubtotalSumClick: onSubtotalSumClick,
+		onSubtotalWeightedClick: onSubtotalWeightedClick,
+		onSubtotalAvgWeightedClick: onSubtotalAvgWeightedClick,
+		//# endregion
+
+		openNumberFormatDialog: openNumberFormatDialog,
+		onContextMenuClose: onContextMenuClose,
+	});
+
+	provide('columnsData', columnsData)
+	//# endregion Data to provide for components-children
 
 	const initEventListeners = function () {
 		// Victor 2021.03.29 #88 fix bug with deleted custom fields
-		evEventService.addEventListener(
+		/* evEventService.addEventListener(
 			evEvents.DYNAMIC_ATTRIBUTES_CHANGE,
 			function () {
 				customFields =
 					attributeDataService.getCustomFieldsByEntityType(entityType)
 				collectMissingCustomFieldsErrors()
 			}
-		)
+		) */
 
 		evEventService.addEventListener(evEvents.GROUPS_CHANGE, onGroupsChange)
 
 		evEventService.addEventListener(evEvents.COLUMNS_CHANGE, function () {
+
 			evDataHelper.updateColumnsIds(evDataService)
 			evDataHelper.setColumnsDefaultWidth(evDataService)
 
-			let columns = evDataService.getColumns()
-
 			getColsAvailableForAdditions() // when inside dashboard
+
 			// flagMissingColumns();
-			makePopupDataForColumns(columns)
 
-			let newColumns = getColumnsToShow()
-			columnsToShow.value = JSON.parse(JSON.stringify(newColumns))
+			/*let newColumns = getColumnsToShow()
+			columnsToShow.value = JSON.parse(JSON.stringify(newColumns))*/
 
-			collectMissingCustomFieldsErrors()
+			collectMissingCustomFieldsErrors();
+
+			columns.value = setColumnsFrontOptions();
+
 		})
 
 		evEventService.addEventListener(
@@ -2070,7 +2666,36 @@
 			onGroupLevelFoldingSwitch
 		)
 
-		if (!isReport) {
+    evEventService.addEventListener(evEvents.DATA_LOAD_START, function () {
+      columnsData.dataIsLoading = true;
+    });
+
+    evEventService.addEventListener(evEvents.DATA_LOAD_END, function () {
+      columnsData.dataIsLoading = false;
+    });
+
+		if (isReport) {
+
+			evEventService.addEventListener(evEvents.UPDATE_GROUPS_SIZE, function (argumentsObj) {
+
+				if (columnHasCorrespondingGroup(argumentsObj.key)) {
+
+					let groupsList = evDataService.getGroups();
+					const columnsList = evDataService.getColumns();
+
+					groupsList = evDataHelper.importGroupsStylesFromColumns(groupsList, columnsList);
+					evDataService.setGroups(groupsList);
+
+					groupsRef.value = getGroups();
+
+				}
+
+
+			});
+
+		}
+		else {
+
 			evEventService.addEventListener(evEvents.DATA_LOAD_END, function () {
 				getDownloadedTableItemsCount()
 			})
@@ -2081,11 +2706,12 @@
 					showFrontEvFilters = !showFrontEvFilters
 				}
 			)
+
 		}
+
 	}
 
 	const init = function () {
-		evDataHelper.importGroupsStylesFromColumns(groups.value, columns)
 
 		if (hideRowSettings.value) {
 			contentWrapElement.classList.add('g-row-settings-collapsed')
@@ -2093,16 +2719,28 @@
 			contentWrapElement.classList.remove('g-row-settings-collapsed')
 		}
 
-		updateGroupTypeIds()
+		columns.value = setColumnsFrontOptions();
 
-		if (isReport) syncColumnsWithGroups()
-		syncGroupLayoutNamesWithColumns()
+		evDataHelper.importGroupsStylesFromColumns(groupsRef.value, columns.value)
 
-		columns = evDataService.getColumns()
+		groupsRef.value = updateGroupTypeIds()
+
+		if (isReport) {
+
+			const res = syncColumnsWithGroups();
+
+			columns.value = res.columns;
+
+		}
+
+		groupsRef.value = syncGroupLayoutNamesWithColumns()
+		groupsRef.value = setGroupsFrontOptions();
+
+		setColumns(columns.value);
+		// columns = evDataService.getColumns()
 		// flagMissingColumns();
-		makePopupDataForColumns(columns)
 
-		columnsToShow.value = getColumnsToShow()
+		// columnsToShow.value = getColumnsToShow()
 
 		collectMissingCustomFieldsErrors()
 
@@ -2120,60 +2758,15 @@
 		)
 		let rowFilterColor = evSettings.row_type_filter
 
+		// update refs after functions above changed groups and columns
+		groupsRef.value = getGroups();
+		columns.value = getColumns();
+
 		initEventListeners()
 	}
 
-	init()
+	init();
 
-	function getPopupData(item, $index, isAGroup) {
-		let data = reactive({
-			$index: $index,
-			isAGroup: isAGroup,
-			item: item, // can be column or group
-			viewContext: viewContext,
-			renameColumn: renameColumn,
-			isReport: isReport,
-			columnHasCorrespondingGroup: columnHasCorrespondingGroup,
-			addColumnEntityToGrouping: addColumnEntityToGrouping,
-			checkForFilteringBySameAttr: checkForFilteringBySameAttr,
-			addFiltersWithColAttr: addFiltersWithColAttr,
-			editManualSorting: editManualSorting,
-			activateColumnNumberRenderingPreset: activateColumnNumberRenderingPreset,
-			// openColumnNumbersRenderingSettings: openColumnNumbersRenderingSettings,
-			selectSubtotalType: selectSubtotalType,
-			checkSubtotalFormula: checkSubtotalFormula,
-			// isSubtotalFormulaSelected: isSubtotalFormulaSelected,
-			getSubtotalFormula: getSubtotalFormula,
-			resizeColumn: resizeColumn,
-			removeColumn: removeColumn,
-			unGroup: unGroup,
-
-			changeColumnTextAlign: changeColumnTextAlign,
-			checkColTextAlign: checkColTextAlign,
-			removeGroup: removeGroup,
-			// reportHideSubtotal: reportHideSubtotal,
-			reportHideGrandTotal: reportHideGrandTotal,
-			isSubtotalWeightedShouldBeExcluded: isSubtotalWeightedShouldBeExcluded,
-
-			isSubtotalSum: isSubtotalSum(item),
-			isSubtotalWeighted: isSubtotalWeighted(item),
-			isSubtotalAvgWeighted: isSubtotalAvgWeighted(item),
-			subtotalFormula: getSubtotalFormula(item),
-			isTemporaryWeighted: false,
-
-			onSubtotalSumClick: onSubtotalSumClick,
-			onSubtotalWeightedClick: onSubtotalWeightedClick,
-			onSubtotalAvgWeightedClick: onSubtotalAvgWeightedClick,
-
-			openNumberFormatDialog: openNumberFormatDialog,
-		})
-
-		if (isAGroup) {
-			data.reportSetSubtotalType = reportSetSubtotalType
-		}
-
-		return data
-	}
 </script>
 
 <style lang="scss" scoped>

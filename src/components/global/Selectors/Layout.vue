@@ -23,7 +23,7 @@
 				<template #left_icon>
 					<FmBtn
 						v-if="!loadingLayout"
-						type="iconBtn"
+						type="icon"
 						icon="menu"
 						@click.stop="isOpenCode = true"
 					/>

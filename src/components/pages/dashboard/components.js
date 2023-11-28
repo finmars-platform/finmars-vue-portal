@@ -763,7 +763,7 @@ export default [
 					type: 'select',
 					items: [
 						{ id: 'time_weighted', name: 'Time-weighted return' },
-						{ id: 'money_weighted', name: 'Money weighted return' },
+						{ id: 'modified_dietz', name: 'Modified Dietz' },
 					],
 				},
 				default_value: null,
@@ -862,7 +862,7 @@ export default [
 					type: 'select',
 					items: [
 						{ id: 'time_weighted', name: 'Time-weighted return' },
-						{ id: 'money_weighted', name: 'Money weighted return' },
+						{ id: 'modified_dietz', name: 'Modified Dietz' },
 					],
 				},
 				default_value: null,

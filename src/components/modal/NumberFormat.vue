@@ -2,109 +2,167 @@
 	<BaseModal title="Number format">
 		<div style="padding: 5px 0 20px">
 			<div class="header">
-				<FmSelect label="Select Preset" :items="presetSelectorData"></FmSelect>
+				<div class="select-main">
+					<FmSelect
+						v-model="vm.currentPresetName"
+						label="Select Preset"
+						:items="vm.presetSelectorData.options"
+					></FmSelect>
+				</div>
 
 				<div class="examples">
 					<div class="examples__name">Examples:</div>
 					<div class="examples-number">
-						<span>{{ positiveNumberExample }}</span>
-						<span>{{ zeroExample }}</span>
-						<span>{{ negativeNumberExample }}</span>
+						<span>{{ vm.positiveNumberExample }}</span>
+						<span>{{ vm.zeroExample }}</span>
+						<span>{{ vm.negativeNumberExample }}</span>
 					</div>
 				</div>
 			</div>
+
 			<div class="content">
-				<FmExpansionPanel title="Zero">
+				<FmExpansionPanel title="Zero" subtitle="0" subtitleOpen="Select zero number format">
 					<div
 						class="panel-content"
-						v-for="(item, index) in zeroFormats"
+						v-for="(item, index) in vm.zeroFormats"
 						:key="index"
 					>
-						<div class="radio-input">
-							<input type="radio" class="input" name="Zero" value="0" />
-							<label>{{ item?.name }}</label>
-						</div>
-						<!-- id=`'ZeroBase' + ${item?.id}` for="ZeroBase" -->
+						<FmInputRadio
+							:name="'Zero'"
+							:id="item.id"
+							:label="item?.name"
+							:value="item.id"
+							v-model="vm.settings.zero_format_id"
+							@input="
+								$emit(
+									'update:vm.settings.zero_format_id',
+									vm.onNumberFormatChange()
+								)
+							"
+						></FmInputRadio>
 					</div>
 				</FmExpansionPanel>
-				<FmExpansionPanel title="Negative">
+				<FmExpansionPanel title="Negative" subtitle="100" subtitleOpen="Select negative number format">
 					<div
 						class="panel-content"
-						v-for="(item, index) in negativeFormats"
+						v-for="(item, index) in vm.negativeFormats"
 						:key="index"
 					>
-						<div class="radio-input">
-							<input type="radio" class="input" name="Negative" value="0" />
-							<label>{{ item?.name }}</label>
-						</div>
-						<!-- id=`'ZeroBase' + ${item?.id}` for="ZeroBase" -->
+						<FmInputRadio
+							:name="'Negative'"
+							:id="item.id"
+							:label="item?.name"
+							:value="item.id"
+							v-model="vm.negativeFormat"
+							@input="
+								$emit('update:vm.negativeFormat', vm.onNegativeFormatChange())
+							"
+						></FmInputRadio>
 					</div>
 				</FmExpansionPanel>
-				<FmExpansionPanel title="Rounding">
+				<FmExpansionPanel title="Rounding" subtitle="No rounding" subtitleOpen="Select negative number format">
 					<div
 						class="panel-content"
-						v-for="(item, index) in percentageFormats"
+						v-for="(item, index) in vm.percentageFormats"
 						:key="index"
 					>
-						<div class="radio-input">
-							<input type="radio" class="input" name="Rounding" value="0" />
-							<label>{{ item?.name }}</label>
-						</div>
-						<!-- id=`'ZeroBase' + ${item?.id}` for="ZeroBase" -->
+						<FmInputRadio
+							:name="'Rounding'"
+							:id="item.id"
+							:label="item?.name"
+							:value="item.id"
+							v-model="vm.settings.round_format_id"
+							@input="
+								$emit(
+									'update:vm.settings.round_format_id',
+									vm.onRoundingChange()
+								)
+							"
+						></FmInputRadio>
 					</div>
 				</FmExpansionPanel>
-				<FmExpansionPanel title="Thousands separation">
+				<FmExpansionPanel title="Thousands separation" subtitle="No separation" subtitleOpen="Select separation format">
 					<div
 						class="panel-content"
-						v-for="(item, index) in separationFormats"
+						v-for="(item, index) in vm.separationFormats"
 						:key="index"
 					>
-						<div class="radio-input">
-							<input
-								type="radio"
-								class="input"
-								name="ThousandsSeparation"
-								value="0"
-							/>
-							<label>{{ item?.name }}</label>
-						</div>
-						<!-- id=`'ZeroBase' + ${item?.id}` for="ZeroBase" -->
+						<FmInputRadio
+							:name="'ThousandsSeparation'"
+							:id="item.id"
+							:label="item?.name"
+							:value="item.id"
+							v-model="vm.settings.thousands_separator_format_id"
+							@input="
+								$emit(
+									'update:vm.settings.thousands_separator_format_id',
+									vm.onNumberFormatChange()
+								)
+							"
+						></FmInputRadio>
 					</div>
 				</FmExpansionPanel>
 
-				<FmExpansionPanel title="Percentage">
+				<FmExpansionPanel title="Percentage" subtitle="N/A" subtitleOpen="Select percentage format">
 					<div
 						class="panel-content"
-						v-for="(item, index) in percentageFormats"
+						v-for="(item, index) in vm.percentageFormats"
 						:key="index"
 					>
-						<div class="radio-input">
-							<input
-								type="radio"
-								class="input"
-								name="ThousandsSeparation"
-								value="0"
-							/>
-							<label>{{ item?.name }}</label>
-						</div>
-						<!-- id=`'ZeroBase' + ${item?.id}` for="ZeroBase" -->
+						<FmInputRadio
+							:name="'percentageFormats'"
+							:id="item.id"
+							:label="item?.name"
+							:value="item.id"
+							v-model="vm.settings.percentage_format_id"
+							@input="
+								$emit(
+									'update:vm.settings.percentage_format_id',
+									vm.onPercentageChange()
+								)
+							"
+						></FmInputRadio>
 					</div>
 				</FmExpansionPanel>
 				<FmExpansionPanel title="Suffix">
 					<div class="panel-content">
-						<FmInputText label="Suffix" v-modal="SuffixActive"></FmInputText>
+						<FmInputText
+							label="Suffix"
+							@input="
+								$emit(
+									'update:vm.settings.number_suffix',
+									vm.onNumberFormatChange()
+								)
+							"
+							v-model="vm.settings.number_suffix"
+						></FmInputText>
 					</div>
 				</FmExpansionPanel>
 				<FmExpansionPanel title="Prefix">
 					<div class="panel-content">
-						<FmInputText label="Prefix" v-modal="PrefixActive"></FmInputText>
+						<FmInputText
+							label="Prefix"
+							@input="
+								$emit(
+									'update:vm.settings.number_prefix',
+									vm.onNumberFormatChange()
+								)
+							"
+							v-model="vm.settings.number_prefix"
+						></FmInputText>
 					</div>
 				</FmExpansionPanel>
 				<FmExpansionPanel title="Multiplier">
 					<div class="panel-content">
 						<FmInputText
 							label="Multiplier"
-							v-modal="MultiplierActive"
+							@input="
+								$emit(
+									'update:vm.settings.number_multiplier',
+									vm.onNumberFormatChange()
+								)
+							"
+							v-model="vm.settings.number_multiplier"
 						></FmInputText>
 					</div>
 				</FmExpansionPanel>
@@ -130,11 +188,20 @@
 		},
 	})
 	const emits = defineEmits(['save'])
-	const isOpenDeleteCustomColumns = ref(false)
-	const isOpenEditCustomColumns = ref(false)
-	const SuffixActive = ref([])
-	const PrefixActive = ref([])
-	const MultiplierActive = ref([])
+	const selectCh = ref([])
+	console.log('select', selectCh)
+	watch(
+		() => selectCh.value,
+		() => console.log('select watch ', selectCh)
+	)
+	let vm = reactive({
+		settings: props.settings,
+		// presetSelectorData: {options: { id: String, name: String, isActive: Boolean }},
+		// selectOption: (option, _$popup) => void
+	})
+	console.log('vm:', vm)
+	console.log('props.settings:', props.settings)
+
 	const defaultReportSettings = {
 		zero_format_id: 0,
 		negative_format_id: 0,
@@ -146,43 +213,40 @@
 		number_suffix: '',
 		number_prefix: '',
 	}
-
-	const zeroFormats = ref([
+	if (vm) {
+		const report_settings = JSON.parse(JSON.stringify(props.settings))
+		vm.settings = { ...defaultReportSettings, ...report_settings }
+	} else {
+		vm.settings = { ...defaultReportSettings }
+	}
+	vm.zeroFormats = [
 		{ id: 0, name: '0' },
 		{ id: 1, name: '-' },
 		{ id: 2, name: '(empty)' },
-	])
-	const negativeFormats = ref([
+	]
+
+	vm.negativeFormats = [
 		{ id: 0, name: '-100', color: 'black' },
 		{ id: 1, name: '-100', color: 'red' },
 		{ id: 2, name: '(100)', color: 'black' },
 		{ id: 3, name: '(100)', color: 'red' },
-	])
-	const separationFormats = ref([
+	]
+
+	vm.separationFormats = [
 		{ id: 0, name: 'No separation' },
 		{ id: 1, name: 'Space' },
 		{ id: 2, name: 'Apostrophe' },
-	])
-	const percentageFormats = ref([
+	]
+
+	vm.percentageFormats = [
 		{ id: 0, name: 'N/A' },
 		{ id: 1, name: '0%' },
 		{ id: 2, name: '0.0%' },
 		{ id: 3, name: '0.00%' },
 		{ id: 4, name: '0 bps' },
 		{ id: 5, name: '0.0 bps' },
-	])
-	const presetSelectorData = ref([
-		{ id: 'price', name: `Price (0)`, isActive: false },
-		{ id: 'market_value', name: `Market Value (000'000)`, isActive: false },
-		{ id: 'amount', name: `Amount (000'000.00)`, isActive: false },
-		{ id: 'exposure', name: `Exposure (0.0%)`, isActive: false },
-		{ id: 'return', name: `Return (0.00%)`, isActive: false },
-	])
-	const positiveNumberExample = ref([])
-	const zeroExample = ref([])
-	const negativeNumberExample = ref([])
+	]
 
-	const negativeFormat = ref([])
 	const presetsSettings = {
 		price: {
 			zero_format_id: 1,
@@ -221,23 +285,30 @@
 			percentage_format_id: 3,
 		},
 	}
+	vm.presetSelectorData = {
+		options: [
+			{ id: 'price', name: `Price (0)`, isActive: false },
+			{ id: 'market_value', name: `Market Value (000'000)`, isActive: false },
+			{ id: 'amount', name: `Amount (000'000.00)`, isActive: false },
+			{ id: 'exposure', name: `Exposure (0.0%)`, isActive: false },
+			{ id: 'return', name: `Return (0.00%)`, isActive: false },
+		],
+		selectOption: (option, _$popup) => {
+			_$popup.cancel()
 
-	let vm = reactive({ settings: props.settings })
-	console.log('vm:', vm)
+			vm.presetSelectorData.options.forEach(
+				(it) => (it.isActive = it === option)
+			)
+
+			const numberFormat = presetsSettings[option.id]
+			Object.assign(vm.settings, numberFormat)
+
+			vm.onNumberFormatChange()
+		},
+	}
 
 	function save() {
 		emits('save', { status: 'agree', data: props.settings })
-	}
-	const setContainersHeight = function (containers) {
-		containers.forEach((container) => {
-			const contentElement = container.querySelector(
-				'.numberFormatAccordionHeight'
-			)
-
-			if (contentElement) {
-				container.style.height = contentElement.clientHeight + 'px'
-			}
-		})
 	}
 
 	const isObjectContain = function (obj, targetObj) {
@@ -248,7 +319,6 @@
 		const selectedPreset = vm.presetSelectorData.options.find((option) => {
 			const requiredProps = presetsSettings[option.id]
 			const currentProps = vm.settings
-
 			return isObjectContain(currentProps, requiredProps)
 		})
 
@@ -329,6 +399,8 @@
 		clearAllPresetSelection()
 		const currentPreset = getActivePreset()
 		vm.currentPresetName = currentPreset ? currentPreset.name : 'Select Preset'
+		// console.log(currentPreset, 'currentPreset onNumberFormatChange ')
+		// console.log(currentPreset.name, 'currentPreset.name onNumberFormatChange')
 	}
 
 	vm.getZeroName = function () {
@@ -361,38 +433,9 @@
 			{ example: value },
 			{ key: 'example', report_settings: vm.settings }
 		)
-
-	vm.presetSelectorData = {
-		options: [
-			{ id: 'price', name: `Price (0)`, isActive: false },
-			{ id: 'market_value', name: `Market Value (000'000)`, isActive: false },
-			{ id: 'amount', name: `Amount (000'000.00)`, isActive: false },
-			{ id: 'exposure', name: `Exposure (0.0%)`, isActive: false },
-			{ id: 'return', name: `Return (0.00%)`, isActive: false },
-		],
-		selectOption: (option, _$popup) => {
-			_$popup.cancel()
-
-			vm.presetSelectorData.options.forEach(
-				(it) => (it.isActive = it === option)
-			)
-
-			const numberFormat = presetsSettings[option.id]
-			Object.assign(vm.settings, numberFormat)
-
-			vm.onNumberFormatChange()
-		},
+	vm.agree = function () {
+		$mdDialog.hide({ status: 'agree', data: vm.settings })
 	}
-
-	const init = function () {
-		vm.onNumberFormatChange()
-
-		// const animatedContainers =
-		// 	$element[0].querySelectorAll('.cb1-resizing-wrap')
-		// setTimeout(() => setContainersHeight(animatedContainers)) // for height animation
-	}
-
-	init()
 </script>
 
 <style lang="scss" scoped>
@@ -402,24 +445,94 @@
 		width: 100%;
 		min-width: 570px;
 	}
+	.select-main {
+		width: 50%;
+	}
 	.panel-content {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		padding-left: 90px;
+		padding-left: 40%;
 		justify-content: center;
 	}
 	.radio-input {
+		position: relative;
 		display: flex;
 		align-items: center;
+		margin: 10px 0;
+		cursor: pointer;
+
 		.input {
-			margin-right: 20px;
+			position: absolute;
+			z-index: -1;
+			opacity: 0;
+			cursor: pointer;
+
+			& + label {
+				display: inline-flex;
+				align-items: center;
+				user-select: none;
+				padding-left: 30px;
+			}
+			& + label::before {
+				box-sizing: border-box;
+				background-color: transparent;
+				border-radius: 50%;
+				content: '';
+				position: absolute;
+				display: block;
+				height: auto;
+				left: 0;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				transition: all 0.5s;
+				width: auto;
+				border-color: rgba(0, 0, 0, 0.54);
+				width: 20px;
+				border-style: solid;
+				border-width: 2px;
+				cursor: pointer;
+			}
+			&:checked + label::before {
+				border-color: #f05a22;
+			}
+			&:checked + label::after {
+				content: '';
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				right: 0;
+				bottom: 0;
+				height: 10px;
+				width: 10px;
+				left: 0;
+				border-radius: 50%;
+				transform: translate(50%, -50%);
+				background-color: #f05a22;
+			}
+			&:not(:disabled):not(:checked) + label:hover::before {
+				box-shadow: 0 0 0 10px rgba(240, 90, 34, 0.2);
+				transition: 0.5s;
+			}
+			&:focus {
+				box-shadow: 0 0 0 10px rgba(240, 90, 34, 0.2);
+				transition: 0.5s;
+			}
+			&:active {
+				box-shadow: 0 0 0 10px rgba(240, 90, 34, 0.2);
+				transition: 0.5s;
+			}
+			&:hover {
+				box-shadow: 0 0 0 10px rgba(240, 90, 34, 0.2);
+				transition: 0.5s;
+			}
 		}
 	}
 	.examples {
 		display: flex;
 		flex-direction: column;
-		margin-top: 15px;
+		margin-top: 10px;
 		margin-left: 20px;
 		// .examples__name
 
@@ -427,6 +540,7 @@
 			display: flex;
 			font-size: 12px;
 			color: $gray;
+			margin-bottom: 10px;
 		}
 	}
 	.examples-number {

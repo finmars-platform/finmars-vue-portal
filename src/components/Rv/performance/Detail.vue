@@ -6,7 +6,7 @@
 			<FmBtn
 				v-if="!showBundleActions"
 				class="primaryIcon"
-				type="iconBtn"
+				type="icon"
 				icon="lock"
 				@click.stop="showBundleActions = true"
 			/>
@@ -15,7 +15,7 @@
 				<FmBtn
 					:disabled="!portfolioItems.length"
 					class="primaryIcon m-r-8"
-					type="iconBtn"
+					type="icon"
 					icon="edit"
 					@click.stop="editBundleIsOpened = true"
 				/>
@@ -23,7 +23,7 @@
 				<FmBtn
 					:disabled="!portfolioItems.length"
 					class="primaryIcon"
-					type="iconBtn"
+					type="icon"
 					icon="delete"
 					@click.stop="deleteBundle()"
 				/>
@@ -265,7 +265,7 @@
 			body: updatedData,
 		}
 
-		let res = await useApi('portfolioBundles.put', opts)
+		let res = await useApi('portfolioBundle.put', opts)
 
 		if (!res.error) {
 			useNotify({
@@ -285,7 +285,7 @@
 
 		if (!isConfirm) return false
 
-		const res = await useApi('portfolioBundles.delete', {
+		const res = await useApi('portfolioBundle.delete', {
 			params: { id: bundleId.value },
 		})
 

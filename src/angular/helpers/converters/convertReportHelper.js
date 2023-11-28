@@ -2,7 +2,7 @@ import evHelperService from '../../services/entityViewerHelperService'
 ;('use strict')
 
 var convertToExcel = function () {
-	/*var rows = document.querySelectorAll('.ev-content .g-row');
+    /*var rows = document.querySelectorAll('.ev-content .g-row');
 
         var table = '<table>';
 
@@ -57,14 +57,14 @@ var convertToExcel = function () {
 var useShortNameAttrs = ['instrument', 'instrument_type']
 
 var getTransactionStatusName = function (statusNumber) {
-	switch (statusNumber) {
-		case 1:
-			return 'Booked'
-			break
-		case 2:
-			return 'Pending'
-			break
-	}
+    switch (statusNumber) {
+        case 1:
+            return 'Booked'
+            break
+        case 2:
+            return 'Pending'
+            break
+    }
 }
 
 /*var getEntityViewerDynamicAttrCellVal = function (flatListItem, column) {
@@ -108,79 +108,79 @@ var getTransactionStatusName = function (statusNumber) {
     };*/
 
 var getReportViewerCellVal = function (
-	flatListItem,
-	column,
-	columnOrder,
-	numberOfGroups,
-	proxylineGroupData
+    flatListItem,
+    column,
+    columnOrder,
+    numberOfGroups,
+    proxylineGroupData
 ) {
-	var cellText = ''
-	var resetPLGD = false
+    var cellText = ''
+    var resetPLGD = false
 
-	if (flatListItem.___type === 'subtotal') {
-		var columnWithGroupName = flatListItem.___level - 2 // group level count starts from 1 and we omit root group
+    if (flatListItem.___type === 'subtotal') {
+        var columnWithGroupName = flatListItem.___level - 2 // group level count starts from 1 and we omit root group
 
-		if (columnWithGroupName < 0 && columnOrder === 0) {
-			// to show grand total
+        if (columnWithGroupName < 0 && columnOrder === 0) {
+            // to show grand total
 
-			cellText = 'Grand Total'
-		} else if (columnOrder === columnWithGroupName) {
-			cellText = String(flatListItem.___group_name)
-		} else if (
-			(flatListItem[column.key] || flatListItem[column.key] === 0) &&
-			columnOrder >= numberOfGroups
-		) {
-			cellText = String(flatListItem[column.key])
-		}
-	} else {
-		if (
-			proxylineGroupData.level &&
-			columnOrder === proxylineGroupData.level - 2
-		) {
-			cellText = proxylineGroupData.group_name
-			resetPLGD = true
-		} else if (flatListItem[column.key] && columnOrder >= numberOfGroups) {
-			cellText = String(flatListItem[column.key])
-		}
-	}
+            cellText = 'Grand Total'
+        } else if (columnOrder === columnWithGroupName) {
+            cellText = String(flatListItem.___group_name)
+        } else if (
+            (flatListItem[column.key] || flatListItem[column.key] === 0) &&
+            columnOrder >= numberOfGroups
+        ) {
+            cellText = String(flatListItem[column.key])
+        }
+    } else {
+        if (
+            proxylineGroupData.level &&
+            columnOrder === proxylineGroupData.level - 2
+        ) {
+            cellText = proxylineGroupData.group_name
+            resetPLGD = true
+        } else if (flatListItem[column.key] && columnOrder >= numberOfGroups) {
+            cellText = String(flatListItem[column.key])
+        }
+    }
 
-	var result = {
-		cellText: cellText,
-		resetPLGD: resetPLGD,
-	}
+    var result = {
+        cellText: cellText,
+        resetPLGD: resetPLGD,
+    }
 
-	return result
+    return result
 }
 
 var getEntityViewerCellVal = function (flatListItem, column, columnOrder) {
-	var cellText = ''
+    var cellText = ''
 
-	if (flatListItem.___type === 'group') {
-		var columnWithGroupName = flatListItem.___level - 1 // group level count starts from 1 and we omit root group
+    if (flatListItem.___type === 'group') {
+        var columnWithGroupName = flatListItem.___level - 1 // group level count starts from 1 and we omit root group
 
-		if (columnOrder === 0) {
-			if (columnWithGroupName > 0) {
-				cellText =
-					'&nbsp;&nbsp;'.repeat(columnWithGroupName) +
-					String(flatListItem.___group_name) // distinguish group level by spaces
-			} else {
-				cellText = String(flatListItem.___group_name)
-			}
-		}
-	} else if (
-		flatListItem.hasOwnProperty('attributes') &&
-		column.key.indexOf('attributes.') === 0
-	) {
-		// for dynamic attributes
+        if (columnOrder === 0) {
+            if (columnWithGroupName > 0) {
+                cellText =
+                    '&nbsp;&nbsp;'.repeat(columnWithGroupName) +
+                    String(flatListItem.___group_name) // distinguish group level by spaces
+            } else {
+                cellText = String(flatListItem.___group_name)
+            }
+        }
+    } else if (
+        flatListItem.hasOwnProperty('attributes') &&
+        column.key.indexOf('attributes.') === 0
+    ) {
+        // for dynamic attributes
 
-		var daKey = column.key.slice(11)
+        var daKey = column.key.slice(11)
 
-		cellText = evHelperService.getValueFromDynamicAttrsByUserCode(
-			daKey,
-			flatListItem.attributes
-		)
+        cellText = evHelperService.getValueFromDynamicAttrsByUserCode(
+            daKey,
+            flatListItem.attributes
+        )
 
-		/* if (cellText || cellText === 0) {
+        /* if (cellText || cellText === 0) {
 
                 if (typeof cellText !== 'string') {
                     cellText = String(cellText);
@@ -190,78 +190,78 @@ var getEntityViewerCellVal = function (flatListItem, column, columnOrder) {
                 cellText = '';
             } */
 
-		if (!cellText && cellText !== 0) {
-			cellText = ''
-		} else if (
-			typeof cellText === 'object' &&
-			cellText.hasOwnProperty('classifier')
-		) {
-			cellText = cellText.classifier_object
-				? cellText.classifier_object.name
-				: ''
-		} else if (typeof cellText !== 'string') {
-			cellText = String(cellText)
-		}
-	} else if (flatListItem[column.key]) {
-		var colValueType = column.value_type
+        if (!cellText && cellText !== 0) {
+            cellText = ''
+        } else if (
+            typeof cellText === 'object' &&
+            cellText.hasOwnProperty('classifier')
+        ) {
+            cellText = cellText.classifier_object
+                ? cellText.classifier_object.name
+                : ''
+        } else if (typeof cellText !== 'string') {
+            cellText = String(cellText)
+        }
+    } else if (flatListItem[column.key]) {
+        var colValueType = column.value_type
 
-		if (colValueType === 'field') {
-			var attrObjName = column.key + '_object'
-			var attrObj = flatListItem[attrObjName]
+        if (colValueType === 'field') {
+            var attrObjName = column.key + '_object'
+            var attrObj = flatListItem[attrObjName]
 
-			if (useShortNameAttrs.indexOf(column.key) === -1) {
-				if (column.key === 'price_download_scheme') {
-					cellText = flatListItem['price_download_scheme_object'].user_code
-				} else {
-					cellText = attrObj.name
-				}
-			} else {
-				// use short name for relation attributes
-				cellText = attrObj.short_name
-			}
-		} else if (
-			column.key === 'status' &&
-			typeof flatListItem[column.key] === 'number'
-		) {
-			cellText = getTransactionStatusName(flatListItem[column.key])
-		} else {
-			cellText = String(flatListItem[column.key])
-		}
-	}
+            if (useShortNameAttrs.indexOf(column.key) === -1) {
+                if (column.key === 'price_download_scheme') {
+                    cellText = flatListItem['price_download_scheme_object'].user_code
+                } else {
+                    cellText = attrObj.name
+                }
+            } else {
+                // use short name for relation attributes
+                cellText = attrObj.short_name
+            }
+        } else if (
+            column.key === 'status' &&
+            typeof flatListItem[column.key] === 'number'
+        ) {
+            cellText = getTransactionStatusName(flatListItem[column.key])
+        } else {
+            cellText = String(flatListItem[column.key])
+        }
+    }
 
-	return cellText
+    return cellText
 }
 
 var convertFlatListToExcel = function (
-	flatList,
-	columns,
-	isReport,
-	numberOfGroups
+    flatList,
+    columns,
+    isReport,
+    numberOfGroups
 ) {
-	var table = '<table><thead><tr>'
+    var table = '<table><thead><tr>'
 
-	for (var hc = 0; hc < columns.length; hc++) {
-		var hColumnText
+    for (var hc = 0; hc < columns.length; hc++) {
+        var hColumnText
 
-		if (columns[hc].layout_name) {
-			hColumnText = columns[hc].layout_name
-		} else {
-			hColumnText = columns[hc].name
-		}
+        if (columns[hc].layout_name) {
+            hColumnText = columns[hc].layout_name
+        } else {
+            hColumnText = columns[hc].name
+        }
 
-		table = table + '<th>' + hColumnText + '</th>'
-	}
+        table = table + '<th>' + hColumnText + '</th>'
+    }
 
-	table = table + '</tr></thead>'
+    table = table + '</tr></thead>'
 
-	table = table + '<tbody>'
+    table = table + '<tbody>'
 
-	var reportViewerGetTdElements = function () {
-		var td = ''
+    var reportViewerGetTdElements = function () {
+        var td = ''
 
-		var c
-		for (c = 0; c < columns.length; c++) {
-			/*var columnKey = columns[c].key;
+        var c
+        for (c = 0; c < columns.length; c++) {
+            /*var columnKey = columns[c].key;
                 var cellText = '';
 
                 if (flatList[r].___type === 'subtotal') {
@@ -297,30 +297,30 @@ var convertFlatListToExcel = function (
 
                 }*/
 
-			var resultObj = getReportViewerCellVal(
-				flatList[r],
-				columns[c],
-				c,
-				numberOfGroups,
-				proxylineGroupData
-			)
+            var resultObj = getReportViewerCellVal(
+                flatList[r],
+                columns[c],
+                c,
+                numberOfGroups,
+                proxylineGroupData
+            )
 
-			if (resultObj.resetPLGD) {
-				proxylineGroupData = {} // resetting after group name got rendered in row that goes after proxyline
-			}
+            if (resultObj.resetPLGD) {
+                proxylineGroupData = {} // resetting after group name got rendered in row that goes after proxyline
+            }
 
-			td = td + '<td>' + resultObj.cellText + '</td>'
-		}
+            td = td + '<td>' + resultObj.cellText + '</td>'
+        }
 
-		return td
-	}
+        return td
+    }
 
-	var entityViewerGetTdElements = function () {
-		var td = ''
+    var entityViewerGetTdElements = function () {
+        var td = ''
 
-		var c
-		for (c = 0; c < columns.length; c++) {
-			/*var columnKey = columns[c].key;
+        var c
+        for (c = 0; c < columns.length; c++) {
+            /*var columnKey = columns[c].key;
                 var cellText = '';
 
                 if (flatList[r].___type === 'group') {
@@ -367,134 +367,134 @@ var convertFlatListToExcel = function (
 
                 }*/
 
-			var cellText = getEntityViewerCellVal(flatList[r], columns[c], c)
+            var cellText = getEntityViewerCellVal(flatList[r], columns[c], c)
 
-			td = td + '<td>' + cellText + '</td>'
-		}
+            td = td + '<td>' + cellText + '</td>'
+        }
 
-		return td
-	}
+        return td
+    }
 
-	var tr
-	var proxylineGroupData = {}
+    var tr
+    var proxylineGroupData = {}
 
-	var r
-	for (r = 0; r < flatList.length; r++) {
-		tr = ''
+    var r
+    for (r = 0; r < flatList.length; r++) {
+        tr = ''
 
-		if (isReport) {
-			if (flatList[r].___type === 'subtotal') {
-				if (flatList[r].___subtotal_type === 'proxyline') {
-					proxylineGroupData.group_name = String(flatList[r].___group_name)
-					proxylineGroupData.level = flatList[r].___level
-				} else {
-					tr = tr + '<tr>' + reportViewerGetTdElements() + '</tr>'
-					table = table + tr
-				}
-			} else {
-				tr = tr + '<tr>' + reportViewerGetTdElements() + '</tr>'
-				table = table + tr
-			}
-		} else {
-			if (flatList[r].___type !== 'control') {
-				entityViewerGetTdElements()
+        if (isReport) {
+            if (flatList[r].___type === 'subtotal') {
+                if (flatList[r].___subtotal_type === 'proxyline') {
+                    proxylineGroupData.group_name = String(flatList[r].___group_name)
+                    proxylineGroupData.level = flatList[r].___level
+                } else {
+                    tr = tr + '<tr>' + reportViewerGetTdElements() + '</tr>'
+                    table = table + tr
+                }
+            } else {
+                tr = tr + '<tr>' + reportViewerGetTdElements() + '</tr>'
+                table = table + tr
+            }
+        } else {
+            if (flatList[r].___type !== 'control') {
+                entityViewerGetTdElements()
 
-				tr = tr + '<tr>' + entityViewerGetTdElements() + '</tr>'
-				table = table + tr
-			}
-		}
-	}
+                tr = tr + '<tr>' + entityViewerGetTdElements() + '</tr>'
+                table = table + tr
+            }
+        }
+    }
 
-	table = table + '</tbody></table>'
+    table = table + '</tbody></table>'
 
-	return table
+    return table
 }
 
 var convertFlatListToCSV = function (
-	flatList,
-	columns,
-	isReport,
-	numberOfGroups
+    flatList,
+    columns,
+    isReport,
+    numberOfGroups
 ) {
-	var csv = []
+    var csv = []
 
-	// creating row with names of columns
-	csv[0] = []
-	for (var hc = 0; hc < columns.length; hc++) {
-		var hColumnText
+    // creating row with names of columns
+    csv[0] = []
+    for (var hc = 0; hc < columns.length; hc++) {
+        var hColumnText
 
-		if (columns[hc].layout_name) {
-			hColumnText = columns[hc].layout_name
-		} else {
-			hColumnText = columns[hc].name
-		}
+        if (columns[hc].layout_name) {
+            hColumnText = columns[hc].layout_name
+        } else {
+            hColumnText = columns[hc].name
+        }
 
-		// Escaping double quotes and commas
-		if (hColumnText.indexOf('"') !== -1) {
-			hColumnText = hColumnText.replace(/"/g, '""')
-		}
-		hColumnText = '"' + hColumnText + '"'
+        // Escaping double quotes and commas
+        if (hColumnText.indexOf('"') !== -1) {
+            hColumnText = hColumnText.replace(/"/g, '""')
+        }
+        hColumnText = '"' + hColumnText + '"'
 
-		csv[0].push(hColumnText)
-	}
+        csv[0].push(hColumnText)
+    }
 
-	if (csv[0].length > 0) {
-		csv[0] = csv[0].join(',')
-	}
+    if (csv[0].length > 0) {
+        csv[0] = csv[0].join(',')
+    }
 
-	// < creating row with names of columns >
+    // < creating row with names of columns >
 
-	var reportViewerAddCellsToCSVRow = function (csvRowOrder) {
-		var c
-		for (c = 0; c < columns.length; c++) {
-			var resultObj = getReportViewerCellVal(
-				flatList[r],
-				columns[c],
-				c,
-				numberOfGroups,
-				proxylineGroupData
-			)
+    var reportViewerAddCellsToCSVRow = function (csvRowOrder) {
+        var c
+        for (c = 0; c < columns.length; c++) {
+            var resultObj = getReportViewerCellVal(
+                flatList[r],
+                columns[c],
+                c,
+                numberOfGroups,
+                proxylineGroupData
+            )
 
-			var cellText = resultObj.cellText
+            var cellText = resultObj.cellText
 
-			if (resultObj.resetPLGD) {
-				proxylineGroupData = {} // resetting after group name got rendered in row that goes after proxyline
-			}
+            if (resultObj.resetPLGD) {
+                proxylineGroupData = {} // resetting after group name got rendered in row that goes after proxyline
+            }
 
-			// Escaping double quotes and commas
-			if (cellText.indexOf('"') !== -1) {
-				cellText = cellText.replace(/"/g, '""')
-			}
-			cellText = '"' + cellText + '"'
+            // Escaping double quotes and commas
+            if (cellText.indexOf('"') !== -1) {
+                cellText = cellText.replace(/"/g, '""')
+            }
+            cellText = '"' + cellText + '"'
 
-			csv[csvRowOrder].push(cellText)
-		}
-	}
+            csv[csvRowOrder].push(cellText)
+        }
+    }
 
-	var entityViewerAddCellsToCSVRow = function (csvRowOrder) {
-		var c
-		for (c = 0; c < columns.length; c++) {
-			var cellText = getEntityViewerCellVal(flatList[r], columns[c], c)
+    var entityViewerAddCellsToCSVRow = function (csvRowOrder) {
+        var c
+        for (c = 0; c < columns.length; c++) {
+            var cellText = getEntityViewerCellVal(flatList[r], columns[c], c)
 
-			// Escaping double quotes and commas
-			if (cellText.indexOf('"') !== -1) {
-				cellText = cellText.replace(/"/g, '""')
-			}
-			cellText = '"' + cellText + '"'
+            // Escaping double quotes and commas
+            if (cellText.indexOf('"') !== -1) {
+                cellText = cellText.replace(/"/g, '""')
+            }
+            cellText = '"' + cellText + '"'
 
-			csv[csvRowOrder].push(cellText)
-		}
-	}
+            csv[csvRowOrder].push(cellText)
+        }
+    }
 
-	var proxylineGroupData = {}
+    var proxylineGroupData = {}
 
-	var r
-	for (r = 0; r < flatList.length; r++) {
-		var csvRowOrder = r + 1 // there is already row with index 0
+    var r
+    for (r = 0; r < flatList.length; r++) {
+        var csvRowOrder = r + 1 // there is already row with index 0
 
-		csv[csvRowOrder] = []
+        csv[csvRowOrder] = []
 
-		if (isReport) {
+    	if (isReport) {
 			if (flatList[r].___type === 'subtotal') {
 				if (flatList[r].___subtotal_type === 'proxyline') {
 					proxylineGroupData.group_name = String(flatList[r].___group_name)

@@ -27,6 +27,6 @@ const metaContentTypesService = new MetaContentTypesService(
 export default new UiService(
 	cookieService,
 	xhrService,
-	ecosystemDefaultService,
-	metaContentTypesService
+	metaContentTypesService,
+	null,
 )

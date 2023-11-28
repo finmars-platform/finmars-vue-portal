@@ -368,6 +368,14 @@
 												<span class="side-nav-title">Procedures status</span>
 											</a>
 										</li>
+										<li>
+											<a
+												:href="getUrlToOldApp('/pricing-parent-procedures')"
+												class="sidenav-dropdown-menu-btn"
+											>
+												<span class="side-nav-title">Portfolio History</span>
+											</a>
+										</li>
 									</ul>
 								</div>
 							</li>
@@ -1001,7 +1009,7 @@
 							<div
 								class="side-menu-group-btn-container side-menu-settings-border-top-1"
 								v-if="
-									accessSectionTable.settings_administration && store.member.is_admin
+									accessSectionTable.settings_administration
 								"
 							>
 								<h3 class="sms-btn-group-header">Administration</h3>

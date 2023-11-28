@@ -339,19 +339,6 @@
 				</template>
 			</FmMenu>
 
-			<!-- <div v-if="scope.isReport">
-							<div v-if="scope.reportOptions.auth_time">
-								Auth Time: {{ reportOptions.auth_time }}s<br />
-								Execution Time: {{ reportOptions.execution_time }}s<br />
-								Relation Prefetch Time:
-								{{ reportOptions.relation_prefetch_time }}s<br />
-								Serialization Time: {{ reportOptions.serialization_time }}s
-								<br />
-								Render Time: {{ renderTime }}s <br />
-								Rows downloaded: {{ reportOptions.items.length }} <br />
-							</div>
-						</div> -->
-
 			<FmMenu v-if="scope.isRootEntityViewer && scope.isReport">
 				<template #btn>
 					<FmIcon btn icon="view_module" v-fm-tooltip="'Matrix'" />
@@ -424,14 +411,14 @@
 							Custom Columns
 						</div>
 
-						<div
+<!--						<div
 							class="fm_list_item"
 							v-if="scope.isReport"
 							@click="toggleAutoRefresh"
 						>
 							<span v-if="scope.rvAutoRefresh">Disable Auto Refresh</span>
 							<span v-if="!scope.rvAutoRefresh">Enable Auto Refresh</span>
-						</div>
+						</div>-->
 
 						<div
 							class="fm_list_item"
@@ -489,6 +476,7 @@
 	scope.readyStatus = reactive({
 		filters: false,
 	})
+	scope.processing = false;
 	scope.gFiltersHelper = gFiltersHelper
 
 	const filters = ref(evDataService.getFilters())
@@ -498,15 +486,40 @@
 	let filtersChipsContainer
 	let customFields
 
+	let reportOptionsRef = ref( evDataService.getReportOptions() );
+	let renderTimeRef = ref(null);
+
+	const refreshBtnTooltipComp = computed(() => {
+
+		let tooltipHtmlStart = "";
+
+		if (scope.isReport && reportOptionsRef.value.auth_time) {
+
+			tooltipHtmlStart =
+				`<div>
+					Auth Time: ${reportOptionsRef.value.auth_time}s</br>
+          Execution Time: ${reportOptionsRef.value.execution_time}s</br>
+          Relation Prefetch Time: ${reportOptionsRef.value.relation_prefetch_time}s</br>
+          Serialization Time: ${reportOptionsRef.value.serialization_time}s</br>
+          Render Time: ${renderTimeRef.value}s</br>
+          Rows downloaded: ${reportOptionsRef.value.items.length}</br>
+         </div>`;
+
+		}
+
+		return `${tooltipHtmlStart}<div>Refresh Database Filters</div>`;
+
+	});
+
 	onMounted(() => {
 		elem.value = document.querySelector('.ev_toolbar.g-filters-holder')
 
-		scope.rvAutoRefresh = evDataService.getAutoRefreshState()
+		/*scope.rvAutoRefresh = evDataService.getAutoRefreshState()
 
 		if (scope.rvAutoRefresh === null || scope.rvAutoRefresh === undefined) {
 			//if we missed initial state for already existing layout
 			scope.rvAutoRefresh = true
-		}
+		}*/
 
 		scope.filterPopupTemplate =
 			'views/popups/groupTable/filters/rv-filter-popup-view.html'
@@ -546,6 +559,21 @@
 			evEventService.dispatchEvent(evEvents.REQUEST_REPORT);
 		}; */
 	scope.refreshTable = function () {
+
+		scope.processing = true; // will be changed to false by evEvents.DATA_LOAD_END
+		evDataService.resetTableContent(true);
+
+		const reportOptions = evDataService.getReportOptions()
+
+		if (reportOptions) {
+
+			reportOptions.report_instance_id = null // if clear report_instance_id then we request new Report Calculation
+			evDataService.setReportOptions(reportOptions);
+
+			evEventService.dispatchEvent(evEvents.REPORT_OPTIONS_CHANGE);
+
+		}
+
 		evEventService.dispatchEvent(evEvents.REQUEST_REPORT)
 	}
 
@@ -802,11 +830,11 @@
 	// 	})
 	// }
 
-	scope.toggleAutoRefresh = function () {
+	/*scope.toggleAutoRefresh = function () {
 		scope.rvAutoRefresh = !scope.rvAutoRefresh
 
 		evDataService.setAutoRefreshState(scope.rvAutoRefresh)
-	}
+	}*/
 
 	scope.addMenu = {
 		data: {
@@ -953,14 +981,25 @@
 			scope.currentAdditions = evDataService.getAdditions()
 		})
 
+		evEventService.addEventListener(evEvents.DATA_LOAD_START, function () {
+			scope.processing = true;
+		})
+
 		evEventService.addEventListener(evEvents.DATA_LOAD_END, function () {
-			scope.reportOptions = evDataService.getReportOptions() // for refresh tooltip -> auth time
+			reportOptionsRef.value = evDataService.getReportOptions(); // for refresh tooltip -> auth time
+			scope.processing = false;
 		})
 
 		evEventService.addEventListener(evEvents.FINISH_RENDER, function () {
-			scope.renderTime = evDataService.getRenderTime() // for refresh tooltip -> auth time
+			renderTimeRef.value = evDataService.getRenderTime(); // for refresh tooltip -> auth time
 		})
+
+		evEventService.addEventListener(evEvents.REPORT_OPTIONS_CHANGE, function () {
+			reportOptionsRef.value = evDataService.getReportOptions();
+		})
+
 	}
+
 	scope.popupData = scope.vm.popupData
 	scope.popupEventService = scope.vm.popupEventService
 

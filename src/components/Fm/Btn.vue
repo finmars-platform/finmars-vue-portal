@@ -15,7 +15,7 @@
 		to: String,
 		/**
 		 * Type of button
-		 * @values primary, basic, text, action, iconBtn
+		 * @values primary, outlined, basic, text, action, icon
 		 */
 		type: {
 			type: String,
@@ -46,6 +46,7 @@
 				background: $primary-lighten-2;
 			}
 		}
+
 		&.primary {
 			background: $primary;
 			color: $separ;
@@ -54,7 +55,18 @@
 				background: $primary-darken;
 			}
 		}
-		&.plain {
+
+		&.outlined {
+			font-weight: 700;
+			border-radius: 3px;
+			border: 1px solid $border-darken;
+      color: $primary;
+
+      &:not([disabled]):hover {
+        background-color: $primary-lighten-2;
+      }
+		}
+		/*&.plain {
 			padding: 0;
 			background: transparent !important;
 			height: auto;
@@ -62,7 +74,8 @@
 			&:not([disabled]):hover {
 				color: $text;
 			}
-		}
+		}*/
+
 		&.text {
 			color: $text;
 
@@ -73,6 +86,7 @@
 				background: $main-darken-hover;
 			}
 		}
+
 		&.action {
 			color: $primary;
 
@@ -84,7 +98,8 @@
 				background: $primary-lighten-2;
 			}
 		}
-		&.iconBtn {
+
+		&.icon {
 			padding: 0;
 			min-width: 0;
 			height: auto;
@@ -97,6 +112,7 @@
 				}
 			}
 		}
+
 		&[disabled] {
 			cursor: default;
 			opacity: 0.6;
@@ -107,6 +123,7 @@
 			}
 		}
 	}
+
 	.fm_btn.icon {
 		display: flex;
 		align-items: center;
@@ -115,7 +132,7 @@
 			color: $text-lighten;
 		}
 
-		&:not(.iconBtn) .icon {
+		&:not(.icon) .icon {
 			margin-right: 7px;
 		}
 	}

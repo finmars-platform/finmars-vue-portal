@@ -1,21 +1,24 @@
 * {
-	margin: 0;
-	padding: 0;
-	outline: none;
-	border: 0;
-	box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    outline: none;
+    border: 0;
+    box-sizing: border-box;
 }
 *::selection {
-	background: #333;
-	color: #fff;
+    background: #333;
+    color: #fff;
 }
 a {
-	text-decoration: none;
-	display: block;
+    text-decoration: none;
+    display: block;
 }
 button {
-	cursor: pointer;
-	background: none;
+    background: none;
+
+    &:not([disabled]) {
+        cursor: pointer;
+    }
 }
 h1,
 h2,
@@ -23,18 +26,18 @@ h3,
 h4,
 h5,
 h6 {
-	font-weight: normal;
+    font-weight: normal;
 }
 li {
-	list-style: none;
+    list-style: none;
 }
 table {
-	border-collapse: 0;
+    border-collapse: 0;
 }
 img {
-	vertical-align: middle;
-	max-width: 100%;
+    vertical-align: middle;
+    max-width: 100%;
 }
 input, textarea {
-	background: transparent;
+    background: transparent;
 }

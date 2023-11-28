@@ -19,7 +19,7 @@
 						</BaseInput>
 					</div>
 
-					<FmBtn type="iconBtn" icon="close" @click="emit('cancel')" />
+					<FmBtn type="icon" icon="close" @click="emit('cancel')" />
 				</div>-->
 
 		<div class="attrs_sel_content scrollable">

@@ -80,7 +80,7 @@ let portfolioRegister = ref()
 defaultsGet()
 
 async function defaultsGet() {
-	let edRes = await useApi('portfolioBundles.get')
+	let edRes = await useApi('portfolioBundleList.get')
 
 	portfolioBundleList.value = edRes.error ? {} : edRes.results
 }
@@ -105,7 +105,7 @@ async function getPortfolioRegister() {
 }
 
 async function deletePortfolioBundleItem(item) {
-	let res = await useApi('portfolioBundles.delete', {
+	let res = await useApi('portfolioBundle.delete', {
 		params: { id: item.id },
 		body: item,
 	})
@@ -145,7 +145,7 @@ function createPortfolioBundle(newNamesData) {
 async function putEditPortfolioBundle(newNamesData) {
 	// activePortfolioBundleList = []
 	console.log('putEditPortfolioBundle newNamesData', newNamesData)
-	let res = await useApi('portfolioBundles.put', {
+	let res = await useApi('portfolioBundle.put', {
 		params: { id: activePortfolioBundleList.id },
 		body: newNamesData,
 	})
@@ -170,7 +170,7 @@ async function putEditPortfolioBundle(newNamesData) {
 
 async function getCreatePortfolioBundle(newNamesData) {
 	activePortfolioBundleList = {}
-	let res = await useApi('portfolioBundles.post', {
+	let res = await useApi('portfolioBundle.post', {
 		body: newNamesData,
 	})
 	if (res.error) {

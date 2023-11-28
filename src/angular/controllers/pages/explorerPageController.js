@@ -20,491 +20,993 @@ export default function explorerController(
 	globalDataService,
 	$mdDialog
 ) {
-	var vm = this
 
-	vm.items = []
+	var vm = this;
+
+	vm.items = [];
+
+	vm.reverse = true;
+	vm.propertyName = 'name';
 
 	vm.currentPath = []
 
-	vm.showHiddenFiles = false
-	vm.showWorkflow = false
-	vm.showEditor = false
+	vm.showHiddenFiles = false;
+	vm.showWorkflow = false;
+	vm.showEditor = false;
 
 	vm.fileEditor = {}
-	vm.fileEditorLoading = false
+	vm.fileEditorLoading = false;
+	vm.playBookLoading = false;
+
+	vm.allSelected = false;
+	vm.selectedCount = 0;
+	vm.filesStatus = [];
+
+	vm.searchTerm = '';
+
+	vm.sortBy = function (propertyName) {
+		vm.reverse = (vm.propertyName === propertyName) ? !vm.reverse : false;
+		vm.propertyName = propertyName;
+	};
 
 	vm.breadcrumbsNavigation = function ($index) {
+
 		if ($index === -1) {
 			vm.currentPath = []
 		} else {
 			vm.currentPath = vm.currentPath.filter(function (item, index) {
-				return index <= $index
+				return index <= $index;
 			})
 		}
 
 		// vm.listFiles();
 		// IMPORTANT! State.go escaping slashes and router goes mad
 		window.location.hash = '#!/explorer/' + vm.currentPath.join('/')
-	}
 
-	vm.selectItem = function ($event, item) {
-		vm.items = vm.items.map(function (_item) {
-			_item.selected = false
-			return _item
-		})
-
-		item.selected = true
 	}
 
 	vm.triggerMenu = function ($event) {
 
+		console.log("$event", $event)
 		// Cause md-menu on right click has wrong absolute position calc
 		setTimeout(function () {
 			$event.currentTarget.querySelector('.explorer-md-menu-trigger').click()
 		}, 0)
+
 	}
 
 	vm.openFolder = function ($event, item) {
 
+		console.log('open Folder ', item);
 
 		vm.currentPath.push(item.name)
 
-
+		console.log('vm.currentPath', vm.currentPath);
 
 		// IMPORTANT! State.go escaping slashes and router goes mad
 		window.location.hash = '#!/explorer/' + vm.currentPath.join('/')
 
 		// vm.listFiles()
+
 	}
 
-	vm.previewFileDialog = function ($event, item, $mdMenu) {
-		if ($mdMenu) {
-			$mdMenu.close()
-		}
+	vm.downloadAndEdit = function () {
 
-		var itemPath = vm.currentPath.join('/') + '/' + item.name
+		var itemPath = vm.currentPath.join('/');
 
 		explorerService.viewFile(itemPath).then(function (blob) {
-			$mdDialog.show({
-				controller: 'FilePreviewDialogController as vm',
-				templateUrl: 'views/dialogs/file-preview-dialog-view.html',
-				parent: angular.element(document.body),
-				targetEvent: $event,
-				clickOutsideToClose: false,
-				preserveScope: true,
-				autoWrap: true,
-				skipHide: true,
-				multiple: true,
-				locals: {
-					data: {
-						blob: blob,
-						file_descriptor: item,
-					},
-				},
-			})
-		})
+
+			var reader = new FileReader();
+
+			reader.addEventListener("loadend", function (e) {
+				vm.fileEditor.content = reader.result;
+				vm.fileEditor.name = vm.currentPath[vm.currentPath.length - 1];
+
+				vm.fileEditorLoading = false;
+
+				vm.draftUserCode = 'explorer.' + vm.currentPath.join('__');
+
+				$scope.$apply();
+
+				vm.initFileEditor() // call after angular.js render
+
+
+			});
+
+			reader.readAsText(blob);
+
+
+		});
 	}
 
-	vm.editFileDialog = function ($event, item, $mdMenu) {
-		if ($mdMenu) {
-			$mdMenu.close()
-		}
+	vm.downloadAndOpenPlaybook = function () {
 
-		var itemPath = vm.currentPath.join('/') + '/' + item.name
+		var itemPath = vm.currentPath.join('/');
+
+		vm.playBookLoading = true;
+
+		vm.showPlaybook = true;
 
 		explorerService.viewFile(itemPath).then(function (blob) {
-			$mdDialog
-				.show({
-					controller: 'FileEditDialogController as vm',
-					templateUrl: 'views/dialogs/file-edit-dialog-view.html',
-					parent: angular.element(document.body),
-					targetEvent: $event,
-					clickOutsideToClose: false,
-					preserveScope: true,
-					autoWrap: true,
-					skipHide: true,
-					multiple: true,
-					locals: {
-						data: {
-							blob: blob,
-							file_descriptor: item,
-							currentPath: vm.currentPath,
-						},
-					},
-				})
-				.then(function (res) {
-					if (res.status === 'agree') {
-						vm.listFiles()
-					}
-				})
-		})
+
+			var reader = new FileReader();
+
+			reader.addEventListener("loadend", function (e) {
+
+				vm.playbook = JSON.parse(reader.result);
+				vm.playbookName = vm.currentPath[vm.currentPath.length - 1];
+
+				vm.playBookLoading = false;
+
+				console.log('vm.playbook', vm.playbook);
+				console.log('vm.playbookName', vm.playbookName);
+
+				$scope.$apply();
+
+			});
+
+			reader.readAsText(blob);
+
+
+		});
+
 	}
 
 	vm.editFile = function ($event, item, $mdMenu) {
-		vm.fileEditor = {}
 
 		if ($mdMenu) {
 			$mdMenu.close()
 		}
 
-		vm.fileEditor.name = item.name
+		vm.currentPath.push(item.name);
 
-		var itemPath = vm.currentPath.join('/') + '/' + item.name
+		window.location.hash = '#!/explorer/' + vm.currentPath.join('/')
 
-		vm.showEditor = true
+		if (item.name.indexOf('.ipynb') !== -1) {
 
-		vm.calculateExplorerStateClass()
 
-		vm.fileEditorLoading = true
+			vm.fileEditorLoading = true;
 
-		explorerService.viewFile(itemPath).then(function (blob) {
-			var reader = new FileReader()
+			vm.downloadAndOpenPlaybook();
 
-			reader.addEventListener('loadend', function (e) {
-				vm.fileEditor.content = reader.result
+		} else {
 
-				vm.fileEditorLoading = false
+			vm.fileEditor = {};
 
-				$scope.$apply()
+			vm.showEditor = true;
 
-				vm.initFileEditor() // call after angular.js render
-			})
+			vm.fileEditorLoading = true;
 
-			reader.readAsText(blob)
-		})
+			vm.downloadAndEdit();
+
+		}
+
 	}
+
+	// DRAFT STARTED
+
+	vm.exportToDraft = function () {
+
+		var data = vm.editor.getValue()
+
+		console.log('data', data);
+
+		return data
+
+	}
+
+	vm.applyDraft = function ($event, data) {
+
+		// console.log('data', data);
+
+		vm.editor.setValue(data);
+
+	}
+
+	// DRAFT ENDED
 
 	vm.initFileEditor = function () {
 
+		console.log('vm.initFileEditor.fileEditor ', vm.fileEditor)
 
 		setTimeout(function () {
-			vm.editor = ace.edit('fileEditorAceEditor')
-			vm.editor.setTheme('ace/theme/monokai')
+
+			vm.editor = ace.edit('fileEditorAceEditor');
+			vm.editor.setTheme("ace/theme/monokai");
 
 			if (vm.fileEditor.name.indexOf('.py') !== -1) {
-				vm.editor.getSession().setMode('ace/mode/python')
+				vm.editor.getSession().setMode("ace/mode/python");
 			}
 
 			if (vm.fileEditor.name.indexOf('.json') !== -1) {
-				vm.editor.getSession().setMode('ace/mode/json')
+				vm.editor.getSession().setMode("ace/mode/json");
+			}
+
+			if (vm.fileEditor.name.indexOf('.ipynb') !== -1) {
+				vm.editor.getSession().setMode("ace/mode/json");
 			}
 
 			if (vm.fileEditor.name.indexOf('.yaml') !== -1) {
-				vm.editor.getSession().setMode('ace/mode/yaml')
+				vm.editor.getSession().setMode("ace/mode/yaml");
 			}
 
-			vm.editor.getSession().setUseWorker(false)
-			vm.editor.setHighlightActiveLine(false)
-			vm.editor.setShowPrintMargin(false)
-			ace.require('ace/ext/language_tools')
+			if (vm.fileEditor.name.indexOf('.yml') !== -1) {
+				vm.editor.getSession().setMode("ace/mode/yaml");
+			}
+
+			if (vm.fileEditor.name.indexOf('.html') !== -1) {
+				vm.editor.getSession().setMode("ace/mode/html");
+			}
+
+			if (vm.fileEditor.name.indexOf('.js') !== -1) {
+				vm.editor.getSession().setMode("ace/mode/javascript");
+			}
+
+			if (vm.fileEditor.name.indexOf('.css') !== -1) {
+				vm.editor.getSession().setMode("ace/mode/css");
+			}
+
+			vm.editor.getSession().setUseWorker(false);
+			vm.editor.setHighlightActiveLine(false);
+			vm.editor.setShowPrintMargin(false);
+			ace.require("ace/ext/language_tools");
 			vm.editor.setOptions({
 				enableBasicAutocompletion: true,
 				enableSnippets: true,
-			})
+				enableLiveAutocompletion: true
+			});
 			vm.editor.setFontSize(14)
-			vm.editor.setBehavioursEnabled(true)
+			vm.editor.setBehavioursEnabled(true);
 			vm.editor.setValue(vm.fileEditor.content)
 
-			vm.editor.focus()
-			vm.editor.navigateFileStart()
+			vm.editor.focus();
+			vm.editor.navigateFileStart();
+
 		}, 100)
+
 	}
 
 	vm.saveFileEditor = function () {
-		vm.fileSaveProcessing = true
 
-		var name = vm.fileEditor.name
+		vm.fileSaveProcessing = true;
 
-		var path = vm.currentPath.join('/')
+		var name = vm.currentPath[vm.currentPath.length - 1];
 
-		let formData = new FormData()
+		var pathPieces = [...vm.currentPath]
+		pathPieces.pop()
+
+		var path = pathPieces.join('/'); // need to path folder path
+
+		let formData = new FormData();
 
 		var content = vm.editor.getValue()
 
+		console.log('path', path)
+		console.log('name', name)
 
-
-
-		const blob = new Blob([content], { type: vm.contentType })
+		const blob = new Blob([content], {type: vm.contentType});
 		const file = new File([blob], name)
 
-		formData.append('file', file)
+		formData.append("file", file)
 		formData.append('path', path)
 
-		explorerService.uploadFiles(formData).then(function (e) {
-			toastNotificationService.success('File Saved')
+		return explorerService.uploadFiles(formData).then(function (e) {
 
-			vm.fileSaveProcessing = false
+			toastNotificationService.success("File Saved")
 
-			$scope.$apply()
+			vm.fileSaveProcessing = false;
+
+			$scope.$apply();
+
 		})
+	}
+
+	vm.deleteSelected = function ($event) {
+
+		var itemsToDelete = vm.items.filter(function (item) {
+			return item.selected;
+		})
+
+		var names = itemsToDelete.map(function (item) {
+			return item.name
+		}).join(', ');
+
+		$mdDialog.show({
+			controller: 'WarningDialogController as vm',
+			templateUrl: 'views/dialogs/warning-dialog-view.html',
+			parent: angular.element(document.body),
+			targetEvent: $event,
+			clickOutsideToClose: false,
+			locals: {
+				warning: {
+					title: 'Warning',
+					description: "Are you sure that you want to delete " + names + "?",
+				}
+			},
+			preserveScope: true,
+			autoWrap: true,
+			skipHide: true,
+			multiple: true
+		}).then(function (res) {
+
+			if (res.status === 'agree') {
+
+				var promises = [];
+
+				itemsToDelete.forEach(function (item) {
+
+					var itemPath = vm.currentPath.join('/') + '/' + item.name
+
+					if (item.type === 'dir') {
+						promises.push(new Promise(function (resolve) {
+							explorerService.deleteFolder(itemPath).then(function (data) {
+								resolve()
+							})
+						}))
+
+					} else {
+						promises.push(new Promise(function (resolve) {
+							explorerService.deleteFile(itemPath, false).then(function (data) {
+								resolve()
+							})
+						}))
+
+					}
+
+				})
+
+				Promise.allSettled(promises).then(function () {
+					toastNotificationService.success("Items deleted")
+					vm.listFiles();
+				})
+
+			}
+		})
+
+	}
+
+	vm.deleteFile = function ($event) {
+
+		$mdDialog.show({
+			controller: 'WarningDialogController as vm',
+			templateUrl: 'views/dialogs/warning-dialog-view.html',
+			parent: angular.element(document.body),
+			targetEvent: $event,
+			clickOutsideToClose: false,
+			locals: {
+				warning: {
+					title: 'Warning',
+					description: "Are you sure that you want to delete file " + vm.fileEditor.name + "?",
+				}
+			},
+			preserveScope: true,
+			autoWrap: true,
+			skipHide: true,
+			multiple: true
+		}).then(function (res) {
+
+			if (res.status === 'agree') {
+
+				var itemPath = vm.fileEditor.name;
+				if (vm.currentPath.length) {
+					itemPath = vm.currentPath.join('/') + '/' + vm.fileEditor.name
+				}
+
+				var is_dir = false;
+
+				explorerService.deleteFile(itemPath, is_dir)
+
+				setTimeout(function () {
+					vm.showEditor = false;
+					vm.listFiles();
+				}, 600)
+
+			}
+
+		});
+
 	}
 
 	vm.closeFileEditor = function () {
-		vm.showEditor = false
 
-		vm.calculateExplorerStateClass()
+		vm.showEditor = false;
+		vm.currentPath.pop();
+
+		vm.listFiles();
 	}
 
-	vm.copyFilePath = function ($event, item, $mdMenu) {
-		if ($mdMenu) {
-			$mdMenu.close()
-		}
+	vm.copyLink = function ($event, item) {
+
+		const url = window.location.origin + '/' + baseUrlService.getMasterUserPrefix() + '/api/storage' + item.file_path
+
+		metaHelper.copyToBuffer(url)
+
+	}
+
+	vm.copyFilePath = function ($event, item) {
 
 		metaHelper.copyToBuffer(item.file_path)
-	}
-
-	vm.downloadFile = function ($mdMenu, $event, item) {
-		$mdMenu.close()
-
-		var itemPath = item.name
-		if (vm.currentPath.length) {
-			itemPath = vm.currentPath.join('/') + '/' + item.name
-		}
-
-		explorerService.viewFile(itemPath).then(function (blob) {
-			// IE doesn't allow using a blob object directly as link href
-			// instead it is necessary to use msSaveOrOpenBlob
-			if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-				window.navigator.msSaveOrOpenBlob(blob)
-				return
-			}
-
-			// For other browsers:
-			// Create a link pointing to the ObjectURL containing the blob.
-			var data = window.URL.createObjectURL(blob)
-			var link = document.createElement('a')
-			link.href = data
-			link.download = item.name
-
-			document.body.appendChild(link) // For Mozilla Firefox
-			link.click()
-
-			setTimeout(function () {
-				document.body.removeChild(link)
-				window.URL.revokeObjectURL(data)
-			}, 100)
-		})
-
 
 	}
 
 	vm.renameFile = function ($mdMenu, $event, item) {
-		$mdMenu.close()
 
-		item.rename = true
+		$mdDialog.show({
+			controller: 'CreateFileDialogController as vm',
+			templateUrl: 'views/dialogs/create-file-dialog-view.html',
+			parent: angular.element(document.body),
+			targetEvent: $event,
+			locals: {
+				data: {}
+			}
+
+		}).then(function (res) {
+
+			if (res.status === 'agree') {
+
+				var oldItemPath = vm.fileEditor.name;
+				if (vm.currentPath.length) {
+					oldItemPath = vm.currentPath.join('/');
+				}
+
+				var is_dir = false;
+
+				explorerService.deleteFile(oldItemPath, is_dir)
+
+				vm.currentPath.pop();
+				vm.currentPath.push(res.name);
+
+				vm.fileEditor.name = res.name;
+
+				vm.saveFileEditor().then(function () {
+					window.location.hash = '#!/explorer/' + vm.currentPath.join('/')
+				})
+
+			}
+		})
+
 	}
 
-	vm.deleteFile = function ($mdMenu, $event, item) {
-		$mdMenu.close()
+	vm.downloadFile = function ($event, item) {
 
-		var itemPath = item.name
-		if (vm.currentPath.length) {
-			itemPath = vm.currentPath.join('/') + '/' + item.name
-		}
+		console.log('downloadFile.item', item);
 
-		var is_dir = false
+		var name = vm.currentPath[vm.currentPath.length - 1];
+		//
+		// var content = vm.editor.getValue();
+		//
+		// const blob = new Blob([content], {type: "plain/text"});
+		//
+		// downloadFileHelper.downloadFile(blob, "plain/text", name)
 
-		if (item.type === 'dir') {
-			is_dir = true
-		}
+		var path = vm.currentPath.join('/') + '/' + item.name;
 
-		explorerService.deleteFile(itemPath, is_dir)
+		explorerService.downloadFile({path: path}).then(function (blob) {
 
-		setTimeout(function () {
-			vm.listFiles()
-		}, 600)
+			downloadFileHelper.downloadFile(blob, "plain/text", item.name)
+
+		})
+
+	}
+
+	vm.formatJSON = function ($event) {
+
+		vm.fileEditor.content = JSON.parse(vm.editor.getValue());
+
+		vm.editor.setValue(JSON.stringify(vm.fileEditor.content, null, 4));
+
+	}
+
+	vm.toggleSelectAll = function ($event) {
+
+		vm.allSelected = !vm.allSelected;
+
+		vm.selectedCount = 0;
+
+		console.log('toggleSelectAll searchTerm', vm.searchTerm);
+
+		vm.items.filter(function (item) {
+			if (vm.searchTerm) {
+				return item.name.indexOf(vm.searchTerm) !== -1
+			}
+
+			return true;
+
+		}).forEach(function (item) {
+			item.selected = vm.allSelected;
+
+			if (item.selected) {
+				vm.selectedCount = vm.selectedCount + 1;
+			}
+
+		})
+
+
+	}
+
+	vm.selectItem = function ($event, item) {
+
+		item.selected = !item.selected;
+
+		console.log(" vm.selectItem item", item)
+
+		var allSelected = true;
+
+		vm.selectedCount = 0;
+
+		vm.items.filter(function (item) {
+			if (vm.searchTerm) {
+				return item.name.indexOf(vm.searchTerm) !== -1
+			}
+			return true;
+
+		}).forEach(function (item) {
+			if (!item.selected) {
+				allSelected = false;
+			}
+
+			if (item.selected) {
+				vm.selectedCount = vm.selectedCount + 1;
+			}
+		})
+
+		vm.allSelected = allSelected;
 	}
 
 	vm.listFiles = function () {
-		vm.processing = true
+
+		vm.processing = true;
+		vm.selectedCount = 0;
 
 		explorerService.listFiles(vm.currentPath.join('/')).then(function (data) {
-			vm.items = data.results
+
+			vm.items = data.results;
 
 			vm.items = vm.items.filter(function (item) {
+
 				var result = true
 
 				if (item.name[0] === '.' && !vm.showHiddenFiles) {
-					result = false
+					result = false;
 				}
 
 				return result
+
 			})
 
-			vm.processing = false
+			vm.processing = false;
 
-			$scope.$apply()
+			$scope.$apply();
+
+		})
+
+	}
+
+	vm.deleteFolder = function ($event) {
+
+		var path = vm.currentPath.join('/')
+
+		$mdDialog.show({
+			controller: 'WarningDialogController as vm',
+			templateUrl: 'views/dialogs/warning-dialog-view.html',
+			parent: angular.element(document.body),
+			targetEvent: $event,
+			clickOutsideToClose: false,
+			locals: {
+				warning: {
+					title: 'Warning',
+					description: "Are you sure that you want to delete folder " + path + "?",
+				}
+			},
+			preserveScope: true,
+			autoWrap: true,
+			skipHide: true,
+			multiple: true
+		}).then(function (res) {
+			console.log('res', res);
+			if (res.status === 'agree') {
+
+				explorerService.deleteFolder(path).then(function () {
+
+					vm.currentPath.pop()
+
+					vm.listFiles();
+
+				})
+
+			}
+
 		})
 	}
 
 	vm.createFolder = function ($event) {
-		$mdDialog
-			.show({
-				controller: 'CreateFolderDialogController as vm',
-				templateUrl: 'views/dialogs/create-folder-dialog-view.html',
-				parent: angular.element(document.body),
-				targetEvent: $event,
-				locals: {
-					data: {},
-				},
-			})
-			.then(function (res) {
-				if (res.status === 'agree') {
-					var itemPath = res.name
-					if (vm.currentPath.length) {
-						itemPath = vm.currentPath.join('/') + '/' + res.name
-					}
 
-					explorerService.createFolder(itemPath).then(function () {
-						vm.listFiles()
-					})
+		$mdDialog.show({
+			controller: 'CreateFolderDialogController as vm',
+			templateUrl: 'views/dialogs/create-folder-dialog-view.html',
+			parent: angular.element(document.body),
+			targetEvent: $event,
+			locals: {
+				data: {}
+			}
+
+		}).then(function (res) {
+
+			if (res.status === 'agree') {
+
+				var itemPath = res.name
+				if (vm.currentPath.length) {
+					itemPath = vm.currentPath.join('/') + '/' + res.name
 				}
-			})
+
+				explorerService.createFolder(itemPath).then(function () {
+
+					vm.listFiles();
+
+				})
+			}
+
+		});
+
 	}
 
 	vm.createFile = function ($event) {
-		$mdDialog
-			.show({
-				controller: 'CreateFileDialogController as vm',
-				templateUrl: 'views/dialogs/create-file-dialog-view.html',
-				parent: angular.element(document.body),
-				targetEvent: $event,
-				locals: {
-					data: {},
-				},
-			})
-			.then(function (res) {
-				if (res.status === 'agree') {
-					$mdDialog
-						.show({
-							controller: 'FileEditDialogController as vm',
-							templateUrl: 'views/dialogs/file-edit-dialog-view.html',
-							parent: angular.element(document.body),
-							targetEvent: $event,
-							clickOutsideToClose: false,
-							preserveScope: true,
-							autoWrap: true,
-							skipHide: true,
-							multiple: true,
-							locals: {
-								data: {
-									content: '',
-									file_descriptor: {
-										name: res.name,
-									},
-									currentPath: vm.currentPath,
-								},
+
+		$mdDialog.show({
+			controller: 'CreateFileDialogController as vm',
+			templateUrl: 'views/dialogs/create-file-dialog-view.html',
+			parent: angular.element(document.body),
+			targetEvent: $event,
+			locals: {
+				data: {}
+			}
+
+		}).then(function (res) {
+
+			if (res.status === 'agree') {
+
+				vm.fileEditor = {}
+
+				vm.currentPath.push(res.name);
+
+				var pathPieces = [...vm.currentPath]
+				pathPieces.pop();
+
+				var path = pathPieces.join('/');
+
+				let formData = new FormData();
+
+				let defaultContent = '';
+
+				if (res.name.indexOf('.ipynb') !== -1) {
+
+					defaultContent = {
+						"metadata": {
+							"kernelspec": {
+								"name": "python",
+								"display_name": "Python (Pyodide)",
+								"language": "python"
 							},
-						})
-						.then(function (res) {
-							if (res.status === 'agree') {
-								vm.listFiles()
+							"language_info": {
+								"codemirror_mode": {
+									"name": "python",
+									"version": 3
+								},
+								"file_extension": ".py",
+								"mimetype": "text/x-python",
+								"name": "python",
+								"nbconvert_exporter": "python",
+								"pygments_lexer": "ipython3",
+								"version": "3.8"
 							}
-						})
+						},
+						"cells": []
+					}
+
 				}
-			})
+
+				var content = JSON.stringify(defaultContent);
+
+				console.log('path', path)
+				console.log('name', res.name)
+
+				const blob = new Blob([content], {type: vm.contentType});
+				const file = new File([blob], res.name)
+
+				formData.append("file", file)
+				formData.append('path', path)
+
+				explorerService.uploadFiles(formData).then(function (e) {
+
+					if (res.name.indexOf('.ipynb') !== -1) {
+
+						vm.playbook = null;
+						vm.playbookName = res.name;
+
+						vm.showPlaybook = true;
+
+					} else {
+
+						vm.fileEditor.name = res.name;
+						vm.fileEditor.content = '';
+
+						vm.draftUserCode = 'explorer.' + vm.currentPath.join('__');
+
+						vm.showEditor = true;
+
+					}
+
+					setTimeout(function () {
+						window.location.hash = '#!/explorer/' + vm.currentPath.join('/')
+					}, 100);
+
+					// vm.initFileEditor() // call after angular.js render
+
+				})
+
+			}
+
+		});
+
 	}
 
 	vm.uploadFiles = function ($event) {
-		document.querySelector('#explorerFileUploadInput').click()
+
+		document.querySelector('#explorerFileUploadInput').click();
+
 	}
 
-	vm.uploadFileHandler = function ($event) {
-		vm.processing = true
-
-
-
-		var fileInput = document.querySelector('#explorerFileUploadInput')
-
-		let formData = new FormData()
-		for (var i = 0; i < fileInput.files.length; i = i + 1) {
-			formData.append('file', fileInput.files[i])
-		}
+	vm.downloadZip = function ($event) {
 
 		var path = vm.currentPath.join('/')
 
+		$mdDialog.show({
+			controller: 'SaveAsDialogController as vm',
+			templateUrl: 'views/dialogs/save-as-dialog-view.html',
+			parent: angular.element(document.body),
+			targetEvent: $event,
+			clickOutsideToClose: false,
+			preserveScope: true,
+			autoWrap: true,
+			skipHide: true,
+			multiple: true,
+			locals: {
+				data: {
+					name: 'Archive'
+				}
+			}
+		}).then(function (res) {
 
+			if (res.status === 'agree') {
 
-		formData.append('path', path)
+				var name = res.data.name + '.zip'
 
-		explorerService.uploadFiles(formData).then(function (data) {
-			document.querySelector('#explorerFileUploadInput').value = ''
+				var paths = []
 
-			vm.listFiles()
+				vm.items.forEach(function (item) {
+					if (item.selected) {
+
+						if (item.type === 'dir') {
+							paths.push(vm.currentPath.join('/') + '/' + item.name + '/') // important to add trailing slash
+						} else {
+							paths.push(vm.currentPath.join('/') + '/' + item.name)
+						}
+					}
+				})
+
+				console.log('paths', paths);
+
+				explorerService.downloadZip({paths: paths}).then(function (blob) {
+
+					downloadFileHelper.downloadFile(blob, "application/zip", name)
+
+				})
+
+			}
 		})
+
+	}
+
+	vm.sizePretty = function (size) {
+		if (isNaN(size))
+			size = 0;
+
+		if (size < 1024)
+			return size + ' Bytes';
+
+		size /= 1024;
+
+		if (size < 1024)
+			return size.toFixed(2) + ' KB';
+
+		size /= 1024;
+
+		if (size < 1024)
+			return size.toFixed(2) + ' MB';
+
+		size /= 1024;
+
+		return size.toFixed(2) + ' GB';
+	};
+
+	vm.uploadFileHandler = async function ($event) {
+
+		vm.closeFileStatuses = false;
+
+		var fileInput = document.querySelector('#explorerFileUploadInput')
+
+		// Assuming vm.filesStatus is an array that you can access from your view to display status
+		vm.filesStatus = Array.from(fileInput.files).map(function (file) {
+			return {
+				file: file,
+				name: file.name,
+				size: file.size,
+				size_pretty: vm.sizePretty(file.size),
+				status: 'init'  // initial status
+			};
+		});
+
+		var path = vm.currentPath.join('/')
+
+		for (let i = 0; i < vm.filesStatus.length; i++) {
+			let fileStatus = vm.filesStatus[i];
+			let formData = new FormData();
+			formData.append("file", fileStatus.file);
+			formData.append('path', path);
+
+			fileStatus.status = 'progress';
+
+			try {
+				await explorerService.uploadFiles(formData);
+				fileStatus.status = 'success';
+			} catch (error) {
+				fileStatus.status = 'error';
+				console.error(`Failed to upload ${fileStatus.name}: ${error}`);
+			}
+
+			$scope.$apply();
+
+		}
+
+		vm.closeFileStatuses = true;
+
+		// Clear the file input for the next set of uploads
+		document.querySelector('#explorerFileUploadInput').value = "";
+		vm.listFiles();
+
 	}
 
 	vm.toggleHidden = function () {
-		vm.showHiddenFiles = !vm.showHiddenFiles
 
-		vm.listFiles()
+		vm.showHiddenFiles = !vm.showHiddenFiles;
+
+		vm.listFiles();
+
 	}
 
 	vm.trustSrc = function (src) {
-		return $sce.trustAsResourceUrl(src)
+		return $sce.trustAsResourceUrl(src);
 	}
 
 	vm.resolveWorkflowIframeUrl = function () {
+
 		vm.workflowIframeUrl = 'http://0.0.0.0:8084/space00000/workflow/'
 
 		if (window.location.href.indexOf('finmars') !== -1) {
-			vm.workflowIframeUrl =
-				window.location.protocol +
-				'//' +
-				window.location.host +
-				'/' +
-				baseUrlService.getMasterUserPrefix() +
-				'/workflow/'
+			vm.workflowIframeUrl = window.location.protocol + '//' + window.location.host + '/' + baseUrlService.getMasterUserPrefix() + '/workflow/'
 		}
+
 	}
 
-	vm.calculateExplorerStateClass = function () {
-		var result = ''
+	vm.openInNewTab = function ($event, item) {
 
-		if (vm.showWorkflow && !vm.showEditor) {
-			result = 'show-explorer-workflow'
-		}
+		const url = window.location.origin + '/' + baseUrlService.getMasterUserPrefix() + '/api/storage' + item.file_path
 
-		if (!vm.showWorkflow && vm.showEditor) {
-			result = 'show-explorer-editor'
-		}
 
-		if (vm.showWorkflow && vm.showEditor) {
-			result = 'show-explorer-editor-workflow'
-		}
-
-		vm.explorerStateClass = result
+		window.open(url, "_blank");
 	}
 
-	vm.toggleWorkflow = function () {
-		vm.showWorkflow = !vm.showWorkflow
-		vm.calculateExplorerStateClass()
+	vm.deleteFile = function ($event, item) {
+
+		var name = vm.currentPath[vm.currentPath.length - 1];
+
+		$mdDialog.show({
+			controller: 'WarningDialogController as vm',
+			templateUrl: 'views/dialogs/warning-dialog-view.html',
+			parent: angular.element(document.body),
+			targetEvent: $event,
+			clickOutsideToClose: false,
+			locals: {
+				warning: {
+					title: 'Warning',
+					description: "Are you sure that you want to delete " + name + "?",
+				}
+			},
+			preserveScope: true,
+			autoWrap: true,
+			skipHide: true,
+			multiple: true
+		}).then(function (res) {
+
+			if (res.status === 'agree') {
+
+				var itemPath = vm.currentPath.join('/');
+
+				explorerService.deleteFile(itemPath, false).then(function (data) {
+
+					vm.showEditor = false;
+
+					vm.currentPath.pop();
+
+					window.location.hash = '#!/explorer/' + vm.currentPath.join('/');
+
+					vm.listFiles();
+
+				})
+
+
+			}
+
+		});
+
+	}
+
+	function getFileExtension(path) {
+		// Split the path into segments
+		let segments = path.split('/');
+		// Take the last segment
+		let lastSegment = segments[segments.length - 1];
+
+		// If the last segment contains more than one dot, treat it as a directory
+		if ((lastSegment.match(/\./g) || []).length > 1) {
+			return null; // or whatever you want to return for directories
+		} else {
+			// Check for a file extension
+			let extension = lastSegment.slice((lastSegment.lastIndexOf(".") - 1 >>> 0) + 2);
+			return extension || null; // If there's no extension, return null
+		}
 	}
 
 	vm.init = function () {
-		vm.resolveWorkflowIframeUrl()
 
+		vm.resolveWorkflowIframeUrl();
 
+		console.log('$stateParams', $stateParams);
 
 		if ($stateParams.folderPath) {
 			vm.currentPath = $stateParams.folderPath.split('/')
+
+			var extension = getFileExtension($stateParams.folderPath);
+
+			if (extension) { // possible file is opened
+
+				if (extension == 'ipynb') {
+
+					vm.downloadAndOpenPlaybook();
+
+				} else {
+
+					vm.showEditor = true;
+
+					vm.downloadAndEdit();
+
+				}
+
+			} else {
+				vm.listFiles();
+			}
+
+		} else {
+			vm.listFiles();
 		}
 
+		console.log("here?")
 
 
-		vm.listFiles()
+		vm.member = globalDataService.getMember();
 
-		vm.member = globalDataService.getMember()
+	};
 
-		document
-			.querySelector('.explorer-page')
-			.addEventListener('click', function (e) {
-				vm.items = vm.items.map(function (_item) {
-					_item.selected = false
-					return _item
-				})
-			})
-	}
+	vm.init();
 
-	vm.init()
 }
