@@ -368,6 +368,14 @@
 												<span class="side-nav-title">Procedures status</span>
 											</a>
 										</li>
+										<li>
+											<a
+												:href="getUrlToOldApp('/pricing-parent-procedures')"
+												class="sidenav-dropdown-menu-btn"
+											>
+												<span class="side-nav-title">Portfolio History</span>
+											</a>
+										</li>
 									</ul>
 								</div>
 							</li>
