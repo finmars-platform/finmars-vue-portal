@@ -91,7 +91,7 @@ export default {
 		post:  prefix + '/master-user-kick-member/',
 	},
 	memberInvites: {
-		get:  prefix + '/invite-to-user/?base_api_url={client}',
+		get:  prefix + '/invite-to-user/?base_api_url={baseApiUrl}',
 		post:  prefix + '/create-invite-to-user/',
 	},
 	masterInitUpdate: {

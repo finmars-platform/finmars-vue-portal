@@ -309,7 +309,7 @@
 					<span v-if="!isEdit">
 						{{ attrInfo.info }}
 					</span>
-					<FmInputArea v-else v-model="infoEditable.description" />
+					<FmInputArea v-else v-model="infoEditable.description" class="m-b-24" />
 				</div>
 
 				<div
