@@ -102,7 +102,12 @@
 					Add Description
 				</FmBtn>
 			</template>
-			<FmInputArea v-else v-model="editingData.description" ref="description"/>
+			<FmInputArea
+				v-else
+				v-model="editingData.description"
+				ref="description"
+				class="m-b-24"
+			/>
 		</div>
 
 
