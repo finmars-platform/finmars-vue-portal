@@ -202,7 +202,7 @@
 
 			monthEndDate = dayjs(monthEndDate).format('YYYY-MM-DD');
 
-			promises.push(getReports({ period_type: 'ytd', end: monthEndDate, ids: bundle }))
+			promises.push(getReports({ period_type: 'mtd', end: monthEndDate, ids: bundle }))
 
 		})
 
