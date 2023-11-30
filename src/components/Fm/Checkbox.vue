@@ -49,10 +49,11 @@
 		display: inline-block;
 		position: relative;
 		vertical-align: middle;
-		min-width: 20px;
-		height: 20px;
+		min-width: 18px;
+		height: 18px;
 		background: #fff;
 		border: 1px solid $border-darken;
+		border-radius: 4px;
 		margin-right: 10px;
 		cursor: pointer;
 		.circle {
@@ -61,8 +62,8 @@
 		.mark {
 			display: block;
 			position: absolute;
-			top: 2px;
-			left: 2px;
+			top: 1px;
+			left: 1px;
 			opacity: 0;
 			transition: 0.3s;
 			font-size: 16px;
