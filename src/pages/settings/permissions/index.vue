@@ -104,7 +104,7 @@
 
 			<div class="fm_container">
 				<BaseTable
-					:headers="['', 'Id','User Code', 'Configuration Code',  'Name', ]"
+					:headers="['', 'Id', 'User Code', 'Configuration Code',  'Name']"
 					:items="roles"
 					colls="50px repeat(4, 1fr)"
 					:cb="(id) => $router.push(`/settings/permissions/roles/${roles[id].id}`)"
@@ -331,9 +331,33 @@ async function init() {
 	]);
 
 	stockMembers.value = res[0].results;
-	groups.value = res[1].results;
-	roles.value = res[2].results;
-	accessPolicies.value = res[3].results;
+	// TODO we need to refactor that table, cause each new key will break it
+	groups.value = res[1].results.map((item) => {
+		return {
+			"id": item.id,
+			"user_code": item.user_code,
+			"configuration_code": item.configuration_code,
+			"name": item.name
+		}
+	});
+
+	roles.value = res[2].results.map((item) => {
+		return {
+			"id": item.id,
+			"user_code": item.user_code,
+			"configuration_code": item.configuration_code,
+			"name": item.name
+		}
+	});
+
+	accessPolicies.value = res[3].results.map((item) => {
+		return {
+			"id": item.id,
+			"user_code": item.user_code,
+			"configuration_code": item.configuration_code,
+			"name": item.name
+		}
+	});
 
 }
 
