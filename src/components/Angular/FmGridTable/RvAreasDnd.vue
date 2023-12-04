@@ -15,7 +15,7 @@
 	])
 
 	const { evEventService, evDataService, attributeDataService } =
-		inject('ngDependace');
+		inject('fmTableData');
 
 	const $mdDialog = inject('$mdDialog');
 

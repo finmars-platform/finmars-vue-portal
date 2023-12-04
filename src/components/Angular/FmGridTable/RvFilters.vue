@@ -588,11 +588,7 @@
 			</FmMenu>
 		</div>
 
-		<AngularFmGridTableMatrixSettingsM
-			v-if="$mdDialog.modals['ReportViewerMatrixSettingsDialogController']"
-			:payload="$mdDialog.modals['ReportViewerMatrixSettingsDialogController']"
-			:modelValue="true"
-		/>
+
 	</div>
 </template>
 
@@ -605,7 +601,7 @@
 	const props = defineProps(['vm'])
 
 	const { evEventService, evDataService, attributeDataService } =
-		inject('ngDependace')
+		inject('fmTableData')
 	const $mdDialog = inject('$mdDialog')
 
 	let gFiltersHelper = new gFiltersHelperInst()

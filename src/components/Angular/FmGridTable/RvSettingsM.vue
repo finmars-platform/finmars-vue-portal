@@ -342,7 +342,7 @@
 	const { resolve, reject, disableChangesSaving } = props.payload
 
 	const { evEventService, evDataService, attributeDataService } =
-		inject('ngDependace')
+		inject('fmTableData')
 	// 	customFieldService,
 	// 	ecosystemDefaultService,
 	// 	uiService,
