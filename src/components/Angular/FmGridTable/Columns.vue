@@ -165,7 +165,7 @@
 					:attributes="
 						$mdDialog.modals['AttributesSelectorDialogController'].data.attributes
 					"
-					:contentType="contentType"
+					:content_type="contentType"
 					@save="
 						(selected) => {
 							$mdDialog.modals['AttributesSelectorDialogController'].resolve({
@@ -297,7 +297,6 @@
 	import rvDataHelper from '@/angular/helpers/rv-data.helper'
 
 	import localStorageService from '@/angular/shell/scripts/app/services/localStorageService'
-  import {useGetEvRvParents} from "~/composables/useEntityReportViewer";
 
 	const props = defineProps([
 		'vm',

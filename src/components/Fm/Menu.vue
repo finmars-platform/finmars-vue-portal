@@ -104,7 +104,7 @@
 			});
 
 		}
-		else {
+		else if (props.openOnClick) {
 			activator.value.addEventListener('click', toggle);
 		}
 

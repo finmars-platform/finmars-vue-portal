@@ -447,7 +447,7 @@ export default function ({
 	 */
 	vm.setLayout = function (layout) {
 		return new Promise(async function (resolve, reject) {
-
+			console.log("testing1923.setLayout ", layout, '\n', structuredClone(layout) );
             if (typeof layout.data.reportLayoutOptions?.useDateFromAbove !== 'boolean') {
                 layout.data.reportLayoutOptions.useDateFromAbove = true;
             }

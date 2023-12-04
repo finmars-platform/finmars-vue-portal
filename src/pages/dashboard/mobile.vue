@@ -216,7 +216,7 @@
         <FmAttributesSelectModal
             v-model="attrsSelectorIsOpen"
             title="Add column"
-            :contentType="attrsSelContentType"
+            :content_type="attrsSelContentType"
             :attributes="allAttrs"
             :selected="selAttrsKeys"
             :disabledAttributes="selAttrsKeys"
@@ -228,7 +228,7 @@
         <FmAttributesSelectModal
             v-model="aggAttrsSelIsOpen"
             title="Select column"
-            :contentType="attrsSelContentType"
+            :content_type="attrsSelContentType"
             :valueType="20"
             :attributes="allAttrs"
             :selected="selAttrsKeys[0]"

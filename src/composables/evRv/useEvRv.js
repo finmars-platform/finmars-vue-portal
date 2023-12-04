@@ -400,7 +400,7 @@ export const getEvRvAttrInFormOf = function (form, attrInstance) {
 
 }
 
-export const getMdDialogData = () => {
+export const useGetMdDialogData = () => {
 
 	return {
 		modals: reactive({}),
@@ -429,8 +429,8 @@ export const getMdDialogData = () => {
  * 	@param {Object} [reportViewerOptions.expressionService]
  * @return {Promise<default>} - resolves into vm of an instance of reportViewerController
  */
-export const initReportViewerController = async function (contentType, evAttrsStore, reportViewerOptions) {
-
+export const useReportViewerController = async function (contentType, evAttrsStore, reportViewerOptions) {
+	console.log("testing1923 useInitReportViewerController works");
 	await evAttrsStore.fetchCustomFields(contentType);
 
 	return new reportViewerController(reportViewerOptions);

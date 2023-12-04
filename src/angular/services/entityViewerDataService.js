@@ -1432,9 +1432,9 @@ export default function (reportHelper) {
 
 		setColumns(listLayout.data.columns);
 		setGroups(listLayout.data.grouping);
-
+		console.log("testing1923.entityViewerDataService filters", listLayout.data.filters);
 		setFilters(listLayout.data.filters);
-
+		console.log("testing1923.entityViewerDataService filters2", getFilters());
 		/*if (isRootEntityViewer()) {
             setAdditions(listLayout.data.additions);
         }*/
