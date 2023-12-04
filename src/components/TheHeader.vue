@@ -84,8 +84,8 @@
 				<FmMenu class="header_item height-100">
 					<template #btn="{ isOpen }">
 						<FmBtn type="text"
-									 :class="['header_text_btn', 'm-l-8', 'm-r-8', {active: isOpen}]"
-									 style="height: 100%;">
+							   :class="['header_text_btn', 'm-l-8', 'm-r-8', {active: isOpen}]"
+							   style="height: 100%;">
 							{{ store.current.name }}
 						</FmBtn>
 					</template>
@@ -108,8 +108,8 @@
 			<FmMenu class="header_item height-100">
 				<template #btn="{ isOpen }">
 					<FmBtn type="text"
-								 :class="['header_text_btn', {active: isOpen}]"
-								 style="height: 100%;"
+						   :class="['header_text_btn', {active: isOpen}]"
+						   style="height: 100%;"
 					>
 
 						<div class="user-profile">
@@ -123,30 +123,31 @@
 				</template>
 				<template #default="{ close }">
 					<div class="fm_list">
-<!--						<div
+						<!--						<div
+													class="fm_list_item"
+													v-for="(item, index) in menu"
+													:key="index"
+													@click="item.cb(), close()"
+												>
+													{{ item.name }}
+												</div>-->
+						<NuxtLink
+							to="/profile"
 							class="fm_list_item"
-							v-for="(item, index) in menu"
-							:key="index"
-							@click="item.cb(), close()"
 						>
-							{{ item.name }}
-						</div>-->
-            <NuxtLink
-                to="/profile"
-                class="fm_list_item"
-            >
-              <span class="side-nav-title">Profile</span>
-            </NuxtLink>
+							<span class="side-nav-title">Profile</span>
+						</NuxtLink>
 
-            <div
-                class="fm_list_item"
-                @click="openAccManager"
-            >Account Security</div>
+						<div
+							class="fm_list_item"
+							@click="openAccManager"
+						>Account Security
+						</div>
 
-            <a
-                class="fm_list_item"
-                :href="`${apiUrl}/logout`"
-            >Logout</a>
+						<a
+							class="fm_list_item"
+							:href="`${apiUrl}/logout`"
+						>Logout</a>
 					</div>
 				</template>
 			</FmMenu>
@@ -157,7 +158,7 @@
 <script setup>
 import dayjs from "dayjs"
 
-import formbricks from "@/services/formbricks";
+import formbricks from "@formbricks/js";
 
 const store = useStore()
 const config = useRuntimeConfig()
@@ -177,8 +178,8 @@ const SECTIONS = {
 }
 
 async function openAccManager() {
-  const kc = await uKeycloak();
-  kc.accountManagement();
+	const kc = await uKeycloak();
+	kc.accountManagement();
 }
 
 let noti = ref(null)
@@ -223,9 +224,21 @@ async function init() {
 	// await formbricks.setAttribute('username', store.user.username)
 	// await formbricks.setAttribute('first_name', store.user.first_name)
 	// await formbricks.setAttribute('last_name', store.user.last_name)
-	formbricks.setUserId(store.user.id)
-	formbricks.setEmail(store.user.email)
-	await formbricks.registerRouteChange();
+
+	try {
+
+		formbricks.init({
+			environmentId: "clnr8525g0009ld01nrnhv5bx",
+			apiHost: "https://survey.finmars.com",
+			debug: true, // remove when in production,
+		});
+
+		await formbricks.setUserId(store.user.id)
+		await formbricks.setEmail(store.user.email)
+		await formbricks.registerRouteChange();
+	} catch (error) {
+		console.log("Could not init formbricks", error);
+	}
 }
 
 init()
@@ -311,6 +324,7 @@ header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+
 	.user-profile-picture {
 		width: 32px;
 		margin-right: 8px;
