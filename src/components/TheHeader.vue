@@ -231,9 +231,9 @@ async function init() {
 			environmentId: "clnr8525g0009ld01nrnhv5bx",
 			apiHost: "https://survey.finmars.com",
 			debug: true, // remove when in production,
+			userId: store.user.id,
 		});
 
-		await formbricks.setUserId(store.user.id)
 		await formbricks.setEmail(store.user.email)
 		await formbricks.registerRouteChange();
 	} catch (error) {
