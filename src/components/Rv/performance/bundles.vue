@@ -94,13 +94,13 @@
 
 			row.daily = null
 			getDay(bundle.id).then((day) => {
-				let value = parseFloat(q * 100).toFixed(4)
+				let value = parseFloat(day * 100).toFixed(4)
 				row.daily = value ? `${value}%` : ''
 			})
 
 			row.month = null
 			getMonth(bundle.id).then((month) => {
-				let value = parseFloat(q * 100).toFixed(4)
+				let value = parseFloat(month * 100).toFixed(4)
 				row.month = value ? `${value}%` : ''
 			})
 
@@ -112,25 +112,25 @@
 
 			row.year = null
 			getYear(bundle.id).then((year) => {
-				let value = parseFloat(q * 100).toFixed(4)
+				let value = parseFloat(year * 100).toFixed(4)
 				row.year = value ? `${value}%` : ''
 			})
 
 			row.last = null
 			getLastYear(bundle.id).then((last) => {
-				let value = parseFloat(q * 100).toFixed(4)
+				let value = parseFloat(last * 100).toFixed(4)
 				row.last = value ? `${value}%` : ''
 			})
 
 			row.beforeLast = null
 			getYearBeforeLast(bundle.id).then((beforeLast) => {
-				let value = parseFloat(q * 100).toFixed(4)
+				let value = parseFloat(beforeLast * 100).toFixed(4)
 				row.beforeLast = value ? `${value}%` : ''
 			})
 
 			row.incept = null
 			getIncept(bundle.id).then((incept) => {
-				let value = parseFloat(q * 100).toFixed(4)
+				let value = parseFloat(incept * 100).toFixed(4)
 				row.incept = value ? `${value}%` : ''
 			})
 		})
