@@ -1,5 +1,7 @@
 <template>
-	<FmExpansionPanel
+	<div class="performance-report-content">
+
+		<FmExpansionPanel
 		:title="currentBundle ? currentBundle.user_code : 'No bundle'"
 	>
 		<template #rightActions>
@@ -63,6 +65,8 @@
 			</div>
 		</div>
 	</FmExpansionPanel>
+
+	</div>
 </template>
 
 <script setup>
@@ -417,4 +421,11 @@ async function getReports({period_type, end, ids, type = 'months'}) {
 .table_wrap {
 	width: 100%;
 }
+
+.performance-report-content {
+	.table-row.t_body {
+		text-align: right;
+	}
+}
+
 </style>

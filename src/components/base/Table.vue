@@ -13,7 +13,7 @@
 		</div>
 
 		<div
-			class="table-row"
+			class="table-row t_body"
 			:class="{ active: active == index, choosible: active !== undefined }"
 			:style="{ gridTemplateColumns: colls }"
 			v-for="(row, index) in items"

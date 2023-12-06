@@ -1,13 +1,15 @@
 <template>
-	<FmExpansionPanel title="Period Returns">
-		<BaseTable
-			:headers="preriodHeaders"
-			:items="preriodItems"
-			:active="activePeriod"
-			colls="repeat(8, 1fr)"
-			:cb="choosePortfolio"
-		/>
-	</FmExpansionPanel>
+	<div class="performance-report-content">
+		<FmExpansionPanel title="Period Returns">
+			<BaseTable
+				:headers="preriodHeaders"
+				:items="preriodItems"
+				:active="activePeriod"
+				colls="repeat(8, 1fr)"
+				:cb="choosePortfolio"
+			/>
+		</FmExpansionPanel>
+	</div>
 </template>
 
 <script setup>
@@ -200,4 +202,12 @@
 
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+
+.performance-report-content {
+	.table-row.t_body {
+		text-align: right;
+	}
+}
+
+</style>
