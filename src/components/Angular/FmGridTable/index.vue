@@ -106,13 +106,14 @@
 				:vm="vm"
 			/>
 
-			<AngularFmGridTableFilters
+<!--			<AngularFmGridTableFiltersArea
 				v-show="components.filterArea"
 				:attributeDataService="attributeDataService"
 				:hideFiltersBlock="hideFiltersBlock"
 				:hideUseFromAboveFilters="hideUseFromAboveFilters"
 				:vm="vm"
-			/>
+			/>-->
+            <FmTableToolbar />
 
 			<div v-if="domElemsAreReady" class="g-table-section flex-row">
 				<AngularFmGridTableLeftPanel
@@ -335,8 +336,8 @@
 	])
 
 	const {attributeDataService, evEventService, evDataService} = props
-
-	provide('ngDependace', {
+	// fmTableData
+	provide('fmTableData', {
 		evEventService,
 		evDataService,
 		attributeDataService,

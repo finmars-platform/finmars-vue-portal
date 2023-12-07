@@ -32,7 +32,7 @@
 							v-if="outputData.hasOwnProperty('propertyName')"
 							v-model="outputData.propertyName"
 							label="Attribute"
-							:contentType="dashStore.getComponent(outputData.component_id).settings.content_type"
+							:content_type="dashStore.getComponent(outputData.component_id).settings.content_type"
 							:valueType="input.value_type"
 							:attributes="getAttributesForLinking(outputData.component_id)"
 						/>
@@ -85,7 +85,7 @@
 					v-if="addLinkingData.comp?.dynamicOutputs"
 					v-model="addLinkingData.comp.propertyName"
 					label="Attribute"
-					:contentType="dashStore.getComponent(addLinkingData.comp.uid).settings.content_type"
+					:content_type="dashStore.getComponent(addLinkingData.comp.uid).settings.content_type"
 					:valueType="addLinkingData.input.value_type"
 					:attributes="getAttributesForLinking(addLinkingData.comp.uid)"
 				/>
@@ -103,7 +103,7 @@
 		<FmAttributesSelectModal
 			v-model="iAdditionOpened"
 			title="Select attribute for input"
-			:contentType="component.settings.content_type"
+			:content_type="component.settings.content_type"
 			:attributes="evAttrsStore.getDataForAttributesSelector(component.settings.content_type)"
 			:selected="attrsUsedByInputs"
 			:disabledAttributes="attrsUsedByInputs"

@@ -83,7 +83,7 @@
 		'rootWrapElement',
 	])
 
-	const { evEventService, evDataService } = inject('ngDependace')
+	const { evEventService, evDataService } = inject('fmTableData')
 
 	let scope = reactive({
 		rootWrapElement: props.rootWrapElement,

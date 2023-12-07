@@ -431,7 +431,7 @@
 
 	// export default function ($mdDialog) {
 	const props = defineProps(['matrixSettings'])
-	const { evEventService, evDataService } = inject('ngDependace')
+	const { evEventService, evDataService } = inject('fmTableData')
 
 	let scope = reactive({})
 	// link: function (scope, elem, attr) {

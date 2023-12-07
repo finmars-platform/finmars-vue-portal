@@ -1,6 +1,16 @@
 @import 'core/core';
 @import 'angular';
+// @import 'fmTable/filters';
 @import 'swiper';
+
+@mixin fm_table_filter_chip {
+	max-width: 240px;
+	height: 33px;
+	padding-top: 9px;
+	padding-bottom: 9px;
+	margin-bottom: 9px;
+	cursor: pointer;
+}
 
 .vue-notification-wrapper {
 }

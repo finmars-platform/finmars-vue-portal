@@ -606,7 +606,7 @@
 
 	const props = defineProps(['attributeDataService', 'vm'])
 	const gFiltersVm = props.vm
-	const { evEventService, evDataService } = inject('ngDependace')
+	const { evEventService, evDataService } = inject('fmTableData')
 
 	let scope = reactive({
 		...props,

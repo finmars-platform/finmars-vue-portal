@@ -48,7 +48,7 @@
 	const props = defineProps(['payload'])
 	var vm = reactive({})
 
-	const { evDataService, attributeDataService } = inject('ngDependace')
+	const { evDataService, attributeDataService } = inject('fmTableData')
 	const $mdDialog = inject('$mdDialog')
 	const { resolve, reject, data } = props.payload
 

@@ -2,17 +2,17 @@
 	<div>
 		<BaseInput
 			class="ms_wrap"
-			:label="title"
+			:label="label"
 			@click="isOpen = true"
-			modelValue=" "
 		>
 			<template #button><FmIcon icon="menu" /></template>
 
 			<div class="flex aic" style="height: inherit" ref="chipWrap">
 				<div
-					class="flex-row fi-center fm_chip"
+					v-if="selectedList.length"
 					v-for="item in selectedList"
-					:key="selectedList[item_id]"
+					:key="item[item_id]"
+					class="flex-row fi-center fm_chip"
 				>
 					<FmIcon
 						v-if="item.error_data"
@@ -41,11 +41,13 @@
 						@click.stop="deleteItem(item)"
 					/>
 				</div>
+
+				<div v-else class="input_placeholder">{{placeholder}}</div>
 			</div>
 		</BaseInput>
 
 		<BaseMultiSelectModal
-			:title="title"
+			:title="modalTitle || label"
 			:items="items"
 			v-model:opened="isOpen"
 			v-model="props.modelValue"
@@ -70,7 +72,8 @@
 			type: [String, Array],
 			default: [],
 		},
-		title: String,
+		label: String,
+		modalTitle: String,
 		item_id: {
 			type: String,
 			default: 'user_code',
@@ -79,6 +82,8 @@
 			type: String,
 			default: 'name',
 		},
+
+		placeholder: String,
 	})
 	let emit = defineEmits(['update:modelValue'])
 
@@ -174,6 +179,9 @@
 		& + & {
 			margin-left: 5px;
 		}
+	}
+	.input_placeholder {
+		color: $text-pale;
 	}
 	/*.header {
 	font-size: 20px;

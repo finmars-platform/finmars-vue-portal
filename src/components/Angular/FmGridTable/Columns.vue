@@ -2,7 +2,10 @@
 	<div class="g-scrollable-area">
 		<div class="g-column-bottom-row g-table-header flex-row">
 			<div class="g-cell g-cell-select-all">
-				<FmCheckbox :size="18" v-model="isAllSelected" />
+				<FmCheckbox
+					:modelValue="isAllSelectedRef"
+					@update:modelValue="selectAllRows"
+				/>
 			</div>
 
 			<div class="g-cell-rows-settings">
@@ -160,7 +163,7 @@
 					:attributes="
 						$mdDialog.modals['AttributesSelectorDialogController'].data.attributes
 					"
-					щ
+					:content_type="contentType"
 					@save="
 						(selected) => {
 							$mdDialog.modals['AttributesSelectorDialogController'].resolve({
@@ -295,7 +298,6 @@
 	import rvDataHelper from '@/angular/helpers/rv-data.helper'
 
 	import localStorageService from '@/angular/shell/scripts/app/services/localStorageService'
-  import {useGetEvRvParents} from "~/composables/useEntityReportViewer";
 
 	const props = defineProps([
 		'vm',
@@ -497,7 +499,7 @@
 	let downloadedItemsCount = null
 	let columnAreaCollapsed = false
 
-	let isAllSelected = ref(evDataService.getSelectAllRowsState())
+	let isAllSelectedRef = ref(evDataService.getSelectAllRowsState())
 	let isAllStarsSelected = false
 	let hideRowSettings = ref(!!evDataService.getRowSettings().folded)
 	let groupsAreaDraggable = viewContext !== 'dashboard'
@@ -931,18 +933,21 @@
 	 * @param dataList {Array<Object>} - For rv list of all groups' data. For ev list of selected groups' data.
 	 */
 	var selectRowsInsideData = function (dataList) {
+
+		const isAllSelected = evDataService.getSelectAllRowsState();
+
 		dataList.forEach(function (dataListItem) {
 			if (isReport && dataListItem.___type === 'group') {
-				dataListItem.___is_area_subtotal_activated = isAllSelected.value
-				dataListItem.___is_line_subtotal_activated = isAllSelected.value
+				dataListItem.___is_area_subtotal_activated = isAllSelected
+				dataListItem.___is_line_subtotal_activated = isAllSelected
 			} else if (dataListItem.___type === 'object') {
-				dataListItem.___is_activated = isAllSelected.value
+				dataListItem.___is_activated = isAllSelected
 			}
 
 			if (dataListItem.results && dataListItem.results.length) {
 				dataListItem.results.forEach(function (child) {
 					if (child.___type === 'object') {
-						child.___is_activated = isAllSelected.value
+						child.___is_activated = isAllSelected
 					}
 				})
 			}
@@ -950,70 +955,72 @@
 			evDataService.setData(dataListItem)
 		})
 
-		var data = evDataService.getData()
 	}
 
-	watch(isAllSelected, selectAllRows)
+	function selectAllRows(isAllSelected) {
 
-	function selectAllRows() {
+		console.time('Selecting all rows');
 
-    console.time('Selecting all rows');
+		let flatList;
+		let dataList;
 
-    let flatList;
-    let dataList;
+		if (isReport) {
+		  flatList = rvDataHelper.getFlatStructure(evDataService);
 
-    if (isReport) {
-      flatList = rvDataHelper.getFlatStructure(evDataService);
+		} else {
+		  flatList = evDataHelper.getObjectsFromSelectedGroups(evDataService, globalDataService);
+		}
 
-    } else {
-      flatList = evDataHelper.getObjectsFromSelectedGroups(evDataService, globalDataService);
-    }
+		// let isAllSelected = evDataService.getSelectAllRowsState();
+		if (typeof isAllSelected !== 'boolean') {
+			// toggle selectedAllRowsState
+			isAllSelected = !evDataService.getSelectAllRowsState();
+		}
 
-    isAllSelected = evDataService.getSelectAllRowsState();
+		// isAllSelected = !isAllSelected;
 
-    isAllSelected = !isAllSelected;
+		flatList.forEach(function (item) {
+		  if (item.___type === 'object') {
+			item.___is_activated = isAllSelected;
+		  }
+		});
 
-    flatList.forEach(function (item) {
-      if (item.___type === 'object') {
-        item.___is_activated = isAllSelected;
-      }
-    });
+		if (isReport) {
 
-    if (isReport) {
+		  dataList = evDataService.getDataAsList();
 
-      dataList = evDataService.getDataAsList();
+		}
+		else {
 
-    }
-    else {
+		  let groupsIds = evDataService.getSelectedGroups();
 
-      let groupsIds = evDataService.getSelectedGroups();
+		  if (!groupsIds.length) {
+			groupsIds = [ evDataService.getRootGroupData() ];
+		  }
 
-      if (!groupsIds.length) {
-        groupsIds = [ evDataService.getRootGroupData() ];
-      }
+		  groupsIds = groupsIds.map(group => group.___id);
 
-      groupsIds = groupsIds.map(group => group.___id);
+		  dataList = evDataService.getDataAsList();
 
-      dataList = evDataService.getDataAsList();
+		  dataList = dataList.filter(item => {
+			return groupsIds.includes(item.___parentId);
+		  })
 
-      dataList = dataList.filter(item => {
-        return groupsIds.includes(item.___parentId);
-      })
+		}
 
-    }
+		evDataService.setSelectAllRowsState(isAllSelected);
+		isAllSelectedRef.value = isAllSelected;
 
-    selectRowsInsideData(dataList);
+		selectRowsInsideData(dataList); // must be called after evDataService.setSelectAllRowsState(isAllSelected);
 
-    evDataService.setSelectAllRowsState(isAllSelected);
+		evDataService.setFlatList(flatList);
 
-    evDataService.setFlatList(flatList);
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+		evEventService.dispatchEvent(evEvents.ROW_ACTIVATION_CHANGE);
 
-    evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-    evEventService.dispatchEvent(evEvents.ROW_ACTIVATION_CHANGE);
+		console.timeEnd('Selecting all rows');
 
-    console.timeEnd('Selecting all rows');
-
-  }
+  	}
 
 	let isColumnFloat = function (column) {
 		return column.value_type == 20

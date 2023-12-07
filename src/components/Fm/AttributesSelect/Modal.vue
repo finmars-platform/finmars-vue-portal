@@ -71,7 +71,7 @@
   let props = defineProps({
     modelValue: Boolean,
     title: String,
-    contentType: {
+    content_type: {
       type: String,
       required: true,
     },
@@ -150,7 +150,7 @@
 
     if (props.valueType) {
 
-      const favAttrs = store.favorites.attributes[props.contentType] || [];
+      const favAttrs = store.favorites.attributes[props.content_type] || [];
 
       return favAttrs.filter(fAttr => {
 
@@ -166,12 +166,12 @@
 
     }
 
-    return store.favorites.attributes[props.contentType] || [];
+    return store.favorites.attributes[props.content_type] || [];
 
   })
 
   function saveFavorites(favAttrs) {
-    store.memberLayout.data.favorites.attributes[props.contentType] = favAttrs;
+    store.memberLayout.data.favorites.attributes[props.content_type] = favAttrs;
     store.updateMemberLayout();
     emit( 'favoritesChanged', structuredClone(favAttrs) );
   }
