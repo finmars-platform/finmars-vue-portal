@@ -222,13 +222,17 @@ export default function ({
 		var activeObject = vm.getActiveObjectFromQueryParameters()
 
 		if (activeObject) {
-			var filters = vm.entityViewerDataService.getFilters()
 
-			filters.forEach(function (item) {
-				if (activeObject.hasOwnProperty(item.key)) {
-					item.options.filter_values = [activeObject[item.key]]
-				}
-			})
+			var filters = vm.entityViewerDataService.getFilters();
+
+            filters.forEach(function (item) {
+
+                if (activeObject.hasOwnProperty(item.key)) {
+                    item.options.filter_values = [activeObject[item.key]]
+                }
+
+            })
+
 		}
 	}
 
@@ -447,7 +451,7 @@ export default function ({
 	 */
 	vm.setLayout = function (layout) {
 		return new Promise(async function (resolve, reject) {
-			console.log("testing1923.setLayout ", layout, '\n', structuredClone(layout) );
+
             if (typeof layout.data.reportLayoutOptions?.useDateFromAbove !== 'boolean') {
                 layout.data.reportLayoutOptions.useDateFromAbove = true;
             }
@@ -457,6 +461,7 @@ export default function ({
 				uiService,
 				true
 			)
+
 			vm.setFiltersValuesFromQueryParameters()
 
 			// var reportOptions = vm.entityViewerDataService.getReportOptions();

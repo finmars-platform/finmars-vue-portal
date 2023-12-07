@@ -379,5 +379,15 @@ export default {
         put: prefix + '/ui/transaction-user-field/{id}/',
         post: prefix + '/ui/transaction-user-field/',
     },
-
+	specificDataValuesForSelect: {
+		/* *
+		 * Used to get unique values of attribute from rv / ev rows.
+		 * Requires next query parameters:
+		 *
+		 * content_type: String - content_type of rv or ev
+		 * key: String - Key of an attribute whose value to aggregate
+		 * value_type: Number - value_type of an attribute
+		 * */
+		get: prefix + '/specific-data/values-for-select/'
+	}
 }

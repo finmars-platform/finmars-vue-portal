@@ -77,7 +77,7 @@ const getAddMenuLayout = async function () {
 
 }
 
-btnDisabledRef.value = await getAddMenuLayout();
+addMenuOptsListRef.value = await getAddMenuLayout();
 console.log("testing1923 btnDisabledRef", btnDisabledRef.value);
 
 </script>
