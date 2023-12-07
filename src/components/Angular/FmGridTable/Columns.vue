@@ -283,6 +283,8 @@
 			v-if="colNumberFormatData.opened"
 			v-model="colNumberFormatData.opened"
 			:title="`${colNumberFormatData.name}: Number Format`"
+            :settings="colNumberFormatData.numberFormat"
+            @cancel="onColNumFormatClose"
 			@save="editColNumberFormat"
 		></LazyModalNumberFormat>
 	</div>
@@ -556,6 +558,8 @@
 		}
 	}*/
 
+    //# region Number format
+
 	/**
 	 * Data for ModalNumberFormat
 	 *
@@ -595,6 +599,12 @@
 
 	}
 
+    function onColNumFormatClose() {
+        colNumberFormatData.key = '';
+        colNumberFormatData.name = '';
+        colNumberFormatData.numberFormat = null;
+    }
+
 	function editColNumberFormat(newNumberFormat) {
 
 		const column = getColumnByKey(colNumberFormatData.key);
@@ -605,17 +615,15 @@
 
         setColumn(column);
 
-        colNumberFormatData.opened = false;
-        colNumberFormatData.key = '';
-        colNumberFormatData.name = '';
-        colNumberFormatData.numberFormat = null;
+        onColNumFormatClose();
 
         evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
         evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED);
 
 	}
+    //# endregion Number format
 
-	// Victor 2020.12.14 #69 New report viewer design
+    // Victor 2020.12.14 #69 New report viewer design
 	let rowFilterColor = 'none'
 
 	let checkForFilteringBySameAttr
