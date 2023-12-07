@@ -596,8 +596,22 @@
 	}
 
 	function editColNumberFormat(newNumberFormat) {
-		console.log("testing2271 editColNumberFormat ", newNumberFormat);
+
 		const column = getColumnByKey(colNumberFormatData.key);
+
+        if (!column.options) column.options = {};
+
+        column.options.numberFormat = newNumberFormat;
+
+        setColumn(column);
+
+        colNumberFormatData.opened = false;
+        colNumberFormatData.key = '';
+        colNumberFormatData.name = '';
+        colNumberFormatData.numberFormat = null;
+
+        evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+        evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED);
 
 	}
 

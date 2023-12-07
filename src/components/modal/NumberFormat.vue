@@ -28,6 +28,7 @@
 					subtitle="0"
 					subtitleOpen="Select zero number format"
 					:open="false"
+                    class="nf_expansion_panel"
 				>
 					<div
 						class="panel-content"
@@ -61,6 +62,7 @@
 							:value="item.id"
 							name="negative"
 							@update:modelValue="vm.onNegativeFormatChange"
+                            :class="{'primary-text': item.color === 'red'}"
 						></FmInputRadio>
 					</div>
 				</FmExpansionPanel>
@@ -68,12 +70,12 @@
 				<FmExpansionPanel
 					title="Rounding"
 					subtitle="No rounding"
-					subtitleOpen="Select negative number format"
+					subtitleOpen="Select rounding format"
 					:open="false"
 				>
 					<div
 						class="panel-content"
-						v-for="(item, index) in vm.percentageFormats"
+						v-for="(item, index) in vm.roundingFormats"
 						:key="index"
 					>
 						<FmInputRadio
@@ -130,6 +132,7 @@
 
 				<FmExpansionPanel
 					title="Suffix"
+                    subtitleOpen="Enter suffix (after number)"
 					:open="false"
 				>
 					<div class="panel-content">
@@ -143,6 +146,7 @@
 
 				<FmExpansionPanel
 					title="Prefix"
+                    subtitleOpen="Enter prefix (before number)"
 					:open="false"
 				>
 					<div class="panel-content">
@@ -154,7 +158,11 @@
 					</div>
 				</FmExpansionPanel>
 
-				<FmExpansionPanel title="Multiplier">
+				<FmExpansionPanel
+                    title="Multiplier"
+                    subtitleOpen="Enter multiplier"
+                    :open="false"
+                >
 					<div class="panel-content">
 						<FmInputText
 							label="Multiplier"
@@ -230,6 +238,14 @@
 		{ id: 2, name: '(100)', color: 'black' },
 		{ id: 3, name: '(100)', color: 'red' },
 	]
+
+    vm.roundingFormats = [
+        { id: 0, name: 'no rounding' },
+        { id: 1, name: '0' },
+        { id: 2, name: '0.0' },
+        { id: 3, name: '0.00' },
+        { id: 4, name: '0.0000' },
+    ]
 
 	vm.separationFormats = [
 		{ id: 0, name: 'No separation' },
@@ -308,16 +324,11 @@
 	}
 
 	function applyPreset(option) {
-		console.log(`testing2271.ModalNumberFormat applyPreset`, option);
-
-		/*vm.presetSelectorData.options.forEach(
-			(it) => (it.isActive = it === option)
-		)*/
 
 		const numberFormat = presetsSettings[option];
-		console.log(`testing2271.ModalNumberFormat applyPreset numberFormat`, numberFormat);
+
 		vm.settings = Object.assign(vm.settings, numberFormat);
-		console.log(`testing2271.ModalNumberFormat applyPreset vm.settings`, vm.settings);
+
 		vm.onNumberFormatChange()
 
 	}
@@ -331,13 +342,11 @@
 		const selectedPreset = vm.presetSelectorData.options.find((option) => {
 			const requiredProps = presetsSettings[option.id]
 			const currentProps = vm.settings
-			console.log(`testing2271.ModalNumberFormat getActivePreset ${option.id}`,
-				requiredProps, currentProps, isObjectContain(currentProps, requiredProps));
-			return isObjectContain(currentProps, requiredProps)
+
+            return isObjectContain(currentProps, requiredProps)
 		})
-		console.log(`testing2271.ModalNumberFormat getActivePreset selectedPreset`,
-			selectedPreset);
-		if (selectedPreset) {
+
+        if (selectedPreset) {
 
 			// selectedPreset.isActive = true;
 			return selectedPreset.id;
@@ -422,8 +431,7 @@
 
 		vm.settings.zero_format_id = newVal;
 		vm.onNumberFormatChange();
-		console.log("testing2271.ModalNumberFormat onNumberFormatChange",
-			newVal, vm.settings.zero_format_id);
+
 	}
 
     vm.onThousandsSepChange = function (newVal) {
@@ -445,8 +453,7 @@
 		// const currentPreset = getActivePreset()
 		// vm.currentPresetName = currentPreset ? currentPreset.name : 'Select Preset'
 		vm.activePreset = getActivePreset();
-		console.log("testing2271.ModalNumberFormat activePreset onNumberFormatChange",
-			vm.activePreset);
+
 	}
 
 	/* vm.getZeroName = function () {
@@ -497,6 +504,16 @@
 	.nf_content {
 		width: 505px;
 		// padding: 5px 0 20px;
+        :deep(.fm_expansion_panel) {
+            .name {
+                font-size: 14px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+            }
+        }
+
 	}
 	.presets_container {
 		display: flex;
@@ -535,8 +552,5 @@
 		margin-top: 4px;
 		font-size: 12px;
 		font-weight: 500;
-	}
-
-	.modal.number-format {
 	}
 </style>
