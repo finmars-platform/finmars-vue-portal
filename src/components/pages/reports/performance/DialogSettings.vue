@@ -122,10 +122,10 @@
 	let currencyOpts = ref([])
 	let pricingPoliciesOpts = ref([])
 	let calcTypeOpts = [
-		{
-			id: 'time_weighted',
-			name: 'Time-Weighted Return',
-		},
+		// {
+		// 	id: 'time_weighted',
+		// 	name: 'Time-Weighted Return',
+		// },
 		{
 			id: 'modified_dietz',
 			name: 'Modified Dietz',
