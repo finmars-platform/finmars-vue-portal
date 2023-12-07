@@ -214,7 +214,7 @@
 			type: Object,
 		},
 	})
-    console.log("testing1923 props.settings ", props.settings);
+
 	const emits = defineEmits(['save', 'cancel'])
 
 	let vm = reactive({
@@ -241,11 +241,9 @@
 		 * Create those properties using the object defaultReportSettings.
 		 * */
 		const report_settings = JSON.parse(JSON.stringify(props.settings));
-        console.log("testing1923 report_settings ", report_settings);
+
 		vm.settings = { ...defaultReportSettings, ...report_settings }
-        console.log("testing1923 vm.settings ",
-            JSON.parse(JSON.stringify(vm.settings))
-        );
+
 	} else {
 		vm.settings = { ...defaultReportSettings }
 	}
