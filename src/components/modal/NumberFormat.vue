@@ -25,7 +25,11 @@
 			<div class="content">
 				<FmExpansionPanel
 					title="Zero"
-					subtitle="0"
+                    :subtitle="
+					    getSelRadioName(
+                            vm.zeroFormats, vm.settings.zero_format_id
+                        )
+                    "
 					subtitleOpen="Select zero number format"
 					:open="false"
                     class="nf_expansion_panel"
@@ -47,7 +51,11 @@
 
 				<FmExpansionPanel
 					title="Negative"
-					subtitle="100"
+                    :subtitle="
+					    getSelRadioName(
+                            vm.negativeFormats, vm.negativeFormat
+                        )
+                    "
 					subtitleOpen="Select negative number format"
 					:open="false"
 				>
@@ -69,14 +77,18 @@
 
 				<FmExpansionPanel
 					title="Rounding"
-					subtitle="No rounding"
+					:subtitle="
+					    getSelRadioName(
+                            vm.roundingFormats, vm.settings.round_format_id
+                        )
+                    "
 					subtitleOpen="Select rounding format"
 					:open="false"
 				>
 					<div
 						class="panel-content"
-						v-for="(item, index) in vm.roundingFormats"
-						:key="index"
+						v-for="item in vm.roundingFormats"
+						:key="item.id"
 					>
 						<FmInputRadio
                             :label="item.name"
@@ -90,7 +102,12 @@
 
 				<FmExpansionPanel
 					title="Thousands separation"
-					subtitle="No separation"
+                    :subtitle="
+					    getSelRadioName(
+                            vm.separationFormats,
+                            vm.settings.thousands_separator_format_id
+                        )
+                    "
 					subtitleOpen="Select separation format"
                     :open="false"
 				>
@@ -111,7 +128,12 @@
 
 				<FmExpansionPanel
 					title="Percentage"
-					subtitle="N/A"
+                    :subtitle="
+					    getSelRadioName(
+                            vm.percentageFormats,
+                            vm.settings.percentage_format_id
+                        )
+                    "
 					subtitleOpen="Select percentage format"
                     :open="false"
 				>
@@ -176,9 +198,9 @@
 
 		<template #controls="{ cancel }">
 			<div class="flex sb">
-				<FmBtn type="text" @click="cancel">CANCEL</FmBtn>
+				<FmBtn type="text" @click="cancelModal(cancel)">CANCEL</FmBtn>
 
-				<FmBtn type="primary" @click="save">save</FmBtn>
+				<FmBtn type="primary" @click="save(cancel)">save</FmBtn>
 			</div>
 		</template>
 	</BaseModal>
@@ -192,11 +214,11 @@
 			type: Object,
 		},
 	})
-
-	const emits = defineEmits(['save'])
+    console.log("testing1923 props.settings ", props.settings);
+	const emits = defineEmits(['save', 'cancel'])
 
 	let vm = reactive({
-		settings: props.settings,
+		settings: null,
 		activePreset: null,
 	})
 
@@ -219,9 +241,11 @@
 		 * Create those properties using the object defaultReportSettings.
 		 * */
 		const report_settings = JSON.parse(JSON.stringify(props.settings));
-
+        console.log("testing1923 report_settings ", report_settings);
 		vm.settings = { ...defaultReportSettings, ...report_settings }
-
+        console.log("testing1923 vm.settings ",
+            JSON.parse(JSON.stringify(vm.settings))
+        );
 	} else {
 		vm.settings = { ...defaultReportSettings }
 	}
@@ -360,6 +384,10 @@
 		vm.activePreset = null;
 	}
 
+    const getSelRadioName = function(formatsList, selectedValue) {
+        return formatsList.find(format => format.id === selectedValue).name;
+    };
+
 	// Negative format in new design differ from settings structure
 	const getNegativeFormat = function (reportSettings) {
 		// 0 0 -> 0
@@ -488,8 +516,14 @@
 			{ key: 'example', report_settings: vm.settings }
 		)
 
-    function save() {
+    function cancelModal(closeFn) {
+        emits('cancel');
+        closeFn();
+    }
+
+    function save(closeFn) {
         emits( 'save', JSON.parse(JSON.stringify(vm.settings)) );
+        closeFn();
     }
 
 	function init() {
@@ -503,6 +537,7 @@
 <style lang="scss" scoped>
 	.nf_content {
 		width: 505px;
+        padding-bottom: 16px;
 		// padding: 5px 0 20px;
         :deep(.fm_expansion_panel) {
             .name {
