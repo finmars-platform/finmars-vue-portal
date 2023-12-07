@@ -17,7 +17,7 @@
 
 				</div>
 
-				<div class="gFiltersContainer flex aic fww">
+				<div class="gFiltersContainer">
 					<FmTableFiltersRv
 						v-if="isReport"
 						@customFieldsMissing="updateMissingCustomFieldsList"

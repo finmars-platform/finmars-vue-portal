@@ -1,19 +1,20 @@
 <template>
 	<FmMenu :disabled="disabled">
 		<template #btn>
-			<FmIcon
-				class="add_ev_btn"
-				btnPrimary
-				icon="add"
-				:disabled="disabled"
-				v-fm-tooltip="'Add'"
-			/>
+			<FmBtn type="icon" :disabled="disabled">
+				<FmIcon
+					class="add_ev_btn"
+					btnPrimary
+					icon="add"
+					v-fm-tooltip="'Add'"
+				/>
+			</FmBtn>
 		</template>
 
 		<template #default="{ close }">
 			<div class="fm_list" @click="close()">
 				<div
-					v-for="item in props.items"
+					v-for="item in items"
 					class="fm_list_item"
 					@click="emit('optionSelected', item)"
 				>

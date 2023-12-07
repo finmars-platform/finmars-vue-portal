@@ -1,23 +1,49 @@
 <template>
-	<FmIcon
-		btn
-		icon="link"
-		color="primary"
-		class="g-toggle-filters-btn md-icon-button chain-button m-l-10"
-		:class="{
+
+	<div class="fm_table_filters flex-row flex-i-start">
+
+		<button
+			type="icon"
+			class="g-toggle-filters-btn md-icon-button chain-button m-l-10"
+			:class="{
 			'g-use-from-above-filters-hidden': !scope.showUseFromAboveFilters,
 		}"
-		@click="scope.toggleUseFromAboveFilters()"
-	/>
+			@click="scope.toggleUseFromAboveFilters()"
+		>
+			<FmIcon icon="link" />
+		</button>
 
-	<FmTableFiltersChips
-		:filters="filtersListRef"
-		:chips="filtersChipsRef"
-		:content_type="contentType"
-        v-bind="$attrs"
-		@addFilters="addFilter"
-		@removeFilter="scope.removeFilter"
-	/>
+		<!-- TODO: create component BasePopup. Use it instead of FmMenu. -->
+		<FmMenu
+			:opened="!!filterToEditRef"
+			:positionX="posXRef"
+			:positionY="posYRef"
+			:openOnClick="false"
+			:minWidth="380"
+			:closeOnClickOutside="false"
+		>
+
+			<template #btn>
+				<FmTableFiltersChips
+					:filters="filtersListRef"
+					:chips="filtersChipsRef"
+					:content_type="contentType"
+					v-bind="$attrs"
+					@addFilters="addFilter"
+					@removeFilter="scope.removeFilter"
+					@openFilterSettings="openFilterSettings"
+				/>
+			</template>
+
+			<FmTableFilterRvSettingsPopup
+				:filter="filterToEditRef"
+				@close="filterToEditRef = null"
+			/>
+
+		</FmMenu>
+
+	</div>
+
 </template>
 
 <script setup>
@@ -28,7 +54,7 @@
 
     import evHelperService from '@/angular/services/entityViewerHelperService';
 	import evEvents from "~/angular/services/entityViewerEvents";
-	import {useInsertActObjIntoEvRvFilters} from "~/composables/evRv/useFilters";
+	import * as filtersHelper from "@/components/Fm/Table/Filter/filtersHelper"
 
 	let evAttrsStore = useEvAttributesStore();
 
@@ -41,10 +67,10 @@
 	const contentType = evDataService.getContentType();
 
 	let filtersListRef = ref([]);
+	let filtersChipsRef = ref([]);
 	let useFromAboveFilters = [];
-	let filtersChipsRef = ref([])
 
-	const customFieldsComp = computed(() =>
+	const customFieldsC = computed(() =>
 		evAttrsStore.customFields[contentType]
 	);
 
@@ -68,9 +94,10 @@
 
 	scope.toggleUseFromAboveFilters = function () {
 
-		scope.showUseFromAboveFilters = !scope.showUseFromAboveFilters
-		console.log('scope.showUseFromAboveFilters:', scope.showUseFromAboveFilters)
-		formatFiltersForChips()
+        scope.showUseFromAboveFilters = !scope.showUseFromAboveFilters;
+
+        evEventService.dispatchEvent(evEvents.TOGGLE_SHOW_FROM_ABOVE_FILTERS);
+        filtersChipsRef.value = formatFiltersForChips();
 
 	}
 
@@ -193,7 +220,7 @@
 					filterData.classes = 'use-from-above-filter-chip'
 					filterData.tooltipContent = chipText
 
-					chipText = '<span class="material-icons">link</span>' + chipText
+					chipText = '<span class="material-icons m-r-4">link</span>' + chipText
 				}
 
 				filterData.text = chipText
@@ -205,7 +232,7 @@
 						_checkCustomFieldFilterForError(
 							filter,
 							filterData,
-							customFieldsComp.value
+							customFieldsC.value
 						);
 
 					if (error) errors.push(error)
@@ -259,21 +286,58 @@
 	}
 	//endregion
 
-	scope.toggleUseFromAboveFilters = function () {
-		scope.showUseFromAboveFilters = !scope.showUseFromAboveFilters;
+	//# region Editing of a filter
+	let filterToEditRef = ref(null);
 
-		evEventService.dispatchEvent(evEvents.TOGGLE_SHOW_FROM_ABOVE_FILTERS)
-		formatFiltersForChips()
+	let posXRef = ref(null);
+	let posYRef = ref(null);
 
-		/*setTimeout(() => {
-			const filterAreaHeightChanged = scope.vm.updateFilterAreaHeight()
+	const findFilter = function (filterKey) {
 
-			if (filterAreaHeightChanged) {
-				evEventService.dispatchEvent(evEvents.UPDATE_TABLE_VIEWPORT)
+		const allFilters = evDataService.getFilters();
+
+		/*allFilters.forEach((filter) => {
+
+			if (isUseFromAbove(filter)) {
+
+				if (filter.key === props.filterKey) {
+					filterRef.value = filter
+					isUseFromAboveFilter = true
+				}
+
 			}
-		}, 0)*/
+			else {
+
+				if (filter.key === props.filterKey) {
+					filterRef.value = filter
+				}
+			}
+
+		})*/
+
+		let filterData = allFilters.find(
+			filter => filter.key === filterKey
+		);
+
+		if (!filterData) {
+			return null;
+		}
+
+		filterData = structuredClone(filterData);
+
+		return useSetEvRvFilterDefaultOptions(filterData, true);
 
 	}
+
+	const openFilterSettings = function(emitData) {
+
+		posXRef.value = emitData.event.clientX;
+		posYRef.value = emitData.event.clientY;
+
+		filterToEditRef.value = findFilter(emitData.data.id);
+
+	}
+	//# endregion
 
 	const initEventListeners = function () {
 
@@ -364,5 +428,23 @@
 </script>
 
 <style scoped lang="scss">
+
+.g-toggle-filters-btn {
+	padding: 8px;
+  	border-radius: 100%;
+
+	&:not([disabled]):hover {
+		background-color: $primary-lighten-2;
+		color: $primary;
+	}
+
+	&:not(.g-use-from-above-filters-hidden) {
+
+		:deep(.icon) {
+			color: $primary;
+		}
+
+	}
+}
 
 </style>

@@ -1,34 +1,22 @@
 <template>
-	<div class="gFiltersContainer" v-bind="$attrs">
-		<FmMenu
-			:opened="showFilterSettingsRef"
-			:positionX="posXRef"
-			:positionY="posYRef"
-			:openOnClick="false"
-			:closeOnCLickOutside="false"
+	<div class="filters_container gFiltersContainer" v-bind="$attrs">
+		<FmChips
+			class="fm_filter_chips"
+			:items="chips"
+			canDelete
+			@chipClick="emitData => emit('openFilterSettings', emitData)"
+			@delete="chipData => emit('removeFilter', chipData)"
 		>
-			<template #btn>
-				<FmChips
-					class="g-filter-chips"
-					:items="chips"
-					canDelete
-					@chipClick="scope.onFilterChipClick"
-					@delete="chipData => emit('removeFilter', chipData)"
-				>
-					<FmBtn
-						type="action"
-						@click="openFiltersAddition"
-						style="margin: 2px 0"
-					>ADD FILTER</FmBtn>
-				</FmChips>
-			</template>
-
-		</FmMenu>
-		<!--		<div ng-if="!isReport">
-					<g-ev-filters ev-data-service="evDataService"
-								  ev-event-service="evEventService"
-								  attribute-data-service="attributeDataService"></g-ev-filters>
-				</div>-->
+			<button
+				@click="openFiltersAddition"
+				class="chip add_filter_btn"
+			>ADD FILTER</button>
+		</FmChips>
+	<!--		<div ng-if="!isReport">
+				<g-ev-filters ev-data-service="evDataService"
+							  ev-event-service="evEventService"
+							  attribute-data-service="attributeDataService"></g-ev-filters>
+			</div>-->
 	</div>
 
 	<FmAttributesSelectModal
@@ -65,13 +53,9 @@
 		},
 	});
 
-	const emit = defineEmits(['addFilters', 'removeFilter']);
+	const emit = defineEmits(['addFilters', 'openFilterSettings', 'removeFilter']);
 
 	let attrsSelOpenedRef = ref(false);
-	let showFilterSettingsRef = ref(false);
-
-	let posXRef = ref(0);
-	let posYRef = ref(0);
 
 	let scope = reactive({});
 
@@ -80,17 +64,6 @@
 	let selAttrsKeysComp = computed(() => {
 		return props.filters.map(filter => filter.key);
 	});
-
-	scope.onFilterChipClick = (emitData) => {
-
-		// scope.popupData.filterKey = emitData.data.id;
-
-		posXRef.value = emitData.event.clientX;
-		posYRef.value = emitData.event.clientY;
-
-		showFilterSettingsRef.value = true;
-
-	}
 
 	function openFiltersAddition() {
 
@@ -104,5 +77,101 @@
 </script>
 
 <style scoped lang="scss">
+
+.add_filter_btn {
+	color: $primary;
+	background-color: initial;
+	font-weight: 700;
+	border-radius: 16px;
+	padding-right: 12px;
+	padding-left: 12px;
+	// padding: 6px 12px;
+	margin: 0 4px;
+	font-size: 14px;
+	box-sizing: border-box;
+
+	&:not([disabled]):hover {
+		background-color: $primary-lighten-2;
+	}
+}
+
+//# region inside FmChips
+:deep(.chip) {
+	max-width: 240px;
+	height: 33px;
+	padding-top: 9px;
+	padding-bottom: 9px;
+	margin-bottom: 9px;
+	cursor: pointer;
+
+	// Only active filters must be orange
+	&.active {
+		background-color: $primary-lighten-2;
+		color: $primary;
+
+		&:hover {
+			background-color: $primary;
+			color: #fff;
+
+			.icon {
+				color: #fff;
+			}
+
+			span.error {
+				color: #fff;
+			}
+		}
+
+		.icon {
+			color: $primary;
+
+			&:hover {
+				color: $text-pale2;
+			}
+		}
+
+	}
+
+	.material-icons:not(.error) {
+		color: inherit;
+	}
+}
+
+:deep(.chip_content) {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+
+	/*.g-filter-chips-text {
+		width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}*/
+}
+
+:deep(.chip-wrap.use-from-above-filter-chip) {
+	.chip {
+		padding-top: 5px;
+		padding-bottom: 5px;
+
+		/*.material-icons:not(.error) {
+			margin-right: 5px;
+		}*/
+	}
+}
+
+:deep( .chip-wrap:not(.use-from-above-filter-chip) ) {
+	.chip {
+		padding-top: 9px;
+		padding-bottom: 9px;
+
+		.chip-list-content {
+			&.custom-field-error {
+				padding-left: 5px;
+			}
+		}
+	}
+}
+//# endregion
 
 </style>

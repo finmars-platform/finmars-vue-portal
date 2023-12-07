@@ -85,17 +85,28 @@ var getDefaultRootGroup = function () {
 }
 
 var emptyUseFromAboveFilters = function (filters) {
-	if (filters && Array.isArray(filters)) {
-		filters.forEach(function (filter) {
-			if (
-				filter.options.use_from_above &&
-				Object.keys(filter.options.use_from_above).length > 0
-			) {
-				filter.options.filter_values = []
-			}
-		})
-	}
+
+    var result;
+
+    if (filters && Array.isArray(filters)) {
+
+        result = structuredClone(filters);
+
+        result.forEach(function (filter) {
+            if (filter.options.use_from_above && Object.keys(filter.options.use_from_above).length > 0) {
+                filter.options.filter_values = [];
+            }
+        });
+
+        return result;
+
+    } else {
+        return filters;
+    }
+
+
 }
+
 /** @module entityViewerDataService */
 export default function (reportHelper) {
 
@@ -1260,7 +1271,7 @@ export default function (reportHelper) {
 
 		if (isReport) {
 
-			emptyUseFromAboveFilters(listLayout.data.filters);
+            listLayout.data.filters = emptyUseFromAboveFilters(listLayout.data.filters);
 
 			listLayout.data.reportOptions = metaHelper.recursiveDeepCopy(getReportOptions());
 			listLayout.data.reportLayoutOptions = metaHelper.recursiveDeepCopy(getReportLayoutOptions());
@@ -1432,9 +1443,8 @@ export default function (reportHelper) {
 
 		setColumns(listLayout.data.columns);
 		setGroups(listLayout.data.grouping);
-		console.log("testing1923.entityViewerDataService filters", listLayout.data.filters);
 		setFilters(listLayout.data.filters);
-		console.log("testing1923.entityViewerDataService filters2", getFilters());
+
 		/*if (isRootEntityViewer()) {
             setAdditions(listLayout.data.additions);
         }*/

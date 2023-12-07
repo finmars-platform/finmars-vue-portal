@@ -170,9 +170,12 @@
  * Supporting component for
  * components/Fm/Table/Toolbar/Actions/Rv.vue,
  * components/Fm/Table/Toolbar/Actions/Ev.vue.
- * Must always have one of them as the parent.
+ * Must always have one of them as the direct parent.
  * */
 import convertReportHelper from "~/angular/helpers/converters/convertReportHelper";
+import downloadFileHelper from "~/angular/helpers/downloadFileHelper";
+import exportExcelService from "~/angular/services/exportExcelService";
+import evEvents from "~/angular/services/entityViewerEvents";
 
 // stores
 // props, emits
@@ -191,10 +194,6 @@ let props = defineProps({
     extraMoreOptions: Array,
     isReport: Boolean,
 });
-
-let emit = defineEmits([
-
-]);
 
 //# region variables, refs, computed
 let {evDataService, evEventService} = inject('fmTableData');
@@ -226,7 +225,7 @@ if (props.extraMoreOptions?.length) {
 
 const toggleSplitPanel = function (type) {
 
-	let currentAddition = evDataService.getAdditions();
+	let currentAdditions = evDataService.getAdditions();
 
 	if (currentAdditions.type === type) {
 
@@ -341,30 +340,28 @@ const exportAsPdf = function ($event) {
 
 const exportAsCSV = function () {
 
-    var flatList = $scope.evDataService.getFlatList();
-    var columns = $scope.evDataService.getColumns();
-    var groups = $scope.evDataService.getGroups();
+    var flatList = evDataService.getFlatList();
+    var columns = evDataService.getColumns();
+    var groups = evDataService.getGroups();
 
-    var blobPart = convertReportHelper.convertFlatListToCSV(flatList, columns, $scope.isReport, groups.length);
+    var blobPart = convertReportHelper.convertFlatListToCSV(flatList, columns, props.isReport, groups.length);
     downloadFileHelper.downloadFile(blobPart, "text/plain", "report.csv");
 };
 
 const exportAsExcel = function () {
 
     var data = {
-        entityType: vm.entityType,
+        entityType: evDataService.getEntityType(),
         contentSettings: {
-            columns: $scope.evDataService.getColumns(),
-            groups: $scope.evDataService.getGroups()
+            columns: evDataService.getColumns(),
+            groups: evDataService.getGroups()
         },
-        content: $scope.evDataService.getFlatList()
+        content: evDataService.getFlatList()
     };
 
     exportExcelService.generateExcel(data).then(function (blob) {
 
         downloadFileHelper.downloadFile(blob, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "report.xlsx");
-
-        $mdDialog.hide();
 
     })
 

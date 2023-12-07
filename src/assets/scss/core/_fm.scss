@@ -280,12 +280,23 @@ button.fm_list_item {
     font-size: 11px;
     z-index: 60;
 
-    &.error {
+    &.error, & > .error {
         background-color: $error;
         font-size: 13px;
     }
+
 }
 
 .fm_select_right_btn:not([disabled]):hover {
     opacity: .5;
+}
+
+// chips
+.fm_table_filter_chip {
+	max-width: 240px;
+	height: 33px;
+	padding-top: 9px;
+	padding-bottom: 9px;
+	margin-bottom: 9px;
+	cursor: pointer;
 }
