@@ -5,8 +5,6 @@
 		<div class="hp_block">
 			<div class="hp_title">Bookmarks</div>
 
-      <FmLoader :size="50" />
-
 			<div class="hp_content">
 				<div style="padding: 10px 20px;">Coming soon</div>
 			</div>

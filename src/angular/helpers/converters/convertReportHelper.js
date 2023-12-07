@@ -1,5 +1,4 @@
-import evHelperService from '../../services/entityViewerHelperService'
-;('use strict')
+import evHelperService from '../../services/entityViewerHelperService';
 
 var convertToExcel = function () {
     /*var rows = document.querySelectorAll('.ev-content .g-row');
