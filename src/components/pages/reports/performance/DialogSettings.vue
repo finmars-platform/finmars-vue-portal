@@ -64,7 +64,7 @@
 					<RvSettingsRow label="Portfolios and Bundles">
 						<BaseMultiSelectInput
 							v-model="reportOptions.bundles"
-							title="Portfolios and Bundles"
+							label="Portfolios and Bundles"
 							:items="bundles"
 							item_id="id"
 							item_title="user_code"

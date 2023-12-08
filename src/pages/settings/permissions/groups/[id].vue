@@ -37,7 +37,7 @@
 				<BaseMultiSelectInput
 					:modelValue="selectedRoles"
 					@update:modelValue="findRoleUserCodes($event)"
-					title="Roles"
+					label="Roles"
 					:items="roles"
 					item_id="user_code"
 					item_title="name"
@@ -49,7 +49,7 @@
 				<BaseMultiSelectInput
 					v-model="selectedMembers"
 					@update:modelValue="findMemberIds($event)"
-					title="Members"
+					label="Members"
 					:items="members"
 					item_id="username"
 					item_title="username"
@@ -61,7 +61,7 @@
 				<BaseMultiSelectInput
 					v-model="selectedAccessPolicies"
 					@update:modelValue="findAccessPolicyUserCodes($event)"
-					title="Access Policies"
+					label="Access Policies"
 					:items="accessPolicies"
 					item_id="user_code"
 					item_title="name"

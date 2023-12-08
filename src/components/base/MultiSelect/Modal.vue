@@ -4,17 +4,19 @@
 						 @update:modelValue="cancel">
 
 		<div>
-			<BaseMultiSelectTwoAreas :items="items"
-															 :modelValue="modelValue"
-															 :item_title="item_title"
-															 :item_id="item_id"
-															 @update:modelValue="newValue => selValue = newValue" />
+			<BaseMultiSelectTwoAreas
+				:items="items"
+				:modelValue="modelValue"
+				:item_title="item_title"
+				:item_id="item_id"
+				@update:modelValue="newValue => selValue = newValue || []"
+			/>
 		</div>
 
 		<template #controls>
 			<div class="flex sb">
 				<FmBtn type="basic" @click="cancel">cancel</FmBtn>
-				<FmBtn @click="emit('save', selValue)">save</FmBtn>
+				<FmBtn @click="emit('save', JSON.parse(JSON.stringify(selValue)) )">save</FmBtn>
 			</div>
 		</template>
 
@@ -48,10 +50,10 @@
 
 	let emit = defineEmits(['cancel', 'save']);
 
-	let selValue = ref(props.modelValue);
+	let selValue = ref(props.modelValue || []);
 
 	function cancel() {
-		selValue.value = props.modelValue;
+		selValue.value = props.modelValue || [];
 		emit('cancel');
 	}
 
