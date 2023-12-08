@@ -7,7 +7,7 @@
 		<RvSettingsRow label="Filter items by statuses">
 			<BaseMultiSelectInput
 				v-model="vm.entityFilters"
-				title="Filter items by statuses"
+				label="Filter items by statuses"
 				item_id="value"
 				:items="vm.multiselectorOptions"
 			/>
