@@ -139,7 +139,7 @@
 					<BaseMultiSelectInput
 						v-model="vm.reportOptions.portfolios"
 						:items="vm.portfolios"
-						title="Portfolios multiselector"
+						label="Portfolios multiselector"
 						item_title="short_name"
 						item_id="id"
 					/>
@@ -149,7 +149,7 @@
 					<BaseMultiSelectInput
 						v-model="vm.reportOptions.accounts"
 						:items="vm.accounts"
-						title="Accounts multiselector"
+						label="Accounts multiselector"
 						item_title="short_name"
 						item_id="id"
 					/>
@@ -159,7 +159,7 @@
 					<BaseMultiSelectInput
 						v-model="vm.reportOptions.strategies1"
 						:items="vm.strategies1"
-						title="Strategies 1 multiselector"
+						label="Strategies 1 multiselector"
 						item_title="short_name"
 						item_id="id"
 					/>
@@ -169,7 +169,7 @@
 					<BaseMultiSelectInput
 						v-model="vm.reportOptions.strategies2"
 						:items="vm.strategies2"
-						title="Strategies 2 multiselector"
+						label="Strategies 2 multiselector"
 						item_title="short_name"
 						item_id="id"
 					/>
@@ -179,7 +179,7 @@
 					<BaseMultiSelectInput
 						v-model="vm.reportOptions.strategies3"
 						:items="vm.strategies3"
-						title="Strategies 3 multiselector"
+						label="Strategies 3 multiselector"
 						item_title="short_name"
 						item_id="id"
 					/>
@@ -201,7 +201,7 @@
 					<BaseMultiSelectInput
 						v-model="vm.selectedCustomFields"
 						:items="vm.customFieldsNames"
-						title="Accounts multiselector"
+						label="Accounts multiselector"
 						item_title="name"
 						item_id="id"
 						@update:model-value="vm.selectedCustomFieldsChanged()"
@@ -342,7 +342,7 @@
 	const { resolve, reject, disableChangesSaving } = props.payload
 
 	const { evEventService, evDataService, attributeDataService } =
-		inject('ngDependace')
+		inject('fmTableData')
 	// 	customFieldService,
 	// 	ecosystemDefaultService,
 	// 	uiService,

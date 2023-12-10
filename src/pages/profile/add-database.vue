@@ -13,11 +13,12 @@
 			</div>
 
 			<template v-if="isShow">
-				<BaseInput v-model="form.base_api_url" label="Base API URL" />
-				<BaseInput v-model="form.db_host" label="Database host" />
-				<BaseInput v-model="form.db_name" label="Database name" />
-				<BaseInput v-model="form.db_user" label="Database user" />
-				<BaseInput v-model="form.db_password" label="Database user password" />
+
+				<BaseInput v-model="form.versions.backend" label="Backend Version" />
+				<BaseInput v-model="form.versions.portal" label="Portal Version" />
+				<BaseInput v-model="form.versions.vue_portal" label="Vue Portal Version" />
+				<BaseInput v-model="form.versions.workflow" label="Workflow Version" />
+
 			</template>
 
 			<div class="flex sb">
@@ -53,6 +54,12 @@
 
 	let form = reactive({
 		description: "",
+		versions: {
+			backend: "",
+			portal: "",
+			vue_portal: "",
+			workflow: "",
+		},
 	})
 	let configs = [
 		{

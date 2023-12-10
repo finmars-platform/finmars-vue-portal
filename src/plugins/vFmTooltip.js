@@ -44,7 +44,13 @@ function calculatePosition(targetElem, tooltipElem, direction) {
 export default defineNuxtPlugin((nuxtApp) => {
 	nuxtApp.vueApp.directive('fm-tooltip', {
 		mounted(el, binding) {
-			const errorMode = !!binding.modifiers.error
+
+			/* *
+			 * Using 'error' as an argument instead of modifier
+			 * allows to do
+			 * v-fm-tooltip:[isMessageAnError()]="Hint or an error text"
+			 * */
+			const errorMode = binding.arg === 'error';
 			const direction = binding.modifiers.bottom ? 'bottom' : 'top'
 
 			const body = document.body
@@ -52,7 +58,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
 			tooltipElem.classList.add('fm_tooltip')
 			tooltipElem.style.position = 'absolute'
-			tooltipElem.style.zIndex = 999
+			tooltipElem.style.zIndex = 99
 			tooltipElem.innerHTML = binding.value
 
 			if (errorMode) tooltipElem.classList.add('error')

@@ -13,8 +13,8 @@
 			<div
 				class="chip flex aic"
 				:class="{ active: chip.isActive }"
-				v-fm-tooltip="scope.getTooltipContent(chip)"
-				@click="$emit('chipClick', { data: chip, event: $event })"
+				v-fm-tooltip:[getTooltipArg(chip.error_data)]="scope.getTooltipContent(chip)"
+				@click="onChipClick(chip, $event)"
 			>
 				<span v-if="chip.error_data" class="material-icons error">error</span>
 
@@ -24,23 +24,25 @@
 					class="chip_content flex aic"
 				></div>
 
-				<FmIcon
+				<FmBtn
 					v-if="canDelete"
-					class="m-l-4"
-					icon="cancel"
-					size="16"
+                    type="icon"
+					class="flex-shrink-0 m-l-4"
 					:class="{ 'custom-field-error': !!chip.error_data }"
 					@click.stop="$emit('delete', [chip])"
-				/>
+                >
+<!--                    <FmIcon icon="cancel" size="16" />-->
+					<div class="icon material-icons" style="font-size: 16px;">cancel</div>
+                </FmBtn>
 			</div>
 		</div>
 
-		<div class="chip-wrap" v-if="hiddenChips.length">
+<!--		<div class="chip-wrap" v-if="hiddenChips.length">
 			<div
 				class="chip expand-chip"
 				@click="onChipClickMethod(hiddenChips, $event)"
 			>
-				<div class="chip-list-content">+{{ hiddenChips.length }}</div>
+				<div class="chip_content">+{{ hiddenChips.length }}</div>
 
 				<md-button
 					v-if="chipsDeletion"
@@ -57,7 +59,7 @@
 					ng-bind="hiddenChipsTexts"
 				></md-tooltip>
 			</div>
-		</div>
+		</div>-->
 
 		<slot></slot>
 	</div>
@@ -66,7 +68,8 @@
 <script setup>
 	import directivesEvents from '@/angular/services/events/directivesEvents'
 
-	const emits = defineEmits(['chipClick', 'delete'])
+	const emit = defineEmits(['chipClick', 'delete'])
+
 	const props = defineProps({
 		items: Array,
 		canDelete: { type: Boolean, default: false },
@@ -144,6 +147,7 @@
 			)
 		}
 	}
+
 	scope.getChipsListClasses = function () {
 		let classes = ''
 
@@ -154,15 +158,28 @@
 		return classes
 	}
 
+	/* Method from angularjs. May be not needed. */
 	scope.onChipClickMethod = function (chipData, $event) {
-		let chipsData = {
+		/*let chipsData = {
 			hiddenChips: Array.isArray(chipData),
 			data: chipData,
 		}
 
 		if (scope.onChipClick) {
 			scope.onChipClick({ chipsData: chipsData, event: $event })
-		}
+		}*/
+	}
+
+	const onChipClick = function (chipData, $event) {
+
+		emit(
+			'chipClick',
+			{
+				data: JSON.parse(JSON.stringify(chipData)),
+				event: $event
+			}
+		)
+
 	}
 
 	let getHiddenChipsTexts = function () {
@@ -194,9 +211,11 @@
 		return chipData.classes ? chipData.classes : ''
 	}
 
+	const getTooltipArg = chipError => chipError ? 'error' : '';
+
 	scope.getTooltipContent = (chipData) => {
 		if (chipData.error_data) {
-			return chipData.error_data.description
+			return `<div class="error">${chipData.error_data.description}</div>`;
 		}
 
 		if (chipData.hasOwnProperty('tooltipContent')) {
@@ -330,23 +349,19 @@
 		background-color: rgb(235, 235, 235);
 		border-radius: 16px;
 		padding: 6px 12px;
-		margin: 4px;
+		margin: 0 4px;
 		font-size: 14px;
 
 		.icon {
-			color: $primary;
+			color: inherit;
 
 			&:hover {
-				color: #fff;
+				color: $text-pale2;
 			}
 		}
 
 		&:hover {
 			background-color: rgba(216, 216, 216, 1);
-
-			.icon {
-				color: #fff;
-			}
 		}
 
 		&:focus {
@@ -395,7 +410,7 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
-	.chip {
+	/*.chip {
 		max-width: 240px;
 		height: 33px;
 		padding-top: 9px;
@@ -403,21 +418,7 @@
 		cursor: pointer;
 
 		// Victor 2021.03.26 #85 only active filters must be orange
-		&.active {
-			background-color: rgba(240, 90, 34, 0.1);
-			color: $orange;
 
-			&:hover {
-				background-color: $orange;
-				color: #fff;
-
-				span.error {
-					color: #fff;
-				}
-			}
-
-			// <Victor 2021.03.26 #85 only active filters must be orange>
-		}
 
 		.chip-list-content {
 			display: flex;
@@ -434,7 +435,58 @@
 		.material-icons:not(.error) {
 			color: inherit;
 		}
-	}
+	}*/
+
+    //# region fm table filters
+    /*.fm_filter_chips {
+
+        .chip {
+
+            // Only active filters must be orange
+            &.active {
+                background-color: $primary-lighten-2;
+                color: $primary;
+
+                &:hover {
+                    background-color: $primary;
+                    color: #fff;
+
+					:deep(.icon) {
+						color: #fff;
+					}
+
+                    span.error {
+                        color: #fff;
+                    }
+                }
+
+				:deep(.icon) {
+					color: $primary;
+
+					&:hover {
+						color: $text-pale2;
+					}
+				}
+
+            }
+        }
+
+        .chip_content {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+            !*.g-filter-chips-text {
+                width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }*!
+        }
+
+        .material-icons:not(.error) {
+            color: inherit;
+        }
+    }
 
 	.chip-wrap.use-from-above-filter-chip {
 		.chip {
@@ -458,5 +510,7 @@
 				}
 			}
 		}
-	}
+	}*/
+    //# endregion fm table filters
+
 </style>

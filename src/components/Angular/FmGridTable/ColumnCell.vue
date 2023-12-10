@@ -201,7 +201,7 @@
 
 					<div
 						class="fm_list_item"
-						@click="columnsData.openNumberFormatDialog(item, close)"
+						@click="columnsData.openNumberFormatDialog(item.key, close)"
 					>
 						Number Format
 					</div>

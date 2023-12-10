@@ -71,7 +71,7 @@
   let props = defineProps({
     modelValue: Boolean,
     title: String,
-    contentType: {
+    content_type: {
       type: String,
       required: true,
     },
@@ -87,7 +87,6 @@
     selected: [Array, String], // Array of Strings (keys) for multiselect, String (key) and null for select
     multiselect: Boolean,
   });
-
   /*
    * save - returns key or array of keys of selected attributes
    * selectedAttributesChanged - returns object or array of objects of selected attributes
@@ -114,22 +113,26 @@
     () => { newSelAttrs.value = props.multiselect ? [] : ''; }
   )
 
+  function getSelAttrsKeysList() {
+
+	  if ( Array.isArray(props.selected) ) {
+
+		  return props.selected;
+
+	  } else if (typeof props.selected === 'string') {
+
+		  return props.selected ? [props.selected] : []
+
+	  } else if (props.selected || props.selected === 0) {
+		  throw new Error("Wrong format of modelValue: " + typeof props.selected)
+	  }
+
+  }
+
   watch(
     () => props.selected,
     () => {
-
-      if ( Array.isArray(props.selected) ) {
-
-        selAttrsKeysList.value = props.selected;
-
-      } else if (typeof props.selected === 'string') {
-
-        selAttrsKeysList.value = props.selected ? [props.selected] : []
-
-      } else if (props.selected || props.selected === 0) {
-        throw new Error("Wrong format of modelValue: " + typeof props.selected)
-      }
-
+        selAttrsKeysList.value = getSelAttrsKeysList();
     }
   )
 
@@ -147,7 +150,7 @@
 
     if (props.valueType) {
 
-      const favAttrs = store.favorites.attributes[props.contentType] || [];
+      const favAttrs = store.favorites.attributes[props.content_type] || [];
 
       return favAttrs.filter(fAttr => {
 
@@ -163,12 +166,12 @@
 
     }
 
-    return store.favorites.attributes[props.contentType] || [];
+    return store.favorites.attributes[props.content_type] || [];
 
   })
 
   function saveFavorites(favAttrs) {
-    store.memberLayout.data.favorites.attributes[props.contentType] = favAttrs;
+    store.memberLayout.data.favorites.attributes[props.content_type] = favAttrs;
     store.updateMemberLayout();
     emit( 'favoritesChanged', structuredClone(favAttrs) );
   }
@@ -248,6 +251,12 @@
 
   }
 
+  function init() {
+	  selAttrsKeysList.value = getSelAttrsKeysList();
+  }
+
+  init();
+
 </script>
 
 <style lang="scss" scoped>
@@ -255,8 +264,8 @@
     min-height: 340px;
     min-width: 400px;
     height: calc(80vh - $modal-header-height - $modal-footer-height);
-    width: 80vw;
-    max-width: 1000px;
+    width: 70vw;
+    max-width: 800px ;
   }
 
 </style>

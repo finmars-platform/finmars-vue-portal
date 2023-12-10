@@ -113,7 +113,7 @@
 	<FmAttributesSelectModal
 		v-model="attrsSelData.opened"
 		title="Select columns"
-		:contentType="content_type"
+		:content_type="content_type"
 		:attributes="attributes"
 		:selected="selAttrsKeysList"
 		:disabledAttributes="selAttrsKeysList"

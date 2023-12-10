@@ -2,7 +2,10 @@
 	<div class="g-scrollable-area">
 		<div class="g-column-bottom-row g-table-header flex-row">
 			<div class="g-cell g-cell-select-all">
-				<FmCheckbox :size="18" v-model="isAllSelected" />
+				<FmCheckbox
+					:modelValue="isAllSelectedRef"
+					@update:modelValue="selectAllRows"
+				/>
 			</div>
 
 			<div class="g-cell-rows-settings">
@@ -18,10 +21,8 @@
 						<span class="material-icons arrow-icon">arrow_drop_down</span>
 					</button>
 
-					<FmMenu anchor="top left"
-									class="header_item header_icon_btn">
+					<FmMenu anchor="top left" class="header_item header_icon_btn">
 						<template #btn="{ isOpen }">
-
 							<button
 								class="g-cell-button g-row-settings-btn g-row-color-picker-btn"
 								:class="rowFilterColor"
@@ -29,14 +30,13 @@
 								<span
 									class="material-icons label-icon"
 									v-if="rowFilterColor === 'none'"
-								>label_outline</span
+									>label_outline</span
 								>
 								<span class="material-icons" v-if="rowFilterColor !== 'none'"
-								>label</span
+									>label</span
 								>
 								<span class="material-icons arrow-icon">arrow_drop_down</span>
 							</button>
-
 						</template>
 
 						<div class="fm_the_table_menu3">
@@ -84,19 +84,17 @@
 									<span class="material-icons">label_off</span>
 								</button>
 							</div>
-
 						</div>
 					</FmMenu>
 				</div>
 
-				<button class="g-row-settings-toggle"
-								@click="rowFiltersToggle()">
+				<button class="g-row-settings-toggle" @click="rowFiltersToggle()">
 					<div class="center aic height-100">
 						<span v-show="!hideRowSettings" class="material-icons f-s-16"
-						>keyboard_arrow_left</span
+							>keyboard_arrow_left</span
 						>
 						<span v-show="hideRowSettings" class="material-icons f-s-16"
-						>keyboard_arrow_right</span
+							>keyboard_arrow_right</span
 						>
 					</div>
 				</button>
@@ -143,7 +141,10 @@
 					"
 				/>
 
-				<button class="g-cell g-add-column-button" @click="addColumn($event)">
+				<button
+					class="g-cell g-add-column-button"
+					@click="columnsAdditionOpened()"
+				>
 					<FmIcon v-fm-tooltip="'Add new column'" icon="add_circle" />
 				</button>
 			</div>
@@ -162,7 +163,7 @@
 					:attributes="
 						$mdDialog.modals['AttributesSelectorDialogController'].data.attributes
 					"
-					:contentType="contentType"
+					:content_type="contentType"
 					@save="
 						(selected) => {
 							$mdDialog.modals['AttributesSelectorDialogController'].resolve({
@@ -204,7 +205,7 @@
 					"
 				/>-->
 
-<!--		<BaseModal
+		<!--		<BaseModal
 			v-if="$mdDialog.modals['RenameFieldDialogController']"
 			:modelValue="true"
 			title="Rename column"
@@ -251,36 +252,41 @@
 			</template>
 		</BaseModal>-->
 
-		<LazyBaseModal
-			v-if="renameOpened"
-			v-model="renameOpened"
-			title="Rename"
-			@close="columnToRename = null"
-		>
+		<LazyBaseModal v-if="renameOpened" v-model="renameOpened" title="Rename">
+			<!-- 		@close="columnToRename = null" -->
 			<BaseInput readonly label="ID" v-model="columnToRename.key" />
-			<BaseInput
-				readonly
-				label="Original"
-				:modelValue="columnToRename.name"
-			/>
+			<BaseInput readonly label="Original" :modelValue="columnToRename.name" />
 			<BaseInput label="Name" v-model="columnToRename.layout_name" />
 
 			<template #controls="{ cancel }">
 				<div class="flex sb">
+					<FmBtn type="text" @click="cancel()">cancel</FmBtn>
 
-					<FmBtn
-						type="text"
-						@click="cancel()"
-					>cancel</FmBtn>
-
-					<FmBtn
-						@click="renameColumn(cancel)"
-					>save</FmBtn>
+					<FmBtn @click="renameColumn(cancel)">save</FmBtn>
 				</div>
 			</template>
-
 		</LazyBaseModal>
 
+		<LazyFmAttributesSelectModal
+			v-if="openColsAddition"
+			v-model="openColsAddition"
+			multiselect
+			title="Add columns"
+			:attributes="allAttrs"
+			:selected="selectedAttrs"
+			:disabledAttributes="selectedAttrs"
+			:type="contentType"
+			@selectedAttributesChanged="addColumn"
+		/>
+
+		<LazyModalNumberFormat
+			v-if="colNumberFormatData.opened"
+			v-model="colNumberFormatData.opened"
+			:title="`${colNumberFormatData.name}: Number Format`"
+            :settings="colNumberFormatData.numberFormat"
+            @cancel="onColNumFormatClose"
+			@save="editColNumberFormat"
+		></LazyModalNumberFormat>
 	</div>
 </template>
 
@@ -294,7 +300,6 @@
 	import rvDataHelper from '@/angular/helpers/rv-data.helper'
 
 	import localStorageService from '@/angular/shell/scripts/app/services/localStorageService'
-  import {useGetEvRvParents} from "~/composables/useEntityReportViewer";
 
 	const props = defineProps([
 		'vm',
@@ -304,16 +309,16 @@
 		'contentWrapElement',
 	])
 
-	const evAttrsStore = useEvAttributesStore();
+	const evAttrsStore = useEvAttributesStore()
 
 	const $mdDialog = inject('$mdDialog')
 
 	const {
-			evDataService,
-			evEventService,
-			attributeDataService,
-			contentWrapElement,
-		} = props
+		evDataService,
+		evEventService,
+		attributeDataService,
+		contentWrapElement,
+	} = props
 
 	let viewContext = evDataService.getViewContext()
 	// let isReport = metaService.isReport(entityType);
@@ -326,66 +331,61 @@
   let dataIsLoadingRef = ref(null);
 
 	const getColumns = () => {
-		return JSON.parse(JSON.stringify( evDataService.getColumns() ));
-	};
+		return JSON.parse(JSON.stringify(evDataService.getColumns()))
+	}
 
 	const setColumns = (columns) => {
-		evDataService.setColumns( JSON.parse(JSON.stringify( columns )) );
-	};
+		evDataService.setColumns(JSON.parse(JSON.stringify(columns)))
+	}
 
 	/**
 	 *
 	 * @param key
 	 * @return {Object} - column from entityViewerDataService
 	 */
-	const getColumnByKey = key => {
-
-		const columnsList = evDataService.getColumns();
-		const column = columnsList.find(col => col.key === key);
+	const getColumnByKey = (key) => {
+		const columnsList = evDataService.getColumns()
+		const column = columnsList.find((col) => col.key === key)
 
 		if (!column) {
 			throw new Error(`No column found with the key: ${key}`)
 		}
 
-		return column;
-
-	};
+		return column
+	}
 
 	/**
 	 * Update column inside entityViewerDataService
 	 *
 	 * @param columnData
 	 */
-	const setColumn = columnData => {
-
-		const columnsList = evDataService.getColumns();
-		const colIndex = columnsList.findIndex(
-			col => col.key === columnData.key
-		);
+	const setColumn = (columnData) => {
+		const columnsList = evDataService.getColumns()
+		const colIndex = columnsList.findIndex((col) => col.key === columnData.key)
 
 		if (!colIndex) {
 			throw new Error(`No column found with the key: ${columnData.key}`)
 		}
 
-		columnsList[colIndex] = columnData;
-
-	};
+		columnsList[colIndex] = columnData
+	}
 
 	function getGroups() {
-		return JSON.parse(JSON.stringify( evDataService.getGroups() ));
+		return JSON.parse(JSON.stringify(evDataService.getGroups()))
 	}
 
 	function setGroups(groups) {
-		return evDataService.setGroups( JSON.parse(JSON.stringify( groups )) );
+		return evDataService.setGroups(JSON.parse(JSON.stringify(groups)))
 	}
 
-	const isOpenAttrsSelector = ref(false)
+	let columns = ref( getColumns() )
 
-	let columns = ref( getColumns() );
+	let groupsRef = ref( getGroups() )
 
-	let groupsRef = ref(null)
-	groupsRef.value = getGroups();
-
+	/** @type {ComputedRef<Array<String>>} - array of keys of attributes for groups and columns */
+	let selectedAttrs = computed(() => {
+		return columns.value.map(item => item.key);
+	});
 	// let columnsToShow = ref([])
 
 	let filters = evDataService.getFilters()
@@ -403,7 +403,10 @@
 	 */
 	const columnsToShow = computed(() => {
 		if (isReport) {
-			return evDataHelper.separateNotGroupingColumns(columns.value, groupsRef.value)
+			return evDataHelper.separateNotGroupingColumns(
+				columns.value,
+				groupsRef.value
+			)
 		} else {
 			return columns.value
 		}
@@ -419,15 +422,12 @@
 	/*let customFields =
 		attributeDataService.getCustomFieldsByEntityType(entityType)*/
 	let customFields = computed(() => {
-		return evAttrsStore.customFields[contentType];
+		return evAttrsStore.customFields[contentType]
 	})
 
-	watch(
-		customFields,
-		() => {
-			collectMissingCustomFieldsErrors()
-		}
-	)
+	watch(customFields, () => {
+		collectMissingCustomFieldsErrors()
+	})
 
 	/**
 	 * Collects errors from columns.
@@ -441,9 +441,7 @@
 			itemType,
 			errorsList
 		) {
-
 			if (item.key.startsWith('custom_fields')) {
-
 				const customField = customFields.value.find(
 					(field) => item.key === `custom_fields.${field.user_code}`
 				)
@@ -467,43 +465,43 @@
 				}
 			}
 
-			return item;
-
+			return item
 		}
 
 		if (isReport) {
+			let groupsList = evDataService.getGroups()
 
-			let groupsList = evDataService.getGroups();
-
-			groupsList = groupsList.map(group => {
+			groupsList = groupsList.map((group) => {
 				return markItemUsingMissingCustomField(group, 'group', groupsErrorsList)
 			})
 
-			evDataService.setGroups(groupsList);
-
+			evDataService.setGroups(groupsList)
 		}
 
 		// columns.value = JSON.parse(JSON.stringify( evDataService.getColumns() ));
-		let colsList = evDataService.getColumns();
+		let colsList = evDataService.getColumns()
 
-		colsList = colsList.map(column => {
-			return markItemUsingMissingCustomField(column, 'column', columnsErrorsList)
+		colsList = colsList.map((column) => {
+			return markItemUsingMissingCustomField(
+				column,
+				'column',
+				columnsErrorsList
+			)
 		})
 
-		evDataService.setColumns(colsList);
+		evDataService.setColumns(colsList)
 
 		evDataService.setMissingCustomFields({
 			forColumns: columnsErrorsList,
 			forGroups: groupsErrorsList,
 		})
-
 	}
 
 	let components = evDataService.getComponents()
 	let downloadedItemsCount = null
 	let columnAreaCollapsed = false
 
-	let isAllSelected = ref(evDataService.getSelectAllRowsState())
+	let isAllSelectedRef = ref(evDataService.getSelectAllRowsState())
 	let isAllStarsSelected = false
 	let hideRowSettings = ref(!!evDataService.getRowSettings().folded)
 	let groupsAreaDraggable = viewContext !== 'dashboard'
@@ -519,9 +517,10 @@
 	 * @param {Function} closeCb - callback to close FmMenu
 	 * @return {Promise<void>}
 	 */
-	async function openNumberFormatDialog(column, closeCb) {
-
-		closeCb();
+	/*async function openNumberFormatDialog(column, closeCb) {
+		console.log('fvafd')
+		openColsAddition.value = true
+		closeCb()
 
 		let dialogData = {
 			settings: {},
@@ -533,9 +532,7 @@
 			dialogData.settings = column.report_settings
 		}
 		// for old layouts
-		if (
-			isReport && !column.options?.hasOwnProperty('numberFormat')
-		) {
+		if (isReport && !column.options?.hasOwnProperty('numberFormat')) {
 			dialogData.settings = column.report_settings
 		}
 		console.log('dialogData:', dialogData)
@@ -558,12 +555,75 @@
 
 			evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 			evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
-
 		}
+	}*/
+
+    //# region Number format
+
+	/**
+	 * Data for ModalNumberFormat
+	 *
+	 * @type {Ref<{opened: Boolean, key: String, name: String, numberFormat: Object|null}>}
+	 */
+	let colNumberFormatData = reactive({
+		opened: false,
+		key: '',
+		name: '',
+		numberFormat: null,
+	});
+
+	/**
+	 *
+	 * @param {String} columnKey
+	 * @param {Function} closeCb - callback to close FmMenu
+	 * @return {Promise<void>}
+	 */
+	function openNumberFormatDialog(columnKey, closeCb) {
+
+		closeCb()
+
+		const column = getColumnByKey(columnKey);
+		let numberFormat;
+
+		if (column.options?.numberFormat) {
+			numberFormat = column.options.numberFormat;
+		}
+		else if (isReport && !column.options?.hasOwnProperty('numberFormat')) {
+			numberFormat = column.report_settings
+		}
+
+		colNumberFormatData.key = columnKey;
+		colNumberFormatData.name = column.name || column.layout_name;
+		colNumberFormatData.numberFormat = numberFormat;
+		colNumberFormatData.opened = true;
 
 	}
 
-	// Victor 2020.12.14 #69 New report viewer design
+    function onColNumFormatClose() {
+        colNumberFormatData.key = '';
+        colNumberFormatData.name = '';
+        colNumberFormatData.numberFormat = null;
+    }
+
+	function editColNumberFormat(newNumberFormat) {
+
+		const column = getColumnByKey(colNumberFormatData.key);
+
+        if (!column.options) column.options = {};
+
+        column.options.numberFormat = newNumberFormat;
+
+        setColumn(column);
+
+        onColNumFormatClose();
+
+        evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+        evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED);
+
+	}
+    //# endregion Number format
+
+    // Victor 2020.12.14 #69 New report viewer design
 	let rowFilterColor = 'none'
 
 	let checkForFilteringBySameAttr
@@ -702,7 +762,6 @@
 	}
 
 	let changeSortDirection = function (columnOrGroup, direction) {
-
 		if (!columnOrGroup.options) columnOrGroup.options = {}
 
 		columnOrGroup.options.sort = direction
@@ -716,11 +775,8 @@
      * ev-data-provider.service -> getObjects() do not register.
      * Whence dataIsLoading = true;
      * */
-    columnsData.dataIsLoading = true;
-
-    if ( isReport && columnHasCorrespondingGroup(columnOrGroup.key) ) {
-
-      const groupsList = evDataService.getGroups();
+    columnsData.dataIsLoading = true;if (isReport &&columnHasCorrespondingGroup(columnOrGroup.key)) {
+			const groupsList = evDataService.getGroups();
 
       const group = groupsList.find(group => group.key === columnOrGroup.key);
       group.options.sort = columnOrGroup.options.sort;
@@ -889,29 +945,31 @@
 			group.report_settings.subtotal_type = type
 		}
 
-		closeCb();
+		closeCb()
 
 		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
 	}
 
-
 	/**
 	 * @param dataList {Array<Object>} - For rv list of all groups' data. For ev list of selected groups' data.
 	 */
 	var selectRowsInsideData = function (dataList) {
+
+		const isAllSelected = evDataService.getSelectAllRowsState();
+
 		dataList.forEach(function (dataListItem) {
 			if (isReport && dataListItem.___type === 'group') {
-				dataListItem.___is_area_subtotal_activated = isAllSelected.value
-				dataListItem.___is_line_subtotal_activated = isAllSelected.value
+				dataListItem.___is_area_subtotal_activated = isAllSelected
+				dataListItem.___is_line_subtotal_activated = isAllSelected
 			} else if (dataListItem.___type === 'object') {
-				dataListItem.___is_activated = isAllSelected.value
+				dataListItem.___is_activated = isAllSelected
 			}
 
 			if (dataListItem.results && dataListItem.results.length) {
 				dataListItem.results.forEach(function (child) {
 					if (child.___type === 'object') {
-						child.___is_activated = isAllSelected.value
+						child.___is_activated = isAllSelected
 					}
 				})
 			}
@@ -919,70 +977,72 @@
 			evDataService.setData(dataListItem)
 		})
 
-		var data = evDataService.getData()
 	}
 
-	watch(isAllSelected, selectAllRows)
+	function selectAllRows(isAllSelected) {
 
-	function selectAllRows() {
+		console.time('Selecting all rows');
 
-    console.time('Selecting all rows');
+		let flatList;
+		let dataList;
 
-    let flatList;
-    let dataList;
+		if (isReport) {
+		  flatList = rvDataHelper.getFlatStructure(evDataService);
 
-    if (isReport) {
-      flatList = rvDataHelper.getFlatStructure(evDataService);
+		} else {
+		  flatList = evDataHelper.getObjectsFromSelectedGroups(evDataService, globalDataService);
+		}
 
-    } else {
-      flatList = evDataHelper.getObjectsFromSelectedGroups(evDataService, globalDataService);
-    }
+		// let isAllSelected = evDataService.getSelectAllRowsState();
+		if (typeof isAllSelected !== 'boolean') {
+			// toggle selectedAllRowsState
+			isAllSelected = !evDataService.getSelectAllRowsState();
+		}
 
-    isAllSelected = evDataService.getSelectAllRowsState();
+		// isAllSelected = !isAllSelected;
 
-    isAllSelected = !isAllSelected;
+		flatList.forEach(function (item) {
+		  if (item.___type === 'object') {
+			item.___is_activated = isAllSelected;
+		  }
+		});
 
-    flatList.forEach(function (item) {
-      if (item.___type === 'object') {
-        item.___is_activated = isAllSelected;
-      }
-    });
+		if (isReport) {
 
-    if (isReport) {
+		  dataList = evDataService.getDataAsList();
 
-      dataList = evDataService.getDataAsList();
+		}
+		else {
 
-    }
-    else {
+		  let groupsIds = evDataService.getSelectedGroups();
 
-      let groupsIds = evDataService.getSelectedGroups();
+		  if (!groupsIds.length) {
+			groupsIds = [ evDataService.getRootGroupData() ];
+		  }
 
-      if (!groupsIds.length) {
-        groupsIds = [ evDataService.getRootGroupData() ];
-      }
+		  groupsIds = groupsIds.map(group => group.___id);
 
-      groupsIds = groupsIds.map(group => group.___id);
+		  dataList = evDataService.getDataAsList();
 
-      dataList = evDataService.getDataAsList();
+		  dataList = dataList.filter(item => {
+			return groupsIds.includes(item.___parentId);
+		  })
 
-      dataList = dataList.filter(item => {
-        return groupsIds.includes(item.___parentId);
-      })
+		}
 
-    }
+		evDataService.setSelectAllRowsState(isAllSelected);
+		isAllSelectedRef.value = isAllSelected;
 
-    selectRowsInsideData(dataList);
+		selectRowsInsideData(dataList); // must be called after evDataService.setSelectAllRowsState(isAllSelected);
 
-    evDataService.setSelectAllRowsState(isAllSelected);
+		evDataService.setFlatList(flatList);
 
-    evDataService.setFlatList(flatList);
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+		evEventService.dispatchEvent(evEvents.ROW_ACTIVATION_CHANGE);
 
-    evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-    evEventService.dispatchEvent(evEvents.ROW_ACTIVATION_CHANGE);
+		console.timeEnd('Selecting all rows');
 
-    console.timeEnd('Selecting all rows');
-
-  }
+  	}
 
 	let isColumnFloat = function (column) {
 		return column.value_type == 20
@@ -1028,10 +1088,8 @@
 
           collectMissingCustomFieldsErrors();
           evEventService.dispatchEvent(evEvents.COLUMN_SORT_CHANGE);
-
-        } else {
-
-          useNotify({type: 'error', title: "Manual Sort is not configured"});
+					} else {
+						useNotify({type: 'error', title: "Manual Sort is not configured"});
 
           column.options.sort_settings.layout_user_code = null;
 
@@ -1095,7 +1153,7 @@
 		console.log('groups sorting group', group)
 		group.options.sort = sort
 
-		groupsRef.value = getGroups();
+		groupsRef.value = getGroups()
 
 		groupsRef.value.forEach(function (item) {
 			if (group.key === item.key || group.id === item.id) {
@@ -1108,7 +1166,6 @@
 
 		evEventService.dispatchEvent(evEvents.GROUP_TYPE_SORT_CHANGE)
 	}*/
-
 	let checkColTextAlign = function (column, type) {
 		if (column.hasOwnProperty('style') && column.style) {
 			if (column.style.text_align === type) {
@@ -1138,7 +1195,7 @@
 			column.style.text_align = type
 		}
 
-		closeCb();
+		closeCb()
 		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 	}
 
@@ -1282,23 +1339,19 @@
 		return true
 	}
 
-
-
-
 	/**
 	 * Used in only by report viewer.
 	 * @param groupKey {string}
 	 * @param closeCb {Function} - callback to close FmMenu
 	 */
 	let removeGroup = function (groupKey, closeCb) {
-
 		let groupsList = evDataService.getGroups()
 
 		/*var groupToRemoveIndex = groupsList.findIndex(
 			(group) => group.___group_type_id === groupKey
 		)*/
 		const groupToRemoveIndex = groupsList.findIndex(
-			group => group.key === groupKey
+			(group) => group.key === groupKey
 		)
 
 		if (groupToRemoveIndex > -1) {
@@ -1309,7 +1362,7 @@
 
 		evDataService.setGroups(groupsList)
 
-		const columnsList = evDataService.getColumns();
+		const columnsList = evDataService.getColumns()
 
 		const colToRemoveIndex = columnsList.findIndex(
 			(column) => column.key === groupKey
@@ -1333,8 +1386,7 @@
 
 		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 
-		closeCb();
-
+		closeCb()
 	}
 
 	/**
@@ -1343,11 +1395,12 @@
 	 * @param {Function} closeCb - callback to close FmMenu
 	 */
 	let unGroup = function (groupKey, closeCb) {
-
-		closeCb();
+		closeCb()
 		let groupsList = getGroups()
 
-		var groupToRemoveIndex = groupsList.findIndex((group) => group.key === groupKey)
+		var groupToRemoveIndex = groupsList.findIndex(
+			(group) => group.key === groupKey
+		)
 
 		if (groupToRemoveIndex > -1) {
 			groupsList.splice(groupToRemoveIndex, 1)
@@ -1356,7 +1409,6 @@
 		}
 
 		if (isReport) {
-
 			const lastDraggedElem = contentWrapElement.querySelector(
 				'.gDraggableHead.last-dragged'
 			)
@@ -1364,15 +1416,16 @@
 			if (lastDraggedElem) lastDraggedElem.classList.remove('last-dragged')
 
 			const columnsList = evDataService.getColumns()
-			const ungroupedColumn = columnsList.find((column) => column.key === groupKey)
+			const ungroupedColumn = columnsList.find(
+				(column) => column.key === groupKey
+			)
 
 			if (ungroupedColumn) {
 				if (!ungroupedColumn.frontOptions) ungroupedColumn.frontOptions = {}
 
 				ungroupedColumn.frontOptions.lastDragged = true
-				evDataService.setColumns(columnsList);
+				evDataService.setColumns(columnsList)
 			}
-
 		}
 
 		// groupsRef.value = groups;
@@ -1387,7 +1440,6 @@
 		}
 	}
 
-
 	const hideSubtotalForColumn = function (prop, column) {
 		if (!column.hasOwnProperty('report_settings')) {
 			column.report_settings = {}
@@ -1398,7 +1450,6 @@
 		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
 	}
-
 
 	var getDownloadedTableItemsCount = function () {
 		var unfilteredFlatList = evDataService.getUnfilteredFlatList()
@@ -1420,11 +1471,11 @@
 
 		setGroups(groupsRef.value)
 
-		return groupsRef.value;
+		return groupsRef.value
 	}
 
 	const setDefaultGroupType = function () {
-		groupsRef.value = getGroups();
+		groupsRef.value = getGroups()
 
 		groupsRef.value.forEach(function (group) {
 			if (!group.hasOwnProperty('report_settings')) {
@@ -1445,7 +1496,7 @@
 
 	const updateGroupFoldingState = function () {
 
-    let groupsList = evDataService.getGroups();
+    let groupsList = evDataService.getGroups()
 		let parentGroupFullyFolded = false
 
 		groupsList.forEach((group) => {
@@ -1474,23 +1525,22 @@
 	}
 
 	const syncColumnsWithGroups = function () {
-
 		let columnsList = evDataService.getColumns()
 		let groups = getGroups()
 
 		let columnsHaveBeenSynced = false
 
 		groups.forEach((group, groupIndex) => {
-
 			if (group.key !== columnsList[groupIndex].key) {
-
 				let columnToAdd
 				let groupColumnIndex = columnsList.findIndex(
 					(column) => group.key === column.key
 				)
 
 				if (groupColumnIndex > -1) {
-					columnToAdd = JSON.parse(JSON.stringify( columnsList[groupColumnIndex] ))
+					columnToAdd = JSON.parse(
+						JSON.stringify(columnsList[groupColumnIndex])
+					)
 					columnsList.splice(groupColumnIndex, 1)
 				} else {
 					columnToAdd = evHelperService.getTableAttrInFormOf('column', group)
@@ -1500,19 +1550,17 @@
 
 				columnsHaveBeenSynced = true
 			}
-
 		})
 
-		evDataService.setColumns(columnsList);
+		evDataService.setColumns(columnsList)
 
 		/* if (columnsHaveBeenSynced) {
 												 evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
 										 } */
 		return {
 			columns: JSON.parse(JSON.stringify(columnsList)),
-			columnsHaveBeenSynced
+			columnsHaveBeenSynced,
 		}
-
 	}
 
 	let hasFoldingBtn = function ($index) {
@@ -1850,35 +1898,30 @@
 		return groups[$index].report_settings.is_level_folded
 	}
 
-	const setUpFrontOptions = item => {
+	const setUpFrontOptions = (item) => {
+		item.frontOptions = item.frontOptions || {}
 
-		item.frontOptions = item.frontOptions || {};
-
-		return item;
+		return item
 	}
 
-	const setColumnsFrontOptions = function() {
-
-  	let columnsList = evDataService.getColumns();
+	const setColumnsFrontOptions = function () {
+		let columnsList = evDataService.getColumns()
 
 		columnsList = columnsList.map(setUpFrontOptions)
 
-		evDataService.setColumns(columnsList);
+		evDataService.setColumns(columnsList)
 
-		return getColumns();
+		return getColumns()
+	}
 
-  }
-
-	const setGroupsFrontOptions = function() {
-
-		let groupsList = evDataService.getGroups();
+	const setGroupsFrontOptions = function () {
+		let groupsList = evDataService.getGroups()
 
 		groupsList = groupsList.map(setUpFrontOptions)
 
-		evDataService.setGroups(groupsList);
+		evDataService.setGroups(groupsList)
 
-		return getGroups();
-
+		return getGroups()
 	}
 
 	var getColsAvailableForAdditions = function () {
@@ -1895,62 +1938,64 @@
 		})
 	}
 
-	async function addColumn($event) {
-		const allAttrs = attributeDataService.getForAttributesSelector(entityType)
-		const selectedAttrs = columns.map((col) => col.key)
+	// async function addColumn($event) {
+	// 	const allAttrs = attributeDataService.getForAttributesSelector(entityType)
+	// 	const selectedAttrs = columns.map((col) => col.key)
 
-		let res = await $mdDialog.show({
-			controller: 'AttributesSelectorDialogController as vm',
-			templateUrl: 'views/dialogs/attributes-selector-dialog-view.html',
-			targetEvent: $event,
-			multiple: true,
-			locals: {
-				data: {
-					title: 'Add columns',
-					attributes: allAttrs,
-					layoutNames: evHelperService.getAttributesLayoutNames(columns),
-					selectedAttributes: selectedAttrs,
-					contentType: contentType,
-				},
-			},
-		})
+	// 	let res = await $mdDialog.show({
+	// 		controller: 'AttributesSelectorDialogController as vm',
+	// 		templateUrl: 'views/dialogs/attributes-selector-dialog-view.html',
+	// 		targetEvent: $event,
+	// 		multiple: true,
+	// 		locals: {
+	// 			data: {
+	// 				title: 'Add columns',
+	// 				attributes: allAttrs,
+	// 				layoutNames: evHelperService.getAttributesLayoutNames(columns),
+	// 				selectedAttributes: selectedAttrs,
+	// 				contentType: contentType,
+	// 			},
+	// 		},
+	// 	})
 
-		if (res && res.status == 'agree') {
-			let newAttrs = allAttrs.filter((o) => res.data.items.includes(o.key))
+	// 	if (res && res.status == 'agree') {
+	// 		let newAttrs = allAttrs.filter((o) => res.data.items.includes(o.key))
 
-			for (var i = 0; i < newAttrs.length; i = i + 1) {
-				var colData = evHelperService.getTableAttrInFormOf(
-					'column',
-					newAttrs[i]
-				)
-				columns.push(colData)
-			}
+	// 		for (var i = 0; i < newAttrs.length; i = i + 1) {
+	// 			var colData = evHelperService.getTableAttrInFormOf(
+	// 				'column',
+	// 				newAttrs[i]
+	// 			)
+	// 			columns.push(colData)
+	// 		}
 
-			evDataService.setColumns(columns)
+	// 		evDataService.setColumns(columns)
 
-			evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
-			evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
-		}
-	}
+	// 		columns.value = getColumns()
+
+	// 		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
+	// 		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+	// 	}
+	// }
 
 	const onGroupLevelFoldingSwitch = function (argumentsObj) {
-
 		rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService)
 
 		groupsRef.value = getGroups();
-		groupsRef.value = evDataHelper.importGroupsStylesFromColumns(columns.value, groupsRef.value)
+		groupsRef.value = evDataHelper.importGroupsStylesFromColumns(
+			columns.value,
+			groupsRef.value
+		)
 
 		// if (argumentsObj && argumentsObj.updateScope) $apply()
 	}
 
 	const syncGroupLayoutNamesWithColumns = function () {
-
-		const columnsList = evDataService.getColumns();
+		const columnsList = evDataService.getColumns()
 
 		columnsList.forEach((column) => {
-
 			if (!column.layout_name) {
-				return;
+				return
 			}
 
 			const matchingGroup = groupsRef.value.find(
@@ -1960,20 +2005,17 @@
 			if (matchingGroup) {
 				matchingGroup.layout_name = column.layout_name
 			}
-
 		})
 
 		setGroups(groupsRef.value)
 
-		return groupsRef.value;
-
+		return groupsRef.value
 	}
 
 	let onGroupsChange
 
 	// Must be called before declaring columnsData
 	if (isReport) {
-
 		checkForFilteringBySameAttr = function (columnKey) {
 			console.log('columnKey:', columnKey)
 			var filters = evDataService.getFilters()
@@ -1989,8 +2031,7 @@
 		}
 
 		onGroupsChange = function () {
-
-			groupsRef.value = updateGroupTypeIds();
+			groupsRef.value = updateGroupTypeIds()
 
 			setDefaultGroupType()
 			updateGroupFoldingState()
@@ -1998,12 +2039,15 @@
 			// groupsRef.value = evDataService.getGroups()
 			evDataService.resetTableContent(isReport)
 
-			const res = syncColumnsWithGroups();
+			const res = syncColumnsWithGroups()
 
-			columns.value = res.columns;
-			const colsChanged = res.columnsHaveBeenSynced;
+			columns.value = res.columns
+			const colsChanged = res.columnsHaveBeenSynced
 
-			groupsRef.value = evDataHelper.importGroupsStylesFromColumns(groupsRef.value, columns.value)
+			groupsRef.value = evDataHelper.importGroupsStylesFromColumns(
+				groupsRef.value,
+				columns.value
+			)
 
 			// columnsToShow.value = getColumnsToShow()
 
@@ -2014,7 +2058,7 @@
 					group.report_settings && group.report_settings.is_level_folded
 			)
 
-			groupsRef.value = setGroupsFrontOptions();
+			groupsRef.value = setGroupsFrontOptions()
 
 			if (!foldedGroup) {
 				rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService)
@@ -2026,11 +2070,10 @@
 
 			evEventService.dispatchEvent(evEvents.UPDATE_TABLE)
 		}
-
-	}
-	else {
-
+	} else {
 		onGroupsChange = function () {
+			groups.value = updateGroupTypeIds()
+			setDefaultGroupType()
 
 			groupsRef.value = updateGroupTypeIds();
 			setDefaultGroupType();
@@ -2038,9 +2081,9 @@
 			groupsRef.value = setGroupsFrontOptions();
 
 			// groups = evDataService.getGroups();
-			evDataService.resetTableContent(isReport);
+			evDataService.resetTableContent(isReport)
 
-			collectMissingCustomFieldsErrors();
+			collectMissingCustomFieldsErrors()
 
 			evEventService.dispatchEvent(evEvents.UPDATE_TABLE)
 		}
@@ -2057,15 +2100,18 @@
 
 			return true
 		}
-
 	}
 
 	//# region Data to provide for components-children
 	// Must be after assignment of checkForFilteringBySameAttr
-	let renameOpened = ref(false);
+	let renameOpened = ref(false)
 	let columnToRename = ref(null)
 
-	/*let renameColumn = async function (itemKey, closeCb) {
+	let openColsAddition = ref(false)
+	const allAttrs = ref([])
+	// const selectedAttrs = ref([])
+	const numberFormatEdit = ref(false)
+	/*let renameColumn = asyncrenameOpened function (itemKey, closeCb) {
 
 		closeCb();
 
@@ -2160,12 +2206,35 @@
 	 * @param {Function} closeCb - callback to close FmMenu
 	 */
 	function openRenameColumn(itemKey, closeCb) {
+		closeCb()
 
-		closeCb();
+		let column = getColumnByKey(itemKey)
+		columnToRename.value = structuredClone(column)
+		renameOpened.value = true
+	}
 
-		let column = getColumnByKey(itemKey);
-		columnToRename.value = structuredClone(column);
-		renameOpened.value = true;
+	function columnsAdditionOpened(itemKey, closeCb) {
+
+		allAttrs.value = evAttrsStore.getDataForAttributesSelector(contentType)
+
+		openColsAddition.value = true
+	}
+
+	function addColumn(newAttrs) {
+
+		let columnsList = evDataService.getColumns()
+
+		for (var i = 0; i < newAttrs.length; i = i + 1) {
+			var colData = evHelperService.getTableAttrInFormOf('column', newAttrs[i])
+			columnsList.push(colData)
+		}
+
+		evDataService.setColumns(columnsList)
+
+		columns.value = getColumns()
+
+		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 
 	}
 
@@ -2175,33 +2244,31 @@
 	 * @param {Function} closeModal
 	 */
 	function renameColumn(closeModal) {
+		let column = getColumnByKey(columnToRename.value.key)
 
-		let column = getColumnByKey(columnToRename.value.key);
+		column.layout_name = columnToRename.value.layout_name
 
-		column.layout_name = columnToRename.value.layout_name;
+		setColumn(column)
 
-		setColumn(column);
+		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
 
-		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
-
-		if ( columnHasCorrespondingGroup(columnToRename.value.key) ) {
-
+		if (columnHasCorrespondingGroup(columnToRename.value.key)) {
 			// var group = groupsRef.value.find((group) => group.key === itemKey)
 
-			let groupsList = evDataService.getGroups();
-			let group = groupsList.find(group => group.key === columnToRename.value.key)
+			let groupsList = evDataService.getGroups()
+			let group = groupsList.find(
+				(group) => group.key === columnToRename.value.key
+			)
 
 			group.layout_name = columnToRename.value.layout_name
 
 			evDataService.setGroups(groupsList)
-			evEventService.dispatchEvent(evEvents.GROUPS_CHANGE);
-
+			evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
 		}
 
 		const filters = evDataService.getFilters()
 
 		if (isReport) {
-
 			const filter = filters.find(
 				(filter) => filter.key === columnToRename.value.key
 			)
@@ -2213,10 +2280,7 @@
 
 				evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
 			}
-
-		}
-		else {
-
+		} else {
 			let filterLayoutNameChanged = false
 
 			for (let filtersProp in filters) {
@@ -2236,12 +2300,10 @@
 				evDataService.setFilters(filters)
 				evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
 			}
-
 		}
 
 		// Must be at the bottom, because closing modal empties ref columnToRename
-		closeModal();
-
+		closeModal()
 	}
 
 	let columnHasCorrespondingGroup = function (columnKey) {
@@ -2254,10 +2316,10 @@
 		const groupToAdd = evHelperService.getTableAttrInFormOf('group', column)
 
 		// groupsRef.value.push(groupToAdd)
-		let groupsList = evDataService.getGroups();
-		groupsList.push(groupToAdd);
+		let groupsList = evDataService.getGroups()
+		groupsList.push(groupToAdd)
 
-		setGroups(groupsList);
+		setGroups(groupsList)
 
 		evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
 		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
@@ -2402,27 +2464,21 @@
 	 * @param {Function} closeCb - callback to close FmMenu
 	 */
 	let removeColumn = function (column, closeCb) {
-
-		closeCb();
-		let columnsList = evDataService.getColumns();
-		let colToDeleteAttr = null;
+		closeCb()
+		let columnsList = evDataService.getColumns()
+		let colToDeleteAttr = null
 		/*let columnsList = columnsList.filter(function (item) {
 												 return column.___column_id !== item.___column_id;
 										 });*/
 		for (let i = 0; i < columnsList.length; i++) {
-
 			if (column.___column_id === columnsList[i].___column_id) {
-
-				colToDeleteAttr = JSON.parse(JSON.stringify( columnsList[i] ));
-				columnsList.splice(i, 1);
+				colToDeleteAttr = JSON.parse(JSON.stringify(columnsList[i]))
+				columnsList.splice(i, 1)
 				break
-
 			}
-
 		}
 
 		if (viewContext === 'dashboard') {
-
 			var hasAttrAlready = false
 			var availableCols =
 				attributeDataService.getAttributesAvailableForColumns()
@@ -2435,7 +2491,6 @@
 			}
 
 			if (!hasAttrAlready) {
-
 				var newAvailableCol = {
 					attribute_data: {
 						key: colToDeleteAttr.key,
@@ -2449,10 +2504,8 @@
 				}
 
 				availableCols.push(newAvailableCol)
-				attributeDataService.setAttributesAvailableForColumns(availableCols);
-
+				attributeDataService.setAttributesAvailableForColumns(availableCols)
 			}
-
 		}
 
 		evDataService.setColumns(columnsList)
@@ -2494,33 +2547,33 @@
 	 * @param {Function} [closeCb] - callback to close FmMenu
 	 */
 	let selectSubtotalType = function (column, type, closeCb) {
+		if (closeCb) closeCb()
 
-		if (closeCb) closeCb();
-
-		const col = getColumnByKey(column.key);
+		const col = getColumnByKey(column.key)
 
 		if (!col.hasOwnProperty('report_settings')) {
-			col.report_settings = {};
+			col.report_settings = {}
 		}
 
 		if (col.report_settings.subtotal_formula_id === type) {
 			// turn off subtotal after clicking on an active subtotal type
-			col.report_settings.subtotal_formula_id = null;
-
+			col.report_settings.subtotal_formula_id = null
 		} else {
-			col.report_settings.subtotal_formula_id = type;
+			col.report_settings.subtotal_formula_id = type
 		}
 
-		col.frontOptions.temporaryWeightedActive = false;
+		col.frontOptions.temporaryWeightedActive = false
 
-		setColumn(col);
-		columns.value = getColumns();
+		setColumn(col)
+		columns.value = getColumns()
 
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED);
-	};
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
+	}
 
 	function onSubtotalSumClick(column) {
+		column.frontOptions.subtotalAvgWeightedActive = false
+		column.frontOptions.subtotalWeightedActive = false
 
 		column.frontOptions.subtotalAvgWeightedActive = false;
 		column.frontOptions.subtotalWeightedActive = false;
@@ -2543,16 +2596,16 @@
   }
 
 	function onSubtotalWeightedClick(column) {
-    // column is an object inside ref columns
-		column.frontOptions.subtotalAvgWeightedActive = false;
-		column.report_settings.subtotal_formula_id = null;
+// column is an object inside ref columns
+		column.frontOptions.subtotalAvgWeightedActive = false
+		column.report_settings.subtotal_formula_id = null
 
-		column.frontOptions.subtotalWeightedActive = !column.frontOptions.subtotalWeightedActive;
+		column.frontOptions.subtotalWeightedActive =
+			!column.frontOptions.subtotalWeightedActive
 
-		setColumns(columns.value);
+		setColumns(columns.value)
 
-    subtotalWeightedChange();
-
+    subtotalWeightedChange()
 	}
 
 	function onSubtotalAvgWeightedClick(column) {
@@ -2560,30 +2613,24 @@
 		column.frontOptions.subtotalWeightedActive = false;
 		column.report_settings.subtotal_formula_id = null;
 
-		column.frontOptions.subtotalAvgWeightedActive = !column.frontOptions.subtotalAvgWeightedActive;
+		setColumns(columns.value)
 
-		setColumns(columns.value);
-
-    subtotalWeightedChange();
-
+    subtotalWeightedChange()
 	}
 
 	function getSubtotalFormula(column) {
-		if ( column.hasOwnProperty('report_settings') ) {
-			return column.report_settings.subtotal_formula_id;
+		if (column.hasOwnProperty('report_settings')) {
+			return column.report_settings.subtotal_formula_id
 		}
 
-		return null;
+		return null
 	}
 
 	function onContextMenuClose(item) {
-
-		item.frontOptions.subtotalWeightedActive = false;
-		item.frontOptions.subtotalAvgWeightedActive = false;
-
+		item.frontOptions.subtotalWeightedActive = false
+		item.frontOptions.subtotalAvgWeightedActive = false
 	}
 	//# endregion
-
 
 	/** Used to pass data into AngularFmGridTableColumnCell */
 	let columnsData = reactive({
@@ -2621,7 +2668,7 @@
 
 		openNumberFormatDialog: openNumberFormatDialog,
 		onContextMenuClose: onContextMenuClose,
-	});
+	})
 
 	provide('columnsData', columnsData)
 	//# endregion Data to provide for components-children
@@ -2640,7 +2687,6 @@
 		evEventService.addEventListener(evEvents.GROUPS_CHANGE, onGroupsChange)
 
 		evEventService.addEventListener(evEvents.COLUMNS_CHANGE, function () {
-
 			evDataHelper.updateColumnsIds(evDataService)
 			evDataHelper.setColumnsDefaultWidth(evDataService)
 
@@ -2651,10 +2697,9 @@
 			/*let newColumns = getColumnsToShow()
 			columnsToShow.value = JSON.parse(JSON.stringify(newColumns))*/
 
-			collectMissingCustomFieldsErrors();
+			collectMissingCustomFieldsErrors()
 
-			columns.value = setColumnsFrontOptions();
-
+			columns.value = setColumnsFrontOptions()
 		})
 
 		evEventService.addEventListener(
@@ -2675,27 +2720,24 @@
     });
 
 		if (isReport) {
+			evEventService.addEventListener(
+				evEvents.UPDATE_GROUPS_SIZE,
+				function (argumentsObj) {
+					if (columnHasCorrespondingGroup(argumentsObj.key)) {
+						let groupsList = evDataService.getGroups()
+						const columnsList = evDataService.getColumns()
 
-			evEventService.addEventListener(evEvents.UPDATE_GROUPS_SIZE, function (argumentsObj) {
+						groupsList = evDataHelper.importGroupsStylesFromColumns(
+							groupsList,
+							columnsList
+						)
+						evDataService.setGroups(groupsList)
 
-				if (columnHasCorrespondingGroup(argumentsObj.key)) {
-
-					let groupsList = evDataService.getGroups();
-					const columnsList = evDataService.getColumns();
-
-					groupsList = evDataHelper.importGroupsStylesFromColumns(groupsList, columnsList);
-					evDataService.setGroups(groupsList);
-
-					groupsRef.value = getGroups();
-
+						groupsRef.value = getGroups()
+					}
 				}
-
-
-			});
-
-		}
-		else {
-
+			)
+		} else {
 			evEventService.addEventListener(evEvents.DATA_LOAD_END, function () {
 				getDownloadedTableItemsCount()
 			})
@@ -2706,37 +2748,32 @@
 					showFrontEvFilters = !showFrontEvFilters
 				}
 			)
-
 		}
-
 	}
 
 	const init = function () {
-
 		if (hideRowSettings.value) {
 			contentWrapElement.classList.add('g-row-settings-collapsed')
 		} else {
 			contentWrapElement.classList.remove('g-row-settings-collapsed')
 		}
 
-		columns.value = setColumnsFrontOptions();
+		columns.value = setColumnsFrontOptions()
 
 		evDataHelper.importGroupsStylesFromColumns(groupsRef.value, columns.value)
 
 		groupsRef.value = updateGroupTypeIds()
 
 		if (isReport) {
+			const res = syncColumnsWithGroups()
 
-			const res = syncColumnsWithGroups();
-
-			columns.value = res.columns;
-
+			columns.value = res.columns
 		}
 
 		groupsRef.value = syncGroupLayoutNamesWithColumns()
-		groupsRef.value = setGroupsFrontOptions();
+		groupsRef.value = setGroupsFrontOptions()
 
-		setColumns(columns.value);
+		setColumns(columns.value)
 		// columns = evDataService.getColumns()
 		// flagMissingColumns();
 
@@ -2759,14 +2796,13 @@
 		let rowFilterColor = evSettings.row_type_filter
 
 		// update refs after functions above changed groups and columns
-		groupsRef.value = getGroups();
-		columns.value = getColumns();
+		groupsRef.value = getGroups()
+		columns.value = getColumns()
 
 		initEventListeners()
 	}
 
-	init();
-
+	init()
 </script>
 
 <style lang="scss" scoped>

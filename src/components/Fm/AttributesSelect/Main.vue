@@ -211,7 +211,7 @@
 							<div
 								class="fm_list_item attr_item flex aic sb "
 								:class="{active: activeRow == item.key}"
-								v-for="(item, i) in disabledAttrs"
+								v-for="(item, i) in selectedOldComp"
 								:key="item.key"
 								@click="activeRow = item.key"
 							>
@@ -236,7 +236,7 @@
 							<div
 								class="fm_list_item attr_item flex aic sb"
 								:class="{active: activeRow == item.key}"
-								v-for="(item, i) in selectedColumns"
+								v-for="(item, i) in selectedNewComp"
 								:key="item.key"
 								@click="activeRow = item.key"
 								@dblclick="selected[item.key] = !selected[item.key]"
@@ -349,7 +349,7 @@
       default() { return [] },
     },
     favoriteAttributes: Array,
-    disabledAttributes: { // Array contains Strings (keys). e.g. attributes that are already used when adding new columns
+    disabledAttributes: { // Array contains Strings (keys). E.g. attributes that are already used when adding new columns
       type: Array,
       default() { return [] },
     },
@@ -390,7 +390,7 @@
   let attrsTree;
   let viewTree = ref([]);
   // let selectedOld = []
-  let disabledAttrs = ref([]);
+  // let disabledAttrs = ref([]);
   let favList = ref([/*{
         key: 'pricing_currency.reference_for_pricing',
         name: 'test',
@@ -474,6 +474,80 @@
   }
 
   let selected = reactive({});
+  let selectedOldKeysRef = ref([]);
+
+  /**
+   * Attributes to show inside tab "SELECTED" inside group "Old"
+   *
+   * @type {ComputedRef<Array<Object>>}
+   */
+  let selectedOldComp = computed(() => {
+
+	  return formattedAttrs.value.filter(
+		  attr => selectedOldKeysRef.value.includes(attr.key)
+	  );
+
+  });
+
+  let selectedNewComp = computed(() => {
+
+	  let newSelectedKeys = Object.keys(selected).filter(key => {
+
+		  const notSelectedOld = !selectedOldKeysRef.value.includes(key);
+
+		  return selected[key] && notSelectedOld;
+
+	  });
+
+	  return formattedAttrs.value.filter(
+		  attr => newSelectedKeys.includes(attr.key)
+	  );
+
+  });
+  /*let selectedNewRef = ref([]);
+
+  function updateSelectedNew(attr, status) {
+
+	  if (status) {
+		  selectedNewRef.value.push(attr);
+
+	  } else {
+
+		  const sAttrIndex = selectedNewRef.value.findIndex(
+			  sAttr => sAttr.key === attr.key
+		  );
+
+		  if (sAttrIndex > -1) {
+			  selectedNewRef.value.splice(sAttrIndex, 1);
+		  }
+
+	  }
+
+	  return selectedNewRef.value;
+
+  }*/
+
+  /*function registerOldSelAttrs(formattedAttrs) {
+
+	  let selOldAttrsList = [];
+
+	  Object.keys(selected).forEach(key => {
+
+		  const selAttr = formattedAttrs.find(attr => attr.key === key);
+
+		  if (selAttr) {
+
+			  selOldAttrsList.push(selAttr);
+
+		  } else {
+			  console.warn(`Selected attribute not found: ${key}`)
+		  }
+
+	  })
+
+	  return selOldAttrsList;
+
+  }*/
 
   let toggleAttr;
   function setToggleAttrFn () {
@@ -487,7 +561,10 @@
         selected[attr.key] = status;
 
         const selKeys = Object.keys(selected).filter( key => {
-          return selected[key] && !disabledAttrs.value.find(attr => attr.key === key);
+
+			return selected[key] &&
+				!selectedOldKeysRef.value.includes(attr.key);
+
         });
         // const selAttrs = props.attributes.filter( attr => selKeys.includes(attr.key) );
 
@@ -505,7 +582,11 @@
       if ( selected[attr.key] ) {
 
         Object.keys(selected).forEach(key => { // deselect other attributes except disabled
-          selected[key] = !disabledAttrs.value.includes(key) && key === attr.key;
+
+			selected[key] =
+				!selectedOldKeysRef.value.includes(key) &&
+				key === attr.key;
+
         })
 
       }
@@ -562,7 +643,7 @@
     let attributes = attrsList
       .sort(sortAttrs)
 
-    disabledAttrs.value = attributes.filter( item => props.disabledAttributes.includes(item.key) );
+    // disabledAttrs.value = attributes.filter( item => props.disabledAttributes.includes(item.key) );
 
     formattedAttrs.value = attributes;
 
@@ -706,6 +787,10 @@
     }
 
     return props
+  })
+
+  const newSelColumns = computed(() => {
+
   })
 
 
@@ -1140,32 +1225,40 @@
     emit('save', selAttrs);
 
   } */
+  function fillSelectedData(selectedData) {
+
+	  props.modelValue.forEach(attrKey => {
+
+		  if ( props.attributes.findIndex(attr => attr.key === attrKey) > -1 ) { // attribute exist
+			  selectedData[attrKey] = true;
+		  } else {
+			  console.warn(`Selected attribute not found: ${attrKey}`);
+		  }
+
+	  })
+
+	  return selectedData;
+
+  }
+
   watch(
     () => props.modelValue,
     () => {
-
-      props.modelValue.forEach(attrKey => {
-
-        if ( props.attributes.findIndex(attr => attr.key === attrKey) > -1 ) { // attribute exist
-          selected[attrKey] = true;
-        }
-
-      })
-
+      selected = fillSelectedData(selected);
     }
   )
 
-  function init() {
+	function init() {
 
-    processAttributes();
+		processAttributes();
 
-    props.modelValue.forEach(attrKey => {
-      selected[attrKey] = true;
-    })
+		selected = fillSelectedData(selected);
 
-    favList.value = JSON.parse(JSON.stringify( props.favoriteAttributes || [] ));
+		selectedOldKeysRef.value = Object.keys(selected);
 
-  }
+		favList.value = JSON.parse(JSON.stringify( props.favoriteAttributes || [] ));
+
+	}
 
   init();
 

@@ -742,17 +742,29 @@ $evGRowSettingsWidth: 124px;
         font-weight: 400;
         line-height: $gRowHeight;
 
-        &.text-left {
-            text-align: left;
-        }
+		&.text-left {
+			text-align: left;
 
-        &.text-center {
-            text-align: center;
-        }
+			.g-cell-content {
+				justify-content: start;
+			}
+		}
 
-        &.text-right {
-            text-align: right;
-        }
+		&.text-center {
+			text-align: center;
+
+			.g-cell-content {
+				justify-content: center;
+			}
+		}
+
+		&.text-right {
+			text-align: right;
+
+			.g-cell-content {
+				justify-content: flex-end;
+			}
+		}
 
         &.negative-red {
             color: #fa393e;
@@ -3947,6 +3959,12 @@ $gFilterFieldsHeight: 40px;
 	padding-top: 4px;
 }
 
+.g-filter-chips-text {
+	flex-grow: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 %g-filter-value-containers {
 	margin: 0;
 	padding: 0;
@@ -4051,6 +4069,10 @@ $gFilterFieldsHeight: 40px;
 
 		.g-filter-types-select {
 			@extend %g-filter-value-containers;
+		}
+
+		.g-filter-value-wrap {
+			width: 170px;
 		}
 
 		.g-filter-value-container {

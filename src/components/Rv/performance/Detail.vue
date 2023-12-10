@@ -148,6 +148,21 @@
 			detailYear: detailYear.value,
 		})
 	}
+
+	function getLastDaysOfMonths(begin_date, end_date) {
+		const begin = new Date(begin_date);
+		const end = new Date(end_date);
+		let current = new Date(begin.getFullYear(), begin.getMonth() + 1, 0); // Last day of the start month
+		let result = [];
+
+		while (current <= end) {
+			result.push(new Date(current));
+			current = new Date(current.getFullYear(), current.getMonth() + 2, 0); // Move to the last day of the next month
+		}
+
+		return result;
+	}
+
 	async function getMonthDetails() {
 		if (detailsLoading) return false
 
@@ -159,34 +174,48 @@
 
 		let bundle = bundleId.value
 
-		let begin
-		let firstTransaction = {}
-		if (!props.begin_date) {
-			firstTransaction = await useApi('performanceFirstTransaction.get', {
-				params: { id: bundle },
-			})
-			begin = firstTransaction.transaction_date
-		} else {
-			begin = dayjs(props.begin_date).format('YYYY-MM-DD')
-		}
+		// let begin
+		// let firstTransaction = {}
+		// if (!props.begin_date) {
+		// 	firstTransaction = await useApi('performanceFirstTransaction.get', {
+		// 		params: { id: bundle },
+		// 	})
+		// 	begin = firstTransaction.transaction_date
+		// } else {
+		// 	begin = dayjs(props.begin_date).format('YYYY-MM-DD')
+		// }
+
 		const endDate = props.end_date
+
+
+		// It Insane to download whole history, lets asume only last year
+
+		let begin = dayjs(new Date()).startOf('year').format('YYYY-MM-DD');
 
 		let end = dayjs(endDate).format('YYYY-MM-DD')
 
-		let allMonths = await getReports({ start: begin, end: end, ids: bundle })
+		const monthEndDates = getLastDaysOfMonths(begin, end)
 
-		if (allMonths.error) {
-			detailsLoading = false
-			return false
-		}
+		const promises = []
+
+		monthEndDates.forEach((monthEndDate) => {
+
+			monthEndDate = dayjs(monthEndDate).format('YYYY-MM-DD');
+
+			promises.push(getReports({ period_type: 'ytd', end: monthEndDate, ids: bundle }))
+
+		})
 
 		let yearsBuffer = new Map()
-		let yearsBufferCumm = []
 
-		allMonths.items.reverse().forEach((item) => {
-			let parseDate = item.date_to.split('-')
+		const allMonths = await Promise.all(promises)
 
-			// key_ fix order
+		console.log('allMonths', allMonths);
+
+		allMonths.forEach((item) =>{
+
+			let parseDate = item.end_date.split('-')
+
 			let defaultMonth = {
 				key_01: [0, 0],
 				key_02: [0, 0],
@@ -207,10 +236,51 @@
 			}
 
 			yearsBuffer.get(parseDate[0])['key_' + parseDate[1]] = [
-				Math.round(item.instrument_return * 10000) / 100,
-				Math.round(item.cumulative_return * 10000) / 100,
+				Math.round(item.grand_return * 10000) / 100,
+				0,
 			]
+
+
 		})
+
+
+		// let allMonths = await getReports({ period_type: 'ytd', end: end, ids: bundle })
+
+		// if (allMonths.error) {
+		// 	detailsLoading = false
+		// 	return false
+		// }
+
+
+
+		// allMonths.items.reverse().forEach((item) => {
+		// 	let parseDate = item.date_to.split('-')
+		//
+		// 	// key_ fix order
+		// 	let defaultMonth = {
+		// 		key_01: [0, 0],
+		// 		key_02: [0, 0],
+		// 		key_03: [0, 0],
+		// 		key_04: [0, 0],
+		// 		key_05: [0, 0],
+		// 		key_06: [0, 0],
+		// 		key_07: [0, 0],
+		// 		key_08: [0, 0],
+		// 		key_09: [0, 0],
+		// 		key_10: [0, 0],
+		// 		key_11: [0, 0],
+		// 		key_12: [0, 0],
+		// 	}
+		//
+		// 	if (!yearsBuffer.has(parseDate[0])) {
+		// 		yearsBuffer.set(parseDate[0], defaultMonth)
+		// 	}
+		//
+		// 	yearsBuffer.get(parseDate[0])['key_' + parseDate[1]] = [
+		// 		Math.round(item.instrument_return * 10000) / 100,
+		// 		Math.round(item.cumulative_return * 10000) / 100,
+		// 	]
+		// })
 
 		let dateTo = dayjs(props.end_date)
 		let dateFrom = dayjs(begin)
@@ -239,7 +309,7 @@
 					: `${year}-12-31`
 
 			let total = await getReports({
-				start: `${year}-01-01`,
+				period_type: 'ytd',
 				end: end,
 				ids: bundle,
 			})
@@ -298,11 +368,14 @@
 		}
 	}
 	// double
-	async function getReports({ start, end, ids, type = 'months' }) {
+	async function getReports({ period_type, end, ids, type = 'months' }) {
+
+		console.log('getReports %s' % getReports)
+
 		let res = await useApi('performanceReport.post', {
 			body: {
 				save_report: false,
-				begin_date: start,
+				period_type: period_type,
 				end_date: end,
 				calculation_type: props.calculation_type,
 				segmentation_type: type,

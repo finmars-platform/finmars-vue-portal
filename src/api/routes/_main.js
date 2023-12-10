@@ -391,6 +391,11 @@ export default {
 	defaultSettings: {
 		put: prefix + '/users/ecosystem-default/{id}/',
 	},
+	/*complexTransactionUserField: {
+		get: prefix + '/ui/complex-transaction-user-field/',
+		put: prefix + '/ui/complex-transaction-user-field/{id}/',
+		post: prefix + '/ui/complex-transaction-user-field/',
+	},*/
 	complexTransactionUserFieldList: {
 		get: prefix + '/ui/complex-transaction-user-field/',
 	},
@@ -398,6 +403,11 @@ export default {
 		put: prefix + '/ui/complex-transaction-user-field/{id}/',
 		post: prefix + '/ui/complex-transaction-user-field/',
 	},
+	/*transactionUserField: {
+		get: prefix + '/ui/transaction-user-field/',
+		put: prefix + '/ui/transaction-user-field/{id}/',
+		post: prefix + '/ui/transaction-user-field/',
+	},*/
 	transactionUserFieldList: {
 		get: prefix + '/ui/transaction-user-field/',
 	},
@@ -413,5 +423,15 @@ export default {
 		post: prefix + '/transactions/transaction-type-group/',
 		delete: prefix + '/transactions/transaction-type-group/{id}/',
 	},
-
+	specificDataValuesForSelect: {
+		/* *
+		 * Used to get unique values of attribute from rv / ev rows.
+		 * Requires next query parameters:
+		 *
+		 * content_type: String - content_type of rv or ev
+		 * key: String - Key of an attribute whose value to aggregate
+		 * value_type: Number - value_type of an attribute
+		 * */
+		get: prefix + '/specific-data/values-for-select/'
+	},
 }

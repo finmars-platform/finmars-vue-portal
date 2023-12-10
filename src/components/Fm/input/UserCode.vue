@@ -78,8 +78,6 @@
 
 <script setup>
 
-	import {useTextNotValidForUserCode} from "~/composables/useMeta";
-
 	let props = defineProps({
 		/** Full user_code **/
 		userCodeLabel: {

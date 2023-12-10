@@ -61,9 +61,59 @@
 					btnPrimary
 					icon="add"
 					class="g-filter-settings-big-left-btn"
+					:class="{
+						'g-use-from-above-filters-hidden': !scope.showUseFromAboveFilters,
+					}"
 					v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
 					@click="evAddEntity"
 				/>
+
+				<!-- <md-menu v-if="scope.entityType == 'instrument'">
+					<md-button
+						class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
+						@click="$mdOpenMenu($event)"
+					>
+						<span class="material-icons">add</span>
+						<md-tooltip md-direction="top"
+							>ADD {{ evGetEntityNameByState() }}</md-tooltip
+						>
+					</md-button>
+
+					<md-menu-content width="4">
+						<md-menu-item>
+							<md-button
+								@click="evAddEntity($event)"
+								class="g-settings-option-btn"
+							>
+								<span>Add Blank</span>
+							</md-button>
+						</md-menu-item>
+						<md-menu-item>
+							<md-button
+								@click="openTransactionTypeDialog($event)"
+								class="g-settings-option-btn"
+							>
+								<span>Add Typical</span>
+							</md-button>
+						</md-menu-item>
+						<md-menu-item>
+							<md-button
+								@click="openSimpleImportDialog($event)"
+								class="g-settings-option-btn"
+							>
+								<span>Import from File</span>
+							</md-button>
+						</md-menu-item>
+						<md-menu-item>
+							<md-button
+								@click="addFromProvider($event)"
+								class="g-settings-option-btn"
+							>
+								<span>Get From Provider</span>
+							</md-button>
+						</md-menu-item>
+					</md-menu-content>
+				</md-menu> -->
 
 				<FmMenu v-if="scope.entityType == 'instrument'">
 					<template #btn>
@@ -97,6 +147,38 @@
 					</template>
 				</FmMenu>
 
+				<!-- <md-menu v-if="scope.entityType == 'instrument-type'">
+					<md-button
+						class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
+						@click="$mdOpenMenu($event)"
+					>
+						<span class="material-icons">add</span>
+						<md-tooltip md-direction="top"
+							>ADD {{ evGetEntityNameByState() }}</md-tooltip
+						>
+					</md-button>
+
+					<md-menu-content width="4">
+						<md-menu-item>
+							<md-button
+								@click="evAddEntity($event)"
+								class="g-settings-option-btn"
+							>
+								<span>Add Blank</span>
+							</md-button>
+						</md-menu-item>
+						<md-menu-item>
+							<md-button
+								class="md-raised"
+								package-manager-button
+								content-type="'instruments.instrumenttype'"
+							>
+								Select from List
+							</md-button>
+						</md-menu-item>
+					</md-menu-content>
+				</md-menu> -->
+
 				<FmMenu v-if="scope.entityType == 'instrument-type'">
 					<template #btn>
 						<FmIcon
@@ -122,7 +204,37 @@
 						</div>
 					</template>
 				</FmMenu>
+				<!-- <md-menu v-if="scope.entityType == 'account-type'">
+					<md-button
+						class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
+						@click="$mdOpenMenu($event)"
+					>
+						<span class="material-icons">add</span>
+						<md-tooltip md-direction="top"
+							>ADD {{ evGetEntityNameByState() }}</md-tooltip
+						>
+					</md-button>
 
+					<md-menu-content width="4">
+						<md-menu-item>
+							<md-button
+								@click="evAddEntity($event)"
+								class="g-settings-option-btn"
+							>
+								<span>Add Blank</span>
+							</md-button>
+						</md-menu-item>
+						<md-menu-item>
+							<md-button
+								class="md-raised"
+								package-manager-button
+								content-type="'accounts.accounttype'"
+							>
+								Select from List
+							</md-button>
+						</md-menu-item>
+					</md-menu-content>
+				</md-menu> -->
 				<FmMenu v-if="scope.entityType == 'account-type'">
 					<template #btn>
 						<FmIcon
@@ -149,6 +261,37 @@
 						</div>
 					</template>
 				</FmMenu>
+				<!-- <md-menu v-if="scope.entityType == 'transaction-type'">
+					<md-button
+						class="g-filter-settings-big-left-btn md-icon-button primary-button rounded"
+						@click="$mdOpenMenu($event)"
+					>
+						<span class="material-icons">add</span>
+						<md-tooltip md-direction="top"
+							>ADD {{ evGetEntityNameByState() }}</md-tooltip
+						>
+					</md-button>
+
+					<md-menu-content width="4">
+						<md-menu-item>
+							<md-button
+								@click="evAddEntity($event)"
+								class="g-settings-option-btn"
+							>
+								<span>Add Blank</span>
+							</md-button>
+						</md-menu-item>
+						<md-menu-item>
+							<md-button
+								class="md-raised"
+								package-manager-button
+								content-type="'transactions.transactiontype'"
+							>
+								Select from List
+							</md-button>
+						</md-menu-item>
+					</md-menu-content>
+				</md-menu> -->
 
 				<FmMenu v-if="scope.entityType == 'transaction-type'">
 					<template #btn>
@@ -177,6 +320,22 @@
 					</template>
 				</FmMenu>
 
+				<!-- <md-button
+					v-if="scope.thereAreFrontendFilters"
+					class="g-toggle-filters-btn md-icon-button"
+					@click="toggleFiltersToShow()"
+				>
+					<span
+						v-show="scope.shownFiltersType === 'frontend'"
+						class="material-icons"
+						>laptop_mac</span
+					>
+					<span
+						v-show="scope.shownFiltersType === 'backend'"
+						class="material-icons"
+						>dns</span
+					>
+				</md-button> -->
 				<FmBtn
 					v-if="scope.thereAreFrontendFilters"
 					type="text"
@@ -367,24 +526,22 @@
 						<div
 							class="fm_list_item"
 							v-if="scope.isReport"
-							@click="scope.exportAsPdf"
+							@click="exportAsPdf"
 						>
 							Export to PDF
 						</div>
 
-						<div class="fm_list_item" @click="scope.exportAsCSV">
-							Export to CSV
-						</div>
+						<div class="fm_list_item" @click="exportAsCSV">Export to CSV</div>
 
-						<div class="fm_list_item" @click="scope.exportAsExcel">
+						<div class="fm_list_item" @click="exportAsExcel">
 							Export to Excel
 						</div>
 
-						<div class="fm_list_item" @click="scope.copyReport">
+						<div class="fm_list_item" @click="copyReport">
 							Copy all to buffer
 						</div>
 
-						<div class="fm_list_item" @click="scope.copySelectedToBuffer">
+						<div class="fm_list_item" @click="copySelectedToBuffer">
 							Copy selected to buffer
 						</div>
 					</div>
@@ -405,9 +562,8 @@
 						<div
 							class="fm_list_item"
 							v-if="scope.entityType !== 'complex-transaction'"
-							@click=";(isOpenCustomColumns = true), close()"
+							@click="openCustomFieldsManager"
 						>
-							<!-- @click="openCustomFieldsManager" -->
 							Custom Columns
 						</div>
 
@@ -432,23 +588,7 @@
 			</FmMenu>
 		</div>
 
-		<AngularFmGridTableMatrixSettingsM
-			v-if="$mdDialog.modals['ReportViewerMatrixSettingsDialogController']"
-			:payload="$mdDialog.modals['ReportViewerMatrixSettingsDialogController']"
-			:modelValue="true"
-		/>
 
-		<AngularFmGridTableExportPdf
-			v-if="$mdDialog.modals['ExportPdfDialogController']"
-			:payload="$mdDialog.modals['ExportPdfDialogController']"
-			:modelValue="true"
-		/>
-
-		<ModalCustomFields
-			title="Custom Field Manager"
-			v-model="isOpenCustomColumns"
-			:content_type="scope.content_type"
-		></ModalCustomFields>
 	</div>
 </template>
 
@@ -459,9 +599,9 @@
 	// import EventService from '@/angular/services/eventService';
 
 	const props = defineProps(['vm'])
-	const isOpenCustomColumns = ref(false)
+
 	const { evEventService, evDataService, attributeDataService } =
-		inject('ngDependace')
+		inject('fmTableData')
 	const $mdDialog = inject('$mdDialog')
 
 	let gFiltersHelper = new gFiltersHelperInst()
@@ -472,7 +612,6 @@
 
 	let scope = reactive({ ...props })
 	scope.entityType = scope.vm.entityType
-	scope.content_type = evDataService.getContentType()
 	scope.readyStatus = reactive({
 		filters: false,
 	})
@@ -795,6 +934,7 @@
 		$mdDialog.show({
 			controller: 'ExportPdfDialogController as vm',
 			templateUrl: 'views/dialogs/export-pdf-dialog-view.html',
+			parent: angular.element(document.body),
 			targetEvent: $event,
 			locals: {
 				evDataService: evDataService,
@@ -811,24 +951,24 @@
 
 	scope.openViewConstructor = scope.vm.openViewConstructor
 
-	// scope.openCustomFieldsManager = function ($event) {
-	// 	$mdDialog.show({
-	// 		controller: 'CustomFieldDialogController as vm',
-	// 		templateUrl: 'views/dialogs/custom-field/custom-field-dialog-view.html',
-	// 		parent: angular.element(document.body),
-	// 		targetEvent: $event,
-	// 		clickOutsideToClose: false,
-	// 		preserveScope: true,
-	// 		multiple: true,
-	// 		locals: {
-	// 			attributeDataService: attributeDataService,
-	// 			entityViewerEventService: evEventService,
-	// 			data: {
-	// 				entityType: scope.vm.entityType,
-	// 			},
-	// 		},
-	// 	})
-	// }
+	scope.openCustomFieldsManager = function ($event) {
+		$mdDialog.show({
+			controller: 'CustomFieldDialogController as vm',
+			templateUrl: 'views/dialogs/custom-field/custom-field-dialog-view.html',
+			parent: angular.element(document.body),
+			targetEvent: $event,
+			clickOutsideToClose: false,
+			preserveScope: true,
+			multiple: true,
+			locals: {
+				attributeDataService: attributeDataService,
+				entityViewerEventService: evEventService,
+				data: {
+					entityType: scope.vm.entityType,
+				},
+			},
+		})
+	}
 
 	/*scope.toggleAutoRefresh = function () {
 		scope.rvAutoRefresh = !scope.rvAutoRefresh
@@ -906,16 +1046,16 @@
 			}
 		)
 
-		// evEventService.addEventListener(
-		// 	evEvents.TABLE_SIZES_CALCULATED,
-		// 	function () {
-		// 		scope.vm.calculateFilterChipsContainerWidth(
-		// 			gFiltersLeftPartWidth,
-		// 			gFiltersRightPartWidth,
-		// 			filtersChipsContainer
-		// 		)
-		// 	}
-		// )
+		evEventService.addEventListener(
+			evEvents.TABLE_SIZES_CALCULATED,
+			function () {
+				scope.vm.calculateFilterChipsContainerWidth(
+					gFiltersLeftPartWidth,
+					gFiltersRightPartWidth,
+					filtersChipsContainer
+				)
+			}
+		)
 
 		evEventService.addEventListener(evEvents.FILTERS_CHANGE, function () {
 			filters.value = evDataService.getFilters()
@@ -1035,13 +1175,7 @@
 		padding-bottom: 10px;
 		border-bottom: 1px solid $border;
 	}
-
-  .chain-button:not(.g-use-from-above-filters-hidden) {
-    color: $primary;
-
-    &:hover {
-      color: $primary;
-    }
-  }
-
+	.g-use-from-above-filters-hidden {
+		color: $primary;
+	}
 </style>
