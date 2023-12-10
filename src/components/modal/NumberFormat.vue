@@ -1,168 +1,195 @@
 <template>
 	<BaseModal title="Number format">
-		<div style="padding: 5px 0 20px">
-			<div class="header">
+
+		<div class="nf_content">
+			<div class="presets_container">
 				<div class="select-main">
 					<FmSelect
-						v-model="vm.currentPresetName"
+						:modelValue="vm.activePreset"
 						label="Select Preset"
 						:items="vm.presetSelectorData.options"
+						@update:modelValue="applyPreset"
 					></FmSelect>
 				</div>
 
 				<div class="examples">
 					<div class="examples__name">Examples:</div>
 					<div class="examples-number">
-						<span>{{ vm.positiveNumberExample }}</span>
-						<span>{{ vm.zeroExample }}</span>
-						<span>{{ vm.negativeNumberExample }}</span>
+						<div>{{ vm.positiveNumberExample }}</div>
+						<div>{{ vm.zeroExample }}</div>
+						<div>{{ vm.negativeNumberExample }}</div>
 					</div>
 				</div>
 			</div>
 
 			<div class="content">
-				<FmExpansionPanel title="Zero" subtitle="0" subtitleOpen="Select zero number format">
+				<FmExpansionPanel
+					title="Zero"
+                    :subtitle="
+					    getSelRadioName(
+                            vm.zeroFormats, vm.settings.zero_format_id
+                        )
+                    "
+					subtitleOpen="Select zero number format"
+					:open="false"
+                    class="nf_expansion_panel"
+				>
 					<div
 						class="panel-content"
 						v-for="(item, index) in vm.zeroFormats"
 						:key="index"
 					>
 						<FmInputRadio
-							:name="'Zero'"
-							:id="item.id"
-							:label="item?.name"
+							:label="item.name"
+							:modelValue="vm.settings.zero_format_id"
 							:value="item.id"
-							v-model="vm.settings.zero_format_id"
-							@input="
-								$emit(
-									'update:vm.settings.zero_format_id',
-									vm.onNumberFormatChange()
-								)
-							"
-						></FmInputRadio>
+							name="zero"
+							@update:modelValue="onZeroFormatChange"
+						/>
 					</div>
 				</FmExpansionPanel>
-				<FmExpansionPanel title="Negative" subtitle="100" subtitleOpen="Select negative number format">
+
+				<FmExpansionPanel
+					title="Negative"
+                    :subtitle="
+					    getSelRadioName(
+                            vm.negativeFormats, vm.negativeFormat
+                        )
+                    "
+					subtitleOpen="Select negative number format"
+					:open="false"
+				>
 					<div
 						class="panel-content"
 						v-for="(item, index) in vm.negativeFormats"
 						:key="index"
 					>
 						<FmInputRadio
-							:name="'Negative'"
-							:id="item.id"
-							:label="item?.name"
+							:label="item.name"
+							:modelValue="vm.negativeFormat"
 							:value="item.id"
-							v-model="vm.negativeFormat"
-							@input="
-								$emit('update:vm.negativeFormat', vm.onNegativeFormatChange())
-							"
+							name="negative"
+							@update:modelValue="vm.onNegativeFormatChange"
+                            :class="{'primary-text': item.color === 'red'}"
 						></FmInputRadio>
 					</div>
 				</FmExpansionPanel>
-				<FmExpansionPanel title="Rounding" subtitle="No rounding" subtitleOpen="Select negative number format">
+
+				<FmExpansionPanel
+					title="Rounding"
+					:subtitle="
+					    getSelRadioName(
+                            vm.roundingFormats, vm.settings.round_format_id
+                        )
+                    "
+					subtitleOpen="Select rounding format"
+					:open="false"
+				>
 					<div
 						class="panel-content"
-						v-for="(item, index) in vm.percentageFormats"
-						:key="index"
+						v-for="item in vm.roundingFormats"
+						:key="item.id"
 					>
 						<FmInputRadio
-							:name="'Rounding'"
-							:id="item.id"
-							:label="item?.name"
-							:value="item.id"
-							v-model="vm.settings.round_format_id"
-							@input="
-								$emit(
-									'update:vm.settings.round_format_id',
-									vm.onRoundingChange()
-								)
-							"
+                            :label="item.name"
+                            :modelValue="vm.settings.round_format_id"
+                            name="rounding"
+                            :value="item.id"
+							@update:modelValue="vm.onRoundingChange"
 						></FmInputRadio>
 					</div>
 				</FmExpansionPanel>
-				<FmExpansionPanel title="Thousands separation" subtitle="No separation" subtitleOpen="Select separation format">
+
+				<FmExpansionPanel
+					title="Thousands separation"
+                    :subtitle="
+					    getSelRadioName(
+                            vm.separationFormats,
+                            vm.settings.thousands_separator_format_id
+                        )
+                    "
+					subtitleOpen="Select separation format"
+                    :open="false"
+				>
 					<div
 						class="panel-content"
 						v-for="(item, index) in vm.separationFormats"
 						:key="index"
 					>
 						<FmInputRadio
-							:name="'ThousandsSeparation'"
-							:id="item.id"
-							:label="item?.name"
-							:value="item.id"
-							v-model="vm.settings.thousands_separator_format_id"
-							@input="
-								$emit(
-									'update:vm.settings.thousands_separator_format_id',
-									vm.onNumberFormatChange()
-								)
-							"
+                            :label="item.name"
+                            :modelValue="vm.settings.thousands_separator_format_id"
+                            :value="item.id"
+                            name="thousandsSeparation"
+							@update:modelValue="vm.onThousandsSepChange"
 						></FmInputRadio>
 					</div>
 				</FmExpansionPanel>
 
-				<FmExpansionPanel title="Percentage" subtitle="N/A" subtitleOpen="Select percentage format">
+				<FmExpansionPanel
+					title="Percentage"
+                    :subtitle="
+					    getSelRadioName(
+                            vm.percentageFormats,
+                            vm.settings.percentage_format_id
+                        )
+                    "
+					subtitleOpen="Select percentage format"
+                    :open="false"
+				>
 					<div
 						class="panel-content"
 						v-for="(item, index) in vm.percentageFormats"
 						:key="index"
 					>
 						<FmInputRadio
-							:name="'percentageFormats'"
-							:id="item.id"
-							:label="item?.name"
-							:value="item.id"
-							v-model="vm.settings.percentage_format_id"
-							@input="
-								$emit(
-									'update:vm.settings.percentage_format_id',
-									vm.onPercentageChange()
-								)
-							"
+							:label="item.name"
+                            :modelValue="vm.settings.percentage_format_id"
+                            :value="item.id"
+                            name="percentageFormats"
+							@update:modelValue="vm.onPercentageChange"
 						></FmInputRadio>
 					</div>
 				</FmExpansionPanel>
-				<FmExpansionPanel title="Suffix">
+
+				<FmExpansionPanel
+					title="Suffix"
+                    subtitleOpen="Enter suffix (after number)"
+					:open="false"
+				>
 					<div class="panel-content">
 						<FmInputText
 							label="Suffix"
-							@input="
-								$emit(
-									'update:vm.settings.number_suffix',
-									vm.onNumberFormatChange()
-								)
-							"
 							v-model="vm.settings.number_suffix"
+							noIndicatorButton
 						></FmInputText>
 					</div>
 				</FmExpansionPanel>
-				<FmExpansionPanel title="Prefix">
+
+				<FmExpansionPanel
+					title="Prefix"
+                    subtitleOpen="Enter prefix (before number)"
+					:open="false"
+				>
 					<div class="panel-content">
 						<FmInputText
 							label="Prefix"
-							@input="
-								$emit(
-									'update:vm.settings.number_prefix',
-									vm.onNumberFormatChange()
-								)
-							"
 							v-model="vm.settings.number_prefix"
+                            noIndicatorButton
 						></FmInputText>
 					</div>
 				</FmExpansionPanel>
-				<FmExpansionPanel title="Multiplier">
+
+				<FmExpansionPanel
+                    title="Multiplier"
+                    subtitleOpen="Enter multiplier"
+                    :open="false"
+                >
 					<div class="panel-content">
 						<FmInputText
 							label="Multiplier"
-							@input="
-								$emit(
-									'update:vm.settings.number_multiplier',
-									vm.onNumberFormatChange()
-								)
-							"
 							v-model="vm.settings.number_multiplier"
+                            noIndicatorButton
 						></FmInputText>
 					</div>
 				</FmExpansionPanel>
@@ -171,9 +198,9 @@
 
 		<template #controls="{ cancel }">
 			<div class="flex sb">
-				<FmBtn type="text" @click="cancel">CANCEL</FmBtn>
+				<FmBtn type="text" @click="cancelModal(cancel)">CANCEL</FmBtn>
 
-				<FmBtn type="primary" @click="save">save</FmBtn>
+				<FmBtn type="primary" @click="save(cancel)">save</FmBtn>
 			</div>
 		</template>
 	</BaseModal>
@@ -187,39 +214,41 @@
 			type: Object,
 		},
 	})
-	const emits = defineEmits(['save'])
-	const selectCh = ref([])
-	console.log('select', selectCh)
-	watch(
-		() => selectCh.value,
-		() => console.log('select watch ', selectCh)
-	)
-	let vm = reactive({
-		settings: props.settings,
-		// presetSelectorData: {options: { id: String, name: String, isActive: Boolean }},
-		// selectOption: (option, _$popup) => void
-	})
-	console.log('vm:', vm)
-	console.log('props.settings:', props.settings)
 
-	const defaultReportSettings = {
-		zero_format_id: 0,
-		negative_format_id: 0,
-		negative_color_format_id: 0,
-		round_format_id: 0,
-		thousands_separator_format_id: 0,
-		percentage_format_id: 0,
-		number_multiplier: null,
-		number_suffix: '',
-		number_prefix: '',
-	}
-	if (vm) {
-		const report_settings = JSON.parse(JSON.stringify(props.settings))
+	const emits = defineEmits(['save', 'cancel'])
+
+	let vm = reactive({
+		settings: null,
+		activePreset: null,
+	})
+
+    const defaultReportSettings = {
+        zero_format_id: 0,
+        negative_format_id: 0,
+        negative_color_format_id: 0,
+        round_format_id: 0,
+        thousands_separator_format_id: 0,
+        percentage_format_id: 0,
+        number_multiplier: null,
+        number_suffix: '',
+        number_prefix: '',
+    }
+
+    if (props.settings) {
+		/* *
+		 * props.settings can be lacking properties
+		 * (only some number formatting set).
+		 * Create those properties using the object defaultReportSettings.
+		 * */
+		const report_settings = JSON.parse(JSON.stringify(props.settings));
+
 		vm.settings = { ...defaultReportSettings, ...report_settings }
+
 	} else {
 		vm.settings = { ...defaultReportSettings }
 	}
-	vm.zeroFormats = [
+
+    vm.zeroFormats = [
 		{ id: 0, name: '0' },
 		{ id: 1, name: '-' },
 		{ id: 2, name: '(empty)' },
@@ -231,6 +260,14 @@
 		{ id: 2, name: '(100)', color: 'black' },
 		{ id: 3, name: '(100)', color: 'red' },
 	]
+
+    vm.roundingFormats = [
+        { id: 0, name: 'no rounding' },
+        { id: 1, name: '0' },
+        { id: 2, name: '0.0' },
+        { id: 3, name: '0.00' },
+        { id: 4, name: '0.0000' },
+    ]
 
 	vm.separationFormats = [
 		{ id: 0, name: 'No separation' },
@@ -285,6 +322,7 @@
 			percentage_format_id: 3,
 		},
 	}
+
 	vm.presetSelectorData = {
 		options: [
 			{ id: 'price', name: `Price (0)`, isActive: false },
@@ -293,7 +331,7 @@
 			{ id: 'exposure', name: `Exposure (0.0%)`, isActive: false },
 			{ id: 'return', name: `Return (0.00%)`, isActive: false },
 		],
-		selectOption: (option, _$popup) => {
+		/*selectOption: (option, _$popup) => {
 			_$popup.cancel()
 
 			vm.presetSelectorData.options.forEach(
@@ -304,11 +342,17 @@
 			Object.assign(vm.settings, numberFormat)
 
 			vm.onNumberFormatChange()
-		},
+		},*/
 	}
 
-	function save() {
-		emits('save', { status: 'agree', data: props.settings })
+	function applyPreset(option) {
+
+		const numberFormat = presetsSettings[option];
+
+		vm.settings = Object.assign(vm.settings, numberFormat);
+
+		vm.onNumberFormatChange()
+
 	}
 
 	const isObjectContain = function (obj, targetObj) {
@@ -316,22 +360,31 @@
 	}
 
 	const getActivePreset = function () {
+
 		const selectedPreset = vm.presetSelectorData.options.find((option) => {
 			const requiredProps = presetsSettings[option.id]
 			const currentProps = vm.settings
-			return isObjectContain(currentProps, requiredProps)
+
+            return isObjectContain(currentProps, requiredProps)
 		})
 
-		if (selectedPreset) {
-			selectedPreset.isActive = true
+        if (selectedPreset) {
+
+			// selectedPreset.isActive = true;
+			return selectedPreset.id;
+
 		}
 
-		return selectedPreset
 	}
 
 	const clearAllPresetSelection = function () {
-		vm.presetSelectorData.options.forEach((it) => (it.isActive = false))
+		// vm.presetSelectorData.options.forEach((it) => (it.isActive = false))
+		vm.activePreset = null;
 	}
+
+    const getSelRadioName = function(formatsList, selectedValue) {
+        return formatsList.find(format => format.id === selectedValue).name;
+    };
 
 	// Negative format in new design differ from settings structure
 	const getNegativeFormat = function (reportSettings) {
@@ -344,14 +397,22 @@
 		return parseInt('' + negative_format_id + negative_color_format_id, 2)
 	}
 
-	vm.onNegativeFormatChange = function () {
+	vm.onNegativeFormatChange = function (newVal) {
+
+        vm.negativeFormat = newVal;
+
 		vm.settings.negative_format_id = vm.negativeFormat < 2 ? 0 : 1
 		vm.settings.negative_color_format_id = vm.negativeFormat % 2
+
 		vm.onNumberFormatChange()
+
 	}
 
-	vm.onRoundingChange = function () {
-		if (vm.settings.round_format_id !== 0) {
+	vm.onRoundingChange = function (newVal) {
+
+        vm.settings.round_format_id = newVal;
+
+        if (vm.settings.round_format_id !== 0) {
 			vm.settings.percentage_format_id = 0
 
 			vm.settings.number_multiplier = null
@@ -362,8 +423,11 @@
 		vm.onNumberFormatChange()
 	}
 
-	vm.onPercentageChange = function () {
-		if (vm.settings.percentage_format_id !== 0) {
+	vm.onPercentageChange = function (newVal) {
+
+        vm.settings.percentage_format_id = newVal;
+
+        if (vm.settings.percentage_format_id !== 0) {
 			vm.settings.round_format_id = 0
 		} else {
 			vm.settings.number_multiplier = null
@@ -389,7 +453,22 @@
 		vm.onNumberFormatChange()
 	}
 
+	function onZeroFormatChange(newVal) {
+
+		vm.settings.zero_format_id = newVal;
+		vm.onNumberFormatChange();
+
+	}
+
+    vm.onThousandsSepChange = function (newVal) {
+
+        vm.settings.thousands_separator_format_id = newVal;
+        vm.onNumberFormatChange();
+
+	}
+
 	vm.onNumberFormatChange = function () {
+
 		vm.positiveNumberExample = vm.formatValue(4878.2308)
 		vm.zeroExample = vm.formatValue(0)
 		vm.negativeNumberExample = vm.formatValue(-9238.1294)
@@ -397,13 +476,13 @@
 		vm.negativeFormat = getNegativeFormat(vm.settings)
 
 		clearAllPresetSelection()
-		const currentPreset = getActivePreset()
-		vm.currentPresetName = currentPreset ? currentPreset.name : 'Select Preset'
-		// console.log(currentPreset, 'currentPreset onNumberFormatChange ')
-		// console.log(currentPreset.name, 'currentPreset.name onNumberFormatChange')
+		// const currentPreset = getActivePreset()
+		// vm.currentPresetName = currentPreset ? currentPreset.name : 'Select Preset'
+		vm.activePreset = getActivePreset();
+
 	}
 
-	vm.getZeroName = function () {
+	/* vm.getZeroName = function () {
 		return vm.zeroFormats[vm.settings.zero_format_id].name
 	}
 
@@ -427,26 +506,60 @@
 
 	vm.formatRounding = (value) =>
 		renderHelper.formatRounding(value, { report_settings: vm.settings })
+	*/
 
 	vm.formatValue = (value) =>
 		renderHelper.formatValue(
 			{ example: value },
 			{ key: 'example', report_settings: vm.settings }
 		)
-	vm.agree = function () {
-		$mdDialog.hide({ status: 'agree', data: vm.settings })
+
+    function cancelModal(closeFn) {
+        emits('cancel');
+        closeFn();
+    }
+
+    function save(closeFn) {
+        emits( 'save', JSON.parse(JSON.stringify(vm.settings)) );
+        closeFn();
+    }
+
+	function init() {
+		vm.onNumberFormatChange();
 	}
+
+	init();
+
 </script>
 
 <style lang="scss" scoped>
-	.header {
+	.nf_content {
+		width: 505px;
+        padding-bottom: 16px;
+		// padding: 5px 0 20px;
+        :deep(.fm_expansion_panel) {
+            .name {
+                font-size: 14px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+            }
+        }
+
+	}
+	.presets_container {
 		display: flex;
-		min-width: 100%;
-		width: 100%;
-		min-width: 570px;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 20px;
 	}
 	.select-main {
-		width: 50%;
+		flex: 0 0 50%;
+
+		:deep(.fm_select) {
+			margin-bottom: 0;
+		}
 	}
 	.panel-content {
 		display: flex;
@@ -455,103 +568,22 @@
 		padding-left: 40%;
 		justify-content: center;
 	}
-	.radio-input {
-		position: relative;
-		display: flex;
-		align-items: center;
-		margin: 10px 0;
-		cursor: pointer;
 
-		.input {
-			position: absolute;
-			z-index: -1;
-			opacity: 0;
-			cursor: pointer;
-
-			& + label {
-				display: inline-flex;
-				align-items: center;
-				user-select: none;
-				padding-left: 30px;
-			}
-			& + label::before {
-				box-sizing: border-box;
-				background-color: transparent;
-				border-radius: 50%;
-				content: '';
-				position: absolute;
-				display: block;
-				height: auto;
-				left: 0;
-				top: 0;
-				right: 0;
-				bottom: 0;
-				transition: all 0.5s;
-				width: auto;
-				border-color: rgba(0, 0, 0, 0.54);
-				width: 20px;
-				border-style: solid;
-				border-width: 2px;
-				cursor: pointer;
-			}
-			&:checked + label::before {
-				border-color: #f05a22;
-			}
-			&:checked + label::after {
-				content: '';
-				position: absolute;
-				left: 50%;
-				top: 50%;
-				right: 0;
-				bottom: 0;
-				height: 10px;
-				width: 10px;
-				left: 0;
-				border-radius: 50%;
-				transform: translate(50%, -50%);
-				background-color: #f05a22;
-			}
-			&:not(:disabled):not(:checked) + label:hover::before {
-				box-shadow: 0 0 0 10px rgba(240, 90, 34, 0.2);
-				transition: 0.5s;
-			}
-			&:focus {
-				box-shadow: 0 0 0 10px rgba(240, 90, 34, 0.2);
-				transition: 0.5s;
-			}
-			&:active {
-				box-shadow: 0 0 0 10px rgba(240, 90, 34, 0.2);
-				transition: 0.5s;
-			}
-			&:hover {
-				box-shadow: 0 0 0 10px rgba(240, 90, 34, 0.2);
-				transition: 0.5s;
-			}
-		}
-	}
 	.examples {
+		flex: 0 0 210px;
 		display: flex;
 		flex-direction: column;
-		margin-top: 10px;
-		margin-left: 20px;
-		// .examples__name
 
 		&__name {
-			display: flex;
 			font-size: 12px;
 			color: $gray;
-			margin-bottom: 10px;
 		}
 	}
 	.examples-number {
+		display: flex;
 		justify-content: space-between;
+		margin-top: 4px;
 		font-size: 12px;
-		color: $gray;
-		span {
-			padding-right: 10px;
-		}
-	}
-
-	.modal.number-format {
+		font-weight: 500;
 	}
 </style>

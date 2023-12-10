@@ -74,13 +74,13 @@
 			<FmCard title="Filters" class="mb-x">
 				<BaseMultiSelectInput
 					v-model="procedure.pricing_policy_filters"
-					title="Pricing policies"
+					label="Pricing policies"
 					item_title="user_code"
 					:items="policyList"
 				/>
 				<BaseMultiSelectInput
 					v-model="procedure.portfolio_filters"
-					title="Portfolios"
+					label="Portfolios"
 					item_title="user_code"
 					:items="portfolioList"
 				/>
@@ -89,13 +89,13 @@
 			<FmCard  title="Instruments" class="mb-x">
 				<BaseMultiSelectInput
 					v-model="procedure.instrument_type_filters"
-					title="Instrument types"
+					label="Instrument types"
 					item_title="user_code"
 					:items="typeList"
 				/>
 				<BaseMultiSelectInput
 					v-model="procedure.instrument_pricing_scheme_filters"
-					title="Pricing schemes"
+					label="Pricing schemes"
 					item_title="user_code"
 					:items="instrumentList"
 				/>
@@ -110,7 +110,7 @@
 			<FmCard title="Currencies" class="mb-x">
 				<BaseMultiSelectInput
 					v-model="procedure.currency_pricing_scheme_filters"
-					title="Pricing schemes"
+					label="Pricing schemes"
 					item_title="user_code"
 					:items="currencyList"
 				/>

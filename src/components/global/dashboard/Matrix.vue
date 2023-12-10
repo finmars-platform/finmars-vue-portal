@@ -676,7 +676,7 @@
 			hide_empty_lines: component.value.settings.hide_empty_lines,
 		}*/
 
-		provide('ngDependace', {
+		provide('fmTableData', {
 			evDataService: vmE.entityViewerDataService,
 			evEventService: vmE.entityViewerEventService,
 			attributeDataService: vmE.attributeDataService,

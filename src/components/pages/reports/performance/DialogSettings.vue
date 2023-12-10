@@ -64,7 +64,7 @@
 					<RvSettingsRow label="Portfolios and Bundles">
 						<BaseMultiSelectInput
 							v-model="reportOptions.bundles"
-							title="Portfolios and Bundles"
+							label="Portfolios and Bundles"
 							:items="bundles"
 							item_id="id"
 							item_title="user_code"
@@ -122,10 +122,10 @@
 	let currencyOpts = ref([])
 	let pricingPoliciesOpts = ref([])
 	let calcTypeOpts = [
-		{
-			id: 'time_weighted',
-			name: 'Time-Weighted Return',
-		},
+		// {
+		// 	id: 'time_weighted',
+		// 	name: 'Time-Weighted Return',
+		// },
 		{
 			id: 'modified_dietz',
 			name: 'Modified Dietz',

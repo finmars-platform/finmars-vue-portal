@@ -7,11 +7,12 @@
 		<template #btn="{ isOpen }">
 			<FmBtn
 				type="text"
-				icon="view_quilt"
-				class="lm_open_btn"
+				class="lm_open_btn flex-row flex-c-space-between flex-i-center"
 				:disabled="loadingLayout"
 			>
-				{{ activeLayout.name }}
+				<FmIcon icon="view_quilt" class="m-r-8" />
+
+				<span>{{ activeLayout.name }}</span>
 
 				<FmIcon
 					:icon="isOpen ? 'arrow_drop_up' : 'arrow_drop_down'"

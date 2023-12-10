@@ -85,6 +85,7 @@
 		preriodItems.value = []
 
 		bundles.value.forEach((bundle) => {
+
 			preriodItems.value.push({
 				name: bundle.user_code,
 			})
@@ -146,7 +147,7 @@
 
 		let day = dayjs(endDate).format('YYYY-MM-DD')
 
-		return await getReports({ start: day, end: day, ids, type: 'days' })
+		return await getReports({ period_type: "daily", end: day, ids, type: 'days' })
 	}
 
 	async function getMonth(ids) {
@@ -155,7 +156,7 @@
 		let start = dayjs(endDate).set('date', 1).format('YYYY-MM-DD')
 		let end = dayjs(endDate).format('YYYY-MM-DD')
 
-		return await getReports({ start, end, ids })
+		return await getReports({ period_type: "mtd", end, ids })
 	}
 
 	async function getQ(ids) {
@@ -168,7 +169,7 @@
 
 		let end = dayjs(endDate).format('YYYY-MM-DD')
 
-		return await getReports({ start, end, ids })
+		return await getReports({ period_type: "qtd", end, ids })
 	}
 
 	async function getYear(ids) {
@@ -177,7 +178,7 @@
 		let start = `${dayjs(endDate).year()}-01-01`
 		let end = dayjs(endDate).format('YYYY-MM-DD')
 
-		return await getReports({ start, end, ids })
+		return await getReports({ period_type: "ytd", end, ids })
 	}
 
 	async function getLastYear(ids) {
@@ -186,7 +187,7 @@
 		let start = `${dayjs(endDate).year() - 1}-01-01`
 		let end = `${dayjs(endDate).year() - 1}-12-31`
 
-		return await getReports({ start, end, ids })
+		return await getReports({ period_type: "ytd", end, ids })
 	}
 
 	async function getYearBeforeLast(ids) {
@@ -196,7 +197,7 @@
 
 		let end = `${dayjs(endDate).year() - 2}-12-31`
 
-		return await getReports({ start, end, ids })
+		return await getReports({ period_type: "ytd", end, ids })
 	}
 
 	async function getIncept(ids) {
@@ -211,14 +212,15 @@
 
 		let end = dayjs(endDate).format('YYYY-MM-DD')
 
-		return await getReports({ start, end, ids })
+		return await getReports({ period_type: "inception", end, ids })
 	}
 
-	async function getReports({ start, end, ids, type = 'months' }) {
+	async function getReports({ period_type, end, ids, type = 'months' }) {
 		let res = await useApi('performanceReport.post', {
 			body: {
 				save_report: false,
-				begin_date: start,
+				period_type: period_type,
+				// begin_date: start, // deprecated, rn Backend handles all date range based on end_date + period_type
 				end_date: end,
 				calculation_type: props.calculation_type,
 				segmentation_type: type,

@@ -49,7 +49,7 @@
 	<FmAttributesSelectModal
 		v-model="modalIsOpen"
 		:title="title"
-		:contentType="contentType"
+		:content_type="content_type"
 		:valueType="valueType"
 		:attributes="attributesList"
 		:selected="modelValue"
@@ -65,7 +65,7 @@
 let props = defineProps({
 	modelValue: [Array, String], // Array of Strings (keys) for multiselect, String (key) and null for select
 	title: String,
-	contentType: String,
+	content_type: String,
 	valueType: Number, // used to filter attributes
 	attributes: {
 		type: Array,

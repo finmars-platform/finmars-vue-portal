@@ -1,18 +1,20 @@
 <template>
 	<div>
+		<!-- :modelValue needed so that the multi selector's label displayed at the top when multi selector is not empty -->
 		<BaseInput
-			class="ms_wrap m-b-0"
-			:label="title"
+			:modelValue="selectedList.length || ''"
+			class="ms_wrap"
+			:label="label"
 			@click="isOpen = true"
-			modelValue=" "
 		>
 			<template #button><FmIcon icon="menu" /></template>
 
 			<div class="flex aic" style="height: inherit" ref="chipWrap">
 				<div
-					class="flex-row fi-center fm_chip"
+					v-if="selectedList.length"
 					v-for="item in selectedList"
-					:key="selectedList[item_id]"
+					:key="item[item_id]"
+					class="flex-row fi-center fm_chip"
 				>
 					<FmIcon
 						v-if="item.error_data"
@@ -41,11 +43,13 @@
 						@click.stop="deleteItem(item)"
 					/>
 				</div>
+
+				<div v-else class="input_placeholder">{{placeholder || label}}</div>
 			</div>
 		</BaseInput>
 
 		<BaseMultiSelectModal
-			:title="title"
+			:title="modalTitle || label"
 			:items="items"
 			v-model:opened="isOpen"
 			v-model="props.modelValue"
@@ -70,7 +74,8 @@
 			type: [String, Array],
 			default: [],
 		},
-		title: String,
+		label: String,
+		modalTitle: String,
 		item_id: {
 			type: String,
 			default: 'user_code',
@@ -79,17 +84,28 @@
 			type: String,
 			default: 'name',
 		},
+
+		placeholder: String,
 	})
 	let emit = defineEmits(['update:modelValue'])
 
 	let isOpen = ref(false)
 	let chipWrap = ref(null)
-	let availableChips = ref(null)
+
+	// how many chips can fit into a multi selector
+	let availableChips = ref(0)
 
 	onMounted(() => {
-		availableChips.value = Math.floor(
-			chipWrap.value.getBoundingClientRect().width / 75
-		)
+
+		setTimeout(function () {
+			// without setTimeout this function ca be called
+			// when chipWrap.value have 0 width (width not calculated yet)
+			availableChips.value = Math.floor(
+				chipWrap.value.getBoundingClientRect().width / 75
+			)
+
+		}, 500);
+
 	})
 	/**
 	 * Set of unique ids of selected items
@@ -102,9 +118,10 @@
 	let selectedList = computed(() => {
 		let filtersArray = [...selectedFilter.value]
 
-		if (!availableChips.value) return false
+		if (!availableChips.value) return [];
 
 		if (availableChips.value < filtersArray.length) {
+			// remove data for chips that do not fit into a multi selector
 			filtersArray = filtersArray.slice(0, availableChips.value - 1)
 		}
 
@@ -125,6 +142,7 @@
 		})
 
 		if (availableChips.value < selectedFilter.value.size) {
+			// chip with number of chips that do not fit into a multi selector
 			result.push({
 				[props.item_id]: -1,
 				[props.item_title]:
@@ -153,8 +171,7 @@
 	watch(
 		() => props.modelValue,
 		() => {
-			console.log('selectedFilter.value:', selectedFilter.value)
-			selectedFilter.value = getSelectedFilter(props.modelValue, props.item_id)
+			selectedFilter.value = getSelectedFilter(props.modelValue, props.item_id);
 		}
 	)
 </script>
@@ -174,6 +191,9 @@
 		& + & {
 			margin-left: 5px;
 		}
+	}
+	.input_placeholder {
+		color: $text-pale;
 	}
 	/*.header {
 	font-size: 20px;

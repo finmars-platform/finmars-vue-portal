@@ -41,21 +41,21 @@
 				<FmAttributesSelect
 					v-model="settings.axisX"
 					title="Axis X Columns"
-					:contentType="settings.content_type"
+					:content_type="settings.content_type"
 					:disabled="!!settings.layout"
 				/>
 
 				<FmAttributesSelect
 					v-model="settings.axisY"
 					title="Axis Y Columns"
-					:contentType="settings.content_type"
+					:content_type="settings.content_type"
 					:disabled="!!settings.layout"
 				/>
 
 				<FmAttributesSelect
 					v-model="settings.valueKey"
 					title="Value"
-					:contentType="settings.content_type"
+					:content_type="settings.content_type"
 					:disabled="!!settings.layout"
 				/>
 
@@ -124,7 +124,7 @@
 				title="Axis X Columns"
 				:attributes="evAttrsStore.getDataForAttributesSelector(component.settings.content_type)"
 				:valueType="10"
-				:contentType="component.settings.content_type"
+				:content_type="component.settings.content_type"
 				:disabled="!component.settings.layout"
 				class="m-b-24"
 			/>
@@ -134,7 +134,7 @@
 				title="Axis Y Columns"
 				:attributes="evAttrsStore.getDataForAttributesSelector(component.settings.content_type)"
 				:valueType="10"
-				:contentType="component.settings.content_type"
+				:content_type="component.settings.content_type"
 				:disabled="!component.settings.layout"
 				class="m-b-24"
 			/>
@@ -144,7 +144,7 @@
 				title="Value"
 				:attributes="evAttrsStore.getDataForAttributesSelector(component.settings.content_type)"
 				:valueType="20"
-				:contentType="component.settings.content_type"
+				:content_type="component.settings.content_type"
 				:disabled="!component.settings.layout"
 				class="m-b-24"
 			/>
@@ -215,7 +215,7 @@
 				title="Axis X Columns"
 				:attributes="evAttrsStore.getDataForAttributesSelector(component.settings.content_type)"
 				:valueType="10"
-				:contentType="component.settings.content_type"
+				:content_type="component.settings.content_type"
 				multiselect
 				@selectedAttributesChanged="newVal => setAvailableAttrs(newVal, 'available_axis_x_attributes')"
 				class="dashboard-field m-b-24"
@@ -226,7 +226,7 @@
 				title="Axis Y Columns"
 				:attributes="evAttrsStore.getDataForAttributesSelector(component.settings.content_type)"
 				:valueType="10"
-				:contentType="component.settings.content_type"
+				:content_type="component.settings.content_type"
 				multiselect
 				@selectedAttributesChanged="newVal => setAvailableAttrs(newVal, 'available_axis_y_attributes')"
 				class="dashboard-field m-b-24"
@@ -237,7 +237,7 @@
 				title="Values"
 				:attributes="evAttrsStore.getDataForAttributesSelector(component.settings.content_type)"
 				:valueType="20"
-				:contentType="component.settings.content_type"
+				:content_type="component.settings.content_type"
 				multiselect
 				@selectedAttributesChanged="newVal => setAvailableAttrs(newVal, 'available_value_attributes')"
 				class="dashboard-field m-b-24"

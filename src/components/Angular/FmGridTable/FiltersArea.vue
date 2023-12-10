@@ -5,15 +5,25 @@
 	>
 		<!-- IMPORTANT: for .gFiltersWrap padding should be set by styles, so that scripts can access it -->
 		<div class="gFiltersWrap" style="padding: 0px">
-			<template v-if="ready">
-				<AngularFmGridTableRvFilters v-if="$scope.isReport" :vm="vm" />
+<!--			<template v-if="ready">
+				<AngularFmGridTableRvFilters v-if="$scope.isReport" />
 
 				<AngularFmGridTableEvRvFilters
 					v-else
 					:vm="vm"
 					:attributeDataService="attributeDataService"
 				/>
+			</template>-->
+			<template v-if="ready && $scope.isReport">
+				<FmTableFiltersRv
+					@customFieldsMissing="updateMissingCustomFieldsList"
+				/>
+
 			</template>
+
+<!--			<template v-if="ready && !$scope.isReport">
+				<FmTableFiltersEv />
+			</template>-->
 
 			<div
 				v-if="viewContext !== 'dashboard' && ready"
@@ -68,9 +78,9 @@
 	import exportExcelService from '@/angular/services/exportExcelService'
 
 	import EventService from '@/angular/services/eventService'
-	import gFiltersHelperInst from '~~/src/angular/helpers/gFiltersHelper'
+	// import gFiltersHelperInst from '~~/src/angular/helpers/gFiltersHelper'
 
-	const gFiltersHelper = new gFiltersHelperInst()
+	// const gFiltersHelper = new gFiltersHelperInst()
 
 	// export default function (
 	// 	uiService,
@@ -85,10 +95,12 @@
 	// 	},
 	const props = defineProps(['attributeDataService', 'contentWrapElement'])
 
-	const { evEventService, evDataService } = inject('ngDependace')
+	const { evEventService, evDataService } = inject('fmTableData')
 
 	let $scope = reactive({ ...props })
-	let vm = {}
+	let vm = reactive({})
+
+	provide('filterData', vm)
 
 	let filters = []
 	// let useFromAboveFilters = [];
@@ -116,8 +128,8 @@
 		ready.value = true
 	})
 
-	vm.entityType = evDataService.getContentType()
-	$scope.isReport = metaService.isReport(vm.entityType)
+	vm.contentType = evDataService.getContentType()
+	$scope.isReport = metaService.isReport(vm.contentType)
 	$scope.contentType = evDataService.getContentType()
 	// $scope.currentAdditions = evDataService.getAdditions();
 	$scope.isRootEntityViewer = evDataService.isRootEntityViewer()
@@ -144,7 +156,7 @@
 		if ($scope.viewContext === 'reconciliation_viewer') {
 			allAttrsList = $scope.attributeDataService.getReconciliationAttributes()
 		} else {
-			switch (vm.entityType) {
+			switch (vm.contentType) {
 				case 'reports.balancereport':
 					allAttrsList =
 						$scope.attributeDataService.getBalanceReportAttributes()
@@ -177,7 +189,7 @@
 							item.name = 'Group'
 						}
 
-						item.entity = vm.entityType
+						item.entity = vm.contentType
 					})
 
 					let instrumentUserFields =
@@ -319,7 +331,7 @@
 		return [filter, filterData, null]
 	}
 
-	vm.updateMissingCustomFieldsList = function (errors) {
+	const updateMissingCustomFieldsList = function (errors) {
 		const missingCustomFields = []
 
 		errors.forEach((error) => {
@@ -567,7 +579,7 @@
 
 			if (res && res.status === 'agree') {
 				for (var i = 0; i < res.data.items.length; i = i + 1) {
-					res.data.items[i] = gFiltersHelper.setFilterDefaultOptions(
+					res.data.items[i] = useSetEvRvFilterDefaultOptions(
 						res.data.items[i]
 					)
 				}

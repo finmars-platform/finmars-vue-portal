@@ -539,6 +539,8 @@ let getTableAttrInFormOf = function (form, attrInstance) {
 				attrTypeToAdd.options.exclude_empty_cells = false
 			}
 
+			attrTypeToAdd.options.enabled = true;
+
 			break
 	}
 
@@ -547,9 +549,6 @@ let getTableAttrInFormOf = function (form, attrInstance) {
 			width: evDataHelper.getColumnWidth(attrTypeToAdd),
 		}
 	}
-
-	attrTypeToAdd.options.enabled = true
-	attrTypeToAdd.__onceOpenSettings = true
 
 	return attrTypeToAdd
 }

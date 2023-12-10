@@ -55,7 +55,7 @@
 		},
 
 		minHeight: String,
-		menuWidth: [Number, String], // depricated
+		menuWidth: [Number, String],
 		minWidth: [Number, String],
 
 		positionX: Number,
@@ -104,7 +104,7 @@
 			});
 
 		}
-		else {
+		else if (props.openOnClick) {
 			activator.value.addEventListener('click', toggle);
 		}
 
@@ -219,7 +219,9 @@
 		let activatorRect = activator.value.getBoundingClientRect();
 		// let popupRect = popup.value.getBoundingClientRect()
 
-		popup.value.style['min-width'] = activatorRect.width + 'px';
+        if (!props.minWidth && props.minWidth !== 0) {
+            popup.value.style['min-width'] = activatorRect.width + 'px';
+        }
 
 		let popupHeight = popup.value.clientHeight;
 		let popupWidth = popup.value.clientWidth;
@@ -296,7 +298,7 @@
 
 	let closeOnCo = {
 		handler: function (event) {
-			// needed when fm_drop attached to another element (e.g. body)
+			// needed when fm_drop attached to another element (e.g. body) instead of activator
 			if ( ( popup.value && popup.value.contains(event.target) ) || activator.value.contains(event.target) ) return;
 
 			isOpen.value = false;
