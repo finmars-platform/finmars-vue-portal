@@ -221,7 +221,9 @@
 	fetchPortfolioBundles()
 
 	async function fetchPortfolioBundles() {
-		let res = await useApi('portfolioBundleList.get')
+		let res = await useApi('portfolioBundleList.get',{
+			filters: { page: 1, page_size: 1000 },
+		})
 
 		bundles.value = res.results
 	}
