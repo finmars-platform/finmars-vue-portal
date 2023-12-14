@@ -69,6 +69,24 @@ export default defineStore({
 
 			this.user = res
 
+			if (window._paq) {
+				// Consider more unique id across spaces
+
+				let prefix = 'eu-central'
+
+				if (window.location.href.indexOf('0.0.0.0') !== -1) {
+					prefix = 'local'
+				}
+
+				let pieces = window.location.host.split('.')
+
+				if (pieces.length === 3) {
+					prefix = pieces[0]
+				}
+
+				window._paq.push(['setUserId', prefix + '_' + this.user.id]);
+			}
+
 			if (!this.user.data) this.user.data = {}
 
 			if (typeof this.user.data.autosave_layouts !== 'boolean') {
