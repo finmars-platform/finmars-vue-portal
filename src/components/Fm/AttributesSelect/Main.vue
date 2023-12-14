@@ -563,7 +563,7 @@
         const selKeys = Object.keys(selected).filter( key => {
 
 			return selected[key] &&
-				!selectedOldKeysRef.value.includes(attr.key);
+				!selectedOldKeysRef.value.includes(key);
 
         });
         // const selAttrs = props.attributes.filter( attr => selKeys.includes(attr.key) );
