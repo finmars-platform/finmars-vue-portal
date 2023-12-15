@@ -72,7 +72,7 @@
 			<FmSelect
 				v-model="ecosystemDefaultsRef.pricing_condition"
 				label="Pricing Condition"
-				:items="instrumentPricingСonditionItems"
+				:items="instrumentPricingConditionItems"
 			/>
 		</div>
 		<div class="wrapp-select">
@@ -84,7 +84,7 @@
 			<FmSelect
 				v-model="ecosystemDefaultsRef.responsible_group"
 				label="Responsible Group"
-				:items="instrumentItems"
+				:items="responsibleGroups"
 			/>
 			<FmSelect
 				v-model="ecosystemDefaultsRef.counterparty"
@@ -94,7 +94,7 @@
 			<FmSelect
 				v-model="ecosystemDefaultsRef.counterparty_group"
 				label="Counterparty Group"
-				:items="instrumentItems"
+				:items="counterpartyGroups"
 			/>
 		</div>
 		<div class="wrapp-select">
@@ -196,9 +196,11 @@
 	const instrumentAccrualCalculationModelItems = ref([])
 	const instrumentClassItems = ref([])
 	const instrumentSizeDetailItems = ref([])
-	const instrumentPricingСonditionItems = ref([])
+	const instrumentPricingConditionItems = ref([])
 	const counterpartyResponsibleLightItems = ref([])
+  	const responsibleGroups = ref([])
 	const counterpartyCounterpartyLightItems = ref([])
+  	const counterpartyGroups = ref([])
 	const strategiesOneLightItems = ref([])
 	const strategiesOneSubgroupItems = ref([])
 	const strategiesSecondLightItems = ref([])
@@ -214,55 +216,68 @@
 	init()
 
 	async function init() {
+
+		const opts = {
+			filters: {
+				page: 1,
+				page_size: 1000,
+				is_deleted: false,
+			},
+		}
+
 		const res = await Promise.all([
-			useApi('instrumentListLight.get'),
-			useApi('portfolioListLight.get'),
-			useApi('accountLight.get'),
-			useApi('currencyListLight.get'),
-			useApi('instrumentType.get'),
-			useApi('transactionTypeLight.get'),
-			useApi('accountTypeList.get'),
-			useApi('pricingPolicyList.get'),
-			useApi('instrumentPeriodicity.get'),
-			useApi('instrumentAccrualCalculationModel.get'),
-			useApi('instrumentClass.get'),
-			useApi('instrumentSizeDetail.get'),
-			useApi('instrumentPricingСondition.get'),
-			useApi('counterpartyResponsibleLight.get'),
-			useApi('counterpartyCounterpartyLight.get'),
-			useApi('strategies1ListLight.get'),
-			useApi('strategies1SubgroupList.get'),
-			useApi('strategies2ListLight.get'),
-			useApi('strategies2SubgroupList.get'),
-			useApi('strategies3ListLight.get'),
-			useApi('strategies3SubgroupList.get'),
-			useApi('instrumentSchemeList.get'),
-			useApi('currencySchemeList.get'),
+			useLoadAllPages('instrumentListLight.get', opts), // 0
+			useLoadAllPages('portfolioListLight.get', opts), // 1
+			useLoadAllPages('accountLight.get', opts), // 2
+			useLoadAllPages('currencyListLight.get', opts), // 3
+			useLoadAllPages('instrumentType.get', opts), // 4
+			useLoadAllPages('transactionTypeLight.get', opts), // 5
+			useLoadAllPages('accountTypeList.get', opts), // 6
+			useLoadAllPages('pricingPolicyList.get', opts), // 7
+			useLoadAllPages('instrumentPeriodicity.get', opts), // 8
+			useLoadAllPages('instrumentAccrualCalculationModel.get', opts), // 9
+			useLoadAllPages('instrumentClass.get', opts), // 10
+			useLoadAllPages('instrumentSizeDetail.get', opts), // 11
+			useLoadAllPages('instrumentPricingСondition.get', opts), // 12
+			useLoadAllPages('counterpartyResponsibleLight.get', opts), // 13
+			useLoadAllPages('responsibleGroupList.get', opts), // 14
+			useLoadAllPages('counterpartyCounterpartyLight.get', opts), // 15
+			useLoadAllPages('counterpartyGroupList.get', opts), // 16. there is no api for light
+			useLoadAllPages('strategies1ListLight.get', opts), // 17
+			useLoadAllPages('strategies1SubgroupList.get', opts), // 18
+			useLoadAllPages('strategies2ListLight.get', opts), // 19
+			useLoadAllPages('strategies2SubgroupList.get', opts), // 20
+			useLoadAllPages('strategies3ListLight.get', opts), // 21
+			useLoadAllPages('strategies3SubgroupList.get', opts), // 22
+			useLoadAllPages('instrumentSchemeList.get', opts), // 23
+			useLoadAllPages('currencySchemeList.get', opts), // 24
 		])
 
-		instrumentItems.value = res[0].results
-		portfolioListLightItems.value = res[1].results
-		billItems.value = res[2].results
-		currencyItems.value = res[3].results
-		instrumentTypeItems.value = res[4].results
-		transactionTypeLightItems.value = res[5].results
-		accountsTypeItems.value = res[6].results
-		pricingPolicyListItems.value = res[7].results
-		instrumentPeriodicityItems.value = res[8]
-		instrumentAccrualCalculationModelItems.value = res[9]
-		instrumentClassItems.value = res[10]
-		instrumentSizeDetailItems.value = res[11]
-		instrumentPricingСonditionItems.value = res[12]
-		counterpartyResponsibleLightItems.value = res[13].results
-		counterpartyCounterpartyLightItems.value = res[14].results
-		strategiesOneLightItems.value = res[15].results
-		strategiesOneSubgroupItems.value = res[16].results
-		strategiesSecondLightItems.value = res[17].results
-		strategiesSecondSubgroupItems.value = res[18].results
-		strategiesThirdLightItems.value = res[19].results
-		strategiesThirdSubgroupItems.value = res[20].results
-		instrumentSchemeListItems.value = res[21].results
-		currencySchemeListItems.value = res[22].results
+		instrumentItems.value = res[0];
+		portfolioListLightItems.value = res[1];
+		billItems.value = res[2];
+		currencyItems.value = res[3];
+		instrumentTypeItems.value = res[4];
+		transactionTypeLightItems.value = res[5];
+		accountsTypeItems.value = res[6];
+		pricingPolicyListItems.value = res[7];
+		instrumentPeriodicityItems.value = res[8];
+		instrumentAccrualCalculationModelItems.value = res[9];
+		instrumentClassItems.value = res[10];
+		instrumentSizeDetailItems.value = res[11];
+		instrumentPricingConditionItems.value = res[12];
+		counterpartyResponsibleLightItems.value = res[13];
+		responsibleGroups.value = res[14];
+		counterpartyCounterpartyLightItems.value = res[15];
+		counterpartyGroups.value = res[16];
+		strategiesOneLightItems.value = res[17];
+		strategiesOneSubgroupItems.value = res[18];
+		strategiesSecondLightItems.value = res[19];
+		strategiesSecondSubgroupItems.value = res[20];
+		strategiesThirdLightItems.value = res[21];
+		strategiesThirdSubgroupItems.value = res[22];
+		instrumentSchemeListItems.value = res[23];
+		currencySchemeListItems.value = res[24];
 	}
 
 	async function defaultSettingsCreate() {

@@ -94,11 +94,17 @@ export default {
 	counterpartyResponsibleLight: {
 		get: prefix + '/counterparties/responsible/light/',
 	},
+	responsibleGroupList: {
+		get: prefix + '/counterparties/responsible-group/',
+	},
 	counterpartyCounterpartyLight: {
 		get: prefix + '/counterparties/counterparty/light/',
 	},
 	counterpartyDatabaseSearch: {
 		get: uDatabasePrefix + '/company/',
+	},
+	counterpartyGroupList: {
+		get: prefix + '/counterparties/counterparty-group/',
 	},
 	importCounterpartyFmDb: {
 		post: prefix + '/import/finmars-database/company/',
