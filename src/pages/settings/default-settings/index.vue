@@ -234,11 +234,11 @@
 			useLoadAllPages('transactionTypeLight.get', opts), // 5
 			useLoadAllPages('accountTypeList.get', opts), // 6
 			useLoadAllPages('pricingPolicyList.get', opts), // 7
-			useLoadAllPages('instrumentPeriodicity.get', opts), // 8
-			useLoadAllPages('instrumentAccrualCalculationModel.get', opts), // 9
-			useLoadAllPages('instrumentClass.get', opts), // 10
-			useLoadAllPages('instrumentSizeDetail.get', opts), // 11
-			useLoadAllPages('instrumentPricingСondition.get', opts), // 12
+			useApi('instrumentPeriodicity.get', opts), // 8
+			useApi('instrumentAccrualCalculationModel.get', opts), // 9
+			useApi('instrumentClass.get', opts), // 10
+			useApi('instrumentSizeDetail.get', opts), // 11
+			useApi('instrumentPricingСondition.get', opts), // 12
 			useLoadAllPages('counterpartyResponsibleLight.get', opts), // 13
 			useLoadAllPages('responsibleGroupList.get', opts), // 14
 			useLoadAllPages('counterpartyCounterpartyLight.get', opts), // 15
@@ -252,7 +252,7 @@
 			useLoadAllPages('instrumentSchemeList.get', opts), // 23
 			useLoadAllPages('currencySchemeList.get', opts), // 24
 		])
-
+		console.log("testing1000 res", res);
 		instrumentItems.value = res[0];
 		portfolioListLightItems.value = res[1];
 		billItems.value = res[2];
