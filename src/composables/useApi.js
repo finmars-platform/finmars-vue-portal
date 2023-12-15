@@ -116,6 +116,10 @@ export function useLoadAllPages(
 		try {
 			let res = await useApi(route_opt, options)
 
+			if (!res.hasOwnProperty('next')) {
+				throw new Error(`Api for the route: ${route_opt} does not support pagination`);
+			}
+
 			dataList = dataList.concat(res.results)
 
 			if (res.next) {
