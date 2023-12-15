@@ -139,6 +139,7 @@
 	})
 
 	let selectedItem = computed(() => {
+
 		if (props.items)
 			return props.items.find((item) => item[props.prop_id] == props.modelValue)
 
