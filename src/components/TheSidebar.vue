@@ -715,6 +715,15 @@
 														<span class="side-nav-title">Templates</span>
 													</a>
 												</li>
+
+												<li>
+													<a
+														:href="getUrlToOldApp('/portfolio-bundles')"
+														class="sidenav-dropdown-menu-btn"
+													>
+														<span class="side-nav-title">Portfolio Bundles</span>
+													</a>
+												</li>
 											</ul>
 										</div>
 									</li>
