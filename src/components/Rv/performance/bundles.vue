@@ -5,7 +5,7 @@
 			:items="preriodItems"
 			:active="activePeriod"
 			colls="repeat(8, 1fr)"
-			:cb="choosePortfolio"
+			:cb="chooseBundle"
 		/>
 	</FmExpansionPanel>
 </template>
@@ -44,7 +44,11 @@
 		]
 	})
 	let preriodItems = ref([])
-	let activePeriod = ref(0)
+	/**
+	 * Index of bundle
+	 * @type {ref<Number|null>}
+	 * */
+	let activePeriod = ref(null)
 	let bundles = ref([])
 
 	watch(props, () => init())
@@ -53,6 +57,9 @@
 	init()
 
 	function init() {
+
+		emits('setBundle', null);
+
 		// проверка на корректность всех свойств, если что выдать ошибку
 		if (!props.end_date) {
 			console.log('No end_date:', props.end_date)
@@ -134,12 +141,12 @@
 				row.incept = value ? `${value}%` : ''
 			})
 		})
-		choosePortfolio(0)
+		chooseBundle(0)
 	}
 
-	async function choosePortfolio(id) {
-		activePeriod.value = id
-		emits('setBundle', bundles.value[id])
+	async function chooseBundle(bundleIndex) {
+		activePeriod.value = bundleIndex
+		emits('setBundle', bundles.value[bundleIndex])
 	}
 
 	async function getDay(ids) {

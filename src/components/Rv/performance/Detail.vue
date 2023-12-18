@@ -13,7 +13,7 @@
 
 			<div v-if="showBundleActions" class="flex-row">
 				<FmBtn
-					:disabled="!portfolioItems.length"
+					:disabled="!bundleId"
 					class="primaryIcon m-r-8"
 					type="icon"
 					icon="edit"
@@ -21,7 +21,7 @@
 				/>
 
 				<FmBtn
-					:disabled="!portfolioItems.length"
+					:disabled="!bundleId"
 					class="primaryIcon"
 					type="icon"
 					icon="delete"
@@ -88,18 +88,24 @@
 	const emits = defineEmits(['setYear', 'refresh'])
 
 	let currentBundle = computed(() => {
+
+		if (!props.bundleId) return null;
+
 		if (typeof props.bundleId == 'object') return props.bundleId
 
 		return { id: props.bundleId, user_code: 'Need name id: ' + props.bundleId }
 	})
 
 	let bundleId = computed(() => {
-		if (typeof props.bundleId == 'object' && props.bundleId.id)
+
+		if (!props.bundleId) return null;
+
+		if (typeof props.bundleId == 'object' && props.bundleId.id) {
 			return props.bundleId.id
+		}
 
 		if (typeof props.bundleId == 'number') return props.bundleId
 
-		return false
 	})
 
 	watch(props, () => {
@@ -290,13 +296,14 @@
 			portfolioItems.value.push(
 				Object.values(months).map((item, i) => {
 					if (
-						(year != dateTo.year() || i <= dateTo.month()) &&
-						(year != dateFrom.year() || i >= dateFrom.month())
+						( year != dateTo.year() || i <= dateTo.month() ) &&
+						( year != dateFrom.year() || i >= dateFrom.month() )
 					)
 						return item[0]
 					else return ''
 				})
 			)
+
 			portfolioItemsCumm.value.push(
 				Object.values(months).map((item, i) => {
 					if (year != dateTo.year() || i <= dateTo.month()) return item[1]
