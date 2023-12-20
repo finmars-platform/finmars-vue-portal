@@ -16,6 +16,7 @@
 <script setup>
 import dayjs from 'dayjs'
 import quarterOfYear from 'dayjs/plugin/quarterOfYear'
+import {useLoadAllPages} from "~/composables/useApi";
 
 dayjs.extend(quarterOfYear)
 
@@ -76,11 +77,13 @@ function init() {
 async function fetchPortfolioBundles() {
 	// readyStatusData.bundles = false;
 
-	let res = await useApi('portfolioBundleList.get');
+	let res = await useLoadAllPages('portfolioBundleList.get', {
+		filters: {page: 1, page_size: 1000}
+	});
 
 	const delUserCodeRe = /^del\d{17}$/;
 
-	bundles.value = res.results.filter(
+	bundles.value = res.filter(
 		bundle => !bundle.user_code.match(delUserCodeRe)
 	);
 
