@@ -81,7 +81,7 @@
 			"page": 1,
 			"groups_values": [],
 			"groups_order": "asc",
-			"page_size": 60,
+			"page_size": 1000,
 			"ev_options": {
 				"entity_filters": ["enabled","disabled","active","inactive"],
 			},
