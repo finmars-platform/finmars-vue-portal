@@ -1,3 +1,41 @@
+import {useGetDefaultEvRvFilterType} from "~/composables/evRv/useFilters";
+
+/**
+ *
+ * @param filter {Object}
+ * @param isReport {Object=}
+ * @returns {Object} - changed filter
+ */
+const setFilterDefaultOptions = (filter, isReport) => {
+
+	if (!filter.options) {
+		filter.options = {}
+	}
+
+	if (!filter.options.filter_type) {
+		filter.options.filter_type = useGetDefaultEvRvFilterType(filter.value_type);
+	}
+
+	if (!filter.options.filter_values) {
+		filter.options.filter_values = []
+	}
+
+	if (!filter.options.hasOwnProperty('exclude_empty_cells')) {
+		filter.options.exclude_empty_cells = false;
+	}
+
+	if (isReport) {
+
+		if (!filter.options.use_from_above) {
+			filter.options.use_from_above = {}
+		}
+
+	}
+
+	return filter;
+
+};
+
 /**
  *
  * @param filterType {string} - filter mode. E.g. 'equal', 'selector' etc.

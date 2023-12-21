@@ -37,6 +37,9 @@
 	 * Supporting component for the
 	 * components/Fm/Table/Filters/Rv.vue, components/Fm/Table/Filters/Ev.vue.
 	 * Must always have it as the parent.
+	 *
+	 * Contains template, styles, logic to display filters as chips
+	 * and modal window for adding filters.
 	 * */
 
 	let evAttrsStore = useEvAttributesStore();

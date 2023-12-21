@@ -289,6 +289,7 @@
 }*/
 
 import reportViewerController from "~/angular/controllers/entityViewer/reportViewerController";
+import {useSetEvRvFilterDefaultOptions} from "~/composables/evRv/useFilters";
 
 const reportContentTypes = ['reports.balancereport', 'reports.plreport', 'reports.transactionreport'];
 export function isReport (contentType) {
@@ -373,7 +374,7 @@ export const getEvRvAttrInFormOf = function (form, attrInstance) {
 
 			attrTypeToAdd.filters = true;
 
-			if (!attrTypeToAdd.options.filter_type) {
+			/*if (!attrTypeToAdd.options.filter_type) {
 				attrTypeToAdd.options.filter_type = getDefaultEvRvFilterType(attrTypeToAdd.value_type);
 			}
 
@@ -383,7 +384,8 @@ export const getEvRvAttrInFormOf = function (form, attrInstance) {
 
 			if (!attrTypeToAdd.options.hasOwnProperty('exclude_empty_cells')) {
 				attrTypeToAdd.options.exclude_empty_cells = false;
-			}
+			}*/
+			attrTypeToAdd = useSetEvRvFilterDefaultOptions(attrTypeToAdd);
 
 			break;
 	}
@@ -461,4 +463,28 @@ export const useGetEvRvParents = function (parentId, evDataService) {
 
 	return results;
 
+};
+
+export const useEntityPluralToSingular = function (key) {
+	switch (key) {
+		case 'instruments':
+			return 'instrument';
+		case 'accounts':
+			return 'account';
+			break;
+		case 'portfolios':
+			return 'portfolio';
+			break;
+		case 'responsibles':
+			return 'responsible';
+			break;
+		case 'counterparties':
+			return 'counterparty';
+			break;
+		case 'content_types':
+			return 'content_type';
+		default:
+			return key;
+			break;
+	}
 };

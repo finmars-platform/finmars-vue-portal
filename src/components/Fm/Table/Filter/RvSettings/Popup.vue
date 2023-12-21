@@ -29,8 +29,11 @@
 				@filterOptionsChanged="newVal => filterRef.options = newVal"
 			/>
 
-			<AngularFmGridTableRvNumberFilter
+			<FmTableFilterRvSettingsNumber
 				v-if="filterRef.value_type === 20"
+				:filter="filterRef"
+				:getActiveFilterType="getActiveFilterType"
+				@filterOptionsChanged="newVal => filterRef.options = newVal"
 			/>
 
 			<!--            <div v-if="filter.value_type === 40" class="m-b-24">
@@ -54,6 +57,7 @@
 </template>
 
 <script setup>
+import * as gFiltersHelper from "@/components/Fm/Table/Filter/filtersHelper"
 
 // stores
 // props, emits
@@ -93,7 +97,9 @@ let attrsList = [];
 
 const getActiveFilterType = (filter, filterTypesList) => {
 
-	if ( useIsFilterUseFromAbove(filterRef.value) ) {
+	filter = unref(filter);
+
+	if ( useIsFilterUseFromAbove(filter) ) {
 
 		return 'use_from_above';
 
@@ -101,10 +107,9 @@ const getActiveFilterType = (filter, filterTypesList) => {
 
 		const activeType = filterTypesList.find(type => {
 			// return type.value === vm.filter.options.filter_type;
-			return type.id === filterRef.value.options.filter_type;
+			return type.id === filter.options.filter_type;
 		});
 
-		// return activeType ? activeType.value : null;
 		return activeType ? activeType.id : null;
 
 	}

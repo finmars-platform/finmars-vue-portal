@@ -146,7 +146,7 @@ const moreMenuOptsList = [
 
 scope.refreshTable = function () {
 	scope.processing = true;
-	scope.evEventService.dispatchEvent(evEvents.REQUEST_REPORT);
+	evEventService.dispatchEvent(evEvents.REQUEST_REPORT);
 };
 
 </script>

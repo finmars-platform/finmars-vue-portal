@@ -23,6 +23,17 @@ input, textarea {
     font: 400 16px/1.2 $font-family, sans-serif;
     color: $text;
 }
+input[type="number"] {
+	-webkit-appearance: textfield;
+	-moz-appearance: textfield;
+	appearance: textfield;
+
+	&::-webkit-inner-spin-button {
+		display: none;
+		-webkit-appearance: none;
+		margin: 0;
+	}
+}
 
 .ev_top_panel {
     height: 50px;

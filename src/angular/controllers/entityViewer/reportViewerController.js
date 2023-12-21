@@ -141,10 +141,12 @@ export default function ({
 		vm.entityViewerEventService.addEventListener(
 			evEvents.REQUEST_REPORT,
 			function () {
-        window.rvDataProviderService.requestReport(
+
+        		window.rvDataProviderService.createDataStructure(
 					vm.entityViewerDataService,
 					vm.entityViewerEventService
 				)
+
 			}
 		)
 

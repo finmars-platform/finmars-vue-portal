@@ -1,5 +1,7 @@
 import filterService from './filter.service'
 import sortService from './sort.service'
+import evRvCommonHelper from "~/angular/helpers/ev-rv-common.helper";
+import {useEntityPluralToSingular} from "~/composables/evRv/useEvRv";
 
 export default function (entityResolverService) {
     /**
@@ -251,12 +253,13 @@ export default function (entityResolverService) {
             var filters = entityViewerDataService.getFilters();
 
             reportOptions.frontend_request_options['filter_settings'] = []
-
+			console.log("testing1923.1000 getBackendList filters", filters);
             filters.forEach(function (item) {
-
+                console.log("testing1923.1000 getBackendList filter",
+					item, evRvCommonHelper.isFilterValid(item));
                 if (evRvCommonHelper.isFilterValid(item)) {
 
-                    var key = queryParamsHelper.entityPluralToSingular(item.key);
+                    var key = useEntityPluralToSingular(item.key);
 
                     var filterSettings = {
                         key: key,
@@ -271,6 +274,10 @@ export default function (entityResolverService) {
                 }
 
             });
+            console.log(
+				"testing1923.1000 getBackendList filter_settings",
+                reportOptions.frontend_request_options['filter_settings']
+			);
 
 
         }

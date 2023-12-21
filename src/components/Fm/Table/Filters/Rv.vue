@@ -257,11 +257,11 @@
 	}
 
 	const addFilter = function (attributes) {
-
+		console.log("testing1923.FmTableFiltersRv addFilter ", attributes);
         const filtersToAdd = attributes.map(attr => {
             return evHelperService.getTableAttrInFormOf('filter', attr);
         })
-
+		console.log("testing1923.FmTableFiltersRv addFilter filtersToAdd", filtersToAdd);
         let filtersList = evDataService.getFilters();
 
         filtersList = filtersList.concat(filtersToAdd);
@@ -318,7 +318,7 @@
 		let filterData = allFilters.find(
 			filter => filter.key === filterKey
 		);
-
+		console.log();
 		if (!filterData) {
 			return null;
 		}
@@ -335,7 +335,7 @@
 		posYRef.value = emitData.event.clientY;
 
 		filterToEditRef.value = findFilter(emitData.data.id);
-
+		console.log("testing1923.FmTableFiltersRv openFilterSettings ", filterToEditRef.value);
 	}
 	//# endregion
 

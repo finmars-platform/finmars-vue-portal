@@ -27,7 +27,7 @@
 						:value="modelValue"
 						:readonly="readonly"
 						:disabled="disabled"
-						@input="$emit('update:modelValue', $event.target.value)"
+						@input="onInputValChange"
 						@focus.stop="$emit('onFocus')"
 						@blur="$emit('onBlur')"
 						class="bi_main_input"
@@ -114,6 +114,24 @@
 	function onBiClick() {
 		if (props.disabled) return
 		if (mainInput.value) mainInput.value.focus()
+	}
+
+	function onInputValChange($event) {
+
+		let newVal = $event.target.value;
+
+		if (props.type === 'number') {
+
+			newVal = parseFloat(newVal);
+
+			if (Number.isNaN(newVal)) {
+				newVal = null;
+			}
+
+		}
+
+		emit('update:modelValue', newVal);
+
 	}
 
 	/*function onModelValueChange (newVal) {

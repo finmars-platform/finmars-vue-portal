@@ -1,5 +1,5 @@
 <template>
-	<div
+<!--	<div
 		v-bind="$attrs"
 		v-if="readyStatusRef"
 		class="g-filter-type-n-value flex-row fc-space-between m-b-16"
@@ -51,14 +51,6 @@
 					item_id="id"
 					@update:modelValue="changeFilterValue"
 				/>
-<!--				<two-fields-multiselect
-					dialog-title="{{getMultiselectorName()}}"
-					items="columnRowsContent"
-					model="filter.options.filter_values"
-					selected-items-indication="chips"
-					nothing-selected-text="Off"
-					small-options="{'dialogParent': '.dialog-containers-wrap'}"
-				></two-fields-multiselect>-->
 			</div>
 		</div>
 	</div>
@@ -68,7 +60,55 @@
 		class="g-filter-type-loader flex-row fc-space-around fi-center m-b-16"
 	>
 		<FmLoader></FmLoader>
-	</div>
+	</div>-->
+	<FmTableFilterBase
+		:readyStatus="readyStatusRef"
+		:filterType="filterTypeC"
+		:types="filterTypes"
+		@update:filterType="scope.changeFilterType"
+	>
+
+		<div
+			v-if="
+					filter.options.filter_type !== 'multiselector' &&
+					filter.options.filter_type !== 'selector'
+				"
+			class="height-100"
+		>
+			<BaseInput
+				class="ci-placeholder2 m-b-0"
+				:modelValue="filter.options.filter_values[0]"
+				label="Value"
+				@update:modelValue="newVal => changeFilterValue( [newVal] )"
+			/>
+		</div>
+
+		<div
+			v-if="filter.options.filter_type === 'selector'"
+			class="height-100"
+		>
+			<FmSelect
+				v-model="filter.options.filter_values[0]"
+				:items="optionsRef"
+			/>
+		</div>
+
+		<div
+			v-if="filter.options.filter_type === 'multiselector'"
+			class="height-100 g-filter-multiselector"
+		>
+			<BaseMultiSelectInput
+				:modelValue="filter.options.filter_values"
+				:modalTitle="
+						`${filter.name}. Regime = ${filter.options.filter_type}`
+					"
+				:items="optionsRef"
+				item_id="id"
+				@update:modelValue="changeFilterValue"
+			/>
+		</div>
+
+	</FmTableFilterBase>
 </template>
 
 <script setup>
@@ -155,11 +195,11 @@ const filterTypeC = computed(() =>
 
 scope.changeFilterType = async function (filterType) {
 
-	let filterOpts = JSON.parse(JSON.stringify( props.filter.options ));
-
 	if (filterType === 'use_from_above') {
 		return;
 	}
+
+	let filterOpts = JSON.parse(JSON.stringify( props.filter.options ));
 
 	filterOpts.use_from_above = {}
 	// openUseFromAboveSettings() responsible for setting 'use_from_above' into scope.activeFilterType

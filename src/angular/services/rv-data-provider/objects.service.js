@@ -1,6 +1,8 @@
 import filterService from './filter.service'
 import sortService from './sort.service'
 import metaHelper from '../../helpers/meta.helper'
+import evRvCommonHelper from "~/angular/helpers/ev-rv-common.helper";
+import {useEntityPluralToSingular} from "~/composables/evRv/useEvRv";
 
 export default function (entityResolverService) {
 
@@ -43,7 +45,7 @@ export default function (entityResolverService) {
 
 				if (evRvCommonHelper.isFilterValid(item)) {
 
-					var key = queryParamsHelper.entityPluralToSingular(item.key);
+					var key = useEntityPluralToSingular(item.key);
 
 					var filterSettings = {
 						key: key,

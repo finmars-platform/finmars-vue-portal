@@ -21,7 +21,7 @@ export const useSetEvRvFilterDefaultOptions = (filter, isReport) => {
 	}
 
 	if (!filter.options.filter_type) {
-		filter.options.filter_type = metaHelper.getDefaultFilterType(filter.value_type);
+		filter.options.filter_type = useGetDefaultEvRvFilterType(filter.value_type);
 	}
 
 	if (!filter.options.filter_values) {
