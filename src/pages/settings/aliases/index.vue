@@ -4,11 +4,13 @@
 		<div class="wrapp-select">
 			<FmSelect
 				v-model="configurationListActive"
-				label="Configuration Code"
 				:items="configurationListItems"
+				label="Configuration Code"
 				prop_id="configuration_code"
+				prop_name="configuration_code"
 			/>
 		</div>
+
 		<div class="fields-block">
 			<div class="transaction-fields">
 				<div class="transaction-fields__text">
@@ -188,7 +190,6 @@
 </template>
 
 <script setup>
-
 	definePageMeta({
 		middleware: 'auth',
 		bread: [
@@ -513,19 +514,18 @@
 	const ecosystemDefaults = ref('local.poms.space0crgw')
 	const BaseInputEcosystemDefaults = ref([])
 
-
 	init()
 
 	async function init() {
 		const res = await Promise.all([
-			useApi('instrumentUserField.get', {
+			useApi('instrumentUserFieldList.get', {
 				filters: { configuration_code: configurationListActive.value },
 			}),
 
-			useApi('complexTransactionUserField.get', {
+			useApi('complexTransactionUserFieldList.get', {
 				filters: { configuration_code: configurationListActive.value },
 			}),
-			useApi('transactionUserField.get', {
+			useApi('transactionUserFieldList.get', {
 				filters: { configuration_code: configurationListActive.value },
 			}),
 		])
@@ -536,7 +536,6 @@
 
 		complexTransactionUserFieldGet()
 		async function complexTransactionUserFieldGet() {
-
 			complexTransactionUserFieldItems.value.forEach(function (field) {
 				textComplexTransactionUserFieldItems.forEach(function (textField) {
 					if (textField.key == field.key && field.key.includes('user_text')) {
@@ -571,6 +570,7 @@
 				})
 			})
 		}
+
 		transactionUserFieldGet()
 		async function transactionUserFieldGet() {
 			transactionUserFieldItems.value.forEach(function (field) {
@@ -608,7 +608,15 @@
 				})
 			})
 		}
-
+	}
+	function testFn(newValue) {
+		configurationListActive.value = newValue
+		console.log(
+			'newValue',
+			newValue,
+			'configurationListActive',
+			configurationListActive.value
+		)
 	}
 
 	watch(
@@ -715,7 +723,6 @@
 
 	function complexTransactionUserFieldItemsCreate() {
 		textComplexTransactionUserFieldItems.forEach(function (textField) {
-
 			if (textField.id >= 0) {
 				let res = useApi('complexTransactionUserField.put', {
 					params: { id: textField.id },

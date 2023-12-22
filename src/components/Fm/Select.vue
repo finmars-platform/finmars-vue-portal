@@ -112,7 +112,7 @@
 		required: Boolean,
 		attach: {
 			type: String,
-			default: 'body',
+			// default: 'body',
 		},
 		clearBtn: Boolean, // button that empties select
 		errorData: Object,
@@ -139,6 +139,7 @@
 	})
 
 	let selectedItem = computed(() => {
+
 		if (props.items)
 			return props.items.find((item) => item[props.prop_id] == props.modelValue)
 

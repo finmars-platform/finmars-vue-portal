@@ -55,7 +55,7 @@
 		},
 
 		minHeight: String,
-		menuWidth: [Number, String], // depricated
+		menuWidth: [Number, String],
 		minWidth: [Number, String],
 
 		positionX: Number,
@@ -104,7 +104,7 @@
 			});
 
 		}
-		else {
+		else if (props.openOnClick) {
 			activator.value.addEventListener('click', toggle);
 		}
 
@@ -207,7 +207,7 @@
 		await openHandlerBegins();
 
 		popup.value.style.position = 'absolute';
-		popup.value.style['z-index'] = 55; // should be same as $backdrop-z-index inside variables.scss
+		// popup.value.style['z-index'] = 55; // should be same as $modal-z-index inside variables.scss
 
 		// const coords = targetElement.getBoundingClientRect();
 		let positionX;
@@ -219,7 +219,9 @@
 		let activatorRect = activator.value.getBoundingClientRect();
 		// let popupRect = popup.value.getBoundingClientRect()
 
-		popup.value.style['min-width'] = activatorRect.width + 'px';
+        if (!props.minWidth && props.minWidth !== 0) {
+            popup.value.style['min-width'] = activatorRect.width + 'px';
+        }
 
 		let popupHeight = popup.value.clientHeight;
 		let popupWidth = popup.value.clientWidth;
@@ -296,7 +298,7 @@
 
 	let closeOnCo = {
 		handler: function (event) {
-			// needed when fm_drop attached to another element (e.g. body)
+			// needed when fm_drop attached to another element (e.g. body) instead of activator
 			if ( ( popup.value && popup.value.contains(event.target) ) || activator.value.contains(event.target) ) return;
 
 			isOpen.value = false;
@@ -317,7 +319,7 @@
 .fm_drop {
 	position: fixed;
 	// z-index: 123;
-	z-index: $backdrop-z-index;
+	z-index: $modal-z-index;
 	box-shadow: 0 3px 11px 3px hsl(0deg 0% 60% / 40%);
 	display: inline-block;
 	border-radius: 5px;

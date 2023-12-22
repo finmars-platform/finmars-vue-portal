@@ -57,7 +57,6 @@
 				<BaseMultiSelectInput
 					:modelValue="selectedGroups"
 					@update:modelValue="findGroupIds($event)"
-					title="Groups"
 					:items="groups"
 					item_id="name"
 				/>
@@ -69,7 +68,6 @@
 				<BaseMultiSelectInput
 					:modelValue="selectedRoles"
 					@update:modelValue="findRoleIds($event)"
-					title="Roles"
 					:items="roles"
 					item_id="name"
 				/>
@@ -82,8 +80,8 @@
 				<BaseMultiSelectInput
 					:modelValue="selectedAccessPolicies"
 					@update:modelValue="findAccessPolicyIds($event)"
-					title="Access Policies"
 					:items="accessPolicies"
+					label="Testing"
 					item_id="user_code"
 					item_title="name"
 				/>
@@ -197,12 +195,14 @@
 	function findAccessPolicyIds(val) {
 		if (typeof val == 'string') val = val.split(',')
 		member.value.access_policies_object = []
-
+		console.log("testing2182.findAccessPolicyIds val", val);
+		console.log("testing2182.findAccessPolicyIds accessPolicies.value", accessPolicies.value);
 		val.forEach(itemArr => {
 			let elem = accessPolicies.value.find(itemObj => itemObj.user_code == itemArr)
+			console.log("testing2182.findAccessPolicyIds itemArr, elem", itemArr, elem);
 			if (elem) member.value.access_policies_object.push(elem)
 		})
-
+		console.log("testing2182.findAccessPolicyIds member.value.access_policies_object", member.value.access_policies_object);
 		member.value.access_policies = member.value.access_policies_object.map(item => item.id)
 	}
 

@@ -78,7 +78,7 @@
                 type="icon"
 								:class="['sort', item.options.sort ? 'has-sort' : '']"
                 :disabled="columnsData.dataIsLoading"
-								@click="$emit('sort')"
+								@click.stop="$emit('sort')"
 							>
 								<span
 									v-show="
@@ -201,7 +201,7 @@
 
 					<div
 						class="fm_list_item"
-						@click="columnsData.openNumberFormatDialog(item, close)"
+						@click="columnsData.openNumberFormatDialog(item.key, close)"
 					>
 						Number Format
 					</div>

@@ -11,19 +11,19 @@
 		<div class="g-filter-content">
 			<AngularFmGridTableRvTextFilter
 				v-if="vm.filter.value_type === 10 || vm.filter.value_type === 30"
-				:gFiltersHelper="gFiltersHelper"
 				:vm="vm"
 			/>
 
 			<AngularFmGridTableRvNumberFilter
 				v-if="vm.filter.value_type === 20"
-				:gFiltersHelper="gFiltersHelper"
 				:vm="vm"
 			/>
 
-			<div v-if="vm.filter.value_type === 40" class="m-b-24">
-				<rv-date-filter></rv-date-filter>
-			</div>
+			<AngularFmGridTableRvDateFilter
+				v-if="vm.filter.value_type === 40"
+				:gFiltersHelper="gFiltersHelper"
+				:vm="vm"
+			/>
 
 			<div v-if="vm.filter.value_type === 50" class="m-b-24">
 				<rv-boolean-filter></rv-boolean-filter>
@@ -48,6 +48,12 @@
 </template>
 
 <script setup>
+	/*
+	 * Supporting component for the
+	 * components/Angular/FmGridTable/Filters.vue .
+	 * Must always have it as the parent.
+	 * */
+
 	import popupEvents from '@/angular/services/events/popupEvents'
 	import evEvents from '@/angular/services/entityViewerEvents'
 	import userFilterService from '@/angular/services/rv-data-provider/user-filter.service'
@@ -55,49 +61,51 @@
 	import metaHelper from '@/angular/helpers/meta.helper'
 
 	const emits = defineEmits(['close'])
-	const props = defineProps([
-		'filterKey',
-		'popupEventService',
-		'popupData',
-		'vm',
-		'gFiltersHelper',
-	])
 
-	let $scope = {
-		...props,
-	}
-	const { evEventService, evDataService, attributeDataService } =
-		inject('ngDependace')
+	let evAttrsStore = useEvAttributesStore();
+
+	const filterData = inject("filterData");
+	const { evEventService, evDataService } =
+		inject('fmTableData');
 
 	// function RvFilterController($scope) {
-	let vm = props.vm
-
-	vm.popupEventService = $scope.popupEventService
+	let vm = reactive({});
+	vm.filter = filterData.filter;
 
 	vm.columnRowsContent = []
 	vm.showSelectMenu = false
 
+	const contentType = evDataService.getContentType();
 	vm.isRootEntityViewer = evDataService.isRootEntityViewer()
 	vm.useFromAbove = evDataService.getUseFromAbove()
 
 	vm.filterNotFound = false
 
+	let attrsList = evAttrsStore.getAllAttributesByContentType(contentType);
 	let filtersList
 	let useFromAboveFilters
 	let isUseFromAboveFilter = false
 	let filterIndex = -1
 	const positions = ref({})
 
+	let filterAttr = computed(() => {
+			attrsList.find
+	})
+
 	onMounted(() => {
 		let elem
 
-		if (props.popupData.elem) {
-			elem = props.popupData.elem
-		} else {
-			let chips = document.querySelectorAll('.chips-list-container .chip-wrap')
+		// if (props.popupData.elem) {
+		// 	elem = props.popupData.elem
+		// 	console.log('elem:', elem)
+		// } else {
 
-			elem = chips[chips.length - 1]
-		}
+		// }
+
+		let chips = document.querySelectorAll('.chips-list-container .chip-wrap')
+
+		elem = chips[chips.length - 1]
+
 		let rect = elem.getBoundingClientRect()
 
 		positions.value.left = rect.left - 160
@@ -131,7 +139,7 @@
 		})
 
 		if (filterIndex > -1) {
-			vm.filter = props.gFiltersHelper.setFilterDefaultOptions(vm.filter, true)
+			vm.filter = useSetEvRvFilterDefaultOptions(vm.filter, true)
 		} else {
 			vm.filterNotFound = true
 		}
@@ -239,6 +247,7 @@
 
 		evDataService.setFilters(allFilters)
 		evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
+		evEventService.dispatchEvent(evEvents.REQUEST_REPORT)
 
 		vm.cancel()
 	}

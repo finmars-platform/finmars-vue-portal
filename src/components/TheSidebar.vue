@@ -368,6 +368,14 @@
 												<span class="side-nav-title">Procedures status</span>
 											</a>
 										</li>
+										<li>
+											<a
+												:href="getUrlToOldApp('/pricing-parent-procedures')"
+												class="sidenav-dropdown-menu-btn"
+											>
+												<span class="side-nav-title">Portfolio History</span>
+											</a>
+										</li>
 									</ul>
 								</div>
 							</li>
@@ -707,6 +715,15 @@
 														<span class="side-nav-title">Templates</span>
 													</a>
 												</li>
+
+												<li>
+													<a
+														:href="getUrlToOldApp('/portfolio-bundles')"
+														class="sidenav-dropdown-menu-btn"
+													>
+														<span class="side-nav-title">Portfolio Bundles</span>
+													</a>
+												</li>
 											</ul>
 										</div>
 									</li>
@@ -1031,12 +1048,12 @@
 										</NuxtLink>
 									</li>
 									<li v-if="accessTable.settings_ecosystem_default">
-										<a
-											:href="getUrlToOldApp('/settings/default-settings')"
-											class="sidemenu-btn"
-										>
-											<span class="side-nav-title">Default Settings</span>
-										</a>
+                    <NuxtLink
+                        to="/settings/default-settings"
+                        class="sidemenu-btn"
+                    >
+                      <span class="side-nav-title">Default Settings</span>
+                    </NuxtLink>
 									</li>
 									<!--									<li>
 																			<a

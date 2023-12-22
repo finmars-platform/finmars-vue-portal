@@ -20,7 +20,7 @@
 				<BaseTable
 					:headers="['', 'id', 'Name', 'Is Admin', 'Is Owner', 'Is Deleted', 'Status', 'Groups', 'Roles']"
 					:items="members"
-					colls="50px repeat(9, 1fr)"
+					colls="50px repeat(8, 1fr)"
 					:cb="(id) => $router.push(`/settings/permissions/members/${stockMembers[id].id}`)"
 					class="clickable_rows"
 				>
@@ -106,7 +106,7 @@
 				<BaseTable
 					:headers="['', 'Id','User Code', 'Configuration Code',  'Name', ]"
 					:items="roles"
-					colls="50px repeat(5, 1fr)"
+					colls="50px repeat(4, 1fr)"
 					:cb="(id) => $router.push(`/settings/permissions/roles/${roles[id].id}`)"
 					class="clickable_rows"
 				>
@@ -331,9 +331,32 @@ async function init() {
 	]);
 
 	stockMembers.value = res[0].results;
-	groups.value = res[1].results;
-	roles.value = res[2].results;
-	accessPolicies.value = res[3].results;
+	groups.value = res[1].results.map((item) => {
+		return {
+			id: item.id,
+			user_code: item.user_code,
+			configuration_code: item.configuration_code,
+			name: item.name
+		}
+	});
+	// ['', 'Id','User Code', 'Configuration Code',  'Name', ]
+	roles.value = res[2].results.map((item) => {
+		return {
+			id: item.id,
+			user_code: item.user_code,
+			configuration_code: item.configuration_code,
+			name: item.name
+		}
+	});
+	// ['', 'Id', 'User Code', 'Configuration Code', 'Name', ]
+	accessPolicies.value = res[3].results.map((item) => {
+		return {
+			id: item.id,
+			user_code: item.user_code,
+			configuration_code: item.configuration_code,
+			name: item.name
+		}
+	});
 
 }
 

@@ -33,7 +33,7 @@
 			>
 				<FmSelect
 					v-model="scope.filter.options.filter_values[0]"
-					:items="columnRowsContent"
+					:items="scope.columnRowsContent"
 				/>
 			</div>
 
@@ -41,14 +41,12 @@
 				v-if="scope.filter.options.filter_type === 'multiselector'"
 				class="height-100 g-filter-multiselector"
 			>
-				<two-fields-multiselect
-					dialog-title="{{getMultiselectorName()}}"
-					items="columnRowsContent"
-					model="filter.options.filter_values"
-					selected-items-indication="chips"
-					nothing-selected-text="Off"
-					small-options="{'dialogParent': '.dialog-containers-wrap'}"
-				></two-fields-multiselect>
+				<BaseMultiSelectInput
+					v-model="scope.filter.options.filter_values"
+					:title="scope.getMultiselectorName()"
+					:items="scope.columnRowsContent"
+					item_id="id"
+				></BaseMultiSelectInput>
 			</div>
 		</div>
 	</div>
@@ -137,6 +135,7 @@
 	}
 
 	init()
+	console.log('scope.columnRowsContent:', scope.columnRowsContent)
 
 	props.vm.popupEventService.addEventListener(
 		popupEvents.CLOSE_POPUP,

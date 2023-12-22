@@ -9,7 +9,7 @@
 		@update:modelValue="newVal => $emit('update:modelValue', newVal)"
 		@update:errorData="newVal => $emit('update:errorData', newVal)"
 	>
-		<template #button>
+		<template v-if="!noIndicatorButton" #button>
 			<FmBtn
 				type="icon"
 				icon="edit"
@@ -43,6 +43,7 @@
 		placeholder: String,
 		tooltip: String,
 		required: Boolean,
+        noIndicatorButton: Boolean,
 		errorData: Object,
 	})
 

@@ -28,7 +28,7 @@
 						:readonly="readonly"
 						:disabled="disabled"
 						@input="$emit('update:modelValue', $event.target.value)"
-						@focus="$emit('onFocus')"
+						@focus.stop="$emit('onFocus')"
 						@blur="$emit('onBlur')"
 						class="bi_main_input"
 					/>

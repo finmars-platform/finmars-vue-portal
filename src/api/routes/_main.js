@@ -49,55 +49,66 @@ export default {
         get: prefix + '/instruments/pricing-condition/',
     },
 
-    pricingPolicyList: {
-        get: prefix + '/instruments/pricing-policy/',
-    },
-    pricingPolicyListLight: {
-        get: prefix + '/instruments/pricing-policy/light/',
-    },
-    currencyList: {
-        get: prefix + '/currencies/currency/',
-    },
-    currencyListLight: {
-        get: prefix + '/currencies/currency/light/',
-    },
-    currencySchemeList: {
-        get: prefix + '/pricing/currency-pricing-scheme/',
-    },
-    currencyDatabaseSearch: {
-        // get: prefix + '/api/currencies/currency-database-search/',
-        get: uDatabasePrefix + '/currency/',
-    },
-    importCurrencyFmDb: {
-        post: prefix + '/import/finmars-database/currency/',
-    },
-    portfolioList: {
-        get: prefix + '/portfolios/portfolio/',
-    },
-    portfolioListLight: {
-        get: prefix + '/portfolios/portfolio/light/',
-    },
-    accountLight: {
-        get: prefix + '/accounts/account/light/',
-    },
-    accountTypeList: {
-        get: prefix + '/accounts/account-type/',
-    },
-    counterpartyList: {
-        get: prefix + '/counterparties/counterparty/',
-    },
-    counterpartyResponsibleLight: {
-        get: prefix + '/counterparties/responsible/light/',
-    },
-    counterpartyCounterpartyLight: {
-        get: prefix + '/counterparties/counterparty/light/',
-    },
-    counterpartyDatabaseSearch: {
-        get: uDatabasePrefix + '/company/',
-    },
-    importCounterpartyFmDb: {
-        post: prefix + '/import/finmars-database/company/',
-    },
+	pricingPolicyList: {
+		get: prefix + '/instruments/pricing-policy/',
+	},
+	pricingPolicy: {
+		post: prefix + '/instruments/pricing-policy/',
+		delete: prefix + '/instruments/pricing-policy/{id}/',
+		put: prefix + '/instruments/pricing-policy/{id}/',
+	},
+	pricingPolicyListLight: {
+		get: prefix + '/instruments/pricing-policy/light/',
+	},
+	currencyList: {
+		get: prefix + '/currencies/currency/',
+	},
+	currencyListLight: {
+		get: prefix + '/currencies/currency/light/',
+	},
+	currencySchemeList: {
+		get: prefix + '/pricing/currency-pricing-scheme/',
+	},
+	currencyDatabaseSearch: {
+		// get: prefix + '/api/currencies/currency-database-search/',
+		get: uDatabasePrefix + '/currency/',
+	},
+	importCurrencyFmDb: {
+		post: prefix + '/import/finmars-database/currency/',
+	},
+	portfolioList: {
+		get: prefix + '/portfolios/portfolio/',
+	},
+	portfolioListLight: {
+		get: prefix + '/portfolios/portfolio/light/',
+	},
+	accountLight: {
+		get: prefix + '/accounts/account/light/',
+	},
+	accountTypeList: {
+		get: prefix + '/accounts/account-type/',
+	},
+	counterpartyList: {
+		get: prefix + '/counterparties/counterparty/',
+	},
+	counterpartyResponsibleLight: {
+		get: prefix + '/counterparties/responsible/light/',
+	},
+	responsibleGroupList: {
+		get: prefix + '/counterparties/responsible-group/',
+	},
+	counterpartyCounterpartyLight: {
+		get: prefix + '/counterparties/counterparty/light/',
+	},
+	counterpartyDatabaseSearch: {
+		get: uDatabasePrefix + '/company/',
+	},
+	counterpartyGroupList: {
+		get: prefix + '/counterparties/counterparty-group/',
+	},
+	importCounterpartyFmDb: {
+		post: prefix + '/import/finmars-database/company/',
+	},
 
     importBankProc: {
         get: prefix + '/procedures/request-data-procedure/',
@@ -190,11 +201,13 @@ export default {
     instrumentsEventInformed: {
         put: prefix + '/instruments/generated-event/{id}/informed/',
     },
-    instrumentUserField:{
+    instrumentUserFieldList:{
         get: prefix + '/ui/instrument-user-field/',
-        put: prefix + '/ui/instrument-user-field/{id}/',
-        post: prefix + '/ui/instrument-user-field/',
     },
+	instrumentUserField:{
+		put: prefix + '/ui/instrument-user-field/{id}/',
+		post: prefix + '/ui/instrument-user-field/',
+	},
 
     listLayoutList: {
         get: prefix + '/ui/list-layout/',
@@ -223,8 +236,10 @@ export default {
     balanceReportAttributes: {
         get: prefix + '/reports/balance-report/attributes/',
     },
-    portfolioBundles: {
-        get: prefix + '/portfolios/portfolio-bundle/',
+	portfolioBundleList: {
+		get: prefix + '/portfolios/portfolio-bundle/',
+	},
+    portfolioBundle: {
         post: prefix + '/portfolios/portfolio-bundle/',
         put: prefix + '/portfolios/portfolio-bundle/{id}/',
         delete: prefix + '/portfolios/portfolio-bundle/{id}/',
@@ -316,68 +331,113 @@ export default {
         get: prefix + '/strategies/3/strategy-attribute-type/',
     },
 
-    transactionTypeLight: {
-        get: prefix + '/transactions/transaction-type/light/',
-    },
-    transactionTypeAttrTypeList: {
-        get: prefix + '/transactions/complex-transaction-attribute-type/',
-    },
-    complexTransactionAttrTypeList: {
-        get: prefix + '/transactions/complex-transaction-attribute-type/',
-    },
-    //# endregion Entity viewer attribute types
-    balanceReportCustomFieldList: {
-        get: prefix + '/reports/balance-report/custom-field/',
-    },
-    plReportCustomFieldList: {
-        get: prefix + '/reports/pl-report/custom-field/',
-    },
-    transactionReportCustomFieldList: {
-        get: prefix + '/reports/transaction-report/custom-field/',
-    },
-    mobileLayout: {
-        get: prefix + '/ui/mobile-layout/',
-        post: prefix + '/ui/mobile-layout/',
-        put: prefix + '/ui/mobile-layout/{id}/',
-    },
-    // Надо отделить
+	transactionTypeLight: {
+		get: prefix + '/transactions/transaction-type/light/',
+	},
+	transactionTypeAttrTypeList: {
+		get: prefix + '/transactions/complex-transaction-attribute-type/',
+	},
+	complexTransactionAttrTypeList: {
+		get: prefix + '/transactions/complex-transaction-attribute-type/',
+	},
+	//# endregion Entity viewer attribute types
+	balanceReportCustomFieldList: {
+		get: prefix + '/reports/balance-report/custom-field/',
+	},
+	balanceReportCustomField: {
+		post: prefix + '/reports/balance-report/custom-field/',
+		put: prefix + '/reports/balance-report/custom-field/{id}/',
+		delete: prefix + '/reports/balance-report/custom-field/{id}/',
+	},
+	plReportCustomFieldList: {
+		get: prefix + '/reports/pl-report/custom-field/',
+	},
+	plReportCustomField: {
+		post: prefix + '/reports/pl-report/custom-field/',
+		put: prefix + '/reports/pl-report/custom-field/{id}/'
+	},
+	transactionReportCustomFieldList: {
+		get: prefix + '/reports/transaction-report/custom-field/',
+	},
+	transactionReportCustomField: {
+		post: prefix + '/reports/transaction-report/custom-field/',
+		put: prefix + '/reports/transaction-report/custom-field/{id}/'
+	},
+	mobileLayout: {
+		get: prefix + '/ui/mobile-layout/',
+		post: prefix + '/ui/mobile-layout/',
+		put: prefix + '/ui/mobile-layout/{id}/',
+	},
+	// Надо отделить
 
-    widgetsHistory: {
-        get: prefix + '/widgets/history/{type}/',
-    },
-    widgetsStats: {
-        get: prefix + '/widgets/stats/',
-    },
-    strategiesOneLight: {
-        get: prefix + '/strategies/1/strategy/light/',
-    },
-    strategiesOneSubgroup: {
-        get: prefix + '/strategies/1/subgroup/',
-    },
-    strategiesSecondLight: {
-        get: prefix + '/strategies/2/strategy/light/',
-    },
-    strategiesSecondSubgroup: {
-        get: prefix + '/strategies/2/subgroup/',
-    },
-    strategiesThirdLight: {
-        get: prefix + '/strategies/3/strategy/light/',
-    },
-    strategiesThirdSubgroup: {
-        get: prefix + '/strategies/3/subgroup/',
-    },
-    defaultSettings: {
-        put: prefix + '/users/ecosystem-default/{id}/',
-    },
-    complexTransactionUserField: {
-        get: prefix + '/ui/complex-transaction-user-field/',
-        put: prefix + '/ui/complex-transaction-user-field/{id}/',
-        post: prefix + '/ui/complex-transaction-user-field/',
-    },
-    transactionUserField: {
-        get: prefix + '/ui/transaction-user-field/',
-        put: prefix + '/ui/transaction-user-field/{id}/',
-        post: prefix + '/ui/transaction-user-field/',
-    },
-
+	widgetsHistory: {
+		get: prefix + '/widgets/history/{type}/',
+	},
+	widgetsStats: {
+		get: prefix + '/widgets/stats/',
+	},
+	strategies1ListLight: {
+		get: prefix + '/strategies/1/strategy/light/',
+	},
+	strategies1SubgroupList: {
+		get: prefix + '/strategies/1/subgroup/',
+	},
+	strategies2ListLight: {
+		get: prefix + '/strategies/2/strategy/light/',
+	},
+	strategies2SubgroupList: {
+		get: prefix + '/strategies/2/subgroup/',
+	},
+	strategies3ListLight: {
+		get: prefix + '/strategies/3/strategy/light/',
+	},
+	strategies3SubgroupList: {
+		get: prefix + '/strategies/3/subgroup/',
+	},
+	defaultSettings: {
+		put: prefix + '/users/ecosystem-default/{id}/',
+	},
+	/*complexTransactionUserField: {
+		get: prefix + '/ui/complex-transaction-user-field/',
+		put: prefix + '/ui/complex-transaction-user-field/{id}/',
+		post: prefix + '/ui/complex-transaction-user-field/',
+	},*/
+	complexTransactionUserFieldList: {
+		get: prefix + '/ui/complex-transaction-user-field/',
+	},
+	complexTransactionUserField: {
+		put: prefix + '/ui/complex-transaction-user-field/{id}/',
+		post: prefix + '/ui/complex-transaction-user-field/',
+	},
+	/*transactionUserField: {
+		get: prefix + '/ui/transaction-user-field/',
+		put: prefix + '/ui/transaction-user-field/{id}/',
+		post: prefix + '/ui/transaction-user-field/',
+	},*/
+	transactionUserFieldList: {
+		get: prefix + '/ui/transaction-user-field/',
+	},
+	transactionUserField: {
+		put: prefix + '/ui/transaction-user-field/{id}/',
+		post: prefix + '/ui/transaction-user-field/',
+	},
+	transactionTypeGroupList: {
+		get: prefix + '/transactions/transaction-type-group/',
+	},
+	transactionTypeGroup: {
+		put: prefix + '/transactions/transaction-type-group/{id}/',
+		post: prefix + '/transactions/transaction-type-group/',
+		delete: prefix + '/transactions/transaction-type-group/{id}/',
+	},
+	specificDataValuesForSelect: {
+		/* *
+		 * Used to get unique values of attribute from rv / ev rows.
+		 * Requires next query parameters:
+		 *
+		 * content_type: String - content_type of rv or ev
+		 * key: String - Key of an attribute whose value to aggregate
+		 * value_type: Number - value_type of an attribute
+		 * */
+		get: prefix + '/specific-data/values-for-select/'
+	},
 }

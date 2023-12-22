@@ -1,17 +1,17 @@
-import routes from "../api/routes";
-import providers from "../api/providers/main.js";
+import routes from '../api/routes'
+import providers from '../api/providers/main.js'
 
 let expireTokens
-export default async function useApi (
-		route_opt,
-		{
-			params,  // Router params
-			body,    // Body for POST PUT PATCH
-			filters, // Query object
-			headers = {},
-			provider = true // Query object
-		} = {}
-	) {
+export default async function useApi(
+	route_opt,
+	{
+		params, // Router params
+		body, // Body for POST PUT PATCH
+		filters, // Query object
+		headers = {},
+		provider = true, // callback for format data result
+	} = {}
+) {
 	// if ( !expireTokens && route_opt != 'tokenInfo.get' ) {
 	// 	let res = await useApi('tokenInfo.get')
 
@@ -23,40 +23,39 @@ export default async function useApi (
 	// 		console.log('expireTokens:', expireTokens)
 	// 	}
 	// }
-	const config = useRuntimeConfig();
+	const config = useRuntimeConfig()
 
-	const [route, method] = route_opt.split(".");
+	const [route, method] = route_opt.split('.')
 
-	if ( !routes[route] ) {
-		throw new Error(`Route: ${route} is not registered`);
+	if (!routes[route]) {
+		throw new Error(`Route: ${route} is not registered`)
 	}
 
-	let url = routes[route][method];
+	let url = routes[route][method]
 
 	if (!url) {
-		console.log("Route not found:", route_opt);
-		return false;
+		console.log('Route not found:', route_opt)
+		return false
 	}
 
 	let baseApi = useStore().current.base_api_url
-	if ( baseApi )
-		url = url.replace('{client}', baseApi);
+	if (baseApi) url = url.replace('{client}', baseApi)
 
 	let token = useCookie('access_token').value
 
 	let opts = {
-		method: method.toUpperCase() || "GET",
+		method: method.toUpperCase() || 'GET',
 		headers: {
-			Authorization: "Token " + token,
-			...headers
-		}
-	};
+			Authorization: 'Token ' + token,
+			...headers,
+		},
+	}
 
-	if (body) opts.body = body;
+	if (body) opts.body = body
 	if (filters) {
 		let searchPaarams = []
 
-		for ( let prop in filters ) {
+		for (let prop in filters) {
 			searchPaarams.push(`${prop}=${filters[prop]}`)
 		}
 
@@ -64,16 +63,17 @@ export default async function useApi (
 	}
 	if (params) {
 		for (let param in params) {
-			url = url.replace(`{${param}}`, params[param]);
+			url = url.replace(`{${param}}`, params[param])
 		}
 	}
 
 	try {
 		let response = await $fetch(url, opts)
 
-		return method == 'get' && providers[route] && provider ? providers[route](response) : response
-
-	} catch(e) {
+		return method == 'get' && providers[route] && provider
+			? providers[route](response)
+			: response
+	} catch (e) {
 		console.log('e:', e)
 		let [code, url] = e.message.split('  ')
 
@@ -89,53 +89,49 @@ export default async function useApi (
 
 		useNotify({ group: 'server_error', title, text, duration: 20000 })
 
-		return {error: e.data || true, code }
+		return { error: e.data || true, code }
 	}
-
 }
 
-export function useLoadAllPages (
+export function useLoadAllPages(
 	route_opt,
 	{
-		params,  // Router params
-		body,    // Body for POST PUT PATCH
+		params, // Router params
+		body, // Body for POST PUT PATCH
 		filters = {}, // Query object
 		headers = {},
 	} = {},
-	dataList = [],
+	dataList = []
 ) {
-
-	if (!filters.hasOwnProperty('page')) filters.page = 1;
+	if (!filters.hasOwnProperty('page')) filters.page = 1
 
 	const options = {
 		params,
 		body,
 		filters,
-		headers
-	};
+		headers,
+	}
 
 	const loadPage = async () => {
-
 		try {
+			let res = await useApi(route_opt, options)
 
-			let res = await useApi(route_opt, options);
-
-			dataList = dataList.concat(res.results);
-
-			if (res.next) {
-				options.filters.page += 1; // number of page to request
-				return loadPage();
-
-			} else {
-				return dataList;
+			if (!res.hasOwnProperty('next')) {
+				throw new Error(`Api for the route: ${route_opt} does not support pagination`);
 			}
 
+			dataList = dataList.concat(res.results)
+
+			if (res.next) {
+				options.filters.page += 1 // number of page to request
+				return loadPage()
+			} else {
+				return dataList
+			}
 		} catch (e) {
-			throw e;
+			throw e
 		}
+	}
 
-	};
-
-	return loadPage();
-
+	return loadPage()
 }

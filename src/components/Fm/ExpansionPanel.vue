@@ -48,7 +48,7 @@
 <style lang="scss" scoped>
 	.fm_expansion_panel {
 		border: 1px solid $border;
-		
+
 		background: $separ;
 		border-radius: 4px;
 		max-width: 100%;
@@ -62,15 +62,13 @@
 		padding: 15px;
 	}
 	.name{
-		width: 35%;
-	}
-	.arrow{
-		margin-left: auto;
-		margin-right: 0;
+        min-width: 210px;
+		flex-basis: 35%;
+        flex-shrink: 0;
 	}
 	.fm_expansion_panel_title {
 		display: flex;
-		justify-content: flex-start;
+        justify-content: space-between;
 		align-items: center;
 		height: 48px;
 		padding: 0 22px;
@@ -81,6 +79,10 @@
 			border-bottom: 1px solid $border;
 		}
 	}
+    .subtitle {
+        flex-basis: 35%;
+        flex-grow: 1;
+    }
 	.subtitle__text {
 		color: $gray;
 		font-weight: 400;

@@ -35,13 +35,31 @@
 				"
 			>
 				<FmLoader v-if="item === null" />
+
 				<template v-else-if="typeof item == 'object'">
-					<NuxtLink class="link dib" :to="item.link" v-if="item.link">{{
-						item.value
-					}}</NuxtLink>
-					<template v-else>{{ item.value }}</template>
+
+					<div
+						class="overflow-hidden text-overflow-ellipsis"
+						v-fm-tooltip="item.value"
+					>
+						<NuxtLink
+							v-if="item.link"
+							class="link dib"
+							:to="item.link"
+
+						>{{ item.value }}</NuxtLink>
+
+						<template v-else>{{ item.value }}</template>
+					</div>
+
 				</template>
-				<template v-else>{{ item === '' ? '-' : item }}</template>
+
+				<template v-else>
+					<div
+						class="overflow-hidden text-overflow-ellipsis"
+						v-fm-tooltip="item"
+					>{{ item === '' ? '-' : item }}</div>
+				</template>
 			</div>
 		</div>
 	</div>

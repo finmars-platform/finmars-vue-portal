@@ -13,7 +13,7 @@
 	var evContent
 	var minWidth = 65
 
-	const { evEventService, evDataService } = inject('ngDependace')
+	const { evEventService, evDataService } = inject('fmTableData')
 
 	onMounted(() => {
 		init()

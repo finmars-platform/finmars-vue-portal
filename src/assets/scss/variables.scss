@@ -1,4 +1,4 @@
-$font-family: "Roboto";
+$font-family: 'Roboto';
 
 $orange: #f05a22;
 $red: #c9400e;
@@ -13,16 +13,16 @@ $primary-lighten-2: rgb(240 90 34 / 12%);
 
 $error: $orange;
 
-$border: #E0E0E0;
+$border: #e0e0e0;
 $border-active: #333;
-$border-darken: #B3B3B3;
+$border-darken: #b3b3b3;
 $borer-lighten: #e0e0e0;
 
 $opts-borders: 1px solid $border;
 
 $main: #fafafa;
 $main-darken: #f2f1f1;
-$main-darken-2: #EBEBEB;
+$main-darken-2: #ebebeb;
 $main-darken-hover: #e2e2e2;
 
 $separ: $white;
@@ -33,13 +33,13 @@ $text-hover: #7e7e7e;
 $text-lighten: #747474;
 
 $text-pale: #e0e0e0;
-$text-pale2: #bdbdbd; // used to make small text more readable (e.g. label of disabled input)
+$text-pale2: #bdbdbd; // more readable version
 
 $hover-background: #f2f2f2;
 
 $content-padding-x: 30px;
 
-$backdrop-z-index: 55;
+$modal-z-index: 55; // used by modals and popups
 
 $modal-header-height: 50px;
 $modal-footer-height: 57px;
@@ -56,17 +56,17 @@ $checkboxColor: rgba(255, 64, 129, 0.87);
 
 $borderPale: #e0e0e0;
 $borderGray: #b3b3b3;
-$whiteBackground: rgb(250,250,250);
+$whiteBackground: rgb(250, 250, 250);
 $grayIcon: #a1a1a1;
 
 $btnHover: #fdece5;
-$optionHoverColor: rgba(158,158,158,0.2);
+$optionHoverColor: rgba(158, 158, 158, 0.2);
 
 $leftSidenavWidth: 160px;
 $collapsedLeftSidenavWidth: 65px;
 
 $gRowHeight: 36px;
-$gCellBorderColor: #DBDBDB;
+$gCellBorderColor: #dbdbdb;
 $gCellBorder: 1px solid $gCellBorderColor;
 
 // after changing gPopupMenuOptionHeight, also modify methods that calculate popup position in rv-dom.manager.js

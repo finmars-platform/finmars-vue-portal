@@ -4,19 +4,25 @@
 		@close="resetBundleData"
 	>
 
-		<FmInputText
-			label="Name"
-			v-model="bundleName"
-		/>
+		<div v-if="readyStatus">
+			<FmInputText
+				label="Name"
+				v-model="bundleName"
+			/>
 
-		<BaseMultiSelectTwoAreas
-			class="p-b-16"
-			v-model="bundleRegistersList"
-			:items="registers"
-			item_id="id"
-			item_title="user_code"
-			@update:modelValue="newValue => bundleRegistersList = newValue"
-		/>
+			<BaseMultiSelectTwoAreas
+				class="p-b-16"
+				v-model="bundleRegistersList"
+				:items="registers"
+				item_id="id"
+				item_title="user_code"
+				@update:modelValue="newValue => bundleRegistersList = newValue"
+			/>
+		</div>
+
+		<div v-else class="loader_container">
+			<FmLoader :size="60" positionCenter/>
+		</div>
 
 		<template #controls="{ cancel }">
 			<div class="flex sb">
@@ -51,6 +57,7 @@
 
 	let emit = defineEmits(['save']);
 
+	let readyStatus = ref(false);
 	let bundleName = ref(props.name);
 	let bundleRegistersList = ref(props.bundleRegisters);
 	let registers = ref([])
@@ -64,11 +71,28 @@
 		() => props.bundleRegisters,
 		() => bundleRegistersList.value = props.bundleRegisters
 	)
-	fetchPrtfRegistersList()
+
 	async function fetchPrtfRegistersList() {
 
-		const res = await useApi('portfolioRegisterEvFiltered.post', {
-			body: '{"groups_types":[],"page":1,"groups_values":[],"groups_order":"asc","page_size":60,"ev_options":{"entity_filters":["enabled","disabled","active","inactive"]},"filter_settings":[],"global_table_search":"","is_enabled":"any"}'
+		readyStatus.value = false;
+
+		const body = {
+			"groups_types": [],
+			"page": 1,
+			"groups_values": [],
+			"groups_order": "asc",
+			"page_size": 1000,
+			"ev_options": {
+				"entity_filters": ["enabled","disabled","active","inactive"],
+			},
+			"filter_settings": [],
+			"global_table_search": "",
+			"is_enabled": "any",
+		};
+
+		const res = await useApi(
+			'portfolioRegisterEvFiltered.post', {
+			body: body,
 		});
 
 		if (!res.error) {
@@ -79,6 +103,8 @@
 				})
 			);
 
+			readyStatus.value = true;
+
 		}
 
 	}
@@ -87,8 +113,15 @@
 		bundleRegistersList.value = props.bundleRegisters;
 	}
 
+	fetchPrtfRegistersList();
+
 </script>
 
 <style lang="scss" scoped>
+
+.loader_container {
+	min-width: 350px;
+	min-height: 400px;
+}
 
 </style>

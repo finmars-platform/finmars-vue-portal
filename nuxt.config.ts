@@ -20,7 +20,10 @@ export default defineNuxtConfig({
 	},
 	ssr: false,
 	imports: {
-		dirs: ['stores']
+		dirs: [
+			'stores',
+			'composables/evRv/*.js'
+		]
 	},
 	app: {
 		head: {
