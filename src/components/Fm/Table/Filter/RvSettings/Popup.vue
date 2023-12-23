@@ -36,6 +36,14 @@
 				@filterOptionsChanged="newVal => filterRef.options = newVal"
 			/>
 
+			<FmTableFilterRvSettingsDate
+				v-if="filterRef.value_type === 40"
+				:filter="filterRef"
+				:getActiveFilterType="getActiveFilterType"
+				:getDataForSelects="getDataForSelects"
+				@filterOptionsChanged="newVal => filterRef.options = newVal"
+			/>
+
 			<!--            <div v-if="filter.value_type === 40" class="m-b-24">
 							<rv-date-filter></rv-date-filter>
 						</div>
@@ -95,6 +103,7 @@ let attrsList = [];
 //# region hooks
 //# endregion
 
+// Used by components for every filter type (e.g. text, number, date etc)
 const getActiveFilterType = (filter, filterTypesList) => {
 
 	filter = unref(filter);

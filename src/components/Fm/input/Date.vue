@@ -2,7 +2,7 @@
 	<BaseInput
 		ref="baseInput"
 		:label="label"
-		:modelValue="modelValue"
+		:modelValue="inputValue"
 		:required="required"
 		:disabled="disabled"
 		:errorData="error"
@@ -43,6 +43,7 @@
 	const emit = defineEmits(['update:modelValue', 'update:errorData'])
 
 	let baseInput = ref(null)
+	let inputValue = ref(null);
 	// let mainInputValue = ref(props.modelValue);
 	let doNotShowDatepicker = true
 	let localErrorData = ref(null) // when props.errorData not used
@@ -58,6 +59,7 @@
 			return props.errorData ? props.errorData : localErrorData.value
 		},
 	})
+
 	onMounted(() => {
 		let pickmeupOpts = {
 			default_date: props.defaultDate,
@@ -89,17 +91,24 @@
 			}
 		)
 	})
+
 	watch(
 		() => props.modelValue,
 		() => {
-			if (
-				error.value &&
-				error.value.code === 40 &&
-				props.modelValue &&
-				dayjs(props.modelValue, 'YYYY-MM-DD', true).isValid()
-			) {
+
+			const invalidValError = error.value && error.value.code === 40;
+			const newValIsValid = props.modelValue &&
+				dayjs(props.modelValue, 'YYYY-MM-DD', true).isValid();
+
+			if (invalidValError && newValIsValid) {
+				// reset error data if valid value passed from above
 				error.value = null
 			}
+
+			if (!props.modelValue || newValIsValid) {
+				inputValue.value = props.modelValue;
+			}
+
 		}
 	)
 
@@ -161,10 +170,19 @@
 		return value
 	}
 
-	const validateValue = useDebounce(function (newValue) {
-		const notValid = !dayjs(newValue, 'YYYY-MM-DD', true).isValid()
+	/**
+	 *
+	 * @param {String} val
+	 * @return {boolean} - 'true' if value valid, otherwise 'false'
+	 */
+	const isValueValid = val => {
+		return dayjs(val, 'YYYY-MM-DD', true).isValid();
+	}
 
-		if (notValid) {
+	/** Turns on error mode if invalid value entered */
+	const indicateInvalidValueD = useDebounce(function (newValue) {
+
+		if ( !isValueValid(newValue) ) { // not valid
 			error.value = {
 				code: 40,
 				message: 'Date has wrong format. Use this format instead: YYYY-MM-DD.',
@@ -183,11 +201,28 @@
 		}
 
 		value = formatDateValue(value)
+		console.log("testing1923.FmInputDate onMainInputChange valid value",
+			value, isValueValid(value));
+		inputValue.value = value;
 
-		validateValue(value)
+		indicateInvalidValueD(value)
 
-		emit('update:modelValue', value)
+		if ( isValueValid(value) ) {
+			emit('update:modelValue', value);
+		}
+
 	}
+
+	function init() {
+
+		if ( props.modelValue && isValueValid(props.modelValue) ) {
+			inputValue.value = props.modelValue;
+		}
+
+	}
+
+	init();
+
 </script>
 
 <style lang="scss" scoped>

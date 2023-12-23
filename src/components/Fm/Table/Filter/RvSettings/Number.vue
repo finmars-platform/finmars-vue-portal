@@ -1,5 +1,4 @@
 <template>
-
 	<FmTableFilterBase
 		:readyStatus="true"
 		:filterType="filterTypeC"
@@ -107,9 +106,13 @@ const filterTypes = [
 	},
 ]
 
-const filterTypeC = computed(() =>
-	props.getActiveFilterType(props.filter, filterTypes)
-)
+const filterTypeC = computed(() => {
+	/* *
+     * when reception of active filter type needs to update
+     * modify getActiveFilterType inside FmTableFilterRvSettingsPopup
+	 * */
+	return props.getActiveFilterType(props.filter, filterTypes);
+})
 //# endregion
 
 const changeFilterType = function (filterType) {
@@ -134,7 +137,7 @@ const changeFilterType = function (filterType) {
 };
 
 const changeFilterValue = function (newVal) {
-	console.log("testing1923.filterNumber changeFilterValue", newVal);
+
 	let filterOptions = JSON.parse(JSON.stringify( props.filter.options ));
 
 	filterOptions.filter_values = newVal;
