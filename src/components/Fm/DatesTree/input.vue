@@ -8,7 +8,7 @@
 		/>
 	</div>
 
-	<FmDateTreeModal
+	<FmDatesTreeModal
 		v-model="modalOpened"
 		:datesTree="datesTree"
 		:options="options"
@@ -59,7 +59,7 @@ let props = defineProps({
 		default() { return [] },
 	},
 });
-console.log("testing1923.DateTreeInput props.modelValue", props.datesTree);
+
 let emit = defineEmits(['update:datesTree']);
 
 //# region variables, refs, computed
@@ -85,7 +85,7 @@ let inputTextC = computed(() => {
 		});
 
 	});
-	console.log("testing1923.DatesTreeInput datesSelected", datesSelected);
+
 	return datesSelected ? `${datesSelected} dates selected` : '';
 
 })

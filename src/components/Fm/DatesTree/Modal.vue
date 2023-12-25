@@ -117,6 +117,8 @@
 
 <script setup>
 
+import dayjs from "dayjs";
+
 // stores
 // props, emits
 let props = defineProps({
@@ -574,6 +576,32 @@ vm.onCheckboxClick = function (checkboxData, options) {
 
 };
 
+const prepareGetTreeForEmit = function () {
+
+    let datesTree = JSON.parse(JSON.stringify( vm.datesTree ));
+
+    datesTree = datesTree.map(yearData => {
+
+        yearData.items = yearData.items.map(monthData => {
+
+            monthData.items = monthData.items.map(dayData => {
+
+                dayData.value = dayjs(dayData.value).format('YYYY-MM-DD');
+
+                return dayData;
+          });
+
+			return monthData;
+
+		})
+
+		return yearData;
+
+	})
+
+	return datesTree;
+};
+
 vm.agree = function (cancelCb) {
 
 	cancelCb();
@@ -596,7 +624,7 @@ vm.agree = function (cancelCb) {
 
 	});
 
-	emit('save', JSON.parse(JSON.stringify( vm.datesTree )) );
+	emit('save', prepareGetTreeForEmit() );
 
 };
 
