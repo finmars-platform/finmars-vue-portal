@@ -48,13 +48,19 @@ button.fm_list_item {
     }
 }
 
-// Custom inputs
+//# region Custom inputs
 .bi_default {
     .bi_main_input {
         width: 100%;
         height: inherit;
     }
 }
+
+.input_placeholder {
+	color: $text-pale;
+}
+
+//# endregion
 
 //# region Card
 .fm_card_title {

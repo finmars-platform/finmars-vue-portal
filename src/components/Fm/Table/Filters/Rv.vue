@@ -175,6 +175,13 @@
 
 	}
 
+	/**
+	 * Make array from filters for component FmTableFiltersChips.
+	 * Located here because this function different for report viewer
+	 * and entity viewer.
+	 *
+	 * @return {*[]} - date for chips
+	 */
 	const formatFiltersForChips = function () {
 
 		let filtersChips = [];
@@ -358,7 +365,8 @@
 			useFromAboveFilters = useFilterUseFromAboveFilters(filtersList);
 
 			filtersChipsRef.value = formatFiltersForChips();
-
+			console.log("testing1923.FiltersRv FILTERS_CHANGED filtersChipsRef.value",
+				filtersChipsRef.value);
 			/*setTimeout(function () { // wait until DOM elems reflow after ng-repeat
 
 				const filterAreaHeightChanged = gFiltersVm.updateFilterAreaHeight();

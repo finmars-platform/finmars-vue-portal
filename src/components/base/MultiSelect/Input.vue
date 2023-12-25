@@ -192,9 +192,6 @@
 			margin-left: 5px;
 		}
 	}
-	.input_placeholder {
-		color: $text-pale;
-	}
 	/*.header {
 	font-size: 20px;
 	margin-bottom: 8px;

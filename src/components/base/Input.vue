@@ -1,7 +1,10 @@
 <template>
 	<div
 		class="base-input"
-		:class="{ error: errorData, disabled: disabled }"
+		:class="[
+			baseInputType,
+			{ error: errorData, disabled: disabled }
+		]"
 		tabindex="-1"
 		@click="onBiClick"
 	>
@@ -25,7 +28,7 @@
 						:type="type"
 						:placeholder="placeholder || label"
 						:value="modelValue"
-						:readonly="readonly"
+						:readonly="readonly || baseInputType === 'button'"
 						:disabled="disabled"
 						@input="onInputValChange"
 						@focus.stop="$emit('onFocus')"
@@ -73,6 +76,10 @@
 		tooltip: String,
 		// error: [String, Array]
 		errorData: Object,
+		/** @values button
+		 * 'button' - For displaying selected value. Uses pointer as curser.
+		 * */
+		baseInputType: String,
 	})
 
 	let emit = defineEmits([
@@ -179,6 +186,13 @@
 			margin-bottom: 25px;
 		}
 
+		&.button {
+			.bi_main_input:not([disabled]) {
+				cursor: pointer;
+			}
+		}
+
+		//# region Borders
 		&:not(.bi_no_borders) {
 			margin-top: 6px;
 
@@ -227,6 +241,7 @@
 				display: none;
 			}
 		}
+		//# endregion Borders
 
 		&:hover {
 			.bi_side_items:not(.empty) {
@@ -235,6 +250,7 @@
 			}
 		}
 
+		//# region Error
 		&.error:not(.disabled) {
 			margin-bottom: 30px;
 
@@ -271,6 +287,7 @@
 				border-left-color: $error;
 			}
 		}
+		//# endregion Error
 	}
 
 	.bi_error {

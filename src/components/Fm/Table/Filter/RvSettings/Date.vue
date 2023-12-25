@@ -14,6 +14,12 @@
 							 data-dates-tree="filter.options.dates_tree"
 							 data-nothing-selected-text="Off"
 							 data-callback-method="dateTreeChanged(filter.options.dates_tree)"></date-tree-input>-->
+			<FmDateTreeInput
+				:datesTree="filter.options.dates_tree"
+				:options="dateTreeOptsList"
+				placeholder="Off"
+				@update:datesTree="datesTreeChanged"
+			/>
 
 		</div>
 
@@ -82,7 +88,7 @@ const emit = defineEmits([
     'filterOptionsChanged',
     'openUseFromAboveModal',
 ]);
-
+console.log("testing1923.filterDate filter ", props.filter);
 //# region variables, refs, computed
 
 let readyStatusRef = ref(false);
@@ -98,17 +104,18 @@ function openUseFromAboveSettings () {
 }
 
 const filterTypes = [
-    { name: 'Equal', id: 'equal' },
-    { name: 'Not equal', id: 'not_equal' },
-    { name: 'Greater than', id: 'greater' },
-    { name: 'Greater or equal to', id: 'greater_equal' },
-    { name: 'Less than', id: 'less' },
-    { name: 'Less or equal to', id: 'less_equal' },
-    { name: 'From ... to ... (incl)', id: 'from_to' },
-    { name: 'Out of range (incl)', id: 'out_of_range' },
-    { name: 'Empty cells', id: 'empty' },
+	{name: 'Equal', id: 'equal'},
+	{name: 'Not equal', id: 'not_equal'},
+	{name: 'Greater than', id: 'greater'},
+	{name: 'Greater or equal to', id: 'greater_equal'},
+	{name: 'Less than', id: 'less'},
+	{name: 'Less or equal to', id: 'less_equal'},
+	{name: 'From ... to ... (incl)', id: 'from_to'},
+	{name: 'Out of range (incl)', id: 'out_of_range'},
+	{name: 'Empty cells', id: 'empty'},
+	{name: 'Date tree', id: 'date_tree'},
 
-    {
+	{
         name: 'Linked',
         id: 'use_from_above',
         onClick: openUseFromAboveSettings,
@@ -197,6 +204,17 @@ const changeMaxVal = function (newVal) {
 	});
 };
 
+const datesTreeChanged = function (newVal) {
+	console.log("testing1923.filterDate datesTreeChanged", newVal);
+	let filterOptions = JSON.parse(JSON.stringify( props.filter.options ));
+
+	filterOptions.filter_values = gFiltersHelper.convertDatesTreeToFlatList(newVal);
+	filterOptions.dates_tree = newVal;
+	console.log("testing1923.filterDate datesTreeChanged ашдеукЩзешщты",
+		filterOptions);
+	emit('filterOptionsChanged', filterOptions);
+
+}
 
 async function init () {
 
@@ -204,7 +222,7 @@ async function init () {
 
 		dateTreeOptsList.value = await getDataForSelects();
 		// readyStatusRef will be set to 'true' by getDataForSelects()
-
+		console.log("testing1923.filterDate", dateTreeOptsList.value);
 	} else {
 		readyStatusRef.value = true;
 	}

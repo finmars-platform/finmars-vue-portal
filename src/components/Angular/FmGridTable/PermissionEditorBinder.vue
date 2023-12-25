@@ -44,7 +44,6 @@
 
 				<div layout="row" layout-align="begin center">
 					<span v-bind="group.name"></span>
-					</span>
 				</div>
 
 
@@ -107,7 +106,7 @@
 
 
 			<div v-if="vm.entityType == 'portfolio' || vm.entityType == 'account' || vm.entityType == 'transaction-type'">
-<!-- 
+<!--
 				<md-button @click="vm.recalculateTransactionPermissions()"
 									 :class="{'disabled-btn': !vm.isSaved}"
 									 class="md-raised md-primary">Apply new Permissions to Transactions
@@ -118,7 +117,7 @@
 				:class="{'disabled-btn': !vm.isSaved}"
 				class="md-raised md-primary">
 									 Apply new Permissions to Transactions
-			
+
 			</FmBtn>
 
 			</div>
@@ -135,13 +134,13 @@
 				:class="{'disabled-btn': !vm.isSaved}"
 				class="md-raised md-primary">
 				Apply new Permissions to Instruments
-			
+
 			</FmBtn>
 
 			</div>
 
 			<div v-if="vm.entityType == 'account-type'" layout="row">
-<!-- 
+<!--
 				<md-button @click="vm.recalculateAccountPermissions()"
 									 :class="{'disabled-btn': !vm.isSaved}"
 									 class="md-raised md-primary">Apply new Permissions to Accounts
@@ -153,7 +152,7 @@
 									 :class="{'disabled-btn': !vm.isSaved}"
 									 class="md-raised md-primary">
 									 Apply new Permissions to Accounts
-			
+
 			</FmBtn>
 
 				<md-button @click="vm.recalculateAccountAndTransactionsPermissions()"
@@ -166,7 +165,7 @@
 									 :class="{'disabled-btn': !vm.isSaved}"
 									 class="md-raised md-primary">
 									 Apply new Permissions to Accounts
-			
+
 			</FmBtn>
 
 			</div>

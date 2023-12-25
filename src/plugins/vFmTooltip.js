@@ -41,6 +41,8 @@ function calculatePosition(targetElem, tooltipElem, direction) {
 	//# endregion Prevents popup from creeping out of window
 }
 
+const tooltipElemsData = {};
+
 export default defineNuxtPlugin((nuxtApp) => {
 	nuxtApp.vueApp.directive('fm-tooltip', {
 		mounted(el, binding) {
@@ -53,33 +55,47 @@ export default defineNuxtPlugin((nuxtApp) => {
 			const errorMode = binding.arg === 'error';
 			const direction = binding.modifiers.bottom ? 'bottom' : 'top'
 
+			const tooltipKey = useGenerateUniqueId(
+				'' + Object.keys(tooltipElemsData)
+			);
+
+			el.setAttribute('data-fm-tooltip', tooltipKey);
+
+			tooltipElemsData[tooltipKey] = document.createElement('div');
+            tooltipElemsData[tooltipKey].classList.add('fm_tooltip');
+            tooltipElemsData[tooltipKey].style.position = 'absolute';
+            tooltipElemsData[tooltipKey].style.zIndex = 99;
+
 			const body = document.body
-			const tooltipElem = document.createElement('div')
+			// const tooltipElem = document.createElement('div');
+            tooltipElemsData[tooltipKey].innerHTML = binding.value
 
-			tooltipElem.classList.add('fm_tooltip')
-			tooltipElem.style.position = 'absolute'
-			tooltipElem.style.zIndex = 99
-			tooltipElem.innerHTML = binding.value
-
-			if (errorMode) tooltipElem.classList.add('error')
+			if (errorMode) tooltipElemsData[tooltipKey].classList.add('error')
 
 			el.addEventListener('mouseover', function () {
 				if (!binding.value) return
-				body.appendChild(tooltipElem)
 
-				calculatePosition(el, tooltipElem, direction)
+				body.appendChild(tooltipElemsData[tooltipKey])
+
+				calculatePosition(el, tooltipElemsData[tooltipKey], direction)
 			})
 
 			el.addEventListener('mouseleave', function () {
 				if (!binding.value) return
-				body.removeChild(tooltipElem)
+				body.removeChild( tooltipElemsData[tooltipKey] )
 			})
 		},
 
-		unmounted() {
+		updated(el, binding) {
+            tooltipElemsData[el.dataset.fmTooltip].innerHTML = binding.value;
+		},
+
+		unmounted(el) {
 			const tooltipElem = document.querySelector('.fm_tooltip')
 
-			if (tooltipElem) tooltipElem.remove()
+			if (tooltipElem) tooltipElem.remove();
+
+			delete tooltipElemsData[el.dataset.fmTooltip];
 		},
 	})
 })

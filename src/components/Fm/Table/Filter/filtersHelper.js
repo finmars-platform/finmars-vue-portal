@@ -119,3 +119,35 @@ export const mapColRowsContent = (cRowsContent) => {
 		active: false // for date tree selector
 	}
 };
+
+/**
+ *
+ * @param dateTree {Object}
+ * @returns {Array} - selected dates
+ */
+export const convertDatesTreeToFlatList = function (dateTree) {
+
+	let datesList = [];
+
+	dateTree.map(function (yearGroup) {
+
+		yearGroup.items.map(function (monthGroup) {
+
+			monthGroup.items.map(function (date) {
+
+				delete date.dayNumber;
+				delete date.available;
+
+				if (date.active) {
+					datesList.push(date.value);
+				}
+
+			});
+
+		});
+
+	});
+
+	return datesList;
+
+};

@@ -1,5 +1,11 @@
 <template>
-	<label class="checkbox_label flex aic" :class="{disabled}">
+	<label
+		class="checkbox_label flex aic"
+		:class="{
+			disabled,
+			'partially_checked': partiallyChecked,
+		}"
+	>
 		<input
 			type="checkbox"
 			:checked="modelValue"
@@ -8,7 +14,14 @@
 		/>
 
 		<span class="check" :class="{ disabled: disabled }">
-			<FmIcon class="mark" icon="check" :disabled="disabled" />
+			<FmIcon
+				v-show="!partiallyChecked"
+				class="mark"
+				icon="check"
+				:disabled="disabled"
+			/>
+
+			<div v-show="partiallyChecked" class="part_checked_mark"></div>
 		</span>
 
 		<span v-if="label">{{ label }}</span>
@@ -19,10 +32,12 @@
 	let props = defineProps({
 		modelValue: Boolean,
 		disabled: Boolean,
-		type: String,
 		label: String,
 		tooltip: String,
+		// e.g. when some but not all children checkboxes are checked
+		partiallyChecked: Boolean,
 	})
+
 	let emit = defineEmits({
 		'update:modelValue': (value) => true,
 	})
@@ -30,19 +45,25 @@
 
 <style lang="scss" scoped>
 
+$check-size: 16px;
+$part-check-size: $check-size - 6px;
+
 .checkbox_label:not(.disabled) {
 	cursor: pointer;
 }
 
-input[type='radio'],
-input[type='checkbox'] {
+.checkbox_label.disabled {
+	cursor: default;
+}
+
+input {
 	display: none;
 }
-input[type='radio']:checked + .check > .mark,
-input[type='checkbox']:checked + .check > .mark {
+
+input:checked + .check > .mark {
 	opacity: 1;
 }
-input[type='checkbox']:checked + .check {
+input:checked + .check {
 	background: $primary;
 	border: none;
 
@@ -72,12 +93,24 @@ input[type='checkbox']:checked + .check {
 		left: 1px;
 		opacity: 0;
 		transition: 0.3s;
-		font-size: 16px;
+		font-size: $check-size;
 		color: $separ;
 	}
 	.disabled {
 		cursor: default;
 	}
+}
+.part_checked_mark {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+	background: $primary;
+	width: $part-check-size;
+	height: $part-check-size;
+	border: none;
+	border-radius: 4px;
 }
 
 </style>
