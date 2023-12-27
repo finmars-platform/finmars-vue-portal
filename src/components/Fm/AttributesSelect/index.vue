@@ -5,14 +5,15 @@
 	e.g. class 'filled'
 	-->
 	<BaseInput
-		class="ms_wrap input_btn cursor-pointer"
-		:label="title"
-		v-bind="$attrs"
-		:disabled="disabled"
-		@click.stop="openDialog"
 		:modelValue="Array.isArray(modelValue) ? modelValue.join() : modelValue"
+		:label="title"
+		:disabled="disabled"
+		baseInputType="button"
+		v-bind="$attrs"
+		class="ms_wrap input_btn"
+		@click.stop="openDialog"
 	>
-		<template #button><FmIcon icon="menu" /></template>
+		<template #button><FmIcon icon="menu" :disabled="disabled" /></template>
 
 		<!--		<div v-if="multiselect" class="flex aic" style="height: inherit;">
 
@@ -33,7 +34,7 @@
 					</div>
 
 				</div>-->
-		<div class="fm_select_main_input">
+		<div class="fm_select_main_input" :class="{disabled}">
 
 			<div
 				class="selected_text"
@@ -74,7 +75,10 @@ let props = defineProps({
 	multiselect: Boolean,
 	disabled: Boolean,
 });
+if (props.title === 'Select field') {
+	console.log("testing1923.AttributesSelect value_type", props.valueType);
 
+}
 let emit = defineEmits(['update:modelValue', 'selectedAttributesChanged']);
 // let evAttrsStore = useEvAttributesStore();
 
@@ -166,6 +170,10 @@ getSelAttrsKeysList();
 <style lang="scss" scoped>
 :deep(.base-input) {
 	margin-bottom: 0;
+}
+
+.fm_select_main_input:not(.disabled) {
+	cursor: pointer;
 }
 
 .selected_text {

@@ -23,6 +23,7 @@
 				:style="{ height: height }"
 				@update:errorData="(newVal) => emit('update:errorData', newVal)"
 				@click.stop="openMenu"
+				v-bind="$attrs"
 			>
 				<template #button>
 					<slot name="left_icon"></slot>
@@ -42,7 +43,7 @@
 					<div class="fm_select_main_input">
 						<div
 							class="selected_text"
-							:class="{ nothing_selected: !selectedItem }"
+							:class="{ 'nothing_selected': !selectedItem }"
 						>
 							{{ selectedName }}
 						</div>
@@ -117,7 +118,9 @@
 		clearBtn: Boolean, // button that empties select
 		errorData: Object,
 	})
-
+	if (props.label === 'Report Type') {
+		console.log("testing1923.FmSelect label", props.label, props.modelValue)
+	}
 	let emit = defineEmits(['update:modelValue', 'update:errorData'])
 
 	let moFilter = ref('')
@@ -197,6 +200,10 @@
 	}
 
 	//#endregion
+
+	if (props.label === 'Report Type') {
+		console.log("testing1923.FmSelect selectedItem", selectedItem.value);
+	}
 </script>
 
 <style lang="scss" scoped>
@@ -217,6 +224,10 @@
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
+
+		&.nothing_selected {
+			color: $text-pale2;
+		}
 	}
 	/*.selected_field {
 		height: 100%;

@@ -75,7 +75,7 @@ const props = defineProps({
 
 const emit = defineEmits([
 	'filterOptionsChanged',
-	'openUseFromAboveModal',
+	'openUseFromAboveSettings',
 ]);
 
 //# region variables, refs, computed
@@ -85,7 +85,7 @@ function openUseFromAboveSettings () {
 			props.openUseFromAboveSettings(),
 			filter.options
 		);*/
-	emit('openUseFromAboveModal');
+	emit('openUseFromAboveSettings');
 }
 
 const filterTypes = [
@@ -118,6 +118,7 @@ const filterTypeC = computed(() => {
 const changeFilterType = function (filterType) {
 
 	if (filterType === 'use_from_above') {
+		emit('openUseFromAboveSettings');
 		return;
 	}
 

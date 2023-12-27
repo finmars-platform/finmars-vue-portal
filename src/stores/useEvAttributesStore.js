@@ -55,9 +55,9 @@ const dynamicAttrsRouteOpts = {
 }
 
 const userFieldsRouteOpts = {
-	'transactions.transaction': 'transactionUserField',
-	'transactions.complextransaction': 'complexTransactionUserField',
-	'instruments.instrument': 'instrumentUserField',
+	'transactions.transaction': 'transactionUserFieldList',
+	'transactions.complextransaction': 'complexTransactionUserFieldList',
+	'instruments.instrument': 'instrumentUserFieldList',
 }
 
 const customFieldsRouteOpts = {
@@ -456,6 +456,7 @@ export default defineStore({
 		},
 
 		async fetchUserFields(contentType) {
+
 			const res = await useApi( resolveRouteOpt(contentType, userFieldsRouteOpts, 'get'), basicFilters );
 
 			if (res.error) {
@@ -463,9 +464,13 @@ export default defineStore({
 			}
 
 			this.userFields[contentType] = res.results;
+
+			return this.userFields[contentType];
+
 		},
 
 		async getFetchUserFields(contentType) {
+
 			if ( !this.userFields[contentType] ) {
 				return await this.fetchUserFields(contentType)
 			}

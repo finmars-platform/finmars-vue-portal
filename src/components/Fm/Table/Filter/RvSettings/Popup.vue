@@ -1,6 +1,7 @@
 <template>
 	<div
 		class="g-filter-settings g-filter-popup-content"
+		v-bind="$attrs"
 	>
 
 		<div class="g-filter-header flex sb aic">
@@ -27,6 +28,7 @@
 				:getActiveFilterType="getActiveFilterType"
 				:getDataForSelects="getDataForSelects"
 				@filterOptionsChanged="newVal => filterRef.options = newVal"
+				@openUseFromAboveSettings="ufaModalIsOpened = true"
 			/>
 
 			<FmTableFilterRvSettingsNumber
@@ -34,6 +36,7 @@
 				:filter="filterRef"
 				:getActiveFilterType="getActiveFilterType"
 				@filterOptionsChanged="newVal => filterRef.options = newVal"
+				@openUseFromAboveSettings="ufaModalIsOpened = true"
 			/>
 
 			<FmTableFilterRvSettingsDate
@@ -42,6 +45,7 @@
 				:getActiveFilterType="getActiveFilterType"
 				:getDataForSelects="getDataForSelects"
 				@filterOptionsChanged="newVal => filterRef.options = newVal"
+				@openUseFromAboveSettings="ufaModalIsOpened = true"
 			/>
 
 			<!--            <div v-if="filter.value_type === 40" class="m-b-24">
@@ -51,6 +55,16 @@
 						<div v-if="filter.value_type === 50" class="m-b-24">
 							<rv-boolean-filter></rv-boolean-filter>
 						</div>-->
+			<div class="flex-row fc-end m-b-16">
+				<FmBtn v-if="isUseFromAboveFilterC"
+					   type="outlined"
+					   @click="ufaModalIsOpened = true"
+					   style="width: 170px;"
+				>
+					LINKED SETTINGS
+				</FmBtn>
+			</div>
+
 			<FmCheckbox
 				v-model="filterRef.options.exclude_empty_cells"
 				label="Exclude cells with no value"
@@ -62,6 +76,16 @@
 			<FmBtn type="basic" @click="saveFilterSettings()" class="link-button">APPLY</FmBtn>
 		</div>
 	</div>
+
+	<LazyFmTableUseFromAboveSettingsModal
+		v-if="ufaModalIsOpened"
+		v-model="ufaModalIsOpened"
+		:content_type="filterRef.options.use_from_above.attrs_content_type"
+		:value_type="filterRef.value_type"
+		:attributeTypeKey="filterRef.options.use_from_above.key"
+		:filterType="filterRef.options.filter_type"
+		@save="applyUseFromAboveOpts"
+	/>
 </template>
 
 <script setup>
@@ -88,16 +112,12 @@ let {evDataService, evEventService} = inject('fmTableData');
 
 const contentType = evDataService.getContentType();
 
-// used to determine whether filter becomes use from above filter
-let isUseFromAboveFilter = false;
-
 /**
  *
  * @type {Ref<Object>}
  */
 let filterRef = ref(null);
 let attrsList = [];
-
 //# endregion
 
 //# region hooks
@@ -181,7 +201,15 @@ const processUseFromAboveToggle = function (filtersList) {
 
 	});
 
-	if (isUseFromAboveFilter) {
+	if (isUseFromAboveFilterC.value) {
+		// became use from above filter
+		ordinaryFilters = ordinaryFilters.filter(
+			filter => filter.key !== filterRef.value.key
+		);
+
+		useFromAboveFilters.push( JSON.parse(JSON.stringify(filterRef.value)) );
+
+	} else {
 		// became ordinary filter
 
 		ordinaryFilters.push( JSON.parse(JSON.stringify(filterRef.value)) );
@@ -189,16 +217,6 @@ const processUseFromAboveToggle = function (filtersList) {
 		useFromAboveFilters = useFromAboveFilters.filter(
 			ufaFilter => ufaFilter.key !== filterRef.value.key
 		)
-
-	} else {
-		// became use from above filter
-
-		ordinaryFilters = ordinaryFilters.filter(
-			filter => filter.key !== filterRef.value.key
-		);
-
-		useFromAboveFilters.push( JSON.parse(JSON.stringify(filterRef.value)) );
-
 	}
 
 	return useFromAboveFilters.concat(ordinaryFilters);
@@ -209,9 +227,8 @@ const saveFilterSettings = function () {
 
 	let filtersList = evDataService.getFilters();
 
-	if (isUseFromAboveFilter !== useIsFilterUseFromAbove(filterRef.value) ) {
+	if ( isUseFromAboveFilterC.value !== useIsFilterUseFromAbove(props.filter) ) {
 		// use from above has been toggled
-
 		filtersList = processUseFromAboveToggle(filtersList);
 
 	} else {
@@ -223,11 +240,7 @@ const saveFilterSettings = function () {
 		filtersList[index] = JSON.parse(JSON.stringify( filterRef.value ));
 
 	}
-	console.log("testing1923.FmTableFilterRvSettingsPopup saveFilterSettings ",
-		filterRef.value,
-		'\n',
-		structuredClone(filtersList)
-	);
+
 	evDataService.setFilters(filtersList);
 	evEventService.dispatchEvent(evEvents.FILTERS_CHANGE);
 
@@ -235,9 +248,68 @@ const saveFilterSettings = function () {
 
 }
 
+//# region Use from above
+
+// used to determine whether filter becomes use from above filter
+let ufaModalIsOpened = ref(false);
+
+let isUseFromAboveFilterC = computed(() => {
+	return filterRef.value && useIsFilterUseFromAbove(filterRef.value);
+});
+
+let ufaOptionsC = computed(() => {
+
+	if ( !filterRef.value ) {
+		return null;
+	}
+
+	return filterRef.value.options.use_from_above;
+
+});
+
+const applyUseFromAboveOpts = function (options) {
+
+	const optsChanged =
+		filterRef.value.options.use_from_above.key !== options.attributeTypeKey ||
+		filterRef.value.options.filter_type !== options.filterType;
+
+	if (!optsChanged) { // options did not change
+		return;
+	}
+
+	filterRef.value.options.use_from_above = {
+		key: options.attributeTypeKey,
+		attrs_content_type: options.attrsContentType,
+	};
+
+	filterRef.value.options.filter_type = options.filterType;
+
+}
+//# endregion
+
 const init = function () {
 
 	filterRef.value = JSON.parse(JSON.stringify(props.filter));
+
+	if ( !filterRef.value.options.use_from_above ) {
+		throw `use_from_above settings are not set for a filter: ${filterRef.value.key}`;
+	}
+
+	isUseFromAboveFilterC.value = useIsFilterUseFromAbove(filterRef.value);
+
+	if (isUseFromAboveFilterC.value) {
+		// filter.options.use_from_above.attrs_entity_type - legacy
+		if ( ufaOptionsC.value.attrs_entity_type &&
+			 !ufaOptionsC.value.hasOwnProperty('attrs_content_type') ) {
+
+			filterRef.value.options.use_from_above.attrs_content_type =
+				window.metaContentTypesService.findContentTypeByEntity(ufaOptionsC.value.attrs_entity_type);
+			console.log("testing1923.FmTableFilterRvSettingsPopup init attrs_content_type",
+				ufaOptionsC.value
+			);
+		}
+
+	}
 
 	attrsList = evAttrsStore.getAllAttributesByContentType(contentType);
 	console.log(

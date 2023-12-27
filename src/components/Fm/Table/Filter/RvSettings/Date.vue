@@ -86,7 +86,7 @@ const props = defineProps({
 
 const emit = defineEmits([
     'filterOptionsChanged',
-    'openUseFromAboveModal',
+    'openUseFromAboveSettings',
 ]);
 
 //# region variables, refs, computed
@@ -100,7 +100,7 @@ function openUseFromAboveSettings () {
             props.openUseFromAboveSettings(),
             filter.options
         );*/
-    emit('openUseFromAboveModal');
+    emit('openUseFromAboveSettings');
 }
 
 const filterTypes = [
@@ -118,7 +118,6 @@ const filterTypes = [
 	{
         name: 'Linked',
         id: 'use_from_above',
-        onClick: openUseFromAboveSettings,
     },
 ]
 
@@ -156,6 +155,7 @@ const getDataForSelects = async function () {
 const changeFilterType = async function (filterType) {
 
 	if (filterType === 'use_from_above') {
+		emit('openUseFromAboveSettings');
 		return;
 	}
 

@@ -186,8 +186,10 @@
 			margin-bottom: 25px;
 		}
 
-		&.button {
-			.bi_main_input:not([disabled]) {
+		&.button:not(.disabled) {
+			cursor: pointer;
+
+			.bi_main_input {
 				cursor: pointer;
 			}
 		}

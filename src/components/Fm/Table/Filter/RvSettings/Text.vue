@@ -138,7 +138,7 @@ const props = defineProps({
 
 const emit = defineEmits([
 	'filterOptionsChanged',
-	'openUseFromAboveModal',
+	'openUseFromAboveSettings',
 ]);
 
 //# region variables, refs, computed
@@ -170,7 +170,7 @@ const openUseFromAboveSettings = function () {
 			props.openUseFromAboveSettings(),
 			filter.options
 		);*/
-	emit('openUseFromAboveModal');
+	emit('openUseFromAboveSettings');
 }
 
 const filterTypes = [
@@ -182,11 +182,7 @@ const filterTypes = [
 	{ name: 'Multiple Select', id: 'multiselector' },
 	{ name: 'Empty cells', id: 'empty' },
 
-	{
-		name: 'Linked',
-		id: 'use_from_above',
-		onClick: openUseFromAboveSettings,
-	},
+	{ name: 'Linked', id: 'use_from_above' },
 ];
 
 const filterTypeC = computed(() =>
@@ -196,6 +192,7 @@ const filterTypeC = computed(() =>
 scope.changeFilterType = async function (filterType) {
 
 	if (filterType === 'use_from_above') {
+		emit('openUseFromAboveSettings');
 		return;
 	}
 

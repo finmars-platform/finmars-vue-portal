@@ -159,13 +159,14 @@
 				break;
 
 			case 'multiselector':
+			case 'date_tree':
 				filterVal = filterValues.join(', ');
 				break;
 
-			case 'date_tree':
+			/*case 'date_tree':
 				const formattedDates = filterValues.map(date => dayjs(date).format('YYYY-MM-DD'));
 				filterVal = formattedDates.join(', ');
-				break;
+				break;*/
 		}
 
 		return `<span class="g-filter-chips-text">
@@ -188,9 +189,9 @@
 		const errors = []
 
 		let filtersList = evDataService.getFilters();
-		console.log("testing1923.formatFiltersForChips filtersList", filtersList);
+		// console.log("testing1923.formatFiltersForChips filtersList", filtersList);
 		filtersList = filtersList.map((filter) => {
-			console.log("testing1923.formatFiltersForChips 1 filter", filter);
+			// console.log("testing1923.formatFiltersForChips 1 filter", filter);
 			if (filter.type === 'filter_link') {
 				// don't show filter from dashboard component
 				return;
@@ -201,10 +202,9 @@
 			// hide use from above filters if needed
 			if (
 				scope.showUseFromAboveFilters ||
-				!filterOpts.use_from_above ||
-				!Object.keys(filterOpts.use_from_above).length
+				!useIsFilterUseFromAbove(filter)
 			) {
-				console.log("testing1923.formatFiltersForChips 2", filter);
+				// console.log("testing1923.formatFiltersForChips 2", filter);
 				let filterData = {
 					id: filter.key,
 					isActive: filterOpts.enabled,
@@ -245,7 +245,7 @@
 					if (error) errors.push(error)
 
 				}
-				console.log("testing1923.formatFiltersForChips filterData", filterData);
+				// console.log("testing1923.formatFiltersForChips filterData", filterData);
 				filtersChips.push(filterData)
 			}
 
@@ -256,10 +256,9 @@
 
 		evDataService.setFilters(filtersList);
 
-		// if (errors.length) scope.vm.updateMissingCustomFieldsList(errors)
 		if (errors.length) emit('customFieldsMissing', errors);
-		console.log("testing1923.formatFiltersForChips filtersChips", filtersChips);
-		// scope.vm.updateFilterAreaHeight()
+		// console.log("testing1923.formatFiltersForChips filtersChips", filtersChips);
+
 		return filtersChips;
 	}
 
@@ -325,7 +324,7 @@
 		let filterData = allFilters.find(
 			filter => filter.key === filterKey
 		);
-		console.log();
+
 		if (!filterData) {
 			return null;
 		}
@@ -365,8 +364,6 @@
 			useFromAboveFilters = useFilterUseFromAboveFilters(filtersList);
 
 			filtersChipsRef.value = formatFiltersForChips();
-			console.log("testing1923.FiltersRv FILTERS_CHANGED filtersChipsRef.value",
-				filtersChipsRef.value);
 			/*setTimeout(function () { // wait until DOM elems reflow after ng-repeat
 
 				const filterAreaHeightChanged = gFiltersVm.updateFilterAreaHeight();

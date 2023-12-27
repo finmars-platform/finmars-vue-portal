@@ -34,7 +34,7 @@ export default async function useApi(
 	let url = routes[route][method]
 
 	if (!url) {
-		console.log('Route not found:', route_opt)
+		console.error('Route not found:', route_opt)
 		return false
 	}
 

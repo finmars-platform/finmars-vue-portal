@@ -146,6 +146,7 @@ export const useFilterUseFromAboveFilters = function (filters) {
 	});
 
 };
+
 export const useInsertActObjIntoEvRvFilters = function (evDataService, evEventService) {
 
 	let filtersChangedFromAbove = false;

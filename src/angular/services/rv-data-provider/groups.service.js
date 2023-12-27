@@ -253,10 +253,9 @@ export default function (entityResolverService) {
             var filters = entityViewerDataService.getFilters();
 
             reportOptions.frontend_request_options['filter_settings'] = []
-			console.log("testing1923.1000 getBackendList filters", filters);
+
             filters.forEach(function (item) {
-                console.log("testing1923.1000 getBackendList filter",
-					item, evRvCommonHelper.isFilterValid(item));
+
                 if (evRvCommonHelper.isFilterValid(item)) {
 
                     var key = useEntityPluralToSingular(item.key);
@@ -274,11 +273,6 @@ export default function (entityResolverService) {
                 }
 
             });
-            console.log(
-				"testing1923.1000 getBackendList filter_settings",
-                reportOptions.frontend_request_options['filter_settings']
-			);
-
 
         }
 

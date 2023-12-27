@@ -119,6 +119,15 @@ export default function () {
         return [filterType, filterOptions];
 
     };
+
+	/**
+	 * @param {Object} filter - a report viewer filter
+	 * @return {boolean} - returns 'true' if a filter is a use from above filter, otherwise 'false'
+	 */
+	const isFilterUseFromAbove = function (filter) {
+		return !!( filter.options.use_from_above &&
+			Object.keys(filter.options.use_from_above).length );
+	}
 	/**
 	 * Returns useFromAboveFilters without changing original array.
 	 *
@@ -271,6 +280,7 @@ export default function () {
 		emptyNumberFilter: emptyNumberFilter,
 		emptyDateFilter: emptyDateFilter,
 
+		isFilterUseFromAbove: isFilterUseFromAbove,
 		filterUseFromAboveFilters: filterUseFromAboveFilters,
 		insertActiveObjectDataIntoFilters: insertActiveObjectDataIntoFilters,
 
