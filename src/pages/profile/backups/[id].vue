@@ -6,7 +6,7 @@
 					type="text"
 					v-model="searchParam"
 					placeholder="Search"
-					class="bi_no_borders"
+					class="bi_no_borders m-b-24"
 					@keyup.enter="refresh()"
 				>
 					<template #button>

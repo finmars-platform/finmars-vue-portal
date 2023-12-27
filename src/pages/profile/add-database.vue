@@ -100,4 +100,7 @@
 	.show_btn {
 		margin-bottom: 25px;
 	}
+	:deep(.base-input) {
+		margin-bottom: 24px;
+	}
 </style>

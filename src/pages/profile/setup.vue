@@ -5,7 +5,11 @@
 			<h2 class="tac">Setup your account</h2>
 			<h3 class="tac">Step 1 / 2</h3>
 			Please select your complexity level:
-			<FmSelect v-model="store.member.interface_level" :items="levels" />
+			<FmSelect
+				v-model="store.member.interface_level"
+				:items="levels"
+				class="m-b-24"
+			/>
 
 			<div class="btns flex sb">
 				<FmBtn type="action" @click="navigateTo('/profile')">Cancel</FmBtn>

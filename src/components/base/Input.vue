@@ -182,10 +182,6 @@
 			font-size: 14px;
 		}
 
-		&:not(.bi_no_margins) {
-			margin-bottom: 25px;
-		}
-
 		&.button:not(.disabled) {
 			cursor: pointer;
 

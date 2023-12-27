@@ -5,13 +5,19 @@
 		<BaseInput
 			label="Name"
 			v-model="form.name"
+			class="m-b-24"
 		/>
 		<BaseInput
 			label="License key"
+			class="m-b-24"
 			v-model="form.license_key"
 		/>
 
-		<FmInputFile label="Select file" @change="addFile" />
+		<FmInputFile
+			label="Select file"
+			class="m-b-24"
+			@change="addFile"
+		/>
 
 		<template #controls>
 			<div class="flex sb">

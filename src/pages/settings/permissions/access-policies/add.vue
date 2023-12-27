@@ -10,20 +10,24 @@
 				<BaseInput
 					label="Name"
 					v-model="form.name"
+					class="m-b-24"
 				/>
 				<BaseInput
 					label="User Code"
 					v-model="form.user_code"
+					class="m-b-24"
 				/>
 
 				<BaseInput
 					label="Configuration Code"
 					v-model="form.configuration_code"
+					class="m-b-24"
 				/>
 
 				<BaseInput
 					label="Description"
 					v-model="form.description"
+					class="m-b-24"
 				/>
 
 				<v-ace-editor

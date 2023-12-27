@@ -8,6 +8,7 @@
 			<FmInputText
 				label="Name"
 				v-model="bundleName"
+				class="m-b-24"
 			/>
 
 			<BaseMultiSelectTwoAreas

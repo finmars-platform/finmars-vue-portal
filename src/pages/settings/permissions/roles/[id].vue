@@ -9,22 +9,26 @@
 				<BaseInput
 					label="Name"
 					v-model="role.name"
+					class="m-b-24"
 				/>
 				<BaseInput
 					label="User Code"
 					v-model="role.user_code"
 					disabled
+					class="m-b-24"
 				/>
 
 				<BaseInput
 					label="Configuration Code"
 					v-model="role.configuration_code"
 					disabled
+					class="m-b-24"
 				/>
 
 				<BaseInput
 					label="Description"
 					v-model="role.description"
+					class="m-b-24"
 				/>
 
 			</FmCard>

@@ -6,10 +6,12 @@
 		<BaseInput
 			label="Name"
 			v-model="form.name"
+			class="m-b-24"
 		/>
 		<BaseInput
 			label="License key"
 			v-model="form.license_key"
+			class="m-b-24"
 		/>
 
 		<template #controls>

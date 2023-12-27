@@ -5,7 +5,7 @@
 		class="modal--rename"
 	>
 		<div>
-			<FmInputText label="Name" v-model="newName" />
+			<FmInputText label="Name" v-model="newName" class="m-b-24" />
 
 			<FmInputUserCode
 				style="width: 700px"

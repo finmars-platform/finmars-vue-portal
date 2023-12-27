@@ -18,6 +18,7 @@
 					:tooltip="tooltip"
 					:modelValue="biText"
 					:errorData="errors.baseInput"
+					class="e_names_input"
 					@update:modelValue="setNames"
 					@update:errorData="(newVal) => onErrorDataChange('baseInput', newVal)"
 				>
@@ -33,6 +34,7 @@
 						label="Full name"
 						:modelValue="name"
 						:errorData="errors.name"
+						class="e_names_input"
 						@update:modelValue="emit('update:name', $event)"
 						@update:errorData="(newVal) => onErrorDataChange('name', newVal)"
 					/>
@@ -42,6 +44,7 @@
 						label="Short name"
 						:modelValue="short_name"
 						:errorData="errors.short_name"
+						class="e_names_input"
 						@update:modelValue="emit('update:short_name', $event)"
 						@update:errorData="
 							(newVal) => onErrorDataChange('short_name', newVal)
@@ -53,6 +56,7 @@
 						label="User code"
 						:modelValue="user_code"
 						:errorData="errors.user_code"
+						class="e_names_input"
 						@update:modelValue="emit('update:user_code', $event)"
 						@update:errorData="
 							(newVal) => onErrorDataChange('user_code', newVal)
@@ -61,7 +65,6 @@
 				</div>
 				<div>
 					<FmInputText
-						class="m-b-0"
 						label="Public name"
 						:modelValue="public_name"
 						:errorData="errors.public_name"
@@ -73,10 +76,10 @@
 				</div>
 				<div v-if="valueToShow">
 					<FmSelect
-						class="m-b-0"
 						label="Show by default"
 						:modelValue="valueToShow"
 						:menuOptions="valueToShowOptions"
+						class="m-t-24"
 						@update:modelValue="onValueToShowChange"
 					/>
 				</div>
@@ -309,5 +312,9 @@
 		:deep(.base-input .bi_main_input) {
 			cursor: pointer;
 		}
+	}
+
+	.e_names_input {
+		margin-bottom: 24px;
 	}
 </style>

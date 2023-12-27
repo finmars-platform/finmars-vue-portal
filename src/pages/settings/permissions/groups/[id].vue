@@ -9,22 +9,26 @@
 				<BaseInput
 					label="Name"
 					v-model="group.name"
+					class="m-b-24"
 				/>
 				<BaseInput
 					label="User Code"
 					v-model="group.user_code"
 					disabled
+					class="m-b-24"
 				/>
 
 				<BaseInput
 					label="Configuration Code"
 					v-model="group.configuration_code"
 					disabled
+					class="m-b-24"
 				/>
 
 				<BaseInput
 					label="Description"
 					v-model="group.description"
+					class="m-b-24"
 				/>
 
 

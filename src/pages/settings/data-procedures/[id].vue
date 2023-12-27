@@ -156,4 +156,8 @@
 	}
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+	:deep(.base-input) {
+		margin-bottom: 24px;
+	}
+</style>

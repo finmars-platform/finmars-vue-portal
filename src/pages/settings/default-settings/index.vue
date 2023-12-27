@@ -309,6 +309,7 @@
 		grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
 		grid-template-rows: 1fr;
 		gap: 10px 5px;
+		margin-bottom: 24px;
 	}
 	.container {
 		padding: 30px;

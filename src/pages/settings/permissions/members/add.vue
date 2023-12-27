@@ -10,11 +10,13 @@
 				<BaseInput
 					label="Username"
 					v-model="form.username"
+					class="m-b-24"
 				/>
 
 				<BaseInput
 					label="Email"
 					v-model="form.email"
+					class="m-b-24"
 				/>
 
 				<FmCheckbox

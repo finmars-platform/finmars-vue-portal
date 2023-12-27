@@ -5,16 +5,19 @@
 				label="First name"
 				v-model="formUser.first_name"
 				:error="errors.first_name"
+				class="m-b-24"
 			/>
 			<BaseInput
 				label="Last name"
 				v-model="formUser.last_name"
 				:error="errors.last_name"
+				class="m-b-24"
 			/>
 			<BaseInput
 				label="E-mail"
 				v-model="formUser.email"
 				:error="errors.email"
+				class="m-b-24"
 			/>
 
 			<BaseFileInput
@@ -22,6 +25,7 @@
 				v-model="formUser.profile_picture"
 				@onUpload="uploadProfilePicture"
 				:error="errors.profile_picture"
+				class="m-b-24"
 			/>
 
 			<template #controls>
@@ -39,6 +43,7 @@
 				:label="'Code editor'"
 				v-model="formUser.data.codeEditor"
 				@update:modelValue="saveUser()"
+				class="m-b-16"
 			/>
 
 			<FmCheckbox
@@ -125,6 +130,7 @@ async function saveUser() {
 
 .link {
 	color: $primary;
-	margin-bottom: 20px;
+	margin-bottom: 16px;
 }
+
 </style>

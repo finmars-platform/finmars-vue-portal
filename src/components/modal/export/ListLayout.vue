@@ -4,8 +4,11 @@
 
 						 @update:modelValue="newVal => emit('update:modelValue', newVal)">
 		<div>
-			<FmInputText label="File Name"
-									 v-model="fileName" />
+			<FmInputText
+				label="File Name"
+				v-model="fileName"
+				class="m-b-24"
+			/>
 		</div>
 
 		<template #controls="{ cancel }">

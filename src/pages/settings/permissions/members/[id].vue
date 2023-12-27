@@ -10,12 +10,14 @@
 					label="Name"
 					v-model="member.username"
 					disabled
+					class="m-b-24"
 				/>
 
 				<BaseInput
 					label="Date joined"
 					:modelValue="fromatDate(member.join_date)"
 					disabled
+					class="m-b-24"
 				/>
 
 				<FmCheckbox
@@ -32,9 +34,12 @@
 				<div style="margin-top: 16px;">
 
 					<div v-if="member.status != 'invited' && member.status != 'deleted' && member.status != 'invite_declined'">
-						<FmSelect label="Status"
-											:items="statuses"
-											v-model="member.status"/>
+						<FmSelect
+							label="Status"
+							:items="statuses"
+							v-model="member.status"
+							class="m-t-24"
+						/>
 					</div>
 
 					<div v-if="member.status == 'invited' || member.status == 'deleted' || member.status == 'invite_declined'">
@@ -43,7 +48,10 @@
 
 				</div>
 
-				<div v-if="member.is_deleted || member.status == 'invite_declined'">
+				<div
+					v-if="member.is_deleted || member.status == 'invite_declined'"
+					class="m-t-24"
+				>
 
 					<FmBtn @click="resendInvite()">Resend Invite</FmBtn>
 

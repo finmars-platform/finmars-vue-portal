@@ -8,6 +8,7 @@
 				label="Configuration Code"
 				prop_id="configuration_code"
 				prop_name="configuration_code"
+				class="m-b-24"
 			/>
 		</div>
 
@@ -884,6 +885,7 @@
 	.complex-input {
 		display: flex;
 		flex-direction: column;
+		margin-bottom: 24px;
 		// .complex-input__header
 
 		&__header {

@@ -12,7 +12,7 @@
 			<BaseInput
 				:errorData="errorData"
 				:modelValue="modelValue"
-				class="input_btn m-b-0"
+				class="input_btn"
 				:class="{
 					active: isOpen,
 					bi_no_borders: no_borders,
@@ -209,7 +209,6 @@
 <style lang="scss" scoped>
 	.fm_select {
 		display: block;
-		margin-bottom: 25px;
 	}
 	.input_btn {
 		cursor: pointer;

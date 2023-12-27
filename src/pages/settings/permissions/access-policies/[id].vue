@@ -9,22 +9,26 @@
 				<BaseInput
 					label="Name"
 					v-model="accessPolicy.name"
+					class="m-b-24"
 				/>
 				<BaseInput
 					label="User Code"
 					v-model="accessPolicy.user_code"
 					disabled
+					class="m-b-24"
 				/>
 
 				<BaseInput
 					label="Configuration Code"
 					v-model="accessPolicy.configuration_code"
 					disabled
+					class="m-b-24"
 				/>
 
 				<BaseInput
 					label="Description"
 					v-model="accessPolicy.description"
+					class="m-b-24"
 				/>
 
 				<v-ace-editor
