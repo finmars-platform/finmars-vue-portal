@@ -223,18 +223,18 @@
 			let parseDate = item.end_date.split('-')
 
 			let defaultMonth = {
-				key_01: [0, 0],
-				key_02: [0, 0],
-				key_03: [0, 0],
-				key_04: [0, 0],
-				key_05: [0, 0],
-				key_06: [0, 0],
-				key_07: [0, 0],
-				key_08: [0, 0],
-				key_09: [0, 0],
-				key_10: [0, 0],
-				key_11: [0, 0],
-				key_12: [0, 0],
+				key_01: [0 + '%', 0],
+				key_02: [0 + '%', 0],
+				key_03: [0 + '%', 0],
+				key_04: [0 + '%', 0],
+				key_05: [0 + '%', 0],
+				key_06: [0 + '%', 0],
+				key_07: [0 + '%', 0],
+				key_08: [0 + '%', 0],
+				key_09: [0 + '%', 0],
+				key_10: [0 + '%', 0],
+				key_11: [0 + '%', 0],
+				key_12: [0 + '%', 0],
 			}
 
 			if (!yearsBuffer.has(parseDate[0])) {
@@ -242,7 +242,7 @@
 			}
 
 			yearsBuffer.get(parseDate[0])['key_' + parseDate[1]] = [
-				Math.round(item.grand_return * 10000) / 100,
+				(Math.round(item.grand_return * 10000) / 100) + '%',
 				0,
 			]
 
@@ -420,5 +420,12 @@
 	}
 	.table_wrap {
 		width: 100%;
+	}
+
+	.table-cell {
+		text-align: right;
+	}
+	.t_header .table-cell {
+		text-align: left;
 	}
 </style>

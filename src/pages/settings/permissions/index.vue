@@ -331,9 +331,32 @@ async function init() {
 	]);
 
 	stockMembers.value = res[0].results;
-	groups.value = res[1].results;
-	roles.value = res[2].results;
-	accessPolicies.value = res[3].results;
+	groups.value = res[1].results.map((item) => {
+		return {
+			id: item.id,
+			user_code: item.user_code,
+			configuration_code: item.configuration_code,
+			name: item.name
+		}
+	});
+	// ['', 'Id','User Code', 'Configuration Code',  'Name', ]
+	roles.value = res[2].results.map((item) => {
+		return {
+			id: item.id,
+			user_code: item.user_code,
+			configuration_code: item.configuration_code,
+			name: item.name
+		}
+	});
+	// ['', 'Id', 'User Code', 'Configuration Code', 'Name', ]
+	accessPolicies.value = res[3].results.map((item) => {
+		return {
+			id: item.id,
+			user_code: item.user_code,
+			configuration_code: item.configuration_code,
+			name: item.name
+		}
+	});
 
 }
 
