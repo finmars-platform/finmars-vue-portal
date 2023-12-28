@@ -115,7 +115,7 @@ let props = defineProps({
 		required: true,
 	}
 })
-console.log("testing1923.ModalCustomFields content_type", props.content_type);
+
 //# region variables, refs, computed
 let {evDataService, evEventService} = inject('fmTableData')
 
