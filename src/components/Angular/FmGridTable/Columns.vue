@@ -21,8 +21,11 @@
 						<span class="material-icons arrow-icon">arrow_drop_down</span>
 					</button>
 
-					<FmMenu anchor="top left" class="header_item header_icon_btn">
-						<template #btn="{ isOpen }">
+					<FmMenu
+						anchor="top left"
+						class="header_item header_icon_btn"
+					>
+						<template #btn>
 							<button
 								class="g-cell-button g-row-settings-btn g-row-color-picker-btn"
 								:class="rowFilterColor"
@@ -39,52 +42,54 @@
 							</button>
 						</template>
 
-						<div class="fm_the_table_menu3">
-							<div class="menu_item">
-								<button
-									class="g-cell-button g-row-color-picker-option"
-									@click="changeRowFilterColor('none')"
-								>
-									<span class="material-icons">label_outline</span>
-								</button>
-							</div>
+						<template #default="{ close }">
+                            <div class="fm_the_table_menu3">
+                                <div class="menu_item">
+                                    <button
+                                            class="g-cell-button g-row-color-picker-option"
+                                            @click="changeRowFilterColor(close, 'none')"
+                                    >
+                                        <span class="material-icons">label_outline</span>
+                                    </button>
+                                </div>
 
-							<div class="menu_item">
-								<button
-									class="g-cell-button g-row-color-picker-option red"
-									@click="changeRowFilterColor('red')"
-								>
-									<span class="material-icons">label</span>
-								</button>
-							</div>
+                                <div class="menu_item">
+                                    <button
+                                            class="g-cell-button g-row-color-picker-option red"
+                                            @click="changeRowFilterColor(close, 'red')"
+                                    >
+                                        <span class="material-icons">label</span>
+                                    </button>
+                                </div>
 
-							<div class="menu_item">
-								<button
-									class="g-cell-button g-row-color-picker-option yellow"
-									@click="changeRowFilterColor('yellow')"
-								>
-									<span class="material-icons">label</span>
-								</button>
-							</div>
+                                <div class="menu_item">
+                                    <button
+                                            class="g-cell-button g-row-color-picker-option yellow"
+                                            @click="changeRowFilterColor(close, 'yellow')"
+                                    >
+                                        <span class="material-icons">label</span>
+                                    </button>
+                                </div>
 
-							<div class="menu_item">
-								<button
-									class="g-cell-button g-row-color-picker-option green"
-									@click="changeRowFilterColor('green')"
-								>
-									<span class="material-icons">label</span>
-								</button>
-							</div>
+                                <div class="menu_item">
+                                    <button
+                                            class="g-cell-button g-row-color-picker-option green"
+                                            @click="changeRowFilterColor(close, 'green')"
+                                    >
+                                        <span class="material-icons">label</span>
+                                    </button>
+                                </div>
 
-							<div class="menu_item">
-								<button
-									class="g-cell-button g-row-color-picker-option divider"
-									@click="removeColorMarkFromAllRows($event)"
-								>
-									<span class="material-icons">label_off</span>
-								</button>
-							</div>
-						</div>
+                                <div class="menu_item">
+                                    <button
+                                            class="g-cell-button g-row-color-picker-option divider"
+                                            @click="removeColorMarkFromAllRows($event)"
+                                    >
+                                        <span class="material-icons">label_off</span>
+                                    </button>
+                                </div>
+                            </div>
+						</template>
 					</FmMenu>
 				</div>
 
@@ -624,7 +629,7 @@
     //# endregion Number format
 
     // Victor 2020.12.14 #69 New report viewer design
-	let rowFilterColor = 'none'
+	let rowFilterColor = ref('none');
 
 	let checkForFilteringBySameAttr
 
@@ -663,10 +668,13 @@
 		}
 	}
 
-	let changeRowFilterColor = function (color) {
+	let changeRowFilterColor = function (closeMenuFn, color) {
+
+        closeMenuFn();
+
 		let rowTypeFiltersData = evDataService.getRowTypeFilters()
 
-		let rowFilterColor = color
+		rowFilterColor.value = color
 		rowTypeFiltersData.markedRowFilters = color
 
 		evDataService.setRowTypeFilters(rowTypeFiltersData)
@@ -2793,7 +2801,8 @@
 			isReport,
 			entityType
 		)
-		let rowFilterColor = evSettings.row_type_filter
+
+		rowFilterColor.value = evSettings.row_type_filter
 
 		// update refs after functions above changed groups and columns
 		groupsRef.value = getGroups()

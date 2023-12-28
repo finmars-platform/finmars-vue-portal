@@ -600,16 +600,18 @@ const filterByRowColor = function (list, evDataService, globalDataService) {
 
 	return list.filter(item => {
 
-		const isSubtotalContainsMarkedRows = item.___subtotal_type === 'line' && notDeletedKeys.includes(item.___parentId);
+		const subtotalContainsMarkedRows = item.___subtotal_type === 'line' && notDeletedKeys.includes(item.___parentId);
 		const isRowColored = notDeletedKeys.includes(item.___id);
 
-		if (isSubtotalContainsMarkedRows) {
+		/*if (subtotalContainsMarkedRows) {
 
-			item.results = item.results.filter(row => notDeletedKeys.includes(row.id));
+			item.results = item.results.filter(
+				row => notDeletedKeys.includes(row.id)
+			);
 
-		}
+		}*/
 
-		return isRowColored || isSubtotalContainsMarkedRows;
+		return isRowColored || subtotalContainsMarkedRows;
 
 	});
 
@@ -697,7 +699,6 @@ var getFlatStructure = function (evDataService, globalDataService) {
 	console.time("Filling list with data");
 	var filledList = utilsHelper.fillListWithData(list, data);
 	console.timeEnd("Filling list with data");
-
 	console.log('Converted list length', filledList.length);
 
 	// console.log('getFlatStructure.list', list);

@@ -1,7 +1,11 @@
 <template>
 	<div class="fm_menu">
 		<div ref="activator" class="height-100">
-			<slot name="btn" :isOpen="isOpen"></slot>
+			<slot
+                name="btn"
+                :isOpen="isOpen"
+                :toggleMenu="toggle"
+            ></slot>
 		</div>
 
 		<Teleport :to="attach">
