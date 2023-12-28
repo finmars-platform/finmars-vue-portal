@@ -250,7 +250,6 @@
 
 		//# region Error
 		&.error:not(.disabled) {
-			margin-bottom: 30px;
 
 			.error_icon {
 				color: $error;
@@ -286,6 +285,11 @@
 			}
 		}
 		//# endregion Error
+	}
+
+	.bi_main_input {
+		padding-right: 4px;
+		text-overflow: ellipsis;
 	}
 
 	.bi_error {

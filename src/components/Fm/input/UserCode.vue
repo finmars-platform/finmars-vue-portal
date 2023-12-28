@@ -262,9 +262,9 @@
 <style lang="scss" scoped>
 	.usercode-input {
 		min-height: 40px;
-		padding: 16px 8px;
-		border: 1px solid #7d7d7d;
-		border-radius: 6px;
+		padding: 16px 0;
+		/*border: 1px solid #7d7d7d;
+		border-radius: 6px;*/
 	}
 
 	:deep(.fm_select),

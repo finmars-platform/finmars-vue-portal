@@ -18,6 +18,12 @@
 // TODO: finish this component
 // stores
 // props, emits
+let props = defineProps({
+	content_type: {
+		type: String,
+		required: true,
+	}
+})
 
 //# region variables, refs, computed
 

@@ -97,6 +97,11 @@
 		:payload="$mdDialog.modals['ReportViewerMatrixSettingsDialogController']"
 		:modelValue="true"
 	/>-->
+	<LazyModalCustomFields
+		v-if="customFieldsModalOpened"
+		v-model="customFieldsModalOpened"
+		:content_type="content_type"
+	/>
 
 </template>
 
@@ -104,17 +109,21 @@
 import evEvents from "@/angular/services/entityViewerEvents";
 // stores
 // props, emits
-let props = defineProps()
-
-let emit = defineEmits([
-]);
-
+let props = defineProps({
+	content_type: {
+		type: String,
+		required: true,
+	}
+})
+console.log("testing1923.ModalCustomFields content_type", props.content_type);
 //# region variables, refs, computed
 let {evDataService, evEventService} = inject('fmTableData')
 
 let scope = reactive({});
 
 scope.isRootEntityViewer = evDataService.isRootEntityViewer();
+
+let customFieldsModalOpened = ref(false);
 
 const spOpts = [
     {
@@ -131,9 +140,13 @@ const spOpts = [
     },
 ]
 
+function openCustomFieldsModal() {
+	customFieldsModalOpened.value = true;
+}
+
 const moreMenuOptsList = [
     {
-		onClick: function () {},
+		onClick: openCustomFieldsModal,
         name: 'Custom Columns',
 	},
 ]

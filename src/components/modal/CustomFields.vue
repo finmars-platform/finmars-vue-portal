@@ -1,8 +1,8 @@
 <template>
-	<BaseModal :title="title">
+	<BaseModal title="Custom Field Manager">
 		<div style="padding: 5px 0 20px">
 			<div class="header">
-				<FmBtn type="text" @click="addCustomField(item)">Add New</FmBtn>
+				<FmBtn type="basic" @click="addCustomField(item)">Add New</FmBtn>
 			</div>
 			<div class="content">
 				<div
@@ -58,17 +58,19 @@
 </template>
 
 <script setup>
+
 	let props = defineProps({
-		title: String,
-		content_type: String,
+		content_type: {
+			type: String,
+			required: true,
+		},
 	})
 
 	const isOpeneditCustomField = ref(false)
 	const evAttrsStore = useEvAttributesStore()
+
 	let editing = ref('')
 	let vm = reactive({ content_type: props.content_type })
-
-
 
 	let activeCustomColumn = ref([
 		{
@@ -93,7 +95,7 @@
 
 	vm.customFields = []
 
-	await evAttrsStore.getFetchCustomFields(props.content_type)
+	await evAttrsStore.fetchCustomFields(props.content_type)
 
 	let customFieldsList = computed(() => {
 		return evAttrsStore.customFields[props.content_type]

@@ -5,8 +5,12 @@
 		@update:modelValue="(newVal) => emit('update:modelValue', newVal)"
 		class="modal--rename"
 	>
-		<div class="wrapp">
-			<FmInputText label="Custom Column Name" v-model="newName" />
+		<div class="wrap">
+			<FmInputText
+				label="Custom Column Name"
+				v-model="newName"
+				class="m-b-24"
+			/>
 
 			<FmInputUserCode
 				userCodeLabel="Custom Column Reference Code (use programming language naming rules)"
@@ -19,6 +23,7 @@
 				label="Value type"
 				v-model="newValueType"
 				:items="valueTypeItems"
+				class="m-b-24"
 			></FmSelect>
 
 			<FmInputArea
@@ -86,7 +91,7 @@
 	let newUserCode = ref(props.user_code)
 
 	let configCode = ref('')
-	
+
 
 	let activeTitle =
 		activeEditing.value == 'edit' ? props.title : 'Create Custom Column'
@@ -177,13 +182,13 @@
 </script>
 
 <style lang="scss" scoped>
-	.wrapp {
-		padding: 0px 15px;
+	.wrap {
+		padding: 0px 15px 24px;
 		min-width: 500px;
 	}
 	.modal-bottom {
 		display: flex;
-		justify-content: flex-end;
+		justify-content: space-between;
 	}
 	.title-custom {
 		padding: 20px 0;

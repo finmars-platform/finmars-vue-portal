@@ -46,7 +46,7 @@
 			return attrs.rows;
 		}
 
-		if ( !props.auto ) return 2;
+		if ( !props.auto || !props.modelValue ) return 2;
 
 		const lineBreaksNum = props.modelValue.split("\n").length;
 

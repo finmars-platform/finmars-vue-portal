@@ -27,9 +27,15 @@
 				</div>
 
                 <div class="flex aic gFiltersRightPart">
-                    <FmTableToolbarActionsRv v-if="isReport" />
+                    <FmTableToolbarActionsRv
+						v-if="isReport"
+						:content_type="contentType"
+					/>
 
-                    <FmTableToolbarActionsEv v-if="!isReport" />
+                    <FmTableToolbarActionsEv
+						v-if="!isReport"
+						:content_type="contentType"
+					/>
                 </div>
 			</div>
 			<!--			<template v-if="ready && !$scope.isReport">
@@ -74,8 +80,9 @@
 let {evDataService} = inject('fmTableData');
 
 const isReport = evDataService.isEntityReport();
+const contentType = evDataService.getContentType();
 const viewContext = evDataService.getViewContext();
-
+console.log("testing1923.Toolbar contentType", contentType);
 const ready = ref(false);
 
 const areFiltersOpenedRef = ref(true); // inside dashboard
