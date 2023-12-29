@@ -41,7 +41,7 @@
 		</div>
 
 		<div class="fm_container databases"
-			v-if="store.masterUsers.length"
+			v-if="false"
 		>
 			<PagesProfileDatabasesItem
 				v-for="db in store.masterUsers"
@@ -50,7 +50,12 @@
 				@refresh="store.getMasterUsers()"
 			/>
 		</div>
-		<div class="fm_container databases" v-else>No databases found</div>
+		<div class="fm_container no-databases" v-else>
+
+			<h1>No spaces found</h1>
+			<p>Please, contact <a href="mailto:sales@finmars.com" title="sales@finmars.com">sales@finmars.com</a></p>
+
+		</div>
 	</div>
 </template>
 
@@ -79,5 +84,22 @@
 	//justify-content: flex-start;
 	justify-content: center;
 	padding-bottom: $content-padding-x;
+}
+.no-databases {
+	text-align: center;
+	margin-top: 1rem;
+
+	h1 {
+		font-size: 1.5rem;
+	}
+
+	p {
+		font-size: 1.2rem;
+		margin-top: 1rem;
+	}
+	a {
+		display: inline-block;
+		color: #f05a22
+	}
 }
 </style>
