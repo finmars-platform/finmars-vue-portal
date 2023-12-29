@@ -11,7 +11,7 @@
 
 					<div class="fm_list">
 						<NuxtLink class="fm_list_item"
-							to="/profile/add-database"
+								  to="/profile/add-database"
 						>
 							New
 						</NuxtLink>
@@ -30,7 +30,7 @@
 		</FmTopRefresh>
 
 		<div class="fm_container databases p-b-16"
-			v-if="invites && invites.results.length"
+			 v-if="invites && invites.results.length"
 		>
 			<PagesProfileInviteItem
 				v-for="invite in invites.results"
@@ -41,7 +41,7 @@
 		</div>
 
 		<div class="fm_container databases"
-			v-if="false"
+			 v-if="store.masterUsers.length"
 		>
 			<PagesProfileDatabasesItem
 				v-for="db in store.masterUsers"
@@ -61,18 +61,18 @@
 
 <script setup>
 
-	let store = useStore()
+let store = useStore()
 
-	let { data: invites, refresh: refreshInvites } = await useAsyncData(
-		"invitesToDB",
-		() => useApi('invitesToDB.get'),
-		{lazy: true}
-	);
+let { data: invites, refresh: refreshInvites } = await useAsyncData(
+	"invitesToDB",
+	() => useApi('invitesToDB.get'),
+	{lazy: true}
+);
 
-	let isShowNewBackup = ref(false)
+let isShowNewBackup = ref(false)
 
-	import formbricks from "@/services/formbricks";
-	await formbricks.registerRouteChange();
+import formbricks from "@/services/formbricks";
+await formbricks.registerRouteChange();
 
 </script>
 
