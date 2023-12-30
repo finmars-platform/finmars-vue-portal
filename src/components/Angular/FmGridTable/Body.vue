@@ -152,6 +152,7 @@
 		}
 
 		function renderReportViewer() {
+
 			var begin = Date.now()
 
 			evDataService.setDataLoadStatus(true)
@@ -172,17 +173,20 @@
 
 			var index = 0
 			flatList = flatList.map(function (item, i) {
-				item.___flat_list_index = i
+				item.___flat_list_index = i;
 
-				if (item.___type === 'object' || item.___type === 'blankline') {
-					item.___flat_list_offset_top_index = index
-					index = index + 1
+				if (item.___type === 'object' ||
+					item.___type === 'control' ||
+					item.___type === 'blankline') {
+					item.___flat_list_offset_top_index = index;
+					index = index + 1;
 				}
 
 				if (item.___type === 'subtotal') {
+
 					if (item.___subtotal_type !== 'proxyline') {
-						item.___flat_list_offset_top_index = index
-						index = index + 1
+						item.___flat_list_offset_top_index = index;
+						index = index + 1;
 					}
 				}
 
@@ -208,6 +212,7 @@
 				evDataService,
 				evEventService
 			)
+
 			cellContentOverflow()
 
 			var end = Date.now()

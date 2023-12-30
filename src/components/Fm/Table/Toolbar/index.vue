@@ -82,7 +82,7 @@ let {evDataService} = inject('fmTableData');
 const isReport = evDataService.isEntityReport();
 const contentType = evDataService.getContentType();
 const viewContext = evDataService.getViewContext();
-console.log("testing1923.Toolbar contentType", contentType);
+
 const ready = ref(false);
 
 const areFiltersOpenedRef = ref(true); // inside dashboard

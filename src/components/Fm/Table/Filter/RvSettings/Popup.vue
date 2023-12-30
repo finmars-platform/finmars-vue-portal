@@ -104,8 +104,7 @@ let props = defineProps({
 		required: true,
 	}
 })
-console.log("testing1923.FmTableFilterRvSettingsPopup props.filterKey ",
-	props.filter);
+
 let emit = defineEmits(['close'])
 //# region variables, refs, computed
 let {evDataService, evEventService} = inject('fmTableData');
@@ -304,18 +303,12 @@ const init = function () {
 
 			filterRef.value.options.use_from_above.attrs_content_type =
 				window.metaContentTypesService.findContentTypeByEntity(ufaOptionsC.value.attrs_entity_type);
-			console.log("testing1923.FmTableFilterRvSettingsPopup init attrs_content_type",
-				ufaOptionsC.value
-			);
+
 		}
 
 	}
 
 	attrsList = evAttrsStore.getAllAttributesByContentType(contentType);
-	console.log(
-		"testing1923.FmTableFilterRvSettingsPopup filterRef.value",
-		filterRef.value
-	);
 
 }
 

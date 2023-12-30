@@ -6,10 +6,10 @@ import evDataHelper from './ev-data.helper'
 
 var getGroupsByParent = function (parentId, evDataService) {
 
-    var items = evDataService.getDataAsList();
+	var items = evDataService.getDataAsList();
 
-    return items.filter(function (item) {
-        return item.___parentId === parentId;
+	return items.filter(function (item) {
+		return item.___parentId === parentId;
 	})
 
 };
@@ -80,7 +80,6 @@ var calculateSubtotals = function (evDataService) {
 		dataList.forEach(function (item) {
 
 
-
 			if (item.___level === i) {
 				calculateItemSubtotal(item, evDataService);
 			}
@@ -91,7 +90,7 @@ var calculateSubtotals = function (evDataService) {
 
 };
 
-var calculateGrandTotal= function (evDataService) {
+var calculateGrandTotal = function (evDataService) {
 
 	var dataList = evDataService.getDataAsList();
 
@@ -202,6 +201,23 @@ var insertSubtotalsToResults = function (data, evDataService) {
 				insertSubtotal(subtotalObj, item);
 
 			}
+
+			var requestParameters = evDataService.getRequestParameters(item.___id);
+
+			if (requestParameters) {
+				if (requestParameters.pagination.count > requestParameters.pagination.page_size) {
+
+					item.results.push({
+						___id: item.___id + '_control',
+						___group_identifier: item.___group_identifier,
+						___group_name: item.___group_name,
+						___type: 'control',
+						___parentId: item.___id,
+						___level: item.___level + 1
+					});
+				}
+			}
+
 
 		});
 
@@ -600,18 +616,16 @@ const filterByRowColor = function (list, evDataService, globalDataService) {
 
 	return list.filter(item => {
 
-		const subtotalContainsMarkedRows = item.___subtotal_type === 'line' && notDeletedKeys.includes(item.___parentId);
+		const isSubtotalContainsMarkedRows = item.___subtotal_type === 'line' && notDeletedKeys.includes(item.___parentId);
 		const isRowColored = notDeletedKeys.includes(item.___id);
 
-		/*if (subtotalContainsMarkedRows) {
+		if (isSubtotalContainsMarkedRows) {
 
-			item.results = item.results.filter(
-				row => notDeletedKeys.includes(row.id)
-			);
+			item.results = item.results.filter(row => notDeletedKeys.includes(row.id));
 
-		}*/
+		}
 
-		return isRowColored || subtotalContainsMarkedRows;
+		return isRowColored || isSubtotalContainsMarkedRows;
 
 	});
 
@@ -699,6 +713,7 @@ var getFlatStructure = function (evDataService, globalDataService) {
 	console.time("Filling list with data");
 	var filledList = utilsHelper.fillListWithData(list, data);
 	console.timeEnd("Filling list with data");
+
 	console.log('Converted list length', filledList.length);
 
 	// console.log('getFlatStructure.list', list);
@@ -893,7 +908,7 @@ var calculateProjection = function (flatList, evDataService) {
 
 	evDataService.setProjectionLastFrom(from);
 
-	var to = from + step * 3/2;
+	var to = from + step * 3 / 2;
 
 	// console.timeEnd('Creating projection');
 
@@ -996,7 +1011,7 @@ var setGroupSettings = function (evDataService, group, groupSettings) {
 		}
 
 		/* if (group.report_settings && group.report_settings.is_level_folded) {
-				reportData.fullyFoldedGroups.push(group.key);
+			reportData.fullyFoldedGroups.push(group.key);
 		} */
 		reportData.groupsList.push(groupObj);
 
@@ -1031,15 +1046,15 @@ var markHiddenColumnsBasedOnFoldedGroups = function (evDataService) {
 
 		/* columns.forEach((column, index) => {
 
-				var colLevel = index + 1;
-				var columnWithoutSubtotal = !column.report_settings || !column.report_settings.subtotal_formula_id;
-				var columnWithoutGroup = groups.length < colLevel;
+			var colLevel = index + 1;
+			var columnWithoutSubtotal = !column.report_settings || !column.report_settings.subtotal_formula_id;
+			var columnWithoutGroup = groups.length < colLevel;
 
-				var colIsHidden = !!(columnWithoutGroup && columnWithoutSubtotal && !column.error);
+			var colIsHidden = !!(columnWithoutGroup && columnWithoutSubtotal && !column.error);
 
-				if (column.isHidden !== colIsHidden) columnsChanged = true;
+			if (column.isHidden !== colIsHidden) columnsChanged = true;
 
-				column.isHidden = colIsHidden;
+			column.isHidden = colIsHidden;
 
 		}); */
 
@@ -1051,15 +1066,15 @@ var markHiddenColumnsBasedOnFoldedGroups = function (evDataService) {
 
 		/*columns.forEach((column, index) => {
 
-				var colLevel = index + 1;
-				var columnWithoutGroup = groups.length < colLevel;
+			var colLevel = index + 1;
+			var columnWithoutGroup = groups.length < colLevel;
 
-				if (columnWithoutGroup) {
+			if (columnWithoutGroup) {
 
-						// if (column.isHidden) columnsChanged = true;
-						column.isHidden = false;
+				// if (column.isHidden) columnsChanged = true;
+				column.isHidden = false;
 
-				}
+			}
 
 		});*/
 

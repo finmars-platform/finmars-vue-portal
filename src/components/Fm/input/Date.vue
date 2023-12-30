@@ -201,8 +201,7 @@
 		}
 
 		value = formatDateValue(value)
-		console.log("testing1923.FmInputDate onMainInputChange valid value",
-			value, isValueValid(value));
+
 		inputValue.value = value;
 
 		indicateInvalidValueD(value)

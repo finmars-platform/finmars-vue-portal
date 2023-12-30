@@ -245,10 +245,6 @@ const changeFilterValue = function (newVal) {
 }
 
 async function init() {
-	console.log(
-		"testing1923.FmTableFilterRvSettingsText props.filterType",
-		props.filterType
-	);
 
 	if ( ['selector', 'multiselector']
 			.includes(props.filter.options.filter_type) ) {

@@ -189,9 +189,9 @@
 		const errors = []
 
 		let filtersList = evDataService.getFilters();
-		// console.log("testing1923.formatFiltersForChips filtersList", filtersList);
+
 		filtersList = filtersList.map((filter) => {
-			// console.log("testing1923.formatFiltersForChips 1 filter", filter);
+
 			if (filter.type === 'filter_link') {
 				// don't show filter from dashboard component
 				return;
@@ -204,7 +204,7 @@
 				scope.showUseFromAboveFilters ||
 				!useIsFilterUseFromAbove(filter)
 			) {
-				// console.log("testing1923.formatFiltersForChips 2", filter);
+
 				let filterData = {
 					id: filter.key,
 					isActive: filterOpts.enabled,
@@ -245,7 +245,7 @@
 					if (error) errors.push(error)
 
 				}
-				// console.log("testing1923.formatFiltersForChips filterData", filterData);
+
 				filtersChips.push(filterData)
 			}
 
@@ -257,17 +257,16 @@
 		evDataService.setFilters(filtersList);
 
 		if (errors.length) emit('customFieldsMissing', errors);
-		// console.log("testing1923.formatFiltersForChips filtersChips", filtersChips);
 
 		return filtersChips;
 	}
 
 	const addFilter = function (attributes) {
-		console.log("testing1923.FmTableFiltersRv addFilter ", attributes);
+
         const filtersToAdd = attributes.map(attr => {
             return evHelperService.getTableAttrInFormOf('filter', attr);
         })
-		console.log("testing1923.FmTableFiltersRv addFilter filtersToAdd", filtersToAdd);
+
         let filtersList = evDataService.getFilters();
 
         filtersList = filtersList.concat(filtersToAdd);
@@ -341,7 +340,7 @@
 		posYRef.value = emitData.event.clientY;
 
 		filterToEditRef.value = findFilter(emitData.data.id);
-		console.log("testing1923.FmTableFiltersRv openFilterSettings ", filterToEditRef.value);
+
 	}
 	//# endregion
 
@@ -425,7 +424,7 @@
 		)
 
 		filtersChipsRef.value = formatFiltersForChips();
-		console.log("testing1923 filtersChipsRef", filtersChipsRef.value);
+
 	}
 
 	init();

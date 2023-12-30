@@ -111,6 +111,12 @@ var emptyUseFromAboveFilters = function (filters) {
 export default function (reportHelper) {
 
 	var data = {
+
+		requestsQueue: [],
+		// needs in dashboard when user can quicly change active Objects
+		// we just ignore old response data that not equal to currentRequestId
+		currentRequestId: 0,
+
 		columns: [],
 		groups: [],
 		rootGroupOptions: {
@@ -122,7 +128,7 @@ export default function (reportHelper) {
 		},
 		useFromAboveFilters: [],
 		pagination: {
-			page_size: 60
+			page_size: 40
 		},
 		status: {
 			data: null
@@ -802,6 +808,8 @@ export default function (reportHelper) {
 		console.log('defaultRootGroup', defaultRootGroup);
 
 		setData(defaultRootGroup);
+		setFlatList([])
+		setProjection([])
 
 	}
 
@@ -881,12 +889,13 @@ export default function (reportHelper) {
 						page: 1,
 						groups_values: [],
 						groups_order: 'asc',
-						page_size: 60
+						page_size: data.pagination.page_size,
 					},
 					pagination: {
 						page: 1,
 						page_size: data.pagination.page_size,
-						count: 1
+						count: 1,
+						downloaded: 0
 					},
 					requestedPages: [1],
 					processedPages: []
@@ -908,12 +917,13 @@ export default function (reportHelper) {
 						page: 1,
 						groups_values: [],
 						groups_order: 'asc',
-						page_size: 60
+						page_size: data.pagination.page_size,
 					},
 					pagination: {
 						page: 1,
 						page_size: data.pagination.page_size,
-						count: 1
+						count: 1,
+						downloaded: 0
 					},
 					requestedPages: [1],
 					processedPages: []
@@ -1858,6 +1868,39 @@ export default function (reportHelper) {
 		return data.renderTime;
 	}
 
+	function enqueueDataRequest(request) {
+
+		console.log("rv.queue.enqueueDataRequest", request)
+
+		data.requestsQueue.push(request);
+	}
+
+	function dequeueDataRequest() {
+
+		console.log("rv.queue.dequeueDataRequest", data.requestsQueue[0])
+
+		return data.requestsQueue.shift();
+
+	}
+
+	function getRequestsQueue() {
+		return data.requestsQueue
+	}
+
+	function isRequestsQueueEmpty() {
+		return data.requestsQueue.length === 0;
+	}
+
+	function incrementCurrentRequestId() {
+
+		data.currentRequestId = data.currentRequestId + 1;
+	}
+
+	function getCurrentRequestId() {
+
+		return data.currentRequestId
+
+	}
 
 	return {
 
@@ -2134,7 +2177,17 @@ export default function (reportHelper) {
 		getGlobalTableSearch: getGlobalTableSearch,
 
 		setRenderTime: setRenderTime,
-		getRenderTime: getRenderTime
+		getRenderTime: getRenderTime,
+
+
+		enqueueDataRequest: enqueueDataRequest,
+		dequeueDataRequest: dequeueDataRequest,
+		getRequestsQueue: getRequestsQueue,
+		isRequestsQueueEmpty: isRequestsQueueEmpty,
+
+
+		incrementCurrentRequestId: incrementCurrentRequestId,
+		getCurrentRequestId: getCurrentRequestId,
 
 	}
 }

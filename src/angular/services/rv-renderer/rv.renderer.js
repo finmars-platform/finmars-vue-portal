@@ -1,6 +1,7 @@
 import objectRender from './object.renderer'
 import subtotalRender from './subtotal.renderer'
 import blanklineRender from './blankline.renderer'
+import controlRender from "./control.renderer";
 
 // import localStorageService from '@/angular/shell/scripts/app/services/localStorageService';
 
@@ -36,6 +37,10 @@ var getHTML = function (items, evDataService, globalDataService) {
 
 		if (item.___type === 'subtotal' && item.___subtotal_type !== 'proxyline') {
 			rows.push(subtotalRender.render(evDataService, item));
+		}
+
+		if (item.___type === 'control') {
+			rows.push(controlRender.render(evDataService, item));
 		}
 
 	}

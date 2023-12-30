@@ -471,7 +471,7 @@
 
 		if (possibleToRequestReportRef.value && notSpWithTransactionReport) {
 
-			rvDataProviderService.updateDataStructure(evDataService, evEventService);
+			rvDataProviderService.createDataStructure(evDataService, evEventService);
 
 		}
 
@@ -677,7 +677,7 @@
 		renderTemplate();
 		init();
 
-		window.rvDataProviderService.updateDataStructure(
+		window.rvDataProviderService.createDataStructure(
 			evDataService, evEventService
 		);
 

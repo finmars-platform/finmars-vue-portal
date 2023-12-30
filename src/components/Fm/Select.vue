@@ -118,9 +118,7 @@
 		clearBtn: Boolean, // button that empties select
 		errorData: Object,
 	})
-	if (props.label === 'Report Type') {
-		console.log("testing1923.FmSelect label", props.label, props.modelValue)
-	}
+
 	let emit = defineEmits(['update:modelValue', 'update:errorData'])
 
 	let moFilter = ref('')
@@ -200,10 +198,6 @@
 	}
 
 	//#endregion
-
-	if (props.label === 'Report Type') {
-		console.log("testing1923.FmSelect selectedItem", selectedItem.value);
-	}
 </script>
 
 <style lang="scss" scoped>

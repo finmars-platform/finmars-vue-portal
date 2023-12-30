@@ -75,10 +75,7 @@ let props = defineProps({
 	multiselect: Boolean,
 	disabled: Boolean,
 });
-if (props.title === 'Select field') {
-	console.log("testing1923.AttributesSelect value_type", props.valueType);
 
-}
 let emit = defineEmits(['update:modelValue', 'selectedAttributesChanged']);
 // let evAttrsStore = useEvAttributesStore();
 

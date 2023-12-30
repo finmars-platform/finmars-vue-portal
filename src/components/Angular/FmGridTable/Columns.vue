@@ -115,7 +115,7 @@
 					:item="column"
 					:itemIndex="index"
 					:isReport="isReport"
-					:isGroup="true"
+					isGroup
 					:viewContext="viewContext"
 					:style="column.style"
 					@sort="
@@ -257,11 +257,31 @@
 			</template>
 		</BaseModal>-->
 
-		<LazyBaseModal v-if="renameOpened" v-model="renameOpened" title="Rename">
+		<LazyBaseModal
+			v-if="renameOpened"
+			v-model="renameOpened"
+			title="Rename"
+		>
 			<!-- 		@close="columnToRename = null" -->
-			<BaseInput readonly label="ID" v-model="columnToRename.key" />
-			<BaseInput readonly label="Original" :modelValue="columnToRename.name" />
-			<BaseInput label="Name" v-model="columnToRename.layout_name" />
+			<BaseInput
+				v-model="columnToRename.key"
+				readonly
+				label="ID"
+				class="m-b-24"
+			/>
+
+			<BaseInput
+				readonly
+				label="Original"
+				:modelValue="columnToRename.name"
+				class="m-b-24"
+			/>
+
+			<BaseInput
+				label="Name"
+				v-model="columnToRename.layout_name"
+				class="m-b-24"
+			/>
 
 			<template #controls="{ cancel }">
 				<div class="flex sb">
@@ -407,14 +427,20 @@
 	 * @type {ComputedRef<Array>}
 	 */
 	const columnsToShow = computed(() => {
+
 		if (isReport) {
-			return evDataHelper.separateNotGroupingColumns(
+
+			const cols = evDataHelper.separateNotGroupingColumns(
 				columns.value,
 				groupsRef.value
 			)
+
+			return cols.filter(col => !col.isHidden);
+
 		} else {
 			return columns.value
 		}
+
 	})
 
 	/*const getColumnsToShow = function () {
@@ -1582,321 +1608,323 @@
 	}
 
 	let foldLevel = function (key, $index) {
-    // Optimized unfold logic
-    // TODO probabaly still need a refactor, code looks too complicated
+		// Optimized unfold logic
+		// TODO probabaly still need a refactor, code looks too complicated
 
-    var layout = evDataService.getListLayout();
-    var contentType = evDataService.getContentType();
+		var layout = evDataService.getListLayout();
+		var contentType = evDataService.getContentType();
 
-    let groupsList = evDataService.getGroups();
+		let groupsList = evDataService.getGroups();
 
-    var item = groupsList[$index];
-    item.report_settings.is_level_folded = true;
+		var item = groupsList[$index];
+		item.report_settings.is_level_folded = true;
 
-    var i;
-    //# region Set folded groups before calling rvDataHelper.setGroupSettings()
-    for (i = $index; i < groupsList.length; i++) {
-      groupsList[i].report_settings.is_level_folded = true;
-    }
+		var i;
+		//# region Set folded groups before calling rvDataHelper.setGroupSettings()
+		for (i = $index; i < groupsList.length; i++) {
+		  groupsList[i].report_settings.is_level_folded = true;
+		}
 
-    evDataService.setGroups(groupsList);
-    //# endregion
+		evDataService.setGroups(groupsList);
+		//# endregion
 
-    var maxLevel = 10
-    var groupsByLevel = evDataHelper.getAllGroupsByLevel(maxLevel, evDataService);
+		var maxLevel = 10
+		var groupsByLevel = evDataHelper.getAllGroupsByLevel(maxLevel, evDataService);
 
-    var reportData = localStorageService.getReportData();
+		var reportData = localStorageService.getReportData();
 
-    for (i = $index; i < groupsList.length; i++) {
+		for (i = $index; i < groupsList.length; i++) {
 
-      var groupsContent = groupsByLevel[i + 1];
+		  var groupsContent = groupsByLevel[i + 1];
 
-      groupsContent.forEach(function (groupItem) {
+		  groupsContent.forEach(function (groupItem) {
 
-        var parents = useGetEvRvParents(groupItem.___parentId, evDataService);
+			var parents = useGetEvRvParents(groupItem.___parentId, evDataService);
 
-        parents.pop() // skip root group
+			parents.pop() // skip root group
 
-        if (!reportData[contentType]) {
-          reportData[contentType] = {};
-        }
+			if (!reportData[contentType]) {
+			  reportData[contentType] = {};
+			}
 
-        if (!reportData[contentType][layout.user_code]) {
-          reportData[contentType][layout.user_code] = {
-            groups: {}
-          }
-        }
+			if (!reportData[contentType][layout.user_code]) {
+			  reportData[contentType][layout.user_code] = {
+				groups: {}
+			  }
+			}
 
-        var full_path = parents.map(function (item) {
-          return item.___group_name
-        })
+			var full_path = parents.map(function (item) {
+			  return item.___group_name
+			})
 
-        full_path.push(groupItem.___group_name);
+			full_path.push(groupItem.___group_name);
 
-        var full_path_prop = full_path.join('___'); // TODO check if safe enough
+			var full_path_prop = full_path.join('___'); // TODO check if safe enough
 
-        var groupSettings;
+			var groupSettings;
 
-        if (reportData[contentType][layout.user_code]['groups'][full_path_prop]) {
-          groupSettings = reportData[contentType][layout.user_code]['groups'][full_path_prop];
-        }
+			if (reportData[contentType][layout.user_code]['groups'][full_path_prop]) {
+			  groupSettings = reportData[contentType][layout.user_code]['groups'][full_path_prop];
+			}
 
-        if (!groupSettings) {
+			if (!groupSettings) {
 
-          groupSettings = {
-            full_path: full_path,
-            is_open: false
-          }
+			  groupSettings = {
+				full_path: full_path,
+				is_open: false
+			  }
 
-          reportData[contentType][layout.user_code]['groups'][full_path_prop] = groupSettings;
+			  reportData[contentType][layout.user_code]['groups'][full_path_prop] = groupSettings;
 
-        }
+			}
 
-        groupItem.___is_open = false;
-        groupSettings.is_open = false;
+			groupItem.___is_open = false;
+			groupSettings.is_open = false;
 
-        if (!reportData[contentType][layout.user_code]['groups']) {
-          reportData[contentType][layout.user_code]['groups'] = {}
-        }
+			if (!reportData[contentType][layout.user_code]['groups']) {
+			  reportData[contentType][layout.user_code]['groups'] = {}
+			}
 
-        var full_path_prop = groupSettings.full_path;
+			var full_path_prop = groupSettings.full_path;
 
-        if (Array.isArray(full_path_prop)) {
-          full_path_prop = full_path_prop.join('___')
-        }
+			if (Array.isArray(full_path_prop)) {
+			  full_path_prop = full_path_prop.join('___')
+			}
 
-        reportData[contentType][layout.user_code]['groups'][full_path_prop] = groupSettings;
+			reportData[contentType][layout.user_code]['groups'][full_path_prop] = groupSettings;
 
-        reportData[contentType][layout.user_code].groupsList = [];
+			reportData[contentType][layout.user_code].groupsList = [];
 
-        groupsList.forEach(group => {
+			groupsList.forEach(group => {
 
-          var groupObj = {
-            key: group.key,
-            report_settings: {
-              is_level_folded: false
-            }
-          };
+			  var groupObj = {
+				key: group.key,
+				report_settings: {
+				  is_level_folded: false
+				}
+			  };
 
-          if (group.report_settings) {
-            groupObj.report_settings.is_level_folded = !!group.report_settings.is_level_folded;
-          }
+			  if (group.report_settings) {
+				groupObj.report_settings.is_level_folded = !!group.report_settings.is_level_folded;
+			  }
 
 
-          reportData[contentType][layout.user_code].groupsList.push(groupObj);
+			  reportData[contentType][layout.user_code].groupsList.push(groupObj);
 
-        });
+			});
 
-        evDataService.setData(groupItem);
+			evDataService.setData(groupItem);
 
-      });
+		  });
 
-    }
+		}
 
-    localStorageService.cacheReportData(reportData);
+		localStorageService.cacheReportData(reportData);
 
-    evEventService.dispatchEvent(evEvents.GROUPS_LEVEL_FOLD);
-    evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+		evEventService.dispatchEvent(evEvents.GROUPS_LEVEL_FOLD);
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
 
-  }
+	}
 
 	let unfoldLevel = async function (key, $index) {
 
-    var layout = evDataService.getListLayout();
-    var contentType = evDataService.getContentType();
+		var layout = evDataService.getListLayout();
+		var contentType = evDataService.getContentType();
 
-    let groupsList = evDataService.getGroups();
+		let groupsList = evDataService.getGroups();
 
-    var item = groupsList[$index];
+		var item = groupsList[$index];
 
-    item.report_settings.is_level_folded = false;
+		item.report_settings.is_level_folded = false;
 
-    var i;
+		var i;
 
-    //# region Set folded groups before calling rvDataHelper.setGroupSettings()
-    for (i = $index; i >= 0; i--) {
-      groupsList[i].report_settings.is_level_folded = false;
-    }
+		//# region Set folded groups before calling rvDataHelper.setGroupSettings()
+		for (i = $index; i >= 0; i--) {
+		  groupsList[i].report_settings.is_level_folded = false;
+		}
 
-    evDataService.setGroups(groupsList);
-    groupsRef.value = getGroups();
+		evDataService.setGroups(groupsList);
+		groupsRef.value = getGroups();
 
-    var maxLevel = 10
-    var groupsByLevel = evDataHelper.getAllGroupsByLevel(maxLevel, evDataService);
+		var maxLevel = 10
+		var groupsByLevel = evDataHelper.getAllGroupsByLevel(maxLevel, evDataService);
 
-    console.log('groupsByLevel', groupsByLevel);
-    console.log('maxLevel', $index);
-    //# endregion
+		console.log('groupsByLevel', groupsByLevel);
+		console.log('maxLevel', $index);
+		//# endregion
 
-    var reportData = localStorageService.getReportData();
+		var reportData = localStorageService.getReportData();
 
-    for (i = $index; i >= 0; i--) {
+		for (i = $index; i >= 0; i--) {
 
-      var groupsContent = groupsByLevel[i + 1];
+		  var groupsContent = groupsByLevel[i + 1];
 
-      groupsContent.forEach(function (groupItem) {
+		  groupsContent.forEach(function (groupItem) {
 
-        var parents = useGetEvRvParents(groupItem.___parentId, evDataService);
+			var parents = useGetEvRvParents(groupItem.___parentId, evDataService);
 
-        parents.pop() // skip root group
+			parents.pop() // skip root group
 
-        if (!reportData[contentType]) {
-          reportData[contentType] = {};
-        }
+			if (!reportData[contentType]) {
+			  reportData[contentType] = {};
+			}
 
-        if (!reportData[contentType][layout.user_code]) {
-          reportData[contentType][layout.user_code] = {
-            groups: {}
-          }
-        }
+			if (!reportData[contentType][layout.user_code]) {
+			  reportData[contentType][layout.user_code] = {
+				groups: {}
+			  }
+			}
 
-        var full_path = parents.map(function (item) {
-          return item.___group_name
-        })
+			var full_path = parents.map(function (item) {
+			  return item.___group_name
+			})
 
-        full_path.push(groupItem.___group_name);
+			full_path.push(groupItem.___group_name);
 
-        var full_path_prop = full_path.join('___'); // TODO check if safe enough
+			var full_path_prop = full_path.join('___'); // TODO check if safe enough
 
-        var groupSettings;
+			var groupSettings;
 
-        if (reportData[contentType][layout.user_code]['groups'][full_path_prop]) {
-          groupSettings = reportData[contentType][layout.user_code]['groups'][full_path_prop];
-        }
+			if (reportData[contentType][layout.user_code]['groups'][full_path_prop]) {
+			  groupSettings = reportData[contentType][layout.user_code]['groups'][full_path_prop];
+			}
 
-        if (!groupSettings) {
+			if (!groupSettings) {
 
-          groupSettings = {
-            full_path: full_path,
-            is_open: true
-          }
+			  groupSettings = {
+				full_path: full_path,
+				is_open: true
+			  }
 
-          reportData[contentType][layout.user_code]['groups'][full_path_prop] = groupSettings;
+			  reportData[contentType][layout.user_code]['groups'][full_path_prop] = groupSettings;
 
-        }
+			}
 
-        groupItem.___is_open = true;
-        groupSettings.is_open = true;
+			groupItem.___is_open = true;
+			groupSettings.is_open = true;
 
-        if (!reportData[contentType][layout.user_code]['groups']) {
-          reportData[contentType][layout.user_code]['groups'] = {}
-        }
+			if (!reportData[contentType][layout.user_code]['groups']) {
+			  reportData[contentType][layout.user_code]['groups'] = {}
+			}
 
-        var full_path_prop = groupSettings.full_path;
+			var full_path_prop = groupSettings.full_path;
 
-        if (Array.isArray(full_path_prop)) {
-          full_path_prop = full_path_prop.join('___')
-        }
+			if (Array.isArray(full_path_prop)) {
+			  full_path_prop = full_path_prop.join('___')
+			}
 
-        reportData[contentType][layout.user_code]['groups'][full_path_prop] = groupSettings;
+			reportData[contentType][layout.user_code]['groups'][full_path_prop] = groupSettings;
 
-        reportData[contentType][layout.user_code].groupsList = [];
+			reportData[contentType][layout.user_code].groupsList = [];
 
-        groupsList.forEach(group => {
+			groupsList.forEach(group => {
 
-          var groupObj = {
-            key: group.key,
-            report_settings: {
-              is_level_folded: false
-            }
-          };
+			  var groupObj = {
+				key: group.key,
+				report_settings: {
+				  is_level_folded: false
+				}
+			  };
 
-          if (group.report_settings) {
-            groupObj.report_settings.is_level_folded = !!group.report_settings.is_level_folded;
-          }
+			  if (group.report_settings) {
+				groupObj.report_settings.is_level_folded = !!group.report_settings.is_level_folded;
+			  }
 
 
-          reportData[contentType][layout.user_code].groupsList.push(groupObj);
+			  reportData[contentType][layout.user_code].groupsList.push(groupObj);
 
-        });
+			});
 
-        evDataService.setData(groupItem);
+			evDataService.setData(groupItem);
 
-      });
+		  });
 
-    }
+		}
 
-    localStorageService.cacheReportData(reportData);
-    // localStorageService.cacheReportDataForLayout(contentType, layout.user_code, reportData);
+		localStorageService.cacheReportData(reportData);
+		// localStorageService.cacheReportDataForLayout(contentType, layout.user_code, reportData);
 
-    rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService);
+		rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService);
 
-    evEventService.dispatchEvent(evEvents.GROUPS_LEVEL_UNFOLD);
-    evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+		evEventService.dispatchEvent(evEvents.GROUPS_LEVEL_UNFOLD);
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
 
+		// New Backend Logic, Try To Request New Unrequested Open Groups
 
-    // New Backend Logic, Try To Request New Unrequested Open Groups
+		var unfoldPromises = []
 
-    var unfoldPromises = []
+		const currentLevelGroups = structuredClone(
+			evDataHelper.getGroupsByLevel($index + 1, evDataService)
+		);
 
-    const currentLevelGroups = structuredClone(
-        evDataHelper.getGroupsByLevel($index + 1, evDataService)
-    );
+		currentLevelGroups.forEach(function (group) {
 
-    currentLevelGroups.forEach(function (group) {
+		  console.log('handleFoldButtonClick.group', group);
 
-      console.log('handleFoldButtonClick.group', group);
+		  if (group.___is_open) {
 
-      if (group.___is_open) {
+			if ( !evDataService.isRequestParametersExist(group.___id) ) {
 
-        if (!evDataService.isRequestParametersExist(group.___id)) {
+			  unfoldPromises.push(function (){
 
-          unfoldPromises.push(function (){
+				  var parentRequestParameters = evDataService.getRequestParameters(group.___parentId);
 
-            var requestParameters = window.rvDataProviderService.createRequestParameters(
-                group, group.___level - 1, evDataService, evEventService
-            )
 
-            console.log('handleFoldButtonClick.group', group);
-            console.log('handleFoldButtonClick.requestParameters', requestParameters);
+				  var requestParameters = window.rvDataProviderService.createRequestParameters(
+					  evDataService, evEventService, group, parentRequestParameters
+				  )
 
-            return window.rvDataProviderService.updateDataStructureByRequestParameters(
-                requestParameters, evDataService, evEventService
-            )
+				console.log('handleFoldButtonClick.group', group);
+				console.log('handleFoldButtonClick.requestParameters', requestParameters);
 
-          })
+				return window.rvDataProviderService.updateDataStructureByRequestParameters(
+					evDataService, evEventService, requestParameters
+				)
 
-        }
+			  })
 
-      }
+			}
 
-    })
+		  }
 
-    console.log('unfoldLevel.unfoldPromises', unfoldPromises);
+		})
 
-    const unfoldGroups = async function () {
+		console.log('unfoldLevel.unfoldPromises', unfoldPromises);
 
-      let promisesToExecute = unfoldPromises.map(func => func());
+		const unfoldGroups = async function () {
 
-      await Promise.all(promisesToExecute)
+		  let promisesToExecute = unfoldPromises.map(func => func());
 
-      evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+		  await Promise.all(promisesToExecute)
 
-    }
+		  evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
 
-    if (unfoldPromises.length > 10) {
+		}
 
-      let res= await $mdDialog.show({
-        controller: 'WarningDialogController as vm',
-        locals: {
-          warning: {
-            title: 'Warning',
-            description: "You are trying to unfold " + unfoldPromises.length + " groups. It may take a while. Do you want to continue?",
-          }
-        }
+		if (unfoldPromises.length > 10) {
 
-      });
+		  let res= await $mdDialog.show({
+			controller: 'WarningDialogController as vm',
+			locals: {
+			  warning: {
+				title: 'Warning',
+				description: "You are trying to unfold " + unfoldPromises.length + " groups. It may take a while. Do you want to continue?",
+			  }
+			}
 
-      if (res.status === 'agree') {
-        await unfoldGroups();
+		  });
 
-      } else {
-        foldLevel(key, $index); // then fold this level back
-      }
+		  if (res.status === 'agree') {
+			await unfoldGroups();
 
-    } else {
-      await unfoldGroups();
-    }
+		  } else {
+			foldLevel(key, $index); // then fold this level back
+		  }
+
+		} else {
+		  await unfoldGroups();
+		}
 
 	}
 
@@ -1987,14 +2015,16 @@
 	// }
 
 	const onGroupLevelFoldingSwitch = function (argumentsObj) {
+
 		rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService)
+		columns.value = getColumns();
 
 		groupsRef.value = getGroups();
-		groupsRef.value = evDataHelper.importGroupsStylesFromColumns(
-			columns.value,
-			groupsRef.value
-		)
 
+		groupsRef.value = evDataHelper.importGroupsStylesFromColumns(
+			groupsRef.value,
+			columns.value,
+		)
 		// if (argumentsObj && argumentsObj.updateScope) $apply()
 	}
 
