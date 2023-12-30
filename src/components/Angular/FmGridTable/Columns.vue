@@ -1528,35 +1528,35 @@
 		setGroups(groupsRef.value)
 	}
 
-	const updateGroupFoldingState = function () {
+    const updateGroupFoldingState = function () {
 
-    let groupsList = evDataService.getGroups()
-		let parentGroupFullyFolded = false
+        let groupsList = evDataService.getGroups()
+        let parentGroupFullyFolded = false
 
-		groupsList.forEach((group) => {
+        groupsList.forEach((group) => {
 
-      if (!group.report_settings) {
-        group.report_settings = {}
-      }
+            if (!group.report_settings) {
+                group.report_settings = {}
+            }
 
-      if (typeof group.report_settings.is_level_folded !== 'boolean') {
-        group.report_settings.is_level_folded = true;
-      }
+            if (typeof group.report_settings.is_level_folded !== 'boolean') {
+                group.report_settings.is_level_folded = true;
+            }
 
-      if (parentGroupFullyFolded) {
-        group.report_settings.is_level_folded = true;
+            if (parentGroupFullyFolded) {
+                group.report_settings.is_level_folded = true;
 
-      } else if (group.report_settings.is_level_folded) { // if group is fully folded, groups after it must be folded too
-        parentGroupFullyFolded = true;
-      }
+            } else if (group.report_settings.is_level_folded) { // if group is fully folded, groups after it must be folded too
+                parentGroupFullyFolded = true;
+            }
 
-		})
+        })
 
-		evDataService.setGroups(groupsList);
+        evDataService.setGroups(groupsList);
 
-    groupsRef.value = getGroups();
+        groupsRef.value = getGroups();
 
-	}
+    }
 
 	const syncColumnsWithGroups = function () {
 		let columnsList = evDataService.getColumns()
@@ -2098,11 +2098,10 @@
 
 			groupsRef.value = setGroupsFrontOptions()
 
-			if (!foldedGroup) {
-				rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService)
-			}
+            rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService)
+            columns.value = getColumns();
 
-			if (colsChanged) {
+            if (colsChanged) {
 				evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
 			}
 
@@ -2110,8 +2109,6 @@
 		}
 	} else {
 		onGroupsChange = function () {
-			groups.value = updateGroupTypeIds()
-			setDefaultGroupType()
 
 			groupsRef.value = updateGroupTypeIds();
 			setDefaultGroupType();
@@ -2351,7 +2348,7 @@
 	}
 
 	let addColumnEntityToGrouping = function (column) {
-		const groupToAdd = evHelperService.getTableAttrInFormOf('group', column)
+		const groupToAdd = useGetEvRvAttrInFormOf('group', column)
 
 		// groupsRef.value.push(groupToAdd)
 		let groupsList = evDataService.getGroups()

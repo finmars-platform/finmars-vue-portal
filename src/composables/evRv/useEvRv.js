@@ -290,6 +290,7 @@
 
 import reportViewerController from "~/angular/controllers/entityViewer/reportViewerController";
 import {useSetEvRvFilterDefaultOptions} from "~/composables/evRv/useFilters";
+import evDataHelper from "~/angular/helpers/ev-data.helper";
 
 const reportContentTypes = ['reports.balancereport', 'reports.plreport', 'reports.transactionreport'];
 export function isReport (contentType) {
@@ -311,7 +312,7 @@ export const getDefaultEvRvFilterType = function (valueType) {
  * @param {object} attrInstance - Object with attribute data on which attribute form will be based
  * @return {object} Return attribute in form of group, column or filter
  */
-export const getEvRvAttrInFormOf = function (form, attrInstance) {
+export const useGetEvRvAttrInFormOf = function (form, attrInstance) {
 	let attrTypeToAdd = {};
 
 	attrTypeToAdd.key = attrInstance.key;
