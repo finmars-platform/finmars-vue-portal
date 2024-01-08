@@ -1265,9 +1265,9 @@ export default function (reportHelper) {
 
 		let listLayout = metaHelper.recursiveDeepCopy(getListLayout());
 
-		listLayout.data.columns = getColumns();
-		listLayout.data.grouping = getGroups();
-		listLayout.data.filters = getFilters();
+		listLayout.data.columns = JSON.parse(JSON.stringify( getColumns() ));
+		listLayout.data.grouping = JSON.parse(JSON.stringify( getGroups() ));
+		listLayout.data.filters = JSON.parse(JSON.stringify( getFilters() ));
 
 		listLayout.data.columns.forEach(column => delete column.frontOptions);
 		listLayout.data.grouping.forEach(group => delete group.frontOptions);

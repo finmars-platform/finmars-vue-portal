@@ -222,7 +222,7 @@
 						class="fm_list_item"
 						v-if="
 							itemIndex !== 0 &&
-							showSubtotalWeighted()
+							showSubtotalWeighted
 						"
 						@click="columnsData.onSubtotalWeightedClick(item)"
 					>
@@ -234,7 +234,7 @@
 						class="fm_list_item"
 						v-if="
 							itemIndex !== 0 &&
-							showSubtotalWeighted()
+							showSubtotalWeighted
 						"
 						@click="
 							columnsData.onSubtotalAvgWeightedClick(item)
@@ -261,7 +261,7 @@
 						class="fm_list_item"
 						v-if="
 							itemIndex !== 0 &&
-							showSubtotalWeighted()
+							showSubtotalWeighted
 						"
 						:disabled="isSubtotalWeightedDisabled"
 						@click="
@@ -275,7 +275,7 @@
 						<FmIcon
 							icon="done"
 							v-show="
-								!item.frontOptions?.temporaryWeightedActive &&
+								!item.frontOptions.temporaryWeightedActive &&
 								(columnsData.getSubtotalFormula(item) === 2 ||
 									columnsData.getSubtotalFormula(item) === 6)
 							"
@@ -288,7 +288,7 @@
 						class="fm_list_item"
 						v-if="
 							itemIndex !== 0 &&
-							showSubtotalWeighted()
+							showSubtotalWeighted
 						"
 						:disabled="isSubtotalWeightedDisabled"
 						@click="
@@ -314,7 +314,7 @@
 
 					<button
 						class="fm_list_item"
-						v-if="itemIndex !== 0 && showSubtotalWeighted()"
+						v-if="itemIndex !== 0 && showSubtotalWeighted"
 						:disabled="isSubtotalWeightedDisabled"
 						@click="
 							columnsData.selectSubtotalType(
@@ -339,7 +339,7 @@
 						class="fm_list_item"
 						v-if="
 							itemIndex !== 0 &&
-							showSubtotalWeighted()
+							showSubtotalWeighted
 						"
 						:disabled="isSubtotalWeightedDisabled"
 						@click="
@@ -457,6 +457,7 @@
 
 	const props = defineProps({
 		item: Object, // column or group
+        // Inside report viewer takes into account columns for groups
 		itemIndex: Number,
 		isReport: Boolean,
 		isGroup: Boolean,
@@ -488,7 +489,7 @@
 	 *
 	 * @return {boolean} - true if subtotal weighted allowed
 	 */
-	let showSubtotalWeighted = function () {
+	let showSubtotalWeighted = computed(() => {
 
 		const withoutSubtotalWeighted = [
 			'market_value',
@@ -497,10 +498,8 @@
 			'exposure_percent',
 		];
 
-		return !withoutSubtotalWeighted.some(
-			excludedKey => props.item.key === excludedKey
-		)
-	}
+		return !withoutSubtotalWeighted.includes(props.item.key);
+	})
 
 	function isSubtotalSum() {
 		return columnsData.getSubtotalFormula(props.item) === 1;
@@ -518,7 +517,7 @@
 	}*/
 	const isSubtotalWeighted = computed(() => {
 
-		if (props.item.frontOptions.subtotalWeightedActive) {
+		if (props.item.frontOptions?.subtotalWeightedActive) {
 			return true;
 		}
 
@@ -529,7 +528,7 @@
 
 	function isSubtotalAvgWeighted() {
 
-		if (props.item.frontOptions.subtotalAvgWeightedActive) {
+		if (props.item.frontOptions?.subtotalAvgWeightedActive) {
 			return true;
 		}
 
@@ -542,8 +541,8 @@
 		return !isSubtotalWeighted.value &&
 			!isSubtotalAvgWeighted(props.item) &&
 			(
-				!props.item.frontOptions.subtotalWeightedActive &&
-				!props.item.frontOptions.subtotalAvgWeightedActive
+				!props.item.frontOptions?.subtotalWeightedActive &&
+				!props.item.frontOptions?.subtotalAvgWeightedActive
 			);
 
 	})

@@ -134,7 +134,7 @@
 					v-for="(column, index) in columnsToShow"
 					:key="column.key"
 					:item="column"
-					:itemIndex="index"
+					:itemIndex="getColumnIndex(index)"
 					:isReport="isReport"
 					:viewContext="viewContext"
 					:style="column.style"
@@ -353,10 +353,19 @@
 	let entityType = evDataService.getEntityType()
 	let rowStatusFilterIcon = `<span class="material-icons">star_outline</span>`;
 
-  let dataIsLoadingRef = ref(null);
+    const setUpFrontOptions = (item) => {
+        item.frontOptions = item.frontOptions || {}
+
+        return item
+    }
 
 	const getColumns = () => {
-		return JSON.parse(JSON.stringify(evDataService.getColumns()))
+
+        let columnsList = evDataService.getColumns();
+        columnsList = columnsList.map(setUpFrontOptions);
+
+        return structuredClone(columnsList);
+
 	}
 
 	const setColumns = (columns) => {
@@ -396,7 +405,12 @@
 	}
 
 	function getGroups() {
-		return JSON.parse(JSON.stringify(evDataService.getGroups()))
+
+        let groupsList = evDataService.getGroups();
+        groupsList = groupsList.map(setUpFrontOptions);
+
+        return structuredClone(groupsList);
+
 	}
 
 	function setGroups(groups) {
@@ -406,6 +420,40 @@
 	let columns = ref( getColumns() )
 
 	let groupsRef = ref( getGroups() )
+
+    /**
+     * Needed because columns inside dashboard
+     * can be different from columns saved in an ev / rv layout
+     *
+     * @type {ComputedRef<Array>}
+     */
+    const columnsToShow = computed(() => {
+
+        if (isReport) {
+
+            const cols = evDataHelper.separateNotGroupingColumns(
+                columns.value,
+                groupsRef.value
+            )
+
+            return cols.filter(col => !col.isHidden);
+
+        } else {
+            return columns.value
+        }
+
+    })
+
+    /**
+     * Needed to calculate index
+     * when taking into account columns for groups inside report viewer
+     *
+     * @param {Number} index - index inside v-for
+     * @return {Number} - index of column
+     */
+    const getColumnIndex = index => {
+        return isReport ? (groupsRef.value.length + index) : index;
+    };
 
 	/** @type {ComputedRef<Array<String>>} - array of keys of attributes for groups and columns */
 	let selectedAttrs = computed(() => {
@@ -420,28 +468,6 @@
 	 */
 	let showFrontEvFilters = !isReport && filters.frontend.length > 0
 
-	/**
-	 * Needed because columns inside dashboard
-	 * can be different from columns saved in an ev / rv layout
-	 *
-	 * @type {ComputedRef<Array>}
-	 */
-	const columnsToShow = computed(() => {
-
-		if (isReport) {
-
-			const cols = evDataHelper.separateNotGroupingColumns(
-				columns.value,
-				groupsRef.value
-			)
-
-			return cols.filter(col => !col.isHidden);
-
-		} else {
-			return columns.value
-		}
-
-	})
 
 	/*const getColumnsToShow = function () {
 		if (isReport) {
@@ -1934,12 +1960,6 @@
 		return groups[$index].report_settings.is_level_folded
 	}
 
-	const setUpFrontOptions = (item) => {
-		item.frontOptions = item.frontOptions || {}
-
-		return item
-	}
-
 	const setColumnsFrontOptions = function () {
 		let columnsList = evDataService.getColumns()
 
@@ -1947,7 +1967,6 @@
 
 		evDataService.setColumns(columnsList)
 
-		return getColumns()
 	}
 
 	const setGroupsFrontOptions = function () {
@@ -1957,7 +1976,6 @@
 
 		evDataService.setGroups(groupsList)
 
-		return getGroups()
 	}
 
 	var getColsAvailableForAdditions = function () {
@@ -2069,6 +2087,7 @@
 		}
 
 		onGroupsChange = function () {
+
 			groupsRef.value = updateGroupTypeIds()
 
 			setDefaultGroupType()
@@ -2079,7 +2098,7 @@
 
 			const res = syncColumnsWithGroups()
 
-			columns.value = res.columns
+			columns.value = getColumns()
 			const colsChanged = res.columnsHaveBeenSynced
 
 			groupsRef.value = evDataHelper.importGroupsStylesFromColumns(
@@ -2096,7 +2115,7 @@
 					group.report_settings && group.report_settings.is_level_folded
 			)
 
-			groupsRef.value = setGroupsFrontOptions()
+			groupsRef.value = getGroups()
 
             rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService)
             columns.value = getColumns();
@@ -2108,12 +2127,13 @@
 			evEventService.dispatchEvent(evEvents.UPDATE_TABLE)
 		}
 	} else {
+
 		onGroupsChange = function () {
 
 			groupsRef.value = updateGroupTypeIds();
 			setDefaultGroupType();
 
-			groupsRef.value = setGroupsFrontOptions();
+			groupsRef.value = getGroups();
 
 			// groups = evDataService.getGroups();
 			evDataService.resetTableContent(isReport)
@@ -2135,6 +2155,7 @@
 
 			return true
 		}
+
 	}
 
 	//# region Data to provide for components-children
@@ -2607,14 +2628,15 @@
 	}
 
 	function onSubtotalSumClick(column) {
+
 		column.frontOptions.subtotalAvgWeightedActive = false
 		column.frontOptions.subtotalWeightedActive = false
 
 		column.frontOptions.subtotalAvgWeightedActive = false;
 		column.frontOptions.subtotalWeightedActive = false;
 
-    evDataService.resetTableContent(isReport);
-    evEventService.dispatchEvent(evEvents.GROUPS_CHANGE); // make request to backend to recalculate subtotals
+    	evDataService.resetTableContent(isReport);
+    	evEventService.dispatchEvent(evEvents.GROUPS_CHANGE); // make request to backend to recalculate subtotals
 
 		selectSubtotalType(column, 1);
 
@@ -2631,16 +2653,19 @@
   }
 
 	function onSubtotalWeightedClick(column) {
+
+		const col = getColumnByKey(column.key);
 // column is an object inside ref columns
-		column.frontOptions.subtotalAvgWeightedActive = false
-		column.report_settings.subtotal_formula_id = null
+		col.frontOptions.subtotalAvgWeightedActive = false;
+		col.report_settings.subtotal_formula_id = null;
 
-		column.frontOptions.subtotalWeightedActive =
-			!column.frontOptions.subtotalWeightedActive
+		col.frontOptions.subtotalWeightedActive =
+			!col.frontOptions.subtotalWeightedActive;
+		// setColumns();
+		// column changed inside entityViewerDataService by mutation
 
-		setColumns(columns.value)
+        subtotalWeightedChange();
 
-    subtotalWeightedChange()
 	}
 
 	function onSubtotalAvgWeightedClick(column) {
@@ -2650,7 +2675,7 @@
 
 		setColumns(columns.value)
 
-    subtotalWeightedChange()
+        subtotalWeightedChange()
 	}
 
 	function getSubtotalFormula(column) {
@@ -2734,7 +2759,9 @@
 
 			collectMissingCustomFieldsErrors()
 
-			columns.value = setColumnsFrontOptions()
+			// columns.value = setColumnsFrontOptions()
+			columns.value = getColumns()
+
 		})
 
 		evEventService.addEventListener(
@@ -2793,7 +2820,9 @@
 			contentWrapElement.classList.remove('g-row-settings-collapsed')
 		}
 
-		columns.value = setColumnsFrontOptions()
+		// columns.value = setColumnsFrontOptions()
+		setColumnsFrontOptions()
+		columns.value = getColumns()
 
 		evDataHelper.importGroupsStylesFromColumns(groupsRef.value, columns.value)
 
@@ -2806,7 +2835,9 @@
 		}
 
 		groupsRef.value = syncGroupLayoutNamesWithColumns()
-		groupsRef.value = setGroupsFrontOptions()
+		// groupsRef.value = setGroupsFrontOptions()
+		setGroupsFrontOptions();
+		groupsRef.value = getGroups();
 
 		setColumns(columns.value)
 		// columns = evDataService.getColumns()
