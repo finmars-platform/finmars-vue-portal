@@ -11,7 +11,7 @@
 
 					<div class="fm_list">
 						<NuxtLink class="fm_list_item"
-							to="/profile/add-database"
+								  to="/profile/add-database"
 						>
 							New
 						</NuxtLink>
@@ -30,7 +30,7 @@
 		</FmTopRefresh>
 
 		<div class="fm_container databases p-b-16"
-			v-if="invites && invites.results.length"
+			 v-if="invites && invites.results.length"
 		>
 			<PagesProfileInviteItem
 				v-for="invite in invites.results"
@@ -41,7 +41,7 @@
 		</div>
 
 		<div class="fm_container databases"
-			v-if="store.masterUsers.length"
+			 v-if="store.masterUsers.length"
 		>
 			<PagesProfileDatabasesItem
 				v-for="db in store.masterUsers"
@@ -50,24 +50,29 @@
 				@refresh="store.getMasterUsers()"
 			/>
 		</div>
-		<div class="fm_container databases" v-else>No databases found</div>
+		<div class="fm_container no-databases" v-else>
+
+			<h1>No spaces found</h1>
+			<p>Please, contact <a href="mailto:sales@finmars.com" title="sales@finmars.com">sales@finmars.com</a></p>
+
+		</div>
 	</div>
 </template>
 
 <script setup>
 
-	let store = useStore()
+let store = useStore()
 
-	let { data: invites, refresh: refreshInvites } = await useAsyncData(
-		"invitesToDB",
-		() => useApi('invitesToDB.get'),
-		{lazy: true}
-	);
+let { data: invites, refresh: refreshInvites } = await useAsyncData(
+	"invitesToDB",
+	() => useApi('invitesToDB.get'),
+	{lazy: true}
+);
 
-	let isShowNewBackup = ref(false)
+let isShowNewBackup = ref(false)
 
-	import formbricks from "@/services/formbricks";
-	await formbricks.registerRouteChange();
+import formbricks from "@/services/formbricks";
+await formbricks.registerRouteChange();
 
 </script>
 
@@ -79,5 +84,22 @@
 	//justify-content: flex-start;
 	justify-content: center;
 	padding-bottom: $content-padding-x;
+}
+.no-databases {
+	text-align: center;
+	margin-top: 1rem;
+
+	h1 {
+		font-size: 1.5rem;
+	}
+
+	p {
+		font-size: 1.2rem;
+		margin-top: 1rem;
+	}
+	a {
+		display: inline-block;
+		color: #f05a22
+	}
 }
 </style>
