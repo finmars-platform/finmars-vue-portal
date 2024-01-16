@@ -51,7 +51,7 @@
 					:headers="portfolioHeaders"
 					:items="portfolioItems"
 					colls="repeat(12, 1fr)"
-					:cb="chooseMonth"
+					:cb="chooseYear"
 					:active="activeYear"
 				/>
 			</div>
@@ -119,7 +119,7 @@
 	let portfolioYears = ref([])
 	let portfolioTotals = ref([])
 	let activeYear = ref(0)
-	let detailsLoading = false
+	// let detailsLoading = false
 
 	let detailPortfolio = ref('')
 	let detailYear = ref('')
@@ -144,13 +144,18 @@
 
 	if (bundleId.value) getMonthDetails()
 
-	async function chooseMonth(id) {
+	async function chooseYear(id) {
 		activeYear.value = id
 		detailYear.value = portfolioYears.value[id]
 
+		console.log('chooseYear', id);
+		console.log('portfolioItems', portfolioItems.value);
+		// console.log('portfolioItemsCumm', portfolioItemsCumm.value);
+		console.log('detailYear', detailYear.value);
+
 		emits('setYear', {
-			datasetMonth: portfolioItems.value[id],
-			datasetLine: portfolioItemsCumm.value[id],
+			datasetCumulative: portfolioItems.value[id],
+			// datasetLine: portfolioItemsCumm.value[id],
 			detailYear: detailYear.value,
 		})
 	}
@@ -170,9 +175,12 @@
 	}
 
 	async function getMonthDetails() {
-		if (detailsLoading) return false
 
-		detailsLoading = true
+		console.log('getMonthDetails here')
+
+		// if (detailsLoading) return false
+
+		// detailsLoading = true
 		portfolioYears.value = []
 		portfolioTotals.value = []
 		portfolioItems.value = []
@@ -196,11 +204,15 @@
 
 		// It Insane to download whole history, lets asume only last year
 
-		let begin = dayjs(new Date()).startOf('year').format('YYYY-MM-DD');
+		let begin = dayjs(props.end_date).startOf('year').format('YYYY-MM-DD');
 
 		let end = dayjs(endDate).format('YYYY-MM-DD')
 
 		const monthEndDates = getLastDaysOfMonths(begin, end)
+
+		console.log('begin', begin);
+		console.log('end', end);
+		console.log('monthEndDates', monthEndDates);
 
 		const promises = []
 
@@ -322,9 +334,9 @@
 			})
 			portfolioTotals.value.push(total.grand_return * 100)
 		}
-		detailsLoading = false
+		// detailsLoading = false
 
-		chooseMonth(0)
+		chooseYear(0)
 	}
 
 	async function updateBundle(bundleData) {
@@ -377,7 +389,11 @@
 	// double
 	async function getReports({ period_type, end, ids, type = 'months' }) {
 
-		console.log('getReports %s' % getReports)
+		// console.log('getReports.period_type', period_type)
+		// console.log('getReports.end', end)
+		// console.log('getReports.type', type)
+		// console.log('getReports.ids', ids)
+		// console.log('getReports.====')
 
 		let res = await useApi('performanceReport.post', {
 			body: {

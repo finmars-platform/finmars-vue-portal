@@ -24,21 +24,27 @@
 	// updateChart( props.yearData.datasetMonth, props.yearData.datasetLine )
 	watch(
 		props,
-		() => updateChart( props.yearData.datasetMonth, props.yearData.datasetLine )
+		() => updateChart( props.yearData.datasetCumulative)
 	)
 
-	function updateChart( datasetMonth, datasetLine ) {
+	function updateChart( datasetCumulative ) {
 		if ( !chart ) createChart()
 
-		chart.data.datasets[0].data = datasetMonth
+		console.log('datasetMonth', datasetCumulative);
+
+		chart.data.datasets[0].data = datasetCumulative.map(function(item){
+			return parseFloat(item);
+		})
 		chart.data.datasets[0].backgroundColor = [];
 
-		if (datasetMonth) {
+		if (datasetCumulative) {
 			chart.data.datasets[0].backgroundColor =
-				datasetMonth.map(item => item > 0 ? '#a5d9c9' : '#fac878')
+				datasetCumulative.map(item => item > 0 ? '#a5d9c9' : '#fac878')
 		}
 
-		chart.data.datasets[1].data = datasetLine
+		console.log('chart.data.datasets[0]', chart.data.datasets[0]);
+
+		// chart.data.datasets[1].data = datasetLine
 
 		chart.update()
 	}
@@ -49,14 +55,14 @@
 			data: {
 				labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 				datasets: [
+					// {
+					// 	label: 'Monthly Returns',
+					// 	data: [],
+					// 	backgroundColor: [],
+					// 	order: 1
+					// },
 					{
-						label: 'Monthly Returns',
-						data: [],
-						backgroundColor: [],
-						order: 1
-					},
-					{
-						label: 'Cummulative Return',
+						label: 'Cumulative Return',
 						data: [],
 						fill: '#f05a23',
 						type: 'line',
