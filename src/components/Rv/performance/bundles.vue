@@ -74,6 +74,12 @@ function init() {
 	fetchPortfolioBundles()
 }
 
+function formatNumber(num) {
+	return Intl.NumberFormat('en-EN', {
+		// maximumSignificantDigits: 3
+	}).format(num)
+}
+
 async function fetchPortfolioBundles() {
 	// readyStatusData.bundles = false;
 
@@ -109,43 +115,82 @@ async function fetchPortfolioBundles() {
 		row.daily = null
 		getDay(bundle.id).then((day) => {
 			let value = Math.round(day * 100 * 100) / 100
-			row.daily = value ? `${value}%` : ''
+
+			if (props.reportOptions.performance_unit === 'percent') {
+				row.daily = value ? `${value}%` : ''
+			} else {
+				row.daily = value ? `${formatNumber(value)}` : ''
+			}
 		})
 
 		row.month = null
 		getMonth(bundle.id).then((month) => {
 			let value = Math.round(month * 100 * 100) / 100
-			row.month = value ? `${value}%` : ''
+
+			if (props.reportOptions.performance_unit === 'percent') {
+				row.month = value ? `${value}%` : ''
+			} else {
+				row.month = value ? `${formatNumber(value)}` : ''
+			}
 		})
 
 		row.q = null
 		getQ(bundle.id).then((q) => {
 			let value = Math.round(q * 100 * 100) / 100
-			row.q = value ? `${value}%` : ''
+
+			if (props.reportOptions.performance_unit === 'percent') {
+				row.q = value ? `${value}%` : ''
+			} else {
+				row.q = value ? `${formatNumber(value)}` : ''
+			}
 		})
 
 		row.year = null
 		getYear(bundle.id).then((year) => {
 			let value = Math.round(year * 100 * 100) / 100
-			row.year = value ? `${value}%` : ''
+
+			if (props.reportOptions.performance_unit === 'percent') {
+				row.year = value ? `${value}%` : ''
+			} else {
+				row.year = value ? `${formatNumber(value)}` : ''
+			}
+
 		})
 
 		row.last = null
 		getLastYear(bundle.id).then((last) => {
 			let value = Math.round(last * 100 * 100) / 100
-			row.last = value ? `${value}%` : ''
+
+			if (props.reportOptions.performance_unit === 'percent') {
+				row.last = value ? `${value}%` : ''
+			} else {
+				row.last = value ? `${formatNumber(value)}` : ''
+			}
+
 		})
 
 		row.beforeLast = null
 		getYearBeforeLast(bundle.id).then((beforeLast) => {
 			let value = Math.round(beforeLast * 100 * 100) / 100
-			row.beforeLast = value ? `${value}%` : ''
+
+			if (props.reportOptions.performance_unit === 'percent') {
+				row.beforeLast = value ? `${value}%` : ''
+			} else {
+				row.beforeLast = value ? `${formatNumber(value)}` : ''
+			}
+
 		})
 
 		row.incept = null
 		getIncept(bundle.id).then((incept) => {
 			let value = Math.round(incept * 100 * 100) / 100
-			row.incept = value ? `${value}%` : ''
+
+			if (props.reportOptions.performance_unit === 'percent') {
+				row.incept = value ? `${value}%` : ''
+			} else {
+				row.incept = value ? `${formatNumber(value)}` : ''
+			}
+
 		})
 	})
 	chooseBundle(0)
@@ -243,7 +288,15 @@ async function getReports({period_type, end, ids, type = 'months'}) {
 		},
 	})
 
-	return res.grand_return
+	if (props.reportOptions.performance_unit === 'percent') {
+		return res.grand_return
+	} else if (props.reportOptions.performance_unit === 'absolute') {
+		return res.grand_absolute_pl
+	} else  {
+		return res.grand_return
+	}
+
+
 }
 
 // rework

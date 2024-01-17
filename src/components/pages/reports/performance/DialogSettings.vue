@@ -37,12 +37,21 @@
 						/>
 					</RvSettingsRow>
 
+					<RvSettingsRow label="Performance Unit">
+						<FmSelect
+							v-model="reportOptions.performance_unit"
+							:items="performanceUnitOpts"
+						/>
+					</RvSettingsRow>
+
 					<RvSettingsRow label="Return calculations">
 						<FmSelect
 							v-model="reportOptions.calculation_type"
 							:items="calcTypeOpts"
 						/>
 					</RvSettingsRow>
+
+
 
 					<RvSettingsRow label="Time grain">
 						<FmSelect
@@ -121,6 +130,16 @@
 
 	let currencyOpts = ref([])
 	let pricingPoliciesOpts = ref([])
+	let performanceUnitOpts = [
+		{
+			id: 'percent',
+			name: 'Percent',
+		},
+		{
+			id: 'absolute',
+			name: 'Absolute',
+		},
+	]
 	let calcTypeOpts = [
 		// {
 		// 	id: 'time_weighted',
@@ -163,6 +182,10 @@
 	]
 
 	let reportOptions = ref({ ...viewerData.reportOptions })
+
+	if (!reportOptions.value.performance_unit) {
+		reportOptions.value.performance_unit = 'percent'
+	}
 
 	watch(
 		() => viewerData.reportOptions,

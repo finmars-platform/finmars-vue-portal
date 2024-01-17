@@ -14,6 +14,9 @@
 	const emits = defineEmits(['setMonth', 'refresh'])
 
 	const props = defineProps({
+		reportOptions: {
+			type: Object,
+		},
 		yearData: {
 			type: Object
 		}
@@ -122,7 +125,13 @@
 						ticks: {
 							// Include a dollar sign in the ticks
 							callback: function(value, index, ticks) {
-								return value + '%';
+
+								if (props.reportOptions.performance_unit === 'percent') {
+									return value + '%';
+								} else {
+									return value;
+								}
+
 							}
 						}
 					}

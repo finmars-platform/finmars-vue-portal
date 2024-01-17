@@ -51,14 +51,19 @@
 					:headers="portfolioHeaders"
 					:items="portfolioItems"
 					colls="repeat(12, 1fr)"
-					:cb="chooseYear"
 					:active="activeYear"
 				/>
 			</div>
 			<div class="coll_total">
 				<div class="coll_item t_header">TOTAL</div>
 				<div class="coll_item" v-for="(item, i) in portfolioTotals" :key="i">
-					{{ Math.round(item * 100) / 100 }}%
+
+					<span v-if="reportOptions.performance_unit === 'percent'">
+						{{ Math.round(item * 100) / 100 }}%
+					</span>
+					<span v-if="reportOptions.performance_unit === 'absolute'">
+						{{item}}
+					</span>
 				</div>
 			</div>
 		</div>
@@ -69,6 +74,9 @@
 	import dayjs from 'dayjs'
 
 	const props = defineProps({
+		reportOptions: {
+			type: Object,
+		},
 		bundleId: {
 			type: [Number, Object],
 		},
@@ -86,6 +94,12 @@
 		},
 	})
 	const emits = defineEmits(['setYear', 'refresh'])
+
+	function formatNumber(num) {
+		return Intl.NumberFormat('en-EN', {
+			// maximumSignificantDigits: 3
+		}).format(num)
+	}
 
 	let currentBundle = computed(() => {
 
@@ -108,18 +122,18 @@
 
 	})
 
-	watch(props, () => {
+	watch(props, async () => {
 		if (!bundleId.value) return false
 
-		getMonthDetails()
+		await getMonthDetails()
 	})
 
 	let portfolioItems = ref([])
-	let portfolioItemsCumm = ref([])
+	let portfolioItemsRaw = ref([])
 	let portfolioYears = ref([])
 	let portfolioTotals = ref([])
 	let activeYear = ref(0)
-	// let detailsLoading = false
+	let detailsLoading = false
 
 	let detailPortfolio = ref('')
 	let detailYear = ref('')
@@ -150,12 +164,13 @@
 
 		console.log('chooseYear', id);
 		console.log('portfolioItems', portfolioItems.value);
-		// console.log('portfolioItemsCumm', portfolioItemsCumm.value);
+		console.log('portfolioItemsRaw', portfolioItemsRaw.value);
+
 		console.log('detailYear', detailYear.value);
 
 		emits('setYear', {
-			datasetCumulative: portfolioItems.value[id],
-			// datasetLine: portfolioItemsCumm.value[id],
+			// datasetCumulative: portfolioItems.value[id],
+			datasetCumulative: portfolioItemsRaw.value[id],
 			detailYear: detailYear.value,
 		})
 	}
@@ -178,13 +193,13 @@
 
 		console.log('getMonthDetails here')
 
-		// if (detailsLoading) return false
+		if (detailsLoading) return false
 
-		// detailsLoading = true
+		detailsLoading = true
 		portfolioYears.value = []
 		portfolioTotals.value = []
 		portfolioItems.value = []
-		portfolioItemsCumm.value = []
+		portfolioItemsRaw.value = []
 
 		let bundle = bundleId.value
 
@@ -229,83 +244,82 @@
 		const allMonths = await Promise.all(promises)
 
 		console.log('allMonths', allMonths);
+		console.log('yearsBuffer', yearsBuffer);
 
 		allMonths.forEach((item) =>{
 
 			let parseDate = item.end_date.split('-')
 
 			let defaultMonth = {
-				key_01: [0 + '%', 0],
-				key_02: [0 + '%', 0],
-				key_03: [0 + '%', 0],
-				key_04: [0 + '%', 0],
-				key_05: [0 + '%', 0],
-				key_06: [0 + '%', 0],
-				key_07: [0 + '%', 0],
-				key_08: [0 + '%', 0],
-				key_09: [0 + '%', 0],
-				key_10: [0 + '%', 0],
-				key_11: [0 + '%', 0],
-				key_12: [0 + '%', 0],
+
+			}
+
+			if (props.reportOptions.performance_unit === 'percent') {
+				defaultMonth = {
+					key_01: [0 + '%', 0],
+					key_02: [0 + '%', 0],
+					key_03: [0 + '%', 0],
+					key_04: [0 + '%', 0],
+					key_05: [0 + '%', 0],
+					key_06: [0 + '%', 0],
+					key_07: [0 + '%', 0],
+					key_08: [0 + '%', 0],
+					key_09: [0 + '%', 0],
+					key_10: [0 + '%', 0],
+					key_11: [0 + '%', 0],
+					key_12: [0 + '%', 0],
+				}
+			} else {
+				defaultMonth = {
+					key_01: [0, 0],
+					key_02: [0, 0],
+					key_03: [0, 0],
+					key_04: [0, 0],
+					key_05: [0, 0],
+					key_06: [0, 0],
+					key_07: [0, 0],
+					key_08: [0, 0],
+					key_09: [0, 0],
+					key_10: [0, 0],
+					key_11: [0, 0],
+					key_12: [0, 0],
+				}
 			}
 
 			if (!yearsBuffer.has(parseDate[0])) {
 				yearsBuffer.set(parseDate[0], defaultMonth)
 			}
 
-			yearsBuffer.get(parseDate[0])['key_' + parseDate[1]] = [
-				(Math.round(item.grand_return * 10000) / 100) + '%',
-				0,
-			]
+			// so 0 index for raw value
+			// so 1 index for formatted value
+			// other is depcreated
+			// todo refactor
+
+			if (props.reportOptions.performance_unit === 'percent') {
+				yearsBuffer.get(parseDate[0])['key_' + parseDate[1]] = [
+					item.grand_return,
+					(Math.round(item.grand_return * 10000) / 100) + '%',
+				]
+			} else {
+				yearsBuffer.get(parseDate[0])['key_' + parseDate[1]] = [
+					item.grand_absolute_pl,
+					formatNumber(item.grand_absolute_pl),
+				]
+			}
 
 
 		})
 
 
-		// let allMonths = await getReports({ period_type: 'ytd', end: end, ids: bundle })
-
-		// if (allMonths.error) {
-		// 	detailsLoading = false
-		// 	return false
-		// }
-
-
-
-		// allMonths.items.reverse().forEach((item) => {
-		// 	let parseDate = item.date_to.split('-')
-		//
-		// 	// key_ fix order
-		// 	let defaultMonth = {
-		// 		key_01: [0, 0],
-		// 		key_02: [0, 0],
-		// 		key_03: [0, 0],
-		// 		key_04: [0, 0],
-		// 		key_05: [0, 0],
-		// 		key_06: [0, 0],
-		// 		key_07: [0, 0],
-		// 		key_08: [0, 0],
-		// 		key_09: [0, 0],
-		// 		key_10: [0, 0],
-		// 		key_11: [0, 0],
-		// 		key_12: [0, 0],
-		// 	}
-		//
-		// 	if (!yearsBuffer.has(parseDate[0])) {
-		// 		yearsBuffer.set(parseDate[0], defaultMonth)
-		// 	}
-		//
-		// 	yearsBuffer.get(parseDate[0])['key_' + parseDate[1]] = [
-		// 		Math.round(item.instrument_return * 10000) / 100,
-		// 		Math.round(item.cumulative_return * 10000) / 100,
-		// 	]
-		// })
-
 		let dateTo = dayjs(props.end_date)
 		let dateFrom = dayjs(begin)
 
+
 		for (let [year, months] of yearsBuffer) {
 			portfolioYears.value.push(year)
-			portfolioItems.value.push(
+
+			// todo refactor this cursed code
+			portfolioItemsRaw.value.push(
 				Object.values(months).map((item, i) => {
 					if (
 						( year != dateTo.year() || i <= dateTo.month() ) &&
@@ -316,11 +330,18 @@
 				})
 			)
 
-			portfolioItemsCumm.value.push(
+			portfolioItems.value.push(
 				Object.values(months).map((item, i) => {
-					if (year != dateTo.year() || i <= dateTo.month()) return item[1]
+					if (
+						( year != dateTo.year() || i <= dateTo.month() ) &&
+						( year != dateFrom.year() || i >= dateFrom.month() )
+					)
+						return item[1]
+					else return ''
 				})
 			)
+
+
 
 			let end =
 				year == dayjs(dateTo).year()
@@ -332,11 +353,15 @@
 				end: end,
 				ids: bundle,
 			})
-			portfolioTotals.value.push(total.grand_return * 100)
+			if (props.reportOptions.performance_unit === 'percent') {
+				portfolioTotals.value.push(total.grand_return * 100)
+			} else {
+				portfolioTotals.value.push(formatNumber(total.grand_absolute_pl))
+			}
 		}
-		// detailsLoading = false
+		detailsLoading = false
 
-		chooseYear(0)
+		await chooseYear(0)
 	}
 
 	async function updateBundle(bundleData) {
