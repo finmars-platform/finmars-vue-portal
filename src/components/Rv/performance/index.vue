@@ -18,6 +18,7 @@
 					:bundleId="currentBundle"
 					:begin_date="reportOptions.begin_date"
 					:end_date="reportOptions.end_date"
+					:reportOptions="reportOptions"
 					:calculation_type="reportOptions.calculation_type"
 					:report_currency="reportOptions.report_currency"
 					@setYear="currentBundleYear = $event"
@@ -27,6 +28,7 @@
 				<RvPerformanceChart
 					v-model:open="components.diagram"
 					:yearData="currentBundleYear"
+					:reportOptions="reportOptions"
 					@setMonth="currentBundleMonth = $event"
 				/>
 
