@@ -10,6 +10,14 @@
 				:cb="chooseBundle"
 			/>
 		</div>
+
+		<ModalPerformanceDetail
+			title="Performance Details"
+			v-model="performanceDetailIsOpen"
+			:performanceDetails="performanceDetails"
+			@cancel="performanceDetailIsOpen = false"
+		/>
+
 	</FmExpansionPanel>
 </template>
 
@@ -53,8 +61,10 @@ let preriodItems = ref([])
  * Index of bundle
  * @type {ref<Number|null>}
  * */
+let performanceDetailIsOpen = ref(false)
 let activePeriod = ref(null)
 let bundles = ref([])
+let performanceDetails = ref(null)
 
 watch(props, () => init())
 
@@ -113,82 +123,110 @@ async function fetchPortfolioBundles() {
 		let row = preriodItems.value[preriodItems.value.length - 1]
 
 		row.daily = null
-		getDay(bundle.id).then((day) => {
-			let value = Math.round(day * 100 * 100) / 100
+		getDay(bundle.id).then((performanceReport) => {
+
+			row.daily_performance_report = performanceReport
 
 			if (props.reportOptions.performance_unit === 'percent') {
+
+				let value = Math.round(performanceReport.grand_return * 100 * 100) / 100
+
 				row.daily = value ? `${value}%` : ''
 			} else {
-				row.daily = value ? `${formatNumber(value)}` : ''
+				row.daily = performanceReport.grand_absolute_pl ? `${formatNumber(performanceReport.grand_absolute_pl)}` : ''
 			}
 		})
 
 		row.month = null
-		getMonth(bundle.id).then((month) => {
-			let value = Math.round(month * 100 * 100) / 100
+		getMonth(bundle.id).then((performanceReport) => {
+
+			row.month_performance_report = performanceReport
 
 			if (props.reportOptions.performance_unit === 'percent') {
+
+				let value = Math.round(performanceReport.grand_return * 100 * 100) / 100
+
 				row.month = value ? `${value}%` : ''
 			} else {
-				row.month = value ? `${formatNumber(value)}` : ''
+				row.month = performanceReport.grand_absolute_pl ? `${formatNumber(performanceReport.grand_absolute_pl)}` : ''
 			}
 		})
 
 		row.q = null
-		getQ(bundle.id).then((q) => {
-			let value = Math.round(q * 100 * 100) / 100
+		getQ(bundle.id).then((performanceReport) => {
+
+			row.q_performance_report = performanceReport
 
 			if (props.reportOptions.performance_unit === 'percent') {
+
+				let value = Math.round(performanceReport.grand_return * 100 * 100) / 100
+
 				row.q = value ? `${value}%` : ''
 			} else {
-				row.q = value ? `${formatNumber(value)}` : ''
+				row.q = performanceReport.grand_absolute_pl ? `${formatNumber(performanceReport.grand_absolute_pl)}` : ''
 			}
 		})
 
 		row.year = null
-		getYear(bundle.id).then((year) => {
-			let value = Math.round(year * 100 * 100) / 100
+		getYear(bundle.id).then((performanceReport) => {
+
+			row.year_performance_report = performanceReport
 
 			if (props.reportOptions.performance_unit === 'percent') {
+
+				let value = Math.round(performanceReport.grand_return * 100 * 100) / 100
+
 				row.year = value ? `${value}%` : ''
 			} else {
-				row.year = value ? `${formatNumber(value)}` : ''
+				row.year = performanceReport.grand_absolute_pl ? `${formatNumber(performanceReport.grand_absolute_pl)}` : ''
 			}
 
 		})
 
 		row.last = null
-		getLastYear(bundle.id).then((last) => {
-			let value = Math.round(last * 100 * 100) / 100
+		getLastYear(bundle.id).then((performanceReport) => {
+
+			row.last_performance_report = performanceReport
 
 			if (props.reportOptions.performance_unit === 'percent') {
+
+				let value = Math.round(performanceReport.grand_return * 100 * 100) / 100
+
 				row.last = value ? `${value}%` : ''
 			} else {
-				row.last = value ? `${formatNumber(value)}` : ''
+				row.last = performanceReport.grand_absolute_pl ? `${formatNumber(performanceReport.grand_absolute_pl)}` : ''
 			}
 
 		})
 
 		row.beforeLast = null
-		getYearBeforeLast(bundle.id).then((beforeLast) => {
-			let value = Math.round(beforeLast * 100 * 100) / 100
+		getYearBeforeLast(bundle.id).then((performanceReport) => {
+
+			row.beforeLast_performance_report = performanceReport
 
 			if (props.reportOptions.performance_unit === 'percent') {
+
+				let value = Math.round(performanceReport.grand_return * 100 * 100) / 100
+
 				row.beforeLast = value ? `${value}%` : ''
 			} else {
-				row.beforeLast = value ? `${formatNumber(value)}` : ''
+				row.beforeLast = performanceReport.grand_absolute_pl ? `${formatNumber(performanceReport.grand_absolute_pl)}` : ''
 			}
 
 		})
 
 		row.incept = null
-		getIncept(bundle.id).then((incept) => {
-			let value = Math.round(incept * 100 * 100) / 100
+		getIncept(bundle.id).then((performanceReport) => {
+
+			row.incept_performance_report = performanceReport
 
 			if (props.reportOptions.performance_unit === 'percent') {
+
+				let value = Math.round(performanceReport.grand_return * 100 * 100) / 100
+
 				row.incept = value ? `${value}%` : ''
 			} else {
-				row.incept = value ? `${formatNumber(value)}` : ''
+				row.incept = performanceReport.grand_absolute_pl ? `${formatNumber(performanceReport.grand_absolute_pl)}` : ''
 			}
 
 		})
@@ -196,9 +234,27 @@ async function fetchPortfolioBundles() {
 	chooseBundle(0)
 }
 
-async function chooseBundle(bundleIndex) {
+async function chooseBundle(bundleIndex, cellIndex) {
+
+	console.log('bundleIndex', bundleIndex)
+	console.log('cellIndex', cellIndex)
+
 	activePeriod.value = bundleIndex
 	emits('setBundle', bundles.value[bundleIndex])
+
+	if (cellIndex && cellIndex !== 'name') {
+
+		performanceDetailIsOpen.value = true;
+
+		console.log('performanceDetailIsOpen', performanceDetailIsOpen);
+		console.log('bundles.value[bundleIndex]', bundles.value[bundleIndex]);
+
+		performanceDetails.value = preriodItems.value[bundleIndex][`${cellIndex}_performance_report`]
+
+		console.log('performanceDetails', performanceDetails.value)
+
+	}
+
 }
 
 async function getDay(ids) {
@@ -288,13 +344,7 @@ async function getReports({period_type, end, ids, type = 'months'}) {
 		},
 	})
 
-	if (props.reportOptions.performance_unit === 'percent') {
-		return res.grand_return
-	} else if (props.reportOptions.performance_unit === 'absolute') {
-		return res.grand_absolute_pl
-	} else  {
-		return res.grand_return
-	}
+	return res
 
 
 }

@@ -30,7 +30,7 @@
 				:key="indexRow"
 				@click="
 					() => {
-						if (cb) cb(index)
+						if (cb) cb(index, indexRow)
 					}
 				"
 			>

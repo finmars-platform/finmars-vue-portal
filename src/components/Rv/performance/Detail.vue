@@ -52,6 +52,7 @@
 					:items="portfolioItems"
 					colls="repeat(12, 1fr)"
 					:active="activeYear"
+					:cb="chooseCell"
 				/>
 			</div>
 			<div class="coll_total">
@@ -67,6 +68,15 @@
 				</div>
 			</div>
 		</div>
+
+
+		<ModalPerformanceDetail
+			title="Performance Details"
+			v-model="performanceDetailIsOpen"
+			:performanceDetails="performanceDetails"
+			@cancel="performanceDetailIsOpen = false"
+		/>
+
 	</FmExpansionPanel>
 </template>
 
@@ -134,12 +144,15 @@
 	let portfolioTotals = ref([])
 	let activeYear = ref(0)
 	let detailsLoading = false
+	let performanceDetailIsOpen = ref(false)
+	let performanceDetails = ref(null)
 
 	let detailPortfolio = ref('')
 	let detailYear = ref('')
 
 	let showBundleActions = ref(false)
 	let editBundleIsOpened = ref(false)
+	let portfolioPerformanceReports = ref({})
 
 	let portfolioHeaders = ref([
 		'Jan',
@@ -174,6 +187,30 @@
 			detailYear: detailYear.value,
 		})
 	}
+
+	async function chooseCell(rowIndex, cellIndex) {
+
+		console.log('rowIndex', rowIndex)
+		console.log('cellIndex', cellIndex)
+
+		console.log('portfolioPerformanceReports', portfolioPerformanceReports);
+
+		try {
+			performanceDetailIsOpen.value = true;
+
+			let keyNum = String(cellIndex + 1).padStart(2, '0');
+
+			performanceDetails.value = portfolioPerformanceReports[0][`key_${keyNum}`][2]
+
+		} catch (error) {
+			console.log('error', error);
+			performanceDetailIsOpen.value = false;
+		}
+
+		console.log('performanceDetails', performanceDetails.value)
+
+	}
+
 
 	function getLastDaysOfMonths(begin_date, end_date) {
 		const begin = new Date(begin_date);
@@ -299,11 +336,13 @@
 				yearsBuffer.get(parseDate[0])['key_' + parseDate[1]] = [
 					item.grand_return,
 					(Math.round(item.grand_return * 10000) / 100) + '%',
+					item,
 				]
 			} else {
 				yearsBuffer.get(parseDate[0])['key_' + parseDate[1]] = [
 					item.grand_absolute_pl,
 					formatNumber(item.grand_absolute_pl),
+					item
 				]
 			}
 
@@ -316,6 +355,7 @@
 
 
 		for (let [year, months] of yearsBuffer) {
+			portfolioPerformanceReports[0] = months // todo refactor, when we consider multiple years
 			portfolioYears.value.push(year)
 
 			// todo refactor this cursed code
