@@ -3,45 +3,53 @@
 
 		<div style="padding: 16px;">
 
-			<p>
-				Date Start: <b>{{ performanceDetails.begin_date }}</b>
-			</p>
-			<p>
-				Date Start Nav: <b>{{ $format(performanceDetails.begin_nav) }}</b>
-			</p>
+			<table style="width: 100%;">
+				<tr>
+					<td>Date Start:</td>
+					<td class="text-right"><b>{{ performanceDetails.begin_date }}</b><FmCopyButton :text="performanceDetails.begin_date"></FmCopyButton></td>
+				</tr>
+				<tr>
+					<td>Date Start Nav:</td>
+					<td class="text-right"><b>{{ $format(performanceDetails.begin_nav) }}</b> <FmCopyButton :text="performanceDetails.begin_nav"></FmCopyButton></td>
+				</tr>
+				<tr>
+					<td>Date End:</td>
+					<td class="text-right"><b>{{ performanceDetails.end_date }}</b> <FmCopyButton :text="performanceDetails.end_date"></FmCopyButton></td>
+				</tr>
+				<tr>
+					<td>Date End NAV:</td>
+					<td class="text-right"><b>{{ $format(performanceDetails.end_nav) }}</b> <FmCopyButton :text="performanceDetails.end_nav"></FmCopyButton></td>
+				</tr>
+				<tr>
+					<td>Cash flow:</td>
+					<td class="text-right"><b>{{ $format(performanceDetails.grand_cash_flow) }}</b> <FmCopyButton :text="performanceDetails.grand_cash_flow"></FmCopyButton></td>
+				</tr>
+				<tr>
+					<td>Weighted Cash flow:</td>
+					<td class="text-right"><b>{{ $format(performanceDetails.grand_cash_flow_weighted) }}</b> <FmCopyButton :text="performanceDetails.grand_cash_flow_weighted"></FmCopyButton></td>
+				</tr>
+				<tr>
+					<td>Absolute P&L:</td>
+					<td class="text-right"><b>{{ $format(performanceDetails.grand_absolute_pl) }}</b> <FmCopyButton :text="performanceDetails.grand_absolute_pl"></FmCopyButton></td>
+				</tr>
+				<tr>
+					<td>Return:</td>
+					<td class="text-right"><b>{{parseFloat(performanceDetails.grand_return * 100).toFixed(2)}}%</b> <FmCopyButton :text="parseFloat(performanceDetails.grand_return * 100).toFixed(2)"></FmCopyButton></td>
+				</tr>
+				<tr>
+					<td>Period Type:</td>
+					<td class="text-right"><b>{{performanceDetails.period_type}}</b></td>
+				</tr>
+				<tr>
+					<td>Calculation Type:</td>
+					<td class="text-right"><b>{{performanceDetails.calculation_type}}</b></td>
+				</tr>
+				<tr>
+					<td>Report Currency:</td>
+					<td class="text-right"><b>{{performanceDetails.report_currency_object.name}}</b></td>
+				</tr>
+			</table>
 
-			<p>
-				Date End: <b>{{ performanceDetails.end_date }}</b>
-			</p>
-
-			<p>
-				Date End NAV: <b>{{  $format(performanceDetails.end_nav) }}</b>
-			</p>
-
-			<p>
-				Cash flow: <b>{{  $format(performanceDetails.grand_cash_flow) }}</b>
-			</p>
-
-			<p>
-				Weighted Cash flow: <b>{{  $format(performanceDetails.grand_cash_flow_weighted) }}</b>
-			</p>
-
-			<p>
-				Absolute P&L: <b>{{  $format(performanceDetails.grand_absolute_pl) }}</b>
-			</p>
-
-			<p>
-				Return: <b>{{performanceDetails.grand_return * 100}}%</b>
-			</p>
-			<p>
-				Period Type: <b>{{performanceDetails.period_type}}</b>
-			</p>
-			<p>
-				Calculation Type: <b>{{performanceDetails.calculation_type}}</b>
-			</p>
-			<p>
-				Report Currency: <b>{{performanceDetails.report_currency_object.name}}</b>
-			</p>
 
 		</div>
 
@@ -87,5 +95,14 @@ init()
 	:deep(.fm_select) {
 		margin-bottom: 0;
 	}
+}
+.text-right {
+	text-align: right;
+}
+.copy-button {
+	margin-left: 8px;
+	margin-bottom: 12px;
+	position: relative;
+	top: 6px;
 }
 </style>
