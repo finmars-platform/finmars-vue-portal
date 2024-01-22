@@ -7,7 +7,8 @@
 				:items="preriodItems"
 				:active="activePeriod"
 				colls="repeat(8, 1fr)"
-				:rightClickCallback="chooseBundle"
+				:cb="chooseBundle"
+				:rightClickCallback="showPerformanceDetail"
 			/>
 		</div>
 
@@ -238,9 +239,17 @@ async function chooseBundle(bundleIndex, cellIndex) {
 
 	console.log('bundleIndex', bundleIndex)
 	console.log('cellIndex', cellIndex)
+	console.log('bundles.value', bundles.value);
 
 	activePeriod.value = bundleIndex
 	emits('setBundle', bundles.value[bundleIndex])
+
+}
+
+async function showPerformanceDetail(bundleIndex, cellIndex) {
+
+	console.log('bundleIndex', bundleIndex)
+	console.log('cellIndex', cellIndex)
 
 	if (cellIndex && cellIndex !== 'name') {
 

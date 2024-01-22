@@ -175,6 +175,7 @@
 		activeYear.value = id
 		detailYear.value = portfolioYears.value[id]
 
+		console.log('portfolioYears', portfolioYears.value);
 		console.log('chooseYear', id);
 		console.log('portfolioItems', portfolioItems.value);
 		console.log('portfolioItemsRaw', portfolioItemsRaw.value);
@@ -212,19 +213,37 @@
 	}
 
 
-	function getLastDaysOfMonths(begin_date, end_date) {
+	function getLastBusinessDayOfMonth(begin_date, end_date) {
 		const begin = new Date(begin_date);
 		const end = new Date(end_date);
-		let current = new Date(begin.getFullYear(), begin.getMonth() + 1, 0); // Last day of the start month
+		let current = getLastDayOfMonth(begin);
 		let result = [];
 
 		while (current <= end) {
 			result.push(new Date(current));
-			current = new Date(current.getFullYear(), current.getMonth() + 2, 0); // Move to the last day of the next month
+			current = getLastDayOfMonth(new Date(current.getFullYear(), current.getMonth() + 1, 1));
 		}
 
 		return result;
 	}
+
+	function getLastDayOfMonth(date) {
+		let lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+		return adjustForWeekend(lastDayOfMonth);
+	}
+
+	function adjustForWeekend(date) {
+		// If Saturday, move to Friday
+		if (date.getDay() === 6) {
+			date.setDate(date.getDate() - 1);
+		}
+		// If Sunday, move to Friday
+		else if (date.getDay() === 0) {
+			date.setDate(date.getDate() - 2);
+		}
+		return date;
+	}
+
 
 	async function getMonthDetails() {
 
@@ -260,7 +279,7 @@
 
 		let end = dayjs(endDate).format('YYYY-MM-DD')
 
-		const monthEndDates = getLastDaysOfMonths(begin, end)
+		const monthEndDates = getLastBusinessDayOfMonth(begin, end)
 
 		console.log('begin', begin);
 		console.log('end', end);
@@ -272,7 +291,8 @@
 
 			monthEndDate = dayjs(monthEndDate).format('YYYY-MM-DD');
 
-			promises.push(getReports({ period_type: 'ytd', end: monthEndDate, ids: bundle }))
+			// promises.push(getReports({ period_type: 'ytd', end: monthEndDate, ids: bundle }))
+			promises.push(getReports({ period_type: 'mtd', end: monthEndDate, ids: bundle }))
 
 		})
 
@@ -476,7 +496,7 @@
 	}
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" >
 	.coll_years {
 		border-top: 1px solid $border;
 		border-left: 1px solid $border;
