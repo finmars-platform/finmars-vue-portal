@@ -7,7 +7,7 @@
 				:items="preriodItems"
 				:active="activePeriod"
 				colls="repeat(8, 1fr)"
-				:cb="chooseBundle"
+				:rightClickCallback="chooseBundle"
 			/>
 		</div>
 
