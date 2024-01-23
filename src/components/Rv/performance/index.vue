@@ -27,6 +27,7 @@
 
 				<RvPerformanceChart
 					v-model:open="components.diagram"
+					:bundleId="currentBundle"
 					:yearData="currentBundleYear"
 					:reportOptions="reportOptions"
 					@setMonth="currentBundleMonth = $event"

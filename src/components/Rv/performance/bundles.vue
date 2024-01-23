@@ -58,6 +58,7 @@ let preriodHeaders = computed(() => {
 	]
 })
 let preriodItems = ref([])
+let preriodItemsRaw = ref([])
 /**
  * Index of bundle
  * @type {ref<Number|null>}
@@ -114,19 +115,24 @@ async function fetchPortfolioBundles() {
 	// readyStatusData.bundles = true;
 
 	preriodItems.value = []
+	preriodItemsRaw.value = []
 
 	bundles.value.forEach((bundle) => {
 
 		preriodItems.value.push({
 			name: bundle.user_code,
 		})
+		preriodItemsRaw.value.push({
+			name: bundle.user_code,
+		})
 
 		let row = preriodItems.value[preriodItems.value.length - 1]
+		let rowRaw = preriodItemsRaw.value[preriodItems.value.length - 1]
 
 		row.daily = null
 		getDay(bundle.id).then((performanceReport) => {
 
-			row.daily_performance_report = performanceReport
+			rowRaw.daily_performance_report = performanceReport
 
 			if (props.reportOptions.performance_unit === 'percent') {
 
@@ -141,7 +147,7 @@ async function fetchPortfolioBundles() {
 		row.month = null
 		getMonth(bundle.id).then((performanceReport) => {
 
-			row.month_performance_report = performanceReport
+			rowRaw.month_performance_report = performanceReport
 
 			if (props.reportOptions.performance_unit === 'percent') {
 
@@ -156,7 +162,7 @@ async function fetchPortfolioBundles() {
 		row.q = null
 		getQ(bundle.id).then((performanceReport) => {
 
-			row.q_performance_report = performanceReport
+			rowRaw.q_performance_report = performanceReport
 
 			if (props.reportOptions.performance_unit === 'percent') {
 
@@ -171,7 +177,7 @@ async function fetchPortfolioBundles() {
 		row.year = null
 		getYear(bundle.id).then((performanceReport) => {
 
-			row.year_performance_report = performanceReport
+			rowRaw.year_performance_report = performanceReport
 
 			if (props.reportOptions.performance_unit === 'percent') {
 
@@ -187,7 +193,7 @@ async function fetchPortfolioBundles() {
 		row.last = null
 		getLastYear(bundle.id).then((performanceReport) => {
 
-			row.last_performance_report = performanceReport
+			rowRaw.last_performance_report = performanceReport
 
 			if (props.reportOptions.performance_unit === 'percent') {
 
@@ -203,7 +209,7 @@ async function fetchPortfolioBundles() {
 		row.beforeLast = null
 		getYearBeforeLast(bundle.id).then((performanceReport) => {
 
-			row.beforeLast_performance_report = performanceReport
+			rowRaw.beforeLast_performance_report = performanceReport
 
 			if (props.reportOptions.performance_unit === 'percent') {
 
@@ -219,7 +225,7 @@ async function fetchPortfolioBundles() {
 		row.incept = null
 		getIncept(bundle.id).then((performanceReport) => {
 
-			row.incept_performance_report = performanceReport
+			rowRaw.incept_performance_report = performanceReport
 
 			if (props.reportOptions.performance_unit === 'percent') {
 
@@ -258,7 +264,7 @@ async function showPerformanceDetail(bundleIndex, cellIndex) {
 		console.log('performanceDetailIsOpen', performanceDetailIsOpen);
 		console.log('bundles.value[bundleIndex]', bundles.value[bundleIndex]);
 
-		performanceDetails.value = preriodItems.value[bundleIndex][`${cellIndex}_performance_report`]
+		performanceDetails.value = preriodItemsRaw.value[bundleIndex][`${cellIndex}_performance_report`]
 
 		console.log('performanceDetails', performanceDetails.value)
 
