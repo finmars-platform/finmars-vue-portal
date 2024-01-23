@@ -132,7 +132,7 @@
 					</div>
 				</div>
 
-				<template v-if="!isEdit && db.is_initialized">
+				<template v-if="!isEdit">
 					<FmBtn v-if="!isEdit" @click="open()">open</FmBtn>
 				</template>
 
@@ -282,7 +282,6 @@ let dateKey = dayjs(props.db.license_expiry_date)
 let diffDateKey = dateKey.diff(dayjs(), 'days')
 
 let status = computed(() => {
-	if (!props.db.is_initialized) return 'Workspace is initializing'
 
 	if (diffDateKey <= 0) return `Expired ${dateKey.format('DD.MM.YYYY')}`
 	else if (diffDateKey <= 30) return `Expire ${dateKey.fromNow()}`
