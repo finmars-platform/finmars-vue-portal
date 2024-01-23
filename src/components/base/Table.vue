@@ -38,7 +38,9 @@
 					}
 				"
 				@click.right="
-					() => {
+					(event) => {
+						event.preventDefault();
+						event.stopPropagation();
 						if (rightClickCallback) rightClickCallback(index, indexRow)
 					}
 				"
