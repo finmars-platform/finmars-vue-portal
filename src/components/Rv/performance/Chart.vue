@@ -221,6 +221,23 @@ function createChart() {
 				legend: {
 					position: 'top',
 					reverse: true
+				},
+				tooltip: {
+					callbacks: {
+						label: (tooltipItem) => {
+
+							console.log('tooltipItem', tooltipItem);
+
+							if (props.reportOptions.performance_unit === 'percent') {
+
+								return tooltipItem.formattedValue + '%'
+
+							} else {
+								return tooltipItem.formattedValue;
+							}
+
+						},
+					}
 				}
 			},
 			scales: {
