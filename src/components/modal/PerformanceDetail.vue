@@ -9,7 +9,7 @@
 					<td class="text-right"><b>{{ performanceDetails.begin_date }}</b><FmCopyButton :text="performanceDetails.begin_date"></FmCopyButton></td>
 				</tr>
 				<tr>
-					<td>Date Start Nav:</td>
+					<td>Date Start NAV:</td>
 					<td class="text-right"><b>{{ $format(performanceDetails.begin_nav) }}</b> <FmCopyButton :text="performanceDetails.begin_nav"></FmCopyButton></td>
 				</tr>
 				<tr>
