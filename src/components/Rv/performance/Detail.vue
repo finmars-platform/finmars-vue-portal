@@ -280,7 +280,8 @@ async function getMonthDetails() {
 
 	let begin = dayjs(props.end_date).startOf('year').format('YYYY-MM-DD');
 
-	let end = dayjs(endDate).format('YYYY-MM-DD')
+	// let end = dayjs(endDate).format('YYYY-MM-DD')
+	let end = dayjs(props.end_date).endOf('year').format('YYYY-MM-DD');
 
 	const monthEndDates = getLastBusinessDayOfMonth(begin, end)
 
