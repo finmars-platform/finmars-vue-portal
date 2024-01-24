@@ -280,11 +280,23 @@ async function getDay(ids) {
 	return await getReports({period_type: "daily", end: day, ids, type: 'days'})
 }
 
+function adjustForWeekend(date) {
+	// If Saturday, move to Friday
+	if (date.getDay() === 6) {
+		date.setDate(date.getDate() - 1);
+	}
+	// If Sunday, move to Friday
+	else if (date.getDay() === 0) {
+		date.setDate(date.getDate() - 2);
+	}
+	return date;
+}
+
 async function getMonth(ids) {
 	let endDate = dayjs(props.end_date)
 
 	let start = dayjs(endDate).set('date', 1).format('YYYY-MM-DD')
-	let end = dayjs(endDate).format('YYYY-MM-DD')
+	let end = dayjs(adjustForWeekend(new Date(endDate))).format('YYYY-MM-DD')
 
 	return await getReports({period_type: "mtd", end, ids})
 }
