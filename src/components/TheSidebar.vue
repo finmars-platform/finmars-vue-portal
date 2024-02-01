@@ -370,7 +370,7 @@
 										</li>
 										<li>
 											<a
-												:href="getUrlToOldApp('/pricing-parent-procedures')"
+												:href="getUrlToOldApp('/data/portfolio-history')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Portfolio History</span>
