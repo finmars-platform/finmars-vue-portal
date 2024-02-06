@@ -47,7 +47,7 @@ const emits = defineEmits(['setBundle', 'refreshFunc'])
 
 let preriodHeaders = computed(() => {
 	return [
-		'',
+		'Bundles',
 		'Daily',
 		'MTD',
 		'QTD',
