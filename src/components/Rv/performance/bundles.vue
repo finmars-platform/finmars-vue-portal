@@ -6,7 +6,7 @@
 				:headers="preriodHeaders"
 				:items="preriodItems"
 				:active="activePeriod"
-				colls="repeat(8, 1fr)"
+				colls="repeat(9, 1fr)"
 				:cb="chooseBundle"
 				:rightClickCallback="showPerformanceDetail"
 			/>
@@ -55,6 +55,7 @@ let preriodHeaders = computed(() => {
 		dayjs(props.end_date).year() - 1,
 		dayjs(props.end_date).year() - 2,
 		'Incept',
+		'Annualized',
 	]
 })
 let preriodItems = ref([])
@@ -237,6 +238,27 @@ async function fetchPortfolioBundles() {
 			}
 
 		})
+
+		row.annualized = null
+		getIncept(bundle.id).then((performanceReport) => {
+			
+			rowRaw.annualized_performance_report = performanceReport
+
+			if (props.reportOptions.performance_unit === 'percent') {
+
+				let value = Math.round(performanceReport.grand_return * 100 * 100) / 100
+
+				var start = dayjs(performanceReport.begin_date)
+				var end = dayjs(performanceReport.end_date)
+				var diffInYears = end.diff(start, 'year');
+				value = (value + 1)**(1 / diffInYears) - 1
+				
+				row.annualized = value ? `${value}%` : ''				
+			} else {
+				row.annualized = performanceReport.grand_absolute_pl ? `${formatNumber(performanceReport.grand_absolute_pl)}` : ''
+			}
+		})
+
 	})
 	chooseBundle(0)
 }
