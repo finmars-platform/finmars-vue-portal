@@ -2,7 +2,7 @@
 	<BaseModal :closingDisabled="creating" @update:modelValue="cancel">
 
 		<div style="padding: 16px;">
-
+			<div v-if="performanceDetailsColumnName!=='name'">
 			<table style="width: 100%;">
 				<tr>
 					<td>Date Start:</td>
@@ -49,8 +49,14 @@
 					<td class="text-right"><b>{{performanceDetails.report_currency_object.name}}</b></td>
 				</tr>
 			</table>
-
-
+			</div>
+			<div v-else-if="performanceDetailsColumnName==='name'">
+			<table>
+				<tr v-for="portfolio in performanceDetails" :key="portfolio.id">
+					<td class="text-center" ><b>{{ portfolio.name }}</b></td>
+				</tr>
+			</table>
+			</div>
 		</div>
 
 
@@ -67,6 +73,7 @@
 
 let props = defineProps({
 	performanceDetails: Object,
+	performanceDetailsColumnName: String,
 })
 
 let emit = defineEmits(['cancel', 'save'])
@@ -81,6 +88,9 @@ function cancel() {
 	emit('cancel')
 }
 
+const getDisplayPortfolios = (portfolios) => {
+	return portfolios.map(obj => obj.name).join(',') + ".";
+}
 
 async function init() {
 
@@ -98,6 +108,10 @@ init()
 }
 .text-right {
 	text-align: right;
+}
+
+.text-center {
+	text-align: center;
 }
 .copy-button {
 	margin-left: 8px;
