@@ -262,23 +262,22 @@ async function getMonthDetails() {
 
 	let bundle = bundleId.value
 
-	// let begin
-	// let firstTransaction = {}
-	// if (!props.begin_date) {
-	// 	firstTransaction = await useApi('performanceFirstTransaction.get', {
-	// 		params: { id: bundle },
-	// 	})
-	// 	begin = firstTransaction.transaction_date
-	// } else {
-	// 	begin = dayjs(props.begin_date).format('YYYY-MM-DD')
-	// }
+	let begin
+	let firstTransaction = {}
+	if (!props.begin_date) {
+		firstTransaction = await useApi('performanceFirstTransaction.get', {
+			params: { id: bundle },
+		})
+		begin = firstTransaction.transaction_date
+	} else {
+		begin = dayjs(props.begin_date).format('YYYY-MM-DD')
+	}
 
 	const endDate = props.end_date
 
 
 	// It Insane to download whole history, lets asume only last year
 
-	let begin = dayjs(props.end_date).startOf('year').format('YYYY-MM-DD');
 
 	// let end = dayjs(endDate).format('YYYY-MM-DD')
 	let end = dayjs(props.end_date).endOf('year').format('YYYY-MM-DD');
