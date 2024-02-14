@@ -13,9 +13,10 @@
 		</div>
 
 		<ModalPerformanceDetail
-			title="Performance Details"
+			:title="performanceDetailsColumnName === 'name' ? 'Bundle Portfolios' : 'Performance Details'"
 			v-model="performanceDetailIsOpen"
 			:performanceDetails="performanceDetails"
+			:performanceDetailsColumnName="performanceDetailsColumnName"
 			@cancel="performanceDetailIsOpen = false"
 		/>
 
@@ -67,6 +68,7 @@ let performanceDetailIsOpen = ref(false)
 let activePeriod = ref(null)
 let bundles = ref([])
 let performanceDetails = ref(null)
+let performanceDetailsColumnName = ref(null)
 
 watch(props, () => init())
 
@@ -128,6 +130,7 @@ async function fetchPortfolioBundles() {
 
 		let row = preriodItems.value[preriodItems.value.length - 1]
 		let rowRaw = preriodItemsRaw.value[preriodItems.value.length - 1]
+		rowRaw.registers = bundle.registers
 
 		row.daily = null
 		getDay(bundle.id).then((performanceReport) => {
@@ -264,10 +267,22 @@ async function showPerformanceDetail(bundleIndex, cellIndex) {
 		console.log('performanceDetailIsOpen', performanceDetailIsOpen);
 		console.log('bundles.value[bundleIndex]', bundles.value[bundleIndex]);
 
+		performanceDetailsColumnName.value = cellIndex
 		performanceDetails.value = preriodItemsRaw.value[bundleIndex][`${cellIndex}_performance_report`]
 
 		console.log('performanceDetails', performanceDetails.value)
 
+	}else if (cellIndex && cellIndex === 'name') {
+
+		performanceDetailIsOpen.value = true;
+
+		console.log('performanceDetailIsOpen', performanceDetailIsOpen);
+		console.log('bundles.value[bundleIndex]', bundles.value[bundleIndex]);
+
+		performanceDetailsColumnName.value = cellIndex
+		performanceDetails.value = preriodItemsRaw.value[bundleIndex][`registers`]
+
+		console.log('performanceDetails', performanceDetails.value)
 	}
 
 }
