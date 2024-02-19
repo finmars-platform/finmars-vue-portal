@@ -2,13 +2,13 @@
 	<FmExpansionPanel title="Period Returns">
 		<div class="performance-holder">
 			<BaseTable
-
 				:headers="preriodHeaders"
 				:items="preriodItems"
 				:active="activePeriod"
 				colls="repeat(9, 1fr)"
 				:cb="chooseBundle"
 				:rightClickCallback="showPerformanceDetail"
+				:is-disabled="!readyStatus"
 			/>
 		</div>
 
@@ -46,6 +46,7 @@ const props = defineProps({
 })
 const emits = defineEmits(['setBundle', 'refreshFunc'])
 
+let readyStatus = ref(false);
 let preriodHeaders = computed(() => {
 	return [
 		'Bundles',
@@ -98,16 +99,22 @@ function formatNumber(num) {
 async function fetchPortfolioBundles() {
 	// readyStatusData.bundles = false;
 
+	readyStatus.value = false;
+
 	let res = await useLoadAllPages('portfolioBundleList.get', {
 		filters: {page: 1, page_size: 1000}
 	});
+	console.log("testing33.fetchPortfolioBundles res", res);
+	if (res.error) {
+		return;
+	}
 
 	const delUserCodeRe = /^del\d{17}$/;
-
+	console.log("testing33.fetchPortfolioBundles 1");
 	bundles.value = res.filter(
 		bundle => !bundle.user_code.match(delUserCodeRe)
 	);
-
+	console.log("testing33.fetchPortfolioBundles 2");
 	if (props.reportOptions?.bundles?.length) {
 
 		bundles.value = bundles.value.filter(
@@ -116,7 +123,7 @@ async function fetchPortfolioBundles() {
 
 	}
 	// readyStatusData.bundles = true;
-
+	console.log("testing33.fetchPortfolioBundles 3");
 	preriodItems.value = []
 	preriodItemsRaw.value = []
 
@@ -244,7 +251,7 @@ async function fetchPortfolioBundles() {
 
 		row.annualized = null
 		getIncept(bundle.id).then((performanceReport) => {
-			
+
 			rowRaw.annualized_performance_report = performanceReport
 
 			if (props.reportOptions.performance_unit === 'percent') {
@@ -255,15 +262,19 @@ async function fetchPortfolioBundles() {
 				var end = dayjs(performanceReport.end_date)
 				var diffInYears = end.diff(start, 'year');
 				value = (value + 1)**(1 / diffInYears) - 1
-				
-				row.annualized = value ? `${value}%` : ''				
+
+				row.annualized = value ? `${value}%` : ''
 			} else {
 				row.annualized = performanceReport.grand_absolute_pl ? `${formatNumber(performanceReport.grand_absolute_pl)}` : ''
 			}
 		})
 
 	})
+	console.log("testing33.fetchPortfolioBundles 3");
+	readyStatus.value = true;
+	console.log("testing33.fetchPortfolioBundles", readyStatus.value);
 	chooseBundle(0)
+
 }
 
 async function chooseBundle(bundleIndex, cellIndex) {
