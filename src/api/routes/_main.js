@@ -241,6 +241,7 @@ export default {
 	},
     portfolioBundle: {
         post: prefix + '/portfolios/portfolio-bundle/',
+        get: prefix + '/portfolios/portfolio-bundle/{id}/',
         put: prefix + '/portfolios/portfolio-bundle/{id}/',
         delete: prefix + '/portfolios/portfolio-bundle/{id}/',
     },
