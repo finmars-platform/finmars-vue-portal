@@ -130,7 +130,7 @@ async function fetchPortfolioBundles() {
 
 		let row = preriodItems.value[preriodItems.value.length - 1]
 		let rowRaw = preriodItemsRaw.value[preriodItems.value.length - 1]
-		rowRaw.registers = bundle.registers
+		rowRaw.id = bundle
 
 		row.daily = null
 		getDay(bundle.id).then((performanceReport) => {
@@ -255,14 +255,12 @@ async function chooseBundle(bundleIndex, cellIndex) {
 
 }
 
-async function showPerformanceDetail(bundleIndex, cellIndex) {
+function showPerformanceDetail(bundleIndex, cellIndex) {
 
 	console.log('bundleIndex', bundleIndex)
 	console.log('cellIndex', cellIndex)
 
 	if (cellIndex && cellIndex !== 'name') {
-
-		performanceDetailIsOpen.value = true;
 
 		console.log('performanceDetailIsOpen', performanceDetailIsOpen);
 		console.log('bundles.value[bundleIndex]', bundles.value[bundleIndex]);
@@ -274,17 +272,15 @@ async function showPerformanceDetail(bundleIndex, cellIndex) {
 
 	}else if (cellIndex && cellIndex === 'name') {
 
-		performanceDetailIsOpen.value = true;
-
 		console.log('performanceDetailIsOpen', performanceDetailIsOpen);
 		console.log('bundles.value[bundleIndex]', bundles.value[bundleIndex]);
 
 		performanceDetailsColumnName.value = cellIndex
-		performanceDetails.value = preriodItemsRaw.value[bundleIndex][`registers`]
+		performanceDetails.value = preriodItemsRaw.value[bundleIndex]['id']
 
 		console.log('performanceDetails', performanceDetails.value)
 	}
-
+	performanceDetailIsOpen.value = true;
 }
 
 async function getDay(ids) {
