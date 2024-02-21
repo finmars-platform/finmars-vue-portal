@@ -288,7 +288,7 @@ async function fetchPortfolioBundles() {
 
         let row = periodItems.value[periodItems.value.length - 1]
         let rowRaw = periodItemsRaw.value[periodItems.value.length - 1]
-        rowRaw.registers = bundle.registers
+        rowRaw.id = bundle
 
         promises.push(
             Promise.all([
@@ -331,35 +331,23 @@ async function chooseBundle(bundleIndex, cellIndex) {
 
 }
 
-async function showPerformanceDetail(bundleIndex, cellIndex) {
-
-    console.log('bundleIndex', bundleIndex)
-    console.log('cellIndex', cellIndex)
+function showPerformanceDetail(bundleIndex, cellIndex) {
 
     if (cellIndex && cellIndex !== 'name') {
 
         performanceDetailIsOpen.value = true;
 
-        console.log('performanceDetailIsOpen', performanceDetailIsOpen);
-        console.log('bundles.value[bundleIndex]', bundles.value[bundleIndex]);
+		performanceDetailsColumnName.value = cellIndex
+		performanceDetails.value = periodItemsRaw.value[bundleIndex][`${cellIndex}_performance_report`]
 
-        performanceDetailsColumnName.value = cellIndex
-        performanceDetails.value = periodItemsRaw.value[bundleIndex][`${cellIndex}_performance_report`]
+	} else if (cellIndex && cellIndex === 'name') {
 
-        console.log('performanceDetails', performanceDetails.value)
+		performanceDetailsColumnName.value = cellIndex
+		performanceDetails.value = periodItemsRaw.value[bundleIndex]['id']
 
-    }else if (cellIndex && cellIndex === 'name') {
+	}
 
-        performanceDetailIsOpen.value = true;
-
-        console.log('performanceDetailIsOpen', performanceDetailIsOpen);
-        console.log('bundles.value[bundleIndex]', bundles.value[bundleIndex]);
-
-        performanceDetailsColumnName.value = cellIndex
-        performanceDetails.value = periodItemsRaw.value[bundleIndex][`registers`]
-
-        console.log('performanceDetails', performanceDetails.value)
-    }
+	performanceDetailIsOpen.value = true;
 
 }
 
