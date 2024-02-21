@@ -1,26 +1,26 @@
 <template>
-	<FmExpansionPanel title="Period Returns">
-		<div class="performance-holder">
-			<BaseTable
-				:headers="preriodHeaders"
-				:items="preriodItems"
-				:active="activePeriod"
-				colls="repeat(9, 1fr)"
-				:cb="chooseBundle"
-				:rightClickCallback="showPerformanceDetail"
-				:is-disabled="!readyStatus"
-			/>
-		</div>
+    <FmExpansionPanel title="Period Returns">
+        <div class="performance-holder">
+            <BaseTable
+                    :headers="periodHeaders"
+                    :items="periodItems"
+                    :active="activePeriod"
+                    colls="repeat(9, 1fr)"
+                    :cb="chooseBundle"
+                    :rightClickCallback="showPerformanceDetail"
+                    :is-disabled="!readyStatus"
+            />
+        </div>
 
-		<ModalPerformanceDetail
-			:title="performanceDetailsColumnName === 'name' ? 'Bundle Portfolios' : 'Performance Details'"
-			v-model="performanceDetailIsOpen"
-			:performanceDetails="performanceDetails"
-			:performanceDetailsColumnName="performanceDetailsColumnName"
-			@cancel="performanceDetailIsOpen = false"
-		/>
+        <ModalPerformanceDetail
+                :title="performanceDetailsColumnName === 'name' ? 'Bundle Portfolios' : 'Performance Details'"
+                v-model="performanceDetailIsOpen"
+                :performanceDetails="performanceDetails"
+                :performanceDetailsColumnName="performanceDetailsColumnName"
+                @cancel="performanceDetailIsOpen = false"
+        />
 
-	</FmExpansionPanel>
+    </FmExpansionPanel>
 </template>
 
 <script setup>
@@ -31,37 +31,37 @@ import {useLoadAllPages} from "~/composables/useApi";
 dayjs.extend(quarterOfYear)
 
 const props = defineProps({
-	reportOptions: {
-		type: Object,
-	},
-	end_date: {
-		type: String,
-	},
-	calculation_type: {
-		type: String,
-	},
-	report_currency: {
-		type: [Number, String],
-	},
+    reportOptions: {
+        type: Object,
+    },
+    end_date: {
+        type: String,
+    },
+    calculation_type: {
+        type: String,
+    },
+    report_currency: {
+        type: [Number, String],
+    },
 })
 const emits = defineEmits(['setBundle', 'refreshFunc'])
 
 let readyStatus = ref(false);
-let preriodHeaders = computed(() => {
-	return [
-		'Bundles',
-		'Daily',
-		'MTD',
-		'QTD',
-		'YTD',
-		dayjs(props.end_date).year() - 1,
-		dayjs(props.end_date).year() - 2,
-		'Incept',
-		'Annualized',
-	]
+let periodHeaders = computed(() => {
+    return [
+        'Bundles',
+        'Daily',
+        'MTD',
+        'QTD',
+        'YTD',
+        dayjs(props.end_date).year() - 1,
+        dayjs(props.end_date).year() - 2,
+        'Incept',
+        'Annualized',
+    ]
 })
-let preriodItems = ref([])
-let preriodItemsRaw = ref([])
+let periodItems = ref([])
+let periodItemsRaw = ref([])
 /**
  * Index of bundle
  * @type {ref<Number|null>}
@@ -79,412 +79,455 @@ init()
 
 function init() {
 
-	emits('setBundle', null);
+    emits('setBundle', null);
 
-	// проверка на корректность всех свойств, если что выдать ошибку
-	if (!props.end_date) {
-		console.log('No end_date:', props.end_date)
-		return false
-	}
+    // проверка на корректность всех свойств, если что выдать ошибку
+    if (!props.end_date) {
+        console.log('No end_date:', props.end_date)
+        return false
+    }
 
-	fetchPortfolioBundles()
+    fetchPortfolioBundles()
 }
 
+//# region Calculate period
 function formatNumber(num) {
-	return Intl.NumberFormat('en-EN', {
-		// maximumSignificantDigits: 3
-	}).format(num)
+    return Intl.NumberFormat('en-EN', {
+        // maximumSignificantDigits: 3
+    }).format(num)
+}
+
+function getValueForPeriod(performanceResult) {
+
+    if (props.reportOptions.performance_unit === 'percent') {
+
+        let value = Math.round(performanceResult.grand_return * 100 * 100) / 100
+
+        return value ? `${value}%` : ''
+    } else {
+        return performanceResult.grand_absolute_pl ? `${formatNumber(performanceResult.grand_absolute_pl)}` : ''
+    }
+
+}
+async function calcDayForBundle(bundleId, row, rowRaw) {
+
+    row.daily = null
+
+    let res = await getDay(bundleId);
+
+    if (res.error) {
+        throw res.error;
+    }
+
+    rowRaw.daily_performance_report = res;
+
+    row.daily = getValueForPeriod(res);
+
+}
+
+async function calcMonthForBundle(bundleId, row, rowRaw) {
+
+    row.month = null
+    const res = await getMonth(bundleId);
+
+    if (res.error) {
+        throw res.error;
+    }
+
+    rowRaw.month_performance_report = res
+
+    row.month = getValueForPeriod(res);
+
+}
+
+async function calcQuarterForBundle(bundleId, row, rowRaw) {
+
+    row.q = null
+
+    const res = await getQ(bundleId);
+
+    if (res.error) {
+        throw res.error;
+    }
+
+    rowRaw.q_performance_report = res;
+
+    row.q = getValueForPeriod(res);
+
+}
+
+async function calcYearForBundle(bundleId, row, rowRaw) {
+
+    row.year = null
+
+    const res = await getYear(bundleId);
+
+    if (res.error) {
+        throw res.error;
+    }
+
+    rowRaw.year_performance_report = res;
+
+    row.year = getValueForPeriod(res);
+
+}
+
+async function calcLastYearForBundle(bundleId, row, rowRaw) {
+
+    row.last = null
+
+    const res = await getLastYear(bundleId);
+
+    if (res.error) {
+        throw res.error;
+    }
+
+    rowRaw.last_performance_report = res;
+
+    row.last = getValueForPeriod(res);
+
+}
+
+async function calcBeforeLastYearForBundle(bundleId, row, rowRaw) {
+
+    row.beforeLast = null
+
+    const res = await getYearBeforeLast(bundleId);
+
+    if (res.error) {
+        throw res.error;
+    }
+
+    rowRaw.beforeLast_performance_report = res;
+
+    row.beforeLast = getValueForPeriod(res);
+
+}
+
+async function calcInceptYearForBundle(bundleId, row, rowRaw) {
+
+    row.incept = null
+
+    const res = await getIncept(bundleId);
+
+    if (res.error) {
+        throw res.error;
+    }
+
+    rowRaw.incept_performance_report = res;
+
+    row.incept = getValueForPeriod(res);
+
+}
+
+async function calcAnnualForBundle(bundleId, row, rowRaw) {
+
+    row.annualized = null
+
+    const res = await getIncept(bundleId)
+
+    rowRaw.annualized_performance_report = res
+
+    if (props.reportOptions.performance_unit === 'percent') {
+
+        let value = Math.round(res.grand_return * 100 * 100) / 100
+
+        var start = dayjs(res.begin_date)
+        var end = dayjs(res.end_date)
+        var diffInYears = end.diff(start, 'year');
+        value = (value + 1)**(1 / diffInYears) - 1
+
+        row.annualized = value ? `${value}%` : ''
+    } else {
+        row.annualized = res.grand_absolute_pl ? `${formatNumber(performanceReport.grand_absolute_pl)}` : ''
+    }
+
 }
 
 async function fetchPortfolioBundles() {
-	// readyStatusData.bundles = false;
+    // readyStatusData.bundles = false;
 
-	readyStatus.value = false;
+    readyStatus.value = false;
 
-	let res = await useLoadAllPages('portfolioBundleList.get', {
-		filters: {page: 1, page_size: 1000}
-	});
-	console.log("testing33.fetchPortfolioBundles res", res);
-	if (res.error) {
-		return;
-	}
+    let res = await useLoadAllPages('portfolioBundleList.get', {
+        filters: {page: 1, page_size: 1000}
+    });
 
-	const delUserCodeRe = /^del\d{17}$/;
-	console.log("testing33.fetchPortfolioBundles 1");
-	bundles.value = res.filter(
-		bundle => !bundle.user_code.match(delUserCodeRe)
-	);
-	console.log("testing33.fetchPortfolioBundles 2");
-	if (props.reportOptions?.bundles?.length) {
+    if (res.error) {
+        return;
+    }
 
-		bundles.value = bundles.value.filter(
-			bundle => props.reportOptions.bundles.includes(bundle.id)
-		)
+    const delUserCodeRe = /^del\d{17}$/;
 
-	}
-	// readyStatusData.bundles = true;
-	console.log("testing33.fetchPortfolioBundles 3");
-	preriodItems.value = []
-	preriodItemsRaw.value = []
+    bundles.value = res.filter(
+        bundle => !bundle.user_code.match(delUserCodeRe)
+    );
 
-	bundles.value.forEach((bundle) => {
+    if (props.reportOptions?.bundles?.length) {
 
-		preriodItems.value.push({
-			name: bundle.user_code,
-		})
-		preriodItemsRaw.value.push({
-			name: bundle.user_code,
-		})
+        bundles.value = bundles.value.filter(
+            bundle => props.reportOptions.bundles.includes(bundle.id)
+        )
 
-		let row = preriodItems.value[preriodItems.value.length - 1]
-		let rowRaw = preriodItemsRaw.value[preriodItems.value.length - 1]
-		rowRaw.registers = bundle.registers
+    }
+    // readyStatusData.bundles = true;
 
-		row.daily = null
-		getDay(bundle.id).then((performanceReport) => {
+    periodItems.value = []
+    periodItemsRaw.value = []
 
-			rowRaw.daily_performance_report = performanceReport
+    let promises = [];
 
-			if (props.reportOptions.performance_unit === 'percent') {
+    bundles.value.forEach(bundle => {
 
-				let value = Math.round(performanceReport.grand_return * 100 * 100) / 100
+        periodItems.value.push({
+            name: bundle.user_code,
+        })
+        periodItemsRaw.value.push({
+            name: bundle.user_code,
+        })
 
-				row.daily = value ? `${value}%` : ''
-			} else {
-				row.daily = performanceReport.grand_absolute_pl ? `${formatNumber(performanceReport.grand_absolute_pl)}` : ''
-			}
-		})
+        let row = periodItems.value[periodItems.value.length - 1]
+        let rowRaw = periodItemsRaw.value[periodItems.value.length - 1]
+        rowRaw.registers = bundle.registers
 
-		row.month = null
-		getMonth(bundle.id).then((performanceReport) => {
+        promises.push(
+            Promise.all([
+                calcDayForBundle(bundle.id, row, rowRaw),
+                calcMonthForBundle(bundle.id, row, rowRaw),
+                calcQuarterForBundle(bundle.id, row, rowRaw),
+                calcYearForBundle(bundle.id, row, rowRaw),
+                calcLastYearForBundle(bundle.id, row, rowRaw),
+                calcBeforeLastYearForBundle(bundle.id, row, rowRaw),
+                calcInceptYearForBundle(bundle.id, row, rowRaw),
+                calcAnnualForBundle(bundle.id, row, rowRaw),
+            ])
+        );
 
-			rowRaw.month_performance_report = performanceReport
+    })
 
-			if (props.reportOptions.performance_unit === 'percent') {
+    try {
+        await Promise.all(promises);
 
-				let value = Math.round(performanceReport.grand_return * 100 * 100) / 100
+    } catch(e) {
+        console.error(e)
+        throw "Error above occurred while trying to calculate performance report";
+    }
 
-				row.month = value ? `${value}%` : ''
-			} else {
-				row.month = performanceReport.grand_absolute_pl ? `${formatNumber(performanceReport.grand_absolute_pl)}` : ''
-			}
-		})
+    readyStatus.value = true;
 
-		row.q = null
-		getQ(bundle.id).then((performanceReport) => {
-
-			rowRaw.q_performance_report = performanceReport
-
-			if (props.reportOptions.performance_unit === 'percent') {
-
-				let value = Math.round(performanceReport.grand_return * 100 * 100) / 100
-
-				row.q = value ? `${value}%` : ''
-			} else {
-				row.q = performanceReport.grand_absolute_pl ? `${formatNumber(performanceReport.grand_absolute_pl)}` : ''
-			}
-		})
-
-		row.year = null
-		getYear(bundle.id).then((performanceReport) => {
-
-			rowRaw.year_performance_report = performanceReport
-
-			if (props.reportOptions.performance_unit === 'percent') {
-
-				let value = Math.round(performanceReport.grand_return * 100 * 100) / 100
-
-				row.year = value ? `${value}%` : ''
-			} else {
-				row.year = performanceReport.grand_absolute_pl ? `${formatNumber(performanceReport.grand_absolute_pl)}` : ''
-			}
-
-		})
-
-		row.last = null
-		getLastYear(bundle.id).then((performanceReport) => {
-
-			rowRaw.last_performance_report = performanceReport
-
-			if (props.reportOptions.performance_unit === 'percent') {
-
-				let value = Math.round(performanceReport.grand_return * 100 * 100) / 100
-
-				row.last = value ? `${value}%` : ''
-			} else {
-				row.last = performanceReport.grand_absolute_pl ? `${formatNumber(performanceReport.grand_absolute_pl)}` : ''
-			}
-
-		})
-
-		row.beforeLast = null
-		getYearBeforeLast(bundle.id).then((performanceReport) => {
-
-			rowRaw.beforeLast_performance_report = performanceReport
-
-			if (props.reportOptions.performance_unit === 'percent') {
-
-				let value = Math.round(performanceReport.grand_return * 100 * 100) / 100
-
-				row.beforeLast = value ? `${value}%` : ''
-			} else {
-				row.beforeLast = performanceReport.grand_absolute_pl ? `${formatNumber(performanceReport.grand_absolute_pl)}` : ''
-			}
-
-		})
-
-		row.incept = null
-		getIncept(bundle.id).then((performanceReport) => {
-
-			rowRaw.incept_performance_report = performanceReport
-
-			if (props.reportOptions.performance_unit === 'percent') {
-
-				let value = Math.round(performanceReport.grand_return * 100 * 100) / 100
-
-				row.incept = value ? `${value}%` : ''
-			} else {
-				row.incept = performanceReport.grand_absolute_pl ? `${formatNumber(performanceReport.grand_absolute_pl)}` : ''
-			}
-
-		})
-
-		row.annualized = null
-		getIncept(bundle.id).then((performanceReport) => {
-
-			rowRaw.annualized_performance_report = performanceReport
-
-			if (props.reportOptions.performance_unit === 'percent') {
-
-				let value = Math.round(performanceReport.grand_return * 100 * 100) / 100
-
-				var start = dayjs(performanceReport.begin_date)
-				var end = dayjs(performanceReport.end_date)
-				var diffInYears = end.diff(start, 'year');
-				value = (value + 1)**(1 / diffInYears) - 1
-
-				row.annualized = value ? `${value}%` : ''
-			} else {
-				row.annualized = performanceReport.grand_absolute_pl ? `${formatNumber(performanceReport.grand_absolute_pl)}` : ''
-			}
-		})
-
-	})
-	console.log("testing33.fetchPortfolioBundles 3");
-	readyStatus.value = true;
-	console.log("testing33.fetchPortfolioBundles", readyStatus.value);
-	chooseBundle(0)
+    chooseBundle(0)
 
 }
+//# endregion Calculate period
 
 async function chooseBundle(bundleIndex, cellIndex) {
 
-	console.log('bundleIndex', bundleIndex)
-	console.log('cellIndex', cellIndex)
-	console.log('bundles.value', bundles.value);
+    console.log('bundleIndex', bundleIndex)
+    console.log('cellIndex', cellIndex)
+    console.log('bundles.value', bundles.value);
 
-	activePeriod.value = bundleIndex
-	emits('setBundle', bundles.value[bundleIndex])
+    activePeriod.value = bundleIndex
+    emits('setBundle', bundles.value[bundleIndex])
 
 }
 
 async function showPerformanceDetail(bundleIndex, cellIndex) {
 
-	console.log('bundleIndex', bundleIndex)
-	console.log('cellIndex', cellIndex)
+    console.log('bundleIndex', bundleIndex)
+    console.log('cellIndex', cellIndex)
 
-	if (cellIndex && cellIndex !== 'name') {
+    if (cellIndex && cellIndex !== 'name') {
 
-		performanceDetailIsOpen.value = true;
+        performanceDetailIsOpen.value = true;
 
-		console.log('performanceDetailIsOpen', performanceDetailIsOpen);
-		console.log('bundles.value[bundleIndex]', bundles.value[bundleIndex]);
+        console.log('performanceDetailIsOpen', performanceDetailIsOpen);
+        console.log('bundles.value[bundleIndex]', bundles.value[bundleIndex]);
 
-		performanceDetailsColumnName.value = cellIndex
-		performanceDetails.value = preriodItemsRaw.value[bundleIndex][`${cellIndex}_performance_report`]
+        performanceDetailsColumnName.value = cellIndex
+        performanceDetails.value = periodItemsRaw.value[bundleIndex][`${cellIndex}_performance_report`]
 
-		console.log('performanceDetails', performanceDetails.value)
+        console.log('performanceDetails', performanceDetails.value)
 
-	}else if (cellIndex && cellIndex === 'name') {
+    }else if (cellIndex && cellIndex === 'name') {
 
-		performanceDetailIsOpen.value = true;
+        performanceDetailIsOpen.value = true;
 
-		console.log('performanceDetailIsOpen', performanceDetailIsOpen);
-		console.log('bundles.value[bundleIndex]', bundles.value[bundleIndex]);
+        console.log('performanceDetailIsOpen', performanceDetailIsOpen);
+        console.log('bundles.value[bundleIndex]', bundles.value[bundleIndex]);
 
-		performanceDetailsColumnName.value = cellIndex
-		performanceDetails.value = preriodItemsRaw.value[bundleIndex][`registers`]
+        performanceDetailsColumnName.value = cellIndex
+        performanceDetails.value = periodItemsRaw.value[bundleIndex][`registers`]
 
-		console.log('performanceDetails', performanceDetails.value)
-	}
+        console.log('performanceDetails', performanceDetails.value)
+    }
 
 }
 
 async function getDay(ids) {
-	let endDate = dayjs(props.end_date)
+    let endDate = dayjs(props.end_date)
 
-	let day = dayjs(endDate).format('YYYY-MM-DD')
+    let day = dayjs(endDate).format('YYYY-MM-DD')
 
-	return await getReports({period_type: "daily", end: day, ids, type: 'days'})
+    return await getReports({period_type: "daily", end: day, ids, type: 'days'})
 }
 
 function adjustForWeekend(date) {
-	// If Saturday, move to Friday
-	if (date.getDay() === 6) {
-		date.setDate(date.getDate() - 1);
-	}
-	// If Sunday, move to Friday
-	else if (date.getDay() === 0) {
-		date.setDate(date.getDate() - 2);
-	}
-	return date;
+    // If Saturday, move to Friday
+    if (date.getDay() === 6) {
+        date.setDate(date.getDate() - 1);
+    }
+    // If Sunday, move to Friday
+    else if (date.getDay() === 0) {
+        date.setDate(date.getDate() - 2);
+    }
+    return date;
 }
 
 async function getMonth(ids) {
-	let endDate = dayjs(props.end_date)
+    let endDate = dayjs(props.end_date)
 
-	let start = dayjs(endDate).set('date', 1).format('YYYY-MM-DD')
-	let end = dayjs(adjustForWeekend(new Date(endDate))).format('YYYY-MM-DD')
+    let start = dayjs(endDate).set('date', 1).format('YYYY-MM-DD')
+    let end = dayjs(adjustForWeekend(new Date(endDate))).format('YYYY-MM-DD')
 
-	return await getReports({period_type: "mtd", end, ids})
+    return await getReports({period_type: "mtd", end, ids})
 }
 
 async function getQ(ids) {
-	let endDate = dayjs(props.end_date)
+    let endDate = dayjs(props.end_date)
 
-	let start = dayjs('2022-01-01')
-		.year(endDate.year())
-		.quarter(endDate.quarter())
-		.format('YYYY-MM-DD')
+    let start = dayjs('2022-01-01')
+        .year(endDate.year())
+        .quarter(endDate.quarter())
+        .format('YYYY-MM-DD')
 
-	let end = dayjs(endDate).format('YYYY-MM-DD')
+    let end = dayjs(endDate).format('YYYY-MM-DD')
 
-	return await getReports({period_type: "qtd", end, ids})
+    return await getReports({period_type: "qtd", end, ids})
 }
 
 async function getYear(ids) {
-	let endDate = dayjs(props.end_date)
+    let endDate = dayjs(props.end_date)
 
-	let start = `${dayjs(endDate).year()}-01-01`
-	let end = dayjs(endDate).format('YYYY-MM-DD')
+    let start = `${dayjs(endDate).year()}-01-01`
+    let end = dayjs(endDate).format('YYYY-MM-DD')
 
-	return await getReports({period_type: "ytd", end, ids})
+    return await getReports({period_type: "ytd", end, ids})
 }
 
 async function getLastYear(ids) {
-	let endDate = dayjs(props.end_date)
+    let endDate = dayjs(props.end_date)
 
-	let start = `${dayjs(endDate).year() - 1}-01-01`
-	let end = `${dayjs(endDate).year() - 1}-12-31`
+    let start = `${dayjs(endDate).year() - 1}-01-01`
+    let end = `${dayjs(endDate).year() - 1}-12-31`
 
-	return await getReports({period_type: "ytd", end, ids})
+    return await getReports({period_type: "ytd", end, ids})
 }
 
 async function getYearBeforeLast(ids) {
-	let endDate = dayjs(props.end_date)
+    let endDate = dayjs(props.end_date)
 
-	let start = `${dayjs(endDate).year() - 2}-01-01`
+    let start = `${dayjs(endDate).year() - 2}-01-01`
 
-	let end = `${dayjs(endDate).year() - 2}-12-31`
+    let end = `${dayjs(endDate).year() - 2}-12-31`
 
-	return await getReports({period_type: "ytd", end, ids})
+    return await getReports({period_type: "ytd", end, ids})
 }
 
 async function getIncept(ids) {
-	let res = await useApi('performanceFirstTransaction.get', {
-		params: {id: ids},
-	})
+    let res = await useApi('performanceFirstTransaction.get', {
+        params: {id: ids},
+    })
 
-	let start = res.transaction_date
-	if (!start) return false
+    let start = res.transaction_date
+    if (!start) return false
 
-	let endDate = dayjs(props.end_date)
+    let endDate = dayjs(props.end_date)
 
-	let end = dayjs(endDate).format('YYYY-MM-DD')
+    let end = dayjs(endDate).format('YYYY-MM-DD')
 
-	return await getReports({period_type: "inception", end, ids})
+    return await getReports({period_type: "inception", end, ids})
 }
 
 async function getReports({period_type, end, ids, type = 'months'}) {
-	let res = await useApi('performanceReport.post', {
-		body: {
-			save_report: false,
-			period_type: period_type,
-			// begin_date: start, // deprecated, rn Backend handles all date range based on end_date + period_type
-			end_date: end,
-			calculation_type: props.calculation_type,
-			segmentation_type: type,
-			report_currency: props.report_currency,
-			bundle: ids,
-		},
-	})
+    let res = await useApi('performanceReport.post', {
+        body: {
+            save_report: false,
+            period_type: period_type,
+            // begin_date: start, // deprecated, rn Backend handles all date range based on end_date + period_type
+            end_date: end,
+            calculation_type: props.calculation_type,
+            segmentation_type: type,
+            report_currency: props.report_currency,
+            bundle: ids,
+        },
+    })
 
-	return res
+    return res
 
 
 }
 
 // rework
 async function getEndDate() {
-	if (viewerData.reportOptions?.end_date) {
-		return viewerData.reportOptions?.end_date
-	}
+    if (viewerData.reportOptions?.end_date) {
+        return viewerData.reportOptions?.end_date
+    }
 
-	const roCopy = viewerData.reportOptions
-		? JSON.parse(JSON.stringify(viewerData.reportOptions))
-		: viewerData.reportOptions
-	console.error('No end_date set for performance report ', roCopy)
+    const roCopy = viewerData.reportOptions
+        ? JSON.parse(JSON.stringify(viewerData.reportOptions))
+        : viewerData.reportOptions
+    console.error('No end_date set for performance report ', roCopy)
 
-	// if there is expression for end_date, calculate it
-	if (
-		viewerData.reportLayoutOptions?.datepickerOptions?.reportLastDatepicker
-			.datepickerMode !== 'datepicker' &&
-		viewerData.reportLayoutOptions.datepickerOptions.reportLastDatepicker
-			.expression
-	) {
-		const opts = {
-			body: {
-				is_eval: true,
-				expression:
-				viewerData.reportLayoutOptions.datepickerOptions
-					.reportLastDatepicker.expression,
-			},
-		}
+    // if there is expression for end_date, calculate it
+    if (
+        viewerData.reportLayoutOptions?.datepickerOptions?.reportLastDatepicker
+            .datepickerMode !== 'datepicker' &&
+        viewerData.reportLayoutOptions.datepickerOptions.reportLastDatepicker
+            .expression
+    ) {
+        const opts = {
+            body: {
+                is_eval: true,
+                expression:
+                viewerData.reportLayoutOptions.datepickerOptions
+                    .reportLastDatepicker.expression,
+            },
+        }
 
-		const res = await useApi('expression.post', opts)
+        const res = await useApi('expression.post', opts)
 
-		viewerData.reportOptions.end_date = res.result
+        viewerData.reportOptions.end_date = res.result
 
-		return viewerData.reportOptions.end_date
-	}
+        return viewerData.reportOptions.end_date
+    }
 
-	const opts = {
-		body: {
-			is_eval: true,
-			expression: 'last_business_day(now())',
-		},
-	}
+    const opts = {
+        body: {
+            is_eval: true,
+            expression: 'last_business_day(now())',
+        },
+    }
 
-	const res = await useApi('expression.post', opts)
+    const res = await useApi('expression.post', opts)
 
-	if (res.error) throw new Error(res.error)
+    if (res.error) throw new Error(res.error)
 
-	viewerData.reportOptions.end_date = res.result
+    viewerData.reportOptions.end_date = res.result
 
-	return viewerData.reportOptions.end_date
+    return viewerData.reportOptions.end_date
 }
 </script>
 
 <style lang="scss">
 
 .performance-holder {
-	.table-cell {
-		text-align: right;
-	}
+  .table-cell {
+    text-align: right;
+  }
 
-	.t_header .table-cell {
-		text-align: left;
-	}
+  .t_header .table-cell {
+    text-align: left;
+  }
 
 }
 </style>
