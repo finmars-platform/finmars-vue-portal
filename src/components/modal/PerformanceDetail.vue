@@ -108,13 +108,13 @@ watch(
 	() => {
 		if (props.performanceDetails == null) {
 			return
-		} else {
+		}
+		if (props.performanceDetailsColumnName === "name")
 			getPortfolios().then(result => {
 				portfolios.value = result
 			}).catch(error => {
 				console.error(error)
 			})
-		}		
 	}
 )
 
