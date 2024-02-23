@@ -39,14 +39,18 @@
 			@save="updateBundle"
 		/>
 
-		<div class="table_wrap flex">
+		<div
+            class="table_wrap flex"
+        >
 			<div class="coll_years">
 				<div class="coll_item t_header">Years</div>
 				<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">
 					{{ item }}
 				</div>
 			</div>
-			<div class="coll_months">
+			<div
+                class="coll_months"
+            >
 				<BaseTable
 					:headers="portfolioHeaders"
 					:items="portfolioItems"
@@ -55,6 +59,7 @@
 					:rightClickCallback="showPerformanceDetail"
 				/>
 			</div>
+
 			<div class="coll_total">
 				<div class="coll_item t_header">TOTAL</div>
 				<div class="coll_item" v-for="(item, i) in portfolioTotals" :key="i">
@@ -69,6 +74,16 @@
 			</div>
 		</div>
 
+        <div v-show="detailsLoading"
+             class="flex-row flex-center p-16">
+            <FmLoader :size="40" />
+        </div>
+
+        <!-- No data after loading -->
+        <div v-show="!detailsLoading && !portfolioItems.length"
+             class="flex-row flex-center p-16" style="font-weight: 500;">
+            {{ bundleId ? "There is no data for selected period" : "Select period" }}
+        </div>
 
 		<ModalPerformanceDetail
 			title="Performance Details"
@@ -87,6 +102,7 @@ const props = defineProps({
 	reportOptions: {
 		type: Object,
 	},
+    // Actually can contain bundle.id or whole bundle. Bad naming.
 	bundleId: {
 		type: [Number, Object],
 	},
@@ -132,19 +148,13 @@ let bundleId = computed(() => {
 
 })
 
-watch(props, async () => {
-	if (!bundleId.value) return false
-
-	await getMonthDetails()
-})
-
 let portfolioItems = ref([])
 let portfolioMonthsEndsRaw = ref([])
 let portfolioItemsRaw = ref([])
 let portfolioYears = ref([])
 let portfolioTotals = ref([])
 let activeYear = ref(0)
-let detailsLoading = false
+let detailsLoading = ref(false);
 let performanceDetailIsOpen = ref(false)
 let performanceDetails = ref(null)
 
@@ -170,7 +180,49 @@ let portfolioHeaders = ref([
 	'Dec',
 ])
 
-if (bundleId.value) getMonthDetails()
+watch(
+    () => props.bundleId,
+    async (newVal, oldVal) => {
+        console.log(
+            "testing33.RvPerformanceDetail props.bundleId watcher ",
+            newVal, oldVal
+        );
+        if (!newVal) {
+
+            if (oldVal) { // value changed from something to nothing
+                console.log(
+                    "testing33.RvPerformanceDetail props.bundleId watcher 2"
+                );
+                // empty table
+                portfolioYears.value = []
+                portfolioTotals.value = []
+                portfolioItems.value = []
+                portfolioItemsRaw.value = []
+            }
+
+            return false;
+        }
+
+        await getMonthDetails()
+    }
+)
+
+watch(
+    () => [
+        props.reportOptions,
+        props.begin_date,
+        props.end_date,
+        props.calculation_type,
+        props.report_currency,
+    ],
+    async () => {
+        console.log("testing33.RvPerformanceDetail props watcher ", props.bundleId);
+        if (props.bundleId) {
+            console.log("testing33.RvPerformanceDetail props watcher 2 ");
+            await getMonthDetails()
+        }
+    }
+)
 
 async function chooseYear(id) {
 	activeYear.value = id
@@ -252,14 +304,17 @@ async function getMonthDetails() {
 
 	console.log('getMonthDetails here')
 
-	if (detailsLoading) return false
+	if (detailsLoading.value) return false
 
-	detailsLoading = true
+    detailsLoading.value = true
 	portfolioYears.value = []
 	portfolioTotals.value = []
 	portfolioItems.value = []
 	portfolioItemsRaw.value = []
-
+    console.log(
+        "testing33.RvPerformanceDetail getMonthDetails ",
+        detailsLoading.value && !portfolioItems.value.length
+    );
 	let bundle = bundleId.value
 
 	let begin
@@ -301,7 +356,14 @@ async function getMonthDetails() {
 
 	let yearsBuffer = new Map()
 
-	const allMonths = await Promise.all(promises)
+    let allMonths;
+
+    try {
+        allMonths = await Promise.all(promises)
+    } catch (e) {
+        detailsLoading.value = false
+        return;
+    }
 
 	console.log('allMonths', allMonths);
 	console.log('yearsBuffer', yearsBuffer);
@@ -429,7 +491,8 @@ async function getMonthDetails() {
 			portfolioTotals.value.push(formatNumber(total.grand_absolute_pl))
 		}
 	}
-	detailsLoading = false
+
+    detailsLoading.value = false
 
 	await chooseYear(0)
 }
@@ -505,6 +568,11 @@ async function getReports({period_type, end, ids, type = 'months'}) {
 
 	return res
 }
+
+function init() {
+    if (bundleId.value) getMonthDetails()
+}
+
 </script>
 
 <style lang="scss">
