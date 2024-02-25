@@ -430,7 +430,7 @@ export const useGetMdDialogData = () => {
  * @return {Promise<default>} - resolves into vm of an instance of reportViewerController
  */
 export const useReportViewerController = async function (contentType, evAttrsStore, reportViewerOptions) {
-	console.log("testing1923 useInitReportViewerController works");
+
 	await evAttrsStore.fetchCustomFields(contentType);
 
 	return new reportViewerController(reportViewerOptions);

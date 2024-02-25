@@ -1,19 +1,27 @@
 <template>
 	<!-- <FmExpansionPanel :title="detailPortfolio + ' - ' + detailYear"> -->
-	<FmExpansionPanel title="Chart">
+	<div class="position-relative">
+		<FmExpansionPanel title="Chart">
 
-		<div style="justify-content: end; display: flex">
-			<FmSelect style="width: 300px;"
-					  v-model="performance_type"
-					  :items="performanceTypeOpts"
-					  @update:modelValue="updateChart(yearData.portfolioMonthsEndsRaw)"
-			/>
-		</div>
+			<div style="justify-content: end; display: flex">
+				<FmSelect style="width: 300px;"
+						  v-model="performance_type"
+						  :items="performanceTypeOpts"
+						  @update:modelValue="updateChart(yearData.portfolioMonthsEndsRaw)"
+				/>
+			</div>
 
-		<div style="height: 350px;">
-			<canvas id="myChart"><p>Chart</p></canvas>
+			<div style="height: 350px;">
+				<canvas id="myChart"><p>Chart</p></canvas>
+			</div>
+
+		</FmExpansionPanel>
+
+		<div v-show="loadingData" class="loader-container">
+			<FmLoader :size="100" />
 		</div>
-	</FmExpansionPanel>
+	</div>
+
 </template>
 
 <script setup>
@@ -23,7 +31,8 @@ import Chart from 'chart.js/auto';
 const emits = defineEmits(['setMonth', 'refresh'])
 
 const props = defineProps({
-	bundleId: {
+	/** Id of a bundle or a whole object of a bundle. */
+	bundle: {
 		type: [Number, Object],
 	},
 	reportOptions: {
@@ -36,16 +45,17 @@ const props = defineProps({
 
 let bundleId = computed(() => {
 
-	if (!props.bundleId) return null;
+	if (!props.bundle) return null;
 
-	if (typeof props.bundleId == 'object' && props.bundleId.id) {
-		return props.bundleId.id
+	if (typeof props.bundle == 'object' && props.bundle.id) {
+		return props.bundle.id
 	}
 
-	if (typeof props.bundleId == 'number') return props.bundleId
+	if (typeof props.bundle == 'number') return props.bundle
 
 })
 
+let loadingData = ref(false);
 let chart
 
 let performanceTypeOpts = [
@@ -64,8 +74,29 @@ let performance_type = ref('monthly')
 
 // updateChart( props.yearData.datasetMonth, props.yearData.datasetLine )
 watch(
-	props,
-	() => updateChart(props.yearData.portfolioMonthsEndsRaw)
+    () => [
+        props.bundle,
+        props.yearData,
+    ],
+	() => {
+
+        if (props.bundle &&
+			props.yearData && Object.keys(props.yearData).length) {
+
+            updateChart(props.yearData.portfolioMonthsEndsRaw)
+
+        }
+        else {
+
+            if (chart) {
+                chart.destroy();
+                createChart();
+			}
+
+		}
+
+	},
+	{deep: true}
 )
 
 async function getReports({period_type, end, ids, type = 'months'}) {
@@ -105,7 +136,15 @@ function updateChartBackgroundColor(dataset) {
 	return dataset.map(item => item > 0 ? '#a5d9c9' : '#fac878');
 }
 
+let updateChartReqKey = null;
+
 async function updateChart(portfolioMonthsEndsRaw) {
+
+	const reqKey = useGenerateUniqueId(bundleId.value + '');
+	updateChartReqKey = reqKey;
+
+	loadingData.value = true;
+
 	if (chart) {
 		chart.destroy();
 	}
@@ -114,13 +153,35 @@ async function updateChart(portfolioMonthsEndsRaw) {
 
 	console.log('updateChart.props', props);
 
-	const dataPromises = portfolioMonthsEndsRaw.map(async item => {
+	let ends = [];
+
+	if ( Array.isArray(portfolioMonthsEndsRaw) ) {
+		ends = portfolioMonthsEndsRaw;
+	}
+
+	const dataPromises = ends.map(async item => {
 		const period_type = getPeriodType(performance_type);
 		const res = await getReports({ period_type, end: item, ids: bundleId.value });
 		return getChartDataItem(res, props.reportOptions);
 	});
 
-	const chartData = await Promise.all(dataPromises);
+	let chartData;
+
+	try {
+		chartData = await Promise.all(dataPromises);
+		loadingData.value = false;
+	} catch (e) {
+		loadingData.value = false;
+        console.error(e);
+		throw "Error above occurred while trying to load data for RvPerformanceChart";
+	}
+
+	if (updateChartReqKey !== reqKey) {
+		// New request sent while old request was processing.
+		// Discard result of old request.
+		return;
+
+	}
 
 	chart.data.datasets[0].data = chartData;
 	chart.data.datasets[0].backgroundColor = updateChartBackgroundColor(chartData);
@@ -264,5 +325,10 @@ function createChart() {
 </script>
 
 <style lang="scss" scoped>
-
+	.loader-container {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
 </style>

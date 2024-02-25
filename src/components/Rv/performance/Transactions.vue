@@ -77,9 +77,12 @@ const props = defineProps({
 	reportOptions: {
 		type: Object,
 	},
-	bundleId: {
+
+  /** Id of a bundle or a whole object of a bundle. */
+	bundle: {
 		type: [Number, Object],
 	},
+
 	yearData: {
 		type: Object
 	},
@@ -94,6 +97,40 @@ const sortState = ref({
 	column: null,
 	ascending: true
 });
+
+let bundleId = computed(() => {
+
+  if (!props.bundle) return null;
+
+  if (typeof props.bundle == 'object' && props.bundle.id) {
+    return props.bundle.id
+  }
+
+  if (typeof props.bundle == 'number') return props.bundle
+
+})
+
+watch(
+    () => [
+        props.bundle,
+        props.yearData,
+        props.monthData,
+    ],
+    () => {
+
+      if (props.bundle &&
+		  props.yearData && Object.keys(props.yearData).length &&
+		  props.monthData?.currentMonth) {
+
+          getTransactions();
+
+	  } else if (transactions.value.length) {
+          transactions.value = [];
+
+	  }
+
+    }
+)
 
 function getMonthStartAndEnd(monthName, year) {
 
@@ -155,54 +192,60 @@ const sortTable = (columnName) => {
 	});
 }
 
-let getTransactions = async () => {
+let getTransactionsReqKey = null;
 
-	if (props.bundleId && props.monthData.currentMonth) {
+const getTransactions = async () => {
 
-		console.log('props.monthData', JSON.stringify(props.monthData))
-		console.log('props.yearData', JSON.stringify(props.yearData))
+	if (!props.bundle ||
+		!props.yearData || !Object.keys(props.yearData).length ||
+		!props.monthData?.currentMonth) {
 
-		var dates = getMonthStartAndEnd(props.monthData.currentMonth, props.yearData.detailYear);
+		return;
 
-		let res = await useApi('transactionReport.post', {
+	}
+
+	const reqKey = useGenerateUniqueId(bundleId.value + props.monthData.currentMonth);
+	getTransactionsReqKey = reqKey;
+
+	var dates = getMonthStartAndEnd(props.monthData.currentMonth, props.yearData.detailYear);
+
+	let res = await useApi(
+        'transactionReport.post',
+		{
 			body: {
-				bundle: props.bundleId.id, // WTF? why if its called id, its object inside?
+				bundle: bundleId.value,
 				begin_date: dates.monthStart,
 				end_date: dates.monthEnd,
 				date_field: 'transaction_date',
 				depth_level: 'base_transaction',
 			},
-		})
+		}
+    )
 
-
-		let result_items = res.items;
-
-		result_items = joinProperty(result_items, 'transaction_class', res.item_transaction_classes);
-		result_items = joinProperty(result_items, 'entry_account', res.item_accounts);
-		result_items = joinProperty(result_items, 'settlement_currency', res.item_currencies);
-		result_items = joinProperty(result_items, 'transaction_currency', res.item_currencies);
-		result_items = joinProperty(result_items, 'instrument', res.item_instruments);
-
-		result_items = result_items.map(function (item) {
-
-			item.transaction_class_name = item.transaction_class.name;
-
-			return item
-		})
-
-		transactions.value = result_items;
-
-		console.log('transactions.value', JSON.parse(JSON.stringify(transactions.value)));
-
+	if (getTransactionsReqKey !== reqKey) {
+		// New request sent while old request was processing.
+		// Discard result of old request.
+		return;
 	}
 
+	let result_items = res.items;
+
+	result_items = joinProperty(result_items, 'transaction_class', res.item_transaction_classes);
+	result_items = joinProperty(result_items, 'entry_account', res.item_accounts);
+	result_items = joinProperty(result_items, 'settlement_currency', res.item_currencies);
+	result_items = joinProperty(result_items, 'transaction_currency', res.item_currencies);
+	result_items = joinProperty(result_items, 'instrument', res.item_instruments);
+
+	result_items = result_items.map(function (item) {
+
+		item.transaction_class_name = item.transaction_class.name;
+
+		return item
+	})
+
+	transactions.value = result_items;
 
 }
-
-watch(
-	props,
-	() => getTransactions()
-)
 
 
 </script>
