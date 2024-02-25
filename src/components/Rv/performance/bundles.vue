@@ -8,7 +8,7 @@
                     colls="repeat(9, 1fr)"
                     :cb="chooseBundle"
                     :rightClickCallback="showPerformanceDetail"
-                    :is-disabled="!readyStatus"
+                    :is-disabled="isDisabled || !readyStatus"
             />
         </div>
 
@@ -43,6 +43,7 @@ const props = defineProps({
     report_currency: {
         type: [Number, String],
     },
+	isDisabled: Boolean,
 })
 const emits = defineEmits(['setBundle', 'refreshFunc'])
 
@@ -72,13 +73,22 @@ let bundles = ref([])
 let performanceDetails = ref(null)
 let performanceDetailsColumnName = ref(null)
 
-watch(props, () => init())
+watch(
+    () => [
+        props.reportOptions,
+        props.end_date,
+        props.calculation_type,
+        props.report_currency,
+    ],
+    () => { init() }
+)
 
 emits('refreshFunc', init)
 init()
 
 function init() {
 
+    activePeriod.value = null;
     emits('setBundle', null);
 
     // проверка на корректность всех свойств, если что выдать ошибку
@@ -246,7 +256,6 @@ async function calcAnnualForBundle(bundleId, row, rowRaw) {
 
 async function fetchPortfolioBundles() {
     // readyStatusData.bundles = false;
-
     readyStatus.value = false;
 
     let res = await useLoadAllPages('portfolioBundleList.get', {
@@ -271,9 +280,9 @@ async function fetchPortfolioBundles() {
 
     }
     // readyStatusData.bundles = true;
-
-    periodItems.value = []
-    periodItemsRaw.value = []
+	activePeriod.value = null;
+    periodItems.value = [];
+    periodItemsRaw.value = [];
 
     let promises = [];
 
@@ -308,42 +317,46 @@ async function fetchPortfolioBundles() {
     try {
         await Promise.all(promises);
 
+
     } catch(e) {
         console.error(e)
-        throw "Error above occurred while trying to calculate performance report";
+        throw "Error above occurred while trying to load and calculate data for RvPerformanceBundles";
     }
 
     readyStatus.value = true;
-
-    chooseBundle(0)
+    // chooseBundle(0)
 
 }
 //# endregion Calculate period
 
 async function chooseBundle(bundleIndex, cellIndex) {
 
-    console.log('bundleIndex', bundleIndex)
-    console.log('cellIndex', cellIndex)
-    console.log('bundles.value', bundles.value);
+    if (activePeriod.value === bundleIndex) {
+        return;
+    }
 
     activePeriod.value = bundleIndex
-    emits('setBundle', bundles.value[bundleIndex])
+    emits('setBundle', JSON.parse(JSON.stringify( bundles.value[bundleIndex] )) );
 
 }
 
 function showPerformanceDetail(bundleIndex, cellIndex) {
 
-    if (cellIndex && cellIndex !== 'name') {
+	if (!cellIndex) {
+		return;
+	}
 
-        performanceDetailIsOpen.value = true;
-
-		performanceDetailsColumnName.value = cellIndex
-		performanceDetails.value = periodItemsRaw.value[bundleIndex][`${cellIndex}_performance_report`]
-
-	} else if (cellIndex && cellIndex === 'name') {
+    if (cellIndex === 'name') {
 
 		performanceDetailsColumnName.value = cellIndex
 		performanceDetails.value = periodItemsRaw.value[bundleIndex]['id']
+
+	} else {
+
+		performanceDetailIsOpen.value = true;
+
+		performanceDetailsColumnName.value = cellIndex
+		performanceDetails.value = periodItemsRaw.value[bundleIndex][`${cellIndex}_performance_report`]
 
 	}
 
@@ -504,6 +517,7 @@ async function getEndDate() {
 
     return viewerData.reportOptions.end_date
 }
+
 </script>
 
 <style lang="scss">

@@ -56,7 +56,9 @@
 					:items="portfolioItems"
 					colls="repeat(12, 1fr)"
 					:active="activeYear"
+					:cb="chooseYear"
 					:rightClickCallback="showPerformanceDetail"
+                    :is-disabled="detailsLoading"
 				/>
 			</div>
 
@@ -102,11 +104,13 @@ const props = defineProps({
 	reportOptions: {
 		type: Object,
 	},
-    // Actually can contain bundle.id or whole bundle. Bad naming.
-	bundleId: {
+
+    /** Id of a bundle or a whole object of a bundle. */
+	bundle: {
 		type: [Number, Object],
 	},
-	begin_date: {
+
+    begin_date: {
 		type: String,
 	},
 	end_date: {
@@ -118,8 +122,14 @@ const props = defineProps({
 	report_currency: {
 		type: [Number, String],
 	},
+
 })
-const emits = defineEmits(['setYear', 'refresh'])
+
+/* *
+ * remove 'loadingDataStart', 'loadingDataEnd' after implementing
+ * discarding of result of old requests
+ * */
+const emits = defineEmits(['setYear', 'refresh', 'loadingDataStart', 'loadingDataEnd'])
 
 function formatNumber(num) {
 	return Intl.NumberFormat('en-EN', {
@@ -129,22 +139,22 @@ function formatNumber(num) {
 
 let currentBundle = computed(() => {
 
-	if (!props.bundleId) return null;
+	if (!props.bundle) return null;
 
-	if (typeof props.bundleId == 'object') return props.bundleId
+	if (typeof props.bundle == 'object') return props.bundle
 
-	return {id: props.bundleId, user_code: 'Need name id: ' + props.bundleId}
+	return {id: props.bundle, user_code: 'Need name id: ' + props.bundle}
 })
 
 let bundleId = computed(() => {
 
-	if (!props.bundleId) return null;
+	if (!props.bundle) return null;
 
-	if (typeof props.bundleId == 'object' && props.bundleId.id) {
-		return props.bundleId.id
+	if (typeof props.bundle == 'object' && props.bundle.id) {
+		return props.bundle.id
 	}
 
-	if (typeof props.bundleId == 'number') return props.bundleId
+	if (typeof props.bundle == 'number') return props.bundle
 
 })
 
@@ -153,7 +163,7 @@ let portfolioMonthsEndsRaw = ref([])
 let portfolioItemsRaw = ref([])
 let portfolioYears = ref([])
 let portfolioTotals = ref([])
-let activeYear = ref(0)
+let activeYear = ref(null)
 let detailsLoading = ref(false);
 let performanceDetailIsOpen = ref(false)
 let performanceDetails = ref(null)
@@ -181,50 +191,49 @@ let portfolioHeaders = ref([
 ])
 
 watch(
-    () => props.bundleId,
+    () => props.bundle,
     async (newVal, oldVal) => {
-        console.log(
-            "testing33.RvPerformanceDetail props.bundleId watcher ",
-            newVal, oldVal
-        );
+
         if (!newVal) {
 
             if (oldVal) { // value changed from something to nothing
-                console.log(
-                    "testing33.RvPerformanceDetail props.bundleId watcher 2"
-                );
+
                 // empty table
                 portfolioYears.value = []
                 portfolioTotals.value = []
                 portfolioItems.value = []
                 portfolioItemsRaw.value = []
+
+				activeYear.value = null;
             }
 
-            return false;
         }
 
-        await getMonthDetails()
-    }
+    },
+    {deep: true}
 )
 
 watch(
     () => [
-        props.reportOptions,
-        props.begin_date,
-        props.end_date,
+        props.bundle,
         props.calculation_type,
         props.report_currency,
-    ],
+	],
     async () => {
-        console.log("testing33.RvPerformanceDetail props watcher ", props.bundleId);
-        if (props.bundleId) {
-            console.log("testing33.RvPerformanceDetail props watcher 2 ");
+
+        if (props.bundle) {
             await getMonthDetails()
         }
-    }
+    },
+    {deep: true},
 )
 
 async function chooseYear(id) {
+
+    if (activeYear.value === id) {
+		return;
+	}
+
 	activeYear.value = id
 	detailYear.value = portfolioYears.value[id]
 
@@ -236,12 +245,16 @@ async function chooseYear(id) {
 
 	console.log('detailYear', detailYear.value);
 
-	emits('setYear', {
-		// datasetCumulative: portfolioItems.value[id],
-		portfolioMonthsEndsRaw: portfolioMonthsEndsRaw.value,
-		datasetCumulative: portfolioItemsRaw.value[id],
-		detailYear: detailYear.value,
-	})
+	const yearData = JSON.parse(JSON.stringify(
+        {
+			// datasetCumulative: portfolioItems.value[id],
+			portfolioMonthsEndsRaw: portfolioMonthsEndsRaw.value,
+			datasetCumulative: portfolioItemsRaw.value[id],
+			detailYear: detailYear.value,
+    	}
+    ));
+
+	emits('setYear', yearData)
 }
 
 async function showPerformanceDetail(rowIndex, cellIndex) {
@@ -304,17 +317,17 @@ async function getMonthDetails() {
 
 	console.log('getMonthDetails here')
 
-	if (detailsLoading.value) return false
+	if (detailsLoading.value) return false;
 
+    emits("loadingDataStart");
+
+    activeYear.value = null;
     detailsLoading.value = true
 	portfolioYears.value = []
 	portfolioTotals.value = []
 	portfolioItems.value = []
 	portfolioItemsRaw.value = []
-    console.log(
-        "testing33.RvPerformanceDetail getMonthDetails ",
-        detailsLoading.value && !portfolioItems.value.length
-    );
+
 	let bundle = bundleId.value
 
 	let begin
@@ -361,8 +374,13 @@ async function getMonthDetails() {
     try {
         allMonths = await Promise.all(promises)
     } catch (e) {
-        detailsLoading.value = false
-        return;
+        console.error(e)
+
+		// May be problem in selected bundle.
+		// Let use ability to select another.
+        emits('loadingDataEnd');
+
+        throw "Error above occurred while trying to load and calculate data for RvPerformanceDetail";
     }
 
 	console.log('allMonths', allMonths);
@@ -492,9 +510,11 @@ async function getMonthDetails() {
 		}
 	}
 
+    emits('loadingDataEnd');
+
     detailsLoading.value = false
 
-	await chooseYear(0)
+	// await chooseYear(0)
 }
 
 async function updateBundle(bundleData) {
@@ -565,6 +585,10 @@ async function getReports({period_type, end, ids, type = 'months'}) {
 			bundle: ids,
 		},
 	})
+
+    if (res.error) {
+        throw res.error;
+    }
 
 	return res
 }
