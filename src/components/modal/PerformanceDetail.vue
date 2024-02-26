@@ -52,7 +52,7 @@
 			</div>
 			<div v-else-if="performanceDetailsColumnName==='name'">
 				<table>
-					<tr v-for="portfolio in portfolios" :key="portfolio.id">
+					<tr v-show="readyStatus" v-for="portfolio in portfolios" :key="portfolio.id">
 						<td class="text-center" ><b>{{ portfolio.name }}</b></td>
 					</tr>
 				</table>
@@ -89,7 +89,7 @@ async function getDetailPortfolioBundle(bundleId) {
 }
 
 async function getPortfolios() {
-	const res = await getDetailPortfolioBundle(props.performanceDetails.id)
+	const res = await getDetailPortfolioBundle(props.performanceDetails)
 	return res.registers
 }
 
@@ -106,15 +106,14 @@ const getDisplayPortfolios = (portfolios) => {
 watch(
 	() => props.performanceDetails,
 	() => {
-		if (props.performanceDetails == null) {
-			return
-		} else {
+		if (props.performanceDetails !== null && props.performanceDetailsColumnName === "name")
+			readyStatus.value = false;
 			getPortfolios().then(result => {
 				portfolios.value = result
+				readyStatus.value = true;
 			}).catch(error => {
 				console.error(error)
 			})
-		}		
 	}
 )
 

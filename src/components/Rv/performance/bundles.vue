@@ -293,7 +293,7 @@ async function fetchPortfolioBundles() {
 
         let row = periodItems.value[periodItems.value.length - 1]
         let rowRaw = periodItemsRaw.value[periodItems.value.length - 1]
-        rowRaw.id = bundle
+        rowRaw.id = bundle.id
 
         promises.push(
             Promise.all([
