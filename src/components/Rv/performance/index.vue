@@ -17,7 +17,6 @@
 				<RvPerformanceDetail
 					v-model:open="components.detail"
 					:bundle="currentBundle"
-					:begin_date="reportOptions.begin_date"
 					:end_date="reportOptions.end_date"
 					:reportOptions="reportOptions"
 					:calculation_type="reportOptions.calculation_type"

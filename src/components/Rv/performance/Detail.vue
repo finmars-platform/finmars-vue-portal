@@ -56,9 +56,9 @@
 					:items="portfolioItems"
 					colls="repeat(12, 1fr)"
 					:active="activeYear"
-					:cb="chooseYear"
 					:rightClickCallback="showPerformanceDetail"
                     :is-disabled="detailsLoading"
+					:is-readonly="true"
 				/>
 			</div>
 
@@ -110,6 +110,8 @@ const props = defineProps({
 		type: [Number, Object],
 	},
 
+	/** If empty, 'transaction_date'
+	 * of earliest transaction in bundle will be used  */
     begin_date: {
 		type: String,
 	},
@@ -514,7 +516,7 @@ async function getMonthDetails() {
 
     detailsLoading.value = false
 
-	// await chooseYear(0)
+	await chooseYear(0)
 }
 
 async function updateBundle(bundleData) {

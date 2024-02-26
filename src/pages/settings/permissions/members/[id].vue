@@ -81,7 +81,6 @@
 					:modelValue="selectedAccessPolicies"
 					@update:modelValue="findAccessPolicyIds($event)"
 					:items="accessPolicies"
-					label="Testing"
 					item_id="user_code"
 					item_title="name"
 				/>
