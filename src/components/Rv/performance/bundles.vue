@@ -233,25 +233,30 @@ async function calcInceptYearForBundle(bundleId, row, rowRaw) {
 
 async function calcAnnualForBundle(bundleId, row, rowRaw) {
 
-    row.annualized = null
+	row.annualized = null
 
-    const res = await getIncept(bundleId)
+	const res = await getIncept(bundleId)
 
-    rowRaw.annualized_performance_report = res
+	if (res.error) {
+		throw res.error;
+	}
 
-    if (props.reportOptions.performance_unit === 'percent') {
+	rowRaw.annualized_performance_report = res
 
-        let value = Math.round(res.grand_return * 100 * 100) / 100
+	var start = dayjs(res.begin_date)
+	var end = dayjs(res.end_date)
+	var diffInYears = end.diff(start, 'year');
 
-        var start = dayjs(res.begin_date)
-        var end = dayjs(res.end_date)
-        var diffInYears = end.diff(start, 'year');
-        value = (value + 1)**(1 / diffInYears) - 1
+	if (diffInYears === 0 || diffInYears === null) {
+		res.grand_return = null;
+		res.grand_absolute_pl = null;
+	}else{
+		res.grand_return = (res.grand_return + 1) ** (1 / diffInYears) - 1;
+	}
 
-        row.annualized = value ? `${value}%` : ''
-    } else {
-        row.annualized = res.grand_absolute_pl ? `${formatNumber(performanceReport.grand_absolute_pl)}` : ''
-    }
+	var value = Math.round(res.grand_return * 100 * 100) / 100
+
+	row.annualized = value ? `${value}%` : ''
 
 }
 
@@ -298,7 +303,7 @@ async function fetchPortfolioBundles() {
 
         let row = periodItems.value[periodItems.value.length - 1]
         let rowRaw = periodItemsRaw.value[periodItems.value.length - 1]
-        rowRaw.id = bundle
+        rowRaw.id = bundle.id
 
         promises.push(
             Promise.all([
