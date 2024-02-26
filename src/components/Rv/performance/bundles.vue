@@ -8,8 +8,9 @@
                     colls="repeat(9, 1fr)"
                     :cb="chooseBundle"
                     :rightClickCallback="showPerformanceDetail"
-                    :is-disabled="isDisabled || !readyStatus"
+                    :is-disabled="isDisabled"
             />
+			<!-- :is-disabled="isDisabled || !readyStatus" -->
         </div>
 
         <ModalPerformanceDetail

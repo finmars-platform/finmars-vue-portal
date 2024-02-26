@@ -1,5 +1,5 @@
 <template>
-	<div class="table">
+	<div class="table" :class="{'readonly': isReadonly}">
 		<div class="table-row t_header" :style="{ gridTemplateColumns: colls }">
 			<div v-if="isActions">
 				<FmCheckbox/>
@@ -28,7 +28,7 @@
 			class="table-row"
 			:class="{
 				active: active == index,
-				choosible: active !== undefined,
+				selectable: !isReadonly && active !== undefined,
 				disabled: isDisabled,
 			}"
 			:style="{ gridTemplateColumns: colls }"
@@ -127,6 +127,7 @@ let props = defineProps({
 		type: Boolean,
 	},
 	isDisabled: Boolean,
+	isReadonly: Boolean,
 })
 
 let sortColumn = ref(-1)
@@ -161,6 +162,20 @@ const sortTable = (col_index) => {
 	font-size: 14px;
 }
 
+.table.readonly {
+  .table-row {
+
+	&:not(.t_header) {
+
+	  .table-cell .table-cell-btn {
+		cursor: default;
+	  }
+
+	}
+
+  }
+}
+
 .table-row {
 	display: grid;
 	align-items: center;
@@ -171,7 +186,7 @@ const sortTable = (col_index) => {
 	transition: outline 0.1s;
 	outline: solid transparent;
 
-	&:not(.disabled).choosible {
+	&:not(.disabled).selectable {
 		cursor: pointer;
 
 		&:not(.active):hover {
