@@ -134,22 +134,34 @@ let ascending = ref(true)
 
 
 const sortTable = (col_index) => {
-	var col = Object.keys(props.items[0])[col_index];
+  var col = Object.keys(props.items[0])[col_index];
 
-	if (sortColumn.value === col_index) {
-	ascending.value = !ascending.value
-	} else {
-	ascending.value = true;
-	sortColumn.value = col_index;
-	}
-	props.items.sort(function(a, b) {
-	if (a[col] > b[col]) {
-		return ascending.value ? 1 : -1
-	} else if (a[col] < b[col]) {
-		return ascending.value ? -1 : 1
-	}
-	return 0;
-	})
+  if (sortColumn.value === col_index) {
+    ascending.value = !ascending.value;
+  } else {
+    ascending.value = true;
+    sortColumn.value = col_index;
+  }
+  
+  props.items.sort(function(a, b) {
+    let valueA = a[col].replace("%","");
+    let valueB = b[col].replace("%","");
+
+	console.log(valueA, valueB)
+	
+    if (!isNaN(valueA) && !isNaN(valueB)){ 
+      valueA = parseFloat(valueA) || 0;
+	  valueB = parseFloat(valueB) || 0;
+    }
+    
+    if (valueA > valueB) {
+      return ascending.value ? 1 : -1;
+    } else if (valueA < valueB) {
+      return ascending.value ? -1 : 1;
+    }
+    
+    return 0;
+  });
 }
 
 </script>
