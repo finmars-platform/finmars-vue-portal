@@ -84,7 +84,7 @@
         <!-- No data after loading -->
         <div v-show="!detailsLoading && !portfolioItems.length"
              class="flex-row flex-center p-16" style="font-weight: 500;">
-            {{ bundleId ? "There is no data for selected period" : "Select period" }}
+			{{ getTextForEmptyTable() }}
         </div>
 
 		<ModalPerformanceDetail
@@ -159,18 +159,20 @@ let bundleId = computed(() => {
 	if (typeof props.bundle == 'number') return props.bundle
 
 })
-
+/** Years with formatted values for months */
 let portfolioItems = ref([])
 let portfolioMonthsEndsRaw = ref([])
+/** Years with values without formatting for months */
 let portfolioItemsRaw = ref([])
 let portfolioYears = ref([])
 let portfolioTotals = ref([])
 let activeYear = ref(null)
 let detailsLoading = ref(false);
+let detailsLoadingError = ref('');
+
 let performanceDetailIsOpen = ref(false)
 let performanceDetails = ref(null)
 
-let detailPortfolio = ref('')
 let detailYear = ref('')
 
 let showBundleActions = ref(false)
@@ -192,6 +194,19 @@ let portfolioHeaders = ref([
 	'Dec',
 ])
 
+function resetData() {
+
+    portfolioYears.value = [];
+    portfolioTotals.value = [];
+    portfolioItems.value = [];
+    portfolioItemsRaw.value = [];
+    portfolioMonthsEndsRaw.value = [];
+
+    activeYear.value = null;
+    detailYear.value = '';
+
+}
+
 watch(
     () => props.bundle,
     async (newVal, oldVal) => {
@@ -200,13 +215,7 @@ watch(
 
             if (oldVal) { // value changed from something to nothing
 
-                // empty table
-                portfolioYears.value = []
-                portfolioTotals.value = []
-                portfolioItems.value = []
-                portfolioItemsRaw.value = []
-
-				activeYear.value = null;
+                resetData();
             }
 
         }
@@ -230,17 +239,31 @@ watch(
     {deep: true},
 )
 
-async function chooseYear(id) {
+function getTextForEmptyTable() {
 
-    if (activeYear.value === id) {
+    if (detailsLoadingError.value) return detailsLoadingError.value;
+
+    return bundleId.value ? "There is no data for selected period" : "Select period";
+}
+
+/**
+ *
+ * @param index {Number} - index of year inside refs
+ * portfolioYears, portfolioItems, portfolioItemsRaw
+ *
+ * @return {Promise<void>}
+ */
+async function chooseYear(index) {
+
+    if (activeYear.value === index) {
 		return;
 	}
 
-	activeYear.value = id
-	detailYear.value = portfolioYears.value[id]
+	activeYear.value = index
+	detailYear.value = portfolioYears.value[index]
 
 	console.log('portfolioYears', portfolioYears.value);
-	console.log('chooseYear', id);
+	console.log('chooseYear index', index);
 	console.log('portfolioItems', portfolioItems.value);
 	console.log('portfolioItemsRaw', portfolioItemsRaw.value);
 	console.log('portfolioMonthsEndsRaw', portfolioMonthsEndsRaw.value);
@@ -251,7 +274,7 @@ async function chooseYear(id) {
         {
 			// datasetCumulative: portfolioItems.value[id],
 			portfolioMonthsEndsRaw: portfolioMonthsEndsRaw.value,
-			datasetCumulative: portfolioItemsRaw.value[id],
+			datasetCumulative: portfolioItemsRaw.value[index],
 			detailYear: detailYear.value,
     	}
     ));
@@ -281,7 +304,6 @@ async function showPerformanceDetail(rowIndex, cellIndex) {
 	console.log('performanceDetails', performanceDetails.value)
 
 }
-
 
 function getLastBusinessDayOfMonth(begin_date, end_date) {
 	const begin = new Date(begin_date);
@@ -378,6 +400,9 @@ async function getMonthDetails() {
     } catch (e) {
         console.error(e)
 
+		resetData();
+        detailsLoading.value = false;
+        detailsLoadingError.value = "Failed to calculate years for period. Try again later.";
 		// May be problem in selected bundle.
 		// Let use ability to select another.
         emits('loadingDataEnd');
@@ -456,13 +481,14 @@ async function getMonthDetails() {
 	let dateTo = dayjs(props.end_date)
 	let dateFrom = dayjs(begin)
 
-
 	for (let [year, months] of yearsBuffer) {
+
 		portfolioPerformanceReports[0] = months // todo refactor, when we consider multiple years
 		portfolioYears.value.push(year)
 
 		// todo refactor this cursed code
 		portfolioMonthsEndsRaw.value = []
+		// const monthsDescending = months.reverse()
 
 		Object.keys(months).forEach((key) => {
 			try {
@@ -516,7 +542,10 @@ async function getMonthDetails() {
 
     detailsLoading.value = false
 
-	await chooseYear(0)
+	if (portfolioYears.value.length) {
+		await chooseYear( portfolioYears.value.length - 1 )
+	}
+
 }
 
 async function updateBundle(bundleData) {
