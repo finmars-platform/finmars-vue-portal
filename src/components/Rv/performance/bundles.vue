@@ -126,6 +126,7 @@ async function calcDayForBundle(bundleId, row, rowRaw) {
     let res = await getDay(bundleId);
 
     if (res.error) {
+        row.daily = '-';
         throw res.error;
     }
 
@@ -141,6 +142,7 @@ async function calcMonthForBundle(bundleId, row, rowRaw) {
     const res = await getMonth(bundleId);
 
     if (res.error) {
+        row.month = '-';
         throw res.error;
     }
 
@@ -157,6 +159,7 @@ async function calcQuarterForBundle(bundleId, row, rowRaw) {
     const res = await getQ(bundleId);
 
     if (res.error) {
+        row.q = '-';
         throw res.error;
     }
 
@@ -173,6 +176,7 @@ async function calcYearForBundle(bundleId, row, rowRaw) {
     const res = await getYear(bundleId);
 
     if (res.error) {
+        row.year = '-';
         throw res.error;
     }
 
@@ -189,6 +193,7 @@ async function calcLastYearForBundle(bundleId, row, rowRaw) {
     const res = await getLastYear(bundleId);
 
     if (res.error) {
+        row.last = '-';
         throw res.error;
     }
 
@@ -205,6 +210,7 @@ async function calcBeforeLastYearForBundle(bundleId, row, rowRaw) {
     const res = await getYearBeforeLast(bundleId);
 
     if (res.error) {
+        row.beforeLast = '-';
         throw res.error;
     }
 
@@ -221,6 +227,7 @@ async function calcInceptYearForBundle(bundleId, row, rowRaw) {
     const res = await getIncept(bundleId);
 
     if (res.error) {
+        row.incept = "-"
         throw res.error;
     }
 
@@ -237,6 +244,7 @@ async function calcAnnualForBundle(bundleId, row, rowRaw) {
 	const res = await getIncept(bundleId)
 
 	if (res.error) {
+        row.annualized = "-"
 		throw res.error;
 	}
 
