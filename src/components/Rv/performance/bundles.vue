@@ -232,32 +232,32 @@ async function calcInceptYearForBundle(bundleId, row, rowRaw) {
 
 async function calcAnnualForBundle(bundleId, row, rowRaw) {
 
-	row.annualized = null
+row.annualized = null
 
-	const res = await getIncept(bundleId)
+const res = await getIncept(bundleId)
 
-	if (res.error) {
-		throw res.error;
-	}
-
-	rowRaw.annualized_performance_report = res
-
-	var start = dayjs(res.begin_date)
-	var end = dayjs(res.end_date)
-	var diffInYears = end.diff(start, 'year');
-
-	if (diffInYears === 0 || diffInYears === null) {
-		res.grand_return = null;
-		res.grand_absolute_pl = null;
-	}else{
-		res.grand_return = (res.grand_return + 1) ** (1 / diffInYears) - 1;
-	}
-
-	var value = Math.round(res.grand_return * 100 * 100) / 100
-
-	row.annualized = value ? `${value}%` : ''
-
+if (res.error) {
+    throw res.error;
 }
+
+rowRaw.annualized_performance_report = res
+
+var start = dayjs(res.begin_date)
+var end = dayjs(res.end_date)
+var diffInYears = end.diff(start, 'year', true);
+
+if (diffInYears === 0 || diffInYears === null || diffInYears < 1 || !res.grand_return ) {
+    if (res) res.grand_return = null;
+    row.annualized = "-";
+}else{
+    var value = res.grand_return * 100 * 100 / 100;
+    value = (value + 1) ** (1 / diffInYears) - 1;
+    res.grand_return = value / 100;
+    value = Math.round(value * 100) / 100;
+    row.annualized = value ? `${value}%` : '';
+}
+}
+
 
 async function fetchPortfolioBundles() {
     // readyStatusData.bundles = false;
