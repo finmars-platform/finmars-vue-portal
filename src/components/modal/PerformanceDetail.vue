@@ -83,24 +83,20 @@ let creating = ref(false)
 let portfolios = ref([])
 
 async function getDetailPortfolioBundle(bundleId) {
-	return await useApi('portfolioBundle.get', {
+	return await useApi('portfolioBundleRegistersList.get', {
 		params: { id: bundleId },
 	})
 }
 
 async function getPortfolios() {
 	const res = await getDetailPortfolioBundle(props.performanceDetails)
-	return res.registers
+	return res.results
 }
 
 function cancel() {
 
 
 	emit('cancel')
-}
-
-const getDisplayPortfolios = (portfolios) => {
-	return portfolios.map(obj => obj.name).join(',') + ".";
 }
 
 watch(
