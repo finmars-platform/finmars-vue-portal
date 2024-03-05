@@ -65,7 +65,7 @@ npm run preview
 Checkout the [deployment documentation](https://v3.nuxtjs.org/docs/deployment) for more information.
 
 
-## Local Development with local backend & authorizer
+## Local Development with local backend & authorizer 
 
 Create .env
 
