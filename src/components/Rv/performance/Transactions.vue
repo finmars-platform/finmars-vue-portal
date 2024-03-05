@@ -78,7 +78,7 @@ const props = defineProps({
 		type: Object,
 	},
 
-  /** Id of a bundle or a whole object of a bundle. */
+    /** Id of a bundle or a whole object of a bundle. */
 	bundle: {
 		type: [Number, Object],
 	},
@@ -134,18 +134,47 @@ watch(
 
 function getMonthStartAndEnd(monthName, year) {
 
+    let endDate = props.reportOptions.end_date.split("-");
+    const endDateYear = endDate[0];
+    const endDateMonth = endDate[1];
+    const endDateDay = endDate[2];
+
 	var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-	var monthIndex = months.indexOf(monthName) + 1;  // Add 1 to get the month in 1-12 format.
+	/*var monthIndex = months.indexOf(monthName) + 1;  // Add 1 to get the month in 1-12 format.
 	var monthStart = `${year}-${monthIndex.toString().padStart(2, '0')}-01`;
 
 	var nextMonthStart = new Date(year, monthIndex, 1);
 	nextMonthStart.setDate(0);  // This sets the date to the last day of the previous month, which is the month of interest.
-	var monthEnd = `${year}-${monthIndex.toString().padStart(2, '0')}-${nextMonthStart.getDate().toString().padStart(2, '0')}`;
+	var monthEnd = `${year}-${monthIndex.toString().padStart(2, '0')}-${nextMonthStart.getDate().toString().padStart(2, '0')}`;*/
+
+    const nextMonthIndex = months.indexOf(monthName) + 1;
+
+    const monthStart = nextMonthIndex.toString().padStart(2, '0');
+    var monthStartFm = `${year}-${monthStart}-01`;
+
+    let monthEnd = new Date(year, nextMonthIndex, 1); // next month
+    monthEnd.setDate(0);  // This sets the date to the last day of the previous month, which is the month of interest.
+
+    // Using nextMonthIndex because conveniently it is equal to current month number (1-12)
+    const mEndMonth = nextMonthIndex.toString().padStart(2, '0'); // values: 01 - 12
+
+    let mEndDay;
+
+    if ( endDateYear === year && endDateMonth === mEndMonth) {
+        // if month at the end of a period of dates for performance,
+        // use the day from the end of the period
+        mEndDay = endDateDay;
+
+    } else {
+        mEndDay = monthEnd.getDate().toString().padStart(2, '0'); // values: 01 - 31
+    }
+
+    const monthEndFm = `${year}-${mEndMonth}-${mEndDay}`;
 
 	return {
-		monthStart: monthStart,
-		monthEnd: monthEnd
+		monthStart: monthStartFm,
+		monthEnd: monthEndFm
 	};
 }
 

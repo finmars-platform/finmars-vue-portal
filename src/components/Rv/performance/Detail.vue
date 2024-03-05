@@ -305,22 +305,68 @@ async function showPerformanceDetail(rowIndex, cellIndex) {
 
 }
 
+/**
+ * Returns dates that will be used to calculate performance report
+ * on backend.
+ *
+ * @param begin_date
+ * @param end_date
+ * @return {[Date]} - Months between begin_date and end_date.
+ * Days for all months except last are last not weekend days.
+ *
+ */
 function getLastBusinessDayOfMonth(begin_date, end_date) {
-	const begin = new Date(begin_date);
-	const end = new Date(end_date);
-	let current = getLastDayOfMonth(begin);
+
+    const begin = new Date(begin_date);
+
+    const end = new Date(end_date);
+    const endYear = end.getFullYear();
+    const endMonth = end.getMonth();
+
+	let current = getLastDayOfMonth(begin.getFullYear(), begin.getMonth());
 	let result = [];
 
 	while (current <= end) {
-		result.push(new Date(current));
-		current = getLastDayOfMonth(new Date(current.getFullYear(), current.getMonth() + 1, 1));
+
+		/*result.push(new Date(current));
+		current = getLastDayOfMonth(new Date(current.getFullYear(), current.getMonth() + 1, 1));*/
+        result.push(new Date(current));
+
+        const nextMonth = current.getMonth() + 1;
+
+        current = getLastDayOfMonth(current.getFullYear(), nextMonth);
+
+        if ( current.getFullYear() === endYear &&
+            current.getMonth() === endMonth ) {
+
+            // current contains the last date of the period.
+			// apply day from `end_date` to it.
+            current.setDate( end.getDate() );
+
+        }
+
 	}
 
 	return result;
 }
 
-function getLastDayOfMonth(date) {
-	let lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+/**
+ * Helper function for getLastBusinessDayOfMonth
+ * @see getLastBusinessDayOfMonth
+ *
+ * @param year {number}
+ * @param month {number} - month index
+ * @return {Date} - last day of the next month
+ */
+function getLastDayOfMonth(year, month) {
+	// let lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+	/* *
+	 * `month + 1` bellow because 0 date sets month to previous
+	 * relative to specified in new Date()
+	 * */
+
+	let lastDayOfMonth = new Date(year, month + 1, 0);
 	return adjustForWeekend(lastDayOfMonth);
 }
 
@@ -336,10 +382,180 @@ function adjustForWeekend(date) {
 	return date;
 }
 
+/* async function convertReportIntoTableRows(startDate, bundle) {
+
+    let end = dayjs(props.end_date).endOf('year').format('YYYY-MM-DD');
+
+    const monthEndDates = getLastBusinessDayOfMonth(startDate, end)
+
+    console.log('begin', startDate);
+    console.log('end', end);
+    console.log('monthEndDates', monthEndDates);
+
+    const promises = []
+
+    monthEndDates.forEach((monthEndDate) => {
+
+        monthEndDate = dayjs(monthEndDate).format('YYYY-MM-DD');
+
+        // promises.push(getReports({ period_type: 'ytd', end: monthEndDate, ids: bundle }))
+        promises.push(getReports({period_type: 'mtd', end: monthEndDate, ids: bundle}))
+
+    })
+
+    let yearsBuffer = new Map()
+
+    let allMonths;
+
+    try {
+        allMonths = await Promise.all(promises)
+    } catch (e) {
+        console.error(e)
+
+        resetData();
+        detailsLoading.value = false;
+        detailsLoadingError.value = "Failed to calculate years for period. Try again later.";
+        // May be problem in selected bundle.
+        // Let use ability to select another.
+        emits('loadingDataEnd');
+
+        throw "Error above occurred while trying to load and calculate data for RvPerformanceDetail";
+    }
+
+    console.log('allMonths', allMonths);
+    console.log('yearsBuffer', yearsBuffer);
+
+    allMonths.forEach((item) => {
+
+        const parseDate = item.end_date.split('-');
+        const year = parseDate[0]; // e.g. "1999", "2001", "2012".
+        const month = parseDate[1]; // e.g. "1", "5", "12".
+
+        let defaultMonth;
+
+        if (props.reportOptions.performance_unit === 'percent') {
+            defaultMonth = {
+                key_01: [0 + '%', 0],
+                key_02: [0 + '%', 0],
+                key_03: [0 + '%', 0],
+                key_04: [0 + '%', 0],
+                key_05: [0 + '%', 0],
+                key_06: [0 + '%', 0],
+                key_07: [0 + '%', 0],
+                key_08: [0 + '%', 0],
+                key_09: [0 + '%', 0],
+                key_10: [0 + '%', 0],
+                key_11: [0 + '%', 0],
+                key_12: [0 + '%', 0],
+            }
+        }
+        else {
+            defaultMonth = {
+                key_01: [0, 0],
+                key_02: [0, 0],
+                key_03: [0, 0],
+                key_04: [0, 0],
+                key_05: [0, 0],
+                key_06: [0, 0],
+                key_07: [0, 0],
+                key_08: [0, 0],
+                key_09: [0, 0],
+                key_10: [0, 0],
+                key_11: [0, 0],
+                key_12: [0, 0],
+            }
+        }
+
+        if ( !yearsBuffer.has(year) ) {
+            yearsBuffer.set(year, defaultMonth)
+        }
+
+        // so 0 index for raw value
+        // so 1 index for formatted value
+        // other is depcreated
+        // todo refactor
+
+        if (props.reportOptions.performance_unit === 'percent') {
+            yearsBuffer.get( year )['key_' + month] = [
+                parseFloat(item.grand_return * 100).toFixed(2),
+                parseFloat(item.grand_return * 100).toFixed(2) + '%',
+                item,
+            ]
+        } else {
+            yearsBuffer.get( year )['key_' + month] = [
+                item.grand_absolute_pl,
+                formatNumber(item.grand_absolute_pl),
+                item
+            ]
+        }
+
+
+    })
+
+
+    let dateTo = dayjs(props.end_date)
+    let dateFrom = dayjs(startDate)
+
+    for (let [year, months] of yearsBuffer) {
+
+        portfolioPerformanceReports[0] = months // todo refactor, when we consider multiple years
+        portfolioYears.value.push(year)
+
+        // todo refactor this cursed code
+        portfolioMonthsEndsRaw.value = []
+        // const monthsDescending = months.reverse()
+
+        Object.keys(months).forEach((key) => {
+            try {
+                portfolioMonthsEndsRaw.value.push(months[key][2].end_date)
+            } catch (error) {
+                portfolioMonthsEndsRaw.value.push(null);
+            }
+        })
+
+        portfolioItemsRaw.value.push(
+            Object.values(months).map((item, i) => {
+                if (
+                    (year != dateTo.year() || i <= dateTo.month()) &&
+                    (year != dateFrom.year() || i >= dateFrom.month())
+                )
+                    return item[0]
+                else return ''
+            })
+        )
+
+        portfolioItems.value.push(
+            Object.values(months).map((item, i) => {
+                if (
+                    (year != dateTo.year() || i <= dateTo.month()) &&
+                    (year != dateFrom.year() || i >= dateFrom.month())
+                )
+                    return item[1]
+                else return ''
+            })
+        )
+
+
+        let end =
+            year == dayjs(dateTo).year()
+                ? dateTo.format('YYYY-MM-DD')
+                : `${year}-12-31`
+
+        let total = await getReports({
+            period_type: 'ytd',
+            end: end,
+            ids: bundle,
+        })
+        if (props.reportOptions.performance_unit === 'percent') {
+            portfolioTotals.value.push(parseFloat(total.grand_return * 100).toFixed(2))
+        } else {
+            portfolioTotals.value.push(formatNumber(total.grand_absolute_pl))
+        }
+    }
+
+} */
 
 async function getMonthDetails() {
-
-	console.log('getMonthDetails here')
 
 	if (detailsLoading.value) return false;
 
@@ -365,14 +581,8 @@ async function getMonthDetails() {
 		begin = dayjs(props.begin_date).format('YYYY-MM-DD')
 	}
 
-	const endDate = props.end_date
-
-
-	// It Insane to download whole history, lets asume only last year
-
-
-	// let end = dayjs(endDate).format('YYYY-MM-DD')
-	let end = dayjs(props.end_date).endOf('year').format('YYYY-MM-DD');
+	// let end = dayjs(props.end_date).endOf('year').format('YYYY-MM-DD');
+    let end = props.end_date;
 
 	const monthEndDates = getLastBusinessDayOfMonth(begin, end)
 
@@ -382,12 +592,16 @@ async function getMonthDetails() {
 
 	const promises = []
 
-	monthEndDates.forEach((monthEndDate) => {
-
-		monthEndDate = dayjs(monthEndDate).format('YYYY-MM-DD');
+	monthEndDates.forEach(monthEndDate => {
 
 		// promises.push(getReports({ period_type: 'ytd', end: monthEndDate, ids: bundle }))
-		promises.push(getReports({period_type: 'mtd', end: monthEndDate, ids: bundle}))
+		if ( monthEndDate < new Date(props.end_date) ) {
+
+            monthEndDate = dayjs(monthEndDate).format('YYYY-MM-DD');
+
+            promises.push(getReports({period_type: 'mtd', end: monthEndDate, ids: bundle}));
+
+		}
 
 	})
 
@@ -413,28 +627,66 @@ async function getMonthDetails() {
 	console.log('allMonths', allMonths);
 	console.log('yearsBuffer', yearsBuffer);
 
+    // Structure of array with month's data
+    //
+    // so 0 index for raw value
+    // so 1 index for formatted value
+    // 2 index - optional. Contains whole response object from backend with data about month
+    // todo refactor
+
+    //# region Default data for months
+    let defaultMonth = {
+        key_01: [0, 0],
+        key_02: [0, 0],
+        key_03: [0, 0],
+        key_04: [0, 0],
+        key_05: [0, 0],
+        key_06: [0, 0],
+        key_07: [0, 0],
+        key_08: [0, 0],
+        key_09: [0, 0],
+        key_10: [0, 0],
+        key_11: [0, 0],
+        key_12: [0, 0],
+    }
+
+    // apply number formats to default data
+    if (props.reportOptions.performance_unit === 'percent') {
+        Object.keys(defaultMonth).forEach(monthKey => {
+            defaultMonth[monthKey][1] = '0.00%';
+        });
+
+
+    } else {
+        Object.keys(defaultMonth).forEach(monthKey => {
+            defaultMonth[monthKey][1] = formatNumber( defaultMonth[monthKey][1] );
+        });
+    }
+    //# endregion
+
 	allMonths.forEach((item) => {
 
-		let parseDate = item.end_date.split('-')
+		const parseDate = item.end_date.split('-');
+        const year = parseDate[0]; // e.g. "1999", "2001", "2012".
+        const month = parseDate[1]; // e.g. "01", "05", "12".
 
-		let defaultMonth = {}
-
-		if (props.reportOptions.performance_unit === 'percent') {
+		/*if (props.reportOptions.performance_unit === 'percent') {
 			defaultMonth = {
-				key_01: [0 + '%', 0],
-				key_02: [0 + '%', 0],
-				key_03: [0 + '%', 0],
-				key_04: [0 + '%', 0],
-				key_05: [0 + '%', 0],
-				key_06: [0 + '%', 0],
-				key_07: [0 + '%', 0],
-				key_08: [0 + '%', 0],
-				key_09: [0 + '%', 0],
-				key_10: [0 + '%', 0],
-				key_11: [0 + '%', 0],
-				key_12: [0 + '%', 0],
+				key_01: [0, 0 + '%'],
+				key_02: [0, 0 + '%'],
+				key_03: [0, 0 + '%'],
+				key_04: [0, 0 + '%'],
+				key_05: [0, 0 + '%'],
+				key_06: [0, 0 + '%'],
+				key_07: [0, 0 + '%'],
+				key_08: [0, 0 + '%'],
+				key_09: [0, 0 + '%'],
+				key_10: [0, 0 + '%'],
+				key_11: [0, 0 + '%'],
+				key_12: [0, 0 + '%'],
 			}
-		} else {
+		}
+        else {
 			defaultMonth = {
 				key_01: [0, 0],
 				key_02: [0, 0],
@@ -449,25 +701,20 @@ async function getMonthDetails() {
 				key_11: [0, 0],
 				key_12: [0, 0],
 			}
-		}
+		}*/
 
-		if (!yearsBuffer.has(parseDate[0])) {
-			yearsBuffer.set(parseDate[0], defaultMonth)
+		if ( !yearsBuffer.has(year) ) {
+			yearsBuffer.set(year, JSON.parse(JSON.stringify(defaultMonth)) )
 		}
-
-		// so 0 index for raw value
-		// so 1 index for formatted value
-		// other is depcreated
-		// todo refactor
 
 		if (props.reportOptions.performance_unit === 'percent') {
-			yearsBuffer.get(parseDate[0])['key_' + parseDate[1]] = [
+			yearsBuffer.get( year )['key_' + month] = [
 				parseFloat(item.grand_return * 100).toFixed(2),
 				parseFloat(item.grand_return * 100).toFixed(2) + '%',
 				item,
 			]
 		} else {
-			yearsBuffer.get(parseDate[0])['key_' + parseDate[1]] = [
+			yearsBuffer.get( year )['key_' + month] = [
 				item.grand_absolute_pl,
 				formatNumber(item.grand_absolute_pl),
 				item
@@ -476,7 +723,6 @@ async function getMonthDetails() {
 
 
 	})
-
 
 	let dateTo = dayjs(props.end_date)
 	let dateFrom = dayjs(begin)
@@ -520,22 +766,31 @@ async function getMonthDetails() {
 			})
 		)
 
+        /* *
+         * Total for year that matches to "end_date"
+         * should not be calculated fully.
+         * Calculate it only until end_date.
+         * */
+        let end;
 
-		let end =
-			year == dayjs(dateTo).year()
-				? dateTo.format('YYYY-MM-DD')
-				: `${year}-12-31`
+        if ( year == dayjs(dateTo).year() ) {
+            end = dateTo.format('YYYY-MM-DD');
+        } else {
+            end = `${year}-12-31`;
+        }
 
 		let total = await getReports({
 			period_type: 'ytd',
 			end: end,
 			ids: bundle,
 		})
-		if (props.reportOptions.performance_unit === 'percent') {
+
+        if (props.reportOptions.performance_unit === 'percent') {
 			portfolioTotals.value.push(parseFloat(total.grand_return * 100).toFixed(2))
 		} else {
 			portfolioTotals.value.push(formatNumber(total.grand_absolute_pl))
 		}
+
 	}
 
     emits('loadingDataEnd');

@@ -91,7 +91,6 @@ function init() {
     activePeriod.value = null;
     emits('setBundle', null);
 
-    // проверка на корректность всех свойств, если что выдать ошибку
     if (!props.end_date) {
         console.log('No end_date:', props.end_date)
         return false
