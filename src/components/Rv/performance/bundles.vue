@@ -247,7 +247,7 @@ async function calcAnnualForBundle(bundleId, row, rowRaw) {
 	var diffInYears = end.diff(start, 'year', true);
 
 	if (diffInYears < 1 || diffInYears === null || !res.grand_return ) {
-		if (res) rowRaw.annualized_performance_report.grand_return = null;
+		if (res) rowRaw.annualized_performance_report.grand_return = value / 100;;
 		row.annualized = "";
 
 	}else{
