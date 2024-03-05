@@ -102,7 +102,7 @@ function cancel() {
 watch(
 	() => props.performanceDetails,
 	() => {
-		if (props.performanceDetails !== null && props.performanceDetailsColumnName === "name")
+		if (props.performanceDetails !== null && props.performanceDetailsColumnName === "name"){
 			readyStatus.value = false;
 			getPortfolios().then(result => {
 				portfolios.value = result
@@ -110,6 +110,7 @@ watch(
 			}).catch(error => {
 				console.error(error)
 			})
+		}
 	}
 )
 
