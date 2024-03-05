@@ -59,14 +59,31 @@
 					/>
 				</a>
 
-				<a :href="`${config.public.apiURL}/documentation`">
-					<FmIcon
-						icon="help"
-						btn
-						tooltip="Open help menu"
-						class="header_item header_icon_btn"
-					/>
-				</a>
+				<FmMenu class="header_item header_icon_btn">
+					<template #btn="{ isOpen }">
+						<FmIcon
+							icon="help"
+							btn
+							tooltip="Open help menu"
+							:class="['header_icon_btn header_item', 'm-l-8', 'm-r-8', {active: isOpen}]"
+						/>
+					</template>
+
+					<template #default="{ close }">
+						<div class="fm_list">
+							<div class="fm_list_item">
+								<a class="fm_message_item_date" :href="`${config.public.apiURL}/documentation`">
+									Documentation
+								</a>
+							</div>
+							<div class="fm_list_item">
+								<a class="fm_message_item_date" :href="`${config.public.apiURL}${config.app.baseURL}/docs/api/v1/`">
+									API Reference
+								</a>
+							</div>
+						</div>
+					</template>
+				</FmMenu>
 			</template>
 
 			<FmIcon
