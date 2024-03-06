@@ -110,6 +110,25 @@ let bundleId = computed(() => {
 
 })
 
+const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+let monthIndex = computed(() => {
+
+	if (!props.monthData || !props.monthData.currentMonth) {
+		return null;
+	}
+
+    let index = monthNames.indexOf(props.monthData.currentMonth);
+
+    if (index < 0) {
+        console.error(`RvPerformanceTransactions invalid month name: ${props.monthData.currentMonth}`)
+        index = null;
+	}
+
+	return index;
+
+})
+
 watch(
     () => [
         props.bundle,
@@ -132,15 +151,12 @@ watch(
     }
 )
 
-function getMonthStartAndEnd(monthName, year) {
+function getMonthStartAndEnd(year) {
 
     let endDate = props.reportOptions.end_date.split("-");
     const endDateYear = endDate[0];
     const endDateMonth = endDate[1];
     const endDateDay = endDate[2];
-
-	var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
 	/*var monthIndex = months.indexOf(monthName) + 1;  // Add 1 to get the month in 1-12 format.
 	var monthStart = `${year}-${monthIndex.toString().padStart(2, '0')}-01`;
 
@@ -148,7 +164,7 @@ function getMonthStartAndEnd(monthName, year) {
 	nextMonthStart.setDate(0);  // This sets the date to the last day of the previous month, which is the month of interest.
 	var monthEnd = `${year}-${monthIndex.toString().padStart(2, '0')}-${nextMonthStart.getDate().toString().padStart(2, '0')}`;*/
 
-    const nextMonthIndex = months.indexOf(monthName) + 1;
+    const nextMonthIndex = monthIndex.value + 1;
 
     const monthStart = nextMonthIndex.toString().padStart(2, '0');
     var monthStartFm = `${year}-${monthStart}-01`;
@@ -233,10 +249,17 @@ const getTransactions = async () => {
 
 	}
 
+	const endDate = new Date(props.reportOptions.end_date);
+	const monthStart = new Date(props.yearData.detailYear, monthIndex.value, 1);
+
+	if (!endDate || !monthStart || endDate < monthStart) {
+		throw "RvPerformanceTransactions: Invalid end date and selected month";
+	}
+
 	const reqKey = useGenerateUniqueId(bundleId.value + props.monthData.currentMonth);
 	getTransactionsReqKey = reqKey;
 
-	var dates = getMonthStartAndEnd(props.monthData.currentMonth, props.yearData.detailYear);
+	var dates = getMonthStartAndEnd(props.yearData.detailYear);
 
 	let res = await useApi(
         'transactionReport.post',

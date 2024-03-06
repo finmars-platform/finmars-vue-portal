@@ -156,7 +156,7 @@ async function updateChart(portfolioMonthsEndsRaw) {
 	let ends = [];
 
 	if ( Array.isArray(portfolioMonthsEndsRaw) ) {
-		ends = portfolioMonthsEndsRaw;
+		ends = portfolioMonthsEndsRaw.filter(item => item);
 	}
 
 	const dataPromises = ends.map(async item => {
