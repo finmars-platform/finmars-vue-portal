@@ -255,6 +255,14 @@
 										</li>
 										<li>
 											<a
+												:href="getUrlToOldApp('/workers')"
+												class="sidenav-dropdown-menu-btn"
+											>
+												<span class="side-nav-title">Workers</span>
+											</a>
+										</li>
+										<li>
+											<a
 												:href="getUrlToOldApp('/workflows')"
 												class="sidenav-dropdown-menu-btn"
 											>
