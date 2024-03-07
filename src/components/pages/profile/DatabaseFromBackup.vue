@@ -13,6 +13,11 @@
 
 		<FmInputFile label="Select file" @change="addFile" />
 
+		<FmCheckbox
+			label="Replace space code"
+			v-model="form.replace_old_space_code"
+		/>
+
 		<template #controls>
 			<div class="flex sb">
 				<FmBtn type="text" @click="cancel()">cancel</FmBtn>
@@ -25,6 +30,7 @@
 <script setup>
 	let emit = defineEmits(['cancel'])
 	let form = reactive({})
+	form.replace_old_space_code = true
 	let processing = ref(false)
 
 	function cancel() {
