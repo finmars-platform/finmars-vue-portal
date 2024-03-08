@@ -1,6 +1,7 @@
 <template>
     <FmExpansionPanel title="Period Returns">
         <div class="performance-holder">
+
             <BaseTable
                     :headers="periodHeaders"
                     :items="periodItems"
@@ -82,7 +83,7 @@ watch(
     ],
     () => { init() }
 )
-
+// TODO: remove refreshFunc
 emits('refreshFunc', init)
 init()
 
@@ -136,7 +137,7 @@ async function calcDayForBundle(bundleId, row, rowRaw) {
 
 async function calcMonthForBundle(bundleId, row, rowRaw) {
 
-    row.month = null
+    row.month = null;
     const res = await getMonth(bundleId);
 
     if (res.error) {
@@ -289,6 +290,91 @@ async function calcAnnualForBundle(bundleId, row, rowRaw) {
 	}
 }
 
+/**
+ * Fetch performance report data for the bundle.
+ *
+ * @param bundle {Object} - A portfolio bundle.
+ * @param row {Array} - formatted values for row of the table with bundles
+ * @param rowRaw {Array} - values for row of the table with bundles without formatting
+ * @return {Promise<{-readonly [P in keyof Promise<void>[]]: PromiseSettledResult<Awaited<Promise<void>[][P]>>}>}
+ * @private
+ */
+function _calcReportForBundle(bundle, row, rowRaw) {
+    // Here you can process responses from calculating report
+	// for a single portfolio bundle.
+	// The bundle passed whole instead of its id only
+	// to ease processing of responses.
+
+    return Promise.allSettled([
+        calcDayForBundle(bundle.id, row, rowRaw),
+        calcMonthForBundle(bundle.id, row, rowRaw),
+        calcQuarterForBundle(bundle.id, row, rowRaw),
+        calcYearForBundle(bundle.id, row, rowRaw),
+        calcLastYearForBundle(bundle.id, row, rowRaw),
+        calcBeforeLastYearForBundle(bundle.id, row, rowRaw),
+        calcInceptYearForBundle(bundle.id, row, rowRaw),
+        calcAnnualForBundle(bundle.id, row, rowRaw),
+    ])
+}
+
+/**
+ * Process Promise.allSettled()
+ * for calculating all portfolio bundles inside report
+ *
+ * @param responses { [ PromiseSettledResult<Awaited<Promise<Object>>> ] } - result of Promise.allSettled( listOfPromisesForEachBundle )
+ *
+ * @return {Boolean} - true if calculations for all bundles ended without errors
+ * @private
+ */
+function _processReportCalculationResponse(responses) {
+
+	const bundlesWithClientError = new Set();
+
+	responses.forEach((bundleResponses, index) => {
+
+        // bundleResponses: { status: String, value: [{}] }
+
+		const bundleWithError = bundleResponses.value.find(res => {
+
+			if (res.status === "rejected") {
+
+                if (res.reason.error?.details?.errors[0] &&
+                    res.reason.error.details.errors[0].error_key) {
+
+                    bundlesWithClientError.add( bundles.value[index].user_code );
+
+                }
+
+                return true;
+
+			}
+
+            return false;
+
+		});
+
+	});
+
+	if (bundlesWithClientError.size) {
+
+		const bundlesUserCodes = [...bundlesWithClientError].join(", ");
+
+        useNotify({
+            group: "fm_warning",
+            title: 'Warning',
+            text: {
+                title: 'Client Error',
+                details: `Check that calculations are correct for portfolio bundles: ${bundlesUserCodes}`,
+            },
+            ignoreDuplicates: true, // TODO: remove after fixing duplicated calls of init()
+            duration: 20000
+        })
+
+	}
+
+    return !bundleWithError;
+
+}
 
 async function fetchPortfolioBundles() {
     // readyStatusData.bundles = false;
@@ -318,6 +404,13 @@ async function fetchPortfolioBundles() {
     // readyStatusData.bundles = true;
 	activePeriod.value = null;
     periodItems.value = [];
+    /* *
+     * TODO: add `let periodItems`, `let periodItemsRaw`.
+     * Use it in calculations of report (create `row`, `rowRaw`).
+     * Assign them to refs `periodItems` and `periodItems`
+     * at the end of fetchPortfolioBundles() only if a request that is used
+     * to calculate them is still relevant. Otherwise discard them.
+     * */
     periodItemsRaw.value = [];
 
     let promises = [];
@@ -336,30 +429,18 @@ async function fetchPortfolioBundles() {
         rowRaw.id = bundle.id
 
         promises.push(
-            Promise.all([
-                calcDayForBundle(bundle.id, row, rowRaw),
-                calcMonthForBundle(bundle.id, row, rowRaw),
-                calcQuarterForBundle(bundle.id, row, rowRaw),
-                calcYearForBundle(bundle.id, row, rowRaw),
-                calcLastYearForBundle(bundle.id, row, rowRaw),
-                calcBeforeLastYearForBundle(bundle.id, row, rowRaw),
-                calcInceptYearForBundle(bundle.id, row, rowRaw),
-                calcAnnualForBundle(bundle.id, row, rowRaw),
-            ])
+            _calcReportForBundle(bundle, row, rowRaw)
         );
 
     })
 
-    try {
-        await Promise.all(promises);
+    const reportCalcRes = await Promise.allSettled(promises);
 
+	const noErrors = _processReportCalculationResponse(reportCalcRes);
 
-    } catch(e) {
-        console.error(e)
-        throw "Error above occurred while trying to load and calculate data for RvPerformanceBundles";
+    if (noErrors) {
+        readyStatus.value = true;
     }
-
-    readyStatus.value = true;
     // chooseBundle(0)
 
 }
@@ -497,7 +578,24 @@ async function getReports({period_type, end, ids, type = 'months'}) {
             report_currency: props.report_currency,
             bundle: ids,
         },
+        notifyError: false,
     })
+
+    if ( res.hasOwnProperty("error") ) {
+
+        if (!res.error.error?.details?.errors[0] ||
+            res.error.error.details.errors[0].error_key !== 'no_first_transaction_date') {
+
+            useNotify({
+                group: 'server_error',
+                title: 'Server Error',
+                text: res.error.error,
+                duration: 20000
+            })
+
+        }
+
+    }
 
     return res
 
