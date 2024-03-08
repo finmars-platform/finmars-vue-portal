@@ -11,7 +11,6 @@
 					:reportOptions="reportOptions"
 					:is-disabled="disableBundledTable"
 					@setBundle="onBundleChange"
-					@refreshFunc="(func) => bundlesRefreshFunc = func"
 				/>
 
 				<RvPerformanceDetail
@@ -51,6 +50,7 @@
 </template>
 
 <script setup>
+
 provide('refreshReport', refresh)
 
 const route = useRoute()
@@ -78,7 +78,7 @@ function onBundleChange(newVal) {
 }
 
 function refresh() {
-	bundlesRefreshFunc()
+	// bundlesRefreshFunc()
     currentBundleYear.value = null;
     currentBundleMonth.value = null;
 }
