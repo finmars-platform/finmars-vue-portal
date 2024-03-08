@@ -389,7 +389,7 @@ function showPerformanceDetail(rowIndex, cellIndex) {
     if (cellIndex === 'name') {
 
 		performanceDetailsColumnName.value = cellIndex
-		performanceDetails.value = periodItemsRaw.value[rowIndex]['id']
+		performanceDetails.value = {bundle: periodItemsRaw.value[rowIndex]['id']}
 
 	} else {
 

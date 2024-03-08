@@ -119,7 +119,7 @@ function cancel() {
 
 async function init() {
 
-	console.log("PerformanceDetail.init");
+	console.log("PerformanceDetail.init", props.performanceDetails);
 
 	getPortfolios().then(result => {
 		portfolios.value = result
