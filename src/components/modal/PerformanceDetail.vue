@@ -107,7 +107,7 @@ async function getDetailPortfolioBundle(bundleId) {
 }
 
 async function getPortfolios() {
-	const res = await getDetailPortfolioBundle(props.performanceDetails)
+	const res = await getDetailPortfolioBundle(props.performanceDetails.bundle)
 	return res.results
 }
 
