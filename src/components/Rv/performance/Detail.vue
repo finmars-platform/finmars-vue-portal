@@ -294,7 +294,7 @@ async function showPerformanceDetail(rowIndex, cellIndex) {
 
 		let keyNum = String(cellIndex + 1).padStart(2, '0');
 
-		performanceDetails.value = portfolioPerformanceReports[0][`key_${keyNum}`][2]
+		performanceDetails.value = portfolioPerformanceReports[rowIndex][`key_${keyNum}`][2]
 
 	} catch (error) {
 		console.log('error', error);
@@ -727,9 +727,12 @@ async function getMonthDetails() {
 	let dateTo = dayjs(props.end_date)
 	let dateFrom = dayjs(begin)
 
+	let index = 0;
+
 	for (let [year, months] of yearsBuffer) {
 
-		portfolioPerformanceReports[0] = months // todo refactor, when we consider multiple years
+		portfolioPerformanceReports[index] = months // todo refactor, when we consider multiple years
+		index = index + 1;
 		portfolioYears.value.push(year)
 
 		// todo refactor this cursed code
