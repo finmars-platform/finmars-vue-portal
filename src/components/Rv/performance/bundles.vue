@@ -376,7 +376,11 @@ async function chooseBundle(bundleIndex, cellIndex) {
 
 }
 
-function showPerformanceDetail(bundleIndex, cellIndex) {
+function showPerformanceDetail(rowIndex, cellIndex) {
+
+	console.log('showPerformanceDetail.rowIndex', rowIndex);
+	console.log('showPerformanceDetail.cellIndex', cellIndex);
+	console.log('showPerformanceDetail.periodItemsRaw', periodItemsRaw.value);
 
 	if (!cellIndex) {
 		return;
@@ -385,14 +389,14 @@ function showPerformanceDetail(bundleIndex, cellIndex) {
     if (cellIndex === 'name') {
 
 		performanceDetailsColumnName.value = cellIndex
-		performanceDetails.value = periodItemsRaw.value[bundleIndex]['id']
+		performanceDetails.value = periodItemsRaw.value[rowIndex]['id']
 
 	} else {
 
 		performanceDetailIsOpen.value = true;
 
 		performanceDetailsColumnName.value = cellIndex
-		performanceDetails.value = periodItemsRaw.value[bundleIndex][`${cellIndex}_performance_report`]
+		performanceDetails.value = periodItemsRaw.value[rowIndex][`${cellIndex}_performance_report`]
 
 	}
 
