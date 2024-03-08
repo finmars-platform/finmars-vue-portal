@@ -329,21 +329,22 @@ function _calcReportForBundle(bundle, row, rowRaw) {
 function _processReportCalculationResponse(responses) {
 
 	const bundlesWithClientError = new Set();
+    let bundleWithError;
 
 	responses.forEach((bundleResponses, index) => {
 
         // bundleResponses: { status: String, value: [{}] }
+        bundleWithError = bundleResponses.value.find(
+            res => res.status === "rejected"
+        )
 
-		const bundleWithError = bundleResponses.value.find(res => {
+		bundleResponses.value.find(res => {
 
-			if (res.status === "rejected") {
-
-                if (res.reason.error?.details?.errors[0] &&
-                    res.reason.error.details.errors[0].error_key) {
+            if (res.status === "rejected" &&
+                res.reason.error?.details?.errors[0] &&
+                res.reason.error.details.errors[0].error_key) {
 
                     bundlesWithClientError.add( bundles.value[index].user_code );
-
-                }
 
                 return true;
 
