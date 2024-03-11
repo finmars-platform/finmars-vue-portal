@@ -250,11 +250,15 @@
 		emit('cancel')
 	}
 	function save() {
-		emit('save', [
-			reportOptions.value,
-			reportLayoutOptions.value,
-			components.value,
-		])
+
+		const data = JSON.parse(JSON.stringify({
+			reportOptions: reportOptions.value,
+			reportLayoutOptions: reportLayoutOptions.value,
+			components: components.value,
+		} ));
+
+		emit('save', data);
+
 	}
 
 	function init() {

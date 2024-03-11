@@ -212,9 +212,7 @@ let moreMenuOptsList = [
 ]
 
 if (props.extraMoreOptions?.length) {
-    console.log("testing1923 props.extraMoreOptions", props.extraMoreOptions);
     moreMenuOptsList = moreMenuOptsList.concat(props.extraMoreOptions);
-    console.log("testing1923 moreMenuOptsList 2", moreMenuOptsList);
 }
 //# endregion
 
