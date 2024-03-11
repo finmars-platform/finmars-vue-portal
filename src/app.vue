@@ -4,9 +4,9 @@
   </NuxtLayout>
 
 	<notifications />
-	<notifications id="toast-wrap" group="server_error" width="400px" position="top right">
+	<notifications class="toast-error-group" group="server_error" width="400px" position="top right">
 		<template #body="props">
-			<div id="toast-container">
+			<div class="toast-container server-error">
 				<div class="title_wrap flex aic sb">
 					<div class="flex aic">
 						<p class="title">
@@ -38,6 +38,38 @@
 			</div>
 		</template>
 	</notifications>
+
+    <notifications class="toast-error-group" group="fm_warning" width="400px" position="top right">
+        <template #body="props">
+            <div class="toast-container warning">
+                <div class="title_wrap flex aic sb">
+                    <div class="flex aic">
+                        <p class="title">
+                            {{ props.item.title }}
+                        </p>
+                    </div>
+
+                    <FmIcon class="toast-close-button" @click="props.close" icon="close" />
+                </div>
+
+                <div class="toast-error">
+                    <span class="toast-error-field">Title: </span>
+                    <div>{{ props.item.text.title }}</div>
+                </div>
+
+                <div v-if="props.item.text.context" class="toast-error">
+                    <span class="toast-error-field">Context: </span>
+                    <div>{{ props.item.text.context }}</div>
+                </div>
+
+                <div class="toast-error">
+                    <span class="toast-error-field">Details: </span>
+                    <div>{{ props.item.text.details }}</div>
+                </div>
+
+            </div>
+        </template>
+    </notifications>
 	<FmConfirm />
 </template>
 
@@ -51,15 +83,15 @@
 </script>
 
 <style lang="scss" scoped>
-#toast-wrap {
+.toast-error-notifications {
 	padding-top: 10px !important;
 	padding-right: 10px !important;
 }
-#toast-container {
+.toast-container {
 	background: #fff;
 	color: #000;
 	padding: 8px 8px 12px;
-	border-left: 4px solid #ff623d;
+	border-left: 4px solid;
 	white-space: pre-wrap;
 	.title_wrap {
 		margin-bottom: 4px;
@@ -114,6 +146,14 @@
 		margin-top: 10px;
 		font-size: 14px;
 	}
+}
+
+.toast-container.server-error {
+    border-left-color: #ff623d;
+}
+
+.toast-container.warning {
+    border-left-color: #f7c33d;
 }
 
 </style>
