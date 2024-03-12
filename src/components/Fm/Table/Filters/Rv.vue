@@ -181,9 +181,9 @@
 		const errors = []
 
 		let filtersList = evDataService.getFilters();
-		console.log("testing1923.formatFiltersForChips filtersList", filtersList);
+
 		filtersList = filtersList.map((filter) => {
-			console.log("testing1923.formatFiltersForChips 1 filter", filter);
+
 			if (filter.type === 'filter_link') {
 				// don't show filter from dashboard component
 				return;
@@ -197,7 +197,7 @@
 				!filterOpts.use_from_above ||
 				!Object.keys(filterOpts.use_from_above).length
 			) {
-				console.log("testing1923.formatFiltersForChips 2", filter);
+
 				let filterData = {
 					id: filter.key,
 					isActive: filterOpts.enabled,
@@ -238,7 +238,7 @@
 					if (error) errors.push(error)
 
 				}
-				console.log("testing1923.formatFiltersForChips filterData", filterData);
+
 				filtersChips.push(filterData)
 			}
 
@@ -251,7 +251,7 @@
 
 		// if (errors.length) scope.vm.updateMissingCustomFieldsList(errors)
 		if (errors.length) emit('customFieldsMissing', errors);
-		console.log("testing1923.formatFiltersForChips filtersChips", filtersChips);
+
 		// scope.vm.updateFilterAreaHeight()
 		return filtersChips;
 	}
@@ -420,7 +420,7 @@
 		)
 
 		filtersChipsRef.value = formatFiltersForChips();
-		console.log("testing1923 filtersChipsRef", filtersChipsRef.value);
+
 	}
 
 	init();

@@ -68,8 +68,7 @@ let props = defineProps({
 		required: true,
 	}
 })
-console.log("testing1923.FmTableFilterRvSettingsPopup props.filterKey ",
-	props.filter);
+
 let emit = defineEmits(['close'])
 //# region variables, refs, computed
 let {evDataService, evEventService} = inject('fmTableData');
@@ -209,11 +208,7 @@ const saveFilterSettings = function () {
 		filtersList[index] = JSON.parse(JSON.stringify( filterRef.value ));
 
 	}
-	console.log("testing1923.FmTableFilterRvSettingsPopup saveFilterSettings ",
-		filterRef.value,
-		'\n',
-		structuredClone(filtersList)
-	);
+
 	evDataService.setFilters(filtersList);
 	evEventService.dispatchEvent(evEvents.FILTERS_CHANGE);
 
@@ -226,10 +221,6 @@ const init = function () {
 	filterRef.value = JSON.parse(JSON.stringify(props.filter));
 
 	attrsList = evAttrsStore.getAllAttributesByContentType(contentType);
-	console.log(
-		"testing1923.FmTableFilterRvSettingsPopup filterRef.value",
-		filterRef.value
-	);
 
 }
 
