@@ -48,10 +48,11 @@
 					{{ item }}
 				</div>
 			</div>
-			<div
+
+            <div
                 class="coll_months"
             >
-				<BaseTable
+			<!-- <BaseTable
 					:headers="portfolioHeaders"
 					:items="portfolioItems"
 					colls="repeat(12, 1fr)"
@@ -59,7 +60,36 @@
 					:rightClickCallback="showPerformanceDetail"
                     :is-disabled="detailsLoading"
 					:is-readonly="true"
-				/>
+				/> -->
+				<FmBasicTable>
+
+                    <template #header>
+                        <FmBasicTableRow
+                            class="grid width-100"
+                            style="grid-template-columns: repeat(12, 1fr);"
+                        >
+                            <FmBasicTableCell v-for="headerName in portfolioHeaders">
+                                {{ headerName }}
+                            </FmBasicTableCell>
+                        </FmBasicTableRow>
+                    </template>
+
+                    <FmBasicTableRow
+                        v-for="row in portfolioItems"
+                        @click="chooseYear(row.key)"
+                        :key="row.key"
+                        :active="row.isActive"
+                        class="grid width-100"
+                        style="grid-template-columns: repeat(12, 1fr);">
+
+                        <FmBasicTableCell
+                            v-for="cell in row.columns"
+                            :key="cell.key"
+                            @contextmenu="showPerformanceDetail(row.key, cell.key)"
+                        >{{ cell.value }}</FmBasicTableCell>
+
+                    </FmBasicTableRow>
+				</FmBasicTable>
 			</div>
 
 			<div class="coll_total">
@@ -161,23 +191,47 @@ let bundleId = computed(() => {
 })
 /** Years with formatted values for months */
 let portfolioItems = ref([])
-let portfolioMonthsEndsRaw = ref([])
-/** Years with values without formatting for months */
-let portfolioItemsRaw = ref([])
+
+/** Years with values without formatting for months.
+ *
+ * @type { {} } - key - a year as a string. value - array with strings */
+let portfolioItemsRaw = {};
 let portfolioYears = ref([])
 let portfolioTotals = ref([])
-let activeYear = ref(null)
 let detailsLoading = ref(false);
 let detailsLoadingError = ref('');
 
 let performanceDetailIsOpen = ref(false)
 let performanceDetails = ref(null)
 
-let detailYear = ref('')
-
 let showBundleActions = ref(false)
 let editBundleIsOpened = ref(false)
-let portfolioPerformanceReports = ref({})
+
+/* *
+ * portfolioPerformanceReports
+ *
+ * key - a year as a string. e.g. "1970"
+ *
+ * value - an array that contains 12 arrays for each month.
+ *
+ * Structure of month's array:
+ * index 0 - raw value
+ * index 1 - formatted value
+ * index 2 - contains whole response object from backend with data about month
+ *
+ * portfolioPerformanceReports = {
+ *  "1970": [
+ *      [
+ *          0: "17.48",
+ *          1: "17.48%",
+ *          2: {}
+ *      ],
+ *      [],[],[],[],[],[],[],[],[],[],[],
+ *  ]
+ * }
+ *
+ * */
+let portfolioPerformanceReports = {};
 
 let portfolioHeaders = ref([
 	'Jan',
@@ -199,11 +253,7 @@ function resetData() {
     portfolioYears.value = [];
     portfolioTotals.value = [];
     portfolioItems.value = [];
-    portfolioItemsRaw.value = [];
-    portfolioMonthsEndsRaw.value = [];
-
-    activeYear.value = null;
-    detailYear.value = '';
+    portfolioItemsRaw = {};
 
 }
 
@@ -251,53 +301,63 @@ function getTextForEmptyTable() {
  * @param index {Number} - index of year inside refs
  * portfolioYears, portfolioItems, portfolioItemsRaw
  *
- * @return {Promise<void>}
  */
-async function chooseYear(index) {
+function chooseYear(year) {
 
-    if (activeYear.value === index) {
+    const yearData = portfolioItems.value.find(yItem => yItem.key === year);
+
+    if (!yearData) {
+        throw `RvPerformanceDetail.chooseYear: unavailable value selected: ${year}`
+    }
+
+    if (yearData.isActive) {
 		return;
 	}
 
-	activeYear.value = index
-	detailYear.value = portfolioYears.value[index]
+    yearData.isActive = true;
 
-	console.log('portfolioYears', portfolioYears.value);
-	console.log('chooseYear index', index);
-	console.log('portfolioItems', portfolioItems.value);
-	console.log('portfolioItemsRaw', portfolioItemsRaw.value);
-	console.log('portfolioMonthsEndsRaw', portfolioMonthsEndsRaw.value);
+	const detailYear = portfolioYears.value.find(year => year === year);
 
-	console.log('detailYear', detailYear.value);
+    if (!detailYear) {
+        throw `RvPerformanceDetail.chooseYear: invalid year: ${year}`
+    }
 
-	const yearData = JSON.parse(JSON.stringify(
+    const portfolioMonthsEndsRaw = portfolioPerformanceReports[year].map(yearData => {
+
+        if (yearData[2] && yearData[2].end_date) {
+            return yearData[2].end_date
+        }
+
+        return null;
+
+    })
+
+	const emitData = JSON.parse(JSON.stringify(
         {
 			// datasetCumulative: portfolioItems.value[id],
-			portfolioMonthsEndsRaw: portfolioMonthsEndsRaw.value,
-			datasetCumulative: portfolioItemsRaw.value[index],
-			detailYear: detailYear.value,
+			portfolioMonthsEndsRaw: portfolioMonthsEndsRaw,
+			datasetCumulative: portfolioItemsRaw[year],
+			detailYear: detailYear,
     	}
     ));
-
-	emits('setYear', yearData)
+    console.log("testing459 chooseYear emitData", emitData);
+	emits('setYear', emitData)
 }
 
-async function showPerformanceDetail(rowIndex, cellIndex) {
-
-	console.log('rowIndex', rowIndex)
-	console.log('cellIndex', cellIndex)
+async function showPerformanceDetail(year, monthIndex) {
 
 	console.log('portfolioPerformanceReports', portfolioPerformanceReports);
 
 	try {
 		performanceDetailIsOpen.value = true;
 
-		let keyNum = String(cellIndex + 1).padStart(2, '0');
+		// let keyNum = String(cellIndex + 1).padStart(2, '0');
 
-		performanceDetails.value = portfolioPerformanceReports[rowIndex][`key_${keyNum}`][2]
+		// performanceDetails.value = portfolioPerformanceReports[year][`key_${keyNum}`][2]
+        performanceDetails.value = portfolioPerformanceReports[year][monthIndex][2]
 
-	} catch (error) {
-		console.log('error', error);
+    } catch (error) {
+		console.error('error', error);
 		performanceDetailIsOpen.value = false;
 	}
 
@@ -561,14 +621,18 @@ async function getMonthDetails() {
 
     emits("loadingDataStart");
 
-    activeYear.value = null;
     detailsLoading.value = true
 	portfolioYears.value = []
 	portfolioTotals.value = []
 	portfolioItems.value = []
-	portfolioItemsRaw.value = []
+	portfolioItemsRaw = {}
 
 	let bundle = bundleId.value
+
+    function _datesRangeIncludesMonth(year, monthIndex) {
+        return ( year != dateTo.year() || monthIndex <= dateTo.month() ) &&
+        ( year != dateFrom.year() || monthIndex >= dateFrom.month() );
+    }
 
 	let begin
 	let firstTransaction = {}
@@ -627,39 +691,39 @@ async function getMonthDetails() {
 	console.log('allMonths', allMonths);
 	console.log('yearsBuffer', yearsBuffer);
 
-    // Structure of array with month's data
+    // Structure of arrays with months' data inside yearsBuffer
     //
-    // so 0 index for raw value
-    // so 1 index for formatted value
-    // 2 index - optional. Contains whole response object from backend with data about month
+    // index 0 - raw value
+    // index 1 - formatted value
+    // index 2 - contains whole response object from backend with data about month
     // todo refactor
 
     //# region Default data for months
-    let defaultMonth = {
-        key_01: [0, 0],
-        key_02: [0, 0],
-        key_03: [0, 0],
-        key_04: [0, 0],
-        key_05: [0, 0],
-        key_06: [0, 0],
-        key_07: [0, 0],
-        key_08: [0, 0],
-        key_09: [0, 0],
-        key_10: [0, 0],
-        key_11: [0, 0],
-        key_12: [0, 0],
-    }
+    let defaultMonth = [
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+    ];
 
     // apply number formats to default data
     if (props.reportOptions.performance_unit === 'percent') {
-        Object.keys(defaultMonth).forEach(monthKey => {
-            defaultMonth[monthKey][1] = '0.00%';
+        defaultMonth.forEach((month, index) => {
+            defaultMonth[index][1] = '0.00%';
         });
 
 
     } else {
-        Object.keys(defaultMonth).forEach(monthKey => {
-            defaultMonth[monthKey][1] = formatNumber( defaultMonth[monthKey][1] );
+        defaultMonth.forEach((month, index) => {
+            defaultMonth[index][1] = formatNumber( defaultMonth[index][1] );
         });
     }
     //# endregion
@@ -668,7 +732,8 @@ async function getMonthDetails() {
 
 		const parseDate = item.end_date.split('-');
         const year = parseDate[0]; // e.g. "1999", "2001", "2012".
-        const month = parseDate[1]; // e.g. "01", "05", "12".
+        let month = parseDate[1]; // e.g. "01", "05", "12".
+        month = parseInt(month) - 1; // month index
 
 		/*if (props.reportOptions.performance_unit === 'percent') {
 			defaultMonth = {
@@ -708,13 +773,13 @@ async function getMonthDetails() {
 		}
 
 		if (props.reportOptions.performance_unit === 'percent') {
-			yearsBuffer.get( year )['key_' + month] = [
+			yearsBuffer.get( year )[month] = [
 				parseFloat(item.grand_return * 100).toFixed(2),
 				parseFloat(item.grand_return * 100).toFixed(2) + '%',
 				item,
 			]
 		} else {
-			yearsBuffer.get( year )['key_' + month] = [
+			yearsBuffer.get( year )[month] = [
 				item.grand_absolute_pl,
 				formatNumber(item.grand_absolute_pl),
 				item
@@ -730,24 +795,17 @@ async function getMonthDetails() {
 	let index = 0;
 
 	for (let [year, months] of yearsBuffer) {
+        // @type {String} - e.g. "1999", "2001", "2012".
+        // year
+        //
+        // @type { [Array] } - an array of arrays with data for each month
+        // months
 
-		portfolioPerformanceReports[index] = months // todo refactor, when we consider multiple years
+        portfolioPerformanceReports[year] = months;
 		index = index + 1;
 		portfolioYears.value.push(year)
 
-		// todo refactor this cursed code
-		portfolioMonthsEndsRaw.value = []
-		// const monthsDescending = months.reverse()
-
-		Object.keys(months).forEach((key) => {
-			try {
-				portfolioMonthsEndsRaw.value.push(months[key][2].end_date)
-			} catch (error) {
-				portfolioMonthsEndsRaw.value.push(null);
-			}
-		})
-
-		portfolioItemsRaw.value.push(
+		/*portfolioItemsRaw.value.push(
 			Object.values(months).map((item, i) => {
 				if (
 					(year != dateTo.year() || i <= dateTo.month()) &&
@@ -756,9 +814,17 @@ async function getMonthDetails() {
 					return item[0]
 				else return ''
 			})
-		)
+		)*/
+        const monthsRawList = months.map((month, i) => {
+            if ( _datesRangeIncludesMonth(year, i) ) {
+                return month[0]
+            }
 
-		portfolioItems.value.push(
+            return '';
+        });
+
+        portfolioItemsRaw[year] = monthsRawList;
+		/*portfolioItems.value.push(
 			Object.values(months).map((item, i) => {
 				if (
 					(year != dateTo.year() || i <= dateTo.month()) &&
@@ -767,7 +833,24 @@ async function getMonthDetails() {
 					return item[1]
 				else return ''
 			})
-		)
+		)*/
+        const monthsRow = months.map((month, i) => {
+            if ( _datesRangeIncludesMonth(year, i) ) {
+                return {
+                    key: i, // month index
+                    value: month[1],
+                }
+            }
+
+            return '';
+        });
+
+        portfolioItems.value.push({
+            key: year,
+            columns: monthsRow,
+            isActive: false,
+            order: portfolioItems.value.length,
+        })
 
         /* *
          * Total for year that matches to "end_date"
@@ -795,14 +878,16 @@ async function getMonthDetails() {
 		}
 
 	}
-
+    console.log("testing459 portfolioPerformanceReports", portfolioPerformanceReports);
+    console.log("testing459 portfolioItemsRaw", portfolioItemsRaw);
+    console.log("testing459 portfolioItems.value", portfolioItems.value);
     emits('loadingDataEnd');
 
     detailsLoading.value = false
 
-	if (portfolioYears.value.length) {
-		await chooseYear( portfolioYears.value.length - 1 )
-	}
+	/* if (portfolioYears.value.length) {
+		chooseYear( portfolioYears.value.length - 1 )
+	}*/
 
 }
 
@@ -900,7 +985,7 @@ function init() {
 	padding: 0 14px;
 	white-space: nowrap;
 	background: #f2f2f2;
-	border-bottom: 1px solid $border;
+	border-bottom: $basic-table-border;
 	font-size: 14px;
 
 	&.t_header {
