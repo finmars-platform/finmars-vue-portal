@@ -9,25 +9,26 @@
 					:calculation_type="reportOptions.calculation_type"
 					:report_currency="reportOptions.report_currency"
 					:reportOptions="reportOptions"
-					@setBundle="currentBundle = $event"
-					@refreshFunc="bundlesRefreshFunc = $event"
+					:is-disabled="disableBundledTable"
+					@setBundle="onBundleChange"
 				/>
 
 				<RvPerformanceDetail
 					v-model:open="components.detail"
-					:bundleId="currentBundle"
-					:begin_date="reportOptions.begin_date"
+					:bundle="currentBundle"
 					:end_date="reportOptions.end_date"
 					:reportOptions="reportOptions"
 					:calculation_type="reportOptions.calculation_type"
 					:report_currency="reportOptions.report_currency"
+					@loadingDataStart="disableBundledTable = true"
+					@loadingDataEnd="disableBundledTable = false"
 					@setYear="currentBundleYear = $event"
 					@refresh="refresh()"
 				/>
 
 				<RvPerformanceChart
 					v-model:open="components.diagram"
-					:bundleId="currentBundle"
+					:bundle="currentBundle"
 					:yearData="currentBundleYear"
 					:reportOptions="reportOptions"
 					@setMonth="currentBundleMonth = $event"
@@ -35,7 +36,7 @@
 
 				<RvPerformanceTransactions
 					v-model:open="components.detail"
-					:bundleId="currentBundle"
+					:bundle="currentBundle"
 					:yearData="currentBundleYear"
 					:monthData="currentBundleMonth"
 					:reportOptions="reportOptions"
@@ -49,6 +50,7 @@
 </template>
 
 <script setup>
+
 provide('refreshReport', refresh)
 
 const route = useRoute()
@@ -57,13 +59,28 @@ let currentBundle = ref({})
 let currentBundleYear = ref({})
 let currentBundleMonth = ref({})
 
+let disableBundledTable = ref(false);
+
 let bundlesRefreshFunc = () => {
 }
 
+function onBundleChange(newVal) {
 
+    /* *
+     * currentBundleYear should be assigned before currentBundle
+     * to empty RvPerformanceChart and RvPerformanceTransactions
+     * */
+    currentBundleYear.value = null;
+    currentBundleMonth.value = null;
+
+    currentBundle.value = newVal;
+
+}
 
 function refresh() {
-	bundlesRefreshFunc()
+	// bundlesRefreshFunc()
+    currentBundleYear.value = null;
+    currentBundleMonth.value = null;
 }
 
 

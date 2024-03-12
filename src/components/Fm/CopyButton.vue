@@ -8,9 +8,7 @@
 
 import { ref, getCurrentInstance } from 'vue';
 
-const props = defineProps({
-	text: String
-})
+const props = defineProps(['text'])
 
 const isClicked = ref(false);
 

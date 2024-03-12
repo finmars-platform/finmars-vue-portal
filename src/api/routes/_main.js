@@ -236,11 +236,15 @@ export default {
     balanceReportAttributes: {
         get: prefix + '/reports/balance-report/attributes/',
     },
+    portfolioBundleRegistersList: {
+        get: prefix + '/portfolios/portfolio-bundle/{id}/portfolio-registers/',
+    },
 	portfolioBundleList: {
 		get: prefix + '/portfolios/portfolio-bundle/',
 	},
     portfolioBundle: {
         post: prefix + '/portfolios/portfolio-bundle/',
+        get: prefix + '/portfolios/portfolio-bundle/{id}/',
         put: prefix + '/portfolios/portfolio-bundle/{id}/',
         delete: prefix + '/portfolios/portfolio-bundle/{id}/',
     },
