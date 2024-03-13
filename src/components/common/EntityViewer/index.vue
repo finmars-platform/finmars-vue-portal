@@ -43,15 +43,7 @@
 				<PagesReportsPerformanceDialogSettings
 					v-model="showSettingsDialog"
 					:bundles="bundles"
-					@save="
-						;(showSettingsDialog = false),
-							([
-								viewerData.reportOptions,
-								viewerData.reportLayoutOptions,
-								viewerData.components,
-							] = $event),
-							emit('refresh')
-					"
+					@save="applySettings"
 					@cancel="showSettingsDialog = false"
 				/>
 			</template>
@@ -171,6 +163,7 @@
 			useSaveEvRvLayout(store, viewerData)
 		}
 	}
+
 	watch(
 		() => viewerData.layoutToOpen,
 		async () => {
@@ -534,6 +527,19 @@
 			},
 		}
 	}
+
+	function applySettings(settings) {
+
+        showSettingsDialog.value = false;
+
+        viewerData.reportOptions = settings.reportOptions;
+        viewerData.reportLayoutOptions = settings.reportLayoutOptions;
+        viewerData.components = settings.components;
+
+		emit('refresh');
+
+	}
+
 </script>
 
 <style lang="scss" scoped>

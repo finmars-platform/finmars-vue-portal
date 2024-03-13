@@ -77,9 +77,12 @@ const props = defineProps({
 	reportOptions: {
 		type: Object,
 	},
-	bundleId: {
+
+    /** Id of a bundle or a whole object of a bundle. */
+	bundle: {
 		type: [Number, Object],
 	},
+
 	yearData: {
 		type: Object
 	},
@@ -95,20 +98,99 @@ const sortState = ref({
 	ascending: true
 });
 
-function getMonthStartAndEnd(monthName, year) {
+let bundleId = computed(() => {
 
-	var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  if (!props.bundle) return null;
 
-	var monthIndex = months.indexOf(monthName) + 1;  // Add 1 to get the month in 1-12 format.
+  if (typeof props.bundle == 'object' && props.bundle.id) {
+    return props.bundle.id
+  }
+
+  if (typeof props.bundle == 'number') return props.bundle
+
+})
+
+const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+let monthIndex = computed(() => {
+
+	if (!props.monthData || !props.monthData.currentMonth) {
+		return null;
+	}
+
+    let index = monthNames.indexOf(props.monthData.currentMonth);
+
+    if (index < 0) {
+        console.error(`RvPerformanceTransactions invalid month name: ${props.monthData.currentMonth}`)
+        index = null;
+	}
+
+	return index;
+
+})
+
+watch(
+    () => [
+        props.bundle,
+        props.yearData,
+        props.monthData,
+    ],
+    () => {
+
+      if (props.bundle &&
+		  props.yearData && Object.keys(props.yearData).length &&
+		  props.monthData?.currentMonth) {
+
+          getTransactions();
+
+	  } else if (transactions.value.length) {
+          transactions.value = [];
+
+	  }
+
+    }
+)
+
+function getMonthStartAndEnd(year) {
+
+    let endDate = props.reportOptions.end_date.split("-");
+    const endDateYear = endDate[0];
+    const endDateMonth = endDate[1];
+    const endDateDay = endDate[2];
+	/*var monthIndex = months.indexOf(monthName) + 1;  // Add 1 to get the month in 1-12 format.
 	var monthStart = `${year}-${monthIndex.toString().padStart(2, '0')}-01`;
 
 	var nextMonthStart = new Date(year, monthIndex, 1);
 	nextMonthStart.setDate(0);  // This sets the date to the last day of the previous month, which is the month of interest.
-	var monthEnd = `${year}-${monthIndex.toString().padStart(2, '0')}-${nextMonthStart.getDate().toString().padStart(2, '0')}`;
+	var monthEnd = `${year}-${monthIndex.toString().padStart(2, '0')}-${nextMonthStart.getDate().toString().padStart(2, '0')}`;*/
+
+    const nextMonthIndex = monthIndex.value + 1;
+
+    const monthStart = nextMonthIndex.toString().padStart(2, '0');
+    var monthStartFm = `${year}-${monthStart}-01`;
+
+    let monthEnd = new Date(year, nextMonthIndex, 1); // next month
+    monthEnd.setDate(0);  // This sets the date to the last day of the previous month, which is the month of interest.
+
+    // Using nextMonthIndex because conveniently it is equal to current month number (1-12)
+    const mEndMonth = nextMonthIndex.toString().padStart(2, '0'); // values: 01 - 12
+
+    let mEndDay;
+
+    if ( endDateYear === year && endDateMonth === mEndMonth) {
+        // if month at the end of a period of dates for performance,
+        // use the day from the end of the period
+        mEndDay = endDateDay;
+
+    } else {
+        mEndDay = monthEnd.getDate().toString().padStart(2, '0'); // values: 01 - 31
+    }
+
+    const monthEndFm = `${year}-${mEndMonth}-${mEndDay}`;
 
 	return {
-		monthStart: monthStart,
-		monthEnd: monthEnd
+		monthStart: monthStartFm,
+		monthEnd: monthEndFm
 	};
 }
 
@@ -155,54 +237,67 @@ const sortTable = (columnName) => {
 	});
 }
 
-let getTransactions = async () => {
+let getTransactionsReqKey = null;
 
-	if (props.bundleId && props.monthData.currentMonth) {
+const getTransactions = async () => {
 
-		console.log('props.monthData', JSON.stringify(props.monthData))
-		console.log('props.yearData', JSON.stringify(props.yearData))
+	if (!props.bundle ||
+		!props.yearData || !Object.keys(props.yearData).length ||
+		!props.monthData?.currentMonth) {
 
-		var dates = getMonthStartAndEnd(props.monthData.currentMonth, props.yearData.detailYear);
+		return;
 
-		let res = await useApi('transactionReport.post', {
+	}
+
+	const endDate = new Date(props.reportOptions.end_date);
+	const monthStart = new Date(props.yearData.detailYear, monthIndex.value, 1);
+
+	if (!endDate || !monthStart || endDate < monthStart) {
+		throw "RvPerformanceTransactions: Invalid end date and selected month";
+	}
+
+	const reqKey = useGenerateUniqueId(bundleId.value + props.monthData.currentMonth);
+	getTransactionsReqKey = reqKey;
+
+	var dates = getMonthStartAndEnd(props.yearData.detailYear);
+
+	let res = await useApi(
+        'transactionReport.post',
+		{
 			body: {
-				bundle: props.bundleId.id, // WTF? why if its called id, its object inside?
+				bundle: bundleId.value,
 				begin_date: dates.monthStart,
 				end_date: dates.monthEnd,
 				date_field: 'transaction_date',
 				depth_level: 'base_transaction',
 			},
-		})
+		}
+    )
 
-
-		let result_items = res.items;
-
-		result_items = joinProperty(result_items, 'transaction_class', res.item_transaction_classes);
-		result_items = joinProperty(result_items, 'entry_account', res.item_accounts);
-		result_items = joinProperty(result_items, 'settlement_currency', res.item_currencies);
-		result_items = joinProperty(result_items, 'transaction_currency', res.item_currencies);
-		result_items = joinProperty(result_items, 'instrument', res.item_instruments);
-
-		result_items = result_items.map(function (item) {
-
-			item.transaction_class_name = item.transaction_class.name;
-
-			return item
-		})
-
-		transactions.value = result_items;
-
-		console.log('transactions.value', JSON.parse(JSON.stringify(transactions.value)));
-
+	if (getTransactionsReqKey !== reqKey) {
+		// New request sent while old request was processing.
+		// Discard result of old request.
+		return;
 	}
 
+	let result_items = res.items;
+
+	result_items = joinProperty(result_items, 'transaction_class', res.item_transaction_classes);
+	result_items = joinProperty(result_items, 'entry_account', res.item_accounts);
+	result_items = joinProperty(result_items, 'settlement_currency', res.item_currencies);
+	result_items = joinProperty(result_items, 'transaction_currency', res.item_currencies);
+	result_items = joinProperty(result_items, 'instrument', res.item_instruments);
+
+	result_items = result_items.map(function (item) {
+
+		item.transaction_class_name = item.transaction_class.name;
+
+		return item
+	})
+
+	transactions.value = result_items;
 
 }
-
-watch(
-	props,
-	() => getTransactions()
-)
 
 
 </script>
