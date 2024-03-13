@@ -122,3 +122,24 @@ function editorInit(editor) {
 
 	editor = initEditor(editor)
 }
+
+/**
+ *
+ *
+ * @param base
+ * @param exponent
+ * @return {number}
+ */
+export const utilsPower = function (base, exponent) {
+
+	/* *
+	 * JavaScript can return NaN if base number
+	 * is a negative
+	 * and exponent is a number with floating point
+	 * */
+	if (base < 0 && !Number.isInteger(exponent)) {
+		return -Math.pow(-base, exponent);
+	} else {
+		return Math.pow(base, exponent);
+	}
+}
