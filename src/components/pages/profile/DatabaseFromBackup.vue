@@ -16,6 +16,7 @@
 		<FmCheckbox
 			label="Replace space code"
 			v-model="form.replace_old_space_code"
+            class="m-b-24"
 		/>
 
 		<template #controls>
