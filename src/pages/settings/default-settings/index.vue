@@ -252,7 +252,7 @@
 			useLoadAllPages('instrumentSchemeList.get', opts), // 23
 			useLoadAllPages('currencySchemeList.get', opts), // 24
 		])
-		console.log("testing1000 res", res);
+
 		instrumentItems.value = res[0];
 		portfolioListLightItems.value = res[1];
 		billItems.value = res[2];

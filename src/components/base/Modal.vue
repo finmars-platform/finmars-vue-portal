@@ -65,6 +65,10 @@
 			//  action
 			// }
 			controls: Object,
+			onShowModal: {
+				type: Function,
+				required: false
+			},
 			no_padding: Boolean,
 			closeOnClickOutside: {
 				type: Boolean,
@@ -82,11 +86,19 @@
 				return this.closeOnClickOutside ? 'click' : false
 			},
 		},
-		async mounted() {},
+		async mounted() {
+
+		},
 		watch: {
 			modelValue(val) {
 				if (val) document.querySelector('html').style.overflow = 'hidden'
 				else document.querySelector('html').style.overflow = 'initial'
+
+				console.log('onShowModal.props', this);
+
+				if (val && typeof this.onShowModal === 'function') {
+					this.onShowModal();
+				}
 			},
 		},
 

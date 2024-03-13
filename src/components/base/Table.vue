@@ -1,5 +1,5 @@
 <template>
-	<div class="table">
+	<div class="table" :class="{'readonly': isReadonly}">
 		<div class="table-row t_header" :style="{ gridTemplateColumns: colls }">
 			<div v-if="isActions">
 				<FmCheckbox/>
@@ -9,16 +9,28 @@
 				class="table-cell font-weight-bold"
 				v-for="(header, index) in headers"
 				:key="index"
-				v-on:click="sortTable(index)"
 			>
-				{{ header }}
-			<div class="arrow" v-if="index == sortColumn" v-bind:class="ascending ? 'arrow_up' : 'arrow_down'"></div>
+				<button
+					class="table-cell-btn"
+					:disabled="isDisabled"
+					@click="sortTable(index)"
+				>
+					<span class="header-text">{{ header }}</span>
+
+					<div v-if="index == sortColumn"
+						 class="arrow"
+						 v-bind:class="ascending ? 'arrow_up' : 'arrow_down'"></div>
+				</button>
 			</div>
 		</div>
 
 		<div
 			class="table-row"
-			:class="{ active: active == index, choosible: active !== undefined }"
+			:class="{
+				active: active == index,
+				selectable: !isReadonly && active !== undefined,
+				disabled: isDisabled,
+			}"
 			:style="{ gridTemplateColumns: colls }"
 			v-for="(row, index) in items"
 			:key="index"
@@ -34,47 +46,50 @@
 				class="table-cell"
 				v-for="(item, indexRow) in row"
 				:key="indexRow"
-				@click="
-					() => {
-						if (cb) cb(index, indexRow)
-					}
-				"
-				@click.right="
-					(event) => {
-						event.preventDefault();
-						event.stopPropagation();
-						if (rightClickCallback) rightClickCallback(index, indexRow)
-					}
-				"
 			>
-				<FmLoader v-if="item === null"/>
+				<button
+					:disabled="isDisabled"
+					class="table-cell-btn"
+					@click="
+						() => {
+							if (cb) cb(index, indexRow)
+						}
+					"
+					@click.right.prevent.stop="
+						() => {
+							if (rightClickCallback) rightClickCallback(index, indexRow)
+						}
+					"
+				>
+					<FmLoader v-if="item === null"/>
 
-				<template v-else-if="typeof item == 'object'">
+					<template v-else-if="typeof item == 'object'">
 
-					<div
-						class="overflow-hidden text-overflow-ellipsis"
-						v-fm-tooltip="item.value"
-					>
-						<NuxtLink
-							v-if="item.link"
-							class="link dib"
-							:to="item.link"
+						<div
+							class="overflow-hidden text-overflow-ellipsis"
+							v-fm-tooltip="item.value"
+						>
+							<NuxtLink
+								v-if="item.link"
+								class="link dib"
+								:to="item.link"
 
-						>{{ item.value }}
-						</NuxtLink>
+							>{{ item.value }}
+							</NuxtLink>
 
-						<template v-else>{{ item.value }}</template>
-					</div>
+							<template v-else>{{ item.value }}</template>
+						</div>
 
-				</template>
+					</template>
 
-				<template v-else>
-					<div
-						class="overflow-hidden text-overflow-ellipsis"
-						v-fm-tooltip="item"
-					>{{ item === '' ? '-' : item }}
-					</div>
-				</template>
+					<template v-else>
+						<div
+							class="overflow-hidden text-overflow-ellipsis"
+							v-fm-tooltip="item"
+						>{{ item === '' ? '-' : item }}
+						</div>
+					</template>
+				</button>
 			</div>
 		</div>
 	</div>
@@ -111,6 +126,8 @@ let props = defineProps({
 	isActions: {
 		type: Boolean,
 	},
+	isDisabled: Boolean,
+	isReadonly: Boolean,
 })
 
 let sortColumn = ref(-1)
@@ -118,22 +135,34 @@ let ascending = ref(true)
 
 
 const sortTable = (col_index) => {
-	var col = Object.keys(props.items[0])[col_index];
+  var col = Object.keys(props.items[0])[col_index];
 
-	if (sortColumn.value === col_index) {
-	ascending.value = !ascending.value
-	} else {
-	ascending.value = true;
-	sortColumn.value = col_index;
-	}
-	props.items.sort(function(a, b) {
-	if (a[col] > b[col]) {
-		return ascending.value ? 1 : -1
-	} else if (a[col] < b[col]) {
-		return ascending.value ? -1 : 1
-	}
-	return 0;
-	})
+  if (sortColumn.value === col_index) {
+    ascending.value = !ascending.value;
+  } else {
+    ascending.value = true;
+    sortColumn.value = col_index;
+  }
+  
+  props.items.sort(function(a, b) {
+    let valueA = a[col].replace("%","");
+    let valueB = b[col].replace("%","");
+
+	console.log(valueA, valueB)
+	
+    if (!isNaN(valueA) && !isNaN(valueB)){ 
+      valueA = parseFloat(valueA) || 0;
+	  valueB = parseFloat(valueB) || 0;
+    }
+    
+    if (valueA > valueB) {
+      return ascending.value ? 1 : -1;
+    } else if (valueA < valueB) {
+      return ascending.value ? -1 : 1;
+    }
+    
+    return 0;
+  });
 }
 
 </script>
@@ -143,6 +172,20 @@ const sortTable = (col_index) => {
 	border: 1px solid $border;
 	width: 100%;
 	font-size: 14px;
+}
+
+.table.readonly {
+  .table-row {
+
+	&:not(.t_header) {
+
+	  .table-cell .table-cell-btn {
+		cursor: default;
+	  }
+
+	}
+
+  }
 }
 
 .table-row {
@@ -155,7 +198,7 @@ const sortTable = (col_index) => {
 	transition: outline 0.1s;
 	outline: solid transparent;
 
-	&.choosible {
+	&:not(.disabled).selectable {
 		cursor: pointer;
 
 		&:not(.active):hover {
@@ -176,14 +219,16 @@ const sortTable = (col_index) => {
 }
 
 .table-cell {
-	white-space: nowrap;
-	padding: 0 14px;
 	height: inherit;
 	line-height: inherit;
 
 	&:not(.no_collapsed) {
 		overflow: hidden;
-		text-overflow: ellipsis;
+
+		.table-cell-btn {
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
 	}
 
 	& + & {
@@ -192,6 +237,26 @@ const sortTable = (col_index) => {
 
 	&.disabled {
 		background: $main-darken-2;
+	}
+}
+
+.table-cell-btn {
+	display: block;
+	width: 100%;
+	height: 100%;
+	padding: 0 14px;
+	// inherit from .table-cell
+	text-align: inherit;
+	font-size: inherit;
+	/*display: flex;
+	justify-content: space-between;
+	align-items: center;*/
+	white-space: nowrap;
+
+	&:not([disabled]):hover {
+		.header-text {
+			color: $text-lighten;
+		}
 	}
 }
 
