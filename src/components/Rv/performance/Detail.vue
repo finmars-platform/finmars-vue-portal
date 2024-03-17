@@ -42,12 +42,12 @@
 		<div
             class="table_wrap flex"
         >
-			<div class="coll_years">
+<!--			<div class="coll_years">
 				<div class="coll_item t_header">Years</div>
 				<div class="coll_item" v-for="(item, i) in portfolioYears" :key="i">
 					{{ item }}
 				</div>
-			</div>
+			</div>-->
 
             <div
                 class="coll_months"
@@ -61,15 +61,22 @@
                     :is-disabled="detailsLoading"
 					:is-readonly="true"
 				/> -->
-				<FmBasicTable>
+				<FmBasicTable
+					type="highlightedEdges"
+					selectableRows
+				>
 
                     <template #header>
                         <FmBasicTableRow
                             class="grid width-100"
-                            style="grid-template-columns: repeat(12, 1fr);"
+                            :style="`grid-template-columns: ${tableGridTemplateCols}`"
                         >
-                            <FmBasicTableCell v-for="headerName in portfolioHeaders">
-                                {{ headerName }}
+                            <FmBasicTableCell
+                                v-for="(column, index) in tableHeader"
+								:sorting="column.sorting"
+                                @toggleSorting="toggleSorting(column.key)"
+                            >
+                                {{ column.name }}
                             </FmBasicTableCell>
                         </FmBasicTableRow>
                     </template>
@@ -80,19 +87,20 @@
                         :key="row.key"
                         :active="row.isActive"
                         class="grid width-100"
-                        style="grid-template-columns: repeat(12, 1fr);">
+                        :style="`grid-template-columns: ${tableGridTemplateCols}`">
 
                         <FmBasicTableCell
                             v-for="cell in row.columns"
                             :key="cell.key"
-                            @contextmenu="showPerformanceDetail(row.key, cell.key)"
+                            :valueType="cell.key !== 'year' ? 20 : null"
+                            @contextmenu.prevent="showPerformanceDetail(row.key, cell.key)"
                         >{{ cell.value }}</FmBasicTableCell>
 
                     </FmBasicTableRow>
 				</FmBasicTable>
 			</div>
 
-			<div class="coll_total">
+<!--			<div class="coll_total">
 				<div class="coll_item t_header">TOTAL</div>
 				<div class="coll_item" v-for="(item, i) in portfolioTotals" :key="i">
 
@@ -103,7 +111,7 @@
 						{{ item }}
 					</span>
 				</div>
-			</div>
+			</div>-->
 		</div>
 
         <div v-show="detailsLoading"
@@ -129,6 +137,7 @@
 
 <script setup>
 import dayjs from 'dayjs'
+import {useSortRowsByNumber} from "~/composables/useTable";
 
 const props = defineProps({
 	reportOptions: {
@@ -206,6 +215,7 @@ let performanceDetails = ref(null)
 
 let showBundleActions = ref(false)
 let editBundleIsOpened = ref(false)
+const tableGridTemplateCols = '75px repeat(12, 1fr) 80px';
 
 /* *
  * portfolioPerformanceReports
@@ -233,19 +243,34 @@ let editBundleIsOpened = ref(false)
  * */
 let portfolioPerformanceReports = {};
 
-let portfolioHeaders = ref([
-	'Jan',
-	'Feb',
-	'Mar',
-	'Apr',
-	'May',
-	'Jun',
-	'Jul',
-	'Aug',
-	'Sep',
-	'Oct',
-	'Nov',
-	'Dec',
+/*{name: 'Jan'},
+{key: 'february', name: 'Feb'},
+{key: 'march', name: 'Mar'},
+{name: 'Jan'},
+{name: 'Jan'},
+{name: 'Jan'},
+{name: 'Jan'},
+{name: 'Jan'},
+{name: 'Jan'},
+{name: 'Jan'},
+{name: 'Jan'},
+{name: 'Jan'},*/
+
+let tableHeader = ref([
+    {key: 'year', name: 'Years', sorting: ''},
+	{key: 0, name: 'Jan', sorting: ''},
+	{key: 1, name: 'Feb', sorting: ''},
+	{key: 2, name: 'Mar', sorting: ''},
+	{key: 3, name: 'Apr', sorting: ''},
+	{key: 4, name: 'May', sorting: ''},
+	{key: 5, name: 'Jun', sorting: ''},
+	{key: 6, name: 'Jul', sorting: ''},
+	{key: 7, name: 'Aug', sorting: ''},
+	{key: 8, name: 'Sep', sorting: ''},
+	{key: 9, name: 'Oct', sorting: ''},
+	{key: 10, name: 'Nov', sorting: ''},
+	{key: 11, name: 'Dec', sorting: ''},
+    {key: 'total', name: 'TOTAL', sorting: ''},
 ])
 
 function resetData() {
@@ -314,6 +339,12 @@ function chooseYear(year) {
 		return;
 	}
 
+	const prevActiveYear = portfolioItems.value.find(yItem => yItem.isActive);
+
+    if (prevActiveYear) {
+        prevActiveYear.isActive = false;
+	}
+
     yearData.isActive = true;
 
 	const detailYear = portfolioYears.value.find(year => year === year);
@@ -340,28 +371,95 @@ function chooseYear(year) {
 			detailYear: detailYear,
     	}
     ));
-    console.log("testing459 chooseYear emitData", emitData);
+
 	emits('setYear', emitData)
 }
 
-async function showPerformanceDetail(year, monthIndex) {
+async function showPerformanceDetail(year, cellKey) {
 
 	console.log('portfolioPerformanceReports', portfolioPerformanceReports);
 
-	try {
-		performanceDetailIsOpen.value = true;
-
-		// let keyNum = String(cellIndex + 1).padStart(2, '0');
-
-		// performanceDetails.value = portfolioPerformanceReports[year][`key_${keyNum}`][2]
-        performanceDetails.value = portfolioPerformanceReports[year][monthIndex][2]
-
-    } catch (error) {
-		console.error('error', error);
-		performanceDetailIsOpen.value = false;
+    if ( ['year', 'total'].includes(cellKey) ) {
+        return;
 	}
 
-	console.log('performanceDetails', performanceDetails.value)
+    // cell with data for month was right-clicked
+
+	const monthReportData = portfolioPerformanceReports[year][cellKey][2];
+
+    if (monthReportData) { // cell is not empty and without errors
+        // `cellKey` is index of a month
+        performanceDetails.value = portfolioPerformanceReports[year][cellKey][2];
+
+        performanceDetailIsOpen.value = true;
+
+    }
+
+}
+
+/**
+ * Function to call inside Array.sort()
+ *
+ * @param yearsList { [{}] } - portfolioItems.value
+ * @return {number} - 1, -1, 0
+ */
+function sortYears(yearsList) {
+
+	let sortCol = tableHeader.value.find(col => col.sorting);
+
+	if (!sortCol) {
+		// return yearsList;
+
+		// if there is no active sorting, sort by year in descending order
+        sortCol = {
+            key: 'year',
+			sorting: 'desc',
+		}
+	}
+
+	const descending = sortCol.sorting === 'desc';
+
+	yearsList.sort((a, b) => {
+
+        /*let aVal = portfolioItemsRaw[a.key][colData.key];
+        let bVal = portfolioItemsRaw[b.key][colData.key];*/
+        let aSortColVal = a.columns.find(col => col.key === sortCol.key).value;
+        let bSortColVal = b.columns.find(col => col.key === sortCol.key).value;
+
+        return useSortRowsByNumber(aSortColVal, bSortColVal, descending);
+
+    });
+
+    return yearsList;
+
+}
+
+/**
+ * Sort by month's value
+ *
+ * @param monthIndex {Number}
+ */
+function toggleSorting(columnKey) {
+
+    const activeSortCol = tableHeader.value.find(
+        col => col.sorting
+	);
+
+    const colData = tableHeader.value.find(col => col.key === columnKey);
+
+    if (activeSortCol && activeSortCol.key !== colData.key) {
+        // if there is active sorting by another column, turn it off
+        activeSortCol.sorting = '';
+	}
+
+	if ( colData.sorting === 'desc' ) {
+        colData.sorting = 'asc';
+
+	} else { // `.sorting` === 'asc' or '';
+        colData.sorting = 'desc';
+	}
+
+	portfolioItems.value = sortYears(portfolioItems.value);
 
 }
 
@@ -648,7 +746,7 @@ async function getMonthDetails() {
 	// let end = dayjs(props.end_date).endOf('year').format('YYYY-MM-DD');
     let end = props.end_date;
 
-	const monthEndDates = getLastBusinessDayOfMonth(begin, end)
+	const monthEndDates = getLastBusinessDayOfMonth(begin, end);
 
 	console.log('begin', begin);
 	console.log('end', end);
@@ -674,7 +772,7 @@ async function getMonthDetails() {
     let allMonths;
 
     try {
-        allMonths = await Promise.all(promises)
+        allMonths = await Promise.all(promises);
     } catch (e) {
         console.error(e)
 
@@ -687,6 +785,38 @@ async function getMonthDetails() {
 
         throw "Error above occurred while trying to load and calculate data for RvPerformanceDetail";
     }
+
+    // sort months by `.end_date` years in descending order
+    allMonths.sort((a, b) => {
+
+        let aYear = null;
+
+        if ( dayjs(a.end_date, 'YYYY-MM-DD').isValid() ) {
+            aYear = dayjs(a.end_date).year();
+
+        } else {
+            console.error(`RvPerformanceDetail: wrong end_date format ${a}`)
+        }
+
+        let bYear = null;
+
+        if ( dayjs(b.end_date, 'YYYY-MM-DD').isValid() ) {
+            bYear = dayjs(b.end_date).year();
+
+        } else {
+            console.error(`RvPerformanceDetail: wrong end_date format ${b}`)
+        }
+
+        if (aYear > bYear) {
+            return -1;
+
+        } else if (aYear < bYear) {
+            return 1;
+        }
+
+        return 0;
+
+    })
 
 	console.log('allMonths', allMonths);
 	console.log('yearsBuffer', yearsBuffer);
@@ -834,29 +964,50 @@ async function getMonthDetails() {
 				else return ''
 			})
 		)*/
-        const monthsRow = months.map((month, i) => {
+        /*const monthsRow = months.map((month, i) => {
+
+			let val = null;
+
             if ( _datesRangeIncludesMonth(year, i) ) {
-                return {
-                    key: i, // month index
-                    value: month[1],
-                }
+				val = month[1];
             }
 
-            return '';
+			return {
+				key: i, // month index
+				value: val,
+			};
+
+        });*/
+        let columnsForYear = [{
+            key: 'year',
+            value: year,
+        }]
+
+        const monthsCols = months.map((month, i) => {
+
+            let val = "-";
+
+            if ( _datesRangeIncludesMonth(year, i) ) {
+                val = month[1];
+            }
+
+            return {
+                key: i, // month index
+                value: val,
+            };
+
         });
 
-        portfolioItems.value.push({
+        columnsForYear = columnsForYear.concat(monthsCols);
+
+        /*portfolioItems.value.push({
             key: year,
             columns: monthsRow,
             isActive: false,
-            order: portfolioItems.value.length,
         })
 
-        /* *
-         * Total for year that matches to "end_date"
-         * should not be calculated fully.
-         * Calculate it only until end_date.
-         * */
+        portfolioItems.value = sortYears(portfolioItems.value);*/
+
         let end;
 
         if ( year == dayjs(dateTo).year() ) {
@@ -871,23 +1022,44 @@ async function getMonthDetails() {
 			ids: bundle,
 		})
 
-        if (props.reportOptions.performance_unit === 'percent') {
+        let totalCol = {
+            key: 'total',
+            value: '-',
+        }
+
+        /*if (props.reportOptions.performance_unit === 'percent') {
 			portfolioTotals.value.push(parseFloat(total.grand_return * 100).toFixed(2))
 		} else {
 			portfolioTotals.value.push(formatNumber(total.grand_absolute_pl))
-		}
+		}*/
+        if (props.reportOptions.performance_unit === 'percent') {
+            totalCol.value = parseFloat(total.grand_return * 100).toFixed(2) + '%';
+
+        } else {
+            totalCol.value = formatNumber(total.grand_absolute_pl)
+        }
+
+        columnsForYear.push(totalCol);
+
+        portfolioItems.value.push({
+            key: year,
+            columns: columnsForYear,
+            isActive: false,
+        })
+
+        // portfolioItems.value = sortYears(portfolioItems.value);
+
 
 	}
-    console.log("testing459 portfolioPerformanceReports", portfolioPerformanceReports);
-    console.log("testing459 portfolioItemsRaw", portfolioItemsRaw);
-    console.log("testing459 portfolioItems.value", portfolioItems.value);
+
     emits('loadingDataEnd');
 
     detailsLoading.value = false
 
-	/* if (portfolioYears.value.length) {
-		chooseYear( portfolioYears.value.length - 1 )
-	}*/
+	if (portfolioYears.value.length) {
+		const latestYearKey = portfolioItems.value[0].key;
+		chooseYear(latestYearKey);
+	}
 
 }
 

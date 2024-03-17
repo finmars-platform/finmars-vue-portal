@@ -36,26 +36,33 @@ let props = defineProps({
 
     .t_row {
         display: flex;
-        height: 36px;
+        height: 35px;
         outline: solid transparent;
         transition: outline .1s;
-        box-sizing: border-box;
         border-bottom: $basic-table-border;
+        text-align: inherit; // from FmBasicTable
+
+        // without content-box FmBasicTableCell overlaps border of FmBasicTableRow
+        box-sizing: content-box;
 
         &.grid {
             display: grid;
         }
 
-        &:not(.disabled) {
+        /*&:not(.disabled) {
             cursor: pointer;
 
             &:not(.active):hover {
-                background: #fac87863;
+                background: $hover-background2;
+
+				:deep(.t_cell) {
+					background: $hover-background2;
+				}
             }
-        }
+        }*/
 
         &.active {
-            background: #fac87863;
+            background: $hover-background2;
         }
     }
 </style>

@@ -4,7 +4,7 @@
 			'icon',
 			{ primary, error, btn, disabled, 'btn-primary': btnPrimary },
 		]"
-		:style="{ width: size + 'px', fontSize: size + 'px' }"
+		:style="{ fontSize: size + 'px' }"
 	>
 		<slot>
 			<div class="material-icons">{{ icon }}</div>
@@ -40,7 +40,7 @@
 		user-select: none;
 
 		&:not(.disabled):hover {
-			color: $text-hover;
+			color: $text-pale2; // $text-hover not pale enough for small icons
 
 			/*.tooltip {
 				opacity: 0.8;
@@ -93,6 +93,7 @@
 	}
 	.material-icons {
 		font-size: inherit;
+		font-weight: inherit;
 	}
 	/*.tooltip {
 		position: absolute;
