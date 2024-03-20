@@ -57,7 +57,7 @@
 					:items="portfolioItems"
 					colls="repeat(12, 1fr)"
 					:active="activeYear"
-					:rightClickCallback="showPerformanceDetail"
+					:rightClickCallback="showCellDetails"
                     :is-disabled="detailsLoading"
 					:is-readonly="true"
 				/> -->
@@ -82,10 +82,10 @@
                     </template>
 
                     <FmBasicTableRow
-                        v-for="row in portfolioItems"
+                        v-for="row in tableRowsComp"
                         @click="chooseYear(row.key)"
                         :key="row.key"
-                        :active="row.isActive"
+                        :active="row.key === selectedYear"
                         class="grid width-100"
                         :style="`grid-template-columns: ${tableGridTemplateCols}`">
 
@@ -93,7 +93,7 @@
                             v-for="cell in row.columns"
                             :key="cell.key"
                             :valueType="cell.key !== 'year' ? 20 : null"
-                            @contextmenu.prevent="showPerformanceDetail(row.key, cell.key)"
+                            @contextmenu.prevent="showCellDetails(row.key, cell.key)"
                         >{{ cell.value }}</FmBasicTableCell>
 
                     </FmBasicTableRow>
@@ -120,16 +120,16 @@
         </div>
 
         <!-- No data after loading -->
-        <div v-show="!detailsLoading && !portfolioItems.length"
+        <div v-show="!detailsLoading && !tableRowsComp.length"
              class="flex-row flex-center p-16" style="font-weight: 500;">
 			{{ getTextForEmptyTable() }}
         </div>
 
 		<ModalPerformanceDetail
 			title="Performance Details"
-			v-model="performanceDetailIsOpen"
-			:performanceDetails="performanceDetails"
-			@cancel="performanceDetailIsOpen = false"
+			v-model="cellDetailsIsOpen"
+			:performanceDetails="cellDetails"
+			@cancel="cellDetailsIsOpen = false"
 		/>
 
 	</FmExpansionPanel>
@@ -138,6 +138,38 @@
 <script setup>
 import dayjs from 'dayjs'
 import {useSortRowsByNumber} from "~/composables/useTable";
+
+/**
+ * @typedef { {} } MonthReportObject
+ * @property displayValue {String} - value displayed inside table's cell
+ *
+ * @property [reportData] {Object|null} - Contains whole object of report
+ * for a month
+ *
+ * @property [error] {Object|null}
+ *
+ * @property [data] {Object} - Information for special months.
+ * E.g. month outside dates range for performance
+ *
+ * @private
+ */
+
+/**
+ * Storing raw values in a separate property `monthsRawValues`
+ * makes it easier to access them inside chooseYear.
+ * No need to call Array.map().
+ *
+ * @typedef {Map<
+ *	 String,
+ *	 {
+ *		 Months: [MonthReportObject|null],
+ *		 monthsRawValues: [String],
+ *		 total: {displayValue},
+ *		 [error]: {}|null,
+ *
+ *	 } > } ReportsMap
+ *	 @private
+ */
 
 const props = defineProps({
 	reportOptions: {
@@ -172,89 +204,27 @@ const props = defineProps({
  * */
 const emits = defineEmits(['setYear', 'refresh', 'loadingDataStart', 'loadingDataEnd'])
 
-function formatNumber(num) {
-	return Intl.NumberFormat('en-EN', {
-		// maximumSignificantDigits: 3
-	}).format(num)
-}
+const tableGridTemplateCols = '75px repeat(12, 1fr) 80px';
 
-let currentBundle = computed(() => {
-
-	if (!props.bundle) return null;
-
-	if (typeof props.bundle == 'object') return props.bundle
-
-	return {id: props.bundle, user_code: 'Need name id: ' + props.bundle}
-})
-
-let bundleId = computed(() => {
-
-	if (!props.bundle) return null;
-
-	if (typeof props.bundle == 'object' && props.bundle.id) {
-		return props.bundle.id
-	}
-
-	if (typeof props.bundle == 'number') return props.bundle
-
-})
-/** Years with formatted values for months */
-let portfolioItems = ref([])
-
-/** Years with values without formatting for months.
- *
- * @type { {} } - key - a year as a string. value - array with strings */
-let portfolioItemsRaw = {};
-let portfolioYears = ref([])
-let portfolioTotals = ref([])
 let detailsLoading = ref(false);
 let detailsLoadingError = ref('');
 
-let performanceDetailIsOpen = ref(false)
-let performanceDetails = ref(null)
+let cellDetailsIsOpen = ref(false)
+let cellDetails = ref(null)
 
 let showBundleActions = ref(false)
 let editBundleIsOpened = ref(false)
-const tableGridTemplateCols = '75px repeat(12, 1fr) 80px';
 
-/* *
- * portfolioPerformanceReports
- *
- * key - a year as a string. e.g. "1970"
- *
- * value - an array that contains 12 arrays for each month.
- *
- * Structure of month's array:
- * index 0 - raw value
- * index 1 - formatted value
- * index 2 - contains whole response object from backend with data about month
- *
- * portfolioPerformanceReports = {
- *  "1970": [
- *      [
- *          0: "17.48",
- *          1: "17.48%",
- *          2: {}
- *      ],
- *      [],[],[],[],[],[],[],[],[],[],[],
- *  ]
- * }
- *
- * */
-let portfolioPerformanceReports = {};
+// let portfolioPerformanceReports = {};
 
-/*{name: 'Jan'},
-{key: 'february', name: 'Feb'},
-{key: 'march', name: 'Mar'},
-{name: 'Jan'},
-{name: 'Jan'},
-{name: 'Jan'},
-{name: 'Jan'},
-{name: 'Jan'},
-{name: 'Jan'},
-{name: 'Jan'},
-{name: 'Jan'},
-{name: 'Jan'},*/
+
+/**
+ *
+ * @type {Ref<UnwrapRef< ReportsMap|Map<any, any> >>}
+ */
+let reportsMapRef = ref( new Map() );
+
+let selectedYear = ref('');
 
 let tableHeader = ref([
     {key: 'year', name: 'Years', sorting: ''},
@@ -273,13 +243,76 @@ let tableHeader = ref([
     {key: 'total', name: 'TOTAL', sorting: ''},
 ])
 
+let currentBundle = computed(() => {
+
+    if (!props.bundle) return null;
+
+    if (typeof props.bundle == 'object') return props.bundle
+
+    return {id: props.bundle, user_code: 'Need name id: ' + props.bundle}
+})
+
+let bundleId = computed(() => {
+
+    if (!props.bundle) return null;
+
+    if (typeof props.bundle == 'object' && props.bundle.id) {
+        return props.bundle.id
+    }
+
+    if (typeof props.bundle == 'number') return props.bundle
+
+})
+
+let tableRowsComp = computed(() => {
+
+    if (!reportsMapRef.value.size) {
+        return []
+	}
+
+    let rows = [];
+
+    for (const [year, yearData] of reportsMapRef.value.entries()) {
+
+        const row = {
+            key: year,
+			columns: [],
+		};
+
+        row.columns.push({
+            key: 'year',
+            value: year,
+        })
+
+        const monthsCols = yearData.months.map((month, i) => {
+            return {
+                key: i, // month index
+                value: month.displayValue,
+            };
+        });
+
+        row.columns = row.columns.concat(monthsCols);
+
+        row.columns.push({
+			key: 'total',
+			value: yearData.total.displayValue,
+		})
+
+        rows.push(row);
+
+        // portfolioItems.value = sortYears(portfolioItems.value);
+
+    }
+
+    rows = sortYears(rows);
+
+    return rows;
+
+});
+
 function resetData() {
-
-    portfolioYears.value = [];
-    portfolioTotals.value = [];
-    portfolioItems.value = [];
-    portfolioItemsRaw = {};
-
+    reportsMapRef.value = new Map();
+    selectedYear.value = '';
 }
 
 watch(
@@ -308,11 +341,21 @@ watch(
     async () => {
 
         if (props.bundle) {
-            await getMonthDetails()
+            await getMonthDetails();
+
+        } else {
+            console.error(`[RvPerformanceDetail] no bundle passed: ${props.bundle}`);
         }
+
     },
     {deep: true},
 )
+
+function formatNumber(num) {
+    return Intl.NumberFormat('en-EN', {
+        // maximumSignificantDigits: 3
+    }).format(num)
+}
 
 function getTextForEmptyTable() {
 
@@ -329,55 +372,63 @@ function getTextForEmptyTable() {
  */
 function chooseYear(year) {
 
-    const yearData = portfolioItems.value.find(yItem => yItem.key === year);
+    const yearData = reportsMapRef.value.get(year);
 
-    if (!yearData) {
-        throw `RvPerformanceDetail.chooseYear: unavailable value selected: ${year}`
+    if (!yearData || typeof year !== 'string') {
+        throw `[RvPerformanceDetail.chooseYear] invalid value selected: ${year}`
     }
 
-    if (yearData.isActive) {
+	if (yearData.error) {
+
+        emits('setYear', {
+            portfolioMonthsEndsRaw: null,
+            datasetCumulative: null,
+            detailYear: null
+        })
+
+	}
+
+    if (selectedYear.value === year || yearData.error) {
 		return;
 	}
 
-	const prevActiveYear = portfolioItems.value.find(yItem => yItem.isActive);
+	selectedYear.value = year;
+	// const detailYear = portfolioYears.value.find(year => year === year);
 
-    if (prevActiveYear) {
-        prevActiveYear.isActive = false;
-	}
-
-    yearData.isActive = true;
-
-	const detailYear = portfolioYears.value.find(year => year === year);
-
-    if (!detailYear) {
-        throw `RvPerformanceDetail.chooseYear: invalid year: ${year}`
-    }
-
-    const portfolioMonthsEndsRaw = portfolioPerformanceReports[year].map(yearData => {
+    /*const portfolioMonthsEndsRaw = portfolioPerformanceReports[year].map(yearData => {
 
         if (yearData[2] && yearData[2].end_date) {
-            return yearData[2].end_date
+            return yearData[2].end_date;
         }
 
         return null;
 
-    })
+    })*/
+    const portfolioMonthsEndsRaw = yearData.months
+        .map(monthsData => {
+
+            if (monthsData.reportData?.end_date) {
+                return monthsData.reportData.end_date;
+            }
+
+            return null;
+
+        })
 
 	const emitData = JSON.parse(JSON.stringify(
         {
 			// datasetCumulative: portfolioItems.value[id],
 			portfolioMonthsEndsRaw: portfolioMonthsEndsRaw,
-			datasetCumulative: portfolioItemsRaw[year],
-			detailYear: detailYear,
+			datasetCumulative: yearData.monthsRawValues,
+			// detailYear: detailYear,
+            detailYear: year
     	}
     ));
 
 	emits('setYear', emitData)
 }
 
-async function showPerformanceDetail(year, cellKey) {
-
-	console.log('portfolioPerformanceReports', portfolioPerformanceReports);
+async function showCellDetails(year, cellKey) {
 
     if ( ['year', 'total'].includes(cellKey) ) {
         return;
@@ -385,13 +436,15 @@ async function showPerformanceDetail(year, cellKey) {
 
     // cell with data for month was right-clicked
 
-	const monthReportData = portfolioPerformanceReports[year][cellKey][2];
+    // `cellKey` is index of a month
+	// const monthReportData = portfolioPerformanceReports[year][cellKey][2];
+    const monthReportData = reportsMapRef.value.get(year).months[cellKey].reportData;
 
     if (monthReportData) { // cell is not empty and without errors
-        // `cellKey` is index of a month
-        performanceDetails.value = portfolioPerformanceReports[year][cellKey][2];
 
-        performanceDetailIsOpen.value = true;
+        cellDetails.value = JSON.parse(JSON.stringify(monthReportData));
+
+        cellDetailsIsOpen.value = true;
 
     }
 
@@ -713,24 +766,469 @@ function adjustForWeekend(date) {
 
 } */
 
+/*function datesRangeIncludesMonth(year, monthIndex, endDate, beginDate) {
+
+    const endDateDjs = dayjs(props.end_date);
+    const beginDateDjs = dayjs(beginDate);
+
+    return ( year != endDateDjs.year() || monthIndex <= endDateDjs.month() ) &&
+        ( year != beginDateDjs.year() || monthIndex >= beginDateDjs.month() );
+
+}*/
+function datesRangeIncludesMonth(date, beginDate, endDate) {
+
+    const year = dayjs(date).year();
+    const monthIndex = dayjs(date).month();
+
+    const beginYear = dayjs(beginDate).year();
+    const beginMonthIndex = dayjs(beginDate).month();
+
+    const moreThanBeginDate = year > beginYear ||
+        ( year === beginYear && monthIndex >= beginMonthIndex );
+
+    const endYear = dayjs(endDate).year();
+    const endMonthIndex = dayjs(endDate).month();
+
+    const lessThanEndDate = year < endYear ||
+        ( year === endYear && monthIndex <= endMonthIndex );
+
+    return moreThanBeginDate && lessThanEndDate;
+
+}
+
+/*
+ * if newer getMonthDetails has been called
+ * do not apply data loaded by the old getMonthDetails
+ * */
+let requestDetailsUid;
+
+function onMessage(newVal) {
+
+}
+
+async function _calcTotalForYear(periodEnd, bundleId, yearData, requestUid) {
+
+    let totalRes;
+
+    try {
+
+        totalRes = await getReports({
+            period_type: 'ytd',
+            end: periodEnd,
+            ids: bundleId,
+            requestUid: requestUid,
+        })
+
+    } catch (e) {
+        throw e;
+    }
+
+    if (requestUid !== requestDetailsUid) {
+        return;
+    }
+
+    // const totalCol = yearRowData.columns.find(col => col.key === 'total');
+
+    /*if (props.reportOptions.performance_unit === 'percent') {
+        portfolioTotals.value.push(parseFloat(total.grand_return * 100).toFixed(2))
+    } else {
+        portfolioTotals.value.push(formatNumber(total.grand_absolute_pl))
+    }*/
+    if (props.reportOptions.performance_unit === 'percent') {
+        yearData.total.displayValue = parseFloat(totalRes.grand_return * 100).toFixed(2) + '%';
+
+    } else {
+        yearData.total.displayValue = formatNumber(totalRes.grand_absolute_pl)
+    }
+
+    return yearData;
+
+}
+
+/**
+ * Helper function for getMonthDetails
+ * @see getMonthDetails
+ *
+ * @param reportsMap { Map } - map from reportsMapRef
+ * @param endDate {Date} - last date in period of dates for performance
+ * @param bundleId {Number} - id of a portfolio bundle
+ * @param requestUid {String} - instance of requestDetailsUid
+ * @return { Promise<Map> } - reportsMap filled with years' totals
+ */
+async function _calculateTotalsForYears(reportsMap, endDate, bundleId, requestUid) {
+
+    let promises = [];
+    const endDateDj = dayjs(endDate);
+
+    const yearsList = [];
+
+    for (let [year, yearData] of reportsMap.entries() ) {
+
+        yearsList.push(year);
+
+        let end;
+
+        if ( year == endDateDj.year() ) {
+            end = endDateDj.format('YYYY-MM-DD');
+        } else {
+            end = `${year}-12-31`;
+        }
+
+        // yearData changed inside _calcTotalForYear
+        promises.push( _calcTotalForYear(end, bundleId, yearData, requestUid) )
+
+	}
+
+    const responses = await Promise.allSettled(promises);
+
+    responses.forEach((res, index) => {
+
+        const year = yearsList[index];
+
+        if (res.status === 'fulfilled') {
+
+            reportsMap.set( year, res.value );
+
+		} else { // rejected
+
+            let yearData = reportsMap.get( yearsList[index], );
+
+            yearData.error = true;
+            yearData.total.error = res.reason;
+
+            reportsMap.set(year, yearData);
+
+		}
+
+	})
+
+	return reportsMap;
+
+}
+
+/**
+ *
+ * @param requestOptions
+ * @param beginDate {String} - 'YYYY-MM-DD'
+ * @param endDate {String} - 'YYYY-MM-DD'
+ * @return {Promise<*>}
+ */
+async function getReportForMonth(requestOptions, beginDate, endDate) {
+
+	Object.keys(requestOptions).forEach(key => {
+		if ( !requestOptions[key] ) {
+			console.error(`[RvPerformanceDetail.getReportForMonth] invalid value inside requestOptions.${key}: ${requestOptions[key]}`)
+		}
+	})
+
+    const opts = {
+        period_type: 'mtd',
+        ...requestOptions
+    };
+
+    if ( !datesRangeIncludesMonth(opts.end, beginDate, endDate) ) {
+        // date is outside of dates range of performance report
+        return {
+			end_date: requestOptions.end,
+			outside_of_dates_range: true,
+		}
+	}
+
+    let res;
+
+    try {
+        res = await getReports(opts);
+
+    } catch (e) {
+        throw {
+            end_date: requestOptions.end,
+            error: e
+        }
+    }
+
+    return res;
+
+}
+
+/**
+ * Helper function to use inside function _assembleReportsMap()
+ * @see _assembleReportsMap
+ *
+ * @param reportData {Object}
+ * @param yearData {Object}
+ * @param monthIndex
+ * @return { {} }
+ * @private
+ */
+function _applyMonthReport(reportData, yearData, monthIndex) {
+
+    if (reportData.outside_of_dates_range) { // e.g. date outside of dates range for performance report
+
+        yearData.months[monthIndex] = {
+            displayValue: "-",
+            reportData: reportData,
+        };
+
+        yearData.monthsRawValues[monthIndex] = null;
+
+		return yearData;
+
+	}
+
+    let displayVal, rawVal;
+
+    if (props.reportOptions.performance_unit === 'percent') {
+        /*yearsMap.get(year)[monthIndex] = [
+            parseFloat(reportData.grand_return * 100).toFixed(2),
+            parseFloat(reportData.grand_return * 100).toFixed(2) + '%',
+            reportData,
+        ]*/
+        displayVal = parseFloat(reportData.grand_return * 100).toFixed(2) + '%';
+        rawVal = parseFloat(reportData.grand_return * 100).toFixed(2);
+
+    } else {
+        /*yearsMap.get( year )[month] = [
+            reportData.grand_absolute_pl,
+            formatNumber(reportData.grand_absolute_pl),
+            reportData
+        ]*/
+
+        displayVal = formatNumber(reportData.grand_absolute_pl);
+        rawVal = reportData.grand_absolute_pl;
+
+    }
+
+    yearData.months[monthIndex] = {
+        displayValue: displayVal,
+        reportData: reportData,
+    };
+
+    yearData.monthsRawValues[monthIndex] = rawVal;
+
+    return yearData;
+
+}
+
+/**
+ * Helper function to use inside function getMonthDetails()
+ * @see getMonthDetails
+ *
+ * @param monthsList
+ * @param yearsMap {Map}
+ * @return {ReportsMap} - map filled with data of reports for months
+ * @private
+ */
+function _assembleReportsMap(monthsList, yearsMap) {
+
+    // sort months by `.end_date` years in descending order
+    monthsList.sort((a, b) => {
+
+        const aEndDate = a.value ? a.value.end_date : a.reason.end_date;
+        let aYear = null;
+
+        if ( dayjs(aEndDate, 'YYYY-MM-DD').isValid() ) {
+            aYear = dayjs(aEndDate).year();
+
+        } else {
+            console.error(`[RvPerformanceDetail] wrong end_date format ${a}`)
+        }
+
+        const bEndDate = b.value ? b.value.end_date : b.reason.end_date;
+        let bYear = null;
+
+        if ( dayjs(bEndDate, 'YYYY-MM-DD').isValid() ) {
+            bYear = dayjs(bEndDate).year();
+
+        } else {
+            console.error(`[RvPerformanceDetail] wrong end_date format ${b}`)
+        }
+
+        if (aYear > bYear) {
+            return -1;
+
+        } else if (aYear < bYear) {
+            return 1;
+        }
+
+        return 0;
+
+    })
+
+    //# region Default data for months
+    /*let defaultMonth = [
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+    ];*/
+    /**
+     * @type {Object}
+     * @property months { [MonthReportObject] }
+     *
+     */
+    let defaultYearData = {
+        // error: false,
+        months: [
+            {
+                displayValue: '-',
+                // reportData: {},
+                // error: {},
+                // data: {},
+            },
+            {
+                displayValue: '-',
+            },
+            {
+                displayValue: '-',
+            },
+            {
+                displayValue: '-',
+            },
+            {
+                displayValue: '-',
+            },
+            {
+                displayValue: '-',
+            },
+            {
+                displayValue: '-',
+            },
+            {
+                displayValue: '-',
+            },
+            {
+                displayValue: '-',
+            },
+            {
+                displayValue: '-',
+            },
+            {
+                displayValue: '-',
+            },
+            {
+                displayValue: '-',
+            },
+        ],
+        /*
+        Storing raw values in a separate property makes it easier to access
+        them inside chooseYear. No need to call Array.map().
+        */
+        monthsRawValues: [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+        ],
+
+        total: {
+            displayValue: ''
+			// error: null
+		}
+
+    };
+
+    // apply number formats to default data
+    /*if (props.reportOptions.performance_unit === 'percent') {
+
+        defaultYearData.months = defaultYearData.months.map(month => {
+            month.displayValue = '0.00%';
+            return month;
+        });
+
+    } else {
+
+        defaultYearData.months = defaultYearData.months.map(month => {
+            month.displayValue = formatNumber( month.formattedValue );
+            return month;
+        });
+
+    }*/
+    //# endregion
+
+    // Group months by years
+    monthsList.forEach((item) => {
+
+        let endDate = item.value ? item.value.end_date : item.reason.end_date;
+
+        if ( !dayjs(endDate, 'YYYY-MM-DD').isValid() ) {
+            console.error(`[RvPerformanceDetail._assembleReportsMap] response with invalid endDate: ${item}`);
+            throw `[RvPerformanceDetail._assembleReportsMap] invalid endDate: ${endDate}`;
+		}
+
+        endDate = endDate.split('-');
+
+        const year = endDate[0]; // e.g. "1999", "2001", "2012".
+        let monthIndex = endDate[1]; // e.g. "01", "05", "12".
+        monthIndex = parseInt(monthIndex) - 1; // month index
+
+        if ( !yearsMap.has(year) ) {
+            yearsMap.set( year, structuredClone(defaultYearData) )
+        }
+
+        let yearData = yearsMap.get(year);
+
+        if (item.status === 'fulfilled') {
+
+            yearData = _applyMonthReport(item.value, yearData, monthIndex);
+
+        }
+        else { // promise rejected
+
+            yearData.error = true;
+            yearData.months[monthIndex].error = item.reason.error.error;
+
+		}
+
+        yearsMap.set(year, yearData)
+
+    })
+
+    /*columnsForYear.push({
+        key: 'total',
+        value: '-',
+    });
+
+    portfolioItemsList.push({
+        key: year,
+        columns: columnsForYear,
+        isActive: false,
+    })*/
+
+	return yearsMap;
+
+}
+
 async function getMonthDetails() {
 
-	if (detailsLoading.value) return false;
+    requestDetailsUid = useGenerateUniqueId();
+    const requestUid = requestDetailsUid;
+	/* portfolioYears.value = [];
+    portfolioTotals.value = [];
+    portfolioItems.value = [];
+    portfolioItemsRaw = {}; */
+    detailsLoading.value = true;
+	resetData();
 
-    emits("loadingDataStart");
+    let portfolioItemsList = [];
+    let portfolioItemsRawData = {};
 
-    detailsLoading.value = true
-	portfolioYears.value = []
-	portfolioTotals.value = []
-	portfolioItems.value = []
-	portfolioItemsRaw = {}
-
-	let bundle = bundleId.value
-
-    function _datesRangeIncludesMonth(year, monthIndex) {
-        return ( year != dateTo.year() || monthIndex <= dateTo.month() ) &&
-        ( year != dateFrom.year() || monthIndex >= dateFrom.month() );
-    }
+	let bundle = bundleId.value;
 
 	let begin
 	let firstTransaction = {}
@@ -754,6 +1252,7 @@ async function getMonthDetails() {
 
 	const promises = []
 
+    // get performance report for months
 	monthEndDates.forEach(monthEndDate => {
 
 		// promises.push(getReports({ period_type: 'ytd', end: monthEndDate, ids: bundle }))
@@ -761,65 +1260,31 @@ async function getMonthDetails() {
 
             monthEndDate = dayjs(monthEndDate).format('YYYY-MM-DD');
 
-            promises.push(getReports({period_type: 'mtd', end: monthEndDate, ids: bundle}));
+            const getReportOpts = {
+                end: monthEndDate,
+                ids: bundle,
+                requestUid: requestUid,
+            };
+
+            promises.push( getReportForMonth(getReportOpts, begin, props.end_date) );
 
 		}
 
 	})
 
-	let yearsBuffer = new Map()
 
-    let allMonths;
+    let allMonths = await Promise.allSettled(promises);
 
-    try {
-        allMonths = await Promise.all(promises);
-    } catch (e) {
-        console.error(e)
+    // Check that requested data is still relevant
+    if (requestUid !== requestDetailsUid) {
+		return;
+	}
 
-		resetData();
-        detailsLoading.value = false;
-        detailsLoadingError.value = "Failed to calculate years for period. Try again later.";
-		// May be problem in selected bundle.
-		// Let use ability to select another.
-        emits('loadingDataEnd');
-
-        throw "Error above occurred while trying to load and calculate data for RvPerformanceDetail";
-    }
-
-    // sort months by `.end_date` years in descending order
-    allMonths.sort((a, b) => {
-
-        let aYear = null;
-
-        if ( dayjs(a.end_date, 'YYYY-MM-DD').isValid() ) {
-            aYear = dayjs(a.end_date).year();
-
-        } else {
-            console.error(`RvPerformanceDetail: wrong end_date format ${a}`)
-        }
-
-        let bYear = null;
-
-        if ( dayjs(b.end_date, 'YYYY-MM-DD').isValid() ) {
-            bYear = dayjs(b.end_date).year();
-
-        } else {
-            console.error(`RvPerformanceDetail: wrong end_date format ${b}`)
-        }
-
-        if (aYear > bYear) {
-            return -1;
-
-        } else if (aYear < bYear) {
-            return 1;
-        }
-
-        return 0;
-
-    })
+    // let yearsBuffer = new Map();
+	let reportsMap = new Map();
 
 	console.log('allMonths', allMonths);
-	console.log('yearsBuffer', yearsBuffer);
+	console.log('yearsBuffer', reportsMap);
 
     // Structure of arrays with months' data inside yearsBuffer
     //
@@ -828,166 +1293,54 @@ async function getMonthDetails() {
     // index 2 - contains whole response object from backend with data about month
     // todo refactor
 
-    //# region Default data for months
-    let defaultMonth = [
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 0],
-    ];
+    reportsMap = _assembleReportsMap(allMonths, reportsMap);
 
-    // apply number formats to default data
-    if (props.reportOptions.performance_unit === 'percent') {
-        defaultMonth.forEach((month, index) => {
-            defaultMonth[index][1] = '0.00%';
-        });
+	/*let dateTo = dayjs(props.end_date)
+	let dateFrom = dayjs(begin)*/
 
-
-    } else {
-        defaultMonth.forEach((month, index) => {
-            defaultMonth[index][1] = formatNumber( defaultMonth[index][1] );
-        });
-    }
-    //# endregion
-
-	allMonths.forEach((item) => {
-
-		const parseDate = item.end_date.split('-');
-        const year = parseDate[0]; // e.g. "1999", "2001", "2012".
-        let month = parseDate[1]; // e.g. "01", "05", "12".
-        month = parseInt(month) - 1; // month index
-
-		/*if (props.reportOptions.performance_unit === 'percent') {
-			defaultMonth = {
-				key_01: [0, 0 + '%'],
-				key_02: [0, 0 + '%'],
-				key_03: [0, 0 + '%'],
-				key_04: [0, 0 + '%'],
-				key_05: [0, 0 + '%'],
-				key_06: [0, 0 + '%'],
-				key_07: [0, 0 + '%'],
-				key_08: [0, 0 + '%'],
-				key_09: [0, 0 + '%'],
-				key_10: [0, 0 + '%'],
-				key_11: [0, 0 + '%'],
-				key_12: [0, 0 + '%'],
-			}
-		}
-        else {
-			defaultMonth = {
-				key_01: [0, 0],
-				key_02: [0, 0],
-				key_03: [0, 0],
-				key_04: [0, 0],
-				key_05: [0, 0],
-				key_06: [0, 0],
-				key_07: [0, 0],
-				key_08: [0, 0],
-				key_09: [0, 0],
-				key_10: [0, 0],
-				key_11: [0, 0],
-				key_12: [0, 0],
-			}
-		}*/
-
-		if ( !yearsBuffer.has(year) ) {
-			yearsBuffer.set(year, JSON.parse(JSON.stringify(defaultMonth)) )
-		}
-
-		if (props.reportOptions.performance_unit === 'percent') {
-			yearsBuffer.get( year )[month] = [
-				parseFloat(item.grand_return * 100).toFixed(2),
-				parseFloat(item.grand_return * 100).toFixed(2) + '%',
-				item,
-			]
-		} else {
-			yearsBuffer.get( year )[month] = [
-				item.grand_absolute_pl,
-				formatNumber(item.grand_absolute_pl),
-				item
-			]
-		}
-
-
-	})
-
-	let dateTo = dayjs(props.end_date)
-	let dateFrom = dayjs(begin)
-
-	let index = 0;
-
-	for (let [year, months] of yearsBuffer) {
+	/* for (let [year, yearData] of reportsMapRef.value) {
         // @type {String} - e.g. "1999", "2001", "2012".
         // year
         //
         // @type { [Array] } - an array of arrays with data for each month
         // months
 
-        portfolioPerformanceReports[year] = months;
-		index = index + 1;
-		portfolioYears.value.push(year)
+        // portfolioPerformanceReports[year] = months;
 
-		/*portfolioItemsRaw.value.push(
-			Object.values(months).map((item, i) => {
-				if (
-					(year != dateTo.year() || i <= dateTo.month()) &&
-					(year != dateFrom.year() || i >= dateFrom.month())
-				)
-					return item[0]
-				else return ''
-			})
-		)*/
-        const monthsRawList = months.map((month, i) => {
-            if ( _datesRangeIncludesMonth(year, i) ) {
-                return month[0]
-            }
+		// portfolioItemsRaw.value.push(
+		// 	Object.values(months).map((item, i) => {
+		// 		if (
+		// 			(year != dateTo.year() || i <= dateTo.month()) &&
+		// 			(year != dateFrom.year() || i >= dateFrom.month())
+		// 		)
+		// 			return item[0]
+		// 		else return ''
+		// 	})
+		// )
 
-            return '';
-        });
+		// portfolioItems.value.push(
+		// 	Object.values(months).map((item, i) => {
+		// 		if (
+		// 			(year != dateTo.year() || i <= dateTo.month()) &&
+		// 			(year != dateFrom.year() || i >= dateFrom.month())
+		// 		)
+		// 			return item[1]
+		// 		else return ''
+		// 	})
+		// )
 
-        portfolioItemsRaw[year] = monthsRawList;
-		/*portfolioItems.value.push(
-			Object.values(months).map((item, i) => {
-				if (
-					(year != dateTo.year() || i <= dateTo.month()) &&
-					(year != dateFrom.year() || i >= dateFrom.month())
-				)
-					return item[1]
-				else return ''
-			})
-		)*/
-        /*const monthsRow = months.map((month, i) => {
+        // portfolioItemsRawData[year] = monthsRawList;
 
-			let val = null;
-
-            if ( _datesRangeIncludesMonth(year, i) ) {
-				val = month[1];
-            }
-
-			return {
-				key: i, // month index
-				value: val,
-			};
-
-        });*/
         let columnsForYear = [{
             key: 'year',
             value: year,
         }]
 
-        const monthsCols = months.map((month, i) => {
+        const monthsCols = yearData.months.map((month, i) => {
 
             let val = "-";
 
-            if ( _datesRangeIncludesMonth(year, i) ) {
+            if ( _datesRangeIncludesMonth(year, i, begin) ) {
                 val = month[1];
             }
 
@@ -1000,65 +1353,73 @@ async function getMonthDetails() {
 
         columnsForYear = columnsForYear.concat(monthsCols);
 
-        /*portfolioItems.value.push({
-            key: year,
-            columns: monthsRow,
-            isActive: false,
-        })
+        // let end;
+		//
+        // if ( year == dayjs(dateTo).year() ) {
+        //     end = dateTo.format('YYYY-MM-DD');
+        // } else {
+        //     end = `${year}-12-31`;
+        // }
+		//
+		// let total = await getReports({
+		// 	period_type: 'ytd',
+		// 	end: end,
+		// 	ids: bundle,
+		// })
+		//
+        // let totalCol = {
+        //     key: 'total',
+        //     value: '-',
+        // }
+		//
+        // if (props.reportOptions.performance_unit === 'percent') {
+        //     totalCol.value = parseFloat(total.grand_return * 100).toFixed(2) + '%';
+		//
+        // } else {
+        //     totalCol.value = formatNumber(total.grand_absolute_pl)
+        // }
+		//
+        // columnsForYear.push(totalCol);
 
-        portfolioItems.value = sortYears(portfolioItems.value);*/
-
-        let end;
-
-        if ( year == dayjs(dateTo).year() ) {
-            end = dateTo.format('YYYY-MM-DD');
-        } else {
-            end = `${year}-12-31`;
-        }
-
-		let total = await getReports({
-			period_type: 'ytd',
-			end: end,
-			ids: bundle,
-		})
-
-        let totalCol = {
+        columnsForYear.push({
             key: 'total',
             value: '-',
-        }
+        });
 
-        /*if (props.reportOptions.performance_unit === 'percent') {
-			portfolioTotals.value.push(parseFloat(total.grand_return * 100).toFixed(2))
-		} else {
-			portfolioTotals.value.push(formatNumber(total.grand_absolute_pl))
-		}*/
-        if (props.reportOptions.performance_unit === 'percent') {
-            totalCol.value = parseFloat(total.grand_return * 100).toFixed(2) + '%';
-
-        } else {
-            totalCol.value = formatNumber(total.grand_absolute_pl)
-        }
-
-        columnsForYear.push(totalCol);
-
-        portfolioItems.value.push({
+        portfolioItemsList.push({
             key: year,
             columns: columnsForYear,
             isActive: false,
         })
 
         // portfolioItems.value = sortYears(portfolioItems.value);
+	}*/
+    /*
+     * if it is not necessary to use '.end_date' from response
+     * of getReports() above
+     * consider calling _calculateTotalsForYears() alongside getReports()
+     */
+    reportsMap = await _calculateTotalsForYears(
+        reportsMap, props.end_date, bundle, requestUid
+	);
 
+    // Check that requested totals are still relevant
+    if (requestUid !== requestDetailsUid) {
+        return;
+    }
 
-	}
+    // if data is actual - use it
+    // portfolioItems.value = portfolioItemsList;
+    // portfolioItemsRaw = portfolioItemsRawData;
+    reportsMapRef.value = reportsMap;
+    detailsLoading.value = false;
 
-    emits('loadingDataEnd');
+	if ( reportsMapRef.value.size ) {
 
-    detailsLoading.value = false
+        const latestYearKey = reportsMapRef.value.keys().next().value;
 
-	if (portfolioYears.value.length) {
-		const latestYearKey = portfolioItems.value[0].key;
 		chooseYear(latestYearKey);
+
 	}
 
 }
@@ -1112,13 +1473,7 @@ async function deleteBundle() {
 }
 
 // double
-async function getReports({period_type, end, ids, type = 'months'}) {
-
-	// console.log('getReports.period_type', period_type)
-	// console.log('getReports.end', end)
-	// console.log('getReports.type', type)
-	// console.log('getReports.ids', ids)
-	// console.log('getReports.====')
+async function getReports({period_type, end, ids, type = 'months', requestUid}) {
 
 	let res = await useApi('performanceReport.post', {
 		body: {
@@ -1130,10 +1485,24 @@ async function getReports({period_type, end, ids, type = 'months'}) {
 			report_currency: props.report_currency,
 			bundle: ids,
 		},
+		notifyError: false,
 	})
 
-    if (res.error) {
-        throw res.error;
+	if (requestUid && requestUid !== requestDetailsUid) {
+        return null;
+	}
+
+    if ( res.hasOwnProperty('error') ) {
+
+        useNotify({
+            group: 'server_error',
+            title: 'Server Error',
+            text: res.error.error,
+            duration: 20000
+        })
+
+		throw res.error;
+
     }
 
 	return res
