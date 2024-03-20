@@ -133,7 +133,6 @@ async function init() {
         getPortfolios().then(result => {
             portfolios.value = result
             readyStatus.value = true;
-            console.log("testing459 this works", portfolios.value)
         });
 
     }
