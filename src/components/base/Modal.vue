@@ -65,10 +65,6 @@
 			//  action
 			// }
 			controls: Object,
-			onShowModal: {
-				type: Function,
-				required: false
-			},
 			no_padding: Boolean,
 			closeOnClickOutside: {
 				type: Boolean,
@@ -77,7 +73,7 @@
 			closingDisabled: Boolean,
 			empty_hack: Boolean,
 		},
-		emits: ['update:modelValue', 'close'],
+		emits: ['update:modelValue', 'open', 'close'],
 		data() {
 			return {}
 		},
@@ -91,14 +87,11 @@
 		},
 		watch: {
 			modelValue(val) {
-				if (val) document.querySelector('html').style.overflow = 'hidden'
+				if (val) {
+                    document.querySelector('html').style.overflow = 'hidden';
+                    this.$emit('open');
+                }
 				else document.querySelector('html').style.overflow = 'initial'
-
-				console.log('onShowModal.props', this);
-
-				if (val && typeof this.onShowModal === 'function') {
-					this.onShowModal();
-				}
 			},
 		},
 
