@@ -13,12 +13,11 @@
             />
         </div>
 
-        <ModalPerformanceDetail
+        <RvPerformanceCellDetailModal
                 :title="performanceDetailsColumnName === 'name' ? 'Bundle Portfolios' : 'Performance Details'"
                 v-model="performanceDetailIsOpen"
                 :performanceDetails="performanceDetails"
                 :performanceDetailsColumnName="performanceDetailsColumnName"
-                @cancel="performanceDetailIsOpen = false"
         />
 
     </FmExpansionPanel>

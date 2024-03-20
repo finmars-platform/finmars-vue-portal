@@ -1,8 +1,12 @@
 <template>
-	<BaseModal v-model="modelValue" :closingDisabled="creating" @update:modelValue="cancel" :onShowModal="onShowModal">
+	<BaseModal :modelValue="modelValue"
+			   :closingDisabled="creating"
+               @open="init"
+			   @close="onClose">
 
 		<div style="padding: 16px;">
-			<div v-if="performanceDetailsColumnName!=='name'">
+
+			<div v-if="performanceDetailsColumnName !== 'name'">
 				<table style="width: 100%;">
 					<tr>
 						<td>Date Start:</td>
@@ -68,7 +72,8 @@
 					</tr>
 				</table>
 			</div>
-			<div v-else-if="performanceDetailsColumnName === 'name'">
+
+			<div v-else>
 				<table>
 					<tr v-show="readyStatus" v-for="portfolio in portfolios" :key="portfolio.id">
 						<td class="text-center"><b>{{ portfolio.name }}</b></td>
@@ -78,9 +83,13 @@
 		</div>
 
 
-		<template #controls>
+		<template #controls="{ cancel }">
 			<div class="flex-row fc-space-between">
-				<FmBtn :disabled="creating" type="basic" @click="cancel">CANCEL</FmBtn>
+				<FmBtn
+					:disabled="creating"
+					type="basic"
+					@click="cancel"
+				>CANCEL</FmBtn>
 
 			</div>
 		</template>
@@ -90,11 +99,12 @@
 <script setup>
 
 let props = defineProps({
+    modelValue: Boolean,
 	performanceDetails: Object,
 	performanceDetailsColumnName: String,
 })
 
-let emit = defineEmits(['cancel', 'save'])
+let emit = defineEmits(['update:modelValue', 'close'])
 
 let readyStatus = ref(false)
 let creating = ref(false)
@@ -111,46 +121,24 @@ async function getPortfolios() {
 	return res.results
 }
 
-function cancel() {
-
-
-	emit('cancel')
+function onClose() {
+    emit('update:modelValue', false);
+    emit('close');
 }
 
 async function init() {
 
-	console.log("PerformanceDetail.init", props.performanceDetails);
+    if (props.performanceDetailsColumnName === "name") {
 
-	getPortfolios().then(result => {
-		portfolios.value = result
-		readyStatus.value = true;
-	}).catch(error => {
-		console.error(error)
-	})
+        getPortfolios().then(result => {
+            portfolios.value = result
+            readyStatus.value = true;
+            console.log("testing459 this works", portfolios.value)
+        });
 
-	watch(
-		() => props.performanceDetails,
-		() => {
-			if (props.performanceDetails !== null && props.performanceDetailsColumnName === "name") {
-				readyStatus.value = false;
-				getPortfolios().then(result => {
-					portfolios.value = result
-					readyStatus.value = true;
-				}).catch(error => {
-					console.error(error)
-				})
-			}
-		}
-	)
+    }
 
 }
-
-function onShowModal() {
-
-	init();
-
-}
-
 
 </script>
 

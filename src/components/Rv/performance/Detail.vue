@@ -125,11 +125,11 @@
 			{{ getTextForEmptyTable() }}
         </div>
 
-		<ModalPerformanceDetail
+		<RvPerformanceCellDetailModal
 			title="Performance Details"
 			v-model="cellDetailsIsOpen"
 			:performanceDetails="cellDetails"
-			@cancel="cellDetailsIsOpen = false"
+            @close="onCellDetailsClose"
 		/>
 
 	</FmExpansionPanel>
@@ -209,14 +209,8 @@ const tableGridTemplateCols = '75px repeat(12, 1fr) 80px';
 let detailsLoading = ref(false);
 let detailsLoadingError = ref('');
 
-let cellDetailsIsOpen = ref(false)
-let cellDetails = ref(null)
-
 let showBundleActions = ref(false)
 let editBundleIsOpened = ref(false)
-
-// let portfolioPerformanceReports = {};
-
 
 /**
  *
@@ -310,46 +304,23 @@ let tableRowsComp = computed(() => {
 
 });
 
+let cellDetailsIsOpen = ref(false)
+let cellDetails = ref(null)
+
+/**
+ * Because model window always opened from outside.
+ * emit('update:modelValue') and onCellDetailsClose() called
+ * only when closing RvPerformanceCellDetailModal.
+ */
+function onCellDetailsClose () {
+    cellDetailsIsOpen.value = false;
+    cellDetails.value = null;
+}
+
 function resetData() {
     reportsMapRef.value = new Map();
     selectedYear.value = '';
 }
-
-watch(
-    () => props.bundle,
-    async (newVal, oldVal) => {
-
-        if (!newVal) {
-
-            if (oldVal) { // value changed from something to nothing
-
-                resetData();
-            }
-
-        }
-
-    },
-    {deep: true}
-)
-
-watch(
-    () => [
-        props.bundle,
-        props.calculation_type,
-        props.report_currency,
-	],
-    async () => {
-
-        if (props.bundle) {
-            await getMonthDetails();
-
-        } else {
-            console.error(`[RvPerformanceDetail] no bundle passed: ${props.bundle}`);
-        }
-
-    },
-    {deep: true},
-)
 
 function formatNumber(num) {
     return Intl.NumberFormat('en-EN', {
@@ -1511,6 +1482,42 @@ async function getReports({period_type, end, ids, type = 'months', requestUid}) 
 function init() {
     if (bundleId.value) getMonthDetails()
 }
+
+watch(
+    () => props.bundle,
+    async (newVal, oldVal) => {
+
+        if (!newVal) {
+
+            if (oldVal) { // value changed from something to nothing
+
+                resetData();
+            }
+
+        }
+
+    },
+    {deep: true}
+)
+
+watch(
+    () => [
+        props.bundle,
+        props.calculation_type,
+        props.report_currency,
+    ],
+    async () => {
+
+        if (props.bundle) {
+            await getMonthDetails();
+
+        } else {
+            console.error(`[RvPerformanceDetail] no bundle passed: ${props.bundle}`);
+        }
+
+    },
+    {deep: true},
+)
 
 </script>
 
