@@ -82,7 +82,7 @@
 
 		const res = await layoutsStore.getLayoutByUserCode(contentType, userCode);
 
-		if (!res || res.error) {
+		if (!res || res._$error) {
 
 			console.error(`Failed to get layout with user code "${userCode}" for split panel`);
 
@@ -91,7 +91,7 @@
 				title: `Failed to get layout with user code "${userCode}" for split panel`
 			})
 
-			if (res.error) console.error(res.error);
+			if (res._$error) console.error(res._$error);
 
 			return null;
 

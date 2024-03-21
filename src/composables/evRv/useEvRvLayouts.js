@@ -86,8 +86,8 @@ export async function useFetchEvRvLayout(layoutsStore, viewerData, queryUserCode
 		res = await layoutsStore.getDefaultLayout(viewerData.content_type);
 	}
 
-	if (res && res.error) {
-		throw new Error(res.error);
+	if (res && res._$error) {
+		throw new Error(res._$error);
 	}
 
 	return res;

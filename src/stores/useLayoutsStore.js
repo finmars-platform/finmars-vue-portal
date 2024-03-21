@@ -9,10 +9,10 @@ import { defineStore } from "pinia";
  */
 function layoutIsActual(layout, fetchedLayoutData) {
 
-	if (fetchedLayoutData.error) {
+	if (fetchedLayoutData._$error) {
 
-		console.error(fetchedLayoutData.error);
-		useNotify({type: 'error', title: fetchedLayoutData.error.message || fetchedLayoutData.error.detail});
+		console.error(fetchedLayoutData._$error);
+		useNotify({type: 'error', title: fetchedLayoutData._$error.message || fetchedLayoutData._$error.detail});
 
 		return false;
 
@@ -35,8 +35,8 @@ function layoutIsActual(layout, fetchedLayoutData) {
 
 function processError(dataWithError) {
 
-	console.error(dataWithError.error);
-	useNotify({type: 'error', title: dataWithError.error.message || dataWithError.error.detail});
+	console.error(dataWithError._$error);
+	useNotify({type: 'error', title: dataWithError._$error.message || dataWithError._$error.detail});
 
 	return dataWithError;
 
@@ -61,7 +61,7 @@ export default defineStore({
 
 			const res = await useApi(route_opt, options);
 
-			if (res.error) {
+			if (res._$error) {
 				return processError(res);
 			}
 
@@ -126,7 +126,7 @@ export default defineStore({
 
 			const res = await useApi('listLayoutListLight.get', options);
 
-			if (res.error) {
+			if (res._$error) {
 				return processError(res);
 
 			} else if (!res.results.length) {
@@ -207,7 +207,7 @@ export default defineStore({
 
 			let res = await useApi('listLayout.put', options);
 
-			if (res.error) {
+			if (res._$error) {
 				return processError(res);
 
 			} else {
@@ -256,7 +256,7 @@ export default defineStore({
 
 			const res = useApi('listLayout.delete', {params: {id: layoutId}});
 
-			if (res.error) {
+			if (res._$error) {
 				return processError(res);
 
 			} else {
@@ -280,7 +280,7 @@ export default defineStore({
 
 			const res = await useApi('listLayoutListLight.get', {filters});
 
-			if (res.error) {
+			if (res._$error) {
 				return processError(res);
 
 			} else {

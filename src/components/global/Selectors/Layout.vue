@@ -166,7 +166,7 @@
 		loadingLayout.value = true;
 		let res = await layoutsStore.getLayoutByUserCode(props.content_type, userCode);
 
-		if (!res.error) {
+		if (!res._$error) {
 
 			layoutString.value = JSON.stringify(res, null, 4);
 

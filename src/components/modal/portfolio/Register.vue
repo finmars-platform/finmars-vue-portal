@@ -211,7 +211,7 @@
 
 		creating.value = false
 
-		if (!res.error) {
+		if (!res._$error) {
 			portfolioRegister.value = { new_linked_instrument: {} }
 
 			Object.keys(errorsData).forEach((prop) => {

@@ -237,7 +237,7 @@
 
 		let res = await useApi('portfolioBundle.put', opts);
 
-		if (!res.error) {
+		if (!res._$error) {
 
 			useNotify({
 				type: 'success',
@@ -255,7 +255,7 @@
 
 		const res = await useApi( 'portfolioBundle.delete', {params: {id: bundleToDelete.id}} );
 
-		if (!res.error) {
+		if (!res._$error) {
 
 			useNotify({type: 'success', title: `Bundle ${bundleToDelete.name} was successfully deleted.`})
 

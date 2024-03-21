@@ -119,7 +119,7 @@
 	async function save() {
 		let res = await useApi('groupList.post', {body: form})
 
-		if ( !res.error ) {
+		if ( !res._$error ) {
 			useNotify({type: 'success', title: 'Group created!'})
 			router.push('/settings/permissions?tab=Groups')
 		}

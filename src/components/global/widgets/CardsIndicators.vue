@@ -84,7 +84,7 @@
 
 		let res = await useApi('widgetsStats.get', apiOpts)
 
-		if ( res.error ) {
+		if ( res._$error ) {
 			status.value = 101
 
 			return false

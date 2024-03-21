@@ -718,7 +718,7 @@
 
 		let res = await useApi('systemMessages.get', { filters })
 
-		if (!res.error) {
+		if (!res._$error) {
 			messages.value = force ? res.results : messages.value.concat(res.results)
 		} else {
 			if (res.code == 404) {

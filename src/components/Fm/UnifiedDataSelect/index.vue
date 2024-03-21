@@ -213,7 +213,7 @@
 
 		res = await commonMethods.startImport(props.content_type, item);
 
-		if ( Object.keys(res).length === 1 && res.error ) {
+		if ( Object.keys(res).length === 1 && res._$error ) {
 
 			setInputStates(false);
 

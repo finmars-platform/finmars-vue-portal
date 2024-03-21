@@ -118,13 +118,13 @@
 			body: item,
 		})
 
-		if (res.error) {
+		if (res._$error) {
 			useNotify({
 				type: 'error',
-				title: res.error.message || res.error.detail,
+				title: res._$error.message || res._$error.detail,
 			})
 
-			throw new Error(res.error)
+			throw new Error(res._$error)
 		}
 		await evAttrsStore.fetchCustomFields(props.content_type)
 		useNotify({ type: 'success', title: `Column delete on the server` })
@@ -150,13 +150,8 @@
 			body: newNamesData,
 		})
 
-		if (res.error) {
-			useNotify({
-				type: 'error',
-				title: res.error.message || res.error.detail,
-			})
-
-			throw new Error(res.error)
+		if (res._$error) {
+			throw new Error(res._$error)
 		}
 
 		useNotify({ type: 'success', title: `Column Edit on the server` })
@@ -169,12 +164,8 @@
 		let res = await useApi('balanceReportCustomField.post', {
 			body: newNamesData,
 		})
-		if (res.error) {
-			useNotify({
-				type: 'error',
-				title: res.error.message || res.error.detail,
-			})
-			throw new Error(res.error)
+		if (res._$error) {
+			throw new Error(res._$error)
 		}
 		useNotify({ type: 'success', title: `Column create on the server` })
 		await evAttrsStore.fetchCustomFields(props.content_type)

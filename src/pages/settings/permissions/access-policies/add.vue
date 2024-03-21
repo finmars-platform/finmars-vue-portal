@@ -197,7 +197,7 @@ async function save() {
 
 	let res = await useApi('accessPolicyList.post', {body: form})
 
-	if (!res.error) {
+	if (!res._$error) {
 		useNotify({type: 'success', title: 'Access Policy created!'})
 		// TODO move to active tab Groups
 		router.push('/settings/permissions')

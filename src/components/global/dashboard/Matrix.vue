@@ -90,9 +90,9 @@
 			component.value.settings.layout
 		)
 
-		if (res.error) {
+		if (res._$error) {
 			errorMessage.value = `ERROR: Layout with user code: ${component.value.settings.layout} not found`
-			throw res.error
+			throw res._$error
 		} else {
 			return res.id
 		}

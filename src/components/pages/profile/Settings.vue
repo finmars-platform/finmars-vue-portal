@@ -97,7 +97,7 @@ async function uploadProfilePicture(data) {
 async function saveUser() {
 	let res = await useApi('me.put', {body: formUser})
 
-	if (!res.error) {
+	if (!res._$error) {
 		useNotify({
 			type: 'success',
 			title: 'Saved'
@@ -105,7 +105,7 @@ async function saveUser() {
 
 	} else {
 
-		errors.value = res.error
+		errors.value = res._$error
 	}
 }
 

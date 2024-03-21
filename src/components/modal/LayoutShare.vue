@@ -129,7 +129,7 @@
 
 		const res = await useApi('memberList.get');
 
-		if (res.error) {
+		if (res._$error) {
 			useLogResponseError(res);
 
 		} else {
@@ -151,7 +151,7 @@
 
 			const res = await useApi('configSharingConfigFile.get', opts);
 
-			if (!res.error) {
+			if (!res._$error) {
 				globalConfigFile.value = res;
 				configFileReady.value = true;
 			}
@@ -393,7 +393,7 @@
 			res = await useApi('configSharingConfigFile.post', opts);
 		}
 
-		if (res.error) {
+		if (res._$error) {
 			return useLogResponseError(res);
 		}
 
@@ -421,7 +421,7 @@
 			res = await layoutStore.updateLayout(item.id, item);
 		}
 
-		if (res.error) {
+		if (res._$error) {
 			return useLogResponseError(res);
 		}
 
@@ -441,7 +441,7 @@
 
 		const res = useApi('configSharingInvite.pust', opts);
 
-		if (res.error) {
+		if (res._$error) {
 			return useLogResponseError(res);
 		}
 

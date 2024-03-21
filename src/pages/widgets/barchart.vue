@@ -127,7 +127,7 @@
 			provider: null
 		})
 
-		if ( res.error ) {
+		if ( res._$error ) {
 			status.value = 101
 
 			return false

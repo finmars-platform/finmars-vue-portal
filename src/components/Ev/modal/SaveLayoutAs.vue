@@ -79,7 +79,7 @@
 
 		let res = await layoutsStore.getLayoutByUserCode(viewerData.listLayout.content_type, overwriteData.user_code);
 
-		if (res.error) {
+		if (res._$error) {
 			return;
 		}
 
@@ -102,7 +102,7 @@
 
 		const updateRes = await useApi('listLayout.put', ovOptions);
 
-		if (!updateRes.error) {
+		if (!updateRes._$error) {
 
 			applyLayout(updateRes);
 			useNotify({type: 'success', title: `Success. Layout ${overwriteData.name} overwritten.`});
@@ -151,11 +151,11 @@
 		});*/
 		let res = await useApi('listLayout.post', {body: newLayout});
 
-		if (res.error) {
+		if (res._$error) {
 
-			// console.error(res.error);
-			useNotify({type: 'error', title: res.error.message || res.error.detail});
-			throw new Error(res.error);
+			// console.error(res._$error);
+			useNotify({type: 'error', title: res._$error.message || res._$error.detail});
+			throw new Error(res._$error);
 
 		} else {
 
@@ -179,8 +179,8 @@
 
 			let res = await useApi('listLayoutListLight.get', options);
 
-			if (res.error) {
-				console.error(res.error);
+			if (res._$error) {
+				console.error(res._$error);
 
 			} else {
 

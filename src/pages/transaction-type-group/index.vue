@@ -96,18 +96,14 @@
 			params: { id: item.id },
 			body: item,
 		})
-		if (res.error) {
-			useNotify({
-				type: 'error',
-				title: res.error.message || res.error.detail,
-			})
-			throw new Error(res.error)
+		if (res._$error) {
+			throw new Error(res._$error)
 		} else if (res.status === 'conflict') {
 			useNotify({
 				type: 'error',
 				title: 'You can not delete attributed that already in use',
 			})
-			throw new Error(res.error)
+			throw new Error(res._$error)
 		}
 		defaultsGet()
 		useNotify({ type: 'success', title: `data delete on the server` })
@@ -129,18 +125,18 @@
 			params: { id: activeTransactionTypeList.id },
 			body: newNamesData,
 		})
-		if (res.error) {
+		if (res._$error) {
 			useNotify({
 				type: 'error',
-				title: res.error.message || res.error.detail,
+				title: res._$error.message || res._$error.detail,
 			})
-			throw new Error(res.error)
+			throw new Error(res._$error)
 		} else if (res.status === 'conflict') {
 			useNotify({
 				type: 'error',
 				title: 'You can not Edit CustomColumns that already in use',
 			})
-			throw new Error(res.error)
+			throw new Error(res._$error)
 		}
 		useNotify({ type: 'success', title: `data Edit on the server` })
 		defaultsGet()
@@ -152,18 +148,14 @@
 		let res = await useApi('transactionTypeGroup.post', {
 			body: newNamesData,
 		})
-		if (res.error) {
-			useNotify({
-				type: 'error',
-				title: res.error.message || res.error.detail,
-			})
-			throw new Error(res.error)
+		if (res._$error) {
+			throw new Error(res._$error)
 		} else if (res.status === 'conflict') {
 			useNotify({
 				type: 'error',
 				title: 'You can not Edit CustomColumns that already in use',
 			})
-			throw new Error(res.error)
+			throw new Error(res._$error)
 		}
 		useNotify({ type: 'success', title: `data Edit on the server` })
 		defaultsGet()

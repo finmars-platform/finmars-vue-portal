@@ -124,8 +124,8 @@ async function calcDayForBundle(bundleId, row, rowRaw) {
 
     let res = await getDay(bundleId);
 
-    if (res.error) {
-        throw res.error;
+    if (res._$error) {
+        throw res._$error;
     }
 
     rowRaw.daily_performance_report = res;
@@ -139,8 +139,8 @@ async function calcMonthForBundle(bundleId, row, rowRaw) {
     row.month = null;
     const res = await getMonth(bundleId);
 
-    if (res.error) {
-        throw res.error;
+    if (res._$error) {
+        throw res._$error;
     }
 
     rowRaw.month_performance_report = res
@@ -155,8 +155,8 @@ async function calcQuarterForBundle(bundleId, row, rowRaw) {
 
     const res = await getQ(bundleId);
 
-    if (res.error) {
-        throw res.error;
+    if (res._$error) {
+        throw res._$error;
     }
 
     rowRaw.q_performance_report = res;
@@ -171,8 +171,8 @@ async function calcYearForBundle(bundleId, row, rowRaw) {
 
     const res = await getYear(bundleId);
 
-    if (res.error) {
-        throw res.error;
+    if (res._$error) {
+        throw res._$error;
     }
 
     rowRaw.year_performance_report = res;
@@ -187,8 +187,8 @@ async function calcLastYearForBundle(bundleId, row, rowRaw) {
 
     const res = await getLastYear(bundleId);
 
-    if (res.error) {
-        throw res.error;
+    if (res._$error) {
+        throw res._$error;
     }
 
     rowRaw.last_performance_report = res;
@@ -203,8 +203,8 @@ async function calcBeforeLastYearForBundle(bundleId, row, rowRaw) {
 
     const res = await getYearBeforeLast(bundleId);
 
-    if (res.error) {
-        throw res.error;
+    if (res._$error) {
+        throw res._$error;
     }
 
     rowRaw.beforeLast_performance_report = res;
@@ -219,8 +219,8 @@ async function calcInceptYearForBundle(bundleId, row, rowRaw) {
 
     const res = await getIncept(bundleId);
 
-    if (res.error) {
-        throw res.error;
+    if (res._$error) {
+        throw res._$error;
     }
 
     rowRaw.incept_performance_report = res;
@@ -235,8 +235,8 @@ async function calcAnnualForBundle(bundleId, row, rowRaw) {
 
 	const res = await getIncept(bundleId)
 
-	if (res.error) {
-		throw res.error;
+	if (res._$error) {
+		throw res._$error;
 	}
 
 	rowRaw.annualized_performance_report = res
@@ -384,7 +384,7 @@ async function fetchPortfolioBundles() {
         filters: {page: 1, page_size: 1000}
     });
 
-    if (res.error) {
+    if (res._$error) {
         return;
     }
 
@@ -587,13 +587,13 @@ async function getReports({period_type, end, ids, type = 'months'}) {
 
     if ( res.hasOwnProperty("error") ) {
 
-        if (!res.error.error?.details?.errors[0] ||
-            res.error.error.details.errors[0].error_key !== 'no_first_transaction_date') {
+        if (!res._$error.error?.details?.errors[0] ||
+            res._$error.error.details.errors[0].error_key !== 'no_first_transaction_date') {
 
             useNotify({
                 group: 'server_error',
                 title: 'Server Error',
-                text: res.error.error,
+                text: res._$error.error,
                 duration: 20000
             })
 
@@ -608,6 +608,7 @@ async function getReports({period_type, end, ids, type = 'months'}) {
 
 // rework
 async function getEndDate() {
+
     if (viewerData.reportOptions?.end_date) {
         return viewerData.reportOptions?.end_date
     }
@@ -649,7 +650,7 @@ async function getEndDate() {
 
     const res = await useApi('expression.post', opts)
 
-    if (res.error) throw new Error(res.error)
+    if (res._$error) throw new Error(res._$error)
 
     viewerData.reportOptions.end_date = res.result
 

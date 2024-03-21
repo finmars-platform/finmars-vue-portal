@@ -61,7 +61,7 @@
 			params: { id: props.workspaceId },
 			body
 		})
-		if ( !res.error ) {
+		if ( !res._$error ) {
 			useNotify({
 				type: 'success',
 				title: 'Success',

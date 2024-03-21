@@ -394,7 +394,7 @@
 			filters: { status: '0' },
 		})
 
-		if (!res.error) invitesList.value = res.results
+		if (!res._$error) invitesList.value = res.results
 	}
 
 	fetchInvites()

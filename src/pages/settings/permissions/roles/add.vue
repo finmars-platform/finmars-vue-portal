@@ -118,7 +118,7 @@
 
 		let res = await useApi('roleList.post', {body: form})
 
-		if ( !res.error ) {
+		if ( !res._$error ) {
 			useNotify({type: 'success', title: 'Role created!'})
 
 			router.push('/settings/permissions?tab=Roles')

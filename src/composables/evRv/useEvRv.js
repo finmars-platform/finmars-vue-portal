@@ -266,7 +266,7 @@
 
 		const res = await getPromise;
 
-		if (res.error) {
+		if (res._$error) {
 			throw new Error("Got error loading attribute types with contentType: " + contentType)
 		}
 

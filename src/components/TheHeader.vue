@@ -213,7 +213,7 @@ async function loadNoti(id) {
 		filters: {only_new: true},
 	})
 
-	if (res.error) return false
+	if (res._$error) return false
 	noti.value = res.results.filter((item) => !item.is_pinned).slice(0, 3)
 }
 

@@ -638,12 +638,8 @@
 					params: { id: textField.id },
 					body: textField,
 				})
-				if (res.error) {
-					useNotify({
-						type: 'error',
-						title: res.error.message || res.error.detail,
-					})
-					throw new Error(res.error)
+				if (res._$error) {
+					throw new Error(res._$error)
 				}
 			} else {
 				textField.configuration_code = configurationListActive.value
@@ -651,12 +647,8 @@
 				let res = useApi('transactionUserField.post', {
 					body: textField,
 				})
-				if (res.error) {
-					useNotify({
-						type: 'error',
-						title: res.error.message || res.error.detail,
-					})
-					throw new Error(res.error)
+				if (res._$error) {
+					throw new Error(res._$error)
 				}
 			}
 		})
@@ -667,12 +659,8 @@
 					params: { id: textField.id },
 					body: textField,
 				})
-				if (res.error) {
-					useNotify({
-						type: 'error',
-						title: res.error.message || res.error.detail,
-					})
-					throw new Error(res.error)
+				if (res._$error) {
+					throw new Error(res._$error)
 				}
 			} else {
 				textField.configuration_code = configurationListActive.value
@@ -680,12 +668,8 @@
 				let res = useApi('transactionUserField.post', {
 					body: textField,
 				})
-				if (res.error) {
-					useNotify({
-						type: 'error',
-						title: res.error.message || res.error.detail,
-					})
-					throw new Error(res.error)
+				if (res._$error) {
+					throw new Error(res._$error)
 				}
 			}
 		})
@@ -696,12 +680,8 @@
 					params: { id: textField.id },
 					body: textField,
 				})
-				if (res.error) {
-					useNotify({
-						type: 'error',
-						title: res.error.message || res.error.detail,
-					})
-					throw new Error(res.error)
+				if (res._$error) {
+					throw new Error(res._$error)
 				}
 			} else {
 				textField.configuration_code = configurationListActive.value
@@ -709,12 +689,8 @@
 				let res = useApi('transactionUserField.post', {
 					body: textField,
 				})
-				if (res.error) {
-					useNotify({
-						type: 'error',
-						title: res.error.message || res.error.detail,
-					})
-					throw new Error(res.error)
+				if (res._$error) {
+					throw new Error(res._$error)
 				}
 			}
 		})
@@ -729,12 +705,8 @@
 					body: textField,
 				})
 
-				if (res.error) {
-					useNotify({
-						type: 'error',
-						title: res.error.message || res.error.detail,
-					})
-					throw new Error(res.error)
+				if (res._$error) {
+					throw new Error(res._$error)
 				}
 			} else {
 				textField.configuration_code = configurationListActive.value
@@ -743,12 +715,8 @@
 				let res = useApi('complexTransactionUserField.post', {
 					body: textField,
 				})
-				if (res.error) {
-					useNotify({
-						type: 'error',
-						title: res.error.message || res.error.detail,
-					})
-					throw new Error(res.error)
+				if (res._$error) {
+					throw new Error(res._$error)
 				}
 			}
 		})
@@ -759,12 +727,8 @@
 					params: { id: textField.id },
 					body: textField,
 				})
-				if (res.error) {
-					useNotify({
-						type: 'error',
-						title: res.error.message || res.error.detail,
-					})
-					throw new Error(res.error)
+				if (res._$error) {
+					throw new Error(res._$error)
 				}
 			} else {
 				textField.configuration_code = configurationListActive.value
@@ -772,12 +736,8 @@
 				let res = useApi('complexTransactionUserField.post', {
 					body: textField,
 				})
-				if (res.error) {
-					useNotify({
-						type: 'error',
-						title: res.error.message || res.error.detail,
-					})
-					throw new Error(res.error)
+				if (res._$error) {
+					throw new Error(res._$error)
 				}
 			}
 		})
@@ -788,12 +748,8 @@
 					params: { id: textField.id },
 					body: textField,
 				})
-				if (res.error) {
-					useNotify({
-						type: 'error',
-						title: res.error.message || res.error.detail,
-					})
-					throw new Error(res.error)
+				if (res._$error) {
+					throw new Error(res._$error)
 				}
 			} else {
 				textField.configuration_code = configurationListActive.value
@@ -801,12 +757,8 @@
 				let res = useApi('complexTransactionUserField.post', {
 					body: textField,
 				})
-				if (res.error) {
-					useNotify({
-						type: 'error',
-						title: res.error.message || res.error.detail,
-					})
-					throw new Error(res.error)
+				if (res._$error) {
+					throw new Error(res._$error)
 				}
 			}
 		})
@@ -820,12 +772,8 @@
 					params: { id: textField.id },
 					body: textField,
 				})
-				if (res.error) {
-					useNotify({
-						type: 'error',
-						title: res.error.message || res.error.detail,
-					})
-					throw new Error(res.error)
+				if (res._$error) {
+					throw new Error(res._$error)
 				}
 			} else {
 				textField.configuration_code = configurationListActive.value
@@ -833,13 +781,9 @@
 				let res = useApi('instrumentUserField.post', {
 					body: textField,
 				})
-				if (res.error) {
-					// console.error(res.error);
-					useNotify({
-						type: 'error',
-						title: res.error.message || res.error.detail,
-					})
-					throw new Error(res.error)
+				if (res._$error) {
+					// console.error(res._$error);
+					throw new Error(res._$error)
 				}
 			}
 		})

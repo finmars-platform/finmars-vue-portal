@@ -9,6 +9,7 @@ export default async function useApi(
 		body, // Body for POST PUT PATCH
 		filters, // Query object
 		headers = {},
+		signal, // AbortController.signal
 		provider = true, // callback for format data result
 		notifyError = true,
 	} = {}
@@ -53,6 +54,7 @@ export default async function useApi(
 	}
 
 	if (body) opts.body = body
+
 	if (filters) {
 		let searchPaarams = []
 
@@ -62,10 +64,15 @@ export default async function useApi(
 
 		url += '?' + searchPaarams.join('&')
 	}
+
 	if (params) {
 		for (let param in params) {
 			url = url.replace(`{${param}}`, params[param])
 		}
+	}
+
+	if (signal) {
+		opts.signal = signal;
 	}
 
 	try {
@@ -75,7 +82,12 @@ export default async function useApi(
 			? providers[route](response)
 			: response
 	} catch (e) {
-		console.log('e:', e)
+		console.error('$fetch error:', e)
+
+		if (e.name === 'FetchError') {
+			return {  }
+		}
+
 		let [code, url] = e.message.split('  ')
 
 		let errors = {
@@ -92,7 +104,7 @@ export default async function useApi(
 			useNotify({ group: 'server_error', title, text, duration: 20000 })
 		}
 
-		return { error: e.data || true, code }
+		return { _$error: e.data || true, code }
 	}
 }
 
@@ -103,6 +115,7 @@ export function useLoadAllPages(
 		body, // Body for POST PUT PATCH
 		filters = {}, // Query object
 		headers = {},
+		signal, // AbortController.signal
 	} = {},
 	dataList = []
 ) {
