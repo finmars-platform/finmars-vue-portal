@@ -153,7 +153,7 @@
 
 			let res = await useApi('listLayout.post', {body: layoutToSave});
 
-			if (!res.error) {
+			if (!res._$error) {
 				viewerData.newLayout = false;
 				viewerData.listLayout = res;
 				useNotify({type: 'success', title: 'Success. Page was saved.'})
@@ -284,7 +284,7 @@
 
 		const res = await useApi('expression.post', opts)
 
-		if (res.error) throw new Error(res.error)
+		if (res._$error) throw new Error(res._$error)
 
 		viewerData.reportOptions.end_date = res.result
 

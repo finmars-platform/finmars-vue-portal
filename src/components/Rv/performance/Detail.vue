@@ -1412,7 +1412,7 @@ async function updateBundle(bundleData) {
 
 	let res = await useApi('portfolioBundle.put', opts)
 
-	if (!res.error) {
+	if (!res._$error) {
 		useNotify({
 			type: 'success',
 			title: 'Bundle updated successfully',
@@ -1434,7 +1434,7 @@ async function deleteBundle() {
 		params: {id: bundleId.value},
 	})
 
-	if (!res.error) {
+	if (!res._$error) {
 		useNotify({
 			type: 'success',
 			title: `Bundle ${currentBundle.value.user_code} was successfully deleted.`,
@@ -1468,11 +1468,11 @@ async function getReports({period_type, end, ids, type = 'months', requestUid}) 
         useNotify({
             group: 'server_error',
             title: 'Server Error',
-            text: res.error.error,
+            text: res._$error.error,
             duration: 20000
         })
 
-		throw res.error;
+		throw res._$error;
 
     }
 

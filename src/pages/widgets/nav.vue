@@ -166,7 +166,7 @@
 			provider: null,
 		})
 
-		if (res.error) {
+		if (res._$error) {
 			status.value = 101
 
 			return false
@@ -228,7 +228,7 @@
 				delete res.portfolio
 				delete res.benchmark
 
-				if (res && !res.error) {
+				if (res && !res._$error) {
 					let arr = Object.entries(res)
 					stats.value = arr
 					status.value = 100

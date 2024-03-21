@@ -280,7 +280,7 @@
 
 		const res = await commonMethods.fetchLocalEntities(props.content_type, inputText.value, nextPage);
 
-		if (!res.error) {
+		if (!res._$error) {
 			// do not increase page if error occurred
 			localPages.value = nextPage;
 			databaseItems.value = databaseItems.value.concat(res.items);
@@ -302,7 +302,7 @@
 
 		const res = await commonMethods.fetchDatabaseEntities(props.content_type, inputText.value, nextPage);
 
-		if (!res.error) {
+		if (!res._$error) {
 			// do not increase page if error occurred
 			dbPages.value = nextPage;
 
@@ -341,13 +341,13 @@
 
 			const res = await commonMethods.startImport(props.content_type, JSON.parse(JSON.stringify( selItem.value )) );
 
-			if ( Object.keys(res).length === 1 && res.error ) {
+			if ( Object.keys(res).length === 1 && res._$error ) {
 
 				saving.value = false;
 
 				return;
 
-			} else if (res.errors) {
+			} else if (res.errors) { // TODO: Investigate. This if never triggers.
 
 				useNotify( {type: 'error', title: res.errors} );
 

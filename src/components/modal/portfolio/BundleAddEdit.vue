@@ -95,7 +95,7 @@
 			body: body,
 		});
 
-		if (!res.error) {
+		if (!res._$error) {
 
 			registers.value = res.results.map((o) => ({
 					user_code: o.user_code,

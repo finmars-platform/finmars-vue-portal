@@ -105,18 +105,14 @@
 			params: { id: item.id },
 			body: item,
 		})
-		if (res.error) {
-			useNotify({
-				type: 'error',
-				title: res.error.message || res.error.detail,
-			})
-			throw new Error(res.error)
+		if (res._$error) {
+			throw new Error(res._$error)
 		} else if (res.status === 'conflict') {
 			useNotify({
 				type: 'error',
 				title: 'You can not delete attributed that already in use',
 			})
-			throw new Error(res.error)
+			throw new Error(res._$error)
 		}
 		useNotify({ type: 'success', title: `data delete on the server` })
 		defaultsGet()
@@ -140,10 +136,10 @@
 	// 		body: ecosystemDefaults.value,
 	// 	})
 
-	// 	if (res.error) {
-	// 		// console.error(res.error);
-	// 		useNotify({ type: 'error', title: res.error.message || res.error.detail })
-	// 		throw new Error(res.error)
+	// 	if (res._$error) {
+	// 		// console.error(res._$error);
+	// 		useNotify({ type: 'error', title: res._$error.message || res._$error.detail })
+	// 		throw new Error(res._$error)
 	// 	} else {
 	// 		useNotify({ type: 'success', title: `data saved on the server` })
 	// 	}

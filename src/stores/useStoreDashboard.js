@@ -84,7 +84,7 @@ export default defineStore({
 				},
 			})
 
-			if (res.error || !res.results.length) return false
+			if (res._$error || !res.results.length) return false
 
 			this.layoutList = res.results
 
@@ -233,7 +233,7 @@ export default defineStore({
 			}
 
 			this.history = await useApi('widgetsHistory.get', apiOpts)
-			if (this.history.error) return false
+			if (this.history._$error) return false
 
 			let colors = this.generateColors()
 
@@ -428,7 +428,7 @@ export default defineStore({
 
 			}
 
-			if (!res.error) {
+			if (!res._$error) {
 
 				this.layoutList.push(res)
 				this.activeLayoutId = res.id

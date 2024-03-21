@@ -108,8 +108,8 @@ function resolveRouteOpt(contentType, routeOptsObj, method) {
 
 	const res = await useApi( resolveDynamicAttrsRouteOpt(contentType, 'get') );
 
-	if (res.error) {
-		throw res.error;
+	if (res._$error) {
+		throw res._$error;
 	}
 
 	return res.results;
@@ -352,8 +352,8 @@ export default defineStore({
 		async fetchSystemAttributes() {
 			let res = await useApi('systemAttributes.get', basicFilters);
 
-			if (res.error) {
-				throw res.error;
+			if (res._$error) {
+				throw res._$error;
 			}
 
 			res['reports.balancereportperformance'] = [];
@@ -400,8 +400,8 @@ export default defineStore({
 
 			const res = await useApi( resolveRouteOpt(contentType, dynamicAttrsRouteOpts, 'get'), basicFilters );
 
-			if (res.error) {
-				throw res.error;
+			if (res._$error) {
+				throw res._$error;
 			}
 
 			this.attrTypes[contentType] = res.results;
@@ -428,8 +428,8 @@ export default defineStore({
 		async fetchCustomFields(contentType) {
 			const res = await useApi( resolveRouteOpt(contentType, customFieldsRouteOpts, 'get'), basicFilters );
 
-			if (res.error) {
-				throw res.error;
+			if (res._$error) {
+				throw res._$error;
 			}
 
 			this.customFields[contentType] = res.results;
@@ -458,8 +458,8 @@ export default defineStore({
 		async fetchUserFields(contentType) {
 			const res = await useApi( resolveRouteOpt(contentType, userFieldsRouteOpts, 'get'), basicFilters );
 
-			if (res.error) {
-				throw res.error;
+			if (res._$error) {
+				throw res._$error;
 			}
 
 			this.userFields[contentType] = res.results;

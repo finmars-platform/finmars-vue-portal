@@ -457,7 +457,7 @@
 
 		const res = await layoutsStore.getListLayoutsLight(component.value.settings.content_type);
 
-		if ( !res.error ) {
+		if ( !res._$error ) {
 			layoutsList.value = res.filter(layout => !layout.user_code.startsWith('system_autosave_') );
 		}
 

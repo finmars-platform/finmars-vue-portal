@@ -36,9 +36,9 @@ export async function fetchDatabaseEntities(content_type, filterText, pageNumber
 
 		const res = await useApi('currencyDatabaseSearch.get', options);
 
-		if (res.error) {
+		if (res._$error) {
 
-			console.error("Unified Database error occurred", res.error);
+			console.error("Unified Database error occurred", res._$error);
 
 		} else {
 
@@ -79,8 +79,8 @@ export async function fetchDatabaseEntities(content_type, filterText, pageNumber
 
 	const res = await useApi(routeOpt, options);
 
-	if (res.error) {
-		console.error("Unified Database error occurred", res.error);
+	if (res._$error) {
+		console.error("Unified Database error occurred", res._$error);
 
 	} else {
 
@@ -117,7 +117,7 @@ export async function fetchLocalEntities(content_type, filterText, pageNumber=1)
 
 	let res = await useResolveEntityApi(content_type, 'get', options);
 
-	if (!res.error) {
+	if (!res._$error) {
 
 		result.itemsTotal = res.count;
 

@@ -207,7 +207,7 @@
 
 		let res = await useApi('member.put', {body: member.value, params: {id: route.params.id}})
 
-		if (!res.error) {
+		if (!res._$error) {
 			useNotify({type: 'success', title: 'Saved!'})
 			router.push('/settings/permissions?tab=Member')
 		}

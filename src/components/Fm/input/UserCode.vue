@@ -219,8 +219,8 @@
 
 		/*const res = await useApi('configurationList.get');
 
-		if ( res.error ) {
-			throw new Error(res.error);
+		if ( res._$error ) {
+			throw new Error(res._$error);
 
 		} else {
 

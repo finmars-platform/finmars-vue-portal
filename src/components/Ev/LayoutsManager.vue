@@ -70,7 +70,7 @@
 
 		const res = await useApi('listLayoutListLight.get', {filters});
 
-		if (res.error) {
+		if (res._$error) {
 			return;
 		}
 
@@ -83,7 +83,7 @@
 
 		layoutsList.value = res.results; */
 		const res = await layoutsStore.getListLayoutsLight(viewerData.content_type);
-		if (res.error) loadingLayoutsList.value = true;
+		if (res._$error) loadingLayoutsList.value = true;
 
 		// openSaveAsModal.value = false;
 
@@ -125,7 +125,7 @@
 
 		const res = await layoutsStore.updateLayout(layout.id, layout);
 
-		if (!res.error) {
+		if (!res._$error) {
 
 			// let prevDefLayout = layoutsList.value.find(dLayout => dLayout.is_default);
 			let prevDefLayout = lLayoutsLight.value.find(dLayout => dLayout.is_default);
@@ -169,7 +169,7 @@
 
 		const res = await layoutsStore.updateLayout(layout.id, layout);
 
-		if (!res.error) {
+		if (!res._$error) {
 
 			viewerData.listLayout = res;
 
@@ -190,7 +190,7 @@
 
 		const res = await layoutsStore.deleteLayout(layoutId);
 
-		if (res.error) return;
+		if (res._$error) return;
 
 		/*if (layoutIsDefault && layoutsList.value.length > 1) { // If default layout was deleted and other layouts exist. Make another layout default.
 
@@ -228,7 +228,7 @@
 
 		const res = layoutsStore.getListLayoutsLight(viewerData.content_type);
 
-		if (!res.error) {
+		if (!res._$error) {
 			loadingLayoutsList.value = false;
 		}
 

@@ -35,8 +35,8 @@ export const useGenerateUniqueId = key => {
 }
 
 export const useLogResponseError = resposeData => {
-	console.error(resposeData.error);
-	useNotify({type: 'error', title: resposeData.error.error.message || resposeData.error.error.details});
+	console.error(resposeData._$error);
+	useNotify({type: 'error', title: resposeData._$error.error.message || resposeData._$error.error.details});
 	return resposeData;
 }
 

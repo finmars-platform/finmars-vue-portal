@@ -139,7 +139,7 @@
 						provider: null
 					})
 
-					if ( pl.error ) {
+					if ( pl._$error ) {
 						status.value = 101
 
 						return false
@@ -204,7 +204,7 @@
 						provider: null
 					})
 
-					if ( pl.error ) {
+					if ( pl._$error ) {
 						status.value = 101
 
 						return false

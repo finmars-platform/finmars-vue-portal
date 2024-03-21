@@ -39,7 +39,7 @@ const calcReportDateExpr = async function (contentType, dateExpr, reportOptions,
 
 	const res = await useApi('expression.post', opts);
 
-	if (res.error) throw new Error(res.error);
+	if (res._$error) throw new Error(res._$error);
 
 	reportOptions[dateProp] = res.result;
 

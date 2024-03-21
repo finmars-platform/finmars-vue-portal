@@ -289,9 +289,9 @@
 			body: ecosystemDefaultsRef.value,
 		})
 
-		if (res.error) {
-			// console.error(res.error);
-			useNotify({ type: 'error', title: res.error.message || res.error.detail })
+		if (res._$error) {
+			// console.error(res._$error);
+			useNotify({ type: 'error', title: res._$error.message || res._$error.detail })
 
 		} else {
 			useNotify({ type: 'success', title: `data saved on the server` })

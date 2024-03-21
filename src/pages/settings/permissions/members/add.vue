@@ -125,7 +125,7 @@
 
 		let res = await useApi('member.post', {body: sendedForm, params: {id: route.params.id}})
 
-		if ( !res.error ) {
+		if ( !res._$error ) {
 			useNotify({type: 'success', title: 'Invite sent!'})
 
 			router.push('/settings/permissions?tab=Members')

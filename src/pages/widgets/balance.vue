@@ -286,7 +286,7 @@
 					provider: null
 				})
 
-				if ( nav.error ) {
+				if ( nav._$error ) {
 					status.value = 101
 
 					return false

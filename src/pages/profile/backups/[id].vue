@@ -190,7 +190,7 @@
 			},
 		})
 
-		if (!res.error) {
+		if (!res._$error) {
 			useNotify({
 				type: 'success',
 				title: 'Success',

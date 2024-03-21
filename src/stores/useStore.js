@@ -37,7 +37,7 @@ export default defineStore({
 		async getMasterUsers() {
 			let res = await useApi('masterUser.get')
 
-			if (res.error) return
+			if (res._$error) return
 
 			this.masterUsers = res.results
 
@@ -50,7 +50,7 @@ export default defineStore({
 
 				const res = await useApi('configurationList.get');
 
-				if (!res.error) {
+				if (!res._$error) {
 					this.configCodes = res.results;
 				}
 
@@ -63,8 +63,8 @@ export default defineStore({
 		async getUser() {
 			let res = await useApi('me.get')
 
-			if (res.error) {
-				throw res.error;
+			if (res._$error) {
+				throw res._$error;
 			}
 
 			this.user = res
@@ -104,8 +104,8 @@ export default defineStore({
 
 			const res = await Promise.all([memberProm, memberLayoutProm]);
 
-			if ( res[0].error || res[1].error ) {
-				console.error('Error while fetching data of member:', res[0].error || res[1].error );
+			if ( res[0]._$error || res[1]._$error ) {
+				console.error('Error while fetching data of member:', res[0]._$error || res[1]._$error );
 
 			} else {
 
@@ -161,8 +161,8 @@ export default defineStore({
 
 			const res = await useApi('member.put', options)
 
-			if (res.error) {
-				console.error(res.error)
+			if (res._$error) {
+				console.error(res._$error)
 			} else {
 				this.member = res
 			}
@@ -177,8 +177,8 @@ export default defineStore({
 
 			const res = await useApi('memberLayout.put', options)
 
-			if (res.error) {
-					console.error(res.error)
+			if (res._$error) {
+					console.error(res._$error)
 			} else {
 					this.memberLayout = res
 			}
@@ -187,7 +187,7 @@ export default defineStore({
 		async fetchEcosystemDefaults() {
 			const res = await useApi('ecosystemDefaults.get')
 
-			if (!res.error) {
+			if (!res._$error) {
 				this.ecosystemDefaults = res.results[0]
 			}
 		},
