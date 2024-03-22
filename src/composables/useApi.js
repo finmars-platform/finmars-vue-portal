@@ -82,11 +82,13 @@ export default async function useApi(
 			? providers[route](response)
 			: response
 	} catch (e) {
-		console.error('$fetch error:', e)
 
+		// abortController.abort() used
 		if (e.name === 'FetchError') {
-			return {  }
+			return {_$abort: {key: 'ABORTED_BY_CLIENT', error: e} }
 		}
+
+		console.error('$fetch error:', e)
 
 		let [code, url] = e.message.split('  ')
 

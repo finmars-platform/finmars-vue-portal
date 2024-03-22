@@ -3,25 +3,29 @@
 		<template #default="{ reportOptions, components }">
 			<div class="fm_container">
 				<RvPerformanceBundles
+					ref="bundlesTable"
 					v-model:open="components.period"
-					:begin_date="reportOptions.begin_date"
+
+                    :begin_date="reportOptions.begin_date"
 					:end_date="reportOptions.end_date"
 					:calculation_type="reportOptions.calculation_type"
 					:report_currency="reportOptions.report_currency"
-					:reportOptions="reportOptions"
-					:is-disabled="disableBundledTable"
+                    :bundlesIds="reportOptions.bundles"
+                    :performance_unit="reportOptions.performance_unit"
+
+                    :is-disabled="disableBundledTable"
 					@setBundle="onBundleChange"
 				/>
 
 				<RvPerformanceDetail
 					v-model:open="components.detail"
+
 					:bundle="currentBundle"
 					:end_date="reportOptions.end_date"
-					:reportOptions="reportOptions"
 					:calculation_type="reportOptions.calculation_type"
 					:report_currency="reportOptions.report_currency"
-					@loadingDataStart="disableBundledTable = true"
-					@loadingDataEnd="disableBundledTable = false"
+                    :performance_unit="reportOptions.performance_unit"
+
 					@setYear="currentBundleYear = $event"
 					@refresh="refresh()"
 				/>
@@ -59,6 +63,7 @@ let currentBundle = ref({})
 let currentBundleYear = ref({})
 let currentBundleMonth = ref({})
 
+let bundlesTable = ref(null);
 let disableBundledTable = ref(false);
 
 let bundlesRefreshFunc = () => {
@@ -78,6 +83,8 @@ function onBundleChange(newVal) {
 }
 
 function refresh() {
+	console.log("testing458.RvPerfromanceIndex", bundlesTable.value);
+	bundlesTable.value.reloadTableD();
 	// bundlesRefreshFunc()
     currentBundleYear.value = null;
     currentBundleMonth.value = null;
