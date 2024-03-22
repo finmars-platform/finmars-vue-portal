@@ -11,6 +11,10 @@
                     :rightClickCallback="showPerformanceDetail"
                     :is-disabled="isDisabled || !readyStatus"
             />
+
+<!--			<FmBasicTable selectableRows>
+
+			</FmBasicTable>-->
         </div>
 
         <RvPerformanceCellDetailModal
@@ -31,9 +35,9 @@ import {useLoadAllPages} from "~/composables/useApi";
 dayjs.extend(quarterOfYear)
 
 const props = defineProps({
-    reportOptions: {
-        type: Object,
-    },
+	/** Used to filter bundles. Can be `undefined` or `null`. */
+	bundlesIds: Array,
+
     end_date: {
         type: String,
     },
@@ -43,9 +47,10 @@ const props = defineProps({
     report_currency: {
         type: [Number, String],
     },
+    performance_unit: String,
 	isDisabled: Boolean,
 })
-const emits = defineEmits(['setBundle', 'refreshFunc'])
+const emits = defineEmits(['setBundle']);
 
 let readyStatus = ref(false);
 let periodHeaders = computed(() => {
@@ -73,33 +78,9 @@ let bundles = ref([])
 let performanceDetails = ref(null)
 let performanceDetailsColumnName = ref(null)
 
-watch(
-    () => [
-        props.reportOptions,
-        props.end_date,
-        props.calculation_type,
-        props.report_currency,
-    ],
-    () => { init() }
-)
-// TODO: remove refreshFunc
-emits('refreshFunc', init)
-init()
+//# region Calculate reports
+let abortController = null;
 
-function init() {
-
-    activePeriod.value = null;
-    emits('setBundle', null);
-
-    if (!props.end_date) {
-        console.log('No end_date:', props.end_date)
-        return false
-    }
-
-    fetchPortfolioBundles()
-}
-
-//# region Calculate period
 function formatNumber(num) {
     return Intl.NumberFormat('en-EN', {
         // maximumSignificantDigits: 3
@@ -108,7 +89,7 @@ function formatNumber(num) {
 
 function getValueForPeriod(performanceResult) {
 
-    if (props.reportOptions.performance_unit === 'percent') {
+    if (props.performance_unit === 'percent') {
 
         let value = Math.round(performanceResult.grand_return * 100 * 100) / 100
 
@@ -118,125 +99,187 @@ function getValueForPeriod(performanceResult) {
     }
 
 }
-async function calcDayForBundle(bundleId, row, rowRaw) {
+
+
+async function calcDayForBundle(bundleId, row, rowRaw, abortSignal) {
 
     row.daily = null
+    let res
 
-    let res = await getDay(bundleId);
+    try {
+        res = await getDay(bundleId, abortSignal);
+
+    } catch (e) {
+        throw e;
+    }
+
 
     if (res._$error) {
-        throw res._$error;
+        return res;
     }
 
     rowRaw.daily_performance_report = res;
 
     row.daily = getValueForPeriod(res);
 
+	return {key: 'calcDayForBundle'};
+
 }
 
-async function calcMonthForBundle(bundleId, row, rowRaw) {
+async function calcMonthForBundle(bundleId, row, rowRaw, abortSignal) {
 
     row.month = null;
-    const res = await getMonth(bundleId);
+
+    let res;
+    try {
+        res = await getMonth(bundleId, abortSignal);
+
+    } catch (e) {
+        throw e;
+    }
 
     if (res._$error) {
-        throw res._$error;
+        return res;
     }
 
     rowRaw.month_performance_report = res
 
     row.month = getValueForPeriod(res);
 
+	return {key: 'calcMonthForBundle'};
+
 }
 
-async function calcQuarterForBundle(bundleId, row, rowRaw) {
+async function calcQuarterForBundle(bundleId, row, rowRaw, abortSignal) {
 
     row.q = null
 
-    const res = await getQ(bundleId);
+    let res;
+
+    try {
+        res = await getQ(bundleId, abortSignal);
+
+    } catch (e) {
+        throw e;
+    }
 
     if (res._$error) {
-        throw res._$error;
+        return res;
     }
 
     rowRaw.q_performance_report = res;
 
     row.q = getValueForPeriod(res);
 
+	return {key: 'calcQuarterForBundle'}
+
 }
 
-async function calcYearForBundle(bundleId, row, rowRaw) {
+async function calcYearForBundle(bundleId, row, rowRaw, abortSignal) {
 
     row.year = null
 
-    const res = await getYear(bundleId);
+    let res;
+    try {
+        res = await getYear(bundleId, abortSignal);
 
+    } catch (e) {
+        throw e;
+    }
     if (res._$error) {
-        throw res._$error;
+        return res;
     }
 
     rowRaw.year_performance_report = res;
 
     row.year = getValueForPeriod(res);
 
+	return {key: 'calcYearForBundle'};
+
 }
 
-async function calcLastYearForBundle(bundleId, row, rowRaw) {
+async function calcLastYearForBundle(bundleId, row, rowRaw, abortSignal) {
 
     row.last = null
 
-    const res = await getLastYear(bundleId);
+    let res
+    try {
+        res = await getLastYear(bundleId, abortSignal);
 
-    if (res._$error) {
-        throw res._$error;
+    } catch (e) {
+        throw e;
+    }
+
+	if (res._$error) {
+        return res;
     }
 
     rowRaw.last_performance_report = res;
 
     row.last = getValueForPeriod(res);
 
+	return {key: 'calcLastYearForBundle'};
+
 }
 
-async function calcBeforeLastYearForBundle(bundleId, row, rowRaw) {
+async function calcBeforeLastYearForBundle(bundleId, row, rowRaw, abortSignal) {
 
     row.beforeLast = null
 
-    const res = await getYearBeforeLast(bundleId);
+    let res;
+    try {
+        res = await getYearBeforeLast(bundleId, abortSignal);
 
+    } catch (e) {
+        throw e;
+    }
     if (res._$error) {
-        throw res._$error;
+        return res;
     }
 
     rowRaw.beforeLast_performance_report = res;
 
     row.beforeLast = getValueForPeriod(res);
 
+	return {key: 'calcBeforeLastYearForBundle'};
+
 }
 
-async function calcInceptYearForBundle(bundleId, row, rowRaw) {
+async function calcInceptYearForBundle(bundleId, row, rowRaw, abortSignal) {
 
     row.incept = null
 
-    const res = await getIncept(bundleId);
+    let res;
+    try {
+        res = await getIncept(bundleId, abortSignal);
 
+    } catch (e) {
+        throw e;
+    }
     if (res._$error) {
-        throw res._$error;
+        return res;
     }
 
     rowRaw.incept_performance_report = res;
 
     row.incept = getValueForPeriod(res);
 
+	return {key: 'calcInceptYearForBundle'};
 }
 
-async function calcAnnualForBundle(bundleId, row, rowRaw) {
+async function calcAnnualForBundle(bundleId, row, rowRaw, abortSignal) {
 
 	row.annualized = null
 
-	const res = await getIncept(bundleId)
+	let res;
+    try {
+        res = await getIncept(bundleId, abortSignal);
 
+    } catch (e) {
+        throw e;
+    }
 	if (res._$error) {
-		throw res._$error;
+		return res;
 	}
 
 	rowRaw.annualized_performance_report = res
@@ -287,6 +330,8 @@ async function calcAnnualForBundle(bundleId, row, rowRaw) {
 		row.annualized = value ? `${value}%` : '';
 
 	}
+
+	return {key: 'calcAnnualForBundle'};
 }
 
 /**
@@ -295,49 +340,106 @@ async function calcAnnualForBundle(bundleId, row, rowRaw) {
  * @param bundle {Object} - A portfolio bundle.
  * @param row {Array} - formatted values for row of the table with bundles
  * @param rowRaw {Array} - values for row of the table with bundles without formatting
+ * @param abortSignal {null|abortSignal}
  * @return {Promise<{-readonly [P in keyof Promise<void>[]]: PromiseSettledResult<Awaited<Promise<void>[][P]>>}>}
  * @private
  */
-function _calcReportForBundle(bundle, row, rowRaw) {
+function _calcReportForBundle(bundle, row, rowRaw, abortSignal) {
     // Here you can process responses from calculating report
 	// for a single portfolio bundle.
 	// The bundle passed whole instead of its id only
 	// to ease processing of responses.
+    console.log("testing458.RvPerformanceBundles " +
+        "_calcReportForBundle results ");
+	try {
+		return Promise.all([
+			calcDayForBundle(bundle.id, row, rowRaw, abortSignal),
+			calcMonthForBundle(bundle.id, row, rowRaw, abortSignal),
+			calcQuarterForBundle(bundle.id, row, rowRaw, abortSignal),
+			calcYearForBundle(bundle.id, row, rowRaw, abortSignal),
+			calcLastYearForBundle(bundle.id, row, rowRaw, abortSignal),
+			calcBeforeLastYearForBundle(bundle.id, row, rowRaw, abortSignal),
+			calcInceptYearForBundle(bundle.id, row, rowRaw, abortSignal),
+			calcAnnualForBundle(bundle.id, row, rowRaw, abortSignal),
+		]);
 
-    return Promise.allSettled([
-        calcDayForBundle(bundle.id, row, rowRaw),
-        calcMonthForBundle(bundle.id, row, rowRaw),
-        calcQuarterForBundle(bundle.id, row, rowRaw),
-        calcYearForBundle(bundle.id, row, rowRaw),
-        calcLastYearForBundle(bundle.id, row, rowRaw),
-        calcBeforeLastYearForBundle(bundle.id, row, rowRaw),
-        calcInceptYearForBundle(bundle.id, row, rowRaw),
-        calcAnnualForBundle(bundle.id, row, rowRaw),
-    ])
+	} catch (e) {
+		console.log("testing458.RvPerformanceBundles " +
+			"_calcReportForBundle 2 ");
+		throw e;
+	}
+
 }
 
 /**
  * Process Promise.allSettled()
  * for calculating all portfolio bundles inside report
  *
- * @param responses { [ PromiseSettledResult<Awaited<Promise<Object>>> ] } - result of Promise.allSettled( listOfPromisesForEachBundle )
+ * @param calculationPromises { [Promise<[Promise]>] } - each promise contains
+ * an array of promises for calculation of reports for bundle
  *
- * @return {Boolean} - true if calculations for all bundles ended without errors
+ * @return {Promise<Boolean>} - true if calculations for all bundles succeeded
  * @private
  */
-function _processReportCalculationResponse(responses) {
+async function _processReportCalculationPromises(calculationPromises) {
 
 	const bundlesWithClientError = new Set();
-    let bundleWithError;
 
-	responses.forEach((bundleResponses, index) => {
+    /*responses.find(bundleResponses => {
+        return
+    })*/
+    let results;
 
-        // bundleResponses: { status: String, value: [{}] }
-        bundleWithError = bundleResponses.value.find(
+    try {
+        results = await Promise.all(calculationPromises);
+        console.log("testing458.RvPerformanceBundles " +
+            "_processReportCalculationPromises results ",
+            results);
+    } catch (e) {
+		console.log("testing458.RvPerformanceBundles " +
+			"_processReportCalculationPromises catch ",
+			e);
+        if ( e === 'ABORTED_BY_CLIENT' ) { // AbortController.abort()
+            return false;
+
+        }
+        else { // unprocessed error
+            console.error(
+                '[RvPerformanceBundle._processReportCalculationPromises] ' +
+                'error while calculating reports',
+                e
+            );
+            throw e;
+        }
+
+    }
+    console.log(
+        "testing458.RvPerformanceBundles results " +
+        "_processReportCalculationPromises",
+        results
+    );
+    results.forEach((bundleRes, index) => {
+
+		/*
+		 * bundleRes content
+		 * [
+		 *  calcDayForBundle, 0
+		 *	calcMonthForBundle, 1
+		 *	calcQuarterForBundle, 2
+		 *	calcYearForBundle, 3
+		 *	calcLastYearForBundle, 4
+		 *	calcBeforeLastYearForBundle, 5
+		 *	calcInceptYearForBundle, 6
+		 *	calcAnnualForBundle, 7
+		 * ]
+		 */
+
+        // filter out empty fullfilment values
+        /*bundleWithError = bundleResponses.value.find(
             res => res.status === "rejected"
-        )
+        )*/
 
-		bundleResponses.value.find(res => {
+        /*bundleRes.value.find(res => {
 
             if (res.status === "rejected" &&
                 res.reason.error?.details?.errors[0] &&
@@ -351,7 +453,22 @@ function _processReportCalculationResponse(responses) {
 
             return false;
 
-		});
+		});*/
+
+        bundleRes.find(res => {
+
+            if (res._$error?.details?.errors[0] &&
+                res._$error.details.errors[0].error_key) {
+
+                bundlesWithClientError.add( bundles.value[index].user_code );
+
+                return true;
+
+            }
+
+            return false;
+
+        });
 
 	});
 
@@ -372,11 +489,17 @@ function _processReportCalculationResponse(responses) {
 
 	}
 
-    return !bundleWithError;
+    return true;
 
 }
 
-async function fetchPortfolioBundles() {
+let counter = 0;
+
+async function fetchPortfolioBundles(abortSignal) {
+	counter++;
+    let localCounter = counter;
+	console.log(
+		`testing458.RvPerformanceBundles called ${localCounter}`);
     // readyStatusData.bundles = false;
     readyStatus.value = false;
 
@@ -394,10 +517,10 @@ async function fetchPortfolioBundles() {
         bundle => !bundle.user_code.match(delUserCodeRe)
     );
 
-    if (props.reportOptions?.bundles?.length) {
+    if (props.bundlesIds?.length) {
 
         bundles.value = bundles.value.filter(
-            bundle => props.reportOptions.bundles.includes(bundle.id)
+            bundle => props.bundlesIds.includes(bundle.id)
         )
 
     }
@@ -413,38 +536,59 @@ async function fetchPortfolioBundles() {
      * */
     periodItemsRaw.value = [];
 
+    /*
+     * Using `periodItemsList`, `periodItemsRawList` in case
+     * while calculating data became irrelevant and must be
+	 * discarded (i.e. `periodItemsList`, `periodItemsRawList`
+	 * will not be assigned to `periodItems` and `periodItems`)
+	 */
+    let periodItemsList = [];
+    let periodItemsRawList = [];
+
     let promises = [];
 
     bundles.value.forEach(bundle => {
 
-        periodItems.value.push({
+        periodItemsList.push({
             name: bundle.user_code,
         })
-        periodItemsRaw.value.push({
+        periodItemsRawList.push({
             name: bundle.user_code,
         })
 
-        let row = periodItems.value[periodItems.value.length - 1]
-        let rowRaw = periodItemsRaw.value[periodItems.value.length - 1]
-        rowRaw.id = bundle.id
+        let row = periodItemsList.at(-1);
+        let rowRaw = periodItemsRawList.at(-1);
+        rowRaw.id = bundle.id;
 
+		/*
+		 * `periodItemsList` and `periodItemsRawList` changed inside
+		 * `_calcReportForBundle` by mutation by changing `row`, `rowRaw`
+		 */
         promises.push(
-            _calcReportForBundle(bundle, row, rowRaw)
+            _calcReportForBundle(bundle, row, rowRaw, abortSignal)
         );
 
     })
 
-    const reportCalcRes = await Promise.allSettled(promises);
+    // const reportCalcPromises = Promise.all(promises);
+    console.log(
+        "testing458.RvPerformanceBundles fetchBundles promises",
+        promises);
+	const reportsCalculated = await _processReportCalculationPromises( promises );
+	console.log(`testing458.RvPerformanceBundles fetchBundles ${localCounter} end`,
+		reportsCalculated)
+    if (reportsCalculated) {
 
-	const noErrors = _processReportCalculationResponse(reportCalcRes);
+        periodItems.value = periodItemsList;
+        periodItemsRaw.value = periodItemsRawList
 
-    if (noErrors) {
         readyStatus.value = true;
+
     }
     // chooseBundle(0)
 
 }
-//# endregion Calculate period
+//# endregion Calculate reports
 
 async function chooseBundle(bundleIndex, cellIndex) {
 
@@ -485,12 +629,18 @@ function showPerformanceDetail(rowIndex, cellIndex) {
 
 }
 
-async function getDay(ids) {
+async function getDay(ids, abortSignal) {
     let endDate = dayjs(props.end_date)
 
     let day = dayjs(endDate).format('YYYY-MM-DD')
 
-    return await getReports({period_type: "daily", end: day, ids, type: 'days'})
+    return await getReports({
+			period_type: "daily",
+			end: day,
+			ids,
+			type: 'days',
+			abortSignal: abortSignal
+    })
 }
 
 function adjustForWeekend(date) {
@@ -505,72 +655,82 @@ function adjustForWeekend(date) {
     return date;
 }
 
-async function getMonth(ids) {
+async function getMonth(ids, abortSignal) {
     let endDate = dayjs(props.end_date)
 
-    let start = dayjs(endDate).set('date', 1).format('YYYY-MM-DD')
     let end = dayjs(adjustForWeekend(new Date(endDate))).format('YYYY-MM-DD')
 
-    return await getReports({period_type: "mtd", end, ids})
+    return await getReports({period_type: "mtd", end, ids, abortSignal})
 }
 
-async function getQ(ids) {
+/**
+ *
+ * @param ids
+ * @return {Promise<*>}
+ */
+function getQ(ids, abortSignal) {
     let endDate = dayjs(props.end_date)
-
-    let start = dayjs('2022-01-01')
-        .year(endDate.year())
-        .quarter(endDate.quarter())
-        .format('YYYY-MM-DD')
 
     let end = dayjs(endDate).format('YYYY-MM-DD')
 
-    return await getReports({period_type: "qtd", end, ids})
+    return getReports({period_type: "qtd", end, ids, abortSignal})
 }
 
-async function getYear(ids) {
+/**
+ *
+ * @param ids
+ * @return {Promise<*>}
+ */
+function getYear(ids, abortSignal) {
     let endDate = dayjs(props.end_date)
 
     let start = `${dayjs(endDate).year()}-01-01`
     let end = dayjs(endDate).format('YYYY-MM-DD')
 
-    return await getReports({period_type: "ytd", end, ids})
+    return getReports({
+		period_type: "ytd", end, ids, abortSignal
+	})
 }
 
-async function getLastYear(ids) {
+/**
+ *
+ * @param ids
+ * @return {Promise<*>}
+ */
+function getLastYear(ids, abortSignal) {
     let endDate = dayjs(props.end_date)
 
-    let start = `${dayjs(endDate).year() - 1}-01-01`
     let end = `${dayjs(endDate).year() - 1}-12-31`
 
-    return await getReports({period_type: "ytd", end, ids})
+    return getReports({
+		period_type: "ytd", end, ids, abortSignal
+	})
 }
 
-async function getYearBeforeLast(ids) {
+/**
+ *
+ * @param ids
+ * @return {Promise<*>}
+ */
+function getYearBeforeLast(ids, abortSignal) {
     let endDate = dayjs(props.end_date)
-
-    let start = `${dayjs(endDate).year() - 2}-01-01`
 
     let end = `${dayjs(endDate).year() - 2}-12-31`
 
-    return await getReports({period_type: "ytd", end, ids})
+    return getReports({
+		period_type: "ytd", end, ids, abortSignal
+	})
 }
 
-async function getIncept(ids) {
-    let res = await useApi('performanceFirstTransaction.get', {
-        params: {id: ids},
-    })
-
-    let start = res.transaction_date
-    if (!start) return false
-
+async function getIncept(ids, abortSignal) {
     let endDate = dayjs(props.end_date)
 
     let end = dayjs(endDate).format('YYYY-MM-DD')
 
-    return await getReports({period_type: "inception", end, ids})
+    return getReports({period_type: "inception", end, ids, abortSignal})
 }
 
-async function getReports({period_type, end, ids, type = 'months'}) {
+async function getReports({period_type, end, ids, type = 'months', abortSignal}) {
     let res = await useApi('performanceReport.post', {
         body: {
             save_report: false,
@@ -582,10 +742,16 @@ async function getReports({period_type, end, ids, type = 'months'}) {
             report_currency: props.report_currency,
             bundle: ids,
         },
+        signal: abortSignal,
         notifyError: false,
     })
 
-    if ( res.hasOwnProperty("error") ) {
+    if (res._$abort) {
+        throw 'ABORTED_BY_CLIENT';
+    }
+    else if ( res.hasOwnProperty('_$error') ) {
+        console.log("testing458.RvPerformanceBundles getReports res._$error",
+            res._$error);
 
         if (!res._$error.error?.details?.errors[0] ||
             res._$error.error.details.errors[0].error_key !== 'no_first_transaction_date') {
@@ -607,7 +773,7 @@ async function getReports({period_type, end, ids, type = 'months'}) {
 }
 
 // rework
-async function getEndDate() {
+/*async function getEndDate() {
 
     if (viewerData.reportOptions?.end_date) {
         return viewerData.reportOptions?.end_date
@@ -655,7 +821,55 @@ async function getEndDate() {
     viewerData.reportOptions.end_date = res.result
 
     return viewerData.reportOptions.end_date
+}*/
+
+const reloadTableD = useDebounce(function () {
+
+    if (abortController) {
+        abortController.abort()
+	}
+
+    abortController = new AbortController();
+    const abortSignal = abortController.signal;
+
+    activePeriod.value = null;
+    emits('setBundle', null);
+
+    if (!props.end_date) {
+        console.warn('[RvPerformanceBundles] No end_date:', props.end_date)
+        return false
+    }
+
+    fetchPortfolioBundles(abortSignal);
+
+}, 300);
+
+function init() {
+    reloadTableD();
 }
+
+init()
+
+defineExpose({
+	reloadTableD
+})
+
+watch(
+    () => [
+        props.end_date,
+        props.calculation_type,
+        props.report_currency,
+		props.bundlesIds,
+		props.performance_unit,
+    ],
+    () => {
+		/*
+		 * Using debounce to prevent calling fetchPortfolioBundles()
+		 * multiple times when several props changed at once.
+		 */
+		reloadTableD()
+	}
+)
 
 </script>
 

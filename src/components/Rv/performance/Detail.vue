@@ -172,9 +172,6 @@ import {useSortRowsByNumber} from "~/composables/useTable";
  */
 
 const props = defineProps({
-	reportOptions: {
-		type: Object,
-	},
 
     /** Id of a bundle or a whole object of a bundle. */
 	bundle: {
@@ -195,14 +192,11 @@ const props = defineProps({
 	report_currency: {
 		type: [Number, String],
 	},
+    performance_unit: String,
 
 })
 
-/* *
- * remove 'loadingDataStart', 'loadingDataEnd' after implementing
- * discarding of result of old requests
- * */
-const emits = defineEmits(['setYear', 'refresh', 'loadingDataStart', 'loadingDataEnd'])
+const emits = defineEmits(['setYear', 'refresh'])
 
 const tableGridTemplateCols = '75px repeat(12, 1fr) 80px';
 
@@ -597,9 +591,6 @@ function adjustForWeekend(date) {
         resetData();
         detailsLoading.value = false;
         detailsLoadingError.value = "Failed to calculate years for period. Try again later.";
-        // May be problem in selected bundle.
-        // Let use ability to select another.
-        emits('loadingDataEnd');
 
         throw "Error above occurred while trying to load and calculate data for RvPerformanceDetail";
     }
@@ -773,10 +764,26 @@ function datesRangeIncludesMonth(date, beginDate, endDate) {
  * */
 let requestDetailsUid;
 
-function onMessage(newVal) {
-
-}
-
+/**
+ * Helper function to use inside function _calculateTotalsForYears
+ * @see _calculateTotalsForYears
+ *
+ * @param periodEnd {String}
+ * @param bundleId {Number}
+ * @param yearData {
+ *  {
+ *      months: [MonthReportObject|null],
+ *      monthsRawValues: Array,
+ *      total: Object,
+ *      [error]: Object|null,
+ *  }
+ * }
+ * @param requestUid {String} - uid to check whether request is still relevant
+ * @return {Promise<Object|undefined>} - resolves with yearData after
+ * successfully calculating total for it
+ *
+ * @private
+ */
 async function _calcTotalForYear(periodEnd, bundleId, yearData, requestUid) {
 
     let totalRes;
@@ -805,7 +812,7 @@ async function _calcTotalForYear(periodEnd, bundleId, yearData, requestUid) {
     } else {
         portfolioTotals.value.push(formatNumber(total.grand_absolute_pl))
     }*/
-    if (props.reportOptions.performance_unit === 'percent') {
+    if (props.performance_unit === 'percent') {
         yearData.total.displayValue = parseFloat(totalRes.grand_return * 100).toFixed(2) + '%';
 
     } else {
@@ -817,7 +824,7 @@ async function _calcTotalForYear(periodEnd, bundleId, yearData, requestUid) {
 }
 
 /**
- * Helper function for getMonthDetails
+ * A helper function for function getMonthDetails
  * @see getMonthDetails
  *
  * @param reportsMap { Map } - map from reportsMapRef
@@ -922,7 +929,7 @@ async function getReportForMonth(requestOptions, beginDate, endDate) {
 }
 
 /**
- * Helper function to use inside function _assembleReportsMap()
+ * Helper function to use inside function _assembleReportsMap
  * @see _assembleReportsMap
  *
  * @param reportData {Object}
@@ -948,7 +955,7 @@ function _applyMonthReport(reportData, yearData, monthIndex) {
 
     let displayVal, rawVal;
 
-    if (props.reportOptions.performance_unit === 'percent') {
+    if (props.performance_unit === 'percent') {
         /*yearsMap.get(year)[monthIndex] = [
             parseFloat(reportData.grand_return * 100).toFixed(2),
             parseFloat(reportData.grand_return * 100).toFixed(2) + '%',
@@ -1196,9 +1203,6 @@ async function getMonthDetails() {
     detailsLoading.value = true;
 	resetData();
 
-    let portfolioItemsList = [];
-    let portfolioItemsRawData = {};
-
 	let bundle = bundleId.value;
 
 	let begin
@@ -1251,7 +1255,11 @@ async function getMonthDetails() {
 		return;
 	}
 
-    // let yearsBuffer = new Map();
+    /*
+     * Not using `reportsMapRef` in case while calculating data became
+	 * irrelevant and must be
+	 * discarded (i.e. reportsMap will not be assigned to reportsMapRef)
+	 */
 	let reportsMap = new Map();
 
 	console.log('allMonths', allMonths);
@@ -1463,7 +1471,7 @@ async function getReports({period_type, end, ids, type = 'months', requestUid}) 
         return null;
 	}
 
-    if ( res.hasOwnProperty('error') ) {
+    if ( res.hasOwnProperty('_$error') ) {
 
         useNotify({
             group: 'server_error',
