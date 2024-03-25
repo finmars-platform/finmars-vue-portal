@@ -15,7 +15,11 @@
 				:class="{ bi_no_borders: noBorders }"
 			>
 				<template v-if="!noBorders" #button>
-					<FmBtn type="icon" icon="calendar_month" />
+					<FmBtn
+						v-show="modeIsActive(['datepicker', 'expression'])"
+						type="icon"
+						icon="calendar_month"
+					/>
 				</template>
 
 				<template v-if="noBorders" #rightBtn>
@@ -122,10 +126,11 @@
 											:modelValue="fDate"
 											:disabled="firstDateIsDisabled"
 											class="bi_no_margins"
-											@update:modelValue="(newVal) => (fDate = newVal)"
+											@update:modelValue="onFirstDateInputChange"
 										>
 											<template #button>
 												<FmBtn
+													v-show="modeIsActive(['datepicker', 'expression'])"
 													type="icon"
 													class="expression-builder-btn"
 													:disabled="firstDateIsDisabled"
@@ -166,10 +171,11 @@
 										<FmInputDate
 											:modelValue="sDate"
 											:disable="secondDateIsDisabled"
-											@update:modelValue="(newVal) => (sDate = newVal)"
+											@update:modelValue="onSecondDateInputChange"
 										>
 											<template #button>
 												<FmBtn
+													v-show="modeIsActive(['datepicker', 'expression'])"
 													type="icon"
 													class="expression-builder-btn"
 													:disabled="secondDateIsDisabled"
@@ -518,6 +524,42 @@
 		secondDateIsDisabled.value = true
 	}
 
+    function onFirstDateInputChange (date) {
+
+        fDate.value = date;
+
+		if ( useDateStringIsValid(date) ) {
+
+            usePickmeup(firstCalendar.value).set_date(fDate.value);
+			if (rangeOfDates.value) usePickmeup(secondCalendar.value).update();
+
+			// if previously date was taken from expression, and now date field changed
+            fdOptions.value.datepickerMode = 'datepicker';
+
+		} else {
+            usePickmeup(firstCalendar.value).set_date();
+		}
+
+	}
+
+    function onSecondDateInputChange (date) {
+
+        sDate.value = date;
+
+        if ( useDateStringIsValid(date) ) {
+
+            usePickmeup(firstCalendar.value).update();
+            usePickmeup(secondCalendar.value).set_date(sDate.value);
+
+            // if previously date was taken from expression, and now date field changed
+            sdOptions.value.datepickerMode = 'datepicker';
+
+        } else {
+            usePickmeup(secondCalendar.value).set_date();
+        }
+
+    }
+
 	async function calcExpression(expression) {
 		const opts = {
 			body: {
@@ -835,30 +877,8 @@
 		return {}
 	}
 
-	function applyDatepickerModeOnInit() {
-		if (rangeOfDates.value) {
-			switch (props.firstDatepickerOptions.datepickerMode) {
-				case 'month-to-date':
-				case 'quarter-to-date':
-				case 'year-to-date':
-				case 'inception':
-					firstDateIsDisabled.value = true
-					secondDateIsDisabled.value = true
-
-					break
-			}
-		} else {
-			switch (props.firstDatepickerOptions.datepickerMode) {
-				case 'today':
-				case 'yesterday':
-				case 'inception':
-					firstDateIsDisabled.value = true
-					break
-			}
-		}
-	}
-
 	function save(closeMenu) {
+
 		if (fdOptions.value.datepickerMode === 'datepicker') {
 			delete fdOptions.value.expression
 		}
@@ -909,11 +929,37 @@
 		closeMenu()
 	}
 
-	/*onMounted(() => {
+	onMounted(() => {
 
+		if (rangeOfDates.value) {
 
+			const disableInputAndCalendar = [
+				'month-to-date',
+				'quarter-to-date',
+				'year-to-date',
+				'inception'
+			].includes(props.firstDatepickerOptions.datepickerMode);
 
-	})*/
+			if (disableInputAndCalendar) {
+				firstDateIsDisabled.value = true;
+				secondDateIsDisabled.value = true;
+			}
+
+		} else {
+
+			const disableInputAndCalendar = [
+				'today',
+				'yesterday-business',
+				'inception'
+			].includes(props.firstDatepickerOptions.datepickerMode);
+
+			if (disableInputAndCalendar) {
+				firstDateIsDisabled.value = true;
+			}
+
+		}
+
+	})
 </script>
 
 <style lang="scss" scoped>
