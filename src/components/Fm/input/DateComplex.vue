@@ -1,7 +1,8 @@
 <template>
 	<FmMenu
-		v-model:opened="menuIsOpened"
+		:modelValue="menuIsOpened"
 		attach="body"
+		@update:opened="onPopupToggle"
 		:closeOnClickOutside="false"
 		v-bind="$attrs"
 	>
@@ -253,7 +254,6 @@
 
 <script setup>
 	import dayjs from 'dayjs'
-	import { useDateStringIsValid } from '../../../composables/useUtils'
 
 	let props = defineProps({
 		firstDate: String,
@@ -357,24 +357,25 @@
 	if (!fdOptions.value.datepickerMode)
 		fdOptions.value.datepickerMode = 'yesterday-business'
 
-	watch(
+	/*watch(
 		() => props.firstDatepickerOptions,
 		() => {
 			fdOptions.value = JSON.parse(JSON.stringify(props.firstDatepickerOptions))
 			if (!fdOptions.value.datepickerMode)
 				fdOptions.value.datepickerMode = 'yesterday-business'
 		}
-	)
+	)*/
 
 	//# region For second date in range of dates
 	let sDate = ref(props.secondDate)
-	let sdOptions = ref(JSON.parse(JSON.stringify(props.secondDatepickerOptions)))
+	let sdOptions = ref(null);
 
 	let openSecondEe = ref(false)
 
 	let secondDateConv = computed(() => convertDate(sDate.value))
 
 	if (rangeOfDates.value) {
+
 		selectedVal = computed(() => {
 			let val = ''
 
@@ -403,14 +404,6 @@
 			}
 		)
 
-		watch(
-			() => props.secondDatepickerOptions,
-			() => {
-				sdOptions.value = JSON.parse(
-					JSON.stringify(props.secondDatepickerOptions)
-				)
-			}
-		)
 	}
 	//# endregion
 
@@ -929,9 +922,21 @@
 		closeMenu()
 	}
 
-	onMounted(() => {
+	function init() {
+
+		fdOptions.value = JSON.parse(JSON.stringify(props.firstDatepickerOptions));
+
+		if (!fdOptions.value.datepickerMode) {
+			fdOptions.value.datepickerMode = 'yesterday-business';
+		}
+
+		firstDateIsDisabled.value = false;
 
 		if (rangeOfDates.value) {
+
+			sdOptions.value = JSON.parse(JSON.stringify(props.secondDatepickerOptions));
+
+			secondDateIsDisabled.value = false;
 
 			const disableInputAndCalendar = [
 				'month-to-date',
@@ -945,7 +950,8 @@
 				secondDateIsDisabled.value = true;
 			}
 
-		} else {
+		}
+		else {
 
 			const disableInputAndCalendar = [
 				'today',
@@ -959,7 +965,18 @@
 
 		}
 
-	})
+	}
+
+	function onPopupToggle(newVal) {
+
+		if (newVal) { // opening popup
+			init();
+		}
+
+		menuIsOpened.value = newVal;
+
+	}
+
 </script>
 
 <style lang="scss" scoped>
