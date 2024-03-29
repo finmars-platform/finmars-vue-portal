@@ -77,7 +77,7 @@
 								</a>
 							</div>
 							<div class="fm_list_item">
-								<a class="fm_message_item_date" :href="`${apiUrl}/${store.current.base_api_url}/docs/api/v1/`">
+								<a class="fm_message_item_date" :href="`${apiUrl}/${store.current.base_api_url}/api/v1/`">
 									API Reference
 								</a>
 							</div>
