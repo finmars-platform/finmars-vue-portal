@@ -134,31 +134,20 @@
 	}
 
 	function formatDateValue(dateText) {
-		if (/\D\/$/.test(dateText))
-			dateText = dateText.substr(0, dateText.length - 3)
+		var formatted = dateText.replace(/[^0-9-]/g, '');
 
-		const values = dateText.split('-').map(function (v) {
-			// prevent writing of non digits
-			return v.replace(/\D/g, '')
-		})
+		/* *
+		 * 'd' for digit
+		 * ^\d{4}$ - matches 'dddd'
+		 * ^\d{4}-d{2}$ - matches 'dddd-dd'
+		 * */
+		var monthOrYear = /^\d{4}$|^\d{4}-\d{2}$/g;
 
-		if (values[1]) values[1] = checkValue(values[1], 12)
-		if (values[2]) values[2] = checkValue(values[2], 31)
+		if ( formatted.match(monthOrYear) ) {
+			formatted = formatted + '-';
+		}
 
-		const output = values.map(function (v, i) {
-			if (v.length == 4 && i == 0) {
-				return v + '-'
-			} else if (v.length == 2 && i == 1) {
-				return v + '-'
-			} else {
-				return v
-			}
-		})
-
-		// this.value = output.join('').substr(0, 14);
-		const value = output.join('').substring(0, 14)
-
-		return value
+		return formatted;
 	}
 
 	const validateValue = useDebounce(function (newValue) {

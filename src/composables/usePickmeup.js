@@ -1,3 +1,10 @@
+/**
+ *
+ * @param target {HTMLElement|String} - element or string-selector
+ * for element with calendar
+ * @param [options] {Object}
+ * @return {*} - instance of pickmeup for target
+ */
 export default function (target, options) {
 	const nuxtApp = useNuxtApp();
 
