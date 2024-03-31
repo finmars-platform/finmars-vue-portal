@@ -17,13 +17,14 @@
 <script setup>
 
 let emit = defineEmits(['update:modelValue'])
-let props = defineProps({realmCode: String})
+let props = defineProps({realmCode: String, realmId: Number})
 
 const lines = ref(['Waiting to server response...'])
 
 async function getData() {
 
 	let logText = await useApi("realmProvisionLog.put", {
+		params: {id: props.realmId},
 		body: {realm_code: props.realmCode, app_code: 'backend'}
 	})
 	lines.value = logText.split(/\r?\n/);
