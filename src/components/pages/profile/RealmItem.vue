@@ -1,6 +1,6 @@
 <template>
 
-	<FmCard>
+	<FmCard class="realm-card">
 
 		<div class="flex aic sb">
 			<div class="fm_card_title m-b-0">
@@ -21,14 +21,12 @@
 							Restart
 						</div>
 
-						<div class="fm_list_item" @click="stop(), close()"
-							 v-if="realm.status === 'operational'"
+						<div class="fm_list_item" @click="stop(), close()" v-if="realm.status === 'operational'"
 						>
 							<FmIcon class="mr-10" icon="stop_circle"/>
 							Stop
 						</div>
-						<div class="fm_list_item" @click="start(), close()"
-							 v-if="realm.status === 'stopped'"
+						<div class="fm_list_item" @click="start(), close()" v-if="realm.status === 'stopped'"
 						>
 							<FmIcon class="mr-10" icon="play_circle"/>
 							Start
@@ -47,7 +45,7 @@
 
 		<div class="fm_card_content">
 
-			<div class="fm_container realm-spaces">
+			<div class="fm_container realm-spaces" v-if="realm.spaces.length">
 
 				<PagesProfileDatabasesItem
 					v-for="space in realm.spaces"
@@ -55,6 +53,29 @@
 					:key="space.id"
 					@refresh="store.getMasterUsers()"
 				/>
+
+			</div>
+
+			<div class="fm_container " v-if="!realm.spaces.length">
+				<h3 class="text-center">No Spaces in this Realm</h3>
+			</div>
+
+			<div class="fm_container" style="justify-content: flex-end; display: flex;">
+
+				<FmMenu>
+					<template #btn>
+						<FmIcon btnPrimary icon="add"/>
+					</template>
+
+					<div class="fm_list">
+						<NuxtLink class="fm_list_item" :to="{
+							path: '/profile/add-space',
+							query: {realm_code: realm.realm_code}
+						}">
+							New Space
+						</NuxtLink>
+					</div>
+				</FmMenu>
 
 			</div>
 
@@ -92,8 +113,8 @@ async function redeploy() {
 	let isConfirm = await useConfirm({text: 'Are you sure?'})
 	if (!isConfirm) return false
 
-	let res = await useApi("masterRedeploy.get", {
-		params: {baseApi: props.db.base_api_url}
+	let res = await useApi("realmRestart.put", {
+		body: {realm_code: props.realm.realm_code}
 	})
 	if (res) {
 		useNotify({
@@ -108,8 +129,8 @@ async function stop() {
 	let isConfirm = await useConfirm({text: 'Are you sure?'})
 	if (!isConfirm) return false
 
-	let res = await useApi("masterStop.get", {
-		params: {baseApi: props.db.base_api_url}
+	let res = await useApi("realmStop.put", {
+		body: {realm_code: props.realm.realm_code}
 	})
 	if (res) {
 		useNotify({
@@ -124,8 +145,8 @@ async function start() {
 	let isConfirm = await useConfirm({text: 'Are you sure?'})
 	if (!isConfirm) return false
 
-	let res = await useApi("masterStart.get", {
-		params: {baseApi: props.db.base_api_url}
+	let res = await useApi("realmStart.put", {
+		body: {realm_code: props.realm.realm_code}
 	})
 	if (res) {
 		useNotify({
@@ -147,6 +168,10 @@ async function start() {
 	//justify-content: flex-start;
 	padding-bottom: $content-padding-x;
 	justify-content: start
+}
+
+.realm-card {
+	margin: 1rem;
 }
 
 </style>
