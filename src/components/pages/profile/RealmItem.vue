@@ -37,6 +37,12 @@
 							Show Provising Log
 						</div>
 
+						<div class="fm_list_item" @click="deleteRealm(), close()" v-if="!realm.spaces.length"
+						>
+							<FmIcon class="mr-10" icon="delete"/>
+							Delete
+						</div>
+
 					</div>
 				</template>
 			</FmMenu>
@@ -148,6 +154,20 @@ async function start() {
 	let res = await useApi("realmStart.put", {
 		body: {realm_code: props.realm.realm_code}
 	})
+	if (res) {
+		useNotify({
+			type: 'success',
+			title: 'Success',
+		})
+		emit("refresh");
+	}
+}
+
+async function deleteRealm() {
+	let isConfirm = await useConfirm({text: 'Are you sure?'})
+	if (!isConfirm) return false
+
+	let res = await useApi("realm.delete")
 	if (res) {
 		useNotify({
 			type: 'success',

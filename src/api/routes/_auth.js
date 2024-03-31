@@ -104,6 +104,7 @@ export default {
 	realm: {
 		get: prefix + "/api/v2/realm/",
 		put: prefix + "/api/v2/realm/{id}/",
+		delete: prefix + "/api/v2/realm/{id}/",
 	},
 	realmProvisionLog: {
 		put: prefix + "/api/v2/realm/{id}/log/",
