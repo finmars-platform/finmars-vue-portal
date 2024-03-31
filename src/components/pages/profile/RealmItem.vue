@@ -89,7 +89,8 @@
 
 	</FmCard>
 
-	<LazyPagesProfileWorkspaceProvisionLogM :realmCode="realm.realm_code" v-model="isProvisionLogDialog"
+	<LazyPagesProfileWorkspaceProvisionLogM :realmCode="realm.realm_code" :realmId="realm.id"
+											v-model="isProvisionLogDialog"
 											v-if="isProvisionLogDialog"/>
 
 </template>
@@ -120,6 +121,7 @@ async function redeploy() {
 	if (!isConfirm) return false
 
 	let res = await useApi("realmRestart.put", {
+		params: {id: props.realm.id},
 		body: {realm_code: props.realm.realm_code}
 	})
 	if (res) {
@@ -136,6 +138,7 @@ async function stop() {
 	if (!isConfirm) return false
 
 	let res = await useApi("realmStop.put", {
+		params: {id: props.realm.id},
 		body: {realm_code: props.realm.realm_code}
 	})
 	if (res) {
@@ -152,6 +155,7 @@ async function start() {
 	if (!isConfirm) return false
 
 	let res = await useApi("realmStart.put", {
+		params: {id: props.realm.id},
 		body: {realm_code: props.realm.realm_code}
 	})
 	if (res) {
@@ -167,7 +171,9 @@ async function deleteRealm() {
 	let isConfirm = await useConfirm({text: 'Are you sure?'})
 	if (!isConfirm) return false
 
-	let res = await useApi("realm.delete")
+	let res = await useApi("realm.delete", {
+		params: {id: props.realm.id},
+	})
 	if (res) {
 		useNotify({
 			type: 'success',
