@@ -5,13 +5,7 @@ export default {
         get: prefix + "/master-user/",
         put: prefix + "/master-user/{id}/",
     },
-	realm: {
-		get: prefix + "/api/v2/realm/",
-		put: prefix + "/api/v2/realm/{id}/",
-	},
-	realmProvisionLog: {
-		put: prefix + "/api/v2/realm/{id}/log/",
-	},
+
     ping: {
         get: prefix + "/ping/"
     },
@@ -103,6 +97,28 @@ export default {
     },
     masterInitUpdate: {
         put:  prefix + '/master-user/{id}/init-update/'
-    }
+    },
+
+// 	REALM
+
+	realm: {
+		get: prefix + "/api/v2/realm/",
+		put: prefix + "/api/v2/realm/{id}/",
+	},
+	realmProvisionLog: {
+		put: prefix + "/api/v2/realm/{id}/log/",
+	},
+	realmCreate: {
+		post:  prefix + '/api/v2/realm/'
+	},
+	realmRestart: {
+		put: prefix + '/api/v2/realm/{id}/restart/'
+	},
+	realmStart: {
+		put: prefix + '/api/v2/realm/{id}/start/'
+	},
+	realmStop: {
+		put: prefix + '/api/v2/realm/{id}/stop/'
+	},
 
 };

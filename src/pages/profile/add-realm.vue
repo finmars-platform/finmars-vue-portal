@@ -1,9 +1,8 @@
 <template>
 	<div class="flex jcc">
-		<FmCard class="fm_card_text form_block" title="Setup your new Database">
+		<FmCard class="fm_card_text form_block" title="Setup your new Realm">
 			<BaseInput v-model="form.name" label="Name" />
 			<BaseInput v-model="form.license_key" label="License key" />
-			<FmSelect v-model="config" :items="configs" label="Init configuration" />
 			<BaseInput v-model="form.description" label="Description" />
 
 			<div class="show_btn tac">
@@ -40,7 +39,7 @@
 				disabled: false,
 			},
 			{
-				text: "Create New Database",
+				text: "Create New Realm",
 				disabled: true,
 			},
 		],
@@ -72,13 +71,13 @@
 	async function createDb() {
 		processing.value = true
 
-		let res = await useApi("masterCreate.post", { body: form })
+		let res = await useApi("realmCreate.post", { body: form })
 
 		if (res.id) {
 			router.push("/profile")
 			useNotify({
 				type: "success",
-				title: "Workspace is initializing.",
+				title: "Realm is initializing.",
 			})
 		}
 

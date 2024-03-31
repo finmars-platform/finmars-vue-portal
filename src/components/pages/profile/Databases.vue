@@ -11,15 +11,15 @@
 
 					<div class="fm_list">
 						<NuxtLink class="fm_list_item"
-								  to="/profile/add-database"
+								  to="/profile/add-realm"
 						>
-							New
+							New Realm
 						</NuxtLink>
-						<div class="fm_list_item" @click="isShowNewBackup = true">
-							From Backup
+<!--						<div class="fm_list_item" @click="isShowNewBackup = true">-->
+<!--							From Backup-->
 
 
-						</div>
+<!--						</div>-->
 					</div>
 				</FmMenu>
 				<PagesProfileDatabaseFromBackup
