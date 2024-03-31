@@ -4,6 +4,7 @@ export default defineStore({
 		return {
 			user: {},
 			masterUsers: [],
+			realms: [],
 			current: {}, // master user
 			member: {},
 			memberLayout: {},
@@ -27,6 +28,7 @@ export default defineStore({
 		async init() {
 			this.getUser()
 			await this.getMasterUsers()
+			await this.getRealms();
 
 			if(this.current){
 				// hack for repots
@@ -57,6 +59,15 @@ export default defineStore({
 				this.defaultConfigCode = this.configCodes.find( conf => conf.is_primary ).configuration_code;
 
 			}
+
+			window.onerror = this.registerSysError
+		},
+		async getRealms() {
+			let res = await useApi('realm.get')
+
+			if (res.error) return
+
+			this.realms = res.results
 
 			window.onerror = this.registerSysError
 		},
