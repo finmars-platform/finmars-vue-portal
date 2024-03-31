@@ -5,6 +5,13 @@ export default {
         get: prefix + "/master-user/",
         put: prefix + "/master-user/{id}/",
     },
+	realm: {
+		get: prefix + "/api/v2/realm/",
+		put: prefix + "/api/v2/realm/{id}/",
+	},
+	realmProvisionLog: {
+		put: prefix + "/api/v2/realm/{id}/log/",
+	},
     ping: {
         get: prefix + "/ping/"
     },
