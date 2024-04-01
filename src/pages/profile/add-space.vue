@@ -76,7 +76,7 @@ let config = ref("Blank")
 async function createDb() {
 	processing.value = true
 
-	let res = await useApi("realmCreateSpace.post",
+	let res = await useApi("realmCreateSpace.put",
 
 		{
 			params: {id: route.query.realm_id},
