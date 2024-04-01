@@ -123,6 +123,9 @@ export default {
 	},
 	realmCreateSpace: {
 		put: prefix + '/api/v2/realm/{id}/create-space/'
-	}
+	},
+	realmDeleteSpace: {
+		delete: prefix + '/api/v2/realm/{id}/delete-space/'
+	},
 
 };
