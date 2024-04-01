@@ -1,6 +1,8 @@
 <template>
+<!--	<FmCard class="db" controls-->
+<!--					:class="{red: diffDateKey <= 0, warn: diffDateKey > 0 && diffDateKey <= 30}"-->
+<!--	>-->
 	<FmCard class="db" controls
-					:class="{red: diffDateKey <= 0, warn: diffDateKey > 0 && diffDateKey <= 30}"
 	>
 		<div class="flex aic sb">
 			<div class="fm_card_title edit_hover m-b-0">
@@ -28,32 +30,10 @@
 
 				<template #default="{close}">
 					<div class="fm_list">
-						<div class="fm_list_item" @click="redeploy(), close()">
-							<FmIcon class="mr-10" icon="restart_alt"/>
-							Restart
-						</div>
-
-						<div class="fm_list_item" @click="stop(), close()"
-								 v-if="db.status != 4"
-						>
-							<FmIcon class="mr-10" icon="stop_circle"/>
-							Stop
-						</div>
-						<div class="fm_list_item" @click="start(), close()"
-								 v-else
-						>
-							<FmIcon class="mr-10" icon="play_circle"/>
-							Start
-						</div>
-
-						<div class="fm_list_item" @click="isOpenRollback = true, close()">
-							<FmIcon class="mr-10" icon="cloud_sync"/>
-							Rollback
-						</div>
-						<div class="fm_list_item" @click="isProvisionLogDialog = true, close()">
-							<FmIcon class="mr-10" icon="cloud_sync"/>
-							Show Provising Log
-						</div>
+<!--						<div class="fm_list_item" @click="isOpenRollback = true, close()">-->
+<!--							<FmIcon class="mr-10" icon="cloud_sync"/>-->
+<!--							Rollback-->
+<!--						</div>-->
 						<div class="fm_list_item" @click="exportDb(), close()">
 							<FmIcon class="mr-10" icon="cloud_upload"/>
 							Export backup
@@ -81,7 +61,8 @@
 
 
 		<div class="fm_card_subtitle m-t-8">
-			{{ status }}
+<!--			{{ status }}-->
+
 		</div>
 
 		<div class="fm_card_content fm_card_text mb-x edit_hover">
@@ -125,8 +106,8 @@
 								red: db.status == 3 || db.status == 4,
 							}"
 						></FmIcon>
-						<a target="_blank" :href="`${config.public.apiURL}/${db.base_api_url}/api/v1/`" class="clipboard_text">
-							{{ db.base_api_url }}
+						<a target="_blank" :href="`${config.public.apiURL}/${db.space_code}/api/v1/`" class="clipboard_text">
+							{{ db.space_code }}
 						</a>
 						<!-- <FmIcon class="m-l-4" icon="content_copy" size="16" /> -->
 					</div>
@@ -145,9 +126,9 @@
 
 			</div>
 
-			<div v-if="db.is_update_available" class="space-card-update-bar">
-				<FmBtn @click="initUpdateDatabase()">Update</FmBtn>
-			</div>
+<!--			<div v-if="db.is_update_available" class="space-card-update-bar">-->
+<!--				<FmBtn @click="initUpdateDatabase()">Update</FmBtn>-->
+<!--			</div>-->
 		</template>
 
 
@@ -199,12 +180,12 @@ let showActions = ref(false)
 let dateKey = dayjs(props.db.license_expiry_date)
 let diffDateKey = dateKey.diff(dayjs(), 'days')
 
-let status = computed(() => {
-
-	if (diffDateKey <= 0) return `Expired ${dateKey.format('DD.MM.YYYY')}`
-	else if (diffDateKey <= 30) return `Expire ${dateKey.fromNow()}`
-	else return `Expire date: ${dateKey.format('DD.MM.YYYY')}`
-})
+// let status = computed(() => {
+//
+// 	if (diffDateKey <= 0) return `Expired ${dateKey.format('DD.MM.YYYY')}`
+// 	else if (diffDateKey <= 30) return `Expire ${dateKey.fromNow()}`
+// 	else return `Expire date: ${dateKey.format('DD.MM.YYYY')}`
+// })
 
 function setEditObject() {
 	editingData.description = props.db.description;
@@ -254,64 +235,16 @@ async function exportDb() {
 	}
 }
 
-async function redeploy() {
-	let isConfirm = await useConfirm({text: 'Are you sure?'})
-	if (!isConfirm) return false
-
-	let res = await useApi("masterRedeploy.get", {
-		params: {baseApi: props.db.base_api_url}
-	})
-	if (res) {
-		useNotify({
-			type: 'success',
-			title: 'Success',
-		})
-		emit("refresh");
-	}
-}
-
-async function stop() {
-	let isConfirm = await useConfirm({text: 'Are you sure?'})
-	if (!isConfirm) return false
-
-	let res = await useApi("masterStop.get", {
-		params: {baseApi: props.db.base_api_url}
-	})
-	if (res) {
-		useNotify({
-			type: 'success',
-			title: 'Success',
-		})
-		emit("refresh");
-	}
-}
-
-async function start() {
-	let isConfirm = await useConfirm({text: 'Are you sure?'})
-	if (!isConfirm) return false
-
-	let res = await useApi("masterStart.get", {
-		params: {baseApi: props.db.base_api_url}
-	})
-	if (res) {
-		useNotify({
-			type: 'success',
-			title: 'Success',
-		})
-		emit("refresh");
-	}
-}
-
 async function deleteDB() {
 	let isConfirm = await useConfirm({
-		title: 'Delete workspace',
-		text: `Enter the full name of the workspace "${props.db.name}" to initiate its deletion.`,
+		title: 'Delete Space',
+		text: `Enter the full name of the Space "${props.db.name}" to initiate its deletion.`,
 		check: props.db.name,
 	})
 	if (!isConfirm) return false
 
 	let res = props.db.is_owner
-		? await useApi('masterDelete.delete', {params: {id: props.db.id}})
+		? await useApi('realmDeleteSpace.delete', {params: {id: props.db.id}})
 		: await useApi('masterLeave.get', {params: {id: props.db.id}})
 
 	if (res) {
