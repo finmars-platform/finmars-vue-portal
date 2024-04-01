@@ -244,7 +244,7 @@ async function deleteDB() {
 	if (!isConfirm) return false
 
 	let res = props.db.is_owner
-		? await useApi('realmDeleteSpace.delete', {params: {id: props.db.id}})
+		? await useApi('realmDeleteSpace.put', {params: {id: props.db.id}})
 		: await useApi('masterLeave.get', {params: {id: props.db.id}})
 
 	if (res) {
