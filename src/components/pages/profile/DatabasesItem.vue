@@ -127,9 +127,6 @@
 
 			</div>
 
-			<!--			<div v-if="db.is_update_available" class="space-card-update-bar">-->
-			<!--				<FmBtn @click="initUpdateDatabase()">Update</FmBtn>-->
-			<!--			</div>-->
 		</template>
 
 
@@ -264,13 +261,7 @@ async function deleteDB() {
 	}
 }
 
-async function initUpdateDatabase() {
 
-	await useApi('masterInitUpdate.put', {params: {id: props.db.id}})
-
-	store.getMasterUsers()
-
-}
 
 async function open() {
 
