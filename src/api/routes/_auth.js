@@ -127,5 +127,8 @@ export default {
 	realmDeleteSpace: {
 		put: prefix + '/api/v2/realm/{id}/delete-space/'
 	},
+	realmInitUpdate: {
+		put: prefix + '/api/v2/realm/{id}/init-update/'
+	},
 
 };

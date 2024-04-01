@@ -9,43 +9,56 @@
 				</div>
 			</div>
 
-			<FmMenu anchor="right" v-if="isAdmin">
-				<template #btn>
-					<FmIcon icon="settings"/>
-				</template>
+			<div anchor="right" class="realm-right-controls-holder">
 
-				<template #default="{close}">
-					<div class="fm_list">
-						<div class="fm_list_item" @click="redeploy(), close()">
-							<FmIcon class="mr-10" icon="restart_alt"/>
-							Restart
-						</div>
+				<div v-if="realm.is_update_available" class="realm-update-is-available-chip">
+					Update is available
+				</div>
 
-						<div class="fm_list_item" @click="stop(), close()" v-if="realm.status === 'operational'"
-						>
-							<FmIcon class="mr-10" icon="stop_circle"/>
-							Stop
-						</div>
-						<div class="fm_list_item" @click="start(), close()" v-if="realm.status === 'stopped'"
-						>
-							<FmIcon class="mr-10" icon="play_circle"/>
-							Start
-						</div>
+				<FmMenu anchor="right"  v-if="isAdmin">
+					<template #btn>
+						<FmIcon icon="settings"/>
+					</template>
 
-						<div class="fm_list_item" @click="isProvisionLogDialog = true, close()">
-							<FmIcon class="mr-10" icon="cloud_sync"/>
-							Show Provising Log
-						</div>
+					<template #default="{close}">
+						<div class="fm_list">
 
-						<div class="fm_list_item" @click="deleteRealm(), close()" v-if="!realm.spaces.length"
-						>
-							<FmIcon class="mr-10" icon="delete"/>
-							Delete
-						</div>
+							<div v-if="realm.is_update_available" class="fm_list_item" @click="initUpdateDatabase(), close()">
+								<FmIcon class="mr-10" icon="downloading"/>
+								Update
+							</div>
 
-					</div>
-				</template>
-			</FmMenu>
+							<div class="fm_list_item" @click="redeploy(), close()">
+								<FmIcon class="mr-10" icon="restart_alt"/>
+								Restart
+							</div>
+
+							<div class="fm_list_item" @click="stop(), close()" v-if="realm.status === 'operational'"
+							>
+								<FmIcon class="mr-10" icon="stop_circle"/>
+								Stop
+							</div>
+							<div class="fm_list_item" @click="start(), close()" v-if="realm.status === 'stopped'"
+							>
+								<FmIcon class="mr-10" icon="play_circle"/>
+								Start
+							</div>
+
+							<div class="fm_list_item" @click="isProvisionLogDialog = true, close()">
+								<FmIcon class="mr-10" icon="cloud_sync"/>
+								Show Provising Log
+							</div>
+
+							<div class="fm_list_item" @click="deleteRealm(), close()" v-if="!realm.spaces.length"
+							>
+								<FmIcon class="mr-10" icon="delete"/>
+								Delete
+							</div>
+
+						</div>
+					</template>
+				</FmMenu>
+			</div>
 		</div>
 
 
@@ -184,6 +197,14 @@ async function deleteRealm() {
 	}
 }
 
+async function initUpdateDatabase() {
+
+	await useApi('realmInitUpdate.put', {params: {id: props.realm.id}})
+
+	emit("refresh");
+
+}
+
 </script>
 
 <style lang="scss" scoped>
@@ -199,6 +220,20 @@ async function deleteRealm() {
 
 .realm-card {
 	margin: 1rem;
+}
+
+.realm-update-is-available-chip {
+	margin-right: 1rem;
+	background: #f05a22;
+	border-radius: 6px;
+	color: #fff;
+	padding: 0.5rem;
+}
+
+.realm-right-controls-holder {
+	display: flex;
+	align-items: center;
+	height: 2rem;
 }
 
 </style>
