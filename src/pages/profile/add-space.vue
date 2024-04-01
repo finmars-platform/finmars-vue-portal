@@ -3,7 +3,7 @@
 		<FmCard class="fm_card_text form_block" title="Setup your new Space">
 			<BaseInput v-model="form.name" label="Name"/>
 			<BaseInput v-model="form.license_key" label="License Key"/>
-			<BaseInput v-model="form.realm_code" label="Realm Code"/>
+			<BaseInput v-model="form.realm_code" label="Realm Code" :disabled="true"/>
 			<FmSelect v-model="config" :items="configs" label="Init configuration"/>
 			<BaseInput v-model="form.description" label="Description"/>
 
