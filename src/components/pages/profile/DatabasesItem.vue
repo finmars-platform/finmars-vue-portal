@@ -1,7 +1,7 @@
 <template>
-<!--	<FmCard class="db" controls-->
-<!--					:class="{red: diffDateKey <= 0, warn: diffDateKey > 0 && diffDateKey <= 30}"-->
-<!--	>-->
+	<!--	<FmCard class="db" controls-->
+	<!--					:class="{red: diffDateKey <= 0, warn: diffDateKey > 0 && diffDateKey <= 30}"-->
+	<!--	>-->
 	<FmCard class="db" controls
 	>
 		<div class="flex aic sb">
@@ -10,16 +10,16 @@
 					{{ isEditTitle ? editingData.name : db.name.length > 20 ? db.name.slice(0, 20) + '...' : db.name }}
 				</span>
 				<FmIcon primary
-								v-if="!isEditTitle"
-								class="edit_icon"
-								icon="edit"
-								@click="edit('title')"
+						v-if="!isEditTitle"
+						class="edit_icon"
+						icon="edit"
+						@click="edit('title')"
 				/>
 
 				<input class="fm_card_title m-b-0"
-							 v-if="isEditTitle"
-							 v-model="editingData.name"
-							 ref="title"
+					   v-if="isEditTitle"
+					   v-model="editingData.name"
+					   ref="title"
 				/>
 			</div>
 
@@ -30,10 +30,10 @@
 
 				<template #default="{close}">
 					<div class="fm_list">
-<!--						<div class="fm_list_item" @click="isOpenRollback = true, close()">-->
-<!--							<FmIcon class="mr-10" icon="cloud_sync"/>-->
-<!--							Rollback-->
-<!--						</div>-->
+						<!--						<div class="fm_list_item" @click="isOpenRollback = true, close()">-->
+						<!--							<FmIcon class="mr-10" icon="cloud_sync"/>-->
+						<!--							Rollback-->
+						<!--						</div>-->
 						<div class="fm_list_item" @click="exportDb(), close()">
 							<FmIcon class="mr-10" icon="cloud_upload"/>
 							Export backup
@@ -61,7 +61,7 @@
 
 
 		<div class="fm_card_subtitle m-t-8">
-<!--			{{ status }}-->
+			<!--			{{ status }}-->
 
 		</div>
 
@@ -69,10 +69,10 @@
 			<template v-if="!isEditDesc">
 				{{ isEditDesc ? editingData.description : db.description }}
 				<FmIcon primary
-								v-if="db.description"
-								class="edit_icon"
-								icon="edit"
-								@click="edit()"
+						v-if="db.description"
+						class="edit_icon"
+						icon="edit"
+						@click="edit()"
 				/>
 				<FmBtn
 					v-else
@@ -106,7 +106,8 @@
 								red: db.status == 3 || db.status == 4,
 							}"
 						></FmIcon>
-						<a target="_blank" :href="`${config.public.apiURL}/${db.space_code}/api/v1/`" class="clipboard_text">
+						<a target="_blank" :href="`${config.public.apiURL}/${db.space_code}/api/v1/`"
+						   class="clipboard_text">
 							{{ db.space_code }}
 						</a>
 						<!-- <FmIcon class="m-l-4" icon="content_copy" size="16" /> -->
@@ -126,9 +127,9 @@
 
 			</div>
 
-<!--			<div v-if="db.is_update_available" class="space-card-update-bar">-->
-<!--				<FmBtn @click="initUpdateDatabase()">Update</FmBtn>-->
-<!--			</div>-->
+			<!--			<div v-if="db.is_update_available" class="space-card-update-bar">-->
+			<!--				<FmBtn @click="initUpdateDatabase()">Update</FmBtn>-->
+			<!--			</div>-->
 		</template>
 
 
@@ -144,7 +145,8 @@
 import dayjs from 'dayjs'
 
 const props = defineProps({
-	db: Object
+	db: Object,
+	realm: Object
 });
 const emit = defineEmits(["refresh", 'delete']);
 const config = useRuntimeConfig();
@@ -244,7 +246,12 @@ async function deleteDB() {
 	if (!isConfirm) return false
 
 	let res = props.db.is_owner
-		? await useApi('realmDeleteSpace.put', {params: {id: props.db.id}})
+		? await useApi('realmDeleteSpace.put', {
+			params: {id: props.realm.id}, body: {
+				realm_code: props.realm.realm_code,
+				space_code: props.db.space_code,
+			}
+		})
 		: await useApi('masterLeave.get', {params: {id: props.db.id}})
 
 	if (res) {
@@ -270,7 +277,7 @@ async function open() {
 	if (props.db.base_api_url) {
 		window.location.href = '/' + props.db.base_api_url + '/v/home' // deprecated
 	} else {
-		window.location.href = '/' + props.db.realm_code +  '/' + props.db.space_code + '/v/home'
+		window.location.href = '/' + props.db.realm_code + '/' + props.db.space_code + '/v/home'
 	}
 }
 
@@ -454,10 +461,12 @@ setTimeout(() => {
 		right: 8px;
 		opacity: 0;
 	}
+
 	&:hover {
 		.space-card-provision-log {
 			display: block;
 			opacity: 0.7;
+
 			&:hover {
 				opacity: 1
 			}
@@ -496,6 +505,7 @@ setTimeout(() => {
 			}
 		}
 	}
+
 	.space-card-foreground-small {
 		font-size: 12px;
 		opacity: 0.7;

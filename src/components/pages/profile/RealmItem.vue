@@ -56,6 +56,7 @@
 				<PagesProfileDatabasesItem
 					v-for="space in realm.spaces"
 					:db="space"
+					:realm="realm"
 					:key="space.id"
 					@refresh="store.getMasterUsers()"
 				/>
