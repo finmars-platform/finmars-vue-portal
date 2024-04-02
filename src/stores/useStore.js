@@ -6,6 +6,8 @@ export default defineStore({
 			masterUsers: [],
 			realms: [],
 			current: {}, // master user
+			realm_code: null,
+			space_code: null,
 			member: {},
 			memberLayout: {},
 
@@ -33,6 +35,21 @@ export default defineStore({
 			if(this.current){
 				// hack for repots
 				window.base_api_url = this.current.base_api_url; // needed for angularjs components
+			}
+
+			const pathname = window.location.pathname;
+
+			if (pathname.includes('/space')) {
+
+				const pathnamePartsList = pathname.split('/');
+				const realm_code = pathnamePartsList.find(part => part.startsWith('realm'));
+				const space_code = pathnamePartsList.find(part => part.startsWith('space'));
+
+				this.realm_code = realm_code
+				this.space_code = space_code
+
+			} else {
+				throw new Error("useStore.init: no space_code in the pathname" + pathname);
 			}
 
 		},
@@ -258,5 +275,8 @@ export default defineStore({
 		favorites(state) {
 			return state.memberLayout.data.favorites
 		},
+		isUrlValid(state){
+			return state.realm_code && state.space_code
+		}
 	},
 })

@@ -131,7 +131,7 @@
 		return dayjs( date ).format('DD.MM.YYYY LT')
 	}
 
-	if ( store.current.base_api_url ) {
+	if ( store.isUrlValid ) {
 		init()
 	} else {
 		const unwatch = watch( () => store.current, async () => {

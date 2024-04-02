@@ -217,7 +217,7 @@ function editorInit(editor) {
 	editor.navigateFileStart();
 }
 
-if (store.current.base_api_url) {
+if (store.isUrlValid) {
 	init()
 } else {
 	watch(() => store.current, async () => {
