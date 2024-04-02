@@ -49,7 +49,9 @@ export default defineStore({
 				this.space_code = space_code
 
 			} else {
-				throw new Error("useStore.init: no space_code in the pathname" + pathname);
+				console.warn("useStore.init: no space_code in the pathname" + pathname);
+				// Throw error when we move profile to separate repository
+				// throw new Error("useStore.init: no space_code in the pathname" + pathname);
 			}
 
 		},
