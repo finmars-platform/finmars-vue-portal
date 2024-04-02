@@ -68,6 +68,8 @@ export default defineNuxtConfig({
 			pages.forEach((page) => {
 				if (page.path.indexOf('/profile') === -1) {
 					page.path = '/:realm_code/:space_code/v' + page.path
+				} else {
+					page.path = '/v' + page.path
 				}
 			})
 
