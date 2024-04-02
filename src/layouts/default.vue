@@ -15,9 +15,36 @@
 <script setup>
 	import Stream from '~/services/WebSocket.js'
 
+
+
 	const store = useStore();
   const evAttrsStore = useEvAttributesStore();
 	const config = useRuntimeConfig();
+
+	const router = useRouter();
+
+	const routesList = router.getRoutes();
+
+	routesList.forEach((route) => {
+
+
+		// if (!route.params) {
+		// 	route.params = {}
+		// }
+
+		// route.props['realm_code'] = 'realm00000'
+		// route.props['space_code'] = 'space00000'
+
+		// route.path = route.path.replace(':realm_code', 'realm00000')
+		// route.path = route.path.replace(':space_code', 'space00000')
+
+		// console.log('routesList.route', route);
+
+	});
+
+	const route = useRoute();
+
+	console.log('home.route', route.params);
 
 	await store.init();
 
@@ -44,7 +71,7 @@
 	// })
 
 	watchEffect(async (onCleanup) => {
-		if (store.current.base_api_url) {
+		if (store.isUrlValid) {
 			onCleanup(() => {})
 
 			notLoadingMember.value = false

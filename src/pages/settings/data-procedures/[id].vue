@@ -144,7 +144,7 @@
 		}
 	}
 
-	if (store.current.base_api_url) {
+	if (store.isUrlValid) {
 		init()
 	} else {
 		watch(

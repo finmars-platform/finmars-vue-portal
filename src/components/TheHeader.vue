@@ -50,7 +50,7 @@
 					</div>
 				</FmMenu>
 
-				<a :href="`${config.public.apiURL}/${store.current.base_api_url}/a/#!/processes`">
+				<a :href="`${config.public.apiURL}/${store.realm_code}/${store.space_code}/a/#!/processes`">
 					<FmIcon
 						icon="cloud_download"
 						btn
@@ -77,7 +77,7 @@
 								</a>
 							</div>
 							<div class="fm_list_item">
-								<a class="fm_message_item_date" :href="`${apiUrl}/${store.current.base_api_url}/api/v1/`">
+								<a class="fm_message_item_date" :href="`${apiUrl}/${store.realm_code}/${store.space_code}/api/v1/`">
 									API Reference
 								</a>
 							</div>
@@ -202,7 +202,7 @@ let noti = ref(null)
 
 watchEffect(
 	() => {
-		if (store.current.base_api_url) {
+		if (store.isUrlValid) {
 			loadNoti()
 		}
 	}

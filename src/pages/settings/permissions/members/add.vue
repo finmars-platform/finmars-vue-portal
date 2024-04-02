@@ -93,7 +93,7 @@
 
 	let form = reactive({
 		groups: [],
-		base_api_url: store.current.base_api_url,
+		base_api_url: store.space_code,
 		is_owner: false
 	})
 
@@ -138,7 +138,7 @@
 		return dayjs( date ).format('DD.MM.YYYY LT')
 	}
 
-	if ( store.current.base_api_url ) {
+	if ( store.isUrlValid ) {
 		init()
 	} else {
 		const unwatch = watch( () => store.current, async () => {

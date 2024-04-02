@@ -78,3 +78,14 @@ export const useTextNotValidForUserCode = (
 	return null;
 
 }
+
+export const useGetNuxtLink = (linkEnd, params) => {
+
+	console.log('useGetNuxtLink.params', params)
+
+	const realm_code = params['realm_code'];
+	const space_code = params['space_code'];
+
+	return '/' + realm_code + '/' + space_code + '/v' + linkEnd;
+
+}
