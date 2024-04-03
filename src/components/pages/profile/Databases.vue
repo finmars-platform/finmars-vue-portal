@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<FmTopRefresh
-			@refresh="store.getMasterUsers(), refreshInvites()"
+			@refresh="store.getRealms(), refreshInvites()"
 		>
 			<template #action>
 				<FmMenu>
@@ -24,7 +24,7 @@
 				</FmMenu>
 				<PagesProfileDatabaseFromBackup
 					v-model="isShowNewBackup"
-					@cancel="isShowNewBackup = false, store.getMasterUsers()"
+					@cancel="isShowNewBackup = false, store.getRealms()"
 				/>
 			</template>
 		</FmTopRefresh>
