@@ -24,7 +24,7 @@
 			</template>
 
 			<div class="flex sb">
-				<FmBtn type="text" @click="$router.push('/profile')">cancel</FmBtn>
+				<FmBtn type="text" @click="$router.push('/v/profile')">cancel</FmBtn>
 				<FmBtn :disabled="processing" @click="createDb()"> finish</FmBtn>
 			</div>
 		</FmCard>
@@ -40,7 +40,7 @@ definePageMeta({
 	bread: [
 		{
 			text: "Profile",
-			to: "/profile",
+			to: "/v/profile",
 			disabled: false,
 		},
 		{
@@ -87,7 +87,7 @@ async function createDb() {
 	)
 
 	if (res.id) {
-		router.push("/profile")
+		router.push("/v/profile")
 		useNotify({
 			type: "success",
 			title: "Workspace is initializing.",

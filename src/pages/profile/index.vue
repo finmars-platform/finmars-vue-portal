@@ -21,7 +21,7 @@
 		bread: [
 			{
 				text: "Profile",
-				to: "/profile",
+				to: "/v/profile",
 				disabled: true,
 			},
 		],
