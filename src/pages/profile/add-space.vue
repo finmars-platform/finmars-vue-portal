@@ -32,6 +32,8 @@
 </template>
 
 <script setup>
+import {usePrefixedRouterPush} from "~/composables/useMeta";
+
 definePageMeta({
 	middleware: 'auth',
 	isHideSidebar: true,

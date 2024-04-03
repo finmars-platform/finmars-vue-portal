@@ -3,7 +3,7 @@
 		v-if="procedure.id"
 		title="Update Pricing Procedure"
 		@save="save()"
-		@cancel="() => $router.push('/valuations/run-pricing')"
+		@cancel="() => usePrefixedRouterPush($router, $route, `/valuations/run-pricing`)"
 	>
 		<template #left>
 			<FmCard title="Global" class="mb-x">
@@ -126,6 +126,8 @@
 </template>
 
 <script setup>
+
+	import {usePrefixedRouterPush} from "~/composables/useMeta";
 
 	definePageMeta({
 		bread: [
