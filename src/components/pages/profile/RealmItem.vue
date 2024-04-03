@@ -89,7 +89,7 @@
 
 					<div class="fm_list">
 						<NuxtLink class="fm_list_item" :to="{
-							path: '/profile/add-space',
+							path: '/v/profile/add-space',
 							query: {realm_code: realm.realm_code, realm_id: realm.id}
 						}">
 							New Space

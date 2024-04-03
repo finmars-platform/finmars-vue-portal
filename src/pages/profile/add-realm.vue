@@ -21,7 +21,7 @@
 			</template>
 
 			<div class="flex sb">
-				<FmBtn type="text" @click="$router.push('/profile')">cancel</FmBtn>
+				<FmBtn type="text" @click="$router.push('/v/profile')">cancel</FmBtn>
 				<FmBtn :disabled="processing" @click="createDb()"> finish </FmBtn>
 			</div>
 		</FmCard>
@@ -35,7 +35,7 @@
 		bread: [
 			{
 				text: "Profile",
-				to: "/profile",
+				to: "/v/profile",
 				disabled: false,
 			},
 			{
@@ -74,7 +74,7 @@
 		let res = await useApi("realmCreate.post", { body: form })
 
 		if (res.id) {
-			router.push("/profile")
+			router.push("/v/profile")
 			useNotify({
 				type: "success",
 				title: "Realm is initializing.",

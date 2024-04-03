@@ -11,7 +11,7 @@
 
 					<div class="fm_list">
 						<NuxtLink class="fm_list_item"
-								  to="/profile/add-realm"
+								  to="/v/profile/add-realm"
 						>
 							New Realm
 						</NuxtLink>

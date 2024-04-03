@@ -46,7 +46,7 @@
 			useCookie('access_token').value = res.access_token
 			useCookie('refresh_token').value = res.refresh_token
 
-			navigateTo('/profile')
+			navigateTo('/v/profile')
 		}
 	}
 </script>
