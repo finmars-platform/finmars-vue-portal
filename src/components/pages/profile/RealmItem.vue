@@ -71,7 +71,7 @@
 					:db="space"
 					:realm="realm"
 					:key="space.id"
-					@refresh="store.getMasterUsers()"
+					@refresh="store.getRealms()"
 				/>
 
 			</div>

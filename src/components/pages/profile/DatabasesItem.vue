@@ -252,7 +252,7 @@ async function deleteDB() {
 		: await useApi('masterLeave.get', {params: {id: props.db.id}})
 
 	if (res) {
-		store.getMasterUsers()
+		store.getRealms()
 
 		useNotify({
 			type: 'success',
