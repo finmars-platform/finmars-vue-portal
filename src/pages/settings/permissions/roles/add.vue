@@ -63,6 +63,7 @@
 
 	import dayjs from 'dayjs'
 	import {loadMultiselectOpts} from "~/pages/settings/helper";
+	import {usePrefixedRouterPush} from "~/composables/useMeta";
 
 	definePageMeta({
 		bread: [
@@ -121,11 +122,11 @@
 		if ( !res.error ) {
 			useNotify({type: 'success', title: 'Role created!'})
 
-			router.push('/settings/permissions?tab=Roles')
+			usePrefixedRouterPush(router, route, '/settings/permissions?tab=Roles')
 		}
 	}
 	async function cancel() {
-		router.push('/settings/permissions?tab=Roles')
+		usePrefixedRouterPush(router, route, '/settings/permissions?tab=Roles')
 	}
 	function fromatDate( date ) {
 		return dayjs( date ).format('DD.MM.YYYY LT')

@@ -81,11 +81,20 @@ export const useTextNotValidForUserCode = (
 
 export const useGetNuxtLink = (linkEnd, params) => {
 
-	console.log('useGetNuxtLink.params', params)
+	// console.log('useGetNuxtLink.params', params)
 
 	const realm_code = params['realm_code'];
 	const space_code = params['space_code'];
 
 	return '/' + realm_code + '/' + space_code + '/v' + linkEnd;
+
+}
+
+
+export const usePrefixedRouterPush = (router, route, link) => {
+
+	// console.log('useGetNuxtLink.params', params)
+
+	router.push(`/${route.params.realm_code}/${route.params.space_code}/v${link}`)
 
 }

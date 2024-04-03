@@ -5,7 +5,6 @@ import websocketService from '@/angular/shell/scripts/app/services/websocketServ
 import crossTabEvents from '@/angular/shell/scripts/app/services/events/crossTabEvents.js'
 // import {sys} from "browserify/lib/builtins";
 // import {window} from "@/angular/libs/js/d3"; // wtf?
-
 import metaService from '../services/metaService' // TODO inject into angular dependencies
 
 export default function (
@@ -84,7 +83,7 @@ export default function (
 
 					websocketService.send({
 						action: 'update_user_state',
-						data: { master_user: scope.currentMasterUser },
+						data: {master_user: scope.currentMasterUser},
 					})
 				}
 			}
@@ -209,11 +208,11 @@ export default function (
 								actionsButtons: [
 									{
 										name: 'CANCEL',
-										response: { status: 'disagree' },
+										response: {status: 'disagree'},
 									},
 									{
 										name: 'OK, PROCEED',
-										response: { status: 'agree' },
+										response: {status: 'agree'},
 									},
 								],
 							},
@@ -273,10 +272,12 @@ export default function (
 			scope.selectMaster = function (master) {
 				// var checkLayoutForChanges = middlewareService.getWarningOfLayoutChangesLossFn();
 				const changeMasterUser = function () {
+
+
 					if (window.PROJECT_ENV === 'local') {
-						window.location.href = '/' + master.base_api_url + '/a/#!/'
+						window.location.href =  '/' + master.realm_code + '/' + master.space_code + '/a/#!/'
 					} else {
-						window.location.href = '/' + master.base_api_url + '/v/home'
+						window.location.href = '/' + master.realm_code + '/' + master.space_code + '/v/home'
 					}
 
 					/*if ($state.current.name.startsWith('app.portal')) {
@@ -374,11 +375,11 @@ export default function (
 									actionsButtons: [
 										{
 											name: 'CANCEL',
-											response: { status: 'disagree' },
+											response: {status: 'disagree'},
 										},
 										{
 											name: 'OK, PROCEED',
-											response: { status: 'agree' },
+											response: {status: 'agree'},
 										},
 									],
 								},

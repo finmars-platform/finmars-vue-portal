@@ -76,6 +76,7 @@
 <script setup>
 
 import dayjs from 'dayjs'
+import {usePrefixedRouterPush} from "~/composables/useMeta";
 
 definePageMeta({
 	middleware: 'auth',
@@ -180,12 +181,12 @@ async function save() {
 
 	if (res) {
 		useNotify({type: 'success', title: 'Saved!'})
-		router.push('/settings/permissions?tab=Roles')
+		usePrefixedRouterPush(router, route, '/settings/permissions?tab=Roles')
 	}
 }
 
 async function cancel() {
-	router.push('/settings/permissions?tab=Roles')
+	usePrefixedRouterPush(router, route, '/settings/permissions?tab=Roles')
 }
 
 function fromatDate(date) {
