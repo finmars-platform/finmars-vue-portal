@@ -50,7 +50,7 @@
 					</div>
 				</FmMenu>
 
-				<a :href="`${config.public.apiURL}/${store.current.base_api_url}/a/#!/processes`">
+				<a :href="`${config.public.apiURL}/${store.realm_code}/${store.space_code}/a/#!/processes`">
 					<FmIcon
 						icon="cloud_download"
 						btn
@@ -77,7 +77,8 @@
 								</a>
 							</div>
 							<div class="fm_list_item">
-								<a class="fm_message_item_date" :href="`${apiUrl}/${store.current.base_api_url}/api/v1/`">
+								<a class="fm_message_item_date"
+								   :href="`${apiUrl}/${store.realm_code}/${store.space_code}/api/v1/`">
 									API Reference
 								</a>
 							</div>
@@ -101,8 +102,8 @@
 				<FmMenu class="header_item height-100">
 					<template #btn="{ isOpen }">
 						<FmBtn type="text"
-									 :class="['header_text_btn', 'm-l-8', 'm-r-8', {active: isOpen}]"
-									 style="height: 100%;">
+							   :class="['header_text_btn', 'm-l-8', 'm-r-8', {active: isOpen}]"
+							   style="height: 100%;">
 							{{ store.current.name }}
 						</FmBtn>
 					</template>
@@ -125,8 +126,8 @@
 			<FmMenu class="header_item height-100">
 				<template #btn="{ isOpen }">
 					<FmBtn type="text"
-								 :class="['header_text_btn', {active: isOpen}]"
-								 style="height: 100%;"
+						   :class="['header_text_btn', {active: isOpen}]"
+						   style="height: 100%;"
 					>
 
 						<div class="user-profile">
@@ -140,30 +141,31 @@
 				</template>
 				<template #default="{ close }">
 					<div class="fm_list">
-<!--						<div
+						<!--						<div
+													class="fm_list_item"
+													v-for="(item, index) in menu"
+													:key="index"
+													@click="item.cb(), close()"
+												>
+													{{ item.name }}
+												</div>-->
+						<div
+							@click="goToProfile()"
 							class="fm_list_item"
-							v-for="(item, index) in menu"
-							:key="index"
-							@click="item.cb(), close()"
 						>
-							{{ item.name }}
-						</div>-->
-            <NuxtLink
-                to="/profile"
-                class="fm_list_item"
-            >
-              <span class="side-nav-title">Profile</span>
-            </NuxtLink>
+							<span class="side-nav-title">Profile</span>
+						</div>
 
-            <div
-                class="fm_list_item"
-                @click="openAccManager"
-            >Account Security</div>
+						<div
+							class="fm_list_item"
+							@click="openAccManager"
+						>Account Security
+						</div>
 
-            <a
-                class="fm_list_item"
-                :href="`${apiUrl}/logout`"
-            >Logout</a>
+						<a
+							class="fm_list_item"
+							:href="`${apiUrl}/logout`"
+						>Logout</a>
 					</div>
 				</template>
 			</FmMenu>
@@ -194,19 +196,25 @@ const SECTIONS = {
 }
 
 async function openAccManager() {
-  const kc = await uKeycloak();
-  kc.accountManagement();
+	const kc = await uKeycloak();
+	kc.accountManagement();
 }
 
 let noti = ref(null)
 
 watchEffect(
 	() => {
-		if (store.current.base_api_url) {
+		if (store.isUrlValid) {
 			loadNoti()
 		}
 	}
 )
+
+function goToProfile() {
+
+	window.location.href = '/v/profile'
+
+}
 
 async function loadNoti(id) {
 	let res = await useApi("systemMessages.get", {
@@ -225,9 +233,9 @@ function fromatDate(date) {
 }
 
 async function setCurrent(item) {
-	let res = await useApi("masterSet.patch", {params: {id: item.id}})
+	// let res = await useApi("masterSet.patch", {params: {id: item.id}})
 
-	if (res) window.location.href = '/' + item.base_api_url + '/v/home'
+	window.location.href = '/' + item.realm_code + '/' + item.space_code + '/v/home'
 }
 
 
@@ -328,6 +336,7 @@ header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+
 	.user-profile-picture {
 		width: 32px;
 		margin-right: 8px;

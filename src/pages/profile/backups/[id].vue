@@ -112,11 +112,11 @@
 		bread: [
 			{
 				text: 'Profile',
-				to: '/profile',
+				to: '/v/profile',
 			},
 			{
 				text: 'Backups',
-				to: '/profile?tab=Backups',
+				to: '/v/profile?tab=Backups',
 			},
 			{
 				text: 'Backup detail',

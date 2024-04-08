@@ -42,7 +42,7 @@
 		backups.value.forEach((item) => {
 
 			let result_item = {
-				name: {value: item.master_user.name, link: `/profile/backups/${item.master_user.base_api_url}`},
+				name: {value: item.master_user.name, link: `/v/profile/backups/${item.master_user.base_api_url}`},
 				count: item.count,
 				autobackup_status: undefined,
 				last_backup: undefined

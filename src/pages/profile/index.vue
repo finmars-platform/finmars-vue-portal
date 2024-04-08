@@ -11,7 +11,6 @@
 		<PagesProfileBackups v-if="tab == 'Backups'" />
 		<PagesProfileBilling v-if="tab == 'Billing'" />
 		<PagesProfileSettings v-if="tab == 'Settings'" />
-		<PagesProfileApi v-if="tab == 'Api'" />
 	</div>
 </template>
 
@@ -22,7 +21,7 @@
 		bread: [
 			{
 				text: "Profile",
-				to: "/profile",
+				to: "/v/profile",
 				disabled: true,
 			},
 		],
@@ -30,7 +29,7 @@
 
 	let route = useRoute()
 
-	const tabs = ["Workspaces", "Backups", "Billing", "Settings", "Api"]
+	const tabs = ["Workspaces", "Backups", "Billing", "Settings"]
 	let tab = ref(route.query.tab || "Workspaces")
 	let error = ref(null)
 </script>

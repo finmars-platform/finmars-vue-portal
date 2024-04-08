@@ -38,7 +38,7 @@
 					:items="groups"
 				/>
 
-				<FmLoader v-if="!readyStatus.groups" />
+				<FmLoader v-if="!readyStatus.groups"/>
 			</FmCard>
 
 			<FmCard title="Roles" class="m-b-6">
@@ -48,7 +48,7 @@
 					:items="roles"
 				/>
 
-				<FmLoader v-if="!readyStatus.roles" />
+				<FmLoader v-if="!readyStatus.roles"/>
 			</FmCard>
 			<FmCard title="Personal Access Policies" class="m-b-6">
 				<BaseMultiSelectInput
@@ -57,7 +57,7 @@
 					:items="accessPolicies"
 				/>
 
-				<FmLoader v-if="!readyStatus.accessPolicies" />
+				<FmLoader v-if="!readyStatus.accessPolicies"/>
 			</FmCard>
 		</template>
 	</CommonSettingsLayout>
@@ -65,93 +65,97 @@
 
 <script setup>
 
-	import dayjs from 'dayjs'
-	import {loadMultiselectOpts} from "~/pages/settings/helper";
+import dayjs from 'dayjs'
+import {loadMultiselectOpts} from "~/pages/settings/helper";
+import {usePrefixedRouterPush} from "~/composables/useMeta";
 
-	definePageMeta({
-		bread: [
-			{
-				text: 'Permissions: Members',
-				to: '/settings/permissions',
-				disabled: false
-			},
-			{
-				text: 'Add member',
-				disabled: true
-			},
-		],
-	});
-	const store = useStore()
-	let route = useRoute()
-	let router = useRouter()
+definePageMeta({
+	bread: [
+		{
+			text: 'Permissions: Members',
+			to: '/settings/permissions',
+			disabled: false
+		},
+		{
+			text: 'Add member',
+			disabled: true
+		},
+	],
+});
+const store = useStore()
+let route = useRoute()
+let router = useRouter()
 
-	let readyStatus = reactive({
-		groups: false,
-		roles: false,
-		accessPolicies: false,
-	})
+let readyStatus = reactive({
+	groups: false,
+	roles: false,
+	accessPolicies: false,
+})
 
-	let form = reactive({
-		groups: [],
-		base_api_url: store.current.base_api_url,
-		is_owner: false
-	})
+let form = reactive({
+	groups: [],
+	base_api_url: store.space_code,
+	is_owner: false
+})
 
-	let groups = ref([]);
-	let roles = ref([]);
-	let accessPolicies = ref([]);
+let groups = ref([]);
+let roles = ref([]);
+let accessPolicies = ref([]);
 
-	async function init() {
+async function init() {
 
-		const res = await Promise.all( [
-			loadMultiselectOpts('groupList.get', readyStatus, 'groups'),
-			loadMultiselectOpts("roleList.get", readyStatus, 'roles'),
-			loadMultiselectOpts("accessPolicyList.get", readyStatus, 'accessPolicies'),
-		]);
+	const res = await Promise.all([
+		loadMultiselectOpts('groupList.get', readyStatus, 'groups'),
+		loadMultiselectOpts("roleList.get", readyStatus, 'roles'),
+		loadMultiselectOpts("accessPolicyList.get", readyStatus, 'accessPolicies'),
+	]);
 
-		groups.value = res[0];
-		roles.value = res[1];
-		accessPolicies.value = res[2];
+	groups.value = res[0];
+	roles.value = res[1];
+	accessPolicies.value = res[2];
 
+}
+
+async function save() {
+	// TODO Refactor
+	let sendedForm = {
+		...form,
+		groups: form.groups,
+		roles: form.roles
 	}
 
-	async function save() {
-		// TODO Refactor
-		let sendedForm = {
-			...form,
-			groups: form.groups,
-			roles: form.roles
-		}
+	let res = await useApi('member.post', {body: sendedForm, params: {id: route.params.id}})
 
-		let res = await useApi('member.post', {body: sendedForm, params: {id: route.params.id}})
+	if (!res._$error) {
+		useNotify({type: 'success', title: 'Invite sent!'})
 
-		if ( !res._$error ) {
-			useNotify({type: 'success', title: 'Invite sent!'})
-
-			router.push('/settings/permissions?tab=Members')
-		}
+		usePrefixedRouterPush(router, route, '/settings/permissions?tab=Members')
 	}
-	async function cancel() {
-		router.push('/settings/permissions?tab=Members')
-	}
-	function fromatDate( date ) {
-		return dayjs( date ).format('DD.MM.YYYY LT')
-	}
+}
 
-	if ( store.current.base_api_url ) {
+async function cancel() {
+	usePrefixedRouterPush(router, route, '/settings/permissions')
+}
+
+function fromatDate(date) {
+	return dayjs(date).format('DD.MM.YYYY LT')
+}
+
+if (store.isUrlValid) {
+	init()
+} else {
+	const unwatch = watch(() => store.current, async () => {
 		init()
-	} else {
-		const unwatch = watch( () => store.current, async () => {
-			init()
-			unwatch();
-		})
-	}
+		unwatch();
+	})
+}
 </script>
 
 <style lang="scss" scoped>
 .coll {
 	width: 48%;
 }
+
 .control_line {
 	width: calc(100% - 160px);
 	position: fixed;

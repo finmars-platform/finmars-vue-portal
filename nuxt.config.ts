@@ -60,5 +60,20 @@ export default defineNuxtConfig({
 			"process.env.DEBUG": false,
 		},
 	},
-	srcDir: "src"
+	srcDir: "src",
+	hooks: {
+		'pages:extend': (pages) => {
+
+
+			pages.forEach((page) => {
+				if (page.path.indexOf('/profile') === -1) {
+					page.path = '/:realm_code/:space_code/v' + page.path
+				} else {
+					page.path = '/v' + page.path
+				}
+			})
+
+			// console.log('pages ', pages)
+		},
+	}
 });

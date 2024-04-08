@@ -4,7 +4,10 @@ export default defineStore({
 		return {
 			user: {},
 			masterUsers: [],
+			realms: [],
 			current: {}, // master user
+			realm_code: null,
+			space_code: null,
 			member: {},
 			memberLayout: {},
 
@@ -27,10 +30,28 @@ export default defineStore({
 		async init() {
 			this.getUser()
 			await this.getMasterUsers()
+			await this.getRealms();
 
 			if(this.current){
 				// hack for repots
 				window.base_api_url = this.current.base_api_url; // needed for angularjs components
+			}
+
+			const pathname = window.location.pathname;
+
+			if (pathname.includes('/space')) {
+
+				const pathnamePartsList = pathname.split('/');
+				const realm_code = pathnamePartsList.find(part => part.startsWith('realm'));
+				const space_code = pathnamePartsList.find(part => part.startsWith('space'));
+
+				this.realm_code = realm_code
+				this.space_code = space_code
+
+			} else {
+				console.warn("useStore.init: no space_code in the pathname" + pathname);
+				// Throw error when we move profile to separate repository
+				// throw new Error("useStore.init: no space_code in the pathname" + pathname);
 			}
 
 		},
@@ -57,6 +78,15 @@ export default defineStore({
 				this.defaultConfigCode = this.configCodes.find( conf => conf.is_primary ).configuration_code;
 
 			}
+
+			window.onerror = this.registerSysError
+		},
+		async getRealms() {
+			let res = await useApi('realm.get')
+
+			if (res.error) return
+
+			this.realms = res.results
 
 			window.onerror = this.registerSysError
 		},
@@ -247,5 +277,8 @@ export default defineStore({
 		favorites(state) {
 			return state.memberLayout.data.favorites
 		},
+		isUrlValid(state){
+			return state.realm_code && state.space_code
+		}
 	},
 })
