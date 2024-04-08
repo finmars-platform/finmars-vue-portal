@@ -92,7 +92,7 @@
 		D: 'Done',
 	}
 
-	if ( store.current.base_api_url ) {
+	if ( store.isUrlValid ) {
 		let resProc = await useApi('pricingProc.get')
 		procedures.value = resProc.results
 

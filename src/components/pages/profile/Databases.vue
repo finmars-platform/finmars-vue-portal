@@ -1,30 +1,30 @@
 <template>
 	<div>
 		<FmTopRefresh
-			@refresh="store.getMasterUsers(), refreshInvites()"
+			@refresh="store.getRealms(), refreshInvites()"
 		>
 			<template #action>
 				<FmMenu>
 					<template #btn>
-						<FmIcon btnPrimary icon="add" />
+						<FmIcon btnPrimary icon="add"/>
 					</template>
 
 					<div class="fm_list">
 						<NuxtLink class="fm_list_item"
-								  to="/profile/add-database"
+								  to="/v/profile/add-realm"
 						>
-							New
+							New Realm
 						</NuxtLink>
-						<div class="fm_list_item" @click="isShowNewBackup = true">
-							From Backup
+<!--						<div class="fm_list_item" @click="isShowNewBackup = true">-->
+<!--							From Backup-->
 
 
-						</div>
+<!--						</div>-->
 					</div>
 				</FmMenu>
 				<PagesProfileDatabaseFromBackup
 					v-model="isShowNewBackup"
-					@cancel="isShowNewBackup = false, store.getMasterUsers()"
+					@cancel="isShowNewBackup = false, store.getRealms()"
 				/>
 			</template>
 		</FmTopRefresh>
@@ -40,15 +40,17 @@
 			/>
 		</div>
 
-		<div class="fm_container databases"
-			 v-if="store.masterUsers.length"
+		<div
+			v-if="store.realms.length"
+			style="padding: 2rem;"
 		>
-			<PagesProfileDatabasesItem
-				v-for="db in store.masterUsers"
-				:db="db"
-				:key="db.id"
-				@refresh="store.getMasterUsers()"
-			/>
+
+			<PagesProfileRealmItem v-for="realm in store.realms"
+						:realm="realm"
+						:key="realm.id"
+						@refresh="store.getRealms()"
+			></PagesProfileRealmItem>
+
 		</div>
 		<div class="fm_container no-databases" v-else>
 
@@ -63,7 +65,7 @@
 
 let store = useStore()
 
-let { data: invites, refresh: refreshInvites } = await useAsyncData(
+let {data: invites, refresh: refreshInvites} = await useAsyncData(
 	"invitesToDB",
 	() => useApi('invitesToDB.get'),
 	{lazy: true}
@@ -72,19 +74,14 @@ let { data: invites, refresh: refreshInvites } = await useAsyncData(
 let isShowNewBackup = ref(false)
 
 import formbricks from "@/services/formbricks";
+
 await formbricks.registerRouteChange();
 
 </script>
 
 <style lang="scss" scoped>
-.databases {
-	display: grid;
-	grid-template-columns: repeat(3, 360px);
-	grid-gap: 30px;
-	//justify-content: flex-start;
-	justify-content: center;
-	padding-bottom: $content-padding-x;
-}
+
+
 .no-databases {
 	text-align: center;
 	margin-top: 1rem;
@@ -97,6 +94,7 @@ await formbricks.registerRouteChange();
 		font-size: 1.2rem;
 		margin-top: 1rem;
 	}
+
 	a {
 		display: inline-block;
 		color: #f05a22

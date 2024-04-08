@@ -1,12 +1,12 @@
 <template>
 	<ModalSystemErrorLog v-model="showErrorLog"
-											 @cancel="showErrorLog = false"/>
+						 @cancel="showErrorLog = false"/>
 
 	<div class="sidenav-wrapper">
 		<div class="sidenav-left">
 			<div class="sidenav-logo-container">
 				<div class="sidenav-logo-wrapper">
-					<NuxtLink to="/home">
+					<NuxtLink :to="useGetNuxtLink('/home', $route.params)">
 						<img src="/img/logo.png" class="sidenav-logo" alt=""/>
 					</NuxtLink>
 				</div>
@@ -52,7 +52,7 @@
 							</li>
 
 							<li>
-								<NuxtLink to="/home" class="sidemenu-btn">
+								<NuxtLink :to="useGetNuxtLink('/home', $route.params)" class="sidemenu-btn">
 									<FmIcon icon="home" class="side-nav-icon"></FmIcon>
 									<span class="side-nav-title">Home</span>
 								</NuxtLink>
@@ -96,7 +96,7 @@
 										</li>
 										<li v-if="accessTable.report_performance">
 											<NuxtLink
-												to="/reports/performance"
+												:to="useGetNuxtLink('/reports/performance', $route.params)"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Performance</span>
@@ -411,17 +411,17 @@
 												</span>
 											</a>
 										</li>
-<!--										<li v-if="accessTable.data_simple_import">-->
-<!--											<a-->
-<!--												:href="getUrlToOldApp('/import/unified-entity-import')"-->
-<!--												class="sidenav-dropdown-menu-btn two-line-text"-->
-<!--											>-->
-<!--												<span class="side-nav-title">-->
-<!--													Instrument<br/>-->
-<!--													(from file)-->
-<!--												</span>-->
-<!--											</a>-->
-<!--										</li>-->
+										<!--										<li v-if="accessTable.data_simple_import">-->
+										<!--											<a-->
+										<!--												:href="getUrlToOldApp('/import/unified-entity-import')"-->
+										<!--												class="sidenav-dropdown-menu-btn two-line-text"-->
+										<!--											>-->
+										<!--												<span class="side-nav-title">-->
+										<!--													Instrument<br/>-->
+										<!--													(from file)-->
+										<!--												</span>-->
+										<!--											</a>-->
+										<!--										</li>-->
 										<li v-if="accessTable.data_transaction_import">
 											<a
 												:href="getUrlToOldApp('/import/transaction-import')"
@@ -466,17 +466,17 @@
 												</span>
 											</a>
 										</li>
-<!--										<li v-if="accessTable.data_prices_download">-->
-<!--											<a-->
-<!--												:href="getUrlToOldApp('/import/prices-import')"-->
-<!--												class="sidenav-dropdown-menu-btn two-line-text"-->
-<!--											>-->
-<!--												<span class="side-nav-title">-->
-<!--													Prices/FX<br/>-->
-<!--													(from provider)-->
-<!--												</span>-->
-<!--											</a>-->
-<!--										</li>-->
+										<!--										<li v-if="accessTable.data_prices_download">-->
+										<!--											<a-->
+										<!--												:href="getUrlToOldApp('/import/prices-import')"-->
+										<!--												class="sidenav-dropdown-menu-btn two-line-text"-->
+										<!--											>-->
+										<!--												<span class="side-nav-title">-->
+										<!--													Prices/FX<br/>-->
+										<!--													(from provider)-->
+										<!--												</span>-->
+										<!--											</a>-->
+										<!--										</li>-->
 										<li>
 											<a
 												:href="getUrlToOldApp('/run-data-procedures')"
@@ -597,7 +597,7 @@
 
 												<li>
 													<NuxtLink
-														to="/dashboard/mobile"
+														:to="useGetNuxtLink('/dashboard/mobile', $route.params)"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Mobile</span>
@@ -839,16 +839,16 @@
 														>
 													</a>
 												</li>
-<!--												<li-->
-<!--													v-if="accessTable.configuration_complex_import_scheme"-->
-<!--												>-->
-<!--													<a-->
-<!--														:href="getUrlToOldApp('/settings/complex-import')"-->
-<!--														class="sidenav-dropdown-menu-btn"-->
-<!--													>-->
-<!--														<span class="side-nav-title">Complex Import</span>-->
-<!--													</a>-->
-<!--												</li>-->
+												<!--												<li-->
+												<!--													v-if="accessTable.configuration_complex_import_scheme"-->
+												<!--												>-->
+												<!--													<a-->
+												<!--														:href="getUrlToOldApp('/settings/complex-import')"-->
+												<!--														class="sidenav-dropdown-menu-btn"-->
+												<!--													>-->
+												<!--														<span class="side-nav-title">Complex Import</span>-->
+												<!--													</a>-->
+												<!--												</li>-->
 											</ul>
 										</div>
 									</li>
@@ -1049,19 +1049,19 @@
 									</li>
 									<li v-if="accessTable.settings_users_groups_permission">
 										<NuxtLink
-											to="/settings/permissions"
+											:to="useGetNuxtLink('/settings/permissions', $route.params)"
 											class="sidemenu-btn"
 										>
 											<span class="side-nav-title">Permissions</span>
 										</NuxtLink>
 									</li>
 									<li v-if="accessTable.settings_ecosystem_default">
-                    <NuxtLink
-                        to="/settings/default-settings"
-                        class="sidemenu-btn"
-                    >
-                      <span class="side-nav-title">Default Settings</span>
-                    </NuxtLink>
+										<NuxtLink
+											:to="useGetNuxtLink('/settings/default-settings', $route.params)"
+											class="sidemenu-btn"
+										>
+											<span class="side-nav-title">Default Settings</span>
+										</NuxtLink>
 									</li>
 									<!--									<li>
 																			<a
@@ -1097,17 +1097,17 @@
 
 		<div class="build-date">
 
-<!--			<div class="side-nav-versions-block">-->
-<!--				<div v-for="version of store.current.versions">-->
+			<!--			<div class="side-nav-versions-block">-->
+			<!--				<div v-for="version of store.current.versions">-->
 
-<!--					<div>{{ version.app }}:{{ version.version }}</div>-->
+			<!--					<div>{{ version.app }}:{{ version.version }}</div>-->
 
-<!--				</div>-->
-<!--			</div>-->
+			<!--				</div>-->
+			<!--			</div>-->
 
-<!--			<div>-->
-<!--				Session Remaining Time: {{ remainingTimePretty }}-->
-<!--			</div>-->
+			<!--			<div>-->
+			<!--				Session Remaining Time: {{ remainingTimePretty }}-->
+			<!--			</div>-->
 
 			<a href="https://finmars.com" target="_blank" class="finmars-site-link">© {{ currentYear }} Finmars
 				SCSA</a>
@@ -1118,6 +1118,9 @@
 
 <script setup>
 // import menu from "~/assets/data/menu.js";
+
+import {useGetNuxtLink} from "~/composables/useMeta";
+
 const store = useStore()
 const config = useRuntimeConfig()
 const buildDate = config.public.buildDATE
@@ -1221,7 +1224,12 @@ function getUrlToOldApp(suffix) {
 	let baseApiUrl = '';
 
 	if (Object.keys(store.current).length) {
-		baseApiUrl = '/' + store.current.base_api_url;
+
+		if (store.current.realm_code) {
+			baseApiUrl = '/' + store.current.realm_code + '/' + store.current.space_code;
+		} else {
+			baseApiUrl = '/' + store.isUrlValid;
+		}
 	}
 
 	return `${apiUrl}${baseApiUrl}/a/#!${suffix}`;
@@ -2234,6 +2242,7 @@ padding: 0;
 		opacity: 0.7;
 	}
 }
+
 .side-nav-versions-block {
 	margin-bottom: 10px;
 	font-size: 8.8px;
@@ -2243,19 +2252,19 @@ padding: 0;
 	color: #fff;
 	margin-top: 2px;
 	display: block;
-	color: rgba(255,255,255,.6);
+	color: rgba(255, 255, 255, .6);
 	padding-left: 24px;
 
 	&:visited {
-		color: rgba(255,255,255,.6);
+		color: rgba(255, 255, 255, .6);
 	}
 
 	&:active {
-		color: rgba(255,255,255,.6);
+		color: rgba(255, 255, 255, .6);
 	}
 
 	&:hover {
-		color: rgba(255,255,255,1);
+		color: rgba(255, 255, 255, 1);
 	}
 }
 

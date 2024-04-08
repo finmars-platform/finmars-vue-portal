@@ -26,7 +26,7 @@ Create file .env in project's root directory.
 .env example:
 
 ```txt
-NUXT_APP_BASE_URL='/space00000/v'
+NUXT_APP_BASE_URL='/realm00000/v'
 
 KEYCLOAK_URL='https://stage-auth.finmars.com'
 KEYCLOAK_REALM='finmars'
@@ -75,8 +75,8 @@ Create .env
 KEYCLOAK_URL=https://dev-auth.finmars.com
 KEYCLOAK_REALM=finmars
 KEYCLOAK_CLIENT_ID=finmars
-NUXT_APP_BASE_URL=/space00000/v/
-APP_HOST=http://0.0.0.0:3000/space00000/v/
+NUXT_APP_BASE_URL=/realm00000/v/
+APP_HOST=http://0.0.0.0:3000/realm00000/v/
 AUTH_HOST=http://0.0.0.0:8083/authorizer
 API_HOST=http://0.0.0.0:8000
 ```

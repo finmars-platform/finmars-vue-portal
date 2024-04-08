@@ -40,8 +40,9 @@ export default async function useApi(
 		return false
 	}
 
-	let baseApi = useStore().current.base_api_url
-	if (baseApi) url = url.replace('{client}', baseApi)
+	// let baseApi = useStore().current.base_api_url
+	let client = useStore().current.realm_code + '/' + useStore().current.space_code
+	if (client) url = url.replace('{client}', client)
 
 	let token = useCookie('access_token').value
 

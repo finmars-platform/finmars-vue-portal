@@ -158,6 +158,7 @@ import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-noconflict/theme-monokai';
 
 import dayjs from 'dayjs'
+import {usePrefixedRouterPush} from "~/composables/useMeta";
 
 definePageMeta({
 	middleware: 'auth',
@@ -200,7 +201,7 @@ async function save() {
 }
 
 async function cancel() {
-	router.push('/settings/permissions')
+	usePrefixedRouterPush(router, route, '/settings/permissions')
 }
 
 function fromatDate(date) {
@@ -217,7 +218,7 @@ function editorInit(editor) {
 	editor.navigateFileStart();
 }
 
-if (store.current.base_api_url) {
+if (store.isUrlValid) {
 	init()
 } else {
 	watch(() => store.current, async () => {

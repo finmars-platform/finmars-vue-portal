@@ -3,7 +3,7 @@
 		v-if="procedure.id"
 		title="Update Pricing Procedure"
 		@save="save()"
-		@cancel="() => $router.push('/valuations/run-pricing')"
+		@cancel="() => usePrefixedRouterPush($router, $route, `/valuations/run-pricing`)"
 	>
 		<template #left>
 			<FmCard title="Global" class="mb-x">
@@ -127,6 +127,8 @@
 
 <script setup>
 
+	import {usePrefixedRouterPush} from "~/composables/useMeta";
+
 	definePageMeta({
 		bread: [
 			{
@@ -193,7 +195,7 @@
 		}
 	}
 
-	if ( store.current.base_api_url ) {
+	if ( store.isUrlValid ) {
 		init()
 	} else {
 		watch( () => store.current, async () => {

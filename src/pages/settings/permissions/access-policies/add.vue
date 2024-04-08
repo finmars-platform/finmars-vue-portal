@@ -137,6 +137,7 @@ import dayjs from 'dayjs'
 import {VAceEditor} from 'vue3-ace-editor';
 import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-noconflict/theme-monokai';
+import {usePrefixedRouterPush} from "~/composables/useMeta";
 
 definePageMeta({
 	bread: [
@@ -200,19 +201,19 @@ async function save() {
 	if (!res._$error) {
 		useNotify({type: 'success', title: 'Access Policy created!'})
 		// TODO move to active tab Groups
-		router.push('/settings/permissions')
+		usePrefixedRouterPush(router, route, '/settings/permissions')
 	}
 }
 
 async function cancel() {
-	router.push('/settings/permissions')
+	usePrefixedRouterPush(router, route, '/settings/permissions')
 }
 
 function fromatDate(date) {
 	return dayjs(date).format('DD.MM.YYYY LT')
 }
 
-if (store.current.base_api_url) {
+if (store.isUrlValid) {
 	init()
 } else {
 	watch(() => store.current, async () => {

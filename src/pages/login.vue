@@ -1,9 +1,11 @@
 <template>
 	<div class="wrap flex sb aic">
 		<div class="left">
-			<NuxtLink to="/home">
+			<div>
 				<img width="200" src="/img/logo.png" class="sidenav-logo" alt="" />
-			</NuxtLink>
+			</div>
+
+
 
 			<h2>Welcome back</h2>
 
@@ -44,7 +46,7 @@
 			useCookie('access_token').value = res.access_token
 			useCookie('refresh_token').value = res.refresh_token
 
-			navigateTo('/profile')
+			navigateTo('/v/profile')
 		}
 	}
 </script>

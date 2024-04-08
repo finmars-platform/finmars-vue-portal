@@ -8,7 +8,7 @@
 			<FmSelect v-model="store.member.interface_level" :items="levels" />
 
 			<div class="btns flex sb">
-				<FmBtn type="action" @click="navigateTo('/profile')">Cancel</FmBtn>
+				<FmBtn type="action" @click="navigateTo('/v/profile')">Cancel</FmBtn>
 				<FmBtn class="btn" @click="next()">Next</FmBtn>
 			</div>
 		</div>
@@ -70,7 +70,7 @@
 		bread: [
 			{
 				text: 'Profile',
-				to: '/profile',
+				to: '/v/profile',
 				disabled: false,
 			},
 			{

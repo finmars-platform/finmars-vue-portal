@@ -36,25 +36,25 @@ const props = defineProps({
 });
 let store = useStore()
 
-async function changeStatus( status) {
+async function changeStatus(status) {
 	let res = await useApi("invitesToDB.put", {
-		body: { ...props.invite, status },
-		params: { id: props.invite.id },
+		body: {...props.invite, status},
+		params: {id: props.invite.id},
 	});
 
 	if (res.status) {
 		let res = await useApi("masterSet.patch", {
 			body: {},
-			params: { id: props.invite.to_master_user },
+			params: {id: props.invite.to_master_user},
 		});
-		if ( res.success ) {
+		if (res.success) {
 			await store.getMasterUsers()
 			emit('refresh')
 
-			if ( status != 2 ) {
+			if (status != 2) {
 				let mu = store.masterUsers.find(item => item.id == props.invite.to_master_user)
 
-				location.href = `https://${location.host}/${mu.base_api_url}/v/profile/setup`
+				location.href = `https://${location.host}/${mu.realm_code}/${mu.space_code}/v/profile/setup`
 			}
 		}
 	}

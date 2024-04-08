@@ -2,7 +2,7 @@
 	<CommonSettingsLayout
 		title="Update Data Procedure"
 		@save="save()"
-		@cancel="() => $router.push('/import/bank')"
+		@cancel="() => usePrefixedRouterPush($router, $route, `/import/bank`)"
 	>
 		<template #left>
 			<FmCard title="Global" class="mb-x">
@@ -90,6 +90,8 @@
 </template>
 
 <script setup>
+	import {usePrefixedRouterPush} from "~/composables/useMeta";
+
 	definePageMeta({
 		bread: [
 			{
@@ -144,7 +146,7 @@
 		}
 	}
 
-	if (store.current.base_api_url) {
+	if (store.isUrlValid) {
 		init()
 	} else {
 		watch(

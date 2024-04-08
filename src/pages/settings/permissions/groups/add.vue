@@ -66,6 +66,7 @@
 
 	import dayjs from 'dayjs'
 	import {loadMultiselectOpts} from "~/pages/settings/helper";
+	import {usePrefixedRouterPush} from "~/composables/useMeta";
 
 	definePageMeta({
 		bread: [
@@ -83,6 +84,7 @@
 
 	const store = useStore()
 	let router = useRouter()
+	let route = useRoute()
 
 	let readyStatus = reactive({
 		roles: false,
@@ -121,17 +123,17 @@
 
 		if ( !res._$error ) {
 			useNotify({type: 'success', title: 'Group created!'})
-			router.push('/settings/permissions?tab=Groups')
+			usePrefixedRouterPush(router, route, '/settings/permissions?tab=Groups')
 		}
 	}
 	async function cancel() {
-		router.push('/settings/permissions?tab=Groups')
+		usePrefixedRouterPush(router, route, '/settings/permissions?tab=Groups')
 	}
 	function fromatDate( date ) {
 		return dayjs( date ).format('DD.MM.YYYY LT')
 	}
 
-	if ( store.current.base_api_url ) {
+	if ( store.isUrlValid ) {
 		init()
 	} else {
 		const unwatch = watch( () => store.current, async () => {

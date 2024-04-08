@@ -8,11 +8,11 @@
 				@refresh="refresh()"
 			>
 				<template #action>
-					<FmIcon
-						btnPrimary
-						icon="add"
-						@click="$router.push(`/settings/permissions/members/add`)"
-					/>
+
+					<NuxtLink :to="useGetNuxtLink('/settings/permissions/members/add', $route.params)">
+						<FmIcon btnPrimary icon="add"/>
+					</NuxtLink>
+
 				</template>
 			</FmTopRefresh>
 
@@ -21,7 +21,7 @@
 					:headers="['', 'id', 'Name', 'Is Admin', 'Is Owner', 'Is Deleted', 'Status', 'Groups', 'Roles']"
 					:items="members"
 					colls="50px repeat(8, 1fr)"
-					:cb="(id) => $router.push(`/settings/permissions/members/${stockMembers[id].id}`)"
+					:cb="(id) => usePrefixedRouterPush($router, $route, `/settings/permissions/members/${stockMembers[id].id}`)"
 					class="clickable_rows"
 				>
 					<template #actions="{index}">
@@ -32,7 +32,7 @@
 								</template>
 								<div class="fm_list">
 									<div class="fm_list_item"
-											 @click="deleteMember(index)"
+										 @click="deleteMember(index)"
 									>
 										<FmIcon class="m-r-4" icon="delete"/>
 										Delete
@@ -54,7 +54,7 @@
 					<FmIcon
 						btnPrimary
 						icon="add"
-						@click="$router.push(`/settings/permissions/groups/add`)"
+						@click="usePrefixedRouterPush($router, $route, `/settings/permissions/groups/add`)"
 					/>
 				</template>
 			</FmTopRefresh>
@@ -65,7 +65,7 @@
 					:items="groupsRows"
 					colls="62.5px repeat(4, 1fr)"
 					rowKeyProp="id"
-					:cb="(id) => $router.push(`/settings/permissions/groups/${id}`)"
+					:cb="(id) => usePrefixedRouterPush($router, $route, `/settings/permissions/groups/${id}`)"
 					class="clickable_rows"
 				>
 					<template #actions="{index}">
@@ -76,7 +76,7 @@
 								</template>
 								<div class="fm_list">
 									<div class="fm_list_item"
-											 @click="deleteGroup(index)"
+										 @click="deleteGroup(index)"
 									>
 										<FmIcon class="m-r-4" icon="delete"/>
 										Delete
@@ -97,7 +97,7 @@
 					<FmIcon
 						btnPrimary
 						icon="add"
-						@click="$router.push(`/settings/permissions/roles/add`)"
+						@click="usePrefixedRouterPush($router, $route, `/settings/permissions/roles/add`)"
 					/>
 				</template>
 			</FmTopRefresh>
@@ -107,7 +107,7 @@
 					:headers="['', 'Id','User Code', 'Configuration Code',  'Name', ]"
 					:items="roles"
 					colls="50px repeat(4, 1fr)"
-					:cb="(id) => $router.push(`/settings/permissions/roles/${roles[id].id}`)"
+					:cb="(id) => usePrefixedRouterPush($router, $route, `/settings/permissions/roles/${roles[id].id}`)"
 					class="clickable_rows"
 				>
 					<template #actions="{index}">
@@ -118,7 +118,7 @@
 								</template>
 								<div class="fm_list">
 									<div class="fm_list_item"
-											 @click="deleteRole(index)"
+										 @click="deleteRole(index)"
 									>
 										<FmIcon class="m-r-4" icon="delete"/>
 										Delete
@@ -140,7 +140,7 @@
 					<FmIcon
 						btnPrimary
 						icon="add"
-						@click="$router.push(`/settings/permissions/access-policies/add`)"
+						@click="usePrefixedRouterPush($router, $route, `/settings/permissions/access-policies/add`)"
 					/>
 				</template>
 			</FmTopRefresh>
@@ -150,7 +150,7 @@
 					:headers="['', 'Id', 'User Code', 'Configuration Code', 'Name', ]"
 					:items="accessPolicies"
 					colls="50px repeat(4, 1fr)"
-					:cb="(id) => $router.push(`/settings/permissions/access-policies/${accessPolicies[id].id}`)"
+					:cb="(id) => usePrefixedRouterPush($router, $route, `/settings/permissions/access-policies/${accessPolicies[id].id}`)"
 					class="clickable_rows"
 				>
 					<template #actions="{index}">
@@ -161,7 +161,7 @@
 								</template>
 								<div class="fm_list">
 									<div class="fm_list_item"
-											 @click="deleteAccessPolicy(index)"
+										 @click="deleteAccessPolicy(index)"
 									>
 										<FmIcon class="m-r-4" icon="delete"/>
 										Delete
@@ -181,6 +181,7 @@
 <script setup>
 
 import dayjs from 'dayjs'
+import {useGetNuxtLink, usePrefixedRouterPush} from "~/composables/useMeta";
 
 definePageMeta({
 	middleware: 'auth',
