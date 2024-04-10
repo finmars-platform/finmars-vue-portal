@@ -224,25 +224,13 @@ async function calcInceptYearForBundle(bundleId, row, rowRaw) {
         throw res.error;
     }
 
-    rowRaw.incept_performance_report = res;
+    rowRaw.incept_performance_report = rowRaw.annualized_performance_report = res;
 
     row.incept = getValueForPeriod(res);
 
-}
-
-async function calcAnnualForBundle(bundleId, row, rowRaw) {
-
-	row.annualized = null
-
-	const res = await getIncept(bundleId, "annualized")
-
-	if (res.error) {
-		throw res.error;
-	}
-
-	rowRaw.annualized_performance_report = res
-
-    row.annualized = getValueForPeriod(res);
+	const resCopy = {...res};
+	resCopy.grand_return = resCopy.annualized_return;
+    row.annualized = getValueForPeriod(resCopy);
 
 }
 
@@ -269,7 +257,6 @@ function _calcReportForBundle(bundle, row, rowRaw) {
         calcLastYearForBundle(bundle.id, row, rowRaw),
         calcBeforeLastYearForBundle(bundle.id, row, rowRaw),
         calcInceptYearForBundle(bundle.id, row, rowRaw),
-        calcAnnualForBundle(bundle.id, row, rowRaw),
     ])
 }
 
