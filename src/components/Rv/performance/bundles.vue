@@ -224,13 +224,25 @@ async function calcInceptYearForBundle(bundleId, row, rowRaw) {
         throw res.error;
     }
 
-    rowRaw.incept_performance_report = rowRaw.annualized_performance_report = res;
+    rowRaw.incept_performance_report = res;
 
     row.incept = getValueForPeriod(res);
 
-	const resCopy = {...res};
-	resCopy.grand_return = resCopy.annualized_return;
-    row.annualized = getValueForPeriod(resCopy);
+}
+
+async function calcAnnualForBundle(bundleId, row, rowRaw) {
+
+	row.annualized = null
+
+	const res = await getIncept(bundleId, "annualized")
+
+	if (res.error) {
+		throw res.error;
+	}
+
+	rowRaw.annualized_performance_report = res
+
+    row.annualized = getValueForPeriod(res);
 
 }
 
@@ -257,6 +269,7 @@ function _calcReportForBundle(bundle, row, rowRaw) {
         calcLastYearForBundle(bundle.id, row, rowRaw),
         calcBeforeLastYearForBundle(bundle.id, row, rowRaw),
         calcInceptYearForBundle(bundle.id, row, rowRaw),
+		calcAnnualForBundle(bundle.id, row, rowRaw),
     ])
 }
 
@@ -499,7 +512,7 @@ async function getYearBeforeLast(ids) {
     return await getReports({period_type: "ytd", end, ids})
 }
 
-async function getIncept(ids, annualized) {
+async function getIncept(ids, adjustment_type = "original") {
     let res = await useApi('performanceFirstTransaction.get', {
         params: {id: ids},
     })
@@ -511,10 +524,10 @@ async function getIncept(ids, annualized) {
 
     let end = dayjs(endDate).format('YYYY-MM-DD')
 
-    return await getReports({period_type: annualized ? "annualized" : "inception", end, ids})
+    return await getReports({period_type: "inception", end, ids, adjustment_type})
 }
 
-async function getReports({period_type, end, ids, type = 'months'}) {
+async function getReports({period_type, end, ids, type = 'months', adjustment_type = 'original'}) {
     let res = await useApi('performanceReport.post', {
         body: {
             save_report: false,
@@ -523,6 +536,7 @@ async function getReports({period_type, end, ids, type = 'months'}) {
             end_date: end,
             calculation_type: props.calculation_type,
             segmentation_type: type,
+			adjustment_type: adjustment_type,
             report_currency: props.report_currency,
             bundle: ids,
         },
