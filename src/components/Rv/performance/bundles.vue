@@ -269,7 +269,7 @@ function _calcReportForBundle(bundle, row, rowRaw) {
         calcLastYearForBundle(bundle.id, row, rowRaw),
         calcBeforeLastYearForBundle(bundle.id, row, rowRaw),
         calcInceptYearForBundle(bundle.id, row, rowRaw),
-		calcAnnualForBundle(bundle.id, row, rowRaw),
+        calcAnnualForBundle(bundle.id, row, rowRaw),
     ])
 }
 
@@ -536,7 +536,7 @@ async function getReports({period_type, end, ids, type = 'months', adjustment_ty
             end_date: end,
             calculation_type: props.calculation_type,
             segmentation_type: type,
-			adjustment_type: adjustment_type,
+            adjustment_type: adjustment_type,
             report_currency: props.report_currency,
             bundle: ids,
         },
