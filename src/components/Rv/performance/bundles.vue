@@ -242,7 +242,7 @@ async function calcAnnualForBundle(bundleId, row, rowRaw) {
 
 	rowRaw.annualized_performance_report = res
 
-    row.annualized = getValueForPeriod(res);
+	row.annualized = res.grand_return ? Math.round(res.grand_return * 100 * 100) / 100 : '';
 
 }
 
