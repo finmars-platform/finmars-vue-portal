@@ -234,7 +234,7 @@ async function calcAnnualForBundle(bundleId, row, rowRaw) {
 
 	row.annualized = null
 
-	const res = await getIncept(bundleId)
+	const res = await getIncept(bundleId, "annualized")
 
 	if (res.error) {
 		throw res.error;
@@ -242,52 +242,8 @@ async function calcAnnualForBundle(bundleId, row, rowRaw) {
 
 	rowRaw.annualized_performance_report = res
 
-	let start = dayjs(res.begin_date)
-    let end = dayjs(res.end_date)
+	row.annualized = res.grand_return ? Math.round(res.grand_return * 100 * 100) / 100 : '';
 
-    /* *
-     * `.diff(start, 'years', true)` are not used
-     * because it is required to divide by 365 for all years
-     * including leap years.
-     * */
-    let diffInYears = end.diff(start, 'days', true);
-    diffInYears = diffInYears / 365;
-
-    if (diffInYears < 1) {
-        console.error(`Cannot calculate annualize for bundle ${bundleId}. There are less than 365 day in period.`)
-    }
-
-    if (res.grand_return < -1) {
-        console.error(`Cannot calculate annualize for bundle ${bundleId}. Inception less than 100%.`)
-    }
-
-    const endDateLessThanBegin = diffInYears < 1;
-    // invalid value inside res.end_date and/or res.begin_date
-    const invalidDates = diffInYears === null;
-    // if grand_return less than -100%, do not calculate annualized
-    const invalidGrandReturn = !res.grand_return || res.grand_return < -1;
-
-	if (endDateLessThanBegin || invalidDates || invalidGrandReturn ) {
-
-        if (res) {
-            rowRaw.annualized_performance_report.grand_return = null;
-        }
-
-		row.annualized = "";
-
-	} else{
-
-        // formula to calculate annualized return
-        // `(return_since_inception+1)^(1/number_of_years_since_inception) - 1`
-        let value = utilsPower(res.grand_return + 1, 1 / diffInYears) - 1;
-
-        rowRaw.annualized_performance_report.grand_return = value;
-
-        value = Math.round(value * 100 * 100) / 100; // convert to percentages
-
-		row.annualized = value ? `${value}%` : '';
-
-	}
 }
 
 /**
@@ -556,7 +512,7 @@ async function getYearBeforeLast(ids) {
     return await getReports({period_type: "ytd", end, ids})
 }
 
-async function getIncept(ids) {
+async function getIncept(ids, adjustment_type = "original") {
     let res = await useApi('performanceFirstTransaction.get', {
         params: {id: ids},
     })
@@ -568,10 +524,10 @@ async function getIncept(ids) {
 
     let end = dayjs(endDate).format('YYYY-MM-DD')
 
-    return await getReports({period_type: "inception", end, ids})
+    return await getReports({period_type: "inception", end, ids, adjustment_type})
 }
 
-async function getReports({period_type, end, ids, type = 'months'}) {
+async function getReports({period_type, end, ids, type = 'months', adjustment_type = 'original'}) {
     let res = await useApi('performanceReport.post', {
         body: {
             save_report: false,
@@ -580,6 +536,7 @@ async function getReports({period_type, end, ids, type = 'months'}) {
             end_date: end,
             calculation_type: props.calculation_type,
             segmentation_type: type,
+            adjustment_type: adjustment_type,
             report_currency: props.report_currency,
             bundle: ids,
         },
