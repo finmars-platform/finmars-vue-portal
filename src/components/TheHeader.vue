@@ -78,7 +78,7 @@
 							</div>
 							<div class="fm_list_item">
 								<a class="fm_message_item_date"
-								   :href="`${apiUrl}/${store.realm_code}/${store.space_code}/api/v1/`">
+								   :href="`${apiUrl}/${store.realm_code}/${store.space_code}/docs/api/v1/`" target="_blank">
 									API Reference
 								</a>
 							</div>
