@@ -26,7 +26,7 @@ Create file .env in project's root directory.
 .env example:
 
 ```txt
-NUXT_APP_BASE_URL='/realm00000/v'
+NUXT_APP_BUILD_ASSETS_DIR='/realm00000/v/_nuxt/'
 
 KEYCLOAK_URL='https://stage-auth.finmars.com'
 KEYCLOAK_REALM='finmars'
@@ -35,17 +35,23 @@ KEYCLOAK_CLIENT_ID='finmars'
 APP_HOST='http://localhost:3000/v'
 API_HOST='https://stage.finmars.com'
 AUTH_HOST='https://stage.finmars.com/authorizer'
+
+OLD_APP_URL='http://0.0.0.0:8080/#!/'
+NUXT_HOST='0.0.0.0'
 ```
+
+For `NUXT_APP_BUILD_ASSETS_DIR` replace `realm00000` with the one that will be used
+
 Run command:
 
 ```bash
 npm run dev
 ```
 
-or for local development (sets environments)
+For locally deployed backend run command:
 
 ```bash
-npm run local
+npm run dev-local
 ```
 
 ## Production
