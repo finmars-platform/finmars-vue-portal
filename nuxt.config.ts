@@ -1,7 +1,5 @@
 import dayjs from 'dayjs'
 
-// console.log('process.env ', process.env);
-
 export default defineNuxtConfig({
 	runtimeConfig: {
 		public: {
@@ -66,14 +64,13 @@ export default defineNuxtConfig({
 
 
 			pages.forEach((page) => {
-				if (page.path.indexOf('/profile') === -1) {
-					page.path = '/:realm_code/:space_code/v' + page.path
-				} else {
+				if (page.path.startsWith('/profile')) {
 					page.path = '/v' + page.path
+				} else {
+					page.path = '/:realm_code/:space_code/v' + page.path
 				}
 			})
 
-			// console.log('pages ', pages)
 		},
 	}
 });

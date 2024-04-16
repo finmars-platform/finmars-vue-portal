@@ -29,13 +29,6 @@ export default defineStore({
 		},
 		async init() {
 			this.getUser()
-			await this.getMasterUsers()
-			await this.getRealms();
-
-			if(this.current){
-				// hack for repots
-				window.base_api_url = this.current.base_api_url; // needed for angularjs components
-			}
 
 			const pathname = window.location.pathname;
 
@@ -54,6 +47,13 @@ export default defineStore({
 				// throw new Error("useStore.init: no space_code in the pathname" + pathname);
 			}
 
+			await Promise.all([this.getMasterUsers(), this.getRealms()]);
+
+			if (this.current){
+				// hack for reports
+				window.base_api_url = this.current.base_api_url; // needed for angularjs components
+			}
+
 		},
 		async getMasterUsers() {
 			let res = await useApi('masterUser.get')
@@ -62,8 +62,11 @@ export default defineStore({
 
 			this.masterUsers = res.results
 
-			const activeMasterUser = this.masterUsers.find((item) =>
+			/*const activeMasterUser = this.masterUsers.find((item) =>
 				location.href.includes(item.base_api_url)
+			)*/
+			const activeMasterUser = this.masterUsers.find((item) =>
+				this.space_code === item.base_api_url
 			)
 
 			if ( activeMasterUser ) {
