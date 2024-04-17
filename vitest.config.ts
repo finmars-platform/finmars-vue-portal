@@ -1,16 +1,14 @@
-import { defineConfig } from 'vitest/config'
-import vue from '@vitejs/plugin-vue'
+import { defineVitestConfig } from '@nuxt/test-utils/config'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 
-export default defineConfig({
+export default defineVitestConfig({
 	test: {
 		globals: true,
 		environment: 'happy-dom',
 	},
 	plugins: [
-		vue(),
-		AutoImport({
+		/*AutoImport({
 			include: [
 				/\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
 				/\.vue$/,
@@ -38,7 +36,7 @@ export default defineConfig({
 			dirs: [
 				// './hooks',
 				// './composables' // only root modules
-				// './composables/**', // all nested modules
+				// './composables/!**', // all nested modules
 				// ...
 			],
 		}),
@@ -60,6 +58,6 @@ export default defineConfig({
 				/[\\/]\.git[\\/]/,
 				/[\\/]\.nuxt[\\/]/,
 			],
-		}),
+		}),*/
 	],
 })

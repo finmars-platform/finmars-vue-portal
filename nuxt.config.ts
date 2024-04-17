@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import commonjs from 'vite-plugin-commonjs'
 
 export default defineNuxtConfig({
 	runtimeConfig: {
@@ -33,14 +34,12 @@ export default defineNuxtConfig({
 		pageTransition: { name: 'page', mode: 'out-in' }
 	},
 	modules: [
-    ['@pinia/nuxt']
-  ],
+    	'@pinia/nuxt',
+		'@nuxt/test-utils/module',
+  	],
 	pinia: {
-    autoImports: [
-      'defineStore', // import { defineStore } from 'pinia'
-      ['defineStore', 'definePiniaStore'], // import { defineStore as definePiniaStore } from 'pinia'
-    ],
-  },
+		/* Options for @pinia/nuxt */
+  	},
 	css: [
 		"~/assets/scss/main.scss",
 		"~/assets/css/material-icons.css",
@@ -57,6 +56,7 @@ export default defineNuxtConfig({
 		define: {
 			"process.env.DEBUG": false,
 		},
+		plugins: [commonjs()]
 	},
 	srcDir: "src",
 	hooks: {
