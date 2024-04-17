@@ -11,13 +11,15 @@ echo PROD_FRONT_HOST $PROD_FRONT_HOST
 echo NUXT_APP_BASE_URL $NUXT_APP_BASE_URL
 echo NUXT_APP_BUILD_ASSETS_DIR $NUXT_APP_BUILD_ASSETS_DIR
 echo PROD_API_HOST $PROD_API_HOST
-echo PROD_WS_HOST $PROD_KEYCLOAK_URL
-echo PROD_WS_HOST $PROD_KEYCLOAK_REALM
-echo PROD_WS_HOST $PROD_KEYCLOAK_CLIENT_ID
+echo PROD_KEYCLOAK_URL $PROD_KEYCLOAK_URL
+echo PROD_KEYCLOAK_REALM $PROD_KEYCLOAK_REALM
+echo PROD_KEYCLOAK_CLIENT_ID $PROD_KEYCLOAK_CLIENT_ID
 
 
-# Replace env vars in files served by server
-for file in $ROOT_DIR/.output/**/*.mjs* $ROOT_DIR/.output/server/chunks/nitro/node-server.mjs
+# Replace env vars in .mjs files served by server
+# Exclude /node_modules folder from the search and replacement
+find "$ROOT_DIR/.output/" -type f -name "*.mjs" ! -path "$ROOT_DIR/.output/server/node_modules/*" |
+while read -r file;
 do
   sed -i 's|==PROD_FRONT_URL==|'${PROD_FRONT_URL}'|g' $file
   sed -i 's|==NUXT_APP_BASE_URL==|'${NUXT_APP_BASE_URL}'|g' $file
@@ -28,8 +30,6 @@ do
   sed -i 's|==PROD_KEYCLOAK_CLIENT_ID==|'${PROD_KEYCLOAK_CLIENT_ID}'|g' $file
 
 done
-
-#grep -rnw '/var/www/finmars/' -e 'PROD_APP_URL'
 
 echo "DONE REPLACE"
 # Starting server
