@@ -23,7 +23,7 @@ Start the development server on http://localhost:3000
 
 Create file .env in project's root directory.
 
-.env example:
+.env example: 
 
 ```txt
 NUXT_APP_BUILD_ASSETS_DIR='/realm00000/v/_nuxt/'
