@@ -37,7 +37,7 @@ API_HOST='https://stage.finmars.com'
 AUTH_HOST='https://stage.finmars.com/authorizer'
 
 OLD_APP_URL='http://0.0.0.0:8080/#!/'
-NUXT_HOST='0.0.0.0'
+NUXT_HOST='localhost'
 ```
 
 For `NUXT_APP_BUILD_ASSETS_DIR` replace `realm00000` with the one that will be used
