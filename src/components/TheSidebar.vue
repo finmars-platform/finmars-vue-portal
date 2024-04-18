@@ -1225,8 +1225,8 @@ function getUrlToOldApp(suffix) {
 
 	if (Object.keys(store.current).length) {
 
-		if (store.current.realm_code) {
-			baseApiUrl = '/' + store.current.realm_code + '/' + store.current.space_code;
+		if (store.realm_code) {
+			baseApiUrl = '/' + store.realm_code + '/' + store.space_code;
 		} else {
 			baseApiUrl = '/' + store.isUrlValid;
 		}

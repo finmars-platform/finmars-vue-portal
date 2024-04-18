@@ -1,6 +1,5 @@
 import dayjs from 'dayjs'
-
-// console.log('process.env ', process.env);
+import commonjs from 'vite-plugin-commonjs'
 
 export default defineNuxtConfig({
 	runtimeConfig: {
@@ -35,14 +34,12 @@ export default defineNuxtConfig({
 		pageTransition: { name: 'page', mode: 'out-in' }
 	},
 	modules: [
-    ['@pinia/nuxt']
-  ],
+    	'@pinia/nuxt',
+		'@nuxt/test-utils/module',
+  	],
 	pinia: {
-    autoImports: [
-      'defineStore', // import { defineStore } from 'pinia'
-      ['defineStore', 'definePiniaStore'], // import { defineStore as definePiniaStore } from 'pinia'
-    ],
-  },
+		/* Options for @pinia/nuxt */
+  	},
 	css: [
 		"~/assets/scss/main.scss",
 		"~/assets/css/material-icons.css",
@@ -59,6 +56,7 @@ export default defineNuxtConfig({
 		define: {
 			"process.env.DEBUG": false,
 		},
+		plugins: [commonjs()]
 	},
 	srcDir: "src",
 	hooks: {
@@ -66,14 +64,13 @@ export default defineNuxtConfig({
 
 
 			pages.forEach((page) => {
-				if (page.path.indexOf('/profile') === -1) {
-					page.path = '/:realm_code/:space_code/v' + page.path
-				} else {
+				if (page.path.startsWith('/profile')) {
 					page.path = '/v' + page.path
+				} else {
+					page.path = '/:realm_code/:space_code/v' + page.path
 				}
 			})
 
-			// console.log('pages ', pages)
 		},
 	}
 });
