@@ -75,7 +75,7 @@ Checkout the [deployment documentation](https://v3.nuxtjs.org/docs/deployment) f
 
 Create .env
 
-.env example
+.env example 
  
 ```
 KEYCLOAK_URL=https://dev-auth.finmars.com
