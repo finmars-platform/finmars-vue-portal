@@ -3,8 +3,7 @@
 	"scripts": {
 		"build": "nuxt build ",
 		"dev": "nuxt --rootDir=./v/ dev -p=3000",
-		"dev-local": "NUXT_APP_BASE_URL=/realm00000/v API_HOST=http://0.0.0.0:8000 AUTH_HOST=http://0.0.0.0:8083/authorizer APP_HOST=http://localhost:3000/v KEYCLOAK_URL=https://stage-auth.finmars.com KEYCLOAK_REALM=finmars KEYCLOAK_CLIENT_ID=finmars OLD_APP_URL='http://0.0.0.0:8080/#!/' NUXT_HOST=0.0.0.0 nuxt --rootDir=./v/ dev",
-		"dev-local-sz": "NUXT_APP_BUILD_ASSETS_DIR=/realm00000/v/_nuxt/ API_HOST=http://0.0.0.0:8000 AUTH_HOST=http://0.0.0.0:8083/authorizer APP_HOST=http://0.0.0.0:3000/v WS_HOST='wss://stage.finmars.com/ws/' NUXT_HOST=0.0.0.0 nuxt --rootDir=./v/ dev",
+		"dev-local": "NUXT_APP_BUILD_ASSETS_DIR=/realm00000/v/_nuxt/ API_HOST=http://0.0.0.0:8000 AUTH_HOST=http://0.0.0.0:8083/authorizer nuxt --rootDir=./v/ dev",
 		"start": "PORT=8080 node .output/server/index.mjs",
 		"generate": "nuxt generate",
 		"preview": "nuxt preview",
@@ -12,27 +11,26 @@
 		"coverage": "vitest run --coverage"
 	},
 	"devDependencies": {
-		"@nuxt/image-edge": "^1.0.0-27809804.194d2d6",
-		"@nuxt/test-utils-edge": "^3.0.1-rc.0-27833302.52421a9",
-		"@testing-library/vue": "^7.0.0",
-		"@vitest/coverage-v8": "^0.33.0",
+		"@nuxt/test-utils": "^3.12.1",
+		"@vitest/coverage-v8": "^1.5.0",
+		"@vue/test-utils": "^2.4.5",
+		"consola": "^3.2.0",
 		"eslint": "^8.24.0",
 		"eslint-plugin-vue": "^9.6.0",
-		"happy-dom": "^10.5.1",
-		"jsdom": "^20.0.3",
-		"nuxt": "^3.0.0",
+		"happy-dom": "^14.7.1",
+		"nuxt": "^3.11.0",
 		"prettier": "2.6.2",
 		"sass": "^1.54.9",
 		"unplugin-auto-import": "^0.16.6",
 		"unplugin-vue-components": "^0.25.1",
-		"vite-plugin-commonjs": "^0.7.1",
-		"vitest": "^0.33.0"
+		"vite-plugin-commonjs": "^0.10.1",
+		"vitest": "^1.5.0"
 	},
 	"dependencies": {
 		"@chenfengyuan/vue-qrcode": "^2.0.0",
 		"@formbricks/js": "1.1.2",
 		"@kyvg/vue3-notification": "^2.4.1",
-		"@pinia/nuxt": "^0.4.4",
+		"@pinia/nuxt": "^0.5.1",
 		"chart.js": "^3.9.1",
 		"click-outside-vue3": "^4.0.1",
 		"dayjs": "^1.11.7",
@@ -42,7 +40,7 @@
 		"pinia": "^2.0.24",
 		"qrcode": "^1.5.1",
 		"swiper": "^10.0.4",
-		"vue": "^3.2.39",
+		"vue": "^3.4.23",
 		"vue-matomo": "^4.2.0",
 		"vue3-ace-editor": "^2.2.2"
 	}

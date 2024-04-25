@@ -25,7 +25,7 @@ export default async function useApi(
 	// 		console.log('expireTokens:', expireTokens)
 	// 	}
 	// }
-	const config = useRuntimeConfig()
+	const store = useStore()
 
 	const [route, method] = route_opt.split('.')
 
@@ -41,7 +41,7 @@ export default async function useApi(
 	}
 
 	// let baseApi = useStore().current.base_api_url
-	let client = useStore().current.realm_code + '/' + useStore().current.space_code
+	let client = store.realm_code + '/' + store.space_code
 	if (client) url = url.replace('{client}', client)
 
 	let token = useCookie('access_token').value
