@@ -2,26 +2,61 @@
     <FmExpansionPanel title="Period Returns">
         <div class="performance-holder">
 
-            <BaseTable
-                    :headers="periodHeaders"
+<!--            <BaseTable
+                    :headers="periodHeader"
                     :items="periodItems"
-                    :active="activePeriod"
+                    :active="activeBundle"
                     colls="repeat(9, 1fr)"
                     :cb="chooseBundle"
                     :rightClickCallback="showPerformanceDetail"
                     :is-disabled="isDisabled || !readyStatus"
-            />
+            />-->
 
-<!--			<FmBasicTable selectableRows>
+			<FmBasicTable selectableRows>
+                <template #header>
+                    <FmBasicTableRow
+                        class="grid width-100"
+                        :style="`grid-template-columns: ${tableGridTemplateCols}`"
+                    >
+                        <FmBasicTableCell
+                            v-for="(column, index) in periodHeader"
+                            :sorting="column.sorting"
+                            @toggleSorting="toggleSorting(column.key)"
+                        >
+                            {{ column.name }}
+                        </FmBasicTableCell>
+                    </FmBasicTableRow>
+                </template>
 
-			</FmBasicTable>-->
+                <FmBasicTableRow
+                    v-for="row in tableRowsComp"
+                    @click="chooseBundle(row.key)"
+                    :key="row.key"
+                    :active="row.key === activeBundle"
+                    class="grid width-100"
+                    :style="`grid-template-columns: ${tableGridTemplateCols}`">
+
+                    <FmBasicTableCell
+                        v-for="cell in row.columns"
+                        :key="cell.key"
+                        :valueType="cell.key !== 'user_code' ? 20 : null"
+                        @contextmenu.prevent="showPerformanceDetail(row.key, cell.key)"
+                    >{{ cell.value }}</FmBasicTableCell>
+
+                </FmBasicTableRow>
+			</FmBasicTable>
+
+			<div v-show="!readyStatus"
+				 class="flex-row flex-center p-16">
+				<FmLoader :size="40" />
+			</div>
         </div>
 
         <RvPerformanceCellDetailModal
-                :title="performanceDetailsColumnName === 'name' ? 'Bundle Portfolios' : 'Performance Details'"
+                :title="performanceDetailsColumnKey === 'user_code' ? 'Bundle Portfolios' : 'Performance Details'"
                 v-model="performanceDetailIsOpen"
                 :performanceDetails="performanceDetails"
-                :performanceDetailsColumnName="performanceDetailsColumnName"
+                :columnKey="performanceDetailsColumnKey"
         />
 
     </FmExpansionPanel>
@@ -30,7 +65,7 @@
 <script setup>
 import dayjs from 'dayjs'
 import quarterOfYear from 'dayjs/plugin/quarterOfYear'
-import {useLoadAllPages} from "~/composables/useApi";
+import {useToggleSorting} from "~/composables/useTable";
 
 dayjs.extend(quarterOfYear)
 
@@ -50,10 +85,12 @@ const props = defineProps({
     performance_unit: String,
 	isDisabled: Boolean,
 })
+
 const emits = defineEmits(['setBundle']);
+const tableGridTemplateCols = 'repeat(9, 1fr)';
 
 let readyStatus = ref(false);
-let periodHeaders = computed(() => {
+/*let periodHeader = computed(() => {
     return [
         'Bundles',
         'Daily',
@@ -65,7 +102,45 @@ let periodHeaders = computed(() => {
         'Incept',
         'Annualized',
     ]
-})
+})*/
+let periodHeader = ref([
+    {key: 'user_code', name: 'Bundles', sorting: ''},
+    {key: 'daily', name: 'Daily', sorting: ''},
+    {key: 'month', name: 'MTD', sorting: ''},
+    {key: 'q', name: 'QTD', sorting: ''},
+    {key: 'year', name: 'YTD', sorting: ''},
+
+    {
+        key: 'last',
+        name: computed(() => {
+
+            if (props.end_date) {
+                return dayjs(props.end_date).year() - 1;
+            }
+
+            return '';
+
+        }),
+        sorting: ''
+    },
+    {
+        key: 'beforeLast',
+        name: computed(() => {
+
+            if (props.end_date) {
+                return dayjs(props.end_date).year() - 2;
+            }
+
+            return '';
+
+        }),
+        sorting: ''
+    },
+
+    {key: 'incept', name: 'Incept', sorting: ''},
+    {key: 'annualized', name: 'Annualized', sorting: ''},
+]);
+
 let periodItems = ref([])
 let periodItemsRaw = ref([])
 /**
@@ -73,10 +148,40 @@ let periodItemsRaw = ref([])
  * @type {ref<Number|null>}
  * */
 let performanceDetailIsOpen = ref(false)
-let activePeriod = ref(null)
+let activeBundleId = ref(null)
 let bundles = ref([])
 let performanceDetails = ref(null)
-let performanceDetailsColumnName = ref(null)
+let performanceDetailsColumnKey = ref(null)
+
+let tableRowsComp = computed(() => {
+
+    if (!periodItems.value.length) {
+        return []
+    }
+
+    let rows = periodItems.value.map(item => {
+
+        const row = {
+            key: item.id, // using `id` as key because `user_code` of a bundle can change
+        };
+
+        row.columns = periodHeader.value.map(col => {
+            return {
+                key: col.key,
+                value: item[col.key],
+            }
+        })
+
+        return row;
+        // portfolioItems.value = sortYears(portfolioItems.value);
+
+    });
+
+    rows = sortBundles(rows);
+
+    return rows;
+
+});
 
 //# region Calculate reports
 let abortController = null;
@@ -93,9 +198,16 @@ function getValueForPeriod(performanceResult) {
 
         let value = Math.round(performanceResult.grand_return * 100 * 100) / 100
 
-        return value ? `${value}%` : ''
+        return (value || value === 0) ? `${value}%` : '-';
     } else {
-        return performanceResult.grand_absolute_pl ? `${formatNumber(performanceResult.grand_absolute_pl)}` : ''
+
+        if (performanceResult.grand_absolute_pl || performanceResult.grand_absolute_pl === 0) {
+
+            return `${formatNumber(performanceResult.grand_absolute_pl)}`;
+
+        }
+
+        return '-';
     }
 
 }
@@ -236,11 +348,11 @@ async function calcBeforeLastYearForBundle(bundleId, row, rowRaw, abortSignal) {
     if (res._$error) {
         return res;
     }
-
+    console.log("testing458.RvPerformanceBundles calcBeforeLastYearForBundle res", res);
     rowRaw.beforeLast_performance_report = res;
 
     row.beforeLast = getValueForPeriod(res);
-
+    console.log("testing458.RvPerformanceBundles calcBeforeLastYearForBundle row, rowRaw", row, '\n', rowRaw);
 	return {key: 'calcBeforeLastYearForBundle'};
 
 }
@@ -493,14 +605,17 @@ async function _processReportCalculationPromises(calculationPromises) {
 
 }
 
-let counter = 0;
+function resetTableData() {
+	periodItems.value = [];
+	periodItemsRaw.value = [];
+}
 
 async function fetchPortfolioBundles(abortSignal) {
-	counter++;
-    let localCounter = counter;
-	console.log(
-		`testing458.RvPerformanceBundles called ${localCounter}`);
+
     // readyStatusData.bundles = false;
+	resetTableData();
+	activeBundleId.value = null;
+
     readyStatus.value = false;
 
     let res = await useLoadAllPages('portfolioBundleList.get', {
@@ -524,17 +639,8 @@ async function fetchPortfolioBundles(abortSignal) {
         )
 
     }
-    // readyStatusData.bundles = true;
-	activePeriod.value = null;
-    periodItems.value = [];
-    /* *
-     * TODO: add `let periodItems`, `let periodItemsRaw`.
-     * Use it in calculations of report (create `row`, `rowRaw`).
-     * Assign them to refs `periodItems` and `periodItems`
-     * at the end of fetchPortfolioBundles() only if a request that is used
-     * to calculate them is still relevant. Otherwise discard them.
-     * */
-    periodItemsRaw.value = [];
+
+
 
     /*
      * Using `periodItemsList`, `periodItemsRawList` in case
@@ -550,15 +656,16 @@ async function fetchPortfolioBundles(abortSignal) {
     bundles.value.forEach(bundle => {
 
         periodItemsList.push({
-            name: bundle.user_code,
+            id: bundle.id,
+            user_code: bundle.user_code, // value of this property displayed inside table
         })
+
         periodItemsRawList.push({
-            name: bundle.user_code,
+            id: bundle.id,
         })
 
         let row = periodItemsList.at(-1);
         let rowRaw = periodItemsRawList.at(-1);
-        rowRaw.id = bundle.id;
 
 		/*
 		 * `periodItemsList` and `periodItemsRawList` changed inside
@@ -575,13 +682,12 @@ async function fetchPortfolioBundles(abortSignal) {
         "testing458.RvPerformanceBundles fetchBundles promises",
         promises);
 	const reportsCalculated = await _processReportCalculationPromises( promises );
-	console.log(`testing458.RvPerformanceBundles fetchBundles ${localCounter} end`,
-		reportsCalculated)
+
     if (reportsCalculated) {
 
         periodItems.value = periodItemsList;
         periodItemsRaw.value = periodItemsRawList
-
+        console.log("testing458.RvPerformanceBundles periodItems.value", periodItems.value);
         readyStatus.value = true;
 
     }
@@ -590,38 +696,105 @@ async function fetchPortfolioBundles(abortSignal) {
 }
 //# endregion Calculate reports
 
-async function chooseBundle(bundleIndex, cellIndex) {
+//# region Sorting
+/**
+ * Function to call inside Array.sort()
+ *
+ * @param bundlesList { [{}] } - periodItems.value
+ * @return { [{}] } - sorted array
+ */
+function sortBundles(bundlesList) {
 
-    if (activePeriod.value === bundleIndex) {
-        return;
+    let sortCol = periodHeader.value.find(col => col.sorting);
+
+    if (!sortCol) {
+        // return yearsList;
+
+        // if there is no active sorting, sort by year in descending order
+        sortCol = {
+            key: 'user_code',
+            sorting: 'desc',
+        }
     }
 
-    activePeriod.value = bundleIndex
-    emits('setBundle', JSON.parse(JSON.stringify( bundles.value[bundleIndex] )) );
+    const descending = sortCol.sorting === 'desc';
+
+    if (sortCol.key === 'user_code') {
+
+        bundlesList.sort((a, b) => {
+
+            let aSortColVal = a.columns.find(col => col.key === sortCol.key).value;
+            let bSortColVal = b.columns.find(col => col.key === sortCol.key).value;
+            // must be different from useSortRowsByNumber
+            if (aSortColVal > bSortColVal) {
+                return descending ? -1 : 1;
+
+            } else if (aSortColVal < bSortColVal) {
+
+                return descending ? 1 : -1;
+
+            }
+
+            return 0;
+
+        })
+
+    }
+    else {
+
+        bundlesList.sort((a, b) => {
+
+            /*let aVal = portfolioItemsRaw[a.key][colData.key];
+            let bVal = portfolioItemsRaw[b.key][colData.key];*/
+            let aSortColVal = a.columns.find(col => col.key === sortCol.key).value;
+            let bSortColVal = b.columns.find(col => col.key === sortCol.key).value;
+
+            return useSortRowsByNumber(aSortColVal, bSortColVal, descending);
+
+        });
+
+    }
+
+    return bundlesList;
 
 }
 
-function showPerformanceDetail(rowIndex, cellIndex) {
+function toggleSorting(columnKey) {
+    periodHeader.value = useToggleSorting(periodHeader.value, columnKey)
+    console.log("testing458.RvPerformanceBundle periodHeader.value ", periodHeader.value);
+}
+//# endregion
 
-	console.log('showPerformanceDetail.rowIndex', rowIndex);
-	console.log('showPerformanceDetail.cellIndex', cellIndex);
-	console.log('showPerformanceDetail.periodItemsRaw', periodItemsRaw.value);
+async function chooseBundle(bundleId) {
 
-	if (!cellIndex) {
+    if (activeBundleId.value === bundleId) {
+        return;
+    }
+
+    activeBundleId.value = bundleId;
+    const bundle = bundles.value.find(bundle => bundle.id === activeBundleId.value);
+
+    emits('setBundle', JSON.parse(JSON.stringify( bundle )) );
+
+}
+
+function showPerformanceDetail(bundleId, cellKey) {
+
+	if (!cellKey) {
 		return;
 	}
 
-    if (cellIndex === 'name') {
+    performanceDetailsColumnKey.value = cellKey;
 
-		performanceDetailsColumnName.value = cellIndex
-		performanceDetails.value = {bundle: periodItemsRaw.value[rowIndex]['id']}
+    if (cellKey === 'user_code') {
+
+		// performanceDetails.value = {bundle: periodItemsRaw.value[rowIndex]['id']}
+        performanceDetails.value = {bundle: bundleId};
 
 	} else {
 
-		performanceDetailIsOpen.value = true;
-
-		performanceDetailsColumnName.value = cellIndex
-		performanceDetails.value = periodItemsRaw.value[rowIndex][`${cellIndex}_performance_report`]
+        const bundleRawData = periodItemsRaw.value.find(item => item.id === bundleId);
+		performanceDetails.value = bundleRawData[`${cellKey}_performance_report`];
 
 	}
 
@@ -832,7 +1005,7 @@ const reloadTableD = useDebounce(function () {
     abortController = new AbortController();
     const abortSignal = abortController.signal;
 
-    activePeriod.value = null;
+    activeBundleId.value = null;
     emits('setBundle', null);
 
     if (!props.end_date) {

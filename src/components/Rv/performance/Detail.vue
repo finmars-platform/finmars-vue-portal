@@ -137,7 +137,6 @@
 
 <script setup>
 import dayjs from 'dayjs'
-import {useSortRowsByNumber} from "~/composables/useTable";
 
 /**
  * @typedef { {} } MonthReportObject
@@ -419,7 +418,7 @@ async function showCellDetails(year, cellKey) {
  * Function to call inside Array.sort()
  *
  * @param yearsList { [{}] } - portfolioItems.value
- * @return {number} - 1, -1, 0
+ * @return { [{}] } - sorted array
  */
 function sortYears(yearsList) {
 
@@ -455,30 +454,10 @@ function sortYears(yearsList) {
 /**
  * Sort by month's value
  *
- * @param monthIndex {Number}
+ * @param columnKey {String}
  */
 function toggleSorting(columnKey) {
-
-    const activeSortCol = tableHeader.value.find(
-        col => col.sorting
-	);
-
-    const colData = tableHeader.value.find(col => col.key === columnKey);
-
-    if (activeSortCol && activeSortCol.key !== colData.key) {
-        // if there is active sorting by another column, turn it off
-        activeSortCol.sorting = '';
-	}
-
-	if ( colData.sorting === 'desc' ) {
-        colData.sorting = 'asc';
-
-	} else { // `.sorting` === 'asc' or '';
-        colData.sorting = 'desc';
-	}
-
-	portfolioItems.value = sortYears(portfolioItems.value);
-
+    tableHeader.value = useToggleSorting(tableHeader.value, columnKey)
 }
 
 /**
