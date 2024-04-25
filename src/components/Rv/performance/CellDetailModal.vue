@@ -6,7 +6,7 @@
 
 		<div style="padding: 16px;">
 
-			<div v-if="performanceDetailsColumnName !== 'name'">
+			<div v-if="columnKey !== 'user_code'">
 				<table style="width: 100%;">
 					<tr>
 						<td>Date Start:</td>
@@ -101,7 +101,7 @@
 let props = defineProps({
     modelValue: Boolean,
 	performanceDetails: Object,
-	performanceDetailsColumnName: String,
+	columnKey: String,
 })
 
 let emit = defineEmits(['update:modelValue', 'close'])
@@ -122,16 +122,18 @@ async function getPortfolios() {
 }
 
 function onClose() {
+    readyStatus.value = false;
+    portfolios.value = [];
     emit('update:modelValue', false);
     emit('close');
 }
 
 async function init() {
 
-    if (props.performanceDetailsColumnName === "name") {
+    if (props.columnKey === "user_code") {
 
         getPortfolios().then(result => {
-            portfolios.value = result
+            portfolios.value = result;
             readyStatus.value = true;
         });
 
