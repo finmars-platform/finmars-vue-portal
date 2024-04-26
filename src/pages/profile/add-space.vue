@@ -86,7 +86,7 @@ async function createDb() {
 		}
 	)
 
-	if (res.id) {
+	if (res.task_id) {
 		router.push("/v/profile")
 		useNotify({
 			type: "success",
