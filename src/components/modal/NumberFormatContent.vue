@@ -282,6 +282,9 @@
 			negative_format_id: 0,
 			round_format_id: 1,
 			percentage_format_id: 0,
+			number_multiplier: null,
+			number_suffix: '',
+			number_prefix: '',
 		},
 		market_value: {
 			zero_format_id: 1,
@@ -290,6 +293,9 @@
 			thousands_separator_format_id: 2,
 			round_format_id: 1,
 			percentage_format_id: 0,
+			number_multiplier: null,
+			number_suffix: '',
+			number_prefix: '',
 		},
 		amount: {
 			zero_format_id: 1,
@@ -298,6 +304,9 @@
 			thousands_separator_format_id: 2,
 			round_format_id: 3,
 			percentage_format_id: 0,
+			number_multiplier: null,
+			number_suffix: '',
+			number_prefix: '',
 		},
 		exposure: {
 			zero_format_id: 1,
@@ -305,12 +314,18 @@
 			negative_format_id: 1,
 			round_format_id: 0,
 			percentage_format_id: 2,
+			number_multiplier: null,
+			number_suffix: '',
+			number_prefix: '',
 		},
 		return: {
 			zero_format_id: 1,
 			negative_color_format_id: 1,
 			negative_format_id: 0,
 			percentage_format_id: 3,
+			number_multiplier: null,
+			number_suffix: '',
+			number_prefix: '',
 		},
 	}
 
