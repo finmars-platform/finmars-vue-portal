@@ -13,4 +13,7 @@ definePageMeta({
 </script>
 
 <style scoped lang="scss">
+	.content {
+		min-height: 570px;
+	}
 </style>

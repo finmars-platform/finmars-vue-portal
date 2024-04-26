@@ -5,6 +5,7 @@
 		:max-width="true"
 		:show-bottom="false"
 		:max-height="true"
+		@close="closeContent"
 	>
 		<NumberFormatContent @cancel="closeContent" @save="saveContent" :settings="settings"/>
 	</BaseModal>
