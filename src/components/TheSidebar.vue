@@ -1783,18 +1783,19 @@ transition: 0.3s;
 	z-index: 60;
 
 	a {
-		color: #fff;
+		color: var(--secondary-color);
 	}
 
-	color: #fff;
+	color: var(--secondary-color);
 
 	button {
-		color: #fff;
+		color: var(--secondary-color);
 	}
 
 	ng-md-icon {
 		position: relative;
 		top: 5px; // adjust for svg viewbox
+		fill: var(--secondary-color);
 	}
 }
 
@@ -1806,7 +1807,7 @@ transition: 0.3s;
 	align-items: center;
 	min-height: 52px;
 	height: 52px;
-	background-color: #000;
+	background-color: var(--page-background-color);
 }
 
 /*.md-toolbar-tools {
@@ -1822,7 +1823,8 @@ padding: 0;
 	position: relative;
 	// height: 100%;
 	//background-color: #3b283b;
-	background-color: #000;
+	//background-color: #000;
+	background-color: var(--page-background-color);
 	overflow: visible;
 }
 
@@ -1853,7 +1855,7 @@ padding: 0;
 	width: 200px;
 	position: absolute;
 	//background-color: #5a3e5a;
-	background-color: #000;
+	background-color: var(--page-background-color);
 	top: 0;
 	right: -200px;
 	padding-left: 0;
@@ -1931,7 +1933,8 @@ padding: 0;
 	}
 
 	.side-nav-icon {
-		color: $separ;
+		//color: $separ;
+		color: var(--secondary-color);
 		display: inline-block;
 		position: absolute;
 		left: 17px;
@@ -2054,9 +2057,9 @@ padding: 0;
 	display: block;
 	width: 24px;
 	height: 24px;
-	background: #fff;
+	background: var(--page-background-color);
 	border-radius: 50%;
-	fill: $gray;
+	fill: var(--secondary-color);
 	left: 12px;
 	min-height: 24px;
 	min-width: 24px;
@@ -2075,8 +2078,8 @@ padding: 0;
 	left: $leftSidenavWidth;
 	z-index: 0;
 	//background-color: #3b283b;
-	background-color: #000;
-	color: #ffffff;
+	background-color: var(--page-background-color);
+	color: var(--secondary-color);
 	overflow: hidden;
 	transition: width ease 0.25s, left ease 0.25s;
 
@@ -2084,8 +2087,8 @@ padding: 0;
 		position: relative;
 		width: 200px;
 		height: 100%;
-		border-top: 2px solid #1f1f1f;
-		border-left: 2px solid #1f1f1f;
+		border-top: 2px solid var(--table-border-color);
+		border-left: 2px solid var(--table-border-color);
 		box-sizing: border-box;
 	}
 
@@ -2113,7 +2116,7 @@ padding: 0;
 	}
 
 	.side-menu-settings-border-top-1 {
-		border-top: 2px solid #1f1f1f;
+		border-top: 2px solid var(--table-border-color);
 	}
 }
 
@@ -2207,7 +2210,7 @@ padding: 0;
 
 .sidenav-settings-toggle-btn.settings-menu-opened,
 .sidenav-settings-toggle-btn.settings-menu-opened.md-button:not([disabled]).md-focused {
-	background-color: #69476a;
+	background-color: var(--state-active-background-color);
 }
 
 .side-menu-settings-menu.settings-menu-opened {

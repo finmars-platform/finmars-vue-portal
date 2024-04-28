@@ -78,7 +78,8 @@
 							</div>
 							<div class="fm_list_item">
 								<a class="fm_message_item_date"
-								   :href="`${apiUrl}/${store.realm_code}/${store.space_code}/docs/api/v1/`" target="_blank">
+								   :href="`${apiUrl}/${store.realm_code}/${store.space_code}/docs/api/v1/`"
+								   target="_blank">
 									API Reference
 								</a>
 							</div>
@@ -270,9 +271,9 @@ header {
 	justify-content: space-between;
 	align-items: center;
 	height: 52px;
-	background: $main-darken;
+	background: var(--page-background-color);
 	padding: 0 $content-padding-x;
-	border-bottom: 1px solid $border;
+	border-bottom: 1px solid var(--table-border-color);
 	@include header_txt;
 }
 
