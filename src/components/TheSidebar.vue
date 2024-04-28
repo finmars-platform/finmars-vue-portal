@@ -218,7 +218,7 @@
 												:href="getUrlToOldApp('data/generated-events')"
 												class="sidenav-dropdown-menu-btn"
 											>
-												<span class="side-nav-title">EVENTS</span>
+												<span class="side-nav-title">Events</span>
 											</a>
 										</li>
 										<li>
@@ -226,7 +226,7 @@
 												:href="getUrlToOldApp('/explorer')"
 												class="sidenav-dropdown-menu-btn"
 											>
-												<span class="side-nav-title">EXPLORER</span>
+												<span class="side-nav-title">Explorer</span>
 											</a>
 										</li>
 										<li>
@@ -234,7 +234,7 @@
 												:href="getUrlToOldApp('/data-stats')"
 												class="sidenav-dropdown-menu-btn"
 											>
-												<span class="side-nav-title">STATS</span>
+												<span class="side-nav-title">Stats</span>
 											</a>
 										</li>
 										<li>
@@ -242,7 +242,7 @@
 												:href="getUrlToOldApp('/calendar')"
 												class="sidenav-dropdown-menu-btn"
 											>
-												<span class="side-nav-title">CALENDAR</span>
+												<span class="side-nav-title">Calendar</span>
 											</a>
 										</li>
 										<li>
@@ -859,9 +859,9 @@
 											@mouseenter="showSubmenu($event)"
 											@mouseleave="hideSubmenu($event)"
 										>
-											<button class="sidemenu-btn f-s-10 openSubmenuBtn">
+											<button class="sidemenu-btn openSubmenuBtn">
 												<span class="side-nav-title"
-												>Procedures and schedules</span
+												>Procedures</span
 												>
 											</button>
 
