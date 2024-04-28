@@ -121,7 +121,7 @@
 				<template v-if="isEdit">
 					<FmBtn type="text" @click="cancelEdit()">cancel</FmBtn>
 
-					<FmBtn @click="save()">save</FmBtn>
+					<FmBtn @click="save()">Save</FmBtn>
 				</template>
 
 
