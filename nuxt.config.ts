@@ -29,21 +29,22 @@ export default defineNuxtConfig({
 			title: 'Finmars',
 			viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
 			charset: 'utf-8',
-			link: [{ rel: 'icon', type: 'image/png', href: 'img/favicon.png' }]
+			link: [{rel: 'icon', type: 'image/png', href: 'img/favicon.png'}]
 		},
-		pageTransition: { name: 'page', mode: 'out-in' }
+		pageTransition: {name: 'page', mode: 'out-in'}
 	},
 	modules: [
-    	'@pinia/nuxt',
+		'@pinia/nuxt',
 		'@nuxt/test-utils/module',
-  	],
+	],
 	pinia: {
 		/* Options for @pinia/nuxt */
-  	},
+	},
 	css: [
 		"~/assets/scss/main.scss",
 		"~/assets/css/material-icons.css",
 		"~/assets/scss/pickmeup.scss",
+		"~/assets/scss/base-theme.scss",
 	],
 	vite: {
 		css: {
