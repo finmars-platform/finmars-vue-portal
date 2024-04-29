@@ -488,6 +488,37 @@
 									</ul>
 								</div>
 							</li>
+							<li v-if="accessSectionTable.reconciliation">
+								<div
+									class="sidenav-dropdown-menu-wrapper"
+									@mouseenter="showSubmenu($event)"
+									@mouseleave="hideSubmenu($event)"
+								>
+									<button class="sidemenu-btn openSubmenuBtn">
+										<FmIcon icon="currency_exchange" class="side-nav-icon"></FmIcon>
+										<span class="side-nav-title">Reconciliation</span>
+									</button>
+
+									<ul class="sidenav-dropdown-menu display-none submenuElement">
+										<li v-if="accessTable.portfolio_reconcile_groups">
+											<a
+												:href="getUrlToOldApp('/portfolio-reconcile-groups')"
+												class="sidenav-dropdown-menu-btn"
+											>
+												<span class="side-nav-title">Portfolio Reconcile Groups</span>
+											</a>
+										</li>
+										<li v-if="accessTable.reconciliation_history">
+											<a
+												:href="getUrlToOldApp('/portfolio-reconcile-history')"
+												class="sidenav-dropdown-menu-btn"
+											>
+												<span class="side-nav-title">Reconciliation History</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</li>
 						</ul>
 					</div>
 
@@ -1148,6 +1179,7 @@ let accessSectionTable = reactive({
 	settings_import_from_providers: true,
 	settings_import_from_files: true,
 
+	reconciliation: true,
 	settings_administration: true,
 });
 
@@ -1213,6 +1245,9 @@ let accessTable = reactive({
 	account_settings: true,
 	account_personal_data: true,
 	account_ecosystem_management: true,
+
+	portfolio_reconcile_groups: true,
+	reconciliation_history: true,
 });
 
 let sidenavExpanded = true;
