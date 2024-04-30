@@ -90,7 +90,7 @@ button.fm_list_item {
             background: $main-darken;
         }
         &.active {
-            color: $primary;
+            color: var(--primary-color);
             border-bottom: 2px solid $primary;
 
             &:hover {

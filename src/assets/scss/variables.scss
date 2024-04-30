@@ -6,7 +6,7 @@ $green: #13d330;
 $white: #fff;
 $black: #000;
 
-$primary: $orange;
+$primary: var(--primary-color);
 $primary-darken: #e2521c;
 $primary-lighten: #f69470;
 $primary-lighten-2: rgb(240 90 34 / 12%);

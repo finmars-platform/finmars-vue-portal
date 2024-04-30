@@ -79,7 +79,7 @@
 <style scoped lang="scss">
 
 .add_filter_btn {
-	color: $primary;
+	color: var(--primary-color);
 	background-color: initial;
 	font-weight: 700;
 	border-radius: 16px;
@@ -107,7 +107,7 @@
 	// Only active filters must be orange
 	&.active {
 		background-color: $primary-lighten-2;
-		color: $primary;
+		color: var(--primary-color);
 
 		&:hover {
 			background-color: $primary;
@@ -123,7 +123,7 @@
 		}
 
 		.icon {
-			color: $primary;
+			color: var(--primary-color);
 
 			&:hover {
 				color: $text-pale2;

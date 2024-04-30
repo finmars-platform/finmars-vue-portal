@@ -574,7 +574,7 @@
 		}
 		&:hover.icon,
 		&.active.icon {
-			color: $primary;
+			color: var(--primary-color);
 		}
 	}
 	hr {
