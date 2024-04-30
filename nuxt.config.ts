@@ -21,7 +21,8 @@ export default defineNuxtConfig({
 	imports: {
 		dirs: [
 			'stores',
-			'composables/evRv/*.js'
+			'composables/evRv/*.js',
+
 		]
 	},
 	app: {
@@ -45,6 +46,7 @@ export default defineNuxtConfig({
 		"~/assets/css/material-icons.css",
 		"~/assets/scss/pickmeup.scss",
 		"~/assets/scss/base-theme.scss",
+		'@finmars/ui/dist/finmars-ui.css'
 	],
 	vite: {
 		css: {
