@@ -1176,6 +1176,6 @@
 		border-bottom: 1px solid $border;
 	}
 	.g-use-from-above-filters-hidden {
-		color: $primary;
+		color: var(--primary-color);
 	}
 </style>

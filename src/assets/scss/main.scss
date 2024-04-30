@@ -1,3 +1,4 @@
+@import 'base-theme';
 @import 'core/core';
 @import 'angular';
 // @import 'fmTable/filters';
@@ -35,7 +36,7 @@
 }
 
 .c_primary {
-    color: $primary;
+    color: var(--primary-color);
 }
 
 .pickmeup {

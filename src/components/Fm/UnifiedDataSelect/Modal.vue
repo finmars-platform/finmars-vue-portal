@@ -431,15 +431,15 @@
 		cursor: pointer;
 
 		&.active {
-			color: $primary;
+			color: var(--primary-color);
 			outline: solid 2px $primary;
 
 			.option-name {
-				color: $primary;
+				color: var(--primary-color);
 			}
 
 			.option-isin {
-				color: $primary;
+				color: var(--primary-color);
 			}
 
 		}

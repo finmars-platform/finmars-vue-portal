@@ -66,14 +66,14 @@
 			}
 		}
 		&.primary {
-			color: $primary;
+			color: var(--primary-color);
 
 			&:hover {
 				color: $primary-lighten;
 			}
 		}
 		&.primary {
-			color: $primary;
+			color: var(--primary-color);
 
 			&:hover {
 				color: $primary-lighten;

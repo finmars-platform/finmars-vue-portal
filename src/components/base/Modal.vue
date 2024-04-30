@@ -169,7 +169,7 @@
 			}
 
 			&:hover path {
-				stroke: $primary !important;
+				stroke: var(--primary-color) !important;
 			}
 		}
 
