@@ -237,6 +237,10 @@ async function calcAnnualForBundle(bundleId, row, rowRaw) {
 	const res = await getIncept(bundleId, "annualized")
 
 	if (res.error) {
+		const hasLessThanYearError = res.error?.error?.details?.errors?.some(
+			error => error.error_key === "less_than_year"
+		);
+		row.annualized = hasLessThanYearError ? '-' : '';
 		throw res.error;
 	}
 
