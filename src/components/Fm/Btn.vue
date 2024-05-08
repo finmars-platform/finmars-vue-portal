@@ -41,7 +41,7 @@
 		user-select: none;
 
 		&.basic {
-			color: $primary;
+			color: var(--primary-color);
 
 			&:not([disabled]):hover {
 				background: $primary-lighten-2;
@@ -49,7 +49,7 @@
 		}
 
 		&.primary {
-			background: $primary;
+			background: var(--primary-color);
 			color: $separ;
 
 			&:not([disabled]):hover {
@@ -61,7 +61,7 @@
 			font-weight: 700;
 			border-radius: 3px;
 			border: 1px solid $border-darken;
-      color: $primary;
+      color: var(--primary-color);
 
       &:not([disabled]):hover {
         background-color: $primary-lighten-2;
@@ -89,10 +89,10 @@
 		}
 
 		&.action {
-			color: $primary;
+			color: var(--primary-color);
 
 			.icon {
-				color: $primary !important;
+				color: var(--primary-color) !important;
 			}
 
 			&:not([disabled]):hover {
@@ -106,10 +106,10 @@
 			height: auto;
 
 			&.primaryIcon {
-				color: $primary;
+				color: var(--primary-color);
 
 				.icon {
-					color: $primary;
+					color: var(--primary-color);
 				}
 			}
 		}

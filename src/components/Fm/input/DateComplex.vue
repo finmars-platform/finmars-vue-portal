@@ -1112,7 +1112,7 @@
 
 		.date-input-holder.expression-mode {
 			:deep(.bi_main_input:not([disabled])) {
-				color: $primary;
+				color: var(--primary-color);
 			}
 		}
 	}
