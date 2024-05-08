@@ -721,7 +721,7 @@
 												</li> -->
 												<li v-if="accessTable.configuration_user_attributes">
 													<a
-														:href="getUrlToOldApp('/settings/entities-custom-attributes')"
+														:href="getUrlToOldApp('/settings/user-attributes')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">User Attributes</span>
