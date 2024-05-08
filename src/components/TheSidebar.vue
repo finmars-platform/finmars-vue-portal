@@ -500,7 +500,7 @@
 									</button>
 
 									<ul class="sidenav-dropdown-menu display-none submenuElement">
-										<li v-if="accessTable.portfolio_reconcile_groups">
+										<li>
 											<a
 												:href="getUrlToOldApp('/portfolio-reconcile-groups')"
 												class="sidenav-dropdown-menu-btn"
@@ -508,7 +508,7 @@
 												<span class="side-nav-title">Portfolio Reconcile Groups</span>
 											</a>
 										</li>
-										<li v-if="accessTable.reconciliation_history">
+										<li>
 											<a
 												:href="getUrlToOldApp('/portfolio-reconcile-history')"
 												class="sidenav-dropdown-menu-btn"
@@ -1245,9 +1245,6 @@ let accessTable = reactive({
 	account_settings: true,
 	account_personal_data: true,
 	account_ecosystem_management: true,
-
-	portfolio_reconcile_groups: true,
-	reconciliation_history: true,
 });
 
 let sidenavExpanded = true;
