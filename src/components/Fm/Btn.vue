@@ -44,7 +44,7 @@
 			color: var(--primary-color);
 
 			&:not([disabled]):hover {
-				background: $primary-lighten-2;
+				background: var(--primary-hover);
 			}
 		}
 
@@ -53,7 +53,7 @@
 			color: var(--page-background-color);
 
 			&:not([disabled]):hover {
-				background: $primary-darken;
+				background: var(--primary-hover);
 			}
 		}
 
@@ -63,9 +63,9 @@
 			border: 1px solid $border-darken;
 			color: var(--primary-color);
 
-      &:not([disabled]):hover {
-        background-color: $primary-lighten-2;
-      }
+		  &:not([disabled]):hover {
+			background-color: var(--primary-hover);
+		  }
 		}
 		/*&.plain {
 			padding: 0;

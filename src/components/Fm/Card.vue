@@ -25,7 +25,8 @@
 		background: var(--page-background-color);
 		color: var(--secondary-color);
 		box-shadow: 0 1px 4px var(--shadow-color);
-		border-radius: 4px;
+		border: 1px solid var(--card-border-color);
+		border-radius: 16px;
 		padding: 20px;
 		word-wrap: break-word;
 
@@ -48,11 +49,11 @@
 	}
 	.with_controls {
 		padding-bottom: 80px;
-		background: var(--card-primary-background-color);
-		color: var(--card-primary-text-color);
+		background: var(--card-background-color);
+		color: var(--secondary-color);
 	}
 	.settings_block {
-		background: var(--card-primary-background-color);
-		color: var(--card-primary-text-color);
+		background: var(--card-background-color);
+		color: var(--secondary-color);
 	}
 </style>

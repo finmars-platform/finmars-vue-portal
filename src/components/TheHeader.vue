@@ -261,18 +261,24 @@ async function init() {
 	await formbricks.registerRouteChange();
 }
 
-const memberLayout = {...store.memberLayout};
+const updateUserD = useDebounce(function () {
+	/* Not using store.updateUser() because it can toggle dark mode back after promise resolved
+	 * by running `this.user = res` */
+	const options = {
+		params: { id: store.user.id },
+		body: store.user,
+	};
 
-watchEffect(() => {
-	document.body.classList.toggle('dark-mode', memberLayout.data.dark_mode);
-	store.updateMemberLayout(memberLayout);
-});
+	useApi('user.put', options);
+
+}, 2000);
 
 function toggleTheme() {
-	memberLayout.data.dark_mode = !memberLayout.data.dark_mode;
-};
+	store.user.data.dark_mode = !store.user.data.dark_mode;
+	updateUserD();
+}
 
-const toggleText = computed(() => !memberLayout.data.dark_mode ? 'Enable Dark Theme' : 'Disable Dark Theme' )
+const toggleText = computed(() => !store.user.data.dark_mode ? 'Enable Dark Theme' : 'Disable Dark Theme' )
 
 init()
 
