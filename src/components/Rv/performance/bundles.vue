@@ -237,7 +237,19 @@ async function calcAnnualForBundle(bundleId, row, rowRaw) {
 	const res = await getIncept(bundleId, "annualized")
 
 	if (res.error) {
-		throw res.error;
+		const hasLessThanYearError = res.error?.error?.details?.errors?.some(
+			error => error.error_key === "less_than_year"
+		);
+
+		if (hasLessThanYearError) {
+			row.annualized = '';
+			return;
+
+		} else {
+			throw res.error;
+		}
+
+
 	}
 
 	rowRaw.annualized_performance_report = res;
@@ -546,7 +558,7 @@ async function getReports({period_type, end, ids, type = 'months', adjustment_ty
     if ( res.hasOwnProperty("error") ) {
 
         if (!res.error.error?.details?.errors[0] ||
-            res.error.error.details.errors[0].error_key !== 'no_first_transaction_date') {
+            !['no_first_transaction_date', 'less_than_year'].includes(res.error.error.details.errors[0].error_key) ) {
 
             useNotify({
                 group: 'server_error',
