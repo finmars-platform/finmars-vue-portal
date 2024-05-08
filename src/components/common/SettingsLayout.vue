@@ -35,9 +35,9 @@
 		position: sticky;
 		top: calc(100vh - 109px);
 		margin-left: -$content-padding-x;
-		border-top: 1px solid $border;
+		border-top: 1px solid var(--table-border-color);
 		padding: 10px $content-padding-x;
-		background: $separ;
+		background: var(--page-background-color);
 		z-index: 2;
 	}
 	.fm_container {

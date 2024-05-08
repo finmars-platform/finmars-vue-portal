@@ -1,24 +1,31 @@
 /* Default to light mode */
 :root {
-  /* Light mode variables */
-  --primary-color: #8F4C36;
-  --on-primary-color: #FFF;
-  --secondary-color: #53433F;
-  --outline-color: rgba(133, 115, 110, 1);
-  --outline-background-color: rgba(103, 80, 164, 0.12);
-  --page-background-color: #FFF;
-  --card-background-color: #FFF1ED;
-  --state-active-background-color: #FFDBD0;
-  --card-border-color: #85736E;
-  --table-header-background-color: rgba(241, 223, 218, .5);
-  --table-border-color: #F1DFDA;
-  --dialog-background-color: #F7E4DF;
-  --dropdown-background-color: #FCEAE5;
+	/* Light mode variables */
+	--primary-color: #8F4C36;
+	--on-primary-color: #FFF;
+	--secondary-color: #53433F;
+	--outline-color: rgba(133, 115, 110, 1);
+	--outline-background-color: rgba(103, 80, 164, 0.12);
+	--page-background-color: #FFF;
+	--card-background-color: #FFF1ED;
+	--state-active-background-color: #FFDBD0;
+	--card-border-color: #85736E;
+	--table-header-background-color: rgba(241, 223, 218, .5);
+	--table-border-color: #F1DFDA;
+	--dialog-background-color: #F7E4DF;
+	--dropdown-background-color: #FCEAE5;
 
-  --color-success: #F4E2A7;
-  --color-error: #BA1A1A;
+	--color-success: #F4E2A7;
+	--color-error: #BA1A1A;
+
+	--shadow-color: hsla(0, 0%, 40%, 0.25);
+	--card-primary-background-color: #F1DFDA;
+	--card-primary-text-color: #231917;
+	--card-secondary-text-color: #444746;
+	--primary-hover: #e2521c;
+	--secondary-hover: #f69470;
+	--scrole-color: #85736E;
 }
-
 /* Switch to dark mode when .dark-mode class is present on body */
 body.dark-mode {
   --primary-color: #FFB59D;
@@ -37,4 +44,13 @@ body.dark-mode {
 
   --color-success: #52461A;
   --color-error: #BA1A1A;
+
+
+  --shadow-color: hsla(0, 0%, 40%, 0.25);
+  --card-primary-background-color: #F1DFDA;
+  --card-primary-text-color: #231917;
+  --card-secondary-text-color: #444746;
+  --primary-hover: #e2521c;
+  --secondary-hover: #f69470;
+  --scrole-color: #85736E;
 }

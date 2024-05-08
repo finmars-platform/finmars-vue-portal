@@ -74,7 +74,7 @@
 		}
 		&_code {
 			display: block;
-			border: 1px solid $border;
+			border: 1px solid var(--table-border-color);
 			border-radius: 5px;
 			padding: 15px;
 			background: #f6f6f6;
@@ -96,7 +96,7 @@
 		}
 	}
 	.editor_block {
-		border: 1px solid $border;
+		border: 1px solid var(--table-border-color);
 		border-radius: 5px;
 		position: relative;
 	}
@@ -134,7 +134,7 @@
 			}
 		}
 		&_item + &_item {
-			border-top: 1px solid $border;
+			border-top: 1px solid var(--table-border-color);
 		}
 	}
 	.line_id {
