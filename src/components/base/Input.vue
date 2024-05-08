@@ -256,7 +256,7 @@
 	}
 
 	.bi_error {
-		color: $primary;
+		color: var(--color-error);
 		font-size: 12px;
 		// padding: 5px 12px 10px;
 		padding: 4px 12px 0;

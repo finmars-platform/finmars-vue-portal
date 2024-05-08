@@ -1116,7 +1116,7 @@
 		padding-right: 10px;
 	}
 	.hp_details_btn {
-		color: $primary;
+		color: var(--primary-color);
 		cursor: pointer;
 		transition: 0.3s;
 
@@ -1154,7 +1154,7 @@
 		padding: 6px;
 		font-size: 14px;
 		text-transform: uppercase;
-		color: $primary;
+		color: var(--primary-color);
 		margin-right: 11px;
 	}
 	.hp_attach_item_name {
@@ -1174,7 +1174,7 @@
 		white-space: nowrap;
 
 		&.primary {
-			color: $primary;
+			color: var(--primary-color);
 			border-color: #ff8a00;
 		}
 	}

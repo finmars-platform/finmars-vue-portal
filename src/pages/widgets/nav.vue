@@ -319,7 +319,7 @@
 
 		&_h {
 			font-weight: 500;
-			color: $primary;
+			color: var(--primary-color);
 			margin-bottom: 3px;
 		}
 		&_t {
