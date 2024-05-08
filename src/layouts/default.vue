@@ -1,5 +1,5 @@
 <template>
-	<div v-if="notLoadingMember" class="wrap">
+	<div v-if="notLoadingMember && store.user" class="wrap">
 		<LazyTheSidebar v-if="!$route.meta.isHideSidebar" />
 
 		<div class="main">
@@ -44,6 +44,12 @@
 	// 		})
 	// 	}
 	// })
+	watch(
+		() => store.user?.data.dark_mode,
+		() => {
+			document.body.classList.toggle('dark-mode', store.user.data.dark_mode);
+		}
+	)
 
 	watchEffect(async (onCleanup) => {
 		if (store.isUrlValid) {
@@ -52,10 +58,10 @@
 			notLoadingMember.value = false
 
 			await Promise.all([
-        store.getMe(),
-        store.fetchEcosystemDefaults(),
-        evAttrsStore.fetchSystemAttributes(),
-      ]);
+				store.getMe(),
+				store.fetchEcosystemDefaults(),
+				evAttrsStore.fetchSystemAttributes(),
+			]);
 
 			notLoadingMember.value = true
 

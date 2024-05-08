@@ -20,9 +20,7 @@
 
 	--shadow-color: hsla(0, 0%, 40%, 0.25);
 	--card-primary-background-color: #F1DFDA;
-	--card-primary-text-color: #231917;
-	--card-secondary-text-color: #444746;
-	--primary-hover: #e2521c;
+	--primary-hover: rgb(152, 90, 70);
 	--secondary-hover: #f69470;
 	--scrole-color: #85736E;
 }
@@ -36,7 +34,7 @@ body.dark-mode {
   --page-background-color: #1A110F;
   --card-background-color: #1A110F;
   --state-active-background-color: #5D4036;
-  --card-border-color: #FFDBD0;
+  --card-border-color: rgba(83, 67, 63, 1);
   --table-header-background-color: rgba(230, 224, 233, 0.12);
   --table-border-color: #53433F;
   --dialog-background-color: #1A110F;
@@ -48,9 +46,7 @@ body.dark-mode {
 
   --shadow-color: hsla(0, 0%, 40%, 0.25);
   --card-primary-background-color: #F1DFDA;
-  --card-primary-text-color: #231917;
-  --card-secondary-text-color: #444746;
-  --primary-hover: #e2521c;
+  --primary-hover: rgb(239, 169, 154);
   --secondary-hover: #f69470;
   --scrole-color: #85736E;
 }

@@ -40,7 +40,7 @@
 		user-select: none;
 
 		&:not(.disabled):hover {
-			color: var(--secondary-hover);
+			color: var(--primary-hover);
 
 			/*.tooltip {
 				opacity: 0.8;
@@ -61,22 +61,23 @@
 			border-radius: 50%;
 
 			&:hover {
-				background: $primary-lighten;
-				color: $white;
+				background: var(--primary-hover);
+				color: var(--on-primary-color);
+				// color: $white;
 			}
 		}
 		&.primary {
 			color: var(--primary-color);
 
 			&:hover {
-				color: $primary-lighten;
+				color: var(--primary-hover);
 			}
 		}
 		&.primary {
 			color: var(--primary-color);
 
 			&:hover {
-				color: $primary-lighten;
+				color: var(--primary-hover);
 			}
 		}
 		&.error {
@@ -87,7 +88,7 @@
 			border-radius: 50%;
 
 			&:hover {
-				background: $main-darken-hover;
+				background: var(--state-active-background-color);
 			}
 		}
 	}

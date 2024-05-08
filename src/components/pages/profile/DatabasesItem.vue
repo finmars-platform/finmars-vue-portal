@@ -366,7 +366,7 @@ setTimeout(() => {
 
 .clipboard a {
 	cursor: pointer;
-	color: var(--card-secondary-text-color);
+	color: var(--secondary-color);
 }
 
 .db_status {
