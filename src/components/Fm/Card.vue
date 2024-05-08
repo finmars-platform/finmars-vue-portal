@@ -22,8 +22,9 @@
 <style lang="scss" scoped>
 	.fm_card {
 		position: relative;
-		background: $separ;
-		box-shadow: 0 1px 4px hsl(0deg 0% 40% / 25%);
+		background: var(--page-background-color);
+		color: var(--secondary-color);
+		box-shadow: 0 1px 4px var(--shadow-color);
 		border-radius: 4px;
 		padding: 20px;
 		word-wrap: break-word;
@@ -47,5 +48,11 @@
 	}
 	.with_controls {
 		padding-bottom: 80px;
+		background: var(--card-primary-background-color);
+		color: var(--card-primary-text-color);
+	}
+	.settings_block {
+		background: var(--card-primary-background-color);
+		color: var(--card-primary-text-color);
 	}
 </style>

@@ -7,7 +7,7 @@
 			<div class="sidenav-logo-container">
 				<div class="sidenav-logo-wrapper">
 					<NuxtLink :to="useGetNuxtLink('/home', $route.params)">
-						<img src="/img/logo.png" class="sidenav-logo" alt=""/>
+						<img :src="logoPath" class="sidenav-logo" alt=""/>
 					</NuxtLink>
 				</div>
 				<div class="panel-resizer-holder sidenav-resizer-holder">
@@ -1681,6 +1681,12 @@ const copyToBuffer = function (content) {
 //
 // 	sideMenuSettingsMenuOpened = !sideMenuSettingsMenuOpened;
 // }
+
+
+const logoPath = computed(() => {
+	return store.memberLayout?.data?.dark_mode ? '/img/logo-dark.png' : '/img/logo.png';
+});
+
 const init = function () {
 	getInterfaceAccess();
 };
@@ -1758,6 +1764,7 @@ transition: 0.3s;
 	overflow: visible;
 	height: 100%;
 	width: 100%;
+	border-right: 1px solid var(--table-border-color);
 
 	button[disabled] {
 		color: #fff;
@@ -1771,8 +1778,6 @@ transition: 0.3s;
 	width: 100%;
 	height: 100%;
 	// fill: #737373;
-	box-shadow: 0 1px 3px 0 rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%),
-	0 2px 1px -1px rgb(0 0 0 / 12%);
 	overflow: visible;
 
 	font-family: "Roboto-Regular", "Roboto", sans-serif;
@@ -1808,6 +1813,7 @@ transition: 0.3s;
 	min-height: 52px;
 	height: 52px;
 	background-color: var(--page-background-color);
+	border-right: 1px solid var(--table-border-color);
 }
 
 /*.md-toolbar-tools {
@@ -1848,7 +1854,7 @@ padding: 0;
 }
 
 @mixin option-hover {
-	background-color: rgba(158, 158, 158, 0.2);
+	background-color: var(--state-active-background-color);
 }
 
 .sidenav-dropdown-menu {
@@ -1859,7 +1865,7 @@ padding: 0;
 	top: 0;
 	right: -200px;
 	padding-left: 0;
-	border-top: 5px solid transparent;
+	border: 1px solid var(--table-border-color);
 	z-index: 1;
 
 	.sidenav-dropdown-menu-btn {
@@ -1882,6 +1888,7 @@ padding: 0;
 
 		&:not([disabled]):hover {
 			@include option-hover;
+			border-radius: 100px;
 		}
 
 		&.active {
@@ -1986,6 +1993,7 @@ padding: 0;
 
 	&:not([disabled]):hover {
 		@include option-hover;
+		border-radius: 100px;
 	}
 
 	&.active {
@@ -2087,8 +2095,7 @@ padding: 0;
 		position: relative;
 		width: 200px;
 		height: 100%;
-		border-top: 2px solid var(--table-border-color);
-		border-left: 2px solid var(--table-border-color);
+		border-left: 0;
 		box-sizing: border-box;
 	}
 
@@ -2116,7 +2123,7 @@ padding: 0;
 	}
 
 	.side-menu-settings-border-top-1 {
-		border-top: 2px solid var(--table-border-color);
+		border-top: 1px solid var(--table-border-color);
 	}
 }
 
@@ -2214,6 +2221,7 @@ padding: 0;
 }
 
 .side-menu-settings-menu.settings-menu-opened {
+	border-right: 1px solid var(--table-border-color);
 	width: 200px;
 }
 

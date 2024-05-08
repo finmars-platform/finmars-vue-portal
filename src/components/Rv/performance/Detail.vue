@@ -890,8 +890,13 @@ function init() {
 
 <style lang="scss">
 .coll_years {
-	border-top: 1px solid $border;
-	border-left: 1px solid $border;
+	border-top: 1px solid var(--table-border-color);
+	border-left: 1px solid var(--table-border-color);
+}
+
+.coll_total {
+	border-top: 1px solid var(--table-border-color);
+	border-right: 1px solid var(--table-border-color);
 }
 
 .coll_item {
@@ -899,12 +904,12 @@ function init() {
 	line-height: 36px;
 	padding: 0 14px;
 	white-space: nowrap;
-	background: #f2f2f2;
-	border-bottom: 1px solid $border;
+	background: var(--table-header-background-color);
+	border-bottom: 2px solid var(--table-border-color);
 	font-size: 14px;
 
 	&.t_header {
-		height: 50px;
+		height: 51px;
 		line-height: 50px;
 		font-weight: 600;
 	}

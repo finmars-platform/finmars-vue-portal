@@ -375,12 +375,12 @@
 <style lang="scss" scoped>
 	.wrap {
 		border-radius: 5px;
-		border: 1px solid $border;
+		border: 1px solid var(--table-border-color);
 	}
 	.title {
 		height: 36px;
 		line-height: 36px;
-		background: $main-darken;
+		background: var(--table-header-background-color);
 		padding: 0 20px;
 	}
 	.content {

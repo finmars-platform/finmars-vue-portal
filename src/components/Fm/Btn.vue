@@ -50,7 +50,7 @@
 
 		&.primary {
 			background: var(--primary-color);
-			color: $separ;
+			color: var(--page-background-color);
 
 			&:not([disabled]):hover {
 				background: $primary-darken;
@@ -61,7 +61,7 @@
 			font-weight: 700;
 			border-radius: 3px;
 			border: 1px solid $border-darken;
-      color: var(--primary-color);
+			color: var(--primary-color);
 
       &:not([disabled]):hover {
         background-color: $primary-lighten-2;
@@ -78,13 +78,13 @@
 		}*/
 
 		&.text {
-			color: $text;
+			color: var(--secondary-color);
 
 			&:not([disabled]):hover {
-				background: $main-darken-hover;
+				background: var(--state-active-background-color);
 			}
 			&:not([disabled]).active {
-				background: $main-darken-hover;
+				background: var(--state-active-background-color);
 			}
 		}
 

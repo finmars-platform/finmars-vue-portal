@@ -33,7 +33,7 @@
 	.title {
 		height: 36px;
 		line-height: 36px;
-		background: $main-darken;
+		background: var(--table-header-background-color);
 		padding: 0 20px;
 	}
 	.log_wrap {

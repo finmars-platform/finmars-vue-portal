@@ -169,7 +169,7 @@
 		left: 0;
 		bottom: 20px;
 		padding: 0 20px;
-		color: $text-lighten;
+		color: var(--card-secondary-text-color);
 	}
 	.setup_wrap {
 		padding-bottom: 30px;
@@ -231,6 +231,6 @@
 	}
 	.progress_desc {
 		margin-top: 40px;
-		color: $text-lighten;
+		color: var(--card-secondary-text-color);
 	}
 </style>

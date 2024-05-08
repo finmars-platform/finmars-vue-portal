@@ -33,7 +33,9 @@
 .checkbox_label:not(.disabled) {
 	cursor: pointer;
 }
-
+.checkbox_label {
+	color: var(--secondary-color);
+}
 input[type='radio'],
 input[type='checkbox'] {
 	display: none;
@@ -73,7 +75,7 @@ input[type='checkbox']:checked + .check {
 		opacity: 0;
 		transition: 0.3s;
 		font-size: 16px;
-		color: $separ;
+		color: var(--page-background-color);
 	}
 	.disabled {
 		cursor: default;

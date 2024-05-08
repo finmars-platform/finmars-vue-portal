@@ -352,7 +352,7 @@ setTimeout(() => {
 
 .clipboard {
 	cursor: pointer;
-	color: $text-lighten;
+	color: var(--card-secondary-text-color);
 	transition: color 0.3s;
 
 	&_text {
@@ -360,8 +360,13 @@ setTimeout(() => {
 	}
 
 	&:hover {
-		color: $text;
+		color: var(--secondary-color);
 	}
+}
+
+.clipboard a {
+	cursor: pointer;
+	color: var(--card-secondary-text-color);
 }
 
 .db_status {

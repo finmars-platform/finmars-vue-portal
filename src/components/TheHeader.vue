@@ -151,7 +151,7 @@
 													{{ item.name }}
 												</div>-->
 						<div
-							@click="goToProfile()"
+							@click="goToProfile(), close()"
 							class="fm_list_item"
 						>
 							<span class="side-nav-title">Profile</span>
@@ -159,7 +159,14 @@
 
 						<div
 							class="fm_list_item"
-							@click="openAccManager"
+							@click="toggleTheme(), close()"
+						>
+							{{toggleText}}
+						</div>
+
+						<div
+							class="fm_list_item"
+							@click="openAccManager, close()"
 						>Account Security
 						</div>
 
@@ -254,6 +261,19 @@ async function init() {
 	await formbricks.registerRouteChange();
 }
 
+const memberLayout = {...store.memberLayout};
+
+watchEffect(() => {
+	document.body.classList.toggle('dark-mode', memberLayout.data.dark_mode);
+	store.updateMemberLayout(memberLayout);
+});
+
+function toggleTheme() {
+	memberLayout.data.dark_mode = !memberLayout.data.dark_mode;
+};
+
+const toggleText = computed(() => !memberLayout.data.dark_mode ? 'Enable Dark Theme' : 'Disable Dark Theme' )
+
 init()
 
 
@@ -262,7 +282,7 @@ init()
 <style lang="scss" scoped>
 @mixin header_txt {
 	font-weight: 500;
-	color: $text-lighten;
+	color: var(--card-secondary-text-color);
 	text-transform: initial;
 }
 
@@ -277,6 +297,13 @@ header {
 	@include header_txt;
 }
 
+.fm_list {
+	background: var(--page-background-color);
+}
+.fm_list_item {
+	color: var(--primary-color);
+}
+
 /*.header_item + .header_item {
 	margin-left: 10px;
 }*/
@@ -284,6 +311,7 @@ header {
 :deep(.fm_btn.text.header_text_btn) {
 	@include header_txt;
 	padding: 0 12px;
+	color: var(--primary-color);
 }
 
 .header_icon_btn {
@@ -293,7 +321,7 @@ header {
 
 .fm_message_item {
 	padding: 11px;
-	border-bottom: 1px solid $border;
+	border-bottom: 1px solid var(--table-border-color);
 	font-size: 14px;
 	width: 280px;
 
@@ -308,11 +336,11 @@ header {
 }
 
 .fm_message_item_date {
-	color: $text-lighten;
+	color: var(--card-secondary-text-color);
 }
 
 .fm_message_item_section {
-	color: $text-lighten;
+	color: var(--card-secondary-text-color);
 	font-weight: 500;
 }
 

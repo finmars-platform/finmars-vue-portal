@@ -7,7 +7,7 @@
 			</template>
 
 			<template #rightActions>
-				<FmBtn class="text-capitalize"
+				<FmBtn class="text-capitalize fm-btn"
 							 icon="refresh"
 							 type="text"
 							 @click="$emit('refresh')"
@@ -40,5 +40,9 @@
 	}
 	.add {
 		margin-right: 15px;
+	}
+	.fm-btn {
+		background: var(--page-background-color);
+		color: var(--primary-color) !important;
 	}
 </style>

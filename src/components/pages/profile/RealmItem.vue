@@ -5,7 +5,7 @@
 		<div class="flex aic sb">
 			<div class="fm_card_title m-b-0">
 				<div class="fm_card_title">
-					Realm: {{ realm.name }} <span style="font-size: .7rem; color: grey;">({{ realm.realm_code }})</span>
+					Realm: {{ realm.name }} <span style="font-size: .7rem;">({{ realm.realm_code }})</span>
 				</div>
 			</div>
 
@@ -236,4 +236,7 @@ async function initUpdateDatabase() {
 	height: 2rem;
 }
 
+.fm_card_title, .fm_card_title span {
+	color: var(--primary-color);
+}
 </style>

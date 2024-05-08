@@ -150,7 +150,6 @@
 		// border: 1px solid $border-darken;
 		border-radius: $border-radius;
 		transition: border 0.3s;
-		background: $separ;
 
 		&.small {
 			height: 24px;
@@ -165,7 +164,7 @@
 			margin-top: 6px;
 
 			.bi_wrap {
-				border: $input-border;
+				border: 1px solid var(--table-border-color);
 				border-top-color: transparent;
 				border-radius: $border-radius;
 			}
@@ -267,25 +266,14 @@
 
 		&:not(.bi_no_borders) {
 			.bi_top {
-				.top_left_border,
-				.top_right_border {
-					border-color: $borer-lighten;
-				}
-
 				.bi_label {
 					color: $text-pale2;
 				}
 			}
-
-			.bi_wrap {
-				border-right-color: $borer-lighten;
-				border-bottom-color: $borer-lighten;
-				border-left-color: $borer-lighten;
-			}
 		}
 
 		.bi_main_input {
-			color: $text-lighten;
+			color: var(--card-secondary-text-color);
 		}
 	}
 
@@ -309,7 +297,7 @@
 			flex: 0 0 10px;
 			width: 10px;
 			height: 5px; // makes connection with .base-input borders smoother
-			border-top: $input-border;
+			border-top: 1px solid var(--table-border-color);
 			border-top-left-radius: $border-radius;
 		}
 
@@ -324,7 +312,7 @@
 			width: 0;
 			max-width: 85%;
 			z-index: 1;
-			color: $text-lighten;
+			color: var(--secondary-color);
 			font-size: 16px;
 			transition: 0.2s;
 			opacity: 0;
@@ -352,7 +340,7 @@
 		.top_right_border {
 			flex: 0 3 100%;
 			height: 5px; // makes connection with .base-input borders smoother
-			border-top: $input-border;
+			border-top: 1px solid var(--table-border-color);
 			border-top-right-radius: $border-radius;
 		}
 	}
@@ -384,7 +372,7 @@
 	}
 	.bi_button {
 		margin-left: 13px;
-		color: $text-lighten;
+		color: var(--card-secondary-text-color);
 		line-height: 0;
 		z-index: 1; // keeps .bi_button atop of .bi_top
 
@@ -405,7 +393,7 @@
 	}
 	.right_btn {
 		margin-right: 10px;
-		color: $text-lighten;
+		color: var(--card-secondary-text-color);
 
 		&:empty {
 			margin-right: 0;
@@ -413,7 +401,7 @@
 	}
 	.bi_side_item {
 		width: 24px;
-		color: $text-lighten;
+		color: var(--card-secondary-text-color);
 
 		& + & {
 			margin-left: 1px;

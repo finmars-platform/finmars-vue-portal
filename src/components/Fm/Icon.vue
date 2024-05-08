@@ -35,12 +35,12 @@
 		transition: color, background 0.3s;
 		font-size: 24px;
 		line-height: 0;
-		color: $text-lighten;
+		color: var(--primary-color);
 		overflow: hidden;
 		user-select: none;
 
 		&:not(.disabled):hover {
-			color: $text-hover;
+			color: var(--secondary-hover);
 
 			/*.tooltip {
 				opacity: 0.8;
@@ -56,7 +56,7 @@
 		}
 		&.btn-primary {
 			background: $primary;
-			color: $white;
+			color: var(--on-primary-color);
 			padding: 7px;
 			border-radius: 50%;
 

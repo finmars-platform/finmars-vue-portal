@@ -280,7 +280,7 @@
 	.card {
 		position: relative;
 		border-radius: 5px;
-		border: 1px solid $border;
+		border: 1px solid var(--table-border-color);
 		border-left: 10px solid #dfeaff;
 		min-width: 154px;
 		max-width: 180px;
@@ -298,7 +298,7 @@
 	}
 	.card_name {
 		margin-bottom: 5px;
-		color: $text-lighten;
+		color: var(--card-secondary-text-color);
 		height: 30px;
 		font-size: 13px;
 		text-align: center;
@@ -323,7 +323,7 @@
 			margin-bottom: 3px;
 		}
 		&_t {
-			color: $text-lighten;
+			color: var(--card-secondary-text-color);
 		}
 	}
 	.card_info {

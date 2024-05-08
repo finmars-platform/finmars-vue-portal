@@ -153,6 +153,6 @@
 	position: fixed;
 	left: 160px;
 	bottom: 0;
-	border-top: 1px solid $border;
+	border-top: 1px solid var(--table-border-color);
 }
 </style>

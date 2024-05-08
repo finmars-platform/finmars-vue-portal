@@ -5,7 +5,7 @@
 		<div class="main">
 			<TheHeader />
 
-			<div class="content">
+			<div class="content scrollable">
 				<slot />
 			</div>
 		</div>
@@ -73,7 +73,7 @@
 	.main {
 		flex-grow: 1;
 		width: calc(100vw - 160px);
-		background: $main;
+		background: var(--page-background-color);
 	}
 	.content {
 		height: calc(100vh - 52px);
