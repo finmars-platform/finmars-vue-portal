@@ -1,6 +1,6 @@
 <template>
 	<!-- <button> instead of <div> because of 'disabled' attribute -->
-    <button class="t_row" :class="{'active': active}">
+    <button class="t_row" :class="{'active': active}" :disabled="disabled">
         <slot />
     </button>
 </template>
@@ -16,6 +16,7 @@
 // props, emits
 let props = defineProps({
     active: Boolean,
+    disabled: Boolean,
 })
 
 //# region variables, refs, computed
@@ -61,7 +62,7 @@ let props = defineProps({
             }
         }*/
 
-        &.active {
+        &:not([disabled]).active {
             background: $hover-background2;
         }
     }

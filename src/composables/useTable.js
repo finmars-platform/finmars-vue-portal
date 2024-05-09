@@ -1,5 +1,9 @@
 function _sortNumberGetVal (value) {
 
+	if (value === '-') {
+		return 0;
+	}
+
 	const convertedVal = parseFloat(value);
 
 	if ( Number.isNaN(convertedVal) ) {

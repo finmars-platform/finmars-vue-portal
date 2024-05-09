@@ -46,6 +46,7 @@ let props = defineProps({
      */
     sorting: String,
     sortingDisabled: Boolean,
+	empty: Boolean, // used to mark cells that contain: null, undefined, ''
 })
 
 if ( props.valueType && ![20].includes(props.valueType) ) {
@@ -62,6 +63,7 @@ let cellClasses = computed(() => {
 
     let classes = {
         'readonly': props.readonly,
+		'empty': props.empty,
 	};
 
     if (props.valueType) {
@@ -112,8 +114,13 @@ let cellClasses = computed(() => {
 			border-left: 1px solid $border;
 		}
 
+		&.empty {
+			background-color: $main-darken;
+		}
+
 		&[disabled] {
-			background-color: $main-darken-2;
+			// background-color: $main-darken-2;
+			color: $text-lighten;
 			cursor: default;
 		}
 

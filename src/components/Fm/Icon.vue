@@ -39,7 +39,7 @@
 		overflow: hidden;
 		user-select: none;
 
-		&:not(.disabled):hover {
+		&:not(.disabled):not(.error):hover {
 			color: $text-pale2; // $text-hover not pale enough for small icons
 
 			/*.tooltip {
@@ -63,13 +63,6 @@
 			&:hover {
 				background: $primary-lighten;
 				color: $white;
-			}
-		}
-		&.primary {
-			color: $primary;
-
-			&:hover {
-				color: $primary-lighten;
 			}
 		}
 		&.primary {
