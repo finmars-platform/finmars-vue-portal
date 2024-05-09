@@ -533,11 +533,12 @@ async function _calcReportForBundle(bundle, row, rowRaw, abortSignal) {
  *
  * @param calculationPromises { [Promise<promiseSettledResultForRow>] } - each promise contains
  * an array of promises for calculation of reports for bundle
+ * @param abortSignal {abortSignal}
  *
  * @return {Promise<Boolean>} - true if calculations for all bundles succeeded
  * @private
  */
-async function _processReportCalculationPromises(calculationPromises) {
+async function _processReportCalculationPromises(calculationPromises, abortSignal) {
 
 	const bundlesWithNftdError = new Set();
 
@@ -567,6 +568,11 @@ async function _processReportCalculationPromises(calculationPromises) {
     }*/
 
 	results = await Promise.allSettled(calculationPromises);
+
+    if (abortSignal.aborted) {
+        return false;
+    }
+
 	/**
 	 *
 	 * @param { PromiseSettledResult } bundleResponses
@@ -711,7 +717,7 @@ async function fetchPortfolioBundles(abortSignal) {
 
     // const reportCalcPromises = Promise.all(promises);
 
-	const reportsCalculated = await _processReportCalculationPromises( promises );
+	const reportsCalculated = await _processReportCalculationPromises( promises, abortSignal );
 
     if (reportsCalculated) {
 
