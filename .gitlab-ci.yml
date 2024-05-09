@@ -71,26 +71,47 @@ Push Version:
   stage: pushVersion
   image: python:3.9
   before_script:
-    - apt install curl git
+      - apt-get update
+      - apt install curl git jq -y
   script:
-    - |
+      - |
 
-      if [[ "$CI_COMMIT_REF_NAME" == *"-rc" ]]; then
-          CHANNEL="rc"
-      elif [[ "$CI_COMMIT_REF_NAME" == *"-stable" ]]; then
-          CHANNEL="stable"
-      else
-          CHANNEL="unknown"
-      fi
+          if [[ "$CI_COMMIT_REF_NAME" == *"-rc" ]]; then
+              CHANNEL="rc"
+          elif [[ "$CI_COMMIT_REF_NAME" == *"-stable" ]]; then
+              CHANNEL="stable"
+          else
+              CHANNEL="unknown"
+          fi
 
-      # Create the JSON payload
-      NOTES=$(git log -1 --pretty=%B)
-      JSON_PAYLOAD="{ \"app\": \"$CI_PROJECT_NAME\", \"version\": \"$IMAGE_TAG\", \"build_number\": $CI_PIPELINE_ID, \"notes\": \"$NOTES\", \"channel\": \"$CHANNEL\" }"
+          NOTES=$(git log -1 --pretty=%B)
+          JSON_PAYLOAD=$(jq -n \
+            --arg app "$CI_PROJECT_NAME" \
+            --arg version "$IMAGE_TAG" \
+            --arg build_number "$CI_PIPELINE_ID" \
+            --arg notes "$NOTES" \
+            --arg channel "$CHANNEL" \
+            '{app: $app, version: $version, build_number: $build_number, notes: $notes, channel: $channel}')
 
-      # Pass the payload to curl
-      curl --request POST https://license.finmars.com/api/v1/version/ \
-      --header "Content-Type: application/json" \
-      --data "$JSON_PAYLOAD"
+          echo "----- Build Payload -----"
+          echo "$JSON_PAYLOAD"
+          echo "-------------------------"
+
+          response=$(curl -s -w "\n%{http_code}" --request POST https://license.finmars.com/api/v1/version/ --header "Content-Type: application/json" --data "$JSON_PAYLOAD")
+
+          # Extract the status code from the last line of output
+          status_code=$(echo "$response" | tail -n1)
+
+          # Remove the last line (status code) to isolate the response body
+          response_body=$(echo "$response" | head -n-1)
+
+          if [[ "$status_code" -ne "201" ]]; then
+            echo "Build failed. Status Code: $status_code"
+            echo "Response Body: $response_body"
+            exit 1
+          else
+            echo "Build succeeded."
+          fi
   only:
     - /^.*-(rc|stable)$/
     - tags

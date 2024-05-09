@@ -31,8 +31,9 @@
 		line-height: $height;
 		padding: 0 16px;
 		min-width: 64px;
-		border-radius: 4px;
-		text-transform: uppercase;
+		//border-radius: 4px;
+		border-radius: 100px;
+		text-transform: capitalize;
 		font-weight: 500;
 		font-size: 14px;
 		letter-spacing: 0.4px;
