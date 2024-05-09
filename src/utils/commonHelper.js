@@ -143,3 +143,54 @@ export const utilsPower = function (base, exponent) {
 		return Math.pow(base, exponent);
 	}
 }
+
+/**
+ * Use inside Array.sort(). Sort strings alphabetically but put string that starts with '-' at the beginning
+ *
+ * @return {Number} - 1, -1, 0
+ */
+export const utilSortTextWithDash = (a, b)  => {
+
+	if (!a || !b) {
+		return 0;
+	}
+
+	const aStartsWithDash = a.startsWith('-');
+	const bStartsWithDash = b.startsWith('-');
+
+	if (!aStartsWithDash && bStartsWithDash) {
+		return 1;
+	}
+
+	if (aStartsWithDash && !bStartsWithDash) {
+		return -1;
+	}
+
+	if (aStartsWithDash && bStartsWithDash) {
+
+		const aWithoutDash = a.slice(1);
+		const bWithoutDash = b.slice(1);
+
+		if (aWithoutDash > bWithoutDash) {
+			return 1
+		}
+
+		if (aWithoutDash < bWithoutDash) {
+			return -1
+		}
+
+		return 0;
+
+	}
+
+	if (a > b) {
+		return 1;
+	}
+
+	if (a < b) {
+		return -1;
+	}
+
+	return 0;
+
+};

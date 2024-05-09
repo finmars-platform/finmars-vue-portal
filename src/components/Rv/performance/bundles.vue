@@ -32,7 +32,8 @@
                     v-for="row in tableRowsComp"
                     @click="chooseBundle(row.key)"
                     :key="row.key"
-                    :active="row.key === activeBundle"
+                    :active="row.key === activeBundleId"
+					:disabled="row.error"
                     class="grid width-100"
                     :style="`grid-template-columns: ${tableGridTemplateCols}`">
 
@@ -40,8 +41,17 @@
                         v-for="cell in row.columns"
                         :key="cell.key"
                         :valueType="cell.key !== 'user_code' ? 20 : null"
-                        @contextmenu.prevent="showPerformanceDetail(row.key, cell.key)"
-                    >{{ cell.value }}</FmBasicTableCell>
+						:disabled="cell.error"
+						:empty="!cell.error && !cell.value && cell.value !== 0"
+                        @contextmenu.prevent="showPerformanceDetail(row.key, cell.key, cell.error)"
+                    >
+						<span v-if="!cell.error">{{ cell.value }}</span>
+                        <div v-else
+                             v-fm-tooltip:error="'Error occurred while calculating performance report'"
+                             class="flex-row flex-center">
+                            <FmIcon icon="error" error />
+                        </div>
+					</FmBasicTableCell>
 
                 </FmBasicTableRow>
 			</FmBasicTable>
@@ -66,8 +76,26 @@
 import dayjs from 'dayjs'
 import quarterOfYear from 'dayjs/plugin/quarterOfYear'
 import {useToggleSorting} from "~/composables/useTable";
+import {utilSortTextWithDash} from "~/utils/commonHelper";
 
 dayjs.extend(quarterOfYear)
+
+/**
+ * @typedef {
+ * [
+ *     { status: String, value?: Object, reason?: Object }, // calcDayForBundle 0
+ *     { status: String, value?: Object, reason?: Object }, // calcMonthForBundle 1
+ *     { status: String, value?: Object, reason?: Object }, // calcQuarterForBundle 2
+ *     { status: String, value?: Object, reason?: Object }, // calcYearForBundle 3
+ *     { status: String, value?: Object, reason?: Object }, // calcLastYearForBundle 4
+ *     { status: String, value?: Object, reason?: Object }, // calcBeforeLastYearForBundle 5
+ *     { status: String, value?: Object, reason?: Object }, // calcInceptYearForBundle 6
+ *     { status: String, value?: Object, reason?: Object }, // calcAnnualForBundle 7
+ * ]
+ * } promiseSettledResultForRow
+ *
+ * @private
+ */
 
 const props = defineProps({
 	/** Used to filter bundles. Can be `undefined` or `null`. */
@@ -165,11 +193,27 @@ let tableRowsComp = computed(() => {
             key: item.id, // using `id` as key because `user_code` of a bundle can change
         };
 
+        if (item.error) row.error = JSON.parse(JSON.stringify( item.error )); // in case of an object with error data will be passed
+
         row.columns = periodHeader.value.map(col => {
-            return {
+
+            const colObj = {
                 key: col.key,
                 value: item[col.key],
             }
+
+			const rawData = periodItemsRaw.value.find(rData => rData.id === item.id);
+			const errorData = rawData[col.key + 'Error'];
+
+			// in case of less_than_year for annualized column, cell must not go into error mode
+            if (errorData && !errorData.lessThanYear) {
+
+				colObj.error = JSON.parse(JSON.stringify( errorData.data ));
+
+			}
+
+            return colObj;
+
         })
 
         return row;
@@ -198,10 +242,11 @@ function getValueForPeriod(performanceResult) {
 
         let value = Math.round(performanceResult.grand_return * 100 * 100) / 100
 
-        return (value || value === 0) ? `${value}%` : '-';
+        return value ? `${value}%` : '-';
+
     } else {
 
-        if (performanceResult.grand_absolute_pl || performanceResult.grand_absolute_pl === 0) {
+        if (performanceResult.grand_absolute_pl) {
 
             return `${formatNumber(performanceResult.grand_absolute_pl)}`;
 
@@ -222,19 +267,20 @@ async function calcDayForBundle(bundleId, row, rowRaw, abortSignal) {
         res = await getDay(bundleId, abortSignal);
 
     } catch (e) {
+
+        rowRaw.dailyError = {
+            data: e
+        }
+
         throw e;
-    }
 
-
-    if (res._$error) {
-        return res;
     }
 
     rowRaw.daily_performance_report = res;
 
     row.daily = getValueForPeriod(res);
 
-	return {key: 'calcDayForBundle'};
+	return 'calcDayForBundle';
 
 }
 
@@ -247,18 +293,18 @@ async function calcMonthForBundle(bundleId, row, rowRaw, abortSignal) {
         res = await getMonth(bundleId, abortSignal);
 
     } catch (e) {
-        throw e;
-    }
+        rowRaw.monthError = {
+            data: e
+        };
 
-    if (res._$error) {
-        return res;
+        throw e;
     }
 
     rowRaw.month_performance_report = res
 
     row.month = getValueForPeriod(res);
 
-	return {key: 'calcMonthForBundle'};
+	return 'calcMonthForBundle';
 
 }
 
@@ -272,18 +318,19 @@ async function calcQuarterForBundle(bundleId, row, rowRaw, abortSignal) {
         res = await getQ(bundleId, abortSignal);
 
     } catch (e) {
-        throw e;
-    }
 
-    if (res._$error) {
-        return res;
+        rowRaw.qError = {
+            data: e
+        };
+
+        throw e;
     }
 
     rowRaw.q_performance_report = res;
 
     row.q = getValueForPeriod(res);
 
-	return {key: 'calcQuarterForBundle'}
+	return 'calcQuarterForBundle';
 
 }
 
@@ -296,17 +343,19 @@ async function calcYearForBundle(bundleId, row, rowRaw, abortSignal) {
         res = await getYear(bundleId, abortSignal);
 
     } catch (e) {
+
+        rowRaw.yearError = {
+            data: e
+        };
+
         throw e;
-    }
-    if (res._$error) {
-        return res;
     }
 
     rowRaw.year_performance_report = res;
 
     row.year = getValueForPeriod(res);
 
-	return {key: 'calcYearForBundle'};
+	return 'calcYearForBundle';
 
 }
 
@@ -319,18 +368,19 @@ async function calcLastYearForBundle(bundleId, row, rowRaw, abortSignal) {
         res = await getLastYear(bundleId, abortSignal);
 
     } catch (e) {
-        throw e;
-    }
 
-	if (res._$error) {
-        return res;
+        rowRaw.lastError = {
+            data: e
+        };
+
+        throw e;
     }
 
     rowRaw.last_performance_report = res;
 
     row.last = getValueForPeriod(res);
 
-	return {key: 'calcLastYearForBundle'};
+	return 'calcLastYearForBundle';
 
 }
 
@@ -343,17 +393,19 @@ async function calcBeforeLastYearForBundle(bundleId, row, rowRaw, abortSignal) {
         res = await getYearBeforeLast(bundleId, abortSignal);
 
     } catch (e) {
+
+        rowRaw.beforeLastError = {
+            data: e
+        };
+
         throw e;
     }
-    if (res._$error) {
-        return res;
-    }
-    console.log("testing458.RvPerformanceBundles calcBeforeLastYearForBundle res", res);
+
     rowRaw.beforeLast_performance_report = res;
 
     row.beforeLast = getValueForPeriod(res);
-    console.log("testing458.RvPerformanceBundles calcBeforeLastYearForBundle row, rowRaw", row, '\n', rowRaw);
-	return {key: 'calcBeforeLastYearForBundle'};
+
+	return 'calcBeforeLastYearForBundle';
 
 }
 
@@ -366,17 +418,19 @@ async function calcInceptYearForBundle(bundleId, row, rowRaw, abortSignal) {
         res = await getIncept(bundleId, abortSignal);
 
     } catch (e) {
+
+        rowRaw.inceptError = {
+            data: e
+        };
+
         throw e;
-    }
-    if (res._$error) {
-        return res;
     }
 
     rowRaw.incept_performance_report = res;
 
     row.incept = getValueForPeriod(res);
 
-	return {key: 'calcInceptYearForBundle'};
+	return 'calcInceptYearForBundle';
 }
 
 async function calcAnnualForBundle(bundleId, row, rowRaw, abortSignal) {
@@ -386,21 +440,46 @@ async function calcAnnualForBundle(bundleId, row, rowRaw, abortSignal) {
 	let res;
 
 	try {
-        res = await getIncept(bundleId, "annualized", abortSignal);
+        res = await getIncept(bundleId, abortSignal, "annualized");
 
     } catch (e) {
+
+		rowRaw.annualizedError = {
+            data: e
+        };
+
+		const eKey = errorWithErrorKey(e)
+
+		if (eKey === "less_than_year") {
+
+			rowRaw.annualizedError.lessThanYear = true;
+			rowRaw.annualizedError.description = "";
+
+			row.annualized = "-";
+
+			return 'calcAnnualForBundle';
+
+		}
+
         throw e;
+
     }
 
-	if (res._$error) {
-		return res;
-	}
+	// `res` can be equal to {key: "less_than_year"}
 
 	rowRaw.annualized_performance_report = res;
 
-	row.annualized = res.grand_return ? `${Math.round(res.grand_return * 100 * 100) / 100}%` : '';
+	if (res.grand_return) {
+		row.annualized = `${Math.round(res.grand_return * 100 * 100) / 100}%`;
 
-	return {key: 'calcAnnualForBundle'};
+	} else if (res.grand_return === 0) {
+		row.annualized = "-";
+
+	} else { // null, undefined
+		row.annualized = null;
+	}
+
+	return 'calcAnnualForBundle';
 }
 
 /**
@@ -413,38 +492,46 @@ async function calcAnnualForBundle(bundleId, row, rowRaw, abortSignal) {
  * @return {Promise<{-readonly [P in keyof Promise<void>[]]: PromiseSettledResult<Awaited<Promise<void>[][P]>>}>}
  * @private
  */
-function _calcReportForBundle(bundle, row, rowRaw, abortSignal) {
+async function _calcReportForBundle(bundle, row, rowRaw, abortSignal) {
     // Here you can process responses from calculating report
 	// for a single portfolio bundle.
 	// The bundle passed whole instead of its id only
 	// to ease processing of responses.
-    console.log("testing458.RvPerformanceBundles " +
-        "_calcReportForBundle results ");
-	try {
-		return Promise.all([
-			calcDayForBundle(bundle.id, row, rowRaw, abortSignal),
-			calcMonthForBundle(bundle.id, row, rowRaw, abortSignal),
-			calcQuarterForBundle(bundle.id, row, rowRaw, abortSignal),
-			calcYearForBundle(bundle.id, row, rowRaw, abortSignal),
-			calcLastYearForBundle(bundle.id, row, rowRaw, abortSignal),
-			calcBeforeLastYearForBundle(bundle.id, row, rowRaw, abortSignal),
-			calcInceptYearForBundle(bundle.id, row, rowRaw, abortSignal),
-			calcAnnualForBundle(bundle.id, row, rowRaw, abortSignal),
-		]);
 
-	} catch (e) {
-		console.log("testing458.RvPerformanceBundles " +
-			"_calcReportForBundle 2 ");
-		throw e;
+    /**
+	 *
+     * @type {promiseSettledResultForRow}
+     */
+	const responses = await Promise.allSettled([
+		calcDayForBundle(bundle.id, row, rowRaw, abortSignal),
+		calcMonthForBundle(bundle.id, row, rowRaw, abortSignal),
+		calcQuarterForBundle(bundle.id, row, rowRaw, abortSignal),
+		calcYearForBundle(bundle.id, row, rowRaw, abortSignal),
+		calcLastYearForBundle(bundle.id, row, rowRaw, abortSignal),
+		calcBeforeLastYearForBundle(bundle.id, row, rowRaw, abortSignal),
+		calcInceptYearForBundle(bundle.id, row, rowRaw, abortSignal),
+		calcAnnualForBundle(bundle.id, row, rowRaw, abortSignal),
+	]);
+
+	const rejectedRes = responses.find(res => res.status === "rejected");
+
+	if (rejectedRes) {
+		row.error = true;
 	}
+
+    return responses;
 
 }
 
 /**
  * Process Promise.allSettled()
- * for calculating all portfolio bundles inside report
+ * with calculations for all portfolio bundles - rows.
  *
- * @param calculationPromises { [Promise<[Promise]>] } - each promise contains
+ * DO NOT use this function for processing calculation of individual rows.
+ * Use _calcReportForBundle for that purpose instead.
+ * @see _calcReportForBundle
+ *
+ * @param calculationPromises { [Promise<promiseSettledResultForRow>] } - each promise contains
  * an array of promises for calculation of reports for bundle
  *
  * @return {Promise<Boolean>} - true if calculations for all bundles succeeded
@@ -452,22 +539,18 @@ function _calcReportForBundle(bundle, row, rowRaw, abortSignal) {
  */
 async function _processReportCalculationPromises(calculationPromises) {
 
-	const bundlesWithClientError = new Set();
+	const bundlesWithNftdError = new Set();
 
     /*responses.find(bundleResponses => {
         return
     })*/
     let results;
 
-    try {
-        results = await Promise.all(calculationPromises);
-        console.log("testing458.RvPerformanceBundles " +
-            "_processReportCalculationPromises results ",
-            results);
+    /*try {
+        results = await Promise.allSettled(calculationPromises);
+
     } catch (e) {
-		console.log("testing458.RvPerformanceBundles " +
-			"_processReportCalculationPromises catch ",
-			e);
+
         if ( e === 'ABORTED_BY_CLIENT' ) { // AbortController.abort()
             return false;
 
@@ -481,69 +564,57 @@ async function _processReportCalculationPromises(calculationPromises) {
             throw e;
         }
 
-    }
-    console.log(
-        "testing458.RvPerformanceBundles results " +
-        "_processReportCalculationPromises",
-        results
-    );
-    results.forEach((bundleRes, index) => {
+    }*/
 
-		/*
-		 * bundleRes content
-		 * [
-		 *  calcDayForBundle, 0
-		 *	calcMonthForBundle, 1
-		 *	calcQuarterForBundle, 2
-		 *	calcYearForBundle, 3
-		 *	calcLastYearForBundle, 4
-		 *	calcBeforeLastYearForBundle, 5
-		 *	calcInceptYearForBundle, 6
-		 *	calcAnnualForBundle, 7
-		 * ]
-		 */
+	results = await Promise.allSettled(calculationPromises);
+	/**
+	 *
+	 * @param { PromiseSettledResult } bundleResponses
+	 * @param {Number} index
+	 */
+	const processProms = (bundleResponses, index) => {
 
-        // filter out empty fullfilment values
-        /*bundleWithError = bundleResponses.value.find(
-            res => res.status === "rejected"
-        )*/
+        bundleResponses.value.forEach(res => {
 
-        /*bundleRes.value.find(res => {
+            if (res.status === "rejected") {
 
-            if (res.status === "rejected" &&
-                res.reason.error?.details?.errors[0] &&
-                res.reason.error.details.errors[0].error_key) {
+                const eKey = errorWithErrorKey(res.reason);
 
-                    bundlesWithClientError.add( bundles.value[index].user_code );
+                if (eKey === "no_first_transaction_date") {
 
-                return true;
+                    bundlesWithNftdError.add( bundles.value[index].user_code );
+
+                }
+
+			}
+            // else { process fullfilled rows}
+
+
+		});
+
+
+		/*bundleRes.find(res => {
+
+			if (res._$error?.details?.errors[0] &&
+				res._$error.details.errors[0].error_key) {
+
+				bundlesWithNftdError.add( bundles.value[index].user_code );
+
+				return true;
 
 			}
 
-            return false;
+			return false;
 
 		});*/
 
-        bundleRes.find(res => {
+	}
 
-            if (res._$error?.details?.errors[0] &&
-                res._$error.details.errors[0].error_key) {
+    results.forEach(processProms);
 
-                bundlesWithClientError.add( bundles.value[index].user_code );
+	if (bundlesWithNftdError.size) {
 
-                return true;
-
-            }
-
-            return false;
-
-        });
-
-	});
-
-	if (bundlesWithClientError.size) {
-
-		const bundlesUserCodes = [...bundlesWithClientError].join(", ");
+		const bundlesUserCodes = [...bundlesWithNftdError].join(", ");
 
         useNotify({
             group: "fm_warning",
@@ -583,21 +654,25 @@ async function fetchPortfolioBundles(abortSignal) {
         return;
     }
 
-    const delUserCodeRe = /^del\d{17}$/;
+    // At this point `res` is a list of objects (bundles)
 
-    bundles.value = res.filter(
+	const delUserCodeRe = /^del\d{17}$/;
+
+    res = res.filter(
         bundle => !bundle.user_code.match(delUserCodeRe)
     );
 
+    res.sort( (a,b) => utilSortTextWithDash(a.user_code, b.user_code) );
+
     if (props.bundlesIds?.length) {
 
-        bundles.value = bundles.value.filter(
+        res = res.filter(
             bundle => props.bundlesIds.includes(bundle.id)
         )
 
     }
 
-
+    bundles.value = res;
 
     /*
      * Using `periodItemsList`, `periodItemsRawList` in case
@@ -635,20 +710,19 @@ async function fetchPortfolioBundles(abortSignal) {
     })
 
     // const reportCalcPromises = Promise.all(promises);
-    console.log(
-        "testing458.RvPerformanceBundles fetchBundles promises",
-        promises);
+
 	const reportsCalculated = await _processReportCalculationPromises( promises );
 
     if (reportsCalculated) {
 
         periodItems.value = periodItemsList;
         periodItemsRaw.value = periodItemsRawList
-        console.log("testing458.RvPerformanceBundles periodItems.value", periodItems.value);
+
         readyStatus.value = true;
 
+        if (periodItems.value.length) chooseBundle( periodItems.value[0].id );
+
     }
-    // chooseBundle(0)
 
 }
 //# endregion Calculate reports
@@ -670,7 +744,7 @@ function sortBundles(bundlesList) {
         // if there is no active sorting, sort by year in descending order
         sortCol = {
             key: 'user_code',
-            sorting: 'desc',
+            sorting: 'asc',
         }
     }
 
@@ -718,13 +792,14 @@ function sortBundles(bundlesList) {
 
 function toggleSorting(columnKey) {
     periodHeader.value = useToggleSorting(periodHeader.value, columnKey)
-    console.log("testing458.RvPerformanceBundle periodHeader.value ", periodHeader.value);
 }
 //# endregion
 
-async function chooseBundle(bundleId) {
+function chooseBundle(bundleId) {
 
-    if (activeBundleId.value === bundleId) {
+	const bundleRow = periodItems.value.find(item => item.id === bundleId);
+
+    if (activeBundleId.value === bundleId || bundleRow.error) {
         return;
     }
 
@@ -741,6 +816,8 @@ function showPerformanceDetail(bundleId, cellKey) {
 		return;
 	}
 
+	const bundleRawData = periodItemsRaw.value.find(item => item.id === bundleId);
+
     performanceDetailsColumnKey.value = cellKey;
 
     if (cellKey === 'user_code') {
@@ -748,15 +825,29 @@ function showPerformanceDetail(bundleId, cellKey) {
 		// performanceDetails.value = {bundle: periodItemsRaw.value[rowIndex]['id']}
         performanceDetails.value = {bundle: bundleId};
 
-	} else {
+	}
+	else if (bundleRawData.error) {
+		// TODO: open modal window to display errorData
+		return;
+	}
+	else {
 
-        const bundleRawData = periodItemsRaw.value.find(item => item.id === bundleId);
 		performanceDetails.value = bundleRawData[`${cellKey}_performance_report`];
 
 	}
 
 	performanceDetailIsOpen.value = true;
 
+}
+
+let noNotificationErrorKeys = ["no_first_transaction_date", "less_than_year"];
+
+function errorWithErrorKey(errorObj) {
+    if ( errorObj && errorObj.error?.details?.errors[0] && errorObj.error.details.errors[0].error_key ) {
+        return errorObj.error.details.errors[0].error_key;
+	}
+
+    return false;
 }
 
 async function getDay(ids, abortSignal) {
@@ -852,15 +943,22 @@ function getYearBeforeLast(ids, abortSignal) {
 	})
 }
 
-async function getIncept(ids, adjustment_type = "original", abortSignal) {
+async function getIncept(ids, abortSignal, adjustment_type = "original") {
 	let endDate = dayjs(props.end_date)
 
     let end = dayjs(endDate).format('YYYY-MM-DD')
 
-    return getReports({period_type: "inception", end, ids, abortSignal})
+    return getReports({
+        period_type: "inception",
+        end,
+        ids,
+        adjustment_type,
+        abortSignal
+    })
 }
 
 async function getReports({period_type, end, ids, type = 'months', adjustment_type = 'original', abortSignal}) {
+
     let res = await useApi('performanceReport.post', {
         body: {
             save_report: false,
@@ -881,11 +979,10 @@ async function getReports({period_type, end, ids, type = 'months', adjustment_ty
         throw 'ABORTED_BY_CLIENT';
     }
     else if ( res.hasOwnProperty('_$error') ) {
-        console.log("testing458.RvPerformanceBundles getReports res._$error",
-            res._$error);
 
-        if (!res._$error.error?.details?.errors[0] ||
-            res._$error.error.details.errors[0].error_key !== 'no_first_transaction_date') {
+        const errorKey = errorWithErrorKey(res._$error);
+
+        if ( !noNotificationErrorKeys.includes(errorKey) ) {
 
             useNotify({
                 group: 'server_error',
@@ -895,6 +992,9 @@ async function getReports({period_type, end, ids, type = 'months', adjustment_ty
             })
 
         }
+
+
+		throw res._$error;
 
     }
 
@@ -957,7 +1057,7 @@ async function getReports({period_type, end, ids, type = 'months', adjustment_ty
 const reloadTableD = useDebounce(function () {
 
     if (abortController) {
-        abortController.abort()
+        abortController.abort({key: "ABORTED_BY_CLIENT"})
 	}
 
     abortController = new AbortController();

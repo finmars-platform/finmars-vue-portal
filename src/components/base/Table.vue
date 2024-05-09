@@ -143,24 +143,24 @@ const sortTable = (col_index) => {
     ascending.value = true;
     sortColumn.value = col_index;
   }
-  
+
   props.items.sort(function(a, b) {
     let valueA = a[col].replace("%","");
     let valueB = b[col].replace("%","");
 
 	console.log(valueA, valueB)
-	
-    if (!isNaN(valueA) && !isNaN(valueB)){ 
+
+    if (!isNaN(valueA) && !isNaN(valueB)){
       valueA = parseFloat(valueA) || 0;
 	  valueB = parseFloat(valueB) || 0;
     }
-    
+
     if (valueA > valueB) {
       return ascending.value ? 1 : -1;
     } else if (valueA < valueB) {
       return ascending.value ? -1 : 1;
     }
-    
+
     return 0;
   });
 }

@@ -111,7 +111,7 @@ let props = defineProps({
 		.t_body {
 
 			:deep(.t_row) {
-				&:not(.disabled) {
+				&:not([disabled]) {
 					cursor: pointer;
 
 					&:not(.active):hover {

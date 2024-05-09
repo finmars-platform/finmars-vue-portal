@@ -84,9 +84,8 @@ export default async function useApi(
 			: response
 	} catch (e) {
 
-		// abortController.abort() used
-		if (e.name === 'FetchError') {
-			return {_$abort: {key: 'ABORTED_BY_CLIENT', error: e} }
+		if (opts.signal?.aborted) {
+			return {_$abort: opts.signal.reason}
 		}
 
 		console.error('$fetch error:', e)
@@ -129,6 +128,7 @@ export function useLoadAllPages(
 		body,
 		filters,
 		headers,
+		signal,
 	}
 
 	const loadPage = async () => {

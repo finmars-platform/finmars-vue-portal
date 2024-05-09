@@ -430,7 +430,7 @@ function sortYears(yearsList) {
 		// if there is no active sorting, sort by year in descending order
         sortCol = {
             key: 'year',
-			sorting: 'desc',
+			sorting: 'asc',
 		}
 	}
 

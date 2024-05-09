@@ -47,7 +47,6 @@
 					@refresh="refresh()"
 				/>
 
-
 			</div>
 		</template>
 	</CommonEntityViewer>
@@ -64,6 +63,7 @@ let currentBundleYear = ref({})
 let currentBundleMonth = ref({})
 
 let bundlesTable = ref(null);
+let testRef = ref(null);
 let disableBundledTable = ref(false);
 
 let bundlesRefreshFunc = () => {
@@ -83,7 +83,6 @@ function onBundleChange(newVal) {
 }
 
 function refresh() {
-	console.log("testing458.RvPerfromanceIndex", bundlesTable.value);
 	bundlesTable.value.reloadTableD();
 	// bundlesRefreshFunc()
     currentBundleYear.value = null;
@@ -98,6 +97,7 @@ watch(
 		refresh()
 	}
 )
+
 </script>
 
 <style lang="scss" scoped></style>
