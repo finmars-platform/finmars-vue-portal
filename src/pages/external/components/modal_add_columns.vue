@@ -185,7 +185,7 @@
     .modal_top {
         height: 50px;
         padding: 0 20px;
-        border-bottom: 1px solid $border;
+		border-bottom: 1px solid var(--table-border-color);
     }
     .modal_content {
         overflow: auto;
@@ -196,7 +196,7 @@
         position: absolute;
         bottom: 0;
         width: 100%;
-        border-top: 1px solid $border;
+		border-top: 1px solid var(--table-border-color);
         padding: 10px 20px;
     }
     .modal {
@@ -255,7 +255,7 @@
         }
 
         &_left {
-            border-right: 1px solid $border;
+			border-right: 1px solid var(--table-border-color);
     		height: 100%;
 			overflow: auto;
 			padding: 9px 0;
@@ -267,7 +267,7 @@
 		}
 		&_right {
 			position: relative;
-			border-left: 1px solid $border;
+			border-left: 1px solid var(--table-border-color);
 			height: 100%;
 			// overflow: auto;
 
@@ -311,20 +311,20 @@
 	.desc_subtitle {
 		padding: 10px 13px;
 		background: $main;
-		border-top: 1px solid $border;
-		border-bottom: 1px solid $border;
-		color: $text-lighten;
+		border-top: 1px solid var(--table-border-color);
+		border-bottom: 1px solid var(--table-border-color);
+		color: var(--card-secondary-text-color);
 		word-wrap: break-word;
 	}
 	.desc_about {
 		padding: 10px 13px;
-		color: $text-lighten;
+		color: var(--card-secondary-text-color);
 	}
 	.collapse {
 		position: absolute;
 		top: 10px;
 		left: -12px;
-		border: 1px solid $border;
+		border: 1px solid var(--table-border-color);
 		background: #fff;
 		border-radius: 50%;
 		opacity: 0;
@@ -352,6 +352,6 @@
 		margin-right: 9px;
 	}
 	.select_old {
-		color: $text-lighten;
+		color: var(--card-secondary-text-color);
 	}
 </style>

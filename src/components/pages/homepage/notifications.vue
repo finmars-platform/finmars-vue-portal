@@ -7,7 +7,7 @@
 					<FmSelect
 						v-model="action"
 						:items="actionsItems"
-						class="m-b-0"
+						class="m-b-0 notification-fm-select"
 						@update:modelValue="dateFilter()"
 					/>
 				</div>
@@ -16,7 +16,7 @@
 					type="text"
 					v-model="query"
 					placeholder="Search"
-					class="bi_no_borders"
+					class="bi_no_borders notification-base-input"
 					@keyup.enter="search()"
 					@change="search()"
 				>
@@ -44,7 +44,7 @@
 				<FmSelect
 					v-model="date"
 					:items="dateItems"
-					class="m-b-0"
+					class="m-b-0 notification-fm-select"
 					no_borders
 					@update:modelValue="dateFilter()"
 				>
@@ -924,11 +924,11 @@
 	.hp_block {
 		border: 1px solid $border;
 		border-radius: 3px;
-		background: $separ;
+		background: var(--page-background-color);
 		max-width: 730px;
 	}
 	.hp_title {
-		background: $main-darken;
+		background: var(--table-header-background-color);
 		height: 33px;
 		line-height: 33px;
 		padding: 0 20px;
@@ -939,7 +939,7 @@
 	}
 	.hp_toolbar {
 		padding: 0 20px;
-		border-bottom: 1px solid $border;
+		border-bottom: 1px solid var(--table-border-color);
 		height: 44px;
 	}
 	.hp_actions_select {
@@ -976,7 +976,7 @@
 	}
 	.hp_text_small {
 		font-size: 10px;
-		color: $text-lighten;
+		color: var(--card-secondary-text-color);
 	}
 	.hp_item_wrap {
 		width: 125px;
@@ -1039,7 +1039,7 @@
 	.hp_back {
 		width: 25px;
 		height: 25px;
-		background: $text-lighten;
+		color: var(--card-secondary-text-color);
 		border-radius: 50%;
 		margin-right: 10px;
 		text-align: center;
@@ -1047,7 +1047,7 @@
 		align-items: center;
 		justify-content: center;
 		.icon {
-			color: $separ;
+			color: var(--page-background-color);
 			font-size: 20px;
 		}
 	}
@@ -1067,7 +1067,7 @@
 		padding: 7px 9px;
 		padding-left: 6px;
 		border-radius: 5px;
-		color: $separ;
+		color: var(--page-background-color);
 		background: $primary-lighten;
 		z-index: 10;
 		font-size: 12px;
@@ -1075,7 +1075,7 @@
 		cursor: pointer;
 
 		.icon {
-			color: $separ;
+			color: var(--page-background-color);
 			display: inline-block;
 			font-size: 16px;
 			vertical-align: middle;
@@ -1116,7 +1116,7 @@
 		padding-right: 10px;
 	}
 	.hp_details_btn {
-		color: $primary;
+		color: var(--primary-color);
 		cursor: pointer;
 		transition: 0.3s;
 
@@ -1131,12 +1131,12 @@
 		margin-bottom: 10px;
 	}
 	.hp_actions_item_h {
-		color: $text-lighten;
+		color: var(--card-secondary-text-color);
 		width: 100px;
 	}
 	.hp_actions_item_btn {
 		margin-top: 10px;
-		background: $main-darken;
+		background: var(--table-header-background-color);
 		border-radius: 5px;
 		padding: 8px 10px;
 		cursor: pointer;
@@ -1154,7 +1154,7 @@
 		padding: 6px;
 		font-size: 14px;
 		text-transform: uppercase;
-		color: $primary;
+		color: var(--primary-color);
 		margin-right: 11px;
 	}
 	.hp_attach_item_name {
@@ -1169,12 +1169,12 @@
 	.action_status {
 		padding: 2px 6px;
 		border-radius: 5px;
-		border: 1px solid $text-lighten;
-		color: $text-lighten;
+		border: 1px solid var(--card-secondary-text-color);
+		color: var(--card-secondary-text-color);
 		white-space: nowrap;
 
 		&.primary {
-			color: $primary;
+			color: var(--primary-color);
 			border-color: #ff8a00;
 		}
 	}
@@ -1184,13 +1184,18 @@
 	}
 	.status {
 		display: inline-block;
-		color: $text-lighten;
+		color: var(--card-secondary-text-color);
 		padding: 2px 6px;
-		border: 1px solid $text-lighten;
+		border: 1px solid var(--card-secondary-text-color);
 		border-radius: 5px;
 
 		&.hidden {
 			opacity: 0;
 		}
+	}
+	.notification-fm-select :deep(.base-input), .notification-base-input {
+		background: transparent;
+	}
+	.notification-base-input {
 	}
 </style>

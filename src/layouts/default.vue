@@ -1,11 +1,11 @@
 <template>
-	<div v-if="notLoadingMember" class="wrap">
+	<div v-if="notLoadingMember && store.user" class="wrap">
 		<LazyTheSidebar v-if="!$route.meta.isHideSidebar" />
 
 		<div class="main">
 			<TheHeader />
 
-			<div class="content">
+			<div class="content scrollable">
 				<slot />
 			</div>
 		</div>
@@ -44,6 +44,12 @@
 	// 		})
 	// 	}
 	// })
+	watch(
+		() => store.user?.data.dark_mode,
+		() => {
+			document.body.classList.toggle('dark-mode', store.user.data.dark_mode);
+		}
+	)
 
 	watchEffect(async (onCleanup) => {
 		if (store.isUrlValid) {
@@ -52,10 +58,10 @@
 			notLoadingMember.value = false
 
 			await Promise.all([
-        store.getMe(),
-        store.fetchEcosystemDefaults(),
-        evAttrsStore.fetchSystemAttributes(),
-      ]);
+				store.getMe(),
+				store.fetchEcosystemDefaults(),
+				evAttrsStore.fetchSystemAttributes(),
+			]);
 
 			notLoadingMember.value = true
 
@@ -73,7 +79,7 @@
 	.main {
 		flex-grow: 1;
 		width: calc(100vw - 160px);
-		background: $main;
+		background: var(--page-background-color);
 	}
 	.content {
 		height: calc(100vh - 52px);

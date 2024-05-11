@@ -414,6 +414,9 @@
 		font-size: 14px;
 	}
 
+	.layouts_manager_menu :deep(.material-icons) {
+		color: var(--primary-color) !important;
+	}
 	.divider_bottom {
 		border-bottom: $opts-borders;
 	}
@@ -424,7 +427,7 @@
 
 		height: 48px;
 
-		color: $text-lighten;
+		color: var(--card-secondary-text-color);
 
 		&.default_layout {
 			opacity: 0.5;
@@ -447,11 +450,11 @@
 				color: #fff;
 
 				&.default_layout {
-					color: $text-lighten;
+					color: var(--card-secondary-text-color);
 				}
 
 				&:hover {
-					color: $text-lighten;
+					color: var(--card-secondary-text-color);
 				}
 			}
 		}
@@ -474,7 +477,7 @@
 			flex-grow: 1;
 			line-height: $layout-manager-item-height;
 			text-decoration: none;
-			color: $text-lighten;
+			color: var(--card-secondary-text-color);
 
 			width: 100%;
 			text-overflow: ellipsis;
@@ -494,7 +497,7 @@
 		text-transform: none;
 		border-radius: initial;
 		font-weight: 400;
-		color: $text-lighten;
+		color: var(--card-secondary-text-color);
 
 		&:not([disabled]):hover {
 			background-color: $main;

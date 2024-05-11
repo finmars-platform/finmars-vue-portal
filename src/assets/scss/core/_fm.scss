@@ -6,7 +6,7 @@
     margin-bottom: 15px;
 }
 .fm_drop {
-    background: $separ;
+	background: var(--page-background-color);
 }
 
 .fm_list {
@@ -28,10 +28,10 @@
     }
 
     &:not([disabled]):hover {
-        background: $main;
+		background: var(--state-active-background-color);
     }
     &.active {
-        background: $main-darken;
+		background: var(--table-header-background-color);
     }
     & + & {
         border-top: $opts-borders;
@@ -62,16 +62,16 @@ button.fm_list_item {
     margin-bottom: 25px;
 }
 .fm_card_subtitle {
-    color: $text-lighten;
+	color: var(--secondary-color);
     margin-top: -20px;
     padding-bottom: 24px;
 }
 .fm_card_text {
-    color: $text-lighten;
+	color: var(--secondary-color);
 }
 .fm_tabs {
     display: flex;
-    background: $separ;
+	background: var(--page-background-color);
     border-bottom: 1px solid $border;
     height: 48px;
     line-height: 48px;
@@ -87,10 +87,10 @@ button.fm_list_item {
         cursor: pointer;
 
         &:hover {
-            background: $main-darken;
+			background: var(--table-header-background-color);
         }
         &.active {
-            color: $primary;
+            color: var(--primary-color);
             border-bottom: 2px solid $primary;
 
             &:hover {
@@ -268,10 +268,6 @@ button.fm_list_item {
     height: 100%;
     display: flex;
     align-items: center;
-
-    .selected_text.nothing_selected {
-        color: $text-pale;
-    }
 }
 
 // vFmTooltip directive

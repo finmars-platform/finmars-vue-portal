@@ -1,24 +1,29 @@
 /* Default to light mode */
 :root {
-  /* Light mode variables */
-  --primary-color: #8F4C36;
-  --on-primary-color: #FFF;
-  --secondary-color: #53433F;
-  --outline-color: rgba(133, 115, 110, 1);
-  --outline-background-color: rgba(103, 80, 164, 0.12);
-  --page-background-color: #FFF;
-  --card-background-color: #FFF1ED;
-  --state-active-background-color: #FFDBD0;
-  --card-border-color: #85736E;
-  --table-header-background-color: rgba(241, 223, 218, .5);
-  --table-border-color: #F1DFDA;
-  --dialog-background-color: #F7E4DF;
-  --dropdown-background-color: #FCEAE5;
+	/* Light mode variables */
+	--primary-color: #8F4C36;
+	--on-primary-color: #FFF;
+	--secondary-color: #53433F;
+	--outline-color: rgba(133, 115, 110, 1);
+	--outline-background-color: rgba(103, 80, 164, 0.12);
+	--page-background-color: #FFF;
+	--card-background-color: #FFF1ED;
+	--state-active-background-color: #FFDBD0;
+	--card-border-color: #85736E;
+	--table-header-background-color: rgba(241, 223, 218, .5);
+	--table-border-color: #F1DFDA;
+	--dialog-background-color: #F7E4DF;
+	--dropdown-background-color: #FCEAE5;
 
-  --color-success: #F4E2A7;
-  --color-error: #BA1A1A;
+	--color-success: #F4E2A7;
+	--color-error: #BA1A1A;
+
+	--shadow-color: hsla(0, 0%, 40%, 0.25);
+	--card-primary-background-color: #F1DFDA;
+	--primary-hover: rgb(152, 90, 70);
+	--secondary-hover: #f69470;
+	--scrole-color: #85736E;
 }
-
 /* Switch to dark mode when .dark-mode class is present on body */
 body.dark-mode {
   --primary-color: #FFB59D;
@@ -29,7 +34,7 @@ body.dark-mode {
   --page-background-color: #1A110F;
   --card-background-color: #1A110F;
   --state-active-background-color: #5D4036;
-  --card-border-color: #FFDBD0;
+  --card-border-color: rgba(83, 67, 63, 1);
   --table-header-background-color: rgba(230, 224, 233, 0.12);
   --table-border-color: #53433F;
   --dialog-background-color: #1A110F;
@@ -37,4 +42,11 @@ body.dark-mode {
 
   --color-success: #52461A;
   --color-error: #BA1A1A;
+
+
+  --shadow-color: hsla(0, 0%, 40%, 0.25);
+  --card-primary-background-color: #F1DFDA;
+  --primary-hover: rgb(239, 169, 154);
+  --secondary-hover: #f69470;
+  --scrole-color: #85736E;
 }

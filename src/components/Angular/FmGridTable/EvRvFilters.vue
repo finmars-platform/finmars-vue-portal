@@ -1058,7 +1058,7 @@
 		gap: 20px;
 		align-items: center;
 		justify-content: space-between;
-		background: $separ;
+		background: var(--page-background-color);
 		padding-top: 0;
 		padding-bottom: 0;
 		border-bottom: 1px solid $border;

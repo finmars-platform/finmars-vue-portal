@@ -271,6 +271,6 @@
 	}
 
 	.bi_main_input[disabled] {
-		color: $text-lighten;
+		color: var(--card-secondary-text-color);
 	}
 </style>
