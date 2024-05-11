@@ -87,14 +87,14 @@
 <style lang="scss" scoped>
 	.backup {
 		padding: 7px 20px;
-		color: $text-lighten;
+		color: var(--card-secondary-text-color);
 		font-size: 14px;
 		cursor: pointer;
 		transition: background 0.3s;
 		width: 400px;
 
 		&:hover {
-			background: $main-darken;
+			background: var(--table-header-background-color);
 		}
 		&.active {
 			background: $primary-lighten-2;
@@ -102,11 +102,11 @@
 	}
 	.backup_title {
 		margin-bottom: 5px;
-		color: $text;
+		color: var(--secondary-color);
 		font-size: 16px;
 	}
 	.backup_by {
-		color: $text;
+		color: var(--secondary-color);
 		text-transform: capitalize;
 	}
 	.backup_notes {

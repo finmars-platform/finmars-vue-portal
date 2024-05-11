@@ -125,6 +125,9 @@ export default defineStore({
 			if (typeof this.user.data.autosave_layouts !== 'boolean') {
 				this.user.data.autosave_layouts = true
 			}
+
+			document.body.classList.toggle('dark-mode', this.user.data.dark_mode);
+
 		},
 		async getMe() {
 			const memberProm = useApi('member.get', { params: { id: 0 } })
@@ -185,6 +188,22 @@ export default defineStore({
 				this.member = member;
 				this.memberLayout = memberLayout;
 			}
+		},
+		async updateUser(user = this.user) {
+
+			const options = {
+				params: { id: user.id },
+				body: user,
+			}
+
+			const res = await useApi('user.put', options);
+
+			if (res.error) {
+				console.error(res.error)
+			} else {
+				this.user = res
+			}
+
 		},
 		async updateMember(member = this.member) {
 			const options = {

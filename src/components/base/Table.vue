@@ -143,24 +143,24 @@ const sortTable = (col_index) => {
     ascending.value = true;
     sortColumn.value = col_index;
   }
-  
+
   props.items.sort(function(a, b) {
     let valueA = a[col].replace("%","");
     let valueB = b[col].replace("%","");
 
 	console.log(valueA, valueB)
-	
-    if (!isNaN(valueA) && !isNaN(valueB)){ 
+
+    if (!isNaN(valueA) && !isNaN(valueB)){
       valueA = parseFloat(valueA) || 0;
 	  valueB = parseFloat(valueB) || 0;
     }
-    
+
     if (valueA > valueB) {
       return ascending.value ? 1 : -1;
     } else if (valueA < valueB) {
       return ascending.value ? -1 : 1;
     }
-    
+
     return 0;
   });
 }
@@ -169,7 +169,7 @@ const sortTable = (col_index) => {
 
 <style lang="scss" scoped>
 .table {
-	border: 1px solid $border;
+	border: 1px solid var(--table-border-color);
 	width: 100%;
 	font-size: 14px;
 }
@@ -191,9 +191,9 @@ const sortTable = (col_index) => {
 .table-row {
 	display: grid;
 	align-items: center;
-	background: #fff;
+	background: var(--page-background-color);
 	height: 36px;
-	border-bottom: 1px solid $border;
+	border-bottom: 1px solid var(--table-border-color);
 	line-height: 36px;
 	transition: outline 0.1s;
 	outline: solid transparent;
@@ -211,7 +211,7 @@ const sortTable = (col_index) => {
 	}
 
 	&.t_header {
-		background: #f2f2f2;
+		background: var(--table-header-background-color);
 		height: 50px;
 		line-height: 50px;
 		font-weight: 500;
@@ -232,7 +232,7 @@ const sortTable = (col_index) => {
 	}
 
 	& + & {
-		border-left: 1px solid $border;
+		border-left: 1px solid var(--table-border-color);
 	}
 
 	&.disabled {
@@ -242,6 +242,7 @@ const sortTable = (col_index) => {
 
 .table-cell-btn {
 	display: block;
+	color: var(--secondary-color);
 	width: 100%;
 	height: 100%;
 	padding: 0 14px;
@@ -255,8 +256,10 @@ const sortTable = (col_index) => {
 
 	&:not([disabled]):hover {
 		.header-text {
-			color: $text-lighten;
+			color:  var(--secondary-color);
 		}
+		background: var(--page-background-color);
+		border-bottom: 1px solid var(--table-border-color);
 	}
 }
 

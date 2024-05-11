@@ -5,7 +5,7 @@
 		<div class="flex aic sb">
 			<div class="fm_card_title m-b-0">
 				<div class="fm_card_title">
-					Realm: {{ realm.name }} <span style="font-size: .7rem; color: grey;">({{ realm.realm_code }})</span>
+					Realm: {{ realm.name }} <span style="font-size: .7rem;">({{ realm.realm_code }})</span>
 				</div>
 			</div>
 
@@ -224,9 +224,9 @@ async function initUpdateDatabase() {
 
 .realm-update-is-available-chip {
 	margin-right: 1rem;
-	background: #f05a22;
+	background: var(--primary-color);
+	color: var(--page-background-color);
 	border-radius: 6px;
-	color: #fff;
 	padding: 0.5rem;
 }
 
@@ -236,4 +236,7 @@ async function initUpdateDatabase() {
 	height: 2rem;
 }
 
+.fm_card_title, .fm_card_title span {
+	color: var(--primary-color);
+}
 </style>

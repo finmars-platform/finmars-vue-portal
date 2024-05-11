@@ -8,7 +8,7 @@
 					<BaseInput class="m-b-0" label="Search" v-model="availableSearch" />
 				</div>
 
-				<div class="list">
+				<div class="list scrollable">
 					<div
 						class="list_item"
 						v-for="item in availableList"
@@ -45,7 +45,7 @@
 				<div class="search">
 					<BaseInput class="m-b-0" label="Search" v-model="selectedSearch" />
 				</div>
-				<div class="list">
+				<div class="list scrollable">
 					<div
 						class="list_item"
 						v-for="item in selectedList"
@@ -172,12 +172,12 @@
 	}
 
 	.list {
-		border-bottom: 1px solid $border-darken;
-		border-left: 1px solid $border-darken;
-		border-right: 1px solid $border-darken;
+		border-bottom: 1px solid var(--table-border-color);
+		border-left: 1px solid var(--table-border-color);
+		border-right: 1px solid var(--table-border-color);
 		padding: 10px 0;
 		overflow: auto;
-		margin-top: -3px;
+		margin-top: 0px;
 		height: 270px;
 	}
 
@@ -187,10 +187,6 @@
 
 		&.selected {
 			background: #eee;
-		}
-
-		& + & {
-			border-top: 1px solid #fff;
 		}
 	}
 </style>

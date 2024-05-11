@@ -181,7 +181,7 @@
 		cursor: pointer;
 	}
 	.fm_chip {
-		background: $main-darken-2;
+		background: var(--state-active-background-color);
 		padding: 3px 8px;
 		border-radius: 16px;
 		min-width: 30px;

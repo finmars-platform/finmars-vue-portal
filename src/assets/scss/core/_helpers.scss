@@ -854,7 +854,7 @@ flex-c-space-around {
 }
 
 .primary-text {
-    color: $primary;
+    color: var(--primary-color);
 }
 
 input.no-input-arrows[type='number'] {

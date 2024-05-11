@@ -131,6 +131,8 @@
 		display: flex;
 		flex-wrap: nowrap;*/
 		display: flex;
+		background: var(--page-background-color);
+		color: var(--primary-color);
 	}
 
 	.fm_tabs_item {

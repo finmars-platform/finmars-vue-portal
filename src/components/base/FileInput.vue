@@ -166,7 +166,7 @@ $border-radius: 4px;
 	// border: 1px solid $border-darken;
 	border-radius: $border-radius;
 	transition: border 0.3s;
-	background: $separ;
+	background: var(--dialog-background-color);;
 
 	&.small {
 		height: 24px;
@@ -277,7 +277,7 @@ $border-radius: 4px;
 }
 
 .bi_error {
-	color: $primary;
+	color: var(--color-error);
 	font-size: 12px;
 	// padding: 5px 12px 10px;
 	padding: 4px 12px 0;
@@ -300,7 +300,7 @@ $border-radius: 4px;
 	}
 
 	.bi_main_input {
-		color: $text-lighten;
+		color: var(--card-secondary-text-color);
 	}
 }
 
@@ -339,7 +339,7 @@ $border-radius: 4px;
 		width: 0;
 		max-width: 85%;
 		z-index: 1;
-		color: $text-lighten;
+		color: var(--secondary-color);
 		font-size: 16px;
 		transition: 0.2s;
 		opacity: 0;
@@ -396,7 +396,7 @@ $border-radius: 4px;
 
 .bi_button {
 	margin-left: 13px;
-	color: $text-lighten;
+	color: var(--card-secondary-text-color);
 	line-height: 0;
 	z-index: 1; // keeps .bi_button atop of .bi_top
 
@@ -418,7 +418,7 @@ $border-radius: 4px;
 
 .right_btn {
 	margin-right: 10px;
-	color: $text-lighten;
+	color: var(--card-secondary-text-color);
 
 	&:empty {
 		margin-right: 0;
@@ -427,7 +427,7 @@ $border-radius: 4px;
 
 .bi_side_item {
 	width: 24px;
-	color: $text-lighten;
+	color: var(--card-secondary-text-color);
 
 	& + & {
 		margin-left: 1px;

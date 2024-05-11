@@ -562,7 +562,7 @@
 			left: 10px;
 		}
 		&.disabled {
-			color: $text-lighten;
+			color: var(--card-secondary-text-color);
 			&:hover {
 				background: none;
 			}
@@ -574,7 +574,7 @@
 		}
 		&:hover.icon,
 		&.active.icon {
-			color: $primary;
+			color: var(--primary-color);
 		}
 	}
 	hr {

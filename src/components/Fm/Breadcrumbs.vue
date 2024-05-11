@@ -43,12 +43,12 @@
 		border-bottom: 1px solid $text;
 		padding-bottom: 1px;
 		transition: 0.3s;
-		color: $text-lighten;
-		border-color: $text-lighten;
+		color: var(--card-secondary-text-color);
+		border-color: var(--card-secondary-text-color);
 
 		&:hover {
-			color: $text;
-			border-color: $text;
+			color: var(--secondary-color);
+			border-color: var(--secondary-color);
 		}
 	}
 	.fm_breadcrumbs_devider {

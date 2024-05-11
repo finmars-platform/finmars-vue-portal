@@ -70,6 +70,9 @@ export default {
 		get: prefix + "/user/0/",
 		put: prefix + "/user/0/",
 	},
+	user: {
+		put: prefix + "/user/{id}/",
+	},
 	meSetPassword: {
 		put: prefix + '/user/0/set-password/'
 	},

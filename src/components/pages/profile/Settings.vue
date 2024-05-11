@@ -124,7 +124,7 @@ async function saveUser() {
 }
 
 .link {
-	color: $primary;
+	color: var(--primary-color);
 	margin-bottom: 20px;
 }
 </style>

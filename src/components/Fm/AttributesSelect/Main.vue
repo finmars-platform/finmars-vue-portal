@@ -1300,7 +1300,7 @@
       }
 
       &:hover path {
-        stroke: $primary !important;
+        stroke: var(--primary-color) !important;
       }
     }
 
@@ -1399,13 +1399,13 @@
     background: $main;
     border-top: 1px solid $border;
     border-bottom: 1px solid $border;
-    color: $text-lighten;
+	color: var(--card-secondary-text-color);
     word-wrap: break-word;
   }
   .desc_about {
     flex-grow: 1;
     padding: 10px 13px;
-    color: $text-lighten;
+	color: var(--card-secondary-text-color);
   }
   .collapse {
     position: absolute;
@@ -1439,6 +1439,6 @@
     margin-right: 9px;
   }
   .select_old {
-    color: $text-lighten;
+	color: var(--card-secondary-text-color);
   }
 </style>
