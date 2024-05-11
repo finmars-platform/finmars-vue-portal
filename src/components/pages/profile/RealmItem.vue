@@ -55,6 +55,11 @@
 								Delete
 							</div>
 
+							<div class="fm_list_item" @click="isAboutDialog = true, close()">
+								<FmIcon class="mr-10" icon="info"/>
+								About
+							</div>
+
 						</div>
 					</template>
 				</FmMenu>
@@ -107,6 +112,11 @@
 											v-model="isProvisionLogDialog"
 											v-if="isProvisionLogDialog"/>
 
+	<LazyPagesProfileRealmAbout :realm="realm"
+								@refresh="store.getRealms()"
+											v-model="isAboutDialog"
+											v-if="isAboutDialog"/>
+
 </template>
 
 <script setup>
@@ -121,6 +131,7 @@ let store = useStore()
 
 let isAdmin = ref(false)
 let isProvisionLogDialog = ref(false);
+let isAboutDialog = ref(false);
 
 props.realm.members.forEach((member) => {
 
