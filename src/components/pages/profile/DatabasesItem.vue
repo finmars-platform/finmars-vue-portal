@@ -106,7 +106,7 @@
 								red: db.status == 3 || db.status == 4,
 							}"
 						></FmIcon>
-						<a target="_blank" :href="`${config.public.apiURL}/${db.space_code}/api/v1/`"
+						<a target="_blank" :href="`${config.public.apiURL}/${db.realm_code}/${db.space_code}/api/v1/`"
 						   class="clipboard_text">
 							{{ db.space_code }}
 						</a>
