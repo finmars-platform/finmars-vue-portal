@@ -43,7 +43,7 @@
                         :valueType="cell.key !== 'user_code' ? 20 : null"
 						:disabled="cell.error"
 						:empty="!cell.error && !cell.value && cell.value !== 0"
-                        @contextmenu.prevent="showPerformanceDetail(row.key, cell.key, cell.error)"
+                        @contextmenu.prevent="showPerformanceDetail(row.key, cell.key)"
                     >
 						<span v-if="!cell.error">{{ cell.value }}</span>
                         <div v-else
@@ -69,6 +69,10 @@
                 :columnKey="performanceDetailsColumnKey"
         />
 
+		<ModalErrorModal
+			v-model="errorModalIsOpen"
+			title="Performance Details"
+			:description="errorModalDescription"/>
     </FmExpansionPanel>
 </template>
 
@@ -77,6 +81,7 @@ import dayjs from 'dayjs'
 import quarterOfYear from 'dayjs/plugin/quarterOfYear'
 import {useToggleSorting} from "~/composables/useTable";
 import {utilSortTextWithDash} from "~/utils/commonHelper";
+import portfolioRegisterService from '~/angular/services/portfolioRegisterService'
 
 dayjs.extend(quarterOfYear)
 
@@ -116,6 +121,13 @@ const props = defineProps({
 
 const emits = defineEmits(['setBundle']);
 const tableGridTemplateCols = 'repeat(9, 1fr)';
+
+// error modal
+let errorModalIsOpen = ref(false);
+let errorModalDescription= ref('');
+
+// end error modal
+
 
 let readyStatus = ref(false);
 /*let periodHeader = computed(() => {
@@ -470,7 +482,7 @@ async function calcAnnualForBundle(bundleId, row, rowRaw, abortSignal) {
 	rowRaw.annualized_performance_report = res;
 
 	if (res.grand_return) {
-		row.annualized = `${Math.round(res.grand_return * 100 * 100) / 100}%`;
+		row.annualized = res.grand_return <= -1 ? "-" : `${Math.round(res.grand_return * 100 * 100) / 100}%`;
 
 	} else if (res.grand_return === 0) {
 		row.annualized = "-";
@@ -816,33 +828,60 @@ function chooseBundle(bundleId) {
 
 }
 
-function showPerformanceDetail(bundleId, cellKey) {
 
+
+async function buildErrorModalDescription(bundleId, isNegativeGrandReturn) {
+	if (isNegativeGrandReturn) {
+		return 'Return since inception is less than -100% (can’t calculate the geometric mean)';
+	}
+	const portfolioRegisterList = await useApi('portfolioRegisterList.get');
+	const currentBundleRegisters = bundles.value.find(item => item.id === bundleId)?.registers;
+	let registerNames = '';
+	for (const id of currentBundleRegisters) {
+		registerNames += `${portfolioRegisterList?.results.find(item => item.id === id).user_code} `;
+	}
+	return `Return period of ${registerNames} is less than a year (<365 days) (must not be annualized)`;
+
+}
+
+async function showPerformanceDetail(bundleId, cellKey) {
+
+	const bundleRawData = periodItemsRaw.value.find(item => item.id === bundleId);
 	if (!cellKey) {
 		return;
 	}
+	performanceDetailsColumnKey.value = cellKey;
 
-	const bundleRawData = periodItemsRaw.value.find(item => item.id === bundleId);
+	// error modal show/hide function and error text set
 
-    performanceDetailsColumnKey.value = cellKey;
+	const modalErrorAnnualized = bundleRawData?.annualizedError?.data?.error?.details?.errors;
 
-    if (cellKey === 'user_code') {
+	const isNegativeGrandReturn = bundleRawData?.annualized_performance_report?.grand_return <= -1;
+	if (cellKey === 'annualized' && (modalErrorAnnualized?.length || isNegativeGrandReturn)) {
+		errorModalIsOpen.value = true;
+		errorModalDescription.value = await buildErrorModalDescription(bundleId, isNegativeGrandReturn);
+	}
 
+	// end error modal function
+
+
+    else if (cellKey === 'user_code') {
 		// performanceDetails.value = {bundle: periodItemsRaw.value[rowIndex]['id']}
         performanceDetails.value = {bundle: bundleId};
 
 	}
 	else if (bundleRawData.error) {
 		// TODO: open modal window to display errorData
-		return;
 	}
 	else {
-
 		performanceDetails.value = bundleRawData[`${cellKey}_performance_report`];
 
+		performanceDetailIsOpen.value = true;
 	}
 
-	performanceDetailIsOpen.value = true;
+	if (performanceDetails.value) {
+		performanceDetails.value.annualization_method = props.calculation_type === 'modified_dietz' ? "simple average" : "geometric average";
+	}
 
 }
 
@@ -1107,7 +1146,6 @@ watch(
 		reloadTableD()
 	}
 )
-
 </script>
 
 <style lang="scss">

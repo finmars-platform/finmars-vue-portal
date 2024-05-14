@@ -55,54 +55,40 @@
 	</Teleport>
 </template>
 
-<script>
-	export default {
-		props: {
-			modelValue: Boolean,
-			title: String,
-			// {
-			//	cancel:
-			//  action
-			// }
-			controls: Object,
-			no_padding: Boolean,
-			closeOnClickOutside: {
-				type: Boolean,
-				default: false,
-			},
-			closingDisabled: Boolean,
-			empty_hack: Boolean,
-		},
-		emits: ['update:modelValue', 'open', 'close'],
-		data() {
-			return {}
-		},
-		computed: {
-			backdropClickable() {
-				return this.closeOnClickOutside ? 'click' : false
-			},
-		},
-		async mounted() {
 
+<script setup>
+	const props = defineProps({
+		modelValue: Boolean,
+		title: String,
+		controls: Object,
+		no_padding: Boolean,
+		closeOnClickOutside: {
+			type: Boolean,
+			default: false,
 		},
-		watch: {
-			modelValue(val) {
-				if (val) {
-                    document.querySelector('html').style.overflow = 'hidden';
-                    this.$emit('open');
-                }
-				else document.querySelector('html').style.overflow = 'initial'
-			},
-		},
+		closingDisabled: Boolean,
+		empty_hack: Boolean,
+	});
+	const emits = defineEmits(['update:modelValue', 'open', 'close']);
 
-		methods: {
-			cancel() {
-				if (this.closingDisabled) return
-				this.$emit('update:modelValue', false)
-				this.$emit('close')
-			},
-		},
-	}
+	const backdropClickable = computed(() => props.closeOnClickOutside ? 'click' : false);
+
+	watch(
+		() => props.modelValue,
+		(newValue) => {
+		if (newValue) {
+			document.querySelector('html').style.overflow = 'hidden';
+			emits('open');
+		} else {
+			document.querySelector('html').style.overflow = 'initial';
+		}
+	});
+
+	const cancel = () => {
+		if (props.closingDisabled) return;
+		emits('update:modelValue', false)
+		emits('close')
+	};
 </script>
 
 <style lang="scss" scoped>
