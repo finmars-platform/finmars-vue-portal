@@ -23,7 +23,7 @@
 				/>
 			</div>
 
-			<FmMenu anchor="right" v-if="db.is_owner || db.is_admin">
+			<FmMenu anchor="right">
 				<template #btn>
 					<FmIcon icon="settings"/>
 				</template>
@@ -34,7 +34,11 @@
 						<!--							<FmIcon class="mr-10" icon="cloud_sync"/>-->
 						<!--							Rollback-->
 						<!--						</div>-->
-						<div class="fm_list_item" @click="exportDb(), close()">
+						<div
+							v-if="db.is_owner || db.is_admin"
+							class="fm_list_item"
+							@click="exportDb(), close()"
+						>
 							<FmIcon class="mr-10" icon="cloud_upload"/>
 							Export backup
 						</div>
@@ -223,7 +227,7 @@ async function exportDb() {
 	let isConfirm = await useConfirm({text: 'Are you sure?'})
 	if (!isConfirm) return false
 
-	let res = await useApi("masterExport.get", {
+	let res = await useApi("masterExport.post", {
 		params: {id: props.db.id},
 	});
 	if (res) {
