@@ -23,7 +23,7 @@
 				/>
 			</div>
 
-			<FmMenu anchor="right" v-if="db.is_owner || db.is_admin">
+			<FmMenu anchor="right">
 				<template #btn>
 					<FmIcon icon="settings"/>
 				</template>
