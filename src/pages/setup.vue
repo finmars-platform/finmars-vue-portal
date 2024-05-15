@@ -114,7 +114,9 @@
 
 	async function finish() {
 		if (config.value == 'blank') {
-			navigateTo('/home')
+			// useRouter().push('/home')
+			// TODO redirect to home with reloading SPA
+			window.location.href = '/' + store.realm_code + '/' + store.space_code + '/v/home'
 			return false
 		}
 
@@ -138,7 +140,9 @@
 
 				setTimeout(checkStatus, 1000)
 			} else if (res.status === 'D') {
-				useRouter().push('/home')
+				// useRouter().push('/home')
+				// TODO redirect to home with reloading SPA
+				window.location.href = '/' + store.realm_code + '/' + store.space_code + '/v/home'
 			}
 		}
 
