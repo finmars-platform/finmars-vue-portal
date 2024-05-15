@@ -193,7 +193,7 @@ async function start() {
 }
 
 async function deleteRealm() {
-	let isConfirm = await useConfirm({text: 'Are you sure?'})
+	let isConfirm = await useConfirm({title: "Delete Realm", text: 'Are you sure?'})
 	if (!isConfirm) return false
 
 	let res = await useApi("realm.delete", {

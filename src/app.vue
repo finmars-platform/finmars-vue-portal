@@ -73,6 +73,8 @@
 		</notifications>
 
 
+		<fm-confirm></fm-confirm>
+
 </template>
 
 <script setup>
