@@ -16,7 +16,7 @@
 				<FmBtn
 					type="basic"
 					@click="cancel">
-					CANCEL
+					CLOSE
 				</FmBtn>
 			</div>
 		</template>

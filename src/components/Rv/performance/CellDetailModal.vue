@@ -8,7 +8,7 @@
 
 			<div v-if="columnKey !== 'user_code'">
 				<table style="width: 100%;">
-					<tr>
+					<tr v-if="performanceDetails.annualization_method">
 						<td>Annualization Method:</td>
 						<td class="text-right"><b>{{ performanceDetails.annualization_method }}</b>
 							<FmCopyButton :text="performanceDetails.annualization_method"></FmCopyButton>

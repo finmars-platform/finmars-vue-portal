@@ -41,9 +41,8 @@
                         v-for="cell in row.columns"
                         :key="cell.key"
                         :valueType="cell.key !== 'user_code' ? 20 : null"
-						:disabled="cell.error"
 						:empty="!cell.error && !cell.value && cell.value !== 0"
-                        @contextmenu.prevent="showPerformanceDetail(row.key, cell.key)"
+                        @contextmenu.prevent="showPerformanceDetail(row.key, cell.key, cell.error)"
                     >
 						<span v-if="!cell.error">{{ cell.value }}</span>
                         <div v-else
@@ -69,7 +68,7 @@
                 :columnKey="performanceDetailsColumnKey"
         />
 
-		<ModalErrorModal
+		<ModalMessage
 			v-model="errorModalIsOpen"
 			title="Performance Details"
 			:description="errorModalDescription"/>
@@ -81,7 +80,6 @@ import dayjs from 'dayjs'
 import quarterOfYear from 'dayjs/plugin/quarterOfYear'
 import {useToggleSorting} from "~/composables/useTable";
 import {utilSortTextWithDash} from "~/utils/commonHelper";
-import portfolioRegisterService from '~/angular/services/portfolioRegisterService'
 
 dayjs.extend(quarterOfYear)
 
@@ -445,6 +443,21 @@ async function calcInceptYearForBundle(bundleId, row, rowRaw, abortSignal) {
 	return 'calcInceptYearForBundle';
 }
 
+async function getPortfolioRegisterList(){
+	return await useApi('portfolioRegisterList.get');
+}
+
+async function buildErrorModalDescription(bundleId) {
+	const portfolioRegisterList = await getPortfolioRegisterList();
+	const currentBundleRegisters = bundles.value.find(item => item.id === bundleId)?.registers;
+	let registerNames = '';
+	for (const id of currentBundleRegisters) {
+		registerNames += `${portfolioRegisterList?.results.find(item => item.id === id).user_code} `;
+	}
+	return `Return period of ${registerNames} is less than a year (<365 days) (must not be annualized)`;
+}
+
+
 async function calcAnnualForBundle(bundleId, row, rowRaw, abortSignal) {
 
 	row.annualized = null
@@ -460,13 +473,13 @@ async function calcAnnualForBundle(bundleId, row, rowRaw, abortSignal) {
             data: e
         };
 
-		const eKey = errorWithErrorKey(e)
+		const eKey = errorWithErrorKey(e);
 
 		if (eKey === "less_than_year") {
 
-			rowRaw.annualizedError.lessThanYear = true;
-			rowRaw.annualizedError.description = "";
 
+			rowRaw.annualizedError.lessThanYear = true;
+			rowRaw.annualizedError.description = await buildErrorModalDescription(bundleId);
 			row.annualized = "-";
 
 			return 'calcAnnualForBundle';
@@ -481,11 +494,11 @@ async function calcAnnualForBundle(bundleId, row, rowRaw, abortSignal) {
 
 	rowRaw.annualized_performance_report = res;
 
-	if (res.grand_return) {
-		row.annualized = res.grand_return <= -1 ? "-" : `${Math.round(res.grand_return * 100 * 100) / 100}%`;
-
-	} else if (res.grand_return === 0) {
+	if (!res.grand_return || res.grand_return <= -1) {
 		row.annualized = "-";
+		rowRaw.annualized_performance_report.description = 'Return since inception is less than -100% (can’t calculate the geometric mean)';
+	} else if (res.grand_return) {
+		row.annualized = `${Math.round(res.grand_return * 100 * 100) / 100}%`;
 
 	} else { // null, undefined
 		row.annualized = null;
@@ -829,60 +842,49 @@ function chooseBundle(bundleId) {
 }
 
 
-
-async function buildErrorModalDescription(bundleId, isNegativeGrandReturn) {
-	if (isNegativeGrandReturn) {
-		return 'Return since inception is less than -100% (can’t calculate the geometric mean)';
-	}
-	const portfolioRegisterList = await useApi('portfolioRegisterList.get');
-	const currentBundleRegisters = bundles.value.find(item => item.id === bundleId)?.registers;
-	let registerNames = '';
-	for (const id of currentBundleRegisters) {
-		registerNames += `${portfolioRegisterList?.results.find(item => item.id === id).user_code} `;
-	}
-	return `Return period of ${registerNames} is less than a year (<365 days) (must not be annualized)`;
-
-}
-
-async function showPerformanceDetail(bundleId, cellKey) {
+async function showPerformanceDetail(bundleId, cellKey, errorData) {
 
 	const bundleRawData = periodItemsRaw.value.find(item => item.id === bundleId);
 	if (!cellKey) {
 		return;
 	}
+
 	performanceDetailsColumnKey.value = cellKey;
 
 	// error modal show/hide function and error text set
 
-	const modalErrorAnnualized = bundleRawData?.annualizedError?.data?.error?.details?.errors;
-
-	const isNegativeGrandReturn = bundleRawData?.annualized_performance_report?.grand_return <= -1;
-	if (cellKey === 'annualized' && (modalErrorAnnualized?.length || isNegativeGrandReturn)) {
+	if (errorData) {
+		errorModalDescription.value = `Error message: ${errorData.error.details.errors[0].detail}`;
 		errorModalIsOpen.value = true;
-		errorModalDescription.value = await buildErrorModalDescription(bundleId, isNegativeGrandReturn);
 	}
+	else if (cellKey === 'annualized') {
+		const modalErrorAnnualized = bundleRawData?.annualizedError?.data?.error?.details?.errors;
+		const currentBundleRawData = bundleRawData['annualized_performance_report'];
 
+		performanceDetails.value = {
+			...currentBundleRawData,
+			annualization_method: props.calculation_type === 'modified_dietz' ? "simple average" : "geometric average"
+		};
+
+		if (modalErrorAnnualized?.length) {
+			errorModalDescription.value = bundleRawData?.annualizedError?.description;
+			errorModalIsOpen.value = true;
+		} else {
+			errorModalDescription.value = currentBundleRawData.description;
+			performanceDetailIsOpen.value = true;
+		}
+	}
 	// end error modal function
 
 
     else if (cellKey === 'user_code') {
 		// performanceDetails.value = {bundle: periodItemsRaw.value[rowIndex]['id']}
         performanceDetails.value = {bundle: bundleId};
-
-	}
-	else if (bundleRawData.error) {
-		// TODO: open modal window to display errorData
 	}
 	else {
 		performanceDetails.value = bundleRawData[`${cellKey}_performance_report`];
-
 		performanceDetailIsOpen.value = true;
 	}
-
-	if (performanceDetails.value) {
-		performanceDetails.value.annualization_method = props.calculation_type === 'modified_dietz' ? "simple average" : "geometric average";
-	}
-
 }
 
 let noNotificationErrorKeys = ["no_first_transaction_date", "less_than_year"];
