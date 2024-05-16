@@ -98,3 +98,11 @@ export const usePrefixedRouterPush = (router, route, link) => {
 	router.push(`/${route.params.realm_code}/${route.params.space_code}/v${link}`)
 
 }
+
+/**
+ *
+ * @param darkMode
+ */
+export const useToggleDarkMode = (darkMode=false) => {
+	document.body.classList.toggle('dark-mode', darkMode);
+}
