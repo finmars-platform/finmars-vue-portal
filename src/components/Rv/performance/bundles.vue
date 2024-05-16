@@ -71,14 +71,15 @@
 		<ModalMessage
 			v-model="errorModalIsOpen"
 			title="Performance Details"
+			:description="errorModalDescription"
+			descriptionTitle="Error message:"
 		>
-			<template #modal-content>
-					<span v-if="errorModalDescription">
-					{{errorModalDescription}}
-				</span>
-				<div v-else class="loading-style">
-					<FmLoader />
-				</div>
+			<template #controls="{cancel}">
+				<FmBtn
+					type="basic"
+					@click="cancel">
+					Close
+				</FmBtn>
 			</template>
 		</ModalMessage>
     </FmExpansionPanel>
@@ -555,7 +556,7 @@ async function _calcReportForBundle(bundle, row, rowRaw, abortSignal) {
 		calcInceptYearForBundle(bundle.id, row, rowRaw, abortSignal),
 		calcAnnualForBundle(bundle.id, row, rowRaw, abortSignal),
 	]);
-
+	console.info('res', responses)
 	const rejectedRes = responses.find(res => res.status === "rejected");
 
 	if (rejectedRes) {
@@ -786,7 +787,7 @@ async function fetchPortfolioBundles(abortSignal) {
 function sortBundles(bundlesList) {
 
     let sortCol = periodHeader.value.find(col => col.sorting);
-
+	console.info('sort',sortCol)
     if (!sortCol) {
         // return yearsList;
 

@@ -4,17 +4,20 @@
 		:title="title"
 		@close="onClose">
 		<div class="modal-content">
-			<b>Error message: </b>
-			<slot name="modal-content"/>
+			<div v-if="descriptionTitle || description" class="error-text">
+				<b v-if="descriptionTitle" class="error-title">
+					{{descriptionTitle}}
+				</b>
+				<span v-if="description">
+					{{description}}
+				</span>
+			</div>
+			<div v-else class="loading-style">
+				<FmLoader />
+			</div>
 		</div>
 		<template #controls="{ cancel }">
-			<div class="flex-row fc-space-between">
-				<FmBtn
-					type="basic"
-					@click="cancel">
-					CLOSE
-				</FmBtn>
-			</div>
+			<slot name="controls" :cancel="cancel"></slot>
 		</template>
 	</BaseModal>
 </template>
@@ -25,7 +28,9 @@
 		title:{
 			required: true,
 			type: String
-		}
+		},
+		descriptionTitle: String,
+		description: String
 	})
 
 	let emit = defineEmits(['update:modelValue', 'close']);
@@ -40,6 +45,10 @@
 .modal-content{
 	padding: 10px;
 	max-width: 500px;
+
+	.error-title{
+		padding-right: 10px;
+	}
 
 	.loading-style{
 		display: flex;
