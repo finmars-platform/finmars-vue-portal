@@ -59,13 +59,14 @@
 <script setup>
 
     definePageMeta({
-        layout: 'auth',
+        layout: 'external',
     });
 
     const windowOrigin = window.origin
     // const windowOrigin = 'http://0.0.0.0:8080'; // for development
+	const route = useRoute();
 
-    const iframeId = useRoute().query.iframeId;
+    const iframeId = route.query.iframeId;
 
     let readyStatus = ref(false);
 
@@ -158,6 +159,8 @@
 
     function init(data) {
 
+		useToggleDarkMode(route.query.dark_mode === 'true')
+
         attrsList.value = data.attributes;
 
         /*disabledAttributes.value = data.attributes.filter(attr => {
@@ -201,7 +204,6 @@
     }
     .modal {
         position: relative;
-        background: #fff;
         width: 100%;
         height: 100vh;
         max-height: 100%;

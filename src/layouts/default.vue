@@ -47,7 +47,7 @@
 	watch(
 		() => store.user?.data.dark_mode,
 		() => {
-			document.body.classList.toggle('dark-mode', store.user.data.dark_mode);
+			useToggleDarkMode(store.user.data.dark_mode)
 		}
 	)
 
