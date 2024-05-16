@@ -71,7 +71,16 @@
 		<ModalMessage
 			v-model="errorModalIsOpen"
 			title="Performance Details"
-			:description="errorModalDescription"/>
+		>
+			<template #modal-content>
+					<span v-if="errorModalDescription">
+					{{errorModalDescription}}
+				</span>
+				<div v-else class="loading-style">
+					<FmLoader />
+				</div>
+			</template>
+		</ModalMessage>
     </FmExpansionPanel>
 </template>
 
@@ -442,21 +451,31 @@ async function calcInceptYearForBundle(bundleId, row, rowRaw, abortSignal) {
 
 	return 'calcInceptYearForBundle';
 }
-
-async function getPortfolioRegisterList(){
+// error modal section
+async function getPortfolioRegisterList() {
 	return await useApi('portfolioRegisterList.get');
 }
 
-async function buildErrorModalDescription(bundleId) {
-	const portfolioRegisterList = await getPortfolioRegisterList();
-	const currentBundleRegisters = bundles.value.find(item => item.id === bundleId)?.registers;
-	let registerNames = '';
-	for (const id of currentBundleRegisters) {
-		registerNames += `${portfolioRegisterList?.results.find(item => item.id === id).user_code} `;
-	}
-	return `Return period of ${registerNames} is less than a year (<365 days) (must not be annualized)`;
+function getUserCodesFromErrorMessage(errorMessage) {
+	const [portfolios = ''] = errorMessage.split(/:(.+)/).slice(1);
+	return portfolios.split(',').map(portfolio => portfolio.trim());
 }
 
+async function buildErrorModalDescription(bundleId, errorMessage) {
+
+	if (!errorMessage) return '';
+	const portfolioRegisterList = await getPortfolioRegisterList();
+	const userCodes = getUserCodesFromErrorMessage(errorMessage)
+
+	let registerNames = '';
+
+	for (const userCode of userCodes) {
+		registerNames += `${portfolioRegisterList?.results.find(item => item.user_code === userCode).name}, `;
+	}
+
+	return `Return period of ${registerNames} is less than a year (<365 days) (must not be annualized)`;
+}
+// end error modal section
 
 async function calcAnnualForBundle(bundleId, row, rowRaw, abortSignal) {
 
@@ -477,9 +496,8 @@ async function calcAnnualForBundle(bundleId, row, rowRaw, abortSignal) {
 
 		if (eKey === "less_than_year") {
 
-
 			rowRaw.annualizedError.lessThanYear = true;
-			rowRaw.annualizedError.description = await buildErrorModalDescription(bundleId);
+			rowRaw.annualizedError.description = await buildErrorModalDescription(bundleId, e.error?.details?.errors?.[0]?.detail);
 			row.annualized = "-";
 
 			return 'calcAnnualForBundle';
@@ -851,10 +869,10 @@ async function showPerformanceDetail(bundleId, cellKey, errorData) {
 
 	performanceDetailsColumnKey.value = cellKey;
 
-	// error modal show/hide function and error text set
+	// error modal section
 
 	if (errorData) {
-		errorModalDescription.value = `Error message: ${errorData.error.details.errors[0].detail}`;
+		errorModalDescription.value = errorData.error.details.errors[0].detail;
 		errorModalIsOpen.value = true;
 	}
 	else if (cellKey === 'annualized') {
@@ -874,7 +892,7 @@ async function showPerformanceDetail(bundleId, cellKey, errorData) {
 			performanceDetailIsOpen.value = true;
 		}
 	}
-	// end error modal function
+	// end error modal section
 
 
     else if (cellKey === 'user_code') {
