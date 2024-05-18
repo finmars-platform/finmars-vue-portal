@@ -57,103 +57,61 @@
 </template>
 
 <script setup>
+	import { handleOnMessage, handleSend } from '~/composables/useExternal'
 
-    definePageMeta({
+	definePageMeta({
         layout: 'auth',
     });
 
-    const windowOrigin = window.origin
-    // const windowOrigin = 'http://0.0.0.0:8080'; // for development
-
     const iframeId = useRoute().query.iframeId;
-
     let readyStatus = ref(false);
-
     let title = ref('');
-
     let attrsList = ref([]);
     let selAttrsKeysList = ref([]);
     let newSelAttrs = ref();
     let favoriteAttributes = ref([]);
     let disabledAttributes = ref([]);
-
     let isAdvanced = ref(false);
-
     let searchParams = ref('');
 
     const onMessageStack = {
         INITIALIZATION_SETTINGS_TRANSMISSION: init,
     }
 
-    function send(data, source = window.parent) {
-
-        data.iframeId = iframeId
-
-        let dataObj = Object.assign(data, {
-            iframeId: iframeId,
-        });
-
-        source.postMessage(dataObj, windowOrigin);
-
-    }
-
-    onMounted(() => {
-        window.addEventListener('message', onMessage)
-
-        send({
-            action: 'IFRAME_READY',
-        })
-    })
-
     function saveFavorites(favAttrs) {
 
         favoriteAttributes.value = favAttrs;
 
-        send({
+		handleSend({
             action: 'SAVE_FAVORITE_ATTRIBUTES',
             payload: JSON.parse(JSON.stringify(favAttrs)), // JSON.parse prevents error when postMessage tries to copy an array proxy
-        })
+        },
+			iframeId
+		)
 
     }
 
     function onMessage(e) {
-        // {
-        //     action: 'name',
-        //     iframeId: 'modal',
-        //     payload: {}
-        // }
-
-        if (!e.data.action) {
-            console.warn('Message without action sent')
-            return false
-        }
-
-        if (e.origin !== windowOrigin) {
-            console.error('Received message from a different origin', e.origin)
-            return false
-        }
-
-        if (onMessageStack[e.data.action])
-            onMessageStack[e.data.action](e.data.payload)
-        else console.log('e.data.action:', e.data)
-
+		handleOnMessage(e, onMessageStack);
     }
 
     function cancel() {
-        send({
+        handleSend({
             action: 'CANCEL_DIALOG',
-        })
+        },
+			iframeId
+		)
     }
 
     function save() {
-
-        send({
+		handleSend({
             action: 'SAVE_DIALOG',
             payload: {
                 selectedAttributes: JSON.parse(JSON.stringify( newSelAttrs.value )),
             },
-        })
-
+        },
+			iframeId
+		)
     }
 
     function init(data) {
@@ -178,6 +136,16 @@
         readyStatus.value = true;
 
     }
+
+	onMounted(() => {
+		window.addEventListener('message', onMessage)
+
+		handleSend({
+				action: 'IFRAME_READY',
+			},
+			iframeId
+		)
+	})
 
 </script>
 

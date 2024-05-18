@@ -6,11 +6,7 @@
 				class="modal_wrap flex aic jcc"
 				:class="{ no_padding: no_padding }"
 			>
-				<div
-					:class="{ maxWidth: maxWidth }"
-					class="modal"
-					v-bind="$attrs"
-				>
+				<div class="modal" v-bind="$attrs">
 					<div v-if="!empty_hack" class="modal_top flex aic sb">
 						<!--						<div class="modal_head">{{ title }}</div>
 
@@ -28,11 +24,11 @@
 						/>
 					</div>
 
-					<div class="modal_content scrollable" :class="{maxHeight: maxHeight}">
+					<div class="modal_content scrollable flex">
 						<slot />
 					</div>
 
-					<div v-if="showBottom" class="modal_bottom">
+					<div class="modal_bottom">
 						<slot name="controls" :cancel="cancel">
 							<div class="flex sb" v-if="controls">
 								<FmBtn
@@ -80,12 +76,6 @@
 			},
 			closingDisabled: Boolean,
 			empty_hack: Boolean,
-			maxWidth: Boolean,
-			maxHeight: Boolean,
-			showBottom: {
-				type: Boolean,
-				default: true
-			},
 		},
 		emits: ['update:modelValue', 'close'],
 		data() {
@@ -123,12 +113,6 @@
 </script>
 
 <style lang="scss" scoped>
-	.maxWidth {
-		max-width: 100% !important;
-	}
-	.maxHeight {
-		max-height: 100% !important;
-	}
 	.modal_wrap {
 		position: fixed;
 		left: 0;

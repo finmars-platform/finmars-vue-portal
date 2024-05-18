@@ -1,6 +1,12 @@
 <template>
-	<div>
-		<div class="nf_content">
+	<div class="modal">
+		<div class="modal_top flex aic sb">
+			<div class="flex aic">
+				<div class="modal_head">Complex Transaction Code: Number Format</div>
+				<FmIcon size="16" icon="close" @click="cancelModal" />
+			</div>
+		</div>
+		<div class="nf_content flex flex-column">
 			<div class="presets_container">
 				<div class="select-main">
 					<FmSelect
@@ -194,12 +200,13 @@
 				</FmExpansionPanel>
 			</div>
 		</div>
+		<div class="bottom-container">
+			<div class="modal_bottom flex sb">
+				<div class="flex aic">
+					<FmBtn type="base" @click="cancelModal">CANCEL</FmBtn>
 
-		<div class="flex footer-part">
-			<div class="row flex sb">
-				<FmBtn type="text" @click="cancelModal()">CANCEL</FmBtn>
-
-				<FmBtn type="primary" @click="save()">save</FmBtn>
+					<FmBtn type="primary" @click="save()">save</FmBtn>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -230,6 +237,7 @@
 		number_prefix: '',
 	}
 	const settings = ref(props.settings);
+	const isOpen = ref(true);
 
 	if (settings) {
 		const report_settings = {...settings.value};
@@ -493,14 +501,52 @@
 </script>
 
 <style lang="scss" scoped>
-	.footer-part {
-		position: fixed;
-		bottom: 0px;
+	.modal_top {
+		height: 50px;
+		padding: 0 20px;
+		border-bottom: 1px solid $border;
+	}
+	.aic {
+		width: 100%;
+		justify-content: space-between;
+	}
+	.modal_content {
+		overflow: auto;
+		height: calc(100vh - 106px);
+		min-width: 400px; // so that FmInputEntityNames could fit in
+	}
+	.modal_bottom {
+		width: 100%;
+		border-top: 1px solid $border;
+		padding: 10px 20px;
 		background: white;
-		width: 90%;
-		display: flex;
-		justify-content: flex-end;
-		padding: 12px 0;
+	}
+	.modal {
+		position: relative;
+		background: #fff;
+		width: 100%;
+		height: 100vh;
+		max-height: 100%;
+		border-radius: 4px;
+		z-index: 2;
+		overflow: hidden;
+
+		.close {
+			cursor: pointer;
+
+			path {
+				transition: 0.3s;
+			}
+
+			&:hover path {
+				stroke: $primary !important;
+			}
+		}
+
+		&_head {
+			font-weight: 500;
+			font-size: 20px;
+		}
 	}
 	.nf_content {
 		width: 100%;
@@ -517,10 +563,9 @@
 		}
 	}
 	.content {
-		height: 416px;
-		max-height: 416px;
-		padding: 13px 18px;
+		padding: 13px 18px 80px 18px;
 		overflow-y: scroll;
+		height: 416px;
 	}
 	.presets_container {
 		min-height: 92px;
@@ -564,5 +609,10 @@
 		margin-top: 4px;
 		font-size: 12px;
 		font-weight: 500;
+	}
+	.bottom-container {
+		position: absolute;
+		width: 100%;
+		bottom: 0;
 	}
 </style>
