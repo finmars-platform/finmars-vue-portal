@@ -9,8 +9,6 @@
 				<div style="padding: 10px 20px;">Coming soon</div>
 			</div>
 		</div>
-		<FmBtn @click="isOpen = !isOpen">Open</FmBtn>
-		<ModalNumberFormatContent v-if="isOpen"  @cancel="isOpen=!isOpen" @save="saveData"/>
 	</div>
 </template>
 
@@ -26,11 +24,6 @@
 		],
 	});
 
-	const isOpen = ref(false);
-
-	const saveData = (data) => {
-		console.log(data, 'homeeeeeeeeeeeeeeeeeeeee')
-	}
 </script>
 
 <style lang="scss" scoped>
