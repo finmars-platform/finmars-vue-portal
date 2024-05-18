@@ -1,5 +1,5 @@
-// const windowOrigin = window.origin
-const windowOrigin = 'http://0.0.0.0:8080'; //for development
+const windowOrigin = window.origin
+// const windowOrigin = 'http://0.0.0.0:8080'; //for development
 
 
 export function handleSend(data, iframeId, source = window.parent) {
