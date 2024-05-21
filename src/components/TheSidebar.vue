@@ -1684,7 +1684,7 @@ const copyToBuffer = function (content) {
 
 
 const logoPath = computed(() => {
-	return store.memberLayout?.data?.dark_mode ? '/img/logo-dark.png' : '/img/logo.png';
+	return store.darkModeActive ? '/img/logo-dark.png' : '/img/logo.png';
 });
 
 const init = function () {

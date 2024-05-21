@@ -301,6 +301,9 @@ export default defineStore({
 		},
 		isUrlValid(state){
 			return state.realm_code && state.space_code
-		}
+		},
+		darkModeActive(state) {
+			return state.user.data?.dark_mode
+		},
 	},
 })
