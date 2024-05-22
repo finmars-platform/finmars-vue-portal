@@ -74,15 +74,14 @@
 
 		let res = await useApi("realmCreate.post", { body: form })
 
-		console.log("testing670 res", res);
 		if (res.error) {
 
-			if ( res.error.message.startsWith('null value in column \"realm_code\" of relation \"authorizer_realm\"') ) {
+			if ( res.error.message.startsWith("License limit exceeded") ) {
 
 				useNotify({
 					type: "warn",
-					title: 'Client Error',
-					text: res.error.message,
+					title: "Client Error",
+					text: "Limit of existing realms exceeded.",
 					duration: 20000
 				})
 
