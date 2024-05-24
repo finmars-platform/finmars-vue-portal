@@ -1,8 +1,9 @@
 <template>
-	<CommonEntityViewer type="report.performance" @refresh="refresh()">
+	<CommonEntityViewer type="report.performance" @refresh="refreshD()">
 		<template #default="{ reportOptions, components }">
 			<div class="fm_container">
 				<RvPerformanceBundles
+					ref="bundlesComp"
 					v-model:open="components.period"
 					:begin_date="reportOptions.begin_date"
 					:end_date="reportOptions.end_date"
@@ -23,7 +24,7 @@
 					@loadingDataStart="disableBundledTable = true"
 					@loadingDataEnd="disableBundledTable = false"
 					@setYear="currentBundleYear = $event"
-					@refresh="refresh()"
+					@refresh="refreshD()"
 				/>
 
 				<RvPerformanceChart
@@ -40,7 +41,7 @@
 					:yearData="currentBundleYear"
 					:monthData="currentBundleMonth"
 					:reportOptions="reportOptions"
-					@refresh="refresh()"
+					@refresh="refreshD()"
 				/>
 
 
@@ -51,9 +52,9 @@
 
 <script setup>
 
-provide('refreshReport', refresh)
-
 const route = useRoute()
+
+const bundlesComp = ref(null);
 
 let currentBundle = ref({})
 let currentBundleYear = ref({})
@@ -61,8 +62,16 @@ let currentBundleMonth = ref({})
 
 let disableBundledTable = ref(false);
 
-let bundlesRefreshFunc = () => {
-}
+const refreshD = useDebounce(function () {
+
+	bundlesComp.value.init();
+
+	currentBundle.value = null;
+	currentBundleYear.value = null;
+	currentBundleMonth.value = null;
+}, 1000);
+
+provide('refreshReport', refreshD)
 
 function onBundleChange(newVal) {
 
@@ -76,13 +85,6 @@ function onBundleChange(newVal) {
     currentBundle.value = newVal;
 
 }
-
-function refresh() {
-	// bundlesRefreshFunc()
-    currentBundleYear.value = null;
-    currentBundleMonth.value = null;
-}
-
 
 watch(
 	() => route.query.layout,

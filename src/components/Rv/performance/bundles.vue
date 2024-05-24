@@ -27,7 +27,6 @@
 <script setup>
 import dayjs from 'dayjs'
 import quarterOfYear from 'dayjs/plugin/quarterOfYear'
-import {useLoadAllPages} from "~/composables/useApi";
 
 dayjs.extend(quarterOfYear)
 
@@ -83,8 +82,7 @@ watch(
     ],
     () => { init() }
 )
-// TODO: remove refreshFunc
-emits('refreshFunc', init)
+
 init()
 
 function init() {
@@ -613,6 +611,10 @@ async function getEndDate() {
 
     return viewerData.reportOptions.end_date
 }
+
+defineExpose({
+	init
+})
 
 </script>
 
