@@ -103,7 +103,7 @@ button.fm_list_item {
 //# region pickmeup inside FmInputDateComplex
 
 .pickmeup.fm_cd_pickmeup {
-    background: #fff;
+    background: var(--page-background-color);
 
     .pmu-instance {
         // width: 340px;
@@ -112,11 +112,11 @@ button.fm_list_item {
         padding: 8px 0;
 
         .pmu-today {
-            background-color: #fff;
+            background-color: var(--page-background-color);
         }
 
         .pmu-button {
-            color: $gray;
+            color: var(--secondary-color);
         }
 
         .pmu-months,
@@ -127,11 +127,11 @@ button.fm_list_item {
                 margin: 5px;
                 line-height: 48px;
                 border-radius: 100%;
-                color: #000;
+                color: var(--secondary-color);
 
                 &.pmu-selected {
-                    background-color: $orange;
-                    color: #fff;
+                    background-color: var(--primary-color);
+                    color: var(--on-primary-color);
 
                     &:hover {
                         opacity: 0.5;
@@ -139,17 +139,17 @@ button.fm_list_item {
                 }
 
                 &:not(.pmu-selected):hover {
-                    background-color: $paleOrange;
+                    background-color: var(--state-active-background-color);
                 }
             }
         }
 
         .pmu-day-of-week {
             padding: 0 13px;
-            border-bottom: 2px solid $borderPale;
+            border-bottom: 2px solid var(--table-border-color);
 
             & > div {
-                color: $gray;
+                color: var(--secondary-color);
                 width: 44px;
             }
         }
@@ -167,7 +167,7 @@ button.fm_list_item {
                 font-size: 12px;
                 box-sizing: border-box;
                 margin: 4px;
-                color: #000;
+                color: var(--secondary-color);
 
                 &.pmu-not-in-month {
                     // visibility: hidden;
@@ -175,18 +175,18 @@ button.fm_list_item {
                 }
 
                 &.pmu-selected {
-                    background: $orange;
-                    color: #fff;
+                    background: var(--state-active-background-color);
+                    color: var(--secondary-color);
                 }
 
                 &:not(.pmu-selected):hover {
-                    background-color: $paleOrange;
+                    background-color: var(--state-active-background-color);
                 }
             }
         }
 
         .ax_default {
-            color: #333333;
+            color: var(--secondary-color);
         }
     }
 
@@ -201,7 +201,7 @@ button.fm_list_item {
             box-sizing: content-box;
 
             &:hover {
-                color: $orange;
+                color: var(--primary-color);
             }
         }
 
@@ -210,7 +210,7 @@ button.fm_list_item {
             margin: 0 16px;
 
             &:hover {
-                color: $orange;
+                color: var(--primary-color);
             }
         }
 
@@ -222,7 +222,7 @@ button.fm_list_item {
             box-sizing: content-box;
 
             &:hover {
-                color: $orange;
+                color: var(--primary-color);
             }
         }
     }
@@ -234,14 +234,14 @@ button.fm_list_item {
             .pmu-days {
                 .pmu-button.pmu-selected:not(.custom-pmu-date-from-to) {
                     &.custom-pmu-date-from {
-                        background-color: $orange;
+                        background-color: var(--state-active-background-color);
                         border-top-right-radius: 0;
                         border-bottom-right-radius: 0;
                         margin-right: 0;
                     }
 
                     &.custom-pmu-date-to {
-                        background-color: $orange;
+                        background-color: var(--state-active-background-color);
                         border-top-left-radius: 0;
                         border-bottom-left-radius: 0;
                         margin-left: 0;
@@ -251,7 +251,7 @@ button.fm_list_item {
                 .pmu-button:not(.pmu-selected) {
                     &.custom-pmu-day-in-range {
                         width: 44px;
-                        background-color: #fcd7ca;
+                        background-color: var(--state-active-background-color);
                         border-radius: 0;
                         margin-right: 0;
                         margin-left: 0;
