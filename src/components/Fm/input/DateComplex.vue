@@ -137,12 +137,13 @@
 													:disabled="firstDateIsDisabled"
 													@click="openFirstEe = true"
 												>
-													<img
+<!--													<img
 														v-show="modeIsActive(['datepicker', 'expression'])"
 														class="btn-icon"
 														src="~/assets/img/fx-icon.png"
 														alt="function"
-													/>
+													/>-->
+                                                    <FmIcon icon="functions" />
 												</FmBtn>
 											</template>
 										</FmInputDate>
@@ -182,12 +183,13 @@
 													:disabled="secondDateIsDisabled"
 													@click="openSecondEe = true"
 												>
-													<img
+<!--													<img
 														v-show="modeIsActive(['datepicker', 'expression'])"
 														class="btn-icon"
 														src="~/assets/img/fx-icon.png"
 														alt="function"
-													/>
+													/>-->
+                                                    <FmIcon icon="functions" />
 												</FmBtn>
 											</template>
 										</FmInputDate>
@@ -986,7 +988,7 @@
 
 	.c_datepicker_footer {
 		height: 60px;
-		border-top: solid 2px $borderPale;
+		border-top: solid 2px var(--table-border-color);
 	}
 
 	.c_datepicker {
@@ -995,7 +997,7 @@
 		.complex-datepicker-left {
 			padding-top: 5px;
 			width: 228px;
-			border-right: solid 2px $borderPale;
+			border-right: solid 2px var(--table-border-color);
 			box-sizing: border-box;
 
 			.complex-datepicker-mode-container {
@@ -1010,14 +1012,14 @@
 				cursor: pointer;
 
 				&.active {
-					border-left-color: $orange;
-					border-top-color: $borderPale;
-					border-bottom-color: $borderPale;
-					background-color: #f2f2f2;
+					border-left-color: var(--primary-color);
+					border-top-color: var(--table-border-color);
+					border-bottom-color: var(--table-border-color);
+					background-color: var(--state-active-background-color);
 				}
 
 				&:hover {
-					background-color: #f2f2f2;
+					background-color: var(--state-active-background-color);
 				}
 
 				&:focus {
@@ -1069,12 +1071,12 @@
 		}
 
 		.date-input-container {
-			.custom-input-borders {
+			/*.custom-input-borders {
 				border: none;
 				border-bottom: 1px solid $border-darken;
 				border-radius: 0;
 				padding-bottom: 1px;
-			}
+			}*/
 
 			.date-input {
 				padding-left: 32px;
@@ -1084,7 +1086,7 @@
 				display: none;
 			}
 
-			&.custom-input-focused {
+			/*&.custom-input-focused {
 				.custom-input-main-container {
 					.custom-input-borders {
 						box-shadow: none;
@@ -1093,7 +1095,7 @@
 						border-bottom-color: $orange;
 					}
 				}
-			}
+			}*/
 		}
 
 		.complex-datepicker-text {
