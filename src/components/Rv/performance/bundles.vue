@@ -8,7 +8,7 @@
                     :active="activeBundle"
                     colls="repeat(9, 1fr)"
                     :cb="chooseBundle"
-                    :rightClickCallback="showPerformanceDetail"
+                    :rightClickCallback="showCellDetailsModal"
                     :is-disabled="isDisabled || !readyStatus"
             />-->
 
@@ -41,13 +41,13 @@
                         v-for="cell in row.columns"
                         :key="cell.key"
                         :valueType="cell.key !== 'user_code' ? 20 : null"
-						:disabled="cell.error"
+						:disabled="cell.error && !cell.error.noErrorMode"
 						:empty="!cell.error && !cell.value && cell.value !== 0"
-                        @contextmenu.prevent="showPerformanceDetail(row.key, cell.key, cell.error)"
+                        @contextmenu.prevent="showCellDetailsModal(row.key, cell.key, cell.error)"
                     >
-						<span v-if="!cell.error">{{ cell.value }}</span>
+						<span v-if="!cell.error || cell.error.noErrorMode">{{ cell.value }}</span>
                         <div v-else
-                             v-fm-tooltip:error="'Error occurred while calculating performance report'"
+                             v-fm-tooltip:error="'Error. Click with right mouse button to see details.'"
                              class="flex-row flex-center">
                             <FmIcon icon="error" error />
                         </div>
@@ -63,11 +63,16 @@
         </div>
 
         <RvPerformanceCellDetailModal
-                :title="performanceDetailsColumnKey === 'user_code' ? 'Bundle Portfolios' : 'Performance Details'"
-                v-model="performanceDetailIsOpen"
-                :performanceDetails="performanceDetails"
-                :columnKey="performanceDetailsColumnKey"
+			:title="performanceDetailsColumnKey === 'user_code' ? 'Bundle Portfolios' : 'Performance Details'"
+			v-model="performanceDetailIsOpen"
+			:details-data="cellDetails"
+			:columnKey="performanceDetailsColumnKey"
         />
+
+		<RvPerformanceCellErrorModal
+			v-model="cellErrorIsOpen"
+			:error-data="cellDetails"
+		/>
 
     </FmExpansionPanel>
 </template>
@@ -171,15 +176,10 @@ let periodHeader = ref([
 
 let periodItems = ref([])
 let periodItemsRaw = ref([])
-/**
- * Index of bundle
- * @type {ref<Number|null>}
- * */
-let performanceDetailIsOpen = ref(false)
+
+
 let activeBundleId = ref(null)
 let bundles = ref([])
-let performanceDetails = ref(null)
-let performanceDetailsColumnKey = ref(null)
 
 let tableRowsComp = computed(() => {
 
@@ -205,10 +205,9 @@ let tableRowsComp = computed(() => {
 			const rawData = periodItemsRaw.value.find(rData => rData.id === item.id);
 			const errorData = rawData[col.key + 'Error'];
 
-			// in case of less_than_year for annualized column, cell must not go into error mode
-            if (errorData && !errorData.lessThanYear) {
+            if (errorData) {
 
-				colObj.error = JSON.parse(JSON.stringify( errorData.data ));
+				colObj.error = JSON.parse(JSON.stringify( errorData ));
 
 			}
 
@@ -226,6 +225,10 @@ let tableRowsComp = computed(() => {
     return rows;
 
 });
+
+function isCellErrorModeActive(cell) {
+    return cell.error && !cell.noErrorMode;
+}
 
 //# region Calculate reports
 let abortController = null;
@@ -448,12 +451,11 @@ async function calcAnnualForBundle(bundleId, row, rowRaw, abortSignal) {
             data: e
         };
 
-		const eKey = errorWithErrorKey(e)
+		const eKey = useGetExceptionKey(e)
 
 		if (eKey === "less_than_year") {
 
-			rowRaw.annualizedError.lessThanYear = true;
-			rowRaw.annualizedError.description = "";
+			rowRaw.annualizedError.noErrorMode = true;
 
 			row.annualized = "-";
 
@@ -468,6 +470,19 @@ async function calcAnnualForBundle(bundleId, row, rowRaw, abortSignal) {
 	// `res` can be equal to {key: "less_than_year"}
 
 	rowRaw.annualized_performance_report = res;
+
+	if (res.grand_return < -1) {
+
+		rowRaw.annualizedError = {
+			noErrorMode: true,
+			description: "Return since inception is less than -100% (can’t calculate the geometric mean)"
+		};
+
+		row.annualized = "-";
+
+		return 'calcAnnualForBundle';
+
+	}
 
 	if (res.grand_return) {
 		row.annualized = `${Math.round(res.grand_return * 100 * 100) / 100}%`;
@@ -584,7 +599,7 @@ async function _processReportCalculationPromises(calculationPromises, abortSigna
 
             if (res.status === "rejected") {
 
-                const eKey = errorWithErrorKey(res.reason);
+                const eKey = useGetExceptionKey(res.reason);
 
                 if (eKey === "no_first_transaction_date") {
 
@@ -816,10 +831,27 @@ function chooseBundle(bundleId) {
 
 }
 
-function showPerformanceDetail(bundleId, cellKey) {
+//# region Modals
+
+let cellDetails = ref(null);
+let performanceDetailsColumnKey = ref(null);
+
+let performanceDetailIsOpen = ref(false)
+let cellErrorIsOpen = ref(false);
+
+function showCellDetailsModal(bundleId, cellKey, error) {
 
 	if (!cellKey) {
 		return;
+	}
+
+	if (error) {
+
+		cellDetails.value = error;
+		cellErrorIsOpen.value = true;
+
+		return;
+
 	}
 
 	const bundleRawData = periodItemsRaw.value.find(item => item.id === bundleId);
@@ -827,34 +859,23 @@ function showPerformanceDetail(bundleId, cellKey) {
     performanceDetailsColumnKey.value = cellKey;
 
     if (cellKey === 'user_code') {
+		// cellDetails.value = {bundle: periodItemsRaw.value[rowIndex]['id']}
+		cellDetails.value = {bundle: bundleId};
 
-		// performanceDetails.value = {bundle: periodItemsRaw.value[rowIndex]['id']}
-        performanceDetails.value = {bundle: bundleId};
-
-	}
-	else if (bundleRawData.error) {
-		// TODO: open modal window to display errorData
-		return;
 	}
 	else {
-
-		performanceDetails.value = bundleRawData[`${cellKey}_performance_report`];
-
+		cellDetails.value = bundleRawData[`${cellKey}_performance_report`];
 	}
 
 	performanceDetailIsOpen.value = true;
 
 }
 
-let noNotificationErrorKeys = ["no_first_transaction_date", "less_than_year"];
 
-function errorWithErrorKey(errorObj) {
-    if ( errorObj && errorObj.error?.details?.errors[0] && errorObj.error.details.errors[0].error_key ) {
-        return errorObj.error.details.errors[0].error_key;
-	}
 
-    return false;
-}
+//# endregion
+
+let noNotificationErrorKeys = ["no_first_transaction_date", "no_portfolio_register_records_found", "less_than_year"];
 
 async function getDay(ids, abortSignal) {
     let endDate = dayjs(props.end_date)
@@ -986,7 +1007,7 @@ async function getReports({period_type, end, ids, type = 'months', adjustment_ty
     }
     else if ( res.hasOwnProperty('_$error') ) {
 
-        const errorKey = errorWithErrorKey(res._$error);
+        const errorKey = useGetExceptionKey(res._$error);
 
         if ( !noNotificationErrorKeys.includes(errorKey) ) {
 

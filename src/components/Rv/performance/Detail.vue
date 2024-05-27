@@ -128,7 +128,7 @@
 		<RvPerformanceCellDetailModal
 			title="Performance Details"
 			v-model="cellDetailsIsOpen"
-			:performanceDetails="cellDetails"
+			:details-data="cellDetails"
             @close="onCellDetailsClose"
 		/>
 

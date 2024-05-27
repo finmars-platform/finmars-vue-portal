@@ -98,3 +98,31 @@ export const usePrefixedRouterPush = (router, route, link) => {
 	router.push(`/${route.params.realm_code}/${route.params.space_code}/v${link}`)
 
 }
+
+export const useGetExceptionKey = (exceptionData) => {
+
+	if (
+		exceptionData &&
+		exceptionData.error?.details?.errors[0] &&
+		exceptionData.error.details.errors[0].error_key
+	) {
+		return exceptionData.error.details.errors[0].error_key;
+	}
+
+	return null;
+
+}
+
+export const useGetExceptionDetails = (exceptionData) => {
+
+	if (
+		exceptionData &&
+		exceptionData.error?.details?.errors[0] &&
+		exceptionData.error.details.errors[0].detail
+	) {
+		return exceptionData.error.details.errors[0].detail;
+	}
+
+	return null;
+
+}
