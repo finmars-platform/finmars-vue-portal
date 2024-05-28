@@ -427,8 +427,7 @@ setTimeout(() => {
 }
 
 .space-card-actions {
-	padding: 20px;
-	padding-bottom: 20px;
+	padding: 16px;
 }
 
 .space-card-update-bar {

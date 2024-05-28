@@ -297,14 +297,14 @@ header {
 	justify-content: space-between;
 	align-items: center;
 	height: 52px;
-	background: var(--page-background-color);
+	background: var(--base-backgroundColor);
 	padding: 0 $content-padding-x;
 	border-bottom: 1px solid var(--table-border-color);
 	@include header_txt;
 }
 
 .fm_list {
-	background: var(--page-background-color);
+	background: var(--base-backgroundColor);
 }
 .fm_list_item {
 	color: var(--primary-color);

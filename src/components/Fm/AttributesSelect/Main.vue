@@ -1320,7 +1320,7 @@
 		height: 18px;
 		line-height: 18px;
 		text-align: center;
-		color: var(--page-background-color);
+		color: var(--base-backgroundColor);
 		margin-left: 11px;
 		font-size: 12px;
 		font-weight: 600;
@@ -1330,7 +1330,7 @@
 	display: grid;
 	grid-template-columns: 1fr 200px;
 	height: 100%;
-	background: var(--page-background-color);
+	background: var(--base-backgroundColor);
 
     &.collapsed {
       grid-template-columns: 1fr 32px;

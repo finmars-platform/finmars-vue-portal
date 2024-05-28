@@ -140,7 +140,7 @@
 		height: calc(100% - $modal-header-height - $modal-footer-height);
 		padding: 15px 20px 0;
 		min-width: 400px; // so that FmInputEntityNames could fit in
-		background: var(--page-background-color);
+		background: var(--base-backgroundColor);
 	}
 	.modal_content :deep(.base-input) {
 		background: transparent;

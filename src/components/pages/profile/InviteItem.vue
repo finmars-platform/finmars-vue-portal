@@ -1,7 +1,7 @@
 <template>
 	<FmCard
 		controls
-		class="d-flex flex-column"
+		class="invite-card d-flex flex-column"
 		:title="
 			invite.to_master_user_object.name.length > 20
 			? invite.to_master_user_object.name.slice(0, 20) + '...'
@@ -20,7 +20,7 @@
 		</div>
 
 		<template #controls>
-			<div class="flex sb">
+			<div class="flex sb p-16">
 				<FmBtn type="text" @click="changeStatus(2)">decline</FmBtn>
 
 				<FmBtn @click="changeStatus(1)">Accept</FmBtn>
@@ -62,6 +62,11 @@ async function changeStatus(status) {
 </script>
 
 <style lang="scss" scoped>
+.invite-card {
+    .actions {
+
+    }
+}
 .databases {
 	display: grid;
 	grid-template-columns: repeat(3, auto);

@@ -47,12 +47,10 @@ let props = defineProps({
 
 <style scoped lang="scss">
 
-    $gray-background-color: #f2f2f2;
-
     .table1 {
-        border-top: $basic-table-border;
-        border-right: $basic-table-border;
-        border-left: $basic-table-border;
+        border-top: var(--base-border);
+        border-right: var(--base-border);
+        border-left: var(--base-border);
         width: 100%;
         font-size: 14px;
         text-align: left;
@@ -75,7 +73,7 @@ let props = defineProps({
     }
 
     .t_head {
-        background-color: $gray-background-color;
+        background-color: var(--tableHeader-backgroundColor);
     }
 
     .table1.highlightedEdges {
@@ -93,15 +91,10 @@ let props = defineProps({
 
 			.t_cell {
 				&:first-child, &:last-child {
-					background-color: $gray-background-color;
+					background-color: var(--tableHeader-backgroundColor);
 				}
 			}
 		}
-		/*:deep(button.t_cell) {
-			&:first-child, &:last-child {
-				background-color: $gray-background-color;
-			}
-		}*/
 
 
     }

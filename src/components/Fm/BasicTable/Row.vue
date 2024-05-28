@@ -40,7 +40,7 @@ let props = defineProps({
         height: 35px;
         outline: solid transparent;
         transition: outline .1s;
-        border-bottom: $basic-table-border;
+        border-bottom: var(--base-border);
         text-align: inherit; // from FmBasicTable
 
         // without content-box FmBasicTableCell overlaps border of FmBasicTableRow

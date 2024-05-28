@@ -33,7 +33,7 @@
 
 <style lang="scss" scoped>
 	.fm_container {
-		background: var(--page-background-color);
+		background: var(--base-backgroundColor);
 		padding-top: 0;
 		padding-bottom: 0;
 		border-bottom: 1px solid var(--table-border-color);

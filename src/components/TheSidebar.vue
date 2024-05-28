@@ -1844,7 +1844,7 @@ transition: 0.3s;
 	align-items: center;
 	min-height: 52px;
 	height: 52px;
-	background-color: var(--page-background-color);
+	background-color: var(--base-backgroundColor);
 	border-right: 1px solid var(--table-border-color);
 }
 
@@ -1862,7 +1862,7 @@ padding: 0;
 	// height: 100%;
 	//background-color: #3b283b;
 	//background-color: #000;
-	background-color: var(--page-background-color);
+	background-color: var(--base-backgroundColor);
 	overflow: visible;
 }
 
@@ -1886,14 +1886,14 @@ padding: 0;
 }
 
 @mixin option-hover {
-	background-color: var(--state-active-background-color);
+	background-color: var(--activeState-backgroundColor);
 }
 
 .sidenav-dropdown-menu {
 	width: 200px;
 	position: absolute;
 	//background-color: #5a3e5a;
-	background-color: var(--page-background-color);
+	background-color: var(--base-backgroundColor);
 	top: 0;
 	right: -200px;
 	padding-left: 0;
@@ -2097,7 +2097,7 @@ padding: 0;
 	display: block;
 	width: 24px;
 	height: 24px;
-	background: var(--page-background-color);
+	background: var(--base-backgroundColor);
 	border-radius: 50%;
 	fill: var(--secondary-color);
 	left: 12px;
@@ -2118,7 +2118,7 @@ padding: 0;
 	left: $leftSidenavWidth;
 	z-index: 0;
 	//background-color: #3b283b;
-	background-color: var(--page-background-color);
+	background-color: var(--base-backgroundColor);
 	color: var(--secondary-color);
 	overflow: hidden;
 	transition: width ease 0.25s, left ease 0.25s;
@@ -2249,7 +2249,7 @@ padding: 0;
 
 .sidenav-settings-toggle-btn.settings-menu-opened,
 .sidenav-settings-toggle-btn.settings-menu-opened.md-button:not([disabled]).md-focused {
-	background-color: var(--state-active-background-color);
+	background-color: var(--activeState-backgroundColor);
 }
 
 .side-menu-settings-menu.settings-menu-opened {

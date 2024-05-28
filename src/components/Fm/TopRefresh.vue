@@ -42,7 +42,7 @@
 		margin-right: 15px;
 	}
 	.fm-btn {
-		background: var(--page-background-color);
+		background: var(--base-backgroundColor);
 		color: var(--primary-color) !important;
 	}
 </style>

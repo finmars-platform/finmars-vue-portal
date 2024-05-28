@@ -79,7 +79,7 @@
 	.main {
 		flex-grow: 1;
 		width: calc(100vw - 160px);
-		background: var(--page-background-color);
+		background: var(--base-backgroundColor);
 	}
 	.content {
 		height: calc(100vh - 52px);

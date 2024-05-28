@@ -47,8 +47,8 @@
 
 <style lang="scss" scoped>
 	.fm_expansion_panel {
-		border: 1px solid $border;
-		background: var(--page-background-color);
+		border: var(--base-border);
+		background: var(--base-backgroundColor);
 		border-radius: 4px;
 		max-width: 100%;
 		box-shadow: 2px 0 2px rgba(0, 0, 0, 0.1), 0 2px 2px rgba(0, 0, 0, 0.1),
@@ -75,7 +75,7 @@
 		font-weight: 500;
 
 		&.active {
-			border-bottom: 1px solid $border;
+			border-bottom: var(--base-border);
 		}
 	}
     .subtitle {
@@ -83,7 +83,7 @@
         flex-grow: 1;
     }
 	.subtitle__text {
-		color: $gray;
+		color: var(--secondary-color);
 		font-weight: 400;
 	}
 </style>

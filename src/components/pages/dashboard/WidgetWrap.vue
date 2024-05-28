@@ -235,7 +235,7 @@
 	.board_widget {
 		position: relative;
 		user-select: none;
-		background: var(--page-background-color);
+		background: var(--base-backgroundColor);
 
 		&:hover {
 		}

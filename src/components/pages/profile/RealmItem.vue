@@ -236,7 +236,7 @@ async function initUpdateDatabase() {
 .realm-update-is-available-chip {
 	margin-right: 1rem;
 	background: var(--primary-color);
-	color: var(--page-background-color);
+	color: var(--base-backgroundColor);
 	border-radius: 6px;
 	padding: 0.5rem;
 }

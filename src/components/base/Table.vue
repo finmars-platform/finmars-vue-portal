@@ -191,7 +191,7 @@ const sortTable = (col_index) => {
 .table-row {
 	display: grid;
 	align-items: center;
-	background: var(--page-background-color);
+	background: var(--base-backgroundColor);
 	height: 36px;
 	border-bottom: 1px solid var(--table-border-color);
 	line-height: 36px;
@@ -258,7 +258,7 @@ const sortTable = (col_index) => {
 		.header-text {
 			color:  var(--secondary-color);
 		}
-		background: var(--page-background-color);
+		background: var(--base-backgroundColor);
 		border-bottom: 1px solid var(--table-border-color);
 	}
 }

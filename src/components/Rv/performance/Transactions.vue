@@ -317,8 +317,8 @@ const getTransactions = async () => {
 
 	th {
 		padding: 8px 16px;
-		background: #f9f9f9;
-		color: #363636;
+		background: var(--tableHeader-backgroundColor);
+		color: var(--secondary-color);
 		opacity: .9;
 	}
 

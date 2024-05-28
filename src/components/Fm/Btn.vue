@@ -50,7 +50,7 @@
 
 		&.primary {
 			background: var(--primary-color);
-			color: var(--page-background-color);
+			color: var(--base-backgroundColor);
 
 			&:not([disabled]):hover {
 				background: var(--primary-hover);
@@ -81,10 +81,10 @@
 			color: var(--secondary-color);
 
 			&:not([disabled]):hover {
-				background: var(--state-active-background-color);
+				background: var(--activeState-backgroundColor);
 			}
 			&:not([disabled]).active {
-				background: var(--state-active-background-color);
+				background: var(--activeState-backgroundColor);
 			}
 		}
 

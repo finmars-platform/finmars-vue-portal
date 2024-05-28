@@ -56,13 +56,13 @@
 		}
 		&.btn-primary {
 			background: $primary;
-			color: var(--on-primary-color);
+			color: var(--onPrimary-color);
 			padding: 7px;
 			border-radius: 50%;
 
 			&:hover {
 				background: var(--primary-hover);
-				color: var(--on-primary-color);
+				color: var(--onPrimary-color);
 				// color: $white;
 			}
 		}
@@ -81,7 +81,7 @@
 			border-radius: 50%;
 
 			&:hover {
-				background: var(--state-active-background-color);
+				background: var(--activeState-backgroundColor);
 			}
 		}
 	}

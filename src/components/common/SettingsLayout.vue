@@ -37,7 +37,7 @@
 		margin-left: -$content-padding-x;
 		border-top: 1px solid var(--table-border-color);
 		padding: 10px $content-padding-x;
-		background: var(--page-background-color);
+		background: var(--base-backgroundColor);
 		z-index: 2;
 	}
 	.fm_container {
