@@ -37,7 +37,7 @@
 	.hp_block {
 		border: 1px solid var(--table-border-color);
 		border-radius: 3px;
-		background: var(--page-background-color);
+		background: var(--base-backgroundColor);
 	}
 	.hp_title {
 		background: var(--table-header-background-color);

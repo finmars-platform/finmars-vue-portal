@@ -75,7 +75,7 @@ input[type='checkbox']:checked + .check {
 		opacity: 0;
 		transition: 0.3s;
 		font-size: 16px;
-		color: var(--page-background-color);
+		color: var(--base-backgroundColor);
 	}
 	.disabled {
 		cursor: default;

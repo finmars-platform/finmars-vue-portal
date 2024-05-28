@@ -1015,11 +1015,11 @@
 					border-left-color: var(--primary-color);
 					border-top-color: var(--table-border-color);
 					border-bottom-color: var(--table-border-color);
-					background-color: var(--state-active-background-color);
+					background-color: var(--activeState-backgroundColor);
 				}
 
 				&:hover {
-					background-color: var(--state-active-background-color);
+					background-color: var(--activeState-backgroundColor);
 				}
 
 				&:focus {

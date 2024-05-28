@@ -400,7 +400,7 @@
 
 		&.active {
 			background: $primary;
-			color: var(--page-background-color);
+			color: var(--base-backgroundColor);
 		}
 
 		&+& {

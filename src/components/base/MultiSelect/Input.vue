@@ -181,7 +181,7 @@
 		cursor: pointer;
 	}
 	.fm_chip {
-		background: var(--state-active-background-color);
+		background: var(--activeState-backgroundColor);
 		padding: 3px 8px;
 		border-radius: 16px;
 		min-width: 30px;

@@ -924,7 +924,7 @@
 	.hp_block {
 		border: 1px solid $border;
 		border-radius: 3px;
-		background: var(--page-background-color);
+		background: var(--base-backgroundColor);
 		max-width: 730px;
 	}
 	.hp_title {
@@ -1047,7 +1047,7 @@
 		align-items: center;
 		justify-content: center;
 		.icon {
-			color: var(--page-background-color);
+			color: var(--base-backgroundColor);
 			font-size: 20px;
 		}
 	}
@@ -1067,7 +1067,7 @@
 		padding: 7px 9px;
 		padding-left: 6px;
 		border-radius: 5px;
-		color: var(--page-background-color);
+		color: var(--base-backgroundColor);
 		background: $primary-lighten;
 		z-index: 10;
 		font-size: 12px;
@@ -1075,7 +1075,7 @@
 		cursor: pointer;
 
 		.icon {
-			color: var(--page-background-color);
+			color: var(--base-backgroundColor);
 			display: inline-block;
 			font-size: 16px;
 			vertical-align: middle;

@@ -89,6 +89,6 @@
 		line-height: 30px;
 		background: var(--card-secondary-text-color);
 		text-align: center;
-		color: var(--page-background-color);
+		color: var(--base-backgroundColor);
 	}
 </style>

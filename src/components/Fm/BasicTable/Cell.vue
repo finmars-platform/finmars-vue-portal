@@ -111,7 +111,7 @@ let cellClasses = computed(() => {
 		}
 
 		& + & {
-			border-left: 1px solid $border;
+			border-left: 1px solid var(--table-border-color);
 		}
 
 		&.empty {
@@ -120,7 +120,7 @@ let cellClasses = computed(() => {
 
 		&[disabled] {
 			// background-color: $main-darken-2;
-			color: $text-lighten;
+			color: rgba(var(--secondary-color), var(--disabled-opacity));
 			cursor: default;
 		}
 

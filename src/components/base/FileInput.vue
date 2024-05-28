@@ -277,7 +277,7 @@ $border-radius: 4px;
 }
 
 .bi_error {
-	color: var(--color-error);
+	color: var(--error-color);
 	font-size: 12px;
 	// padding: 5px 12px 10px;
 	padding: 4px 12px 0;

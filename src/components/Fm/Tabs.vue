@@ -131,7 +131,7 @@
 		display: flex;
 		flex-wrap: nowrap;*/
 		display: flex;
-		background: var(--page-background-color);
+		background: var(--base-backgroundColor);
 		color: var(--primary-color);
 	}
 

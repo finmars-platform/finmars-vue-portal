@@ -22,7 +22,7 @@
 <style lang="scss" scoped>
 	.fm_card {
 		position: relative;
-		background: var(--page-background-color);
+		background: var(--base-backgroundColor);
 		color: var(--secondary-color);
 		box-shadow: 0 1px 4px var(--shadow-color);
 		border: 1px solid var(--card-border-color);
