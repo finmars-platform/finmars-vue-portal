@@ -61,8 +61,7 @@
 	color: #555555;
 }
 h2 {
-	color: $separ;
-	font-weight: 24px;
+	color: var(--page-background-color);
 	font-weight: 700;
 	margin: 50px 0 20px;
 }
@@ -87,7 +86,7 @@ h2 {
 	transition: 0.3s;
 	margin-bottom: 24px;
 	&:hover {
-		color: $separ;
+		color: var(--page-background-color);
 	}
 }
 .action_btn {
@@ -97,7 +96,7 @@ h2 {
 	letter-spacing: 1px;
 }
 .white {
-	color: $separ;
+	color: var(--page-background-color);
 }
 .bot_text {
 	margin-top: 20px;

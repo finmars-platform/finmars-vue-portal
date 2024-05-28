@@ -22,7 +22,7 @@
 
 			<div class="flex sb">
 				<FmBtn type="text" @click="$router.push('/v/profile')">cancel</FmBtn>
-				<FmBtn :disabled="processing" @click="createDb()"> finish </FmBtn>
+				<FmBtn :disabled="processing" @click="createRealm()"> finish </FmBtn>
 			</div>
 		</FmCard>
 	</div>
@@ -68,17 +68,35 @@
 	]
 	let config = ref("Blank")
 
-	async function createDb() {
+	async function createRealm() {
+
 		processing.value = true
 
 		let res = await useApi("realmCreate.post", { body: form })
 
-		if (res.id) {
+		if (res.error) {
+
+			if ( res.error.message.startsWith("License limit exceeded") ) {
+
+				useNotify({
+					type: "warn",
+					title: "Client Error",
+					text: "Limit of existing realms exceeded.",
+					duration: 20000
+				})
+
+			}
+
+		}
+		else if (res.id) {
+
 			router.push("/v/profile")
+
 			useNotify({
 				type: "success",
 				title: "Realm is initializing.",
 			})
+
 		}
 
 		processing.value = false

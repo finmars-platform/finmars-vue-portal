@@ -1170,12 +1170,12 @@
 		gap: 6px;
 		align-items: flex-start;
 		justify-content: space-between;
-		background: $separ;
+		background: var(--page-background-color);
 		padding-top: 10px;
 		padding-bottom: 10px;
 		border-bottom: 1px solid $border;
 	}
 	.g-use-from-above-filters-hidden {
-		color: $primary;
+		color: var(--primary-color);
 	}
 </style>

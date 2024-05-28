@@ -35,12 +35,12 @@
 		transition: color, background 0.3s;
 		font-size: 24px;
 		line-height: 0;
-		color: $text-lighten;
+		color: var(--primary-color);
 		overflow: hidden;
 		user-select: none;
 
-		&:not(.disabled):not(.error):hover {
-			color: $text-pale2; // $text-hover not pale enough for small icons
+		&:not(.disabled):hover {
+			color: var(--primary-hover);
 
 			/*.tooltip {
 				opacity: 0.8;
@@ -56,20 +56,21 @@
 		}
 		&.btn-primary {
 			background: $primary;
-			color: $white;
+			color: var(--on-primary-color);
 			padding: 7px;
 			border-radius: 50%;
 
 			&:hover {
-				background: $primary-lighten;
-				color: $white;
+				background: var(--primary-hover);
+				color: var(--on-primary-color);
+				// color: $white;
 			}
 		}
 		&.primary {
-			color: $primary;
+			color: var(--primary-color);
 
 			&:hover {
-				color: $primary-lighten;
+				color: var(--primary-hover);
 			}
 		}
 		&.error {
@@ -80,7 +81,7 @@
 			border-radius: 50%;
 
 			&:hover {
-				background: $main-darken-hover;
+				background: var(--state-active-background-color);
 			}
 		}
 	}

@@ -435,13 +435,13 @@
 
 	&:not([disabled]):hover {
 		background-color: $primary-lighten-2;
-		color: $primary;
+		color: var(--primary-color);
 	}
 
 	&:not(.g-use-from-above-filters-hidden) {
 
 		:deep(.icon) {
-			color: $primary;
+			color: var(--primary-color);
 		}
 
 	}

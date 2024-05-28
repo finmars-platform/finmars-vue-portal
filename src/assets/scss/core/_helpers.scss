@@ -531,6 +531,56 @@ button.md-raised.md-success {
     width: 33.3%;
 }
 
+// vw
+
+.width-10-vw {
+	width: 10vw
+}
+
+.width-20-vw {
+	width: 20vw;
+}
+
+.width-30-vw {
+	width: 30vw;
+}
+
+.width-40-vw {
+	width: 40vw;
+}
+
+.width-50-vw {
+	width: 50vw;
+}
+
+.width-60-vw {
+	width: 60vw
+}
+
+.width-70-vw {
+	width: 70vw;
+}
+
+.width-80-vw {
+	width: 80vw;
+}
+
+.width-90-vw {
+	width: 90vw;
+}
+
+.width-100-vw {
+	width: 100vw;
+}
+
+.width-66-vw {
+	width: 66.6vw;
+}
+
+.width-33-vw {
+	width: 33.3vw;
+}
+
 .margin-auto {
     margin-left: auto;
     margin-right: auto;
@@ -854,7 +904,7 @@ flex-c-space-around {
 }
 
 .primary-text {
-    color: $primary;
+    color: var(--primary-color);
 }
 
 input.no-input-arrows[type='number'] {

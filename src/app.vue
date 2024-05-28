@@ -1,79 +1,85 @@
 <template>
-	<NuxtLayout>
-    <NuxtPage />
-  </NuxtLayout>
 
-	<notifications />
-	<notifications class="toast-error-group" group="server_error" width="400px" position="top right">
-		<template #body="props">
-			<div class="toast-container server-error">
-				<div class="title_wrap flex aic sb">
-					<div class="flex aic">
-						<p class="title">
-							{{ props.item.title }}
-						</p>
-						<div class="toast_copy" @click="copy(props.item.text)">Click to copy</div>
+		<NuxtLayout >
+			<NuxtPage />
+		</NuxtLayout>
+
+		<notifications />
+		<notifications class="toast-error-group" group="server_error" width="400px" position="top right">
+			<template #body="props">
+				<div class="toast-container server-error">
+					<div class="title_wrap flex aic sb">
+						<div class="flex aic">
+							<p class="title">
+								{{ props.item.title }}
+							</p>
+							<div class="toast_copy" @click="copy(props.item.text)">Click to copy</div>
+						</div>
+
+						<FmIcon class="toast-close-button" @click="props.close" icon="close" />
 					</div>
 
-					<FmIcon class="toast-close-button" @click="props.close" icon="close" />
+					<div class="toast-error">
+						<span class="toast-error-field">Title: </span>
+						<div>{{ props.item.text.message }}</div>
+					</div>
+					<div class="toast-error">
+						<span class="toast-error-field">Code: </span>
+						<div>{{ props.item.text.status_code }}</div>
+					</div>
+					<div class="toast-error">
+						<span class="toast-error-field">URL: </span>
+						<div class="toast_error_text">{{ props.item.text.url }}</div>
+					</div>
+					<div class="toast-error">
+						<span class="toast-error-field">Date & Time: </span>
+						<div>{{ props.item.text.datetime }}</div>
+					</div>
+					<pre class="toast-pre">{{JSON.stringify(props.item.text.details, null, 2)}}</pre>
 				</div>
+			</template>
+		</notifications>
 
-				<div class="toast-error">
-					<span class="toast-error-field">Title: </span>
-					<div>{{ props.item.text.message }}</div>
+		<notifications class="toast-error-group" group="fm_warning" width="400px" position="top right">
+			<template #body="props">
+				<div class="toast-container warning">
+					<div class="title_wrap flex aic sb">
+						<div class="flex aic">
+							<p class="title">
+								{{ props.item.title }}
+							</p>
+						</div>
+
+						<FmIcon class="toast-close-button" @click="props.close" icon="close" />
+					</div>
+
+					<div class="toast-error">
+						<span class="toast-error-field">Title: </span>
+						<div>{{ props.item.text.title }}</div>
+					</div>
+
+					<div v-if="props.item.text.context" class="toast-error">
+						<span class="toast-error-field">Context: </span>
+						<div>{{ props.item.text.context }}</div>
+					</div>
+
+					<div class="toast-error">
+						<span class="toast-error-field">Details: </span>
+						<div>{{ props.item.text.details }}</div>
+					</div>
+
 				</div>
-				<div class="toast-error">
-					<span class="toast-error-field">Code: </span>
-					<div>{{ props.item.text.status_code }}</div>
-				</div>
-				<div class="toast-error">
-					<span class="toast-error-field">URL: </span>
-					<div class="toast_error_text">{{ props.item.text.url }}</div>
-				</div>
-				<div class="toast-error">
-					<span class="toast-error-field">Date & Time: </span>
-					<div>{{ props.item.text.datetime }}</div>
-				</div>
-				<pre class="toast-pre">{{JSON.stringify(props.item.text.details, null, 2)}}</pre>
-			</div>
-		</template>
-	</notifications>
+			</template>
+		</notifications>
 
-    <notifications class="toast-error-group" group="fm_warning" width="400px" position="top right">
-        <template #body="props">
-            <div class="toast-container warning">
-                <div class="title_wrap flex aic sb">
-                    <div class="flex aic">
-                        <p class="title">
-                            {{ props.item.title }}
-                        </p>
-                    </div>
 
-                    <FmIcon class="toast-close-button" @click="props.close" icon="close" />
-                </div>
+		<fm-confirm></fm-confirm>
 
-                <div class="toast-error">
-                    <span class="toast-error-field">Title: </span>
-                    <div>{{ props.item.text.title }}</div>
-                </div>
-
-                <div v-if="props.item.text.context" class="toast-error">
-                    <span class="toast-error-field">Context: </span>
-                    <div>{{ props.item.text.context }}</div>
-                </div>
-
-                <div class="toast-error">
-                    <span class="toast-error-field">Details: </span>
-                    <div>{{ props.item.text.details }}</div>
-                </div>
-
-            </div>
-        </template>
-    </notifications>
-	<FmConfirm />
 </template>
 
 <script setup>
+
+	// let store = useStore()
 	function copy( value ) {
 		navigator.clipboard.writeText( JSON.stringify(value, null, 2) ).then(() => {
     });

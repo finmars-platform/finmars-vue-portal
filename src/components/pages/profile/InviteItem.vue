@@ -54,7 +54,7 @@ async function changeStatus(status) {
 			if (status != 2) {
 				let mu = store.masterUsers.find(item => item.id == props.invite.to_master_user)
 
-				location.href = `https://${location.host}/${mu.realm_code}/${mu.space_code}/v/profile/setup`
+				location.href = `https://${location.host}/${mu.realm_code}/${mu.space_code}/v/setup`
 			}
 		}
 	}

@@ -167,7 +167,7 @@
 	}
 	.card_name {
 		margin-bottom: 10px;
-		color: $text-lighten;
+		color: var(--card-secondary-text-color);
 	}
 	.card_value {
 		text-align: center;

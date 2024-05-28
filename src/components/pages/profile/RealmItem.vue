@@ -5,7 +5,7 @@
 		<div class="flex aic sb">
 			<div class="fm_card_title m-b-0">
 				<div class="fm_card_title">
-					Realm: {{ realm.name }} <span style="font-size: .7rem; color: grey;">({{ realm.realm_code }})</span>
+					Realm: {{ realm.name }} <span style="font-size: .7rem;">({{ realm.realm_code }})</span>
 				</div>
 			</div>
 
@@ -53,6 +53,11 @@
 							>
 								<FmIcon class="mr-10" icon="delete"/>
 								Delete
+							</div>
+
+							<div class="fm_list_item" @click="isAboutDialog = true, close()">
+								<FmIcon class="mr-10" icon="info"/>
+								About
 							</div>
 
 						</div>
@@ -107,6 +112,11 @@
 											v-model="isProvisionLogDialog"
 											v-if="isProvisionLogDialog"/>
 
+	<LazyPagesProfileRealmAbout :realm="realm"
+								@refresh="store.getRealms()"
+											v-model="isAboutDialog"
+											v-if="isAboutDialog"/>
+
 </template>
 
 <script setup>
@@ -121,6 +131,7 @@ let store = useStore()
 
 let isAdmin = ref(false)
 let isProvisionLogDialog = ref(false);
+let isAboutDialog = ref(false);
 
 props.realm.members.forEach((member) => {
 
@@ -182,7 +193,7 @@ async function start() {
 }
 
 async function deleteRealm() {
-	let isConfirm = await useConfirm({text: 'Are you sure?'})
+	let isConfirm = await useConfirm({title: "Delete Realm", text: 'Are you sure?'})
 	if (!isConfirm) return false
 
 	let res = await useApi("realm.delete", {
@@ -224,9 +235,9 @@ async function initUpdateDatabase() {
 
 .realm-update-is-available-chip {
 	margin-right: 1rem;
-	background: #f05a22;
+	background: var(--primary-color);
+	color: var(--page-background-color);
 	border-radius: 6px;
-	color: #fff;
 	padding: 0.5rem;
 }
 
@@ -236,4 +247,7 @@ async function initUpdateDatabase() {
 	height: 2rem;
 }
 
+.fm_card_title, .fm_card_title span {
+	color: var(--primary-color);
+}
 </style>

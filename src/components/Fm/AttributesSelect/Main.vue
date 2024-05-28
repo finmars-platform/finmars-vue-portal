@@ -50,10 +50,13 @@
 					:class="{active: tab == 'selected'}"
 					@click="tab = 'selected'"
 				>
-					Selected
-					<div class="select_count">
-						{{  selectedColumns.length }}
+					<div>
+						Selected
+						<div class="select_count">
+							{{  selectedColumns.length }}
+						</div>
 					</div>
+
 				</div>
 			</div>
 
@@ -1300,7 +1303,7 @@
       }
 
       &:hover path {
-        stroke: $primary !important;
+        stroke: var(--primary-color) !important;
       }
     }
 
@@ -1310,22 +1313,24 @@
     }
   }
 
-  .select_count {
-    background: $primary;
-    width: 18px;
-    height: 18px;
-    line-height: 18px;
-    text-align: center;
-    color: #fff;
-    margin-left: 11px;
-    font-size: 12px;
-    font-weight: 400;
-    border-radius: 2px;
-  }
+	.select_count {
+		display: inline-block;
+		background: var(--primary-color);
+		width: 18px;
+		height: 18px;
+		line-height: 18px;
+		text-align: center;
+		color: var(--page-background-color);
+		margin-left: 11px;
+		font-size: 12px;
+		font-weight: 600;
+		border-radius: 2px;
+	}
   .content_grid {
-    display: grid;
-    grid-template-columns: 1fr 200px;
-    height: 100%;
+	display: grid;
+	grid-template-columns: 1fr 200px;
+	height: 100%;
+	background: var(--page-background-color);
 
     &.collapsed {
       grid-template-columns: 1fr 32px;
@@ -1399,13 +1404,13 @@
     background: $main;
     border-top: 1px solid $border;
     border-bottom: 1px solid $border;
-    color: $text-lighten;
+	color: var(--card-secondary-text-color);
     word-wrap: break-word;
   }
   .desc_about {
     flex-grow: 1;
     padding: 10px 13px;
-    color: $text-lighten;
+	color: var(--card-secondary-text-color);
   }
   .collapse {
     position: absolute;
@@ -1439,6 +1444,6 @@
     margin-right: 9px;
   }
   .select_old {
-    color: $text-lighten;
+	color: var(--card-secondary-text-color);
   }
 </style>
