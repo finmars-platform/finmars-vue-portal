@@ -114,7 +114,9 @@
 
 	async function finish() {
 		if (config.value == 'blank') {
-			navigateTo('/home')
+			// useRouter().push('/home')
+			// TODO redirect to home with reloading SPA
+			window.location.href = '/' + store.realm_code + '/' + store.space_code + '/v/home'
 			return false
 		}
 
@@ -138,7 +140,9 @@
 
 				setTimeout(checkStatus, 1000)
 			} else if (res.status === 'D') {
-				useRouter().push('/home')
+				// useRouter().push('/home')
+				// TODO redirect to home with reloading SPA
+				window.location.href = '/' + store.realm_code + '/' + store.space_code + '/v/home'
 			}
 		}
 
@@ -169,7 +173,7 @@
 		left: 0;
 		bottom: 20px;
 		padding: 0 20px;
-		color: $text-lighten;
+		color: var(--card-secondary-text-color);
 	}
 	.setup_wrap {
 		padding-bottom: 30px;
@@ -231,6 +235,6 @@
 	}
 	.progress_desc {
 		margin-top: 40px;
-		color: $text-lighten;
+		color: var(--card-secondary-text-color);
 	}
 </style>

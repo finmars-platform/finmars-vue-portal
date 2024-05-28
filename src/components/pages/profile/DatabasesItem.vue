@@ -110,7 +110,7 @@
 								red: db.status == 3 || db.status == 4,
 							}"
 						></FmIcon>
-						<a target="_blank" :href="`${config.public.apiURL}/${db.space_code}/api/v1/`"
+						<a target="_blank" :href="`${config.public.apiURL}/${db.realm_code}/${db.space_code}/api/v1/`"
 						   class="clipboard_text">
 							{{ db.space_code }}
 						</a>
@@ -356,7 +356,7 @@ setTimeout(() => {
 
 .clipboard {
 	cursor: pointer;
-	color: $text-lighten;
+	color: var(--card-secondary-text-color);
 	transition: color 0.3s;
 
 	&_text {
@@ -364,8 +364,13 @@ setTimeout(() => {
 	}
 
 	&:hover {
-		color: $text;
+		color: var(--secondary-color);
 	}
+}
+
+.clipboard a {
+	cursor: pointer;
+	color: var(--secondary-color);
 }
 
 .db_status {

@@ -19,19 +19,18 @@
 		gap: 20px
 	}
 	.hp_block {
-		border: 1px solid $border;
+		border: 1px solid var(--table-border-color);
 		border-radius: 3px;
-		background: $separ;
+		background: var(--page-background-color);
 	}
 	.hp_title {
-		background: $main-darken;
+		background: var(--table-header-background-color);
 		height: 33px;
 		line-height: 33px;
 		padding: 0 20px;
 		font-weight: 500;
-		border-bottom: 1px solid $border;
+		border-bottom: 1px solid var(--table-border-color);
 		font-size: 14px;
-		font-weight: 500;
 	}
 
 </style>

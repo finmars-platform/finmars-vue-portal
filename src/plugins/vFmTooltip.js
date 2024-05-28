@@ -41,6 +41,8 @@ function calculatePosition(targetElem, tooltipElem, direction) {
 	//# endregion Prevents popup from creeping out of window
 }
 
+let tooltipText = {};
+
 export default defineNuxtPlugin((nuxtApp) => {
 	nuxtApp.vueApp.directive('fm-tooltip', {
 		mounted(el, binding) {
@@ -51,7 +53,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 			 * v-fm-tooltip:[isMessageAnError()]="Hint or an error text"
 			 * */
 			const errorMode = binding.arg === 'error';
-			const direction = binding.modifiers.bottom ? 'bottom' : 'top'
+			const direction = binding.modifiers.bottom ? 'bottom' : 'top';
 
 			const body = document.body
 			const tooltipElem = document.createElement('div')
@@ -59,21 +61,31 @@ export default defineNuxtPlugin((nuxtApp) => {
 			tooltipElem.classList.add('fm_tooltip')
 			tooltipElem.style.position = 'absolute'
 			tooltipElem.style.zIndex = 99
-			tooltipElem.innerHTML = binding.value
+			el.dataset["fmTooltipValue"] = binding.value
+			// tooltipElem.innerHTML = binding.value
 
 			if (errorMode) tooltipElem.classList.add('error')
 
 			el.addEventListener('mouseover', function () {
-				if (!binding.value) return
+				const tooltipVal = el.dataset["fmTooltipValue"];
+
+				if (!tooltipVal) return;
+
+				tooltipElem.innerHTML = tooltipVal;
+
 				body.appendChild(tooltipElem)
 
 				calculatePosition(el, tooltipElem, direction)
 			})
 
 			el.addEventListener('mouseleave', function () {
-				if (!binding.value) return
+				if (!tooltipText) return
 				body.removeChild(tooltipElem)
 			})
+		},
+
+		updated(el, binding) {
+			el.dataset["fmTooltipValue"] = binding.value;
 		},
 
 		unmounted() {

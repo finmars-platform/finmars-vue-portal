@@ -126,3 +126,11 @@ export const useGetExceptionDetails = (exceptionData) => {
 	return null;
 
 }
+
+/**
+ *
+ * @param darkMode
+ */
+export const useToggleDarkMode = (darkMode=false) => {
+	document.body.classList.toggle('dark-mode', darkMode);
+}

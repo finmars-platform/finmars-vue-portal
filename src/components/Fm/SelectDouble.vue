@@ -87,8 +87,8 @@
 		width: 30px;
 		height: 30px;
 		line-height: 30px;
-		background: $text-lighten;
+		background: var(--card-secondary-text-color);
 		text-align: center;
-		color: $separ;
+		color: var(--page-background-color);
 	}
 </style>

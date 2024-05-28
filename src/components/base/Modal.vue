@@ -132,7 +132,7 @@
 	.modal_top {
 		height: $modal-header-height;
 		padding: 0 20px;
-		border-bottom: 1px solid $border;
+		border-bottom: 1px solid var(--table-border-color);
 	}
 	.modal_content {
 		overflow: auto;
@@ -140,15 +140,20 @@
 		height: calc(100% - $modal-header-height - $modal-footer-height);
 		padding: 15px 20px 0;
 		min-width: 400px; // so that FmInputEntityNames could fit in
+		background: var(--page-background-color);
+	}
+	.modal_content :deep(.base-input) {
+		background: transparent;
 	}
 	.modal_bottom {
 		height: $modal-footer-height;
-		border-top: 1px solid $border;
+		border-top: 1px solid var(--table-border-color);
 		padding: 10px 20px;
 	}
 	.modal {
 		position: relative;
-		background: #fff;
+		background-color: var(--dropdown-background-color);
+		color: var(--secondary-color);
 		min-width: 300px;
 		max-width: 90%;
 		border-radius: 4px;
@@ -162,7 +167,7 @@
 			}
 
 			&:hover path {
-				stroke: $primary !important;
+				stroke: var(--primary-color) !important;
 			}
 		}
 

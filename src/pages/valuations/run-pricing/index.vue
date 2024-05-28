@@ -136,7 +136,7 @@
 	justify-content: flex-start;
 }
 .table {
-	border: 1px solid $border;
+	border: 1px solid var(--table-border-color);
 	width: 100%;
 	font-size: 14px;
 }
@@ -145,7 +145,7 @@
 	grid-template-columns: 1fr 1fr 100px;
 	align-items: center;
 	background: #Fff;
-	border-bottom: 1px solid $border;
+	border-bottom: 1px solid var(--table-border-color);
 	padding: 5px 0;
 	// height: 26px;
 	&.header {

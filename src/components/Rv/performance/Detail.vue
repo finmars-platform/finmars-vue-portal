@@ -1510,8 +1510,8 @@ watch(
 
 <style lang="scss">
 .coll_years {
-	border-top: 1px solid $border;
-	border-left: 1px solid $border;
+	border-top: 1px solid var(--table-border-color);
+	border-left: 1px solid var(--table-border-color);
 }
 
 .coll_item {
@@ -1519,8 +1519,8 @@ watch(
 	line-height: 36px;
 	padding: 0 14px;
 	white-space: nowrap;
-	background: #f2f2f2;
-	border-bottom: $basic-table-border;
+	background: var(--table-header-background-color);
+	border-bottom: 2px solid var(--table-border-color);
 	font-size: 14px;
 
 	&.t_header {
