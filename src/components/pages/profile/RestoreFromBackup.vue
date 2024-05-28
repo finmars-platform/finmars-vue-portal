@@ -11,6 +11,10 @@
 			label="License key"
 			v-model="form.license_key"
 		/>
+		<BaseInput
+			label="Realm code"
+			v-model="form.realm_code"
+		/>
 
 		<template #controls>
 			<div class="flex-row fc-space-between">
