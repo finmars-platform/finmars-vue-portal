@@ -3,17 +3,20 @@
 		title="Create Database"
 		@cancel="cancel()"
 	>
-		<BaseInput
+		<FmInputText
 			label="Name"
 			v-model="form.name"
+			noIndicatorButton
 		/>
-		<BaseInput
+		<FmInputText
 			label="License key"
 			v-model="form.license_key"
+			noIndicatorButton
 		/>
-		<BaseInput
+		<FmInputText
 			label="Realm code"
 			v-model="form.realm_code"
+			noIndicatorButton
 		/>
 
 		<template #controls>
