@@ -49,7 +49,7 @@ export default {
 		get: prefix + '/master-user-stop/?base_api_url={baseApi}'
 	},
 	masterExport: {
-		get: prefix + '/master-user-export/{id}/'
+		post: prefix + '/api/v2/space/{id}/create-backup/'
 	},
 	masterLeave: {
 		get: prefix + '/master-user-leave/{id}/'
