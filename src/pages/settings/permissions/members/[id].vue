@@ -18,11 +18,13 @@
 					disabled
 				/>
 
-				<FmCheckbox
+				<div v-if="member.status != 'invited' && member.status != 'deleted' && member.status != 'invite_declined'">
+				  <FmCheckbox
 					v-model="member.is_owner"
 					label="Owner"
 					class="m-b-8"
-				/>
+				  />
+				</div>
 
 				<FmCheckbox
 					v-model="member.is_admin"

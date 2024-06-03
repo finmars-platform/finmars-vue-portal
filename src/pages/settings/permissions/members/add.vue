@@ -17,11 +17,11 @@
 					v-model="form.email"
 				/>
 
-				<FmCheckbox
+				<!--<FmCheckbox
 					v-model="form.is_owner"
 					label="Owner"
 					class="m-b-8"
-				/>
+				/>-->
 
 				<FmCheckbox
 					v-model="form.is_admin"
