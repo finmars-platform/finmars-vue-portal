@@ -93,8 +93,15 @@
                             v-for="cell in row.columns"
                             :key="cell.key"
                             :valueType="cell.key !== 'year' ? 20 : null"
-                            @contextmenu.prevent="showCellDetails(row.key, cell.key)"
-                        >{{ cell.value }}</FmBasicTableCell>
+                            @contextmenu.prevent="showCellDetails(row.key, cell.key, cell.error)"
+                        >
+							<span v-if="!cell.error">{{ cell.value }}</span>
+							<div v-else
+								 v-fm-tooltip:error="'Error. Click with right mouse button to see details.'"
+								 class="flex-row flex-center">
+								<FmIcon icon="error" error />
+							</div>
+						</FmBasicTableCell>
 
                     </FmBasicTableRow>
 				</FmBasicTable>
@@ -131,7 +138,10 @@
 			:details-data="cellDetails"
             @close="onCellDetailsClose"
 		/>
-
+		<RvPerformanceCellErrorModal
+			v-model="cellErrorIsOpen"
+			:error-data="cellDetails"
+		/>
 	</FmExpansionPanel>
 </template>
 
@@ -205,6 +215,10 @@ let detailsLoadingError = ref('');
 let showBundleActions = ref(false)
 let editBundleIsOpened = ref(false)
 
+let cellDetailsIsOpen = ref(false)
+let cellDetails = ref(null)
+let cellErrorIsOpen = ref(false);
+
 /**
  *
  * @type {Ref<UnwrapRef< ReportsMap|Map<any, any> >>}
@@ -272,6 +286,24 @@ let tableRowsComp = computed(() => {
         })
 
         const monthsCols = yearData.months.map((month, i) => {
+
+			if (month.error) {
+				const eKey = useGetExceptionKey(month);
+
+				if (eKey === 'no_first_transaction_date') {
+					//this structure for ErrorModal
+					return {
+						key: i,
+						value: month.displayValue,
+						error: {
+							data: {
+								error: month.error
+							}
+						}
+					};
+				}
+			}
+
             return {
                 key: i, // month index
                 value: month.displayValue,
@@ -296,9 +328,6 @@ let tableRowsComp = computed(() => {
     return rows;
 
 });
-
-let cellDetailsIsOpen = ref(false)
-let cellDetails = ref(null)
 
 /**
  * Because model window always opened from outside.
@@ -392,10 +421,15 @@ function chooseYear(year) {
 	emits('setYear', emitData)
 }
 
-async function showCellDetails(year, cellKey) {
-
+async function showCellDetails(year, cellKey, error) {
     if ( ['year', 'total'].includes(cellKey) ) {
         return;
+	}
+
+	if (error) {
+		cellDetails.value = error;
+		cellErrorIsOpen.value = true;
+		return;
 	}
 
     // cell with data for month was right-clicked
