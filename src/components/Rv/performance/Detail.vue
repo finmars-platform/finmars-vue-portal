@@ -288,20 +288,16 @@ let tableRowsComp = computed(() => {
         const monthsCols = yearData.months.map((month, i) => {
 
 			if (month.error) {
-				const eKey = useGetExceptionKey(month);
-
-				if (eKey === 'no_first_transaction_date') {
-					//this structure for ErrorModal
-					return {
-						key: i,
-						value: month.displayValue,
-						error: {
-							data: {
-								error: month.error
-							}
+				//this structure for ErrorModal
+				return {
+					key: i,
+					value: month.displayValue,
+					error: {
+						data: {
+							error: month.error
 						}
-					};
-				}
+					}
+				};
 			}
 
             return {
