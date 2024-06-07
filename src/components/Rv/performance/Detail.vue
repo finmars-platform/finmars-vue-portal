@@ -371,8 +371,8 @@ function chooseYear(year) {
     const portfolioMonthsEndsRaw = yearData.months
         .map(monthsData => {
 
-            if (monthsData.reportData?.end_date) {
-                return monthsData.reportData.end_date;
+            if (monthsData.reportData?.frontOptions.monthEndDate) {
+                return monthsData.reportData.frontOptions.monthEndDate;
             }
 
             return null;
@@ -467,7 +467,7 @@ function toggleSorting(columnKey) {
  * @param begin_date
  * @param end_date
  * @return {[Date]} - Months between begin_date and end_date.
- * Days for all months except last are last not weekend days.
+ * Dates for all months in range except the last are days that fit criteria - last not weekend day of a month.
  *
  */
 function getLastBusinessDayOfMonth(begin_date, end_date) {
@@ -828,7 +828,7 @@ async function _calculateTotalsForYears(reportsMap, endDate, bundleId, requestUi
         if ( year == endDateDj.year() ) {
             end = endDateDj.format('YYYY-MM-DD');
         } else {
-            end = `${year}-12-31`;
+            end = utilGetLastDayOfMonth(year, 11, {excludeWeekend: true});
         }
 
         // yearData changed inside _calcTotalForYear
@@ -898,10 +898,14 @@ async function getReportForMonth(requestOptions, beginDate, endDate) {
 
     } catch (e) {
         throw {
-            end_date: requestOptions.end,
+            monthEndDate: requestOptions.end,
             error: e
         }
     }
+
+	res.frontOptions = {
+        monthEndDate: requestOptions.end
+    };
 
     return res;
 
@@ -977,10 +981,21 @@ function _applyMonthReport(reportData, yearData, monthIndex) {
  */
 function _assembleReportsMap(monthsList, yearsMap) {
 
+    const getMonthEndDate = responseData => {
+
+        if (responseData.value) {
+            return responseData.value.frontOptions.monthEndDate;
+		}
+
+        return responseData.reason.monthEndDate;
+
+	}
+
     // sort months by `.end_date` years in descending order
     monthsList.sort((a, b) => {
 
-        const aEndDate = a.value ? a.value.end_date : a.reason.end_date;
+        // const aEndDate = a.value ? a.value.end_date : a.reason.end_date;
+        const aEndDate = getMonthEndDate(a);
         let aYear = null;
 
         if ( dayjs(aEndDate, 'YYYY-MM-DD').isValid() ) {
@@ -990,7 +1005,8 @@ function _assembleReportsMap(monthsList, yearsMap) {
             console.error(`[RvPerformanceDetail] wrong end_date format ${a}`)
         }
 
-        const bEndDate = b.value ? b.value.end_date : b.reason.end_date;
+        // const bEndDate = b.value ? b.value.end_date : b.reason.end_date;
+        const bEndDate = getMonthEndDate(b);
         let bYear = null;
 
         if ( dayjs(bEndDate, 'YYYY-MM-DD').isValid() ) {
@@ -1121,7 +1137,8 @@ function _assembleReportsMap(monthsList, yearsMap) {
     // Group months by years
     monthsList.forEach((item) => {
 
-        let endDate = item.value ? item.value.end_date : item.reason.end_date;
+        // let endDate = item.value ? item.value.end_date : item.reason.end_date;
+        let endDate = getMonthEndDate(item);
 
         if ( !dayjs(endDate, 'YYYY-MM-DD').isValid() ) {
             console.error(`[RvPerformanceDetail._assembleReportsMap] response with invalid endDate: ${item}`);

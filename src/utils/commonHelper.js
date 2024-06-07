@@ -194,3 +194,61 @@ export const utilSortTextWithDash = (a, b)  => {
 	return 0;
 
 };
+
+/**
+ *
+ * @param year {number|string}
+ * @param monthIndex {number|string} - month index
+ * @param options {Object}
+ * @param [options.excludeWeekend] {Boolean} - if `true` and last day is a weekend day, last business day will be returned
+ * @param [options.formatted] {Boolean} - if `true` date returned as string in `YYYY-MM-DD` format
+ *
+ * @return {Date|String}
+ *
+ */
+export const utilGetLastDayOfMonth = (year, monthIndex, {excludeWeekend, formatted=true}={}) => {
+
+	const origYear = year;
+	year = parseInt(year);
+
+	if ( Number.isNaN(year) ) {
+		throw `[utilGetLastDayOfMonth] Invalid year provided ${origYear}`
+	}
+
+	const origMonthIndex = monthIndex;
+	monthIndex = parseInt(monthIndex);
+
+	if ( Number.isNaN(monthIndex) || monthIndex > 11 || monthIndex < 0) {
+		throw `[utilGetLastDayOfMonth] Invalid month index provided: ${origMonthIndex}`
+	}
+
+	/*
+	`month + 1` bellow because 0 date sets month to previous one
+	relative to specified in new Date()
+	*/
+	const endDate = new Date(year, monthIndex + 1, 0);
+
+	if (excludeWeekend) {
+		// If Saturday, move to Friday
+		if (endDate.getDay() === 6) {
+			endDate.setDate(endDate.getDate() - 1);
+		}
+		// If Sunday, move to Friday
+		else if (endDate.getDay() === 0) {
+			endDate.setDate(endDate.getDate() - 2);
+		}
+
+	}
+
+	if (formatted) {
+
+		const month = `${endDate.getMonth() + 1}`.padStart(2, "0");
+		const day = `${endDate.getDate()}`.padStart(2, "0");
+
+		return `${endDate.getFullYear()}-${month}-${day}`;
+
+	}
+
+	return endDate;
+
+}
