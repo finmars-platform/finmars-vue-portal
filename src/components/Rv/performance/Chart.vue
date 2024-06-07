@@ -12,7 +12,7 @@
 			</div>
 
 			<div style="height: 350px;">
-				<canvas id="myChart"><p>Chart</p></canvas>
+				<canvas id="performanceYearsChart"><p>Chart</p></canvas>
 			</div>
 
 		</FmExpansionPanel>
@@ -35,12 +35,18 @@ const props = defineProps({
 	bundle: {
 		type: [Number, Object],
 	},
-	reportOptions: {
-		type: Object,
-	},
 	yearData: {
 		type: Object
-	}
+	},
+
+    calculation_type: {
+        type: String,
+    },
+    report_currency: {
+        type: [Number, String],
+    },
+    performance_unit: String,
+
 })
 
 let bundleId = computed(() => {
@@ -101,12 +107,6 @@ watch(
 
 async function getReports({period_type, end, ids, type = 'months'}) {
 
-	// console.log('getReports.period_type', period_type)
-	// console.log('getReports.end', end)
-	// console.log('getReports.type', type)
-	// console.log('getReports.ids', ids)
-	// console.log('getReports.====')
-
 	let res = await useApi('performanceReport.post', {
 		body: {
 			save_report: false,
@@ -126,10 +126,15 @@ function getPeriodType(performanceType) {
 	return performanceType.value === 'monthly' ? 'mtd' : 'ytd';
 }
 
-function getChartDataItem(res, reportOptions) {
-	return reportOptions.performance_unit === 'percent' ?
-		parseFloat((res.grand_return * 100).toFixed(2)) :
-		parseFloat(res.grand_absolute_pl.toFixed(2));
+function getChartDataItem(res) {
+
+	if (props.performance_unit === 'percent') {
+		return parseFloat(res.grand_return * 100).toFixed(2);
+
+	}
+
+	return parseFloat(res.grand_absolute_pl).toFixed(2);
+
 }
 
 function updateChartBackgroundColor(dataset) {
@@ -153,17 +158,25 @@ async function updateChart(portfolioMonthsEndsRaw) {
 
 	console.log('updateChart.props', props);
 
-	let ends = [];
+	// let ends = [];
+	let dataPromises = [];
 
 	if ( Array.isArray(portfolioMonthsEndsRaw) ) {
-		ends = portfolioMonthsEndsRaw.filter(item => item);
+
+		dataPromises = portfolioMonthsEndsRaw.map(async item => {
+
+			if (!item) {
+				return null;
+			}
+
+			const period_type = getPeriodType(performance_type);
+			const res = await getReports({ period_type, end: item, ids: bundleId.value });
+			return getChartDataItem(res);
+
+		});
+
 	}
 
-	const dataPromises = ends.map(async item => {
-		const period_type = getPeriodType(performance_type);
-		const res = await getReports({ period_type, end: item, ids: bundleId.value });
-		return getChartDataItem(res, props.reportOptions);
-	});
 
 	let chartData;
 
@@ -212,7 +225,8 @@ function createChart() {
 				label: 'Monthly Returns',
 				data: [],
 				backgroundColor: [],
-				order: 1
+				order: 1,
+				minBarLength: 4,
 			}
 
 		]
@@ -234,7 +248,7 @@ function createChart() {
 	}
 
 
-	chart = new Chart('myChart', {
+	chart = new Chart('performanceYearsChart', {
 		type: type,
 		data: {
 			labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -243,7 +257,15 @@ function createChart() {
 		options: {
 			responsive: true,
 			maintainAspectRatio: false,
-			events: ['click'],
+			events: ['click', 'mousemove'],
+			onHover: (event, chartElement) => {
+
+				const target = event.native ? event.native.target : null;
+
+				if (target) {
+					target.style.cursor = chartElement[0] ? 'pointer' : 'default';
+				}
+			},
 			onClick: function (event, array) {
 				console.log("onclick", event, array);
 				if (array.length > 0) {
@@ -289,7 +311,7 @@ function createChart() {
 
 							console.log('tooltipItem', tooltipItem);
 
-							if (props.reportOptions.performance_unit === 'percent') {
+							if (props.performance_unit === 'percent') {
 
 								return tooltipItem.formattedValue + '%'
 
@@ -308,7 +330,7 @@ function createChart() {
 						// Include a dollar sign in the ticks
 						callback: function (value, index, ticks) {
 
-							if (props.reportOptions.performance_unit === 'percent') {
+							if (props.performance_unit === 'percent') {
 								return value + '%';
 							} else {
 								return value;

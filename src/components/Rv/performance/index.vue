@@ -34,7 +34,11 @@
 					v-model:open="components.diagram"
 					:bundle="currentBundle"
 					:yearData="currentBundleYear"
-					:reportOptions="reportOptions"
+
+                    :calculation_type="reportOptions.calculation_type"
+                    :report_currency="reportOptions.report_currency"
+                    :performance_unit="reportOptions.performance_unit"
+
 					@setMonth="currentBundleMonth = $event"
 				/>
 
