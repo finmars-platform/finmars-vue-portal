@@ -778,6 +778,10 @@ function sortBundles(bundlesList) {
 
             let aSortColVal = a.columns.find(col => col.key === sortCol.key).value;
             let bSortColVal = b.columns.find(col => col.key === sortCol.key).value;
+
+			aSortColVal = aSortColVal.toLowerCase();
+			bSortColVal = bSortColVal.toLowerCase();
+
             // must be different from useSortRowsByNumber
             if (aSortColVal > bSortColVal) {
                 return descending ? -1 : 1;
