@@ -80,8 +80,7 @@
 <script setup>
 import dayjs from 'dayjs'
 import quarterOfYear from 'dayjs/plugin/quarterOfYear'
-import {useToggleSorting} from "~/composables/useTable";
-import {utilSortTextWithDash} from "~/utils/commonHelper";
+import {getEndOfYearDate} from "~/components/Rv/performance/helper";
 
 dayjs.extend(quarterOfYear)
 
@@ -962,7 +961,7 @@ function getLastYear(ids, abortSignal) {
     let endDate = dayjs(props.end_date)
 
     // let end = `${dayjs(endDate).year() - 1}-12-31`
-    const end = utilGetLastDayOfMonth(dayjs(endDate).year() - 1, 11);
+	const end = getEndOfYearDate(dayjs(endDate).year() - 1);
 
     return getReports({
 		period_type: "ytd", end, ids, abortSignal
@@ -979,7 +978,7 @@ function getYearBeforeLast(ids, abortSignal) {
     let endDate = dayjs(props.end_date)
 
     // let end = `${dayjs(endDate).year() - 2}-12-31`
-    const end = utilGetLastDayOfMonth(dayjs(endDate).year() - 2, 11);
+    const end = getEndOfYearDate(dayjs(endDate).year() - 2);
 
     return getReports({
 		period_type: "ytd", end, ids, abortSignal
