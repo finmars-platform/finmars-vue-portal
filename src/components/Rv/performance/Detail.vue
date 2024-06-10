@@ -137,6 +137,7 @@
 
 <script setup>
 import dayjs from 'dayjs'
+import {getEndOfYearDate} from "~/components/Rv/performance/helper";
 
 /**
  * @typedef { {} } MonthReportObject
@@ -828,7 +829,7 @@ async function _calculateTotalsForYears(reportsMap, endDate, bundleId, requestUi
         if ( year == endDateDj.year() ) {
             end = endDateDj.format('YYYY-MM-DD');
         } else {
-            end = utilGetLastDayOfMonth(year, 11, {excludeWeekend: true});
+            end = getEndOfYearDate(year);
         }
 
         // yearData changed inside _calcTotalForYear
