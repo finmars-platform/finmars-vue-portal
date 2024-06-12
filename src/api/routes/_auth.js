@@ -19,15 +19,15 @@ export default {
 		post: prefix + '/token-auth/'
 	},
 	spaceBackup: {
-		get: prefix + '/space-backup/',
-		'delete': prefix + '/space-backup/{id}/',
-		put: prefix + '/space-backup/{id}/restore-from-backup/' // Bad, need rework
+		get: prefix + '/api/v2/space-backup/',
+		'delete': prefix + '/api/v2/space-backup/{id}/',
+		put: prefix + '/api/v2/space-backup/{id}/restore-from-backup/' // Bad, need rework
 	},
 	spaceBackupSave: {
-		put: prefix + '/space-backup/{id}/'
+		put: prefix + '/api/v2/space-backup/{id}/'
 	},
-	masterBackupInfo: {
-		get: prefix + '/master-user/backups-info/'
+	spaceBackupInfo: {
+		get: prefix + '/api/v2/space/backups-info/'
 	},
 
 	masterRollback: {
