@@ -4,7 +4,7 @@
 			<BaseInput v-model="form.name" label="Name"/>
 			<BaseInput v-model="form.license_key" label="License Key"/>
 			<BaseInput v-model="form.realm_code" label="Realm Code" :disabled="true"/>
-<!--			<FmSelect v-model="config" :items="configs" label="Init configuration"/>-->
+			<FmInputFile label="Select file" @change="addFile" />
 			<BaseInput v-model="form.description" label="Description"/>
 
 			<div class="show_btn tac">
@@ -67,22 +67,29 @@ let form = reactive({
 		workflow: "",
 	},
 })
-let configs = [
-	{
-		id: "Blank",
-		name: "Blank",
-	},
-]
-let config = ref("Blank")
+
+
+
+function addFile( event ) {
+	form.file = event.target.files[0]
+}
 
 async function createDb() {
 	processing.value = true
 
-	let res = await useApi("realmCreateSpace.put",
+	let FD  = new FormData();
+
+	for( let prop in form ) {
+		FD.append( prop, form[ prop ] );
+	}
+
+	processing.value = true
+
+	let res = await useApi("realmCreateSpaceFromBackup.put",
 
 		{
 			params: {id: route.query.realm_id},
-			body: form
+			body: FD
 		}
 	)
 
