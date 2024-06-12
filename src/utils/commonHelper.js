@@ -150,7 +150,7 @@ export const utilsPower = function (base, exponent) {
  * @return {Number} - 1, -1, 0
  */
 export const utilSortTextWithDash = (a, b)  => {
-	console.log("testing450 utilSortTextWithDash", a, b);
+
 	if (!a || !b) {
 		return 0;
 	}

@@ -937,7 +937,7 @@ function _applyMonthReport(reportData, yearData, monthIndex) {
 
 	}
 
-    let displayVal, rawVal;
+    let displayVal = "-", rawVal;
 
     if (props.performance_unit === 'percent') {
         /*yearsMap.get(year)[monthIndex] = [
@@ -945,8 +945,12 @@ function _applyMonthReport(reportData, yearData, monthIndex) {
             parseFloat(reportData.grand_return * 100).toFixed(2) + '%',
             reportData,
         ]*/
-        displayVal = parseFloat(reportData.grand_return * 100).toFixed(2) + '%';
-        rawVal = parseFloat(reportData.grand_return * 100).toFixed(2);
+
+		if (reportData.grand_return) {
+            displayVal = parseFloat(reportData.grand_return * 100).toFixed(2) + '%';
+		}
+
+		rawVal = parseFloat(reportData.grand_return * 100).toFixed(2);
 
     } else {
         /*yearsMap.get( year )[month] = [
@@ -955,7 +959,10 @@ function _applyMonthReport(reportData, yearData, monthIndex) {
             reportData
         ]*/
 
-        displayVal = formatNumber(reportData.grand_absolute_pl);
+		if (reportData.grand_absolute_pl) {
+            displayVal = formatNumber(reportData.grand_absolute_pl);
+		}
+
         rawVal = reportData.grand_absolute_pl;
 
     }
