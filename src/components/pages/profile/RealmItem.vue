@@ -100,6 +100,14 @@
 							New Space
 						</NuxtLink>
 					</div>
+					<div class="fm_list">
+						<NuxtLink class="fm_list_item" :to="{
+							path: '/v/profile/add-space-from-backup',
+							query: {realm_code: realm.realm_code, realm_id: realm.id}
+						}">
+							New Space From Backup
+						</NuxtLink>
+					</div>
 				</FmMenu>
 
 			</div>

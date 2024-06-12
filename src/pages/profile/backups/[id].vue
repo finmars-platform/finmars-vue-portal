@@ -168,7 +168,7 @@
 	}
 
 	async function saveBackup() {
-		let res = await useApi('masterBackupsSave.put', {
+		let res = await useApi('spaceBackupSave.put', {
 			params: { id: editable.value.id },
 			body: editable.value,
 		})

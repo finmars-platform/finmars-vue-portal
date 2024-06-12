@@ -1,12 +1,18 @@
 <template>
 	<BaseModal
-		title="Create Database"
+		title="Create Space"
 		@cancel="cancel()"
 	>
 		<BaseInput
 			label="Name"
 			v-model="form.name"
 		/>
+
+		<BaseInput
+			label="Realm Code"
+			v-model="form.realm_code"
+		/>
+
 		<BaseInput
 			label="License key"
 			v-model="form.license_key"
@@ -17,7 +23,7 @@
 				<FmBtn type="basic" @click="cancel()">cancel</FmBtn>
 				<FmBtn
 					:disabled="processing"
-					@click="createMasterUser()"
+					@click="createSpace()"
 				>
 					create
 				</FmBtn>
@@ -38,18 +44,18 @@
 		emit('cancel')
 		processing.value = false
 	}
-	async function createMasterUser() {
+	async function createSpace() {
 		if ( processing.value ) return false
 
 		processing.value = true
 
-		let res = await useApi('masterBackups.put', {
+		let res = await useApi('spaceBackup.put', {
 			body: form,
 			params: {id: props.backupId }
 		})
 
 		if ( res ) {
-			useNotify({type: 'success', title: 'Ecosystem is proccessing'})
+			useNotify({type: 'success', title: 'Space is proccessing'})
 		}
 
 		emit('save')
