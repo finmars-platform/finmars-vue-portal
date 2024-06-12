@@ -54,7 +54,7 @@
 	// 	}
 	// }
 	async function deleteBackup() {
-		let res = await useApi('masterBackups.delete', {params: {id: props.backup.id }})
+		let res = await useApi('spaceBackup.delete', {params: {id: props.backup.id }})
 		console.log('res:', res)
 		emit('refresh')
 	}

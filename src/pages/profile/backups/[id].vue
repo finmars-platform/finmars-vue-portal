@@ -142,7 +142,7 @@
 	refresh()
 
 	async function refresh() {
-		let res = await useApi('masterBackups.get', {
+		let res = await useApi('spaceBackup.get', {
 			filters: {
 				space_id: route.params.id,
 				query: searchParam.value,
@@ -208,7 +208,7 @@
 		})
 		if (!isConfirm) return false
 
-		let res = await useApi('masterBackups.delete', {
+		let res = await useApi('spaceBackup.delete', {
 			params: { id: backups[index].id },
 		})
 		refresh()
