@@ -63,7 +63,7 @@
 		if ( process ) return false
 		process = true
 
-		let res = await useApi("masterBackupInfo.get", {
+		let res = await useApi("spaceBackupInfo.get", {
 			filters: {
 				query: searchParam.value
 			}
