@@ -43,7 +43,7 @@
                         :valueType="cell.key !== 'user_code' ? 20 : null"
 						:disabled="cell.error && !cell.error.noErrorMode"
 						:empty="!cell.error && !cell.value && cell.value !== 0"
-                        @contextmenu.prevent="showCellDetailsModal(row.key, cell.key, cell.error)"
+                        @contextmenu.prevent="showCellDetailsModal(row.key, cell)"
                     >
 						<span v-if="!cell.error || cell.error.noErrorMode">{{ cell.value }}</span>
                         <div v-else
@@ -63,15 +63,15 @@
         </div>
 
         <RvPerformanceCellDetailModal
-			:title="performanceDetailsColumnKey === 'user_code' ? 'Bundle Portfolios' : 'Performance Details'"
+			:title="cellDetails.title"
 			v-model="performanceDetailIsOpen"
-			:details-data="cellDetails"
-			:columnKey="performanceDetailsColumnKey"
+			:details-data="cellDetails.data"
+			:columnKey="cellDetails.key"
         />
 
 		<RvPerformanceCellErrorModal
 			v-model="cellErrorIsOpen"
-			:error-data="cellDetails"
+			:error-data="cellDetails.error"
 		/>
 
     </FmExpansionPanel>
@@ -80,8 +80,7 @@
 <script setup>
 import dayjs from 'dayjs'
 import quarterOfYear from 'dayjs/plugin/quarterOfYear'
-import {useToggleSorting} from "~/composables/useTable";
-import {utilSortTextWithDash} from "~/utils/commonHelper";
+import {getEndOfYearDate} from "~/components/Rv/performance/helper";
 
 dayjs.extend(quarterOfYear)
 
@@ -190,7 +189,8 @@ let tableRowsComp = computed(() => {
     let rows = periodItems.value.map(item => {
 
         const row = {
-            key: item.id, // using `id` as key because `user_code` of a bundle can change
+            key: item.id, // using `id` as key because `user_code` of a bundle can be changed by user
+			user_code: item.user_code,
         };
 
         if (item.error) row.error = JSON.parse(JSON.stringify( item.error )); // in case of an object with error data will be passed
@@ -199,6 +199,7 @@ let tableRowsComp = computed(() => {
 
             const colObj = {
                 key: col.key,
+				name: col.name,
                 value: item[col.key],
             }
 
@@ -777,6 +778,10 @@ function sortBundles(bundlesList) {
 
             let aSortColVal = a.columns.find(col => col.key === sortCol.key).value;
             let bSortColVal = b.columns.find(col => col.key === sortCol.key).value;
+
+			aSortColVal = aSortColVal.toLowerCase();
+			bSortColVal = bSortColVal.toLowerCase();
+
             // must be different from useSortRowsByNumber
             if (aSortColVal > bSortColVal) {
                 return descending ? -1 : 1;
@@ -833,38 +838,49 @@ function chooseBundle(bundleId) {
 
 //# region Modals
 
-let cellDetails = ref(null);
-let performanceDetailsColumnKey = ref(null);
+let cellDetails = ref({});
 
 let performanceDetailIsOpen = ref(false)
 let cellErrorIsOpen = ref(false);
 
-function showCellDetailsModal(bundleId, cellKey, error) {
+/**
+ *
+ * @param {Number} bundleId
+ * @param { {key: String, name: String, error?: Object} } cellData
+ */
+function showCellDetailsModal(bundleId, cellData) {
 
-	if (!cellKey) {
+	if (!cellData.key) {
 		return;
 	}
 
-	if (error) {
+	if (cellData.error) {
 
-		cellDetails.value = error;
+		cellDetails.value = cellData.error;
 		cellErrorIsOpen.value = true;
 
 		return;
 
 	}
 
+	const bundleData = periodItems.value.find(item => item.id === bundleId);
 	const bundleRawData = periodItemsRaw.value.find(item => item.id === bundleId);
 
-    performanceDetailsColumnKey.value = cellKey;
 
-    if (cellKey === 'user_code') {
+    if (cellData.key === 'user_code') {
 		// cellDetails.value = {bundle: periodItemsRaw.value[rowIndex]['id']}
-		cellDetails.value = {bundle: bundleId};
+		cellDetails.value = {
+			key: cellData.key,
+			title: `Portfolios of the Bundle: ${bundleData.user_code}`,
+			data: {bundle: bundleId}
+		};
 
 	}
 	else {
-		cellDetails.value = bundleRawData[`${cellKey}_performance_report`];
+		cellDetails.value = {
+			title: `${cellData.name} of the Bundle: ${bundleData.user_code}`,
+			data: bundleRawData[`${cellData.key}_performance_report`],
+		};
 	}
 
 	performanceDetailIsOpen.value = true;
@@ -948,7 +964,8 @@ function getYear(ids, abortSignal) {
 function getLastYear(ids, abortSignal) {
     let endDate = dayjs(props.end_date)
 
-    let end = `${dayjs(endDate).year() - 1}-12-31`
+    // let end = `${dayjs(endDate).year() - 1}-12-31`
+	const end = getEndOfYearDate(dayjs(endDate).year() - 1);
 
     return getReports({
 		period_type: "ytd", end, ids, abortSignal
@@ -958,12 +975,14 @@ function getLastYear(ids, abortSignal) {
 /**
  *
  * @param ids
+ * @param abortSignal {null|abortSignal}
  * @return {Promise<*>}
  */
 function getYearBeforeLast(ids, abortSignal) {
     let endDate = dayjs(props.end_date)
 
-    let end = `${dayjs(endDate).year() - 2}-12-31`
+    // let end = `${dayjs(endDate).year() - 2}-12-31`
+    const end = getEndOfYearDate(dayjs(endDate).year() - 2);
 
     return getReports({
 		period_type: "ytd", end, ids, abortSignal

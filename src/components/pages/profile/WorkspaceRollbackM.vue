@@ -40,8 +40,8 @@
 	let emit = defineEmits(['update:modelValue'])
 	let props = defineProps({workspaceId: String})
 
-	let { data, refresh, pending } = useLazyAsyncData("masterBackups", () =>
-		useApi("masterBackups.get", {
+	let { data, refresh, pending } = useLazyAsyncData("spaceBackup", () =>
+		useApi("spaceBackup.get", {
 			filters: {
 				master_user: props.workspaceId
 			}

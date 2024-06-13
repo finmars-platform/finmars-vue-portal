@@ -49,11 +49,11 @@ export const useSortRowsByNumber = function(a, b, descending=true) {
 	}
 
 	if (aVal > bVal) {
-		return descending ? 1 : -1;
+		return descending ? -1 : 1;
 
 	} else if (aVal < bVal) {
 
-		return descending ? -1 : 1;
+		return descending ? 1 : -1;
 
 	}
 

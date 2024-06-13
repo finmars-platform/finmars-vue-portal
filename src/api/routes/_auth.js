@@ -18,16 +18,16 @@ export default {
 	login: {
 		post: prefix + '/token-auth/'
 	},
-	masterBackups: {
-		get: prefix + '/master-user-backups/',
-		'delete': prefix + '/master-user-backups/{id}/',
-		put: prefix + '/master-user-backups/{id}/restore-from-backup/' // Bad, need rework
+	spaceBackup: {
+		get: prefix + '/api/v2/space-backup/',
+		'delete': prefix + '/api/v2/space-backup/{id}/',
+		put: prefix + '/api/v2/space-backup/{id}/restore-from-backup/' // Bad, need rework
 	},
-	masterBackupsSave: {
-		put: prefix + '/master-user-backups/{id}/'
+	spaceBackupSave: {
+		put: prefix + '/api/v2/space-backup/{id}/'
 	},
-	masterBackupInfo: {
-		get: prefix + '/master-user/backups-info/'
+	spaceBackupInfo: {
+		get: prefix + '/api/v2/space/backups-info/'
 	},
 
 	masterRollback: {
@@ -126,6 +126,9 @@ export default {
 	},
 	realmCreateSpace: {
 		put: prefix + '/api/v2/realm/{id}/create-space/'
+	},
+	realmCreateSpaceFromBackup: {
+		put: prefix + '/api/v2/realm/{id}/create-space-from-backup/'
 	},
 	realmDeleteSpace: {
 		put: prefix + '/api/v2/realm/{id}/delete-space/'
