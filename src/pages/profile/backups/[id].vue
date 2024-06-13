@@ -109,6 +109,7 @@
 
 	definePageMeta({
 		middleware: 'auth',
+		isHideSidebar: true,
 		bread: [
 			{
 				text: 'Profile',
@@ -142,7 +143,7 @@
 	refresh()
 
 	async function refresh() {
-		let res = await useApi('masterBackups.get', {
+		let res = await useApi('spaceBackup.get', {
 			filters: {
 				space_id: route.params.id,
 				query: searchParam.value,
@@ -168,7 +169,7 @@
 	}
 
 	async function saveBackup() {
-		let res = await useApi('masterBackupsSave.put', {
+		let res = await useApi('spaceBackupSave.put', {
 			params: { id: editable.value.id },
 			body: editable.value,
 		})
@@ -208,7 +209,7 @@
 		})
 		if (!isConfirm) return false
 
-		let res = await useApi('masterBackups.delete', {
+		let res = await useApi('spaceBackup.delete', {
 			params: { id: backups[index].id },
 		})
 		refresh()

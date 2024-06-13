@@ -1,11 +1,14 @@
 <template>
 	<BaseModal
-		title="Create Database"
+		title="Create Space"
 	>
 		<BaseInput
 			label="Name"
 			v-model="form.name"
 		/>
+
+
+
 		<BaseInput
 			label="License key"
 			v-model="form.license_key"
@@ -52,7 +55,7 @@
 		let res = await useApi('masterCreateFrom.post', {body: FD })
 
 		if ( res ) {
-			useNotify({type: 'success', title: 'Ecosystem is proccessing'})
+			useNotify({type: 'success', title: 'Space is proccessing'})
 		}
 
 		cancel()
