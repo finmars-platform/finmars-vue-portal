@@ -93,9 +93,11 @@
                             v-for="cell in row.columns"
                             :key="cell.key"
                             :valueType="cell.key !== 'year' ? 20 : null"
+                            :disabled="cell.error && !cell.error.noErrorMode"
+                            :empty="!cell.error && !cell.value && cell.value !== 0"
                             @contextmenu.prevent="showCellDetails(row.key, cell.key, cell.error)"
                         >
-							<span v-if="!cell.error">{{ cell.value }}</span>
+							<span v-if="!cell.error || cell.error.noErrorMode">{{ cell.value }}</span>
 							<div v-else
 								 v-fm-tooltip:error="'Error. Click with right mouse button to see details.'"
 								 class="flex-row flex-center">
@@ -293,11 +295,7 @@ let tableRowsComp = computed(() => {
 				return {
 					key: i,
 					value: month.displayValue,
-					error: {
-						data: {
-							error: month.error
-						}
-					}
+					error: JSON.parse(JSON.stringify(month.error)),
 				};
 			}
 
@@ -928,9 +926,15 @@ async function getReportForMonth(requestOptions, beginDate, endDate) {
         res = await getReports(opts);
 
     } catch (e) {
+
+        if (!e.error?.details?.errors) {
+            // not a typical back-end error
+            console.error(e);
+        }
+
         throw {
             monthEndDate: requestOptions.end,
-            error: e
+            data: e
         }
     }
 
@@ -959,6 +963,10 @@ function _applyMonthReport(reportData, yearData, monthIndex) {
         yearData.months[monthIndex] = {
             displayValue: "-",
             reportData: reportData,
+            error: {
+                noErrorMode: true,
+                description: "Month is outside of range of dates for a performance report",
+            }
         };
 
         yearData.monthsRawValues[monthIndex] = null;
@@ -1203,7 +1211,7 @@ function _assembleReportsMap(monthsList, yearsMap) {
         else { // promise rejected
 
             yearData.error = true;
-            yearData.months[monthIndex].error = item.reason.error.error;
+            yearData.months[monthIndex].error = item.reason;
 
 		}
 
