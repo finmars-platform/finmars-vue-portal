@@ -1016,62 +1016,8 @@ function _applyMonthReport(reportData, yearData, monthIndex) {
 
 }
 
-/**
- * Helper function to use inside function getMonthDetails()
- * @see getMonthDetails
- *
- * @param monthsList
- * @param yearsMap {Map}
- * @return {ReportsMap} - map filled with data of reports for months
- * @private
- */
-function _assembleReportsMap(monthsList, yearsMap) {
 
-    const getMonthEndDate = responseData => {
-
-        if (responseData.value) {
-            return responseData.value.frontOptions.monthEndDate;
-		}
-
-        return responseData.reason.monthEndDate;
-
-	}
-
-    // sort months by `.end_date` years in descending order
-    monthsList.sort((a, b) => {
-
-        // const aEndDate = a.value ? a.value.end_date : a.reason.end_date;
-        const aEndDate = getMonthEndDate(a);
-        let aYear = null;
-
-        if ( dayjs(aEndDate, 'YYYY-MM-DD').isValid() ) {
-            aYear = dayjs(aEndDate).year();
-
-        } else {
-            console.error(`[RvPerformanceDetail] wrong end_date format ${a}`)
-        }
-
-        // const bEndDate = b.value ? b.value.end_date : b.reason.end_date;
-        const bEndDate = getMonthEndDate(b);
-        let bYear = null;
-
-        if ( dayjs(bEndDate, 'YYYY-MM-DD').isValid() ) {
-            bYear = dayjs(bEndDate).year();
-
-        } else {
-            console.error(`[RvPerformanceDetail] wrong end_date format ${b}`)
-        }
-
-        if (aYear > bYear) {
-            return -1;
-
-        } else if (aYear < bYear) {
-            return 1;
-        }
-
-        return 0;
-
-    })
+function getDefaultDataForYear(year, beginDate, endDate) {
 
     //# region Default data for months
     /*let defaultMonth = [
@@ -1157,8 +1103,8 @@ function _assembleReportsMap(monthsList, yearsMap) {
 
         total: {
             displayValue: ''
-			// error: null
-		}
+            // error: null
+        }
 
     };
 
@@ -1178,7 +1124,87 @@ function _assembleReportsMap(monthsList, yearsMap) {
         });
 
     }*/
-    //# endregion
+
+    defaultYearData.months = defaultYearData.months.map( (month, monthIndex) => {
+
+        const monthStr = `${monthIndex + 1}`.padStart(2, "0");
+        const date = `${year}-${monthStr}-01`;
+
+        if ( !datesRangeIncludesMonth(date, beginDate, endDate) ) {
+
+            month.error = {
+                noErrorMode: true,
+                description: "Month is outside of range of dates for a performance report",
+            }
+
+        }
+
+        return month;
+
+    })
+
+	return defaultYearData;
+
+}
+
+/**
+ * Helper function to use inside function getMonthDetails()
+ * @see getMonthDetails
+ *
+ * @param monthsList
+ * @param yearsMap {Map}
+ * @param beginDate {String} - first date in range of dates for a performance report
+ * @param endDate {String} - last date in range of dates for a performance report
+ * @return {ReportsMap} - map filled with data of reports for months
+ * @private
+ */
+function _assembleReportsMap(monthsList, yearsMap, beginDate, endDate) {
+
+    const getMonthEndDate = responseData => {
+
+        if (responseData.value) {
+            return responseData.value.frontOptions.monthEndDate;
+		}
+
+        return responseData.reason.monthEndDate;
+
+	}
+
+    // sort months by `.end_date` years in descending order
+    monthsList.sort((a, b) => {
+
+        // const aEndDate = a.value ? a.value.end_date : a.reason.end_date;
+        const aEndDate = getMonthEndDate(a);
+        let aYear = null;
+
+        if ( dayjs(aEndDate, 'YYYY-MM-DD').isValid() ) {
+            aYear = dayjs(aEndDate).year();
+
+        } else {
+            console.error(`[RvPerformanceDetail] wrong end_date format ${a}`)
+        }
+
+        // const bEndDate = b.value ? b.value.end_date : b.reason.end_date;
+        const bEndDate = getMonthEndDate(b);
+        let bYear = null;
+
+        if ( dayjs(bEndDate, 'YYYY-MM-DD').isValid() ) {
+            bYear = dayjs(bEndDate).year();
+
+        } else {
+            console.error(`[RvPerformanceDetail] wrong end_date format ${b}`)
+        }
+
+        if (aYear > bYear) {
+            return -1;
+
+        } else if (aYear < bYear) {
+            return 1;
+        }
+
+        return 0;
+
+    })
 
     // Group months by years
     monthsList.forEach((item) => {
@@ -1198,7 +1224,7 @@ function _assembleReportsMap(monthsList, yearsMap) {
         monthIndex = parseInt(monthIndex) - 1; // month index
 
         if ( !yearsMap.has(year) ) {
-            yearsMap.set( year, structuredClone(defaultYearData) )
+            yearsMap.set( year, getDefaultDataForYear(year, beginDate, endDate) )
         }
 
         let yearData = yearsMap.get(year);
@@ -1314,7 +1340,7 @@ async function getMonthDetails() {
     // index 2 - contains whole response object from backend with data about month
     // todo refactor
 
-    reportsMap = _assembleReportsMap(allMonths, reportsMap);
+    reportsMap = _assembleReportsMap(allMonths, reportsMap, begin, props.end_date);
 
 	/*let dateTo = dayjs(props.end_date)
 	let dateFrom = dayjs(begin)*/
