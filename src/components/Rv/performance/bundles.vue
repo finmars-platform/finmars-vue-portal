@@ -71,7 +71,7 @@
 
 		<RvPerformanceCellErrorModal
 			v-model="cellErrorIsOpen"
-			:error-data="cellDetails.error"
+			:error-data="cellDetails"
 		/>
 
     </FmExpansionPanel>
@@ -539,6 +539,21 @@ async function _calcReportForBundle(bundle, row, rowRaw, abortSignal) {
 
 }
 
+function notifyClientError(textDetails) {
+
+	useNotify({
+		group: "fm_warning",
+		title: 'Warning',
+		text: {
+			title: 'Client Error',
+			details: textDetails,
+		},
+		ignoreDuplicates: true, // TODO: remove after fixing duplicated calls of init()
+		duration: 20000,
+	});
+
+}
+
 /**
  * Process Promise.allSettled()
  * with calculations for all portfolio bundles - rows.
@@ -557,6 +572,7 @@ async function _calcReportForBundle(bundle, row, rowRaw, abortSignal) {
 async function _processReportCalculationPromises(calculationPromises, abortSignal) {
 
 	const bundlesWithNftdError = new Set();
+	const bundlesWithoutPrtfRegs = new Set();
 
     /*responses.find(bundleResponses => {
         return
@@ -607,6 +623,9 @@ async function _processReportCalculationPromises(calculationPromises, abortSigna
                     bundlesWithNftdError.add( bundles.value[index].user_code );
 
                 }
+				else if (eKey === "no_portfolio_registers_found") {
+					bundlesWithoutPrtfRegs.add( bundles.value[index].user_code );
+				}
 
 			}
             // else { process fullfilled rows}
@@ -634,20 +653,21 @@ async function _processReportCalculationPromises(calculationPromises, abortSigna
 
     results.forEach(processProms);
 
+
+
 	if (bundlesWithNftdError.size) {
 
 		const bundlesUserCodes = [...bundlesWithNftdError].join(", ");
 
-        useNotify({
-            group: "fm_warning",
-            title: 'Warning',
-            text: {
-                title: 'Client Error',
-                details: `Check that calculations are correct for portfolio bundles: ${bundlesUserCodes}`,
-            },
-            ignoreDuplicates: true, // TODO: remove after fixing duplicated calls of init()
-            duration: 20000
-        })
+		notifyClientError(`Check that calculations are correct for portfolio bundles: ${bundlesUserCodes}`)
+
+	}
+
+	if (bundlesWithoutPrtfRegs.size) {
+
+		const bundlesUserCodes = [...bundlesWithoutPrtfRegs].join(", ");
+
+		notifyClientError(`The following portfolio bundles have no portfolio registers: ${bundlesUserCodes}`);
 
 	}
 
@@ -891,7 +911,7 @@ function showCellDetailsModal(bundleId, cellData) {
 
 //# endregion
 
-let noNotificationErrorKeys = ["no_first_transaction_date", "no_portfolio_register_records_found", "less_than_year"];
+let noNotificationErrorKeys = ["no_first_transaction_date", "no_portfolio_registers_found", "no_portfolio_register_records_found", "less_than_year"];
 
 async function getDay(ids, abortSignal) {
     let endDate = dayjs(props.end_date)

@@ -96,7 +96,7 @@ async function init() {
 
 	readyStatus.value = false;
 	let error;
-
+	console.log("testing519 errorData", props.errorData);
 	if (props.errorData) {
 		error = JSON.parse(JSON.stringify(props.errorData));
     }
