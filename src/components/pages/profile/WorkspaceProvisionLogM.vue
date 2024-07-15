@@ -23,9 +23,9 @@ const lines = ref(['Waiting to server response...'])
 
 async function getData() {
 
-	let logText = await useApi("realmProvisionLog.put", {
+	let logText = await useApi("realmProvisionLog.get", {
 		params: {id: props.realmId},
-		body: {realm_code: props.realmCode, app_code: 'backend'}
+		filters: {app_code: 'backend'},
 	})
 	lines.value = logText.split(/\r?\n/);
 
