@@ -72,7 +72,7 @@
 					<template #default="{ close }">
 						<div class="fm_list">
 							<div class="fm_list_item">
-								<a class="fm_message_item_date" :href="`${apiUrl}/documentation`">
+								<a class="fm_message_item_date" :href="getDocumentationLink()">
 									Documentation
 								</a>
 							</div>
@@ -244,6 +244,14 @@ async function setCurrent(item) {
 	// let res = await useApi("masterSet.patch", {params: {id: item.id}})
 
 	window.location.href = '/' + item.realm_code + '/' + item.space_code + '/v/home'
+}
+
+function getDocumentationLink() {
+	const pieces = window.location.href
+		.split('/v/')[1].split('/')
+		.map(item => item.split('-').join(' '));
+
+	return `https://docs.finmars.com/search?term=${pieces.join(' ')}`;
 }
 
 

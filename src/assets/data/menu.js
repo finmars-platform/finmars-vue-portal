@@ -6,29 +6,29 @@ export default [
         title: 'Reports',
         icon: 'mdi-chart-bar',
         pages: [
-            { title: 'Balance', link: 'reports/balance', old: true },
-            { title: 'P&L', link: 'reports/profit-and-lost', old: true },
-            { title: 'Transaction', link: 'reports/transaction', old: true },
+            { title: 'Balance', link: 'report/balance', old: true },
+            { title: 'P&L', link: 'report/profit-and-lost', old: true },
+            { title: 'Transaction', link: 'report/transaction', old: true },
             { title: 'Performance', link: '/reports/performance' },
-            { title: 'Cash flow', link: 'reports/cash-flow-projection', old: true },
-            { title: 'Events', link: 'reports/check-for-events', old: true },
+            { title: 'Cash flow', link: 'report/cash-flow-projection', old: true },
+            { title: 'Events', link: 'report/check-for-events', old: true },
         ]
     },
     {
         title: 'Data',
         icon: 'mdi-database',
         pages: [
-            { title: 'Portfolios', link: 'data/portfolios', old: true },
-            { title: 'Registers', link: 'data/portfolio-registers', old: true },
-            { title: 'Accounts', link: 'data/accounts', old: true },
-            { title: 'Instruments', link: 'data/instruments', old: true },
-            { title: 'Counterparties', link: 'data/counterparties', old: true },
-            { title: 'Responsibles', link: 'data/responsibles', old: true },
+            { title: 'Portfolios', link: 'data/portfolio', old: true },
+            { title: 'Registers', link: 'data/portfolio-register', old: true },
+            { title: 'Accounts', link: 'data/account', old: true },
+            { title: 'Instruments', link: 'data/instrument', old: true },
+            { title: 'Counterparties', link: 'data/counterparty', old: true },
+            { title: 'Responsibles', link: 'data/responsible', old: true },
             { title: 'Currencies', link: 'data/currency', old: true },
             { title: 'Strategies 1', link: 'data/strategy/1', old: true },
             { title: 'Strategies 2', link: 'data/strategy/2', old: true },
             { title: 'Strategies 3', link: 'data/strategy/3', old: true },
-            { title: 'Events', link: 'data/generated-events', old: true },
+            { title: 'Events', link: 'data/generated-event', old: true },
 
         ]
     },
@@ -36,19 +36,19 @@ export default [
         title: 'Transactions',
         icon: 'mdi-history',
         pages: [
-            { title: 'Transactions', link: 'data/complex-transactions', old: true },
-            { title: 'Base transactions', link: 'data/transactions', old: true },
-            { title: 'Register records', link: 'data/portfolio-register-records', old: true },
+            { title: 'Transactions', link: 'data/complex-transaction', old: true },
+            { title: 'Base transactions', link: 'data/transaction', old: true },
+            { title: 'Register records', link: 'data/portfolio-register-record', old: true },
         ]
     },
     {
         title: 'Valuations',
         icon: 'mdi-layers',
         pages: [
-            { title: 'Prices', link: 'data/pricing', old: true},
-            { title: 'Prices journal', link: 'data/pricing-errors', old: true},
-            { title: 'FX rates', link: 'data/currencies', old: true},
-            { title: 'FX rates journal', link: 'data/currencies-errors', old: true},
+            { title: 'Prices', link: 'data/price-history', old: true},
+            { title: 'Prices journal', link: 'data/price-history-error', old: true},
+            { title: 'FX rates', link: 'data/currency-history', old: true},
+            { title: 'FX rates journal', link: 'data/currency-history-error', old: true},
             { title: 'Run pricing', link: '/valuations/run-pricing' }
         ]
     },
@@ -71,10 +71,10 @@ export default [
         title: 'Journal',
         icon: 'mdi-book',
         pages: [
-            { title: 'Instruments audit', link: 'data/audit/instruments', old: true},
-            { title: 'Transactions audit', link: 'data/audit/transactions', old: true},
+            { title: 'Instruments audit', link: 'data/audit/instrument', old: true},
+            { title: 'Transactions audit', link: 'data/audit/transaction', old: true},
             { title: 'Activity log', link: ''},
-            { title: 'System files', link: 'system/file-reports', old: true},
+            { title: 'System files', link: 'system/file-report', old: true},
         ]
     },
     {
@@ -89,11 +89,11 @@ export default [
                         link: 'data/audit/transactions',
                         old: true,
                         pages: [
-                            { title: 'Entity viewer layouts', link: 'settings/layouts', old: true},
-                            { title: 'Dashboard layouts', link: 'dashboard-layouts', old: true},
-                            { title: 'Input form layouts', link: 'settings/input-form-layouts', old: true},
-                            { title: 'Context menu layouts', link: 'context-menu-layouts', old: true},
-                            { title: 'Manual sorting', link: 'manual-sorting-layouts', old: true},
+                            { title: 'Entity viewer layouts', link: 'settings/layout', old: true},
+                            { title: 'Dashboard layouts', link: 'dashboard-layout', old: true},
+                            { title: 'Input form layouts', link: 'settings/input-form-layout', old: true},
+                            { title: 'Context menu layouts', link: 'context-menu-layout', old: true},
+                            { title: 'Manual sorting', link: 'manual-sorting-layout', old: true},
 
                         ]
                     },
@@ -109,11 +109,11 @@ export default [
                         link: 'data/audit/transactions',
                         old: true,
                         pages: [
-                            { title: 'Account types', link: 'settings/account-types', old: true},
-                            { title: 'Instument types', link: 'settings/instument-types', old: true},
-                            { title: 'Transaction types', link: 'settings/transaction-types', old: true},
-                            { title: 'User attributes', link: 'settings/entites-custom-attributes', old: true},
-                            { title: 'Reference tables', link: 'import/reference-tables', old: true},
+                            { title: 'Account types', link: 'settings/account-type', old: true},
+                            { title: 'Instument types', link: 'settings/instument-type', old: true},
+                            { title: 'Transaction types', link: 'settings/transaction-type', old: true},
+                            { title: 'User attributes', link: 'settings/entites-custom-attribute', old: true},
+                            { title: 'Reference tables', link: 'import/reference-table', old: true},
                             { title: 'Mapping tables', link: 'import/mapping-tables-import', old: true},
                             { title: 'Templates', link: 'template-layouts', old: true},
 
@@ -124,8 +124,8 @@ export default [
                         link: 'data/audit/transactions',
                         old: true,
                         pages: [
-                            { title: 'Account types', link: 'settings/account-types', old: true},
-                            { title: 'Instument types', link: 'settings/instument-types', old: true}
+                            { title: 'Account types', link: 'settings/account-type', old: true},
+                            { title: 'Instument types', link: 'settings/instument-type', old: true}
                         ]
                     },
                 ]
