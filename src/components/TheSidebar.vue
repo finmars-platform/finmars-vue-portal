@@ -72,7 +72,7 @@
 									<ul class="sidenav-dropdown-menu display-none submenuElement">
 										<li v-if="accessTable.report_balance">
 											<a
-												:href="getUrlToOldApp('/reports/balance')"
+												:href="getUrlToOldApp('/report/balance')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Balance</span>
@@ -80,7 +80,7 @@
 										</li>
 										<li v-if="accessTable.report_pl">
 											<a
-												:href="getUrlToOldApp('/reports/profit-and-lost')"
+												:href="getUrlToOldApp('/report/profit-and-lost')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">P&L</span>
@@ -88,7 +88,7 @@
 										</li>
 										<li v-if="accessTable.report_transaction">
 											<a
-												:href="getUrlToOldApp('/reports/transaction')"
+												:href="getUrlToOldApp('/report/transaction')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Transaction</span>
@@ -111,7 +111,7 @@
 										</li>
 										<li v-if="accessTable.report_event">
 											<a
-												:href="getUrlToOldApp('/reports/check-for-events')"
+												:href="getUrlToOldApp('/report/check-for-events')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Events</span>
@@ -135,7 +135,7 @@
 									<ul class="sidenav-dropdown-menu submenuElement display-none">
 										<li v-if="accessTable.data_portfolio">
 											<a
-												:href="getUrlToOldApp('/data/portfolios')"
+												:href="getUrlToOldApp('/data/portfolio')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Portfolios</span>
@@ -143,7 +143,7 @@
 										</li>
 										<li v-if="accessTable.data_portfolio">
 											<a
-												:href="getUrlToOldApp('/data/portfolio-registers')"
+												:href="getUrlToOldApp('/data/portfolio-register')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Registers</span>
@@ -151,7 +151,7 @@
 										</li>
 										<li v-if="accessTable.data_account">
 											<a
-												:href="getUrlToOldApp('/data/accounts')"
+												:href="getUrlToOldApp('/data/account')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Accounts</span>
@@ -159,7 +159,7 @@
 										</li>
 										<li v-if="accessTable.data_instrument">
 											<a
-												:href="getUrlToOldApp('/data/instruments')"
+												:href="getUrlToOldApp('/data/instrument')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Instruments</span>
@@ -167,7 +167,7 @@
 										</li>
 										<li v-if="accessTable.data_counterparty">
 											<a
-												:href="getUrlToOldApp('/data/counterparties')"
+												:href="getUrlToOldApp('/data/counterparty')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Counterparties</span>
@@ -175,7 +175,7 @@
 										</li>
 										<li v-if="accessTable.data_responsible">
 											<a
-												:href="getUrlToOldApp('/data/responsibles')"
+												:href="getUrlToOldApp('/data/responsible')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Responsibles</span>
@@ -215,7 +215,7 @@
 										</li>
 										<li v-if="accessTable.data_instrument">
 											<a
-												:href="getUrlToOldApp('data/generated-events')"
+												:href="getUrlToOldApp('data/generated-event')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Events</span>
@@ -247,7 +247,7 @@
 										</li>
 										<li>
 											<a
-												:href="getUrlToOldApp('/tasks')"
+												:href="getUrlToOldApp('/task')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Tasks</span>
@@ -255,7 +255,7 @@
 										</li>
 										<li>
 											<a
-												:href="getUrlToOldApp('/workers')"
+												:href="getUrlToOldApp('/worker')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Workers</span>
@@ -263,7 +263,7 @@
 										</li>
 										<li>
 											<a
-												:href="getUrlToOldApp('/workflows')"
+												:href="getUrlToOldApp('/workflow')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Workflows</span>
@@ -287,7 +287,7 @@
 									<ul class="sidenav-dropdown-menu submenuElement display-none">
 										<li v-if="accessTable.data_transaction">
 											<a
-												:href="getUrlToOldApp('/data/complex-transactions')"
+												:href="getUrlToOldApp('/data/complex-transaction')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Transactions</span>
@@ -295,7 +295,7 @@
 										</li>
 										<li>
 											<a
-												:href="getUrlToOldApp('/data/transactions')"
+												:href="getUrlToOldApp('/data/transaction')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Base Transactions</span>
@@ -303,7 +303,7 @@
 										</li>
 										<li>
 											<a
-												:href="getUrlToOldApp('/data/portfolio-register-records')"
+												:href="getUrlToOldApp('/data/portfolio-register-record')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Register Records</span>
@@ -330,7 +330,7 @@
 									<ul class="sidenav-dropdown-menu submenuElement display-none">
 										<li v-if="accessTable.data_price_history">
 											<a
-												:href="getUrlToOldApp('/data/pricing')"
+												:href="getUrlToOldApp('/data/price-history')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Prices</span>
@@ -346,7 +346,7 @@
 										</li>
 										<li v-if="accessTable.data_fx_history">
 											<a
-												:href="getUrlToOldApp('/data/currencies')"
+												:href="getUrlToOldApp('/data/currency-history')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">FX Rates</span>
@@ -502,7 +502,7 @@
 									<ul class="sidenav-dropdown-menu display-none submenuElement">
 										<li>
 											<a
-												:href="getUrlToOldApp('/portfolio-reconcile-groups')"
+												:href="getUrlToOldApp('/portfolio-reconcile-group')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Portfolio Reconcile Groups</span>
@@ -578,7 +578,7 @@
 											>
 												<li>
 													<a
-														:href="getUrlToOldApp('/import/layouts')"
+														:href="getUrlToOldApp('/import/layout')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
@@ -588,7 +588,7 @@
 												</li>
 												<li>
 													<a
-														:href="getUrlToOldApp('/dashboard-layouts')"
+														:href="getUrlToOldApp('/dashboard-layout')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
@@ -598,7 +598,7 @@
 												</li>
 												<li>
 													<a
-														:href="getUrlToOldApp('/settings/input-form-layouts')"
+														:href="getUrlToOldApp('/settings/input-form-layout')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
@@ -608,7 +608,7 @@
 												</li>
 												<li>
 													<a
-														:href="getUrlToOldApp('/context-menu-layouts')"
+														:href="getUrlToOldApp('/context-menu-layout')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
@@ -619,7 +619,7 @@
 
 												<li>
 													<a
-														:href="getUrlToOldApp('/manual-sorting-layouts')"
+														:href="getUrlToOldApp('/manual-sorting-layout')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Manual Sorting</span>
@@ -640,7 +640,7 @@
 
 									<li>
 										<a
-											:href="getUrlToOldApp('/settings/notifications')"
+											:href="getUrlToOldApp('/settings/notification')"
 											class="sidemenu-btn"
 										>
 											<span class="side-nav-title">Notifications</span>
@@ -677,7 +677,7 @@
 											>
 												<li v-if="accessTable.configuration_account_type">
 													<a
-														:href="getUrlToOldApp('/data/account-types')"
+														:href="getUrlToOldApp('/data/account-type')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Account Types</span>
@@ -685,7 +685,7 @@
 												</li>
 												<li v-if="accessTable.configuration_instrument_type">
 													<a
-														:href="getUrlToOldApp('/data/instrument-types')"
+														:href="getUrlToOldApp('/data/instrument-type')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Instrument Types</span>
@@ -693,7 +693,7 @@
 												</li>
 												<li v-if="accessTable.configuration_transaction_type">
 													<a
-														:href="getUrlToOldApp('/data/transaction-types')"
+														:href="getUrlToOldApp('/data/transaction-type')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
@@ -721,7 +721,7 @@
 												</li> -->
 												<li v-if="accessTable.configuration_user_attributes">
 													<a
-														:href="getUrlToOldApp('/settings/user-attributes')"
+														:href="getUrlToOldApp('/settings/user-attribute')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">User Attributes</span>
@@ -730,7 +730,7 @@
 
 												<li v-if="accessTable.configuration_reference_table">
 													<a
-														:href="getUrlToOldApp('/import/reference-tables')"
+														:href="getUrlToOldApp('/import/reference-table')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Reference Tables</span>
@@ -748,7 +748,7 @@
 
 												<li v-if="accessTable.configuration_template">
 													<a
-														:href="getUrlToOldApp('/template-layouts')"
+														:href="getUrlToOldApp('/template-layout')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Templates</span>
@@ -757,7 +757,7 @@
 
 												<li>
 													<a
-														:href="getUrlToOldApp('/portfolio-bundles')"
+														:href="getUrlToOldApp('/portfolio-bundle')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Portfolio Bundles</span>
@@ -790,7 +790,7 @@
 												</li>
 												<li>
 													<a
-														:href="getUrlToOldApp('/pricing-policies')"
+														:href="getUrlToOldApp('/pricing-policy')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Policies</span>
@@ -909,7 +909,7 @@
 											>
 												<li>
 													<a
-														:href="getUrlToOldApp('/pricing-procedures')"
+														:href="getUrlToOldApp('/pricing-procedure')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
@@ -919,7 +919,7 @@
 												</li>
 												<li>
 													<a
-														:href="getUrlToOldApp('/data-procedures')"
+														:href="getUrlToOldApp('/data-procedure')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Data Procedures</span>
@@ -927,7 +927,7 @@
 												</li>
 												<li>
 													<a
-														:href="getUrlToOldApp('/expression-procedures')"
+														:href="getUrlToOldApp('/expression-procedure')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
@@ -937,7 +937,7 @@
 												</li>
 												<li>
 													<a
-														:href="getUrlToOldApp('/schedules')"
+														:href="getUrlToOldApp('/schedule')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Schedules</span>
@@ -966,7 +966,7 @@
 											>
 												<li v-if="accessTable.configuration_aliases">
 													<a
-														:href="getUrlToOldApp('/settings/aliases')"
+														:href="getUrlToOldApp('/settings/aliase')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Aliases</span>
@@ -975,7 +975,7 @@
 
 												<li>
 													<a
-														:href="getUrlToOldApp('/settings/tooltips')"
+														:href="getUrlToOldApp('/settings/tooltip')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Tooltips</span>
@@ -984,7 +984,7 @@
 
 												<li>
 													<a
-														:href="getUrlToOldApp('/settings/palettes')"
+														:href="getUrlToOldApp('/settings/palette')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Palettes</span>
