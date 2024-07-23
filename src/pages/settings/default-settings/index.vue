@@ -148,18 +148,6 @@
 				:items="''"
 			/>-->
 		</div>
-		<div class="wrapp-select">
-			<FmSelect
-				v-model="ecosystemDefaultsRef.instrument_pricing_scheme"
-				label="Instrument Pricing Scheme"
-				:items="instrumentSchemeListItems"
-			/>
-			<FmSelect
-				v-model="ecosystemDefaultsRef.currency_pricing_scheme"
-				label="Currency Pricing Scheme"
-				:items="currencySchemeListItems"
-			/>
-		</div>
 		<FmBtn
 			type="primary"
 			class="g-toggle-filters-btn"
@@ -207,11 +195,9 @@
 	const strategiesSecondSubgroupItems = ref([])
 	const strategiesThirdLightItems = ref([])
 	const strategiesThirdSubgroupItems = ref([])
-	const instrumentSchemeListItems = ref([])
-	const currencySchemeListItems = ref([])
 
 	const disabledBtn = ref(false)
-	const ecosystemDefaultsRef = ref( JSON.parse(JSON.stringify(store.ecosystemDefaults)) );
+	const ecosystemDefaultsRef = ref(JSON.parse(JSON.stringify(store.ecosystemDefaults)) );
 
 	init()
 
@@ -249,8 +235,6 @@
 			useLoadAllPages('strategies2SubgroupList.get', opts), // 20
 			useLoadAllPages('strategies3ListLight.get', opts), // 21
 			useLoadAllPages('strategies3SubgroupList.get', opts), // 22
-			useLoadAllPages('instrumentSchemeList.get', opts), // 23
-			useLoadAllPages('currencySchemeList.get', opts), // 24
 		])
 
 		instrumentItems.value = res[0];
@@ -276,8 +260,6 @@
 		strategiesSecondSubgroupItems.value = res[20];
 		strategiesThirdLightItems.value = res[21];
 		strategiesThirdSubgroupItems.value = res[22];
-		instrumentSchemeListItems.value = res[23];
-		currencySchemeListItems.value = res[24];
 	}
 
 	async function defaultSettingsCreate() {
