@@ -65,13 +65,20 @@ export default defineNuxtConfig({
 	hooks: {
 		'pages:extend': (pages) => {
 
+			pages.forEach((page, index) => {
 
-			pages.forEach((page) => {
+				// do not create pages for components whose names start with "_"
+				if ( page.path.search(/\/_./) > -1 ) {
+					pages.splice(index, 1);
+					return;
+				}
+
 				if (page.path.startsWith('/profile')) {
 					page.path = '/v' + page.path
 				} else {
 					page.path = '/:realm_code/:space_code/v' + page.path
 				}
+
 			})
 
 		},
