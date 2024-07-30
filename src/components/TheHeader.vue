@@ -89,8 +89,9 @@
 			</template>
 
 
-			<FmToggleButton
-				:checked="toggleIsDark"
+			<fm-switch
+				class="m-r-4"
+				v-model="toggleIsDark"
 				@change="toggleTheme()"
 			/>
 
@@ -284,8 +285,8 @@ function toggleTheme() {
 	updateUserD();
 }
 
-const toggleText = computed(() => !store.user.data.dark_mode ? 'Enable Dark Theme' : 'Disable Dark Theme' )
-const toggleIsDark = computed(() => store.user.data.dark_mode)
+// const toggleText = computed(() => !store.user.data.dark_mode ? 'Enable Dark Theme' : 'Disable Dark Theme' )
+const toggleIsDark = ref(store.user.data.dark_mode);
 
 init()
 
