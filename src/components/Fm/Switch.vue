@@ -2,17 +2,21 @@
 	<label class="toggle-switch">
 		<input
 			type="checkbox"
-			:checked="checked"
-			@click="emit('change')">
+			:checked="modelValue"
+			@change="emit('update:modelValue', !modelValue)"
+		>
 		<span class="slider round"></span>
 	</label>
 </template>
 
 <script setup lang="ts">
 	defineProps({
-		checked: Boolean,
+		modelValue: Boolean,
 	});
-	let emit = defineEmits(['change']);
+	let emit = defineEmits({
+		'update:modelValue': (value) => true,
+	})
+
 </script>
 
 <style scoped lang="scss">
