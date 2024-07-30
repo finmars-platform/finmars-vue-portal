@@ -9,13 +9,12 @@
 	</label>
 </template>
 
-<script setup lang="ts">
-	defineProps({
+<script setup>
+	let props = defineProps({
 		modelValue: Boolean,
 	});
-	let emit = defineEmits({
-		'update:modelValue': (value) => true,
-	})
+
+	let emit = defineEmits(['update:modelValue']);
 
 </script>
 
