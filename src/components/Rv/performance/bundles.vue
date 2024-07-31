@@ -227,6 +227,8 @@ let tableRowsComp = computed(() => {
 
 });
 
+let portfolioRegistersList;
+
 function isCellErrorModeActive(cell) {
     return cell.error && !cell.noErrorMode;
 }
@@ -529,11 +531,63 @@ async function _calcReportForBundle(bundle, row, rowRaw, abortSignal) {
 		calcAnnualForBundle(bundle.id, row, rowRaw, abortSignal),
 	]);
 
-	const rejectedRes = responses.find(res => res.status === "rejected");
+    const processNoPrrError = function () {
 
-	if (rejectedRes) {
-		row.error = true;
-	}
+        const keysForColsWithErrors = [
+            'daily',
+            'month',
+            'q',
+            'year',
+            'last',
+            'beforeLast',
+            'incept',
+            'annualized',
+        ];
+
+        keysForColsWithErrors.forEach(key => {
+
+            const errorKey = key + 'Error';
+
+            if ( rowRaw[errorKey] ) {
+
+                rowRaw[errorKey].noErrorMode = true;
+
+                row[key] = "-";
+
+            } else {
+
+                console.error(`[RvPerformanceBundle _calcReportForBundle] A cell '${key}' of a row '${row.user_code}' '${row.id}' lacks a data for the error 'no_portfolio_register_records'`);
+
+                rowRaw[errorKey] = {
+                    description: "No portfolio register records for the period of performance report"
+                };
+
+            }
+
+        })
+
+    }
+
+    try {
+
+	    const rejectedRes = responses.find(res => res.status === "rejected");
+
+        if (rejectedRes) {
+
+            row.error = true;
+
+            const errorKey = useGetExceptionKey(rejectedRes.reason);
+
+            if (errorKey === 'no_portfolio_register_records') {
+                processNoPrrError();
+            }
+
+        }
+
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
 
     return responses;
 
@@ -554,6 +608,46 @@ function notifyClientError(textDetails) {
 
 }
 
+async function getPortfolioRegisters() {
+
+    if (portfolioRegistersList) {
+        return portfolioRegistersList;
+    }
+
+    const res = await useApi("portfolioRegisterList.get");
+
+    if (res._$error) {
+        throw res._$error;
+    }
+
+    portfolioRegistersList = res.results;
+
+    return structuredClone(portfolioRegistersList);
+
+}
+
+/**
+ *
+ * @param { [String] } userCodes - user codes of portfolio registers
+ * @return {Promise<String>} - short names matching to user codes
+ */
+const getPrtfRegsShortNames = async function(userCodes) {
+
+    const prtfRegistersList = await getPortfolioRegisters();
+
+    let prtfRegistersShortNames = prtfRegistersList
+        .filter(pRegister => {
+            return userCodes.includes(pRegister.user_code);
+        })
+        .map(pRegister => {
+            return pRegister.short_name;
+        });
+
+    return prtfRegistersShortNames.join(", ");
+
+}
+
+
 /**
  * Process Promise.allSettled()
  * with calculations for all portfolio bundles - rows.
@@ -573,6 +667,7 @@ async function _processReportCalculationPromises(calculationPromises, abortSigna
 
 	const bundlesWithNftdError = new Set();
 	const bundlesWithoutPrtfRegs = new Set();
+    const prtfRegsWithoutRecords = new Set();
 
     /*responses.find(bundleResponses => {
         return
@@ -626,9 +721,21 @@ async function _processReportCalculationPromises(calculationPromises, abortSigna
 				else if (eKey === "no_portfolio_registers_found") {
 					bundlesWithoutPrtfRegs.add( bundles.value[index].user_code );
 				}
+                else if (eKey === "no_portfolio_register_records") {
+
+                    const errorDetails = useGetExceptionDetails(res.reason);
+
+                    let prtfRegistersUserCodes = errorDetails.split(": ").at(-1); // result string example: "portfolioRegister1, portfolioRegister2, portfolioRegister3"
+                    prtfRegistersUserCodes = prtfRegistersUserCodes.split(", ");
+
+                    prtfRegistersUserCodes.forEach(userCode => {
+                        prtfRegsWithoutRecords.add(userCode);
+					});
+
+				}
 
 			}
-            // else { process fullfilled rows}
+            // else { process fulfilled rows}
 
 
 		});
@@ -654,7 +761,6 @@ async function _processReportCalculationPromises(calculationPromises, abortSigna
     results.forEach(processProms);
 
 
-
 	if (bundlesWithNftdError.size) {
 
 		const bundlesUserCodes = [...bundlesWithNftdError].join(", ");
@@ -668,6 +774,15 @@ async function _processReportCalculationPromises(calculationPromises, abortSigna
 		const bundlesUserCodes = [...bundlesWithoutPrtfRegs].join(", ");
 
 		notifyClientError(`The following portfolio bundles have no portfolio registers: ${bundlesUserCodes}`);
+
+	}
+
+    if (prtfRegsWithoutRecords.size) {
+
+        const prtfRegsUserCodes = [...prtfRegsWithoutRecords];
+        const prtfRegsShortNames = await getPrtfRegsShortNames(prtfRegsUserCodes);
+
+        notifyClientError(`The following portfolio registers have no portfolio register records for the period of performance report: ${prtfRegsShortNames}`);
 
 	}
 
@@ -911,7 +1026,7 @@ function showCellDetailsModal(bundleId, cellData) {
 
 //# endregion
 
-let noNotificationErrorKeys = ["no_first_transaction_date", "no_portfolio_registers_found", "no_portfolio_register_records_found", "less_than_year"];
+let noNotificationErrorKeys = ["no_first_transaction_date", "no_portfolio_registers_found", "no_portfolio_register_records", "less_than_year"];
 
 async function getDay(ids, abortSignal) {
     let endDate = dayjs(props.end_date)
