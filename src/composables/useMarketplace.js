@@ -164,7 +164,6 @@ export function useMarketplace() {
 		} else {
 			filters['is_package'] = true
 		}
-		console.log('filters', filters)
 
 		const payload = {
 			pageSize: pageSize.value,
@@ -174,7 +173,7 @@ export function useMarketplace() {
 		}
 
 		try {
-			const data = await useApi('marketplace.get', { filters: payload })
+			const data = await useApi('marketplaceList.get', { filters: payload })
 
 			if (data) {
 				generatePages(data)
@@ -198,21 +197,23 @@ export function useMarketplace() {
 		}
 	}
 
-	function installConfiguration(item) {
+	async function installConfiguration(item) {
 		console.log('Install configuration', item)
 
-		configurationService
-			.installConfiguration({
+		try {
+			const payload = {
 				configuration_code: item.configuration_code,
 				version: item.latest_release_object.version,
 				channel: item.latest_release_object.channel,
 				is_package: item.is_package
-			})
-			.then((data) => {
-				activeTaskId.value = data.task_id
+			}
 
-				$scope.$apply()
-			})
+			const res = await useApi('marketplaceInstall.post', { body: payload })
+
+			activeTaskId.value = res.task_id
+		} catch (e) {
+			console.log('installConfiguration', e)
+		}
 	}
 
 	function setFiltersQuery(query) {
@@ -225,6 +226,10 @@ export function useMarketplace() {
 		isShowModules.value = bool
 
 		getData()
+	}
+
+	function removeActiveTaskId() {
+		activeTaskId.value = null
 	}
 
 	return {
@@ -243,6 +248,7 @@ export function useMarketplace() {
 		openPage,
 		getAvatar,
 		setFiltersQuery,
-		setShowModules
+		setShowModules,
+		removeActiveTaskId
 	}
 }

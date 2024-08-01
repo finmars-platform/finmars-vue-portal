@@ -1,0 +1,251 @@
+<template>
+	<div class="marketplace-item">
+		<div class="row extra">
+			<h1 class="title">Marketplace</h1>
+		</div>
+
+		<div class="content">
+			<div
+				v-if="activeTaskId"
+				style="position: absolute; right: 10px; z-index: 1; background: #fff"
+			>
+				<FmTaskCard
+					@update="getData"
+					@removeTaskId="removeActiveTaskId"
+					:task-id="activeTaskId"
+				/>
+			</div>
+			<div v-if="checkReadyStatus" class="position-relative">
+				<div class="row">
+					<FmCard flex="100" class="inm-card-special">
+						<div class="column">
+							<div class="row">
+								<div class="configuration-card-image">
+									<img v-if="item.thumbnail" :src="item.thumbnail" alt="" />
+									<div
+										v-if="!item.thumbnail"
+										class="configuration-card-no-thumbnail"
+										:style="{ backgroundColor: getAvatar(item.name[0]) }"
+									>
+										{{ item.name.charAt(0) }}
+									</div>
+								</div>
+
+								<div>
+									<div class="configuration-card-from-marketplace-organization">
+										{{ item.organization_object.name }}
+									</div>
+
+									<div>
+										<h3 class="configuration-card-name" style="margin: 4px 0">
+											{{ item.name }}
+										</h3>
+									</div>
+
+									<div class="row" v-if="item.localItem">
+										Current: ({{ item.localItem.version }}
+										{{ item.localItem.channel }})
+									</div>
+
+									<div class="row">
+										<FmSelect
+											:modelValue="channel"
+											@update:modelValue="setSelect"
+											@change="getVersions"
+											:items="[
+												{ value: 'stable', label: 'Stable' },
+												{ value: 'rc', label: 'Release Candidate' }
+											]"
+											prop_id="value"
+											prop_name="label"
+										/>
+										<FmSelect
+											v-model="version"
+											@change="getVersions"
+											:items="versions"
+											prop_id="version"
+											prop_name="version"
+										/>
+
+										<div v-if="!item.localItem">
+											<FmBtn
+												type="primary"
+												class="open"
+												@click.prevent.stop="installConfiguration(item)"
+											>
+												Install
+											</FmBtn>
+										</div>
+
+										<div v-if="item.localItem">
+											<div
+												v-if="
+													item.latest_release_object.version ==
+													item.localItem.version
+												"
+											>
+												<FmBtn
+													type="primary"
+													class="open"
+													@click.prevent.stop="installConfiguration(item)"
+												>
+													Reinstall
+												</FmBtn>
+											</div>
+
+											<div
+												v-if="
+													item.latest_release_object.version !=
+													item.localItem.version
+												"
+											>
+												<FmBtn
+													type="primary"
+													class="open"
+													@click.prevent.stop="installConfiguration(item)"
+												>
+													Update
+												</FmBtn>
+											</div>
+										</div>
+
+										<div style="padding: 0 8px">
+											Download count: {{ item.download_count }}
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div>
+								<h3>Description</h3>
+								<div v-if="item.description">{{ item.description }}</div>
+								<div v-if="!item.description">No description</div>
+							</div>
+
+							<div>
+								<h3>Other Info</h3>
+
+								<div>
+									<div class="configuration-card-from-marketplace-code">
+										Code:
+										<b>{{ item.configuration_code }}</b>
+									</div>
+									<div class="configuration-card-from-marketplace-version">
+										Version: <b>{{ item.latest_release_object.version }}</b>
+									</div>
+									<div class="configuration-card-from-marketplace-version">
+										Developer: <b>{{ item.organization_object.name }}</b>
+									</div>
+									<div class="configuration-card-from-marketplace-version">
+										Type:
+										<b v-if="item.is_package">Is a Package</b>
+										<b v-if="!item.is_package">Is a Module¬</b>
+									</div>
+								</div>
+							</div>
+						</div>
+					</FmCard>
+				</div>
+
+				<div class="loader-overlay" v-show="processing">
+					<div class="row">
+						<FmLoader :size="100" :positionCenter="true" />
+					</div>
+				</div>
+			</div>
+			<div v-if="!checkReadyStatus">
+				<div class="row">
+					<FmLoader :size="100" :positionCenter="true" />
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script setup>
+	import { useGetNuxtLink } from '~/composables/useMeta'
+	import { useMarketplace } from '~/composables/useMarketplace'
+
+	const route = useRoute()
+	const router = useRouter()
+
+	const {
+		installConfiguration,
+		readyStatus,
+		getAvatar,
+		activeTaskId,
+		removeActiveTaskId
+	} = useMarketplace()
+
+	const item = ref(null)
+	const processing = ref(false)
+	const channel = ref('stable')
+	const versions = ref([])
+	const version = ref(null)
+
+	const checkReadyStatus = computed(() => readyStatus.data)
+
+	async function getData() {
+		const { configCodes } = useStore()
+
+		try {
+			item.value = await useApi('marketplaceItem.get', {
+				params: { id: route?.params?.id }
+			})
+
+			readyStatus.data = true
+
+			configCodes?.forEach(function (localItem) {
+				if (item.value.configuration_code === localItem.configuration_code) {
+					item.value.localItem = localItem
+				}
+			})
+		} catch (e) {
+			await router.push(useGetNuxtLink(`/marketplace/`, route.params))
+			console.warn('Error getTask', e)
+		}
+	}
+
+	function setSelect(newVal) {
+		channel.value = newVal
+
+		getVersions()
+	}
+
+	async function getVersions() {
+		versions.value = []
+
+		const payload = {
+			pageSize: 10,
+			page: 1,
+			configuration_code: item.value.configuration_code,
+			channel: channel.value,
+			ordering: '-created'
+		}
+
+		try {
+			const data = await useApi('marketplaceItemVersion.get', {
+				filters: payload
+			})
+			versions.value = data.results
+
+			if (versions.value?.length) {
+				version.value = versions.value[0].version
+			}
+		} catch (e) {
+			console.warn('Error getVersions', e)
+		}
+	}
+
+	onMounted(async () => {
+		await getData()
+		await getVersions()
+	})
+</script>
+
+<style lang="scss" scoped>
+	.marketplace-item {
+		font-size: 14px;
+		padding: 8px;
+	}
+</style>
