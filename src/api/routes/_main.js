@@ -444,4 +444,10 @@ export default {
 		 * */
 		get: prefix + '/specific-data/values-for-select/'
 	},
+	vaultRecord: {
+		get: prefix + '/vault/vault-record/',
+		post: prefix + '/vault/vault-record/',
+		put: prefix + '/vault/vault-record/{id}/',
+		delete: prefix + '/vault/vault-record/{id}/',
+	}
 }
