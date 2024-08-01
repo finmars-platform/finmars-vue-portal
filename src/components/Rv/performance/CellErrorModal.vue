@@ -65,30 +65,64 @@ const errorMessageC = computed(() => {
 });
 //# endregion
 
-async function getErrorDescForLessThanYear(error) {
+async function getPrtfRegsShortNames(errorData) {
 
-	const res = await useApi("portfolioRegisterList.get");
+    const res = await useApi("portfolioRegisterList.get");
 
-	if (res._$error) {
-		throw res._$error;
-	}
+    if (res._$error) {
+        throw res._$error;
+    }
 
-	const errorDetails = useGetExceptionDetails(error.data);
+    const errorDetails = useGetExceptionDetails(errorData);
 
-	let prtfRegistersUserCodes = errorDetails.split(": ").at(-1); // result string example: "portfolioRegister1, portfolioRegister2, portfolioRegister3"
-	prtfRegistersUserCodes = prtfRegistersUserCodes.split(", ");
+    let prtfRegistersUserCodes = errorDetails.split(": ").at(-1); // result string example: "portfolioRegister1, portfolioRegister2, portfolioRegister3"
+    prtfRegistersUserCodes = prtfRegistersUserCodes.split(", ");
 
-	let prtfRegistersShortNames = res.results
-		.filter(pRegister => {
-			return prtfRegistersUserCodes.includes(pRegister.user_code);
-		})
-		.map(pRegister => {
-			return `<span class="text-bold">${pRegister.short_name}</span>`;
-		});
+    const shortNames = res.results
+        .filter(pRegister => {
+            return prtfRegistersUserCodes.includes(pRegister.user_code);
+        })
+        .map(pRegister => {
+            return `<span class="text-bold">${pRegister.short_name}</span>`;
+        });
 
-	prtfRegistersShortNames = prtfRegistersShortNames.join(", ");
+    return shortNames.join(", ");
+
+}
+
+async function getDescForLessThanYear(error) {
+
+    /* const res = await useApi("portfolioRegisterList.get");
+
+    if (res._$error) {
+        throw res._$error;
+    }
+
+    const errorDetails = useGetExceptionDetails(error.data);
+
+    let prtfRegistersUserCodes = errorDetails.split(": ").at(-1); // result string example: "portfolioRegister1, portfolioRegister2, portfolioRegister3"
+    prtfRegistersUserCodes = prtfRegistersUserCodes.split(", ");
+
+    let prtfRegistersShortNames = res.results
+        .filter(pRegister => {
+            return prtfRegistersUserCodes.includes(pRegister.user_code);
+        })
+        .map(pRegister => {
+            return `<span class="text-bold">${pRegister.short_name}</span>`;
+        });
+
+    prtfRegistersShortNames = prtfRegistersShortNames.join(", ");*/
+    const prtfRegistersShortNames = await getPrtfRegsShortNames(error.data);
 
 	return `Return period of ${prtfRegistersShortNames} is less than a year (<365 days) (must not be annualized)`;
+
+}
+
+async function getDescForNoPrr(error) {
+
+    const prtfRegistersShortNames = await getPrtfRegsShortNames(error.data);
+
+    return `The following portfolio registers have no portfolio register records for the period of performance report: ${prtfRegistersShortNames}`;
 
 }
 
@@ -96,7 +130,7 @@ async function init() {
 
 	readyStatus.value = false;
 	let error;
-	console.log("testing519 errorData", props.errorData);
+
 	if (props.errorData) {
 		error = JSON.parse(JSON.stringify(props.errorData));
     }
@@ -104,8 +138,11 @@ async function init() {
 	error.errorKey = useGetExceptionKey(error.data);
 
 	if (error.errorKey === 'less_than_year') {
-		error.description = await getErrorDescForLessThanYear(error);
+		error.description = await getDescForLessThanYear(error);
 	}
+    else if (error.errorKey === 'no_portfolio_register_records') {
+        error.description = await getDescForNoPrr(error);
+    }
 
 	errorObj.value = error;
 
