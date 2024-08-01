@@ -252,3 +252,20 @@ export const utilGetLastDayOfMonth = (year, monthIndex, {excludeWeekend, formatt
 	return endDate;
 
 }
+
+export function splitLongWords(text, maxLength) {
+	const words = text.split(' ')
+	const splittedWords = words.map((word) => {
+		if (word.length <= maxLength) {
+			return word
+		}
+
+		let chunks = []
+		for (let i = 0; i < word.length; i += maxLength) {
+			chunks.push(word.substring(i, i + maxLength))
+		}
+		return chunks.join(' ')
+	})
+
+	return splittedWords.join(' ')
+}

@@ -250,8 +250,7 @@ export default {
 	},
 	performanceFirstTransaction: {
 		get:
-			prefix +
-			'/reports/performance-report/first-transaction-date/?bundle={id}'
+			prefix + '/reports/performance-report/first-transaction-date/?bundle={id}'
 	},
 	interfaceAccess: {
 		get: prefix + '/ui/portal-interface-access/'
@@ -444,7 +443,21 @@ export default {
 		 * */
 		get: prefix + '/specific-data/values-for-select/'
 	},
-	marketplace: {
+	marketplaceList: {
 		get: 'https://marketplace.finmars.com/api/v1/configuration/'
+	},
+	marketplaceItem: {
+		get: 'https://marketplace.finmars.com/api/v1/configuration/{id}/'
+	},
+	marketplaceItemVersion: {
+		get: 'https://marketplace.finmars.com/api/v1/configuration-release/'
+	},
+	marketplaceInstall: {
+		post:
+			prefix +
+			'/configuration/configuration/install-configuration-from-marketplace/'
+	},
+	taskCard: {
+		get: prefix + '/tasks/task/{taskId}/'
 	}
 }

@@ -20,7 +20,11 @@
 				v-if="activeTaskId"
 				style="position: absolute; right: 10px; z-index: 1; background: #fff"
 			>
-				<task-card task-id="activeTaskId"></task-card>
+				<FmTaskCard
+					@removeTaskId="removeActiveTaskId"
+					@update="getData"
+					:task-id="activeTaskId"
+				/>
 			</div>
 		</div>
 		<div class="m-t-8 m-b-8 marketplace-page-filters row">
@@ -31,7 +35,12 @@
 			/>
 		</div>
 		<div v-if="readyStatus.data" class="list">
-			<FmCard v-for="item in items" :key="item" class="card">
+			<FmCard
+				v-for="item in items"
+				:key="item"
+				class="card"
+				@click="openCard(item.id)"
+			>
 				<div class="row">
 					<div class="image">
 						<img v-if="item.thumbnail" :src="item.thumbnail" alt="" />
@@ -77,7 +86,7 @@
 							item.latest_release_object?.version === item.localItem.version
 						"
 					>
-						<FmBtn class="open" @click="installConfiguration($event, item)">
+						<FmBtn class="open" @click="installConfiguration(item)">
 							Reinstall
 						</FmBtn>
 					</div>
@@ -136,6 +145,10 @@
 
 <script setup>
 	import { useMarketplace } from '~/composables/useMarketplace'
+	import { useGetNuxtLink } from '~/composables/useMeta'
+
+	const route = useRoute()
+	const router = useRouter()
 
 	const {
 		getData,
@@ -153,8 +166,13 @@
 		openPage,
 		getAvatar,
 		setFiltersQuery,
-		setShowModules
+		setShowModules,
+		removeActiveTaskId
 	} = useMarketplace()
+
+	function openCard(id) {
+		router.push(useGetNuxtLink(`/marketplace/${id}`, route.params))
+	}
 
 	onMounted(() => {
 		getData()
