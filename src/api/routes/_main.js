@@ -449,5 +449,8 @@ export default {
 		post: prefix + '/vault/vault-record/',
 		put: prefix + '/vault/vault-record/{id}/',
 		delete: prefix + '/vault/vault-record/{id}/',
+	},
+	explorerViewFile: {
+		get: prefix + '/explorer/view/?path={path}'
 	}
 }
