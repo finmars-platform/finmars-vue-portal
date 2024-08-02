@@ -15,17 +15,13 @@
 				label="Show Modules"
 				@update:model-value="setShowModules"
 			/>
-
-			<div
+			<FmTaskCard
 				v-if="activeTaskId"
-				style="position: absolute; right: 10px; z-index: 1; background: #fff"
-			>
-				<FmTaskCard
-					@removeTaskId="removeActiveTaskId"
-					@update="getData"
-					:task-id="activeTaskId"
-				/>
-			</div>
+				@update="getData"
+				@removeTaskId="removeActiveTaskId"
+				:task-id="activeTaskId"
+				class="task-card"
+			/>
 		</div>
 		<div class="m-t-8 m-b-8 marketplace-page-filters row">
 			<FmInputText
@@ -86,7 +82,10 @@
 							item.latest_release_object?.version === item.localItem.version
 						"
 					>
-						<FmBtn class="open" @click="installConfiguration(item)">
+						<FmBtn
+							class="open"
+							@click.prevent.stop="installConfiguration(item)"
+						>
 							Reinstall
 						</FmBtn>
 					</div>
@@ -96,7 +95,10 @@
 							item.latest_release_object?.version !== item.localItem.version
 						"
 					>
-						<FmBtn class="open" @click="installConfiguration($event, item)">
+						<FmBtn
+							class="open"
+							@click.prevent.stop="installConfiguration($event, item)"
+						>
 							Update
 						</FmBtn>
 					</div>
@@ -286,6 +288,13 @@
 
 		.caption {
 			margin: 10px;
+		}
+
+		.task-card {
+			position: absolute;
+			top: 62px;
+			right: 10px;
+			z-index: 1;
 		}
 	}
 </style>

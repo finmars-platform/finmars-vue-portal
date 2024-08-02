@@ -1,31 +1,28 @@
 <template>
 	<div class="marketplace-item">
+		<FmTaskCard
+			v-if="activeTaskId"
+			@update="getData"
+			@removeTaskId="removeActiveTaskId"
+			:task-id="activeTaskId"
+			class="task-card"
+		/>
 		<div class="row extra">
 			<h1 class="title">Marketplace</h1>
 		</div>
 
 		<div class="content">
-			<div
-				v-if="activeTaskId"
-				style="position: absolute; right: 10px; z-index: 1; background: #fff"
-			>
-				<FmTaskCard
-					@update="getData"
-					@removeTaskId="removeActiveTaskId"
-					:task-id="activeTaskId"
-				/>
-			</div>
-			<div v-if="checkReadyStatus" class="position-relative">
+			<div v-if="checkReadyStatus">
 				<FmCard flex="100" class="inm-card-special">
 					<div class="row">
 						<div class="image">
 							<img v-if="item.thumbnail" :src="item.thumbnail" alt="" />
 							<div
 								v-if="!item.thumbnail"
-								class="configuration-card-no-thumbnail"
-								:style="{ backgroundColor: getAvatar(item.name[0]) }"
+								class="no-thumbnail"
+								:style="{ backgroundColor: getAvatar(item.name?.[0]) }"
 							>
-								{{ item.name.charAt(0) }}
+								{{ item.name?.charAt(0) }}
 							</div>
 						</div>
 
@@ -41,8 +38,8 @@
 							</div>
 
 							<div v-if="item.localItem">
-								Current: ({{ item.localItem.version }}
-								{{ item.localItem.channel }})
+								Current: ({{ item.localItem?.version }}
+								{{ item.localItem?.channel }})
 							</div>
 
 							<div class="row g-24">
@@ -129,10 +126,10 @@
 								<b>{{ item.configuration_code }}</b>
 							</div>
 							<div class="configuration-card-from-marketplace-version">
-								Version: <b>{{ item.latest_release_object.version }}</b>
+								Version: <b>{{ item.latest_release_object?.version }}</b>
 							</div>
 							<div class="configuration-card-from-marketplace-version">
-								Developer: <b>{{ item.organization_object.name }}</b>
+								Developer: <b>{{ item.organization_object?.name }}</b>
 							</div>
 							<div class="configuration-card-from-marketplace-version">
 								Type:
@@ -265,13 +262,14 @@
 		}
 
 		.no-thumbnail {
-			height: 40px;
-			width: 40px;
+			height: 80px;
+			width: 80px;
 			background: var(--primary-color);
 			border-radius: 50%;
 			text-align: center;
 			color: #fff;
-			line-height: 40px;
+			line-height: 80px;
+			font-size: 20px;
 		}
 	}
 
@@ -286,14 +284,25 @@
 	.select {
 		margin: 0;
 	}
+
 	.open {
 		margin-top: 6px;
 	}
+
 	.title {
 		margin-bottom: 24px;
 	}
+
 	.sub-title {
 		margin: 10px 0;
 		font-weight: bold;
+	}
+
+	.task-card {
+		position: absolute;
+		top: 62px;
+		right: 10px;
+		z-index: 1;
+		background: var(--dialog-background-color);
 	}
 </style>
