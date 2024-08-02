@@ -10,11 +10,8 @@
 				{{ task.verbose_name }} [{{ task.id }}]
 			</a>
 
-			<div class="task-card-started-at">
+			<div v-fm-tooltip="task.created" class="task-card-started-at">
 				Started at: <b>{{ dayjs(task.created).format('HH:mm:ss') }}</b>
-				<FmTooltip v-if="false" class="tooltip_2" direction="bottom">
-					{{ task.created }}
-				</FmTooltip>
 			</div>
 
 			<div class="task-card-executed-by">
@@ -22,18 +19,11 @@
 			</div>
 
 			<div v-if="task.status === 'P'" class="task-card-progress-block">
-				<div
-					layout="row"
-					layout-sm="column"
-					layout-align="space-around"
-					class="loader-spinner"
-				>
-					<FmProgressBar :progress="task.progress_object?.percent || 0" />
-
-					<FmTooltip v-if="false" class="tooltip_2" direction="bottom">
-						{{ task.progress_object?.percent }}%
-					</FmTooltip>
-				</div>
+				<FmProgressBar
+					v-fm-tooltip="task.progress_object?.percent"
+					:progress="task.progress_object?.percent || 0"
+					class="progress-bar"
+				/>
 
 				<div class="task-card-progress-text">
 					{{ taskDescriptionPretty }}
@@ -159,5 +149,39 @@
 
 <style scoped lang="scss">
 	.task-card {
+		width: 300px;
+		min-height: 50px;
+		padding: 16px;
+
+		.task-card-name {
+			margin: 4px 8px 4px 0;
+			font-size: 14px;
+			cursor: pointer;
+			display: block;
+			color: var(--secondary-color);
+		}
+
+		.task-card-started-at {
+			font-size: 11px;
+			opacity: 0.7;
+		}
+
+		.ask-card-executed-by {
+			font-size: 11px;
+			opacity: 0.7;
+			margin: 2px 0;
+		}
+
+		.task-card-progress-text {
+			font-size: 11px;
+			overflow: hidden;
+			display: block;
+			margin-top: 15px;
+			white-space: break-spaces;
+			padding-left: 12px;
+		}
+		.progress-bar {
+			margin-top: 12px;
+		}
 	}
 </style>

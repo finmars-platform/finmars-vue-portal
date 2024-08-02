@@ -16,136 +16,132 @@
 				/>
 			</div>
 			<div v-if="checkReadyStatus" class="position-relative">
-				<div class="row">
-					<FmCard flex="100" class="inm-card-special">
-						<div class="column">
-							<div class="row">
-								<div class="configuration-card-image">
-									<img v-if="item.thumbnail" :src="item.thumbnail" alt="" />
-									<div
-										v-if="!item.thumbnail"
-										class="configuration-card-no-thumbnail"
-										:style="{ backgroundColor: getAvatar(item.name[0]) }"
-									>
-										{{ item.name.charAt(0) }}
-									</div>
-								</div>
-
-								<div>
-									<div class="configuration-card-from-marketplace-organization">
-										{{ item.organization_object.name }}
-									</div>
-
-									<div>
-										<h3 class="configuration-card-name" style="margin: 4px 0">
-											{{ item.name }}
-										</h3>
-									</div>
-
-									<div class="row" v-if="item.localItem">
-										Current: ({{ item.localItem.version }}
-										{{ item.localItem.channel }})
-									</div>
-
-									<div class="row">
-										<FmSelect
-											:modelValue="channel"
-											@update:modelValue="setSelect"
-											@change="getVersions"
-											:items="[
-												{ value: 'stable', label: 'Stable' },
-												{ value: 'rc', label: 'Release Candidate' }
-											]"
-											prop_id="value"
-											prop_name="label"
-										/>
-										<FmSelect
-											v-model="version"
-											@change="getVersions"
-											:items="versions"
-											prop_id="version"
-											prop_name="version"
-										/>
-
-										<div v-if="!item.localItem">
-											<FmBtn
-												type="primary"
-												class="open"
-												@click.prevent.stop="installConfiguration(item)"
-											>
-												Install
-											</FmBtn>
-										</div>
-
-										<div v-if="item.localItem">
-											<div
-												v-if="
-													item.latest_release_object.version ==
-													item.localItem.version
-												"
-											>
-												<FmBtn
-													type="primary"
-													class="open"
-													@click.prevent.stop="installConfiguration(item)"
-												>
-													Reinstall
-												</FmBtn>
-											</div>
-
-											<div
-												v-if="
-													item.latest_release_object.version !=
-													item.localItem.version
-												"
-											>
-												<FmBtn
-													type="primary"
-													class="open"
-													@click.prevent.stop="installConfiguration(item)"
-												>
-													Update
-												</FmBtn>
-											</div>
-										</div>
-
-										<div style="padding: 0 8px">
-											Download count: {{ item.download_count }}
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<div>
-								<h3>Description</h3>
-								<div v-if="item.description">{{ item.description }}</div>
-								<div v-if="!item.description">No description</div>
-							</div>
-
-							<div>
-								<h3>Other Info</h3>
-
-								<div>
-									<div class="configuration-card-from-marketplace-code">
-										Code:
-										<b>{{ item.configuration_code }}</b>
-									</div>
-									<div class="configuration-card-from-marketplace-version">
-										Version: <b>{{ item.latest_release_object.version }}</b>
-									</div>
-									<div class="configuration-card-from-marketplace-version">
-										Developer: <b>{{ item.organization_object.name }}</b>
-									</div>
-									<div class="configuration-card-from-marketplace-version">
-										Type:
-										<b v-if="item.is_package">Is a Package</b>
-										<b v-if="!item.is_package">Is a Module¬</b>
-									</div>
-								</div>
+				<FmCard flex="100" class="inm-card-special">
+					<div class="row">
+						<div class="image">
+							<img v-if="item.thumbnail" :src="item.thumbnail" alt="" />
+							<div
+								v-if="!item.thumbnail"
+								class="configuration-card-no-thumbnail"
+								:style="{ backgroundColor: getAvatar(item.name[0]) }"
+							>
+								{{ item.name.charAt(0) }}
 							</div>
 						</div>
-					</FmCard>
-				</div>
+
+						<div>
+							<div class="configuration-card-from-marketplace-organization">
+								{{ item.organization_object.name }}
+							</div>
+
+							<div>
+								<h3 class="configuration-card-name">
+									{{ item.name }}
+								</h3>
+							</div>
+
+							<div v-if="item.localItem">
+								Current: ({{ item.localItem.version }}
+								{{ item.localItem.channel }})
+							</div>
+
+							<div class="row g-24">
+								<FmSelect
+									:modelValue="channel"
+									@update:modelValue="setSelect"
+									@change="getVersions"
+									:items="[
+										{ value: 'stable', label: 'Stable' },
+										{ value: 'rc', label: 'Release Candidate' }
+									]"
+									prop_id="value"
+									prop_name="label"
+									class="select"
+								/>
+								<FmSelect
+									v-model="version"
+									@change="getVersions"
+									:items="versions"
+									prop_id="version"
+									prop_name="version"
+									class="select"
+								/>
+
+								<div v-if="!item.localItem">
+									<FmBtn
+										type="primary"
+										class="open"
+										@click.prevent.stop="installConfiguration(item)"
+									>
+										Install
+									</FmBtn>
+								</div>
+
+								<div v-if="item.localItem">
+									<div
+										v-if="
+											item.latest_release_object.version ==
+											item.localItem.version
+										"
+									>
+										<FmBtn
+											type="primary"
+											class="open"
+											@click.prevent.stop="installConfiguration(item)"
+										>
+											Reinstall
+										</FmBtn>
+									</div>
+
+									<div
+										v-if="
+											item.latest_release_object.version !=
+											item.localItem.version
+										"
+									>
+										<FmBtn
+											type="primary"
+											class="open"
+											@click.prevent.stop="installConfiguration(item)"
+										>
+											Update
+										</FmBtn>
+									</div>
+								</div>
+
+								<div>Download count: {{ item.download_count }}</div>
+							</div>
+						</div>
+					</div>
+
+					<div>
+						<h3 class="sub-title">Description</h3>
+						<div v-if="item.description">{{ item.description }}</div>
+						<div v-if="!item.description">No description</div>
+					</div>
+
+					<div>
+						<h3 class="sub-title">Other Info</h3>
+
+						<div>
+							<div class="configuration-card-from-marketplace-code">
+								Code:
+								<b>{{ item.configuration_code }}</b>
+							</div>
+							<div class="configuration-card-from-marketplace-version">
+								Version: <b>{{ item.latest_release_object.version }}</b>
+							</div>
+							<div class="configuration-card-from-marketplace-version">
+								Developer: <b>{{ item.organization_object.name }}</b>
+							</div>
+							<div class="configuration-card-from-marketplace-version">
+								Type:
+								<b v-if="item.is_package">Is a Package</b>
+								<b v-if="!item.is_package">Is a Module¬</b>
+							</div>
+						</div>
+					</div>
+				</FmCard>
 
 				<div class="loader-overlay" v-show="processing">
 					<div class="row">
@@ -247,5 +243,57 @@
 	.marketplace-item {
 		font-size: 14px;
 		padding: 8px;
+	}
+
+	.row {
+		display: flex;
+		align-items: center;
+
+		&.g-24 {
+			gap: 24px;
+		}
+	}
+
+	.image {
+		padding-right: 24px;
+
+		img {
+			height: 80px;
+			width: 80px;
+			min-width: 80px;
+			border-radius: 50%;
+		}
+
+		.no-thumbnail {
+			height: 40px;
+			width: 40px;
+			background: var(--primary-color);
+			border-radius: 50%;
+			text-align: center;
+			color: #fff;
+			line-height: 40px;
+		}
+	}
+
+	.configuration-card-from-marketplace-organization {
+		color: #ddd;
+	}
+
+	.configuration-card-name {
+		margin: 4px 0;
+	}
+
+	.select {
+		margin: 0;
+	}
+	.open {
+		margin-top: 6px;
+	}
+	.title {
+		margin-bottom: 24px;
+	}
+	.sub-title {
+		margin: 10px 0;
+		font-weight: bold;
 	}
 </style>
