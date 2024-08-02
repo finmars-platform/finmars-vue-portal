@@ -30,7 +30,7 @@
 	watch( () => props.items, () => setLast())
 
 	function setLast() {
-		last.value = props.items.length - 1
+		if (props.items?.length) last.value = props.items.length - 1
 	}
 </script>
 
