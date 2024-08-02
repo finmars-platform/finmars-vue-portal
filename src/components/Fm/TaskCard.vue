@@ -1,6 +1,6 @@
 <template>
 	<div class="task-card">
-		<FmIcon icon="close" size="16" @click="close" />
+		<FmIcon icon="close" size="16" @click="close" class="close" />
 		<div v-if="task">
 			<a
 				class="task-card-name"
@@ -153,6 +153,11 @@
 		min-height: 50px;
 		padding: 16px;
 
+		background: var(--dialog-background-color);
+		border-radius: 6px;
+		box-shadow: 0 1px 22px -12px #607d8b;
+		margin: 8px 0;
+
 		.task-card-name {
 			margin: 4px 8px 4px 0;
 			font-size: 14px;
@@ -166,7 +171,7 @@
 			opacity: 0.7;
 		}
 
-		.ask-card-executed-by {
+		.task-card-executed-by {
 			font-size: 11px;
 			opacity: 0.7;
 			margin: 2px 0;
@@ -180,8 +185,21 @@
 			white-space: break-spaces;
 			padding-left: 12px;
 		}
+
 		.progress-bar {
 			margin-top: 12px;
+		}
+
+		.task-card-result {
+			text-align: center;
+			font-size: 16px;
+		}
+
+		.close {
+			cursor: pointer;
+			position: absolute;
+			right: 8px;
+			top: 16px;
 		}
 	}
 </style>
