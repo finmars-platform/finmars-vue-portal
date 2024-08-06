@@ -459,5 +459,8 @@ export default {
 	},
 	taskCard: {
 		get: prefix + '/tasks/task/{taskId}/'
+	},
+	fileReport: {
+		get: prefix + '/file-reports/file-report/{fileId}/view/'
 	}
 }
