@@ -3,17 +3,17 @@
 		title="File Preview"
 		:modelValue="!!data"
 		@update:modelValue="() => emit('update:modelValue')"
+		class="modal-download-file"
 	>
-		<template #modalTop>
+		<div class="p-b-16" style="position: relative">
 			<FmIcon
 				v-if="contentType !== 'image'"
 				v-fm-tooltip="'Copy to clipboard'"
 				@click="copyContent(data.content_formatted)"
-				icon="copy"
+				icon="file_copy"
+				class="icon-copy"
 			/>
-		</template>
-		<div class="p-b-16">
-			<div v-show="readyStatus">
+			<div>
 				<div
 					v-if="contentType === 'text'"
 					class="file-preview-content-wrap"
@@ -32,31 +32,26 @@
 
 				<div
 					v-show="
-						contentType == 'json' ||
-						contentType == 'yaml' ||
-						contentType == 'python'
+						contentType === 'json' ||
+						contentType === 'yaml' ||
+						contentType === 'python'
 					"
 					class="file-preview-content-wrap"
 				>
-					<div class="ace-editor" id="filePreviewAceEditor"></div>
-
 					<v-ace-editor
-						v-if="data.content_formatted"
+						v-if="data.content_formatted && contentType"
 						v-model:value="data.content_formatted"
 						theme="monokai"
 						:lang="contentType"
-						:options="editorOptions"
+						:options="EDITOR_OPTIONS"
+						@init="editorInit"
 						style="width: 100%; height: 500px"
 					/>
 				</div>
 
 				<div v-show="contentType === 'image'" class="text-center">
-					<img id="preview-image" />
+					<img :src="imageSrc" />
 				</div>
-			</div>
-
-			<div v-if="!readyStatus" class="flex-row fc-center">
-				<FmLoader />
 			</div>
 		</div>
 
@@ -76,13 +71,12 @@
 
 	const props = defineProps({
 		modelValue: Boolean,
-		data: Object
+		fileInfo: Object
 	})
 
 	const emit = defineEmits(['update:modelValue', 'updateLayouts'])
 
-	const data = ref(props.data)
-	const editorOptions = ref({
+	const EDITOR_OPTIONS = {
 		enableBasicAutocompletion: true,
 		enableSnippets: true,
 		fontSize: 14,
@@ -90,10 +84,12 @@
 		highlightActiveLine: false,
 		showPrintMargin: false,
 		useWorker: false
-	})
+	}
 
-	const contentType = ref('json')
-	const readyStatus = ref(true)
+	const data = ref(props.fileInfo)
+	const imageSrc = ref(null)
+
+	const contentType = ref(null)
 
 	function download() {
 		let content = data.value.content
@@ -113,62 +109,6 @@
 		}
 
 		downloadFile(content, 'application/force-download', name)
-	}
-
-	function initJsonEditor() {
-		editorOptions.value = {
-			enableBasicAutocompletion: true,
-			enableSnippets: true,
-			fontSize: 14,
-			behavioursEnabled: true,
-			highlightActiveLine: false,
-			showPrintMargin: false,
-			useWorker: false
-		}
-	}
-
-	function initYamlEditor() {
-		setTimeout(function () {
-			let editor = ace.edit('filePreviewAceEditor')
-			editor.setTheme('ace/theme/monokai')
-			editor.getSession().setMode('ace/mode/yaml')
-			editor.getSession().setUseWorker(false)
-			editor.setHighlightActiveLine(false)
-			editor.setShowPrintMargin(false)
-			ace.require('ace/ext/language_tools')
-			editor.setOptions({
-				enableBasicAutocompletion: true,
-				enableSnippets: true
-			})
-			editor.setFontSize(14)
-			editor.setBehavioursEnabled(true)
-			editor.setValue(data.value.content_formatted)
-
-			editor.focus()
-			editor.navigateFileStart()
-		}, 100)
-	}
-
-	function initPythonEditor() {
-		setTimeout(function () {
-			let editor = ace.edit('filePreviewAceEditor')
-			editor.setTheme('ace/theme/monokai')
-			editor.getSession().setMode('ace/mode/python')
-			editor.getSession().setUseWorker(false)
-			editor.setHighlightActiveLine(false)
-			editor.setShowPrintMargin(false)
-			ace.require('ace/ext/language_tools')
-			editor.setOptions({
-				enableBasicAutocompletion: true,
-				enableSnippets: true
-			})
-			editor.setFontSize(14)
-			editor.setBehavioursEnabled(true)
-			editor.setValue(data.value.content_formatted)
-
-			editor.focus()
-			editor.navigateFileStart()
-		}, 100)
 	}
 
 	function formatCSV() {
@@ -196,7 +136,12 @@
 	}
 
 	function copyContent(content) {
-		metaHelper.copyToBuffer(content)
+		copyToBuffer(content, () => useNotify({ type: 'success', title: 'Copied' }))
+	}
+
+	function editorInit(editor) {
+		editor.focus()
+		editor.navigateFileStart()
 	}
 
 	function formatContent() {
@@ -218,22 +163,16 @@
 			contentType.value = 'json'
 
 			data.value.content_formatted = data.value.content
-
-			initJsonEditor()
 		} else if (name.indexOf('.py') !== -1) {
 			contentType.value = 'python'
 
 			data.value.content_formatted = data.value.content
-
-			initPythonEditor()
 		} else if (name.indexOf('.yml') !== -1 || name.indexOf('.yaml') !== -1) {
 			contentType.value = 'yaml'
 
 			data.value.content_formatted = data.value.content
-
-			initYamlEditor()
 		} else if (name.indexOf('.txt') !== -1) {
-			vm.contentType = 'text'
+			contentType.value = 'text'
 
 			data.value.content_formatted = data.value.content
 		} else if (name.indexOf('.log') !== -1) {
@@ -248,16 +187,14 @@
 			contentType.value = 'image'
 
 			const urlCreator = window.URL || window.webkitURL
-			document.querySelector('#preview-image').src = urlCreator.createObjectURL(
-				data.value.blob
-			)
+			imageSrc.value = urlCreator.createObjectURL(data.value.blob)
 		}
 	}
 
 	function readBlob() {
 		const reader = new FileReader()
 
-		reader.addEventListener('loadend', function (e) {
+		reader.addEventListener('loadend', function () {
 			data.value.content = reader.result
 
 			formatContent()
@@ -275,4 +212,16 @@
 	})
 </script>
 
-<style lang="scss" scoped></style>
+<style>
+	.modal-download-file {
+		width: 80vw;
+
+		.icon-copy {
+			position: absolute;
+			top: 16px;
+			right: 16px;
+			cursor: pointer;
+			z-index: 1;
+		}
+	}
+</style>

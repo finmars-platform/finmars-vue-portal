@@ -4,7 +4,7 @@
 		<ModalDownloadFile
 			v-if="!!downloadFileData"
 			@update:modelValue="downloadFileData = null"
-			:data="downloadFileData"
+			:fileInfo="downloadFileData"
 		/>
 		<div v-if="task">
 			<a
@@ -35,7 +35,7 @@
 				</div>
 			</div>
 
-			<div v-if="task.status === 'D' || true" class="task-card-success-block">
+			<div v-if="task.status === 'D'" class="task-card-success-block">
 				<div class="task-card-result">Task Finished</div>
 
 				<div class="text-center width-100">
@@ -126,27 +126,6 @@
 					20
 				)
 			}
-
-			task.value.attachments = [
-				{
-					id: 271,
-					file_url: '',
-					file_name: '',
-					notes: '',
-					file_report: 271,
-					file_report_object: {
-						id: 271,
-						name: 'Configuration Import 2024-07-18-06-13 (Task 484125).json',
-						notes: 'System File',
-						type: 'configuration.import_configuration',
-						created_at: '2024-07-18T06:13:24.210101Z',
-						content_type: 'application/json',
-						content_type_verbose: 'json',
-						file_url:
-							'/.system/file_reports/file_report_2024-07-18-06-13_task_484125.json'
-					}
-				}
-			]
 
 			if (task.value.status === 'P' && props.taskId) {
 				timeOut.value = setTimeout(() => {

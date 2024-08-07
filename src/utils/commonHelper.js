@@ -280,3 +280,17 @@ export function downloadFile(blobParts, blobType, downloadFileName) {
 		window.URL.revokeObjectURL(data)
 	}, 100)
 }
+
+export function copyToBuffer(content, fn) {
+	const listener = function (e) {
+		e.clipboardData.setData('text/plain', content)
+
+		e.preventDefault()
+	}
+
+	document.addEventListener('copy', listener, { once: true })
+
+	document.execCommand('copy')
+
+	fn()
+}

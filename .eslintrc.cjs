@@ -26,13 +26,8 @@ module.exports = {
 				trailingComma: 'none'
 			}
 		],
-		'vue/multi-word-component-names': 'off'
-	},
-	globals: {
-		ref: 'readonly',
-		reactive: 'readonly',
-		useApi: 'readonly',
-		onMounted: 'readonly',
-		useStore: 'readonly'
+		'vue/multi-word-component-names': 'off',
+		'vue/no-unused-components': 'off',
+		'no-undef': 'off'
 	}
 }
