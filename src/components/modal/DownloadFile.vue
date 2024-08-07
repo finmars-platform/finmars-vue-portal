@@ -2,7 +2,7 @@
 	<BaseModal
 		title="File Preview"
 		:modelValue="!!data"
-		@update:modelValue="() => emit('update:modelValue')"
+		@update:modelValue="() => emit('close')"
 		class="modal-download-file"
 	>
 		<div class="p-b-16" style="position: relative">
@@ -67,14 +67,15 @@
 <script setup>
 	import { VAceEditor } from 'vue3-ace-editor'
 	import 'ace-builds/src-noconflict/mode-json'
+	import 'ace-builds/src-noconflict/mode-python'
+	import 'ace-builds/src-noconflict/mode-yaml'
 	import 'ace-builds/src-noconflict/theme-monokai'
 
 	const props = defineProps({
-		modelValue: Boolean,
 		fileInfo: Object
 	})
 
-	const emit = defineEmits(['update:modelValue', 'updateLayouts'])
+	const emit = defineEmits(['close'])
 
 	const EDITOR_OPTIONS = {
 		enableBasicAutocompletion: true,
