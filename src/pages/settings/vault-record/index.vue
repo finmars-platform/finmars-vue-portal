@@ -212,10 +212,13 @@
 	const createNewRecord = async () => {
 		try {
 			if (!validateNewRecord.value) return;
-			JSON.stringify(JSON.parse(newRecord.data));
+
+			newRecord.data = JSON.parse(newRecord.data);
+
 			await useApi('vaultRecord.post', {
 				body: newRecord,
 			});
+
 			newRecord = {
 				name: '',
 				user_code: '',
