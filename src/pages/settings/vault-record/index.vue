@@ -242,7 +242,7 @@
 
 	const editRecord = (vaultRecord) => {
 		editRecordObject.value = vaultRecord;
-		const recordObject = JSON.parse(vaultRecord.data);
+		const recordObject = vaultRecord.data;
 		for (const key in recordObject) {
 
 			items.value.push({
