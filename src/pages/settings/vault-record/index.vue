@@ -37,7 +37,7 @@
 				<span class="m-l-8" v-if="errorValidateData">Data is invalid</span>
 			</div>
 			<v-ace-editor
-				v-model:value="newRecord.data"
+				v-model:value="stringData"
 				@init="editorInit"
 				lang="json"
 				theme="monokai"
@@ -83,12 +83,12 @@
 			</FmCard>
 			<div class="m-t-8 m-b-8">
 				<span class="cursor-pointer" @click="showEditJson = !showEditJson">{{showEditJson ? 'Hide' : 'Show'}} JSON</span>
-				<span class="m-l-8" v-if="!editRecordObject.data.length">Field is required</span>
+				<span class="m-l-8" v-if="!editRecordObject.data">Field is required</span>
 				<span class="m-l-8" v-if="errorValidateData">Data is invalid</span>
 			</div>
 			<v-ace-editor
 				v-if="showEditJson"
-				v-model:value="editRecordObject.data"
+				v-model:value="stringData"
 				@init="editorInit"
 				lang="json"
 				theme="monokai"
@@ -132,6 +132,8 @@
 		data: '{}'
 	});
 
+	let stringData = ref('');
+
 	const editRecordObject = ref({});
 	const deleteRecordObject = ref({});
 
@@ -147,7 +149,7 @@
 	const errorValidateData = ref(false);
 
 	const validateEditRecord = computed(() => {
-		return editRecordObject.value.name.length && editRecordObject.value.data.length;
+		return editRecordObject.value.name.length && stringData.value.length;
 	});
 
 	const validateNewRecord = computed(() => {
@@ -163,35 +165,13 @@
 		showModal.value = true;
 	}
 
-	watch(
-		() => editRecordObject.value.data,
-		(newValue) => {
-			try {
-				JSON.stringify(JSON.parse(newValue));
-				errorValidateData.value = false;
-			} catch (error) {
-				errorValidateData.value = true;
-			}
-		}
-	);
-
-	watch(
-		() => newRecord.data,
-		(newValue) => {
-			try {
-				JSON.stringify(JSON.parse(newValue));
-				errorValidateData.value = false;
-			} catch (error) {
-				errorValidateData.value = true;
-			}
-		}
-	);
-
 
 	const updateRecord = async () => {
 		if (!validateEditRecord.value) return;
 		try {
-			JSON.stringify(JSON.parse(editRecordObject.value.data));
+
+			editRecordObject.value.data = JSON.parse(stringData.value)
+
 			await useApi('vaultRecord.put', {
 				params: { id: editRecordObject.value.id },
 				body: {
@@ -213,7 +193,7 @@
 		try {
 			if (!validateNewRecord.value) return;
 
-			newRecord.data = JSON.parse(newRecord.data);
+			newRecord.data = JSON.parse(stringData.value);
 
 			await useApi('vaultRecord.post', {
 				body: newRecord,
@@ -222,7 +202,7 @@
 			newRecord = {
 				name: '',
 				user_code: '',
-				data: '{}'
+				data: {}
 			};
 			await getRecords();
 			showModal.value = false;
@@ -255,6 +235,8 @@
 				showValue: false
 			})
 		}
+
+		stringData.value = JSON.stringify(vaultRecord.data, null, 2);
 		showEditModal.value = true;
 	}
 
