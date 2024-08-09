@@ -38,7 +38,7 @@
 			<div
 				class="selected_text"
 				:class="{'nothing_selected': !modelValue || (Array.isArray(modelValue) && !modelValue.length) }"
-				v-fm-tooltip="selectedName"
+				v-tooltip="selectedName"
 			>
 				{{ selectedName }}
 			</div>

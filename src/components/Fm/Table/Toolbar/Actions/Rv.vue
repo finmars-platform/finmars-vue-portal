@@ -9,13 +9,13 @@
 			<FmIcon
 				icon="refresh"
 				@click="scope.refreshTable()"
-				v-fm-tooltip="'Refresh Database Filters'"
+				v-tooltip="'Refresh Database Filters'"
 				btn
 			/>
 
 			<FmMenu v-if="scope.isRootEntityViewer">
 				<template #btn>
-					<FmIcon btn icon="view_stream" v-fm-tooltip="'Split'" />
+					<FmIcon btn icon="view_stream" v-tooltip="'Split'" />
 				</template>
 
 				<template #default="{ close }">
@@ -73,7 +73,7 @@
 						btn
 						icon="view_module"
 						:disabled="true"
-						v-fm-tooltip="'Matrix'"
+						v-tooltip="'Matrix'"
 					/>
 				</template>
 

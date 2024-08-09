@@ -67,7 +67,7 @@
 
 						<div
 							class="overflow-hidden text-overflow-ellipsis"
-							v-fm-tooltip="item.value"
+							v-tooltip="item.value"
 						>
 							<NuxtLink
 								v-if="item.link"
@@ -85,7 +85,7 @@
 					<template v-else>
 						<div
 							class="overflow-hidden text-overflow-ellipsis"
-							v-fm-tooltip="item"
+							v-tooltip="item"
 						>{{ item === '' ? '-' : item }}
 						</div>
 					</template>

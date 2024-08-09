@@ -4,7 +4,7 @@
 
 	<FmMenu v-if="isRootEntityViewer">
 		<template #btn>
-			<FmIcon btn icon="view_stream" v-fm-tooltip="'Split'" />
+			<FmIcon btn icon="view_stream" v-tooltip="'Split'" />
 		</template>
 
 		<template #default="{ close }">
@@ -73,7 +73,7 @@
 
 	<FmMenu>
 		<template #btn>
-			<FmIcon btn icon="upgrade" v-fm-tooltip="'Export'" />
+			<FmIcon btn icon="upgrade" v-tooltip="'Export'" />
 		</template>
 
 		<template #default="{ close }">
@@ -128,7 +128,7 @@
 
 	<FmMenu>
 		<template #btn>
-			<FmIcon btn icon="more_vert" v-fm-tooltip="'More'" />
+			<FmIcon btn icon="more_vert" v-tooltip="'More'" />
 		</template>
 
 		<template #default="{ close }">

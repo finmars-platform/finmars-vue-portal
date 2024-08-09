@@ -37,6 +37,7 @@ export default defineNuxtConfig({
 	modules: [
 		'@pinia/nuxt',
 		'@nuxt/test-utils/module',
+		'floating-vue/nuxt'
 	],
 	pinia: {
 		/* Options for @pinia/nuxt */
