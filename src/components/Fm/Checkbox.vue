@@ -23,9 +23,7 @@
 		label: String,
 		tooltip: String,
 	})
-	let emit = defineEmits({
-		'update:modelValue': (value) => true,
-	})
+	let emit = defineEmits(['update:modelValue']);
 </script>
 
 <style lang="scss" scoped>

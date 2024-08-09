@@ -88,6 +88,13 @@
 				</FmMenu>
 			</template>
 
+
+			<fm-switch
+				class="m-r-4"
+				v-model="toggleIsDark"
+				@change="toggleTheme()"
+			/>
+
 			<FmIcon
 				class="header_item header_icon_btn"
 				v-if="
@@ -157,12 +164,12 @@
 							<span class="side-nav-title">Profile</span>
 						</div>
 
-						<div
-							class="fm_list_item"
-							@click="toggleTheme(), close()"
-						>
-							{{toggleText}}
-						</div>
+<!--						<div-->
+<!--							class="fm_list_item"-->
+<!--							@click="toggleTheme(), close()"-->
+<!--						>-->
+<!--							{{toggleText}}-->
+<!--						</div>-->
 
 						<div
 							class="fm_list_item"
@@ -286,7 +293,8 @@ function toggleTheme() {
 	updateUserD();
 }
 
-const toggleText = computed(() => !store.user.data.dark_mode ? 'Enable Dark Theme' : 'Disable Dark Theme' )
+// const toggleText = computed(() => !store.user.data.dark_mode ? 'Enable Dark Theme' : 'Disable Dark Theme' )
+const toggleIsDark = ref(store.user.data.dark_mode);
 
 init()
 
