@@ -98,7 +98,7 @@
 							btn-primary
 							icon="more_vert"
 							@click="$mdOpenMenu($event)"
-							v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
+							v-tooltip="'ADD ' + evGetEntityNameByState()"
 						/>
 					</template>
 

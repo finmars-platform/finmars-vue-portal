@@ -145,7 +145,7 @@
 					class="g-cell g-add-column-button"
 					@click="columnsAdditionOpened()"
 				>
-					<FmIcon v-fm-tooltip="'Add new column'" icon="add_circle" />
+					<FmIcon v-tooltip="'Add new column'" icon="add_circle" />
 				</button>
 			</div>
 		</div>

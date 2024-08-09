@@ -5,7 +5,7 @@
 			<FmIcon
 				icon="refresh"
 				@click="scope.refreshTable()"
-				v-fm-tooltip="'Refresh Database Filters'"
+				v-tooltip="'Refresh Database Filters'"
 				btn
 			/>
 

@@ -6,7 +6,7 @@
 					class="add_ev_btn"
 					btnPrimary
 					icon="add"
-					v-fm-tooltip="'Add'"
+					v-tooltip="'Add'"
 				/>
 			</FmBtn>
 		</template>

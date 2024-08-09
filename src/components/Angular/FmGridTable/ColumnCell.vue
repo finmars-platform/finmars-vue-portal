@@ -13,7 +13,7 @@
 	>
 		<template #btn>
 			<div class="g-table-header-cell-wrapper">
-				<!-- v-fm-tooltip="
+				<!-- v-tooltip="
 			item.error_data ? item.error_data.description : item.name
 		" -->
 				<div
@@ -380,7 +380,7 @@
 					<FmIcon
 						class="i_align"
 						icon="format_align_left"
-						v-fm-tooltip="'Left alignment'"
+						v-tooltip="'Left alignment'"
 						@click="columnsData.changeColumnTextAlign(item, 'left', close)"
 						:class="{
 							active: columnsData.checkColTextAlign(
@@ -393,7 +393,7 @@
 					<FmIcon
 						class="i_align"
 						icon="format_align_center"
-						v-fm-tooltip="'Center alignment'"
+						v-tooltip="'Center alignment'"
 						@click="
 							columnsData.changeColumnTextAlign(item, 'center', close)
 						"
@@ -408,7 +408,7 @@
 					<FmIcon
 						class="i_align"
 						icon="format_align_right"
-						v-fm-tooltip="'Right alignment'"
+						v-tooltip="'Right alignment'"
 						@click="
 							columnsData.changeColumnTextAlign(item, 'right', close)
 						"

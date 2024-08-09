@@ -161,7 +161,7 @@
 					>
 						<span v-if="!saving">ok</span>
 
-						<!-- <div v-if="saving" v-fm-tooltip="'Starting import from unified database'">
+						<!-- <div v-if="saving" v-tooltip="'Starting import from unified database'">
 							<FmLoader />
 						</div>-->
 						<div v-if="saving">

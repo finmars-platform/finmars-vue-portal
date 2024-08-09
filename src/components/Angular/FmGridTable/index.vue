@@ -18,7 +18,7 @@
 				type="outlined"
 				class="m-8"
 				@click="resetUnfoldedGroups()"
-				v-fm-tooltip="'Close all previously opened groups. All other settings will remain'"
+				v-tooltip="'Close all previously opened groups. All other settings will remain'"
 			>START NEW
 			</FmBtn>
 
@@ -26,7 +26,7 @@
 				type="outlined"
 				class="m-8"
 				@click="continueReportGeneration()"
-				v-fm-tooltip="'Loading Report could take time.'"
+				v-tooltip="'Loading Report could take time.'"
 			>RESTORE SESSION
 			</FmBtn>
 

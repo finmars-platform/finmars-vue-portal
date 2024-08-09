@@ -42,7 +42,7 @@
 				<slot name="sideItems"></slot>
 
 				<div class="bi_side_item" v-if="tooltip">
-					<FmIcon v-fm-tooltip="tooltip" icon="info_outlined" />
+					<FmIcon v-tooltip="tooltip" icon="info_outlined" />
 				</div>
 			</div>
 

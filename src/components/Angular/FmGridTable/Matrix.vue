@@ -68,7 +68,7 @@
 							style="width: 100%"
 						>
 							<template #btn>
-								<div class="flex aic" v-fm-tooltip="scope.matrixValueAttrName">
+								<div class="flex aic" v-tooltip="scope.matrixValueAttrName">
 									<span
 										style="
 											white-space: nowrap;
@@ -100,7 +100,7 @@
 							v-if="!canChangeValueAttr"
 							v-bind="matrixValueAttrName"
 							class="report-viewer-matrix-value-name"
-							v-fm-tooltip="matrixValueAttrName"
+							v-tooltip="matrixValueAttrName"
 						></div>
 					</div>
 
@@ -112,7 +112,7 @@
 								:class="{
 									active: scope.activeItem == 'column_total:' + $index,
 								}"
-								v-fm-tooltip="column.key"
+								v-tooltip="column.key"
 								@click="scope.singleColumnTotalClick($event, $index)"
 							>
 								{{ column.key }}
@@ -144,7 +144,7 @@
 							{ active: scope.activeItem == 'columns_total' },
 						]"
 						style="right: 15px"
-						v-fm-tooltip="'TOTAL'"
+						v-tooltip="'TOTAL'"
 						@click="scope.columnsTotalClick($event)"
 					>
 						TOTAL
@@ -160,7 +160,7 @@
 							<div
 								v-for="(item, $index) in scope.columns"
 								class="report-viewer-matrix-cell report-viewer-matrix-cell-total rv-matrix-colored-cell rvMatrixCell"
-								v-fm-tooltip="item.total"
+								v-tooltip="item.total"
 								:class="[
 									`text-${scope.styles.cell.text_align}`,
 									{
@@ -195,7 +195,7 @@
 									'negative-red': scope.checkNegative(scope.grandtotal),
 								},
 							]"
-							v-fm-tooltip="scope.grandtotal"
+							v-tooltip="scope.grandtotal"
 							@click="scope.totalClick($event)"
 						>
 							{{ scope.formatValue(scope.grandtotal) }}
@@ -212,7 +212,7 @@
 										`text-${scope.styles.cell.text_align}`,
 										{ active: scope.activeItem == 'row_total:' + row.index },
 									]"
-									v-fm-tooltip="row.row_name"
+									v-tooltip="row.row_name"
 									@click="scope.singleRowTotalClick($event, row.index)"
 								>
 									{{ row.row_name }}
@@ -230,7 +230,7 @@
 								<div
 									class="report-viewer-matrix-cell rvMatrixCell"
 									v-for="item in row.items"
-									v-fm-tooltip="item.data.value"
+									v-tooltip="item.data.value"
 									@click="scope.cellClick($event, row.index, item.index)"
 									:class="[
 										`text-${scope.styles.cell.text_align}`,
@@ -261,7 +261,7 @@
 									>
 										<div
 											class="report-viewer-matrix-cell report-viewer-matrix-cell-total report-viewer-cell-border-left rv-matrix-colored-cell rvMatrixCell"
-											v-fm-tooltip="scope.rows[row.index].total"
+											v-tooltip="scope.rows[row.index].total"
 											@click="scope.singleRowTotalClick($event, row.index)"
 											:class="[
 												`text-${scope.styles.cell.text_align}`,
@@ -294,7 +294,7 @@
 							<div
 								v-for="(item, $index) in scope.columns"
 								class="report-viewer-matrix-cell report-viewer-matrix-cell-total rv-matrix-colored-cell rvMatrixCell"
-								v-fm-tooltip="item.total"
+								v-tooltip="item.total"
 								@click="scope.singleColumnTotalClick($event, $index)"
 								:class="[
 									`text-${scope.styles.cell.text_align}`,
@@ -310,7 +310,7 @@
 
 						<div
 							class="report-viewer-matrix-cell rv-matrix-lb-cell firstColumnCell rvMatrixCell"
-							v-fm-tooltip="'TOTAL'"
+							v-tooltip="'TOTAL'"
 							@click="scope.rowsTotalClick($event)"
 							:class="[
 								`text-${scope.styles.cell.text_align}`,
@@ -341,7 +341,7 @@
 								<div
 									v-for="row in scope.matrix"
 									class="report-viewer-matrix-cell rv-matrix-colored-cell firstColumnCell rvMatrixCell"
-									v-fm-tooltip="row.row_name"
+									v-tooltip="row.row_name"
 									@click="scope.singleRowTotalClick($event, row.index)"
 									:class="[
 										`text-${scope.styles.cell.text_align}`,
@@ -363,7 +363,7 @@
 								<div
 									class="report-viewer-matrix-cell rvMatrixCell"
 									v-for="item in row.items"
-									v-fm-tooltip="item.data.value"
+									v-tooltip="item.data.value"
 									@click="scope.cellClick($event, row.index, item.index)"
 									:class="[
 										`text-${scope.styles.cell.text_align}`,
@@ -408,7 +408,7 @@
 											),
 										},
 									]"
-									v-fm-tooltip="scope.formatValue(scope.rows[row.index].total)"
+									v-tooltip="scope.formatValue(scope.rows[row.index].total)"
 								>
 									{{ scope.formatValue(scope.rows[row.index].total) }}
 								</div>

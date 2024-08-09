@@ -20,7 +20,7 @@
 							class="add_ev_btn"
 							btnPrimary
 							icon="add"
-							v-fm-tooltip="'Add'"
+							v-tooltip="'Add'"
 						/>
 					</template>
 
@@ -64,7 +64,7 @@
 					:class="{
 						'g-use-from-above-filters-hidden': !scope.showUseFromAboveFilters,
 					}"
-					v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
+					v-tooltip="'ADD ' + evGetEntityNameByState()"
 					@click="evAddEntity"
 				/>
 
@@ -122,7 +122,7 @@
 							btnPrimary
 							icon="add"
 							@click="$mdOpenMenu($event)"
-							v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
+							v-tooltip="'ADD ' + evGetEntityNameByState()"
 						/>
 					</template>
 
@@ -186,7 +186,7 @@
 							btnPrimary
 							icon="add"
 							@click="$mdOpenMenu($event)"
-							v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
+							v-tooltip="'ADD ' + evGetEntityNameByState()"
 						/>
 					</template>
 
@@ -242,7 +242,7 @@
 							btnPrimary
 							icon="add"
 							@click="$mdOpenMenu($event)"
-							v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
+							v-tooltip="'ADD ' + evGetEntityNameByState()"
 						/>
 					</template>
 
@@ -300,7 +300,7 @@
 							btnPrimary
 							icon="add"
 							@click="$mdOpenMenu($event)"
-							v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
+							v-tooltip="'ADD ' + evGetEntityNameByState()"
 						/>
 					</template>
 
@@ -389,13 +389,13 @@
 			<FmIcon
 				icon="refresh"
 				@click="scope.refreshTable()"
-				v-fm-tooltip="'Refresh Database Filters'"
+				v-tooltip="'Refresh Database Filters'"
 				btn
 			/>
 
 			<FmMenu v-if="scope.isRootEntityViewer">
 				<template #btn>
-					<FmIcon btn icon="view_stream" v-fm-tooltip="'Split'" />
+					<FmIcon btn icon="view_stream" v-tooltip="'Split'" />
 				</template>
 
 				<template #default="{ close }">
@@ -500,7 +500,7 @@
 
 			<FmMenu v-if="scope.isRootEntityViewer && scope.isReport">
 				<template #btn>
-					<FmIcon btn icon="view_module" v-fm-tooltip="'Matrix'" />
+					<FmIcon btn icon="view_module" v-tooltip="'Matrix'" />
 				</template>
 
 				<template #default="{ close }">
@@ -518,7 +518,7 @@
 
 			<FmMenu>
 				<template #btn>
-					<FmIcon btn icon="upgrade" v-fm-tooltip="'Export'" />
+					<FmIcon btn icon="upgrade" v-tooltip="'Export'" />
 				</template>
 
 				<template #default="{ close }">
@@ -550,7 +550,7 @@
 
 			<FmMenu>
 				<template #btn>
-					<FmIcon btn icon="more_vert" v-fm-tooltip="'More'" />
+					<FmIcon btn icon="more_vert" v-tooltip="'More'" />
 				</template>
 
 				<template #default="{ close }">

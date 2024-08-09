@@ -3,7 +3,7 @@
 		:modelValue="inputText"
 		:label="title"
 		v-bind="$attrs"
-		v-fm-tooltip="tooltipText"
+		v-tooltip="tooltipText"
 		class="cursor-pointer"
 		@click="showModal"
 	>

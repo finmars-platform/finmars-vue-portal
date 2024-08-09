@@ -42,6 +42,36 @@
 					ExpansionPanel
 				</NuxtLink>
 			</li>
+			<li>
+				<NuxtLink :to="useGetNuxtLink('/demo/v-tooltip', $route.params)">
+					Tooltip directive
+				</NuxtLink>
+			</li>
+			<li>
+				<NuxtLink :to="useGetNuxtLink('/demo/v-tooltip-directive', $route.params)">
+					V-Tooltip directive
+				</NuxtLink>
+			</li>
+			<li>
+				<NuxtLink :to="useGetNuxtLink('/demo/v-close-popover-directive', $route.params)">
+					V-Close-popper directive
+				</NuxtLink>
+			</li>
+			<li>
+				<NuxtLink :to="useGetNuxtLink('/demo/v-dropdown', $route.params)">
+					VDropdown
+				</NuxtLink>
+			</li>
+			<li>
+				<NuxtLink :to="useGetNuxtLink('/demo/v-tooltip', $route.params)">
+					VTooltip
+				</NuxtLink>
+			</li>
+			<li>
+				<NuxtLink :to="useGetNuxtLink('/demo/v-menu', $route.params)">
+					VMenu
+				</NuxtLink>
+			</li>
 		</ul>
 	</div>
 </template>

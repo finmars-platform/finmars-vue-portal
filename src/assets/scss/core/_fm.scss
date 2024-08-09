@@ -1,10 +1,12 @@
 .fm_container {
-    padding: 15px $content-padding-x;
+	padding: 15px $content-padding-x;
 }
+
 .fm_page_title {
-    font-size: 24px;
-    margin-bottom: 15px;
+	font-size: 24px;
+	margin-bottom: 15px;
 }
+
 .fm_drop {
 	background: var(--base-backgroundColor);
 }
@@ -14,280 +16,271 @@
 }
 
 .fm_list_item {
-    display: flex;
-    align-items: center;
-    // height: 40px;
-    height: 36px;
-    padding: 0 16px;
-    transition: 0.3s;
-    white-space: nowrap;
+	display: flex;
+	align-items: center;
+	// height: 40px;
+	height: 36px;
+	padding: 0 16px;
+	transition: 0.3s;
+	white-space: nowrap;
 
-    &:not([disabled]) {
-        cursor: pointer;
-    }
+	&:not([disabled]) {
+		cursor: pointer;
+	}
 
-    &:not([disabled]):hover {
+	&:not([disabled]):hover {
 		background: var(--activeState-backgroundColor);
-    }
-    &.active {
+	}
+
+	&.active {
 		background: var(--table-header-background-color);
-    }
-    & + & {
-        border-top: $opts-borders;
-    }
+	}
+
+	& + & {
+		border-top: $opts-borders;
+	}
 }
 
 button.fm_list_item {
-    width: 100%;
+	width: 100%;
 }
 
 .fm_the_table_menu3 {
-    .menu_item {
-        height: 48px;
-    }
+	.menu_item {
+		height: 48px;
+	}
 }
 
 // Custom inputs
 .bi_default {
-    .bi_main_input {
-        width: 100%;
-        height: inherit;
-    }
+	.bi_main_input {
+		width: 100%;
+		height: inherit;
+	}
 }
 
 //# region Card
 .fm_card_title {
-    font-size: 24px;
-    margin-bottom: 25px;
+	font-size: 24px;
+	margin-bottom: 25px;
 }
+
 .fm_card_subtitle {
 	color: var(--secondary-color);
-    margin-top: -20px;
-    padding-bottom: 24px;
+	margin-top: -20px;
+	padding-bottom: 24px;
 }
+
 .fm_card_text {
 	color: var(--secondary-color);
 }
+
 .fm_tabs {
-    display: flex;
+	display: flex;
 	background: var(--base-backgroundColor);
-    border-bottom: 1px solid $border;
-    height: 48px;
-    line-height: 48px;
+	border-bottom: 1px solid $border;
+	height: 48px;
+	line-height: 48px;
 
-    &_item {
-        height: inherit;
-        line-height: inherit;
-        padding: 0 $content-padding-x;
-        //text-transform: uppercase;
-        font-size: 14px;
-        letter-spacing: 0.4px;
-        transition: background 0.3s;
-        cursor: pointer;
+	&_item {
+		height: inherit;
+		line-height: inherit;
+		padding: 0 $content-padding-x;
+		//text-transform: uppercase;
+		font-size: 14px;
+		letter-spacing: 0.4px;
+		transition: background 0.3s;
+		cursor: pointer;
 
-        &:hover {
+		&:hover {
 			background: var(--table-header-background-color);
-        }
-        &.active {
-            color: var(--primary-color);
-            border-bottom: 2px solid $primary;
+		}
 
-            &:hover {
-                background: $primary-lighten-2;
-            }
-        }
-    }
+		&.active {
+			color: var(--primary-color);
+			border-bottom: 2px solid $primary;
+
+			&:hover {
+				background: $primary-lighten-2;
+			}
+		}
+	}
 }
+
 //# endregion Card
 
 //# region pickmeup inside FmInputDateComplex
 
 .pickmeup.fm_cd_pickmeup {
-    background: var(--base-backgroundColor);
+	background: var(--base-backgroundColor);
 
-    .pmu-instance {
-        // width: 340px;
-        width: 334px;
-        height: 340px;
-        padding: 8px 0;
+	.pmu-instance {
+		// width: 340px;
+		width: 334px;
+		height: 340px;
+		padding: 8px 0;
 
-        .pmu-today {
-            background-color: var(--base-backgroundColor);
-        }
+		.pmu-today {
+			background-color: var(--base-backgroundColor);
+		}
 
-        .pmu-button {
-            color: var(--secondary-color);
-        }
+		.pmu-button {
+			color: var(--secondary-color);
+		}
 
-        .pmu-months,
-        .pmu-years {
-            .pmu-button {
-                width: 46px;
-                height: 47px;
-                margin: 5px;
-                line-height: 48px;
-                border-radius: 100%;
-                color: var(--secondary-color);
+		.pmu-months,
+		.pmu-years {
+			.pmu-button {
+				width: 46px;
+				height: 47px;
+				margin: 5px;
+				line-height: 48px;
+				border-radius: 100%;
+				color: var(--secondary-color);
 
-                &.pmu-selected {
-                    background-color: var(--primary-color);
-                    color: var(--onPrimary-color);
+				&.pmu-selected {
+					background-color: var(--primary-color);
+					color: var(--onPrimary-color);
 
-                    &:hover {
-                        opacity: 0.5;
-                    }
-                }
+					&:hover {
+						opacity: 0.5;
+					}
+				}
 
-                &:not(.pmu-selected):hover {
-                    background-color: var(--activeState-backgroundColor);
-                }
-            }
-        }
+				&:not(.pmu-selected):hover {
+					background-color: var(--activeState-backgroundColor);
+				}
+			}
+		}
 
-        .pmu-day-of-week {
-            padding: 0 13px;
-            border-bottom: 2px solid var(--table-border-color);
+		.pmu-day-of-week {
+			padding: 0 13px;
+			border-bottom: 2px solid var(--table-border-color);
 
-            & > div {
-                color: var(--secondary-color);
-                width: 44px;
-            }
-        }
+			& > div {
+				color: var(--secondary-color);
+				width: 44px;
+			}
+		}
 
-        .pmu-days {
-            padding: 0 13px;
-            width: 334px;
+		.pmu-days {
+			padding: 0 13px;
+			width: 334px;
 
-            .pmu-button {
-                border-radius: 100%;
-                height: 36px;
-                width: 36px;
-                font-size: 12px;
-                padding: 10px 0;
-                font-size: 12px;
-                box-sizing: border-box;
-                margin: 4px;
-                color: var(--secondary-color);
+			.pmu-button {
+				border-radius: 100%;
+				height: 36px;
+				width: 36px;
+				font-size: 12px;
+				padding: 10px 0;
+				font-size: 12px;
+				box-sizing: border-box;
+				margin: 4px;
+				color: var(--secondary-color);
 
-                &.pmu-not-in-month {
-                    // visibility: hidden;
-                    opacity: 0.4;
-                }
+				&.pmu-not-in-month {
+					// visibility: hidden;
+					opacity: 0.4;
+				}
 
-                &.pmu-selected {
-                    background: var(--activeState-backgroundColor);
-                    color: var(--secondary-color);
-                }
+				&.pmu-selected {
+					background: var(--activeState-backgroundColor);
+					color: var(--secondary-color);
+				}
 
-                &:not(.pmu-selected):hover {
-                    background-color: var(--activeState-backgroundColor);
-                }
-            }
-        }
+				&:not(.pmu-selected):hover {
+					background-color: var(--activeState-backgroundColor);
+				}
+			}
+		}
 
-        .ax_default {
-            color: var(--secondary-color);
-        }
-    }
+		.ax_default {
+			color: var(--secondary-color);
+		}
+	}
 
-    .pmu-instance:first-child,
-    .pmu-instance:last-child {
-        .pmu-prev {
-            // order: 1;
-            width: 16px;
-            padding: 0 4px;
-            // margin-right: 8px;
-            margin-left: 18px;
-            box-sizing: content-box;
+	.pmu-instance:first-child,
+	.pmu-instance:last-child {
+		.pmu-prev {
+			// order: 1;
+			width: 16px;
+			padding: 0 4px;
+			// margin-right: 8px;
+			margin-left: 18px;
+			box-sizing: content-box;
 
-            &:hover {
-                color: var(--primary-color);
-            }
-        }
+			&:hover {
+				color: var(--primary-color);
+			}
+		}
 
-        .pmu-month {
-            width: 258px;
-            margin: 0 16px;
+		.pmu-month {
+			width: 258px;
+			margin: 0 16px;
 
-            &:hover {
-                color: var(--primary-color);
-            }
-        }
+			&:hover {
+				color: var(--primary-color);
+			}
+		}
 
-        .pmu-next {
-            // order: 2;
-            width: 16px;
-            padding: 0 4px;
-            // margin-left: 8px;
-            box-sizing: content-box;
+		.pmu-next {
+			// order: 2;
+			width: 16px;
+			padding: 0 4px;
+			// margin-left: 8px;
+			box-sizing: content-box;
 
-            &:hover {
-                color: var(--primary-color);
-            }
-        }
-    }
+			&:hover {
+				color: var(--primary-color);
+			}
+		}
+	}
 }
 
 .dates_range {
-    .pickmeup.fm_cd_pickmeup {
-        .pmu-instance {
-            .pmu-days {
-                .pmu-button.pmu-selected:not(.custom-pmu-date-from-to) {
-                    &.custom-pmu-date-from {
-                        background-color: var(--activeState-backgroundColor);
-                        border-top-right-radius: 0;
-                        border-bottom-right-radius: 0;
-                        margin-right: 0;
-                    }
+	.pickmeup.fm_cd_pickmeup {
+		.pmu-instance {
+			.pmu-days {
+				.pmu-button.pmu-selected:not(.custom-pmu-date-from-to) {
+					&.custom-pmu-date-from {
+						background-color: var(--activeState-backgroundColor);
+						border-top-right-radius: 0;
+						border-bottom-right-radius: 0;
+						margin-right: 0;
+					}
 
-                    &.custom-pmu-date-to {
-                        background-color: var(--activeState-backgroundColor);
-                        border-top-left-radius: 0;
-                        border-bottom-left-radius: 0;
-                        margin-left: 0;
-                    }
-                }
+					&.custom-pmu-date-to {
+						background-color: var(--activeState-backgroundColor);
+						border-top-left-radius: 0;
+						border-bottom-left-radius: 0;
+						margin-left: 0;
+					}
+				}
 
-                .pmu-button:not(.pmu-selected) {
-                    &.custom-pmu-day-in-range {
-                        width: 44px;
-                        background-color: var(--activeState-backgroundColor);
-                        border-radius: 0;
-                        margin-right: 0;
-                        margin-left: 0;
-                    }
-                }
-            }
-        }
-    }
+				.pmu-button:not(.pmu-selected) {
+					&.custom-pmu-day-in-range {
+						width: 44px;
+						background-color: var(--activeState-backgroundColor);
+						border-radius: 0;
+						margin-right: 0;
+						margin-left: 0;
+					}
+				}
+			}
+		}
+	}
 }
+
 //# endregion pickmeup inside FmInputDateComplex
 
 .fm_select_main_input {
-    height: 100%;
-    display: flex;
-    align-items: center;
-}
-
-// vFmTooltip directive
-.fm_tooltip {
-    padding: 3px 6px;
-    border-radius: 4px;
-    color: #fff;
-    background-color: #646464;
-    opacity: 0.8;
-    font-size: 11px;
-    z-index: 60;
-
-    &.error, & > .error {
-        background-color: $error;
-        font-size: 13px;
-    }
-
+	height: 100%;
+	display: flex;
+	align-items: center;
 }
 
 .fm_select_right_btn:not([disabled]):hover {
-    opacity: .5;
+	opacity: .5;
 }
 
 // chips

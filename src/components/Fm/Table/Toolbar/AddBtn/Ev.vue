@@ -14,7 +14,7 @@
 		:class="{
 					'g-use-from-above-filters-hidden': !scope.showUseFromAboveFilters,
 				}"
-		v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
+		v-tooltip="'ADD ' + evGetEntityNameByState()"
 		@click="evAddEntity"
 	/>
 
@@ -72,7 +72,7 @@
 				btnPrimary
 				icon="add"
 				@click="$mdOpenMenu($event)"
-				v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
+				v-tooltip="'ADD ' + evGetEntityNameByState()"
 			/>
 		</template>
 
@@ -136,7 +136,7 @@
 				btnPrimary
 				icon="add"
 				@click="$mdOpenMenu($event)"
-				v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
+				v-tooltip="'ADD ' + evGetEntityNameByState()"
 			/>
 		</template>
 
@@ -192,7 +192,7 @@
 				btnPrimary
 				icon="add"
 				@click="$mdOpenMenu($event)"
-				v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
+				v-tooltip="'ADD ' + evGetEntityNameByState()"
 			/>
 		</template>
 
@@ -250,7 +250,7 @@
 				btnPrimary
 				icon="add"
 				@click="$mdOpenMenu($event)"
-				v-fm-tooltip="'ADD ' + evGetEntityNameByState()"
+				v-tooltip="'ADD ' + evGetEntityNameByState()"
 			/>
 		</template>
 

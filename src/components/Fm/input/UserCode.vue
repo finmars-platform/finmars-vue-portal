@@ -52,7 +52,7 @@
 			</ng-md-icon>-->
 			<!-- <FmIcon
 				icon="info"
-				v-fm-tooltip="
+				v-tooltip="
 					`Allowed symbols:
 								Numbers: 0-9,
 								Letters: a-z (lowercase)
