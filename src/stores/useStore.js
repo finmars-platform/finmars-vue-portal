@@ -93,6 +93,47 @@ export default defineStore({
 
 			window.onerror = this.registerSysError
 		},
+
+		async getTheme(user) {
+
+			if (!user.data.theme) { // if no theme selected, use default one
+				return
+			}
+
+			// User selected specific theme
+
+			const themePath = user.data.theme.split('.').join('/');
+			const itemPath = `.system/ui/themes/${themePath}/theme.css`;
+
+			try {
+
+				const blob = await useApi('explorerViewFile.get', { params: { path: itemPath } })
+
+				// seems useApi somehow Parse blob already
+				var styleElement = document.createElement('style');
+				styleElement.textContent = blob;
+
+				document.head.appendChild(styleElement);
+
+				// const reader = new FileReader();
+				//
+				// reader.addEventListener("loadend", function (e) {
+				//
+				// 	var styleElement = document.createElement('style');
+				// 	styleElement.textContent = reader.result;
+				//
+				// 	document.head.appendChild(styleElement);
+				//
+				// });
+				//
+				// reader.readAsText(blob);
+
+			} catch (error) {
+				console.error("[portalController loadTheme] Could not fetch theme", error);
+			}
+
+		},
+
 		async getUser() {
 			let res = await useApi('me.get')
 
@@ -127,6 +168,8 @@ export default defineStore({
 			}
 
 			document.body.classList.toggle('dark-mode', this.user.data.dark_mode);
+
+			await this.getTheme(this.user);
 
 		},
 		async getMe() {

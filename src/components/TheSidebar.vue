@@ -796,6 +796,14 @@
 														<span class="side-nav-title">Policies</span>
 													</a>
 												</li>
+												<li>
+													<a
+														:href="getUrlToOldApp('/pricing-manage')"
+														class="sidenav-dropdown-menu-btn"
+													>
+														<span class="side-nav-title">Manage</span>
+													</a>
+												</li>
 											</ul>
 										</div>
 									</li>
@@ -1117,6 +1125,22 @@
 										>
 											<span class="side-nav-title">System</span>
 										</a>
+									</li>
+									<li>
+										<a
+											:href="getUrlToOldApp('/vault')"
+											class="sidemenu-btn"
+										>
+											<span class="side-nav-title">Vault</span>
+										</a>
+									</li>
+									<li>
+										<NuxtLink
+											class="sidemenu-btn"
+											:to="useGetNuxtLink('/settings/vault-record', $route.params)"
+										>
+											Vault Record
+										</NuxtLink>
 									</li>
 								</ul>
 							</div>
@@ -2005,8 +2029,6 @@ padding: 0;
 	/*padding-top: 0;
 	padding-bottom: 0;*/
 	padding-left: 55px;
-	margin-top: 6px;
-	margin-bottom: 6px;
 	margin-left: 0;
 
 	.side-nav-icon div.icon {
