@@ -1049,12 +1049,12 @@
 													</a>
 												</li>
 												<li>
-													<a
-														:href="getUrlToOldApp('/marketplace')"
+													<NuxtLink
+														:to="useGetNuxtLink('/marketplace', $route.params)"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title">Marketplace</span>
-													</a>
+													</NuxtLink>
 												</li>
 											</ul>
 										</div>
