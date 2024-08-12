@@ -2,6 +2,8 @@
 	"tabWidth": 2,
 	"useTabs": true,
 	"semi": false,
+	"printWidth": 80,
 	"singleQuote": true,
-	"vueIndentScriptAndStyle": true
+	"vueIndentScriptAndStyle": true,
+	"trailingComma": "none"
 }
