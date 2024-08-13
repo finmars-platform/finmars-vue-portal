@@ -4,7 +4,12 @@
 		<h1>Tooltip-directive</h1>
 		<a target="_blank" href="https://floating-vue.starpad.dev/guide/">Docs</a>
 		<div class="list">
-			<FmBtn v-tooltip="'Tooltip directive'"> primary</FmBtn>
+			<FmBtn
+				v-tooltip="{ content: 'Tooltip directive', theme: 'error-tooltip' }"
+			>
+				Tooltip directive error
+			</FmBtn>
+			<FmBtn v-tooltip="'Tooltip directive'"> Tooltip directive simple</FmBtn>
 		</div>
 	</div>
 </template>
@@ -19,7 +24,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 16px;
-		max-width: 200px;
+		max-width: 400px;
 		border: 1px solid var(--baseText-color);
 		padding: 24px;
 	}
