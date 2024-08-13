@@ -444,6 +444,26 @@ export default {
 		 * */
 		get: prefix + '/specific-data/values-for-select/'
 	},
+	marketplaceList: {
+		get: 'https://marketplace.finmars.com/api/v1/configuration/'
+	},
+	marketplaceItem: {
+		get: 'https://marketplace.finmars.com/api/v1/configuration/{id}/'
+	},
+	marketplaceItemVersion: {
+		get: 'https://marketplace.finmars.com/api/v1/configuration-release/'
+	},
+	marketplaceInstall: {
+		post:
+			prefix +
+			'/configuration/configuration/install-configuration-from-marketplace/'
+	},
+	taskCard: {
+		get: prefix + '/tasks/task/{taskId}/'
+	},
+	fileReport: {
+		get: prefix + '/file-reports/file-report/{fileId}/view/'
+	},
 	vaultRecord: {
 		get: prefix + '/vault/vault-record/',
 		post: prefix + '/vault/vault-record/',
