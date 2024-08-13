@@ -97,3 +97,19 @@ export function useRegExpEscape (string) {
 	return string.replace(regex, "\\$&");
 
 }
+
+export function getUrlToOldApp(suffix) {
+	const store = useStore()
+	const apiUrl = useRuntimeConfig().public.apiURL
+	let baseApiUrl = ''
+
+	if (Object.keys(store.current).length) {
+		if (store.realm_code) {
+			baseApiUrl = '/' + store.realm_code + '/' + store.space_code
+		} else {
+			baseApiUrl = '/' + store.isUrlValid
+		}
+	}
+
+	return `${apiUrl}${baseApiUrl}/a/#!${suffix}`
+}

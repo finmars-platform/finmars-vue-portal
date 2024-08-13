@@ -112,13 +112,13 @@ export const formatNumberNegative = function (value, column) {
 }
 
 function editorInit(editor) {
-	editor.setHighlightActiveLine(false);
-	editor.setShowPrintMargin(false);
+	editor.setHighlightActiveLine(false)
+	editor.setShowPrintMargin(false)
 	editor.setFontSize(14)
-	editor.setBehavioursEnabled(true);
+	editor.setBehavioursEnabled(true)
 
-	editor.focus();
-	editor.navigateFileStart();
+	editor.focus()
+	editor.navigateFileStart()
 
 	editor = initEditor(editor)
 }
@@ -131,16 +131,15 @@ function editorInit(editor) {
  * @return {number}
  */
 export const utilsPower = function (base, exponent) {
-
 	/* *
 	 * JavaScript can return NaN if base number
 	 * is a negative
 	 * and exponent is a number with floating point
 	 * */
 	if (base < 0 && !Number.isInteger(exponent)) {
-		return -Math.pow(-base, exponent);
+		return -Math.pow(-base, exponent)
 	} else {
-		return Math.pow(base, exponent);
+		return Math.pow(base, exponent)
 	}
 }
 
@@ -149,27 +148,25 @@ export const utilsPower = function (base, exponent) {
  *
  * @return {Number} - 1, -1, 0
  */
-export const utilSortTextWithDash = (a, b)  => {
-
+export const utilSortTextWithDash = (a, b) => {
 	if (!a || !b) {
-		return 0;
+		return 0
 	}
 
-	const aStartsWithDash = a.startsWith('-');
-	const bStartsWithDash = b.startsWith('-');
+	const aStartsWithDash = a.startsWith('-')
+	const bStartsWithDash = b.startsWith('-')
 
 	if (!aStartsWithDash && bStartsWithDash) {
-		return 1;
+		return 1
 	}
 
 	if (aStartsWithDash && !bStartsWithDash) {
-		return -1;
+		return -1
 	}
 
 	if (aStartsWithDash && bStartsWithDash) {
-
-		const aWithoutDash = a.slice(1);
-		const bWithoutDash = b.slice(1);
+		const aWithoutDash = a.slice(1)
+		const bWithoutDash = b.slice(1)
 
 		if (aWithoutDash > bWithoutDash) {
 			return 1
@@ -179,21 +176,19 @@ export const utilSortTextWithDash = (a, b)  => {
 			return -1
 		}
 
-		return 0;
-
+		return 0
 	}
 
 	if (a > b) {
-		return 1;
+		return 1
 	}
 
 	if (a < b) {
-		return -1;
+		return -1
 	}
 
-	return 0;
-
-};
+	return 0
+}
 
 /**
  *
@@ -206,19 +201,22 @@ export const utilSortTextWithDash = (a, b)  => {
  * @return {Date|String}
  *
  */
-export const utilGetLastDayOfMonth = (year, monthIndex, {excludeWeekend, formatted=true}={}) => {
+export const utilGetLastDayOfMonth = (
+	year,
+	monthIndex,
+	{ excludeWeekend, formatted = true } = {}
+) => {
+	const origYear = year
+	year = parseInt(year)
 
-	const origYear = year;
-	year = parseInt(year);
-
-	if ( Number.isNaN(year) ) {
+	if (Number.isNaN(year)) {
 		throw `[utilGetLastDayOfMonth] Invalid year provided ${origYear}`
 	}
 
-	const origMonthIndex = monthIndex;
-	monthIndex = parseInt(monthIndex);
+	const origMonthIndex = monthIndex
+	monthIndex = parseInt(monthIndex)
 
-	if ( Number.isNaN(monthIndex) || monthIndex > 11 || monthIndex < 0) {
+	if (Number.isNaN(monthIndex) || monthIndex > 11 || monthIndex < 0) {
 		throw `[utilGetLastDayOfMonth] Invalid month index provided: ${origMonthIndex}`
 	}
 
@@ -226,29 +224,73 @@ export const utilGetLastDayOfMonth = (year, monthIndex, {excludeWeekend, formatt
 	`month + 1` bellow because 0 date sets month to previous one
 	relative to specified in new Date()
 	*/
-	const endDate = new Date(year, monthIndex + 1, 0);
+	const endDate = new Date(year, monthIndex + 1, 0)
 
 	if (excludeWeekend) {
 		// If Saturday, move to Friday
 		if (endDate.getDay() === 6) {
-			endDate.setDate(endDate.getDate() - 1);
+			endDate.setDate(endDate.getDate() - 1)
 		}
 		// If Sunday, move to Friday
 		else if (endDate.getDay() === 0) {
-			endDate.setDate(endDate.getDate() - 2);
+			endDate.setDate(endDate.getDate() - 2)
 		}
-
 	}
 
 	if (formatted) {
+		const month = `${endDate.getMonth() + 1}`.padStart(2, '0')
+		const day = `${endDate.getDate()}`.padStart(2, '0')
 
-		const month = `${endDate.getMonth() + 1}`.padStart(2, "0");
-		const day = `${endDate.getDate()}`.padStart(2, "0");
-
-		return `${endDate.getFullYear()}-${month}-${day}`;
-
+		return `${endDate.getFullYear()}-${month}-${day}`
 	}
 
-	return endDate;
+	return endDate
+}
 
+export function splitLongWords(text, maxLength) {
+	const words = text.split(' ')
+	const splittedWords = words.map((word) => {
+		if (word.length <= maxLength) {
+			return word
+		}
+
+		let chunks = []
+		for (let i = 0; i < word.length; i += maxLength) {
+			chunks.push(word.substring(i, i + maxLength))
+		}
+		return chunks.join(' ')
+	})
+
+	return splittedWords.join(' ')
+}
+
+export function downloadFile(blobParts, blobType, downloadFileName) {
+	const newBlob = new Blob([blobParts], { type: blobType })
+	const data = window.URL.createObjectURL(newBlob)
+	const link = document.createElement('a')
+
+	link.href = data
+	link.download = downloadFileName
+
+	document.body.appendChild(link)
+	link.click()
+
+	setTimeout(() => {
+		document.body.removeChild(link)
+		window.URL.revokeObjectURL(data)
+	}, 100)
+}
+
+export function copyToBuffer(content, fn) {
+	const listener = function (e) {
+		e.clipboardData.setData('text/plain', content)
+
+		e.preventDefault()
+	}
+
+	document.addEventListener('copy', listener, { once: true })
+
+	document.execCommand('copy')
+
+	fn()
 }
