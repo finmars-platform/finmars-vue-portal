@@ -292,3 +292,32 @@ button.fm_list_item {
 	margin-bottom: 9px;
 	cursor: pointer;
 }
+
+// v-tooltip directive
+.v-popper--theme-tooltip {
+	.v-popper__wrapper {
+		.v-popper__inner {
+			padding: 3px 6px;
+			border-radius: 4px;
+			color: rgba(white, 0.8);
+			background-color: rgba(#646464, 0.8);
+			font-size: 11px;
+		}
+		.v-popper__arrow-outer {
+			border-color: rgba(#646464, 0.8);
+		}
+	}
+}
+
+.v-popper--theme-error-tooltip {
+	.v-popper__wrapper {
+		.v-popper__inner {
+			background-color: rgba($error, 0.8);
+			font-size: 13px;
+		}
+		.v-popper__arrow-outer {
+			border-color: rgba($error, 0.8);
+		}
+	}
+
+}
