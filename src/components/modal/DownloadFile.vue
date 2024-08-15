@@ -8,7 +8,7 @@
 		<div class="p-b-16" style="position: relative">
 			<FmIcon
 				v-if="contentType !== 'image'"
-				v-fm-tooltip="'Copy to clipboard'"
+				v-tooltip="'Copy to clipboard'"
 				@click="copyContent(data.content_formatted)"
 				icon="file_copy"
 				class="icon-copy"

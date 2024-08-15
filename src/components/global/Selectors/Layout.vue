@@ -28,7 +28,7 @@
 						@click.stop="isOpenCode = true"
 					/>
 
-					<div v-if="loadingLayout" v-fm-tooltip.error="'Loading layout'">
+					<div v-if="loadingLayout" v-tooltip="{ content: 'Loading layout', theme: 'error-tooltip' }">
 						<FmLoader />
 					</div>
 				</template>

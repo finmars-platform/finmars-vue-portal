@@ -28,7 +28,7 @@
 						@click.stop="emit('openModal')"
 					/>
 
-					<div v-show="importingEntity" v-fm-tooltip.error="'Importing entity'">
+					<div v-show="importingEntity" v-tooltip="{ content: 'Importing entity', theme: 'error-tooltip' }">
 						<FmLoader />
 					</div>
 				</template>

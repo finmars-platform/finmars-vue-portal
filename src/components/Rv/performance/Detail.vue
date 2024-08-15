@@ -99,7 +99,7 @@
                         >
 							<span v-if="!cell.error || cell.error.noErrorMode">{{ cell.value }}</span>
 							<div v-else
-								 v-fm-tooltip:error="'Error. Click with right mouse button to see details.'"
+								 v-tooltip="{ content: 'Error. Click with right mouse button to see details.', theme: 'error-tooltip' }"
 								 class="flex-row flex-center">
 								<FmIcon icon="error" error />
 							</div>

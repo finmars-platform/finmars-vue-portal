@@ -13,7 +13,7 @@
 			<div
 				class="chip flex aic"
 				:class="{ active: chip.isActive }"
-				v-fm-tooltip:[getTooltipArg(chip.error_data)]="scope.getTooltipContent(chip)"
+				v-tooltip="{ content: scope.getTooltipContent(chip), ...(chip.error_data && {theme: 'error-tooltip'}) }"
 				@click="onChipClick(chip, $event)"
 			>
 				<span v-if="chip.error_data" class="material-icons error">error</span>
@@ -210,8 +210,6 @@
 	scope.getChipClasses = (chipData) => {
 		return chipData.classes ? chipData.classes : ''
 	}
-
-	const getTooltipArg = chipError => chipError ? 'error' : '';
 
 	scope.getTooltipContent = (chipData) => {
 		if (chipData.error_data) {
