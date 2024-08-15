@@ -114,7 +114,7 @@
 								size="20"
 								primary
 								icon="info"
-								v-fm-tooltip.error="item.error"
+								v-tooltip="{ content: item.error, theme: 'error-tooltip' }"
 							/>
 						</div>
 					</div>

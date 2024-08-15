@@ -15,7 +15,7 @@
 				{{ task.verbose_name }} [{{ task.id }}]
 			</a>
 
-			<div v-fm-tooltip="task.created" class="task-card-started-at">
+			<div v-tooltip="task.created" class="task-card-started-at">
 				Started at: <b>{{ dayjs(task.created).format('HH:mm:ss') }}</b>
 			</div>
 
@@ -25,7 +25,7 @@
 
 			<div v-if="task.status === 'P'" class="task-card-progress-block">
 				<FmProgressBar
-					v-fm-tooltip="task.progress_object?.percent"
+					v-tooltip="task.progress_object?.percent"
 					:progress="task.progress_object?.percent || 0"
 					class="progress-bar"
 				/>

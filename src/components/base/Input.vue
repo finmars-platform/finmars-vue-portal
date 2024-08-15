@@ -50,7 +50,7 @@
 				v-if="errorData && errorData.longMessage"
 				class="bi_side_item error_icon"
 			>
-				<FmIcon v-fm-tooltip.error="errorData.longMessage" icon="info" />
+				<FmIcon v-tooltip="{ content: errorData.longMessage, theme: 'error-tooltip' }" icon="info" />
 			</div>
 
 			<div class="right_btn">
