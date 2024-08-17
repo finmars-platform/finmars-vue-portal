@@ -66,12 +66,16 @@ export default defineNuxtConfig({
 	hooks: {
 		'pages:extend': (pages) => {
 
+			const pagesToRemove: string[] = [];
+
 			pages.forEach((page, index) => {
 
 				// do not create pages for components whose names start with "_"
 				if ( page.path.search(/\/_./) > -1 ) {
-					pages.splice(index, 1);
+
+					pagesToRemove.push(page.path);
 					return;
+
 				}
 
 				if (page.path.startsWith('/profile')) {
@@ -79,6 +83,16 @@ export default defineNuxtConfig({
 				} else {
 					page.path = '/:realm_code/:space_code/v' + page.path
 				}
+
+			})
+
+			pagesToRemove.forEach(pagePath => {
+
+				const pageIndex = pages.findIndex(
+					page => page.path === pagePath
+				);
+
+				pages.splice(pageIndex, 1);
 
 			})
 
