@@ -213,7 +213,7 @@
 			page: 1,
 			configuration_code: item.value.configuration_code,
 			channel: channel.value,
-			ordering: '-created'
+			ordering: '-created_at'
 		}
 
 		try {

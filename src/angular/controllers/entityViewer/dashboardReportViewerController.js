@@ -1942,8 +1942,8 @@ export default function (
 						.then(function (layoutData) {
 							var listLayout = vm.entityViewerDataService.getListLayout()
 
-							listLayout.modified = layoutData.modified
-							currentLayoutConfig.modified = layoutData.modified
+							listLayout.modified_at = layoutData.modified_at
+							currentLayoutConfig.modified_at = layoutData.modified_at
 							vm.entityViewerDataService.setActiveLayoutConfiguration({
 								layoutConfig: currentLayoutConfig,
 							})

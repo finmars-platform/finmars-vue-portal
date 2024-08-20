@@ -61,13 +61,13 @@ export default function (
 					uiService
 						.updateDashboardLayout(listLayout.id, listLayout)
 						.then(function (data) {
-							/*listLayout.modified = data.modified;
+							/*listLayout.modified_at = data.modified_at;
                         dashboardDataService.setListLayout(listLayout);
 
                         var layout = dashboardDataService.getData();
-                        layout.modified = data.modified;
+                        layout.modified_at = data.modified_at;
                         dashboardDataService.setData(layout);*/
-							dashboardDataService.updateModifiedDate(data.modified)
+							dashboardDataService.updateModifiedDate(data.modified_at)
 
 							if (showNotification) {
 								toastNotificationService.success(

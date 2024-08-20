@@ -567,7 +567,7 @@ export default function (
 								scope.localInstruments = scope.localInstruments.map(function (
 									item
 								) {
-									item.pretty_date = moment(item.modified).format('DD.MM.YYYY')
+									item.pretty_date = moment(item.modified_at).format('DD.MM.YYYY')
 
 									return item
 								})

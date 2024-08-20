@@ -273,7 +273,7 @@ var getValue = function (obj, column) {
 				rawTextResult = statusData[statusKey];
 
 			}
-			else if(column.key === 'procedure_modified_datetime' || column.key === 'created' || column.key === 'modified') {
+			else if(column.key === 'procedure_modified_datetime' || column.key === 'created_at' || column.key === 'modified_at') {
 
 				rawTextResult = moment(obj[column.key]).format('YYYY-MM-DD HH:mm:ss')
 
