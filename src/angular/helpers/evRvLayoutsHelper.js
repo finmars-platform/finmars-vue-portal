@@ -281,7 +281,7 @@ export default function (toastNotificationService, uiService) {
 								overwriteLayout(layoutToOverwrite, listLayout)
 									.then(function (updatedLayoutData) {
 										/* if (isRootEntityViewer) listLayout.is_default = true; // default layout for split panel does not have is_default === true
-                                listLayout.modified = updatedLayoutData.modified; */
+                                listLayout.modified_at = updatedLayoutData.modified_at; */
 
 										applyLayout(
 											isRootEntityViewer,

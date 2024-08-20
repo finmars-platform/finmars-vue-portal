@@ -547,7 +547,7 @@
 
 	let query = ref('')
 	let date = ref('')
-	let ordering = ref('-created')
+	let ordering = ref('-created_at')
 	let only_new = ref(true)
 	let action = ref('')
 	let types = ref(new Set())
@@ -639,7 +639,7 @@
 
 	function order() {
 		if (openedStream.value) {
-			ordering.value = ordering.value == 'created' ? '-created' : 'created'
+			ordering.value = ordering.value === 'created_at' ? '-created_at' : 'created_at'
 			loadStream(true)
 		}
 	}

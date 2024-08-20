@@ -311,7 +311,7 @@ export default function recycleBinPageController(
 				filters: vm.filters,
 				sort: {
 					direction: 'DESC',
-					key: 'created',
+					key: 'created_at',
 				},
 			})
 			.then(function (data) {
@@ -322,7 +322,7 @@ export default function recycleBinPageController(
 
 				vm.items.forEach(function (item) {
 					item.modified_datetime_prettty = moment(
-						new Date(item.modified)
+						new Date(item.modified_at)
 					).format('DD-MM-YYYY HH:mm')
 				})
 

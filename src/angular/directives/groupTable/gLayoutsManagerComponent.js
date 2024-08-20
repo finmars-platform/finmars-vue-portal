@@ -809,7 +809,7 @@ export default function (
                                 overwriteLayout(changeableLayout, listLayout).then(function (updatedLayoutData) {
 
                                     listLayout.is_default = true;
-                                    listLayout.modified = updatedLayoutData.modified;
+                                    listLayout.modified_at = updatedLayoutData.modified_at;
                                     applyLayout(listLayout);
 
                                 });
