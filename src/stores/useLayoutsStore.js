@@ -18,10 +18,10 @@ function layoutIsActual(layout, fetchedLayoutData) {
 
 	}
 
-	if (layout.modified) { // check that default layout still default
+	if (layout.modified_at) { // check that default layout still default
 
-		const layoutModDate = new Date(layout.modified).getTime();
-		let fetchedLayoutModDate = new Date(fetchedLayoutData.modified).getTime();
+		const layoutModDate = new Date(layout.modified_at).getTime();
+		let fetchedLayoutModDate = new Date(fetchedLayoutData.modified_at).getTime();
 
 		if (layoutModDate >= fetchedLayoutModDate) {
 			return true;

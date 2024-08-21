@@ -20,9 +20,9 @@ export default function (
 	)
 
 	const isCachedLayoutActual = function (cachedLayout, layoutData) {
-		if (cachedLayout && cachedLayout.modified) {
-			let cachedLayoutModDate = new Date(cachedLayout.modified).getTime()
-			let layoutModDate = new Date(layoutData.modified).getTime()
+		if (cachedLayout && cachedLayout.modified_at) {
+			let cachedLayoutModDate = new Date(cachedLayout.modified_at).getTime()
+			let layoutModDate = new Date(layoutData.modified_at).getTime()
 
 			if (cachedLayoutModDate >= layoutModDate) {
 				return true
@@ -239,7 +239,7 @@ export default function (
 			uiRepository
 				.updateListLayout(id, ui)
 				.then(function (data) {
-					ui.modified = data.modified
+					ui.modified_at = data.modified_at
 
 					if (ui.is_systemic) {
 						localStorageService.cacheAutosaveLayout(ui)
@@ -629,7 +629,7 @@ export default function (
 			uiRepository
 				.updateDashboardLayout(id, data)
 				.then(function (updatedLayoutData) {
-					data.modified = updatedLayoutData.modified // prevents synchronization error
+					data.modified_at = updatedLayoutData.modified_at // prevents synchronization error
 
 					resolve(updatedLayoutData)
 				})

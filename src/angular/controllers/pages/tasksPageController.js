@@ -250,7 +250,7 @@ export default function tasksPageController(
 
 	vm.formatTask = function (item) {
 		if (item.finished_at) {
-			const date1 = new Date(item.created)
+			const date1 = new Date(item.created_at)
 			const date2 = new Date(item.finished_at)
 			const diffTime = Math.abs(date2 - date1)
 
@@ -275,7 +275,7 @@ export default function tasksPageController(
 				filters: vm.filters,
 				sort: {
 					direction: 'DESC',
-					key: 'created',
+					key: 'created_at',
 				},
 			})
 			.then(function (data) {

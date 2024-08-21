@@ -122,7 +122,7 @@ export default function processesController($scope, $mdDialog) {
 					filters: filters,
 					sort: {
 						direction: 'DESC',
-						key: 'created',
+						key: 'created_at',
 					},
 				})
 				.then(function (data) {
@@ -163,7 +163,7 @@ export default function processesController($scope, $mdDialog) {
 					filters: filters,
 					sort: {
 						direction: 'DESC',
-						key: 'created',
+						key: 'created_at',
 					},
 				})
 				.then(function (data) {
@@ -240,9 +240,9 @@ export default function processesController($scope, $mdDialog) {
 
 	vm.getStartedAt = function (item) {
 		return (
-			new Date(item.created).toLocaleDateString() +
+			new Date(item.created_at).toLocaleDateString() +
 			' ' +
-			new Date(item.created).toLocaleTimeString()
+			new Date(item.created_at).toLocaleTimeString()
 		)
 	}
 

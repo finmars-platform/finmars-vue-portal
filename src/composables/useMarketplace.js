@@ -168,7 +168,7 @@ export function useMarketplace() {
 		const payload = {
 			pageSize: pageSize.value,
 			page: currentPage.value,
-			ordering: '-created',
+			ordering: '-created_at',
 			...filters
 		}
 

@@ -1070,7 +1070,7 @@ export default function (
 			uiService
 				.updateDashboardLayout(layout.id, layout)
 				.then(function (data) {
-					vm.layout.modified = data.modified
+					vm.layout.modified_at = data.modified_at
 
 					toastNotificationService.success(
 						'Dashboard layout ' + layout.name + ' was successfully saved'

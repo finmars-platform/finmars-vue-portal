@@ -48,10 +48,10 @@ export default function ($scope) {
 			})
 			.then(function (data) {
 				vm.instruments = data.results.map(function (item) {
-					item.dateFormatted = moment(new Date(item.created)).format(
+					item.dateFormatted = moment(new Date(item.created_at)).format(
 						'DD/MM/YYYY'
 					)
-					item.timeFormatted = moment(new Date(item.created)).format('HH:ss')
+					item.timeFormatted = moment(new Date(item.created_at)).format('HH:ss')
 					return item
 				})
 
@@ -71,7 +71,7 @@ export default function ($scope) {
 
 	//     auditService.getList({filters: {'content_type': 'transactions.transaction'}, page: vm.transactionCurrent}).then(function (data) {
 	//         vm.transactions = data.results.map(function (item) {
-	//             item.dateFormatted = moment(new Date(item.created)).format('DD/MM/YYYY');
+	//             item.dateFormatted = moment(new Date(item.created_at)).format('DD/MM/YYYY');
 	//             return item
 	//         });
 

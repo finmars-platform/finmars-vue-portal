@@ -137,7 +137,7 @@ export default function systemMEssagesController(
 				filters: filters,
 				sort: {
 					direction: 'DESC',
-					key: 'created',
+					key: 'created_at',
 				},
 			})
 			.then(function (data) {
@@ -146,7 +146,7 @@ export default function systemMEssagesController(
 				vm.generatePages(data)
 
 				vm.systemMessages = vm.systemMessages.map(function (item) {
-					item.verbose_created = moment(new Date(item.created)).format(
+					item.verbose_created = moment(new Date(item.created_at)).format(
 						'DD-MM-YYYY HH:mm'
 					)
 
