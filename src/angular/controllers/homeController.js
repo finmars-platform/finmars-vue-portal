@@ -217,7 +217,7 @@ export default function (
 			.getList({
 				sort: {
 					direction: 'DESC',
-					key: 'created',
+					key: 'created_at',
 				},
 			})
 			.then(function (data) {
@@ -240,7 +240,7 @@ export default function (
 					// TYPE_ERROR = 3
 					// TYPE_SUCCESS = 4
 
-					item.verbose_created = moment(new Date(item.created)).format(
+					item.verbose_created = moment(new Date(item.created_at)).format(
 						'DD-MM-YYYY HH:mm'
 					)
 

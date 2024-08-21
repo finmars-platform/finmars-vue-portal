@@ -123,7 +123,7 @@ export default function dataStatsController(
 				filters: filters,
 				sort: {
 					direction: 'DESC',
-					key: 'created',
+					key: 'created_at',
 				},
 			})
 			.then(function (data) {
@@ -136,9 +136,9 @@ export default function dataStatsController(
 						item.details = JSON.stringify(item.details, null, 4)
 					}
 
-					var pieces = item.created.split('T')
+					var pieces = item.created_at.split('T')
 
-					item.created = pieces[0] + ' ' + pieces[1].split('.')[0]
+					item.created_at = pieces[0] + ' ' + pieces[1].split('.')[0]
 
 					return item
 				})

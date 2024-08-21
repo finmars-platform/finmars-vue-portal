@@ -73,13 +73,13 @@ var getAttributes = function () {
         },
 
         {
-            key: 'created',
+            key: 'created_at',
             name: 'Created',
             value_type: 40,
         },
 
         {
-            key: 'modified',
+            key: 'modified_at',
             name: 'Modified',
             value_type: 40,
         },

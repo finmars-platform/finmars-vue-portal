@@ -162,10 +162,10 @@ export default function () {
 	function updateModifiedDate(modifiedDate) {
 		// updating listLayout prevents synchronization error when saving settings of component inside dashboard
 		var listLayout = getListLayout()
-		listLayout.modified = modifiedDate
+		listLayout.modified_at = modifiedDate
 
 		var layout = getData()
-		layout.modified = modifiedDate
+		layout.modified_at = modifiedDate
 	}
 
 	function pushToActualRvLayoutsInCache(layoutId) {

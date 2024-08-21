@@ -216,7 +216,7 @@ export default function journalPageController(
 					filters: vm.filters,
 					sort: {
 						direction: 'DESC',
-						key: 'created',
+						key: 'created_at',
 					},
 				})
 				.then(function (data) {
@@ -226,13 +226,13 @@ export default function journalPageController(
 					vm.count = data.count
 
 					vm.items = vm.items.map(function (item) {
-						item.created_pretty = moment(new Date(item.created)).format(
+						item.created_pretty = moment(new Date(item.created_at)).format(
 							'DD-MM-YYYY HH:mm'
 						)
-						item.created_date_pretty = moment(new Date(item.created)).format(
+						item.created_date_pretty = moment(new Date(item.created_at)).format(
 							'YYYY-MM-DD'
 						)
-						item.created_time_pretty = moment(new Date(item.created)).format(
+						item.created_time_pretty = moment(new Date(item.created_at)).format(
 							'HH:mm'
 						)
 						item.content_type_pretty =
