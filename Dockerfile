@@ -1,4 +1,4 @@
-FROM node:18.9
+FROM node:18.20.2
 
 RUN mkdir -p /var/www/finmars
 WORKDIR /var/www/finmars
