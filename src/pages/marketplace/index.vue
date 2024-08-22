@@ -6,6 +6,7 @@
 			<FmIcon
 				btn-primary
 				icon="refresh"
+				class="refresh"
 				style="display: inline-flex"
 				@click="getData"
 			/>
@@ -25,6 +26,7 @@
 		</div>
 		<div class="m-t-8 m-b-8 marketplace-page-filters row">
 			<FmInputText
+				:noIndicatorButton="true"
 				label="Search"
 				:model-value="filters.query"
 				@update:model-value="setFiltersQuery"
@@ -185,6 +187,10 @@
 	.marketplace-page {
 		font-size: 14px;
 		padding: 8px;
+
+		.refresh {
+			padding: 0;
+		}
 
 		.row {
 			display: flex;

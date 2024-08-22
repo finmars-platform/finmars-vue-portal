@@ -41,7 +41,7 @@
 				<div class="text-center width-100">
 					<span
 						class="material-icons task-card-result-icon"
-						style="font-size: 40px; margin: 0"
+						style="font-size: 40px; margin: 0; color: green"
 						>check_circle</span
 					>
 				</div>
@@ -68,7 +68,7 @@
 				<div class="text-center width-100">
 					<span
 						class="material-icons task-card-result-icon"
-						style="font-size: 40px; margin: 0"
+						style="font-size: 40px; margin: 0; color: red"
 						>error</span
 					>
 				</div>
@@ -82,7 +82,7 @@
 				<div class="text-center width-100">
 					<span
 						class="material-icons task-card-result-icon"
-						style="font-size: 40px; margin: 0"
+						style="font-size: 40px; margin: 0; color: orange"
 						>warning</span
 					>
 				</div>
@@ -183,6 +183,10 @@
 			cursor: pointer;
 			display: block;
 			color: var(--secondary-color);
+
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 
 		.task-card-started-at {

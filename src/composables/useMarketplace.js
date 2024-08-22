@@ -74,29 +74,6 @@ export function useMarketplace() {
 		getData()
 	}
 
-	function openConfigurationItem($event, item) {
-		$mdDialog
-			.show({
-				controller: 'MarketplaceConfigurationDialogController as vm',
-				templateUrl: 'views/dialogs/marketplace-configuration-dialog-view.html',
-				locals: {
-					data: {
-						id: item.id
-					}
-				},
-				targetEvent: $event,
-				preserveScope: true,
-				multiple: true,
-				autoWrap: true,
-				skipHide: true
-			})
-			.then(function (res) {
-				if (res.status === 'agree') {
-					getData()
-				}
-			})
-	}
-
 	function generatePages(data) {
 		totalPages.value = Math.ceil(data.count / pageSize.value)
 
@@ -168,7 +145,7 @@ export function useMarketplace() {
 		const payload = {
 			pageSize: pageSize.value,
 			page: currentPage.value,
-			ordering: '-created_at',
+			ordering: 'name',
 			...filters
 		}
 
@@ -191,15 +168,13 @@ export function useMarketplace() {
 				})
 			}
 		} catch (e) {
-			console.log('Error marketplace.get', e)
+			console.warn('Error marketplace.get', e)
 		} finally {
 			readyStatus.data = true
 		}
 	}
 
 	async function installConfiguration(item) {
-		console.log('Install configuration', item)
-
 		try {
 			const payload = {
 				configuration_code: item.configuration_code,
@@ -217,6 +192,7 @@ export function useMarketplace() {
 	}
 
 	function setFiltersQuery(query) {
+		currentPage.value = 1
 		filters.query = query
 
 		getData()
