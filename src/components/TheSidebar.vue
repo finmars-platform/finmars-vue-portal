@@ -6,9 +6,7 @@
 		<div class="sidenav-left">
 			<div class="sidenav-logo-container">
 				<div class="sidenav-logo-wrapper">
-					<NuxtLink :to="useGetNuxtLink('/home', $route.params)">
-						<img :src="logoPath" class="sidenav-logo" alt=""/>
-					</NuxtLink>
+					<FmLogo />
 				</div>
 				<div class="panel-resizer-holder sidenav-resizer-holder">
 					<button
@@ -1142,6 +1140,14 @@
 											Vault Record
 										</NuxtLink>
 									</li>
+									<li>
+										<NuxtLink
+											class="sidemenu-btn"
+											:to="useGetNuxtLink('/system/settings/general/', $route.params)"
+										>
+											White Label
+										</NuxtLink>
+									</li>
 								</ul>
 							</div>
 						</div>
@@ -1738,11 +1744,6 @@ const copyToBuffer = function (content) {
 // 	sideMenuSettingsMenuOpened = !sideMenuSettingsMenuOpened;
 // }
 
-
-const logoPath = computed(() => {
-	return store.darkModeActive ? '/img/logo-dark.png' : '/img/logo.png';
-});
-
 const init = function () {
 	getInterfaceAccess();
 };
@@ -1896,13 +1897,6 @@ padding: 0;
 	width: 140px;
 	height: 40px;
 	overflow: hidden;
-}
-
-.sidenav-logo {
-	max-width: 140px;
-	width: 140px;
-	height: 40px;
-	margin: 0 auto;
 }
 
 .sidenav-dropdown-menu-wrapper {

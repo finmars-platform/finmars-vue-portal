@@ -17,6 +17,7 @@
 
 
 
+	const { loadThemeSettingsDefault } = useWhiteLabelStore()
 	const store = useStore();
   	const evAttrsStore = useEvAttributesStore();
 	const config = useRuntimeConfig();
@@ -71,6 +72,8 @@
 			// })
 		}
 	})
+
+	loadThemeSettingsDefault()
 </script>
 <style lang="scss" scoped>
 	.wrap {

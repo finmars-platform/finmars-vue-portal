@@ -27,6 +27,7 @@
 						:value="modelValue"
 						:readonly="readonly"
 						:disabled="disabled"
+						:accept="accept"
 						@input="$emit('update:modelValue', $event.target.value)"
 						@focus.stop="$emit('onFocus')"
 						@blur="$emit('onBlur')"
@@ -66,6 +67,7 @@
 		modelValue: [String, Number],
 		type: String,
 		label: String,
+		accept: String,
 		placeholder: String,
 		readonly: Boolean,
 		disabled: Boolean,
