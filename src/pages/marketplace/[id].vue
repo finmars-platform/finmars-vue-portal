@@ -209,11 +209,11 @@
 		versions.value = []
 
 		const payload = {
-			pageSize: 10,
+			page_size: 1000,
 			page: 1,
 			configuration_code: item.value.configuration_code,
 			channel: channel.value,
-			ordering: '-created_at'
+			ordering: '-created'
 		}
 
 		try {
