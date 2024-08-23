@@ -8,26 +8,26 @@
 			<FmInputText label="Enter theme code" v-model="formState.theme_code" />
 			<FmInputFile
 				:fileName="theme_css_url || null"
-				label="Select css url"
+				label="Select css file"
 				@change="onFileChange($event, 'theme_css_url')"
 			/>
 			<FmInputFile
 				:fileName="logo_light_url || null"
-				label="Select light logo"
+				label="Select light logo file"
 				@change="onFileChange($event, 'logo_light_url')"
 				accept="image/*"
 			/>
 
 			<FmInputFile
 				:fileName="logo_dark_url || null"
-				label="Select dark logo"
+				label="Select dark logo file "
 				@change="onFileChange($event, 'logo_dark_url')"
 				accept="image/*"
 			/>
 
 			<FmInputFile
 				:fileName="favicon_url || null"
-				label="Select favicon"
+				label="Select favicon file"
 				@change="onFileChange($event, 'favicon_url')"
 			/>
 
@@ -54,10 +54,10 @@
 	import { VAceEditor } from 'vue3-ace-editor'
 	import 'ace-builds/src-noconflict/mode-css'
 	import 'ace-builds/src-noconflict/theme-monokai'
-	import Button from '~/pages/demo/button.vue'
 
 	const route = useRoute()
 	const router = useRouter()
+	const { loadThemeSettingsDefault } = useWhiteLabelStore()
 
 	const EDITOR_OPTIONS = {
 		enableBasicAutocompletion: true,
@@ -121,11 +121,13 @@
 			if (!response) {
 				throw new Error('Upload failed')
 			}
-			useNotify({ type: 'success', title: 'White logo uploaded successfully!' })
+			useNotify({ type: 'success', title: 'White label added successfully!' })
 
 			await router.push(
 				useGetNuxtLink(`/system/settings/general`, route.params)
 			)
+
+			if (formState.is_default) await loadThemeSettingsDefault()
 		} catch (e) {
 			console.warn('Error uploading white:', e)
 		}
@@ -159,7 +161,9 @@
 			if (!response) {
 				throw new Error('Upload failed')
 			}
-			useNotify({ type: 'success', title: 'White logo uploaded successfully!' })
+			useNotify({ type: 'success', title: 'White label edited successfully!' })
+
+			if (formData.get('is_default')) await loadThemeSettingsDefault()
 
 			await router.push(
 				useGetNuxtLink(`/system/settings/general`, route.params)
