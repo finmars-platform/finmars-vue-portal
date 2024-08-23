@@ -27,6 +27,7 @@
 			width: 140px;
 			height: 40px;
 			margin: 0 auto;
+			object-fit: contain;
 		}
 	}
 </style>

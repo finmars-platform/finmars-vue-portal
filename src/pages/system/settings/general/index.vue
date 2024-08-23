@@ -37,6 +37,7 @@
 
 	const route = useRoute()
 	const router = useRouter()
+	const { loadThemeSettingsDefault } = useWhiteLabelStore()
 
 	const items = ref(null)
 	const breadcrumbsItems = [
@@ -62,6 +63,8 @@
 				body: formData,
 				params: { id }
 			})
+
+			await loadThemeSettingsDefault()
 		} catch (e) {
 			console.log('Error set Default', e)
 		}
