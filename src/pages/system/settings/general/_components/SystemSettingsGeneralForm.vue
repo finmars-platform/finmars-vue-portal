@@ -118,9 +118,10 @@
 		try {
 			const response = await useApi('systemWhiteLabel.post', { body: formData })
 
-			if (!response) {
-				throw new Error('Upload failed')
+			if (response._$error) {
+				throw new Error('Save failed')
 			}
+
 			useNotify({ type: 'success', title: 'White label added successfully!' })
 
 			await router.push(
@@ -158,9 +159,10 @@
 				params: { id: props.id }
 			})
 
-			if (!response) {
-				throw new Error('Upload failed')
+			if (response._$error) {
+				throw new Error('Save failed')
 			}
+
 			useNotify({ type: 'success', title: 'White label edited successfully!' })
 
 			if (formData.get('is_default')) await loadThemeSettingsDefault()

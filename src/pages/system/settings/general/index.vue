@@ -91,12 +91,8 @@
 		try {
 			let response = await useApi('systemWhiteLabel.get')
 
-			if (response?.length) {
+			if (response) {
 				items.value = response
-			} else {
-				await router.push(
-					useGetNuxtLink(`/system/settings/general/new`, route.params)
-				)
 			}
 		} catch (e) {
 			console.warn('Error fetch white:', e)
