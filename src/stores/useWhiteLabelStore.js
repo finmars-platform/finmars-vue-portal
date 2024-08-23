@@ -50,7 +50,7 @@ export const useWhiteLabelStore = defineStore({
 				document.head.appendChild(link)
 			}
 
-			link.href = this.themeSettings.favicon_ur
+			link.href = this.themeSettings.favicon_url
 		},
 
 		setCssFile() {
