@@ -1,7 +1,7 @@
 <template>
 	<div class="marketplace-page">
 		<div class="row extra">
-			<h1 class="title">Marketplace</h1>
+			<h1 class="title"><b>Marketplace</b></h1>
 
 			<FmIcon
 				btn-primary
@@ -29,7 +29,7 @@
 				:noIndicatorButton="true"
 				label="Search"
 				:model-value="filters.query"
-				@update:model-value="setFiltersQuery"
+				@update:model-value="setFiltersQueryDebounced"
 			/>
 		</div>
 		<div v-if="readyStatus.data" class="list">
@@ -39,7 +39,7 @@
 				class="card"
 				@click="openCard(item.id)"
 			>
-				<div class="row">
+				<div class="row top">
 					<div class="image">
 						<img v-if="item.thumbnail" :src="item.thumbnail" alt="" />
 						<div
@@ -169,7 +169,7 @@
 		openPreviousPage,
 		openPage,
 		getAvatar,
-		setFiltersQuery,
+		setFiltersQueryDebounced,
 		setShowModules,
 		removeActiveTaskId
 	} = useMarketplace()
@@ -198,6 +198,10 @@
 
 			&.extra {
 				gap: 12px;
+			}
+
+			&.top {
+				align-items: flex-start;
 			}
 		}
 

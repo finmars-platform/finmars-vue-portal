@@ -1,3 +1,5 @@
+import { debounce } from 'lodash'
+
 export function useMarketplace() {
 	const items = ref([])
 	const readyStatus = reactive({ data: false })
@@ -191,14 +193,19 @@ export function useMarketplace() {
 		}
 	}
 
-	function setFiltersQuery(query) {
+	async function setFiltersQuery(query) {
 		currentPage.value = 1
 		filters.query = query
 
-		getData()
+		await getData()
 	}
 
+	const setFiltersQueryDebounced = debounce(async (query) => {
+		await setFiltersQuery(query)
+	}, 500)
+
 	function setShowModules(bool) {
+		currentPage.value = 1
 		isShowModules.value = bool
 
 		getData()
@@ -223,7 +230,7 @@ export function useMarketplace() {
 		openPreviousPage,
 		openPage,
 		getAvatar,
-		setFiltersQuery,
+		setFiltersQueryDebounced,
 		setShowModules,
 		removeActiveTaskId
 	}

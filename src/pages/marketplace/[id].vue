@@ -8,7 +8,7 @@
 			class="task-card"
 		/>
 		<div class="row extra">
-			<h1 class="title">Marketplace</h1>
+			<h1 class="title"><b>Marketplace</b></h1>
 		</div>
 
 		<div class="content">
@@ -304,5 +304,9 @@
 		right: 10px;
 		z-index: 1;
 		background: var(--dialog-background-color);
+	}
+
+	.select {
+		min-width: 170px;
 	}
 </style>
