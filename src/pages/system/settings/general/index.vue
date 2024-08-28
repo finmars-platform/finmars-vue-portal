@@ -18,7 +18,7 @@
 					disabled
 					:icon="item.is_default ? 'star' : 'star_border'"
 					btn
-					v-on="!item.is_default && { click: () => setDefault(item.id) }"
+					v-on="!item.is_default ? { click: () => setDefault(item.id) } : {}"
 				/>
 				<FmIcon @click="confirmRemove(item)" icon="delete" btn />
 			</div>

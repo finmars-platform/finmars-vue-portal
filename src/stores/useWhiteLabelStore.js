@@ -73,29 +73,35 @@ export const useWhiteLabelStore = defineStore({
 			link.href = this.themeSettings.favicon_url
 		},
 		removeFavicon() {
-			let link = document.querySelector("link[rel~='icon']");
+			let link = document.querySelector("link[rel~='icon']")
 
 			if (link) {
-				link.remove();
+				link.remove()
 			}
 
-			let defaultLink = document.createElement('link');
-			defaultLink.rel = 'icon';
-			defaultLink.href = '/img/favicon/favicon.ico';
-			document.head.appendChild(defaultLink);
+			let defaultLink = document.createElement('link')
+			defaultLink.rel = 'icon'
+			defaultLink.href = '/img/favicon/favicon.ico'
+			document.head.appendChild(defaultLink)
 		},
 		setCssFile() {
-			let link = document.createElement('link')
-			link.rel = 'stylesheet'
-			link.href = this.themeSettings.theme_css_url
-
-			document.head.appendChild(link)
-		},
-		removeCssFile() {
-			let existingLink = document.getElementById('custom-theme-css');
+			let existingLink = document.getElementById('custom-theme-css')
 
 			if (existingLink) {
-				existingLink.remove();
+				existingLink.href = this.themeSettings.theme_css_url
+			} else {
+				let link = document.createElement('link')
+				link.rel = 'stylesheet'
+				link.id = 'custom-theme-css' // Устанавливаем уникальный id
+				link.href = this.themeSettings.theme_css_url
+				document.head.appendChild(link)
+			}
+		},
+		removeCssFile() {
+			let existingLink = document.getElementById('custom-theme-css')
+
+			if (existingLink) {
+				existingLink.remove()
 			}
 		}
 	}
