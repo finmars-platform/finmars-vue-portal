@@ -81,7 +81,7 @@ export const useWhiteLabelStore = defineStore({
 
 			let defaultLink = document.createElement('link')
 			defaultLink.rel = 'icon'
-			defaultLink.href = 'img/favicon.png'
+			defaultLink.href = '/img/favicon.png'
 			document.head.appendChild(defaultLink)
 		},
 		setCssFile() {
