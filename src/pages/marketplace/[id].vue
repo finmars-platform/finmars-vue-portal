@@ -68,7 +68,7 @@
 									<FmBtn
 										type="primary"
 										class="open"
-										@click.prevent.stop="installConfiguration(item)"
+										@click.prevent.stop="installConfiguration(item, version)"
 									>
 										Install
 									</FmBtn>
@@ -77,14 +77,14 @@
 								<div v-if="item.localItem">
 									<div
 										v-if="
-											item.latest_release_object.version ==
+											item.latest_release_object.version ===
 											item.localItem.version
 										"
 									>
 										<FmBtn
 											type="primary"
 											class="open"
-											@click.prevent.stop="installConfiguration(item)"
+											@click.prevent.stop="installConfiguration(item, version)"
 										>
 											Reinstall
 										</FmBtn>
@@ -92,14 +92,14 @@
 
 									<div
 										v-if="
-											item.latest_release_object.version !=
+											item.latest_release_object.version !==
 											item.localItem.version
 										"
 									>
 										<FmBtn
 											type="primary"
 											class="open"
-											@click.prevent.stop="installConfiguration(item)"
+											@click.prevent.stop="installConfiguration(item, version)"
 										>
 											Update
 										</FmBtn>
@@ -134,7 +134,7 @@
 							<div class="configuration-card-from-marketplace-version">
 								Type:
 								<b v-if="item.is_package">Is a Package</b>
-								<b v-if="!item.is_package">Is a Module¬</b>
+								<b v-if="!item.is_package">Is a Module</b>
 							</div>
 						</div>
 					</div>
