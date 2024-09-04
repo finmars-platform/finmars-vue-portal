@@ -99,7 +99,7 @@
 					>
 						<FmBtn
 							class="open"
-							@click.prevent.stop="installConfiguration($event, item)"
+							@click.prevent.stop="installConfiguration(item)"
 						>
 							Update
 						</FmBtn>

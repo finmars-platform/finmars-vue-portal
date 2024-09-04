@@ -176,11 +176,11 @@ export function useMarketplace() {
 		}
 	}
 
-	async function installConfiguration(item) {
+	async function installConfiguration(item, version = null) {
 		try {
 			const payload = {
 				configuration_code: item.configuration_code,
-				version: item.latest_release_object.version,
+				version: version || item.latest_release_object.version,
 				channel: item.latest_release_object.channel,
 				is_package: item.is_package
 			}
