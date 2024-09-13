@@ -240,8 +240,8 @@ async function exportDb() {
 
 async function deleteDB() {
 	let isConfirm = await useConfirm({
-		title: 'Delete Space',
-		text: `Enter the full name of the Space "${props.db.name}" to initiate its deletion.`,
+		title: 'Exit Space',
+		text: `Enter the full name of the Space "${props.db.name}" to exit.`,
 		check: props.db.name,
 	})
 	if (!isConfirm) return false
