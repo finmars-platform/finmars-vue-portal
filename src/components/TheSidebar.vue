@@ -500,7 +500,7 @@
 									<ul class="sidenav-dropdown-menu display-none submenuElement">
 										<li>
 											<a
-												:href="getUrlToOldApp('/portfolio-reconcile-group')"
+												:href="getUrlToOldApp('/data/portfolio-reconcile-group')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Portfolio Reconcile Groups</span>
@@ -508,7 +508,7 @@
 										</li>
 										<li>
 											<a
-												:href="getUrlToOldApp('/portfolio-reconcile-history')"
+												:href="getUrlToOldApp('/data/portfolio-reconcile-history')"
 												class="sidenav-dropdown-menu-btn"
 											>
 												<span class="side-nav-title">Reconciliation History</span>
@@ -576,7 +576,7 @@
 											>
 												<li>
 													<a
-														:href="getUrlToOldApp('/import/layout')"
+														:href="getUrlToOldApp('/settings/layout')"
 														class="sidenav-dropdown-menu-btn"
 													>
 														<span class="side-nav-title"
