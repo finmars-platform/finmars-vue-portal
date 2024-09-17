@@ -673,6 +673,15 @@
 											<ul
 												class="sidenav-dropdown-menu display-none submenuElement"
 											>
+												<li v-if="accessTable.data_portfolio">
+													<a
+														:href="getUrlToOldApp('/data/portfolio-type')"
+														class="sidenav-dropdown-menu-btn"
+													>
+														<span class="side-nav-title">Portfolio Types</span>
+													</a>
+												</li>
+
 												<li v-if="accessTable.configuration_account_type">
 													<a
 														:href="getUrlToOldApp('/data/account-type')"
