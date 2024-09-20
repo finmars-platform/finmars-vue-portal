@@ -1157,6 +1157,22 @@
 											White Label
 										</NuxtLink>
 									</li>
+									<li>
+										<a
+											:href="getUrlToOldApp('/balance-report-instance')"
+											class="sidemenu-btn"
+										>
+											<span class="side-nav-title">Balance Report Instance</span>
+										</a>
+									</li>
+									<li>
+										<a
+											:href="getUrlToOldApp('/pl-report-instance')"
+											class="sidemenu-btn"
+										>
+											<span class="side-nav-title">PL Report Instance</span>
+										</a>
+									</li>
 								</ul>
 							</div>
 						</div>
