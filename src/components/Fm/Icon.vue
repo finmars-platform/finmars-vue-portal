@@ -2,7 +2,7 @@
 	<div
 		:class="[
 			'icon',
-			{ primary, error, btn, disabled, 'btn-primary': btnPrimary },
+			{ primary, error, btn, disabled, 'btn-primary': btnPrimary }
 		]"
 		:style="{ fontSize: size + 'px' }"
 	>
@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-	let props = defineProps({
+	defineProps({
 		icon: String,
 		size: String,
 		tooltip: String,
@@ -23,7 +23,7 @@
 		error: Boolean,
 		btn: Boolean,
 		btnPrimary: Boolean,
-		disabled: Boolean,
+		disabled: Boolean
 	})
 </script>
 
@@ -32,7 +32,9 @@
 		position: relative;
 		display: block;
 		cursor: pointer;
-		transition: color, background 0.3s;
+		transition:
+			color,
+			background 0.3s;
 		font-size: 24px;
 		line-height: 0;
 		color: var(--primary-color);
@@ -51,11 +53,13 @@
 		&.disabled {
 			cursor: default;
 		}
+
 		&.gray-icon {
-			color: $grayIcon;
+			color: gray;
 		}
+
 		&.btn-primary {
-			background: $primary;
+			background: blue;
 			color: var(--onPrimary-color);
 			padding: 7px;
 			border-radius: 50%;
@@ -63,9 +67,9 @@
 			&:hover {
 				background: var(--primary-hover);
 				color: var(--onPrimary-color);
-				// color: $white;
 			}
 		}
+
 		&.primary {
 			color: var(--primary-color);
 
@@ -73,9 +77,11 @@
 				color: var(--primary-hover);
 			}
 		}
+
 		&.error {
-			color: $error;
+			color: red;
 		}
+
 		&.btn {
 			padding: 7px;
 			border-radius: 50%;
@@ -85,10 +91,12 @@
 			}
 		}
 	}
+
 	.material-icons {
 		font-size: inherit;
 		font-weight: inherit;
 	}
+
 	/*.tooltip {
 		position: absolute;
 		bottom: -18px;
