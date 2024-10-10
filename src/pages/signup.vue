@@ -1,5 +1,4 @@
 <template>
-
 	<div>
 		dffs <br />
 		dffs <br />
@@ -21,9 +20,7 @@
 </template>
 
 <script setup>
-	import TheSidebar from "../components/TheSidebar";
-
 	definePageMeta({
-		title: "Homepage",
-	});
+		title: 'Homepage'
+	})
 </script>

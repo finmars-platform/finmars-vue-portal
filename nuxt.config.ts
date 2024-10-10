@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import commonjs from 'vite-plugin-commonjs'
 
 export default defineNuxtConfig({
+	compatibilityDate: '2024-09-04',
 	runtimeConfig: {
 		public: {
 			frontURL: process.env.FRONT_HOST || "==PROD_FRONT_HOST==",
@@ -36,8 +37,9 @@ export default defineNuxtConfig({
 	},
 	modules: [
 		'@pinia/nuxt',
+		'@nuxtjs/tailwindcss',
 		'@nuxt/test-utils/module',
-		'floating-vue/nuxt'
+		'floating-vue/nuxt',
 	],
 	pinia: {
 		/* Options for @pinia/nuxt */
@@ -47,8 +49,13 @@ export default defineNuxtConfig({
 		"~/assets/css/material-icons.css",
 		"~/assets/scss/pickmeup.scss",
 		"~/assets/scss/base-theme.scss",
-		// '@finmars/ui/dist/finmars-ui.css',
+		'@finmars/ui/dist/finmars-ui.css',
 	],
+	postcss: {
+		plugins: {
+			'postcss-mixins': {},
+		}
+	},
 	vite: {
 		css: {
 			preprocessorOptions: {
