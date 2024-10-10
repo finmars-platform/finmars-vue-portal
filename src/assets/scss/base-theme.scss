@@ -11,14 +11,18 @@
 	--baseHeading-color: #53433F; /* h1-h6 */
 	--base-backgroundColor: #FFFFFF; /* body, page */
 
-	--container-backgroundColor: #F7E4DF; /* NEW */ /* dropdowns, menu */
-	--tableHeader-backgroundColor: #FFF1ED; /* NEW */ /* table-header */
+	--container-backgroundColor: #F7E4DF; /* NEW */
+	/* dropdowns, menu */
+	--tableHeader-backgroundColor: #FFF1ED; /* NEW */
+	/* table-header */
 
 	--activeState-backgroundColor: #FFDBD0; /* NEW */
 	--activeState-color: #2C160E;
 
-	--border-color: #85736E; /* NEW */ /* button borders, segments, inputs, dividers figma_keyword=outline  */
-	--light-borderColor: #D8C2BC; /* NEW */ /* cards, tables, */
+	--border-color: #85736E; /* NEW */
+	/* button borders, segments, inputs, dividers figma_keyword=outline  */
+	--light-borderColor: #D8C2BC; /* NEW */
+	/* cards, tables, */
 	--base-border: 1px solid var(--border-color);
 
 	--hover-opacity: 0.92; /* NEW */
@@ -43,6 +47,9 @@
 	--secondary-hover: #f69470;
 	--scrole-color: #85736E;
 	//# endregion
+
+	--sidebar-backgroundColor-hover: rgba(29, 27, 32, 0.08);
+	--sidebar-backgroundColor-focus: rgba(29, 27, 32, 0.12);
 }
 
 /* Switch to dark mode when .dark-mode class is present on body */
@@ -107,4 +114,7 @@ body.dark-mode {
 	--secondary-hover: #f69470;
 	--scrole-color: #85736E;
 	//# endregion
+
+	--sidebar-backgroundColor-hover: rgba(230, 224, 233, 0.08);
+	--sidebar-backgroundColor-focus: rgba(230, 224, 233, 0.12);
 }
