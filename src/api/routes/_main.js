@@ -480,5 +480,14 @@ export default {
 		get: prefix + '/system/whitelabel/{id}/',
 		patch: prefix + '/system/whitelabel/{id}/',
 		delete: prefix + '/system/whitelabel/{id}/'
-	}
+	},
+	resourceGroup: {
+		get: prefix + '/iam/resource-group/',
+		post: prefix + '/iam/resource-group/',
+	},
+	resourceGroupDetails: {
+		get: prefix + '/iam/resource-group/{id}/',
+		delete: prefix + '/iam/resource-group/{id}/',
+		put: prefix + '/iam/resource-group/{id}/',
+	},
 }
