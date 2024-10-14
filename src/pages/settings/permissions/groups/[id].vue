@@ -182,12 +182,12 @@ async function save() {
 
 	if (res) {
 		useNotify({type: 'success', title: 'Saved!'})
-		usePrefixedRouterPush(router, route, '/settings/permissions?tab=Groups')
+		router.back();
 	}
 }
 
 async function cancel() {
-	usePrefixedRouterPush(router, route, '/settings/permissions?tab=Groups')
+	router.back();
 }
 
 function fromatDate(date) {

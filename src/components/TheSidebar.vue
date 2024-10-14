@@ -1173,6 +1173,14 @@
 											<span class="side-nav-title">PL Report Instance</span>
 										</a>
 									</li>
+									<li>
+										<NuxtLink
+											class="sidemenu-btn"
+											:to="useGetNuxtLink('/settings/iam/resource-group', $route.params)"
+										>
+											Resource Group
+										</NuxtLink>
+									</li>
 								</ul>
 							</div>
 						</div>

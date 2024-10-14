@@ -1,0 +1,155 @@
+<template>
+	<div class="fm_container">
+		<BaseTable
+			colls="60px 1fr 1fr 1fr 1fr"
+			:items="resourceGroups"
+			:cb="clickCell"
+			:headers="[
+				'ID',
+				'Name',
+				'User Code',
+				'Description',
+				'Notes',
+			]"
+		/>
+		<div class="flex m-t-20">
+			<FmBtn @click="openModal()">Add Resource Group</FmBtn>
+		</div>
+
+		<FmPagination
+			class="m-t-20"
+			:count="count"
+			:page-size="pageSize"
+			@page-change="handlePageChange"
+		/>
+
+		<BaseModal
+			v-model="showModal"
+			title="Create Resource Group"
+			class="width-40"
+		>
+			<span v-if="!newResourceGroup.user_code.length">Field is required</span>
+			<BaseInput class="m-b-10" v-model="newResourceGroup.user_code" label="User Code" />
+			<span v-if="!newResourceGroup.name.length">Field is required</span>
+			<BaseInput class="m-b-10" v-model="newResourceGroup.name" label="Name" />
+			<BaseInput class="m-b-10" v-model="newResourceGroup.description" label="Description" />
+
+			<template #controls>
+				<div class="flex aic sb">
+					<FmBtn type="text" @click="cancelBaseModal"> Cancel </FmBtn>
+					<FmBtn :disabled="!validateNewResourceGroup" @click="createNewResourceGroup">Create</FmBtn>
+				</div>
+			</template>
+		</BaseModal>
+	</div>
+</template>
+
+<script setup>
+
+	definePageMeta({
+		middleware: 'auth',
+		bread: [
+			{
+				text: 'Resource Group',
+				disable: true,
+			},
+		],
+	});
+
+	const router = useRouter();
+	const showModal = ref(false);
+	const resourceGroups = ref([]);
+	const count = ref(0);
+	const pageSize = ref(10);
+
+	let newResourceGroup = reactive({
+		name: '',
+		user_code: '',
+		description: '',
+	});
+
+	const validateNewResourceGroup = computed(() => {
+		return newResourceGroup.name.length && newResourceGroup.user_code.length;
+	});
+
+	const getResourceGroup = async (currentPage = 1) => {
+		const payload = {
+			page_size: pageSize.value,
+			page: currentPage
+		}
+		const res = await useApi('resourceGroup.get', {
+			filters: payload
+		});
+		count.value = res.count;
+		return res.results ?? []
+	}
+
+	const openModal = () => {
+		showModal.value = true;
+	}
+	const cancelBaseModal = () => {
+		showModal.value = false;
+	}
+
+	const createNewResourceGroup = async () => {
+		if (!validateNewResourceGroup.value) return;
+
+		const res = await useApi('resourceGroup.post', {
+			body: newResourceGroup,
+		});
+		if (res) {
+			newResourceGroup = {
+				name: '',
+				user_code: '',
+				description: '',
+			};
+			init();
+			showModal.value = false;
+
+			useNotify({
+				type: 'success',
+				title: 'Success',
+			})
+		} else {
+			useNotify({
+				type: 'error',
+				title: 'No success',
+			})
+		}
+	}
+
+	const clickCell = async (index) => {
+		const resourceItem = resourceGroups.value[index];
+		router.push(`resource-group/${resourceItem.id}`);
+	}
+
+	const buildItemsForResourceGroups = (items) => {
+		return items.map((item)=> {
+			return {
+				id: `${item.id}`,
+				name: item.name,
+				user_code: item.user_code,
+				description: item.description?.length ? item.description : 'Empty',
+				notes: item.assignments.length ? '...' : 'Empty',
+			}
+		});
+	}
+
+	async function init(page = 1) {
+		const items = await getResourceGroup(page);
+		resourceGroups.value = buildItemsForResourceGroups(items);
+	}
+
+	const handlePageChange = (newPage) => {
+		init(newPage);
+	};
+
+	init();
+</script>
+
+
+<style scoped lang="scss">
+  :deep(.table-cell-btn) {
+	  text-align: left;
+  }
+</style>

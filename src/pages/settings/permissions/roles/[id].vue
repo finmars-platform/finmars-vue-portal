@@ -181,12 +181,12 @@ async function save() {
 
 	if (res) {
 		useNotify({type: 'success', title: 'Saved!'})
-		usePrefixedRouterPush(router, route, '/settings/permissions?tab=Roles')
+		router.back();
 	}
 }
 
 async function cancel() {
-	usePrefixedRouterPush(router, route, '/settings/permissions?tab=Roles')
+	router.back();
 }
 
 function fromatDate(date) {
