@@ -193,9 +193,7 @@
 </template>
 
 <script setup>
-
-	import dayjs from 'dayjs'
-	import {useGetNuxtLink, usePrefixedRouterPush} from "~/composables/useMeta";
+	import { useGetNuxtLink, usePrefixedRouterPush } from '~/composables/useMeta';
 
 	definePageMeta({
 		middleware: 'auth',
@@ -204,103 +202,109 @@
 				text: 'Permissions: Members',
 				disabled: true
 			}
-		],
+		]
 	});
 
-	const store = useStore()
 	const route = useRoute();
 	const router = useRouter();
+	const groups = ref([]);
+	const roles = ref([]);
+	const accessPolicies = ref([]);
 
 	const count = ref(0);
 	const pageSize = ref(10);
 
-	let tabsList = ['Members', 'Groups', 'Roles', 'Access Policies'];
-	let activeTab = ref('Members');
-	let stockMembers = ref(null);
-	router.push({query: { tab: activeTab.value }});
+	const tabsList = ['Members', 'Groups', 'Roles', 'Access Policies'];
+	const activeTab = ref('Members');
+	const stockMembers = ref(null);
 
-	let members = computed(() => {
-		let data = []
+	router.push({ query: { tab: activeTab.value } });
 
-		if (!stockMembers.value) return []
+	const members = computed(() => {
+		const data = [];
+		if (!stockMembers.value) return [];
 
-		stockMembers.value.forEach(item => {
-
+		stockMembers.value.forEach((item) => {
 			data.push({
 				id: `${item.id}`,
-				username: {value: item.username, link: '/settings/permissions/members/' + item.id},
+				username: {
+					value: item.username,
+					link: '/settings/permissions/members/' + item.id
+				},
 				is_admin: item.is_admin ? 'Admin' : 'No',
 				is_owner: item.is_owner ? 'Owner' : 'No',
 				is_deleted: item.is_deleted ? 'Deleted' : 'No',
 				status: item.status,
-				groups: item.groups_object.map(item => item.name).join(', '),
-				roles: item.roles_object.map(item => item.name).join(', '),
-			})
-		})
+				groups: item.groups_object.map((item) => item.name).join(', '),
+				roles: item.roles_object.map((item) => item.name).join(', ')
+			});
+		});
 
-		return data
-	})
+		return data;
+	});
 
-	let groups = ref([])
-	let roles = ref([])
-	let accessPolicies = ref([])
-
-	let groupsRows = computed(() => {
-		return groups.value.map(group => {
+	const groupsRows = computed(() => {
+		return groups.value.map((group) => {
 			return {
 				id: `${group.id}`,
 				user_code: group.user_code,
 				configuration_code: group.configuration_code,
-				name: group.name,
-			}
-		})
-	})
+				name: group.name
+			};
+		});
+	});
 
 	async function deleteMember(index) {
-		let usernameDel = members.value[index].username?.value;
-		let isConfirm = await useConfirm({
+		const usernameDel = members.value[index].username?.value;
+		const isConfirm = await useConfirm({
 			title: 'Delete member',
-			text: `Do you want to delete a member "${usernameDel}"?`,
-		})
+			text: `Do you want to delete a member "${usernameDel}"?`
+		});
 		if (!isConfirm) return false;
-		await useApi('member.delete', {params: {id: members.value[index].id}});
-		useNotify({type: 'success', title: `Member "${usernameDel}" was deleted.`})
+		await useApi('member.delete', { params: { id: members.value[index].id } });
+		useNotify({
+			type: 'success',
+			title: `Member "${usernameDel}" was deleted.`
+		});
 		refresh();
 	}
 
 	async function deleteGroup(index) {
-		let group = groups.value[index];
-		let isConfirm = await useConfirm({
+		const group = groups.value[index];
+		const isConfirm = await useConfirm({
 			title: 'Delete group',
-			text: `Do you want to delete a group "${group.name}"?`,
-		})
+			text: `Do you want to delete a group "${group.name}"?`
+		});
 		if (!isConfirm) return false;
-		await useApi('group.delete', {params: {id: group.id}});
-		useNotify({type: 'success', title: `Group "${group.name}" was deleted.`})
+		await useApi('group.delete', { params: { id: group.id } });
+		useNotify({ type: 'success', title: `Group "${group.name}" was deleted.` });
 		refresh();
 	}
 
 	async function deleteRole(index) {
-		let role = roles.value[index]
-		let isConfirm = await useConfirm({
+		const role = roles.value[index];
+		const isConfirm = await useConfirm({
 			title: 'Delete role',
-			text: `Do you want to delete a role "${role.name}"?`,
-		})
+			text: `Do you want to delete a role "${role.name}"?`
+		});
 		if (!isConfirm) return false;
-		await useApi('role.delete', {params: {id: role.id}});
-		useNotify({type: 'success', title: `Role "${role.name}" was deleted.`})
+		await useApi('role.delete', { params: { id: role.id } });
+		useNotify({ type: 'success', title: `Role "${role.name}" was deleted.` });
 		refresh();
 	}
 
 	async function deleteAccessPolicy(index) {
-		let policy = accessPolicies.value[index]
-		let isConfirm = await useConfirm({
+		const policy = accessPolicies.value[index];
+		const isConfirm = await useConfirm({
 			title: 'Delete Access Policy',
-			text: `Do you want to delete an Access Policy "${policy.name}"?`,
-		})
+			text: `Do you want to delete an Access Policy "${policy.name}"?`
+		});
 		if (!isConfirm) return false;
-		await useApi('accessPolicy.delete', {params: {id: policy.id}});
-		useNotify({type: 'success', title: `Access Policy "${policy.name}" was deleted.`})
+		await useApi('accessPolicy.delete', { params: { id: policy.id } });
+		useNotify({
+			type: 'success',
+			title: `Access Policy "${policy.name}" was deleted.`
+		});
 		refresh();
 	}
 
@@ -331,10 +335,7 @@
 			useApi('memberList.get'),
 			useApi('groupList.get'),
 			useApi('roleList.get'),
-			useApi(
-				'accessPolicyList.get',
-				{filters: {page: 1, page_size: 10000},}
-			)
+			useApi('accessPolicyList.get', { filters: { page: 1, page_size: 10000 } })
 		]);
 
 		stockMembers.value = res[0].results;
@@ -344,7 +345,7 @@
 				user_code: item.user_code,
 				configuration_code: item.configuration_code,
 				name: item.name
-			}
+			};
 		});
 		// ['', 'Id','User Code', 'Configuration Code',  'Name', ]
 		roles.value = res[2].results.map((item) => {
@@ -353,7 +354,7 @@
 				user_code: item.user_code,
 				configuration_code: item.configuration_code,
 				name: item.name
-			}
+			};
 		});
 		// ['', 'Id', 'User Code', 'Configuration Code', 'Name', ]
 		accessPolicies.value = res[3].results.map((item) => {
@@ -362,25 +363,22 @@
 				user_code: item.user_code,
 				configuration_code: item.configuration_code,
 				name: item.name
-			}
+			};
 		});
 	}
 
 	function generateLink(id) {
-		usePrefixedRouterPush(router, route, members.value[id].username.link)
+		usePrefixedRouterPush(router, route, members.value[id].username.link);
 	}
 
-	watch(
-		activeTab,
-		() => {
-			router.push({query: { tab: activeTab.value }});
-		}
-	)
+	watch(activeTab, () => {
+		router.push({ query: { tab: activeTab.value } });
+	});
 
-	init()
+	init();
 
 	function refresh() {
-		init()
+		init();
 	}
 </script>
 
