@@ -212,13 +212,13 @@
 
 		if (!res._$error) {
 			useNotify({type: 'success', title: 'Saved!'})
-			usePrefixedRouterPush(router, route, '/settings/permissions?tab=Member')
+			router.back();
 		}
 
 	}
 
 	async function cancel() {
-		usePrefixedRouterPush(router, route, '/settings/permissions?tab=Member')
+		router.back();
 	}
 
 	function fromatDate(date) {
