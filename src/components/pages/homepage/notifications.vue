@@ -1002,18 +1002,22 @@
 		&.blue:hover,
 		&.blue.active {
 			background: #dfeaff;
+			color: initial;
 		}
 		&.red:hover,
 		&.red.active {
 			background: #ffcccc;
+			color: initial;
 		}
 		&.primary:hover,
 		&.primary.active {
 			background: #ffe8cc;
+			color: initial;
 		}
 		&.green:hover,
 		&.green.active {
 			background: #e1fef5;
+			color: initial;
 		}
 		.circle {
 			display: inline-block;
