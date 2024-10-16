@@ -1,4 +1,4 @@
-import { tailwindCssVariables } from '@finmars/ui'
+// import { tailwindCssVariables } from '@finmars/ui'
 
 export default {
 	content: [
@@ -9,5 +9,5 @@ export default {
 	theme: {
 		extend: {}
 	},
-	plugins: [tailwindCssVariables]
+	plugins: []
 }
