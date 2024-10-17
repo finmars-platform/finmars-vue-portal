@@ -128,15 +128,18 @@ let props = defineProps({
 	},
 	isDisabled: Boolean,
 	isReadonly: Boolean,
+	isRightKebab: {
+		type: Boolean,
+		default: true,
+	},
 })
 
 let sortColumn = ref(-1)
 let ascending = ref(true)
 
-
 const sortTable = (col_index) => {
-  var col = Object.keys(props.items[0])[col_index];
-
+  let colIndex = props.isRightKebab ? col_index : col_index - 1;
+  let col = Object.keys(props.items[0])[colIndex];
   if (sortColumn.value === col_index) {
     ascending.value = !ascending.value;
   } else {
@@ -145,10 +148,8 @@ const sortTable = (col_index) => {
   }
 
   props.items.sort(function(a, b) {
-    let valueA = a[col].replace("%","");
-    let valueB = b[col].replace("%","");
-
-	console.log(valueA, valueB)
+    let valueA = col !== 'username' ? a[col].replace("%","") : a[col]?.value.replace("%","");
+    let valueB = col !== 'username' ? b[col].replace("%","") : b[col]?.value.replace("%","");
 
     if (!isNaN(valueA) && !isNaN(valueB)){
       valueA = parseFloat(valueA) || 0;
