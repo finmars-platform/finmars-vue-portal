@@ -1,12 +1,14 @@
 export function getRealmSpaceCodes(route) {
 	const pathnamePartsList = route.fullPath.split('/');
-	const realmCode = pathnamePartsList.find(part => part.startsWith('realm'));
-	const spaceCode = pathnamePartsList.find(part => part.startsWith('space'));
-	return { realmCode, spaceCode }
+	const realmCode = pathnamePartsList.find((part) => part.startsWith('realm'));
+	const spaceCode = pathnamePartsList.find((part) => part.startsWith('space'));
+	return { realmCode, spaceCode };
 }
 
 export function isEditorFile(string = window.location.href) {
-	return /\.(txt|css|js|html|yml|yaml|ipynb|json|py|md|xml|csv|jpg|jpeg|png|gif|svg|bmp|mp4|mp3|wav|zip|tar|gz|pdf|doc|docx|ppt|pptx)$/i.test(string);
+	return /\.(txt|css|js|html|yml|yaml|ipynb|json|py|md|xml|csv|jpg|jpeg|png|gif|svg|bmp|mp4|mp3|wav|zip|tar|gz|pdf|doc|docx|ppt|pptx)$/i.test(
+		string
+	);
 }
 
 export function getCurrentUrl(url, route) {
@@ -51,18 +53,23 @@ export function getItemsForAction(items, item = null) {
 	} else {
 		forActionItems = items.value.filter(function (item) {
 			return item.selected;
-		})
+		});
 	}
 	return forActionItems;
 }
 
-export function  copyToBuffer(content) {
-	const listener = function (e) {
-		e.clipboardData.setData('text/plain', content);
-		e.preventDefault();
-	};
-	document.addEventListener('copy', listener, false);
-	document.execCommand("copy");
-	document.removeEventListener('copy', listener, false);
-	return true;
+export function copyToBuffer(content) {
+	try {
+		const listener = function (e) {
+			e.clipboardData.setData('text/plain', content);
+			e.preventDefault();
+		};
+		document.addEventListener('copy', listener, false);
+		document.execCommand('copy');
+		document.removeEventListener('copy', listener, false);
+		return true;
+	} catch (error) {
+		console.log(error);
+		return false;
+	}
 }

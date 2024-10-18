@@ -36,7 +36,7 @@ export function useExplorer() {
 	const hideItemsCount = ref(null);
 	const exportTaskId = ref(null);
 	const searchTerm = ref('');
-	const throttleTimeout = ref(0);
+	const debounceTimeout = ref(0);
 	const currentPage = ref(1);
 	const currentPageForFiles = ref(1);
 	const currentPageForSearch = ref(1);
@@ -53,7 +53,7 @@ export function useExplorer() {
 	});
 
 	function formatDate(dateString) {
-		if (!dateString) return ;
+		if (!dateString) return;
 		const date = new Date(dateString);
 		const year = date.getFullYear();
 		const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
@@ -65,13 +65,13 @@ export function useExplorer() {
 	}
 
 	function generatePages(data) {
-		totalPages.value = Math.ceil(data.count / pageSize.value)
-		pages.value = []
-		for (var i = 1; i <= totalPages.value; i = i + 1) {
+		totalPages.value = Math.ceil(data.count / pageSize.value);
+		pages.value = [];
+		for (let i = 1; i <= totalPages.value; i = i + 1) {
 			pages.value.push({
 				number: i,
 				caption: i.toString()
-			})
+			});
 		}
 		if (totalPages.value > 10) {
 			let currentPageIndex = 0;
@@ -79,31 +79,25 @@ export function useExplorer() {
 				if (currentPage.value === item.number) {
 					currentPageIndex = index;
 				}
-			})
+			});
 			pages.value = pages.value.filter(function (item, index) {
-				if (index < 2 || index > totalPages.value - 3) {
-					return true
-				}
-				if (index === currentPageIndex) {
-					return true
-				}
-				if (index > currentPageIndex - 3 && index < currentPageIndex) {
-					return true
-				}
-				if (index < currentPageIndex + 3 && index > currentPageIndex) {
-					return true
-				}
-				return false
-			})
+				return (
+					index < 2 ||
+					index > totalPages.value - 3 ||
+					index === currentPageIndex ||
+					(index > currentPageIndex - 3 && index < currentPageIndex) ||
+					(index < currentPageIndex + 3 && index > currentPageIndex)
+				);
+			});
 
-			for (var i = 0; i < pages.value.length; i = i + 1) {
+			for (let i = 0; i < pages.value.length; i = i + 1) {
 				const j = i + 1;
 				if (j < pages.value.length) {
 					if (pages.value[j].number && pages.value[i].number) {
 						if (pages.value[j].number - pages.value[i].number > 1) {
 							pages.value.splice(i + 1, 0, {
 								caption: '...'
-							})
+							});
 						}
 					}
 				}
@@ -144,18 +138,18 @@ export function useExplorer() {
 	}
 
 	function search(query) {
-		if (throttleTimeout) {
-			clearTimeout(throttleTimeout.value);
+		if (debounceTimeout) {
+			clearTimeout(debounceTimeout.value);
 		}
-		throttleTimeout.value = setTimeout(async function() {
+		debounceTimeout.value = setTimeout(async function () {
 			if (query.length) {
 				hideItemsCount.value = 0;
 				currentPage.value = currentPageForSearch.value;
 				const options = {
-					pageSize : pageSize.value,
-					page : currentPageForSearch.value,
-					query : query
-				}
+					pageSize: pageSize.value,
+					page: currentPageForSearch.value,
+					query: query
+				};
 				try {
 					const data = await useApi('explorerSearch.get', { filters: options });
 					if (data) {
@@ -164,7 +158,7 @@ export function useExplorer() {
 						processing.value = false;
 					}
 				} catch (error) {
-					console.warn('Error explorerSearch.get', error)
+					console.warn('Error explorerSearch.get', error);
 				}
 			} else {
 				currentPageForSearch.value = 1;
@@ -174,21 +168,17 @@ export function useExplorer() {
 	}
 
 	function sizePretty(size) {
-		if (isNaN(size))
-			size = 0;
+		if (isNaN(size)) size = 0;
 
-		if (size < 1024)
-			return size + ' Bytes';
+		if (size < 1024) return size + ' Bytes';
 
 		size /= 1024;
 
-		if (size < 1024)
-			return size.toFixed(2) + ' KB';
+		if (size < 1024) return size.toFixed(2) + ' KB';
 
 		size /= 1024;
 
-		if (size < 1024)
-			return size.toFixed(2) + ' MB';
+		if (size < 1024) return size.toFixed(2) + ' MB';
 
 		size /= 1024;
 
@@ -202,29 +192,33 @@ export function useExplorer() {
 		isEditor.value = isEditorFile(currentPath.value.join('/'));
 		let data = null;
 		try {
-			if(searchTerm.value){
+			if (searchTerm.value) {
 				search(searchTerm.value);
 			} else {
 				data = await useApi('explorer.get', {
-					filters: { page_size: pageSize.value, page: currentPageForFiles.value, path: currentPath.value.join('/') }
+					filters: {
+						page_size: pageSize.value,
+						page: currentPageForFiles.value,
+						path: currentPath.value.join('/')
+					}
 				});
 			}
 			if (data) {
 				generatePages(data);
 				const itemsCountBefore = data.results.length ?? 0;
 				items.value = data.results.filter(function (item) {
-					var result = true;
+					let result = true;
 					if (item.name[0] === '.' && !showHiddenFiles.value) {
 						result = false;
 					}
 					return result;
-				})
+				});
 				const itemsCountAfter = items.value.length ?? 0;
 				hideItemsCount.value = itemsCountBefore - itemsCountAfter;
 				processing.value = false;
 			}
 		} catch (e) {
-			console.warn('Error explorer.get', e)
+			console.warn('Error explorer.get', e);
 		}
 	}
 
@@ -262,15 +256,17 @@ export function useExplorer() {
 
 	async function openDeleteSelected(item = undefined) {
 		const itemsToDelete = getItemsForAction(items, item);
-		const names = itemsToDelete.map(function (item) {
-			return item.name
-		}).join(', ');
+		const names = itemsToDelete
+			.map(function (item) {
+				return item.name;
+			})
+			.join(', ');
 		const confirm = await useConfirm({
 			title: 'Warning',
-			text: `Are you sure that you want to delete ${names}?`,
-		})
+			text: `Are you sure that you want to delete ${names}?`
+		});
 		if (confirm) {
-			deleteSelected()
+			deleteSelected();
 		}
 	}
 
@@ -294,34 +290,34 @@ export function useExplorer() {
 		let defaultContent = '';
 		if (teValue.value.indexOf('.ipynb') !== -1) {
 			defaultContent = {
-				"metadata": {
-					"kernelspec": {
-						"name": "python",
-						"display_name": "Python (Pyodide)",
-						"language": "python"
+				metadata: {
+					kernelspec: {
+						name: 'python',
+						display_name: 'Python (Pyodide)',
+						language: 'python'
 					},
-					"language_info": {
-						"codemirror_mode": {
-							"name": "python",
-							"version": 3
+					language_info: {
+						codemirror_mode: {
+							name: 'python',
+							version: 3
 						},
-						"file_extension": ".py",
-						"mimetype": "text/x-python",
-						"name": "python",
-						"nbconvert_exporter": "python",
-						"pygments_lexer": "ipython3",
-						"version": "3.8"
+						file_extension: '.py',
+						mimetype: 'text/x-python',
+						name: 'python',
+						nbconvert_exporter: 'python',
+						pygments_lexer: 'ipython3',
+						version: '3.8'
 					}
 				},
-				"cells": []
-			}
+				cells: []
+			};
 		}
 		const content = JSON.stringify(defaultContent);
 		const blob = new Blob([content]);
 		const file = new File([blob], teValue.value);
-		formData.append("file", file);
+		formData.append('file', file);
 		formData.append('path', path);
-		const res = await useApi('explorerFile.post',{
+		const res = await useApi('explorerFile.post', {
 			body: formData
 		});
 		if (res?.status === 'ok') {
@@ -337,19 +333,19 @@ export function useExplorer() {
 			}
 			const newUrl = getCurrentUrl(currentPath.value.join('/'), route);
 			cancel();
-			router.push(newUrl)
+			router.push(newUrl);
 		}
 	}
 
 	async function createFolder() {
 		let itemPath = teValue.value;
 		if (currentPath.value.length) {
-			itemPath = currentPath.value.join('/') + '/' + itemPath
+			itemPath = currentPath.value.join('/') + '/' + itemPath;
 		}
 		if (itemPath?.length) {
 			const options = {
 				body: { path: itemPath }
-			}
+			};
 			const res = await useApi('explorerFolder.post', options);
 			if (res.status === 'ok') {
 				cancel();
@@ -365,12 +361,13 @@ export function useExplorer() {
 
 	async function sync() {
 		const res = await useApi('explorerSync.post');
-		if(res.status === 'ok') {
+		console.log(res, 111111111111);
+		if (res.status === 'ok') {
 			exportTaskId.value = res.task_id;
 		}
 	}
 
-	async function breadcrumbsNavigation (itemIndex) {
+	async function breadcrumbsNavigation(itemIndex) {
 		if (itemIndex === -1) {
 			currentPath.value = [];
 			const { realmCode, spaceCode } = getRealmSpaceCodes(route);
@@ -378,12 +375,16 @@ export function useExplorer() {
 		} else {
 			currentPath.value = currentPath.value.filter(function (item, index) {
 				return index <= itemIndex;
-			})
+			});
 			const currentPathData = route.fullPath.split('/');
 			const dynamicSegments = currentPath.value;
 			const indexOfExplorer = currentPathData.indexOf('explorer');
 			if (indexOfExplorer !== -1) {
-				currentPathData.splice(indexOfExplorer + 1, currentPathData.length, ...dynamicSegments);
+				currentPathData.splice(
+					indexOfExplorer + 1,
+					currentPathData.length,
+					...dynamicSegments
+				);
 			}
 			const newPath = currentPathData.join('/');
 			router.push(newPath);
@@ -392,7 +393,7 @@ export function useExplorer() {
 	}
 
 	function removeActiveTaskId() {
-		exportTaskId.value = null
+		exportTaskId.value = null;
 	}
 
 	function create() {
@@ -400,7 +401,7 @@ export function useExplorer() {
 			createFile();
 		} else if (isZip.value) {
 			downloadZip();
-		} else if(isRename.value){
+		} else if (isRename.value) {
 			rename();
 		} else if (isMove.value) {
 			move();
@@ -425,15 +426,15 @@ export function useExplorer() {
 				status: 'init'
 			};
 		});
-		const path = currentPath.value.join('/')
+		const path = currentPath.value.join('/');
 		for (let i = 0; i < filesStatus.value.length; i++) {
 			let fileStatus = filesStatus.value[i];
 			const formData = new FormData();
-			formData.append("file", fileStatus.file);
+			formData.append('file', fileStatus.file);
 			formData.append('path', path);
 			fileStatus.status = 'progress';
 			try {
-				await useApi('explorerFile.post',{
+				await useApi('explorerFile.post', {
 					body: formData
 				});
 				fileStatus.status = 'success';
@@ -443,7 +444,7 @@ export function useExplorer() {
 			}
 		}
 		closeFileStatuses.value = true;
-		document.querySelector('#explorerFileUploadInput').value = "";
+		document.querySelector('#explorerFileUploadInput').value = '';
 		await listFiles();
 	}
 
@@ -458,34 +459,41 @@ export function useExplorer() {
 	}
 
 	function selectItem() {
+		let isAllSelected = true;
 		selectedCount.value = 0;
-		const isAllSelected = items.value.every(item => {
-			if (item.selected) {
-				selectedCount.value += 1;
-				return true;
+		items.value.forEach(function (item) {
+			if (!item.selected) {
+				isAllSelected = false;
+			} else {
+				selectedCount.value = selectedCount.value + 1;
 			}
-			return false;
 		});
 		allSelected.value = isAllSelected;
 	}
 
 	async function openFolder(item) {
-		currentPath.value.push(item.name)
-		router.push(route.fullPath + '/' + item.name)
+		currentPath.value.push(item.name);
+		router.push(route.fullPath + '/' + item.name);
 	}
 
 	function editFile(item) {
 		const filePath = item.file_path.split('/');
-		currentPath.value = filePath.filter(element => element !== "");
-		const hasSpace = currentPath.value.some(element => element.includes('space'));
+		currentPath.value = filePath.filter((element) => element !== '');
+		const hasSpace = currentPath.value.some((element) =>
+			element.includes('space')
+		);
 		if (hasSpace) {
-			currentPath.value = currentPath.value.filter(element => !element.includes("space"));
+			currentPath.value = currentPath.value.filter(
+				(element) => !element.includes('space')
+			);
 		}
-		const hasFileName = currentPath.value.some(element => element.includes(item.name));
+		const hasFileName = currentPath.value.some((element) =>
+			element.includes(item.name)
+		);
 		if (!hasFileName) {
 			currentPath.value.push(item.name);
 		}
-		currentPath.value = currentPath.value.filter(item => item !== "");
+		currentPath.value = currentPath.value.filter((item) => item !== '');
 		const pathForEditor = [...currentPath.value];
 		const url = 'explorer/' + pathForEditor.join('/');
 		currentPath.value.pop();
@@ -504,39 +512,41 @@ export function useExplorer() {
 	function editorInit(editor) {
 		editor.setHighlightActiveLine(false);
 		editor.setShowPrintMargin(false);
-		editor.setFontSize(14)
+		editor.setFontSize(14);
 		editor.setBehavioursEnabled(true);
 		editor.focus();
 		editor.navigateFileStart();
 	}
 
 	function openFile(index, item) {
-		const pathParts = item.file_path.split('/').filter(element => !!element);
+		const pathParts = item.file_path.split('/').filter((element) => !!element);
 		currentPath.value = pathParts.slice(0, index + 1).join('/');
-		const isFile = isEditorFile(currentPath.value );
-		if(isFile) {
-			editFile(item)
+		const isFile = isEditorFile(currentPath.value);
+		if (isFile) {
+			editFile(item);
 		} else {
-			router.push('explorer/' + currentPath.value );
+			router.push('explorer/' + currentPath.value);
 		}
 	}
 
 	async function downloadZip() {
 		const name = teValue.value + '.zip';
-		const paths = []
+		const paths = [];
 		items.value.forEach(function (item) {
 			if (item.selected) {
 				if (item.type === 'dir') {
-					paths.push(currentPath.value.join('/') + '/' + item.name + '/') // important to add trailing slash
+					paths.push(currentPath.value.join('/') + '/' + item.name + '/'); // important to add trailing slash
 				} else {
-					paths.push(currentPath.value.join('/') + '/' + item.name)
+					paths.push(currentPath.value.join('/') + '/' + item.name);
 				}
 			}
-		})
+		});
 		try {
-			const blobData = await useApi('explorerDownloadAsZip.post', { body: { paths } });
+			const blobData = await useApi('explorerDownloadAsZip.post', {
+				body: { paths }
+			});
 			if (blobData) {
-				downloadFile(blobData, "application/zip", name);
+				downloadFile(blobData, 'application/zip', name);
 			}
 			cancel();
 		} catch (error) {
@@ -545,89 +555,125 @@ export function useExplorer() {
 	}
 
 	function deleteSelected(item = undefined) {
-    const itemsToDelete = getItemsForAction(items, item);
-    if (currentPageForFiles.value > 1 && (items.value.length - itemsToDelete.length) === 0) {
-        currentPageForFiles.value = currentPageForFiles.value - 1;
-        allSelected.value = false;
-    }
-    for (const item of itemsToDelete) {
+		const itemsToDelete = getItemsForAction(items, item);
+		if (
+			currentPageForFiles.value > 1 &&
+			items.value.length - itemsToDelete.length === 0
+		) {
+			currentPageForFiles.value = currentPageForFiles.value - 1;
+			allSelected.value = false;
+		}
+		for (const item of itemsToDelete) {
 			let path = currentPath.value.join('/') + '/' + item.name;
 			let res;
 			try {
 				if (item.type === 'dir') {
-						res = useApi('explorerDeleteFolder.post', { body: { path } });
+					res = useApi('explorerDeleteFolder.post', { body: { path } });
 				} else {
 					if (searchTerm.value.length) {
-							path = item.file_path;
+						path = item.file_path;
 					}
 					res = useApi('explorerDelete.post', { filters: { path } });
 				}
-				if (res.status === "ok") {
-						useNotify({ type: 'success', title: `${item.name} successfully deleted` });
-						listFiles();
+				if (res.status === 'ok') {
+					useNotify({
+						type: 'success',
+						title: `${item.name} successfully deleted`
+					});
+					listFiles();
 				}
 			} catch (error) {
-					console.log('Delete' + error); // Improved error message concatenation
-					useNotify({ type: 'error', title: `${item.name} - Something went wrong!` });
+				console.log('Delete' + error); // Improved error message concatenation
+				useNotify({
+					type: 'error',
+					title: `${item.name} - Something went wrong!`
+				});
 			}
-	}
+		}
 	}
 
-	async function rename () {
+	async function rename() {
 		const name = oldItem.value.name;
 		let path = '';
 		try {
 			if (oldItem.value.type === 'dir') {
 				path = currentPath.value.join('/') + '/' + name;
 			} else {
-				path = oldItem.value.file_path.startsWith('/') ? oldItem.value.file_path.substring(1) : oldItem.value.file_path;
+				path = oldItem.value.file_path.startsWith('/')
+					? oldItem.value.file_path.substring(1)
+					: oldItem.value.file_path;
 			}
-			const res = await useApi('explorerRename.post', {body: { new_name: teValue.value, path: path} });
-			if (res.status === "ok") {
-				useNotify({ type: 'success', title: `${teValue.value} successfully renamed` });
+			const res = await useApi('explorerRename.post', {
+				body: { new_name: teValue.value, path: path }
+			});
+			if (res.status === 'ok') {
+				useNotify({
+					type: 'success',
+					title: `${teValue.value} successfully renamed`
+				});
 			}
 			exportTaskId.value = res.task_id;
 			oldItem.value = {};
 			cancel();
 		} catch (error) {
-			useNotify({ type: 'success', title: `${oldItem.value.name} rename failed!` });
+			useNotify({
+				type: 'success',
+				title: `${oldItem.value.name} rename failed!`
+			});
 		}
 	}
 
-	function openInNewTab (item) {
+	function openInNewTab(item) {
 		const { realmCode, spaceCode } = getRealmSpaceCodes(route);
-		let url =  window.location.origin + '/' + `${realmCode}/${spaceCode}/v/explorer` + item.file_path;
+		let url =
+			window.location.origin +
+			'/' +
+			`${realmCode}/${spaceCode}/v/explorer` +
+			item.file_path;
 		if (!item.file_path.startsWith('/')) {
-			url = window.location.origin + '/' + `${realmCode}/${spaceCode}/v/explorer/` + item.file_path;
+			url =
+				window.location.origin +
+				'/' +
+				`${realmCode}/${spaceCode}/v/explorer/` +
+				item.file_path;
 		}
-		window.open(url, "_blank");
+		window.open(url, '_blank');
 	}
 
 	function copyLink(item) {
 		const { realmCode, spaceCode } = getRealmSpaceCodes(route);
-		let url = window.location.origin + '/' + `${realmCode}/${spaceCode}/v/explorer` + item.file_path;
+		let url =
+			window.location.origin +
+			'/' +
+			`${realmCode}/${spaceCode}/v/explorer` +
+			item.file_path;
 		if (!item.file_path.startsWith('/')) {
-			url = window.location.origin + '/' + `${realmCode}/${spaceCode}/v/explorer/` + item.file_path;
+			url =
+				window.location.origin +
+				'/' +
+				`${realmCode}/${spaceCode}/v/explorer/` +
+				item.file_path;
 		}
-		const copy = copyToBuffer(url);
-		if (copy) {
-			useNotify({ type: 'info', title: 'Copied' });
-		}
+		copyFilePath({ file_path: url });
 	}
 
-	function copyFilePath (item) {
+	function copyFilePath(item) {
 		const copy = copyToBuffer(item.file_path);
 		if (copy) {
 			useNotify({ type: 'info', title: 'Copied' });
+		} else {
+			useNotify({ type: 'error', title: 'Copy Filed' });
 		}
 	}
 
 	async function download(item) {
 		const path = currentPath.value.join('/') + '/' + item.name;
 		try {
-			const blobData = await useApi('explorerDownload.post', { body: { path } });
+			const blobData = await useApi('explorerDownload.post', {
+				body: { path }
+			});
 			if (blobData) {
-				downloadFile(blobData, "plain/text", item.name);
+				downloadFile(blobData, 'plain/text', item.name);
 			}
 		} catch (error) {
 			console.error('Error fetching ZIP:', error);
@@ -645,9 +691,11 @@ export function useExplorer() {
 				if (item.type === 'file') {
 					paths.push(item.file_path);
 				}
-			})
-			const res = await useApi('explorer.post', {body : {target_directory_path: pathToMove.value, paths}});
-			if(res.status === 'ok') {
+			});
+			const res = await useApi('explorer.post', {
+				body: { target_directory_path: pathToMove.value, paths }
+			});
+			if (res.status === 'ok') {
 				exportTaskId.value = res.task_id;
 				cancel();
 			}
@@ -711,5 +759,5 @@ export function useExplorer() {
 		openMove,
 		isMove,
 		getPathToMove
-	}
+	};
 }
