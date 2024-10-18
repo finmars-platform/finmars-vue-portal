@@ -324,59 +324,59 @@ import { useExplorer } from '~/composables/useExplorer'
 import { VAceEditor } from 'vue3-ace-editor'
 import Move from '~/pages/explorer/_components/Move.vue'
 
-const {
-	store,
-	formatDate,
-	processing,
-	selectedCount,
-	listFiles,
-	items,
-	label,
-	teIsOpened,
-	teValue,
-	openCreateFileModal,
-	cancel,
-	create,
-	openCreateFolderModal,
-	uploadFileHandler,
-	uploadFiles,
-	showHiddenFiles,
-	hideItemsCount,
-	toggleHidden,
-	sync,
-	exportTaskId,
-	removeActiveTaskId,
-	allSelected,
-	toggleSelectAll,
-	selectItem,
-	searchTerm,
-	currentPage,
-	totalPages,
-	pages,
-	openPreviousPage,
-	openNextPage,
-	openPage,
-	closeFileStatuses,
-	filesStatus,
-	currentPath,
-	breadcrumbsNavigation,
-	openFolder,
-	editFile,
-	editorInit,
-	content,
-	isEditor,
-	openFile,
-	openDownloadZipModal,
-	openDeleteSelected,
-	openRename,
-	openInNewTab,
-	copyLink,
-	copyFilePath,
-	download,
-	openMove,
-	isMove,
-	getPathToMove
-} = useExplorer();
+	const {
+		store,
+		formatDate,
+		processing,
+		selectedCount,
+		listFiles,
+		items,
+		label,
+		teIsOpened,
+		teValue,
+		openCreateFileModal,
+		cancel,
+		create,
+		openCreateFolderModal,
+		uploadFileHandler,
+		uploadFiles,
+		showHiddenFiles,
+		hideItemsCount,
+		toggleHidden,
+		sync,
+		exportTaskId,
+		removeActiveTaskId,
+		allSelected,
+		toggleSelectAll,
+		selectItem,
+		searchTerm,
+		currentPage,
+		totalPages,
+		pages,
+		openPreviousPage,
+		openNextPage,
+		openPage,
+		closeFileStatuses,
+		filesStatus,
+		currentPath,
+		breadcrumbsNavigation,
+		openFolder,
+		editFile,
+		editorInit,
+		content,
+		isEditor,
+		openFile,
+		openDownloadZipModal,
+		openDeleteSelected,
+		openRename,
+		openInNewTab,
+		copyLink,
+		copyFilePath,
+		download,
+		openMove,
+		isMove,
+		getPathToMove
+	} = useExplorer();
 </script>
 
 <style scoped lang="scss">
@@ -724,5 +724,11 @@ const {
 		.menu-item-delete {
 			color: $error;
 		}
+	}
+	.task-card {
+		position: absolute;
+		top: 62px;
+		right: 10px;
+		z-index: 1;
 	}
 </style>
