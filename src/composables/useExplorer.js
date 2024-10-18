@@ -361,7 +361,6 @@ export function useExplorer() {
 
 	async function sync() {
 		const res = await useApi('explorerSync.post');
-		console.log(res, 111111111111);
 		if (res.status === 'ok') {
 			exportTaskId.value = res.task_id;
 		}
@@ -583,7 +582,7 @@ export function useExplorer() {
 					listFiles();
 				}
 			} catch (error) {
-				console.log('Delete' + error); // Improved error message concatenation
+				console.log('Delete' + error);
 				useNotify({
 					type: 'error',
 					title: `${item.name} - Something went wrong!`
