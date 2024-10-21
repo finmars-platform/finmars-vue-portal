@@ -49,7 +49,7 @@ var filterTableItem = function (item, regularFilters) {
 		var keyProperty = regularFilters[rf].key
 		var valueType = regularFilters[rf].value_type
 		var filterType = regularFilters[rf].filter_type
-		var excludeEmptyCells = regularFilters[rf].exclude_empty_cells
+		// var excludeEmptyCells = regularFilters[rf].exclude_empty_cells
 		var filterValue = regularFilters[rf].value
 
 		if (keyProperty === 'ordering') {
@@ -206,7 +206,8 @@ var filterTableItem = function (item, regularFilters) {
 		} else {
 			// attribute value is empty
 
-			var hideEmptyCells = excludeEmptyCells && item.___type !== 'group'
+			// var hideEmptyCells = excludeEmptyCells && item.___type !== 'group'
+			var hideEmptyCells = item.___type !== 'group'
 
 			if (hideEmptyCells) return false
 		}
@@ -636,7 +637,7 @@ var convertIntoRegularFilters = function (filtersList) {
 			var filterOptions = {
 				key: filter.key,
 				filter_type: filter.options.filter_type,
-				exclude_empty_cells: filter.options.exclude_empty_cells,
+				// exclude_empty_cells: filter.options.exclude_empty_cells,
 				value_type: filter.value_type,
 				value: filter.options.filter_values,
 			}

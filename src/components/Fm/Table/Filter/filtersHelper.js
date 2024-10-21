@@ -8,9 +8,9 @@ export const emptyTextFilter = (filterType, filterOptions) => {
 
 	filterOptions.filter_type = filterType;
 
-	if (filterType === 'empty') {
-		filterOptions.exclude_empty_cells = false;
-	}
+	// if (filterType === 'empty') {
+	// 	filterOptions.exclude_empty_cells = false;
+	// }
 
 	filterOptions.filter_values = [];
 
@@ -32,9 +32,9 @@ export const emptyNumberFilter = (filterType, filterOptions) => {
 
 	} else {
 
-		if (filterType === 'empty') {
-			filterOptions.exclude_empty_cells = false;
-		}
+		// if (filterType === 'empty') {
+		// 	filterOptions.exclude_empty_cells = false;
+		// }
 
 		filterOptions.filter_values = [];
 
@@ -62,9 +62,9 @@ export const emptyDateFilter = (filterType, filterOptions) => {
 
 	} else {
 
-		if (filterType === 'empty') {
-			filterOptions.exclude_empty_cells = false;
-		}
+		// if (filterType === 'empty') {
+		// 	filterOptions.exclude_empty_cells = false;
+		// }
 
 		filterOptions.filter_values = [];
 

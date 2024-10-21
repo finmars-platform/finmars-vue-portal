@@ -26,9 +26,9 @@ export default function () {
             filter.options.filter_values = []
         }
 
-        if (!filter.options.hasOwnProperty('exclude_empty_cells')) {
-            filter.options.exclude_empty_cells = false;
-        }
+        // if (!filter.options.hasOwnProperty('exclude_empty_cells')) {
+        //     filter.options.exclude_empty_cells = false;
+        // }
 
         if (isReport) {
 
@@ -52,9 +52,9 @@ export default function () {
 
         filterOptions.filter_type = filterType;
 
-        if (filterType === 'empty') {
-            filterOptions.exclude_empty_cells = false;
-        }
+        // if (filterType === 'empty') {
+        //     filterOptions.exclude_empty_cells = false;
+        // }
 
         filterOptions.filter_values = [];
 
@@ -77,9 +77,9 @@ export default function () {
 
         } else {
 
-            if (filterType === 'empty') {
-                filterOptions.exclude_empty_cells = false;
-            }
+            // if (filterType === 'empty') {
+            //     filterOptions.exclude_empty_cells = false;
+            // }
 
             filterOptions.filter_values = [];
 
@@ -108,9 +108,9 @@ export default function () {
 
         } else {
 
-            if (filterType === 'empty') {
-                filterOptions.exclude_empty_cells = false;
-            }
+            // if (filterType === 'empty') {
+            //     filterOptions.exclude_empty_cells = false;
+            // }
 
             filterOptions.filter_values = [];
 
