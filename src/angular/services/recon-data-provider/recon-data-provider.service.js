@@ -62,7 +62,11 @@ export default function (entityResolverService, reportHelper) {
 
 				var filterType = filterItem.options.filter_type
 
-				if (filterType === 'empty' || filterItem.options.exclude_empty_cells) {
+				// if (filterType === 'empty' || filterItem.options.exclude_empty_cells) {
+				// 	// if filter works for empty cells
+				// 	return true
+				// }
+				if (filterType === 'empty') {
 					// if filter works for empty cells
 
 					return true
@@ -96,7 +100,7 @@ export default function (entityResolverService, reportHelper) {
 				var filterSettings = {
 					key: key,
 					filter_type: item.options.filter_type,
-					exclude_empty_cells: item.options.exclude_empty_cells,
+					// exclude_empty_cells: item.options.exclude_empty_cells,
 					value_type: item.value_type,
 					value: item.options.filter_values,
 				}
