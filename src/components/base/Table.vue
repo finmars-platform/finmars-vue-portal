@@ -92,9 +92,9 @@
 				</button>
 			</div>
 		</div>
-	</div>
-	<div class="center p-16" v-if="status === 'loading'">
-		<FmLoader/>
+		<div class="center p-16" v-if="status === 'loading'">
+			<FmLoader />
+		</div>
 	</div>
 </template>
 
