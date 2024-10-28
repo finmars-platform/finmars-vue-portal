@@ -107,7 +107,7 @@ export default defineStore({
 
 			try {
 
-				const blob = await useApi('explorerViewFile.get', { params: { path: itemPath } })
+				const blob = await useApi('explorerViewFile.get', { filters: { path: itemPath } })
 
 				// seems useApi somehow Parse blob already
 				var styleElement = document.createElement('style');

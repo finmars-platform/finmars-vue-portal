@@ -28,9 +28,9 @@ export const useSetEvRvFilterDefaultOptions = (filter, isReport) => {
 		filter.options.filter_values = []
 	}
 
-	if (!filter.options.hasOwnProperty('exclude_empty_cells')) {
-		filter.options.exclude_empty_cells = false;
-	}
+	// if (!filter.options.hasOwnProperty('exclude_empty_cells')) {
+	// 	filter.options.exclude_empty_cells = false;
+	// }
 
 	if (isReport) {
 
@@ -54,9 +54,9 @@ export const useEmptyEvRvTextFilter = (filterType, filterOptions) => {
 
 	filterOptions.filter_type = filterType;
 
-	if (filterType === 'empty') {
-		filterOptions.exclude_empty_cells = false;
-	}
+	// if (filterType === 'empty') {
+	// 	filterOptions.exclude_empty_cells = false;
+	// }
 
 	filterOptions.filter_values = [];
 
@@ -79,9 +79,9 @@ export const useEmptyEvRvNumberFilter = (filterType, filterOptions) => {
 
 	} else {
 
-		if (filterType === 'empty') {
-			filterOptions.exclude_empty_cells = false;
-		}
+		// if (filterType === 'empty') {
+		// 	filterOptions.exclude_empty_cells = false;
+		// }
 
 		filterOptions.filter_values = [];
 
@@ -110,9 +110,9 @@ export const useEmptyEvRvDateFilter = (filterType, filterOptions) => {
 
 	} else {
 
-		if (filterType === 'empty') {
-			filterOptions.exclude_empty_cells = false;
-		}
+		// if (filterType === 'empty') {
+		// 	filterOptions.exclude_empty_cells = false;
+		// }
 
 		filterOptions.filter_values = [];
 

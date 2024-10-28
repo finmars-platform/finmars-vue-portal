@@ -41,6 +41,6 @@
 		z-index: 2;
 	}
 	.fm_container {
-		min-height: calc(100vh - 52px);
+		min-height: calc(100vh - 80px);
 	}
 </style>
