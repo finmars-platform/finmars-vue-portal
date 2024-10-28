@@ -1,117 +1,147 @@
 <template>
 	<div>
 		<div class="explorer-page">
-			<div class="explorer-explorer-section ">
-				<div layout="row" class="flex">
-					<h1 style="margin-top: 5px; margin-right: 8px; font-size: 20px">Explorer</h1>
+			<div class="explorer-explorer-section">
+				<div class="flex">
+					<h1 style="margin-top: 5px; margin-right: 8px; font-size: 20px">
+						Explorer
+					</h1>
 					<FmIcon
 						btnPrimary
 						class="md-raised md-icon-button md-primary explorer-page-refresh-button"
-						:class="{'disabled-btn': processing}"
+						:class="{ 'disabled-btn': processing }"
 						@click="listFiles"
 						icon="refresh"
 						size="24"
 						v-tooltip="'Refresh'"
 					/>
 				</div>
-				<div layout="column">
-					<div class="explorer-toolbar" layout="row">
-						<div class="flex explorer-actions-buttons">
+				<div class="explorer-toolbar">
+					<div class="flex explorer-actions-buttons">
+						<FmMenu>
+							<template #btn="{ isOpen }">
+								<FmBtn> Create </FmBtn>
+							</template>
+							<template #default>
+								<div class="fm_list">
+									<div class="fm_list_item" @click="openCreateFileModal()">
+										Create File
+									</div>
+									<div class="fm_list_item" @click="openCreateFolderModal()">
+										Create Folder
+									</div>
+									<div class="fm_list_item" @click="uploadFiles()">
+										Upload Files
+									</div>
+								</div>
+							</template>
+						</FmMenu>
+						<div class="explorer-show-hide-border">
+							<FmBtn type="text" @click="toggleHidden()">
+								{{
+									showHiddenFiles
+										? 'Hide Invisible Files'
+										: `Show Invisible Files${hideItemsCount ? ' (' + hideItemsCount + ')' : ''}`
+								}}
+							</FmBtn>
+						</div>
+						<FmBtn @click="sync()"> Sync </FmBtn>
+						<div v-if="selectedCount" class="flex" style="align-items: center">
+							Selected: {{ selectedCount }}
 							<FmMenu>
-								<template #btn="{ isOpen }">
-									<FmBtn> Create </FmBtn>
+								<template #btn>
+									<FmIcon icon="more_vert" />
 								</template>
 								<template #default>
-									<div class="fm_list">
-										<div class="fm_list_item" @click="openCreateFileModal()">
-											Create File
-										</div>
-										<div class="fm_list_item" @click="openCreateFolderModal()">
-											Create Folder
-										</div>
-										<div class="fm_list_item" @click="uploadFiles()">
-											Upload Files
-										</div>
+									<div class="menu-items-content">
+										<span @click="openDownloadZipModal"
+											>Download Selected as .zip</span
+										>
+										<span @click="openMove()">Move</span>
+										<span class="menu-item-delete" @click="openDeleteSelected()"
+											>Delete Selected</span
+										>
 									</div>
 								</template>
 							</FmMenu>
-							<div class="explorer-show-hide-border">
-								<FmBtn type="text" @click="toggleHidden()">
-									{{ showHiddenFiles ? 'Hide Invisible Files' : `Show Invisible Files${hideItemsCount ? ' (' + hideItemsCount + ')' : ''}` }}
-								</FmBtn>
-							</div>
-							<FmBtn @click="sync()"> Sync </FmBtn>
-							<div v-if="selectedCount" class="flex" style="align-items: center">
-								Selected: {{selectedCount}}
-								<FmMenu>
-									<template #btn>
-										<FmIcon icon="more_vert"/>
-									</template>
-									<template  #default>
-										<div class="menu-items-content">
-											<span @click="openDownloadZipModal">Download Selected as .zip</span>
-											<span @click="openMove()">Move</span>
-											<span class="menu-item-delete" @click="openDeleteSelected()">Delete Selected</span>
-										</div>
-									</template>
-								</FmMenu>
-							</div>
 						</div>
 					</div>
 				</div>
 				<div class="explorer-breadcrumbs">
-					<div class="explorer-breadcrumbs-item" @click="breadcrumbsNavigation(-1)">My Finmars</div>
-					<span class="explorer-breadcrumbs-item-divider" v-if="currentPath.length">/</span>
+					<div
+						class="explorer-breadcrumbs-item"
+						@click="breadcrumbsNavigation(-1)"
+					>
+						My Finmars
+					</div>
+					<span
+						class="explorer-breadcrumbs-item-divider"
+						v-if="currentPath.length"
+						>/</span
+					>
 					<div v-for="(item, index) in currentPath" :key="item">
-                    	<span
-							@click="breadcrumbsNavigation(index)"
-					        class="explorer-breadcrumbs-item"
-						>
-							{{item}}
-						</span>
 						<span
-							 v-if="index < currentPath.length - 1"
-						     class="explorer-breadcrumbs-item-divider"
-						 >
-							/
-						</span>
+							@click="breadcrumbsNavigation(index)"
+							class="explorer-breadcrumbs-item"
+							>{{ item.trim().replace(/%20/g, ' ') }}</span
+						>
+						<span
+							v-if="index < currentPath.length - 1"
+							class="explorer-breadcrumbs-item-divider"
+							>/</span
+						>
 					</div>
 				</div>
 				<template v-if="!isEditor">
-					<div v-if="filesStatus.length" class="explorer-file-upload-status-holder">
-						<div v-for="item in filesStatus" :key="item" class="explorer-file-upload-status-item">
+					<div
+						v-if="filesStatus.length"
+						class="explorer-file-upload-status-holder"
+					>
+						<div
+							v-for="item in filesStatus"
+							:key="item"
+							class="explorer-file-upload-status-item"
+						>
 							<div class="flex">
 								<div class="explorer-file-upload-status-item-name">
-									{{item.name}}
+									{{ item.name }}
 								</div>
 								<div class="explorer-file-upload-status-size">
-									&nbsp;{{item.size_pretty}}
+									&nbsp;{{ item.size_pretty }}
 								</div>
 							</div>
 							<div class="flex explorer-file-upload-status-item-status">
-								<div class="task-status-badge status-init"
-									 v-if="item.status === 'I' || item.status === 'init'">
+								<div
+									class="task-status-badge status-init"
+									v-if="item.status === 'I' || item.status === 'init'"
+								>
 									<div class="explorer-file-upload-status-item-status-wrapper">
-										<FmIcon size="14" icon="check_circle"/>
+										<FmIcon size="14" icon="check_circle" />
 										<div class="task-status-text">Init</div>
 									</div>
 								</div>
-								<div class="task-status-badge status-progress"
-									 v-if="item.status === 'P' || item.status === 'progress'">
+								<div
+									class="task-status-badge status-progress"
+									v-if="item.status === 'P' || item.status === 'progress'"
+								>
 									<div class="explorer-file-upload-status-item-status-wrapper">
-										<FmIcon size="14" icon="hourglass_full"/>
+										<FmIcon size="14" icon="hourglass_full" />
 										<div class="task-status-text">Running</div>
 									</div>
 								</div>
-								<div class="task-status-badge status-success"
-									 v-if="item.status === 'D' || item.status === 'success'">
+								<div
+									class="task-status-badge status-success"
+									v-if="item.status === 'D' || item.status === 'success'"
+								>
 									<div class="explorer-file-upload-status-item-status-wrapper">
-										<FmIcon size="14" icon="check_circle"/>
+										<FmIcon size="14" icon="check_circle" />
 										<div class="task-status-text">Success</div>
 									</div>
 								</div>
-								<div class="task-status-badge status-error"
-									 v-if="item.status === 'E' || item.status === 'error'">
+								<div
+									class="task-status-badge status-error"
+									v-if="item.status === 'E' || item.status === 'error'"
+								>
 									<div class="explorer-file-upload-status-item-status-wrapper">
 										<FmIcon size="14" icon="error" />
 										<div class="task-status-text">Error</div>
@@ -120,107 +150,173 @@
 							</div>
 						</div>
 						<div class="uploaded-button-close">
-							<FmBtn class="outline-button" type="text" v-if="closeFileStatuses" @click="filesStatus=[]">Close</FmBtn>
+							<FmBtn
+								class="outline-button"
+								type="text"
+								v-if="closeFileStatuses"
+								@click="filesStatus = []"
+								>Close</FmBtn
+							>
 						</div>
 					</div>
 					<div class="explorer-table">
 						<FmInputText
-							 placeholder="Search for a ..."
-							 class="text-search-input"
-							 :noIndicatorButton="true"
-							 v-model="searchTerm"
+							placeholder="Search for a ..."
+							class="text-search-input"
+							:noIndicatorButton="true"
+							v-model="searchTerm"
 						/>
-						<FmLoader v-if="processing"></FmLoader>
+						<FmLoader :size="100" v-if="processing"></FmLoader>
 						<table v-else>
 							<thead>
-							<tr>
-								<th style="width: 10px">
-									<div class="explorer-table-checkbox">
-										<FmCheckbox @change="toggleSelectAll()" v-model="allSelected"/>
-									</div>
-								</th>
-								<th>Name</th>
-								<th>Path</th>
-								<th>Date Modified</th>
-								<th>Size</th>
-								<th>Kind</th>
-								<th style="width: 10px"></th>
-							</tr>
+								<tr>
+									<th style="width: 10px">
+										<div class="explorer-table-checkbox">
+											<FmCheckbox
+												@change="toggleSelectAll()"
+												v-model="allSelected"
+											/>
+										</div>
+									</th>
+									<th
+										v-for="headerItem of tableHeaderItems"
+										:key="headerItem"
+										class="table-header-element-wrapper"
+										@click="sortTable(headerItem)"
+									>
+										<div class="table-column-title-wrap">
+											<span>{{ headerItem.name }}</span>
+											<span v-if="headerItem.isSortable" class="material-icons">
+												{{
+													headerItem.isSort
+														? 'arrow_drop_down'
+														: 'arrow_drop_up'
+												}}
+											</span>
+										</div>
+									</th>
+									<th style="width: 10px"></th>
+								</tr>
 							</thead>
 							<tbody>
-							<tr v-for="(item) of items" :key="item">
-								<td style="width: 10px">
-									<div class="explorer-table-checkbox">
-										<FmCheckbox @change="selectItem()" v-model="item.selected"/>
-									</div>
-								</td>
-								<td>
-									<div v-if="item.type == 'dir'">
-										<div class="flex-row fi-center" @click="openFolder(item)">
-                                        <span class="material-icons"
-											  v-if="item.name !== store.member?.username && item.name !== 'import'">folder</span>
-											<span class="material-icons"
-												  v-if="item.name === store.member?.username">folder_shared</span>
-											<span class="material-icons"
-												  v-if="item.name === 'import'">folder_special</span>
-											<span class="explorer-item-name"
-												  :title="item.name">{{item.name}}</span>
+								<tr v-for="item of items" :key="item">
+									<td style="width: 10px">
+										<div class="explorer-table-checkbox">
+											<FmCheckbox
+												@change="selectItem()"
+												v-model="item.selected"
+											/>
 										</div>
-									</div>
-									<div v-if="item.type == 'file'">
-										<div @click="editFile(item)">
-											<span class="material-icons">text_snippet</span>
-											<span class="explorer-item-name" :title="item.name">{{item.name}}</span>
-										</div>
-									</div>
-								</td>
-								<td>
-									<div v-if="!searchTerm.length">
-										<div v-for="(path, index) in currentPath" :key="item">
-											<span	@click="breadcrumbsNavigation(index)"	class="explorer-path-item">{{path}}</span>
-											<span class="cursor-default explorer-path-divider" v-if="index < currentPath.length - 1">/</span>
-										</div>
-									</div>
-									<div v-if="searchTerm.length && item.type === 'file'">
-										<span
-											v-for="(path, index) in ((item.file_path).split('/'))" :key="path"
-											@click="openFile(index, item)"
-											class="explorer-path-item"
-										>
-											{{path}}<span v-if="index !== item.file_path.split('/').length - 1">/</span>
-										</span>
-									</div>
-								</td>
-								<td>
-									{{formatDate(item.modified_at)}}
-								</td>
-								<td>{{item.size_pretty}}</td>
-								<td>
-									{{item.mime_type}}
-								</td>
-								<td>
-									<FmMenu fm-drop-class="m-r-20">
-										<template #btn>
-											<FmIcon icon="more_vert"/>
-										</template>
-										<template #default>
-											<div v-if="item.type == 'file'" class="menu-items-content">
-												<span @click="openInNewTab(item)">Open In New Tab</span>
-												<span @click="copyLink(item)">Copy Link</span>
-												<span @click="copyFilePath(item)">Copy Explorer File Path</span>
-												<span @click="openMove(item)">Move</span>
-												<span @click="editFile(item)">Edit</span>
-												<span @click="openRename(item)">Rename</span>
-												<span @click="download(item)">Download</span>
+									</td>
+									<td>
+										<div v-if="item.type == 'dir'">
+											<div class="flex-row fi-center" @click="openFolder(item)">
+												<span
+													class="material-icons"
+													v-if="
+														item.name !== store.member?.username &&
+														item.name !== 'import'
+													"
+													>folder</span
+												>
+												<span
+													class="material-icons"
+													v-if="item.name === store.member?.username"
+													>folder_shared</span
+												>
+												<span
+													class="material-icons"
+													v-if="item.name === 'import'"
+													>folder_special</span
+												>
+												<span class="explorer-item-name" :title="item.name">{{
+													item.name
+												}}</span>
 											</div>
-											<div v-if="item.type == 'dir'" class="menu-items-content">
-												<span @click="openRename(item)">Rename</span>
-												<span class="menu-item-delete" @click="openDeleteSelected(item)">Delete</span>
+										</div>
+										<div v-if="item.type === 'file'">
+											<div @click="editFile(item)">
+												<span class="material-icons">text_snippet</span>
+												<span class="explorer-item-name" :title="item.name">{{
+													item.name
+												}}</span>
 											</div>
-										</template>
-									</FmMenu>
-								</td>
-							</tr>
+										</div>
+									</td>
+									<td>
+										<div v-if="!searchTerm.length">
+											<div v-for="(path, index) in currentPath" :key="item">
+												<span
+													@click="breadcrumbsNavigation(index)"
+													class="explorer-path-item"
+													>{{ path.replace(/%20/g, ' ') }}</span
+												>
+												<span
+													class="cursor-default explorer-path-divider"
+													v-if="index < currentPath.length - 1"
+													>/</span
+												>
+											</div>
+										</div>
+										<div v-if="searchTerm.length && item.type === 'file'">
+											<span
+												v-for="(path, index) in item.file_path.split('/')"
+												:key="path"
+												@click="openFile(index, item)"
+												class="explorer-path-item"
+											>
+												{{ path.replace(/%20/g, ' ') }}
+												<span
+													v-if="index !== item.file_path.split('/').length - 1"
+													>/</span
+												>
+											</span>
+										</div>
+									</td>
+									<td>
+										{{ formatDate(item.modified_at) }}
+									</td>
+									<td>{{ item.size_pretty }}</td>
+									<td>
+										{{ item.mime_type }}
+									</td>
+									<td>
+										<FmMenu fm-drop-class="m-r-20">
+											<template #btn>
+												<FmIcon icon="more_vert" />
+											</template>
+											<template #default>
+												<div
+													v-if="item.type == 'file'"
+													class="menu-items-content"
+												>
+													<span @click="openInNewTab(item)"
+														>Open In New Tab</span
+													>
+													<span @click="copyLink(item)">Copy Link</span>
+													<span @click="copyFilePath(item)"
+														>Copy Explorer File Path</span
+													>
+													<span @click="openMove(item)">Move</span>
+													<span @click="editFile(item)">Edit</span>
+													<span @click="openRename(item)">Rename</span>
+													<span @click="download(item)">Download</span>
+												</div>
+												<div
+													v-if="item.type == 'dir'"
+													class="menu-items-content"
+												>
+													<span @click="openRename(item)">Rename</span>
+													<span
+														class="menu-item-delete"
+														@click="openDeleteSelected(item)"
+														>Delete</span
+													>
+												</div>
+											</template>
+										</FmMenu>
+									</td>
+								</tr>
 							</tbody>
 						</table>
 					</div>
@@ -240,10 +336,10 @@
 									:type="currentPage === page.number ? 'primary' : ''"
 									class="pagination-bar-button"
 								>
-									{{page.caption}}
+									{{ page.caption }}
 								</FmBtn>
-								<div v-if="!page.number" style="margin: 10px;">
-									{{page.caption}}
+								<div v-if="!page.number" style="margin: 10px">
+									{{ page.caption }}
 								</div>
 							</div>
 						</div>
@@ -257,15 +353,50 @@
 					</div>
 				</template>
 				<template v-else>
-					<v-ace-editor
-						v-model="content"
-						@init="editorInit"
-						lang="json"
-						theme="monokai"
-						style="min-height: 380px; width: 100%;"
-					/>
-				</template>
+					<template v-if="!processing">
+						<div v-if="!showPlaybook" class="opened-file-actions-wrap">
+							<FmBtn class="outline-button" type="primary" @click="saveFile"
+								>Save</FmBtn
+							>
+							<FmMenu fm-drop-class="m-r-20">
+								<template #btn>
+									<FmBtn class="outline-button" type="primary">Settings</FmBtn>
+								</template>
+								<template #default>
+									<div class="menu-items-content">
+										<span @click="openRename()">Rename</span>
+										<span @click="deleteFile">Delete</span>
+										<span class="menu-item-delete" @click="download()"
+											>Download</span
+										>
+									</div>
+								</template>
+							</FmMenu>
+						</div>
 
+						<div class="finmars-playbook" v-if="showPlaybook">
+							<PlaybookComponent
+								:current-path="currentPath"
+								:playbook="playbook"
+								:playbook-name="playbookName"
+								@update-playbook="updatePlaybook"
+							/>
+						</div>
+						<template v-else>
+							<v-ace-editor
+								id="fileEditorAceEditor"
+								lang="json"
+								theme="monokai"
+								style="min-height: 425px; width: 100%"
+							/>
+						</template>
+					</template>
+					<template v-else>
+						<div class="flex-row fc-center loader">
+							<FmLoader :size="100" />
+						</div>
+					</template>
+				</template>
 			</div>
 		</div>
 		<FmTaskCard
@@ -282,15 +413,9 @@
 			style="display: none"
 			@change="uploadFileHandler"
 		/>
-		<BaseModal
-			:title="label"
-			v-model="teIsOpened"
-		>
+		<BaseModal :title="label" v-model="teIsOpened">
 			<div class="width-100 height-100">
-				<FmInputText
-					v-model="teValue"
-					noIndicatorButton
-				/>
+				<FmInputText v-model="teValue" noIndicatorButton />
 			</div>
 
 			<template #controls>
@@ -301,13 +426,8 @@
 			</template>
 		</BaseModal>
 
-
-		<BaseModal
-			title="Move Editor"
-			v-model="isMove"
-			class="move-modal"
-		>
-			<Move @path-for-move="getPathToMove"/>
+		<BaseModal title="Move Editor" v-model="isMove" class="move-modal">
+			<Move @path-for-move="getPathToMove" />
 			<template #controls>
 				<div class="flex-row fc-space-between">
 					<FmBtn type="text" @click="cancel">CANCEL</FmBtn>
@@ -317,12 +437,12 @@
 		</BaseModal>
 	</div>
 </template>
-<script setup>
 
-import Input from '~/components/base/MultiSelect/Input.vue'
-import { useExplorer } from '~/composables/useExplorer'
-import { VAceEditor } from 'vue3-ace-editor'
-import Move from '~/pages/explorer/_components/Move.vue'
+<script setup>
+	import { useExplorer } from '~/composables/useExplorer';
+	import { VAceEditor } from 'vue3-ace-editor';
+	import Move from '~/pages/explorer/_components/Move.vue';
+	import PlaybookComponent from '~/pages/explorer/_components/PlaybookComponent.vue';
 
 	const {
 		store,
@@ -362,8 +482,6 @@ import Move from '~/pages/explorer/_components/Move.vue'
 		breadcrumbsNavigation,
 		openFolder,
 		editFile,
-		editorInit,
-		content,
 		isEditor,
 		openFile,
 		openDownloadZipModal,
@@ -375,7 +493,15 @@ import Move from '~/pages/explorer/_components/Move.vue'
 		download,
 		openMove,
 		isMove,
-		getPathToMove
+		getPathToMove,
+		deleteFile,
+		saveFile,
+		sortTable,
+		tableHeaderItems,
+		showPlaybook,
+		playbook,
+		playbookName,
+		updatePlaybook
 	} = useExplorer();
 </script>
 
@@ -442,6 +568,11 @@ import Move from '~/pages/explorer/_components/Move.vue'
 				}
 				th {
 					font-size: 14px;
+					.table-column-title-wrap {
+						display: flex;
+						flex-wrap: nowrap;
+						align-items: center;
+					}
 				}
 				td {
 					font-size: 16px;
@@ -471,8 +602,10 @@ import Move from '~/pages/explorer/_components/Move.vue'
 					overflow: hidden;
 					width: 100%;
 					cursor: pointer;
+					white-space: wrap;
+					word-break: break-all;
 					&:hover {
-						opacity: .7;
+						opacity: 0.7;
 						text-decoration: underline;
 					}
 				}
@@ -568,14 +701,12 @@ import Move from '~/pages/explorer/_components/Move.vue'
 				margin-left: 2px;
 			}
 		}
-
 		span.explorer-breadcrumbs-item-divider {
 			float: left;
 			font-weight: bold;
 			margin-top: 14px;
 			font-size: 20px;
 		}
-
 		.explorer-toolbar {
 			padding-top: 8px;
 			button.md-raised.md-button {
@@ -590,7 +721,6 @@ import Move from '~/pages/explorer/_components/Move.vue'
 				}
 			}
 		}
-
 		.explorer-item-menu-button {
 			padding: 0;
 			margin: 0 4px 0 0;
@@ -614,14 +744,12 @@ import Move from '~/pages/explorer/_components/Move.vue'
 				margin: 2px auto;
 			}
 		}
-
 		.explorer-file-upload-status-holder {
 			padding: 16px;
 			border: 1px solid var(--table-border-color);
 			max-height: 300px;
 			overflow: auto;
 		}
-
 		.explorer-file-upload-status-item {
 			margin: 8px;
 			border: 1px solid var(--table-border-color);
@@ -635,7 +763,6 @@ import Move from '~/pages/explorer/_components/Move.vue'
 			margin-left: 5px;
 			color: var(--secondary-color);
 		}
-
 		.task-status-badge {
 			color: #fff;
 			font-size: 14px;
@@ -649,13 +776,12 @@ import Move from '~/pages/explorer/_components/Move.vue'
 			align-items: center;
 			line-height: 1;
 			&:hover {
-				opacity: .7;
+				opacity: 0.7;
 			}
 			ng-md-icon {
 				margin-right: 4px;
 			}
 		}
-
 		.status-progress {
 			border: 1px solid #12293b;
 			background: rgb(63, 81, 181);
@@ -688,22 +814,26 @@ import Move from '~/pages/explorer/_components/Move.vue'
 				}
 			}
 		}
-
-
 		.status-success {
 			background: #3fb950;
 			border: 1px solid #1d8102;
 			color: #fff;
 		}
-
 		.status-error {
 			border: 1px solid #ec5941;
 			background: #eb0014;
 		}
-
 		.status-init {
 			background: grey;
 			border: 1px solid var(--table-border-color);
+		}
+
+		.opened-file-actions-wrap {
+			display: flex;
+			flex-wrap: nowrap;
+			align-items: center;
+			justify-content: space-between;
+			min-width: 60px;
 		}
 	}
 	.menu-items-content {
@@ -716,7 +846,7 @@ import Move from '~/pages/explorer/_components/Move.vue'
 			font-size: 15px;
 			font-weight: 400;
 			padding: 10px 15px;
-			&:hover{
+			&:hover {
 				cursor: pointer;
 				background-color: var(--activeState-backgroundColor);
 			}
@@ -730,5 +860,10 @@ import Move from '~/pages/explorer/_components/Move.vue'
 		top: 62px;
 		right: 10px;
 		z-index: 1;
+	}
+	.finmars-playbook {
+		display: flex;
+		flex-direction: column;
+		gap: 15px;
 	}
 </style>
