@@ -6,8 +6,11 @@ var isActiveAndValid = function (filter) {
 
 		var filterType = filter.options.filter_type;
 
-		if (filterType === 'empty' ||
-			filter.options.exclude_empty_cells) { // if filter works for empty cells
+		// if (filterType === 'empty' ||
+		// 	filter.options.exclude_empty_cells) { // if filter works for empty cells
+		// 	return true;
+		// }
+		if (filterType === 'empty') { // if filter works for empty cells
 
 			return true;
 
@@ -75,7 +78,7 @@ var filterTableRows = function (items, regularFilters, entityType) {
 			var keyProperty = regularFilters[k].key;
 			var valueType = regularFilters[k].value_type;
 			var filterType = regularFilters[k].filter_type;
-			var excludeEmptyCells = regularFilters[k].exclude_empty_cells;
+			// var excludeEmptyCells = regularFilters[k].exclude_empty_cells;
 			var filterValue = regularFilters[k].value;
 
 			if (keyProperty !== 'ordering') {
@@ -174,10 +177,10 @@ var filterTableRows = function (items, regularFilters, entityType) {
 				} else {
 
 
-					if (excludeEmptyCells) { // if user choose to hide empty cells
-						match = false;
-						break;
-					} else {
+					// if (excludeEmptyCells) { // if user choose to hide empty cells
+					// 	match = false;
+					// 	break;
+					// } else {
 
 						if (keyProperty === 'name' || keyProperty.indexOf('instrument') !== -1) {
 							if (item.item_type !== 1) { // item_type 1 == "instrument"
@@ -188,7 +191,7 @@ var filterTableRows = function (items, regularFilters, entityType) {
 
 							match = true;
 						}
-					}
+					// }
 				}
 
 			}
@@ -528,7 +531,7 @@ var convertTableFiltersToRegularFilters = function (filters) {
 			var filterSettings = {
 				key: key,
 				filter_type: filter.options.filter_type,
-				exclude_empty_cells: filter.options.exclude_empty_cells,
+				// exclude_empty_cells: filter.options.exclude_empty_cells,
 				value_type: filter.value_type,
 				value: filter.options.filter_values
 			};

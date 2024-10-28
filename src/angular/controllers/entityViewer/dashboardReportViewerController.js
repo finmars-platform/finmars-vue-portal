@@ -666,7 +666,7 @@ export default function (
 					value_type: filter_link.value_type,
 					options: {
 						enabled: true,
-						exclude_empty_cells: true,
+						// exclude_empty_cells: true,
 						filter_values: [componentOutput.data.value],
 					},
 				}

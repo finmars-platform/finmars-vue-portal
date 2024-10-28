@@ -535,9 +535,9 @@ let getTableAttrInFormOf = function (form, attrInstance) {
 				attrTypeToAdd.options.filter_values = []
 			}
 
-			if (!attrTypeToAdd.options.hasOwnProperty('exclude_empty_cells')) {
-				attrTypeToAdd.options.exclude_empty_cells = false
-			}
+			// if (!attrTypeToAdd.options.hasOwnProperty('exclude_empty_cells')) {
+			// 	attrTypeToAdd.options.exclude_empty_cells = false
+			// }
 
 			attrTypeToAdd.options.enabled = true;
 

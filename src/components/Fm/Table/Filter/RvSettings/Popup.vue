@@ -40,10 +40,10 @@
 						<div v-if="filter.value_type === 50" class="m-b-24">
 							<rv-boolean-filter></rv-boolean-filter>
 						</div>-->
-			<FmCheckbox
-				v-model="filterRef.options.exclude_empty_cells"
-				label="Exclude cells with no value"
-			/>
+<!--			<FmCheckbox-->
+<!--				v-model="filterRef.options.exclude_empty_cells"-->
+<!--				label="Exclude cells with no value"-->
+<!--			/>-->
 
 		</div>
 
