@@ -20,16 +20,24 @@
 		<div class="assignments-content" v-if="details.assignments.length">
 			<span class="assignments-title">Assignments</span>
 			<BaseTable
-				colls="60px 1fr 1fr 1fr 1fr"
+				colls="50px 60px 1fr 1fr 1fr 1fr"
 				:items="details.assignments"
+				:isRightKebab="true"
 				:headers="[
+					'',
 					'ID',
 					'Object ID',
 					'User Code',
 					'Resource Group',
-					'Content Type',
+					'Content Type'
 				]"
-			/>
+			>
+				<template #actions="{index}">
+					<div class="flex jcc aic height-100">
+						<FmIcon class="delete-assignments-icon" icon="close" @click="deleteAssignment(index)" />
+					</div>
+				</template>
+			</BaseTable>
 		</div>
 	</div>
 </template>
@@ -52,12 +60,20 @@
 	const route = useRoute();
 	const router = useRouter();
 
+	const resourceGroupItem = await useApi('resourceGroupDetails.get', {
+		params: {
+			id: route.params.id
+		}
+	});
+
+	const details = reactive(resourceGroupItem);
+
 	const validateDetails = computed(() => {
 		return details.name.length && details.user_code.length;
 	});
 
 	async function deleteResource() {
-		let confirm = await useConfirm({
+		const confirm = await useConfirm({
 			title: 'Confirm action',
 			text: `Do you want to delete ${resourceGroupItem.name}?`,
 		});
@@ -80,21 +96,26 @@
 		});
 		useNotify({
 			type: 'success',
-			title: 'Successfully updated',
+			title: 'Successfully saved',
 		})
 	}
 
-	const resourceGroupItem = await useApi('resourceGroupDetails.get', {
-		params: {
-			id: route.params.id
-		}
-	});
-
-	const details = reactive(resourceGroupItem);
+	async function deleteAssignment(index) {
+		const assignment = details.assignments[index].object_user_code;
+		const isConfirm = await useConfirm({
+			title: 'Delete Assignment',
+			text: `Do you want to delete an Assignment "${assignment}"?`
+		});
+		if (!isConfirm) return false;
+		details.assignments.splice(index, 1);
+	}
 </script>
 
 <style scoped lang="scss">
 	:deep(.table-cell-btn) {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 		text-align: left;
 	}
 	.details-action-btns {
@@ -120,6 +141,19 @@
 		margin-top: 40px;
 		.assignments-title {
 			font-size: 18px;
+		}
+		.delete-assignments-icon {
+			transition: transform 0.1s ease, opacity 0.5s ease;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 18px;
+			min-width: 22px;
+			min-height: 22px;
+			&:hover {
+				opacity: 0.8;
+				transform: scale(1.2);
+			}
 		}
 	}
 </style>
