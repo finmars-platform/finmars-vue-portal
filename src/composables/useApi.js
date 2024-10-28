@@ -99,6 +99,19 @@ export default async function useApi(
 
 		let error_object = e.data?.error
 
+		if (code.indexOf('403 Forbidden') !== -1) {
+
+			localStorage.setItem("errorMessage", error_object.details.errors[0].detail || "Access Denied");
+			localStorage.setItem("previousUrl", window.location.href);
+
+			var root = window.location.href.split('/v/')[0]
+			// Redirect to the 403 error page
+			window.location.href = root + "/a/#!/403"; // Adjust based on your routing setup
+
+			return
+		}
+
+
 		let text = error_object
 		let title = code == 500 ? 'Server Error' : 'Client Error'
 
