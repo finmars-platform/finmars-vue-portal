@@ -9,8 +9,6 @@
 		<slot>
 			<div class="material-icons">{{ icon }}</div>
 		</slot>
-
-		<!--		<div class="tooltip" v-if="tooltip">{{ tooltip }}</div>-->
 	</div>
 </template>
 
@@ -24,7 +22,7 @@
 		btn: Boolean,
 		btnPrimary: Boolean,
 		disabled: Boolean
-	})
+	});
 </script>
 
 <style lang="scss" scoped>
@@ -43,11 +41,6 @@
 
 		&:not(.disabled):hover {
 			color: var(--primary-hover);
-
-			/*.tooltip {
-				opacity: 0.8;
-				visibility: visible;
-			}*/
 		}
 
 		&.disabled {
@@ -55,11 +48,11 @@
 		}
 
 		&.gray-icon {
-			color: gray;
+			color: $grayIcon;
 		}
 
 		&.btn-primary {
-			background: blue;
+			background: $primary;
 			color: var(--onPrimary-color);
 			padding: 7px;
 			border-radius: 50%;
@@ -79,7 +72,7 @@
 		}
 
 		&.error {
-			color: red;
+			color: $error;
 		}
 
 		&.btn {
@@ -96,23 +89,4 @@
 		font-size: inherit;
 		font-weight: inherit;
 	}
-
-	/*.tooltip {
-		position: absolute;
-		bottom: -18px;
-		left: 50%;
-		transform: translateX(-50%);
-		color: rgb(230, 230, 230);
-		background: rgb(26, 26, 26);
-		padding: 3px 6px;
-		// height: 15px;
-		height: 20px;
-		line-height: 15px;
-		border-radius: 4px;
-		font-size: 14px;
-		opacity: 0;
-		visibility: hidden;
-		transition: 0.3s;
-		white-space: nowrap;
-	}*/
 </style>

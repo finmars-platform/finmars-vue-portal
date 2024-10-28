@@ -83,8 +83,11 @@ var isFilterValid = function (filterObj) {
 
 		var filterType = filterObj.options.filter_type;
 
-		if (filterType === 'empty' ||
-			filterObj.options.exclude_empty_cells) { // if filter works for empty cells
+		// if (filterType === 'empty' ||
+		// 	filterObj.options.exclude_empty_cells) { // if filter works for empty cells
+		// 	return true;
+		// }
+		if (filterType === 'empty') { // if filter works for empty cells
 
 			return true;
 
