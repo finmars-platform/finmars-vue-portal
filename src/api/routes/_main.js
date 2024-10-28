@@ -521,4 +521,9 @@ export default {
 		delete: prefix + '/iam/resource-group/{id}/',
 		put: prefix + '/iam/resource-group/{id}/',
 	},
-}
+	draft: {
+		get: prefix + '/ui/draft/',
+		post: prefix + '/ui/draft/',
+		put: prefix + '/ui/draft/{id}/'
+	}
+};
