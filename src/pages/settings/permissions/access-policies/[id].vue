@@ -197,11 +197,15 @@ async function save() {
 
 	let res = await useApi('accessPolicy.put', {body: accessPolicy.value, params: {id: route.params.id}})
 
-	if (res) useNotify({type: 'success', title: 'Saved!'})
+	if (res) {
+		useNotify({type: 'success', title: 'Saved!'});
+		router.back();
+	}
 }
 
 async function cancel() {
 	usePrefixedRouterPush(router, route, '/settings/permissions')
+	router.back();
 }
 
 function fromatDate(date) {

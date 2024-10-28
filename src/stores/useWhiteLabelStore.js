@@ -92,7 +92,7 @@ export const useWhiteLabelStore = defineStore({
 			} else {
 				let link = document.createElement('link')
 				link.rel = 'stylesheet'
-				link.id = 'custom-theme-css' // Устанавливаем уникальный id
+				link.id = 'custom-theme-css'
 				link.href = this.themeSettings.theme_css_url
 				document.head.appendChild(link)
 			}

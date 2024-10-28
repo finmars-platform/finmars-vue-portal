@@ -34,10 +34,10 @@
 				v-model="vm.filter.options.enabled"
 				label="Enabled"
 			/>
-			<FmCheckbox
-				v-model="vm.filter.options.exclude_empty_cells"
-				label="Exclude cells with no value"
-			/>
+<!--			<FmCheckbox-->
+<!--				v-model="vm.filter.options.exclude_empty_cells"-->
+<!--				label="Exclude cells with no value"-->
+<!--			/>-->
 		</div>
 
 		<div class="g-filter-footer flex sb">

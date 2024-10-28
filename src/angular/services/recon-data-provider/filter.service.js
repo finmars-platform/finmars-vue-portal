@@ -54,7 +54,7 @@ var filterTableRows = function (flatList, regularFilters, groupsList) {
 				var keyProperty = regularFilters[rf].key
 				var valueType = regularFilters[rf].value_type
 				var filterType = regularFilters[rf].filter_type
-				var excludeEmptyCells = regularFilters[rf].exclude_empty_cells
+				// var excludeEmptyCells = regularFilters[rf].exclude_empty_cells
 				var filterValue = regularFilters[rf].value
 
 				if (keyProperty !== 'ordering') {
@@ -217,7 +217,12 @@ var filterTableRows = function (flatList, regularFilters, groupsList) {
 							}
 						}
 					} else {
-						if (excludeEmptyCells && flItem.___type !== 'group') {
+						// if (excludeEmptyCells && flItem.___type !== 'group') {
+						// 	// if user choose to hide empty cells
+						// 	match = false
+						// 	break
+						// }
+						if (flItem.___type !== 'group') {
 							// if user choose to hide empty cells
 							match = false
 							break

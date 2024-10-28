@@ -470,7 +470,38 @@ export default {
 		delete: prefix + '/vault/vault-record/{id}/'
 	},
 	explorerViewFile: {
-		get: prefix + '/explorer/view/?path={path}'
+		get: prefix + '/explorer/view/'
+	},
+	explorer: {
+		get: prefix + '/explorer/explorer/',
+		post: prefix + '/explorer/move/'
+	},
+	explorerFolder: {
+		post: prefix + '/explorer/create-folder/',
+	},
+	explorerFile: {
+		post: prefix + '/explorer/upload/',
+	},
+	explorerSync: {
+		post: prefix + '/explorer/sync/',
+	},
+	explorerSearch: {
+		get: prefix + '/explorer/search/',
+	},
+	explorerDownloadAsZip: {
+		post: prefix + '/explorer/download-as-zip/',
+	},
+	explorerDownload: {
+		post: prefix + '/explorer/download/',
+	},
+	explorerDeleteFolder: {
+		post: prefix + '/explorer/delete-folder/',
+	},
+	explorerDelete: {
+		post: prefix + '/explorer/delete/',
+	},
+	explorerRename: {
+		post: prefix + '/explorer/rename/',
 	},
 	systemWhiteLabel: {
 		get: prefix + '/system/whitelabel/',
@@ -480,5 +511,14 @@ export default {
 		get: prefix + '/system/whitelabel/{id}/',
 		patch: prefix + '/system/whitelabel/{id}/',
 		delete: prefix + '/system/whitelabel/{id}/'
-	}
+	},
+	resourceGroup: {
+		get: prefix + '/iam/resource-group/',
+		post: prefix + '/iam/resource-group/',
+	},
+	resourceGroupDetails: {
+		get: prefix + '/iam/resource-group/{id}/',
+		delete: prefix + '/iam/resource-group/{id}/',
+		put: prefix + '/iam/resource-group/{id}/',
+	},
 }
