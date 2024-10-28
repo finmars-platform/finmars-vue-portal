@@ -23,78 +23,83 @@
 				</button>
 			</div>
 		</div>
-
-		<div
-			class="table-row"
-			:class="{
+		<div v-if="status !== 'loading' && !items.length" class="table-empty-data">
+			<FmIcon icon="cloud_off" />
+			<span>No Data</span>
+		</div>
+		<div v-else-if="status === 'loading'" class="center p-16">
+			<FmLoader />
+		</div>
+		<template v-else>
+			<div
+				class="table-row"
+				:class="{
 				active: active == index,
 				selectable: !isReadonly && active !== undefined,
 				disabled: isDisabled,
 			}"
-			:style="{ gridTemplateColumns: colls }"
-			v-for="(row, index) in items"
-			:key="index"
-		>
-			<div class="center" v-if="isActions">
-				<FmCheckbox/>
-			</div>
-
-			<div class="table-cell no_collapsed" v-if="$slots.actions">
-				<slot name="actions" :index="index"/>
-			</div>
-			<div
-				class="table-cell"
-				v-for="(item, indexRow) in row"
-				:key="indexRow"
+				:style="{ gridTemplateColumns: colls }"
+				v-for="(row, index) in items"
+				:key="index"
 			>
-				<button
-					:disabled="isDisabled"
-					class="table-cell-btn"
-					@click="
+				<div class="center" v-if="isActions">
+					<FmCheckbox/>
+				</div>
+
+				<div class="table-cell no_collapsed" v-if="$slots.actions">
+					<slot name="actions" :index="index"/>
+				</div>
+				<div
+					class="table-cell"
+					v-for="(item, indexRow) in row"
+					:key="indexRow"
+				>
+					<button
+						:disabled="isDisabled"
+						class="table-cell-btn"
+						@click="
 						() => {
 							if (cb) cb(index, indexRow)
 						}
 					"
-					@click.right.prevent.stop="
+						@click.right.prevent.stop="
 						() => {
 							if (rightClickCallback) rightClickCallback(index, indexRow)
 						}
 					"
-				>
-					<FmLoader v-if="item === null"/>
+					>
+						<FmLoader v-if="item === null"/>
 
-					<template v-else-if="typeof item == 'object'">
+						<template v-else-if="typeof item == 'object'">
 
-						<div
-							class="overflow-hidden text-overflow-ellipsis"
-							v-tooltip="item.value"
-						>
-							<NuxtLink
-								v-if="item.link"
-								class="link dib"
-								:to="item.link"
+							<div
+								class="overflow-hidden text-overflow-ellipsis"
+								v-tooltip="item.value"
+							>
+								<NuxtLink
+									v-if="item.link"
+									class="link dib"
+									:to="item.link"
 
-							>{{ item.value }}
-							</NuxtLink>
+								>{{ item.value }}
+								</NuxtLink>
 
-							<template v-else>{{ item.value }}</template>
-						</div>
+								<template v-else>{{ item.value }}</template>
+							</div>
 
-					</template>
+						</template>
 
-					<template v-else>
-						<div
-							class="overflow-hidden text-overflow-ellipsis"
-							v-tooltip="item"
-						>{{ item === '' ? '-' : item }}
-						</div>
-					</template>
-				</button>
+						<template v-else>
+							<div
+								class="overflow-hidden text-overflow-ellipsis"
+								v-tooltip="item"
+							>{{ item === '' ? '-' : item }}
+							</div>
+						</template>
+					</button>
+				</div>
 			</div>
-		</div>
-	</div>
-	<div class="center p-16" v-if="status === 'loading'">
-		<FmLoader/>
+		</template>
 	</div>
 </template>
 
@@ -281,6 +286,19 @@ const sortTable = (col_index) => {
 }
 .arrow_up {
 	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAaCAYAAACgoey0AAAAAXNSR0IArs4c6QAAAwpJREFUSA21Vt1PUmEYP4dvkQ8JFMwtBRocWAkDbiqXrUWXzU1rrTt0bdVqXbb1tbW16C9IBUSmm27cODdneoXjputa6069qwuW6IIBIdLvdaF4OAcOiGeDc87zPs/vd57P96WpFq7p6enbGo1mjKZpeTabjU1MTCRagGnOZHFxcXxtbe1XKpUq7+zslJeXl//Mz8+Hy+Uy3RxSE9qTk5M3otFooVQqgef4Wl9f343FYoEmoISrxuNxFX5f9vb2jhn/PxUKhfLS0tIPfFifUESRUMV8Pv/M6XReRm5rTGQyGeXxeGxYe1ezeBpBOBx2rKysbO7v79d4Wy3Y2Nj4GQqFbgnhaugxwiuGJx99Pp9FLBbXxYTXvTqd7v3MzIy6riIWGxJnMpl7AwMD14xGYyMsSq1WUyQdUqn0eSPlusQIsbGrq+vl4OCgvhFQZd1utyv1en0gEolcqsi47nWJlUrlG5fLZVcoFFy2nDKSDpIWlUoVTCQSEk4lCHmJMZ2GTCbTiMVikfIZ88l7enoos9l8dXt7+z6fDicxSJUokqDX6xXcl2wCROoc0vQCWL3sNfLOSdzR0fHY4XC4tVotl40gmVwup9xuN4OQv+UyqCFGH9rg7SOGYVRcBs3IEG4J0nVnamrqOtvuBDGGgQg9+wHFcVEi4a0LNkbdd6TrPKo8ODc311mteIIYjT/a398/jK+s1jnVM0kXoufCFvq0GuiIGEVgQIhfoygM1QrteEa9dAL7ITiYCt4RMabOK5AyKKzKWtvupLcRciu8D5J0EuDDPyT/Snd39yh6VtY2NhYQSR9G79Ds7OxdskRjEyAufvb7/cPoO5Z6e1+xtVKrq6vfcFzyi/A3ZrPZ3GdNSlwgo5ekE4X2RIQGf2C1WlufFE0GBeGWYQ8YERWLxQtnUVB830MKLZfL9RHir8lkssCn2G751tZWEWe03zTKm15YWPiEiXXTYDB0Ig/t7yd8PRws4EicwWHxO4jHD8/C5HiTTqd1BwcHFozKU89origB+y/kmzgYpgOBQP4fGmUiZmJ+WNgAAAAASUVORK5CYII=')
+}
+
+.table-empty-data {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	min-height: 200px;
+	align-items: center;
+	justify-content: center;
+	span {
+		font-size: 16px;
+		color: var(--primary-color);
+	}
 }
 
 </style>
