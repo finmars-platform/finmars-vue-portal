@@ -9,6 +9,7 @@
 				<div
 					v-if="isOpen"
 					class="fm_drop"
+					:class="fmDropClass"
 					ref="popup"
 					:style="{'min-height': minHeight}"
 					v-click-outside="closeOnCo"
@@ -67,6 +68,10 @@
 		offsetY: {
 			type: Number,
 			default: 0
+		},
+		fmDropClass: {
+			type: String,
+			default: ''
 		},
 	})
 
