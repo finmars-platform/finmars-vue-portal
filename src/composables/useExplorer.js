@@ -4,7 +4,10 @@ import {
 	getRealmSpaceCodes,
 	downloadFile,
 	getItemsForAction,
-	copyToBuffer
+	copyToBuffer,
+	getFileExtension,
+	getMimeType,
+	buildFileBlob
 } from '~/pages/explorer/helper';
 
 export function useExplorer() {
@@ -43,14 +46,75 @@ export function useExplorer() {
 	const pageSize = ref(100);
 	const pages = ref([]);
 	const totalPages = ref(0);
-	const content = ref('test data');
 	const oldItem = ref({});
+	const editorFile = ref({});
+	const sortColumn = ref('');
+	const sortOrder = ref('asc');
+	const tableHeaderItems = ref([
+		{
+			name: 'Name',
+			sort_key: 'name',
+			isSort: true,
+			isSortable: true
+		},
+		{
+			name: 'Path',
+			isSort: true,
+			isSortable: false
+		},
+		{
+			name: 'Date Modified',
+			sort_key: 'modified_at',
+			isSort: true,
+			isSortable: true
+		},
+		{
+			name: 'Size',
+			sort_key: 'size',
+			isSort: true,
+			isSortable: true
+		},
+		{
+			name: 'Kind',
+			sort_key: 'mime_type',
+			isSort: true,
+			isSortable: true
+		}
+	]);
 
 	watch(searchTerm, (newVal, oldVal) => {
 		if (newVal !== oldVal) {
 			search(newVal);
 		}
 	});
+
+	watch(items, () => {
+		if (sortColumn.value) {
+			sortItems();
+		}
+	});
+
+	function sortItems() {
+		items.value.sort((a, b) => {
+			if (!sortOrder.value) return 0;
+			const mod = sortOrder.value === 'asc' ? 1 : -1;
+			const aValue = a[sortColumn.value] || '';
+			const bValue = b[sortColumn.value] || '';
+			return (
+				aValue.toString().localeCompare(bValue.toString(), undefined, {
+					numeric: true,
+					sensitivity: 'base'
+				}) * mod
+			);
+		});
+	}
+
+	function sortTable(headerItem) {
+		if (!headerItem.isSortable) return;
+		sortColumn.value = headerItem.sort_key;
+		sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+		sortItems();
+	}
 
 	function formatDate(dateString) {
 		if (!dateString) return;
@@ -146,7 +210,7 @@ export function useExplorer() {
 				hideItemsCount.value = 0;
 				currentPage.value = currentPageForSearch.value;
 				const options = {
-					pageSize: pageSize.value,
+					page_size: pageSize.value,
 					page: currentPageForSearch.value,
 					query: query
 				};
@@ -240,7 +304,13 @@ export function useExplorer() {
 		teIsOpened.value = true;
 	}
 
-	function openRename(item) {
+	function openRename(item = undefined) {
+		if (!item) {
+			item = {
+				name: '',
+				file_path: currentPath.value.join('/')
+			};
+		}
 		isRename.value = true;
 		label.value = 'Rename';
 		teValue.value = item.name;
@@ -500,21 +570,126 @@ export function useExplorer() {
 		window.open(newUrl.href, '_blank');
 	}
 
+	function initFileEditor() {
+		const editor = ace.edit('fileEditorAceEditor');
+		setTimeout(function () {
+			editor.setTheme('ace/theme/monokai');
+
+			if (editorFile.value.name.indexOf('.py') !== -1) {
+				editor.getSession().setMode('ace/mode/python');
+			}
+
+			if (editorFile.value.name.indexOf('.json') !== -1) {
+				editor.getSession().setMode('ace/mode/json');
+			}
+
+			if (editorFile.value.name.indexOf('.ipynb') !== -1) {
+				editor.getSession().setMode('ace/mode/json');
+			}
+
+			if (editorFile.value.name.indexOf('.yaml') !== -1) {
+				editor.getSession().setMode('ace/mode/yaml');
+			}
+
+			if (editorFile.value.name.indexOf('.yml') !== -1) {
+				editor.getSession().setMode('ace/mode/yaml');
+			}
+
+			if (editorFile.value.name.indexOf('.html') !== -1) {
+				editor.getSession().setMode('ace/mode/html');
+			}
+
+			if (editorFile.value.name.indexOf('.js') !== -1) {
+				editor.getSession().setMode('ace/mode/javascript');
+			}
+
+			if (editorFile.value.name.indexOf('.css') !== -1) {
+				editor.getSession().setMode('ace/mode/css');
+			}
+
+			editor.getSession().setUseWorker(false);
+			editor.setHighlightActiveLine(false);
+			editor.setShowPrintMargin(false);
+			ace.require('ace/ext/language_tools');
+			editor.setOptions({
+				enableBasicAutocompletion: true,
+				enableSnippets: true,
+				enableLiveAutocompletion: true
+			});
+			editor.setFontSize(14);
+			editor.setBehavioursEnabled(true);
+			editor.setValue(editorFile.value.content);
+
+			editor.focus();
+			editor.navigateFileStart();
+		}, 100);
+	}
+
+	async function viewFile() {
+		const itemPath = currentPath.value.join('/');
+		const fileName = currentPath.value[currentPath.value.length - 1];
+
+		const options = {
+			path: itemPath
+		};
+		const reader = new FileReader();
+		const response = await useApi('explorerViewFile.get', { filters: options });
+		reader.addEventListener('loadend', function () {
+			playbook.value = JSON.parse(reader.result);
+			editorFile.value.content = reader.result;
+			editorFile.value.name = fileName;
+			draftUserCode.value = 'explorer.' + currentPath.value.join('__');
+			initFileEditor();
+		});
+
+		let blob = buildFileBlob(response, fileName);
+		reader.readAsText(
+			new Blob(blob, {
+				type: getMimeType(fileName)
+			})
+		);
+		isEditor.value = true;
+	}
+
+	async function downloadAndOpenPlaybook() {
+		isEditor.value = true;
+		const itemPath = currentPath.value.join('/');
+		const fileName = currentPath.value[currentPath.value.length - 1];
+		const options = {
+			path: itemPath
+		};
+		showPlaybook.value = true;
+		const reader = new FileReader();
+		const response = await useApi('explorerViewFile.get', { filters: options });
+		reader.addEventListener('loadend', function () {
+			playbook.value = JSON.parse(reader.result);
+			playbookName.value = currentPath.value[currentPath.value.length - 1];
+		});
+
+		let blob = buildFileBlob(response, fileName);
+		reader.readAsText(
+			new Blob(blob, {
+				type: getMimeType(fileName)
+			})
+		);
+	}
+
 	function init() {
 		const parts = route.fullPath.split('/v/explorer');
 		if (parts.length > 1 && parts[1].length) {
 			currentPath.value = parts[1].replace('/', '').split('/');
 		}
-		listFiles();
-	}
-
-	function editorInit(editor) {
-		editor.setHighlightActiveLine(false);
-		editor.setShowPrintMargin(false);
-		editor.setFontSize(14);
-		editor.setBehavioursEnabled(true);
-		editor.focus();
-		editor.navigateFileStart();
+		const extension = getFileExtension(currentPath.value.join('/'));
+		if (extension) {
+			if (extension === 'ipynb') {
+				downloadAndOpenPlaybook();
+			} else {
+				editorFile.value = {};
+				viewFile();
+			}
+		} else {
+			listFiles();
+		}
 	}
 
 	function openFile(index, item) {
@@ -553,7 +728,7 @@ export function useExplorer() {
 		}
 	}
 
-	function deleteSelected(item = undefined) {
+	async function deleteSelected(item = undefined) {
 		const itemsToDelete = getItemsForAction(items, item);
 		if (
 			currentPageForFiles.value > 1 &&
@@ -563,31 +738,49 @@ export function useExplorer() {
 			allSelected.value = false;
 		}
 		for (const item of itemsToDelete) {
-			let path = currentPath.value.join('/') + '/' + item.name;
+			let path = '';
+			if (currentPath.value.length) {
+				path = currentPath.value.join('/') + '/' + item.name;
+			} else {
+				path = item.name;
+			}
+			path = path.replace(/%20/g, ' ');
+
 			let res;
 			try {
 				if (item.type === 'dir') {
-					res = useApi('explorerDeleteFolder.post', { body: { path } });
+					res = await useApi('explorerDeleteFolder.post', { body: { path } });
 				} else {
 					if (searchTerm.value.length) {
 						path = item.file_path;
 					}
-					res = useApi('explorerDelete.post', { filters: { path } });
+					res = await useApi('explorerDelete.post', { filters: { path } });
 				}
-				if (res.status === 'ok') {
+				if (res.status == 'ok') {
 					useNotify({
 						type: 'success',
 						title: `${item.name} successfully deleted`
 					});
-					listFiles();
 				}
 			} catch (error) {
-				console.log('Delete' + error);
 				useNotify({
 					type: 'error',
 					title: `${item.name} - Something went wrong!`
 				});
 			}
+		}
+		if (searchTerm.value) {
+			if (
+				currentPageForSearch.value > 1 &&
+				items.value.length - itemsToDelete.length === 0
+			) {
+				currentPageForSearch.value = currentPageForSearch.value - 1;
+				selectedCount.value = 0;
+				allSelected.value = false;
+			}
+			search(searchTerm.value);
+		} else {
+			listFiles();
 		}
 	}
 
@@ -603,7 +796,7 @@ export function useExplorer() {
 					: oldItem.value.file_path;
 			}
 			const res = await useApi('explorerRename.post', {
-				body: { new_name: teValue.value, path: path }
+				body: { new_name: teValue.value, path: path.replace(/%20/g, ' ') }
 			});
 			if (res.status === 'ok') {
 				useNotify({
@@ -665,8 +858,16 @@ export function useExplorer() {
 		}
 	}
 
-	async function download(item) {
-		const path = currentPath.value.join('/') + '/' + item.name;
+	async function download(item = undefined) {
+		let path = '';
+		if (!item) {
+			item = {
+				name: [...currentPath.value].pop()
+			};
+			path = '/' + currentPath.value.join('/');
+		} else {
+			path = currentPath.value.join('/') + '/' + item.name;
+		}
 		try {
 			const blobData = await useApi('explorerDownload.post', {
 				body: { path }
@@ -699,9 +900,87 @@ export function useExplorer() {
 				cancel();
 			}
 		} catch (error) {
-			console.log(error);
 			useNotify({ type: 'error', title: 'Move failed!' });
 		}
+	}
+	async function deleteFile() {
+		const confirm = await useConfirm({
+			title: 'Warning',
+			text: `Are you sure that you want to delete?`
+		});
+
+		if (confirm) {
+			try {
+				const path = currentPath.value.join('/');
+				const res = await useApi('explorerDelete.post', { filters: { path } });
+				if (res.status === 'ok') {
+					useNotify({
+						type: 'success',
+						title: `Successfully deleted`
+					});
+					const copyCurrentPath = [...currentPath.value];
+					const { realmCode, spaceCode } = getRealmSpaceCodes(route);
+					copyCurrentPath.pop();
+					router.push(
+						`/${realmCode}/${spaceCode}/v/explorer/${copyCurrentPath.join('/')}`
+					);
+				}
+			} catch (e) {
+				useNotify({
+					type: 'error',
+					title: 'Something went wrong!'
+				});
+			}
+		}
+	}
+
+	async function saveFile() {
+		const editor = ace.edit('fileEditorAceEditor');
+		const name = currentPath.value[currentPath.value.length - 1]?.replace(
+			/%20/g,
+			' '
+		);
+
+		const pathPieces = [...currentPath.value];
+		pathPieces.pop();
+
+		const path = pathPieces.join('/')?.replace(/%20/g, ' ');
+		const formData = new FormData();
+		const content = editor.getValue();
+		const blob = new Blob([content]);
+		const file = new File([blob], name);
+
+		formData.append('file', file);
+		formData.append('path', path);
+
+		try {
+			const res = await useApi('explorerFile.post', {
+				body: formData
+			});
+			if (res.status === 'ok') {
+				useNotify({
+					type: 'success',
+					title: 'Saved successfully'
+				});
+			}
+			const { realmCode, spaceCode } = getRealmSpaceCodes(route);
+			let pathToBack = '';
+			if (pathPieces.length) {
+				pathToBack = `/${realmCode}/${spaceCode}/v/explorer/${pathPieces.join('/')}`;
+			} else {
+				pathToBack = `/${realmCode}/${spaceCode}/v/explorer`;
+			}
+			await router.push(pathToBack);
+		} catch (error) {
+			useNotify({
+				type: 'error',
+				title: 'Something went wrong !'
+			});
+		}
+	}
+
+	function updatePlaybook(data) {
+		playbook.value = data;
 	}
 
 	init();
@@ -744,8 +1023,6 @@ export function useExplorer() {
 		breadcrumbsNavigation,
 		openFolder,
 		editFile,
-		editorInit,
-		content,
 		isEditor,
 		openFile,
 		openDownloadZipModal,
@@ -757,6 +1034,15 @@ export function useExplorer() {
 		download,
 		openMove,
 		isMove,
-		getPathToMove
+		getPathToMove,
+		deleteFile,
+		initFileEditor,
+		saveFile,
+		sortTable,
+		tableHeaderItems,
+		showPlaybook,
+		playbook,
+		playbookName,
+		updatePlaybook
 	};
 }

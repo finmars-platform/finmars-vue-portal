@@ -73,3 +73,69 @@ export function copyToBuffer(content) {
 		return false;
 	}
 }
+
+export function getFileExtension(path) {
+	// Split the path into segments
+	let segments = path.split('/');
+
+	// Take the last segment
+	let lastSegment = segments[segments.length - 1];
+
+	// If the last segment contains more than one dot, treat it as a directory
+	if ((lastSegment.match(/\./g) || []).length > 1) {
+		return null; // or whatever you want to return for directories
+	} else {
+		// Check for a file extension
+		let extension = lastSegment.slice(
+			((lastSegment.lastIndexOf('.') - 1) >>> 0) + 2
+		);
+		return extension || null; // If there's no extension, return null
+	}
+}
+
+export function buildFileBlob(response, fileName) {
+	if (fileName.indexOf('.json') !== -1 || fileName.indexOf('.ipynb') !== -1) {
+		return [JSON.stringify(response, null, 2)];
+	} else {
+		return [response];
+	}
+}
+
+export function getMimeType(fileName = '.json') {
+	const extension = fileName.split('.').pop().toLowerCase();
+	const mimeTypes = {
+		txt: 'text/plain',
+		html: 'text/html',
+		css: 'text/css',
+		py: 'application/json',
+		ipynb: 'application/json',
+		js: 'application/javascript',
+		json: 'application/json',
+		xml: 'application/xml',
+		pdf: 'application/pdf',
+		csv: 'text/csv',
+		jpg: 'image/jpeg',
+		jpeg: 'image/jpeg',
+		png: 'image/png',
+		gif: 'image/gif',
+		svg: 'image/svg+xml',
+		bmp: 'image/bmp',
+		webp: 'image/webp',
+		ico: 'image/x-icon',
+		mp3: 'audio/mpeg',
+		wav: 'audio/wav',
+		mp4: 'video/mp4',
+		mov: 'video/quicktime',
+		avi: 'video/x-msvideo',
+		zip: 'application/zip',
+		rar: 'application/x-rar-compressed',
+		'7z': 'application/x-7z-compressed',
+		doc: 'application/msword',
+		docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		xls: 'application/vnd.ms-excel',
+		xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+		ppt: 'application/vnd.ms-powerpoint',
+		pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+	};
+	return mimeTypes[extension];
+}
