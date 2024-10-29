@@ -71,15 +71,15 @@
 					valid_children: ['root']
 				},
 				root: {
-					icon: 'portal/content/img/ic_folder_black_1x.png',
+					icon: '/img/ic_folder_black_1x.png',
 					valid_children: ['default']
 				},
 				default: {
-					icon: 'portal/content/img/ic_label_outline_black_1x.png',
+					icon: '/img/ic_label_outline_black_1x.png',
 					valid_children: ['default', 'folder']
 				},
 				folder: {
-					icon: 'portal/content/img/ic_folder_black_1x.png',
+					icon: '/img/ic_folder_black_1x.png',
 					valid_children: ['default', 'folder']
 				}
 			},
