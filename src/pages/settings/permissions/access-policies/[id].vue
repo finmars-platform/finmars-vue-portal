@@ -32,9 +32,7 @@
 					@init="editorInit"
 					lang="json"
 					theme="monokai"
-					style="height: 300px;width: 600px;"/>
-
-
+					style="height: 300px;"/>
 			</FmCard>
 		</template>
 
