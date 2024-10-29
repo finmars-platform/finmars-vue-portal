@@ -50,6 +50,7 @@ export default defineNuxtConfig({
 		"~/assets/scss/pickmeup.scss",
 		"~/assets/scss/base-theme.scss",
 		'@finmars/ui/dist/finmars-ui.css',
+		'@finmars/ui/dist/themes.css',
 	],
 	postcss: {
 		plugins: {
