@@ -7,7 +7,7 @@
 		>
 			Previous
 		</FmBtn>
-		<div class="flex">
+		<div class="flex pages-wrapper">
 			<div v-for="page in pages" :key="page.number">
 				<FmBtn
 					@click="openPage(page)"
@@ -32,8 +32,10 @@
 	</div>
 </template>
 
-<script setup >
+<script setup>
 	import { defineProps, defineEmits } from 'vue';
+
+	const route = useRoute();
 
 	const props = defineProps({
 		count: {
@@ -48,7 +50,7 @@
 
 	const pages = ref([]);
 	const totalPages = ref(0);
-	const currentPage = ref(1);
+	const currentPage = ref(route.query.page ? parseInt(route.query.page) : 1);
 	const emit = defineEmits(['page-change']);
 
 	watch(
@@ -64,7 +66,7 @@
 		for (var i = 1; i <= totalPages.value; i = i + 1) {
 			pages.value.push({
 				number: i,
-				caption: i.toString(),
+				caption: i.toString()
 			});
 		}
 		if (totalPages.value > 10) {
@@ -109,6 +111,7 @@
 		if (currentPage.value > 1) {
 			currentPage.value = currentPage.value - 1;
 			emit('page-change', currentPage.value);
+			generatePages();
 		}
 	};
 
@@ -116,6 +119,7 @@
 		if (currentPage.value < totalPages.value) {
 			currentPage.value += 1;
 			emit('page-change', currentPage.value);
+			generatePages();
 		}
 	};
 
@@ -123,6 +127,7 @@
 		if (page.number && page.number !== currentPage.value) {
 			currentPage.value = page.number;
 			emit('page-change', page.number);
+			generatePages();
 		}
 	};
 </script>
@@ -133,19 +138,10 @@
 		flex-wrap: nowrap;
 		align-items: center;
 		justify-content: flex-start;
-		//.fm-pagination {
-		//	display: flex;
-		//	align-items: center;
-		//	justify-content: flex-start;
-		//	gap: 10px;
-		//}
-		//.pagination-pages {
-		//	display: flex;
-		//	align-items: center;
-		//	gap: 5px;
-		//}
-		//.pagination-page {
-		//	margin: 0 2px;
-		//}
+	}
+	.pages-wrapper > div {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 </style>

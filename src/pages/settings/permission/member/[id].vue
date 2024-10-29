@@ -103,7 +103,7 @@
 		bread: [
 			{
 				text: 'Permissions: Members',
-				to: '/settings/permissions',
+				to: '/settings/permission',
 				disabled: false
 			},
 			{
@@ -236,15 +236,15 @@
 </script>
 
 <style lang="scss" scoped>
-.coll {
-	width: 48%;
-}
+	.coll {
+		width: 48%;
+	}
 
-.control_line {
-	width: calc(100% - 160px);
-	position: fixed;
-	left: 160px;
-	bottom: 0;
-	border-top: 1px solid var(--table-border-color);
-}
+	.control_line {
+		width: calc(100% - 160px);
+		position: fixed;
+		left: 160px;
+		bottom: 0;
+		border-top: 1px solid var(--table-border-color);
+	}
 </style>
