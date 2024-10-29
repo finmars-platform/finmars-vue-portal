@@ -5,7 +5,7 @@
 				<FmIcon
 					btnPrimary
 					icon="add"
-					@click="usePrefixedRouterPush($router, $route, `/settings/permissions/access-policies/add`)"
+					@click="usePrefixedRouterPush($router, $route, `/settings/permission/access-policy/add`)"
 				/>
 			</template>
 		</FmTopRefresh>
@@ -17,7 +17,7 @@
 				:status="!loading ? 'done' : 'loading'"
 				:isRightKebab="false"
 				colls="50px repeat(4, 1fr)"
-				:cb="(id) => usePrefixedRouterPush($router, $route, `/settings/permissions/access-policies/${accessPolicies[id].id}`)"
+				:cb="(id) => usePrefixedRouterPush($router, $route, `/settings/permission/access-policy/${accessPolicies[id].id}`)"
 				class="clickable_rows"
 			>
 				<template #actions="{index}">
@@ -51,10 +51,14 @@
 <script setup>
 	import { usePrefixedRouterPush } from '~/composables/useMeta';
 
+	const route = useRoute();
+	const router = useRouter();
+
 	const accessPolicies = ref([]);
 	const loading = ref(false);
 	const count = ref(0);
 	const pageSize = ref(10);
+	const currentPage = ref(route.query.page ? parseInt(route.query.page) : 1);
 
 	async function deleteAccessPolicy(index) {
 		const policy = accessPolicies.value[index];
@@ -72,16 +76,20 @@
 	}
 
 	const handlePageChange = (newPage) => {
-		init(newPage);
+		currentPage.value = newPage;
+		init(currentPage.value);
 	};
 
-	async function init(currentPage = 1) {
+	async function init(newPage = 1) {
+		router.push({ query: { ...route.query, page: currentPage.value } });
 		loading.value = true;
 		const payload = {
-			page_size: pageSize.value,
-			page: currentPage
+			page_size: pageSize.value
 		};
-		const res = await useApi('accessPolicyList.get', { filters: payload });
+		const res = await useApi('accessPolicyList.get', {
+			filters: payload,
+			query: { page: newPage }
+		});
 		count.value = res.count;
 		accessPolicies.value = res.results.map((item) => {
 			return {

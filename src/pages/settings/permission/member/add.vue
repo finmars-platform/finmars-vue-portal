@@ -1,0 +1,166 @@
+<template>
+	<CommonSettingsLayout
+		title="Add member"
+		saveText="Send invite"
+		@save="save"
+		@cancel="cancel"
+	>
+		<template #left>
+			<FmCard title="General" class="mb-6">
+				<BaseInput
+					label="Username"
+					v-model="form.username"
+				/>
+
+				<BaseInput
+					label="Email"
+					v-model="form.email"
+				/>
+
+				<!--<FmCheckbox
+					v-model="form.is_owner"
+					label="Owner"
+					class="m-b-8"
+				/>-->
+
+				<FmCheckbox
+					v-model="form.is_admin"
+					label="Admin"
+				/>
+
+			</FmCard>
+		</template>
+		<template #right>
+			<FmCard title="Groups" class="m-b-6">
+				<BaseMultiSelectInput
+					v-if="readyStatus.groups"
+					v-model="form.groups"
+					:items="groups"
+				/>
+
+				<FmLoader v-if="!readyStatus.groups"/>
+			</FmCard>
+
+			<FmCard title="Roles" class="m-b-6">
+				<BaseMultiSelectInput
+					v-if="readyStatus.roles"
+					v-model="form.roles"
+					:items="roles"
+				/>
+
+				<FmLoader v-if="!readyStatus.roles"/>
+			</FmCard>
+			<FmCard title="Personal Access Policies" class="m-b-6">
+				<BaseMultiSelectInput
+					v-if="readyStatus.accessPolicies"
+					v-model="form.access_policies"
+					:items="accessPolicies"
+				/>
+
+				<FmLoader v-if="!readyStatus.accessPolicies"/>
+			</FmCard>
+		</template>
+	</CommonSettingsLayout>
+</template>
+
+<script setup>
+
+	import dayjs from 'dayjs'
+	import {loadMultiselectOpts} from "~/pages/settings/helper";
+	import {usePrefixedRouterPush} from "~/composables/useMeta";
+
+	definePageMeta({
+		bread: [
+			{
+				text: 'Permissions: Members',
+				to: '/settings/permission',
+				disabled: false
+			},
+			{
+				text: 'Add member',
+				disabled: true
+			},
+		],
+	});
+	const store = useStore()
+	let route = useRoute()
+	let router = useRouter()
+
+	let readyStatus = reactive({
+		groups: false,
+		roles: false,
+		accessPolicies: false,
+	})
+
+	let form = reactive({
+		groups: [],
+		base_api_url: store.space_code,
+		is_owner: false
+	})
+
+	let groups = ref([]);
+	let roles = ref([]);
+	let accessPolicies = ref([]);
+
+	async function init() {
+
+		const res = await Promise.all([
+			loadMultiselectOpts('groupList.get', readyStatus, 'groups'),
+			loadMultiselectOpts("roleList.get", readyStatus, 'roles'),
+			loadMultiselectOpts("accessPolicyList.get", readyStatus, 'accessPolicies'),
+		]);
+
+		groups.value = res[0];
+		roles.value = res[1];
+		accessPolicies.value = res[2];
+
+	}
+
+	async function save() {
+		// TODO Refactor
+		let sendedForm = {
+			...form,
+			groups: form.groups,
+			roles: form.roles
+		}
+
+		let res = await useApi('member.post', {body: sendedForm, params: {id: route.params.id}})
+
+		if (!res._$error) {
+			useNotify({type: 'success', title: 'Invite sent!'})
+
+			usePrefixedRouterPush(router, route, '/settings/permission?tab=Members')
+		}
+	}
+
+	async function cancel() {
+		usePrefixedRouterPush(router, route, '/settings/permission')
+	}
+
+	function fromatDate(date) {
+		return dayjs(date).format('DD.MM.YYYY LT')
+	}
+
+	if (store.isUrlValid) {
+		init()
+	} else {
+		const unwatch = watch(() => store.current, async () => {
+			init()
+			unwatch();
+		})
+	}
+</script>
+
+<style lang="scss" scoped>
+	.coll {
+		width: 48%;
+	}
+
+	.control_line {
+		width: calc(100% - 160px);
+		position: fixed;
+		left: 160px;
+		bottom: 0;
+		border-top: 1px solid var(--table-border-color);
+	}
+</style>
