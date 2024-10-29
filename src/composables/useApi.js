@@ -99,7 +99,7 @@ export default async function useApi(
 
 		let error_object = e.data?.error
 
-		if (code.indexOf('403 Forbidden') !== -1) {
+		if (e.response && e.response.status == 403) {
 
 			localStorage.setItem("errorMessage", error_object.details.errors[0].detail || "Access Denied");
 			localStorage.setItem("previousUrl", window.location.href);
