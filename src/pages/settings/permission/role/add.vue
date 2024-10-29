@@ -69,7 +69,7 @@
 		bread: [
 			{
 				text: 'Permissions: Roles',
-				to: '/settings/permissions',
+				to: '/settings/permission',
 				disabled: false
 			},
 			{
@@ -122,11 +122,11 @@
 		if ( !res._$error ) {
 			useNotify({type: 'success', title: 'Role created!'})
 
-			usePrefixedRouterPush(router, route, '/settings/permissions?tab=Roles')
+			usePrefixedRouterPush(router, route, '/settings/permission?tab=Role')
 		}
 	}
 	async function cancel() {
-		usePrefixedRouterPush(router, route, '/settings/permissions?tab=Roles')
+		usePrefixedRouterPush(router, route, '/settings/permission?tab=Role')
 	}
 	function fromatDate( date ) {
 		return dayjs( date ).format('DD.MM.YYYY LT')
@@ -143,14 +143,14 @@
 </script>
 
 <style lang="scss" scoped>
-.coll {
-	width: 48%;
-}
-.control_line {
-	width: calc(100% - 160px);
-	position: fixed;
-	left: 160px;
-	bottom: 0;
-	border-top: 1px solid var(--table-border-color);
-}
+	.coll {
+		width: 48%;
+	}
+	.control_line {
+		width: calc(100% - 160px);
+		position: fixed;
+		left: 160px;
+		bottom: 0;
+		border-top: 1px solid var(--table-border-color);
+	}
 </style>

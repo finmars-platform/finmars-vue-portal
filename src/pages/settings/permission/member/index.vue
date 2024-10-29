@@ -4,7 +4,7 @@
 			<template #action>
 				<NuxtLink
 					:to="
-						useGetNuxtLink('/settings/permissions/members/add', $route.params)
+						useGetNuxtLink('/settings/permission/member/add', $route.params)
 					"
 				>
 					<FmIcon btnPrimary icon="add" />
@@ -53,6 +53,7 @@
 				class="m-t-20"
 				:count="count"
 				:page-size="pageSize"
+				:init-page="currentPage"
 				@page-change="handlePageChange"
 			/>
 		</div>
@@ -64,10 +65,12 @@
 
 	const route = useRoute();
 	const router = useRouter();
+
 	const stockMembers = ref(null);
 	const loading = ref(false);
 	const count = ref(0);
 	const pageSize = ref(10);
+	const currentPage = ref(route.query.page ? parseInt(route.query.page) : 1);
 
 	const members = computed(() => {
 		const data = [];
@@ -78,7 +81,7 @@
 				id: `${item.id}`,
 				username: {
 					value: item.username,
-					link: '/settings/permissions/members/' + item.id
+					link: '/settings/permission/member/' + item.id
 				},
 				is_admin: item.is_admin ? 'Admin' : 'No',
 				is_owner: item.is_owner ? 'Owner' : 'No',
@@ -112,16 +115,20 @@
 	}
 
 	const handlePageChange = (newPage) => {
-		init(newPage);
+		currentPage.value = newPage;
+		init(currentPage.value);
 	};
 
-	async function init(currentPage = 1) {
+	async function init(newPage = 1) {
+		router.push({ query: { ...route.query, page: currentPage.value } });
 		loading.value = true;
 		const payload = {
-			page_size: pageSize.value,
-			page: currentPage
+			page_size: pageSize.value
 		};
-		const res = await useApi('memberList.get', { filters: payload });
+		const res = await useApi('memberList.get', {
+			filters: payload,
+			query: { page: newPage }
+		});
 		count.value = res.count;
 		stockMembers.value = res.results;
 		loading.value = false;
