@@ -133,136 +133,135 @@
 
 <script setup>
 
-import dayjs from 'dayjs'
-import {VAceEditor} from 'vue3-ace-editor';
-import 'ace-builds/src-noconflict/mode-json';
-import 'ace-builds/src-noconflict/theme-monokai';
-import {usePrefixedRouterPush} from "~/composables/useMeta";
+	import dayjs from 'dayjs'
+	import {VAceEditor} from 'vue3-ace-editor';
+	import 'ace-builds/src-noconflict/mode-json';
+	import 'ace-builds/src-noconflict/theme-monokai';
+	import {usePrefixedRouterPush} from "~/composables/useMeta";
 
-definePageMeta({
-	bread: [
-		{
-			text: 'Permissions: Access Policies',
-			to: '/settings/permissions',
-			disabled: false
-		},
-		{
-			text: 'Add Access Policy',
-			disabled: true
-		},
-	],
-});
-const store = useStore()
-let route = useRoute()
-let router = useRouter()
+	definePageMeta({
+		bread: [
+			{
+				text: 'Permissions: Access Policies',
+				to: '/settings/permission',
+				disabled: false
+			},
+			{
+				text: 'Add Access Policy',
+				disabled: true
+			},
+		],
+	});
+	const store = useStore()
+	let route = useRoute()
+	let router = useRouter()
 
-let form = reactive({
-	name: '',
-	user_code: '',
-	configuration_code: 'com.finmars.local',
-	policy: null
-})
-
-let policyJson = ref(JSON.stringify({
-			"Version": "2023-01-01",
-			"Statement": [
-				{
-					"Effect": "Allow",
-					"Action": [],
-					"Principal": "*",
-					"Resource": "*"
-
-				}
-			]
-		}
-		, null, 4)
-)
-
-async function init() {
-
-}
-
-function editorInit(editor) {
-	editor.setHighlightActiveLine(false);
-	editor.setShowPrintMargin(false);
-	editor.setFontSize(14)
-	editor.setBehavioursEnabled(true);
-
-	editor.focus();
-	editor.navigateFileStart();
-}
-
-async function save() {
-
-	form.policy = JSON.parse(policyJson.value)
-
-	let res = await useApi('accessPolicyList.post', {body: form})
-
-	if (!res._$error) {
-		useNotify({type: 'success', title: 'Access Policy created!'})
-		// TODO move to active tab Groups
-		usePrefixedRouterPush(router, route, '/settings/permissions')
-	}
-}
-
-async function cancel() {
-	usePrefixedRouterPush(router, route, '/settings/permissions')
-}
-
-function fromatDate(date) {
-	return dayjs(date).format('DD.MM.YYYY LT')
-}
-
-if (store.isUrlValid) {
-	init()
-} else {
-	watch(() => store.current, async () => {
-		init()
+	let form = reactive({
+		name: '',
+		user_code: '',
+		configuration_code: 'com.finmars.local',
+		policy: null
 	})
-}
+
+	let policyJson = ref(JSON.stringify({
+				"Version": "2023-01-01",
+				"Statement": [
+					{
+						"Effect": "Allow",
+						"Action": [],
+						"Principal": "*",
+						"Resource": "*"
+
+					}
+				]
+			}
+			, null, 4)
+	)
+
+	async function init() {
+
+	}
+
+	function editorInit(editor) {
+		editor.setHighlightActiveLine(false);
+		editor.setShowPrintMargin(false);
+		editor.setFontSize(14)
+		editor.setBehavioursEnabled(true);
+
+		editor.focus();
+		editor.navigateFileStart();
+	}
+
+	async function save() {
+
+		form.policy = JSON.parse(policyJson.value)
+
+		let res = await useApi('accessPolicyList.post', {body: form})
+
+		if (!res._$error) {
+			useNotify({type: 'success', title: 'Access Policy created!'})
+			// TODO move to active tab Groups
+			usePrefixedRouterPush(router, route, '/settings/permission')
+		}
+	}
+
+	async function cancel() {
+		usePrefixedRouterPush(router, route, '/settings/permission')
+	}
+
+	function fromatDate(date) {
+		return dayjs(date).format('DD.MM.YYYY LT')
+	}
+
+	if (store.isUrlValid) {
+		init()
+	} else {
+		watch(() => store.current, async () => {
+			init()
+		})
+	}
 </script>
 
 <style lang="scss" scoped>
-.coll {
-	width: 48%;
-}
-
-.control_line {
-	width: calc(100% - 160px);
-	position: fixed;
-	left: 160px;
-	bottom: 0;
-	border-top: 1px solid var(--table-border-color);
-}
-
-.finmars-documentation-block {
-
-	h4 {
-		margin: 20px 0 10px 0;
-		font-size: 16px;
-		font-weight: bold;
+	.coll {
+		width: 48%;
 	}
 
-	p {
-		margin: 10px 0;
+	.control_line {
+		width: calc(100% - 160px);
+		position: fixed;
+		left: 160px;
+		bottom: 0;
+		border-top: 1px solid var(--table-border-color);
 	}
 
-	ul {
-		padding-left: 40px;
-		list-style: disc;
+	.finmars-documentation-block {
+
+		h4 {
+			margin: 20px 0 10px 0;
+			font-size: 16px;
+			font-weight: bold;
+		}
+
+		p {
+			margin: 10px 0;
+		}
+
+		ul {
+			padding-left: 40px;
+			list-style: disc;
+		}
+
+		li {
+			margin: 10px 0;
+			list-style: disc;
+		}
+
 	}
 
-	li {
-		margin: 10px 0;
-		list-style: disc;
+	pre.code-block {
+		background: #272822;
+		color: #fff;
+		padding: 8px;
 	}
-
-}
-
-pre.code-block {
-	background: #272822;
-	color: #fff;
-	padding: 8px;
-}
-
 </style>

@@ -158,118 +158,117 @@ import 'ace-builds/src-noconflict/theme-monokai';
 import dayjs from 'dayjs'
 import {usePrefixedRouterPush} from "~/composables/useMeta";
 
-definePageMeta({
-	middleware: 'auth',
-	bread: [
-		{
-			text: 'Permissions: Access Policies',
-			to: '/settings/permissions',
-			disabled: false
-		},
-		{
-			text: 'Update Access Policy',
-			disabled: true
-		},
-	],
-});
-const store = useStore()
-let route = useRoute()
-let router = useRouter()
+	definePageMeta({
+		middleware: 'auth',
+		bread: [
+			{
+				text: 'Permissions: Access Policies',
+				to: '/settings/permission',
+				disabled: false
+			},
+			{
+				text: 'Update Access Policy',
+				disabled: true
+			},
+		],
+	});
+	const store = useStore()
+	let route = useRoute()
+	let router = useRouter()
 
-let accessPolicy = ref({})
-let policyJson = ref({})
-
-
-async function init() {
-	let res = await useApi('accessPolicy.get', {params: {id: route.params.id}})
-	accessPolicy.value = res
-
-	policyJson.value = JSON.stringify(accessPolicy.value.policy, null, 2)
-
-}
+	let accessPolicy = ref({})
+	let policyJson = ref({})
 
 
-async function save() {
+	async function init() {
+		let res = await useApi('accessPolicy.get', {params: {id: route.params.id}})
+		accessPolicy.value = res
 
-	accessPolicy.value.policy = JSON.parse(policyJson.value)
+		policyJson.value = JSON.stringify(accessPolicy.value.policy, null, 2)
 
-	let res = await useApi('accessPolicy.put', {body: accessPolicy.value, params: {id: route.params.id}})
+	}
 
-	if (res) {
-		useNotify({type: 'success', title: 'Saved!'});
+
+	async function save() {
+
+		accessPolicy.value.policy = JSON.parse(policyJson.value)
+
+		let res = await useApi('accessPolicy.put', {body: accessPolicy.value, params: {id: route.params.id}})
+
+		if (res) {
+			useNotify({type: 'success', title: 'Saved!'});
+			router.back();
+		}
+	}
+
+	async function cancel() {
+		usePrefixedRouterPush(router, route, '/settings/permission')
 		router.back();
 	}
-}
 
-async function cancel() {
-	usePrefixedRouterPush(router, route, '/settings/permissions')
-	router.back();
-}
+	function fromatDate(date) {
+		return dayjs(date).format('DD.MM.YYYY LT')
+	}
 
-function fromatDate(date) {
-	return dayjs(date).format('DD.MM.YYYY LT')
-}
+	function editorInit(editor) {
+		editor.setHighlightActiveLine(false);
+		editor.setShowPrintMargin(false);
+		editor.setFontSize(14)
+		editor.setBehavioursEnabled(true);
 
-function editorInit(editor) {
-	editor.setHighlightActiveLine(false);
-	editor.setShowPrintMargin(false);
-	editor.setFontSize(14)
-	editor.setBehavioursEnabled(true);
+		editor.focus();
+		editor.navigateFileStart();
+	}
 
-	editor.focus();
-	editor.navigateFileStart();
-}
-
-if (store.isUrlValid) {
-	init()
-} else {
-	watch(() => store.current, async () => {
+	if (store.isUrlValid) {
 		init()
-	})
-}
+	} else {
+		watch(() => store.current, async () => {
+			init()
+		})
+	}
 </script>
 
 <style lang="scss" scoped>
-.coll {
-	width: 48%;
-}
-
-.control_line {
-	width: calc(100% - 160px);
-	position: fixed;
-	left: 160px;
-	bottom: 0;
-	border-top: 1px solid var(--table-border-color);
-}
-
-.finmars-documentation-block {
-
-	h4 {
-		margin: 20px 0 10px 0;
-		font-size: 16px;
-		font-weight: bold;
+	.coll {
+		width: 48%;
 	}
 
-	p {
-		margin: 10px 0;
+	.control_line {
+		width: calc(100% - 160px);
+		position: fixed;
+		left: 160px;
+		bottom: 0;
+		border-top: 1px solid var(--table-border-color);
 	}
 
-	ul {
-		padding-left: 40px;
-		list-style: disc;
+	.finmars-documentation-block {
+
+		h4 {
+			margin: 20px 0 10px 0;
+			font-size: 16px;
+			font-weight: bold;
+		}
+
+		p {
+			margin: 10px 0;
+		}
+
+		ul {
+			padding-left: 40px;
+			list-style: disc;
+		}
+
+		li {
+			margin: 10px 0;
+			list-style: disc;
+		}
+
 	}
 
-	li {
-		margin: 10px 0;
-		list-style: disc;
+	pre.code-block {
+		background: #272822;
+		color: #fff;
+		padding: 8px;
 	}
-
-}
-
-pre.code-block {
-	background: #272822;
-	color: #fff;
-	padding: 8px;
-}
-
 </style>
