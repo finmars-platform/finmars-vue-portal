@@ -12,6 +12,8 @@
 	import jQuery from 'jquery';
 	import 'jstree/dist/jstree.min.js';
 	import 'jstree/dist/themes/default/style.min.css';
+	import iconFolderBlack from '~/assets/img/ic_folder_black_1x.png';
+	import iconLabelOutlineBlack from '~/assets/img/ic_label_outline_black_1x.png';
 
 	const alreadyMadeRequests = ref(['']);
 	const path = ref('');
@@ -71,15 +73,15 @@
 					valid_children: ['root']
 				},
 				root: {
-					icon: '/img/ic_folder_black_1x.png',
+					icon: iconFolderBlack,
 					valid_children: ['default']
 				},
 				default: {
-					icon: '/img/ic_label_outline_black_1x.png',
+					icon: iconLabelOutlineBlack,
 					valid_children: ['default', 'folder']
 				},
 				folder: {
-					icon: '/img/ic_folder_black_1x.png',
+					icon: iconFolderBlack,
 					valid_children: ['default', 'folder']
 				}
 			},
@@ -146,10 +148,12 @@
 		.jstree-wholerow {
 			background: transparent !important;
 		}
+
 		.jstree-wholerow-hovered {
 			background: transparent !important;
 		}
-		.jstree-wholerow-clicked{
+
+		.jstree-wholerow-clicked {
 			background: var(--activeState-backgroundColor) !important;
 		}
 	}
