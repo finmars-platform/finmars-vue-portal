@@ -84,11 +84,11 @@
 		router.push({ query: { ...route.query, page: currentPage.value } });
 		loading.value = true;
 		const payload = {
-			page_size: pageSize.value
+			page_size: pageSize.value,
+			page: newPage
 		};
 		const res = await useApi('accessPolicyList.get', {
-			filters: payload,
-			query: { page: newPage }
+			filters: payload
 		});
 		count.value = res.count;
 		accessPolicies.value = res.results.map((item) => {
