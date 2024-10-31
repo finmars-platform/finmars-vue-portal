@@ -5,19 +5,28 @@
 				<FmIcon
 					btnPrimary
 					icon="add"
-					@click="usePrefixedRouterPush($router, $route, `/settings/permissions/access-policies/add`)"
+					@click="usePrefixedRouterPush($router, $route, `/settings/permission/access-policy/add`)"
 				/>
 			</template>
 		</FmTopRefresh>
 
 		<div class="fm_container">
+
+			<FmInputText
+				placeholder="Search for a ..."
+				class="text-search-input"
+				:noIndicatorButton="true"
+				v-model="searchTerm"
+				@update:model-value="setFiltersQueryDebounced"
+			/>
+
 			<BaseTable
 				:headers="['', 'Id', 'User Code', 'Configuration Code', 'Name']"
 				:items="accessPolicies"
 				:status="!loading ? 'done' : 'loading'"
 				:isRightKebab="false"
 				colls="50px repeat(4, 1fr)"
-				:cb="(id) => usePrefixedRouterPush($router, $route, `/settings/permissions/access-policies/${accessPolicies[id].id}`)"
+				:cb="(id) => usePrefixedRouterPush($router, $route, `/settings/permission/access-policy/${accessPolicies[id].id}`)"
 				class="clickable_rows"
 			>
 				<template #actions="{index}">
@@ -51,10 +60,16 @@
 <script setup>
 	import { usePrefixedRouterPush } from '~/composables/useMeta';
 
+	const route = useRoute();
+	const router = useRouter();
+
+	const searchTerm = ref('');
 	const accessPolicies = ref([]);
 	const loading = ref(false);
 	const count = ref(0);
 	const pageSize = ref(10);
+	const currentPage = ref(route.query.page ? parseInt(route.query.page) : 1);
+	import { debounce } from 'lodash'
 
 	async function deleteAccessPolicy(index) {
 		const policy = accessPolicies.value[index];
@@ -72,16 +87,21 @@
 	}
 
 	const handlePageChange = (newPage) => {
-		init(newPage);
+		currentPage.value = newPage;
+		init(currentPage.value);
 	};
 
-	async function init(currentPage = 1) {
+	async function init(newPage = 1) {
+		router.push({ query: { ...route.query, page: currentPage.value } });
 		loading.value = true;
 		const payload = {
 			page_size: pageSize.value,
-			page: currentPage
+			page: newPage,
+			user_code__contains: searchTerm.value
 		};
-		const res = await useApi('accessPolicyList.get', { filters: payload });
+		const res = await useApi('accessPolicyList.get', {
+			filters: payload
+		});
 		count.value = res.count;
 		accessPolicies.value = res.results.map((item) => {
 			return {
@@ -93,6 +113,11 @@
 		});
 		loading.value = false;
 	}
+
+	const setFiltersQueryDebounced = debounce(async (query) => {
+		currentPage.value = 1;
+		init();
+	}, 500);
 
 	function refresh() {
 		init();

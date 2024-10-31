@@ -1,38 +1,40 @@
 <template>
 	<div>
-		<FmTopRefresh
-			@refresh="refresh()"
-		>
+		<FmTopRefresh @refresh="refresh()">
 			<template #action>
 				<FmIcon
 					btnPrimary
 					icon="add"
-					@click="usePrefixedRouterPush($router, $route, `/settings/permissions/roles/add`)"
+					@click="
+						usePrefixedRouterPush(
+							$router,
+							$route,
+							`/settings/permission/group/add`
+						)
+					"
 				/>
 			</template>
 		</FmTopRefresh>
-
 		<div class="fm_container">
 			<BaseTable
 				:headers="['', 'Id', 'User Code', 'Configuration Code', 'Name']"
-				:items="roles"
+				:items="groupsRows"
 				:status="!loading ? 'done' : 'loading'"
 				:isRightKebab="false"
-				colls="50px repeat(4, 1fr)"
-				:cb="(id) => usePrefixedRouterPush($router, $route, `/settings/permissions/roles/${roles[id].id}`)"
+				colls="62.5px repeat(4, 1fr)"
+				rowKeyProp="id"
+				:cb="(id) => usePrefixedRouterPush($router, $route, `/settings/permission/group/${groups[id].id}`)"
 				class="clickable_rows"
 			>
 				<template #actions="{index}">
 					<div class="flex jcc aic height-100">
 						<FmMenu attach="body">
 							<template #btn>
-								<FmIcon icon="more_vert"/>
+								<FmIcon icon="more_vert" />
 							</template>
 							<div class="fm_list">
-								<div class="fm_list_item"
-									 @click="deleteRole(index)"
-								>
-									<FmIcon class="m-r-4" icon="delete"/>
+								<div class="fm_list_item" @click="deleteGroup(index)">
+									<FmIcon class="m-r-4" icon="delete" />
 									Delete
 								</div>
 							</div>
@@ -44,6 +46,7 @@
 				class="m-t-20"
 				:count="count"
 				:page-size="pageSize"
+				:init-page="currentPage"
 				@page-change="handlePageChange"
 			/>
 		</div>
@@ -53,36 +56,55 @@
 <script setup>
 	import { usePrefixedRouterPush } from '~/composables/useMeta';
 
-	const roles = ref([]);
+	const route = useRoute();
+	const router = useRouter();
+
+	const groups = ref([]);
 	const loading = ref(false);
 	const count = ref(0);
 	const pageSize = ref(10);
+	const currentPage = ref(route.query.page ? parseInt(route.query.page) : 1);
 
-	async function deleteRole(index) {
-		const role = roles.value[index];
+	const groupsRows = computed(() => {
+		return groups.value.map((group) => {
+			return {
+				id: `${group.id}`,
+				user_code: group.user_code,
+				configuration_code: group.configuration_code,
+				name: group.name
+			};
+		});
+	});
+
+	async function deleteGroup(index) {
+		const group = groups.value[index];
 		const isConfirm = await useConfirm({
-			title: 'Delete role',
-			text: `Do you want to delete a role "${role.name}"?`
+			title: 'Delete group',
+			text: `Do you want to delete a group "${group.name}"?`
 		});
 		if (!isConfirm) return false;
-		await useApi('role.delete', { params: { id: role.id } });
-		useNotify({ type: 'success', title: `Role "${role.name}" was deleted.` });
+		await useApi('group.delete', { params: { id: group.id } });
+		useNotify({ type: 'success', title: `Group "${group.name}" was deleted.` });
 		refresh();
 	}
 
 	const handlePageChange = (newPage) => {
-		init(newPage);
+		currentPage.value = newPage;
+		init(currentPage.value);
 	};
 
-	async function init(currentPage = 1) {
+	async function init(newPage = 1) {
+		router.push({ query: { ...route.query, page: currentPage.value } });
 		loading.value = true;
 		const payload = {
-			page_size: pageSize.value,
-			page: currentPage
+			page_size: pageSize.value
 		};
-		const res = await useApi('roleList.get', { filters: payload });
+		const res = await useApi('groupList.get', {
+			filters: payload,
+			query: { page: newPage }
+		});
 		count.value = res.count;
-		roles.value = res.results.map((item) => {
+		groups.value = res.results.map((item) => {
 			return {
 				id: `${item.id}`,
 				user_code: item.user_code,
