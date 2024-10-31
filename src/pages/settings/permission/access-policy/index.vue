@@ -11,6 +11,15 @@
 		</FmTopRefresh>
 
 		<div class="fm_container">
+
+			<FmInputText
+				placeholder="Search for a ..."
+				class="text-search-input"
+				:noIndicatorButton="true"
+				v-model="searchTerm"
+				@update:model-value="setFiltersQueryDebounced"
+			/>
+
 			<BaseTable
 				:headers="['', 'Id', 'User Code', 'Configuration Code', 'Name']"
 				:items="accessPolicies"
@@ -54,11 +63,13 @@
 	const route = useRoute();
 	const router = useRouter();
 
+	const searchTerm = ref('');
 	const accessPolicies = ref([]);
 	const loading = ref(false);
 	const count = ref(0);
 	const pageSize = ref(10);
 	const currentPage = ref(route.query.page ? parseInt(route.query.page) : 1);
+	import { debounce } from 'lodash'
 
 	async function deleteAccessPolicy(index) {
 		const policy = accessPolicies.value[index];
@@ -85,7 +96,8 @@
 		loading.value = true;
 		const payload = {
 			page_size: pageSize.value,
-			page: newPage
+			page: newPage,
+			user_code__contains: searchTerm.value
 		};
 		const res = await useApi('accessPolicyList.get', {
 			filters: payload
@@ -101,6 +113,11 @@
 		});
 		loading.value = false;
 	}
+
+	const setFiltersQueryDebounced = debounce(async (query) => {
+		currentPage.value = 1;
+		init();
+	}, 500);
 
 	function refresh() {
 		init();
