@@ -291,6 +291,9 @@ export default {
 	expression: {
 		post: prefix + '/utils/expression/'
 	},
+	exprCalcPeriodDate: {
+		post: prefix + '/utils/date/calc-period-date/',
+	},
 	transactionComplexFiltered: {
 		post: prefix + '/transactions/complex-transaction/ev-item/'
 	},
