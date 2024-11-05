@@ -15,7 +15,6 @@ export function useExplorer() {
 	const router = useRouter();
 	const route = useRoute();
 	const processing = ref(false);
-	const draftChangerButton = ref(false);
 	const selectedCount = ref(0);
 	const allSelected = ref(false);
 	const currentPath = ref([]);

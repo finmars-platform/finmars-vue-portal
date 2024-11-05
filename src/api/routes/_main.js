@@ -153,7 +153,7 @@ export default {
 		put: prefix + '/users/member/{id}/send-invite/'
 	},
 	userGroups: {
-		get: prefix + '/users/group/'
+		get: prefix + '/iam/group/'
 	},
 
 	portfolioRegisterList: {
