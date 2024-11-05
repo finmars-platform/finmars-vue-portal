@@ -11,26 +11,15 @@
 		</FmTopRefresh>
 
 		<div class="fm_container">
-			<BaseInput
-				type="text"
-				v-model="searchParam"
-				placeholder="Search"
-				class="bi_no_borders"
-				@keyup.enter="search()"
-				@input="search()"
-			>
-				<template #button>
-					<FmIcon icon="search" @click="search()" />
-				</template>
-				<template #rightBtn>
-					<FmIcon
-						v-if="searchParam || searchParam !== ''"
-						size="18"
-						icon="close"
-						@click="clearSearch()"
-					/>
-				</template>
-			</BaseInput>
+
+			<FmInputText
+				placeholder="Search for a ..."
+				class="text-search-input"
+				:noIndicatorButton="true"
+				v-model="searchTerm"
+				@update:model-value="setFiltersQueryDebounced"
+			/>
+
 			<BaseTable
 				:headers="['', 'Id', 'User Code', 'Configuration Code', 'Name']"
 				:items="accessPolicies"
@@ -74,13 +63,13 @@
 	const route = useRoute();
 	const router = useRouter();
 
+	const searchTerm = ref('');
 	const accessPolicies = ref([]);
 	const loading = ref(false);
 	const count = ref(0);
 	const pageSize = ref(10);
 	const currentPage = ref(route.query.page ? parseInt(route.query.page) : 1);
-	const searchParam = ref('');
-	const debounceTimeout = ref(0);
+	import { debounce } from 'lodash';
 
 	async function deleteAccessPolicy(index) {
 		const policy = accessPolicies.value[index];
@@ -102,33 +91,16 @@
 		init(currentPage.value);
 	};
 
-	const search = () => {
-		if (debounceTimeout) {
-			clearTimeout(debounceTimeout.value);
-		}
-		debounceTimeout.value = setTimeout(async function () {
-			await init();
-		}, 500);
-	};
-
-	const clearSearch = () => {
-		searchParam.value = '';
-		init();
-	};
-
 	async function init(newPage = 1) {
 		router.push({ query: { ...route.query, page: currentPage.value } });
 		loading.value = true;
 		const payload = {
 			page_size: pageSize.value,
-			page: newPage
+			page: newPage,
+			user_code__contains: searchTerm.value
 		};
-		if (searchParam.value.length) {
-			payload.user_code = searchParam.value;
-		}
 		const res = await useApi('accessPolicyList.get', {
-			filters: payload,
-			query: { page: newPage }
+			filters: payload
 		});
 		count.value = res.count;
 		accessPolicies.value = res.results.map((item) => {
@@ -141,6 +113,11 @@
 		});
 		loading.value = false;
 	}
+
+	const setFiltersQueryDebounced = debounce(async (query) => {
+		currentPage.value = 1;
+		init();
+	}, 500);
 
 	function refresh() {
 		init();
