@@ -23,6 +23,7 @@ export function useExplorer() {
 	const label = ref('');
 	const teIsOpened = ref(false);
 	const teValue = ref('');
+	const teValueForEdit = ref('');
 	const isMove = ref(false);
 	const itemsToMove = ref([]);
 	const pathToMove = ref('');
@@ -310,10 +311,12 @@ export function useExplorer() {
 				name: '',
 				file_path: currentPath.value.join('/')
 			};
+			teValue.value = currentPath.value.join('/').split('/').pop();
+		} else {
+			teValue.value = item.name;
 		}
 		isRename.value = true;
 		label.value = 'Rename';
-		teValue.value = item.name;
 		teIsOpened.value = true;
 		oldItem.value = item;
 	}
@@ -626,29 +629,36 @@ export function useExplorer() {
 	}
 
 	async function viewFile() {
-		const itemPath = currentPath.value.join('/');
-		const fileName = currentPath.value[currentPath.value.length - 1];
+		try {
+			const itemPath = currentPath.value.join('/');
+			const fileName = currentPath.value[currentPath.value.length - 1];
+			const options = {
+				path: itemPath
+			};
+			const reader = new FileReader();
+			const response = await useApi('explorerViewFile.get', {
+				filters: options
+			});
+			reader.addEventListener('loadend', function () {
+				editorFile.value.content = reader.result;
+				editorFile.value.name = fileName;
+				draftUserCode.value = 'explorer.' + currentPath.value.join('__');
+				initFileEditor();
+			});
 
-		const options = {
-			path: itemPath
-		};
-		const reader = new FileReader();
-		const response = await useApi('explorerViewFile.get', { filters: options });
-		reader.addEventListener('loadend', function () {
-			playbook.value = JSON.parse(reader.result);
-			editorFile.value.content = reader.result;
-			editorFile.value.name = fileName;
-			draftUserCode.value = 'explorer.' + currentPath.value.join('__');
-			initFileEditor();
-		});
-
-		let blob = buildFileBlob(response, fileName);
-		reader.readAsText(
-			new Blob(blob, {
-				type: getMimeType(fileName)
-			})
-		);
-		isEditor.value = true;
+			const blob = buildFileBlob(response, fileName);
+			reader.readAsText(
+				new Blob(blob, {
+					type: getMimeType(fileName)
+				})
+			);
+			isEditor.value = true;
+		} catch (e) {
+			useNotify({
+				type: 'error',
+				title: 'Something went wrong!'
+			});
+		}
 	}
 
 	async function downloadAndOpenPlaybook() {
@@ -803,13 +813,16 @@ export function useExplorer() {
 					type: 'success',
 					title: `${teValue.value} successfully renamed`
 				});
+				exportTaskId.value = res.task_id;
+				oldItem.value = {};
+				teValueForEdit.value = teValue.value;
+				cancel();
 			}
-			exportTaskId.value = res.task_id;
-			oldItem.value = {};
-			cancel();
+
+			// init();
 		} catch (error) {
 			useNotify({
-				type: 'success',
+				type: 'error',
 				title: `${oldItem.value.name} rename failed!`
 			});
 		}
@@ -983,6 +996,19 @@ export function useExplorer() {
 		playbook.value = data;
 	}
 
+	async function refreshContent(isRefreshByClick = false) {
+		if (!isEditor.value || isRefreshByClick) {
+			await listFiles();
+			await viewFile();
+		} else {
+			const segments = route.fullPath.split('/');
+			segments[segments.length - 1] = teValueForEdit.value.replace(/%20/g, ' ');
+			const renamedPath = segments.join('/');
+			await router.replace(renamedPath);
+			teValueForEdit.value = '';
+		}
+	}
+
 	init();
 
 	return {
@@ -990,7 +1016,6 @@ export function useExplorer() {
 		formatDate,
 		processing,
 		selectedCount,
-		listFiles,
 		items,
 		label,
 		teIsOpened,
@@ -1043,6 +1068,7 @@ export function useExplorer() {
 		showPlaybook,
 		playbook,
 		playbookName,
-		updatePlaybook
+		updatePlaybook,
+		refreshContent
 	};
 }

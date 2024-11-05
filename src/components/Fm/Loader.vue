@@ -214,7 +214,7 @@
 	  position: absolute;
 	  top: -.2em;
 	  left: -.2em;
-	  border: .2em solid currentcolor;
+	  //border: .2em solid currentcolor;
 	  border-radius: 50%;
 	  opacity: .2;
 	}
