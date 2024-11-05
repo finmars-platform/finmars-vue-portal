@@ -15,7 +15,6 @@ export function useExplorer() {
 	const router = useRouter();
 	const route = useRoute();
 	const processing = ref(false);
-	const draftChangerButton = ref(false);
 	const selectedCount = ref(0);
 	const allSelected = ref(false);
 	const currentPath = ref([]);
@@ -56,31 +55,36 @@ export function useExplorer() {
 		{
 			name: 'Name',
 			sort_key: 'name',
-			isSort: true,
-			isSortable: true
+			isSorted: false,
+			isSortable: true,
+			isShowSortArrows: false
 		},
 		{
 			name: 'Path',
-			isSort: true,
-			isSortable: false
+			isSorted: false,
+			isSortable: false,
+			isShowSortArrows: false
 		},
 		{
 			name: 'Date Modified',
 			sort_key: 'modified_at',
-			isSort: true,
-			isSortable: true
+			isSorted: false,
+			isSortable: true,
+			isShowSortArrows: false
 		},
 		{
 			name: 'Size',
 			sort_key: 'size',
-			isSort: true,
-			isSortable: true
+			isSorted: false,
+			isSortable: true,
+			isShowSortArrows: false
 		},
 		{
 			name: 'Kind',
 			sort_key: 'mime_type',
-			isSort: true,
-			isSortable: true
+			isSorted: false,
+			isSortable: true,
+			isShowSortArrows: false
 		}
 	]);
 
@@ -115,7 +119,14 @@ export function useExplorer() {
 		if (!headerItem.isSortable) return;
 		sortColumn.value = headerItem.sort_key;
 		sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
-		sortItems();
+
+		tableHeaderItems.value.forEach((item) => {
+			item.isSorted = false;
+			item.isShowSortArrows = false;
+		});
+		headerItem.isSorted = sortOrder.value === 'asc';
+		headerItem.isShowSortArrows = true;
+		sortItems(headerItem);
 	}
 
 	function formatDate(dateString) {

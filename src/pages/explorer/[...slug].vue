@@ -186,11 +186,14 @@
 									>
 										<div class="table-column-title-wrap">
 											<span>{{ headerItem.name }}</span>
-											<span v-if="headerItem.isSortable" class="material-icons">
+											<span
+												v-if="headerItem.isSortable && headerItem.isShowSortArrows"
+												class="material-icons"
+											>
 												{{
-													headerItem.isSort
-														? 'arrow_drop_down'
-														: 'arrow_drop_up'
+													headerItem.isSorted
+														? 'arrow_drop_up'
+														: 'arrow_drop_down'
 												}}
 											</span>
 										</div>
