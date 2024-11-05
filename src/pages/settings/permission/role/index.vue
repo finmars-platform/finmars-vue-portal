@@ -60,7 +60,7 @@
 	const roles = ref([]);
 	const loading = ref(false);
 	const count = ref(0);
-	const pageSize = ref(10);
+	const pageSize = ref(40);
 	const currentPage = ref(route.query.page ? parseInt(route.query.page) : 1);
 
 	async function deleteRole(index) {
@@ -84,7 +84,8 @@
 		router.push({ query: { ...route.query, page: currentPage.value } });
 		loading.value = true;
 		const payload = {
-			page_size: pageSize.value
+			page_size: pageSize.value,
+			page: newPage
 		};
 		const res = await useApi('roleList.get', {
 			filters: payload,

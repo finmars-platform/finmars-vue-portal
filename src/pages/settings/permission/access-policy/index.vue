@@ -11,6 +11,26 @@
 		</FmTopRefresh>
 
 		<div class="fm_container">
+			<BaseInput
+				type="text"
+				v-model="searchParam"
+				placeholder="Search"
+				class="bi_no_borders"
+				@keyup.enter="search()"
+				@input="search()"
+			>
+				<template #button>
+					<FmIcon icon="search" @click="search()" />
+				</template>
+				<template #rightBtn>
+					<FmIcon
+						v-if="searchParam || searchParam !== ''"
+						size="18"
+						icon="close"
+						@click="clearSearch()"
+					/>
+				</template>
+			</BaseInput>
 			<BaseTable
 				:headers="['', 'Id', 'User Code', 'Configuration Code', 'Name']"
 				:items="accessPolicies"
@@ -59,6 +79,8 @@
 	const count = ref(0);
 	const pageSize = ref(10);
 	const currentPage = ref(route.query.page ? parseInt(route.query.page) : 1);
+	const searchParam = ref('');
+	const debounceTimeout = ref(0);
 
 	async function deleteAccessPolicy(index) {
 		const policy = accessPolicies.value[index];
@@ -80,12 +102,30 @@
 		init(currentPage.value);
 	};
 
+	const search = () => {
+		if (debounceTimeout) {
+			clearTimeout(debounceTimeout.value);
+		}
+		debounceTimeout.value = setTimeout(async function () {
+			await init();
+		}, 500);
+	};
+
+	const clearSearch = () => {
+		searchParam.value = '';
+		init();
+	};
+
 	async function init(newPage = 1) {
 		router.push({ query: { ...route.query, page: currentPage.value } });
 		loading.value = true;
 		const payload = {
-			page_size: pageSize.value
+			page_size: pageSize.value,
+			page: newPage
 		};
+		if (searchParam.value.length) {
+			payload.user_code = searchParam.value;
+		}
 		const res = await useApi('accessPolicyList.get', {
 			filters: payload,
 			query: { page: newPage }
@@ -114,6 +154,14 @@
 		align-items: center;
 		justify-content: space-between;
 		text-align: left;
+	}
+	.bi_no_borders {
+		max-width: 35%;
+		font-size: 14px !important;
+		margin-bottom: 10px !important;
+		:deep(.right_btn) {
+			margin-left: 10px !important;
+		}
 	}
 	.cards {
 		display: grid;
