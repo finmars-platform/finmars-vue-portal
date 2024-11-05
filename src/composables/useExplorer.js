@@ -126,7 +126,7 @@ export function useExplorer() {
 		});
 		headerItem.isSorted = sortOrder.value === 'asc';
 		headerItem.isShowSortArrows = true;
-		sortItems(headerItem);
+		sortItems();
 	}
 
 	function formatDate(dateString) {
