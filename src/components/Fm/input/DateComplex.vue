@@ -372,6 +372,10 @@
 	let sDate = ref(props.secondDate)
 	let sdOptions = ref(null);
 
+	if (rangeOfDates.value) {
+		sdOptions.value = JSON.parse(JSON.stringify(props.secondDatepickerOptions));
+	}
+
 	let openSecondEe = ref(false)
 
 	let secondDateConv = computed(() => convertDate(sDate.value))
@@ -571,7 +575,7 @@
 	}
 
 	async function activateRangeMode(mode) {
-		const currentDate = new Date()
+		const currentDate = new Date();
 
 		switch (mode) {
 			case 'week-to-date':
@@ -598,13 +602,27 @@
 				break
 
 			case 'month-to-date':
-				let prevMonthLastDay
+				let prevMonthLastBDay
 
 				try {
-					const exprCalcRes = await calcExpression(
+					/*const exprCalcRes = await calcExpression(
 						'get_date_last_month_end_business(now())'
-					)
-					prevMonthLastDay = new Date(exprCalcRes.result)
+					)*/
+
+					const opts = {
+						body: {
+							date: dayjs(currentDate).format('YYYY-MM-DD'),
+							frequency: "M",
+							shift: -1,
+							is_only_bday: true,
+							start: false,
+						}
+					}
+
+					const exprCalcRes = await useApi("exprCalcPeriodDate.post", opts)
+
+					prevMonthLastBDay = new Date(exprCalcRes.result);
+
 				} catch (error) {
 					throw new Error(error)
 				}
@@ -624,7 +642,7 @@
 
 				disableFieldsAndCalendars(); */
 				applyDatesOnRangeModeSwitch(
-					prevMonthLastDay,
+					prevMonthLastBDay,
 					'get_date_last_month_end_business(now())',
 					currentDate,
 					'now()',
