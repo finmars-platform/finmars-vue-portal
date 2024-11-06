@@ -56,7 +56,6 @@
 			},
 		],
 	});
-	const store = useStore();
 	const route = useRoute();
 	const router = useRouter();
 
@@ -117,6 +116,8 @@
 		align-items: center;
 		justify-content: space-between;
 		text-align: left;
+		user-select: auto;
+		cursor: text;
 	}
 	.details-action-btns {
 		display: flex;

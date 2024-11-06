@@ -259,10 +259,11 @@
 		try {
 			const host = useRuntimeConfig().public.apiURL;
 			const { realmCode, spaceCode } = getRealmSpaceCodes(route);
-			const data = await fetch(
+			const res = await fetch(
 				`${host}/${realmCode}/${spaceCode}/workflow/api/execute-code/`,
 				options
 			);
+			const data = await res.json();
 			executing.value = false;
 			activeCell.value.outputs = [data.result];
 			useNotify({

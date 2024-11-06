@@ -153,7 +153,7 @@ export default {
 		put: prefix + '/users/member/{id}/send-invite/'
 	},
 	userGroups: {
-		get: prefix + '/users/group/'
+		get: prefix + '/iam/group/'
 	},
 
 	portfolioRegisterList: {
@@ -290,6 +290,9 @@ export default {
 	},
 	expression: {
 		post: prefix + '/utils/expression/'
+	},
+	exprCalcPeriodDate: {
+		post: prefix + '/utils/date/calc-period-date/',
 	},
 	transactionComplexFiltered: {
 		post: prefix + '/transactions/complex-transaction/ev-item/'

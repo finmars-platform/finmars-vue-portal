@@ -10,7 +10,7 @@
 						btnPrimary
 						class="md-raised md-icon-button md-primary explorer-page-refresh-button"
 						:class="{ 'disabled-btn': processing }"
-						@click="listFiles"
+						@click="refreshContent(true)"
 						icon="refresh"
 						size="24"
 						v-tooltip="'Refresh'"
@@ -186,11 +186,14 @@
 									>
 										<div class="table-column-title-wrap">
 											<span>{{ headerItem.name }}</span>
-											<span v-if="headerItem.isSortable" class="material-icons">
+											<span
+												v-if="headerItem.isSortable && headerItem.isShowSortArrows"
+												class="material-icons"
+											>
 												{{
-													headerItem.isSort
-														? 'arrow_drop_down'
-														: 'arrow_drop_up'
+													headerItem.isSorted
+														? 'arrow_drop_up'
+														: 'arrow_drop_down'
 												}}
 											</span>
 										</div>
@@ -403,7 +406,7 @@
 			v-if="exportTaskId"
 			:task-id="exportTaskId"
 			@removeTaskId="removeActiveTaskId"
-			@update="listFiles()"
+			@update="refreshContent()"
 			class="task-card"
 		/>
 		<input
@@ -449,7 +452,6 @@
 		formatDate,
 		processing,
 		selectedCount,
-		listFiles,
 		items,
 		label,
 		teIsOpened,
@@ -501,7 +503,8 @@
 		showPlaybook,
 		playbook,
 		playbookName,
-		updatePlaybook
+		updatePlaybook,
+		refreshContent
 	} = useExplorer();
 </script>
 

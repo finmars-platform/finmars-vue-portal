@@ -25,12 +25,12 @@
 				</button>
 			</div>
 		</div>
-		<div v-if="status !== 'loading' && !items.length" class="table-empty-data">
+		<div v-if="status === 'loading'" class="center p-16">
+			<FmLoader />
+		</div>
+		<div v-else-if="status !== 'loading' && !items.length" class="table-empty-data">
 			<FmIcon icon="cloud_off" />
 			<span>No Data</span>
-		</div>
-		<div v-else-if="status === 'loading'" class="center p-16">
-			<FmLoader />
 		</div>
 		<template v-else>
 			<div
@@ -179,11 +179,8 @@
 	}
 
 	.table.readonly {
-
 		.table-row {
-
 			&:not(.t_header) {
-
 				.table-cell .table-cell-btn {
 					cursor: default;
 				}
@@ -255,7 +252,6 @@
 		white-space: nowrap;
 
 		&:not([disabled]):hover {
-
 			.header-text {
 				color: var(--secondary-color);
 			}
