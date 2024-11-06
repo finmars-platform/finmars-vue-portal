@@ -69,7 +69,7 @@
 	const count = ref(0);
 	const pageSize = ref(10);
 	const currentPage = ref(route.query.page ? parseInt(route.query.page) : 1);
-	import { debounce } from 'lodash'
+	import { debounce } from 'lodash';
 
 	async function deleteAccessPolicy(index) {
 		const policy = accessPolicies.value[index];
@@ -131,6 +131,14 @@
 		align-items: center;
 		justify-content: space-between;
 		text-align: left;
+	}
+	.bi_no_borders {
+		max-width: 35%;
+		font-size: 14px !important;
+		margin-bottom: 10px !important;
+		:deep(.right_btn) {
+			margin-left: 10px !important;
+		}
 	}
 	.cards {
 		display: grid;
