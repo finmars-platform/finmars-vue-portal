@@ -643,7 +643,7 @@
 				disableFieldsAndCalendars(); */
 				applyDatesOnRangeModeSwitch(
 					prevMonthLastBDay,
-					'get_date_last_month_end_business(now())',
+					'calculate_period_date(now(), "M", -1, True, False)',
 					currentDate,
 					'now()',
 					'month-to-date'
