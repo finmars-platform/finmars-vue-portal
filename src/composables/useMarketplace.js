@@ -202,7 +202,7 @@ export function useMarketplace() {
 
 	const setFiltersQueryDebounced = debounce(async (query) => {
 		await setFiltersQuery(query)
-	}, 500)
+	}, 800)
 
 	function setShowModules(bool) {
 		currentPage.value = 1

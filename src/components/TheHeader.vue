@@ -29,7 +29,7 @@
 	const toggleIsDark = ref(store.user.data.dark_mode)
 
 	const letters = computed(() => {
-		return (store?.user?.first_name || store?.user?.username)?.substr(2) || ''
+		return (store?.user?.first_name || store?.user?.username)?.slice(0, 2) || ''
 	})
 	const logoPath = computed(() => {
 		switch (toggleIsDark.value) {
