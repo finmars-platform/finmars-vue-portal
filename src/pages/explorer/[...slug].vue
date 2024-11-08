@@ -166,7 +166,7 @@
 							:noIndicatorButton="true"
 							v-model="searchTerm"
 						/>
-						<FmLoader :size="100" v-if="processing"></FmLoader>
+						<FmLoader :size="60" v-if="processing"></FmLoader>
 						<table v-else>
 							<thead>
 								<tr>
@@ -396,7 +396,7 @@
 					</template>
 					<template v-else>
 						<div class="flex-row fc-center loader">
-							<FmLoader :size="100" />
+							<FmLoader :size="60" />
 						</div>
 					</template>
 				</template>
@@ -569,8 +569,15 @@
 				.explorer-table-checkbox {
 					margin: 4px;
 				}
+				th,
+				td {
+					border: 1px solid var(--table-border-color);
+					padding: 6px;
+					text-align: left;
+				}
 				th {
 					font-size: 14px;
+					background-color: var(--activeState-backgroundColor);
 					.table-column-title-wrap {
 						display: flex;
 						flex-wrap: nowrap;
@@ -578,7 +585,7 @@
 					}
 				}
 				td {
-					font-size: 16px;
+					font-size: 12px;
 					.material-icons {
 						font-size: 14px;
 						margin-right: 3px;
@@ -600,7 +607,7 @@
 					justify-content: center;
 				}
 				.explorer-item-name {
-					font-size: 16px;
+					font-size: 14px;
 					text-overflow: ellipsis;
 					overflow: hidden;
 					width: 100%;
@@ -669,7 +676,7 @@
 		}
 		.explorer-path-item {
 			float: left;
-			font-size: 16px;
+			font-size: 14px;
 			cursor: pointer;
 			&:hover {
 				text-decoration: underline;

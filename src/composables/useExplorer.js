@@ -51,6 +51,7 @@ export function useExplorer() {
 	const editorFile = ref({});
 	const sortColumn = ref('');
 	const sortOrder = ref('asc');
+	const isRefreshAfterMoveRename = ref(false);
 	const tableHeaderItems = ref([
 		{
 			name: 'Name',
@@ -821,17 +822,14 @@ export function useExplorer() {
 				body: { new_name: teValue.value, path: path.replace(/%20/g, ' ') }
 			});
 			if (res.status === 'ok') {
-				useNotify({
-					type: 'success',
-					title: `${teValue.value} successfully renamed`
-				});
+				if (!isEditor.value) {
+					isRefreshAfterMoveRename.value = true;
+				}
 				exportTaskId.value = res.task_id;
 				oldItem.value = {};
 				teValueForEdit.value = teValue.value;
 				cancel();
 			}
-
-			// init();
 		} catch (error) {
 			useNotify({
 				type: 'error',
@@ -921,6 +919,7 @@ export function useExplorer() {
 				body: { target_directory_path: pathToMove.value, paths }
 			});
 			if (res.status === 'ok') {
+				isRefreshAfterMoveRename.value = true;
 				exportTaskId.value = res.task_id;
 				cancel();
 			}
@@ -928,6 +927,7 @@ export function useExplorer() {
 			useNotify({ type: 'error', title: 'Move failed!' });
 		}
 	}
+
 	async function deleteFile() {
 		const confirm = await useConfirm({
 			title: 'Warning',
@@ -1009,9 +1009,16 @@ export function useExplorer() {
 	}
 
 	async function refreshContent(isRefreshByClick = false) {
-		if (!isEditor.value || isRefreshByClick) {
+		if (isRefreshAfterMoveRename.value) {
 			await listFiles();
-			await viewFile();
+			isRefreshAfterMoveRename.value = false;
+			return;
+		}
+		if (isRefreshByClick) {
+			await listFiles();
+			if (isEditor.value) {
+				await viewFile();
+			}
 		} else {
 			const segments = route.fullPath.split('/');
 			segments[segments.length - 1] = teValueForEdit.value.replace(/%20/g, ' ');
