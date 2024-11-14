@@ -31,7 +31,7 @@
 	},
 	"dependencies": {
 		"@chenfengyuan/vue-qrcode": "^2.0.0",
-		"@finmars/ui": "1.0.30",
+		"@finmars/ui": "1.0.37",
 		"@formbricks/js": "1.1.2",
 		"@kyvg/vue3-notification": "^2.4.1",
 		"@pinia/nuxt": "^0.5.1",
@@ -47,6 +47,7 @@
 		"jquery": "^3.3.1",
 		"jstree": "^3.3.17",
 		"keycloak-js": "^21.0.1",
+		"lodash": "^4.17.21",
 		"pdfjs-dist": "^4.0.269",
 		"pinia": "^2.0.24",
 		"qrcode": "^1.5.1",
