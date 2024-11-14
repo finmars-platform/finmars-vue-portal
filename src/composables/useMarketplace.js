@@ -1,131 +1,92 @@
-import { debounce } from 'lodash'
+import { debounce } from 'lodash';
 
 export function useMarketplace() {
-	const items = ref([])
-	const readyStatus = reactive({ data: false })
-	const filters = reactive({})
+	const items = ref([]);
+	const readyStatus = reactive({ data: false });
+	const filters = reactive({});
 
-	const totalPages = ref(1)
-	const currentPage = ref(1)
-	const activeTaskId = ref(null)
-	const pageSize = ref(40)
-	const isShowModules = ref(false)
+	const totalPages = ref(1);
+	const currentPage = ref(1);
+	const activeTaskId = ref(null);
+	const pageSize = ref(40);
+	const isShowModules = ref(false);
 
-	const pages = ref([])
-
-	// TODO move to separate service to keep it DRY
-	const alphabets = [
-		'#357EC7', // A
-		'#C11B17', // B
-		'#008080', // C
-		'#728C00', // D
-		'#0020C2', // E
-		'#347C17', // F
-		'#D4A017', // G
-		'#7D0552', // H
-		'#9F000F', // I
-		'#E42217', // J
-		'#F52887', // K
-		'#571B7E', // L
-		'#1F45FC', // M
-		'#C35817', // N
-		'#F87217', // O
-		'#41A317', // P
-		'#4C4646', // Q
-		'#4CC417', // R
-		'#C12869', // S
-		'#15317E', // T
-		'#AF7817', // U
-		'#F75D59', // V
-		'#FF0000', // W
-		'#000000', // X
-		'#E9AB17', // Y
-		'#8D38C9' // Z
-	]
-
-	function getAvatar(char) {
-		let charCode = char.charCodeAt(0)
-		let charIndex = charCode - 65
-
-		let colorIndex = charIndex % alphabets.length
-
-		return alphabets[colorIndex]
-	}
+	const pages = ref([]);
 
 	function openPreviousPage() {
-		if (currentPage.value <= 1) return
+		if (currentPage.value <= 1) return;
 
-		currentPage.value = currentPage.value - 1
+		currentPage.value = currentPage.value - 1;
 
-		getData()
+		getData();
 	}
 
 	function openNextPage() {
-		if (currentPage.value >= totalPages.value) return
+		if (currentPage.value >= totalPages.value) return;
 
-		currentPage.value = currentPage.value + 1
+		currentPage.value = currentPage.value + 1;
 
-		getData()
+		getData();
 	}
 
 	function openPage(page) {
-		if (!page.number) return
+		if (!page.number) return;
 
-		currentPage.value = page.number
+		currentPage.value = page.number;
 
-		getData()
+		getData();
 	}
 
 	function generatePages(data) {
-		totalPages.value = Math.ceil(data.count / pageSize.value)
+		totalPages.value = Math.ceil(data.count / pageSize.value);
 
-		pages.value = []
+		pages.value = [];
 
 		for (let i = 1; i <= totalPages.value; i++) {
 			pages.value.push({
 				number: i,
 				caption: i.toString()
-			})
+			});
 		}
 
 		if (totalPages.value > 10) {
-			let currentPageIndex = 0
+			let currentPageIndex = 0;
 
 			pages.value.forEach((item, index) => {
 				if (currentPage.value === item.number) {
-					currentPageIndex = index
+					currentPageIndex = index;
 				}
-			})
+			});
 
 			pages.value = pages.value.filter((item, index) => {
 				if (index < 2 || index > totalPages.value - 3) {
-					return true
+					return true;
 				}
 
 				if (index === currentPageIndex) {
-					return true
+					return true;
 				}
 
 				if (index > currentPageIndex - 3 && index < currentPageIndex) {
-					return true
+					return true;
 				}
 
 				if (index < currentPageIndex + 3 && index > currentPageIndex) {
-					return true
+					return true;
 				}
 
-				return false
-			})
+				return false;
+			});
 
 			for (let i = 0; i < pages.value.length; i = i + 1) {
-				let j = i + 1
+				let j = i + 1;
 
 				if (j < pages.value.length) {
 					if (pages.value[j].number && pages.value[i].number) {
 						if (pages.value[j].number - pages.value[i].number > 1) {
 							pages.value.splice(i + 1, 0, {
 								caption: '...'
-							})
+							});
 						}
 					}
 				}
@@ -134,14 +95,14 @@ export function useMarketplace() {
 	}
 
 	async function getData() {
-		const { configCodes } = useStore()
+		const { configCodes } = useStore();
 
-		readyStatus.data = false
+		readyStatus.data = false;
 
 		if (isShowModules.value) {
-			delete filters['is_package']
+			delete filters['is_package'];
 		} else {
-			filters['is_package'] = true
+			filters['is_package'] = true;
 		}
 
 		const payload = {
@@ -149,30 +110,30 @@ export function useMarketplace() {
 			page: currentPage.value,
 			ordering: 'name',
 			...filters
-		}
+		};
 
 		try {
-			const data = await useApi('marketplaceList.get', { filters: payload })
+			const data = await useApi('marketplaceList.get', { filters: payload });
 
 			if (data) {
-				generatePages(data)
+				generatePages(data);
 
-				items.value = data.results
+				items.value = data.results;
 
 				items.value.forEach((remoteItem) => {
 					configCodes.forEach(function (localItem) {
 						if (
 							remoteItem.configuration_code === localItem.configuration_code
 						) {
-							remoteItem.localItem = localItem
+							remoteItem.localItem = localItem;
 						}
-					})
-				})
+					});
+				});
 			}
 		} catch (e) {
-			console.warn('Error marketplace.get', e)
+			console.warn('Error marketplace.get', e);
 		} finally {
-			readyStatus.data = true
+			readyStatus.data = true;
 		}
 	}
 
@@ -183,21 +144,21 @@ export function useMarketplace() {
 				version: version || item.latest_release_object.version,
 				channel: item.latest_release_object.channel,
 				is_package: item.is_package
-			}
+			};
 
-			const res = await useApi('marketplaceInstall.post', { body: payload })
+			const res = await useApi('marketplaceInstall.post', { body: payload });
 
-			activeTaskId.value = res.task_id
+			activeTaskId.value = res.task_id;
 		} catch (e) {
-			console.log('installConfiguration', e)
+			console.log('installConfiguration', e);
 		}
 	}
 
 	async function setFiltersQuery(query) {
-		currentPage.value = 1
-		filters.query = query
+		currentPage.value = 1;
+		filters.query = query;
 
-		await getData()
+		await getData();
 	}
 
 	const setFiltersQueryDebounced = debounce(async (query) => {
@@ -205,14 +166,14 @@ export function useMarketplace() {
 	}, 800)
 
 	function setShowModules(bool) {
-		currentPage.value = 1
-		isShowModules.value = bool
+		currentPage.value = 1;
+		isShowModules.value = bool;
 
-		getData()
+		getData();
 	}
 
 	function removeActiveTaskId() {
-		activeTaskId.value = null
+		activeTaskId.value = null;
 	}
 
 	return {
@@ -229,9 +190,8 @@ export function useMarketplace() {
 		readyStatus,
 		openPreviousPage,
 		openPage,
-		getAvatar,
 		setFiltersQueryDebounced,
 		setShowModules,
 		removeActiveTaskId
-	}
+	};
 }
