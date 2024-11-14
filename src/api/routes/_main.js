@@ -1,6 +1,6 @@
-let host = useRuntimeConfig().public.apiURL
-let prefix = host + '/{client}/api/v1'
-let uDatabasePrefix = 'https://database.finmars.com/api/v1'
+let host = useRuntimeConfig().public.apiURL;
+let prefix = host + '/{client}/api/v1';
+let uDatabasePrefix = 'https://database.finmars.com/api/v1';
 
 export default {
 	pricingProc: {
@@ -292,7 +292,7 @@ export default {
 		post: prefix + '/utils/expression/'
 	},
 	exprCalcPeriodDate: {
-		post: prefix + '/utils/date/calc-period-date/',
+		post: prefix + '/utils/date/calc-period-date/'
 	},
 	transactionComplexFiltered: {
 		post: prefix + '/transactions/complex-transaction/ev-item/'
@@ -300,8 +300,18 @@ export default {
 	systemAttributes: {
 		get: prefix + '/ui/system-attributes/'
 	},
+	taskListLight: {
+		get: prefix + '/tasks/task/light/'
+	},
+	taskStats: {
+		get: prefix + '/tasks/stats/'
+	},
 	task: {
-		get: prefix + '/tasks/task/{id}/'
+		get: prefix + '/tasks/task/{id}/',
+		put: prefix + '/tasks/task/{id}/cancel'
+	},
+	taskTransaction: {
+		put: prefix + '/tasks/task/{id}/abort-transaction-import'
 	},
 
 	//# region Entity viewer attribute types
@@ -480,31 +490,31 @@ export default {
 		post: prefix + '/explorer/move/'
 	},
 	explorerFolder: {
-		post: prefix + '/explorer/create-folder/',
+		post: prefix + '/explorer/create-folder/'
 	},
 	explorerFile: {
-		post: prefix + '/explorer/upload/',
+		post: prefix + '/explorer/upload/'
 	},
 	explorerSync: {
-		post: prefix + '/explorer/sync/',
+		post: prefix + '/explorer/sync/'
 	},
 	explorerSearch: {
-		get: prefix + '/explorer/search/',
+		get: prefix + '/explorer/search/'
 	},
 	explorerDownloadAsZip: {
-		post: prefix + '/explorer/download-as-zip/',
+		post: prefix + '/explorer/download-as-zip/'
 	},
 	explorerDownload: {
-		post: prefix + '/explorer/download/',
+		post: prefix + '/explorer/download/'
 	},
 	explorerDeleteFolder: {
-		post: prefix + '/explorer/delete-folder/',
+		post: prefix + '/explorer/delete-folder/'
 	},
 	explorerDelete: {
-		post: prefix + '/explorer/delete/',
+		post: prefix + '/explorer/delete/'
 	},
 	explorerRename: {
-		post: prefix + '/explorer/rename/',
+		post: prefix + '/explorer/rename/'
 	},
 	systemWhiteLabel: {
 		get: prefix + '/system/whitelabel/',
@@ -517,12 +527,12 @@ export default {
 	},
 	resourceGroup: {
 		get: prefix + '/iam/resource-group/',
-		post: prefix + '/iam/resource-group/',
+		post: prefix + '/iam/resource-group/'
 	},
 	resourceGroupDetails: {
 		get: prefix + '/iam/resource-group/{id}/',
 		delete: prefix + '/iam/resource-group/{id}/',
-		put: prefix + '/iam/resource-group/{id}/',
+		put: prefix + '/iam/resource-group/{id}/'
 	},
 	draft: {
 		get: prefix + '/ui/draft/',

@@ -20,7 +20,7 @@
 							<div
 								v-if="!item.thumbnail"
 								class="no-thumbnail"
-								:style="{ backgroundColor: getAvatar(item.name?.[0]) }"
+								:style="{ backgroundColor: getAvatarColor(item.name?.[0]) }"
 							>
 								{{ item.name?.charAt(0) }}
 							</div>
@@ -156,57 +156,57 @@
 </template>
 
 <script setup>
-	import { useGetNuxtLink } from '~/composables/useMeta'
-	import { useMarketplace } from '~/composables/useMarketplace'
+	import { useGetNuxtLink } from '~/composables/useMeta';
+	import { useMarketplace } from '~/composables/useMarketplace';
+	import { getAvatarColor } from '~/utils/commonHelper';
 
-	const route = useRoute()
-	const router = useRouter()
+	const route = useRoute();
+	const router = useRouter();
 
 	const {
 		installConfiguration,
 		readyStatus,
-		getAvatar,
 		activeTaskId,
 		removeActiveTaskId
-	} = useMarketplace()
+	} = useMarketplace();
 
-	const item = ref(null)
-	const processing = ref(false)
-	const channel = ref('stable')
-	const versions = ref([])
-	const version = ref(null)
+	const item = ref(null);
+	const processing = ref(false);
+	const channel = ref('stable');
+	const versions = ref([]);
+	const version = ref(null);
 
-	const checkReadyStatus = computed(() => readyStatus.data)
+	const checkReadyStatus = computed(() => readyStatus.data);
 
 	async function getData() {
-		const { configCodes } = useStore()
+		const { configCodes } = useStore();
 
 		try {
 			item.value = await useApi('marketplaceItem.get', {
 				params: { id: route?.params?.id }
-			})
+			});
 
-			readyStatus.data = true
+			readyStatus.data = true;
 
 			configCodes?.forEach(function (localItem) {
 				if (item.value.configuration_code === localItem.configuration_code) {
-					item.value.localItem = localItem
+					item.value.localItem = localItem;
 				}
-			})
+			});
 		} catch (e) {
-			await router.push(useGetNuxtLink(`/marketplace/`, route.params))
-			console.warn('Error getTask', e)
+			await router.push(useGetNuxtLink(`/marketplace/`, route.params));
+			console.warn('Error getTask', e);
 		}
 	}
 
 	function setSelect(newVal) {
-		channel.value = newVal
+		channel.value = newVal;
 
-		getVersions()
+		getVersions();
 	}
 
 	async function getVersions() {
-		versions.value = []
+		versions.value = [];
 
 		const payload = {
 			page_size: 1000,
@@ -214,26 +214,26 @@
 			configuration_code: item.value.configuration_code,
 			channel: channel.value,
 			ordering: '-created'
-		}
+		};
 
 		try {
 			const data = await useApi('marketplaceItemVersion.get', {
 				filters: payload
-			})
-			versions.value = data.results
+			});
+			versions.value = data.results;
 
 			if (versions.value?.length) {
-				version.value = versions.value[0].version
+				version.value = versions.value[0].version;
 			}
 		} catch (e) {
-			console.warn('Error getVersions', e)
+			console.warn('Error getVersions', e);
 		}
 	}
 
 	onMounted(async () => {
-		await getData()
-		await getVersions()
-	})
+		await getData();
+		await getVersions();
+	});
 </script>
 
 <style lang="scss" scoped>

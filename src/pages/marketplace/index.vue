@@ -44,7 +44,7 @@
 						<img v-if="item.thumbnail" :src="item.thumbnail" alt="" />
 						<div
 							v-if="!item.thumbnail"
-							:style="{ backgroundColor: getAvatar(item.name?.[0]) }"
+							:style="{ backgroundColor: getAvatarColor(item.name?.[0]) }"
 							class="no-thumbnail"
 						>
 							{{ item.name?.charAt(0) }}
@@ -148,11 +148,12 @@
 </template>
 
 <script setup>
-	import { useMarketplace } from '~/composables/useMarketplace'
-	import { useGetNuxtLink } from '~/composables/useMeta'
+	import { useMarketplace } from '~/composables/useMarketplace';
+	import { useGetNuxtLink } from '~/composables/useMeta';
+	import { getAvatarColor } from '~/utils/commonHelper';
 
-	const route = useRoute()
-	const router = useRouter()
+	const route = useRoute();
+	const router = useRouter();
 
 	const {
 		getData,
@@ -168,19 +169,18 @@
 		readyStatus,
 		openPreviousPage,
 		openPage,
-		getAvatar,
 		setFiltersQueryDebounced,
 		setShowModules,
 		removeActiveTaskId
-	} = useMarketplace()
+	} = useMarketplace();
 
 	function openCard(id) {
-		router.push(useGetNuxtLink(`/marketplace/${id}`, route.params))
+		router.push(useGetNuxtLink(`/marketplace/${id}`, route.params));
 	}
 
 	onMounted(() => {
-		getData()
-	})
+		getData();
+	});
 </script>
 
 <style lang="scss" scoped>
