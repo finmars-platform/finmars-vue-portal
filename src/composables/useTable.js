@@ -1,3 +1,37 @@
+/**
+ *
+ * @param { {error?: Object} } a - object of a column
+ * @param { {error?: Object} } b - object of a column
+ * @param {Boolean} [descending]
+ * @returns {number}
+ */
+export const useSortRowsWithErrors = function (a, b, descending) {
+
+	if (!a.error && !b.error) {
+		throw new Error("useSortRowsWithErrors was called for columns without errors");
+	}
+
+	if (a.error && !b.error) {
+		return descending ? 1 : -1;
+
+	} else if (!a.error && b.error) {
+		return descending ? -1 : 1;
+
+	} else if (a.error && b.error) {
+
+		if (a.error.noErrorMode && !b.error.noErrorMode) {
+			return descending ? -1 : 1;
+
+		} else if (!a.error.noErrorMode && b.error.noErrorMode) {
+			return descending ? 1 : -1;
+		}
+
+		return 0;
+
+	}
+
+}
+
 function _sortNumberGetVal (value) {
 
 	if (value === '-') {
@@ -39,10 +73,26 @@ function _sortNumberCompareNaN (a, b, descending=true) {
 
 }
 
+/**
+ *
+ * @param { Object } a - object of a column
+ * @param a.value
+ * @param { Object } [a.error]
+ * @param { Object } b - object of a column
+ * @param b.value
+ * @param { Object } [b.error]
+ * @param {Boolean} [descending]
+ *
+ * @returns {number}
+ */
 export const useSortRowsByNumber = function(a, b, descending=true) {
 
-	const aVal = _sortNumberGetVal(a);
-	const bVal = _sortNumberGetVal(b);
+	if (a.error || b.error) {
+		return useSortRowsWithErrors(a, b, descending);
+	}
+
+	const aVal = _sortNumberGetVal(a.value);
+	const bVal = _sortNumberGetVal(b.value);
 
 	if ( Number.isNaN(aVal) || Number.isNaN(bVal) ) {
 		return _sortNumberCompareNaN(aVal, bVal, descending);
@@ -65,7 +115,7 @@ export const useSortRowsByNumber = function(a, b, descending=true) {
  * To
  *
  * @param { Array|Ref< UnwrapRef<Array> > } headerList
- * @param {String} columnKey - ke of a column whose values to use for sorting
+ * @param {String} columnKey - key of a column whose values to use for sorting
  * @return {Array} - headerList with applied sorting settings
  */
 export const useToggleSorting = function (headerList, columnKey) {
