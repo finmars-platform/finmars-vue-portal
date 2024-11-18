@@ -80,7 +80,11 @@
 <script setup>
 import dayjs from 'dayjs'
 import quarterOfYear from 'dayjs/plugin/quarterOfYear'
-import {getEndOfYearDate} from "~/components/Rv/performance/helper";
+import {
+	getEndOfYearDate,
+	applySortSettings,
+	commonToggleSorting
+} from "~/components/Rv/performance/helper";
 
 dayjs.extend(quarterOfYear)
 
@@ -116,9 +120,10 @@ const props = defineProps({
     },
     performance_unit: String,
 	isDisabled: Boolean,
+	sortSettings: Object,
 })
 
-const emits = defineEmits(['setBundle']);
+const emits = defineEmits(['setBundle', 'sortingChanged']);
 const tableGridTemplateCols = 'repeat(9, 1fr)';
 
 let readyStatus = ref(false);
@@ -952,7 +957,12 @@ function sortBundles(bundlesList) {
 }
 
 function toggleSorting(columnKey) {
-    periodHeader.value = useToggleSorting(periodHeader.value, columnKey)
+
+	const result = commonToggleSorting(periodHeader.value, columnKey);
+	periodHeader.value = result.tableHeader;
+
+	emits("sortingChanged", result.sortSettings);
+
 }
 //# endregion
 
@@ -1237,6 +1247,8 @@ async function getReports({period_type, end, ids, type = 'months', adjustment_ty
 
 const reloadTableD = useDebounce(function () {
 
+	periodHeader.value = applySortSettings(periodHeader.value, props.sortSettings);
+
     if (abortController) {
         abortController.abort({key: "ABORTED_BY_CLIENT"})
 	}
@@ -1281,6 +1293,14 @@ watch(
 		 */
 		reloadTableD()
 	}
+)
+
+watch(
+	() => props.sortSettings,
+	() => {
+		periodHeader.value = applySortSettings(periodHeader.value, props.sortSettings);
+	},
+	{deep: true},
 )
 
 </script>
