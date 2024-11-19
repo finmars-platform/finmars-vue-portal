@@ -467,12 +467,10 @@ function sortYears(yearsList) {
 
 	yearsList.sort((a, b) => {
 
-        /*let aVal = portfolioItemsRaw[a.key][colData.key];
-        let bVal = portfolioItemsRaw[b.key][colData.key];*/
-        let aSortColVal = a.columns.find(col => col.key === sortCol.key).value;
-        let bSortColVal = b.columns.find(col => col.key === sortCol.key).value;
+        const aSortCol = a.columns.find(col => col.key === sortCol.key);
+        const bSortCol = b.columns.find(col => col.key === sortCol.key);
 
-        return useSortRowsByNumber(aSortColVal, bSortColVal, descending);
+        return useSortRowsByNumber(aSortCol, bSortCol, descending);
 
     });
 
