@@ -29,18 +29,26 @@
 
 		<div class="grid grid-cols-3 gap-x-2">
 			<div>
-				<FmSelect
-					v-model="filter.statuses"
+<!--				<FmSelect-->
+<!--					v-model="filter.statuses"-->
+<!--					:options="TASK_STATUSES"-->
+<!--					variant="outlined"-->
+<!--					label="Status"-->
+<!--					placeholder="Select statuses"-->
+<!--					persistent-placeholder-->
+<!--					clearable-->
+<!--					multiple-->
+<!--					chip-->
+<!--					:disabled="disabled"-->
+<!--					@change="updateFilterValue"-->
+<!--				/>-->
+				<TaskFilterSelect
+					:model-value="filter.statuses"
 					:options="TASK_STATUSES"
-					variant="outlined"
 					label="Status"
 					placeholder="Select statuses"
-					persistent-placeholder
-					clearable
-					multiple
-					chip
 					:disabled="disabled"
-					@change="updateFilterValue"
+					@update:model-value="updateSelect('statuses', $event)"
 				/>
 			</div>
 
@@ -87,6 +95,7 @@
 	import { FmSelect, FmTextField } from '@finmars/ui';
 	import { TASK_RESULTS, TASK_STATUSES, TASK_TYPES } from './constants';
 	import TaskFilterDate from './TaskFilterDate.vue';
+	import TaskFilterSelect from './TaskFilterSelect.vue';
 
 	const props = defineProps({
 		modelValue: {
@@ -112,11 +121,18 @@
 	const debouncedUpdateText = debounce(updateText, 500);
 
 	function updateFilterValue() {
+		console.log('updateFilterValue: ', filter.value);
 		emits('update:modelValue', filter.value);
 	}
 
 	function updateText(value) {
 		filter.value.query = value;
+		emits('update:modelValue', filter.value);
+	}
+
+	function updateSelect(field, value) {
+		console.log('updateSelect: ', field, value);
+		filter.value[field] = value;
 		emits('update:modelValue', filter.value);
 	}
 </script>
