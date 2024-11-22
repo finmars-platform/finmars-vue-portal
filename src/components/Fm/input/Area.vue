@@ -48,7 +48,11 @@
 
 		if ( !props.auto ) return 2;
 
-		const lineBreaksNum = props.modelValue.split("\n").length;
+		let lineBreaksNum = 2;
+
+		if ( typeof props.modelValue === 'string' ) {
+			lineBreaksNum = props.modelValue.split("\n").length;
+		}
 
 		return Math.max(lineBreaksNum, 2);
 
