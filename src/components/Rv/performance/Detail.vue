@@ -149,7 +149,11 @@
 
 <script setup>
 import dayjs from 'dayjs'
-import {getEndOfYearDate} from "~/components/Rv/performance/helper";
+import {
+	getEndOfYearDate,
+	applySortSettings,
+	commonToggleSorting
+} from "~/components/Rv/performance/helper";
 
 /**
  * @typedef { {} } MonthReportObject
@@ -205,10 +209,11 @@ const props = defineProps({
 		type: [Number, String],
 	},
     performance_unit: String,
+	sortSettings: Object,
 
 })
 
-const emits = defineEmits(['setYear', 'refresh'])
+const emits = defineEmits(['setYear', 'refresh', 'sortingChanged'])
 
 const tableGridTemplateCols = '75px repeat(12, 1fr) 80px';
 
@@ -478,14 +483,30 @@ function sortYears(yearsList) {
 
 }
 
+//# region Sorting
 /**
  * Sort by month's value
  *
  * @param columnKey {String}
  */
 function toggleSorting(columnKey) {
-    tableHeader.value = useToggleSorting(tableHeader.value, columnKey)
+
+	const result = commonToggleSorting(tableHeader.value, columnKey);
+	tableHeader.value = result.tableHeader;
+
+	emits("sortingChanged", result.sortSettings);
+
 }
+
+watch(
+	() => props.sortSettings,
+	() => {
+		tableHeader.value = applySortSettings(tableHeader.value, props.sortSettings);
+	},
+	{deep: true},
+)
+
+//# endregion sorting
 
 /**
  * Returns dates that will be used to calculate performance report
@@ -1554,8 +1575,10 @@ async function getReports({period_type, end, ids, type = 'months', requestUid}) 
 }
 
 function init() {
-    if (bundleId.value) getMonthDetails()
+	tableHeader.value = applySortSettings(tableHeader.value, props.sortSettings);
 }
+
+init();
 
 watch(
     () => props.bundle,
