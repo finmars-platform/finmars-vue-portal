@@ -122,11 +122,11 @@
 
 	const emit = defineEmits(['refresh'])
 
-	const viewerData = getPerformanceViewerData()
 	const layoutsStore = useLayoutsStore()
 	const store = useStore()
 	const route = useRoute()
-	provide('viewerData', viewerData)
+
+	let viewerData = inject("viewerData");
 
 	let bundles = ref([])
 
@@ -337,153 +337,6 @@
 		viewerData.reportOptions = reportOptionsRes
 
 		readyStatusData.layout = true
-	}
-
-	function getPerformanceViewerData() {
-		return reactive({
-			listLayout: {},
-			reportLayoutOptions: {},
-			reportOptions: {},
-			additions: {},
-			components: {},
-			exportOptions: {},
-
-			layoutToOpen: null, // id of layout
-
-			content_type: 'reports.performancereport',
-			entityType: 'reports-performance', // TODO: remove and use only content_type
-
-			isReport: true,
-			isRootEntityViewer: true,
-			newLayout: false,
-			viewerContext: 'entity_viewer',
-
-			/*setListLayout(listLayout) {
-					this.state.listLayout = listLayout;
-				},
-
-				setReportOptions(ro) {
-					this.state.reportOptions = ro;
-				},
-
-				setAdditions(additions) {
-					this.state.additions = additions;
-				},
-
-				setComponents(components) {
-					this.state.components = components;
-				},
-
-				setExportOptions(options) {
-					this.state.exportOptions = options;
-				},*/
-
-			setLayoutCurrentConfiguration(listLayout, ecosystemDefaults) {
-				if (listLayout) {
-					this.newLayout = false
-					listLayout = useRecursiveDeepCopy(listLayout)
-				} else {
-					this.newLayout = true
-
-					/*let edRes = await useApi('ecosystemDefaults.get');
-
-						const ecosystemDefaults = (edRes.error) ? {} : edRes.results[0];*/
-
-					listLayout = getEmptyLayoutData(
-						JSON.parse(JSON.stringify(ecosystemDefaults))
-					)
-				}
-
-				//region Setup data for FmInputDateComplex
-				if (!listLayout.data.hasOwnProperty('reportLayoutOptions')) {
-					listLayout.data.reportLayoutOptions = {}
-				}
-
-				if (
-					!listLayout.data.reportLayoutOptions.hasOwnProperty(
-						'datepickerOptions'
-					)
-				) {
-					listLayout.data.reportLayoutOptions.datepickerOptions = {}
-				}
-
-				if (
-					!listLayout.data.reportLayoutOptions.datepickerOptions.hasOwnProperty(
-						'reportFirstDatepicker'
-					)
-				) {
-					listLayout.data.reportLayoutOptions.datepickerOptions.reportFirstDatepicker =
-						{}
-				}
-
-				if (
-					!listLayout.data.reportLayoutOptions.datepickerOptions.hasOwnProperty(
-						'reportLastDatepicker'
-					)
-				) {
-					listLayout.data.reportLayoutOptions.datepickerOptions.reportLastDatepicker =
-						{
-							expression: 'last_business_day(now())',
-							datepickerMode: 'expression',
-						}
-				}
-				//endregion
-
-				this.components = JSON.parse(JSON.stringify(listLayout.data.components))
-				this.reportLayoutOptions = JSON.parse(
-					JSON.stringify(listLayout.data.reportLayoutOptions)
-				)
-				this.reportOptions = JSON.parse(
-					JSON.stringify(listLayout.data.reportOptions)
-				)
-
-				this.additions = JSON.parse(JSON.stringify(listLayout.data.additions))
-				this.exportOptions = JSON.parse(
-					JSON.stringify(listLayout.data.exportOptions)
-				)
-
-				this.listLayout = listLayout
-
-				/*this.setComponents(JSON.parse(JSON.stringify(listLayout.data.components)));
-					this.setReportOptions(JSON.parse(JSON.stringify(listLayout.data.reportOptions)));
-					this.setAdditions(JSON.parse(JSON.stringify(listLayout.data.additions)));
-					this.setExportOptions(JSON.parse(JSON.stringify(listLayout.data.exportOptions)));
-
-					this.setListLayout(listLayout);*/
-			},
-
-			getLayoutCurrentConfiguration() {
-				let listLayout = useRecursiveDeepCopy(this.listLayout)
-				delete listLayout.newLayout;
-
-				listLayout.data.components = { ...{}, ...this.components }
-				listLayout.data.reportLayoutOptions = JSON.parse(
-					JSON.stringify(this.reportLayoutOptions)
-				)
-				listLayout.data.reportOptions = JSON.parse(
-					JSON.stringify(this.reportOptions)
-				)
-
-				listLayout.data.additions = JSON.parse(JSON.stringify(this.additions))
-				listLayout.data.exportOptions = JSON.parse(
-					JSON.stringify(this.exportOptions)
-				)
-
-				return listLayout
-			},
-
-			/*get reportOptions() {
-					return this.state.reportOptions;
-				},
-
-				get components() {
-					return this.state.components;
-				},
-
-				get exportOptions() {
-					return this.state.exportOptions;
-				},*/
-		})
 	}
 
 	function getEmptyLayoutData(ecosystemDefaults) {
