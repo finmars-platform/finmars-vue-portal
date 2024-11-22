@@ -5,7 +5,7 @@
 
 		<div v-if="readyStatus">
 
-			<table class="angularjs-table mb-6" style="min-width: 959px;">
+			<table class="angularjs-table mb-6 min-w-[959px]">
 
 				<thead>
 					<tr>
@@ -24,7 +24,7 @@
 						<th>
 							Default Currency Pricing Scheme
 						</th>
-						<th style="width: 190px;"><!-- Column with button --></th>
+						<th class="w-[190px]"><!-- Column with button --></th>
 					</tr>
 				</thead>
 
@@ -94,7 +94,7 @@
 			title="Create Pricing Policy"
 			@close="pricingPolicyToAdd = {}"
 		>
-			<div class="flex-col p-4" style="width: 450px;">
+			<div class="flex-col p-4 w-[600px]">
 
 				<div class="mb-1">
 					<fm-text-field v-model="pricingPolicyToAdd.name" label="Name" outlined />
@@ -141,14 +141,10 @@ definePageMeta({
 	],
 });
 
-// stores
-// props, emits
-
 //# region variables, refs, computed
-import {useGetNuxtLink} from "~/composables/useMeta";
-
 const readyStatus = ref(false);
 const pricingPolicies = ref([]);
+//# endregion
 
 async function getList() {
 
@@ -162,7 +158,7 @@ async function getList() {
 
 	readyStatus.value = true;
 
-	return res.results;
+	pricingPolicies.value = res.results;
 
 }
 
@@ -172,7 +168,7 @@ const pricingPolicyToAdd = ref({});
 const creatingPricingPolicy = ref(false);
 
 function resetPricingPolicyToAdd() {
-	resetPricingPolicyToAdd.value = {};
+	pricingPolicyToAdd.value = {};
 }
 
 async function create() {
@@ -198,11 +194,12 @@ async function create() {
 
 		resetPricingPolicyToAdd();
 
-		pricingPolicies.value = await getList();
+		await getList();
 
 	}
 
 }
+//# endregion
 
 function isNotDashPricingPolicy(userCode) {
 
@@ -238,16 +235,8 @@ async function deletePricingPolicy(pricingPolicy, index) {
 	}
 
 }
-//# endregion
 
-//# endregion
-
-//# region hooks
-//# endregion
-
-// watchers
-
-pricingPolicies.value = await getList();
+getList();
 
 </script>
 

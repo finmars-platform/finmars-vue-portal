@@ -8,7 +8,7 @@
 				<h1 class="text-4xl text-center">Pricing Policy was not found.</h1>
 			</div>
 
-			<div v-else style="max-width: 900px;">
+			<div v-else class="max-w-[900px]">
 
 				<div>
 					<fm-text-field v-model="pricingPolicy.name" label="Name" outlined />
@@ -46,7 +46,7 @@
 					<fm-button
 						v-if="pricingPolicy !== 'not_found'"
 						type="secondary"
-						@click="deletePp"
+						@click="deletePricingPolicy"
 					>
 						DELETE
 					</fm-button>
@@ -82,9 +82,6 @@ definePageMeta({
 	],
 });
 
-// stores
-// props, emits
-
 //# region variables, refs, computed
 const route = useRoute();
 const router = useRouter();
@@ -92,6 +89,7 @@ const router = useRouter();
 const pricingPolicy = ref(null);
 
 const readyStatus = ref(false);
+//# endregion
 
 function save() {
 
@@ -115,7 +113,7 @@ function save() {
 
 }
 
-async function deletePp() {
+async function deletePricingPolicy() {
 
 	const opts = {
 		params: {
@@ -167,12 +165,6 @@ async function loadPricingPolicy () {
 	}
 
 }
-//# endregion
-
-//# region hooks
-//# endregion
-
-// watchers
 
 loadPricingPolicy();
 
