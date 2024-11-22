@@ -31,7 +31,7 @@
 	},
 	"dependencies": {
 		"@chenfengyuan/vue-qrcode": "^2.0.0",
-		"@finmars/ui": "file:../ui/dist/finmars-ui-1.0.44-3.tgz",
+		"@finmars/ui": "file:../ui/dist/finmars-ui-1.0.44-6.tgz",
 		"@formbricks/js": "1.1.2",
 		"@kyvg/vue3-notification": "^2.4.1",
 		"@pinia/nuxt": "^0.5.1",

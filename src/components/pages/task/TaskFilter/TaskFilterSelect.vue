@@ -13,11 +13,12 @@
 			:disabled="disabled"
 			@click:prependIcon="onIconClick"
 			@focus="onFocus"
-			@change="updateValue"
+			@update:model-value="updateValue"
 		>
 			<template #selection>
 				<FmChip
-					:value="displaySelected"
+					:value="displaySelected.value"
+					:tooltip="displaySelected.tooltip"
 					rounded
 					closable
 					@click:close="deleteSelection"
@@ -44,10 +45,12 @@
 						>
 							<FmTextField
 								v-model="searchText.available"
+								compact
 								clearable
 								placeholder="Search for.."
 								hide-details
 								class="task-filter-select__search"
+								@click:clear="searchText.available = ''"
 							/>
 							<div
 								class="relative w-full min-h-[100px] max-h-[150px] overflow-y-auto"
@@ -98,10 +101,12 @@
 						>
 							<FmTextField
 								v-model="searchText.selected"
+								compact
 								clearable
 								placeholder="Search for.."
 								hide-details
 								class="task-filter-select__search"
+								@click:clear="searchText.selected = ''"
 							/>
 							<div
 								class="relative w-full min-h-[100px] max-h-[150px] overflow-y-auto"
@@ -127,11 +132,7 @@
 					<FmButton rounded type="secondary" @click.stop.prevent="close">
 						Close
 					</FmButton>
-					<FmButton
-						rounded
-						:disabled="isEmpty(selectedOptions)"
-						@click.stop.prevent="save"
-					>
+					<FmButton rounded :disabled="!isDirty" @click.stop.prevent="save">
 						Save
 					</FmButton>
 				</div>
@@ -182,6 +183,7 @@
 		available: '',
 		selected: ''
 	});
+	const isDirty = ref(false);
 
 	const selectedOptions = ref([]);
 	const selectedOptionsValues = computed(() =>
@@ -212,12 +214,18 @@
 
 	const displaySelected = computed(() => {
 		if (isEmpty(props.modelValue)) {
-			return '';
+			return {
+				value: '',
+				tooltip: ''
+			};
 		}
 
 		if (props.modelValue.length === 1) {
 			const option = props.options.find((o) => o.value === props.modelValue[0]);
-			return option?.title || '';
+			return {
+				value: option?.title || '',
+				tooltip: option?.title || ''
+			};
 		}
 
 		const optionTitles = props.options
@@ -225,7 +233,10 @@
 			.map((o) => o.title)
 			.sort();
 
-		return `${optionTitles[0]} (+${optionTitles.length - 1})`;
+		return {
+			value: `${optionTitles[0]} (+${optionTitles.length - 1})`,
+			tooltip: optionTitles.join(', ')
+		};
 	});
 
 	function onIconClick(ev) {
@@ -257,6 +268,7 @@
 	}
 
 	function onBtnClick(btn) {
+		isDirty.value = true;
 		switch (btn) {
 			case 'left':
 				highlightedOptions.value.available = [];
@@ -305,6 +317,7 @@
 	}
 
 	function clear() {
+		isDirty.value = false;
 		selectedOptions.value = [];
 		highlightedOptions.value = {
 			available: [],
@@ -318,7 +331,6 @@
 	}
 
 	function save() {
-		console.log('save: ', selectedOptionsValues.value);
 		emits('update:modelValue', selectedOptionsValues.value);
 		close();
 	}
