@@ -65,7 +65,7 @@
 							</nuxt-link>
 
 							<fm-button
-								v-if="notDashPricingPolicy(item.user_code)"
+								v-if="isNotDashPricingPolicy(item.user_code)"
 								type="secondary"
 								@click="deletePricingPolicy(item, index)"
 							>
@@ -171,6 +171,10 @@ const additionIsOpen = ref(false);
 const pricingPolicyToAdd = ref({});
 const creatingPricingPolicy = ref(false);
 
+function resetPricingPolicyToAdd() {
+	resetPricingPolicyToAdd.value = {};
+}
+
 async function create() {
 
 	creatingPricingPolicy.value = true;
@@ -192,7 +196,7 @@ async function create() {
 			title: `Pricing policy '${pricingPolicyToAdd.value.name}' was successfully created.`}
 		);
 
-		pricingPolicyToAdd.value = {};
+		resetPricingPolicyToAdd();
 
 		pricingPolicies.value = await getList();
 
@@ -200,7 +204,7 @@ async function create() {
 
 }
 
-function notDashPricingPolicy(userCode) {
+function isNotDashPricingPolicy(userCode) {
 
 	if (!userCode) {
 		return true;

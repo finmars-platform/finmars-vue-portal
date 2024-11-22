@@ -138,7 +138,7 @@ async function deletePp() {
 
 }
 
-async function init () {
+async function loadPricingPolicy () {
 
 	const res = await useApi(
 		"pricingPolicy.get",
@@ -174,7 +174,7 @@ async function init () {
 
 // watchers
 
-init();
+loadPricingPolicy();
 
 </script>
 
