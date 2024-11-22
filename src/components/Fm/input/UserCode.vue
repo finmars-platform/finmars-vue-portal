@@ -33,7 +33,7 @@
 				:modelValue="userCodeEnd"
 				:label="userCodeLabel"
 				:disabled="disabled"
-				@update:modelValue="onUserCodeChange"
+				@update:modelValue="onUserCodeChangeD"
 				tooltip="Allowed symbols: Numbers:
 						0-9, Letters: a-z (lowercase) Special Symbols: _, - (underscore, dash)"
 			/>
@@ -182,18 +182,19 @@
 		return userCode + ucEnd
 	}
 
-	function onUserCodeChange(userCode) {
-		userCode = userCode.replace(/\s+/g, '_').toLowerCase()
+	const onUserCodeChangeD = useDebounce(function (newUserCodeEnd) {
 
-		validateUserCode(userCode)
+		newUserCodeEnd = newUserCodeEnd.replace(/^\d|[^A-Za-z1-9]+/g, '_').toLowerCase()
+
+		validateUserCode(newUserCodeEnd);
 
 		if (!props.errorData) {
-			userCodeEnd.value = userCode
+			userCodeEnd.value = newUserCodeEnd
 
 			emit( 'update:modelValue', assembleUserCode(userCodeEnd.value) )
 		}
 
-	}
+	}, 600)
 
 	const validateUserCode = function (userCodeVal) {
 		let errorVal = useTextNotValidForUserCode(userCodeVal, {

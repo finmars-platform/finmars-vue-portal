@@ -53,6 +53,7 @@ export default {
 		get: prefix + '/instruments/pricing-policy/'
 	},
 	pricingPolicy: {
+		get:  prefix + '/instruments/pricing-policy/{id}/',
 		post: prefix + '/instruments/pricing-policy/',
 		delete: prefix + '/instruments/pricing-policy/{id}/',
 		put: prefix + '/instruments/pricing-policy/{id}/'
