@@ -321,3 +321,22 @@ button.fm_list_item {
 	}
 
 }
+
+.angularjs-table {
+	width: 100%;
+	border-collapse: collapse;
+	border-spacing: 0;
+
+	thead {
+		border-bottom: 1px solid var(--table-border-color);
+	}
+
+	th, td {
+		padding: 0 5px;
+		display: table-cell;
+		text-align: left;
+		vertical-align: middle;
+		border-radius: 2px;
+	}
+
+}
