@@ -916,11 +916,15 @@ function sortBundles(bundlesList) {
 
         bundlesList.sort((a, b) => {
 
-            let aSortColVal = a.columns.find(col => col.key === sortCol.key).value;
-            let bSortColVal = b.columns.find(col => col.key === sortCol.key).value;
+            const aSortCol = a.columns.find(col => col.key === sortCol.key);
+            const bSortCol = b.columns.find(col => col.key === sortCol.key);
 
-			aSortColVal = aSortColVal.toLowerCase();
-			bSortColVal = bSortColVal.toLowerCase();
+			if (aSortCol.error || bSortCol.error) {
+				return useSortRowsWithErrors(aSortCol, bSortCol, descending);
+			}
+
+			const aSortColVal = aSortCol.value.toLowerCase();
+			const bSortColVal = bSortCol.value.toLowerCase();
 
             // must be different from useSortRowsByNumber
             if (aSortColVal > bSortColVal) {
@@ -943,10 +947,10 @@ function sortBundles(bundlesList) {
 
             /*let aVal = portfolioItemsRaw[a.key][colData.key];
             let bVal = portfolioItemsRaw[b.key][colData.key];*/
-            let aSortColVal = a.columns.find(col => col.key === sortCol.key).value;
-            let bSortColVal = b.columns.find(col => col.key === sortCol.key).value;
+            let aSortCol = a.columns.find(col => col.key === sortCol.key);
+            let bSortCol = b.columns.find(col => col.key === sortCol.key);
 
-            return useSortRowsByNumber(aSortColVal, bSortColVal, descending);
+            return useSortRowsByNumber(aSortCol, bSortCol, descending);
 
         });
 
