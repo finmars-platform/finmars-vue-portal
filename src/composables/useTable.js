@@ -116,9 +116,14 @@ export const useSortRowsByNumber = function(a, b, descending=true) {
  *
  * @param { Array|Ref< UnwrapRef<Array> > } headerList
  * @param {String} columnKey - key of a column whose values to use for sorting
+ * @param {String} [direction] - direction of sorting. Values: 'asc', 'desc'
  * @return {Array} - headerList with applied sorting settings
  */
-export const useToggleSorting = function (headerList, columnKey) {
+export const useToggleSorting = function (headerList, columnKey, direction) {
+
+	if (direction && !['asc', 'desc'].includes(direction) ) {
+		throw new Error(`[useToggleSorting] Invalid argument 'direction': ${direction}`);
+	}
 
 	headerList = unref(headerList);
 
@@ -133,7 +138,10 @@ export const useToggleSorting = function (headerList, columnKey) {
 		activeSortCol.sorting = '';
 	}
 
-	if ( colData.sorting === 'desc' ) {
+	if (direction) {
+		colData.sorting = direction;
+	}
+	else if ( colData.sorting === 'desc' ) {
 		colData.sorting = 'asc';
 
 	} else { // `.sorting` === 'asc' or '';
