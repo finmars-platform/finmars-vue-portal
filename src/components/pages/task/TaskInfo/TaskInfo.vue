@@ -183,7 +183,7 @@
 				Abort Transactions
 			</FmButton>
 		</div>
-
+		<!-- loading -->
 		<div
 			v-if="isLoading"
 			class="absolute left-[-16px] top-[-16px] w-[calc(100%+32px)] h-[calc(100%+32px)] flex justify-center items-center bg-[var(--task-info-loading-bg)]"
@@ -193,9 +193,9 @@
 
 		<!-- file preview  -->
 		<TaskInfoFilePreview
-			v-if="previeFileModal.open"
-			:file="previeFileModal.file"
-			@close="previeFileModal = { open: false, file: null }"
+			v-if="previewFileModal.open"
+			:file="previewFileModal.file"
+			@close="previewFileModal = { open: false, file: null }"
 		/>
 	</div>
 </template>
@@ -233,7 +233,7 @@
 
 	const isLoading = ref(false);
 	const task = ref(null);
-	const previeFileModal = ref({
+	const previewFileModal = ref({
 		open: false,
 		file: null
 	});
@@ -312,7 +312,7 @@
 	}
 
 	function openPreviewFile(item) {
-		previeFileModal.value = {
+		previewFileModal.value = {
 			open: true,
 			file: item.file_report_object
 		};

@@ -241,6 +241,7 @@
 	function onIconClick(ev) {
 		ev.preventDefault();
 		ev.stopImmediatePropagation();
+
 		sel.value.toggleDropdown(false);
 		isMenuOpen.value = !isMenuOpen.value;
 		if (isMenuOpen.value) {
@@ -302,12 +303,10 @@
 	}
 
 	function updateValue(val) {
-		console.log('updateValue: ', val);
 		emits('update:modelValue', val);
 	}
 
 	function deleteSelection() {
-		console.log('deleteSelection');
 		selectedOptions.value = [];
 		highlightedOptions.value = {
 			available: [],

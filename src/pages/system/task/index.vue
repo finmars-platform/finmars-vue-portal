@@ -1,7 +1,7 @@
 <template>
 	<section class="tasks-page">
 		<div class="tasks-page__content">
-			<div class="flex justify-start align-center gap-x-2 mb-4">
+			<div class="flex justify-start items-center gap-x-2 mb-4">
 				<h1 class="text-[20px] font-bold">Tasks</h1>
 				<FmIconButton
 					class="tasks-page__btn-refresh"
@@ -30,6 +30,7 @@
 				<div class="tasks-page__table-th w-[38%]">Task</div>
 				<div class="tasks-page__table-th w-[22%]">User</div>
 			</div>
+
 			<div class="tasks-page__table-body">
 				<TaskListItem
 					v-for="task in tasks"
@@ -46,6 +47,7 @@
 					<FmProgressCircular indeterminate />
 				</div>
 			</div>
+
 			<div class="tasks-page__table-footer">
 				<FmPagination
 					v-model="filter.page"

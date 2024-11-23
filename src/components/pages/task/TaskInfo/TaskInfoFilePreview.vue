@@ -75,8 +75,8 @@
 						rounded
 						:disabled="isProcessing"
 						@click.prevent.stop="_downloadFile"
-						>Download</FmButton
-					>
+						>Download
+					</FmButton>
 
 					<FmButton
 						rounded

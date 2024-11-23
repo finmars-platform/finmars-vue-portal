@@ -92,7 +92,6 @@
 	const debouncedUpdateText = debounce(updateText, 500);
 
 	function updateFilterValue() {
-		console.log('updateFilterValue: ', filter.value);
 		emits('update:modelValue', filter.value);
 	}
 
@@ -102,7 +101,6 @@
 	}
 
 	function updateSelect(field, value) {
-		console.log('updateSelect: ', field, value);
 		filter.value[field] = value;
 		emits('update:modelValue', filter.value);
 	}
