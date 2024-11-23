@@ -197,6 +197,7 @@
 			justify-content: center;
 			align-items: center;
 			color: var(--p-100);
+			text-transform: uppercase;
 		}
 	}
 </style>

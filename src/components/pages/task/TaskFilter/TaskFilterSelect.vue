@@ -10,6 +10,7 @@
 			:placeholder="placeholder"
 			persistent-placeholder
 			multiple
+			scroll-strategy="block"
 			:disabled="disabled"
 			@click:prependIcon="onIconClick"
 			@focus="onFocus"
@@ -30,6 +31,7 @@
 			v-model="isMenuOpen"
 			:activator="`#s-${id}`"
 			offset="6"
+			scroll-strategy="block"
 			:close-on-content-click="false"
 		>
 			<div class="relative w-[640px] min-h-[300px] p-16">
@@ -198,9 +200,6 @@
 	const availableOptions = computed(() =>
 		props.options.filter((o) => !selectedOptionsValues.value.includes(o.value))
 	);
-	const availableOptionsValues = computed(() =>
-		availableOptions.value.map((o) => o.value)
-	);
 	const availableOptionsFiltered = computed(() =>
 		availableOptions.value.filter((o) =>
 			o.title.toLowerCase().includes(searchText.value.available.toLowerCase())
@@ -281,7 +280,7 @@
 				highlightedOptions.value.selected = [];
 				break;
 			case 'doubleLeft':
-				clear();
+				clear(false);
 				break;
 			case 'right':
 				highlightedOptions.value.selected = [];
@@ -299,6 +298,7 @@
 				highlightedOptions.value.available = [];
 				break;
 		}
+		console.log('onBtnClick: ', btn, isDirty.value);
 	}
 
 	function updateValue(val) {
@@ -316,8 +316,8 @@
 		updateValue([]);
 	}
 
-	function clear() {
-		isDirty.value = false;
+	function clear(touchDirty = true) {
+		touchDirty && (isDirty.value = false);
 		selectedOptions.value = [];
 		highlightedOptions.value = {
 			available: [],
