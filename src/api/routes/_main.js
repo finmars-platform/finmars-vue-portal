@@ -53,7 +53,7 @@ export default {
 		get: prefix + '/instruments/pricing-policy/'
 	},
 	pricingPolicy: {
-		get:  prefix + '/instruments/pricing-policy/{id}/',
+		get: prefix + '/instruments/pricing-policy/{id}/',
 		post: prefix + '/instruments/pricing-policy/',
 		delete: prefix + '/instruments/pricing-policy/{id}/',
 		put: prefix + '/instruments/pricing-policy/{id}/'
@@ -545,5 +545,24 @@ export default {
 		post: prefix + '/clients/client/',
 		put: prefix + '/clients/client/{id}/',
 		delete: prefix + '/clients/client/{id}/'
+	},
+	manageConfigurationList: {
+		get: prefix + '/configuration/configuration/'
+	},
+	manageConfigurationListById: {
+		get: prefix + '/configuration/configuration/{id}/'
+	},
+	exportConfiguration: {
+		get: prefix + '/configuration/configuration/{id}/export-configuration/'
+	},
+	pushConfigurationToMarketplace: {
+		put:
+			prefix +
+			'/configuration/configuration/{id}/push-configuration-to-marketplace/'
+	},
+	setConfiguration: {
+		put: prefix + '/configuration/configuration/{id}/',
+		post: prefix + '/configuration/configuration/',
+		delete: prefix + '/configuration/configuration/{id}/'
 	}
 };
