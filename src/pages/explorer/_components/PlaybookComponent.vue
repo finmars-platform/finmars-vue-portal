@@ -44,7 +44,7 @@
 					<FmBtn
 						class="outline-button delete-cell-button"
 						type="primary"
-						@click="deleteCell(index, cell)"
+						@click="deleteCell(index)"
 						>Delete</FmBtn
 					>
 					<div v-if="cell.outputs">
@@ -146,21 +146,13 @@
 			editor.focus();
 			editor.navigateFileStart();
 			editor.getSession().on('change', () => {
-				dataForEditorJson.value = JSON.parse(editor.getValue());
+				dataForEditorJson.value = editor.getValue();
 			});
 		}, 400);
 	};
 
 	const userSaveDraft = () => {
 		saveDraftModal();
-	};
-
-	const applyDraftToFrom = () => {
-		processing.value = true;
-		draft.value.data = fileData.value;
-		setTimeout(function () {
-			processing.value = false;
-		}, 1000);
 	};
 
 	const initEditor = () => {
@@ -189,9 +181,17 @@
 		}, 400);
 	};
 
+	const applyDraftToFrom = () => {
+		processing.value = true;
+		draft.value.data = fileData.value;
+		setTimeout(function () {
+			processing.value = false;
+			initEditor();
+		}, 1000);
+	};
+
 	const saveDraftModal = async () => {
-		emit('updatePlaybook', JSON.stringify(dataForEditorJson.value, null, 4));
-		fileData.value = dataForEditorJson.value;
+		emit('updatePlaybook', dataForEditorJson.value);
 		draft.value.data = dataForEditorJson.value;
 		try {
 			if (draft.value.id) {
@@ -205,7 +205,6 @@
 				draft.value = await useApi('draft.post', { body: draft.value });
 				draftModifiedAt.value = draft.value.modified_at;
 			}
-			initEditor();
 			close();
 		} catch (error) {
 			console.log(error, 'draft.put error');
@@ -291,7 +290,7 @@
 			if (data.results.length) {
 				draft.value = data.results[0];
 				draftModifiedAt.value = draft.value.modified_at;
-				emit('updatePlaybook', JSON.stringify(draft.value, null, 4));
+				emit('updatePlaybook', draft.value.data);
 			} else {
 				draft.value = {
 					name: 'Draft for ' + userCode,
@@ -332,18 +331,20 @@
 			execution_count: 0
 		});
 		initEditor();
+		useNotify({
+			type: 'success',
+			title: 'Cell added'
+		});
 	};
 
-	const deleteCell = async (index, cell) => {
+	const deleteCell = async (index) => {
 		const confirm = await useConfirm({
 			title: 'Warning',
 			text: `Are you sure that you want to delete?`
 		});
 		if (confirm) {
 			processing.value = true;
-			fileData.value.cells = fileData.value.cells.filter(function (item) {
-				return item.id !== cell.id;
-			});
+			fileData.value.cells?.splice(index, 1);
 			processing.value = false;
 		}
 	};
@@ -387,6 +388,10 @@
 	}
 	.finmars-playbook-cell {
 		margin-bottom: 10px;
+	}
+	.finmars-playbook-cell-output {
+		overflow: auto;
+		padding: var(--spacing-16);
 	}
 	.disabled {
 		pointer-events: none;

@@ -7,7 +7,7 @@
 			<NuxtLink
 				v-if="!item.disabled"
 				class="fm_breadcrumbs_items"
-				:to="checkingTo(item.to)"
+				:to="item.to"
 			>
 				{{ item.text }}
 			</NuxtLink>
@@ -31,13 +31,6 @@
 
 	function setLast() {
 		if (props.items?.length) last.value = props.items.length - 1
-	}
-
-	function checkingTo(to) {
-		const pathnamePartsList = window.location.pathname.split('/');
-		const realm_code = pathnamePartsList.find(part => part.startsWith('realm'));
-		const space_code = pathnamePartsList.find(part => part.startsWith('space'));
-		return `/${realm_code}/${space_code}/v${to}`
 	}
 </script>
 
