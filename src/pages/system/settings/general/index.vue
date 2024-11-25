@@ -1,7 +1,7 @@
 <template>
 	<div class="general">
 		<FmBreadcrumbs :items="breadcrumbsItems" />
-		<h1 class="title">White label</h1>
+		<h1 class="text-[20px] font-bold">Manage Configuration</h1>
 		<div class="list">
 			<div v-for="item in items" :key="item.id" class="item">
 				<b class="name">
