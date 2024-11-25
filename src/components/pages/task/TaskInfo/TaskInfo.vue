@@ -119,6 +119,7 @@
 				lang="json"
 				theme="monokai"
 				class="task-info__viewer"
+				@init="onEditorInit"
 			/>
 		</div>
 		<!-- progress -->
@@ -150,6 +151,7 @@
 				lang="json"
 				theme="monokai"
 				class="task-info__viewer"
+				@init="onEditorInit"
 			/>
 		</div>
 		<!-- attachments -->
@@ -161,8 +163,8 @@
 			<span
 				v-for="(item, index) in task?.attachments"
 				:key="index"
-				class="text-[12px] leading-[20px] cursor-pointer hover:bg-[var(--primary-container)]"
-				@click.stop.prevent="_downloadFile(item)"
+				class="text-[12px] leading-[20px] cursor-pointer hover:bg-[var(--primary-container)] px-2 py-1"
+				@click.stop.prevent="openPreviewFile(item)"
 			>
 				{{ item.file_report_object?.name }}
 			</span>
@@ -181,13 +183,20 @@
 				Abort Transactions
 			</FmButton>
 		</div>
-
+		<!-- loading -->
 		<div
 			v-if="isLoading"
-			class="absolute left-0 top-0 w-full h-full flex justify-center align-center bg-[rgba(0, 0, 0, 0.2)]"
+			class="absolute left-[-16px] top-[-16px] w-[calc(100%+32px)] h-[calc(100%+32px)] flex justify-center items-center bg-[var(--task-info-loading-bg)]"
 		>
 			<FmProgressCircular indeterminate />
 		</div>
+
+		<!-- file preview  -->
+		<TaskInfoFilePreview
+			v-if="previewFileModal.open"
+			:file="previewFileModal.file"
+			@close="previewFileModal = { open: false, file: null }"
+		/>
 	</div>
 </template>
 
@@ -195,10 +204,8 @@
 	import { computed, ref, watch } from 'vue';
 	import dayjs from 'dayjs';
 	import utc from 'dayjs/plugin/utc';
-	import { VAceEditor } from 'vue3-ace-editor';
 	import isEmpty from 'lodash/isEmpty';
-	import 'ace-builds/src-noconflict/mode-json';
-	import 'ace-builds/src-noconflict/theme-monokai';
+	import useAceEditor from '~/composables/useAceEditor';
 	import useApi from '~/composables/useApi';
 	import useConfirm from '~/composables/useConfirm';
 	import useNotify from '~/composables/useNotify';
@@ -209,8 +216,8 @@
 		FmProgressLinear,
 		FmTooltip
 	} from '@finmars/ui';
-	import { downloadFile } from '~/pages/explorer/helper';
-	import TaskListItemStatus from './TaskListItem/TaskListItemStatus.vue';
+	import TaskListItemStatus from '../TaskListItem/TaskListItemStatus.vue';
+	import TaskInfoFilePreview from './TaskInfoFilePreview.vue';
 
 	dayjs.extend(utc);
 
@@ -222,8 +229,14 @@
 
 	const emits = defineEmits(['refresh']);
 
+	const { VAceEditor, onEditorInit } = useAceEditor();
+
 	const isLoading = ref(false);
 	const task = ref(null);
+	const previewFileModal = ref({
+		open: false,
+		file: null
+	});
 
 	const showCancelButton = computed(() =>
 		['I', 'init', 'P', 'progress', 'W'].includes(task.value?.status)
@@ -268,6 +281,7 @@
 			isLoading.value = true;
 
 			task.value = await useApi('task.get', { params: { id: props.taskId } });
+			console.log('TASK INFO: ', task.value);
 		} catch (e) {
 			console.error(`The task ${props.taskId} loading error. `, e);
 		} finally {
@@ -288,6 +302,7 @@
 			}
 
 			await useApi('task.put', { params: { id: props.taskId } });
+			emits('refresh');
 			await loadTaskInfo();
 		} catch (e) {
 			console.error(`The task ${props.taskId} canceling error. `, e);
@@ -296,21 +311,11 @@
 		}
 	}
 
-	async function _downloadFile(item = {}) {
-		const { file_report_object } = item;
-		if (!file_report_object) {
-			return;
-		}
-
-		const { file_url, name } = file_report_object || {};
-		if (!file_url) {
-			return;
-		}
-
-		const blob = await useApi('explorerViewFile.get', {
-			filters: { path: file_url }
-		});
-		downloadFile(blob, 'application/json', name);
+	function openPreviewFile(item) {
+		previewFileModal.value = {
+			open: true,
+			file: item.file_report_object
+		};
 	}
 
 	async function abortTransactionImport() {
@@ -353,6 +358,8 @@
 
 <style lang="scss" scoped>
 	.task-info {
+		--task-info-loading-bg: rgba(0, 0, 0, 0.1);
+
 		position: relative;
 		width: 100%;
 		min-height: 100vh;
