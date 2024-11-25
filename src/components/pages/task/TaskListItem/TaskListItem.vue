@@ -13,7 +13,7 @@
 						<div
 							v-if="executionTime"
 							v-bind="props"
-							class="flex w-full justify-end align-center pr-2 pt-1"
+							class="flex w-full justify-end items-center pr-2 pt-1"
 						>
 							<FmIcon
 								icon="mdi-clock-outline"
@@ -36,7 +36,7 @@
 						<div
 							v-if="finishedTime"
 							v-bind="props"
-							class="flex w-full justify-end align-center pr-2 pt-1"
+							class="flex w-full justify-end items-center pr-2 pt-1"
 						>
 							<FmIcon
 								icon="mdi-calendar-today"
@@ -138,7 +138,7 @@
 	});
 
 	const date = computed(() =>
-		dayjs(props.task.created_date).format('YYYY-MM-DD')
+		dayjs(props.task.created_at).format('YYYY-MM-DD')
 	);
 
 	const taskText = computed(
@@ -190,12 +190,14 @@
 		.avatar {
 			position: relative;
 			width: 32px;
+			min-width: 32px;
 			height: 32px;
 			border-radius: 50%;
 			display: flex;
 			justify-content: center;
 			align-items: center;
 			color: var(--p-100);
+			text-transform: uppercase;
 		}
 	}
 </style>

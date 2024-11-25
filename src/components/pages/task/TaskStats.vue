@@ -1,12 +1,6 @@
 <template>
 	<div class="relative w-full min-h-[60px]">
-		<div class="flex justify-start align-center gap-x-2 text-[18px]">
-			Stats
-
-			<FmButton type="tertiary" rounded :to="configureRoutePath">
-				Configure
-			</FmButton>
-		</div>
+		<div class="flex justify-start align-center gap-x-2 text-[18px]">Stats</div>
 
 		<div class="relative w-full h-[16px] flex justify-start align-center">
 			<FmProgressLinear v-show="isStatsLoading" indeterminate />
@@ -23,25 +17,17 @@
 </template>
 
 <script setup>
-	import { computed, onBeforeMount, onBeforeUnmount, ref } from 'vue';
-	import { storeToRefs } from 'pinia';
+	import { onBeforeMount, onBeforeUnmount, ref } from 'vue';
 	import dayjs from 'dayjs';
 	import utc from 'dayjs/plugin/utc';
-	import { FmButton, FmProgressLinear } from '@finmars/ui';
-	import useStore from '@/stores/useStore';
+	import { FmProgressLinear } from '@finmars/ui';
 	import useApi from '@/composables/useApi';
 
 	dayjs.extend(utc);
 
-	const { realm_code, space_code } = storeToRefs(useStore());
-
 	const isStatsLoading = ref(false);
 	const statsRequestTimerId = ref();
 	const stats = ref([]);
-
-	const configureRoutePath = computed(
-		() => `/${realm_code.value}/${space_code.value}/a/#!/worker`
-	);
 
 	async function getStats() {
 		try {

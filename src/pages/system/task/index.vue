@@ -1,7 +1,7 @@
 <template>
 	<section class="tasks-page">
 		<div class="tasks-page__content">
-			<div class="flex justify-start align-center gap-x-2 mb-4">
+			<div class="flex justify-start items-center gap-x-2 mb-4">
 				<h1 class="text-[20px] font-bold">Tasks</h1>
 				<FmIconButton
 					class="tasks-page__btn-refresh"
@@ -30,6 +30,7 @@
 				<div class="tasks-page__table-th w-[38%]">Task</div>
 				<div class="tasks-page__table-th w-[22%]">User</div>
 			</div>
+
 			<div class="tasks-page__table-body">
 				<TaskListItem
 					v-for="task in tasks"
@@ -41,16 +42,18 @@
 
 				<div
 					v-if="isTaskListLoading"
-					class="absolute left-0 top-0 w-full h-full flex justify-center align-center bg-[rgba(0, 0, 0, 0.05)]"
+					class="absolute left-0 top-0 w-full h-full flex justify-center items-center bg-[var(--tasks-loading-bg)]"
 				>
 					<FmProgressCircular indeterminate />
 				</div>
 			</div>
+
 			<div class="tasks-page__table-footer">
 				<FmPagination
 					v-model="filter.page"
 					:items-per-page="20"
 					:total-items="totalTasks"
+					:disabled="isTaskListLoading"
 					@update:model-value="updateFilter({ page: $event })"
 				/>
 			</div>
@@ -83,7 +86,7 @@
 	import TaskFilter from '~/components/pages/task/TaskFilter/TaskFilter.vue';
 	import TaskStats from '~/components/pages/task/TaskStats.vue';
 	import TaskListItem from '~/components/pages/task/TaskListItem/TaskListItem.vue';
-	import TaskInfo from '~/components/pages/task/TaskInfo.vue';
+	import TaskInfo from '~/components/pages/task/TaskInfo/TaskInfo.vue';
 
 	const dateFormat = 'YYYY-MM-DD';
 
@@ -183,6 +186,7 @@
 <style lang="scss" scoped>
 	.tasks-page {
 		--tasks-page-info-width: 450px;
+		--tasks-loading-bg: rgba(0, 0, 0, 0.05);
 
 		position: relative;
 		width: 100%;
@@ -244,6 +248,7 @@
 			&-body {
 				position: relative;
 				width: 100%;
+				min-height: 80px;
 			}
 
 			&-footer {

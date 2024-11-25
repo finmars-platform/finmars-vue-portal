@@ -5,7 +5,7 @@
 				v-bind="props"
 				outlined
 				hide-details
-				label="Date From"
+				:label="label"
 				readonly
 				:model-value="date"
 			/>
@@ -13,6 +13,8 @@
 
 		<FmDateEditor
 			v-model="date"
+			show-adjacent-months
+			allow-weekend-selection
 			:disabled="disabled"
 			@update:model-value="updateValue"
 		/>
