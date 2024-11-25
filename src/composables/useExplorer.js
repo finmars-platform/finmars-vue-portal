@@ -988,14 +988,6 @@ export function useExplorer() {
 					title: 'Saved successfully'
 				});
 			}
-			const { realmCode, spaceCode } = getRealmSpaceCodes(route);
-			let pathToBack = '';
-			if (pathPieces.length) {
-				pathToBack = `/${realmCode}/${spaceCode}/v/explorer/${pathPieces.join('/')}`;
-			} else {
-				pathToBack = `/${realmCode}/${spaceCode}/v/explorer`;
-			}
-			await router.push(pathToBack);
 		} catch (error) {
 			useNotify({
 				type: 'error',
