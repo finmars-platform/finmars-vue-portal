@@ -539,5 +539,11 @@ export default {
 		get: prefix + '/ui/draft/',
 		post: prefix + '/ui/draft/',
 		put: prefix + '/ui/draft/{id}/'
+	},
+	clientEntity: {
+		get: prefix + '/clients/client/',
+		post: prefix + '/clients/client/',
+		put: prefix + '/clients/client/{id}/',
+		delete: prefix + '/clients/client/{id}/'
 	}
 };
