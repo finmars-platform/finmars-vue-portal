@@ -102,6 +102,9 @@
 		border-radius: 5px;
 		padding: 4px;
 		.draft-toolbar-content {
+			display: flex;
+			align-items: center;
+			justify-content: center;
 			.toolbar-icon-content {
 				display: flex;
 				flex-direction: row;

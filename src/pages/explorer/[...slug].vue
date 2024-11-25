@@ -446,6 +446,7 @@
 	import { VAceEditor } from 'vue3-ace-editor';
 	import Move from '~/pages/explorer/_components/Move.vue';
 	import PlaybookComponent from '~/pages/explorer/_components/PlaybookComponent.vue';
+	import 'ace-builds/src-noconflict/ext-searchbox';
 
 	const {
 		store,
