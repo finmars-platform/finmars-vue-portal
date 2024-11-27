@@ -152,6 +152,10 @@
 	import { useGetNuxtLink } from '~/composables/useMeta';
 	import { getAvatarColor } from '~/utils/commonHelper';
 
+	definePageMeta({
+		middleware: 'auth',
+	});
+
 	const route = useRoute();
 	const router = useRouter();
 

@@ -74,6 +74,7 @@
 	import dayjs from 'dayjs'
 
 	definePageMeta({
+		middleware: 'auth',
 		bread: [
 			{
 				text: 'Valuations: Run Pricing',

@@ -23,6 +23,10 @@
 	import { useGetNuxtLink } from '~/composables/useMeta';
 	import ManageConfigurationForm from '~/pages/configuration/manage-configuration/_components/ManageConfigurationForm.vue';
 
+	definePageMeta({
+		middleware: 'auth',
+	});
+
 	const route = useRoute();
 	const router = useRouter();
 
