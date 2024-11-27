@@ -130,6 +130,7 @@
 	import {usePrefixedRouterPush} from "~/composables/useMeta";
 
 	definePageMeta({
+		middleware: 'auth',
 		bread: [
 			{
 				text: 'Valuations: Run Pricing ',
