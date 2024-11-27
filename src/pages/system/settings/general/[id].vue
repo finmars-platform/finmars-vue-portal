@@ -21,6 +21,10 @@
 	import SystemSettingsGeneralForm from '~/pages/system/settings/general/_components/SystemSettingsGeneralForm.vue'
 	import { useGetNuxtLink } from '~/composables/useMeta'
 
+	definePageMeta({
+		middleware: 'auth',
+	});
+
 	const route = useRoute()
 	const router = useRouter()
 

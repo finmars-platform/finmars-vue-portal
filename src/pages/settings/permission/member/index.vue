@@ -63,6 +63,10 @@
 <script setup>
 	import { useGetNuxtLink, usePrefixedRouterPush } from '~/composables/useMeta';
 
+	definePageMeta({
+		middleware: 'auth',
+	});
+
 	const route = useRoute();
 	const router = useRouter();
 
