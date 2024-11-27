@@ -358,9 +358,18 @@
 				<template v-else>
 					<template v-if="!processing">
 						<div v-if="!showPlaybook" class="opened-file-actions-wrap">
-							<FmBtn class="outline-button" type="primary" @click="saveFile"
-								>Save</FmBtn
-							>
+							<div class="flex gap-2">
+								<FmBtn class="outline-button" type="primary" @click="saveFile">
+									Save
+								</FmBtn>
+								<FmBtn
+									class="outline-button"
+									@click="formatJSON"
+									v-if="editorFile?.name && editorFile.name.endsWith('.json')"
+								>
+									Format JSON
+								</FmBtn>
+							</div>
 							<FmMenu fm-drop-class="m-r-20">
 								<template #btn>
 									<FmBtn class="outline-button" type="primary">Settings</FmBtn>
@@ -505,7 +514,9 @@
 		playbook,
 		playbookName,
 		updatePlaybook,
-		refreshContent
+		refreshContent,
+		formatJSON,
+		editorFile
 	} = useExplorer();
 </script>
 
