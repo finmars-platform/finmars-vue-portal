@@ -142,6 +142,12 @@ export function useExplorer() {
 		return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 	}
 
+	function formatJSON() {
+		const editor = ace.edit('fileEditorAceEditor');
+		editorFile.value.content = JSON.parse(editor.getValue());
+		editor.setValue(JSON.stringify(editorFile.value.content, null, 4));
+	}
+
 	function generatePages(data) {
 		totalPages.value = Math.ceil(data.count / pageSize.value);
 		pages.value = [];
@@ -1080,6 +1086,8 @@ export function useExplorer() {
 		playbook,
 		playbookName,
 		updatePlaybook,
-		refreshContent
+		refreshContent,
+		formatJSON,
+		editorFile
 	};
 }
