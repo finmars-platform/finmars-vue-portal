@@ -66,6 +66,7 @@
 	import {usePrefixedRouterPush} from "~/composables/useMeta";
 
 	definePageMeta({
+		middleware: 'auth',
 		bread: [
 			{
 				text: 'Permissions: Roles',

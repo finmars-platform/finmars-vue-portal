@@ -8,6 +8,10 @@
 
 <script setup>
 	import ManageConfigurationForm from '~/pages/configuration/manage-configuration/_components/ManageConfigurationForm.vue';
+
+	definePageMeta({
+		middleware: 'auth',
+	});
 </script>
 
 <style scoped lang="scss">

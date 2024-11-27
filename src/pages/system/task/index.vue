@@ -88,6 +88,10 @@
 	import TaskListItem from '~/components/pages/task/TaskListItem/TaskListItem.vue';
 	import TaskInfo from '~/components/pages/task/TaskInfo/TaskInfo.vue';
 
+	definePageMeta({
+		middleware: 'auth',
+	});
+
 	const dateFormat = 'YYYY-MM-DD';
 
 	const route = useRoute();

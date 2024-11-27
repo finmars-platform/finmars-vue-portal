@@ -160,6 +160,10 @@
 	import { useMarketplace } from '~/composables/useMarketplace';
 	import { getAvatarColor } from '~/utils/commonHelper';
 
+	definePageMeta({
+		middleware: 'auth',
+	});
+
 	const route = useRoute();
 	const router = useRouter();
 
