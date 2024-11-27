@@ -148,6 +148,8 @@
 </template>
 
 <script setup>
+	import cloneDeep from 'lodash/cloneDeep';
+
 	definePageMeta({
 		middleware: 'auth',
 		bread: [
@@ -242,7 +244,7 @@
 	};
 
 	const editEntity = (clientEntity) => {
-		editEntityObject.value = JSON.parse(JSON.stringify(clientEntity));
+		editEntityObject.value = cloneDeep(clientEntity);
 		showEditModal.value = true;
 	};
 
@@ -269,7 +271,7 @@
 	};
 
 	const requiredValidate = (val) => {
-		return !!val || 'This is required field';
+		return val ? '' : 'This is required field';
 	};
 
 	const init = async () => {
