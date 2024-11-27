@@ -5,27 +5,36 @@
 				<h1 class="title">Client Entity</h1>
 			</div>
 			<FmCard class="m-b-8" v-for="clientEntity of clientEntities">
-
 				<div class="flex_cb">
-					<div>
-						<span>{{ clientEntity.user_code }}</span>
+					<div class="flex flex-col gap-2">
+						<span>User code: {{ clientEntity.user_code }}</span>
+						<span>Name: {{ clientEntity.name }}</span>
 					</div>
 					<div>
-						<FmBtn class="m-l-8 m-r-8" @click="editEntity(clientEntity)"
-							>Edit</FmBtn
-						>
-						<FmBtn
+						<FmButton
 							class="m-l-8 m-r-8"
-							type="text"
-							@click="openDeleteEntityModal(clientEntity)"
-							>Delete</FmBtn
+							type="primary"
+							@click="editEntity(clientEntity)"
+							rounded
 						>
+							Edit
+						</FmButton>
+						<FmButton
+							class="m-l-8 m-r-8"
+							type="secondary"
+							@click="deleteEntity(clientEntity)"
+							rounded
+						>
+							Delete
+						</FmButton>
 					</div>
 				</div>
 			</FmCard>
 
 			<div class="flex m-t-20">
-				<FmBtn @click="createEntity()">Add Entity</FmBtn>
+				<FmButton type="primary" @click="createEntity()" rounded
+					>Add Entity</FmButton
+				>
 			</div>
 		</div>
 
@@ -34,20 +43,24 @@
 			title="Create Client Entity"
 			class="width-60"
 		>
-			<span v-if="!newEntity.user_code.length">Field is required</span>
-			<BaseInput
+			<FmTextField
 				class="m-b-10"
 				v-model="newEntity.user_code"
 				label="User Code"
+				:rules="[requiredValidate]"
 			/>
-			<span v-if="!newEntity.name.length">Field is required</span>
-			<BaseInput class="m-b-10" v-model="newEntity.name" label="Name" />
-			<BaseInput
+			<FmTextField
+				class="m-b-10"
+				v-model="newEntity.name"
+				label="Name"
+				:rules="[requiredValidate]"
+			/>
+			<FmTextField
 				class="m-b-10"
 				v-model="newEntity.short_name"
 				label="Short Name"
 			/>
-			<BaseInput
+			<FmTextField
 				class="m-b-10"
 				v-model="newEntity.public_name"
 				label="Public Name"
@@ -64,11 +77,16 @@
 			</div>
 			<template #controls>
 				<div class="flex aic sb">
-					<FmBtn type="text" @click="cancelBaseModal"> Cancel </FmBtn>
-
-					<FmBtn :disabled="!validateNewEntity" @click="createNewEntity"
-						>Create</FmBtn
+					<FmButton type="secondary" @click="cancelBaseModal">
+						Cancel
+					</FmButton>
+					<FmButton
+						type="primary"
+						:disabled="!validateNewEntity"
+						@click="createNewEntity"
 					>
+						Create
+					</FmButton>
 				</div>
 			</template>
 		</BaseModal>
@@ -78,27 +96,27 @@
 			class="width-60"
 		>
 			<div class="m-b-10 p-b-8 p-t-8">
-				<span>user_code: {{ editEntityObject.user_code }}</span>
+				<span>User Code: {{ editEntityObject.user_code }}</span>
 			</div>
 			<div>
-				<span v-if="!editEntityObject.user_code.length">Field is required</span>
-				<BaseInput
+				<FmTextField
 					class="m-b-10"
 					v-model="editEntityObject.user_code"
 					label="User Code"
+					:rules="[requiredValidate]"
 				/>
-				<span v-if="!editEntityObject.name.length">Field is required</span>
-				<BaseInput
+				<FmTextField
 					class="m-b-10"
 					v-model="editEntityObject.name"
 					label="Name"
+					:rules="[requiredValidate]"
 				/>
-				<BaseInput
+				<FmTextField
 					class="m-b-10"
 					v-model="editEntityObject.short_name"
 					label="Short Name"
 				/>
-				<BaseInput
+				<FmTextField
 					class="m-b-10"
 					v-model="editEntityObject.public_name"
 					label="Public Name"
@@ -116,26 +134,15 @@
 			</div>
 			<template #controls>
 				<div class="flex aic sb">
-					<FmBtn type="text" @click="cancelBaseModal"> Cancel </FmBtn>
-
-					<FmBtn :disabled="!validateEditEntity" @click="updateEntity"
-						>Update</FmBtn
+					<FmButton type="secondary" @click="cancelBaseModal">Cancel</FmButton>
+					<FmButton
+						type="primary"
+						:disabled="!validateEditEntity"
+						@click="updateEntity"
+						>Update</FmButton
 					>
 				</div>
 			</template>
-		</BaseModal>
-		<BaseModal
-			v-model="openDeleteModal"
-			title="Delete Client Entity"
-			:controls="{
-				cancel: { name: 'Cancel', cb: cancelDeleteBaseModal },
-				action: { name: 'Delete', cb: deleteEntity }
-			}"
-			class="width-30"
-		>
-			<div class="m-b-16">
-				Are you sure you want delete secret {{ deleteEntityObject.user_code }}?
-			</div>
 		</BaseModal>
 	</div>
 </template>
@@ -160,12 +167,10 @@
 	});
 
 	const editEntityObject = ref({});
-	const deleteEntityObject = ref({});
 	const clientEntities = ref([]);
 	const items = ref([]);
 	const showModal = ref(false);
 	const showEditModal = ref(false);
-	const openDeleteModal = ref(false);
 	const userCode = ref('');
 
 	const errorValidateData = ref(false);
@@ -237,33 +242,34 @@
 	};
 
 	const editEntity = (clientEntity) => {
-		editEntityObject.value = clientEntity;
+		editEntityObject.value = JSON.parse(JSON.stringify(clientEntity));
 		showEditModal.value = true;
 	};
 
-	const openDeleteEntityModal = async (clientEntity) => {
-		openDeleteModal.value = true;
-		deleteEntityObject.value = clientEntity;
-	};
+	const deleteEntity = async (clientEntity) => {
+		const confirm = await useConfirm({
+			title: 'Delete Client Entity',
+			text: `Are you sure you want delete ${clientEntity.user_code}?`
+		});
+		if (!confirm) return false;
 
-	const deleteEntity = async () => {
 		await useApi('clientEntity.delete', {
-			params: { id: deleteEntityObject.value.id }
+			params: { id: clientEntity.id }
 		});
 		await getEntities();
-		deleteEntityObject.value = {};
-	};
-
-	const cancelDeleteBaseModal = () => {
-		deleteEntityObject.value = {};
 	};
 
 	const cancelBaseModal = () => {
+		editEntityObject.value = {};
 		showEditModal.value = false;
 		showModal.value = false;
 		items.value = [];
 		userCode.value = '';
-		editEntityObject.value = {};
+		newEntity = {};
+	};
+
+	const requiredValidate = (val) => {
+		return !!val || 'This is required field';
 	};
 
 	const init = async () => {
@@ -281,7 +287,13 @@
 	.container {
 		padding: 30px;
 	}
-
+	.user-code {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-items: center;
+		margin: 0 var(--spacing-12);
+	}
 	.right-container {
 		width: 36%;
 	}
