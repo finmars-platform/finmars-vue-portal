@@ -5,33 +5,32 @@
 		@cancel="cancel"
 	>
 		<template #left>
-			<FmCard title="General" v-if="group.id">
-				<BaseInput
-					label="Name"
+			<FmCard title="General" v-if="group.id" class="flex flex-col gap-3 mb-6">
+				<FmTextField
 					v-model="group.name"
+					label="Name"
+					outlined
 				/>
-				<BaseInput
-					label="User Code"
+				<FmTextField
 					v-model="group.user_code"
+					label="User Code"
 					disabled
+					outlined
 				/>
-
-				<BaseInput
-					label="Configuration Code"
+				<FmTextField
 					v-model="group.configuration_code"
+					label="Configuration Code"
 					disabled
+					outlined
 				/>
-
-				<BaseInput
-					label="Description"
+				<FmTextField
 					v-model="group.description"
+					label="Description"
+					outlined
 				/>
-
-
 			</FmCard>
 		</template>
 		<template #right>
-
 			<FmCard title="Roles" class="m-b-24" v-if="group.id">
 
 				<BaseMultiSelectInput
@@ -42,8 +41,6 @@
 					item_id="user_code"
 					item_title="name"
 				/>
-
-
 			</FmCard>
 			<FmCard title="Members" class="m-b-24" v-if="group.id">
 				<BaseMultiSelectInput
@@ -55,9 +52,7 @@
 					item_title="username"
 				/>
 			</FmCard>
-
 			<FmCard title="Access Policies" class="m-b-24" v-if="group.id">
-
 				<BaseMultiSelectInput
 					v-model="selectedAccessPolicies"
 					@update:modelValue="findAccessPolicyUserCodes($event)"
@@ -66,19 +61,12 @@
 					item_id="user_code"
 					item_title="name"
 				/>
-
-
 			</FmCard>
-
 		</template>
 	</CommonSettingsLayout>
 </template>
 
 <script setup>
-
-	import dayjs from 'dayjs'
-	import {usePrefixedRouterPush} from "~/composables/useMeta";
-
 	definePageMeta({
 		middleware: 'auth',
 		bread: [
@@ -94,27 +82,27 @@
 		],
 	});
 	const store = useStore()
-	let route = useRoute()
-	let router = useRouter()
+	const route = useRoute()
+	const router = useRouter()
 
-	let group = ref({})
-	let roles = ref([])
-	let members = ref([])
-	let accessPolicies = ref([])
+	const group = ref({})
+	const roles = ref([])
+	const members = ref([])
+	const accessPolicies = ref([])
 
-	let selectedRoles = computed(() => {
+	const selectedRoles = computed(() => {
 		if (!group.value.roles_object.length) return []
-		return group.value.roles_object.map(item => item.user_code).join(',')
+		return group.value.roles_object.map(item => item.user_code)
 	})
 
-	let selectedMembers = computed(() => {
+	const selectedMembers = computed(() => {
 		if (!group.value.members_object.length) return []
-		return group.value.members_object.map(item => item.username).join(',')
+		return group.value.members_object.map(item => item.username)
 	})
 
-	let selectedAccessPolicies = computed(() => {
+	const selectedAccessPolicies = computed(() => {
 		if (!group.value.access_policies_object.length) return []
-		return group.value.access_policies_object.map(item => item.user_code).join(',')
+		return group.value.access_policies_object.map(item => item.user_code)
 	})
 
 
@@ -170,7 +158,7 @@
 		console.log('findMemberIds.val', val)
 
 		val.forEach(itemArr => {
-			let elem = members.value.find(itemObj => itemObj.username == itemArr)
+			const elem = members.value.find(itemObj => itemObj.username == itemArr)
 			if (elem) group.value.members_object.push(elem)
 		})
 
@@ -178,7 +166,7 @@
 	}
 
 	async function save() {
-		let res = await useApi('group.put', {body: group.value, params: {id: route.params.id}})
+		const res = await useApi('group.put', {body: group.value, params: {id: route.params.id}})
 
 		if (res) {
 			useNotify({type: 'success', title: 'Saved!'})
@@ -190,15 +178,11 @@
 		router.back();
 	}
 
-	function fromatDate(date) {
-		return dayjs(date).format('DD.MM.YYYY LT')
-	}
-
 	if (store.isUrlValid) {
 		init()
 	} else {
 		watch(() => store.current, async () => {
-			init()
+			await init()
 		})
 	}
 </script>

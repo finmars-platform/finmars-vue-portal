@@ -159,7 +159,7 @@
 	}
 
 	function deleteItem(item) {
-		let index = props.modelValue.findIndex((o) => o == item.id)
+		let index = props.modelValue.findIndex((o) => o == item.user_code)
 
 		props.modelValue.splice(index, 1)
 

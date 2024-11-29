@@ -5,28 +5,29 @@
 		@cancel="cancel"
 	>
 		<template #left>
-			<FmCard title="General" v-if="role.id">
-				<BaseInput
-					label="Name"
+			<FmCard title="General" class="flex flex-col gap-3" v-if="role.id">
+				<FmTextField
 					v-model="role.name"
+					label="Name"
+					outlined
 				/>
-				<BaseInput
-					label="User Code"
+				<FmTextField
 					v-model="role.user_code"
+					label="User Code"
 					disabled
+					outlined
 				/>
-
-				<BaseInput
-					label="Configuration Code"
+				<FmTextField
 					v-model="role.configuration_code"
+					label="Configuration Code"
 					disabled
+					outlined
 				/>
-
-				<BaseInput
-					label="Description"
+				<FmTextField
 					v-model="role.description"
+					label="Description"
+					outlined
 				/>
-
 			</FmCard>
 		</template>
 		<template #right>
@@ -39,7 +40,6 @@
 					:items="groups"
 					item_id="user_code"
 				/>
-
 
 			</FmCard>
 
@@ -74,10 +74,6 @@
 </template>
 
 <script setup>
-
-	import dayjs from 'dayjs'
-	import {usePrefixedRouterPush} from "~/composables/useMeta";
-
 	definePageMeta({
 		middleware: 'auth',
 		bread: [
@@ -93,28 +89,27 @@
 		],
 	});
 	const store = useStore()
-	let route = useRoute()
-	let router = useRouter()
+	const route = useRoute()
+	const router = useRouter()
 
-	let role = ref({})
-	let groups = ref([])
-	let members = ref([])
-	let accessPolicies = ref([])
+	const role = ref({})
+	const groups = ref([])
+	const members = ref([])
+	const accessPolicies = ref([])
 
-	let selectedGroups = computed(() => {
+	const selectedGroups = computed(() => {
 		if (!role.value.groups_object.length) return []
-		return role.value.groups_object.map(item => item.user_code).join(',')
-
+		return role.value.groups_object.map(item => item.user_code)
 	})
 
-	let selectedMembers = computed(() => {
+	const selectedMembers = computed(() => {
 		if (!role.value.members_object.length) return []
-		return role.value.members_object.map(item => item.username).join(',')
+		return role.value.members_object.map(item => item.username)
 	})
 
-	let selectedAccessPolicies = computed(() => {
+	const selectedAccessPolicies = computed(() => {
 		if (!role.value.access_policies_object.length) return []
-		return role.value.access_policies_object.map(item => item.user_code).join(',')
+		return role.value.access_policies_object.map(item => item.user_code)
 	})
 
 
@@ -153,8 +148,6 @@
 		if (typeof val == 'string') val = val.split(',')
 		role.value.members_object = []
 
-		console.log('findMemberIds.val', val)
-
 		val.forEach(itemArr => {
 			let elem = members.value.find(itemObj => itemObj.username == itemArr)
 			if (elem) role.value.members_object.push(elem)
@@ -177,7 +170,7 @@
 
 
 	async function save() {
-		let res = await useApi('role.put', {body: role.value, params: {id: route.params.id}})
+		const res = await useApi('role.put', {body: role.value, params: {id: route.params.id}})
 
 		if (res) {
 			useNotify({type: 'success', title: 'Saved!'})
@@ -189,15 +182,11 @@
 		router.back();
 	}
 
-	function fromatDate(date) {
-		return dayjs(date).format('DD.MM.YYYY LT')
-	}
-
 	if (store.isUrlValid) {
 		init()
 	} else {
 		watch(() => store.current, async () => {
-			init()
+			await init()
 		})
 	}
 </script>

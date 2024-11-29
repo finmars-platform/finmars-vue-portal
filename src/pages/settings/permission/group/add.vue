@@ -6,34 +6,39 @@
 		@cancel="cancel"
 	>
 		<template #left>
-			<FmCard title="General" class="mb-6">
-				<BaseInput
-					label="Name"
+			<FmCard title="General" class="flex flex-col gap-3 mb-6">
+				<FmTextField
 					v-model="form.name"
+					label="Name"
+					outlined
 				/>
-				<BaseInput
-					label="User Code"
+				<FmTextField
 					v-model="form.user_code"
+					:rules="[rules.required]"
+					label="User Code"
+					outlined
 				/>
-
-				<BaseInput
-					label="Configuration Code"
+				<FmTextField
 					v-model="form.configuration_code"
+					:rules="[rules.required]"
+					label="Configuration Code"
+					outlined
 				/>
-
+				<FmTextField
+					v-model="form.description"
+					label="Description"
+					outlined
+				/>
 			</FmCard>
 		</template>
 		<template #right>
-
-
 			<FmCard title="Roles" class="m-b-24">
 				<BaseMultiSelectInput
 					v-if="readyStatus.roles"
 					v-model="form.roles"
 					:items="roles"
 				/>
-
-				<FmLoader v-if="!readyStatus.roles" />
+				<FmProgressCircular v-if="!readyStatus.roles" :size="32" indeterminate />
 			</FmCard>
 
 			<FmCard title="Members" class="m-b-24">
@@ -45,7 +50,7 @@
 					item_title="username"
 				/>
 
-				<FmLoader v-if="!readyStatus.members" />
+				<FmProgressCircular v-if="!readyStatus.members" :size="32" indeterminate />
 			</FmCard>
 
 			<FmCard title="Access Policies" class="m-b-24">
@@ -55,7 +60,7 @@
 					:items="accessPolicies"
 				/>
 
-				<FmLoader v-if="!readyStatus.accessPolicies" />
+				<FmProgressCircular v-if="!readyStatus.accessPolicies" :size="32" indeterminate />
 			</FmCard>
 
 		</template>
@@ -63,10 +68,7 @@
 </template>
 
 <script setup>
-
-	import dayjs from 'dayjs'
 	import {loadMultiselectOpts} from "~/pages/settings/helper";
-	import {usePrefixedRouterPush} from "~/composables/useMeta";
 
 	definePageMeta({
 		middleware: 'auth',
@@ -84,31 +86,35 @@
 	});
 
 	const store = useStore()
-	let router = useRouter()
-	let route = useRoute()
+	const router = useRouter()
 
-	let readyStatus = reactive({
+	const readyStatus = reactive({
 		roles: false,
 		members: false,
 		accessPolicies: false,
 	})
 
-	let roles = ref([]);
-	let members = ref([]);
-	let accessPolicies = ref([]);
+	const roles = ref([]);
+	const members = ref([]);
+	const accessPolicies = ref([]);
 
-	let form = reactive({
+	const form = reactive({
 		name: '',
 		user_code: '',
 		configuration_code: 'com.finmars.local',
 		roles: [],
 		users: [],
 		access_policies: [],
+		description: ''
 	})
+
+	const rules = {
+		required: value => value ? '' : 'Field is required'
+	}
 
 	async function init() {
 
-		let res = await Promise.all( [
+		const res = await Promise.all( [
 			loadMultiselectOpts('roleList.get', readyStatus, 'roles'),
 			loadMultiselectOpts('memberList.get', readyStatus, 'members'),
 			loadMultiselectOpts('accessPolicyList.get', readyStatus, 'accessPolicies'),
@@ -120,25 +126,22 @@
 
 	}
 	async function save() {
-		let res = await useApi('groupList.post', {body: form})
+		const res = await useApi('groupList.post', {body: form})
 
 		if ( !res._$error ) {
 			useNotify({type: 'success', title: 'Group created!'})
-			usePrefixedRouterPush(router, route, '/settings/permission?tab=Groups')
+			router.back();
 		}
 	}
 	async function cancel() {
-		usePrefixedRouterPush(router, route, '/settings/permission?tab=Groups')
-	}
-	function fromatDate( date ) {
-		return dayjs( date ).format('DD.MM.YYYY LT')
+		router.back();
 	}
 
 	if ( store.isUrlValid ) {
 		init()
 	} else {
 		const unwatch = watch( () => store.current, async () => {
-			init();
+			await init();
 			unwatch();
 		})
 	}

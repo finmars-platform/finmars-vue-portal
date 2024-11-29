@@ -6,21 +6,30 @@
 		@cancel="cancel"
 	>
 		<template #left>
-			<FmCard title="General" class="mb-24">
-				<BaseInput
-					label="Name"
+			<FmCard title="General" class="flex flex-col gap-3 mb-24">
+
+				<FmTextField
 					v-model="form.name"
+					label="Name"
+					outlined
 				/>
-				<BaseInput
-					label="User Code"
+				<FmTextField
 					v-model="form.user_code"
+					label="User Code"
+					:rules="[rules.required]"
+					outlined
 				/>
-
-				<BaseInput
-					label="Configuration Code"
+				<FmTextField
 					v-model="form.configuration_code"
+					label="Configuration Code"
+					:rules="[rules.required]"
+					outlined
 				/>
-
+				<FmTextField
+					v-model="form.description"
+					label="Description"
+					outlined
+				/>
 			</FmCard>
 		</template>
 		<template #right>
@@ -60,10 +69,7 @@
 </template>
 
 <script setup>
-
-	import dayjs from 'dayjs'
 	import {loadMultiselectOpts} from "~/pages/settings/helper";
-	import {usePrefixedRouterPush} from "~/composables/useMeta";
 
 	definePageMeta({
 		middleware: 'auth',
@@ -80,16 +86,15 @@
 		],
 	});
 	const store = useStore()
-	let route = useRoute()
-	let router = useRouter()
+	const router = useRouter()
 
-	let readyStatus = reactive({
+	const readyStatus = reactive({
 		groups: false,
 		members: false,
 		accessPolicies: false,
 	});
 
-	let form = reactive({
+	const form = reactive({
 		name: '',
 		user_code: '',
 		configuration_code: 'com.finmars.local',
@@ -98,13 +103,17 @@
 		access_policies: [],
 	})
 
-	let groups = ref([]);
-	let members = ref([]);
-	let accessPolicies = ref([]);
+	const groups = ref([]);
+	const members = ref([]);
+	const accessPolicies = ref([]);
+
+	const rules = {
+		required: value => value ? '' : 'Field is required'
+	}
 
 	async function init() {
 
-		let res = await Promise.all( [
+		const res = await Promise.all( [
 			loadMultiselectOpts('userGroups.get', readyStatus, 'groups'),
 			loadMultiselectOpts('memberList.get', readyStatus, 'members'),
 			loadMultiselectOpts('accessPolicyList.get', readyStatus, 'accessPolicies'),
@@ -113,33 +122,30 @@
 		groups.value = res[0];
 		members.value = res[1];
 		accessPolicies.value = res[2];
-
 	}
 
 	async function save() {
-
-		let res = await useApi('roleList.post', {body: form})
+		const res = await useApi('roleList.post', {body: form})
 
 		if ( !res._$error ) {
-			useNotify({type: 'success', title: 'Role created!'})
-
-			usePrefixedRouterPush(router, route, '/settings/permission?tab=Role')
+			useNotify({ type: 'success', title: 'Role created!'})
+			router.back();
 		}
 	}
 	async function cancel() {
-		usePrefixedRouterPush(router, route, '/settings/permission?tab=Role')
-	}
-	function fromatDate( date ) {
-		return dayjs( date ).format('DD.MM.YYYY LT')
+		router.back();
 	}
 
-	if ( store.isUrlValid ) {
-		init()
+	if (store.isUrlValid) {
+		init();
 	} else {
-		const unwatch = watch( () => store.current, async () => {
-			init();
-			unwatch();
-		})
+		const unwatch = watch(
+			() => store.current,
+			async () => {
+				await init();
+				unwatch();
+			}
+		);
 	}
 </script>
 
