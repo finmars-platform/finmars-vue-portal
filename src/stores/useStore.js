@@ -79,9 +79,9 @@ export default defineStore({
 					this.configCodes = res.results;
 				}
 
-				this.defaultConfigCode = this.configCodes.find(
-					(conf) => conf.is_primary
-				).configuration_code;
+				this.defaultConfigCode =
+					this.configCodes.find((conf) => conf.is_primary)
+						?.configuration_code || this.configCodes?.[0]?.configuration_code;
 			}
 
 			window.onerror = this.registerSysError;
