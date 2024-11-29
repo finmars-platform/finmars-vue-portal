@@ -5,34 +5,39 @@
 		@cancel="cancel"
 	>
 		<template #left>
-			<FmCard title="General" v-if="accessPolicy.id">
-				<BaseInput
-					label="Name"
+			<FmCard title="General" v-if="accessPolicy.id" class="flex flex-col gap-3 mb-6">
+				<FmTextField
 					v-model="accessPolicy.name"
+					label="Name"
+					outlined
 				/>
-				<BaseInput
+				<FmTextField
 					label="User Code"
 					v-model="accessPolicy.user_code"
 					disabled
+					outlined
 				/>
-
-				<BaseInput
+				<FmTextField
 					label="Configuration Code"
 					v-model="accessPolicy.configuration_code"
 					disabled
+					outlined
 				/>
-
-				<BaseInput
+				<FmTextField
 					label="Description"
 					v-model="accessPolicy.description"
+					outlined
 				/>
-
-				<v-ace-editor
-					v-model:value="policyJson"
-					@init="editorInit"
-					lang="json"
-					theme="monokai"
-					style="height: 300px;"/>
+				<div :class="!isJsonValid ? 'invalid-json' : ''">
+					<v-ace-editor
+						v-model:value="policyJson"
+						@init="editorInit"
+						lang="json"
+						theme="monokai"
+						style="height: 300px"
+					/>
+				</div>
+				<p v-if="!isJsonValid" class="text-red-500 text-sm mt-2">Invalid JSON format. Please check.</p>
 			</FmCard>
 		</template>
 
@@ -50,25 +55,25 @@
 				<h4>AccessPolicy JSON Structure</h4>
 
 				<p>
-				<pre class="code-block">{
-  "Version": "2021-01-01",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "service:resource:create",
-        "service:resource:edit"
-      ],
-      "Resource": "*"
-    },
-    {
-      "Effect": "Deny",
-      "Action": "service:resource:delete",
-      "Resource": "*"
-    }
-  ]
-}
-</pre>
+					<pre class="code-block">{
+					  "Version": "2021-01-01",
+					  "Statement": [
+						{
+						  "Effect": "Allow",
+						  "Action": [
+							"service:resource:create",
+							"service:resource:edit"
+						  ],
+						  "Resource": "*"
+						},
+						{
+						  "Effect": "Deny",
+						  "Action": "service:resource:delete",
+						  "Resource": "*"
+						}
+					  ]
+					}
+					</pre>
 				</p>
 
 				<h4>Version</h4>
@@ -100,23 +105,24 @@
 					portfolios:</p>
 
 				<pre class="code-block">{
-  "Version": "2021-01-01",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "finmars:portfolio:create",
-        "finmars:portfolio:edit"
-      ],
-      "Resource": "*"
-    },
-    {
-      "Effect": "Deny",
-      "Action": "finmars:portfolio:delete",
-      "Resource": "*"
-    }
-  ]
-}</pre>
+				  "Version": "2021-01-01",
+				  "Statement": [
+					{
+					  "Effect": "Allow",
+					  "Action": [
+						"finmars:portfolio:create",
+						"finmars:portfolio:edit"
+					  ],
+					  "Resource": "*"
+					},
+					{
+					  "Effect": "Deny",
+					  "Action": "finmars:portfolio:delete",
+					  "Resource": "*"
+					}
+				  ]
+				}
+				</pre>
 				<h4>Resource Example</h4>
 
 				<p>Following pattern to assign access to objects</p>
@@ -129,18 +135,18 @@
 				<h4>Allow Full Access only to one portfolio</h4>
 
 				<pre class="code-block">{
-  "Version": "2021-01-01",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "finmars:portfolio:*"
-      ],
-      "Resource": ["frn:finmars:portfolios.portfolio:portfolio_1"]
-    },
+				  "Version": "2021-01-01",
+				  "Statement": [
+					{
+					  "Effect": "Allow",
+					  "Action": [
+						"finmars:portfolio:*"
+					  ],
+					  "Resource": ["frn:finmars:portfolios.portfolio:portfolio_1"]
+					},
 
-  ]
-}</pre>
+				  ]
+				}</pre>
 
 			</div>
 
@@ -153,10 +159,8 @@
 
 import {VAceEditor} from 'vue3-ace-editor';
 import 'ace-builds/src-noconflict/mode-json';
+import 'ace-builds/src-noconflict/ext-searchbox';
 import 'ace-builds/src-noconflict/theme-monokai';
-
-import dayjs from 'dayjs'
-import {usePrefixedRouterPush} from "~/composables/useMeta";
 
 	definePageMeta({
 		middleware: 'auth',
@@ -173,27 +177,40 @@ import {usePrefixedRouterPush} from "~/composables/useMeta";
 		],
 	});
 	const store = useStore()
-	let route = useRoute()
-	let router = useRouter()
+	const route = useRoute()
+	const router = useRouter()
 
-	let accessPolicy = ref({})
-	let policyJson = ref({})
+	const accessPolicy = ref({})
+	const policyJson = ref({})
 
+	const isJsonValid = computed(() => {
+		try {
+			JSON.parse(policyJson.value);
+			return true;
+		} catch (e) {
+			return false;
+		}
+	});
 
 	async function init() {
-		let res = await useApi('accessPolicy.get', {params: {id: route.params.id}})
-		accessPolicy.value = res
-
-		policyJson.value = JSON.stringify(accessPolicy.value.policy, null, 2)
+		try {
+			accessPolicy.value = await useApi('accessPolicy.get', {params: {id: route.params.id}})
+			policyJson.value = JSON.stringify(accessPolicy.value.policy, null, 2)
+		} catch (e) {
+			useNotify({ type: 'error', title: e.message});
+		}
 
 	}
 
-
 	async function save() {
+		if (!isJsonValid.value) {
+			useNotify({ type: 'error', title: 'Invalid JSON format'});
+			return;
+		}
 
 		accessPolicy.value.policy = JSON.parse(policyJson.value)
 
-		let res = await useApi('accessPolicy.put', {body: accessPolicy.value, params: {id: route.params.id}})
+		const res = await useApi('accessPolicy.put', {body: accessPolicy.value, params: {id: route.params.id}})
 
 		if (res) {
 			useNotify({type: 'success', title: 'Saved!'});
@@ -202,12 +219,7 @@ import {usePrefixedRouterPush} from "~/composables/useMeta";
 	}
 
 	async function cancel() {
-		usePrefixedRouterPush(router, route, '/settings/permission')
 		router.back();
-	}
-
-	function fromatDate(date) {
-		return dayjs(date).format('DD.MM.YYYY LT')
 	}
 
 	function editorInit(editor) {
@@ -224,7 +236,7 @@ import {usePrefixedRouterPush} from "~/composables/useMeta";
 		init()
 	} else {
 		watch(() => store.current, async () => {
-			init()
+			await init()
 		})
 	}
 </script>
@@ -264,6 +276,10 @@ import {usePrefixedRouterPush} from "~/composables/useMeta";
 			list-style: disc;
 		}
 
+	}
+
+	.invalid-json{
+		border: 2px solid var(--error-color);
 	}
 
 	pre.code-block {
