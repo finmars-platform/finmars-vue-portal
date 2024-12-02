@@ -132,6 +132,7 @@
 		align-items: center;
 		justify-content: space-between;
 		text-align: left;
+		user-select: auto;
 	}
 	.cards {
 		display: grid;
