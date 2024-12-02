@@ -135,6 +135,7 @@
 		align-items: center;
 		justify-content: space-between;
 		text-align: left;
+		user-select: auto;
 	}
 	.bi_no_borders {
 		max-width: 35%;
