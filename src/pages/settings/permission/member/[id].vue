@@ -5,19 +5,19 @@
 		@cancel="cancel"
 	>
 		<template #left>
-			<FmCard title="General" v-if="member.id">
-				<BaseInput
-					label="Name"
+			<FmCard title="General" class="flex flex-col gap-3" v-if="member.id">
+				<FmTextField
 					v-model="member.username"
+					label="Username"
+					outlined
 					disabled
 				/>
-
-				<BaseInput
-					label="Date joined"
+				<FmTextField
 					:modelValue="fromatDate(member.join_date)"
+					label="Date joined"
 					disabled
+					outlined
 				/>
-
 				<div v-if="member.status != 'invited' && member.status != 'deleted' && member.status != 'invite_declined'">
 				  <FmCheckbox
 					v-model="member.is_owner"
@@ -34,9 +34,7 @@
 				<div style="margin-top: 16px;">
 
 					<div v-if="member.status != 'invited' && member.status != 'deleted' && member.status != 'invite_declined'">
-						<FmSelect label="Status"
-											:items="statuses"
-											v-model="member.status"/>
+						<FmSelect label="Status" :items="statuses" v-model="member.status"/>
 					</div>
 
 					<div v-if="member.status == 'invited' || member.status == 'deleted' || member.status == 'invite_declined'">
@@ -46,24 +44,19 @@
 				</div>
 
 				<div v-if="member.is_deleted || member.status == 'invite_declined'">
-
-					<FmBtn @click="resendInvite()">Resend Invite</FmBtn>
-
+					<FmButton rounded @click="resendInvite()">Resend Invite</FmButton>
 				</div>
 
 			</FmCard>
 		</template>
 		<template #right>
 			<FmCard title="Groups" class="m-b-24" v-if="member.id">
-
 				<BaseMultiSelectInput
 					:modelValue="selectedGroups"
 					@update:modelValue="findGroupIds($event)"
 					:items="groups"
 					item_id="name"
 				/>
-
-
 			</FmCard>
 			<FmCard title="Roles" class="m-b-24" v-if="member.id">
 
@@ -73,12 +66,9 @@
 					:items="roles"
 					item_id="name"
 				/>
-
-
 			</FmCard>
 
 			<FmCard title="Attached Access Policies" class="m-b-24">
-
 				<BaseMultiSelectInput
 					:modelValue="selectedAccessPolicies"
 					@update:modelValue="findAccessPolicyIds($event)"
@@ -86,17 +76,14 @@
 					item_id="user_code"
 					item_title="name"
 				/>
-
 			</FmCard>
-
 		</template>
 	</CommonSettingsLayout>
 </template>
 
 <script setup>
-
 	import dayjs from 'dayjs'
-	import {usePrefixedRouterPush} from "~/composables/useMeta";
+	import { FmButton } from '@finmars/ui'
 
 	definePageMeta({
 		middleware: 'auth',
@@ -113,17 +100,17 @@
 		],
 	});
 	const store = useStore()
-	let route = useRoute()
-	let router = useRouter()
+	const route = useRoute()
+	const router = useRouter()
 
-	let member = ref({})
-	let groups = ref([])
-	let roles = ref([])
-	let accessPolicies = ref([])
+	const member = ref({})
+	const groups = ref([])
+	const roles = ref([])
+	const accessPolicies = ref([])
 
 	async function resendInvite() {
 
-		let res = await useApi('memberSendInvite.put', {params: {id: route.params.id}})
+		const res = await useApi('memberSendInvite.put', {params: {id: route.params.id}})
 
 		if (res) {
 			useNotify({type: 'success', title: 'Invite sent!'})
@@ -131,22 +118,22 @@
 
 	}
 
-	let statuses = ref([
+	const statuses = ref([
 		{id: 'active', name: 'Active'},
 		{id: 'blocked', name: 'Blocked'},
 	]);
 
-	let selectedGroups = computed(() => {
+	const selectedGroups = computed(() => {
 		if (!member.value.groups_object.length) return [];
 		return member.value.groups_object.map(item => item.name);
 	})
 
-	let selectedRoles = computed(() => {
+	const selectedRoles = computed(() => {
 		if (!member.value.roles_object.length) return [];
 		return member.value.roles_object.map(item => item.name);
 	})
 
-	let selectedAccessPolicies = computed(() => {
+	const selectedAccessPolicies = computed(() => {
 		if (!member.value.access_policies_object?.length) return [];
 		return member.value.access_policies_object.map(item => item.user_code);
 	})
@@ -208,7 +195,7 @@
 
 	async function save() {
 
-		let res = await useApi('member.put', {body: member.value, params: {id: route.params.id}})
+		const res = await useApi('member.put', {body: member.value, params: {id: route.params.id}})
 
 		if (!res._$error) {
 			useNotify({type: 'success', title: 'Saved!'})
@@ -229,7 +216,7 @@
 		init()
 	} else {
 		watch(() => store.current, async () => {
-			init()
+			await init();
 		})
 	}
 
