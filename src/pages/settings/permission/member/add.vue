@@ -6,15 +6,17 @@
 		@cancel="cancel"
 	>
 		<template #left>
-			<FmCard title="General" class="mb-6">
-				<BaseInput
-					label="Username"
-					v-model="form.username"
-				/>
+			<FmCard title="General" class="flex flex-col gap-3 mb-6">
 
-				<BaseInput
-					label="Email"
+				<FmTextField
+					v-model="form.Username"
+					label="Username"
+					outlined
+				/>
+				<FmTextField
 					v-model="form.email"
+					label="Email"
+					outlined
 				/>
 
 				<!--<FmCheckbox
@@ -37,8 +39,7 @@
 					v-model="form.groups"
 					:items="groups"
 				/>
-
-				<FmLoader v-if="!readyStatus.groups"/>
+				<FmProgressCircular v-if="!readyStatus.groups" :size="32" indeterminate />
 			</FmCard>
 
 			<FmCard title="Roles" class="m-b-6">
@@ -47,8 +48,7 @@
 					v-model="form.roles"
 					:items="roles"
 				/>
-
-				<FmLoader v-if="!readyStatus.roles"/>
+				<FmProgressCircular v-if="!readyStatus.roles" :size="32" indeterminate />
 			</FmCard>
 			<FmCard title="Personal Access Policies" class="m-b-6">
 				<BaseMultiSelectInput
@@ -56,18 +56,14 @@
 					v-model="form.access_policies"
 					:items="accessPolicies"
 				/>
-
-				<FmLoader v-if="!readyStatus.accessPolicies"/>
+				<FmProgressCircular v-if="!readyStatus.accessPolicies" :size="32" indeterminate />
 			</FmCard>
 		</template>
 	</CommonSettingsLayout>
 </template>
 
 <script setup>
-
-	import dayjs from 'dayjs'
 	import {loadMultiselectOpts} from "~/pages/settings/helper";
-	import {usePrefixedRouterPush} from "~/composables/useMeta";
 
 	definePageMeta({
 		middleware: 'auth',
@@ -84,42 +80,40 @@
 		],
 	});
 	const store = useStore()
-	let route = useRoute()
-	let router = useRouter()
+	const route = useRoute()
+	const router = useRouter()
 
-	let readyStatus = reactive({
+	const readyStatus = reactive({
 		groups: false,
 		roles: false,
 		accessPolicies: false,
 	})
 
-	let form = reactive({
+	const form = reactive({
 		groups: [],
 		base_api_url: store.space_code,
 		is_owner: false
 	})
 
-	let groups = ref([]);
-	let roles = ref([]);
-	let accessPolicies = ref([]);
+	const groups = ref([]);
+	const roles = ref([]);
+	const accessPolicies = ref([]);
 
 	async function init() {
-
 		const res = await Promise.all([
 			loadMultiselectOpts('groupList.get', readyStatus, 'groups'),
-			loadMultiselectOpts("roleList.get", readyStatus, 'roles'),
-			loadMultiselectOpts("accessPolicyList.get", readyStatus, 'accessPolicies'),
+			loadMultiselectOpts('roleList.get', readyStatus, 'roles'),
+			loadMultiselectOpts('accessPolicyList.get', readyStatus, 'accessPolicies')
 		]);
 
 		groups.value = res[0];
 		roles.value = res[1];
 		accessPolicies.value = res[2];
-
 	}
 
 	async function save() {
 		// TODO Refactor
-		let sendedForm = {
+		const sendedForm = {
 			...form,
 			groups: form.groups,
 			roles: form.roles
@@ -128,27 +122,25 @@
 		let res = await useApi('member.post', {body: sendedForm, params: {id: route.params.id}})
 
 		if (!res._$error) {
-			useNotify({type: 'success', title: 'Invite sent!'})
-
-			usePrefixedRouterPush(router, route, '/settings/permission?tab=Members')
+			useNotify({ type: 'success', title: 'Invite sent!' });
+			router.back();
 		}
 	}
 
 	async function cancel() {
-		usePrefixedRouterPush(router, route, '/settings/permission')
-	}
-
-	function fromatDate(date) {
-		return dayjs(date).format('DD.MM.YYYY LT')
+		router.back();
 	}
 
 	if (store.isUrlValid) {
-		init()
+		init();
 	} else {
-		const unwatch = watch(() => store.current, async () => {
-			init()
-			unwatch();
-		})
+		const unwatch = watch(
+			() => store.current,
+			async () => {
+				await init();
+				unwatch();
+			}
+		);
 	}
 </script>
 

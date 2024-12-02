@@ -83,10 +83,7 @@
 		stockMembers.value.forEach((item) => {
 			data.push({
 				id: `${item.id}`,
-				username: {
-					value: item.username,
-					link: '/settings/permission/member/' + item.id
-				},
+				username: item.username,
 				is_admin: item.is_admin ? 'Admin' : 'No',
 				is_owner: item.is_owner ? 'Owner' : 'No',
 				is_deleted: item.is_deleted ? 'Deleted' : 'No',
@@ -100,7 +97,11 @@
 	});
 
 	function generateLink(id) {
-		usePrefixedRouterPush(router, route, members.value[id].username.link);
+		usePrefixedRouterPush(
+			router,
+			route,
+			`/settings/permission/member/${members.value[id].id}`
+		);
 	}
 
 	async function deleteMember(index) {

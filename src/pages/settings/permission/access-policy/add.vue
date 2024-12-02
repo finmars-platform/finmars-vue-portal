@@ -6,34 +6,39 @@
 		@cancel="cancel"
 	>
 		<template #left>
-			<FmCard title="General" class="mb-6">
-				<BaseInput
-					label="Name"
+			<FmCard title="General" class="flex flex-col gap-3 mb-6">
+				<FmTextField
 					v-model="form.name"
+					label="Name"
+					outlined
 				/>
-				<BaseInput
-					label="User Code"
+				<FmTextField
 					v-model="form.user_code"
+					:rules="[rules.required]"
+					label="User Code"
+					outlined
 				/>
-
-				<BaseInput
-					label="Configuration Code"
+				<FmTextField
 					v-model="form.configuration_code"
+					:rules="[rules.required]"
+					label="Configuration Code"
+					outlined
 				/>
-
-				<BaseInput
-					label="Description"
+				<FmTextField
 					v-model="form.description"
+					label="Description"
+					outlined
 				/>
-
-				<v-ace-editor
-					v-model:value="policyJson"
-					@init="editorInit"
-					lang="json"
-					theme="monokai"
-					style="height: 300px;width: 600px;"/>
-
-
+				<div :class="!isJsonValid ? 'invalid-json' : ''">
+					<v-ace-editor
+						v-model:value="policyJson"
+						@init="editorInit"
+						lang="json"
+						theme="monokai"
+						style="height: 300px"
+					/>
+				</div>
+				<p v-if="!isJsonValid" class="text-red-500 text-sm mt-2">Invalid JSON format. Please check.</p>
 			</FmCard>
 		</template>
 		<template #right>
@@ -50,25 +55,25 @@
 				<h4>AccessPolicy JSON Structure</h4>
 
 				<p>
-				<pre class="code-block">{
-  "Version": "2021-01-01",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "service:resource:create",
-        "service:resource:edit"
-      ],
-      "Resource": "*"
-    },
-    {
-      "Effect": "Deny",
-      "Action": "service:resource:delete",
-      "Resource": "*"
-    }
-  ]
-}
-</pre>
+					<pre class="code-block">{
+					  "Version": "2021-01-01",
+					  "Statement": [
+						{
+						  "Effect": "Allow",
+						  "Action": [
+							"service:resource:create",
+							"service:resource:edit"
+						  ],
+						  "Resource": "*"
+						},
+						{
+						  "Effect": "Deny",
+						  "Action": "service:resource:delete",
+						  "Resource": "*"
+						}
+					  ]
+					}
+					</pre>
 				</p>
 
 				<h4>Version</h4>
@@ -98,23 +103,23 @@
 					portfolios:</p>
 
 				<pre class="code-block">{
-  "Version": "2021-01-01",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "finmars:portfolio:create",
-        "finmars:portfolio:edit"
-      ],
-      "Resource": "*"
-    },
-    {
-      "Effect": "Deny",
-      "Action": "finmars:portfolio:delete",
-      "Resource": "*"
-    }
-  ]
-}</pre>
+				  "Version": "2021-01-01",
+				  "Statement": [
+					{
+					  "Effect": "Allow",
+					  "Action": [
+						"finmars:portfolio:create",
+						"finmars:portfolio:edit"
+					  ],
+					  "Resource": "*"
+					},
+					{
+					  "Effect": "Deny",
+					  "Action": "finmars:portfolio:delete",
+					  "Resource": "*"
+					}
+				  ]
+				}</pre>
 
 			</div>
 
@@ -133,11 +138,10 @@
 
 <script setup>
 
-	import dayjs from 'dayjs'
 	import {VAceEditor} from 'vue3-ace-editor';
 	import 'ace-builds/src-noconflict/mode-json';
+	import 'ace-builds/src-noconflict/ext-searchbox';
 	import 'ace-builds/src-noconflict/theme-monokai';
-	import {usePrefixedRouterPush} from "~/composables/useMeta";
 
 	definePageMeta({
 		middleware: 'auth',
@@ -153,34 +157,41 @@
 			},
 		],
 	});
-	const store = useStore()
-	let route = useRoute()
+
 	let router = useRouter()
 
 	let form = reactive({
 		name: '',
 		user_code: '',
 		configuration_code: 'com.finmars.local',
-		policy: null
+		policy: null,
+		description: ''
 	})
 
 	let policyJson = ref(JSON.stringify({
-				"Version": "2023-01-01",
-				"Statement": [
-					{
-						"Effect": "Allow",
-						"Action": [],
-						"Principal": "*",
-						"Resource": "*"
+		"Version": "2023-01-01",
+		"Statement": [
+			{
+				"Effect": "Allow",
+				"Action": [],
+				"Principal": "*",
+				"Resource": "*"
 
-					}
-				]
 			}
-			, null, 4)
-	)
+		]
+	}, null, 4))
 
-	async function init() {
+	const isJsonValid = computed(() => {
+		try {
+			JSON.parse(policyJson.value);
+			return true;
+		} catch (e) {
+			return false;
+		}
+	});
 
+	const rules = {
+		required: value => value ? '' : 'Field is required'
 	}
 
 	function editorInit(editor) {
@@ -194,32 +205,25 @@
 	}
 
 	async function save() {
+		if (!form.user_code) {
+			return;
+		} else if (!isJsonValid.value) {
+			useNotify({ type: 'error', title: 'Invalid JSON format'});
+			return;
+		}
 
-		form.policy = JSON.parse(policyJson.value)
+		form.policy = JSON.parse(policyJson.value);
 
 		let res = await useApi('accessPolicyList.post', {body: form})
 
 		if (!res._$error) {
 			useNotify({type: 'success', title: 'Access Policy created!'})
-			// TODO move to active tab Groups
-			usePrefixedRouterPush(router, route, '/settings/permission')
+			router.back();
 		}
 	}
 
 	async function cancel() {
-		usePrefixedRouterPush(router, route, '/settings/permission')
-	}
-
-	function fromatDate(date) {
-		return dayjs(date).format('DD.MM.YYYY LT')
-	}
-
-	if (store.isUrlValid) {
-		init()
-	} else {
-		watch(() => store.current, async () => {
-			init()
-		})
+		router.back();
 	}
 </script>
 
@@ -258,6 +262,10 @@
 			list-style: disc;
 		}
 
+	}
+
+	.invalid-json{
+		border: 2px solid var(--error-color);
 	}
 
 	pre.code-block {
