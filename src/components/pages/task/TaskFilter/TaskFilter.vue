@@ -23,6 +23,7 @@
 				placeholder="Enter task name"
 				:disabled="disabled"
 				:model-value="modelValue.query"
+				@init="onInit"
 				@update:model-value="debouncedUpdateText"
 			/>
 		</div>
@@ -59,7 +60,7 @@
 </template>
 
 <script setup>
-	import { ref } from 'vue';
+	import { ref, watch } from 'vue';
 	import dayjs from 'dayjs';
 	import cloneDeep from 'lodash/cloneDeep';
 	import debounce from 'lodash/debounce';
@@ -89,7 +90,15 @@
 
 	const filter = ref(cloneDeep(props.modelValue));
 
-	const debouncedUpdateText = debounce(updateText, 500);
+	const debouncedUpdateText = debounce(updateText, 650);
+
+	const searchInputEl = ref(null);
+	const isSearchFieldDirty = ref(false);
+
+	function onInit(instance) {
+		console.log('instance: ', instance);
+		searchInputEl.value = instance.input;
+	}
 
 	function updateFilterValue() {
 		emits('update:modelValue', filter.value);
@@ -97,6 +106,7 @@
 
 	function updateText(value) {
 		filter.value.query = value;
+		isSearchFieldDirty.value = true;
 		emits('update:modelValue', filter.value);
 	}
 
@@ -104,4 +114,14 @@
 		filter.value[field] = value;
 		emits('update:modelValue', filter.value);
 	}
+
+	watch([() => props.modelValue, () => props.disabled], () => {
+		filter.value = cloneDeep(props.modelValue);
+		if (isSearchFieldDirty.value && !props.disabled) {
+			nextTick(() => {
+				searchInputEl.value && searchInputEl.value.focus();
+				isSearchFieldDirty.value = false;
+			});
+		}
+	});
 </script>

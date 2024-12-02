@@ -59,10 +59,10 @@
 			</div>
 		</div>
 
-		<div class="tasks-page__info p-4">
+		<div class="tasks-page__info">
 			<div
 				v-if="!selectedTask"
-				class="text-[14px] leading-[20px] text-[var(--on-surface)] font-medium"
+				class="tasks-page__info__text"
 			>
 				Click on event to see details
 			</div>
@@ -89,7 +89,7 @@
 	import TaskInfo from '~/components/pages/task/TaskInfo/TaskInfo.vue';
 
 	definePageMeta({
-		middleware: 'auth',
+		middleware: 'auth'
 	});
 
 	const dateFormat = 'YYYY-MM-DD';
@@ -216,6 +216,13 @@
 			overflow-y: auto;
 			border-left: 1px solid var(--outline-variant);
 			padding: var(--spacing-16);
+
+			&-text {
+				font-size: 14px;
+				font-weight: 500;
+				line-height: 20px;
+				color: var(--on-surface);
+			}
 		}
 
 		&__btn-refresh {

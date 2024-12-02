@@ -2,7 +2,7 @@
 	<div class="task-info">
 		<div class="task-info__header">
 			<h1 class="task-info__header-title">
-				{{ task?.verbose_name }}
+				{{ task?.verbose_name || task?.type }}
 			</h1>
 
 			<div class="task-info__header-actions">
