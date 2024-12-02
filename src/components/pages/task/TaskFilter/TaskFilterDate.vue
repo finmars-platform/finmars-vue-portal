@@ -15,6 +15,7 @@
 			v-model="date"
 			show-adjacent-months
 			allow-weekend-selection
+			calculate-previous-day-from-today
 			:disabled="disabled"
 			@update:model-value="updateValue"
 		/>
