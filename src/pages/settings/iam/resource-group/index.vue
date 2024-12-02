@@ -13,9 +13,11 @@
 
 		<FmPagination
 			class="m-t-20"
-			:count="count"
-			:page-size="pageSize"
-			@page-change="handlePageChange"
+			:with-info="true"
+			:total-items="count"
+			:items-per-page="pageSize"
+			:model-value="currentPage"
+			@update:modelValue="handlePageChange"
 		/>
 
 		<BaseModal
@@ -52,6 +54,8 @@
 </template>
 
 <script setup>
+	import { FmPagination } from '@finmars/ui';
+
 	definePageMeta({
 		middleware: 'auth',
 		bread: [
@@ -62,12 +66,15 @@
 		]
 	});
 
+	const route = useRoute();
 	const router = useRouter();
+
 	const showModal = ref(false);
 	const resourceGroups = ref([]);
 	const count = ref(0);
 	const pageSize = ref(40);
 	const loading = ref(false);
+	const currentPage = ref(route.query.page ? parseInt(route.query.page) : 1);
 
 	let newResourceGroup = reactive({
 		name: '',
@@ -154,7 +161,8 @@
 	}
 
 	const handlePageChange = (newPage) => {
-		init(newPage);
+		currentPage.value = newPage;
+		init(currentPage.value);
 	};
 
 	init();

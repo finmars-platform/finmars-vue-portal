@@ -16,6 +16,12 @@
 			</template>
 		</FmTopRefresh>
 		<div class="fm_container">
+			<FmTextField
+				v-model="searchTerm"
+				outlined
+				label="Search for a ..."
+				@update:model-value="setFiltersQueryDebounced"
+			/>
 			<BaseTable
 				:headers="['', 'Id', 'User Code', 'Configuration Code', 'Name']"
 				:items="groupsRows"
@@ -44,25 +50,29 @@
 			</BaseTable>
 			<FmPagination
 				class="m-t-20"
-				:count="count"
-				:page-size="pageSize"
-				:init-page="currentPage"
-				@page-change="handlePageChange"
+				:with-info="true"
+				:total-items="count"
+				:items-per-page="pageSize"
+				:model-value="currentPage"
+				@update:modelValue="handlePageChange"
 			/>
 		</div>
 	</div>
 </template>
 
 <script setup>
+	import { FmPagination } from '@finmars/ui';
 	import { usePrefixedRouterPush } from '~/composables/useMeta';
+	import { debounce } from 'lodash';
 
 	definePageMeta({
-		middleware: 'auth',
+		middleware: 'auth'
 	});
 
 	const route = useRoute();
 	const router = useRouter();
 
+	const searchTerm = ref('');
 	const groups = ref([]);
 	const loading = ref(false);
 	const count = ref(0);
@@ -102,7 +112,8 @@
 		loading.value = true;
 		const payload = {
 			page_size: pageSize.value,
-			page: newPage
+			page: newPage,
+			user_code__contains: searchTerm.value
 		};
 		const res = await useApi('groupList.get', {
 			filters: payload,
@@ -119,6 +130,11 @@
 		});
 		loading.value = false;
 	}
+
+	const setFiltersQueryDebounced = debounce(async () => {
+		currentPage.value = 1;
+		await init();
+	}, 500);
 
 	function refresh() {
 		init();
