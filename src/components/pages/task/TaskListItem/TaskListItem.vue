@@ -142,7 +142,7 @@
 	);
 
 	const taskText = computed(
-		() => `${props.task.verbose_name} [${props.task.id}]`
+		() => `${props.task.verbose_name || props.task.type} [${props.task.id}]`
 	);
 
 	const userName = computed(() => props.task.member_object?.username);

@@ -299,7 +299,6 @@
 				highlightedOptions.value.available = [];
 				break;
 		}
-		console.log('onBtnClick: ', btn, isDirty.value);
 	}
 
 	function updateValue(val) {
@@ -318,6 +317,10 @@
 	function clear(touchDirty = true) {
 		touchDirty && (isDirty.value = false);
 		selectedOptions.value = [];
+		searchText.value = {
+			available: '',
+			selected: ''
+		};
 		highlightedOptions.value = {
 			available: [],
 			selected: []
