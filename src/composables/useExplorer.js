@@ -423,6 +423,7 @@ export function useExplorer() {
 				draftUserCode.value = 'explorer.' + currentPath.value.join('__');
 				isEditor.value = true;
 			}
+			editorFile.value = fileEditor;
 			const newUrl = getCurrentUrl(currentPath.value.join('/'), route);
 			cancel();
 			router.push(newUrl);
