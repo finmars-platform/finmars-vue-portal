@@ -11,15 +11,12 @@
 		</FmTopRefresh>
 
 		<div class="fm_container">
-
-			<FmInputText
-				placeholder="Search for a ..."
-				class="text-search-input"
-				:noIndicatorButton="true"
+			<FmTextField
 				v-model="searchTerm"
+				outlined
+				label="Search for a ..."
 				@update:model-value="setFiltersQueryDebounced"
 			/>
-
 			<BaseTable
 				:headers="['', 'Id', 'User Code', 'Configuration Code', 'Name']"
 				:items="accessPolicies"
@@ -49,19 +46,23 @@
 			</BaseTable>
 			<FmPagination
 				class="m-t-20"
-				:count="count"
-				:page-size="pageSize"
-				@page-change="handlePageChange"
+				:with-info="true"
+				:total-items="count"
+				:items-per-page="pageSize"
+				:model-value="currentPage"
+				@update:modelValue="handlePageChange"
 			/>
 		</div>
 	</div>
 </template>
 
 <script setup>
+	import { FmPagination } from '@finmars/ui';
 	import { usePrefixedRouterPush } from '~/composables/useMeta';
+	import { debounce } from 'lodash';
 
 	definePageMeta({
-		middleware: 'auth',
+		middleware: 'auth'
 	});
 
 	const route = useRoute();
@@ -71,9 +72,8 @@
 	const accessPolicies = ref([]);
 	const loading = ref(false);
 	const count = ref(0);
-	const pageSize = ref(10);
+	const pageSize = ref(40);
 	const currentPage = ref(route.query.page ? parseInt(route.query.page) : 1);
-	import { debounce } from 'lodash';
 
 	async function deleteAccessPolicy(index) {
 		const policy = accessPolicies.value[index];
@@ -118,9 +118,9 @@
 		loading.value = false;
 	}
 
-	const setFiltersQueryDebounced = debounce(async (query) => {
+	const setFiltersQueryDebounced = debounce(async () => {
 		currentPage.value = 1;
-		init();
+		await init();
 	}, 500);
 
 	function refresh() {
