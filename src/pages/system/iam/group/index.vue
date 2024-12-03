@@ -5,11 +5,16 @@
 				<FmIcon
 					btnPrimary
 					icon="add"
-					@click="usePrefixedRouterPush($router, $route, `/settings/permission/access-policy/add`)"
+					@click="
+						usePrefixedRouterPush(
+							$router,
+							$route,
+							`/system/iam/group/add`
+						)
+					"
 				/>
 			</template>
 		</FmTopRefresh>
-
 		<div class="fm_container">
 			<FmTextField
 				v-model="searchTerm"
@@ -19,24 +24,23 @@
 			/>
 			<BaseTable
 				:headers="['', 'Id', 'User Code', 'Configuration Code', 'Name']"
-				:items="accessPolicies"
+				:items="groupsRows"
 				:status="!loading ? 'done' : 'loading'"
 				:isRightKebab="false"
-				colls="50px repeat(4, 1fr)"
-				:cb="(id) => usePrefixedRouterPush($router, $route, `/settings/permission/access-policy/${accessPolicies[id].id}`)"
+				colls="62.5px repeat(4, 1fr)"
+				rowKeyProp="id"
+				:cb="(id) => usePrefixedRouterPush($router, $route, `/system/iam/group/${groups[id].id}`)"
 				class="clickable_rows"
 			>
 				<template #actions="{index}">
 					<div class="flex jcc aic height-100">
 						<FmMenu attach="body">
 							<template #btn>
-								<FmIcon icon="more_vert"/>
+								<FmIcon icon="more_vert" />
 							</template>
 							<div class="fm_list">
-								<div class="fm_list_item"
-									 @click="deleteAccessPolicy(index)"
-								>
-									<FmIcon class="m-r-4" icon="delete"/>
+								<div class="fm_list_item" @click="deleteGroup(index)">
+									<FmIcon class="m-r-4" icon="delete" />
 									Delete
 								</div>
 							</div>
@@ -69,24 +73,32 @@
 	const router = useRouter();
 
 	const searchTerm = ref('');
-	const accessPolicies = ref([]);
+	const groups = ref([]);
 	const loading = ref(false);
 	const count = ref(0);
 	const pageSize = ref(40);
 	const currentPage = ref(route.query.page ? parseInt(route.query.page) : 1);
 
-	async function deleteAccessPolicy(index) {
-		const policy = accessPolicies.value[index];
+	const groupsRows = computed(() => {
+		return groups.value.map((group) => {
+			return {
+				id: `${group.id}`,
+				user_code: group.user_code,
+				configuration_code: group.configuration_code,
+				name: group.name
+			};
+		});
+	});
+
+	async function deleteGroup(index) {
+		const group = groups.value[index];
 		const isConfirm = await useConfirm({
-			title: 'Delete Access Policy',
-			text: `Do you want to delete an Access Policy "${policy.name}"?`
+			title: 'Delete group',
+			text: `Do you want to delete a group "${group.name}"?`
 		});
 		if (!isConfirm) return false;
-		await useApi('accessPolicy.delete', { params: { id: policy.id } });
-		useNotify({
-			type: 'success',
-			title: `Access Policy "${policy.name}" was deleted.`
-		});
+		await useApi('group.delete', { params: { id: group.id } });
+		useNotify({ type: 'success', title: `Group "${group.name}" was deleted.` });
 		refresh();
 	}
 
@@ -103,11 +115,12 @@
 			page: newPage,
 			user_code__contains: searchTerm.value
 		};
-		const res = await useApi('accessPolicyList.get', {
-			filters: payload
+		const res = await useApi('groupList.get', {
+			filters: payload,
+			query: { page: newPage }
 		});
 		count.value = res.count;
-		accessPolicies.value = res.results.map((item) => {
+		groups.value = res.results.map((item) => {
 			return {
 				id: `${item.id}`,
 				user_code: item.user_code,
@@ -136,14 +149,6 @@
 		justify-content: space-between;
 		text-align: left;
 		user-select: auto;
-	}
-	.bi_no_borders {
-		max-width: 35%;
-		font-size: 14px !important;
-		margin-bottom: 10px !important;
-		:deep(.right_btn) {
-			margin-left: 10px !important;
-		}
 	}
 	.cards {
 		display: grid;
