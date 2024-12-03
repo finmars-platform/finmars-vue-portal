@@ -267,7 +267,13 @@
 		showModal.value = false;
 		items.value = [];
 		userCode.value = '';
-		newEntity = {};
+		newEntity = {
+			name: '',
+			user_code: '',
+			short_name: '',
+			public_name: '',
+			notes: ''
+		};
 	};
 
 	const requiredValidate = (val) => {
