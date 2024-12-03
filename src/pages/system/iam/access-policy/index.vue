@@ -1,13 +1,11 @@
 <template>
 	<div>
-		<FmTopRefresh
-			@refresh="refresh()"
-		>
+		<FmTopRefresh @refresh="refresh()">
 			<template #action>
 				<FmIcon
 					btnPrimary
 					icon="add"
-					@click="usePrefixedRouterPush($router, $route, `/settings/permission/role/add`)"
+					@click="usePrefixedRouterPush($router, $route, `/system/iam/access-policy/add`)"
 				/>
 			</template>
 		</FmTopRefresh>
@@ -21,11 +19,11 @@
 			/>
 			<BaseTable
 				:headers="['', 'Id', 'User Code', 'Configuration Code', 'Name']"
-				:items="roles"
+				:items="accessPolicies"
 				:status="!loading ? 'done' : 'loading'"
 				:isRightKebab="false"
 				colls="50px repeat(4, 1fr)"
-				:cb="(id) => usePrefixedRouterPush($router, $route, `/settings/permission/role/${roles[id].id}`)"
+				:cb="(id) => usePrefixedRouterPush($router, $route, `/system/iam/access-policy/${accessPolicies[id].id}`)"
 				class="clickable_rows"
 			>
 				<template #actions="{index}">
@@ -36,7 +34,7 @@
 							</template>
 							<div class="fm_list">
 								<div class="fm_list_item"
-									 @click="deleteRole(index)"
+									 @click="deleteAccessPolicy(index)"
 								>
 									<FmIcon class="m-r-4" icon="delete"/>
 									Delete
@@ -71,21 +69,24 @@
 	const router = useRouter();
 
 	const searchTerm = ref('');
-	const roles = ref([]);
+	const accessPolicies = ref([]);
 	const loading = ref(false);
 	const count = ref(0);
 	const pageSize = ref(40);
 	const currentPage = ref(route.query.page ? parseInt(route.query.page) : 1);
 
-	async function deleteRole(index) {
-		const role = roles.value[index];
+	async function deleteAccessPolicy(index) {
+		const policy = accessPolicies.value[index];
 		const isConfirm = await useConfirm({
-			title: 'Delete role',
-			text: `Do you want to delete a role "${role.name}"?`
+			title: 'Delete Access Policy',
+			text: `Do you want to delete an Access Policy "${policy.name}"?`
 		});
 		if (!isConfirm) return false;
-		await useApi('role.delete', { params: { id: role.id } });
-		useNotify({ type: 'success', title: `Role "${role.name}" was deleted.` });
+		await useApi('accessPolicy.delete', { params: { id: policy.id } });
+		useNotify({
+			type: 'success',
+			title: `Access Policy "${policy.name}" was deleted.`
+		});
 		refresh();
 	}
 
@@ -102,12 +103,11 @@
 			page: newPage,
 			user_code__contains: searchTerm.value
 		};
-		const res = await useApi('roleList.get', {
-			filters: payload,
-			query: { page: newPage }
+		const res = await useApi('accessPolicyList.get', {
+			filters: payload
 		});
 		count.value = res.count;
-		roles.value = res.results.map((item) => {
+		accessPolicies.value = res.results.map((item) => {
 			return {
 				id: `${item.id}`,
 				user_code: item.user_code,
@@ -136,6 +136,14 @@
 		justify-content: space-between;
 		text-align: left;
 		user-select: auto;
+	}
+	.bi_no_borders {
+		max-width: 35%;
+		font-size: 14px !important;
+		margin-bottom: 10px !important;
+		:deep(.right_btn) {
+			margin-left: 10px !important;
+		}
 	}
 	.cards {
 		display: grid;

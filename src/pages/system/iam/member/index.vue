@@ -2,19 +2,17 @@
 	<div>
 		<FmTopRefresh @refresh="refresh()">
 			<template #action>
-				<FmIcon
-					btnPrimary
-					icon="add"
-					@click="
-						usePrefixedRouterPush(
-							$router,
-							$route,
-							`/settings/permission/group/add`
-						)
+				<NuxtLink
+					:to="
+						useGetNuxtLink('/system/iam/member/add', $route.params)
 					"
-				/>
+				>
+					<FmIcon btnPrimary icon="add" />
+				</NuxtLink>
+
 			</template>
 		</FmTopRefresh>
+
 		<div class="fm_container">
 			<FmTextField
 				v-model="searchTerm"
@@ -23,13 +21,22 @@
 				@update:model-value="setFiltersQueryDebounced"
 			/>
 			<BaseTable
-				:headers="['', 'Id', 'User Code', 'Configuration Code', 'Name']"
-				:items="groupsRows"
+				:headers="[
+					'',
+					'id',
+					'Name',
+					'Is Admin',
+					'Is Owner',
+					'Is Deleted',
+					'Status',
+					'Groups',
+					'Roles'
+				]"
+				:items="members"
 				:status="!loading ? 'done' : 'loading'"
 				:isRightKebab="false"
-				colls="62.5px repeat(4, 1fr)"
-				rowKeyProp="id"
-				:cb="(id) => usePrefixedRouterPush($router, $route, `/settings/permission/group/${groups[id].id}`)"
+				colls="50px repeat(8, 1fr)"
+				:cb="generateLink"
 				class="clickable_rows"
 			>
 				<template #actions="{index}">
@@ -39,7 +46,7 @@
 								<FmIcon icon="more_vert" />
 							</template>
 							<div class="fm_list">
-								<div class="fm_list_item" @click="deleteGroup(index)">
+								<div class="fm_list_item" @click="deleteMember(index)">
 									<FmIcon class="m-r-4" icon="delete" />
 									Delete
 								</div>
@@ -62,7 +69,7 @@
 
 <script setup>
 	import { FmPagination } from '@finmars/ui';
-	import { usePrefixedRouterPush } from '~/composables/useMeta';
+	import { useGetNuxtLink, usePrefixedRouterPush } from '~/composables/useMeta';
 	import { debounce } from 'lodash';
 
 	definePageMeta({
@@ -73,32 +80,52 @@
 	const router = useRouter();
 
 	const searchTerm = ref('');
-	const groups = ref([]);
+	const stockMembers = ref(null);
 	const loading = ref(false);
 	const count = ref(0);
 	const pageSize = ref(40);
 	const currentPage = ref(route.query.page ? parseInt(route.query.page) : 1);
 
-	const groupsRows = computed(() => {
-		return groups.value.map((group) => {
-			return {
-				id: `${group.id}`,
-				user_code: group.user_code,
-				configuration_code: group.configuration_code,
-				name: group.name
-			};
+	const members = computed(() => {
+		const data = [];
+		if (!stockMembers.value) return [];
+
+		stockMembers.value.forEach((item) => {
+			data.push({
+				id: `${item.id}`,
+				username: item.username,
+				is_admin: item.is_admin ? 'Admin' : 'No',
+				is_owner: item.is_owner ? 'Owner' : 'No',
+				is_deleted: item.is_deleted ? 'Deleted' : 'No',
+				status: item.status,
+				groups: item.groups_object.map((item) => item.name).join(', '),
+				roles: item.roles_object.map((item) => item.name).join(', ')
+			});
 		});
+
+		return data;
 	});
 
-	async function deleteGroup(index) {
-		const group = groups.value[index];
+	function generateLink(id) {
+		usePrefixedRouterPush(
+			router,
+			route,
+			`/system/iam/member/${members.value[id].id}`
+		);
+	}
+
+	async function deleteMember(index) {
+		const usernameDel = members.value[index].username?.value;
 		const isConfirm = await useConfirm({
-			title: 'Delete group',
-			text: `Do you want to delete a group "${group.name}"?`
+			title: 'Delete member',
+			text: `Do you want to delete a member "${usernameDel}"?`
 		});
 		if (!isConfirm) return false;
-		await useApi('group.delete', { params: { id: group.id } });
-		useNotify({ type: 'success', title: `Group "${group.name}" was deleted.` });
+		await useApi('member.delete', { params: { id: members.value[index].id } });
+		useNotify({
+			type: 'success',
+			title: `Member "${usernameDel}" was deleted.`
+		});
 		refresh();
 	}
 
@@ -113,21 +140,14 @@
 		const payload = {
 			page_size: pageSize.value,
 			page: newPage,
-			user_code__contains: searchTerm.value
+			username: searchTerm.value
 		};
-		const res = await useApi('groupList.get', {
+		const res = await useApi('memberList.get', {
 			filters: payload,
 			query: { page: newPage }
 		});
 		count.value = res.count;
-		groups.value = res.results.map((item) => {
-			return {
-				id: `${item.id}`,
-				user_code: item.user_code,
-				configuration_code: item.configuration_code,
-				name: item.name
-			};
-		});
+		stockMembers.value = res.results;
 		loading.value = false;
 	}
 
