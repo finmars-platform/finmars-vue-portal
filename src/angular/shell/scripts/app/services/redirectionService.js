@@ -23,7 +23,7 @@ export default function () {
             'app.portal.home': urlBeginning + '/v/home',
             'app.profile': profileUrl,
             'app.portal.reports.performance-report': urlBeginning + '/v/reports/performance',
-            'app.portal.settings.users-groups': urlBeginning + '/v/settings/permissions',
+            'app.portal.settings.users-groups': urlBeginning + '/v/system/iam',
         };
 
 

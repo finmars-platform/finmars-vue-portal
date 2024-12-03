@@ -1,15 +1,14 @@
 <template>
 	<div>
-		<FmTopRefresh @refresh="refresh()">
+		<FmTopRefresh
+			@refresh="refresh()"
+		>
 			<template #action>
-				<NuxtLink
-					:to="
-						useGetNuxtLink('/settings/permission/member/add', $route.params)
-					"
-				>
-					<FmIcon btnPrimary icon="add" />
-				</NuxtLink>
-
+				<FmIcon
+					btnPrimary
+					icon="add"
+					@click="usePrefixedRouterPush($router, $route, `/system/iam/role/add`)"
+				/>
 			</template>
 		</FmTopRefresh>
 
@@ -21,33 +20,25 @@
 				@update:model-value="setFiltersQueryDebounced"
 			/>
 			<BaseTable
-				:headers="[
-					'',
-					'id',
-					'Name',
-					'Is Admin',
-					'Is Owner',
-					'Is Deleted',
-					'Status',
-					'Groups',
-					'Roles'
-				]"
-				:items="members"
+				:headers="['', 'Id', 'User Code', 'Configuration Code', 'Name']"
+				:items="roles"
 				:status="!loading ? 'done' : 'loading'"
 				:isRightKebab="false"
-				colls="50px repeat(8, 1fr)"
-				:cb="generateLink"
+				colls="50px repeat(4, 1fr)"
+				:cb="(id) => usePrefixedRouterPush($router, $route, `/system/iam/role/${roles[id].id}`)"
 				class="clickable_rows"
 			>
 				<template #actions="{index}">
 					<div class="flex jcc aic height-100">
 						<FmMenu attach="body">
 							<template #btn>
-								<FmIcon icon="more_vert" />
+								<FmIcon icon="more_vert"/>
 							</template>
 							<div class="fm_list">
-								<div class="fm_list_item" @click="deleteMember(index)">
-									<FmIcon class="m-r-4" icon="delete" />
+								<div class="fm_list_item"
+									 @click="deleteRole(index)"
+								>
+									<FmIcon class="m-r-4" icon="delete"/>
 									Delete
 								</div>
 							</div>
@@ -69,7 +60,7 @@
 
 <script setup>
 	import { FmPagination } from '@finmars/ui';
-	import { useGetNuxtLink, usePrefixedRouterPush } from '~/composables/useMeta';
+	import { usePrefixedRouterPush } from '~/composables/useMeta';
 	import { debounce } from 'lodash';
 
 	definePageMeta({
@@ -80,52 +71,21 @@
 	const router = useRouter();
 
 	const searchTerm = ref('');
-	const stockMembers = ref(null);
+	const roles = ref([]);
 	const loading = ref(false);
 	const count = ref(0);
 	const pageSize = ref(40);
 	const currentPage = ref(route.query.page ? parseInt(route.query.page) : 1);
 
-	const members = computed(() => {
-		const data = [];
-		if (!stockMembers.value) return [];
-
-		stockMembers.value.forEach((item) => {
-			data.push({
-				id: `${item.id}`,
-				username: item.username,
-				is_admin: item.is_admin ? 'Admin' : 'No',
-				is_owner: item.is_owner ? 'Owner' : 'No',
-				is_deleted: item.is_deleted ? 'Deleted' : 'No',
-				status: item.status,
-				groups: item.groups_object.map((item) => item.name).join(', '),
-				roles: item.roles_object.map((item) => item.name).join(', ')
-			});
-		});
-
-		return data;
-	});
-
-	function generateLink(id) {
-		usePrefixedRouterPush(
-			router,
-			route,
-			`/settings/permission/member/${members.value[id].id}`
-		);
-	}
-
-	async function deleteMember(index) {
-		const usernameDel = members.value[index].username?.value;
+	async function deleteRole(index) {
+		const role = roles.value[index];
 		const isConfirm = await useConfirm({
-			title: 'Delete member',
-			text: `Do you want to delete a member "${usernameDel}"?`
+			title: 'Delete role',
+			text: `Do you want to delete a role "${role.name}"?`
 		});
 		if (!isConfirm) return false;
-		await useApi('member.delete', { params: { id: members.value[index].id } });
-		useNotify({
-			type: 'success',
-			title: `Member "${usernameDel}" was deleted.`
-		});
+		await useApi('role.delete', { params: { id: role.id } });
+		useNotify({ type: 'success', title: `Role "${role.name}" was deleted.` });
 		refresh();
 	}
 
@@ -140,14 +100,21 @@
 		const payload = {
 			page_size: pageSize.value,
 			page: newPage,
-			username: searchTerm.value
+			user_code__contains: searchTerm.value
 		};
-		const res = await useApi('memberList.get', {
+		const res = await useApi('roleList.get', {
 			filters: payload,
 			query: { page: newPage }
 		});
 		count.value = res.count;
-		stockMembers.value = res.results;
+		roles.value = res.results.map((item) => {
+			return {
+				id: `${item.id}`,
+				user_code: item.user_code,
+				configuration_code: item.configuration_code,
+				name: item.name
+			};
+		});
 		loading.value = false;
 	}
 
