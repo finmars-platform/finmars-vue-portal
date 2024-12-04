@@ -14,9 +14,9 @@
 				</FmTooltip>
 			</FmIconButton>
 
-			<FmButton @click="onOpenNew" class="button">
-				Add new Configuration</FmButton
-			>
+			<FmButton @click="onOpenNew" rounded class="button">
+				Add new Configuration
+			</FmButton>
 		</div>
 		<FmTextField
 			outlined
@@ -41,10 +41,17 @@
 				:isPrimary="item.is_primary"
 				class="item"
 			/>
+			<div
+				v-if="isLoading"
+				class="absolute left-0 top-0 w-full h-full flex justify-center items-center bg-[var(--tasks-loading-bg)]"
+			>
+				<FmProgressCircular indeterminate />
+			</div>
 		</div>
 		<FmPagination
 			v-model="filters.page"
-			:items-per-page="20"
+			:disabled="isLoading"
+			:items-per-page="filters.page_size"
 			:total-items="total"
 			@update:model-value="setFilters({ page: $event })"
 		/>
@@ -58,6 +65,7 @@
 		FmButton,
 		FmIconButton,
 		FmPagination,
+		FmProgressCircular,
 		FmTextField,
 		FmTooltip
 	} from '@finmars/ui';
@@ -66,7 +74,7 @@
 	import { useGetNuxtLink } from '~/composables/useMeta';
 
 	definePageMeta({
-		middleware: 'auth',
+		middleware: 'auth'
 	});
 
 	const route = useRoute();
@@ -76,7 +84,8 @@
 	const total = ref(0);
 	const filters = ref({
 		page: 1,
-		query: null
+		query: null,
+		page_size: 20
 	});
 	const items = ref([]);
 
@@ -87,13 +96,13 @@
 	async function getConfigurationList() {
 		try {
 			isLoading.value = true;
-			const { query, page } = filters.value;
+			const { query, page, page_size } = filters.value;
 
 			const data = await useApi('manageConfigurationList.get', {
 				filters: {
 					...(query && { query }),
 					page,
-					page_size: 40,
+					page_size,
 					ordering: 'name'
 				}
 			});
@@ -118,7 +127,7 @@
 
 	const setFiltersDebounced = debounce(async (value) => {
 		await setFilters({ query: value, page: 1 });
-	}, 300);
+	}, 700);
 
 	function onOpenNew() {
 		router.push(

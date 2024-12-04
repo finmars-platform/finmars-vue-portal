@@ -19,7 +19,9 @@
 			<div class="description"></div>
 		</div>
 
-		<FmButton size="small" @click="onOpen" class="button"> Open</FmButton>
+		<FmButton size="small" @click="onOpen" class="button" rounded>
+			Open</FmButton
+		>
 	</div>
 </template>
 
