@@ -6,15 +6,18 @@
 			v-if="item"
 			:configuration_code="item.configuration_code"
 			:name="item.name"
+			:itemId="item.name"
 			:description="item.description"
 			:version="item.version"
 			:channel="item.channel"
 			:type="item.type"
 			:is_primary="item.is_primary"
 			:is_package="item.is_package"
+			:is_from_marketplace="item.is_from_marketplace"
 			:configurationId="item.id"
 			:manifest="item.manifest"
 			:user_code="item.user_code"
+			:short_name="item.short_name"
 		/>
 	</section>
 </template>

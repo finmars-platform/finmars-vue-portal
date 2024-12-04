@@ -7,13 +7,13 @@
 			:fileInfo="downloadFileData"
 		/>
 		<div v-if="task">
-			<a
+			<NuxtLink
 				class="task-card-name"
-				:href="getUrlToOldApp('/tasks')"
 				target="_blank"
+				:to="useGetNuxtLink('/system/task', $route.params)"
 			>
 				{{ task.verbose_name }} [{{ task.id }}]
-			</a>
+			</NuxtLink>
 
 			<div v-tooltip="task.created" class="task-card-started-at">
 				Started at: <b>{{ dayjs(task.created).format('HH:mm:ss') }}</b>
@@ -96,46 +96,46 @@
 </template>
 
 <script setup>
-	import { getUrlToOldApp } from '~/composables/useUtils'
-	import dayjs from 'dayjs'
+	import dayjs from 'dayjs';
+	import { useGetNuxtLink } from '~/composables/useMeta';
 
 	const props = defineProps({
 		taskId: Number
-	})
+	});
 
-	const emit = defineEmits(['removeTaskId', 'update'])
+	const emit = defineEmits(['removeTaskId', 'update']);
 
-	const taskDescriptionPretty = ref('')
-	const task = ref(null)
-	const timeOut = ref(null)
-	const downloadFileData = ref(null)
+	const taskDescriptionPretty = ref('');
+	const task = ref(null);
+	const timeOut = ref(null);
+	const downloadFileData = ref(null);
 
 	function close() {
-		emit('removeTaskId')
+		emit('removeTaskId');
 	}
 
 	async function getTask() {
 		try {
 			task.value = await useApi('taskCard.get', {
 				params: { taskId: props.taskId }
-			})
+			});
 
 			if (task.value.progress_object) {
 				taskDescriptionPretty.value = splitLongWords(
 					task.value.progress_object.description,
 					20
-				)
+				);
 			}
 
 			if (task.value.status === 'P' && props.taskId) {
 				timeOut.value = setTimeout(() => {
-					getTask()
-				}, 2000)
+					getTask();
+				}, 2000);
 			} else {
-				emit('update')
+				emit('update');
 			}
 		} catch (e) {
-			console.warn('Error getTask', e)
+			console.warn('Error getTask', e);
 		}
 	}
 
@@ -143,27 +143,27 @@
 		try {
 			const response = await useApi('fileReport.get', {
 				params: { fileId: item.file_report }
-			})
+			});
 
 			downloadFileData.value = {
 				content: new Blob([response], {
 					type: item.file_report_object.content_type
 				}),
 				info: item
-			}
+			};
 		} catch (e) {
-			console.warn('Error downloadFile', e)
+			console.warn('Error downloadFile', e);
 		}
 	}
 
 	onMounted(() => {
-		getTask(props.taskId)
-	})
+		getTask(props.taskId);
+	});
 
 	onUnmounted(() => {
-		clearTimeout(timeOut.value)
-		timeOut.value = null
-	})
+		clearTimeout(timeOut.value);
+		timeOut.value = null;
+	});
 </script>
 
 <style scoped lang="scss">

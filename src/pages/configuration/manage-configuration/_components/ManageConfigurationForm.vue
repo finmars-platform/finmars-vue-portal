@@ -26,7 +26,7 @@
 			hide-details
 			label="Configuration Code"
 			placeholder="Enter configuration code"
-			:disabled="configurationId"
+			:disabled="!!configurationId"
 			v-model="formState.configuration_code"
 			class="input"
 		/>
@@ -61,6 +61,7 @@
 			v-model="formState.channel"
 			:options="CHANNELS"
 			variant="outlined"
+			height="auto"
 			label="Status"
 			placeholder="Select statuses"
 			persistent-placeholder
@@ -68,6 +69,7 @@
 		<FmSelect
 			v-model="formState.type"
 			:options="TYPES"
+			height="auto"
 			variant="outlined"
 			label="Status"
 			placeholder="Select statuses"
@@ -81,7 +83,7 @@
 			/>
 			<FmTooltip>
 				<template #activator="{ props }">
-					<FmIcon icon="mdi-information" v-bind="props" />
+					<FmIcon class="ml-1" icon="mdi-information" v-bind="props" />
 				</template>
 
 				<span
@@ -92,6 +94,7 @@
 		</div>
 		<div v-if="configurationId">
 			<p>Manifest</p>
+			{{ formState.manifest }}
 			<VAceEditor
 				v-model:value="formState.manifest"
 				lang="json"
@@ -241,6 +244,7 @@
 				<template v-else>
 					<FmTextField
 						outlined
+						:maxlength="100"
 						hide-details
 						clearable
 						:label="`Changelog (optional) ${credential.changelog ? credential.changelog.length : 0} / 100)`"
@@ -313,7 +317,7 @@
 		</div>
 
 		<div class="footer">
-			<div class="flex">
+			<div class="flex justify-end">
 				<FmButton
 					v-if="
 						configurationId &&
@@ -353,13 +357,55 @@
 				</FmButton>
 			</div>
 		</div>
+
+		<BaseModal
+			v-model="showModal"
+			title="JSON Editor - Configuration"
+			class="width-80"
+		>
+			<VAceEditor
+				v-model:value="asJson"
+				lang="json"
+				theme="monokai"
+				class="viewer"
+				@init="onEditorInit"
+			/>
+
+			<template #controls>
+				<div class="flex justify-end">
+					<FmButton
+						@click="showModal = false"
+						type="secondary"
+						class="button mr-auto"
+						>Close
+					</FmButton>
+					<FmButton
+						@click="convertToExport"
+						type="secondary"
+						class="button mr-2"
+						>Convert to Export
+					</FmButton>
+					<FmButton type="secondary" @click="downloadAsJson" class="button mr-2"
+						>Download
+					</FmButton>
+					<FmButton @click="save" class="button"> Save</FmButton>
+				</div>
+			</template>
+		</BaseModal>
 	</form>
 </template>
 
 <script setup>
 	import { useGetNuxtLink } from '~/composables/useMeta';
-	import { FmButton, FmSelect, FmTextField, FmTooltip } from '@finmars/ui';
+	import {
+		FmButton,
+		FmSelect,
+		FmTextField,
+		FmTooltip,
+		FmIcon
+	} from '@finmars/ui';
 	import useAceEditor from '~/composables/useAceEditor';
+	import { downloadFile } from '~/pages/explorer/helper';
 
 	const route = useRoute();
 	const router = useRouter();
@@ -418,7 +464,9 @@
 		is_primary: Boolean,
 		is_package: Boolean,
 		manifest: Object,
-		user_code: String
+		user_code: String,
+		is_from_marketplace: Boolean,
+		short_name: String
 	});
 
 	const formState = reactive({
@@ -430,7 +478,9 @@
 		type: props.type || TYPES[0].value,
 		is_primary: props.is_primary || false,
 		is_package: props.is_package || false,
-		manifest: JSON.stringify(props.manifest, null, 4) || {}
+		is_from_marketplace: props.is_from_marketplace || false,
+		manifest: wrapperStringify(props.manifest),
+		short_name: props.short_name || null
 	});
 
 	const credential = reactive({
@@ -441,6 +491,8 @@
 
 	const processing = ref(false);
 	const isShowLogin = ref(false);
+	const showModal = ref(false);
+	const asJson = ref(null);
 
 	const defaultConfigurationCode = computed(
 		() => 'local.poms.' + store.user?.base_api_url
@@ -453,8 +505,47 @@
 		goToList();
 	}
 
-	function makeCopy() {
-		console.log('makeCopy');
+	function wrapperStringify(obj) {
+		try {
+			return JSON.stringify(obj || {}, null, 4);
+		} catch (e) {
+			console.warn(e, 'Json has problem');
+			return '';
+		}
+	}
+
+	async function makeCopy() {
+		await create(true);
+	}
+
+	async function create(isCopy) {
+		try {
+			await useApi('setConfiguration.post', {
+				body: Object.assign({}, formState, {
+					manifest: props.configurationId
+						? JSON.parse(formState.manifest)
+						: {
+								name: formState.name,
+								configuration_code: formState.configuration_code,
+								version: formState.version,
+								description: formState.description,
+								date: new Date().toJSON().slice(0, 10),
+								dependencies: []
+							}
+				})
+			});
+
+			useNotify({
+				type: 'success',
+				title: `Configuration ${props.user_code} was successfully ${isCopy ? 'copied' : 'created'}`
+			});
+
+			await goToList();
+		} catch (e) {
+			console.warn('AGREE ERROR. ', e);
+		} finally {
+			processing.value = false;
+		}
 	}
 
 	async function agree() {
@@ -481,31 +572,7 @@
 				processing.value = false;
 			}
 		} else {
-			formState.manifest = {
-				name: formState.name,
-				configuration_code: formState.configuration_code,
-				version: formState.version,
-				description: formState.description,
-				date: new Date().toJSON().slice(0, 10),
-				dependencies: []
-			};
-
-			try {
-				await useApi('setConfiguration.post', {
-					body: formState
-				});
-
-				useNotify({
-					type: 'success',
-					title: `Configuration ${props.user_code} was successfully created`
-				});
-
-				await goToList();
-			} catch (e) {
-				console.warn('AGREE ERROR. ', e);
-			} finally {
-				processing.value = false;
-			}
+			await create();
 		}
 	}
 
@@ -593,7 +660,143 @@
 	}
 
 	function editAsJson() {
-		console.log('editAsJson');
+		asJson.value = wrapperStringify(
+			Object.assign({}, formState, {
+				manifest: JSON.parse(formState.manifest),
+				id: props.configurationId
+			})
+		);
+		showModal.value = true;
+	}
+
+	function downloadAsJson() {
+		const name = formState.name;
+
+		try {
+			downloadFile(asJson.value, 'application/json', name);
+		} catch (e) {
+			console.warn(e, 'JSON has problem');
+		}
+	}
+
+	function recursiveConvert(obj) {
+		Object.keys(obj).forEach(function (key) {
+			if (key === 'id') {
+				delete obj.id;
+			}
+
+			if (key.indexOf('___') !== -1) {
+				delete obj[key];
+			}
+
+			if (key === 'deleted_user_code') {
+				delete obj.deleted_user_code;
+			}
+
+			if (key === 'procedure_modified_datetime') {
+				delete obj['procedure_modified_datetime'];
+			}
+
+			if (key === 'created_at') {
+				delete obj.created_at;
+			}
+
+			if (key === 'modified_at') {
+				delete obj.modified_at;
+			}
+
+			if (key === 'is_deleted') {
+				delete obj.is_deleted;
+			}
+
+			if (obj.hasOwnProperty(key + '_object')) {
+				if (obj[key + '_object']) {
+					obj[key] = obj[key + '_object']['user_code'];
+					delete obj[key + '_object'];
+				}
+			}
+
+			if (key === 'pricing_policies') {
+				delete obj.pricing_policies;
+			}
+			if (key === 'registers') {
+				delete obj.registers;
+			}
+
+			if (key === 'attributes') {
+				obj.attributes = obj.attributes.map(function (attribute) {
+					attribute.attribute_type = attribute.attribute_type_object.user_code;
+					delete attribute.attribute_type_object;
+
+					if (attribute.classifier_object) {
+						attribute.classifier = attribute.classifier_object.name;
+						delete attribute.classifier_object;
+					}
+
+					return attribute;
+				});
+			}
+
+			if (key === 'accrual_calculation_schedules') {
+				obj.accrual_calculation_schedules =
+					obj.accrual_calculation_schedules.map(function (item) {
+						delete item['id'];
+						item['accrual_calculation_model'] =
+							item['accrual_calculation_model_object']['user_code'];
+						delete item['accrual_calculation_model_object'];
+
+						item['periodicity'] = item['periodicity_object']['user_code'];
+						delete item['periodicity_object'];
+
+						return item;
+					});
+			}
+		});
+
+		return obj;
+	}
+
+	function convertToExport() {
+		const converted = recursiveConvert(
+			Object.assign({}, formState, {
+				manifest: JSON.parse(formState.manifest),
+				id: props.configurationId
+			})
+		);
+
+		asJson.value = wrapperStringify(converted);
+
+		useNotify({ title: 'Converted', type: 'success' });
+	}
+
+	async function save() {
+		processing.value = true;
+
+		try {
+			if (props.configurationId) {
+				try {
+					await useApi('setConfiguration.put', {
+						params: { id: props.configurationId },
+						body: JSON.parse(asJson.value)
+					});
+
+					useNotify({
+						type: 'success',
+						title: `Configuration ${props.user_code} was successfully saved`
+					});
+
+					await goToList();
+				} catch (e) {
+					console.warn('SAVE ERROR. ', e);
+				} finally {
+					processing.value = false;
+				}
+			} else {
+				await create();
+			}
+		} catch (error) {
+			processing.value = false;
+		}
 	}
 </script>
 
