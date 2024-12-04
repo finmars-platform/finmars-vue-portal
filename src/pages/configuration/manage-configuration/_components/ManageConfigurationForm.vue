@@ -94,7 +94,6 @@
 		</div>
 		<div v-if="configurationId">
 			<p>Manifest</p>
-			{{ formState.manifest }}
 			<VAceEditor
 				v-model:value="formState.manifest"
 				lang="json"
