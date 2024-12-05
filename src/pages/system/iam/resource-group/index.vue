@@ -1,70 +1,81 @@
 <template>
-	<div class="fm_container">
-		<BaseTable
-			colls="60px 1fr 1fr 1fr 1fr"
-			:items="resourceGroups"
-			:cb="clickCell"
-			:status="!loading ? 'done' : 'loading'"
-			:headers="['ID', 'Name', 'User Code', 'Description', 'Notes']"
-		/>
-		<div class="flex m-t-20">
-			<FmBtn @click="openModal()">Add Resource Group</FmBtn>
+	<div>
+		<div class="py-3 px-8">
+			<FmBreadcrumbs :crumbs="crumbs" />
 		</div>
-
-		<FmPagination
-			class="m-t-20"
-			:with-info="true"
-			:total-items="count"
-			:items-per-page="pageSize"
-			:model-value="currentPage"
-			@update:modelValue="handlePageChange"
-		/>
-
-		<BaseModal
-			v-model="showModal"
-			title="Create Resource Group"
-			class="width-40"
-		>
-			<span v-if="!newResourceGroup.user_code.length">Field is required</span>
-			<BaseInput
-				class="m-b-10"
-				v-model="newResourceGroup.user_code"
-				label="User Code"
+		<div class="fm_container">
+			<BaseTable
+				colls="60px 1fr 1fr 1fr 1fr"
+				:items="resourceGroups"
+				:cb="clickCell"
+				:status="!loading ? 'done' : 'loading'"
+				:headers="['ID', 'Name', 'User Code', 'Description', 'Notes']"
 			/>
-			<span v-if="!newResourceGroup.name.length">Field is required</span>
-			<BaseInput class="m-b-10" v-model="newResourceGroup.name" label="Name" />
-			<BaseInput
-				class="m-b-10"
-				v-model="newResourceGroup.description"
-				label="Description"
-			/>
+			<div class="flex mt-4">
+				<FmButton type="primary" @click="openModal()" rounded>
+					Add Resource Group
+				</FmButton>
+			</div>
 
-			<template #controls>
-				<div class="flex aic sb">
-					<FmBtn type="text" @click="cancelBaseModal"> Cancel </FmBtn>
-					<FmBtn
-						:disabled="!validateNewResourceGroup"
-						@click="createNewResourceGroup"
-						>Create</FmBtn
-					>
-				</div>
-			</template>
-		</BaseModal>
+			<FmPagination
+				:with-info="true"
+				:total-items="count"
+				:items-per-page="pageSize"
+				:model-value="currentPage"
+				@update:modelValue="handlePageChange"
+			/>
+			<BaseModal
+				v-model="showModal"
+				title="Create Resource Group"
+				class="width-40"
+			>
+				<FmTextField
+					v-model="newResourceGroup.user_code"
+					label="User Code"
+					:rules="[rules.required]"
+					outlined
+					class="mb-2"
+				/>
+				<FmTextField
+					v-model="newResourceGroup.name"
+					label="Name"
+					:rules="[rules.required]"
+					outlined
+					class="mb-2"
+				/>
+				<FmTextField
+					v-model="newResourceGroup.description"
+					label="Description"
+					outlined
+					class="mb-2"
+				/>
+				<template #controls>
+					<div class="flex aic sb">
+						<FmButton type="secondary" @click="cancelBaseModal" rounded>
+							Cancel
+						</FmButton>
+						<FmButton
+							type="primary"
+							:disabled="!validateNewResourceGroup"
+							@click="createNewResourceGroup"
+							rounded
+						>
+							Create
+						</FmButton>
+					</div>
+				</template>
+			</BaseModal>
+		</div>
 	</div>
 </template>
 
 <script setup>
-	import { FmPagination } from '@finmars/ui';
-
-	definePageMeta({
-		middleware: 'auth',
-		bread: [
-			{
-				text: 'Resource Group',
-				disable: true
-			}
-		]
-	});
+	import {
+		FmBreadcrumbs,
+		FmPagination,
+		FmButton,
+		FmTextField
+	} from '@finmars/ui';
 
 	const route = useRoute();
 	const router = useRouter();
@@ -75,6 +86,7 @@
 	const pageSize = ref(40);
 	const loading = ref(false);
 	const currentPage = ref(route.query.page ? parseInt(route.query.page) : 1);
+	const crumbs = ref([{ title: 'Resource Groups', path: 'resource-group' }]);
 
 	let newResourceGroup = reactive({
 		name: '',
@@ -85,6 +97,10 @@
 	const validateNewResourceGroup = computed(() => {
 		return newResourceGroup.name.length && newResourceGroup.user_code.length;
 	});
+
+	const rules = {
+		required: (value) => (value ? '' : 'Field is required')
+	};
 
 	const getResourceGroup = async (currentPage = 1) => {
 		loading.value = true;

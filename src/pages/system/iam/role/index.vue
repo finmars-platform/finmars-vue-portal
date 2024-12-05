@@ -1,18 +1,16 @@
 <template>
 	<div>
-		<FmTopRefresh
-			@refresh="refresh()"
-		>
-			<template #action>
-				<FmIcon
-					btnPrimary
-					icon="add"
-					@click="usePrefixedRouterPush($router, $route, `/system/iam/role/add`)"
-				/>
-			</template>
-		</FmTopRefresh>
-
+		<div class="py-3 px-8">
+			<FmBreadcrumbs :crumbs="crumbs" />
+		</div>
 		<div class="fm_container">
+			<FmTopRefresh @refresh="refresh()" class="mb-4">
+				<template #action>
+					<NuxtLink :to="useGetNuxtLink('/system/iam/role/add', $route.params)">
+						<FmIcon icon="mdi-plus-circle" :size="36" />
+					</NuxtLink>
+				</template>
+			</FmTopRefresh>
 			<FmTextField
 				v-model="searchTerm"
 				outlined
@@ -25,20 +23,25 @@
 				:status="!loading ? 'done' : 'loading'"
 				:isRightKebab="false"
 				colls="50px repeat(4, 1fr)"
-				:cb="(id) => usePrefixedRouterPush($router, $route, `/system/iam/role/${roles[id].id}`)"
+				:cb="
+					(id) =>
+						usePrefixedRouterPush(
+							$router,
+							$route,
+							`/system/iam/role/${roles[id].id}`
+						)
+				"
 				class="clickable_rows"
 			>
-				<template #actions="{index}">
-					<div class="flex jcc aic height-100">
+				<template #actions="{ index }">
+					<div class="flex jcc aic height-100 cursor-pointer">
 						<FmMenu attach="body">
 							<template #btn>
-								<FmIcon icon="more_vert"/>
+								<FmIcon icon="mdi-dots-vertical" :size="26" />
 							</template>
 							<div class="fm_list">
-								<div class="fm_list_item"
-									 @click="deleteRole(index)"
-								>
-									<FmIcon class="m-r-4" icon="delete"/>
+								<div class="fm_list_item" @click="deleteRole(index)">
+									<FmIcon icon="mdi-delete" :size="26" class="mr-2" />
 									Delete
 								</div>
 							</div>
@@ -47,7 +50,6 @@
 				</template>
 			</BaseTable>
 			<FmPagination
-				class="m-t-20"
 				:with-info="true"
 				:total-items="count"
 				:items-per-page="pageSize"
@@ -59,13 +61,14 @@
 </template>
 
 <script setup>
-	import { FmPagination } from '@finmars/ui';
-	import { usePrefixedRouterPush } from '~/composables/useMeta';
+	import {
+		FmTextField,
+		FmBreadcrumbs,
+		FmIcon,
+		FmPagination
+	} from '@finmars/ui';
+	import { useGetNuxtLink, usePrefixedRouterPush } from '~/composables/useMeta';
 	import { debounce } from 'lodash';
-
-	definePageMeta({
-		middleware: 'auth'
-	});
 
 	const route = useRoute();
 	const router = useRouter();
@@ -76,6 +79,7 @@
 	const count = ref(0);
 	const pageSize = ref(40);
 	const currentPage = ref(route.query.page ? parseInt(route.query.page) : 1);
+	const crumbs = ref([{ title: 'Roles', path: 'role' }]);
 
 	async function deleteRole(index) {
 		const role = roles.value[index];
