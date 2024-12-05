@@ -1,19 +1,18 @@
 <template>
 	<div>
-		<FmTopRefresh @refresh="refresh()">
-			<template #action>
-				<NuxtLink
-					:to="
-						useGetNuxtLink('/system/iam/member/add', $route.params)
-					"
-				>
-					<FmIcon btnPrimary icon="add" />
-				</NuxtLink>
-
-			</template>
-		</FmTopRefresh>
-
+		<div class="py-3 px-8">
+			<FmBreadcrumbs :crumbs="crumbs" />
+		</div>
 		<div class="fm_container">
+			<FmTopRefresh @refresh="refresh()" class="mb-4">
+				<template #action>
+					<NuxtLink
+						:to="useGetNuxtLink('/system/iam/member/add', $route.params)"
+					>
+						<FmIcon icon="mdi-plus-circle" :size="36" />
+					</NuxtLink>
+				</template>
+			</FmTopRefresh>
 			<FmTextField
 				v-model="searchTerm"
 				outlined
@@ -39,15 +38,15 @@
 				:cb="generateLink"
 				class="clickable_rows"
 			>
-				<template #actions="{index}">
-					<div class="flex jcc aic height-100">
+				<template #actions="{ index }">
+					<div class="flex jcc aic height-100 cursor-pointer">
 						<FmMenu attach="body">
 							<template #btn>
-								<FmIcon icon="more_vert" />
+								<FmIcon icon="mdi-dots-vertical" :size="26" />
 							</template>
 							<div class="fm_list">
 								<div class="fm_list_item" @click="deleteMember(index)">
-									<FmIcon class="m-r-4" icon="delete" />
+									<FmIcon icon="mdi-delete" :size="26" class="mr-2" />
 									Delete
 								</div>
 							</div>
@@ -56,7 +55,6 @@
 				</template>
 			</BaseTable>
 			<FmPagination
-				class="m-t-20"
 				:with-info="true"
 				:total-items="count"
 				:items-per-page="pageSize"
@@ -68,13 +66,9 @@
 </template>
 
 <script setup>
-	import { FmPagination } from '@finmars/ui';
+	import { FmPagination, FmBreadcrumbs, FmIcon } from '@finmars/ui';
 	import { useGetNuxtLink, usePrefixedRouterPush } from '~/composables/useMeta';
 	import { debounce } from 'lodash';
-
-	definePageMeta({
-		middleware: 'auth'
-	});
 
 	const route = useRoute();
 	const router = useRouter();
@@ -85,6 +79,7 @@
 	const count = ref(0);
 	const pageSize = ref(40);
 	const currentPage = ref(route.query.page ? parseInt(route.query.page) : 1);
+	const crumbs = ref([{ title: 'Members', path: 'member' }]);
 
 	const members = computed(() => {
 		const data = [];

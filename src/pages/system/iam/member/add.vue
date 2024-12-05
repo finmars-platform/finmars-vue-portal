@@ -1,103 +1,110 @@
 <template>
-	<CommonSettingsLayout
-		title="Add member"
-		saveText="Send invite"
-		@save="save"
-		@cancel="cancel"
-	>
-		<template #left>
-			<FmCard title="General" class="flex flex-col gap-3 mb-6">
-
-				<FmTextField
-					v-model="form.Username"
-					label="Username"
-					outlined
-				/>
-				<FmTextField
-					v-model="form.email"
-					label="Email"
-					outlined
-				/>
-
-				<!--<FmCheckbox
-					v-model="form.is_owner"
-					label="Owner"
-					class="m-b-8"
-				/>-->
-
-				<FmCheckbox
-					v-model="form.is_admin"
-					label="Admin"
-				/>
-
-			</FmCard>
-		</template>
-		<template #right>
-			<FmCard title="Groups" class="m-b-6">
-				<BaseMultiSelectInput
-					v-if="readyStatus.groups"
-					v-model="form.groups"
-					:items="groups"
-				/>
-				<FmProgressCircular v-if="!readyStatus.groups" :size="32" indeterminate />
-			</FmCard>
-
-			<FmCard title="Roles" class="m-b-6">
-				<BaseMultiSelectInput
-					v-if="readyStatus.roles"
-					v-model="form.roles"
-					:items="roles"
-				/>
-				<FmProgressCircular v-if="!readyStatus.roles" :size="32" indeterminate />
-			</FmCard>
-			<FmCard title="Personal Access Policies" class="m-b-6">
-				<BaseMultiSelectInput
-					v-if="readyStatus.accessPolicies"
-					v-model="form.access_policies"
-					:items="accessPolicies"
-				/>
-				<FmProgressCircular v-if="!readyStatus.accessPolicies" :size="32" indeterminate />
-			</FmCard>
-		</template>
-	</CommonSettingsLayout>
+	<div>
+		<div class="py-3 px-8">
+			<FmBreadcrumbs :crumbs="crumbs" @update-crumbs="handleCrumbs" />
+		</div>
+		<CommonSettingsLayout
+			title="Add member"
+			saveText="Send invite"
+			@save="save"
+			@cancel="cancel"
+		>
+			<template #left>
+				<FmCard title="General" class="flex flex-col gap-3 mb-6">
+					<FmTextField v-model="form.username" label="Username" outlined />
+					<FmTextField v-model="form.email" label="Email" outlined />
+					<FmCheckbox v-model="form.is_admin" label="Admin" />
+				</FmCard>
+			</template>
+			<template #right>
+				<FmCard title="Groups" class="mb-6">
+					<BaseMultiSelectInput
+						v-if="readyStatus.groups"
+						v-model="form.groups"
+						:items="groups"
+					/>
+					<div class="flex w-full justify-center">
+						<FmProgressCircular
+							v-if="!readyStatus.groups"
+							:size="32"
+							indeterminate
+						/>
+					</div>
+				</FmCard>
+				<FmCard title="Roles" class="mb-6">
+					<BaseMultiSelectInput
+						v-if="readyStatus.roles"
+						v-model="form.roles"
+						:items="roles"
+					/>
+					<div class="flex w-full justify-center">
+						<FmProgressCircular
+							v-if="!readyStatus.roles"
+							:size="32"
+							indeterminate
+						/>
+					</div>
+				</FmCard>
+				<FmCard title="Personal Access Policies" class="mb-6">
+					<BaseMultiSelectInput
+						v-if="readyStatus.accessPolicies"
+						v-model="form.access_policies"
+						:items="accessPolicies"
+					/>
+					<div class="flex w-full justify-center">
+						<FmProgressCircular
+							v-if="!readyStatus.accessPolicies"
+							:size="32"
+							indeterminate
+						/>
+					</div>
+				</FmCard>
+			</template>
+		</CommonSettingsLayout>
+	</div>
 </template>
 
 <script setup>
-	import {loadMultiselectOpts} from "~/pages/settings/helper";
+	import {
+		FmTextField,
+		FmProgressCircular,
+		FmBreadcrumbs,
+		FmCheckbox
+	} from '@finmars/ui';
+	import {
+		getRealmSpaceCodes,
+		loadMultiselectOpts
+	} from '~/pages/system/helper';
 
-	definePageMeta({
-		middleware: 'auth',
-		bread: [
-			{
-				text: 'Permissions: Members',
-				to: '/settings/permission',
-				disabled: false
-			},
-			{
-				text: 'Add member',
-				disabled: true
-			},
-		],
-	});
-	const store = useStore()
-	const route = useRoute()
-	const router = useRouter()
+	const store = useStore();
+	const route = useRoute();
+	const router = useRouter();
+
+	const { realmCode, spaceCode } = getRealmSpaceCodes(route);
+	const crumbs = ref([
+		{ title: 'Members', path: 'member' },
+		{ title: 'Add', path: 'add' }
+	]);
 
 	const readyStatus = reactive({
 		groups: false,
 		roles: false,
-		accessPolicies: false,
-	})
+		accessPolicies: false
+	});
 
 	const form = reactive({
 		groups: [],
 		base_api_url: store.space_code,
 		is_owner: false
-	})
+	});
 
 	const groups = ref([]);
 	const roles = ref([]);
 	const accessPolicies = ref([]);
+
+	const handleCrumbs = (newCrumbs, newPath) => {
+		router.push(`/${realmCode}/${spaceCode}/v/system/iam` + newPath);
+	};
 
 	async function init() {
 		const res = await Promise.all([
@@ -117,9 +124,12 @@
 			...form,
 			groups: form.groups,
 			roles: form.roles
-		}
+		};
 
-		let res = await useApi('member.post', {body: sendedForm, params: {id: route.params.id}})
+		let res = await useApi('member.post', {
+			body: sendedForm,
+			params: { id: route.params.id }
+		});
 
 		if (!res._$error) {
 			useNotify({ type: 'success', title: 'Invite sent!' });
