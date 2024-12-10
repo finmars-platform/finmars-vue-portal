@@ -564,5 +564,14 @@ export default {
 		put: prefix + '/configuration/configuration/{id}/',
 		post: prefix + '/configuration/configuration/',
 		delete: prefix + '/configuration/configuration/{id}/'
+	},
+	journalList: {
+		get: prefix + '/history/historical-record/'
+	},
+	availableContentTypes: {
+		get: prefix + '/history/historical-record/content-types/'
+	},
+	historicalRecordData: {
+		get: prefix + '/history/historical-record/{id}/data'
 	}
 };
