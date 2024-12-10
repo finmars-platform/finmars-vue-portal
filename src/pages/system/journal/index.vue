@@ -209,7 +209,7 @@
 			</div>
 			<template #controls>
 				<div class="flex-row fc-space-between">
-					<FmBtn type="text" @click="downloadFile(modalItem.notes, '.txt')"
+					<FmBtn type="text" @click="download(modalItem.notes, '.txt')"
 						>Download</FmBtn
 					>
 					<FmBtn @click="cancel">Ok</FmBtn>
@@ -219,12 +219,12 @@
 
 		<BaseModal title="File Preview" v-model="isDiff" style="min-width: 40vw">
 			<div class="flex justify-between relative w-full h-full pb-4">
-				<v-ace-editor
-					v-model:value="modalItem.diff"
-					@init="initEditor"
+				<VAceEditor
+					:value="JSON.stringify(JSON.parse(modalItem.diff), null, 4)"
 					lang="json"
 					theme="monokai"
 					class="min-h-80 w-full"
+					@init="onEditorInit"
 				/>
 				<div
 					class="copy-wrap absolute top-4 right-4"
@@ -246,7 +246,7 @@
 			</div>
 			<template #controls>
 				<div class="flex-row fc-space-between">
-					<FmBtn type="text" @click="downloadFile(modalItem.diff, '.json')"
+					<FmBtn type="text" @click="download(modalItem.diff, '.json')"
 						>Download</FmBtn
 					>
 					<FmBtn @click="cancel">Ok</FmBtn>
@@ -256,12 +256,12 @@
 
 		<BaseModal title="File Preview" v-model="isData" style="min-width: 40vw">
 			<div class="flex justify-between relative w-full h-full pb-4">
-				<v-ace-editor
-					v-model:value="modalItem"
-					@init="initEditor"
+				<VAceEditor
+					:value="JSON.stringify(JSON.parse(modalItem), null, 4)"
 					lang="json"
 					theme="monokai"
 					class="min-h-80 w-full"
+					@init="onEditorInit"
 				/>
 				<div class="copy-wrap absolute top-4 right-4" @click="copy(modalItem)">
 					<FmTooltip type="secondary">
@@ -280,7 +280,7 @@
 			</div>
 			<template #controls>
 				<div class="flex-row fc-space-between">
-					<FmBtn type="text" @click="downloadFile(modalItem, '.json')"
+					<FmBtn type="text" @click="download(modalItem, '.json')"
 						>Download</FmBtn
 					>
 					<FmBtn @click="cancel">Ok</FmBtn>
@@ -293,10 +293,8 @@
 <script setup>
 	import dayjs from 'dayjs';
 	import { debounce } from 'lodash';
-	import { VAceEditor } from 'vue3-ace-editor';
-	import 'ace-builds/src-noconflict/mode-json';
-	import 'ace-builds/src-noconflict/theme-monokai';
-	import 'ace-builds/src-noconflict/ext-searchbox';
+	import { downloadFile } from '~/pages/system/helper';
+	import useAceEditor from '~/composables/useAceEditor';
 	import {
 		FmTextField,
 		FmPagination,
@@ -307,13 +305,15 @@
 		FmTooltip
 	} from '@finmars/ui';
 
+	const { VAceEditor, onEditorInit } = useAceEditor();
+
 	const route = useRoute();
 	const router = useRouter();
 
 	const loading = ref(false);
 	const count = ref(0);
 	const pageSize = ref(40);
-	const currentPage = ref(route.query.page ? parseInt(route.query.page) : 1);
+	const currentPage = ref(route.query?.page ? parseInt(route.query.page) : 1);
 
 	const journalFilters = ref({});
 	const modalItem = ref({});
@@ -893,53 +893,58 @@
 	];
 
 	const getData = async (newPage = 1) => {
-		await router.push({ query: { ...route.query, page: currentPage.value } });
-		loading.value = true;
-		const payload = {
-			page_size: pageSize.value,
-			page: newPage,
-			...journalFilters.value
-		};
-		const res = await useApi('journalList.get', {
-			filters: payload,
-			query: { page: newPage }
-		});
-		if (res.results) {
-			count.value = res.count;
-			items.value = res.results;
-			items.value.map((item) => {
-				item.created_pretty = dayjs(new Date(item.created_at)).format(
-					'DD-MM-YYYY HH:mm'
-				);
-				item.created_date_pretty = dayjs(new Date(item.created_at)).format(
-					'YYYY-MM-DD'
-				);
-				item.created_time_pretty = dayjs(new Date(item.created_at)).format(
-					'HH:mm'
-				);
-				item.content_type_pretty = findEntityByContentType(item.content_type);
-				if (!item.content_type_pretty) {
-					item.content_type_pretty = item.content_type;
-				}
-				try {
-					const pieces = item.context_url.split('/api/v1');
-					if (pieces.length >= 2) {
-						item.context_url_pretty = pieces[1];
-					} else {
-						item.context_url_pretty = pieces[0];
-					}
-				} catch (e) {
-					item.context_url_pretty = item.context_url;
-				}
-				try {
-					item.diff_pretty = JSON.parse(item.diff);
-				} catch (e) {
-					item.diff_pretty = item.diff;
-				}
-				return item;
+		try {
+			await router.push({ query: { ...route.query, page: currentPage.value } });
+			loading.value = true;
+			const payload = {
+				page_size: pageSize.value,
+				page: newPage,
+				...journalFilters.value
+			};
+			const res = await useApi('journalList.get', {
+				filters: payload,
+				query: { page: newPage }
 			});
+			if (res.results) {
+				count.value = res.count;
+				items.value = res.results;
+				items.value.map((item) => {
+					item.created_pretty = dayjs(new Date(item.created_at)).format(
+						'DD-MM-YYYY HH:mm'
+					);
+					item.created_date_pretty = dayjs(new Date(item.created_at)).format(
+						'YYYY-MM-DD'
+					);
+					item.created_time_pretty = dayjs(new Date(item.created_at)).format(
+						'HH:mm'
+					);
+					item.content_type_pretty = findEntityByContentType(item.content_type);
+					if (!item.content_type_pretty) {
+						item.content_type_pretty = item.content_type;
+					}
+					try {
+						const pieces = item.context_url.split('/api/v1');
+						if (pieces.length >= 2) {
+							item.context_url_pretty = pieces[1];
+						} else {
+							item.context_url_pretty = pieces[0];
+						}
+					} catch (e) {
+						item.context_url_pretty = item.context_url;
+					}
+					try {
+						item.diff_pretty = JSON.parse(item.diff);
+					} catch (e) {
+						item.diff_pretty = item.diff;
+					}
+					return item;
+				});
+			}
+		} catch (e) {
+			console.log(`Catch error: ${e}`);
+		} finally {
+			loading.value = false;
 		}
-		loading.value = false;
 	};
 
 	const getEntityNameByContentType = (contentType) => {
@@ -1154,49 +1159,40 @@
 	};
 
 	const getMembers = async () => {
-		const res = await useApi('memberList.get');
-		if (res.results) {
-			members.value = res.results.map((member) => ({
-				title: member.user.username,
-				value: member.user.username
-			}));
+		try {
+			const res = await useApi('memberList.get');
+			if (res.results) {
+				members.value = res.results.map((member) => ({
+					title: member.user.username,
+					value: member.user.username
+				}));
+			}
+		} catch (e) {
+			console.log(`Catch error: ${e}`);
 		}
 	};
 
 	const getAvailableContentTypes = async () => {
-		const res = await useApi('availableContentTypes.get');
-		if (res.results) {
-			contentTypes.value = res.results.map(function (item) {
-				item.name = getEntityNameByContentType(item.key);
-				if (!item.name) {
-					item.name = item.key;
-				}
-				return item;
-			});
-		}
-	};
-
-	const initEditor = (editor) => {
-		setTimeout(() => {
-			if (editor) {
-				editor.setValue(JSON.stringify(JSON.parse(editor.getValue()), null, 4));
-				editor.setHighlightActiveLine(false);
-				editor.setShowPrintMargin(false);
-				editor.setReadOnly(true);
-				editor.setFontSize(14);
-				editor.setBehavioursEnabled(true);
-				editor.focus();
-				editor.navigateFileStart();
+		try {
+			const res = await useApi('availableContentTypes.get');
+			if (res.results) {
+				contentTypes.value = res.results.map(function (item) {
+					item.name = getEntityNameByContentType(item.key);
+					if (!item.name) {
+						item.name = item.key;
+					}
+					return item;
+				});
 			}
-		}, 200);
+		} catch (e) {
+			console.log(`Catch error: ${e}`);
+		}
 	};
 
 	const findEntityByContentType = (contentType, type) => {
-		let contentTypes = entityContentTypeList;
 		let entity = null;
-		if (type === 'ui') {
-			contentTypes = entityContentTypeListForUi;
-		}
+		const contentTypes =
+			type === 'ui' ? entityContentTypeListForUi : entityContentTypeList;
 		contentTypes.forEach(function (item) {
 			if (item.key === contentType) {
 				entity = item.entity;
@@ -1214,7 +1210,6 @@
 		try {
 			modalItem.value = item;
 			isDiff.value = true;
-			initEditor();
 		} catch (e) {
 			modalItem.value = null;
 		}
@@ -1238,28 +1233,13 @@
 		}
 	};
 
-	const downloadFile = (downloadItem, fileType = '.txt') => {
+	const download = (downloadItem, fileType = '.txt') => {
 		const fileContent = {
 			name: modalItem.value.member_object?.username || 'Untitled',
 			content: downloadItem,
 			mime_type: fileType === '.json' ? 'application/json' : 'text/plain'
 		};
-
-		const newBlob = new Blob([fileContent.content], {
-			type: fileContent.mime_type
-		});
-
-		const data = window.URL.createObjectURL(newBlob);
-		const link = document.createElement('a');
-		link.href = data;
-		link.download = fileContent.name;
-		document.body.appendChild(link);
-		link.click();
-
-		setTimeout(() => {
-			document.body.removeChild(link);
-			window.URL.revokeObjectURL(data);
-		}, 100);
+		downloadFile(fileContent.content, fileContent.mime_type, fileContent.name);
 		cancel();
 	};
 
