@@ -1,60 +1,64 @@
 <template>
-	<CommonSettingsLayout
-		title="Add Access Policy"
-		saveText="Create Access Policy"
-		@save="save"
-		@cancel="cancel"
-	>
-		<template #left>
-			<FmCard title="General" class="flex flex-col gap-3 mb-6">
-				<FmTextField
-					v-model="form.name"
-					label="Name"
-					outlined
-				/>
-				<FmTextField
-					v-model="form.user_code"
-					:rules="[rules.required]"
-					label="User Code"
-					outlined
-				/>
-				<FmTextField
-					v-model="form.configuration_code"
-					:rules="[rules.required]"
-					label="Configuration Code"
-					outlined
-				/>
-				<FmTextField
-					v-model="form.description"
-					label="Description"
-					outlined
-				/>
-				<div :class="!isJsonValid ? 'invalid-json' : ''">
-					<v-ace-editor
-						v-model:value="policyJson"
-						@init="editorInit"
-						lang="json"
-						theme="monokai"
-						style="height: 300px"
+	<div>
+		<div class="py-3 px-8">
+			<FmBreadcrumbs :crumbs="crumbs" @update-crumbs="handleCrumbs" />
+		</div>
+		<CommonSettingsLayout
+			title="Add Access Policy"
+			saveText="Create Access Policy"
+			@save="save"
+			@cancel="cancel"
+		>
+			<template #left>
+				<FmCard title="General" class="flex flex-col gap-3 mb-6">
+					<FmTextField
+						v-model="form.name"
+						label="Name"
+						outlined
 					/>
-				</div>
-				<p v-if="!isJsonValid" class="text-red-500 text-sm mt-2">Invalid JSON format. Please check.</p>
-			</FmCard>
-		</template>
-		<template #right>
+					<FmTextField
+						v-model="form.user_code"
+						:rules="[rules.required]"
+						label="User Code"
+						outlined
+					/>
+					<FmTextField
+						v-model="form.configuration_code"
+						:rules="[rules.required]"
+						label="Configuration Code"
+						outlined
+					/>
+					<FmTextField
+						v-model="form.description"
+						label="Description"
+						outlined
+					/>
+					<div :class="!isJsonValid ? 'invalid-json' : ''">
+						<v-ace-editor
+							v-model:value="policyJson"
+							@init="editorInit"
+							lang="json"
+							theme="monokai"
+							style="height: 300px"
+						/>
+					</div>
+					<p v-if="!isJsonValid" class="text-red-500 text-sm mt-2">Invalid JSON format. Please check.</p>
+				</FmCard>
+			</template>
+			<template #right>
 
-			<div class="finmars-documentation-block">
+				<div class="finmars-documentation-block">
 
-				<h4>Access Policy</h4>
+					<h4>Access Policy</h4>
 
-				<p>
-					An AccessPolicy JSON is used to define the permissions a user, role, or group has within a system. The JSON
-					object consists of a version number, and an array of statements, each describing a set of permissions.
-				</p>
+					<p>
+						An AccessPolicy JSON is used to define the permissions a user, role, or group has within a system. The JSON
+						object consists of a version number, and an array of statements, each describing a set of permissions.
+					</p>
 
-				<h4>AccessPolicy JSON Structure</h4>
+					<h4>AccessPolicy JSON Structure</h4>
 
-				<p>
+					<p>
 					<pre class="code-block">{
 					  "Version": "2021-01-01",
 					  "Statement": [
@@ -74,35 +78,35 @@
 					  ]
 					}
 					</pre>
-				</p>
+					</p>
 
-				<h4>Version</h4>
-				<p>The Version field represents the date when the policy format was defined. It is a string in the format
-					"YYYY-MM-DD".</p>
+					<h4>Version</h4>
+					<p>The Version field represents the date when the policy format was defined. It is a string in the format
+						"YYYY-MM-DD".</p>
 
-				<h4>Statement</h4>
-				<p>The Statement field is an array of objects, where each object represents a set of permissions. Each statement
-					object contains the following fields:</p>
+					<h4>Statement</h4>
+					<p>The Statement field is an array of objects, where each object represents a set of permissions. Each statement
+						object contains the following fields:</p>
 
-				<ul>
-					<li><b>Effect</b>: The effect of the statement, either "Allow" or "Deny".</li>
-					<li><b>Action</b>: A single action or an array of actions that the statement applies to. <b>Action String is case insensitive. Policy Engine forces it to lowercase when permission evaluated</b></li>
-					<li><b>Resource</b>: The resource or resources to which the statement applies. The value can be a specific resource
-						identifier or a wildcard * to represent all resources.
-					</li>
-				</ul>
+					<ul>
+						<li><b>Effect</b>: The effect of the statement, either "Allow" or "Deny".</li>
+						<li><b>Action</b>: A single action or an array of actions that the statement applies to. <b>Action String is case insensitive. Policy Engine forces it to lowercase when permission evaluated</b></li>
+						<li><b>Resource</b>: The resource or resources to which the statement applies. The value can be a specific resource
+							identifier or a wildcard * to represent all resources.
+						</li>
+					</ul>
 
-				<h4>Action</h4>
+					<h4>Action</h4>
 
-				<p>An action represents a specific operation that can be performed on a resource. Actions are represented as
-					strings in the format "service:resource:operation", such as "finmars:accounts:create" or "finmars:accounts:edit".</p>
+					<p>An action represents a specific operation that can be performed on a resource. Actions are represented as
+						strings in the format "service:resource:operation", such as "finmars:accounts:create" or "finmars:accounts:edit".</p>
 
-				<h4>Example</h4>
+					<h4>Example</h4>
 
-				<p>The following AccessPolicy JSON allows the user to create and edit portfolios but denies the ability to delete
-					portfolios:</p>
+					<p>The following AccessPolicy JSON allows the user to create and edit portfolios but denies the ability to delete
+						portfolios:</p>
 
-				<pre class="code-block">{
+					<pre class="code-block">{
 				  "Version": "2021-01-01",
 				  "Statement": [
 					{
@@ -121,44 +125,38 @@
 				  ]
 				}</pre>
 
-			</div>
+				</div>
 
-			<h4>Resource Example</h4>
+				<h4>Resource Example</h4>
 
-			<p>Following pattern to assign access to objects</p>
-			<pre class="code-block">frn:[service]:[content_type]:[user_code]</pre>
+				<p>Following pattern to assign access to objects</p>
+				<pre class="code-block">frn:[service]:[content_type]:[user_code]</pre>
 
-			<p>Example:</p>
-			<pre class="code-block">frn:poms:portfolios.portfolio:portfolio_1</pre>
-			<pre class="code-block">frn:poms:accounts.account:bank_1</pre>
+				<p>Example:</p>
+				<pre class="code-block">frn:poms:portfolios.portfolio:portfolio_1</pre>
+				<pre class="code-block">frn:poms:accounts.account:bank_1</pre>
 
-		</template>
-	</CommonSettingsLayout>
+			</template>
+		</CommonSettingsLayout>
+	</div>
 </template>
 
 <script setup>
-
 	import {VAceEditor} from 'vue3-ace-editor';
 	import 'ace-builds/src-noconflict/mode-json';
 	import 'ace-builds/src-noconflict/ext-searchbox';
 	import 'ace-builds/src-noconflict/theme-monokai';
+	import { FmBreadcrumbs, FmTextField } from '@finmars/ui'
+	import { getRealmSpaceCodes } from '~/pages/system/helper'
 
-	definePageMeta({
-		middleware: 'auth',
-		bread: [
-			{
-				text: 'Permissions: Access Policies',
-				to: '/settings/permission',
-				disabled: false
-			},
-			{
-				text: 'Add Access Policy',
-				disabled: true
-			},
-		],
-	});
+	const route = useRoute();
+	const router = useRouter();
 
-	let router = useRouter()
+	const { realmCode, spaceCode } = getRealmSpaceCodes(route);
+	const crumbs = ref([
+		{ title: 'Access Policy', path: 'access-policy' },
+		{ title: 'Add', path: 'add' }
+	]);
 
 	let form = reactive({
 		name: '',
@@ -168,7 +166,7 @@
 		description: ''
 	})
 
-	let policyJson = ref(JSON.stringify({
+	const policyJson = ref(JSON.stringify({
 		"Version": "2023-01-01",
 		"Statement": [
 			{
@@ -180,6 +178,10 @@
 			}
 		]
 	}, null, 4))
+
+	const handleCrumbs = (newCrumbs, newPath) => {
+		router.push(`/${realmCode}/${spaceCode}/v/system/iam` + newPath);
+	};
 
 	const isJsonValid = computed(() => {
 		try {
