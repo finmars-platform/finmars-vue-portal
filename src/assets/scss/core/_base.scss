@@ -66,3 +66,13 @@ textarea {
 	width: 7px;
 }
 //# endregion
+
+//# region TODO: remove after fixing CSS variables related to font inside the Finmars UI Library
+.display-large-font {
+	font: 400 57px/64px "SF Pro Display";
+}
+
+.display-medium-font {
+	font: 400 45px/52px "SF Pro Display";
+}
+//# endregion

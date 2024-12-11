@@ -1,11 +1,11 @@
 <template>
 	<div class="h-full p-8 flex flex-col">
-		<h1 class="text-4xl mb-8 grow-0 shrink-0">Edit Pricing Policy</h1>
+		<h1 class="display-medium-font mb-8 grow-0 shrink-0">Edit Pricing Policy</h1>
 
 		<div v-if="readyStatus" class="flex flex-col justify-between grow-0 shrink-1 basis-full">
 
 			<div v-if="pricingPolicy === 'not_found'">
-				<h1 class="text-4xl text-center">Pricing Policy was not found.</h1>
+				<h1 class="text-center" style="font: var(--display-large-font);">Pricing Policy was not found.</h1>
 			</div>
 
 			<div v-else class="max-w-[900px]">
