@@ -44,3 +44,7 @@ export function downloadFile(blobParts, blobType, downloadFileName) {
 		window.URL.revokeObjectURL(data);
 	}, 100);
 }
+
+export function isObject(item) {
+	return item !== null && !Array.isArray(item) && typeof item === 'object';
+}
