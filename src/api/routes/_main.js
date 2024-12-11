@@ -573,5 +573,21 @@ export default {
 	},
 	historicalRecordData: {
 		get: prefix + '/history/historical-record/{id}/data'
+	},
+	masterUserInfo: {
+		get: prefix + '/users/master-user/get/',
+		post: prefix + '/users/master-user/update/'
+	},
+	systemInfo: {
+		get: prefix + '/utils/system-info/'
+	},
+	systemLogs: {
+		get: prefix + '/utils/system-logs/'
+	},
+	tablesSize: {
+		get: prefix + '/utils/tables-size/'
+	},
+	viewLog: {
+		get: prefix + '/utils/system-logs/view-log/'
 	}
 };
