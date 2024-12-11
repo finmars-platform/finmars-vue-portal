@@ -259,6 +259,9 @@ export default {
 	newMemberSetupConfig: {
 		get: prefix + '/configuration/new-member-setup-configuration/'
 	},
+	installNewMemberSetupConfig: {
+		put: prefix + '/configuration/new-member-setup-configuration/{id}/install/',
+	},
 	unifiedData: {
 		get: prefix + '/data/{type}/'
 	},
