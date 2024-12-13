@@ -235,32 +235,28 @@
 
 	const generateFormData = (item = null) => {
 		const formData = new FormData();
-		formData.append('name', item ? item.id : '');
-		formData.append('name', item ? item.name : '');
-		formData.append('user_code', item ? item.user_code : '');
-		formData.append('configuration_code', item ? item.configuration_code : '');
-		formData.append('notes', item ? item.notes : '');
+		formData.append('id', item?.id || '');
+		formData.append('name', item?.name || '');
+		formData.append('user_code', item?.user_code || '');
+		formData.append('configuration_code', item?.configuration_code || '');
+		formData.append('notes', item?.notes || '');
 		formData.append(
 			'target_configuration_code',
-			item ? item.target_configuration_code : ''
+			item?.target_configuration_code || ''
 		);
 		formData.append(
 			'target_configuration_version',
-			item ? item.target_configuration_version : ''
+			item?.target_configuration_version || ''
 		);
 		formData.append(
 			'target_configuration_channel',
-			item ? item.target_configuration_channel : 'stable'
+			item?.target_configuration_channel || 'stable'
 		);
 		formData.append(
 			'target_configuration_is_package',
-			item ? item.target_configuration_is_package : false
+			item?.target_configuration_is_package || false
 		);
-		if (selectedItem.value.file) {
-			formData.append('file', selectedItem.value.file);
-		} else {
-			formData.append('file', null);
-		}
+		formData.append('file', selectedItem.value.file || null);
 		return formData;
 	};
 
