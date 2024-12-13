@@ -257,7 +257,10 @@ export default {
 		get: prefix + '/ui/portal-interface-access/'
 	},
 	newMemberSetupConfig: {
-		get: prefix + '/configuration/new-member-setup-configuration/'
+		get: prefix + '/configuration/new-member-setup-configuration/',
+		put: prefix + '/configuration/new-member-setup-configuration/{id}/',
+		post: prefix + '/configuration/new-member-setup-configuration/',
+		delete: prefix + '/configuration/new-member-setup-configuration/{id}/'
 	},
 	installNewMemberSetupConfig: {
 		put: prefix + '/configuration/new-member-setup-configuration/{id}/install/',
