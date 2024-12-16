@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-	import Card from '@/pages/configuration/initial-setup/card';
+	import Card from '@/pages/configuration/initial-setup/card/index.vue';
 	import { FmButton, FmPagination, FmProgressCircular } from '@finmars/ui';
 	import MemberSetupModal from '@/pages/configuration/initial-setup/member-configuration-modal/index.vue';
 
