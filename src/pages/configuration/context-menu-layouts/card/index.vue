@@ -1,9 +1,5 @@
 <template>
-	<div
-		class="flex justify-between items-center w-full"
-		v-for="item in items"
-		:key="item"
-	>
+	<div class="flex justify-between items-center w-full">
 		<span>{{ item.name }} ({{ item.type }})</span>
 		<div class="flex gap-2">
 			<FmButton type="primary" @click="navigateToEdit(item.id)" rounded>
@@ -20,11 +16,9 @@
 	import { FmButton } from '@finmars/ui';
 
 	defineProps({
-		items: {
-			type: Array,
-			default() {
-				return [];
-			}
+		item: {
+			type: Object,
+			required: true
 		}
 	});
 	const emit = defineEmits(['edit', 'delete']);

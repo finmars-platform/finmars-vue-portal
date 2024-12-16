@@ -33,7 +33,13 @@
 			<span>No data available!</span>
 		</div>
 		<div v-else class="flex flex-col py-4 w-full gap-3">
-			<Card :items="items" @edit="generateLink" @delete="deleteItem" />
+			<Card
+				v-for="item in items"
+				@edit="generateLink"
+				@delete="deleteItem"
+				:item="item"
+				:key="item"
+			/>
 		</div>
 	</div>
 </template>
