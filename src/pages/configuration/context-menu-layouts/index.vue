@@ -33,21 +33,7 @@
 			<span>No data available!</span>
 		</div>
 		<div v-else class="flex flex-col py-4 w-full gap-3">
-			<div
-				class="flex justify-between items-center"
-				v-for="item in items"
-				:key="item"
-			>
-				<span>{{ item.name }} ({{ item.type }})</span>
-				<div class="flex gap-2">
-					<FmButton type="primary" @click="generateLink(item.id)" rounded>
-						Edit
-					</FmButton>
-					<FmButton type="secondary" @click="deleteItem(item)" rounded>
-						Delete
-					</FmButton>
-				</div>
-			</div>
+			<Card :items="items" @edit="generateLink" @delete="deleteItem" />
 		</div>
 	</div>
 </template>
@@ -55,6 +41,11 @@
 <script setup>
 	import { FmBreadcrumbs, FmButton, FmProgressCircular } from '@finmars/ui';
 	import { useGetNuxtLink, usePrefixedRouterPush } from '~/composables/useMeta';
+	import Card from '~/pages/configuration/context-menu-layouts/card/index.vue';
+
+	definePageMeta({
+		middleware: 'auth'
+	});
 
 	const route = useRoute();
 	const router = useRouter();
