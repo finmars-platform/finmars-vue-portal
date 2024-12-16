@@ -19,7 +19,7 @@
 				@open-modal="openModal"
 				@delete-item="deleteItem"
 				:item="item"
-				:key="item"
+				:key="item.id"
 			/>
 			<FmPagination
 				:with-info="true"
