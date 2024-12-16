@@ -14,7 +14,13 @@
 			<span>No data available!</span>
 		</div>
 		<template v-else>
-			<Card :items="items" @open-modal="openModal" @delete-item="deleteItem" />
+			<Card
+				v-for="item in items"
+				@open-modal="openModal"
+				@delete-item="deleteItem"
+				:item="item"
+				:key="item.id"
+			/>
 			<FmPagination
 				:with-info="true"
 				:total-items="count"
