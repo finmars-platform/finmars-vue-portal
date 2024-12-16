@@ -38,7 +38,7 @@
 				@edit="generateLink"
 				@delete="deleteItem"
 				:item="item"
-				:key="item"
+				:key="item.id"
 			/>
 		</div>
 	</div>
