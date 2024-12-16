@@ -14,21 +14,7 @@
 			<span>No data available!</span>
 		</div>
 		<template v-else>
-			<div
-				class="card flex justify-between items-center"
-				v-for="item in items"
-				:key="item"
-			>
-				<span>Name: {{ item.name }}</span>
-				<div>
-					<FmButton type="secondary" @click="openModal(item)" rounded>
-						Edit
-					</FmButton>
-					<FmButton type="secondary" @click="deleteItem(item)" rounded>
-						Delete
-					</FmButton>
-				</div>
-			</div>
+			<Card :items="items" @open-modal="openModal" @delete-item="deleteItem" />
 			<FmPagination
 				:with-info="true"
 				:total-items="count"
@@ -40,129 +26,24 @@
 		<div>
 			<FmButton type="primary" @click="openModal()" rounded> Create </FmButton>
 		</div>
-
-		<BaseModal
+		<MemberSetupModal
 			v-model="showModal"
-			title="Create New Member Setup Configuration"
-			class="width-60"
-		>
-			<div class="flex flex-column gap-3 py-3">
-				<div class="code-wrapper">
-					<div class="flex flex-row gap-1">
-						<div class="w-1/3">
-							<FmSelect
-								v-model="selectedItem.configuration_code"
-								:options="configCodeOptions"
-								label="Configuration"
-								variant="outlined"
-							/>
-							<span v-if="!selectedItem.configuration_code" class="error-text"
-								>Field is required</span
-							>
-						</div>
-						<div class="w-full">
-							<FmTextField
-								v-model="selectedItem.user_code"
-								:rules="[rules.required]"
-								label="User Code"
-								outlined
-							/>
-						</div>
-					</div>
-					<i class="text-xs my-1">
-						Result: {{ selectedItem.configuration_code }}:{{
-							selectedItem.user_code
-						}}
-					</i>
-				</div>
-				<FmTextField v-model="selectedItem.name" label="Name" outlined />
-				<div class="flex w-full justify-center items-center">
-					<FmButton @click="toggleFileMode">
-						<span v-if="isFromMarketplace">
-							I want to upload .zip file manually
-						</span>
-						<span v-else>I want to provide code from marketplace</span>
-					</FmButton>
-				</div>
-				<div v-if="isFromMarketplace">
-					<FmTextField
-						v-model="selectedItem.target_configuration_code"
-						label="Configuration Code"
-						outlined
-					/>
-					<FmTextField
-						v-model="selectedItem.target_configuration_version"
-						label="Configuration Version"
-						outlined
-					/>
-					<FmSelect
-						v-model="selectedItem.target_configuration_channel"
-						variant="outlined"
-						:options="configChanelOptions"
-						label="Configuration Chanel"
-					/>
-				</div>
-				<div v-else class="flex flex-row items-center gap-1">
-					<div class="brows-file-info">
-						{{
-							selectedItem.file_name ? selectedItem.file_name : 'Select File'
-						}}
-					</div>
-					<div class="max-w-32">
-						<FmFileUpload
-							@update-files="getBrowsedFiles"
-							:multiple="false"
-							icon="mdi-upload"
-							variant="large"
-							label="BROWSE"
-						/>
-					</div>
-				</div>
-				<FmCheckbox
-					v-model="selectedItem.target_configuration_is_package"
-					label="Is Package"
-				/>
-				<div class="flex flex-column pt-2">
-					<span class="mb-1">Notes</span>
-					<textarea
-						id="notes"
-						name="notes"
-						rows="6"
-						cols="50"
-						v-model="selectedItem.notes"
-						class="border-none decoration-0 p-2"
-					/>
-				</div>
-			</div>
-			<template #controls>
-				<div class="flex aic sb">
-					<FmButton type="secondary" @click="cancelModal"> Close </FmButton>
-					<FmButton
-						type="primary"
-						@click="confirmModal()"
-						:disabled="
-							!selectedItem.configuration_code ||
-							!selectedItem.user_code ||
-							(!isFromMarketplace && !selectedItem.file_name)
-						"
-					>
-						Save
-					</FmButton>
-				</div>
-			</template>
-		</BaseModal>
+			:modal-type="modalType"
+			:item="selectedItem"
+			@edit="editItem"
+			@create="createItem"
+			@close="closeModal"
+			@handle-marketplace="handleMarketplace"
+			:config-list="configCodeOptions"
+			:title="modalTitle"
+		/>
 	</div>
 </template>
 
 <script setup>
-	import {
-		FmButton,
-		FmTextField,
-		FmSelect,
-		FmPagination,
-		FmCheckbox,
-		FmProgressCircular
-	} from '@finmars/ui';
+	import Card from '@/pages/configuration/initial-setup/card';
+	import { FmButton, FmPagination, FmProgressCircular } from '@finmars/ui';
+	import MemberSetupModal from '@/pages/configuration/initial-setup/member-configuration-modal/index.vue';
 
 	definePageMeta({
 		middleware: 'auth'
@@ -179,8 +60,8 @@
 	const items = ref([]);
 	const isFromMarketplace = ref(true);
 	const showModal = ref(false);
-	const isEdit = ref(false);
-	const isCreate = ref(false);
+	const modalType = ref('create');
+	const modalTitle = ref('create');
 
 	const selectedItem = ref({
 		id: '',
@@ -197,14 +78,6 @@
 	});
 
 	const configCodeOptions = ref([{ title: 'No codes !', value: '' }]);
-	const configChanelOptions = [
-		{ title: 'Stable', value: 'stable' },
-		{ title: 'Release Candidate', value: 'rc' }
-	];
-
-	const rules = {
-		required: (value) => (value ? '' : 'Field is required')
-	};
 
 	const handlePageChange = (newPage) => {
 		currentPage.value = newPage;
@@ -218,7 +91,7 @@
 			user_code: item?.user_code || '',
 			configuration_code: item?.configuration_code || '',
 			notes: item?.notes || '',
-			target_configuration_code: item ? item.target_configuration_code : '',
+			target_configuration_code: item?.target_configuration_code || '',
 			target_configuration_version: item?.target_configuration_version || '',
 			target_configuration_channel:
 				item?.target_configuration_channel || 'stable',
@@ -231,28 +104,29 @@
 
 	const generateFormData = (item = null) => {
 		const formData = new FormData();
-		formData.append('id', item?.id || '');
-		formData.append('name', item?.name || '');
-		formData.append('user_code', item?.user_code || '');
-		formData.append('configuration_code', item?.configuration_code || '');
-		formData.append('notes', item?.notes || '');
-		formData.append(
-			'target_configuration_code',
-			item?.target_configuration_code || ''
-		);
-		formData.append(
-			'target_configuration_version',
-			item?.target_configuration_version || ''
-		);
-		formData.append(
-			'target_configuration_channel',
-			item?.target_configuration_channel || 'stable'
-		);
-		formData.append(
-			'target_configuration_is_package',
-			item?.target_configuration_is_package || false
-		);
-		formData.append('file', selectedItem.value.file || null);
+		const appendField = (key, value) => formData.append(key, value || '');
+		appendField('id', item?.id);
+		appendField('name', item?.name);
+		appendField('user_code', item?.user_code);
+		appendField('configuration_code', item?.configuration_code);
+		appendField('notes', item?.notes);
+		if (isFromMarketplace.value) {
+			appendField('target_configuration_code', item?.target_configuration_code);
+			appendField(
+				'target_configuration_version',
+				item?.target_configuration_version
+			);
+			appendField(
+				'target_configuration_channel',
+				item?.target_configuration_channel || 'stable'
+			);
+			appendField(
+				'target_configuration_is_package',
+				item?.target_configuration_is_package || false
+			);
+		} else if (selectedItem.value.file) {
+			formData.append('file', selectedItem.value.file);
+		}
 		return formData;
 	};
 
@@ -288,6 +162,7 @@
 			});
 			count.value = res.count;
 			items.value = res.results;
+			selectedItem.value = getEditableObject(null);
 		} catch (e) {
 			console.log(`Catch error: ${e}`);
 		} finally {
@@ -295,35 +170,32 @@
 		}
 	}
 
-	const toggleFileMode = () => {
-		isFromMarketplace.value = !isFromMarketplace.value;
-	};
-
-	const getBrowsedFiles = (files) => {
-		selectedItem.value.file = files[files.length - 1].file;
-		selectedItem.value.file_name = files[files.length - 1].file_name;
-	};
-
-	async function createNewItem() {
+	async function createItem(item) {
 		try {
+			loading.value = true;
+			selectedItem.value = item;
 			const formData = generateFormData(selectedItem.value);
 			await useApi('newMemberSetupConfig.post', {
 				body: formData
 			});
 			await getList();
+			closeModal();
 		} catch (e) {
 			console.log(`Catch error: ${e}`);
 		}
 	}
 
-	async function editItem() {
+	async function editItem(item) {
 		try {
+			loading.value = true;
+			selectedItem.value = item;
 			const formData = generateFormData(selectedItem.value);
 			await useApi('newMemberSetupConfig.put', {
 				params: { id: selectedItem.value.id },
 				body: formData
 			});
 			await getList();
+			closeModal();
 		} catch (e) {
 			console.log(`Catch error: ${e}`);
 		}
@@ -350,29 +222,24 @@
 		}
 	}
 
-	async function openModal(item = null) {
-		isCreate.value = !item;
-		isEdit.value = !!item;
-		showModal.value = true;
-		isFromMarketplace.value = true;
+	const openModal = (item = null) => {
+		modalType.value = !item ? 'create' : 'edit';
+		modalTitle.value = !item
+			? 'Create New Member Setup Configuration'
+			: 'Edit Member Setup Configuration';
 		selectedItem.value = getEditableObject(item);
-	}
-
-	const cancelModal = () => {
-		isEdit.value = false;
-		isCreate.value = false;
-		showModal.value = false;
-		isFromMarketplace.value = true;
-		selectedItem.value = getEditableObject(null);
+		isFromMarketplace.value = !item?.file_name;
+		showModal.value = true;
 	};
 
-	const confirmModal = () => {
-		(isEdit.value ? editItem : createNewItem)();
-		isEdit.value = false;
-		isCreate.value = false;
-		showModal.value = false;
-		isFromMarketplace.value = true;
+	const handleMarketplace = (marketplace) => {
+		isFromMarketplace.value = marketplace;
+	};
+
+	const closeModal = () => {
+		modalType.value = 'create';
 		selectedItem.value = getEditableObject(null);
+		showModal.value = false;
 	};
 
 	function init(newPage = 1) {
@@ -383,39 +250,4 @@
 	init();
 </script>
 
-<style scoped lang="scss">
-	.card {
-		border-radius: var(--spacing-4);
-		border: 1px solid var(--card-border-color);
-		background: var(--card-background-color);
-		padding: var(--spacing-12);
-		width: 100%;
-		.card-title {
-			padding-bottom: var(--spacing-8);
-			margin-bottom: var(--spacing-4);
-			border-bottom: 1px solid var(--border-color);
-		}
-		.table-wrapper {
-			max-height: 480px;
-			overflow-y: auto;
-		}
-	}
-	.code-wrapper {
-		display: flex;
-		flex-direction: column;
-		border-radius: var(--spacing-4);
-		border: 1px solid var(--border-color);
-		padding: var(--spacing-12);
-	}
-	.error-text {
-		font-size: var(--spacing-12);
-		color: var(--error-color);
-		margin: var(--spacing-12);
-	}
-	.brows-file-info {
-		width: 100%;
-		border-radius: var(--spacing-4);
-		border: 1px solid var(--border-color);
-		padding: var(--spacing-4);
-	}
-</style>
+<style scoped lang="scss"></style>
