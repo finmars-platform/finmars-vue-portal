@@ -213,21 +213,17 @@
 
 	const getEditableObject = (item = null) => {
 		return {
-			id: item ? item.id : '',
-			name: item ? item.name : '',
-			user_code: item ? item.user_code : '',
-			configuration_code: item ? item.configuration_code : '',
-			notes: item ? item.notes : '',
+			id: item?.id || '',
+			name: item?.name || '',
+			user_code: item?.user_code || '',
+			configuration_code: item?.configuration_code || '',
+			notes: item?.notes || '',
 			target_configuration_code: item ? item.target_configuration_code : '',
-			target_configuration_version: item
-				? item.target_configuration_version
-				: '',
-			target_configuration_channel: item
-				? item.target_configuration_channel
-				: 'stable',
-			target_configuration_is_package: item
-				? item.target_configuration_is_package
-				: false,
+			target_configuration_version: item?.target_configuration_version || '',
+			target_configuration_channel:
+				item?.target_configuration_channel || 'stable',
+			target_configuration_is_package:
+				item?.target_configuration_is_package || false,
 			file_name: '',
 			file: null
 		};
