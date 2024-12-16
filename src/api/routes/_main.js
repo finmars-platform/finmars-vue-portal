@@ -595,5 +595,11 @@ export default {
 	},
 	viewLog: {
 		get: prefix + '/utils/system-logs/view-log/'
+	},
+	contextMenuLayoutList: {
+		get: prefix + '/ui/context-menu-layout/',
+		post: prefix + '/ui/context-menu-layout/',
+		put: prefix + '/ui/context-menu-layout/{id}',
+		delete: prefix + '/ui/context-menu-layout/{id}/'
 	}
 };
