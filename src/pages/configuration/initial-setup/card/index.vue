@@ -1,9 +1,5 @@
 <template>
-	<div
-		class="card flex justify-between items-center w-full"
-		v-for="item in items"
-		:key="item"
-	>
+	<div class="card flex justify-between items-center w-full">
 		<span>Name: {{ item.name }}</span>
 		<div>
 			<FmButton type="secondary" @click="openModal(item)" rounded>
@@ -20,11 +16,9 @@
 	import { FmButton } from '@finmars/ui';
 
 	defineProps({
-		items: {
-			type: Array,
-			default() {
-				return [];
-			}
+		item: {
+			type: Object,
+			required: true
 		}
 	});
 	const emit = defineEmits(['openModal', 'deleteItem']);
