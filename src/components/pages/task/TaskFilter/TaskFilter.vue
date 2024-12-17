@@ -29,7 +29,7 @@
 		</div>
 
 		<div class="grid grid-cols-3 gap-x-2">
-			<TaskFilterSelect
+			<MultipleSelectWithTransfer
 				:model-value="filter.statuses"
 				:options="TASK_STATUSES"
 				label="Status"
@@ -38,7 +38,7 @@
 				@update:model-value="updateSelect('statuses', $event)"
 			/>
 
-			<TaskFilterSelect
+			<MultipleSelectWithTransfer
 				:model-value="filter.types"
 				:options="TASK_TYPES"
 				label="Task type"
@@ -47,7 +47,7 @@
 				@update:model-value="updateSelect('types', $event)"
 			/>
 
-			<TaskFilterSelect
+			<MultipleSelectWithTransfer
 				:model-value="filter.result"
 				:options="TASK_RESULTS"
 				label="Result"
@@ -67,7 +67,7 @@
 	import { FmTextField } from '@finmars/ui';
 	import { TASK_RESULTS, TASK_STATUSES, TASK_TYPES } from './constants';
 	import TaskFilterDate from './TaskFilterDate.vue';
-	import TaskFilterSelect from './TaskFilterSelect.vue';
+	import MultipleSelectWithTransfer from '@/components/common/MultipleSelectWithTransfer/MultipleSelectWithTransfer.vue';
 
 	const props = defineProps({
 		modelValue: {
@@ -96,7 +96,6 @@
 	const isSearchFieldDirty = ref(false);
 
 	function onInit(instance) {
-		console.log('instance: ', instance);
 		searchInputEl.value = instance.input;
 	}
 
