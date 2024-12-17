@@ -14,6 +14,7 @@
 	"devDependencies": {
 		"@nuxt/test-utils": "^3.12.1",
 		"@nuxtjs/tailwindcss": "^6.12.1",
+		"@types/sanitize-html": "^2.13.0",
 		"@vitest/coverage-v8": "^1.5.0",
 		"@vue/test-utils": "^2.4.5",
 		"consola": "^3.2.0",
@@ -31,7 +32,7 @@
 	},
 	"dependencies": {
 		"@chenfengyuan/vue-qrcode": "^2.0.0",
-		"@finmars/ui": "^1.0.50",
+		"@finmars/ui": "1.0.52",
 		"@formbricks/js": "1.1.2",
 		"@kyvg/vue3-notification": "^2.4.1",
 		"@pinia/nuxt": "^0.5.1",
@@ -45,15 +46,18 @@
 		"eslint-plugin-prettier": "^5.2.1",
 		"floating-vue": "^5.2.2",
 		"jquery": "^3.3.1",
+		"jsondiffpatch": "^0.6.0",
 		"jstree": "^3.3.17",
 		"keycloak-js": "^21.0.1",
 		"lodash": "^4.17.21",
 		"pdfjs-dist": "^4.0.269",
 		"pinia": "^2.0.24",
 		"qrcode": "^1.5.1",
+		"sanitize-html": "^2.13.1",
 		"swiper": "^10.0.4",
 		"vue": "^3.4.23",
 		"vue-matomo": "^4.2.0",
-		"vue3-ace-editor": "^2.2.2"
+		"vue3-ace-editor": "^2.2.2",
+		"vuedraggable": "^4.1.0"
 	}
 }

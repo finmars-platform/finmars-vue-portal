@@ -10,6 +10,7 @@
 			:placeholder="placeholder"
 			persistent-placeholder
 			multiple
+			:compact="compact"
 			scroll-strategy="block"
 			:disabled="disabled"
 			@click:prependIcon="onIconClick"
@@ -20,6 +21,7 @@
 				<FmChip
 					:value="displaySelected.value"
 					:tooltip="displaySelected.tooltip"
+					:compact="compact"
 					rounded
 					closable
 					@click:close="deleteSelection"
@@ -51,7 +53,7 @@
 								clearable
 								placeholder="Search for.."
 								hide-details
-								class="task-filter-select__search"
+								class="filter-select__search"
 								@click:clear="searchText.available = ''"
 							/>
 							<div
@@ -107,7 +109,7 @@
 								clearable
 								placeholder="Search for.."
 								hide-details
-								class="task-filter-select__search"
+								class="filter-select__search"
 								@click:clear="searchText.selected = ''"
 							/>
 							<div
@@ -170,6 +172,9 @@
 		options: {
 			type: Array,
 			default: () => []
+		},
+		compact: {
+			type: Boolean
 		},
 		disabled: {
 			type: Boolean
@@ -354,7 +359,7 @@
 </script>
 
 <style lang="scss" scoped>
-	.task-filter-select {
+	.filter-select {
 		&__search {
 			--backgroundColor-fmTextField: var(--surface-container);
 		}
