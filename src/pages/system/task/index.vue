@@ -60,10 +60,7 @@
 		</div>
 
 		<div class="tasks-page__info">
-			<div
-				v-if="!selectedTask"
-				class="tasks-page__info__text"
-			>
+			<div v-if="!selectedTask" class="tasks-page__info__text">
 				Click on event to see details
 			</div>
 

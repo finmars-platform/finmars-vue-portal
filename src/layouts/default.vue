@@ -17,40 +17,39 @@
 </template>
 
 <script setup>
-	const { loadThemeSettingsDefault } = useWhiteLabelStore()
-	const store = useStore()
-	const evAttrsStore = useEvAttributesStore()
-	const config = useRuntimeConfig()
-	await store.init()
+	const { loadThemeSettingsDefault } = useWhiteLabelStore();
+	const store = useStore();
+	const evAttrsStore = useEvAttributesStore();
+	const config = useRuntimeConfig();
 
-	const notLoadingMember = ref(true)
+	store.init();
 
-	watch(
-		() => store.user?.data.dark_mode,
-		() => {
-			useToggleDarkMode(store.user.data.dark_mode)
-		}
-	)
+	const notLoadingMember = ref(true);
 
 	watchEffect(async (onCleanup) => {
 		if (store.isUrlValid) {
-			onCleanup(() => {})
+			onCleanup(() => {});
 
-			notLoadingMember.value = false
+			notLoadingMember.value = false;
 
 			await Promise.all([
 				store.getMe(),
 				store.fetchEcosystemDefaults(),
 				evAttrsStore.fetchSystemAttributes()
-			])
+			]);
 
-			notLoadingMember.value = true
+			notLoadingMember.value = true;
 		}
-	})
+	});
 
-	loadThemeSettingsDefault()
+	loadThemeSettingsDefault();
 
-
+	watch(
+		() => store.user?.data?.dark_mode,
+		() => {
+			useToggleDarkMode(store.user.data.dark_mode);
+		}
+	);
 </script>
 <style lang="scss" scoped>
 	.main {
