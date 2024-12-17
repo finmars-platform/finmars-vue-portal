@@ -1,7 +1,7 @@
 <template>
 	<div class="p-24">
 
-		<h1 class="text-4xl mb-8">Pricing Policies</h1>
+		<h1 class="display-medium-font mb-8">Pricing Policies</h1>
 
 		<div v-if="readyStatus">
 
@@ -17,12 +17,6 @@
 						</th>
 						<th>
 							Notes
-						</th>
-						<th>
-							Default Instrument Pricing Scheme
-						</th>
-						<th>
-							Default Currency Pricing Scheme
 						</th>
 						<th class="w-[190px]"><!-- Column with button --></th>
 					</tr>
@@ -42,14 +36,6 @@
 
 						<td>
 							{{ item.notes }}
-						</td>
-
-						<td>
-							{{ item.default_instrument_pricing_scheme_object?.name }}
-						</td>
-
-						<td>
-							{{ item.default_currency_pricing_scheme_object?.name }}
 						</td>
 
 						<td>

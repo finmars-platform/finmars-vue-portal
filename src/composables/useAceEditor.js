@@ -1,11 +1,13 @@
 import { VAceEditor } from 'vue3-ace-editor';
 import modeJsonUrl from 'ace-builds/src-noconflict/mode-json?url';
+import modePython from 'ace-builds/src-noconflict/mode-python?url';
 import themeMonokaiUrl from 'ace-builds/src-noconflict/theme-monokai?url';
 import extSearchboxUrl from 'ace-builds/src-noconflict/ext-searchbox?url';
 import extLanguageTools from 'ace-builds/src-noconflict/ext-language_tools?url';
 
-export default function useAceEditor() {
-	ace.config.setModuleUrl('ace/mode/json', modeJsonUrl);
+export default function useAceEditor(mode = 'json') {
+	mode === 'json' && ace.config.setModuleUrl('ace/mode/json', modeJsonUrl);
+	mode === 'python' && ace.config.setModuleUrl('ace/mode/python', modePython);
 	ace.config.setModuleUrl('ace/theme/monokai', themeMonokaiUrl);
 	ace.config.setModuleUrl('ace/ext/searchbox', extSearchboxUrl);
 	ace.config.setModuleUrl('ace/ext/language_tools', extLanguageTools);

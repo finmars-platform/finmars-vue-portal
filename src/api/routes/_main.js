@@ -45,7 +45,8 @@ export default {
 	instrumentClass: {
 		get: prefix + '/instruments/instrument-class/'
 	},
-	instrumentPricingСondition: {
+
+	instrumentPricingCondition: {
 		get: prefix + '/instruments/pricing-condition/'
 	},
 
@@ -140,6 +141,11 @@ export default {
 	},
 	importSchemeLight: {
 		get: prefix + '/import/complex-transaction-import-scheme/light/'
+	},
+	importSchemeInstance: {
+		get: prefix + '/import/complex-transaction-import-scheme/{id}/',
+		post: prefix + '/import/complex-transaction-import-scheme/',
+		patch: prefix + `/import/complex-transaction-import-scheme/{id}/`
 	},
 	configurationList: {
 		get: prefix + '/configuration/configuration/'
@@ -264,7 +270,13 @@ export default {
 		get: prefix + '/ui/portal-interface-access/'
 	},
 	newMemberSetupConfig: {
-		get: prefix + '/configuration/new-member-setup-configuration/'
+		get: prefix + '/configuration/new-member-setup-configuration/',
+		put: prefix + '/configuration/new-member-setup-configuration/{id}/',
+		post: prefix + '/configuration/new-member-setup-configuration/',
+		delete: prefix + '/configuration/new-member-setup-configuration/{id}/'
+	},
+	installNewMemberSetupConfig: {
+		put: prefix + '/configuration/new-member-setup-configuration/{id}/install/',
 	},
 	unifiedData: {
 		get: prefix + '/data/{type}/'
@@ -358,6 +370,10 @@ export default {
 	transactionTypeLight: {
 		get: prefix + '/transactions/transaction-type/light/'
 	},
+	transactionType: {
+		get: prefix + '/transactions/transaction-type/'
+	},
+
 	transactionTypeAttrTypeList: {
 		get: prefix + '/transactions/complex-transaction-attribute-type/'
 	},
@@ -580,6 +596,38 @@ export default {
 	},
 	historicalRecordData: {
 		get: prefix + '/history/historical-record/{id}/data'
+	},
+	masterUserInfo: {
+		get: prefix + '/users/master-user/get/',
+		post: prefix + '/users/master-user/update/'
+	},
+	systemInfo: {
+		get: prefix + '/utils/system-info/'
+	},
+	systemLogs: {
+		get: prefix + '/utils/system-logs/'
+	},
+	tablesSize: {
+		get: prefix + '/utils/tables-size/'
+	},
+	viewLog: {
+		get: prefix + '/utils/system-logs/view-log/'
+	},
+	contextMenuLayoutList: {
+		get: prefix + '/ui/context-menu-layout/',
+		post: prefix + '/ui/context-menu-layout/',
+		put: prefix + '/ui/context-menu-layout/{id}',
+		delete: prefix + '/ui/context-menu-layout/{id}/'
+	},
+
+	activeProcesses: {
+		get: prefix + '/active_processes/active_processes/{id}/'
+	},
+	transactionImport: {
+		post: prefix + '/import/complex-transaction-csv-file-import/'
+	},
+	importSchemeDryRun: {
+		post: prefix + '/import/transaction-import/dry-run/'
 	},
 
 	recycleBin: {
