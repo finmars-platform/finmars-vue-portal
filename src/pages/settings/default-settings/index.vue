@@ -108,11 +108,11 @@
 				label="Strategy 1 Group "
 				:items="strategiesOneSubgroupItems"
 			/>
-<!--			<FmSelect
-				v-model="ecosystemDefaultsRef.strategy1_subgroup"
-				label="Strategy 1  Subgroup"
-				:items=""
-			/>-->
+			<!--			<FmSelect
+							v-model="ecosystemDefaultsRef.strategy1_subgroup"
+							label="Strategy 1  Subgroup"
+							:items=""
+						/>-->
 		</div>
 		<div class="wrapp-select">
 			<FmSelect
@@ -125,11 +125,11 @@
 				label="Strategy 2 Group"
 				:items="strategiesSecondSubgroupItems"
 			/>
-<!--			<FmSelect
-				v-model="ecosystemDefaultsRef.strategy2_subgroup"
-				label="Strategy 2  Subgroup"
-				:items="''"
-			/>-->
+			<!--			<FmSelect
+							v-model="ecosystemDefaultsRef.strategy2_subgroup"
+							label="Strategy 2  Subgroup"
+							:items="''"
+						/>-->
 		</div>
 		<div class="wrapp-select">
 			<FmSelect
@@ -142,11 +142,11 @@
 				label="Strategy 3 Group"
 				:items="strategiesThirdSubgroupItems"
 			/>
-<!--			<FmSelect
-				v-model="ecosystemDefaultsRef.strategy3_subgroup"
-				label="Strategy 3 Subgroup"
-				:items="''"
-			/>-->
+			<!--			<FmSelect
+							v-model="ecosystemDefaultsRef.strategy3_subgroup"
+							label="Strategy 3 Subgroup"
+							:items="''"
+						/>-->
 		</div>
 		<FmBtn
 			type="primary"
@@ -160,56 +160,57 @@
 </template>
 
 <script setup>
-  definePageMeta({
+	definePageMeta({
 		middleware: 'auth',
 		bread: [
 			{
 				text: 'settings: DEFAULT SETTINGS',
-				to: '/settings/default-settings',
-			},
-		],
-	})
+				to: '/settings/default-settings'
+			}
+		]
+	});
 
 	const store = useStore();
 
-	const instrumentItems = ref([])
-	const portfolioListLightItems = ref([])
-	const billItems = ref([])
-	const currencyItems = ref([])
-	const instrumentTypeItems = ref([])
-	const transactionTypeLightItems = ref([])
-	const accountsTypeItems = ref([])
-	const pricingPolicyListItems = ref([])
-	const instrumentPeriodicityItems = ref([])
-	const instrumentAccrualCalculationModelItems = ref([])
-	const instrumentClassItems = ref([])
-	const instrumentSizeDetailItems = ref([])
-	const instrumentPricingConditionItems = ref([])
-	const counterpartyResponsibleLightItems = ref([])
-  	const responsibleGroups = ref([])
-	const counterpartyCounterpartyLightItems = ref([])
-  	const counterpartyGroups = ref([])
-	const strategiesOneLightItems = ref([])
-	const strategiesOneSubgroupItems = ref([])
-	const strategiesSecondLightItems = ref([])
-	const strategiesSecondSubgroupItems = ref([])
-	const strategiesThirdLightItems = ref([])
-	const strategiesThirdSubgroupItems = ref([])
+	const instrumentItems = ref([]);
+	const portfolioListLightItems = ref([]);
+	const billItems = ref([]);
+	const currencyItems = ref([]);
+	const instrumentTypeItems = ref([]);
+	const transactionTypeLightItems = ref([]);
+	const accountsTypeItems = ref([]);
+	const pricingPolicyListItems = ref([]);
+	const instrumentPeriodicityItems = ref([]);
+	const instrumentAccrualCalculationModelItems = ref([]);
+	const instrumentClassItems = ref([]);
+	const instrumentSizeDetailItems = ref([]);
+	const instrumentPricingConditionItems = ref([]);
+	const counterpartyResponsibleLightItems = ref([]);
+	const responsibleGroups = ref([]);
+	const counterpartyCounterpartyLightItems = ref([]);
+	const counterpartyGroups = ref([]);
+	const strategiesOneLightItems = ref([]);
+	const strategiesOneSubgroupItems = ref([]);
+	const strategiesSecondLightItems = ref([]);
+	const strategiesSecondSubgroupItems = ref([]);
+	const strategiesThirdLightItems = ref([]);
+	const strategiesThirdSubgroupItems = ref([]);
 
-	const disabledBtn = ref(false)
-	const ecosystemDefaultsRef = ref(JSON.parse(JSON.stringify(store.ecosystemDefaults)) );
+	const disabledBtn = ref(false);
+	const ecosystemDefaultsRef = ref(
+		JSON.parse(JSON.stringify(store.ecosystemDefaults))
+	);
 
-	init()
+	init();
 
 	async function init() {
-
 		const opts = {
 			filters: {
 				page: 1,
 				page_size: 1000,
-				is_deleted: false,
-			},
-		}
+				is_deleted: false
+			}
+		};
 
 		const res = await Promise.all([
 			useLoadAllPages('instrumentListLight.get', opts), // 0
@@ -224,7 +225,7 @@
 			useApi('instrumentAccrualCalculationModel.get', opts), // 9
 			useApi('instrumentClass.get', opts), // 10
 			useApi('instrumentSizeDetail.get', opts), // 11
-			useApi('instrumentPricingСondition.get', opts), // 12
+			useApi('instrumentPricingCondition.get', opts), // 12
 			useLoadAllPages('counterpartyResponsibleLight.get', opts), // 13
 			useLoadAllPages('responsibleGroupList.get', opts), // 14
 			useLoadAllPages('counterpartyCounterpartyLight.get', opts), // 15
@@ -234,8 +235,8 @@
 			useLoadAllPages('strategies2ListLight.get', opts), // 19
 			useLoadAllPages('strategies2SubgroupList.get', opts), // 20
 			useLoadAllPages('strategies3ListLight.get', opts), // 21
-			useLoadAllPages('strategies3SubgroupList.get', opts), // 22
-		])
+			useLoadAllPages('strategies3SubgroupList.get', opts) // 22
+		]);
 
 		instrumentItems.value = res[0];
 		portfolioListLightItems.value = res[1];
@@ -263,25 +264,25 @@
 	}
 
 	async function defaultSettingsCreate() {
-
 		disabledBtn.value = true;
 
 		let res = await useApi('defaultSettings.put', {
 			params: { id: ecosystemDefaultsRef.value.id },
-			body: ecosystemDefaultsRef.value,
-		})
+			body: ecosystemDefaultsRef.value
+		});
 
 		if (res._$error) {
 			// console.error(res._$error);
-			useNotify({ type: 'error', title: res._$error.message || res._$error.detail })
-
+			useNotify({
+				type: 'error',
+				title: res._$error.message || res._$error.detail
+			});
 		} else {
-			useNotify({ type: 'success', title: `data saved on the server` })
+			useNotify({ type: 'success', title: `data saved on the server` });
 			store.ecosystemDefaults = structuredClone(res);
 		}
 
 		disabledBtn.value = false;
-
 	}
 </script>
 
@@ -292,13 +293,16 @@
 		grid-template-rows: 1fr;
 		gap: 10px 5px;
 	}
+
 	.container {
 		padding: 30px;
 	}
+
 	.title {
 		margin-bottom: 24px;
 		font-weight: 700;
 	}
+
 	@media (max-width: 1200px) {
 		.wrapp-select {
 			display: grid;
@@ -307,6 +311,7 @@
 			gap: 10px 5px;
 		}
 	}
+
 	@media (max-width: 767px) {
 		.wrapp-select {
 			display: grid;

@@ -1,3 +1,5 @@
+import cloneDeep from 'lodash/cloneDeep';
+
 const ALPHABET_COLORS = [
 	'#357EC7', // A
 	'#C11B17', // B
@@ -327,4 +329,32 @@ export function getAvatarColor(char) {
 	const charIndex = charCode - 65;
 	const colorIndex = charIndex % ALPHABET_COLORS.length;
 	return ALPHABET_COLORS[colorIndex];
+}
+
+export async function loadDataFromAllPages(fn, argumentsList = [], dataList) {
+	let dataListInner = !Array.isArray(dataList) ? [] : cloneDeep(dataList);
+	const optionsArg = argumentsList.find(
+		(arg) => typeof arg === 'object' && 'page' in arg
+	);
+	if (!optionsArg) {
+		throw new Error(
+			'No options with page number were specified in argumentsList'
+		);
+	}
+
+	const loadAllPages = (resolve, reject) => {
+		fn(...argumentsList)
+			.then((data) => {
+				dataListInner = [...dataListInner, ...data.results];
+				if (data.next) {
+					optionsArg.page += 1;
+					loadAllPages(resolve, reject);
+				} else {
+					resolve(dataListInner);
+				}
+			})
+			.catch((err) => reject(err));
+	};
+
+	return new Promise((resolve, reject) => loadAllPages(resolve, reject));
 }

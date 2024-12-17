@@ -45,7 +45,8 @@ export default {
 	instrumentClass: {
 		get: prefix + '/instruments/instrument-class/'
 	},
-	instrumentPricingСondition: {
+
+	instrumentPricingCondition: {
 		get: prefix + '/instruments/pricing-condition/'
 	},
 
@@ -133,6 +134,11 @@ export default {
 	},
 	importSchemeLight: {
 		get: prefix + '/import/complex-transaction-import-scheme/light/'
+	},
+	importSchemeInstance: {
+		get: prefix + '/import/complex-transaction-import-scheme/{id}/',
+		post: prefix + '/import/complex-transaction-import-scheme/',
+		patch: prefix + `/import/complex-transaction-import-scheme/{id}/`
 	},
 	configurationList: {
 		get: prefix + '/configuration/configuration/'
@@ -357,6 +363,10 @@ export default {
 	transactionTypeLight: {
 		get: prefix + '/transactions/transaction-type/light/'
 	},
+	transactionType: {
+		get: prefix + '/transactions/transaction-type/'
+	},
+
 	transactionTypeAttrTypeList: {
 		get: prefix + '/transactions/complex-transaction-attribute-type/'
 	},
@@ -601,5 +611,15 @@ export default {
 		post: prefix + '/ui/context-menu-layout/',
 		put: prefix + '/ui/context-menu-layout/{id}',
 		delete: prefix + '/ui/context-menu-layout/{id}/'
+	},
+
+	activeProcesses: {
+		get: prefix + '/active_processes/active_processes/{id}/'
+	},
+	transactionImport: {
+		post: prefix + '/import/complex-transaction-csv-file-import/'
+	},
+	importSchemeDryRun: {
+		post: prefix + '/import/transaction-import/dry-run/'
 	}
 };

@@ -216,7 +216,6 @@
 	}
 
 	function copyContentToClipboard() {
-		console.log('copyContentToClipboard');
 		const controller = new AbortController();
 
 		document.addEventListener('copy', (e) => {
