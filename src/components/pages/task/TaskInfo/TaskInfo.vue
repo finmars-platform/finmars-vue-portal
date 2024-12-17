@@ -192,7 +192,7 @@
 		</div>
 
 		<!-- file preview  -->
-		<TaskInfoFilePreview
+		<FilePreview
 			v-if="previewFileModal.open"
 			:file="previewFileModal.file"
 			@close="previewFileModal = { open: false, file: null }"
@@ -217,7 +217,7 @@
 		FmTooltip
 	} from '@finmars/ui';
 	import TaskListItemStatus from '../TaskListItem/TaskListItemStatus.vue';
-	import TaskInfoFilePreview from './TaskInfoFilePreview.vue';
+	import FilePreview from '../../FilePreview.vue';
 
 	dayjs.extend(utc);
 
@@ -281,7 +281,6 @@
 			isLoading.value = true;
 
 			task.value = await useApi('task.get', { params: { id: props.taskId } });
-			console.log('TASK INFO: ', task.value);
 		} catch (e) {
 			console.error(`The task ${props.taskId} loading error. `, e);
 		} finally {
