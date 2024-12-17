@@ -112,6 +112,13 @@ export default {
 		post: prefix + '/import/finmars-database/company/'
 	},
 
+	complexTransactionBulkRestore: {
+		post: prefix + '/transactions/complex-transaction/bulk-restore/',
+	},
+	complexTransactionBulkDelete: {
+		post: prefix + '/transactions/complex-transaction/bulk-delete/',
+	},
+
 	importBankProc: {
 		get: prefix + '/procedures/request-data-procedure/'
 	},
@@ -621,5 +628,12 @@ export default {
 	},
 	importSchemeDryRun: {
 		post: prefix + '/import/transaction-import/dry-run/'
+	},
+
+	recycleBin: {
+		get: prefix + '/utils/recycle-bin/',
+	},
+	clearRecycleBin: {
+		post: prefix + '/utils/recycle-bin/clear-bin/',
 	}
 };

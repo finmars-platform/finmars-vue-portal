@@ -141,6 +141,7 @@
 		padding: 15px 20px 0;
 		min-width: 400px; // so that FmInputEntityNames could fit in
 		background: var(--base-backgroundColor);
+		font: var(--body-large-font);
 	}
 	.modal_content :deep(.base-input) {
 		background: transparent;
