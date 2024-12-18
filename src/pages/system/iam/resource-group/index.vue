@@ -5,11 +5,18 @@
 		</div>
 		<div class="fm_container">
 			<BaseTable
-				colls="60px 1fr 1fr 1fr 1fr"
+				colls="60px 1fr 1fr 1fr 1fr 1fr"
 				:items="resourceGroups"
 				:cb="clickCell"
 				:status="!loading ? 'done' : 'loading'"
-				:headers="['ID', 'Name', 'User Code', 'Description', 'Notes']"
+				:headers="[
+					'ID',
+					'Name',
+					'User Code',
+					'Configuration Code',
+					'Description',
+					'Notes'
+				]"
 			/>
 			<div class="flex mt-4">
 				<FmButton type="primary" @click="openModal()" rounded>
@@ -36,6 +43,17 @@
 					outlined
 					class="mb-2"
 				/>
+				<div class="mb-4">
+					<FmSelect
+						v-model="newResourceGroup.configuration_code"
+						:options="configCodeOptions"
+						label="Configuration Code"
+						variant="outlined"
+					/>
+					<span v-if="!newResourceGroup.configuration_code" class="error-text">
+						Field is required
+					</span>
+				</div>
 				<FmTextField
 					v-model="newResourceGroup.name"
 					label="Name"
@@ -74,7 +92,8 @@
 		FmBreadcrumbs,
 		FmPagination,
 		FmButton,
-		FmTextField
+		FmTextField,
+		FmSelect
 	} from '@finmars/ui';
 
 	const route = useRoute();
@@ -87,19 +106,43 @@
 	const loading = ref(false);
 	const currentPage = ref(route.query.page ? parseInt(route.query.page) : 1);
 	const crumbs = ref([{ title: 'Resource Groups', path: 'resource-group' }]);
+	const configCodeOptions = ref([{ title: 'No codes !', value: '' }]);
 
 	let newResourceGroup = reactive({
 		name: '',
 		user_code: '',
+		configuration_code: '',
 		description: ''
 	});
 
 	const validateNewResourceGroup = computed(() => {
-		return newResourceGroup.name.length && newResourceGroup.user_code.length;
+		return (
+			newResourceGroup.name.length &&
+			newResourceGroup.user_code.length &&
+			newResourceGroup.configuration_code
+		);
 	});
 
 	const rules = {
 		required: (value) => (value ? '' : 'Field is required')
+	};
+
+	const getConfigList = async () => {
+		try {
+			const res = await useApi('configurationList.get');
+			if (res.results) {
+				configCodeOptions.value = res.results.map((result) => {
+					return {
+						title: result.configuration_code,
+						value: result.configuration_code
+					};
+				});
+			} else {
+				configCodeOptions.value = [{ title: 'No codes !', value: '' }];
+			}
+		} catch (e) {
+			console.log(`Catch error: ${e}`);
+		}
 	};
 
 	const getResourceGroup = async (currentPage = 1) => {
@@ -134,6 +177,7 @@
 			newResourceGroup = {
 				name: '',
 				user_code: '',
+				configuration_code: '',
 				description: ''
 			};
 			init();
@@ -163,6 +207,7 @@
 				id: `${item.id}`,
 				name: item.name,
 				user_code: item.user_code,
+				configuration_code: item.configuration_code,
 				description: item.description?.length ? item.description : ' ',
 				notes: item.assignments.length
 					? item.assignments.map((it) => it.object_user_code).join(',')
@@ -174,6 +219,7 @@
 	async function init(page = 1) {
 		const items = await getResourceGroup(page);
 		resourceGroups.value = buildItemsForResourceGroups(items);
+		await getConfigList();
 	}
 
 	const handlePageChange = (newPage) => {
@@ -185,6 +231,11 @@
 </script>
 
 <style scoped lang="scss">
+	.error-text {
+		font-size: var(--spacing-12);
+		color: var(--error-color);
+		margin: var(--spacing-12);
+	}
 	:deep(.table-cell-btn) {
 		display: flex;
 		align-items: center;

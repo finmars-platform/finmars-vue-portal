@@ -12,6 +12,17 @@
 					outlined
 					class="mb-2"
 				/>
+				<div class="mb-4">
+					<FmSelect
+						v-model="details.configuration_code"
+						:options="configCodeOptions"
+						label="Configuration Code"
+						variant="outlined"
+					/>
+					<span v-if="!details.configuration_code" class="error-text">
+						Field is required
+					</span>
+				</div>
 				<FmTextField
 					v-model="details.name"
 					label="Name"
@@ -68,7 +79,7 @@
 
 <script setup>
 	import { getRealmSpaceCodes } from '~/pages/system/helper';
-	import { FmBreadcrumbs, FmIcon, FmButton, FmTextField } from '@finmars/ui';
+	import { FmBreadcrumbs, FmIcon, FmButton, FmTextField, FmSelect } from '@finmars/ui';
 
 	const route = useRoute();
 	const router = useRouter();
@@ -78,6 +89,7 @@
 		{ title: 'Resource Groups', path: 'resource-group' },
 		{ title: 'Details', path: '' }
 	]);
+	const configCodeOptions = ref([{ title: 'No codes !', value: '' }]);
 
 	const rules = {
 		required: (value) => (value ? '' : 'Field is required')
@@ -89,10 +101,28 @@
 		}
 	});
 
+	const getConfigList = async () => {
+		try {
+			const res = await useApi('configurationList.get');
+			if (res.results) {
+				configCodeOptions.value = res.results.map((result) => {
+					return {
+						title: result.configuration_code,
+						value: result.configuration_code
+					};
+				});
+			} else {
+				configCodeOptions.value = [{ title: 'No codes !', value: '' }];
+			}
+		} catch (e) {
+			console.log(`Catch error: ${e}`);
+		}
+	};
+
 	const details = reactive(resourceGroupItem);
 
 	const validateDetails = computed(() => {
-		return details.name.length && details.user_code.length;
+		return details.name.length && details.user_code.length && details.configuration_code.length;
 	});
 
 	async function deleteResource() {
@@ -136,6 +166,8 @@
 	const handleCrumbs = (newCrumbs, newPath) => {
 		router.push(`/${realmCode}/${spaceCode}/v/system/iam` + newPath);
 	};
+
+	getConfigList();
 </script>
 
 <style scoped lang="scss">
