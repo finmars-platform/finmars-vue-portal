@@ -113,10 +113,10 @@ export default {
 	},
 
 	complexTransactionBulkRestore: {
-		post: prefix + '/transactions/complex-transaction/bulk-restore/',
+		post: prefix + '/transactions/complex-transaction/bulk-restore/'
 	},
 	complexTransactionBulkDelete: {
-		post: prefix + '/transactions/complex-transaction/bulk-delete/',
+		post: prefix + '/transactions/complex-transaction/bulk-delete/'
 	},
 
 	importBankProc: {
@@ -146,6 +146,12 @@ export default {
 		get: prefix + '/import/complex-transaction-import-scheme/{id}/',
 		post: prefix + '/import/complex-transaction-import-scheme/',
 		patch: prefix + `/import/complex-transaction-import-scheme/{id}/`
+	},
+	simpleImportSchemeLight: {
+		get: prefix + '/import/csv/scheme/light/'
+	},
+	simpleImportSchemeInstance: {
+		post: prefix + '/import/csv/'
 	},
 	configurationList: {
 		get: prefix + '/configuration/configuration/'
@@ -276,7 +282,7 @@ export default {
 		delete: prefix + '/configuration/new-member-setup-configuration/{id}/'
 	},
 	installNewMemberSetupConfig: {
-		put: prefix + '/configuration/new-member-setup-configuration/{id}/install/',
+		put: prefix + '/configuration/new-member-setup-configuration/{id}/install/'
 	},
 	unifiedData: {
 		get: prefix + '/data/{type}/'
@@ -634,9 +640,9 @@ export default {
 	},
 
 	recycleBin: {
-		get: prefix + '/utils/recycle-bin/',
+		get: prefix + '/utils/recycle-bin/'
 	},
 	clearRecycleBin: {
-		post: prefix + '/utils/recycle-bin/clear-bin/',
+		post: prefix + '/utils/recycle-bin/clear-bin/'
 	}
 };

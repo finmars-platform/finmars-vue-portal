@@ -1,6 +1,6 @@
 <template>
-	<div class="transaction-import-result">
-		<div class="transaction-import-result__icon">
+	<div class="data-import-result">
+		<div v-if="importStatus" class="data-import-result__icon">
 			<FmIcon
 				:icon="importStatus === 'D' ? 'mdi-check-circle' : 'mdi-alert-circle'"
 				:color="importStatus === 'D' ? '#02a471' : 'var(--error)'"
@@ -10,14 +10,11 @@
 			{{ importStatus === 'D' ? 'Success' : 'Error' }}
 		</div>
 
-		<div
-			v-if="!isEmpty(attachments)"
-			class="transaction-import-result__attachments"
-		>
+		<div v-if="!isEmpty(attachments)" class="data-import-result__attachments">
 			<span
 				v-for="(item, index) in attachments"
 				:key="index"
-				class="transaction-import-result__attachment"
+				class="data-import-result__attachment"
 				@click.stop.prevent="openPreviewFile(item)"
 			>
 				{{ item.file_report_object?.name }}
@@ -36,7 +33,7 @@
 	import { ref } from 'vue';
 	import isEmpty from 'lodash/isEmpty';
 	import { FmIcon } from '@finmars/ui';
-	import FilePreview from '../FilePreview.vue';
+	import FilePreview from '@/components/common/FilePreview.vue';
 
 	defineProps({
 		importStatus: {
@@ -66,7 +63,7 @@
 </script>
 
 <style lang="scss" scoped>
-	.transaction-import-result {
+	.data-import-result {
 		position: relative;
 
 		&__icon {

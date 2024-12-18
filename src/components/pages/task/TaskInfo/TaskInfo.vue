@@ -217,7 +217,7 @@
 		FmTooltip
 	} from '@finmars/ui';
 	import TaskListItemStatus from '../TaskListItem/TaskListItemStatus.vue';
-	import FilePreview from '../../FilePreview.vue';
+	import FilePreview from '@/components/common/FilePreview.vue';
 
 	dayjs.extend(utc);
 
