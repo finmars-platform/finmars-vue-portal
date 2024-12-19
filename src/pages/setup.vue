@@ -8,7 +8,7 @@
 			<FmSelect v-model="store.member.interface_level" :items="levels" />
 
 			<div class="btns flex sb">
-				<FmBtn type="action" @click="navigateTo('/v/profile')">Cancel</FmBtn>
+				<FmBtn type="action" href="/v/profile">Cancel</FmBtn>
 				<FmBtn class="btn" @click="next()">Next</FmBtn>
 			</div>
 		</div>

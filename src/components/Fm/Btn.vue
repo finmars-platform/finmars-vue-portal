@@ -1,7 +1,7 @@
 <template>
 	<button
 		:class="['fm_btn', { icon }, type]"
-		@click="to ? $router.push(to) : ''"
+		@click="to ? $router.push(to) : href ? goToHref() : ''"
 	>
 		<div v-if="icon" :class="`icon material-icons`">{{ icon }}</div>
 		<slot />
@@ -9,19 +9,24 @@
 </template>
 
 <script setup>
-	let props = defineProps({
+	const props = defineProps({
 		label: String,
 		icon: String,
 		to: String,
+		href: String,
 		/**
 		 * Type of button
 		 * @values primary, outlined, basic, text, action, icon
 		 */
 		type: {
 			type: String,
-			default: 'primary',
-		},
-	})
+			default: 'primary'
+		}
+	});
+
+	function goToHref() {
+		window.location.href = props.href;
+	}
 </script>
 
 <style lang="scss" scoped>
@@ -63,10 +68,11 @@
 			border: 1px solid $border-darken;
 			color: var(--primary-color);
 
-		  &:not([disabled]):hover {
-			background-color: var(--primary-hover);
-		  }
+			&:not([disabled]):hover {
+				background-color: var(--primary-hover);
+			}
 		}
+
 		/*&.plain {
 			padding: 0;
 			background: transparent !important;
@@ -83,6 +89,7 @@
 			&:not([disabled]):hover {
 				background: var(--activeState-backgroundColor);
 			}
+
 			&:not([disabled]).active {
 				background: var(--activeState-backgroundColor);
 			}
