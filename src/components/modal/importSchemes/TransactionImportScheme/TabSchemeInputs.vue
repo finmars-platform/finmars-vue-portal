@@ -182,7 +182,7 @@
 	import {
 		getFunctions,
 		schemeTabFormatItem
-	} from '~/components/modal/TransactionImportScheme/utils';
+	} from '~/components/modal/importSchemes/TransactionImportScheme/utils';
 
 	const vRipple = Ripple;
 

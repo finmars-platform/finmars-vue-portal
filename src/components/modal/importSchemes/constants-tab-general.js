@@ -9,9 +9,19 @@ export const SEPARATORS_OPTIONS = [
 	{ title: 'Tab', value: '\t' }
 ];
 
+export const MODE_OPTIONS = [
+	{ title: 'Skip if exists', value: 'skip' },
+	{ title: 'Overwrite', value: 'overwrite' }
+];
+
 export const DATA_HANDLER_OPTIONS = [
 	{ title: 'Treat as Error', value: 'throw_error' },
 	{ title: 'Replace with Default Value', value: 'set_defaults' }
+];
+
+export const CLASSIFIER_HANDLER_OPTIONS = [
+	{ title: 'Skip (assign Null)', value: 'skip' },
+	{ title: 'Append Category (assign the appended category)', value: 'append' }
 ];
 
 export const COLUMN_MATCHER_OPTIONS = [
