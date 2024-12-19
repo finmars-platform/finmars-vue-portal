@@ -178,11 +178,9 @@
 		Ripple,
 		getRandomString
 	} from '@finmars/ui';
+	import { getFunctions } from '~/components/modal/importSchemes/utils';
 	import ExpressionEditor from '~/components/common/ExpressionEditorSelector/ExpressionEditor.vue';
-	import {
-		getFunctions,
-		schemeTabFormatItem
-	} from '~/components/modal/importSchemes/TransactionImportScheme/utils';
+	import { schemeTabFormatItem } from '~/components/modal/importSchemes/TransactionImportScheme/utils';
 
 	const vRipple = Ripple;
 

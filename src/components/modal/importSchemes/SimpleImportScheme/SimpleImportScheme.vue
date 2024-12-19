@@ -47,9 +47,13 @@
 								@update:valid="onUpdateValid('general', $event)"
 							/>
 
-							<div v-else class="whitespace-pre-wrap">
-								{{ JSON.stringify(scheme, null, 2) }}
-							</div>
+							<SimpleTabScheme
+								v-else
+								:scheme="scheme"
+								:loading="isLoading"
+								@update:scheme="updateScheme"
+								@update:valid="onUpdateValid('scheme', $event)"
+							/>
 						</transition>
 					</div>
 				</div>
@@ -99,6 +103,7 @@
 	} from '@finmars/ui';
 	import useApi from '~/composables/useApi';
 	import SimpleTabGeneral from './SimpleTabGeneral.vue';
+	import SimpleTabScheme from './SimpleTabScheme.vue';
 	import DraftButton from '~/components/common/DraftButton/DraftButton.vue';
 
 	const props = defineProps({
