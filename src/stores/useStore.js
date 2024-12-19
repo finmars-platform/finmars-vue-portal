@@ -165,7 +165,7 @@ export default defineStore({
 				window._paq.push(['setUserId', prefix + '_' + this.user.id]);
 			}
 
-			if (!this.user.data) this.user.data = {};
+			if (!this.user.data) this.user.data = { dark_mode: false };
 
 			if (typeof this.user.data.autosave_layouts !== 'boolean') {
 				this.user.data.autosave_layouts = true;
