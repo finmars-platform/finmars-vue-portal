@@ -287,6 +287,7 @@
 		}
 
 		.list {
+			gap: 8px;
 			display: grid;
 			grid-template-columns: repeat(auto-fill, 240px);
 			align-items: stretch;
