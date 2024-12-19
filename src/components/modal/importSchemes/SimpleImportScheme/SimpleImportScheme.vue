@@ -38,8 +38,18 @@
 
 					<div class="simple-import-scheme__content">
 						<transition>
-							<div v-if="currentTab === 0">1</div>
-							<div v-else>2</div>
+							<SimpleTabGeneral
+								v-if="currentTab === 0"
+								:scheme="scheme"
+								:is-edit-mode="isEditMode"
+								:loading="isLoading"
+								@update:scheme="updateScheme"
+								@update:valid="onUpdateValid('general', $event)"
+							/>
+
+							<div v-else class="whitespace-pre-wrap">
+								{{ JSON.stringify(scheme, null, 2) }}
+							</div>
 						</transition>
 					</div>
 				</div>
@@ -79,7 +89,7 @@
 </template>
 
 <script setup>
-	import { computed, ref } from 'vue';
+	import { computed, onBeforeMount, ref } from 'vue';
 	import cloneDeep from 'lodash/cloneDeep';
 	import {
 		FmButton,
@@ -87,6 +97,8 @@
 		FmProgressLinear,
 		FmTabs
 	} from '@finmars/ui';
+	import useApi from '~/composables/useApi';
+	import SimpleTabGeneral from './SimpleTabGeneral.vue';
 	import DraftButton from '~/components/common/DraftButton/DraftButton.vue';
 
 	const props = defineProps({
@@ -94,7 +106,11 @@
 			type: Number
 		},
 		initialScheme: {
-			type: Object
+			type: Object,
+			default: () => ({
+				entity_fields: [],
+				csv_fields: []
+			})
 		}
 	});
 
@@ -117,6 +133,44 @@
 			isTabFieldsValuesValid.value.general &&
 			isTabFieldsValuesValid.value.scheme
 	);
+
+	const draftUserCode = computed(() => {
+		if (!scheme.value || !scheme.value?.user_code) {
+			return '';
+		}
+
+		return isEditMode.value
+			? `csv_import.csvimportscheme.${scheme.value?.user_code}`
+			: 'csv_import.csvimportscheme.new';
+	});
+
+	function onUpdateValid(tab, value) {
+		isTabFieldsValuesValid.value[tab] = value;
+	}
+
+	function updateScheme(value) {
+		scheme.value = value;
+	}
+
+	async function getScheme() {
+		try {
+			isLoading.value = true;
+			const res = await useApi('simpleImportSchemeInstance.get', {
+				params: { id: props.schemeId }
+			});
+			res && (scheme.value = res);
+		} catch (e) {
+			console.error('The error loading the simple schema data. ', e);
+		} finally {
+			isLoading.value = false;
+		}
+	}
+
+	onBeforeMount(async () => {
+		if (isEditMode.value) {
+			await getScheme();
+		}
+	});
 </script>
 
 <style lang="scss" scoped>

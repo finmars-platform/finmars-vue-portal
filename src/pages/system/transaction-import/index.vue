@@ -49,7 +49,7 @@
 	import { FmIconButton, FmSearch, FmTooltip } from '@finmars/ui';
 	import useApi from '@/composables/useApi';
 	import DataImportByScheme from '~/components/common/DataImportByScheme/DataImportByScheme.vue';
-	import TransactionImportScheme from '@/components/modal/TransactionImportScheme/TransactionImportScheme.vue';
+	import TransactionImportScheme from '~/components/modal/importSchemes/TransactionImportScheme/TransactionImportScheme.vue';
 
 	const isSchemeListLoading = ref(false);
 	const isImporting = ref(false);

@@ -97,7 +97,7 @@
 		FmProgressLinear,
 		FmTabs
 	} from '@finmars/ui';
-	import useApi from '@/composables/useApi';
+	import useApi from '~/composables/useApi';
 	import { createOrUpdateScheme } from './utils';
 	import DraftButton from '~/components/common/DraftButton/DraftButton.vue';
 	import TabGeneral from './TabGeneral.vue';
@@ -180,7 +180,7 @@
 
 		return isEditMode.value
 			? `integrations.complextransactionimportscheme.${scheme.value?.user_code}`
-			: `integrations.complextransactionimportscheme.new`;
+			: 'integrations.complextransactionimportscheme.new';
 	});
 
 	function exportToDraft() {

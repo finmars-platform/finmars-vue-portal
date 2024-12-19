@@ -47,7 +47,7 @@
 
 		<DataImportByScheme
 			:scheme-id="selectedImportScheme?.id"
-			api-url="simpleImportSchemeInstance.post"
+			api-url="simpleImport.post"
 			:disabled="isLoading"
 			@update:importing-flag="isImporting = $event"
 			@complete:import="onImportComplete"
@@ -68,7 +68,7 @@
 	import useApi from '@/composables/useApi';
 	import { ENTITY_LIST } from './constants';
 	import DataImportByScheme from '~/components/common/DataImportByScheme/DataImportByScheme.vue';
-	import SimpleImportScheme from '~/components/modal/SimpleImportScheme/SimpleImportScheme.vue';
+	import SimpleImportScheme from '~/components/modal/importSchemes/SimpleImportScheme/SimpleImportScheme.vue';
 
 	const isLoading = ref(false);
 	const isImporting = ref(false);

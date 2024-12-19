@@ -12,7 +12,7 @@
 			<FmTextField
 				outlined
 				:model-value="scheme.name"
-				label="Name"
+				label="Name*"
 				:disabled="loading"
 				:error="validationData.name.isDirty && !validationData.name.isValid"
 				:error-messages="
@@ -222,9 +222,10 @@
 		ERROR_HANDLER_OPTIONS,
 		DATA_HANDLER_OPTIONS,
 		SEPARATORS_OPTIONS
-	} from './constants-tab-general';
+	} from '../constants-tab-general';
 	import { FmCheckbox, FmTextField, FmSelect } from '@finmars/ui';
-	import { getFunctions, generalTabFormatItem } from './utils';
+	import { getFunctions } from '~/components/modal/importSchemes/utils';
+	import { generalTabFormatItem } from './utils';
 	import UserCodeInput from '~/components/common/UserCodeInput/UserCodeInput.vue';
 	import ExpressionEditorSelector from '~/components/common/ExpressionEditorSelector/ExpressionEditorSelector.vue';
 	import SelectorManager from '~/components/common/SelectorManager/SelectorManager.vue';

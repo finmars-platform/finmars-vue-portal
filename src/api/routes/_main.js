@@ -150,8 +150,11 @@ export default {
 	simpleImportSchemeLight: {
 		get: prefix + '/import/csv/scheme/light/'
 	},
-	simpleImportSchemeInstance: {
+	simpleImport: {
 		post: prefix + '/import/csv/'
+	},
+	simpleImportSchemeInstance: {
+		get: prefix + '/import/csv/scheme/{id}/'
 	},
 	configurationList: {
 		get: prefix + '/configuration/configuration/'
