@@ -155,6 +155,7 @@
 <script setup>
 	import { computed } from 'vue';
 	import cloneDeep from 'lodash/cloneDeep';
+	import size from 'lodash/size';
 	import {
 		FmIconButton,
 		FmSearch,
@@ -165,13 +166,10 @@
 	import useApi from '~/composables/useApi';
 	import useNotify from '~/composables/useNotify';
 	import { SCENARIO_STATUS_OPTIONS } from '~/components/modal/importSchemes/TransactionImportScheme/constants-tab-scheme';
+	import { getFunctions } from '~/components/modal/importSchemes/utils';
+	import { generalTabFormatItem } from '~/components/modal/importSchemes/TransactionImportScheme/utils';
 	import MultipleSelectWithTransfer from '~/components/common/MultipleSelectWithTransfer/MultipleSelectWithTransfer.vue';
 	import ExpressionEditorSelector from '~/components/common/ExpressionEditorSelector/ExpressionEditorSelector.vue';
-	import {
-		generalTabFormatItem,
-		getFunctions
-	} from '~/components/modal/importSchemes/TransactionImportScheme/utils';
-	import size from 'lodash/size';
 
 	const props = defineProps({
 		scheme: {
