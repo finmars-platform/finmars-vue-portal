@@ -121,6 +121,7 @@
 			&-row {
 				position: relative;
 				width: 100%;
+				height: 50%;
 				flex-grow: 1;
 			}
 		}
