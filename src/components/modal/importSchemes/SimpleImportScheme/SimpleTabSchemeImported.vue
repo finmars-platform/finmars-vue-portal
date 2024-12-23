@@ -1,55 +1,68 @@
 <template>
-	<div class="calculated-block">
+	<div class="imported-block">
 		<draggable
-			:list="calculatedInputs"
+			:list="csvFields"
 			:item-key="(item) => item.column"
-			handle=".calculated-block__item-drag"
-			chosen-class="calculated-block__item--chosen"
-			drag-class="calculated-block__item--move"
+			handle=".imported-block__item-drag"
+			chosen-class="imported-block__item--chosen"
+			drag-class="imported-block__item--move"
 			@end="onMoveItemEnd"
 		>
 			<template #item="{ element }">
-				<div class="calculated-block__item">
+				<div class="imported-block__item">
 					<FmIcon
-						class="calculated-block__item-drag"
+						class="imported-block__item-drag"
 						icon="mdi-drag"
 						size="20"
 						color="var(--on-surface)"
 					/>
 
 					<FmTextField
+						class="imported-block__item-cell"
 						outlined
 						compact
-						label="Name*"
+						label="Column name"
+						:model-value="element.column_name"
+						@change="updateField(element, 'column_name', $event)"
+					/>
+
+					<FmTextField
+						class="imported-block__item-cell"
+						outlined
+						compact
+						label="Name"
 						:model-value="element.name"
-						:error="!!element.frontOptions.validateError?.name"
-						:error-messages="
-							!!element.frontOptions.validateError?.name
-								? [element.frontOptions.validateError.name]
-								: []
-						"
 						@change="updateField(element, 'name', $event)"
 					/>
 
-					<FmTooltip
-						type="secondary"
-						location="top"
-						:disabled="!element.name || !!element.name_expr"
-					>
+					<FmTooltip type="secondary" location="top">
 						<template #activator="{ props }">
-							<FmIconButton
-								class="calculated-block__item-expression"
-								v-ripple.center
-								icon="mdi-function-variant"
-								:variant="
-									element.name && !element.name_expr ? 'flat' : 'outlined'
-								"
+							<div
+								:class="[
+									'imported-block__expr-editor',
+									{
+										'imported-block__expr-editor--error':
+											!!element.frontOptions.validateError?.name_expr
+									}
+								]"
 								v-bind="props"
+								v-ripple.center
 								@click.stop.prevent="openExpressionEditor(element)"
-							/>
+							>
+								<FmIcon icon="mdi-sigma" size="20" color="var(--on-surface)" />
+
+								<span>{{ element.name_expr }}</span>
+
+								<div
+									v-if="!!element.frontOptions.validateError?.name_expr"
+									class="imported-block__expr-editor-messages"
+								>
+									{{ element.frontOptions.validateError?.name_expr }}
+								</div>
+							</div>
 						</template>
 
-						<span>No expression defined for the calculated variable.</span>
+						<span>{{ element.name_expr }}</span>
 					</FmTooltip>
 
 					<FmIconButton
@@ -88,21 +101,18 @@
 	import { computed, watch } from 'vue';
 	import isEmpty from 'lodash/isEmpty';
 	import cloneDeep from 'lodash/cloneDeep';
-	import size from 'lodash/size';
 	import draggable from 'vuedraggable';
 	import {
 		FmButton,
 		FmIcon,
 		FmIconButton,
 		FmTextField,
-		FmTooltip,
-		Ripple
+		FmTooltip
 	} from '@finmars/ui';
 	import ExpressionEditor from '~/components/common/ExpressionEditorSelector/ExpressionEditor.vue';
-	import { getFunctions } from '~/components/modal/importSchemes/utils';
 	import { validators } from './utils';
-
-	const vRipple = Ripple;
+	import { getFunctions } from '~/components/modal/importSchemes/utils';
+	import size from 'lodash/size';
 
 	const props = defineProps({
 		scheme: {
@@ -120,18 +130,17 @@
 		item: null
 	});
 
-	const calculatedInputs = computed(() => {
-		if (isEmpty(props.scheme?.calculated_inputs)) {
+	const csvFields = computed(() => {
+		if (isEmpty(props.scheme?.csv_fields)) {
 			return [];
 		}
 
-		return cloneDeep(props.scheme.calculated_inputs)
+		return cloneDeep(props.scheme.csv_fields)
 			.sort((a, b) => a.column - b.column)
 			.map((i) => ({
 				...i,
 				frontOptions: {
 					validateError: {
-						name: validators.required(i, 'name'),
 						name_expr: validators.required(i, 'name_expr')
 					}
 				}
@@ -147,22 +156,20 @@
 
 	const isBlockValid = computed(
 		() =>
-			!calculatedInputs.value.some((i) => {
+			!csvFields.value.some((i) => {
 				const { frontOptions = {} } = i;
 				const { validateError = {} } = frontOptions;
-				return !!validateError.name || !!validateError.name_expr;
+				return !!validateError.name_expr;
 			})
 	);
 
 	function findItemIndex(item) {
-		return props.scheme.calculated_inputs.findIndex(
-			(i) => item.column === i.column
-		);
+		return props.scheme.csv_fields.findIndex((i) => item.column === i.column);
 	}
 
 	function onMoveItemEnd({ oldIndex, newIndex }) {
-		console.log('onMoveCalculatedItemEnd: ', oldIndex, newIndex);
-		const updatedBlock = cloneDeep(props.scheme.calculated_inputs);
+		console.log('onMoveCalculatedItemEnd (csv_fields): ', oldIndex, newIndex);
+		const updatedBlock = cloneDeep(props.scheme.csv_fields);
 		const movedItems = updatedBlock.splice(oldIndex, 1);
 		updatedBlock.splice(newIndex, 0, movedItems[0]);
 		updatedBlock.forEach((i, index) => (i.column = index));
@@ -171,18 +178,19 @@
 	}
 
 	function addField() {
-		const updatedBlock = cloneDeep(props.scheme.calculated_inputs);
+		console.log('addField (csv_fields)');
+		const updatedBlock = cloneDeep(props.scheme.csv_fields);
 		updatedBlock.push({
 			name: '',
 			name_expr: '',
-			column: size(calculatedInputs.value) + 1
+			column: size(csvFields.value) + 1
 		});
 		emits('update:block', updatedBlock);
 	}
 
 	function removeItem(column) {
-		console.log('removeItem (calculated_inputs): ', column);
-		const updatedBlock = cloneDeep(props.scheme.calculated_inputs);
+		console.log('removeItem (csv_fields): ', column);
+		const updatedBlock = cloneDeep(props.scheme.csv_fields);
 		const index = updatedBlock.findIndex((i) => i.column === column);
 		if (index !== -1) {
 			updatedBlock.splice(index, 1);
@@ -195,13 +203,10 @@
 
 	function updateField(item, field, value) {
 		const index = findItemIndex(item);
-		if (
-			index !== -1 &&
-			props.scheme.calculated_inputs[index][field] !== value
-		) {
-			const updatedBlock = cloneDeep(props.scheme.calculated_inputs);
+		if (index !== -1 && props.scheme.csv_fields[index][field] !== value) {
+			const updatedBlock = cloneDeep(props.scheme.csv_fields);
 			updatedBlock[index][field] = value;
-			console.log('updateField: ', updatedBlock);
+			console.log('updateField (csv_fields): ', updatedBlock);
 			emits('update:block', updatedBlock);
 		}
 	}
@@ -216,11 +221,8 @@
 	function onExpressionEditorUpdate(value) {
 		const { item } = expressionEditor.value;
 		const index = findItemIndex(item);
-		if (
-			index !== -1 &&
-			props.scheme.calculated_inputs[index].name_expr !== value
-		) {
-			const updatedBlock = cloneDeep(props.scheme.calculated_inputs);
+		if (index !== -1 && props.scheme.csv_fields[index].name_expr !== value) {
+			const updatedBlock = cloneDeep(props.scheme.csv_fields);
 			updatedBlock[index].name_expr = value;
 			console.log('onExpressionEditorUpdate: ', updatedBlock);
 			emits('update:block', updatedBlock);
@@ -245,7 +247,7 @@
 </script>
 
 <style lang="scss" scoped>
-	.calculated-block {
+	.imported-block {
 		position: relative;
 		width: 100%;
 		height: 100%;
@@ -261,6 +263,13 @@
 			justify-content: flex-start;
 			align-items: flex-start;
 			column-gap: 8px;
+
+			&-cell {
+				position: relative;
+				min-width: 25%;
+				width: 25%;
+				max-width: 25%;
+			}
 
 			&-drag {
 				position: absolute;
@@ -281,10 +290,43 @@
 				position: absolute;
 				right: 4px;
 			}
+		}
 
-			&-expression {
-				&.v-btn--variant-flat {
-					background-color: var(--error) !important;
+		&__expr-editor {
+			position: relative;
+			width: 100%;
+			height: 40px;
+			border-radius: 4px;
+			border: 1px solid color-mix(in srgb, var(--on-surface) 38%, transparent);
+			padding: 0 8px;
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+			column-gap: 4px;
+			cursor: pointer;
+
+			span {
+				display: block;
+				position: relative;
+				width: calc(100% - 24px);
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+			}
+
+			&--error {
+				border: 1px solid var(--error);
+
+				.imported-block__expr-editor-messages {
+					position: absolute;
+					top: 100%;
+					left: 0;
+					width: 100%;
+					padding: 2px 16px 0 16px;
+					font-size: 12px;
+					font-weight: 400;
+					line-height: 1;
+					color: var(--error);
 				}
 			}
 		}
