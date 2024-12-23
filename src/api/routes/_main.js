@@ -616,8 +616,11 @@ export default {
 	contextMenuLayoutList: {
 		get: prefix + '/ui/context-menu-layout/',
 		post: prefix + '/ui/context-menu-layout/',
-		put: prefix + '/ui/context-menu-layout/{id}',
+		put: prefix + '/ui/context-menu-layout/{id}/',
 		delete: prefix + '/ui/context-menu-layout/{id}/'
+	},
+	contextMenuLayout: {
+		get: prefix + '/ui/context-menu-layout/{id}/'
 	},
 
 	activeProcesses: {
