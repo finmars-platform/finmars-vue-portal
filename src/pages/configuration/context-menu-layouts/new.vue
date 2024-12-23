@@ -114,12 +114,65 @@
 	const { realmCode, spaceCode } = getRealmSpaceCodes(route);
 	const crumbs = ref([
 		{ title: 'Context Menu Layouts', path: 'context-menu-layouts' },
-		{ title: 'Edit', path: 'edit' }
+		{ title: 'New', path: 'new' }
 	]);
-	const typeOptions = ref([
-		{ title: 'Report Right Click', value: 'report_context_menu' },
-		{ title: 'Report Menu Add Entities', value: 'report_menu_add_entities' }
-	]);
+
+	const defaultMenu = {
+		root: {
+			items: [
+				{
+					name: 'Edit Instrument',
+					action: 'edit_instrument',
+					order: '0'
+				},
+				{
+					name: 'Edit Account',
+					action: 'edit_account',
+					order: '1'
+				},
+				{
+					name: 'Edit Portfolio',
+					action: 'edit_portfolio',
+					order: '2'
+				},
+				{
+					name: 'Edit Price',
+					action: 'edit_price',
+					order: '3'
+				},
+				{
+					name: 'Edit FX Rate',
+					action: 'edit_fx_rate',
+					order: '4'
+				},
+				{
+					name: 'Edit Pricing FX Rate',
+					action: 'edit_pricing_currency_fx_rate',
+					order: '5'
+				},
+				{
+					name: 'Edit Accrued FX Rate',
+					action: 'edit_accrued_currency_fx_rate',
+					order: '6'
+				},
+				{
+					name: 'Edit Currency',
+					action: 'edit_currency',
+					order: '7'
+				},
+				{
+					name: 'Edit Transaction',
+					action: 'rebook_transaction',
+					order: '8'
+				},
+				{
+					name: 'Open Book Manager',
+					action: 'book_transaction',
+					order: '9'
+				}
+			]
+		}
+	};
 	const layout = ref({
 		name: '',
 		user_code: '',
@@ -133,7 +186,10 @@
 			}
 		}
 	});
-
+	const typeOptions = ref([
+		{ title: 'Report Right Click', value: 'report_context_menu' },
+		{ title: 'Report Menu Add Entities', value: 'report_menu_add_entities' }
+	]);
 	const configCodeOptions = ref([]);
 	const loading = ref(false);
 	const showModal = ref(false);
@@ -197,12 +253,11 @@
 		try {
 			loading.value = true;
 			layout.value.user_code = `${layout.value.configuration_code}:${layout.value.user_code}`;
-			const res = await useApi('contextMenuLayoutList.put', {
-				params: { id: layout.value.id },
+			const res = await useApi('contextMenuLayoutList.post', {
 				body: layout.value
 			});
 			if (res?.id) {
-				useNotify({ type: 'success', title: 'Updated' });
+				useNotify({ type: 'success', title: 'Created' });
 			}
 		} catch (e) {
 			console.log(`Catch error: ${e}`);
@@ -214,14 +269,8 @@
 	async function init() {
 		try {
 			loading.value = true;
+			layout.value.data.menu.root.items = defaultMenu.root.items;
 			await getConfigList();
-			const res = await useApi('contextMenuLayout.get', {
-				params: { id: route.params.id }
-			});
-			if (res?.id) {
-				layout.value = res;
-				layout.value.user_code = res.user_code.split(':')[1];
-			}
 		} catch (e) {
 			console.log(`Catch error: ${e}`);
 		} finally {
