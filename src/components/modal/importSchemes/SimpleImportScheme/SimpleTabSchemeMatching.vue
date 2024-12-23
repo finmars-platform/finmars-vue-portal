@@ -2,11 +2,17 @@
 	<div class="matching-block">
 		<div v-for="(field, index) in entityFields" :key="index">
 			<template v-if="field.system_property_key">
-				<SimpleTabSchemeMatchingField :field="field" />
+				<SimpleTabSchemeMatchingField
+					:field="field"
+					:expression-editor-selector-data="expressionEditorSelectorData"
+				/>
 			</template>
 
 			<template v-if="field.attribute_user_code">
-				<SimpleTabSchemeMatchingField :field="field" />
+				<SimpleTabSchemeMatchingField
+					:field="field"
+					:expression-editor-selector-data="expressionEditorSelectorData"
+				/>
 			</template>
 		</div>
 
@@ -17,6 +23,7 @@
 				name: 'Post Process Script',
 				expression: scheme.item_post_process_script
 			}"
+			:expression-editor-selector-data="expressionEditorSelectorData"
 		/>
 	</div>
 </template>
@@ -24,6 +31,7 @@
 <script setup>
 	import { computed, ref } from 'vue';
 	import isEmpty from 'lodash/isEmpty';
+	import { getFunctions } from '~/components/modal/importSchemes/utils';
 	import { DEPRECATED_ENTITY_FIELDS, MODELS } from './constants';
 	import SimpleTabSchemeMatchingField from './SimpleTabSchemeMatchingField.vue';
 
@@ -39,8 +47,6 @@
 	const emits = defineEmits(['update:block', 'update:valid']);
 
 	const attrTypes = ref(MODELS[props.scheme?.content_type] || []);
-
-	console.log('A: ', DEPRECATED_ENTITY_FIELDS, props.scheme?.content_type);
 
 	const entityFields = computed(() => {
 		if (isEmpty(props.scheme.entity_fields)) {
@@ -80,6 +86,13 @@
 
 				return res;
 			}, []);
+	});
+
+	const expressionEditorSelectorData = computed(() => {
+		return {
+			groups: [{ name: '<b>Imported</b>', key: 'input' }],
+			functions: [getFunctions(props.scheme.csv_fields)]
+		};
 	});
 </script>
 
