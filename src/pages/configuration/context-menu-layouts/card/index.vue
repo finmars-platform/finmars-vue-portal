@@ -1,5 +1,5 @@
 <template>
-	<div class="flex justify-between items-center w-full">
+	<div class="card flex justify-between items-center w-full">
 		<span>{{ item.name }} ({{ item.type }})</span>
 		<div class="flex gap-2">
 			<FmButton type="primary" @click="navigateToEdit(item.id)" rounded>
@@ -32,4 +32,12 @@
 	};
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+	.card {
+		border-radius: var(--spacing-8);
+		border: 1px solid var(--card-border-color);
+		background: var(--card-background-color);
+		padding: var(--spacing-12);
+		width: 100%;
+	}
+</style>
