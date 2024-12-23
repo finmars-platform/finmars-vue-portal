@@ -101,18 +101,21 @@
 	import { computed, watch } from 'vue';
 	import isEmpty from 'lodash/isEmpty';
 	import cloneDeep from 'lodash/cloneDeep';
+	import size from 'lodash/size';
 	import draggable from 'vuedraggable';
 	import {
 		FmButton,
 		FmIcon,
 		FmIconButton,
 		FmTextField,
-		FmTooltip
+		FmTooltip,
+		Ripple
 	} from '@finmars/ui';
-	import ExpressionEditor from '~/components/common/ExpressionEditorSelector/ExpressionEditor.vue';
 	import { validators } from './utils';
 	import { getFunctions } from '~/components/modal/importSchemes/utils';
-	import size from 'lodash/size';
+	import ExpressionEditor from '~/components/common/ExpressionEditorSelector/ExpressionEditor.vue';
+
+	const vRipple = Ripple;
 
 	const props = defineProps({
 		scheme: {
