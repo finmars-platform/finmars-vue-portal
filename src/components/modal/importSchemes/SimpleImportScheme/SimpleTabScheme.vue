@@ -21,7 +21,14 @@
 					<div class="simple-tab-scheme__block simple-tab-scheme__imported">
 						<div class="simple-tab-scheme__block-label">Imported Columns</div>
 
-						<div class="simple-tab-scheme__block-body">2</div>
+						<div class="simple-tab-scheme__block-body">
+							<SimpleTabSchemeImported
+								:scheme="scheme"
+								:loading="loading"
+								@update:valid="isBlockValid.csv_fields = $event"
+								@update:block="updateBlock('csv_fields', $event)"
+							/>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -30,7 +37,14 @@
 				<div class="simple-tab-scheme__block simple-tab-scheme__matching">
 					<div class="simple-tab-scheme__block-label">Data matching</div>
 
-					<div class="simple-tab-scheme__block-body">3</div>
+					<div class="simple-tab-scheme__block-body">
+						<SimpleTabSchemeMatching
+							:scheme="scheme"
+							:loading="loading"
+							@update:valid="isBlockValid.entity_fields = $event"
+							@update:block="updateBlock('entity_fields', $event)"
+						/>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -41,6 +55,8 @@
 	import { computed, ref, watch } from 'vue';
 	import cloneDeep from 'lodash/cloneDeep';
 	import SimpleTabSchemeCalculated from './SimpleTabSchemeCalculated.vue';
+	import SimpleTabSchemeImported from './SimpleTabSchemeImported.vue';
+	import SimpleTabSchemeMatching from './SimpleTabSchemeMatching.vue';
 
 	const props = defineProps({
 		scheme: {
