@@ -67,9 +67,8 @@
 	}
 
 	async function setCurrent(item) {
-		let res = await useApi('masterSet.patch', { params: { id: item.id } });
-
-		if (res) window.location.href = getUrlToOldApp(`/dashboard`);
+		window.location.href =
+			'/' + item.realm_code + '/' + item.space_code + '/a/#!/dashboard';
 	}
 
 	function getDocumentationLink() {
