@@ -65,7 +65,7 @@
 <script setup>
 	import { computed, onBeforeMount, ref } from 'vue';
 	import { FmIconButton, FmSearch, FmTooltip } from '@finmars/ui';
-	import useApi from '@/composables/useApi';
+	import { getListLight } from '@/services/csvImportSchemeService';
 	import { ENTITY_LIST } from './constants';
 	import DataImportByScheme from '~/components/common/DataImportByScheme/DataImportByScheme.vue';
 	import SimpleImportScheme from '~/components/modal/importSchemes/SimpleImportScheme/SimpleImportScheme.vue';
@@ -90,9 +90,9 @@
 	async function getSchemeList(contentType) {
 		try {
 			isLoading.value = true;
-			const data = await useApi('simpleImportSchemeLight.get', {
-				...(contentType && { filters: { content_type: contentType } })
-			});
+			const data = await getListLight(
+				contentType ? { content_type: contentType } : {}
+			);
 			data && data.results && (schemes.value = data.results);
 		} catch (e) {
 			console.error('The scheme list loading error.', e);

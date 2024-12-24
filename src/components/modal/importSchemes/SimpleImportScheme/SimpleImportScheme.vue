@@ -101,7 +101,7 @@
 		FmProgressLinear,
 		FmTabs
 	} from '@finmars/ui';
-	import useApi from '~/composables/useApi';
+	import { getById } from '@/services/csvImportSchemeService';
 	import SimpleTabGeneral from './SimpleTabGeneral.vue';
 	import SimpleTabScheme from './SimpleTabScheme.vue';
 	import DraftButton from '~/components/common/DraftButton/DraftButton.vue';
@@ -160,9 +160,7 @@
 	async function getScheme() {
 		try {
 			isLoading.value = true;
-			const res = await useApi('simpleImportSchemeInstance.get', {
-				params: { id: props.schemeId }
-			});
+			const res = await getById(props.schemeId);
 			res && (scheme.value = res);
 		} catch (e) {
 			console.error('The error loading the simple schema data. ', e);

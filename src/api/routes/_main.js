@@ -3,6 +3,13 @@ let prefix = host + '/{client}/api/v1';
 let uDatabasePrefix = 'https://database.finmars.com/api/v1';
 
 export default {
+	auditHistoryList: {
+		get: prefix + '/audit/history/'
+	},
+
+	expressionProcedureList: {
+		get: prefix + '/procedures/expression-procedure/'
+	},
 	pricingProc: {
 		get: prefix + '/procedures/pricing-procedure/',
 		post: prefix + '/procedures/pricing-procedure/{id}/run-procedure/',
@@ -16,6 +23,23 @@ export default {
 		get: prefix + '/procedures/pricing-parent-procedure-instance/'
 	},
 
+	accrualCalculationModelMappingList: {
+		get: prefix + '/import/accrual-calculation-model-mapping/'
+	},
+
+	instrumentPeriodicityMappingList: {
+		get: prefix + '/import/periodicity-mapping/'
+	},
+	instrumentAttributeTypeMappingList: {
+		get: prefix + '/import/instrument-attribute-value-mapping/'
+	},
+
+	instrumentCostMethodList: {
+		get: prefix + '/instruments/cost-method/'
+	},
+	instrumentPriceHistoryList: {
+		get: prefix + '/instruments/price-history/'
+	},
 	instrumentList: {
 		get: prefix + '/instruments/instrument/'
 	},
@@ -46,8 +70,14 @@ export default {
 		get: prefix + '/instruments/instrument-class/'
 	},
 
+	instrumentCountryList: {
+		get: prefix + '/instruments/country/'
+	},
 	instrumentPricingCondition: {
 		get: prefix + '/instruments/pricing-condition/'
+	},
+	instrumentDailyPricingModelList: {
+		get: prefix + '/instruments/daily-pricing-model/'
 	},
 
 	pricingPolicyList: {
@@ -75,8 +105,14 @@ export default {
 		// get: prefix + '/api/currencies/currency-database-search/',
 		get: uDatabasePrefix + '/currency/'
 	},
+	currencyHistoryList: {
+		get: prefix + 'currencies/currency-history/'
+	},
 	importCurrencyFmDb: {
 		post: prefix + '/import/finmars-database/currency/'
+	},
+	importPriceDownloadSchemeList: {
+		get: prefix + '/import/price-download-scheme/'
 	},
 	portfolioList: {
 		get: prefix + '/portfolios/portfolio/'
@@ -87,11 +123,20 @@ export default {
 	accountLight: {
 		get: prefix + '/accounts/account/light/'
 	},
+	account: {
+		get: prefix + '/accounts/account/'
+	},
 	accountTypeList: {
 		get: prefix + '/accounts/account-type/'
 	},
+	accountMappingList: {
+		get: prefix + '/import/account-mapping/'
+	},
 	counterpartyList: {
 		get: prefix + '/counterparties/counterparty/'
+	},
+	counterpartyResponsible: {
+		get: prefix + '/counterparties/responsible/'
 	},
 	counterpartyResponsibleLight: {
 		get: prefix + '/counterparties/responsible/light/'
@@ -112,6 +157,9 @@ export default {
 		post: prefix + '/import/finmars-database/company/'
 	},
 
+	complexTransactionList: {
+		get: prefix + '/transactions/complex-transaction/'
+	},
 	complexTransactionBulkRestore: {
 		post: prefix + '/transactions/complex-transaction/bulk-restore/'
 	},
@@ -139,6 +187,9 @@ export default {
 	dataInstance: {
 		get: prefix + '/procedures/data-procedure-instance/'
 	},
+	currencyMappingImportList: {
+		get: prefix + '/import/currency-mapping/'
+	},
 	importSchemeLight: {
 		get: prefix + '/import/complex-transaction-import-scheme/light/'
 	},
@@ -146,6 +197,9 @@ export default {
 		get: prefix + '/import/complex-transaction-import-scheme/{id}/',
 		post: prefix + '/import/complex-transaction-import-scheme/',
 		patch: prefix + `/import/complex-transaction-import-scheme/{id}/`
+	},
+	simpleImportSchemeList: {
+		get: prefix + '/import/csv/scheme/'
 	},
 	simpleImportSchemeLight: {
 		get: prefix + '/import/csv/scheme/light/'
@@ -179,12 +233,30 @@ export default {
 		get: prefix + '/iam/group/'
 	},
 
+	portfolioHistoryList: {
+		get: prefix + '/portfolios/portfolio-history/'
+	},
+	portfolioReconcileHistoryList: {
+		get: prefix + '/portfolios/portfolio-reconcile-history/'
+	},
+	portfolioClassList: {
+		get: prefix + '/portfolios/portfolio-class/'
+	},
 	portfolioRegisterList: {
 		get: prefix + '/portfolios/portfolio-register/',
 		post: prefix + '/portfolios/portfolio-register/'
 	},
 	portfolioRegisterEvFiltered: {
 		post: prefix + '/portfolios/portfolio-register/ev-item/'
+	},
+	portfolioRegisterRecordList: {
+		get: prefix + '/portfolios/portfolio-register-record/'
+	},
+	portfolioTypeList: {
+		get: prefix + '/portfolios/portfolio-type/'
+	},
+	portfolioReconcileGroupList: {
+		get: prefix + 'portfolios/portfolio-reconcile-group/'
 	},
 	performanceReport: {
 		post: prefix + '/reports/performance-report/'
@@ -254,7 +326,8 @@ export default {
 		get: prefix + '/users/ecosystem-default/'
 	},
 	balanceReport: {
-		get: prefix + 'reports/balance-report/'
+		get: prefix + 'reports/balance-report/',
+		post: prefix + 'reports/balance-report/'
 	},
 	balanceReportAttributes: {
 		get: prefix + '/reports/balance-report/attributes/'
@@ -354,6 +427,9 @@ export default {
 	instrumentAttrTypeList: {
 		get: prefix + '/instruments/instrument-attribute-type/'
 	},
+	instrumentTypeMappingList: {
+		get: prefix + '/import/instrument-type-mapping/'
+	},
 	instrumentTypeAttrTypeList: {
 		get: prefix + '/instruments/instrument-type-attribute-type/'
 	},
@@ -376,6 +452,18 @@ export default {
 		get: prefix + '/strategies/3/strategy-attribute-type/'
 	},
 
+	transactionEventClass: {
+		get: prefix + '/transactions/event-class/'
+	},
+	transactionNotificationClass: {
+		get: prefix + '/transactions/notification-class/'
+	},
+	transactionList: {
+		get: prefix + '/transactions/transaction/'
+	},
+	transactionClassList: {
+		get: prefix + '/transactions/transaction-class/'
+	},
 	transactionTypeLight: {
 		get: prefix + '/transactions/transaction-type/light/'
 	},
@@ -397,6 +485,9 @@ export default {
 		post: prefix + '/reports/balance-report/custom-field/',
 		put: prefix + '/reports/balance-report/custom-field/{id}/',
 		delete: prefix + '/reports/balance-report/custom-field/{id}/'
+	},
+	pnlReport: {
+		post: prefix + '/reports/pl-report/'
 	},
 	plReportCustomFieldList: {
 		get: prefix + '/reports/pl-report/custom-field/'
@@ -427,6 +518,12 @@ export default {
 	},
 	strategies1ListLight: {
 		get: prefix + '/strategies/1/strategy/light/'
+	},
+	strategyGroupList: {
+		get: prefix + '/strategies/{strategyNumber}/subgroup/'
+	},
+	strategyList: {
+		get: prefix + '/strategies/{strategyNumber}/strategy/'
 	},
 	strategies1SubgroupList: {
 		get: prefix + '/strategies/1/subgroup/'
@@ -647,5 +744,11 @@ export default {
 	},
 	clearRecycleBin: {
 		post: prefix + '/utils/recycle-bin/clear-bin/'
+	},
+	complexImportSchemeList: {
+		get: prefix + '/import/complex/scheme/'
+	},
+	transactionImportSchemeList: {
+		get: prefix + '/import/complex-transaction-import-scheme/'
 	}
 };

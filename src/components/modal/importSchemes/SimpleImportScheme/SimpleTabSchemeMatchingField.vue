@@ -42,7 +42,7 @@
 	import { ref } from 'vue';
 	import { FmIconButton, Ripple } from '@finmars/ui';
 	import ExpressionEditor from '~/components/common/ExpressionEditorSelector/ExpressionEditor.vue';
-	import EntityTypeMapping from '~/components/modal/EntityTypeMapping.vue';
+	import EntityTypeMapping from '~/components/modal/EntityTypeMapping/EntityTypeMapping.vue';
 
 	const vRipple = Ripple;
 
@@ -99,7 +99,7 @@
 			cursor: pointer;
 
 			&:hover {
-				background-color: var(--surface-dim);
+				background-color: color-mix(in srgb, transparent, var(--on-surface) 8%);
 			}
 		}
 
