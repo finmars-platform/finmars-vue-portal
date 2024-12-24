@@ -10,6 +10,10 @@
 						variant="text"
 						@click.stop.prevent="emits('close')"
 					/>
+
+					<div v-if="isLoading" class="entity-type-mapping__loader">
+						<FmProgressLinear indeterminate />
+					</div>
 				</div>
 
 				<div class="entity-type-mapping__body">
@@ -29,8 +33,11 @@
 </template>
 
 <script setup>
-	import { ref } from 'vue';
-	import { FmButton, FmIconButton } from '@finmars/ui';
+	import { computed, onMounted, ref } from 'vue';
+	import { FmButton, FmIconButton, FmProgressLinear } from '@finmars/ui';
+	import { loadDataFromAllPages } from '@/utils/commonHelper';
+	import { getEntityList } from './utils';
+	import { ENTITY_WITHOUT_COUNT } from './constants';
 
 	const props = defineProps({
 		locals: {
@@ -39,6 +46,49 @@
 	});
 
 	const emits = defineEmits(['close', 'update']);
+
+	const isLoading = ref(false);
+	const items = ref([]);
+	const entityItems = ref([]);
+
+	const mapEntityType = computed(() => {
+		const value = props.locals.mapItem?.complexExpressionEntity;
+		return value ? value.replaceAll('_', '-') : '';
+	});
+
+	async function loadEntityItems() {
+		const inputMapEntityType =
+			props.locals.mapItem?.complexExpressionEntity || '';
+		const isEntityWithoutCount = inputMapEntityType
+			? ENTITY_WITHOUT_COUNT.includes(inputMapEntityType)
+			: false;
+
+		if (isEntityWithoutCount) {
+			const res = await getEntityList(mapEntityType.value);
+			console.log('isEntityWithoutCount 1: ', res);
+		} else {
+			const res = await loadDataFromAllPages(getEntityList, [
+				mapEntityType.value,
+				{ page: 1, pageSize: 1000 }
+			]);
+			console.log('isEntityWithoutCount 2: ', res);
+		}
+	}
+
+	async function loadItems() {
+		// TODO
+	}
+
+	onMounted(async () => {
+		try {
+			isLoading.value = true;
+			await loadEntityItems();
+		} catch (e) {
+			console.error(e);
+		} finally {
+			isLoading.value = false;
+		}
+	});
 </script>
 
 <style lang="scss" scoped>
@@ -98,11 +148,9 @@
 
 		&__loader {
 			position: absolute;
-			inset: 0;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			z-index: 5;
+			left: 0;
+			bottom: 0;
+			width: 100%;
 		}
 	}
 </style>
