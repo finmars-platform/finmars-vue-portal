@@ -53,6 +53,9 @@ export default {
 	instrumentSizeDetail: {
 		get: prefix + '/instruments/payment-size-detail/'
 	},
+	paymentSizeDetailMappingList: {
+		get: prefix + '/import/payment-size-detail-mapping/'
+	},
 	instrumentPeriodicity: {
 		get: prefix + '/instruments/periodicity/'
 	},
@@ -76,8 +79,17 @@ export default {
 	instrumentPricingCondition: {
 		get: prefix + '/instruments/pricing-condition/'
 	},
+	pricingConditionMappingList: {
+		get: prefix + '/import/pricing-condition-mapping/'
+	},
 	instrumentDailyPricingModelList: {
 		get: prefix + '/instruments/daily-pricing-model/'
+	},
+	instrumentMappingList: {
+		get: prefix + '/import/instrument-mapping/'
+	},
+	dailyPricingModelMappingList: {
+		get: prefix + '/import/daily-pricing-model-mapping/'
 	},
 
 	pricingPolicyList: {
@@ -91,6 +103,9 @@ export default {
 	},
 	pricingPolicyListLight: {
 		get: prefix + '/instruments/pricing-policy/light/'
+	},
+	pricingPolicyMappingList: {
+		get: prefix + '/import/pricing-policy-mapping/'
 	},
 	currencyList: {
 		get: prefix + '/currencies/currency/'
@@ -114,11 +129,17 @@ export default {
 	importPriceDownloadSchemeList: {
 		get: prefix + '/import/price-download-scheme/'
 	},
+	priceDownloadSchemeMappingList: {
+		get: prefix + '/import/price-download-scheme-mapping/'
+	},
 	portfolioList: {
 		get: prefix + '/portfolios/portfolio/'
 	},
 	portfolioListLight: {
 		get: prefix + '/portfolios/portfolio/light/'
+	},
+	portfolioMappingList: {
+		get: prefix + '/import/portfolio-mapping/'
 	},
 	accountLight: {
 		get: prefix + '/accounts/account/light/'
@@ -132,6 +153,9 @@ export default {
 	accountMappingList: {
 		get: prefix + '/import/account-mapping/'
 	},
+	accountTypeMappingList: {
+		get: prefix + '/import/account-type-mapping/'
+	},
 	counterpartyList: {
 		get: prefix + '/counterparties/counterparty/'
 	},
@@ -144,6 +168,9 @@ export default {
 	responsibleGroupList: {
 		get: prefix + '/counterparties/responsible-group/'
 	},
+	responsibleMappingList: {
+		get: prefix + '/import/responsible-mapping/'
+	},
 	counterpartyCounterpartyLight: {
 		get: prefix + '/counterparties/counterparty/light/'
 	},
@@ -155,6 +182,9 @@ export default {
 	},
 	importCounterpartyFmDb: {
 		post: prefix + '/import/finmars-database/company/'
+	},
+	counterpartyMappingList: {
+		get: prefix + '/import/counterparty-mapping/'
 	},
 
 	complexTransactionList: {
@@ -450,6 +480,15 @@ export default {
 	},
 	strategy3AttrTypeList: {
 		get: prefix + '/strategies/3/strategy-attribute-type/'
+	},
+	strategy1MappingList: {
+		get: prefix + '/import/strategy1-mapping/'
+	},
+	strategy2MappingList: {
+		get: prefix + '/import/strategy2-mapping/'
+	},
+	strategy3MappingList: {
+		get: prefix + '/import/strategy3-mapping/'
 	},
 
 	transactionEventClass: {
