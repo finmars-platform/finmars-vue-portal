@@ -56,6 +56,19 @@ import { getList as accrualCalculationModelMappingGetList } from '@/services/acc
 import { getList as instrumentPeriodicityMappingGetList } from '@/services/instrumentPeriodicityMappingService';
 import { getList as instrumentAttributeTypeMappingGetList } from '@/services/instrumentAttributeTypeMappingService';
 import { getList as accountMappingGetList } from '@/services/accountMappingService';
+import { getList as accountTypeMappingGetList } from '@/services/accountTypeMappingService';
+import { getList as instrumentMappingGetList } from '@/services/instrumentMappingService';
+import { getList as counterpartyMappingGetList } from '@/services/counterpartyMappingService';
+import { getList as responsibleMappingGetList } from '@/services/responsibleMappingService';
+import { getList as portfolioMappingGetList } from '@/services/portfolioMappingService';
+import { getList as strategy1MappingGetList } from '@/services/strategy1MappingService';
+import { getList as strategy2MappingGetList } from '@/services/strategy2MappingService';
+import { getList as strategy3MappingGetList } from '@/services/strategy3MappingService';
+import { getList as dailyPricingModelMappingGetList } from '@/services/dailyPricingModelMappingService';
+import { getList as paymentSizeDetailMappingGetList } from '@/services/paymentSizeDetailMappingService';
+import { getList as pricingConditionMappingGetList } from '@/services/pricingConditionMappingService';
+import { getList as priceDownloadSchemeMappingGetList } from '@/services/priceDownloadSchemeMappingService';
+import { getList as pricingPolicyMappingGetList } from '@/services/pricingPolicyMappingService';
 
 export function getEntityList(mapEntityType) {
 	const options = { page: 1, pageSize: 1000 };
@@ -188,30 +201,30 @@ export function getEntityTypeList(mapEntityType) {
 		case 'account':
 			return accountMappingGetList(options);
 		case 'account-type':
-			return [];
+			return accountTypeMappingGetList(options);
 		case 'instrument':
-			return [];
+			return instrumentMappingGetList(options);
 		case 'counterparty':
-			return [];
+			return counterpartyMappingGetList(options);
 		case 'responsible':
-			return [];
+			return responsibleMappingGetList(options);
 		case 'portfolio':
-			return [];
+			return portfolioMappingGetList(options);
 		case 'strategy-1':
-			return [];
+			return strategy1MappingGetList(options);
 		case 'strategy-2':
-			return [];
+			return strategy2MappingGetList(options);
 		case 'strategy-3':
-			return [];
+			return strategy3MappingGetList(options);
 		case 'daily-pricing-model':
-			return [];
+			return dailyPricingModelMappingGetList(options);
 		case 'payment-size-detail':
-			return [];
+			return paymentSizeDetailMappingGetList(options);
 		case 'pricing-condition':
-			return [];
+			return pricingConditionMappingGetList(options);
 		case 'price-download-scheme':
-			return [];
+			return priceDownloadSchemeMappingGetList(options);
 		case 'pricing-policy':
-			return [];
+			return pricingPolicyMappingGetList(options);
 	}
 }

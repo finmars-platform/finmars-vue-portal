@@ -17,7 +17,37 @@
 				</div>
 
 				<div class="entity-type-mapping__body">
-					{{ locals }}
+					<div class="entity-type-mapping__body-row">
+						<div class="entity-type-mapping__body-header">
+							<div class="entity-type-mapping__body-title">Your value</div>
+							<FmTextField
+								v-model="search.value"
+								outlined
+								compact
+								hide-details
+								prepend-icon="mdi-magnify"
+								label="Search"
+							/>
+						</div>
+
+						<div class="entity-type-mapping__body-header">
+							<div class="entity-type-mapping__body-title">Map on</div>
+							<FmTextField
+								v-model="search.name"
+								outlined
+								compact
+								hide-details
+								prepend-icon="mdi-magnify"
+								label="Search"
+							/>
+						</div>
+					</div>
+
+					<div class="entity-type-mapping__body-content">
+						<template v-for="entity in entityItems" :key="entity.id">
+							<EntityTypeMappingItem :entity="entity" />
+						</template>
+					</div>
 				</div>
 
 				<div class="entity-type-mapping__actions">
@@ -34,10 +64,16 @@
 
 <script setup>
 	import { computed, onMounted, ref } from 'vue';
-	import { FmButton, FmIconButton, FmProgressLinear } from '@finmars/ui';
+	import {
+		FmButton,
+		FmIconButton,
+		FmProgressLinear,
+		FmTextField
+	} from '@finmars/ui';
 	import { loadDataFromAllPages } from '@/utils/commonHelper';
-	import { getEntityList } from './utils';
+	import { getEntityList, getEntityTypeList } from './utils';
 	import { ENTITY_WITHOUT_COUNT } from './constants';
+	import EntityTypeMappingItem from './EntityTypeMappingItem.vue';
 
 	const props = defineProps({
 		locals: {
@@ -50,6 +86,10 @@
 	const isLoading = ref(false);
 	const items = ref([]);
 	const entityItems = ref([]);
+	const search = ref({
+		name: '',
+		value: ''
+	});
 
 	const mapEntityType = computed(() => {
 		const value = props.locals.mapItem?.complexExpressionEntity;
@@ -64,25 +104,54 @@
 			: false;
 
 		if (isEntityWithoutCount) {
-			const res = await getEntityList(mapEntityType.value);
-			console.log('isEntityWithoutCount 1: ', res);
+			entityItems.value = await getEntityList(mapEntityType.value);
+			console.log('isEntityWithoutCount 1: ', entityItems.value);
 		} else {
-			const res = await loadDataFromAllPages(getEntityList, [
+			entityItems.value = await loadDataFromAllPages(getEntityList, [
 				mapEntityType.value,
 				{ page: 1, pageSize: 1000 }
 			]);
-			console.log('isEntityWithoutCount 2: ', res);
+			console.log('isEntityWithoutCount 2: ', entityItems.value);
 		}
 	}
 
 	async function loadItems() {
-		// TODO
+		items.value = await loadDataFromAllPages(getEntityTypeList, [
+			mapEntityType.value,
+			{ page: 1, pageSize: 1000 }
+		]);
+		console.log('loadItems: ', items.value);
+
+		entityItems.value.forEach((entity) => {
+			items.value.forEach((item) => {
+				if (item.content_object !== entity.id) {
+					return;
+				}
+
+				if ('mapping' in entity) {
+					const entityIndex = entity.mapping.findIndex((m) => m.id === item.id);
+					if (entityIndex === -1) {
+						entity.mapping.push(item);
+					}
+					return;
+				}
+
+				entity.mapping = [item];
+			});
+		});
+
+		entityItems.value.forEach((entity) => {
+			if (!entity.mapping) {
+				entity.mapping = [{ value: '' }];
+			}
+		});
 	}
 
 	onMounted(async () => {
 		try {
 			isLoading.value = true;
 			await loadEntityItems();
+			await loadItems();
 		} catch (e) {
 			console.error(e);
 		} finally {
@@ -130,6 +199,37 @@
 			width: 100%;
 			height: 400px;
 			padding: 24px;
+
+			&-row {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				column-gap: 8px;
+				margin-bottom: 8px;
+			}
+
+			&-header {
+				position: relative;
+				width: 100%;
+			}
+
+			&-title {
+				position: relative;
+				width: 100%;
+				display: flex;
+				justify-content: flex-start;
+				align-items: center;
+				font: var(--body-large-pro-font);
+				margin-bottom: 4px;
+			}
+
+			&-content {
+				position: relative;
+				width: 100%;
+				height: calc(100% - 76px);
+				padding-top: 8px;
+				overflow-y: auto;
+			}
 		}
 
 		&__actions {
