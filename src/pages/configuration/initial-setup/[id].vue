@@ -136,11 +136,10 @@
 	const router = useRouter();
 
 	const { realmCode, spaceCode } = getRealmSpaceCodes(route);
-	const crumbs = ref([
+	const crumbs = [
 		{ title: 'New User Setups', path: 'initial-setup' },
 		{ title: 'Edit', path: 'edit' }
-	]);
-
+	];
 	const configChanelOptions = [
 		{ title: 'Stable', value: 'stable' },
 		{ title: 'Release Candidate', value: 'rc' }
@@ -173,13 +172,9 @@
 	};
 
 	const getBrowsedFiles = (files) => {
-		if (files && files.length) {
-			selectedItem.value.file = files[files.length - 1].file;
-			selectedItem.value.file_name = files[files.length - 1].file.name;
-		} else {
-			selectedItem.value.file = null;
-			selectedItem.value.file_name = '';
-		}
+		const browsedFile = files?.[files.length - 1]?.file;
+		selectedItem.value.file = browsedFile || null;
+		selectedItem.value.file_name = browsedFile?.name || '';
 	};
 
 	const handleCrumbs = (newCrumbs, newPath) => {
