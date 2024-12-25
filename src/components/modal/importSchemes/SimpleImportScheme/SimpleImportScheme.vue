@@ -71,6 +71,7 @@
 						type="tertiary"
 						rounded
 						:disabled="isLoading || !isSchemeValid || !scheme?.id"
+						@click.stop.prevent="makeCopy"
 					>
 						Make a copy
 					</FmButton>
@@ -83,7 +84,11 @@
 						Cancel
 					</FmButton>
 
-					<FmButton rounded :disabled="isLoading || !isSchemeValid">
+					<FmButton
+						rounded
+						:disabled="isLoading || !isSchemeValid"
+						@click.stop.prevent="save"
+					>
 						Save
 					</FmButton>
 				</div>
@@ -101,7 +106,10 @@
 		FmProgressLinear,
 		FmTabs
 	} from '@finmars/ui';
-	import { getById } from '@/services/csvImportSchemeService';
+	import useNotify from '~/composables/useNotify';
+	import { getById, create, update } from '@/services/csvImportSchemeService';
+	import { findEntityByContentType } from '@/services/metaContentTypeService';
+	import { getList } from '@/services/attributeTypeService';
 	import SimpleTabGeneral from './SimpleTabGeneral.vue';
 	import SimpleTabScheme from './SimpleTabScheme.vue';
 	import DraftButton from '~/components/common/DraftButton/DraftButton.vue';
@@ -130,6 +138,9 @@
 		general: true,
 		scheme: true
 	});
+
+	// const entityType = ref();
+	const dynamicAttributes = ref([]);
 
 	const isEditMode = computed(() => !!props.schemeId);
 
@@ -167,6 +178,63 @@
 		} finally {
 			isLoading.value = false;
 		}
+	}
+
+	async function getDynamicAttributes(schemeContentType) {
+		const entityType = findEntityByContentType(schemeContentType);
+		const res = await getList(entityType, { pageSize: 1000 });
+		dynamicAttributes.value = res.results;
+		scheme.value.entity_fields.forEach((item) => {
+			if (item.dynamic_attribute_id !== null) {
+				dynamicAttributes.value.forEach((attr) => {
+					if (item.dynamic_attribute_id === attr.id) {
+						item.value_type = attr.value_type;
+					}
+				});
+			}
+		});
+	}
+
+	async function createOrUpdateScheme(data) {
+		const updatedData = cloneDeep(data);
+		updatedData.entity_fields.forEach((item) => {
+			dynamicAttributes.value.forEach((attr) => {
+				if (item.dynamic_attribute_id === attr.id) {
+					item.name = attr.name;
+				}
+			});
+		});
+		if (updatedData.id) {
+			await update(updatedData);
+		} else {
+			await create(updatedData);
+		}
+	}
+
+	async function save() {
+		try {
+			isLoading.value = true;
+			await getDynamicAttributes(scheme.value.content_type);
+			await createOrUpdateScheme(scheme.value);
+			useNotify({
+				type: 'success',
+				title: `Simple Import Scheme ${scheme.value.user_code} was successfully saved`
+			});
+			emits('close', true);
+		} catch (e) {
+			console.error('Error saving the simple import schema. ', e);
+			useNotify({
+				type: 'error',
+				title: 'Error saving the simple import schema.',
+				message: e.message || ''
+			});
+		} finally {
+			isLoading.value = false;
+		}
+	}
+
+	function makeCopy() {
+		emits('copy', scheme.value);
 	}
 
 	onBeforeMount(async () => {

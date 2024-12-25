@@ -238,7 +238,9 @@ export default {
 		post: prefix + '/import/csv/'
 	},
 	simpleImportSchemeInstance: {
-		get: prefix + '/import/csv/scheme/{id}/'
+		get: prefix + '/import/csv/scheme/{id}/',
+		post: prefix + '/import/csv/scheme/',
+		patch: prefix + '/import/csv/scheme/{id}/'
 	},
 	configurationList: {
 		get: prefix + '/configuration/configuration/'
