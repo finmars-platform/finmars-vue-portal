@@ -13,3 +13,17 @@ export async function getById(id) {
 		params: { id }
 	});
 }
+
+export async function update(scheme) {
+	const schemeId = scheme.id;
+	return useApi('simpleImportSchemeInstance.patch', {
+		params: { id: schemeId },
+		body: scheme
+	});
+}
+
+export async function create(scheme) {
+	return useApi('simpleImportSchemeInstance.post', {
+		body: scheme
+	});
+}

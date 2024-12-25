@@ -56,14 +56,16 @@
 		<SimpleImportScheme
 			v-if="isSchemeEditorOpen"
 			:scheme-id="selectedImportScheme?.id"
-			:initial-scheme="{}"
+			:initial-scheme="copiedScheme"
 			@close="closeSchemeEditor"
+			@copy="makeSchemeCopy"
 		/>
 	</section>
 </template>
 
 <script setup>
-	import { computed, onBeforeMount, ref } from 'vue';
+	import { computed, nextTick, onBeforeMount, ref } from 'vue';
+	import omit from 'lodash/omit';
 	import { FmIconButton, FmSearch, FmTooltip } from '@finmars/ui';
 	import { getListLight } from '@/services/csvImportSchemeService';
 	import { ENTITY_LIST } from './constants';
@@ -77,9 +79,14 @@
 	const selectedImportScheme = ref(null);
 
 	const isSchemeEditorOpen = ref(false);
+	const copiedScheme = ref({});
 
 	const schemeEditButtonDisabled = computed(
 		() => isLoading.value || !selectedImportScheme.value
+	);
+
+	const userCodesOfExistingImportSchemes = computed(() =>
+		schemes.value.map((s) => s.user_code)
 	);
 
 	async function onEntitySelect(entity) {
@@ -99,6 +106,33 @@
 		} finally {
 			isLoading.value = false;
 		}
+	}
+
+	function createUserCodeForCopiedScheme(oldUserCode) {
+		let isUserCodeUnique = false;
+		let newUserCode = oldUserCode;
+		while (!isUserCodeUnique) {
+			newUserCode = `${newUserCode}_copy`;
+			if (!userCodesOfExistingImportSchemes.value.includes(newUserCode)) {
+				isUserCodeUnique = true;
+			}
+		}
+		return newUserCode;
+	}
+
+	function makeSchemeCopy(scheme) {
+		console.log('makeSchemeCopy: ', scheme);
+		isSchemeEditorOpen.value = false;
+		selectedImportScheme.value = null;
+		nextTick(() => {
+			setTimeout(() => {
+				copiedScheme.value = omit(scheme, 'id');
+				copiedScheme.value.user_code = createUserCodeForCopiedScheme(
+					copiedScheme.value.user_code
+				);
+				isSchemeEditorOpen.value = true;
+			}, 500);
+		});
 	}
 
 	function onImportComplete() {
