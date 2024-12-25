@@ -150,8 +150,9 @@
 		layout.value.data.menu.root.items.push({
 			name: elem.name,
 			action: elem.action,
-			order: layout.value.data.menu.root.items.length
+			order: layout.value.data.menu.root.items.length.toString()
 		});
+		updateList(layout.value.data.menu.root.items);
 		closeModal();
 	};
 
@@ -166,7 +167,7 @@
 	const updateList = (newList) => {
 		if (newList) {
 			newList.forEach((item, index) => {
-				item.order = index;
+				item.order = index.toString();
 				if (item.children) {
 					updateList(item.children);
 				}
