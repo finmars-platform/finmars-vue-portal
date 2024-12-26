@@ -1,14 +1,7 @@
 import useApi from '~/composables/useApi';
 
-export async function getList(strategyNumber, options = {}) {
-	return useApi('strategySubGroupList.get', {
-		params: { strategyNumber },
-		filters: options
-	});
-}
-
 export async function create(strategyNumber, data) {
-	return useApi('strategySubGroupList.post', {
+	return useApi('strategyGroup.post', {
 		params: { strategyNumber },
 		body: data
 	});
@@ -16,7 +9,7 @@ export async function create(strategyNumber, data) {
 
 export async function update(strategyNumber, data) {
 	const id = data.id;
-	return useApi('strategySubGroupList.put', {
+	return useApi('strategyGroup.put', {
 		params: { strategyNumber, id },
 		body: data
 	});

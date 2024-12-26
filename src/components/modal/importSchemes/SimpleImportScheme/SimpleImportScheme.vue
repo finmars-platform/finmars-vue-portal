@@ -13,13 +13,12 @@
 					/>
 
 					<div class="simple-import-scheme__draft">
-						<!--					<DraftButton-->
-						<!--						v-if="draftUserCode"-->
-						<!--						:draft-user-code="draftUserCode"-->
-						<!--						:export-to-draft="exportToDraft"-->
-						<!--						:apply-draft="applyDraft"-->
-						<!--					/>-->
-						DRAFT
+						<DraftButton
+							v-if="draftUserCode"
+							:draft-user-code="draftUserCode"
+							:export-to-draft="exportToDraft"
+							:apply-draft="applyDraft"
+						/>
 					</div>
 
 					<div v-if="isLoading" class="simple-import-scheme__loader">
@@ -63,6 +62,7 @@
 						type="tertiary"
 						rounded
 						:disabled="isLoading || !isSchemeValid || !scheme?.id"
+						@click.stop.prevent="isJsonEditorOpen = true"
 					>
 						Edit as JSON
 					</FmButton>
@@ -79,7 +79,7 @@
 					<FmButton
 						type="secondary"
 						rounded
-						@click.prevent.stop="emits('close', false)"
+						@click.prevent.stop="emits('close', true)"
 					>
 						Cancel
 					</FmButton>
@@ -93,6 +93,14 @@
 					</FmButton>
 				</div>
 			</div>
+
+			<EntityJsonEditor
+				v-if="isJsonEditorOpen"
+				:data="scheme"
+				entity-type="csv-import-scheme"
+				@close="isJsonEditorOpen = false"
+				@update="onSchemeUpdate"
+			/>
 		</section>
 	</teleport>
 </template>
@@ -112,6 +120,7 @@
 	import { getList } from '@/services/attributeTypeService';
 	import SimpleTabGeneral from './SimpleTabGeneral.vue';
 	import SimpleTabScheme from './SimpleTabScheme.vue';
+	import EntityJsonEditor from '~/components/modal/EntityJsonEditor/EntityJsonEditor.vue';
 	import DraftButton from '~/components/common/DraftButton/DraftButton.vue';
 
 	const props = defineProps({
@@ -138,6 +147,7 @@
 		general: true,
 		scheme: true
 	});
+	const isJsonEditorOpen = ref(false);
 
 	// const entityType = ref();
 	const dynamicAttributes = ref([]);
@@ -235,6 +245,18 @@
 
 	function makeCopy() {
 		emits('copy', scheme.value);
+	}
+
+	async function onSchemeUpdate() {
+		await getScheme();
+	}
+
+	function exportToDraft() {
+		return cloneDeep(scheme.value);
+	}
+
+	function applyDraft(value) {
+		scheme.value = value;
 	}
 
 	onBeforeMount(async () => {
