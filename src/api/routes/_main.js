@@ -27,14 +27,22 @@ export default {
 	},
 
 	accrualCalculationModelMappingList: {
-		get: prefix + '/import/accrual-calculation-model-mapping/'
+		get: prefix + '/import/accrual-calculation-model-mapping/',
+		post: prefix + '/import/accrual-calculation-model-mapping/',
+		put: prefix + '/import/accrual-calculation-model-mapping/{id}/'
 	},
 
 	instrumentPeriodicityMappingList: {
-		get: prefix + '/import/periodicity-mapping/'
+		get: prefix + '/import/periodicity-mapping/',
+		post: prefix + '/import/periodicity-mapping/',
+		put: prefix + '/import/periodicity-mapping/{id}/',
+		delete: prefix + '/import/periodicity-mapping/{id}/'
 	},
 	instrumentAttributeTypeMappingList: {
-		get: prefix + '/import/instrument-attribute-value-mapping/'
+		get: prefix + '/import/instrument-attribute-value-mapping/',
+		post: prefix + '/import/instrument-attribute-value-mapping/',
+		put: prefix + '/import/instrument-attribute-value-mapping/{id}/',
+		delete: prefix + '/import/instrument-attribute-value-mapping/{id}/'
 	},
 
 	instrumentCostMethodList: {
@@ -48,7 +56,7 @@ export default {
 	instrumentList: {
 		get: prefix + '/instruments/instrument/',
 		post: prefix + '/instruments/instrument/',
-		put: prefix + '/instruments/instrument/{id}'
+		put: prefix + '/instruments/instrument/{id}/'
 	},
 	instrumentListLight: {
 		get: prefix + '/instruments/instrument/light/'
@@ -57,13 +65,15 @@ export default {
 	instrumentTypeList: {
 		get: prefix + '/instruments/instrument-type/',
 		post: prefix + '/instruments/instrument-type/',
-		put: prefix + '/instruments/instrument-type/{id}'
+		put: prefix + '/instruments/instrument-type/{id}/'
 	},
 	instrumentSizeDetail: {
 		get: prefix + '/instruments/payment-size-detail/'
 	},
 	paymentSizeDetailMappingList: {
-		get: prefix + '/import/payment-size-detail-mapping/'
+		get: prefix + '/import/payment-size-detail-mapping/',
+		post: prefix + '/import/payment-size-detail-mapping/',
+		put: prefix + '/import/payment-size-detail-mapping/{id}/'
 	},
 	instrumentPeriodicity: {
 		get: prefix + '/instruments/periodicity/'
@@ -89,22 +99,28 @@ export default {
 		get: prefix + '/instruments/pricing-condition/'
 	},
 	pricingConditionMappingList: {
-		get: prefix + '/import/pricing-condition-mapping/'
+		get: prefix + '/import/pricing-condition-mapping/',
+		post: prefix + '/import/pricing-condition-mapping/',
+		put: prefix + '/import/pricing-condition-mapping/{id}/'
 	},
 	instrumentDailyPricingModelList: {
 		get: prefix + '/instruments/daily-pricing-model/'
 	},
 	instrumentMappingList: {
-		get: prefix + '/import/instrument-mapping/'
+		get: prefix + '/import/instrument-mapping/',
+		post: prefix + '/import/instrument-mapping/',
+		put: prefix + '/import/instrument-mapping/{id}/'
 	},
 	dailyPricingModelMappingList: {
-		get: prefix + '/import/daily-pricing-model-mapping/'
+		get: prefix + '/import/daily-pricing-model-mapping/',
+		post: prefix + '/import/daily-pricing-model-mapping/',
+		put: prefix + '/import/daily-pricing-model-mapping/{id}/'
 	},
 
 	pricingPolicyList: {
 		get: prefix + '/instruments/pricing-policy/',
 		post: prefix + '/instruments/pricing-policy/',
-		put: prefix + '/instruments/pricing-policy/{id}'
+		put: prefix + '/instruments/pricing-policy/{id}/'
 	},
 	pricingPolicy: {
 		get: prefix + '/instruments/pricing-policy/{id}/',
@@ -116,7 +132,9 @@ export default {
 		get: prefix + '/instruments/pricing-policy/light/'
 	},
 	pricingPolicyMappingList: {
-		get: prefix + '/import/pricing-policy-mapping/'
+		get: prefix + '/import/pricing-policy-mapping/',
+		post: prefix + '/import/pricing-policy-mapping/',
+		put: prefix + '/import/pricing-policy-mapping/{id}/'
 	},
 	currencyList: {
 		get: prefix + '/currencies/currency/',
@@ -145,18 +163,22 @@ export default {
 		get: prefix + '/import/price-download-scheme/'
 	},
 	priceDownloadSchemeMappingList: {
-		get: prefix + '/import/price-download-scheme-mapping/'
+		get: prefix + '/import/price-download-scheme-mapping/',
+		post: prefix + '/import/price-download-scheme-mapping/',
+		put: prefix + '/import/price-download-scheme-mapping/{id}/'
 	},
 	portfolioList: {
 		get: prefix + '/portfolios/portfolio/',
 		post: prefix + '/portfolios/portfolio/',
-		put: prefix + '/portfolios/portfolio/{id}'
+		put: prefix + '/portfolios/portfolio/{id}/'
 	},
 	portfolioListLight: {
 		get: prefix + '/portfolios/portfolio/light/'
 	},
 	portfolioMappingList: {
-		get: prefix + '/import/portfolio-mapping/'
+		get: prefix + '/import/portfolio-mapping/',
+		post: prefix + '/import/portfolio-mapping/',
+		put: prefix + '/import/portfolio-mapping/{id}/'
 	},
 	accountLight: {
 		get: prefix + '/accounts/account/light/'
@@ -172,10 +194,14 @@ export default {
 		put: prefix + '/accounts/account-type/{id}/'
 	},
 	accountMappingList: {
-		get: prefix + '/import/account-mapping/'
+		get: prefix + '/import/account-mapping/',
+		post: prefix + '/import/account-mapping/',
+		put: prefix + '/import/account-mapping/{id}/'
 	},
 	accountTypeMappingList: {
-		get: prefix + '/import/account-type-mapping/'
+		get: prefix + '/import/account-type-mapping/',
+		post: prefix + '/import/account-type-mapping/',
+		put: prefix + '/import/account-type-mapping/{id}/'
 	},
 	counterpartyList: {
 		get: prefix + '/counterparties/counterparty/',
@@ -185,7 +211,7 @@ export default {
 	counterpartyResponsible: {
 		get: prefix + '/counterparties/responsible/',
 		post: prefix + '/counterparties/responsible/',
-		put: prefix + '/counterparties/responsible/{id}'
+		put: prefix + '/counterparties/responsible/{id}/'
 	},
 	counterpartyResponsibleLight: {
 		get: prefix + '/counterparties/responsible/light/'
@@ -196,7 +222,9 @@ export default {
 		put: prefix + '/counterparties/responsible-group/{id}/'
 	},
 	responsibleMappingList: {
-		get: prefix + '/import/responsible-mapping/'
+		get: prefix + '/import/responsible-mapping/',
+		post: prefix + '/import/responsible-mapping/',
+		put: prefix + '/import/responsible-mapping/{id}/'
 	},
 	counterpartyCounterpartyLight: {
 		get: prefix + '/counterparties/counterparty/light/'
@@ -213,7 +241,9 @@ export default {
 		post: prefix + '/import/finmars-database/company/'
 	},
 	counterpartyMappingList: {
-		get: prefix + '/import/counterparty-mapping/'
+		get: prefix + '/import/counterparty-mapping/',
+		post: prefix + '/import/counterparty-mapping/',
+		put: prefix + '/import/counterparty-mapping/{id}/'
 	},
 
 	complexTransactionList: {
@@ -235,7 +265,7 @@ export default {
 	importBankProc: {
 		get: prefix + '/procedures/request-data-procedure/',
 		post: prefix + '/procedures/request-data-procedure/',
-		put: prefix + '/procedures/request-data-procedure/{id}'
+		put: prefix + '/procedures/request-data-procedure/{id}/'
 	},
 	importBankProcId: {
 		get: prefix + '/procedures/request-data-procedure/{id}/',
@@ -255,7 +285,9 @@ export default {
 		get: prefix + '/procedures/data-procedure-instance/'
 	},
 	currencyMappingImportList: {
-		get: prefix + '/import/currency-mapping/'
+		get: prefix + '/import/currency-mapping/',
+		post: prefix + '/import/currency-mapping/',
+		put: prefix + '/import/currency-mapping/{id}/'
 	},
 	importSchemeLight: {
 		get: prefix + '/import/complex-transaction-import-scheme/light/'
@@ -307,12 +339,12 @@ export default {
 	portfolioHistoryList: {
 		get: prefix + '/portfolios/portfolio-history/',
 		post: prefix + '/portfolios/portfolio-history/',
-		put: prefix + '/portfolios/portfolio-history/{id}'
+		put: prefix + '/portfolios/portfolio-history/{id}/'
 	},
 	portfolioReconcileHistoryList: {
 		get: prefix + '/portfolios/portfolio-reconcile-history/',
 		post: prefix + '/portfolios/portfolio-reconcile-history/',
-		put: prefix + '/portfolios/portfolio-reconcile-history/{id}'
+		put: prefix + '/portfolios/portfolio-reconcile-history/{id}/'
 	},
 	portfolioClassList: {
 		get: prefix + '/portfolios/portfolio-class/'
@@ -320,7 +352,7 @@ export default {
 	portfolioRegisterList: {
 		get: prefix + '/portfolios/portfolio-register/',
 		post: prefix + '/portfolios/portfolio-register/',
-		put: prefix + '/portfolios/portfolio-register/{id}'
+		put: prefix + '/portfolios/portfolio-register/{id}/'
 	},
 	portfolioRegisterEvFiltered: {
 		post: prefix + '/portfolios/portfolio-register/ev-item/'
@@ -331,12 +363,12 @@ export default {
 	portfolioTypeList: {
 		get: prefix + '/portfolios/portfolio-type/',
 		post: prefix + '/portfolios/portfolio-type/',
-		put: prefix + '/portfolios/portfolio-type/{id}'
+		put: prefix + '/portfolios/portfolio-type/{id}/'
 	},
 	portfolioReconcileGroupList: {
 		get: prefix + 'portfolios/portfolio-reconcile-group/',
 		post: prefix + '/portfolios/portfolio-reconcile-group/',
-		put: prefix + '/portfolios/portfolio-reconcile-group/{id}'
+		put: prefix + '/portfolios/portfolio-reconcile-group/{id}/'
 	},
 	performanceReport: {
 		post: prefix + '/reports/performance-report/'
@@ -508,7 +540,9 @@ export default {
 		get: prefix + '/instruments/instrument-attribute-type/'
 	},
 	instrumentTypeMappingList: {
-		get: prefix + '/import/instrument-type-mapping/'
+		get: prefix + '/import/instrument-type-mapping/',
+		post: prefix + '/import/instrument-type-mapping/',
+		put: prefix + '/import/instrument-type-mapping/{id}/'
 	},
 	instrumentTypeAttrTypeList: {
 		get: prefix + '/instruments/instrument-type-attribute-type/'
@@ -532,13 +566,19 @@ export default {
 		get: prefix + '/strategies/3/strategy-attribute-type/'
 	},
 	strategy1MappingList: {
-		get: prefix + '/import/strategy1-mapping/'
+		get: prefix + '/import/strategy1-mapping/',
+		post: prefix + '/import/strategy1-mapping/',
+		put: prefix + '/import/strategy1-mapping/{id}/'
 	},
 	strategy2MappingList: {
-		get: prefix + '/import/strategy2-mapping/'
+		get: prefix + '/import/strategy2-mapping/',
+		post: prefix + '/import/strategy2-mapping/',
+		put: prefix + '/import/strategy2-mapping/{id}/'
 	},
 	strategy3MappingList: {
-		get: prefix + '/import/strategy3-mapping/'
+		get: prefix + '/import/strategy3-mapping/',
+		post: prefix + '/import/strategy3-mapping/',
+		put: prefix + '/import/strategy3-mapping/{id}/'
 	},
 
 	transactionEventClass: {
