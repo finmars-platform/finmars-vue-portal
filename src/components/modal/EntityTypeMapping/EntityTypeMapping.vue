@@ -71,7 +71,8 @@
 		FmTextField
 	} from '@finmars/ui';
 	import { loadDataFromAllPages } from '@/utils/commonHelper';
-	import { getEntityList, getEntityTypeList } from './utils';
+	import { getList as getEntityList } from '@/services/entityResolverService';
+	import { getEntityTypeList } from './utils';
 	import { ENTITY_WITHOUT_COUNT } from './constants';
 	import EntityTypeMappingItem from './EntityTypeMappingItem.vue';
 
@@ -104,7 +105,10 @@
 			: false;
 
 		if (isEntityWithoutCount) {
-			entityItems.value = await getEntityList(mapEntityType.value);
+			entityItems.value = await getEntityList(mapEntityType.value, {
+				page: 1,
+				pageSize: 1000
+			});
 			console.log('isEntityWithoutCount 1: ', entityItems.value);
 		} else {
 			entityItems.value = await loadDataFromAllPages(getEntityList, [
