@@ -20,6 +20,7 @@
 					<div class="entity-type-mapping__body-row">
 						<div class="entity-type-mapping__body-header">
 							<div class="entity-type-mapping__body-title">Your value</div>
+							<!-- TODO temporary hide
 							<FmTextField
 								v-model="search.value"
 								outlined
@@ -28,6 +29,8 @@
 								prepend-icon="mdi-magnify"
 								label="Search"
 							/>
+							-->
+							<div class="relative w-full h-[40px]" />
 						</div>
 
 						<div class="entity-type-mapping__body-header">
@@ -43,9 +46,14 @@
 						</div>
 					</div>
 
+					<div class="entity-type-mapping__delimiter" />
+
 					<div class="entity-type-mapping__body-content">
-						<template v-for="entity in entityItems" :key="entity.id">
-							<EntityTypeMappingItem :entity="entity" />
+						<template v-for="entity in filteredEntityItems" :key="entity.id">
+							<EntityTypeMappingItem
+								:entity="entity"
+								@update="updateEntityTypeMapping(entity.id, $event)"
+							/>
 						</template>
 					</div>
 				</div>
@@ -55,7 +63,9 @@
 						Cancel
 					</FmButton>
 
-					<FmButton rounded>Update</FmButton>
+					<FmButton rounded :disabled="isLoading" @click.stop.prevent="save">
+						Update
+					</FmButton>
 				</div>
 			</div>
 		</section>
@@ -64,6 +74,7 @@
 
 <script setup>
 	import { computed, onMounted, ref } from 'vue';
+	import isEmpty from 'lodash/isEmpty';
 	import {
 		FmButton,
 		FmIconButton,
@@ -72,6 +83,11 @@
 	} from '@finmars/ui';
 	import { loadDataFromAllPages } from '@/utils/commonHelper';
 	import { getList as getEntityList } from '@/services/entityResolverService';
+	import {
+		create,
+		update,
+		deleteByKey
+	} from '@/services/entityTypeMappingResolveService';
 	import { getEntityTypeList } from './utils';
 	import { ENTITY_WITHOUT_COUNT } from './constants';
 	import EntityTypeMappingItem from './EntityTypeMappingItem.vue';
@@ -82,7 +98,7 @@
 		}
 	});
 
-	const emits = defineEmits(['close', 'update']);
+	const emits = defineEmits(['close']);
 
 	const isLoading = ref(false);
 	const items = ref([]);
@@ -96,6 +112,13 @@
 		const value = props.locals.mapItem?.complexExpressionEntity;
 		return value ? value.replaceAll('_', '-') : '';
 	});
+
+	const filteredEntityItems = computed(() =>
+		entityItems.value.filter((e) => {
+			const entityName = e.user_code ? `${e.name} ('${e.user_code}')` : e.name;
+			return entityName.toLowerCase().includes(search.value.name.toLowerCase());
+		})
+	);
 
 	async function loadEntityItems() {
 		const inputMapEntityType =
@@ -151,6 +174,59 @@
 		});
 	}
 
+	function updateEntityTypeMapping(id, value) {
+		const updatedItemIndex = entityItems.value.findIndex((e) => e.id === id);
+		if (updatedItemIndex === -1) {
+			return;
+		}
+
+		entityItems.value[updatedItemIndex] = value;
+	}
+
+	async function save() {
+		try {
+			isLoading.value = true;
+
+			for (const entityItem of entityItems.value) {
+				const { mapping = [] } = entityItem;
+				if (!isEmpty(mapping)) {
+					for (const mapItem of mapping) {
+						if (!mapItem.id) {
+							mapItem.provider = 1;
+							if (mapEntityType.value === 'classifier') {
+								mapItem.attribute_type = entityItem.classifier;
+
+								if (entityItem.value_type === 30) {
+									mapItem.classifier = entityItem.id;
+								}
+
+								mapItem.content_object = mapItem.attribute_type;
+							} else {
+								mapItem.content_object = entityItem.id;
+							}
+
+							if (!mapItem.value) {
+								await create(mapEntityType.value, mapItem);
+							}
+							continue;
+						}
+
+						if (mapItem.isDeleted) {
+							await deleteByKey(mapEntityType.value, mapItem.id);
+							continue;
+						}
+
+						await update(mapEntityType.value, mapItem);
+					}
+				}
+			}
+
+			emits('close');
+		} finally {
+			isLoading.value = false;
+		}
+	}
+
 	onMounted(async () => {
 		try {
 			isLoading.value = true;
@@ -201,20 +277,19 @@
 		&__body {
 			position: relative;
 			width: 100%;
-			height: 400px;
+			height: 480px;
 			padding: 24px;
 
 			&-row {
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-				column-gap: 8px;
-				margin-bottom: 8px;
+				column-gap: 32px;
 			}
 
 			&-header {
 				position: relative;
-				width: 100%;
+				width: 50%;
 			}
 
 			&-title {
@@ -230,10 +305,18 @@
 			&-content {
 				position: relative;
 				width: 100%;
-				height: calc(100% - 76px);
+				height: calc(100% - 92px);
 				padding-top: 8px;
 				overflow-y: auto;
 			}
+		}
+
+		&__delimiter {
+			position: relative;
+			width: 100%;
+			height: 1px;
+			border-bottom: 1px solid var(--outline-variant);
+			margin: 15px 0 8px;
 		}
 
 		&__actions {
