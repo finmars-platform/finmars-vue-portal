@@ -26,6 +26,7 @@
 				expression: scheme.item_post_process_script
 			}"
 			:expression-editor-selector-data="expressionEditorSelectorData"
+			@update="updateField('item_post_process_script', $event)"
 		/>
 	</div>
 </template>
@@ -47,7 +48,7 @@
 		}
 	});
 
-	const emits = defineEmits(['update:block']);
+	const emits = defineEmits(['update:block', 'update:field']);
 
 	const attrTypes = ref(MODELS[props.scheme?.content_type] || []);
 
@@ -109,6 +110,10 @@
 			updatedBlock[updatedFieldIndex].expression = field.expression;
 			emits('update:block', updatedBlock);
 		}
+	}
+
+	function updateField(field, val) {
+		emits('update:field', { field, value: val.expression });
 	}
 </script>
 

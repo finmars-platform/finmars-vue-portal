@@ -1,198 +1,198 @@
 /* eslint-disable no-case-declarations */
 import cloneDeep from 'lodash/cloneDeep';
-import { getList as portfolioGetList } from '@/services/portfolioService';
-import { getList as portfolioRegisterGetList } from '@/services/portfolioRegisterService';
-import { getList as portfolioRegisterRecordGetList } from '@/services/portfolioRegisterRecordService';
-import { getList as accountGetList } from '@/services/accountService';
-import { getList as accountTypeGetList } from '@/services/accountTypeService';
-import { getList as responsibleGetList } from '@/services/responsibleService';
-import { getList as counterpartyGetList } from '@/services/counterpartyService';
-import { getList as responsibleGroupGetList } from '@/services/responsibleGroupService';
-import { getList as counterpartyGroupGetList } from '@/services/counterpartyGroupService';
-import { getList as currencyGetList } from '@/services/currencyService';
-import { getList as currencyHistoryGetList } from '@/services/currencyHistoryService';
-import { getList as instrumentGetList } from '@/services/instrumentService';
-import { getList as portfolioTypeGetList } from '@/services/portfolioTypeService';
-import { getList as portfolioReconcileGroupGetList } from '@/services/portfolioReconcileGroupService';
-import { getList as instrumentTypeGetList } from '@/services/instrumentTypeService';
-import { getList as auditGetList } from '@/services/auditService';
-import { getList as transactionGetList } from '@/services/transactionService';
-import { getList as complexTransactionGetList } from '@/services/complexTransactionService';
-import { getList as transactionTypeGetList } from '@/services/transactionTypeService';
-import { getList as instrumentPeriodicityGetList } from '@/services/instrumentPeriodicityService';
-import { getList as accrualCalculationModelGetList } from '@/services/accrualCalculationModelService';
-import { getList as instrumentPaymentSizeDetailGetList } from '@/services/instrumentPaymentSizeDetailService';
-import { getList as instrumentPricingConditionGetList } from '@/services/instrumentPricingConditionService';
-import { getList as instrumentCountryGetList } from '@/services/instrumentCountryService';
-import { getList as metaEventClassGetList } from '@/services/metaEventClassService';
-import { getList as metaNotificationClassGetList } from '@/services/metaNotificationClassService';
-import { getList as instrumentDailyPricingModelGetList } from '@/services/instrumentDailyPricingModelService';
-import { getList as priceDownloadSchemeGetList } from '@/services/priceDownloadSchemeService';
-import { getList as csvImportSchemeGetList } from '@/services/csvImportSchemeService';
-import { getList as complexImportSchemeGetList } from '@/services/complexImportSchemeService';
-import { getList as transactionImportSchemeGetList } from '@/services/transactionImportSchemeService';
-import { getList as transactionTypeGroupGetList } from '@/services/transactionTypeGroupService';
-import { getList as strategyGetList } from '@/services/strategyService';
-import { getList as strategySubgroupGetList } from '@/services/strategySubgroupService';
-import { getList as instrumentClassGetList } from '@/services/instrumentClassService';
-import { getList as portfolioClassGetList } from '@/services/portfolioClassService';
-import { getList as priceHistoryGetList } from '@/services/priceHistoryService';
-import { getList as portfolioHistoryGetList } from '@/services/portfolioHistoryService';
-import { getList as portfolioReconcileHistoryGetList } from '@/services/portfolioReconcileHistoryService';
-import { getList as pricingPolicyGetList } from '@/services/pricingPolicyService';
-import { getList as costMethodGetList } from '@/services/costMethodService';
-import { getList as transactionClassGetList } from '@/services/transactionClassService';
-import { getList as expressionProcedureGetList } from '@/services/expressionProcedureService';
-import { getList as dataProcedureGetList } from '@/services/dataProcedureService';
-import { getList as pricingProcedureGetList } from '@/services/pricingProcedureService';
-import { getList as configurationGetList } from '@/services/configurationService';
+import { getList as portfolioGetList } from '~/services/portfolio/portfolioService';
+import { getList as portfolioRegisterGetList } from '~/services/portfolio/portfolioRegisterService';
+import { getList as portfolioRegisterRecordGetList } from '~/services/portfolio/portfolioRegisterRecordService';
+import { getList as accountGetList } from '~/services/account/accountService';
+import { getList as accountTypeGetList } from '~/services/account/accountTypeService';
+import { getList as responsibleGetList } from '~/services/responsible/responsibleService';
+import { getList as counterpartyGetList } from '~/services/counterparty/counterpartyService';
+import { getList as responsibleGroupGetList } from '~/services/responsible/responsibleGroupService';
+import { getList as counterpartyGroupGetList } from '~/services/counterparty/counterpartyGroupService';
+import { getList as currencyGetList } from '~/services/currency/currencyService';
+import { getList as currencyHistoryGetList } from '~/services/currency/currencyHistoryService';
+import { getList as instrumentGetList } from '~/services/instrument/instrumentService';
+import { getList as portfolioTypeGetList } from '~/services/portfolio/portfolioTypeService';
+import { getList as portfolioReconcileGroupGetList } from '~/services/portfolio/portfolioReconcileGroupService';
+import { getList as instrumentTypeGetList } from '~/services/instrument/instrumentTypeService';
+import { getList as auditGetList } from '~/services/auditService';
+import { getList as transactionGetList } from '~/services/transaction/transactionService';
+import { getList as complexTransactionGetList } from '~/services/complex/complexTransactionService';
+import { getList as transactionTypeGetList } from '~/services/transaction/transactionTypeService';
+import { getList as instrumentPeriodicityGetList } from '~/services/instrument/instrumentPeriodicityService';
+import { getList as accrualCalculationModelGetList } from '~/services/accrual-calculation/accrualCalculationModelService';
+import { getList as instrumentPaymentSizeDetailGetList } from '~/services/instrument/instrumentPaymentSizeDetailService';
+import { getList as instrumentPricingConditionGetList } from '~/services/instrument/instrumentPricingConditionService';
+import { getList as instrumentCountryGetList } from '~/services/instrument/instrumentCountryService';
+import { getList as metaEventClassGetList } from '~/services/meta/metaEventClassService';
+import { getList as metaNotificationClassGetList } from '~/services/meta/metaNotificationClassService';
+import { getList as instrumentDailyPricingModelGetList } from '~/services/instrument/instrumentDailyPricingModelService';
+import { getList as priceDownloadSchemeGetList } from '~/services/price/priceDownloadSchemeService';
+import { getList as csvImportSchemeGetList } from '~/services/csvImportSchemeService';
+import { getList as complexImportSchemeGetList } from '~/services/complex/complexImportSchemeService';
+import { getList as transactionImportSchemeGetList } from '~/services/transaction/transactionImportSchemeService';
+import { getList as transactionTypeGroupGetList } from '~/services/transaction/transactionTypeGroupService';
+import { getList as strategyGetList } from '~/services/strategy/strategyService';
+import { getList as strategySubgroupGetList } from '~/services/strategy/strategySubgroupService';
+import { getList as instrumentClassGetList } from '~/services/instrument/instrumentClassService';
+import { getList as portfolioClassGetList } from '~/services/portfolio/portfolioClassService';
+import { getList as priceHistoryGetList } from '~/services/price/priceHistoryService';
+import { getList as portfolioHistoryGetList } from '~/services/portfolio/portfolioHistoryService';
+import { getList as portfolioReconcileHistoryGetList } from '~/services/portfolio/portfolioReconcileHistoryService';
+import { getList as pricingPolicyGetList } from '~/services/pricing/pricingPolicyService';
+import { getList as costMethodGetList } from '~/services/costMethodService';
+import { getList as transactionClassGetList } from '~/services/transaction/transactionClassService';
+import { getList as expressionProcedureGetList } from '~/services/expressionProcedureService';
+import { getList as dataProcedureGetList } from '~/services/dataProcedureService';
+import { getList as pricingProcedureGetList } from '~/services/pricing/pricingProcedureService';
+import { getList as configurationGetList } from '~/services/configurationService';
 import {
 	getBalanceReport,
 	getPerformanceReport,
 	getPnlReport,
 	getTransactionReport
-} from '@/services/reportService';
+} from '~/services/reportService';
 
 import {
 	create as csvImportSchemeCreate,
 	update as csvImportSchemeUpdate
-} from '@/services/csvImportSchemeService';
+} from '~/services/csvImportSchemeService';
 import {
 	create as complexImportSchemeCreate,
 	update as complexImportSchemeUpdate
-} from '@/services/complexImportSchemeService';
+} from '~/services/complex/complexImportSchemeService';
 import {
 	create as transactionImportSchemeCreate,
 	update as transactionImportSchemeUpdate
-} from '@/services/transactionImportSchemeService';
+} from '~/services/transaction/transactionImportSchemeService';
 import {
 	create as portfolioCreate,
 	update as portfolioUpdate
-} from '@/services/portfolioService';
+} from '~/services/portfolio/portfolioService';
 import {
 	create as portfolioTypeCreate,
 	update as portfolioTypeUpdate
-} from '@/services/portfolioTypeService';
+} from '~/services/portfolio/portfolioTypeService';
 import {
 	create as portfolioReconcileGroupCreate,
 	update as portfolioReconcileGroupUpdate
-} from '@/services/portfolioReconcileGroupService';
+} from '~/services/portfolio/portfolioReconcileGroupService';
 import {
 	create as portfolioRegisterCreate,
 	update as portfolioRegisterUpdate
-} from '@/services/portfolioRegisterService';
+} from '~/services/portfolio/portfolioRegisterService';
 import {
 	create as accountCreate,
 	update as accountUpdate
-} from '@/services/accountService';
+} from '~/services/account/accountService';
 import {
 	create as accountTypeCreate,
 	update as accountTypeUpdate
-} from '@/services/accountTypeService';
+} from '~/services/account/accountTypeService';
 import {
 	create as responsibleCreate,
 	update as responsibleUpdate
-} from '@/services/responsibleService';
+} from '~/services/responsible/responsibleService';
 import {
 	create as responsibleGroupCreate,
 	update as responsibleGroupUpdate
-} from '@/services/responsibleGroupService';
+} from '~/services/responsible/responsibleGroupService';
 import {
 	create as counterpartyCreate,
 	update as counterpartyUpdate
-} from '@/services/counterpartyService';
+} from '~/services/counterparty/counterpartyService';
 import {
 	create as counterpartyGroupCreate,
 	update as counterpartyGroupUpdate
-} from '@/services/counterpartyGroupService';
+} from '~/services/counterparty/counterpartyGroupService';
 import {
 	create as instrumentCreate,
 	update as instrumentUpdate
-} from '@/services/instrumentService';
+} from '~/services/instrument/instrumentService';
 import {
 	create as instrumentTypeCreate,
 	update as instrumentTypeUpdate
-} from '@/services/instrumentTypeService';
+} from '~/services/instrument/instrumentTypeService';
 import {
 	create as currencyCreate,
 	update as currencyUpdate
-} from '@/services/currencyService';
+} from '~/services/currency/currencyService';
 import {
 	create as pricingPolicyCreate,
 	update as pricingPolicyUpdate
-} from '@/services/pricingPolicyService';
+} from '~/services/pricing/pricingPolicyService';
 import {
 	create as transactionCreate,
 	update as transactionUpdate
-} from '@/services/transactionService';
+} from '~/services/transaction/transactionService';
 import {
 	update as complexTransactionUpdate,
 	initRebookComplexTransaction,
 	rebookComplexTransaction
-} from '@/services/complexTransactionService';
+} from '~/services/complex/complexTransactionService';
 import {
 	create as transactionTypeCreate,
 	update as transactionTypeUpdate
-} from '@/services/transactionTypeService';
+} from '~/services/transaction/transactionTypeService';
 import {
 	create as transactionTypeGroupCreate,
 	update as transactionTypeGroupUpdate
-} from '@/services/transactionTypeGroupService';
+} from '~/services/transaction/transactionTypeGroupService';
 import {
 	create as priceHistoryCreate,
 	update as priceHistoryUpdate
-} from '@/services/priceHistoryService';
+} from '~/services/price/priceHistoryService';
 import {
 	create as portfolioHistoryCreate,
 	update as portfolioHistoryUpdate
-} from '@/services/portfolioHistoryService';
+} from '~/services/portfolio/portfolioHistoryService';
 import {
 	create as portfolioReconcileHistoryCreate,
 	update as portfolioReconcileHistoryUpdate
-} from '@/services/portfolioReconcileHistoryService';
+} from '~/services/portfolio/portfolioReconcileHistoryService';
 import {
 	create as currencyHistoryCreate,
 	update as currencyHistoryUpdate
-} from '@/services/currencyHistoryService';
+} from '~/services/currency/currencyHistoryService';
 import {
 	create as strategyCreate,
 	update as strategyUpdate
-} from '@/services/strategyService';
+} from '~/services/strategy/strategyService';
 import {
 	create as strategyGroupCreate,
 	update as strategyGroupUpdate
-} from '@/services/strategyGroupService';
+} from '~/services/strategy/strategyGroupService';
 import {
 	create as strategySubgroupCreate,
 	update as strategySubgroupUpdate
-} from '@/services/strategySubgroupService';
+} from '~/services/strategy/strategySubgroupService';
 import {
 	initBookComplexTransaction,
 	bookComplexTransaction
-} from '@/services/transactionTypeService';
+} from '~/services/transaction/transactionTypeService';
 import {
 	create as expressionProcedureCreate,
 	update as expressionProcedureUpdate
-} from '@/services/expressionProcedureService';
+} from '~/services/expressionProcedureService';
 import {
 	create as dataProcedureCreate,
 	update as dataProcedureUpdate
-} from '@/services/dataProcedureService';
+} from '~/services/dataProcedureService';
 import {
 	create as pricingProcedureCreate,
 	update as pricingProcedureUpdate
-} from '@/services/pricingProcedureService';
+} from '~/services/pricing/pricingProcedureService';
 import {
 	create as scheduleCreate,
 	update as scheduleUpdate
-} from '@/services/scheduleService';
+} from '~/services/scheduleService';
 import {
 	create as configurationCreate,
 	update as configurationUpdate
-} from '@/services/configurationService';
-import { update as priceHistoryErrorUpdate } from '@/services/priceHistoryErrorService';
-import { update as currencyHistoryErrorUpdate } from '@/services/currencyHistoryErrorService';
-import { updateDashboardLayout } from '@/services/uiService';
+} from '~/services/configurationService';
+import { update as priceHistoryErrorUpdate } from '~/services/price/priceHistoryErrorService';
+import { update as currencyHistoryErrorUpdate } from '~/services/currency/currencyHistoryErrorService';
+import { updateDashboardLayout } from '~/services/uiService';
 
 export function getList(mapEntityType, options) {
 	switch (mapEntityType) {

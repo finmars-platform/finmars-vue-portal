@@ -43,6 +43,7 @@
 							:loading="loading"
 							@update:valid="isBlockValid.entity_fields = $event"
 							@update:block="updateBlock('entity_fields', $event)"
+							@update:field="updateField"
 						/>
 					</div>
 				</div>
@@ -81,6 +82,12 @@
 			isBlockValid.value.csv_fields &&
 			isBlockValid.value.entity_fields
 	);
+
+	function updateField({ field, value }) {
+		const updateScheme = cloneDeep(props.scheme);
+		updateScheme[field] = value;
+		emits('update:scheme', updateScheme);
+	}
 
 	function updateBlock(block, value) {
 		const updateScheme = cloneDeep(props.scheme);
