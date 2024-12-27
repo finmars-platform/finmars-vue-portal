@@ -10,5 +10,8 @@ export async function create(price) {
 
 export async function update(price) {
 	const id = price.id;
-	return useApi('instrumentPriceHistoryList.put', { params: { id }, body: price });
+	return useApi('instrumentPriceHistoryList.put', {
+		params: { id },
+		body: price
+	});
 }
