@@ -161,7 +161,6 @@
 	}
 
 	function onMoveItemEnd({ oldIndex, newIndex }) {
-		console.log('onMoveCalculatedItemEnd: ', oldIndex, newIndex);
 		const updatedBlock = cloneDeep(props.scheme.calculated_inputs);
 		const movedItems = updatedBlock.splice(oldIndex, 1);
 		updatedBlock.splice(newIndex, 0, movedItems[0]);

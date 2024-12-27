@@ -15,3 +15,7 @@ export async function update(map) {
 		body: map
 	});
 }
+
+export async function deleteByKey(id) {
+	return useApi('dailyPricingModelMappingList.delete', { params: { id } });
+}

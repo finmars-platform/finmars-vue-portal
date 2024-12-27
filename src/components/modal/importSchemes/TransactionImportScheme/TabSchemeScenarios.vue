@@ -178,7 +178,6 @@
 	}
 
 	function addScenario() {
-		console.log('Add Scenario');
 		const updatedBlock = cloneDeep(props.scheme.rule_scenarios);
 		updatedBlock.push(getRuleScenarioTplt({ name: '' }));
 		emits('update:block', updatedBlock);

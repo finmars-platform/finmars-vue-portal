@@ -9,5 +9,10 @@ export async function create(map) {
 }
 
 export async function update(map) {
+	const id = map.id;
 	return useApi('pricingPolicyMappingList.put', { params: { id }, body: map });
+}
+
+export async function deleteByKey(id) {
+	return useApi('pricingPolicyMappingList.delete', { params: { id } });
 }

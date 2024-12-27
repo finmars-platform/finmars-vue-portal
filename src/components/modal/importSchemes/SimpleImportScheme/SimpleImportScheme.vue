@@ -149,7 +149,6 @@
 	});
 	const isJsonEditorOpen = ref(false);
 
-	// const entityType = ref();
 	const dynamicAttributes = ref([]);
 
 	const isEditMode = computed(() => !!props.schemeId);

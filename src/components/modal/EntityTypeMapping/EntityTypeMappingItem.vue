@@ -91,13 +91,14 @@
 		position: relative;
 		width: 100%;
 		min-height: 40px;
-		padding-top: 4px;
+		padding: 4px;
 		margin-bottom: 8px;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		column-gap: 32px;
 		overflow: hidden;
+		border-bottom: 1px solid var(--outline-variant);
 
 		&__column {
 			position: relative;

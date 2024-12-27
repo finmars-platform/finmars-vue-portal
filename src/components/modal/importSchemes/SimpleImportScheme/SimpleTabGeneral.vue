@@ -228,7 +228,6 @@
 	}
 
 	async function updateScheme(field, value) {
-		console.log('updateScheme: ', field, value);
 		await nextTick(() => {
 			if (validationData.value[field] && !validationData.value[field].isDirty) {
 				validationData.value[field].isDirty = true;

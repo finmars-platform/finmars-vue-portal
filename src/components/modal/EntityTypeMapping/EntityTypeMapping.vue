@@ -132,13 +132,11 @@
 				page: 1,
 				pageSize: 1000
 			});
-			console.log('isEntityWithoutCount 1: ', entityItems.value);
 		} else {
 			entityItems.value = await loadDataFromAllPages(getEntityList, [
 				mapEntityType.value,
 				{ page: 1, pageSize: 1000 }
 			]);
-			console.log('isEntityWithoutCount 2: ', entityItems.value);
 		}
 	}
 
@@ -205,7 +203,7 @@
 								mapItem.content_object = entityItem.id;
 							}
 
-							if (!mapItem.value) {
+							if (mapItem.value) {
 								await create(mapEntityType.value, mapItem);
 							}
 							continue;

@@ -171,7 +171,6 @@
 	}
 
 	function onMoveItemEnd({ oldIndex, newIndex }) {
-		console.log('onMoveCalculatedItemEnd (csv_fields): ', oldIndex, newIndex);
 		const updatedBlock = cloneDeep(props.scheme.csv_fields);
 		const movedItems = updatedBlock.splice(oldIndex, 1);
 		updatedBlock.splice(newIndex, 0, movedItems[0]);
@@ -181,7 +180,6 @@
 	}
 
 	function addField() {
-		console.log('addField (csv_fields)');
 		const updatedBlock = cloneDeep(props.scheme.csv_fields);
 		updatedBlock.push({
 			name: '',
@@ -192,7 +190,6 @@
 	}
 
 	function removeItem(column) {
-		console.log('removeItem (csv_fields): ', column);
 		const updatedBlock = cloneDeep(props.scheme.csv_fields);
 		const index = updatedBlock.findIndex((i) => i.column === column);
 		if (index !== -1) {
@@ -209,7 +206,6 @@
 		if (index !== -1 && props.scheme.csv_fields[index][field] !== value) {
 			const updatedBlock = cloneDeep(props.scheme.csv_fields);
 			updatedBlock[index][field] = value;
-			console.log('updateField (csv_fields): ', updatedBlock);
 			emits('update:block', updatedBlock);
 		}
 	}
@@ -227,7 +223,6 @@
 		if (index !== -1 && props.scheme.csv_fields[index].name_expr !== value) {
 			const updatedBlock = cloneDeep(props.scheme.csv_fields);
 			updatedBlock[index].name_expr = value;
-			console.log('onExpressionEditorUpdate: ', updatedBlock);
 			emits('update:block', updatedBlock);
 			expressionEditor.value = {
 				show: false,
