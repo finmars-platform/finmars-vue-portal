@@ -61,12 +61,10 @@ export default function useDraftButton(
 	}
 
 	async function createDraft(draft) {
-		console.log('create draft: ', draft);
 		return useApi('draft.post', { body: draft });
 	}
 
 	async function updateDraft(draft) {
-		console.log('update draft: ', draft);
 		return useApi('draft.put', {
 			params: { id: draft.id },
 			body: draft
@@ -74,7 +72,6 @@ export default function useDraftButton(
 	}
 
 	async function saveDraft(draft) {
-		console.log('saveDraft: ', draft.id);
 		try {
 			return draft.id ? updateDraft(draft) : createDraft(draft);
 		} catch (e) {

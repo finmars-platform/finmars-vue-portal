@@ -12,3 +12,7 @@ export async function update(map) {
 	const id = map.id;
 	return useApi('currencyMappingImportList.put', { params: { id }, body: map });
 }
+
+export async function deleteByKey(id) {
+	return useApi('currencyMappingImportList.delete', { params: { id } });
+}

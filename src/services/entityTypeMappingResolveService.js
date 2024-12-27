@@ -70,9 +70,9 @@ export async function deleteByKey(entityType, id) {
 		case 'accrual-calculation-model':
 			return accrualCalculationModelService.deleteByKey(id);
 		case 'periodicity':
-			return instrumentPeriodicityService.deleteByKey(id);
+			return instrumentPeriodicityMappingService.deleteByKey(id);
 		case 'classifier':
-			return instrumentAttributeTypeService.deleteByKey(id);
+			return instrumentAttributeTypeMappingService.deleteByKey(id);
 		case 'account':
 			return accountMappingService.deleteByKey(id);
 		case 'account-type':

@@ -5,6 +5,7 @@
 				<SimpleTabSchemeMatchingField
 					:field="field"
 					:expression-editor-selector-data="expressionEditorSelectorData"
+					@update="updateBlock"
 				/>
 			</template>
 
@@ -12,6 +13,7 @@
 				<SimpleTabSchemeMatchingField
 					:field="field"
 					:expression-editor-selector-data="expressionEditorSelectorData"
+					@update="updateBlock"
 				/>
 			</template>
 		</div>
@@ -34,6 +36,7 @@
 	import { getFunctions } from '~/components/modal/importSchemes/utils';
 	import { DEPRECATED_ENTITY_FIELDS, MODELS } from './constants';
 	import SimpleTabSchemeMatchingField from './SimpleTabSchemeMatchingField.vue';
+	import cloneDeep from 'lodash/cloneDeep';
 
 	const props = defineProps({
 		scheme: {
@@ -44,7 +47,7 @@
 		}
 	});
 
-	const emits = defineEmits(['update:block', 'update:valid']);
+	const emits = defineEmits(['update:block']);
 
 	const attrTypes = ref(MODELS[props.scheme?.content_type] || []);
 
@@ -94,6 +97,19 @@
 			functions: [getFunctions(props.scheme.csv_fields)]
 		};
 	});
+
+	function updateBlock(field) {
+		const updatedBlock = cloneDeep(props.scheme.entity_fields);
+		const updatedFieldIndex = updatedBlock.findIndex((i) => i.id === field.id);
+		if (updatedFieldIndex === -1) {
+			return;
+		}
+
+		if (updatedBlock[updatedFieldIndex].expression !== field.expression) {
+			updatedBlock[updatedFieldIndex].expression = field.expression;
+			emits('update:block', updatedBlock);
+		}
+	}
 </script>
 
 <style lang="scss" scoped>

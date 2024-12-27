@@ -12,3 +12,7 @@ export async function update(map) {
 	const id = map.id;
 	return useApi('strategy1MappingList.put', { params: { id }, body: map });
 }
+
+export async function deleteByKey(id) {
+	return useApi('strategy1MappingList.delete', { params: { id } });
+}

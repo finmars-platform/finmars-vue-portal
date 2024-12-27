@@ -121,7 +121,6 @@
 	}
 
 	function makeSchemeCopy(scheme) {
-		console.log('makeSchemeCopy: ', scheme);
 		isSchemeEditorOpen.value = false;
 		selectedImportScheme.value = null;
 		nextTick(() => {

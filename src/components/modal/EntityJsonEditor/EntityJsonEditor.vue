@@ -228,7 +228,6 @@
 	}
 
 	function convertToExport() {
-		console.log('convert to Export');
 		const convertedData = recursiveConvert(
 			JSON.parse(aceEditor.value.getValue())
 		);

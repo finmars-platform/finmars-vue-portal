@@ -23,7 +23,6 @@
 			v-if="isExpressionEditorShow"
 			:rule-expr="field.expression"
 			:data="expressionEditorSelectorData"
-			disallow-empty-value
 			@close="isExpressionEditorShow = false"
 			@update="onExpressionEditorUpdate"
 		/>
@@ -40,6 +39,7 @@
 
 <script setup>
 	import { ref } from 'vue';
+	import cloneDeep from 'lodash/cloneDeep';
 	import { FmIconButton, Ripple } from '@finmars/ui';
 	import ExpressionEditor from '~/components/common/ExpressionEditorSelector/ExpressionEditor.vue';
 	import EntityTypeMapping from '~/components/modal/EntityTypeMapping/EntityTypeMapping.vue';
@@ -56,11 +56,15 @@
 		}
 	});
 
+	const emits = defineEmits(['update']);
+
 	const isExpressionEditorShow = ref(false);
 	const isEntityTypeMappingShow = ref(false);
 
 	function onExpressionEditorUpdate(value) {
-		console.log('onExpressionEditorUpdate: ', value);
+		const updatedField = cloneDeep(props.field);
+		updatedField.expression = value;
+		emits('update', updatedField);
 	}
 </script>
 

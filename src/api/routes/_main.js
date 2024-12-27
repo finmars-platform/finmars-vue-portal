@@ -29,7 +29,8 @@ export default {
 	accrualCalculationModelMappingList: {
 		get: prefix + '/import/accrual-calculation-model-mapping/',
 		post: prefix + '/import/accrual-calculation-model-mapping/',
-		put: prefix + '/import/accrual-calculation-model-mapping/{id}/'
+		put: prefix + '/import/accrual-calculation-model-mapping/{id}/',
+		delete: prefix + '/import/accrual-calculation-model-mapping/{id}/'
 	},
 
 	instrumentPeriodicityMappingList: {
@@ -73,7 +74,8 @@ export default {
 	paymentSizeDetailMappingList: {
 		get: prefix + '/import/payment-size-detail-mapping/',
 		post: prefix + '/import/payment-size-detail-mapping/',
-		put: prefix + '/import/payment-size-detail-mapping/{id}/'
+		put: prefix + '/import/payment-size-detail-mapping/{id}/',
+		delete: prefix + '/import/payment-size-detail-mapping/{id}/'
 	},
 	instrumentPeriodicity: {
 		get: prefix + '/instruments/periodicity/'
@@ -101,7 +103,8 @@ export default {
 	pricingConditionMappingList: {
 		get: prefix + '/import/pricing-condition-mapping/',
 		post: prefix + '/import/pricing-condition-mapping/',
-		put: prefix + '/import/pricing-condition-mapping/{id}/'
+		put: prefix + '/import/pricing-condition-mapping/{id}/',
+		delete: prefix + '/import/pricing-condition-mapping/{id}/'
 	},
 	instrumentDailyPricingModelList: {
 		get: prefix + '/instruments/daily-pricing-model/'
@@ -109,12 +112,14 @@ export default {
 	instrumentMappingList: {
 		get: prefix + '/import/instrument-mapping/',
 		post: prefix + '/import/instrument-mapping/',
-		put: prefix + '/import/instrument-mapping/{id}/'
+		put: prefix + '/import/instrument-mapping/{id}/',
+		delete: prefix + '/import/instrument-mapping/{id}/'
 	},
 	dailyPricingModelMappingList: {
 		get: prefix + '/import/daily-pricing-model-mapping/',
 		post: prefix + '/import/daily-pricing-model-mapping/',
-		put: prefix + '/import/daily-pricing-model-mapping/{id}/'
+		put: prefix + '/import/daily-pricing-model-mapping/{id}/',
+		delete: prefix + '/import/daily-pricing-model-mapping/{id}/'
 	},
 
 	pricingPolicyList: {
@@ -134,7 +139,8 @@ export default {
 	pricingPolicyMappingList: {
 		get: prefix + '/import/pricing-policy-mapping/',
 		post: prefix + '/import/pricing-policy-mapping/',
-		put: prefix + '/import/pricing-policy-mapping/{id}/'
+		put: prefix + '/import/pricing-policy-mapping/{id}/',
+		delete: prefix + '/import/pricing-policy-mapping/{id}/'
 	},
 	currencyList: {
 		get: prefix + '/currencies/currency/',
@@ -165,7 +171,8 @@ export default {
 	priceDownloadSchemeMappingList: {
 		get: prefix + '/import/price-download-scheme-mapping/',
 		post: prefix + '/import/price-download-scheme-mapping/',
-		put: prefix + '/import/price-download-scheme-mapping/{id}/'
+		put: prefix + '/import/price-download-scheme-mapping/{id}/',
+		delete: prefix + '/import/price-download-scheme-mapping/{id}/'
 	},
 	portfolioList: {
 		get: prefix + '/portfolios/portfolio/',
@@ -178,7 +185,8 @@ export default {
 	portfolioMappingList: {
 		get: prefix + '/import/portfolio-mapping/',
 		post: prefix + '/import/portfolio-mapping/',
-		put: prefix + '/import/portfolio-mapping/{id}/'
+		put: prefix + '/import/portfolio-mapping/{id}/',
+		delete: prefix + '/import/portfolio-mapping/{id}/'
 	},
 	accountLight: {
 		get: prefix + '/accounts/account/light/'
@@ -196,12 +204,14 @@ export default {
 	accountMappingList: {
 		get: prefix + '/import/account-mapping/',
 		post: prefix + '/import/account-mapping/',
-		put: prefix + '/import/account-mapping/{id}/'
+		put: prefix + '/import/account-mapping/{id}/',
+		delete: prefix + '/import/account-mapping/{id}/'
 	},
 	accountTypeMappingList: {
 		get: prefix + '/import/account-type-mapping/',
 		post: prefix + '/import/account-type-mapping/',
-		put: prefix + '/import/account-type-mapping/{id}/'
+		put: prefix + '/import/account-type-mapping/{id}/',
+		delete: prefix + '/import/account-type-mapping/{id}/'
 	},
 	counterpartyList: {
 		get: prefix + '/counterparties/counterparty/',
@@ -224,7 +234,8 @@ export default {
 	responsibleMappingList: {
 		get: prefix + '/import/responsible-mapping/',
 		post: prefix + '/import/responsible-mapping/',
-		put: prefix + '/import/responsible-mapping/{id}/'
+		put: prefix + '/import/responsible-mapping/{id}/',
+		delete: prefix + '/import/responsible-mapping/{id}/'
 	},
 	counterpartyCounterpartyLight: {
 		get: prefix + '/counterparties/counterparty/light/'
@@ -243,7 +254,8 @@ export default {
 	counterpartyMappingList: {
 		get: prefix + '/import/counterparty-mapping/',
 		post: prefix + '/import/counterparty-mapping/',
-		put: prefix + '/import/counterparty-mapping/{id}/'
+		put: prefix + '/import/counterparty-mapping/{id}/',
+		delete: prefix + '/import/counterparty-mapping/{id}/'
 	},
 
 	complexTransactionList: {
@@ -287,7 +299,8 @@ export default {
 	currencyMappingImportList: {
 		get: prefix + '/import/currency-mapping/',
 		post: prefix + '/import/currency-mapping/',
-		put: prefix + '/import/currency-mapping/{id}/'
+		put: prefix + '/import/currency-mapping/{id}/',
+		delete: prefix + '/import/currency-mapping/{id}/'
 	},
 	importSchemeLight: {
 		get: prefix + '/import/complex-transaction-import-scheme/light/'
@@ -542,7 +555,8 @@ export default {
 	instrumentTypeMappingList: {
 		get: prefix + '/import/instrument-type-mapping/',
 		post: prefix + '/import/instrument-type-mapping/',
-		put: prefix + '/import/instrument-type-mapping/{id}/'
+		put: prefix + '/import/instrument-type-mapping/{id}/',
+		delete: prefix + '/import/instrument-type-mapping/{id}/'
 	},
 	instrumentTypeAttrTypeList: {
 		get: prefix + '/instruments/instrument-type-attribute-type/'
@@ -568,17 +582,20 @@ export default {
 	strategy1MappingList: {
 		get: prefix + '/import/strategy1-mapping/',
 		post: prefix + '/import/strategy1-mapping/',
-		put: prefix + '/import/strategy1-mapping/{id}/'
+		put: prefix + '/import/strategy1-mapping/{id}/',
+		delete: prefix + '/import/strategy1-mapping/{id}/'
 	},
 	strategy2MappingList: {
 		get: prefix + '/import/strategy2-mapping/',
 		post: prefix + '/import/strategy2-mapping/',
-		put: prefix + '/import/strategy2-mapping/{id}/'
+		put: prefix + '/import/strategy2-mapping/{id}/',
+		delete: prefix + '/import/strategy2-mapping/{id}/'
 	},
 	strategy3MappingList: {
 		get: prefix + '/import/strategy3-mapping/',
 		post: prefix + '/import/strategy3-mapping/',
-		put: prefix + '/import/strategy3-mapping/{id}/'
+		put: prefix + '/import/strategy3-mapping/{id}/',
+		delete: prefix + '/import/strategy3-mapping/{id}/'
 	},
 
 	transactionEventClass: {
