@@ -116,7 +116,7 @@
 	} from '@finmars/ui';
 	import useNotify from '~/composables/useNotify';
 	import { getById, create, update } from '@/services/csvImportSchemeService';
-	import { findEntityByContentType } from '@/services/metaContentTypeService';
+	import { findEntityByContentType } from '~/services/meta/metaContentTypeService';
 	import { getList } from '@/services/attributeTypeService';
 	import SimpleTabGeneral from './SimpleTabGeneral.vue';
 	import SimpleTabScheme from './SimpleTabScheme.vue';

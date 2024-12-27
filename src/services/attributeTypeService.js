@@ -1,5 +1,5 @@
 import useApi from '~/composables/useApi';
-import { getEntitiesWithoutDynamicAttrsList } from '@/services/metaRestrictionsService';
+import { getEntitiesWithoutDynamicAttrsList } from '~/services/meta/metaRestrictionsService';
 
 function getEndPoint(entity) {
 	switch (entity) {

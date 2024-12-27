@@ -82,12 +82,12 @@
 		FmTextField
 	} from '@finmars/ui';
 	import { loadDataFromAllPages } from '@/utils/commonHelper';
-	import { getList as getEntityList } from '@/services/entityResolverService';
+	import { getList as getEntityList } from '~/services/entity/entityResolverService';
 	import {
 		create,
 		update,
 		deleteByKey
-	} from '@/services/entityTypeMappingResolveService';
+	} from '~/services/entity/entityTypeMappingResolveService';
 	import { getEntityTypeList } from './utils';
 	import { ENTITY_WITHOUT_COUNT } from './constants';
 	import EntityTypeMappingItem from './EntityTypeMappingItem.vue';

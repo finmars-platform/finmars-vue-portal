@@ -81,7 +81,7 @@
 	import useAceEditor from '~/composables/useAceEditor';
 	import useNotify from '~/composables/useNotify';
 	import { downloadFile } from '~/pages/explorer/helper';
-	import { create, update } from '@/services/entityResolverService';
+	import { create, update } from '~/services/entity/entityResolverService';
 
 	const props = defineProps({
 		data: {
