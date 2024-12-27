@@ -67,7 +67,7 @@
 	const isFromMarketplace = ref(true);
 	const showModal = ref(false);
 	const modalType = ref('create');
-	const modalTitle = ref('create');
+	const modalTitle = ref('Create New Member Setup Configuration');
 
 	const selectedItem = ref({
 		id: '',
