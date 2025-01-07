@@ -20,9 +20,9 @@
 					/>
 					<div
 						v-if="
-							member.status != 'invited' &&
-							member.status != 'deleted' &&
-							member.status != 'invite_declined'
+							member.status !== 'invited' &&
+							member.status !== 'deleted' &&
+							member.status !== 'invite_declined'
 						"
 					>
 						<FmCheckbox v-model="member.is_owner" label="Owner" class="m-b-8" />
@@ -34,31 +34,31 @@
 						<div
 							class="mb-2"
 							v-if="
-								member.status != 'invited' &&
-								member.status != 'deleted' &&
-								member.status != 'invite_declined'
+								member.status !== 'invited' &&
+								member.status !== 'deleted' &&
+								member.status !== 'invite_declined'
 							"
 						>
 							<FmSelect
 								v-model="member.status"
 								:options="statuses"
-								label="Label1"
+								label="Status"
 								variant="outlined"
 							/>
 						</div>
 
 						<div
 							v-if="
-								member.status == 'invited' ||
-								member.status == 'deleted' ||
-								member.status == 'invite_declined'
+								member.status === 'invited' ||
+								member.status === 'deleted' ||
+								member.status === 'invite_declined'
 							"
 						>
 							Status: <b>{{ member.status }}</b>
 						</div>
 					</div>
 
-					<div v-if="member.is_deleted || member.status == 'invite_declined'">
+					<div v-if="member.is_deleted || member.status === 'invite_declined'">
 						<FmButton rounded @click="resendInvite()">Resend Invite</FmButton>
 					</div>
 				</FmCard>
