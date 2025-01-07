@@ -36,18 +36,10 @@
 				class="clickable_rows"
 			>
 				<template #actions="{ index }">
-					<div class="flex jcc aic height-100 cursor-pointer">
-						<FmMenu attach="body">
-							<template #btn>
-								<FmIcon icon="mdi-dots-vertical" :size="26" />
-							</template>
-							<div class="fm_list">
-								<div class="fm_list_item" @click="deleteAccessPolicy(index)">
-									<FmIcon icon="mdi-delete" :size="26" class="mr-2" />
-									Delete
-								</div>
-							</div>
-						</FmMenu>
+					<div class="fm_list">
+						<div class="fm_list_item" @click="deleteAccessPolicy(index)">
+							<FmIcon icon="mdi-delete" :size="22" />
+						</div>
 					</div>
 				</template>
 			</BaseTable>
