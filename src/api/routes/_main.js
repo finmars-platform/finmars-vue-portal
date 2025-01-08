@@ -113,10 +113,10 @@ export default {
 	},
 
 	complexTransactionBulkRestore: {
-		post: prefix + '/transactions/complex-transaction/bulk-restore/',
+		post: prefix + '/transactions/complex-transaction/bulk-restore/'
 	},
 	complexTransactionBulkDelete: {
-		post: prefix + '/transactions/complex-transaction/bulk-delete/',
+		post: prefix + '/transactions/complex-transaction/bulk-delete/'
 	},
 
 	importBankProc: {
@@ -216,7 +216,9 @@ export default {
 		put: prefix + '/instruments/generated-event/{id}/informed/'
 	},
 	instrumentUserFieldList: {
-		get: prefix + '/ui/instrument-user-field/'
+		get: prefix + '/ui/instrument-user-field/',
+		put: prefix + '/ui/instrument-user-field/{id}/',
+		post: prefix + '/ui/instrument-user-field/'
 	},
 	instrumentUserField: {
 		put: prefix + '/ui/instrument-user-field/{id}/',
@@ -276,7 +278,7 @@ export default {
 		delete: prefix + '/configuration/new-member-setup-configuration/{id}/'
 	},
 	installNewMemberSetupConfig: {
-		put: prefix + '/configuration/new-member-setup-configuration/{id}/install/',
+		put: prefix + '/configuration/new-member-setup-configuration/{id}/install/'
 	},
 	unifiedData: {
 		get: prefix + '/data/{type}/'
@@ -443,7 +445,9 @@ export default {
 		post: prefix + '/ui/complex-transaction-user-field/',
 	},*/
 	complexTransactionUserFieldList: {
-		get: prefix + '/ui/complex-transaction-user-field/'
+		get: prefix + '/ui/complex-transaction-user-field/',
+		put: prefix + '/ui/complex-transaction-user-field/{id}/',
+		post: prefix + '/ui/complex-transaction-user-field/'
 	},
 	complexTransactionUserField: {
 		put: prefix + '/ui/complex-transaction-user-field/{id}/',
@@ -455,7 +459,9 @@ export default {
 		post: prefix + '/ui/transaction-user-field/',
 	},*/
 	transactionUserFieldList: {
-		get: prefix + '/ui/transaction-user-field/'
+		get: prefix + '/ui/transaction-user-field/',
+		put: prefix + '/ui/transaction-user-field/{id}/',
+		post: prefix + '/ui/transaction-user-field/'
 	},
 	transactionUserField: {
 		put: prefix + '/ui/transaction-user-field/{id}/',
@@ -634,9 +640,9 @@ export default {
 	},
 
 	recycleBin: {
-		get: prefix + '/utils/recycle-bin/',
+		get: prefix + '/utils/recycle-bin/'
 	},
 	clearRecycleBin: {
-		post: prefix + '/utils/recycle-bin/clear-bin/',
+		post: prefix + '/utils/recycle-bin/clear-bin/'
 	}
 };
