@@ -113,10 +113,10 @@ export default {
 	},
 
 	complexTransactionBulkRestore: {
-		post: prefix + '/transactions/complex-transaction/bulk-restore/',
+		post: prefix + '/transactions/complex-transaction/bulk-restore/'
 	},
 	complexTransactionBulkDelete: {
-		post: prefix + '/transactions/complex-transaction/bulk-delete/',
+		post: prefix + '/transactions/complex-transaction/bulk-delete/'
 	},
 
 	importBankProc: {
@@ -276,7 +276,7 @@ export default {
 		delete: prefix + '/configuration/new-member-setup-configuration/{id}/'
 	},
 	installNewMemberSetupConfig: {
-		put: prefix + '/configuration/new-member-setup-configuration/{id}/install/',
+		put: prefix + '/configuration/new-member-setup-configuration/{id}/install/'
 	},
 	unifiedData: {
 		get: prefix + '/data/{type}/'
@@ -341,6 +341,9 @@ export default {
 	accountAttrTypeList: {
 		get: prefix + '/accounts/account-attribute-type/'
 	},
+	accountTypeAttrTypeList: {
+		get: prefix + '/accounts/account-type-attribute-type/'
+	},
 
 	instrumentAttrTypeList: {
 		get: prefix + '/instruments/instrument-attribute-type/'
@@ -375,7 +378,7 @@ export default {
 	},
 
 	transactionTypeAttrTypeList: {
-		get: prefix + '/transactions/complex-transaction-attribute-type/'
+		get: prefix + '/transactions/transaction-type-attribute-type/'
 	},
 	complexTransactionAttrTypeList: {
 		get: prefix + '/transactions/complex-transaction-attribute-type/'
@@ -634,9 +637,9 @@ export default {
 	},
 
 	recycleBin: {
-		get: prefix + '/utils/recycle-bin/',
+		get: prefix + '/utils/recycle-bin/'
 	},
 	clearRecycleBin: {
-		post: prefix + '/utils/recycle-bin/clear-bin/',
+		post: prefix + '/utils/recycle-bin/clear-bin/'
 	}
 };
