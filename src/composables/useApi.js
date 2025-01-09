@@ -1,7 +1,7 @@
 import routes from '../api/routes';
 import providers from '../api/providers/main.js';
 
-let expireTokens;
+// let expireTokens;
 export default async function useApi(
 	route_opt,
 	{
@@ -12,7 +12,8 @@ export default async function useApi(
 		signal, // AbortController.signal
 		provider = true, // callback for format data result
 		notifyError = true
-	} = {}
+	} = {},
+	{ apiUrl, apiMethod } = {}
 ) {
 	// if ( !expireTokens && route_opt != 'tokenInfo.get' ) {
 	// 	let res = await useApi('tokenInfo.get')
@@ -27,17 +28,27 @@ export default async function useApi(
 	// }
 	const store = useStore();
 
-	const [route, method] = route_opt.split('.');
+	let url;
+	let method;
+	let route;
 
-	if (!routes[route]) {
-		throw new Error(`Route: ${route} is not registered`);
-	}
+	if (apiUrl && apiMethod) {
+		url = apiUrl;
+		method = apiMethod;
+	} else {
+		const splittedRouteOpt = route_opt.split('.');
+		route = splittedRouteOpt[0];
+		method = splittedRouteOpt[1];
 
-	let url = routes[route][method];
+		if (!routes[route]) {
+			throw new Error(`Route: ${route} is not registered`);
+		}
 
-	if (!url) {
-		console.log('Route not found:', route_opt);
-		return false;
+		url = routes[route][method];
+		if (!url) {
+			console.log('Route not found:', route_opt);
+			return false;
+		}
 	}
 
 	// let baseApi = useStore().current.base_api_url
@@ -79,7 +90,7 @@ export default async function useApi(
 	try {
 		let response = await $fetch(url, opts);
 
-		return method == 'get' && providers[route] && provider
+		return method === 'get' && providers[route] && provider
 			? providers[route](response)
 			: response;
 	} catch (e) {

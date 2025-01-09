@@ -1,4 +1,4 @@
-import { computed, nextTick, onBeforeMount, ref } from 'vue';
+import { computed, nextTick, onBeforeMount, ref, watch } from 'vue';
 import isEmpty from 'lodash/isEmpty';
 import useApi from '@/composables/useApi';
 import cloneDeep from 'lodash/cloneDeep';
@@ -20,6 +20,10 @@ export default function useUserCodeInput(props, emits) {
 		const value = props.item ? props.item.content_type : props.contentType;
 		return value || '';
 	});
+
+	const userCodeFieldComponentValid = computed(
+		() => userCodeFieldComponent.value?.isValid
+	);
 
 	function parseUserCode() {
 		if (!editedUserCode.value) {
@@ -144,6 +148,16 @@ export default function useUserCodeInput(props, emits) {
 		() => {
 			editedUserCode.value = props.userCode;
 			parseUserCode();
+		},
+		{ immediate: true }
+	);
+
+	watch(
+		() => userCodeFieldComponentValid.value,
+		(val, oldVal) => {
+			if (val !== oldVal) {
+				emits('update:valid', val);
+			}
 		},
 		{ immediate: true }
 	);
