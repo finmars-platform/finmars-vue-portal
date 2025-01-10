@@ -32,7 +32,7 @@
 						<FmTextField
 							outlined
 							:model-value="attr.name"
-							label="Attribute name"
+							label="Attribute name*"
 							:disabled="isLoading"
 							:error="formInfo.name.isDirty && !formInfo.name.isValid"
 							:error-messages="
@@ -44,13 +44,37 @@
 						/>
 					</div>
 
-					<div class="attribute-type__row">
+					<div class="attribute-type__row attribute-type__row--margin">
 						<FmTextField
 							outlined
 							:model-value="attr.tooltip"
 							label="Tooltip"
+							hide-details
 							:disabled="isLoading"
 							@update:model-value="updateAttr('tooltip', $event)"
+						/>
+					</div>
+
+					<div class="attribute-type__row attribute-type__row--margin">
+						<FmCheckbox
+							:model-value="attr.can_recalculate"
+							label="Can recalculate"
+							:disabled="isLoading"
+							@update:model-value="updateAttr('can_recalculate', $event)"
+						/>
+					</div>
+
+					<div class="attribute-type__row">
+						<FmSelect
+							variant="outlined"
+							label="Attribute type*"
+							:options="VALUE_TYPES"
+							:model-value="attr.value_type"
+							:disabled="isLoading || !!attr.id"
+							:error="
+								formInfo.value_type.isDirty && !formInfo.value_type.isValid
+							"
+							@update:model-value="updateAttr('value_type', $event)"
 						/>
 					</div>
 				</div>
@@ -66,18 +90,21 @@
 
 					<div class="attribute-type__actions-block">
 						<FmButton
+							v-if="attr.id"
 							type="tertiary"
 							rounded
 							:disabled="isLoading || !isFormValid"
+							@click.stop.prevent="makeCopy"
 						>
 							Make a copy
 						</FmButton>
 
 						<FmButton
 							rounded
-							:disabled="isLoading || !isFormValid || !isFormDirty"
+							:disabled="isLoading || !isFormValid || (attr.id && !isFormDirty)"
+							@click.stop.prevent="save"
 						>
-							Save
+							{{ attr.id ? 'Save' : 'Create' }}
 						</FmButton>
 					</div>
 				</div>
@@ -90,14 +117,19 @@
 	import { computed, onBeforeMount, ref } from 'vue';
 	import cloneDeep from 'lodash/cloneDeep';
 	import set from 'lodash/set';
+	import size from 'lodash/size';
 	import {
 		FmButton,
+		FmCheckbox,
 		FmIconButton,
 		FmProgressLinear,
+		FmSelect,
 		FmTextField
 	} from '@finmars/ui';
+	import useNotify from '~/composables/useNotify';
 	import { findContentTypeByEntity } from '~/services/meta/metaContentTypeService';
-	import { getByKey } from '~/services/attributeTypeService';
+	import { getByKey, create, update } from '~/services/attributeTypeService';
+	import { VALUE_TYPES } from './constants';
 	import UserCodeInput from '~/components/common/UserCodeInput/UserCodeInput.vue';
 
 	const props = defineProps({
@@ -112,7 +144,7 @@
 		}
 	});
 
-	const emits = defineEmits(['close']);
+	const emits = defineEmits(['close', 'make:copy']);
 
 	const isLoading = ref(false);
 	const formInfo = ref({
@@ -131,13 +163,23 @@
 		configuration_code: {
 			isDirty: false,
 			isValid: true
+		},
+		can_recalculate: {
+			isDirty: false,
+			skipValidation: true
+		},
+		value_type: {
+			isDirty: false,
+			isValid: true
 		}
 	});
 
 	const attr = ref({
 		name: '',
 		user_code: '',
-		configuration_code: ''
+		configuration_code: '',
+		can_recalculate: false,
+		value_type: null
 	});
 
 	const isFormDirty = computed(() =>
@@ -188,6 +230,36 @@
 		}
 		set(attr.value, field, value);
 		validate();
+	}
+
+	async function save() {
+		try {
+			isLoading.value = true;
+			if (attr.value.id) {
+				await update(props.entityType, attr.value);
+			} else {
+				await create(props.entityType, attr.value);
+			}
+			useNotify({ type: 'success', title: 'The attribute type saved.' });
+			emits('close', true);
+		} catch (err) {
+			useNotify({ type: 'error', title: err });
+		} finally {
+			isLoading.value = false;
+		}
+	}
+
+	async function makeCopy() {
+		const copiedAttr = cloneDeep(attr.value);
+		delete copiedAttr.id;
+		copiedAttr.user_code = `${copiedAttr.user_code}_copy`;
+		if (size(copiedAttr.classifiers)) {
+			delete copiedAttr.classifiers_flat;
+			copiedAttr.classifiers.forEach((classifier) => {
+				delete classifier.id;
+			});
+		}
+		emits('make:copy', copiedAttr);
 	}
 
 	onBeforeMount(async () => {
@@ -245,6 +317,22 @@
 
 		&__row {
 			margin-bottom: 8px;
+
+			&--margin {
+				margin-bottom: 20px;
+			}
+
+			:deep(.fm-checkbox) {
+				.v-checkbox-btn {
+					column-gap: 8px;
+
+					.v-label {
+						font-size: 16px;
+						color: var(--on-surface);
+						opacity: 1;
+					}
+				}
+			}
 		}
 
 		&__actions {

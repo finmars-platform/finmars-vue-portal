@@ -387,7 +387,7 @@
 				expression.value,
 				props.data
 			);
-			console.log('V: ', validationResultData);
+
 			validationResult.value = {
 				show: true,
 				status: validationResultData.error
