@@ -65,6 +65,13 @@
 			@close="closeImportDialog"
 		/>
 
+		<ClassfierMappingDialog
+			v-if="dialogs.isClassifierMappingOpen"
+			:entity-type="block.key"
+			:id="selectedAttr.id"
+			@close="closeClassifierMapping"
+		/>
+
 		<ClassifierEditorDialog
 			v-if="dialogs.isClassifierEditorOpen"
 			:entity-type="block.key"
@@ -88,6 +95,7 @@
 	import ClassifierExportDialog from '~/components/modal/ClassifierExportDialog/ClassifierExportDialog.vue';
 	import ClassifierImportDialog from '~/components/modal/ClassifierImportDialog/ClassifierImportDialog.vue';
 	import ClassifierEditorDialog from '~/components/modal/ClassifierEditorDialog/ClassifierEditorDialog.vue';
+	import ClassfierMappingDialog from '~/components/modal/ClassifierMappingDialog/ClassifierMappingDialog.vue';
 
 	const props = defineProps({
 		block: {
@@ -105,6 +113,7 @@
 		isConfirmationDialogOpen: false,
 		isExportDialogOpen: false,
 		isImportDialogOpen: false,
+		isClassifierMappingOpen: false,
 		isClassifierEditorOpen: false
 	});
 
@@ -158,6 +167,12 @@
 		shouldRefreshData && (await getAttributes());
 	}
 
+	async function closeClassifierMapping(shouldRefreshData) {
+		dialogs.value.isClassifierMappingOpen = false;
+		clearSelectedAttrValue();
+		shouldRefreshData && (await getAttributes());
+	}
+
 	async function handleActions({ action, value }) {
 		clearSelectedAttrValue();
 		switch (action) {
@@ -182,7 +197,8 @@
 				dialogs.value.isImportDialogOpen = true;
 				break;
 			case 'open:classifier':
-				console.log('openClassifier: ', value);
+				selectedAttr.value.id = value.id;
+				dialogs.value.isClassifierMappingOpen = true;
 				break;
 			case 'edit:classifier':
 				selectedAttr.value.data = value;
