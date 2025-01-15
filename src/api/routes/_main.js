@@ -1010,5 +1010,28 @@ export default {
 		post: prefix + '/ui/user-interface-access/',
 		put: prefix + '/ui/user-interface-access/{id}/',
 		delete: prefix + '/ui/user-interface-access/{id}/'
+	},
+
+	systemNotifications: {
+		get: prefix + '/system-notifications/system-notifications/', // get all notifications for a user
+		post: prefix + '/system-notifications/system-notifications/', // create a notification
+		put: prefix + '/system-notifications/system-notifications/{userCode}/' // update notification
+	},
+	systemNotificationsSubscriptions: {
+		get: prefix + '/system-notifications/subscriptions/all_types/' // get all subscription types in general
+	},
+	systemNotificationsUserSubscriptions: {
+		get: prefix + '/system-notifications/subscriptions/', // get all subscriptions of a user
+		post: prefix + '/system-notifications/subscriptions/' // update subscriptions for a user
+	},
+	systemNotificationsChannels: {
+		get: prefix + '/system-notifications/channels/', // get all channels that a user subscribed to
+		post: prefix + '/system-notifications/channels/' // create a channel
+	},
+	systemNotificationsChannelJoin: {
+		post: prefix + '/system-notifications/channels/{channelUserCode}/join/' //  join a channel
+	},
+	systemNotificationsChannelLeave: {
+		post: prefix + '/system-notifications/channels/{channelUserCode}/leave/' // leave a channel
 	}
 };
