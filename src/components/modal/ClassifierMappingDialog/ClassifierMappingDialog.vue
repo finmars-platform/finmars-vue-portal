@@ -1,66 +1,54 @@
 <template>
-	<section class="classifier-mapping-dialog__wrapper">
-		<div class="classifier-mapping-dialog">
-			<div class="classifier-mapping-dialog__header">
-				<span>Entity type classifier mapping</span>
-
-				<FmIconButton
-					icon="mdi-close"
-					variant="text"
-					@click.stop.prevent="emits('close', false)"
-				/>
-			</div>
-
-			<div class="classifier-mapping-dialog__body">
-				<div class="classifier-mapping-dialog__body-row">
-					<div class="classifier-mapping-dialog__body-header">
-						<div class="classifier-mapping-dialog__body-title">Your value</div>
-					</div>
-
-					<div class="classifier-mapping-dialog__body-header">
-						<div class="classifier-mapping-dialog__body-title">
-							Map on portfolio
-						</div>
-					</div>
+	<div class="classifier-mapping-dialog">
+		<div class="classifier-mapping-dialog__body">
+			<div class="classifier-mapping-dialog__body-row">
+				<div class="classifier-mapping-dialog__body-header">
+					<div class="classifier-mapping-dialog__body-title">Your value</div>
 				</div>
 
-				<div class="classifier-mapping-dialog__delimiter" />
-
-				<div class="classifier-mapping-dialog__body-content">
-					<template v-for="item in items" :key="item.id">
-						<ClassifierMappingItem
-							:item="item"
-							@update="updateItemMapping(item.id, $event)"
-						/>
-					</template>
+				<div class="classifier-mapping-dialog__body-header">
+					<div class="classifier-mapping-dialog__body-title">
+						Map on portfolio
+					</div>
 				</div>
 			</div>
 
-			<div class="classifier-mapping-dialog__actions">
-				<FmButton type="secondary" rounded @click.stop.prevent="emits('close')">
-					Close
-				</FmButton>
+			<div class="classifier-mapping-dialog__delimiter" />
 
-				<FmButton
-					rounded
-					:disabled="isProcessing"
-					@click.stop.prevent="updateMapping"
-				>
-					Update
-				</FmButton>
-			</div>
-
-			<div v-if="isProcessing" class="classifier-mapping-dialog__loader">
-				<FmProgressCircular indeterminate size="80" />
+			<div class="classifier-mapping-dialog__body-content">
+				<template v-for="item in items" :key="item.id">
+					<ClassifierMappingItem
+						:item="item"
+						@update="updateItemMapping(item.id, $event)"
+					/>
+				</template>
 			</div>
 		</div>
-	</section>
+
+		<div class="classifier-mapping-dialog__actions">
+			<FmButton type="secondary" rounded @click.stop.prevent="emits('close')">
+				Close
+			</FmButton>
+
+			<FmButton
+				rounded
+				:disabled="isProcessing"
+				@click.stop.prevent="updateMapping"
+			>
+				Update
+			</FmButton>
+		</div>
+
+		<div v-if="isProcessing" class="classifier-mapping-dialog__loader">
+			<FmProgressCircular indeterminate size="80" />
+		</div>
+	</div>
 </template>
 
 <script setup>
 	import { onBeforeMount, ref } from 'vue';
 	import isEmpty from 'lodash/isEmpty';
-	import { FmButton, FmIconButton, FmProgressCircular } from '@finmars/ui';
+	import { FmButton, FmProgressCircular } from '@finmars/ui';
 	import { getByKey } from '~/services/attributeTypeService';
 	import {
 		getList,
@@ -164,38 +152,10 @@
 </script>
 
 <style lang="scss" scoped>
-	.classifier-mapping-dialog__wrapper {
-		position: fixed;
-		inset: 0;
-		background-color: rgba(0, 0, 0, 0.2);
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		z-index: 1000;
-	}
-
 	.classifier-mapping-dialog {
 		position: relative;
 		width: 840px;
 		border-radius: 24px;
-		background-color: var(--surface);
-		box-shadow:
-			0 1px 3px 0 rgba(0, 0, 0, 0.3),
-			0 4px 8px 3px rgba(0, 0, 0, 0.15);
-
-		&__header {
-			position: relative;
-			display: flex;
-			width: 100%;
-			height: 64px;
-			padding: 0 24px;
-			justify-content: space-between;
-			align-items: center;
-			border-bottom: 1px solid var(--outline-variant);
-			font-size: 18px;
-			font-weight: 600;
-			line-height: 24px;
-		}
 
 		&__body {
 			position: relative;
@@ -244,7 +204,6 @@
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			border-top: 1px solid var(--outline-variant);
 
 			button {
 				text-transform: none;

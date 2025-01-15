@@ -1,76 +1,59 @@
 <template>
-	<section class="classifier-import-dialog__wrapper">
-		<div class="classifier-import-dialog">
-			<div class="classifier-import-dialog__header">
-				<span>Import Classifier</span>
-
-				<FmIconButton
-					icon="mdi-close"
-					variant="text"
-					@click.stop.prevent="emits('close', false)"
+	<div class="classifier-import-dialog">
+		<div class="classifier-import-dialog__body">
+			<div class="classifier-import-dialog__content">
+				<FmInputFiles
+					v-model="file"
+					info-text="You can select the CSV file"
+					allowed-file-types=".csv"
+					:disabled="isProcessing"
+					@update:model-value="onLoad"
+					@error="onError"
 				/>
-			</div>
 
-			<div class="classifier-import-dialog__body">
-				<div class="classifier-import-dialog__content">
-					<FmInputFiles
-						v-model="file"
-						info-text="You can select the CSV file"
-						allowed-file-types=".csv"
-						:disabled="isProcessing"
-						@update:model-value="onLoad"
-						@error="onError"
-					/>
-
-					<div
-						v-if="infoText || errorMessage"
-						:class="[
-							'classifier-import-dialog__info',
-							{ 'classifier-import-dialog__info--error': !!errorMessage }
-						]"
-					>
-						{{ infoText || errorMessage }}
-					</div>
-				</div>
-
-				<FmSelect
-					v-model="mode"
-					:options="MODE_OPTIONS"
-					variant="outlined"
-					label="Mode"
-				/>
-			</div>
-
-			<div class="classifier-import-dialog__actions">
-				<FmButton type="secondary" rounded @click.stop.prevent="emits('close')">
-					Close
-				</FmButton>
-
-				<FmButton
-					rounded
-					:disabled="isProcessing || !!errorMessage"
-					@click.stop.prevent="runImport"
+				<div
+					v-if="infoText || errorMessage"
+					:class="[
+						'classifier-import-dialog__info',
+						{ 'classifier-import-dialog__info--error': !!errorMessage }
+					]"
 				>
-					Export
-				</FmButton>
+					{{ infoText || errorMessage }}
+				</div>
 			</div>
 
-			<div v-if="isProcessing" class="classifier-import-dialog__loader">
-				<FmProgressCircular indeterminate size="80" />
-			</div>
+			<FmSelect
+				v-model="mode"
+				:options="MODE_OPTIONS"
+				variant="outlined"
+				label="Mode"
+			/>
 		</div>
-	</section>
+
+		<div class="classifier-import-dialog__actions">
+			<FmButton type="secondary" rounded @click.stop.prevent="emits('close')">
+				Close
+			</FmButton>
+
+			<FmButton
+				rounded
+				:disabled="isProcessing || !!errorMessage"
+				@click.stop.prevent="runImport"
+			>
+				Import
+			</FmButton>
+		</div>
+
+		<div v-if="isProcessing" class="classifier-import-dialog__loader">
+			<FmProgressCircular indeterminate size="80" />
+		</div>
+	</div>
 </template>
 
 <script setup>
 	import { onBeforeMount, ref } from 'vue';
 	import size from 'lodash/size';
-	import {
-		FmButton,
-		FmIconButton,
-		FmProgressCircular,
-		FmSelect
-	} from '@finmars/ui';
+	import { FmButton, FmProgressCircular, FmSelect } from '@finmars/ui';
 	import useNotify from '~/composables/useNotify';
 	import { getByKey, update } from '~/services/attributeTypeService';
 	import FmInputFiles from '~/components/Fm/InputFiles/InputFiles.vue';
@@ -86,7 +69,7 @@
 		}
 	});
 
-	const emits = defineEmits(['close']);
+	const emits = defineEmits(['close', 'confirm']);
 
 	const isProcessing = ref(false);
 	const mode = ref('skip');
@@ -161,7 +144,7 @@
 				type: 'success',
 				title: 'You are successfully import classifiers.'
 			});
-			emits('close', true);
+			emits('confirm');
 		} catch (err) {
 			useNotify({
 				type: 'error',
@@ -178,7 +161,6 @@
 			return;
 		}
 
-		console.info('Importing ...');
 		const reader = new FileReader();
 		reader.onload = (evt) => prepareFile(evt);
 		reader.readAsText(file.value[0]);
@@ -195,38 +177,10 @@
 </script>
 
 <style lang="scss" scoped>
-	.classifier-import-dialog__wrapper {
-		position: fixed;
-		inset: 0;
-		background-color: rgba(0, 0, 0, 0.2);
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		z-index: 1000;
-	}
-
 	.classifier-import-dialog {
 		position: relative;
-		width: 480px;
+		width: 100%;
 		border-radius: 24px;
-		background-color: var(--surface);
-		box-shadow:
-			0 1px 3px 0 rgba(0, 0, 0, 0.3),
-			0 4px 8px 3px rgba(0, 0, 0, 0.15);
-
-		&__header {
-			position: relative;
-			display: flex;
-			width: 100%;
-			height: 64px;
-			padding: 0 24px;
-			justify-content: space-between;
-			align-items: center;
-			border-bottom: 1px solid var(--outline-variant);
-			font-size: 18px;
-			font-weight: 600;
-			line-height: 24px;
-		}
 
 		&__body {
 			position: relative;

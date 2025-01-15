@@ -35,67 +35,25 @@
 		<div v-if="isLoading" class="attributes-block__loader">
 			<FmProgressCircular indeterminate size="48" />
 		</div>
-
-		<AttributeTypeDialog
-			v-if="dialogs.isAttributeTypeDialogOpen"
-			:entity-type="block.key"
-			:id="selectedAttr.id"
-			:attribute="selectedAttr.data"
-			@close="closeAttributeTypeDialog"
-			@make:copy="openDialogForCopyAttr"
-		/>
-
-		<ConfirmationDialog
-			v-if="dialogs.isConfirmationDialogOpen"
-			:text="`Are you sure to delete attribute '${selectedAttr.name}'?`"
-			@close="handleConfirmResponse"
-		/>
-
-		<ClassifierExportDialog
-			v-if="dialogs.isExportDialogOpen"
-			:entity-type="block.key"
-			:item="selectedAttr.data"
-			@close="dialogs.isExportDialogOpen = false"
-		/>
-
-		<ClassifierImportDialog
-			v-if="dialogs.isImportDialogOpen"
-			:entity-type="block.key"
-			:item="selectedAttr.data"
-			@close="closeImportDialog"
-		/>
-
-		<ClassfierMappingDialog
-			v-if="dialogs.isClassifierMappingOpen"
-			:entity-type="block.key"
-			:id="selectedAttr.id"
-			@close="closeClassifierMapping"
-		/>
-
-		<ClassifierEditorDialog
-			v-if="dialogs.isClassifierEditorOpen"
-			:entity-type="block.key"
-			:item="selectedAttr.data"
-			@close="dialogs.isClassifierEditorOpen = false"
-		/>
 	</div>
 </template>
 
 <script setup>
 	/* eslint-disable no-case-declarations */
-	import { onBeforeMount, ref } from 'vue';
+	import { defineAsyncComponent, inject, onBeforeMount, ref } from 'vue';
 	import size from 'lodash/size';
-	import { FmButton, FmIcon, FmProgressCircular } from '@finmars/ui';
+	import {
+		FmButton,
+		FmIcon,
+		FmProgressCircular,
+		FM_DIALOGS_KEY
+	} from '@finmars/ui';
 	import { getEntitiesWithoutDynamicAttrsList } from '~/services/meta/metaNotificationClassService';
 	import { deleteByKey } from '~/services/attributeTypeService';
 	import useApi from '~/composables/useApi';
 	import UserAttribute from '~/components/pages/configuration/user-attributes/UserAttribute.vue';
-	import AttributeTypeDialog from '~/components/modal/AttributeTypeDialog/AttributeTypeDialog.vue';
-	import ConfirmationDialog from '~/components/modal/ConfirmationDialog.vue';
-	import ClassifierExportDialog from '~/components/modal/ClassifierExportDialog/ClassifierExportDialog.vue';
-	import ClassifierImportDialog from '~/components/modal/ClassifierImportDialog/ClassifierImportDialog.vue';
-	import ClassifierEditorDialog from '~/components/modal/ClassifierEditorDialog/ClassifierEditorDialog.vue';
-	import ClassfierMappingDialog from '~/components/modal/ClassifierMappingDialog/ClassifierMappingDialog.vue';
+
+	const dialogsService = inject(FM_DIALOGS_KEY);
 
 	const props = defineProps({
 		block: {
@@ -108,101 +66,177 @@
 	const isCollapsed = ref(false);
 	const attributes = ref([]);
 
-	const dialogs = ref({
-		isAttributeTypeDialogOpen: false,
-		isConfirmationDialogOpen: false,
-		isExportDialogOpen: false,
-		isImportDialogOpen: false,
-		isClassifierMappingOpen: false,
-		isClassifierEditorOpen: false
-	});
+	function deleteAttr(id, name) {
+		const confirmationDialog = defineAsyncComponent(
+			() => import('../../../modal/ConfirmationDialog.vue')
+		);
+		dialogsService.$openDialog({
+			component: confirmationDialog,
+			componentProps: {
+				text: `Are you sure to delete attribute '${name}'?`
+			},
+			dialogProps: {
+				title: 'Warning',
+				width: 480,
+				onConfirm: async () => {
+					await deleteByKey(props.block.key, id);
+					await getAttributes();
+				}
+			}
+		});
+	}
 
-	const selectedAttr = ref({
-		id: null,
-		name: null,
-		data: null
-	});
+	function runExport(data) {
+		const exportDialog = defineAsyncComponent(
+			() =>
+				import(
+					'../../../modal/ClassifierExportDialog/ClassifierExportDialog.vue'
+				)
+		);
+		dialogsService.$openDialog({
+			component: exportDialog,
+			componentProps: {
+				entityType: props.block.key,
+				item: data
+			},
+			dialogProps: {
+				title: 'Export Classifier',
+				width: 360,
+				confirmButton: false,
+				cancelButton: false,
+				closeOnClickOverlay: false
+			}
+		});
+	}
 
-	function clearSelectedAttrValue() {
-		selectedAttr.value = {
-			id: null,
-			name: null,
-			data: null
-		};
+	function runImport(data) {
+		const importDialog = defineAsyncComponent(
+			() =>
+				import(
+					'../../../modal/ClassifierImportDialog/ClassifierImportDialog.vue'
+				)
+		);
+		dialogsService.$openDialog({
+			component: importDialog,
+			componentProps: {
+				entityType: props.block.key,
+				item: data
+			},
+			dialogProps: {
+				title: 'Import Classifier',
+				width: 480,
+				confirmButton: false,
+				cancelButton: false,
+				closeOnClickOverlay: false,
+				onConfirm: async () => {
+					await getAttributes();
+				}
+			}
+		});
 	}
 
 	function openAttributeTypeDialog({ id, initialAttr }) {
-		id && (selectedAttr.value.id = id);
-		initialAttr && (selectedAttr.value.data = initialAttr);
-		dialogs.value.isAttributeTypeDialogOpen = true;
+		const attrTypeDialog = defineAsyncComponent(
+			() => import('../../../modal/AttributeTypeDialog/AttributeTypeDialog.vue')
+		);
+		dialogsService.$openDialog({
+			component: attrTypeDialog,
+			componentProps: {
+				entityType: props.block.key,
+				...(id && { id }),
+				...(initialAttr && { attribute: initialAttr })
+			},
+			dialogProps: {
+				title: 'Attribute manager',
+				width: 1024,
+				confirmButton: false,
+				cancelButton: false,
+				closeOnClickOverlay: false,
+				onConfirm: async ({ action, payload }) => {
+					if (action === 'refresh:data') {
+						await getAttributes();
+						return;
+					}
+
+					if (action === 'make:copy') {
+						setTimeout(() => {
+							openAttributeTypeDialog({ initialAttr: payload });
+						}, 500);
+					}
+				}
+			}
+		});
 	}
 
-	async function closeAttributeTypeDialog(shouldRefreshData) {
-		dialogs.value.isAttributeTypeDialogOpen = false;
-		clearSelectedAttrValue();
-		shouldRefreshData && (await getAttributes());
+	function openMappingDialog(id) {
+		const mappingDialog = defineAsyncComponent(
+			() =>
+				import(
+					'../../../modal/ClassifierMappingDialog/ClassifierMappingDialog.vue'
+				)
+		);
+		dialogsService.$openDialog({
+			component: mappingDialog,
+			componentProps: {
+				entityType: props.block.key,
+				id
+			},
+			dialogProps: {
+				title: 'Entity type classifier mapping',
+				width: 840,
+				confirmButton: false,
+				cancelButton: false,
+				closeOnClickOverlay: false,
+				onConfirm: async () => {
+					await getAttributes();
+				}
+			}
+		});
 	}
 
-	function openDialogForCopyAttr(copiedAttr) {
-		dialogs.value.isAttributeTypeDialogOpen = false;
-		setTimeout(() => {
-			clearSelectedAttrValue();
-			selectedAttr.value.data = copiedAttr;
-			dialogs.value.isAttributeTypeDialogOpen = true;
-		}, 500);
-	}
-
-	async function handleConfirmResponse(value) {
-		dialogs.value.isConfirmationDialogOpen = false;
-		if (value && selectedAttr.value.id) {
-			await deleteByKey(props.block.key, selectedAttr.value.id);
-			await getAttributes();
-		}
-		clearSelectedAttrValue();
-	}
-
-	async function closeImportDialog(shouldRefreshData) {
-		dialogs.value.isImportDialogOpen = false;
-		clearSelectedAttrValue();
-		shouldRefreshData && (await getAttributes());
-	}
-
-	async function closeClassifierMapping(shouldRefreshData) {
-		dialogs.value.isClassifierMappingOpen = false;
-		clearSelectedAttrValue();
-		shouldRefreshData && (await getAttributes());
+	function openEditorDialog(data) {
+		const editorDialog = defineAsyncComponent(
+			() =>
+				import(
+					'../../../modal/ClassifierEditorDialog/ClassifierEditorDialog.vue'
+				)
+		);
+		dialogsService.$openDialog({
+			component: editorDialog,
+			componentProps: {
+				entityType: props.block.key,
+				item: data
+			},
+			dialogProps: {
+				title: 'Classifier Editor',
+				width: 520,
+				confirmButton: false,
+				cancelButton: false,
+				closeOnClickOverlay: false
+			}
+		});
 	}
 
 	async function handleActions({ action, value }) {
-		clearSelectedAttrValue();
 		switch (action) {
 			case 'edit':
 				openAttributeTypeDialog({ id: value });
 				break;
 			case 'delete':
 				const { id, name } = value;
-				dialogs.value.isConfirmationDialogOpen = true;
-				selectedAttr.value = {
-					id,
-					name,
-					data: null
-				};
+				deleteAttr(id, name);
 				break;
 			case 'export:classifier':
-				selectedAttr.value.data = value;
-				dialogs.value.isExportDialogOpen = true;
+				runExport(value);
 				break;
 			case 'import:classifier':
-				selectedAttr.value.data = value;
-				dialogs.value.isImportDialogOpen = true;
+				runImport(value);
 				break;
 			case 'open:classifier':
-				selectedAttr.value.id = value.id;
-				dialogs.value.isClassifierMappingOpen = true;
+				openMappingDialog(value.id);
 				break;
 			case 'edit:classifier':
-				selectedAttr.value.data = value;
-				dialogs.value.isClassifierEditorOpen = true;
+				openEditorDialog(value);
 				break;
 		}
 	}
