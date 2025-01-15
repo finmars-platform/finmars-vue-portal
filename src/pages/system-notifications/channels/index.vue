@@ -1,6 +1,9 @@
 <template>
 	<section class="notification-channels">
-		<div class="notification-channels__toolbar">Notifications</div>
+		<div class="notification-channels__toolbar">
+			<span>Notifications</span>
+			<ChannelsToolbar />
+		</div>
 
 		<div class="notification-channels__body">
 			<div class="notification-channels__list">LIST</div>
@@ -10,7 +13,22 @@
 	</section>
 </template>
 
-<script setup></script>
+<script setup>
+	import { onBeforeMount } from 'vue';
+	import useApi from '~/composables/useApi';
+	import ChannelsToolbar from '~/components/pages/system-notifications/ChannelsToolbar/ChannelsToolbar.vue';
+	//
+	// onBeforeMount(async () => {
+	// 	const channels = await useApi('systemNotificationsChannels.get');
+	// 	console.log('channels: ', channels);
+	// 	const userSubs = await useApi('systemNotificationsUserSubscriptions.get');
+	// 	console.log('userSubs: ', userSubs);
+	// 	const allSubs = await useApi('systemNotificationsSubscriptions.get');
+	// 	console.log('allSubs: ', allSubs);
+	// 	const notifications = await useApi('systemNotifications.get');
+	// 	console.log('notifications: ', notifications);
+	// });
+</script>
 
 <style lang="scss" scoped>
 	.notification-channels {
