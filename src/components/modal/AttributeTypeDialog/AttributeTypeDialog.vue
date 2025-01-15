@@ -1,116 +1,94 @@
 <template>
-	<teleport to="body">
-		<section class="attribute-type__overlay">
-			<div class="attribute-type">
-				<div class="attribute-type__header">
-					<span>Attribute manager</span>
-
-					<FmIconButton
-						icon="mdi-close"
-						variant="text"
-						@click.stop.prevent="emits('close')"
-					/>
-
-					<div v-if="isLoading" class="attribute-type__loader">
-						<FmProgressLinear indeterminate />
-					</div>
-				</div>
-
-				<div class="attribute-type__body">
-					<UserCodeInput
-						class="attribute-type__row"
-						:user-code="attr.user_code"
-						:disabled="isLoading"
-						@update:user-code="updateAttr('user_code', $event)"
-						@update:configuration-code="
-							updateAttr('configuration_code', $event)
-						"
-						@update:valid="formInfo['user_code'].isValid = $event"
-					/>
-
-					<div class="attribute-type__row">
-						<FmTextField
-							outlined
-							:model-value="attr.name"
-							label="Attribute name*"
-							:disabled="isLoading"
-							:error="formInfo.name.isDirty && !formInfo.name.isValid"
-							:error-messages="
-								formInfo.name.isDirty && !formInfo.name.isValid
-									? ['This field may not blank']
-									: []
-							"
-							@update:model-value="updateAttr('name', $event)"
-						/>
-					</div>
-
-					<div class="attribute-type__row attribute-type__row--margin">
-						<FmTextField
-							outlined
-							:model-value="attr.tooltip"
-							label="Tooltip"
-							hide-details
-							:disabled="isLoading"
-							@update:model-value="updateAttr('tooltip', $event)"
-						/>
-					</div>
-
-					<div class="attribute-type__row attribute-type__row--margin">
-						<FmCheckbox
-							:model-value="attr.can_recalculate"
-							label="Can recalculate"
-							:disabled="isLoading"
-							@update:model-value="updateAttr('can_recalculate', $event)"
-						/>
-					</div>
-
-					<div class="attribute-type__row">
-						<FmSelect
-							variant="outlined"
-							label="Attribute type*"
-							:options="VALUE_TYPES"
-							:model-value="attr.value_type"
-							:disabled="isLoading || !!attr.id"
-							:error="
-								formInfo.value_type.isDirty && !formInfo.value_type.isValid
-							"
-							@update:model-value="updateAttr('value_type', $event)"
-						/>
-					</div>
-				</div>
-
-				<div class="attribute-type__actions">
-					<FmButton
-						type="secondary"
-						rounded
-						@click.prevent.stop="emits('close', false)"
-					>
-						Cancel
-					</FmButton>
-
-					<div class="attribute-type__actions-block">
-						<FmButton
-							v-if="attr.id"
-							type="tertiary"
-							rounded
-							:disabled="isLoading || !isFormValid"
-							@click.stop.prevent="makeCopy"
-						>
-							Make a copy
-						</FmButton>
-
-						<FmButton
-							rounded
-							:disabled="isLoading || !isFormValid || (attr.id && !isFormDirty)"
-							@click.stop.prevent="save"
-						>
-							{{ attr.id ? 'Save' : 'Create' }}
-						</FmButton>
-					</div>
-				</div>
+	<div class="attribute-type">
+		<div class="attribute-type__body">
+			<div v-if="isLoading" class="attribute-type__loader">
+				<FmProgressLinear indeterminate />
 			</div>
-		</section>
-	</teleport>
+
+			<UserCodeInput
+				class="attribute-type__row"
+				:user-code="attr.user_code"
+				:disabled="isLoading"
+				@update:user-code="updateAttr('user_code', $event)"
+				@update:configuration-code="updateAttr('configuration_code', $event)"
+				@update:valid="formInfo['user_code'].isValid = $event"
+			/>
+
+			<div class="attribute-type__row">
+				<FmTextField
+					outlined
+					:model-value="attr.name"
+					label="Attribute name*"
+					:disabled="isLoading"
+					:error="formInfo.name.isDirty && !formInfo.name.isValid"
+					:error-messages="
+						formInfo.name.isDirty && !formInfo.name.isValid
+							? ['This field may not blank']
+							: []
+					"
+					@update:model-value="updateAttr('name', $event)"
+				/>
+			</div>
+
+			<div class="attribute-type__row attribute-type__row--margin">
+				<FmTextField
+					outlined
+					:model-value="attr.tooltip"
+					label="Tooltip"
+					hide-details
+					:disabled="isLoading"
+					@update:model-value="updateAttr('tooltip', $event)"
+				/>
+			</div>
+
+			<div class="attribute-type__row attribute-type__row--margin">
+				<FmCheckbox
+					:model-value="attr.can_recalculate"
+					label="Can recalculate"
+					:disabled="isLoading"
+					@update:model-value="updateAttr('can_recalculate', $event)"
+				/>
+			</div>
+
+			<div class="attribute-type__row">
+				<FmSelect
+					variant="outlined"
+					label="Attribute type*"
+					:options="VALUE_TYPES"
+					:model-value="attr.value_type"
+					:disabled="isLoading || !!attr.id"
+					:error="formInfo.value_type.isDirty && !formInfo.value_type.isValid"
+					@update:model-value="updateAttr('value_type', $event)"
+				/>
+			</div>
+		</div>
+
+		<div class="attribute-type__actions">
+			<FmButton type="secondary" rounded @click.prevent.stop="emits('cancel')">
+				Cancel
+			</FmButton>
+
+			<div class="attribute-type__actions-block">
+				<FmButton
+					v-if="attr.id"
+					type="tertiary"
+					rounded
+					:disabled="isLoading || !isFormValid"
+					@click.stop.prevent="makeCopy"
+				>
+					Make a copy
+				</FmButton>
+
+				<FmButton
+					rounded
+					:disabled="isLoading || !isFormValid || (attr.id && !isFormDirty)"
+					@click.stop.prevent="save"
+				>
+					{{ attr.id ? 'Save' : 'Create' }}
+				</FmButton>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script setup>
@@ -121,7 +99,6 @@
 	import {
 		FmButton,
 		FmCheckbox,
-		FmIconButton,
 		FmProgressLinear,
 		FmSelect,
 		FmTextField
@@ -144,7 +121,7 @@
 		}
 	});
 
-	const emits = defineEmits(['close', 'make:copy']);
+	const emits = defineEmits(['cancel', 'select', 'confirm']);
 
 	const isLoading = ref(false);
 	const formInfo = ref({
@@ -241,7 +218,8 @@
 				await create(props.entityType, attr.value);
 			}
 			useNotify({ type: 'success', title: 'The attribute type saved.' });
-			emits('close', true);
+			emits('select', { action: 'refresh:data' });
+			emits('confirm');
 		} catch (err) {
 			useNotify({ type: 'error', title: err });
 		} finally {
@@ -259,7 +237,9 @@
 				delete classifier.id;
 			});
 		}
-		emits('make:copy', copiedAttr);
+
+		emits('select', { action: 'make:copy', payload: copiedAttr });
+		emits('confirm');
 	}
 
 	onBeforeMount(async () => {
@@ -268,45 +248,17 @@
 </script>
 
 <style lang="scss" scoped>
-	.attribute-type__overlay {
-		position: fixed;
-		inset: 0;
-		background-color: rgba(0, 0, 0, 0.2);
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		z-index: 1000;
-	}
-
 	.attribute-type {
 		position: relative;
-		width: 1024px;
+		width: 100%;
 		height: auto;
 		border-radius: 24px;
-		background-color: var(--surface);
-		box-shadow:
-			0 1px 3px 0 rgba(0, 0, 0, 0.3),
-			0 4px 8px 3px rgba(0, 0, 0, 0.15);
-
-		&__header {
-			position: relative;
-			display: flex;
-			width: 100%;
-			height: 64px;
-			padding: 0 24px;
-			justify-content: space-between;
-			align-items: center;
-			border-bottom: 1px solid var(--outline-variant);
-			font-size: 18px;
-			font-weight: 600;
-			line-height: 24px;
-		}
 
 		&__loader {
 			position: absolute;
 			left: 0;
 			width: 100%;
-			bottom: -1px;
+			top: -1px;
 		}
 
 		&__body {
@@ -338,17 +290,15 @@
 		&__actions {
 			display: flex;
 			width: 100%;
-			height: 84px;
-			padding: 0 24px;
+			padding: 24px;
 			justify-content: space-between;
 			align-items: center;
-			border-top: 1px solid var(--outline-variant);
 
 			&-block {
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				column-gap: 16px;
+				column-gap: 8px;
 			}
 
 			button {

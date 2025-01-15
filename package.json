@@ -20,7 +20,7 @@
 		"consola": "^3.2.0",
 		"eslint": "^8.24.0",
 		"eslint-plugin-vue": "^9.6.0",
-		"happy-dom": "^14.7.1",
+		"happy-dom": "^14.12.3",
 		"nuxt": "^3.11.0",
 		"postcss-mixins": "^10.0.1",
 		"prettier": "3.3.3",
@@ -32,7 +32,7 @@
 	},
 	"dependencies": {
 		"@chenfengyuan/vue-qrcode": "^2.0.0",
-		"@finmars/ui": "1.0.53",
+		"@finmars/ui": "1.0.55",
 		"@formbricks/js": "1.1.2",
 		"@kyvg/vue3-notification": "^2.4.1",
 		"@pinia/nuxt": "^0.5.1",
