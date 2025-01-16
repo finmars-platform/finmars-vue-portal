@@ -119,7 +119,7 @@ export default function useUserCodeInput(props, emits) {
 	async function getConfigurationList() {
 		try {
 			isLoading.value = true;
-			const res = await useApi('manageConfigurationList.get');
+			const res = await useApi('configurationList.get');
 			if (res && res.results) {
 				configurationCodes.value = res.results
 					.filter((i) => !i.is_package)
