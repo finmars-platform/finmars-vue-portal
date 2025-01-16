@@ -62,7 +62,15 @@ export default {
 	instrumentListLight: {
 		get: prefix + '/instruments/instrument/light/'
 	},
-
+	instrumentClassifierMappingList: {
+		get: prefix + '/import/instrument-classifier-mapping/'
+	},
+	instrumentClassifierMappingInstance: {
+		get: prefix + '/import/instrument-classifier-mapping/{id}/',
+		post: prefix + '/import/instrument-classifier-mapping/',
+		put: prefix + '/import/instrument-classifier-mapping/{id}/',
+		delete: prefix + '/import/instrument-classifier-mapping/{id}/'
+	},
 	instrumentTypeList: {
 		get: prefix + '/instruments/instrument-type/',
 		post: prefix + '/instruments/instrument-type/',
@@ -188,6 +196,15 @@ export default {
 		put: prefix + '/import/portfolio-mapping/{id}/',
 		delete: prefix + '/import/portfolio-mapping/{id}/'
 	},
+	portfolioClassifierMappingList: {
+		get: prefix + '/import/portfolio-classifier-mapping/'
+	},
+	portfolioClassifierMappingInstance: {
+		get: prefix + '/import/portfolio-classifier-mapping/{id}',
+		post: prefix + '/import/portfolio-classifier-mapping/',
+		put: prefix + '/import/portfolio-classifier-mapping/{id}/',
+		delete: prefix + '/import/portfolio-classifier-mapping/{id}/'
+	},
 	accountLight: {
 		get: prefix + '/accounts/account/light/'
 	},
@@ -213,6 +230,15 @@ export default {
 		put: prefix + '/import/account-type-mapping/{id}/',
 		delete: prefix + '/import/account-type-mapping/{id}/'
 	},
+	accountClassifierMappingList: {
+		get: prefix + '/import/account-classifier-mapping/'
+	},
+	accountClassifierMappingInstance: {
+		get: prefix + '/import/account-classifier-mapping/{id}/',
+		post: prefix + '/import/account-classifier-mapping/',
+		put: prefix + '/import/account-classifier-mapping/{id}/',
+		delete: prefix + '/import/account-classifier-mapping/{id}/'
+	},
 	counterpartyList: {
 		get: prefix + '/counterparties/counterparty/',
 		post: prefix + '/counterparties/counterparty/',
@@ -222,6 +248,15 @@ export default {
 		get: prefix + '/counterparties/responsible/',
 		post: prefix + '/counterparties/responsible/',
 		put: prefix + '/counterparties/responsible/{id}/'
+	},
+	counterpartyClassifierMappingList: {
+		get: prefix + '/import/counterparty-classifier-mapping/'
+	},
+	counterpartyClassifierMappingInstance: {
+		get: prefix + '/import/counterparty-classifier-mapping/{id}',
+		post: prefix + '/import/counterparty-classifier-mapping/',
+		put: prefix + '/import/counterparty-classifier-mapping/{id}/',
+		delete: prefix + '/import/counterparty-classifier-mapping/{id}/'
 	},
 	counterpartyResponsibleLight: {
 		get: prefix + '/counterparties/responsible/light/'
@@ -553,6 +588,9 @@ export default {
 	accountAttrTypeList: {
 		get: prefix + '/accounts/account-attribute-type/'
 	},
+	accountTypeAttrTypeList: {
+		get: prefix + '/accounts/account-type-attribute-type/'
+	},
 
 	instrumentAttrTypeList: {
 		get: prefix + '/instruments/instrument-attribute-type/'
@@ -568,6 +606,15 @@ export default {
 	},
 	responsibleAttrTypeList: {
 		get: prefix + '/counterparties/responsible-attribute-type/'
+	},
+	responsibleClassifierMappingList: {
+		get: prefix + '/import/responsible-classifier-mapping/'
+	},
+	responsibleClassifierMappingInstance: {
+		get: prefix + '/import/responsible-classifier-mapping/{id}/',
+		post: prefix + '/import/responsible-classifier-mapping/',
+		put: prefix + '/import/responsible-classifier-mapping/{id}/',
+		delete: prefix + '/import/responsible-classifier-mapping/{id}/'
 	},
 	currencyAttrTypeList: {
 		get: prefix + '/currencies/currency-attribute-type/'
@@ -631,7 +678,7 @@ export default {
 	},
 
 	transactionTypeAttrTypeList: {
-		get: prefix + '/transactions/complex-transaction-attribute-type/'
+		get: prefix + '/transactions/transaction-type-attribute-type/'
 	},
 	complexTransactionAttrTypeList: {
 		get: prefix + '/transactions/complex-transaction-attribute-type/'
