@@ -549,6 +549,12 @@ export function getListForUi() {
 	];
 }
 
+export function findContentTypeByEntity(entity, type) {
+	const contentTypes = type === 'ui' ? getListForUi() : getList();
+	const item = contentTypes.find((i) => i.entity === entity);
+	return item ? item.key : null;
+}
+
 export function findEntityByContentType(contentType, type) {
 	const contentTypes = type === 'ui' ? getListForUi() : getList();
 	const item = contentTypes.find((i) => i.key === contentType);

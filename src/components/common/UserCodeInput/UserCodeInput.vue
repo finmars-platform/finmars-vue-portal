@@ -20,16 +20,13 @@
 					:disabled="isLoading"
 					@update:model-value="updateConfigurationCode"
 				/>
-
-				<div class="user-code-input__result">
-					<i>Result: </i> {{ editedUserCode }}
-				</div>
 			</div>
 
 			<FmTextField
 				:model-value="userCodeEnd"
 				label="User Code"
 				outlined
+				hide-details
 				:rules="[validateUserCodeEnd]"
 				:disabled="isLoading"
 				@init="userCodeFieldComponent = $event?.component"
@@ -52,6 +49,10 @@
 					</FmTooltip>
 				</template>
 			</FmTextField>
+
+			<div class="user-code-input__result">
+				<i>Result: </i> {{ editedUserCode }}
+			</div>
 		</div>
 	</div>
 </template>
@@ -88,7 +89,12 @@
 		}
 	});
 
-	const emits = defineEmits(['update:userCode', 'update:item']);
+	const emits = defineEmits([
+		'update:userCode',
+		'update:item',
+		'update:configurationCode',
+		'update:valid'
+	]);
 
 	const {
 		userCodeFieldComponent,
@@ -112,11 +118,11 @@
 			display: grid;
 			grid-template-columns: 1fr 1fr;
 			column-gap: 16px;
+			padding-bottom: 22px;
 		}
 
 		&__cell {
 			position: relative;
-			padding-bottom: 22px;
 		}
 
 		&__tooltip {
