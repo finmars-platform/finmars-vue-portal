@@ -1,321 +1,184 @@
 <template>
-	<div class="container">
-		<div class="client-entity-page">
-			<div class="m-b-8">
-				<h1 class="title">Client Entity</h1>
+	<div class="px-5 py-5 flex flex-col items-start justify-start gap-6">
+		<div class="flex flex-col w-full gap-2">
+			<span class="text-lg">Client Entity</span>
+			<div
+				v-if="loading"
+				class="flex w-full justify-center items-center min-w-44"
+			>
+				<FmProgressCircular :size="32" indeterminate />
 			</div>
-			<FmCard class="m-b-8" v-for="clientEntity of clientEntities">
-				<div class="flex_cb">
-					<div class="flex flex-col gap-2">
-						<span>User code: {{ clientEntity.user_code }}</span>
-						<span>Name: {{ clientEntity.name }}</span>
-					</div>
-					<div>
-						<FmButton
-							class="m-l-8 m-r-8"
-							type="primary"
-							@click="editEntity(clientEntity)"
-							rounded
-						>
-							Edit
-						</FmButton>
-						<FmButton
-							class="m-l-8 m-r-8"
-							type="secondary"
-							@click="deleteEntity(clientEntity)"
-							rounded
-						>
-							Delete
-						</FmButton>
-					</div>
-				</div>
-			</FmCard>
-
-			<div class="flex m-t-20">
-				<FmButton type="primary" @click="createEntity()" rounded
-					>Add Entity</FmButton
-				>
+			<div
+				v-else-if="!items.length"
+				class="flex w-full justify-center items-center min-w-44"
+			>
+				<span>No data available!</span>
+			</div>
+			<template v-else>
+				<Card
+					v-for="item in items"
+					@open-modal="openModal"
+					@delete-item="deleteItem"
+					:item="item"
+					:key="item.id"
+				/>
+			</template>
+			<div class="m-4">
+				<FmButton type="primary" @click="openModal()" rounded>
+					Add Entity
+				</FmButton>
 			</div>
 		</div>
-
-		<BaseModal
-			v-model="showModal"
-			title="Create Client Entity"
-			class="width-60"
-		>
-			<FmTextField
-				class="m-b-10"
-				v-model="newEntity.user_code"
-				label="User Code"
-				:rules="[requiredValidate]"
+		<template v-if="showModal">
+			<EntityModal
+				v-model="showModal"
+				:modal-type="modalType"
+				:item="selectedItem"
+				:title="modalTitle"
+				:portfolios-options="portfoliosOptions"
+				@close="closeModal"
+				@edit="editItem"
+				@create="createItem"
 			/>
-			<FmTextField
-				class="m-b-10"
-				v-model="newEntity.name"
-				label="Name"
-				:rules="[requiredValidate]"
-			/>
-			<FmTextField
-				class="m-b-10"
-				v-model="newEntity.short_name"
-				label="Short Name"
-			/>
-			<FmTextField
-				class="m-b-10"
-				v-model="newEntity.public_name"
-				label="Public Name"
-			/>
-			<div class="flex flex-column m-b-10">
-				<span>Notes</span>
-				<textarea
-					id="notes"
-					name="notes"
-					rows="6"
-					cols="50"
-					v-model="newEntity.notes"
-				/>
-			</div>
-			<template #controls>
-				<div class="flex aic sb">
-					<FmButton type="secondary" @click="cancelBaseModal">
-						Cancel
-					</FmButton>
-					<FmButton
-						type="primary"
-						:disabled="!validateNewEntity"
-						@click="createNewEntity"
-					>
-						Create
-					</FmButton>
-				</div>
-			</template>
-		</BaseModal>
-		<BaseModal
-			v-model="showEditModal"
-			title="Edit Client Entity"
-			class="width-60"
-		>
-			<div class="m-b-10 p-b-8 p-t-8">
-				<span>User Code: {{ editEntityObject.user_code }}</span>
-			</div>
-			<div>
-				<FmTextField
-					class="m-b-10"
-					v-model="editEntityObject.user_code"
-					label="User Code"
-					:rules="[requiredValidate]"
-				/>
-				<FmTextField
-					class="m-b-10"
-					v-model="editEntityObject.name"
-					label="Name"
-					:rules="[requiredValidate]"
-				/>
-				<FmTextField
-					class="m-b-10"
-					v-model="editEntityObject.short_name"
-					label="Short Name"
-				/>
-				<FmTextField
-					class="m-b-10"
-					v-model="editEntityObject.public_name"
-					label="Public Name"
-				/>
-				<div class="flex flex-column m-b-10">
-					<span>Notes</span>
-					<textarea
-						id="notes"
-						name="notes"
-						rows="6"
-						cols="50"
-						v-model="editEntityObject.notes"
-					/>
-				</div>
-			</div>
-			<template #controls>
-				<div class="flex aic sb">
-					<FmButton type="secondary" @click="cancelBaseModal">Cancel</FmButton>
-					<FmButton
-						type="primary"
-						:disabled="!validateEditEntity"
-						@click="updateEntity"
-						>Update</FmButton
-					>
-				</div>
-			</template>
-		</BaseModal>
+		</template>
 	</div>
 </template>
 
 <script setup>
-	import cloneDeep from 'lodash/cloneDeep';
+	import EntityModal from '~/pages/settings/client-entity/entity-modal/index.vue';
+	import Card from '@/pages/settings/client-entity/card/index.vue';
+	import { FmProgressCircular, FmButton } from '@finmars/ui';
 
 	definePageMeta({
-		middleware: 'auth',
-		bread: [
-			{
-				text: 'Settings Client Entity',
-				to: '/settings/client-entity'
-			}
-		]
+		middleware: 'auth'
 	});
 
-	let newEntity = reactive({
-		name: '',
-		user_code: '',
-		short_name: '',
-		public_name: '',
-		notes: ''
-	});
-
-	const editEntityObject = ref({});
-	const clientEntities = ref([]);
-	const items = ref([]);
+	const loading = ref(false);
 	const showModal = ref(false);
-	const showEditModal = ref(false);
-	const userCode = ref('');
+	const modalType = ref('create');
+	const modalTitle = ref('Create Client Entity');
+	const items = ref([]);
 
-	const errorValidateData = ref(false);
+	const portfoliosOptions = ref([]);
+	const selectedItem = ref({});
 
-	const validateEditEntity = computed(() => {
-		return (
-			editEntityObject.value.name.length &&
-			editEntityObject.value.user_code.length
-		);
-	});
-
-	const validateNewEntity = computed(() => {
-		return newEntity.name.length && newEntity.user_code.length;
-	});
-
-	const getEntities = async () => {
-		const res = await useApi('clientEntity.get');
-		clientEntities.value = res.results;
-	};
-
-	const createEntity = () => {
-		showModal.value = true;
-	};
-
-	const updateEntity = async () => {
-		if (!validateEditEntity.value) return;
-		try {
-			await useApi('clientEntity.put', {
-				params: { id: editEntityObject.value.id },
-				body: {
-					name: editEntityObject.value.name,
-					user_code: editEntityObject.value.user_code,
-					short_name: editEntityObject.value.short_name,
-					public_name: editEntityObject.value.public_name,
-					notes: editEntityObject.value.notes
-				}
-			});
-			await getEntities();
-			showEditModal.value = false;
-			items.value = [];
-			errorValidateData.value = false;
-		} catch (error) {
-			errorValidateData.value = true;
-		}
-	};
-
-	const createNewEntity = async () => {
-		try {
-			if (!validateNewEntity.value) return;
-			await useApi('clientEntity.post', {
-				body: newEntity
-			});
-
-			newEntity = {
-				name: '',
-				user_code: '',
-				short_name: '',
-				public_name: '',
-				notes: ''
-			};
-
-			await getEntities();
-			showModal.value = false;
-			items.value = [];
-			errorValidateData.value = false;
-		} catch (error) {
-			errorValidateData.value = true;
-		}
-	};
-
-	const editEntity = (clientEntity) => {
-		editEntityObject.value = cloneDeep(clientEntity);
-		showEditModal.value = true;
-	};
-
-	const deleteEntity = async (clientEntity) => {
-		const confirm = await useConfirm({
-			title: 'Delete Client Entity',
-			text: `Are you sure you want delete ${clientEntity.user_code}?`
-		});
-		if (!confirm) return false;
-
-		await useApi('clientEntity.delete', {
-			params: { id: clientEntity.id }
-		});
-		await getEntities();
-	};
-
-	const cancelBaseModal = () => {
-		editEntityObject.value = {};
-		showEditModal.value = false;
-		showModal.value = false;
-		items.value = [];
-		userCode.value = '';
-		newEntity = {
-			name: '',
-			user_code: '',
-			short_name: '',
-			public_name: '',
-			notes: ''
+	const getEditableObject = (item = null) => {
+		return {
+			id: item?.id || '',
+			name: item?.name || '',
+			user_code: item?.user_code || '',
+			short_name: item?.short_name || '',
+			first_name: item?.first_name || '',
+			last_name: item?.last_name || '',
+			email: item?.email || '',
+			telephone: item?.telephone || '',
+			notes: item?.notes || '',
+			client_secrets: item?.client_secrets || [],
+			client_secrets_object: item?.client_secrets_object || [],
+			portfolios: item?.portfolios || []
 		};
 	};
 
-	const requiredValidate = (val) => {
-		return val ? '' : 'This is required field';
+	async function getItemsList() {
+		try {
+			loading.value = true;
+			const res = await useApi('clientEntity.get');
+			items.value = res.results;
+			selectedItem.value = getEditableObject(null);
+		} catch (e) {
+			console.log(`Catch error: ${e}`);
+		} finally {
+			loading.value = false;
+		}
+	}
+
+	async function getPortfoliosOptions() {
+		try {
+			const res = await useApi('portfolioList.get');
+			if (res.results) {
+				portfoliosOptions.value = res.results.map((result) => {
+					return {
+						title: result.name,
+						value: result.id
+					};
+				});
+			} else {
+				portfoliosOptions.value = [];
+			}
+		} catch (e) {
+			console.log(`Catch error: ${e}`);
+		}
+	}
+
+	async function editItem(item) {
+		try {
+			loading.value = true;
+			selectedItem.value = item;
+			await useApi('clientEntity.put', {
+				params: { id: selectedItem.value.id },
+				body: selectedItem.value
+			});
+			await getItemsList();
+			closeModal();
+		} catch (e) {
+			console.log(`Catch error: ${e}`);
+		}
+	}
+
+	async function createItem(item) {
+		try {
+			loading.value = true;
+			selectedItem.value = item;
+			await useApi('clientEntity.post', {
+				body: selectedItem.value
+			});
+			await getItemsList();
+			closeModal();
+		} catch (e) {
+			console.log(`Catch error: ${e}`);
+		}
+	}
+
+	async function deleteItem(item) {
+		const confirm = await useConfirm({
+			title: 'Delete Client Entity',
+			text: `Are you sure you want delete ${item.user_code}?`
+		});
+		if (confirm) {
+			try {
+				await useApi('clientEntity.delete', {
+					params: { id: item.id }
+				});
+				useNotify({
+					type: 'success',
+					title: `${item.name} successfully deleted`
+				});
+				await getItemsList();
+			} catch (e) {
+				console.log(`Catch error: ${e}`);
+			}
+		}
+	}
+
+	async function openModal(item = null) {
+		selectedItem.value = getEditableObject(item);
+		modalType.value = !item ? 'create' : 'edit';
+		modalTitle.value = !item ? 'Create Client Entity' : 'Edit Client Entity';
+		showModal.value = true;
+	}
+
+	const closeModal = () => {
+		selectedItem.value = getEditableObject(null);
+		modalType.value = 'create';
+		showModal.value = false;
 	};
 
-	const init = async () => {
-		await getEntities();
-	};
+	async function init() {
+		await getItemsList();
+		await getPortfoliosOptions();
+	}
 
 	init();
 </script>
 
-<style lang="scss" scoped>
-	.title {
-		margin-top: 5px;
-		font-size: 20px;
-	}
-	.container {
-		padding: 30px;
-	}
-	.user-code {
-		display: flex;
-		flex-direction: column;
-		justify-content: flex-start;
-		align-items: center;
-		margin: 0 var(--spacing-12);
-	}
-	.right-container {
-		width: 36%;
-	}
-	.right-container span {
-		display: inline-block;
-		width: 140px;
-		white-space: nowrap;
-		overflow: hidden !important;
-		text-overflow: ellipsis;
-		vertical-align: middle;
-	}
-	textarea {
-		border-radius: var(--spacing-4);
-		border: 1px solid var(--table-border-color);
-		padding: var(--spacing-4);
-	}
-</style>
+<style lang="scss" scoped></style>
