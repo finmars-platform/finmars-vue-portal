@@ -268,7 +268,7 @@
 	const textEditor = ref();
 	const isLoading = ref(true);
 
-	const isInsideReport = ref(!!props.data.entityType);
+	const isInsideReport = ref(!!props.data?.entityType);
 	const availableAttrs = ref([]);
 	const isAttrsSelectorOpen = ref(false);
 
