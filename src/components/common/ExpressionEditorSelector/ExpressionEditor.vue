@@ -268,7 +268,7 @@
 	const textEditor = ref();
 	const isLoading = ref(true);
 
-	const isInsideReport = ref(!!props.data.entityType);
+	const isInsideReport = ref(!!props.data?.entityType);
 	const availableAttrs = ref([]);
 	const isAttrsSelectorOpen = ref(false);
 
@@ -387,7 +387,7 @@
 				expression.value,
 				props.data
 			);
-			console.log('V: ', validationResultData);
+
 			validationResult.value = {
 				show: true,
 				status: validationResultData.error
