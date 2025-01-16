@@ -20,6 +20,7 @@
 							:prepend-icon="item.icon"
 							:title="item.title"
 							append-icon="mdi-menu-right"
+							:disabled="item.disabled"
 						/>
 					</template>
 
@@ -29,6 +30,7 @@
 						item-size="large"
 						:prepend-icon="child.icon"
 						:title="child.title"
+						:disabled="child.disabled"
 						@click="emits('select:action', child.value)"
 					/>
 				</FmMenu>
@@ -39,6 +41,7 @@
 				item-size="large"
 				:prepend-icon="item.icon"
 				:title="item.title"
+				:disabled="item.disabled"
 				@click="emits('select:action', item.value)"
 			/>
 		</template>
@@ -47,8 +50,10 @@
 
 <script setup>
 	import { computed } from 'vue';
+	import { storeToRefs } from 'pinia';
 	import size from 'lodash/size';
 	import { FmIconButton, FmMenu, FmMenuItem } from '@finmars/ui';
+	import useNotificationsStore from '~/stores/useNotificationsStore';
 	import {
 		CHANNEL_ACTIONS,
 		CHANNEL_MUTE_ACTIONS,
@@ -63,9 +68,15 @@
 
 	const emits = defineEmits(['select:action']);
 
+	const { currentChannel } = storeToRefs(useNotificationsStore());
+
 	const channelActions = computed(() => [
 		props.channel?.mute ? CHANNEL_UNMUTE_ACTIONS : CHANNEL_MUTE_ACTIONS,
-		...CHANNEL_ACTIONS
+		...CHANNEL_ACTIONS.map((item) => ({
+			...item,
+			...(['details', 'leave'].includes(item.value) &&
+				!currentChannel.value && { disabled: true })
+		}))
 	]);
 </script>
 
@@ -80,6 +91,10 @@
 					padding: 8px 0 !important;
 
 					div {
+						&.pointer-events-none {
+							opacity: 0.5;
+						}
+
 						span {
 							flex-grow: 1;
 						}

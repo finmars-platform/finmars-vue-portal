@@ -6,28 +6,59 @@
 		</div>
 
 		<div class="notification-channels__body">
-			<div class="notification-channels__list">LIST</div>
+			<div class="notification-channels__list">
+				<ChannelList />
+			</div>
 
-			<div class="notification-channels__content">CONTENT</div>
+			<div class="notification-channels__content">
+				<NotificationsByChannel />
+			</div>
+		</div>
+
+		<div v-if="isLoading" class="notification-channels__loader">
+			<FmProgressCircular indeterminate size="100" />
 		</div>
 	</section>
 </template>
 
 <script setup>
-	import { onBeforeMount } from 'vue';
-	import useApi from '~/composables/useApi';
+	import { onBeforeMount, ref } from 'vue';
+	import { FmProgressCircular } from '@finmars/ui';
+	import useNotificationsStore from '~/stores/useNotificationsStore';
 	import ChannelsToolbar from '~/components/pages/system-notifications/ChannelsToolbar/ChannelsToolbar.vue';
-	//
-	// onBeforeMount(async () => {
-	// 	const channels = await useApi('systemNotificationsChannels.get');
-	// 	console.log('channels: ', channels);
-	// 	const userSubs = await useApi('systemNotificationsUserSubscriptions.get');
-	// 	console.log('userSubs: ', userSubs);
-	// 	const allSubs = await useApi('systemNotificationsSubscriptions.get');
-	// 	console.log('allSubs: ', allSubs);
-	// 	const notifications = await useApi('systemNotifications.get');
-	// 	console.log('notifications: ', notifications);
-	// });
+	import ChannelList from '~/components/pages/system-notifications/ChannelList/ChannelList.vue';
+	import NotificationsByChannel from '~/components/pages/system-notifications/Notifications/Notifications.vue';
+
+	const isLoading = ref(false);
+
+	const {
+		getChannels,
+		getNotifications,
+		getNotificationsStatuses,
+		getNotificationsCategories
+	} = useNotificationsStore();
+
+	onBeforeMount(async () => {
+		try {
+			isLoading.value = true;
+
+			await getNotificationsCategories();
+			await getNotificationsStatuses();
+			await getChannels();
+			await getNotifications();
+
+			// const channels = await useApi('systemNotificationsChannels.get');
+			// console.log('channels: ', channels);
+			// const userSubs = await useApi('systemNotificationsUserSubscriptions.get');
+			// console.log('userSubs: ', userSubs);
+			// const allSubs = await useApi('systemNotificationsSubscriptions.get');
+			// console.log('allSubs: ', allSubs);
+			// const notifications = await useApi('systemNotifications.get');
+			// console.log('notifications: ', notifications);
+		} finally {
+			isLoading.value = false;
+		}
+	});
 </script>
 
 <style lang="scss" scoped>
@@ -62,13 +93,25 @@
 
 		&__list {
 			position: relative;
+			min-width: var(--notification-channels-list-width);
 			width: var(--notification-channels-list-width);
 			border-right: 1px solid var(--outline-variant);
 		}
 
 		&__content {
 			position: relative;
-			width: calc(100% - var(--notification-channels-content-width) - 1px);
+			width: calc(100% - 1px - var(--notification-channels-list-width));
+		}
+
+		&__loader {
+			position: absolute;
+			inset: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			pointer-events: none;
+			z-index: 5;
+			background-color: rgba(0, 0, 0, 0.2);
 		}
 	}
 </style>
