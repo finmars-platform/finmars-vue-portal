@@ -3,31 +3,79 @@ let prefix = host + '/{client}/api/v1';
 let uDatabasePrefix = 'https://database.finmars.com/api/v1';
 
 export default {
+	auditHistoryList: {
+		get: prefix + '/audit/history/'
+	},
+
+	expressionProcedureList: {
+		get: prefix + '/procedures/expression-procedure/',
+		post: prefix + '/procedures/expression-procedure/',
+		put: prefix + '/procedures/expression-procedure/{id}/'
+	},
 	pricingProc: {
 		get: prefix + '/procedures/pricing-procedure/',
-		post: prefix + '/procedures/pricing-procedure/{id}/run-procedure/',
+		post: prefix + '/procedures/pricing-procedure/',
 		put: prefix + '/procedures/pricing-procedure/{id}/'
 	},
 	pricingProcId: {
 		get: prefix + '/procedures/pricing-procedure/{id}/',
+		post: prefix + '/procedures/pricing-procedure/{id}/run-procedure/',
 		put: prefix + '/procedures/pricing-procedure/{id}/'
 	},
 	pricingProcInstance: {
 		get: prefix + '/procedures/pricing-parent-procedure-instance/'
 	},
 
+	accrualCalculationModelMappingList: {
+		get: prefix + '/import/accrual-calculation-model-mapping/',
+		post: prefix + '/import/accrual-calculation-model-mapping/',
+		put: prefix + '/import/accrual-calculation-model-mapping/{id}/',
+		delete: prefix + '/import/accrual-calculation-model-mapping/{id}/'
+	},
+
+	instrumentPeriodicityMappingList: {
+		get: prefix + '/import/periodicity-mapping/',
+		post: prefix + '/import/periodicity-mapping/',
+		put: prefix + '/import/periodicity-mapping/{id}/',
+		delete: prefix + '/import/periodicity-mapping/{id}/'
+	},
+	instrumentAttributeTypeMappingList: {
+		get: prefix + '/import/instrument-attribute-value-mapping/',
+		post: prefix + '/import/instrument-attribute-value-mapping/',
+		put: prefix + '/import/instrument-attribute-value-mapping/{id}/',
+		delete: prefix + '/import/instrument-attribute-value-mapping/{id}/'
+	},
+
+	instrumentCostMethodList: {
+		get: prefix + '/instruments/cost-method/'
+	},
+	instrumentPriceHistoryList: {
+		get: prefix + '/instruments/price-history/',
+		post: prefix + '/instruments/price-history/',
+		put: prefix + '/instruments/price-history/{id}/'
+	},
 	instrumentList: {
-		get: prefix + '/instruments/instrument/'
+		get: prefix + '/instruments/instrument/',
+		post: prefix + '/instruments/instrument/',
+		put: prefix + '/instruments/instrument/{id}/'
 	},
 	instrumentListLight: {
 		get: prefix + '/instruments/instrument/light/'
 	},
 
 	instrumentTypeList: {
-		get: prefix + '/instruments/instrument-type/'
+		get: prefix + '/instruments/instrument-type/',
+		post: prefix + '/instruments/instrument-type/',
+		put: prefix + '/instruments/instrument-type/{id}/'
 	},
 	instrumentSizeDetail: {
 		get: prefix + '/instruments/payment-size-detail/'
+	},
+	paymentSizeDetailMappingList: {
+		get: prefix + '/import/payment-size-detail-mapping/',
+		post: prefix + '/import/payment-size-detail-mapping/',
+		put: prefix + '/import/payment-size-detail-mapping/{id}/',
+		delete: prefix + '/import/payment-size-detail-mapping/{id}/'
 	},
 	instrumentPeriodicity: {
 		get: prefix + '/instruments/periodicity/'
@@ -46,12 +94,38 @@ export default {
 		get: prefix + '/instruments/instrument-class/'
 	},
 
+	instrumentCountryList: {
+		get: prefix + '/instruments/country/'
+	},
 	instrumentPricingCondition: {
 		get: prefix + '/instruments/pricing-condition/'
 	},
+	pricingConditionMappingList: {
+		get: prefix + '/import/pricing-condition-mapping/',
+		post: prefix + '/import/pricing-condition-mapping/',
+		put: prefix + '/import/pricing-condition-mapping/{id}/',
+		delete: prefix + '/import/pricing-condition-mapping/{id}/'
+	},
+	instrumentDailyPricingModelList: {
+		get: prefix + '/instruments/daily-pricing-model/'
+	},
+	instrumentMappingList: {
+		get: prefix + '/import/instrument-mapping/',
+		post: prefix + '/import/instrument-mapping/',
+		put: prefix + '/import/instrument-mapping/{id}/',
+		delete: prefix + '/import/instrument-mapping/{id}/'
+	},
+	dailyPricingModelMappingList: {
+		get: prefix + '/import/daily-pricing-model-mapping/',
+		post: prefix + '/import/daily-pricing-model-mapping/',
+		put: prefix + '/import/daily-pricing-model-mapping/{id}/',
+		delete: prefix + '/import/daily-pricing-model-mapping/{id}/'
+	},
 
 	pricingPolicyList: {
-		get: prefix + '/instruments/pricing-policy/'
+		get: prefix + '/instruments/pricing-policy/',
+		post: prefix + '/instruments/pricing-policy/',
+		put: prefix + '/instruments/pricing-policy/{id}/'
 	},
 	pricingPolicy: {
 		get: prefix + '/instruments/pricing-policy/{id}/',
@@ -62,8 +136,16 @@ export default {
 	pricingPolicyListLight: {
 		get: prefix + '/instruments/pricing-policy/light/'
 	},
+	pricingPolicyMappingList: {
+		get: prefix + '/import/pricing-policy-mapping/',
+		post: prefix + '/import/pricing-policy-mapping/',
+		put: prefix + '/import/pricing-policy-mapping/{id}/',
+		delete: prefix + '/import/pricing-policy-mapping/{id}/'
+	},
 	currencyList: {
-		get: prefix + '/currencies/currency/'
+		get: prefix + '/currencies/currency/',
+		post: prefix + '/currencies/currency/',
+		put: prefix + '/currencies/currency/{id}/'
 	},
 	currencyListLight: {
 		get: prefix + '/currencies/currency/light/'
@@ -75,29 +157,85 @@ export default {
 		// get: prefix + '/api/currencies/currency-database-search/',
 		get: uDatabasePrefix + '/currency/'
 	},
+	currencyHistoryList: {
+		get: prefix + 'currencies/currency-history/',
+		post: prefix + '/currencies/currency-history/',
+		put: prefix + '/currencies/currency-history/{id}/'
+	},
 	importCurrencyFmDb: {
 		post: prefix + '/import/finmars-database/currency/'
 	},
+	importPriceDownloadSchemeList: {
+		get: prefix + '/import/price-download-scheme/'
+	},
+	priceDownloadSchemeMappingList: {
+		get: prefix + '/import/price-download-scheme-mapping/',
+		post: prefix + '/import/price-download-scheme-mapping/',
+		put: prefix + '/import/price-download-scheme-mapping/{id}/',
+		delete: prefix + '/import/price-download-scheme-mapping/{id}/'
+	},
 	portfolioList: {
-		get: prefix + '/portfolios/portfolio/'
+		get: prefix + '/portfolios/portfolio/',
+		post: prefix + '/portfolios/portfolio/',
+		put: prefix + '/portfolios/portfolio/{id}/'
 	},
 	portfolioListLight: {
 		get: prefix + '/portfolios/portfolio/light/'
 	},
+	portfolioMappingList: {
+		get: prefix + '/import/portfolio-mapping/',
+		post: prefix + '/import/portfolio-mapping/',
+		put: prefix + '/import/portfolio-mapping/{id}/',
+		delete: prefix + '/import/portfolio-mapping/{id}/'
+	},
 	accountLight: {
 		get: prefix + '/accounts/account/light/'
 	},
+	account: {
+		get: prefix + '/accounts/account/',
+		post: prefix + '/accounts/account/',
+		put: prefix + '/accounts/account/{id}/'
+	},
 	accountTypeList: {
-		get: prefix + '/accounts/account-type/'
+		get: prefix + '/accounts/account-type/',
+		post: prefix + '/accounts/account-type/',
+		put: prefix + '/accounts/account-type/{id}/'
+	},
+	accountMappingList: {
+		get: prefix + '/import/account-mapping/',
+		post: prefix + '/import/account-mapping/',
+		put: prefix + '/import/account-mapping/{id}/',
+		delete: prefix + '/import/account-mapping/{id}/'
+	},
+	accountTypeMappingList: {
+		get: prefix + '/import/account-type-mapping/',
+		post: prefix + '/import/account-type-mapping/',
+		put: prefix + '/import/account-type-mapping/{id}/',
+		delete: prefix + '/import/account-type-mapping/{id}/'
 	},
 	counterpartyList: {
-		get: prefix + '/counterparties/counterparty/'
+		get: prefix + '/counterparties/counterparty/',
+		post: prefix + '/counterparties/counterparty/',
+		put: prefix + '/counterparties/counterparty/{id}/'
+	},
+	counterpartyResponsible: {
+		get: prefix + '/counterparties/responsible/',
+		post: prefix + '/counterparties/responsible/',
+		put: prefix + '/counterparties/responsible/{id}/'
 	},
 	counterpartyResponsibleLight: {
 		get: prefix + '/counterparties/responsible/light/'
 	},
 	responsibleGroupList: {
-		get: prefix + '/counterparties/responsible-group/'
+		get: prefix + '/counterparties/responsible-group/',
+		post: prefix + '/counterparties/responsible-group/',
+		put: prefix + '/counterparties/responsible-group/{id}/'
+	},
+	responsibleMappingList: {
+		get: prefix + '/import/responsible-mapping/',
+		post: prefix + '/import/responsible-mapping/',
+		put: prefix + '/import/responsible-mapping/{id}/',
+		delete: prefix + '/import/responsible-mapping/{id}/'
 	},
 	counterpartyCounterpartyLight: {
 		get: prefix + '/counterparties/counterparty/light/'
@@ -106,21 +244,40 @@ export default {
 		get: uDatabasePrefix + '/company/'
 	},
 	counterpartyGroupList: {
-		get: prefix + '/counterparties/counterparty-group/'
+		get: prefix + '/counterparties/counterparty-group/',
+		post: prefix + '/counterparties/counterparty-group/',
+		put: prefix + '/counterparties/counterparty-group/{id}/'
 	},
 	importCounterpartyFmDb: {
 		post: prefix + '/import/finmars-database/company/'
 	},
+	counterpartyMappingList: {
+		get: prefix + '/import/counterparty-mapping/',
+		post: prefix + '/import/counterparty-mapping/',
+		put: prefix + '/import/counterparty-mapping/{id}/',
+		delete: prefix + '/import/counterparty-mapping/{id}/'
+	},
 
+	complexTransactionList: {
+		get: prefix + '/transactions/complex-transaction/',
+		post: prefix + '/transactions/complex-transaction/',
+		put: prefix + '/transactions/complex-transaction/{id}/'
+	},
+	complexTransactionRebook: {
+		get: prefix + '/transactions/complex-transaction/{id}/rebook/',
+		put: prefix + '/transactions/complex-transaction/{id}/rebook/'
+	},
 	complexTransactionBulkRestore: {
-		post: prefix + '/transactions/complex-transaction/bulk-restore/',
+		post: prefix + '/transactions/complex-transaction/bulk-restore/'
 	},
 	complexTransactionBulkDelete: {
-		post: prefix + '/transactions/complex-transaction/bulk-delete/',
+		post: prefix + '/transactions/complex-transaction/bulk-delete/'
 	},
 
 	importBankProc: {
-		get: prefix + '/procedures/request-data-procedure/'
+		get: prefix + '/procedures/request-data-procedure/',
+		post: prefix + '/procedures/request-data-procedure/',
+		put: prefix + '/procedures/request-data-procedure/{id}/'
 	},
 	importBankProcId: {
 		get: prefix + '/procedures/request-data-procedure/{id}/',
@@ -139,6 +296,12 @@ export default {
 	dataInstance: {
 		get: prefix + '/procedures/data-procedure-instance/'
 	},
+	currencyMappingImportList: {
+		get: prefix + '/import/currency-mapping/',
+		post: prefix + '/import/currency-mapping/',
+		put: prefix + '/import/currency-mapping/{id}/',
+		delete: prefix + '/import/currency-mapping/{id}/'
+	},
 	importSchemeLight: {
 		get: prefix + '/import/complex-transaction-import-scheme/light/'
 	},
@@ -147,8 +310,24 @@ export default {
 		post: prefix + '/import/complex-transaction-import-scheme/',
 		patch: prefix + `/import/complex-transaction-import-scheme/{id}/`
 	},
+	simpleImportSchemeList: {
+		get: prefix + '/import/csv/scheme/'
+	},
+	simpleImportSchemeLight: {
+		get: prefix + '/import/csv/scheme/light/'
+	},
+	simpleImport: {
+		post: prefix + '/import/csv/'
+	},
+	simpleImportSchemeInstance: {
+		get: prefix + '/import/csv/scheme/{id}/',
+		post: prefix + '/import/csv/scheme/',
+		patch: prefix + '/import/csv/scheme/{id}/'
+	},
 	configurationList: {
-		get: prefix + '/configuration/configuration/'
+		get: prefix + '/configuration/configuration/',
+		post: prefix + '/configuration/configuration/',
+		put: prefix + '/configuration/configuration/{id}/'
 	},
 	memberList: {
 		get: prefix + '/users/member/'
@@ -170,12 +349,39 @@ export default {
 		get: prefix + '/iam/group/'
 	},
 
+	portfolioHistoryList: {
+		get: prefix + '/portfolios/portfolio-history/',
+		post: prefix + '/portfolios/portfolio-history/',
+		put: prefix + '/portfolios/portfolio-history/{id}/'
+	},
+	portfolioReconcileHistoryList: {
+		get: prefix + '/portfolios/portfolio-reconcile-history/',
+		post: prefix + '/portfolios/portfolio-reconcile-history/',
+		put: prefix + '/portfolios/portfolio-reconcile-history/{id}/'
+	},
+	portfolioClassList: {
+		get: prefix + '/portfolios/portfolio-class/'
+	},
 	portfolioRegisterList: {
 		get: prefix + '/portfolios/portfolio-register/',
-		post: prefix + '/portfolios/portfolio-register/'
+		post: prefix + '/portfolios/portfolio-register/',
+		put: prefix + '/portfolios/portfolio-register/{id}/'
 	},
 	portfolioRegisterEvFiltered: {
 		post: prefix + '/portfolios/portfolio-register/ev-item/'
+	},
+	portfolioRegisterRecordList: {
+		get: prefix + '/portfolios/portfolio-register-record/'
+	},
+	portfolioTypeList: {
+		get: prefix + '/portfolios/portfolio-type/',
+		post: prefix + '/portfolios/portfolio-type/',
+		put: prefix + '/portfolios/portfolio-type/{id}/'
+	},
+	portfolioReconcileGroupList: {
+		get: prefix + 'portfolios/portfolio-reconcile-group/',
+		post: prefix + '/portfolios/portfolio-reconcile-group/',
+		put: prefix + '/portfolios/portfolio-reconcile-group/{id}/'
 	},
 	performanceReport: {
 		post: prefix + '/reports/performance-report/'
@@ -245,7 +451,8 @@ export default {
 		get: prefix + '/users/ecosystem-default/'
 	},
 	balanceReport: {
-		get: prefix + 'reports/balance-report/'
+		get: prefix + 'reports/balance-report/',
+		post: prefix + 'reports/balance-report/'
 	},
 	balanceReportAttributes: {
 		get: prefix + '/reports/balance-report/attributes/'
@@ -275,8 +482,11 @@ export default {
 		post: prefix + '/configuration/new-member-setup-configuration/',
 		delete: prefix + '/configuration/new-member-setup-configuration/{id}/'
 	},
+	newMemberConfig: {
+		get: prefix + '/configuration/new-member-setup-configuration/{id}/'
+	},
 	installNewMemberSetupConfig: {
-		put: prefix + '/configuration/new-member-setup-configuration/{id}/install/',
+		put: prefix + '/configuration/new-member-setup-configuration/{id}/install/'
 	},
 	unifiedData: {
 		get: prefix + '/data/{type}/'
@@ -345,6 +555,12 @@ export default {
 	instrumentAttrTypeList: {
 		get: prefix + '/instruments/instrument-attribute-type/'
 	},
+	instrumentTypeMappingList: {
+		get: prefix + '/import/instrument-type-mapping/',
+		post: prefix + '/import/instrument-type-mapping/',
+		put: prefix + '/import/instrument-type-mapping/{id}/',
+		delete: prefix + '/import/instrument-type-mapping/{id}/'
+	},
 	instrumentTypeAttrTypeList: {
 		get: prefix + '/instruments/instrument-type-attribute-type/'
 	},
@@ -366,12 +582,50 @@ export default {
 	strategy3AttrTypeList: {
 		get: prefix + '/strategies/3/strategy-attribute-type/'
 	},
+	strategy1MappingList: {
+		get: prefix + '/import/strategy1-mapping/',
+		post: prefix + '/import/strategy1-mapping/',
+		put: prefix + '/import/strategy1-mapping/{id}/',
+		delete: prefix + '/import/strategy1-mapping/{id}/'
+	},
+	strategy2MappingList: {
+		get: prefix + '/import/strategy2-mapping/',
+		post: prefix + '/import/strategy2-mapping/',
+		put: prefix + '/import/strategy2-mapping/{id}/',
+		delete: prefix + '/import/strategy2-mapping/{id}/'
+	},
+	strategy3MappingList: {
+		get: prefix + '/import/strategy3-mapping/',
+		post: prefix + '/import/strategy3-mapping/',
+		put: prefix + '/import/strategy3-mapping/{id}/',
+		delete: prefix + '/import/strategy3-mapping/{id}/'
+	},
 
+	transactionEventClass: {
+		get: prefix + '/transactions/event-class/'
+	},
+	transactionNotificationClass: {
+		get: prefix + '/transactions/notification-class/'
+	},
+	transactionList: {
+		get: prefix + '/transactions/transaction/',
+		post: prefix + '/transactions/transaction/',
+		put: prefix + '/transactions/transaction/{id}'
+	},
+	transactionClassList: {
+		get: prefix + '/transactions/transaction-class/'
+	},
 	transactionTypeLight: {
 		get: prefix + '/transactions/transaction-type/light/'
 	},
 	transactionType: {
-		get: prefix + '/transactions/transaction-type/'
+		get: prefix + '/transactions/transaction-type/',
+		post: prefix + '/transactions/transaction-type/',
+		put: prefix + '/transactions/transaction-type/{id}'
+	},
+	bookComplexTransaction: {
+		get: prefix + '/transactions/transaction-type/{id}/book/',
+		put: prefix + '/transactions/transaction-type/{id}/book/'
 	},
 
 	transactionTypeAttrTypeList: {
@@ -388,6 +642,9 @@ export default {
 		post: prefix + '/reports/balance-report/custom-field/',
 		put: prefix + '/reports/balance-report/custom-field/{id}/',
 		delete: prefix + '/reports/balance-report/custom-field/{id}/'
+	},
+	pnlReport: {
+		post: prefix + '/reports/pl-report/'
 	},
 	plReportCustomFieldList: {
 		get: prefix + '/reports/pl-report/custom-field/'
@@ -418,6 +675,20 @@ export default {
 	},
 	strategies1ListLight: {
 		get: prefix + '/strategies/1/strategy/light/'
+	},
+	strategySubGroupList: {
+		get: prefix + '/strategies/{strategyNumber}/subgroup/',
+		post: prefix + '/strategies/{strategyNumber}/subgroup/',
+		put: prefix + '/strategies/{strategyNumber}/subgroup/{id}/'
+	},
+	strategyList: {
+		get: prefix + '/strategies/{strategyNumber}/strategy/',
+		post: prefix + '/strategies/{strategyNumber}/strategy/',
+		put: prefix + '/strategies/{strategyNumber}/strategy/{id}/'
+	},
+	strategyGroup: {
+		post: prefix + '/strategies/{strategyNumber}/group/',
+		put: prefix + '/strategies/{strategyNumber}/group/{id}/'
 	},
 	strategies1SubgroupList: {
 		get: prefix + '/strategies/1/subgroup/'
@@ -462,7 +733,9 @@ export default {
 		post: prefix + '/ui/transaction-user-field/'
 	},
 	transactionTypeGroupList: {
-		get: prefix + '/transactions/transaction-type-group/'
+		get: prefix + '/transactions/transaction-type-group/',
+		post: prefix + '/transactions/transaction-type-group/',
+		put: prefix + '/transactions/transaction-type-group/{id}/'
 	},
 	transactionTypeGroup: {
 		put: prefix + '/transactions/transaction-type-group/{id}/',
@@ -569,9 +842,6 @@ export default {
 		put: prefix + '/clients/client/{id}/',
 		delete: prefix + '/clients/client/{id}/'
 	},
-	manageConfigurationList: {
-		get: prefix + '/configuration/configuration/'
-	},
 	manageConfigurationListById: {
 		get: prefix + '/configuration/configuration/{id}/'
 	},
@@ -634,9 +904,32 @@ export default {
 	},
 
 	recycleBin: {
-		get: prefix + '/utils/recycle-bin/',
+		get: prefix + '/utils/recycle-bin/'
 	},
 	clearRecycleBin: {
-		post: prefix + '/utils/recycle-bin/clear-bin/',
+		post: prefix + '/utils/recycle-bin/clear-bin/'
+	},
+	complexImportSchemeList: {
+		get: prefix + '/import/complex/scheme/',
+		post: prefix + '/import/complex/scheme/',
+		put: prefix + '/import/complex/scheme/{id}'
+	},
+	transactionImportSchemeList: {
+		get: prefix + '/import/complex-transaction-import-scheme/',
+		post: prefix + '/import/complex-transaction-import-scheme/',
+		patch: prefix + '/import/complex-transaction-import-scheme/{id}'
+	},
+
+	schedule: {
+		post: prefix + '/schedules/schedule/',
+		put: prefix + '/schedules/schedule/{id}'
+	},
+
+	priceHistoryError: {
+		put: prefix + '/pricing/price-history-error/{id}/'
+	},
+
+	currencyHistoryError: {
+		put: prefix + '/pricing/currency-history-error/{id}/'
 	}
 };
