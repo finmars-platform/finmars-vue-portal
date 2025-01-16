@@ -98,7 +98,7 @@
 			isLoading.value = true;
 			const { query, page, page_size } = filters.value;
 
-			const data = await useApi('manageConfigurationList.get', {
+			const data = await useApi('configurationList.get', {
 				filters: {
 					...(query && { query }),
 					page,

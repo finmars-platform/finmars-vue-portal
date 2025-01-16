@@ -39,18 +39,10 @@
 				class="clickable_rows"
 			>
 				<template #actions="{ index }">
-					<div class="flex jcc aic height-100 cursor-pointer">
-						<FmMenu attach="body">
-							<template #btn>
-								<FmIcon icon="mdi-dots-vertical" :size="26" />
-							</template>
-							<div class="fm_list">
-								<div class="fm_list_item" @click="deleteMember(index)">
-									<FmIcon icon="mdi-delete" :size="26" class="mr-2" />
-									Delete
-								</div>
-							</div>
-						</FmMenu>
+					<div class="fm_list">
+						<div class="fm_list_item" @click="deleteMember(index)">
+							<FmIcon icon="mdi-delete" :size="22" />
+						</div>
 					</div>
 				</template>
 			</BaseTable>
@@ -110,16 +102,16 @@
 	}
 
 	async function deleteMember(index) {
-		const usernameDel = members.value[index].username?.value;
+		const member = members.value[index];
 		const isConfirm = await useConfirm({
 			title: 'Delete member',
-			text: `Do you want to delete a member "${usernameDel}"?`
+			text: `Do you want to delete a member "${member.username}"?`
 		});
 		if (!isConfirm) return false;
-		await useApi('member.delete', { params: { id: members.value[index].id } });
+		await useApi('member.delete', { params: { id: member.id } });
 		useNotify({
 			type: 'success',
-			title: `Member "${usernameDel}" was deleted.`
+			title: `Member "${member.username}" was deleted.`
 		});
 		refresh();
 	}

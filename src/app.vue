@@ -11,9 +11,9 @@
 					<div class="title_wrap flex aic sb">
 						<div class="flex aic">
 							<p class="title">
-								{{ props.item.title }}
+								{{ props.item?.title }}
 							</p>
-							<div class="toast_copy" @click="copy(props.item.text)">Click to copy</div>
+							<div class="toast_copy" @click="copy(props.item?.text)">Click to copy</div>
 						</div>
 
 						<FmIcon class="toast-close-button" @click="props.close" icon="close" />
@@ -21,21 +21,21 @@
 
 					<div class="toast-error">
 						<span class="toast-error-field">Title: </span>
-						<div>{{ props.item.text.message }}</div>
+						<div>{{ props.item?.text?.message }}</div>
 					</div>
 					<div class="toast-error">
 						<span class="toast-error-field">Code: </span>
-						<div>{{ props.item.text.status_code }}</div>
+						<div>{{ props.item?.text?.status_code }}</div>
 					</div>
 					<div class="toast-error">
 						<span class="toast-error-field">URL: </span>
-						<div class="toast_error_text">{{ props.item.text.url }}</div>
+						<div class="toast_error_text">{{ props.item?.text?.url }}</div>
 					</div>
 					<div class="toast-error">
 						<span class="toast-error-field">Date & Time: </span>
-						<div>{{ props.item.text.datetime }}</div>
+						<div>{{ props.item?.text?.datetime }}</div>
 					</div>
-					<pre class="toast-pre">{{JSON.stringify(props.item.text.details, null, 2)}}</pre>
+					<pre class="toast-pre">{{JSON.stringify(props.item?.text?.details, null, 2)}}</pre>
 				</div>
 			</template>
 		</notifications>
@@ -46,7 +46,7 @@
 					<div class="title_wrap flex aic sb">
 						<div class="flex aic">
 							<p class="title">
-								{{ props.item.title }}
+								{{ props.item?.title }}
 							</p>
 						</div>
 
@@ -55,17 +55,17 @@
 
 					<div class="toast-error">
 						<span class="toast-error-field">Title: </span>
-						<div>{{ props.item.text.title }}</div>
+						<div>{{ props.item?.text?.title }}</div>
 					</div>
 
-					<div v-if="props.item.text.context" class="toast-error">
+					<div v-if="props.item?.text?.context" class="toast-error">
 						<span class="toast-error-field">Context: </span>
-						<div>{{ props.item.text.context }}</div>
+						<div>{{ props.item?.text?.context }}</div>
 					</div>
 
 					<div class="toast-error">
 						<span class="toast-error-field">Details: </span>
-						<div>{{ props.item.text.details }}</div>
+						<div>{{ props.item?.text?.details }}</div>
 					</div>
 
 				</div>

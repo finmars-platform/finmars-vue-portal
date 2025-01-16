@@ -4,7 +4,7 @@
 			<FmBreadcrumbs :crumbs="crumbs" />
 		</div>
 		<div class="px-5 py-5 flex flex-col items-start justify-start gap-2">
-			<span class="mb-4 text-lg">Initial Configuration for Invited Users</span>
+			<span class="mb-4 text-lg">Context Menu Layouts</span>
 			<div>
 				<NuxtLink
 					:class="{ disabledNuxtLink: items.length > 2 }"
