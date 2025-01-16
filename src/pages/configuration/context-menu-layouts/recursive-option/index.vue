@@ -133,7 +133,7 @@
 		optionItem.value.children.push({
 			name: elem.name,
 			action: elem.action,
-			order: optionItem.value.children.length
+			order: optionItem.value.children.length.toString()
 		});
 		emit('update-list');
 		closeModal();
@@ -174,7 +174,9 @@
 			text: `Are you sure you want to delete this option?`
 		});
 		if (confirm) {
-			const index = optionList.value.indexOf(optionItem.value);
+			const index = optionList.value.findIndex(
+				(item) => item?.order === optionItem.value.order
+			);
 			if (index !== -1) {
 				optionList.value.splice(index, 1);
 				emit('update-list');
