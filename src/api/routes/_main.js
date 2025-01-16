@@ -275,6 +275,9 @@ export default {
 		post: prefix + '/configuration/new-member-setup-configuration/',
 		delete: prefix + '/configuration/new-member-setup-configuration/{id}/'
 	},
+	newMemberConfig: {
+		get: prefix + '/configuration/new-member-setup-configuration/{id}/'
+	},
 	installNewMemberSetupConfig: {
 		put: prefix + '/configuration/new-member-setup-configuration/{id}/install/',
 	},
