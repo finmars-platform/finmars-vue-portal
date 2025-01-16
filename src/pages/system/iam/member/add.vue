@@ -92,10 +92,15 @@
 		accessPolicies: false
 	});
 
-	const form = reactive({
+	const form = ref({
+		username: '',
+		email: '',
+		is_admin: false,
+		is_owner: false,
 		groups: [],
-		base_api_url: store.space_code,
-		is_owner: false
+		roles: [],
+		access_policies: [],
+		base_api_url: store.space_code
 	});
 
 	const groups = ref([]);
@@ -119,15 +124,8 @@
 	}
 
 	async function save() {
-		// TODO Refactor
-		const sendedForm = {
-			...form,
-			groups: form.groups,
-			roles: form.roles
-		};
-
-		let res = await useApi('member.post', {
-			body: sendedForm,
+		const res = await useApi('member.post', {
+			body: form.value,
 			params: { id: route.params.id }
 		});
 
