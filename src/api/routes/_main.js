@@ -422,7 +422,9 @@ export default {
 		put: prefix + '/instruments/generated-event/{id}/informed/'
 	},
 	instrumentUserFieldList: {
-		get: prefix + '/ui/instrument-user-field/'
+		get: prefix + '/ui/instrument-user-field/',
+		put: prefix + '/ui/instrument-user-field/{id}/',
+		post: prefix + '/ui/instrument-user-field/'
 	},
 	instrumentUserField: {
 		put: prefix + '/ui/instrument-user-field/{id}/',
@@ -714,7 +716,9 @@ export default {
 		post: prefix + '/ui/complex-transaction-user-field/',
 	},*/
 	complexTransactionUserFieldList: {
-		get: prefix + '/ui/complex-transaction-user-field/'
+		get: prefix + '/ui/complex-transaction-user-field/',
+		put: prefix + '/ui/complex-transaction-user-field/{id}/',
+		post: prefix + '/ui/complex-transaction-user-field/'
 	},
 	complexTransactionUserField: {
 		put: prefix + '/ui/complex-transaction-user-field/{id}/',
@@ -726,7 +730,9 @@ export default {
 		post: prefix + '/ui/transaction-user-field/',
 	},*/
 	transactionUserFieldList: {
-		get: prefix + '/ui/transaction-user-field/'
+		get: prefix + '/ui/transaction-user-field/',
+		put: prefix + '/ui/transaction-user-field/{id}/',
+		post: prefix + '/ui/transaction-user-field/'
 	},
 	transactionUserField: {
 		put: prefix + '/ui/transaction-user-field/{id}/',
@@ -841,6 +847,9 @@ export default {
 		post: prefix + '/clients/client/',
 		put: prefix + '/clients/client/{id}/',
 		delete: prefix + '/clients/client/{id}/'
+	},
+	manageConfigurationList: {
+		get: prefix + '/configuration/configuration/'
 	},
 	manageConfigurationListById: {
 		get: prefix + '/configuration/configuration/{id}/'
