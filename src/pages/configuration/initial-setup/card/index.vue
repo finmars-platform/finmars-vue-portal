@@ -2,12 +2,8 @@
 	<div class="card flex justify-between items-center w-full">
 		<span>Name: {{ item.name }}</span>
 		<div>
-			<FmButton type="secondary" @click="openModal(item)" rounded>
-				Edit
-			</FmButton>
-			<FmButton type="secondary" @click="deleteItem(item)" rounded>
-				Delete
-			</FmButton>
+			<FmButton type="secondary" @click="openEdit" rounded> Edit </FmButton>
+			<FmButton type="secondary" @click="deleteItem" rounded> Delete </FmButton>
 		</div>
 	</div>
 </template>
@@ -15,7 +11,7 @@
 <script setup>
 	import { FmButton } from '@finmars/ui';
 
-	defineProps({
+	const props = defineProps({
 		item: {
 			type: Object,
 			required: true
@@ -23,12 +19,12 @@
 	});
 	const emit = defineEmits(['openModal', 'deleteItem']);
 
-	const openModal = (item) => {
-		emit('openModal', item);
+	const openEdit = () => {
+		emit('edit', props.item.id);
 	};
 
-	const deleteItem = (item) => {
-		emit('deleteItem', item);
+	const deleteItem = () => {
+		emit('deleteItem', props.item);
 	};
 </script>
 
