@@ -2,7 +2,8 @@ export const CHANNEL_ACTIONS = [
 	{
 		title: 'Mark all as read',
 		value: 'mark',
-		icon: 'mdi-message-check-outline'
+		icon: 'mdi-message-check-outline',
+		disabled: true
 	},
 	{
 		title: 'Open Channel Details',
@@ -12,7 +13,8 @@ export const CHANNEL_ACTIONS = [
 	{
 		title: 'Notification Settings',
 		value: 'settings',
-		icon: 'mdi-cog-outline'
+		icon: 'mdi-cog-outline',
+		disabled: true
 	},
 	{ title: 'Leave Channel', value: 'leave', icon: 'mdi-logout-variant' }
 ];
@@ -21,6 +23,7 @@ export const CHANNEL_MUTE_ACTIONS = {
 	title: 'Mute Channel',
 	value: 'mute',
 	icon: 'mdi-bell-off-outline',
+	disabled: true,
 	children: [
 		{
 			title: 'Mute for 1 hour',
@@ -39,7 +42,8 @@ export const CHANNEL_MUTE_ACTIONS = {
 export const CHANNEL_UNMUTE_ACTIONS = {
 	title: 'Unmute Channel',
 	value: 'unmute',
-	icon: 'mdi-bell-ring-outline'
+	icon: 'mdi-bell-ring-outline',
+	disabled: true
 };
 
 export const MESSAGE_TYPES = [

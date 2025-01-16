@@ -8,6 +8,8 @@
 
 		<ChannelsToolbarDate v-model="filter.date" />
 
+		<FmIconButton icon="mdi-magnify" variant="text" />
+
 		<ChannelsToolbarActions
 			:channel="channel"
 			@select:action="runSelectAction"
@@ -17,6 +19,7 @@
 
 <script setup>
 	import { ref } from 'vue';
+	import { FmIconButton } from '@finmars/ui';
 	import ChannelsToolbarActions from './ChannelsToolbarActions.vue';
 	import ChannelsToolbarType from './ChannelsToolbarType.vue';
 	import ChannelsToolbarModule from './ChannelsToolbarModule.vue';
@@ -29,6 +32,8 @@
 		}
 	});
 
+	const emits = defineEmits(['select:action']);
+
 	const filter = ref({
 		type: 'all',
 		module: 'all',
@@ -40,7 +45,7 @@
 	});
 
 	function runSelectAction(action) {
-		console.log('RUN ACTION', action);
+		emits('select:action', action);
 	}
 </script>
 
