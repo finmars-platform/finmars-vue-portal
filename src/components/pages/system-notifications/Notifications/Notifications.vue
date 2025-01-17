@@ -8,21 +8,24 @@
 			<div class="notification__title">
 				<span
 					class="notification__text--accented"
-					v-fm-html="notif.title"
+					v-fm-html="processText(notif.title)"
 				/>
 				<span>from</span>
-				<span class="notification__text--accented">{{
-					notif.owner
-				}}</span>
-				<span>{{
-					dayjs(notif.created_at).format('DD MMM HH:mm')
-				}}</span>
-				<span class="notification__text--accented"
-					>#{{ notif.channel }}</span
-				>
+				<span class="notification__text--accented">
+					{{ notif.owner }}
+				</span>
+				<span>
+					{{ dayjs(notif.created_at).format('DD MMM HH:mm') }}
+				</span>
+				<span class="notification__text--accented">
+					#{{ notif.channel }}
+				</span>
 			</div>
 
-			<div class="notification__content" v-fm-html="notif.content" />
+			<div
+				class="notification__content"
+				v-fm-html="processText(notif.content)"
+			/>
 		</div>
 	</div>
 </template>
@@ -37,7 +40,24 @@
 	const vFmHtml = FmHtml;
 
 	const notificationsStore = useNotificationsStore();
-	const { selectedChannelNotifications } = storeToRefs(notificationsStore);
+	const { notificationsFilter, selectedChannelNotifications } =
+		storeToRefs(notificationsStore);
+
+	const searchFilter = computed(() =>
+		notificationsFilter.value.search.toLowerCase()
+	);
+
+	function processText(text) {
+		if (!searchFilter.value) {
+			return text;
+		}
+
+		const index = text.toLowerCase().indexOf(searchFilter.value);
+		const part1 = text.slice(0, index);
+		const part2 = text.slice(index, index + searchFilter.value.length);
+		const part3 = text.slice(index + searchFilter.value.length);
+		return `<span>${part1}<span class="text-highlight">${part2}</span>${part3}</span>`;
+	}
 </script>
 
 <style lang="scss" scoped>
@@ -83,6 +103,11 @@
 		&__content {
 			font: var(--body-medium-font);
 			color: var(--on-surface);
+		}
+
+		:deep(.text-highlight) {
+			font-weight: 700;
+			color: var(--primary);
 		}
 	}
 </style>
