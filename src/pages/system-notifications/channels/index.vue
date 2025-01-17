@@ -2,7 +2,7 @@
 	<section class="notification-channels">
 		<div class="notification-channels__toolbar">
 			<span>Notifications</span>
-			<ChannelsToolbar />
+			<ChannelsToolbar @select:action="handleActions" />
 		</div>
 
 		<div class="notification-channels__body">
@@ -15,6 +15,23 @@
 			</div>
 		</div>
 
+		<Transition name="fade" mode="out-in">
+			<div v-if="isDetailsBlockOpen" class="notification-channels__details">
+				<FmIconButton
+					variant="text"
+					icon="mdi-close"
+					class="notification-channels__details-close"
+					@click="isDetailsBlockOpen = false"
+				/>
+
+				<h4>About channel</h4>
+
+				<div class="notification-channels__details-content">
+					{{ currentChannel.description }}
+				</div>
+			</div>
+		</Transition>
+
 		<div v-if="isLoading" class="notification-channels__loader">
 			<FmProgressCircular indeterminate size="100" />
 		</div>
@@ -23,20 +40,36 @@
 
 <script setup>
 	import { onBeforeMount, ref } from 'vue';
-	import { FmProgressCircular } from '@finmars/ui';
+	import { storeToRefs } from 'pinia';
+	import { FmIconButton, FmProgressCircular } from '@finmars/ui';
 	import useNotificationsStore from '~/stores/useNotificationsStore';
 	import ChannelsToolbar from '~/components/pages/system-notifications/ChannelsToolbar/ChannelsToolbar.vue';
 	import ChannelList from '~/components/pages/system-notifications/ChannelList/ChannelList.vue';
 	import NotificationsByChannel from '~/components/pages/system-notifications/Notifications/Notifications.vue';
 
 	const isLoading = ref(false);
+	const isDetailsBlockOpen = ref(false);
 
+	const notificationsStore = useNotificationsStore();
+
+	const { currentChannel } = storeToRefs(notificationsStore);
 	const {
 		getChannels,
 		getNotifications,
 		getNotificationsStatuses,
 		getNotificationsCategories
-	} = useNotificationsStore();
+	} = notificationsStore;
+
+	function handleActions(action) {
+		console.log('handleActions: ', action);
+		switch (action) {
+			case 'details':
+				if (currentChannel) {
+					isDetailsBlockOpen.value = true;
+				}
+				break;
+		}
+	}
 
 	onBeforeMount(async () => {
 		try {
@@ -101,6 +134,33 @@
 		&__content {
 			position: relative;
 			width: calc(100% - 1px - var(--notification-channels-list-width));
+		}
+
+		&__details {
+			position: absolute;
+			left: 0;
+			width: 100%;
+			bottom: 0;
+			z-index: 1;
+			background-color: var(--surface);
+			border-top: 1px solid var(--outline-variant);
+			padding: 32px;
+			color: var(--on-surface);
+
+			h4 {
+				font: var(--label-large-pro-font);
+				margin-bottom: 24px;
+			}
+
+			&-content {
+				font: var(--body-medium-font);
+			}
+
+			&-close {
+				position: absolute;
+				top: 16px;
+				right: 16px;
+			}
 		}
 
 		&__loader {
