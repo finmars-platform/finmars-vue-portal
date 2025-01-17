@@ -45,7 +45,11 @@
 		cursor: pointer;
 
 		&:hover {
-			background-color: color-mix(in srgb, var(--primary) 8%, transparent);
+			background-color: color-mix(
+				in srgb,
+				var(--primary) 8%,
+				transparent
+			);
 		}
 
 		&--selected {
@@ -53,7 +57,11 @@
 			color: var(--on-secondary);
 
 			&:hover {
-				background-color: color-mix(in srgb, var(--secondary) 75%, transparent);
+				background-color: color-mix(
+					in srgb,
+					var(--secondary) 75%,
+					transparent
+				);
 			}
 		}
 	}

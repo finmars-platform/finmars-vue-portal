@@ -485,7 +485,8 @@ export default {
 		get: prefix + '/ui/list-layout/{id}/ping'
 	},
 	defaultListLayout: {
-		get: prefix + '/ui/list-layout/?is_default=2&content_type={content_type}'
+		get:
+			prefix + '/ui/list-layout/?is_default=2&content_type={content_type}'
 	},
 	ecosystemDefaults: {
 		get: prefix + '/users/ecosystem-default/'
@@ -511,7 +512,8 @@ export default {
 	},
 	performanceFirstTransaction: {
 		get:
-			prefix + '/reports/performance-report/first-transaction-date/?bundle={id}'
+			prefix +
+			'/reports/performance-report/first-transaction-date/?bundle={id}'
 	},
 	interfaceAccess: {
 		get: prefix + '/ui/portal-interface-access/'
@@ -526,7 +528,9 @@ export default {
 		get: prefix + '/configuration/new-member-setup-configuration/{id}/'
 	},
 	installNewMemberSetupConfig: {
-		put: prefix + '/configuration/new-member-setup-configuration/{id}/install/'
+		put:
+			prefix +
+			'/configuration/new-member-setup-configuration/{id}/install/'
 	},
 	unifiedData: {
 		get: prefix + '/data/{type}/'
@@ -544,7 +548,9 @@ export default {
 		get: prefix + '/configuration-sharing/my-invites/'
 	},
 	configurationJson: {
-		put: prefix + '/configuration/new-member-setup-configuration/{id}/install/'
+		put:
+			prefix +
+			'/configuration/new-member-setup-configuration/{id}/install/'
 	},
 	getTask: {
 		get: prefix + '/tasks/task/{id}/'
@@ -1027,6 +1033,9 @@ export default {
 	systemNotificationsChannels: {
 		get: prefix + '/system-notifications/channels/', // get all channels that a user subscribed to
 		post: prefix + '/system-notifications/channels/' // create a channel
+	},
+	systemNotificationsChannelsAll: {
+		get: prefix + '/system-notifications/channels/all_channels/' // get all available channels
 	},
 	systemNotificationsChannelJoin: {
 		post: prefix + '/system-notifications/channels/{channelUserCode}/join/' //  join a channel

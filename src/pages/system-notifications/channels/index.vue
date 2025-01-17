@@ -7,7 +7,9 @@
 
 		<div class="notification-channels__body">
 			<div class="notification-channels__list">
-				<ChannelList />
+				<ChannelList
+					@refresh="() => console.log('Need refresh data')"
+				/>
 			</div>
 
 			<div class="notification-channels__content">
@@ -16,7 +18,10 @@
 		</div>
 
 		<Transition name="fade" mode="out-in">
-			<div v-if="isDetailsBlockOpen" class="notification-channels__details">
+			<div
+				v-if="isDetailsBlockOpen"
+				class="notification-channels__details"
+			>
 				<FmIconButton
 					variant="text"
 					icon="mdi-close"
@@ -39,13 +44,19 @@
 </template>
 
 <script setup>
-	import { onBeforeMount, ref } from 'vue';
+	import { defineAsyncComponent, inject, onBeforeMount, ref } from 'vue';
 	import { storeToRefs } from 'pinia';
-	import { FmIconButton, FmProgressCircular } from '@finmars/ui';
+	import {
+		FmIconButton,
+		FmProgressCircular,
+		FM_DIALOGS_KEY
+	} from '@finmars/ui';
 	import useNotificationsStore from '~/stores/useNotificationsStore';
 	import ChannelsToolbar from '~/components/pages/system-notifications/ChannelsToolbar/ChannelsToolbar.vue';
 	import ChannelList from '~/components/pages/system-notifications/ChannelList/ChannelList.vue';
 	import NotificationsByChannel from '~/components/pages/system-notifications/Notifications/Notifications.vue';
+
+	const dialogsService = inject(FM_DIALOGS_KEY);
 
 	const isLoading = ref(false);
 	const isDetailsBlockOpen = ref(false);
@@ -57,21 +68,50 @@
 		getChannels,
 		getNotifications,
 		getNotificationsStatuses,
-		getNotificationsCategories
+		getNotificationsCategories,
+		leaveChannel
 	} = notificationsStore;
 
+	function _leaveChannel() {
+		const confirmDialog = defineAsyncComponent(
+			() => import('../../../components/modal/ConfirmationDialog.vue')
+		);
+		dialogsService.$openDialog({
+			component: confirmDialog,
+			componentProps: {
+				text: 'Are you sure that you want to leave this channel?'
+			},
+			dialogProps: {
+				title: 'Leave channel',
+				width: 320,
+				onConfirm: async () => {
+					try {
+						isLoading.value = true;
+						await leaveChannel(currentChannel.value.user_code);
+					} finally {
+						isLoading.value = false;
+					}
+				}
+			}
+		});
+	}
+
 	function handleActions(action) {
-		console.log('handleActions: ', action);
+		if (!currentChannel) {
+			return;
+		}
+
 		switch (action) {
 			case 'details':
-				if (currentChannel) {
-					isDetailsBlockOpen.value = true;
-				}
+				isDetailsBlockOpen.value = true;
+				break;
+			case 'leave':
+				_leaveChannel();
 				break;
 		}
 	}
 
-	onBeforeMount(async () => {
+	async function loadData() {
 		try {
 			isLoading.value = true;
 
@@ -79,18 +119,13 @@
 			await getNotificationsStatuses();
 			await getChannels();
 			await getNotifications();
-
-			// const channels = await useApi('systemNotificationsChannels.get');
-			// console.log('channels: ', channels);
-			// const userSubs = await useApi('systemNotificationsUserSubscriptions.get');
-			// console.log('userSubs: ', userSubs);
-			// const allSubs = await useApi('systemNotificationsSubscriptions.get');
-			// console.log('allSubs: ', allSubs);
-			// const notifications = await useApi('systemNotifications.get');
-			// console.log('notifications: ', notifications);
 		} finally {
 			isLoading.value = false;
 		}
+	}
+
+	onBeforeMount(async () => {
+		await loadData();
 	});
 </script>
 
