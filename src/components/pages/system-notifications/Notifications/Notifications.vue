@@ -6,11 +6,20 @@
 			class="notification"
 		>
 			<div class="notification__title">
-				<span class="notification__text--accented">{{ notif.title }}</span>
+				<span
+					class="notification__text--accented"
+					v-fm-html="notif.title"
+				/>
 				<span>from</span>
-				<span class="notification__text--accented">{{ notif.owner }}</span>
-				<span>{{ dayjs(notif.created_at).format('DD MMM HH:mm') }}</span>
-				<span class="notification__text--accented">#{{ notif.channel }}</span>
+				<span class="notification__text--accented">{{
+					notif.owner
+				}}</span>
+				<span>{{
+					dayjs(notif.created_at).format('DD MMM HH:mm')
+				}}</span>
+				<span class="notification__text--accented"
+					>#{{ notif.channel }}</span
+				>
 			</div>
 
 			<div class="notification__content" v-fm-html="notif.content" />
@@ -19,6 +28,7 @@
 </template>
 
 <script setup>
+	import { computed } from 'vue';
 	import { storeToRefs } from 'pinia';
 	import dayjs from 'dayjs';
 	import { FmHtml } from '@finmars/ui';
@@ -46,7 +56,11 @@
 		cursor: pointer;
 
 		&:hover {
-			background-color: color-mix(in srgb, var(--primary) 8%, transparent);
+			background-color: color-mix(
+				in srgb,
+				var(--primary) 8%,
+				transparent
+			);
 		}
 
 		&__title {

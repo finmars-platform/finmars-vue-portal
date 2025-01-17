@@ -88,7 +88,7 @@ export const NOTIFICATIONS = [
 		source_name: 'important_admin',
 		user_code: 'abc-def-123',
 		ttl: '120 00:00:00',
-		created_at: '2025-01-15T02:59:18.151067Z',
+		created_at: '2024-12-05T02:59:18.151067Z',
 		modified_at: '2025-01-15T02:59:18.151113Z'
 	},
 	{
@@ -102,7 +102,7 @@ export const NOTIFICATIONS = [
 		source_name: 'important_admin',
 		user_code: 'ghi-jkl-456',
 		ttl: '120 00:00:00',
-		created_at: '2025-01-15T02:59:20.151067Z',
+		created_at: '2024-12-11T02:59:20.151067Z',
 		modified_at: '2025-01-15T02:59:20.151113Z'
 	},
 	{
@@ -116,7 +116,7 @@ export const NOTIFICATIONS = [
 		source_name: 'important_admin',
 		user_code: 'mno-pqr-789',
 		ttl: '120 00:00:00',
-		created_at: '2025-01-15T02:59:22.151067Z',
+		created_at: '2024-12-25T02:59:22.151067Z',
 		modified_at: '2025-01-15T02:59:22.151113Z'
 	},
 	{
@@ -130,7 +130,7 @@ export const NOTIFICATIONS = [
 		source_name: 'important_admin',
 		user_code: 'stu-vwx-012',
 		ttl: '120 00:00:00',
-		created_at: '2025-01-15T02:59:24.151067Z',
+		created_at: '2025-01-05T02:59:24.151067Z',
 		modified_at: '2025-01-15T02:59:24.151113Z'
 	},
 	{
@@ -144,7 +144,7 @@ export const NOTIFICATIONS = [
 		source_name: 'important_admin',
 		user_code: 'yz-abc-345',
 		ttl: '120 00:00:00',
-		created_at: '2025-01-15T02:59:26.151067Z',
+		created_at: '2025-01-05T16:59:26.151067Z',
 		modified_at: '2025-01-15T02:59:26.151113Z'
 	},
 	{
@@ -172,7 +172,7 @@ export const NOTIFICATIONS = [
 		source_name: 'important_admin',
 		user_code: 'jkl-mno-901',
 		ttl: '120 00:00:00',
-		created_at: '2025-01-15T02:59:30.151067Z',
+		created_at: '2024-11-15T02:59:30.151067Z',
 		modified_at: '2025-01-15T02:59:30.151113Z'
 	},
 	{
@@ -186,7 +186,7 @@ export const NOTIFICATIONS = [
 		source_name: 'important_admin',
 		user_code: 'pqr-stu-234',
 		ttl: '120 00:00:00',
-		created_at: '2025-01-15T02:59:32.151067Z',
+		created_at: '2024-11-11T02:59:32.151067Z',
 		modified_at: '2025-01-15T02:59:32.151113Z'
 	},
 	{
@@ -200,7 +200,7 @@ export const NOTIFICATIONS = [
 		source_name: 'important_admin',
 		user_code: 'vwx-yz-567',
 		ttl: '120 00:00:00',
-		created_at: '2025-01-15T02:59:34.151067Z',
+		created_at: '2024-11-25T02:59:34.151067Z',
 		modified_at: '2025-01-15T02:59:34.151113Z'
 	},
 	{
@@ -214,7 +214,7 @@ export const NOTIFICATIONS = [
 		source_name: 'important_admin',
 		user_code: 'abc-def-890',
 		ttl: '120 00:00:00',
-		created_at: '2025-01-15T02:59:36.151067Z',
+		created_at: '2024-11-09T02:59:36.151067Z',
 		modified_at: '2025-01-15T02:59:36.151113Z'
 	},
 	{
@@ -228,7 +228,7 @@ export const NOTIFICATIONS = [
 		source_name: 'important_admin',
 		user_code: 'ghi-jkl-123',
 		ttl: '120 00:00:00',
-		created_at: '2025-01-15T02:59:38.151067Z',
+		created_at: '2024-10-15T02:59:38.151067Z',
 		modified_at: '2025-01-15T02:59:38.151113Z'
 	},
 	{
@@ -242,7 +242,7 @@ export const NOTIFICATIONS = [
 		source_name: 'important_admin',
 		user_code: 'mno-pqr-456',
 		ttl: '120 00:00:00',
-		created_at: '2025-01-15T02:59:40.151067Z',
+		created_at: '2024-11-21T02:59:40.151067Z',
 		modified_at: '2025-01-15T02:59:40.151113Z'
 	},
 	{
@@ -256,7 +256,7 @@ export const NOTIFICATIONS = [
 		source_name: 'important_admin',
 		user_code: 'stu-vwx-789',
 		ttl: '120 00:00:00',
-		created_at: '2025-01-15T02:59:42.151067Z',
+		created_at: '2025-01-03T02:59:42.151067Z',
 		modified_at: '2025-01-15T02:59:42.151113Z'
 	},
 	{
@@ -270,7 +270,7 @@ export const NOTIFICATIONS = [
 		source_name: 'important_admin',
 		user_code: 'yz-abcd-012',
 		ttl: '120 00:00:00',
-		created_at: '2025-01-15T02:59:44.151067Z',
+		created_at: '2025-01-11T07:59:44.151067Z',
 		modified_at: '2025-01-15T02:59:44.151113Z'
 	},
 	{
@@ -284,7 +284,7 @@ export const NOTIFICATIONS = [
 		source_name: 'important_admin',
 		user_code: 'ef-ghij-klm',
 		ttl: '120 00:00:00',
-		created_at: '2025-01-15T02:59:46.151067Z',
+		created_at: '2025-01-15T11:29:46.151067Z',
 		modified_at: '2025-01-15T02:59:46.151113Z'
 	}
 ];
@@ -331,5 +331,68 @@ export const CHANNELS = [
 		name: 'Resources',
 		description:
 			'In the resources channel, users can access a wealth of information including documents, links, and tools that support their work. This channel serves as a repository for best practices, tutorials, and reference materials that can enhance productivity and knowledge sharing within the team.'
+	}
+];
+
+export const ALL_AVAILABLE_CHANNELS = [
+	{
+		id: 1,
+		user_code: 'general-485e03fb',
+		name: 'General',
+		description:
+			'This is the general channel. It serves as a primary hub for all users to engage in discussions, share updates, and collaborate on various topics. Whether you are looking for information or simply want to connect with others, this channel is the place to be.'
+	},
+	{
+		id: 2,
+		user_code: 'alerts-123',
+		name: 'Alerts',
+		description:
+			'This is the alerts channel. Here, users receive timely notifications about important updates, system changes, and critical events. Staying informed is key, and this channel ensures that you never miss out on vital information that could affect your work or interests.'
+	},
+	{
+		id: 3,
+		user_code: 'alerts-channel-f771330b',
+		name: 'Alerts Channel',
+		description:
+			'This is the alerts channel. It is dedicated to delivering real-time alerts and announcements. Users can expect to receive notifications regarding new features, scheduled maintenance, and any urgent issues that may arise. This channel is essential for those who want to stay ahead of the curve.'
+	},
+	{
+		id: 4,
+		user_code: 'updates-9c1e4f2a',
+		name: 'Updates',
+		description:
+			"This channel provides regular updates about ongoing projects and initiatives. Users can find detailed reports on progress, upcoming milestones, and insights into team performance. Engaging with this channel helps everyone stay aligned and informed about the organization's goals."
+	},
+	{
+		id: 5,
+		user_code: 'feedback-3a2d5b6c',
+		name: 'Feedback',
+		description:
+			'The feedback channel is a space where users can share their thoughts and suggestions about various topics. Constructive criticism and positive reinforcement are both welcome here. This channel aims to foster a culture of continuous improvement by encouraging open dialogue among team members.'
+	},
+	{
+		id: 6,
+		user_code: 'resources-1f4e8d3b',
+		name: 'Resources',
+		description:
+			'In the resources channel, users can access a wealth of information including documents, links, and tools that support their work. This channel serves as a repository for best practices, tutorials, and reference materials that can enhance productivity and knowledge sharing within the team.'
+	},
+	{
+		id: 7,
+		user_code: 'alerts-7bb2e635',
+		name: 'alerts',
+		description: 'This is the alerts channel.'
+	},
+	{
+		id: 8,
+		user_code: 'alerts-channel-234',
+		name: 'alerts channel',
+		description: 'This is the alerts channel.'
+	},
+	{
+		id: 9,
+		user_code: 'general-485qwe',
+		name: 'general',
+		description: 'This is the general channel.'
 	}
 ];

@@ -1,11 +1,17 @@
+// FixMe All actions here work with mock data. It will be necessary to rewrite the code as soon as real APIs become available
 import cloneDeep from 'lodash/cloneDeep';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import {
+	ALL_AVAILABLE_CHANNELS,
 	CHANNELS,
 	NOTIFICATIONS,
 	NOTIFICATION_STATUSES,
 	NOTIFICATION_CATEGORIES
 } from '@/assets/data/systemNotifications.mock';
 // import useApi from '~/composables/useApi';
+
+dayjs.extend(relativeTime);
 
 export default defineStore({
 	id: 'notifications',
@@ -38,20 +44,60 @@ export default defineStore({
 			const {
 				category: currentCategory,
 				channel: currentChannel,
-				status: currentStatus
+				status: currentStatus,
+				dateFrom,
+				dateTo,
+				search
 			} = state.notificationsFilter;
 
-			return state.notifications.filter((n) => {
-				const { category, channel, current_status } = n;
+			return state.notifications
+				.filter((n) => {
+					const {
+						category,
+						channel,
+						current_status,
+						created_at,
+						title,
+						content
+					} = n;
 
-				const isTheSameCategory =
-					!currentCategory || category === currentCategory;
-				const isTheSameChannel = !currentChannel || channel === currentChannel;
-				const isTheSameStatus =
-					!currentStatus || current_status === currentStatus;
+					const isTheSameCategory =
+						!currentCategory || category === currentCategory;
+					const isTheSameChannel =
+						!currentChannel || channel === currentChannel;
+					const isTheSameStatus =
+						!currentStatus || current_status === currentStatus;
+					const isTheSameText =
+						!search ||
+						title.toLowerCase().includes(search.toLowerCase()) ||
+						content.toLowerCase().includes(search.toLowerCase());
 
-				return isTheSameCategory && isTheSameChannel && isTheSameStatus;
-			});
+					const transformedCreatedAt =
+						dayjs(created_at).format('YYYY-MM-DD');
+					const dateMoreThanFrom =
+						!dateFrom ||
+						dayjs(transformedCreatedAt).diff(
+							dayjs(dateFrom),
+							'day'
+						) >= 0;
+					const dateLessThanTo =
+						!dateTo ||
+						dayjs(dateTo).diff(
+							dayjs(transformedCreatedAt),
+							'day'
+						) >= 0;
+
+					const isTheSameDate = dateMoreThanFrom && dateLessThanTo;
+
+					return (
+						isTheSameCategory &&
+						isTheSameChannel &&
+						isTheSameStatus &&
+						isTheSameText &&
+						isTheSameDate
+					);
+				})
+				.sort((a, b) => (a.created_at > b.created_at ? 1 : -1));
 		}
 	},
 	actions: {
@@ -89,12 +135,46 @@ export default defineStore({
 			});
 		},
 
+		getAllAvailableChannels() {
+			return new Promise((resolve) => {
+				setTimeout(() => {
+					resolve(cloneDeep(ALL_AVAILABLE_CHANNELS));
+				}, 550);
+			});
+		},
+
 		getNotifications(filter = {}) {
 			this.setNotificationsFilter(filter);
 
 			return new Promise((resolve) => {
 				setTimeout(() => {
 					this.notifications = cloneDeep(NOTIFICATIONS);
+					resolve();
+				}, 500);
+			});
+		},
+
+		joinChannel(channel) {
+			console.log('join channel: ', channel.user_code);
+			return new Promise((resolve) => {
+				setTimeout(() => {
+					this.channels.push(channel);
+					resolve();
+				}, 350);
+			});
+		},
+
+		leaveChannel(user_code) {
+			console.log('leave channel: ', user_code);
+			return new Promise((resolve) => {
+				setTimeout(() => {
+					console.log(`The user left channel ${user_code}`);
+					const channelIndex = this.channels.findIndex(
+						(c) => c.user_code === user_code
+					);
+					channelIndex > -1 && this.channels.splice(channelIndex, 1);
+
+					this.setNotificationsFilter({ channel: '' });
 					resolve();
 				}, 500);
 			});
