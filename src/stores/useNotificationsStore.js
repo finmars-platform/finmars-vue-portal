@@ -10,17 +10,17 @@ import {
 export default defineStore({
 	id: 'notifications',
 	state: () => ({
-		statuses: [],
-		categories: [],
 		channels: [],
 		notifications: [],
+		categories: [],
+		statuses: [],
 		notificationsFilter: {
-			category: '',
 			channel: '',
+			category: '',
 			status: '',
 			dateFrom: '',
 			dateTo: '',
-			text: ''
+			search: ''
 		}
 	}),
 	getters: {

@@ -1,12 +1,10 @@
 <template>
 	<div class="channels-toolbar">
-		<ChannelsToolbarType v-model="filter.type" />
+		<ChannelsToolbarCategory />
 
-		<ChannelsToolbarModule v-model="filter.module" />
+		<ChannelsToolbarStatus />
 
-		<ChannelsToolbarPortfolio v-model="filter.portfolio" />
-
-		<ChannelsToolbarDate v-model="filter.date" />
+		<ChannelsToolbarDate />
 
 		<FmIconButton icon="mdi-magnify" variant="text" />
 
@@ -18,31 +16,19 @@
 </template>
 
 <script setup>
-	import { ref } from 'vue';
 	import { FmIconButton } from '@finmars/ui';
-	import ChannelsToolbarActions from './ChannelsToolbarActions.vue';
-	import ChannelsToolbarType from './ChannelsToolbarType.vue';
-	import ChannelsToolbarModule from './ChannelsToolbarModule.vue';
-	import ChannelsToolbarPortfolio from './ChannelsToolbarPortfolio.vue';
+	import ChannelsToolbarCategory from './ChannelsToolbarCategory.vue';
+	import ChannelsToolbarStatus from './ChannelsToolbarStatus.vue';
 	import ChannelsToolbarDate from './ChannelsToolbarDate.vue';
+	import ChannelsToolbarActions from './ChannelsToolbarActions.vue';
 
-	const props = defineProps({
+	defineProps({
 		channel: {
 			type: Object
 		}
 	});
 
 	const emits = defineEmits(['select:action']);
-
-	const filter = ref({
-		type: 'all',
-		module: 'all',
-		portfolio: 'all',
-		date: {
-			from: '',
-			to: ''
-		}
-	});
 
 	function runSelectAction(action) {
 		emits('select:action', action);

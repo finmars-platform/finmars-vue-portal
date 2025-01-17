@@ -1,6 +1,6 @@
 <template>
 	<div class="toolbar-date">
-		<FmMenu v-model="isOpenMenu.from" :close-on-content-click="false">
+		<FmMenu v-model="isOpenMenu.dateFrom" :close-on-content-click="false">
 			<template #activator="{ props }">
 				<FmButton
 					v-bind="props"
@@ -13,16 +13,16 @@
 			</template>
 
 			<FmDateEditor
-				v-model="date.from"
+				:model-value="dateFromFilter"
 				show-adjacent-months
 				min="1970-01-01"
 				:max="maxDate"
-				@update:model-value="updateDate('from', $event)"
-				@cancel="updateDate('from', '')"
+				@update:model-value="updateDate('dateFrom', $event)"
+				@cancel="updateDate('dateFrom', '')"
 			/>
 		</FmMenu>
 
-		<FmMenu v-model="isOpenMenu.to" :close-on-content-click="false">
+		<FmMenu v-model="isOpenMenu.dateTo" :close-on-content-click="false">
 			<template #activator="{ props }">
 				<FmButton
 					v-bind="props"
@@ -35,11 +35,11 @@
 			</template>
 
 			<FmDateEditor
-				v-model="date.to"
+				:model-value="dateToFilter"
 				show-adjacent-months
 				:min="minDate"
-				@update:model-value="updateDate('to', $event)"
-				@cancel="updateDate('to', '')"
+				@update:model-value="updateDate('dateTo', $event)"
+				@cancel="updateDate('dateTo', '')"
 			/>
 		</FmMenu>
 	</div>
@@ -47,54 +47,46 @@
 
 <script setup>
 	import { computed, ref } from 'vue';
+	import { storeToRefs } from 'pinia';
 	import dayjs from 'dayjs';
 	import { FmButton, FmDateEditor, FmMenu } from '@finmars/ui';
+	import useNotificationsStore from '~/stores/useNotificationsStore';
 
-	const props = defineProps({
-		modelValue: {
-			type: Object,
-			default: () => ({
-				from: '',
-				to: ''
-			})
-		}
-	});
-
-	const emits = defineEmits(['update:modelValue']);
+	const notificationsStore = useNotificationsStore();
+	const { notificationsFilter } = storeToRefs(notificationsStore);
+	const { setNotificationsFilter } = notificationsStore;
 
 	const isOpenMenu = ref({
-		from: false,
-		to: false
+		dateFrom: false,
+		dateTo: false
 	});
 
-	const date = ref({
-		from: props.modelValue.from,
-		to: props.modelValue.to
-	});
+	const dateFromFilter = computed(() => notificationsFilter.value.dateFrom);
+	const dateToFilter = computed(() => notificationsFilter.value.dateTo);
 
 	const minDate = computed(() => {
-		if (date.value.from) {
-			return dayjs(date.value.from).add(1, 'day').format('YYYY-MM-DD');
+		if (dateFromFilter.value) {
+			return dayjs(dateFromFilter.value).add(1, 'day').format('YYYY-MM-DD');
 		}
 		return '1970-01-01';
 	});
 	const maxDate = computed(() => {
-		if (date.value.to) {
-			return dayjs(date.value.to).subtract(1, 'day').format('YYYY-MM-DD');
+		if (dateToFilter.value) {
+			return dayjs(dateToFilter.value).subtract(1, 'day').format('YYYY-MM-DD');
 		}
 		return dayjs().subtract(1, 'day').format('YYYY-MM-DD');
 	});
 
 	const selectedDateFrom = computed(() =>
-		date.value.from ? `From ${date.value.from}` : 'From'
+		dateFromFilter.value ? `From ${dateFromFilter.value}` : 'From'
 	);
 	const selectedDateTo = computed(() =>
-		date.value.to ? `To ${date.value.to}` : 'To'
+		dateToFilter.value ? `To ${dateToFilter.value}` : 'To'
 	);
 
 	function updateDate(field, value) {
-		date.value[field] = value ? dayjs(value).format('YYYY-MM-DD') : '';
-		emits('update:modelValue', date.value);
+		const transformedValue = value ? dayjs(value).format('YYYY-MM-DD') : '';
+		setNotificationsFilter({ [field]: transformedValue });
 		isOpenMenu.value[field] = false;
 	}
 </script>
