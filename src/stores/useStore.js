@@ -148,21 +148,31 @@ export default defineStore({
 			this.user = res;
 
 			if (window._paq) {
-				// Consider more unique id across spaces
+				// Extract realm_code and space_code from URL
+				const getCodesFromUrl = () => {
+					const urlPath = window.location.pathname;
+					const pathParts = urlPath.split('/');
+					return {
+						realmCode: pathParts[1] || 'unknown_realm',
+						spaceCode: pathParts[2] || 'unknown_space',
+					};
+				};
 
-				let prefix = 'eu-central';
-
-				if (window.location.href.indexOf('0.0.0.0') !== -1) {
-					prefix = 'local';
+				// Update Matomo tracking information
+				const codes = getCodesFromUrl();
+				if (codes.realmCode) {
+					window._paq.push(['setCustomDimension', 1, codes.realmCode]);
+				}
+				if (codes.spaceCode) {
+					window._paq.push(['setCustomDimension', 2, codes.spaceCode]);
 				}
 
-				let pieces = window.location.host.split('.');
-
-				if (pieces.length === 3) {
-					prefix = pieces[0];
+				if (this.user.username) {
+					window._paq.push(['setUserId', this.user.username]);
 				}
 
-				window._paq.push(['setUserId', prefix + '_' + this.user.id]);
+				// Track the initial page view after setting dimensions and user ID
+				window._paq.push(['trackPageView']);
 			}
 
 			if (!this.user.data) this.user.data = { dark_mode: false };
