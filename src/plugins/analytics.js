@@ -1,6 +1,7 @@
 import VueMatomo from 'vue-matomo'
 
 export default defineNuxtPlugin((nuxtApp) => {
+
 	nuxtApp.vueApp.use(VueMatomo, {
 		// Configure your matomo server and site by providing
 		host: 'https://analytics.finmars.com',
@@ -32,7 +33,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
 		// Whether to track the initial page view
 		// Default: true
-		trackInitialView: true,
+		trackInitialView: false, // Disable initial view tracking to customize it
 
 		// Run Matomo without cookies
 		// Default: false
@@ -74,7 +75,6 @@ export default defineNuxtPlugin((nuxtApp) => {
 		//   ['appendToTrackingUrl', 'new_visit=1'],
 		//   etc.
 		// ]
-		preInitActions: [],
 
 		// A function to determine whether to track an interaction as a site search
 		// instead of as a page view. If not a function, all interactions will be
@@ -95,5 +95,11 @@ export default defineNuxtPlugin((nuxtApp) => {
 		// Set this to include crossorigin attribute on the matomo script import
 		// Default: undefined, possible values : 'anonymous', 'use-credentials'
 		crossOrigin: undefined,
+		preInitActions: [
+
+		],
 	});
+
+
+
 });
