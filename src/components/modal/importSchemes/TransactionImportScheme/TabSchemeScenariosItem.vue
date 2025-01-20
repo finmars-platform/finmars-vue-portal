@@ -43,7 +43,9 @@
 							:items="transactionTypes"
 							:loading="isProcessing"
 							:readonly="isProcessing"
-							@update:model-value="updateScenarioTransactionType($event)"
+							@update:model-value="
+								updateScenarioTransactionType($event)
+							"
 						/>
 					</template>
 
@@ -78,7 +80,11 @@
 					<span>Edit transaction type</span>
 				</FmTooltip>
 
-				<FmTooltip v-if="!isNotMainScenario" type="secondary" location="top">
+				<FmTooltip
+					v-if="!isNotMainScenario"
+					type="secondary"
+					location="top"
+				>
 					<template #activator="{ props }">
 						<FmIconButton
 							v-bind="props"
@@ -97,9 +103,13 @@
 			{{ scenario.error_message }}
 		</div>
 
-		<div v-if="isListOpened && !isProcessing" class="scenarios-item__inputs">
+		<div
+			v-if="isListOpened && !isProcessing"
+			class="scenarios-item__inputs"
+		>
 			<div
-				v-for="typeInput in scenario.frontOptions?.transactionTypeInputs"
+				v-for="typeInput in scenario.frontOptions
+					?.transactionTypeInputs"
 				:key="typeInput.id"
 				class="scenarios-item__type-input"
 			>
@@ -116,8 +126,14 @@
 						outlined
 						compact
 						hide-details
-						:label="getLabelOfScenarioInputValueType(typeInput.value_type)"
-						@update:model-value="updateScenarioExpression(typeInput, $event)"
+						:label="
+							getLabelOfScenarioInputValueType(
+								typeInput.value_type
+							)
+						"
+						@update:model-value="
+							updateScenarioExpression(typeInput, $event)
+						"
 					/>
 				</div>
 
@@ -130,7 +146,10 @@
 					@update="updateScenarioExpression(typeInput, $event)"
 				>
 					<template #activator>
-						<FmIconButton icon="mdi-dots-horizontal" variant="outlined" />
+						<FmIconButton
+							icon="mdi-dots-horizontal"
+							variant="outlined"
+						/>
 					</template>
 				</ExpressionEditorSelector>
 
@@ -140,7 +159,10 @@
 					location="top"
 				>
 					<template #activator="{ props }">
-						<div v-bind="props" class="scenarios-item__dry-run-result">
+						<div
+							v-bind="props"
+							class="scenarios-item__dry-run-result"
+						>
 							{{ typeInput.dryRunResult }}
 						</div>
 					</template>
@@ -195,9 +217,6 @@
 
 	const emits = defineEmits(['update', 'remove']);
 
-	const route = useRoute();
-	const router = useRouter();
-
 	const isProcessing = ref(false);
 	const isListOpened = ref(false);
 
@@ -227,12 +246,12 @@
 	});
 
 	function openTransactionTypeEditor() {
-		const { realm_code, space_code } = route.params;
 		const { transaction_type_object = {} } = props.scenario;
 		const { user_code } = transaction_type_object;
-		user_code &&
-			router.push(
-				`/${realm_code}/${space_code}/a/#!/data/transaction-type/${user_code}`
+
+		if (user_code)
+			window.location.href = getUrlToOldApp(
+				`/data/transaction-type/${user_code}`
 			);
 	}
 
@@ -253,7 +272,8 @@
 	function updateScenarioField(field, value) {
 		if (
 			currentScenarioIndex.value !== -1 &&
-			props.scheme.rule_scenarios[currentScenarioIndex.value][field] !== value
+			props.scheme.rule_scenarios[currentScenarioIndex.value][field] !==
+				value
 		) {
 			updateScenario(field, value);
 		}
@@ -317,7 +337,8 @@
 						(i) => i.value_type !== 120
 					);
 			} else {
-				updatedScenario.error_message = '⚠️ Transaction Type is not found';
+				updatedScenario.error_message =
+					'⚠️ Transaction Type is not found';
 				useNotify({
 					type: 'error',
 					title: 'Transaction type not found'
@@ -329,7 +350,10 @@
 				value: updatedScenario
 			});
 		} catch (e) {
-			console.error('The error of the transaction type list loading. ', e);
+			console.error(
+				'The error of the transaction type list loading. ',
+				e
+			);
 		} finally {
 			isProcessing.value = false;
 		}
