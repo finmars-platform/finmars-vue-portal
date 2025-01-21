@@ -10,7 +10,9 @@
 				:user-code="attr.user_code"
 				:disabled="isLoading"
 				@update:user-code="updateAttr('user_code', $event)"
-				@update:configuration-code="updateAttr('configuration_code', $event)"
+				@update:configuration-code="
+					updateAttr('configuration_code', $event)
+				"
 				@update:valid="formInfo['user_code'].isValid = $event"
 			/>
 
@@ -57,14 +59,21 @@
 					:options="VALUE_TYPES"
 					:model-value="attr.value_type"
 					:disabled="isLoading || !!attr.id"
-					:error="formInfo.value_type.isDirty && !formInfo.value_type.isValid"
+					:error="
+						formInfo.value_type.isDirty &&
+						!formInfo.value_type.isValid
+					"
 					@update:model-value="updateAttr('value_type', $event)"
 				/>
 			</div>
 		</div>
 
 		<div class="attribute-type__actions">
-			<FmButton type="secondary" rounded @click.prevent.stop="emits('cancel')">
+			<FmButton
+				type="secondary"
+				rounded
+				@click.prevent.stop="emits('cancel')"
+			>
 				Cancel
 			</FmButton>
 
@@ -81,7 +90,9 @@
 
 				<FmButton
 					rounded
-					:disabled="isLoading || !isFormValid || (attr.id && !isFormDirty)"
+					:disabled="
+						isLoading || !isFormValid || (attr.id && !isFormDirty)
+					"
 					@click.stop.prevent="save"
 				>
 					{{ attr.id ? 'Save' : 'Create' }}
@@ -172,20 +183,17 @@
 	async function getAttribute() {
 		if (props.attribute) {
 			attr.value = cloneDeep(props.attribute);
-			console.log('getAttribute: ', attr.value);
 			return;
 		}
 
 		if (!props.id) {
 			attr.value.content_type = findContentTypeByEntity(props.entityType);
-			console.log('getAttribute: ', attr.value);
 			return;
 		}
 
 		try {
 			isLoading.value = true;
 			attr.value = await getByKey(props.entityType, props.id);
-			console.log('getAttribute: ', attr.value);
 		} catch (err) {
 			console.error('The error of the attribute loading. ', err);
 		} finally {

@@ -1,6 +1,9 @@
 <template>
 	<div class="attributes-block">
-		<div class="attributes-block__header" @click="isCollapsed = !isCollapsed">
+		<div
+			class="attributes-block__header"
+			@click="isCollapsed = !isCollapsed"
+		>
 			{{ block.title }}
 
 			<FmIcon
@@ -12,7 +15,10 @@
 		<Transition name="fade" mode="out-in">
 			<div v-if="!isCollapsed" class="attributes-block__body">
 				<div class="attributes-block__actions">
-					<FmButton rounded @click="openAttributeTypeDialog({ id: null })">
+					<FmButton
+						rounded
+						@click="openAttributeTypeDialog({ id: null })"
+					>
 						Add New
 					</FmButton>
 				</div>
@@ -68,7 +74,7 @@
 
 	function deleteAttr(id, name) {
 		const confirmationDialog = defineAsyncComponent(
-			() => import('../../../modal/ConfirmationDialog.vue')
+			() => import('@/components/modal/ConfirmationDialog.vue')
 		);
 		dialogsService.$openDialog({
 			component: confirmationDialog,
@@ -90,7 +96,7 @@
 		const exportDialog = defineAsyncComponent(
 			() =>
 				import(
-					'../../../modal/ClassifierExportDialog/ClassifierExportDialog.vue'
+					'@/components/modal/ClassifierExportDialog/ClassifierExportDialog.vue'
 				)
 		);
 		dialogsService.$openDialog({
@@ -113,7 +119,7 @@
 		const importDialog = defineAsyncComponent(
 			() =>
 				import(
-					'../../../modal/ClassifierImportDialog/ClassifierImportDialog.vue'
+					'@/components/modal/ClassifierImportDialog/ClassifierImportDialog.vue'
 				)
 		);
 		dialogsService.$openDialog({
@@ -137,7 +143,10 @@
 
 	function openAttributeTypeDialog({ id, initialAttr }) {
 		const attrTypeDialog = defineAsyncComponent(
-			() => import('../../../modal/AttributeTypeDialog/AttributeTypeDialog.vue')
+			() =>
+				import(
+					'@/components/modal/AttributeTypeDialog/AttributeTypeDialog.vue'
+				)
 		);
 		dialogsService.$openDialog({
 			component: attrTypeDialog,
@@ -172,7 +181,7 @@
 		const mappingDialog = defineAsyncComponent(
 			() =>
 				import(
-					'../../../modal/ClassifierMappingDialog/ClassifierMappingDialog.vue'
+					'@/components/modal/ClassifierMappingDialog/ClassifierMappingDialog.vue'
 				)
 		);
 		dialogsService.$openDialog({
@@ -198,7 +207,7 @@
 		const editorDialog = defineAsyncComponent(
 			() =>
 				import(
-					'../../../modal/ClassifierEditorDialog/ClassifierEditorDialog.vue'
+					'@/components/modal/ClassifierEditorDialog/ClassifierEditorDialog.vue'
 				)
 		);
 		dialogsService.$openDialog({
