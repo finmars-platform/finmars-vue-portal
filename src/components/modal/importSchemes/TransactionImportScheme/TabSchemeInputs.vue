@@ -42,32 +42,43 @@
 								v-if="block === 'inputs'"
 								:class="[
 									{
-										'tab-scheme-inputs__cell-3': block === 'inputs',
-										'tab-scheme-inputs__cell-2': block === 'calculated_inputs'
+										'tab-scheme-inputs__cell-3':
+											block === 'inputs',
+										'tab-scheme-inputs__cell-2':
+											block === 'calculated_inputs'
 									}
 								]"
 								outlined
 								compact
 								label="Column name"
 								:model-value="element.column_name"
-								@change="updateField(element, 'column_name', $event)"
+								@change="
+									updateField(element, 'column_name', $event)
+								"
 							/>
 
 							<FmTextField
 								:class="[
 									{
-										'tab-scheme-inputs__cell-3': block === 'inputs',
-										'tab-scheme-inputs__cell-2': block === 'calculated_inputs'
+										'tab-scheme-inputs__cell-3':
+											block === 'inputs',
+										'tab-scheme-inputs__cell-2':
+											block === 'calculated_inputs'
 									}
 								]"
 								outlined
 								compact
 								label="Name"
 								:model-value="element.name"
-								:error="!!element.frontOptions.validateError?.name"
+								:error="
+									!!element.frontOptions.validateError?.name
+								"
 								:error-messages="
 									!!element.frontOptions.validateError?.name
-										? [element.frontOptions.validateError.name]
+										? [
+												element.frontOptions
+													.validateError.name
+											]
 										: []
 								"
 								@change="updateField(element, 'name', $event)"
@@ -79,17 +90,24 @@
 										:class="[
 											'tab-scheme-inputs__expr-editor',
 											{
-												'tab-scheme-inputs__cell-3': block === 'inputs',
+												'tab-scheme-inputs__cell-3':
+													block === 'inputs',
 												'tab-scheme-inputs__cell-2':
-													block === 'calculated_inputs',
+													block ===
+													'calculated_inputs',
 												'tab-scheme-inputs__expr-editor--error':
-													!!element.frontOptions.validateError?.name_expr
+													!!element.frontOptions
+														.validateError
+														?.name_expr
 											}
 										]"
 										v-bind="props"
 										v-ripple.center
 										@click.stop.prevent="
-											openExpressionEditor(element, element.name_expr)
+											openExpressionEditor(
+												element,
+												element.name_expr
+											)
 										"
 									>
 										<FmIcon
@@ -101,10 +119,16 @@
 										<span>{{ element.name_expr }}</span>
 
 										<div
-											v-if="!!element.frontOptions.validateError?.name_expr"
+											v-if="
+												!!element.frontOptions
+													.validateError?.name_expr
+											"
 											class="tab-scheme-inputs__expr-editor-messages"
 										>
-											{{ element.frontOptions.validateError?.name_expr }}
+											{{
+												element.frontOptions
+													.validateError?.name_expr
+											}}
 										</div>
 									</div>
 								</template>
@@ -126,7 +150,10 @@
 								location="top"
 							>
 								<template #activator="{ props }">
-									<div v-bind="props" class="tab-scheme-inputs__item-result">
+									<div
+										v-bind="props"
+										class="tab-scheme-inputs__item-result"
+									>
 										{{ element.dryRunResult }}
 									</div>
 								</template>
@@ -289,7 +316,9 @@
 
 	function updateField(item, field, value) {
 		const index = props.scheme[props.block].findIndex(
-			(i) => i.id === item.id || i.frontOptions?.key === item.frontOptions?.key
+			(i) =>
+				i.id === item.id ||
+				i.frontOptions?.key === item.frontOptions?.key
 		);
 		if (index !== -1 && props.scheme[props.block][index][field] !== value) {
 			isProcessing.value = true;
@@ -313,10 +342,15 @@
 	function onExpressionEditorUpdate(value) {
 		const { item } = expressionEditor.value;
 		const index = props.scheme[props.block].findIndex(
-			(i) => i.id === item.id || i.frontOptions?.key === item.frontOptions?.key
+			(i) =>
+				i.id === item.id ||
+				i.frontOptions?.key === item.frontOptions?.key
 		);
 
-		if (index !== -1 && props.scheme[props.block][index].name_expr !== value) {
+		if (
+			index !== -1 &&
+			props.scheme[props.block][index].name_expr !== value
+		) {
 			isProcessing.value = true;
 			const updatedInputs = cloneDeep(props.scheme[props.block]);
 			updatedInputs[index].name_expr = value;
@@ -447,7 +481,11 @@
 			}
 
 			&--chosen {
-				background-color: color-mix(in srgb, var(--on-surface) 8%, transparent);
+				background-color: color-mix(
+					in srgb,
+					var(--on-surface) 8%,
+					transparent
+				);
 			}
 
 			&--move {
@@ -497,7 +535,8 @@
 			width: 100%;
 			height: 40px;
 			border-radius: 4px;
-			border: 1px solid color-mix(in srgb, var(--on-surface) 38%, transparent);
+			border: 1px solid
+				color-mix(in srgb, var(--on-surface) 38%, transparent);
 			padding: 0 8px;
 			display: flex;
 			justify-content: flex-start;
