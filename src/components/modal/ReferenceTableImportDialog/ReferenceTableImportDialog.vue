@@ -1,7 +1,7 @@
 <template>
-	<div class="classifier-import-dialog">
-		<div class="classifier-import-dialog__body">
-			<div class="classifier-import-dialog__content">
+	<div class="reference-table-import-dialog">
+		<div class="reference-table-import-dialog__body">
+			<div class="reference-table-import-dialog__content">
 				<FmInputFiles
 					v-model="file"
 					info-text="You can select the CSV file"
@@ -14,9 +14,9 @@
 				<div
 					v-if="infoText || errorMessage"
 					:class="[
-						'classifier-import-dialog__info',
+						'reference-table-import-dialog__info',
 						{
-							'classifier-import-dialog__info--error':
+							'reference-table-import-dialog__info--error':
 								!!errorMessage
 						}
 					]"
@@ -33,7 +33,7 @@
 			/>
 		</div>
 
-		<div class="classifier-import-dialog__actions">
+		<div class="reference-table-import-dialog__actions">
 			<FmButton
 				type="secondary"
 				rounded
@@ -51,7 +51,7 @@
 			</FmButton>
 		</div>
 
-		<div v-if="isProcessing" class="classifier-import-dialog__loader">
+		<div v-if="isProcessing" class="reference-table-import-dialog__loader">
 			<FmProgressCircular indeterminate size="80" />
 		</div>
 	</div>
@@ -62,14 +62,11 @@
 	import size from 'lodash/size';
 	import { FmButton, FmProgressCircular, FmSelect } from '@finmars/ui';
 	import useNotify from '~/composables/useNotify';
-	import { getByKey, update } from '~/services/attributeTypeService';
+	import { getByKey, update } from '~/services/referenceTablesService';
 	import FmInputFiles from '~/components/Fm/InputFiles/InputFiles.vue';
 	import { IMPORT_MODE_OPTIONS } from '~/constants';
 
 	const props = defineProps({
-		entityType: {
-			type: String
-		},
 		item: {
 			type: Object,
 			default: () => ({})
@@ -81,7 +78,7 @@
 	const isProcessing = ref(false);
 	const mode = ref('skip');
 	const file = ref([]);
-	const classifier = ref();
+	const referenceTable = ref();
 
 	const errorMessage = ref(null);
 	const infoText = ref('');
@@ -118,38 +115,54 @@
 	}
 
 	async function processDataIfSkip(data = []) {
-		const allCurrentClassifiersNames = (
-			classifier.value.classifiers || []
-		).map((c) => c.name);
+		const allCurrentKeys = (referenceTable.value.rows || []).map(
+			(r) => r.key
+		);
 		data.forEach((line) => {
-			if (!allCurrentClassifiersNames.includes(line)) {
-				classifier.value.classifiers.push({ name: line });
+			const [lineKey, lineValue] = line.split(',');
+
+			if (!allCurrentKeys.includes(lineKey)) {
+				referenceTable.value.rows?.push({
+					key: lineKey,
+					value: lineValue
+				});
 			}
 		});
-		await updateClassifier();
+
+		const updatedTable = {
+			...referenceTable.value,
+			rows: (referenceTable.value.rows || []).filter(
+				(r) => !!r.key && !!r.value
+			)
+		};
+		await updateTable(updatedTable);
 	}
 
 	async function processDataIfOverwrite(data = []) {
-		try {
-			isProcessing.value = true;
-			classifier.value.classifiers = [];
-			classifier.value.classifiers_flat = [];
-			await update(props.entityType, classifier.value);
-			classifier.value.classifiers = data.map((line) => ({ name: line }));
-			await updateClassifier();
-		} finally {
-			isProcessing.value = false;
-		}
+		const rows = [];
+		data.forEach((line) => {
+			const [lineKey, lineValue] = line.split(',');
+			rows.push({
+				key: lineKey,
+				value: lineValue
+			});
+		});
+
+		const updatedTable = {
+			...referenceTable.value,
+			rows: rows.filter((r) => !!r.key && !!r.value)
+		};
+		await updateTable(updatedTable);
 	}
 
-	async function updateClassifier() {
+	async function updateTable(updatedData) {
 		try {
 			isProcessing.value = true;
-			await update(props.entityType, classifier.value);
+			await update(updatedData);
 
 			useNotify({
 				type: 'success',
-				title: 'You are successfully import classifiers.'
+				title: 'You are successfully import Reference Table.'
 			});
 			emits('confirm');
 		} catch (err) {
@@ -176,7 +189,7 @@
 	onBeforeMount(async () => {
 		try {
 			isProcessing.value = true;
-			classifier.value = await getByKey(props.entityType, props.item.id);
+			referenceTable.value = await getByKey(props.item.id);
 		} finally {
 			isProcessing.value = false;
 		}
@@ -184,7 +197,7 @@
 </script>
 
 <style lang="scss" scoped>
-	.classifier-import-dialog {
+	.reference-table-import-dialog {
 		position: relative;
 		width: 100%;
 		border-radius: 24px;
