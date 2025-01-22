@@ -793,10 +793,9 @@ export default {
 	},
 	transactionTypeGroupList: {
 		get: prefix + '/transactions/transaction-type-group/',
-		post: prefix + '/transactions/transaction-type-group/',
-		put: prefix + '/transactions/transaction-type-group/{id}/'
 	},
 	transactionTypeGroup: {
+		get: prefix + '/transactions/transaction-type-group/{id}/',
 		put: prefix + '/transactions/transaction-type-group/{id}/',
 		post: prefix + '/transactions/transaction-type-group/',
 		delete: prefix + '/transactions/transaction-type-group/{id}/'
