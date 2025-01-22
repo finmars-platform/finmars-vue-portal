@@ -109,7 +109,8 @@ export default defineStore({
 
 			try {
 				const blob = await useApi('explorerViewFile.get', {
-					filters: { path: itemPath }
+					filters: { path: itemPath },
+					notifyError: false
 				});
 
 				// seems useApi somehow Parse blob already
