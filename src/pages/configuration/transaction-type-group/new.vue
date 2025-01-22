@@ -10,46 +10,48 @@
 			<FmProgressCircular :size="32" indeterminate />
 		</div>
 		<template v-else>
-			<div class="flex flex-column py-3">
+			<div class="flex flex-column py-3 gap-2">
 				<div class="code-wrapper">
-					<div class="flex flex-row gap-1">
-						<div class="w-1/3">
-							<FmSelect
-								v-model="selectedItem.configuration_code"
-								:options="configCodeOptions"
-								label="Configuration"
-								variant="outlined"
-							/>
-							<span v-if="!selectedItem.configuration_code" class="error-text"
-							>Field is required</span
-							>
-						</div>
-						<div class="w-full">
-							<FmTextField
-								v-model="selectedItem.user_code"
-								:rules="[rules.required]"
-								label="User Code"
-								outlined
-							/>
-						</div>
-					</div>
-					<i class="text-xs my-1">
-						Result: {{ selectedItem.configuration_code }}:{{
-							selectedItem.user_code
-						}}
-					</i>
+					<UserCodeInput
+						:user-code="selectedItem.user_code"
+						@update:user-code="updateField('user_code', $event)"
+						@update:configuration-code="
+						updateField('configuration_code', $event)
+					"
+						@update:valid="updateUserCodeValidationValue"
+					/>
 				</div>
-				<FmTextField v-model="selectedItem.name" :rules="[rules.required]" label="Name" outlined />
-				<FmTextField v-model="selectedItem.short_name" :rules="[rules.required]" label="Short name" outlined />
+				<FmTextField
+					:model-value="selectedItem.name"
+					outlined
+					label="Name"
+					:error="formData.name.isDirty && !formData.name.isValid"
+					:error-messages="
+						formData.name.isDirty && !formData.name.isValid
+							? 'This field may not be blank.'
+							: ''
+					"
+					@change="updateField('name', $event)"
+				/>
+				<FmTextField
+					:model-value="selectedItem.short_name"
+					outlined
+					label="Short name"
+					:error="formData.short_name.isDirty && !formData.short_name.isValid"
+					:error-messages="
+						formData.short_name.isDirty && !formData.short_name.isValid
+							? 'This field may not be blank.'
+							: ''
+					"
+					@change="updateField('short_name', $event)"
+				/>
 			</div>
 			<div class="flex items-center justify-start gap-2 mt-4">
 				<FmButton
 					type="primary"
 					@click="createItem"
 					:loading="confirmButtonLoader"
-					:disabled="
-                   !selectedItem.configuration_code || !selectedItem.user_code
-                "
+					:disabled="!isDirty || !isValid"
 					rounded
 				>
 					Create
@@ -63,22 +65,29 @@
 <script setup>
 	import {
 		FmBreadcrumbs,
-		FmButton, FmIcon,
+		FmButton,
 		FmProgressCircular,
-		FmSelect,
 		FmTextField
 	} from '@finmars/ui';
 	import { getRealmSpaceCodes } from '~/pages/system/helper';
+	import UserCodeInput from '~/components/common/UserCodeInput/UserCodeInput.vue';
+	import cloneDeep from 'lodash/cloneDeep';
 
 	definePageMeta({
 		middleware: 'auth'
 	});
 
+	const emptyItem = {
+		name: '',
+		short_name: '',
+		user_code: '',
+		configuration_code: ''
+	};
+
 	const route = useRoute();
 	const router = useRouter();
 	const { realmCode, spaceCode } = getRealmSpaceCodes(route);
 
-	const configCodeOptions = ref([{ title: 'No codes !', value: '' }]);
 	const confirmButtonLoader = ref(false);
 	const loading = ref(false);
 	const crumbs = [
@@ -86,16 +95,34 @@
 		{ title: 'New', path: 'new' }
 	];
 
-	const selectedItem = ref({
-		name: '',
-		short_name: '',
-		user_code: '',
-		configuration_code: ''
+	const selectedItem = ref(cloneDeep(emptyItem));
+	const formData = ref({
+		name: {
+			isDirty: false,
+			isValid: true
+		},
+		short_name: {
+			isDirty: false,
+			isValid: true
+		},
+		configuration_code: {
+			isDirty: false,
+			skipValidation: true,
+			isValid: true
+		},
+		user_code: {
+			isDirty: false,
+			skipValidation: true,
+			isValid: true
+		}
 	});
 
-	const rules = {
-		required: (value) => (value ? '' : 'Field is required')
-	};
+	const isDirty = computed(
+		() => Object.values(formData.value).some((i) => i.isDirty)
+	);
+	const isValid = computed(
+		() => !Object.values(formData.value).some((i) => !i.isValid)
+	);
 
 	const handleCrumbs = (newCrumbs, newPath) => {
 		router.push(`/${realmCode}/${spaceCode}/v/configuration` + newPath);
@@ -112,22 +139,24 @@
 		router.back();
 	};
 
-	async function getConfigList() {
-		try {
-			const res = await useApi('configurationList.get');
-			if (res.results) {
-				configCodeOptions.value = res.results.map((result) => {
-					return {
-						title: result.configuration_code,
-						value: result.configuration_code
-					};
-				});
-			} else {
-				configCodeOptions.value = [{ title: 'No codes !', value: '' }];
+	function updateUserCodeValidationValue(val) {
+		formData.value.user_code.isValid = val;
+		formData.value.configuration_code.isValid = val;
+	}
+
+	function validateForm() {
+		Object.keys(formData.value).forEach((field) => {
+			if (!formData.value[field].skipValidation) {
+				formData.value[field].isValid = !!selectedItem.value[field];
 			}
-		} catch (e) {
-			console.log(`Catch error: ${e}`);
-		}
+		});
+	}
+
+	function updateField(field, value) {
+		selectedItem.value[field] = value;
+		!formData.value[field].isDirty &&
+		(formData.value[field].isDirty = true);
+		validateForm();
 	}
 
 	async function createItem() {
@@ -144,26 +173,15 @@
 			router.back();
 		}
 	}
-
-	async function init() {
-		await getConfigList();
-	}
-
-	init();
 </script>
 
 <style scoped lang="scss">
 	.code-wrapper {
-		display: flex;
-		flex-direction: column;
-		border-radius: var(--spacing-4);
-		border: 1px solid var(--border-color);
-		padding: var(--spacing-12);
+		position: relative;
+		width: 100%;
+		padding: 16px 12px;
+		border-radius: 8px;
+		border: 1px solid var(--outline-variant);
 		margin-bottom: var(--spacing-16);
-	}
-	.error-text {
-		font-size: var(--spacing-12);
-		color: var(--error-color);
-		margin: var(--spacing-12);
 	}
 </style>
