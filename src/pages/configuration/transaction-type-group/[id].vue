@@ -160,35 +160,28 @@
 	}
 
 	async function getSelectedItem() {
-		try {
-			loading.value = true;
-			const res = await useApi('transactionTypeGroup.get', {
-				params: { id: route?.params?.id }
-			});
-			if (res.id) {
-				selectedItem.value = res;
-			}
-		} catch (e) {
-			console.log(`Catch error: ${e}`);
-		} finally {
-			loading.value = false;
+		loading.value = true;
+		const res = await useApi('transactionTypeGroup.get', {
+			params: { id: route?.params?.id }
+		});
+		if (res && res._$error) {
+			useNotify({type: 'error', title: res._$error.message || res._$error.detail});
+		} else if (res.id) {
+			selectedItem.value = res;
 		}
+		loading.value = false;
 	}
 
 	async function editItem() {
-		try {
-			confirmButtonLoader.value = true;
-			await useApi('transactionTypeGroup.put', {
-				params: { id: selectedItem.value.id },
-				body: selectedItem.value
-			});
-			cancel();
-		} catch (e) {
-			console.log(`Catch error: ${e}`);
-		} finally {
-			confirmButtonLoader.value = false;
-			router.back();
+		confirmButtonLoader.value = true;
+		const res = await useApi('transactionTypeGroup.put', {
+			params: { id: selectedItem.value.id },
+			body: selectedItem.value
+		});
+		if (res && res._$error) {
+			useNotify({type: 'error', title: res._$error.message || res._$error.detail});
 		}
+		cancel();
 	}
 
 	async function init() {
