@@ -392,6 +392,7 @@
 	async function fetchInvites() {
 		const res = await useApi('configSharingMyInvitesList.get', {
 			filters: { status: '0' },
+			notifyError: false
 		})
 
 		if (!res._$error) invitesList.value = res.results
