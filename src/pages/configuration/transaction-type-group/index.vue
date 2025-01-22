@@ -106,7 +106,6 @@
 	}
 
 	async function getList(newPage = 1) {
-		try {
 			router.push({ query: { ...route.query, page: currentPage.value } });
 			loading.value = true;
 			const payload = {
@@ -117,13 +116,12 @@
 				filters: payload,
 				query: { page: newPage }
 			});
+      if (res && res._$error) {
+        useNotify({type: 'error', title: res._$error.message || res._$error.detail});
+      }
 			count.value = res.count;
 			items.value = res.results;
-		} catch (e) {
-			console.log(`Catch error: ${e}`);
-		} finally {
 			loading.value = false;
-		}
 	}
 
 	function deleteItem(item) {
@@ -138,20 +136,17 @@
 			dialogProps: {
 				title: 'Warning',
 				onConfirm: async () => {
-					try {
-						await useApi('transactionTypeGroup.delete', {
-							params: { id: item.id }
-						});
-						useNotify({
-							type: 'success',
-							title: `${item.name} successfully deleted`
-						});
-						await getList();
-					} catch (e) {
-						console.log(`Catch error: ${e}`);
-					} finally {
-						isLoading.value = false;
-					}
+          const res = await useApi('transactionTypeGroup.delete', {
+            params: { id: item.id }
+          });
+          if (res && res._$error) {
+            useNotify({type: 'error', title: res._$error.message || res._$error.detail});
+          }
+          useNotify({
+            type: 'success',
+            title: `${item.name} successfully deleted`
+          });
+          await getList();
 				}
 			}
 		});

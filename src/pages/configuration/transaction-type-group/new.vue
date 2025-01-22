@@ -160,18 +160,14 @@
 	}
 
 	async function createItem() {
-		try {
 			confirmButtonLoader.value = true;
-			await useApi('transactionTypeGroup.post', {
+			const res = await useApi('transactionTypeGroup.post', {
 				body: selectedItem.value
 			});
+      if (res && res._$error) {
+        useNotify({type: 'error', title: res._$error.message || res._$error.detail});
+      }
 			cancel();
-		} catch (e) {
-			console.log(`Catch error: ${e}`);
-		} finally {
-			confirmButtonLoader.value = false;
-			router.back();
-		}
 	}
 </script>
 
