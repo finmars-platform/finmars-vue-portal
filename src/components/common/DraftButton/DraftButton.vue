@@ -3,9 +3,17 @@
 		<FmMenu :items="menuItems" @click:item="onItemClick">
 			<template #activator="{ props }">
 				<div v-bind="props" class="draft-button__activator">
-					<FmIcon icon="mdi-gesture" size="20" color="var(--primary)" />
+					<FmIcon
+						icon="mdi-gesture"
+						size="20"
+						color="var(--primary)"
+					/>
 
-					<FmTooltip type="secondary" location="top" activator="parent">
+					<FmTooltip
+						type="secondary"
+						location="top"
+						activator="parent"
+					>
 						Draft Manager
 					</FmTooltip>
 
@@ -53,7 +61,10 @@
 							Close
 						</FmButton>
 
-						<FmButton rounded @click.prevent.stop="processAfterPreview">
+						<FmButton
+							rounded
+							@click.prevent.stop="processAfterPreview"
+						>
 							Apply Draft
 						</FmButton>
 					</div>
@@ -64,6 +75,11 @@
 </template>
 
 <script setup>
+	import { onBeforeMount, onBeforeUnmount, ref } from 'vue';
+	import cloneDeep from 'lodash/cloneDeep';
+	import dayjs from 'dayjs';
+	import relativeTime from 'dayjs/plugin/relativeTime';
+	import { diff } from 'jsondiffpatch';
 	import {
 		FmButton,
 		FmIcon,
@@ -73,7 +89,12 @@
 		FmTooltip
 	} from '@finmars/ui';
 	import useAceEditor from '~/composables/useAceEditor';
-	import useDraftButton from './useDraftButton';
+	import useApi from '~/composables/useApi';
+	import useNotify from '~/composables/useNotify';
+
+	dayjs.extend(relativeTime);
+
+	const autosaveInterval = 30000; // ms
 
 	const props = defineProps({
 		draftUserCode: {
@@ -98,21 +119,132 @@
 
 	const { VAceEditor, onEditorInit } = useAceEditor();
 
-	const {
-		menuItems,
-		isLoading,
-		isDraftViewerShow,
-		draft,
-		aceEditor,
-		formatDate,
-		runApplyingDraft,
-		forcedSaveDraft,
-		processAfterPreview
-	} = useDraftButton(
-		props.draftUserCode,
-		props.exportToDraft,
-		props.applyDraft
-	);
+	const menuItems = [
+		{ title: 'Preview Draft', value: 0 },
+		{ title: 'Save Draft', value: 1 },
+		{ title: 'Apply Draft to Form', value: 2 }
+	];
+
+	const isLoading = ref(false);
+	const isDraftViewerShow = ref(false);
+	const aceEditor = ref();
+
+	const draft = ref(null);
+	const lastSavedDraftData = ref(null);
+	const draftInterval = ref(null);
+
+	function getDefaultDraftData() {
+		return {
+			name: `Draft for ${props.draftUserCode}`,
+			user_code: props.draftUserCode,
+			data: {}
+		};
+	}
+
+	function formatDate(date) {
+		if (!date) return '';
+
+		const formattedDate = dayjs(date).format('HH:mm');
+		const fromNow = dayjs(date).fromNow();
+		return `${formattedDate} (${fromNow})`;
+	}
+
+	async function getOrCreate(draftUserCode) {
+		try {
+			const res = await useApi('draft.get', {
+				filters: { user_code: draftUserCode }
+			});
+
+			return res && res.results && res.results.length
+				? res.results[0]
+				: cloneDeep(getDefaultDraftData(draftUserCode));
+		} catch (e) {
+			console.error('The error of the drafts list loading. ', e);
+			return getDefaultDraftData(draftUserCode);
+		}
+	}
+
+	async function createDraft(draft) {
+		draft.value = await useApi('draft.post', { body: draft });
+	}
+
+	async function updateDraft(draft) {
+		return useApi('draft.put', {
+			params: { id: draft.id },
+			body: draft
+		});
+	}
+
+	async function saveDraft(draft) {
+		try {
+			return draft.id ? updateDraft(draft) : createDraft(draft);
+		} catch (e) {
+			console.error('The error saving draft. ', e);
+		}
+	}
+
+	function checkBeforeSaving() {
+		if (!props.exportToDraft || !props.exportToDraft()) {
+			useNotify({
+				type: 'error',
+				title: 'Nothing to save'
+			});
+			return false;
+		}
+
+		return true;
+	}
+
+	async function prepareDraft() {
+		const canSave = checkBeforeSaving();
+		if (!canSave) return;
+
+		draft.value.data = props.exportToDraft();
+		if (!lastSavedDraftData.value) {
+			lastSavedDraftData.value = cloneDeep(draft.value.data);
+		}
+
+		const diffData = diff(draft.value.data, lastSavedDraftData.value);
+		if (diffData) {
+			try {
+				isLoading.value = true;
+				draft.value = await saveDraft(draft.value);
+				lastSavedDraftData.value = cloneDeep(draft.value.data);
+			} finally {
+				isLoading.value = false;
+			}
+		}
+	}
+
+	async function forcedSaveDraft() {
+		const canSave = checkBeforeSaving();
+		if (!canSave) return;
+
+		try {
+			isLoading.value = true;
+			draft.value.data = props.exportToDraft();
+			lastSavedDraftData.value = cloneDeep(draft.value.data);
+			await saveDraft(draft.value);
+		} finally {
+			isLoading.value = false;
+		}
+	}
+
+	function runApplyingDraft() {
+		props.applyDraft && draft.value && props.applyDraft(draft.value.data);
+	}
+
+	async function processAfterPreview() {
+		const editedDraft = aceEditor.value.getValue();
+
+		try {
+			isLoading.value = true;
+			draft.value = await saveDraft(JSON.parse(editedDraft));
+			runApplyingDraft();
+		} finally {
+			isLoading.value = false;
+		}
+	}
 
 	function onItemClick({ item }) {
 		switch (item.value) {
@@ -132,6 +264,22 @@
 		aceEditor.value = editor;
 		onEditorInit(editor);
 	}
+
+	onBeforeMount(async () => {
+		if (!props.draftUserCode) {
+			return;
+		}
+
+		draft.value = await getOrCreate(props.draftUserCode);
+		draftInterval.value = setInterval(
+			() => prepareDraft(),
+			autosaveInterval
+		);
+	});
+
+	onBeforeUnmount(() => {
+		clearInterval(draftInterval.value);
+	});
 </script>
 
 <style lang="scss" scoped>

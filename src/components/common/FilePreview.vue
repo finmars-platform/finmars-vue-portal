@@ -3,7 +3,9 @@
 		<section
 			class="fixed inset-0 bg-black/40 flex justify-center items-center z-[100]"
 		>
-			<div class="relative w-[80%] h-[75%] bg-[var(--surface)] rounded-[24px]">
+			<div
+				class="relative w-[80%] h-[75%] bg-[var(--surface)] rounded-[24px]"
+			>
 				<div
 					class="relative w-full h-[64px] pl-[24px] pr-[12px] flex justify-between items-center border-b-[1px] border-b-[var(--outline-variant)] border-solid"
 				>
@@ -37,7 +39,9 @@
 					</template>
 
 					<template v-if="isCurrentTypeImage">
-						<div class="relative w-full h-full rounded-[6px] bg-[#2f3129]">
+						<div
+							class="relative w-full h-full rounded-[6px] bg-[#2f3129]"
+						>
 							<img
 								:src="formattedContent"
 								alt="image"
@@ -55,7 +59,11 @@
 						:disabled="isProcessing"
 						@click.stop.prevent="copyContentToClipboard"
 					>
-						<FmTooltip activator="parent" type="secondary" location="top">
+						<FmTooltip
+							activator="parent"
+							type="secondary"
+							location="top"
+						>
 							Copy to clipboard
 						</FmTooltip>
 					</FmIconButton>
@@ -72,6 +80,7 @@
 					class="relative w-full px-[24px] h-[64px] flex justify-between items-center border-t-[1px] border-t-[var(--outline-variant)] border-solid"
 				>
 					<FmButton
+						v-if="file.file_url"
 						rounded
 						:disabled="isProcessing"
 						@click.prevent.stop="_downloadFile"
@@ -108,14 +117,15 @@
 		file: {
 			/*
 			{
-				id: number;
+				id?: number;
 				name: string;
 				notes: string;
 				type: string;
 				created_at: string; // Date ISO 8601
 				content_type: string;
+				content?: any;
 				content_type_verbose: string;
-				file_url: string;
+				file_url?: string;
 			}
 			*/
 			type: Object,
@@ -267,16 +277,25 @@
 
 		try {
 			isProcessing.value = true;
-			const { file_url } = props.file;
-			data.value = await useApi('explorerViewFile.get', {
-				filters: { path: file_url }
-			});
+			const { file_url, info } = props.file;
 
-			if (data.value instanceof Blob) {
-				content.value = await readBlob(data.value);
-			} else {
-				content.value = data.value;
+			if (file_url) {
+				data.value = await useApi('explorerViewFile.get', {
+					filters: { path: file_url }
+				});
+				console.log('DATA>VALUE: ', data.value);
+				if (data.value instanceof Blob) {
+					content.value = await readBlob(data.value);
+				} else {
+					content.value = data.value;
+				}
+				console.log('SUCCESS: ', content.value);
+			} else if (info) {
+				data.value = info;
+				content.value = info;
+				console.log('ERROR: ', content.value);
 			}
+
 			formatContent();
 		} catch (error) {
 			console.error(`The file ${props.file.name} loading error. `, error);

@@ -12,7 +12,7 @@
 				item-value="key"
 				:loading="isLoading"
 				:items="ENTITY_LIST"
-				:disabled="isLoading"
+				:disabled="isLoading || isImporting"
 				class="simple-import-page__select"
 				@update:model-value="onEntitySelect"
 			/>
@@ -30,13 +30,13 @@
 				item-value="id"
 				:loading="isLoading"
 				:items="schemes"
-				:disabled="isLoading"
+				:disabled="isLoading || isImporting"
 				class="simple-import-page__select"
 			/>
 
 			<FmIconButton
 				icon="mdi-developer-board"
-				:disabled="schemeEditButtonDisabled"
+				:disabled="schemeEditButtonDisabled || isImporting"
 				@click.stop.prevent="isSchemeEditorOpen = true"
 			>
 				<FmTooltip activator="parent" type="secondary" location="top">
@@ -129,6 +129,7 @@
 				copiedScheme.value.user_code = createUserCodeForCopiedScheme(
 					copiedScheme.value.user_code
 				);
+
 				isSchemeEditorOpen.value = true;
 			}, 500);
 		});
@@ -139,13 +140,8 @@
 		selectedImportScheme.value = null;
 	}
 
-	function closeSchemeEditor(shouldRefresh) {
+	function closeSchemeEditor() {
 		isSchemeEditorOpen.value = false;
-		if (shouldRefresh) {
-			selectedEntity.value = null;
-			selectedImportScheme.value = null;
-			getSchemeList();
-		}
 	}
 
 	onBeforeMount(async () => {
@@ -174,6 +170,20 @@
 			:deep(.v-input__control) {
 				.v-field.v-field--rounded {
 					border-radius: 4px;
+				}
+
+				.v-field {
+					.v-field__field {
+						.v-field__input,
+						.v-label {
+							color: var(--on-surface-variant);
+						}
+					}
+				}
+
+				.v-field__clearable,
+				.v-field__append-inner {
+					color: var(--on-surface-variant);
 				}
 			}
 		}

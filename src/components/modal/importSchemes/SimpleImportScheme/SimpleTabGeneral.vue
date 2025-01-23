@@ -5,14 +5,16 @@
 			:user-code="scheme.user_code"
 			:disabled="isEditMode || loading"
 			@update:user-code="updateScheme('user_code', $event)"
-			@update:configuration-code="updateScheme('configuration_code', $event)"
+			@update:configuration-code="
+				updateScheme('configuration_code', $event)
+			"
 		/>
 
 		<FmTextField
 			outlined
 			:model-value="scheme.name"
 			label="Name*"
-			:disabled="loading"
+			:disabled="isEditMode || loading"
 			:error="validationData.name.isDirty && !validationData.name.isValid"
 			:error-messages="
 				validationData.name.isDirty && !validationData.name.isValid
@@ -28,7 +30,7 @@
 			hide-details
 			:model-value="scheme.short_name"
 			label="Short name"
-			:disabled="loading"
+			:disabled="isEditMode || loading"
 			@update:model-value="updateScheme('short_name', $event)"
 		/>
 
@@ -53,7 +55,10 @@
 					@update="updateScheme('filter_expr', $event)"
 				>
 					<template #activator>
-						<FmIconButton icon="mdi-dots-horizontal" variant="outlined" />
+						<FmIconButton
+							icon="mdi-dots-horizontal"
+							variant="outlined"
+						/>
 					</template>
 				</ExpressionEditorSelector>
 			</div>
@@ -100,7 +105,9 @@
 					:options="DATA_HANDLER_OPTIONS"
 					:model-value="scheme.missing_data_handler"
 					:disabled="loading"
-					@update:model-value="updateScheme('missing_data_handler', $event)"
+					@update:model-value="
+						updateScheme('missing_data_handler', $event)
+					"
 				/>
 			</div>
 
@@ -111,7 +118,9 @@
 					:options="CLASSIFIER_HANDLER_OPTIONS"
 					:model-value="scheme.classifier_handler"
 					:disabled="loading"
-					@update:model-value="updateScheme('classifier_handler', $event)"
+					@update:model-value="
+						updateScheme('classifier_handler', $event)
+					"
 				/>
 			</div>
 		</div>
@@ -143,7 +152,9 @@
 						? ['This field may not blank']
 						: []
 				"
-				@update:model-value="updateScheme('spreadsheet_start_cell', $event)"
+				@update:model-value="
+					updateScheme('spreadsheet_start_cell', $event)
+				"
 			/>
 
 			<FmTextField
@@ -229,7 +240,10 @@
 
 	async function updateScheme(field, value) {
 		await nextTick(() => {
-			if (validationData.value[field] && !validationData.value[field].isDirty) {
+			if (
+				validationData.value[field] &&
+				!validationData.value[field].isDirty
+			) {
 				validationData.value[field].isDirty = true;
 			}
 			const updatedScheme = cloneDeep(props.scheme);
