@@ -2,7 +2,11 @@
 	<div class="data-import-result">
 		<div v-if="importStatus" class="data-import-result__icon">
 			<FmIcon
-				:icon="importStatus === 'D' ? 'mdi-check-circle' : 'mdi-alert-circle'"
+				:icon="
+					importStatus === 'D'
+						? 'mdi-check-circle'
+						: 'mdi-alert-circle'
+				"
 				:color="importStatus === 'D' ? '#02a471' : 'var(--error)'"
 				size="80"
 			/>
@@ -10,7 +14,10 @@
 			{{ importStatus === 'D' ? 'Success' : 'Error' }}
 		</div>
 
-		<div v-if="!isEmpty(attachments)" class="data-import-result__attachments">
+		<div
+			v-if="!isEmpty(attachments)"
+			class="data-import-result__attachments"
+		>
 			<span
 				v-for="(item, index) in attachments"
 				:key="index"

@@ -115,10 +115,14 @@
 	const isOverDropZone = ref(false);
 
 	const widthValue = computed(() =>
-		['100%', 'auto'].includes(props.width) ? props.width : `${props.width}px`
+		['100%', 'auto'].includes(props.width)
+			? props.width
+			: `${props.width}px`
 	);
 	const heightValue = computed(() =>
-		['100%', 'auto'].includes(props.height) ? props.height : `${props.height}px`
+		['100%', 'auto'].includes(props.height)
+			? props.height
+			: `${props.height}px`
 	);
 
 	function selectFiles(ev) {
@@ -158,7 +162,8 @@
 			.map((type) => trim(type).toLowerCase());
 
 		const isValid =
-			allowedFileTypes.includes('*') || allowedFileTypes.includes(fileExt);
+			allowedFileTypes.includes('*') ||
+			allowedFileTypes.includes(fileExt);
 		if (!isValid) {
 			emits('error', `The [${name}] file type is not valid.`);
 		}
@@ -217,7 +222,10 @@
 				.filter((f) => validateFileType(f));
 
 			if (size(inputValue) > 0) {
-				emits('update:modelValue', [...props.modelValue, ...inputValue]);
+				emits('update:modelValue', [
+					...props.modelValue,
+					...inputValue
+				]);
 			}
 		}
 	}
@@ -274,7 +282,8 @@
 
 		ev.stopPropagation();
 		ev.preventDefault();
-		size(ev.dataTransfer?.files) && processFiles([...ev.dataTransfer.files]);
+		size(ev.dataTransfer?.files) &&
+			processFiles([...ev.dataTransfer.files]);
 		isOverDropPlace.value = false;
 		isOverDropZone.value = false;
 	}
@@ -360,7 +369,11 @@
 			cursor: pointer;
 
 			&:hover {
-				background-color: color-mix(in srgb, var(--on-surface) 8%, transparent);
+				background-color: color-mix(
+					in srgb,
+					var(--on-surface) 8%,
+					transparent
+				);
 			}
 		}
 

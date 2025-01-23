@@ -2,9 +2,16 @@
 	<section class="data-import">
 		<div class="data-import__row">
 			<div class="data-import__cell">
-				<div class="data-import__cell-header" @click="toggleBlocks('file')">
+				<div
+					class="data-import__cell-header"
+					@click="toggleBlocks('file')"
+				>
 					<FmIcon
-						:icon="blocks.file.show ? 'mdi-menu-down' : 'mdi-menu-right'"
+						:icon="
+							blocks.file.show
+								? 'mdi-menu-down'
+								: 'mdi-menu-right'
+						"
 						color="var(--on-surface-variant)"
 					/>
 					Select a file for import
@@ -23,7 +30,15 @@
 						allowed-file-types=".csv,.xls,.xlsx"
 						class="data-import__cell-input"
 						:disabled="disabled || isImporting"
+						@error="blocks.file.error = $event"
 					/>
+
+					<div
+						v-if="blocks.file.error && isEmpty(blocks.file.data)"
+						class="data-import__cell-error"
+					>
+						{{ blocks.file.error }}
+					</div>
 				</div>
 
 				<div
@@ -35,9 +50,16 @@
 			</div>
 
 			<div class="data-import__cell">
-				<div class="data-import__cell-header" @click="toggleBlocks('json')">
+				<div
+					class="data-import__cell-header"
+					@click="toggleBlocks('json')"
+				>
 					<FmIcon
-						:icon="blocks.json.show ? 'mdi-menu-down' : 'mdi-menu-right'"
+						:icon="
+							blocks.json.show
+								? 'mdi-menu-down'
+								: 'mdi-menu-right'
+						"
 						color="var(--on-surface-variant)"
 					/>
 					Paste JSON for import
@@ -52,7 +74,7 @@
 					]"
 				>
 					<VAceEditor
-						v-model="blocks.json.data"
+						v-model:value="blocks.json.data"
 						lang="json"
 						theme="monokai"
 						:disabled="disabled || isImporting"
@@ -62,8 +84,8 @@
 				</div>
 
 				<div
-					v-if="isImporting && !isEmpty(blocks.json.data)"
-					class="ata-import__cell-loader"
+					v-if="isImporting && !isEmpty(JSON.parse(blocks.json.data))"
+					class="data-import__cell-loader"
 				>
 					<FmProgressCircular indeterminate size="120" />
 				</div>
@@ -76,7 +98,7 @@
 				<span>{{ blocks.file.data[0]?.name }}</span>
 			</template>
 
-			<template v-if="!isEmpty(blocks.json.data)">
+			<template v-if="!isEmpty(JSON.parse(blocks.json.data))">
 				<b>You have pasted the JSON data to import</b>
 			</template>
 		</div>
@@ -124,6 +146,7 @@
 	import useNotify from '~/composables/useNotify';
 	import FmInputFiles from '@/components/Fm/InputFiles/InputFiles.vue';
 	import DataImportResult from '@/components/common/DataImportResult.vue';
+	import { wrapperStringify } from './utils';
 
 	const props = defineProps({
 		schemeId: {
@@ -146,11 +169,13 @@
 	const blocks = ref({
 		file: {
 			show: true,
-			data: []
+			data: [],
+			error: ''
 		},
 		json: {
 			show: false,
-			data: []
+			data: wrapperStringify(''),
+			error: ''
 		}
 	});
 	const aceEditor = ref();
@@ -169,7 +194,9 @@
 
 	const importButtonDisabled = computed(
 		() =>
-			(isEmpty(blocks.value.file.data) && isEmpty(blocks.value.json.data)) ||
+			(isEmpty(blocks.value.file.data) &&
+				isEmpty(blocks.value.json.data)) ||
+			(!!blocks.value.file.error && isEmpty(blocks.value.file.data)) ||
 			!props.schemeId ||
 			isImporting.value
 	);
@@ -183,15 +210,22 @@
 	});
 
 	function toggleBlocks(block) {
-		if (blocks.value[block].show || props.isProcessing) {
+		if (
+			blocks.value[block].show ||
+			props.isProcessing ||
+			isImporting.value
+		) {
 			return;
 		}
 
 		const hiddenBlock = block === 'file' ? 'json' : 'file';
 		blocks.value[block].show = true;
-		blocks.value[block].data = [];
+		blocks.value[block].data = block === 'file' ? [] : wrapperStringify('');
+		blocks.value[block].error = '';
 		blocks.value[hiddenBlock].show = false;
-		blocks.value[hiddenBlock].data = [];
+		blocks.value[hiddenBlock].data =
+			hiddenBlock === 'file' ? [] : wrapperStringify('');
+		blocks.value[hiddenBlock].error = '';
 	}
 
 	function onPaste(value) {
@@ -217,7 +251,8 @@
 			});
 			if (res) {
 				process.value.status = res.status;
-				res.progress_object && (process.value.progress = res.progress_object);
+				res.progress_object &&
+					(process.value.progress = res.progress_object);
 
 				if (['D', 'E'].includes(res.status)) {
 					clearInterval(poolingInterval.value);
@@ -227,14 +262,28 @@
 					blocks.value = {
 						file: {
 							show: false,
-							data: []
+							data: [],
+							error: ''
 						},
 						json: {
 							show: false,
-							data: []
+							data: wrapperStringify(''),
+							error: ''
 						}
 					};
-					attachmentsFiles.value = res.attachments;
+
+					attachmentsFiles.value =
+						res.status === 'D'
+							? res.attachments
+							: [
+									{
+										file_report_object: {
+											name: `Result (Task ${res.id})`,
+											content_type_verbose: 'json',
+											info: res.result_object ?? {}
+										}
+									}
+								];
 					isImporting.value = false;
 					emits('update:importingFlag', false);
 				}
@@ -242,7 +291,10 @@
 		} catch (e) {
 			isImporting.value = false;
 			emits('update:importingFlag', false);
-			console.error('The error getting information about active process. ', e);
+			console.error(
+				'The error getting information about active process. ',
+				e
+			);
 			useNotify({
 				type: 'error',
 				title: 'The error getting information about active process.',
@@ -253,7 +305,9 @@
 
 	async function startImport() {
 		if (
-			(isEmpty(blocks.value.file.data) && isEmpty(blocks.value.json.data)) ||
+			(isEmpty(blocks.value.file.data) &&
+				isEmpty(blocks.value.json.data)) ||
+			(!!blocks.value.file.error && isEmpty(blocks.value.file.data)) ||
 			!props.schemeId ||
 			!props.apiUrl
 		) {
@@ -274,9 +328,12 @@
 			};
 
 			const file = isEmpty(blocks.value.file.data)
-				? new Blob([JSON.stringify(JSON.parse(blocks.value.json.data))], {
-						type: 'application/json'
-					})
+				? new Blob(
+						[wrapperStringify(JSON.parse(blocks.value.json.data))],
+						{
+							type: 'application/json'
+						}
+					)
 				: blocks.value.file.data[0];
 
 			const formData = new FormData();
@@ -305,6 +362,11 @@
 
 	onBeforeUnmount(() => {
 		aceEditor.value.off('paste', onPaste);
+
+		if (poolingInterval.value) {
+			clearInterval(poolingInterval.value);
+			poolingInterval.value = null;
+		}
 	});
 </script>
 
@@ -344,6 +406,7 @@
 				width: 100%;
 				aspect-ratio: 4/3;
 				border-radius: 4px;
+				padding-bottom: 24px;
 				opacity: 1;
 				transition: all 0.4s ease-in-out;
 
@@ -365,6 +428,20 @@
 				border-radius: 12px;
 			}
 
+			&-error {
+				position: absolute;
+				left: 0;
+				bottom: 0;
+				width: 100%;
+				height: 24px;
+				display: flex;
+				justify-content: flex-start;
+				align-items: center;
+				padding: 0 8px;
+				font: var(--body-large-font);
+				color: var(--error);
+			}
+
 			&-loader {
 				position: absolute;
 				inset: 0;
@@ -377,9 +454,8 @@
 		}
 
 		&__data-info {
-			font-size: 16px;
-			line-height: 24px;
-			margin-bottom: 16px;
+			font: var(--body-large-font);
+			margin-bottom: 24px;
 		}
 
 		&__progress {
