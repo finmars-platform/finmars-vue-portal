@@ -54,7 +54,7 @@
 
 				<draggable
 					:list="filteredRows"
-					item-key="order"
+					item-key="id"
 					handle=".reference-table-editor__item-drag"
 					chosen-class="reference-table-editor__item--chosen"
 					drag-class="reference-table-editor__item--move"
@@ -174,7 +174,8 @@
 		FmIcon,
 		FmIconButton,
 		FmProgressCircular,
-		FmTextField
+		FmTextField,
+		getRandomString
 	} from '@finmars/ui';
 	import { create, update } from '~/services/referenceTablesService';
 	import UserCodeInput from '~/components/common/UserCodeInput/UserCodeInput.vue';
@@ -212,6 +213,7 @@
 			isValid: true
 		}
 	});
+	const areRowsDirty = ref(false);
 
 	const search = ref({
 		keys: '',
@@ -231,19 +233,21 @@
 	const isDirty = computed(
 		() =>
 			Object.values(formData.value).some((i) => i.isDirty) ||
+			areRowsDirty.value ||
 			(editedTable.value.rows || []).some(
 				(r) => r.isDirty.key || r.isDirty.value
 			)
 	);
-	const isValid = computed(
-		() =>
-			!(
-				Object.values(formData.value).some((i) => !i.isValid) ||
-				(editedTable.value.rows || []).some(
-					(r) => !!r.errorMessage.key || !!r.errorMessage.value
-				)
-			)
-	);
+
+	const isValid = computed(() => {
+		const areMainFieldsNotValid = Object.values(formData.value).some(
+			(i) => !i.isValid
+		);
+		const areRowsFieldsNotValid = (editedTable.value.rows || []).some(
+			(r) => !!r.errorMessage.key || !!r.errorMessage.value
+		);
+		return !(areMainFieldsNotValid || areRowsFieldsNotValid);
+	});
 
 	function prepareTableData(table, withValidation = false) {
 		const data = cloneDeep(table || EMPTY_TABLE);
@@ -254,6 +258,10 @@
 		}
 
 		(data.rows || []).forEach((r) => {
+			if (!r.id) {
+				r.id = getRandomString(3)
+			}
+
 			r.isDirty = {
 				key: !!withValidation,
 				value: !!withValidation
@@ -344,6 +352,7 @@
 
 	function addNewRow() {
 		editedTable.value.rows.push({
+			id: getRandomString(3),
 			key: '',
 			value: '',
 			order: editedTable.value.rows.length,
@@ -360,16 +369,20 @@
 	}
 
 	function deleteRow(row) {
-		const rows = cloneDeep(editedTable.value.rows);
-		const index = rows.findIndex(
+		const updatedEditedTable = cloneDeep(editedTable.value);
+		const index = updatedEditedTable.rows.findIndex(
 			(r) => r.id === row.id || r.order === row.order
 		);
-		rows.splice(index, 1);
-		rows.forEach((r, index) => {
-			r.order = index;
-		});
-		editedTable.value.rows = rows;
-		validateForm();
+
+		if (index !== -1) {
+			areRowsDirty.value = true;
+			updatedEditedTable.rows.splice(index, 1);
+			updatedEditedTable.rows.forEach((r, ind) => {
+				r.order = ind;
+			});
+			editedTable.value = updatedEditedTable;
+			validateForm();
+		}
 	}
 
 	function makeCopy() {
@@ -389,6 +402,7 @@
 
 			const data = cloneDeep(editedTable.value);
 			(data.rows || []).forEach((r) => {
+				delete r.id;
 				delete r.isDirty;
 				delete r.isValid;
 			});
