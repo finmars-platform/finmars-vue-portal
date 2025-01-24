@@ -81,10 +81,23 @@
 						class="data-import__cell-input"
 						@init="_onEditorInit"
 					/>
+
+					<div
+						v-if="
+							blocks.json.error &&
+							isEmpty(safelyParseJSON(blocks.json.data))
+						"
+						class="data-import__cell-error"
+					>
+						{{ blocks.json.error }}
+					</div>
 				</div>
 
 				<div
-					v-if="isImporting && !isEmpty(JSON.parse(blocks.json.data))"
+					v-if="
+						isImporting &&
+						!isEmpty(safelyParseJSON(blocks.json.data))
+					"
 					class="data-import__cell-loader"
 				>
 					<FmProgressCircular indeterminate size="120" />
@@ -98,7 +111,7 @@
 				<span>{{ blocks.file.data[0]?.name }}</span>
 			</template>
 
-			<template v-if="!isEmpty(JSON.parse(blocks.json.data))">
+			<template v-if="!isEmpty(safelyParseJSON(blocks.json.data))">
 				<b>You have pasted the JSON data to import</b>
 			</template>
 		</div>
@@ -208,6 +221,17 @@
 
 		return `${process.value.progress.current} / ${process.value.progress.total}`;
 	});
+
+	function safelyParseJSON(json) {
+		try {
+			blocks.value.json.error = '';
+			return JSON.parse(json);
+		} catch (e) {
+			blocks.value.json.error = 'This is erroneous JSON.';
+			console.warn('This is erroneous JSON. ', e);
+			return null;
+		}
+	}
 
 	function toggleBlocks(block) {
 		if (
@@ -416,7 +440,7 @@
 			}
 
 			&-editor {
-				padding: 11px;
+				padding: 11px 11px 36px 11px;
 			}
 
 			&-input {
