@@ -103,7 +103,11 @@
 			cursor: pointer;
 
 			&:hover {
-				background-color: color-mix(in srgb, transparent, var(--on-surface) 8%);
+				background-color: color-mix(
+					in srgb,
+					transparent,
+					var(--on-surface) 8%
+				);
 			}
 		}
 
