@@ -8,6 +8,7 @@
 				:base="config?.public?.apiURL"
 				:route="$route"
 				:isVue="true"
+				:items="temporaryItems"
 			/>
 			<div class="content scrollable">
 				<slot />
@@ -17,10 +18,13 @@
 </template>
 
 <script setup>
+	import { useNavigationRoutes } from '~/composables/useNavigationRoutes';
 	const { loadThemeSettingsDefault } = useWhiteLabelStore();
 	const store = useStore();
 	const evAttrsStore = useEvAttributesStore();
 	const config = useRuntimeConfig();
+
+	const { navigationInit, temporaryItems } = useNavigationRoutes();
 
 	store.init();
 
@@ -50,6 +54,18 @@
 			useToggleDarkMode(store.user.data.dark_mode);
 		}
 	);
+
+	watch(
+		temporaryItems,
+		(newValue, oldValue) => {
+			if (newValue) {
+				temporaryItems.value = newValue
+			}
+		},
+		{ deep: true }
+	)
+
+	navigationInit();
 </script>
 <style lang="scss" scoped>
 	.main {

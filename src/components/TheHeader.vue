@@ -26,7 +26,7 @@
 	const { themeSettings } = storeToRefs(useWhiteLabelStore());
 
 	const noti = ref(null);
-	const toggleIsDark = ref(store.user.data.dark_mode);
+	const toggleIsDark = ref(store?.user?.data?.dark_mode);
 
 	const letters = computed(() => {
 		return (
@@ -91,7 +91,7 @@
 			toggleIsDark.value = val;
 			store.user.data.dark_mode = toggleIsDark.value;
 		} else {
-			store.user.data.dark_mode = !store.user.data.dark_mode;
+			store.user.data.dark_mode = !store?.user?.data?.dark_mode;
 		}
 		updateUserD();
 	}
