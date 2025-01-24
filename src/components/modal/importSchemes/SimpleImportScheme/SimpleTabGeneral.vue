@@ -14,7 +14,7 @@
 			outlined
 			:model-value="scheme.name"
 			label="Name*"
-			:disabled="isEditMode || loading"
+			:disabled="loading"
 			:error="validationData.name.isDirty && !validationData.name.isValid"
 			:error-messages="
 				validationData.name.isDirty && !validationData.name.isValid
@@ -30,7 +30,7 @@
 			hide-details
 			:model-value="scheme.short_name"
 			label="Short name"
-			:disabled="isEditMode || loading"
+			:disabled="loading"
 			@update:model-value="updateScheme('short_name', $event)"
 		/>
 

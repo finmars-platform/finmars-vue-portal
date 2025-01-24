@@ -50,7 +50,6 @@
 			api-url="simpleImport.post"
 			:disabled="isLoading"
 			@update:importing-flag="isImporting = $event"
-			@complete:import="onImportComplete"
 		/>
 
 		<SimpleImportScheme
@@ -135,13 +134,21 @@
 		});
 	}
 
-	function onImportComplete() {
-		selectedEntity.value = null;
-		selectedImportScheme.value = null;
-	}
-
-	function closeSchemeEditor() {
+	async function closeSchemeEditor(shouldRefresh) {
 		isSchemeEditorOpen.value = false;
+		if (shouldRefresh && selectedEntity.value) {
+			await getSchemeList(selectedEntity.value.key);
+			const currentSelectedSchemeId = selectedImportScheme.value.id;
+			const updatedCurrentSelectedScheme = (schemes.value || []).find(
+				(s) => s.id === currentSelectedSchemeId
+			);
+			if (updatedCurrentSelectedScheme) {
+				selectedImportScheme.value = null;
+				nextTick(() => {
+					selectedImportScheme.value = updatedCurrentSelectedScheme;
+				});
+			}
+		}
 	}
 
 	onBeforeMount(async () => {
