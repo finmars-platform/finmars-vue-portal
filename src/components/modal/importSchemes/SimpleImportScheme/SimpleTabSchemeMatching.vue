@@ -4,7 +4,9 @@
 			<template v-if="field.system_property_key">
 				<SimpleTabSchemeMatchingField
 					:field="field"
-					:expression-editor-selector-data="expressionEditorSelectorData"
+					:expression-editor-selector-data="
+						expressionEditorSelectorData
+					"
 					@update="updateBlock"
 				/>
 			</template>
@@ -12,7 +14,9 @@
 			<template v-if="field.attribute_user_code">
 				<SimpleTabSchemeMatchingField
 					:field="field"
-					:expression-editor-selector-data="expressionEditorSelectorData"
+					:expression-editor-selector-data="
+						expressionEditorSelectorData
+					"
 					@update="updateBlock"
 				/>
 			</template>
@@ -61,7 +65,8 @@
 			.filter(
 				(f) =>
 					!(
-						DEPRECATED_ENTITY_FIELDS[props.scheme?.content_type] || []
+						DEPRECATED_ENTITY_FIELDS[props.scheme?.content_type] ||
+						[]
 					).includes(f.system_property_key)
 			)
 			.reduce((res, f) => {
@@ -101,7 +106,9 @@
 
 	function updateBlock(field) {
 		const updatedBlock = cloneDeep(props.scheme.entity_fields);
-		const updatedFieldIndex = updatedBlock.findIndex((i) => i.id === field.id);
+		const updatedFieldIndex = updatedBlock.findIndex(
+			(i) => i.id === field.id
+		);
 		if (updatedFieldIndex === -1) {
 			return;
 		}
