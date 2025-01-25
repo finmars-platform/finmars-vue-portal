@@ -10,14 +10,14 @@
 				}}</span>
 		</div>
 		<div
-			v-if="clickedElement.children && clickedElement.children.length"
+			v-if="clickedElement?.children && clickedElement?.children?.length"
 			class="children"
 		>
 			<RecursiveRow
 				v-for="child in clickedElement.children"
 				:key="child.key"
 				:item="child"
-				@update-list="$emit('update-list')"
+				@update-list="$emit('update-list', $event)"
 			/>
 		</div>
 	</div>

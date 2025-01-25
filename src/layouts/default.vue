@@ -18,17 +18,20 @@
 </template>
 
 <script setup>
-	import { useNavigationRoutes } from '~/composables/useNavigationRoutes';
+	// import { useNavigationRoutes } from '~/composables/useNavigationRoutes';
+	import { NavigationRoutes } from '@finmars/ui';
+
 	const { loadThemeSettingsDefault } = useWhiteLabelStore();
 	const store = useStore();
 	const evAttrsStore = useEvAttributesStore();
 	const config = useRuntimeConfig();
 
-	const { navigationInit, temporaryItems } = useNavigationRoutes();
+	// const { navigationInit, temporaryItems } = useNavigationRoutes();
 
 	store.init();
 
 	const notLoadingMember = ref(true);
+	const temporaryItems = ref([]);
 
 	watchEffect(async (onCleanup) => {
 		if (store.isUrlValid) {
@@ -56,16 +59,23 @@
 	);
 
 	watch(
-		temporaryItems,
-		(newValue, oldValue) => {
-			if (newValue) {
-				temporaryItems.value = newValue
-			}
-		},
-		{ deep: true }
-	)
+		() => store.member.is_admin,
+		() => {
+			temporaryItems.value =  store.member.is_admin ? NavigationRoutes : [];
+		}
+	);
 
-	navigationInit();
+	// watch(
+	// 	temporaryItems,
+	// 	(newValue, oldValue) => {
+	// 		if (newValue) {
+	// 			temporaryItems.value = newValue
+	// 		}
+	// 	},
+	// 	{ deep: true }
+	// )
+	//
+	// navigationInit();
 </script>
 <style lang="scss" scoped>
 	.main {
