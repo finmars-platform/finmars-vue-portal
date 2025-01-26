@@ -8,7 +8,7 @@ export function useNavigationRoutes() {
 		'local.poms.space0i3a2:base-data-manager': ['data', 'valuations', 'transactions-from-file', 'data-from-file', 'reconciliation', 'workflows'],
 		'local.poms.space0i3a2:configuration-manager': ['Default-settings', 'Account-Types', 'Instrument-Types', 'Transaction-Types', 'Account-Types', 'Transaction-Type-Groups'],
 		'local.poms.space0i3a2:full-data-manager': ['dashboard', 'Member', 'Permissions',],
-		'local.poms.space0i3a2:member': ['dashboard', 'reports', 'Member', 'navigation']
+		'local.poms.space0i3a2:member': ['dashboard', 'reports', 'Member', 'navigation', 'group']
 	};
 
 	function filterMenuItems(navigationRouts, allowedKeys) {
@@ -41,20 +41,24 @@ export function useNavigationRoutes() {
 	}
 
 	async function init() {
-		const filters = {
-			role: store.member?.roles_object?.[0]?.user_code,
-			user_code: store.member?.roles_object?.[0]?.user_code.split(':')[1],
-			configuration_code: store.member?.roles_object?.[0]?.configuration_code
-		}
-
-		const resData = await useApi('sidebarNavigationAccessList.get', {filters});
-		if (resData?._$error) {
-			useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
-			return [];
+		if(store.member?.is_admin) {
+			return NavigationRoutes;
 		} else {
-			const data = resData?.[0];
-			if(data?.allowed_items) {
-				return filterMenuItems(NavigationRoutes, data.allowed_items);
+			const filters = {
+				role: store.member?.roles_object?.[0]?.user_code,
+				user_code: store.member?.roles_object?.[0]?.user_code.split(':')[1],
+				configuration_code: store.member?.roles_object?.[0]?.configuration_code
+			}
+
+			const resData = await useApi('sidebarNavigationAccessList.get', {filters});
+			if (resData?._$error) {
+				useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
+				return [];
+			} else {
+				const data = resData?.[0];
+				if(data?.allowed_items) {
+					return filterMenuItems(NavigationRoutes, data.allowed_items);
+				}
 			}
 		}
 	}
