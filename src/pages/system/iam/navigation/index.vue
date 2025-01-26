@@ -133,15 +133,15 @@
 	});
 
 	function updateAccessList() {
-		const initList = (list, parentAccess) => {
+		const initList = (list) => {
 			list.forEach((item) => {
-				item.access = parentAccess ? parentAccess : lastSavedItems.value.includes(item.key);
+				item.access = lastSavedItems.value.includes(item.key);
 				if (item.children) {
-					initList(item.children, item.access);
+					initList(item.children);
 				}
 			});
 		};
-		initList(defaultItems.value, false);
+		initList(defaultItems.value);
 	}
 
 	function enableAll() {
