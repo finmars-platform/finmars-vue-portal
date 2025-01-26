@@ -18,15 +18,14 @@
 </template>
 
 <script setup>
-	// import { useNavigationRoutes } from '~/composables/useNavigationRoutes';
-	import { NavigationRoutes } from '@finmars/ui';
+	import { useNavigationRoutes } from '~/composables/useNavigationRoutes';
 
 	const { loadThemeSettingsDefault } = useWhiteLabelStore();
 	const store = useStore();
 	const evAttrsStore = useEvAttributesStore();
 	const config = useRuntimeConfig();
 
-	// const { navigationInit, temporaryItems } = useNavigationRoutes();
+	const { init, items } = useNavigationRoutes();
 
 	store.init();
 
@@ -59,23 +58,27 @@
 	);
 
 	watch(
-		() => store.member.is_admin,
-		() => {
-			temporaryItems.value =  store.member.is_admin ? NavigationRoutes : [];
-		}
+		() => store.member,
+		async () => {
+			// if(store.member?.is_admin){
+			// 	temporaryItems.value = NavigationRoutes;
+			// } else {
+				await init();
+				temporaryItems.value = items.value;
+			// }
+		},
+		{deep: true}
 	);
 
-	// watch(
-	// 	temporaryItems,
-	// 	(newValue, oldValue) => {
-	// 		if (newValue) {
-	// 			temporaryItems.value = newValue
-	// 		}
-	// 	},
-	// 	{ deep: true }
-	// )
-	//
-	// navigationInit();
+	watch(
+		temporaryItems,
+		(newValue) => {
+			if (newValue) {
+				temporaryItems.value = newValue;
+			}
+		},
+		{ deep: true }
+	)
 </script>
 <style lang="scss" scoped>
 	.main {
