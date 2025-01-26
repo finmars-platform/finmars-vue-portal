@@ -60,14 +60,11 @@
 
 	watch(
 		() => store.member,
-		async () => {
-			// if(store.member?.is_admin){
-			// 	temporaryItems.value = NavigationRoutes;
-			// } else {
+		() => {
+			setTimeout(async () => {
 				temporaryItems.value = await init();
-			// }
-		}
-	);
+			},1000)
+		});
 </script>
 <style lang="scss" scoped>
 	.main {
