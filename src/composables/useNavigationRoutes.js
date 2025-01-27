@@ -46,7 +46,7 @@ export function useNavigationRoutes() {
 		} else {
 			const filters = {
 				role: store.member?.roles_object?.[0]?.user_code,
-				user_code: store.member?.roles_object?.[0]?.user_code.split(':')[1],
+				user_code: store.member?.roles_object?.[0]?.user_code?.split(':')[1],
 				configuration_code: store.member?.roles_object?.[0]?.configuration_code
 			}
 
