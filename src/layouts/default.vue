@@ -19,7 +19,6 @@
 
 <script setup>
 	import { useNavigationRoutes } from '~/composables/useNavigationRoutes';
-	import { NavigationRoutes } from '@finmars/ui';
 
 	const { loadThemeSettingsDefault } = useWhiteLabelStore();
 	const store = useStore();
@@ -31,7 +30,9 @@
 	store.init();
 
 	const notLoadingMember = ref(true);
-	const temporaryItems = ref([]);
+	const temporaryItems = ref(null);
+	const intervalId = ref(null);
+
 
 	watchEffect(async (onCleanup) => {
 		if (store.isUrlValid) {
@@ -61,10 +62,25 @@
 	watch(
 		() => store.member,
 		() => {
-			setTimeout(async () => {
-				temporaryItems.value = await init();
-			},1000)
-		});
+			if (intervalId.value) {
+				clearInterval(intervalId.value);
+				intervalId.value = null;
+			}
+			intervalId.value = setInterval(async () => {
+				try {
+					const result = await init();
+					if (result) {
+						temporaryItems.value = result;
+						clearInterval(intervalId.value);
+						intervalId.value = null;
+					}
+				} catch (error) {
+					console.error("Error initializing temporary items:", error);
+				}
+			}, 1000);
+		}
+	);
+
 </script>
 <style lang="scss" scoped>
 	.main {
