@@ -38,6 +38,7 @@
 						/>
 					</template>
 					<template v-else>
+						<span class="flex w-full justify-center items-center min-h-24">No allowed data!</span>
 						<FmButton @click="create" rounded>Create</FmButton>
 					</template>
 				</template>
