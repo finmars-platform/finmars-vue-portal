@@ -79,7 +79,7 @@
 					<FmButton
 						type="secondary"
 						rounded
-						@click.prevent.stop="emits('close', true)"
+						@click.prevent.stop="emits('close')"
 					>
 						Cancel
 					</FmButton>
