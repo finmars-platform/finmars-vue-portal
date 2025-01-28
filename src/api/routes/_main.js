@@ -482,8 +482,7 @@ export default {
 		get: prefix + '/ui/list-layout/{id}/ping'
 	},
 	defaultListLayout: {
-		get:
-			prefix + '/ui/list-layout/?is_default=2&content_type={content_type}'
+		get: prefix + '/ui/list-layout/?is_default=2&content_type={content_type}'
 	},
 	ecosystemDefaults: {
 		get: prefix + '/users/ecosystem-default/'
@@ -509,8 +508,7 @@ export default {
 	},
 	performanceFirstTransaction: {
 		get:
-			prefix +
-			'/reports/performance-report/first-transaction-date/?bundle={id}'
+			prefix + '/reports/performance-report/first-transaction-date/?bundle={id}'
 	},
 	interfaceAccess: {
 		get: prefix + '/ui/portal-interface-access/'
@@ -525,9 +523,7 @@ export default {
 		get: prefix + '/configuration/new-member-setup-configuration/{id}/'
 	},
 	installNewMemberSetupConfig: {
-		put:
-			prefix +
-			'/configuration/new-member-setup-configuration/{id}/install/'
+		put: prefix + '/configuration/new-member-setup-configuration/{id}/install/'
 	},
 	unifiedData: {
 		get: prefix + '/data/{type}/'
@@ -545,9 +541,7 @@ export default {
 		get: prefix + '/configuration-sharing/my-invites/'
 	},
 	configurationJson: {
-		put:
-			prefix +
-			'/configuration/new-member-setup-configuration/{id}/install/'
+		put: prefix + '/configuration/new-member-setup-configuration/{id}/install/'
 	},
 	getTask: {
 		get: prefix + '/tasks/task/{id}/'
@@ -793,6 +787,8 @@ export default {
 	},
 	transactionTypeGroupList: {
 		get: prefix + '/transactions/transaction-type-group/',
+		post: prefix + '/transactions/transaction-type-group/',
+		put: prefix + '/transactions/transaction-type-group/{id}/'
 	},
 	transactionTypeGroup: {
 		get: prefix + '/transactions/transaction-type-group/{id}/',
@@ -1002,5 +998,11 @@ export default {
 		post: prefix + '/reference-tables/reference-table/',
 		put: prefix + '/reference-tables/reference-table/{id}/',
 		delete: prefix + '/reference-tables/reference-table/{id}/'
+	},
+	sidebarNavigationAccessList: {
+		get: prefix + '/ui/user-interface-access/',
+		post: prefix + '/ui/user-interface-access/',
+		put: prefix + '/ui/user-interface-access/{id}/',
+		delete: prefix + '/ui/user-interface-access/{id}/'
 	}
 };
