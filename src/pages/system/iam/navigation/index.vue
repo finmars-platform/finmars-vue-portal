@@ -84,7 +84,7 @@
 		middleware: 'auth'
 	});
 
-	const { ROLES_MAP, filterMenuItems, getNavigationRoutesWithAccess } = useNavigationRoutes();
+	const { ROLES_MAP, filterMenuItems } = useNavigationRoutes();
 
 	const formData = ref({
 		id: {
@@ -253,7 +253,7 @@
 	}
 
 	async function create() {
-		defaultItems.value = filterMenuItems(getNavigationRoutesWithAccess(NavigationRoutes), ROLES_MAP[selectedItem.value.role]);
+		defaultItems.value = filterMenuItems(NavigationRoutes, ROLES_MAP[selectedItem.value.role]);
 		let listToSave = [];
 		const findItems = (list) => {
 			list.forEach(item => {
@@ -292,7 +292,7 @@
 			user_code: selectedItem.value.user_code,
 			configuration_code: selectedItem.value.configuration_code
 		}
-		defaultItems.value = filterMenuItems(getNavigationRoutesWithAccess(NavigationRoutes), ROLES_MAP[selectedItem.value.role]);
+		defaultItems.value = filterMenuItems(NavigationRoutes, ROLES_MAP[selectedItem.value.role]);
 		const resData = await useApi('sidebarNavigationAccessList.get', {filters});
 		if (resData?._$error) {
 			useNotify({ type: 'error', title: res._$error.message || res._$error.detail });

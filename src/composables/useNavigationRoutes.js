@@ -28,24 +28,18 @@ export function useNavigationRoutes() {
 			if (isParentAllowed && !isChildAllowed) {
 				acc.push({
 					...item,
+					access: true,
 					children: item.children
 				});
 			} else if (isChildAllowed) {
 				acc.push({
 					...item,
+					access: true,
 					children: filteredChildren
 				});
 			}
 			return acc;
 		}, []);
-	}
-
-	function getNavigationRoutesWithAccess(array) {
-		return array.map(item => ({
-			...item,
-			access: true,
-			...(item.children ? { children: getNavigationRoutesWithAccess(item.children) } : {})
-		}));
 	}
 
 	async function init() {
@@ -74,7 +68,6 @@ export function useNavigationRoutes() {
 	return {
 		ROLES_MAP,
 		filterMenuItems,
-		getNavigationRoutesWithAccess,
 		init
 	};
 }
