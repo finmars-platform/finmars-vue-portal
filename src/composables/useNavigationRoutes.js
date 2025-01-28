@@ -4,11 +4,11 @@ export function useNavigationRoutes() {
 
 	const store = useStore();
 	const ROLES_MAP = {
-		'local.poms.space0i3a2:viewer': ['dashboard', 'reports', 'add-ons'],
-		'local.poms.space0i3a2:base-data-manager': ['data', 'valuations', 'transactions-from-file', 'data-from-file', 'reconciliation', 'workflows'],
+		'local.poms.space0i3a2:viewer': ['reports'],
+		'local.poms.space0i3a2:base-data-manager': ['data'],
 		'local.poms.space0i3a2:configuration-manager': ['Default-settings', 'Account-Types', 'Instrument-Types', 'Transaction-Types', 'Account-Types', 'Transaction-Type-Groups'],
-		'local.poms.space0i3a2:full-data-manager': ['dashboard', 'Member', 'Permissions',],
-		'local.poms.space0i3a2:member': ['dashboard', 'reports', 'Member', 'navigation', 'group']
+		'local.poms.space0i3a2:full-data-manager': ['dashboard', 'Member', 'Permissions'],
+		'local.poms.space0i3a2:member': ['dashboard']
 	};
 
 	function filterMenuItems(navigationRouts, allowedKeys) {
@@ -43,24 +43,36 @@ export function useNavigationRoutes() {
 	}
 
 	async function init() {
-		if(store.member?.is_admin) {
+		if (store.member?.is_admin) {
 			return NavigationRoutes;
 		} else {
-			const filters = {
-				role: store.member?.roles_object?.[0]?.user_code,
-				user_code: store.member?.roles_object?.[0]?.user_code?.split(':')[1],
-				configuration_code: store.member?.roles_object?.[0]?.configuration_code
-			}
+			const filtersArray = store.member?.roles_object?.map(({ id, ...rest }) => {
+				return {
+					user_code: rest.user_code?.split(':')[1],
+					role: rest.user_code,
+					configuration_code: rest?.configuration_code
+				};
+			});
 
-			const resData = await useApi('sidebarNavigationAccessList.get', {filters});
-			if (resData?._$error) {
-				useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
-				return [];
-			} else {
-				const data = resData?.[0];
-				if(data?.allowed_items) {
-					return filterMenuItems(NavigationRoutes, data.allowed_items);
+			const results = await Promise.all(filtersArray.map(async (filters) => {
+				const resData = await useApi('sidebarNavigationAccessList.get', { filters });
+				if (resData?._$error) {
+					useNotify({ type: 'error', title: resData._$error.message || resData._$error.detail });
+					return null;
 				}
+				return resData[0];
+			}));
+
+			const allowedItems = results
+				.filter(data => data && data.allowed_items)
+				.flatMap(data => data.allowed_items);
+
+			const uniqueAllowedItems = [...new Set(allowedItems)];
+
+			if (allowedItems.length > 0) {
+				return filterMenuItems(NavigationRoutes, uniqueAllowedItems);
+			} else {
+				return [];
 			}
 		}
 	}
