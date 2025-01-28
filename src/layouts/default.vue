@@ -8,7 +8,7 @@
 				:base="config?.public?.apiURL"
 				:route="$route"
 				:isVue="true"
-				:items="temporaryItems"
+				:items="allowedItems"
 			/>
 			<div class="content scrollable">
 				<slot />
@@ -30,7 +30,7 @@
 	store.init();
 
 	const notLoadingMember = ref(true);
-	const temporaryItems = ref(null);
+	const allowedItems = ref(null);
 	const intervalId = ref(null);
 
 
@@ -70,12 +70,12 @@
 				try {
 					const result = await init();
 					if (result) {
-						temporaryItems.value = result;
+						allowedItems.value = result;
 						clearInterval(intervalId.value);
 						intervalId.value = null;
 					}
 				} catch (error) {
-					console.error("Error initializing temporary items:", error);
+					console.error("Allowed items initializing error: ", error);
 				}
 			}, 1000);
 		}

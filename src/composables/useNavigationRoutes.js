@@ -40,6 +40,14 @@ export function useNavigationRoutes() {
 		}, []);
 	}
 
+	function getNavigationRoutesWithAccess(array) {
+		return array.map(item => ({
+			...item,
+			access: true,
+			...(item.children ? { children: getNavigationRoutesWithAccess(item.children) } : {})
+		}));
+	}
+
 	async function init() {
 		if(store.member?.is_admin) {
 			return NavigationRoutes;
@@ -66,6 +74,7 @@ export function useNavigationRoutes() {
 	return {
 		ROLES_MAP,
 		filterMenuItems,
+		getNavigationRoutesWithAccess,
 		init
 	};
 }
