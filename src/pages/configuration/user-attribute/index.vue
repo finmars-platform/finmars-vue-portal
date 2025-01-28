@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-	import UserAttributesBlock from '~/components/pages/configuration/user-attributes/UserAttributesBlock.vue';
+	import UserAttributesBlock from '~/components/pages/configuration/user-attribute/UserAttributesBlock.vue';
 
 	const attributeBlocks = [
 		{

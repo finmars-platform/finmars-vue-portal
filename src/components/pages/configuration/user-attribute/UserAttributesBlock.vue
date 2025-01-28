@@ -57,7 +57,7 @@
 	import { getEntitiesWithoutDynamicAttrsList } from '~/services/meta/metaNotificationClassService';
 	import { deleteByKey } from '~/services/attributeTypeService';
 	import useApi from '~/composables/useApi';
-	import UserAttribute from '~/components/pages/configuration/user-attributes/UserAttribute.vue';
+	import UserAttribute from '~/components/pages/configuration/user-attribute/UserAttribute.vue';
 
 	const dialogsService = inject(FM_DIALOGS_KEY);
 

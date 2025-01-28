@@ -8,11 +8,17 @@
 				>
 					<div class="classifier-editor__root-block">
 						<FmIcon
-							:icon="isRootOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+							:icon="
+								isRootOpen
+									? 'mdi-chevron-up'
+									: 'mdi-chevron-down'
+							"
 							color="var(--on-surface-variant)"
 						/>
 						<FmIcon
-							:icon="size(tree) ? 'mdi-label' : 'mdi-label-outline'"
+							:icon="
+								size(tree) ? 'mdi-label' : 'mdi-label-outline'
+							"
 							size="20"
 							color="var(--on-surface-variant)"
 						/>
@@ -46,6 +52,7 @@
 						:entity-type="entityType"
 						:item="item"
 						:parent-index="index"
+						@scroll="scrollToElement"
 						@update="updateItem($event, index)"
 						@delete="deleteChild"
 					/>
@@ -54,7 +61,11 @@
 		</div>
 
 		<div class="classifier-editor__actions">
-			<FmButton type="secondary" rounded @click.stop.prevent="emits('close')">
+			<FmButton
+				type="secondary"
+				rounded
+				@click.stop.prevent="emits('close')"
+			>
 				Cancel
 			</FmButton>
 
@@ -77,7 +88,12 @@
 	import { onBeforeMount, ref } from 'vue';
 	import cloneDeep from 'lodash/cloneDeep';
 	import size from 'lodash/size';
-	import { FmButton, FmIcon, FmProgressCircular, FmTooltip } from '@finmars/ui';
+	import {
+		FmButton,
+		FmIcon,
+		FmProgressCircular,
+		FmTooltip
+	} from '@finmars/ui';
 	import { getByKey, update } from '~/services/attributeTypeService';
 	import useNotify from '~/composables/useNotify';
 	import ClassifierEditorItem from './ClassifierEditorItem.vue';
@@ -98,7 +114,7 @@
 	const isDirty = ref(false);
 	const classifier = ref({});
 	const tree = ref([]);
-	const isRootOpen = ref(false);
+	const isRootOpen = ref(true);
 
 	function insertItem() {
 		isRootOpen.value = true;
@@ -130,6 +146,10 @@
 		delete data.isOpened;
 		data.children = data.children.map(prepareSavedData);
 		return data;
+	}
+
+	function scrollToElement(el) {
+		el.scrollIntoView({ block: 'center', behavior: 'smooth' });
 	}
 
 	async function save() {

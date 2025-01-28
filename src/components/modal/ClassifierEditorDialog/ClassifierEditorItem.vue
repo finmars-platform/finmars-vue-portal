@@ -3,14 +3,20 @@
 		<div
 			:class="[
 				'classifier-editor-item__content',
-				{ 'classifier-editor-item__content--filled': !!size(item.children) }
+				{
+					'classifier-editor-item__content--filled': !!size(
+						item.children
+					)
+				}
 			]"
 			@click.prevent.stop="toggleList"
 		>
 			<div class="classifier-editor-item__icon">
 				<FmIcon
 					v-if="!!size(item.children)"
-					:icon="item.isOpened ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+					:icon="
+						item.isOpened ? 'mdi-chevron-up' : 'mdi-chevron-down'
+					"
 					color="var(--on-surface-variant)"
 				/>
 			</div>
@@ -27,6 +33,7 @@
 					compact
 					hide-details
 					:autofocus="item.isFocused"
+					@init="inputEl = $event.input"
 					@change="changeName"
 				/>
 			</div>
@@ -58,7 +65,11 @@
 						icon
 						@click.stop.prevent="deleteItem"
 					>
-						<FmIcon icon="mdi-delete" size="20" color="var(--error)" />
+						<FmIcon
+							icon="mdi-delete"
+							size="20"
+							color="var(--error)"
+						/>
 					</FmButton>
 				</template>
 
@@ -73,6 +84,7 @@
 				:entity-type="entityType"
 				:item="item"
 				:parent-index="index"
+				@scroll="emits('scroll', $event)"
 				@update="updateItem($event, index)"
 				@delete="deleteChild"
 			/>
@@ -81,6 +93,7 @@
 </template>
 
 <script setup>
+	import { ref, watch } from 'vue';
 	import size from 'lodash/size';
 	import cloneDeep from 'lodash/cloneDeep';
 	import { FmButton, FmIcon, FmTextField, FmTooltip } from '@finmars/ui';
@@ -101,7 +114,9 @@
 		}
 	});
 
-	const emits = defineEmits(['update', 'delete']);
+	const emits = defineEmits(['update', 'scroll', 'delete']);
+
+	const inputEl = ref(null);
 
 	function toggleList() {
 		if (size(props.item.children) > 0 && !props.disabled) {
@@ -145,6 +160,18 @@
 		updatedItem.children[index] = value;
 		emits('update', updatedItem);
 	}
+
+	watch(
+		() => props.item?.isFocused,
+		(val, oVal) => {
+			if (val && val !== oVal) {
+				setTimeout(() => {
+					emits('scroll', inputEl.value);
+				}, 100);
+			}
+		},
+		{ immediate: true }
+	);
 </script>
 
 <style lang="scss" scoped>
