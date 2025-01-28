@@ -4,11 +4,11 @@ export function useNavigationRoutes() {
 
 	const store = useStore();
 	const ROLES_MAP = {
-		'local.poms.space0i3a2:viewer': ['reports'],
-		'local.poms.space0i3a2:base-data-manager': ['data'],
+		'local.poms.space0i3a2:viewer': ['dashboard', 'reports', 'add-ons'],
+		'local.poms.space0i3a2:base-data-manager': ['data', 'valuations', 'transactions-from-file', 'data-from-file', 'reconciliation', 'workflows'],
 		'local.poms.space0i3a2:configuration-manager': ['Default-settings', 'Account-Types', 'Instrument-Types', 'Transaction-Types', 'Account-Types', 'Transaction-Type-Groups'],
-		'local.poms.space0i3a2:full-data-manager': ['dashboard', 'Member', 'Permissions'],
-		'local.poms.space0i3a2:member': ['dashboard']
+		'local.poms.space0i3a2:full-data-manager': ['dashboard', 'Member', 'Permissions',],
+		'local.poms.space0i3a2:member': ['dashboard', 'reports', 'Member', 'navigation', 'group']
 	};
 
 	function filterMenuItems(navigationRouts, allowedKeys) {
