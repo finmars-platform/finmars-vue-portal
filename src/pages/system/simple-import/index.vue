@@ -32,6 +32,7 @@
 				:items="schemes"
 				:disabled="isLoading || isImporting"
 				class="simple-import-page__select"
+				@update:model-value="onSchemeSelect"
 			/>
 
 			<FmIconButton
@@ -75,6 +76,8 @@
 	const isImporting = ref(false);
 	const schemes = ref([]);
 	const selectedEntity = ref(null);
+
+	const selectedImportSchemeCopy = ref(null);
 	const selectedImportScheme = ref(null);
 
 	const isSchemeEditorOpen = ref(false);
@@ -91,6 +94,10 @@
 	async function onEntitySelect(entity) {
 		selectedImportScheme.value = null;
 		await getSchemeList(entity.key);
+	}
+
+	function onSchemeSelect() {
+		selectedImportSchemeCopy.value = selectedImportScheme.value;
 	}
 
 	async function getSchemeList(contentType) {
@@ -138,7 +145,7 @@
 		isSchemeEditorOpen.value = false;
 		if (shouldRefresh && selectedEntity.value) {
 			await getSchemeList(selectedEntity.value.key);
-			const currentSelectedSchemeId = selectedImportScheme.value.id;
+			const currentSelectedSchemeId = selectedImportSchemeCopy.value.id;
 			const updatedCurrentSelectedScheme = (schemes.value || []).find(
 				(s) => s.id === currentSelectedSchemeId
 			);

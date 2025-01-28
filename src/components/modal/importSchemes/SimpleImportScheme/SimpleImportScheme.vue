@@ -191,7 +191,9 @@
 
 	async function getDynamicAttributes(schemeContentType) {
 		const entityType = findEntityByContentType(schemeContentType);
-		const res = await getList(entityType, { pageSize: 1000 });
+		const res = entityType
+			? await getList(entityType, { pageSize: 1000 })
+			: { results: [] };
 		dynamicAttributes.value = res.results;
 		scheme.value.entity_fields.forEach((item) => {
 			if (item.dynamic_attribute_id !== null) {
