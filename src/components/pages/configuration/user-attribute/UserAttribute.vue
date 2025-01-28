@@ -17,7 +17,10 @@
 							type="secondary"
 							icon
 							@click="
-								emits('action', { action: 'export:classifier', value: attr })
+								emits('action', {
+									action: 'export:classifier',
+									value: attr
+								})
 							"
 						>
 							<FmIcon
@@ -38,7 +41,10 @@
 							type="secondary"
 							icon
 							@click="
-								emits('action', { action: 'import:classifier', value: attr })
+								emits('action', {
+									action: 'import:classifier',
+									value: attr
+								})
 							"
 						>
 							<FmIcon
@@ -59,7 +65,10 @@
 							type="secondary"
 							icon
 							@click="
-								emits('action', { action: 'open:classifier', value: attr })
+								emits('action', {
+									action: 'open:classifier',
+									value: attr
+								})
 							"
 						>
 							<FmIcon
@@ -80,7 +89,10 @@
 							type="secondary"
 							icon
 							@click="
-								emits('action', { action: 'edit:classifier', value: attr })
+								emits('action', {
+									action: 'edit:classifier',
+									value: attr
+								})
 							"
 						>
 							<FmIcon
@@ -101,7 +113,9 @@
 						v-bind="props"
 						type="secondary"
 						icon
-						@click="emits('action', { action: 'edit', value: attr.id })"
+						@click="
+							emits('action', { action: 'edit', value: attr.id })
+						"
 					>
 						<FmIcon
 							icon="mdi-pencil"
@@ -120,9 +134,15 @@
 						v-bind="props"
 						type="secondary"
 						icon
-						@click="emits('action', { action: 'delete', value: attr })"
+						@click="
+							emits('action', { action: 'delete', value: attr })
+						"
 					>
-						<FmIcon icon="mdi-delete" size="20" color="var(--error)" />
+						<FmIcon
+							icon="mdi-delete"
+							size="20"
+							color="var(--error)"
+						/>
 					</FmButton>
 				</template>
 
