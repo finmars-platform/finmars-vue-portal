@@ -19,7 +19,9 @@
 				<div class="entity-type-mapping__body">
 					<div class="entity-type-mapping__body-row">
 						<div class="entity-type-mapping__body-header">
-							<div class="entity-type-mapping__body-title">Your value</div>
+							<div class="entity-type-mapping__body-title">
+								Your value
+							</div>
 							<!-- TODO temporary hide
 							<FmTextField
 								v-model="search.value"
@@ -34,7 +36,9 @@
 						</div>
 
 						<div class="entity-type-mapping__body-header">
-							<div class="entity-type-mapping__body-title">Map on</div>
+							<div class="entity-type-mapping__body-title">
+								Map on
+							</div>
 							<FmTextField
 								v-model="search.name"
 								outlined
@@ -49,10 +53,15 @@
 					<div class="entity-type-mapping__delimiter" />
 
 					<div class="entity-type-mapping__body-content">
-						<template v-for="entity in filteredEntityItems" :key="entity.id">
+						<template
+							v-for="entity in filteredEntityItems"
+							:key="entity.id"
+						>
 							<EntityTypeMappingItem
 								:entity="entity"
-								@update="updateEntityTypeMapping(entity.id, $event)"
+								@update="
+									updateEntityTypeMapping(entity.id, $event)
+								"
 							/>
 						</template>
 					</div>
@@ -63,7 +72,11 @@
 						Cancel
 					</FmButton>
 
-					<FmButton rounded :disabled="isLoading" @click.stop.prevent="save">
+					<FmButton
+						rounded
+						:disabled="isLoading"
+						@click.stop.prevent="save"
+					>
 						Update
 					</FmButton>
 				</div>
@@ -115,8 +128,12 @@
 
 	const filteredEntityItems = computed(() =>
 		entityItems.value.filter((e) => {
-			const entityName = e.user_code ? `${e.name} ('${e.user_code}')` : e.name;
-			return entityName.toLowerCase().includes(search.value.name.toLowerCase());
+			const entityName = e.user_code
+				? `${e.name} ('${e.user_code}')`
+				: e.name;
+			return entityName
+				.toLowerCase()
+				.includes(search.value.name.toLowerCase());
 		})
 	);
 
@@ -154,7 +171,9 @@
 				}
 
 				if ('mapping' in entity) {
-					const entityIndex = entity.mapping.findIndex((m) => m.id === item.id);
+					const entityIndex = entity.mapping.findIndex(
+						(m) => m.id === item.id
+					);
 					if (entityIndex === -1) {
 						entity.mapping.push(item);
 					}
@@ -173,7 +192,9 @@
 	}
 
 	function updateEntityTypeMapping(id, value) {
-		const updatedItemIndex = entityItems.value.findIndex((e) => e.id === id);
+		const updatedItemIndex = entityItems.value.findIndex(
+			(e) => e.id === id
+		);
 		if (updatedItemIndex === -1) {
 			return;
 		}

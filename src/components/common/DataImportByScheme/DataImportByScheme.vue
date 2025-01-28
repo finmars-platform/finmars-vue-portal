@@ -73,18 +73,27 @@
 						{ 'data-import__cell-body--hidden': !blocks.json.show }
 					]"
 				>
+					<!--					v-model:value="blocks.json.data"-->
 					<VAceEditor
-						v-model:value="blocks.json.data"
+						:value="jsonData"
 						lang="json"
 						theme="monokai"
 						:disabled="disabled || isImporting"
 						class="data-import__cell-input"
 						@init="_onEditorInit"
+						@update:value="onJsonUpdate"
 					/>
+
+					<div
+						v-if="blocks.json.error && isEmpty(blocks.json.data)"
+						class="data-import__cell-error"
+					>
+						{{ blocks.json.error }}
+					</div>
 				</div>
 
 				<div
-					v-if="isImporting && !isEmpty(JSON.parse(blocks.json.data))"
+					v-if="isImporting && !isEmpty(blocks.json.data)"
 					class="data-import__cell-loader"
 				>
 					<FmProgressCircular indeterminate size="120" />
@@ -98,7 +107,7 @@
 				<span>{{ blocks.file.data[0]?.name }}</span>
 			</template>
 
-			<template v-if="!isEmpty(JSON.parse(blocks.json.data))">
+			<template v-if="!isEmpty(blocks.json.data)">
 				<b>You have pasted the JSON data to import</b>
 			</template>
 		</div>
@@ -174,10 +183,11 @@
 		},
 		json: {
 			show: false,
-			data: wrapperStringify(''),
+			data: null,
 			error: ''
 		}
 	});
+	const jsonData = ref(wrapperStringify(''));
 	const aceEditor = ref();
 	const process = ref({
 		taskId: null,
@@ -220,16 +230,26 @@
 
 		const hiddenBlock = block === 'file' ? 'json' : 'file';
 		blocks.value[block].show = true;
-		blocks.value[block].data = block === 'file' ? [] : wrapperStringify('');
+		blocks.value[block].data = block === 'file' ? [] : null;
 		blocks.value[block].error = '';
 		blocks.value[hiddenBlock].show = false;
-		blocks.value[hiddenBlock].data =
-			hiddenBlock === 'file' ? [] : wrapperStringify('');
+		blocks.value[hiddenBlock].data = hiddenBlock === 'file' ? [] : null;
 		blocks.value[hiddenBlock].error = '';
 	}
 
 	function onPaste(value) {
-		blocks.value.json.data = value.text.replaceAll('\n', '');
+		jsonData.value = value.text.replaceAll('\n', '');
+	}
+
+	function onJsonUpdate(val) {
+		blocks.value.json.error = '';
+		try {
+			blocks.value.json.data = JSON.parse(val);
+		} catch (e) {
+			blocks.value.json.data = null;
+			blocks.value.json.error = 'This is erroneous JSON.';
+			console.warn('This is erroneous JSON. ', e);
+		}
 	}
 
 	function _onEditorInit(editor) {
@@ -241,7 +261,7 @@
 		});
 		onEditorInit(editor);
 
-		editor.on('paste', onPaste);
+		aceEditor.value.on('paste', onPaste);
 	}
 
 	async function getActiveProcessInfo() {
@@ -267,10 +287,11 @@
 						},
 						json: {
 							show: false,
-							data: wrapperStringify(''),
+							data: null,
 							error: ''
 						}
 					};
+					jsonData.value = wrapperStringify('');
 
 					attachmentsFiles.value =
 						res.status === 'D'
@@ -328,12 +349,9 @@
 			};
 
 			const file = isEmpty(blocks.value.file.data)
-				? new Blob(
-						[wrapperStringify(JSON.parse(blocks.value.json.data))],
-						{
-							type: 'application/json'
-						}
-					)
+				? new Blob([wrapperStringify(blocks.value.json.data)], {
+						type: 'application/json'
+					})
 				: blocks.value.file.data[0];
 
 			const formData = new FormData();
@@ -416,7 +434,7 @@
 			}
 
 			&-editor {
-				padding: 11px;
+				padding: 11px 11px 36px 11px;
 			}
 
 			&-input {

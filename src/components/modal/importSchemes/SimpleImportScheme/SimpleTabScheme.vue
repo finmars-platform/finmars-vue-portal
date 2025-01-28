@@ -3,30 +3,44 @@
 		<div class="simple-tab-scheme__row">
 			<div class="simple-tab-scheme__col simple-tab-scheme__col-1">
 				<div class="simple-tab-scheme__col-row">
-					<div class="simple-tab-scheme__block simple-tab-scheme__calculated">
-						<div class="simple-tab-scheme__block-label">Calculated Columns</div>
+					<div
+						class="simple-tab-scheme__block simple-tab-scheme__calculated"
+					>
+						<div class="simple-tab-scheme__block-label">
+							Calculated Columns
+						</div>
 
 						<div class="simple-tab-scheme__block-body">
 							<SimpleTabSchemeCalculated
 								:scheme="scheme"
 								:loading="loading"
-								@update:valid="isBlockValid.calculated_inputs = $event"
-								@update:block="updateBlock('calculated_inputs', $event)"
+								@update:valid="
+									isBlockValid.calculated_inputs = $event
+								"
+								@update:block="
+									updateBlock('calculated_inputs', $event)
+								"
 							/>
 						</div>
 					</div>
 				</div>
 
 				<div class="simple-tab-scheme__col-row">
-					<div class="simple-tab-scheme__block simple-tab-scheme__imported">
-						<div class="simple-tab-scheme__block-label">Imported Columns</div>
+					<div
+						class="simple-tab-scheme__block simple-tab-scheme__imported"
+					>
+						<div class="simple-tab-scheme__block-label">
+							Imported Columns
+						</div>
 
 						<div class="simple-tab-scheme__block-body">
 							<SimpleTabSchemeImported
 								:scheme="scheme"
 								:loading="loading"
 								@update:valid="isBlockValid.csv_fields = $event"
-								@update:block="updateBlock('csv_fields', $event)"
+								@update:block="
+									updateBlock('csv_fields', $event)
+								"
 							/>
 						</div>
 					</div>
@@ -34,8 +48,12 @@
 			</div>
 
 			<div class="simple-tab-scheme__col simple-tab-scheme__col-2">
-				<div class="simple-tab-scheme__block simple-tab-scheme__matching">
-					<div class="simple-tab-scheme__block-label">Data matching</div>
+				<div
+					class="simple-tab-scheme__block simple-tab-scheme__matching"
+				>
+					<div class="simple-tab-scheme__block-label">
+						Data matching
+					</div>
 
 					<div class="simple-tab-scheme__block-body">
 						<SimpleTabSchemeMatching
