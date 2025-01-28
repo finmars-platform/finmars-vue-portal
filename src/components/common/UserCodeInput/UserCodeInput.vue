@@ -22,33 +22,39 @@
 				/>
 			</div>
 
-			<FmTextField
-				:model-value="userCodeEnd"
-				label="User Code"
-				outlined
-				hide-details
-				:rules="[validateUserCodeEnd]"
-				:disabled="isLoading"
-				@init="userCodeFieldComponent = $event?.component"
-				@update:model-value="updateUserCodeEnd"
-			>
-				<template #append-inner>
-					<FmTooltip location="top" type="secondary">
-						<template #activator="{ props }">
-							<FmIcon
-								class="user-code-input__tooltip"
-								v-bind="props"
-								icon="mdi-information-slab-circle-outline"
-							/>
-						</template>
+			<div class="user-code-input__cell">
+				<FmTextField
+					class="user-code-input__value"
+					:model-value="userCodeEnd"
+					label="User Code"
+					outlined
+					hide-details
+					:rules="[validateUserCodeEnd]"
+					:disabled="isLoading"
+					@init="userCodeFieldComponent = $event?.component"
+					@update:model-value="updateUserCodeEnd"
+				>
+					<template #append-inner>
+						<span />
+					</template>
+				</FmTextField>
 
-						<span>
-							Allowed symbols: Numbers: 0-9, Letters: a-z (lowercase) Special
-							Symbols: _, - (underscore, dash)
-						</span>
-					</FmTooltip>
-				</template>
-			</FmTextField>
+				<FmTooltip location="top" type="secondary">
+					<template #activator="{ props }">
+						<FmIcon
+							class="user-code-input__tooltip"
+							v-bind="props"
+							size="20"
+							icon="mdi-information-slab-circle-outline"
+						/>
+					</template>
+
+					<span>
+						Allowed symbols: Numbers: 0-9, Letters: a-z (lowercase)
+						Special Symbols: _, - (underscore, dash)
+					</span>
+				</FmTooltip>
+			</div>
 
 			<div class="user-code-input__result">
 				<i>Result: </i> {{ editedUserCode }}
@@ -125,8 +131,18 @@
 			position: relative;
 		}
 
+		&__value {
+			:deep(.v-field) {
+				padding-inline-end: 30px;
+			}
+		}
+
 		&__tooltip {
+			position: absolute;
 			cursor: pointer;
+			top: 18px;
+			right: 6px;
+			z-index: 1;
 		}
 
 		&__result {
