@@ -9,7 +9,7 @@ import {
 	NOTIFICATION_STATUSES,
 	NOTIFICATION_CATEGORIES
 } from '@/assets/data/systemNotifications.mock';
-// import useApi from '~/composables/useApi';
+import useApi from '~/composables/useApi';
 
 dayjs.extend(relativeTime);
 
@@ -126,7 +126,10 @@ export default defineStore({
 			});
 		},
 
-		getChannels() {
+		async getChannels() {
+			const res = await useApi('systemNotificationsChannels.get');
+			console.log('RES: ', res);
+
 			return new Promise((resolve) => {
 				setTimeout(() => {
 					this.channels = cloneDeep(CHANNELS);

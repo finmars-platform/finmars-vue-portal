@@ -54,7 +54,7 @@ export default async function useApi(
 	// let baseApi = useStore().current.base_api_url
 	let client = store.realm_code + '/' + store.space_code;
 	if (client) url = url.replace('{client}', client);
-
+	console.log('URL: ', url);
 	let token = useCookie('access_token').value;
 
 	let opts = {
