@@ -999,6 +999,9 @@ export default {
 		put: prefix + '/reference-tables/reference-table/{id}/',
 		delete: prefix + '/reference-tables/reference-table/{id}/'
 	},
+	sidebarNavigationAccess: {
+		get: prefix + '/ui/user-interface-access/{id}/'
+	},
 	sidebarNavigationAccessList: {
 		get: prefix + '/ui/user-interface-access/',
 		post: prefix + '/ui/user-interface-access/',
