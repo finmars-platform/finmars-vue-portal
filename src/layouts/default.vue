@@ -31,7 +31,6 @@
 
 	const notLoadingMember = ref(true);
 	const allowedItems = ref(null);
-	const intervalId = ref(null);
 
 
 	watchEffect(async (onCleanup) => {
@@ -61,23 +60,11 @@
 
 	watch(
 		() => store.member,
-		() => {
-			if (intervalId.value) {
-				clearInterval(intervalId.value);
-				intervalId.value = null;
+		async () => {
+			const result = await init();
+			if (result) {
+				allowedItems.value = result;
 			}
-			intervalId.value = setInterval(async () => {
-				try {
-					const result = await init();
-					if (result) {
-						allowedItems.value = result;
-						clearInterval(intervalId.value);
-						intervalId.value = null;
-					}
-				} catch (error) {
-					console.error("Allowed items initializing error: ", error);
-				}
-			}, 1000);
 		}
 	);
 
