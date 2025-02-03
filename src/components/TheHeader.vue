@@ -30,7 +30,8 @@
 
 	const letters = computed(() => {
 		return (
-			(store?.user?.first_name || store?.user?.username)?.slice(0, 2) || ''
+			(store?.user?.first_name || store?.user?.username)?.slice(0, 2) ||
+			''
 		);
 	});
 	const logoPath = computed(() => {
@@ -93,17 +94,18 @@
 		} else {
 			store.user.data.dark_mode = !store?.user?.data?.dark_mode;
 		}
-		updateUserD();
+
+		updateUser();
 	}
 
-	const updateUserD = useDebounce(function () {
+	const updateUser = function () {
 		const options = {
 			params: { id: store.user.id },
 			body: store.user
 		};
 
 		useApi('user.put', options);
-	}, 2000);
+	};
 
 	init();
 </script>
