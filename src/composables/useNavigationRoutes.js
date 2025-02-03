@@ -70,7 +70,7 @@ export function useNavigationRoutes() {
 		updateItem(defaultItems);
 	}
 
-	async function getRoles () {
+	async function getRoles() {
 		const res = await useApi('roleList.get');
 		if (res?._$error) {
 			useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
@@ -192,12 +192,12 @@ export function useNavigationRoutes() {
 			});
 
 			const results = await Promise.all(filtersArray.map(async (filters) => {
-				const resData = await useApi('sidebarNavigationAccessList.get', { filters });
-				if (resData?._$error) {
-					useNotify({ type: 'error', title: resData._$error.message || resData._$error.detail });
+				const res = await useApi('sidebarNavigationAccessList.get', { filters });
+				if (res?._$error) {
+					useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
 					return null;
 				}
-				return resData[0];
+				return res.results[0];
 			}));
 
 			const allowedItems = results
