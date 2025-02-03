@@ -32,7 +32,6 @@
 	const notLoadingMember = ref(true);
 	const allowedItems = ref(null);
 
-
 	watchEffect(async (onCleanup) => {
 		if (store.isUrlValid) {
 			onCleanup(() => {});
