@@ -98,7 +98,7 @@
 			useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
 		} else {
 			count.value = res.count;
-			items.value = res.result;
+			items.value = res.results;
 		}
 		isLoading.value = false;
 	}
