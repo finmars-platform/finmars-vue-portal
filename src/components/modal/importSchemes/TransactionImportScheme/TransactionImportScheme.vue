@@ -21,7 +21,10 @@
 						/>
 					</div>
 
-					<div v-if="isLoading" class="transaction-import-scheme__loader">
+					<div
+						v-if="isLoading"
+						class="transaction-import-scheme__loader"
+					>
 						<FmProgressLinear indeterminate />
 					</div>
 				</div>
