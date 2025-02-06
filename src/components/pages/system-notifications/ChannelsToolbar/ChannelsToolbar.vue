@@ -71,7 +71,7 @@
 		setNotificationsFilter({ search: text });
 	}
 
-	const updateSearchTextDebounced = debounce(updateSearchText, 300);
+	const updateSearchTextDebounced = debounce(updateSearchText, 400);
 
 	function clearSearch() {
 		updateSearchText('');

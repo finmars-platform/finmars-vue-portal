@@ -9,7 +9,7 @@
 
 		<div class="channel-adding-menu__content">
 			<div
-				v-for="channel in allAvailableChannels"
+				v-for="channel in allAvailableChannelsFiltered"
 				:key="channel.user_code"
 				:class="[
 					'channel-adding-menu__item',
@@ -20,13 +20,15 @@
 				]"
 				@click="_joinChannel(channel)"
 			>
-				<div class="channel-adding-menu__item-title">
-					#{{ channel.user_code }} ({{ channel.name }})
-				</div>
+				<div
+					class="channel-adding-menu__item-title"
+					v-fm-html="getChannelName(channel)"
+				/>
 
-				<div class="channel-adding-menu__item-description">
-					{{ channel.description }}
-				</div>
+				<div
+					class="channel-adding-menu__item-description"
+					v-fm-html="highlightText(channel.description, text)"
+				/>
 
 				<div class="channel-adding-menu__item-info">
 					{{ isChannelJoined(channel) ? 'Joined' : 'Join' }}
@@ -55,10 +57,18 @@
 </template>
 
 <script setup>
-	import { onBeforeMount, ref } from 'vue';
+	import { computed, onBeforeMount, ref } from 'vue';
 	import { storeToRefs } from 'pinia';
-	import { FmIcon, FmProgressCircular, FmTextField } from '@finmars/ui';
+	import {
+		FmIcon,
+		FmProgressCircular,
+		FmTextField,
+		FmHtml
+	} from '@finmars/ui';
 	import useNotificationsStore from '~/stores/useNotificationsStore';
+	import { highlightText } from '~/utils/highlightString';
+
+	const vFmHtml = FmHtml;
 
 	const emits = defineEmits(['refresh']);
 
@@ -69,6 +79,19 @@
 	const isLoading = ref(false);
 	const allAvailableChannels = ref([]);
 	const text = ref('');
+
+	const allAvailableChannelsFiltered = computed(() =>
+		allAvailableChannels.value.filter(
+			(c) =>
+				c.name.toLowerCase().includes(text.value.toLowerCase()) ||
+				c.description.toLowerCase().includes(text.value.toLowerCase())
+		)
+	);
+
+	function getChannelName(channel) {
+		const name = `#${channel.user_code} ${channel.name}`;
+		return highlightText(name, text.value);
+	}
 
 	function isChannelJoined(channel) {
 		const index = channels.value.findIndex(
@@ -106,6 +129,13 @@
 </script>
 
 <style lang="scss" scoped>
+	@import '../../../../assets/scss/core/_mixins.scss';
+
+	:global(.text-highlight) {
+		font-weight: 700;
+		color: var(--primary);
+	}
+
 	.channel-adding-menu {
 		position: relative;
 		width: 100%;
@@ -130,22 +160,17 @@
 			border-bottom: 1px solid var(--outline-variant);
 
 			&-title {
-				display: flex;
-				justify-content: flex-start;
-				align-items: center;
 				font: var(--label-large-pro-font);
 				color: var(--on-surface);
 				margin-bottom: 10px;
+				@include text-overflow-ellipsis();
 			}
 
 			&-description {
 				font: var(--body-medium-font);
 				color: var(--on-surface);
-				max-width: 100%;
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
 				margin-bottom: 16px;
+				@include text-overflow-ellipsis();
 			}
 
 			&-info {

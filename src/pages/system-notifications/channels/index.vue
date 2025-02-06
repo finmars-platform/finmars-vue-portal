@@ -7,9 +7,7 @@
 
 		<div class="notification-channels__body">
 			<div class="notification-channels__list">
-				<ChannelList
-					@refresh="() => console.log('Need refresh data')"
-				/>
+				<ChannelList @refresh="getChannels" />
 			</div>
 
 			<div class="notification-channels__content">
@@ -44,7 +42,13 @@
 </template>
 
 <script setup>
-	import { defineAsyncComponent, inject, onBeforeMount, ref } from 'vue';
+	import {
+		defineAsyncComponent,
+		inject,
+		onBeforeMount,
+		ref,
+		watch
+	} from 'vue';
 	import { storeToRefs } from 'pinia';
 	import {
 		FmIconButton,
@@ -63,8 +67,10 @@
 
 	const notificationsStore = useNotificationsStore();
 
-	const { currentChannel } = storeToRefs(notificationsStore);
+	const { currentChannel, notificationsFilter } =
+		storeToRefs(notificationsStore);
 	const {
+		setNotificationsFilter,
 		getChannels,
 		getNotifications,
 		getNotificationsStatuses,
@@ -88,6 +94,8 @@
 					try {
 						isLoading.value = true;
 						await leaveChannel(currentChannel.value.user_code);
+						setNotificationsFilter({ channel: '' });
+						await getChannels();
 					} finally {
 						isLoading.value = false;
 					}
@@ -127,6 +135,14 @@
 	onBeforeMount(async () => {
 		await loadData();
 	});
+
+	watch(
+		() => notificationsFilter.value,
+		async () => {
+			await getNotifications();
+		},
+		{ deep: true }
+	);
 </script>
 
 <style lang="scss" scoped>

@@ -1012,6 +1012,12 @@ export default {
 		delete: prefix + '/ui/user-interface-access/{id}/'
 	},
 
+	systemNotificationsCategoryList: {
+		get: prefix + '/system-notifications/categories/'
+	},
+	systemNotificationsStatusList: {
+		get: prefix + '/system-notifications/statuses/'
+	},
 	systemNotifications: {
 		get: prefix + '/system-notifications/system-notifications/', // get all notifications for a user
 		post: prefix + '/system-notifications/system-notifications/', // create a notification

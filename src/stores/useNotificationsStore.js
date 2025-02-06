@@ -1,17 +1,4 @@
-// FixMe All actions here work with mock data. It will be necessary to rewrite the code as soon as real APIs become available
-import cloneDeep from 'lodash/cloneDeep';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import {
-	ALL_AVAILABLE_CHANNELS,
-	CHANNELS,
-	NOTIFICATIONS,
-	NOTIFICATION_STATUSES,
-	NOTIFICATION_CATEGORIES
-} from '@/assets/data/systemNotifications.mock';
 import useApi from '~/composables/useApi';
-
-dayjs.extend(relativeTime);
 
 export default defineStore({
 	id: 'notifications',
@@ -38,149 +25,134 @@ export default defineStore({
 				}
 				return c.user_code === channel;
 			});
-		},
-
-		selectedChannelNotifications: (state) => {
-			const {
-				category: currentCategory,
-				channel: currentChannel,
-				status: currentStatus,
-				dateFrom,
-				dateTo,
-				search
-			} = state.notificationsFilter;
-
-			return state.notifications
-				.filter((n) => {
-					const {
-						category,
-						channel,
-						current_status,
-						created_at,
-						title,
-						content
-					} = n;
-
-					const isTheSameCategory =
-						!currentCategory || category === currentCategory;
-					const isTheSameChannel =
-						!currentChannel || channel === currentChannel;
-					const isTheSameStatus =
-						!currentStatus || current_status === currentStatus;
-					const isTheSameText =
-						!search ||
-						title.toLowerCase().includes(search.toLowerCase()) ||
-						content.toLowerCase().includes(search.toLowerCase());
-
-					const transformedCreatedAt =
-						dayjs(created_at).format('YYYY-MM-DD');
-					const dateMoreThanFrom =
-						!dateFrom ||
-						dayjs(transformedCreatedAt).diff(
-							dayjs(dateFrom),
-							'day'
-						) >= 0;
-					const dateLessThanTo =
-						!dateTo ||
-						dayjs(dateTo).diff(
-							dayjs(transformedCreatedAt),
-							'day'
-						) >= 0;
-
-					const isTheSameDate = dateMoreThanFrom && dateLessThanTo;
-
-					return (
-						isTheSameCategory &&
-						isTheSameChannel &&
-						isTheSameStatus &&
-						isTheSameText &&
-						isTheSameDate
-					);
-				})
-				.sort((a, b) => (a.created_at > b.created_at ? 1 : -1));
 		}
 	},
 	actions: {
 		setNotificationsFilter(value) {
+			if (
+				JSON.stringify(value) ===
+				JSON.stringify(this.notificationsFilter)
+			)
+				return;
+
 			this.notificationsFilter = {
 				...this.notificationsFilter,
 				...value
 			};
 		},
 
-		getNotificationsStatuses() {
-			return new Promise((resolve) => {
-				setTimeout(() => {
-					this.statuses = cloneDeep(NOTIFICATION_STATUSES);
-					resolve();
-				}, 600);
-			});
+		async getNotificationsStatuses() {
+			try {
+				this.statuses = await useApi(
+					'systemNotificationsStatusList.get',
+					{
+						filters: { page: 1, pageSize: 1000 }
+					}
+				);
+			} catch (e) {
+				console.error('Statuses load error. ', e);
+			}
 		},
 
-		getNotificationsCategories() {
-			return new Promise((resolve) => {
-				setTimeout(() => {
-					this.categories = cloneDeep(NOTIFICATION_CATEGORIES);
-					resolve();
-				}, 700);
-			});
+		async getNotificationsCategories() {
+			try {
+				this.categories = await useApi(
+					'systemNotificationsCategoryList.get',
+					{
+						filters: { page: 1, pageSize: 1000 }
+					}
+				);
+			} catch (e) {
+				console.error('Categories load error. ', e);
+			}
 		},
 
 		async getChannels() {
-			const res = await useApi('systemNotificationsChannels.get');
-			console.log('RES: ', res);
-
-			return new Promise((resolve) => {
-				setTimeout(() => {
-					this.channels = cloneDeep(CHANNELS);
-					resolve();
-				}, 400);
-			});
+			try {
+				this.channels = await useApi(
+					'systemNotificationsChannels.get',
+					{
+						filters: { page: 1, pageSize: 1000 }
+					}
+				);
+			} catch (e) {
+				console.error('Channels load error. ', e);
+			}
 		},
 
-		getAllAvailableChannels() {
-			return new Promise((resolve) => {
-				setTimeout(() => {
-					resolve(cloneDeep(ALL_AVAILABLE_CHANNELS));
-				}, 550);
-			});
+		async getAllAvailableChannels(options = {}) {
+			try {
+				const res = await useApi('systemNotificationsChannelsAll.get', {
+					filters: {
+						...options,
+						page: 1,
+						pageSize: 1000
+					}
+				});
+				return res.results;
+			} catch (e) {
+				console.error('All available channels load error. ', e);
+				return [];
+			}
 		},
 
-		getNotifications(filter = {}) {
-			this.setNotificationsFilter(filter);
+		async getNotifications() {
+			try {
+				const { channel, category, status, dateFrom, dateTo, search } =
+					this.notificationsFilter;
 
-			return new Promise((resolve) => {
-				setTimeout(() => {
-					this.notifications = cloneDeep(NOTIFICATIONS);
-					resolve();
-				}, 500);
-			});
+				const data = await useApi('systemNotifications.get', {
+					filters: {
+						...(channel && { channel }),
+						...(status && { status }),
+						...(category && { category }),
+						...(dateFrom && { date_from: dateFrom }),
+						...(dateTo && { date_to: dateTo }),
+						...(search && { search }),
+						page: 1,
+						pageSize: 1000
+					}
+				});
+				this.notifications = data.results;
+				return data.results;
+			} catch (e) {
+				console.error('Notifications load error. ', e);
+				return [];
+			}
 		},
 
 		joinChannel(channel) {
-			console.log('join channel: ', channel.user_code);
-			return new Promise((resolve) => {
-				setTimeout(() => {
-					this.channels.push(channel);
-					resolve();
-				}, 350);
-			});
+			try {
+				const channelUserCode = channel?.user_code;
+				if (!channelUserCode) {
+					console.error('Channel user_code does not exist');
+					return;
+				}
+
+				return useApi('systemNotificationsChannelJoin.post', {
+					params: { channelUserCode }
+				});
+			} catch (e) {
+				console.error(
+					`Error during join the channel ${channelUserCode}`,
+					e
+				);
+			}
 		},
 
 		leaveChannel(user_code) {
-			console.log('leave channel: ', user_code);
-			return new Promise((resolve) => {
-				setTimeout(() => {
-					console.log(`The user left channel ${user_code}`);
-					const channelIndex = this.channels.findIndex(
-						(c) => c.user_code === user_code
-					);
-					channelIndex > -1 && this.channels.splice(channelIndex, 1);
+			try {
+				if (!user_code) {
+					console.error('Channel user_code does not exist');
+					return;
+				}
 
-					this.setNotificationsFilter({ channel: '' });
-					resolve();
-				}, 500);
-			});
+				return useApi('systemNotificationsChannelLeave.post', {
+					params: { channelUserCode: user_code }
+				});
+			} catch (e) {
+				console.error(`Error during leave the channel ${user_code}`, e);
+			}
 		}
 	}
 });

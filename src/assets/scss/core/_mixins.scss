@@ -7,3 +7,10 @@
         src: url("#{$file-path}.ttf") format("truetype");
     }
 }
+
+@mixin text-overflow-ellipsis($width: 100%) {
+	max-width: $width;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
