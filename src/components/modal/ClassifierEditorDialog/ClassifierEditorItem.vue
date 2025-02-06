@@ -93,7 +93,7 @@
 </template>
 
 <script setup>
-	import { ref, watch } from 'vue';
+	import { onMounted, ref, watch } from 'vue';
 	import size from 'lodash/size';
 	import cloneDeep from 'lodash/cloneDeep';
 	import { FmButton, FmIcon, FmTextField, FmTooltip } from '@finmars/ui';
@@ -160,6 +160,15 @@
 		updatedItem.children[index] = value;
 		emits('update', updatedItem);
 	}
+
+	onMounted(() => {
+		if (props.item.isFocused) {
+			setTimeout(() => {
+				console.log('SEL');
+				inputEl.value.select();
+			}, 50);
+		}
+	});
 
 	watch(
 		() => props.item?.isFocused,
