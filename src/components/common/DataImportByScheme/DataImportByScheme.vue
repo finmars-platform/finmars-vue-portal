@@ -235,10 +235,17 @@
 		blocks.value[hiddenBlock].show = false;
 		blocks.value[hiddenBlock].data = hiddenBlock === 'file' ? [] : null;
 		blocks.value[hiddenBlock].error = '';
+		if (hiddenBlock === 'json') {
+			aceEditor.value.setValue(null);
+		}
 	}
 
 	function onPaste(value) {
-		jsonData.value = value.text.replaceAll('\n', '');
+		try {
+			jsonData.value = JSON.stringify(JSON.parse(value.text), null, 4);
+		} catch (e) {
+			jsonData.value = value.text.replaceAll('\n', '');
+		}
 	}
 
 	function onJsonUpdate(val) {
@@ -260,6 +267,7 @@
 			enableSnippets: true
 		});
 		onEditorInit(editor);
+		aceEditor.value.setValue(blocks.value.json.data);
 
 		aceEditor.value.on('paste', onPaste);
 	}

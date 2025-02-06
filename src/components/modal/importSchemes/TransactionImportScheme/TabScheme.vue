@@ -52,13 +52,15 @@
 			<div class="tab-scheme__block-body">
 				<template v-if="dryRun.processingResult?.result">
 					<div
-						v-for="(item, index) in dryRun.processingResult?.result?.items"
+						v-for="(item, index) in dryRun.processingResult?.result
+							?.items"
 						:key="index"
 						:class="[
 							'tab-scheme__dry-run-result-item',
 							{
 								'tab-scheme__dry-run-result-item--active':
-									index === dryRun.processingResultActiveItemIndex
+									index ===
+									dryRun.processingResultActiveItemIndex
 							}
 						]"
 						@click.prevent.stop="activateResultItem(item, index)"
@@ -86,7 +88,8 @@
 				{
 					'tab-scheme__body--short': dryRun.processingResult,
 					'tab-scheme__body--shorter': dryRun.isShow,
-					'tab-scheme__body--shortest': dryRun.isShow && dryRun.processingResult
+					'tab-scheme__body--shortest':
+						dryRun.isShow && dryRun.processingResult
 				}
 			]"
 		>
@@ -96,7 +99,9 @@
 					block="inputs"
 					label="Imported Columns"
 					:scheme="scheme"
-					:dry-run-result-active-item="dryRun.processingResultActiveItem"
+					:dry-run-result-active-item="
+						dryRun.processingResultActiveItem
+					"
 					@update:block="updateBlock('inputs', $event)"
 					@update:valid="isBlockValid.inputs = $event"
 				/>
@@ -107,7 +112,9 @@
 					block="calculated_inputs"
 					label="Calculated Variables"
 					:scheme="scheme"
-					:dry-run-result-active-item="dryRun.processingResultActiveItem"
+					:dry-run-result-active-item="
+						dryRun.processingResultActiveItem
+					"
 					@update:block="updateBlock('calculated_inputs', $event)"
 					@update:valid="isBlockValid.calculated_inputs = $event"
 				/>
@@ -117,7 +124,9 @@
 				<TabSchemeScenarios
 					label="Transaction Type Matching Scenarios"
 					:scheme="scheme"
-					:dry-run-result-active-item="dryRun.processingResultActiveItem"
+					:dry-run-result-active-item="
+						dryRun.processingResultActiveItem
+					"
 					@update:block="updateBlock('rule_scenarios', $event)"
 				/>
 			</div>
@@ -185,10 +194,17 @@
 
 			const currentDryRunData = dryRun.value.editor.getValue();
 			const formData = new FormData();
-			const blob = new Blob([JSON.stringify(JSON.parse(currentDryRunData))], {
-				type: 'application/json'
-			});
-			formData.append('file', blob, `input ${new Date().getUTCDate()}.json`);
+			const blob = new Blob(
+				[JSON.stringify(JSON.parse(currentDryRunData))],
+				{
+					type: 'application/json'
+				}
+			);
+			formData.append(
+				'file',
+				blob,
+				`input ${new Date().getUTCDate()}.json`
+			);
 			formData.append('scheme', props.scheme.id);
 			const res = await useApi('importSchemeDryRun.post', {
 				body: formData
