@@ -364,6 +364,9 @@ export default {
 		post: prefix + '/configuration/configuration/',
 		put: prefix + '/configuration/configuration/{id}/'
 	},
+	configurationImport: {
+		post: prefix + '/configuration/configuration/import-configuration/'
+	},
 	memberList: {
 		get: prefix + '/users/member/'
 	},
