@@ -67,19 +67,6 @@
 					<span>{{ isListOpened ? 'Hide ' : 'Show ' }}inputs</span>
 				</FmTooltip>
 
-				<FmTooltip type="secondary" location="top">
-					<template #activator="{ props }">
-						<FmIconButton
-							v-bind="props"
-							icon="mdi-pencil"
-							variant="outlined"
-							@click.stop.prevent="openTransactionTypeEditor"
-						/>
-					</template>
-
-					<span>Edit transaction type</span>
-				</FmTooltip>
-
 				<FmTooltip
 					v-if="!isNotMainScenario"
 					type="secondary"
@@ -244,16 +231,6 @@
 			functions: [getFunctions(schemeInputs.value)]
 		};
 	});
-
-	function openTransactionTypeEditor() {
-		const { transaction_type_object = {} } = props.scenario;
-		const { user_code } = transaction_type_object;
-
-		if (user_code)
-			window.location.href = getUrlToOldApp(
-				`/data/transaction-type/${user_code}`
-			);
-	}
 
 	function removeItem() {
 		currentScenarioIndex.value !== -1 &&

@@ -35,7 +35,9 @@
 					Add scenario
 				</FmButton>
 
-				<h3 class="tab-scheme-scenarios__sub-label">Default Rule Scenario</h3>
+				<h3 class="tab-scheme-scenarios__sub-label">
+					Default Rule Scenario
+				</h3>
 
 				<TabSchemeScenariosItem
 					:scheme="scheme"
@@ -46,7 +48,9 @@
 					@update="updateScenarios"
 				/>
 
-				<h3 class="tab-scheme-scenarios__sub-label">Error Rule Scenario</h3>
+				<h3 class="tab-scheme-scenarios__sub-label">
+					Error Rule Scenario
+				</h3>
 
 				<TabSchemeScenariosItem
 					:scheme="scheme"
@@ -110,7 +114,9 @@
 			);
 			if (item.transaction_type_object) {
 				item.frontOptions.transactionTypeInputs =
-					s.transaction_type_object.inputs.filter((i) => i.value_type !== 120);
+					s.transaction_type_object.inputs.filter(
+						(i) => i.value_type !== 120
+					);
 			} else {
 				item.error_message = '⚠️ Transaction Type is not found';
 			}
