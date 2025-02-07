@@ -1,18 +1,94 @@
 import { NavigationRoutes } from '@finmars/ui';
+import cloneDeep from 'lodash/cloneDeep';
 
 export function useNavigationRoutes() {
-
 	const store = useStore();
-	const ROLES_MAP = {
-		'local.poms.space0i3a2:viewer': ['dashboard', 'reports', 'add-ons'],
-		'local.poms.space0i3a2:base-data-manager': ['data', 'valuations', 'transactions-from-file', 'data-from-file', 'reconciliation', 'workflows'],
-		'local.poms.space0i3a2:configuration-manager': ['Default-settings', 'Account-Types', 'Instrument-Types', 'Transaction-Types', 'Account-Types', 'Transaction-Type-Groups'],
-		'local.poms.space0i3a2:full-data-manager': ['dashboard', 'Member', 'Permissions',],
-		'local.poms.space0i3a2:member': ['dashboard', 'reports', 'Member', 'navigation', 'group']
-	};
+	const router = useRouter();
+	const route = useRoute();
+
+	const selectedItem = ref({
+		id: '',
+		name: '',
+		role: '',
+		user_code: '',
+		configuration_code: '',
+		allowed_items: []
+	});
+	const itemDataForReset = ref(null);
+	const defaultItems = ref([]);
+	const roles = ref([]);
+
+	function enableAll(defaultItems) {
+		const enableItems = (list) => {
+			list.forEach(item => {
+				item.access = true;
+				if (item.children) {
+					enableItems(item.children);
+				}
+			});
+		};
+		enableItems(defaultItems);
+	}
+
+	function disableAll(defaultItems) {
+		const disableItems = (list) => {
+			list.forEach(item => {
+				item.access = false;
+				if (item.children) {
+					disableItems(item.children);
+				}
+			});
+		};
+		disableItems(defaultItems);
+	}
+
+	function updateAccessList(defaultItems, selectedItem) {
+		const initList = (list) => {
+			list.forEach((item) => {
+				item.access = selectedItem.allowed_items.includes(item.key);
+				if (item.children) {
+					initList(item.children);
+				}
+			});
+		};
+		initList(defaultItems);
+	}
+
+	function updateList(defaultItems, updatedItem) {
+		const updateItem = (list) => {
+			const index = list.findIndex(item => item.key === updatedItem.key);
+			if (index !== -1) {
+				list[index] = updatedItem;
+			} else {
+				list.forEach(item => {
+					if (item.children) {
+						updateItem(item.children);
+					}
+				});
+			}
+		};
+		updateItem(defaultItems);
+	}
+
+	async function getRoles() {
+		const res = await useApi('roleList.get');
+		if (res?._$error) {
+			useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
+		} else {
+			roles.value = res.results.map((item) => ({
+				title: item.name,
+				value: item.user_code
+			}));
+		}
+	}
+
+	async function reset() {
+		selectedItem.value = cloneDeep(itemDataForReset.value);
+		await updateAccessList(defaultItems.value, selectedItem.value);
+	}
 
 	function filterMenuItems(navigationRouts, allowedKeys) {
-		if (!allowedKeys) return;
+		if (!allowedKeys) return navigationRouts;
 
 		return navigationRouts.reduce((acc, item) => {
 			const hasChildren = Array.isArray(item.children) && item.children.length > 0;
@@ -42,6 +118,67 @@ export function useNavigationRoutes() {
 		}, []);
 	}
 
+	async function saveItem(defaultItems, selectedItem, isEdit = false) {
+		let listToSave = [];
+
+		const findItems = (list) => {
+			list.forEach(item => {
+				if (item.access) {
+					listToSave.push(item.key);
+				}
+				if (item.children) {
+					findItems(item.children);
+				}
+			});
+		};
+		findItems(defaultItems);
+		const payload = {
+			role: selectedItem.role,
+			name: selectedItem.name,
+			user_code: selectedItem.user_code,
+			configuration_code: selectedItem.configuration_code,
+			allowed_items: listToSave
+		};
+		let apiMethod = '';
+		let requestData = {};
+
+		if (isEdit) {
+			apiMethod = 'sidebarNavigationAccessList.put';
+			requestData = { params: { id: route.params.id }, body: payload };
+		} else {
+			apiMethod = 'sidebarNavigationAccessList.post';
+			requestData = { body: payload };
+		}
+
+		const res = await useApi(apiMethod, requestData);
+		if (res?._$error) {
+			useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
+		} else {
+			useNotify({ type: 'success', title: 'Successfully saved !' });
+		}
+	}
+
+	async function deleteItem(selectedItem, isGoBack) {
+		const confirm = await useConfirm({
+			title: 'Delete',
+			text: `Are you sure you want delete ${selectedItem.user_code}?`
+		});
+		if (confirm) {
+			const res = await useApi('sidebarNavigationAccessList.delete', {
+				params: { id: selectedItem.id }
+			});
+			if (res?._$error) {
+				useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
+			} else {
+				if (isGoBack) {
+					router.back();
+				} else {
+					await init();
+				}
+			}
+		}
+	}
+
 	async function init() {
 		if (store.member?.is_admin) {
 			return NavigationRoutes;
@@ -55,12 +192,12 @@ export function useNavigationRoutes() {
 			});
 
 			const results = await Promise.all(filtersArray.map(async (filters) => {
-				const resData = await useApi('sidebarNavigationAccessList.get', { filters });
-				if (resData?._$error) {
-					useNotify({ type: 'error', title: resData._$error.message || resData._$error.detail });
+				const res = await useApi('sidebarNavigationAccessList.get', { filters });
+				if (res?._$error) {
+					useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
 					return null;
 				}
-				return resData[0];
+				return res.results[0];
 			}));
 
 			const allowedItems = results
@@ -78,8 +215,18 @@ export function useNavigationRoutes() {
 	}
 
 	return {
-		ROLES_MAP,
-		filterMenuItems,
+		selectedItem,
+		itemDataForReset,
+		defaultItems,
+		roles,
+		enableAll,
+		disableAll,
+		reset,
+		updateAccessList,
+		updateList,
+		getRoles,
+		saveItem,
+		deleteItem,
 		init
 	};
 }

@@ -369,6 +369,9 @@ export default {
 		post: prefix + '/configuration/configuration/',
 		put: prefix + '/configuration/configuration/{id}/'
 	},
+	configurationImport: {
+		post: prefix + '/configuration/configuration/import-configuration/'
+	},
 	memberList: {
 		get: prefix + '/users/member/'
 	},
@@ -1003,6 +1006,9 @@ export default {
 		post: prefix + '/reference-tables/reference-table/',
 		put: prefix + '/reference-tables/reference-table/{id}/',
 		delete: prefix + '/reference-tables/reference-table/{id}/'
+	},
+	sidebarNavigationAccess: {
+		get: prefix + '/ui/user-interface-access/{id}/'
 	},
 	sidebarNavigationAccessList: {
 		get: prefix + '/ui/user-interface-access/',

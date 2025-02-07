@@ -1,5 +1,5 @@
 <template>
-	<div class="recursive-row">
+	<div>
 		<div class="row-item">
 			<FmCheckbox
 				v-model="clickedElement.access"
@@ -58,6 +58,7 @@
 		justify-content: flex-start;
 		flex-wrap: nowrap;
 		gap: var(--spacing-8);
+		margin-bottom: var(--spacing-4);
 
 		span {
 			width: 100%;
