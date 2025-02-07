@@ -1,4 +1,6 @@
 import { debounce } from 'lodash';
+import { storeToRefs } from 'pinia';
+import useStore from '~/stores/useStore';
 
 export function useMarketplace() {
 	const items = ref([]);
@@ -95,7 +97,7 @@ export function useMarketplace() {
 	}
 
 	async function getData() {
-		const { configCodes } = useStore();
+		const { configCodes } = storeToRefs(useStore());
 
 		readyStatus.data = false;
 
@@ -113,7 +115,9 @@ export function useMarketplace() {
 		};
 
 		try {
-			const data = await useApi('marketplaceList.get', { filters: payload });
+			const data = await useApi('marketplaceList.get', {
+				filters: payload
+			});
 
 			if (data) {
 				generatePages(data);
@@ -121,9 +125,10 @@ export function useMarketplace() {
 				items.value = data.results;
 
 				items.value.forEach((remoteItem) => {
-					configCodes.forEach(function (localItem) {
+					configCodes.value.forEach(function (localItem) {
 						if (
-							remoteItem.configuration_code === localItem.configuration_code
+							remoteItem.configuration_code ===
+							localItem.configuration_code
 						) {
 							remoteItem.localItem = localItem;
 						}
@@ -146,7 +151,9 @@ export function useMarketplace() {
 				is_package: item.is_package
 			};
 
-			const res = await useApi('marketplaceInstall.post', { body: payload });
+			const res = await useApi('marketplaceInstall.post', {
+				body: payload
+			});
 
 			activeTaskId.value = res.task_id;
 		} catch (e) {
@@ -162,8 +169,8 @@ export function useMarketplace() {
 	}
 
 	const setFiltersQueryDebounced = debounce(async (query) => {
-		await setFiltersQuery(query)
-	}, 800)
+		await setFiltersQuery(query);
+	}, 800);
 
 	function setShowModules(bool) {
 		currentPage.value = 1;
