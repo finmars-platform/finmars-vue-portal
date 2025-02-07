@@ -53,7 +53,7 @@
 	import { storeToRefs } from 'pinia';
 	import size from 'lodash/size';
 	import { FmIconButton, FmMenu, FmMenuItem } from '@finmars/ui';
-	import useNotificationsStore from '~/stores/useNotificationsStore';
+	import { useNotificationsStore } from '~/stores/useNotificationsStore';
 	import {
 		CHANNEL_ACTIONS,
 		CHANNEL_MUTE_ACTIONS,

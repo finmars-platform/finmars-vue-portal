@@ -47,7 +47,7 @@
 	import { storeToRefs } from 'pinia';
 	import debounce from 'lodash/debounce';
 	import { FmIcon, FmIconButton, FmTextField } from '@finmars/ui';
-	import useNotificationsStore from '~/stores/useNotificationsStore';
+	import { useNotificationsStore } from '~/stores/useNotificationsStore';
 	import ChannelsToolbarCategory from './ChannelsToolbarCategory.vue';
 	import ChannelsToolbarStatus from './ChannelsToolbarStatus.vue';
 	import ChannelsToolbarDate from './ChannelsToolbarDate.vue';
@@ -65,13 +65,13 @@
 	const { notificationsFilter } = storeToRefs(notificationsStore);
 	const { setNotificationsFilter } = notificationsStore;
 
-	const isSearchOpen = ref(false);
+	const isSearchOpen = ref(!!notificationsFilter.value.search);
 
 	function updateSearchText(text) {
 		setNotificationsFilter({ search: text });
 	}
 
-	const updateSearchTextDebounced = debounce(updateSearchText, 400);
+	const updateSearchTextDebounced = debounce(updateSearchText, 500);
 
 	function clearSearch() {
 		updateSearchText('');

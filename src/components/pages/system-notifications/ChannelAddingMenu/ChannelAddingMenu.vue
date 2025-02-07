@@ -65,7 +65,7 @@
 		FmTextField,
 		FmHtml
 	} from '@finmars/ui';
-	import useNotificationsStore from '~/stores/useNotificationsStore';
+	import { useNotificationsStore } from '~/stores/useNotificationsStore';
 	import { highlightText } from '~/utils/highlightString';
 
 	const vFmHtml = FmHtml;
@@ -117,7 +117,9 @@
 	async function loadAllAvailableChannels() {
 		try {
 			isLoading.value = true;
-			allAvailableChannels.value = await getAllAvailableChannels();
+			const list = await getAllAvailableChannels();
+			list.sort((a, b) => (a.user_code > b.user_code ? 1 : -1));
+			allAvailableChannels.value = list;
 		} finally {
 			isLoading.value = false;
 		}

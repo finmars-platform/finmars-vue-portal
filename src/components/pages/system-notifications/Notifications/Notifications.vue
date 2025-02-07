@@ -35,7 +35,7 @@
 	import { storeToRefs } from 'pinia';
 	import dayjs from 'dayjs';
 	import { FmHtml } from '@finmars/ui';
-	import useNotificationsStore from '~/stores/useNotificationsStore';
+	import { useNotificationsStore } from '~/stores/useNotificationsStore';
 	import { highlightText } from '~/utils/highlightString';
 
 	const vFmHtml = FmHtml;

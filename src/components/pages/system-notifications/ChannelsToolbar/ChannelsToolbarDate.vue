@@ -50,7 +50,7 @@
 	import { storeToRefs } from 'pinia';
 	import dayjs from 'dayjs';
 	import { FmButton, FmDateEditor, FmMenu } from '@finmars/ui';
-	import useNotificationsStore from '~/stores/useNotificationsStore';
+	import { useNotificationsStore } from '~/stores/useNotificationsStore';
 
 	const notificationsStore = useNotificationsStore();
 	const { notificationsFilter } = storeToRefs(notificationsStore);
@@ -66,13 +66,17 @@
 
 	const minDate = computed(() => {
 		if (dateFromFilter.value) {
-			return dayjs(dateFromFilter.value).add(1, 'day').format('YYYY-MM-DD');
+			return dayjs(dateFromFilter.value)
+				.add(1, 'day')
+				.format('YYYY-MM-DD');
 		}
 		return '1970-01-01';
 	});
 	const maxDate = computed(() => {
 		if (dateToFilter.value) {
-			return dayjs(dateToFilter.value).subtract(1, 'day').format('YYYY-MM-DD');
+			return dayjs(dateToFilter.value)
+				.subtract(1, 'day')
+				.format('YYYY-MM-DD');
 		}
 		return dayjs().subtract(1, 'day').format('YYYY-MM-DD');
 	});
