@@ -10,7 +10,12 @@ export default {
 	expressionProcedureList: {
 		get: prefix + '/procedures/expression-procedure/',
 		post: prefix + '/procedures/expression-procedure/',
-		put: prefix + '/procedures/expression-procedure/{id}/'
+		put: prefix + '/procedures/expression-procedure/{id}/',
+		delete: prefix + '/procedures/expression-procedure/{id}/'
+	},
+	expressionProcedureId: {
+		get: prefix + '/procedures/expression-procedure/{id}/',
+		post: prefix + '/procedures/expression-procedure/{id}/run-procedure/',
 	},
 	pricingProc: {
 		get: prefix + '/procedures/pricing-procedure/',
