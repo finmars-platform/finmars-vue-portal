@@ -36,6 +36,13 @@ export const useNotificationsStore = defineStore('notifications', () => {
 	const notificationsTotal = computed(
 		() => notificationsRequestResult.value?.count
 	);
+	const notificationsTotalPage = computed(() => {
+		const tp = Math.ceil(
+			(notificationsRequestResult.value?.count || 0) /
+				(notificationsFilter.value.pageSize || 10)
+		);
+		return Math.max(tp, 1);
+	});
 
 	function setNotificationsFilter(value) {
 		const updatedField = Object.keys(value);
@@ -51,6 +58,11 @@ export const useNotificationsStore = defineStore('notifications', () => {
 			...notificationsFilter.value,
 			...value
 		};
+
+		notificationsFilter.value.page = Math.min(
+			notificationsFilter.value.page,
+			notificationsTotalPage.value
+		);
 
 		const {
 			channel,
@@ -200,6 +212,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
 		currentChannel,
 		notifications,
 		notificationsTotal,
+		notificationsTotalPage,
 		setNotificationsFilter,
 		getNotificationsStatuses,
 		getNotificationsCategories,
