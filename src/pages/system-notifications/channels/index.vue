@@ -11,7 +11,20 @@
 			</div>
 
 			<div class="notification-channels__content">
-				<NotificationsByChannel />
+				<div class="notification-channels__content-list">
+					<NotificationsByChannel />
+				</div>
+
+				<FmPagination
+					v-if="notificationsTotal > 10"
+					:model-value="notificationsFilter.page"
+					:items-per-page="notificationsFilter.pageSize"
+					:total-items="notificationsTotal"
+					:disabled="isLoading"
+					@update:model-value="
+						setNotificationsFilter({ page: $event })
+					"
+				/>
 			</div>
 		</div>
 
@@ -52,23 +65,28 @@
 	import { storeToRefs } from 'pinia';
 	import {
 		FmIconButton,
+		FmPagination,
 		FmProgressCircular,
 		FM_DIALOGS_KEY
 	} from '@finmars/ui';
-	import useNotificationsStore from '~/stores/useNotificationsStore';
+	import { useNotificationsStore } from '~/stores/useNotificationsStore';
 	import ChannelsToolbar from '~/components/pages/system-notifications/ChannelsToolbar/ChannelsToolbar.vue';
 	import ChannelList from '~/components/pages/system-notifications/ChannelList/ChannelList.vue';
 	import NotificationsByChannel from '~/components/pages/system-notifications/Notifications/Notifications.vue';
 
 	const dialogsService = inject(FM_DIALOGS_KEY);
+	const route = useRoute();
 
-	const isLoading = ref(false);
 	const isDetailsBlockOpen = ref(false);
 
 	const notificationsStore = useNotificationsStore();
 
-	const { currentChannel, notificationsFilter } =
-		storeToRefs(notificationsStore);
+	const {
+		currentChannel,
+		notificationsFilter,
+		notificationsTotal,
+		isLoading
+	} = storeToRefs(notificationsStore);
 	const {
 		setNotificationsFilter,
 		getChannels,
@@ -133,15 +151,40 @@
 	}
 
 	onBeforeMount(async () => {
+		const {
+			channel,
+			category,
+			status,
+			dateFrom,
+			dateTo,
+			search,
+			page = 1,
+			pageSize = 10
+		} = route.query;
+		setNotificationsFilter({
+			...(channel && { channel }),
+			...(status && { status }),
+			...(category && { category }),
+			...(dateFrom && { date_from: dateFrom }),
+			...(dateTo && { date_to: dateTo }),
+			...(search && { search }),
+			page,
+			pageSize
+		});
+
 		await loadData();
 	});
 
 	watch(
 		() => notificationsFilter.value,
 		async () => {
-			await getNotifications();
-		},
-		{ deep: true }
+			try {
+				isLoading.value = true;
+				await getNotifications();
+			} finally {
+				isLoading.value = false;
+			}
+		}
 	);
 </script>
 
@@ -185,6 +228,14 @@
 		&__content {
 			position: relative;
 			width: calc(100% - 1px - var(--notification-channels-list-width));
+
+			&-list {
+				position: relative;
+				width: 100%;
+				height: calc(100% - 72px);
+				margin-bottom: 8px;
+				overflow-y: auto;
+			}
 		}
 
 		&__details {

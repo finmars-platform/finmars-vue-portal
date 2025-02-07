@@ -26,7 +26,7 @@
 	import { computed } from 'vue';
 	import { storeToRefs } from 'pinia';
 	import { FmButton, FmMenu, FmMenuItem } from '@finmars/ui';
-	import useNotificationsStore from '~/stores/useNotificationsStore';
+	import { useNotificationsStore } from '~/stores/useNotificationsStore';
 
 	const notificationsStore = useNotificationsStore();
 	const { statuses, notificationsFilter } = storeToRefs(notificationsStore);

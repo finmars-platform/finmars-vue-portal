@@ -36,7 +36,7 @@
 	import { ref } from 'vue';
 	import { storeToRefs } from 'pinia';
 	import { FmIcon, FmMenu, Ripple } from '@finmars/ui';
-	import useNotificationsStore from '~/stores/useNotificationsStore';
+	import { useNotificationsStore } from '~/stores/useNotificationsStore';
 	import ChannelListItem from './ChannelListItem.vue';
 	import ChannelAddingMenu from '~/components/pages/system-notifications/ChannelAddingMenu/ChannelAddingMenu.vue';
 
