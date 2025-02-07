@@ -63,6 +63,7 @@
 		watch
 	} from 'vue';
 	import { storeToRefs } from 'pinia';
+	import dayjs from 'dayjs';
 	import {
 		FmIconButton,
 		FmPagination,
@@ -151,6 +152,9 @@
 	}
 
 	onBeforeMount(async () => {
+		const endDate = dayjs().format('YYYY-MM-DD');
+		const startDate = dayjs().subtract(7, 'day').format('YYYY-MM-DD');
+
 		const {
 			channel,
 			category,
@@ -165,11 +169,15 @@
 			...(channel && { channel }),
 			...(status && { status }),
 			...(category && { category }),
+			...(!(dateFrom && dateTo) && {
+				dateFrom: startDate,
+				dateTo: endDate
+			}),
 			...(dateFrom && { date_from: dateFrom }),
 			...(dateTo && { date_to: dateTo }),
 			...(search && { search }),
-			page,
-			pageSize
+			page: Number(page),
+			pageSize: Number(pageSize)
 		});
 
 		await loadData();
