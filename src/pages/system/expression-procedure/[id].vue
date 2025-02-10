@@ -50,6 +50,7 @@
 						:item="variable"
 						@remove-item="removeVariable"
 						@update-item="updateVariable"
+						@update-expression-editor="updateVariable"
 					/>
 				</div>
 				<FmButton type="primary" @click="addNewVariable" rounded>Add Context Variable</FmButton>
