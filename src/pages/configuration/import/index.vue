@@ -258,24 +258,12 @@
 
   const incorrectCount = () => {
     openDialog('Can not import more then 1 file.');
-    detailsEditor.value = {
-		data: {
-			info: null,
-			content: null,
-			file_descriptor: null
-		}
-	};
+	cancel();
   };
 
   const incorrectFile = () => {
     openDialog('Wrong file extension. Drop configuration file to start import.');
-    detailsEditor.value = {
-		data: {
-			info: null,
-			content: null,
-			file_descriptor: null
-		}
-	};
+	cancel();
   };
 
 </script>
