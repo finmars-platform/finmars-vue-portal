@@ -157,8 +157,8 @@
 
 		const {
 			channel,
-			category,
-			status,
+			category = '',
+			status = '',
 			dateFrom,
 			dateTo,
 			search,
@@ -167,8 +167,8 @@
 		} = route.query;
 		setNotificationsFilter({
 			...(channel && { channel }),
-			...(status && { status }),
-			...(category && { category }),
+			...(status && { status: status.split(',') }),
+			...(category && { category: category.split(',') }),
 			...(!(dateFrom && dateTo) && {
 				dateFrom: startDate,
 				dateTo: endDate

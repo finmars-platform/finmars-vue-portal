@@ -1,5 +1,6 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
+import isEmpty from 'lodash/isEmpty';
 import useApi from '~/composables/useApi';
 
 export const useNotificationsStore = defineStore('notifications', () => {
@@ -12,8 +13,8 @@ export const useNotificationsStore = defineStore('notifications', () => {
 	const notificationsRequestResult = ref({});
 	const notificationsFilter = ref({
 		channel: '',
-		category: '',
-		status: '',
+		category: [],
+		status: [],
 		dateFrom: '',
 		dateTo: '',
 		search: '',
@@ -66,8 +67,8 @@ export const useNotificationsStore = defineStore('notifications', () => {
 
 		const {
 			channel,
-			category,
-			status,
+			category = [],
+			status = [],
 			dateFrom,
 			dateTo,
 			search,
@@ -78,8 +79,8 @@ export const useNotificationsStore = defineStore('notifications', () => {
 		router.push({
 			query: {
 				...(channel && { channel }),
-				...(status && { status }),
-				...(category && { category }),
+				...(!isEmpty(status) && { status: status.join(',') }),
+				...(!isEmpty(category) && { category: category.join(',') }),
 				...(dateFrom && { date_from: dateFrom }),
 				...(dateTo && { date_to: dateTo }),
 				...(search && { search }),
@@ -91,7 +92,12 @@ export const useNotificationsStore = defineStore('notifications', () => {
 
 	async function getNotificationsStatuses() {
 		try {
-			const res = await useApi('systemNotificationsStatusList.get');
+			const res = await useApi('systemNotificationsStatusList.get', {
+				filters: {
+					sortBy: 'name',
+					order: 'asc'
+				}
+			});
 			statuses.value = Array.isArray(res) ? res : [];
 		} catch (e) {
 			console.error('Statuses load error. ', e);
@@ -101,7 +107,12 @@ export const useNotificationsStore = defineStore('notifications', () => {
 
 	async function getNotificationsCategories() {
 		try {
-			const res = await useApi('systemNotificationsCategoryList.get');
+			const res = await useApi('systemNotificationsCategoryList.get', {
+				filters: {
+					sortBy: 'name',
+					order: 'asc'
+				}
+			});
 			categories.value = Array.isArray(res) ? res : [];
 		} catch (e) {
 			console.error('Categories load error. ', e);
@@ -156,8 +167,8 @@ export const useNotificationsStore = defineStore('notifications', () => {
 				{
 					filters: {
 						...(channel && { channel }),
-						...(status && { status }),
-						...(category && { category }),
+						...(!isEmpty(status) && { status }),
+						...(!isEmpty(category) && { category }),
 						...(dateFrom && { date_from: dateFrom }),
 						...(dateTo && { date_to: dateTo }),
 						...(search && { search }),
