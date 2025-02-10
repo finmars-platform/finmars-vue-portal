@@ -91,28 +91,32 @@ export const useNotificationsStore = defineStore('notifications', () => {
 
 	async function getNotificationsStatuses() {
 		try {
-			statuses.value = await useApi('systemNotificationsStatusList.get');
+			const res = await useApi('systemNotificationsStatusList.get');
+			statuses.value = Array.isArray(res) ? res : [];
 		} catch (e) {
 			console.error('Statuses load error. ', e);
+			statuses.value = [];
 		}
 	}
 
 	async function getNotificationsCategories() {
 		try {
-			categories.value = await useApi(
-				'systemNotificationsCategoryList.get'
-			);
+			const res = await useApi('systemNotificationsCategoryList.get');
+			categories.value = Array.isArray(res) ? res : [];
 		} catch (e) {
 			console.error('Categories load error. ', e);
+			categories.value = [];
 		}
 	}
 
 	async function getChannels() {
 		try {
-			channels.value = await useApi('systemNotificationsChannels.get');
+			const res = await useApi('systemNotificationsChannels.get');
+			channels.value = Array.isArray(res) ? res : [];
 			channels.value.sort((a, b) => (a.user_code > b.user_code ? 1 : -1));
 		} catch (e) {
 			console.error('Channels load error. ', e);
+			channels.value = [];
 		}
 	}
 
