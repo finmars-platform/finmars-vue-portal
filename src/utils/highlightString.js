@@ -3,10 +3,12 @@ function getSubstringOccurrenceIndexes(str, substr) {
 
 	const indexes = [];
 	let lastIndex = str.indexOf(substr);
+
 	while (lastIndex !== -1) {
 		indexes.push(lastIndex);
 		lastIndex = str.indexOf(substr, lastIndex + 1);
 	}
+
 	return indexes;
 }
 

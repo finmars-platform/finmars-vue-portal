@@ -118,8 +118,8 @@
 		try {
 			isLoading.value = true;
 			const list = await getAllAvailableChannels();
-			list.sort((a, b) => (a.user_code > b.user_code ? 1 : -1));
-			allAvailableChannels.value = list;
+			list?.sort((a, b) => (a.user_code > b.user_code ? 1 : -1));
+			allAvailableChannels.value = list || [];
 		} finally {
 			isLoading.value = false;
 		}
@@ -131,7 +131,7 @@
 </script>
 
 <style lang="scss" scoped>
-	@import '../../../../assets/scss/core/_mixins.scss';
+	@import '~/assets/scss/core/_mixins.scss';
 
 	:global(.text-highlight) {
 		font-weight: 700;

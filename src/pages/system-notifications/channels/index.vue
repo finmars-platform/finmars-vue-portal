@@ -99,7 +99,7 @@
 
 	function _leaveChannel() {
 		const confirmDialog = defineAsyncComponent(
-			() => import('../../../components/modal/ConfirmationDialog.vue')
+			() => import('@/components/modal/ConfirmationDialog.vue')
 		);
 		dialogsService.$openDialog({
 			component: confirmDialog,
