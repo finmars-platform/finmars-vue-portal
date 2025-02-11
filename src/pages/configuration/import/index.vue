@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-8 p-5">
     <div class="import-container">
       <div class="page-title">Import Configuration</div>
-      <div class="upload-container-wrap">
+      <div :class="['upload-container-wrap',{ 'not-complete': isNotComplete }]">
         <FmFileUpload
           @update-files="updateList"
           @show-details="showDetails"
@@ -64,6 +64,7 @@
   const taskObject = ref(null);
   const taskObjectId = ref(null);
   const isDetailsLoading = ref(false);
+  const isNotComplete = ref(false);
   const pollingInterval = 1000;
   const heightValue = ref('280px');
   const contentType = ref('json');
@@ -148,7 +149,11 @@
         heightValue.value = 'unset';
         if (res.status === 'D') {
           clearInterval(intervalId);
+		  isNotComplete.value = false;
         }
+		if (res.status === 'E') {
+		  isNotComplete.value = true;
+		}
       }
     }, pollingInterval);
   }
@@ -160,10 +165,10 @@
       const res = await useApi('configurationImport.post', { body: formData });
       if (res?._$error) {
         useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
-        return;
-      }
-      taskObjectId.value = res.task_id;
-      pollTaskStatus(taskObjectId.value);
+      } else {
+	  	taskObjectId.value = res.task_id;
+	  	pollTaskStatus(taskObjectId.value);
+	  }
     } else {
       cancel();
     }
@@ -245,6 +250,7 @@
     closeDetails();
     taskObject.value = null;
     taskObjectId.value = null;
+	isNotComplete.value = false;
     heightValue.value = '280px';
     contentType.value = 'json';
     imageUrl.value = '';
@@ -252,20 +258,26 @@
 
   const incorrectCount = () => {
     openDialog('Can not import more then 1 file.');
-    detailsEditor.value = null;
+	cancel();
   };
 
   const incorrectFile = () => {
     openDialog('Wrong file extension. Drop configuration file to start import.');
-    detailsEditor.value = null;
+	cancel();
   };
 
 </script>
 
 <style scoped lang="scss">
   .upload-container-wrap {
-    width: 480px;
+    min-width: 520px;
+    width: 45%;
     height: v-bind(progressHeightValue);
+
+	  &.not-complete {
+		  color: var(--error-color);
+		  border: 1px solid var(--error-color);
+	  }
   }
 
   .page-title {
