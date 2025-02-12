@@ -992,10 +992,15 @@ export default {
 	},
 
 	schedule: {
+		get: prefix + '/schedules/schedule/',
 		post: prefix + '/schedules/schedule/',
-		put: prefix + '/schedules/schedule/{id}'
+		put: prefix + '/schedules/schedule/{id}/',
+		delete: prefix + '/schedules/schedule/{id}/'
 	},
-
+	scheduleByKey: {
+		get: prefix + '/schedules/schedule/{id}/',
+		post: prefix + '/schedules/schedule/{id}/run-schedule/'
+	},
 	priceHistoryError: {
 		put: prefix + '/pricing/price-history-error/{id}/'
 	},
