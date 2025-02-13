@@ -52,7 +52,7 @@
 							variant="outlined"
 						/>
 					</div>
-					<div v-if="cron.periodicity === 2" class="px-8">
+					<div v-if="cron.periodicity === '2'" class="px-8">
 						<div class="grid grid-cols-7 gap-4">
 							<div v-for="(day, index) in days" :key="index">
 								<FmCheckbox
@@ -63,7 +63,7 @@
 							</div>
 						</div>
 					</div>
-					<div v-if="cron.periodicity === 3" class="px-8">
+					<div v-if="cron.periodicity === '3'" class="px-8">
 						<div class="grid grid-cols-2 gap-4">
 							<FmSelect
 								v-model="cron.month"
@@ -102,7 +102,8 @@
 				<div class="flex flex-col gap-4">
 					<span><strong>Error Handling</strong></span>
 					<div class="grid grid-cols-2">
-						<FmSelect v-model="scheduleItem.error_handler" :options="errorHandlerOptions" variant="outlined" />
+						<FmSelect v-model="scheduleItem.error_handler" :options="errorHandlerOptions"
+								  variant="outlined" />
 					</div>
 				</div>
 
@@ -122,7 +123,7 @@
 				<EntityJsonEditor
 					v-if="isEditAsJson"
 					:data="scheduleItem"
-					entity-type="expression-procedure"
+					entity-type="schedule"
 					@close="isEditAsJson = false"
 					@update="editorUpdate"
 				/>
@@ -130,12 +131,12 @@
 			<div class="flex items-center justify-start gap-4 py-8 px-8">
 				<FmButton
 					type="primary"
-					@click="createItem"
+					@click="saveItem"
 					:loading="confirmButtonLoader"
 					:disabled="!isFormValid"
 					rounded
 				>
-					Create
+					Save
 				</FmButton>
 				<FmButton type="primary" @click="makeCopy" rounded>
 					Make a Copy
@@ -178,9 +179,9 @@
 	const scheduleItem = ref({});
 
 	const periodicityOptions = ([
-		{ title: 'Daily', value: 1 },
-		{ title: 'Weekly', value: 2 },
-		{ title: 'Monthly', value: 3 }
+		{ title: 'Daily', value: '1' },
+		{ title: 'Weekly', value: '2' },
+		{ title: 'Monthly', value: '3' }
 	]);
 	const errorHandlerOptions = ([
 		{ title: 'Continue', value: 'continue' },
@@ -196,23 +197,23 @@
 		{ title: 'Sunday', status: false }
 	]);
 	const monthsOptions = ref([
-		{ title: 'January', value: 1 },
-		{ title: 'February', value: 2 },
-		{ title: 'March', value: 3 },
-		{ title: 'April', value: 4 },
-		{ title: 'May', value: 5 },
-		{ title: 'June', value: 6 },
-		{ title: 'July', value: 7 },
-		{ title: 'August', value: 8 },
-		{ title: 'September', value: 9 },
-		{ title: 'November', value: 10 },
-		{ title: 'October', value: 11 },
-		{ title: 'December', value: 12 }
+		{ title: 'January', value: '1' },
+		{ title: 'February', value: '2' },
+		{ title: 'March', value: '3' },
+		{ title: 'April', value: '4' },
+		{ title: 'May', value: '5' },
+		{ title: 'June', value: '6' },
+		{ title: 'July', value: '7' },
+		{ title: 'August', value: '8' },
+		{ title: 'September', value: '9' },
+		{ title: 'November', value: '10' },
+		{ title: 'October', value: '11' },
+		{ title: 'December', value: '12' }
 	]);
 
 	const cron = ref(
 		{
-			periodicity: 1,
+			periodicity: '1',
 			day: [],
 			month: [],
 			time: dayjs(new Date()).format('HH:mm')
@@ -267,16 +268,11 @@
 	};
 
 	const removeScheduleProcedure = (procedures) => {
-		if (scheduleProcedureList.value) {
-			scheduleProcedureList.value = procedures;
-		}
+		scheduleProcedureList.value = procedures;
 	};
 
-	const updateScheduleProcedure = (item) => {
-		const obj = scheduleProcedureList.value.find(obj => obj === item);
-		if (obj) {
-			Object.assign(obj, item);
-		}
+	const updateScheduleProcedure = (list) => {
+		scheduleProcedureList.value = list;
 	};
 
 	const resetCronExpr = () => {
@@ -302,15 +298,8 @@
 		}
 	};
 
-	const getRange = (num) => {
-		const res = [];
-
-		let i;
-		for (i = 1; i <= num; i = i + 1) {
-			res.push({ title: i.toString(), value: i });
-		}
-		return res;
-	};
+	const getRange = (num) =>
+		Array.from({ length: num }, (_, i) => ({ title: (i + 1).toString(), value: (i + 1).toString() }));
 
 	function updateUserCodeValidationValue(val) {
 		formData.value.user_code.isValid = val;
@@ -333,10 +322,10 @@
 	}
 
 	function closeItem() {
-		router.back();
 		scheduleItem.value = {};
 		scheduleProcedureList.value = [];
 		confirmButtonLoader.value = false;
+		router.back();
 	}
 
 	function makeCopy() {
@@ -353,33 +342,46 @@
 		await init();
 	}
 
-	async function createItem() {
+	async function parsingCronExpression() {
+		const time = cron.value.time.split(':'); // HH:mm format
+		let minutes = time[1] || '0';
+		let hours = time[0] || '0';
+		let dayOfMonth = '*';
+		let month = '*';
+		let dayOfWeek = '*';
+
+		if (cron.value.periodicity === '1') {
+			// Daily
+			dayOfMonth = '*';
+			month = '*';
+			dayOfWeek = '*';
+		} else if (cron.value.periodicity === '2') {
+			// Weekly
+			dayOfWeek = cron.value.day.length ? cron.value.day.join(',') : '*';
+			dayOfMonth = '*';
+			month = '*';
+		} else if (cron.value.periodicity === '3') {
+			// Monthly
+			month = cron.value.month.length ? cron.value.month.join(',') : '*';
+			dayOfMonth = cron.value.day.length ? cron.value.day.join(',') : '*';
+			dayOfWeek = '*';
+		}
+
+		return `${minutes} ${hours} ${dayOfMonth} ${month} ${dayOfWeek}`;
+	}
+
+	async function saveItem() {
 		confirmButtonLoader.value = true;
 		scheduleItem.value.is_enabled = true;
 		scheduleItem.value.procedures = scheduleProcedureList.value;
 
-		// const now = dayjs();
-		// const fullDate = dayjs(`${now.format('YYYY-MM-DD')} ${cron.value.time}`, 'YYYY-MM-DD HH:mm');
-		//
-		// const minutes = dayjs(new Date(fullDate)).format('mm');
-		// const hours = dayjs(new Date(fullDate)).format('HH');
-		//
-		// cron.value.periodicity = parseInt(cron.value.periodicity, 10);
-		//
-		// if (cron.value.periodicity === 1) {
-		// 	scheduleItem.value.cron_expr = parseInt(minutes) + ' ' + parseInt(hours) + ' * * *';
-		// }
-		// if (cron.value.periodicity === 2) {
-		// 	scheduleItem.value.cron_expr = parseInt(minutes) + ' ' + parseInt(hours) + ' * * ' + cron.value.day.join(',');
-		// }
-		// if (cron.value.periodicity === 3) {
-		// 	scheduleItem.value.cron_expr = parseInt(minutes) + ' ' + parseInt(hours) + ' ' + cron.value.day.join(',') + ' ' + cron.value.month.join(',') + ' *';
-		// }
+		scheduleItem.value.cron_expr = await parsingCronExpression();
 
 		const payload = {
+			params: { id: route.params.id },
 			body: scheduleItem.value
 		};
-		const res = await useApi('schedule.post', payload);
+		const res = await useApi('schedule.put', payload);
 		if (res && res._$error) {
 			useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
 		} else {
@@ -388,7 +390,7 @@
 				title: 'Execute is being processed'
 			});
 			confirmButtonLoader.value = false;
-			router.back();
+			await init();
 		}
 	}
 
@@ -403,22 +405,22 @@
 
 			let values = scheduleItem.value.cron_expr.split(' ');
 
-			if (values.length === 5){
+			if (values.length === 5) {
 				const time = new Date();
 				time.setMinutes(values[0]);
 				time.setHours(values[1]);
-				cron.value.time = dayjs(time).format('HH:mm')
+				cron.value.time = dayjs(time).format('HH:mm');
 
 				if (values[3] === '*' && values[2] === '*') {
-					cron.value.periodicity = 2;
+					cron.value.periodicity = '2';
 					cron.value.day = values[4].split(',');
 					cron.value.day.forEach((day) => {
-						days.value[day - 1] = {status: true};
-					})
+						days.value[day - 1] = { status: true };
+					});
 				}
 
 				if (values[4] === '*') {
-					cron.value.periodicity = 3;
+					cron.value.periodicity = '3';
 					cron.value.day = values[2].split(',');
 					if (values[3].length > 1) {
 						cron.value.month = values[3].split(',');
@@ -428,7 +430,7 @@
 				}
 
 				if (values[4] === '*' && values[3] === '*' && values[2] === '*') {
-					cron.value.periodicity = 1
+					cron.value.periodicity = '1';
 				}
 			}
 

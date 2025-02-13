@@ -48,7 +48,6 @@
 </template>
 
 <script setup>
-	import { ref } from 'vue';
 	import { FmButton, FmSelect } from '@finmars/ui';
 	import draggable from 'vuedraggable';
 
