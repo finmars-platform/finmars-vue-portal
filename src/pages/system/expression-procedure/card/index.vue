@@ -101,11 +101,11 @@
 		});
 		const res = await useApi('expressionProcedureId.post', { params: { id: item.id } });
 		if (res && res._$error) {
-			useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
+			useNotify({ type: 'error', title: res._$error.error.message || res._$error.error.details });
 		} else {
 			const result = await useApi('taskCard.get', { params: { taskId: res.task_id } });
 			if (result && result._$error) {
-				useNotify({ type: 'error', title: result._$error.message || result._$error.detail });
+				useNotify({ type: 'error', title: result._$error.error.message || result._$error.error.details });
 			} else {
 				useNotify({
 					type: 'success',
