@@ -100,7 +100,7 @@
 						params: { id: item.id }
 					});
 					if (res && res._$error) {
-						useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
+						useNotify({ type: 'error', title: res._$error.error.message || res._$error.error.details });
 					} else {
 						useNotify({
 							type: 'success',
@@ -125,7 +125,7 @@
 			query: { page: newPage }
 		});
 		if (res && res._$error) {
-			useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
+			useNotify({ type: 'error', title: res._$error.error.message || res._$error.error.details });
 		}
 		count.value = res.count;
 		items.value = res.results;
