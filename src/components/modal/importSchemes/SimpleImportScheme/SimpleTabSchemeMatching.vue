@@ -1,6 +1,6 @@
 <template>
 	<div class="matching-block">
-		<div v-for="(field, index) in entityFields" :key="index">
+		<div v-for="field in entityFields" :key="field.id">
 			<template v-if="field.system_property_key">
 				<SimpleTabSchemeMatchingField
 					:field="field"
@@ -78,19 +78,17 @@
 				const attrTypeForTheField = attrTypes.value.find(
 					(a) => a.key === f.system_property_key
 				);
-				if (
-					!attrTypeForTheField ||
-					attrTypeForTheField.value_type === 'mc_field'
-				) {
+
+				if (attrTypeForTheField?.value_type === 'mc_field') {
 					return res;
 				}
 
 				res.push({
 					...f,
-					value_type: attrTypeForTheField.value_type,
-					entity: attrTypeForTheField.value_entity,
-					content_type: attrTypeForTheField.content_type,
-					code: attrTypeForTheField.code
+					value_type: attrTypeForTheField?.value_type,
+					entity: attrTypeForTheField?.value_entity,
+					content_type: attrTypeForTheField?.content_type,
+					code: attrTypeForTheField?.code
 				});
 
 				return res;
