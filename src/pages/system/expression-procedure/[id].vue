@@ -254,22 +254,22 @@
 		};
 		const res = await useApi('expressionProcedureList.put', payload);
 		if (res && res._$error) {
-			useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
+			useNotify({ type: 'error', title: res._$error.error.message || res._$error.error.details });
 		} else {
 			useNotify({
 				type: 'success',
 				title: 'Execute is being processed'
 			});
-			confirmButtonLoader.value = false;
-			await init();
 		}
+		confirmButtonLoader.value = false;
+		await init();
 	}
 
 	async function init() {
 		isLoading.value = true;
 		const res = await useApi('expressionProcedureId.get', { params: { id: route.params.id } });
 		if (res && res._$error) {
-			useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
+			useNotify({ type: 'error', title: res._$error.error.message || res._$error.error.details });
 		} else {
 			expressionProcedureItem.value = res;
 			contextVariablesList.value = res.context_variables;

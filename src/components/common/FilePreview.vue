@@ -283,17 +283,14 @@
 				data.value = await useApi('explorerViewFile.get', {
 					filters: { path: file_url }
 				});
-				console.log('DATA>VALUE: ', data.value);
 				if (data.value instanceof Blob) {
 					content.value = await readBlob(data.value);
 				} else {
 					content.value = data.value;
 				}
-				console.log('SUCCESS: ', content.value);
 			} else if (info) {
 				data.value = info;
 				content.value = info;
-				console.log('ERROR: ', content.value);
 			}
 
 			formatContent();
