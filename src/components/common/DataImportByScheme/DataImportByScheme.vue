@@ -142,7 +142,7 @@
 </template>
 
 <script setup>
-	import { computed, onBeforeUnmount, ref } from 'vue';
+	import { computed, nextTick, onBeforeUnmount, ref } from 'vue';
 	import isEmpty from 'lodash/isEmpty';
 	import {
 		FmButton,
@@ -236,13 +236,22 @@
 		blocks.value[hiddenBlock].data = hiddenBlock === 'file' ? [] : null;
 		blocks.value[hiddenBlock].error = '';
 		if (hiddenBlock === 'json') {
-			aceEditor.value.setValue(null);
+			jsonData.value = '';
+		}
+		if (hiddenBlock === 'file') {
+			nextTick(() => {
+				aceEditor.value.focus();
+			});
 		}
 	}
 
 	function onPaste(value) {
 		try {
-			jsonData.value = JSON.stringify(JSON.parse(value.text), null, 4);
+			jsonData.value = wrapperStringify('');
+			nextTick(() => {
+				const data = wrapperStringify(JSON.parse(value.text));
+				jsonData.value = data;
+			});
 		} catch (e) {
 			jsonData.value = value.text.replaceAll('\n', '');
 		}
@@ -250,6 +259,11 @@
 
 	function onJsonUpdate(val) {
 		blocks.value.json.error = '';
+		if (!val) {
+			blocks.value.json.data = '';
+			jsonData.value = wrapperStringify('');
+			return;
+		}
 		try {
 			blocks.value.json.data = JSON.parse(val);
 		} catch (e) {
