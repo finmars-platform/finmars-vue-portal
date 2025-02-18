@@ -100,7 +100,9 @@
 		while (!isUserCodeUnique) {
 			newUserCode = `${newUserCode}_copy`;
 			if (
-				!userCodesOfExistingTransactionImportSchemes.value.includes(newUserCode)
+				!userCodesOfExistingTransactionImportSchemes.value.includes(
+					newUserCode
+				)
 			) {
 				isUserCodeUnique = true;
 			}
@@ -118,7 +120,9 @@
 					copiedScheme.value.user_code
 				);
 				copiedScheme.value.inputs.forEach((i) => delete i.id);
-				copiedScheme.value.calculated_inputs.forEach((i) => delete i.id);
+				copiedScheme.value.calculated_inputs.forEach(
+					(i) => delete i.id
+				);
 				copiedScheme.value.rule_scenarios.forEach((i) => delete i.id);
 				isSchemeEditorOpen.value = true;
 			}, 500);
