@@ -1,8 +1,10 @@
 import { debounce } from 'lodash';
 import { storeToRefs } from 'pinia';
 import useStore from '~/stores/useStore';
+import cloneDeep from 'lodash/cloneDeep';
 
 export function useMarketplace() {
+	const { configCodes } = storeToRefs(useStore());
 	const items = ref([]);
 	const readyStatus = reactive({ data: false });
 	const filters = reactive({});
@@ -14,6 +16,22 @@ export function useMarketplace() {
 	const isShowModules = ref(false);
 
 	const pages = ref([]);
+
+	const matchItems = computed(() => {
+		const res = cloneDeep(items.value);
+		res.forEach((remoteItem) => {
+			configCodes.value.forEach(function (localItem) {
+				if (
+					remoteItem.configuration_code ===
+					localItem.configuration_code
+				) {
+					remoteItem.localItem = localItem;
+				}
+			});
+		});
+
+		return res;
+	});
 
 	function openPreviousPage() {
 		if (currentPage.value <= 1) return;
@@ -97,8 +115,6 @@ export function useMarketplace() {
 	}
 
 	async function getData() {
-		const { configCodes } = storeToRefs(useStore());
-
 		readyStatus.data = false;
 
 		if (isShowModules.value) {
@@ -123,17 +139,6 @@ export function useMarketplace() {
 				generatePages(data);
 
 				items.value = data.results;
-
-				items.value.forEach((remoteItem) => {
-					configCodes.value.forEach(function (localItem) {
-						if (
-							remoteItem.configuration_code ===
-							localItem.configuration_code
-						) {
-							remoteItem.localItem = localItem;
-						}
-					});
-				});
 			}
 		} catch (e) {
 			console.warn('Error marketplace.get', e);
@@ -189,6 +194,7 @@ export function useMarketplace() {
 		activeTaskId,
 		filters,
 		items,
+		matchItems,
 		installConfiguration,
 		currentPage,
 		totalPages,
