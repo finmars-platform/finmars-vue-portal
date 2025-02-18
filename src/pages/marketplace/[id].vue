@@ -16,30 +16,40 @@
 				<FmCard flex="100" class="inm-card-special">
 					<div class="row">
 						<div class="image">
-							<img v-if="item.thumbnail" :src="item.thumbnail" alt="" />
+							<img
+								v-if="matchItem.thumbnail"
+								:src="matchItem.thumbnail"
+								alt=""
+							/>
 							<div
-								v-if="!item.thumbnail"
+								v-if="!matchItem.thumbnail"
 								class="no-thumbnail"
-								:style="{ backgroundColor: getAvatarColor(item.name?.[0]) }"
+								:style="{
+									backgroundColor: getAvatarColor(
+										matchItem.name?.[0]
+									)
+								}"
 							>
-								{{ item.name?.charAt(0) }}
+								{{ matchItem.name?.charAt(0) }}
 							</div>
 						</div>
 
 						<div>
-							<div class="configuration-card-from-marketplace-organization">
-								{{ item.organization_object.name }}
+							<div
+								class="configuration-card-from-marketplace-organization"
+							>
+								{{ matchItem.organization_object.name }}
 							</div>
 
 							<div>
 								<h3 class="configuration-card-name">
-									{{ item.name }}
+									{{ matchItem.name }}
 								</h3>
 							</div>
 
-							<div v-if="item.localItem">
-								Current: ({{ item.localItem?.version }}
-								{{ item.localItem?.channel }})
+							<div v-if="matchItem.localItem">
+								Current: ({{ matchItem.localItem?.version }}
+								{{ matchItem.localItem?.channel }})
 							</div>
 
 							<div class="row g-24">
@@ -49,7 +59,10 @@
 									@change="getVersions"
 									:items="[
 										{ value: 'stable', label: 'Stable' },
-										{ value: 'rc', label: 'Release Candidate' }
+										{
+											value: 'rc',
+											label: 'Release Candidate'
+										}
 									]"
 									prop_id="value"
 									prop_name="label"
@@ -64,27 +77,35 @@
 									class="select"
 								/>
 
-								<div v-if="!item.localItem">
+								<div v-if="!matchItem.localItem">
 									<FmBtn
 										type="primary"
 										class="open"
-										@click.prevent.stop="installConfiguration(item, version)"
+										@click.prevent.stop="
+											installConfiguration(matchItem, version)
+										"
 									>
 										Install
 									</FmBtn>
 								</div>
 
-								<div v-if="item.localItem">
+								<div v-if="matchItem.localItem">
 									<div
 										v-if="
-											item.latest_release_object.version ===
-											item.localItem.version
+											matchItem.latest_release_object
+												.version ===
+											matchItem.localItem.version
 										"
 									>
 										<FmBtn
 											type="primary"
 											class="open"
-											@click.prevent.stop="installConfiguration(item, version)"
+											@click.prevent.stop="
+												installConfiguration(
+													matchItem,
+													version
+												)
+											"
 										>
 											Reinstall
 										</FmBtn>
@@ -92,49 +113,69 @@
 
 									<div
 										v-if="
-											item.latest_release_object.version !==
-											item.localItem.version
+											matchItem.latest_release_object
+												.version !==
+											matchItem.localItem.version
 										"
 									>
 										<FmBtn
 											type="primary"
 											class="open"
-											@click.prevent.stop="installConfiguration(item, version)"
+											@click.prevent.stop="
+												installConfiguration(
+													matchItem,
+													version
+												)
+											"
 										>
 											Update
 										</FmBtn>
 									</div>
 								</div>
 
-								<div>Download count: {{ item.download_count }}</div>
+								<div>
+									Download count: {{ matchItem.download_count }}
+								</div>
 							</div>
 						</div>
 					</div>
 
 					<div>
 						<h3 class="sub-title">Description</h3>
-						<div v-if="item.description">{{ item.description }}</div>
-						<div v-if="!item.description">No description</div>
+						<div v-if="matchItem.description">
+							{{ matchItem.description }}
+						</div>
+						<div v-if="!matchItem.description">No description</div>
 					</div>
 
 					<div>
 						<h3 class="sub-title">Other Info</h3>
 
 						<div>
-							<div class="configuration-card-from-marketplace-code">
+							<div
+								class="configuration-card-from-marketplace-code"
+							>
 								Code:
-								<b>{{ item.configuration_code }}</b>
+								<b>{{ matchItem.configuration_code }}</b>
 							</div>
-							<div class="configuration-card-from-marketplace-version">
-								Version: <b>{{ item.latest_release_object?.version }}</b>
+							<div
+								class="configuration-card-from-marketplace-version"
+							>
+								Version:
+								<b>{{ matchItem.latest_release_object?.version }}</b>
 							</div>
-							<div class="configuration-card-from-marketplace-version">
-								Developer: <b>{{ item.organization_object?.name }}</b>
+							<div
+								class="configuration-card-from-marketplace-version"
+							>
+								Developer:
+								<b>{{ matchItem.organization_object?.name }}</b>
 							</div>
-							<div class="configuration-card-from-marketplace-version">
+							<div
+								class="configuration-card-from-marketplace-version"
+							>
 								Type:
-								<b v-if="item.is_package">Is a Package</b>
-								<b v-if="!item.is_package">Is a Module</b>
+								<b v-if="matchItem.is_package">Is a Package</b>
+								<b v-if="!matchItem.is_package">Is a Module</b>
 							</div>
 						</div>
 					</div>
@@ -159,9 +200,12 @@
 	import { useGetNuxtLink } from '~/composables/useMeta';
 	import { useMarketplace } from '~/composables/useMarketplace';
 	import { getAvatarColor } from '~/utils/commonHelper';
+	import { storeToRefs } from 'pinia';
+	import useStore from '~/stores/useStore';
+	import cloneDeep from 'lodash/cloneDeep';
 
 	definePageMeta({
-		middleware: 'auth',
+		middleware: 'auth'
 	});
 
 	const route = useRoute();
@@ -173,6 +217,7 @@
 		activeTaskId,
 		removeActiveTaskId
 	} = useMarketplace();
+	const { configCodes } = storeToRefs(useStore());
 
 	const item = ref(null);
 	const processing = ref(false);
@@ -182,21 +227,25 @@
 
 	const checkReadyStatus = computed(() => readyStatus.data);
 
-	async function getData() {
-		const { configCodes } = useStore();
+	const matchItem = computed(() => {
+		const res = cloneDeep(item.value);
 
+		configCodes.value?.forEach(function (localItem) {
+			if (res?.configuration_code === localItem.configuration_code) {
+				res.localItem = localItem;
+			}
+		});
+
+		return res;
+	});
+
+	async function getData() {
 		try {
 			item.value = await useApi('marketplaceItem.get', {
 				params: { id: route?.params?.id }
 			});
 
 			readyStatus.data = true;
-
-			configCodes?.forEach(function (localItem) {
-				if (item.value.configuration_code === localItem.configuration_code) {
-					item.value.localItem = localItem;
-				}
-			});
 		} catch (e) {
 			await router.push(useGetNuxtLink(`/marketplace/`, route.params));
 			console.warn('Error getTask', e);
@@ -215,7 +264,7 @@
 		const payload = {
 			page_size: 1000,
 			page: 1,
-			configuration_code: item.value.configuration_code,
+			configuration_code: matchItem.value.configuration_code,
 			channel: channel.value,
 			ordering: '-created'
 		};

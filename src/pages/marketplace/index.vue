@@ -34,7 +34,7 @@
 		</div>
 		<div v-if="readyStatus.data" class="list">
 			<FmCard
-				v-for="item in items"
+				v-for="item in matchItems"
 				:key="item"
 				class="card"
 				@click="openCard(item.id)"
@@ -164,7 +164,7 @@
 		isShowModules,
 		activeTaskId,
 		filters,
-		items,
+		matchItems,
 		installConfiguration,
 		currentPage,
 		totalPages,
