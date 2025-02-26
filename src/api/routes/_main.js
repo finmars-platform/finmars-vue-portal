@@ -402,6 +402,15 @@ export default {
 		post: prefix + '/portfolios/portfolio-reconcile-history/',
 		put: prefix + '/portfolios/portfolio-reconcile-history/{id}/'
 	},
+	pickDatesFromRange: {
+		post: prefix + '/utils/date/pick-dates-from-range/'
+	},
+	portfolioReconcileGroups: {
+		post: prefix + '/portfolios/portfolio-reconcile-group/ev-item/'
+	},
+	portfolioReconcileHistoryBulk: {
+		post: prefix + '/portfolios/portfolio-reconcile-history/bulk-calculate/'
+	},
 	portfolioClassList: {
 		get: prefix + '/portfolios/portfolio-class/'
 	},
