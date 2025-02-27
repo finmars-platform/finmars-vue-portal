@@ -12,7 +12,7 @@ default:
     - docker:20.10.16-dind
   before_script:
     - docker info
-    - echo -n $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin registry.finmars.com
+    - echo -n $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin git.finmars.com:5050
 
 variables:
   # When using dind service, you must instruct docker to talk with the
