@@ -37,13 +37,17 @@
 			:close-on-content-click="false"
 		>
 			<div class="relative w-[640px] min-h-[300px] p-16">
-				<h4 class="relative w-full text-center text-[14px] text-bold mb-2">
+				<h4
+					class="relative w-full text-center text-[14px] text-bold mb-2"
+				>
 					{{ label }}
 				</h4>
 
 				<div class="flex flex-row justify-center items-stretch">
 					<div class="flex flex-column w-[45%]">
-						<h4 class="text-center text-[14px] text-bold mb-2">Available</h4>
+						<h4 class="text-center text-[14px] text-bold mb-2">
+							Available
+						</h4>
 						<div
 							class="relative w-full rounded-[4px] border border-solid border-[var(--outline)] flex-grow"
 						>
@@ -65,9 +69,13 @@
 									class="relative px-2 w-full h-[30px] flex flex-row justify-start items-center text-[14px] cursor-pointer mb-[2px]"
 									:class="{
 										'bg-[var(--secondary-container)]':
-											highlightedOptions.available.includes(item.value)
+											highlightedOptions.available.includes(
+												item.value
+											)
 									}"
-									@click.stop.prevent="onItemItemClick('available', item)"
+									@click.stop.prevent="
+										onItemItemClick('available', item)
+									"
 								>
 									{{ item.title }}
 								</div>
@@ -75,7 +83,9 @@
 						</div>
 					</div>
 
-					<div class="w-[10%] flex flex-column justify-center items-center">
+					<div
+						class="w-[10%] flex flex-column justify-center items-center"
+					>
 						<FmIconButton
 							icon="mdi-chevron-right"
 							variant="text"
@@ -99,7 +109,9 @@
 					</div>
 
 					<div class="flex flex-column w-[45%]">
-						<h4 class="text-center text-[14px] text-bold mb-2">Selected</h4>
+						<h4 class="text-center text-[14px] text-bold mb-2">
+							Selected
+						</h4>
 						<div
 							class="relative w-full rounded-[4px] border border-solid border-[var(--outline)] flex-grow"
 						>
@@ -121,9 +133,13 @@
 									class="relative px-2 w-full h-[30px] flex flex-row justify-start items-center text-[14px] cursor-pointer mb-[2px]"
 									:class="{
 										'bg-[var(--secondary-container)]':
-											highlightedOptions.selected.includes(item.value)
+											highlightedOptions.selected.includes(
+												item.value
+											)
 									}"
-									@click.stop.prevent="onItemItemClick('selected', item)"
+									@click.stop.prevent="
+										onItemItemClick('selected', item)
+									"
 								>
 									{{ item.title }}
 								</div>
@@ -133,10 +149,18 @@
 				</div>
 
 				<div class="flex flex-row gap-4 justify-end items-center pt-4">
-					<FmButton rounded type="secondary" @click.stop.prevent="close">
+					<FmButton
+						rounded
+						type="secondary"
+						@click.stop.prevent="close"
+					>
 						Close
 					</FmButton>
-					<FmButton rounded :disabled="!isDirty" @click.stop.prevent="save">
+					<FmButton
+						rounded
+						:disabled="!isDirty"
+						@click.stop.prevent="save"
+					>
 						Save
 					</FmButton>
 				</div>
@@ -161,7 +185,8 @@
 
 	const props = defineProps({
 		modelValue: {
-			type: String
+			type: Array,
+			default: () => []
 		},
 		label: {
 			type: String
@@ -198,16 +223,22 @@
 	);
 	const selectedOptionsFiltered = computed(() =>
 		selectedOptions.value.filter((o) =>
-			o.title.toLowerCase().includes(searchText.value.selected.toLowerCase())
+			o.title
+				.toLowerCase()
+				.includes(searchText.value.selected.toLowerCase())
 		)
 	);
 
 	const availableOptions = computed(() =>
-		props.options.filter((o) => !selectedOptionsValues.value.includes(o.value))
+		props.options.filter(
+			(o) => !selectedOptionsValues.value.includes(o.value)
+		)
 	);
 	const availableOptionsFiltered = computed(() =>
 		availableOptions.value.filter((o) =>
-			o.title.toLowerCase().includes(searchText.value.available.toLowerCase())
+			o.title
+				.toLowerCase()
+				.includes(searchText.value.available.toLowerCase())
 		)
 	);
 
@@ -225,7 +256,9 @@
 		}
 
 		if (props.modelValue.length === 1) {
-			const option = props.options.find((o) => o.value === props.modelValue[0]);
+			const option = props.options.find(
+				(o) => o.value === props.modelValue[0]
+			);
 			return {
 				value: option?.title || '',
 				tooltip: option?.title || ''
@@ -278,7 +311,9 @@
 			case 'left':
 				highlightedOptions.value.available = [];
 				highlightedOptions.value.selected.forEach((val) => {
-					const index = selectedOptions.value.findIndex((o) => o.value === val);
+					const index = selectedOptions.value.findIndex(
+						(o) => o.value === val
+					);
 					if (index !== -1) {
 						selectedOptions.value.splice(index, 1);
 					}
@@ -292,7 +327,9 @@
 				highlightedOptions.value.selected = [];
 				highlightedOptions.value.available.forEach((val) => {
 					if (!selectedOptionsValues.value.includes(val)) {
-						const option = availableOptions.value.find((o) => o.value === val);
+						const option = availableOptions.value.find(
+							(o) => o.value === val
+						);
 						selectedOptions.value.push(option);
 					}
 				});
