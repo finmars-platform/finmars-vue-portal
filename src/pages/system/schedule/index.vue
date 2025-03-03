@@ -109,7 +109,7 @@
 						params: { id: item.id }
 					});
 					if (res && res._$error) {
-						useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
+						useNotify({ type: 'error', title: res._$error.error.message || res._$error.error?.details?.errors?.[0].detail?.toUpperCase() });
 					} else {
 						useNotify({
 							type: 'success',
@@ -125,7 +125,7 @@
 	async function runItem(item) {
 		const res = await useApi('scheduleByKey.post', { params: { id: item.id }, body: item });
 		if (res && res._$error) {
-			useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
+			useNotify({ type: 'error', title: res._$error.error?.message || res._$error.error?.details?.errors?.[0].detail?.toUpperCase() });
 		} else {
 			useNotify({
 				type: 'success',
@@ -146,7 +146,7 @@
 			query: { page: newPage }
 		});
 		if (res && res._$error) {
-			useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
+			useNotify({ type: 'error', title: res._$error.error.message || res._$error.error?.details?.errors?.[0].detail?.toUpperCase() });
 		} else {
 			count.value = res.count;
 			items.value = res.results;
