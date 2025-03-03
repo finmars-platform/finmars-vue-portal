@@ -132,7 +132,7 @@
 					getTask();
 				}, 2000);
 			} else {
-				emit('update');
+				emit('update', task.value.status);
 			}
 		} catch (e) {
 			console.warn('Error getTask', e);
