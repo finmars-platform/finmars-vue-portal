@@ -1,23 +1,70 @@
 <template>
 	<section class="balance-report">
-		<ReportHeader :entity-type="entityType" :content-type="contentType" :disabled="isLoading" />
+		<div class="balance-report__header">
+			<div class="balance-report__header-content">
+				<div class="balance-report__header-block">
+					<FmButton
+						type="secondary"
+						rounded
+						append-icon="mdi-menu-down"
+					>
+						Layout (test)
 
-		<div class="balance-report__content">CONTENT</div>
+						<FmMenu
+							v-model="isLayoutSelectMenuOpen"
+							activator="parent"
+							:close-on-content-click="false"
+						>
+							Select layout
+						</FmMenu>
+					</FmButton>
 
-		<div v-if="isLoading" class="balance-report__loader">
-			<FmProgressCircular indeterminate size="100" />
+					<FmIconButton icon="mdi-dots-vertical" variant="text">
+						<FmMenu
+							v-model="isMainMenuOpen"
+							activator="parent"
+							:close-on-content-click="false"
+						>
+							Main menu
+						</FmMenu>
+					</FmIconButton>
+
+					<FmIconButton icon="mdi-content-save" variant="text" />
+				</div>
+
+				<div class="balance-report__header-block">
+					<FmIconButton icon="mdi-tray-arrow-down" variant="text" />
+
+					<FmIconButton
+						icon="mdi-view-agenda-outline"
+						variant="text"
+					/>
+
+					<FmIconButton icon="mdi-cog-outline" variant="text" />
+				</div>
+			</div>
+		</div>
+
+		<div class="balance-report__header">
+			<div class="balance-report__header-filters">
+				<FmFilterToolbar
+					class="balance-report__filters"
+					:value="[]"
+					:attributes="[]"
+					:suggested-attrs="[]"
+					@update:model-value="(ev) => console.log('UPDATE FILTERS')"
+				/>
+			</div>
+
+			<FmIconButton icon="mdi-dots-vertical" variant="text" />
 		</div>
 	</section>
 </template>
 
 <script setup>
 	import { onBeforeMount, ref } from 'vue';
-	import { storeToRefs } from 'pinia';
-	import { FmProgressCircular } from '@finmars/ui';
-	import { useAttributes } from '~/stores/useAttributes';
-	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
-	import { getListLayoutByUserCode } from '~/services/entity/entityViewerHelperService';
-	import ReportHeader from '~/components/pages/reports/common/ReportHeader/ReportHeader.vue';
+	import { FmButton, FmFilterToolbar, FmIconButton, FmMenu } from '@finmars/ui';
+	import useApi from '~/composables/useApi';
 
 	definePageMeta({
 		middleware: 'auth',
@@ -30,83 +77,50 @@
 		]
 	});
 
-	const balanceReportStore = useBalanceReportStore();
-	const { getLayouts, getCurrencies } = balanceReportStore;
-	const { currentLayout } = storeToRefs(balanceReportStore);
-
-	const {
-		downloadCustomFieldsByEntityType,
-		downloadDynamicAttributesByEntityType,
-		downloadInstrumentUserFields
-	} = useAttributes();
-
-	const entityType = 'balance-report';
-	const contentType = 'reports.balancereport';
-	const isLoading = ref(false);
-
-	onBeforeMount(async () => {
-		try {
-			isLoading.value = true;
-			await getLayouts(entityType);
-			await getCurrencies();
-
-			await Promise.allSettled([
-				downloadCustomFieldsByEntityType('balance-report'),
-				downloadCustomFieldsByEntityType('pl-report'),
-				downloadCustomFieldsByEntityType('transaction-report'),
-				downloadDynamicAttributesByEntityType('portfolio'),
-				downloadDynamicAttributesByEntityType('account'),
-				downloadDynamicAttributesByEntityType('instrument'),
-				downloadDynamicAttributesByEntityType('responsible'),
-				downloadDynamicAttributesByEntityType('counterparty'),
-				downloadDynamicAttributesByEntityType('transaction-type'),
-				downloadDynamicAttributesByEntityType('complex-transaction'),
-				downloadInstrumentUserFields()
-			]);
-
-
-		} finally {
-			isLoading.value = false;
-		}
-	});
+	const isLayoutSelectMenuOpen = ref(false);
+	const isMainMenuOpen = ref(false);
 </script>
 
 <style scoped lang="scss">
 	.balance-report {
 		position: relative;
 		width: 100%;
-		height: 100%;
-		color: var(--on-surface);
+		min-height: 100vh;
 
-		&__content {
+		&__header {
 			position: relative;
-			width: 100%;
-			height: calc(100% - 130px);
-		}
-
-		&__loader {
-			position: absolute;
-			inset: 0;
-			z-index: 5;
-			pointer-events: none;
 			display: flex;
-			justify-content: center;
+			justify-content: space-between;
 			align-items: center;
-		}
-	}
-</style>
+			width: 100%;
+			height: 64px;
+			padding: 0 16px;
 
-<style lang="scss">
-	.v-overlay-container {
-		.v-overlay,
-		.v-overlay.v-menu {
-			.v-overlay__content {
-				border-radius: 4px !important;
-
-				& > div {
-					border-radius: 4px !important;
-				}
+			&-content {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				width: 100%;
+				height: 100%;
+				border-bottom: 1px solid var(--outline-variant);
 			}
+
+			&-block {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				column-gap: 8px;
+			}
+
+			&-filters {
+				position: relative;
+				width: calc(100% - 48px);
+				height: 100%;
+			}
+		}
+
+		&__filters {
+			--fmFilterToolbar-background-color: transparent;
 		}
 	}
 </style>
