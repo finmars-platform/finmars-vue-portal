@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-	import reportViewerController from '@/angular/controllers/entityViewer/reportViewerController'
+	import reportViewerController from '~/angular/controllers/entityViewer/reportViewerController'
 	import {useGetMdDialogData, useReportViewerController} from "~/composables/evRv/useEvRv";
 
 	definePageMeta({
