@@ -31,9 +31,14 @@
 						:class="{ active: config == item.id }"
 						@click="config = item.id"
 					>
-						<div class="fm_card_text">{{ item.notes.slice(0, 100) }}</div>
+						<div class="fm_card_text">
+							{{ item.notes.slice(0, 100) }}
+						</div>
 
-						<div class="version flex sb" v-if="item.data != 'blank'">
+						<div
+							class="version flex sb"
+							v-if="item.data != 'blank'"
+						>
 							<!-- <div>Updated: {{ item.data.head.date }}</div> -->
 							<div>Version: {{ item.configuration_code }}</div>
 						</div>
@@ -43,8 +48,8 @@
 				<div class="btns flex sb">
 					<FmBtn type="action" @click="step = 1">Back</FmBtn>
 					<FmBtn class="btn" :disabled="!config" @click="finish()"
-						>Finish</FmBtn
-					>
+						>Finish
+					</FmBtn>
 				</div>
 			</div>
 		</div>
@@ -71,84 +76,86 @@
 			{
 				text: 'Profile',
 				to: '/v/profile',
-				disabled: false,
+				disabled: false
 			},
 			{
 				text: 'Initial setup',
-				disabled: true,
-			},
-		],
-	})
+				disabled: true
+			}
+		]
+	});
 
-	let store = useStore()
+	let store = useStore();
 
-	let step = ref(1)
+	let step = ref(1);
 	let levels = [
 		{ id: 5, name: 'Front Office' },
 		{ id: 10, name: 'Middle Office' },
 		{ id: 15, name: 'Sophisticated User' },
-		{ id: 20, name: 'Advanced Sophisticated User' },
-	]
+		{ id: 20, name: 'Advanced Sophisticated User' }
+	];
 
-	let res = await useApi('newMemberSetupConfig.get')
+	let res = await useApi('newMemberSetupConfig.get');
 	res.results.unshift({
 		id: 'blank',
 		name: 'Blank',
 		notes: 'Empty Ecosystem. Configure all forms, layouts and tables by myself',
-		data: 'blank',
-	})
-	let configs = ref(res.results)
+		data: 'blank'
+	});
+	let configs = ref(res.results);
 
-	let config = ref(null)
-	let progress = ref(0)
-	let progress_item = ref('')
+	let config = ref(null);
+	let progress = ref(0);
+	let progress_item = ref('');
 
 	async function next() {
 		await useApi('member.put', {
 			body: store.member,
-			params: { id: 0 },
-		})
+			params: { id: 0 }
+		});
 
-		step.value = 2
+		step.value = 2;
 	}
 
 	async function finish() {
 		if (config.value == 'blank') {
 			// useRouter().push('/home')
 			// TODO redirect to home with reloading SPA
-			window.location.href = '/' + store.realm_code + '/' + store.space_code + '/v/home'
-			return false
+			window.location.href =
+				'/' + store.realm_code + '/' + store.space_code + '/v/home';
+			return false;
 		}
 
-		step.value = 3
+		step.value = 3;
 
 		let importedData = await useApi('configurationJson.put', {
 			params: {
-				id: config.value,
+				id: config.value
 			},
-			body: configs.value.find((o) => o.id == config.value),
-		})
+			body: configs.value.find((o) => o.id == config.value)
+		});
 
 		let checkStatus = async () => {
 			let res = await useApi('getTask.get', {
-				params: { id: importedData.task_id },
-			})
+				params: { id: importedData.task_id }
+			});
 
 			if (res.status === 'P' || res.status === 'I') {
-				progress.value = res.progress_object?.percent || progress.value
-				progress_item.value = res.progress_object?.description
+				progress.value = res.progress_object?.percent || progress.value;
+				progress_item.value = res.progress_object?.description;
 
-				setTimeout(checkStatus, 1000)
+				setTimeout(checkStatus, 1000);
 			} else if (res.status === 'D') {
 				// useRouter().push('/home')
 				// TODO redirect to home with reloading SPA
-				window.location.href = '/' + store.realm_code + '/' + store.space_code + '/v/home'
+				window.location.href =
+					'/' + store.realm_code + '/' + store.space_code + '/v/home';
 			}
-		}
+		};
 
-		if (importedData.task_id) checkStatus()
+		if (importedData.task_id) checkStatus();
 		else {
-			step.value = 2
+			step.value = 2;
 		}
 	}
 </script>
@@ -158,15 +165,17 @@
 		text-align: left;
 		width: 750px;
 	}
+
 	.config_item {
 		height: 186px;
 		width: 360px;
 		margin-bottom: 30px;
 
 		&.active {
-			background: $primary-lighten-2;
+			background: rgb(240 90 34 / 12%);
 		}
 	}
+
 	.version {
 		position: absolute;
 		width: 100%;
@@ -175,6 +184,7 @@
 		padding: 0 20px;
 		color: var(--card-secondary-text-color);
 	}
+
 	.setup_wrap {
 		padding-bottom: 30px;
 
@@ -184,12 +194,14 @@
 			text-align: center;
 			letter-spacing: 0.4px;
 		}
+
 		h2 {
 			font-size: 20px;
 			line-height: 23px;
 			letter-spacing: 0.4px;
 			margin-top: 22px;
 		}
+
 		h3 {
 			font-size: 16px;
 			line-height: 19px;
@@ -198,27 +210,33 @@
 			margin-bottom: 30px;
 		}
 	}
+
 	.btns {
 	}
+
 	.step_1 {
 		width: 330px;
 		margin: 0 auto;
 		margin-top: 30px;
 	}
+
 	.step_2 {
 		margin: 0 auto;
 		margin-top: 30px;
 		text-align: center;
 	}
+
 	.progress {
 		margin-top: 150px;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 	}
+
 	.posr {
 		position: relative;
 	}
+
 	.progress_percent {
 		position: absolute;
 		left: 0;
@@ -228,11 +246,13 @@
 		font-weight: 500;
 		text-align: center;
 	}
+
 	.progress_inst {
 		font-weight: 500;
 		font-size: 20px;
 		margin-left: 11px;
 	}
+
 	.progress_desc {
 		margin-top: 40px;
 		color: var(--card-secondary-text-color);

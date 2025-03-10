@@ -1,6 +1,10 @@
 import useApi from '~/composables/useApi';
 
 export async function getList(options) {
+	return useApi('transactionType.get', { filters: options });
+}
+
+export async function getListLight(options) {
 	return useApi('transactionTypeLight.get', { filters: options });
 }
 

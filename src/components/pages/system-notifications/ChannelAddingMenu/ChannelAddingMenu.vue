@@ -131,7 +131,7 @@
 </script>
 
 <style lang="scss" scoped>
-	@import '~/assets/scss/core/_mixins.scss';
+	@use '@/assets/scss/core/_mixins' as mixins;
 
 	:global(.text-highlight) {
 		font-weight: 700;
@@ -165,14 +165,14 @@
 				font: var(--label-large-pro-font);
 				color: var(--on-surface);
 				margin-bottom: 10px;
-				@include text-overflow-ellipsis();
+				@include mixins.text-overflow-ellipsis();
 			}
 
 			&-description {
 				font: var(--body-medium-font);
 				color: var(--on-surface);
 				margin-bottom: 16px;
-				@include text-overflow-ellipsis();
+				@include mixins.text-overflow-ellipsis();
 			}
 
 			&-info {
