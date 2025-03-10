@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="grid grid-cols-[40px_1fr_1fr_60px] gap-4 mb-2">
+		<div class="grid grid-cols-[40px_1fr_1fr_60px] gap-8 px-4 mb-2">
 			<div class="text-center">Order</div>
 			<div>Type</div>
 			<div>Code</div>
@@ -16,8 +16,8 @@
 			handle=".drag-handle"
 		>
 			<template #item="{ element: proc, index }">
-				<div class="grid grid-cols-[40px_1fr_1fr_60px] gap-4 items-center">
-					<div class="text-center mb-2 drag-handle cursor-grab">
+				<div class="grid grid-cols-[40px_1fr_1fr_60px] gap-8 px-4 items-center drag-handle">
+					<div class="text-center mb-2 cursor-grab">
 						<span>{{index+1}}</span>
 						<span class="ml-4 max-w-20">☰</span>
 					</div>
@@ -112,7 +112,7 @@
 	async function getPricingProcedures() {
 		const res = await useApi('pricingProc.get');
 		if (res && res._$error) {
-			useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
+			useNotify({ type: 'error', title: res._$error.error.message || res._$error.error?.details?.errors?.[0].detail?.toUpperCase() });
 		} else {
 			pricingProcedures.value = filteredProcedures(res.results);
 		}
@@ -121,7 +121,7 @@
 	async function getDataProcedures() {
 		const res = await useApi('importBankProc.get');
 		if (res && res._$error) {
-			useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
+			useNotify({ type: 'error', title: res._$error.error.message || res._$error.error?.details?.errors?.[0].detail?.toUpperCase() });
 		} else {
 			dataProcedures.value = filteredProcedures(res.results);
 		}
@@ -130,7 +130,7 @@
 	async function getExpressionProcedures() {
 		const res = await useApi('expressionProcedureList.get');
 		if (res && res._$error) {
-			useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
+			useNotify({ type: 'error', title: res._$error.error.message || res._$error.error?.details?.errors?.[0].detail?.toUpperCase() });
 		} else {
 			expressionProcedures.value = filteredProcedures(res.results);
 		}
@@ -162,10 +162,6 @@
 	}
 
 	.cursor-grab {
-		cursor: grab;
-	}
-
-	.cursor-grab:active {
-		cursor: grabbing;
+		cursor: move;
 	}
 </style>

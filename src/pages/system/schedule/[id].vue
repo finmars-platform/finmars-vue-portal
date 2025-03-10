@@ -10,12 +10,11 @@
 			<div class="py-3 px-8 flex flex-column gap-2">
 				<div class="code-wrapper">
 					<UserCodeInput
+						:disabled="isLoading"
 						:user-code="scheduleItem.user_code"
 						@update:user-code="updateField('user_code', $event)"
-						@update:configuration-code="
-						updateField('configuration_code', $event)
-					"
-						@update:valid="updateUserCodeValidationValue"
+						@update:configuration-code="updateField('configuration_code', $event)"
+						@update:valid="formData['user_code'].isValid = $event"
 					/>
 				</div>
 				<FmTextField
@@ -25,10 +24,10 @@
 					:error="formData.name.isDirty && !formData.name.isValid"
 					:error-messages="
 						formData.name.isDirty && !formData.name.isValid
-							? 'This field may not be blank.'
-							: ''
+							? ['This field may not blank']
+							: []
 					"
-					@change="updateField('name', $event)"
+					@update:model-value="updateField('name', $event)"
 				/>
 				<div class="flex flex-col mb-2">
 					<span class="mb-1">Notes</span>
@@ -58,7 +57,7 @@
 								<FmCheckbox
 									v-model="day.status"
 									:label="day.title"
-									@update:modelValue="setDay(index +1)"
+									@update:modelValue="setDay"
 								/>
 							</div>
 						</div>
@@ -77,6 +76,7 @@
 							<FmSelect
 								v-model="cron.day"
 								:options="getRange(31)"
+								:disabled="!cron.month.length"
 								label="Day"
 								variant="outlined"
 								clearable
@@ -87,7 +87,7 @@
 					</div>
 				</div>
 				<div>
-					<span><strong>Server time</strong>: <i>{{ getServerTime() }}</i></span>
+					<span><strong>Server time</strong>: <i ref="serverTimeContent"></i></span>
 				</div>
 				<div class="flex flex-row nowrap items-center gap-2">
 					<span><strong>Time: </strong></span>
@@ -96,7 +96,7 @@
 				<div class="flex flex-col gap-4">
 					<span><strong>Code Expression</strong></span>
 					<div class="grid grid-cols-2">
-						<FmTextField :model-value="scheduleItem.cron_expr" outlined />
+						<FmTextField v-model="scheduleItem.cron_expr" outlined />
 					</div>
 				</div>
 				<div class="flex flex-col gap-4">
@@ -155,13 +155,15 @@
 		FmCheckbox,
 		FmSelect,
 		FmTextField,
-		FmInputTime, FmProgressCircular
+		FmInputTime,
+		FmProgressCircular
 	} from '@finmars/ui';
 	import { getRealmSpaceCodes } from '~/pages/system/helper';
 	import UserCodeInput from '~/components/common/UserCodeInput/UserCodeInput.vue';
 	import Procedure from '~/pages/system/schedule/procedure/index.vue';
 	import EntityJsonEditor from '~/components/modal/EntityJsonEditor/EntityJsonEditor.vue';
 	import dayjs from 'dayjs';
+	import set from 'lodash/set';
 
 	definePageMeta({
 		middleware: 'auth'
@@ -172,21 +174,34 @@
 
 	const { realmCode, spaceCode } = getRealmSpaceCodes(route);
 
+	const serverTimeIntervalId = ref(0);
+	const serverTimeContent = ref(null);
 	const isLoading = ref(false);
 	const isEditAsJson = ref(false);
 	const confirmButtonLoader = ref(false);
 	const scheduleProcedureList = ref([]);
-	const scheduleItem = ref({});
+	const scheduleItem = ref({
+		name: '',
+		user_code: '',
+		configuration_code: '',
+		notes: '',
+		cron_expr: '',
+		error_handler: '',
+		procedures: [],
+		is_enabled: true
+	});
 
-	const periodicityOptions = ([
+	const periodicityOptions = [
 		{ title: 'Daily', value: '1' },
 		{ title: 'Weekly', value: '2' },
 		{ title: 'Monthly', value: '3' }
-	]);
-	const errorHandlerOptions = ([
+	];
+
+	const errorHandlerOptions = [
 		{ title: 'Continue', value: 'continue' },
 		{ title: 'Break on first error', value: 'break' }
-	]);
+	];
+
 	const days = ref([
 		{ title: 'Monday', status: false },
 		{ title: 'Tuesday', status: false },
@@ -196,6 +211,7 @@
 		{ title: 'Saturday', status: false },
 		{ title: 'Sunday', status: false }
 	]);
+
 	const monthsOptions = ref([
 		{ title: 'January', value: '1' },
 		{ title: 'February', value: '2' },
@@ -211,32 +227,28 @@
 		{ title: 'December', value: '12' }
 	]);
 
-	const cron = ref(
-		{
-			periodicity: '1',
-			day: [],
-			month: [],
-			time: dayjs(new Date()).format('HH:mm')
-		}
-	);
+	const cron = ref({
+		periodicity: '1',
+		day: [],
+		month: [],
+		time: dayjs(new Date()).format('HH:mm')
+	});
 
 	const crumbs = [
 		{ title: 'Pricing Schedules', path: 'schedule' },
-		{ title: 'New', path: 'new' }
+		{ title: 'Edit', path: 'edit' }
 	];
 	const formData = ref({
 		name: {
 			isDirty: false,
 			isValid: true
 		},
-		configuration_code: {
-			isDirty: false,
-			skipValidation: true,
-			isValid: true
-		},
 		user_code: {
 			isDirty: false,
-			skipValidation: true,
+			isValid: true
+		},
+		configuration_code: {
+			isDirty: false,
 			isValid: true
 		}
 	});
@@ -247,9 +259,9 @@
 
 	const isFormValid = computed(() => {
 		return !!(
-			scheduleItem.value.name?.length &&
-			scheduleItem.value.user_code?.length &&
-			scheduleItem.value.configuration_code?.length &&
+			scheduleItem.value.name &&
+			scheduleItem.value.user_code &&
+			scheduleItem.value.configuration_code &&
 			formData.value.user_code.isValid &&
 			formData.value.configuration_code.isValid
 		);
@@ -280,31 +292,23 @@
 		cron.value.month = [];
 	};
 
-	const getServerTime = () => {
-		return new Date().toISOString().split('T')[1].split('.')[0];
-	};
-
-	const setDay = (day) => {
-		if (!cron.value.day) {
-			cron.value.day = [];
-		}
-
-		if (cron.value.day.indexOf(day) === -1) {
-			cron.value.day.push(day);
-		} else {
-			cron.value.day = cron.value.day.filter((day_number) => {
-				return day_number !== day;
-			});
-		}
+	const setDay = () => {
+		cron.value.day = days.value
+			.map((day, index) => (day.status ? index + 1 : null))
+			.filter(Boolean);
 	};
 
 	const getRange = (num) =>
-		Array.from({ length: num }, (_, i) => ({ title: (i + 1).toString(), value: (i + 1).toString() }));
+		Array.from({ length: num }, (_, i) => ({
+			title: (i + 1).toString(),
+			value: (i + 1).toString()
+		}));
 
-	function updateUserCodeValidationValue(val) {
-		formData.value.user_code.isValid = val;
-		formData.value.configuration_code.isValid = val;
-	}
+	const updateServerTime = () => {
+		if (serverTimeContent.value) {
+			serverTimeContent.value.textContent = new Date().toISOString().split('T')[1].split('.')[0];
+		}
+	};
 
 	function validateForm() {
 		Object.keys(formData.value).forEach((field) => {
@@ -315,9 +319,10 @@
 	}
 
 	function updateField(field, value) {
-		scheduleItem.value[field] = value;
-		!formData.value[field].isDirty &&
-		(formData.value[field].isDirty = true);
+		if (formData.value[field] && !formData.value[field].isDirty) {
+			formData.value[field].isDirty = true;
+		}
+		set(scheduleItem.value, field, value);
 		validateForm();
 	}
 
@@ -338,7 +343,7 @@
 		isEditAsJson.value = true;
 	}
 
-	async function editorUpdate(data) {
+	async function editorUpdate() {
 		await init();
 	}
 
@@ -383,22 +388,22 @@
 		};
 		const res = await useApi('schedule.put', payload);
 		if (res && res._$error) {
-			useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
+			useNotify({ type: 'error', title: res._$error.error.message || res._$error.error?.details?.errors?.[0].detail?.toUpperCase(), duration: 6000 });
 		} else {
 			useNotify({
 				type: 'success',
 				title: 'Execute is being processed'
 			});
-			confirmButtonLoader.value = false;
 			await init();
 		}
+		confirmButtonLoader.value = false;
 	}
 
 	async function init() {
 		isLoading.value = true;
 		const res = await useApi('scheduleByKey.get', { params: { id: route.params.id } });
 		if (res && res._$error) {
-			useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
+			useNotify({ type: 'error', title: res._$error.error.message || res._$error.error.detail });
 		} else {
 			scheduleItem.value = res;
 			scheduleProcedureList.value = res.procedures;
@@ -413,15 +418,18 @@
 
 				if (values[3] === '*' && values[2] === '*') {
 					cron.value.periodicity = '2';
-					cron.value.day = values[4].split(',');
+					cron.value.day = values[4] ? values[4].split(',') : [];
 					cron.value.day.forEach((day) => {
-						days.value[day - 1] = { status: true };
+						const index = parseInt(day, 10) - 1;
+						if (!isNaN(index) && days.value[index]) {
+							days.value[index].status = true;
+						}
 					});
 				}
 
 				if (values[4] === '*') {
 					cron.value.periodicity = '3';
-					cron.value.day = values[2].split(',');
+					cron.value.day = values[2] ? values[2].split(',') : [];
 					if (values[3].length > 1) {
 						cron.value.month = values[3].split(',');
 					} else {
@@ -433,12 +441,28 @@
 					cron.value.periodicity = '1';
 				}
 			}
-
-			isLoading.value = false;
 		}
+		isLoading.value = false;
 	}
 
 	init();
+
+	watch(() => cron.value.month, (newMonth) => {
+		if (!newMonth.length) {
+			cron.value.day = [];
+		}
+	}, { deep: true });
+
+	onMounted(() => {
+		serverTimeIntervalId.value = setInterval(updateServerTime, 1000);
+	})
+
+	onUnmounted(() => {
+		if (serverTimeIntervalId.value) {
+			clearInterval(serverTimeIntervalId.value);
+		}
+	});
+
 </script>
 
 <style scoped lang="scss">
@@ -469,5 +493,4 @@
 		width: 100%;
 		max-width: 50%;
 	}
-
 </style>
