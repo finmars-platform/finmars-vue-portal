@@ -1,24 +1,30 @@
 <template>
-	<BaseModal :modelValue="modelValue"
-						 :title="title"
-						 no_padding
-						 @update:modelValue="newVal => emit('update:modelValue', newVal)"
-						 @close="onClose">
-
+	<BaseModal
+		:modelValue="modelValue"
+		:title="title"
+		no_padding
+		@update:modelValue="(newVal) => emit('update:modelValue', newVal)"
+		@close="onClose"
+	>
 		<template #modalTop>
-			<div style="flex-grow: 1;">
-				<BaseInput type="text"
-									 class="small bi_no_borders bi_border_bottom m-l-20"
-									 style="width: 280px;"
-									 placeholder="Search"
-									 :modelValue="searchParams"
-									 @update:modelValue="newVal => searchParams = newVal"
+			<div style="flex-grow: 1">
+				<BaseInput
+					type="text"
+					class="small bi_no_borders bi_border_bottom m-l-20"
+					style="width: 280px"
+					placeholder="Search"
+					:modelValue="searchParams"
+					@update:modelValue="(newVal) => (searchParams = newVal)"
 				>
 					<template #button>
 						<FmIcon icon="search" />
 					</template>
 					<template #rightBtn>
-						<FmIcon size="16" icon="close" @click="searchParams = ''" />
+						<FmIcon
+							size="16"
+							icon="close"
+							@click="searchParams = ''"
+						/>
 					</template>
 				</BaseInput>
 			</div>
@@ -33,7 +39,6 @@
 				:multiselect="multiselect"
 				:searchParameters="searchParams"
 				v-model:isAdvanced="isAdvanced"
-
 				@update:modelValue="applySelAttrs"
 				@favoritesChanged="saveFavorites"
 			/>
@@ -42,12 +47,7 @@
 		<template #controls="{ cancel }">
 			<div class="flex space-between">
 				<div class="flex aic">
-					<FmBtn
-						type="text"
-						@click="cancel()"
-					>
-						Cancel
-					</FmBtn>
+					<FmBtn type="text" @click="cancel()"> Cancel</FmBtn>
 
 					<FmIcon
 						class="m-l-24"
@@ -60,212 +60,211 @@
 				<FmBtn @click="save(cancel)">OK</FmBtn>
 			</div>
 		</template>
-
 	</BaseModal>
 </template>
 
 <script setup>
+	const store = useStore();
 
-  const store = useStore();
+	let props = defineProps({
+		modelValue: Boolean,
+		title: String,
+		content_type: {
+			type: String,
+			required: true
+		},
+		valueType: Number, // used to filter attributes
+		attributes: {
+			type: Array,
+			default() {
+				return [];
+			}
+		},
+		disabledAttributes: {
+			// Array of Strings (attribute's keys)
+			type: Array,
+			default() {
+				return [];
+			}
+		},
+		selected: [Array, String], // Array of Strings (keys) for multiselect, String (key) and null for select
+		multiselect: Boolean
+	});
+	/*
+	 * save - returns key or array of keys of selected attributes
+	 * selectedAttributesChanged - returns object or array of objects of selected attributes
+	 */
+	let emit = defineEmits([
+		'update:modelValue',
+		'save',
+		'selectedAttributesChanged',
+		'favoritesChanged'
+	]);
 
-  let props = defineProps({
-    modelValue: Boolean,
-    title: String,
-    content_type: {
-      type: String,
-      required: true,
-    },
-    valueType: Number, // used to filter attributes
-    attributes: {
-      type: Array,
-      default() { return [] },
-    },
-    disabledAttributes: { // Array of Strings (attribute's keys)
-      type: Array,
-      default() { return [] },
-    },
-    selected: [Array, String], // Array of Strings (keys) for multiselect, String (key) and null for select
-    multiselect: Boolean,
-  });
-  /*
-   * save - returns key or array of keys of selected attributes
-   * selectedAttributesChanged - returns object or array of objects of selected attributes
-   */
-  let emit = defineEmits([
-    'update:modelValue',
-    'save',
-    'selectedAttributesChanged',
-    'favoritesChanged'
-  ]);
+	let searchParams = ref('');
+	let selAttrsKeysList = ref([]);
+	let isAdvanced = ref(false);
 
-  let searchParams = ref('');
-  let selAttrsKeysList = ref([]);
-  let isAdvanced = ref(false);
+	/**
+	 * Contains array of keys or a key of the selected attribute(s)
+	 * @type {{value: Array|String}}
+	 */
+	let newSelAttrs = ref(props.multiselect ? [] : '');
 
-  /**
-   * Contains array of keys or a key of the selected attribute(s)
-   * @type {{value: Array|String}}
-   */
-  let newSelAttrs = ref( props.multiselect ? [] : '' );
+	watch(
+		() => props.multiselect,
+		() => {
+			newSelAttrs.value = props.multiselect ? [] : '';
+		}
+	);
 
-  watch(
-    () => props.multiselect,
-    () => { newSelAttrs.value = props.multiselect ? [] : ''; }
-  )
+	function getSelAttrsKeysList() {
+		if (Array.isArray(props.selected)) {
+			return props.selected;
+		} else if (typeof props.selected === 'string') {
+			return props.selected ? [props.selected] : [];
+		} else if (props.selected || props.selected === 0) {
+			throw new Error(
+				'Wrong format of modelValue: ' + typeof props.selected
+			);
+		}
+	}
 
-  function getSelAttrsKeysList() {
+	watch(
+		() => props.selected,
+		() => {
+			selAttrsKeysList.value = getSelAttrsKeysList();
+		}
+	);
 
-	  if ( Array.isArray(props.selected) ) {
+	const filteredAttrs = computed(() => {
+		if (props.valueType) {
+			return props.attributes.filter(
+				(attr) => attr.value_type === props.valueType
+			);
+		}
 
-		  return props.selected;
+		return props.attributes;
+	});
 
-	  } else if (typeof props.selected === 'string') {
+	const favoriteAttrs = computed(() => {
+		if (props.valueType) {
+			const favAttrs =
+				store.favorites.attributes[props.content_type] || [];
 
-		  return props.selected ? [props.selected] : []
+			return favAttrs.filter((fAttr) => {
+				const fAttrData = props.attributes.find(
+					(attr) => attr.key === fAttr.key
+				);
 
-	  } else if (props.selected || props.selected === 0) {
-		  throw new Error("Wrong format of modelValue: " + typeof props.selected)
-	  }
+				/*
+				!fAttrData here because favorite attribute
+				without matching attribute should be shown and marked
+				*/
+				return !fAttrData || fAttrData.value_type === props.valueType;
+			});
+		}
 
-  }
+		return store.favorites.attributes[props.content_type] || [];
+	});
 
-  watch(
-    () => props.selected,
-    () => {
-        selAttrsKeysList.value = getSelAttrsKeysList();
-    }
-  )
+	function saveFavorites(favAttrs) {
+		store.memberLayout.data.favorites.attributes[props.content_type] =
+			favAttrs;
+		store.updateMemberLayout();
+		emit('favoritesChanged', structuredClone(favAttrs));
+	}
 
-  const filteredAttrs = computed(() => {
+	function applySelAttrs(newVal) {
+		if (props.multiselect) {
+			newSelAttrs.value = newVal.filter(
+				(attrKey) => !selAttrsKeysList.value.includes(attrKey)
+			);
+		} else {
+			newSelAttrs.value = newVal;
+		}
+	}
 
-    if (props.valueType) {
-      return props.attributes.filter(attr => attr.value_type === props.valueType);
-    }
+	function onClose() {
+		newSelAttrs.value = props.multiselect ? [] : '';
+		isAdvanced.value = false;
+		searchParams.value = '';
+	}
 
-    return props.attributes;
+	function getSelAttrData(key) {
+		let attrData = props.attributes.find((attr) => attr.key === key);
+		attrData = JSON.parse(JSON.stringify(attrData));
 
-  });
+		const favData = favoriteAttrs.value.find((attr) => attr.key === key);
+		if (favData) attrData.layout_name = favData.customName;
 
-  const favoriteAttrs = computed(() => {
+		return attrData;
+	}
 
-    if (props.valueType) {
+	function save(cancelCallback) {
+		let val;
 
-      const favAttrs = store.favorites.attributes[props.content_type] || [];
+		let val2; // contains full data of selected attributes
+		// eslint-disable-next-line
+		let selKeysList;
 
-      return favAttrs.filter(fAttr => {
+		if (props.multiselect) {
+			// emit array
 
-        const fAttrData = props.attributes.find(attr => attr.key === fAttr.key);
+			val = JSON.parse(JSON.stringify(newSelAttrs.value)) || [];
 
-        /*
-        !fAttrData here because favorite attribute
-        without matching attribute should be shown and marked
-        */
-        return !fAttrData || fAttrData.value_type === props.valueType;
+			if (!Array.isArray(val)) {
+				throw new Error(
+					'Component FmAttributesSelectModal return value with wrong format. Expected array got ' +
+						typeof val
+				);
+			}
 
-      })
+			val2 = val.map((key) => getSelAttrData(key));
+		} else {
+			// emit string and Object of selected attribute
 
-    }
+			val = newSelAttrs.value || null;
 
-    return store.favorites.attributes[props.content_type] || [];
+			if (!val) {
+				// forbid selection of emptiness for selector of single attribute
+				cancelCallback();
+				return;
+			}
 
-  })
+			if (typeof val !== 'string') {
+				throw new Error(
+					'Component FmAttributesSelectModal return value with wrong format. Expected string or null got a ' +
+						typeof val
+				);
+			}
 
-  function saveFavorites(favAttrs) {
-    store.memberLayout.data.favorites.attributes[props.content_type] = favAttrs;
-    store.updateMemberLayout();
-    emit( 'favoritesChanged', structuredClone(favAttrs) );
-  }
+			val2 = getSelAttrData(val);
+		}
 
-  function applySelAttrs(newVal) {
+		emit('save', val);
 
-    if (props.multiselect) {
+		emit('selectedAttributesChanged', val2);
 
-      newSelAttrs.value = newVal.filter(
-          attrKey => !selAttrsKeysList.value.includes(attrKey)
-      )
+		cancelCallback();
+	}
 
-    } else {
-      newSelAttrs.value = newVal;
-    }
+	function init() {
+		selAttrsKeysList.value = getSelAttrsKeysList();
+	}
 
-  }
-
-  function onClose() {
-    newSelAttrs.value = props.multiselect ? [] : '';
-    isAdvanced.value = false;
-    searchParams.value = '';
-  }
-
-  function getSelAttrData(key) {
-
-    let attrData = props.attributes.find(attr => attr.key === key);
-    attrData = JSON.parse(JSON.stringify( attrData ));
-
-    const favData = favoriteAttrs.value.find(attr => attr.key === key);
-    if (favData) attrData.layout_name = favData.customName;
-
-    return attrData;
-
-  }
-
-  function save(cancelCallback) {
-
-    let val;
-
-    let val2; // contains full data of selected attributes
-    let selKeysList;
-
-    if ( props.multiselect ) { // emit array
-
-      val = JSON.parse(JSON.stringify( newSelAttrs.value )) || [];
-
-      if ( !Array.isArray(val) ) {
-        throw new Error("Component FmAttributesSelectModal return value with wrong format. Expected array got " + typeof val);
-      }
-
-      val2 = val.map( key => getSelAttrData(key) );
-
-    }
-    else { // emit string and Object of selected attribute
-
-      val = newSelAttrs.value || null;
-
-      if (!val) { // forbid selection of emptiness for selector of single attribute
-        cancelCallback();
-        return;
-      }
-
-      if ( typeof val !== 'string' ) {
-        throw new Error("Component FmAttributesSelectModal return value with wrong format. Expected string or null got a " + typeof val);
-      }
-
-      val2 = getSelAttrData(val);
-
-    }
-
-    emit('save', val);
-
-    emit('selectedAttributesChanged', val2);
-
-    cancelCallback();
-
-  }
-
-  function init() {
-	  selAttrsKeysList.value = getSelAttrsKeysList();
-  }
-
-  init();
-
+	init();
 </script>
 
 <style lang="scss" scoped>
-  .attr_select_wrap {
-    min-height: 340px;
-    min-width: 400px;
-    height: calc(80vh - $modal-header-height - $modal-footer-height);
-    width: 70vw;
-    max-width: 800px ;
-  }
+	$modal-header-height: 50px;
+	$modal-footer-height: 57px;
 
+	.attr_select_wrap {
+		min-height: 340px;
+		min-width: 400px;
+		height: calc(80vh - $modal-header-height - $modal-footer-height);
+		width: 70vw;
+		max-width: 800px;
+	}
 </style>

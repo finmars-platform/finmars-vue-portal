@@ -59,7 +59,8 @@
 			type: String
 		},
 		data: {
-			type: Object
+			type: Object,
+			default: () => ({})
 		},
 		menuLocation: {
 			type: String,

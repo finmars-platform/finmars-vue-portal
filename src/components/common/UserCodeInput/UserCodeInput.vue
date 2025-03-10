@@ -27,11 +27,12 @@
 					class="user-code-input__value"
 					:model-value="userCodeEnd"
 					label="User Code"
+					autofocus
 					outlined
 					hide-details
-					:rules="[validateUserCodeEnd]"
 					:disabled="isLoading"
-					@init="userCodeFieldComponent = $event?.component"
+					:error="!!userCodeEndErrorMessage"
+					:error-messages="userCodeEndErrorMessage"
 					@update:model-value="updateUserCodeEnd"
 				>
 					<template #append-inner>
@@ -64,6 +65,7 @@
 </template>
 
 <script setup>
+	import { computed } from 'vue';
 	import { FmIcon, FmSelect, FmTextField, FmTooltip } from '@finmars/ui';
 	import useUserCodeInput from './useUserCodeInput';
 
@@ -102,17 +104,18 @@
 		'update:valid'
 	]);
 
+	const propsValue = computed(() => props);
+
 	const {
-		userCodeFieldComponent,
 		isLoading,
 		editedUserCode,
 		userCodeEnd,
+		userCodeEndErrorMessage,
 		configurationCodes,
 		configurationCode,
-		validateUserCodeEnd,
 		updateUserCodeEnd,
 		updateConfigurationCode
-	} = useUserCodeInput(props, emits);
+	} = useUserCodeInput(propsValue, emits);
 </script>
 
 <style lang="scss" scoped>

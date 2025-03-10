@@ -18,18 +18,17 @@
 </template>
 
 <script setup>
-
-	const props = defineProps([
-		'title', 'saveText'
-	])
-	const emit = defineEmits([
-		'save', 'cancel',
-	])
+	/* eslint-disable */
+	const props = defineProps(['title', 'saveText']);
+	const emit = defineEmits(['save', 'cancel']);
 </script>
 <style lang="scss" scoped>
+	$content-padding-x: 30px;
+
 	.coll {
 		width: calc(50% - $content-padding-x / 2);
 	}
+
 	.control_line {
 		width: calc(100% + $content-padding-x * 2);
 		position: sticky;
@@ -40,6 +39,7 @@
 		background: var(--base-backgroundColor);
 		z-index: 2;
 	}
+
 	.fm_container {
 		min-height: calc(100vh - 80px);
 	}

@@ -324,7 +324,7 @@
 .fm_drop {
 	position: fixed;
 	// z-index: 123;
-	z-index: $modal-z-index;
+	z-index: var(--modal-z-index);
 	box-shadow: 0 3px 11px 3px hsl(0deg 0% 60% / 40%);
 	display: inline-block;
 	border-radius: 5px;
