@@ -22,7 +22,9 @@
 						:value="expression"
 						@input="onInput"
 					/>
-					<label class="expression-editor__editor-label">Expression</label>
+					<label class="expression-editor__editor-label"
+						>Expression</label
+					>
 				</div>
 
 				<div
@@ -39,14 +41,15 @@
 						Status:
 						<b
 							:style="{
-								color:
-									EXPRESSION_VALIDATION_DESCRIPTIONS[validationResult.status]
-										?.color
+								color: EXPRESSION_VALIDATION_DESCRIPTIONS[
+									validationResult.status
+								]?.color
 							}"
 						>
 							{{
-								EXPRESSION_VALIDATION_DESCRIPTIONS[validationResult.status]
-									?.text
+								EXPRESSION_VALIDATION_DESCRIPTIONS[
+									validationResult.status
+								]?.text
 							}}
 						</b>
 					</div>
@@ -86,14 +89,19 @@
 							:close-on-content-click="false"
 						>
 							<div class="expression-editor__attr-selector">
-								<div class="expression-editor__attr-selector-header">
-									Choose column's key to add it at the end of the expression
+								<div
+									class="expression-editor__attr-selector-header"
+								>
+									Choose column's key to add it at the end of
+									the expression
 
 									<FmIconButton
 										icon="mdi-close"
 										variant="text"
 										size="small"
-										@click.stop.prevent="isAttrsSelectorOpen = false"
+										@click.stop.prevent="
+											isAttrsSelectorOpen = false
+										"
 									/>
 								</div>
 								<FmItemPicker
@@ -115,7 +123,10 @@
 						@mousemove.stop.prevent="onResizerMouseMove"
 					/>
 
-					<div ref="dataBlockEl" class="expression-editor__functions-data">
+					<div
+						ref="dataBlockEl"
+						class="expression-editor__functions-data"
+					>
 						<div class="expression-editor__functions-group">
 							<div
 								v-for="(group, index) in groups"
@@ -142,7 +153,9 @@
 								@click:clear="searchExpr = ''"
 							/>
 
-							<div class="expression-editor__functions-exprs-list">
+							<div
+								class="expression-editor__functions-exprs-list"
+							>
 								<div
 									v-for="(expr, index) in filteredExpressions"
 									:key="index"
@@ -153,7 +166,9 @@
 												isExpressionSelected(expr)
 										}
 									]"
-									@click.stop.prevent="selectedHelpItem = expr"
+									@click.stop.prevent="
+										selectedHelpItem = expr
+									"
 								>
 									{{ expr.name }}
 								</div>
@@ -162,8 +177,12 @@
 					</div>
 
 					<div class="expression-editor__functions-description">
-						<div class="expression-editor__functions-description-content">
-							<div class="expression-editor__functions-description-header">
+						<div
+							class="expression-editor__functions-description-content"
+						>
+							<div
+								class="expression-editor__functions-description-header"
+							>
 								{{ selectedHelpItem?.func }}
 							</div>
 
@@ -254,7 +273,8 @@
 			type: String
 		},
 		data: {
-			type: Object
+			type: Object,
+			default: () => ({})
 		},
 		disallowEmptyValue: {
 			type: Boolean
@@ -303,7 +323,9 @@
 			return expressions.value.filter(
 				(expr) =>
 					!expr.name ||
-					expr?.name.toLowerCase().includes(searchExpr.value.toLowerCase())
+					expr?.name
+						.toLowerCase()
+						.includes(searchExpr.value.toLowerCase())
 			);
 		}
 
@@ -311,7 +333,9 @@
 			return (
 				expr.groups === selectedHelpGroup.value.key &&
 				(!expr.name ||
-					expr?.name.toLowerCase().includes(searchExpr.value.toLowerCase()))
+					expr?.name
+						.toLowerCase()
+						.includes(searchExpr.value.toLowerCase()))
 			);
 		});
 	});
@@ -684,7 +708,9 @@
 				top: 12px;
 				height: calc(100% - 24px);
 				width: 4px;
-				left: calc(var(--expression-editor-data-block-width) + 16px + 6px);
+				left: calc(
+					var(--expression-editor-data-block-width) + 16px + 6px
+				);
 				background-color: var(--outline-variant);
 				cursor: ew-resize;
 			}

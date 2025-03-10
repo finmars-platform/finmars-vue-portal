@@ -14,6 +14,7 @@
 
 				<div class="entity-json-editor__body">
 					<VAceEditor
+						:value="''"
 						lang="json"
 						theme="monokai"
 						class="entity-json-editor__editor"
@@ -27,7 +28,11 @@
 						:disabled="isProcessing"
 						@click.stop.prevent="copyContentToClipboard"
 					>
-						<FmTooltip activator="parent" type="secondary" location="top">
+						<FmTooltip
+							activator="parent"
+							type="secondary"
+							location="top"
+						>
 							Copy to clipboard
 						</FmTooltip>
 					</FmIconButton>
@@ -113,10 +118,6 @@
 		editor.getSession().setMode('ace/mode/json');
 		editor.getSession().setUseWorker(false);
 		editor.setAutoScrollEditorIntoView(true);
-		editor.setOptions({
-			enableBasicAutocompletion: true,
-			enableSnippets: true
-		});
 		editor.setValue(JSON.stringify(props.data, null, 4));
 		editor.focus();
 		onEditorInit(editor);
@@ -156,9 +157,13 @@
 				}
 
 				if (
-					!['inputs', 'transaction_type', 'status', 'meta', 'source'].includes(
-						key
-					)
+					![
+						'inputs',
+						'transaction_type',
+						'status',
+						'meta',
+						'source'
+					].includes(key)
 				) {
 					delete convertedData[key];
 				}
@@ -183,45 +188,53 @@
 				return;
 			}
 
-			if (`${key}_object` in convertedData && convertedData[`${key}_object`]) {
+			if (
+				`${key}_object` in convertedData &&
+				convertedData[`${key}_object`]
+			) {
 				convertedData[key] = convertedData[`${key}_object`].user_code;
 				delete convertedData[`${key}_object`];
 				return;
 			}
 
 			if (key === 'attributes') {
-				convertedData.attributes = convertedData.attributes.map((attr) => {
-					const editedAttr = cloneDeep(attr);
-					editedAttr.attribute_type =
-						editedAttr.attribute_type_object?.user_code;
-					delete editedAttr.attribute_type_object;
+				convertedData.attributes = convertedData.attributes.map(
+					(attr) => {
+						const editedAttr = cloneDeep(attr);
+						editedAttr.attribute_type =
+							editedAttr.attribute_type_object?.user_code;
+						delete editedAttr.attribute_type_object;
 
-					if (editedAttr.classifier_object) {
-						editedAttr.classifier = editedAttr.classifier_object.name;
-						delete editedAttr.classifier_object;
+						if (editedAttr.classifier_object) {
+							editedAttr.classifier =
+								editedAttr.classifier_object.name;
+							delete editedAttr.classifier_object;
+						}
+
+						return editedAttr;
 					}
-
-					return editedAttr;
-				});
+				);
 				return;
 			}
 
 			if (key === 'accrual_calculation_schedules') {
 				convertedData.accrual_calculation_schedules =
-					convertedData.accrual_calculation_schedules.map((schedule) => {
-						const editedSchedule = cloneDeep(schedule);
-						delete editedSchedule.id;
+					convertedData.accrual_calculation_schedules.map(
+						(schedule) => {
+							const editedSchedule = cloneDeep(schedule);
+							delete editedSchedule.id;
 
-						editedSchedule.accrual_calculation_model =
-							editedSchedule.accrual_calculation_model_object?.user_code;
-						delete editedSchedule.accrual_calculation_model_object;
+							editedSchedule.accrual_calculation_model =
+								editedSchedule.accrual_calculation_model_object?.user_code;
+							delete editedSchedule.accrual_calculation_model_object;
 
-						editedSchedule.periodicity =
-							editedSchedule.periodicity_object?.user_code;
-						delete editedSchedule.periodicity_object;
+							editedSchedule.periodicity =
+								editedSchedule.periodicity_object?.user_code;
+							delete editedSchedule.periodicity_object;
 
-						return editedSchedule;
-					});
+							return editedSchedule;
+						}
+					);
 			}
 		});
 		return convertedData;
@@ -346,7 +359,7 @@
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				column-gap: 8px;
+				column-gap: 16px;
 			}
 
 			button {
