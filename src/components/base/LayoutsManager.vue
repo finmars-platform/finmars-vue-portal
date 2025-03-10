@@ -36,20 +36,14 @@
 
 				<div class="layouts_container divider_bottom">
 					<div v-if="!loadingLayoutsList">
-						<div
-							v-for="layout in layouts"
-							:key="layout.id"
-							class="menu_item"
-						>
+						<div v-for="layout in layouts" :key="layout.id" class="menu_item">
 							<span
 								v-if="
 									!layout.origin_for_global_layout &&
 									!layout.sourced_from_global_layout
 								"
 								class="material-icons default_icons"
-								:class="{
-									default_layout: isLayoutDefault(layout)
-								}"
+								:class="{ default_layout: isLayoutDefault(layout) }"
 								@click.prevent.stop="setAsDefault(layout)"
 								>home</span
 							>
@@ -75,16 +69,12 @@
 								:to="
 									$router.resolve({
 										name: $route.name,
-										query: { layout: layout.user_code }
+										query: { layout: layout.user_code },
 									})
 								"
 								class="a_item"
 							>
-								<div
-									@click.prevent.stop="
-										onLayoutLinkClick(layout.id, close)
-									"
-								>
+								<div @click.prevent.stop="onLayoutLinkClick(layout.id, close)">
 									{{ layout.name }}
 								</div>
 							</NuxtLink>
@@ -93,13 +83,8 @@
 						<div v-if="autosaveLayout" class="menu_item">
 							<span
 								class="material-icons default_icons"
-								:class="{
-									default_layout:
-										isLayoutDefault(autosaveLayout)
-								}"
-								@click.prevent.stop="
-									setAsDefault(autosaveLayout)
-								"
+								:class="{ default_layout: isLayoutDefault(autosaveLayout) }"
+								@click.prevent.stop="setAsDefault(autosaveLayout)"
 								>home</span
 							>
 
@@ -107,19 +92,14 @@
 								:to="
 									$router.resolve({
 										name: $route.name,
-										query: {
-											layout: autosaveLayout.user_code
-										}
+										query: { layout: autosaveLayout.user_code },
 									})
 								"
 								class="a_item"
 							>
 								<div
 									@click.prevent.stop="
-										onLayoutLinkClick(
-											autosaveLayout.id,
-											close
-										)
+										onLayoutLinkClick(autosaveLayout.id, close)
 									"
 								>
 									{{ autosaveLayout.name }}
@@ -195,11 +175,7 @@
 						</div>-->
 
 				<div class="divider_bottom">
-					<FmBtn
-						type="text"
-						class="menu_item"
-						@click="emit('export'), close()"
-					>
+					<FmBtn type="text" class="menu_item" @click="emit('export'), close()">
 						<span class="material-icons">exit_to_app</span>
 						Export
 					</FmBtn>
@@ -235,7 +211,7 @@
 						type="text"
 						class="menu_item"
 						:disabled="activeLayout.newLayout"
-						@click="(renameIsOpened = true), close()"
+						@click=";(renameIsOpened = true), close()"
 					>
 						<span class="material-icons">create</span>
 						Rename
@@ -317,7 +293,6 @@
 </template>
 
 <script setup>
-	/* eslint-disable */
 	let props = defineProps({
 		activeLayout: Object,
 		layouts: Array,
@@ -326,8 +301,8 @@
 		loadingLayoutsList: Boolean,
 		content_type: String,
 
-		isLayoutDefault: Function
-	});
+		isLayoutDefault: Function,
+	})
 
 	// const viewerData = inject('viewerData');
 
@@ -341,15 +316,15 @@
 		'openLayoutsList',
 		'openInvites',
 		'rename',
-		'delete'
-	]);
+		'delete',
+	])
 
-	let invitesList = ref([]);
+	let invitesList = ref([])
 
-	let menuIsOpened = ref(false);
-	let renameIsOpened = ref(false);
-	let showDeletionWarning = ref(false);
-	let sharingIsOpened = ref(false);
+	let menuIsOpened = ref(false)
+	let renameIsOpened = ref(false)
+	let showDeletionWarning = ref(false)
+	let sharingIsOpened = ref(false)
 
 	/* Maybe will be used again
 
@@ -369,20 +344,20 @@
 	let occupiedUserCodes = computed(() => {
 		return props.layouts
 			.filter((lLayout) => {
-				return lLayout.user_code !== 'viewerData.listLayout.user_code';
+				return lLayout.user_code !== 'viewerData.listLayout.user_code'
 			})
-			.map((lLayout) => lLayout.user_code);
-	});
+			.map((lLayout) => lLayout.user_code)
+	})
 
-	let isLayoutDefault = (layout) => layout.is_default;
+	let isLayoutDefault = (layout) => layout.is_default
 
 	if (props.isLayoutDefault) {
-		isLayoutDefault = (layout) => props.isLayoutDefault(layout);
+		isLayoutDefault = (layout) => props.isLayoutDefault(layout)
 	}
 
 	function setAsDefault(layoutLight) {
 		if (!isLayoutDefault(layoutLight)) {
-			emit('setAsDefault', JSON.parse(JSON.stringify(layoutLight)));
+			emit('setAsDefault', JSON.parse(JSON.stringify(layoutLight)))
 		}
 	}
 
@@ -394,23 +369,23 @@
 		scope.dashboardEventService.dispatchEvent(dashboardEvents.DASHBOARD_LAYOUT_CHANGE)*/
 		// TODO write function for vue
 
-		closeMenuFn();
-		emit('changeLayout', layoutId);
+		closeMenuFn()
+		emit('changeLayout', layoutId)
 	}
 
 	function renameLayout(newNamesData) {
-		emit('rename', newNamesData);
-		renameIsOpened.value = false;
+		emit('rename', newNamesData)
+		renameIsOpened.value = false
 	}
 
 	async function deleteLayout() {
 		let confirm = await useConfirm({
 			title: 'Confirm action',
-			text: ` Are you sure to delete Custom Column "${props.activeLayout.name}"  ?`
-		});
+			text: ` Are you sure to delete Custom Column "${props.activeLayout.name}"  ?`,
+		})
 
 		if (confirm) {
-			emit('delete');
+			emit('delete')
 		}
 	}
 
@@ -418,20 +393,16 @@
 		const res = await useApi('configSharingMyInvitesList.get', {
 			filters: { status: '0' },
 			notifyError: false
-		});
+		})
 
-		if (!res._$error) invitesList.value = res.results;
+		if (!res._$error) invitesList.value = res.results
 	}
 
-	fetchInvites();
+	fetchInvites()
 </script>
 
 <style lang="scss" scoped>
-	$main: #fafafa;
-	$border: #e0e0e0;
 	$layout-manager-item-height: 48px;
-	$opts-borders: 1px solid $border;
-
 	:deep(.lm_open_btn.fm_btn) {
 		padding: 0;
 		text-transform: none;
@@ -447,7 +418,6 @@
 	.layouts_manager_menu :deep(.material-icons) {
 		color: var(--primary-color) !important;
 	}
-
 	.divider_bottom {
 		border-bottom: $opts-borders;
 	}

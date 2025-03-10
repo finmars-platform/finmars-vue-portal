@@ -155,7 +155,7 @@
 	import useNotify from '~/composables/useNotify';
 	import FmInputFiles from '@/components/Fm/InputFiles/InputFiles.vue';
 	import DataImportResult from '@/components/common/DataImportResult.vue';
-	import { wrapperStringify } from '~/utils/wrapperStringify';
+	import { wrapperStringify } from './utils';
 
 	const props = defineProps({
 		schemeId: {

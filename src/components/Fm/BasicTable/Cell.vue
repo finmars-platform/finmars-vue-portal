@@ -7,7 +7,7 @@
 			v-if="sorting || sorting === ''"
 			type="icon"
 			class="sorting_icon_btn"
-			:class="{ active: ['asc', 'desc'].includes(sorting) }"
+			:class="{ 'active': ['asc', 'desc'].includes(sorting) }"
 			:disabled="sortingDisabled"
 			@click="emits('toggleSorting')"
 		>
@@ -19,81 +19,86 @@
 			/>
 		</FmBtn>
 
-		<FmLoader v-if="loading" />
+
+        <FmLoader v-if="loading" />
+
 	</button>
 </template>
 
 <script setup>
-	/*
-	 * Supporting component for the
-	 * components/Fm/BasicTable/index.vue, components/Fm/BasicTable/Header.vue .
-	 * Must always have one of them as parent.
-	 */
+/*
+ * Supporting component for the
+ * components/Fm/BasicTable/index.vue, components/Fm/BasicTable/Header.vue .
+ * Must always have one of them as parent.
+ */
 
-	// stores
-	// props, emits
-	let props = defineProps({
-		loading: Boolean,
-		/** @values: 'number' */
-		valueType: Number,
-		readonly: Boolean,
-		/**
-		 * Empty string used when sorting enabled for the cell but not active
-		 *
-		 * @values: 'asc', 'desc', '', undefined
-		 */
-		sorting: String,
-		sortingDisabled: Boolean,
-		empty: Boolean // used to mark cells that contain: null, undefined, ''
-	});
+// stores
+// props, emits
+let props = defineProps({
+	loading: Boolean,
+	/** @values: 'number' */
+	valueType: Number,
+    readonly: Boolean,
+    /**
+     * Empty string used when sorting enabled for the cell but not active
+     *
+     * @values: 'asc', 'desc', '', undefined
+     */
+    sorting: String,
+    sortingDisabled: Boolean,
+	empty: Boolean, // used to mark cells that contain: null, undefined, ''
+})
 
-	if (props.valueType && ![20].includes(props.valueType)) {
-		throw `FmBasicTable: invalid value passed to property 'valueType': ${props.valueType}`;
-	}
+if ( props.valueType && ![20].includes(props.valueType) ) {
+	throw `FmBasicTable: invalid value passed to property 'valueType': ${props.valueType}`
+}
 
-	let emits = defineEmits('toggleSorting');
-	//# region variables, refs, computed
-	const valueTypeNames = {
-		20: 'number'
+let emits = defineEmits('toggleSorting')
+//# region variables, refs, computed
+const valueTypeNames = {
+    20: "number",
+}
+
+let cellClasses = computed(() => {
+
+    let classes = {
+        'readonly': props.readonly,
+		'empty': props.empty,
 	};
 
-	let cellClasses = computed(() => {
-		let classes = {
-			readonly: props.readonly,
-			empty: props.empty
-		};
+    if (props.valueType) {
 
-		if (props.valueType) {
-			// e.g. 'number-cell'
-			const className = valueTypeNames[props.valueType] + '-cell';
+        // e.g. 'number-cell'
+        const className = valueTypeNames[props.valueType] + "-cell";
 
-			classes[className] = true;
-		}
+        classes[className] = true;
+    }
 
-		return classes;
-	});
-	//# endregion
+    return classes;
 
-	//# region hooks
-	//# endregion
+});
+//# endregion
 
-	// watchers
+//# region hooks
+//# endregion
+
+// watchers
+
 </script>
 
 <style scoped lang="scss">
-	$main-darken: #f2f1f1;
-	/*
-	 * Some styles are applied to this component inside components
-	 * FmBasicTable and FmBasicTableHeader using :deep()
-	 */
+    /*
+     * Some styles are applied to this component inside components
+     * FmBasicTable and FmBasicTableHeader using :deep()
+     */
 
 	.t_cell {
 		position: relative;
 		display: block;
 		// height: calc(100% - 1px); // without -1px
-		height: inherit;
-		padding: 0 16px;
-		text-align: inherit; // from FmBasicTableRow
+        height: inherit;
+        padding: 0 16px;
+        text-align: inherit; // from FmBasicTableRow
 		cursor: inherit;
 
 		&:not(.no_collapsed) {
@@ -119,19 +124,18 @@
 			cursor: default;
 		}
 
-		&:not([disabled]):hover {
+        &:not([disabled]):hover {
 			:deep(.fm_btn.sorting_icon_btn) {
-				display: block;
-			}
-		}
+                display: block;
+            }
+        }
 	}
 
 	.t_cell.number-cell {
-		text-align: right;
+	  text-align: right;
 	}
 
-	:deep(.fm_btn.sorting_icon_btn) {
-		// 2 classes needed to override classes inside FmBtn
+    :deep(.fm_btn.sorting_icon_btn) { // 2 classes needed to override classes inside FmBtn
 		position: absolute;
 		right: 2px;
 
@@ -141,7 +145,7 @@
 		&:not(.active) {
 			display: none;
 		}
-	}
+    }
 
 	:deep(.sorting_icon) {
 		padding: 4px;

@@ -2,16 +2,17 @@
 	<div
 		class="radio_input_holder"
 		:class="{
-			disabled: disabled,
-			checked: modelValue === value
+			'disabled': disabled,
+			'checked': modelValue === value
 		}"
 		@click="inputElem.click()"
 	>
+
 		<input
 			ref="inputElem"
 			type="radio"
 			class="radio_input"
-			:class="{ checked: modelValue === value }"
+			:class="{ 'checked': modelValue === value }"
 			:name="name"
 			:checked="modelValue === value"
 			:disabled="disabled"
@@ -24,29 +25,27 @@
 </template>
 
 <script setup>
-	/* eslint-disable */
+
 	let props = defineProps({
 		modelValue: [Number, String, Boolean],
 		value: {
-			type: [Number, String, Boolean]
+			type: [Number, String, Boolean],
 		},
 		name: String,
 		label: {
 			default: '',
-			type: String
+			type: String,
 		},
-		disabled: Boolean
-	});
+		disabled:Boolean,
+	})
 
-	let emit = defineEmits(['update:modelValue']);
+	let emit = defineEmits(['update:modelValue'])
 
 	let inputElem = ref(null);
+
 </script>
 
 <style lang="scss" scoped>
-	$borer-lighten: #e0e0e0;
-	$primary: var(--primary-color);
-	$primary-lighten: #f69470;
 
 	.radio_input_holder {
 		height: 20px;
@@ -179,6 +178,8 @@
 				scale: 1;
 			}
 		}*/
+
+
 	}
 
 	.radio_input {
@@ -190,11 +191,11 @@
 		border-radius: 50%;
 		border-style: solid;
 		border-width: 2px;
-		transition: border-color ease 0.28s;
+		transition: border-color ease .28s;
 		box-sizing: border-box;
 
 		&::after {
-			content: '';
+			content: "";
 			position: absolute;
 			display: block;
 			height: 10px;
@@ -214,6 +215,7 @@
 		&:not(.checked)[disabled] {
 			border-color: $borer-lighten;
 		}
+
 	}
 
 	.radio_input.checked {
@@ -239,4 +241,6 @@
 	.radio_label {
 		margin-left: 10px;
 	}
+
+
 </style>

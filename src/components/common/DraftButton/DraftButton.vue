@@ -307,10 +307,8 @@
 			background-color: var(--surface-container-highest);
 
 			&:hover {
-				background-color: color-mix(
-					in srgb,
-					transparent,
-					var(--primary) 20%
+				background-color: hsl(
+					from var(--surface-container-highest) h s calc(l - 5)
 				);
 			}
 		}

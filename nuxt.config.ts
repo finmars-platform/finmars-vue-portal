@@ -3,7 +3,6 @@ import commonjs from 'vite-plugin-commonjs';
 
 export default defineNuxtConfig({
 	compatibilityDate: '2024-09-04',
-	devtools: { enabled: true },
 	runtimeConfig: {
 		public: {
 			frontURL: process.env.FRONT_HOST || '==PROD_FRONT_HOST==',
@@ -14,8 +13,7 @@ export default defineNuxtConfig({
 				process.env.AUTH_HOST || '==PROD_API_HOST==' + '/authorizer',
 
 			KEYCLOAK_URL: process.env.KEYCLOAK_URL || '==PROD_KEYCLOAK_URL==',
-			KEYCLOAK_REALM:
-				process.env.KEYCLOAK_REALM || '==PROD_KEYCLOAK_REALM==',
+			KEYCLOAK_REALM: process.env.KEYCLOAK_REALM || '==PROD_KEYCLOAK_REALM==',
 			KEYCLOAK_CLIENT_ID:
 				process.env.KEYCLOAK_CLIENT_ID || '==PROD_KEYCLOAK_CLIENT_ID==',
 
@@ -47,10 +45,10 @@ export default defineNuxtConfig({
 	css: [
 		'@finmars/ui/dist/finmars-ui.css',
 		'@finmars/ui/dist/themes.css',
-		'~/assets/scss/variables.scss',
 		'~/assets/scss/main.scss',
 		'~/assets/css/material-icons.css',
-		'~/assets/scss/pickmeup.scss'
+		'~/assets/scss/pickmeup.scss',
+		'~/assets/scss/base-theme.scss',
 	],
 	postcss: {
 		plugins: {
@@ -61,7 +59,7 @@ export default defineNuxtConfig({
 		css: {
 			preprocessorOptions: {
 				scss: {
-					api: 'modern-compiler'
+					additionalData: '@import "~/assets/scss/variables.scss";'
 				}
 			}
 		},
@@ -90,9 +88,7 @@ export default defineNuxtConfig({
 			});
 
 			pagesToRemove.forEach((pagePath) => {
-				const pageIndex = pages.findIndex(
-					(page) => page.path === pagePath
-				);
+				const pageIndex = pages.findIndex((page) => page.path === pagePath);
 
 				pages.splice(pageIndex, 1);
 			});

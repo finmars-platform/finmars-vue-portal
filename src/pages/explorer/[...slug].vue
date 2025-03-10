@@ -3,13 +3,7 @@
 		<div class="explorer-page">
 			<div class="explorer-explorer-section">
 				<div class="flex">
-					<h1
-						style="
-							margin-top: 5px;
-							margin-right: 8px;
-							font-size: 20px;
-						"
-					>
+					<h1 style="margin-top: 5px; margin-right: 8px; font-size: 20px">
 						Explorer
 					</h1>
 					<FmIcon
@@ -26,26 +20,17 @@
 					<div class="flex explorer-actions-buttons">
 						<FmMenu>
 							<template #btn="{ isOpen }">
-								<FmBtn> Create</FmBtn>
+								<FmBtn> Create </FmBtn>
 							</template>
 							<template #default>
 								<div class="fm_list">
-									<div
-										class="fm_list_item"
-										@click="openCreateFileModal()"
-									>
+									<div class="fm_list_item" @click="openCreateFileModal()">
 										Create File
 									</div>
-									<div
-										class="fm_list_item"
-										@click="openCreateFolderModal()"
-									>
+									<div class="fm_list_item" @click="openCreateFolderModal()">
 										Create Folder
 									</div>
-									<div
-										class="fm_list_item"
-										@click="uploadFiles()"
-									>
+									<div class="fm_list_item" @click="uploadFiles()">
 										Upload Files
 									</div>
 								</div>
@@ -60,12 +45,8 @@
 								}}
 							</FmBtn>
 						</div>
-						<FmBtn @click="sync()"> Sync</FmBtn>
-						<div
-							v-if="selectedCount"
-							class="flex"
-							style="align-items: center"
-						>
+						<FmBtn @click="sync()"> Sync </FmBtn>
+						<div v-if="selectedCount" class="flex" style="align-items: center">
 							Selected: {{ selectedCount }}
 							<FmMenu>
 								<template #btn>
@@ -77,9 +58,7 @@
 											>Download Selected as .zip</span
 										>
 										<span @click="openMove()">Move</span>
-										<span
-											class="menu-item-delete"
-											@click="openDeleteSelected()"
+										<span class="menu-item-delete" @click="openDeleteSelected()"
 											>Delete Selected</span
 										>
 									</div>
@@ -124,81 +103,48 @@
 							class="explorer-file-upload-status-item"
 						>
 							<div class="flex">
-								<div
-									class="explorer-file-upload-status-item-name"
-								>
+								<div class="explorer-file-upload-status-item-name">
 									{{ item.name }}
 								</div>
 								<div class="explorer-file-upload-status-size">
 									&nbsp;{{ item.size_pretty }}
 								</div>
 							</div>
-							<div
-								class="flex explorer-file-upload-status-item-status"
-							>
+							<div class="flex explorer-file-upload-status-item-status">
 								<div
 									class="task-status-badge status-init"
-									v-if="
-										item.status === 'I' ||
-										item.status === 'init'
-									"
+									v-if="item.status === 'I' || item.status === 'init'"
 								>
-									<div
-										class="explorer-file-upload-status-item-status-wrapper"
-									>
+									<div class="explorer-file-upload-status-item-status-wrapper">
 										<FmIcon size="14" icon="check_circle" />
 										<div class="task-status-text">Init</div>
 									</div>
 								</div>
 								<div
 									class="task-status-badge status-progress"
-									v-if="
-										item.status === 'P' ||
-										item.status === 'progress'
-									"
+									v-if="item.status === 'P' || item.status === 'progress'"
 								>
-									<div
-										class="explorer-file-upload-status-item-status-wrapper"
-									>
-										<FmIcon
-											size="14"
-											icon="hourglass_full"
-										/>
-										<div class="task-status-text">
-											Running
-										</div>
+									<div class="explorer-file-upload-status-item-status-wrapper">
+										<FmIcon size="14" icon="hourglass_full" />
+										<div class="task-status-text">Running</div>
 									</div>
 								</div>
 								<div
 									class="task-status-badge status-success"
-									v-if="
-										item.status === 'D' ||
-										item.status === 'success'
-									"
+									v-if="item.status === 'D' || item.status === 'success'"
 								>
-									<div
-										class="explorer-file-upload-status-item-status-wrapper"
-									>
+									<div class="explorer-file-upload-status-item-status-wrapper">
 										<FmIcon size="14" icon="check_circle" />
-										<div class="task-status-text">
-											Success
-										</div>
+										<div class="task-status-text">Success</div>
 									</div>
 								</div>
 								<div
 									class="task-status-badge status-error"
-									v-if="
-										item.status === 'E' ||
-										item.status === 'error'
-									"
+									v-if="item.status === 'E' || item.status === 'error'"
 								>
-									<div
-										class="explorer-file-upload-status-item-status-wrapper"
-									>
+									<div class="explorer-file-upload-status-item-status-wrapper">
 										<FmIcon size="14" icon="error" />
-										<div class="task-status-text">
-											Error
-										</div>
+										<div class="task-status-text">Error</div>
 									</div>
 								</div>
 							</div>
@@ -209,8 +155,8 @@
 								type="text"
 								v-if="closeFileStatuses"
 								@click="filesStatus = []"
-								>Close
-							</FmBtn>
+								>Close</FmBtn
+							>
 						</div>
 					</div>
 					<div class="explorer-table">
@@ -241,10 +187,7 @@
 										<div class="table-column-title-wrap">
 											<span>{{ headerItem.name }}</span>
 											<span
-												v-if="
-													headerItem.isSortable &&
-													headerItem.isShowSortArrows
-												"
+												v-if="headerItem.isSortable && headerItem.isShowSortArrows"
 												class="material-icons"
 											>
 												{{
@@ -270,110 +213,64 @@
 									</td>
 									<td>
 										<div v-if="item.type == 'dir'">
-											<div
-												class="flex-row fi-center"
-												@click="openFolder(item)"
-											>
+											<div class="flex-row fi-center" @click="openFolder(item)">
 												<span
 													class="material-icons"
 													v-if="
-														item.name !==
-															store.member
-																?.username &&
+														item.name !== store.member?.username &&
 														item.name !== 'import'
 													"
 													>folder</span
 												>
 												<span
 													class="material-icons"
-													v-if="
-														item.name ===
-														store.member?.username
-													"
+													v-if="item.name === store.member?.username"
 													>folder_shared</span
 												>
 												<span
 													class="material-icons"
-													v-if="
-														item.name === 'import'
-													"
+													v-if="item.name === 'import'"
 													>folder_special</span
 												>
-												<span
-													class="explorer-item-name"
-													:title="item.name"
-													>{{ item.name }}</span
-												>
+												<span class="explorer-item-name" :title="item.name">{{
+													item.name
+												}}</span>
 											</div>
 										</div>
 										<div v-if="item.type === 'file'">
 											<div @click="editFile(item)">
-												<span class="material-icons"
-													>text_snippet</span
-												>
-												<span
-													class="explorer-item-name"
-													:title="item.name"
-													>{{ item.name }}</span
-												>
+												<span class="material-icons">text_snippet</span>
+												<span class="explorer-item-name" :title="item.name">{{
+													item.name
+												}}</span>
 											</div>
 										</div>
 									</td>
 									<td>
 										<div v-if="!searchTerm.length">
-											<div
-												v-for="(
-													path, index
-												) in currentPath"
-												:key="path"
-											>
+											<div v-for="(path, index) in currentPath" :key="item">
 												<span
-													@click="
-														breadcrumbsNavigation(
-															index
-														)
-													"
+													@click="breadcrumbsNavigation(index)"
 													class="explorer-path-item"
-													>{{
-														path.replace(
-															/%20/g,
-															' '
-														)
-													}}</span
+													>{{ path.replace(/%20/g, ' ') }}</span
 												>
 												<span
 													class="cursor-default explorer-path-divider"
-													v-if="
-														index <
-														currentPath.length - 1
-													"
+													v-if="index < currentPath.length - 1"
 													>/</span
 												>
 											</div>
 										</div>
-										<div
-											v-if="
-												searchTerm.length &&
-												item.type === 'file'
-											"
-										>
+										<div v-if="searchTerm.length && item.type === 'file'">
 											<span
-												v-for="(
-													path, index
-												) in item.file_path.split('/')"
+												v-for="(path, index) in item.file_path.split('/')"
 												:key="path"
 												@click="openFile(index, item)"
 												class="explorer-path-item"
 											>
 												{{ path.replace(/%20/g, ' ') }}
 												<span
-													v-if="
-														index !==
-														item.file_path.split(
-															'/'
-														).length -
-															1
-													"
+													v-if="index !== item.file_path.split('/').length - 1"
 													>/</span
 												>
 											</span>
@@ -396,59 +293,26 @@
 													v-if="item.type == 'file'"
 													class="menu-items-content"
 												>
-													<span
-														@click="
-															openInNewTab(item)
-														"
+													<span @click="openInNewTab(item)"
 														>Open In New Tab</span
 													>
-													<span
-														@click="copyLink(item)"
-														>Copy Link</span
+													<span @click="copyLink(item)">Copy Link</span>
+													<span @click="copyFilePath(item)"
+														>Copy Explorer File Path</span
 													>
-													<span
-														@click="
-															copyFilePath(item)
-														"
-														>Copy Explorer File
-														Path</span
-													>
-													<span
-														@click="openMove(item)"
-														>Move</span
-													>
-													<span
-														@click="editFile(item)"
-														>Edit</span
-													>
-													<span
-														@click="
-															openRename(item)
-														"
-														>Rename</span
-													>
-													<span
-														@click="download(item)"
-														>Download</span
-													>
+													<span @click="openMove(item)">Move</span>
+													<span @click="editFile(item)">Edit</span>
+													<span @click="openRename(item)">Rename</span>
+													<span @click="download(item)">Download</span>
 												</div>
 												<div
 													v-if="item.type == 'dir'"
 													class="menu-items-content"
 												>
-													<span
-														@click="
-															openRename(item)
-														"
-														>Rename</span
-													>
+													<span @click="openRename(item)">Rename</span>
 													<span
 														class="menu-item-delete"
-														@click="
-															openDeleteSelected(
-																item
-															)
-														"
+														@click="openDeleteSelected(item)"
 														>Delete</span
 													>
 												</div>
@@ -472,11 +336,7 @@
 								<FmBtn
 									@click="openPage(page)"
 									v-if="page.number"
-									:type="
-										currentPage === page.number
-											? 'primary'
-											: ''
-									"
+									:type="currentPage === page.number ? 'primary' : ''"
 									class="pagination-bar-button"
 								>
 									{{ page.caption }}
@@ -497,44 +357,28 @@
 				</template>
 				<template v-else>
 					<template v-if="!processing">
-						<div
-							v-if="!showPlaybook"
-							class="opened-file-actions-wrap"
-						>
+						<div v-if="!showPlaybook" class="opened-file-actions-wrap">
 							<div class="flex gap-2">
-								<FmBtn
-									class="outline-button"
-									type="primary"
-									@click="saveFile"
-								>
+								<FmBtn class="outline-button" type="primary" @click="saveFile">
 									Save
 								</FmBtn>
 								<FmBtn
 									class="outline-button"
 									@click="formatJSON"
-									v-if="
-										editorFile?.name &&
-										editorFile.name.endsWith('.json')
-									"
+									v-if="editorFile?.name && editorFile.name.endsWith('.json')"
 								>
 									Format JSON
 								</FmBtn>
 							</div>
 							<FmMenu fm-drop-class="m-r-20">
 								<template #btn>
-									<FmBtn class="outline-button" type="primary"
-										>Settings
-									</FmBtn>
+									<FmBtn class="outline-button" type="primary">Settings</FmBtn>
 								</template>
 								<template #default>
 									<div class="menu-items-content">
-										<span @click="openRename()"
-											>Rename</span
-										>
+										<span @click="openRename()">Rename</span>
 										<span @click="deleteFile">Delete</span>
-										<span
-											class="menu-item-delete"
-											@click="download()"
+										<span class="menu-item-delete" @click="download()"
 											>Download</span
 										>
 									</div>
@@ -680,123 +524,100 @@
 	.explorer-page {
 		overflow: auto;
 		padding-bottom: 40px;
-
 		.uploaded-button-close {
 			display: flex;
 			justify-content: flex-end;
 		}
-
 		.explorer-file-upload-status-item-status-wrapper {
 			display: flex;
 			align-items: center;
 			gap: 5px;
 		}
-
 		.explorer-table {
 			display: flex;
 			flex-direction: column;
 			align-items: center;
 			justify-content: center;
-
 			:deep(.base-input) {
 				&:not(.disabled):focus-within,
 				&:not(.disabled):focus {
 					.bi_top {
 						top: 0;
-
 						.top_left_border,
 						.top_right_border {
 							border-top: none;
 						}
 					}
-
 					.bi_wrap {
 						border: none;
 					}
 				}
 			}
-
 			:deep(.text-search-input) {
 				margin: 0 !important;
 				width: 100%;
-
 				.bi_wrap {
 					height: 27px;
 					border-radius: 0;
 					transform: translateY(1px);
 				}
-
 				.bi_default {
 					margin: 0;
 				}
-
 				.bi_main_input {
 					font-size: 12px;
 					padding-left: 13px;
-
 					&:focus {
-						outline: 2px solid #f05a22;
+						outline: 2px solid $error;
 						outline-offset: -2px;
 					}
 				}
 			}
-
 			table {
 				height: 100%;
 				width: 100%;
 				border-collapse: collapse;
 				text-align: left;
-
 				.explorer-table-checkbox {
 					margin: 4px;
 				}
-
 				th,
 				td {
 					border: 1px solid var(--table-border-color);
 					padding: 6px;
 					text-align: left;
 				}
-
 				th {
 					font-size: 14px;
 					background-color: var(--activeState-backgroundColor);
-
 					.table-column-title-wrap {
 						display: flex;
 						flex-wrap: nowrap;
 						align-items: center;
 					}
 				}
-
 				td {
 					font-size: 12px;
-
 					.material-icons {
 						font-size: 14px;
 						margin-right: 3px;
 					}
 				}
-
 				tr {
 					border: 1px solid var(--table-border-color);
-
 					&:hover {
 						background: var(--activeState-backgroundColor);
 						cursor: pointer;
-
 						.explore-item-name {
 							text-decoration: underline;
 						}
 					}
 				}
-
 				.menu-items-content {
 					display: flex;
 					flex-direction: column;
 					justify-content: center;
 				}
-
 				.explorer-item-name {
 					font-size: 14px;
 					text-overflow: ellipsis;
@@ -805,7 +626,6 @@
 					cursor: pointer;
 					white-space: wrap;
 					word-break: break-all;
-
 					&:hover {
 						opacity: 0.7;
 						text-decoration: underline;
@@ -813,24 +633,20 @@
 				}
 			}
 		}
-
 		.pagination-bar {
 			display: flex;
 			align-items: center;
-
 			.pagination-bar-button {
 				height: 24px;
 				min-width: 24px;
 				margin: 2px;
 				min-height: 24px;
 				line-height: 24px;
-
 				&:hover {
 					background-color: var(--activeState-backgroundColor);
 				}
 			}
 		}
-
 		.md-raised.md-primary.explorer-page-refresh-button {
 			height: 24px;
 			width: 24px;
@@ -842,7 +658,6 @@
 			margin-top: 5px;
 			background: var(--primary-color);
 		}
-
 		.explorer-explorer-section {
 			display: flex;
 			gap: 15px;
@@ -852,65 +667,53 @@
 			box-sizing: border-box;
 			flex-direction: column;
 		}
-
 		.explorer-workflow-section {
 			width: 100vw;
 			height: 100%;
 		}
-
 		.explorer-breadcrumbs {
 			overflow: hidden;
 		}
-
 		.explorer-breadcrumbs-item {
 			float: left;
 			margin: 8px;
 			font-size: 20px;
 			cursor: pointer;
 			padding: 8px;
-
 			&:hover {
 				background: var(--state-active-background-color);
 				opacity: 7;
 				text-decoration: underline;
 			}
 		}
-
 		.explorer-path-item {
 			float: left;
 			font-size: 14px;
 			cursor: pointer;
-
 			&:hover {
 				text-decoration: underline;
 			}
 		}
-
 		.explorer-path-divider {
 			float: left;
 			font-size: 16px;
 		}
-
 		.explorer-item {
 			box-sizing: border-box;
 			text-align: center;
 			word-break: break-word;
-
 			td {
 				font-size: 16px;
 				text-overflow: ellipsis;
 				overflow: hidden;
 				padding: 1px;
 			}
-
 			&.selected {
 				background: var(--state-active-background-color);
-
 				.explorer-item-name {
 					color: var(--secondary-color);
 				}
 			}
-
 			.material-icons {
 				font-size: 14px;
 				cursor: pointer;
@@ -920,32 +723,26 @@
 				margin-left: 2px;
 			}
 		}
-
 		span.explorer-breadcrumbs-item-divider {
 			float: left;
 			font-weight: bold;
 			margin-top: 14px;
 			font-size: 20px;
 		}
-
 		.explorer-toolbar {
 			padding-top: 8px;
-
 			button.md-raised.md-button {
 				font-size: 11px;
 				height: 30px;
 			}
-
 			.explorer-actions-buttons {
 				gap: 10px;
-
 				.explorer-show-hide-border {
-					border: 1px solid #b3b3b3;
+					border: 1px solid $border-darken;
 					border-radius: 100px;
 				}
 			}
 		}
-
 		.explorer-item-menu-button {
 			padding: 0;
 			margin: 0 4px 0 0;
@@ -957,7 +754,6 @@
 			text-align: center;
 			background: #ddd;
 			display: block;
-
 			.material-icons {
 				font-size: 12px;
 				cursor: pointer;
@@ -970,14 +766,12 @@
 				margin: 2px auto;
 			}
 		}
-
 		.explorer-file-upload-status-holder {
 			padding: 16px;
 			border: 1px solid var(--table-border-color);
 			max-height: 300px;
 			overflow: auto;
 		}
-
 		.explorer-file-upload-status-item {
 			margin: 8px;
 			border: 1px solid var(--table-border-color);
@@ -986,13 +780,11 @@
 			align-items: end;
 			justify-content: space-between;
 		}
-
 		.explorer-file-upload-status-size {
 			font-size: 11px;
 			margin-left: 5px;
 			color: var(--secondary-color);
 		}
-
 		.task-status-badge {
 			color: #fff;
 			font-size: 14px;
@@ -1005,21 +797,17 @@
 			text-transform: lowercase;
 			align-items: center;
 			line-height: 1;
-
 			&:hover {
 				opacity: 0.7;
 			}
-
 			ng-md-icon {
 				margin-right: 4px;
 			}
 		}
-
 		.status-progress {
 			border: 1px solid #12293b;
 			background: rgb(63, 81, 181);
 			color: var(--onPrimary-color);
-
 			ng-md-icon {
 				-webkit-animation: spin 4s linear infinite;
 				-moz-animation: spin 4s linear infinite;
@@ -1048,18 +836,15 @@
 				}
 			}
 		}
-
 		.status-success {
 			background: #3fb950;
 			border: 1px solid #1d8102;
 			color: #fff;
 		}
-
 		.status-error {
 			border: 1px solid #ec5941;
 			background: #eb0014;
 		}
-
 		.status-init {
 			background: grey;
 			border: 1px solid var(--table-border-color);
@@ -1073,37 +858,31 @@
 			min-width: 60px;
 		}
 	}
-
 	.menu-items-content {
 		display: flex;
 		flex-direction: column;
 		max-height: 300px;
-
 		span {
 			text-align: left;
 			margin: auto 0;
 			font-size: 15px;
 			font-weight: 400;
 			padding: 10px 15px;
-
 			&:hover {
 				cursor: pointer;
 				background-color: var(--activeState-backgroundColor);
 			}
 		}
-
 		.menu-item-delete {
-			color: #f05a22;
+			color: $error;
 		}
 	}
-
 	.task-card {
 		position: absolute;
 		top: 62px;
 		right: 10px;
 		z-index: 1;
 	}
-
 	.finmars-playbook {
 		display: flex;
 		flex-direction: column;

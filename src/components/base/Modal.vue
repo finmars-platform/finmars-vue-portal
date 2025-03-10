@@ -106,16 +106,13 @@
 </script>
 
 <style lang="scss" scoped>
-	$modal-header-height: 50px;
-	$modal-footer-height: 57px;
-
 	.modal_wrap {
 		position: fixed;
 		left: 0;
 		top: 0;
 		right: 0;
 		bottom: 0;
-		z-index: var(--modal-z-index);
+		z-index: $modal-z-index;
 		background: rgba(0, 0, 0, 0.55);
 
 		.mask {

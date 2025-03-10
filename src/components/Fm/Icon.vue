@@ -26,10 +26,6 @@
 </script>
 
 <style lang="scss" scoped>
-	$grayIcon: #a1a1a1;
-	$primary: var(--primary-color);
-	$error: #f05a22;
-
 	.icon {
 		position: relative;
 		display: block;

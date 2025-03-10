@@ -7,9 +7,7 @@
 			:label="label"
 			@click="isOpen = true"
 		>
-			<template #button>
-				<FmIcon icon="menu" />
-			</template>
+			<template #button><FmIcon icon="menu" /></template>
 
 			<div class="flex aic" style="height: inherit" ref="chipWrap">
 				<div
@@ -46,9 +44,7 @@
 					/>
 				</div>
 
-				<div v-else class="input_placeholder">
-					{{ placeholder || label }}
-				</div>
+				<div v-else class="input_placeholder">{{placeholder || label}}</div>
 			</div>
 		</BaseInput>
 
@@ -66,130 +62,124 @@
 </template>
 
 <script setup>
-	/* eslint-disable */
-	import { getSelectedFilter } from './multiSelectHelper';
+	import { getSelectedFilter } from './multiSelectHelper'
 
 	let props = defineProps({
 		items: {
 			type: Array,
-			default: []
+			default: [],
 		},
 		/** Unique keys or objects of selected items as string separated by comma or inside an array  */
 		modelValue: {
 			type: [String, Array],
-			default: []
+			default: [],
 		},
 		label: String,
 		modalTitle: String,
 		item_id: {
 			type: String,
-			default: 'user_code'
+			default: 'user_code',
 		},
 		item_title: {
 			type: String,
-			default: 'name'
+			default: 'name',
 		},
 
-		placeholder: String
-	});
-	let emit = defineEmits(['update:modelValue']);
+		placeholder: String,
+	})
+	let emit = defineEmits(['update:modelValue'])
 
-	let isOpen = ref(false);
-	let chipWrap = ref(null);
+	let isOpen = ref(false)
+	let chipWrap = ref(null)
 
 	// how many chips can fit into a multi selector
-	let availableChips = ref(0);
+	let availableChips = ref(0)
 
 	onMounted(() => {
+
 		setTimeout(function () {
 			// without setTimeout this function ca be called
 			// when chipWrap.value have 0 width (width not calculated yet)
 			availableChips.value = Math.floor(
 				chipWrap.value.getBoundingClientRect().width / 75
-			);
+			)
+
 		}, 500);
-	});
+
+	})
 	/**
 	 * Set of unique ids of selected items
 	 * @type {Ref<Set>}
 	 * */
-	let selectedFilter;
+	let selectedFilter
 
-	selectedFilter = ref(getSelectedFilter(props.modelValue, props.item_id));
+	selectedFilter = ref(getSelectedFilter(props.modelValue, props.item_id))
 
 	let selectedList = computed(() => {
-		let filtersArray = [...selectedFilter.value];
+		let filtersArray = [...selectedFilter.value]
 
 		if (!availableChips.value) return [];
 
 		if (availableChips.value < filtersArray.length) {
 			// remove data for chips that do not fit into a multi selector
-			filtersArray = filtersArray.slice(0, availableChips.value - 1);
+			filtersArray = filtersArray.slice(0, availableChips.value - 1)
 		}
 
 		let result = filtersArray.map((selId) => {
-			let selItem = props.items.find(
-				(item) => item[props.item_id] === selId
-			);
+			let selItem = props.items.find((item) => item[props.item_id] === selId)
 
 			if (!selItem) {
 				return {
 					[props.item_id]: selId,
 					[props.item_title]: 'Not found',
 					error_data: {
-						description: ''
-					}
-				};
+						description: '',
+					},
+				}
 			}
 
-			return selItem;
-		});
+			return selItem
+		})
 
 		if (availableChips.value < selectedFilter.value.size) {
 			// chip with number of chips that do not fit into a multi selector
 			result.push({
 				[props.item_id]: -1,
 				[props.item_title]:
-					selectedFilter.value.size - availableChips.value + 1 + '+'
-			});
+					selectedFilter.value.size - availableChips.value + 1 + '+',
+			})
 		}
 
-		return result;
-	});
+		return result
+	})
 
 	function save(newValue) {
-		isOpen.value = false;
-		emit('update:modelValue', newValue);
+		isOpen.value = false
+		emit('update:modelValue', newValue)
 	}
 
 	function deleteItem(item) {
-		let index = props.modelValue.findIndex((o) => o == item.user_code);
+		let index = props.modelValue.findIndex((o) => o == item.user_code)
 
-		props.modelValue.splice(index, 1);
+		props.modelValue.splice(index, 1)
 
-		let newRes = JSON.parse(JSON.stringify(props.modelValue));
+		let newRes = JSON.parse(JSON.stringify(props.modelValue))
 
-		emit('update:modelValue', newRes);
+		emit('update:modelValue', newRes)
 	}
 
 	watch(
 		() => props.modelValue,
 		() => {
-			selectedFilter.value = getSelectedFilter(
-				props.modelValue,
-				props.item_id
-			);
+			selectedFilter.value = getSelectedFilter(props.modelValue, props.item_id);
 		}
-	);
+	)
 </script>
 
 <style lang="scss" scoped>
-	$text-pale: #e0e0e0;
-
 	.ms_wrap {
 		cursor: pointer;
 	}
-
 	.fm_chip {
 		background: var(--activeState-backgroundColor);
 		padding: 3px 8px;
@@ -202,11 +192,9 @@
 			margin-left: 5px;
 		}
 	}
-
 	.input_placeholder {
 		color: $text-pale;
 	}
-
 	/*.header {
 	font-size: 20px;
 	margin-bottom: 8px;

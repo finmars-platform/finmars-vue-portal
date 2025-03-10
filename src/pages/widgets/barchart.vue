@@ -3,12 +3,11 @@
 		<div class="title">{{ widgetName }}</div>
 
 		<div class="filters flex" v-show="status == 100">
-			<div
-				class="filter_item"
+			<div class="filter_item"
 				v-for="(item, i) in categories"
 				:key="i"
-				:class="{ active: categoryName == item }"
-				@click="(categoryName = item), updateData()"
+				:class="{active: categoryName == item}"
+				@click="categoryName = item, updateData()"
 			>
 				{{ item }}
 			</div>
@@ -20,11 +19,7 @@
 
 		<div class="content flex-column aic jcc" v-if="status > 100">
 			<div class="flex aic">
-				<FmIcon
-					v-if="status > 100"
-					class="m-r-8"
-					icon="report_problem"
-				/>
+				<FmIcon v-if="status > 100" class="m-r-8" icon="report_problem" />
 				{{ STATUSES[status] }}
 			</div>
 		</div>
@@ -32,35 +27,35 @@
 </template>
 
 <script setup>
-	/* eslint-disable */
-	import dayjs from 'dayjs';
+
+	import dayjs from 'dayjs'
 	import {
-		Chart,
-		ArcElement,
-		LineElement,
-		BarElement,
-		PointElement,
-		BarController,
-		BubbleController,
-		DoughnutController,
-		LineController,
-		PieController,
-		PolarAreaController,
-		RadarController,
-		ScatterController,
-		CategoryScale,
-		LinearScale,
-		LogarithmicScale,
-		RadialLinearScale,
-		TimeScale,
-		TimeSeriesScale,
-		Decimation,
-		Filler,
-		Legend,
-		Title,
-		Tooltip,
-		SubTitle
-	} from 'chart.js';
+  Chart,
+  ArcElement,
+  LineElement,
+  BarElement,
+  PointElement,
+  BarController,
+  BubbleController,
+  DoughnutController,
+  LineController,
+  PieController,
+  PolarAreaController,
+  RadarController,
+  ScatterController,
+  CategoryScale,
+  LinearScale,
+  LogarithmicScale,
+  RadialLinearScale,
+  TimeScale,
+  TimeSeriesScale,
+  Decimation,
+  Filler,
+  Legend,
+  Title,
+  Tooltip,
+  SubTitle
+} from 'chart.js';
 
 	Chart.register(
 		ArcElement,
@@ -98,70 +93,71 @@
 		101: 'Data are not available',
 		102: 'Data are missing',
 		103: 'Bad/incomplete input data'
-	};
-	let status = ref(0);
+	}
+	let status = ref(0)
 
-	let route = useRoute();
-	let wId = route.query.wId;
-	let portfolioId = route.query.portfolioId;
-	let client = route.query.workspace;
-	let date_to = route.query.date_to;
-	let typeHistory = 'nav';
-	let widgetName = ref('Balance (Historical)');
-	let historyStats = {};
+	let route = useRoute()
+	let wId = route.query.wId
+	let portfolioId = route.query.portfolioId
+	let client = route.query.workspace
+	let date_to = route.query.date_to
+	let typeHistory = 'nav'
+	let widgetName = ref('Balance (Historical)')
+	let historyStats = {}
+
 
 	async function getHistory() {
-		if (dayjs(date_to).diff(dayjs(), 'day') >= 0) {
-			status.value = 101;
+		if ( dayjs(date_to).diff(dayjs(), 'day') >= 0 ) {
+			status.value = 101
 
-			return false;
+			return false
 		}
 		let res = await useApi('widgetsHistory.get', {
 			params: {
 				type: typeHistory,
-				client
+				client,
 			},
 			filters: {
 				portfolio: portfolioId,
-				date_to
+				date_to,
 			},
 			headers: {
 				Authorization: 'Token ' + route.query.token
 			},
 			provider: null
-		});
+		})
 
-		if (res._$error) {
-			status.value = 101;
+		if ( res._$error ) {
+			status.value = 101
 
-			return false;
+			return false
 		}
 
-		if (!res.items || res.items.length == 0) {
-			status.value = 102;
+		if ( !res.items || res.items.length == 0  ) {
+			status.value = 102
 
-			return false;
+			return false
 		}
 
-		historyStats = res;
-		activeIndex.value = historyStats.items?.length - 1;
+		historyStats = res
+		activeIndex.value = historyStats.items?.length - 1
 
-		return true;
+		return true
 	}
+	let active = ref(null)
+	let dataOfActive = ref({})
+	let activeIndex = ref(null)
+	let categoryName = ref('Asset Types')
+	let categories = reactive(new Set())
 
-	let active = ref(null);
-	let dataOfActive = ref({});
-	let activeIndex = ref(null);
-	let categoryName = ref('Asset Types');
-	let categories = reactive(new Set());
+	await getHistory()
 
-	await getHistory();
 
 	let data = {
 		labels: [],
-		datasets: []
-	};
-	let myChart;
+		datasets: [],
+	}
+	let myChart
 	const COLORS = [
 		'#577590CC',
 		'#43AA8BCC',
@@ -182,108 +178,107 @@
 		'#D9ED92',
 		'#C8D7F9',
 		'#96B5B4',
-		'#AB7967'
-	];
+		'#AB7967',
+	]
 
 	function updateData() {
-		data.labels = [];
-		data.datasets = [];
+		data.labels = []
+		data.datasets = []
 
-		createData();
+		createData()
 
 		send({
 			action: 'clickOnChart',
-			data: { ...dataOfActive.value },
+			data: {...dataOfActive.value},
 			date: historyStats.items[activeIndex.value],
 			category: categoryName.value
-		});
-		myChart.update();
+		})
+		myChart.update()
+
 	}
 
+
 	function createData() {
-		let dataByName = {};
-		let dataset = [];
+		let dataByName = {}
+		let dataset = []
 
 		historyStats.items.forEach((date) => {
-			let formatedDate = dayjs(date.date).format('MMM YY');
-			data.labels.push(formatedDate);
+			let formatedDate = dayjs(date.date).format('MMM YY')
+			data.labels.push(formatedDate)
 
-			if (!date.categories.length) {
-				for (let prop in dataset) {
-					dataset[prop].data[formatedDate] = null;
+			if ( !date.categories.length ) {
+				for ( let prop in dataset ) {
+					dataset[prop].data[formatedDate] = null
 				}
 			}
 
 			date.categories.forEach((category) => {
-				categories.add(category.name);
-				if (category.name != categoryName.value) return false;
+				categories.add( category.name )
+				if ( category.name != categoryName.value ) return false
 
 				category.items.forEach((instrument, key) => {
-					if (!dataset[instrument.name]) {
+					if ( !dataset[instrument.name] ) {
 						dataset[instrument.name] = {
 							data: {},
 							total: 0
-						};
+						}
 					}
 
-					dataset[instrument.name].label = instrument.name;
-					dataset[instrument.name].data[formatedDate] =
-						instrument.value;
-					dataset[instrument.name].total += instrument.value;
-				});
-			});
-		});
-		for (let prop in dataset) {
-			let elem = dataset[prop];
+					dataset[instrument.name].label = instrument.name
+					dataset[instrument.name].data[formatedDate] = instrument.value
+					dataset[instrument.name].total += instrument.value
+				})
+			})
+		})
+		for ( let prop in dataset ) {
+			let elem = dataset[prop]
 
-			if (elem.total == 0) continue;
+			if ( elem.total == 0 ) continue
 
-			data.datasets.push(dataset[prop]);
+			data.datasets.push( dataset[prop] )
 		}
-		data.datasets = data.datasets.sort((a, b) => b.total - a.total);
+		data.datasets = data.datasets
+			.sort( (a, b) => b.total - a.total)
 
-		dataOfActive.value = {};
+		dataOfActive.value = {}
 
 		data.datasets.forEach((item, key) => {
-			item.backgroundColor = COLORS[key];
+			item.backgroundColor = COLORS[key]
 
-			dataOfActive.value[item.label] = item.data[activeIndex.value];
-		});
+			dataOfActive.value[item.label] = item.data[activeIndex.value]
+		})
 	}
 
 	onMounted(async () => {
-		initPostMessageBus();
+		initPostMessageBus()
 
-		createData();
-		status.value = 100;
-		await nextTick();
+		createData()
+		status.value = 100
+		await nextTick()
 
 		myChart = new Chart('myChart', {
 			type: 'bar',
 			data: data,
-			plugins: [
-				{
-					id: 'custom_canvas_background_color',
-					afterDraw: (chart, args, options) => {
-						if (!active.value) return;
-						const { ctx } = chart;
-						ctx.save();
-						ctx.globalCompositeOperation = 'destination-over';
-						ctx.fillStyle = options.color;
-						ctx.fillRect(
-							active.value.element.x -
-								(active.value.element.width * 1.25) / 2,
-							chart.chartArea.top,
-							active.value.element.width * 1.25,
-							chart.chartArea.height
-						);
-						ctx.restore();
-					},
-					defaults: {
-						color: 'rgba(243, 123, 78, 0.2)'
-					}
+			plugins: [{
+				id: 'custom_canvas_background_color',
+				afterDraw: (chart, args, options) => {
+					if ( !active.value ) return;
+					const {ctx} = chart;
+					ctx.save();
+					ctx.globalCompositeOperation = 'destination-over';
+					ctx.fillStyle = options.color;
+					ctx.fillRect(
+						active.value.element.x - active.value.element.width * 1.25 / 2,
+						chart.chartArea.top,
+						active.value.element.width * 1.25,
+						chart.chartArea.height
+					);
+					ctx.restore();
+				},
+				defaults: {
+					color: 'rgba(243, 123, 78, 0.2)'
 				}
-			],
+			}],
 			options: {
 				barPercentage: 0.8,
 				categoryPercentage: 1.0,
@@ -292,52 +287,42 @@
 				maintainAspectRatio: false,
 				scales: {
 					x: {
-						stacked: true
+						stacked: true,
 					},
 					y: {
 						stacked: true,
 						position: 'right',
 						grace: '5%',
 						ticks: {
-							callback: function (value) {
+							callback: function(value) {
 								return new Intl.NumberFormat('en-US', {
-									notation: 'compact',
-									maximumFractionDigits: 2
-								}).format(parseFloat(value));
+										notation: "compact",
+										maximumFractionDigits: 2
+									}).format(parseFloat(value));
 							}
 						},
 						grid: {
 							tickWidth: 1,
-							tickLength: 1
+							tickLength: 1,
 						}
 					}
 				},
 				plugins: {
 					tooltip: {
 						callbacks: {
-							footer: (tooltipItems) => {
-								let sum = 0;
-								tooltipItems.forEach(function (tooltipItem) {
-									let rawDate = tooltipItem.label.split(' ');
-									let date = dayjs(
-										rawDate[0] + ' 20' + rawDate[1]
-									).format('YYYY-MM-');
+							footer:  (tooltipItems) => {
+								let sum = 0
+								tooltipItems.forEach(function(tooltipItem) {
+									let rawDate = tooltipItem.label.split(' ')
+									let date = dayjs( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
 
-									let item = historyStats.items.find((item) =>
-										item.date.includes(date)
-									);
-									sum =
-										typeHistory == 'nav'
-											? item.nav
-											: item.total;
+									let item = historyStats.items.find((item) => item.date.includes(date))
+									sum = typeHistory == 'nav' ? item.nav : item.total
 								});
-								return (
-									'Total: ' +
-									new Intl.NumberFormat('en-US', {
+								return 'Total: ' + new Intl.NumberFormat('en-US', {
 										style: 'currency',
-										currency: 'USD'
-									}).format(parseFloat(sum))
-								);
+										currency: 'USD',
+									}).format(parseFloat(sum));
 							}
 						}
 					},
@@ -360,126 +345,96 @@
 					axis: 'x'
 				},
 				onClick: (evt) => {
-					let metas = myChart.getSortedVisibleDatasetMetas();
-					let index;
+					let metas = myChart.getSortedVisibleDatasetMetas()
+					let index
 
 					metas.forEach((dataset) => {
-						let clickedElem = dataset.data.find(
-							(item) =>
-								item.x - (item.width * 1.25) / 2 < evt.x &&
-								item.x + (item.width * 1.25) / 2 > evt.x
-						);
+						let clickedElem = dataset.data.find( item => (item.x - (item.width * 1.25 / 2)) < evt.x && (item.x + (item.width * 1.25 / 2)) > evt.x )
 
-						if (clickedElem) index = clickedElem.$context.parsed.x;
-					});
+						if ( clickedElem ) index = clickedElem.$context.parsed.x
+					})
 
-					const points = myChart.getElementsAtEventForMode(
-						evt,
-						'nearest',
-						{
-							intersect: false,
-							axis: 'x'
-						},
-						true
-					);
+					const points = myChart.getElementsAtEventForMode(evt, 'nearest', { intersect: false, axis: 'x' }, true);
 
 					if (points.length) {
-						let data = {};
-						let currentLabel;
+						let data = {}
+						let currentLabel
 
 						try {
-							let currentLabel = myChart.data.labels[index];
+							let currentLabel = myChart.data.labels[index]
 
 							points.forEach((item, i) => {
-								data[
-									myChart.data.datasets[
-										item.datasetIndex
-									].label
-								] =
-									myChart.data.datasets[
-										item.datasetIndex
-									].data[currentLabel];
-							});
-							active.value = points[0];
-							myChart.update();
+								data[myChart.data.datasets[item.datasetIndex].label] = myChart.data.datasets[item.datasetIndex].data[currentLabel]
+							})
+							active.value = points[0]
+							myChart.update()
 
-							activeIndex.value = index;
+							activeIndex.value = index
 
-							let rawDate = currentLabel.split(' ');
-							let date = dayjs(
-								rawDate[0] + ' 20' + rawDate[1]
-							).format('YYYY-MM-');
+							let rawDate = currentLabel.split(' ')
+							let date = dayjs( rawDate[0] + ' 20' + rawDate[1] ).format('YYYY-MM-')
 
 							send({
 								action: 'clickOnChart',
 								data,
-								date: historyStats.items.find((item) =>
-									item.date.includes(date)
-								),
+								date: historyStats.items.find((item) => item.date.includes(date)),
 								category: categoryName.value
-							});
+							})
 						} catch (e) {
-							console.log('Error in click:', e);
+							console.log('Error in click:', e)
 						}
 					}
-				}
-			}
+        }
+			},
 		});
-	});
+	})
 
 	function initPostMessageBus() {
-		if (window == top) return false;
+		if ( window == top ) return false
 
 		send({
 			action: 'init'
-		});
+		})
 
-		window.addEventListener('message', async (e) => {
-			if (e.data.action == 'ready') {
-				e.source.postMessage(
-					{
-						action: 'clickOnChart',
-						data: { ...dataOfActive.value },
-						date: historyStats.items[activeIndex.value],
-						category: categoryName.value
-					},
-					'*'
-				);
+		window.addEventListener("message", async (e) => {
+			if ( e.data.action == 'ready' ) {
+				e.source.postMessage({
+					action: 'clickOnChart',
+					data: {...dataOfActive.value},
+					date: historyStats.items[activeIndex.value],
+					category: categoryName.value
+				}, '*')
 			}
-			if (e.data.action == 'updateOpts') {
-				portfolioId = e.data.data.portfolioId;
-				date_to = e.data.data.date_to;
+			if ( e.data.action == 'updateOpts' ) {
+				portfolioId = e.data.data.portfolioId
+				date_to = e.data.data.date_to
 
-				let success = await getHistory();
+				let success = await getHistory()
 
-				if (success) status.value = 100;
-				updateData();
+				if ( success ) status.value = 100
+				updateData()
 			}
-			if (e.data.action == 'changeHistoryType') {
+			if ( e.data.action == 'changeHistoryType' ) {
 				let map = {
 					nav: 'nav',
 					total: 'pl'
-				};
-				typeHistory = map[e.data.type];
+				}
+				typeHistory = map[e.data.type]
 
-				let success = await getHistory();
-				if (success) status.value = 100;
+				let success = await getHistory()
+				if ( success ) status.value = 100
 
-				widgetName.value =
-					e.data.type == 'total'
-						? 'P&L (Historical)'
-						: 'Balance (Historical)';
+				widgetName.value = e.data.type == 'total' ? 'P&L (Historical)' : 'Balance (Historical)'
 
-				updateData();
+				updateData()
 			}
 		});
 	}
-
-	function send(data, source = window.parent) {
+	function send( data, source = window.parent ) {
 		let dataObj = Object.assign(data, {
-			wId
-		});
-		source.postMessage(dataObj, '*');
+			wId,
+		})
+		source.postMessage( dataObj, "*" )
 	}
 </script>
 
@@ -488,25 +443,21 @@
 		border-radius: 5px;
 		border: 1px solid var(--table-border-color);
 	}
-
 	.title {
 		height: 36px;
 		line-height: 36px;
 		background: var(--table-header-background-color);
 		padding: 0 20px;
 	}
-
 	.content {
 		height: calc(100vh - 100px);
 	}
-
 	.filters {
 		margin-top: 12px;
 		margin-left: 12px;
 		overflow-x: auto;
-		overflow-y: hidden;
+    overflow-y: hidden;
 	}
-
 	.filter_item {
 		height: 25px;
 		line-height: 25px;
@@ -516,11 +467,11 @@
 		cursor: pointer;
 
 		&.active {
-			background: var(--primary-color);
+			background: $primary;
 			color: var(--base-backgroundColor);
 		}
 
-		& + & {
+		&+& {
 			margin-left: 20px;
 		}
 	}

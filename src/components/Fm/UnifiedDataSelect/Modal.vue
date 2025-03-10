@@ -1,94 +1,94 @@
 <template>
-	<BaseModal title="Results" :modelValue="opened" @close="cancel">
+	<BaseModal title="Results"
+						 :modelValue="opened"
+						 @close="cancel">
+
 		<div class="uds_modal">
+
 			<div class="flex-row">
-				<div style="width: 383px">
-					<FmInputText
-						placeholder="Search"
-						class="m-r-8"
-						:modelValue="inputText"
-						@update:modelValue="filterItems"
-					/>
+
+				<div style="width: 383px;">
+					<FmInputText placeholder="Search"
+											 class="m-r-8"
+											 :modelValue="inputText"
+											 @update:modelValue="filterItems" />
 				</div>
+
 			</div>
 
 			<div class="database-table-head">
-				<div style="width: 50%; padding: 5px">Name</div>
 
-				<div style="width: 30%; padding: 5px">Code</div>
+				<div style="width: 50%; padding: 5px;">
+					Name
+				</div>
+
+				<div style="width: 30%; padding: 5px;">
+					Code
+				</div>
+
+
 			</div>
 
 			<div class="database-table-body">
+
 				<div v-if="!processing" style="height: 359px; overflow-y: auto">
-					<span
-						v-if="localItems.length"
-						class="options-group-title text-bold"
-						>Local Records ({{ localItemsTotal }})</span
-					>
+
+					<span v-if="localItems.length" class="options-group-title text-bold">Local Records
+						({{ localItemsTotal }})</span>
 
 					<div v-if="localItems.length">
+
 						<div
 							v-for="option in localItems"
 							@click="selItem = option"
-							@dblclick="
-								() => {
-									selItem = option;
-									save();
-								}
-							"
+							@dblclick="() => {selItem = option; save();}"
 							class="database-option-row"
-							:class="{
-								active: option.user_code === selItem.user_code
-							}"
+							:class="{ 'active': option.user_code === selItem.user_code }"
 						>
+
 							<div
 								class="option-name"
 								:title="`${option.name}`"
-								v-html="getHighlighted(option.name)"
-							></div>
+								v-html="getHighlighted(option.name)">
+							</div>
 
 							<div
 								class="option-isin"
 								:title="`${option.user_code}`"
-								v-html="getHighlighted(option.user_code)"
-							></div>
+								v-html="getHighlighted(option.user_code)">
+							</div>
+
 						</div>
 
-						<!--						<div>
-													<FmBtn
-														v-if="localPages < localPagesTotal"
-														v-show="!loadingLocal"
-														type="basic"
-														class="control-button load-more"
-														@click="loadMoreLocalItems($event)"
-													>Load more</FmBtn>
+<!--						<div>
+							<FmBtn
+								v-if="localPages < localPagesTotal"
+								v-show="!loadingLocal"
+								type="basic"
+								class="control-button load-more"
+								@click="loadMoreLocalItems($event)"
+							>Load more</FmBtn>
 
-													<FmLoader v-if="loadingLocal" />
-												</div>-->
+							<FmLoader v-if="loadingLocal" />
+						</div>-->
+
 					</div>
 
-					<span
-						v-if="databaseItems.length"
-						class="options-group-title"
-						style="bottom: 0px"
-						>Global Records ({{ databaseItemsTotal }})</span
-					>
+					<span v-if="databaseItems.length"
+								class="options-group-title"
+								style="bottom: 0px;"
+					>Global Records ({{ databaseItemsTotal }})</span>
 
 					<div v-if="databaseItems.length">
+
 						<div
 							v-for="option in databaseItems"
-							@click="() => (selItem = option)"
-							@dblclick="
-								() => {
-									selItem = option;
-									save();
-								}
-							"
+							@click="() => selItem = option"
+							@dblclick="() => {selItem = option; save();}"
 							class="database-option-row"
-							:class="{
-								active: option.user_code === selItem.user_code
-							}"
+							:class="{'active': option.user_code === selItem.user_code}"
 						>
+
 							<div
 								class="option-name"
 								:title="`${option.name}`"
@@ -100,6 +100,7 @@
 								:title="`${option.user_code}`"
 								v-html="getHighlighted(option.user_code)"
 							></div>
+
 						</div>
 
 						<FmBtn
@@ -108,25 +109,30 @@
 							type="basic"
 							class="control-button load-more"
 							@click="loadMoreGlobalItems()"
-							>Load more
-						</FmBtn>
+						>Load more</FmBtn>
 
 						<FmLoader v-if="loadingFromDb" />
+
 					</div>
 
 					<div v-if="localItems.length && !databaseItems.length">
 						<b class="options-group-title">No records found</b>
 					</div>
+
 				</div>
 
 				<div v-if="processing" class="flex-row fc-center">
 					<FmLoader />
 				</div>
+
 			</div>
+
 		</div>
 
 		<template #controls>
 			<div class="uds_modal_footer">
+
+
 				<div>
 					<!--	TODO: add creation after making entityViewerAddDialog
 									<FmBtn v-if="!showActions"
@@ -144,12 +150,15 @@
 										</div>-->
 				</div>
 
-				<div>
-					<FmBtn type="basic" class="m-r-8" @click="cancel()"
-						>CANCEL</FmBtn
-					>
 
-					<FmBtn type="basic" :disabled="saving" @click="save()">
+				<div>
+					<FmBtn type="basic" class="m-r-8" @click="cancel()">CANCEL</FmBtn>
+
+					<FmBtn
+						type="basic"
+						:disabled="saving"
+						@click="save()"
+					>
 						<span v-if="!saving">ok</span>
 
 						<!-- <div v-if="saving" v-tooltip="'Starting import from unified database'">
@@ -160,29 +169,30 @@
 						</div>
 					</FmBtn>
 				</div>
+
 			</div>
 		</template>
 	</BaseModal>
 </template>
 
 <script setup>
-	/* eslint-disable */
-	import * as commonMethods from './helper';
+
+	import * as commonMethods from "./helper";
 
 	let props = defineProps({
 		opened: Boolean,
 		selectedItem: Object,
 		propId: {
 			type: String,
-			default: 'id'
+			default: 'id',
 		},
-		content_type: String
-	});
+		content_type: String,
+	})
 
 	let emit = defineEmits([
 		'update:opened',
 		'databaseItemSelected',
-		'localItemSelected'
+		'localItemSelected',
 	]);
 
 	let processing = ref(false);
@@ -197,9 +207,7 @@
 	let dbPages = ref(1);
 
 	let dbPagesTotal = computed(() => {
-		return databaseItemsTotal.value
-			? Math.round(databaseItemsTotal.value / 40)
-			: 0;
+		return databaseItemsTotal.value ? Math.round(databaseItemsTotal.value / 40) : 0;
 	});
 
 	let localItemsTotal = ref(0);
@@ -209,11 +217,8 @@
 
 	let selItem = ref({});
 
-	let localPagesTotal = computed(() => {
-		// TODO: implement after adding pagination for local item on backend
-		return localItemsTotal.value
-			? Math.round(localItemsTotal.value / 40)
-			: 0;
+	let localPagesTotal = computed(() => { // TODO: implement after adding pagination for local item on backend
+		return localItemsTotal.value ? Math.round(localItemsTotal.value / 40) : 0;
 	});
 
 	// let inputText = ref(props.parentInputText);
@@ -224,6 +229,7 @@
 	watch(
 		() => props.opened,
 		() => {
+
 			if (!props.opened) return;
 
 			if (props.selectedItem.id || props.selectedItem.user_code) {
@@ -231,28 +237,29 @@
 			}
 
 			getList();
+
 		}
-	);
+	)
 
 	const filterItems = useDebounce(function (filterVal) {
+
 		inputText.value = filterVal;
 
 		dbPages.value = 1;
 
 		getList(inputText.value);
+
 	}, 500);
 
-	function getHighlighted(value) {
+	function getHighlighted (value) {
 		return commonMethods.getHighlighted(inputText.value, value);
 	}
 
-	async function getList(filterTerms) {
+	async function getList (filterTerms) {
+
 		processing.value = true;
 
-		const res = await commonMethods.getList(
-			props.content_type,
-			filterTerms
-		);
+		const res = await commonMethods.getList(props.content_type, filterTerms);
 
 		databaseItems.value = res.databaseData.items;
 		databaseItemsTotal.value = res.databaseData.itemsTotal;
@@ -261,6 +268,7 @@
 		localItemsTotal.value = res.localData.itemsTotal;
 
 		processing.value = false;
+
 	}
 
 	/* // TODO: implement after adding pagination for local item on backend
@@ -282,92 +290,97 @@
 
 	} */
 
-	function selectDatabaseItem(item) {
+	function selectDatabaseItem (item) {
 		selLocalItem.value = {};
 		selDatabaseItem.value = item;
 	}
 
-	async function loadMoreGlobalItems() {
+	async function loadMoreGlobalItems () {
+
 		loadingFromDb.value = true;
 		const nextPage = dbPages.value + 1;
 
-		const res = await commonMethods.fetchDatabaseEntities(
-			props.content_type,
-			inputText.value,
-			nextPage
-		);
+		const res = await commonMethods.fetchDatabaseEntities(props.content_type, inputText.value, nextPage);
 
 		if (!res._$error) {
 			// do not increase page if error occurred
 			dbPages.value = nextPage;
 
-			const items = commonMethods.filterDatabaseItems(
-				res.items,
-				localItems.value
-			);
+			const items = commonMethods.filterDatabaseItems(res.items, localItems.value);
 
 			databaseItems.value = databaseItems.value.concat(items);
+
 		}
 
 		loadingFromDb.value = false;
+
 	}
 
-	function cancel() {
+	function cancel () {
+
 		emit('update:opened', false);
 
 		selItem.value = {};
+
 	}
 
-	async function save() {
-		const sameItemSelected =
-			props.modelValue &&
-			props.modelValue[props.propId] === selItem.value[props.propId];
+	async function save () {
 
-		if (!Object.keys(selItem).length || sameItemSelected) {
+		const sameItemSelected = props.modelValue && props.modelValue[props.propId] === selItem.value[props.propId];
+
+		if ( !Object.keys(selItem).length || sameItemSelected ) {
+
 			cancel();
 			return;
+
 		}
 
-		if (selItem.value.frontOptions.type === 'database') {
+		if ( selItem.value.frontOptions.type === 'database' ) {
+
 			saving.value = true;
 
-			const res = await commonMethods.startImport(
-				props.content_type,
-				JSON.parse(JSON.stringify(selItem.value))
-			);
+			const res = await commonMethods.startImport(props.content_type, JSON.parse(JSON.stringify( selItem.value )) );
 
-			if (Object.keys(res).length === 1 && res._$error) {
-				saving.value = false;
-
-				return;
-			} else if (res.errors) {
-				// TODO: Investigate. This if never triggers.
-
-				useNotify({ type: 'error', title: res.errors });
+			if ( Object.keys(res).length === 1 && res._$error ) {
 
 				saving.value = false;
 
 				return;
+
+			} else if (res.errors) { // TODO: Investigate. This if never triggers.
+
+				useNotify( {type: 'error', title: res.errors} );
+
+				saving.value = false;
+
+				return;
+
 			} else {
+
 				res.id = selItem.value.id;
-				emit('databaseItemSelected', res);
+				emit( 'databaseItemSelected', res );
+
 			}
 			// emit( 'databaseItemSelected', JSON.parse(JSON.stringify( selDatabaseItem.value )) );
-		} else {
+
+		}
+		else {
+
 			delete selItem.value.frontOptions;
 
-			emit(
-				'localItemSelected',
-				JSON.parse(JSON.stringify(selItem.value))
-			);
+			emit( 'localItemSelected', JSON.parse(JSON.stringify( selItem.value )) );
+
 		}
 
 		selItem.value = {};
 		emit('update:opened', false);
+
 	}
+
 </script>
 
 <style lang="scss" scoped>
+
 	:deep(.modal_wrap) {
 		width: 936px;
 		height: 614px;
@@ -376,11 +389,12 @@
 	.database-table-head {
 		display: flex;
 		width: 713px;
-		padding: 13px 10px 0 10px;
+		padding: 0 10px;
 		font-size: 13px;
 		color: #666;
 		box-sizing: border-box;
 		height: 56px;
+		padding-top: 13px;
 		border-top: 1px solid #ddd;
 		border-bottom: 1px solid #ddd;
 	}
@@ -418,7 +432,7 @@
 
 		&.active {
 			color: var(--primary-color);
-			outline: solid 2px var(--primary-color);
+			outline: solid 2px $primary;
 
 			.option-name {
 				color: var(--primary-color);
@@ -427,6 +441,7 @@
 			.option-isin {
 				color: var(--primary-color);
 			}
+
 		}
 
 		&:hover {
@@ -459,6 +474,7 @@
 			overflow: hidden;
 			white-space: nowrap;
 		}
+
 	}
 
 	.uds_modal_footer {
@@ -467,4 +483,5 @@
 		justify-content: space-between;
 		align-items: center;
 	}
+
 </style>

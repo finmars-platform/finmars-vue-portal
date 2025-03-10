@@ -28,10 +28,7 @@
 		<div v-if="status === 'loading'" class="center p-16">
 			<FmLoader />
 		</div>
-		<div
-			v-else-if="status !== 'loading' && !items.length"
-			class="table-empty-data"
-		>
+		<div v-else-if="status !== 'loading' && !items.length" class="table-empty-data">
 			<FmIcon icon="cloud_off" />
 			<span>No Data</span>
 		</div>
@@ -54,11 +51,7 @@
 				<div class="table-cell no_collapsed" v-if="$slots.actions">
 					<slot name="actions" :index="index" />
 				</div>
-				<div
-					class="table-cell"
-					v-for="(item, indexRow) in row"
-					:key="indexRow"
-				>
+				<div class="table-cell" v-for="(item, indexRow) in row" :key="indexRow">
 					<button
 						:disabled="isDisabled"
 						class="table-cell-btn"
@@ -69,8 +62,7 @@
 						"
 						@click.right.prevent.stop="
 							() => {
-								if (rightClickCallback)
-									rightClickCallback(index, indexRow);
+								if (rightClickCallback) rightClickCallback(index, indexRow);
 							}
 						"
 					>
@@ -81,10 +73,7 @@
 								class="overflow-hidden text-overflow-ellipsis"
 								v-tooltip="item.value"
 							>
-								<NuxtLink
-									v-if="item.link"
-									class="link dib"
-									:to="item.link"
+								<NuxtLink v-if="item.link" class="link dib" :to="item.link"
 									>{{ item.value }}
 								</NuxtLink>
 
@@ -108,7 +97,6 @@
 </template>
 
 <script setup>
-	/* eslint-disable */
 	let props = defineProps({
 		headers: {
 			type: Array
@@ -242,16 +230,13 @@
 				text-overflow: ellipsis;
 			}
 		}
-
 		& + & {
 			border-left: 1px solid var(--table-border-color);
 		}
-
 		&.disabled {
-			background: #ebebeb;
+			background: $main-darken-2;
 		}
 	}
-
 	.table-cell-btn {
 		display: block;
 		color: var(--secondary-color);
@@ -270,7 +255,6 @@
 			.header-text {
 				color: var(--secondary-color);
 			}
-
 			background: var(--base-backgroundColor);
 			border-bottom: 1px solid var(--table-border-color);
 		}
@@ -279,7 +263,6 @@
 	.link {
 		text-decoration: underline;
 	}
-
 	.arrow {
 		float: right;
 		width: 12px;

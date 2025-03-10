@@ -15,7 +15,7 @@ export default {
 	},
 	expressionProcedureId: {
 		get: prefix + '/procedures/expression-procedure/{id}/',
-		post: prefix + '/procedures/expression-procedure/{id}/run-procedure/'
+		post: prefix + '/procedures/expression-procedure/{id}/run-procedure/',
 	},
 	pricingProc: {
 		get: prefix + '/procedures/pricing-procedure/',
@@ -113,20 +113,6 @@ export default {
 	instrumentPricingCondition: {
 		get: prefix + '/instruments/pricing-condition/'
 	},
-
-	instrumentDownloadSchemeList: {
-		get: prefix + '/import/instrument-scheme/'
-	},
-	instrumentDownloadSchemeInstance: {
-		get: prefix + '/import/instrument-scheme/{id}/',
-		post: prefix + '/import/instrument-scheme/',
-		patch: prefix + '/import/instrument-scheme/{id}/',
-		delete: prefix + '/import/instrument-scheme/{id}/'
-	},
-	instrumentDownloadSchemeListLight: {
-		get: prefix + '/import/instrument-scheme/light/'
-	},
-
 	pricingConditionMappingList: {
 		get: prefix + '/import/pricing-condition-mapping/',
 		post: prefix + '/import/pricing-condition-mapping/',
@@ -598,9 +584,6 @@ export default {
 	exprCalcPeriodDate: {
 		post: prefix + '/utils/date/calc-period-date/'
 	},
-	exprBusinessDate: {
-		post: prefix + '/utils/date/last-business-day/'
-	},
 	transactionComplexFiltered: {
 		post: prefix + '/transactions/complex-transaction/ev-item/'
 	},
@@ -1052,10 +1035,6 @@ export default {
 		post: prefix + '/ui/user-interface-access/',
 		put: prefix + '/ui/user-interface-access/{id}/',
 		delete: prefix + '/ui/user-interface-access/{id}/'
-	},
-
-	customFieldList: {
-		get: prefix + '/reports/{entityType}/custom-field/'
 	},
 
 	systemNotificationsCategoryList: {
