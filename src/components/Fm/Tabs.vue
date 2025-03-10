@@ -48,30 +48,31 @@
 </template>
 
 <script setup>
-	import { Swiper, SwiperSlide } from 'swiper/vue'
+	import { Swiper, SwiperSlide } from 'swiper/vue';
 
-	const swiperElem = ref(null)
+	const swiperElem = ref(null);
 
 	defineProps({
 		modelValue: String,
-		tabs: Array,
-	})
+		tabs: Array
+	});
 
-	defineEmits(['update:modelValue'])
+	defineEmits(['update:modelValue']);
 
-	let swiperData = ref({})
+	let swiperData = ref({});
 
 	function onSwiperInit(swiperInst) {
-		swiperData.value = swiperInst
+		swiperData.value = swiperInst;
 	}
 
 	function slidePrev() {
-		swiperData.value.slidePrev()
+		swiperData.value.slidePrev();
 	}
 
 	function slideNext() {
-		swiperData.value.slideNext()
+		swiperData.value.slideNext();
 	}
+
 	/*onMounted(() => {
 
 		allowedWidth = tabsElem.value.clientWidth;
@@ -158,7 +159,7 @@
 		width: 32px;
 
 		&:not([disabled]):hover {
-			background-color: $primary-lighten-2;
+			background-color: rgb(240 90 34 / 12%);
 		}
 	}
 </style>
