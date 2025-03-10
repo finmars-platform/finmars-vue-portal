@@ -26,10 +26,10 @@ export default defineNuxtConfig({
 	},
 	app: {
 		head: {
-			title: 'Finmars',
+			title: 'Finmars | Financial Management Revolution System',
 			viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
 			charset: 'utf-8',
-			link: [{ rel: 'icon', type: 'image/png', href: 'img/favicon.png' }]
+			link: [{ rel: 'icon', type: 'image/png', href: '/img/favicon/favicon-new-64x64.png' }]
 		},
 		pageTransition: { name: 'page', mode: 'out-in' }
 	},
