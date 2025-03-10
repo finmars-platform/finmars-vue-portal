@@ -50,7 +50,11 @@ export async function validateExpression(ruleExpr, data) {
 		if (ruleExpr) {
 			return {
 				error: e,
-				htmlExpressionData: getHtmlExpression(ruleExpr, data, expressionsList)
+				htmlExpressionData: getHtmlExpression(
+					ruleExpr,
+					data,
+					expressionsList
+				)
 			};
 		}
 	}
@@ -91,7 +95,9 @@ function getHtmlExpression(expression, data, expressionsList) {
 		} else if (/^\s+$/.test(expression[currentIndex])) {
 			token = eatEmptySpace(expression, currentIndex);
 			currentIndex = currentIndex + token.value.length;
-		} else if (['+', '-', '/', '*'].indexOf(expression[currentIndex]) !== -1) {
+		} else if (
+			['+', '-', '/', '*'].indexOf(expression[currentIndex]) !== -1
+		) {
 			token = eatSpecialSymbol(expression, currentIndex);
 			currentIndex = currentIndex + token.value.length;
 		} else if (expression[currentIndex] === "'") {
@@ -234,7 +240,8 @@ function getFunctionWords(expressionsList) {
 	return expressionsList
 		.filter((expression) => expression?.validation?.func?.includes('('))
 		.map(
-			(expression) => get(expression, ['validation', 'func'], '').split('(')[0]
+			(expression) =>
+				get(expression, ['validation', 'func'], '').split('(')[0]
 		);
 }
 
@@ -242,7 +249,8 @@ function getPropertiesWords(expressionsList) {
 	const propertiesWordsTmp = expressionsList
 		.filter((expression) => expression.validation?.func?.includes(']'))
 		.map(
-			(expression) => get(expression, ['validation', 'func'], '').split(']')[1]
+			(expression) =>
+				get(expression, ['validation', 'func'], '').split(']')[1]
 		);
 	const propertiesWords = propertiesWordsTmp.reduce((res, word) => {
 		if (word) {

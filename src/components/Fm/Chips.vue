@@ -13,10 +13,15 @@
 			<div
 				class="chip flex aic"
 				:class="{ active: chip.isActive }"
-				v-tooltip="{ content: scope.getTooltipContent(chip), ...(chip.error_data && {theme: 'error-tooltip'}) }"
+				v-tooltip="{
+					content: scope.getTooltipContent(chip),
+					...(chip.error_data && { theme: 'error-tooltip' })
+				}"
 				@click="onChipClick(chip, $event)"
 			>
-				<span v-if="chip.error_data" class="material-icons error">error</span>
+				<span v-if="chip.error_data" class="material-icons error"
+					>error</span
+				>
 
 				<div
 					v-html="chip.text"
@@ -26,58 +31,61 @@
 
 				<FmBtn
 					v-if="canDelete"
-                    type="icon"
+					type="icon"
 					class="flex-shrink-0 m-l-4"
 					:class="{ 'custom-field-error': !!chip.error_data }"
 					@click.stop="$emit('delete', [chip])"
-                >
-<!--                    <FmIcon icon="cancel" size="16" />-->
-					<div class="icon material-icons" style="font-size: 16px;">cancel</div>
-                </FmBtn>
+				>
+					<!--                    <FmIcon icon="cancel" size="16" />-->
+					<div class="icon material-icons" style="font-size: 16px">
+						cancel
+					</div>
+				</FmBtn>
 			</div>
 		</div>
 
-<!--		<div class="chip-wrap" v-if="hiddenChips.length">
-			<div
-				class="chip expand-chip"
-				@click="onChipClickMethod(hiddenChips, $event)"
-			>
-				<div class="chip_content">+{{ hiddenChips.length }}</div>
+		<!--		<div class="chip-wrap" v-if="hiddenChips.length">
+					<div
+						class="chip expand-chip"
+						@click="onChipClickMethod(hiddenChips, $event)"
+					>
+						<div class="chip_content">+{{ hiddenChips.length }}</div>
 
-				<md-button
-					v-if="chipsDeletion"
-					@click="deleteChips(hiddenChips, $event)"
-					class="chip-deletion-btn"
-				>
-					<span class="material-icons">cancel</span>
-				</md-button>
+						<md-button
+							v-if="chipsDeletion"
+							@click="deleteChips(hiddenChips, $event)"
+							class="chip-deletion-btn"
+						>
+							<span class="material-icons">cancel</span>
+						</md-button>
 
-				<md-tooltip
-					ng-if="hiddenChipsTexts"
-					md-direction="top"
-					class="tooltip_1"
-					ng-bind="hiddenChipsTexts"
-				></md-tooltip>
-			</div>
-		</div>-->
+						<md-tooltip
+							ng-if="hiddenChipsTexts"
+							md-direction="top"
+							class="tooltip_1"
+							ng-bind="hiddenChipsTexts"
+						></md-tooltip>
+					</div>
+				</div>-->
 
 		<slot></slot>
 	</div>
 </template>
 
 <script setup>
-	import directivesEvents from '@/angular/services/events/directivesEvents'
+	/* eslint-disable */
+	import directivesEvents from '@/angular/services/events/directivesEvents';
 
-	const emit = defineEmits(['chipClick', 'delete'])
+	const emit = defineEmits(['chipClick', 'delete']);
 
 	const props = defineProps({
 		items: Array,
 		canDelete: { type: Boolean, default: false },
-		overflowing: Boolean,
-	})
+		overflowing: Boolean
+	});
 
-	let scope = {}
-	const elem = ref(null)
+	let scope = {};
+	const elem = ref(null);
 	// $filter
 
 	// chipsDeletion: '@', // whether allow chips deletion
@@ -93,70 +101,72 @@
 	// onFirstRenderEnding: '&?',
 	// link: function (scope, elem, attr) {
 	// scope.chipsToDisplay = [];
-	const hiddenChips = ref([])
-	scope.hiddenChipsTexts = ''
+	const hiddenChips = ref([]);
+	scope.hiddenChipsTexts = '';
 
-	scope.orderOptions = null
+	scope.orderOptions = null;
 
 	if (scope.orderChips) {
-		scope.orderOptions = 'text'
+		scope.orderOptions = 'text';
 	}
 
 	let addChipBtn,
-		addChipWidth = 0
-	let lastChipRendered = false
+		addChipWidth = 0;
+	let lastChipRendered = false;
 
 	let chipsContainer,
-		chipsContainerWidth = 0
+		chipsContainerWidth = 0;
 	// let dropdownMenuFilter;
 	onMounted(() => {
-		init()
-	})
+		init();
+	});
 
 	function init() {
 		if (scope.chipsContainerWidth) {
-			chipsContainerWidth = scope.chipsContainerWidth - addChipWidth
+			chipsContainerWidth = scope.chipsContainerWidth - addChipWidth;
 		} else {
-			chipsContainerWidth = elem.value.clientWidth - addChipWidth
+			chipsContainerWidth = elem.value.clientWidth - addChipWidth;
 		}
 
 		if (!props.items || !props.items.length) {
-			onFirstRenderEnding()
+			onFirstRenderEnding();
 		}
 
 		if (scope.eventService) {
 			scope.eventService.addEventListener(
 				directivesEvents.CHIPS_LIST_CHANGED,
 				function (argumentsObj) {
-					scope.chipsList = argumentsObj.chipsList
-					scope.concealOverflowingChips(argumentsObj.updateScope)
+					scope.chipsList = argumentsObj.chipsList;
+					scope.concealOverflowingChips(argumentsObj.updateScope);
 				}
-			)
+			);
 
 			scope.eventService.addEventListener(
 				directivesEvents.CHIPS_LIST_ELEMENT_SIZE_CHANGED,
 				function () {
 					if (scope.chipsContainerWidth) {
-						chipsContainerWidth = scope.chipsContainerWidth - addChipWidth
+						chipsContainerWidth =
+							scope.chipsContainerWidth - addChipWidth;
 					} else {
-						chipsContainerWidth = chipsContainer.clientWidth - addChipWidth
+						chipsContainerWidth =
+							chipsContainer.clientWidth - addChipWidth;
 					}
 
-					scope.concealOverflowingChips()
+					scope.concealOverflowingChips();
 				}
-			)
+			);
 		}
 	}
 
 	scope.getChipsListClasses = function () {
-		let classes = ''
+		let classes = '';
 
 		if (scope.chipsDeletion) {
-			classes = 'chips-deletion-enabled'
+			classes = 'chips-deletion-enabled';
 		}
 
-		return classes
-	}
+		return classes;
+	};
 
 	/* Method from angularjs. May be not needed. */
 	scope.onChipClickMethod = function (chipData, $event) {
@@ -168,48 +178,48 @@
 		if (scope.onChipClick) {
 			scope.onChipClick({ chipsData: chipsData, event: $event })
 		}*/
-	}
+	};
 
 	const onChipClick = function (chipData, $event) {
-
-		emit(
-			'chipClick',
-			{
-				data: JSON.parse(JSON.stringify(chipData)),
-				event: $event
-			}
-		)
-
-	}
+		emit('chipClick', {
+			data: JSON.parse(JSON.stringify(chipData)),
+			event: $event
+		});
+	};
 
 	let getHiddenChipsTexts = function () {
-		scope.hiddenChipsTexts = ''
+		scope.hiddenChipsTexts = '';
 
-		let hiddenChips = scope.hiddenChips
+		let hiddenChips = scope.hiddenChips;
 
 		if (scope.orderOptions) {
-			hiddenChips = $filter('orderBy')(hiddenChips, scope.orderOptions)
+			hiddenChips = $filter('orderBy')(hiddenChips, scope.orderOptions);
 		}
 
 		hiddenChips.forEach(function (hChip) {
 			if (hChip.text) {
-				scope.hiddenChipsTexts = scope.hiddenChipsTexts + hChip.text + '; '
+				scope.hiddenChipsTexts =
+					scope.hiddenChipsTexts + hChip.text + '; ';
 			}
-		})
+		});
 
 		if (scope.hiddenChipsTexts) {
 			// remove "; " from the end
-			let endIndex = scope.hiddenChipsTexts.length - 2
-			scope.hiddenChipsTexts = scope.hiddenChipsTexts.substring(0, endIndex)
+			let endIndex = scope.hiddenChipsTexts.length - 2;
+			scope.hiddenChipsTexts = scope.hiddenChipsTexts.substring(
+				0,
+				endIndex
+			);
 
-			scope.hiddenChipsTexts = 'Hidden chips: ' + scope.hiddenChipsTexts + '.'
+			scope.hiddenChipsTexts =
+				'Hidden chips: ' + scope.hiddenChipsTexts + '.';
 		}
-	}
+	};
 
 	// hideOverflowingChips function called from chips-list-view.html by ng-init
 	scope.getChipClasses = (chipData) => {
-		return chipData.classes ? chipData.classes : ''
-	}
+		return chipData.classes ? chipData.classes : '';
+	};
 
 	scope.getTooltipContent = (chipData) => {
 		if (chipData.error_data) {
@@ -217,57 +227,60 @@
 		}
 
 		if (chipData.hasOwnProperty('tooltipContent')) {
-			return chipData.tooltipContent
+			return chipData.tooltipContent;
 		}
 
-		return chipData.text
-	}
+		return chipData.text;
+	};
 
 	scope.concealOverflowingChips = function (updateScope) {
 		if (scope.hideOverflowingChips !== 'false') {
 			setTimeout(function () {
 				// wait for ng-repeat to finish rendering
 
-				scope.hiddenChips = []
+				scope.hiddenChips = [];
 
-				const expandChipWidth = 74
-				let chipsElemsList = elem[0].querySelectorAll('.chipWrapElem')
-				let chipsWidth = 0 // size of .expand-chip (width + margins)
+				const expandChipWidth = 74;
+				let chipsElemsList = elem[0].querySelectorAll('.chipWrapElem');
+				let chipsWidth = 0; // size of .expand-chip (width + margins)
 
 				const hideChips = function (index) {
-					scope.hiddenChips = scope.chipsList.slice(index)
-					getHiddenChipsTexts()
-				}
+					scope.hiddenChips = scope.chipsList.slice(index);
+					getHiddenChipsTexts();
+				};
 
 				chipsElemsList.forEach(function (cElem) {
-					cElem.classList.add('chip-hidden')
-				})
+					cElem.classList.add('chip-hidden');
+				});
 
 				for (let i = 0; i < chipsElemsList.length; i++) {
-					let cElem = chipsElemsList[i]
-					chipsWidth += cElem.clientWidth
+					let cElem = chipsElemsList[i];
+					chipsWidth += cElem.clientWidth;
 
 					if (i + 1 === chipsElemsList.length) {
 						// for the last chip
 
 						if (chipsWidth > chipsContainerWidth) {
-							hideChips(i)
-							break
+							hideChips(i);
+							break;
 						}
-					} else if (chipsWidth + expandChipWidth > chipsContainerWidth) {
-						hideChips(i)
-						break
+					} else if (
+						chipsWidth + expandChipWidth >
+						chipsContainerWidth
+					) {
+						hideChips(i);
+						break;
 					}
 
-					cElem.classList.remove('chip-hidden')
+					cElem.classList.remove('chip-hidden');
 				}
 
 				if (updateScope) {
-					scope.$apply()
+					scope.$apply();
 				}
-			}, 0)
+			}, 0);
 		}
-	}
+	};
 
 	// scope.deleteChips = function (chipsData, $event) {
 	// 	$event.stopPropagation()
@@ -300,40 +313,40 @@
 		if (scope.onFirstRenderEnding) {
 			setTimeout(function () {
 				// wait until DOM elems reflow after ng-repeat
-				scope.onFirstRenderEnding()
-			}, 0)
+				scope.onFirstRenderEnding();
+			}, 0);
 		}
 
 		scope.onLastChipInit = function () {
 			// discard all on first time init callbacks
-			scope.concealOverflowingChips(true)
-		}
-	}
+			scope.concealOverflowingChips(true);
+		};
+	};
 
 	scope.onLastChipInit = function () {
 		if (typeof scope.chipsAddition === 'string') {
-			lastChipRendered = true
+			lastChipRendered = true;
 
 			if (addChipBtn) {
 				// whether addChipBtn already loaded
-				scope.concealOverflowingChips(true)
-				onFirstRenderEnding()
+				scope.concealOverflowingChips(true);
+				onFirstRenderEnding();
 			}
 		} else {
-			scope.concealOverflowingChips(true)
-			onFirstRenderEnding()
+			scope.concealOverflowingChips(true);
+			onFirstRenderEnding();
 		}
-	}
+	};
 
 	scope.onAddChipInit = function () {
-		addChipBtn = elem[0].querySelector('.add-chip-wrap')
-		addChipWidth = addChipBtn.clientWidth
+		addChipBtn = elem[0].querySelector('.add-chip-wrap');
+		addChipWidth = addChipBtn.clientWidth;
 
 		if (lastChipRendered) {
-			scope.concealOverflowingChips(true)
-			onFirstRenderEnding()
+			scope.concealOverflowingChips(true);
+			onFirstRenderEnding();
 		}
-	}
+	};
 </script>
 
 <style lang="scss" scoped>
@@ -341,6 +354,7 @@
 		display: flex;
 		flex-wrap: wrap;
 	}
+
 	.chip {
 		position: relative;
 		height: 28px;
@@ -354,7 +368,7 @@
 			color: inherit;
 
 			&:hover {
-				color: $text-pale2;
+				color: #bdbdbd;
 			}
 		}
 
@@ -387,7 +401,7 @@
 			}
 
 			.material-icons {
-				color: $gray;
+				color: #747474;
 				font-size: 16px;
 			}
 		}
@@ -402,12 +416,14 @@
 			font-size: 16px;
 		}
 	}
+
 	.chip_content {
 		font-size: 14px;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
+
 	/*.chip {
 		max-width: 240px;
 		height: 33px;
@@ -435,28 +451,28 @@
 		}
 	}*/
 
-    //# region fm table filters
-    /*.fm_filter_chips {
+	//# region fm table filters
+	/*.fm_filter_chips {
 
-        .chip {
+		.chip {
 
-            // Only active filters must be orange
-            &.active {
-                background-color: $primary-lighten-2;
-                color: $primary;
+			// Only active filters must be orange
+			&.active {
+				background-color: $primary-lighten-2;
+				color: $primary;
 
-                &:hover {
-                    background-color: $primary;
-                    color: #fff;
+				&:hover {
+					background-color: $primary;
+					color: #fff;
 
 					:deep(.icon) {
 						color: #fff;
 					}
 
-                    span.error {
-                        color: #fff;
-                    }
-                }
+					span.error {
+						color: #fff;
+					}
+				}
 
 				:deep(.icon) {
 					color: $primary;
@@ -466,25 +482,25 @@
 					}
 				}
 
-            }
-        }
+			}
+		}
 
-        .chip_content {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
+		.chip_content {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
 
-            !*.g-filter-chips-text {
-                width: 100%;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }*!
-        }
+			!*.g-filter-chips-text {
+				width: 100%;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}*!
+		}
 
-        .material-icons:not(.error) {
-            color: inherit;
-        }
-    }
+		.material-icons:not(.error) {
+			color: inherit;
+		}
+	}
 
 	.chip-wrap.use-from-above-filter-chip {
 		.chip {
@@ -509,6 +525,5 @@
 			}
 		}
 	}*/
-    //# endregion fm table filters
-
+	//# endregion fm table filters
 </style>

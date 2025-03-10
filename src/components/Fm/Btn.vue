@@ -31,6 +31,10 @@
 
 <style lang="scss" scoped>
 	$height: 36px;
+	$primary-lighten: #f69470;
+	$primary-lighten-2: rgb(240 90 34 / 12%);
+	$text-lighten: #747474;
+
 	.fm_btn {
 		height: $height;
 		line-height: $height;
@@ -65,7 +69,7 @@
 		&.outlined {
 			font-weight: 700;
 			border-radius: 3px;
-			border: 1px solid $border-darken;
+			border: 1px solid #b3b3b3;;
 			color: var(--primary-color);
 
 			&:not([disabled]):hover {

@@ -11,25 +11,27 @@
 
 <script setup>
 	const props = defineProps({
-		uid: String,
-	})
+		uid: String
+	});
 
-	const dashStore = useStoreDashboard()
-	let component = dashStore.getComponent(props.uid)
-	console.log('component:', component)
+	const dashStore = useStoreDashboard();
+	let component = dashStore.getComponent(props.uid);
+	console.log('component:', component);
 </script>
 
 <style lang="scss" scoped>
 	.wrap {
 		border-radius: 5px;
-		border: 1px solid $border;
+		border: 1px solid #e0e0e0;
 	}
+
 	.title {
 		height: 36px;
 		line-height: 36px;
 		background: var(--table-header-background-color);
 		padding: 0 20px;
 	}
+
 	.log_wrap {
 		padding: 15px;
 	}

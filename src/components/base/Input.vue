@@ -130,10 +130,14 @@
 </script>
 
 <style lang="scss" scoped>
-	$input-border: 1px solid $border-darken;
-	$active-input-border: 1px solid $border-active;
+	$input-border: 1px solid #b3b3b3;
+	$active-input-border: 1px solid #333;
 	$side-items-padding: 0 8px;
+	$border: #e0e0e0;
 	$border-radius: 4px;
+	$error: #f05a22;
+	$text-pale: #e0e0e0;
+	$text-pale2: #bdbdbd;
 
 	%show_label {
 		top: -8px;
@@ -198,7 +202,7 @@
 
 			&.bi_border_bottom {
 				.bi_default {
-					border-bottom: 1px solid $border;
+					border-bottom: 1px solid #e0e0e0;
 					padding-left: 7px;
 					padding-bottom: 3px;
 					margin-left: 6px;

@@ -1,8 +1,14 @@
-@import 'base-theme';
-@import 'core/core';
+@import 'base-theme.css';
+@import "./core/resets.css";
+@import "./core/helpers.css";
+@import './core/core';
 @import 'angular';
 // @import 'fmTable/filters';
 @import 'swiper';
+
+:root {
+	--modal-z-index: 55; // used by modals and popups
+}
 
 @mixin fm_table_filter_chip {
 	max-width: 240px;
@@ -40,7 +46,7 @@
 }
 
 .pickmeup {
-    z-index: $modal-z-index;
+    z-index: var(--modal-z-index);
 }
 
 .error-color {
