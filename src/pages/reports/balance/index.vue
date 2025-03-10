@@ -1,70 +1,27 @@
 <template>
 	<section class="balance-report">
-		<div class="balance-report__header">
-			<div class="balance-report__header-content">
-				<div class="balance-report__header-block">
-					<FmButton
-						type="secondary"
-						rounded
-						append-icon="mdi-menu-down"
-					>
-						Layout (test)
+		<ReportHeader
+			:entity-type="entityType"
+			:content-type="contentType"
+			:layouts="layouts"
+			:disabled="isLoading"
+			@set:layout="(ev) => console.log('SET LAYOUT AS DEFAULT: ', ev)"
+			@select:layout="(ev) => console.log('SELECT LAYOUT', ev)"
+		/>
 
-						<FmMenu
-							v-model="isLayoutSelectMenuOpen"
-							activator="parent"
-							:close-on-content-click="false"
-						>
-							Select layout
-						</FmMenu>
-					</FmButton>
+		<div class="balance-report__content">CONTENT</div>
 
-					<FmIconButton icon="mdi-dots-vertical" variant="text">
-						<FmMenu
-							v-model="isMainMenuOpen"
-							activator="parent"
-							:close-on-content-click="false"
-						>
-							Main menu
-						</FmMenu>
-					</FmIconButton>
-
-					<FmIconButton icon="mdi-content-save" variant="text" />
-				</div>
-
-				<div class="balance-report__header-block">
-					<FmIconButton icon="mdi-tray-arrow-down" variant="text" />
-
-					<FmIconButton
-						icon="mdi-view-agenda-outline"
-						variant="text"
-					/>
-
-					<FmIconButton icon="mdi-cog-outline" variant="text" />
-				</div>
-			</div>
-		</div>
-
-		<div class="balance-report__header">
-			<div class="balance-report__header-filters">
-				<FmFilterToolbar
-					class="balance-report__filters"
-					:value="[]"
-					:attributes="[]"
-					:suggested-attrs="[]"
-					@update:model-value="(ev) => console.log('UPDATE FILTERS')"
-				/>
-			</div>
-
-			<FmIconButton icon="mdi-dots-vertical" variant="text" />
+		<div v-if="isLoading" class="balance-report__loader">
+			<FmProgressCircular indeterminate size="100" />
 		</div>
 	</section>
 </template>
 
 <script setup>
 	import { onBeforeMount, ref } from 'vue';
-	import { FmButton, FmFilterToolbar, FmIconButton, FmMenu } from '@finmars/ui';
-	import useApi from '~/composables/useApi';
+	import { FmProgressCircular } from '@finmars/ui';
+	import { getListLayout } from '~/services/uiService';
+	import ReportHeader from '~/components/pages/reports/common/ReportHeader/ReportHeader.vue';
 
 	definePageMeta({
 		middleware: 'auth',
@@ -77,50 +34,47 @@
 		]
 	});
 
-	const isLayoutSelectMenuOpen = ref(false);
-	const isMainMenuOpen = ref(false);
+	const entityType = 'balance-report';
+	const contentType = 'reports.balancereport';
+	const isLoading = ref(false);
+	const layouts = ref([]);
+
+	async function getLayouts() {
+		const res = await getListLayout(entityType, { pageSize: 1000 });
+		layouts.value = res.results;
+	}
+
+	onBeforeMount(async () => {
+		try {
+			isLoading.value = true;
+			await getLayouts();
+		} finally {
+			isLoading.value = false;
+		}
+	});
 </script>
 
 <style scoped lang="scss">
 	.balance-report {
 		position: relative;
 		width: 100%;
-		min-height: 100vh;
+		height: 100%;
+		color: var(--on-surface);
 
-		&__header {
+		&__content {
 			position: relative;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
 			width: 100%;
-			height: 64px;
-			padding: 0 16px;
-
-			&-content {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				width: 100%;
-				height: 100%;
-				border-bottom: 1px solid var(--outline-variant);
-			}
-
-			&-block {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				column-gap: 8px;
-			}
-
-			&-filters {
-				position: relative;
-				width: calc(100% - 48px);
-				height: 100%;
-			}
+			height: calc(100% - 130px);
 		}
 
-		&__filters {
-			--fmFilterToolbar-background-color: transparent;
+		&__loader {
+			position: absolute;
+			inset: 0;
+			z-index: 5;
+			pointer-events: none;
+			display: flex;
+			justify-content: center;
+			align-items: center;
 		}
 	}
 </style>
