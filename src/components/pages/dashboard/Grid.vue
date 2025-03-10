@@ -1,8 +1,9 @@
 <template>
 	<div class="drag_container">
-		<div class="shadow_grid" v-if="dashStore.isEdit">
-			<div
-				class="shadow_grid_item"
+		<div class="shadow_grid"
+			v-if="dashStore.isEdit"
+		>
+			<div class="shadow_grid_item"
 				v-for="(item, key) in shadowCells"
 				:key="key"
 			></div>
@@ -27,32 +28,31 @@
 			:tab="tab"
 			@close="isOpenAddComponents = false"
 		/>
+
 	</div>
 </template>
 
 <script setup>
-	/* eslint-disable */
+
 	const props = defineProps({
 		tab: Number
-	});
-	const dashStore = useStoreDashboard();
+	})
+	const dashStore = useStoreDashboard()
 
-	let isOpenAddComponents = ref(false);
+	let isOpenAddComponents = ref(false)
 
-	let gridElement = ref(null);
-	let shadowCells = ref([]);
+	let gridElement = ref(null)
+	let shadowCells = ref([])
 
 	onMounted(() => {
 		const resizeObserver = new ResizeObserver((entries) => {
-			let rowsCount = Math.ceil(
-				entries[0].contentRect.height / (50 + 20)
-			);
+			let rowsCount = Math.ceil(entries[0].contentRect.height / (50 + 20))
 
-			shadowCells.value = new Array(rowsCount * 12);
-		});
+			shadowCells.value = new Array(rowsCount * 12)
+		})
 
-		resizeObserver.observe(gridElement.value);
-	});
+		resizeObserver.observe(gridElement.value)
+	})
 </script>
 
 <style lang="scss" scoped>
@@ -60,14 +60,12 @@
 		position: relative;
 		margin: 20px 30px;
 	}
-
 	.grid {
 		display: grid;
 		gap: 20px;
 		grid-template-columns: repeat(12, 1fr);
 		grid-auto-rows: 50px;
 	}
-
 	.shadow_grid {
 		position: absolute;
 		display: grid;
@@ -79,11 +77,10 @@
 
 		&_item {
 			border: 1px solid #ecded2;
-			background: rgb(240 90 34 / 12%);
+			background: $primary-lighten-2;
 			border-radius: 4px;
 		}
 	}
-
 	.add_component {
 		width: 100%;
 		margin-top: 20px;

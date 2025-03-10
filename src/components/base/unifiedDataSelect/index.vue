@@ -6,6 +6,7 @@
 		class="width-100"
 		@update:opened="toggleMenu"
 	>
+
 		<template #btn>
 			<BaseInput
 				:modelValue="modelValue ? modelValue[propId] : null"
@@ -27,13 +28,7 @@
 						@click.stop="emit('openModal')"
 					/>
 
-					<div
-						v-show="importingEntity"
-						v-tooltip="{
-							content: 'Importing entity',
-							theme: 'error-tooltip'
-						}"
-					>
+					<div v-show="importingEntity" v-tooltip="{ content: 'Importing entity', theme: 'error-tooltip' }">
 						<FmLoader />
 					</div>
 				</template>
@@ -50,9 +45,7 @@
 				<template #rightBtn>
 					<slot name="rightBtn" />
 					<FmIcon
-						:icon="
-							menuIsOpened ? 'arrow_drop_up' : 'arrow_drop_down'
-						"
+						:icon="menuIsOpened ? 'arrow_drop_up' : 'arrow_drop_down'"
 						:disabled="disabled"
 					/>
 				</template>
@@ -62,10 +55,7 @@
 		<div class="sel_menu_block">
 			<div>
 				<div v-if="!processing" style="height: 369px; overflow-y: auto">
-					<div
-						v-if="localItems.length"
-						class="text-bold opts_group_title"
-					>
+					<div v-if="localItems.length" class="text-bold opts_group_title">
 						Local Records ({{ localItemsTotal }})
 					</div>
 
@@ -78,9 +68,7 @@
 						>
 							<div v-html="getHighlighted(option.name)"></div>
 
-							<div
-								v-html="getHighlighted(option.user_code)"
-							></div>
+							<div v-html="getHighlighted(option.user_code)"></div>
 						</div>
 					</div>
 
@@ -101,16 +89,13 @@
 						>
 							<div v-html="getHighlighted(option.name)"></div>
 
-							<div
-								v-html="getHighlighted(option.user_code)"
-							></div>
+							<div v-html="getHighlighted(option.user_code)"></div>
+
 						</div>
 					</div>
 
 					<div v-if="!localItems.length && !databaseItems.length">
-						<span class="text-bold opts_group_title"
-							>Not records found</span
-						>
+						<span class="text-bold opts_group_title">Not records found</span>
 					</div>
 				</div>
 
@@ -120,12 +105,15 @@
 			</div>
 
 			<slot name="selectedDetails" />
+
 		</div>
+
 	</FmMenu>
 </template>
 
 <script setup>
-	import * as commonHelper from '~/components/Fm/UnifiedDataSelect/helper';
+
+	import * as commonHelper from "~/components/Fm/UnifiedDataSelect/helper";
 
 	let props = defineProps({
 		label: String,
@@ -139,7 +127,7 @@
 		modelValue: Object,
 		propId: {
 			type: String,
-			default: 'id'
+			default: 'id',
 		},
 
 		importingEntity: Boolean,
@@ -147,32 +135,28 @@
 
 		localItems: {
 			type: Array,
-			default() {
-				return [];
-			}
+			default() { return [] },
 		},
 
 		localItemsTotal: Number,
 
 		databaseItems: {
 			type: Array,
-			default() {
-				return [];
-			}
+			default() { return [] },
 		},
 
 		databaseItemsTotal: Number,
 
 		disabled: Boolean,
 
-		errorData: Object
+		errorData: Object,
 	});
 
 	let emit = defineEmits([
-		'update:modelValue',
-		'update:errorData',
-		'loadItems',
-		'openModal'
+		"update:modelValue",
+		"update:errorData",
+		"loadItems",
+		"openModal",
 	]);
 
 	let menuIsOpened = ref(false);
@@ -183,33 +167,39 @@
 		() => {
 			inputText.value = props.modelValue ? props.modelValue.name : '';
 		}
-	);
-
+	)
 	function toggleMenu(opened) {
+
 		inputText.value = '';
 
 		if (opened) {
+
 			emit('loadItems');
-		} else if (props.modelValue) {
-			inputText.value =
-				props.modelValue.short_name || props.modelValue.name;
+
+		}
+		else if (props.modelValue) {
+
+			inputText.value = props.modelValue.short_name || props.modelValue.name;
+
 		}
 
 		menuIsOpened.value = opened;
 	}
 
 	function openMenu() {
+
 		if (menuIsOpened.value || props.disabled) return;
 
 		menuIsOpened.value = true;
 
-		inputText.value = '';
+		inputText.value = "";
 
-		emit('loadItems');
+		emit("loadItems");
+
 	}
 
 	function getHighlighted(value) {
-		return commonHelper.getHighlighted(inputText.value, value);
+		return commonHelper.getHighlighted(inputText.value, value)
 	}
 
 	function onFilterChange($event) {
@@ -220,14 +210,16 @@
 	function selectItem(item) {
 		menuIsOpened.value = false;
 
-		if (item[props.propId] === props.modelValue[props.propId]) return;
+		if ( item[props.propId] === props.modelValue[props.propId] ) return;
 
-		emit('update:modelValue', JSON.parse(JSON.stringify(item)));
+		emit( "update:modelValue", JSON.parse(JSON.stringify(item)) );
+
 	}
 
 	if (props.modelValue) {
 		inputText.value = props.modelValue.name;
 	}
+
 </script>
 
 <style lang="scss" scoped>
@@ -241,11 +233,11 @@
 			padding: 11px 16px 2px 16px;
 			box-sizing: border-box;
 			width: 100%;
-			border-bottom: 1px solid #e0e0e0;
+			border-bottom: $opts-borders;
 			cursor: pointer;
 
 			&:first-child {
-				border-top: 1px solid #e0e0e0;
+				border-top: $opts-borders;
 			}
 
 			&:hover {

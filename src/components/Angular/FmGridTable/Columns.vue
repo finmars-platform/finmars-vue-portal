@@ -17,19 +17,11 @@
 						class="g-row-settings-btn visibility-hidden"
 						data-click-action-type="open_row_status_picker"
 					>
-						<span
-							v-html="rowStatusFilterIcon"
-							style="height: 24px"
-						></span>
-						<span class="material-icons arrow-icon"
-							>arrow_drop_down</span
-						>
+						<span v-html="rowStatusFilterIcon" style="height: 24px"></span>
+						<span class="material-icons arrow-icon">arrow_drop_down</span>
 					</button>
 
-					<FmMenu
-						anchor="top left"
-						class="header_item header_icon_btn"
-					>
+					<FmMenu anchor="top left" class="header_item header_icon_btn">
 						<template #btn="{ isOpen }">
 							<button
 								class="g-cell-button g-row-settings-btn g-row-color-picker-btn"
@@ -40,14 +32,10 @@
 									v-if="rowFilterColor === 'none'"
 									>label_outline</span
 								>
-								<span
-									class="material-icons"
-									v-if="rowFilterColor !== 'none'"
+								<span class="material-icons" v-if="rowFilterColor !== 'none'"
 									>label</span
 								>
-								<span class="material-icons arrow-icon"
-									>arrow_drop_down</span
-								>
+								<span class="material-icons arrow-icon">arrow_drop_down</span>
 							</button>
 						</template>
 
@@ -57,9 +45,7 @@
 									class="g-cell-button g-row-color-picker-option"
 									@click="changeRowFilterColor('none')"
 								>
-									<span class="material-icons"
-										>label_outline</span
-									>
+									<span class="material-icons">label_outline</span>
 								</button>
 							</div>
 
@@ -95,28 +81,19 @@
 									class="g-cell-button g-row-color-picker-option divider"
 									@click="removeColorMarkFromAllRows($event)"
 								>
-									<span class="material-icons"
-										>label_off</span
-									>
+									<span class="material-icons">label_off</span>
 								</button>
 							</div>
 						</div>
 					</FmMenu>
 				</div>
 
-				<button
-					class="g-row-settings-toggle"
-					@click="rowFiltersToggle()"
-				>
+				<button class="g-row-settings-toggle" @click="rowFiltersToggle()">
 					<div class="center aic height-100">
-						<span
-							v-show="!hideRowSettings"
-							class="material-icons f-s-16"
+						<span v-show="!hideRowSettings" class="material-icons f-s-16"
 							>keyboard_arrow_left</span
 						>
-						<span
-							v-show="hideRowSettings"
-							class="material-icons f-s-16"
+						<span v-show="hideRowSettings" class="material-icons f-s-16"
 							>keyboard_arrow_right</span
 						>
 					</div>
@@ -147,9 +124,7 @@
 				/>
 			</div>
 
-			<div
-				class="flex-row width-100 g-cols-holder gColumnsHolder gcAreaDnD"
-			>
+			<div class="flex-row width-100 g-cols-holder gColumnsHolder gcAreaDnD">
 				<AngularFmGridTableColumnCell
 					v-for="(column, index) in columnsToShow"
 					:key="column.key"
@@ -277,18 +252,10 @@
 			</template>
 		</BaseModal>-->
 
-		<LazyBaseModal
-			v-if="renameOpened"
-			v-model="renameOpened"
-			title="Rename"
-		>
+		<LazyBaseModal v-if="renameOpened" v-model="renameOpened" title="Rename">
 			<!-- 		@close="columnToRename = null" -->
 			<BaseInput readonly label="ID" v-model="columnToRename.key" />
-			<BaseInput
-				readonly
-				label="Original"
-				:modelValue="columnToRename.name"
-			/>
+			<BaseInput readonly label="Original" :modelValue="columnToRename.name" />
 			<BaseInput label="Name" v-model="columnToRename.layout_name" />
 
 			<template #controls="{ cancel }">
@@ -316,61 +283,60 @@
 			v-if="colNumberFormatData.opened"
 			v-model="colNumberFormatData.opened"
 			:title="`${colNumberFormatData.name}: Number Format`"
-			:settings="colNumberFormatData.numberFormat"
-			@cancel="onColNumFormatClose"
+            :settings="colNumberFormatData.numberFormat"
+            @cancel="onColNumFormatClose"
 			@save="editColNumberFormat"
 		></LazyModalNumberFormat>
 	</div>
 </template>
 
 <script setup>
-	/* eslint-disable */
-	import evEvents from '@/angular/services/entityViewerEvents';
-	import popupEvents from '@/angular/services/events/popupEvents';
-	import evDataHelper from '@/angular/helpers/ev-data.helper';
+	import evEvents from '@/angular/services/entityViewerEvents'
+	import popupEvents from '@/angular/services/events/popupEvents'
+	import evDataHelper from '@/angular/helpers/ev-data.helper'
 
 	// import metaService from '@/angular/services/metaService';
-	import evHelperService from '@/angular/services/entityViewerHelperService';
-	import rvDataHelper from '@/angular/helpers/rv-data.helper';
+	import evHelperService from '@/angular/services/entityViewerHelperService'
+	import rvDataHelper from '@/angular/helpers/rv-data.helper'
 
-	import localStorageService from '@/angular/shell/scripts/app/services/localStorageService';
+	import localStorageService from '@/angular/shell/scripts/app/services/localStorageService'
 
 	const props = defineProps([
 		'vm',
 		'evEventService',
 		'evDataService',
 		'attributeDataService',
-		'contentWrapElement'
-	]);
+		'contentWrapElement',
+	])
 
-	const evAttrsStore = useEvAttributesStore();
+	const evAttrsStore = useEvAttributesStore()
 
-	const $mdDialog = inject('$mdDialog');
+	const $mdDialog = inject('$mdDialog')
 
 	const {
 		evDataService,
 		evEventService,
 		attributeDataService,
-		contentWrapElement
-	} = props;
+		contentWrapElement,
+	} = props
 
-	let viewContext = evDataService.getViewContext();
+	let viewContext = evDataService.getViewContext()
 	// let isReport = metaService.isReport(entityType);
-	let contentType = evDataService.getContentType();
-	let isReport = evDataService.isEntityReport();
+	let contentType = evDataService.getContentType()
+	let isReport = evDataService.isEntityReport()
 
-	let entityType = evDataService.getEntityType();
+	let entityType = evDataService.getEntityType()
 	let rowStatusFilterIcon = `<span class="material-icons">star_outline</span>`;
 
-	let dataIsLoadingRef = ref(null);
+  let dataIsLoadingRef = ref(null);
 
 	const getColumns = () => {
-		return JSON.parse(JSON.stringify(evDataService.getColumns()));
-	};
+		return JSON.parse(JSON.stringify(evDataService.getColumns()))
+	}
 
 	const setColumns = (columns) => {
-		evDataService.setColumns(JSON.parse(JSON.stringify(columns)));
-	};
+		evDataService.setColumns(JSON.parse(JSON.stringify(columns)))
+	}
 
 	/**
 	 *
@@ -378,15 +344,15 @@
 	 * @return {Object} - column from entityViewerDataService
 	 */
 	const getColumnByKey = (key) => {
-		const columnsList = evDataService.getColumns();
-		const column = columnsList.find((col) => col.key === key);
+		const columnsList = evDataService.getColumns()
+		const column = columnsList.find((col) => col.key === key)
 
 		if (!column) {
-			throw new Error(`No column found with the key: ${key}`);
+			throw new Error(`No column found with the key: ${key}`)
 		}
 
-		return column;
-	};
+		return column
+	}
 
 	/**
 	 * Update column inside entityViewerDataService
@@ -394,42 +360,40 @@
 	 * @param columnData
 	 */
 	const setColumn = (columnData) => {
-		const columnsList = evDataService.getColumns();
-		const colIndex = columnsList.findIndex(
-			(col) => col.key === columnData.key
-		);
+		const columnsList = evDataService.getColumns()
+		const colIndex = columnsList.findIndex((col) => col.key === columnData.key)
 
 		if (!colIndex) {
-			throw new Error(`No column found with the key: ${columnData.key}`);
+			throw new Error(`No column found with the key: ${columnData.key}`)
 		}
 
-		columnsList[colIndex] = columnData;
-	};
+		columnsList[colIndex] = columnData
+	}
 
 	function getGroups() {
-		return JSON.parse(JSON.stringify(evDataService.getGroups()));
+		return JSON.parse(JSON.stringify(evDataService.getGroups()))
 	}
 
 	function setGroups(groups) {
-		return evDataService.setGroups(JSON.parse(JSON.stringify(groups)));
+		return evDataService.setGroups(JSON.parse(JSON.stringify(groups)))
 	}
 
-	let columns = ref(getColumns());
+	let columns = ref( getColumns() )
 
-	let groupsRef = ref(getGroups());
+	let groupsRef = ref( getGroups() )
 
 	/** @type {ComputedRef<Array<String>>} - array of keys of attributes for groups and columns */
 	let selectedAttrs = computed(() => {
-		return columns.value.map((item) => item.key);
+		return columns.value.map(item => item.key);
 	});
 	// let columnsToShow = ref([])
 
-	let filters = evDataService.getFilters();
+	let filters = evDataService.getFilters()
 	/**
 	 * What filters (front or back) are shown now in filter area of entity viewer
 	 * @type {Boolean}
 	 */
-	let showFrontEvFilters = !isReport && filters.frontend.length > 0;
+	let showFrontEvFilters = !isReport && filters.frontend.length > 0
 
 	/**
 	 * Needed because columns inside dashboard
@@ -442,11 +406,11 @@
 			return evDataHelper.separateNotGroupingColumns(
 				columns.value,
 				groupsRef.value
-			);
+			)
 		} else {
-			return columns.value;
+			return columns.value
 		}
-	});
+	})
 
 	/*const getColumnsToShow = function () {
 		if (isReport) {
@@ -458,19 +422,19 @@
 	/*let customFields =
 		attributeDataService.getCustomFieldsByEntityType(entityType)*/
 	let customFields = computed(() => {
-		return evAttrsStore.customFields[contentType];
-	});
+		return evAttrsStore.customFields[contentType]
+	})
 
 	watch(customFields, () => {
-		collectMissingCustomFieldsErrors();
-	});
+		collectMissingCustomFieldsErrors()
+	})
 
 	/**
 	 * Collects errors from columns.
 	 */
 	function collectMissingCustomFieldsErrors() {
-		const columnsErrorsList = [];
-		const groupsErrorsList = [];
+		const columnsErrorsList = []
+		const groupsErrorsList = []
 
 		const markItemUsingMissingCustomField = function (
 			item,
@@ -480,74 +444,70 @@
 			if (item.key.startsWith('custom_fields')) {
 				const customField = customFields.value.find(
 					(field) => item.key === `custom_fields.${field.user_code}`
-				);
+				)
 
 				if (customField) {
-					item.error_data = null;
+					item.error_data = null
 				} else {
-					const description = `The ${itemType} does not exist in the Configuration`;
+					const description = `The ${itemType} does not exist in the Configuration`
 
 					item.error_data = {
 						code: 10,
-						description: description
-					};
+						description: description,
+					}
 
 					const error = {
 						key: item.key,
-						description: description
-					};
+						description: description,
+					}
 
-					errorsList.push(error);
+					errorsList.push(error)
 				}
 			}
 
-			return item;
-		};
+			return item
+		}
 
 		if (isReport) {
-			let groupsList = evDataService.getGroups();
+			let groupsList = evDataService.getGroups()
 
 			groupsList = groupsList.map((group) => {
-				return markItemUsingMissingCustomField(
-					group,
-					'group',
-					groupsErrorsList
-				);
-			});
+				return markItemUsingMissingCustomField(group, 'group', groupsErrorsList)
+			})
 
-			evDataService.setGroups(groupsList);
+			evDataService.setGroups(groupsList)
 		}
 
 		// columns.value = JSON.parse(JSON.stringify( evDataService.getColumns() ));
-		let colsList = evDataService.getColumns();
+		let colsList = evDataService.getColumns()
 
 		colsList = colsList.map((column) => {
 			return markItemUsingMissingCustomField(
 				column,
 				'column',
 				columnsErrorsList
-			);
-		});
+			)
+		})
 
-		evDataService.setColumns(colsList);
+		evDataService.setColumns(colsList)
 
 		evDataService.setMissingCustomFields({
 			forColumns: columnsErrorsList,
-			forGroups: groupsErrorsList
-		});
+			forGroups: groupsErrorsList,
+		})
 	}
 
-	let components = evDataService.getComponents();
-	let downloadedItemsCount = null;
-	let columnAreaCollapsed = false;
+	let components = evDataService.getComponents()
+	let downloadedItemsCount = null
+	let columnAreaCollapsed = false
 
-	let isAllSelectedRef = ref(evDataService.getSelectAllRowsState());
-	let isAllStarsSelected = false;
-	let hideRowSettings = ref(!!evDataService.getRowSettings().folded);
-	let groupsAreaDraggable = viewContext !== 'dashboard';
+	let isAllSelectedRef = ref(evDataService.getSelectAllRowsState())
+	let isAllStarsSelected = false
+	let hideRowSettings = ref(!!evDataService.getRowSettings().folded)
+	let groupsAreaDraggable = viewContext !== 'dashboard'
 
-	let entityAttrs = [];
-	let dynamicAttrs = [];
+	let entityAttrs = []
+	let dynamicAttrs = []
 
 	// var keysOfColsToHide = [];
 
@@ -598,7 +558,7 @@
 		}
 	}*/
 
-	//# region Number format
+    //# region Number format
 
 	/**
 	 * Data for ModalNumberFormat
@@ -609,7 +569,7 @@
 		opened: false,
 		key: '',
 		name: '',
-		numberFormat: null
+		numberFormat: null,
 	});
 
 	/**
@@ -619,99 +579,100 @@
 	 * @return {Promise<void>}
 	 */
 	function openNumberFormatDialog(columnKey, closeCb) {
-		closeCb();
+
+		closeCb()
 
 		const column = getColumnByKey(columnKey);
 		let numberFormat;
 
 		if (column.options?.numberFormat) {
 			numberFormat = column.options.numberFormat;
-		} else if (
-			isReport &&
-			!column.options?.hasOwnProperty('numberFormat')
-		) {
-			numberFormat = column.report_settings;
+		}
+		else if (isReport && !column.options?.hasOwnProperty('numberFormat')) {
+			numberFormat = column.report_settings
 		}
 
 		colNumberFormatData.key = columnKey;
 		colNumberFormatData.name = column.name || column.layout_name;
 		colNumberFormatData.numberFormat = numberFormat;
 		colNumberFormatData.opened = true;
+
 	}
 
-	function onColNumFormatClose() {
-		colNumberFormatData.key = '';
-		colNumberFormatData.name = '';
-		colNumberFormatData.numberFormat = null;
-	}
+    function onColNumFormatClose() {
+        colNumberFormatData.key = '';
+        colNumberFormatData.name = '';
+        colNumberFormatData.numberFormat = null;
+    }
 
 	function editColNumberFormat(newNumberFormat) {
+
 		const column = getColumnByKey(colNumberFormatData.key);
 
-		if (!column.options) column.options = {};
+        if (!column.options) column.options = {};
 
-		column.options.numberFormat = newNumberFormat;
+        column.options.numberFormat = newNumberFormat;
 
-		setColumn(column);
+        setColumn(column);
 
-		onColNumFormatClose();
+        onColNumFormatClose();
 
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED);
+        evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+        evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED);
+
 	}
+    //# endregion Number format
 
-	//# endregion Number format
+    // Victor 2020.12.14 #69 New report viewer design
+	let rowFilterColor = 'none'
 
-	// Victor 2020.12.14 #69 New report viewer design
-	let rowFilterColor = 'none';
-
-	let checkForFilteringBySameAttr;
+	let checkForFilteringBySameAttr
 
 	let getPopupMenuTemplate = function (column) {
 		if (isReport && column.value_type == 20) {
-			return "'views/popups/groupTable/columnSettings/g-numeric-column-settings-popup-menu.html'"; // Victor 2020.12.14 #69 string in string must returned for template binding
+			return "'views/popups/groupTable/columnSettings/g-numeric-column-settings-popup-menu.html'" // Victor 2020.12.14 #69 string in string must returned for template binding
 		}
 
-		return "'views/popups/groupTable/columnSettings/g-column-settings-popup-menu.html'";
-	};
+		return "'views/popups/groupTable/columnSettings/g-column-settings-popup-menu.html'"
+	}
 
 	let getPopupMenuClasses = function (column) {
 		if (isReport && column.value_type == 20) {
-			return 'rounded-border g-column-number-context-menu-popup';
+			return 'rounded-border g-column-number-context-menu-popup'
 		}
 
-		return 'rounded-border g-column-context-menu-popup';
-	};
+		return 'rounded-border g-column-context-menu-popup'
+	}
 
 	let rowFiltersToggle = function () {
-		hideRowSettings.value = !hideRowSettings.value;
+		hideRowSettings.value = !hideRowSettings.value
 		/* var rowColorsColumnCollapsed = evDataService.getRowColorsColumnData();
 
 										 rowColorsColumnCollapsed = !rowColorsColumnCollapsed; */
 
-		var rowSettings = evDataService.getRowSettings(hideRowSettings.value);
+		var rowSettings = evDataService.getRowSettings(hideRowSettings.value)
 
-		rowSettings.folded = hideRowSettings.value;
+		rowSettings.folded = hideRowSettings.value
 
-		evDataService.setRowSettings(rowSettings);
+		evDataService.setRowSettings(rowSettings)
 
 		if (hideRowSettings.value) {
-			contentWrapElement.classList.add('g-row-settings-collapsed');
+			contentWrapElement.classList.add('g-row-settings-collapsed')
 		} else {
-			contentWrapElement.classList.remove('g-row-settings-collapsed');
+			contentWrapElement.classList.remove('g-row-settings-collapsed')
 		}
-	};
+	}
 
 	let changeRowFilterColor = function (color) {
-		let rowTypeFiltersData = evDataService.getRowTypeFilters();
+		let rowTypeFiltersData = evDataService.getRowTypeFilters()
 
-		let rowFilterColor = color;
-		rowTypeFiltersData.markedRowFilters = color;
+		let rowFilterColor = color
+		rowTypeFiltersData.markedRowFilters = color
 
-		evDataService.setRowTypeFilters(rowTypeFiltersData);
+		evDataService.setRowTypeFilters(rowTypeFiltersData)
 
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-	};
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+	}
 
 	// let rowFilterColor = localStorageService.getRowTypeFilter(isReport, entityType);
 
@@ -731,15 +692,15 @@
 						actionsButtons: [
 							{
 								name: 'OK',
-								response: { status: 'agree' }
+								response: { status: 'agree' },
 							},
 							{
 								name: 'CANCEL',
-								response: { status: 'disagree' }
-							}
-						]
-					}
-				}
+								response: { status: 'disagree' },
+							},
+						],
+					},
+				},
 			})
 			.then(function (res) {
 				if (res.status === 'agree') {
@@ -748,24 +709,24 @@
 						evEventService,
 						usersService,
 						globalDataService
-					);
+					)
 				}
-			});
-	};
+			})
+	}
 
 	// <Victor 2020.12.14 #69 New report viewer design>
 
 	// Victor 2021.04.07 #90 sort setting for column
 
 	// let activeNameBlockElement = null;
-	let columnWithOpenSortMenuElem = null;
+	let columnWithOpenSortMenuElem = null
 
 	let showArrowDown = ($event) => {
 		/* activeNameBlockElement = $event.target.closest('.name-block');
 										 activeNameBlockElement.classList.add('active'); */
-		columnWithOpenSortMenuElem = $event.target.closest('.gColumnElem');
-		columnWithOpenSortMenuElem.classList.add('sort-menu-opened');
-	};
+		columnWithOpenSortMenuElem = $event.target.closest('.gColumnElem')
+		columnWithOpenSortMenuElem.classList.add('sort-menu-opened')
+	}
 
 	let hideArrowDown = () => {
 		/* if (activeNameBlockElement) {
@@ -773,198 +734,196 @@
 												 activeNameBlockElement = null;
 										 } */
 		if (columnWithOpenSortMenuElem) {
-			columnWithOpenSortMenuElem.classList.remove('sort-menu-opened');
-			columnWithOpenSortMenuElem = null;
+			columnWithOpenSortMenuElem.classList.remove('sort-menu-opened')
+			columnWithOpenSortMenuElem = null
 		}
-	};
+	}
 
 	const clearAllSortOptions = function (columns) {
 		columns.forEach((column) => {
 			if (!column.options) {
-				column.options = {};
+				column.options = {}
 			}
 
-			column.options.sort = null;
-		});
-	};
+			column.options.sort = null
+		})
+	}
 
 	let changeSortMode = function (column, sortMode) {
 		// hideArrowDown();
-		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP);
+		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
 
-		column.options.sort_settings.mode = sortMode;
+		column.options.sort_settings.mode = sortMode
 		// column.options.sort = direction;
-		if (!column.options) column.options = {};
-		if (!column.options.sort) column.options.sort = 'ASC';
+		if (!column.options) column.options = {}
+		if (!column.options.sort) column.options.sort = 'ASC'
 
-		sort(column);
-	};
+		sort(column)
+	}
 
 	let changeSortDirection = function (columnOrGroup, direction) {
-		if (!columnOrGroup.options) columnOrGroup.options = {};
+		if (!columnOrGroup.options) columnOrGroup.options = {}
 
-		columnOrGroup.options.sort = direction;
-		sortDeb(columnOrGroup);
-	};
+		columnOrGroup.options.sort = direction
+		sortDeb(columnOrGroup)
+
+	}
 
 	const signalSortChange = function (columnOrGroup) {
-		/* *
-		 * For some reason dispatch evEvents.DATA_LOAD_START from
-		 * ev-data-provider.service -> getObjects() do not register.
-		 * Whence dataIsLoading = true;
-		 * */
-		columnsData.dataIsLoading = true;
-		if (isReport && columnHasCorrespondingGroup(columnOrGroup.key)) {
+    /* *
+     * For some reason dispatch evEvents.DATA_LOAD_START from
+     * ev-data-provider.service -> getObjects() do not register.
+     * Whence dataIsLoading = true;
+     * */
+    columnsData.dataIsLoading = true;if (isReport &&columnHasCorrespondingGroup(columnOrGroup.key)) {
 			const groupsList = evDataService.getGroups();
 
-			const group = groupsList.find(
-				(group) => group.key === columnOrGroup.key
-			);
-			group.options.sort = columnOrGroup.options.sort;
-			group.options.sort_settings = columnOrGroup.options.sort_settings;
+      const group = groupsList.find(group => group.key === columnOrGroup.key);
+      group.options.sort = columnOrGroup.options.sort;
+      group.options.sort_settings = columnOrGroup.options.sort_settings;
 
-			evDataService.setGroups(groupsList);
+      evDataService.setGroups(groupsList);
 
-			evDataService.setActiveGroupTypeSort(
-				JSON.parse(JSON.stringify(columnOrGroup))
-			);
+      evDataService.setActiveGroupTypeSort(
+          JSON.parse(JSON.stringify( columnOrGroup ))
+      );
 
-			evEventService.dispatchEvent(evEvents.GROUP_TYPE_SORT_CHANGE);
-		} else {
-			evDataService.setActiveGroupTypeSort(
-				JSON.parse(JSON.stringify(columnOrGroup))
-			);
+      evEventService.dispatchEvent(evEvents.GROUP_TYPE_SORT_CHANGE);
 
-			evEventService.dispatchEvent(evEvents.COLUMN_SORT_CHANGE);
-		}
-	};
+    }
+    else {
+
+      evDataService.setActiveGroupTypeSort(
+          JSON.parse(JSON.stringify( columnOrGroup ))
+      );
+
+      evEventService.dispatchEvent(evEvents.COLUMN_SORT_CHANGE);
+
+    }
+
+	}
 
 	const sort = function (columnOrGroup) {
-		if (columnOrGroup.options.sort_settings.mode === 'manual') {
+
+    if (columnOrGroup.options.sort_settings.mode === 'manual') {
 			// manual sort handler
 
 			uiService
 				.getColumnSortDataList({
 					filters: {
-						user_code:
-							columnOrGroup.options.sort_settings.layout_user_code
-					}
+						user_code: columnOrGroup.options.sort_settings.layout_user_code,
+					},
 				})
 				.then(function (data) {
-					if (data.results.length) {
-						var layout = data.results[0];
 
-						evDataService.setColumnSortData(
-							columnOrGroup.key,
-							layout.data
-						);
+          if (data.results.length) {
 
-						signalSortChange(columnOrGroup);
+            var layout = data.results[0]
+
+						evDataService.setColumnSortData(columnOrGroup.key, layout.data)
+
+						signalSortChange(columnOrGroup)
+
 					} else {
-						useNotify({
-							type: 'error',
-							title: 'Manual Sort is not configured'
-						});
-						columnOrGroup.options.sort_settings.layout_user_code =
-							null;
-					}
-				});
-		} else {
-			signalSortChange(columnOrGroup);
-		}
-	};
 
-	const sortDeb = useDebounce(function (columnOrGroup) {
-		sort(columnOrGroup);
-	}, 500);
+            useNotify({type: 'error', title: 'Manual Sort is not configured'})
+						columnOrGroup.options.sort_settings.layout_user_code = null
+
+					}
+
+				})
+
+		} else {
+			signalSortChange(columnOrGroup)
+		}
+
+	}
+
+  const sortDeb = useDebounce(function (columnOrGroup) {
+    sort(columnOrGroup);
+  }, 500);
 
 	// <Victor 2021.04.07 #90 sort setting for column>
 
 	const getAttributes = function () {
-		var allAttrsList = [];
+		var allAttrsList = []
 
 		if (viewContext === 'reconciliation_viewer') {
-			allAttrsList = attributeDataService.getReconciliationAttributes();
+			allAttrsList = attributeDataService.getReconciliationAttributes()
 		} else {
 			switch (entityType) {
 				case 'balance-report':
-					allAttrsList =
-						attributeDataService.getBalanceReportAttributes();
-					break;
+					allAttrsList = attributeDataService.getBalanceReportAttributes()
+					break
 
 				case 'pl-report':
-					allAttrsList = attributeDataService.getPlReportAttributes();
-					break;
+					allAttrsList = attributeDataService.getPlReportAttributes()
+					break
 
 				case 'transaction-report':
-					allAttrsList =
-						attributeDataService.getTransactionReportAttributes();
-					break;
+					allAttrsList = attributeDataService.getTransactionReportAttributes()
+					break
 
 				default:
-					entityAttrs = [];
-					dynamicAttrs = [];
-					allAttrsList = [];
+					entityAttrs = []
+					dynamicAttrs = []
+					allAttrsList = []
 
 					entityAttrs =
-						attributeDataService.getEntityAttributesByEntityType(
-							entityType
-						);
+						attributeDataService.getEntityAttributesByEntityType(entityType)
 
 					entityAttrs.forEach(function (item) {
 						if (
 							item.key === 'subgroup' &&
 							item.value_entity.indexOf('strategy') !== -1
 						) {
-							item.name = 'Group';
+							item.name = 'Group'
 						}
-						item.entity = entityType;
-					});
+						item.entity = entityType
+					})
 
 					var instrumentUserFields =
-						attributeDataService.getInstrumentUserFields();
+						attributeDataService.getInstrumentUserFields()
 					var transactionUserFields =
-						attributeDataService.getTransactionUserFields();
+						attributeDataService.getTransactionUserFields()
 
 					instrumentUserFields.forEach(function (field) {
 						entityAttrs.forEach(function (entityAttr) {
 							if (entityAttr.key === field.key) {
-								entityAttr.name = field.name;
+								entityAttr.name = field.name
 							}
-						});
-					});
+						})
+					})
 					transactionUserFields.forEach(function (field) {
 						entityAttrs.forEach(function (entityAttr) {
 							if (entityAttr.key === field.key) {
-								entityAttr.name = field.name;
+								entityAttr.name = field.name
 							}
-						});
-					});
+						})
+					})
 
 					dynamicAttrs =
-						attributeDataService.getDynamicAttributesByEntityType(
-							entityType
-						);
+						attributeDataService.getDynamicAttributesByEntityType(entityType)
 
 					dynamicAttrs = dynamicAttrs.map(function (attribute) {
-						var result = {};
+						var result = {}
 
-						result.attribute_type = Object.assign({}, attribute);
-						result.value_type = attribute.value_type;
-						result.content_type = contentType;
-						result.key = 'attributes.' + attribute.user_code;
-						result.name = attribute.name;
+						result.attribute_type = Object.assign({}, attribute)
+						result.value_type = attribute.value_type
+						result.content_type = contentType
+						result.key = 'attributes.' + attribute.user_code
+						result.name = attribute.name
 
-						return result;
-					});
+						return result
+					})
 
-					allAttrsList = allAttrsList.concat(entityAttrs);
-					allAttrsList = allAttrsList.concat(dynamicAttrs);
+					allAttrsList = allAttrsList.concat(entityAttrs)
+					allAttrsList = allAttrsList.concat(dynamicAttrs)
 			}
 		}
 
-		return allAttrsList;
-	};
+		return allAttrsList
+	}
 
 	/**
 	 *
@@ -977,60 +936,61 @@
 			!group.hasOwnProperty('report_settings') ||
 			group.report_settings === undefined
 		) {
-			group.report_settings = {};
+			group.report_settings = {}
 		}
 
 		if (group.report_settings.subtotal_type === type) {
-			group.report_settings.subtotal_type = false;
+			group.report_settings.subtotal_type = false
 		} else {
-			group.report_settings.subtotal_type = type;
+			group.report_settings.subtotal_type = type
 		}
 
-		closeCb();
+		closeCb()
 
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED);
-	};
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
+	}
 
 	/**
 	 * @param dataList {Array<Object>} - For rv list of all groups' data. For ev list of selected groups' data.
 	 */
 	var selectRowsInsideData = function (dataList) {
+
 		const isAllSelected = evDataService.getSelectAllRowsState();
 
 		dataList.forEach(function (dataListItem) {
 			if (isReport && dataListItem.___type === 'group') {
-				dataListItem.___is_area_subtotal_activated = isAllSelected;
-				dataListItem.___is_line_subtotal_activated = isAllSelected;
+				dataListItem.___is_area_subtotal_activated = isAllSelected
+				dataListItem.___is_line_subtotal_activated = isAllSelected
 			} else if (dataListItem.___type === 'object') {
-				dataListItem.___is_activated = isAllSelected;
+				dataListItem.___is_activated = isAllSelected
 			}
 
 			if (dataListItem.results && dataListItem.results.length) {
 				dataListItem.results.forEach(function (child) {
 					if (child.___type === 'object') {
-						child.___is_activated = isAllSelected;
+						child.___is_activated = isAllSelected
 					}
-				});
+				})
 			}
 
-			evDataService.setData(dataListItem);
-		});
-	};
+			evDataService.setData(dataListItem)
+		})
+
+	}
 
 	function selectAllRows(isAllSelected) {
+
 		console.time('Selecting all rows');
 
 		let flatList;
 		let dataList;
 
 		if (isReport) {
-			flatList = rvDataHelper.getFlatStructure(evDataService);
+		  flatList = rvDataHelper.getFlatStructure(evDataService);
+
 		} else {
-			flatList = evDataHelper.getObjectsFromSelectedGroups(
-				evDataService,
-				globalDataService
-			);
+		  flatList = evDataHelper.getObjectsFromSelectedGroups(evDataService, globalDataService);
 		}
 
 		// let isAllSelected = evDataService.getSelectAllRowsState();
@@ -1042,27 +1002,32 @@
 		// isAllSelected = !isAllSelected;
 
 		flatList.forEach(function (item) {
-			if (item.___type === 'object') {
-				item.___is_activated = isAllSelected;
-			}
+		  if (item.___type === 'object') {
+			item.___is_activated = isAllSelected;
+		  }
 		});
 
 		if (isReport) {
-			dataList = evDataService.getDataAsList();
-		} else {
-			let groupsIds = evDataService.getSelectedGroups();
 
-			if (!groupsIds.length) {
-				groupsIds = [evDataService.getRootGroupData()];
-			}
+		  dataList = evDataService.getDataAsList();
 
-			groupsIds = groupsIds.map((group) => group.___id);
+		}
+		else {
 
-			dataList = evDataService.getDataAsList();
+		  let groupsIds = evDataService.getSelectedGroups();
 
-			dataList = dataList.filter((item) => {
-				return groupsIds.includes(item.___parentId);
-			});
+		  if (!groupsIds.length) {
+			groupsIds = [ evDataService.getRootGroupData() ];
+		  }
+
+		  groupsIds = groupsIds.map(group => group.___id);
+
+		  dataList = evDataService.getDataAsList();
+
+		  dataList = dataList.filter(item => {
+			return groupsIds.includes(item.___parentId);
+		  })
+
 		}
 
 		evDataService.setSelectAllRowsState(isAllSelected);
@@ -1076,107 +1041,104 @@
 		evEventService.dispatchEvent(evEvents.ROW_ACTIVATION_CHANGE);
 
 		console.timeEnd('Selecting all rows');
-	}
+
+  	}
 
 	let isColumnFloat = function (column) {
-		return column.value_type == 20;
-	};
+		return column.value_type == 20
+	}
 
 	let sortHandler = function (column, sort) {
-		if (!column.options) column.options = {};
-		if (!column.options.sort_settings) column.options.sort_settings = {};
 
-		if (column.options.sort_settings.layout_user_code) {
-			// manual sort handler
+    if (!column.options) column.options = {};
+    if (!column.options.sort_settings) column.options.sort_settings = {};
 
-			uiService
-				.getColumnSortDataList({
-					filters: {
-						user_code: column.options.sort_settings.layout_user_code
-					}
-				})
-				.then(function (data) {
-					if (data.results.length) {
-						var layout = data.results[0];
+    if (column.options.sort_settings.layout_user_code) { // manual sort handler
 
-						evDataService.setColumnSortData(
-							column.key,
-							layout.data
-						);
+      uiService.getColumnSortDataList({
+        filters: {
+          user_code: column.options.sort_settings.layout_user_code
+        }
+      }).then(function (data) {
 
-						var i;
-						for (i = 0; i < columns.length; i = i + 1) {
-							if (!columns[i].options) {
-								columns[i].options = {};
-							}
-							columns[i].options.sort = null;
-						}
+        if (data.results.length) {
 
-						column.options.sort = sort;
-						column.options.sort_settings.mode = 'manual';
+          var layout = data.results[0];
 
-						console.log('sortHandler.column', column);
+          evDataService.setColumnSortData(column.key, layout.data)
 
-						evDataService.setActiveColumnSort(column);
+          var i;
+          for (i = 0; i < columns.length; i = i + 1) {
+            if (!columns[i].options) {
+              columns[i].options = {};
+            }
+            columns[i].options.sort = null;
+          }
 
-						if (isReport) {
-							columns.value = getColumns();
-						}
+          column.options.sort = sort;
+          column.options.sort_settings.mode = 'manual';
 
-						collectMissingCustomFieldsErrors();
-						evEventService.dispatchEvent(
-							evEvents.COLUMN_SORT_CHANGE
-						);
+          console.log('sortHandler.column', column);
+
+          evDataService.setActiveColumnSort(column);
+
+          if (isReport) {
+            columns.value = getColumns();
+          }
+
+          collectMissingCustomFieldsErrors();
+          evEventService.dispatchEvent(evEvents.COLUMN_SORT_CHANGE);
 					} else {
-						useNotify({
-							type: 'error',
-							title: 'Manual Sort is not configured'
-						});
+						useNotify({type: 'error', title: "Manual Sort is not configured"});
 
-						column.options.sort_settings.layout_user_code = null;
-					}
-				});
-		} else {
-			// default sort handler
+          column.options.sort_settings.layout_user_code = null;
 
-			let columnsList = evDataService.getColumns();
+        }
 
-			var i;
-			for (i = 0; i < columnsList.length; i = i + 1) {
-				if (!columnsList[i].options) {
-					columnsList[i].options = {};
-				}
-				columnsList[i].options.sort = null;
-			}
+      })
 
-			column.options.sort = sort;
-			column.options.sort_settings.mode = 'default';
 
-			console.log('sortHandler.column', column);
+    }
+    else { // default sort handler
 
-			/*columnsList.forEach(function (item) {
+      let columnsList = evDataService.getColumns();
 
-			  if (column.key === item.key) {
-				item = column;
-			  }
+      var i;
+      for (i = 0; i < columnsList.length; i = i + 1) {
+        if (!columnsList[i].options) {
+          columnsList[i].options = {};
+        }
+        columnsList[i].options.sort = null;
+      }
 
-			});*/
-			const columnIndex = columnsList.findIndex(
-				(col) => col.key === column.key
-			);
-			columnsList[columnIndex] = structuredClone(column);
+      column.options.sort = sort;
+      column.options.sort_settings.mode = 'default';
 
-			evDataService.setActiveColumnSort(column);
+      console.log('sortHandler.column', column);
 
-			evDataService.setColumns(columns);
+      /*columnsList.forEach(function (item) {
 
-			columns.value = getColumns();
+        if (column.key === item.key) {
+          item = column;
+        }
 
-			collectMissingCustomFieldsErrors();
+      });*/
+      const columnIndex = columnsList.findIndex(col => col.key === column.key);
+      columnsList[columnIndex] = structuredClone(column);
 
-			evEventService.dispatchEvent(evEvents.COLUMN_SORT_CHANGE);
-		}
-	};
+      evDataService.setActiveColumnSort(column);
+
+      evDataService.setColumns(columns);
+
+      columns.value = getColumns();
+
+      collectMissingCustomFieldsErrors();
+
+      evEventService.dispatchEvent(evEvents.COLUMN_SORT_CHANGE);
+
+    }
+
+	}
 
 	/*let groupsSortHandler = function (groupIndex, sort) {
 		// reset sorting for other groups
@@ -1207,12 +1169,12 @@
 	let checkColTextAlign = function (column, type) {
 		if (column.hasOwnProperty('style') && column.style) {
 			if (column.style.text_align === type) {
-				return true;
+				return true
 			}
 		}
 
-		return false;
-	};
+		return false
+	}
 
 	/**
 	 *
@@ -1221,158 +1183,143 @@
 	 * @param {Function} closeCb - callback to close FmMenu
 	 */
 	let changeColumnTextAlign = function (column, type, closeCb) {
-		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP);
+		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
 
 		if (!column.hasOwnProperty('style')) {
-			column.style = {};
+			column.style = {}
 		}
 
 		if (column.style.text_align === type) {
-			delete column.style.text_align;
+			delete column.style.text_align
 		} else {
-			column.style.text_align = type;
+			column.style.text_align = type
 		}
 
-		closeCb();
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-	};
+		closeCb()
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+	}
 
 	let selectRoundFormat = function (column, type) {
 		if (!column.hasOwnProperty('report_settings')) {
-			column.report_settings = {};
+			column.report_settings = {}
 		}
 
 		if (column.report_settings.round_format_id == type) {
-			column.report_settings.round_format_id = null;
+			column.report_settings.round_format_id = null
 		} else {
-			column.report_settings.round_format_id = type;
+			column.report_settings.round_format_id = type
 		}
 
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED);
-	};
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
+	}
 
 	let checkRoundFormatFormula = function (column, type) {
-		if (
-			column.hasOwnProperty('report_settings') &&
-			column.report_settings
-		) {
+		if (column.hasOwnProperty('report_settings') && column.report_settings) {
 			if (column.report_settings.round_format_id == type) {
-				return true;
+				return true
 			}
 		}
 
-		return false;
-	};
+		return false
+	}
 
 	let selectThousandsSeparatorFormat = function (column, type) {
 		if (!column.hasOwnProperty('report_settings')) {
-			column.report_settings = {};
+			column.report_settings = {}
 		}
 
 		if (column.report_settings.thousands_separator_format_id === type) {
-			column.report_settings.thousands_separator_format_id = null;
+			column.report_settings.thousands_separator_format_id = null
 		} else {
-			column.report_settings.thousands_separator_format_id = type;
+			column.report_settings.thousands_separator_format_id = type
 		}
 
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED);
-	};
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
+	}
 
 	let checkThousandsSeparatorFormat = function (column, type) {
-		if (
-			column.hasOwnProperty('report_settings') &&
-			column.report_settings
-		) {
+		if (column.hasOwnProperty('report_settings') && column.report_settings) {
 			if (column.report_settings.thousands_separator_format_id === type) {
-				return true;
+				return true
 			}
 		}
-		return false;
-	};
+		return false
+	}
 
 	let selectNegativeColor = function (column, type) {
 		if (!column.hasOwnProperty('report_settings')) {
-			column.report_settings = {};
+			column.report_settings = {}
 		}
 
 		if (column.report_settings.negative_color_format_id === type) {
-			column.report_settings.negative_color_format_id = null;
+			column.report_settings.negative_color_format_id = null
 		} else {
-			column.report_settings.negative_color_format_id = type;
+			column.report_settings.negative_color_format_id = type
 		}
 
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED);
-	};
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
+	}
 
 	let checkNegativeColor = function (column, type) {
-		if (
-			column.hasOwnProperty('report_settings') &&
-			column.report_settings
-		) {
+		if (column.hasOwnProperty('report_settings') && column.report_settings) {
 			if (column.report_settings.negative_color_format_id === type) {
-				return true;
+				return true
 			}
 		}
-		return false;
-	};
+		return false
+	}
 
 	let selectNegativeFormat = function (column, type) {
 		if (!column.hasOwnProperty('report_settings')) {
-			column.report_settings = {};
+			column.report_settings = {}
 		}
 
 		if (column.report_settings.negative_format_id == type) {
-			column.report_settings.netgative_format_id = null;
+			column.report_settings.netgative_format_id = null
 		} else {
-			column.report_settings.negative_format_id = type;
+			column.report_settings.negative_format_id = type
 		}
 
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED);
-	};
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
+	}
 
 	let checkNegativeFormatFormula = function (column, type) {
-		if (
-			column.hasOwnProperty('report_settings') &&
-			column.report_settings
-		) {
+		if (column.hasOwnProperty('report_settings') && column.report_settings) {
 			if (column.report_settings.negative_format_id == type) {
-				return true;
+				return true
 			}
 		}
-		return false;
-	};
+		return false
+	}
 
 	let selectZeroFormat = function (column, type) {
 		if (!column.hasOwnProperty('report_settings')) {
-			column.report_settings = {};
+			column.report_settings = {}
 		}
 
 		if (column.report_settings.zero_format_id == type) {
-			column.report_settings.zero_format_id = null;
+			column.report_settings.zero_format_id = null
 		} else {
-			column.report_settings.zero_format_id = type;
+			column.report_settings.zero_format_id = type
 		}
 
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED);
-	};
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
+	}
 
 	let checkZeroFormatFormula = function (column, type) {
-		if (
-			column.hasOwnProperty('report_settings') &&
-			column.report_settings
-		) {
+		if (column.hasOwnProperty('report_settings') && column.report_settings) {
 			if (column.report_settings.zero_format_id == type) {
-				return true;
+				return true
 			}
 		}
 
-		return false;
-	};
+		return false
+	}
 
 	let isSortable = function (column) {
 		if (column.hasOwnProperty('key')) {
@@ -1382,15 +1329,15 @@
 					'counterparties',
 					'responsibles',
 					'transaction_types',
-					'portfolios'
+					'portfolios',
 				].indexOf(column.key) !== -1
 			) {
-				return false;
+				return false
 			}
 		}
 
-		return true;
-	};
+		return true
+	}
 
 	/**
 	 * Used in only by report viewer.
@@ -1398,49 +1345,49 @@
 	 * @param closeCb {Function} - callback to close FmMenu
 	 */
 	let removeGroup = function (groupKey, closeCb) {
-		let groupsList = evDataService.getGroups();
+		let groupsList = evDataService.getGroups()
 
 		/*var groupToRemoveIndex = groupsList.findIndex(
 			(group) => group.___group_type_id === groupKey
 		)*/
 		const groupToRemoveIndex = groupsList.findIndex(
 			(group) => group.key === groupKey
-		);
+		)
 
 		if (groupToRemoveIndex > -1) {
-			groupsList.splice(groupToRemoveIndex, 1);
+			groupsList.splice(groupToRemoveIndex, 1)
 		} else {
-			throw new Error('No group with such key found: ' + groupKey);
+			throw new Error('No group with such key found: ' + groupKey)
 		}
 
-		evDataService.setGroups(groupsList);
+		evDataService.setGroups(groupsList)
 
-		const columnsList = evDataService.getColumns();
+		const columnsList = evDataService.getColumns()
 
 		const colToRemoveIndex = columnsList.findIndex(
 			(column) => column.key === groupKey
-		);
+		)
 
 		if (colToRemoveIndex > -1) {
-			columnsList.splice(colToRemoveIndex, 1);
+			columnsList.splice(colToRemoveIndex, 1)
 		} else {
-			throw new Error('No column with such key found: ' + groupKey);
+			throw new Error('No column with such key found: ' + groupKey)
 		}
 
-		evDataService.setColumns(columnsList);
+		evDataService.setColumns(columnsList)
 
 		// columnsToShow.value = getColumnsToShow()
 
-		collectMissingCustomFieldsErrors();
+		collectMissingCustomFieldsErrors()
 
-		evEventService.dispatchEvent(evEvents.GROUPS_CHANGE);
-		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
-		evEventService.dispatchEvent(evEvents.UPDATE_COLUMNS_SIZE);
+		evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
+		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
+		evEventService.dispatchEvent(evEvents.UPDATE_COLUMNS_SIZE)
 
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 
-		closeCb();
-	};
+		closeCb()
+	}
 
 	/**
 	 *
@@ -1448,567 +1395,548 @@
 	 * @param {Function} closeCb - callback to close FmMenu
 	 */
 	let unGroup = function (groupKey, closeCb) {
-		closeCb();
-		let groupsList = getGroups();
+		closeCb()
+		let groupsList = getGroups()
 
 		var groupToRemoveIndex = groupsList.findIndex(
 			(group) => group.key === groupKey
-		);
+		)
 
 		if (groupToRemoveIndex > -1) {
-			groupsList.splice(groupToRemoveIndex, 1);
+			groupsList.splice(groupToRemoveIndex, 1)
 		} else {
-			throw new Error('No group with such key found: ' + groupKey);
+			throw new Error('No group with such key found: ' + groupKey)
 		}
 
 		if (isReport) {
 			const lastDraggedElem = contentWrapElement.querySelector(
 				'.gDraggableHead.last-dragged'
-			);
+			)
 
-			if (lastDraggedElem)
-				lastDraggedElem.classList.remove('last-dragged');
+			if (lastDraggedElem) lastDraggedElem.classList.remove('last-dragged')
 
-			const columnsList = evDataService.getColumns();
+			const columnsList = evDataService.getColumns()
 			const ungroupedColumn = columnsList.find(
 				(column) => column.key === groupKey
-			);
+			)
 
 			if (ungroupedColumn) {
-				if (!ungroupedColumn.frontOptions)
-					ungroupedColumn.frontOptions = {};
+				if (!ungroupedColumn.frontOptions) ungroupedColumn.frontOptions = {}
 
-				ungroupedColumn.frontOptions.lastDragged = true;
-				evDataService.setColumns(columnsList);
+				ungroupedColumn.frontOptions.lastDragged = true
+				evDataService.setColumns(columnsList)
 			}
 		}
 
 		// groupsRef.value = groups;
-		evDataService.setGroups(groupsList);
-		evEventService.dispatchEvent(evEvents.GROUPS_CHANGE);
+		evDataService.setGroups(groupsList)
+		evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
 
 		if (isReport) {
-			evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
-			evEventService.dispatchEvent(evEvents.UPDATE_COLUMNS_SIZE);
+			evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
+			evEventService.dispatchEvent(evEvents.UPDATE_COLUMNS_SIZE)
 
-			evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+			evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 		}
-	};
+	}
 
 	const hideSubtotalForColumn = function (prop, column) {
 		if (!column.hasOwnProperty('report_settings')) {
-			column.report_settings = {};
+			column.report_settings = {}
 		}
 
-		column.report_settings[prop] = !column.report_settings[prop];
+		column.report_settings[prop] = !column.report_settings[prop]
 
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED);
-	};
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
+	}
 
 	var getDownloadedTableItemsCount = function () {
-		var unfilteredFlatList = evDataService.getUnfilteredFlatList();
+		var unfilteredFlatList = evDataService.getUnfilteredFlatList()
 
 		unfilteredFlatList = unfilteredFlatList.filter(function (item) {
-			return item.___type !== 'control';
-		});
+			return item.___type !== 'control'
+		})
 
-		let downloadedItemsCount = unfilteredFlatList.length;
-	};
+		let downloadedItemsCount = unfilteredFlatList.length
+	}
 
 	const updateGroupTypeIds = function () {
+
 		groupsRef.value = getGroups();
 
 		groupsRef.value.forEach((item) => {
-			item.___group_type_id = evDataHelper.getGroupTypeId(item);
-		});
+			item.___group_type_id = evDataHelper.getGroupTypeId(item)
+		})
 
-		setGroups(groupsRef.value);
+		setGroups(groupsRef.value)
 
-		return groupsRef.value;
-	};
+		return groupsRef.value
+	}
 
 	const setDefaultGroupType = function () {
-		groupsRef.value = getGroups();
+		groupsRef.value = getGroups()
 
 		groupsRef.value.forEach(function (group) {
 			if (!group.hasOwnProperty('report_settings')) {
-				group.report_settings = {};
+				group.report_settings = {}
 			}
 
 			if (!group.report_settings.subtotal_type) {
-				group.report_settings.subtotal_type = 'line';
+				group.report_settings.subtotal_type = 'line'
 			}
 
 			if (!isReport && !group.hasOwnProperty('ev_folded')) {
-				group.ev_group_folded = true;
+				group.ev_group_folded = true
 			}
-		});
+		})
 
-		setGroups(groupsRef.value);
-	};
+		setGroups(groupsRef.value)
+	}
 
 	const updateGroupFoldingState = function () {
-		let groupsList = evDataService.getGroups();
-		let parentGroupFullyFolded = false;
+
+    let groupsList = evDataService.getGroups()
+		let parentGroupFullyFolded = false
 
 		groupsList.forEach((group) => {
-			if (!group.report_settings) {
-				group.report_settings = {};
-			}
 
-			if (typeof group.report_settings.is_level_folded !== 'boolean') {
-				group.report_settings.is_level_folded = true;
-			}
+      if (!group.report_settings) {
+        group.report_settings = {}
+      }
 
-			if (parentGroupFullyFolded) {
-				group.report_settings.is_level_folded = true;
-			} else if (group.report_settings.is_level_folded) {
-				// if group is fully folded, groups after it must be folded too
-				parentGroupFullyFolded = true;
-			}
-		});
+      if (typeof group.report_settings.is_level_folded !== 'boolean') {
+        group.report_settings.is_level_folded = true;
+      }
+
+      if (parentGroupFullyFolded) {
+        group.report_settings.is_level_folded = true;
+
+      } else if (group.report_settings.is_level_folded) { // if group is fully folded, groups after it must be folded too
+        parentGroupFullyFolded = true;
+      }
+
+		})
 
 		evDataService.setGroups(groupsList);
 
-		groupsRef.value = getGroups();
-	};
+    groupsRef.value = getGroups();
+
+	}
 
 	const syncColumnsWithGroups = function () {
-		let columnsList = evDataService.getColumns();
-		let groups = getGroups();
+		let columnsList = evDataService.getColumns()
+		let groups = getGroups()
 
-		let columnsHaveBeenSynced = false;
+		let columnsHaveBeenSynced = false
 
 		groups.forEach((group, groupIndex) => {
 			if (group.key !== columnsList[groupIndex].key) {
-				let columnToAdd;
+				let columnToAdd
 				let groupColumnIndex = columnsList.findIndex(
 					(column) => group.key === column.key
-				);
+				)
 
 				if (groupColumnIndex > -1) {
 					columnToAdd = JSON.parse(
 						JSON.stringify(columnsList[groupColumnIndex])
-					);
-					columnsList.splice(groupColumnIndex, 1);
+					)
+					columnsList.splice(groupColumnIndex, 1)
 				} else {
-					columnToAdd = evHelperService.getTableAttrInFormOf(
-						'column',
-						group
-					);
+					columnToAdd = evHelperService.getTableAttrInFormOf('column', group)
 				}
 
-				columnsList.splice(groupIndex, 0, columnToAdd);
+				columnsList.splice(groupIndex, 0, columnToAdd)
 
-				columnsHaveBeenSynced = true;
+				columnsHaveBeenSynced = true
 			}
-		});
+		})
 
-		evDataService.setColumns(columnsList);
+		evDataService.setColumns(columnsList)
 
 		/* if (columnsHaveBeenSynced) {
 												 evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
 										 } */
 		return {
 			columns: JSON.parse(JSON.stringify(columnsList)),
-			columnsHaveBeenSynced
-		};
-	};
+			columnsHaveBeenSynced,
+		}
+	}
 
 	let hasFoldingBtn = function ($index) {
-		var groups = evDataService.getGroups();
+		var groups = evDataService.getGroups()
 
 		if (isReport && $index < groupsRef.value.length) {
-			return true;
+			return true
 		}
 
-		return false;
-	};
+		return false
+	}
 
 	let foldLevel = function (key, $index) {
-		// Optimized unfold logic
-		// TODO probabaly still need a refactor, code looks too complicated
+    // Optimized unfold logic
+    // TODO probabaly still need a refactor, code looks too complicated
 
-		var layout = evDataService.getListLayout();
-		var contentType = evDataService.getContentType();
+    var layout = evDataService.getListLayout();
+    var contentType = evDataService.getContentType();
 
-		let groupsList = evDataService.getGroups();
+    let groupsList = evDataService.getGroups();
 
-		var item = groupsList[$index];
-		item.report_settings.is_level_folded = true;
+    var item = groupsList[$index];
+    item.report_settings.is_level_folded = true;
 
-		var i;
-		//# region Set folded groups before calling rvDataHelper.setGroupSettings()
-		for (i = $index; i < groupsList.length; i++) {
-			groupsList[i].report_settings.is_level_folded = true;
-		}
+    var i;
+    //# region Set folded groups before calling rvDataHelper.setGroupSettings()
+    for (i = $index; i < groupsList.length; i++) {
+      groupsList[i].report_settings.is_level_folded = true;
+    }
 
-		evDataService.setGroups(groupsList);
-		//# endregion
+    evDataService.setGroups(groupsList);
+    //# endregion
 
-		var maxLevel = 10;
-		var groupsByLevel = evDataHelper.getAllGroupsByLevel(
-			maxLevel,
-			evDataService
-		);
+    var maxLevel = 10
+    var groupsByLevel = evDataHelper.getAllGroupsByLevel(maxLevel, evDataService);
 
-		var reportData = localStorageService.getReportData();
+    var reportData = localStorageService.getReportData();
 
-		for (i = $index; i < groupsList.length; i++) {
-			var groupsContent = groupsByLevel[i + 1];
+    for (i = $index; i < groupsList.length; i++) {
 
-			groupsContent.forEach(function (groupItem) {
-				var parents = useGetEvRvParents(
-					groupItem.___parentId,
-					evDataService
-				);
+      var groupsContent = groupsByLevel[i + 1];
 
-				parents.pop(); // skip root group
+      groupsContent.forEach(function (groupItem) {
 
-				if (!reportData[contentType]) {
-					reportData[contentType] = {};
-				}
+        var parents = useGetEvRvParents(groupItem.___parentId, evDataService);
 
-				if (!reportData[contentType][layout.user_code]) {
-					reportData[contentType][layout.user_code] = {
-						groups: {}
-					};
-				}
+        parents.pop() // skip root group
 
-				var full_path = parents.map(function (item) {
-					return item.___group_name;
-				});
+        if (!reportData[contentType]) {
+          reportData[contentType] = {};
+        }
 
-				full_path.push(groupItem.___group_name);
+        if (!reportData[contentType][layout.user_code]) {
+          reportData[contentType][layout.user_code] = {
+            groups: {}
+          }
+        }
 
-				var full_path_prop = full_path.join('___'); // TODO check if safe enough
+        var full_path = parents.map(function (item) {
+          return item.___group_name
+        })
 
-				var groupSettings;
+        full_path.push(groupItem.___group_name);
 
-				if (
-					reportData[contentType][layout.user_code]['groups'][
-						full_path_prop
-					]
-				) {
-					groupSettings =
-						reportData[contentType][layout.user_code]['groups'][
-							full_path_prop
-						];
-				}
+        var full_path_prop = full_path.join('___'); // TODO check if safe enough
 
-				if (!groupSettings) {
-					groupSettings = {
-						full_path: full_path,
-						is_open: false
-					};
+        var groupSettings;
 
-					reportData[contentType][layout.user_code]['groups'][
-						full_path_prop
-					] = groupSettings;
-				}
+        if (reportData[contentType][layout.user_code]['groups'][full_path_prop]) {
+          groupSettings = reportData[contentType][layout.user_code]['groups'][full_path_prop];
+        }
 
-				groupItem.___is_open = false;
-				groupSettings.is_open = false;
+        if (!groupSettings) {
 
-				if (!reportData[contentType][layout.user_code]['groups']) {
-					reportData[contentType][layout.user_code]['groups'] = {};
-				}
+          groupSettings = {
+            full_path: full_path,
+            is_open: false
+          }
 
-				var full_path_prop = groupSettings.full_path;
+          reportData[contentType][layout.user_code]['groups'][full_path_prop] = groupSettings;
 
-				if (Array.isArray(full_path_prop)) {
-					full_path_prop = full_path_prop.join('___');
-				}
+        }
 
-				reportData[contentType][layout.user_code]['groups'][
-					full_path_prop
-				] = groupSettings;
+        groupItem.___is_open = false;
+        groupSettings.is_open = false;
 
-				reportData[contentType][layout.user_code].groupsList = [];
+        if (!reportData[contentType][layout.user_code]['groups']) {
+          reportData[contentType][layout.user_code]['groups'] = {}
+        }
 
-				groupsList.forEach((group) => {
-					var groupObj = {
-						key: group.key,
-						report_settings: {
-							is_level_folded: false
-						}
-					};
+        var full_path_prop = groupSettings.full_path;
 
-					if (group.report_settings) {
-						groupObj.report_settings.is_level_folded =
-							!!group.report_settings.is_level_folded;
-					}
+        if (Array.isArray(full_path_prop)) {
+          full_path_prop = full_path_prop.join('___')
+        }
 
-					reportData[contentType][layout.user_code].groupsList.push(
-						groupObj
-					);
-				});
+        reportData[contentType][layout.user_code]['groups'][full_path_prop] = groupSettings;
 
-				evDataService.setData(groupItem);
-			});
-		}
+        reportData[contentType][layout.user_code].groupsList = [];
 
-		localStorageService.cacheReportData(reportData);
+        groupsList.forEach(group => {
 
-		evEventService.dispatchEvent(evEvents.GROUPS_LEVEL_FOLD);
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-	};
+          var groupObj = {
+            key: group.key,
+            report_settings: {
+              is_level_folded: false
+            }
+          };
+
+          if (group.report_settings) {
+            groupObj.report_settings.is_level_folded = !!group.report_settings.is_level_folded;
+          }
+
+
+          reportData[contentType][layout.user_code].groupsList.push(groupObj);
+
+        });
+
+        evDataService.setData(groupItem);
+
+      });
+
+    }
+
+    localStorageService.cacheReportData(reportData);
+
+    evEventService.dispatchEvent(evEvents.GROUPS_LEVEL_FOLD);
+    evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+
+  }
 
 	let unfoldLevel = async function (key, $index) {
-		var layout = evDataService.getListLayout();
-		var contentType = evDataService.getContentType();
 
-		let groupsList = evDataService.getGroups();
+    var layout = evDataService.getListLayout();
+    var contentType = evDataService.getContentType();
 
-		var item = groupsList[$index];
+    let groupsList = evDataService.getGroups();
 
-		item.report_settings.is_level_folded = false;
+    var item = groupsList[$index];
 
-		var i;
+    item.report_settings.is_level_folded = false;
 
-		//# region Set folded groups before calling rvDataHelper.setGroupSettings()
-		for (i = $index; i >= 0; i--) {
-			groupsList[i].report_settings.is_level_folded = false;
-		}
+    var i;
 
-		evDataService.setGroups(groupsList);
-		groupsRef.value = getGroups();
+    //# region Set folded groups before calling rvDataHelper.setGroupSettings()
+    for (i = $index; i >= 0; i--) {
+      groupsList[i].report_settings.is_level_folded = false;
+    }
 
-		var maxLevel = 10;
-		var groupsByLevel = evDataHelper.getAllGroupsByLevel(
-			maxLevel,
-			evDataService
-		);
+    evDataService.setGroups(groupsList);
+    groupsRef.value = getGroups();
 
-		console.log('groupsByLevel', groupsByLevel);
-		console.log('maxLevel', $index);
-		//# endregion
+    var maxLevel = 10
+    var groupsByLevel = evDataHelper.getAllGroupsByLevel(maxLevel, evDataService);
 
-		var reportData = localStorageService.getReportData();
+    console.log('groupsByLevel', groupsByLevel);
+    console.log('maxLevel', $index);
+    //# endregion
 
-		for (i = $index; i >= 0; i--) {
-			var groupsContent = groupsByLevel[i + 1];
+    var reportData = localStorageService.getReportData();
 
-			groupsContent.forEach(function (groupItem) {
-				var parents = useGetEvRvParents(
-					groupItem.___parentId,
-					evDataService
-				);
+    for (i = $index; i >= 0; i--) {
 
-				parents.pop(); // skip root group
+      var groupsContent = groupsByLevel[i + 1];
 
-				if (!reportData[contentType]) {
-					reportData[contentType] = {};
-				}
+      groupsContent.forEach(function (groupItem) {
 
-				if (!reportData[contentType][layout.user_code]) {
-					reportData[contentType][layout.user_code] = {
-						groups: {}
-					};
-				}
+        var parents = useGetEvRvParents(groupItem.___parentId, evDataService);
 
-				var full_path = parents.map(function (item) {
-					return item.___group_name;
-				});
+        parents.pop() // skip root group
 
-				full_path.push(groupItem.___group_name);
+        if (!reportData[contentType]) {
+          reportData[contentType] = {};
+        }
 
-				var full_path_prop = full_path.join('___'); // TODO check if safe enough
+        if (!reportData[contentType][layout.user_code]) {
+          reportData[contentType][layout.user_code] = {
+            groups: {}
+          }
+        }
 
-				var groupSettings;
+        var full_path = parents.map(function (item) {
+          return item.___group_name
+        })
 
-				if (
-					reportData[contentType][layout.user_code]['groups'][
-						full_path_prop
-					]
-				) {
-					groupSettings =
-						reportData[contentType][layout.user_code]['groups'][
-							full_path_prop
-						];
-				}
+        full_path.push(groupItem.___group_name);
 
-				if (!groupSettings) {
-					groupSettings = {
-						full_path: full_path,
-						is_open: true
-					};
+        var full_path_prop = full_path.join('___'); // TODO check if safe enough
 
-					reportData[contentType][layout.user_code]['groups'][
-						full_path_prop
-					] = groupSettings;
-				}
+        var groupSettings;
 
-				groupItem.___is_open = true;
-				groupSettings.is_open = true;
+        if (reportData[contentType][layout.user_code]['groups'][full_path_prop]) {
+          groupSettings = reportData[contentType][layout.user_code]['groups'][full_path_prop];
+        }
 
-				if (!reportData[contentType][layout.user_code]['groups']) {
-					reportData[contentType][layout.user_code]['groups'] = {};
-				}
+        if (!groupSettings) {
 
-				var full_path_prop = groupSettings.full_path;
+          groupSettings = {
+            full_path: full_path,
+            is_open: true
+          }
 
-				if (Array.isArray(full_path_prop)) {
-					full_path_prop = full_path_prop.join('___');
-				}
+          reportData[contentType][layout.user_code]['groups'][full_path_prop] = groupSettings;
 
-				reportData[contentType][layout.user_code]['groups'][
-					full_path_prop
-				] = groupSettings;
+        }
 
-				reportData[contentType][layout.user_code].groupsList = [];
+        groupItem.___is_open = true;
+        groupSettings.is_open = true;
 
-				groupsList.forEach((group) => {
-					var groupObj = {
-						key: group.key,
-						report_settings: {
-							is_level_folded: false
-						}
-					};
+        if (!reportData[contentType][layout.user_code]['groups']) {
+          reportData[contentType][layout.user_code]['groups'] = {}
+        }
 
-					if (group.report_settings) {
-						groupObj.report_settings.is_level_folded =
-							!!group.report_settings.is_level_folded;
-					}
+        var full_path_prop = groupSettings.full_path;
 
-					reportData[contentType][layout.user_code].groupsList.push(
-						groupObj
-					);
-				});
+        if (Array.isArray(full_path_prop)) {
+          full_path_prop = full_path_prop.join('___')
+        }
 
-				evDataService.setData(groupItem);
-			});
-		}
+        reportData[contentType][layout.user_code]['groups'][full_path_prop] = groupSettings;
 
-		localStorageService.cacheReportData(reportData);
-		// localStorageService.cacheReportDataForLayout(contentType, layout.user_code, reportData);
+        reportData[contentType][layout.user_code].groupsList = [];
 
-		rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService);
+        groupsList.forEach(group => {
 
-		evEventService.dispatchEvent(evEvents.GROUPS_LEVEL_UNFOLD);
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+          var groupObj = {
+            key: group.key,
+            report_settings: {
+              is_level_folded: false
+            }
+          };
 
-		// New Backend Logic, Try To Request New Unrequested Open Groups
+          if (group.report_settings) {
+            groupObj.report_settings.is_level_folded = !!group.report_settings.is_level_folded;
+          }
 
-		var unfoldPromises = [];
 
-		const currentLevelGroups = structuredClone(
-			evDataHelper.getGroupsByLevel($index + 1, evDataService)
-		);
+          reportData[contentType][layout.user_code].groupsList.push(groupObj);
 
-		currentLevelGroups.forEach(function (group) {
-			console.log('handleFoldButtonClick.group', group);
+        });
 
-			if (group.___is_open) {
-				if (!evDataService.isRequestParametersExist(group.___id)) {
-					unfoldPromises.push(function () {
-						var requestParameters =
-							window.rvDataProviderService.createRequestParameters(
-								group,
-								group.___level - 1,
-								evDataService,
-								evEventService
-							);
+        evDataService.setData(groupItem);
 
-						console.log('handleFoldButtonClick.group', group);
-						console.log(
-							'handleFoldButtonClick.requestParameters',
-							requestParameters
-						);
+      });
 
-						return window.rvDataProviderService.updateDataStructureByRequestParameters(
-							requestParameters,
-							evDataService,
-							evEventService
-						);
-					});
-				}
-			}
-		});
+    }
 
-		console.log('unfoldLevel.unfoldPromises', unfoldPromises);
+    localStorageService.cacheReportData(reportData);
+    // localStorageService.cacheReportDataForLayout(contentType, layout.user_code, reportData);
 
-		const unfoldGroups = async function () {
-			let promisesToExecute = unfoldPromises.map((func) => func());
+    rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService);
 
-			await Promise.all(promisesToExecute);
+    evEventService.dispatchEvent(evEvents.GROUPS_LEVEL_UNFOLD);
+    evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
 
-			evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-		};
 
-		if (unfoldPromises.length > 10) {
-			let res = await $mdDialog.show({
-				controller: 'WarningDialogController as vm',
-				locals: {
-					warning: {
-						title: 'Warning',
-						description:
-							'You are trying to unfold ' +
-							unfoldPromises.length +
-							' groups. It may take a while. Do you want to continue?'
-					}
-				}
-			});
+    // New Backend Logic, Try To Request New Unrequested Open Groups
 
-			if (res.status === 'agree') {
-				await unfoldGroups();
-			} else {
-				foldLevel(key, $index); // then fold this level back
-			}
-		} else {
-			await unfoldGroups();
-		}
-	};
+    var unfoldPromises = []
+
+    const currentLevelGroups = structuredClone(
+        evDataHelper.getGroupsByLevel($index + 1, evDataService)
+    );
+
+    currentLevelGroups.forEach(function (group) {
+
+      console.log('handleFoldButtonClick.group', group);
+
+      if (group.___is_open) {
+
+        if (!evDataService.isRequestParametersExist(group.___id)) {
+
+          unfoldPromises.push(function (){
+
+            var requestParameters = window.rvDataProviderService.createRequestParameters(
+                group, group.___level - 1, evDataService, evEventService
+            )
+
+            console.log('handleFoldButtonClick.group', group);
+            console.log('handleFoldButtonClick.requestParameters', requestParameters);
+
+            return window.rvDataProviderService.updateDataStructureByRequestParameters(
+                requestParameters, evDataService, evEventService
+            )
+
+          })
+
+        }
+
+      }
+
+    })
+
+    console.log('unfoldLevel.unfoldPromises', unfoldPromises);
+
+    const unfoldGroups = async function () {
+
+      let promisesToExecute = unfoldPromises.map(func => func());
+
+      await Promise.all(promisesToExecute)
+
+      evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+
+    }
+
+    if (unfoldPromises.length > 10) {
+
+      let res= await $mdDialog.show({
+        controller: 'WarningDialogController as vm',
+        locals: {
+          warning: {
+            title: 'Warning',
+            description: "You are trying to unfold " + unfoldPromises.length + " groups. It may take a while. Do you want to continue?",
+          }
+        }
+
+      });
+
+      if (res.status === 'agree') {
+        await unfoldGroups();
+
+      } else {
+        foldLevel(key, $index); // then fold this level back
+      }
+
+    } else {
+      await unfoldGroups();
+    }
+
+	}
 
 	let groupLevelIsFolded = function ($index) {
-		var groups = evDataService.getGroups();
+		var groups = evDataService.getGroups()
 
-		return groups[$index].report_settings.is_level_folded;
-	};
+		return groups[$index].report_settings.is_level_folded
+	}
 
 	const setUpFrontOptions = (item) => {
-		item.frontOptions = item.frontOptions || {};
+		item.frontOptions = item.frontOptions || {}
 
-		return item;
-	};
+		return item
+	}
 
 	const setColumnsFrontOptions = function () {
-		let columnsList = evDataService.getColumns();
+		let columnsList = evDataService.getColumns()
 
-		columnsList = columnsList.map(setUpFrontOptions);
+		columnsList = columnsList.map(setUpFrontOptions)
 
-		evDataService.setColumns(columnsList);
+		evDataService.setColumns(columnsList)
 
-		return getColumns();
-	};
+		return getColumns()
+	}
 
 	const setGroupsFrontOptions = function () {
-		let groupsList = evDataService.getGroups();
+		let groupsList = evDataService.getGroups()
 
-		groupsList = groupsList.map(setUpFrontOptions);
+		groupsList = groupsList.map(setUpFrontOptions)
 
-		evDataService.setGroups(groupsList);
+		evDataService.setGroups(groupsList)
 
-		return getGroups();
-	};
+		return getGroups()
+	}
 
 	var getColsAvailableForAdditions = function () {
-		var availableCols =
-			attributeDataService.getAttributesAvailableForColumns();
+		var availableCols = attributeDataService.getAttributesAvailableForColumns()
 
-		let colsAvailableForAdditions = availableCols.filter(
-			function (aColumn) {
-				for (var i = 0; i < columns.length; i++) {
-					if (columns[i].key === aColumn.attribute_data.key) {
-						return false;
-					}
+		let colsAvailableForAdditions = availableCols.filter(function (aColumn) {
+			for (var i = 0; i < columns.length; i++) {
+				if (columns[i].key === aColumn.attribute_data.key) {
+					return false
 				}
-
-				return true;
 			}
-		);
-	};
+
+			return true
+		})
+	}
 
 	// async function addColumn($event) {
 	// 	const allAttrs = attributeDataService.getForAttributesSelector(entityType)
@@ -2051,104 +1979,101 @@
 	// }
 
 	const onGroupLevelFoldingSwitch = function (argumentsObj) {
-		rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService);
+		rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService)
 
 		groupsRef.value = getGroups();
 		groupsRef.value = evDataHelper.importGroupsStylesFromColumns(
 			columns.value,
 			groupsRef.value
-		);
+		)
 
 		// if (argumentsObj && argumentsObj.updateScope) $apply()
-	};
+	}
 
 	const syncGroupLayoutNamesWithColumns = function () {
-		const columnsList = evDataService.getColumns();
+		const columnsList = evDataService.getColumns()
 
 		columnsList.forEach((column) => {
 			if (!column.layout_name) {
-				return;
+				return
 			}
 
 			const matchingGroup = groupsRef.value.find(
 				(group) => group.key === column.key
-			);
+			)
 
 			if (matchingGroup) {
-				matchingGroup.layout_name = column.layout_name;
+				matchingGroup.layout_name = column.layout_name
 			}
-		});
+		})
 
-		setGroups(groupsRef.value);
+		setGroups(groupsRef.value)
 
-		return groupsRef.value;
-	};
+		return groupsRef.value
+	}
 
-	let onGroupsChange;
+	let onGroupsChange
 
 	// Must be called before declaring columnsData
 	if (isReport) {
 		checkForFilteringBySameAttr = function (columnKey) {
-			console.log('columnKey:', columnKey);
-			var filters = evDataService.getFilters();
-			console.log('filters:', filters);
+			console.log('columnKey:', columnKey)
+			var filters = evDataService.getFilters()
+			console.log('filters:', filters)
 
 			for (var i = 0; i < filters.length; i++) {
 				if (filters[i].key === columnKey) {
-					return false;
+					return false
 				}
 			}
 
-			return true;
-		};
+			return true
+		}
 
 		onGroupsChange = function () {
-			groupsRef.value = updateGroupTypeIds();
+			groupsRef.value = updateGroupTypeIds()
 
-			setDefaultGroupType();
-			updateGroupFoldingState();
+			setDefaultGroupType()
+			updateGroupFoldingState()
 
 			// groupsRef.value = evDataService.getGroups()
-			evDataService.resetTableContent(isReport);
+			evDataService.resetTableContent(isReport)
 
-			const res = syncColumnsWithGroups();
+			const res = syncColumnsWithGroups()
 
-			columns.value = res.columns;
-			const colsChanged = res.columnsHaveBeenSynced;
+			columns.value = res.columns
+			const colsChanged = res.columnsHaveBeenSynced
 
 			groupsRef.value = evDataHelper.importGroupsStylesFromColumns(
 				groupsRef.value,
 				columns.value
-			);
+			)
 
 			// columnsToShow.value = getColumnsToShow()
 
-			collectMissingCustomFieldsErrors();
+			collectMissingCustomFieldsErrors()
 			// setFiltersLayoutNames();
 			var foldedGroup = groupsRef.value.find(
 				(group) =>
-					group.report_settings &&
-					group.report_settings.is_level_folded
-			);
+					group.report_settings && group.report_settings.is_level_folded
+			)
 
-			groupsRef.value = setGroupsFrontOptions();
+			groupsRef.value = setGroupsFrontOptions()
 
 			if (!foldedGroup) {
-				rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(
-					evDataService
-				);
+				rvDataHelper.markHiddenColumnsBasedOnFoldedGroups(evDataService)
 			}
 
 			if (colsChanged) {
-				evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
+				evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
 			}
 
-			evEventService.dispatchEvent(evEvents.UPDATE_TABLE);
-		};
+			evEventService.dispatchEvent(evEvents.UPDATE_TABLE)
+		}
 	} else {
 		onGroupsChange = function () {
-			groups.value = updateGroupTypeIds();
-			setDefaultGroupType();
+			groups.value = updateGroupTypeIds()
+			setDefaultGroupType()
 
 			groupsRef.value = updateGroupTypeIds();
 			setDefaultGroupType();
@@ -2156,39 +2081,36 @@
 			groupsRef.value = setGroupsFrontOptions();
 
 			// groups = evDataService.getGroups();
-			evDataService.resetTableContent(isReport);
+			evDataService.resetTableContent(isReport)
 
-			collectMissingCustomFieldsErrors();
+			collectMissingCustomFieldsErrors()
 
-			evEventService.dispatchEvent(evEvents.UPDATE_TABLE);
-		};
+			evEventService.dispatchEvent(evEvents.UPDATE_TABLE)
+		}
 
 		checkForFilteringBySameAttr = function (columnKey) {
-			var filters = evDataService.getFilters();
-			var filtersList = showFrontEvFilters
-				? filters.frontend
-				: filters.backend;
+			var filters = evDataService.getFilters()
+			var filtersList = showFrontEvFilters ? filters.frontend : filters.backend
 
 			for (var i = 0; i < filtersList.length; i++) {
 				if (filtersList[i].key === columnKey) {
-					return false;
+					return false
 				}
 			}
 
-			return true;
-		};
+			return true
+		}
 	}
 
 	//# region Data to provide for components-children
 	// Must be after assignment of checkForFilteringBySameAttr
-	let renameOpened = ref(false);
-	let columnToRename = ref(null);
+	let renameOpened = ref(false)
+	let columnToRename = ref(null)
 
-	let openColsAddition = ref(false);
-	const allAttrs = ref([]);
+	let openColsAddition = ref(false)
+	const allAttrs = ref([])
 	// const selectedAttrs = ref([])
-	const numberFormatEdit = ref(false);
-
+	const numberFormatEdit = ref(false)
 	/*let renameColumn = asyncrenameOpened function (itemKey, closeCb) {
 
 		closeCb();
@@ -2284,36 +2206,36 @@
 	 * @param {Function} closeCb - callback to close FmMenu
 	 */
 	function openRenameColumn(itemKey, closeCb) {
-		closeCb();
+		closeCb()
 
-		let column = getColumnByKey(itemKey);
-		columnToRename.value = structuredClone(column);
-		renameOpened.value = true;
+		let column = getColumnByKey(itemKey)
+		columnToRename.value = structuredClone(column)
+		renameOpened.value = true
 	}
 
 	function columnsAdditionOpened(itemKey, closeCb) {
-		allAttrs.value = evAttrsStore.getDataForAttributesSelector(contentType);
 
-		openColsAddition.value = true;
+		allAttrs.value = evAttrsStore.getDataForAttributesSelector(contentType)
+
+		openColsAddition.value = true
 	}
 
 	function addColumn(newAttrs) {
-		let columnsList = evDataService.getColumns();
+
+		let columnsList = evDataService.getColumns()
 
 		for (var i = 0; i < newAttrs.length; i = i + 1) {
-			var colData = evHelperService.getTableAttrInFormOf(
-				'column',
-				newAttrs[i]
-			);
-			columnsList.push(colData);
+			var colData = evHelperService.getTableAttrInFormOf('column', newAttrs[i])
+			columnsList.push(colData)
 		}
 
-		evDataService.setColumns(columnsList);
+		evDataService.setColumns(columnsList)
 
-		columns.value = getColumns();
+		columns.value = getColumns()
 
-		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+
 	}
 
 	/**
@@ -2322,121 +2244,113 @@
 	 * @param {Function} closeModal
 	 */
 	function renameColumn(closeModal) {
-		let column = getColumnByKey(columnToRename.value.key);
+		let column = getColumnByKey(columnToRename.value.key)
 
-		column.layout_name = columnToRename.value.layout_name;
+		column.layout_name = columnToRename.value.layout_name
 
-		setColumn(column);
+		setColumn(column)
 
-		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
+		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
 
 		if (columnHasCorrespondingGroup(columnToRename.value.key)) {
 			// var group = groupsRef.value.find((group) => group.key === itemKey)
 
-			let groupsList = evDataService.getGroups();
+			let groupsList = evDataService.getGroups()
 			let group = groupsList.find(
 				(group) => group.key === columnToRename.value.key
-			);
+			)
 
-			group.layout_name = columnToRename.value.layout_name;
+			group.layout_name = columnToRename.value.layout_name
 
-			evDataService.setGroups(groupsList);
-			evEventService.dispatchEvent(evEvents.GROUPS_CHANGE);
+			evDataService.setGroups(groupsList)
+			evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
 		}
 
-		const filters = evDataService.getFilters();
+		const filters = evDataService.getFilters()
 
 		if (isReport) {
 			const filter = filters.find(
 				(filter) => filter.key === columnToRename.value.key
-			);
+			)
 
 			if (filter) {
-				filter.layout_name = columnToRename.value.layout_name;
+				filter.layout_name = columnToRename.value.layout_name
 
-				evDataService.setFilters(filters);
+				evDataService.setFilters(filters)
 
-				evEventService.dispatchEvent(evEvents.FILTERS_CHANGE);
+				evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
 			}
 		} else {
-			let filterLayoutNameChanged = false;
+			let filterLayoutNameChanged = false
 
 			for (let filtersProp in filters) {
 				// search among frontend and backend filters
 
 				const filter = filters[filtersProp].find(
 					(filter) => filter.key === columnToRename.value.key
-				);
+				)
 
 				if (filter) {
-					filter.layout_name = columnToRename.value.layout_name;
-					filterLayoutNameChanged = true;
+					filter.layout_name = columnToRename.value.layout_name
+					filterLayoutNameChanged = true
 				}
 			}
 
 			if (filterLayoutNameChanged) {
-				evDataService.setFilters(filters);
-				evEventService.dispatchEvent(evEvents.FILTERS_CHANGE);
+				evDataService.setFilters(filters)
+				evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
 			}
 		}
 
 		// Must be at the bottom, because closing modal empties ref columnToRename
-		closeModal();
+		closeModal()
 	}
 
 	let columnHasCorrespondingGroup = function (columnKey) {
-		var groupIndex = groupsRef.value.findIndex(
-			(group) => group.key === columnKey
-		);
+		var groupIndex = groupsRef.value.findIndex((group) => group.key === columnKey)
 
-		return groupIndex > -1;
-	};
+		return groupIndex > -1
+	}
 
 	let addColumnEntityToGrouping = function (column) {
-		const groupToAdd = evHelperService.getTableAttrInFormOf(
-			'group',
-			column
-		);
+		const groupToAdd = evHelperService.getTableAttrInFormOf('group', column)
 
 		// groupsRef.value.push(groupToAdd)
-		let groupsList = evDataService.getGroups();
-		groupsList.push(groupToAdd);
+		let groupsList = evDataService.getGroups()
+		groupsList.push(groupToAdd)
 
-		setGroups(groupsList);
+		setGroups(groupsList)
 
-		evEventService.dispatchEvent(evEvents.GROUPS_CHANGE);
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-	};
+		evEventService.dispatchEvent(evEvents.GROUPS_CHANGE)
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+	}
 
 	let addFiltersWithColAttr = function (column) {
-		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP);
+		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
 
-		var filters = evDataService.getFilters();
-		var filterToAdd = evHelperService.getTableAttrInFormOf(
-			'filter',
-			column
-		);
-		filterToAdd.options.enabled = true;
+		var filters = evDataService.getFilters()
+		var filterToAdd = evHelperService.getTableAttrInFormOf('filter', column)
+		filterToAdd.options.enabled = true
 
 		if (isReport) {
-			filters.push(filterToAdd);
+			filters.push(filterToAdd)
 		} else {
 			if (showFrontEvFilters) {
-				filters.frontend.push(filterToAdd);
+				filters.frontend.push(filterToAdd)
 			} else {
-				filters.backend.push(filterToAdd);
+				filters.backend.push(filterToAdd)
 			}
 		}
 
-		evDataService.setFilters(filters);
+		evDataService.setFilters(filters)
 
-		evEventService.dispatchEvent(evEvents.FILTERS_CHANGE);
-	};
+		evEventService.dispatchEvent(evEvents.FILTERS_CHANGE)
+	}
 
 	let editManualSorting = function ($event, column) {
-		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP);
+		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
 
-		console.log('editManualSorting', column);
+		console.log('editManualSorting', column)
 
 		$mdDialog
 			.show({
@@ -2447,10 +2361,10 @@
 				multiple: true,
 				locals: {
 					data: {
-						column: column
+						column: column,
 					},
-					entityViewerDataService: evDataService
-				}
+					entityViewerDataService: evDataService,
+				},
 			})
 			.then(function (res) {
 				if (res.status === 'agree') {
@@ -2459,71 +2373,71 @@
 
 					column.options.sort_settings = {
 						...column.options.sort_settings,
-						...res.data.sort_settings
-					};
+						...res.data.sort_settings,
+					}
 
-					if (!column.options.sort) column.options.sort = 'ASC';
+					if (!column.options.sort) column.options.sort = 'ASC'
 
-					sort(column);
+					sort(column)
 				}
-			});
-	};
+			})
+	}
 
 	let activateColumnNumberRenderingPreset = function (column, rendPreset) {
-		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP);
+		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
 
 		if (!column.report_settings) {
-			column.report_settings = {};
+			column.report_settings = {}
 		}
 
 		switch (rendPreset) {
 			case 'price':
-				column.report_settings.zero_format_id = 1;
-				column.report_settings.negative_color_format_id = 0;
-				column.report_settings.negative_format_id = 0;
-				column.report_settings.round_format_id = 1;
-				column.report_settings.percentage_format_id = 0;
-				break;
+				column.report_settings.zero_format_id = 1
+				column.report_settings.negative_color_format_id = 0
+				column.report_settings.negative_format_id = 0
+				column.report_settings.round_format_id = 1
+				column.report_settings.percentage_format_id = 0
+				break
 			case 'market_value':
-				column.report_settings.zero_format_id = 1;
-				column.report_settings.negative_color_format_id = 1;
-				column.report_settings.negative_format_id = 1;
-				column.report_settings.thousands_separator_format_id = 2;
-				column.report_settings.round_format_id = 1;
-				column.report_settings.percentage_format_id = 0;
-				break;
+				column.report_settings.zero_format_id = 1
+				column.report_settings.negative_color_format_id = 1
+				column.report_settings.negative_format_id = 1
+				column.report_settings.thousands_separator_format_id = 2
+				column.report_settings.round_format_id = 1
+				column.report_settings.percentage_format_id = 0
+				break
 			case 'amount':
-				column.report_settings.zero_format_id = 1;
-				column.report_settings.negative_color_format_id = 1;
-				column.report_settings.negative_format_id = 0;
-				column.report_settings.thousands_separator_format_id = 2;
-				column.report_settings.round_format_id = 3;
-				column.report_settings.percentage_format_id = 0;
-				break;
+				column.report_settings.zero_format_id = 1
+				column.report_settings.negative_color_format_id = 1
+				column.report_settings.negative_format_id = 0
+				column.report_settings.thousands_separator_format_id = 2
+				column.report_settings.round_format_id = 3
+				column.report_settings.percentage_format_id = 0
+				break
 			case 'exposure':
-				column.report_settings.zero_format_id = 1;
-				column.report_settings.negative_color_format_id = 1;
-				column.report_settings.negative_format_id = 1;
-				column.report_settings.round_format_id = 0;
-				column.report_settings.percentage_format_id = 2;
-				break;
+				column.report_settings.zero_format_id = 1
+				column.report_settings.negative_color_format_id = 1
+				column.report_settings.negative_format_id = 1
+				column.report_settings.round_format_id = 0
+				column.report_settings.percentage_format_id = 2
+				break
 			case 'return':
-				column.report_settings.zero_format_id = 1;
-				column.report_settings.negative_color_format_id = 1;
-				column.report_settings.negative_format_id = 0;
-				column.report_settings.percentage_format_id = 3;
-				break;
+				column.report_settings.zero_format_id = 1
+				column.report_settings.negative_color_format_id = 1
+				column.report_settings.negative_format_id = 0
+				column.report_settings.percentage_format_id = 3
+				break
 		}
 
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED);
-	};
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
+	}
 
 	let resizeColumn = function (column, $mdMenu, $event) {
 		if ($mdMenu) {
-			$mdMenu.close();
+			$mdMenu.close()
 		} else {
-			evEventService.dispatchEvent(popupEvents.CLOSE_POPUP);
+			evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
 		}
 
 		$mdDialog
@@ -2533,16 +2447,16 @@
 				parent: angular.element(document.body),
 				targetEvent: $event,
 				locals: {
-					data: column
-				}
+					data: column,
+				},
 			})
 			.then(function (res) {
 				if (res.status === 'agree') {
-					evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
-					evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+					evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
+					evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
 				}
-			});
-	};
+			})
+	}
 
 	/**
 	 *
@@ -2550,31 +2464,29 @@
 	 * @param {Function} closeCb - callback to close FmMenu
 	 */
 	let removeColumn = function (column, closeCb) {
-		closeCb();
-		let columnsList = evDataService.getColumns();
-		let colToDeleteAttr = null;
+		closeCb()
+		let columnsList = evDataService.getColumns()
+		let colToDeleteAttr = null
 		/*let columnsList = columnsList.filter(function (item) {
 												 return column.___column_id !== item.___column_id;
 										 });*/
 		for (let i = 0; i < columnsList.length; i++) {
 			if (column.___column_id === columnsList[i].___column_id) {
-				colToDeleteAttr = JSON.parse(JSON.stringify(columnsList[i]));
-				columnsList.splice(i, 1);
-				break;
+				colToDeleteAttr = JSON.parse(JSON.stringify(columnsList[i]))
+				columnsList.splice(i, 1)
+				break
 			}
 		}
 
 		if (viewContext === 'dashboard') {
-			var hasAttrAlready = false;
+			var hasAttrAlready = false
 			var availableCols =
-				attributeDataService.getAttributesAvailableForColumns();
+				attributeDataService.getAttributesAvailableForColumns()
 
 			for (var i = 0; i < availableCols.length; i++) {
-				if (
-					availableCols[i].attribute_data.key === colToDeleteAttr.key
-				) {
-					hasAttrAlready = true;
-					break;
+				if (availableCols[i].attribute_data.key === colToDeleteAttr.key) {
+					hasAttrAlready = true
+					break
 				}
 			}
 
@@ -2584,25 +2496,23 @@
 						key: colToDeleteAttr.key,
 						name: colToDeleteAttr.name,
 						content_type: colToDeleteAttr.content_type,
-						value_type: colToDeleteAttr.value_type
+						value_type: colToDeleteAttr.value_type,
 					},
 					is_default: false,
 					layout_name: colToDeleteAttr.layout_name || '',
-					order: colsAvailableForAdditions.length
-				};
+					order: colsAvailableForAdditions.length,
+				}
 
-				availableCols.push(newAvailableCol);
-				attributeDataService.setAttributesAvailableForColumns(
-					availableCols
-				);
+				availableCols.push(newAvailableCol)
+				attributeDataService.setAttributesAvailableForColumns(availableCols)
 			}
 		}
 
-		evDataService.setColumns(columnsList);
-		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
-		evEventService.dispatchEvent(evEvents.UPDATE_COLUMNS_SIZE);
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-	};
+		evDataService.setColumns(columnsList)
+		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE)
+		evEventService.dispatchEvent(evEvents.UPDATE_COLUMNS_SIZE)
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+	}
 
 	/**
 	 *
@@ -2610,9 +2520,9 @@
 	 * @param {Function} closeCb - callback to close FmMenu
 	 */
 	let reportHideGrandTotal = function (column, closeCb) {
-		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP);
-		hideSubtotalForColumn('hide_grandtotal', column);
-	};
+		evEventService.dispatchEvent(popupEvents.CLOSE_POPUP)
+		hideSubtotalForColumn('hide_grandtotal', column)
+	}
 
 	//# region Subtotals
 
@@ -2637,87 +2547,89 @@
 	 * @param {Function} [closeCb] - callback to close FmMenu
 	 */
 	let selectSubtotalType = function (column, type, closeCb) {
-		if (closeCb) closeCb();
+		if (closeCb) closeCb()
 
-		const col = getColumnByKey(column.key);
+		const col = getColumnByKey(column.key)
 
 		if (!col.hasOwnProperty('report_settings')) {
-			col.report_settings = {};
+			col.report_settings = {}
 		}
 
 		if (col.report_settings.subtotal_formula_id === type) {
 			// turn off subtotal after clicking on an active subtotal type
-			col.report_settings.subtotal_formula_id = null;
+			col.report_settings.subtotal_formula_id = null
 		} else {
-			col.report_settings.subtotal_formula_id = type;
+			col.report_settings.subtotal_formula_id = type
 		}
 
-		col.frontOptions.temporaryWeightedActive = false;
+		col.frontOptions.temporaryWeightedActive = false
 
-		setColumn(col);
-		columns.value = getColumns();
+		setColumn(col)
+		columns.value = getColumns()
 
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED);
-	};
+		evEventService.dispatchEvent(evEvents.REDRAW_TABLE)
+		evEventService.dispatchEvent(evEvents.REPORT_TABLE_VIEW_CHANGED)
+	}
 
 	function onSubtotalSumClick(column) {
-		column.frontOptions.subtotalAvgWeightedActive = false;
-		column.frontOptions.subtotalWeightedActive = false;
+		column.frontOptions.subtotalAvgWeightedActive = false
+		column.frontOptions.subtotalWeightedActive = false
 
 		column.frontOptions.subtotalAvgWeightedActive = false;
 		column.frontOptions.subtotalWeightedActive = false;
 
-		evDataService.resetTableContent(isReport);
-		evEventService.dispatchEvent(evEvents.GROUPS_CHANGE); // make request to backend to recalculate subtotals
+    evDataService.resetTableContent(isReport);
+    evEventService.dispatchEvent(evEvents.GROUPS_CHANGE); // make request to backend to recalculate subtotals
 
 		selectSubtotalType(column, 1);
+
 	}
 
-	function subtotalWeightedChange() {
-		evDataService.resetTableContent(isReport);
+  function subtotalWeightedChange() {
 
-		evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
-		evEventService.dispatchEvent(evEvents.GROUPS_CHANGE); // make request to backend to recalculate subtotals
-		evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
-	}
+    evDataService.resetTableContent(isReport);
+
+    evEventService.dispatchEvent(evEvents.COLUMNS_CHANGE);
+    evEventService.dispatchEvent(evEvents.GROUPS_CHANGE); // make request to backend to recalculate subtotals
+    evEventService.dispatchEvent(evEvents.REDRAW_TABLE);
+
+  }
 
 	function onSubtotalWeightedClick(column) {
-		// column is an object inside ref columns
-		column.frontOptions.subtotalAvgWeightedActive = false;
-		column.report_settings.subtotal_formula_id = null;
+// column is an object inside ref columns
+		column.frontOptions.subtotalAvgWeightedActive = false
+		column.report_settings.subtotal_formula_id = null
 
 		column.frontOptions.subtotalWeightedActive =
-			!column.frontOptions.subtotalWeightedActive;
+			!column.frontOptions.subtotalWeightedActive
 
-		setColumns(columns.value);
+		setColumns(columns.value)
 
-		subtotalWeightedChange();
+    subtotalWeightedChange()
 	}
 
 	function onSubtotalAvgWeightedClick(column) {
-		// column is an object inside ref columns
+    // column is an object inside ref columns
 		column.frontOptions.subtotalWeightedActive = false;
 		column.report_settings.subtotal_formula_id = null;
 
-		setColumns(columns.value);
+		setColumns(columns.value)
 
-		subtotalWeightedChange();
+    subtotalWeightedChange()
 	}
 
 	function getSubtotalFormula(column) {
 		if (column.hasOwnProperty('report_settings')) {
-			return column.report_settings.subtotal_formula_id;
+			return column.report_settings.subtotal_formula_id
 		}
 
-		return null;
+		return null
 	}
 
 	function onContextMenuClose(item) {
-		item.frontOptions.subtotalWeightedActive = false;
-		item.frontOptions.subtotalAvgWeightedActive = false;
+		item.frontOptions.subtotalWeightedActive = false
+		item.frontOptions.subtotalAvgWeightedActive = false
 	}
-
 	//# endregion
 
 	/** Used to pass data into AngularFmGridTableColumnCell */
@@ -2728,8 +2640,7 @@
 		checkForFilteringBySameAttr: checkForFilteringBySameAttr,
 		addFiltersWithColAttr: addFiltersWithColAttr,
 		editManualSorting: editManualSorting,
-		activateColumnNumberRenderingPreset:
-			activateColumnNumberRenderingPreset,
+		activateColumnNumberRenderingPreset: activateColumnNumberRenderingPreset,
 		// openColumnNumbersRenderingSettings: openColumnNumbersRenderingSettings,
 		resizeColumn: resizeColumn,
 		removeColumn: removeColumn,
@@ -2739,7 +2650,7 @@
 		checkColTextAlign: checkColTextAlign,
 		removeGroup: removeGroup,
 
-		dataIsLoading: false,
+    dataIsLoading: false,
 
 		//# region Subtotals
 		selectSubtotalType: selectSubtotalType,
@@ -2756,10 +2667,10 @@
 		//# endregion
 
 		openNumberFormatDialog: openNumberFormatDialog,
-		onContextMenuClose: onContextMenuClose
-	});
+		onContextMenuClose: onContextMenuClose,
+	})
 
-	provide('columnsData', columnsData);
+	provide('columnsData', columnsData)
 	//# endregion Data to provide for components-children
 
 	const initEventListeners = function () {
@@ -2773,131 +2684,125 @@
 			}
 		) */
 
-		evEventService.addEventListener(evEvents.GROUPS_CHANGE, onGroupsChange);
+		evEventService.addEventListener(evEvents.GROUPS_CHANGE, onGroupsChange)
 
 		evEventService.addEventListener(evEvents.COLUMNS_CHANGE, function () {
-			evDataHelper.updateColumnsIds(evDataService);
-			evDataHelper.setColumnsDefaultWidth(evDataService);
+			evDataHelper.updateColumnsIds(evDataService)
+			evDataHelper.setColumnsDefaultWidth(evDataService)
 
-			getColsAvailableForAdditions(); // when inside dashboard
+			getColsAvailableForAdditions() // when inside dashboard
 
 			// flagMissingColumns();
 
 			/*let newColumns = getColumnsToShow()
 			columnsToShow.value = JSON.parse(JSON.stringify(newColumns))*/
 
-			collectMissingCustomFieldsErrors();
+			collectMissingCustomFieldsErrors()
 
-			columns.value = setColumnsFrontOptions();
-		});
+			columns.value = setColumnsFrontOptions()
+		})
 
 		evEventService.addEventListener(
 			evEvents.GROUPS_LEVEL_FOLD,
 			onGroupLevelFoldingSwitch
-		);
+		)
 		evEventService.addEventListener(
 			evEvents.GROUPS_LEVEL_UNFOLD,
 			onGroupLevelFoldingSwitch
-		);
+		)
 
-		evEventService.addEventListener(evEvents.DATA_LOAD_START, function () {
-			columnsData.dataIsLoading = true;
-		});
+    evEventService.addEventListener(evEvents.DATA_LOAD_START, function () {
+      columnsData.dataIsLoading = true;
+    });
 
-		evEventService.addEventListener(evEvents.DATA_LOAD_END, function () {
-			columnsData.dataIsLoading = false;
-		});
+    evEventService.addEventListener(evEvents.DATA_LOAD_END, function () {
+      columnsData.dataIsLoading = false;
+    });
 
 		if (isReport) {
 			evEventService.addEventListener(
 				evEvents.UPDATE_GROUPS_SIZE,
 				function (argumentsObj) {
 					if (columnHasCorrespondingGroup(argumentsObj.key)) {
-						let groupsList = evDataService.getGroups();
-						const columnsList = evDataService.getColumns();
+						let groupsList = evDataService.getGroups()
+						const columnsList = evDataService.getColumns()
 
 						groupsList = evDataHelper.importGroupsStylesFromColumns(
 							groupsList,
 							columnsList
-						);
-						evDataService.setGroups(groupsList);
+						)
+						evDataService.setGroups(groupsList)
 
-						groupsRef.value = getGroups();
+						groupsRef.value = getGroups()
 					}
 				}
-			);
+			)
 		} else {
-			evEventService.addEventListener(
-				evEvents.DATA_LOAD_END,
-				function () {
-					getDownloadedTableItemsCount();
-				}
-			);
+			evEventService.addEventListener(evEvents.DATA_LOAD_END, function () {
+				getDownloadedTableItemsCount()
+			})
 
 			evEventService.addEventListener(
 				evEvents.FILTERS_TO_SHOW_CHANGE,
 				function () {
-					showFrontEvFilters = !showFrontEvFilters;
+					showFrontEvFilters = !showFrontEvFilters
 				}
-			);
+			)
 		}
-	};
+	}
 
 	const init = function () {
 		if (hideRowSettings.value) {
-			contentWrapElement.classList.add('g-row-settings-collapsed');
+			contentWrapElement.classList.add('g-row-settings-collapsed')
 		} else {
-			contentWrapElement.classList.remove('g-row-settings-collapsed');
+			contentWrapElement.classList.remove('g-row-settings-collapsed')
 		}
 
-		columns.value = setColumnsFrontOptions();
+		columns.value = setColumnsFrontOptions()
 
-		evDataHelper.importGroupsStylesFromColumns(
-			groupsRef.value,
-			columns.value
-		);
+		evDataHelper.importGroupsStylesFromColumns(groupsRef.value, columns.value)
 
-		groupsRef.value = updateGroupTypeIds();
+		groupsRef.value = updateGroupTypeIds()
 
 		if (isReport) {
-			const res = syncColumnsWithGroups();
+			const res = syncColumnsWithGroups()
 
-			columns.value = res.columns;
+			columns.value = res.columns
 		}
 
-		groupsRef.value = syncGroupLayoutNamesWithColumns();
-		groupsRef.value = setGroupsFrontOptions();
+		groupsRef.value = syncGroupLayoutNamesWithColumns()
+		groupsRef.value = setGroupsFrontOptions()
 
-		setColumns(columns.value);
+		setColumns(columns.value)
 		// columns = evDataService.getColumns()
 		// flagMissingColumns();
 
 		// columnsToShow.value = getColumnsToShow()
 
-		collectMissingCustomFieldsErrors();
+		collectMissingCustomFieldsErrors()
 
-		evDataHelper.updateColumnsIds(evDataService);
-		evDataHelper.setColumnsDefaultWidth(evDataService);
+		evDataHelper.updateColumnsIds(evDataService)
+		evDataHelper.setColumnsDefaultWidth(evDataService)
 
 		if (viewContext === 'dashboard') {
-			getColsAvailableForAdditions();
+			getColsAvailableForAdditions()
 			// keysOfColsToHide = evDataService.getKeysOfColumnsToHide();
 		}
 
 		var evSettings = globalDataService.getMemberEntityViewersSettings(
 			isReport,
 			entityType
-		);
-		let rowFilterColor = evSettings.row_type_filter;
+		)
+		let rowFilterColor = evSettings.row_type_filter
 
 		// update refs after functions above changed groups and columns
-		groupsRef.value = getGroups();
-		columns.value = getColumns();
+		groupsRef.value = getGroups()
+		columns.value = getColumns()
 
-		initEventListeners();
-	};
+		initEventListeners()
+	}
 
-	init();
+	init()
 </script>
 
 <style lang="scss" scoped>
@@ -2908,7 +2813,7 @@
 	// Victor 2020.1202 #69 New report viewer interface
 	$g-top-part-height: 50px;
 	$icon-size: 20px;
-	$g-top-part-color: #747474;
+	$g-top-part-color: $gray;
 	$g-table-header-background-color: rgba(242, 242, 242, 1);
 	//$g-table-border-color: rgb(219, 219, 219);
 	$g-table-border-color: #e0e0e0;

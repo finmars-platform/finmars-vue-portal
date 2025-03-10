@@ -41,12 +41,8 @@
 						</div>
 
 						<div class="selector-manager__row">
-							<div class="selector-manager__col-header">
-								Value
-							</div>
-							<div class="selector-manager__col-header">
-								Notes
-							</div>
+							<div class="selector-manager__col-header">Value</div>
+							<div class="selector-manager__col-header">Notes</div>
 						</div>
 
 						<div class="selector-manager__list">
@@ -73,11 +69,7 @@
 											hide-details
 											label="Value"
 											@update:model-value="
-												updateItem(
-													element.order,
-													'value',
-													$event
-												)
+												updateItem(element.order, 'value', $event)
 											"
 										/>
 
@@ -87,11 +79,7 @@
 											hide-details
 											label="Note"
 											@update:model-value="
-												updateItem(
-													element.order,
-													'notes',
-													$event
-												)
+												updateItem(element.order, 'notes', $event)
 											"
 										/>
 
@@ -99,9 +87,7 @@
 											class="selector-manager__item--delete"
 											icon="mdi-trash-can-outline"
 											color="var(--error)"
-											@click.stop.prevent="
-												deleteItem(element.order)
-											"
+											@click.stop.prevent="deleteItem(element.order)"
 										/>
 									</div>
 								</template>
@@ -132,9 +118,7 @@
 								<FmButton
 									v-bind="props"
 									rounded
-									v-on="
-										okBtnDisabled ? {} : { click: update }
-									"
+									v-on="okBtnDisabled ? {} : { click: update }"
 								>
 									OK
 								</FmButton>
@@ -396,11 +380,7 @@
 			}
 
 			&--chosen {
-				background-color: color-mix(
-					in srgb,
-					var(--on-surface) 8%,
-					transparent
-				);
+				background-color: color-mix(in srgb, var(--on-surface) 8%, transparent);
 			}
 
 			&--move {

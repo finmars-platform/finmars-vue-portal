@@ -15,11 +15,11 @@ a {
 }
 button {
     background: none;
-}
-button:not([disabled]) {
-	cursor: pointer;
-}
 
+    &:not([disabled]) {
+        cursor: pointer;
+    }
+}
 h1,
 h2,
 h3,
@@ -32,7 +32,7 @@ li {
     list-style: none;
 }
 table {
-    border-collapse: collapsed;
+    border-collapse: 0;
 }
 img {
     vertical-align: middle;

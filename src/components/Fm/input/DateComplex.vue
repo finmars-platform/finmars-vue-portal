@@ -24,34 +24,19 @@
 				</template>
 
 				<template v-if="noBorders" #rightBtn>
-					<FmIcon
-						:icon="
-							menuIsOpened ? 'arrow_drop_up' : 'arrow_drop_down'
-						"
-					/>
+					<FmIcon :icon="menuIsOpened ? 'arrow_drop_up' : 'arrow_drop_down'" />
 				</template>
 			</BaseInput>
 		</template>
 
 		<template #default="{ close }">
 			<div :style="popupWidth">
-				<div
-					class="c_datepicker"
-					:class="{ dates_range: rangeOfDates }"
-				>
+				<div class="c_datepicker" :class="{ dates_range: rangeOfDates }">
 					<div class="flex-row">
-						<div
-							v-if="!rangeOfDates"
-							class="complex-datepicker-left"
-						>
+						<div v-if="!rangeOfDates" class="complex-datepicker-left">
 							<div
 								class="complex-datepicker-mode-container"
-								:class="{
-									active: modeIsActive([
-										'datepicker',
-										'expression'
-									])
-								}"
+								:class="{ active: modeIsActive(['datepicker', 'expression']) }"
 								@click="activateCustomMode()"
 							>
 								Custom
@@ -67,9 +52,7 @@
 
 							<div
 								class="complex-datepicker-mode-container"
-								:class="{
-									active: modeIsActive('yesterday-business')
-								}"
+								:class="{ active: modeIsActive('yesterday-business') }"
 								@click="activateMode('yesterday-business')"
 							>
 								Yesterday (Business)
@@ -80,18 +63,10 @@
 									 @click="activateMode('inception')">All time</div>-->
 						</div>
 
-						<div
-							v-if="rangeOfDates"
-							class="complex-datepicker-left"
-						>
+						<div v-if="rangeOfDates" class="complex-datepicker-left">
 							<div
 								class="complex-datepicker-mode-container"
-								:class="{
-									active: modeIsActive([
-										'datepicker',
-										'expression'
-									])
-								}"
+								:class="{ active: modeIsActive(['datepicker', 'expression']) }"
 								@click="activateCustomMode()"
 							>
 								Custom
@@ -99,9 +74,7 @@
 
 							<div
 								class="complex-datepicker-mode-container"
-								:class="{
-									active: modeIsActive('week-to-date')
-								}"
+								:class="{ active: modeIsActive('week-to-date') }"
 								@click="activateRangeMode('week-to-date')"
 							>
 								WTD
@@ -109,9 +82,7 @@
 
 							<div
 								class="complex-datepicker-mode-container"
-								:class="{
-									active: modeIsActive('month-to-date')
-								}"
+								:class="{ active: modeIsActive('month-to-date') }"
 								@click="activateRangeMode('month-to-date')"
 							>
 								MTD
@@ -119,9 +90,7 @@
 
 							<div
 								class="complex-datepicker-mode-container"
-								:class="{
-									active: modeIsActive('quarter-to-date')
-								}"
+								:class="{ active: modeIsActive('quarter-to-date') }"
 								@click="activateRangeMode('quarter-to-date')"
 							>
 								QTD
@@ -129,9 +98,7 @@
 
 							<div
 								class="complex-datepicker-mode-container"
-								:class="{
-									active: modeIsActive('year-to-date')
-								}"
+								:class="{ active: modeIsActive('year-to-date') }"
 								@click="activateRangeMode('year-to-date')"
 							>
 								YTD
@@ -147,87 +114,54 @@
 						</div>
 
 						<div class="flex-column">
-							<div
-								class="flex-row m-b-10"
-								style="margin-left: 18px"
-							>
+							<div class="flex-row m-b-10" style="margin-left: 18px">
 								<div
 									class="date-input-holder"
 									:class="{
 										'expression-mode':
-											fdOptions.datepickerMode ===
-											'expression'
+											fdOptions.datepickerMode === 'expression',
 									}"
 								>
-									<div
-										v-if="
-											fdOptions.datepickerMode !==
-											'inception'
-										"
-									>
+									<div v-if="fdOptions.datepickerMode !== 'inception'">
 										<FmInputDate
 											:modelValue="fDate"
 											:disabled="firstDateIsDisabled"
 											class="bi_no_margins"
-											@update:modelValue="
-												onFirstDateInputChange
-											"
+											@update:modelValue="onFirstDateInputChange"
 										>
 											<template #button>
 												<FmBtn
-													v-show="
-														modeIsActive([
-															'datepicker',
-															'expression'
-														])
-													"
+													v-show="modeIsActive(['datepicker', 'expression'])"
 													type="icon"
 													class="expression-builder-btn"
-													:disabled="
-														firstDateIsDisabled
-													"
+													:disabled="firstDateIsDisabled"
 													@click="openFirstEe = true"
 												>
-													<!--													<img
-																											v-show="modeIsActive(['datepicker', 'expression'])"
-																											class="btn-icon"
-																											src="~/assets/img/fx-icon.png"
-																											alt="function"
-																										/>-->
-													<FmIcon icon="functions" />
+<!--													<img
+														v-show="modeIsActive(['datepicker', 'expression'])"
+														class="btn-icon"
+														src="~/assets/img/fx-icon.png"
+														alt="function"
+													/>-->
+                                                    <FmIcon icon="functions" />
 												</FmBtn>
 											</template>
 										</FmInputDate>
 									</div>
 
-									<div
-										v-if="
-											fdOptions.datepickerMode ===
-											'inception'
-										"
-									>
-										<p class="complex-datepicker-text">
-											Inception
-										</p>
+									<div v-if="fdOptions.datepickerMode === 'inception'">
+										<p class="complex-datepicker-text">Inception</p>
 									</div>
 								</div>
 
-								<div
-									v-if="rangeOfDates"
-									class="flex-row fi-center"
-								>
-									<div
-										class="complex-datepicker-date-fields-divider"
-									>
-										-
-									</div>
+								<div v-if="rangeOfDates" class="flex-row fi-center">
+									<div class="complex-datepicker-date-fields-divider">-</div>
 
 									<div
 										class="date-input-holder"
 										:class="{
 											'expression-mode':
-												sdOptions.datepickerMode ===
-												'expression'
+												sdOptions.datepickerMode === 'expression',
 										}"
 									>
 										<!--											<button v-show="modeIsActive(['datepicker', 'expression'])"
@@ -239,32 +173,23 @@
 										<FmInputDate
 											:modelValue="sDate"
 											:disable="secondDateIsDisabled"
-											@update:modelValue="
-												onSecondDateInputChange
-											"
+											@update:modelValue="onSecondDateInputChange"
 										>
 											<template #button>
 												<FmBtn
-													v-show="
-														modeIsActive([
-															'datepicker',
-															'expression'
-														])
-													"
+													v-show="modeIsActive(['datepicker', 'expression'])"
 													type="icon"
 													class="expression-builder-btn"
-													:disabled="
-														secondDateIsDisabled
-													"
+													:disabled="secondDateIsDisabled"
 													@click="openSecondEe = true"
 												>
-													<!--													<img
-																											v-show="modeIsActive(['datepicker', 'expression'])"
-																											class="btn-icon"
-																											src="~/assets/img/fx-icon.png"
-																											alt="function"
-																										/>-->
-													<FmIcon icon="functions" />
+<!--													<img
+														v-show="modeIsActive(['datepicker', 'expression'])"
+														class="btn-icon"
+														src="~/assets/img/fx-icon.png"
+														alt="function"
+													/>-->
+                                                    <FmIcon icon="functions" />
 												</FmBtn>
 											</template>
 										</FmInputDate>
@@ -278,7 +203,7 @@
 									class="datepicker-container"
 									:class="{
 										empty: fDate === null,
-										disabled: firstDateIsDisabled
+										disabled: firstDateIsDisabled,
 									}"
 								></div>
 
@@ -288,7 +213,7 @@
 									class="datepicker-container"
 									:class="{
 										empty: sDate === null,
-										disabled: secondDateIsDisabled
+										disabled: secondDateIsDisabled,
 									}"
 								></div>
 							</div>
@@ -297,18 +222,12 @@
 				</div>
 
 				<div class="flex-row fc-end fi-center c_datepicker_footer">
-					<FmBtn
-						type="text"
-						class="m-r-8 m-l-8"
-						@click="cancel(close)"
-						>CANCEL
-					</FmBtn>
-					<FmBtn
-						type="primary"
-						class="m-r-8 m-l-8"
-						@click="save(close)"
-						>SAVE
-					</FmBtn>
+					<FmBtn type="text" class="m-r-8 m-l-8" @click="cancel(close)"
+						>CANCEL</FmBtn
+					>
+					<FmBtn type="primary" class="m-r-8 m-l-8" @click="save(close)"
+						>SAVE</FmBtn
+					>
 				</div>
 			</div>
 		</template>
@@ -319,8 +238,8 @@
 		:expressions="fdOptions.expression"
 		@save="
 			(val) => {
-				applyExpression(1, val);
-				openFirstEe = false;
+				applyExpression(1, val)
+				openFirstEe = false
 			}
 		"
 		@cancel="openFirstEe = false"
@@ -336,91 +255,91 @@
 </template>
 
 <script setup>
-	import dayjs from 'dayjs';
+	import dayjs from 'dayjs'
 
 	let props = defineProps({
 		firstDate: String,
 		firstDatepickerOptions: {
 			type: Object,
 			default() {
-				return { datepickerMode: 'yesterday-business' };
-			}
+				return {datepickerMode: 'yesterday-business'};
+			},
 		},
 		secondDate: String,
 		secondDatepickerOptions: {
 			type: Object,
 			default() {
-				return { datepickerMode: 'datepicker' };
-			}
+				return {datepickerMode: 'datepicker'};
+			},
 		},
 		label: String,
 		noBorders: Boolean,
-		errorData: Object
-	});
+		errorData: Object,
+	})
 
 	let emit = defineEmits([
 		'update:firstDate',
 		'update:firstDatepickerOptions',
 		'update:secondDate',
 		'update:secondDatepickerOptions',
-		'update:errorData'
-	]);
+		'update:errorData',
+	])
 
-	let rangeOfDates = ref(props.secondDate !== undefined);
+	let rangeOfDates = ref(props.secondDate !== undefined)
 
-	const popupWidth = rangeOfDates.value ? 'width: 896px;' : 'width: 562px;';
-	let menuIsOpened = ref(false);
+	const popupWidth = rangeOfDates.value ? 'width: 896px;' : 'width: 562px;'
+	let menuIsOpened = ref(false)
 
-	let firstDateIsDisabled = ref(false);
-	let secondDateIsDisabled = ref(false);
+	let firstDateIsDisabled = ref(false)
+	let secondDateIsDisabled = ref(false)
 
-	let openFirstEe = ref(false);
+	let openFirstEe = ref(false)
 
-	let localErrorData = ref(null); // when props.errorData not used
+	let localErrorData = ref(null) // when props.errorData not used
 
-	let firstCalendar = ref(null);
-	let secondCalendar = ref(null);
+	let firstCalendar = ref(null)
+	let secondCalendar = ref(null)
 
 	let pickmeupOptions = {
 		default_date: false,
 		flat: true,
-		class_name: 'fm_cd_pickmeup'
-	};
-
-	if (rangeOfDates.value) pickmeupOptions.render = dayRenderFn;
-
-	function convertDate(date) {
-		return useDateStringIsValid(date) ? new Date(date) : null;
+		class_name: 'fm_cd_pickmeup',
 	}
 
-	let fDate = ref(props.firstDate);
+	if (rangeOfDates.value) pickmeupOptions.render = dayRenderFn
 
-	let firstDateConv = computed(() => convertDate(fDate.value));
+	function convertDate(date) {
+		return useDateStringIsValid(date) ? new Date(date) : null
+	}
 
-	let selectedVal;
+	let fDate = ref(props.firstDate)
+
+	let firstDateConv = computed(() => convertDate(fDate.value))
+
+	let selectedVal
 
 	if (!rangeOfDates.value) {
 		selectedVal = computed(() => {
-			return useDateStringIsValid(props.firstDate) ? props.firstDate : '';
-		});
+			return useDateStringIsValid(props.firstDate) ? props.firstDate : ''
+		})
 	}
 
 	let error = computed({
 		set(newVal) {
 			localErrorData.value = newVal
 				? JSON.parse(JSON.stringify(newVal))
-				: newVal;
-			emit('update:errorData', newVal);
+				: newVal
+			emit('update:errorData', newVal)
 		},
 		get() {
-			return props.errorData ? props.errorData : localErrorData.value;
-		}
-	});
+			return props.errorData ? props.errorData : localErrorData.value
+		},
+	})
 
 	watch(
 		() => props.firstDate,
 		() => {
-			fDate.value = props.firstDate;
+			fDate.value = props.firstDate
 
 			if (firstCalendar.value) {
 				const datepickerVal = dayjs(
@@ -429,18 +348,16 @@
 					true
 				).isValid()
 					? props.firstDate
-					: undefined;
-				usePickmeup(firstCalendar.value).set_date(datepickerVal);
+					: undefined
+				usePickmeup(firstCalendar.value).set_date(datepickerVal)
 			}
 		}
-	);
+	)
 
-	let fdOptions = ref(
-		JSON.parse(JSON.stringify(props.firstDatepickerOptions))
-	);
+	let fdOptions = ref(JSON.parse(JSON.stringify(props.firstDatepickerOptions)))
 
 	if (!fdOptions.value.datepickerMode)
-		fdOptions.value.datepickerMode = 'yesterday-business';
+		fdOptions.value.datepickerMode = 'yesterday-business'
 
 	/*watch(
 		() => props.firstDatepickerOptions,
@@ -452,144 +369,138 @@
 	)*/
 
 	//# region For second date in range of dates
-	let sDate = ref(props.secondDate);
+	let sDate = ref(props.secondDate)
 	let sdOptions = ref(null);
 
 	if (rangeOfDates.value) {
-		sdOptions.value = JSON.parse(
-			JSON.stringify(props.secondDatepickerOptions)
-		);
+		sdOptions.value = JSON.parse(JSON.stringify(props.secondDatepickerOptions));
 	}
 
-	let openSecondEe = ref(false);
+	let openSecondEe = ref(false)
 
-	let secondDateConv = computed(() => convertDate(sDate.value));
+	let secondDateConv = computed(() => convertDate(sDate.value))
 
 	if (rangeOfDates.value) {
+
 		selectedVal = computed(() => {
-			let val = '';
+			let val = ''
 
 			if (useDateStringIsValid(fDate.value)) {
-				val = fDate.value;
+				val = fDate.value
 			}
 
 			if (useDateStringIsValid(sDate.value)) {
-				val = val + ' - ' + sDate.value;
+				val = val + ' - ' + sDate.value
 			}
 
-			return val;
-		});
+			return val
+		})
 
 		watch(
 			() => props.secondDate,
 			() => {
-				sDate.value = props.secondDate;
+				sDate.value = props.secondDate
 
 				if (secondCalendar.value) {
 					const datepickerVal = useDateStringIsValid(sDate.value)
 						? sDate.value
-						: undefined;
-					usePickmeup(secondCalendar.value).set_date(datepickerVal);
+						: undefined
+					usePickmeup(secondCalendar.value).set_date(datepickerVal)
 				}
 			}
-		);
-	}
+		)
 
+	}
 	//# endregion
 
 	function initFirstDatepicker(el) {
-		firstCalendar.value = el;
+		firstCalendar.value = el
 
 		if (firstCalendar.value && !firstCalendar.value.__pickmeup) {
 			// check that pickmeup did not already initialize
-			initCalendar(1);
+			initCalendar(1)
 		}
 	}
 
 	function initSecondDatepicker(el) {
-		secondCalendar.value = el;
+		secondCalendar.value = el
 
 		if (secondCalendar.value && !secondCalendar.value.__pickmeup) {
 			// check that pickmeup did not already initialize
-			initCalendar(2);
+			initCalendar(2)
 		}
 	}
 
 	async function applyExpression(dateNumber, expression) {
-		fdOptions.value.expression = expression;
+		fdOptions.value.expression = expression
 
 		// if no expression entered, turn off expression mode
-		fdOptions.value.datepickerMode = 'datepicker';
+		fdOptions.value.datepickerMode = 'datepicker'
 
-		if (!fdOptions.value.expression) return;
+		if (!fdOptions.value.expression) return
 
-		fdOptions.value.datepickerMode = 'expression';
+		fdOptions.value.datepickerMode = 'expression'
 
 		try {
-			const res = await calcExpression(fdOptions.value.expression);
+			const res = await calcExpression(fdOptions.value.expression)
 
 			if (useDateStringIsValid(res)) {
 				if (dateNumber === 1) {
-					fDate.value = res;
+					fDate.value = res
 
-					usePickmeup(firstCalendar.value).set_date(
-						firstDateConv.value
-					);
+					usePickmeup(firstCalendar.value).set_date(firstDateConv.value)
 
-					if (rangeOfDates.value)
-						usePickmeup(secondCalendar.value).update();
+					if (rangeOfDates.value) usePickmeup(secondCalendar.value).update()
 				} else {
-					sDate.value = res;
+					sDate.value = res
 
-					usePickmeup(secondCalendar.value).set_date(
-						secondDateConv.value
-					);
-					usePickmeup(firstCalendar.value).update();
+					usePickmeup(secondCalendar.value).set_date(secondDateConv.value)
+					usePickmeup(firstCalendar.value).update()
 				}
 			} else {
 				const errorMessage = `Invalid ${
 					dateNumber === 2 ? 'second' : 'first'
-				} date`;
-				useNotify({ type: 'error', title: errorMessage });
+				} date`
+				useNotify({ type: 'error', title: errorMessage })
 			}
 		} catch (e) {
 			const errorMessage = `Invalid expression for ${
 				dateNumber === 2 ? 'second' : 'first'
-			} date`;
-			useNotify({ type: 'error', title: errorMessage });
+			} date`
+			useNotify({ type: 'error', title: errorMessage })
 		}
 	}
 
 	function modeIsActive(modeNames) {
 		if (Array.isArray(modeNames)) {
-			return modeNames.includes(fdOptions.value.datepickerMode);
+			return modeNames.includes(fdOptions.value.datepickerMode)
 		}
 
-		return modeNames === fdOptions.value.datepickerMode;
+		return modeNames === fdOptions.value.datepickerMode
 	}
 
 	function activateCustomMode() {
 		if (!modeIsActive(['datepicker', 'expression'])) {
 			fdOptions.value.datepickerMode = fdOptions.value.expression
 				? 'expression'
-				: 'datepicker';
-			firstDateIsDisabled.value = false;
+				: 'datepicker'
+			firstDateIsDisabled.value = false
 
 			if (rangeOfDates.value) {
-				secondDateIsDisabled.value = false;
+				secondDateIsDisabled.value = false
 			}
 		}
 	}
 
 	function applyFirstDate(date) {
-		fDate.value = dayjs(date).format('YYYY-MM-DD');
-		usePickmeup(firstCalendar.value).set_date(date);
+		fDate.value = dayjs(date).format('YYYY-MM-DD')
+		usePickmeup(firstCalendar.value).set_date(date)
 	}
 
 	const applySecondDate = function (date) {
-		sDate.value = dayjs(date).format('YYYY-MM-DD');
-		usePickmeup(secondCalendar.value).set_date(date);
-	};
+		sDate.value = dayjs(date).format('YYYY-MM-DD')
+		usePickmeup(secondCalendar.value).set_date(date)
+	}
 
 	function applyDatesOnRangeModeSwitch(
 		firstDate,
@@ -598,61 +509,69 @@
 		secondExpression,
 		mode
 	) {
-		applyFirstDate(firstDate);
+		applyFirstDate(firstDate)
 
-		fdOptions.value.datepickerMode = mode;
-		fdOptions.value.expression = firstExpression;
+		fdOptions.value.datepickerMode = mode
+		fdOptions.value.expression = firstExpression
 
-		applySecondDate(secondDate);
+		applySecondDate(secondDate)
 
-		sdOptions.value.datepickerMode = mode;
-		sdOptions.value.expression = secondExpression;
+		sdOptions.value.datepickerMode = mode
+		sdOptions.value.expression = secondExpression
 
-		firstDateIsDisabled.value = true;
-		secondDateIsDisabled.value = true;
+		firstDateIsDisabled.value = true
+		secondDateIsDisabled.value = true
 	}
 
-	function onFirstDateInputChange(date) {
-		fDate.value = date;
+    function onFirstDateInputChange (date) {
 
-		if (useDateStringIsValid(date)) {
-			usePickmeup(firstCalendar.value).set_date(fDate.value);
+        fDate.value = date;
+
+		if ( useDateStringIsValid(date) ) {
+
+            usePickmeup(firstCalendar.value).set_date(fDate.value);
 			if (rangeOfDates.value) usePickmeup(secondCalendar.value).update();
 
 			// if previously date was taken from expression, and now date field changed
-			fdOptions.value.datepickerMode = 'datepicker';
+            fdOptions.value.datepickerMode = 'datepicker';
+
 		} else {
-			usePickmeup(firstCalendar.value).set_date();
+            usePickmeup(firstCalendar.value).set_date();
 		}
+
 	}
 
-	function onSecondDateInputChange(date) {
-		sDate.value = date;
+    function onSecondDateInputChange (date) {
 
-		if (useDateStringIsValid(date)) {
-			usePickmeup(firstCalendar.value).update();
-			usePickmeup(secondCalendar.value).set_date(sDate.value);
+        sDate.value = date;
 
-			// if previously date was taken from expression, and now date field changed
-			sdOptions.value.datepickerMode = 'datepicker';
-		} else {
-			usePickmeup(secondCalendar.value).set_date();
-		}
-	}
+        if ( useDateStringIsValid(date) ) {
+
+            usePickmeup(firstCalendar.value).update();
+            usePickmeup(secondCalendar.value).set_date(sDate.value);
+
+            // if previously date was taken from expression, and now date field changed
+            sdOptions.value.datepickerMode = 'datepicker';
+
+        } else {
+            usePickmeup(secondCalendar.value).set_date();
+        }
+
+    }
 
 	async function calcExpression(expression) {
 		const opts = {
 			body: {
 				is_eval: true,
-				expression: expression
-			}
-		};
+				expression: expression,
+			},
+		}
 
-		let res = await useApi('expression.post', opts);
+		let res = await useApi('expression.post', opts)
 
-		if (res._$error) throw new Error(res._$error);
+		if (res._$error) throw new Error(res._$error)
 
-		return res.result;
+		return res.result
 	}
 
 	async function activateRangeMode(mode) {
@@ -660,18 +579,16 @@
 
 		switch (mode) {
 			case 'week-to-date':
-				// eslint-disable-next-line no-case-declarations
-				let prevWeekLastDay;
+				let prevWeekLastDay
 
-				// eslint-disable-next-line no-useless-catch
 				try {
 					const exprCalcRes = await calcExpression(
 						'get_date_last_week_end_business(now())'
-					);
+					)
 
-					prevWeekLastDay = new Date(exprCalcRes.result);
+					prevWeekLastDay = new Date(exprCalcRes.result)
 				} catch (error) {
-					throw error;
+					throw error
 				}
 
 				applyDatesOnRangeModeSwitch(
@@ -680,13 +597,12 @@
 					currentDate,
 					'now()',
 					'week-to-date'
-				);
+				)
 
-				break;
+				break
 
 			case 'month-to-date':
-				// eslint-disable-next-line no-case-declarations
-				let prevMonthLastBDay;
+				let prevMonthLastBDay
 
 				try {
 					/*const exprCalcRes = await calcExpression(
@@ -696,21 +612,19 @@
 					const opts = {
 						body: {
 							date: dayjs(currentDate).format('YYYY-MM-DD'),
-							frequency: 'M',
+							frequency: "M",
 							shift: -1,
 							is_only_bday: true,
-							start: false
+							start: false,
 						}
-					};
+					}
 
-					const exprCalcRes = await useApi(
-						'exprCalcPeriodDate.post',
-						opts
-					);
+					const exprCalcRes = await useApi("exprCalcPeriodDate.post", opts)
 
 					prevMonthLastBDay = new Date(exprCalcRes.result);
+
 				} catch (error) {
-					throw new Error(error);
+					throw new Error(error)
 				}
 
 				/* applyFirstDate(lastDayOfPrevMonth);
@@ -733,21 +647,20 @@
 					currentDate,
 					'now()',
 					'month-to-date'
-				);
+				)
 
-				break;
+				break
 
 			case 'quarter-to-date':
-				// eslint-disable-next-line no-case-declarations
-				let prevQuarterLastDay;
+				let prevQuarterLastDay
 
 				try {
 					const exprCalcRes = await calcExpression(
 						'get_date_last_quarter_end_business(now())'
-					);
-					prevQuarterLastDay = new Date(exprCalcRes.result);
+					)
+					prevQuarterLastDay = new Date(exprCalcRes.result)
 				} catch (error) {
-					throw new Error(error);
+					throw new Error(error)
 				}
 
 				/* applyFirstDate(lastDayOfCurrentMonth);
@@ -770,9 +683,9 @@
 					currentDate,
 					'now()',
 					'quarter-to-date'
-				);
+				)
 
-				break;
+				break
 
 			case 'year-to-date':
 				/* const firstDayOfCurrentYear = new Date(currentDate.getFullYear(), 0, 1);
@@ -792,16 +705,15 @@
 				//</editor-fold>
 
 				disableFieldsAndCalendars(); */
-				// eslint-disable-next-line no-case-declarations
-				let prevYearLastDay;
+				let prevYearLastDay
 
 				try {
 					const exprCalcRes = await calcExpression(
 						'get_date_last_year_end_business(now())'
-					);
-					prevYearLastDay = new Date(exprCalcRes.result);
+					)
+					prevYearLastDay = new Date(exprCalcRes.result)
 				} catch (error) {
-					throw new Error(error);
+					throw new Error(error)
 				}
 
 				applyDatesOnRangeModeSwitch(
@@ -810,92 +722,85 @@
 					currentDate,
 					'now()',
 					'year-to-date'
-				);
+				)
 
-				break;
+				break
 
 			case 'inception':
 				//<editor-fold desc="First date">
-				applyFirstDate(new Date('0001-01-01'));
+				applyFirstDate(new Date('0001-01-01'))
 
-				fdOptions.value.datepickerMode = 'inception';
-				fdOptions.value.expression = '';
+				fdOptions.value.datepickerMode = 'inception'
+				fdOptions.value.expression = ''
 				//</editor-fold>
 
 				//<editor-fold desc="Second date">
-				applySecondDate(currentDate);
+				applySecondDate(currentDate)
 
-				sdOptions.value.datepickerMode = 'inception';
-				sdOptions.value.expression = 'now()';
+				sdOptions.value.datepickerMode = 'inception'
+				sdOptions.value.expression = 'now()'
 				//</editor-fold>
 
-				firstDateIsDisabled.value = true;
-				secondDateIsDisabled.value = true;
+				firstDateIsDisabled.value = true
+				secondDateIsDisabled.value = true
 
-				break;
+				break
 		}
 
-		resetPmuCalendars();
+		resetPmuCalendars()
 	}
 
 	function resetPmuCalendars() {
-		usePickmeup(firstCalendar.value).destroy(); // redraw calendar after mode switch
+		usePickmeup(firstCalendar.value).destroy() // redraw calendar after mode switch
 
 		const options = {
 			...{ date: new Date(fDate.value) },
-			...pickmeupOptions
-		};
+			...pickmeupOptions,
+		}
 
-		usePickmeup(firstCalendar.value, options);
+		usePickmeup(firstCalendar.value, options)
 
 		if (rangeOfDates.value) {
-			usePickmeup(secondCalendar.value).destroy(); // redraw calendar after mode switch
+			usePickmeup(secondCalendar.value).destroy() // redraw calendar after mode switch
 
 			const sOptions = {
 				...{ date: new Date(sDate.value) },
-				...pickmeupOptions
-			};
+				...pickmeupOptions,
+			}
 
-			usePickmeup(secondCalendar.value, sOptions);
+			usePickmeup(secondCalendar.value, sOptions)
 		}
 	}
 
 	async function activateMode(mode) {
 		switch (mode) {
 			case 'today':
-				fdOptions.value.datepickerMode = 'today';
-				fdOptions.value.expression = 'now()';
+				fdOptions.value.datepickerMode = 'today'
+				fdOptions.value.expression = 'now()'
 
-				fDate.value = dayjs(new Date()).format('YYYY-MM-DD'); // today's date
+				fDate.value = dayjs(new Date()).format('YYYY-MM-DD') // today's date
 
-				usePickmeup(firstCalendar.value).set_date(
-					new Date(fDate.value)
-				);
+				usePickmeup(firstCalendar.value).set_date(new Date(fDate.value))
 
-				firstDateIsDisabled.value = true;
+				firstDateIsDisabled.value = true
 
-				break;
+				break
 
 			case 'yesterday-business':
-				// eslint-disable-next-line no-useless-catch
 				try {
-					fDate.value = await calcExpression(
-						'last_business_day(now()-days(1))'
-					);
+					fDate.value = await calcExpression('last_business_day(now()-days(1))')
 
-					usePickmeup(firstCalendar.value).set_date(
-						new Date(fDate.value)
-					);
+					usePickmeup(firstCalendar.value).set_date(new Date(fDate.value))
 				} catch (error) {
-					throw error;
+					throw error
 				}
 
-				fdOptions.value.datepickerMode = 'yesterday-business';
-				fdOptions.value.expression = 'last_business_day(now()-days(1))';
+				fdOptions.value.datepickerMode = 'yesterday-business'
+				fdOptions.value.expression = 'last_business_day(now()-days(1))'
 
-				firstDateIsDisabled.value = true;
+				firstDateIsDisabled.value = true
 
-				break;
+				break
 
 			/* case 'inception':
 
@@ -911,51 +816,45 @@
 				break; */
 		}
 
-		resetPmuCalendars();
+		resetPmuCalendars()
 	}
 
 	function onFirstPickmeupChange(event) {
-		document.activeElement.blur();
+		document.activeElement.blur()
 
-		fDate.value = event.detail.formatted_date;
-		fdOptions.value.datepickerMode = 'datepicker';
+		fDate.value = event.detail.formatted_date
+		fdOptions.value.datepickerMode = 'datepicker'
 
 		// update highlighted dates inside another calendar
-		if (rangeOfDates.value) usePickmeup(secondCalendar.value).update();
+		if (rangeOfDates.value) usePickmeup(secondCalendar.value).update()
 	}
 
 	function onSecondPickmeupChange(event) {
-		document.activeElement.blur();
+		document.activeElement.blur()
 
-		sDate.value = event.detail.formatted_date;
-		sdOptions.value.datepickerMode = 'datepicker';
+		sDate.value = event.detail.formatted_date
+		sdOptions.value.datepickerMode = 'datepicker'
 
 		// update highlighted dates inside another calendar
-		if (rangeOfDates.value) usePickmeup(firstCalendar.value).update();
+		if (rangeOfDates.value) usePickmeup(firstCalendar.value).update()
 	}
 
 	function initCalendar(calendarNumber) {
-		let date = calendarNumber === 1 ? fDate.value : sDate.value;
+		let date = calendarNumber === 1 ? fDate.value : sDate.value
 		let calendarElem =
-			calendarNumber === 1 ? firstCalendar.value : secondCalendar.value;
+			calendarNumber === 1 ? firstCalendar.value : secondCalendar.value
 
 		const pOpts = {
 			...{ date: new Date(date) },
-			...pickmeupOptions
-		};
+			...pickmeupOptions,
+		}
 
-		usePickmeup(calendarElem, pOpts);
+		usePickmeup(calendarElem, pOpts)
 
 		if (calendarNumber === 1) {
-			calendarElem.addEventListener(
-				'pickmeup-change',
-				onFirstPickmeupChange
-			);
+			calendarElem.addEventListener('pickmeup-change', onFirstPickmeupChange)
 		} else {
-			calendarElem.addEventListener(
-				'pickmeup-change',
-				onSecondPickmeupChange
-			);
+			calendarElem.addEventListener('pickmeup-change', onSecondPickmeupChange)
 		}
 	}
 
@@ -964,94 +863,88 @@
 			const dateFrom =
 				firstDateConv.value > secondDateConv.value
 					? secondDateConv.value
-					: firstDateConv.value;
+					: firstDateConv.value
 			const dateTo =
 				firstDateConv.value > secondDateConv.value
 					? firstDateConv.value
-					: secondDateConv.value;
+					: secondDateConv.value
 
-			const ymdDate = dayjs(date).format('YYYY-MM-DD');
+			const ymdDate = dayjs(date).format('YYYY-MM-DD')
 
 			if (
 				ymdDate === dayjs(dateFrom).format('YYYY-MM-DD') &&
 				ymdDate === dayjs(dateTo).format('YYYY-MM-DD')
 			) {
-				return { class_name: 'custom-pmu-day-in-range' };
+				return { class_name: 'custom-pmu-day-in-range' }
 			} else if (ymdDate === dayjs(dateFrom).format('YYYY-MM-DD')) {
-				return {
-					class_name: 'custom-pmu-date-from custom-pmu-day-in-range'
-				};
+				return { class_name: 'custom-pmu-date-from custom-pmu-day-in-range' }
 			} else if (ymdDate === dayjs(dateTo).format('YYYY-MM-DD')) {
-				return {
-					class_name: 'custom-pmu-date-to custom-pmu-day-in-range'
-				};
+				return { class_name: 'custom-pmu-date-to custom-pmu-day-in-range' }
 			}
 
 			if (dateFrom < date && date < dateTo) {
-				return { class_name: 'custom-pmu-day-in-range' };
+				return { class_name: 'custom-pmu-day-in-range' }
 			}
 		}
 
-		return {};
+		return {}
 	}
 
 	function save(closeMenu) {
+
 		if (fdOptions.value.datepickerMode === 'datepicker') {
-			delete fdOptions.value.expression;
+			delete fdOptions.value.expression
 		}
 
 		if (rangeOfDates.value) {
-			if (!fDate.value && sDate.value) fDate.value = sDate.value;
+			if (!fDate.value && sDate.value) fDate.value = sDate.value
 
-			if (!sDate.value && fDate.value) sDate.value = fDate.value;
+			if (!sDate.value && fDate.value) sDate.value = fDate.value
 
 			if (sdOptions.value.datepickerMode === 'datepicker') {
-				delete sdOptions.value.expression;
+				delete sdOptions.value.expression
 			}
 
 			if (new Date(sDate.value) > new Date(fDate.value)) {
-				emit('update:firstDate', fDate.value);
-				emit('update:firstDatepickerOptions', fdOptions.value);
+				emit('update:firstDate', fDate.value)
+				emit('update:firstDatepickerOptions', fdOptions.value)
 
-				emit('update:secondDate', sDate.value);
-				emit('update:secondDatepickerOptions', sdOptions.value);
+				emit('update:secondDate', sDate.value)
+				emit('update:secondDatepickerOptions', sdOptions.value)
 			} else {
 				// if the second date later than the first, switch them
 
-				emit('update:firstDate', sDate.value);
-				emit('update:firstDatepickerOptions', sdOptions.value);
+				emit('update:firstDate', sDate.value)
+				emit('update:firstDatepickerOptions', sdOptions.value)
 
-				emit('update:secondDate', fDate.value);
-				emit('update:secondDatepickerOptions', fdOptions.value);
+				emit('update:secondDate', fDate.value)
+				emit('update:secondDatepickerOptions', fdOptions.value)
 			}
 		} else {
-			emit('update:firstDate', fDate.value);
-			emit('update:firstDatepickerOptions', fdOptions.value);
+			emit('update:firstDate', fDate.value)
+			emit('update:firstDatepickerOptions', fdOptions.value)
 		}
 
-		closeMenu();
+		closeMenu()
 	}
 
 	function cancel(closeMenu) {
-		fDate.value = props.firstDate;
-		fdOptions.value = JSON.parse(
-			JSON.stringify(props.firstDatepickerOptions)
-		);
+		fDate.value = props.firstDate
+		fdOptions.value = JSON.parse(JSON.stringify(props.firstDatepickerOptions))
 
 		if (rangeOfDates.value) {
-			sDate.value = props.secondDate;
+			sDate.value = props.secondDate
 			sdOptions.value = JSON.parse(
 				JSON.stringify(props.secondDatepickerOptions)
-			);
+			)
 		}
 
-		closeMenu();
+		closeMenu()
 	}
 
 	function init() {
-		fdOptions.value = JSON.parse(
-			JSON.stringify(props.firstDatepickerOptions)
-		);
+
+		fdOptions.value = JSON.parse(JSON.stringify(props.firstDatepickerOptions));
 
 		if (!fdOptions.value.datepickerMode) {
 			fdOptions.value.datepickerMode = 'yesterday-business';
@@ -1060,9 +953,8 @@
 		firstDateIsDisabled.value = false;
 
 		if (rangeOfDates.value) {
-			sdOptions.value = JSON.parse(
-				JSON.stringify(props.secondDatepickerOptions)
-			);
+
+			sdOptions.value = JSON.parse(JSON.stringify(props.secondDatepickerOptions));
 
 			secondDateIsDisabled.value = false;
 
@@ -1077,7 +969,10 @@
 				firstDateIsDisabled.value = true;
 				secondDateIsDisabled.value = true;
 			}
-		} else {
+
+		}
+		else {
+
 			const disableInputAndCalendar = [
 				'today',
 				'yesterday-business',
@@ -1087,22 +982,24 @@
 			if (disableInputAndCalendar) {
 				firstDateIsDisabled.value = true;
 			}
+
 		}
+
 	}
 
 	function onPopupToggle(newVal) {
-		if (newVal) {
-			// opening popup
+
+		if (newVal) { // opening popup
 			init();
 		}
 
 		menuIsOpened.value = newVal;
+
 	}
+
 </script>
 
 <style lang="scss" scoped>
-	$border-darken: #b3b3b3;
-
 	:deep(.bi_main_input) {
 		font-size: 14px;
 	}
