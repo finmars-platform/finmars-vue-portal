@@ -142,18 +142,15 @@
 	function pollTaskStatus(taskId) {
 		const intervalId = setInterval(async () => {
 			const res = await useApi('activeProcesses.get', { params: { id: taskId } });
-			if (res?._$error) {
-				useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
+			if (res && res?._$error) {
+				useNotify({ type: 'error', title: res._$error.error.message || res._$error.error.detail });
 				clearInterval(intervalId);
 			} else {
 				taskObject.value = res;
 				heightValue.value = '140';
-				if (res.status === 'D') {
+				if (['D', 'E'].includes(res.status)) {
 					clearInterval(intervalId);
-					isNotComplete.value = false;
-				}
-				if (res.status === 'E') {
-					isNotComplete.value = true;
+					isNotComplete.value = res.status === 'E';
 				}
 			}
 		}, pollingInterval);
@@ -164,8 +161,8 @@
 			const formData = new FormData();
 			formData.append('file', data[0].file);
 			const res = await useApi('configurationImport.post', { body: formData });
-			if (res?._$error) {
-				useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
+			if (res && res?._$error) {
+				useNotify({ type: 'error', title: res._$error.error.message || res._$error.error.detail });
 			} else {
 				taskObjectId.value = res.task_id;
 				pollTaskStatus(taskObjectId.value);
@@ -178,8 +175,8 @@
 	async function showDetails(obj) {
 		isDetailsLoading.value = true;
 		const res = await useApi('fileReport.get', { params: { fileId: obj.attachments[0].file_report } });
-		if (res._$error) {
-			useNotify({ type: 'error', title: res._$error.message || res._$error.detail });
+		if (res && res._$error) {
+			useNotify({ type: 'error', title: res._$error.error.message || res._$error.error.detail });
 		} else {
 			detailsEditor.value.data.content = res;
 			detailsEditor.value.data.info = obj.attachments[0];
