@@ -260,9 +260,9 @@
 				type: 'success',
 				title: 'Execute is being processed'
 			});
+			await init();
 		}
 		confirmButtonLoader.value = false;
-		await init();
 	}
 
 	async function init() {

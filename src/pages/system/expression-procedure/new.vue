@@ -97,6 +97,7 @@
 	const { realmCode, spaceCode } = getRealmSpaceCodes(route);
 
 	const confirmButtonLoader = ref(false);
+	const isCopyMode = ref(false);
 	const contextVariablesList = ref([]);
 	const expressionProcedureItem = ref({});
 	const crumbs = [
@@ -198,7 +199,11 @@
 	}
 
 	function closeItem() {
-		router.back();
+		if (isCopyMode.value) {
+			router.push(`/${realmCode}/${spaceCode}/v/system/expression-procedure`);
+		} else {
+			router.back();
+		}
 		expressionProcedureItem.value = {};
 		contextVariablesList.value = [];
 		confirmButtonLoader.value = false;
@@ -221,20 +226,28 @@
 				type: 'success',
 				title: 'Execute is being processed'
 			});
+			if (isCopyMode.value) {
+				router.push(`/${realmCode}/${spaceCode}/v/system/expression-procedure`);
+			} else {
+				router.back();
+			}
 		}
 		confirmButtonLoader.value = false;
-		router.back();
 	}
 
 	onMounted(() => {
 		const data = JSON.parse(localStorage.getItem('copedExpressionProcedureData'));
-		if (data) {
-			expressionProcedureItem.value = cloneDeep(data);
-			contextVariablesList.value = cloneDeep(data.context_variables);
-			setEditorValueDebounced('expressionEditor', cloneDeep(data.code));
-			expressionProcedureItem.value.user_code += '_copy';
-			localStorage.removeItem('copedExpressionProcedureData');
+		if (!data) {
+			isCopyMode.value = false;
+			return;
 		}
+
+		expressionProcedureItem.value = cloneDeep(data);
+		contextVariablesList.value = cloneDeep(data.context_variables);
+		setEditorValueDebounced('expressionEditor', cloneDeep(data.code));
+		expressionProcedureItem.value.user_code += '_copy';
+		localStorage.removeItem('copedExpressionProcedureData');
+		isCopyMode.value = true;
 	});
 </script>
 

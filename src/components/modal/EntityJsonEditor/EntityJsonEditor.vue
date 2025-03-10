@@ -19,7 +19,9 @@
 						class="entity-json-editor__editor"
 						@init="_onEditorInit"
 					/>
-
+					<div v-if="!isJsonValid" class="invalid-json-format">
+						Incorrect JSON !!!
+					</div>
 					<FmIconButton
 						icon="mdi-content-copy"
 						variant="text"
@@ -96,6 +98,7 @@
 
 	const { VAceEditor, onEditorInit } = useAceEditor();
 
+	const isJsonValid = ref(true);
 	const isProcessing = ref(false);
 	const aceEditor = ref();
 
@@ -109,6 +112,16 @@
 		return splittedStr.join(' ');
 	});
 
+	function validateJson() {
+		const jsonString = aceEditor?.value?.getValue();
+		try {
+			JSON.parse(jsonString);
+			isJsonValid.value = true;
+		} catch (e) {
+			isJsonValid.value = false;
+		}
+	}
+
 	function _onEditorInit(editor) {
 		editor.getSession().setMode('ace/mode/json');
 		editor.getSession().setUseWorker(false);
@@ -121,6 +134,11 @@
 		editor.focus();
 		onEditorInit(editor);
 		aceEditor.value = editor;
+
+		// Listen for editor changes
+		editor.getSession().on("change", () => {
+			validateJson();
+		});
 	}
 
 	function copyContentToClipboard() {
@@ -228,6 +246,15 @@
 	}
 
 	function convertToExport() {
+		if (!isJsonValid.value) {
+			useNotify({
+				type: "error",
+				title: "Invalid JSON. Please correct the JSON format before convert it.",
+				duration: 3000,
+			});
+			return;
+		}
+
 		const convertedData = recursiveConvert(
 			JSON.parse(aceEditor.value.getValue())
 		);
@@ -240,6 +267,15 @@
 	}
 
 	async function _downloadFile() {
+		if (!isJsonValid.value) {
+			useNotify({
+				type: "error",
+				title: "Invalid JSON. Please correct the JSON format before download it.",
+				duration: 3000,
+			});
+			return;
+		}
+
 		const data = JSON.parse(aceEditor.value.getValue());
 		const schemeName = data.name;
 		const fileName = schemeName
@@ -255,6 +291,16 @@
 	async function save() {
 		try {
 			isProcessing.value = true;
+
+			if (!isJsonValid.value) {
+				useNotify({
+					type: "error",
+					title: "Invalid JSON. Please correct the JSON format before save it.",
+					duration: 3000,
+				});
+				return;
+			}
+
 			const data = JSON.parse(aceEditor.value.getValue());
 			if (data.id) {
 				await update(props.entityType, data);
@@ -312,6 +358,17 @@
 			height: 520px;
 			padding: 24px;
 			overflow: auto;
+
+			.invalid-json-format {
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				width: 100%;
+				border-top: 3px solid var(--error-color);
+				text-align: center;
+				color: var(--error-color);
+				font-size: 14px;
+			}
 		}
 
 		&__editor {
