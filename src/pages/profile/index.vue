@@ -2,15 +2,19 @@
 	<div>
 		<Head>
 			<Title>Profile</Title>
-			<Link type="image/x-icon" rel="icon" href="/img/favicon/favicon.ico" />
+			<Link
+				type="image/png"
+				rel="icon"
+				href="/img/favicon-new-32x32.png"
+			/>
 		</Head>
 
 		<FmTabs v-model="tab" :tabs="tabs" />
 
-		<PagesProfileDatabases v-if="tab == 'Workspaces'" />
-		<PagesProfileBackups v-if="tab == 'Backups'" />
-		<PagesProfileBilling v-if="tab == 'Billing'" />
-		<PagesProfileSettings v-if="tab == 'Settings'" />
+		<PagesProfileDatabases v-if="tab === 'Workspaces'" />
+		<PagesProfileBackups v-if="tab === 'Backups'" />
+		<PagesProfileBilling v-if="tab === 'Billing'" />
+		<PagesProfileSettings v-if="tab === 'Settings'" />
 	</div>
 </template>
 
@@ -20,16 +24,16 @@
 		isHideSidebar: true,
 		bread: [
 			{
-				text: "Profile",
-				to: "/v/profile",
-				disabled: true,
-			},
-		],
-	})
+				text: 'Profile',
+				to: '/v/profile',
+				disabled: true
+			}
+		]
+	});
 
-	let route = useRoute()
+	let route = useRoute();
 
-	const tabs = ["Workspaces", "Backups", "Billing", "Settings"]
-	let tab = ref(route.query.tab || "Workspaces")
-	let error = ref(null)
+	const tabs = ['Workspaces', 'Backups', 'Billing', 'Settings'];
+	let tab = ref(route.query.tab || 'Workspaces');
+	let error = ref(null);
 </script>
