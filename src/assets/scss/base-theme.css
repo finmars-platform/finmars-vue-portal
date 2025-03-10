@@ -33,7 +33,7 @@
 	--error-color: #BA1A1A; /* NEW */
 
 
-	//# region Temporary variables. Will be deleted or changed after conversation about variables ends.
+	 /* region Temporary variables. Will be deleted or changed after conversation about variables ends.*/
 	--card-border-color: #85736E;
 	--card-background-color: #FFF1ED;
 
@@ -46,7 +46,7 @@
 	--primary-hover: rgb(152, 90, 70);
 	--secondary-hover: #f69470;
 	--scrole-color: #85736E;
-	//# endregion
+	/* endregion */
 
 	--sidebar-backgroundColor-hover: rgba(29, 27, 32, 0.08);
 	--sidebar-backgroundColor-focus: rgba(29, 27, 32, 0.12);
@@ -99,7 +99,7 @@ body.dark-mode {
 	--tableBody-backgroundColor: var(--base-backgroundColor); /* NEW */ /* table-body */
 
 
-	//# region Temporary variables. Will be deleted or changed after conversation about variables ends.
+	/* region Temporary variables. Will be deleted or changed after conversation about variables ends. */
 	--tableHeader-backgroundColor: #332b2a; /* NEW */ /* table-header */
 	--card-border-color: rgba(83, 67, 63, 1);
 	--card-background-color: #1A110F;
@@ -113,7 +113,7 @@ body.dark-mode {
 	--primary-hover: rgb(239, 169, 154);
 	--secondary-hover: #f69470;
 	--scrole-color: #85736E;
-	//# endregion
+	/* endregion */
 
 	--sidebar-backgroundColor-hover: rgba(230, 224, 233, 0.08);
 	--sidebar-backgroundColor-focus: rgba(230, 224, 233, 0.12);

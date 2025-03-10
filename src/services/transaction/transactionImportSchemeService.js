@@ -4,6 +4,10 @@ export async function getList(options = {}) {
 	return useApi('transactionImportSchemeList.get', { filters: options });
 }
 
+export async function getListLight(options = {}) {
+	return useApi('importSchemeLight.get', { filters: options });
+}
+
 export async function create(data) {
 	return useApi('transactionImportSchemeList.post', { body: data });
 }

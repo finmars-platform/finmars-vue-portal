@@ -5,16 +5,11 @@
 	>
 		<!-- IMPORTANT: for .gFiltersWrap padding should be set by styles, so that scripts can access it -->
 		<div class="gFiltersWrap" style="padding: 0px">
-
 			<div class="fm_container ev_toolbar g-filters-holder">
-
-				<div
-					class="g-filter-left-part gFiltersLeftPart"
-				>
+				<div class="g-filter-left-part gFiltersLeftPart">
 					<FmTableToolbarAddBtnRv v-if="isReport" />
 
 					<FmTableToolbarAddBtnEv v-if="!isReport" />
-
 				</div>
 
 				<div class="gFiltersContainer">
@@ -26,11 +21,11 @@
 					<FmTableFiltersEv v-if="!isReport" />
 				</div>
 
-                <div class="flex aic gFiltersRightPart">
-                    <FmTableToolbarActionsRv v-if="isReport" />
+				<div class="flex aic gFiltersRightPart">
+					<FmTableToolbarActionsRv v-if="isReport" />
 
-                    <FmTableToolbarActionsEv v-if="!isReport" />
-                </div>
+					<FmTableToolbarActionsEv v-if="!isReport" />
+				</div>
 			</div>
 			<!--			<template v-if="ready && !$scope.isReport">
 							<FmTableFiltersEv />
@@ -57,7 +52,6 @@
 					<span class="material-icons">delete</span>
 				</div>
 			</div>
-
 		</div>
 		<!-- RowsBulkActionsDirective.vue-->
 		<!--		<g-rows-bulk-actions
@@ -70,54 +64,48 @@
 </template>
 
 <script setup>
+	let { evDataService } = inject('fmTableData');
 
-let {evDataService} = inject('fmTableData');
+	const isReport = evDataService.isEntityReport();
+	const viewContext = evDataService.getViewContext();
 
-const isReport = evDataService.isEntityReport();
-const viewContext = evDataService.getViewContext();
+	const ready = ref(false);
 
-const ready = ref(false);
+	const areFiltersOpenedRef = ref(true); // inside dashboard
 
-const areFiltersOpenedRef = ref(true); // inside dashboard
-
-onMounted(() => {
-    ready.value = true;
-})
-
-const updateMissingCustomFieldsList = function (errors) {
-
-	const missingCustomFields = [];
-
-	errors.forEach(error => {
-
-		if (!missingCustomFields.find(field => field.key === error.key)) {
-			missingCustomFields.push(error);
-		}
-
+	onMounted(() => {
+		ready.value = true;
 	});
 
-	evDataService.setMissingCustomFields({forFilters: missingCustomFields});
+	const updateMissingCustomFieldsList = function (errors) {
+		const missingCustomFields = [];
 
-};
+		errors.forEach((error) => {
+			if (!missingCustomFields.find((field) => field.key === error.key)) {
+				missingCustomFields.push(error);
+			}
+		});
 
+		evDataService.setMissingCustomFields({
+			forFilters: missingCustomFields
+		});
+	};
 </script>
 
 <style lang="scss" scoped>
+	.ev_toolbar {
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		gap: 6px;
+		align-items: flex-start;
+		justify-content: space-between;
+		background: var(--base-backgroundColor);
+		padding-top: 10px;
+		padding-bottom: 10px;
+		border-bottom: 1px solid #e0e0e0;
+	}
 
-.ev_toolbar {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: 6px;
-    align-items: flex-start;
-    justify-content: space-between;
-	background: var(--base-backgroundColor);
-    padding-top: 10px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid $border;
-}
-
-.g-use-from-above-filters-hidden {
-    color: var(--primary-color);
-}
-
+	.g-use-from-above-filters-hidden {
+		color: var(--primary-color);
+	}
 </style>

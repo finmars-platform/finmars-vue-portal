@@ -4,29 +4,32 @@ import useApi from '@/composables/useApi';
 import cloneDeep from 'lodash/cloneDeep';
 
 export default function useUserCodeInput(props, emits) {
-	const userCodeFieldComponent = ref();
-
 	const isLoading = ref(false);
 	const configurationCodes = ref([]);
 
-	const editedUserCode = ref(
-		props.item ? props.item.user_code : props.userCode
-	);
+	const editedUserCode = ref('');
 
 	const configurationCode = ref(null);
 	const userCodeEnd = ref(null);
 
 	const processedContentType = computed(() => {
-		const value = props.item ? props.item.content_type : props.contentType;
+		const value = props.value.item
+			? props.value.item.content_type
+			: props.value.contentType;
 		return value || '';
 	});
 
-	const userCodeFieldComponentValid = computed(
-		() => userCodeFieldComponent.value?.isValid
-	);
+	const userCodeEndErrorMessage = computed(() => {
+		const validationResult = validateUserCodeEnd(userCodeEnd.value);
+		return typeof validationResult === 'boolean' ? '' : validationResult;
+	});
+
+	const isUserCodeEndValid = computed(() => !userCodeEndErrorMessage.value);
 
 	function parseUserCode() {
 		if (!editedUserCode.value) {
+			configurationCode.value = null;
+			userCodeEnd.value = null;
 			return;
 		}
 
@@ -84,8 +87,8 @@ export default function useUserCodeInput(props, emits) {
 			? replaceSpecialCharsAndSpaces(userCodeEnd.value).toLowerCase()
 			: '';
 
-		if (props.item) {
-			const updatedItem = cloneDeep(props.item);
+		if (props.value.item) {
+			const updatedItem = cloneDeep(props.value.item);
 			updatedItem.user_code = userCodeEnd.value
 				? assembleUserCode(userCodeEnd.value, configurationCode.value)
 				: null;
@@ -102,8 +105,8 @@ export default function useUserCodeInput(props, emits) {
 
 	async function updateUserCodeEnd(val) {
 		await nextTick(() => {
-			if (userCodeFieldComponent.value.isValid) {
-				userCodeEnd.value = val;
+			userCodeEnd.value = val;
+			if (isUserCodeEndValid.value) {
 				updateUserCode();
 			}
 		});
@@ -144,16 +147,23 @@ export default function useUserCodeInput(props, emits) {
 	});
 
 	watch(
-		() => props.userCode,
+		[() => props.value.userCode, () => props.value.item?.user_code],
 		() => {
-			editedUserCode.value = props.userCode;
-			parseUserCode();
+			const val =
+				props.value.item && props.value.item?.user_code
+					? props.value.item?.user_code
+					: props.value.userCode;
+
+			if (editedUserCode.value !== val) {
+				editedUserCode.value = val;
+				parseUserCode();
+			}
 		},
 		{ immediate: true }
 	);
 
 	watch(
-		() => userCodeFieldComponentValid.value,
+		() => isUserCodeEndValid.value,
 		(val, oldVal) => {
 			if (val !== oldVal) {
 				emits('update:valid', val);
@@ -163,14 +173,12 @@ export default function useUserCodeInput(props, emits) {
 	);
 
 	return {
-		userCodeFieldComponent,
 		isLoading,
 		editedUserCode,
 		userCodeEnd,
-
+		userCodeEndErrorMessage,
 		configurationCodes,
 		configurationCode,
-		validateUserCodeEnd,
 		updateUserCodeEnd,
 		updateConfigurationCode
 	};
