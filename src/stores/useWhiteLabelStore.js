@@ -24,7 +24,7 @@ export const useWhiteLabelStore = defineStore({
 			}
 		},
 		installTheme() {
-			if (this.themeSettings?.theme_css_url) {
+			if (this.themeSettings?.theme_css_file) {
 				this.setCssFile();
 			} else {
 				this.removeCssFile();
@@ -36,7 +36,7 @@ export const useWhiteLabelStore = defineStore({
 				this.removeCustomCss();
 			}
 
-			if (this.themeSettings?.favicon_url) {
+			if (this.themeSettings?.favicon_image) {
 				this.setFavicon();
 			} else {
 				this.removeFavicon();
@@ -72,7 +72,7 @@ export const useWhiteLabelStore = defineStore({
 				document.head.appendChild(link);
 			}
 
-			link.href = this.themeSettings.favicon_url;
+			link.href = this.themeSettings.favicon_image;
 		},
 		removeFavicon() {
 			let link = document.querySelector("link[rel~='icon']");
@@ -90,12 +90,12 @@ export const useWhiteLabelStore = defineStore({
 			let existingLink = document.getElementById('custom-theme-css');
 
 			if (existingLink) {
-				existingLink.href = this.themeSettings.theme_css_url;
+				existingLink.href = this.themeSettings.theme_css_file;
 			} else {
 				let link = document.createElement('link');
 				link.rel = 'stylesheet';
 				link.id = 'custom-theme-css';
-				link.href = this.themeSettings.theme_css_url;
+				link.href = this.themeSettings.theme_css_file;
 				document.head.appendChild(link);
 			}
 		},
