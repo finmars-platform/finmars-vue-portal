@@ -795,7 +795,10 @@ export default {
 		get: prefix + '/strategies/3/subgroup/'
 	},
 	defaultSettings: {
-		put: prefix + '/users/ecosystem-default/{id}/'
+		get: prefix + '/users/ecosystem-default/{id}/',
+		post: prefix + '/users/ecosystem-default/',
+		put: prefix + '/users/ecosystem-default/{id}/',
+		delete: prefix + '/users/ecosystem-default/{id}/'
 	},
 	/*complexTransactionUserField: {
 		get: prefix + '/ui/complex-transaction-user-field/',

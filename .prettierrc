@@ -1,7 +1,19 @@
 {
 	"semi": true,
-	"printWidth": 80,
+	"printWidth": 100,
 	"singleQuote": true,
 	"vueIndentScriptAndStyle": true,
-	"trailingComma": "none"
+	"trailingComma": "none",
+	"overrides": [
+		{
+			"files": [
+				"*.js",
+				"*.ts",
+				"*.vue"
+			],
+			"options": {
+				"tabWidth": 2
+			}
+		}
+	]
 }

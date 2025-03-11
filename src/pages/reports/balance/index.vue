@@ -3,7 +3,6 @@
 		<ReportHeader
 			:entity-type="entityType"
 			:content-type="contentType"
-			:layouts="layouts"
 			:disabled="isLoading"
 			@set:layout="(ev) => console.log('SET LAYOUT AS DEFAULT: ', ev)"
 			@select:layout="(ev) => console.log('SELECT LAYOUT', ev)"
@@ -20,7 +19,7 @@
 <script setup>
 	import { onBeforeMount, ref } from 'vue';
 	import { FmProgressCircular } from '@finmars/ui';
-	import { getListLayout } from '~/services/uiService';
+	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
 	import ReportHeader from '~/components/pages/reports/common/ReportHeader/ReportHeader.vue';
 
 	definePageMeta({
@@ -34,20 +33,20 @@
 		]
 	});
 
+	const { getLayouts, getCurrencies, prepareReportLayoutOptions } = useBalanceReportStore();
+
 	const entityType = 'balance-report';
 	const contentType = 'reports.balancereport';
 	const isLoading = ref(false);
-	const layouts = ref([]);
-
-	async function getLayouts() {
-		const res = await getListLayout(entityType, { pageSize: 1000 });
-		layouts.value = res.results;
-	}
 
 	onBeforeMount(async () => {
+		console.log('=== ON BEFORE MOUNT ===');
 		try {
 			isLoading.value = true;
-			await getLayouts();
+			await getLayouts(entityType);
+			await getCurrencies();
+
+			prepareReportLayoutOptions();
 		} finally {
 			isLoading.value = false;
 		}
@@ -75,6 +74,21 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
+		}
+	}
+</style>
+
+<style lang="scss">
+	.v-overlay-container {
+		.v-overlay,
+		.v-overlay.v-menu {
+			.v-overlay__content {
+				border-radius: 4px !important;
+
+				& > div {
+					border-radius: 4px !important;
+				}
+			}
 		}
 	}
 </style>
