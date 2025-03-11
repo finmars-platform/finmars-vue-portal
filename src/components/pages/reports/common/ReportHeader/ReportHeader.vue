@@ -3,7 +3,7 @@
 		<div class="report-header__row">
 			<div class="report-header__block">
 				<FmButton type="secondary" rounded append-icon="mdi-menu-down">
-					{{ currentLayout?.name }}
+					{{ defaultLayout?.name }}
 
 					<FmMenu
 						v-model="isLayoutSelectMenuOpen"
@@ -19,20 +19,20 @@
 									:id="`${layout.id}`"
 									:key="layout.id"
 									item-size="medium"
-									:item-selected="layout.id === currentLayout?.id"
+									:item-selected="layout.id === defaultLayout.id"
 								>
 									<div class="report-header__menu-layouts-item">
 										<FmIcon
 											icon="mdi-home"
 											:color="
-												layout.id === currentLayout?.id
+												layout.id === defaultLayout?.id
 													? 'var(--primary)'
 													: 'var(--outline-variant)'
 											"
-											@click="onLayoutsMenuItemClick('layout:set-default', layout)"
+											@click="onLayoutsMenuItemClick('set:layout', layout)"
 										/>
 
-										<span @click="onLayoutsMenuItemClick('layout:select', layout)">
+										<span @click="onLayoutsMenuItemClick('select:layout', layout)">
 											{{ layout.name }}
 										</span>
 									</div>
@@ -66,7 +66,7 @@
 
 			<div class="report-header__block">
 				<FmSelect
-					:model-value="data?.reportOptions.cost_method"
+					:model-value="data.reportOptions.cost_method"
 					:options="REPORT_OPTIONS"
 					placeholder="Select cost method"
 					variant="outlined"
@@ -127,7 +127,7 @@
 				/>
 
 				<div class="report-header__checkbox">
-					<FmCheckbox :model-value="data?.reportLayoutOptions.useDateFromAbove" label="Link date" />
+					<FmCheckbox v-model="data.reportLayoutOptions.useDateFromAbove" label="Link date" />
 				</div>
 
 				<FmButton type="secondary" rounded prepend-icon="mdi-autorenew">Synced</FmButton>
@@ -144,10 +144,9 @@
 			<div class="report-header__filters">
 				<FmFilterToolbar
 					class="report-header__filters-toolbar"
-					:value="data?.filters || []"
+					:value="[]"
 					:attributes="[]"
 					:suggested-attrs="[]"
-					:get-filter-options="getFilterOptions"
 					@update:model-value="(ev) => console.log('UPDATE FILTERS')"
 				/>
 			</div>
@@ -160,6 +159,7 @@
 <script setup>
 	import { computed, ref } from 'vue';
 	import { storeToRefs } from 'pinia';
+	import dayjs from 'dayjs';
 	import {
 		FmButton,
 		FmCheckbox,
@@ -172,10 +172,7 @@
 		FmSelect
 	} from '@finmars/ui';
 	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
-	import { useAttributes } from '~/stores/useAttributes';
-	import { getValuesForSelect } from '~/services/specificDataService';
-	import { REPORT_DATA_PROPERTIES } from '../constants';
-	import { MAIN_MENU, REPORT_OPTIONS } from './constants';
+	import { MAIN_MENU, REPORT_OPTIONS, REPORT_DATA_PROPERTIES } from './constants';
 
 	const props = defineProps({
 		entityType: {
@@ -190,52 +187,27 @@
 	});
 	const emits = defineEmits(['select:layout', 'set:layout']);
 
-	const attributesStore = useAttributes();
-	const { getAllAttributesByEntityType } = attributesStore;
-
 	const balanceReportStore = useBalanceReportStore();
-	const { layouts, currentLayout, currencies, currentCurrency } = storeToRefs(balanceReportStore);
+	const { data, layouts, currencies, currentCurrency } = storeToRefs(balanceReportStore);
 
 	const [dateFromKey, dateToKey] = REPORT_DATA_PROPERTIES[props.entityType];
-
-	const data = computed(() => currentLayout.value?.data);
 
 	const isLayoutSelectMenuOpen = ref(false);
 	const isMainMenuOpen = ref(false);
 	const isDateFromMenuOpen = ref(false);
 	const isDateToMenuOpen = ref(false);
+	const syncedTime = ref(dayjs());
 
-	const datesDateTo = computed(() => data.value?.reportOptions[dateToKey]);
+	const defaultLayout = computed(() => (layouts.value || []).find((l) => l.is_default));
+
+	const datesDateTo = computed(() => data.value.reportOptions[dateToKey]);
 	const datesDateFrom = computed(() =>
-		dateFromKey ? data.value?.reportOptions[dateFromKey] : null
+		dateFromKey ? data.value.reportOptions[dateFromKey] : null
 	);
 
 	function onLayoutsMenuItemClick(eventName, payload) {
 		emits(eventName, payload);
 		isLayoutSelectMenuOpen.value = false;
-	}
-
-	async function getFilterOptions(filter) {
-		const attrsList = getAllAttributesByEntityType(props.entityType);
-		const filterAttr = (attrsList || []).find((attr) => attr.key === filter.key);
-
-		let key = filter.key;
-
-		const content_type = key.startsWith('custom_fields.')
-			? props.contentType
-			: filterAttr.content_type;
-
-		if (!key.includes('attributes.')) {
-			const keyParts = key.split('.');
-			key = keyParts.at(-1);
-		}
-
-		const res = await getValuesForSelect(content_type, key, filter.value_type, {
-			...(data.value.reportOptions?.report_instance_id && {
-				report_instance_id: data.value.reportOptions?.report_instance_id
-			})
-		});
-		return (res?.results || []).map((item) => ({ title: item, value: item }));
 	}
 </script>
 
@@ -321,9 +293,6 @@
 			width: calc(100% - 32px);
 			height: 100%;
 			margin-left: -16px;
-			display: flex;
-			justify-content: stretch;
-			align-items: center;
 
 			&-toolbar {
 				--fmFilterToolbar-background-color: transparent;
