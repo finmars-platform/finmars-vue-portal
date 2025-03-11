@@ -12,6 +12,7 @@
 								v-model="dateRange.date_from"
 								@update:model-value="setDatesDebounce('from', $event)"
 								label="Start date"
+								clearable
 								outlined
 							></FmTextField>
 						</template>
@@ -29,6 +30,7 @@
 								v-model="dateRange.date_to"
 								@update:model-value="setDatesDebounce('to', $event)"
 								label="End date"
+								clearable
 								outlined
 							></FmTextField>
 						</template>
@@ -45,28 +47,25 @@
 			<div class="flex flex-col gap-4">
 				<span><i class="font-bold whitespace-nowrap">Portfolio Reconcile Group:</i></span>
 				<div class="grid grid-cols-1 mb-4">
-					<FmSelect
+					<FmSearch
 						v-model="portfoliosGroupToReconcile"
-						:options="portfoliosGroupOptions"
-						label="Select Groups"
-						variant="outlined"
-						item-size="small"
-						clearable
+						:items="portfoliosGroupOptions"
+						placeholder="Select Groups"
+						closable-chips
 						multiple
-						chip
+						chips
 					/>
 				</div>
 			</div>
 		</div>
 		<div class="flex flex-col gap-4 dates-wrapper">
-
 			<div v-if="isLoading" class="w-full min-h-40 flex items-center justify-center">
 				<FmProgressCircular :size="34" indeterminate />
 			</div>
 			<div v-else-if="!datesToReconcile.length">
-        <span class="w-full min-h-64 flex items-center justify-center">
-          No data available!
-        </span>
+				<span class="w-full min-h-64 flex items-center justify-center">
+				  No data available!
+				</span>
 			</div>
 			<div v-else class="my-4">
 				<span><i class="font-bold">Dates to Reconcile:</i></span>
@@ -80,7 +79,7 @@
 							<div class="year-column">
 								<span class="font-bold text-xl block pb-2">{{ year }}</span> <!-- Year Title -->
 								<div v-for="(dates, month) in months" :key="month" class="pb-4">
-									<span class="font-bold text-lg pb-2 block">{{ month }}</span> <!-- Month Title -->
+									<span class="font-bold text-lg block pb-2">{{ month }}</span> <!-- Month Title -->
 									<div v-for="(date, index) in dates" :key="index" class="pb-2">
 										<span><i class="font-bold pr-2">{{ index + 1 }}.</i> {{ date }}</span>
 									</div>
@@ -133,7 +132,7 @@
 </template>
 
 <script setup>
-	import { FmDatePicker, FmSelect, FmButton, FmTextField } from '@finmars/ui';
+	import { FmDatePicker, FmSearch, FmButton, FmTextField } from '@finmars/ui';
 	import dayjs from 'dayjs';
 	import { debounce } from 'lodash';
 
@@ -167,7 +166,10 @@
 	});
 
 	const updateDates = (field, data) => {
-		const isValidDate = (date) => dayjs(date, 'YYYY-MM-DD', true).isValid();
+		const isValidDate = (date) => {
+			const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+			return dateRegex.test(date) && dayjs(date, 'YYYY-MM-DD', true).isValid();
+		};
 
 		switch (field) {
 			case 'from':
@@ -179,17 +181,25 @@
 		}
 
 		if (!dateRange.value.date_from || !dateRange.value.date_to) {
-			useNotify({ type: 'warning', title: 'Select date range !!!' });
+			useNotify({ type: 'warning', title: 'Select date range !!!', duration: 4000 });
 			return;
 		}
 
 		if (!isValidDate(dateRange.value.date_from) || !isValidDate(dateRange.value.date_to)) {
-			useNotify({ type: 'warning', title: 'Invalid date format. Please use \'YYYY-MM-DD\' format.' });
+			useNotify({
+				type: 'warning',
+				title: 'Invalid date format. Please use \'YYYY-MM-DD\' format.',
+				duration: 5000
+			});
 			return;
 		}
 
 		if (dateRange.value.date_from > dateRange.value.date_to) {
-			useNotify({ type: 'warning', title: '\"Start\" date can\'t be greater than \"End\" date.' });
+			useNotify({
+				type: 'warning',
+				title: '\"Start\" date can\'t be greater than \"End\" date.',
+				duration: 5000
+			});
 			return;
 		}
 
@@ -211,7 +221,7 @@
 				cancel();
 			}, 4000)
 		}
-	}
+	};
 
 	async function reconcile() {
 		reconcileBtnLoader.value = true;
