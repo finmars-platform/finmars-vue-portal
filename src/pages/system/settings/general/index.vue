@@ -5,7 +5,7 @@
 		<div class="list">
 			<div v-for="item in items" :key="item.id" class="item">
 				<b class="name">
-					{{ item.name || 'Unknown' }}
+					{{ item.company_name || 'Unknown' }}
 				</b>
 				<NuxtLink
 					:to="
@@ -82,7 +82,7 @@
 
 			useNotify({
 				type: 'success',
-				title: `White label "${item.name}" was deleted.`
+				title: `White label "${item.company_name}" was deleted.`
 			})
 
 			await getWhiteLabel()
@@ -106,7 +106,7 @@
 	async function confirmRemove(item) {
 		const isConfirm = await useConfirm({
 			title: 'Delete white label',
-			text: `Do you want to delete a white label "${item.name}"?`
+			text: `Do you want to delete a white label "${item.company_name}"?`
 		})
 
 		if (!isConfirm) return false
