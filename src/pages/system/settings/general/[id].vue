@@ -1,18 +1,18 @@
 <template>
 	<div class="general-id">
 		<FmBreadcrumbs :items="breadcrumbsItems" />
-		<h1 class="title">Edit {{ item?.company_name || 'White label' }}</h1>
+		<h1 class="title">Edit {{ item?.name || 'White label' }}</h1>
 		<SystemSettingsGeneralForm
 			v-if="item"
 			:id="item.id"
 			:custom_css="item.custom_css"
-			:favicon_url="item.favicon_url"
-			:company_name="item.company_name"
+			:favicon_image="item.favicon_image"
+			:name="item.name"
 			:is_default="item.is_default"
-			:logo_dark_url="item.logo_dark_url"
-			:logo_light_url="item.logo_light_url"
-			:theme_code="item.theme_code"
-			:theme_css_url="item.theme_css_url"
+			:logo_dark_image="item.logo_dark_image"
+			:logo_light_image="item.logo_light_image"
+			:configuration_code="item.configuration_code"
+			:theme_css_file="item.theme_css_file"
 		/>
 	</div>
 </template>
@@ -41,7 +41,7 @@
 				to: useGetNuxtLink(`/system/settings/general`, route.params),
 				disabled: false
 			},
-			{ text: item.value?.company_name, to: '', disabled: true }
+			{ text: item.value?.name, to: '', disabled: true }
 		]
 	})
 
