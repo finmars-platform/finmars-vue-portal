@@ -37,9 +37,9 @@
 	const logoPath = computed(() => {
 		switch (toggleIsDark.value) {
 			case true:
-				return themeSettings.value?.logo_dark_image || undefined;
+				return themeSettings.value?.logo_dark_url || undefined;
 			default:
-				return themeSettings.value?.logo_light_image || undefined;
+				return themeSettings.value?.logo_light_url || undefined;
 		}
 	});
 
