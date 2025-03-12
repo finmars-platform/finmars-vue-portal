@@ -23,7 +23,7 @@
 	const store = useStore();
 	const config = useRuntimeConfig();
 	const apiUrl = config.public.apiURL;
-	const { themeSettings } = storeToRefs(useWhiteLabelStore());
+	const { themeSettings, getPrefixPath } = storeToRefs(useWhiteLabelStore());
 
 	const noti = ref(null);
 	const toggleIsDark = ref(store?.user?.data?.dark_mode);
@@ -37,9 +37,13 @@
 	const logoPath = computed(() => {
 		switch (toggleIsDark.value) {
 			case true:
-				return themeSettings.value?.logo_dark_url || undefined;
+				return themeSettings.value?.logo_dark_url
+					? getPrefixPath.value + themeSettings.value?.logo_dark_url
+					: undefined;
 			default:
-				return themeSettings.value?.logo_light_url || undefined;
+				return themeSettings.value?.logo_light_url
+					? getPrefixPath.value + themeSettings.value?.logo_light_url
+					: undefined;
 		}
 	});
 
