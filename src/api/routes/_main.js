@@ -496,6 +496,9 @@ export default {
 		put: prefix + '/ui/instrument-user-field/{id}/',
 		post: prefix + '/ui/instrument-user-field/'
 	},
+	instrumentUserFieldPrimaryList: {
+		get: prefix + '/ui/instrument-user-field/primary/'
+	},
 
 	listLayoutList: {
 		get: prefix + '/ui/list-layout/'
@@ -513,8 +516,7 @@ export default {
 		get: prefix + '/ui/list-layout/{id}/ping'
 	},
 	defaultListLayout: {
-		get:
-			prefix + '/ui/list-layout/?is_default=2&content_type={content_type}'
+		get: prefix + '/ui/list-layout/?is_default=2&content_type={content_type}'
 	},
 	ecosystemDefaults: {
 		get: prefix + '/users/ecosystem-default/'
@@ -539,9 +541,7 @@ export default {
 		delete: prefix + '/portfolios/portfolio-bundle/{id}/'
 	},
 	performanceFirstTransaction: {
-		get:
-			prefix +
-			'/reports/performance-report/first-transaction-date/?bundle={id}'
+		get: prefix + '/reports/performance-report/first-transaction-date/?bundle={id}'
 	},
 	interfaceAccess: {
 		get: prefix + '/ui/portal-interface-access/'
@@ -556,9 +556,7 @@ export default {
 		get: prefix + '/configuration/new-member-setup-configuration/{id}/'
 	},
 	installNewMemberSetupConfig: {
-		put:
-			prefix +
-			'/configuration/new-member-setup-configuration/{id}/install/'
+		put: prefix + '/configuration/new-member-setup-configuration/{id}/install/'
 	},
 	unifiedData: {
 		get: prefix + '/data/{type}/'
@@ -576,9 +574,7 @@ export default {
 		get: prefix + '/configuration-sharing/my-invites/'
 	},
 	configurationJson: {
-		put:
-			prefix +
-			'/configuration/new-member-setup-configuration/{id}/install/'
+		put: prefix + '/configuration/new-member-setup-configuration/{id}/install/'
 	},
 	getTask: {
 		get: prefix + '/tasks/task/{id}/'
@@ -860,9 +856,7 @@ export default {
 		get: 'https://marketplace.finmars.com/api/v1/configuration-release/'
 	},
 	marketplaceInstall: {
-		post:
-			prefix +
-			'/configuration/configuration/install-configuration-from-marketplace/'
+		post: prefix + '/configuration/configuration/install-configuration-from-marketplace/'
 	},
 	taskCard: {
 		get: prefix + '/tasks/task/{taskId}/'
@@ -949,9 +943,7 @@ export default {
 		get: prefix + '/configuration/configuration/{id}/export-configuration/'
 	},
 	pushConfigurationToMarketplace: {
-		put:
-			prefix +
-			'/configuration/configuration/{id}/push-configuration-to-marketplace/'
+		put: prefix + '/configuration/configuration/{id}/push-configuration-to-marketplace/'
 	},
 	setConfiguration: {
 		put: prefix + '/configuration/configuration/{id}/',

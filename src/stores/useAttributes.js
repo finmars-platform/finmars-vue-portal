@@ -60,28 +60,19 @@ import {
 	findContentTypeByEntity,
 	findEntityByContentType
 } from '~/services/meta/metaContentTypeService';
+import { getInstrumentFieldPrimaryList } from '~/services/uiService';
 import { T_TYPE_USER_FIELDS } from '~/constants/attributeData';
 
 export const useAttributes = defineStore('attributes', () => {
-	const reportsEntityTypes = [
-		'balance-report',
-		'pl-report',
-		'transaction-report'
-	];
+	const reportsEntityTypes = ['balance-report', 'pl-report', 'transaction-report'];
 	const entityAttributesData = ref({
 		portfolio: cloneDeep(portfolioAttributes),
 		'portfolio-type': cloneDeep(portfolioTypeAttributes),
-		'portfolio-reconcile-group': cloneDeep(
-			portfolioReconcileGroupAttributes
-		),
+		'portfolio-reconcile-group': cloneDeep(portfolioReconcileGroupAttributes),
 		'portfolio-register': cloneDeep(portfolioRegisterAttributes),
-		'portfolio-register-record': cloneDeep(
-			portfolioRegisterRecordAttributes
-		),
+		'portfolio-register-record': cloneDeep(portfolioRegisterRecordAttributes),
 		'portfolio-history': cloneDeep(portfolioHistoryAttributes),
-		'portfolio-reconcile-history': cloneDeep(
-			portfolioReconcileHistoryAttributes
-		),
+		'portfolio-reconcile-history': cloneDeep(portfolioReconcileHistoryAttributes),
 		'audit-transaction': cloneDeep(auditTransactionAttributes),
 		'audit-instrument': cloneDeep(auditInstrumentAttributes),
 		account: cloneDeep(accountAttributes),
@@ -113,28 +104,20 @@ export const useAttributes = defineStore('attributes', () => {
 		'complex-transaction': cloneDeep(complexTransactionAttributes),
 		'instrument-scheme': cloneDeep(instrumentSchemeAttributes),
 		'balance-report': cloneDeep(balanceReportAttributes),
-		'balance-report-performance': cloneDeep(
-			reportAddonPerformanceAttributes
-		),
+		'balance-report-performance': cloneDeep(reportAddonPerformanceAttributes),
 		'balance-report-mismatch': cloneDeep(reportMismatchAttributes),
 		'pl-report': cloneDeep(pnlReportAttributes),
 		'pl-report-performance': cloneDeep(reportAddonPerformancePnlAttributes),
 		'pl-report-mismatch': cloneDeep(reportMismatchPnlAttributes),
 		'transaction-report': cloneDeep(transactionReportAttributes),
-		'cash-flow-projection-report': cloneDeep(
-			cashFlowProjectionReportAttributes
-		),
+		'cash-flow-projection-report': cloneDeep(cashFlowProjectionReportAttributes),
 		'performance-report': cloneDeep(performanceReportAttributes),
 		'currency-history-error': cloneDeep(currencyHistoryErrorAttributes),
 		'price-history-error': cloneDeep(priceHistoryErrorAttributes),
 		'transaction-class': cloneDeep(transactionClassAttributes),
-		'complex-transaction-status': cloneDeep(
-			complextransactionStatusAttributes
-		),
+		'complex-transaction-status': cloneDeep(complextransactionStatusAttributes),
 		country: cloneDeep(countryAttributes),
-		'complex-transaction-import-scheme': cloneDeep(
-			complexTransactionImportSchemeAttributes
-		),
+		'complex-transaction-import-scheme': cloneDeep(complexTransactionImportSchemeAttributes),
 		'csv-import-scheme': cloneDeep(csvImportSchemeAttributes)
 	});
 	const customFieldsData = ref({});
@@ -153,8 +136,14 @@ export const useAttributes = defineStore('attributes', () => {
 
 	async function downloadDynamicAttributesByEntityType(entityType) {
 		const data = await getAttributeTypeList(entityType, { pageSize: 1000 });
-		dynamicAttributesData.value[entityType] = data.results || [];
+		dynamicAttributesData.value[entityType] = data?.results || [];
 		return data.results || [];
+	}
+
+	async function downloadInstrumentUserFields() {
+		const data = await getInstrumentFieldPrimaryList({ pageSize: 1000 });
+		instrumentUserFieldsData.value = data?.results || [];
+		return instrumentUserFieldsData.value;
 	}
 
 	function appendEntityAttribute(entityType, field) {
@@ -194,16 +183,14 @@ export const useAttributes = defineStore('attributes', () => {
 
 		const dynamicAttrs = !dynamicAttributesData.value[entityType]
 			? []
-			: cloneDeep(dynamicAttributesData.value[entityType]).map(
-					(attr) => ({
-						attribute_type: attr,
-						value_type: attr.value_type,
-						content_type: contentType,
-						key: `attributes.${attr.user_code}`,
-						name: attr.name
-					})
-				);
-		console.log('---------> ', [...entityAttrs, ...dynamicAttrs]);
+			: cloneDeep(dynamicAttributesData.value[entityType]).map((attr) => ({
+					attribute_type: attr,
+					value_type: attr.value_type,
+					content_type: contentType,
+					key: `attributes.${attr.user_code}`,
+					name: attr.name
+				}));
+
 		return [...entityAttrs, ...dynamicAttrs];
 	}
 
@@ -269,12 +256,9 @@ export const useAttributes = defineStore('attributes', () => {
 			{ maxDepth: 1 }
 		);
 
-		const accountAttrs = getAllAttributesAsFlatList(
-			'accounts.account',
-			'account',
-			'Account',
-			{ maxDepth: 1 }
-		);
+		const accountAttrs = getAllAttributesAsFlatList('accounts.account', 'account', 'Account', {
+			maxDepth: 1
+		});
 
 		const portfolioAttrs = getAllAttributesAsFlatList(
 			'portfolios.portfolio',
@@ -304,12 +288,9 @@ export const useAttributes = defineStore('attributes', () => {
 			{ maxDepth: 1 }
 		);
 
-		const balanceAttrs = getAllAttributesAsFlatList(
-			'reports.balancereport',
-			'',
-			'Balance',
-			{ maxDepth: 1 }
-		).filter((bAttr) => {
+		const balanceAttrs = getAllAttributesAsFlatList('reports.balancereport', '', 'Balance', {
+			maxDepth: 1
+		}).filter((bAttr) => {
 			const cAttr = currencyAttrs.find((a) => a.key === bAttr.key);
 			return !cAttr;
 		});
@@ -323,16 +304,11 @@ export const useAttributes = defineStore('attributes', () => {
 					name: `Custom Field. ${ci.name}`
 				}));
 
-		const portfolioDynamicAttrs =
-			cloneDeep(dynamicAttributesData.value.portfolio) || [];
-		const accountDynamicAttrs =
-			cloneDeep(dynamicAttributesData.value.account) || [];
-		const instrumentDynamicAttrs =
-			cloneDeep(dynamicAttributesData.value.instrument) || [];
-		const allocationDynamicAttrs =
-			cloneDeep(dynamicAttributesData.value.instrument) || [];
-		const linkedInstrumentDynamicAttrs =
-			cloneDeep(dynamicAttributesData.value.instrument) || [];
+		const portfolioDynamicAttrs = cloneDeep(dynamicAttributesData.value.portfolio) || [];
+		const accountDynamicAttrs = cloneDeep(dynamicAttributesData.value.account) || [];
+		const instrumentDynamicAttrs = cloneDeep(dynamicAttributesData.value.instrument) || [];
+		const allocationDynamicAttrs = cloneDeep(dynamicAttributesData.value.instrument) || [];
+		const linkedInstrumentDynamicAttrs = cloneDeep(dynamicAttributesData.value.instrument) || [];
 
 		const portfolioDynamicAttrsFormatted = formatAttributeTypes(
 			portfolioDynamicAttrs,
@@ -397,12 +373,9 @@ export const useAttributes = defineStore('attributes', () => {
 	function _getPlReportAttributes() {
 		let result = [];
 
-		const balanceAttrs = getAllAttributesAsFlatList(
-			'reports.plreport',
-			'',
-			'Balance',
-			{ maxDepth: 1 }
-		);
+		const balanceAttrs = getAllAttributesAsFlatList('reports.plreport', '', 'Balance', {
+			maxDepth: 1
+		});
 
 		const balanceMismatchAttrs = getAllAttributesAsFlatList(
 			'reports.plreportmismatch',
@@ -457,12 +430,9 @@ export const useAttributes = defineStore('attributes', () => {
 			'Allocation. '
 		);
 
-		const accountAttrs = getAllAttributesAsFlatList(
-			'accounts.account',
-			'account',
-			'Account',
-			{ maxDepth: 1 }
-		);
+		const accountAttrs = getAllAttributesAsFlatList('accounts.account', 'account', 'Account', {
+			maxDepth: 1
+		});
 
 		const portfolioAttrs = getAllAttributesAsFlatList(
 			'portfolios.portfolio',
@@ -515,16 +485,11 @@ export const useAttributes = defineStore('attributes', () => {
 					name: `Custom Field. ${ci.name}`
 				}));
 
-		const portfolioDynamicAttrs =
-			cloneDeep(dynamicAttributesData.value.portfolio) || [];
-		const accountDynamicAttrs =
-			cloneDeep(dynamicAttributesData.value.account) || [];
-		const instrumentDynamicAttrs =
-			cloneDeep(dynamicAttributesData.value.instrument) || [];
-		const allocationDynamicAttrs =
-			cloneDeep(dynamicAttributesData.value.instrument) || [];
-		const linkedInstrumentDynamicAttrs =
-			cloneDeep(dynamicAttributesData.value.instrument) || [];
+		const portfolioDynamicAttrs = cloneDeep(dynamicAttributesData.value.portfolio) || [];
+		const accountDynamicAttrs = cloneDeep(dynamicAttributesData.value.account) || [];
+		const instrumentDynamicAttrs = cloneDeep(dynamicAttributesData.value.instrument) || [];
+		const allocationDynamicAttrs = cloneDeep(dynamicAttributesData.value.instrument) || [];
+		const linkedInstrumentDynamicAttrs = cloneDeep(dynamicAttributesData.value.instrument) || [];
 
 		const portfolioDynamicAttrsFormatted = formatAttributeTypes(
 			portfolioDynamicAttrs,
@@ -588,10 +553,9 @@ export const useAttributes = defineStore('attributes', () => {
 			'Complex Transaction',
 			{ maxDepth: 1 }
 		);
-		const complexTransactionAttrsDataFiltered =
-			complexTransactionAttrsData.filter(
-				(attr) => !T_TYPE_USER_FIELDS.includes(attr.key)
-			);
+		const complexTransactionAttrsDataFiltered = complexTransactionAttrsData.filter(
+			(attr) => !T_TYPE_USER_FIELDS.includes(attr.key)
+		);
 		const complexTransactionAttrs = applyAliasesToAttrs(
 			complexTransactionAttrsDataFiltered,
 			'transactions.complextransaction',
@@ -751,40 +715,28 @@ export const useAttributes = defineStore('attributes', () => {
 
 		const custom = !customFieldsData.value['transaction-report']
 			? []
-			: cloneDeep(customFieldsData.value['transaction-report']).map(
-					(ci) => ({
-						...ci,
-						custom_field: ci,
-						key: `custom_fields.${ci.user_code}`,
-						name: `Custom Field. ${ci.name}`
-					})
-				);
+			: cloneDeep(customFieldsData.value['transaction-report']).map((ci) => ({
+					...ci,
+					custom_field: ci,
+					key: `custom_fields.${ci.user_code}`,
+					name: `Custom Field. ${ci.name}`
+				}));
 
-		const portfolioDynamicAttrs =
-			cloneDeep(dynamicAttributesData.value.portfolio) || [];
+		const portfolioDynamicAttrs = cloneDeep(dynamicAttributesData.value.portfolio) || [];
 		const complexTransactionDynamicAttrs =
 			cloneDeep(dynamicAttributesData.value['complex-transaction']) || [];
 		const transactionTypeDynamicAttrs =
 			cloneDeep(dynamicAttributesData.value['transaction-type']) || [];
-		const responsibleDynamicAttrs =
-			cloneDeep(dynamicAttributesData.value.responsible) || [];
-		const counterpartyDynamicAttrs =
-			cloneDeep(dynamicAttributesData.value.counterparty) || [];
-		const instrumentDynamicAttrs =
-			cloneDeep(dynamicAttributesData.value.instrument) || [];
-		const linkedInstrumentDynamicAttrs =
-			cloneDeep(dynamicAttributesData.value.instrument) || [];
-		const allocationBalanceDynamicAttrs =
-			cloneDeep(dynamicAttributesData.value.instrument) || [];
-		const allocationPlDnymaicAttrs =
-			cloneDeep(dynamicAttributesData.value.instrument) || [];
+		const responsibleDynamicAttrs = cloneDeep(dynamicAttributesData.value.responsible) || [];
+		const counterpartyDynamicAttrs = cloneDeep(dynamicAttributesData.value.counterparty) || [];
+		const instrumentDynamicAttrs = cloneDeep(dynamicAttributesData.value.instrument) || [];
+		const linkedInstrumentDynamicAttrs = cloneDeep(dynamicAttributesData.value.instrument) || [];
+		const allocationBalanceDynamicAttrs = cloneDeep(dynamicAttributesData.value.instrument) || [];
+		const allocationPlDnymaicAttrs = cloneDeep(dynamicAttributesData.value.instrument) || [];
 
-		const accountPositionDynamicAttrs =
-			cloneDeep(dynamicAttributesData.value.account) || [];
-		const accountCashDynamicAttrs =
-			cloneDeep(dynamicAttributesData.value.account) || [];
-		const accountInterimDynamicAttrs =
-			cloneDeep(dynamicAttributesData.value.account) || [];
+		const accountPositionDynamicAttrs = cloneDeep(dynamicAttributesData.value.account) || [];
+		const accountCashDynamicAttrs = cloneDeep(dynamicAttributesData.value.account) || [];
+		const accountInterimDynamicAttrs = cloneDeep(dynamicAttributesData.value.account) || [];
 
 		const portfolioDynamicAttrsFormatted = formatAttributeTypes(
 			portfolioDynamicAttrs,
@@ -896,26 +848,14 @@ export const useAttributes = defineStore('attributes', () => {
 		];
 	}
 
-	function getAllAttributesAsFlatList(
-		rootContentType,
-		rootKey,
-		rootName,
-		options
-	) {
+	function getAllAttributesAsFlatList(rootContentType, rootKey, rootName, options) {
 		const _options = {
 			maxDepth: 1,
 			...options
 		};
 
 		const result = [];
-		_getAttributesRecursive(
-			result,
-			0,
-			rootContentType,
-			rootKey,
-			rootName,
-			_options
-		);
+		_getAttributesRecursive(result, 0, rootContentType, rootKey, rootName, _options);
 
 		return result;
 	}
@@ -932,9 +872,7 @@ export const useAttributes = defineStore('attributes', () => {
 		const attributes = getEntityAttributesByEntityType(entityType);
 
 		if (!attributes) {
-			console.warn(
-				`Can't find attributes for content type: ${contentType}`
-			);
+			console.warn(`Can't find attributes for content type: ${contentType}`);
 			return;
 		}
 
@@ -942,20 +880,11 @@ export const useAttributes = defineStore('attributes', () => {
 		let name;
 		let resultAttr;
 		attributes.forEach((attribute) => {
-			const {
-				name: attrName,
-				key: attrKey,
-				value_type,
-				code
-			} = attribute;
+			const { name: attrName, key: attrKey, value_type, code } = attribute;
 
 			name = `${parentName}. ${attrName}`;
 			key = parentKey ? `${parentKey}.${attrKey}` : attrKey;
-			if (
-				value_type === 'field' &&
-				code === 'user_code' &&
-				currentLevel < options.maxDepth
-			) {
+			if (value_type === 'field' && code === 'user_code' && currentLevel < options.maxDepth) {
 				_getAttributesRecursive(
 					result,
 					currentLevel + 1,
@@ -990,12 +919,7 @@ export const useAttributes = defineStore('attributes', () => {
 		return applyAliasesToAttrs(attrs, contentType);
 	}
 
-	function applyAliasesToAttrs(
-		attributes = [],
-		contentType,
-		keyPrefix = '',
-		namePrefix = ''
-	) {
+	function applyAliasesToAttrs(attributes = [], contentType, keyPrefix = '', namePrefix = '') {
 		let userFields = [];
 		switch (contentType) {
 			case 'transactions.transaction':
@@ -1020,12 +944,7 @@ export const useAttributes = defineStore('attributes', () => {
 		}, cloneDeep(attributes));
 	}
 
-	function formatAttributeTypes(
-		attributes = [],
-		contentType,
-		rootKey,
-		rootName
-	) {
+	function formatAttributeTypes(attributes = [], contentType, rootKey, rootName) {
 		return attributes.map((attribute) => ({
 			attribute_type: attribute,
 			value_type: attribute.value_type,
@@ -1049,6 +968,7 @@ export const useAttributes = defineStore('attributes', () => {
 		attributesAvailableForColumns,
 		downloadCustomFieldsByEntityType,
 		downloadDynamicAttributesByEntityType,
+		downloadInstrumentUserFields,
 		getAllAttributesByEntityType,
 		_getBalanceReportAttributes,
 		_getPlReportAttributes,

@@ -47,11 +47,7 @@ export async function getList(entity, options) {
 
 	const prefix = getPrefix();
 	const endPoint = `${prefix}/${getEndPoint(entity)}`;
-	return useApi(
-		null,
-		{ filters: options },
-		{ apiUrl: endPoint, apiMethod: 'get' }
-	);
+	return useApi(null, { filters: options }, { apiUrl: endPoint, apiMethod: 'get' });
 }
 
 export async function getByKey(entityType, id) {
@@ -63,22 +59,14 @@ export async function getByKey(entityType, id) {
 export async function create(entity, attributeType) {
 	const prefix = getPrefix();
 	const endPoint = `${prefix}/${getEndPoint(entity)}`;
-	return useApi(
-		null,
-		{ body: attributeType },
-		{ apiUrl: endPoint, apiMethod: 'post' }
-	);
+	return useApi(null, { body: attributeType }, { apiUrl: endPoint, apiMethod: 'post' });
 }
 
 export async function update(entity, attributeType) {
 	const { id } = attributeType;
 	const prefix = getPrefix();
 	const endPoint = `${prefix}/${getEndPoint(entity)}${id}/`;
-	return useApi(
-		null,
-		{ body: attributeType },
-		{ apiUrl: endPoint, apiMethod: 'put' }
-	);
+	return useApi(null, { body: attributeType }, { apiUrl: endPoint, apiMethod: 'put' });
 }
 
 export async function deleteByKey(entity, id) {

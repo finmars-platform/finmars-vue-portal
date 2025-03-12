@@ -3,7 +3,7 @@
 		<div class="report-header__row">
 			<div class="report-header__block">
 				<FmButton type="secondary" rounded append-icon="mdi-menu-down">
-					{{ defaultLayout?.name }}
+					{{ currentLayout?.name }}
 
 					<FmMenu
 						v-model="isLayoutSelectMenuOpen"
@@ -19,20 +19,20 @@
 									:id="`${layout.id}`"
 									:key="layout.id"
 									item-size="medium"
-									:item-selected="layout.id === defaultLayout.id"
+									:item-selected="layout.id === currentLayout?.id"
 								>
 									<div class="report-header__menu-layouts-item">
 										<FmIcon
 											icon="mdi-home"
 											:color="
-												layout.id === defaultLayout?.id
+												layout.id === currentLayout?.id
 													? 'var(--primary)'
 													: 'var(--outline-variant)'
 											"
-											@click="onLayoutsMenuItemClick('set:layout', layout)"
+											@click="onLayoutsMenuItemClick('layout:set-default', layout)"
 										/>
 
-										<span @click="onLayoutsMenuItemClick('select:layout', layout)">
+										<span @click="onLayoutsMenuItemClick('layout:select', layout)">
 											{{ layout.name }}
 										</span>
 									</div>
@@ -66,7 +66,7 @@
 
 			<div class="report-header__block">
 				<FmSelect
-					:model-value="data.reportOptions.cost_method"
+					:model-value="data?.reportOptions.cost_method"
 					:options="REPORT_OPTIONS"
 					placeholder="Select cost method"
 					variant="outlined"
@@ -127,7 +127,7 @@
 				/>
 
 				<div class="report-header__checkbox">
-					<FmCheckbox v-model="data.reportLayoutOptions.useDateFromAbove" label="Link date" />
+					<FmCheckbox :model-value="data?.reportLayoutOptions.useDateFromAbove" label="Link date" />
 				</div>
 
 				<FmButton type="secondary" rounded prepend-icon="mdi-autorenew">Synced</FmButton>
@@ -144,7 +144,7 @@
 			<div class="report-header__filters">
 				<FmFilterToolbar
 					class="report-header__filters-toolbar"
-					:value="[]"
+					:value="data?.filters || []"
 					:attributes="[]"
 					:suggested-attrs="[]"
 					@update:model-value="(ev) => console.log('UPDATE FILTERS')"
@@ -159,7 +159,6 @@
 <script setup>
 	import { computed, ref } from 'vue';
 	import { storeToRefs } from 'pinia';
-	import dayjs from 'dayjs';
 	import {
 		FmButton,
 		FmCheckbox,
@@ -172,7 +171,8 @@
 		FmSelect
 	} from '@finmars/ui';
 	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
-	import { MAIN_MENU, REPORT_OPTIONS, REPORT_DATA_PROPERTIES } from './constants';
+	import { REPORT_DATA_PROPERTIES } from '../constants';
+	import { MAIN_MENU, REPORT_OPTIONS } from './constants';
 
 	const props = defineProps({
 		entityType: {
@@ -188,21 +188,20 @@
 	const emits = defineEmits(['select:layout', 'set:layout']);
 
 	const balanceReportStore = useBalanceReportStore();
-	const { data, layouts, currencies, currentCurrency } = storeToRefs(balanceReportStore);
+	const { layouts, currentLayout, currencies, currentCurrency } = storeToRefs(balanceReportStore);
 
 	const [dateFromKey, dateToKey] = REPORT_DATA_PROPERTIES[props.entityType];
+
+	const data = computed(() => currentLayout.value?.data);
 
 	const isLayoutSelectMenuOpen = ref(false);
 	const isMainMenuOpen = ref(false);
 	const isDateFromMenuOpen = ref(false);
 	const isDateToMenuOpen = ref(false);
-	const syncedTime = ref(dayjs());
 
-	const defaultLayout = computed(() => (layouts.value || []).find((l) => l.is_default));
-
-	const datesDateTo = computed(() => data.value.reportOptions[dateToKey]);
+	const datesDateTo = computed(() => data.value?.reportOptions[dateToKey]);
 	const datesDateFrom = computed(() =>
-		dateFromKey ? data.value.reportOptions[dateFromKey] : null
+		dateFromKey ? data.value?.reportOptions[dateFromKey] : null
 	);
 
 	function onLayoutsMenuItemClick(eventName, payload) {
@@ -293,6 +292,9 @@
 			width: calc(100% - 32px);
 			height: 100%;
 			margin-left: -16px;
+			display: flex;
+			justify-content: stretch;
+			align-items: center;
 
 			&-toolbar {
 				--fmFilterToolbar-background-color: transparent;
