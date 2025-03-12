@@ -1,12 +1,6 @@
 <template>
 	<section class="balance-report">
-		<ReportHeader
-			:entity-type="entityType"
-			:content-type="contentType"
-			:disabled="isLoading"
-			@set:layout="(ev) => console.log('SET LAYOUT AS DEFAULT: ', ev)"
-			@select:layout="(ev) => console.log('SELECT LAYOUT', ev)"
-		/>
+		<ReportHeader :entity-type="entityType" :content-type="contentType" :disabled="isLoading" />
 
 		<div class="balance-report__content">CONTENT</div>
 
@@ -18,8 +12,11 @@
 
 <script setup>
 	import { onBeforeMount, ref } from 'vue';
+	import { storeToRefs } from 'pinia';
 	import { FmProgressCircular } from '@finmars/ui';
+	import { useAttributes } from '~/stores/useAttributes';
 	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
+	import { getLayoutByUserCode } from '~/services/entityViewerHelperService';
 	import ReportHeader from '~/components/pages/reports/common/ReportHeader/ReportHeader.vue';
 
 	definePageMeta({
@@ -33,20 +30,41 @@
 		]
 	});
 
-	const { getLayouts, getCurrencies, prepareReportLayoutOptions } = useBalanceReportStore();
+	const balanceReportStore = useBalanceReportStore();
+	const { getLayouts, getCurrencies } = balanceReportStore;
+	const { currentLayout } = storeToRefs(balanceReportStore);
+
+	const {
+		downloadCustomFieldsByEntityType,
+		downloadDynamicAttributesByEntityType,
+		downloadInstrumentUserFields
+	} = useAttributes();
 
 	const entityType = 'balance-report';
 	const contentType = 'reports.balancereport';
 	const isLoading = ref(false);
 
 	onBeforeMount(async () => {
-		console.log('=== ON BEFORE MOUNT ===');
 		try {
 			isLoading.value = true;
 			await getLayouts(entityType);
 			await getCurrencies();
 
-			prepareReportLayoutOptions();
+			await Promise.allSettled([
+				downloadCustomFieldsByEntityType('balance-report'),
+				downloadCustomFieldsByEntityType('pl-report'),
+				downloadCustomFieldsByEntityType('transaction-report'),
+				downloadDynamicAttributesByEntityType('portfolio'),
+				downloadDynamicAttributesByEntityType('account'),
+				downloadDynamicAttributesByEntityType('instrument'),
+				downloadDynamicAttributesByEntityType('responsible'),
+				downloadDynamicAttributesByEntityType('counterparty'),
+				downloadDynamicAttributesByEntityType('transaction-type'),
+				downloadDynamicAttributesByEntityType('complex-transaction'),
+				downloadInstrumentUserFields()
+			]);
+
+
 		} finally {
 			isLoading.value = false;
 		}
