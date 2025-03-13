@@ -5,6 +5,13 @@ export const useWhiteLabelStore = defineStore({
 	state: () => ({
 		themeSettings: null
 	}),
+	getters: {
+		getPrefixPath() {
+			const store = useStore();
+
+			return `${useRuntimeConfig().public.apiURL}/${store.realm_code}/${store.space_code}/`;
+		}
+	},
 	actions: {
 		async loadThemeSettingsDefault() {
 			try {
@@ -72,7 +79,7 @@ export const useWhiteLabelStore = defineStore({
 				document.head.appendChild(link);
 			}
 
-			link.href = this.themeSettings.favicon_url;
+			link.href = this.getPrefixPath + this.themeSettings.favicon_url;
 		},
 		removeFavicon() {
 			let link = document.querySelector("link[rel~='icon']");
@@ -90,12 +97,14 @@ export const useWhiteLabelStore = defineStore({
 			let existingLink = document.getElementById('custom-theme-css');
 
 			if (existingLink) {
-				existingLink.href = this.themeSettings.theme_css_url;
+				existingLink.href =
+					this.getPrefixPath + this.themeSettings.theme_css_url;
 			} else {
 				let link = document.createElement('link');
 				link.rel = 'stylesheet';
 				link.id = 'custom-theme-css';
-				link.href = this.themeSettings.theme_css_url;
+				link.href =
+					this.getPrefixPath + this.themeSettings.theme_css_url;
 				document.head.appendChild(link);
 			}
 		},
