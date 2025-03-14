@@ -1,12 +1,9 @@
 <template>
 	<div class="system-settings-general-form">
 		<form @submit.prevent="isEdit ? editWhiteLabel() : uploadWhiteLabel()">
+			<FmInputText label="Enter name" v-model="formState.company_name" />
 			<FmInputText
-				label="Enter company name"
-				v-model="formState.company_name"
-			/>
-			<FmInputText
-				label="Enter theme code"
+				label="Enter configuration code"
 				v-model="formState.theme_code"
 			/>
 			<FmInputFile
