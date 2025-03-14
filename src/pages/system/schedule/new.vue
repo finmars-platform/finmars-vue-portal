@@ -350,14 +350,14 @@
 	async function createItem() {
 		const invalidDays = await getInvalidDays();
 
-		if (invalidDays.length > 0) {
+		if (invalidDays?.length) {
 			const confirmationComponent = defineAsyncComponent(
 				() => import('@/components/modal/NotifierDialog.vue')
 			);
 			dialogService.$openDialog({
 				component: confirmationComponent,
 				componentProps: {
-					text: invalidDays,
+					items: invalidDays,
 				},
 				dialogProps: {
 					title: "Incorrect days!"
