@@ -1,6 +1,6 @@
 <template>
 	<div class="dialog">
-		<div v-for="item in text" class="dialog__body" :key="item">
+		<div v-for="item in items" class="dialog__body" :key="item">
 			{{item}}
 		</div>
 	</div>
@@ -8,7 +8,7 @@
 
 <script setup>
 	defineProps({
-		text: {
+		items: {
 			type: Array,
 			default: ['Are you sure you want to continue?']
 		}
