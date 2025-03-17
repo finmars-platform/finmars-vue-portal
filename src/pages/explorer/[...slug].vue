@@ -25,7 +25,7 @@
 				<div class="explorer-toolbar">
 					<div class="flex explorer-actions-buttons">
 						<FmMenu>
-							<template #btn="{ isOpen }">
+							<template #btn>
 								<FmBtn> Create</FmBtn>
 							</template>
 							<template #default>
@@ -269,7 +269,7 @@
 										</div>
 									</td>
 									<td>
-										<div v-if="item.type == 'dir'">
+										<div v-if="item.type === 'dir'">
 											<div
 												class="flex-row fi-center"
 												@click="openFolder(item)"
@@ -393,7 +393,7 @@
 											</template>
 											<template #default>
 												<div
-													v-if="item.type == 'file'"
+													v-if="item.type === 'file'"
 													class="menu-items-content"
 												>
 													<span
@@ -433,7 +433,7 @@
 													>
 												</div>
 												<div
-													v-if="item.type == 'dir'"
+													v-if="item.type === 'dir'"
 													class="menu-items-content"
 												>
 													<span
