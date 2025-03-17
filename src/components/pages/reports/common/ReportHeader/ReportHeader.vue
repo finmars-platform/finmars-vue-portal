@@ -147,6 +147,7 @@
 					:value="data?.filters || []"
 					:attributes="[]"
 					:suggested-attrs="[]"
+					:get-filter-options="getFilterOptions"
 					@update:model-value="(ev) => console.log('UPDATE FILTERS')"
 				/>
 			</div>
@@ -171,6 +172,8 @@
 		FmSelect
 	} from '@finmars/ui';
 	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
+	import { useAttributes } from '~/stores/useAttributes';
+	import { getValuesForSelect } from '~/services/specificDataService';
 	import { REPORT_DATA_PROPERTIES } from '../constants';
 	import { MAIN_MENU, REPORT_OPTIONS } from './constants';
 
@@ -186,6 +189,9 @@
 		}
 	});
 	const emits = defineEmits(['select:layout', 'set:layout']);
+
+	const attributesStore = useAttributes();
+	const { getAllAttributesByEntityType } = attributesStore;
 
 	const balanceReportStore = useBalanceReportStore();
 	const { layouts, currentLayout, currencies, currentCurrency } = storeToRefs(balanceReportStore);
@@ -207,6 +213,29 @@
 	function onLayoutsMenuItemClick(eventName, payload) {
 		emits(eventName, payload);
 		isLayoutSelectMenuOpen.value = false;
+	}
+
+	async function getFilterOptions(filter) {
+		const attrsList = getAllAttributesByEntityType(props.entityType);
+		const filterAttr = (attrsList || []).find((attr) => attr.key === filter.key);
+
+		let key = filter.key;
+
+		const content_type = key.startsWith('custom_fields.')
+			? props.contentType
+			: filterAttr.content_type;
+
+		if (!key.includes('attributes.')) {
+			const keyParts = key.split('.');
+			key = keyParts.at(-1);
+		}
+
+		const res = await getValuesForSelect(content_type, key, filter.value_type, {
+			...(data.value.reportOptions?.report_instance_id && {
+				report_instance_id: data.value.reportOptions?.report_instance_id
+			})
+		});
+		return (res?.results || []).map((item) => ({ title: item, value: item }));
 	}
 </script>
 

@@ -16,7 +16,7 @@
 	import { FmProgressCircular } from '@finmars/ui';
 	import { useAttributes } from '~/stores/useAttributes';
 	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
-	import { getLayoutByUserCode } from '~/services/entityViewerHelperService';
+	import { getListLayoutByUserCode } from '~/services/entity/entityViewerHelperService';
 	import ReportHeader from '~/components/pages/reports/common/ReportHeader/ReportHeader.vue';
 
 	definePageMeta({

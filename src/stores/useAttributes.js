@@ -64,6 +64,7 @@ import { getInstrumentFieldPrimaryList } from '~/services/uiService';
 import { T_TYPE_USER_FIELDS } from '~/constants/attributeData';
 
 export const useAttributes = defineStore('attributes', () => {
+	const attributesByEntityType = ref({});
 	const reportsEntityTypes = ['balance-report', 'pl-report', 'transaction-report'];
 	const entityAttributesData = ref({
 		portfolio: cloneDeep(portfolioAttributes),
@@ -155,24 +156,33 @@ export const useAttributes = defineStore('attributes', () => {
 	}
 
 	function getAllAttributesByEntityType(entityType, viewContext) {
+		console.log('getAllAttributesByEntityType => ', entityType);
 		if (viewContext === 'reconciliation_viewer') {
 			return reconciliationAttributes.value;
 		}
 
 		if (entityType === 'balance-report') {
-			return _getBalanceReportAttributes();
+			const res = _getBalanceReportAttributes();
+			attributesByEntityType[entityType] = res;
+			return res;
 		}
 
 		if (entityType === 'pl-report') {
-			return _getPlReportAttributes();
+			const res = _getPlReportAttributes();
+			attributesByEntityType[entityType] = res;
+			return res;
 		}
 
 		if (entityType === 'transaction-report') {
-			return _getTransactionReportAttributes();
+			const res = _getTransactionReportAttributes();
+			attributesByEntityType[entityType] = res;
+			return res;
 		}
 
 		const contentType = findContentTypeByEntity(entityType);
+		console.log('111 => ', contentType);
 		const entityAttrs = getEntityAttributesByEntityType(entityType);
+		console.log('222 => ', entityAttrs);
 		entityAttrs.forEach((item) => {
 			const { key, value_entity } = item;
 			if (key === 'subgroup' && value_entity.includes('strategy')) {
@@ -191,7 +201,9 @@ export const useAttributes = defineStore('attributes', () => {
 					name: attr.name
 				}));
 
-		return [...entityAttrs, ...dynamicAttrs];
+		const res = [...entityAttrs, ...dynamicAttrs];
+		attributesByEntityType[entityType] = res;
+		return res;
 	}
 
 	/* auxiliary functions  */
@@ -957,6 +969,7 @@ export const useAttributes = defineStore('attributes', () => {
 	/***********************/
 
 	return {
+		attributesByEntityType,
 		reportsEntityTypes,
 		entityAttributesData,
 		customFieldsData,

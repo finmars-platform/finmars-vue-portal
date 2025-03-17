@@ -8,6 +8,8 @@ import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
 import set from 'lodash/set';
 import { getListLayout } from '~/services/uiService';
+import { isFilterValid } from '~/utils/evRvCommonHelper';
+import { entityPluralToSingular } from '~/utils/queryParamsHelper';
 import { getListLight as getCurrencyList } from '~/services/currency/currencyService';
 import { getList as getDefaultList } from '~/services/ecosystemDefaultService';
 import { REPORT_DATA_PROPERTIES } from '~/components/pages/reports/common/constants';
@@ -95,6 +97,39 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		) {
 			set(currentLayout.value, 'data.reportLayoutOptions.useDateFromAbove', true);
 		}
+	}
+
+	async function getGroupList(options, entityType) {
+		const reportOptions = cloneDeep(get(currentLayout.value, ['data', 'reportOptions'], {}));
+
+		if (entityType === 'transaction-report') {
+			reportOptions.filters = cloneDeep(get(currentLayout.value, ['data', 'filters'], []));
+		}
+
+		reportOptions.page = options.page;
+		reportOptions.page_size = options.page_size;
+		reportOptions.frontend_request_options = cloneDeep(options.frontend_request_options);
+		reportOptions.frontend_request_options.columns = cloneDeep(
+			get(currentLayout.value, ['data', 'columns'], [])
+		);
+		// reportOptions.frontend_request_options['globalTableSearch'] = globalTableSearch
+
+		reportOptions.frontend_request_options.filter_settings = get(
+			currentLayout.value,
+			['data', 'filters'],
+			[]
+		).reduce((res, filter) => {
+			if (isFilterValid(filter)) {
+				res.push({
+					key: entityPluralToSingular(filter.key),
+					filter_type: filter.options?.filter_type,
+					value_type: filter.value_type,
+					value: filter.options?.filter_values
+				});
+			}
+
+			return res;
+		}, []);
 	}
 
 	return {

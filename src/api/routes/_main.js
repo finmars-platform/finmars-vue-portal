@@ -1053,6 +1053,25 @@ export default {
 		get: prefix + '/reports/{entityType}/custom-field/'
 	},
 
+	balanceReportGroups: {
+		post: prefix + '/reports/backend-balance-report/groups/'
+	},
+	balanceReportItems: {
+		post: prefix + '/reports/backend-balance-report/items/'
+	},
+	plReportGroups: {
+		post: prefix + '/reports/backend-pl-report/groups/'
+	},
+	plReportItems: {
+		post: prefix + '/reports/backend-pl-report/items/'
+	},
+	transactionReportGroups: {
+		post: prefix + '/reports/backend-transaction-report/groups/'
+	},
+	transactionReportItems: {
+		post: prefix + '/reports/backend-transaction-report/items/'
+	},
+
 	systemNotificationsCategoryList: {
 		get: prefix + '/system-notifications/categories/'
 	},
