@@ -169,7 +169,8 @@ export function useExplorer() {
 					index < 2 ||
 					index > totalPages.value - 3 ||
 					index === currentPageIndex ||
-					(index > currentPageIndex - 3 && index < currentPageIndex) ||
+					(index > currentPageIndex - 3 &&
+						index < currentPageIndex) ||
 					(index < currentPageIndex + 3 && index > currentPageIndex)
 				);
 			});
@@ -235,7 +236,9 @@ export function useExplorer() {
 					query: query
 				};
 				try {
-					const data = await useApi('explorerSearch.get', { filters: options });
+					const data = await useApi('explorerSearch.get', {
+						filters: options
+					});
 					if (data) {
 						generatePages(data);
 						items.value = data.results;
@@ -420,7 +423,8 @@ export function useExplorer() {
 			} else {
 				fileEditor.name = teValue.value;
 				fileEditor.content = '';
-				draftUserCode.value = 'explorer.' + currentPath.value.join('__');
+				draftUserCode.value =
+					'explorer.' + currentPath.value.join('__');
 				isEditor.value = true;
 			}
 			editorFile.value = fileEditor;
@@ -465,9 +469,11 @@ export function useExplorer() {
 			const { realmCode, spaceCode } = getRealmSpaceCodes(route);
 			router.push(`/${realmCode}/${spaceCode}/v/explorer`);
 		} else {
-			currentPath.value = currentPath.value.filter(function (item, index) {
-				return index <= itemIndex;
-			});
+			currentPath.value = currentPath.value.filter(
+				function (item, index) {
+					return index <= itemIndex;
+				}
+			);
 			const currentPathData = route.fullPath.split('/');
 			const dynamicSegments = currentPath.value;
 			const indexOfExplorer = currentPathData.indexOf('explorer');
@@ -571,14 +577,10 @@ export function useExplorer() {
 	function editFile(item) {
 		const filePath = item.file_path.split('/');
 		currentPath.value = filePath.filter((element) => element !== '');
-		const hasSpace = currentPath.value.some((element) =>
-			element.includes('space')
-		);
-		if (hasSpace) {
-			currentPath.value = currentPath.value.filter(
-				(element) => !element.includes('space')
-			);
-		}
+
+		if (currentPath.value?.[0]?.includes('space'))
+			currentPath.value.shift();
+
 		const hasFileName = currentPath.value.some((element) =>
 			element.includes(item.name)
 		);
@@ -662,7 +664,8 @@ export function useExplorer() {
 			reader.addEventListener('loadend', function () {
 				editorFile.value.content = reader.result;
 				editorFile.value.name = fileName;
-				draftUserCode.value = 'explorer.' + currentPath.value.join('__');
+				draftUserCode.value =
+					'explorer.' + currentPath.value.join('__');
 				initFileEditor();
 			});
 
@@ -690,10 +693,13 @@ export function useExplorer() {
 		};
 		showPlaybook.value = true;
 		const reader = new FileReader();
-		const response = await useApi('explorerViewFile.get', { filters: options });
+		const response = await useApi('explorerViewFile.get', {
+			filters: options
+		});
 		reader.addEventListener('loadend', function () {
 			playbook.value = JSON.parse(reader.result);
-			playbookName.value = currentPath.value[currentPath.value.length - 1];
+			playbookName.value =
+				currentPath.value[currentPath.value.length - 1];
 		});
 
 		let blob = buildFileBlob(response, fileName);
@@ -723,7 +729,9 @@ export function useExplorer() {
 	}
 
 	function openFile(index, item) {
-		const pathParts = item.file_path.split('/').filter((element) => !!element);
+		const pathParts = item.file_path
+			.split('/')
+			.filter((element) => !!element);
 		currentPath.value = pathParts.slice(0, index + 1).join('/');
 		const isFile = isEditorFile(currentPath.value);
 		if (isFile) {
@@ -739,7 +747,9 @@ export function useExplorer() {
 		items.value.forEach(function (item) {
 			if (item.selected) {
 				if (item.type === 'dir') {
-					paths.push(currentPath.value.join('/') + '/' + item.name + '/'); // important to add trailing slash
+					paths.push(
+						currentPath.value.join('/') + '/' + item.name + '/'
+					); // important to add trailing slash
 				} else {
 					paths.push(currentPath.value.join('/') + '/' + item.name);
 				}
@@ -779,12 +789,16 @@ export function useExplorer() {
 			let res;
 			try {
 				if (item.type === 'dir') {
-					res = await useApi('explorerDeleteFolder.post', { body: { path } });
+					res = await useApi('explorerDeleteFolder.post', {
+						body: { path }
+					});
 				} else {
 					if (searchTerm.value.length) {
 						path = item.file_path;
 					}
-					res = await useApi('explorerDelete.post', { filters: { path } });
+					res = await useApi('explorerDelete.post', {
+						filters: { path }
+					});
 				}
 				if (res.status == 'ok') {
 					useNotify({
@@ -826,7 +840,10 @@ export function useExplorer() {
 					: oldItem.value.file_path;
 			}
 			const res = await useApi('explorerRename.post', {
-				body: { new_name: teValue.value, path: path.replace(/%20/g, ' ') }
+				body: {
+					new_name: teValue.value,
+					path: path.replace(/%20/g, ' ')
+				}
 			});
 			if (res.status === 'ok') {
 				if (!isEditor.value) {
@@ -944,7 +961,9 @@ export function useExplorer() {
 		if (confirm) {
 			try {
 				const path = currentPath.value.join('/');
-				const res = await useApi('explorerDelete.post', { filters: { path } });
+				const res = await useApi('explorerDelete.post', {
+					filters: { path }
+				});
 				if (res.status === 'ok') {
 					useNotify({
 						type: 'success',
@@ -1020,7 +1039,10 @@ export function useExplorer() {
 			}
 		} else {
 			const segments = route.fullPath.split('/');
-			segments[segments.length - 1] = teValueForEdit.value.replace(/%20/g, ' ');
+			segments[segments.length - 1] = teValueForEdit.value.replace(
+				/%20/g,
+				' '
+			);
 			const renamedPath = segments.join('/');
 			await router.replace(renamedPath);
 			teValueForEdit.value = '';
