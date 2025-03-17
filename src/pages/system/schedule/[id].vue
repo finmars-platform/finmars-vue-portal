@@ -53,7 +53,7 @@
 					</div>
 					<div v-if="cron.periodicity === '2'" class="px-8">
 						<div class="grid grid-cols-7 gap-4">
-							<div v-for="(day, index) in days" :key="index">
+							<div v-for="(day, index) in weekDays" :key="index">
 								<FmCheckbox
 									v-model="day.status"
 									:label="day.title"
@@ -156,9 +156,10 @@
 		FmSelect,
 		FmTextField,
 		FmInputTime,
-		FmProgressCircular
+		FmProgressCircular, FM_DIALOGS_KEY
 	} from '@finmars/ui';
 	import { getRealmSpaceCodes } from '~/pages/system/helper';
+	import { defineAsyncComponent, inject } from 'vue';
 	import UserCodeInput from '~/components/common/UserCodeInput/UserCodeInput.vue';
 	import Procedure from '~/pages/system/schedule/procedure/index.vue';
 	import EntityJsonEditor from '~/components/modal/EntityJsonEditor/EntityJsonEditor.vue';
@@ -171,6 +172,7 @@
 
 	const route = useRoute();
 	const router = useRouter();
+	const dialogService = inject(FM_DIALOGS_KEY);
 
 	const { realmCode, spaceCode } = getRealmSpaceCodes(route);
 
@@ -202,7 +204,7 @@
 		{ title: 'Break on first error', value: 'break' }
 	];
 
-	const days = ref([
+	const weekDays = ref([
 		{ title: 'Monday', status: false },
 		{ title: 'Tuesday', status: false },
 		{ title: 'Wednesday', status: false },
@@ -238,6 +240,7 @@
 		{ title: 'Pricing Schedules', path: 'schedule' },
 		{ title: 'Edit', path: 'edit' }
 	];
+
 	const formData = ref({
 		name: {
 			isDirty: false,
@@ -293,7 +296,7 @@
 	};
 
 	const setDay = () => {
-		cron.value.day = days.value
+		cron.value.day = weekDays.value
 			.map((day, index) => (day.status ? index + 1 : null))
 			.filter(Boolean);
 	};
@@ -309,6 +312,20 @@
 			serverTimeContent.value.textContent = new Date().toISOString().split('T')[1].split('.')[0];
 		}
 	};
+
+	function getDaysInMonth(month) {
+		const year = new Date().getFullYear();
+		const date = new Date(year, month, 0); // 0 day of next month gives the last day of the current month
+		return date.getDate();
+	}
+
+	function getMonthName(month) {
+		const monthNames = [
+			"January", "February", "March", "April", "May", "June",
+			"July", "August", "September", "October", "November", "December"
+		];
+		return monthNames[month - 1];
+	}
 
 	function validateForm() {
 		Object.keys(formData.value).forEach((field) => {
@@ -375,7 +392,45 @@
 		return `${minutes} ${hours} ${dayOfMonth} ${month} ${dayOfWeek}`;
 	}
 
+	async function getInvalidDays() {
+		const selectedMonths = cron.value.month;
+		const selectedDays = cron.value.day;
+		const invalidMessages = [];
+
+		selectedMonths.forEach((month) => {
+			const daysInMonth = getDaysInMonth(month);
+
+			// Collect invalid days for the current month
+			const invalidDays = selectedDays.filter((day) => day > daysInMonth);
+
+			if (invalidDays.length) {
+				invalidMessages.push(
+					`${getMonthName(month)} does not have day(s) - ${invalidDays.join(", ")}`
+				);
+			}
+		});
+		return invalidMessages;
+	}
+
 	async function saveItem() {
+		const invalidDays = await getInvalidDays();
+
+		if (invalidDays?.length) {
+			const confirmationComponent = defineAsyncComponent(
+				() => import('@/components/modal/NotifierDialog.vue')
+			);
+			dialogService.$openDialog({
+				component: confirmationComponent,
+				componentProps: {
+					items: invalidDays,
+				},
+				dialogProps: {
+					title: "Incorrect days!"
+				}
+			});
+			return;
+		}
+
 		confirmButtonLoader.value = true;
 		scheduleItem.value.is_enabled = true;
 		scheduleItem.value.procedures = scheduleProcedureList.value;
@@ -421,8 +476,8 @@
 					cron.value.day = values[4] ? values[4].split(',') : [];
 					cron.value.day.forEach((day) => {
 						const index = parseInt(day, 10) - 1;
-						if (!isNaN(index) && days.value[index]) {
-							days.value[index].status = true;
+						if (!isNaN(index) && weekDays.value[index]) {
+							weekDays.value[index].status = true;
 						}
 					});
 				}
