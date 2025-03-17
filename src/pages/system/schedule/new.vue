@@ -129,7 +129,7 @@
 		FmCheckbox,
 		FmSelect,
 		FmTextField,
-		FmInputTime
+		FmInputTime, FM_DIALOGS_KEY
 	} from '@finmars/ui';
 	import cloneDeep from 'lodash/cloneDeep';
 	import { getRealmSpaceCodes } from '~/pages/system/helper';
@@ -137,6 +137,7 @@
 	import Procedure from '~/pages/system/schedule/procedure/index.vue';
 	import dayjs from 'dayjs';
 	import set from 'lodash/set';
+	import { defineAsyncComponent, inject } from 'vue';
 
 	definePageMeta({
 		middleware: 'auth'
@@ -144,6 +145,7 @@
 
 	const route = useRoute();
 	const router = useRouter();
+	const dialogService = inject(FM_DIALOGS_KEY);
 
 	const { realmCode, spaceCode } = getRealmSpaceCodes(route);
 
@@ -282,6 +284,20 @@
 		}
 	};
 
+	function getDaysInMonth(month) {
+		const year = new Date().getFullYear();
+		const date = new Date(year, month, 0); // 0 day of next month gives the last day of the current month
+		return date.getDate();
+	}
+
+	function getMonthName(month) {
+		const monthNames = [
+			"January", "February", "March", "April", "May", "June",
+			"July", "August", "September", "October", "November", "December"
+		];
+		return monthNames[month - 1];
+	}
+
 	function validateForm() {
 		Object.keys(formData.value).forEach((field) => {
 			if (!formData.value[field].skipValidation) {
@@ -311,7 +327,45 @@
 		router.back();
 	}
 
+	async function getInvalidDays() {
+		const selectedMonths = cron.value.month;
+		const selectedDays = cron.value.day;
+		const invalidMessages = [];
+
+		selectedMonths.forEach((month) => {
+			const daysInMonth = getDaysInMonth(month);
+
+			// Collect invalid days for the current month
+			const invalidDays = selectedDays.filter((day) => day > daysInMonth);
+
+			if (invalidDays.length) {
+				invalidMessages.push(
+					`${getMonthName(month)} does not have day(s) - ${invalidDays.join(", ")}`
+				);
+			}
+		});
+		return invalidMessages;
+	}
+
 	async function createItem() {
+		const invalidDays = await getInvalidDays();
+
+		if (invalidDays?.length) {
+			const confirmationComponent = defineAsyncComponent(
+				() => import('@/components/modal/NotifierDialog.vue')
+			);
+			dialogService.$openDialog({
+				component: confirmationComponent,
+				componentProps: {
+					items: invalidDays,
+				},
+				dialogProps: {
+					title: "Incorrect days!"
+				}
+			});
+			return;
+		}
+
 		confirmButtonLoader.value = true;
 		scheduleItem.value.is_enabled = true;
 		scheduleItem.value.procedures = scheduleProcedureList.value;
