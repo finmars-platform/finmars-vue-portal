@@ -13,22 +13,24 @@
 			:logo_light_url="item.logo_light_url"
 			:theme_code="item.theme_code"
 			:theme_css_url="item.theme_css_url"
+			:configuration_code="item.configuration_code"
+			:name="item.name"
 		/>
 	</div>
 </template>
 
 <script setup>
-	import SystemSettingsGeneralForm from '~/pages/system/settings/general/_components/SystemSettingsGeneralForm.vue'
-	import { useGetNuxtLink } from '~/composables/useMeta'
+	import SystemSettingsGeneralForm from '~/pages/system/settings/general/_components/SystemSettingsGeneralForm.vue';
+	import { useGetNuxtLink } from '~/composables/useMeta';
 
 	definePageMeta({
-		middleware: 'auth',
+		middleware: 'auth'
 	});
 
-	const route = useRoute()
-	const router = useRouter()
+	const route = useRoute();
+	const router = useRouter();
 
-	const item = ref(null)
+	const item = ref(null);
 	const breadcrumbsItems = computed(() => {
 		return [
 			{
@@ -42,25 +44,25 @@
 				disabled: false
 			},
 			{ text: item.value?.company_name, to: '', disabled: true }
-		]
-	})
+		];
+	});
 
 	async function getWhiteLabel() {
 		try {
 			const response = await useApi('systemWhiteLabelById.get', {
 				params: { id: route.params.id }
-			})
+			});
 
-			item.value = response
+			item.value = response;
 		} catch (e) {
-			console.warn('Error fetch white:', e)
+			console.warn('Error fetch white:', e);
 			await router.push(
 				useGetNuxtLink(`/system/settings/general/`, route.params)
-			)
+			);
 		}
 	}
 
-	getWhiteLabel()
+	getWhiteLabel();
 </script>
 
 <style scoped lang="scss">
