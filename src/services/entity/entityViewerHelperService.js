@@ -9,10 +9,10 @@ export async function getDefaultLayout(entityType) {
 	return get(defaultLayoutData, ['results', 0], null);
 }
 
-export async function getListLayoutByUserCode(entityType, userCode) {
+export async function getLayoutByUserCode(entityType, userCode) {
 	const activeLayoutData = await uiService.getListLayoutByUserCode(entityType, userCode);
 	const activeLayout = get(activeLayoutData, ['results', 0], null);
-
+	console.log('!!! activeLayout => ', activeLayout);
 	if (activeLayout) {
 		return activeLayout;
 	} else {

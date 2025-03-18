@@ -1,19 +1,23 @@
-import { getUser, getMasterUser, getMember } from '~/services/globalService';
+import useGlobalStore from '~/stores/useStore';
 
 function getPropertyForStoring() {
+	const globalStore = useGlobalStore();
 	const errorsList = [];
 
-	const user = getUser();
+	const user = globalStore.user;
 	if (!user) {
 		errorsList.push(new Error('No user set'));
 	}
 
-	const masterUser = getMasterUser();
+	const masterUser = globalStore.masterUsers.find(
+		(user) =>
+			user.space_code === globalStore.space_code && user.realm_code === globalStore.realm_code
+	);
 	if (!masterUser) {
 		errorsList.push(new Error('No masterUser set'));
 	}
 
-	const member = getMember();
+	const member = globalStore.member;
 	if (!member) {
 		errorsList.push(new Error('No member set'));
 	}

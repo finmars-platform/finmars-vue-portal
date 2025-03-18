@@ -1,3 +1,4 @@
+import get from 'lodash/get';
 import useApi from '~/composables/useApi';
 import { findContentTypeByEntity } from '~/services/meta/metaContentTypeService';
 import { isReport } from '~/services/meta/metaService';

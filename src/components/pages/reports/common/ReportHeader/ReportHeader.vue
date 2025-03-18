@@ -185,7 +185,7 @@
 			type: Boolean
 		}
 	});
-	const emits = defineEmits(['select:layout', 'set:layout']);
+	const emits = defineEmits(['header:action']);
 
 	const balanceReportStore = useBalanceReportStore();
 	const { layouts, currentLayout, currencies, currentCurrency } = storeToRefs(balanceReportStore);
@@ -204,8 +204,8 @@
 		dateFromKey ? data.value?.reportOptions[dateFromKey] : null
 	);
 
-	function onLayoutsMenuItemClick(eventName, payload) {
-		emits(eventName, payload);
+	function onLayoutsMenuItemClick(action, payload) {
+		emits('header:action', { action, payload });
 		isLayoutSelectMenuOpen.value = false;
 	}
 </script>

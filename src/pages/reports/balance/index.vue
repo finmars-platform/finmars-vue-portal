@@ -1,8 +1,15 @@
 <template>
 	<section class="balance-report">
-		<ReportHeader :entity-type="entityType" :content-type="contentType" :disabled="isLoading" />
+		<ReportHeader
+			:entity-type="entityType"
+			:content-type="contentType"
+			:disabled="isLoading"
+			@header:action="processAction"
+		/>
 
-		<div class="balance-report__content">CONTENT</div>
+		<div class="balance-report__content">
+			<ReportTable />
+		</div>
 
 		<div v-if="isLoading" class="balance-report__loader">
 			<FmProgressCircular indeterminate size="100" />
@@ -13,11 +20,13 @@
 <script setup>
 	import { onBeforeMount, ref } from 'vue';
 	import { storeToRefs } from 'pinia';
+	import get from 'lodash/get';
 	import { FmProgressCircular } from '@finmars/ui';
 	import { useAttributes } from '~/stores/useAttributes';
 	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
-	import { getLayoutByUserCode } from '~/services/entityViewerHelperService';
+	// import { getLayoutByUserCode } from '~/services/entity/entityViewerHelperService';
 	import ReportHeader from '~/components/pages/reports/common/ReportHeader/ReportHeader.vue';
+	import ReportTable from '~/components/pages/reports/common/ReportTable/ReportTable.vue';
 
 	definePageMeta({
 		middleware: 'auth',
@@ -31,8 +40,16 @@
 	});
 
 	const balanceReportStore = useBalanceReportStore();
-	const { getLayouts, getCurrencies } = balanceReportStore;
-	const { currentLayout } = storeToRefs(balanceReportStore);
+	const {
+		changeRouteQuery,
+		getLayouts,
+		getCurrencies,
+		getGroupList,
+		getItemList,
+		prepareTableDataRequestOptions,
+		getTableData
+	} = balanceReportStore;
+	const { currentLayout, tableData } = storeToRefs(balanceReportStore);
 
 	const {
 		downloadCustomFieldsByEntityType,
@@ -43,6 +60,29 @@
 	const entityType = 'balance-report';
 	const contentType = 'reports.balancereport';
 	const isLoading = ref(false);
+
+	async function processAction({ action, payload }) {
+		console.log('processAction => ', action, payload);
+		switch (action) {
+			case 'layout:select':
+				try {
+					isLoading.value = true;
+					currentLayout.value = payload;
+					await changeRouteQuery(entityType);
+					tableData.value = [];
+					await loadTableData();
+				} finally {
+					isLoading.value = false;
+				}
+				break;
+		}
+	}
+
+	async function loadTableData() {
+		const options = prepareTableDataRequestOptions({});
+		console.log('!!! OPTIONS => ', options);
+		await getTableData(!!options.frontend_request_options.groups_types.length, entityType, options);
+	}
 
 	onBeforeMount(async () => {
 		try {
@@ -64,7 +104,10 @@
 				downloadInstrumentUserFields()
 			]);
 
+			// const l = await getLayoutByUserCode(entityType, currentLayout.value.user_code);
+			// console.log('R L => ', l);
 
+			await loadTableData();
 		} finally {
 			isLoading.value = false;
 		}
@@ -82,6 +125,8 @@
 			position: relative;
 			width: 100%;
 			height: calc(100% - 130px);
+			padding-right: 16px;
+			overflow-x: auto;
 		}
 
 		&__loader {

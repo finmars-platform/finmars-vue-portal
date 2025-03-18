@@ -135,8 +135,7 @@ export function setUpMemberData(memberData = {}, viewerType, entityType) {
 		};
 	}
 
-	const entityTypesSettings =
-		member.data.group_tables[viewerType].entity_viewers_settings;
+	const entityTypesSettings = member.data.group_tables[viewerType].entity_viewers_settings;
 
 	if (!entityTypesSettings[entityType]) {
 		entityTypesSettings[entityType] = {
@@ -152,17 +151,14 @@ export function getMemberEntityViewersSettings(isReport, entityType) {
 	const viewerType = isReport ? 'report_viewer' : 'entity_viewer';
 	const member = setUpMemberData(data.member, viewerType, entityType);
 
-	return cloneDeep(
-		member.data.group_tables[viewerType].entity_viewers_settings[entityType]
-	);
+	return cloneDeep(member.data.group_tables[viewerType].entity_viewers_settings[entityType]);
 }
 
 export function setMemberEntityViewersSettings(settings, isReport, entityType) {
 	const viewerType = isReport ? 'report_viewer' : 'entity_viewer';
 	const member = setUpMemberData(data.member, viewerType, entityType);
 
-	member.data.group_tables[viewerType].entity_viewers_settings[entityType] =
-		settings;
+	member.data.group_tables[viewerType].entity_viewers_settings[entityType] = settings;
 }
 
 export function setMemberLayout(layout) {
@@ -183,15 +179,10 @@ export function isAutosaveLayoutOn() {
 
 	if (!memberLayout.data) memberLayout.data = {};
 
-	const autosave77 =
-		user.data.autosave_layouts && memberLayout.data.autosave_layouts;
+	const autosave77 = user.data.autosave_layouts && memberLayout.data.autosave_layouts;
 
 	if (!autosave77) {
-		console.warn(
-			'autosave77 isAutosaveLayoutOn user, memberLayout',
-			user,
-			memberLayout
-		);
+		console.warn('autosave77 isAutosaveLayoutOn user, memberLayout', user, memberLayout);
 	}
 
 	return autosave77;
