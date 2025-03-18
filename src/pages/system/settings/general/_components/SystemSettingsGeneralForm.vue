@@ -1,10 +1,10 @@
 <template>
 	<div class="system-settings-general-form">
 		<form @submit.prevent="isEdit ? editWhiteLabel() : uploadWhiteLabel()">
-			<FmInputText label="Enter name" v-model="formState.company_name" />
+			<FmInputText label="Enter name" v-model="formState.name" />
 			<FmInputText
 				label="Enter configuration code"
-				v-model="formState.theme_code"
+				v-model="formState.configuration_code"
 			/>
 			<FmInputFile
 				:fileName="theme_css_url || null"
@@ -78,7 +78,9 @@
 		logo_dark_url: String,
 		logo_light_url: String,
 		theme_code: String,
-		theme_css_url: String
+		theme_css_url: String,
+		name: String,
+		configuration_code: String
 	});
 
 	const formState = reactive({
@@ -89,6 +91,8 @@
 		logo_light_url: null,
 		favicon_url: null,
 		custom_css: props.custom_css || '',
+		name: props.name || '',
+		configuration_code: props.configuration_code || '',
 		is_default: props.is_default || false
 	});
 
@@ -106,8 +110,10 @@
 
 	async function uploadWhiteLabel() {
 		const formData = new FormData();
-		formData.append('name', formState.company_name);
-		formData.append('configuration_code', formState.theme_code);
+		formData.append('name', formState.name);
+		formData.append('configuration_code', formState.configuration_code);
+		formData.append('company_name', formState.company_name);
+		formData.append('theme_code', formState.theme_code);
 		formData.append('theme_css_file', formState.theme_css_url);
 		formData.append('logo_dark_image', formState.logo_dark_url);
 		formData.append('logo_light_image', formState.logo_light_url);
