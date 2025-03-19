@@ -5,7 +5,7 @@
 		<div class="list">
 			<div v-for="item in items" :key="item.id" class="item">
 				<b class="name">
-					{{ item.company_name || 'Unknown' }}
+					{{ item.name || item.company_name || 'Unknown' }}
 				</b>
 				<NuxtLink
 					:to="

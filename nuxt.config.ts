@@ -71,9 +71,6 @@ export default defineNuxtConfig({
 		plugins: [commonjs()]
 	},
 	srcDir: 'src',
-	dir: {
-		public: '../public',
-	},
 	hooks: {
 		'pages:extend': (pages) => {
 			const pagesToRemove: string[] = [];
