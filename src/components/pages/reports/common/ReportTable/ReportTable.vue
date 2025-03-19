@@ -1,14 +1,11 @@
 <template>
 	<div class="report-table">
-		<div class="report-table__header">
-			<div :class="['report-table__header-checkbox', 'report-table__header-cell']">
+		<div ref="tableHeaderEl" class="report-table__header">
+			<div class="report-table__header-checkbox">
 				<FmCheckbox :disabled="disabled" />
 			</div>
 
-			<div
-				v-if="!isMenuColumnHidden"
-				:class="['report-table__header-menu', 'report-table__header-cell']"
-			>
+			<div v-if="!isMenuColumnHidden" class="report-table__header-menu">
 				<FmIconButton
 					icon="mdi-label-outline"
 					variant="text"
@@ -34,39 +31,25 @@
 			</div>
 
 			<template v-for="gr in groups" :key="gr.key">
-				<div
-					:class="['report-table__header-group', 'report-table__header-cell']"
-					:style="{ width: gr.style?.width || '100px' }"
-				>
-					<FmIconButton
-						icon="mdi-menu-right"
-						variant="text"
-						class="report-table__header-cell-prepend"
-					/>
-
-					<span>{{ gr.layout_name }}</span>
-
-					<FmIconButton
-						icon="mdi-dots-vertical"
-						variant="text"
-						class="report-table__header-cell-append"
-					/>
-				</div>
+				<ReportTableHeaderCell
+					type="group"
+					:item="gr"
+					:sort-data="sortGroup"
+					:disabled="disabled"
+					@open-cell-menu="openHeaderCellMenu($event, 'group', gr)"
+					@cell-resize="onCellResize('group', gr, $event)"
+				/>
 			</template>
 
 			<template v-for="col in visibleColumns" :key="col.key">
-				<div
-					:class="['report-table__header-col', 'report-table__header-cell']"
-					:style="{ width: col.style?.width || '100px' }"
-				>
-					<span>{{ col.layout_name }}</span>
-
-					<FmIconButton
-						icon="mdi-dots-vertical"
-						variant="text"
-						class="report-table__header-cell-append"
-					/>
-				</div>
+				<ReportTableHeaderCell
+					type="column"
+					:item="col"
+					:sort-data="sortColumn"
+					:disabled="disabled"
+					@open-cell-menu="openHeaderCellMenu($event, 'column', col)"
+					@cell-resize="onCellResize('column', col, $event)"
+				/>
 			</template>
 
 			<FmIconButton
@@ -80,42 +63,116 @@
 				:disabled="disabled"
 				@click.stop.prevent="isMenuColumnHidden = !isMenuColumnHidden"
 			/>
+
+			<FmMenu
+				v-model="headerCellMenuSettings.open"
+				:activator="tableHeaderEl"
+				:target="[headerCellMenuSettings.x, headerCellMenuSettings.y]"
+				:close-on-content-click="false"
+				scroll-strategy="block"
+				width="240"
+			>
+				<div>
+					{{ headerCellMenuSettings.entity.type }} {{ headerCellMenuSettings.entity.value }}
+				</div>
+			</FmMenu>
+		</div>
+
+		<div class="report-table__body">
+			<template v-for="val in tableData?.children" :key="val.___group_identifier || val.id">
+				<ReportTableRowForItem
+					v-if="val.id"
+					:item="val"
+					:current-layout="currentLayout"
+					:is-menu-column-hidden="isMenuColumnHidden"
+					:disabled="disabled"
+				/>
+
+				<div v-else>ROW FOR GROUP</div>
+			</template>
 		</div>
 	</div>
 </template>
 
 <script setup>
 	import { computed, ref } from 'vue';
-	import { storeToRefs } from 'pinia';
 	import get from 'lodash/get';
 	import { FmCheckbox, FmIcon, FmIconButton, FmMenu, FmMenuItem } from '@finmars/ui';
-	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
 	import { LABEL_OPTIONS } from './constants';
+	import ReportTableHeaderCell from './ReportTableHeaderCell.vue';
+	import ReportTableRowForItem from '../ReportTableRowForItem/ReportTableRowForItem.vue';
 
 	const props = defineProps({
+		currentLayout: {
+			type: Object,
+			default: () => ({})
+		},
+		tableData: {
+			type: Object,
+			required: true,
+			default: () => ({})
+		},
+		sortGroup: {
+			type: Object,
+			required: true
+		},
+		sortColumn: {
+			type: Object,
+			required: true
+		},
 		disabled: {
 			type: Boolean
 		}
 	});
 
-	const balanceReportStore = useBalanceReportStore();
-	const { currentLayout, sortGroup, sortColumn } = storeToRefs(balanceReportStore);
+	const emits = defineEmits(['cell-resize']);
 
+	const tableHeaderEl = ref(null);
 	const isMenuColumnHidden = ref(false);
+	const headerCellMenuSettings = ref({
+		open: false,
+		x: 0,
+		y: 0,
+		entity: {
+			type: 'group',
+			value: null
+		}
+	});
 
-	const groups = computed(() => get(currentLayout.value, ['data', 'grouping'], []));
-	const groupIds = computed(() => groups.value.map((gr) => gr.___group_id));
+	const groups = computed(() => get(props.currentLayout, ['data', 'grouping'], []));
+	const groupIds = computed(() => groups.value.map((gr) => gr.___group_type_id));
 	const columns = computed(() =>
-		get(currentLayout.value, ['data', 'columns'], []).filter(
+		get(props.currentLayout, ['data', 'columns'], []).filter(
 			(col) => !groupIds.value.includes(col.___column_id)
 		)
 	);
 	const visibleColumns = computed(() => columns.value.filter((col) => !col.isHidden));
+
+	function openHeaderCellMenu(event, type = 'group', value) {
+		console.log('openHeaderCellMenu: ', type, event, value);
+		const elRect = event.target.getBoundingClientRect();
+		headerCellMenuSettings.value = {
+			open: true,
+			x: elRect.x,
+			y: elRect.y + elRect.height + 4,
+			entity: {
+				type,
+				value
+			}
+		};
+	}
+
+	function onCellResize(type = 'group', item, width) {
+		emits('cell-resize', { type, item, width });
+	}
 </script>
 
 <style lang="scss" scoped>
+	@use '@/assets/scss/core/_mixins' as mixins;
+
 	.report-table {
 		--report-table-row-height: 48px;
+		--report-table-cell-min-width: 90px;
 
 		position: relative;
 		width: max-content;
@@ -131,40 +188,25 @@
 			color: var(--on-surface-variant);
 			border-bottom: 1px solid var(--outline-variant);
 
-			&-cell {
-				position: relative;
-				height: 100%;
-				display: flex;
-				align-items: center;
-				overflow: hidden;
-				border-right: 1px solid var(--outline-variant);
-				font: var(--label-medium-pro-font);
-
-				&-prepend,
-				&-append {
-					position: absolute;
-					right: 0;
-					top: calc(var(--report-table-row-height) - 40px) / 2;
-				}
-
-				&-prepend {
-					left: 0;
-				}
-
-				&-append {
-					right: 0;
-				}
-			}
-
 			&-checkbox {
-				width: var(--report-table-row-height);
+				display: flex;
 				justify-content: center;
+				align-items: center;
+				width: var(--report-table-row-height);
+				min-width: var(--report-table-row-height);
+				height: 100%;
+				border-right: 1px solid var(--outline-variant);
 			}
 
 			&-menu {
-				width: calc(2 * var(--report-table-row-height));
-				padding-left: var(--report-table-row-height);
+				display: flex;
 				justify-content: center;
+				align-items: center;
+				width: calc(2 * var(--report-table-row-height));
+				min-width: calc(2 * var(--report-table-row-height));
+				height: 100%;
+				border-right: 1px solid var(--outline-variant);
+				padding-left: var(--report-table-row-height);
 
 				&-btn {
 					:deep(.v-icon) {
@@ -192,14 +234,11 @@
 					}
 				}
 			}
+		}
 
-			&-group {
-				padding: 0 40px;
-			}
-
-			&-col {
-				padding: 0 40px 0 16px;
-			}
+		&__body {
+			position: relative;
+			width: 100%;
 		}
 	}
 </style>

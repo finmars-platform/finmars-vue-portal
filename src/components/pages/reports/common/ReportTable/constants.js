@@ -25,3 +25,10 @@ export const LABEL_OPTIONS = [
 		icon: 'mdi-label-off'
 	}
 ];
+
+export const REPORT_TABLE_CELL_MIN_WIDTH = {
+	group: 110,
+	column: 90
+};
+
+export const REPORT_TABLE_CELL_MAX_WIDTH = 400;

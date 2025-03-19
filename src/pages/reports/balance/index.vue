@@ -8,7 +8,13 @@
 		/>
 
 		<div class="balance-report__content">
-			<ReportTable />
+			<ReportTable
+				:current-layout="currentLayout"
+				:table-data="tableData"
+				:sort-group="sortGroup"
+				:sort-column="sortColumn"
+				@cell-resize="onCellResize"
+			/>
 		</div>
 
 		<div v-if="isLoading" class="balance-report__loader">
@@ -21,6 +27,7 @@
 	import { onBeforeMount, ref } from 'vue';
 	import { storeToRefs } from 'pinia';
 	import get from 'lodash/get';
+	import set from 'lodash/set';
 	import { FmProgressCircular } from '@finmars/ui';
 	import { useAttributes } from '~/stores/useAttributes';
 	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
@@ -49,7 +56,7 @@
 		prepareTableDataRequestOptions,
 		getTableData
 	} = balanceReportStore;
-	const { currentLayout, tableData } = storeToRefs(balanceReportStore);
+	const { currentLayout, sortGroup, sortColumn, tableData } = storeToRefs(balanceReportStore);
 
 	const {
 		downloadCustomFieldsByEntityType,
@@ -75,6 +82,21 @@
 					isLoading.value = false;
 				}
 				break;
+		}
+	}
+
+	function onCellResize({ type, item, width }) {
+		console.log('onCellResize: ', type, item, width);
+		if (type === 'group') {
+			const index = get(currentLayout.value, ['data', 'grouping'], []).findIndex(
+				(i) => i.___group_type_id === item.___group_type_id
+			);
+			index > -1 && set(currentLayout.value, ['data', 'grouping', index, 'style', 'width'], width);
+		} else {
+			const index = get(currentLayout.value, ['data', 'columns'], []).findIndex(
+				(i) => i.___column_id === item.___column_id
+			);
+			index > -1 && set(currentLayout.value, ['data', 'columns', index, 'style', 'width'], width);
 		}
 	}
 

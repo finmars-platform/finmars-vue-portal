@@ -15,6 +15,8 @@ import { getListLight as getCurrencyList } from '~/services/currency/currencySer
 import { getList as getDefaultList } from '~/services/ecosystemDefaultService';
 import { REPORT_DATA_PROPERTIES } from '~/components/pages/reports/common/constants';
 
+const itemsPerPage = 40;
+
 export const useBalanceReportStore = defineStore('balance-report', () => {
 	const router = useRouter();
 
@@ -31,7 +33,12 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		key: null,
 		sort: 'asc'
 	});
-	const tableData = ref([]);
+	const tableData = ref({
+		___group_type_id: 'root',
+		key: 'root',
+		totalChildren: 0,
+		children: []
+	});
 
 	const groupIds = computed(() =>
 		get(currentLayout.value, ['data', 'grouping'], []).map((gr) => gr.___group_type_id)
@@ -153,7 +160,7 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		}
 	}
 
-	function prepareTableDataRequestOptions({ page = 1, pageSize = 40, groupValue = [] }) {
+	function prepareTableDataRequestOptions({ page = 1, pageSize = itemsPerPage, groupValue = [] }) {
 		const options = {
 			frontend_request_options: {
 				columns: get(currentLayout.value, ['data', 'columns'], []),
@@ -190,6 +197,11 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		} else {
 			const itemList = await getItemList(options, entityType);
 			console.log('itemList => ', itemList);
+			tableData.value.totalChildren = get(itemList, 'count', 0);
+			tableData.value.children = get(itemList, 'results', []).map((item) => ({
+				...item,
+				rowId: item.___column_id
+			}));
 		}
 	}
 
