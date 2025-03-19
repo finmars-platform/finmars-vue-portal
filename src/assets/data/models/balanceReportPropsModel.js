@@ -357,11 +357,6 @@ export const balanceReportAttributes = [
 		value_type: 20
 	},
 	{
-		key: 'instrument_ytm',
-		name: 'Current YTM',
-		value_type: 20
-	},
-	{
 		key: 'detail',
 		name: 'Transaction Detail',
 		value_type: 10
