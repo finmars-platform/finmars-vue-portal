@@ -15,6 +15,8 @@
 			:theme_css_url="item.theme_css_url"
 			:configuration_code="item.configuration_code"
 			:name="item.name"
+			:notes="item.notes"
+			:user_code="item.user_code"
 		/>
 	</div>
 </template>

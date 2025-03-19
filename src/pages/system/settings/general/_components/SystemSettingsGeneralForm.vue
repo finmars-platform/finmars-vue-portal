@@ -1,11 +1,29 @@
 <template>
 	<div class="system-settings-general-form">
 		<form @submit.prevent="isEdit ? editWhiteLabel() : uploadWhiteLabel()">
-			<FmInputText label="Enter name" v-model="formState.name" />
-			<FmInputText
-				label="Enter configuration code"
-				v-model="formState.configuration_code"
-			/>
+			<div class="card">
+				<UserCodeInput
+					:user-code="formState.user_code"
+					@update:user-code="updateField('user_code', $event)"
+					@update:configuration-code="
+						updateField('configuration_code', $event)
+					"
+					@update:valid="formData['user_code'].isValid = $event"
+					class="mb-6"
+				/>
+				<FmTextField
+					:model-value="formState.name"
+					outlined
+					label="Name"
+					:error="formData.name.isDirty && !formData.name.isValid"
+					:error-messages="
+						formData.name.isDirty && !formData.name.isValid
+							? ['This field may not blank']
+							: []
+					"
+					@update:model-value="updateField('name', $event)"
+				/>
+			</div>
 			<FmInputFile
 				:fileName="theme_css_url || null"
 				label="Select css file"
@@ -41,6 +59,7 @@
 				style="height: 200px"
 				class="m-b-24"
 			/>
+			<FmInputArea class="mb-4" label="Notes" v-model="formState.notes" />
 			<FmCheckbox v-model="formState.is_default" label="Default" />
 			<button class="btn" type="submit">
 				<FmBtn>Save</FmBtn>
@@ -54,6 +73,8 @@
 	import { VAceEditor } from 'vue3-ace-editor';
 	import 'ace-builds/src-noconflict/mode-css';
 	import 'ace-builds/src-noconflict/theme-monokai';
+	import UserCodeInput from '~/components/common/UserCodeInput/UserCodeInput.vue';
+	import { FmTextField } from '@finmars/ui';
 
 	const route = useRoute();
 	const router = useRouter();
@@ -80,7 +101,26 @@
 		theme_code: String,
 		theme_css_url: String,
 		name: String,
+		notes: String,
+		user_code: String,
 		configuration_code: String
+	});
+
+	const formData = ref({
+		name: {
+			isDirty: false,
+			isValid: true
+		},
+		configuration_code: {
+			isDirty: false,
+			skipValidation: true,
+			isValid: true
+		},
+		user_code: {
+			isDirty: false,
+			skipValidation: true,
+			isValid: true
+		}
 	});
 
 	const formState = reactive({
@@ -93,10 +133,18 @@
 		custom_css: props.custom_css || '',
 		name: props.name || '',
 		configuration_code: props.configuration_code || '',
+		user_code: props.user_code || '',
+		notes: props.notes || '',
 		is_default: props.is_default || false
 	});
 
 	const isEdit = computed(() => !!props.id);
+	const isFormValid = computed(
+		() =>
+			!Object.keys(formData.value).find(
+				(fieldName) => !formData.value[fieldName].isValid
+			)
+	);
 
 	function onFileChange(event, fieldName) {
 		const file = event.target.files[0];
@@ -109,6 +157,9 @@
 	}
 
 	async function uploadWhiteLabel() {
+		beforeSave();
+		if (!isFormValid.value) return;
+
 		const formData = new FormData();
 		formData.append('name', formState.name);
 		formData.append('configuration_code', formState.configuration_code);
@@ -120,6 +171,8 @@
 		formData.append('favicon_image', formState.favicon_url);
 		formData.append('custom_css', formState.custom_css);
 		formData.append('is_default', formState.is_default);
+		formData.append('notes', formState.notes);
+		formData.append('user_code', formState.user_code);
 
 		try {
 			const response = await useApi('systemWhiteLabel.post', {
@@ -146,9 +199,20 @@
 	}
 
 	async function editWhiteLabel() {
+		beforeSave();
+		if (!isFormValid.value) return;
+
 		const formData = new FormData();
 		if (props.company_name !== formState.company_name)
 			formData.append('company_name', formState.company_name);
+		if (props.name !== formState.name)
+			formData.append('name', formState.name);
+		if (props.configuration_code !== formState.configuration_code)
+			formData.append('configuration_code', formState.configuration_code);
+		if (props.user_code !== formState.user_code)
+			formData.append('user_code', formState.user_code);
+		if (props.notes !== formState.notes)
+			formData.append('notes', formState.notes);
 		if (props.theme_code !== formState.theme_code)
 			formData.append('theme_code', formState.theme_code);
 		if (formState.theme_css_url)
@@ -189,6 +253,30 @@
 		}
 	}
 
+	function updateField(field, value) {
+		formState[field] = value;
+		!formData.value[field].isDirty &&
+			(formData.value[field].isDirty = true);
+		validateForm();
+	}
+
+	function beforeSave() {
+		Object.keys(formData.value).forEach((field) => {
+			if (!formData.value[field].skipValidation) {
+				formData.value[field].isDirty = true;
+			}
+		});
+		validateForm();
+	}
+
+	function validateForm() {
+		Object.keys(formData.value).forEach((field) => {
+			if (!formData.value[field].skipValidation) {
+				formData.value[field].isValid = !!formState[field];
+			}
+		});
+	}
+
 	function editorInit(editor) {
 		editor.focus();
 		editor.navigateFileStart();
@@ -204,5 +292,14 @@
 	.btn {
 		margin-top: 24px;
 		padding: 0;
+	}
+
+	.card {
+		position: relative;
+		width: 100%;
+		padding: 16px 12px 0;
+		border-radius: 8px;
+		border: 1px solid var(--outline-variant);
+		margin-bottom: var(--spacing-16);
 	}
 </style>
