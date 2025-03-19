@@ -34,6 +34,7 @@
 				<ReportTableHeaderCell
 					type="group"
 					:item="gr"
+					:header-element="tableHeaderEl"
 					:sort-data="sortGroup"
 					:disabled="disabled"
 					@open-cell-menu="openHeaderCellMenu($event, 'group', gr)"
@@ -46,6 +47,7 @@
 					type="column"
 					:item="col"
 					:sort-data="sortColumn"
+					:header-element="tableHeaderEl"
 					:disabled="disabled"
 					@open-cell-menu="openHeaderCellMenu($event, 'column', col)"
 					@cell-resize="onCellResize('column', col, $event)"

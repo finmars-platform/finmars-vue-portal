@@ -86,7 +86,6 @@
 	}
 
 	function onCellResize({ type, item, width }) {
-		console.log('onCellResize: ', type, item, width);
 		if (type === 'group') {
 			const index = get(currentLayout.value, ['data', 'grouping'], []).findIndex(
 				(i) => i.___group_type_id === item.___group_type_id

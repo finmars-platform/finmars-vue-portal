@@ -6,11 +6,11 @@
 			{
 				'table-header-cell__group': type === 'group',
 				'table-header-cell__column': type === 'column',
-				'table-header-cell--sorted': sortData.key === item.key
+				'table-header-cell--sorted': sortData.key === item.key,
+				'table-header-cell--resizing': movingConfig.changing
 			}
 		]"
 		:style="{ width: movingConfig.width }"
-		@mouseup="onResizerMouseUp"
 		@click.stop.prevent
 	>
 		<FmIcon
@@ -20,7 +20,7 @@
 			@click.stop.prevent
 		/>
 
-		<span class="table-header-cell__text">
+		<span class="table-header-cell__text" @click.stop.prevent>
 			{{ item.layout_name }}
 
 			<FmTooltip type="secondary" activator="parent" location="top">
@@ -37,18 +37,12 @@
 			@click.stop.prevent="emits('open-cell-menu', $event)"
 		/>
 
-		<div
-			class="table-header-cell__resizer"
-			@click.stop.prevent
-			@dragstart="onResizerDragStart"
-			@mousedown="onResizerMouseDown"
-			@mousemove.stop.prevent="onResizerMouseMove"
-		/>
+		<div ref="resizerEl" class="table-header-cell__resizer" @click.stop.prevent />
 	</div>
 </template>
 
 <script setup>
-	import { computed, ref, watch } from 'vue';
+	import { onBeforeUnmount, computed, onMounted, ref, watch } from 'vue';
 	import { FmIcon, FmTooltip, Ripple } from '@finmars/ui';
 	import { REPORT_TABLE_CELL_MIN_WIDTH, REPORT_TABLE_CELL_MAX_WIDTH } from './constants';
 
@@ -63,6 +57,9 @@
 			type: Object,
 			required: true
 		},
+		headerElement: {
+			type: Object
+		},
 		sortData: {
 			type: Object,
 			required: true
@@ -74,6 +71,7 @@
 	const emits = defineEmits(['open-cell-menu', 'cell-resize']);
 
 	const cellEl = ref(null);
+	const resizerEl = ref(null);
 
 	const cssGroupCellMinWidth = computed(() => `${REPORT_TABLE_CELL_MIN_WIDTH.group}px`);
 	const cssColumnCellMinWidth = computed(() => `${REPORT_TABLE_CELL_MIN_WIDTH.column}px`);
@@ -89,45 +87,53 @@
 		width:
 			props.item.style?.width ||
 			(props.type === 'group' ? cssGroupCellMinWidth.value : cssColumnCellMinWidth.value),
-		shift: 0,
+		initialWidth: 0,
+		x: 0,
 		changing: false
 	});
 
-	function onResizerDragStart() {
-		return false;
+	function onMouseMove(ev) {
+		const dx = ev.clientX - movingConfig.value.x;
+		const newCellWidth = movingConfig.value.initialWidth + dx;
+		if (
+			newCellWidth >= REPORT_TABLE_CELL_MIN_WIDTH[props.type] &&
+			newCellWidth <= REPORT_TABLE_CELL_MAX_WIDTH
+		) {
+			movingConfig.value.width = `${newCellWidth}px`;
+			emits('cell-resize', movingConfig.value.width);
+		}
+	}
+
+	function onMouseUp() {
+		movingConfig.value.changing = false;
+		movingConfig.value.x = 0;
+		movingConfig.value.initialWidth = 0;
+		props.headerElement?.removeEventListener('mousemove', onMouseMove);
+		props.headerElement?.removeEventListener('mouseup', onMouseUp);
 	}
 
 	function onResizerMouseDown(ev) {
-		const cellElRect = cellEl.value.getBoundingClientRect();
-		movingConfig.value.shift = ev.clientX - cellElRect.right;
+		movingConfig.value.x = ev.clientX;
+		movingConfig.value.initialWidth = parseInt(movingConfig.value.width.slice(0, -2), 10);
 		movingConfig.value.changing = true;
+
+		props.headerElement?.addEventListener('mousemove', onMouseMove);
+		props.headerElement?.addEventListener('mouseup', onMouseUp);
 	}
 
-	function onResizerMouseUp() {
-		movingConfig.value.changing = false;
-		movingConfig.value.shift = 0;
-		return false;
-	}
+	onMounted(() => {
+		resizerEl.value.addEventListener('mousedown', onResizerMouseDown);
+	});
 
-	function onResizerMouseMove(ev) {
-		if (movingConfig.value.changing) {
-			const cellElRect = cellEl.value.getBoundingClientRect();
-			const newCellWidth = ev.clientX - movingConfig.value.shift - cellElRect.x;
-
-			if (
-				newCellWidth > REPORT_TABLE_CELL_MIN_WIDTH[props.type] &&
-				newCellWidth < REPORT_TABLE_CELL_MAX_WIDTH
-			) {
-				movingConfig.value.width = `${newCellWidth}px`;
-				emits('cell-resize', movingConfig.value.width);
-			}
-		}
-	}
+	onBeforeUnmount(() => {
+		resizerEl.value.removeEventListener('mousedown', onResizerMouseDown);
+	});
 
 	watch(
 		() => props.item?.style?.width,
 		() => {
 			if (movingConfig.value.width !== props.item?.style?.width) {
+				console.log('WATCH!');
 				movingConfig.value.width =
 					props.item.style?.width ||
 					(props.type === 'group' ? cssGroupCellMinWidth.value : cssColumnCellMinWidth.value);
@@ -209,6 +215,11 @@
 			}
 		}
 
+		&--resizing {
+			user-select: none;
+			border-right: 1px solid var(--primary);
+		}
+
 		&:hover {
 			padding-right: 60px;
 
@@ -223,8 +234,7 @@
 			top: 0;
 			height: 100%;
 			right: 0;
-			width: 3px;
-			background-color: var(--outline-variant);
+			width: 5px;
 			cursor: col-resize;
 		}
 	}
