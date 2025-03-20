@@ -194,6 +194,11 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		if (type === 'group') {
 			const groupList = await getGroupList(options, entityType);
 			console.log('groupList => ', groupList);
+			tableData.value.totalChildren = get(groupList, 'count', 0);
+			tableData.value.children = get(groupList, 'results', []).map((item) => ({
+				...item,
+				rowId: item.___group_identifier
+			}));
 		} else {
 			const itemList = await getItemList(options, entityType);
 			console.log('itemList => ', itemList);

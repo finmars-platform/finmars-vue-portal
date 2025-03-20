@@ -101,8 +101,12 @@
 
 	async function loadTableData() {
 		const options = prepareTableDataRequestOptions({});
-		console.log('!!! OPTIONS => ', options);
-		await getTableData(!!options.frontend_request_options.groups_types.length, entityType, options);
+		console.log('!!! OPTIONS => ', options, !!options.frontend_request_options.groups_types.length);
+		await getTableData(
+			options.frontend_request_options.groups_types.length ? 'group' : 'items',
+			entityType,
+			options
+		);
 	}
 
 	onBeforeMount(async () => {
