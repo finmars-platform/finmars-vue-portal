@@ -24,7 +24,7 @@
 			<template v-else>
 				<VAceEditor
 					:value="detailsEditor.data.content_formatted || ''"
-					:lang="detailsEditor.contentType"
+					:lang="detailsEditor.contentType || 'json'"
 					theme="monokai"
 					class="min-h-96 w-full"
 					@init="onEditorInit"
