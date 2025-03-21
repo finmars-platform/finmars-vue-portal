@@ -13,8 +13,8 @@
 							v-model="viewerData.reportOptions.report_currency"
 							propId="user_code"
 							:selectedItemName="
-								viewerData.reportOptions.report_currency_object
-									.name
+								viewerData?.reportOptions
+									?.report_currency_object?.name
 							"
 							noBorders
 							content_type="currencies.currency"
