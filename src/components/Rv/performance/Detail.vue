@@ -1280,6 +1280,7 @@ function _assembleReportsMap(monthsList, yearsMap, beginDate, endDate) {
 }
 
 async function getMonthDetails() {
+	if (!bundleId.value) return
 
     requestDetailsUid = useGenerateUniqueId();
     const requestUid = requestDetailsUid;
@@ -1290,18 +1291,13 @@ async function getMonthDetails() {
     detailsLoading.value = true;
 	resetData();
 
-	let bundle = bundleId.value;
-
 	let begin
 	let firstTransaction = {}
 	if (!props.begin_date) {
-		if (bundle) {
-			firstTransaction = await useApi('performanceFirstTransaction.get', {
-				params: { id: bundle },
-			})
-			begin = firstTransaction.transaction_date
-		}
-
+		firstTransaction = await useApi('performanceFirstTransaction.get', {
+			params: { id: bundleId.value },
+		})
+		begin = firstTransaction.transaction_date
 	} else {
 		begin = dayjs(props.begin_date).format('YYYY-MM-DD')
 	}
@@ -1327,7 +1323,7 @@ async function getMonthDetails() {
 
             const getReportOpts = {
                 end: monthEndDate,
-                ids: bundle,
+                ids: bundleId.value,
                 requestUid: requestUid,
             };
 
@@ -1469,7 +1465,7 @@ async function getMonthDetails() {
      * consider calling _calculateTotalsForYears() alongside getReports()
      */
     reportsMap = await _calculateTotalsForYears(
-        reportsMap, props.end_date, bundle, requestUid
+        reportsMap, props.end_date, bundleId.value, requestUid
 	);
 
     // Check that requested totals are still relevant
@@ -1607,7 +1603,6 @@ watch(
         props.report_currency,
     ],
     async () => {
-		console.log('--------------------watch', props.bundle);
         if (props.bundle) {
             await getMonthDetails();
 
