@@ -1295,10 +1295,13 @@ async function getMonthDetails() {
 	let begin
 	let firstTransaction = {}
 	if (!props.begin_date) {
-		firstTransaction = await useApi('performanceFirstTransaction.get', {
-			params: { id: bundle },
-		})
-		begin = firstTransaction.transaction_date
+		if (bundle) {
+			firstTransaction = await useApi('performanceFirstTransaction.get', {
+				params: { id: bundle },
+			})
+			begin = firstTransaction.transaction_date
+		}
+
 	} else {
 		begin = dayjs(props.begin_date).format('YYYY-MM-DD')
 	}
@@ -1604,7 +1607,7 @@ watch(
         props.report_currency,
     ],
     async () => {
-
+		console.log('--------------------watch', props.bundle);
         if (props.bundle) {
             await getMonthDetails();
 
