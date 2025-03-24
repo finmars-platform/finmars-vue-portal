@@ -82,7 +82,7 @@
 
 		<div class="report-table__body">
 			<template v-for="val in tableData?.children" :key="val.___group_identifier || val.id">
-				<ReportTableRowForItem
+				<ReportTableItemRow
 					v-if="val.id"
 					:item="val"
 					:current-layout="currentLayout"
@@ -90,7 +90,13 @@
 					:disabled="disabled"
 				/>
 
-				<div v-else>ROW FOR GROUP</div>
+				<ReportTableGroupRow
+					v-else
+					:group="val"
+					:current-layout="currentLayout"
+					:is-menu-column-hidden="isMenuColumnHidden"
+					:disabled="disabled"
+				/>
 			</template>
 		</div>
 	</div>
@@ -102,7 +108,8 @@
 	import { FmCheckbox, FmIcon, FmIconButton, FmMenu, FmMenuItem } from '@finmars/ui';
 	import { LABEL_OPTIONS } from './constants';
 	import ReportTableHeaderCell from './ReportTableHeaderCell.vue';
-	import ReportTableRowForItem from '../ReportTableRowForItem/ReportTableRowForItem.vue';
+	import ReportTableGroupRow from '../ReportTableGroupRow/ReportTableGroupRow.vue';
+	import ReportTableItemRow from '../ReportTableItemRow/ReportTableItemRow.vue';
 
 	const props = defineProps({
 		currentLayout: {

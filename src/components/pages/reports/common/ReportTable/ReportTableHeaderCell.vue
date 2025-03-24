@@ -14,8 +14,9 @@
 		@click.stop.prevent
 	>
 		<FmIcon
-			v-if="type === 'group'"
-			icon="mdi-menu-right"
+			v-if="prependIcon"
+			v-ripple.center.circle
+			:icon="prependIcon"
 			:class="['table-header-cell__prepend', { 'table-header-cell__prepend--disabled': disabled }]"
 			@click.stop.prevent
 		/>
@@ -28,11 +29,16 @@
 			</FmTooltip>
 		</span>
 
-		<FmIcon :icon="sortIcon" v-ripple.center class="table-header-cell__sort" @click.stop.prevent />
+		<FmIcon
+			:icon="sortIcon"
+			v-ripple.center.circle
+			class="table-header-cell__sort"
+			@click.stop.prevent
+		/>
 
 		<FmIcon
 			icon="mdi-dots-vertical"
-			v-ripple.center
+			v-ripple.center.circle
 			:class="['table-header-cell__append', { 'table-header-cell__append--disabled': disabled }]"
 			@click.stop.prevent="emits('open-cell-menu', $event)"
 		/>
@@ -43,8 +49,9 @@
 
 <script setup>
 	import { onBeforeUnmount, computed, onMounted, ref, watch } from 'vue';
+	import get from 'lodash/get';
 	import { FmIcon, FmTooltip, Ripple } from '@finmars/ui';
-	import { REPORT_TABLE_CELL_MIN_WIDTH, REPORT_TABLE_CELL_MAX_WIDTH } from './constants';
+	import { REPORT_TABLE_CELL_MIN_WIDTH, REPORT_TABLE_CELL_MAX_WIDTH } from '../constants';
 
 	const vRipple = Ripple;
 
@@ -75,6 +82,12 @@
 
 	const cssGroupCellMinWidth = computed(() => `${REPORT_TABLE_CELL_MIN_WIDTH.group}px`);
 	const cssColumnCellMinWidth = computed(() => `${REPORT_TABLE_CELL_MIN_WIDTH.column}px`);
+	const prependIcon = computed(() => {
+		if (props.type === 'column') return false;
+
+		const isGroupFolded = get(props.item, ['report_settings', 'is_level_folded']);
+		return isGroupFolded ? 'mdi-menu-right' : 'mdi-menu-down';
+	});
 	const sortIcon = computed(() => {
 		if (props.sortData?.key !== props.item?.key) {
 			return 'mdi-sort-descending';

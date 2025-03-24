@@ -3,3 +3,10 @@ export const REPORT_DATA_PROPERTIES = {
 	'pl-report': ['pl_first_date', 'report_date'],
 	'transaction-report': ['begin_date', 'end_date']
 };
+
+export const REPORT_TABLE_CELL_MIN_WIDTH = {
+	group: 110,
+	column: 90
+};
+
+export const REPORT_TABLE_CELL_MAX_WIDTH = 400;

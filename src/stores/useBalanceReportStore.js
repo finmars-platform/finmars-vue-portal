@@ -34,8 +34,9 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		sort: 'asc'
 	});
 	const tableData = ref({
-		___group_type_id: 'root',
-		key: 'root',
+		___group_identifier: 'root',
+		___group_type_key: 'root',
+		___group_name: 'root',
 		totalChildren: 0,
 		children: []
 	});
@@ -197,8 +198,11 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 			tableData.value.totalChildren = get(groupList, 'count', 0);
 			tableData.value.children = get(groupList, 'results', []).map((item) => ({
 				...item,
-				rowId: item.___group_identifier
+				rowId: item.___group_identifier,
+				totalChildren: 0,
+				children: []
 			}));
+			console.log('<-- !!!!! -->');
 		} else {
 			const itemList = await getItemList(options, entityType);
 			console.log('itemList => ', itemList);
