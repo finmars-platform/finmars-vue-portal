@@ -7,11 +7,11 @@
 			:row-height="rowHeight"
 			:max-rows="rowsCount"
 			:auto-size="false"
-			is-draggable
-			is-resizable
-			prevent-collision
+			:is-draggable="true"
+			:is-resizable="true"
+			:prevent-collision="true"
 			:vertical-compact="false"
-			use-css-transforms
+			:use-css-transforms="true"
 			@layout-updated="debouncedUpdateDashboard"
 		>
 			<template #item="{ item }">
@@ -34,7 +34,19 @@
 						@click.stop.prevent="removeComponent(item)"
 					/>
 
-					<div v-fm-html="componentsLabels[item.i] ?? ''" />
+					<FmTooltip type="secondary" location="top">
+						<template #activator="{ props }">
+							<div
+								v-fm-html="componentsLabels[item.i] ?? ''"
+								v-bind="props"
+								class="top-panel-layout__component-name"
+							/>
+						</template>
+
+						<span>
+							{{ getComponentTooltip(componentsLabels[item.i]) }}
+						</span>
+					</FmTooltip>
 				</div>
 			</template>
 		</GridLayout>
@@ -132,6 +144,14 @@
 	} = useLayout(data, path, emits);
 
 	const debouncedUpdateDashboard = debounce(updateDashboard, 100);
+
+	function getComponentTooltip(text) {
+		if (!text) return '';
+
+		const div = document.createElement('div');
+		div.innerHTML = text;
+		return div.innerText;
+	}
 </script>
 
 <style lang="scss" scoped>
@@ -180,6 +200,16 @@
 				top: 2px;
 				width: 24px !important;
 				height: 24px !important;
+			}
+
+			&-name {
+				display: -webkit-box;
+				max-width: 100%;
+				max-height: 32px;
+				-webkit-line-clamp: 2;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+				user-select: none;
 			}
 
 			&-delete {

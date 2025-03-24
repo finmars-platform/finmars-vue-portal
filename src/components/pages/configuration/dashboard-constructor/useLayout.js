@@ -10,10 +10,10 @@ import {
 import get from 'lodash/get';
 import size from 'lodash/size';
 import cloneDeep from 'lodash/cloneDeep';
+import set from 'lodash/set';
 import { FM_VUEBUS_KEY } from '@finmars/ui';
 import { getComponentItemVerboseType } from './utils';
 import { DASHBOARD_CONSTRUCTOR_EVENTS } from '~/constants';
-import set from 'lodash/set';
 
 export function useLayout(data, path, emits) {
 	const vueBus = inject(FM_VUEBUS_KEY);
@@ -22,6 +22,9 @@ export function useLayout(data, path, emits) {
 	const gridLayout = ref();
 
 	const gridData = ref([]);
+	const gridDataComponentIds = computed(() =>
+		gridData.value.map((cell) => cell.i)
+	);
 
 	const layout = computed(() =>
 		get(toValue(data), [...toValue(path), 'layout'], {})
@@ -156,6 +159,7 @@ export function useLayout(data, path, emits) {
 
 		return !rows.value[rowIndex].columns.some((cell, index) => {
 			const { cell_type, is_hidden } = cell;
+
 			const { cell_type: next_cell_type, is_hidden: next_is_hidden } =
 				rows.value[rowIndex + 1].columns[index];
 			return (
@@ -169,7 +173,6 @@ export function useLayout(data, path, emits) {
 
 	function updateDashboard(layoutGridData = []) {
 		if (isDragging.value) return;
-
 		const updatedLayout = transformGridDataToLayoutData(
 			layoutGridData,
 			columnsCount.value,
@@ -240,50 +243,51 @@ export function useLayout(data, path, emits) {
 	}
 
 	function onComponentDrag({ mouseAt, component }) {
-		const parentRect = wrapper.value?.getBoundingClientRect();
-		if (!parentRect || !gridLayout.value) return;
+		const parentElRect = wrapper.value?.getBoundingClientRect();
+		if (!parentElRect || !gridLayout.value) return;
 		isDragging.value = true;
 
-		const mouseInGrid = isMouseInGrid(mouseAt, parentRect);
-		if (
-			mouseInGrid &&
-			!gridData.value.find((item) => item.i === component.id)
-		) {
+		const mouseInGrid = isMouseInGrid(mouseAt, parentElRect);
+		if (mouseInGrid && !gridDataComponentIds.value.includes('drop')) {
 			gridData.value.push({
-				x: columnsCount.value - 1,
-				y: 0,
+				x: columnsCount.value + 2,
+				y: rowsCount.value + 2,
 				w: 1,
 				h: 1,
-				i: component.id
+				i: 'drop'
 			});
 		}
 
-		const index = gridData.value.findIndex(
-			(item) => item.i === component.id
-		);
+		const index = gridData.value.findIndex((item) => item.i === 'drop');
 		if (index !== -1) {
-			const item = gridLayout.value.getItem(component.id);
+			const item = gridLayout.value.getItem('drop');
 			if (!item) return;
 
 			try {
 				item.wrapper.style.display = 'none';
 			} catch (e) {
-				//
+				/* empty */
 			}
 
 			Object.assign(item.state, {
-				top: mouseAt.y - parentRect.top,
-				left: mouseAt.x - parentRect.left
+				top: mouseAt.y - parentElRect.top,
+				left: mouseAt.x - parentElRect.left
 			});
 			const newPos = item.calcXY(
-				mouseAt.y - parentRect.top,
-				mouseAt.x - parentRect.left
+				mouseAt.y - parentElRect.top,
+				mouseAt.x - parentElRect.left
 			);
 
-			if (mouseInGrid) {
+			if (
+				mouseInGrid &&
+				newPos.x !== undefined &&
+				newPos.x <= columnsCount.value - 1 &&
+				newPos.y !== undefined &&
+				newPos.y <= rowsCount.value - 1
+			) {
 				gridLayout.value.dragEvent(
 					'dragstart',
-					component.id,
+					'drop',
 					newPos.x,
 					newPos.y,
 					dragItem.value.h,
@@ -295,63 +299,66 @@ export function useLayout(data, path, emits) {
 			} else {
 				gridLayout.value.dragEvent(
 					'dragend',
-					component.id,
+					'drop',
 					newPos.x,
 					newPos.y,
 					dragItem.value.h,
 					dragItem.value.w
 				);
-				gridData.value = gridData.value.filter(
-					(item) => item.i !== component.id
-				);
+				gridData.value = gridData.value.filter((c) => c.i !== 'drop');
 			}
 		}
 	}
 
-	function onComponentDragend({ mouseAt, component }) {
+	function onComponentDragend({ mouseAt }) {
 		isDragging.value = false;
-		const parentRect = wrapper.value?.getBoundingClientRect();
-		if (!parentRect || !gridLayout.value) return;
+		const parentElRect = wrapper.value?.getBoundingClientRect();
+		if (!parentElRect || !gridLayout.value) return;
 
-		const mouseInGrid = isMouseInGrid(mouseAt, parentRect);
-		if (!mouseInGrid) return;
+		const mouseInGrid = isMouseInGrid(mouseAt, parentElRect);
+		if (mouseInGrid) {
+			gridLayout.value.dragEvent(
+				'dragend',
+				'drop',
+				dragItem.value.x,
+				dragItem.value.y,
+				dragItem.value.h,
+				dragItem.value.w
+			);
+			gridData.value = gridData.value.filter((item) => item.i !== 'drop');
+		} else {
+			return;
+		}
 
+		dragItem.value.x !== undefined &&
+			dragItem.value.x <= columnsCount.value - 1 &&
+			dragItem.value.y !== undefined &&
+			dragItem.value.y <= rowsCount.value - 1 &&
+			gridData.value.push({
+				x: dragItem.value.x,
+				y: dragItem.value.y,
+				w: dragItem.value.w,
+				h: dragItem.value.h,
+				i: dragItem.value.i
+			});
 		gridLayout.value.dragEvent(
 			'dragend',
-			component.id,
+			dragItem.value.i,
 			dragItem.value.x,
 			dragItem.value.y,
 			dragItem.value.h,
 			dragItem.value.w
 		);
-		gridData.value = gridData.value.filter(
-			(item) => item.i !== component.id
-		);
-		gridData.value.push({
-			x: dragItem.value.x,
-			y: dragItem.value.y,
-			w: dragItem.value.w,
-			h: dragItem.value.h,
-			i: component.id
-		});
-		gridLayout.value.dragEvent(
-			'dragend',
-			component.id,
-			dragItem.value.x,
-			dragItem.value.y,
-			dragItem.value.h,
-			dragItem.value.w
-		);
 
-		const item = gridLayout.value.getItem(component.id);
-		dragItem.value = { x: -1, y: -1, w: 1, h: 1, i: '' };
-
+		const item = gridLayout.value.getItem('drop');
 		if (!item) return;
 		try {
 			item.wrapper.style.display = '';
 		} catch (e) {
-			//
+			/* empty */
 		}
+
+		// dragItem.value = { x: -1, y: -1, w: 1, h: 1, i: '' };
 	}
 
 	onMounted(() => {

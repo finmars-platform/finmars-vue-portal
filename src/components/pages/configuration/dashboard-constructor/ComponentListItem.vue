@@ -120,6 +120,7 @@
 			align-items: flex-start;
 			font: var(--body-medium-font);
 			color: var(--on-surface);
+			user-select: none;
 			@include mixins.text-overflow-ellipsis();
 		}
 

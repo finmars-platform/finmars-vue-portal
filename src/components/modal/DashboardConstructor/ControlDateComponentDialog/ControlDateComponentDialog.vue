@@ -188,7 +188,7 @@
 			position: relative;
 			top: -1px;
 			width: 100%;
-			height: 680px;
+			height: 480px;
 			border-radius: 0 8px 8px 8px;
 			padding: 24px 24px 0 24px;
 			border: 1px solid var(--outline-variant);

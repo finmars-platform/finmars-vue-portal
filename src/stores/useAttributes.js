@@ -203,7 +203,7 @@ export const useAttributes = defineStore('attributes', () => {
 						name: attr.name
 					})
 				);
-
+		console.log('---------> ', [...entityAttrs, ...dynamicAttrs]);
 		return [...entityAttrs, ...dynamicAttrs];
 	}
 
