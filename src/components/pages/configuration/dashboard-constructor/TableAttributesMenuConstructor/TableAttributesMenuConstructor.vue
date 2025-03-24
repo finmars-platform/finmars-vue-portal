@@ -39,7 +39,10 @@
 						outlined
 						readonly
 						hide-details
-						:disabled="disabled"
+						:disabled="disabled || attr.is_default"
+						@click.stop.prevent="
+							changeAttributeOfMenuPosition(attr.attribute_data)
+						"
 					/>
 
 					<FmTextField
@@ -91,7 +94,7 @@
 					rounded
 					class="table-attributes-menu__content-add"
 					:disabled="disabled"
-					@click.stop.prevent="changeAttributeOfMenuPosition"
+					@click.stop.prevent="changeAttributeOfMenuPosition(null)"
 				>
 					Add Columns
 				</FmButton>
@@ -272,6 +275,16 @@
 		innerValue.value = [...innerValue.value, ...newAttrs];
 	}
 
+	function changeAttr(oldAttr, newAttrKey) {
+		const oldAttrIndex = innerValue.value.findIndex(
+			(a) => a.attribute_data.key === oldAttr.key
+		);
+		const newAttr = props.availableAttrs.find((a) => a.key === newAttrKey);
+		if (newAttr && oldAttrIndex !== -1) {
+			innerValue.value[oldAttrIndex].attribute_data = newAttr;
+		}
+	}
+
 	function moveAttr(direction, attrKey) {
 		const attrIndex = innerValue.value.findIndex(
 			(a) => a.attribute_data.key === attrKey
@@ -299,7 +312,7 @@
 		innerValue.value = reorderAttrs(updatedValue);
 	}
 
-	function changeAttributeOfMenuPosition() {
+	function changeAttributeOfMenuPosition(attr) {
 		const component = defineAsyncComponent(
 			() =>
 				import(
@@ -311,7 +324,7 @@
 			component,
 			componentProps: {
 				availableAttrs: toValue(filteredAvailableAttrs.value),
-				multiple: true
+				multiple: !attr
 			},
 			dialogProps: {
 				title: 'Select Column',
@@ -319,7 +332,13 @@
 				confirmButton: false,
 				cancelButton: false,
 				closeOnClickOverlay: false,
-				onConfirm: (attrIds) => addColumns(attrIds)
+				onConfirm: (attrIds) => {
+					if (attr) {
+						changeAttr(attr, attrIds[0]);
+					} else {
+						addColumns(attrIds);
+					}
+				}
 			}
 		});
 		if (dialogInstance.el) {

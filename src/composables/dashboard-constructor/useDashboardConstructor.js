@@ -19,19 +19,13 @@ import { getUrlToOldApp } from '~/composables/useUtils';
 import { md5 } from '~/utils/md5';
 import { DIALOG_COMPONENT_BY_TYPE } from '~/components/pages/configuration/dashboard-constructor/constants';
 
-const idAttribute = {
-	key: 'id',
-	name: 'Id',
-	value_type: 20
-};
-
 export function useDashboardConstructor() {
+	const router = useRouter();
 	const vueBus = inject(FM_VUEBUS_KEY);
 	const dialogsService = inject(FM_DIALOGS_KEY);
 
 	const attributesStore = useAttributes();
 	const {
-		appendEntityAttribute,
 		downloadCustomFieldsByEntityType,
 		downloadDynamicAttributesByEntityType
 	} = attributesStore;
@@ -358,6 +352,7 @@ export function useDashboardConstructor() {
 	}
 
 	async function downloadAttributes() {
+		/*
 		appendEntityAttribute('portfolio', cloneDeep(idAttribute));
 		appendEntityAttribute('account', cloneDeep(idAttribute));
 		appendEntityAttribute('currency', cloneDeep(idAttribute));
@@ -366,6 +361,7 @@ export function useDashboardConstructor() {
 		appendEntityAttribute('counterparty', cloneDeep(idAttribute));
 		appendEntityAttribute('transaction', cloneDeep(idAttribute));
 		appendEntityAttribute('complex-transaction', cloneDeep(idAttribute));
+		*/
 
 		await Promise.all([
 			downloadCustomFieldsByEntityType('balance-report'),
@@ -399,12 +395,14 @@ export function useDashboardConstructor() {
 		isJsonEditorOpen.value = true;
 	}
 
-	function makeCopy() {
+	async function makeCopy() {
 		layout.value.name = `${layout.value.name}_copy`;
 		delete layout.value.id;
 		delete layout.value.user_code;
 
 		validateLayout(true);
+
+		await router.push({ params: { id: 'new' } });
 	}
 
 	async function save() {
@@ -415,23 +413,46 @@ export function useDashboardConstructor() {
 			);
 
 			if (layout.value.id) {
-				const data = await updateDashboardLayout(layout.value);
-				layout.value.modified_at = data.modified_at;
-			} else {
-				const data = await getDashboardLayoutList();
+				const res = await updateDashboardLayout(layout.value);
+				layout.value.modified_at = res.modified_at;
 
-				if (!size(data?.results)) {
-					layout.value.is_default = true;
-				}
+				useNotify({
+					type: 'success',
+					title: `Dashboard layout ${layout.value.name} was successfully saved`
+				});
 
-				const res = await createDashboardLayout(layout.value);
-				layout.value = res;
+				return;
 			}
 
-			useNotify({
-				type: 'success',
-				title: `Dashboard layout ${layout.value.name} was successfully saved`
-			});
+			const data = await getDashboardLayoutList();
+			if (!size(data?.results)) {
+				layout.value.is_default = true;
+			}
+
+			const res = await createDashboardLayout(layout.value);
+			if (!res._$error) {
+				layout.value = res;
+				await router.push({ params: { id: res.id } });
+
+				useNotify({
+					type: 'success',
+					title: `Dashboard layout ${layout.value.name} was successfully saved`
+				});
+			} else {
+				const errorText = get(
+					res,
+					['_$error', 'error', 'details', 'errors'],
+					[]
+				)
+					.map((err) => err.detail)
+					.join(' ');
+
+				useNotify({
+					type: 'error',
+					title: `Error occurred while saving layout ${layout.value.name}`,
+					text: errorText
+				});
+			}
 		} catch (e) {
 			console.error(e);
 			useNotify({

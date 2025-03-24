@@ -188,7 +188,7 @@
 					<div class="row-grid">
 						<TableAttributesMenuConstructor
 							:value="
-								itemData.user_settings.available_abscissa_keys
+								itemData.user_settings?.available_abscissa_keys
 							"
 							label="Axis X Columns"
 							title="Axis X Columns"
@@ -203,7 +203,7 @@
 
 						<TableAttributesMenuConstructor
 							:value="
-								itemData.user_settings.available_ordinate_keys
+								itemData.user_settings?.available_ordinate_keys
 							"
 							label="Axis Y Columns"
 							title="Axis Y Columns"
@@ -217,7 +217,9 @@
 						/>
 
 						<TableAttributesMenuConstructor
-							:value="itemData.user_settings.available_value_keys"
+							:value="
+								itemData.user_settings?.available_value_keys
+							"
 							label="Values"
 							title="Values"
 							:available-attrs="numericAttributes"
@@ -255,10 +257,11 @@
 					<div class="row-grid">
 						<div
 							v-if="
-								itemData.settings.entity_type ===
+								itemData.settings?.entity_type ===
 									'balance-report' ||
 								(itemData.type === 'report_viewer_matrix' &&
-									itemData.settings.matrix_type === 'balance')
+									itemData.settings?.matrix_type ===
+										'balance')
 							"
 							class="cell"
 						>
@@ -896,7 +899,9 @@
 					auto_refresh: false,
 					auto_scaling: false,
 					calculate_name_column_width: false,
-					linked_components: {},
+					linked_components: {
+						report_settings: {}
+					},
 					hide_empty_lines: '',
 					filters: {
 						show_filters_area: false,
@@ -957,7 +962,7 @@
 			position: relative;
 			top: -1px;
 			width: 100%;
-			height: 680px;
+			height: 480px;
 			border-radius: 0 8px 8px 8px;
 			padding: 24px 24px 0 24px;
 			border: 1px solid var(--outline-variant);
@@ -1039,7 +1044,7 @@
 	.editor-wrapper {
 		position: relative;
 		width: 100%;
-		height: 400px;
+		height: 280px;
 		margin-bottom: 16px;
 	}
 
