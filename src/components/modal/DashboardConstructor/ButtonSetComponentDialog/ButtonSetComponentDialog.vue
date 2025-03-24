@@ -400,7 +400,7 @@
 		.body {
 			position: relative;
 			width: 100%;
-			height: 680px;
+			height: 480px;
 			padding: 24px 24px 0 24px;
 
 			:deep(.v-tabs) {

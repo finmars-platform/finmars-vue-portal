@@ -1,6 +1,16 @@
 <template>
 	<section class="dashboard-constructor-page">
-		<template v-if="!layout.id && !layout.data.layout_type">
+		<template v-if="!isMounted && !layout">
+			<div class="dashboard-constructor-page__loading">Loading ...</div>
+		</template>
+
+		<template
+			v-if="
+				route.params.id === 'new' &&
+				!layout?.id &&
+				!layout?.data?.layout_type
+			"
+		>
 			<h3 class="title-new">Select Device for Dashboard Layout</h3>
 
 			<div class="actions-new">
@@ -48,7 +58,12 @@
 			</div>
 		</template>
 
-		<template v-else>
+		<template
+			v-if="
+				layout?.id ||
+				(route.params.id === 'new' && layout?.data?.layout_type)
+			"
+		>
 			<div class="actions">
 				<div class="actions__block">
 					<FmButton
@@ -235,7 +250,7 @@
 </template>
 
 <script setup>
-	import { onBeforeUnmount, onMounted } from 'vue';
+	import { onBeforeUnmount, onMounted, ref } from 'vue';
 	import isEmpty from 'lodash/isEmpty';
 	import {
 		FmButton,
@@ -265,6 +280,7 @@
 	});
 
 	const route = useRoute();
+	const isMounted = ref(false);
 
 	const {
 		vueBus,
@@ -321,6 +337,7 @@
 			}
 		} finally {
 			isLoading.value = false;
+			isMounted.value = true;
 		}
 	});
 
@@ -344,6 +361,15 @@
 
 		button {
 			text-transform: none;
+		}
+
+		&__loading {
+			display: flex;
+			width: 100%;
+			height: 320px;
+			justify-content: center;
+			align-items: center;
+			font: var(--headline-large-font);
 		}
 	}
 
