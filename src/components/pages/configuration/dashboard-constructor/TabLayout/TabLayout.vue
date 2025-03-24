@@ -34,7 +34,19 @@
 						@click.stop.prevent="removeComponent(item)"
 					/>
 
-					<div v-fm-html="componentsLabels[item.i] ?? ''" />
+					<FmTooltip type="secondary" location="top">
+						<template #activator="{ props }">
+							<div
+								v-fm-html="componentsLabels[item.i] ?? ''"
+								v-bind="props"
+								class="tab-layout__component-name"
+							/>
+						</template>
+
+						<span>
+							{{ getComponentTooltip(componentsLabels[item.i]) }}
+						</span>
+					</FmTooltip>
 				</div>
 			</template>
 		</GridLayout>
@@ -140,6 +152,14 @@
 	} = useLayout(data, path, emits);
 
 	const debouncedUpdateDashboard = debounce(updateDashboard, 100);
+
+	function getComponentTooltip(text) {
+		if (!text) return '';
+
+		const div = document.createElement('div');
+		div.innerHTML = text;
+		return div.innerText;
+	}
 </script>
 
 <style lang="scss" scoped>
@@ -188,6 +208,16 @@
 				top: 2px;
 				width: 24px !important;
 				height: 24px !important;
+			}
+
+			&-name {
+				display: -webkit-box;
+				max-width: 100%;
+				max-height: 32px;
+				-webkit-line-clamp: 2;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+				user-select: none;
 			}
 
 			&-delete {

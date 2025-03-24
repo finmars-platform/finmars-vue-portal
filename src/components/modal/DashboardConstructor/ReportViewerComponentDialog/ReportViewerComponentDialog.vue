@@ -91,9 +91,7 @@
 							variant="outlined"
 							label="Report Type"
 							:disabled="isLoading"
-							@update:model-value="
-								itemData.settings.entity_type = $event
-							"
+							@update:model-value="updateSettingsEntityType"
 						/>
 
 						<ExpandableItemsSelector
@@ -886,16 +884,22 @@
 				[]
 			);
 
-			console.log(
-				'tableColumnsForMultiselector: ',
-				tableColumnsForMultiselector
-			);
-
 			smallRvSelectedCols.value = tableColumnsForMultiselector.value.map(
 				(c) => c.id
 			);
 			linkingToFilters.value = getLinkingToFilters(selectedLayout.value);
 		}
+	}
+
+	async function updateSettingsEntityType(value) {
+		itemData.value.settings.entity_type = value;
+		itemData.value.settings.layout = null;
+
+		const data = await getLayouts();
+		layoutsWithLinkToFilters.value = data.map((i) => ({
+			...i,
+			id: i.user_code
+		}));
 	}
 
 	async function getLayouts() {
@@ -1034,7 +1038,7 @@
 			position: relative;
 			top: -1px;
 			width: 100%;
-			height: 680px;
+			height: 480px;
 			border-radius: 0 8px 8px 8px;
 			padding: 24px 24px 0 24px;
 			border: 1px solid var(--outline-variant);

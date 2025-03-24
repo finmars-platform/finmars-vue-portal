@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-	import { computed, ref } from 'vue';
+	import { computed, ref, watch } from 'vue';
 	import cloneDeep from 'lodash/cloneDeep';
 	import isEqual from 'lodash/isEqual';
 	import size from 'lodash/size';
@@ -164,6 +164,8 @@
 		zero: applyFormatValue(0)
 	}));
 
+	console.log('SETTINGS => ', settings.value);
+
 	function applyFormatValue(value) {
 		return formatValue(
 			{ example: value },
@@ -190,6 +192,7 @@
 			...settings.value,
 			...preset
 		};
+		emits('select', settings.value);
 	}
 
 	function updateItem({ key, value }) {
@@ -201,13 +204,24 @@
 		}
 
 		const number_multiplier = settings.value.number_multiplier;
-		emits('select', {
+		const newSettings = {
 			...settings.value,
 			...(size(number_multiplier) > 0 && {
 				number_multiplier: Number(number_multiplier)
 			})
-		});
+		};
+		emits('select', newSettings);
 	}
+
+	watch(
+		currentPreset,
+		() => {
+			console.log('CURRENT PRESET => ', currentPreset.value);
+		},
+		{
+			immediate: true
+		}
+	);
 </script>
 
 <style lang="scss" scoped>

@@ -155,7 +155,7 @@ export const COMPONENTS_FOR_LINKING = [
 ];
 
 export const ENTITY_TYPE_OPTIONS = [
-	{ title: 'Balance Report', value: 'balance' },
+	{ title: 'Balance Report', value: 'balance-report' },
 	{ title: 'P&L Report', value: 'pl-report' },
 	{ title: 'Transaction Report', value: 'transaction-report' }
 ];

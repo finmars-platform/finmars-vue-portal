@@ -169,8 +169,9 @@
 		.body {
 			position: relative;
 			width: 100%;
-			height: 680px;
+			height: 480px;
 			padding: 24px 24px 0 24px;
+			overflow-y: auto;
 
 			:deep(.v-tabs) {
 				border-radius: 4px 4px 0 0;
