@@ -72,7 +72,13 @@
 			</span>
 		</FmTooltip>
 
-		<FmButton rounded @click.stop.prevent="clearButton">Clear</FmButton>
+		<FmButton
+			class="button-set__clear"
+			rounded
+			@click.stop.prevent="clearButton"
+		>
+			Clear
+		</FmButton>
 	</div>
 </template>
 
@@ -151,7 +157,7 @@
 			if (['open_report', 'open_data_viewer'].includes(action)) {
 				const entityType = findEntityByContentType(target);
 				const data = await getListLayout(entityType);
-				console.log('DATA:  ', data);
+
 				const updatedTargetSpecifics = cloneDeep(props.targetSpecifics);
 
 				updatedTargetSpecifics[action][target] = (
@@ -218,7 +224,8 @@
 <style lang="scss" scoped>
 	.button-set {
 		position: relative;
-		padding: 8px 16px;
+		height: 100%;
+		padding: 8px 8px 48px 8px;
 		border-radius: 4px;
 		display: flex;
 		flex-direction: column;
@@ -228,6 +235,22 @@
 
 		button {
 			text-transform: none;
+		}
+
+		&__clear {
+			position: absolute;
+			bottom: 0;
+			left: 8px;
+		}
+
+		:deep(.fm-text-field) {
+			height: max-content;
+			max-height: max-content;
+		}
+
+		:deep(.fm-select-activator) {
+			height: max-content;
+			max-height: max-content;
 		}
 	}
 </style>

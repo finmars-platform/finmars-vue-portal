@@ -10,7 +10,6 @@ export async function getListLayout(entity, options = {}) {
 		}
 	}
 
-	console.log('!!! getListLayout => ', filters);
 	return useApi('listLayoutList.get', { filters });
 }
 

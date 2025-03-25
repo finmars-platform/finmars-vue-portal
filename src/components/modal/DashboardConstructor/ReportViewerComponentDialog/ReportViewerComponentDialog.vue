@@ -18,11 +18,10 @@
 							:disabled="isLoading"
 						/>
 
-						<FmTextField
+						<UserCodeField
 							v-model="itemData.user_code"
-							label="User Code"
-							outlined
 							:disabled="isLoading"
+							@update:valid="isUserCodeValid = $event"
 						/>
 
 						<FmMenu
@@ -666,7 +665,7 @@
 
 				<FmButton
 					rounded
-					:disabled="isLoading || !itemData.name"
+					:disabled="isLoading || !itemData.name || !isUserCodeValid"
 					@click.stop.prevent="save"
 				>
 					{{ data?.openedFromDashboard ? 'Save' : 'Ok' }}
@@ -714,6 +713,7 @@
 	import ExpandableItemsSelector from '~/components/pages/configuration/dashboard-constructor/ExpandableItemsSelector/ExpandableItemsSelector.vue';
 	import TwoFieldsMultiselect from '~/components/common/TwoFieldsMultiselect/TwoFieldsMultiselect.vue';
 	import TableAttributesMenuConstructor from '~/components/pages/configuration/dashboard-constructor/TableAttributesMenuConstructor/TableAttributesMenuConstructor.vue';
+	import UserCodeField from '~/components/common/UserCodeField/UserCodeField.vue';
 
 	const props = defineProps({
 		item: {
@@ -748,6 +748,7 @@
 	const isTransferListOpen = ref(false);
 
 	const itemData = ref(null);
+	const isUserCodeValid = ref(false);
 	const componentsTypes = ref([]);
 	const componentsTypesToListen = ref([]);
 	const attributes = ref([]);
@@ -1100,6 +1101,10 @@
 		margin-bottom: 16px;
 
 		:deep(.fm-select-activator) {
+			height: max-content;
+		}
+
+		:deep(.fm-text-field) {
 			height: max-content;
 		}
 	}
