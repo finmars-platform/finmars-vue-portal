@@ -28,7 +28,6 @@ export async function updateDashboardLayout(data) {
 }
 
 export async function getListLayout(entityType, options = {}) {
-	console.log('@@@ getListLayout => ', entityType);
 	const currentOptions = { ...options };
 	if (
 		currentOptions.filters &&

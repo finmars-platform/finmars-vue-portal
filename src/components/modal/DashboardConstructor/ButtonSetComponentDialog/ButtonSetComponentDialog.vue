@@ -450,7 +450,7 @@
 		width: 100%;
 		margin-bottom: 16px;
 		font: var(--label-large-font);
-		color: var(--on-surface);
+		color: var(--error);
 	}
 
 	.row-grid {
@@ -478,7 +478,7 @@
 			width: 100%;
 			display: flex;
 			justify-content: flex-start;
-			align-items: flex-start;
+			align-items: stretch;
 			column-gap: 16px;
 			margin-bottom: 16px;
 		}
@@ -486,14 +486,9 @@
 		&__cell {
 			position: relative;
 			width: calc(calc(100% - 80px) / 6);
-			padding: 8px 16px;
+			padding: 8px;
 			border-radius: 4px;
 			border: 1px solid var(--outline-variant);
-			display: flex;
-			flex-direction: column;
-			justify-content: flex-start;
-			align-items: stretch;
-			row-gap: 12px;
 		}
 	}
 </style>

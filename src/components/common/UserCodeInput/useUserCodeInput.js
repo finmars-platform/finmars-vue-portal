@@ -106,9 +106,7 @@ export default function useUserCodeInput(props, emits) {
 	async function updateUserCodeEnd(val) {
 		await nextTick(() => {
 			userCodeEnd.value = val;
-			if (isUserCodeEndValid.value) {
-				updateUserCode();
-			}
+			updateUserCode();
 		});
 	}
 

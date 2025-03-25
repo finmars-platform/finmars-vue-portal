@@ -19,10 +19,6 @@
 							'tabs-header__tab--active': element.id === activeTab
 						}
 					]"
-					v-click-outside="
-						(ev) =>
-							onClickOutside(ev, element.id, tabsInnerValue, tabs)
-					"
 					@click.stop.prevent="emits('select', element.id)"
 				>
 					<FmIcon
@@ -79,7 +75,7 @@
 							icon="mdi-delete"
 							size="small"
 							variant="text"
-							@click.capture="emits('delete', element)"
+							@click.stop.prevent="emits('delete', element)"
 						/>
 					</template>
 				</div>
@@ -105,16 +101,8 @@
 	import { watch } from 'vue';
 	import cloneDeep from 'lodash/cloneDeep';
 	import draggable from 'vuedraggable';
-	import {
-		FmIcon,
-		FmIconButton,
-		FmTextField,
-		FmTooltip,
-		ClickOutside
-	} from '@finmars/ui';
+	import { FmIcon, FmIconButton, FmTextField, FmTooltip } from '@finmars/ui';
 	import { useTabsHeader } from './useTabsHeader';
-
-	const vClickOutside = ClickOutside;
 
 	const props = defineProps({
 		tabs: {
@@ -132,7 +120,6 @@
 		tabsInnerValue,
 		tabsEl,
 		isEditModeOn,
-		onClickOutside,
 		validateTabName,
 		startEdit,
 		cancelEdit,

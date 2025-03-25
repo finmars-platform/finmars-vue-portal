@@ -19,12 +19,10 @@
 							:disabled="isLoading"
 						/>
 
-						<FmTextField
+						<UserCodeField
 							v-model="itemData.user_code"
-							label="User Code"
-							hide-details
-							outlined
 							:disabled="isLoading"
+							@update:valid="isUserCodeValid = $event"
 						/>
 
 						<FmSelect
@@ -95,7 +93,7 @@
 
 				<FmButton
 					rounded
-					:disabled="isLoading || !itemData.name"
+					:disabled="isLoading || !itemData.name || !isUserCodeValid"
 					@click.stop.prevent="save"
 				>
 					Ok
@@ -126,6 +124,7 @@
 	import { useDashboardConstructorStore } from '~/stores/useDashboardConstructorStore';
 	import { md5 } from '~/utils/md5';
 	import { URL_TYPES } from './constants';
+	import UserCodeField from '~/components/common/UserCodeField/UserCodeField.vue';
 
 	const props = defineProps({
 		item: {
@@ -142,6 +141,7 @@
 	const activeTab = ref(0);
 	const isLoading = ref(false);
 	const itemData = ref(null);
+	const isUserCodeValid = ref(false);
 
 	function exportToDashboards() {
 		exportComponentToDashboards(itemData.value);
@@ -262,6 +262,14 @@
 		grid-template-columns: repeat(3, 1fr);
 		column-gap: 16px;
 		margin-bottom: 16px;
+
+		:deep(.fm-text-field) {
+			height: max-content;
+		}
+
+		:deep(.fm-select-activator) {
+			height: max-content;
+		}
 	}
 
 	.row {

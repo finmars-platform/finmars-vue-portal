@@ -18,11 +18,10 @@
 							:disabled="isLoading"
 						/>
 
-						<FmTextField
+						<UserCodeField
 							v-model="itemData.user_code"
-							label="User Code"
-							outlined
 							:disabled="isLoading"
+							@update:valid="isUserCodeValid = $event"
 						/>
 
 						<FmSelect
@@ -725,7 +724,7 @@
 			<div class="actions__block">
 				<FmButton
 					rounded
-					:disabled="isLoading || !itemData.name"
+					:disabled="isLoading || !itemData.name || !isUserCodeValid"
 					@click.stop.prevent="save"
 				>
 					Ok
@@ -765,6 +764,7 @@
 	import TableAttributeSelector from '~/components/common/TableAttributeSelector/TableAttributeSelector.vue';
 	import TableAttributesMenuConstructor from '~/components/pages/configuration/dashboard-constructor/TableAttributesMenuConstructor/TableAttributesMenuConstructor.vue';
 	import NumberFormatSettingsDialog from '~/components/modal/NumberFormatSettingsDialog/NumberFormatSettingsDialog.vue';
+	import UserCodeField from '~/components/common/UserCodeField/UserCodeField.vue';
 
 	const props = defineProps({
 		item: {
@@ -800,6 +800,7 @@
 	const activeTab = ref(0);
 	const isLoading = ref(false);
 	const itemData = ref(null);
+	const isUserCodeValid = ref(false);
 	const aceEditor = ref();
 
 	const componentsForMultiselector = ref([]);
@@ -913,7 +914,8 @@
 						portfolio_mode: 1,
 						custom_fields_to_calculate: ''
 					}
-				}
+				},
+				user_settings: {}
 			};
 		}
 
@@ -1028,6 +1030,10 @@
 		margin-bottom: 16px;
 
 		:deep(.fm-select-activator) {
+			height: max-content;
+		}
+
+		:deep(.fm-text-field) {
 			height: max-content;
 		}
 	}
