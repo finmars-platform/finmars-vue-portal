@@ -17,11 +17,10 @@
 							:disabled="isLoading"
 						/>
 
-						<FmTextField
+						<UserCodeField
 							v-model="itemData.user_code"
-							label="User Code"
-							outlined
 							:disabled="isLoading"
+							@update:valid="isUserCodeValid = $event"
 						/>
 
 						<FmCheckbox
@@ -85,7 +84,7 @@
 
 			<FmButton
 				rounded
-				:disabled="isLoading || !itemData.name"
+				:disabled="isLoading || !itemData.name || !isUserCodeValid"
 				@click.stop.prevent="save"
 			>
 				Ok
@@ -112,8 +111,9 @@
 	} from '@finmars/ui';
 	import { useDashboardConstructorStore } from '~/stores/useDashboardConstructorStore';
 	import { TABS } from '../constants';
-	import ExpressionEditorSelector from '~/components/common/ExpressionEditorSelector/ExpressionEditorSelector.vue';
 	import { md5 } from '~/utils/md5';
+	import ExpressionEditorSelector from '~/components/common/ExpressionEditorSelector/ExpressionEditorSelector.vue';
+	import UserCodeField from '~/components/common/UserCodeField/UserCodeField.vue';
 
 	const props = defineProps({
 		item: {
@@ -131,6 +131,7 @@
 	const activeTab = ref(0);
 
 	const itemData = ref(null);
+	const isUserCodeValid = ref(false);
 
 	function save() {
 		if (itemData.value.id) {
@@ -246,6 +247,10 @@
 				padding-left: 8px;
 				font: var(--body-large-font) !important;
 			}
+		}
+
+		:deep(.fm-text-field) {
+			height: max-content;
 		}
 	}
 </style>

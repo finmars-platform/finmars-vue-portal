@@ -17,11 +17,10 @@
 							:disabled="isLoading"
 						/>
 
-						<FmTextField
+						<UserCodeField
 							v-model="itemData.user_code"
-							label="User Code"
-							outlined
 							:disabled="isLoading"
+							@update:valid="isUserCodeValid = $event"
 						/>
 					</div>
 
@@ -108,7 +107,7 @@
 
 			<FmButton
 				rounded
-				:disabled="isLoading || !itemData.name"
+				:disabled="isLoading || !itemData.name || !isUserCodeValid"
 				@click.stop.prevent="save"
 			>
 				Ok
@@ -138,6 +137,7 @@
 	import { md5 } from '~/utils/md5';
 	import { CONTENT_TYPES, TABS } from '../constants';
 	import ExpressionEditorSelector from '~/components/common/ExpressionEditorSelector/ExpressionEditorSelector.vue';
+	import UserCodeField from '~/components/common/UserCodeField/UserCodeField.vue';
 
 	const props = defineProps({
 		item: {
@@ -157,6 +157,7 @@
 	const itemData = ref(null);
 	const currentContentType = ref(null);
 	const defaultValue = ref({});
+	const isUserCodeValid = ref(false);
 
 	function onMultipleChange(val) {
 		itemData.value.settings.multiple = val;
@@ -316,6 +317,10 @@
 				padding-left: 8px;
 				font: var(--body-large-font) !important;
 			}
+		}
+
+		:deep(.fm-text-field) {
+			height: max-content;
 		}
 	}
 

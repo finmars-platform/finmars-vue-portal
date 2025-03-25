@@ -45,7 +45,8 @@ export function useTabsHeader(emits) {
 			if (!t.captionName) {
 				initialTab?.name && (t.name = initialTab.name);
 				initialTab?.name && (t.captionName = initialTab.name);
-				!initialTab?.name && emits('delete', tab);
+				// temporary hide (PLAT-873)
+				// !initialTab?.name && emits('delete', tab);
 			}
 		});
 	}
@@ -55,10 +56,11 @@ export function useTabsHeader(emits) {
 
 		const initialTab = tabs.find((t) => tab.id === t.id);
 
-		if (!initialTab.name && !initialTab.captionName) {
-			emits('delete', tab);
-			return;
-		}
+		// temporary hide (PLAT-873)
+		// if (!initialTab.name && !initialTab.captionName) {
+		// 	emits('delete', tab);
+		// 	return;
+		// }
 
 		tab.name = initialTab.name;
 		tab.captionName = tab.name;
@@ -68,6 +70,7 @@ export function useTabsHeader(emits) {
 	}
 
 	function saveData(tab) {
+		if (!tab.captionName || !tab.captionName) return;
 		tab.name = tab.captionName.replaceAll(' ', '');
 		tab.captionName = tab.name;
 		tab.isValid = true;
@@ -85,6 +88,8 @@ export function useTabsHeader(emits) {
 		emits('move', { oldIndex, newIndex });
 	}
 
+	/*
+	// temporary hide (PLAT-873)
 	function onClickOutside(ev, tabId, tabs, initialTabs) {
 		ev.stopPropagation();
 		ev.preventDefault();
@@ -93,12 +98,13 @@ export function useTabsHeader(emits) {
 			cancelEdit(tab, initialTabs);
 		}
 	}
+	 */
 
 	return {
 		tabsInnerValue,
 		tabsEl,
 		isEditModeOn,
-		onClickOutside,
+		// onClickOutside,
 		validateTabName,
 		startEdit,
 		cancelEdit,
