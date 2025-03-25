@@ -52,7 +52,8 @@
 
 					<span>
 						Allowed symbols: Numbers: 0-9, Letters: a-z (lowercase)
-						Special Symbols: _, - (underscore, dash)
+						Special Symbols: _, - (underscore, dash). User code
+						should not be empty and start with number.
 					</span>
 				</FmTooltip>
 			</div>

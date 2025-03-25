@@ -93,19 +93,20 @@ export function useDashboardConstructor() {
 		Object.values(formData.value).some((i) => i.isDirty)
 	);
 
+	const layoutTabs = computed(() => get(layout.value, ['data', 'tabs'], []));
+	const layoutTabsHeader = computed(() =>
+		layoutTabs.value.map((t) => omit(t, 'layout'))
+	);
+
 	const isValid = computed(() => {
 		const v1 = !Object.values(formData.value).some((i) => !i.isValid);
 		const v2 = !(
 			layout.value?.sourced_from_global_layout &&
 			!layout.value?.origin_for_global_layout
 		);
-		return v1 && v2;
+		const v3 = !layoutTabs.value.some((t) => !t.name);
+		return v1 && v2 && v3;
 	});
-
-	const layoutTabs = computed(() => get(layout.value, ['data', 'tabs'], []));
-	const layoutTabsHeader = computed(() =>
-		layoutTabs.value.map((t) => omit(t, 'layout'))
-	);
 
 	const columnsCount = computed(() => {
 		const type = get(layout.value, ['data', 'layout_type'], 'desktop');
@@ -322,6 +323,7 @@ export function useDashboardConstructor() {
 
 	function deleteTab(tab) {
 		const deletedTabIndex = getUpdatedTabIndex(tab);
+
 		if (deletedTabIndex !== -1) {
 			const updatedTabs = cloneDeep(layoutTabs.value);
 			updatedTabs.splice(deletedTabIndex, 1);

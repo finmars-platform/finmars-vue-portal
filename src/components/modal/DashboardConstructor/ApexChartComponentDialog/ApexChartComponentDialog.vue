@@ -10,12 +10,10 @@
 					:disabled="isLoading"
 				/>
 
-				<FmTextField
+				<UserCodeField
 					v-model="itemData.user_code"
-					label="User Code"
-					hide-details
-					outlined
 					:disabled="isLoading"
+					@update:valid="isUserCodeValid = $event"
 				/>
 			</div>
 
@@ -60,7 +58,7 @@
 			<div class="actions__block">
 				<FmButton
 					rounded
-					:disabled="isLoading || !itemData.name"
+					:disabled="isLoading || !itemData.name || !isUserCodeValid"
 					@click.stop.prevent="save"
 				>
 					Ok
@@ -78,6 +76,7 @@
 	import { computed, onBeforeMount, ref } from 'vue';
 	import { storeToRefs } from 'pinia';
 	import cloneDeep from 'lodash/cloneDeep';
+	import size from 'lodash/size';
 	import {
 		FmButton,
 		FmCheckbox,
@@ -85,10 +84,10 @@
 		FmTextField
 	} from '@finmars/ui';
 	import useAceEditor from '~/composables/useAceEditor';
+	import { md5 } from '~/utils/md5';
 	import { useDashboardConstructorStore } from '~/stores/useDashboardConstructorStore';
 	import TwoFieldsMultiselect from '~/components/common/TwoFieldsMultiselect/TwoFieldsMultiselect.vue';
-	import { md5 } from '~/utils/md5';
-	import size from 'lodash/size';
+	import UserCodeField from '~/components/common/UserCodeField/UserCodeField.vue';
 
 	const props = defineProps({
 		item: {
@@ -105,6 +104,7 @@
 	const aceEditor = ref();
 	const isLoading = ref(false);
 	const itemData = ref(null);
+	const isUserCodeValid = ref(false);
 
 	const componentsTypesToListen = computed(() =>
 		(components.value || [])
@@ -222,13 +222,16 @@
 		grid-template-columns: repeat(2, 1fr);
 		column-gap: 16px;
 		margin-bottom: 16px;
+
+		:deep(.fm-text-field) {
+			height: max-content;
+		}
 	}
 
 	.editor-wrapper {
 		position: relative;
 		width: 100%;
-		height: 400px;
-		margin-bottom: 16px;
+		height: 256px;
 	}
 
 	.editor {
