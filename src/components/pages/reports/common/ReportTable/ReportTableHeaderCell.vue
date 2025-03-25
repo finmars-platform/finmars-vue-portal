@@ -17,7 +17,7 @@
 			v-if="prependIcon"
 			v-ripple.center.circle
 			:icon="prependIcon"
-			:class="['table-header-cell__prepend', { 'table-header-cell__prepend--disabled': disabled }]"
+			:class="['table-header-cell__prepend', { 'table-header-cell__prepend--disabled': isLoading }]"
 			@click.stop.prevent
 		/>
 
@@ -39,7 +39,7 @@
 		<FmIcon
 			icon="mdi-dots-vertical"
 			v-ripple.center.circle
-			:class="['table-header-cell__append', { 'table-header-cell__append--disabled': disabled }]"
+			:class="['table-header-cell__append', { 'table-header-cell__append--disabled': isLoading }]"
 			@click.stop.prevent="emits('open-cell-menu', $event)"
 		/>
 
@@ -49,8 +49,10 @@
 
 <script setup>
 	import { onBeforeUnmount, computed, onMounted, ref, watch } from 'vue';
+	import { storeToRefs } from 'pinia';
 	import get from 'lodash/get';
 	import { FmIcon, FmTooltip, Ripple } from '@finmars/ui';
+	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
 	import { REPORT_TABLE_CELL_MIN_WIDTH, REPORT_TABLE_CELL_MAX_WIDTH } from '../constants';
 
 	const vRipple = Ripple;
@@ -66,20 +68,17 @@
 		},
 		headerElement: {
 			type: Object
-		},
-		sortData: {
-			type: Object,
-			required: true
-		},
-		disabled: {
-			type: Boolean
 		}
 	});
 	const emits = defineEmits(['open-cell-menu', 'cell-resize']);
 
+	const balanceReportStore = useBalanceReportStore();
+	const { isLoading, sortGroup, sortColumn } = storeToRefs(balanceReportStore);
+
 	const cellEl = ref(null);
 	const resizerEl = ref(null);
 
+	const sortData = computed(() => (props.type === 'group' ? sortGroup.value : sortColumn.value));
 	const cssGroupCellMinWidth = computed(() => `${REPORT_TABLE_CELL_MIN_WIDTH.group}px`);
 	const cssColumnCellMinWidth = computed(() => `${REPORT_TABLE_CELL_MIN_WIDTH.column}px`);
 	const prependIcon = computed(() => {
@@ -89,11 +88,11 @@
 		return isGroupFolded ? 'mdi-menu-right' : 'mdi-menu-down';
 	});
 	const sortIcon = computed(() => {
-		if (props.sortData?.key !== props.item?.key) {
+		if (sortData.value?.key !== props.item?.key) {
 			return 'mdi-sort-descending';
 		}
 
-		return props.sortData?.sort === 'desc' ? 'mdi-sort-descending' : 'mdi-sort-ascending';
+		return sortData.value?.sort === 'desc' ? 'mdi-sort-descending' : 'mdi-sort-ascending';
 	});
 
 	const movingConfig = ref({
@@ -146,7 +145,6 @@
 		() => props.item?.style?.width,
 		() => {
 			if (movingConfig.value.width !== props.item?.style?.width) {
-				console.log('WATCH!');
 				movingConfig.value.width =
 					props.item.style?.width ||
 					(props.type === 'group' ? cssGroupCellMinWidth.value : cssColumnCellMinWidth.value);

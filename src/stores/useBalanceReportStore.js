@@ -20,6 +20,7 @@ const itemsPerPage = 40;
 export const useBalanceReportStore = defineStore('balance-report', () => {
 	const router = useRouter();
 
+	const isLoading = ref(false);
 	const layouts = ref([]);
 	const currentLayout = ref({});
 	const currencies = ref([]);
@@ -41,9 +42,10 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		children: []
 	});
 
-	const groupIds = computed(() =>
-		get(currentLayout.value, ['data', 'grouping'], []).map((gr) => gr.___group_type_id)
-	);
+	const groups = computed(() => get(currentLayout.value, ['data', 'grouping'], []));
+	const groupIds = computed(() => groups.value.map((gr) => gr.___group_type_id));
+	const columns = computed(() => get(currentLayout.value, ['data', 'columns'], []));
+	const visibleColumns = computed(() => columns.value.filter((col) => !col.isHidden));
 
 	async function changeRouteQuery(entityType) {
 		syncedTime.value = dayjs();
@@ -323,13 +325,18 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 	}
 
 	return {
-		layouts,
-		currentLayout,
+		isLoading,
 		currencies,
 		currentCurrency,
 		sortGroup,
 		sortColumn,
 		syncedTime,
+		layouts,
+		currentLayout,
+		groups,
+		groupIds,
+		columns,
+		visibleColumns,
 		tableData,
 		changeRouteQuery,
 		getLayouts,

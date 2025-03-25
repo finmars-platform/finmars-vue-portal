@@ -18,7 +18,7 @@
 	import get from 'lodash/get';
 	import has from 'lodash/has';
 	import { formatValue } from '~/utils/renderHelper';
-	import { REPORT_TABLE_CELL_MIN_WIDTH, REPORT_TABLE_CELL_MAX_WIDTH } from '../constants';
+	import { REPORT_TABLE_CELL_MIN_WIDTH } from '../constants';
 
 	const props = defineProps({
 		col: {
@@ -32,7 +32,6 @@
 		}
 	});
 
-	const cssGroupCellMinWidth = computed(() => `${REPORT_TABLE_CELL_MIN_WIDTH.group}px`);
 	const cssColumnCellMinWidth = computed(() => `${REPORT_TABLE_CELL_MIN_WIDTH.column}px`);
 
 	const cellWidthCss = computed(() => get(props.col, ['style', 'width'], 0));

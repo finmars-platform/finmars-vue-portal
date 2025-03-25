@@ -2,7 +2,7 @@
 	<div class="report-table">
 		<div ref="tableHeaderEl" class="report-table__header">
 			<div class="report-table__header-checkbox">
-				<FmCheckbox :disabled="disabled" />
+				<FmCheckbox :disabled="isLoading" />
 			</div>
 
 			<div v-if="!isMenuColumnHidden" class="report-table__header-menu">
@@ -10,7 +10,7 @@
 					icon="mdi-label-outline"
 					variant="text"
 					class="report-table__header-menu-btn"
-					:disabled="disabled"
+					:disabled="isLoading"
 				>
 					<FmMenu activator="parent">
 						<template #default>
@@ -35,8 +35,6 @@
 					type="group"
 					:item="gr"
 					:header-element="tableHeaderEl"
-					:sort-data="sortGroup"
-					:disabled="disabled"
 					@open-cell-menu="openHeaderCellMenu($event, 'group', gr)"
 					@cell-resize="onCellResize('group', gr, $event)"
 				/>
@@ -46,9 +44,7 @@
 				<ReportTableHeaderCell
 					type="column"
 					:item="col"
-					:sort-data="sortColumn"
 					:header-element="tableHeaderEl"
-					:disabled="disabled"
 					@open-cell-menu="openHeaderCellMenu($event, 'column', col)"
 					@cell-resize="onCellResize('column', col, $event)"
 				/>
@@ -62,7 +58,7 @@
 				:icon="isMenuColumnHidden ? 'mdi-chevron-right' : 'mdi-chevron-left'"
 				size="small"
 				variant="tonal"
-				:disabled="disabled"
+				:disabled="isLoading"
 				@click.stop.prevent="isMenuColumnHidden = !isMenuColumnHidden"
 			/>
 
@@ -82,21 +78,9 @@
 
 		<div class="report-table__body">
 			<template v-for="val in tableData?.children" :key="val.___group_identifier || val.id">
-				<ReportTableItemRow
-					v-if="val.id"
-					:item="val"
-					:current-layout="currentLayout"
-					:is-menu-column-hidden="isMenuColumnHidden"
-					:disabled="disabled"
-				/>
+				<ReportTableItemRow v-if="val.id" :item="val" :is-menu-column-hidden="isMenuColumnHidden" />
 
-				<ReportTableGroupRow
-					v-else
-					:group="val"
-					:current-layout="currentLayout"
-					:is-menu-column-hidden="isMenuColumnHidden"
-					:disabled="disabled"
-				/>
+				<ReportTableGroupRow v-else :group="val" :is-menu-column-hidden="isMenuColumnHidden" />
 			</template>
 		</div>
 	</div>
@@ -104,37 +88,18 @@
 
 <script setup>
 	import { computed, ref } from 'vue';
-	import get from 'lodash/get';
+	import { storeToRefs } from 'pinia';
 	import { FmCheckbox, FmIcon, FmIconButton, FmMenu, FmMenuItem } from '@finmars/ui';
+	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
 	import { LABEL_OPTIONS } from './constants';
 	import ReportTableHeaderCell from './ReportTableHeaderCell.vue';
 	import ReportTableGroupRow from '../ReportTableGroupRow/ReportTableGroupRow.vue';
 	import ReportTableItemRow from '../ReportTableItemRow/ReportTableItemRow.vue';
 
-	const props = defineProps({
-		currentLayout: {
-			type: Object,
-			default: () => ({})
-		},
-		tableData: {
-			type: Object,
-			required: true,
-			default: () => ({})
-		},
-		sortGroup: {
-			type: Object,
-			required: true
-		},
-		sortColumn: {
-			type: Object,
-			required: true
-		},
-		disabled: {
-			type: Boolean
-		}
-	});
-
 	const emits = defineEmits(['cell-resize']);
+
+	const balanceReportStore = useBalanceReportStore();
+	const { isLoading, groups, groupIds, columns, tableData } = storeToRefs(balanceReportStore);
 
 	const tableHeaderEl = ref(null);
 	const isMenuColumnHidden = ref(false);
@@ -148,14 +113,10 @@
 		}
 	});
 
-	const groups = computed(() => get(props.currentLayout, ['data', 'grouping'], []));
-	const groupIds = computed(() => groups.value.map((gr) => gr.___group_type_id));
-	const columns = computed(() =>
-		get(props.currentLayout, ['data', 'columns'], []).filter(
-			(col) => !groupIds.value.includes(col.___column_id)
-		)
+	const _columns = computed(() =>
+		columns.value.filter((col) => !groupIds.value.includes(col.___column_id))
 	);
-	const visibleColumns = computed(() => columns.value.filter((col) => !col.isHidden));
+	const visibleColumns = computed(() => _columns.value.filter((c) => !c.isHidden));
 
 	function openHeaderCellMenu(event, type = 'group', value) {
 		console.log('openHeaderCellMenu: ', type, event, value);

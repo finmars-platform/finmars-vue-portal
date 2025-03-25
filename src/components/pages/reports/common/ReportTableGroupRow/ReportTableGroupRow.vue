@@ -1,15 +1,15 @@
 <template>
 	<div class="table-group-row">
 		<div class="table-group-row__body">
-			<ReportTableRowActions :is-menu-column-hidden="isMenuColumnHidden" :disabled="disabled" />
+			<ReportTableRowActions :is-menu-column-hidden="isMenuColumnHidden" :disabled="isLoading" />
 
 			<div class="table-group-row__groups-block">
 				<FmIcon
 					v-if="prependIcon"
 					v-ripple.center.circle
 					:icon="prependIcon"
-					:class="['table-group-row__prepend', { 'table-group-row__prepend--disabled': disabled }]"
-					@click.stop.prevent
+					:class="['table-group-row__prepend', { 'table-group-row__prepend--disabled': isLoading }]"
+					@click.stop.prevent="toggleFolding"
 				/>
 
 				<span class="table-group-row__name">{{ group?.___group_name }}</span>
@@ -26,8 +26,10 @@
 
 <script setup>
 	import { computed } from 'vue';
+	import { storeToRefs } from 'pinia';
 	import get from 'lodash/get';
 	import { FmIcon, Ripple } from '@finmars/ui';
+	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
 	import { REPORT_TABLE_CELL_MIN_WIDTH } from '../constants';
 	import ReportTableRowActions from '~/components/pages/reports/common/ReportTableRowActions/ReportTableRowActions.vue';
 
@@ -39,21 +41,14 @@
 			required: true,
 			default: () => ({})
 		},
-		currentLayout: {
-			type: Object,
-			required: true,
-			default: () => ({})
-		},
 		isMenuColumnHidden: {
-			type: Boolean
-		},
-		disabled: {
 			type: Boolean
 		}
 	});
 
-	const groups = computed(() => get(props.currentLayout, ['data', 'grouping'], []));
-	const groupIds = computed(() => groups.value.map((gr) => gr.___group_type_id));
+	const balanceReportStore = useBalanceReportStore();
+	const { isLoading, groups, groupIds, columns } = storeToRefs(balanceReportStore);
+
 	const groupsBlockWidth = computed(() =>
 		groups.value.reduce((res, gr) => {
 			const cssWidth = get(gr, ['style', 'width'], '0px');
@@ -85,12 +80,10 @@
 	});
 	const groupsBlockPaddingCss = computed(() => `${groupsBlockPadding.value + 8}px`);
 
-	const columns = computed(() =>
-		get(props.currentLayout, ['data', 'columns'], []).filter(
-			(col) => !groupIds.value.includes(col.___column_id)
-		)
+	const _columns = computed(() =>
+		columns.value.filter((col) => !groupIds.value.includes(col.___column_id))
 	);
-	const visibleColumns = computed(() => columns.value.filter((c) => !c.isHidden));
+	const visibleColumns = computed(() => _columns.value.filter((c) => !c.isHidden));
 
 	const prependIcon = computed(() => {
 		const group = groups.value.find((g) => g.key === props.group.___group_type_key);
@@ -109,6 +102,11 @@
 		if (!cell) return '0';
 
 		return get(cell, ['style', 'width'], '0');
+	}
+
+	function toggleFolding() {
+		const currentGroup = groups.value.find((g) => g.key === props.group.___group_type_key);
+		console.log('toggleFolding => ', currentGroup, props.group);
 	}
 </script>
 

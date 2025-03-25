@@ -1,43 +1,38 @@
 <template>
 	<div class="table-item-row">
-		<ReportTableRowActions :is-menu-column-hidden="isMenuColumnHidden" :disabled="disabled" />
+		<ReportTableRowActions :is-menu-column-hidden="isMenuColumnHidden" :disabled="isLoading" />
 
 		<div class="table-item-row__groups-block" />
 
 		<template v-for="col in visibleColumns" :key="col.key">
-			<ReportTableItemCell :col="col" :item="item" :disabled="disabled" />
+			<ReportTableItemCell :col="col" :item="item" :disabled="isLoading" />
 		</template>
 	</div>
 </template>
 
 <script setup>
 	import { computed } from 'vue';
+	import { storeToRefs } from 'pinia';
 	import get from 'lodash/get';
 	import { REPORT_TABLE_CELL_MIN_WIDTH } from '../constants';
+	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
 	import ReportTableRowActions from '~/components/pages/reports/common/ReportTableRowActions/ReportTableRowActions.vue';
 	import ReportTableItemCell from './ResportTableItemCell.vue';
 
-	const props = defineProps({
+	defineProps({
 		item: {
-			type: Object,
-			required: true,
-			default: () => ({})
-		},
-		currentLayout: {
 			type: Object,
 			required: true,
 			default: () => ({})
 		},
 		isMenuColumnHidden: {
 			type: Boolean
-		},
-		disabled: {
-			type: Boolean
 		}
 	});
 
-	const groups = computed(() => get(props.currentLayout, ['data', 'grouping'], []));
-	const groupIds = computed(() => groups.value.map((gr) => gr.___group_type_id));
+	const balanceReportStore = useBalanceReportStore();
+	const { isLoading, groups, visibleColumns } = storeToRefs(balanceReportStore);
+
 	const groupsBlockWidth = computed(() =>
 		groups.value.reduce((res, gr) => {
 			const cssWidth = get(gr, ['style', 'width'], '0px');
@@ -49,12 +44,6 @@
 		}, 0)
 	);
 	const groupsBlockWidthCss = computed(() => `${groupsBlockWidth.value}px`);
-	const columns = computed(() =>
-		get(props.currentLayout, ['data', 'columns'], []).filter(
-			(col) => !groupIds.value.includes(col.___column_id)
-		)
-	);
-	const visibleColumns = computed(() => columns.value.filter((c) => !c.isHidden));
 </script>
 
 <style lang="scss" scoped>

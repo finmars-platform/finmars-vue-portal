@@ -3,18 +3,11 @@
 		<ReportHeader
 			:entity-type="entityType"
 			:content-type="contentType"
-			:disabled="isLoading"
 			@header:action="processAction"
 		/>
 
 		<div class="balance-report__content">
-			<ReportTable
-				:current-layout="currentLayout"
-				:table-data="tableData"
-				:sort-group="sortGroup"
-				:sort-column="sortColumn"
-				@cell-resize="onCellResize"
-			/>
+			<ReportTable @cell-resize="onCellResize" />
 		</div>
 
 		<div v-if="isLoading" class="balance-report__loader">

@@ -10,7 +10,7 @@
 						activator="parent"
 						width="300"
 						min-width="300"
-						:disabled="disabled"
+						:disabled="isLoading"
 					>
 						<div class="report-header__menu-layouts">
 							<div class="report-header__menu-layouts-content">
@@ -71,7 +71,7 @@
 					placeholder="Select cost method"
 					variant="outlined"
 					compact
-					:disabled="disabled"
+					:disabled="isLoading"
 				/>
 
 				<FmButton
@@ -79,7 +79,7 @@
 					type="secondary"
 					rounded
 					append-icon="mdi-menu-down"
-					:disabled="disabled"
+					:disabled="isLoading"
 				>
 					{{ datesDateFrom || 'Select date from' }}
 
@@ -87,7 +87,7 @@
 						v-model="isDateFromMenuOpen"
 						activator="parent"
 						:close-on-content-click="false"
-						:disabled="disabled"
+						:disabled="isLoading"
 					>
 						<FmDateEditor
 							:model-value="datesDateFrom"
@@ -98,14 +98,14 @@
 					</FmMenu>
 				</FmButton>
 
-				<FmButton type="secondary" rounded append-icon="mdi-menu-down" :disabled="disabled">
+				<FmButton type="secondary" rounded append-icon="mdi-menu-down" :disabled="isLoading">
 					{{ datesDateTo || 'Select date to' }}
 
 					<FmMenu
 						v-model="isDateToMenuOpen"
 						activator="parent"
 						:close-on-content-click="false"
-						:disabled="disabled"
+						:disabled="isLoading"
 					>
 						<FmDateEditor
 							:model-value="datesDateTo"
@@ -123,7 +123,7 @@
 					compact
 					title-key="name"
 					value-key="user_code"
-					:disabled="disabled"
+					:disabled="isLoading"
 				/>
 
 				<div class="report-header__checkbox">
@@ -147,7 +147,7 @@
 					:value="data?.filters || []"
 					:attributes="[]"
 					:suggested-attrs="[]"
-					@update:model-value="(ev) => console.log('UPDATE FILTERS')"
+					@update:model-value="() => console.log('UPDATE FILTERS')"
 				/>
 			</div>
 
@@ -180,15 +180,13 @@
 		},
 		contentType: {
 			type: String
-		},
-		disabled: {
-			type: Boolean
 		}
 	});
 	const emits = defineEmits(['header:action']);
 
 	const balanceReportStore = useBalanceReportStore();
-	const { layouts, currentLayout, currencies, currentCurrency } = storeToRefs(balanceReportStore);
+	const { isLoading, layouts, currentLayout, currencies, currentCurrency } =
+		storeToRefs(balanceReportStore);
 
 	const [dateFromKey, dateToKey] = REPORT_DATA_PROPERTIES[props.entityType];
 
