@@ -15,11 +15,11 @@ import { getListLight as getCurrencyList } from '~/services/currency/currencySer
 import { getList as getDefaultList } from '~/services/ecosystemDefaultService';
 import { REPORT_DATA_PROPERTIES } from '~/components/pages/reports/common/constants';
 
-const itemsPerPage = 40;
-
 export const useBalanceReportStore = defineStore('balance-report', () => {
 	const router = useRouter();
 
+	const entityType = ref();
+	const contentType = ref();
 	const isLoading = ref(false);
 	const layouts = ref([]);
 	const currentLayout = ref({});
@@ -163,57 +163,38 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		}
 	}
 
-	function prepareTableDataRequestOptions({ page = 1, pageSize = itemsPerPage, groupValue = [] }) {
-		const options = {
-			frontend_request_options: {
-				columns: get(currentLayout.value, ['data', 'columns'], []),
-				filter_settings: get(currentLayout.value, ['data', 'filters'], []).map((item) => ({
-					key: item.key,
-					filter_type: item.options.filter_type,
-					value_type: item.value_type,
-					value: item.options.filter_values
-				})),
-				globalTableSearch: '',
-				groups_types: get(currentLayout.value, ['data', 'grouping'], []).reduce(
-					(acc, item, index) => {
-						if (index < 1) {
-							acc.push(item);
-						}
+	async function getTableData({ type = 'group', entityType, options, path = [] }) {
+		console.log('getTableData => ', path);
+		const data =
+			type === 'group'
+				? await getGroupList(options, entityType)
+				: await getItemList(options, entityType);
+		type === 'group' && console.log('groupList => ', data);
+		type !== 'group' && console.log('itemList => ', data);
 
-						return acc;
-					},
-					[]
-				),
-				group_values: groupValue
-			},
-			page,
-			page_size: pageSize
-		};
-
-		return options;
-	}
-
-	async function getTableData(type = 'group', entityType, options) {
-		if (type === 'group') {
-			const groupList = await getGroupList(options, entityType);
-			console.log('groupList => ', groupList);
-			tableData.value.totalChildren = get(groupList, 'count', 0);
-			tableData.value.children = get(groupList, 'results', []).map((item) => ({
-				...item,
-				rowId: item.___group_identifier,
-				totalChildren: 0,
-				children: []
-			}));
-			console.log('<-- !!!!! -->');
-		} else {
-			const itemList = await getItemList(options, entityType);
-			console.log('itemList => ', itemList);
-			tableData.value.totalChildren = get(itemList, 'count', 0);
-			tableData.value.children = get(itemList, 'results', []).map((item) => ({
-				...item,
-				rowId: item.___column_id
-			}));
-		}
+		set(tableData.value, [...path, 'totalChildren'], get(data, 'count', 0));
+		const results = get(data, 'results', []);
+		const children =
+			type === 'group'
+				? results.reduce((res, item) => {
+						res[item.___group_identifier] = {
+							...item,
+							rowId: item.___group_identifier,
+							is_open: false,
+							parents: path.filter((i) => i !== 'children'),
+							totalChildren: 0,
+							children: {}
+						};
+						return res;
+					}, {})
+				: results.reduce((res, item) => {
+						res[item.id] = {
+							...item,
+							rowId: item.id
+						};
+						return res;
+					}, {});
+		set(tableData.value, [...path, 'children'], children);
 	}
 
 	async function getGroupList(options, entityType) {
@@ -325,6 +306,8 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 	}
 
 	return {
+		entityType,
+		contentType,
 		isLoading,
 		currencies,
 		currentCurrency,
@@ -341,7 +324,6 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		changeRouteQuery,
 		getLayouts,
 		getCurrencies,
-		prepareTableDataRequestOptions,
 		getTableData,
 		getGroupList,
 		getItemList

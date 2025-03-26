@@ -22,6 +22,7 @@
 	import get from 'lodash/get';
 	import set from 'lodash/set';
 	import { FmProgressCircular } from '@finmars/ui';
+	import { prepareTableDataRequestOptions } from '@/components/pages/reports/common/utils';
 	import { useAttributes } from '~/stores/useAttributes';
 	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
 	// import { getLayoutByUserCode } from '~/services/entity/entityViewerHelperService';
@@ -40,16 +41,10 @@
 	});
 
 	const balanceReportStore = useBalanceReportStore();
-	const {
-		changeRouteQuery,
-		getLayouts,
-		getCurrencies,
-		getGroupList,
-		getItemList,
-		prepareTableDataRequestOptions,
-		getTableData
-	} = balanceReportStore;
-	const { currentLayout, sortGroup, sortColumn, tableData } = storeToRefs(balanceReportStore);
+	const { changeRouteQuery, getLayouts, getCurrencies, getGroupList, getItemList, getTableData } =
+		balanceReportStore;
+	const { entityType, contentType, currentLayout, sortGroup, sortColumn, tableData } =
+		storeToRefs(balanceReportStore);
 
 	const {
 		downloadCustomFieldsByEntityType,
@@ -57,8 +52,8 @@
 		downloadInstrumentUserFields
 	} = useAttributes();
 
-	const entityType = 'balance-report';
-	const contentType = 'reports.balancereport';
+	entityType.value = 'balance-report';
+	contentType.value = 'reports.balancereport';
 	const isLoading = ref(false);
 
 	async function processAction({ action, payload }) {
@@ -68,7 +63,7 @@
 				try {
 					isLoading.value = true;
 					currentLayout.value = payload;
-					await changeRouteQuery(entityType);
+					await changeRouteQuery(entityType.value);
 					tableData.value = [];
 					await loadTableData();
 				} finally {
@@ -93,19 +88,23 @@
 	}
 
 	async function loadTableData() {
-		const options = prepareTableDataRequestOptions({});
+		const options = prepareTableDataRequestOptions({
+			currentLayout: currentLayout.value,
+			groupIndex: -1,
+			groupValues: []
+		});
 		console.log('!!! OPTIONS => ', options, !!options.frontend_request_options.groups_types.length);
-		await getTableData(
-			options.frontend_request_options.groups_types.length ? 'group' : 'items',
-			entityType,
+		await getTableData({
+			type: options.frontend_request_options.groups_types.length ? 'group' : 'items',
+			entityType: entityType.value,
 			options
-		);
+		});
 	}
 
 	onBeforeMount(async () => {
 		try {
 			isLoading.value = true;
-			await getLayouts(entityType);
+			await getLayouts(entityType.value);
 			await getCurrencies();
 
 			await Promise.allSettled([

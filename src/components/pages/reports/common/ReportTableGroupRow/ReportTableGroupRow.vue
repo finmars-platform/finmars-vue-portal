@@ -21,17 +21,35 @@
 				</div>
 			</template>
 		</div>
+
+		<div v-if="group.is_open && !isEmpty(group.children)" class="table-group-row__children">
+			<template v-for="val in group?.children" :key="val.___group_identifier || val.id">
+				<ReportTableItemRow v-if="val.id" :item="val" :is-menu-column-hidden="isMenuColumnHidden" />
+
+				<ReportTableGroupRow v-else :group="val" :is-menu-column-hidden="isMenuColumnHidden" />
+			</template>
+		</div>
+
+		<div v-if="isLocalLoading" class="table-group-row__loader">
+			<FmProgressCircular indeterminate size="32" />
+		</div>
 	</div>
 </template>
 
 <script setup>
-	import { computed } from 'vue';
+	import { computed, ref } from 'vue';
 	import { storeToRefs } from 'pinia';
 	import get from 'lodash/get';
-	import { FmIcon, Ripple } from '@finmars/ui';
+	import size from 'lodash/size';
+	import set from 'lodash/set';
+	import isEmpty from 'lodash/isEmpty';
+	import { FmIcon, FmProgressCircular, Ripple } from '@finmars/ui';
+	import { prepareTableDataRequestOptions } from '~/components/pages/reports/common/utils';
 	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
 	import { REPORT_TABLE_CELL_MIN_WIDTH } from '../constants';
 	import ReportTableRowActions from '~/components/pages/reports/common/ReportTableRowActions/ReportTableRowActions.vue';
+	import ReportTableGroupRow from '~/components/pages/reports/common/ReportTableGroupRow/ReportTableGroupRow.vue';
+	import ReportTableItemRow from '~/components/pages/reports/common/ReportTableItemRow/ReportTableItemRow.vue';
 
 	const vRipple = Ripple;
 
@@ -47,7 +65,11 @@
 	});
 
 	const balanceReportStore = useBalanceReportStore();
-	const { isLoading, groups, groupIds, columns } = storeToRefs(balanceReportStore);
+	const { entityType, isLoading, currentLayout, groups, groupIds, columns, tableData } =
+		storeToRefs(balanceReportStore);
+	const { getTableData } = balanceReportStore;
+
+	const isLocalLoading = ref(false);
 
 	const groupsBlockWidth = computed(() =>
 		groups.value.reduce((res, gr) => {
@@ -86,11 +108,8 @@
 	const visibleColumns = computed(() => _columns.value.filter((c) => !c.isHidden));
 
 	const prependIcon = computed(() => {
-		const group = groups.value.find((g) => g.key === props.group.___group_type_key);
-		if (!group) return null;
-
-		const isGroupFolded = get(group, ['report_settings', 'is_level_folded']);
-		return isGroupFolded ? 'mdi-menu-right' : 'mdi-menu-down';
+		const isGroupOpen = get(props.group, ['is_open']);
+		return isGroupOpen ? 'mdi-menu-down' : 'mdi-menu-right';
 	});
 
 	function getCellValue(key) {
@@ -104,9 +123,52 @@
 		return get(cell, ['style', 'width'], '0');
 	}
 
-	function toggleFolding() {
-		const currentGroup = groups.value.find((g) => g.key === props.group.___group_type_key);
-		console.log('toggleFolding => ', currentGroup, props.group);
+	async function toggleFolding() {
+		console.log('toggleFolding => ', props.group);
+		const parentPath = props.group.parents.reduce(
+			(res, parent) => {
+				res.push(parent);
+				res.push('children');
+				return res;
+			},
+			['children']
+		);
+		console.log('parentPath =>', parentPath);
+
+		if (props.group.is_open) {
+			set(tableData.value, [...parentPath, props.group.___group_identifier, 'is_open'], false);
+			return;
+		}
+
+		if (size(props.group.children) > 0) {
+			set(tableData.value, [...parentPath, props.group.___group_identifier, 'is_open'], true);
+			return;
+		}
+
+		const currentGroupIndex = groups.value.findIndex(
+			(g) => g.key === props.group.___group_type_key
+		);
+		console.log('currentGroupIndex =>', currentGroupIndex);
+		const requestOptions = prepareTableDataRequestOptions({
+			currentLayout: currentLayout.value,
+			groupIndex: currentGroupIndex,
+			groupValues: [...props.group.parents, props.group.___group_identifier]
+		});
+		console.log('requestOptions =>', requestOptions);
+
+		try {
+			isLocalLoading.value = true;
+			const type = currentGroupIndex !== size(groups.value) - 1 ? 'group' : 'column';
+			await getTableData({
+				type,
+				entityType: entityType.value,
+				options: requestOptions,
+				path: [...parentPath, props.group.___group_identifier]
+			});
+			set(tableData.value, [...parentPath, props.group.___group_identifier, 'is_open'], true);
+		} finally {
+			isLocalLoading.value = false;
+		}
 	}
 </script>
 
@@ -119,7 +181,7 @@
 
 		position: relative;
 		width: 100%;
-		height: var(--report-table-row-height);
+		min-height: var(--report-table-row-height);
 		background-color: var(--surface-dim);
 		color: var(--on-surface);
 
@@ -139,6 +201,7 @@
 			justify-content: flex-start;
 			align-items: center;
 			column-gap: 8px;
+			padding-left: var(--table-row-group-block-padding-left);
 		}
 
 		&__prepend {
@@ -167,6 +230,16 @@
 			color: var(--on-surface);
 			border-right: 1px solid var(--outline-variant);
 			@include mixins.text-overflow-ellipsis();
+		}
+
+		&__loader {
+			position: absolute;
+			inset: 0;
+			z-index: 5;
+			pointer-events: none;
+			display: flex;
+			justify-content: center;
+			align-items: center;
 		}
 	}
 </style>
