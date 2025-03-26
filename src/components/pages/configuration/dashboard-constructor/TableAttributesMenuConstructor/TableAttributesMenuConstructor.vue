@@ -4,6 +4,7 @@
 		:offset="-20"
 		:close-on-content-click="false"
 		:close-on-back="false"
+		persistent
 		z-index="1010"
 		:disabled="disabled"
 	>
