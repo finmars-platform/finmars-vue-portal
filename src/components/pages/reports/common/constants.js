@@ -9,4 +9,4 @@ export const REPORT_TABLE_CELL_MIN_WIDTH = {
 	column: 90
 };
 
-export const REPORT_TABLE_CELL_MAX_WIDTH = 400;
+export const REPORT_TABLE_CELL_MAX_WIDTH = 2000;
