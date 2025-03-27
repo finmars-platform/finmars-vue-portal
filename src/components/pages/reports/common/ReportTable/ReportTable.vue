@@ -82,24 +82,33 @@
 
 				<ReportTableGroupRow v-else :group="val" :is-menu-column-hidden="isMenuColumnHidden" />
 			</template>
+
+			<ReportTableInfoRow
+				v-if="tableData?.totalChildren > size(tableData?.children)"
+				:is-menu-column-hidden="isMenuColumnHidden"
+			/>
+
+			<p>{{ size(tableData?.children) }}</p>
 		</div>
 	</div>
 </template>
 
 <script setup>
-	import { computed, ref } from 'vue';
+	import { ref } from 'vue';
 	import { storeToRefs } from 'pinia';
+	import size from 'lodash/size';
 	import { FmCheckbox, FmIcon, FmIconButton, FmMenu, FmMenuItem } from '@finmars/ui';
 	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
 	import { LABEL_OPTIONS } from './constants';
 	import ReportTableHeaderCell from './ReportTableHeaderCell.vue';
 	import ReportTableGroupRow from '../ReportTableGroupRow/ReportTableGroupRow.vue';
 	import ReportTableItemRow from '../ReportTableItemRow/ReportTableItemRow.vue';
+	import ReportTableInfoRow from '../ReportTableInfoRow/ReportTableInfoRow.vue';
 
 	const emits = defineEmits(['cell-resize']);
 
 	const balanceReportStore = useBalanceReportStore();
-	const { isLoading, groups, groupIds, columns, tableData } = storeToRefs(balanceReportStore);
+	const { isLoading, groups, visibleColumns, tableData } = storeToRefs(balanceReportStore);
 
 	const tableHeaderEl = ref(null);
 	const isMenuColumnHidden = ref(false);
@@ -112,11 +121,6 @@
 			value: null
 		}
 	});
-
-	const _columns = computed(() =>
-		columns.value.filter((col) => !groupIds.value.includes(col.___column_id))
-	);
-	const visibleColumns = computed(() => _columns.value.filter((c) => !c.isHidden));
 
 	function openHeaderCellMenu(event, type = 'group', value) {
 		console.log('openHeaderCellMenu: ', type, event, value);

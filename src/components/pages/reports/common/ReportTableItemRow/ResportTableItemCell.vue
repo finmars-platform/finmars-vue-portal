@@ -9,7 +9,7 @@
 			}
 		]"
 	>
-		{{ isCellValueNumeric ? applyFormatValue() : cellValue }}
+		<span :title="processedCellValue">{{ processedCellValue }}</span>
 	</div>
 </template>
 
@@ -44,6 +44,10 @@
 	);
 	const negativeColorFormatId = computed(() => get(numberFormat.value, 'negative_color_format_id'));
 
+	const processedCellValue = computed(() =>
+		isCellValueNumeric.value ? applyFormatValue() : cellValue.value
+	);
+
 	function applyFormatValue() {
 		return formatValue(props.item, props.col);
 	}
@@ -67,7 +71,6 @@
 		font: var(--body-medium-font);
 		color: var(--on-surface);
 		border-right: 1px solid var(--outline-variant);
-		@include mixins.text-overflow-ellipsis();
 
 		&__numeric {
 			justify-content: flex-end;
@@ -75,6 +78,12 @@
 			&--accented {
 				color: var(--error);
 			}
+		}
+
+		span {
+			display: block;
+			width: 100%;
+			@include mixins.text-overflow-ellipsis();
 		}
 	}
 </style>

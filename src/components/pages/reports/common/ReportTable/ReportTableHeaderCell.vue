@@ -81,6 +81,7 @@
 	const sortData = computed(() => (props.type === 'group' ? sortGroup.value : sortColumn.value));
 	const cssGroupCellMinWidth = computed(() => `${REPORT_TABLE_CELL_MIN_WIDTH.group}px`);
 	const cssColumnCellMinWidth = computed(() => `${REPORT_TABLE_CELL_MIN_WIDTH.column}px`);
+
 	const prependIcon = computed(() => {
 		if (props.type === 'column') return false;
 

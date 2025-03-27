@@ -1,5 +1,6 @@
 import get from 'lodash/get';
 import size from 'lodash/size';
+import isEmpty from 'lodash/isEmpty';
 
 const itemsPerPage = 40;
 
@@ -19,8 +20,8 @@ export function prepareTableDataRequestOptions({
 				value_type: item.value_type,
 				value: item.options.filter_values
 			})),
-			globalTableSearch: '',
-			group_values: groupValues
+			// globalTableSearch: '',
+			groups_values: groupValues
 		},
 		page,
 		page_size: pageSize
@@ -32,4 +33,29 @@ export function prepareTableDataRequestOptions({
 		size(groups) > 0 ? groups.slice(0, groupIndex + 2) : [];
 
 	return options;
+}
+
+function processItem(arr = [], item) {
+	if (!item.children) return arr;
+
+	arr.push({
+		___group_identifier: item.___group_identifier,
+		___group_type_key: item.___group_type_key,
+		is_open: item.is_open,
+		parents: item.parents,
+		totalChildren: item.totalChildren,
+		childrenLoaded: size(item.children)
+	});
+
+	if (isEmpty(item.children)) return arr;
+
+	return Object.values(item.children).reduce((res, i) => {
+		return processItem(res, i);
+	}, arr);
+}
+
+export function prepareFlatListOfGroupRows(tableData) {
+	return Object.values(tableData?.children || {}).reduce((res, item) => {
+		return processItem(res, item);
+	}, []);
 }

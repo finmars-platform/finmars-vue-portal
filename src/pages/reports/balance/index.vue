@@ -137,6 +137,7 @@
 		width: 100%;
 		height: 100%;
 		color: var(--on-surface);
+		padding-bottom: 16px;
 
 		&__content {
 			position: relative;

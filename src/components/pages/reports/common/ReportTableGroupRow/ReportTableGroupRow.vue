@@ -12,7 +12,9 @@
 					@click.stop.prevent="toggleFolding"
 				/>
 
-				<span class="table-group-row__name">{{ group?.___group_name }}</span>
+				<span class="table-group-row__name" :title="group?.___group_name">
+					{{ group?.___group_name }}
+				</span>
 			</div>
 
 			<template v-for="col in visibleColumns" :key="col.key">
@@ -37,7 +39,7 @@
 </template>
 
 <script setup>
-	import { computed, ref } from 'vue';
+	import { computed, ref, watch } from 'vue';
 	import { storeToRefs } from 'pinia';
 	import get from 'lodash/get';
 	import size from 'lodash/size';
@@ -65,11 +67,24 @@
 	});
 
 	const balanceReportStore = useBalanceReportStore();
-	const { entityType, isLoading, currentLayout, groups, groupIds, columns, tableData } =
-		storeToRefs(balanceReportStore);
+	const {
+		entityType,
+		isLoading,
+		currentLayout,
+		groups,
+		groupRows,
+		columns,
+		visibleColumns,
+		tableData
+	} = storeToRefs(balanceReportStore);
 	const { getTableData } = balanceReportStore;
 
 	const isLocalLoading = ref(false);
+
+	const columnKey = computed(() => props.group?.___group_type_key);
+	const currentGroupIndex = computed(() =>
+		(groups.value || []).findIndex((g) => g.key === columnKey.value)
+	);
 
 	const groupsBlockWidth = computed(() =>
 		groups.value.reduce((res, gr) => {
@@ -82,7 +97,6 @@
 		}, 0)
 	);
 	const groupsBlockWidthCss = computed(() => `${groupsBlockWidth.value}px`);
-
 	const groupsBlockPadding = computed(() => {
 		let skipCheck = false;
 		return groups.value.reduce((res, gr) => {
@@ -102,15 +116,21 @@
 	});
 	const groupsBlockPaddingCss = computed(() => `${groupsBlockPadding.value + 8}px`);
 
-	const _columns = computed(() =>
-		columns.value.filter((col) => !groupIds.value.includes(col.___column_id))
-	);
-	const visibleColumns = computed(() => _columns.value.filter((c) => !c.isHidden));
-
 	const prependIcon = computed(() => {
 		const isGroupOpen = get(props.group, ['is_open']);
 		return isGroupOpen ? 'mdi-menu-down' : 'mdi-menu-right';
 	});
+
+	const parentPath = computed(() =>
+		props.group?.parents.reduce(
+			(res, parent) => {
+				res.push(parent);
+				res.push('children');
+				return res;
+			},
+			['children']
+		)
+	);
 
 	function getCellValue(key) {
 		return get(props.group, ['subtotal', key], '');
@@ -120,56 +140,57 @@
 		const cell = columns.value.find((c) => c.key === key);
 		if (!cell) return '0';
 
-		return get(cell, ['style', 'width'], '0');
+		const cssWidth = get(cell, ['style', 'width'], '0px');
+		const width = parseInt(cssWidth.slice(0, -2), 10);
+		return `${Math.max(width, REPORT_TABLE_CELL_MIN_WIDTH.column)}px`;
 	}
 
-	async function toggleFolding() {
-		console.log('toggleFolding => ', props.group);
-		const parentPath = props.group.parents.reduce(
-			(res, parent) => {
-				res.push(parent);
-				res.push('children');
-				return res;
-			},
-			['children']
+	function toggleFolding() {
+		set(
+			tableData.value,
+			[...parentPath.value, props.group.___group_identifier, 'is_open'],
+			!props.group.is_open
 		);
-		console.log('parentPath =>', parentPath);
 
-		if (props.group.is_open) {
-			set(tableData.value, [...parentPath, props.group.___group_identifier, 'is_open'], false);
-			return;
-		}
-
-		if (size(props.group.children) > 0) {
-			set(tableData.value, [...parentPath, props.group.___group_identifier, 'is_open'], true);
-			return;
-		}
-
-		const currentGroupIndex = groups.value.findIndex(
-			(g) => g.key === props.group.___group_type_key
+		const isGroupColumnOpen = groupRows.value.some(
+			(g) => g.___group_type_key === columnKey.value && g.is_open
 		);
-		console.log('currentGroupIndex =>', currentGroupIndex);
+		set(
+			currentLayout.value,
+			['data', 'grouping', currentGroupIndex.value, 'report_settings', 'is_level_folded'],
+			!isGroupColumnOpen
+		);
+	}
+
+	async function loadChildren() {
 		const requestOptions = prepareTableDataRequestOptions({
 			currentLayout: currentLayout.value,
-			groupIndex: currentGroupIndex,
+			groupIndex: currentGroupIndex.value,
 			groupValues: [...props.group.parents, props.group.___group_identifier]
 		});
-		console.log('requestOptions =>', requestOptions);
 
 		try {
 			isLocalLoading.value = true;
-			const type = currentGroupIndex !== size(groups.value) - 1 ? 'group' : 'column';
+			const type = currentGroupIndex.value !== size(groups.value) - 1 ? 'group' : 'column';
 			await getTableData({
 				type,
 				entityType: entityType.value,
 				options: requestOptions,
-				path: [...parentPath, props.group.___group_identifier]
+				path: [...parentPath.value, props.group.___group_identifier]
 			});
-			set(tableData.value, [...parentPath, props.group.___group_identifier, 'is_open'], true);
 		} finally {
 			isLocalLoading.value = false;
 		}
 	}
+
+	watch(
+		() => props.group.is_open,
+		async (val) => {
+			if (!val || (val && size(props.group.children) > 0)) return;
+
+			await loadChildren();
+		}
+	);
 </script>
 
 <style lang="scss" scoped>
@@ -215,8 +236,10 @@
 		}
 
 		&__name {
+			display: block;
 			font: var(--body-medium-pro-font);
 			color: var(--on-surface);
+			@include mixins.text-overflow-ellipsis();
 		}
 
 		&__cell {

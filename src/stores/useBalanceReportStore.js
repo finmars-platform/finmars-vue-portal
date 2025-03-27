@@ -7,10 +7,12 @@ import has from 'lodash/has';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
 import set from 'lodash/set';
+import size from 'lodash/size';
 import { getListLayout } from '~/services/uiService';
 import { getListReportGroups, getListReportItems } from '~/services/entity/entityResolverService';
 import { isFilterValid } from '~/utils/evRvCommonHelper';
 import { entityPluralToSingular } from '~/utils/queryParamsHelper';
+import { prepareFlatListOfGroupRows } from '~/components/pages/reports/common/utils';
 import { getListLight as getCurrencyList } from '~/services/currency/currencyService';
 import { getList as getDefaultList } from '~/services/ecosystemDefaultService';
 import { REPORT_DATA_PROPERTIES } from '~/components/pages/reports/common/constants';
@@ -36,16 +38,37 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 	});
 	const tableData = ref({
 		___group_identifier: 'root',
-		___group_type_key: 'root',
 		___group_name: 'root',
+		___group_type_key: 'root',
 		totalChildren: 0,
-		children: []
+		children: {}
 	});
+
+	const groupRows = computed(() => prepareFlatListOfGroupRows(tableData.value));
 
 	const groups = computed(() => get(currentLayout.value, ['data', 'grouping'], []));
 	const groupIds = computed(() => groups.value.map((gr) => gr.___group_type_id));
+	const isExtendedColumnsMode = computed(() => {
+		if (isEmpty(groups.value)) return true;
+
+		return groupRows.value.some(
+			(row) => size(row.parents) === size(groups.value) - 1 && row.is_open
+		);
+	});
+
 	const columns = computed(() => get(currentLayout.value, ['data', 'columns'], []));
-	const visibleColumns = computed(() => columns.value.filter((col) => !col.isHidden));
+	const columnsWithoutGroups = computed(() =>
+		columns.value.filter((col) => !groupIds.value.includes(col.___column_id))
+	);
+	const visibleColumnsForNonExtendedMode = computed(() =>
+		columnsWithoutGroups.value.filter((col) => col.report_settings?.subtotal_formula_id === 1)
+	);
+
+	const visibleColumns = computed(() =>
+		isExtendedColumnsMode.value
+			? columnsWithoutGroups.value
+			: visibleColumnsForNonExtendedMode.value
+	);
 
 	async function changeRouteQuery(entityType) {
 		syncedTime.value = dayjs();
@@ -174,7 +197,7 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 
 		set(tableData.value, [...path, 'totalChildren'], get(data, 'count', 0));
 		const results = get(data, 'results', []);
-		const children =
+		const newChildren =
 			type === 'group'
 				? results.reduce((res, item) => {
 						res[item.___group_identifier] = {
@@ -194,7 +217,11 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 						};
 						return res;
 					}, {});
-		set(tableData.value, [...path, 'children'], children);
+
+		set(tableData.value, [...path, 'children'], {
+			...get(tableData.value, [...path, 'children'], {}),
+			...newChildren
+		});
 	}
 
 	async function getGroupList(options, entityType) {
@@ -250,7 +277,12 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 			next: null,
 			previous: null,
 			count: data?.count,
-			results: cloneDeep(data?.items || [])
+			results: cloneDeep(
+				(data?.items || []).map((i) => ({
+					...i,
+					___group_identifier: i.___group_identifier || '-'
+				}))
+			)
 		};
 	}
 
@@ -318,8 +350,11 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		currentLayout,
 		groups,
 		groupIds,
+		groupRows,
 		columns,
+		columnsWithoutGroups,
 		visibleColumns,
+		isExtendedColumnsMode,
 		tableData,
 		changeRouteQuery,
 		getLayouts,
