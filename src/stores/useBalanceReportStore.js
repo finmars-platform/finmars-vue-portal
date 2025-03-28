@@ -26,7 +26,6 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 	const layouts = ref([]);
 	const currentLayout = ref({});
 	const currencies = ref([]);
-	const currentCurrency = ref('USD');
 	const syncedTime = ref(null);
 	const sortGroup = ref({
 		key: null,
@@ -107,7 +106,7 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 			query: {
 				layout: currentLayout.value.user_code,
 				costMethod: currentLayout.value.data.reportOptions.cost_method,
-				currency: currentCurrency.value.user_code,
+				currency: currentLayout.value.data.reportOptions.report_currency,
 				...(entityType !== 'balance-report' && {
 					dateFrom: currentLayout.value.data.reportOptions[dateFromKey]
 				}),
@@ -140,7 +139,7 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 	}
 
 	async function getCurrencies() {
-		const res = await getCurrencyList({ pageSize: 1000 });
+		const res = await getCurrencyList({ page: 1, page_size: 1000 });
 		currencies.value = [...res.results];
 
 		if (isEmpty(currencies.value)) {
@@ -342,7 +341,6 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		contentType,
 		isLoading,
 		currencies,
-		currentCurrency,
 		sortGroup,
 		sortColumn,
 		syncedTime,

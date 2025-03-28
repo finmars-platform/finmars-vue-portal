@@ -66,12 +66,14 @@
 
 			<div class="report-header__block">
 				<FmSelect
+					v-if="entityType !== 'transaction-report'"
 					:model-value="data?.reportOptions.cost_method"
 					:options="REPORT_OPTIONS"
 					placeholder="Select cost method"
 					variant="outlined"
 					compact
 					:disabled="isLoading"
+					@update:model-value="updateLayoutField('data.reportOptions.cost_method', $event)"
 				/>
 
 				<FmButton
@@ -117,13 +119,15 @@
 				</FmButton>
 
 				<FmSelect
-					v-model="currentCurrency"
+					v-if="entityType !== 'transaction-report'"
+					:model-value="data?.reportOptions.report_currency"
 					:options="currencies"
 					variant="outlined"
 					compact
 					title-key="name"
 					value-key="user_code"
 					:disabled="isLoading"
+					@update:model-value="updateLayoutField('data.reportOptions.report_currency', $event)"
 				/>
 
 				<div class="report-header__checkbox">
@@ -159,6 +163,7 @@
 <script setup>
 	import { computed, ref } from 'vue';
 	import { storeToRefs } from 'pinia';
+	import set from 'lodash/set';
 	import {
 		FmButton,
 		FmCheckbox,
@@ -185,8 +190,7 @@
 	const emits = defineEmits(['header:action']);
 
 	const balanceReportStore = useBalanceReportStore();
-	const { isLoading, layouts, currentLayout, currencies, currentCurrency } =
-		storeToRefs(balanceReportStore);
+	const { isLoading, layouts, currentLayout, currencies } = storeToRefs(balanceReportStore);
 
 	const [dateFromKey, dateToKey] = REPORT_DATA_PROPERTIES[props.entityType];
 
@@ -205,6 +209,11 @@
 	function onLayoutsMenuItemClick(action, payload) {
 		emits('header:action', { action, payload });
 		isLayoutSelectMenuOpen.value = false;
+	}
+
+	function updateLayoutField(field, value) {
+		console.log('updateLayoutField => ', field, value);
+		set(currentLayout.value, field, value);
 	}
 </script>
 

@@ -169,11 +169,8 @@
 	}
 
 	function toggleFolding() {
-		set(
-			tableData.value,
-			[...parentPath.value, props.group.___group_identifier, 'is_open'],
-			!props.group.is_open
-		);
+		const isOpen = !props.group.is_open;
+		set(tableData.value, [...parentPath.value, props.group.___group_identifier, 'is_open'], isOpen);
 
 		const isGroupColumnOpen = groupRows.value.some(
 			(g) => g.___group_type_key === columnKey.value && g.is_open
@@ -183,6 +180,20 @@
 			['data', 'grouping', currentGroupIndex.value, 'report_settings', 'is_level_folded'],
 			!isGroupColumnOpen
 		);
+
+		if (!isOpen && currentGroupIndex.value < size(groups.value) - 1) {
+			groupRows.value.forEach((r) => {
+				if (size(r.parents) > currentGroupIndex.value) {
+					const prePath = r.parents.reduce((res, parentId) => {
+						res.push(parentId);
+						res.push('children');
+						return res;
+					}, []);
+					const path = ['children', ...prePath, r.___group_identifier, 'is_open'];
+					set(tableData.value, path, false);
+				}
+			});
+		}
 	}
 
 	async function loadChildren(page = 1) {
