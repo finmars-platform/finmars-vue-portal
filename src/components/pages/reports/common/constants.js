@@ -10,3 +10,5 @@ export const REPORT_TABLE_CELL_MIN_WIDTH = {
 };
 
 export const REPORT_TABLE_CELL_MAX_WIDTH = 2000;
+
+export const ITEM_PER_PAGE = 40;

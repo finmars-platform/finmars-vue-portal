@@ -30,6 +30,25 @@
 
 				<ReportTableGroupRow v-else :group="val" :is-menu-column-hidden="isMenuColumnHidden" />
 			</template>
+
+			<ReportTableInfoRow
+				v-if="group.totalChildren > size(group.children)"
+				type="group"
+				:is-menu-column-hidden="isMenuColumnHidden"
+				:is-loading="isLocalLoading"
+			>
+				<div class="table-group-row__info">
+					<span>({{ size(group?.children) }} of {{ group?.totalChildren }})</span>
+					<FmButton
+						rounded
+						density="comfortable"
+						:disabled="isLoading || isLocalLoading"
+						@click.stop.prevent="loadMore"
+					>
+						Load More
+					</FmButton>
+				</div>
+			</ReportTableInfoRow>
 		</div>
 
 		<div v-if="isLocalLoading" class="table-group-row__loader">
@@ -45,13 +64,17 @@
 	import size from 'lodash/size';
 	import set from 'lodash/set';
 	import isEmpty from 'lodash/isEmpty';
-	import { FmIcon, FmProgressCircular, Ripple } from '@finmars/ui';
-	import { prepareTableDataRequestOptions } from '~/components/pages/reports/common/utils';
+	import { FmButton, FmIcon, FmProgressCircular, Ripple } from '@finmars/ui';
+	import {
+		calculatePageNumberForRequest,
+		prepareTableDataRequestOptions
+	} from '~/components/pages/reports/common/utils';
 	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
 	import { REPORT_TABLE_CELL_MIN_WIDTH } from '../constants';
 	import ReportTableRowActions from '~/components/pages/reports/common/ReportTableRowActions/ReportTableRowActions.vue';
 	import ReportTableGroupRow from '~/components/pages/reports/common/ReportTableGroupRow/ReportTableGroupRow.vue';
 	import ReportTableItemRow from '~/components/pages/reports/common/ReportTableItemRow/ReportTableItemRow.vue';
+	import ReportTableInfoRow from '~/components/pages/reports/common/ReportTableInfoRow/ReportTableInfoRow.vue';
 
 	const vRipple = Ripple;
 
@@ -162,11 +185,12 @@
 		);
 	}
 
-	async function loadChildren() {
+	async function loadChildren(page = 1) {
 		const requestOptions = prepareTableDataRequestOptions({
 			currentLayout: currentLayout.value,
 			groupIndex: currentGroupIndex.value,
-			groupValues: [...props.group.parents, props.group.___group_identifier]
+			groupValues: [...props.group.parents, props.group.___group_identifier],
+			page
 		});
 
 		try {
@@ -181,6 +205,14 @@
 		} finally {
 			isLocalLoading.value = false;
 		}
+	}
+
+	async function loadMore() {
+		const newPage = calculatePageNumberForRequest({
+			totalItems: props.group?.totalChildren,
+			currentItemsCount: size(props.group?.children)
+		});
+		await loadChildren(newPage);
 	}
 
 	watch(
@@ -253,6 +285,17 @@
 			color: var(--on-surface);
 			border-right: 1px solid var(--outline-variant);
 			@include mixins.text-overflow-ellipsis();
+		}
+
+		&__info {
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+			column-gap: 8px;
+
+			button {
+				text-transform: none;
+			}
 		}
 
 		&__loader {

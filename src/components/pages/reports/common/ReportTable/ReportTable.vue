@@ -85,10 +85,22 @@
 
 			<ReportTableInfoRow
 				v-if="tableData?.totalChildren > size(tableData?.children)"
+				type="group"
 				:is-menu-column-hidden="isMenuColumnHidden"
-			/>
-
-			<p>{{ size(tableData?.children) }}</p>
+				:is-loading="isLocalLoading"
+			>
+				<div class="report-table__row-info">
+					<span>({{ size(tableData?.children) }} of {{ tableData?.totalChildren }})</span>
+					<FmButton
+						rounded
+						density="comfortable"
+						:disabled="isLoading || isLocalLoading"
+						@click.stop.prevent="loadMore"
+					>
+						Load More
+					</FmButton>
+				</div>
+			</ReportTableInfoRow>
 		</div>
 	</div>
 </template>
@@ -97,9 +109,10 @@
 	import { ref } from 'vue';
 	import { storeToRefs } from 'pinia';
 	import size from 'lodash/size';
-	import { FmCheckbox, FmIcon, FmIconButton, FmMenu, FmMenuItem } from '@finmars/ui';
+	import { FmButton, FmCheckbox, FmIcon, FmIconButton, FmMenu, FmMenuItem } from '@finmars/ui';
 	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
 	import { LABEL_OPTIONS } from './constants';
+	import { calculatePageNumberForRequest, prepareTableDataRequestOptions } from '../utils';
 	import ReportTableHeaderCell from './ReportTableHeaderCell.vue';
 	import ReportTableGroupRow from '../ReportTableGroupRow/ReportTableGroupRow.vue';
 	import ReportTableItemRow from '../ReportTableItemRow/ReportTableItemRow.vue';
@@ -108,8 +121,11 @@
 	const emits = defineEmits(['cell-resize']);
 
 	const balanceReportStore = useBalanceReportStore();
-	const { isLoading, groups, visibleColumns, tableData } = storeToRefs(balanceReportStore);
+	const { isLoading, entityType, currentLayout, groups, visibleColumns, tableData } =
+		storeToRefs(balanceReportStore);
+	const { getTableData } = balanceReportStore;
 
+	const isLocalLoading = ref(false);
 	const tableHeaderEl = ref(null);
 	const isMenuColumnHidden = ref(false);
 	const headerCellMenuSettings = ref({
@@ -138,6 +154,30 @@
 
 	function onCellResize(type = 'group', item, width) {
 		emits('cell-resize', { type, item, width });
+	}
+
+	async function loadMore() {
+		try {
+			isLocalLoading.value = true;
+
+			const newPage = calculatePageNumberForRequest({
+				totalItems: tableData.value?.totalChildren,
+				currentItemsCount: size(tableData.value?.children)
+			});
+			const options = prepareTableDataRequestOptions({
+				currentLayout: currentLayout.value,
+				groupIndex: -1,
+				groupValues: [],
+				page: newPage
+			});
+			await getTableData({
+				type: options.frontend_request_options.groups_types.length ? 'group' : 'items',
+				entityType: entityType.value,
+				options
+			});
+		} finally {
+			isLocalLoading.value = false;
+		}
 	}
 </script>
 
@@ -213,6 +253,17 @@
 		&__body {
 			position: relative;
 			width: 100%;
+		}
+
+		&__row-info {
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+			column-gap: 8px;
+
+			button {
+				text-transform: none;
+			}
 		}
 	}
 </style>

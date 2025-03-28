@@ -1,15 +1,14 @@
 import get from 'lodash/get';
 import size from 'lodash/size';
 import isEmpty from 'lodash/isEmpty';
-
-const itemsPerPage = 40;
+import { ITEM_PER_PAGE } from './constants';
 
 export function prepareTableDataRequestOptions({
 	currentLayout = {},
 	groupIndex,
 	groupValues = [],
 	page = 1,
-	pageSize = itemsPerPage
+	pageSize = ITEM_PER_PAGE
 }) {
 	const options = {
 		frontend_request_options: {
@@ -58,4 +57,14 @@ export function prepareFlatListOfGroupRows(tableData) {
 	return Object.values(tableData?.children || {}).reduce((res, item) => {
 		return processItem(res, item);
 	}, []);
+}
+
+export function calculatePageNumberForRequest({
+	totalItems = 0,
+	currentItemsCount = 0,
+	pageSize = ITEM_PER_PAGE
+}) {
+	const currentPage = Math.floor(currentItemsCount / pageSize);
+	const totalPages = Math.ceil(totalItems / pageSize);
+	return Math.min(currentPage + 1, totalPages);
 }
