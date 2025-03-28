@@ -62,8 +62,8 @@
 				<p>No Cells found. You can add a new one.</p>
 			</div>
 		</div>
-		<div v-if="processing || fileSaveProcessing" class="flex-row fc-center">
-			<FmLoader />
+		<div class="flex-row items-center justify-center loader w-full min-h-40" v-if="processing || fileSaveProcessing">
+			<FmLoader :size="60" />
 		</div>
 	</div>
 
@@ -212,15 +212,16 @@
 	};
 
 	const save = async () => {
+		if(!fileData?.value) return;
 		processing.value = true;
 		fileSaveProcessing.value = true;
-		let formData = new FormData();
+		const formData = new FormData();
 		const content = JSON.stringify(fileData.value, null, 4);
 		const blob = new Blob([content], { type: 'application/json' });
 		const file = new File([blob], props.playbookName);
-		let pathPieces = [...props.currentPath];
+		const pathPieces = [...props.currentPath];
 		pathPieces.pop();
-		const path = pathPieces.join('/');
+		const path = pathPieces.join('/')?.replace(/%20/g, ' ');
 		formData.append('file', file);
 		formData.append('path', path);
 		try {
@@ -307,7 +308,8 @@
 	};
 
 	const activateCell = (cell) => {
-		fileData.value.cells = fileData.value.cells.map(function (item) {
+		if(!fileData?.value?.cells) return;
+		fileData.value.cells = fileData?.value?.cells?.map(function (item) {
 			item.active = false;
 			return item;
 		});
@@ -321,7 +323,8 @@
 	};
 
 	const addCell = () => {
-		fileData.value.cells.push({
+		if(!fileData?.value) return;
+		fileData?.value?.cells?.push({
 			id: generateUniqueID(),
 			cell_type: 'code',
 			source: '',
@@ -338,13 +341,14 @@
 	};
 
 	const deleteCell = async (index) => {
+		if(!fileData?.value?.cells) return;
 		const confirm = await useConfirm({
 			title: 'Warning',
 			text: `Are you sure that you want to delete?`
 		});
 		if (confirm) {
 			processing.value = true;
-			fileData.value.cells?.splice(index, 1);
+			fileData?.value?.cells?.splice(index, 1);
 			processing.value = false;
 		}
 	};
