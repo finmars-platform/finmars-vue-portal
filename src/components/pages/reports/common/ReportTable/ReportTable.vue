@@ -173,7 +173,8 @@
 			await getTableData({
 				type: options.frontend_request_options.groups_types.length ? 'group' : 'items',
 				entityType: entityType.value,
-				options
+				options,
+				justThisLevel: true
 			});
 		} finally {
 			isLocalLoading.value = false;

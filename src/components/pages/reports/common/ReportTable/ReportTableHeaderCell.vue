@@ -18,7 +18,7 @@
 			v-ripple.center.circle
 			:icon="prependIcon"
 			:class="['table-header-cell__prepend', { 'table-header-cell__prepend--disabled': isLoading }]"
-			@click.stop.prevent
+			@click.stop.prevent="toggleFolding"
 		/>
 
 		<span class="table-header-cell__text" @click.stop.prevent>
@@ -51,9 +51,11 @@
 	import { onBeforeUnmount, computed, onMounted, ref, watch } from 'vue';
 	import { storeToRefs } from 'pinia';
 	import get from 'lodash/get';
+	import size from 'lodash/size';
 	import { FmIcon, FmTooltip, Ripple } from '@finmars/ui';
 	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
 	import { REPORT_TABLE_CELL_MIN_WIDTH, REPORT_TABLE_CELL_MAX_WIDTH } from '../constants';
+	import set from 'lodash/set';
 
 	const vRipple = Ripple;
 
@@ -73,7 +75,9 @@
 	const emits = defineEmits(['open-cell-menu', 'cell-resize']);
 
 	const balanceReportStore = useBalanceReportStore();
-	const { isLoading, sortGroup, sortColumn } = storeToRefs(balanceReportStore);
+	const { isLoading, sortGroup, sortColumn, tableData, groups, groupRows } =
+		storeToRefs(balanceReportStore);
+	const { loadTableDataToGroupLevel } = balanceReportStore;
 
 	const cellEl = ref(null);
 	const resizerEl = ref(null);
@@ -132,6 +136,34 @@
 
 		props.headerElement?.addEventListener('mousemove', onMouseMove);
 		props.headerElement?.addEventListener('mouseup', onMouseUp);
+	}
+
+	async function toggleFolding() {
+		console.log('toggleFolding => ', props.item);
+		const isCurrentGroupOpen = !get(props.item, ['report_settings', 'is_level_folded']);
+		const newOpenFlagValue = !isCurrentGroupOpen;
+		const currentGroupIndex = (groups.value || []).findIndex((g) => g.key === props.item?.key);
+
+		if (currentGroupIndex === -1) return;
+
+		console.log('currentGroupIndex => ', currentGroupIndex);
+		if (!newOpenFlagValue) {
+			groupRows.value.forEach((r) => {
+				if (size(r.parents) >= currentGroupIndex) {
+					const prePath = r.parents.reduce((res, parentId) => {
+						res.push(parentId);
+						res.push('children');
+						return res;
+					}, []);
+					const path = ['children', ...prePath, r.___group_identifier, 'is_open'];
+					set(tableData.value, path, newOpenFlagValue);
+				}
+			});
+
+			return;
+		}
+
+		await loadTableDataToGroupLevel(currentGroupIndex);
 	}
 
 	onMounted(() => {

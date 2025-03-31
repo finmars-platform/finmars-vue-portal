@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { defineStore } from 'pinia';
 import dayjs from 'dayjs';
@@ -12,7 +12,10 @@ import { getListLayout } from '~/services/uiService';
 import { getListReportGroups, getListReportItems } from '~/services/entity/entityResolverService';
 import { isFilterValid } from '~/utils/evRvCommonHelper';
 import { entityPluralToSingular } from '~/utils/queryParamsHelper';
-import { prepareFlatListOfGroupRows } from '~/components/pages/reports/common/utils';
+import {
+	prepareFlatListOfGroupRows,
+	prepareTableDataRequestOptions
+} from '~/components/pages/reports/common/utils';
 import { getListLight as getCurrencyList } from '~/services/currency/currencyService';
 import { getList as getDefaultList } from '~/services/ecosystemDefaultService';
 import { REPORT_DATA_PROPERTIES } from '~/components/pages/reports/common/constants';
@@ -35,6 +38,7 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		key: null,
 		sort: 'asc'
 	});
+	const expandGroupsToLevel = ref(null);
 	const tableData = ref({
 		___group_identifier: 'root',
 		___group_name: 'root',
@@ -185,8 +189,25 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		}
 	}
 
-	async function getTableData({ type = 'group', entityType, options, path = [] }) {
+	async function loadTableDataToGroupLevel(level) {
+		expandGroupsToLevel.value = level;
+		const options = prepareTableDataRequestOptions({
+			currentLayout: currentLayout.value,
+			groupIndex: -1,
+			groupValues: []
+		});
+		await getTableData({ entityType: entityType.value, options });
+	}
+
+	async function getTableData({
+		type = 'group',
+		entityType,
+		options,
+		path = [],
+		justThisLevel = false
+	}) {
 		console.log('getTableData => ', path);
+
 		const data =
 			type === 'group'
 				? await getGroupList(options, entityType)
@@ -197,14 +218,20 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		set(tableData.value, [...path, 'hasServerResponseError'], !!data?.error);
 		set(tableData.value, [...path, 'totalChildren'], get(data, 'count', 0));
 		const results = get(data, 'results', []);
+		const currentGroupRowParents = path.filter((i) => i !== 'children');
+		const isOpen =
+			!justThisLevel &&
+			typeof expandGroupsToLevel.value === 'number' &&
+			size(currentGroupRowParents) <= expandGroupsToLevel.value;
+
 		const newChildren =
 			type === 'group'
 				? results.reduce((res, item) => {
 						res[item.___group_identifier] = {
 							...item,
 							rowId: item.___group_identifier,
-							is_open: false,
-							parents: path.filter((i) => i !== 'children'),
+							is_open: isOpen,
+							parents: currentGroupRowParents,
 							totalChildren: 0,
 							children: {}
 						};
@@ -348,6 +375,22 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		};
 	}
 
+	watch(
+		groupRows,
+		() => {
+			groups.value.forEach((_, index) => {
+				const currentGroupRows = groupRows.value.filter((r) => size(r.parents) === index);
+				const isGroupColumnOpen = currentGroupRows.some((r) => r.is_open);
+				set(
+					currentLayout.value,
+					['data', 'grouping', index, 'report_settings', 'is_level_folded'],
+					!isGroupColumnOpen
+				);
+			});
+		},
+		{ immediate: true }
+	);
+
 	return {
 		entityType,
 		contentType,
@@ -365,11 +408,13 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		columnsWithoutGroups,
 		visibleColumns,
 		isExtendedColumnsMode,
+		expandGroupsToLevel,
 		tableData,
 		changeRouteQuery,
 		getLayouts,
 		getCurrencies,
 		getTableData,
+		loadTableDataToGroupLevel,
 		getGroupList,
 		getItemList
 	};

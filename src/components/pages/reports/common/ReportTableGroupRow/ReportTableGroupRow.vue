@@ -91,6 +91,9 @@
 			required: true,
 			default: () => ({})
 		},
+		initialOpen: {
+			type: [Boolean, undefined]
+		},
 		isMenuColumnHidden: {
 			type: Boolean
 		}
@@ -179,15 +182,6 @@
 		const isOpen = !props.group.is_open;
 		set(tableData.value, [...parentPath.value, props.group.___group_identifier, 'is_open'], isOpen);
 
-		const isGroupColumnOpen = groupRows.value.some(
-			(g) => g.___group_type_key === columnKey.value && g.is_open
-		);
-		set(
-			currentLayout.value,
-			['data', 'grouping', currentGroupIndex.value, 'report_settings', 'is_level_folded'],
-			!isGroupColumnOpen
-		);
-
 		if (!isOpen && currentGroupIndex.value < size(groups.value) - 1) {
 			groupRows.value.forEach((r) => {
 				if (size(r.parents) > currentGroupIndex.value) {
@@ -218,7 +212,8 @@
 				type,
 				entityType: entityType.value,
 				options: requestOptions,
-				path: [...parentPath.value, props.group.___group_identifier]
+				path: [...parentPath.value, props.group.___group_identifier],
+				justThisLevel: true
 			});
 		} finally {
 			isLocalLoading.value = false;
@@ -236,9 +231,19 @@
 	watch(
 		() => props.group.is_open,
 		async (val) => {
-			if (!val || (val && size(props.group.children) > 0)) return;
-
+			console.log('<-- WATCH --> ', props.group.___group_identifier, val);
+			if (
+				!val ||
+				(val &&
+					size(props.group.children) > 0 &&
+					props.group.totalChildren === size(props.group.children))
+			)
+				return;
+			console.log('<-- WATCH 11111 -->');
 			await loadChildren();
+		},
+		{
+			immediate: true
 		}
 	);
 </script>
@@ -328,7 +333,7 @@
 
 			&-element {
 				position: absolute;
-				left: 192px;
+				left: calc(var(--table-row-group-block-padding-left) + 192px);
 				top: calc(var(--report-table-row-height) / 2 - 16px);
 			}
 		}
