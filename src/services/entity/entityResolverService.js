@@ -377,12 +377,16 @@ export async function getListReportGroups(entityType, options = {}) {
 }
 
 export async function getListReportItems(entityType, options = {}) {
-	switch (entityType) {
-		case 'balance-report':
-			return reportService.getBackendBalanceReportItems(options);
-		case 'pl-report':
-			return reportService.getBackendPnlReportItems(options);
-		case 'transaction-report':
-			return reportService.getBackendTransactionReportItems(options);
+	try {
+		switch (entityType) {
+			case 'balance-report':
+				return reportService.getBackendBalanceReportItems(options);
+			case 'pl-report':
+				return reportService.getBackendPnlReportItems(options);
+			case 'transaction-report':
+				return reportService.getBackendTransactionReportItems(options);
+		}
+	} catch (error) {
+		console.log('### getListReportItems => ', error);
 	}
 }

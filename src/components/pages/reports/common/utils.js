@@ -66,5 +66,5 @@ export function calculatePageNumberForRequest({
 }) {
 	const currentPage = Math.floor(currentItemsCount / pageSize);
 	const totalPages = Math.ceil(totalItems / pageSize);
-	return Math.min(currentPage + 1, totalPages);
+	return Math.min(currentPage + 1, totalPages) || 1;
 }

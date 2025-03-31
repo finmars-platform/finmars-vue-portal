@@ -22,10 +22,10 @@
 		/>
 
 		<span class="table-header-cell__text" @click.stop.prevent>
-			{{ item.layout_name }}
+			{{ item.layout_name || item.name }}
 
 			<FmTooltip type="secondary" activator="parent" location="top">
-				{{ item.layout_name }}
+				{{ item.layout_name || item.name }}
 			</FmTooltip>
 		</span>
 

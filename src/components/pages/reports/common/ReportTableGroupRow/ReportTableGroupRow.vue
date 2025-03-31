@@ -30,29 +30,36 @@
 
 				<ReportTableGroupRow v-else :group="val" :is-menu-column-hidden="isMenuColumnHidden" />
 			</template>
-
-			<ReportTableInfoRow
-				v-if="group.totalChildren > size(group.children)"
-				type="group"
-				:is-menu-column-hidden="isMenuColumnHidden"
-				:is-loading="isLocalLoading"
-			>
-				<div class="table-group-row__info">
-					<span>({{ size(group?.children) }} of {{ group?.totalChildren }})</span>
-					<FmButton
-						rounded
-						density="comfortable"
-						:disabled="isLoading || isLocalLoading"
-						@click.stop.prevent="loadMore"
-					>
-						Load More
-					</FmButton>
-				</div>
-			</ReportTableInfoRow>
 		</div>
 
+		<ReportTableInfoRow
+			v-if="group.totalChildren > size(group.children) || group.hasServerResponseError"
+			type="group"
+			:col-key="group.___group_type_key"
+			:is-menu-column-hidden="isMenuColumnHidden"
+			:is-loading="isLocalLoading"
+		>
+			<div class="table-group-row__info">
+				<span v-if="group.hasServerResponseError" class="table-group-row__info--error">Error</span>
+				<span v-else>({{ size(group?.children) }} of {{ group?.totalChildren }})</span>
+
+				<FmButton
+					rounded
+					density="comfortable"
+					:disabled="isLoading || isLocalLoading"
+					@click.stop.prevent="loadMore"
+				>
+					{{ group.hasServerResponseError ? 'Retry' : 'Load More' }}
+				</FmButton>
+
+				<div v-if="isLocalLoading" class="table-group-row__loader">
+					<FmProgressCircular class="table-group-row__loader-element" indeterminate size="32" />
+				</div>
+			</div>
+		</ReportTableInfoRow>
+
 		<div v-if="isLocalLoading" class="table-group-row__loader">
-			<FmProgressCircular indeterminate size="32" />
+			<FmProgressCircular class="table-group-row__loader-element" indeterminate size="32" />
 		</div>
 	</div>
 </template>
@@ -307,6 +314,10 @@
 			button {
 				text-transform: none;
 			}
+
+			&--error {
+				color: var(--error);
+			}
 		}
 
 		&__loader {
@@ -314,9 +325,12 @@
 			inset: 0;
 			z-index: 5;
 			pointer-events: none;
-			display: flex;
-			justify-content: center;
-			align-items: center;
+
+			&-element {
+				position: absolute;
+				left: 192px;
+				top: calc(var(--report-table-row-height) / 2 - 16px);
+			}
 		}
 	}
 </style>

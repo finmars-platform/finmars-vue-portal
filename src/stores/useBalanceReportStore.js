@@ -194,6 +194,7 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		type === 'group' && console.log('groupList => ', data);
 		type !== 'group' && console.log('itemList => ', data);
 
+		set(tableData.value, [...path, 'hasServerResponseError'], !!data?.error);
 		set(tableData.value, [...path, 'totalChildren'], get(data, 'count', 0));
 		const results = get(data, 'results', []);
 		const newChildren =
@@ -261,16 +262,19 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		}, []);
 
 		const data = await getListReportGroups(entityType, reportOptions);
-		reportOptions.report_instance_id = data.report_instance_id;
-		reportOptions.created_at = data.created_at;
 
-		if (data.portfolios_object) {
-			reportOptions.portfolios_table_data_objects = data?.portfolios_object;
-		} else if (data.items) {
-			reportOptions.portfolios_table_data_items = data?.items;
+		if (data && !data._$error) {
+			reportOptions.report_instance_id = data?.report_instance_id;
+			reportOptions.created_at = data?.created_at;
+
+			if (data.portfolios_object) {
+				reportOptions.portfolios_table_data_objects = data?.portfolios_object;
+			} else if (data.items) {
+				reportOptions.portfolios_table_data_items = data?.items;
+			}
+
+			set(currentLayout.value, ['data', 'reportOptions'], reportOptions);
 		}
-
-		set(currentLayout.value, ['data', 'reportOptions'], reportOptions);
 
 		return {
 			next: null,
@@ -281,7 +285,10 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 					...i,
 					___group_identifier: i.___group_identifier || '-'
 				}))
-			)
+			),
+			...(data?._$error && {
+				error: data?.code
+			})
 		};
 	}
 
@@ -323,16 +330,21 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		}, []);
 
 		const data = await getListReportItems(entityType, reportOptions);
-		reportOptions.report_instance_id = data?.report_instance_id;
-		reportOptions.created_at = data?.created_at;
 
-		set(currentLayout.value, ['data', 'reportOptions'], reportOptions);
+		if (data && !data._$error) {
+			reportOptions.report_instance_id = data?.report_instance_id;
+			reportOptions.created_at = data?.created_at;
+			set(currentLayout.value, ['data', 'reportOptions'], reportOptions);
+		}
 
 		return {
 			next: null,
 			previous: null,
 			count: data?.count,
-			results: cloneDeep(data?.items || [])
+			results: cloneDeep(data?.items || []),
+			...(data?._$error && {
+				error: data?.code
+			})
 		};
 	}
 
