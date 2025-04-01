@@ -1,13 +1,7 @@
 <template>
 	<div class="user-code-input">
 		<template v-if="disabled">
-			<FmTextField
-				:model-value="userCode"
-				outlined
-				label="User code"
-				hide-details
-				disabled
-			/>
+			<FmTextField :model-value="userCode" outlined label="User code" hide-details disabled />
 		</template>
 
 		<div v-else class="user-code-input__row">
@@ -51,15 +45,18 @@
 					</template>
 
 					<span>
-						Allowed symbols: Numbers: 0-9, Letters: a-z (lowercase)
-						Special Symbols: _, - (underscore, dash). User code
-						should not be empty and start with number.
+						Allowed symbols: Numbers: 0-9, Letters: a-z (lowercase) Special Symbols: _, -
+						(underscore, dash). User code should not be empty and start with number.
 					</span>
 				</FmTooltip>
 			</div>
 
-			<div class="user-code-input__result">
+			<div v-if="isEmpty(userCodeEndErrorMessage)" class="user-code-input__result">
 				<i>Result: </i> {{ editedUserCode }}
+			</div>
+
+			<div v-else :class="['user-code-input__result', 'user-code-input__result--error']">
+				{{ userCodeEndErrorMessage }}
 			</div>
 		</div>
 	</div>
@@ -67,6 +64,7 @@
 
 <script setup>
 	import { computed } from 'vue';
+	import isEmpty from 'lodash/isEmpty';
 	import { FmIcon, FmSelect, FmTextField, FmTooltip } from '@finmars/ui';
 	import useUserCodeInput from './useUserCodeInput';
 
@@ -158,6 +156,12 @@
 
 			i {
 				color: var(--on-surface);
+			}
+
+			&--error {
+				i {
+					color: var(--error);
+				}
 			}
 		}
 	}

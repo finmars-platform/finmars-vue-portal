@@ -17,17 +17,18 @@
 </template>
 
 <script setup>
-	import { onBeforeMount, ref } from 'vue';
+	import { inject, onBeforeMount, ref } from 'vue';
 	import { storeToRefs } from 'pinia';
 	import get from 'lodash/get';
 	import set from 'lodash/set';
-	import { FmProgressCircular } from '@finmars/ui';
+	import { FmProgressCircular, FM_DIALOGS_KEY } from '@finmars/ui';
 	import { prepareTableDataRequestOptions } from '@/components/pages/reports/common/utils';
 	import { useAttributes } from '~/stores/useAttributes';
 	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
 	// import { getLayoutByUserCode } from '~/services/entity/entityViewerHelperService';
 	import ReportHeader from '~/components/pages/reports/common/ReportHeader/ReportHeader.vue';
 	import ReportTable from '~/components/pages/reports/common/ReportTable/ReportTable.vue';
+	import LayoutSaveAsDialog from '~/components/modal/LayoutSaveAsDialog/LayoutSaveAsDialog.vue';
 
 	definePageMeta({
 		middleware: 'auth',
@@ -40,6 +41,8 @@
 		]
 	});
 
+	const dialogsSrv = inject(FM_DIALOGS_KEY);
+
 	const balanceReportStore = useBalanceReportStore();
 	const {
 		changeRouteQuery,
@@ -48,7 +51,8 @@
 		getGroupList,
 		getItemList,
 		getTableData,
-		loadTableDataToGroupLevel
+		loadTableDataToGroupLevel,
+		saveLayout
 	} = balanceReportStore;
 	const { entityType, contentType, currentLayout, sortGroup, sortColumn, groups, tableData } =
 		storeToRefs(balanceReportStore);
@@ -76,6 +80,27 @@
 				} finally {
 					isLoading.value = false;
 				}
+				break;
+			case 'layout:save':
+				await saveLayout();
+				break;
+			case 'layout:save-as':
+				dialogsSrv.$openDialog({
+					component: LayoutSaveAsDialog,
+					componentProps: {
+						entityType: entityType.value
+					},
+					dialogProps: {
+						title: 'New layout',
+						width: 800,
+						cancelButton: false,
+						confirmButton: false,
+						closeOnClickOverlay: false,
+						onConfirm: async ({ status, data }) => {
+							console.log('onConfirm => ', status, data);
+						}
+					}
+				});
 				break;
 		}
 	}
@@ -113,11 +138,7 @@
 				groupIndex: -1,
 				groupValues: []
 			});
-			console.log(
-				'!!! OPTIONS => ',
-				options,
-				!!options.frontend_request_options.groups_types.length
-			);
+
 			await getTableData({
 				type: options.frontend_request_options.groups_types.length ? 'group' : 'items',
 				entityType: entityType.value,

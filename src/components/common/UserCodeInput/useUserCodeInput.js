@@ -13,13 +13,18 @@ export default function useUserCodeInput(props, emits) {
 	const userCodeEnd = ref(null);
 
 	const processedContentType = computed(() => {
-		const value = props.value.item
-			? props.value.item.content_type
-			: props.value.contentType;
+		const value = props.value.item ? props.value.item.content_type : props.value.contentType;
 		return value || '';
 	});
 
 	const userCodeEndErrorMessage = computed(() => {
+		if (
+			Array.isArray(props.value.occupiedUserCodes) &&
+			props.value.occupiedUserCodes.includes(editedUserCode.value)
+		) {
+			return 'User code should be unique.';
+		}
+
 		const validationResult = validateUserCodeEnd(userCodeEnd.value);
 		return typeof validationResult === 'boolean' ? '' : validationResult;
 	});
@@ -34,9 +39,7 @@ export default function useUserCodeInput(props, emits) {
 		}
 
 		if (typeof editedUserCode.value !== 'string') {
-			throw new Error(
-				`Expected 'string' as user_code, got: ${typeof editedUserCode.value}`
-			);
+			throw new Error(`Expected 'string' as user_code, got: ${typeof editedUserCode.value}`);
 		}
 
 		const parts = editedUserCode.value.split(':');
@@ -63,8 +66,7 @@ export default function useUserCodeInput(props, emits) {
 		}
 
 		if (val.match(/[^1-9a-z_-]/)) {
-			errorsMessage =
-				'Only english letters (lowercase) and 1-9 numbers allowed for User code.';
+			errorsMessage = 'Only english letters (lowercase) and 1-9 numbers allowed for User code.';
 		}
 
 		if (val.match(/^[0-9]/)) {

@@ -4,7 +4,7 @@ import { findContentTypeByEntity } from '~/services/meta/metaContentTypeService'
 import { isReport } from '~/services/meta/metaService';
 import {
 	getListLayout as uiGetListLayout,
-	getListLayoutLight,
+	getListLayoutLight as uiGetListLayoutLight,
 	getDefaultListLayout as getDefListLayout,
 	getListLayoutTemplate,
 	pingListLayoutByKey
@@ -48,7 +48,7 @@ export async function getListLayout(entityType, options = {}) {
 		currentOptions.filters.user_code
 	) {
 		try {
-			const data = await getListLayoutLight(entityType, options);
+			const data = await uiGetListLayoutLight(entityType, options);
 			const lightLayout = data && data.results ? data.results[0] : undefined;
 
 			if (lightLayout) {
@@ -73,6 +73,10 @@ export async function getListLayout(entityType, options = {}) {
 
 	const res = await uiGetListLayout(entityType, options);
 	return res;
+}
+
+export async function getListLayoutLight(entityType, options) {
+	return uiGetListLayoutLight(entityType, options);
 }
 
 export async function getDashboardLayoutList(options = {}) {

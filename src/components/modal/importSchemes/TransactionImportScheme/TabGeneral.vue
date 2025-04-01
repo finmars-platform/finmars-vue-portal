@@ -38,9 +38,7 @@
 				:model-value="scheme.rule_expr"
 				label="Expression for Transaction Type Selector"
 				:disabled="loading"
-				:error="
-					validationData.rule_expr.isDirty && !validationData.rule_expr.isValid
-				"
+				:error="validationData.rule_expr.isDirty && !validationData.rule_expr.isValid"
 				:error-messages="
 					validationData.rule_expr.isDirty && !validationData.rule_expr.isValid
 						? ['This field may not blank']
@@ -139,9 +137,7 @@
 				:model-value="scheme.spreadsheet_active_tab_name"
 				label="Spreadsheet active tab"
 				:disabled="loading"
-				@update:model-value="
-					updateScheme('spreadsheet_active_tab_name', $event)
-				"
+				@update:model-value="updateScheme('spreadsheet_active_tab_name', $event)"
 			/>
 
 			<div class="tab-general__cell">
@@ -203,9 +199,7 @@
 						? ['This field may not blank']
 						: []
 				"
-				@update:model-value="
-					updateScheme('expression_iterations_count', $event)
-				"
+				@update:model-value="updateScheme('expression_iterations_count', $event)"
 			/>
 		</div>
 	</div>
@@ -261,9 +255,7 @@
 			return [];
 		}
 
-		return props.scheme.inputs
-			.map(generalTabFormatItem)
-			.sort((a, b) => a.column - b.column);
+		return props.scheme.inputs.map(generalTabFormatItem).sort((a, b) => a.column - b.column);
 	});
 
 	const expressionEditorSelectorData = computed(() => {

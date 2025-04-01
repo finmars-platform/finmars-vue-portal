@@ -53,6 +53,7 @@
 									item-size="medium"
 									:title="item.title"
 									:prepend-icon="item.icon"
+									@click.stop.prevent="onMainMenuItemClick(item.action)"
 								/>
 
 								<div v-else class="report-header__menu-main-delimiter" />
@@ -212,7 +213,14 @@
 		dateFromKey ? data.value?.reportOptions[dateFromKey] : null
 	);
 
+	function onMainMenuItemClick(action, payload) {
+		console.log('onMainMenuItemClick: ', action, payload);
+		emits('header:action', { action, payload });
+		isMainMenuOpen.value = false;
+	}
+
 	function onLayoutsMenuItemClick(action, payload) {
+		console.log('onLayoutsMenuItemClick: ', action, payload);
 		emits('header:action', { action, payload });
 		isLayoutSelectMenuOpen.value = false;
 	}
