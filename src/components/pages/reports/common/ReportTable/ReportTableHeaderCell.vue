@@ -139,7 +139,7 @@
 	}
 
 	async function toggleFolding() {
-		console.log('toggleFolding => ', props.item);
+		console.log('toggleFolding => ', props.item, value);
 		const isCurrentGroupOpen = !get(props.item, ['report_settings', 'is_level_folded']);
 		const newOpenFlagValue = !isCurrentGroupOpen;
 		const currentGroupIndex = (groups.value || []).findIndex((g) => g.key === props.item?.key);

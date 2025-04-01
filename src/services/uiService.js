@@ -166,3 +166,13 @@ export async function getDefaultListLayout(entityType) {
 
 	return resultData;
 }
+
+export async function updateListLayout(layout) {
+	if (!layout || !layout.id) {
+		console.error('The layout value is not defined.');
+		return;
+	}
+
+	const { id } = layout;
+	return useApi('listLayout.put', { params: { id }, body: layout });
+}

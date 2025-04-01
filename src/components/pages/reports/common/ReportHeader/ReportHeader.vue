@@ -61,7 +61,12 @@
 					</FmMenu>
 				</FmIconButton>
 
-				<FmButton type="secondary" rounded prepend-icon="mdi-content-save" />
+				<FmButton
+					type="secondary"
+					rounded
+					prepend-icon="mdi-content-save"
+					@click.stop.prevent="saveLayout"
+				/>
 			</div>
 
 			<div class="report-header__block">
@@ -191,6 +196,7 @@
 
 	const balanceReportStore = useBalanceReportStore();
 	const { isLoading, layouts, currentLayout, currencies } = storeToRefs(balanceReportStore);
+	const { saveLayout } = balanceReportStore;
 
 	const [dateFromKey, dateToKey] = REPORT_DATA_PROPERTIES[props.entityType];
 

@@ -8,7 +8,8 @@ import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
 import set from 'lodash/set';
 import size from 'lodash/size';
-import { getListLayout } from '~/services/uiService';
+import useNotify from '~/composables/useNotify';
+import { getListLayout, updateListLayout } from '~/services/uiService';
 import { getListReportGroups, getListReportItems } from '~/services/entity/entityResolverService';
 import { isFilterValid } from '~/utils/evRvCommonHelper';
 import { entityPluralToSingular } from '~/utils/queryParamsHelper';
@@ -375,21 +376,27 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		};
 	}
 
-	watch(
-		groupRows,
-		() => {
-			groups.value.forEach((_, index) => {
-				const currentGroupRows = groupRows.value.filter((r) => size(r.parents) === index);
-				const isGroupColumnOpen = currentGroupRows.some((r) => r.is_open);
-				set(
-					currentLayout.value,
-					['data', 'grouping', index, 'report_settings', 'is_level_folded'],
-					!isGroupColumnOpen
-				);
-			});
-		},
-		{ immediate: true }
-	);
+	async function saveLayout() {
+		console.log('saveLayout');
+		if (currentLayout.value.id) {
+			await updateListLayout(currentLayout.value);
+			useNotify({ type: 'success', title: 'Page was saved.' });
+		} else {
+			// TODO open dialog for enter new layout name and user code and then save new layout
+		}
+	}
+
+	watch(groupRows, () => {
+		groups.value.forEach((_, index) => {
+			const currentGroupRows = groupRows.value.filter((r) => size(r.parents) === index);
+			const isGroupColumnOpen = currentGroupRows.some((r) => r.is_open);
+			set(
+				currentLayout.value,
+				['data', 'grouping', index, 'report_settings', 'is_level_folded'],
+				!isGroupColumnOpen
+			);
+		});
+	});
 
 	return {
 		entityType,
@@ -416,6 +423,7 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		getTableData,
 		loadTableDataToGroupLevel,
 		getGroupList,
-		getItemList
+		getItemList,
+		saveLayout
 	};
 });

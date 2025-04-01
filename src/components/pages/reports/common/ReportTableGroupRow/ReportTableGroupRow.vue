@@ -231,7 +231,6 @@
 	watch(
 		() => props.group.is_open,
 		async (val) => {
-			console.log('<-- WATCH --> ', props.group.___group_identifier, val);
 			if (
 				!val ||
 				(val &&
@@ -239,7 +238,7 @@
 					props.group.totalChildren === size(props.group.children))
 			)
 				return;
-			console.log('<-- WATCH 11111 -->');
+
 			await loadChildren();
 		},
 		{

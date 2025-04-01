@@ -41,9 +41,16 @@
 	});
 
 	const balanceReportStore = useBalanceReportStore();
-	const { changeRouteQuery, getLayouts, getCurrencies, getGroupList, getItemList, getTableData } =
-		balanceReportStore;
-	const { entityType, contentType, currentLayout, sortGroup, sortColumn, tableData } =
+	const {
+		changeRouteQuery,
+		getLayouts,
+		getCurrencies,
+		getGroupList,
+		getItemList,
+		getTableData,
+		loadTableDataToGroupLevel
+	} = balanceReportStore;
+	const { entityType, contentType, currentLayout, sortGroup, sortColumn, groups, tableData } =
 		storeToRefs(balanceReportStore);
 
 	const {
@@ -88,18 +95,36 @@
 	}
 
 	async function loadTableData() {
-		const options = prepareTableDataRequestOptions({
-			currentLayout: currentLayout.value,
-			groupIndex: -1,
-			groupValues: []
-		});
-		console.log('!!! OPTIONS => ', options, !!options.frontend_request_options.groups_types.length);
-		await getTableData({
-			type: options.frontend_request_options.groups_types.length ? 'group' : 'items',
-			entityType: entityType.value,
-			options,
-			justThisLevel: true
-		});
+		const groupIndexToExpand = groups.value.reduce((acc, g, index) => {
+			const { report_settings = {} } = g;
+			const { is_level_folded } = report_settings;
+			if (!is_level_folded && index > acc) {
+				acc = index;
+			}
+
+			return acc;
+		}, -1);
+
+		if (groupIndexToExpand !== -1) {
+			await loadTableDataToGroupLevel(groupIndexToExpand);
+		} else {
+			const options = prepareTableDataRequestOptions({
+				currentLayout: currentLayout.value,
+				groupIndex: -1,
+				groupValues: []
+			});
+			console.log(
+				'!!! OPTIONS => ',
+				options,
+				!!options.frontend_request_options.groups_types.length
+			);
+			await getTableData({
+				type: options.frontend_request_options.groups_types.length ? 'group' : 'items',
+				entityType: entityType.value,
+				options,
+				justThisLevel: true
+			});
+		}
 	}
 
 	onBeforeMount(async () => {
