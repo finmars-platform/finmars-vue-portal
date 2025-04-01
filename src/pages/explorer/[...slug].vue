@@ -23,7 +23,7 @@
 					/>
 				</div>
 				<div class="explorer-toolbar">
-					<div class="flex explorer-actions-buttons">
+					<div class="flex explorer-actions-buttons" :class="{ disableActions: isEditor }">
 						<FmMenu>
 							<template #btn>
 								<FmBtn> Create</FmBtn>
@@ -215,12 +215,14 @@
 					</div>
 					<div class="explorer-table">
 						<FmInputText
-							placeholder="Search for a ..."
+							placeholder="Search file..."
 							class="text-search-input"
 							:noIndicatorButton="true"
 							v-model="searchTerm"
 						/>
-						<FmLoader :size="60" v-if="processing"></FmLoader>
+						<div class="flex-row items-center justify-center loader w-full min-h-40" v-if="processing">
+							<FmLoader :size="60" />
+						</div>
 						<table v-else>
 							<thead>
 								<tr>
@@ -528,9 +530,7 @@
 								</template>
 								<template #default>
 									<div class="menu-items-content">
-										<span @click="openRename()"
-											>Rename</span
-										>
+										<span @click="openRename()">Rename</span>
 										<span @click="deleteFile">Delete</span>
 										<span
 											class="menu-item-delete"
@@ -560,7 +560,7 @@
 						</template>
 					</template>
 					<template v-else>
-						<div class="flex-row fc-center loader">
+						<div class="flex-row items-center justify-center loader w-full min-h-40" v-if="processing">
 							<FmLoader :size="60" />
 						</div>
 					</template>
@@ -589,7 +589,7 @@
 			<template #controls>
 				<div class="flex-row fc-space-between">
 					<FmBtn type="text" @click="cancel">CANCEL</FmBtn>
-					<FmBtn @click="create">Ok</FmBtn>
+					<FmBtn @click="create" :disabled="isModalConfirmProcessing">Ok</FmBtn>
 				</div>
 			</template>
 		</BaseModal>
@@ -599,7 +599,7 @@
 			<template #controls>
 				<div class="flex-row fc-space-between">
 					<FmBtn type="text" @click="cancel">CANCEL</FmBtn>
-					<FmBtn @click="create">Save</FmBtn>
+					<FmBtn @click="create" :disabled="isModalConfirmProcessing">Save</FmBtn>
 				</div>
 			</template>
 		</BaseModal>
@@ -615,6 +615,7 @@
 
 	const {
 		store,
+		isModalConfirmProcessing,
 		formatDate,
 		processing,
 		selectedCount,
@@ -938,6 +939,11 @@
 
 			.explorer-actions-buttons {
 				gap: 10px;
+
+				&.disableActions {
+					display: none;
+					pointer-events: none;
+				}
 
 				.explorer-show-hide-border {
 					border: 1px solid #b3b3b3;
