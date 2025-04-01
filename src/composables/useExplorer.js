@@ -14,6 +14,8 @@ export function useExplorer() {
 	const store = useStore();
 	const router = useRouter();
 	const route = useRoute();
+
+	const isModalConfirmProcessing = ref(false);
 	const processing = ref(false);
 	const selectedCount = ref(0);
 	const allSelected = ref(false);
@@ -302,22 +304,24 @@ export function useExplorer() {
 				});
 				const itemsCountAfter = items.value.length ?? 0;
 				hideItemsCount.value = itemsCountBefore - itemsCountAfter;
-				processing.value = false;
 			}
 		} catch (e) {
 			console.warn('Error explorer.get', e);
+		} finally {
+			processing.value = false;
 		}
 	}
 
 	function openCreateFileModal() {
-		label.value = 'Type a filename';
+		label.value = 'Type file name';
 		teIsOpened.value = true;
 		isFile.value = true;
 	}
 
 	function openCreateFolderModal() {
-		label.value = 'Type a filename';
+		label.value = 'Type folder name';
 		teIsOpened.value = true;
+		isFile.value = false;
 	}
 
 	function openDownloadZipModal() {
@@ -329,6 +333,10 @@ export function useExplorer() {
 
 	function openRename(item = undefined) {
 		if (!item) {
+			currentPath.value[currentPath.value.length - 1] = currentPath.value[currentPath.value.length - 1]?.replace(
+				/%20/g,
+				' '
+			);
 			item = {
 				name: '',
 				file_path: currentPath.value.join('/')
@@ -373,18 +381,12 @@ export function useExplorer() {
 		isZip.value = false;
 		isRename.value = false;
 		isMove.value = false;
+		isModalConfirmProcessing.value = false;
 	}
 
-	async function createFile() {
-		const fileEditor = {};
-		currentPath.value.push(teValue.value);
-		const pathPieces = [...currentPath.value];
-		pathPieces.pop();
-		const path = pathPieces.join('/');
-		const formData = new FormData();
-		let defaultContent = '';
-		if (teValue.value.indexOf('.ipynb') !== -1) {
-			defaultContent = {
+	function getJupiterFileDefaultContent(fileName = '') {
+		if (fileName.endsWith('.ipynb')) {
+			return {
 				metadata: {
 					kernelspec: {
 						name: 'python',
@@ -406,7 +408,20 @@ export function useExplorer() {
 				},
 				cells: []
 			};
+		} else {
+			return '';
 		}
+	}
+
+	async function createFile() {
+		isModalConfirmProcessing.value = true;
+		const fileEditor = {};
+		currentPath.value.push(teValue.value);
+		const pathPieces = [...currentPath.value];
+		pathPieces.pop();
+		const path = pathPieces.join('/');
+		const formData = new FormData();
+		const defaultContent = getJupiterFileDefaultContent(teValue.value);
 		const content = JSON.stringify(defaultContent);
 		const blob = new Blob([content]);
 		const file = new File([blob], teValue.value);
@@ -416,7 +431,7 @@ export function useExplorer() {
 			body: formData
 		});
 		if (res?.status === 'ok') {
-			if (teValue.value.indexOf('.ipynb') !== -1) {
+			if (teValue.value.endsWith('.ipynb')) {
 				playbook.value = null;
 				playbookName.value = teValue.value.slice(0);
 				showPlaybook.value = true;
@@ -428,13 +443,16 @@ export function useExplorer() {
 				isEditor.value = true;
 			}
 			editorFile.value = fileEditor;
+			if(currentPath.value[0] !== 'explorer') currentPath.value.unshift('explorer');
 			const newUrl = getCurrentUrl(currentPath.value.join('/'), route);
 			cancel();
-			router.push(newUrl);
+			router.push(newUrl.pathname);
 		}
+		isModalConfirmProcessing.value = false;
 	}
 
 	async function createFolder() {
+		isModalConfirmProcessing.value = true;
 		let itemPath = teValue.value;
 		if (currentPath.value.length) {
 			itemPath = currentPath.value.join('/') + '/' + itemPath;
@@ -449,6 +467,7 @@ export function useExplorer() {
 				await listFiles();
 			}
 		}
+		isModalConfirmProcessing.value = false;
 	}
 
 	function toggleHidden() {
@@ -710,24 +729,6 @@ export function useExplorer() {
 		);
 	}
 
-	function init() {
-		const parts = route.fullPath.split('/v/explorer');
-		if (parts.length > 1 && parts[1].length) {
-			currentPath.value = parts[1].replace('/', '').split('/');
-		}
-		const extension = getFileExtension(currentPath.value.join('/'));
-		if (extension) {
-			if (extension === 'ipynb') {
-				downloadAndOpenPlaybook();
-			} else {
-				editorFile.value = {};
-				viewFile();
-			}
-		} else {
-			listFiles();
-		}
-	}
-
 	function openFile(index, item) {
 		const pathParts = item.file_path
 			.split('/')
@@ -829,6 +830,15 @@ export function useExplorer() {
 	}
 
 	async function rename() {
+		if (!oldItem.value.name.endsWith('.ipynb') && teValue.value.endsWith('.ipynb')) {
+			useNotify({
+				type: 'error',
+				title: `Not allowed change non Jupiter file to '.ipynb'`,
+				text: 'You can create New one if You want.'
+			});
+			return;
+		}
+		isModalConfirmProcessing.value = true;
 		const name = oldItem.value.name;
 		let path = '';
 		try {
@@ -859,6 +869,8 @@ export function useExplorer() {
 				type: 'error',
 				title: `${oldItem.value.name} rename failed!`
 			});
+		} finally {
+			isModalConfirmProcessing.value = false;
 		}
 	}
 
@@ -932,6 +944,7 @@ export function useExplorer() {
 	}
 
 	async function move() {
+		isModalConfirmProcessing.value = true;
 		const paths = [];
 		try {
 			itemsToMove.value.forEach((item) => {
@@ -949,6 +962,8 @@ export function useExplorer() {
 			}
 		} catch (error) {
 			useNotify({ type: 'error', title: 'Move failed!' });
+		} finally {
+			isModalConfirmProcessing.value = false;
 		}
 	}
 
@@ -959,6 +974,7 @@ export function useExplorer() {
 		});
 
 		if (confirm) {
+			processing.value = true;
 			try {
 				const path = currentPath.value.join('/');
 				const res = await useApi('explorerDelete.post', {
@@ -981,6 +997,8 @@ export function useExplorer() {
 					type: 'error',
 					title: 'Something went wrong!'
 				});
+			} finally {
+				processing.value = false;
 			}
 		}
 	}
@@ -1049,10 +1067,29 @@ export function useExplorer() {
 		}
 	}
 
+	function init() {
+		const parts = route.fullPath.split('/v/explorer');
+		if (parts.length > 1 && parts[1].length) {
+			currentPath.value = parts[1].replace('/', '').split('/');
+		}
+		const extension = getFileExtension(currentPath.value.join('/'));
+		if (extension) {
+			if (extension === 'ipynb') {
+				downloadAndOpenPlaybook();
+			} else {
+				editorFile.value = {};
+				viewFile();
+			}
+		} else {
+			listFiles();
+		}
+	}
+
 	init();
 
 	return {
 		store,
+		isModalConfirmProcessing,
 		formatDate,
 		processing,
 		selectedCount,
