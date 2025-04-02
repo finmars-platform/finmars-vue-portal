@@ -21,12 +21,12 @@ export const MAIN_MENU = [
 		icon: 'mdi-content-save-outline',
 		action: 'layout:save-as'
 	},
-	{
-		type: 'item',
-		title: 'Make a copy',
-		icon: 'mdi-content-copy',
-		action: 'layout:copy'
-	},
+	// {
+	// 	type: 'item',
+	// 	title: 'Make a copy',
+	// 	icon: 'mdi-content-copy',
+	// 	action: 'layout:copy'
+	// },
 	{
 		type: 'item',
 		title: 'Rename',

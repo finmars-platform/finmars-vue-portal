@@ -17,11 +17,14 @@
 </template>
 
 <script setup>
-	import { inject, onBeforeMount, ref } from 'vue';
+	import { inject, onBeforeMount } from 'vue';
 	import { storeToRefs } from 'pinia';
 	import get from 'lodash/get';
 	import set from 'lodash/set';
 	import { FmProgressCircular, FM_DIALOGS_KEY } from '@finmars/ui';
+	import useNotify from '~/composables/useNotify';
+	import * as uiService from '~/services/uiService';
+	import * as metaContentTypesService from '~/services/meta/metaContentTypeService';
 	import { prepareTableDataRequestOptions } from '@/components/pages/reports/common/utils';
 	import { useAttributes } from '~/stores/useAttributes';
 	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
@@ -29,6 +32,7 @@
 	import ReportHeader from '~/components/pages/reports/common/ReportHeader/ReportHeader.vue';
 	import ReportTable from '~/components/pages/reports/common/ReportTable/ReportTable.vue';
 	import LayoutSaveAsDialog from '~/components/modal/LayoutSaveAsDialog/LayoutSaveAsDialog.vue';
+	import cloneDeep from 'lodash/cloneDeep';
 
 	definePageMeta({
 		middleware: 'auth',
@@ -47,14 +51,13 @@
 	const {
 		changeRouteQuery,
 		getLayouts,
+		updateLayoutList,
 		getCurrencies,
-		getGroupList,
-		getItemList,
 		getTableData,
 		loadTableDataToGroupLevel,
 		saveLayout
 	} = balanceReportStore;
-	const { entityType, contentType, currentLayout, sortGroup, sortColumn, groups, tableData } =
+	const { isLoading, entityType, contentType, currentLayout, groups, tableData } =
 		storeToRefs(balanceReportStore);
 
 	const {
@@ -65,7 +68,28 @@
 
 	entityType.value = 'balance-report';
 	contentType.value = 'reports.balancereport';
-	const isLoading = ref(false);
+
+	async function saveAsLayout(updatedLayoutData) {
+		const layout = await uiService.createListLayout(updatedLayoutData);
+		updateLayoutList(layout);
+		await processAction({ action: 'layout:select', payload: layout });
+		useNotify({ type: 'success', title: `Layout ${updatedLayoutData.name} saved.` });
+	}
+
+	async function overwriteLayout(updatedLayoutData) {
+		const layoutToOverwriteData = await uiService.getListLayoutByUserCode(
+			entityType.value,
+			updatedLayoutData.user_code
+		);
+
+		const layoutToOverwrite = layoutToOverwriteData.results[0];
+		layoutToOverwrite.data = updatedLayoutData.data;
+		layoutToOverwrite.name = updatedLayoutData.name;
+		const layout = await uiService.updateListLayout(layoutToOverwrite.id, layoutToOverwrite);
+		updateLayoutList(layout);
+		await processAction({ action: 'layout:select', payload: layout });
+		useNotify({ type: 'success', title: `Success. Layout ${updatedLayoutData.name} overwritten.` });
+	}
 
 	async function processAction({ action, payload }) {
 		console.log('processAction => ', action, payload);
@@ -97,7 +121,58 @@
 						confirmButton: false,
 						closeOnClickOverlay: false,
 						onConfirm: async ({ status, data }) => {
-							console.log('onConfirm => ', status, data);
+							try {
+								isLoading.value = true;
+
+								const updatedLayout = {
+									...data,
+									is_systemic: false
+								};
+
+								if (status === 'agree') {
+									updatedLayout.id && delete updatedLayout.id;
+									await saveAsLayout(updatedLayout);
+								} else if (status === 'overwrite') {
+									await overwriteLayout(updatedLayout);
+								}
+							} finally {
+								isLoading.value = false;
+							}
+						}
+					}
+				});
+				break;
+			case 'layout:rename':
+				dialogsSrv.$openDialog({
+					component: LayoutSaveAsDialog,
+					componentProps: {
+						entityType: metaContentTypesService.findEntityByContentType(contentType.value),
+						name: currentLayout.value.name,
+						userCode: currentLayout.value.user_code,
+						offerToOverride: true
+					},
+					dialogProps: {
+						title: 'New layout',
+						width: 800,
+						cancelButton: false,
+						confirmButton: false,
+						closeOnClickOverlay: false,
+						onConfirm: async ({ status, data }) => {
+							try {
+								isLoading.value = true;
+								if (status === 'agree') {
+									const updatedLayout = cloneDeep(currentLayout.value);
+									updatedLayout.name = data.name;
+									updatedLayout.user_code = data.user_code;
+									const res = await uiService.updateListLayout(updatedLayout.id, updatedLayout);
+									updateLayoutList(res);
+									currentLayout.value = res;
+									await processAction({ action: 'layout:select', payload: layout });
+									useNotify({ type: 'success', title: 'Success. Layout has been renamed.' });
+								}
+							} finally {
+								isLoading.value = false;
+							}
 						}
 					}
 				});

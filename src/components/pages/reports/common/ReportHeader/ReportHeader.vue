@@ -53,6 +53,7 @@
 									item-size="medium"
 									:title="item.title"
 									:prepend-icon="item.icon"
+									:disabled="disableMainMenuItem(item)"
 									@click.stop.prevent="onMainMenuItemClick(item.action)"
 								/>
 
@@ -181,6 +182,8 @@
 		FmMenuItem,
 		FmSelect
 	} from '@finmars/ui';
+	import * as metaContentTypesService from '~/services/meta/metaContentTypeService';
+	import useGlobalStore from '~/stores/useStore';
 	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
 	import { REPORT_DATA_PROPERTIES } from '../constants';
 	import { MAIN_MENU, REPORT_OPTIONS } from './constants';
@@ -195,6 +198,7 @@
 	});
 	const emits = defineEmits(['header:action']);
 
+	const { defaultConfigurationCode } = storeToRefs(useGlobalStore());
 	const balanceReportStore = useBalanceReportStore();
 	const { isLoading, layouts, currentLayout, currencies } = storeToRefs(balanceReportStore);
 	const { saveLayout } = balanceReportStore;
@@ -203,15 +207,30 @@
 
 	const data = computed(() => currentLayout.value?.data);
 
+	const targetContentType = ref(
+		metaContentTypesService.findContentTypeByEntity(props.entityType, 'ui')
+	);
 	const isLayoutSelectMenuOpen = ref(false);
 	const isMainMenuOpen = ref(false);
 	const isDateFromMenuOpen = ref(false);
 	const isDateToMenuOpen = ref(false);
 
+	const autosaveLayoutUserCode = computed(
+		() => `${defaultConfigurationCode}:${targetContentType.value}:autosave`
+	);
 	const datesDateTo = computed(() => data.value?.reportOptions[dateToKey]);
 	const datesDateFrom = computed(() =>
 		dateFromKey ? data.value?.reportOptions[dateFromKey] : null
 	);
+
+	function disableMainMenuItem(item) {
+		const autosaveLayout = layouts.value.find((l) => l.user_code === autosaveLayoutUserCode.value);
+		if (['layout:rename', 'layout:delete'].includes(item.action)) {
+			return currentLayout.value.id === autosaveLayout?.id || currentLayout.value.isNewLayout;
+		}
+
+		return false;
+	}
 
 	function onMainMenuItemClick(action, payload) {
 		console.log('onMainMenuItemClick: ', action, payload);

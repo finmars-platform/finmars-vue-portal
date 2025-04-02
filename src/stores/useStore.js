@@ -349,6 +349,9 @@ export default defineStore({
 		},
 		darkModeActive(state) {
 			return state.user.data?.dark_mode;
+		},
+		defaultConfigurationCode(state) {
+			return `local.poms.${state.current.base_api_url}`;
 		}
 	}
 });

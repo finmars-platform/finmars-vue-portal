@@ -180,3 +180,13 @@ export async function updateListLayout(layout) {
 	const { id } = layout;
 	return useApi('listLayout.put', { params: { id }, body: layout });
 }
+
+export async function createListLayout(entityType, data) {
+	const updatedData = { ...data };
+	updatedData.content_type = findContentTypeByEntity(entityType, 'ui');
+	const res = await useApi('listLayout.post', updatedData);
+	if (data.is_default) {
+		cacheDefaultLayout(res);
+	}
+	return res;
+}

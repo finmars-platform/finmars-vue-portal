@@ -143,6 +143,15 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		prepareReportLayoutOptions();
 	}
 
+	function updateLayoutList(layout) {
+		const currentLayoutIndex = layouts.value.findIndex((l) => l.id === layout.id);
+		if (currentLayoutIndex === -1) {
+			layouts.value.push(layout);
+		} else {
+			layouts.value[currentLayoutIndex] = layout;
+		}
+	}
+
 	async function getCurrencies() {
 		const res = await getCurrencyList({ page: 1, page_size: 1000 });
 		currencies.value = [...res.results];
@@ -417,6 +426,7 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		isExtendedColumnsMode,
 		expandGroupsToLevel,
 		tableData,
+		updateLayoutList,
 		changeRouteQuery,
 		getLayouts,
 		getCurrencies,
