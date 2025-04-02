@@ -27,8 +27,10 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 	const entityType = ref();
 	const contentType = ref();
 	const isLoading = ref(false);
+	const rootEntityViewer = ref(true);
 	const layouts = ref([]);
 	const currentLayout = ref({});
+	const splitPanelDefaultLayout = ref(null);
 	const currencies = ref([]);
 	const syncedTime = ref(null);
 	const sortGroup = ref({
@@ -410,6 +412,8 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 	return {
 		entityType,
 		contentType,
+		rootEntityViewer,
+		splitPanelDefaultLayout,
 		isLoading,
 		currencies,
 		sortGroup,

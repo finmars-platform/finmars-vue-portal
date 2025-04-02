@@ -24,11 +24,7 @@
 									<div class="report-header__menu-layouts-item">
 										<FmIcon
 											icon="mdi-home"
-											:color="
-												layout.id === currentLayout?.id
-													? 'var(--primary)'
-													: 'var(--outline-variant)'
-											"
+											:color="layout.is_default ? 'var(--primary)' : 'var(--outline-variant)'"
 											@click="onLayoutsMenuItemClick('layout:set-default', layout)"
 										/>
 
@@ -53,7 +49,7 @@
 									item-size="medium"
 									:title="item.title"
 									:prepend-icon="item.icon"
-									:disabled="disableMainMenuItem(item)"
+									:item-disabled="disableMainMenuItem(item)"
 									@click.stop.prevent="onMainMenuItemClick(item.action)"
 								/>
 
@@ -227,6 +223,10 @@
 		const autosaveLayout = layouts.value.find((l) => l.user_code === autosaveLayoutUserCode.value);
 		if (['layout:rename', 'layout:delete'].includes(item.action)) {
 			return currentLayout.value.id === autosaveLayout?.id || currentLayout.value.isNewLayout;
+		}
+
+		if (item.action === 'layout:make-default') {
+			return currentLayout.value.is_default;
 		}
 
 		return false;

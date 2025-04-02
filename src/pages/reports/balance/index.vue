@@ -57,8 +57,17 @@
 		loadTableDataToGroupLevel,
 		saveLayout
 	} = balanceReportStore;
-	const { isLoading, entityType, contentType, currentLayout, groups, tableData } =
-		storeToRefs(balanceReportStore);
+	const {
+		isLoading,
+		entityType,
+		contentType,
+		rootEntityViewer,
+		layouts,
+		currentLayout,
+		splitPanelDefaultLayout,
+		groups,
+		tableData
+	} = storeToRefs(balanceReportStore);
 
 	const {
 		downloadCustomFieldsByEntityType,
@@ -85,7 +94,7 @@
 		const layoutToOverwrite = layoutToOverwriteData.results[0];
 		layoutToOverwrite.data = updatedLayoutData.data;
 		layoutToOverwrite.name = updatedLayoutData.name;
-		const layout = await uiService.updateListLayout(layoutToOverwrite.id, layoutToOverwrite);
+		const layout = await uiService.updateListLayout(layoutToOverwrite);
 		updateLayoutList(layout);
 		await processAction({ action: 'layout:select', payload: layout });
 		useNotify({ type: 'success', title: `Success. Layout ${updatedLayoutData.name} overwritten.` });
@@ -164,7 +173,7 @@
 									const updatedLayout = cloneDeep(currentLayout.value);
 									updatedLayout.name = data.name;
 									updatedLayout.user_code = data.user_code;
-									const res = await uiService.updateListLayout(updatedLayout.id, updatedLayout);
+									const res = await uiService.updateListLayout(updatedLayout);
 									updateLayoutList(res);
 									currentLayout.value = res;
 									await processAction({ action: 'layout:select', payload: layout });
@@ -176,6 +185,28 @@
 						}
 					}
 				});
+				break;
+			case 'layout:make-default':
+				if (rootEntityViewer.value) {
+					const updatedLayout = payload || cloneDeep(currentLayout.value);
+
+					if (updatedLayout.is_default) return;
+
+					updatedLayout.is_default = true;
+					layouts.value.forEach((l) => {
+						l.is_default = l.id === updatedLayout.id;
+					});
+					const layout = await uiService.updateListLayout(updatedLayout);
+					updateLayoutList(layout);
+
+					useNotify({ type: 'success', title: 'Success. Layout made by default' });
+				} else if (updatedLayout.id !== splitPanelDefaultLayout.value.id) {
+					splitPanelDefaultLayout.value = {
+						layoutId: updatedLayout.id,
+						name: updatedLayout.name,
+						content_type: updatedLayout.content_type
+					};
+				}
 				break;
 		}
 	}
