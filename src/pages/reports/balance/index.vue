@@ -17,10 +17,12 @@
 </template>
 
 <script setup>
+	/* eslint-disable no-case-declarations */
 	import { inject, onBeforeMount } from 'vue';
 	import { storeToRefs } from 'pinia';
 	import get from 'lodash/get';
 	import set from 'lodash/set';
+	import cloneDeep from 'lodash/cloneDeep';
 	import { FmProgressCircular, FM_DIALOGS_KEY } from '@finmars/ui';
 	import useNotify from '~/composables/useNotify';
 	import * as uiService from '~/services/uiService';
@@ -33,7 +35,7 @@
 	import ReportTable from '~/components/pages/reports/common/ReportTable/ReportTable.vue';
 	import ConfirmationDialog from '~/components/modal/ConfirmationDialog.vue';
 	import LayoutSaveAsDialog from '~/components/modal/LayoutSaveAsDialog/LayoutSaveAsDialog.vue';
-	import cloneDeep from 'lodash/cloneDeep';
+	import LayoutListView from '~/components/modal/LayoutListView/LayoutListView.vue';
 
 	definePageMeta({
 		middleware: 'auth',
@@ -64,6 +66,7 @@
 		contentType,
 		rootEntityViewer,
 		layouts,
+		initialCurrentLayout,
 		currentLayout,
 		splitPanelDefaultLayout,
 		groups,
@@ -104,10 +107,14 @@
 	async function processAction({ action, payload }) {
 		console.log('processAction => ', action, payload);
 		switch (action) {
+			case 'layout:create':
+				// TODO
+				break;
 			case 'layout:select':
 				try {
 					isLoading.value = true;
 					currentLayout.value = payload;
+					initialCurrentLayout.value = cloneDeep(currentLayout.value);
 					await changeRouteQuery(entityType.value);
 					tableData.value = [];
 					await loadTableData();
@@ -208,6 +215,20 @@
 						content_type: updatedLayout.content_type
 					};
 				}
+				break;
+			case 'layout:open':
+				dialogsSrv.$openDialog({
+					component: LayoutListView,
+					componentProps: {},
+					dialogProps: {
+						title: 'Layouts',
+						width: 800,
+						confirmButtonText: 'Open',
+						onConfirm: async (layout) => {
+							console.log('layout:open => ', layout);
+						}
+					}
+				});
 				break;
 			case 'layout:delete':
 				dialogsSrv.$openDialog({

@@ -35,9 +35,9 @@ export const MAIN_MENU = [
 	},
 	{
 		type: 'item',
-		title: 'Edit layout',
+		title: 'Open',
 		icon: 'mdi-pencil-outline',
-		action: 'layout:edit'
+		action: 'layout:open'
 	},
 	{
 		type: 'item',

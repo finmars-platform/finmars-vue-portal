@@ -1,6 +1,6 @@
 import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { defineStore } from 'pinia';
+import { defineStore, storeToRefs } from 'pinia';
 import dayjs from 'dayjs';
 import isEmpty from 'lodash/isEmpty';
 import has from 'lodash/has';
@@ -8,6 +8,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
 import set from 'lodash/set';
 import size from 'lodash/size';
+import useGlobalStore from '~/stores/useStore';
 import useNotify from '~/composables/useNotify';
 import { getListLayout, updateListLayout } from '~/services/uiService';
 import { getListReportGroups, getListReportItems } from '~/services/entity/entityResolverService';
@@ -20,15 +21,18 @@ import {
 import { getListLight as getCurrencyList } from '~/services/currency/currencyService';
 import { getList as getDefaultList } from '~/services/ecosystemDefaultService';
 import { REPORT_DATA_PROPERTIES } from '~/components/pages/reports/common/constants';
+import * as metaContentTypesService from '~/services/meta/metaContentTypeService';
 
 export const useBalanceReportStore = defineStore('balance-report', () => {
 	const router = useRouter();
+	const { defaultConfigurationCode } = storeToRefs(useGlobalStore());
 
 	const entityType = ref();
 	const contentType = ref();
 	const isLoading = ref(false);
 	const rootEntityViewer = ref(true);
 	const layouts = ref([]);
+	const initialCurrentLayout = ref({});
 	const currentLayout = ref({});
 	const splitPanelDefaultLayout = ref(null);
 	const currencies = ref([]);
@@ -49,6 +53,13 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		totalChildren: 0,
 		children: {}
 	});
+
+	const targetContentType = computed(() =>
+		metaContentTypesService.findContentTypeByEntity(entityType.value, 'ui')
+	);
+	const autosaveLayoutUserCode = computed(
+		() => `${defaultConfigurationCode.value}:${targetContentType.value}:autosave`
+	);
 
 	const groupRows = computed(() => prepareFlatListOfGroupRows(tableData.value));
 
@@ -131,10 +142,13 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		});
 	}
 
-	async function getLayouts(entityType) {
+	async function loadLayoutList(entityType) {
 		const res = await getListLayout(entityType, { pageSize: 1000 });
 		layouts.value = res.results;
+	}
 
+	async function getLayouts(entityType) {
+		await loadLayoutList(entityType);
 		const layout = (layouts.value || []).find((l) => l.is_default);
 		currentLayout.value = cloneDeep(layout || {});
 
@@ -143,6 +157,7 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		}
 
 		prepareReportLayoutOptions();
+		initialCurrentLayout.value = cloneDeep(currentLayout.value);
 	}
 
 	function updateLayoutList(layout) {
@@ -391,6 +406,7 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		console.log('saveLayout');
 		if (currentLayout.value.id) {
 			await updateListLayout(currentLayout.value);
+			initialCurrentLayout.value = cloneDeep(currentLayout.value);
 			useNotify({ type: 'success', title: 'Page was saved.' });
 		} else {
 			// TODO open dialog for enter new layout name and user code and then save new layout
@@ -412,6 +428,8 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 	return {
 		entityType,
 		contentType,
+		targetContentType,
+		autosaveLayoutUserCode,
 		rootEntityViewer,
 		splitPanelDefaultLayout,
 		isLoading,
@@ -420,6 +438,7 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		sortColumn,
 		syncedTime,
 		layouts,
+		initialCurrentLayout,
 		currentLayout,
 		groups,
 		groupIds,
@@ -432,6 +451,7 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		tableData,
 		updateLayoutList,
 		changeRouteQuery,
+		loadLayoutList,
 		getLayouts,
 		getCurrencies,
 		getTableData,
