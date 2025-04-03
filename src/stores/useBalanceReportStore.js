@@ -122,7 +122,7 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 
 		await router.push({
 			query: {
-				layout: currentLayout.value.user_code,
+				layout: currentLayout.value.id,
 				costMethod: currentLayout.value.data.reportOptions.cost_method,
 				currency: currentLayout.value.data.reportOptions.report_currency,
 				...(entityType !== 'balance-report' && {
