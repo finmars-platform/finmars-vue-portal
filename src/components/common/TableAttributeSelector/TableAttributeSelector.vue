@@ -10,7 +10,7 @@
 			/>
 		</template>
 
-		<div class="table-attribute-selector">
+		<div class="table-attribute-selector" @click.stop.prevent>
 			<div class="table-attribute-selector__title">{{ title }}</div>
 
 			<TableAttributeSelectorDialog
