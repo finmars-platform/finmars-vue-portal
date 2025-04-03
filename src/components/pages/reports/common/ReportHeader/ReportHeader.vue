@@ -25,7 +25,7 @@
 										<FmIcon
 											icon="mdi-home"
 											:color="layout.is_default ? 'var(--primary)' : 'var(--outline-variant)'"
-											@click="onLayoutsMenuItemClick('layout:set-default', layout)"
+											@click="onLayoutsMenuItemClick('layout:make-default', layout)"
 										/>
 
 										<span @click="onLayoutsMenuItemClick('layout:select', layout)">

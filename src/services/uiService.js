@@ -14,7 +14,8 @@ import {
 	getCachedLayout,
 	cacheLayout,
 	cacheDefaultLayout,
-	getDefaultLayout
+	getDefaultLayout,
+	deleteLayoutFromCache
 } from '~/services/localStorageService';
 
 function isCachedLayoutActual(cachedLayout, layoutData) {
@@ -189,4 +190,9 @@ export async function createListLayout(entityType, data) {
 		cacheDefaultLayout(res);
 	}
 	return res;
+}
+
+export async function deleteListLayoutByKey(id) {
+	await useApi('listLayout.delete', { params: { id } });
+	deleteLayoutFromCache(id);
 }

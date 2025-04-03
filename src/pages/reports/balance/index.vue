@@ -31,6 +31,7 @@
 	// import { getLayoutByUserCode } from '~/services/entity/entityViewerHelperService';
 	import ReportHeader from '~/components/pages/reports/common/ReportHeader/ReportHeader.vue';
 	import ReportTable from '~/components/pages/reports/common/ReportTable/ReportTable.vue';
+	import ConfirmationDialog from '~/components/modal/ConfirmationDialog.vue';
 	import LayoutSaveAsDialog from '~/components/modal/LayoutSaveAsDialog/LayoutSaveAsDialog.vue';
 	import cloneDeep from 'lodash/cloneDeep';
 
@@ -207,6 +208,36 @@
 						content_type: updatedLayout.content_type
 					};
 				}
+				break;
+			case 'layout:delete':
+				dialogsSrv.$openDialog({
+					component: ConfirmationDialog,
+					componentProps: {
+						text: 'Are you sure want to delete this layout?'
+					},
+					dialogProps: {
+						title: 'Warning',
+						width: 480,
+						onConfirm: async () => {
+							try {
+								isLoading.value = true;
+
+								await uiService.deleteListLayoutByKey(currentLayout.value.id);
+
+								if (currentLayout.value.is_default && layouts.value.length > 1) {
+									const newDefaultLayoutIndex =
+										layouts.value[0].id === currentLayout.value.id ? 1 : 0;
+									layouts.value[newDefaultLayoutIndex].is_default = true;
+									await uiService.updateListLayout(layouts.value[newDefaultLayoutIndex]);
+								}
+
+								await getLayouts(entityType.value);
+							} finally {
+								isLoading.value = false;
+							}
+						}
+					}
+				});
 				break;
 		}
 	}
