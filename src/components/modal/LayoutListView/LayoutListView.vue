@@ -7,7 +7,7 @@
 				'layout-list-view__item',
 				{ 'layout-list-view__item--selected': item.id === selectedLayout?.id }
 			]"
-			@click.stop.prevent="selectedLayout = item"
+			@click.stop.prevent="selectLayout(item)"
 		>
 			<div class="layout-list-view__item-block">
 				<FmTooltip type="secondary" max-width="400" location="top start">
@@ -39,15 +39,16 @@
 			</div>
 
 			<div class="layout-list-view__item-block">
-				<FmIconButton variant="text" icon="mdi-pencil" @click.stop.prevent />
+				<FmIconButton variant="text" icon="mdi-pencil" @click.stop.prevent="_renameLayout(item)" />
 
 				<FmIconButton
 					variant="text"
 					:icon="item.is_default ? 'mdi-star' : 'mdi-star-outline'"
-					@click.stop.prevent
+					:disabled="item.is_default"
+					@click.stop.prevent="_makeLayoutDefault(item)"
 				/>
 
-				<FmIconButton variant="text" icon="mdi-delete" @click.stop.prevent />
+				<FmIconButton variant="text" icon="mdi-delete" @click.stop.prevent="_deleteLayout(item)" />
 			</div>
 		</div>
 
@@ -57,7 +58,7 @@
 				'layout-list-view__item',
 				{ 'layout-list-view__item--selected': autosaveLayout.id === selectedLayout?.id }
 			]"
-			@click.stop.prevent="selectedLayout = autosaveLayout"
+			@click.stop.prevent="selectLayout(autosaveLayout)"
 		>
 			<div class="layout-list-view__item-block">
 				<b>{{ autosaveLayout.name }}</b>
@@ -88,18 +89,65 @@
 	import cloneDeep from 'lodash/cloneDeep';
 	import hasIn from 'lodash/hasIn';
 	import { FmIcon, FmIconButton, FmProgressCircular, FmTooltip } from '@finmars/ui';
-	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
+	import { useMainReportStore } from '~/stores/useMainReportStore';
 
 	const emits = defineEmits(['validate', 'select', 'confirm']);
 
-	const balanceReportStore = useBalanceReportStore();
-	const { loadLayoutList } = balanceReportStore;
-	const { entityType, autosaveLayoutUserCode, layouts } = storeToRefs(balanceReportStore);
+	const mainReportStore = useMainReportStore();
+	const { deleteLayout, loadLayoutList, makeLayoutDefault, renameLayout } = mainReportStore;
+	const { entityType, autosaveLayoutUserCode, layouts } = storeToRefs(mainReportStore);
 
 	const isLoading = ref(false);
 	const items = ref([]);
 	const autosaveLayout = ref();
 	const selectedLayout = ref(null);
+
+	function selectLayout(layout) {
+		selectedLayout.value = layout;
+		emits('select', layout);
+	}
+
+	async function _renameLayout(layout) {
+		try {
+			isLoading.value = true;
+
+			const layoutIndex = items.value.findIndex((l) => l.id === layout.id);
+			const updatedLayout = await renameLayout(layout);
+			items.value[layoutIndex].name = updatedLayout.name;
+			items.value[layoutIndex].user_code = updatedLayout.id;
+		} finally {
+			isLoading.value = false;
+		}
+	}
+
+	async function _makeLayoutDefault(layout) {
+		try {
+			isLoading.value = true;
+
+			await makeLayoutDefault(layout);
+			items.value.forEach((item) => {
+				item.is_default = item.id === layout.id;
+			});
+		} finally {
+			isLoading.value = false;
+		}
+	}
+
+	async function _deleteLayout(layout) {
+		try {
+			isLoading.value = true;
+
+			if (layout.id === selectedLayout.value?.id) {
+				selectedLayout.value = null;
+			}
+
+			await deleteLayout(layout);
+			const layoutIndex = items.value.findIndex((l) => l.id === layout.id);
+			layoutIndex !== -1 && items.value.splice(layoutIndex, 1);
+		} finally {
+			isLoading.value = false;
+		}
+	}
 
 	onMounted(async () => {
 		try {
@@ -126,8 +174,6 @@
 					}
 				}
 			});
-
-			console.log('items => ', items.value);
 		} finally {
 			isLoading.value = false;
 		}

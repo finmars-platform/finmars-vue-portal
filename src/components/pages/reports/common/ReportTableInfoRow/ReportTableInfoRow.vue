@@ -18,7 +18,7 @@
 	import { computed } from 'vue';
 	import { storeToRefs } from 'pinia';
 	import { FmProgressCircular } from '@finmars/ui';
-	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
+	import { useMainReportStore } from '~/stores/useMainReportStore';
 	import { REPORT_TABLE_CELL_MIN_WIDTH } from '../constants';
 
 	const props = defineProps({
@@ -38,8 +38,8 @@
 		}
 	});
 
-	const balanceReportStore = useBalanceReportStore();
-	const { groups, columns } = storeToRefs(balanceReportStore);
+	const mainReportStore = useMainReportStore();
+	const { groups, columns } = storeToRefs(mainReportStore);
 
 	const rowPaddingCss = computed(() => {
 		if (!props.colKey) {

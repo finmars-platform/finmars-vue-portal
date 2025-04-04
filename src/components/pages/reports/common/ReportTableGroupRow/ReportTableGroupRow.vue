@@ -76,7 +76,7 @@
 		calculatePageNumberForRequest,
 		prepareTableDataRequestOptions
 	} from '~/components/pages/reports/common/utils';
-	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
+	import { useMainReportStore } from '~/stores/useMainReportStore';
 	import { REPORT_TABLE_CELL_MIN_WIDTH } from '../constants';
 	import ReportTableRowActions from '~/components/pages/reports/common/ReportTableRowActions/ReportTableRowActions.vue';
 	import ReportTableGroupRow from '~/components/pages/reports/common/ReportTableGroupRow/ReportTableGroupRow.vue';
@@ -99,7 +99,7 @@
 		}
 	});
 
-	const balanceReportStore = useBalanceReportStore();
+	const mainReportStore = useMainReportStore();
 	const {
 		entityType,
 		isLoading,
@@ -109,8 +109,8 @@
 		columns,
 		visibleColumns,
 		tableData
-	} = storeToRefs(balanceReportStore);
-	const { getTableData } = balanceReportStore;
+	} = storeToRefs(mainReportStore);
+	const { getTableData } = mainReportStore;
 
 	const isLocalLoading = ref(false);
 

@@ -75,7 +75,7 @@
 	const occupiedUserCodes = ref([]);
 
 	const isFormValid = computed(() => {
-		if (props.offerToOverride) {
+		if (!props.offerToOverride) {
 			const userCodeValid =
 				isUserCodeValid.value ||
 				(!isUserCodeValid.value && occupiedUserCodes.value.includes(layout.value.user_code));
@@ -103,11 +103,9 @@
 	}
 
 	function runSaveProcess() {
-		console.log('runSaveProcess => ', isFormValid.value);
 		if (!isFormValid.value) return;
 
 		if (!props.offerToOverride) {
-			console.log('### 00000 ###');
 			emits('select', { status: 'agree', data: layout.value });
 			emits('confirm');
 			emits('close');
@@ -129,8 +127,6 @@
 				}
 			}
 		});
-
-		console.log('runSaveProcess => ', layout.value);
 	}
 
 	onBeforeMount(async () => {

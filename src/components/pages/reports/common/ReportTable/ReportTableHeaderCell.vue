@@ -53,7 +53,7 @@
 	import get from 'lodash/get';
 	import size from 'lodash/size';
 	import { FmIcon, FmTooltip, Ripple } from '@finmars/ui';
-	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
+	import { useMainReportStore } from '~/stores/useMainReportStore';
 	import { REPORT_TABLE_CELL_MIN_WIDTH, REPORT_TABLE_CELL_MAX_WIDTH } from '../constants';
 	import set from 'lodash/set';
 
@@ -74,10 +74,10 @@
 	});
 	const emits = defineEmits(['open-cell-menu', 'cell-resize']);
 
-	const balanceReportStore = useBalanceReportStore();
+	const mainReportStore = useMainReportStore();
 	const { isLoading, sortGroup, sortColumn, tableData, groups, groupRows } =
-		storeToRefs(balanceReportStore);
-	const { loadTableDataToGroupLevel } = balanceReportStore;
+		storeToRefs(mainReportStore);
+	const { loadTableDataToGroupLevel } = mainReportStore;
 
 	const cellEl = ref(null);
 	const resizerEl = ref(null);

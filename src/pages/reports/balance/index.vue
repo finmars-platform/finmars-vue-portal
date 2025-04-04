@@ -22,19 +22,12 @@
 	import { storeToRefs } from 'pinia';
 	import get from 'lodash/get';
 	import set from 'lodash/set';
-	import cloneDeep from 'lodash/cloneDeep';
 	import { FmProgressCircular, FM_DIALOGS_KEY } from '@finmars/ui';
-	import useNotify from '~/composables/useNotify';
-	import * as uiService from '~/services/uiService';
-	import * as metaContentTypesService from '~/services/meta/metaContentTypeService';
-	import { prepareTableDataRequestOptions } from '@/components/pages/reports/common/utils';
 	import { useAttributes } from '~/stores/useAttributes';
-	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
+	import { useMainReportStore } from '~/stores/useMainReportStore';
 	// import { getLayoutByUserCode } from '~/services/entity/entityViewerHelperService';
 	import ReportHeader from '~/components/pages/reports/common/ReportHeader/ReportHeader.vue';
 	import ReportTable from '~/components/pages/reports/common/ReportTable/ReportTable.vue';
-	import ConfirmationDialog from '~/components/modal/ConfirmationDialog.vue';
-	import LayoutSaveAsDialog from '~/components/modal/LayoutSaveAsDialog/LayoutSaveAsDialog.vue';
 	import LayoutListView from '~/components/modal/LayoutListView/LayoutListView.vue';
 
 	definePageMeta({
@@ -50,28 +43,19 @@
 
 	const dialogsSrv = inject(FM_DIALOGS_KEY);
 
-	const balanceReportStore = useBalanceReportStore();
+	const mainReportStore = useMainReportStore();
 	const {
-		changeRouteQuery,
 		getLayouts,
-		updateLayoutList,
 		getCurrencies,
-		getTableData,
-		loadTableDataToGroupLevel,
-		saveLayout
-	} = balanceReportStore;
-	const {
-		isLoading,
-		entityType,
-		contentType,
-		rootEntityViewer,
-		layouts,
-		initialCurrentLayout,
-		currentLayout,
-		splitPanelDefaultLayout,
-		groups,
-		tableData
-	} = storeToRefs(balanceReportStore);
+		loadTableData,
+		saveLayout,
+		selectLayout,
+		saveAsLayout,
+		renameLayout,
+		makeLayoutDefault,
+		deleteLayout
+	} = mainReportStore;
+	const { isLoading, entityType, contentType, currentLayout } = storeToRefs(mainReportStore);
 
 	const {
 		downloadCustomFieldsByEntityType,
@@ -82,28 +66,6 @@
 	entityType.value = 'balance-report';
 	contentType.value = 'reports.balancereport';
 
-	async function saveAsLayout(updatedLayoutData) {
-		const layout = await uiService.createListLayout(updatedLayoutData);
-		updateLayoutList(layout);
-		await processAction({ action: 'layout:select', payload: layout });
-		useNotify({ type: 'success', title: `Layout ${updatedLayoutData.name} saved.` });
-	}
-
-	async function overwriteLayout(updatedLayoutData) {
-		const layoutToOverwriteData = await uiService.getListLayoutByUserCode(
-			entityType.value,
-			updatedLayoutData.user_code
-		);
-
-		const layoutToOverwrite = layoutToOverwriteData.results[0];
-		layoutToOverwrite.data = updatedLayoutData.data;
-		layoutToOverwrite.name = updatedLayoutData.name;
-		const layout = await uiService.updateListLayout(layoutToOverwrite);
-		updateLayoutList(layout);
-		await processAction({ action: 'layout:select', payload: layout });
-		useNotify({ type: 'success', title: `Success. Layout ${updatedLayoutData.name} overwritten.` });
-	}
-
 	async function processAction({ action, payload }) {
 		console.log('processAction => ', action, payload);
 		switch (action) {
@@ -111,110 +73,19 @@
 				// TODO
 				break;
 			case 'layout:select':
-				try {
-					isLoading.value = true;
-					currentLayout.value = payload;
-					initialCurrentLayout.value = cloneDeep(currentLayout.value);
-					await changeRouteQuery(entityType.value);
-					tableData.value = [];
-					await loadTableData();
-				} finally {
-					isLoading.value = false;
-				}
+				await selectLayout(payload);
 				break;
 			case 'layout:save':
 				await saveLayout();
 				break;
 			case 'layout:save-as':
-				dialogsSrv.$openDialog({
-					component: LayoutSaveAsDialog,
-					componentProps: {
-						entityType: entityType.value
-					},
-					dialogProps: {
-						title: 'New layout',
-						width: 800,
-						cancelButton: false,
-						confirmButton: false,
-						closeOnClickOverlay: false,
-						onConfirm: async ({ status, data }) => {
-							try {
-								isLoading.value = true;
-
-								const updatedLayout = {
-									...data,
-									is_systemic: false
-								};
-
-								if (status === 'agree') {
-									updatedLayout.id && delete updatedLayout.id;
-									await saveAsLayout(updatedLayout);
-								} else if (status === 'overwrite') {
-									await overwriteLayout(updatedLayout);
-								}
-							} finally {
-								isLoading.value = false;
-							}
-						}
-					}
-				});
+				await saveAsLayout();
 				break;
 			case 'layout:rename':
-				dialogsSrv.$openDialog({
-					component: LayoutSaveAsDialog,
-					componentProps: {
-						entityType: metaContentTypesService.findEntityByContentType(contentType.value),
-						name: currentLayout.value.name,
-						userCode: currentLayout.value.user_code,
-						offerToOverride: true
-					},
-					dialogProps: {
-						title: 'New layout',
-						width: 800,
-						cancelButton: false,
-						confirmButton: false,
-						closeOnClickOverlay: false,
-						onConfirm: async ({ status, data }) => {
-							try {
-								isLoading.value = true;
-								if (status === 'agree') {
-									const updatedLayout = cloneDeep(currentLayout.value);
-									updatedLayout.name = data.name;
-									updatedLayout.user_code = data.user_code;
-									const res = await uiService.updateListLayout(updatedLayout);
-									updateLayoutList(res);
-									currentLayout.value = res;
-									await processAction({ action: 'layout:select', payload: layout });
-									useNotify({ type: 'success', title: 'Success. Layout has been renamed.' });
-								}
-							} finally {
-								isLoading.value = false;
-							}
-						}
-					}
-				});
+				await renameLayout();
 				break;
 			case 'layout:make-default':
-				if (rootEntityViewer.value) {
-					const updatedLayout = payload || cloneDeep(currentLayout.value);
-
-					if (updatedLayout.is_default) return;
-
-					updatedLayout.is_default = true;
-					layouts.value.forEach((l) => {
-						l.is_default = l.id === updatedLayout.id;
-					});
-					const layout = await uiService.updateListLayout(updatedLayout);
-					updateLayoutList(layout);
-
-					useNotify({ type: 'success', title: 'Success. Layout made by default' });
-				} else if (updatedLayout.id !== splitPanelDefaultLayout.value.id) {
-					splitPanelDefaultLayout.value = {
-						layoutId: updatedLayout.id,
-						name: updatedLayout.name,
-						content_type: updatedLayout.content_type
-					};
-				}
+				await makeLayoutDefault(payload);
 				break;
 			case 'layout:open':
 				dialogsSrv.$openDialog({
@@ -231,34 +102,7 @@
 				});
 				break;
 			case 'layout:delete':
-				dialogsSrv.$openDialog({
-					component: ConfirmationDialog,
-					componentProps: {
-						text: 'Are you sure want to delete this layout?'
-					},
-					dialogProps: {
-						title: 'Warning',
-						width: 480,
-						onConfirm: async () => {
-							try {
-								isLoading.value = true;
-
-								await uiService.deleteListLayoutByKey(currentLayout.value.id);
-
-								if (currentLayout.value.is_default && layouts.value.length > 1) {
-									const newDefaultLayoutIndex =
-										layouts.value[0].id === currentLayout.value.id ? 1 : 0;
-									layouts.value[newDefaultLayoutIndex].is_default = true;
-									await uiService.updateListLayout(layouts.value[newDefaultLayoutIndex]);
-								}
-
-								await getLayouts(entityType.value);
-							} finally {
-								isLoading.value = false;
-							}
-						}
-					}
-				});
+				await deleteLayout(payload);
 				break;
 		}
 	}
@@ -274,35 +118,6 @@
 				(i) => i.___column_id === item.___column_id
 			);
 			index > -1 && set(currentLayout.value, ['data', 'columns', index, 'style', 'width'], width);
-		}
-	}
-
-	async function loadTableData() {
-		const groupIndexToExpand = groups.value.reduce((acc, g, index) => {
-			const { report_settings = {} } = g;
-			const { is_level_folded } = report_settings;
-			if (!is_level_folded && index > acc) {
-				acc = index;
-			}
-
-			return acc;
-		}, -1);
-
-		if (groupIndexToExpand !== -1) {
-			await loadTableDataToGroupLevel(groupIndexToExpand);
-		} else {
-			const options = prepareTableDataRequestOptions({
-				currentLayout: currentLayout.value,
-				groupIndex: -1,
-				groupValues: []
-			});
-
-			await getTableData({
-				type: options.frontend_request_options.groups_types.length ? 'group' : 'items',
-				entityType: entityType.value,
-				options,
-				justThisLevel: true
-			});
 		}
 	}
 

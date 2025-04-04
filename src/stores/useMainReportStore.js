@@ -1,5 +1,4 @@
-import { computed, ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, inject, ref, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
 import dayjs from 'dayjs';
 import isEmpty from 'lodash/isEmpty';
@@ -8,23 +7,31 @@ import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
 import set from 'lodash/set';
 import size from 'lodash/size';
-import useGlobalStore from '~/stores/useStore';
+import { FM_DIALOGS_KEY } from '@finmars/ui';
 import useNotify from '~/composables/useNotify';
-import { getListLayout, updateListLayout } from '~/services/uiService';
-import { getListReportGroups, getListReportItems } from '~/services/entity/entityResolverService';
-import { isFilterValid } from '~/utils/evRvCommonHelper';
-import { entityPluralToSingular } from '~/utils/queryParamsHelper';
+import useGlobalStore from '~/stores/useStore';
+import {
+	loadLayoutList as _loadLayoutList,
+	getGroupList as _getGroupList,
+	getItemList as _getItemList,
+	saveLayout as _saveLayout
+} from '~/utils/reports';
 import {
 	prepareFlatListOfGroupRows,
 	prepareTableDataRequestOptions
 } from '~/components/pages/reports/common/utils';
+import * as uiService from '~/services/uiService';
+import * as metaContentTypesService from '~/services/meta/metaContentTypeService';
 import { getListLight as getCurrencyList } from '~/services/currency/currencyService';
 import { getList as getDefaultList } from '~/services/ecosystemDefaultService';
 import { REPORT_DATA_PROPERTIES } from '~/components/pages/reports/common/constants';
-import * as metaContentTypesService from '~/services/meta/metaContentTypeService';
+import ConfirmationDialog from '~/components/modal/ConfirmationDialog.vue';
+import LayoutSaveAsDialog from '~/components/modal/LayoutSaveAsDialog/LayoutSaveAsDialog.vue';
 
-export const useBalanceReportStore = defineStore('balance-report', () => {
+export const useMainReportStore = defineStore('balance-report', () => {
 	const router = useRouter();
+	const dialogsSrv = inject(FM_DIALOGS_KEY);
+
 	const { defaultConfigurationCode } = storeToRefs(useGlobalStore());
 
 	const entityType = ref();
@@ -143,8 +150,7 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 	}
 
 	async function loadLayoutList(entityType) {
-		const res = await getListLayout(entityType, { pageSize: 1000 });
-		layouts.value = res.results;
+		layouts.value = await _loadLayoutList(entityType);
 	}
 
 	async function getLayouts(entityType) {
@@ -170,12 +176,12 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 	}
 
 	async function getCurrencies() {
-		const res = await getCurrencyList({ page: 1, page_size: 1000 });
-		currencies.value = [...res.results];
+		const { results = [] } = await getCurrencyList({ page: 1, page_size: 1000 });
+		currencies.value = results;
 
 		if (isEmpty(currencies.value)) {
-			const res = await getDefaultList();
-			const ecosystemDefaultData = res?.results[0];
+			const data = await getDefaultList();
+			const ecosystemDefaultData = data?.results[0];
 
 			if (ecosystemDefaultData) {
 				currencies.value.push(ecosystemDefaultData.currency_object);
@@ -233,8 +239,6 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		path = [],
 		justThisLevel = false
 	}) {
-		console.log('getTableData => ', path);
-
 		const data =
 			type === 'group'
 				? await getGroupList(options, entityType)
@@ -279,138 +283,242 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 	}
 
 	async function getGroupList(options, entityType) {
-		const reportOptions = cloneDeep(get(currentLayout.value, ['data', 'reportOptions'], {}));
+		const { reportOptions, data } = await _getGroupList({
+			currentLayout: currentLayout.value,
+			sortGroup: sortGroup.value,
+			options,
+			entityType
+		});
 
-		if (entityType === 'transaction-report') {
-			reportOptions.filters = cloneDeep(get(currentLayout.value, ['data', 'filters'], []));
-		}
-
-		reportOptions.page = options.page;
-		reportOptions.page_size = options.page_size;
-		reportOptions.frontend_request_options = cloneDeep(options.frontend_request_options);
-		reportOptions.frontend_request_options.columns = cloneDeep(
-			get(currentLayout.value, ['data', 'columns'], [])
-		);
-		// reportOptions.frontend_request_options['globalTableSearch'] = globalTableSearch
-
-		if (sortGroup.value.key) {
-			reportOptions.frontend_request_options.groups_order = sortGroup.value.sort;
-			reportOptions.frontend_request_options.ordering_mode = sortGroup.value.key;
-		}
-
-		reportOptions.frontend_request_options.filter_settings = get(
-			currentLayout.value,
-			['data', 'filters'],
-			[]
-		).reduce((res, filter) => {
-			if (isFilterValid(filter)) {
-				res.push({
-					key: entityPluralToSingular(filter.key),
-					filter_type: filter.options?.filter_type,
-					value_type: filter.value_type,
-					value: filter.options?.filter_values
-				});
-			}
-
-			return res;
-		}, []);
-
-		const data = await getListReportGroups(entityType, reportOptions);
-
-		if (data && !data._$error) {
-			reportOptions.report_instance_id = data?.report_instance_id;
-			reportOptions.created_at = data?.created_at;
-
-			if (data.portfolios_object) {
-				reportOptions.portfolios_table_data_objects = data?.portfolios_object;
-			} else if (data.items) {
-				reportOptions.portfolios_table_data_items = data?.items;
-			}
-
+		if (!data.error) {
 			set(currentLayout.value, ['data', 'reportOptions'], reportOptions);
 		}
 
-		return {
-			next: null,
-			previous: null,
-			count: data?.count,
-			results: cloneDeep(
-				(data?.items || []).map((i) => ({
-					...i,
-					___group_identifier: i.___group_identifier || '-'
-				}))
-			),
-			...(data?._$error && {
-				error: data?.code
-			})
-		};
+		return { ...data };
 	}
 
 	async function getItemList(options, entityType) {
-		const reportOptions = cloneDeep(get(currentLayout.value, ['data', 'reportOptions'], {}));
+		const { reportOptions, data } = await _getItemList({
+			currentLayout: currentLayout.value,
+			sortColumn: sortColumn.value,
+			options,
+			entityType
+		});
 
-		if (entityType === 'transaction-report') {
-			reportOptions.filters = cloneDeep(get(currentLayout.value, ['data', 'filters'], []));
-		}
-
-		reportOptions.page = options.page;
-		reportOptions.page_size = options.page_size;
-		reportOptions.frontend_request_options = cloneDeep(options.frontend_request_options);
-		reportOptions.frontend_request_options.columns = cloneDeep(
-			get(currentLayout.value, ['data', 'columns'], [])
-		);
-		// reportOptions.frontend_request_options['globalTableSearch'] = globalTableSearch
-
-		if (sortColumn.value.key) {
-			reportOptions.frontend_request_options.items_order = sortColumn.value.sort;
-			reportOptions.frontend_request_options.ordering = sortColumn.value.key;
-		}
-
-		reportOptions.frontend_request_options.filter_settings = get(
-			currentLayout.value,
-			['data', 'filters'],
-			[]
-		).reduce((res, filter) => {
-			if (isFilterValid(filter)) {
-				res.push({
-					key: entityPluralToSingular(filter.key),
-					filter_type: filter.options?.filter_type,
-					value_type: filter.value_type,
-					value: filter.options?.filter_values
-				});
-			}
-
-			return res;
-		}, []);
-
-		const data = await getListReportItems(entityType, reportOptions);
-
-		if (data && !data._$error) {
-			reportOptions.report_instance_id = data?.report_instance_id;
-			reportOptions.created_at = data?.created_at;
+		if (!data.error) {
 			set(currentLayout.value, ['data', 'reportOptions'], reportOptions);
 		}
 
-		return {
-			next: null,
-			previous: null,
-			count: data?.count,
-			results: cloneDeep(data?.items || []),
-			...(data?._$error && {
-				error: data?.code
-			})
-		};
+		return { ...data };
+	}
+
+	async function loadTableData() {
+		const groupIndexToExpand = groups.value.reduce((acc, g, index) => {
+			const { report_settings = {} } = g;
+			const { is_level_folded } = report_settings;
+			if (!is_level_folded && index > acc) {
+				acc = index;
+			}
+
+			return acc;
+		}, -1);
+
+		if (groupIndexToExpand !== -1) {
+			await loadTableDataToGroupLevel(groupIndexToExpand);
+			return;
+		}
+
+		const options = prepareTableDataRequestOptions({
+			currentLayout: currentLayout.value,
+			groupIndex: -1,
+			groupValues: []
+		});
+
+		await getTableData({
+			type: options.frontend_request_options.groups_types.length ? 'group' : 'items',
+			entityType: entityType.value,
+			options,
+			justThisLevel: true
+		});
+	}
+
+	async function selectLayout(layout) {
+		try {
+			isLoading.value = true;
+			currentLayout.value = layout;
+			initialCurrentLayout.value = cloneDeep(currentLayout.value);
+			await changeRouteQuery(entityType.value);
+			tableData.value = [];
+			await loadTableData();
+		} finally {
+			isLoading.value = false;
+		}
 	}
 
 	async function saveLayout() {
-		console.log('saveLayout');
-		if (currentLayout.value.id) {
-			await updateListLayout(currentLayout.value);
-			initialCurrentLayout.value = cloneDeep(currentLayout.value);
-			useNotify({ type: 'success', title: 'Page was saved.' });
-		} else {
-			// TODO open dialog for enter new layout name and user code and then save new layout
+		await _saveLayout(currentLayout.value);
+		initialCurrentLayout.value = cloneDeep(currentLayout.value);
+	}
+
+	async function _saveAsLayout(updatedLayoutData) {
+		const layout = await uiService.createListLayout(entityType.value, updatedLayoutData);
+		updateLayoutList(layout);
+		await selectLayout(layout);
+		useNotify({ type: 'success', title: `Layout ${updatedLayoutData.name} saved.` });
+	}
+
+	async function _overwriteLayout(updatedLayoutData) {
+		const layoutToOverwriteData = await uiService.getListLayoutByUserCode(
+			entityType.value,
+			updatedLayoutData.user_code
+		);
+
+		const layoutToOverwrite = layoutToOverwriteData.results[0];
+		layoutToOverwrite.data = updatedLayoutData.data;
+		layoutToOverwrite.name = updatedLayoutData.name;
+		const layout = await uiService.updateListLayout(layoutToOverwrite);
+		updateLayoutList(layout);
+		await selectLayout(layout);
+		useNotify({ type: 'success', title: `Success. Layout ${updatedLayoutData.name} overwritten.` });
+	}
+
+	async function saveAsLayout(layout) {
+		dialogsSrv.$openDialog({
+			component: LayoutSaveAsDialog,
+			componentProps: {
+				entityType: entityType.value
+			},
+			dialogProps: {
+				title: 'New layout',
+				width: 800,
+				cancelButton: false,
+				confirmButton: false,
+				closeOnClickOverlay: false,
+				onConfirm: async ({ status, data }) => {
+					try {
+						isLoading.value = true;
+
+						const updatedLayout = {
+							...(layout || cloneDeep(currentLayout.value)),
+							...data,
+							is_systemic: false
+						};
+
+						if (status === 'agree') {
+							updatedLayout.id && delete updatedLayout.id;
+							await _saveAsLayout(updatedLayout);
+						} else if (status === 'overwrite') {
+							await _overwriteLayout(updatedLayout);
+						}
+					} finally {
+						isLoading.value = false;
+					}
+				}
+			}
+		});
+	}
+
+	async function renameLayout(layout) {
+		return new Promise((resolve) => {
+			const updatedLayout = layout || cloneDeep(currentLayout.value);
+
+			dialogsSrv.$openDialog({
+				component: LayoutSaveAsDialog,
+				componentProps: {
+					entityType: metaContentTypesService.findEntityByContentType(contentType.value),
+					name: updatedLayout.name,
+					userCode: updatedLayout.user_code
+				},
+				dialogProps: {
+					title: 'Rename layout',
+					width: 800,
+					cancelButton: false,
+					confirmButton: false,
+					closeOnClickOverlay: false,
+					onConfirm: async ({ status, data }) => {
+						try {
+							isLoading.value = true;
+
+							if (status === 'agree') {
+								updatedLayout.name = data.name;
+								updatedLayout.user_code = data.user_code;
+								const res = await uiService.updateListLayout(updatedLayout);
+								updateLayoutList(res);
+
+								if (currentLayout.value.id === res.id) {
+									currentLayout.value.name = data.name;
+									currentLayout.value.user_code = data.user_code;
+								}
+
+								useNotify({ type: 'success', title: 'Success. Layout has been renamed.' });
+								resolve(updatedLayout);
+							}
+						} finally {
+							isLoading.value = false;
+						}
+					}
+				}
+			});
+		});
+	}
+
+	async function makeLayoutDefault(layout) {
+		try {
+			isLoading.value = true;
+			const updatedLayout = layout || cloneDeep(currentLayout.value);
+
+			if (rootEntityViewer.value) {
+				if (updatedLayout.is_default) return;
+
+				updatedLayout.is_default = true;
+				layouts.value.forEach((l) => {
+					l.is_default = l.id === updatedLayout.id;
+				});
+				const layout = await uiService.updateListLayout(updatedLayout);
+				updateLayoutList(layout);
+
+				useNotify({ type: 'success', title: 'Success. Layout made by default' });
+			} else if (updatedLayout.id !== splitPanelDefaultLayout.value.id) {
+				splitPanelDefaultLayout.value = {
+					layoutId: updatedLayout.id,
+					name: updatedLayout.name,
+					content_type: updatedLayout.content_type
+				};
+			}
+		} finally {
+			isLoading.value = false;
 		}
+	}
+
+	async function deleteLayout(layout) {
+		dialogsSrv.$openDialog({
+			component: ConfirmationDialog,
+			componentProps: {
+				text: 'Are you sure want to delete this layout?'
+			},
+			dialogProps: {
+				title: 'Warning',
+				width: 480,
+				onConfirm: async () => {
+					try {
+						isLoading.value = true;
+						const deletedLayout = layout || currentLayout.value;
+
+						await uiService.deleteListLayoutByKey(deletedLayout.id);
+
+						if (deletedLayout.is_default && layouts.value.length > 1) {
+							const newDefaultLayoutIndex = layouts.value[0].id === deletedLayout.id ? 1 : 0;
+							layouts.value[newDefaultLayoutIndex].is_default = true;
+							await uiService.updateListLayout(layouts.value[newDefaultLayoutIndex]);
+						}
+
+						await getLayouts(entityType.value);
+					} finally {
+						isLoading.value = false;
+					}
+				}
+			}
+		});
 	}
 
 	watch(groupRows, () => {
@@ -454,10 +562,16 @@ export const useBalanceReportStore = defineStore('balance-report', () => {
 		loadLayoutList,
 		getLayouts,
 		getCurrencies,
+		loadTableData,
 		getTableData,
 		loadTableDataToGroupLevel,
 		getGroupList,
 		getItemList,
-		saveLayout
+		saveLayout,
+		selectLayout,
+		saveAsLayout,
+		renameLayout,
+		makeLayoutDefault,
+		deleteLayout
 	};
 });

@@ -185,7 +185,7 @@ export async function updateListLayout(layout) {
 export async function createListLayout(entityType, data) {
 	const updatedData = { ...data };
 	updatedData.content_type = findContentTypeByEntity(entityType, 'ui');
-	const res = await useApi('listLayout.post', updatedData);
+	const res = await useApi('listLayout.post', { body: updatedData });
 	if (data.is_default) {
 		cacheDefaultLayout(res);
 	}

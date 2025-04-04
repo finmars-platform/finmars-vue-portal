@@ -110,7 +110,7 @@
 	import { storeToRefs } from 'pinia';
 	import size from 'lodash/size';
 	import { FmButton, FmCheckbox, FmIcon, FmIconButton, FmMenu, FmMenuItem } from '@finmars/ui';
-	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
+	import { useMainReportStore } from '~/stores/useMainReportStore';
 	import { LABEL_OPTIONS } from './constants';
 	import { calculatePageNumberForRequest, prepareTableDataRequestOptions } from '../utils';
 	import ReportTableHeaderCell from './ReportTableHeaderCell.vue';
@@ -120,10 +120,10 @@
 
 	const emits = defineEmits(['cell-resize']);
 
-	const balanceReportStore = useBalanceReportStore();
+	const mainReportStore = useMainReportStore();
 	const { isLoading, entityType, currentLayout, groups, visibleColumns, tableData } =
-		storeToRefs(balanceReportStore);
-	const { getTableData } = balanceReportStore;
+		storeToRefs(mainReportStore);
+	const { getTableData } = mainReportStore;
 
 	const isLocalLoading = ref(false);
 	const tableHeaderEl = ref(null);

@@ -15,7 +15,7 @@
 	import { storeToRefs } from 'pinia';
 	import get from 'lodash/get';
 	import { REPORT_TABLE_CELL_MIN_WIDTH } from '../constants';
-	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
+	import { useMainReportStore } from '~/stores/useMainReportStore';
 	import ReportTableRowActions from '~/components/pages/reports/common/ReportTableRowActions/ReportTableRowActions.vue';
 	import ReportTableItemCell from './ResportTableItemCell.vue';
 
@@ -30,8 +30,8 @@
 		}
 	});
 
-	const balanceReportStore = useBalanceReportStore();
-	const { isLoading, groups, visibleColumns } = storeToRefs(balanceReportStore);
+	const mainReportStore = useMainReportStore();
+	const { isLoading, groups, visibleColumns } = storeToRefs(mainReportStore);
 
 	const groupsBlockWidth = computed(() =>
 		groups.value.reduce((res, gr) => {

@@ -178,7 +178,7 @@
 		FmMenuItem,
 		FmSelect
 	} from '@finmars/ui';
-	import { useBalanceReportStore } from '~/stores/useBalanceReportStore';
+	import { useMainReportStore } from '~/stores/useMainReportStore';
 	import { REPORT_DATA_PROPERTIES } from '../constants';
 	import { MAIN_MENU, REPORT_OPTIONS } from './constants';
 
@@ -192,10 +192,10 @@
 	});
 	const emits = defineEmits(['header:action']);
 
-	const balanceReportStore = useBalanceReportStore();
+	const mainReportStore = useMainReportStore();
 	const { isLoading, autosaveLayoutUserCode, layouts, currentLayout, currencies } =
-		storeToRefs(balanceReportStore);
-	const { saveLayout } = balanceReportStore;
+		storeToRefs(mainReportStore);
+	const { saveLayout } = mainReportStore;
 
 	const [dateFromKey, dateToKey] = REPORT_DATA_PROPERTIES[props.entityType];
 
