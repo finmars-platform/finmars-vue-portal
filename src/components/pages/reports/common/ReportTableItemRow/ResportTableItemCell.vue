@@ -8,6 +8,7 @@
 					isCellValueNumeric && cellValue < 0 && negativeColorFormatId
 			}
 		]"
+		:style="{ 'text-align': cellTextAlignment }"
 	>
 		<span :title="processedCellValue">{{ processedCellValue }}</span>
 	</div>
@@ -35,6 +36,7 @@
 	const cssColumnCellMinWidth = computed(() => `${REPORT_TABLE_CELL_MIN_WIDTH.column}px`);
 
 	const cellWidthCss = computed(() => get(props.col, ['style', 'width'], 0));
+	const cellTextAlignment = computed(() => get(props.col, ['style', 'text_align'], 'left'));
 	const cellValue = computed(() => get(props.item, [props.col?.key], ''));
 	const isCellValueNumeric = computed(() => props.col?.value_type === 20);
 	const numberFormat = computed(() =>

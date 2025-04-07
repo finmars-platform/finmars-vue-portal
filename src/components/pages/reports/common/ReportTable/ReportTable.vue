@@ -1,79 +1,91 @@
 <template>
-	<div class="report-table">
-		<div ref="tableHeaderEl" class="report-table__header">
-			<div class="report-table__header-checkbox">
-				<FmCheckbox :disabled="isLoading" />
-			</div>
-
-			<div v-if="!isMenuColumnHidden" class="report-table__header-menu">
-				<FmIconButton
-					icon="mdi-label-outline"
-					variant="text"
-					class="report-table__header-menu-btn"
-					:disabled="isLoading"
-				>
-					<FmMenu activator="parent">
-						<template #default>
-							<template v-for="item in LABEL_OPTIONS" :key="item.key">
-								<FmMenuItem
-									:class="[
-										'report-table__header-menu-item',
-										{ 'report-table__header-menu-item--bordered': item.key === 'reset' }
-									]"
-									item-size="medium"
-								>
-									<FmIcon :icon="item.icon" :color="item.color" />
-								</FmMenuItem>
-							</template>
-						</template>
-					</FmMenu>
-				</FmIconButton>
-			</div>
-
-			<template v-for="gr in groups" :key="gr.key">
-				<ReportTableHeaderCell
-					type="group"
-					:item="gr"
-					:header-element="tableHeaderEl"
-					@open-cell-menu="openHeaderCellMenu($event, 'group', gr)"
-					@cell-resize="onCellResize('group', gr, $event)"
-				/>
-			</template>
-
-			<template v-for="col in visibleColumns" :key="col.key">
-				<ReportTableHeaderCell
-					type="column"
-					:item="col"
-					:header-element="tableHeaderEl"
-					@open-cell-menu="openHeaderCellMenu($event, 'column', col)"
-					@cell-resize="onCellResize('column', col, $event)"
-				/>
-			</template>
-
-			<FmIconButton
-				:class="[
-					'report-table__header-menu-icon',
-					{ 'report-table__header-menu-icon--closed': isMenuColumnHidden }
-				]"
-				:icon="isMenuColumnHidden ? 'mdi-chevron-right' : 'mdi-chevron-left'"
-				size="small"
-				variant="tonal"
-				:disabled="isLoading"
-				@click.stop.prevent="isMenuColumnHidden = !isMenuColumnHidden"
-			/>
-
-			<FmMenu
-				v-model="headerCellMenuSettings.open"
-				:activator="tableHeaderEl"
-				:target="[headerCellMenuSettings.x, headerCellMenuSettings.y]"
-				:close-on-content-click="false"
-				scroll-strategy="block"
-				width="240"
-			>
-				<div>
-					{{ headerCellMenuSettings.entity.type }} {{ headerCellMenuSettings.entity.value }}
+	<div :class="['report-table', { 'report-table--no-overflow': headerCellMenuSettings.open }]">
+		<div class="report-table__header-wrapper">
+			<div ref="tableHeaderEl" class="report-table__header">
+				<div class="report-table__header-checkbox" @click.stop.prevent>
+					<FmCheckbox :disabled="isLoading" />
 				</div>
-			</FmMenu>
+
+				<div v-if="!isMenuColumnHidden" class="report-table__header-menu" @click.stop.prevent>
+					<FmIconButton
+						icon="mdi-label-outline"
+						variant="text"
+						class="report-table__header-menu-btn"
+						:disabled="isLoading"
+					>
+						<FmMenu activator="parent">
+							<template #default>
+								<template v-for="item in LABEL_OPTIONS" :key="item.key">
+									<FmMenuItem
+										:class="[
+											'report-table__header-menu-item',
+											{ 'report-table__header-menu-item--bordered': item.key === 'reset' }
+										]"
+										item-size="medium"
+									>
+										<FmIcon :icon="item.icon" :color="item.color" />
+									</FmMenuItem>
+								</template>
+							</template>
+						</FmMenu>
+					</FmIconButton>
+				</div>
+
+				<template v-for="gr in groups" :key="gr.key">
+					<ReportTableHeaderCell
+						type="group"
+						:item="gr"
+						:header-element="tableHeaderEl"
+						@open-cell-menu="openHeaderCellMenu($event, 'group', gr)"
+						@cell-resize="onCellResize('group', gr, $event)"
+					/>
+				</template>
+
+				<template v-for="col in visibleColumns" :key="col.key">
+					<ReportTableHeaderCell
+						type="column"
+						:item="col"
+						:header-element="tableHeaderEl"
+						@open-cell-menu="openHeaderCellMenu($event, 'column', col)"
+						@cell-resize="onCellResize('column', col, $event)"
+					/>
+				</template>
+
+				<FmIconButton
+					:class="[
+						'report-table__header-menu-icon',
+						{ 'report-table__header-menu-icon--closed': isMenuColumnHidden }
+					]"
+					:icon="isMenuColumnHidden ? 'mdi-chevron-right' : 'mdi-chevron-left'"
+					size="small"
+					variant="tonal"
+					:disabled="isLoading"
+					@click.stop.prevent="isMenuColumnHidden = !isMenuColumnHidden"
+				/>
+
+				<FmMenu
+					v-model="headerCellMenuSettings.open"
+					:activator="tableHeaderEl"
+					attach
+					:target="[headerCellMenuSettings.x, headerCellMenuSettings.y]"
+					:close-on-content-click="false"
+					scroll-strategy="block"
+					width="280"
+				>
+					<template v-if="headerCellMenuSettings.entity && headerCellMenuSettings.entity.value">
+						<ReportNumericColumnSettingsMenu
+							v-if="headerCellMenuSettings.entity?.value.value_type === 20"
+							:column="headerCellMenuSettings.entity.value"
+						/>
+
+						<ReportColumnSettingsMenu
+							v-else
+							:column="headerCellMenuSettings.entity.value"
+							@action="runAction($event, headerCellMenuSettings.entity.value)"
+						/>
+					</template>
+				</FmMenu>
+			</div>
 		</div>
 
 		<div class="report-table__body">
@@ -106,80 +118,33 @@
 </template>
 
 <script setup>
-	import { ref } from 'vue';
-	import { storeToRefs } from 'pinia';
 	import size from 'lodash/size';
 	import { FmButton, FmCheckbox, FmIcon, FmIconButton, FmMenu, FmMenuItem } from '@finmars/ui';
-	import { useMainReportStore } from '~/stores/useMainReportStore';
 	import { LABEL_OPTIONS } from './constants';
-	import { calculatePageNumberForRequest, prepareTableDataRequestOptions } from '../utils';
+	import useReportTable from './useReportTable';
 	import ReportTableHeaderCell from './ReportTableHeaderCell.vue';
 	import ReportTableGroupRow from '../ReportTableGroupRow/ReportTableGroupRow.vue';
 	import ReportTableItemRow from '../ReportTableItemRow/ReportTableItemRow.vue';
 	import ReportTableInfoRow from '../ReportTableInfoRow/ReportTableInfoRow.vue';
+	import ReportColumnSettingsMenu from '../ReportColumnSettingsMenu/ReportColumnSettingsMenu.vue';
+	import ReportNumericColumnSettingsMenu from '../ReportNumericColumnSettingsMenu/ReportNumericColumnSettingsMenu.vue';
 
 	const emits = defineEmits(['cell-resize']);
 
-	const mainReportStore = useMainReportStore();
-	const { isLoading, entityType, currentLayout, groups, visibleColumns, tableData } =
-		storeToRefs(mainReportStore);
-	const { getTableData } = mainReportStore;
-
-	const isLocalLoading = ref(false);
-	const tableHeaderEl = ref(null);
-	const isMenuColumnHidden = ref(false);
-	const headerCellMenuSettings = ref({
-		open: false,
-		x: 0,
-		y: 0,
-		entity: {
-			type: 'group',
-			value: null
-		}
-	});
-
-	function openHeaderCellMenu(event, type = 'group', value) {
-		console.log('openHeaderCellMenu: ', type, event, value);
-		const elRect = event.target.getBoundingClientRect();
-		headerCellMenuSettings.value = {
-			open: true,
-			x: elRect.x,
-			y: elRect.y + elRect.height + 4,
-			entity: {
-				type,
-				value
-			}
-		};
-	}
-
-	function onCellResize(type = 'group', item, width) {
-		emits('cell-resize', { type, item, width });
-	}
-
-	async function loadMore() {
-		try {
-			isLocalLoading.value = true;
-
-			const newPage = calculatePageNumberForRequest({
-				totalItems: tableData.value?.totalChildren,
-				currentItemsCount: size(tableData.value?.children)
-			});
-			const options = prepareTableDataRequestOptions({
-				currentLayout: currentLayout.value,
-				groupIndex: -1,
-				groupValues: [],
-				page: newPage
-			});
-			await getTableData({
-				type: options.frontend_request_options.groups_types.length ? 'group' : 'items',
-				entityType: entityType.value,
-				options,
-				justThisLevel: true
-			});
-		} finally {
-			isLocalLoading.value = false;
-		}
-	}
+	const {
+		isLoading,
+		isLocalLoading,
+		tableHeaderEl,
+		groups,
+		visibleColumns,
+		tableData,
+		isMenuColumnHidden,
+		headerCellMenuSettings,
+		onCellResize,
+		loadMore,
+		openHeaderCellMenu,
+		runAction
+	} = useReportTable(emits);
 </script>
 
 <style lang="scss" scoped>
@@ -190,7 +155,22 @@
 		--report-table-cell-min-width: 90px;
 
 		position: relative;
-		width: max-content;
+		width: 100%;
+		height: 100%;
+		padding-right: 16px;
+		padding-bottom: 8px;
+		overflow-x: auto;
+
+		&--no-overflow {
+			overflow: hidden;
+		}
+
+		&__header-wrapper {
+			position: sticky;
+			width: max-content;
+			top: 0;
+			z-index: 1;
+		}
 
 		&__header {
 			position: relative;
@@ -253,7 +233,7 @@
 
 		&__body {
 			position: relative;
-			width: 100%;
+			width: max-content;
 		}
 
 		&__row-info {

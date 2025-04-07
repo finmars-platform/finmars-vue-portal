@@ -223,13 +223,25 @@ export const useMainReportStore = defineStore('balance-report', () => {
 	}
 
 	async function loadTableDataToGroupLevel(level) {
+		console.log('### loadTableDataToGroupLevel => ', level);
+		tableData.value = {
+			___group_identifier: 'root',
+			___group_name: 'root',
+			___group_type_key: 'root',
+			totalChildren: 0,
+			children: {}
+		};
 		expandGroupsToLevel.value = level;
 		const options = prepareTableDataRequestOptions({
 			currentLayout: currentLayout.value,
 			groupIndex: -1,
 			groupValues: []
 		});
-		await getTableData({ entityType: entityType.value, options });
+		await getTableData({
+			type: options.frontend_request_options.groups_types.length ? 'group' : 'items',
+			entityType: entityType.value,
+			options
+		});
 	}
 
 	async function getTableData({
