@@ -111,19 +111,39 @@
 	const draft = ref(null);
 	const dataForEditorJson = ref(null);
 	const draftModifiedAt = ref('');
-	const userCode = 'explorer.' + props.currentPath.join('__');
+	const replacedCurrentPath = ref([]);
+	const replacedPlaybookName = ref('');
 	const activeCell = ref(null);
 	const fileData = ref(null);
 	const processing = ref(false);
 	const fileSaveProcessing = ref(false);
 	const executing = ref(false);
+	let userCode = 'explorer.' + props.currentPath.join('__');
 
 	watch(
 		() => props.playbook,
 		(newValue) => {
+			console.log('0000 props.playbook', props.playbook);
 			dataForEditorJson.value = newValue;
 		},
 		{ deep: true }
+	);
+
+	watch(
+		() => props.currentPath,
+		(newValue) => {
+			replacedCurrentPath.value = newValue.map(item => item.replace(/%20/g, ' '));
+			userCode = 'explorer.' + replacedCurrentPath.value.join('__');
+		},
+		{ deep: true , immediate: true }
+	);
+
+	watch(
+		() => props.playbookName,
+		(newValue) => {
+			replacedPlaybookName.value = newValue.replace(/%20/g, ' ');
+		},
+		{ deep: true , immediate: true }
 	);
 
 	const previewDraft = () => {
@@ -218,8 +238,8 @@
 		const formData = new FormData();
 		const content = JSON.stringify(fileData.value, null, 4);
 		const blob = new Blob([content], { type: 'application/json' });
-		const file = new File([blob], props.playbookName);
-		const pathPieces = [...props.currentPath];
+		const file = new File([blob], replacedPlaybookName.value);
+		const pathPieces = [...replacedCurrentPath.value];
 		pathPieces.pop();
 		const path = pathPieces.join('/')?.replace(/%20/g, ' ');
 		formData.append('file', file);
@@ -249,7 +269,7 @@
 			method: 'POST',
 			body: JSON.stringify({
 				code: activeCell.value.source,
-				file_path: props.currentPath.join('/')
+				file_path: replacedCurrentPath.value.join('/')
 			}),
 			headers: {
 				'Content-Type': 'application/json',
@@ -360,7 +380,7 @@
 	const init = async () => {
 		processing.value = true;
 		const options = {
-			path: props.currentPath.join('/')
+			path: replacedCurrentPath.value.join('/')
 		};
 		const res = await useApi('explorerViewFile.get', { filters: options });
 		fileData.value = JSON.parse(res);
