@@ -95,7 +95,7 @@
 			display: flex;
 			width: 100%;
 			height: 48px;
-			padding: 0 16px;
+			padding: 0 16px 0 32px;
 			align-items: center;
 		}
 

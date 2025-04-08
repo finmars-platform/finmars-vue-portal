@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import { inject, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import cloneDeep from 'lodash/cloneDeep';
@@ -5,11 +6,17 @@ import size from 'lodash/size';
 import get from 'lodash/get';
 import set from 'lodash/set';
 import unset from 'lodash/unset';
+import hasIn from 'lodash/hasIn';
 import { FM_DIALOGS_KEY } from '@finmars/ui';
 import { useMainReportStore } from '~/stores/useMainReportStore';
-import { calculatePageNumberForRequest, prepareTableDataRequestOptions } from '../utils';
+import {
+	calculatePageNumberForRequest,
+	prepareTableDataRequestOptions,
+	isGrandTotalHidden,
+	isSubtotalAvgWeighted
+} from '../utils';
 import RenameFieldDialog from '~/components/modal/RenameFieldDialog/RenameFieldDialog.vue';
-import hasIn from 'lodash/hasIn';
+import NumberFormatSettingsDialog from '~/components/modal/NumberFormatSettingsDialog/NumberFormatSettingsDialog.vue';
 
 export default function useReportTable(emits) {
 	const dialogsService = inject(FM_DIALOGS_KEY);
@@ -91,20 +98,30 @@ export default function useReportTable(emits) {
 		};
 	}
 
+	function findIndexInColumns(column) {
+		return columns.value.findIndex((c) => c.key === column.key);
+	}
+
+	function findIndexInGroups(column) {
+		return groups.value.findIndex((g) => g.key === column.key);
+	}
+
+	function findIndexInFilters(column) {
+		return get(currentLayout.value, ['data', 'filters'], []).findIndex((f) => f.key === column.key);
+	}
+
 	function renameColumn(column, newName) {
-		const columnIndex = columns.value.findIndex((c) => c.key === column.key);
+		const columnIndex = findIndexInColumns(column);
 		if (columnIndex !== -1) {
 			set(currentLayout.value, ['data', 'columns', columnIndex, 'layout_name'], newName);
 		}
 
-		const indexInGroups = groups.value.findIndex((g) => g.key === column.key);
+		const indexInGroups = findIndexInGroups(column);
 		if (indexInGroups !== -1) {
-			set(currentLayout.value, ['data', 'groups', indexInGroups, 'layout_name'], newName);
+			set(currentLayout.value, ['data', 'grouping', indexInGroups, 'layout_name'], newName);
 		}
 
-		const indexInFilters = get(currentLayout.value, ['data', 'filters'], []).findIndex(
-			(f) => f.key === column.key
-		);
+		const indexInFilters = findIndexInFilters(column);
 		if (indexInFilters !== -1) {
 			set(currentLayout.value, ['data', 'filters', indexInFilters, 'layout_name'], newName);
 		}
@@ -134,7 +151,7 @@ export default function useReportTable(emits) {
 	}
 
 	async function unGroup(column) {
-		const indexInGroups = groups.value.findIndex((g) => g.key === column.key);
+		const indexInGroups = findIndexInGroups(column);
 		if (indexInGroups !== -1) {
 			const updatedGroup = cloneDeep(get(currentLayout.value, ['data', 'grouping'], []));
 			updatedGroup.splice(indexInGroups, 1);
@@ -168,7 +185,7 @@ export default function useReportTable(emits) {
 	}
 
 	function changeColumnTextAlign(column, type) {
-		const columnIndex = columns.value.findIndex((c) => c.key === column.key);
+		const columnIndex = findIndexInColumns(column);
 		if (columnIndex === -1) return;
 
 		const currentColumnTextAlign = get(currentLayout.value, [
@@ -178,7 +195,7 @@ export default function useReportTable(emits) {
 			'style',
 			'text_align'
 		]);
-		console.log(currentColumnTextAlign);
+
 		if (currentColumnTextAlign === type) {
 			unset(currentLayout.value, ['data', 'columns', columnIndex, 'style', 'text_align']);
 		} else {
@@ -187,10 +204,10 @@ export default function useReportTable(emits) {
 	}
 
 	async function removeColumn(column) {
-		const isGroupColumn = hasIn(column, 'groups', '___group_type_id');
+		const isGroupColumn = hasIn(column, '___group_type_id');
 
 		if (isGroupColumn) {
-			const indexInGroups = groups.value.findIndex((g) => g.key === column.key);
+			const indexInGroups = findIndexInGroups(column);
 			if (indexInGroups === -1) {
 				throw new Error(`No group with such key found: ${column.key}`);
 			}
@@ -202,7 +219,7 @@ export default function useReportTable(emits) {
 			return;
 		}
 
-		const columnIndex = columns.value.findIndex((c) => c.key === column.key);
+		const columnIndex = findIndexInColumns(column);
 		if (columnIndex === -1) {
 			throw new Error(`No column with such key found: ${column.key}`);
 		}
@@ -210,6 +227,47 @@ export default function useReportTable(emits) {
 		const updatedColumns = cloneDeep(get(currentLayout.value, ['data', 'columns'], []));
 		updatedColumns.splice(columnIndex, 1);
 		set(currentLayout.value, ['data', 'columns'], updatedColumns);
+	}
+
+	function changeNumberFormat(column) {
+		const indexInColumns = findIndexInColumns(column);
+		const settings = {
+			...(column.options && { ...column.options.numberFormat }),
+			...(!column.options && { ...column.report_settings }),
+			...(column.options && !hasIn(column.options, 'numberFormat') && { ...column.report_settings })
+		};
+		dialogsService.$openDialog({
+			component: NumberFormatSettingsDialog,
+			componentProps: {
+				settings
+			},
+			dialogProps: {
+				title: 'Number Format',
+				width: 600,
+				closeOnClickOverlay: false,
+				onConfirm: (val) => {
+					set(
+						currentLayout.value,
+						['data', 'columns', indexInColumns, 'options', 'numberFormat'],
+						val
+					);
+				}
+			}
+		});
+	}
+
+	function changeSubtotalValue(column, field, value) {
+		const isGroupColumn = hasIn(column, '___group_type_id');
+		const index = isGroupColumn ? findIndexInGroups(column) : findIndexInColumns(column);
+		if (index === -1) return;
+
+		const path = ['data', isGroupColumn ? 'grouping' : 'columns', index, 'report_settings', field];
+		const currentValue =
+			typeof value === 'boolean'
+				? !!get(currentLayout.value, path)
+				: get(currentLayout.value, path);
+		const newValue = currentValue === value ? (typeof value === 'boolean' ? !value : null) : value;
+		set(currentLayout.value, path, newValue);
 	}
 
 	async function runAction(action, item) {
@@ -223,6 +281,7 @@ export default function useReportTable(emits) {
 			}
 		};
 
+		console.log('## ACT => ', action, item);
 		switch (action) {
 			case 'rename':
 				dialogsService.$openDialog({
@@ -259,7 +318,34 @@ export default function useReportTable(emits) {
 				changeColumnTextAlign(item, 'right');
 				break;
 			case 'remove':
-				removeColumn(item);
+				await removeColumn(item);
+				break;
+			case 'format:number':
+				changeNumberFormat(item);
+				break;
+			case 'subtotal:sum':
+				changeSubtotalValue(item, 'subtotal_formula_id', 1);
+				break;
+			case 'subtotal:weighted':
+				changeSubtotalValue(item, 'subtotal_formula_id', 2);
+				break;
+			case 'subtotal:av-weighted':
+				changeSubtotalValue(item, 'subtotal_formula_id', 6);
+				break;
+			case 'hide:total':
+				changeSubtotalValue(item, 'hide_grandtotal', !isGrandTotalHidden(item));
+				break;
+			case 'format:number:market':
+				changeSubtotalValue(item, 'subtotal_formula_id', 2 + 4 * isSubtotalAvgWeighted(item));
+				break;
+			case 'format:number:market:percentage':
+				changeSubtotalValue(item, 'subtotal_formula_id', 3 + 4 * isSubtotalAvgWeighted(item));
+				break;
+			case 'format:number:exposure':
+				changeSubtotalValue(item, 'subtotal_formula_id', 4 + 4 * isSubtotalAvgWeighted(item));
+				break;
+			case 'format:number:exposure:percentage':
+				changeSubtotalValue(item, 'subtotal_formula_id', 5 + 4 * isSubtotalAvgWeighted(item));
 				break;
 		}
 	}
@@ -268,6 +354,7 @@ export default function useReportTable(emits) {
 		isLoading,
 		isLocalLoading,
 		tableHeaderEl,
+		currentLayout,
 		groups,
 		visibleColumns,
 		tableData,

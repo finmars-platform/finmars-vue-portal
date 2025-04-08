@@ -76,6 +76,8 @@
 						<ReportNumericColumnSettingsMenu
 							v-if="headerCellMenuSettings.entity?.value.value_type === 20"
 							:column="headerCellMenuSettings.entity.value"
+							:current-layout="currentLayout"
+							@action="runAction($event, headerCellMenuSettings.entity.value)"
 						/>
 
 						<ReportColumnSettingsMenu
@@ -136,6 +138,7 @@
 		isLocalLoading,
 		tableHeaderEl,
 		groups,
+		currentLayout,
 		visibleColumns,
 		tableData,
 		isMenuColumnHidden,
