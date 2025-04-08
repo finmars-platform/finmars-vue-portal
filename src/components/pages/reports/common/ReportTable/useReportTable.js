@@ -1,13 +1,15 @@
 import { inject, ref } from 'vue';
 import { storeToRefs } from 'pinia';
+import cloneDeep from 'lodash/cloneDeep';
 import size from 'lodash/size';
 import get from 'lodash/get';
 import set from 'lodash/set';
-import cloneDeep from 'lodash/cloneDeep';
+import unset from 'lodash/unset';
 import { FM_DIALOGS_KEY } from '@finmars/ui';
 import { useMainReportStore } from '~/stores/useMainReportStore';
 import { calculatePageNumberForRequest, prepareTableDataRequestOptions } from '../utils';
 import RenameFieldDialog from '~/components/modal/RenameFieldDialog/RenameFieldDialog.vue';
+import hasIn from 'lodash/hasIn';
 
 export default function useReportTable(emits) {
 	const dialogsService = inject(FM_DIALOGS_KEY);
@@ -60,7 +62,6 @@ export default function useReportTable(emits) {
 	}
 
 	function openHeaderCellMenu(event, type = 'group', value) {
-		console.log('openHeaderCellMenu: ', type, event, value);
 		if (!event || !value) {
 			headerCellMenuSettings.value.open = false;
 		}
@@ -133,18 +134,85 @@ export default function useReportTable(emits) {
 	}
 
 	async function unGroup(column) {
-		const indexInGroup = groups.value.findIndex((g) => g.key === column.key);
-		if (indexInGroup !== -1) {
+		const indexInGroups = groups.value.findIndex((g) => g.key === column.key);
+		if (indexInGroups !== -1) {
 			const updatedGroup = cloneDeep(get(currentLayout.value, ['data', 'grouping'], []));
-			updatedGroup.splice(indexInGroup, 1);
+			updatedGroup.splice(indexInGroups, 1);
 			set(currentLayout.value, ['data', 'grouping'], updatedGroup);
-			await loadTableDataToGroupLevel(Math.max(0, indexInGroup - 1));
+			await loadTableDataToGroupLevel(Math.max(0, indexInGroups - 1));
 		} else {
 			throw new Error(`No group with such key found: ${column.key}`);
 		}
 	}
 
-	function runAction(action, item) {
+	async function addFilter(column) {
+		// TODO требует доработки (открытие созданного фильтра для редактирования и обновление данных таблицы с учетом обновленных фильтров
+		const newFilterItem = {
+			isNew: true,
+			key: column.key,
+			columns: column.columns,
+			name: column.name,
+			value_type: column.value_type,
+			layout_name: column.layout_name,
+			options: {
+				filter_type: 'equal',
+				filter_values: [],
+				enabled: true,
+				use_from_above: {}
+			},
+			filters: true
+		};
+		const updatedFilters = cloneDeep(get(currentLayout.value, ['data', 'filters'], []));
+		updatedFilters.push(newFilterItem);
+		set(currentLayout.value, ['data', 'filters'], updatedFilters);
+	}
+
+	function changeColumnTextAlign(column, type) {
+		const columnIndex = columns.value.findIndex((c) => c.key === column.key);
+		if (columnIndex === -1) return;
+
+		const currentColumnTextAlign = get(currentLayout.value, [
+			'data',
+			'columns',
+			columnIndex,
+			'style',
+			'text_align'
+		]);
+		console.log(currentColumnTextAlign);
+		if (currentColumnTextAlign === type) {
+			unset(currentLayout.value, ['data', 'columns', columnIndex, 'style', 'text_align']);
+		} else {
+			set(currentLayout.value, ['data', 'columns', columnIndex, 'style', 'text_align'], type);
+		}
+	}
+
+	async function removeColumn(column) {
+		const isGroupColumn = hasIn(column, 'groups', '___group_type_id');
+
+		if (isGroupColumn) {
+			const indexInGroups = groups.value.findIndex((g) => g.key === column.key);
+			if (indexInGroups === -1) {
+				throw new Error(`No group with such key found: ${column.key}`);
+			}
+
+			const updatedGroup = cloneDeep(get(currentLayout.value, ['data', 'grouping'], []));
+			updatedGroup.splice(indexInGroups, 1);
+			set(currentLayout.value, ['data', 'grouping'], updatedGroup);
+			await loadTableDataToGroupLevel(Math.max(0, indexInGroups - 1));
+			return;
+		}
+
+		const columnIndex = columns.value.findIndex((c) => c.key === column.key);
+		if (columnIndex === -1) {
+			throw new Error(`No column with such key found: ${column.key}`);
+		}
+
+		const updatedColumns = cloneDeep(get(currentLayout.value, ['data', 'columns'], []));
+		updatedColumns.splice(columnIndex, 1);
+		set(currentLayout.value, ['data', 'columns'], updatedColumns);
+	}
+
+	async function runAction(action, item) {
 		headerCellMenuSettings.value = {
 			open: false,
 			x: 0,
@@ -173,10 +241,25 @@ export default function useReportTable(emits) {
 				});
 				break;
 			case 'add:group':
-				addColumnToGroup(item);
+				await addColumnToGroup(item);
 				break;
 			case 'remove:group':
-				unGroup(item);
+				await unGroup(item);
+				break;
+			case 'add:filter':
+				await addFilter(item);
+				break;
+			case 'alignment:left':
+				changeColumnTextAlign(item, 'left');
+				break;
+			case 'alignment:center':
+				changeColumnTextAlign(item, 'center');
+				break;
+			case 'alignment:right':
+				changeColumnTextAlign(item, 'right');
+				break;
+			case 'remove':
+				removeColumn(item);
 				break;
 		}
 	}

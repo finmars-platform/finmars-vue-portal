@@ -9,7 +9,6 @@
 								v-bind="props"
 								icon="mdi-format-align-left"
 								:variant="currentColumnAlignment === 'left' ? 'tonal' : 'outlined'"
-								:disabled="currentColumnAlignment === 'left'"
 								@click.stop.prevent="runAction(`${item.action}:left`)"
 							/>
 						</template>
@@ -23,7 +22,6 @@
 								v-bind="props"
 								icon="mdi-format-align-center"
 								:variant="currentColumnAlignment === 'center' ? 'tonal' : 'outlined'"
-								:disabled="currentColumnAlignment === 'center'"
 								@click.stop.prevent="runAction(`${item.action}:center`)"
 							/>
 						</template>
@@ -37,7 +35,6 @@
 								v-bind="props"
 								icon="mdi-format-align-right"
 								:variant="currentColumnAlignment === 'right' ? 'tonal' : 'outlined'"
-								:disabled="currentColumnAlignment === 'right'"
 								@click.stop.prevent="runAction(`${item.action}:right`)"
 							/>
 						</template>
@@ -71,7 +68,7 @@
 	const emits = defineEmits(['action']);
 
 	const isGroup = computed(() => hasIn(props.column, '___group_type_id'));
-	const currentColumnAlignment = computed(() => get(props.column, ['style', 'text_align'], 'left'));
+	const currentColumnAlignment = computed(() => get(props.column, ['style', 'text_align']));
 
 	const currentMenuItems = computed(() =>
 		REPORT_COLUMN_MENU_ITEMS.filter((i) => i.available.includes(isGroup.value ? 'group' : 'item'))
