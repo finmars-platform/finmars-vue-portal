@@ -4,7 +4,7 @@
 		:offset="-20"
 		:close-on-content-click="false"
 		:close-on-back="false"
-		persistent
+		:persistent="blockMenu"
 		z-index="1010"
 		:disabled="disabled"
 	>
@@ -175,6 +175,7 @@
 
 	const isMenuOpen = ref(false);
 	const innerValue = ref([]);
+	const blockMenu = ref(false);
 
 	const defaultAttrFromAvailable = computed(() => {
 		const attr = props.availableAttrs.find(
@@ -313,6 +314,7 @@
 	}
 
 	function changeAttributeOfMenuPosition(attr) {
+		blockMenu.value = true;
 		const component = defineAsyncComponent(
 			() =>
 				import(
@@ -331,13 +333,25 @@
 				width: 700,
 				confirmButton: false,
 				cancelButton: false,
-				closeOnClickOverlay: false,
 				onConfirm: (attrIds) => {
 					if (attr) {
 						changeAttr(attr, attrIds[0]);
 					} else {
 						addColumns(attrIds);
 					}
+					setTimeout(() => {
+						blockMenu.value = false;
+					}, 200);
+				},
+				onCancel: () => {
+					setTimeout(() => {
+						blockMenu.value = false;
+					}, 200);
+				},
+				onClose: () => {
+					setTimeout(() => {
+						blockMenu.value = false;
+					}, 200);
 				}
 			}
 		});
@@ -369,6 +383,12 @@
 			}
 		}
 	);
+
+	watch(isMenuOpen, (val, oVal) => {
+		if (oVal && val !== oVal) {
+			innerValue.value = cloneDeep(props.value);
+		}
+	});
 </script>
 
 <style lang="scss" scoped>

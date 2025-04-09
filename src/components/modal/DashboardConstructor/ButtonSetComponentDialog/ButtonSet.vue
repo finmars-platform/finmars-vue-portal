@@ -17,6 +17,7 @@
 			label="Action"
 			variant="outlined"
 			compact
+			scroll-strategy="close"
 			:disabled="disabled"
 			@update:model-value="updateButton('action', $event)"
 		/>
@@ -28,6 +29,7 @@
 			label="Target"
 			variant="outlined"
 			compact
+			scroll-strategy="close"
 			:disabled="disabled"
 			@update:model-value="updateButton('target', $event)"
 		/>
@@ -43,6 +45,7 @@
 			label="Target Specific"
 			variant="outlined"
 			compact
+			scroll-strategy="close"
 			:loading="isTargetSpecificsLoading"
 			:disabled="
 				disabled ||
