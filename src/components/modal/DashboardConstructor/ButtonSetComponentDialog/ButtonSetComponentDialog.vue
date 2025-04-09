@@ -7,6 +7,7 @@
 					label="Name"
 					hide-details
 					outlined
+					compact
 					:disabled="isLoading"
 				/>
 
@@ -15,6 +16,7 @@
 					label="Label"
 					hide-details
 					outlined
+					compact
 					:disabled="isLoading"
 				/>
 
@@ -34,7 +36,9 @@
 					label="Rows"
 					outlined
 					hide-details
+					compact
 					:disabled="isLoading"
+					@init="rowsInputEl = $event.input"
 					@update:model-value="changeGridSize('rows', $event)"
 				/>
 
@@ -44,7 +48,9 @@
 					label="Columns"
 					outlined
 					hide-details
+					compact
 					:disabled="isLoading"
+					@init="columnsInputEl = $event.input"
 					@update:model-value="changeGridSize('columns', $event)"
 				/>
 			</div>
@@ -151,6 +157,8 @@
 	const itemData = ref(null);
 	const gridRows = ref(0);
 	const gridColumns = ref(0);
+	const rowsInputEl = ref(null);
+	const columnsInputEl = ref(null);
 
 	const rowsData = computed(() => itemData.value?.settings?.grid?.rows || []);
 	const sortedActions = computed(() => ACTIONS.sort(sortByName));
@@ -280,6 +288,7 @@
 
 	function changeGridSize(direction, value) {
 		const formattedValue = formatNumber(value);
+
 		const updatedValue =
 			Number(formattedValue) < 1
 				? 1
@@ -290,8 +299,10 @@
 		nextTick(() => {
 			if (direction === 'rows') {
 				gridRows.value = updatedValue;
+				rowsInputEl.value.value = updatedValue;
 			} else {
 				gridColumns.value = updatedValue;
+				columnsInputEl.value.value = updatedValue;
 			}
 
 			itemData.value.settings.columns = `${gridColumns.value}`;
@@ -401,7 +412,7 @@
 			position: relative;
 			width: 100%;
 			height: 480px;
-			padding: 24px 24px 0 24px;
+			padding: 8px 24px 0 24px;
 
 			:deep(.v-tabs) {
 				border-radius: 4px 4px 0 0;
